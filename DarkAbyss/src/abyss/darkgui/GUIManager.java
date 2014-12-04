@@ -118,13 +118,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-		getFrame().setLocation((int) (screenSize.width * 0.1) / 2,
-				(int) (screenSize.height * 0.1) / 2);
-		getFrame().setSize((int) (screenSize.getWidth() * 0.9),
-				(int) (screenSize.getHeight() * 0.9));
+		getFrame().setLocation((int) (screenSize.width * 0.1) / 2, (int) (screenSize.height * 0.1) / 2);
+		getFrame().setSize((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
 		getFrame().setVisible(true);
-		getFrame().setExtendedState(
-				getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
 		// Create the dock model for the docks.
 		setDockModel(new FloatDockModel());
@@ -135,10 +132,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		// setfactories
 		DefaultPopupMenuFactory popupMenuFactory = new DefaultPopupMenuFactory();
-		popupMenuFactory
-				.setPopupActions(DefaultPopupMenuFactory.DOCKABLE_ACTIONS
-						| DefaultPopupMenuFactory.CLOSE_ALL_ACTION
-						| DefaultPopupMenuFactory.CLOSE_OTHERS_ACTION);
+		popupMenuFactory.setPopupActions(DefaultPopupMenuFactory.DOCKABLE_ACTIONS
+				| DefaultPopupMenuFactory.CLOSE_ALL_ACTION
+				| DefaultPopupMenuFactory.CLOSE_OTHERS_ACTION);
 		DefaultSwComponentFactory componentFactory = new DefaultSwComponentFactory();
 		componentFactory.setPopupMenuFactory(popupMenuFactory);
 		DockingManager.setComponentFactory(componentFactory);
@@ -205,8 +201,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 				- (int) screenSize.getWidth() / 6);
 
 		// // Add root dock
-		getDockModel()
-				.addRootDock("totalSplitDock", totalSplitDock, getFrame());
+		getDockModel().addRootDock("totalSplitDock", totalSplitDock, getFrame());
 		add(totalSplitDock, BorderLayout.CENTER);
 
 		// save docking paths
@@ -237,8 +232,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setShortcutsBar(new ShortcutsBar());
 
 		// Add the shortcuts bar also as root dock to the dock model.
-		dockModel.addRootDock("toolBarBorderDock", getShortcutsBar()
-				.getToolBarBorderDock(), frame);
+		dockModel.addRootDock("toolBarBorderDock", getShortcutsBar().getToolBarBorderDock(), frame);
 
 		// Add the shortcuts bar to this panel.
 		this.add(getShortcutsBar().getToolBarBorderDock(), BorderLayout.CENTER);
@@ -381,16 +375,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	public void importProject() {
 		JFileChooser fc;
-		if(lastPath==null)
-		{
-		fc = new JFileChooser();
-		}
-		else
-		{
-		fc = new JFileChooser(lastPath);	
+		if(lastPath==null) {
+			fc = new JFileChooser();
+		} else {
+			fc = new JFileChooser(lastPath);	
 		}
 		FileFilter snoopyFilter = new ExtensionFileFilter(
-				".spped - Snoopy Files", new String[] { "SPPED" });
+			".spped - Snoopy Files", new String[] { "SPPED" });
 		FileFilter inaFilter = new ExtensionFileFilter(".pnt - INA Files",
 				new String[] { "PNT" });
 		fc.setFileFilter(snoopyFilter);

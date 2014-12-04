@@ -130,7 +130,8 @@ public class ShortcutsBar extends BorderDock {
 	private void loadButtons() {
 		//nowa zak³adka
 		@SuppressWarnings("serial")
-		ToolbarButtonAction addButton = new ToolbarButtonAction(this, "New tab", new ImageIcon("resources/icons/add.png")) {
+		ToolbarButtonAction addButton = new ToolbarButtonAction(this, 
+				"New tab", new ImageIcon("resources/icons/toolbar/add.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().newTab();
@@ -138,10 +139,20 @@ public class ShortcutsBar extends BorderDock {
 		};
 		buttonDockables.add(createButtonDockable("ButtonDockableAdd", addButton));
 		
+		@SuppressWarnings("serial")
+		ToolbarButtonAction openButton = new ToolbarButtonAction(this,
+				"Open project...", new ImageIcon("resources/icons/toolbar/open.png")) {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().openProject();
+			}
+		};
+		buttonDockables.add(createButtonDockable("ButtonDockableOpen",openButton));
+
 		//import projektu ze snoopiego
 		@SuppressWarnings("serial")
 		ToolbarButtonAction importButton = new ToolbarButtonAction(this,
-				"Import project...", new ImageIcon("resources/icons/import.png")) {
+				"Import project...", new ImageIcon("resources/icons/toolbar/import.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().importProject();
@@ -152,7 +163,7 @@ public class ShortcutsBar extends BorderDock {
 		//odswiezanie
 		@SuppressWarnings("serial")
 		ToolbarButtonAction refreshButton = new ToolbarButtonAction(this,
-				"Refresh", new ImageIcon("resources/icons/refresh.png")) {
+				"Refresh", new ImageIcon("resources/icons/toolbar/refresh.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().restoreDefaultVisuals();
@@ -165,130 +176,102 @@ public class ShortcutsBar extends BorderDock {
 	@SuppressWarnings("serial")
 	private ArrayList<ButtonDockable> createSimulationBar() {
 		ArrayList<ButtonDockable> simulationDockables = new ArrayList<ButtonDockable>();
-		przyciskI = new ToolbarButtonAction(
-				this, "Loop back to oldest action saved",
-				new ImageIcon( "resources/icons/simulation_icons/control_step_bck_blue.png")) {
+		przyciskI = new ToolbarButtonAction(this, "Loop back to oldest action saved",
+			new ImageIcon( "resources/icons/toolbar/sim_back.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getSimulator()
-						.startSimulation(SimulatorMode.LOOP_BACK);
+					.getSimulator().startSimulation(SimulatorMode.LOOP_BACK);
 			}
 		};
-		simulationDockables.add(createButtonDockable("ButtonDockableStepBack",
-				przyciskI));
-		przyciskII = new ToolbarButtonAction(
-				this,
-				"Single action back simulation",
-				new ImageIcon(
-						"resources/icons/simulation_icons/control_bck_blue.png")) {
+		simulationDockables.add(createButtonDockable("ButtonDockableStepBack",przyciskI));
+		
+		przyciskII = new ToolbarButtonAction(this,"Single action back simulation",
+				new ImageIcon("resources/icons/toolbar/sim_back_step.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getSimulator()
-						.startSimulation(SimulatorMode.ACTION_BACK);
+					.getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
 			}
 		};
-		simulationDockables.add(createButtonDockable(
-				"ButtonDockableSmallStepBack", przyciskII));
-		loopSimButton = new ToolbarButtonAction(
-				this,
-				"Loop simulation",
-				new ImageIcon(
-						"resources/icons/simulation_icons/control_repeat_blue.png")) {
+		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepBack", przyciskII));
+		
+		loopSimButton = new ToolbarButtonAction(this,"Loop simulation",
+				new ImageIcon("resources/icons/toolbar/sim_start.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getSimulator().startSimulation(SimulatorMode.LOOP);
+					.getSimulator().startSimulation(SimulatorMode.LOOP);
 			}
 		};
-		simulationDockables.add(createButtonDockable("ButtonDockableLoopSim",
-				loopSimButton));
-		singleTransitionLoopSimButton = new ToolbarButtonAction(this,
-				"Loop single transition simulation", new ImageIcon(
-						"resources/icons/simulation_icons/control_repeat.png")) {
+		simulationDockables.add(createButtonDockable("ButtonDockableLoopSim",loopSimButton));
+		
+		singleTransitionLoopSimButton = new ToolbarButtonAction(this, "Loop single transition simulation", 
+				new ImageIcon("resources/icons/toolbar/sim_start_single.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getSimulator()
-						.startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
+					.getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
 			}
 		};
-		simulationDockables.add(createButtonDockable(
-				"ButtonDockableLoopSingleTransitionSim",
+		simulationDockables.add(createButtonDockable("ButtonDockableLoopSingleTransitionSim",
 				singleTransitionLoopSimButton));
-		pauseSimButton = new ToolbarButtonAction(
-				this,
-				"Pause simulation",
-				new ImageIcon(
-						"resources/icons/simulation_icons/control_pause_blue.png")) {
+		
+		pauseSimButton = new ToolbarButtonAction(this,"Pause simulation",
+				new ImageIcon("resources/icons/toolbar/sim_pause.png")) {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().pause();
+			}
+		};
+		simulationDockables.add(createButtonDockable("ButtonDockablePauseSim",pauseSimButton));
+		
+		stopSimButton = new ToolbarButtonAction(this,"Schedule a stop for the simulation",
+				new ImageIcon("resources/icons/toolbar/sim_stop.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getSimulator().pause();
+					.getSimulator().stop();
 			}
 		};
-		simulationDockables.add(createButtonDockable("ButtonDockablePauseSim",
-				pauseSimButton));
-		stopSimButton = new ToolbarButtonAction(
-				this,
-				"Schedule a stop for the simulation",
-				new ImageIcon(
-						"resources/icons/simulation_icons/control_stop_blue.png")) {
+		simulationDockables.add(createButtonDockable("ButtonDockableStopSim",stopSimButton));
+		
+		smallStepFwdSimButton = new ToolbarButtonAction(this,"Single transition forward simulation",
+				new ImageIcon("resources/icons/toolbar/sim_forward_step.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getSimulator().stop();
+						.getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION);
 			}
 		};
-		simulationDockables.add(createButtonDockable("ButtonDockableStopSim",
-				stopSimButton));
-		smallStepFwdSimButton = new ToolbarButtonAction(
-				this,
-				"Single transition forward simulation",
-				new ImageIcon(
-						"resources/icons/simulation_icons/control_fwd_blue.png")) {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getSimulator()
-						.startSimulation(SimulatorMode.SINGLE_TRANSITION);
-			}
-		};
-		simulationDockables.add(createButtonDockable(
-				"ButtonDockableSmallStepFwdSim", smallStepFwdSimButton));
-		stepFwdSimButton = new ToolbarButtonAction(
-				this,
-				"Step forward simulation",
-				new ImageIcon(
-						"resources/icons/simulation_icons/control_step_fwd_blue.png")) {
+		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepFwdSim", smallStepFwdSimButton));
+		
+		stepFwdSimButton = new ToolbarButtonAction(this,"Step forward simulation",
+				new ImageIcon("resources/icons/toolbar/sim_forward.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
 						.getSimulator().startSimulation(SimulatorMode.STEP);
 			}
 		};
-		simulationDockables.add(createButtonDockable(
-				"ButtonDockableStepFwdSim", stepFwdSimButton));
+		simulationDockables.add(createButtonDockable("ButtonDockableStepFwdSim", stepFwdSimButton));
+		
 		return simulationDockables;
 	}
 	
 	@SuppressWarnings("serial")
 	private ArrayList<ButtonDockable> createAnalysisBar() {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
-		przyciskI = new ToolbarButtonAction(
-				this, "Podpowiedz I",
-				new ImageIcon( "resources/icons/simulation_icons/control_step_bck_blue.png")) {
+		przyciskI = new ToolbarButtonAction(this, "Podpowiedz I", 
+				new ImageIcon( "resources/icons/toolbar/terminal.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				//GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-				//		.getSimulator().startSimulation(SimulatorMode.LOOP_BACK);
+				GUIManager.getDefaultGUIManager().importProject();
 			}
 		};
 		analysisDockables.add(createButtonDockable("Przycisk I",przyciskI));
-		przyciskII = new ToolbarButtonAction(
-				this, "Podpowiedz przycisku II",
-				new ImageIcon("resources/icons/simulation_icons/control_bck_blue.png")) {
+		przyciskII = new ToolbarButtonAction(this, "Podpowiedz przycisku II",
+				new ImageIcon("resources/icons/toolbar/terminal.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				//GUIManager.getDefaultGUIManager().getWorkspace().getProject()

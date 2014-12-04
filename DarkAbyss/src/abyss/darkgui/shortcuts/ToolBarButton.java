@@ -30,7 +30,7 @@ public class ToolBarButton extends JLabel
 	// Static fields.
 	private static final long serialVersionUID = 3034370365062643549L;
 	/** The button will always have this size. */
-	private static final Dimension DEFAULT_SIZE = new Dimension(24, 24);
+	private static final Dimension DEFAULT_SIZE = new Dimension(48, 48);
 	/** The border width of the button. */
 	private static final int BORDER = 4;
 	/** The empty border of the button. */
