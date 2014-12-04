@@ -18,19 +18,14 @@ import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
 import abyss.math.Transition;
 
-/*
- * Wyglada na to, ze klasa nie jest juz uzywana!
- * Uzywac INAreader2 !
- * 
- */
 public class INAreader {
-
 	private ArrayList<Node> nodeArray = new ArrayList<Node>();
 	private ArrayList<Arc> arcArray = new ArrayList<Arc>();
 	private ArrayList<ElementLocation> elemArray = new ArrayList<ElementLocation>();
+	private int MatSiz = 999999;
 	@SuppressWarnings("unused")
-	private String netName = "defaultINA";
-	private int globalPlaceNumber = 0; // kolejny ID miejsca (inkrementacja przy czytaniu)
+	private String netName = "";
+	private int globalPlaceNumber = 0;
 	private int etap = 1;
 	private int placeCount = 0;
 	private ArrayList<String[]> placeArcListPost = new ArrayList<String[]>();
@@ -49,6 +44,10 @@ public class INAreader {
 	public void read(String sciezka) {
 		try {
 
+			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().checkSheetID();
+					//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
+			
+			
 			DataInputStream in = new DataInputStream(new FileInputStream(
 					sciezka));
 			BufferedReader buffer = new BufferedReader(
@@ -56,199 +55,119 @@ public class INAreader {
 			String wczytanaLinia = buffer.readLine();
 			String[] tabWczytanaLinia = wczytanaLinia.split(":");
 			netName = tabWczytanaLinia[1];
-			int marking[] = new int[999];
-			int trans[][] = new int[999][2];
-			int mark = 0;
+			// int marking[] = new int[MatSiz];
+			int trans[][] = new int[MatSiz][2];
+			//int mark = 0;
+			int ID = 0;
+			String[] wID = new String[MatSiz];
+			int[] wMark = new int[MatSiz];
+			ArrayList<Integer> wagiWej = new ArrayList<Integer>();
+			ArrayList<Integer> wagiWyj = new ArrayList<Integer>();
+			// ArrayList<ArrayList<String>> wWej = new
+			// ArrayList<ArrayList<String>>();
+			// ArrayList<ArrayList<String>> wWyj = new
+			// ArrayList<ArrayList<String>>();
 
 			while ((wczytanaLinia = buffer.readLine()) != null) {
 				// Etap I
+
 				// Wczytywanie informacji o Arcach i tokenach
 				if (wczytanaLinia.equals("@")) {
 					etap++;
 				}
 				switch (etap) {
+
 				case 1:
-					String[] stringDoWarunku = wczytanaLinia.split("");
-					// System.out.println(stringDoWarunku[10]);
-					if (stringDoWarunku[10].equals(",")) {
+					ArrayList<String> tmpStringWej = new ArrayList<String>();
+					ArrayList<String> tmpStringWyj = new ArrayList<String>();
 
-						tabWczytanaLinia = wczytanaLinia.split("    , ");
-						String tmp1 = tabWczytanaLinia[0];
-						String[] t1Array = tmp1.split(" ");
-						ArrayList<String> t1List = new ArrayList<String>();
-						for (int i = 0; i < t1Array.length; i++) {
-							if (t1Array[i].equals("")) {
-							} else {
-								t1List.add(t1Array[i]);
-							}
-						}
-						marking[mark] = Integer.parseInt(t1List.get(1));
-						mark++;
-						tmp1 = tabWczytanaLinia[1];
-						t1Array = tmp1.split(" ");
-						/////////////
-						int redukcja = 0;
-						for (int k = 0; k < t1Array.length; k++) {
-							if (t1Array[k].endsWith(":")) {
-								redukcja++;
-							}
-						}
+					wczytanaLinia = wczytanaLinia.replace(",", " , ");
+					wczytanaLinia = wczytanaLinia.replace(":", " : ");
+					String[] WczytanyString = wczytanaLinia.split(" ");
+					int poz = 0;
+					int poZap = 0;
+					for (int j = 0; j < WczytanyString.length; j++) {
+						/*
+						  bylo: 
+						  if (WczytanyString[j].isEmpty()) {
 
-						String[] forArcListPost = new String[t1Array.length
-								- redukcja];
-						int red=0;
-						ArrayList<Integer> weightArryPost = new ArrayList<Integer>();
-						for (int k = 0; k < t1Array.length; k++) {
-							if (t1Array[k].endsWith(":")) {
-								String[] bezDK = t1Array[k].split(":");
-								forArcListPost[k-red] = bezDK[0];
-								weightArryPost.add(Integer
-										.parseInt(t1Array[k + 1]));
-								k++;
-								red++;
-							} else {
-								weightArryPost.add(1);
-								forArcListPost[k-red] = t1Array[k];
-							}
-						}
-
-						placeArcListPostWeight.add(weightArryPost);
-						placeArcListPost.add(forArcListPost);
-						// ////////////
-						String[] pusta = {};
-						placeArcListPreWeight.add(new ArrayList<Integer>());
-						placeArcListPre.add(pusta);
-					} else {
-						boolean brakNastepnikow = true;
-						for (int i = 0; i < stringDoWarunku.length; i++) {
-							if (stringDoWarunku[i].equals(",")) {
-								brakNastepnikow = false;
-							}
-						}
-						tabWczytanaLinia = wczytanaLinia.split("     ");
-						String tmp1 = tabWczytanaLinia[0];
-						String[] t1Array = tmp1.split(" ");
-						ArrayList<String> t1List = new ArrayList<String>();
-						for (int i = 0; i < t1Array.length; i++) {
-							if (t1Array[i].equals("")) {
-							} else {
-								t1List.add(t1Array[i]);
-							}
-						}
-						marking[mark] = Integer.parseInt(t1List.get(1));
-						mark++;
-
-						if (brakNastepnikow) {
-							String tmp2 = tabWczytanaLinia[1];
-							t1Array = tmp2.split(" ");
-							////
-							int redukcja = 0;
-							for (int k = 0; k < t1Array.length; k++) {
-								if (t1Array[k].endsWith(":")) {
-									redukcja++;
-								}
-							}
-
-							String[] forArcListPre = new String[t1Array.length
-									- redukcja];
-							int red=0;
-							ArrayList<Integer> weightArryPre = new ArrayList<Integer>();
-							for (int k = 0; k < t1Array.length; k++) {
-								if (t1Array[k].endsWith(":")) {
-									String[] bezDK = t1Array[k].split(":");
-									forArcListPre[k-red] = bezDK[0];
-									weightArryPre.add(Integer
-											.parseInt(t1Array[k + 1]));
-									k++;
-									red++;
-								} else {
-									weightArryPre.add(1);
-									forArcListPre[k-red] = t1Array[k];
-								}
-							}
-
-							placeArcListPreWeight.add(weightArryPre);
-							placeArcListPre.add(forArcListPre);
-							// //
-							String[] pusta = {};
-							placeArcListPost.add(pusta);
-							placeArcListPostWeight.add(new ArrayList<Integer>());
 						} else {
-							String tmp2 = tabWczytanaLinia[1];
-							String[] t2Array = tmp2.split(", ");
-							tmp1 = t2Array[0];
-							t1Array = tmp1.split(" ");
-							int redukcja = 0;
-							
+						
+						 */
+						if (!WczytanyString[j].isEmpty()) {
+							if (!Character.isWhitespace(WczytanyString[j].charAt(0))) 
+							{
+								if (WczytanyString[j].contains(",")) {
+									poZap = poz;
+									poz = 5;
+								}
+								if (WczytanyString[j].contains(":")) {
+									poZap = poz;
+									poz = 4;
+								}
 
-							for (int k = 0; k < t1Array.length; k++) {
-								if (t1Array[k].endsWith(":")) {									
-									redukcja++;
+								switch (poz) {
+								// numer miejsca
+								case 0:
+									wID[ID] = WczytanyString[j];
+									poz++;
+									break;
+								// ilosc tokenow
+								case 1:
+									wMark[ID] = Integer
+											.parseInt(WczytanyString[j]);
+									ID++;
+									poz++;
+									break;
+								// wchodzace
+								case 2:
+									tmpStringWej.add(WczytanyString[j]);
+									wagiWej.add(1);
+									break;
+								// wychodzace
+								case 3:
+									tmpStringWyj.add(WczytanyString[j]);
+									wagiWyj.add(1);
+									break;
+								case 4:
+									if (WczytanyString[j].contains(":")) {
+									} else {
+										if (poZap == 2) {
+											wagiWej.remove(wagiWej.size() - 1);
+											wagiWej.add(Integer
+													.parseInt(WczytanyString[j]));
+										} else {
+											wagiWyj.remove(wagiWyj.size() - 1);
+											wagiWyj.add(Integer
+													.parseInt(WczytanyString[j]));
+										}
+										poz = poZap;
+									}
+
+									break;
+								case 5:
+									poz = poZap;
+									poz++;
+									break;
 								}
 							}
-
-							String[] forArcListPre = new String[t1Array.length
-									- redukcja];
-							int red = 0;
-							ArrayList<Integer> weightArryPre = new ArrayList<Integer>();
-							for (int k = 0; k < t1Array.length; k++) {
-								// System.out.println(t1Array[k]);
-								if (t1Array[k].endsWith(":")) {
-									String[] bezDK = t1Array[k].split(":");
-									forArcListPre[k-red] = bezDK[0];
-									weightArryPre.add(Integer
-											.parseInt(t1Array[k + 1]));
-									k++;
-									red++;
-								} else {
-									weightArryPre.add(1);
-									forArcListPre[k-red] = t1Array[k];
-								}
-							}
-							placeArcListPreWeight.add(weightArryPre);
-							placeArcListPre.add(forArcListPre);
-							tmp1 = t2Array[1];
-							t1Array = tmp1.split(" ");
-
-							//////
-							redukcja = 0;
-							for (int k = 0; k < t1Array.length; k++) {
-								if (t1Array[k].endsWith(":")) {
-									redukcja++;
-								}
-							}
-							
-							String[] forArcListPost = new String[t1Array.length
-									- redukcja];
-							red=0;
-							ArrayList<Integer> weightArryPost = new ArrayList<Integer>();
-							for (int k = 0; k < t1Array.length; k++) {
-								if (t1Array[k].endsWith(":")) {
-									String[] bezDK = t1Array[k].split(":");
-									forArcListPost[k-red] = bezDK[0];
-									weightArryPost.add(Integer
-											.parseInt(t1Array[k + 1]));
-									k++;
-									red++;
-								} else {
-									weightArryPost.add(1);
-									forArcListPost[k-red] = t1Array[k];
-								}
-							}
-
-							placeArcListPostWeight.add(weightArryPost);
-							placeArcListPost.add(forArcListPost);
-							// ////
-							// placeArcListPost.add(t1Array);
-
 						}
 					}
+					String[] a = new String[tmpStringWej.size()];
+					placeArcListPre.add(tmpStringWej.toArray(a));
+					placeArcListPreWeight.add(wagiWej);
+					a = new String[tmpStringWyj.size()];
+					placeArcListPost.add(tmpStringWyj.toArray(a));
+					placeArcListPostWeight.add(wagiWyj);
+
 					break;
 				case 2:
 					// Etap II
-					//System.out.println("Etap II");
 					// Wczytywanie danych o miejscach
-					if (wczytanaLinia.endsWith("name capacity time") || wczytanaLinia.equals("@")) {
+
+					if ((wczytanaLinia.contains("capacity")
+							&& wczytanaLinia.contains("time") && wczytanaLinia
+								.contains("name")) || wczytanaLinia.equals("@")) {
 					} else {
 
 						tabWczytanaLinia = wczytanaLinia.split(": ");
@@ -257,15 +176,16 @@ public class INAreader {
 						globalPlaceNumber++;
 						tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
 						String placeName = tabWczytanaLinia[0];
-						nodeArray.add(new Place(placeNumber,
-							new ArrayList<ElementLocation>(), placeName, "", marking[placeNumber]));
+						nodeArray.add(new Place(placeNumber, new ArrayList<ElementLocation>(), 
+								placeName, "", wMark[placeNumber]));
 					}
 					break;
 				case 3:
 					// Etap III
 					// Wczytywanie danych o tranzycjach
-					if (wczytanaLinia.endsWith("name priority time")
-							|| wczytanaLinia.equals("@")) {
+					if ((wczytanaLinia.contains("priority")
+							&& wczytanaLinia.contains("time") && wczytanaLinia
+								.contains("name")) || wczytanaLinia.equals("@")) {
 						placeCount = globalPlaceNumber;
 					} else {
 						tabWczytanaLinia = wczytanaLinia.split(": ");
@@ -274,25 +194,24 @@ public class INAreader {
 							if (tmp5[i].equals("")) {
 							} else {
 								globalPlaceNumber++;
-								trans[Integer.parseInt(tmp5[i])][0] = Integer
-										.parseInt(tmp5[i]);
+								trans[Integer.parseInt(tmp5[i])][0] = Integer.parseInt(tmp5[i]);
 								trans[Integer.parseInt(tmp5[i])][1] = globalPlaceNumber;
 							}
 						}
 
-						int transNumber = mark;
+						int transNumber = globalPlaceNumber;
 						tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
 						String transName = tabWczytanaLinia[0];
 						nodeArray.add(new Transition(transNumber,
 							new ArrayList<ElementLocation>(), transName, ""));
-						mark++;
+						//mark++;
 					}
 					break;
 				case 4:
-					// Tworzenie Arców, szerokosci okna
-					int SID = GUIManager.getDefaultGUIManager().getWorkspace()
-							.newTab();
-					// tworzenie dla ka¿dego noda element location
+
+					// Tworzenie Arcï¿½w, szerokosci okna
+					
+					// tworzenie dla kaï¿½dego noda element location
 					for (int j = 0; j < nodeArray.size(); j++) {
 						if (nodeArray.get(j).getType() == PetriNetElementType.PLACE) {
 							elemArray.add(new ElementLocation(SID, new Point(
@@ -314,6 +233,7 @@ public class INAreader {
 						}
 					}
 
+					int pozycja_a = 0;
 					// Arki
 					for (int k = 0; k < placeArcListPre.size(); k++) {
 						for (int j = 0; j < placeArcListPre.get(k).length; j++) {
@@ -321,25 +241,22 @@ public class INAreader {
 							int t1 = trans[Integer.parseInt(placeArcListPre
 									.get(k)[j])][1];
 
-//							arcArray.add(new Arc(nodeArray.get(t1 - 1)
-//									.getLastLocation(), nodeArray.get(k)
-//									.getLastLocation()));
-							arcArray.add(new Arc(nodeArray.get(t1 - 1)
-									.getLastLocation(), nodeArray.get(k)
-									.getLastLocation(), "", placeArcListPreWeight.get(k).get(j)));
+							arcArray.add(new Arc(nodeArray.get(t1 - 1).getLastLocation(), nodeArray.get(k).getLastLocation(), "",placeArcListPreWeight.get(0).get(pozycja_a)));
+							pozycja_a++;
 						}
 					}
+					pozycja_a = 0;
 					for (int k = 0; k < placeArcListPost.size(); k++) {
 						for (int j = 0; j < placeArcListPost.get(k).length; j++) {
+
 							int t2 = trans[Integer.parseInt(placeArcListPost
 									.get(k)[j])][1];
-//							arcArray.add(new Arc(nodeArray.get(k)
-//									.getLastLocation(), nodeArray.get(t2 - 1)
-//									.getLastLocation()));
 							arcArray.add(new Arc(nodeArray.get(k)
 									.getLastLocation(), nodeArray.get(t2 - 1)
-									.getLastLocation(), "",placeArcListPostWeight.get(k).get(j)));
-							//placeArcListPostWeight.get(k).get(j);
+									.getLastLocation(), "",
+									placeArcListPostWeight.get(0).get(pozycja_a)));
+							pozycja_a++;
+
 						}
 					}
 

@@ -2,7 +2,6 @@ package abyss.darkgui.shortcuts;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
 
 import abyss.darkgui.GUIManager;

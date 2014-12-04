@@ -20,7 +20,7 @@ import abyss.math.parser.ExtendedNetHandler;
 import abyss.math.parser.INAinvariants;
 import abyss.math.parser.INAinvariantsWriter;
 //import abyss.math.parser.INAreader;
-import abyss.math.parser.INAreader2;
+import abyss.math.parser.INAreader;
 import abyss.math.parser.INAwriter;
 import abyss.math.parser.NetHandler;
 import abyss.math.parser.StandardNetHandler;
@@ -69,7 +69,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public SAXParserFactory readerSNOOPY;
 	private AbyssWriter ABYSSwriter;
 	private AbyssReader ABYSSReader;
-	private INAreader2 readerINA2;
+	private INAreader readerINA2;
 	private INAwriter writerINA;
 	private INAinvariants invariantsINA;
 	private ArrayList<ArrayList<InvariantTransition>> invariants = new ArrayList<ArrayList<InvariantTransition>>();
@@ -327,7 +327,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 			// Format INY
 			if (sciezka.endsWith(".pnt")) {
-				readerINA2 = new INAreader2();
+				readerINA2 = new INAreader();
 				readerINA2.read(sciezka);
 
 				addArcsAndNodes(readerINA2.getArcArray(),
