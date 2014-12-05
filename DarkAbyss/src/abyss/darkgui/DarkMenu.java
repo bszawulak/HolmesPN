@@ -25,8 +25,7 @@ public class DarkMenu extends JMenuBar {
 	private GUIManager guiManager;
 
 	// menus
-	private JMenu fileMenu, windowMenu, analysisMenu, sheetsMenu, openMenu,
-			saveMenu, newMenu, invMenu;
+	private JMenu fileMenu, windowMenu, analysisMenu, sheetsMenu, openMenu,saveMenu, newMenu, invMenu;
 
 	// dockable
 	private ArrayList<Dockable> dockables;
@@ -38,23 +37,19 @@ public class DarkMenu extends JMenuBar {
 		// Build the File menu.
 		fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
-		fileMenu.getAccessibleContext().setAccessibleDescription(
-				"The File Menu");
+		fileMenu.getAccessibleContext().setAccessibleDescription("The File Menu");
 		this.add(fileMenu);
 
 		// Build the Window menu.
 		windowMenu = new JMenu("Window");
 		windowMenu.setMnemonic(KeyEvent.VK_W);
-		windowMenu.getAccessibleContext().setAccessibleDescription(
-				"The Window Menu");
+		windowMenu.getAccessibleContext().setAccessibleDescription("The Window Menu");
 		this.add(windowMenu);
 
 		// build the Analysis menu
 		analysisMenu = new JMenu("Analysis");
 		analysisMenu.setMnemonic(KeyEvent.VK_A);
-		analysisMenu.getAccessibleContext().setAccessibleDescription(
-				"The Analysis Menu");
-		
+		analysisMenu.getAccessibleContext().setAccessibleDescription("The Analysis Menu");
 		
 		invMenu = new JMenu("Invariants");
 		invMenu.setMnemonic(KeyEvent.VK_S);
@@ -65,8 +60,7 @@ public class DarkMenu extends JMenuBar {
 		
 		sheetsMenu = new JMenu("Project");
 		sheetsMenu.setMnemonic(KeyEvent.VK_P);
-		sheetsMenu.getAccessibleContext().setAccessibleDescription(
-				"The Project Sheets Menu");
+		sheetsMenu.getAccessibleContext().setAccessibleDescription("The Project Sheets Menu");
 		windowMenu.add(sheetsMenu);
 
 		openMenu = new JMenu("Open");
@@ -88,8 +82,7 @@ public class DarkMenu extends JMenuBar {
 
 		// new Project
 		menuItem = new JMenuItem("Project", KeyEvent.VK_N);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-				ActionEvent.CTRL_MASK));
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
 		menuItem.getAccessibleContext().setAccessibleDescription("New project");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -137,10 +130,8 @@ public class DarkMenu extends JMenuBar {
 
 		// The New Tab for File
 		menuItem = new JMenuItem("Sheet", KeyEvent.VK_T);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
-				ActionEvent.ALT_MASK));
-		menuItem.getAccessibleContext().setAccessibleDescription(
-				"Create a new sheet (tab) in workspace");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,ActionEvent.ALT_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Create a new sheet (tab) in workspace");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				guiManager.getWorkspace().newTab();
@@ -150,10 +141,8 @@ public class DarkMenu extends JMenuBar {
 
 		// open file
 		menuItem = new JMenuItem("Open...", KeyEvent.VK_O);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
-				ActionEvent.CTRL_MASK));
-		menuItem.getAccessibleContext()
-				.setAccessibleDescription("Open project");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Open project");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				guiManager.openProject();
@@ -163,10 +152,8 @@ public class DarkMenu extends JMenuBar {
 
 		// import from file
 		menuItem = new JMenuItem("Import...", KeyEvent.VK_I);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
-				ActionEvent.CTRL_MASK));
-		menuItem.getAccessibleContext().setAccessibleDescription(
-				"Import project");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,ActionEvent.CTRL_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Import project");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				guiManager.importProject();
@@ -176,10 +163,8 @@ public class DarkMenu extends JMenuBar {
 
 		// save file
 		menuItem = new JMenuItem("Save...", KeyEvent.VK_S);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				ActionEvent.CTRL_MASK));
-		menuItem.getAccessibleContext()
-				.setAccessibleDescription("Save project");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Save project");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				guiManager.saveProject();
@@ -189,10 +174,8 @@ public class DarkMenu extends JMenuBar {
 
 		// export file
 		menuItem = new JMenuItem("Export...", KeyEvent.VK_E);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
-				ActionEvent.CTRL_MASK));
-		menuItem.getAccessibleContext().setAccessibleDescription(
-				"Export project");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,ActionEvent.CTRL_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Export project");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				guiManager.exportProject();
@@ -202,10 +185,8 @@ public class DarkMenu extends JMenuBar {
 
 		// export image file
 		menuItem = new JMenuItem("Export to image", KeyEvent.VK_E);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
-				ActionEvent.CTRL_MASK));
-		menuItem.getAccessibleContext().setAccessibleDescription(
-				"Export project to image");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,ActionEvent.CTRL_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Export project to image");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				guiManager.exportProjectToImage();
@@ -215,10 +196,8 @@ public class DarkMenu extends JMenuBar {
 
 		// The JMenuItem for File
 		menuItem = new JMenuItem("Exit", KeyEvent.VK_E);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
-				ActionEvent.ALT_MASK));
-		menuItem.getAccessibleContext().setAccessibleDescription(
-				"Exit te application");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,ActionEvent.ALT_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Exit the application");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				System.exit(0);
@@ -235,23 +214,16 @@ public class DarkMenu extends JMenuBar {
 		// sheetItems.add(new DockableMenuItem(dockables.get(index)));
 		// sheetsMenu.add(sheetItems.get(index));
 		// }
-		windowMenu.add(new DockableMenuItem(guiManager.getToolBox()
-				.getDockable()));
-		windowMenu.add(new DockableMenuItem(guiManager.getPropertiesBox()
-				.getDockable()));
-		windowMenu.add(new DockableMenuItem(guiManager.getSimulatorBox()
-				.getDockable()));
-		windowMenu.add(new DockableMenuItem(guiManager.getAnalyzerBox()
-				.getDockable()));
-		windowMenu.add(new DockableMenuItem(guiManager.getMctBox()
-				.getDockable()));
+		windowMenu.add(new DockableMenuItem(guiManager.getToolBox().getDockable()));
+		windowMenu.add(new DockableMenuItem(guiManager.getPropertiesBox().getDockable()));
+		windowMenu.add(new DockableMenuItem(guiManager.getSimulatorBox().getDockable()));
+		windowMenu.add(new DockableMenuItem(guiManager.getAnalyzerBox().getDockable()));
+		windowMenu.add(new DockableMenuItem(guiManager.getMctBox().getDockable()));
 
 		// The JMenuItem for external analysis
 		menuItem = new JMenuItem("Generate and analyze T-invariants", KeyEvent.VK_1);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,
-				ActionEvent.ALT_MASK));
-		menuItem.getAccessibleContext().setAccessibleDescription(
-				"Generate MCT Groups");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Generate MCT Groups");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().tInvariantsAnalyse();
@@ -261,10 +233,8 @@ public class DarkMenu extends JMenuBar {
 
 		// The JMenuItem for external analysis
 		menuItem = new JMenuItem("Import invariants", KeyEvent.VK_2);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,
-				ActionEvent.ALT_MASK));
-		menuItem.getAccessibleContext().setAccessibleDescription(
-				"Load analysis result from external source");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,ActionEvent.ALT_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Load analysis result from external source");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().loadExternalAnalysis();
@@ -274,10 +244,8 @@ public class DarkMenu extends JMenuBar {
 
 		// The JMenuItem for external analysis
 		menuItem = new JMenuItem("Generate MCT Groups", KeyEvent.VK_4);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4,
-				ActionEvent.ALT_MASK));
-		menuItem.getAccessibleContext().setAccessibleDescription(
-				"Generate MCT Groups");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4,ActionEvent.ALT_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Generate MCT Groups");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().generateMCT();
@@ -286,52 +254,44 @@ public class DarkMenu extends JMenuBar {
 		analysisMenu.add(menuItem);
 		
 		// The JMenuItem for invariants simulation
-				menuItem = new JMenuItem("Start Invariants Simulation", KeyEvent.VK_5);
-				menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5,
-						ActionEvent.ALT_MASK));
-				menuItem.getAccessibleContext().setAccessibleDescription(
-						"Start Invariants Simulation");
-				menuItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						try {
-							GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
-						} catch (CloneNotSupportedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				});
-				analysisMenu.add(menuItem);
-				
-				
-				menuItem = new JMenuItem("fdfdfdf");
-				menuItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						try {
-							GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
-						} catch (CloneNotSupportedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				});
-				analysisMenu.add(menuItem);
+		menuItem = new JMenuItem("Start Invariants Simulation", KeyEvent.VK_5);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5,ActionEvent.ALT_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Start Invariants Simulation");
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
+				} catch (CloneNotSupportedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		analysisMenu.add(menuItem);
+
+		menuItem = new JMenuItem("fdfdfdf");
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
+				} catch (CloneNotSupportedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		analysisMenu.add(menuItem);
 		
 		// The JMenuItem for exportInvariants
-				menuItem = new JMenuItem("Export invariants", KeyEvent.VK_3);
-				menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3,
-						ActionEvent.ALT_MASK));
-				menuItem.getAccessibleContext().setAccessibleDescription(
-						"Export generated invariants");
-				menuItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						GUIManager.getDefaultGUIManager().exportGeneratedInvariants();
-					}
-				});
-				invMenu.add(menuItem);
-		
-		
-		
+		menuItem = new JMenuItem("Export invariants", KeyEvent.VK_3);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3,ActionEvent.ALT_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Export generated invariants");
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().exportGeneratedInvariants();
+			}
+		});
+		invMenu.add(menuItem);
 	}
 
 	public void addSheetItem(Dockable dockableItem) {

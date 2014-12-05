@@ -24,21 +24,15 @@ public class NetSimulator {
 	private NetType simulationType;
 	private SimulatorMode mode = SimulatorMode.STOPPED;
 	private SimulatorMode previousMode = SimulatorMode.STOPPED;
-
 	private PetriNet petriNet;
 	private Integer delay = new Integer(30);
 	private boolean simulationActive = false;
 	private Timer timer;
 	private ArrayList<Transition> launchingTransitions;
-
 	private Stack<SimulationStep> actionStack;
-
 	private boolean maximumMode = false;
-
 	public static int DEFAULT_COUNTER = 50;
-	
 	public JFrame timeFrame = new JFrame("Zegar");
-
 	public double timeNetStepCounter = 0;
 	public double timeNetPartStepCounter = 0;
 
@@ -78,7 +72,6 @@ public class NetSimulator {
 			simulationType = NetType.TIME;
 			break;
 		}
-		
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -93,10 +86,8 @@ public class NetSimulator {
 		setMode(simulatorMode);
 		setSimulationActive(true);
 		ActionListener taskPerformer = new SimulationPerformer();
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties()
-				.allowOnlySimulationDisruptButtons();
-		GUIManager.getDefaultGUIManager().getShortcutsBar()
-				.allowOnlySimulationDisruptButtons();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties().allowOnlySimulationDisruptButtons();
+		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
 		switch (getMode()) {
 		case LOOP:
 			taskPerformer = new StepPerformer(true);
@@ -162,16 +153,13 @@ public class NetSimulator {
 
 				if (transition.launchable()) {
 					boolean deadLineTime = false;
-					double tmp1 = transition.getMinFireTime()
-							+ transition.getFireTime();
-					double tmp2 = (timeNetPartStepCounter / 1000)
-							+ timeNetStepCounter;
+					double tmp1 = transition.getMinFireTime() + transition.getFireTime();
+					double tmp2 = (timeNetPartStepCounter / 1000) + timeNetStepCounter;
 					if (tmp1 <= tmp2) {
 						if (tmp2 >= transition.getMaxFireTime())
 							deadLineTime = true;
 						// calkowite
-						if ((randomLaunch.nextInt(1000) < 4) || maximumMode
-								|| deadLineTime) {
+						if ((randomLaunch.nextInt(1000) < 4) || maximumMode || deadLineTime) {
 							transition.bookRequiredTokens();
 							launchableTransitions.add(transition);
 							transition.setFireTime(-1);
@@ -180,12 +168,8 @@ public class NetSimulator {
 				} else {
 					transition.setFireTime(-1);
 				}
-
-				
-				
 			}
 			this.timeNetPartStepCounter++;
-			
 			
 			//timeFrame.repaint();
 			if (timeNetPartStepCounter == 1000) {
@@ -350,8 +334,7 @@ public class NetSimulator {
 	}
 
 	public void stop() {
-		((SimulationPerformer) getTimer().getActionListeners()[0])
-				.scheduleStop();
+		((SimulationPerformer) getTimer().getActionListeners()[0]).scheduleStop();
 	}
 
 	public void pause() {
@@ -362,36 +345,28 @@ public class NetSimulator {
 			unpauseSimulation();
 		else if (getMode() == SimulatorMode.STOPPED)
 			JOptionPane.showMessageDialog(null,
-					"Can't pause a stopped simulation!",
-					"The simulator is already stopped!",
-					JOptionPane.ERROR_MESSAGE);
+				"Can't pause a stopped simulation!", "The simulator is already stopped!",JOptionPane.ERROR_MESSAGE);
 	}
 
 	private void stopSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties()
-				.allowOnlySimulationInitiateButtons();
-		GUIManager.getDefaultGUIManager().getShortcutsBar()
-				.allowOnlySimulationInitiateButtons();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties().allowOnlySimulationInitiateButtons();
+		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationInitiateButtons();
 		timer.stop();
 		previousMode = mode;
 		setMode(SimulatorMode.STOPPED);
 	}
 
 	private void pauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties()
-				.allowOnlyUnpauseButton();
-		GUIManager.getDefaultGUIManager().getShortcutsBar()
-				.allowOnlyUnpauseButton();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties().allowOnlyUnpauseButton();
+		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlyUnpauseButton();
 		timer.stop();
 		previousMode = mode;
 		setMode(SimulatorMode.PAUSED);
 	}
 
 	private void unpauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties()
-				.allowOnlySimulationDisruptButtons();
-		GUIManager.getDefaultGUIManager().getShortcutsBar()
-				.allowOnlySimulationDisruptButtons();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties().allowOnlySimulationDisruptButtons();
+		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
 		if (previousMode != SimulatorMode.STOPPED) {
 			timer.start();
 			setMode(previousMode);
@@ -489,10 +464,8 @@ public class NetSimulator {
 		protected int remainingTransitionsAmount = launchingTransitions.size();
 
 		protected void updateStep() {
-			GUIManager.getDefaultGUIManager().getWorkspace()
-					.incrementSimulationStep();
-			GUIManager.getDefaultGUIManager().getSimulatorBox()
-					.updateSimulatorProperties();
+			GUIManager.getDefaultGUIManager().getWorkspace().incrementSimulationStep();
+			GUIManager.getDefaultGUIManager().getSimulatorBox().updateSimulatorProperties();
 		}
 
 		public void scheduleStop() {
@@ -549,19 +522,16 @@ public class NetSimulator {
 					setSimulationActive(false);
 					stopSimulation();
 					JOptionPane.showMessageDialog(null, "Backtracking ended",
-							"No more available actions to backtrack!",
-							JOptionPane.INFORMATION_MESSAGE);
+						"No more available actions to backtrack!", JOptionPane.INFORMATION_MESSAGE);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
 				// subtract phase ended, commencing add phase
 				if (currentStep.getType() == SimulatorMode.STEP)
-					launchAddPhaseGraphics(currentStep.getPendingTransitions(),
-							true);
+					launchAddPhaseGraphics(currentStep.getPendingTransitions(), true);
 				else if (currentStep.getType() == SimulatorMode.SINGLE_TRANSITION)
-					launchSingleAddPhaseGraphics(
-							currentStep.getPendingTransitions(), true,
-							currentStep.getLaunchedTransition());
+					launchSingleAddPhaseGraphics(currentStep.getPendingTransitions(), true,
+						currentStep.getLaunchedTransition());
 				finishedAddPhase = false;
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
@@ -570,7 +540,7 @@ public class NetSimulator {
 					launchAddPhase(currentStep.getPendingTransitions(), true);
 				else if (currentStep.getType() == SimulatorMode.SINGLE_TRANSITION)
 					launchSingleAddPhase(currentStep.getPendingTransitions(),
-							true, currentStep.getLaunchedTransition());
+						true, currentStep.getLaunchedTransition());
 				finishedAddPhase = true;
 				subtractPhase = true;
 				// if not
@@ -605,11 +575,10 @@ public class NetSimulator {
 				} else if (isPossibleStep()) { // if steps remaining
 					if (remainingTransitionsAmount == 0) {
 						launchingTransitions = generateValidLaunchingTransitions();
-						remainingTransitionsAmount = launchingTransitions
-								.size();
+						remainingTransitionsAmount = launchingTransitions.size();
 					}
 					actionStack.push(new SimulationStep(SimulatorMode.STEP,
-							cloneTransitionArray(launchingTransitions)));
+						cloneTransitionArray(launchingTransitions)));
 					if (actionStack.peek().getPendingTransitions() == null)
 						SettingsManager.log("Yay");
 					launchSubtractPhase(launchingTransitions, false);
@@ -680,8 +649,7 @@ public class NetSimulator {
 					setSimulationActive(false);
 					stopSimulation();
 					JOptionPane.showMessageDialog(null, "Simulation ended",
-							"No more available steps!",
-							JOptionPane.INFORMATION_MESSAGE);
+						"No more available steps!",JOptionPane.INFORMATION_MESSAGE);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {

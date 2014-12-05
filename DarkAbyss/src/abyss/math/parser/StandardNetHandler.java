@@ -61,9 +61,7 @@ public class StandardNetHandler extends NetHandler {
 
 	public ArrayList<Transition> tmpTransitionList = new ArrayList<Transition>();
 
-	public void startElement(String uri, String localName, String qName,
-			Attributes attributes) throws SAXException {
-
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		System.out.print("uri  ");
 		System.out.println(uri);
 		System.out.print("localName  ");
@@ -161,9 +159,7 @@ public class StandardNetHandler extends NetHandler {
 		}
 	}
 
-	public void endElement(String uri, String localName, String qName)
-			throws SAXException {
-
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (qName.equalsIgnoreCase("points")) {
 			points = false;
 		}
@@ -187,7 +183,7 @@ public class StandardNetHandler extends NetHandler {
 			graphic = false;
 		}
 
-		// Zapis atrybut�w noda i arca
+		// Zapis atrybutow noda i arca
 
 		if (qName.equalsIgnoreCase("attribute")) {
 			if (node == true) {
@@ -250,8 +246,7 @@ public class StandardNetHandler extends NetHandler {
 			int tmpY = 0;
 			boolean xFound = false;
 			boolean yFound = false;
-			GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
-					.getWorkspace().getSheets().get(SIN).getGraphPanel();
+			GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(SIN).getGraphPanel();
 			for (int l = 0; l < elementLocationList.size(); l++) {
 				if (elementLocationList.get(l).getPosition().x > wid) {
 					tmpX = l;
@@ -266,16 +261,15 @@ public class StandardNetHandler extends NetHandler {
 			}
 			if (xFound == true && yFound == false) {
 				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX)
-						.getPosition().x + 90, graphPanel.getSize().height));
+					.getPosition().x + 90, graphPanel.getSize().height));
 			}
 			if (yFound == true && xFound == false) {
 				graphPanel.setSize(new Dimension(graphPanel.getSize().width,
-						elementLocationList.get(tmpY).getPosition().y + 90));
+					elementLocationList.get(tmpY).getPosition().y + 90));
 			}
 			if (xFound == true && yFound == true) {
 				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX)
-						.getPosition().x + 90, elementLocationList.get(tmpY)
-						.getPosition().y + 90));
+					.getPosition().x + 90, elementLocationList.get(tmpY).getPosition().y + 90));
 			}
 
 			// Tablice arc�w dla element location
@@ -294,20 +288,15 @@ public class StandardNetHandler extends NetHandler {
 			for (int u = 0; u < tmpElementLocationList.size(); u++) {
 				elementLocationList.add(tmpElementLocationList.get(u));
 			}
-			
-			if (nodeType == "Place") {
-								
+			if (nodeType == "Place") {		
 				tmpNode = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
 				nodesList.add(tmpNode);
-			} else {
-								
-				Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName,
-						nodeComment);
+			} else {	
+				Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
 				tmpTransitionList.add(tmpTran);
 			}
 
 			// Zerowanie zmiennych
-
 			nodeName = "";
 			nodeID = 0;
 			nodeMarking = 0;
@@ -337,11 +326,8 @@ public class StandardNetHandler extends NetHandler {
 		}
 	}
 
-	public void characters(char ch[], int start, int length)
-			throws SAXException {
-
+	public void characters(char ch[], int start, int length) throws SAXException {
 		// Wyluskiwanie zawartosci <![CDATA[]]>
-
 		if (((node == true) || edge == true) && (atribute == true)) {
 			String temper = "";
 			char tm[] = new char[20000];

@@ -1,10 +1,14 @@
-package abyss.math.parser;
+package abyss.wasteland;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import abyss.math.Transition;
 
+/**
+ * Nieuzywana, zawartosc przeniesiona do INAprotocols
+ * @author students
+ */
 public class INAinvariantsWriter {
 
 	String buffor = "transition sub/sur/invariants for net 0.";

@@ -1,4 +1,4 @@
-package abyss.math.parser;
+package abyss.wasteland;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -7,12 +7,16 @@ import abyss.math.Arc;
 import abyss.math.Place;
 import abyss.math.Transition;
 
+/**
+ * Nieuzywana, zawartosc przeniesiona do INAprotocols
+ * @author students
+ *
+ */
 public class INAwriter {
-
-	String zawartoscPliku = "P   M   PRE,POST  NETZ 0:";
 
 	public void write(String sciezka, ArrayList<Place> placeList,
 			ArrayList<Transition> transitionList, ArrayList<Arc> arcList) {
+		String zawartoscPliku = "P   M   PRE,POST  NETZ 0:";
 		try {
 			PrintWriter zapis = new PrintWriter(sciezka + ".pnt");
 

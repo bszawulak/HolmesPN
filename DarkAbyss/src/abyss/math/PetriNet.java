@@ -9,7 +9,6 @@ import abyss.darkgui.GUIManager;
 import abyss.graphpanel.SelectionActionListener;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
-//import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.Node;
 import abyss.math.parser.AbyssReader;
@@ -17,61 +16,37 @@ import abyss.math.parser.AbyssWriter;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.parser.ColoredNetHandler;
 import abyss.math.parser.ExtendedNetHandler;
-import abyss.math.parser.INAinvariants;
-import abyss.math.parser.INAinvariantsWriter;
-//import abyss.math.parser.INAreader;
-import abyss.math.parser.INAreader;
-import abyss.math.parser.INAwriter;
+import abyss.math.parser.INAprotocols;
 import abyss.math.parser.NetHandler;
 import abyss.math.parser.StandardNetHandler;
 import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
 
-//import java.awt.Graphics;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-//import java.io.File;
 import java.io.FileInputStream;
-//import java.io.FileNotFoundException;
-//import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-//import java.util.Date;
 import java.util.Iterator;
-//import java.util.Timer;
-//import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
-//import javax.xml.parsers.DocumentBuilder;
-//import javax.xml.parsers.DocumentBuilderFactory;
-//import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-//import org.xml.sax.SAXException;
 
 import abyss.settings.SettingsManager;
 import abyss.workspace.Workspace;
 import abyss.workspace.WorkspaceSheet;
 
-//import org.simpleframework.xml.Element;
-//import org.simpleframework.xml.Path;
 import org.simpleframework.xml.Root;
-//import org.simpleframework.xml.core.Persister;
 
 @Root
 public class PetriNet implements SelectionActionListener, Cloneable {
-
 	private PetriNetData data = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>());
 	private ArrayList<GraphPanel> graphPanels;
 	private IdGenerator idGenerator;
 	public SAXParserFactory readerSNOOPY;
 	private AbyssWriter ABYSSwriter;
 	private AbyssReader ABYSSReader;
-	private INAreader readerINA2;
-	private INAwriter writerINA;
-	private INAinvariants invariantsINA;
+	private INAprotocols communicationProtocol;
 	private ArrayList<ArrayList<InvariantTransition>> invariants = new ArrayList<ArrayList<InvariantTransition>>();
 	public NetHandler handler;
 	private Workspace workspace;
@@ -84,7 +59,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public ArrayList<ArrayList<Integer>> genInvariants;
 	private DarkAnalyzer analyzer;
 	private NetPropAnalyzer netPropAna; // Propanbutan
-	private INAinvariantsWriter inaIw;
+	
 
 	public PetriNet(ArrayList<Node> nod, ArrayList<Arc> ar) {
 		getData().nodes = nod;
@@ -266,11 +241,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		setArcs(new ArrayList<Arc>());
 		for (GraphPanel gp : getGraphPanels()) {
 			int sheetID = gp.getSheetId();
-			WorkspaceSheet.SheetPanel sheetPanel = (WorkspaceSheet.SheetPanel) gp
-					.getParent();
+			WorkspaceSheet.SheetPanel sheetPanel = (WorkspaceSheet.SheetPanel) gp.getParent();
 			sheetPanel.remove(gp);
-			GraphPanel newGraphPanel = new GraphPanel(sheetID, this,
-					getNodes(), getArcs());
+			GraphPanel newGraphPanel = new GraphPanel(sheetID, this,getNodes(), getArcs());
 			sheetPanel.add(newGraphPanel);
 			newGraphPanels.add(newGraphPanel);
 		}
@@ -279,20 +252,19 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	public void saveToFile(String sciezka) {
-
 		if (sciezka.endsWith(".pnt")) {
 			sciezka = sciezka.substring(0, sciezka.length() - 4);
-			writerINA = new INAwriter();
-			writerINA.write(sciezka, getPlaces(), getTranstions(), getArcs());
+			communicationProtocol = new INAprotocols();
+			communicationProtocol.write(sciezka, getPlaces(), getTranstions(), getArcs());
+			//writerINA = new INAwriter();
+			//writerINA.write(sciezka, getPlaces(), getTranstions(), getArcs());
 		}
 		if (sciezka.endsWith(".abyss")) {
 			sciezka = sciezka.substring(0, sciezka.length() - 6);
 			ABYSSwriter = new AbyssWriter();
 			ABYSSwriter.write(sciezka);
 		}
-		if (sciezka.endsWith(".png")) {
-
-		}
+		//if (sciezka.endsWith(".png")) { } //wykonywane w GUIManager.exportProjectToImage
 	}
 
 	public void loadFromFile(String sciezka) {
@@ -303,16 +275,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if (sciezka.endsWith(".abyss")) {
 				ABYSSReader = new AbyssReader();
 				ABYSSReader.read(sciezka);
-				addArcsAndNodes(ABYSSReader.getArcArray(),
-						ABYSSReader.getNodeArray());
+				addArcsAndNodes(ABYSSReader.getArcArray(), ABYSSReader.getNodeArray());
 			}
 			// Formaty Snoopiego
-			if (sciezka.endsWith(".spped") || sciezka.endsWith(".spept")
-					|| sciezka.endsWith(".colpn")) {
+			if (sciezka.endsWith(".spped") || sciezka.endsWith(".spept") || sciezka.endsWith(".colpn")) {
 				InputStream xmlInput = new FileInputStream(sciezka);
 
 				SAXParser saxParser = readerSNOOPY.newSAXParser();
-				// Wyb�r parsera
+				// Wybor parsera
 				if (sciezka.endsWith(".spped")) {
 					handler = new StandardNetHandler();
 				}
@@ -327,30 +297,29 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 			// Format INY
 			if (sciezka.endsWith(".pnt")) {
-				readerINA2 = new INAreader();
-				readerINA2.read(sciezka);
+				communicationProtocol = new INAprotocols();
+				communicationProtocol.readPNT(sciezka);
+				//readerINA2 = new INAreader();
+				//readerINA2.read(sciezka);
 
-				addArcsAndNodes(readerINA2.getArcArray(),
-						readerINA2.getNodeArray());
+				addArcsAndNodes(communicationProtocol.getArcArray(),communicationProtocol.getNodeArray());
 			}
-
 		} catch (Throwable err) {
 			err.printStackTrace();
 		}
-
 	}
 
 	public void writeInvariantsToInaFormat(String path) {
 		try {
 			if (genInvariants != null) {
-				inaIw = new INAinvariantsWriter();
-				inaIw.write(path, genInvariants, getTranstions());
+				communicationProtocol = new INAprotocols();
+				communicationProtocol.writeINV(path, genInvariants, getTranstions());
+				//inaIw = new INAinvariantsWriter();
+				//inaIw.write(path, genInvariants, getTranstions());
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"There are no invariants to export",
-						"Uwaga!  Achtung!  Attention!",
-						JOptionPane.WARNING_MESSAGE);
-
+						"Uwaga!  Achtung!  Attention!",JOptionPane.WARNING_MESSAGE);
 			}
 		} catch (Throwable err) {
 			err.printStackTrace();
@@ -359,11 +328,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	public void tInvariantsAnalyze() {
 		try {
-
 			eia = new EarlyInvariantsAnalyzer();
 			Thread myThread = new Thread(eia);
 			myThread.start();
-
 		} catch (Throwable err) {
 			err.printStackTrace();
 		}
@@ -374,10 +341,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void loadInvariantsFromFile(String sciezka) {
 		try {
-
-			invariantsINA = new INAinvariants();
-			invariantsINA.read(sciezka);
-
+			//invariantsINA = new INAinvariants();
+			//invariantsINA.read(sciezka);
+			communicationProtocol = new INAprotocols();
 		} catch (Throwable err) {
 			err.printStackTrace();
 		}
@@ -515,7 +481,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public ArrayList<ArrayList<InvariantTransition>> getInvariants() {
 		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
 		InvariantTransition currentTransition;
-		invariantsBinaryList = invariantsINA.getInvariantsList();
+		//invariantsBinaryList = invariantsINA.getInvariantsList();
+		invariantsBinaryList = communicationProtocol.getInvariantsList();
 		setInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
 		SettingsManager.log("start logging");
 		//String invariantLog = new String("");

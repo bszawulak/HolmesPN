@@ -1,4 +1,4 @@
-package abyss.math.parser;
+package abyss.wasteland;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -18,6 +18,11 @@ import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
 import abyss.math.Transition;
 
+/**
+ * Nieuzywana, zawartosc przeniesiona do INAprotocols
+ * @author students
+ *
+ */
 public class INAreader {
 	private ArrayList<Node> nodeArray = new ArrayList<Node>();
 	private ArrayList<Arc> arcArray = new ArrayList<Arc>();
@@ -43,15 +48,10 @@ public class INAreader {
 
 	public void read(String sciezka) {
 		try {
-
 			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().checkSheetID();
-					//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
-			
-			
-			DataInputStream in = new DataInputStream(new FileInputStream(
-					sciezka));
-			BufferedReader buffer = new BufferedReader(
-					new InputStreamReader(in));
+
+			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
 			String wczytanaLinia = buffer.readLine();
 			String[] tabWczytanaLinia = wczytanaLinia.split(":");
 			netName = tabWczytanaLinia[1];

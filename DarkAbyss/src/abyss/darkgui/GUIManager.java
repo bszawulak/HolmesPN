@@ -551,22 +551,19 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}
 	}
 
+	/**
+	 * Zapis sieci do obrazka
+	 */
 	public void exportProjectToImage() {
 		JFileChooser fc;
-		if(lastPath==null)
-		{
-		fc = new JFileChooser();
+		if(lastPath==null) {
+			fc = new JFileChooser();
+		} else {
+			fc = new JFileChooser(lastPath);	
 		}
-		else
-		{
-		fc = new JFileChooser(lastPath);	
-		}
-		FileFilter pngFilter = new ExtensionFileFilter(
-				".png - Portable Network Graphics", new String[] { "png" });
-		FileFilter bmpFilter = new ExtensionFileFilter(
-				".bmp -  Bitmap Image File", new String[] { "bmp" });
-		FileFilter jpegFilter = new ExtensionFileFilter(
-				".jpeg - JPEG Image File", new String[] { "jpeg" });
+		FileFilter pngFilter = new ExtensionFileFilter(".png - Portable Network Graphics", new String[] { "png" });
+		FileFilter bmpFilter = new ExtensionFileFilter(".bmp -  Bitmap Image File", new String[] { "bmp" });
+		FileFilter jpegFilter = new ExtensionFileFilter(".jpeg - JPEG Image File", new String[] { "jpeg" });
 		fc.setFileFilter(pngFilter);
 		fc.addChoosableFileFilter(pngFilter);
 		fc.addChoosableFileFilter(bmpFilter);
@@ -586,8 +583,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 				ext = ".jpeg";
 			}
 			int index = 0;
-			for (BufferedImage bi : workspace.getProject()
-					.getImagesFromGraphPanels()) {
+			for (BufferedImage bi : workspace.getProject().getImagesFromGraphPanels()) {
 				try {
 					ImageIO.write(bi, ext.substring(1), new File(file.getPath()
 							+ "_" + Integer.toString(index) + ext));
@@ -602,13 +598,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	public void saveProject() {
 		JFileChooser fc;
-		if(lastPath==null)
-		{
-		fc = new JFileChooser();
-		}
-		else
-		{
-		fc = new JFileChooser(lastPath);	
+		if(lastPath==null) {
+			fc = new JFileChooser();
+		} else {
+			fc = new JFileChooser(lastPath);	
 		}
 		// FileFilter snoopyFilter = new ExtensionFileFilter(
 		// ".spped - Snoopy Files", new String[] { "SPPED" });

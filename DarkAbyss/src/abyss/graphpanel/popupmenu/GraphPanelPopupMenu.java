@@ -17,9 +17,9 @@ import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
 
 public class GraphPanelPopupMenu extends JPopupMenu {
-
-	private static final long serialVersionUID = 1L;
-
+	//private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8272632051140705976L;
+	
 	@SuppressWarnings("unused")
 	private GUIManager guiManager;
 	private GraphPanel graphPanel;
@@ -91,18 +91,15 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	 * @param actionListener
 	 *            - action listener of menu action
 	 */
-	protected void addMenuItem(String text, String iconName,
-			ActionListener actionListener) {
-		JMenuItem menuItem = new JMenuItem(text, new ImageIcon(
-				"resources/icons/" + iconName + ".png"));
+	protected void addMenuItem(String text, String iconName, ActionListener actionListener) {
+		JMenuItem menuItem = new JMenuItem(text, new ImageIcon("resources/icons/" + iconName + ".png"));
 		menuItem.addActionListener(actionListener);
 		this.add(menuItem);
 	}
 
 	protected JMenuItem createMenuItem(String text, String iconName,
 			KeyStroke accelerator, ActionListener actionListener) {
-		JMenuItem menuItem = new JMenuItem(text, new ImageIcon(
-				"resources/icons/" + iconName + ".png"));
+		JMenuItem menuItem = new JMenuItem(text, new ImageIcon("resources/icons/" + iconName + ".png"));
 		menuItem.addActionListener(actionListener);
 		menuItem.setAccelerator(accelerator);
 		return menuItem;

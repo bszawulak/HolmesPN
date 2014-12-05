@@ -130,7 +130,7 @@ public class ShortcutsBar extends BorderDock {
 		//nowa zak³adka
 		@SuppressWarnings("serial")
 		ToolbarButtonAction addButton = new ToolbarButtonAction(this, 
-				"New tab", new ImageIcon("resources/icons/toolbar/add.png")) {
+				"New tab", new ImageIcon("resources/icons/toolbar/add_panel.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().newTab();
@@ -151,13 +151,24 @@ public class ShortcutsBar extends BorderDock {
 		//import projektu ze snoopiego
 		@SuppressWarnings("serial")
 		ToolbarButtonAction importButton = new ToolbarButtonAction(this,
-				"Import project...", new ImageIcon("resources/icons/toolbar/import.png")) {
+				"Import project...", new ImageIcon("resources/icons/toolbar/import_net.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().importProject();
 			}
 		};
 		buttonDockables.add(createButtonDockable("ButtonDockableImport",importButton));
+		
+		//zapis obrazu sieci do pliku
+		@SuppressWarnings("serial")
+		ToolbarButtonAction pictureButton = new ToolbarButtonAction(this,
+				"Save picture...", new ImageIcon("resources/icons/toolbar/save_picture.png")) {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().exportProjectToImage();
+			}
+		};
+		buttonDockables.add(createButtonDockable("ButtonDockableImport",pictureButton));
 		
 		//odswiezanie
 		@SuppressWarnings("serial")

@@ -1,4 +1,4 @@
-package abyss.math.parser;
+package abyss.wasteland;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -6,6 +6,10 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+/**
+ * Nieuzywana, zawartosc przeniesiono do INAprotocols 5.12.2014
+ * @author Students
+ */
 public class INAinvariants {
 
 	private ArrayList<ArrayList<Integer>> listaInvariantow = new ArrayList<ArrayList<Integer>>();
