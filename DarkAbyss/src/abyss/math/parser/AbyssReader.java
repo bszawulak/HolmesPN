@@ -9,18 +9,31 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
+import abyss.graphpanel.IdGenerator;
 import abyss.math.Arc;
 import abyss.math.ElementLocation;
 import abyss.math.Node;
 import abyss.math.PetriNetData;
+import abyss.math.PetriNetElement.PetriNetElementType;
 
+/**
+ * Klasa odpowiedzialna za odczyt plików projektu.<br><br>
+ *
+ * Poprawiono:<br>
+ * wczytywanie pliku - uaktualnianie zmiennych ID generatora
+ * @author students
+ * @author MR
+ */
 public class AbyssReader {
 
 	private ArrayList<Node> nodeArray = new ArrayList<Node>();
 	private ArrayList<Arc> arcArray = new ArrayList<Arc>();
 
+	/**
+	 * Metoda odpowiedzialna za czytanie plików projektu formatu .abyss.
+	 * @param sciezka String - œcie¿ka dostêpu do pliku
+	 */
 	public void read(String sciezka) {
-
 		File source = new File(sciezka);
 
 		try {
@@ -29,14 +42,43 @@ public class AbyssReader {
 			xstream.alias("petriNet", PetriNetData.class);
 			PetriNetData PND = (PetriNetData) xstream.fromXML(source);
 			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().checkSheetID();
-			for(Node n : PND.nodes)
+			
+			//IdGenerator.setStartId(0);
+			//IdGenerator.setPlaceId(0);
+			//IdGenerator.setTransitionId(0);
+			int maxPlaceId = 0;
+			int maxTransitionId = 0;
+			int maxGlobalId = 0;
+			
+			for(Node n : PND.nodes) {
+				if(n.getType() == PetriNetElementType.PLACE) { //przywracanie ID
+					if(n.getID() > maxPlaceId)
+						maxPlaceId = n.getID();
+					if(n.getID() > maxGlobalId)
+						maxGlobalId = n.getID();
+				} else { //jakakolwiek tranzycja
+					if(n.getID() > maxTransitionId)
+						maxTransitionId = n.getID();
+					if(n.getID() > maxGlobalId)
+						maxGlobalId = n.getID();
+				}
 				for(ElementLocation el : n.getElementLocations())
 					el.setSheetID(SID);
+			}
+			for(Arc n : PND.arcs) {
+				if(n.getID() > maxGlobalId)
+					maxGlobalId = n.getID();
+			}
+			
 			setWorkframeBoundary(PND.nodes);
 			getNodeArray().addAll(PND.nodes);
 			getArcArray().addAll(PND.arcs);
+			
+			IdGenerator.setTransitionId(maxTransitionId+1);
+			IdGenerator.setPlaceId(maxPlaceId+1);
+			IdGenerator.setStartId(maxGlobalId+1);
+			
 			xstream.fromXML(source);
-
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

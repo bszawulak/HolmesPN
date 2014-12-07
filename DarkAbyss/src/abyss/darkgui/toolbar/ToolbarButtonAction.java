@@ -1,4 +1,4 @@
-package abyss.darkgui.shortcuts;
+package abyss.darkgui.toolbar;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;

@@ -5,15 +5,17 @@ import java.util.ArrayList;
 import abyss.math.Arc;
 import abyss.math.ElementLocation;
 
+/**
+ * Klasa przekazuj¹ca informacje zwi¹zane ze zdarzeniem zaznaczania, wywo³ywanym przez SelectionManager.
+ * @author students
+ *
+ */
 public interface SelectionActionListener {
 	public void actionPerformed(SelectionActionEvent e);
 
 	public class SelectionActionEvent {
 
-		public enum SelectionActionType {
-			SELECTED_ONE, SELECTED_GROUP, SELECTED_SHEET
-		}
-
+		public enum SelectionActionType { SELECTED_ONE, SELECTED_GROUP, SELECTED_SHEET }
 		private ArrayList<Arc> arcGroup = new ArrayList<Arc>();
 		private ArrayList<ElementLocation> elementLocationGroup = new ArrayList<ElementLocation>();
 		private int sheetId;
@@ -23,40 +25,60 @@ public interface SelectionActionListener {
 		}
 		
 		@SuppressWarnings("static-access")
+		/**
+		 * Konstruktor obiektu klasy SelectionActionEvent.
+		 * @param sheetId int - numer arkusza
+		 */
 		public SelectionActionEvent(int sheetId)
 		{
 			this.setActionType(getActionType().SELECTED_SHEET);
 			this.setSheetId(sheetId);
 		}
 
-		public SelectionActionEvent(ArrayList<Arc> arcGroup,
-				ArrayList<ElementLocation> elementLocationGroup,
+		/**
+		 * Konstruktor obiektu klasy SelectionActionEvent.
+		 * @param arcGroup ArrayList[Arc] - tablica ³uków
+		 * @param elementLocationGroup ArrayList[ElementLocation] - tablica lokalizacji
+		 * @param actionType SelectionActionType - rodzaj
+		 */
+		public SelectionActionEvent(ArrayList<Arc> arcGroup, ArrayList<ElementLocation> elementLocationGroup,
 				SelectionActionType actionType) {
 			this.setArcGroup(arcGroup);
 			this.setElementLocationGroup(elementLocationGroup);
 			this.setActionType(actionType);
 		}
 
-		public SelectionActionEvent(Arc arc, ElementLocation el,
-				SelectionActionType actionType) {
+		/**
+		 * Konstruktor obiektu klasy SelectionActionEvent.
+		 * @param arc Arc - konkretny ³uk sieci
+		 * @param el ElementLocation - lokalizacja ³uku
+		 * @param actionType - typ akcji
+		 */
+		public SelectionActionEvent(Arc arc, ElementLocation el, SelectionActionType actionType) {
 			this.setArc(arc);
 			this.setElementLocation(el);
 			this.setActionType(actionType);
 		}
 
+		/**
+		 * Metoda pozwala pobraæ listê ³uków, których dotyczy wywo³ane zdarzenie zaznaczenia.
+		 * @return ArrayList[Arc] - lista ³uków
+		 */
 		public ArrayList<Arc> getArcGroup() {
 			return arcGroup;
 		}
 
+		/**
+		 * Metoda pozwala ustawiæ listê ³uków, których dotyczy wywo³ane zdarzenie zaznaczenia.
+		 * @param arcGroup ArrayList[Arc] - lista ³uków
+		 */
 		public void setArcGroup(ArrayList<Arc> arcGroup) {
 			this.arcGroup = arcGroup;
 		}
 
 		/**
-		 * Returns the first element of stored Arcs collection. If Arcs
-		 * collection is null or size == 0 returns null
-		 * 
-		 * @return
+		 * Metoda pozwala pobraæ pojedynczy ³uk, którego dotyczy wywo³ane zdarzenie zaznaczenia.
+		 * @return Arc - zaznaczony ³uk
 		 */
 		public Arc getArc() {
 			if (getArcGroup() == null || getArcGroup().size() == 0)
@@ -65,9 +87,8 @@ public interface SelectionActionListener {
 		}
 
 		/**
-		 * Creates new Arc collection and add to it given Arc element
-		 * 
-		 * @param arc
+		 * Metoda pozwala ustawiæ pojedynczy ³uk, którego dotyczy wywo³ane zdarzenie zaznaczenia.
+		 * @param arc Arc - zaznaczony ³uk
 		 */
 		public void setArc(Arc arc) {
 			setArcGroup(new ArrayList<Arc>());
@@ -75,49 +96,55 @@ public interface SelectionActionListener {
 		}
 
 		/**
-		 * Returns stored ElementLocation collection
-		 * 
-		 * @return
+		 * Metoda pozwala pobraæ listê lokalizacji wierzcho³ków, których dotyczy wywo³ane
+		 * zdarzenie zaznaczenia.
+		 * @return ArrayList[ElementLocation] - lista lokalizacji wierzcho³ków, w sytuacji, gdy
+		 * 		¿adna lokalizacja wierzcho³ka nie zosta³a zaznaczona, zwracana jest wartoœæ null
 		 */
 		public ArrayList<ElementLocation> getElementLocationGroup() {
 			return elementLocationGroup;
 		}
 
 		/**
-		 * Sets stored ElementLocation collection to given one
-		 * 
-		 * @param elementLocationGroup
+		 * Metoda pozwala ustawiæ listê lokalizacji wierzcho³ków (Arc), których dotyczy wywo³ane
+		 * zdarzenie zaznaczenia.
+		 * @param elementLocationGroup ArrayList[ElementLocation] - lista ³uków zaznaczonych
 		 */
-		public void setElementLocationGroup(
-				ArrayList<ElementLocation> elementLocationGroup) {
+		public void setElementLocationGroup(ArrayList<ElementLocation> elementLocationGroup) {
 			this.elementLocationGroup = elementLocationGroup;
 		}
-		
 
+		/**
+		 * Metoda zwraca identyfikator arkusza na którym zosta³o wykonane zaznaczenie.
+		 * @return int - identyfikator arkusza
+		 */
 		public int getSheetId() {
 			return sheetId;
 		}
 
+		/**
+		 * Metoda pozwala ustawiæ identyfikator arkusza na którym zosta³o wykonane zaznaczenie.
+		 * @param sheetId int - nowy identyfikator arkusza 
+		 */
 		public void setSheetId(int sheetId) {
 			this.sheetId = sheetId;
 		}
 
 		/**
-		 * Returns the first element of stored ElementLocation collection. If
-		 * ElementLocation collection is null or size == 0 returns null
-		 * 
-		 * @return
+		 * Metoda pozwala pobraæ pojedyncza lokalizacjê wierzcho³ka (ElementLocation), której dotyczy
+		 * wywo³ane zdarzenie zaznaczenia.
+		 * @return ElementLocation - lokalizacja zaznaczonego elementu
 		 */
 		public ElementLocation getElementLocation() {
-			if (getElementLocationGroup() == null
-					|| getElementLocationGroup().size() == 0)
+			if (getElementLocationGroup() == null || getElementLocationGroup().size() == 0)
 				return null;
 			return getElementLocationGroup().get(0);
 		}
 
 		/**
-		 * Creates new ElementLocation collection and add to it given ElementLocation element
-		 * @param el
+		 * Metoda pozwala ustawiæ pojedyncza lokalizacjê wierzcho³ka (ElementLocation),
+		 * której dotyczy wywo³ane zdarzenie.
+		 * @param el ElementLocation - zaznaczona lokalizacja wierzcho³ka
 		 */
 		public void setElementLocation(ElementLocation el) {
 			if (el == null)
@@ -126,10 +153,18 @@ public interface SelectionActionListener {
 			getElementLocationGroup().add(el);
 		}
 
+		/**
+		 * Metoda zwraca typ wykonanego zdarzenia, definiowany przez typ SelectionActionType.
+		 * @return SelectionActionType - typ zdarzenia
+		 */
 		public SelectionActionType getActionType() {
 			return actionType;
 		}
 
+		/**
+		 * Metoda pozwala ustawiæ typ wykonanego zdarzenia, definiowany przez typ SelectionActionType.
+		 * @param actionType SelectionActionType - typ zdarzenia
+		 */
 		public void setActionType(SelectionActionType actionType) {
 			this.actionType = actionType;
 		}

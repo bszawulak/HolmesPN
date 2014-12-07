@@ -50,8 +50,7 @@ public class ClipboardManager implements ClipboardOwner {
 				&& contents.isDataFlavorSupported(DataFlavor.stringFlavor);
 		if (hasTransferableText) {
 			try {
-				result = (String) contents
-						.getTransferData(DataFlavor.stringFlavor);
+				result = (String) contents.getTransferData(DataFlavor.stringFlavor);
 			} catch (UnsupportedFlavorException ex) {
 				// highly unlikely since we are using a standard DataFlavor
 				System.out.println(ex);

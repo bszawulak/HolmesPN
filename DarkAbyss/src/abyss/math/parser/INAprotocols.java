@@ -23,7 +23,10 @@ import abyss.math.Transition;
 import abyss.math.PetriNetElement.PetriNetElementType;
 
 /**
- * @author Rince
+ * Klasa odpowiedzialna za protoko³y komunikacyjne z programem INA. Precyzyjnie,
+ * posiada ona metody zapisu i odczytu plików sieci i niezmienników programu INA.
+ * @author students
+ * @author MR - integracja w jedn¹ klasê
  *
  */
 public class INAprotocols {
@@ -47,7 +50,7 @@ public class INAprotocols {
 	
 	/**
 	 * Zwraca tablice inwariantow z wczytanego pliku INA
-	 * @return invariantsList
+	 * @return invariantsList - lista inwariantów
 	 */
 	public ArrayList<ArrayList<Integer>> getInvariantsList() {
 		return invariantsList;
@@ -55,7 +58,7 @@ public class INAprotocols {
 
 	/**
 	 * Wczytywanie pliki t-inwariantow INA, wczesniej: INAinvariants.read
-	 * @param sciezka
+	 * @param sciezka - scie¿ka do pliku
 	 */
 	public void readINV(String sciezka) {
 		try {
@@ -113,13 +116,12 @@ public class INAprotocols {
 	}
 
 	/**
-	 * Zapis inwariantow w formacie INA
-	 * @param path
-	 * @param invariants
-	 * @param transitions
+	 * Zapis inwariantow w formacie INA.
+	 * @param path - scie¿ka do pliku
+	 * @param invariants - lista niezmienników
+	 * @param transitions - lista tranzycji
 	 */
-	public void writeINV(String path, ArrayList<ArrayList<Integer>> invariants,
-			ArrayList<Transition> transitions) {
+	public void writeINV(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
 		String buffor = "transition sub/sur/invariants for net 0.";
 		try {
 			String extension = "";
@@ -205,14 +207,19 @@ public class INAprotocols {
 		}
 	}
 
+	/**
+	 * Metoda zwraca nazwê pliku.
+	 * @param sciezka - scie¿ka do pliku
+	 * @return string - nazwa pliku
+	 */
 	public String getNazwaPliku(String sciezka) {
 		String[] tablica = sciezka.split("\\\\");
 		return tablica[tablica.length - 1];
 	}
 	
 	/**
-	 * Zwraca liste wezlow sieci po tym jak readPNT przeczyta plik INY
-	 * @return nodeArray
+	 * Metoda zwraca listê wez³ów sieci po tym jak readPNT przeczyta plik INY
+	 * @return nodeArray - tablica wêz³ów sieci
 	 */
 	public ArrayList<Node> getNodeArray() {
 		return nodeArray;
@@ -220,7 +227,7 @@ public class INAprotocols {
 
 	/**
 	 * Zwraca liste krawedzi sieci po tym jak readPNT przeczyta plik INY
-	 * @return arcArray
+	 * @return arcArray - lista ³uków sieci
 	 */
 	public ArrayList<Arc> getArcArray() {
 		return arcArray;
@@ -228,7 +235,7 @@ public class INAprotocols {
 
 	/**
 	 * Czyta plik PNT w formacie INA z siecia standardowa
-	 * @param sciezka
+	 * @param scie¿ka - scie¿ka do pliku
 	 */
 	public void readPNT(String sciezka) {
 		try {
@@ -488,7 +495,13 @@ public class INAprotocols {
 
 	}
 
-	//INAwriter:
+	/**
+	 * Metoda s³u¿¹ca do zapisywaniu pliku sieci Petriego w formacie programu INA.
+	 * @param sciezka - œcie¿ka zapisu pliku
+	 * @param placeList - lista miejsc sieci
+	 * @param transitionList - lista tranzycji sieci
+	 * @param arcList - lista ³uków sieci
+	 */
 	public void write(String sciezka, ArrayList<Place> placeList,
 			ArrayList<Transition> transitionList, ArrayList<Arc> arcList) {
 		String zawartoscPliku = "P   M   PRE,POST  NETZ 0:";
@@ -643,8 +656,5 @@ public class INAprotocols {
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 		}
-
 	}
-	
-
 }

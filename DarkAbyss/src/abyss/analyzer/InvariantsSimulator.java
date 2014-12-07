@@ -58,14 +58,30 @@ public class InvariantsSimulator {
 	
 	private InvariantsWriter invariantsWriter = new InvariantsWriter();
 
+	/**
+	 * LOOP<br>
+	 * SINGLE_TRANSITION_LOOP<br>
+	 * SINGLE_TRANSITION<br>
+	 * STEP<br>
+	 * STOPPED<br>
+	 * PAUSED<br>
+	 * ACTION_BACK<br>
+	 * LOOP_BACK
+	 */
 	public enum SimulatorMode {
 		LOOP, SINGLE_TRANSITION_LOOP, SINGLE_TRANSITION, STEP, STOPPED, PAUSED, ACTION_BACK, LOOP_BACK
 	}
 
+	/**
+	 * BASIC, COLORED, TIME
+	 */
 	public enum NetType {
 		BASIC, COLORED, TIME
 	}
 	
+	/**
+	 * TIME, CYCLE, STEP
+	 */
 	public enum SimulatorType {
 		TIME, CYCLE, STEP
 	}
@@ -92,8 +108,8 @@ public class InvariantsSimulator {
 	}
 
 	private boolean isPossibleStep() {
-		for (Transition transition : petriNet.getTranstions()) {
-			if (transition.launchable())
+		for (Transition transition : petriNet.getTransitions()) {
+			if (transition.isActive())
 				return true;
 		}
 		return false;
@@ -170,7 +186,7 @@ public class InvariantsSimulator {
 	private ArrayList<Transition> generateLaunchingTransitions() {
 		Random randomLaunch = new Random();
 		ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
-		ArrayList<Transition> allTransitions = petriNet.getTranstions();
+		ArrayList<Transition> allTransitions = petriNet.getTransitions();
 		ArrayList<Integer> indexList = new ArrayList<Integer>();
 		int i = 0;
 		for (Transition transition : allTransitions) {
@@ -181,7 +197,7 @@ public class InvariantsSimulator {
 		if (simulationType == NetType.BASIC)
 			for (i = 0; i < allTransitions.size(); i++) {
 				Transition transition = allTransitions.get(indexList.get(i));
-				if (transition.launchable())
+				if (transition.isActive())
 					if ((randomLaunch.nextInt(10) < 4) || maximumMode) {
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
@@ -194,7 +210,7 @@ public class InvariantsSimulator {
 				if (transition.getFireTime() == -1)
 					transition.setFireTime(timeNetStepCounter);
 
-				if (transition.launchable()) {
+				if (transition.isActive()) {
 					boolean deadLineTime = false;
 					double tmp1 = transition.getMinFireTime()
 							+ transition.getFireTime();
@@ -249,7 +265,7 @@ public class InvariantsSimulator {
 			boolean backtracking) {
 		ArrayList<Arc> arcs;
 		for (Transition transition : transitions) {
-			transition.setLunching(true);
+			transition.setLaunching(true);
 			if (!backtracking)
 				arcs = transition.getInArcs();
 			else
@@ -282,7 +298,7 @@ public class InvariantsSimulator {
 				tran = chosenTransition;
 				arcs = tran.getOutArcs();
 			}
-			tran.setLunching(true);
+			tran.setLaunching(true);
 			for (Arc arc : arcs) {
 				arc.setSimulationForwardDirection(!backtracking);
 				arc.setTransportingTokens(true);
@@ -301,7 +317,7 @@ public class InvariantsSimulator {
 			boolean backtracking) {
 		ArrayList<Arc> arcs;
 		for (Transition tran : transitions) {
-			tran.setLunching(true);
+			tran.setLaunching(true);
 			if (!backtracking)
 				arcs = tran.getOutArcs();
 			else
@@ -328,7 +344,7 @@ public class InvariantsSimulator {
 				tran = chosenTransition;
 				arcs = tran.getInArcs();
 			}
-			tran.setLunching(true);
+			tran.setLaunching(true);
 			for (Arc arc : arcs) {
 				arc.setSimulationForwardDirection(!backtracking);
 				arc.setTransportingTokens(true);
@@ -453,7 +469,7 @@ public class InvariantsSimulator {
 	}
 
 	public int getTransitionsAmount() {
-		return petriNet.getTranstions().size();
+		return petriNet.getTransitions().size();
 	}
 
 	public int getArcsAmount() {

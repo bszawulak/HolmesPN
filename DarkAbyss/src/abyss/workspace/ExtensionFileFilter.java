@@ -6,7 +6,6 @@ import javax.swing.filechooser.FileFilter;
 
 public class ExtensionFileFilter extends FileFilter {
 	  String description;
-
 	  String extensions[];
 
 	  public ExtensionFileFilter(String description, String extension) {

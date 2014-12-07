@@ -4,6 +4,11 @@ import javax.swing.*;
 import javax.swing.SpringLayout;
 import java.awt.*;
 
+/**
+ * Jak siê okazuje - nieu¿ywana klasa nie bardzo wiadomo do czego.
+ * @author students
+ *
+ */
 public class SpringUtilities {
     /**
      * A debugging utility that prints to stdout the component's

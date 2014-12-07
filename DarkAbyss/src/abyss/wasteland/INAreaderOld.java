@@ -1,4 +1,4 @@
-package abyss.math.parser;
+package abyss.wasteland;
 
 import java.awt.Dimension;
 import java.awt.Point;

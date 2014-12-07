@@ -17,8 +17,12 @@ import abyss.math.Node;
 import abyss.math.Place;
 import abyss.math.Transition;
 
-public class StandardNetHandler extends NetHandler {
-
+/**
+ * Klasa zajmuj¹ca siê wczytaniem standardowej sieci Petriego z formatu .spped.
+ * @author students
+ *
+ */
+public class NetHandler_Classic extends NetHandler {
 	// Zmienne boolowskie parsera
 	public boolean Snoopy = false;
 	public boolean node = false;
@@ -56,11 +60,16 @@ public class StandardNetHandler extends NetHandler {
 	public int nodeMarking;
 	public int nodeLogic;
 	public String nodeComment;
-
 	public String readString = "";
-
 	public ArrayList<Transition> tmpTransitionList = new ArrayList<Transition>();
 
+	/**
+	 * Metoda wykrywaj¹ca rozpoczêcie nowego elementu.
+	 * @param uri - adres zasobu
+	 * @param localName - lokalna nazwa elementu
+	 * @param qName - nazwa elementu
+	 * @param attributes - atrybut elementu
+	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		System.out.print("uri  ");
 		System.out.println(uri);
@@ -84,7 +93,6 @@ public class StandardNetHandler extends NetHandler {
 		}
 		if (qName.equalsIgnoreCase("node")) {
 			node = true;
-
 			nodeID = IdGenerator.getNextId(); // Integer.parseInt(attributes.getValue(0));
 		}
 		if (qName.equalsIgnoreCase("attribute")) {
@@ -159,6 +167,14 @@ public class StandardNetHandler extends NetHandler {
 		}
 	}
 
+	/**
+	 * Metoda wykrywaj¹ca koniec bie¿¹cego. To w niej po wczytaniu elementu i
+	 * wszystkich jego w³asnoœci, zostaje uruchomiony k¹kretny konstruktor
+	 * odpowiedzialny za utworzenie nowego wierzcho³ka, lub ³uku.
+	 * @param uri - adres zasobu
+	 * @param localName - lokalna nazwa elementu
+	 * @param qName - nazwa elementu
+	 */
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (qName.equalsIgnoreCase("points")) {
 			points = false;
@@ -272,8 +288,7 @@ public class StandardNetHandler extends NetHandler {
 					.getPosition().x + 90, elementLocationList.get(tmpY).getPosition().y + 90));
 			}
 
-			// Tablice arcï¿½w dla element location
-
+			// Tablice lukow dla element location
 			nodesList.addAll(tmpTransitionList);
 		}
 
@@ -326,6 +341,12 @@ public class StandardNetHandler extends NetHandler {
 		}
 	}
 
+	/**
+	 * Metoda odczytuj¹ca zawartoœæ elementu.
+	 * @param ch[] - tablica wczytanych znaków
+	 * @param start - indeks pocz¹tkowy
+	 * @param length - iloœæ wczytanych znaków
+	 */
 	public void characters(char ch[], int start, int length) throws SAXException {
 		// Wyluskiwanie zawartosci <![CDATA[]]>
 		if (((node == true) || edge == true) && (atribute == true)) {
@@ -342,8 +363,13 @@ public class StandardNetHandler extends NetHandler {
 		}
 	}
 
+	/**
+	 * Metoda s³u¿¹ca do wy³apywania i ignorowania pustych przestrzeni.
+	 * @param ch[] - tablica wczytanych znaków
+	 * @param start - indeks pocz¹tkowy
+	 * @param length - wielkoœæ pustej przestrzeni
+	 */
 	public void ignorableWhitespace(char ch[], int start, int length)
 			throws SAXException {
 	}
-
 }

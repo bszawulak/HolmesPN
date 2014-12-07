@@ -4,6 +4,11 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Stroke;
 
+/**
+ * Klasa zasobów programu, ogólnie mówiaæ definiuje sta³e zwi¹zane z grafik¹.
+ * @author Rince
+ *
+ */
 public class EditorResources {
 	
 	public static final Color selectionColorLevel1 = new Color(30, 144, 255, 20);

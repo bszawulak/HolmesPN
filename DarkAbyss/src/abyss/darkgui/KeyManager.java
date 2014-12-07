@@ -3,11 +3,20 @@ package abyss.darkgui;
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 
+/**
+ * Klasa odpowiedzialna za przechwytywanie naciœnieæ przycisków.
+ * @author students
+ *
+ */
 class KeyManager implements KeyEventDispatcher {
 
 	@SuppressWarnings("unused")
 	private GUIManager guiManager;
 
+	/**
+	 * Konstruktor obiektu klasy KeyManager.
+	 * @param guiManager GUIManager - manager g³ównego interfejsu programu
+	 */
 	public KeyManager(GUIManager guiManager) {
 		this.guiManager = guiManager;
 	}

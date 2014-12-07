@@ -18,19 +18,25 @@ import abyss.workspace.WorkspaceSheet;
 
 import com.javadocking.dockable.Dockable;
 
+/**
+ * Klasa implementuj¹ca metody tworzenia i obs³ugi g³ównego menu programu.
+ * @author students
+ *
+ */
 public class DarkMenu extends JMenuBar {
 	private static final long serialVersionUID = -1671996309149490657L;
 
 	// GUI
 	private GUIManager guiManager;
-
 	// menus
 	private JMenu fileMenu, windowMenu, analysisMenu, sheetsMenu, openMenu,saveMenu, newMenu, invMenu;
-
 	// dockable
 	private ArrayList<Dockable> dockables;
 	private ArrayList<DockableMenuItem> sheetItems;
 
+	/**
+	 * Konstruktor domyœlny obiektu klasy DarkMenu.
+	 */
 	public DarkMenu() {
 		guiManager = GUIManager.getDefaultGUIManager();
 
@@ -63,6 +69,11 @@ public class DarkMenu extends JMenuBar {
 		sheetsMenu.getAccessibleContext().setAccessibleDescription("The Project Sheets Menu");
 		windowMenu.add(sheetsMenu);
 
+		newMenu = new JMenu("New");
+		newMenu.setMnemonic(KeyEvent.VK_N);
+		newMenu.getAccessibleContext().setAccessibleDescription("New - Menu");
+		fileMenu.add(newMenu);
+		
 		openMenu = new JMenu("Open");
 		openMenu.setMnemonic(KeyEvent.VK_O);
 		openMenu.getAccessibleContext().setAccessibleDescription("Open - Menu");
@@ -72,11 +83,6 @@ public class DarkMenu extends JMenuBar {
 		saveMenu.setMnemonic(KeyEvent.VK_S);
 		saveMenu.getAccessibleContext().setAccessibleDescription("Save - Menu");
 		fileMenu.add(saveMenu);
-
-		newMenu = new JMenu("New");
-		newMenu.setMnemonic(KeyEvent.VK_N);
-		newMenu.getAccessibleContext().setAccessibleDescription("New - Menu");
-		fileMenu.add(newMenu);
 
 		JMenuItem menuItem;
 
@@ -294,6 +300,10 @@ public class DarkMenu extends JMenuBar {
 		invMenu.add(menuItem);
 	}
 
+	/**
+	 * Metoda pomocnicza uruchamiana przy dodawaniu nowej zak³adki/arkusza.
+	 * @param dockableItem Dockable - obiekt do osadzenia.
+	 */
 	public void addSheetItem(Dockable dockableItem) {
 		dockables.add(dockableItem);
 		DockableMenuItem menuItem = new DockableMenuItem(dockableItem);
@@ -301,6 +311,10 @@ public class DarkMenu extends JMenuBar {
 		sheetsMenu.add(menuItem);
 	}
 
+	/**
+	 * Metoda pomocnicza uruchamiana przy usuwaniu zak³adki/arkusza.
+	 * @param dockableItem Dockable - obiekt do usuniêcia
+	 */
 	public void deleteSheetItem(Dockable dockableItem) {
 		int index = dockables.indexOf(dockableItem);
 		dockables.remove(index);

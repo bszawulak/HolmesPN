@@ -1,4 +1,4 @@
-package abyss.darkgui.shortcuts;
+package abyss.darkgui.toolbar;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -24,7 +24,7 @@ import javax.swing.border.Border;
  * When the button is clicked, the action is performed.
  * </p>
  */
-public class ToolBarButton extends JLabel
+public class ToolbarButton extends JLabel
 {
 
 	// Static fields.
@@ -54,7 +54,7 @@ public class ToolBarButton extends JLabel
 	 * 
 	 * @param	action 		The action that will be performed when this button is clicked.
 	 */
-	public ToolBarButton(Action action)
+	public ToolbarButton(Action action)
 	{		
 		setDimensions();
 		setAction(action);

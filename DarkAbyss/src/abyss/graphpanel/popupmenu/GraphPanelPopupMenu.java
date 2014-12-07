@@ -47,6 +47,8 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 				KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
+						@SuppressWarnings("unused")
+						int x = 1;
 						// getGraphPanel().removeAllSelectedElementLocations();
 					}
 				});
@@ -57,6 +59,10 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 					public void actionPerformed(ActionEvent e) {
 					}
 				});
+		
+		cutMenuItem.setEnabled(false);
+		copyMenuItem.setEnabled(false);
+		pasteMenuItem.setEnabled(false);
 	}
 
 	public void serializeObjectToXML(String xmlFileLocation,

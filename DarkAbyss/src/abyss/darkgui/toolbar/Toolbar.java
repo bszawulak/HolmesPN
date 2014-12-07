@@ -1,4 +1,4 @@
-package abyss.darkgui.shortcuts;
+package abyss.darkgui.toolbar;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import com.javadocking.dockable.DockingMode;
 import com.javadocking.drag.DragListener;
 import com.javadocking.visualizer.SingleMaximizer;
 
-public class ShortcutsBar extends BorderDock {
+public class Toolbar extends BorderDock {
 	private static final long serialVersionUID = 640320332920131092L;
 	private GUIManager guiManager;
 	private SingleMaximizer maximizePanel;
@@ -41,7 +41,7 @@ public class ShortcutsBar extends BorderDock {
 	ArrayList<ButtonDockable> simulationDockables;
 	ArrayList<ButtonDockable> analysisDockables;
 
-	public ShortcutsBar() {
+	public Toolbar() {
 		guiManager = GUIManager.getDefaultGUIManager();
 		maximizePanel = guiManager.getMaximizer();
 		buttonDockables = new ArrayList<ButtonDockable>();
@@ -146,7 +146,7 @@ public class ShortcutsBar extends BorderDock {
 				GUIManager.getDefaultGUIManager().openProject();
 			}
 		};
-		buttonDockables.add(createButtonDockable("ButtonDockableOpen",openButton));
+		buttonDockables.add(createButtonDockable("ButtonDockableOpen", openButton));
 
 		//import projektu ze snoopiego
 		@SuppressWarnings("serial")
@@ -157,7 +157,7 @@ public class ShortcutsBar extends BorderDock {
 				GUIManager.getDefaultGUIManager().importProject();
 			}
 		};
-		buttonDockables.add(createButtonDockable("ButtonDockableImport",importButton));
+		buttonDockables.add(createButtonDockable("ButtonDockableImport", importButton));
 		
 		//zapis obrazu sieci do pliku
 		@SuppressWarnings("serial")
@@ -168,7 +168,7 @@ public class ShortcutsBar extends BorderDock {
 				GUIManager.getDefaultGUIManager().exportProjectToImage();
 			}
 		};
-		buttonDockables.add(createButtonDockable("ButtonDockableImport",pictureButton));
+		buttonDockables.add(createButtonDockable("ButtonDockableImport", pictureButton));
 		
 		//odswiezanie
 		@SuppressWarnings("serial")
@@ -179,8 +179,18 @@ public class ShortcutsBar extends BorderDock {
 				GUIManager.getDefaultGUIManager().restoreDefaultVisuals();
 			}
 		};
-		buttonDockables.add(createButtonDockable("ButtonDockableRefresh",
-				refreshButton));
+		buttonDockables.add(createButtonDockable("ButtonDockableRefresh", refreshButton));
+		
+		//czyszczenie arkuszy
+		@SuppressWarnings("serial")
+		ToolbarButtonAction clearProject = new ToolbarButtonAction(this,
+				"Clear project", new ImageIcon("resources/icons/toolbar/clear_project.png")) {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().clearProject();
+			}
+		};
+		buttonDockables.add(createButtonDockable("ButtonDockableRefresh", clearProject));
 	}
 
 	@SuppressWarnings("serial")
@@ -312,7 +322,7 @@ public class ShortcutsBar extends BorderDock {
 		// ToolbarButtonAction action = new ToolbarButtonAction(this, title,
 		// icon, message);
 		// Create the button.
-		ToolBarButton button = new ToolBarButton(action);
+		ToolbarButton button = new ToolbarButton(action);
 		// Create the dockable with the button as component.
 		ButtonDockable buttonDockable = new ButtonDockable(id, button);
 		// Add a dragger to the individual dockable.

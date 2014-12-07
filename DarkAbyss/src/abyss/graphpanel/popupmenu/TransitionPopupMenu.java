@@ -14,8 +14,7 @@ public class TransitionPopupMenu extends PetriNetElementPopupMenu {
 		this.addMenuItem("Transform into portal", "portal",
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						getGraphPanel().getSelectionManager()
-								.transformSelectedIntoPortal();
+						getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
 					}
 				});
 	}

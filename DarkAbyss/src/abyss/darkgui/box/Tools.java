@@ -30,6 +30,12 @@ import com.javadocking.dock.SingleDock;
 import com.javadocking.dockable.DefaultDockable;
 import com.javadocking.dockable.Dockable;
 
+/**
+ * Klasa odpowiedzialna za tworzenie okna narzêdziowego, w którym sk³adowane
+ * s¹ komponenty mo¿liwe do dodania w ró¿nych rodzajach sieci Petriego.
+ * @author students
+ *
+ */
 public class Tools extends SingleDock implements TreeSelectionListener {
 	private static final long serialVersionUID = 5385847227073467035L;
 	private Dockable dockable;
@@ -41,6 +47,9 @@ public class Tools extends SingleDock implements TreeSelectionListener {
 	// buttons
 	JButton place, transition, arc, none;
 
+	/**
+	 * Konstruktor domyœlny obiektu klasy Tools.
+	 */
 	public Tools() {
 		guiManager = GUIManager.getDefaultGUIManager();
 		panel = new JPanel();
@@ -50,21 +59,18 @@ public class Tools extends SingleDock implements TreeSelectionListener {
 		panel.add(label);
 
 		setDockable(new DefaultDockable("Tools", panel, "Tools"));
-		setDockable(GUIManager.externalWithListener(getDockable(),
-				guiManager.getDockingListener()));
+		setDockable(GUIManager.externalWithListener(getDockable(),guiManager.getDockingListener()));
 
 		DefaultMutableTreeNode miscNode = new DefaultMutableTreeNode("Misc");
 		miscNode.add(new DefaultMutableTreeNode("Pointer"));
 		miscNode.add(new DefaultMutableTreeNode("Eraser"));
 
-		DefaultMutableTreeNode basicPetriNetsNode = new DefaultMutableTreeNode(
-				"Simple Petri Nets");
+		DefaultMutableTreeNode basicPetriNetsNode = new DefaultMutableTreeNode("Simple Petri Nets");
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Place"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Transition"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Arc"));
 
-		DefaultMutableTreeNode timePetriNetsNode = new DefaultMutableTreeNode(
-				"Time Petri Nets");
+		DefaultMutableTreeNode timePetriNetsNode = new DefaultMutableTreeNode("Time Petri Nets");
 		timePetriNetsNode.add(new DefaultMutableTreeNode("TimeTransition"));		
 		
 		// Create the root and add the country nodes.
@@ -78,8 +84,7 @@ public class Tools extends SingleDock implements TreeSelectionListener {
 
 		// Create the JTree from the tree model.
 		toolTree = new JTree(treeModel);
-		toolTree.getSelectionModel().setSelectionMode(
-				TreeSelectionModel.SINGLE_TREE_SELECTION);
+		toolTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
 		// Listen for when the selection changes.
 		toolTree.addTreeSelectionListener(this);
@@ -100,10 +105,18 @@ public class Tools extends SingleDock implements TreeSelectionListener {
 
 	}
 
+	/**
+	 * Metoda zwracaj¹ca podokno dokowalne narzêdzi intefejsu programu.
+	 * @return Dockable - obiekt dokowalny
+	 */
 	public Dockable getDockable() {
 		return dockable;
 	}
 
+	/**
+	 * Metoda ustawiaj¹ca podokno dokowalne narzêdzi intefejsu programu.
+	 * @return Dockable - obiekt dokowalny
+	 */
 	private void setDockable(Dockable dockable) {
 		this.dockable = dockable;
 	}

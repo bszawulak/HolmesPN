@@ -11,6 +11,12 @@ import com.javadocking.dockable.DockingMode;
 import com.javadocking.event.DockingEvent;
 import com.javadocking.event.DockingListener;
 
+/**
+ * Klasa implementuj¹ca interfejs DockingListener. Jedna z klas odpowiedzialnych
+ * za przesuwanie elementów interfejsu programu.
+ * @author students
+ *
+ */
 public class DarkDockingListener implements DockingListener {
 	private Workspace workspace;
 
@@ -27,8 +33,7 @@ public class DarkDockingListener implements DockingListener {
 		if ((e.getDestinationDock() != workspace.getWorkspaceDock())
 				&& (workspace.getWorkspaceDock().getChildDockCount() == 1)) {
 			workspace.setFillerDockable(GUIManager.externalWithListener(
-					new DefaultDockable("Workspace", new WorkspaceFiller(),
-							"Workspace"), this));
+					new DefaultDockable("Workspace", new WorkspaceFiller(), "Workspace"), this));
 			workspace.setFillerDock(workspace.getDockFactory().createDock(workspace.getFillerDockable(),
 					DockingMode.SINGLE));
 			Point position = new Point(0, 0);
@@ -37,10 +42,18 @@ public class DarkDockingListener implements DockingListener {
 		}
 	}
 
+	/**
+	 * Metoda zwraca obiekt obszaru roboczego.
+	 * @return Workspace - obszar roboczy
+	 */
 	public Workspace getWorkspace() {
 		return workspace;
 	}
 
+	/**
+	 * Metoda ustawia obiekt obszaru roboczego.
+	 * @return Workspace - nowy obszar roboczy
+	 */
 	public void setWorkspace(Workspace workspace) {
 		this.workspace = workspace;
 	}

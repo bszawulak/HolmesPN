@@ -7,12 +7,13 @@ import abyss.darkgui.box.Properties;
 import abyss.darkgui.box.Tools;
 import abyss.darkgui.box.Properties.PropertiesType;
 import abyss.darkgui.dockable.DeleteAction;
-import abyss.darkgui.shortcuts.ShortcutsBar;
+import abyss.darkgui.toolbar.Toolbar;
 import abyss.math.PetriNet;
 import abyss.settings.SettingsManager;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
 //import abyss.workspace.WorkspaceSheet;
+
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -52,6 +53,12 @@ import com.javadocking.visualizer.FloatExternalizer;
 import com.javadocking.visualizer.LineMinimizer;
 import com.javadocking.visualizer.SingleMaximizer;
 
+/**
+ * G³ówna klasa programu odpowiedzialna za w³aœciwie wszystko. Zaczyna od utworzenia elementów
+ * graficznych programu, a dalej jakoœ to bêdzie... :)
+ * @author students
+ *
+ */
 public class GUIManager extends JPanel implements ComponentListener {
 	private static final long serialVersionUID = -817072868916096442L;
 	// Static fields.
@@ -81,7 +88,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	// docking listener
 	private DarkDockingListener dockingListener;
 
-	private ShortcutsBar shortcutsBar;
+	private Toolbar shortcutsBar;
 
 	// SplitDocks
 	private SplitDock leftSplitDock, rightSplitDock, totalSplitDock;
@@ -94,8 +101,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	private String lastPath;
 
-	// Constructor.
-
+	/**
+	 * Konstruktor obiektu klasy GUIManager.
+	 * @param frejm JFrame - g³ówna ramka kontener programu
+	 */
 	public GUIManager(JFrame frejm) {
 		super(new BorderLayout());
 		guiManager = this;
@@ -229,7 +238,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		smallScreenSize = new Dimension((int) (screenSize.getWidth() * 0.9),
 				(int) (screenSize.getHeight() * 0.9));
 
-		setShortcutsBar(new ShortcutsBar());
+		setShortcutsBar(new Toolbar());
 
 		// Add the shortcuts bar also as root dock to the dock model.
 		dockModel.addRootDock("toolBarBorderDock", getShortcutsBar().getToolBarBorderDock(), frame);
@@ -375,17 +384,20 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	public void importProject() {
 		JFileChooser fc;
-		if(lastPath==null) {
+		if(lastPath==null)
 			fc = new JFileChooser();
-		} else {
-			fc = new JFileChooser(lastPath);	
-		}
+		else
+			fc = new JFileChooser(lastPath);
+		
 		FileFilter snoopyFilter = new ExtensionFileFilter(
-			".spped - Snoopy Files", new String[] { "SPPED" });
+			".spped - Snoopy PN Files", new String[] { "SPPED" });
+		FileFilter snoopyFilterTime = new ExtensionFileFilter(
+				".sptpt - Snoopy TPN Files", new String[] { "SPTPT" });
 		FileFilter inaFilter = new ExtensionFileFilter(".pnt - INA Files",
 				new String[] { "PNT" });
 		fc.setFileFilter(snoopyFilter);
 		fc.addChoosableFileFilter(snoopyFilter);
+		fc.addChoosableFileFilter(snoopyFilterTime);
 		fc.addChoosableFileFilter(inaFilter);
 		fc.setAcceptAllFileFilterUsed(false);
 		int returnVal = fc.showOpenDialog(null);
@@ -400,13 +412,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void openProject() {
 		JFileChooser fc;
 		if(lastPath==null)
-		{
-		fc = new JFileChooser();
-		}
+			fc = new JFileChooser();
 		else
-		{
-		fc = new JFileChooser(lastPath);	
-		}
+			fc = new JFileChooser(lastPath);
+		
 		FileFilter fileFilter = new ExtensionFileFilter(
 				".abyss - Abyss Petri Net Files", new String[] { "ABYSS" });
 		fc.setFileFilter(fileFilter);
@@ -530,13 +539,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void exportGeneratedInvariants() {
 		JFileChooser fc;
 		if(lastPath==null)
-		{
-		fc = new JFileChooser();
-		}
+			fc = new JFileChooser();
 		else
-		{
-		fc = new JFileChooser(lastPath);	
-		}
+			fc = new JFileChooser(lastPath);
+		
 		FileFilter inaFilter = new ExtensionFileFilter(".inv - INA Invariants Files",
 				new String[] { "INV" });
 		String fileExtension = ".inv";
@@ -556,11 +562,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void exportProjectToImage() {
 		JFileChooser fc;
-		if(lastPath==null) {
+		if(lastPath==null)
 			fc = new JFileChooser();
-		} else {
-			fc = new JFileChooser(lastPath);	
-		}
+		else
+			fc = new JFileChooser(lastPath);
+		
 		FileFilter pngFilter = new ExtensionFileFilter(".png - Portable Network Graphics", new String[] { "png" });
 		FileFilter bmpFilter = new ExtensionFileFilter(".bmp -  Bitmap Image File", new String[] { "bmp" });
 		FileFilter jpegFilter = new ExtensionFileFilter(".jpeg - JPEG Image File", new String[] { "jpeg" });
@@ -598,11 +604,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	public void saveProject() {
 		JFileChooser fc;
-		if(lastPath==null) {
+		if(lastPath==null)
 			fc = new JFileChooser();
-		} else {
-			fc = new JFileChooser(lastPath);	
-		}
+		else
+			fc = new JFileChooser(lastPath);
+		
 		// FileFilter snoopyFilter = new ExtensionFileFilter(
 		// ".spped - Snoopy Files", new String[] { "SPPED" });
 		FileFilter fileFilter = new ExtensionFileFilter(
@@ -621,18 +627,16 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 	}
 
-	public ShortcutsBar getShortcutsBar() {
+	public Toolbar getShortcutsBar() {
 		return shortcutsBar;
 	}
 
-	private void setShortcutsBar(ShortcutsBar shortcutsBar) {
+	private void setShortcutsBar(Toolbar shortcutsBar) {
 		this.shortcutsBar = shortcutsBar;
 	}
 
-	public static Dockable externalWithListener(Dockable dockable,
-			DockingListener listener) {
-		Dockable wrapper = guiManager.decorateDockableWithActions(dockable,
-				false);
+	public static Dockable externalWithListener(Dockable dockable, DockingListener listener) {
+		Dockable wrapper = guiManager.decorateDockableWithActions(dockable, false);
 		wrapper.addDockingListener(listener);
 		return wrapper;
 	}
@@ -676,15 +680,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void loadExternalAnalysis() {
 		JFileChooser fc;
 		if(lastPath==null)
-		{
-		fc = new JFileChooser();
-		}
+			fc = new JFileChooser();
 		else
-		{
-		fc = new JFileChooser(lastPath);	
-		}
-		FileFilter inaFilter = new ExtensionFileFilter(
-				".inv - INA Invariants Files", new String[] { "INV" });
+			fc = new JFileChooser(lastPath);	
+
+		FileFilter inaFilter = new ExtensionFileFilter(".inv - INA Invariants Files", new String[] { "INV" });
 		fc.setFileFilter(inaFilter);
 		fc.addChoosableFileFilter(inaFilter);
 		fc.setAcceptAllFileFilterUsed(false);
@@ -700,10 +700,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	public void tInvariantsAnalyse(){
-		
 		PetriNet project = workspace.getProject();
 		project.tInvariantsAnalyze();
-		System.out.println("Jebac Barona!!!!!!!!!!!");	
+		System.out.println("*%^$(*$)$ Barona!!!!!!!!!!!");	
+		//powy¿sza metody przekazuje na konsolê wyrazy uznania dla kolegi, który
+		//implementowa³ inne czêœci programu
 	}
 
 	public Properties getMctBox() {
@@ -727,11 +728,21 @@ public class GUIManager extends JPanel implements ComponentListener {
 		DarkAnalyzer analyzer = getWorkspace().getProject().getAnalyzer();
 		getMctBox().showMCT(analyzer.generateMCT(analyzer.gettInvariants()));
 	}
+	
+	/**
+	 * Metoda zleca wyœwietlenie w³aœciwoœci sieci.
+	 */
 	public void generateNetProps(){
 		NetPropAnalyzer analyzer = getWorkspace().getProject().getNetPropAnal();
 		getPropAnalyzerBox().showNetProperties(analyzer.propAnalyze());
 	}
 	
+	/**
+	 * Metoda rozpoczyna symulacjê odpalania inwariantów.
+	 * @param type int - 0-basic, 1- time
+	 * @param value - 
+	 * @throws CloneNotSupportedException
+	 */
 	public void startInvariantsSimulation(int type, int value) throws CloneNotSupportedException{
 		this.getWorkspace().getProject().startInvSim(type, value);
 		

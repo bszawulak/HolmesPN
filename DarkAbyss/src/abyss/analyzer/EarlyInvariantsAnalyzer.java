@@ -19,7 +19,7 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 
 	private HashMap<Place, Integer> placesMap = new HashMap<Place, Integer>();
 	private HashMap<Transition, Integer> transitionsMap = new HashMap<Transition, Integer>();
-	private ArrayList<ArrayList<Integer>> listaInvatianow = new ArrayList<ArrayList<Integer>>();
+	private ArrayList<ArrayList<Integer>> invariantsList = new ArrayList<ArrayList<Integer>>();
 
 	private ArrayList<ArrayList<Integer>> incidanceMatrixL;
 	private ArrayList<ArrayList<Integer>> TxTMatrixL;
@@ -32,23 +32,16 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 	public void run() {
 		this.CreateIncidanceMatrixAndTxTMatrix();
 		this.Analyze();
-		
-		
-		PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace()
-				.getProject();
-		
+		PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		GUIManager.getDefaultGUIManager().getPropAnalyzerBox().showNetProperties(NPA.propAnalyze());
 		GUIManager.getDefaultGUIManager().getAnalyzerBox().showInvariants(project.getGeneratedInvariants());
-		project.genInvariants = listaInvatianow;
+		project.genInvariants = invariantsList;
 	}
 
 	public EarlyInvariantsAnalyzer() {
-		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-				.getPlaces();
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace()
-				.getProject().getTranstions();
-		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-				.getArcs();
+		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
 		createDictionary();
 	}
 
@@ -136,12 +129,9 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 		// Etap I z artykulu
 		for (int p = 0; p < places.size(); p++) {
 			// Wystepuje tylko jedno wejscie i wyjscie z miejsca
-
 			if (checkEtapI(incidanceMatrixTMPL, p)) {
 				findAndCreateNewRowL(incidanceMatrixTMPL, rowsForEtapI, p);
-
-				sumRowsForIEtap(incidanceMatrixTMPL, TxTMatrixTMPL,
-						rowsForEtapI);
+				sumRowsForIEtap(incidanceMatrixTMPL, TxTMatrixTMPL, rowsForEtapI);
 
 			}
 			rowsForEtapI.clear();
@@ -197,7 +187,7 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 
 		etapII(im, txt, newRowL);
 		setFoundedInvariantsL(im, txt);
-		getMinimal(listaInvatianow);
+		getMinimal(invariantsList);
 
 		System.out.print("Koniec pracy analizatora");
 	}
@@ -362,8 +352,7 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 		}
 	}
 
-	private void sumRowsForIEtap(
-			ArrayList<ArrayList<Integer>> incidanceMatrixTMPL,
+	private void sumRowsForIEtap(ArrayList<ArrayList<Integer>> incidanceMatrixTMPL,
 			ArrayList<ArrayList<Integer>> TxTMatrixTMPL,
 			ArrayList<ArrayList<Integer>> newRowL) {
 		if (newRowL.size() > 0) {
@@ -383,8 +372,7 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 
 			}
 
-			addOldRowsL(incidanceMatrixTMPL, TxTMatrixTMPL, newRowL,
-					incidanceMatrixTML, TxTMatrixTML);
+			addOldRowsL(incidanceMatrixTMPL, TxTMatrixTMPL, newRowL, incidanceMatrixTML, TxTMatrixTML);
 
 			incidanceMatrixTMPL.clear();
 			for (int i = 0; i < incidanceMatrixTML.size(); i++) {
@@ -424,8 +412,7 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 
 			}
 
-			addOldRowsL(incidanceMatrixTMPL, TxTMatrixTMPL, newRowL,
-					incidanceMatrixTML, TxTMatrixTML);
+			addOldRowsL(incidanceMatrixTMPL, TxTMatrixTMPL, newRowL, incidanceMatrixTML, TxTMatrixTML);
 
 			incidanceMatrixTMPL.clear();
 			for (int i = 0; i < incidanceMatrixTML.size(); i++) {
@@ -442,13 +429,10 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 					tmp.add(TxTMatrixTML.get(i).get(j));
 				TxTMatrixTMPL.add(tmp);
 			}
-
 		}
 	}
 
-	private void setFoundedInvariantsL(ArrayList<ArrayList<Integer>> iL,
-			ArrayList<ArrayList<Integer>> tL) {
-
+	private void setFoundedInvariantsL(ArrayList<ArrayList<Integer>> iL, ArrayList<ArrayList<Integer>> tL) {
 		for (int it = 0; it < iL.size(); it++) {
 			boolean zero = true;
 			for (int jo = 0; jo < places.size(); jo++) {
@@ -457,8 +441,8 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 			}
 			if (zero)
 			{
-				if (checkIfExist(listaInvatianow, tL.get(it)) == 0) {
-					listaInvatianow.add(tL.get(it));
+				if (checkIfExist(invariantsList, tL.get(it)) == 0) {
+					invariantsList.add(tL.get(it));
 					System.out.println("!!!Wstawiam!!!");
 				}
 				/*
@@ -472,7 +456,6 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 	}
 	
 	private void getMinimal(ArrayList<ArrayList<Integer>> iL) {
-	
 		ArrayList<ArrayList<Integer>> minList = new ArrayList<ArrayList<Integer>>();
 		
 		for (int it = 0; it < iL.size(); it++) {
@@ -494,10 +477,8 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 			
 			if(isSimp)
 				minList.add(iL.get(it));
-			
 		}
-		
-		listaInvatianow = minList;
+		invariantsList = minList;
 	}
 	
 	@SuppressWarnings("unused")
@@ -589,8 +570,7 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 		}
 	}
 
-	private boolean checkEtapI(
-			ArrayList<ArrayList<Integer>> incidanceMatrixTMP, int place) {
+	private boolean checkEtapI(ArrayList<ArrayList<Integer>> incidanceMatrixTMP, int place) {
 		int input = 0;
 		int output = 0;
 		for (int t = 0; t < incidanceMatrixTMP.size(); t++) {
@@ -605,8 +585,7 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 			return false;
 	}
 
-	private boolean checkEtapII(
-			ArrayList<ArrayList<Integer>> incidanceMatrixTMP, int place) {
+	private boolean checkEtapII(ArrayList<ArrayList<Integer>> incidanceMatrixTMP, int place) {
 		int input = 0;
 		int output = 0;
 		for (int t = 0; t < incidanceMatrixTMP.size(); t++) {
@@ -737,11 +716,10 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 	}
 
 	public ArrayList<ArrayList<Integer>> getListaInvatianow() {
-		return listaInvatianow;
+		return invariantsList;
 	}
 
 	public void setListaInvatianow(ArrayList<ArrayList<Integer>> listaInvatianow) {
-		this.listaInvatianow = listaInvatianow;
+		this.invariantsList = listaInvatianow;
 	}
-
 }

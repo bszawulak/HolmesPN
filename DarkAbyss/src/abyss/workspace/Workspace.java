@@ -29,7 +29,7 @@ public class Workspace implements SelectionActionListener {
 	private ArrayList<Dockable> dockables;
 	private ArrayList<Dock> docks;
 	private ArrayList<WorkspaceSheet> sheets;
-	private ArrayList<Integer> ids;
+	private ArrayList<Integer> sheetsIDtable;
 
 	// filler
 //	private WorkspaceFiller filler;
@@ -52,7 +52,7 @@ public class Workspace implements SelectionActionListener {
 		dockables = new ArrayList<Dockable>();
 		docks = new ArrayList<Dock>();
 		sheets = new ArrayList<WorkspaceSheet>();
-		ids = new ArrayList<Integer>();
+		sheetsIDtable = new ArrayList<Integer>();
 
 		// filler = new WorkspaceFiller();
 		setFillerDockable(new DefaultDockable("Workspace",
@@ -69,14 +69,13 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	public int newTab() {
-		int index = ids.size();
+		int index = sheetsIDtable.size();
 		int id = index;
-		if (ids.indexOf(id) != -1)
+		if (sheetsIDtable.indexOf(id) != -1)
 			id = getMaximumTabIndex() + 1;
 		Point position = new Point(0, 0);
-		ids.add(id);
-		sheets.add(new WorkspaceSheet("I am sheet " + Integer.toString(id), id,
-				this));
+		sheetsIDtable.add(id);
+		sheets.add(new WorkspaceSheet("I am sheet " + Integer.toString(id), id, this));
 		Dockable tempDockable = new DefaultDockable("Sheet "
 				+ Integer.toString(id), sheets.get(index), "Sheet "
 				+ Integer.toString(id));
@@ -100,7 +99,7 @@ public class Workspace implements SelectionActionListener {
 		getWorkspaceDock().emptyChild(docks.get(id));
 		docks.remove(id);
 		sheets.remove(id);
-		ids.remove(id);
+		sheetsIDtable.remove(id);
 	}
 
 	public void deleteTab(Dockable dockable) {
@@ -139,15 +138,14 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	private Dockable withListener(Dockable dockable) {
-		Dockable wrapper = guiManager.decorateDockableWithActions(dockable,
-				true);
+		Dockable wrapper = guiManager.decorateDockableWithActions(dockable, true);
 		wrapper.addDockingListener(GUIManager.getDefaultGUIManager().getDockingListener());
 		return wrapper;
 	}
 
 	private int getMaximumTabIndex() {
 		int index = 0;
-		for (int x : ids) {
+		for (int x : sheetsIDtable) {
 			if (x > index)
 				index = x;
 		}
@@ -163,17 +161,30 @@ public class Workspace implements SelectionActionListener {
 		return sheets;
 	}
 
+	/**
+	 * Metoda zwracaj¹ca obiekt zawieraj¹cy sieæ Petriego.
+	 * @return PetriNet - obiekt z danymi sieci
+	 */
 	public PetriNet getProject() {
 		return project;
 	}
 
+	/**
+	 * Metoda ustawiaj¹ca nowy obiekt zawieraj¹cy sieæ Petriego.
+	 * @return PetriNet - obiekt z danymi sieci
+	 */
 	private void setProject(PetriNet project) {
 		this.project = project;
 	}
 
+	/**
+	 * Metoda zwracaj¹ca ostatni indeks arkusza w programie.
+	 * @param id int - nr arkusza
+	 * @return int - nr arkusza. Nie, te¿ nie ogarniam o co tu chodzi (MR).
+	 */
 	public int getIndexOfId(int id) {
 		Integer ajDi = new Integer(id);
-		return ids.lastIndexOf(ajDi);
+		return sheetsIDtable.lastIndexOf(ajDi);
 	}
 
 	public void redockSheets() {
@@ -191,55 +202,101 @@ public class Workspace implements SelectionActionListener {
 		}
 	}
 
-	@Override
+	/**
+	 * Metoda odpowiedzialna za zainicjowanie sekwencji rozkazów zwi¹zanych z wyœwietleniem
+	 * w³aœciwoœci (lub wype³nieniem którychœ podokien zawartoœci¹) w zale¿noœci od tego, co
+	 * w³aœnie zosta³o klikniête.
+	 * @param e SelectionActionEvent - zdarzenie wyboru czegoœ mysz¹
+	 */
 	public void actionPerformed(SelectionActionEvent e) {
 		guiManager.getPropertiesBox().selectElement(e);
 		guiManager.getSelectionBox().getSelectionPanel().actionPerformed(e);
 	}
 
+	/**
+	 * Metoda s³u¿¹ca do pobierania aktualnie klikniêtego arkusza sieci.
+	 * @return WorkspaceSheet - klikniêty arkusz
+	 */
 	public WorkspaceSheet getSelectedSheet() {
 		int index = docks.indexOf(workspaceDock.getSelectedDock());
 		return sheets.get(index);
 	}
 
+	/**
+	 * Metoda zwracaj¹ca obiekt dokowalny.
+	 * @return CompositeTabDock - obiekt
+	 */
 	public CompositeTabDock getWorkspaceDock() {
 		return workspaceDock;
 	}
 
+	/**
+	 * Metoda ustawiaj¹ca nowy obiekt dokowalny.
+	 * @return CompositeTabDock - obiekt
+	 */
 	private void setWorkspaceDock(CompositeTabDock workspaceDock) {
 		this.workspaceDock = workspaceDock;
 	}
 
+	/**
+	 * Metoda inicjuj¹ca przerysowanie wszystkich paneli.
+	 */
 	public void repaintAllGraphPanels() {
 		this.getProject().repaintAllGraphPanels();
 	}
 
+	/**
+	 * Metoda zwiêkszaj¹ca krok symulacji.
+	 */
 	public void incrementSimulationStep() {
 		this.getProject().incrementSimulationStep();
 	}
 
+	/**
+	 * Metoda zwracaj¹ca obiekt dokowalny.
+	 * @return Dock - obiekt
+	 */
 	public Dock getFillerDock() {
 		return fillerDock;
 	}
 
+	/**
+	 * Metoda ustawiaj¹ca nowy obiekt dokowalny.
+	 * @return Dock - obiekt
+	 */
 	public void setFillerDock(Dock fillerDock) {
 		this.fillerDock = fillerDock;
 	}
 
+	/**
+	 * Metoda zwracaj¹ca obiekt dokowalny-wype³niaj¹cy.
+	 * @return Dock - obiekt
+	 */
 	public Dockable getFillerDockable() {
 		return fillerDockable;
 	}
 
+	/**
+	 * Metoda ustawiaj¹ca nowy obiekt dokowalny-wype³niaj¹cy.
+	 * @return Dock - obiekt
+	 */
 	public void setFillerDockable(Dockable fillerDockable) {
 		this.fillerDockable = fillerDockable;
 	}
 
+	/**
+	 * Metoda zwracaj¹ca obiekt fabryki dokowalnej.
+	 * @return Dock - obiekt
+	 */
 	public DockFactory getDockFactory() {
 		return dockFactory;
 	}
 
+	/**
+	 * Metoda ustawiaj¹ca nowy fabryki dokowalnej.
+	 * @return Dock - obiekt
+	 */
 	private void setDockFactory(DockFactory dockFactory) {
 		this.dockFactory = dockFactory;
 	}
-
 }

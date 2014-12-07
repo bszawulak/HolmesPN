@@ -5,10 +5,19 @@ import javax.swing.SwingUtilities;
 
 import abyss.darkgui.GUIManager;
 
+/**
+ * G³ówna klasa programu. Jedna metoda, odpowiedzialna za tworzenie œrodowiska graficznego Abyss
+ * @author students
+ *
+ */
 public class Main {
 
 	public static GUIManager guiManager;
 
+	/**
+	 * Metoda main(). I wszystko jasne?
+	 * @param args String[] - argumenty.
+	 */
 	public static void main(String[] args) {
 		Runnable doCreateAndShowGUI = new Runnable() {
 			public void run() {

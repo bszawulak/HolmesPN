@@ -21,7 +21,7 @@ public class NetPropAnalyzer {
 
 	public NetPropAnalyzer() {
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTranstions();
+		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
 		nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
 	}

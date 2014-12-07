@@ -22,8 +22,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
 		this.addMenuItem("Select All", "", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				getGraphPanel().getSelectionManager()
-						.selectAllElementLocations();
+				getGraphPanel().getSelectionManager().selectAllElementLocations();
 			}
 		});
 

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 //import java.awt.Dialog;
 
 
+
 import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -55,6 +56,11 @@ import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.workspace.WorkspaceSheet;
 
+/**
+ * Klasa zawieraj¹ca szczegó³y interfejsu podokien dokowalnych programu.
+ * @author students
+ *
+ */
 public class PropertiesTable extends JPanel {
 	private static final long serialVersionUID = 4510802239873443705L;
 	private ArrayList<JComponent> headers;
@@ -97,7 +103,10 @@ public class PropertiesTable extends JPanel {
 
 	// private static final JComponent new JButton = null;
 
-	// Arc constructor
+	/**
+	 * Konstruktor odpowiedzialny za tworzenie elementów podokna dla symulatora sieci.
+	 * @param sim NetSimulator - obiekt symulatora sieci
+	 */
 	public PropertiesTable(NetSimulator sim) {
 		initiateContainers();
 		
@@ -251,7 +260,11 @@ public class PropertiesTable extends JPanel {
 		putContents(panel);
 	}
 
-	// Place constructor
+	/**
+	 * Konstruktor podokna wyœwietlaj¹cego w³aœciwoœci klikniêtego miejsca sieci.
+	 * @param place Place - obiekt miejsca
+	 * @param location ElementLocation - lokalizacja miejsca
+	 */
 	public PropertiesTable(Place place, ElementLocation location) {
 		// launch all constructors
 		elementLocation = location;
@@ -366,7 +379,11 @@ public class PropertiesTable extends JPanel {
 		putContents(panel);
 	}
 
-	// Transition constructor
+	/**
+	 * Metoda odpowiedzialna za wyœwietlenie w³aœciwoœci klikniêtej tranzycji.
+	 * @param transition Transition - obiekt tranzycji sieci
+	 * @param location ElementLocation - lokalizacja tranzycji
+	 */
 	public PropertiesTable(Transition transition, ElementLocation location) {
 		mode = TRANSITION;
 		// launch all constructors
@@ -385,8 +402,7 @@ public class PropertiesTable extends JPanel {
 		nameField.addPropertyChangeListener("value",
 				new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e
-								.getSource();
+						JFormattedTextField field = (JFormattedTextField) e.getSource();
 						try {
 							field.commitEdit();
 						} catch (ParseException ex) {
@@ -399,27 +415,24 @@ public class PropertiesTable extends JPanel {
 		// comment
 		JFormattedTextField commentField = new JFormattedTextField();
 		commentField.setValue(transition.getComment());
-		commentField.addPropertyChangeListener("value",
-				new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e
-								.getSource();
-						try {
-							field.commitEdit();
-						} catch (ParseException ex) {
-						}
-						String newComment = (String) field.getValue();
-						changeComment(newComment);
-					}
-				});
+		commentField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newComment = (String) field.getValue();
+				changeComment(newComment);
+			}
+		});
 		headers.add(new JLabel("Comment:", JLabel.TRAILING));
 		values.add(commentField);
 		// location
 		headers.add(new JLabel("Sheet:", JLabel.TRAILING));
 		values.add(new JLabel(Integer.toString(location.getSheetID())));
 		headers.add(new JLabel("Location:", JLabel.TRAILING));
-		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(
-				location.getSheetID());
+		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
 		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
 				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(
@@ -443,8 +456,7 @@ public class PropertiesTable extends JPanel {
 			}
 		});
 		JPanel locationSpinnerPanel = new JPanel();
-		locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel,
-				BoxLayout.X_AXIS));
+		locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel,BoxLayout.X_AXIS));
 		locationSpinnerPanel.add(locationXSpinner);
 		locationSpinnerPanel.add(new JLabel(" , "));
 		locationSpinnerPanel.add(locationYSpinner);
@@ -468,9 +480,12 @@ public class PropertiesTable extends JPanel {
 		putContents(panel);
 	}
 
-	// Transition constructor
-	public PropertiesTable(final TimeTransition transition,
-			ElementLocation location) {
+	/**
+	 * Metoda odpowiedzialna za wyœwietlenie w³aœciwoœci klikniêtej tranzycji czasowej.
+	 * @param transition TimeTransition - obiekt tranzycji czasowej
+	 * @param location ElementLocation - lokalizacja tranzycji
+	 */
+	public PropertiesTable(final TimeTransition transition, ElementLocation location) {
 		mode = TIMETRANSITION;
 		// launch all constructors
 		elementLocation = location;
@@ -488,8 +503,7 @@ public class PropertiesTable extends JPanel {
 		nameField.addPropertyChangeListener("value",
 				new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e
-								.getSource();
+						JFormattedTextField field = (JFormattedTextField) e.getSource();
 						try {
 							field.commitEdit();
 						} catch (ParseException ex) {
@@ -505,8 +519,7 @@ public class PropertiesTable extends JPanel {
 		commentField.addPropertyChangeListener("value",
 				new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e
-								.getSource();
+						JFormattedTextField field = (JFormattedTextField) e.getSource();
 						try {
 							field.commitEdit();
 						} catch (ParseException ex) {
@@ -642,7 +655,11 @@ public class PropertiesTable extends JPanel {
 		putContents(panel);
 	}
 
-	// Arc constructor
+	/**
+	 * Konstruktor odpowiedzialny za utworzenie elementów podokna w³aœciwoœci klikniêtego
+	 * ³uku sieci.
+	 * @param arc Arc - obiekt ³uku
+	 */
 	public PropertiesTable(Arc arc) {
 		initiateContainers();
 		// set mode
@@ -659,8 +676,7 @@ public class PropertiesTable extends JPanel {
 		commentField.addPropertyChangeListener("value",
 				new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e
-								.getSource();
+						JFormattedTextField field = (JFormattedTextField) e.getSource();
 						try {
 							field.commitEdit();
 						} catch (ParseException ex) {
@@ -673,8 +689,7 @@ public class PropertiesTable extends JPanel {
 		values.add(commentField);
 		// weight
 		headers.add(new JLabel("Weight:", JLabel.TRAILING));
-		SpinnerModel weightSpinnerModel = new SpinnerNumberModel(
-				arc.getWeight(), 0, Integer.MAX_VALUE, 1);
+		SpinnerModel weightSpinnerModel = new SpinnerNumberModel(arc.getWeight(), 0, Integer.MAX_VALUE, 1);
 		JSpinner weightSpinner = new JSpinner(weightSpinnerModel);
 		weightSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -694,8 +709,7 @@ public class PropertiesTable extends JPanel {
 				.getSheetID())));
 		headers.add(new JLabel("Location:", JLabel.TRAILING));
 		values.add(new JLabel(Integer.toString(arc.getStartLocation()
-				.getPosition().x)
-				+ ", "
+				.getPosition().x)+ ", "
 				+ Integer.toString(arc.getStartLocation().getPosition().y)));
 		// endNode
 		headers.add(new JLabel("EndNode ID:", JLabel.TRAILING));
@@ -707,14 +721,17 @@ public class PropertiesTable extends JPanel {
 				.getSheetID())));
 		headers.add(new JLabel("EndNode Location:", JLabel.TRAILING));
 		values.add(new JLabel(Integer.toString(arc.getEndLocation()
-				.getPosition().x)
-				+ ", "
+				.getPosition().x) + ", "
 				+ Integer.toString(arc.getEndLocation().getPosition().y)));
 		// put all contents on the pane
 		putContents(panel);
 	}
 
-	// Sheet constructor
+	/**
+	 * Konstruktor odpowiedzialny za utworzenie podokna w³aœciwoœci klikniêtego
+	 * arkusza sieci. 
+	 * @param sheet WorkspaceSheet - obiekt arkusza
+	 */
 	public PropertiesTable(WorkspaceSheet sheet) {
 		initiateContainers();
 		// set mode
@@ -751,8 +768,7 @@ public class PropertiesTable extends JPanel {
 		values.add(heightSpinner);
 		// is auto scroll when dragging automatic
 		headers.add(new JLabel("Autoscroll:", JLabel.TRAILING));
-		JCheckBox autoscrollBox = new JCheckBox("", sheet.getGraphPanel()
-				.isAutoDragScroll());
+		JCheckBox autoscrollBox = new JCheckBox("", sheet.getGraphPanel().isAutoDragScroll());
 		autoscrollBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -768,6 +784,11 @@ public class PropertiesTable extends JPanel {
 		putContents(panel);
 	}
 
+	/**
+	 * Konstruktor odpowiedzialny za wype³nienie podokna umo¿liwiaj¹cego wybór poszczególnych
+	 * inwariantów sieci.
+	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
+	 */
 	public PropertiesTable(ArrayList<ArrayList<InvariantTransition>> invariants) {
 		if (invariants.size() > 0) {
 			initiateContainers();
@@ -776,18 +797,15 @@ public class PropertiesTable extends JPanel {
 			externalInvariants = invariants;
 			// getting the data
 			JLabel chooseInvariantLabel = new JLabel("Choose invariant: ");
-			chooseInvariantLabel.setMaximumSize(chooseInvariantLabel
-					.getMinimumSize());
+			chooseInvariantLabel.setMaximumSize(chooseInvariantLabel.getMinimumSize());
 			headers.add(chooseInvariantLabel);
 			String[] invariantHeaders = new String[invariants.size() + 1];
 			invariantHeaders[0] = "---";
 			for (int i = 0; i < invariants.size(); i++)
-				invariantHeaders[i + 1] = "Invariant no. "
-						+ Integer.toString(i);
+				invariantHeaders[i + 1] = "Invariant no. " + Integer.toString(i);
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			JComboBox chooseInvariantBox = new JComboBox(invariantHeaders);
-			chooseInvariantBox.setMaximumSize(chooseInvariantBox
-					.getMinimumSize());
+			chooseInvariantBox.setMaximumSize(chooseInvariantBox.getMinimumSize());
 			chooseInvariantBox.setVisible(true);
 			chooseInvariantBox.addActionListener(new ActionListener() {
 				@Override
@@ -807,13 +825,16 @@ public class PropertiesTable extends JPanel {
 		}
 	}
 
-	// konstruktor Net properties
-
+	/**
+	 * Konstruktor podokna w³aœciwoœci elementów sieci. Wype³niany w zale¿noœci od
+	 * tego, co przysz³o jako argument - tj. które w³aœciwoœci
+	 * @param prop ArrayList[ArrayList[Object]] - macierz w³aœciwoœci
+	 * @param ref boolean - wartoœæ logiczna nie maj¹ca na nic wp³ywu :)
+	 */
 	public PropertiesTable(ArrayList<ArrayList<Object>> prop, boolean ref) {
 		initiateContainers();
 		JPanel rowPanel = new JPanel();
-		rowPanel.setLayout(new BoxLayout(rowPanel,
-				BoxLayout.X_AXIS));
+		rowPanel.setLayout(new BoxLayout(rowPanel,BoxLayout.X_AXIS));
 		ArrayList<Object> row = new ArrayList<Object>();
 		
 		
@@ -846,8 +867,7 @@ public class PropertiesTable extends JPanel {
 					rowPanel.add((Component) com);
 				headers.add(rowPanel);
 				rowPanel = new JPanel();
-				rowPanel.setLayout(new BoxLayout(rowPanel,
-						BoxLayout.X_AXIS));
+				rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
 				row = new ArrayList<Object>();
 			}
 			values.add(new JLabel());
@@ -858,22 +878,57 @@ public class PropertiesTable extends JPanel {
 				rowPanel.add((Component) com);
 			headers.add(rowPanel);
 			rowPanel = new JPanel();
-			rowPanel.setLayout(new BoxLayout(rowPanel,
-					BoxLayout.X_AXIS));
+			rowPanel.setLayout(new BoxLayout(rowPanel,BoxLayout.X_AXIS));
 			row = new ArrayList<Object>();
 		}
 		values.add(new JLabel());
-
 		putContents(panel);
 	}
 	
-	//Konstruktor Symulatora Invariantów
+	/**
+	 * Konstruktor odpowiedzialny za utworzenie elementów podokna symulatora inwariantów
+	 * @param is
+	 */
 	public PropertiesTable(InvariantsSimulator is)
 	{
 		initiateContainers();
 		// set mode
 		mode = INVARIANTSSIMULATOR;
 		invSimulator = is;
+		
+		String[] simModeName = {"Klasyczny", "Czasowy"};
+		// set mode
+		//mode = SIMULATOR;
+		//simulator = sim;
+				
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		JComboBox simMode = new JComboBox(simModeName);
+		simMode.setSelectedIndex(0);
+		/*
+		simMode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				invSimulator.setSimulatorNetType(simMode.getSelectedIndex());
+				//simulator.setSimulatorNetType(simMode.getSelectedIndex());
+			}
+		});
+		*/
+		simMode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				@SuppressWarnings("rawtypes")
+				JComboBox comboBox = (JComboBox) actionEvent.getSource();
+				if (comboBox.getSelectedIndex() == 0) {
+					invSimulator.setSimulatorNetType(0);
+				} else {
+					invSimulator.setSimulatorNetType(1);
+				}
+			}
+		});
+
+		headers.add(simMode);
+		//group.add(simMode);
+		values.add(new JLabel("Typ symulacji"));
 		
 		 JRadioButton TimeMode = new JRadioButton("Time Mode");
 		 TimeMode.setActionCommand("0");
@@ -918,10 +973,8 @@ public class PropertiesTable extends JPanel {
 					}
 					else
 					{
-						JOptionPane.showMessageDialog(new JFrame(),
-							    "There is no invariants to simulate",
-							    "Inane warning",
-							    JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(new JFrame(),"There is no invariants to simulate",
+							    "Inane warning",JOptionPane.WARNING_MESSAGE);
 					}
 				}
 			});
@@ -930,9 +983,12 @@ public class PropertiesTable extends JPanel {
 		 putContents(panel);
 	}
 
-	// konstruktor MCT
-	public PropertiesTable(ArrayList<ArrayList<Transition>> mct,
-			Properties.PropertiesType type) {
+	/**
+	 * Konstruktor odpowiedzialny za utworzenie podokna wyboru zbiorów MCT.
+	 * @param mct ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
+	 * @param type Properties.PropertiesType - nic nie znacz¹cy tutaj element...
+	 */
+	public PropertiesTable(ArrayList<ArrayList<Transition>> mct, Properties.PropertiesType type) {
 		initiateContainers();
 		// set mode
 		mode = EXTERNAL_ANALYSIS;
@@ -958,7 +1014,7 @@ public class PropertiesTable extends JPanel {
 				if (comboBox.getSelectedIndex() == 0) {
 					showMct(0, false);
 				} else {
-					showMct(comboBox.getSelectedIndex()-1);
+					showMct(comboBox.getSelectedIndex()-1, true);
 				}
 				
 				invariantPanel.repaint();
@@ -971,17 +1027,23 @@ public class PropertiesTable extends JPanel {
 		putContents(panel);
 	}
 
+	/*
+	
+	 //Metoda odpowiedzialna za pokazanie szczegó³ów wybranego zbioru MCT.
+	 //@param mctIndex Integer - numer wybranego zbioru
+	 
+	@SuppressWarnings("unused")
 	private void showMct(Integer mctIndex) {
-		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace()
-				.getProject();
+		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		net.turnTransitionGlowingOff();
-		net.setTransitionGlowedMTC(false);
+		net.setTransitionGlowedMTC(false); //wy³¹czanie podœwietlenia MCT
 		headers.clear();
 		values.clear();
 		invariantPanel.removeAll();
 		this.remove(invariantPanel);
 		invariantPanel = new JPanel();
 		this.add(invariantPanel);
+		
 		ArrayList<Transition> mct = mctGroups.get(mctIndex);
 		JLabel number = new JLabel("0");
 		headers.add(new JLabel("Transitions: "));
@@ -1004,10 +1066,15 @@ public class PropertiesTable extends JPanel {
 		}
 		net.repaintAllGraphPanels();
 	}
+	*/
 	
+	/**
+	 * Metoda odpowiedzialna za pokazanie szczegó³ów wybranego zbioru MCT.
+	 * @param mctIndex Integer - numer wybranego zbioru
+	 * @param mc boolean - true, jeœli dane maj¹ byæ pokazane
+	 */
 	private void showMct(Integer mctIndex, boolean mc) {
-		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace()
-				.getProject();
+		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace() .getProject();
 		net.turnTransitionGlowingOff();
 		net.setTransitionGlowedMTC(false);
 		headers.clear();
@@ -1019,47 +1086,44 @@ public class PropertiesTable extends JPanel {
 		
 		if(mc)
 		{
-		ArrayList<Transition> mct = mctGroups.get(mctIndex);
-		JLabel number = new JLabel("0");
-		headers.add(new JLabel("Transitions: "));
-		values.add(number);
-		headers.add(new JLabel(""));
-		values.add(new JLabel(""));
-		headers.add(new JLabel("ID"));
-		values.add(new JLabel("Name"));
-		headers.add(new JLabel(""));
-		values.add(new JLabel(""));
-		//int i = 0;
-		int counter = 0;
-		for (Transition transition : mct) {
-			headers.add(new JLabel(Integer.toString(transition.getID())));
-			values.add(new JLabel(transition.getName()));
-			transition.setGlowedMTC(true);
-			counter++;
-			number.setText(Integer.toString(counter));
-			putContents(invariantPanel);
-		}
+			ArrayList<Transition> mct = mctGroups.get(mctIndex);
+			JLabel number = new JLabel("0");
+			headers.add(new JLabel("Transitions: "));
+			values.add(number);
+			headers.add(new JLabel(""));
+			values.add(new JLabel(""));
+			headers.add(new JLabel("ID"));
+			values.add(new JLabel("Name"));
+			headers.add(new JLabel(""));
+			values.add(new JLabel(""));
+			//int i = 0;
+			int counter = 0;
+			for (Transition transition : mct) {
+				headers.add(new JLabel(Integer.toString(transition.getID())));
+				values.add(new JLabel(transition.getName()));
+				transition.setGlowedMTC(true);
+				counter++;
+				number.setText(Integer.toString(counter));
+				putContents(invariantPanel);
+			}
 		}
 		net.repaintAllGraphPanels();
 	}
 
 	
 	/**
-	 * Pokazywanie inwariantów
-	 * @param invariantIndex
-	 * @param inv
+	 * Metoda odpowiedzialna za podœwietlanie inwariantów.
+	 * @param invariantIndex Integer - numer wybranego inwariantu
+	 * @param inv boolean - true, jeœli maj¹ byæ pokazane dane szczegó³owe w panelu
 	 */
 	private void showInvariant(Integer invariantIndex, boolean inv) {
-		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace()
-				.getProject();
+		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace() .getProject();
 		net.turnTransitionGlowingOff(); //!!!!!
 		headers.clear();
 		values.clear();
 		invariantPanel.removeAll();
-		ArrayList<InvariantTransition> invariant = externalInvariants
-				.get(invariantIndex);
+		ArrayList<InvariantTransition> invariant = externalInvariants.get(invariantIndex);
 		if (inv) {
-
 			JLabel number = new JLabel("0");
 			headers.add(new JLabel("Transitions: "));
 			values.add(number);
@@ -1102,6 +1166,9 @@ public class PropertiesTable extends JPanel {
 		net.repaintAllGraphPanels();
 	}
 	
+	/**
+	 * Metoda pomocnicza tworz¹ca szkielet g³ównych komponentów podokna w³aœciwoœci
+	 */
 	private void initiateContainers() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		headerSize = new Dimension(300, 30);
@@ -1112,6 +1179,10 @@ public class PropertiesTable extends JPanel {
 		mainPanel = this;
 	}
 
+	/**
+	 * Metoda pomocnicza odpowiedzialna za wype³nanie okna danymi.
+	 * @param contentPanel JPanel - panel z wawartoœci¹
+	 */
 	private void putContents(JPanel contentPanel) {
 		// setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		for (JComponent component : headers)
@@ -1123,8 +1194,7 @@ public class PropertiesTable extends JPanel {
 			contentPanel.add(headers.get(i));
 			contentPanel.add(values.get(i));
 		}
-		SpringUtilities.makeCompactGrid(contentPanel, headers.size(), 2, 5, 5,
-				5, 5);
+		SpringUtilities.makeCompactGrid(contentPanel, headers.size(), 2, 5, 5, 5, 5);
 		contentPanel.setOpaque(true);
 		add(contentPanel);
 	}
@@ -1313,6 +1383,9 @@ public class PropertiesTable extends JPanel {
 		values.get(4).setEnabled(false);
 	}
 
+	/**
+	 * hmmm....
+	 */
 	public void updateSimulatorProperties() {
 		// TODO Auto-generated method stub
 	}
