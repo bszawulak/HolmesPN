@@ -5,6 +5,8 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.JOptionPane;
+
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import abyss.math.Arc;
@@ -358,36 +360,167 @@ public class SelectionManager {
 	/**
 	 * Metoda zmienia aktualnie zaznaczone elementy w portal, przenosz¹c je do
 	 * jednego obiektu Node.
+	 * Dodano komunikaty ostrzegaj¹ce oraz zachowywanie starych danych pierwszego
+	 * zaznaczonego obiektu wêz³a
+	 * @author students
+	 * @author MR
 	 */
 	@SuppressWarnings("unchecked")
 	public void transformSelectedIntoPortal() {
 		// sprawdzenie czy wszystkie elementy sa tego samego typu (Place lub Transition)
 		for (int i = 1; i < this.getSelectedElementLocations().size(); i++) {
 			if (this.getSelectedElementLocations().get(i - 1).getParentNode()
-					.getType() != this.getSelectedElementLocations().get(i).getParentNode().getType())
+					.getType() != this.getSelectedElementLocations().get(i).getParentNode().getType()) {
+				JOptionPane.showMessageDialog(null,"Please select only one type of element: either transitions or places!",
+						"Multiple types selection warning", JOptionPane.WARNING_MESSAGE);
 				return;
+			}
 		}
-		for (ElementLocation el : this.getSelectedElementLocations()) {
+		for (ElementLocation el : this.getSelectedElementLocations()) { 
 			if (el.getParentNode().isPortal()) //usuwanie statusu portal
 				for (ElementLocation e : el.getParentNode().getNodeLocations())
 					e.setPortalSelected(false);
 			if (!el.getParentNode().removeElementLocation(el))
-				this.getGraphPanelNodes().remove(el.getParentNode());
+				this.getGraphPanelNodes().remove(el.getParentNode()); //usuwanie wêz³a sieci z danych sieci
 		}
+		//tutaj jednak obiekt(y) wci¹¿ istnieje i mo¿na np. sprawdziæ jego typ
 		if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.PLACE) {
-			getGraphPanelNodes().add(new Place(IdGenerator.getNextId(),
-					(ArrayList<ElementLocation>)getSelectedElementLocations().clone()));
+			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
+			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
+			int oldTokensNumber = ((Place)getSelectedElementLocations().get(0).getParentNode()).getTokensNumber();
+			int oldTokensTaken = ((Place)getSelectedElementLocations().get(0).getParentNode()).getTokensTaken();
+			Place portal = new Place(IdGenerator.getNextId(),
+					(ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
+			portal.setName(oldName);
+			portal.setComment(oldComment);
+			portal.setTokensNumber(oldTokensNumber);
+			portal.bookTokens(oldTokensTaken);
+			getGraphPanelNodes().add(portal);
 		} else {
 			@SuppressWarnings("unused")
 			String test = getSelectedElementLocations().get(0).getParentNode().getType().toString();
 			if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TIMETRANSITION) {
-				getGraphPanelNodes().add(new TimeTransition(IdGenerator.getNextId(),
-					(ArrayList<ElementLocation>)getSelectedElementLocations().clone()));
+				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
+				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
+				double oldEFT = ((TimeTransition)getSelectedElementLocations().get(0).getParentNode()).getMinFireTime();
+				double oldLFT = ((TimeTransition)getSelectedElementLocations().get(0).getParentNode()).getMaxFireTime();
+				TimeTransition portal = new TimeTransition(IdGenerator.getNextId(),
+						(ArrayList<ElementLocation>)getSelectedElementLocations().clone());
+				portal.setName(oldName);
+				portal.setComment(oldComment);
+				portal.setMinFireTime(oldEFT);
+				portal.setMaxFireTime(oldLFT);
+				getGraphPanelNodes().add(portal);
 			} else if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TRANSITION){
-				//getGraphPanelNodes().add(new Transition(IdGenerator.getNextId(),
-					//(ArrayList<ElementLocation>)getSelectedElementLocations().clone()));
-				getGraphPanelNodes().add(new Transition(IdGenerator.getNextId(),
-					((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) ));
+				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
+				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
+				Transition portal = new Transition(IdGenerator.getNextId(),
+						((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
+				portal.setName(oldName);
+				portal.setComment(oldComment);
+				getGraphPanelNodes().add(portal);
+			}
+		}
+		getGraphPanel().repaint();
+	}
+
+	/**
+	 * Metoda zmienia aktualnie klikniêty element w portal, tworz¹c jego klona.
+	 * @author MR
+	 */
+	@SuppressWarnings("unchecked")
+	public void cloneNodeIntoPortal() {
+		// sprawdzenie czy wszystkie elementy sa tego samego typu (Place lub Transition)
+		if(this.getSelectedElementLocations().size() > 1) {
+			//String type = this.getSelectedElementLocations().get(0).getParentNode().getType().toString();
+			JOptionPane.showMessageDialog(null,"Cloning into Portals possible only for one selected node!",
+					"Multiple selection warning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		for (ElementLocation el : this.getSelectedElementLocations()) { 
+			if (el.getParentNode().isPortal()) //usuwanie statusu portal
+				for (ElementLocation e : el.getParentNode().getNodeLocations())
+					e.setPortalSelected(false);
+			if (!el.getParentNode().removeElementLocation(el))
+				this.getGraphPanelNodes().remove(el.getParentNode()); //usuwanie wêz³a sieci z danych sieci
+		}
+		
+		if (getSelectedElementLocations().get(0).getParentNode().getType() 
+				== PetriNetElementType.PLACE) {
+			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
+			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
+			int oldTokensNumber = ((Place)getSelectedElementLocations().get(0).getParentNode()).getTokensNumber();
+			int oldTokensTaken = ((Place)getSelectedElementLocations().get(0).getParentNode()).getTokensTaken();
+			
+			ElementLocation clonedNode = getSelectedElementLocations().get(0);
+			Point newPosition = new Point();
+			newPosition.setLocation(clonedNode.getPosition().getX()+30, clonedNode.getPosition().getY()+30);
+			ElementLocation clone = new ElementLocation(clonedNode.getSheetID(), 
+					newPosition, clonedNode.getParentNode());
+			//clone.setInArcs((ArrayList<Arc>)clonedNode.getInArcs().clone());
+			//clone.setOutArcs((ArrayList<Arc>)clonedNode.getOutArcs().clone());
+			clone.setSelected(clonedNode.isSelected());
+			clone.setPortalSelected(clonedNode.isPortalSelected());
+			selectedElementLocations.add(clone);
+			
+			Place portal = new Place(IdGenerator.getNextId(),
+					(ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
+			portal.setName(oldName);
+			portal.setComment(oldComment);
+			portal.setTokensNumber(oldTokensNumber);
+			portal.bookTokens(oldTokensTaken);
+			getGraphPanelNodes().add(portal);
+		} else {
+			@SuppressWarnings("unused")
+			String test = getSelectedElementLocations().get(0).getParentNode().getType().toString();
+			if (getSelectedElementLocations().get(0).getParentNode().getType() 
+					== PetriNetElementType.TIMETRANSITION) {
+				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
+				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
+				double oldEFT = ((TimeTransition)getSelectedElementLocations().get(0).getParentNode()).getMinFireTime();
+				double oldLFT = ((TimeTransition)getSelectedElementLocations().get(0).getParentNode()).getMaxFireTime();
+				
+				ElementLocation clonedNode = getSelectedElementLocations().get(0);
+				Point newPosition = new Point();
+				newPosition.setLocation(clonedNode.getPosition().getX()+30, clonedNode.getPosition().getY()+30);
+				ElementLocation clone = new ElementLocation(clonedNode.getSheetID(), 
+						newPosition, clonedNode.getParentNode());
+				//clone.setInArcs((ArrayList<Arc>)clonedNode.getInArcs().clone());
+				//clone.setOutArcs((ArrayList<Arc>)clonedNode.getOutArcs().clone());
+				clone.setSelected(clonedNode.isSelected());
+				clone.setPortalSelected(clonedNode.isPortalSelected());
+				selectedElementLocations.add(clone);
+				
+				TimeTransition portal = new TimeTransition(IdGenerator.getNextId(),
+						(ArrayList<ElementLocation>)getSelectedElementLocations().clone());
+				portal.setName(oldName);
+				portal.setComment(oldComment);
+				portal.setMinFireTime(oldEFT);
+				portal.setMaxFireTime(oldLFT);
+				
+				getGraphPanelNodes().add(portal);
+			} else if (getSelectedElementLocations().get(0).getParentNode().getType() 
+					== PetriNetElementType.TRANSITION){
+				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
+				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
+				ElementLocation clonedNode = getSelectedElementLocations().get(0);
+				Point newPosition = new Point();
+				newPosition.setLocation(clonedNode.getPosition().getX()+30, clonedNode.getPosition().getY()+30);
+				
+				ElementLocation clone = new ElementLocation(clonedNode.getSheetID(), 
+						newPosition, clonedNode.getParentNode());
+				//clone.setInArcs((ArrayList<Arc>)clonedNode.getInArcs().clone());
+				//clone.setOutArcs((ArrayList<Arc>)clonedNode.getOutArcs().clone());
+				clone.setSelected(clonedNode.isSelected());
+				clone.setPortalSelected(clonedNode.isPortalSelected());
+				selectedElementLocations.add(clone);
+				
+				Transition portal = new Transition(IdGenerator.getNextId(),
+						((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
+				portal.setName(oldName);
+				portal.setComment(oldComment);
+				getGraphPanelNodes().add(portal);
 			}
 		}
 		getGraphPanel().repaint();

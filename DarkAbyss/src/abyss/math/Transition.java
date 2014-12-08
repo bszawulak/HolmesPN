@@ -23,7 +23,7 @@ public class Transition extends Node {
 	
 	/*
 	 * UWAGA!!! NIE WOLNO ZMIENIAÆ NAZW, DODAWAÆ LUB USUWAÆ PÓL TEJ KLASY
-	 * (przestanie byæ mo¿liwe wczytywanie zapisanych proejktów .abyss)
+	 * (przestanie byæ mo¿liwe wczytywanie zapisanych projektów .abyss)
 	 */
 	protected double minFireTime = 0;
 	protected double maxFireTime = 999;

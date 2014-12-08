@@ -18,6 +18,13 @@ import com.javadocking.dockable.DefaultDockable;
 import com.javadocking.dockable.Dockable;
 import com.javadocking.dockable.DockingMode;
 
+/**
+ * G³owna klasa odpowiedzialna za zarz¹dzanie przestrzeni¹ programu, w której
+ * rysowana jest sieæ Petriego. Posiada w sobie miêdzy innymi zak³adki
+ * otwarte w programie.
+ * @author students
+ *
+ */
 public class Workspace implements SelectionActionListener {
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = -7304351849692823097L;
@@ -45,6 +52,10 @@ public class Workspace implements SelectionActionListener {
 	// composite tab dock
 	private CompositeTabDock workspaceDock;
 
+	/**
+	 * Konstruktor obiektu klasy Workspace.
+	 * @param gui GUIManager - obiekt managera œrodowiska graficznego programu
+	 */
 	public Workspace(GUIManager gui) {
 		setWorkspaceDock(new CompositeTabDock());
 		guiManager = gui;
@@ -68,6 +79,10 @@ public class Workspace implements SelectionActionListener {
 
 	}
 
+	/**
+	 * Metoda odpowiedzialna za utworzenie nowej zak³adki sieci w projekcie.
+	 * @return int - numer bêd¹cy identyfikatorem nowej zak³adki
+	 */
 	public int newTab() {
 		int index = sheetsIDtable.size();
 		int id = index;
@@ -89,10 +104,19 @@ public class Workspace implements SelectionActionListener {
 		return id;
 	}
 
+	/**
+	 * Metoda opdowiedzialna za ustawienie nowego trybu rysowania sieci, zale¿na od
+	 * tego, co wybrano z prawego panelu narzedziowego programu.
+	 * @param mode DrawModes - aktualny tryb rysowania sieci
+	 */
 	public void setGraphMode(DrawModes mode) {
 		this.getProject().setDrawMode(mode);
 	}
 
+	/**
+	 * Metoda usuwa dane arkusza z listy arkuszy obiektu klasy Workspace.
+	 * @param sheet WorkspaceSheet - arkusz do usuniêcia
+	 */
 	public void deleteSheetFromArrays(WorkspaceSheet sheet) {
 		int id = sheets.indexOf(sheet) + 1 - 1;
 		getProject().removeGraphPanel(id);
@@ -102,6 +126,10 @@ public class Workspace implements SelectionActionListener {
 		sheetsIDtable.remove(id);
 	}
 
+	/**
+	 * Metoda odpowiedzialna za usuwanie arkusza rysowania sieci z przestrzeni roboczej.
+	 * @param dockable Dockable - obiekt do usuniêcia
+	 */
 	public void deleteTab(Dockable dockable) {
 		int index = dockables.indexOf(dockable);
 		int n = JOptionPane

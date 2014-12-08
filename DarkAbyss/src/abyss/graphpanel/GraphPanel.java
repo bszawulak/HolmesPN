@@ -54,11 +54,11 @@ public class GraphPanel extends JComponent {
 	public enum DrawModes { POINTER, PLACE, TRANSITION, ARC, ERASER, TIMETRANSITION; }
 
 	/**
-	 * 
-	 * @param sheetId
-	 * @param petriNet
-	 * @param nodesList
-	 * @param arcsList
+	 * Konstruktor obiektu klasy GraphPanel
+	 * @param sheetId int - nr arkusza
+	 * @param petriNet PetriNet - sieæ Petriego
+	 * @param nodesList ArrayList[Node]- lista wierzcho³ków
+	 * @param arcsList ArrayList[Arc]- lista ³uków
 	 */
 	public GraphPanel(int sheetId, PetriNet petriNet, ArrayList<Node> nodesList, ArrayList<Arc> arcsList) {
 		this.petriNet = petriNet;
@@ -67,6 +67,9 @@ public class GraphPanel extends JComponent {
 		this.Initialize();
 	}
 
+	/**
+	 * Inicjalizacja obiektów dla panelu
+	 */
 	public void Initialize() {
 		this.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 		this.setOpaque(true);

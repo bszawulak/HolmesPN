@@ -121,10 +121,12 @@ public class Tools extends SingleDock implements TreeSelectionListener {
 		this.dockable = dockable;
 	}
 
-	@Override
+	/**
+	 * Przeci¹¿ona metoda odpowiedzialna za reakcjê na zmianê narzêdzia rysowania sieci.
+	 * @param e TreeSelectionEvent - zdarzenie wybrania wêz³a w drzewie narzêdzi
+	 */
 	public void valueChanged(TreeSelectionEvent e) {
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) toolTree
-				.getLastSelectedPathComponent();
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)toolTree.getLastSelectedPathComponent();
 		if (node == null)
 			return;
 		Object nodeInfo = node.getUserObject();
@@ -152,11 +154,19 @@ public class Tools extends SingleDock implements TreeSelectionListener {
 		}
 	}
 
+	/**
+	 * Klasa wewnêtrzna odpowiedzialna za kszta³t wêz³ów drzewa narzêdziowego.
+	 * @author students
+	 *
+	 */
 	private class LeafRenderer extends DefaultTreeCellRenderer {
 		private static final long serialVersionUID = 3169140404884453079L;
 		private ImageIcon placeIcon, transitionIcon, arcIcon, pointerIcon,
 				eraserIcon, timeTransitionIcon;
 
+		/**
+		 * Konstruktor domyœlny obiektu klasy wewnêtrznej LeafRenderer
+		 */
 		public LeafRenderer() {
 			placeIcon = new ImageIcon("resources/icons/place.gif");
 			transitionIcon = new ImageIcon("resources/icons/transition.gif");
@@ -166,6 +176,17 @@ public class Tools extends SingleDock implements TreeSelectionListener {
 			eraserIcon = new ImageIcon("resources/icons/eraser.gif");
 		}
 
+		/**
+		 * Metoda odpowiedzialna za obs³ugê wyboru wêz³a w drzewie narzêdziowym.
+		 * @param tree JTree - drzewo narzêdzi programu
+		 * @param value Object - wartoœæ
+		 * @param sel boolean - czy wybrany
+		 * @param expanded boolean - czy wêze³ otwarty
+		 * @param leaf boolean - czy jest liœciem
+		 * @param row int - nr wiersza
+		 * @param hasFocus boolean - czy jest nad nim kursor
+		 * @return Component - komponent wybrany z drzewa
+		 */
 		public Component getTreeCellRendererComponent(JTree tree, Object value,
 				boolean sel, boolean expanded, boolean leaf, int row,
 				boolean hasFocus) {

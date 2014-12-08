@@ -703,8 +703,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		PetriNet project = workspace.getProject();
 		project.tInvariantsAnalyze();
 		System.out.println("*%^$(*$)$ Barona!!!!!!!!!!!");	
-		//powy¿sza metody przekazuje na konsolê wyrazy uznania dla kolegi, który
-		//implementowa³ inne czêœci programu
+		//powy¿sza metoda przekazuje na konsolê wyrazy uznania od jednego ze studentów
+		//dla kolegi, który implementowa³ inne czêœci programu (MR)
 	}
 
 	public Properties getMctBox() {

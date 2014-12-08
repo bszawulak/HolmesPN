@@ -472,6 +472,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			//invariantsINA = new INAinvariants();
 			//invariantsINA.read(sciezka);
 			communicationProtocol = new INAprotocols();
+			communicationProtocol.readINV(sciezka);
 		} catch (Throwable err) {
 			err.printStackTrace();
 		}
@@ -698,7 +699,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if (invariantsBinaryList.get(0).size() == getTransitions().size()) {
 				ArrayList<InvariantTransition> currentInvariant;
 				//int count = 0;
-				int i;
+				int i; //iterator po tranzycjach sieci
 				for (ArrayList<Integer> binaryInvariant : invariantsBinaryList) {
 					currentInvariant = new ArrayList<InvariantTransition>();
 					i = 0;

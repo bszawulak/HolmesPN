@@ -25,7 +25,7 @@ public abstract class Node extends PetriNetElement {
 
 	/*
 	 * UWAGA!!! NIE WOLNO ZMIENIAÆ NAZW, DODAWAÆ LUB USUWAÆ PÓL TEJ KLASY
-	 * (przestanie byæ mo¿liwe wczytywanie zapisanych proejktów .abyss)
+	 * (przestanie byæ mo¿liwe wczytywanie zapisanych projektów .abyss)
 	 */
 	
 	@ElementList
@@ -54,20 +54,33 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Konstruktor obiektu klasy Node.
+	 * Konstruktor obiektu klasy Node. Jest wywo³ywany miêdzy innymi w czasie tworzenia portalu,
+	 * tj. wtedy, kiedy jeden wêze³ sieci ma 2 lub wiêcej lokalizacji
 	 * @param nodeId int - identyfikator elementu sieci Petriego
-	 * @param elementLocations ArrayList[ElementLocation] - lista lokacji elementu sieci Petriego
+	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji elementu sieci Petriego
 	 * @param radius int - promieñ okrêgu, na którym opisana jest figura 
 	 * 				geometryczna reprezentuj¹ca obiekt w edytorze graficznym
 	 */
 	public Node(int nodeId, ArrayList<ElementLocation> elementLocations, int radius) {
 		this.setRadius(radius);
 		this.setID(nodeId);
+		/*
+		 * Poni¿ej, dla wszystkich lokalizacji w elemenLocations a co za tym idzie
+		 * dla wszystkich przes³anych wewn¹trz tej tablicy wêz³ów, s¹ one podmieniane
+		 * na aktualnie tworzony konstruktorem - czyli np. jeœli przysz³y tu dane 3
+		 * starych tranzycji o id 1, 2, 3, s¹ one podmieniane na w³aœnie konstruowany
+		 * obiekt, o innym ID i innych danych - jest to ten sam portal.
+		 */
 		for (ElementLocation el : elementLocations)
 			el.setParentNode(this);
+		/*
+		 * Tablica elementLocations zawiera kolekcje ³uków wejœciowych i wyjœciowych, 
+		 * tak wiêc powy¿sze podmienienie ParentNode nie wp³ywa na nie - zostaj¹ takie,
+		 * jakie by³y dla starych kilku wêz³ów zmienianych w portal
+		 */
 		this.setNodeLocations(elementLocations);
-		if (elementLocations.size() > 1) {
-			isPortal = true;
+		if (elementLocations.size() > 1) { // oczywiœcie konstruktor mo¿e te¿ tworzyæ zwyk³y wêze³
+			setPortal(true); //skoro po coœ ta metoda w ogóle powsta³a...
 		}
 	}
 
@@ -270,8 +283,8 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ listê wszystkich lokacji wierzcho³ka.
-	 * @param ArrayList[ElementLocation] nodeLocations - lista lokalizacji wierzcho³ka
+	 * Metoda pozwala ustawiæ listê wszystkich lokalizacji wierzcho³ka.
+	 * @param ArrayList[ElementLocation] nodeLocations - lista nowucj lokalizacji wierzcho³ka
 	 */
 	public void setNodeLocations(ArrayList<ElementLocation> nodeLocations) {
 		this.setElementLocations(nodeLocations);
@@ -339,7 +352,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Zwraca wartoœc identyfikatora wêz³a.
+	 * Zwraca wartoœæ identyfikatora wêz³a.
 	 * @return String - ³añcuch znaków ID
 	 */
 	public String toString() {
@@ -348,16 +361,16 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda zwraca lokalizacjê obiektu.
-	 * @return ArrayList[ElementLocation] - wspo³rzêdne
+	 * Metoda zwraca lokalizacjê obiektu - portalu.
+	 * @return ArrayList[ElementLocation] - tablica wspo³rzêdnych portalu
 	 */
 	public ArrayList<ElementLocation> getElementLocations() {
 		return elementLocations;
 	}
 
 	/**
-	 * Metoda ustawia lokalizacjê obiektu 
-	 * @param elementLocations ArrayList[ElementLocation] - obiekt lokalizacji wêz³a
+	 * Metoda ustawia nowe lokalizacje obiektu - portalu
+	 * @param elementLocations ArrayList[ElementLocation] - tablica lokalizacji wêz³a - portalu
 	 */
 	public void setElementLocations(ArrayList<ElementLocation> elementLocations) {
 		this.elementLocations = elementLocations;

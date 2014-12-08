@@ -246,6 +246,14 @@ public class TimeTransition extends Transition {
 			minFireTime = 0.001;
 		this.minFireTime = minFireTime;
 	}
+	
+	/**
+	 * Metoda pozwala odczytaæ przypisany czas EFT tranzycji.
+	 * @return double - czas EFT
+	 */
+	public double getMinFireTime() {
+		return this.minFireTime;
+	}
 
 	/**
 	 * Metoda ustala górny limit nieujemnego czasu krytycznego - LFT.
@@ -257,6 +265,14 @@ public class TimeTransition extends Transition {
 		this.maxFireTime = maxFireTime;
 	}
 
+	/**
+	 * Metoda pozwala odczytaæ przypisany czas LFT tranzycji.
+	 * @return double - czas LFT
+	 */
+	public double getMaxFireTime() {
+		return this.maxFireTime;
+	}
+	
 	/**
 	 * Metoda ta zwraca czas dla danej tranzcji.
 	 * @return double - czas dla tranzycji - pole absoluteFireTime
