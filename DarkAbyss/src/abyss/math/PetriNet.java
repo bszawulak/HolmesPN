@@ -74,6 +74,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public PetriNet(ArrayList<Node> nod, ArrayList<Arc> ar) {
 		getData().nodes = nod;
 		getData().arcs = ar;
+		communicationProtocol = new INAprotocols();
 	}
 
 	/**
@@ -85,6 +86,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.workspace = workspace;
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
 		this.setAnalyzer(new DarkAnalyzer(this));
+		communicationProtocol = new INAprotocols();
 	}
 
 	/**
@@ -136,7 +138,19 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public ArrayList<Arc> getArcs() {
 		return this.getData().arcs;
 	}
-
+	
+	/**
+	 * Metoda powoduje ustawienie w projekcie listy wierzcho³ków ArrayList[Node]
+	 * oraz listy ³uków ArrayList[Arc] z których zostanie zbudowana sieæ. Zmiana
+	 * ta zostaje automatycznie rozpropagowana na wszystkie arkusze w projekcie.
+	 * @param arcs ArrayList[Arc] - nowa lista ³uków
+	 * @param nodes ArrayList[Node] - nowa lista wierzcho³ków
+	 */
+	public void addArcsAndNodes(ArrayList<Arc> arcs, ArrayList<Node> nodes) {
+		this.getArcs().addAll(arcs);
+		this.getNodes().addAll(nodes);
+	}
+	
 	/**
 	 * Metoda pozwala ustawiæ nowe ³uki dla danej sieci. Zmiana
 	 * ta zostaje automatycznie rozpropagowana do wszystkich .
@@ -146,6 +160,215 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.getData().arcs = arcs;
 		for (GraphPanel gp : this.getGraphPanels())
 			gp.setArcs(this.getData().arcs);
+	}
+
+	/**
+	 * Metoda pozwala pobraæ listê wszystkich wierzcho³ków Node zawartych w projekcie.
+	 * @return ArrayList[Node] - lista wierzcho³ków sieci
+	 */
+	public ArrayList<Node> getNodes() {
+		return this.getData().nodes;
+	}
+	
+	/**
+	 * Metoda pozwala ustawiæ aktualny tryb rysowania definiowany przez typ DrawModes.
+	 * Zmiana ta zostaje rozpropagowana  na wszystkie arkusze, przez co zmiana trybu
+	 * rysowania staje siê globalna.
+	 * @param mode DrawModes - nowy tryb rysowania
+	 */
+	public void setDrawMode(DrawModes mode) {
+		this.drawMode = mode;
+		for (GraphPanel gp : this.getGraphPanels())
+			gp.setDrawMode(mode);
+	}
+
+	/**
+	 * Metoda pobiera aktualny tryb rysowania definiowany przez tryb DrawModes.
+	 * @return DrawModes - tryb rysowania
+	 */
+	public DrawModes getDrawMode() {
+		return this.drawMode;
+	}
+	
+	/**
+	 * Metoda zwracaj¹ca handler oczytu pliku sieci.
+	 * @return NetHandler - obiekt dla parsera w czasie czytania pliku
+	 */
+	public NetHandler getHandler() {
+		return handler;
+	}
+
+	/**
+	 * Metoda zwraca numer generatora identyfikatorów
+	 * @return IdGenerator - obiekt generatora
+	 */
+	public IdGenerator getIdGenerator() {
+		return idGenerator;
+	}
+
+	/**
+	 * Metoda ustawia nowy generator identyfikatorów elementów sieci.
+	 * @param idGenerator IdGenerator - nowy generator
+	 */
+	public void setIdGenerator(IdGenerator idGenerator) {
+		this.idGenerator = idGenerator;
+	}
+
+	/**
+	 * Metoda zwracaj¹ca obiekt w ramach którego dzia³a aktualna sieæ.
+	 * @return Workspace - obiekt zawieraj¹cy obiekt sieci.
+	 */
+	public Workspace getWorkspace() {
+		return workspace;
+	}
+
+	/**
+	 * Metoda ustawia nowy obiekt w ramach którego dzia³a sieæ Petriego.
+	 * @param workspace Workspace - jak wy¿ej
+	 */
+	public void setWorkspace(Workspace workspace) {
+		this.workspace = workspace;
+	}
+
+	/**
+	 * Metoda ustawia obiekt nas³uchuj¹cy o zmianach na sieci.
+	 * @param a SelectionActionListener - obiekt nas³ucjuj¹cy
+	 */
+	public void addActionListener(SelectionActionListener a) {
+		this.actionListeners.add(a);
+	}
+
+	/**
+	 * Metoda aktywuj¹ca obiekty nas³uchuj¹ce sieci.
+	 * @param e SelectionActionEvent - obiekty nas³uchuj¹ce
+	 */
+	private void invokeActionListeners(SelectionActionEvent e) {
+		for (SelectionActionListener a : this.actionListeners)
+			a.actionPerformed(e);
+	}
+
+	/**
+	 * Metoda bêd¹ca implementacj¹ interfejsu SelectionActionListener,
+	 * wywo³ywana dla zajœcia zdarzanie zmiany znaczenia na którymkolwiek z
+	 * arkuszy GraphPan) zawartych w projekcie, dla których obiekt klasy PetriNet
+	 * jest domyœlnym obiektem nas³uchuj¹cym. Zdarzenie jest propagowane dalej, 
+	 * przekazuj¹c o nim informacje do innych elementów frameworku, jak np. Properties.
+	 * @param arg0 SelectionActionEvent -  zdarzenie przekazuj¹ce informacje o zaznaczonych obiektach
+	 */
+	public void actionPerformed(SelectionActionEvent arg0) {
+		this.invokeActionListeners(arg0);
+	}
+
+	/**
+	 * Metoda pozwala na pobrania aktualnego obiektu symulatora Netsimulator
+	 * dla bie¿¹cego projektu
+	 * @return NetSimulator - symulator
+	 */
+	public NetSimulator getSimulator() {
+		return simulator;
+	}
+	
+	/**
+	 * Metoda pozwala na ustawienie symulatora NetSimulator dla bie¿¹cego projektu
+	 * @param simulator NetSimulator - nowy symulator
+	 */
+	public void setSimulator(NetSimulator simulator) {
+		this.simulator = simulator;
+	}
+	
+	/**
+	 * Metoda zwraca obiekt symulatora inwariantów w ramach sieci.
+	 * @return InvariantsSimulator - symulator inwariantów
+	 */
+	public InvariantsSimulator getInvSimulator() {
+		return invSimulator;
+	}
+
+	/**
+	 * Metoda zwracaj¹ca obiekt analizatora, np. na potrzeby generacji MCT.
+	 * @return DarkAnalyzer - obiekt analizatora
+	 */
+	public DarkAnalyzer getAnalyzer() {
+		return analyzer;
+	}
+
+	/**
+	 * Metoda ustawiaj¹ca aktualny analizator dla obiektu sieci.
+	 * @param analyzer DarkAnalyzer - analizator dla sieci
+	 */
+	private void setAnalyzer(DarkAnalyzer analyzer) {
+		this.analyzer = analyzer;
+	}
+	
+	/**
+	 * Metoda zwraca tablicê arkuszy sieci.
+	 * @return ArrayList[GraphPanel] - lista arkuszy.
+	 */
+	public ArrayList<GraphPanel> getGraphPanels() {
+		return graphPanels;
+	}
+
+	/**
+	 * Metoda ustawiaj¹ca tablicê arkuszy sieci.
+	 * @param graphPanels ArrayList[GraphPanel] - arkusze sieci
+	 */
+	public void setGraphPanels(ArrayList<GraphPanel> graphPanels) {
+		this.graphPanels = graphPanels;
+	}
+
+	/**
+	 * Metoda zwracaj¹ca pe³ne dane sieci - wierzcho³ki i ³uki.
+	 * @return PetriNetData - wierzcho³ki i ³uki sieci
+	 */
+	public PetriNetData getData() {
+		return data;
+	}
+
+	/**
+	 * Metoda ustawiaj¹ca pe³ne dane sieci - wierzcho³ki i ³uki.
+	 * @param data PetriNetData - wierzcho³ki i ³uki sieci
+	 */
+	public void setData(PetriNetData data) {
+		this.data = data;
+	}
+	
+	/**
+	 * Klonowanie obiektu klasy PetriNet.
+	 */
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+	
+	/**
+	 * Metoda ustawiaj¹ca macierz inwariantów sieci.
+	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
+	 */
+	public void setInvariantsList(ArrayList<ArrayList<InvariantTransition>> invariants) {
+		this.invariants = invariants;
+	}
+	
+	/**
+	 * Metoda zwracaj¹ca listê inwariantów sieci.
+	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
+	 */
+	public ArrayList<ArrayList<InvariantTransition>> getInvariantsList() {
+		return invariants;
+	}
+
+	/**
+	 * Metoda zwracaj¹ca obiekt analizatora w³aœciwoœci sieci.
+	 * @return NetPropAnalyzer - obiekt analizatora w³aœciwoœci
+	 */
+	public NetPropAnalyzer getNetPropAnal() {
+		return netPropAna;
+	}
+	
+	/**
+	 * Metoda ustawiaj¹ca nowy analizator w³aœciwoœci sieci.
+	 * @param netPropAnal NetPropAnalyzer - analizator w³aœciwoœci
+	 */
+	public void setNetPropAna(NetPropAnalyzer netPropAnal) {
+		this.netPropAna = netPropAnal;
 	}
 
 	/**
@@ -204,6 +427,17 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
+	 * Metoda zwraca obiekt g³ównego komunikatora obiektu sieci, zawieraj¹cego
+	 * metody I/O dla programu / formatu INA.
+	 * @return INAprotocols - obiekt klasy odpowiedzialnej za pliki
+	 */
+	public INAprotocols getCommunicator() {
+		return communicationProtocol;
+	}
+	
+	//*********************************************************************************
+
+	/**
 	 * Metoda wy³¹czaj¹ca œwiecenie tranzycji np. w ramach aktywacji niezmiennika.
 	 */
 	public void turnTransitionGlowingOff() {
@@ -211,26 +445,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			gp.getSelectionManager().removeTransitionsGlowing();
 			gp.repaint();
 		}
-	}
-
-	/**
-	 * Metoda powoduje ustawienie w projekcie listy wierzcho³ków ArrayList[Node]
-	 * oraz listy ³uków ArrayList[Arc] z których zostanie zbudowana sieæ. Zmiana
-	 * ta zostaje automatycznie rozpropagowana na wszystkie arkusze w projekcie.
-	 * @param arcs ArrayList[Arc] - nowa lista ³uków
-	 * @param nodes ArrayList[Node] - nowa lista wierzcho³ków
-	 */
-	public void addArcsAndNodes(ArrayList<Arc> arcs, ArrayList<Node> nodes) {
-		this.getArcs().addAll(arcs);
-		this.getNodes().addAll(nodes);
-	}
-
-	/**
-	 * Metoda pozwala pobraæ listê wszystkich wierzcho³ków Node zawartych w projekcie.
-	 * @return ArrayList[Node] - lista wierzcho³ków sieci
-	 */
-	public ArrayList<Node> getNodes() {
-		return this.getData().nodes;
 	}
 
 	/**
@@ -281,26 +495,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				return true;
 			}
 		return false;
-	}
-
-	/**
-	 * Metoda pozwala ustawiæ aktualny tryb rysowania definiowany przez typ DrawModes.
-	 * Zmiana ta zostaje rozpropagowana  na wszystkie arkusze, przez co zmiana trybu
-	 * rysowania staje siê globalna.
-	 * @param mode DrawModes - nowy tryb rysowania
-	 */
-	public void setDrawMode(DrawModes mode) {
-		this.drawMode = mode;
-		for (GraphPanel gp : this.getGraphPanels())
-			gp.setDrawMode(mode);
-	}
-
-	/**
-	 * Metoda pobiera aktualny tryb rysowania definiowany przez tryb DrawModes.
-	 * @return DrawModes - tryb rysowania
-	 */
-	public DrawModes getDrawMode() {
-		return this.drawMode;
 	}
 
 	/**
@@ -361,8 +555,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void saveToFile(String sciezka) {
 		if (sciezka.endsWith(".pnt")) {
 			sciezka = sciezka.substring(0, sciezka.length() - 4);
-			communicationProtocol = new INAprotocols();
-			communicationProtocol.write(sciezka, getPlaces(), getTransitions(), getArcs());
+			//communicationProtocol = new INAprotocols();
+			communicationProtocol.writePNT(sciezka, getPlaces(), getTransitions(), getArcs());
 			//writerINA = new INAwriter();
 			//writerINA.write(sciezka, getPlaces(), getTranstions(), getArcs());
 		}
@@ -416,11 +610,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 			// Format INY
 			if (sciezka.endsWith(".pnt")) {
-				communicationProtocol = new INAprotocols();
+				//communicationProtocol = new INAprotocols();
 				communicationProtocol.readPNT(sciezka);
-				//readerINA2 = new INAreader();
-				//readerINA2.read(sciezka);
-
 				addArcsAndNodes(communicationProtocol.getArcArray(),communicationProtocol.getNodeArray());
 			}
 		} catch (Throwable err) {
@@ -432,18 +623,36 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda zapisuj¹ca inwarianty do pliku w formacie INA
 	 * @param path String - œcie¿ka do pliku zapisu
 	 */
-	public void writeInvariantsToInaFormat(String path) {
+	public void saveInvariantsToInaFormat(String path) {
 		try {
 			if (genInvariants != null) {
-				communicationProtocol = new INAprotocols();
+				//communicationProtocol = new INAprotocols();
 				communicationProtocol.writeINV(path, genInvariants, getTransitions());
 				//inaIw = new INAinvariantsWriter();
 				//inaIw.write(path, genInvariants, getTranstions());
+				JOptionPane.showMessageDialog(null,
+						"Invariants saved to file:\n"+path,
+						"Success",JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"There are no invariants to export",
 						"Uwaga!  Achtung!  Attention!",JOptionPane.WARNING_MESSAGE);
 			}
+		} catch (Throwable err) {
+			err.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Metoda wczytuj¹ca plik inwariantów z pliku .inv
+	 * @param sciezka String - œcie¿ka do pliku INA
+	 */
+	public void loadInvariantsFromFile(String sciezka) {
+		try {
+			//invariantsINA = new INAinvariants();
+			//invariantsINA.read(sciezka);
+			//communicationProtocol = new INAprotocols();
+			communicationProtocol.readINV(sciezka);
 		} catch (Throwable err) {
 			err.printStackTrace();
 		}
@@ -462,62 +671,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			err.printStackTrace();
 		}
 	}
-
-	/**
-	 * Metoda wczytuj¹ca plik inwariantów z pliku .inv
-	 * @param sciezka String - œcie¿ka do pliku INA
-	 */
-	public void loadInvariantsFromFile(String sciezka) {
-		try {
-			//invariantsINA = new INAinvariants();
-			//invariantsINA.read(sciezka);
-			communicationProtocol = new INAprotocols();
-			communicationProtocol.readINV(sciezka);
-		} catch (Throwable err) {
-			err.printStackTrace();
-		}
-	}
-
-	/**
-	 * Metoda zwracaj¹ca handler oczytu pliku sieci.
-	 * @return NetHandler - obiekt dla parsera w czasie czytania pliku
-	 */
-	public NetHandler getHandler() {
-		return handler;
-	}
-
-	/**
-	 * Metoda zwraca numer generatora identyfikatorów
-	 * @return IdGenerator - obiekt generatora
-	 */
-	public IdGenerator getIdGenerator() {
-		return idGenerator;
-	}
-
-	/**
-	 * Metoda ustawia nowy generator identyfikatorów elementów sieci.
-	 * @param idGenerator IdGenerator - nowy generator
-	 */
-	public void setIdGenerator(IdGenerator idGenerator) {
-		this.idGenerator = idGenerator;
-	}
-
-	/**
-	 * Metoda zwracaj¹ca obiekt w ramach którego dzia³a aktualna sieæ.
-	 * @return Workspace - obiekt zawieraj¹cy obiekt sieci.
-	 */
-	public Workspace getWorkspace() {
-		return workspace;
-	}
-
-	/**
-	 * Metoda ustawia nowy obiekt w ramach którego dzia³a sieæ Petriego.
-	 * @param workspace Workspace - jak wy¿ej
-	 */
-	public void setWorkspace(Workspace workspace) {
-		this.workspace = workspace;
-	}
-
+	
 	/**
 	 * Metoda przerysowuj¹ca arkusze wyœwietlaj¹ce wszystkie czêœci sieci.
 	 */
@@ -528,59 +682,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		}
 	}
 
-	/**
-	 * Metoda ustawia obiekt nas³uchuj¹cy o zmianach na sieci.
-	 * @param a SelectionActionListener - obiekt nas³ucjuj¹cy
-	 */
-	public void addActionListener(SelectionActionListener a) {
-		this.actionListeners.add(a);
-	}
-
-	/**
-	 * Metoda aktywuj¹ca obiekty nas³uchuj¹ce sieci.
-	 * @param e SelectionActionEvent - obiekty nas³uchuj¹ce
-	 */
-	private void invokeActionListeners(SelectionActionEvent e) {
-		for (SelectionActionListener a : this.actionListeners)
-			a.actionPerformed(e);
-	}
-
-	/**
-	 * Metoda bêd¹ca implementacj¹ interfejsu SelectionActionListener,
-	 * wywo³ywana dla zajœcia zdarzanie zmiany znaczenia na którymkolwiek z
-	 * arkuszy GraphPan) zawartych w projekcie, dla których obiekt klasy PetriNet
-	 * jest domyœlnym obiektem nas³uchuj¹cym. Zdarzenie jest propagowane dalej, 
-	 * przekazuj¹c o nim informacje do innych elementów frameworku, jak np. Properties.
-	 * @param arg0 SelectionActionEvent -  zdarzenie przekazuj¹ce informacje o zaznaczonych obiektach
-	 */
-	public void actionPerformed(SelectionActionEvent arg0) {
-		this.invokeActionListeners(arg0);
-	}
-
-	/**
-	 * Metoda pozwala na pobrania aktualnego obiektu symulatora Netsimulator
-	 * dla bie¿¹cego projektu
-	 * @return NetSimulator - symulator
-	 */
-	public NetSimulator getSimulator() {
-		return simulator;
-	}
-	
-	/**
-	 * Metoda zwraca obiekt symulatora inwariantów w ramach sieci.
-	 * @return InvariantsSimulator - symulator inwariantów
-	 */
-	public InvariantsSimulator getInvSimulator() {
-		return invSimulator;
-	}
-
-	/**
-	 * Metoda pozwala na ustawienie symulatora NetSimulator dla bie¿¹cego projektu
-	 * @param simulator NetSimulator - nowy symulator
-	 */
-	public void setSimulator(NetSimulator simulator) {
-		this.simulator = simulator;
-	}
 
 	/**
 	 * Metoda pozwala na pobranie stanu symulacji. W sytuacji gdy jest ona aktywna
@@ -618,22 +719,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.isSimulationActive = isSimulationActive;
 		for (GraphPanel g : this.getGraphPanels())
 			g.setSimulationActive(isSimulationActive);
-	}
-
-	/**
-	 * Metoda zwracaj¹ca obiekt analizatora, np. na potrzeby generacji MCT.
-	 * @return DarkAnalyzer - obiekt analizatora
-	 */
-	public DarkAnalyzer getAnalyzer() {
-		return analyzer;
-	}
-
-	/**
-	 * Metoda ustawiaj¹ca aktualny analizator dla obiektu sieci.
-	 * @param analyzer DarkAnalyzer - analizator dla sieci
-	 */
-	private void setAnalyzer(DarkAnalyzer analyzer) {
-		this.analyzer = analyzer;
 	}
 
 	/**
@@ -690,37 +775,26 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public ArrayList<ArrayList<InvariantTransition>> getInvariants() {
 		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
 		InvariantTransition currentTransition;
-		//invariantsBinaryList = invariantsINA.getInvariantsList();
 		invariantsBinaryList = communicationProtocol.getInvariantsList();
 		setInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
 		SettingsManager.log("start logging");
-		//String invariantLog = new String("");
 		if (invariantsBinaryList.size() > 0) {
 			if (invariantsBinaryList.get(0).size() == getTransitions().size()) {
 				ArrayList<InvariantTransition> currentInvariant;
-				//int count = 0;
 				int i; //iterator po tranzycjach sieci
 				for (ArrayList<Integer> binaryInvariant : invariantsBinaryList) {
 					currentInvariant = new ArrayList<InvariantTransition>();
 					i = 0;
-					// SettingsManager.log("next invariant");
-					//String invariantLog = new String("");
 					for (Integer amountOfFirings : binaryInvariant) {
 						if (amountOfFirings > 0) {
-							// invariantLog += " " + amountOfFirings.toString();
 							currentTransition = new InvariantTransition(
 									getTransitions().get(i), amountOfFirings);
-							// invariantLog += " " + amountOfFirings.toString();
 							currentInvariant.add(currentTransition);
-							// invariantLog += " " +
-							// currentInvariant.get(currentInvariant.size()-1).getAmountOfFirings().toString();
 						}
 						i++;
 					}
-					// if (count < 5)
 					// SettingsManager.log(invariantLog);
 					getInvariantsList().add(currentInvariant);
-					//count++;
 				}
 			} else {
 				JOptionPane
@@ -792,22 +866,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda zwraca tablicê arkuszy sieci.
-	 * @return ArrayList[GraphPanel] - lista arkuszy.
-	 */
-	public ArrayList<GraphPanel> getGraphPanels() {
-		return graphPanels;
-	}
-
-	/**
-	 * Metoda ustawiaj¹ca tablicê arkuszy sieci.
-	 * @param graphPanels ArrayList[GraphPanel] - arkusze sieci
-	 */
-	public void setGraphPanels(ArrayList<GraphPanel> graphPanels) {
-		this.graphPanels = graphPanels;
-	}
-
-	/**
 	 * Metoda ustawia podœwietlanie zbiorów MCT.
 	 * @param isGlowedMTC boolean - true jeœli MCT ma byæ podœwietlony
 	 */
@@ -818,39 +876,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
 				((TimeTransition) n).setGlowedMTC(isGlowedMTC);
 	}
-
-	/**
-	 * Metoda zwracaj¹ca pe³ne dane sieci - wierzcho³ki i ³uki.
-	 * @return PetriNetData - wierzcho³ki i ³uki sieci
-	 */
-	public PetriNetData getData() {
-		return data;
-	}
-
-	/**
-	 * Metoda ustawiaj¹ca pe³ne dane sieci - wierzcho³ki i ³uki.
-	 * @param data PetriNetData - wierzcho³ki i ³uki sieci
-	 */
-	public void setData(PetriNetData data) {
-		this.data = data;
-	}
-
-	/**
-	 * Metoda zwracaj¹ca obiekt analizatora w³aœciwoœci sieci.
-	 * @return NetPropAnalyzer - obiekt analizatora w³aœciwoœci
-	 */
-	public NetPropAnalyzer getNetPropAnal() {
-		return netPropAna;
-	}
-
-	/**
-	 * Metoda ustawiaj¹ca nowy analizator w³aœciwoœci sieci.
-	 * @param netPropAnal NetPropAnalyzer - analizator w³aœciwoœci
-	 */
-	public void setNetPropAna(NetPropAnalyzer netPropAnal) {
-		this.netPropAna = netPropAnal;
-	}
-
+	
 	/**
 	 * Metoda rozpoczynaj¹ca proces symulatora wykonañ inwariantów.
 	 * @param type int - typ symulacji: 0 - zwyk³a, 1 - czasowa
@@ -866,29 +892,5 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 						getData().nodes, getData().arcs), getInvariantsList(),type, value);
 
 		invSimulator.startSimulation(SimulatorMode.LOOP);
-		
-	}
-
-	/**
-	 * Klonowanie obiektu klasy PetriNet.
-	 */
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
-	/**
-	 * Metoda zwracaj¹ca listê inwariantów sieci.
-	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
-	 */
-	public ArrayList<ArrayList<InvariantTransition>> getInvariantsList() {
-		return invariants;
-	}
-
-	/**
-	 * Metoda ustawiaj¹ca macierz inwariantów sieci.
-	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
-	 */
-	public void setInvariantsList(ArrayList<ArrayList<InvariantTransition>> invariants) {
-		this.invariants = invariants;
 	}
 }

@@ -184,7 +184,7 @@ public class NetSimulator {
 		if (simulationType == NetType.BASIC)
 			for (i = 0; i < allTransitions.size(); i++) {
 				Transition transition = allTransitions.get(indexList.get(i));
-				if (transition.isActive())
+				if (transition.isActive() )
 					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // why 4?
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);

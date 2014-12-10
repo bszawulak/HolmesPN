@@ -71,12 +71,12 @@ public class NetHandler_Classic extends NetHandler {
 	 * @param attributes - atrybut elementu
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		System.out.print("uri  ");
-		System.out.println(uri);
-		System.out.print("localName  ");
-		System.out.println(localName);
-		System.out.print("qName  ");
-		System.out.println(qName);
+		//System.out.print("uri  ");
+		//System.out.println(uri);
+		//System.out.print("localName  ");
+		//System.out.println(localName);
+		//System.out.print("qName  ");
+		//System.out.println(qName);
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
 			nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().checkSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();

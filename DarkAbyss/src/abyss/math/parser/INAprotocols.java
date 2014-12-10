@@ -25,8 +25,8 @@ import abyss.math.PetriNetElement.PetriNetElementType;
 /**
  * Klasa odpowiedzialna za protoko³y komunikacyjne z programem INA. Precyzyjnie,
  * posiada ona metody zapisu i odczytu plików sieci i niezmienników programu INA.
- * @author students
- * @author MR - integracja w jedn¹ klasê
+ * @author students - pierwsze wersje metod 4 klas
+ * @author MR - integracja w jedn¹ klasê, writeINV - przeróbka, aby w ogóle dzia³a³o
  *
  */
 public class INAprotocols {
@@ -70,24 +70,26 @@ public class INAprotocols {
 			// mnie nie slucha (student)	
 			// brzydka, niedobra INA... (MR)
 			
-			if (wczytanaLinia
-					.contains("transition sub/sur/invariants for net 0.t               :")) {
+			if (wczytanaLinia.contains("transition sub/sur/invariants for net")) {
 			}
+			
 			buffer.readLine();
-			if (wczytanaLinia.contains("semipositive transition invariants =")) {
+			while (!wczytanaLinia.contains("semipositive transition invariants =")) {
+				wczytanaLinia = buffer.readLine();
 			}
 			buffer.readLine();
 			//System.out.println("Etap I");
 			// Etap I - ilosc tranzycji/miejsc
-			while (!(wczytanaLinia = buffer.readLine()).endsWith("~~~~~~~~~~~~~~~~~~~~~~~~")) {
-				if(wczytanaLinia.endsWith("~~~~~~~~~~~~~~~~~~~~~~~~")){break;}
+			while (!(wczytanaLinia = buffer.readLine()).endsWith("~~~~~~~~~~~")) {
+				if(wczytanaLinia.endsWith("~~~~~~~~~~~")){break;}
 				String[] sformatowanaLinia = wczytanaLinia.split(" ");
 				//System.out.println(wczytanaLinia);
 				for (int j = 0; j < sformatowanaLinia.length; j++) {
-					if ((sformatowanaLinia[j].isEmpty())
-							|| sformatowanaLinia[j].contains("Nr.")) {
+					if ((sformatowanaLinia[j].isEmpty()) || sformatowanaLinia[j].contains("Nr.")) {
 					} else {
-						nodesList.add(Integer.parseInt(sformatowanaLinia[j]));
+						try {
+							nodesList.add(Integer.parseInt(sformatowanaLinia[j]));
+						} catch (NumberFormatException e) {}
 					}
 				}
 			}
@@ -122,14 +124,14 @@ public class INAprotocols {
 	 * @param transitions - lista tranzycji
 	 */
 	public void writeINV(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
-		String buffor = "transition sub/sur/invariants for net 0.";
+		String buffor = "transition sub/sur/invariants for net 0.t";
 		try {
 			String extension = "";
 			if(!path.contains(".inv"))
 				extension = ".inv";
 			PrintWriter pw = new PrintWriter(path + extension);
 
-			buffor += getNazwaPliku(path);
+			//buffor += getNazwaPliku(path);
 			buffor += "\r\n";
 			buffor += "\r\n";
 			// Dod pokrycie
@@ -138,34 +140,44 @@ public class INAprotocols {
 			buffor += "Nr.      ";
 
 			//int[] tabTransitions = new int[transitions.size()];
+			int delimiter = 13;
+			if(transitions.size() < 100)
+				delimiter = 17;
+			int multipl = 1;
+			int transNo = invariants.get(0).size();
+			
 			for (int i = 0; i < transitions.size(); i++) {
 				
-				if (i <= 9)
-					buffor += " ";
-				if (i <= 99)
-					buffor += " ";
-				if (i <= 999)
-					buffor += " ";
-				buffor += i;
+				//if (i <= 9) buffor += " ";
+				//if (i <= 99) buffor += " ";
+				//if (i <= 999) buffor += " ";
+				if(transNo >= 100)
+					buffor += conIntToStr(true,i);
+				else
+					buffor += conIntToStr(false,i);
+				//buffor += i;
 
-				if (i == 16) {
+				if (i == (multipl*delimiter) - 1) {
 					buffor += "\r\n";
 					buffor += "        ";
+					multipl++;
 				}
 			}
 			buffor += "\r\n";
-			// if(transitions.size()>=17)
-			// {
-			// buffor +=
-			// "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
-
-			// }else
-			buffor += "~~~~~~~~~";
-			for (int t = 0; t < transitions.size(); t++)
-				buffor += "~~~~";
+			
+			buffor += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
 			buffor += "\r\n";
 
+			
+			
+			
 			for (int i = 0; i < invariants.size(); i++) {
+				
+				if(transNo >= 100) {
+					buffor += conIntToStr(true,i) + " |   ";
+				} else
+					buffor += conIntToStr(false,i) + " |   ";
+				/*
 				if (i <= 9)
 					buffor += " ";
 				if (i <= 99)
@@ -173,20 +185,26 @@ public class INAprotocols {
 				if (i <= 999)
 					buffor += " ";
 				buffor += i;
-				buffor += " |   ";
-
+				buffor += " |   "; //zawsze 3 bazowo
+				*/
+				
+				multipl = 1;
 				for (int t = 0; t < invariants.get(i).size(); t++) {
 					int tr = invariants.get(i).get(t);
-					if (tr <= 9)
-						buffor += " ";
-					if (tr <= 99)
-						buffor += " ";
-					if (tr <= 999)
-						buffor += " ";
-					buffor += tr;
-					if (t == 16 && invariants.size() > 16) {
+
+					if (transNo >= 100)
+						buffor += conIntToStr(true, tr);
+					else
+						buffor += conIntToStr(false, tr);
+					//buffor += tr;
+					if (t == (multipl*delimiter)-1 ) { //&& invariants.size() > 16) {
 						buffor += "\r\n";
-						buffor += "     |   ";
+						//buffor += "     |   ";
+						if(transNo>=100)
+							buffor += "      |   ";
+						else
+							buffor += "     |   ";
+						multipl++;
 					}
 				}
 				buffor += "\r\n";
@@ -205,6 +223,28 @@ public class INAprotocols {
 			System.err.println("Error: " + e.getMessage());
 
 		}
+	}
+	
+	private String conIntToStr(boolean large, int tr) {
+		//String result = "";
+		if(large) {
+			if(tr<10)
+				return "    "+tr;
+			if(tr<100)
+				return "   "+tr;
+			if(tr<1000)
+				return "  "+tr;
+			else
+				return " "+tr;
+		} else { //smaller
+			if(tr<10)
+				return "   "+tr;
+			if(tr<100)
+				return "  "+tr;
+			else
+				return " "+tr;
+		}
+		//return result = " "+tr;
 	}
 
 	/**
@@ -502,7 +542,7 @@ public class INAprotocols {
 	 * @param transitionList - lista tranzycji sieci
 	 * @param arcList - lista ³uków sieci
 	 */
-	public void write(String sciezka, ArrayList<Place> placeList,
+	public void writePNT(String sciezka, ArrayList<Place> placeList,
 			ArrayList<Transition> transitionList, ArrayList<Arc> arcList) {
 		String zawartoscPliku = "P   M   PRE,POST  NETZ 0:";
 		try {
@@ -656,5 +696,10 @@ public class INAprotocols {
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 		}
+	}
+	
+	public void writeCharlieInv(String path, ArrayList<ArrayList<Integer>> invariants, 
+			ArrayList<Transition> transitions) {
+		
 	}
 }

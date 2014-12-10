@@ -21,6 +21,12 @@ import com.javadocking.dockable.DockingMode;
 import com.javadocking.drag.DragListener;
 import com.javadocking.visualizer.SingleMaximizer;
 
+/**
+ * Klasa odpowiedzialna za tworzenie paska narzêdzi zaraz poni¿ej paska menu
+ * programu.
+ * @author students
+ *
+ */
 public class Toolbar extends BorderDock {
 	private static final long serialVersionUID = 640320332920131092L;
 	private GUIManager guiManager;
@@ -32,7 +38,7 @@ public class Toolbar extends BorderDock {
 	private LineDock defaultVerticalToolBarDock;
 
 	// simulator buttons
-	ToolbarButtonAction przyciskI, przyciskII, loopSimButton,
+	ToolbarButtonAction reverseLoopButton, reverseStepButton, loopSimButton,
 			singleTransitionLoopSimButton, pauseSimButton, stopSimButton,
 			smallStepFwdSimButton, stepFwdSimButton;
 
@@ -41,6 +47,9 @@ public class Toolbar extends BorderDock {
 	ArrayList<ButtonDockable> simulationDockables;
 	ArrayList<ButtonDockable> analysisDockables;
 
+	/**
+	 * Konstruktor domyœlny obiektu klasy Toolbar.
+	 */
 	public Toolbar() {
 		guiManager = GUIManager.getDefaultGUIManager();
 		maximizePanel = guiManager.getMaximizer();
@@ -87,6 +96,11 @@ public class Toolbar extends BorderDock {
 		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(analysisDockables), new Position(2));
 	}
 
+	/**
+	 * Metoda odpowiedzialna za dodawanie nowych przycisków w poziomie do podanego kontenera.
+	 * @param buttons ArrayList[ButtonDockable] - tablica przycisków do dodania
+	 * @param horizontalToolBarDock LineDock - obiekt kontenera przycisków
+	 */
 	public void addAllButtonDockablesHorizontally(ArrayList<ButtonDockable> buttons, LineDock horizontalToolBarDock) {
 		int i = 0;
 		for (ButtonDockable button : buttons) {
@@ -96,15 +110,24 @@ public class Toolbar extends BorderDock {
 		}
 	}
 
-	public void addAllButtonDockablesVertically(
-			ArrayList<ButtonDockable> buttons) {
+	/**
+	 * Metoda odpowiedzialna za dodawanie nowych przycisków w pionie.
+	 * @param buttons ArrayList[ButtonDockable] - tablica przycisków do dodania
+	 */
+	public void addAllButtonDockablesVertically(ArrayList<ButtonDockable> buttons) {
 		int i = 0;
 		for (ButtonDockable button : buttons) {
-			addButtonVertically(button, i);
+			defaultVerticalToolBarDock.addDockable(button, new Position(i));
+			//addButtonVertically(button, i);
 			i++;
 		}
 	}
 
+	/**
+	 * Metoda dodaj¹ca przyciski w poziomie do domyœlnego kontenera przycisków.
+	 * @param buttons ArrayList[ButtonDockable] - tablica przycisków
+	 * @return LineDock - obiekt kontera przycisków
+	 */
 	public LineDock createHorizontalBarDock(ArrayList<ButtonDockable> buttons) {
 		LineDock horizontalToolBarDock = new LineDock();
 		int i = 0;
@@ -116,16 +139,9 @@ public class Toolbar extends BorderDock {
 		return horizontalToolBarDock;
 	}
 
-	//unused, zastapiona bezposrednim poleceniem MR
-	public void addButtonHorizontally(ButtonDockable button, int index,
-			LineDock horizontalToolBarDock) {
-		horizontalToolBarDock.addDockable(button, new Position(index));
-	}
-
-	public void addButtonVertically(ButtonDockable button, int index) {
-		defaultVerticalToolBarDock.addDockable(button, new Position(index));
-	}
-
+	/**
+	 * Metoda odpowiedzialna za tworzenie konkretnych instancji przycisków g³ównych.
+	 */
 	private void loadButtons() {
 		//nowa zak³adka
 		@SuppressWarnings("serial")
@@ -194,9 +210,13 @@ public class Toolbar extends BorderDock {
 	}
 
 	@SuppressWarnings("serial")
+	/**
+	 * Metoda odpowiedzialna za tworzenie tablicy przycisków symulatora.
+	 * @return ArrayList[ButtonDockable] - tablica zawieraj¹ca obiekty przycisków
+	 */
 	private ArrayList<ButtonDockable> createSimulationBar() {
 		ArrayList<ButtonDockable> simulationDockables = new ArrayList<ButtonDockable>();
-		przyciskI = new ToolbarButtonAction(this, "Loop back to oldest action saved",
+		reverseLoopButton = new ToolbarButtonAction(this, "Loop back to oldest action saved",
 			new ImageIcon( "resources/icons/toolbar/sim_back.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -204,9 +224,9 @@ public class Toolbar extends BorderDock {
 					.getSimulator().startSimulation(SimulatorMode.LOOP_BACK);
 			}
 		};
-		simulationDockables.add(createButtonDockable("ButtonDockableStepBack",przyciskI));
+		simulationDockables.add(createButtonDockable("ButtonDockableStepBack",reverseLoopButton));
 		
-		przyciskII = new ToolbarButtonAction(this,"Single action back simulation",
+		reverseStepButton = new ToolbarButtonAction(this,"Single action back simulation",
 				new ImageIcon("resources/icons/toolbar/sim_back_step.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -214,7 +234,7 @@ public class Toolbar extends BorderDock {
 					.getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
 			}
 		};
-		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepBack", przyciskII));
+		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepBack", reverseStepButton));
 		
 		loopSimButton = new ToolbarButtonAction(this,"Loop simulation",
 				new ImageIcon("resources/icons/toolbar/sim_start.png")) {
@@ -280,17 +300,22 @@ public class Toolbar extends BorderDock {
 	}
 	
 	@SuppressWarnings("serial")
+	/**
+	 * Metoda odpowiedzialna za tworzenie tablicy przycisków analizatora.
+	 * @return ArrayList[ButtonDockable] - tablica zawieraj¹ca obiekty przycisków
+	 */
 	private ArrayList<ButtonDockable> createAnalysisBar() {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
-		przyciskI = new ToolbarButtonAction(this, "Podpowiedz I", 
+		ToolbarButtonAction generateINAinvariants = new ToolbarButtonAction(this, "Generate INA Invariants", 
 				new ImageIcon( "resources/icons/toolbar/terminal.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().importProject();
+				GUIManager.getDefaultGUIManager().generateINAinvariants();
 			}
 		};
-		analysisDockables.add(createButtonDockable("Przycisk I",przyciskI));
-		przyciskII = new ToolbarButtonAction(this, "Podpowiedz przycisku II",
+		analysisDockables.add(createButtonDockable("GenerateINAinv",generateINAinvariants));
+		
+		ToolbarButtonAction xxx = new ToolbarButtonAction(this, "Podpowiedz przycisku II",
 				new ImageIcon("resources/icons/toolbar/terminal.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -298,7 +323,7 @@ public class Toolbar extends BorderDock {
 				//	.getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
 			}
 		};
-		analysisDockables.add(createButtonDockable("Przycisk II", przyciskII));
+		analysisDockables.add(createButtonDockable("Przycisk II", xxx));
 		
 		return analysisDockables;
 	}
@@ -331,7 +356,9 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Adds a drag listener on the content component of a dockable.
+	 * Metoda ustawia obiekt nas³uchuj¹cy, który monitoruje zdarzenia przeci¹gniêcia
+	 * grupy przycisków lub jednego z jednej lokalizacji w inn¹.
+	 * @param dockable Dockable - obiekt monitorowany
 	 */
 	private void createDockableDragger(Dockable dockable) {
 		// Create the dragger for the dockable.
@@ -340,14 +367,27 @@ public class Toolbar extends BorderDock {
 		dockable.getContent().addMouseMotionListener(dragListener);
 	}
 
+	/**
+	 * Metoda zwraca obiekt dokowalny kontenera przycisków.
+	 * @return BorderDock - obiekt
+	 */
 	public BorderDock getToolBarBorderDock() {
 		return toolBarBorderDock;
 	}
 
+	/**
+	 * Metoda ustawia nowy obiekt dokowalny kontenera przycisków.
+	 * @param toolBarBorderDock BorderDock - obiekt
+	 */
 	private void setToolBarBorderDock(BorderDock toolBarBorderDock) {
 		this.toolBarBorderDock = toolBarBorderDock;
 	}
 
+	/**
+	 * Metoda ta ustawia stan wszystkich przycisków symulatora poza dwoma: pauz¹
+	 * i przyciskiem zatrzymania symulacji.
+	 * @param enabled boolean - true, jeœli maj¹ byæ aktywne
+	 */
 	public void setEnabledSimulationInitiateButtons(boolean enabled) {
 		for (int i = 0; i < simulationDockables.size(); i++) {
 			if (i != 4 && i != 5) //4 i 5 to pauza i stop
@@ -356,8 +396,8 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * uaktywnia przyciski Pauza i Stop dla symulacji
-	 * @param enabled
+	 * Metoda ta uaktywnia przyciski Pauza i Stop dla symulacji.
+	 * @param enabled boolean - true jeœli Pauza i Stop maj¹ byæ aktywne
 	 */
 	public void setEnabledSimulationDisruptButtons(boolean enabled) {
 		simulationDockables.get(4).getContent().setEnabled(enabled);
@@ -365,8 +405,8 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Na pocz¹tku aktywne wszystkie przyciski poza dwoma: Pauza i Stop dla
-	 * symulatora
+	 * Metoda odpowiedzialna za to, ¿e aktywne s¹ wszystkie przyciski 
+	 * poza dwoma: Pauza i Stop dla symulatora
 	 */
 	public void allowOnlySimulationInitiateButtons() {
 		setEnabledSimulationInitiateButtons(true);
@@ -374,13 +414,16 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Uaktywnia tylko przyciski Pauzy i Stopu, reszta nieaktywna - gdy dzia³a symulacja
+	 * Metoda ta uaktywnia tylko przyciski Pauzy i Stopu, reszta nieaktywna - gdy dzia³a symulacja.
 	 */
 	public void allowOnlySimulationDisruptButtons() {
 		setEnabledSimulationInitiateButtons(false);
 		setEnabledSimulationDisruptButtons(true);
 	}
 
+	/**
+	 * Metoda ustawia na aktywny tylko przycisk przerwania trwaj¹cej pauzy.
+	 */
 	public void allowOnlyUnpauseButton() {
 		allowOnlySimulationDisruptButtons();
 		simulationDockables.get(5).getContent().setEnabled(false);

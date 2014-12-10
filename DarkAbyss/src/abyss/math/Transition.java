@@ -207,8 +207,21 @@ public class Transition extends Node {
 				g.setStroke(EditorResources.glowStrokeLevel3);
 				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 			}
-			g.setColor(Color.white);
-			g.setColor(Color.lightGray);
+			//g.setColor(Color.white);
+			
+			if (isGlowed())
+				g.setColor(Color.blue);
+			else if(isGlowedMTC())
+				g.setColor(Color.green);
+			else
+				g.setColor(new Color(224,224,224));
+				//g.setColor(Color.lightGray);
+			
+				//g.setColor(new Color(0,102,0));
+				//g.setColor(Color.lightGray);
+			
+			
+			
 			g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 			g.setColor(Color.DARK_GRAY);
 			g.setStroke(new BasicStroke(1.5F));

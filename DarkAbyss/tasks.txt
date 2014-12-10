@@ -1,0 +1,14 @@
+Metody do przejrzenia / napisania
+[ ]GUIManager.restoreDefaultVisuals - przejrzeæ i przywróciæ do dzia³ania
+
+Poprawiæ problem z powtarzaj¹cym siê rozszerzeniem:
+[ ] GUIManager.exportProject
+[ ] GUIManager.exportGeneratedInvariants
+[ ] GUIManager.exportProjectToImage
+[ ] GUIManager.saveProject
+
+Struktura sieci
+[*] Klonowanie wierzcho³ków w ramach tworzenia Portali
+
+Analiza
+[*] Generowanie inwariantów przy pomocy programu INA (AR, MR)
