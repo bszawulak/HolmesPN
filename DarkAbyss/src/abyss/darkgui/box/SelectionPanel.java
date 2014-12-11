@@ -23,7 +23,7 @@ public class SelectionPanel extends JPanel {
 	private DefaultListModel<String> selectedArcList;
 
 	/**
-	 * Konstruktor domyœlny obiektu klasy SelectionPanel
+	 * Konstruktor domyœlny obiektu klasy SelectionPanel.
 	 */
 	public SelectionPanel() {
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -56,10 +56,45 @@ public class SelectionPanel extends JPanel {
 	protected void setGuiManager(GUIManager guiManager) {
 		this.guiManager = guiManager;
 	}
+	
+	/**
+	 * Metoda zwraca listê z opisami wybranych wierzcho³ków.
+	 * @return DefaultListModel[String] - lista informacji o wierzcho³kach
+	 */
+	public DefaultListModel<String> getSelectedElementLocationList() {
+		return selectedElementLocationList;
+	}
 
 	/**
-	 * Metoda odpowiedzialna za coœ...
-	 * @param e
+	 * Metoda ustawia now¹ listê z opisami wybranych wierzcho³ków.
+	 * @param selectedElementLocationList DefaultListModel[String] - lista informacji o wierzcho³kach
+	 */
+	public void setSelectedElementLocationList(
+			DefaultListModel<String> selectedElementLocationList) {
+		this.selectedElementLocationList = selectedElementLocationList;
+	}
+
+	/**
+	 * Metoda zwraca listê z opisami wybranych ³uków.
+	 * @return DefaultListModel[String] - lista informacji o ³ukach
+	 */
+	public DefaultListModel<String> getSelectedArcList() {
+		return selectedArcList;
+	}
+
+	/**
+	 * Metoda ustawia now¹ listê z opisami wybranych ³uków.
+	 * @param selectedArcList DefaultListModel[String] - lista informacji o ³ukach
+	 */
+	public void setSelectedArcList(DefaultListModel<String> selectedArcList) {
+		this.selectedArcList = selectedArcList;
+	}
+
+	/**
+	 * Metoda odpowiedzialna za wype³nienie tablic przechowuj¹cych informacje
+	 * o wybranych (zaznaczonych) przez u¿ytkownika elementach sieci - ³ukach
+	 * i/lub wierzcho³kach. 
+	 * @param e SelectionActionEvent - obiekt zdarzenia wywo³uj¹cego
 	 */
 	public void actionPerformed(SelectionActionEvent e) {
 		this.getSelectedElementLocationList().clear();
@@ -73,22 +108,4 @@ public class SelectionPanel extends JPanel {
 				this.getSelectedArcList().addElement(a.toString());
 		}
 	}
-
-	public DefaultListModel<String> getSelectedElementLocationList() {
-		return selectedElementLocationList;
-	}
-
-	public void setSelectedElementLocationList(
-			DefaultListModel<String> selectedElementLocationList) {
-		this.selectedElementLocationList = selectedElementLocationList;
-	}
-
-	public DefaultListModel<String> getSelectedArcList() {
-		return selectedArcList;
-	}
-
-	public void setSelectedArcList(DefaultListModel<String> selectedArcList) {
-		this.selectedArcList = selectedArcList;
-	}
-
 }

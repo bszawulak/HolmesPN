@@ -25,7 +25,7 @@ public class PlacePopupMenu extends PetriNetElementPopupMenu {
 		
 		this.addMenuItem("Clone one Place into Portals", "portal", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
+				getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 			}
 		});
 	}

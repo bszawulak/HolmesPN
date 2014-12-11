@@ -522,10 +522,18 @@ public class GUIManager extends JPanel implements ComponentListener {
 		return wrapper;
 	}
 
+	/**
+	 * Metoda zwracaj¹ca obiekt nas³uchuj¹cy zdarzenia dokowania podokna.
+	 * @return DarkDockingListener - obiekt nas³uchuj¹cy
+	 */
 	public DarkDockingListener getDockingListener() {
 		return dockingListener;
 	}
 
+	/**
+	 * Metoda ustawiaj¹ca nowy obiekt nas³uchuj¹cy zdarzenia dokowania podokna.
+	 * @param dockingListener DarkDockingListener - nowy obiekt nas³uchuj¹cy
+	 */
 	public void setDockingListener(DarkDockingListener dockingListener) {
 		this.dockingListener = dockingListener;
 	}
@@ -619,7 +627,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za otwieranie pliku z zapisan¹ sieci¹ w formacie natywnym.
+	 * Metoda odpowiedzialna za otwieranie pliku z zapisan¹ sieci¹ w formacie .abyss.
 	 */
 	public void openProject() {
 		JFileChooser fc;

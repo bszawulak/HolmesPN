@@ -234,7 +234,7 @@ public class Workspace implements SelectionActionListener {
 	 * Metoda odpowiedzialna za zainicjowanie sekwencji rozkazów zwi¹zanych z wyœwietleniem
 	 * w³aœciwoœci (lub wype³nieniem którychœ podokien zawartoœci¹) w zale¿noœci od tego, co
 	 * w³aœnie zosta³o klikniête.
-	 * @param e SelectionActionEvent - zdarzenie wyboru czegoœ mysz¹
+	 * @param e SelectionActionEvent - zdarzenie wyboru elementu mysz¹
 	 */
 	public void actionPerformed(SelectionActionEvent e) {
 		guiManager.getPropertiesBox().selectElement(e);

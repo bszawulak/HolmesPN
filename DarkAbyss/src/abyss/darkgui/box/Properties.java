@@ -60,22 +60,22 @@ public class Properties extends SingleDock {
 					"Properties"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == PropertiesType.SIMULATOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Simulator", scrollPane,
-					"Simulator"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"Sim"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == PropertiesType.SELECTOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Selection", scrollPane,
 					"Selection"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == PropertiesType.InvANALYZER)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants analysis", scrollPane,
-					"Invariants analysis"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"Invariants"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == PropertiesType.MctANALYZER)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("MCT Groups", scrollPane,
-					"MCT Groups"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"MCT"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == PropertiesType.PropANALYZER)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Net properties", scrollPane,
-					"Net properties"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"Properties"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == PropertiesType.InvSIMULATOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants simulator", scrollPane,
-					"Invariants simulator"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"InvSim"),GUIManager.getDefaultGUIManager().getDockingListener()));
 //		setDockable(GUIManager.getDefaultGUIManager()
 //				.decorateDockableWithActions(getDockable(), false));
 

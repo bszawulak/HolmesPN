@@ -1,12 +1,15 @@
 package abyss.darkgui.box;
 
 //import java.awt.BorderLayout;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
@@ -14,6 +17,12 @@ import java.beans.PropertyChangeListener;
 import java.text.ParseException;
 import java.util.ArrayList;
 //import java.awt.Dialog;
+
+
+
+
+
+
 
 
 
@@ -32,12 +41,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.DefaultFormatter;
 
 import abyss.analyzer.InvariantsSimulator;
 import abyss.darkgui.GUIManager;
@@ -59,26 +71,45 @@ import abyss.workspace.WorkspaceSheet;
 /**
  * Klasa zawieraj¹ca szczegó³y interfejsu podokien dokowalnych programu.
  * @author students
- *
+ * @author MR
+ * W³aœciwie, to wyleje tu swoje ¿ale na Jave, opensourcowe podejœcia w tym jêzyku i takie
+ * tam. Nie ma to NIC wspólnego ze studentami, którzy siê serio postarali i zrobili okna ok.
+ * Przerobi³em metody na pozycjonowanie absolutne, wywali³em w cholerê wszystkie layouty.
+ * Bo tak. Bo ludzie padaj¹cy przed ich ide¹ na kolana i bij¹cy pok³ony "Oh, layout, jak
+ * cudownie, wszystko siê nam teraz automatycznie rozmieœci" nie zauwa¿aj¹, albo nie chc¹
+ * zauwa¿aæ, ¿e to 'automatycznie' jest tak do dupy, tak bardzo z... ¿e ju¿ bardziej siê
+ * chyba nie da. PO CO MI LATAJ¥CE WE WSZYSTKIE STRONY ELEMENTY OKNA, SKORO CHCIA£BYM
+ * MIEÆ JE NA STA£E W JEDNYM MIEJSCU?! Ok, ale o co tu chodzi? No wiêc albo siê u¿ywa w
+ * Javie layoutów, 2 polecenia na krzy¿ i wszystko siê rozmieszcza gdzie chce i jak chce,
+ * albo robi rêcznie i okazuje siê, ¿e Java w najmniejszym stopniu nie wspiera takiego podejœcia.
+ * Nagle miliard rzeczy nale¿y rêcznie ustawiaæ, niepotrzebych na zdrowy rozs¹dek (PO CO MI 
+ * BORDERSIZE JAK MOGÊ USTAWIÆ START LOCATION I SIZE? PO NIC. ALE BEZ NIEGO JPANEL SIE NIE
+ * WYŒWIETLI. BO NIE!). Nagle okazuje siê, ¿e JPanel rêcznie nale¿y zmusiæ do przerysowania siê
+ * (repaint) - bo tak. Z layoutami jakoœ pamiêta, ¿eby siê narysowaæ. Bez nich ju¿ nie.
+ * 
+ * Konkluzja. Ktoœ móg³by powiedzieæ, ¿e przecie¿ skoro chce siê rêcznie wszystko rozmieœciæ,
+ * to nie nale¿y narzekaæ, ¿e jest du¿o roboty. ZOBACZCIE SOBIE DURNIE MICROSOFT VISUAL STUDIO.
+ * S¹ panele, layouty i inne. Ale nie zmusz¹ siê nikogo m³otem do ich korzystania jak w Javie.
+ * I okazuje siê, ¿e nagle jest mniej tam roboty z rozmieszczaniem, ni¿ nawet z layoutami w Javie.
+ * Ten jêzyk powinien pozostaæ na etapie konsoli. Jego ¿a³osne próby udawania, ¿e s³u¿y do
+ * tworzenia tak¿e aplikacji w oknach nabieraj¹ chyba tylko jego zaœlepionych fanbojów.
+ * MR
  */
 public class PropertiesTable extends JPanel {
 	private static final long serialVersionUID = 4510802239873443705L;
 	private ArrayList<JComponent> headers;
 	private ArrayList<JComponent> values;
+	private ArrayList<JComponent> components;
 	private int mode;
-
 	// Containers
 	private JPanel panel, invariantPanel, mainPanel;
-
 	// sheet reference
 	WorkspaceSheet currentSheet;
-
 	// petri net reference
 	PetriNetElement element;
 	ElementLocation elementLocation;
 	NetSimulator simulator;
 	InvariantsSimulator invSimulator;
-
 	// other
 	ArrayList<ArrayList<InvariantTransition>> externalInvariants;
 	ArrayList<ArrayList<Transition>> mctGroups;
@@ -248,8 +279,7 @@ public class PropertiesTable extends JPanel {
 		values.add(new JLabel(Integer.toString(simulator.getPlacesAmount())));
 		// Transitions total
 		headers.add(new JLabel("Transitions:", JLabel.TRAILING));
-		values.add(new JLabel(
-				Integer.toString(simulator.getTransitionsAmount())));
+		values.add(new JLabel(Integer.toString(simulator.getTransitionsAmount())));
 		// Arcs total
 		headers.add(new JLabel("Arcs:", JLabel.TRAILING));
 		values.add(new JLabel(Integer.toString(simulator.getArcsAmount())));
@@ -266,57 +296,86 @@ public class PropertiesTable extends JPanel {
 	 * @param location ElementLocation - lokalizacja miejsca
 	 */
 	public PropertiesTable(Place place, ElementLocation location) {
-		// launch all constructors
+		int columnA_posX = 10;
+		int columnB_posX = 100;
+		int columnA_Y = 0;
+		int columnB_Y = 0;
+		int colACompLength = 70;
+		int colBCompLength = 200;
 		elementLocation = location;
 		initiateContainers();
-		// set mode
 		mode = PLACE;
 		element = place;
-		// getting the data
-		// ID
-		headers.add(new JLabel("ID:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(place.getID())));
-		// name
-		headers.add(new JLabel("Name:", JLabel.TRAILING));
+
+		//ID:
+		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
+		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+		//components.add(idLabel);
+		components.add(idLabel);
+		JLabel idLabel2 = new JLabel(Integer.toString(place.getID()));
+		idLabel2.setBounds(columnB_posX, columnB_Y += 10, 50, 20);
+		components.add(idLabel2);
+
+		//NAME:
+		JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
+		nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(nameLabel);
+
 		JFormattedTextField nameField = new JFormattedTextField();
+		nameField.setLocation(columnB_posX, columnB_Y += 20);
+		nameField.setSize(colBCompLength, 20);
+		nameField.setMaximumSize(new Dimension(colBCompLength,20));
+		nameField.setMinimumSize(new Dimension(colBCompLength,20));
 		nameField.setText(place.getName());
-		nameField.addPropertyChangeListener("value",
-				new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e
-								.getSource();
-						try {
-							field.commitEdit();
-						} catch (ParseException ex) {
-						}
-						String newName = (String) field.getText();
-						changeName(newName);
-					}
-				});
-		values.add(nameField);
-		// comment
-		JFormattedTextField commentField = new JFormattedTextField();
-		commentField.setText(place.getComment());
-		commentField.addPropertyChangeListener("value",
-				new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e
-								.getSource();
-						try {
-							field.commitEdit();
-						} catch (ParseException ex) {
-						}
-						String newComment = (String) field.getValue();
-						changeComment(newComment);
-					}
-				});
-		headers.add(new JLabel("Comment:", JLabel.TRAILING));
-		values.add(commentField);
-		// tokens
-		headers.add(new JLabel("Tokens:", JLabel.TRAILING));
-		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(
-				place.getTokensNumber(), 0, Integer.MAX_VALUE, 1);
+		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newName = (String) field.getText();
+				changeName(newName);
+			}
+		});
+		components.add(nameField);
+		
+		//KOMENTARZE WIERZCHO£KA:
+		JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
+		comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		columnA_Y += 20;
+		components.add(comLabel);	
+		JTextArea commentField = new JTextArea(place.getComment());
+		commentField.setLineWrap(true);
+		commentField.addFocusListener(new FocusAdapter() {
+	            public void focusLost(FocusEvent e) {
+	            	JTextArea field = (JTextArea) e.getSource();
+	            	String newComment = "";
+	            	if(field != null)
+	            		newComment = field.getText();
+					changeComment(newComment);
+	            }
+	        });
+		
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
+        CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
+        columnB_Y += 20;
+        components.add(CreationPanel);
+        
+        
+		// token
+        JLabel tokenLabel = new JLabel("Tokens:", JLabel.LEFT);
+        tokenLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(tokenLabel);
+		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(place.getTokensNumber(), 0, 
+				Integer.MAX_VALUE, 1);
 		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
+		tokenSpinner.setLocation(columnB_posX, columnB_Y += 20);
+		tokenSpinner.setSize(colBCompLength, 20);
+		tokenSpinner.setMaximumSize(new Dimension(colBCompLength,20));
+		tokenSpinner.setMinimumSize(new Dimension(colBCompLength,20));
 		tokenSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -324,114 +383,22 @@ public class PropertiesTable extends JPanel {
 				setTokens(tokenz);
 			}
 		});
-		values.add(tokenSpinner);
-		// location
-		headers.add(new JLabel("Sheet:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(location.getSheetID())));
-		headers.add(new JLabel("Location:", JLabel.TRAILING));
-		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(
-				location.getSheetID());
-		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
-				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
-		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(
-				location.getPosition().x, 0, graphPanel.getSize().width, 1);
-		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(
-				location.getPosition().y, 0, graphPanel.getSize().height, 1);
-		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
-		locationXSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int x = (int) spinner.getValue();
-				setX(x);
-			}
-		});
-		JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
-		locationYSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int y = (int) spinner.getValue();
-				setY(y);
-			}
-		});
-		JPanel locationSpinnerPanel = new JPanel();
-		locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel,
-				BoxLayout.X_AXIS));
-		locationSpinnerPanel.add(locationXSpinner);
-		locationSpinnerPanel.add(new JLabel(" , "));
-		locationSpinnerPanel.add(locationYSpinner);
-		values.add(locationSpinnerPanel);
-		// is Portal
-		headers.add(new JLabel("Portal:", JLabel.TRAILING));
-		JCheckBox portalBox = new JCheckBox("", place.isPortal());
-		portalBox.setEnabled(false);
-		portalBox.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				JCheckBox box = (JCheckBox) e.getSource();
-				if (box.isSelected())
-					unPortal();
-				else
-					makePortal();
-			}
-		});
-		values.add(portalBox);
-		// put all contents on the pane
-		putContents(panel);
-	}
+		components.add(tokenSpinner);
 
-	/**
-	 * Metoda odpowiedzialna za wyœwietlenie w³aœciwoœci klikniêtej tranzycji.
-	 * @param transition Transition - obiekt tranzycji sieci
-	 * @param location ElementLocation - lokalizacja tranzycji
-	 */
-	public PropertiesTable(Transition transition, ElementLocation location) {
-		mode = TRANSITION;
-		// launch all constructors
-		elementLocation = location;
-		initiateContainers();
-		// set mode
-		element = transition;
-		// getting the data
-		// ID
-		headers.add(new JLabel("ID:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(transition.getID())));
-		// name
-		headers.add(new JLabel("Name:", JLabel.TRAILING));
-		JFormattedTextField nameField = new JFormattedTextField();
-		nameField.setValue(transition.getName());
-		nameField.addPropertyChangeListener("value",
-				new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e.getSource();
-						try {
-							field.commitEdit();
-						} catch (ParseException ex) {
-						}
-						String newName = (String) field.getValue();
-						changeName(newName);
-					}
-				});
-		values.add(nameField);
-		// comment
-		JFormattedTextField commentField = new JFormattedTextField();
-		commentField.setValue(transition.getComment());
-		commentField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					field.commitEdit();
-				} catch (ParseException ex) {
-				}
-				String newComment = (String) field.getValue();
-				changeComment(newComment);
-			}
-		});
-		headers.add(new JLabel("Comment:", JLabel.TRAILING));
-		values.add(commentField);
-		// location
-		headers.add(new JLabel("Sheet:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(location.getSheetID())));
-		headers.add(new JLabel("Location:", JLabel.TRAILING));
+		//SHEET ID
+		
+		JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
+		sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(sheetLabel);
+		JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
+		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		components.add(sheetIdLabel);		
+		
+		//LOKALIZACJA:
+		JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
+		locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(locLabel);
+		
 		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
 		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
 				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
@@ -460,153 +427,12 @@ public class PropertiesTable extends JPanel {
 		locationSpinnerPanel.add(locationXSpinner);
 		locationSpinnerPanel.add(new JLabel(" , "));
 		locationSpinnerPanel.add(locationYSpinner);
-		values.add(locationSpinnerPanel);
-		// is Portal
-		headers.add(new JLabel("Portal:", JLabel.TRAILING));
-		JCheckBox portalBox = new JCheckBox("", transition.isPortal());
-		portalBox.setEnabled(false);
-		portalBox.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				JCheckBox box = (JCheckBox) e.getSource();
-				if (box.isSelected())
-					unPortal();
-				else
-					makePortal();
-			}
-		});
-		values.add(portalBox);
-		// put all contents on the pane
-		putContents(panel);
-	}
-
-	/**
-	 * Metoda odpowiedzialna za wyœwietlenie w³aœciwoœci klikniêtej tranzycji czasowej.
-	 * @param transition TimeTransition - obiekt tranzycji czasowej
-	 * @param location ElementLocation - lokalizacja tranzycji
-	 */
-	public PropertiesTable(final TimeTransition transition, ElementLocation location) {
-		mode = TIMETRANSITION;
-		// launch all constructors
-		elementLocation = location;
-		initiateContainers();
-		// set mode
-		element = transition;
-		// getting the data
-		// ID
-		headers.add(new JLabel("IDictator:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(transition.getID())));
-		// name
-		headers.add(new JLabel("Name:", JLabel.TRAILING));
-		JFormattedTextField nameField = new JFormattedTextField();
-		nameField.setValue(transition.getName());
-		nameField.addPropertyChangeListener("value",
-				new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e.getSource();
-						try {
-							field.commitEdit();
-						} catch (ParseException ex) {
-						}
-						String newName = (String) field.getValue();
-						changeName(newName);
-					}
-				});
-		values.add(nameField);
-		// comment
-		JFormattedTextField commentField = new JFormattedTextField();
-		commentField.setValue(transition.getComment());
-		commentField.addPropertyChangeListener("value",
-				new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e.getSource();
-						try {
-							field.commitEdit();
-						} catch (ParseException ex) {
-						}
-						String newComment = (String) field.getValue();
-						changeComment(newComment);
-					}
-				});
-		headers.add(new JLabel("Comment:", JLabel.TRAILING));
-		values.add(commentField);
-
-		headers.add(new JLabel("Min / Max time:", JLabel.TRAILING));
+		
+		locationSpinnerPanel.setBounds(columnA_posX+90, columnB_Y += 20, colBCompLength, 20);
+		components.add(locationSpinnerPanel);
 		/*
-		SpinnerModel minTimeSpinnerModel = new SpinnerNumberModel(
-				transition.getMinFireTime(), 0, Integer.MAX_VALUE, 1);
-		JSpinner minFireTimeSpinner = new JSpinner(minTimeSpinnerModel);
-		minFireTimeSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				double min = (double) spinner.getValue();
-				System.out.println(min);
-				//transition.setMinFireTime(min);
-				setMinFireTime(min);
-				;
-			}
-		});*/
-		
-		JFormattedTextField minTimeField = new JFormattedTextField();
-		minTimeField.setValue(transition.getMinFireTime());
-		minTimeField.addPropertyChangeListener("value",
-				new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e
-								.getSource();
-						try {
-							field.commitEdit();
-						} catch (ParseException ex) {
-						}						
-						double min = (double) field.getValue();
-						setMinFireTime(min);
-					}
-				});
-		
-		JFormattedTextField maxTimeField = new JFormattedTextField();
-		maxTimeField.setValue(transition.getMaxFireTime());
-		maxTimeField.addPropertyChangeListener("value",
-				new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e
-								.getSource();
-						try {
-							field.commitEdit();
-						} catch (ParseException ex) {
-						}						
-						double max = (double) field.getValue();
-						setMaxFireTime(max);
-					}
-				});
-		
-/*
-		SpinnerModel maxTimeSpinnerModel = new SpinnerNumberModel(
-				transition.getMaxFireTime(), 0, Integer.MAX_VALUE, 1);
-		JSpinner maxFireTimeSpinner = new JSpinner(maxTimeSpinnerModel);
-		maxFireTimeSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int min = (int) spinner.getValue();
-				transition.setMaxFireTime(min);
-				;
-			}
-		});*/
-
-		JPanel minTimeSpinnerPanel = new JPanel();
-		minTimeSpinnerPanel.setLayout(new BoxLayout(minTimeSpinnerPanel,
-				BoxLayout.X_AXIS));
-		minTimeSpinnerPanel.add(minTimeField);
-		minTimeSpinnerPanel.add(new JLabel(" / "));
-		minTimeSpinnerPanel.add(maxTimeField);
-		values.add(minTimeSpinnerPanel);
-
-		// location
-		headers.add(new JLabel("Sheet:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(location.getSheetID())));
 		headers.add(new JLabel("Location:", JLabel.TRAILING));
-
-		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(
-				location.getSheetID());
+		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
 		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
 				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(
@@ -636,9 +462,15 @@ public class PropertiesTable extends JPanel {
 		locationSpinnerPanel.add(new JLabel(" , "));
 		locationSpinnerPanel.add(locationYSpinner);
 		values.add(locationSpinnerPanel);
-		// is Portal
-		headers.add(new JLabel("Portal:", JLabel.TRAILING));
-		JCheckBox portalBox = new JCheckBox("", transition.isPortal());
+		*/
+		
+		
+		// PORTAL
+		JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
+		portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(portalLabel);
+		JCheckBox portalBox = new JCheckBox("", place.isPortal());
+		portalBox.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
 		portalBox.setEnabled(false);
 		portalBox.addItemListener(new ItemListener() {
 			@Override
@@ -650,9 +482,404 @@ public class PropertiesTable extends JPanel {
 					makePortal();
 			}
 		});
-		values.add(portalBox);
+		components.add(portalBox);
+		
+		panel.setLayout(null);
+		for (JComponent component : components) {
+			panel.add(component);
+		}
+		panel.setOpaque(true);
+		panel.repaint();
+		add(panel);
+	}
+
+	/**
+	 * Metoda odpowiedzialna za wyœwietlenie w³aœciwoœci klikniêtej tranzycji.
+	 * @param transition Transition - obiekt tranzycji sieci
+	 * @param location ElementLocation - lokalizacja tranzycji
+	 */
+	public PropertiesTable(Transition transition, ElementLocation location) {
+		int columnA_posX = 10;
+		int columnB_posX = 100;
+		int columnA_Y = 0;
+		int columnB_Y = 0;
+		int colACompLength = 70;
+		int colBCompLength = 200;
+
+		mode = TRANSITION;
+		elementLocation = location;
+		initiateContainers();
+		element = transition;
+		
+		// ID:
+		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
+		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+		components.add(idLabel);
+		JLabel idLabel2 = new JLabel(Integer.toString(transition.getID()));
+		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+		components.add(idLabel2);
+
+		// TRANSITION NAME:
+		JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
+		nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(nameLabel);
+		
+		DefaultFormatter format = new DefaultFormatter();
+	    format.setOverwriteMode(false);
+		JFormattedTextField nameField = new JFormattedTextField(format);
+		nameField.setLocation(columnB_posX, columnB_Y += 20);
+		nameField.setSize(colBCompLength, 20);
+		nameField.setMaximumSize(new Dimension(colBCompLength,20));
+		nameField.setMinimumSize(new Dimension(colBCompLength,20));
+	    
+		nameField.setValue(transition.getName());
+		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newName = (String) field.getText();
+				changeName(newName);
+			}
+		});
+		components.add(nameField);
+		
+		//KOMENTARZE WIERZCHO£KA:
+		JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
+		comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		columnA_Y += 20;
+		components.add(comLabel);	
+		/*
+		JFormattedTextField commentField = new JFormattedTextField();
+		commentField.setLocation(columnB_posX, columnB_Y += 20);
+		commentField.setSize(colBCompLength, 20);
+		commentField.setMaximumSize(new Dimension(colBCompLength,20));
+		commentField.setMinimumSize(new Dimension(colBCompLength,20));
+		commentField.setText(transition.getComment());
+		commentField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newComment = (String) field.getText();
+				changeComment(newComment);
+			}
+		});
+		components.add(commentField);
+		*/
+		JTextArea commentField = new JTextArea(transition.getComment());
+		commentField.setLineWrap(true);
+		commentField.addFocusListener(new FocusAdapter() {
+	            public void focusLost(FocusEvent e) {
+	            	JTextArea field = (JTextArea) e.getSource();
+	            	String newComment = "";
+	            	if(field != null)
+	            		newComment = field.getText();
+					changeComment(newComment);
+	            }
+	        });
+		
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
+        CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
+        columnB_Y += 20;
+        components.add(CreationPanel);
+		
+		//SHEET ID
+		JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
+		sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(sheetLabel);
+		JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
+		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		components.add(sheetIdLabel);
+		
+		//LOKALIZACJA:
+		JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
+		locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(locLabel);
+		
+		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
+		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
+				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(
+				location.getPosition().x, 0, graphPanel.getSize().width, 1);
+		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(
+				location.getPosition().y, 0, graphPanel.getSize().height, 1);
+		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
+		locationXSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int x = (int) spinner.getValue();
+				setX(x);
+			}
+		});
+		JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
+		locationYSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int y = (int) spinner.getValue();
+				setY(y);
+			}
+		});
+		JPanel locationSpinnerPanel = new JPanel();
+		locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel,BoxLayout.X_AXIS));
+		locationSpinnerPanel.add(locationXSpinner);
+		locationSpinnerPanel.add(new JLabel(" , "));
+		locationSpinnerPanel.add(locationYSpinner);
+		
+		locationSpinnerPanel.setBounds(columnA_posX+90, columnB_Y += 20, colBCompLength, 20);
+		components.add(locationSpinnerPanel);
+		
+		// PORTAL
+		JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
+		portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(portalLabel);
+		JCheckBox portalBox = new JCheckBox("", transition.isPortal());
+		portalBox.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
+		portalBox.setEnabled(false);
+		portalBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected())
+					unPortal();
+				else
+					makePortal();
+			}
+		});
+		components.add(portalBox);
 		// put all contents on the pane
-		putContents(panel);
+		 
+		//putContents(panel);
+		panel.setLayout(null);
+		for (JComponent component : components) {
+			panel.add(component);
+		}
+
+		//contentPanel.setLayout(new SpringLayout());
+		for (int i = 0; i < components.size(); i++) {
+			//panel.add(components.get(i));
+		}
+		//SpringUtilities.makeCompactGrid(contentPanel, headers.size(), 2, 5, 2, 2, 5);
+		panel.setOpaque(true);
+		panel.repaint();
+		add(panel);
+	}
+
+	/**
+	 * Metoda odpowiedzialna za wyœwietlenie w³aœciwoœci klikniêtej tranzycji czasowej.
+	 * @param transition TimeTransition - obiekt tranzycji czasowej
+	 * @param location ElementLocation - lokalizacja tranzycji
+	 */
+	public PropertiesTable(final TimeTransition transition, ElementLocation location) {
+		int columnA_posX = 10;
+		int columnB_posX = 100;
+		int columnA_Y = 0;
+		int columnB_Y = 0;
+		int colACompLength = 70;
+		int colBCompLength = 200;
+		
+		mode = TIMETRANSITION;
+		elementLocation = location;
+		initiateContainers(); //!!!
+		element = transition;
+		
+		// ID
+		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
+		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+		components.add(idLabel);
+		JLabel idLabel2 = new JLabel(Integer.toString(transition.getID()));
+		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+		components.add(idLabel2);
+
+		// T-TRANSITION NAME
+		JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
+		nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(nameLabel);
+		DefaultFormatter format = new DefaultFormatter();
+	    format.setOverwriteMode(false);
+		JFormattedTextField nameField = new JFormattedTextField(format);
+		nameField.setLocation(columnB_posX, columnB_Y += 20);
+		nameField.setSize(colBCompLength, 20);
+		nameField.setMaximumSize(new Dimension(colBCompLength,20));
+		nameField.setMinimumSize(new Dimension(colBCompLength,20));
+		nameField.setValue(transition.getName());
+		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newName = (String) field.getText();
+				changeName(newName);
+			}
+		});
+		components.add(nameField);
+		
+		// T-TRANSITION COMMENT:
+		JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
+		comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		columnA_Y += 20;
+		components.add(comLabel);
+		/*
+		JFormattedTextField commentField = new JFormattedTextField();
+		commentField.setLocation(columnB_posX, columnB_Y += 20);
+		commentField.setSize(200, 20);
+		commentField.setMaximumSize(new Dimension(200,20));
+		commentField.setMinimumSize(new Dimension(200,20));
+		commentField.setValue(transition.getComment());
+		commentField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newComment = (String) field.getText();
+				changeComment(newComment);
+			}
+		});
+		components.add(commentField);
+		*/
+		JTextArea commentField = new JTextArea(transition.getComment());
+		commentField.setLineWrap(true);
+		commentField.addFocusListener(new FocusAdapter() {
+	            public void focusLost(FocusEvent e) {
+	            	JTextArea field = (JTextArea) e.getSource();
+	            	String newComment = "";
+	            	if(field != null)
+	            		newComment = field.getText();
+					changeComment(newComment);
+	            }
+	        });
+		
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
+        CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
+        columnB_Y += 20;
+        components.add(CreationPanel);
+        
+		// EFT / LFT TIMES:
+		JLabel minMaxLabel = new JLabel("EFT / LFT:", JLabel.LEFT);
+		minMaxLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(minMaxLabel);
+		JFormattedTextField minTimeField = new JFormattedTextField();
+		minTimeField.setValue(transition.getMinFireTime());
+		minTimeField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}						
+				double min = (double) field.getValue();
+				setMinFireTime(min);
+			}
+		});
+
+		JFormattedTextField maxTimeField = new JFormattedTextField();
+		maxTimeField.setValue(transition.getMaxFireTime());
+		maxTimeField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e
+						.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}						
+				double max = (double) field.getValue();
+				setMaxFireTime(max);
+			}
+		});
+
+		JPanel minTimeSpinnerPanel = new JPanel();
+		minTimeSpinnerPanel.setLayout(new BoxLayout(minTimeSpinnerPanel, BoxLayout.X_AXIS));
+		minTimeSpinnerPanel.add(minTimeField);
+		minTimeSpinnerPanel.add(new JLabel(" / "));
+		minTimeSpinnerPanel.add(maxTimeField);
+		minTimeSpinnerPanel.setBounds(columnA_posX+90, columnB_Y += 20, 200, 20);
+		components.add(minTimeSpinnerPanel);
+
+		// T-TRANSITION SHEET ID:
+		JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
+		sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(sheetLabel);
+		JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
+		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, 100, 20);
+		components.add(sheetIdLabel);
+		
+		// T-TRANSITION LOCATION:
+		//headers.add(new JLabel("Location:", JLabel.TRAILING));
+		JLabel comLabel2 = new JLabel("Location:", JLabel.LEFT);
+		comLabel2.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(comLabel2);
+		
+		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex( location.getSheetID());
+		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
+				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(
+				location.getPosition().x, 0, graphPanel.getSize().width, 1);
+		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(
+				location.getPosition().y, 0, graphPanel.getSize().height, 1);
+		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
+		locationXSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int x = (int) spinner.getValue();
+				setX(x);
+			}
+		});
+		JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
+		locationYSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int y = (int) spinner.getValue();
+				setY(y);
+			}
+		});
+		JPanel locationSpinnerPanel = new JPanel();
+		locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel,BoxLayout.X_AXIS));
+		locationSpinnerPanel.add(locationXSpinner);
+		locationSpinnerPanel.add(new JLabel(" , "));
+		locationSpinnerPanel.add(locationYSpinner);
+		locationSpinnerPanel.setBounds(columnA_posX+90, columnB_Y += 20, 200, 20);
+		components.add(locationSpinnerPanel);
+		
+		// PORTAL STATUS
+		JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
+		portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(portalLabel);
+
+		JCheckBox portalBox = new JCheckBox("", transition.isPortal());
+		portalBox.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
+		portalBox.setEnabled(false);
+		portalBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected())
+					unPortal();
+				else
+					makePortal();
+			}
+		});
+		components.add(portalBox);
+		// put all contents on the pane
+		//putContents(panel);
+		
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		add(panel);
 	}
 
 	/**
@@ -1174,6 +1401,7 @@ public class PropertiesTable extends JPanel {
 		headerSize = new Dimension(300, 30);
 		headers = new ArrayList<JComponent>();
 		values = new ArrayList<JComponent>();
+		components = new ArrayList<JComponent>();
 		panel = new JPanel();
 		invariantPanel = new JPanel();
 		mainPanel = this;
@@ -1181,14 +1409,37 @@ public class PropertiesTable extends JPanel {
 
 	/**
 	 * Metoda pomocnicza odpowiedzialna za wype³nanie okna danymi.
-	 * @param contentPanel JPanel - panel z wawartoœci¹
+	 * @param contentPanel JPanel - panel z zawartoœci¹
 	 */
 	private void putContents(JPanel contentPanel) {
-		// setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-		for (JComponent component : headers)
+		/*
+		panel.setLayout(null);
+		for (JComponent component : headers) {
+
+		}
+		for (JComponent component : values) {
+			
+		}
+
+		//contentPanel.setLayout(new SpringLayout());
+		for (int i = 0; i < headers.size(); i++) {
+			contentPanel.add(headers.get(i));
+			contentPanel.add(values.get(i));
+		}
+		//SpringUtilities.makeCompactGrid(contentPanel, headers.size(), 2, 5, 2, 2, 5);
+		contentPanel.setOpaque(true);
+		contentPanel.repaint();
+		add(contentPanel);
+		*/
+		
+		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+		for (JComponent component : headers) {
 			component.setMaximumSize(component.getMinimumSize());
+			
+		}
 		for (JComponent component : values)
 			component.setMaximumSize(component.getMinimumSize());
+		
 		contentPanel.setLayout(new SpringLayout());
 		for (int i = 0; i < headers.size(); i++) {
 			contentPanel.add(headers.get(i));
@@ -1196,16 +1447,22 @@ public class PropertiesTable extends JPanel {
 		}
 		SpringUtilities.makeCompactGrid(contentPanel, headers.size(), 2, 5, 5, 5, 5);
 		contentPanel.setOpaque(true);
+		//contentPanel.repaint();
 		add(contentPanel);
+		
 	}
 
+	/**
+	 * Metoda zwraca okno tekstowe na bazie podanego comboBox.
+	 * @param spinner JSpinner - ComboBox po ludzku
+	 * @return JFormattedTextField - chyba TextBox?
+	 */
 	public JFormattedTextField getTextField(JSpinner spinner) {
 		JComponent editor = spinner.getEditor();
 		if (editor instanceof JSpinner.DefaultEditor) {
 			return ((JSpinner.DefaultEditor) editor).getTextField();
 		} else {
-			System.err.println("Unexpected editor type: "
-					+ spinner.getEditor().getClass()
+			System.err.println("Unexpected editor type: " + spinner.getEditor().getClass()
 					+ " isn't a descendant of DefaultEditor");
 			return null;
 		}
@@ -1213,8 +1470,7 @@ public class PropertiesTable extends JPanel {
 
 	// general operations
 	private void repaintGraphPanel() {
-		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(
-				elementLocation.getSheetID());
+		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(elementLocation.getSheetID());
 		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
 				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 		graphPanel.repaint();
@@ -1256,11 +1512,6 @@ public class PropertiesTable extends JPanel {
 			currentSheet.getGraphPanel().setAutoDragScroll(value);
 		}
 	}
-
-	// general petri net element operations (all modes)
-	private void changeComment(String newComment) {
-		element.setComment(newComment);
-	}
 	
 	// time petri net operations
 	private void setMinFireTime(double x) {
@@ -1295,13 +1546,27 @@ public class PropertiesTable extends JPanel {
 			repaintGraphPanel();
 		}
 	}
-
+	
+	/**
+	 * Zmiana nazwy elementu sieci, dokonywana poza listenerem, który
+	 * jest klasa anonimow¹ (i nie widzi pola element).
+	 * @param newName String - nowa nazwa
+	 */
 	private void changeName(String newName) {
 		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
 			Node node = (Node) element;
 			node.setName(newName);
 			repaintGraphPanel();
 		}
+	}
+	
+	/**
+	 * Zmiana wartoœci komentarza dla elementu sieci, poza listenerem, który
+	 * jest klas¹ anonimow¹ (i nie widzi pola element).
+	 * @param newComment String - nowy komentarz
+	 */
+	private void changeComment(String newComment) {
+		element.setComment(newComment);	
 	}
 
 	private void makePortal() {

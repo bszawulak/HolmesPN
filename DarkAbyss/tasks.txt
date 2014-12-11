@@ -12,3 +12,6 @@ Struktura sieci
 
 Analiza
 [*] Generowanie inwariantów przy pomocy programu INA (AR, MR)
+
+
+[ ] Lokalizacja Node przyciskami w Properties - co 10 i align do linii
