@@ -386,6 +386,16 @@ public class PropertiesTable extends JPanel {
 		components.add(tokenSpinner);
 
 		//SHEET ID
+		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
+		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
+				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		int xPos = location.getPosition().x;
+		int width =  graphPanel.getSize().width;
+		int zoom = graphPanel.getZoom();
+		int yPos = location.getPosition().y;
+		int height =  graphPanel.getSize().height;
+		width = (int) (((double)100/(double)zoom) * width);
+		height = (int) (((double)100/(double)zoom) * height);
 		
 		JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
 		sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
@@ -393,19 +403,18 @@ public class PropertiesTable extends JPanel {
 		JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
 		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
 		components.add(sheetIdLabel);		
-		
+		JLabel zoomLabel = new JLabel("Zoom: "+zoom);
+		zoomLabel.setBounds(columnB_posX+50, columnB_Y, colBCompLength, 20);
+		components.add(zoomLabel);	
 		//LOKALIZACJA:
 		JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
 		locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(locLabel);
-		
-		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
-		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
-				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(
-				location.getPosition().x, 0, graphPanel.getSize().width, 1);
+				xPos, 0, width, 1);
 		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(
-				location.getPosition().y, 0, graphPanel.getSize().height, 1);
+				yPos, 0, height, 1);
+
 		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
 		locationXSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -422,6 +431,10 @@ public class PropertiesTable extends JPanel {
 				setY(y);
 			}
 		});
+		if(zoom != 100) {
+			locationXSpinner.setEnabled(false);
+			locationYSpinner.setEnabled(false);
+		}
 		JPanel locationSpinnerPanel = new JPanel();
 		locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel,BoxLayout.X_AXIS));
 		locationSpinnerPanel.add(locationXSpinner);
@@ -591,25 +604,34 @@ public class PropertiesTable extends JPanel {
         components.add(CreationPanel);
 		
 		//SHEET ID
+        int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
+		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
+				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		int xPos = location.getPosition().x;
+		int width =  graphPanel.getSize().width;
+		int zoom = graphPanel.getZoom();
+		int yPos = location.getPosition().y;
+		int height =  graphPanel.getSize().height;
+		width = (int) (((double)100/(double)zoom) * width);
+		height = (int) (((double)100/(double)zoom) * height);
+		
 		JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
 		sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(sheetLabel);
 		JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
 		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
 		components.add(sheetIdLabel);
-		
+		JLabel zoomLabel = new JLabel("Zoom: "+zoom);
+		zoomLabel.setBounds(columnB_posX+50, columnB_Y, colBCompLength, 20);
+		components.add(zoomLabel);	
 		//LOKALIZACJA:
 		JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
 		locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(locLabel);
 		
-		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
-		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
-				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
-		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(
-				location.getPosition().x, 0, graphPanel.getSize().width, 1);
-		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(
-				location.getPosition().y, 0, graphPanel.getSize().height, 1);
+		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
+		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
+		
 		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
 		locationXSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -626,6 +648,10 @@ public class PropertiesTable extends JPanel {
 				setY(y);
 			}
 		});
+		if(zoom != 100) {
+			locationXSpinner.setEnabled(false);
+			locationYSpinner.setEnabled(false);
+		}
 		JPanel locationSpinnerPanel = new JPanel();
 		locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel,BoxLayout.X_AXIS));
 		locationSpinnerPanel.add(locationXSpinner);
@@ -808,26 +834,34 @@ public class PropertiesTable extends JPanel {
 		components.add(minTimeSpinnerPanel);
 
 		// T-TRANSITION SHEET ID:
+		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
+		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
+				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		int xPos = location.getPosition().x;
+		int width =  graphPanel.getSize().width;
+		int zoom = graphPanel.getZoom();
+		int yPos = location.getPosition().y;
+		int height =  graphPanel.getSize().height;
+		width = (int) (((double)100/(double)zoom) * width);
+		height = (int) (((double)100/(double)zoom) * height);
+
 		JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
 		sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(sheetLabel);
 		JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
 		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, 100, 20);
 		components.add(sheetIdLabel);
-		
+		JLabel zoomLabel = new JLabel("Zoom: "+zoom);
+		zoomLabel.setBounds(columnB_posX+50, columnB_Y, colBCompLength, 20);
+		components.add(zoomLabel);	
 		// T-TRANSITION LOCATION:
 		//headers.add(new JLabel("Location:", JLabel.TRAILING));
 		JLabel comLabel2 = new JLabel("Location:", JLabel.LEFT);
 		comLabel2.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(comLabel2);
-		
-		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex( location.getSheetID());
-		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
-				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
-		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(
-				location.getPosition().x, 0, graphPanel.getSize().width, 1);
-		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(
-				location.getPosition().y, 0, graphPanel.getSize().height, 1);
+
+		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
+		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
 		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
 		locationXSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -844,6 +878,10 @@ public class PropertiesTable extends JPanel {
 				setY(y);
 			}
 		});
+		if(zoom != 100) {
+			locationXSpinner.setEnabled(false);
+			locationYSpinner.setEnabled(false);
+		}
 		JPanel locationSpinnerPanel = new JPanel();
 		locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel,BoxLayout.X_AXIS));
 		locationSpinnerPanel.add(locationXSpinner);

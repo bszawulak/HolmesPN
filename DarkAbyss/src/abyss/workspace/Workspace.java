@@ -171,6 +171,11 @@ public class Workspace implements SelectionActionListener {
 		return wrapper;
 	}
 
+	/**
+	 * Metoda zwraca maksymaln¹ wartoœæ identyfikatora z tablicy zak³adek (czyli
+	 * id ostatniej dodanej)
+	 * @return int - id ostatniej zak³adki
+	 */
 	private int getMaximumTabIndex() {
 		int index = 0;
 		for (int x : sheetsIDtable) {
@@ -180,11 +185,18 @@ public class Workspace implements SelectionActionListener {
 		return index;
 	}
 
+	/**
+	 * Metoda zwraca tablicê zadokowanych elementów w Workspace.
+	 * @return ArrayList[Dockable] - tablica elementów
+	 */
 	public ArrayList<Dockable> getDockables() {
 		return dockables;
 	}
 
-
+	/**
+	 * Metoda zwraca tablicê zadokowanych zak³adek w Workspace.
+	 * @return ArrayList[WorkspaceSheet] - tablica zak³adek
+	 */
 	public ArrayList<WorkspaceSheet> getSheets() {
 		return sheets;
 	}
