@@ -117,7 +117,6 @@ public class PropertiesTable extends JPanel {
 	public JSpinner spiner = new JSpinner();
 
 	Dimension headerSize;
-	
 	JFrame timeFrame = new JFrame("Zegar");
 
 	// modes
@@ -307,7 +306,7 @@ public class PropertiesTable extends JPanel {
 		mode = PLACE;
 		element = place;
 
-		//ID:
+		// ID
 		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
 		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
 		//components.add(idLabel);
@@ -316,7 +315,7 @@ public class PropertiesTable extends JPanel {
 		idLabel2.setBounds(columnB_posX, columnB_Y += 10, 50, 20);
 		components.add(idLabel2);
 
-		//NAME:
+		// NAME
 		JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
 		nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(nameLabel);
@@ -340,7 +339,7 @@ public class PropertiesTable extends JPanel {
 		});
 		components.add(nameField);
 		
-		//KOMENTARZE WIERZCHO£KA:
+		// KOMENTARZE WIERZCHO£KA
 		JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
 		comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		columnA_Y += 20;
@@ -348,14 +347,14 @@ public class PropertiesTable extends JPanel {
 		JTextArea commentField = new JTextArea(place.getComment());
 		commentField.setLineWrap(true);
 		commentField.addFocusListener(new FocusAdapter() {
-	            public void focusLost(FocusEvent e) {
-	            	JTextArea field = (JTextArea) e.getSource();
-	            	String newComment = "";
-	            	if(field != null)
-	            		newComment = field.getText();
-					changeComment(newComment);
-	            }
-	        });
+			public void focusLost(FocusEvent e) {
+            	JTextArea field = (JTextArea) e.getSource();
+            	String newComment = "";
+            	if(field != null)
+            		newComment = field.getText();
+				changeComment(newComment);
+            }
+        });
 		
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
@@ -364,8 +363,7 @@ public class PropertiesTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
         
-        
-		// token
+		// PLACE TOKEN
         JLabel tokenLabel = new JLabel("Tokens:", JLabel.LEFT);
         tokenLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(tokenLabel);
@@ -404,16 +402,16 @@ public class PropertiesTable extends JPanel {
 		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
 		components.add(sheetIdLabel);		
 		JLabel zoomLabel = new JLabel("Zoom: "+zoom);
-		zoomLabel.setBounds(columnB_posX+50, columnB_Y, colBCompLength, 20);
+		zoomLabel.setBounds(columnB_posX+100, columnB_Y, colBCompLength, 20);
+		if(zoom != 100)
+			zoomLabel.setForeground(Color.red);
 		components.add(zoomLabel);	
 		//LOKALIZACJA:
 		JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
 		locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(locLabel);
-		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(
-				xPos, 0, width, 1);
-		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(
-				yPos, 0, height, 1);
+		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
+		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
 
 		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
 		locationXSpinner.addChangeListener(new ChangeListener() {
@@ -443,40 +441,6 @@ public class PropertiesTable extends JPanel {
 		
 		locationSpinnerPanel.setBounds(columnA_posX+90, columnB_Y += 20, colBCompLength, 20);
 		components.add(locationSpinnerPanel);
-		/*
-		headers.add(new JLabel("Location:", JLabel.TRAILING));
-		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
-		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
-				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
-		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(
-				location.getPosition().x, 0, graphPanel.getSize().width, 1);
-		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(
-				location.getPosition().y, 0, graphPanel.getSize().height, 1);
-		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
-		locationXSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int x = (int) spinner.getValue();
-				setX(x);
-			}
-		});
-		JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
-		locationYSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int y = (int) spinner.getValue();
-				setY(y);
-			}
-		});
-		JPanel locationSpinnerPanel = new JPanel();
-		locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel,
-				BoxLayout.X_AXIS));
-		locationSpinnerPanel.add(locationXSpinner);
-		locationSpinnerPanel.add(new JLabel(" , "));
-		locationSpinnerPanel.add(locationYSpinner);
-		values.add(locationSpinnerPanel);
-		*/
-		
 		
 		// PORTAL
 		JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
@@ -564,26 +528,7 @@ public class PropertiesTable extends JPanel {
 		comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		columnA_Y += 20;
 		components.add(comLabel);	
-		/*
-		JFormattedTextField commentField = new JFormattedTextField();
-		commentField.setLocation(columnB_posX, columnB_Y += 20);
-		commentField.setSize(colBCompLength, 20);
-		commentField.setMaximumSize(new Dimension(colBCompLength,20));
-		commentField.setMinimumSize(new Dimension(colBCompLength,20));
-		commentField.setText(transition.getComment());
-		commentField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					field.commitEdit();
-				} catch (ParseException ex) {
-				}
-				String newComment = (String) field.getText();
-				changeComment(newComment);
-			}
-		});
-		components.add(commentField);
-		*/
+		
 		JTextArea commentField = new JTextArea(transition.getComment());
 		commentField.setLineWrap(true);
 		commentField.addFocusListener(new FocusAdapter() {
@@ -622,7 +567,9 @@ public class PropertiesTable extends JPanel {
 		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
 		components.add(sheetIdLabel);
 		JLabel zoomLabel = new JLabel("Zoom: "+zoom);
-		zoomLabel.setBounds(columnB_posX+50, columnB_Y, colBCompLength, 20);
+		zoomLabel.setBounds(columnB_posX+100, columnB_Y, colBCompLength, 20);
+		if(zoom != 100)
+			zoomLabel.setForeground(Color.red);
 		components.add(zoomLabel);	
 		//LOKALIZACJA:
 		JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
@@ -748,31 +695,12 @@ public class PropertiesTable extends JPanel {
 		});
 		components.add(nameField);
 		
-		// T-TRANSITION COMMENT:
+		// T-TRANSITION COMMENT
 		JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
 		comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		columnA_Y += 20;
 		components.add(comLabel);
-		/*
-		JFormattedTextField commentField = new JFormattedTextField();
-		commentField.setLocation(columnB_posX, columnB_Y += 20);
-		commentField.setSize(200, 20);
-		commentField.setMaximumSize(new Dimension(200,20));
-		commentField.setMinimumSize(new Dimension(200,20));
-		commentField.setValue(transition.getComment());
-		commentField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					field.commitEdit();
-				} catch (ParseException ex) {
-				}
-				String newComment = (String) field.getText();
-				changeComment(newComment);
-			}
-		});
-		components.add(commentField);
-		*/
+		
 		JTextArea commentField = new JTextArea(transition.getComment());
 		commentField.setLineWrap(true);
 		commentField.addFocusListener(new FocusAdapter() {
@@ -833,7 +761,7 @@ public class PropertiesTable extends JPanel {
 		minTimeSpinnerPanel.setBounds(columnA_posX+90, columnB_Y += 20, 200, 20);
 		components.add(minTimeSpinnerPanel);
 
-		// T-TRANSITION SHEET ID:
+		// T-TRANSITION SHEET ID
 		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
 		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
 				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
@@ -852,10 +780,12 @@ public class PropertiesTable extends JPanel {
 		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, 100, 20);
 		components.add(sheetIdLabel);
 		JLabel zoomLabel = new JLabel("Zoom: "+zoom);
-		zoomLabel.setBounds(columnB_posX+50, columnB_Y, colBCompLength, 20);
+		zoomLabel.setBounds(columnB_posX+100, columnB_Y, colBCompLength, 20);
+		if(zoom != 100)
+			zoomLabel.setForeground(Color.red);
 		components.add(zoomLabel);	
+		
 		// T-TRANSITION LOCATION:
-		//headers.add(new JLabel("Location:", JLabel.TRAILING));
 		JLabel comLabel2 = new JLabel("Location:", JLabel.LEFT);
 		comLabel2.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(comLabel2);
@@ -890,7 +820,7 @@ public class PropertiesTable extends JPanel {
 		locationSpinnerPanel.setBounds(columnA_posX+90, columnB_Y += 20, 200, 20);
 		components.add(locationSpinnerPanel);
 		
-		// PORTAL STATUS
+		// T-TRANSITION PORTAL STATUS
 		JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
 		portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(portalLabel);
@@ -909,9 +839,7 @@ public class PropertiesTable extends JPanel {
 			}
 		});
 		components.add(portalBox);
-		// put all contents on the pane
-		//putContents(panel);
-		
+
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
 			panel.add(components.get(i));
@@ -926,36 +854,62 @@ public class PropertiesTable extends JPanel {
 	 * @param arc Arc - obiekt ³uku
 	 */
 	public PropertiesTable(Arc arc) {
+		int columnA_posX = 10;
+		int columnB_posX = 100;
+		int columnA_Y = 0;
+		int columnB_Y = 0;
+		int colACompLength = 70;
+		int colBCompLength = 200;
 		initiateContainers();
 		// set mode
 		mode = ARC;
 		element = arc;
 		elementLocation = arc.getStartLocation();
-		// getting the data
-		// ID
-		headers.add(new JLabel("ID:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(arc.getID())));
-		// comment
-		JFormattedTextField commentField = new JFormattedTextField();
-		commentField.setValue(arc.getComment());
-		commentField.addPropertyChangeListener("value",
-				new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent e) {
-						JFormattedTextField field = (JFormattedTextField) e.getSource();
-						try {
-							field.commitEdit();
-						} catch (ParseException ex) {
-						}
-						String newComment = (String) field.getValue();
-						changeComment(newComment);
-					}
-				});
-		headers.add(new JLabel("Comment:", JLabel.TRAILING));
-		values.add(commentField);
-		// weight
-		headers.add(new JLabel("Weight:", JLabel.TRAILING));
+		
+		// ARC ID
+		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
+		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+		components.add(idLabel);
+		JLabel idLabel2 = new JLabel(Integer.toString(arc.getID()));
+		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+		components.add(idLabel2);
+		
+		// ARC COMMENT
+		JLabel commLabel = new JLabel("Comment:", JLabel.LEFT);
+		commLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		columnA_Y += 20;
+		components.add(commLabel);
+		
+		JTextArea commentField = new JTextArea(arc.getComment());
+		commentField.setLineWrap(true);
+		commentField.addFocusListener(new FocusAdapter() {
+	            public void focusLost(FocusEvent e) {
+	            	JTextArea field = (JTextArea) e.getSource();
+	            	String newComment = "";
+	            	if(field != null)
+	            		newComment = field.getText();
+					changeComment(newComment);
+	            }
+	        });
+		
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
+        CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
+        columnB_Y += 20;
+        components.add(CreationPanel);
+		
+		// ARC WEIGHT
+        JLabel weightLabel = new JLabel("Weight:", JLabel.LEFT);
+        weightLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(weightLabel);
+		
 		SpinnerModel weightSpinnerModel = new SpinnerNumberModel(arc.getWeight(), 0, Integer.MAX_VALUE, 1);
 		JSpinner weightSpinner = new JSpinner(weightSpinnerModel);
+		weightSpinner.setLocation(columnB_posX, columnB_Y += 20);
+		weightSpinner.setSize(colBCompLength/3, 20);
+		weightSpinner.setMaximumSize(new Dimension(colBCompLength/3,20));
+		weightSpinner.setMinimumSize(new Dimension(colBCompLength/3,20));
 		weightSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -963,33 +917,76 @@ public class PropertiesTable extends JPanel {
 				setWeight(tokenz);
 			}
 		});
-		values.add(weightSpinner);
+		components.add(weightSpinner);
+
 		// startNode
-		headers.add(new JLabel("StartNode ID:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(arc.getStartNode().getID())));
-		headers.add(new JLabel("StartNode Name:", JLabel.TRAILING));
-		values.add(new JLabel(arc.getStartNode().getName()));
-		headers.add(new JLabel("StartNode Sheet:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(arc.getStartLocation()
-				.getSheetID())));
-		headers.add(new JLabel("Location:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(arc.getStartLocation()
-				.getPosition().x)+ ", "
-				+ Integer.toString(arc.getStartLocation().getPosition().y)));
+		columnB_posX+= 30;
+		colACompLength += 40;
+		JLabel label1A = new JLabel("StartNode ID:", JLabel.LEFT);
+		label1A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(label1A);
+		JLabel label1B = new JLabel(Integer.toString(arc.getStartNode().getID()));
+		label1B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		components.add(label1B);
+		
+		JLabel label2A = new JLabel("StartNode Name:", JLabel.LEFT);
+		label2A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(label2A);
+		JLabel label2B = new JLabel(arc.getStartNode().getName());
+		label2B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		components.add(label2B);
+		
+		JLabel label3A = new JLabel("StartNode Sheet:", JLabel.LEFT);
+		label3A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(label3A);
+		JLabel label3B = new JLabel(Integer.toString(arc.getStartLocation().getSheetID()));
+		label3B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		components.add(label3B);
+		
+		JLabel label4A = new JLabel("Location:", JLabel.LEFT);
+		label4A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(label4A);
+		JLabel label4B = new JLabel(Integer.toString(arc.getStartLocation().getPosition().x)+ ", "
+				+ Integer.toString(arc.getStartLocation().getPosition().y));
+		label4B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		components.add(label4B);
+		
 		// endNode
-		headers.add(new JLabel("EndNode ID:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(arc.getEndNode().getID())));
-		headers.add(new JLabel("EndNode Name:", JLabel.TRAILING));
-		values.add(new JLabel(arc.getEndNode().getName()));
-		headers.add(new JLabel("EndNode Sheet:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(arc.getEndLocation()
-				.getSheetID())));
-		headers.add(new JLabel("EndNode Location:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(arc.getEndLocation()
-				.getPosition().x) + ", "
-				+ Integer.toString(arc.getEndLocation().getPosition().y)));
-		// put all contents on the pane
-		putContents(panel);
+		JLabel label5A = new JLabel("EndNode ID:", JLabel.LEFT);
+		label5A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(label5A);
+		JLabel label5B = new JLabel(Integer.toString(arc.getEndNode().getID()));
+		label5B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		components.add(label5B);
+		
+		JLabel label6A = new JLabel("EndNode Name:", JLabel.LEFT);
+		label6A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(label6A);
+		JLabel label6B = new JLabel(arc.getEndNode().getName());
+		label6B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		components.add(label6B);
+		
+		JLabel label7A = new JLabel("EndNode Sheet:", JLabel.LEFT);
+		label7A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(label7A);
+		JLabel label7B = new JLabel(Integer.toString(arc.getEndLocation().getSheetID()));
+		label7B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		components.add(label7B);
+		
+		JLabel label8A = new JLabel("EndNode Location:", JLabel.LEFT);
+		label8A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(label8A);
+		JLabel label8B = new JLabel(Integer.toString(arc.getEndLocation().getPosition().x)+ ", "
+				+ Integer.toString(arc.getEndLocation().getPosition().y));
+		label8B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		components.add(label8B);
+		
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		add(panel);
 	}
 
 	/**
@@ -998,19 +995,63 @@ public class PropertiesTable extends JPanel {
 	 * @param sheet WorkspaceSheet - obiekt arkusza
 	 */
 	public PropertiesTable(WorkspaceSheet sheet) {
+		int columnA_posX = 10;
+		int columnB_posX = 100;
+		int columnA_Y = 0;
+		int columnB_Y = 0;
+		int colACompLength = 70;
+		int colBCompLength = 200;
+		
 		initiateContainers();
-		// set mode
 		mode = SHEET;
 		currentSheet = sheet;
-		// getting the data
-		// ID
-		headers.add(new JLabel("Sheet ID:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(sheet.getId())));
-		// size
-		headers.add(new JLabel("Width:", JLabel.TRAILING));
-		SpinnerModel widthSpinnerModel = new SpinnerNumberModel(sheet
-				.getGraphPanel().getSize().width, 0, Integer.MAX_VALUE, 1);
+
+		// SHEET ID
+		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
+		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+		components.add(idLabel);
+		JLabel idLabel2 = new JLabel(Integer.toString(sheet.getId()));
+		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+		components.add(idLabel2);
+		
+		// SHEET ZOOM
+		int zoom = sheet.getGraphPanel().getZoom();
+		//
+		Dimension x = sheet.getGraphPanel().getOriginSize();
+		int widthOrg = 0;
+		int heightOrg = 0;
+		if(x != null) {
+			widthOrg = (int) x.getWidth();
+			heightOrg =  (int) x.getHeight();
+		} else {
+			widthOrg = sheet.getGraphPanel().getSize().width;
+			heightOrg =  sheet.getGraphPanel().getSize().height;
+		}
+		
+		widthOrg = (int) (((double)100/(double)zoom) * widthOrg);
+		heightOrg = (int) (((double)100/(double)zoom) * heightOrg);
+		
+		JLabel zoomLabel1 = new JLabel("Zoom:", JLabel.LEFT);
+		zoomLabel1.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(zoomLabel1);
+		JLabel zoomLabel2 = new JLabel(Integer.toString(zoom)+"%");
+		zoomLabel2.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
+		if(zoom != 100)
+			zoomLabel2.setForeground(Color.red);
+		components.add(zoomLabel2);
+		
+		// SHEET SIZE
+		JLabel widthLabel = new JLabel("Width:", JLabel.LEFT);
+		widthLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(widthLabel);
+		
+		SpinnerModel widthSpinnerModel = new SpinnerNumberModel(sheet.getGraphPanel().getSize().width,
+				0, Integer.MAX_VALUE, 1);
 		JSpinner widthSpinner = new JSpinner(widthSpinnerModel);
+		widthSpinner.setLocation(columnB_posX, columnB_Y += 20);
+		widthSpinner.setSize(colBCompLength/2, 20);
+		widthSpinner.setMaximumSize(new Dimension(colBCompLength/2,20));
+		widthSpinner.setMinimumSize(new Dimension(colBCompLength/2,20));
 		widthSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -1018,11 +1059,27 @@ public class PropertiesTable extends JPanel {
 				setSheetWidth(width);
 			}
 		});
-		values.add(widthSpinner);
-		headers.add(new JLabel("Height:", JLabel.TRAILING));
-		SpinnerModel heightSpinnerModel = new SpinnerNumberModel(sheet
-				.getGraphPanel().getSize().height, 0, Integer.MAX_VALUE, 1);
+		components.add(widthSpinner);
+		
+		JLabel widthLabel2 = new JLabel(Integer.toString(widthOrg), JLabel.LEFT);
+		widthLabel2.setBounds(columnB_posX+110, columnA_Y, colACompLength, 20);
+		components.add(widthLabel2);
+		JLabel widthLabel3 = new JLabel("(orig.)", JLabel.LEFT);
+		widthLabel3.setBounds(columnB_posX+150, columnA_Y, colACompLength, 20);
+		components.add(widthLabel3);
+		
+		// SHEET HEIGHT
+		JLabel heightLabel = new JLabel("Height:", JLabel.LEFT);
+		heightLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(heightLabel);
+		
+		SpinnerModel heightSpinnerModel = new SpinnerNumberModel(sheet.getGraphPanel().getSize().height,
+				0, Integer.MAX_VALUE, 1);
 		JSpinner heightSpinner = new JSpinner(heightSpinnerModel);
+		heightSpinner.setLocation(columnB_posX, columnB_Y += 20);
+		heightSpinner.setSize(colBCompLength/2, 20);
+		heightSpinner.setMaximumSize(new Dimension(colBCompLength/2,20));
+		heightSpinner.setMinimumSize(new Dimension(colBCompLength/2,20));
 		heightSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -1030,10 +1087,27 @@ public class PropertiesTable extends JPanel {
 				setSheetHeight(height);
 			}
 		});
-		values.add(heightSpinner);
+		components.add(heightSpinner);
+		if(zoom != 100) {
+			widthSpinner.setEnabled(false);
+			heightSpinner.setEnabled(false);
+		}
+		
+		JLabel heightLabel2 = new JLabel(Integer.toString(heightOrg), JLabel.LEFT);
+		heightLabel2.setBounds(columnB_posX+110, columnB_Y, colACompLength, 20);
+		components.add(heightLabel2);
+		JLabel heightLabel3 = new JLabel("(orig.)", JLabel.LEFT);
+		heightLabel3.setBounds(columnB_posX+150, columnB_Y, colACompLength, 20);
+		components.add(heightLabel3);
+		
 		// is auto scroll when dragging automatic
-		headers.add(new JLabel("Autoscroll:", JLabel.TRAILING));
+		JLabel autoSrclLabel = new JLabel("Autoscroll:", JLabel.LEFT);
+		autoSrclLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(autoSrclLabel);
+		
 		JCheckBox autoscrollBox = new JCheckBox("", sheet.getGraphPanel().isAutoDragScroll());
+		autoscrollBox.setBounds(columnB_posX-4, columnB_Y, colACompLength, 20);
+		autoscrollBox.setLocation(columnB_posX-4, columnB_Y += 20);
 		autoscrollBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -1044,9 +1118,14 @@ public class PropertiesTable extends JPanel {
 					setAutoscroll(false);
 			}
 		});
-		values.add(autoscrollBox);
-		// put all contents on the pane
-		putContents(panel);
+		components.add(autoscrollBox);
+		
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		add(panel);
 	}
 
 	/**
@@ -1257,6 +1336,7 @@ public class PropertiesTable extends JPanel {
 		initiateContainers();
 		// set mode
 		mode = EXTERNAL_ANALYSIS;
+		//mode = MCT;
 		this.mctGroups = mct;
 		// getting the data
 		JLabel chooseMctLabel = new JLabel("Choose invariant: ");
@@ -1432,7 +1512,7 @@ public class PropertiesTable extends JPanel {
 	}
 	
 	/**
-	 * Metoda pomocnicza tworz¹ca szkielet g³ównych komponentów podokna w³aœciwoœci
+	 * Metoda pomocnicza tworz¹ca szkielet g³ównych komponentów podokna w³aœciwoœci.
 	 */
 	private void initiateContainers() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -1446,34 +1526,14 @@ public class PropertiesTable extends JPanel {
 	}
 
 	/**
-	 * Metoda pomocnicza odpowiedzialna za wype³nanie okna danymi.
+	 * Metoda pomocnicza odpowiedzialna za wype³nanie okna danymi przy u¿yciu
+	 * Layout Managera.
 	 * @param contentPanel JPanel - panel z zawartoœci¹
 	 */
 	private void putContents(JPanel contentPanel) {
-		/*
-		panel.setLayout(null);
-		for (JComponent component : headers) {
-
-		}
-		for (JComponent component : values) {
-			
-		}
-
-		//contentPanel.setLayout(new SpringLayout());
-		for (int i = 0; i < headers.size(); i++) {
-			contentPanel.add(headers.get(i));
-			contentPanel.add(values.get(i));
-		}
-		//SpringUtilities.makeCompactGrid(contentPanel, headers.size(), 2, 5, 2, 2, 5);
-		contentPanel.setOpaque(true);
-		contentPanel.repaint();
-		add(contentPanel);
-		*/
-		
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		for (JComponent component : headers) {
 			component.setMaximumSize(component.getMinimumSize());
-			
 		}
 		for (JComponent component : values)
 			component.setMaximumSize(component.getMinimumSize());
@@ -1506,7 +1566,9 @@ public class PropertiesTable extends JPanel {
 		}
 	}
 
-	// general operations
+	/**
+	 * Metoda odpowiedzialna za przerysowanie grafu obrazu w arkuszu sieci.
+	 */
 	private void repaintGraphPanel() {
 		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(elementLocation.getSheetID());
 		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
@@ -1514,21 +1576,43 @@ public class PropertiesTable extends JPanel {
 		graphPanel.repaint();
 	}
 
-	// sheet operations
+	/**
+	 * Metoda zmienia szerokoœæ arkusza dla sieci.
+	 * @param width int - nowa szerokoœæ
+	 */
 	private void setSheetWidth(int width) {
 		if (mode == SHEET) {
 			setContainerWidth(width, currentSheet.getGraphPanel());
 			setContainerWidth(width, currentSheet.getContainerPanel());
+			currentSheet.getGraphPanel().setOriginSize(currentSheet.getGraphPanel().getSize());
+			//Dimension dim = currentSheet.getGraphPanel().getSize();
+			//dim.setSize(width, dim.height);
+			//currentSheet.getGraphPanel().setSize(dim);
+			//currentSheet.getContainerPanel().setSize(dim);
 		}
 	}
 
+	/**
+	 * Metoda zmienia wysokoœæ arkusza dla sieci.
+	 * @param width int - nowa wysokoœæ
+	 */
 	private void setSheetHeight(int height) {
 		if (mode == SHEET) {
 			setContainerHeight(height, currentSheet.getGraphPanel());
 			setContainerHeight(height, currentSheet.getContainerPanel());
+			currentSheet.getGraphPanel().setOriginSize(currentSheet.getGraphPanel().getSize());
+			//Dimension dim = currentSheet.getGraphPanel().getSize();
+			//dim.setSize(dim.width, height);
+			//currentSheet.getGraphPanel().setSize(dim);
+			//currentSheet.getContainerPanel().setSize(dim);
 		}
 	}
 
+	/**
+	 * Metoda zmienia szerokoœæ wymiaru dla arkusza dla sieci.
+	 * @param width int - nowa szerokoœæ
+	 * @param container JComponent - obiekt dla którego zmieniany jest wymiar
+	 */
 	private void setContainerWidth(int width, JComponent container) {
 		if (mode == SHEET) {
 			Dimension dim = container.getSize();
@@ -1537,6 +1621,11 @@ public class PropertiesTable extends JPanel {
 		}
 	}
 
+	/**
+	 * Metoda zmienia wysokoœæ dla wymiaru dla arkusza dla sieci.
+	 * @param width int - nowa wysokoœæ
+	 * @param container JComponent - obiekt dla którego zmieniany jest wymiar
+	 */
 	private void setContainerHeight(int height, JComponent container) {
 		if (mode == SHEET) {
 			Dimension dim = container.getSize();
@@ -1545,13 +1634,20 @@ public class PropertiesTable extends JPanel {
 		}
 	}
 
+	/**
+	 * Metoda ustawia opcjê autoscroll dla panelu graficznego w arkuszu sieci.
+	 * @param value boolean - true, jeœli autoscroll w³¹czony
+	 */
 	private void setAutoscroll(boolean value) {
 		if (mode == SHEET) {
 			currentSheet.getGraphPanel().setAutoDragScroll(value);
 		}
 	}
 	
-	// time petri net operations
+	/**
+	 * Metoda ustawia now¹ wartoœæ czasu EFT dla tranzycji czasowej.
+	 * @param x int - nowe EFT
+	 */
 	private void setMinFireTime(double x) {
 		if (mode == TIMETRANSITION) {
 			TimeTransition transition = (TimeTransition) element;
@@ -1560,6 +1656,10 @@ public class PropertiesTable extends JPanel {
 		}
 	}
 	
+	/**
+	 * Metoda ustawia now¹ wartoœæ czasu LFT dla tranzycji czasowej.
+	 * @param x int - nowe LFT
+	 */
 	private void setMaxFireTime(double x) {
 		if (mode == TIMETRANSITION) {
 			TimeTransition transition = (TimeTransition) element;
@@ -1568,19 +1668,24 @@ public class PropertiesTable extends JPanel {
 		}
 	}
 
-	// general node operations (PLACE or TRANSITION modes)
+	/**
+	 * Metoda zmienia wspó³rzêdn¹ X dla wierzcho³ka sieci.
+	 * @param x int - nowa wartoœæ
+	 */
 	private void setX(int x) {
-		if (mode == PLACE || mode == TRANSITION) {
-			elementLocation.setPosition(new Point(x, elementLocation
-					.getPosition().y));
+		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
+			elementLocation.setPosition(new Point(x, elementLocation.getPosition().y));
 			repaintGraphPanel();
 		}
 	}
 
+	/**
+	 * Metoda zmienia wspó³rzêdn¹ Y dla wierzcho³ka sieci.
+	 * @param y int - nowa wartoœæ
+	 */
 	private void setY(int y) {
-		if (mode == PLACE || mode == TRANSITION) {
-			elementLocation.setPosition(new Point(
-					elementLocation.getPosition().x, y));
+		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
+			elementLocation.setPosition(new Point(elementLocation.getPosition().x, y));
 			repaintGraphPanel();
 		}
 	}
@@ -1599,7 +1704,7 @@ public class PropertiesTable extends JPanel {
 	}
 	
 	/**
-	 * Zmiana wartoœci komentarza dla elementu sieci, poza listenerem, który
+	 * Metoda zmienia komentarz dla elementu sieci, poza listenerem, który
 	 * jest klas¹ anonimow¹ (i nie widzi pola element).
 	 * @param newComment String - nowy komentarz
 	 */
@@ -1608,19 +1713,24 @@ public class PropertiesTable extends JPanel {
 	}
 
 	private void makePortal() {
-		if (mode == PLACE || mode == TRANSITION) {
+		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
 			@SuppressWarnings("unused")
 			Node node = (Node) element;
 		}
 	}
 
 	private void unPortal() {
-		if (mode == PLACE || mode == TRANSITION) {
+		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
 			@SuppressWarnings("unused")
 			Node node = (Node) element;
 		}
 	}
 
+	/**
+	 * Metoda zmienia liczbê tokenów dla miejsca sieci, poza listenerem, który
+	 * jest klas¹ anonimow¹ (i nie widzi pola element).
+	 * @param tokenz int - nowa liczba tokenów
+	 */
 	private void setTokens(int tokenz) {
 		Place place = (Place) element;
 		if (mode == PLACE) {
@@ -1629,7 +1739,11 @@ public class PropertiesTable extends JPanel {
 		}
 	}
 
-	// arc specific operations
+	/**
+	 * Metoda zmienia wagê dla ³uku sieci, poza listenerem, który
+	 * jest klas¹ anonimow¹ (i nie widzi pola element).
+	 * @param weight int - nowa waga
+	 */
 	private void setWeight(int weight) {
 		Arc arc = (Arc) element;
 		if (mode == ARC) {

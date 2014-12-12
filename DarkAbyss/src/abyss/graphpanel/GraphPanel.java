@@ -204,7 +204,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * 
+	 * Metoda ustawia odpowiedni kursor w zale¿noœci od wybranego elementu sieci.
 	 */
 	public void setCursorForMode() {
 		if (this.getDrawMode() == DrawModes.POINTER) {
@@ -467,14 +467,25 @@ public class GraphPanel extends JComponent {
 	 * Metoda s³u¿¹ca do ustawiania skali powiêkszenia.
 	 * @param zoom int - nowa wartoœæ powiêkszenia
 	 */
-	public void setZoom(int zoom) {
+	public void setZoom(int zoom, int oldZoom) {
 		if (getOriginSize() == null)
-			setOriginSize(this.getSize());
+		   setOriginSize(this.getSize());
+		
+		Dimension hidden = getOriginSize();
+		int orgHeight = (int) hidden.getHeight();
+		int orgWidth = (int) hidden.getWidth();
+		
 		if (getOriginSize().width * zoom / 100 < 10)
 			return;
+		
 		this.zoom = zoom;
-		System.out.println(this.getOriginSize().width * zoom / 100);
-		this.setSize(this.getOriginSize().width * zoom / 100, this.getOriginSize().height * zoom / 100);
+		//System.out.println(this.getOriginSize().width * zoom / 100);
+		//this.setSize(this.getOriginSize().width * zoom / 100, this.getOriginSize().height * zoom / 100);
+		int h = orgHeight;
+		h = (int) (h * (double)zoom / (double)100);
+		int w = orgWidth;
+		w = (int) (w * (double)zoom / (double)100);
+		this.setSize(w, h);
 		GUIManager gui = GUIManager.getDefaultGUIManager();
 		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
 		sheet.revalidate();
@@ -843,7 +854,7 @@ public class GraphPanel extends JComponent {
 		 */
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			if (e.isControlDown())
-				setZoom(getZoom() - 10 * e.getWheelRotation());
+				setZoom(getZoom() - 10 * e.getWheelRotation(), getZoom());
 			else if (e.isShiftDown())
 				scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 2);
 			else

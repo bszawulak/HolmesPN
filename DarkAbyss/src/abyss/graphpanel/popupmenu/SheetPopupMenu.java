@@ -97,25 +97,25 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
 		zoomMenu.add(createMenuItem("100%", "", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				getGraphPanel().setZoom(100);
+				getGraphPanel().setZoom(100, getGraphPanel().getZoom());
 			}
 		}));
 
 		zoomMenu.add(createMenuItem("80%", "", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				getGraphPanel().setZoom(80);
+				getGraphPanel().setZoom(80, getGraphPanel().getZoom());
 			}
 		}));
 
 		zoomMenu.add(createMenuItem("50%", "", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				getGraphPanel().setZoom(50);
+				getGraphPanel().setZoom(50, getGraphPanel().getZoom());
 			}
 		}));
 
 		zoomMenu.add(createMenuItem("30%", "", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				getGraphPanel().setZoom(30);
+				getGraphPanel().setZoom(30, getGraphPanel().getZoom());
 			}
 		}));
 

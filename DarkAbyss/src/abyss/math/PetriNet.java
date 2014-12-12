@@ -626,10 +626,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void saveInvariantsToInaFormat(String path) {
 		try {
 			if (genInvariants != null) {
-				//communicationProtocol = new INAprotocols();
 				communicationProtocol.writeINV(path, genInvariants, getTransitions());
-				//inaIw = new INAinvariantsWriter();
-				//inaIw.write(path, genInvariants, getTranstions());
 				JOptionPane.showMessageDialog(null,
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);

@@ -186,15 +186,13 @@ public class NetPropAnalyzer {
 					for (Arc a1 : el.getInArcs())
 						for (Transition t2 : transitions)
 							if (t.getID() != t2.getID())
-								for (ElementLocation el2 : t2
-										.getElementLocations())
+								for (ElementLocation el2 : t2.getElementLocations())
 									for (Arc a2 : el2.getInArcs())
-										if (a1.getStartNode().getID() == a2
-												.getStartNode().getID())
+										if (a1.getStartNode().getID() == a2.getStartNode().getID())
 											;
 			isStaticConFree = false;
 
-			System.out.println("====> " + isStaticConFree);
+			//System.out.println("====> " + isStaticConFree);
 
 			ArrayList<Object> ft0Prop = new ArrayList<Object>();
 			ft0Prop.add("FT0");

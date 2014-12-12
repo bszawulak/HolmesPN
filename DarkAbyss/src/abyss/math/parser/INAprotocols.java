@@ -124,6 +124,76 @@ public class INAprotocols {
 	 * @param transitions - lista tranzycji
 	 */
 	public void writeINV(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
+		try {
+			String extension = "";
+			if(!path.contains(".inv"))
+				extension = ".inv";
+			PrintWriter pw = new PrintWriter(path + extension);
+
+			pw.print("transition sub/sur/invariants for net 0.t\r\n");
+			pw.print("\r\n");
+			pw.print("semipositive transition invariants =\r\n");
+			pw.print("\r\n");
+			pw.print("Nr.      ");
+
+			int delimiter = 13;
+			if(transitions.size() < 100)
+				delimiter = 17;
+			int multipl = 1;
+			int transNo = invariants.get(0).size();
+			
+			for (int i = 0; i < transitions.size(); i++) {
+				if(transNo >= 100)
+					pw.print(conIntToStr(true,i));
+				else
+					pw.print(conIntToStr(false,i));
+				
+				if (i == (multipl*delimiter) - 1) {
+					pw.print("\r\n");
+					pw.print("        ");
+					multipl++;
+				}
+			}
+			pw.print("\r\n");
+			pw.print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			pw.print("\r\n");
+
+			for (int i = 0; i < invariants.size(); i++) {
+				
+				if(transNo >= 100) {
+					pw.print(conIntToStr(true,i) + " |   ");
+				} else
+					pw.print(conIntToStr(false,i) + " |   ");
+				
+				multipl = 1;
+				for (int t = 0; t < invariants.get(i).size(); t++) {
+					int tr = invariants.get(i).get(t);
+
+					if (transNo >= 100)
+						pw.print(conIntToStr(true, tr));
+					else
+						pw.print(conIntToStr(false, tr));
+					//buffor += tr;
+					if (t == (multipl*delimiter)-1 ) { //&& invariants.size() > 16) {
+						pw.print("\r\n");
+						//buffor += "     |   ";
+						if(transNo>=100)
+							pw.print("      |   ");
+						else
+							pw.print("     |   ");
+						multipl++;
+					}
+				}
+				pw.print("\r\n");
+			}
+			pw.print("\r\n");
+			pw.print("@");
+			pw.close();
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+
+		}
+		/*
 		String buffor = "transition sub/sur/invariants for net 0.t";
 		try {
 			String extension = "";
@@ -147,16 +217,11 @@ public class INAprotocols {
 			int transNo = invariants.get(0).size();
 			
 			for (int i = 0; i < transitions.size(); i++) {
-				
-				//if (i <= 9) buffor += " ";
-				//if (i <= 99) buffor += " ";
-				//if (i <= 999) buffor += " ";
 				if(transNo >= 100)
 					buffor += conIntToStr(true,i);
 				else
 					buffor += conIntToStr(false,i);
-				//buffor += i;
-
+				
 				if (i == (multipl*delimiter) - 1) {
 					buffor += "\r\n";
 					buffor += "        ";
@@ -164,29 +229,15 @@ public class INAprotocols {
 				}
 			}
 			buffor += "\r\n";
-			
 			buffor += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
 			buffor += "\r\n";
 
-			
-			
-			
 			for (int i = 0; i < invariants.size(); i++) {
 				
 				if(transNo >= 100) {
 					buffor += conIntToStr(true,i) + " |   ";
 				} else
 					buffor += conIntToStr(false,i) + " |   ";
-				/*
-				if (i <= 9)
-					buffor += " ";
-				if (i <= 99)
-					buffor += " ";
-				if (i <= 999)
-					buffor += " ";
-				buffor += i;
-				buffor += " |   "; //zawsze 3 bazowo
-				*/
 				
 				multipl = 1;
 				for (int t = 0; t < invariants.get(i).size(); t++) {
@@ -223,6 +274,7 @@ public class INAprotocols {
 			System.err.println("Error: " + e.getMessage());
 
 		}
+		*/
 	}
 	
 	private String conIntToStr(boolean large, int tr) {
@@ -291,10 +343,6 @@ public class INAprotocols {
 			int[] wMark = new int[MatSiz];
 			ArrayList<Integer> wagiWej = new ArrayList<Integer>();
 			ArrayList<Integer> wagiWyj = new ArrayList<Integer>();
-			// ArrayList<ArrayList<String>> wWej = new
-			// ArrayList<ArrayList<String>>();
-			// ArrayList<ArrayList<String>> wWyj = new
-			// ArrayList<ArrayList<String>>();
 
 			while ((wczytanaLinia = buffer.readLine()) != null) {
 				// Etap I
@@ -342,8 +390,7 @@ public class INAprotocols {
 									break;
 								// ilosc tokenow
 								case 1:
-									wMark[ID] = Integer
-											.parseInt(WczytanyString[j]);
+									wMark[ID] = Integer.parseInt(WczytanyString[j]);
 									ID++;
 									poz++;
 									break;
@@ -362,16 +409,13 @@ public class INAprotocols {
 									} else {
 										if (poZap == 2) {
 											wagiWej.remove(wagiWej.size() - 1);
-											wagiWej.add(Integer
-													.parseInt(WczytanyString[j]));
+											wagiWej.add(Integer.parseInt(WczytanyString[j]));
 										} else {
 											wagiWyj.remove(wagiWyj.size() - 1);
-											wagiWyj.add(Integer
-													.parseInt(WczytanyString[j]));
+											wagiWyj.add(Integer.parseInt(WczytanyString[j]));
 										}
 										poz = poZap;
 									}
-
 									break;
 								case 5:
 									poz = poZap;
@@ -393,11 +437,9 @@ public class INAprotocols {
 					// Etap II
 					// Wczytywanie danych o miejscach
 
-					if ((wczytanaLinia.contains("capacity")
-							&& wczytanaLinia.contains("time") && wczytanaLinia
-								.contains("name")) || wczytanaLinia.equals("@")) {
+					if ((wczytanaLinia.contains("capacity") && wczytanaLinia.contains("time") 
+							&& wczytanaLinia.contains("name")) || wczytanaLinia.equals("@")) {
 					} else {
-
 						tabWczytanaLinia = wczytanaLinia.split(": ");
 						//String[] tmp4 = tabWczytanaLinia[0].split(" ");
 						int placeNumber = globalPlaceNumber;
@@ -411,9 +453,8 @@ public class INAprotocols {
 				case 3:
 					// Etap III
 					// Wczytywanie danych o tranzycjach
-					if ((wczytanaLinia.contains("priority")
-							&& wczytanaLinia.contains("time") && wczytanaLinia
-								.contains("name")) || wczytanaLinia.equals("@")) {
+					if ((wczytanaLinia.contains("priority") && wczytanaLinia.contains("time") 
+							&& wczytanaLinia.contains("name")) || wczytanaLinia.equals("@")) {
 						placeCount = globalPlaceNumber;
 					} else {
 						tabWczytanaLinia = wczytanaLinia.split(": ");
@@ -436,10 +477,8 @@ public class INAprotocols {
 					}
 					break;
 				case 4:
-
-					// Tworzenie Arcï¿½w, szerokosci okna
-					
-					// tworzenie dla kaï¿½dego noda element location
+					// Tworzenie Arców, szerokosci okna
+					// tworzenie dla kazdego noda element location
 					for (int j = 0; j < nodeArray.size(); j++) {
 						if (nodeArray.get(j).getType() == PetriNetElementType.PLACE) {
 							elemArray.add(new ElementLocation(SID, new Point(
@@ -452,8 +491,7 @@ public class INAprotocols {
 
 						if (nodeArray.get(j).getType() == PetriNetElementType.TRANSITION) {
 							elemArray.add(new ElementLocation(SID, new Point(
-									280, 30 + (j - placeCount) * 60), nodeArray
-									.get(j)));
+									280, 30 + (j - placeCount) * 60), nodeArray.get(j)));
 							ArrayList<ElementLocation> tempElementLocationArry = new ArrayList<ElementLocation>();
 							tempElementLocationArry.add(elemArray.get(j));
 							nodeArray.get(j).setNodeLocations(
@@ -465,23 +503,19 @@ public class INAprotocols {
 					// Arki
 					for (int k = 0; k < placeArcListPre.size(); k++) {
 						for (int j = 0; j < placeArcListPre.get(k).length; j++) {
-
-							int t1 = trans[Integer.parseInt(placeArcListPre
-									.get(k)[j])][1];
-
-							arcArray.add(new Arc(nodeArray.get(t1 - 1).getLastLocation(), nodeArray.get(k).getLastLocation(), "",placeArcListPreWeight.get(0).get(pozycja_a)));
+							int t1 = trans[Integer.parseInt(placeArcListPre.get(k)[j])][1];
+							arcArray.add(new Arc(nodeArray.get(t1 - 1).getLastLocation(), 
+									nodeArray.get(k).getLastLocation(), "", 
+									placeArcListPreWeight.get(0).get(pozycja_a)));
 							pozycja_a++;
 						}
 					}
 					pozycja_a = 0;
 					for (int k = 0; k < placeArcListPost.size(); k++) {
 						for (int j = 0; j < placeArcListPost.get(k).length; j++) {
-
-							int t2 = trans[Integer.parseInt(placeArcListPost
-									.get(k)[j])][1];
-							arcArray.add(new Arc(nodeArray.get(k)
-									.getLastLocation(), nodeArray.get(t2 - 1)
-									.getLastLocation(), "",
+							int t2 = trans[Integer.parseInt(placeArcListPost.get(k)[j])][1];
+							arcArray.add(new Arc(nodeArray.get(k).getLastLocation(), 
+									nodeArray.get(t2 - 1).getLastLocation(), "",
 									placeArcListPostWeight.get(0).get(pozycja_a)));
 							pozycja_a++;
 
@@ -496,8 +530,7 @@ public class INAprotocols {
 					boolean xFound = false;
 					boolean yFound = false;
 					GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
-							.getWorkspace().getSheets().get(SIN)
-							.getGraphPanel();
+							.getWorkspace().getSheets().get(SIN).getGraphPanel();
 					for (int l = 0; l < elemArray.size(); l++) {
 						if (elemArray.get(l).getPosition().x > wid) {
 							tmpX = l;
@@ -512,18 +545,15 @@ public class INAprotocols {
 					}
 					if (xFound == true && yFound == false) {
 						graphPanel.setSize(new Dimension(elemArray.get(tmpX)
-								.getPosition().x + 90,
-								graphPanel.getSize().height));
+								.getPosition().x + 90,graphPanel.getSize().height));
 					}
 					if (yFound == true && xFound == false) {
 						graphPanel.setSize(new Dimension(
-								graphPanel.getSize().width, elemArray.get(tmpY)
-										.getPosition().y + 90));
+								graphPanel.getSize().width, elemArray.get(tmpY).getPosition().y + 90));
 					}
 					if (xFound == true && yFound == true) {
 						graphPanel.setSize(new Dimension(elemArray.get(tmpX)
-								.getPosition().x + 90, elemArray.get(tmpY)
-								.getPosition().y + 90));
+								.getPosition().x + 90, elemArray.get(tmpY).getPosition().y + 90));
 					}
 					break;
 				}
@@ -547,11 +577,8 @@ public class INAprotocols {
 		String zawartoscPliku = "P   M   PRE,POST  NETZ 0:";
 		try {
 			PrintWriter zapis = new PrintWriter(sciezka + ".pnt");
-
-			
 			zawartoscPliku += getNazwaPliku(sciezka);
 			zawartoscPliku += "\r\n";
-
 			//int[] tabPlace = new int[placeList.size()];
 
 			for (int i = 0; i < placeList.size(); i++) {
