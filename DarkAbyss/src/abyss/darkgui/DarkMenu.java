@@ -113,10 +113,12 @@ public class DarkMenu extends JMenuBar {
 				workspace.getProject().setNodes(new ArrayList<Node>());
 				workspace = guiManager.getWorkspace();
 				dockablesToRemove = new ArrayList<Dockable>();
+				
 				for (Dockable dockable : dockables)
 					dockablesToRemove.add(dockable);
 				for (Dockable dockable : dockablesToRemove)
 					deleteSheetItem(dockable);
+				
 				workspace.newTab();
 				lastIndex = workspace.getSheets().size() - 1;
 				sheetsToRemove = new ArrayList<WorkspaceSheet>();
@@ -301,8 +303,8 @@ public class DarkMenu extends JMenuBar {
 	}
 
 	/**
-	 * Metoda pomocnicza uruchamiana przy dodawaniu nowej zak³adki/arkusza.
-	 * @param dockableItem Dockable - obiekt do osadzenia.
+	 * Metoda odpowiedzialna za dodanie do menu zak³adek w Windows->Project... nazwy nowo utworzonego arkusza.
+	 * @param dockableItem Dockable - obiekt menu do osadzenia.
 	 */
 	public void addSheetItem(Dockable dockableItem) {
 		dockables.add(dockableItem);
@@ -312,8 +314,8 @@ public class DarkMenu extends JMenuBar {
 	}
 
 	/**
-	 * Metoda pomocnicza uruchamiana przy usuwaniu zak³adki/arkusza.
-	 * @param dockableItem Dockable - obiekt do usuniêcia
+	 * Metoda odpowiedzialna za usuwanie z menu Windows->Project wpisu o arkuszu.
+	 * @param dockableItem Dockable - obiekt menu do usuniêcia
 	 */
 	public void deleteSheetItem(Dockable dockableItem) {
 		int index = dockables.indexOf(dockableItem);

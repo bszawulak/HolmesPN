@@ -81,14 +81,21 @@ public class GUIManager extends JPanel implements ComponentListener {
 	// main Docks
 	private Workspace workspace;
 	private CompositeTabDock leftTabDock;
-	private CompositeTabDock topRightTabDock, bottomRightTabDock;
+	//private CompositeTabDock bottomLeftTabDock;
+	private CompositeTabDock topRightTabDock;
+	private CompositeTabDock bottomRightTabDock;
+	// SplitDocks
+	private SplitDock leftSplitDock;
+	private SplitDock rightSplitDock;
+	private SplitDock totalSplitDock;
+	
 	private Tools toolBox;
 	private Properties propertiesBox, simulatorBox, selectionBox, analyzerBox, propAnalyzerBox, mctBox, invSimBox;
 	// docking listener
 	private DarkDockingListener dockingListener;
 	private Toolbar shortcutsBar;
-	// SplitDocks
-	private SplitDock leftSplitDock, rightSplitDock, totalSplitDock;
+
+	
 	// main frame
 	private JFrame frame;
 	// other components
@@ -177,11 +184,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setWorkspace(new Workspace(this)); // default workspace dock
 		getDockingListener().setWorkspace(workspace);
 
+		//leftTabDock.setHeaderPosition(Position.BOTTOM);
 		leftTabDock.addChildDock(getToolBox(), new Position(0));
+		
+		leftTabDock.addChildDock(getSimulatorBox(), new Position(1));
+		leftTabDock.setSelectedDock(getToolBox());
 		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
 		topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
 		topRightTabDock.setSelectedDock(getPropertiesBox());
-		bottomRightTabDock.addChildDock(getSimulatorBox(), new Position(0));
+		//bottomRightTabDock.addChildDock(getSimulatorBox(), new Position(0));
 		bottomRightTabDock.addChildDock(getAnalyzerBox(), new Position(1));
 		bottomRightTabDock.addChildDock(getMctBox(), new Position(2));
 		bottomRightTabDock.addChildDock(getPropAnalyzerBox(), new Position(3));
@@ -190,24 +201,18 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// create the split docks
 		leftSplitDock = new SplitDock();
 		leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
-		leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(),
-				new Position(Position.CENTER));
+		leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(),new Position(Position.CENTER));
 		leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 8);
 
 		rightSplitDock = new SplitDock();
-		rightSplitDock
-				.addChildDock(topRightTabDock, new Position(Position.TOP));
-		rightSplitDock.addChildDock(bottomRightTabDock, new Position(
-				Position.BOTTOM));
-		rightSplitDock
-				.setDividerLocation((int) (screenSize.getHeight() * 2 / 5));
+		rightSplitDock.addChildDock(topRightTabDock, new Position(Position.TOP));
+		rightSplitDock.addChildDock(bottomRightTabDock, new Position(Position.BOTTOM));
+		rightSplitDock.setDividerLocation((int) (screenSize.getHeight() * 2 / 5));
 
 		totalSplitDock = new SplitDock();
 		totalSplitDock.addChildDock(leftSplitDock, new Position(Position.LEFT));
-		totalSplitDock.addChildDock(rightSplitDock,
-				new Position(Position.RIGHT));
-		totalSplitDock.setDividerLocation((int) screenSize.getWidth()
-				- (int) screenSize.getWidth() / 6);
+		totalSplitDock.addChildDock(rightSplitDock,new Position(Position.RIGHT));
+		totalSplitDock.setDividerLocation((int) screenSize.getWidth() - (int) screenSize.getWidth() / 6);
 
 		// // Add root dock
 		getDockModel().addRootDock("totalSplitDock", totalSplitDock, getFrame());
@@ -215,11 +220,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		// save docking paths
 		DockingManager.getDockingPathModel().add(
-				DefaultDockingPath
-						.createDockingPath(getToolBox().getDockable()));
+				DefaultDockingPath.createDockingPath(getToolBox().getDockable()));
 		DockingManager.getDockingPathModel().add(
-				DefaultDockingPath.createDockingPath(getPropertiesBox()
-						.getDockable()));
+				DefaultDockingPath.createDockingPath(getPropertiesBox().getDockable()));
 
 		// Create an externalizer.
 		setExternalizer(new FloatExternalizer(getFrame()));
@@ -245,8 +248,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		// Add the shortcuts bar to this panel.
 		this.add(getShortcutsBar().getToolBarBorderDock(), BorderLayout.CENTER);
-		KeyboardFocusManager manager = KeyboardFocusManager
-				.getCurrentKeyboardFocusManager();
+		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new KeyManager(this));
 	}
 
@@ -911,17 +913,17 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda rozpoczyna symulacjê odpalania inwariantów.
+	 * Metoda rozpoczyna symulacjê uruchamiania inwariantów.
 	 * @param type int - 0-basic, 1- time
 	 * @param value - wartoœæ
 	 * @throws CloneNotSupportedException
 	 */
 	public void startInvariantsSimulation(int type, int value) throws CloneNotSupportedException{
 		this.getWorkspace().getProject().startInvSim(type, value);
-		
 	}
 	
 	//********************************************************************
+	
 	static void copyFileByPath(String source, String target) throws IOException{
     	InputStream inStream = null;
     	OutputStream outStream = null;

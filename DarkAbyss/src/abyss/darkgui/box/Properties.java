@@ -56,11 +56,11 @@ public class Properties extends SingleDock {
 		guiManager = GUIManager.getDefaultGUIManager();
 
 		if (type == PropertiesType.EDITOR)
-			setDockable(GUIManager.externalWithListener(new DefaultDockable("Properties", scrollPane,
-					"Properties"),GUIManager.getDefaultGUIManager().getDockingListener()));
+			setDockable(GUIManager.externalWithListener(new DefaultDockable("NetElement", scrollPane,
+					"Net Element"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == PropertiesType.SIMULATOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Simulator", scrollPane,
-					"Sim"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"Simulator"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == PropertiesType.SELECTOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Selection", scrollPane,
 					"Selection"),GUIManager.getDefaultGUIManager().getDockingListener()));
@@ -72,7 +72,7 @@ public class Properties extends SingleDock {
 					"MCT"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == PropertiesType.PropANALYZER)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Net properties", scrollPane,
-					"Properties"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"Net Properties"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == PropertiesType.InvSIMULATOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants simulator", scrollPane,
 					"InvSim"),GUIManager.getDefaultGUIManager().getDockingListener()));

@@ -26,6 +26,8 @@ import java.util.ArrayList;
 
 
 
+
+
 import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -138,15 +140,28 @@ public class PropertiesTable extends JPanel {
 	 * @param sim NetSimulator - obiekt symulatora sieci
 	 */
 	public PropertiesTable(NetSimulator sim) {
+		int columnA_posX = 10;
+		int columnB_posX = 80;
+		int columnA_Y = 0;
+		int columnB_Y = 0;
+		int colACompLength = 70;
+		int colBCompLength = 70;
+		
 		initiateContainers();
 		
-		String[] simModeName = {"Klasyczny", "Czasowy"};
-		// set mode
+		String[] simModeName = {"Classic", "Time"};
 		mode = SIMULATOR;
 		simulator = sim;
-				
+		
+		// SIMULATION MODE
+		JLabel netTypeLabel = new JLabel("Net:");
+		netTypeLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+		components.add(netTypeLabel);
+		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		final JComboBox simMode = new JComboBox(simModeName);
+		final JComboBox simMode = new JComboBox(simModeName); //final, aby listener przycisku odczyta³ wartoœæ
+		simMode.setLocation(columnB_posX, columnB_Y += 10);
+		simMode.setSize(colBCompLength, 20);
 		simMode.setSelectedIndex(0);
 		simMode.addActionListener(new ActionListener() {
 			@Override
@@ -154,8 +169,15 @@ public class PropertiesTable extends JPanel {
 				simulator.setSimulatorNetType(simMode.getSelectedIndex());
 			}
 		});
-		headers.add(simMode);
-		// simulator controls
+		components.add(simMode);
+		
+		
+		// SIMULATOR CONTROLS
+		JLabel controlsLabel = new JLabel("Net:");
+		controlsLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(controlsLabel);
+		columnB_Y += 20;
+		
 		JButton oneActionBack = new JButton(new ImageIcon(
 				"resources/icons/simulation_icons/control_bck_blue.png"));
 		oneActionBack.setToolTipText("One action back");
@@ -286,7 +308,15 @@ public class PropertiesTable extends JPanel {
 		headers.add(new JLabel("Tokens:", JLabel.TRAILING));
 		values.add(new JLabel(Integer.toString(simulator.getTokensAmount())));
 		// put all contents on the pane
-		putContents(panel);
+		//putContents(panel);
+		
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			 panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		panel.setVisible(true);
+		add(panel);
 	}
 
 	/**
@@ -990,8 +1020,7 @@ public class PropertiesTable extends JPanel {
 	}
 
 	/**
-	 * Konstruktor odpowiedzialny za utworzenie podokna w³aœciwoœci klikniêtego
-	 * arkusza sieci. 
+	 * Konstruktor odpowiedzialny za wype³nienie podokna w³aœciwoœci dla wybranego arkusza sieci. 
 	 * @param sheet WorkspaceSheet - obiekt arkusza
 	 */
 	public PropertiesTable(WorkspaceSheet sheet) {
@@ -1171,7 +1200,7 @@ public class PropertiesTable extends JPanel {
 
 	/**
 	 * Konstruktor podokna w³aœciwoœci elementów sieci. Wype³niany w zale¿noœci od
-	 * tego, co przysz³o jako argument - tj. które w³aœciwoœci
+	 * tego, co przysz³o jako argument - tj. które w³aœciwoœci.
 	 * @param prop ArrayList[ArrayList[Object]] - macierz w³aœciwoœci
 	 * @param ref boolean - wartoœæ logiczna nie maj¹ca na nic wp³ywu :)
 	 */
@@ -1235,96 +1264,125 @@ public class PropertiesTable extends JPanel {
 	 */
 	public PropertiesTable(InvariantsSimulator is)
 	{
+		int columnA_posX = 10;
+		int columnB_posX = 60;
+		int columnA_Y = 0;
+		int columnB_Y = 0;
+		int colACompLength = 50;
+		int colBCompLength = 140;
+		String[] simModeName = {"Classic", "TPN"};
+		
 		initiateContainers();
-		// set mode
 		mode = INVARIANTSSIMULATOR;
 		invSimulator = is;
 		
-		String[] simModeName = {"Klasyczny", "Czasowy"};
-		// set mode
-		//mode = SIMULATOR;
-		//simulator = sim;
-				
+		// INVARIANTS SIMULATION NETWORK TYPE
+		JLabel netTypeLabel = new JLabel("Net:");
+		netTypeLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+		components.add(netTypeLabel);
+		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		JComboBox simMode = new JComboBox(simModeName);
+		simMode.setLocation(columnB_posX+5, columnB_Y += 10);
+		simMode.setSize(colBCompLength-60, 20);
+		//simMode.setMaximumSize(new Dimension(colBCompLength,20));
+		//simMode.setMinimumSize(new Dimension(colBCompLength,20));
 		simMode.setSelectedIndex(0);
-		/*
-		simMode.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				invSimulator.setSimulatorNetType(simMode.getSelectedIndex());
-				//simulator.setSimulatorNetType(simMode.getSelectedIndex());
-			}
-		});
-		*/
 		simMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				@SuppressWarnings("rawtypes")
 				JComboBox comboBox = (JComboBox) actionEvent.getSource();
 				if (comboBox.getSelectedIndex() == 0) {
-					invSimulator.setSimulatorNetType(0);
+					if(invSimulator != null)
+						invSimulator.setSimulatorNetType(0);
 				} else {
-					invSimulator.setSimulatorNetType(1);
+					if(invSimulator != null)
+						invSimulator.setSimulatorNetType(1);
 				}
 			}
 		});
-
-		headers.add(simMode);
-		//group.add(simMode);
-		values.add(new JLabel("Typ symulacji"));
+		components.add(simMode);
 		
-		 JRadioButton TimeMode = new JRadioButton("Time Mode");
-		 TimeMode.setActionCommand("0");
-		 headers.add(TimeMode);
-		 group.add(TimeMode);	
-		 values.add(new JLabel(""));
-		 JRadioButton StepMode = new JRadioButton("Step Mode");
-		 StepMode.setActionCommand("1");
-		 headers.add(StepMode);
-		 group.add(StepMode);
-		 values.add(new JLabel(""));
-		 JRadioButton CycleMode = new JRadioButton("Cycle Mode");
-		 CycleMode.setActionCommand("2");
-		 headers.add(CycleMode);
-		 group.add(CycleMode);
-		 values.add(new JLabel(""));
-		 
-		 SpinnerModel timeCycle = new SpinnerNumberModel(5,1,9999,1);
-		 spiner = new JSpinner(timeCycle);
-		 
-		 headers.add(spiner);
-		 values.add(new JLabel(""));
-		 group.setSelected(TimeMode.getModel(), true);
-		 JButton start = new JButton("Start");
-		 
-		 start.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent actionEvent) {
-					
-					if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsList().size()>0)
-					{
+		// INVARIANTS SIMULATION MODE
+		JLabel simTypeLabel = new JLabel("Mode:");
+		simTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(simTypeLabel);
+		
+		JRadioButton TimeMode = new JRadioButton("Time Mode");
+		TimeMode.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		TimeMode.setLocation(columnB_posX, columnB_Y);
+		TimeMode.setSize(colBCompLength, 20);
+		TimeMode.setActionCommand("0");
+		components.add(TimeMode);
+		group.add(TimeMode);
+		
+		columnA_Y += 20;
+		JRadioButton StepMode = new JRadioButton("Step Mode");
+		StepMode.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		StepMode.setLocation(columnB_posX, columnB_Y);
+		StepMode.setSize(colBCompLength, 20);
+		StepMode.setActionCommand("1");
+		components.add(StepMode);
+		group.add(StepMode);
+
+		columnA_Y += 20;
+		JRadioButton CycleMode = new JRadioButton("Cycle Mode");
+		CycleMode.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		CycleMode.setLocation(columnB_posX, columnB_Y);
+		CycleMode.setSize(colBCompLength, 20);
+		CycleMode.setActionCommand("2");
+		components.add(CycleMode);
+		group.add(CycleMode);
+		group.setSelected(TimeMode.getModel(), true);
+		
+		// INVARIANTS SIMULATION TIME
+		JLabel timeLabel = new JLabel("Time:");
+		timeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(timeLabel);
+		
+		SpinnerModel timeCycle = new SpinnerNumberModel(1,1,9999,1);
+		spiner = new JSpinner(timeCycle);
+		spiner.setLocation(columnB_posX+5, columnB_Y += 20);
+		spiner.setSize(colBCompLength-60, 20);
+		components.add(spiner);
+		
+		// INVARIANTS SIMULATION START
+		JButton startButton = new JButton("Start");
+		startButton.setBounds(columnA_posX, columnB_Y += 40, colBCompLength*2, 40);
+		startButton.setLocation(columnA_posX, columnB_Y);
+		startButton.setSize(colBCompLength, 40);
+		startButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsList().size()>0)
+				{
 					//blokowanie
 					setEnabledInvariantSimulationInitiateButtons(false);
-					
 					//odpalanie
 					try {
-						GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(group.getSelection().getActionCommand()),(Integer) spiner.getValue());
+						GUIManager.getDefaultGUIManager().startInvariantsSimulation(
+								Integer.valueOf(group.getSelection().getActionCommand()), 
+								(Integer) spiner.getValue()); //jaki tryb
 					} catch (CloneNotSupportedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					}
-					else
-					{
-						JOptionPane.showMessageDialog(new JFrame(),"There is no invariants to simulate",
-							    "Inane warning",JOptionPane.WARNING_MESSAGE);
-					}
 				}
-			});
-		 headers.add(start);
-		 values.add(new JLabel(""));
-		 putContents(panel);
+				else
+				{
+					JOptionPane.showMessageDialog(new JFrame(),"There are no invariants to simulate",
+						    "Ina warning",JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
+		components.add(startButton);
+		 
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			 panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		panel.setVisible(true);
+		add(panel);
 	}
 
 	/**

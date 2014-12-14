@@ -95,8 +95,7 @@ public class Workspace implements SelectionActionListener {
 				+ Integer.toString(id), sheets.get(index), "Sheet "
 				+ Integer.toString(id));
 		dockables.add(index, withListener(tempDockable));
-		docks.add(getDockFactory().createDock(dockables.get(index),
-				DockingMode.SINGLE));
+		docks.add(getDockFactory().createDock(dockables.get(index),DockingMode.SINGLE));
 		docks.get(index).addDockable(dockables.get(index), position, position);
 		getWorkspaceDock().addChildDock(docks.get(index), new Position(index));
 		// add menu item to the menu
