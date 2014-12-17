@@ -438,6 +438,16 @@ public class SelectionManager {
 			return;
 		}
 		
+		//dodawanie innych miejsc dla samego portalu do selectedElementLocations
+		ElementLocation nodeSelecredEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
+		Node nodeSelected = nodeSelecredEL.getParentNode(); //wybrany wierzcho³ek
+		ArrayList<ElementLocation> otherNodes = nodeSelected.getElementLocations(); //lista jego (innych?) lokacji
+		for (ElementLocation el : otherNodes) { 
+			if(!el.equals(nodeSelecredEL)) {
+				selectedElementLocations.add(el);
+			}
+		}
+		
 		for (ElementLocation el : this.getSelectedElementLocations()) { 
 			if (el.getParentNode().isPortal()) //usuwanie statusu portal
 				for (ElementLocation e : el.getParentNode().getNodeLocations())

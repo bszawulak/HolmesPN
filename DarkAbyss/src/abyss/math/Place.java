@@ -1,7 +1,6 @@
 package abyss.math;
 
 import java.awt.BasicStroke;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -173,6 +172,10 @@ public class Place extends Node {
 	 */
 	public void setTokensNumber(int tokensNumber) {
 		this.tokensNumber = tokensNumber;
+		if(tokensNumber < 0) {
+			@SuppressWarnings("unused")
+			int error = 1;
+		}
 	}
 
 	/**
@@ -181,6 +184,11 @@ public class Place extends Node {
 	 */
 	public void modifyTokensNumber(int delta) {
 		this.tokensNumber = this.tokensNumber + delta;
+		if(tokensNumber < 0) {
+			@SuppressWarnings("unused")
+			int error = 1;
+			error = 2;
+		}
 	}
 
 	/**

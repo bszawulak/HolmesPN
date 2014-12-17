@@ -24,7 +24,7 @@ import abyss.workspace.WorkspaceSheet;
 
 /**
  * Klasa, której zadaniem jest reprezentacja graficzna u¿ywanej w programie
- * sieci Petriego oraz oferowanie interfejsu umo¿liwiaj¹cego interakcje ze
+ * sieci Petriego oraz oferowanie interfejsu umo¿liwiaj¹cego interakcjê ze
  * strony u¿ytkownika.
  * @author students
  *
@@ -85,26 +85,6 @@ public class GraphPanel extends JComponent {
 		this.getSelectionManager().setActionListener(petriNet);
 	}
 
-	public GraphPanel getThis() {
-		return this;
-	}
-
-	/**
-	 * Metoda pozwala na pobranie numery identyfikacyjnego danego arkusza.
-	 * @return int - zwraca id arkusza z pola sheetId
-	 */
-	public int getSheetId() {
-		return sheetId;
-	}
-
-	/**
-	 * Metoda pozwala na ustawienie nowego identyfikatora dla danego arkusza.
-	 * @param sheetID int - id arkusza dla sieci
-	 */
-	public void setSheetId(int sheetID) {
-		this.sheetId = sheetID;
-	}
-
 	/**
 	 * Metoda pozwala na ustawienie zbioru wierzcho³ków oraz ³uków dla danego arkusza.
 	 * Zbiór ten jest wspólny dla wszystkich arkuszy i jest przechowywana w obiekcie
@@ -133,6 +113,54 @@ public class GraphPanel extends JComponent {
 		this.repaint();
 	}
 
+	/**
+	 * Metoda ustawia odpowiedni kursor w zale¿noœci od wybranego elementu sieci.
+	 */
+	public void setCursorForMode() {
+		if (this.getDrawMode() == DrawModes.POINTER) {
+			setCursor(Cursor.getDefaultCursor());
+		} else {
+			Toolkit toolkit = Toolkit.getDefaultToolkit();
+			Image image = toolkit.getImage("resources/cursors/"
+					+ this.getDrawMode().toString() + ".gif");
+			Point hotSpot = new Point(0, 0);
+			Cursor cursor = toolkit.createCustomCursor(image, hotSpot, this
+					.getDrawMode().toString());
+			setCursor(cursor);
+		}
+	}
+
+	/**
+	 * Metoda odpowiedzialna za konwersjê czêœci sieci wyœwietlanej w komponencie
+	 * GraphPanel na obiekt typu BufferedImage.
+	 * @return BufferedImage - obraz arkusza sieci
+	 */
+	public BufferedImage createImageFromSheet() {
+		Rectangle r = getBounds();
+		BufferedImage image = new BufferedImage(r.width, r.height, BufferedImage.TYPE_INT_RGB);
+		Graphics g = image.getGraphics();
+		g.setColor(Color.white);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		drawPetriNet((Graphics2D) g.create());
+		return image;
+	}
+
+	/**
+	 * Metoda pozwala na pobranie numery identyfikacyjnego danego arkusza.
+	 * @return int - zwraca id arkusza z pola sheetId
+	 */
+	public int getSheetId() {
+		return sheetId;
+	}
+
+	/**
+	 * Metoda pozwala na ustawienie nowego identyfikatora dla danego arkusza.
+	 * @param sheetID int - id arkusza dla sieci
+	 */
+	public void setSheetId(int sheetID) {
+		this.sheetId = sheetID;
+	}
+	
 	/**
 	 * Metoda pozwala na pobrania listy wierzcho³ków przypisanych do danego arkusza.
 	 * Lista ta jest wspólna dla wszystkich arkuszy i jest przechowywana w obiekcie PetriNet.
@@ -174,6 +202,215 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
+	 * Przeci¹¿ona metoda paintComponent w klasie javax.swing.JComponent. Jej ka¿dorazowe
+	 * wywo³anie powoduje wyczyszczenie aktualnego widoku i narysowanie go od nowa. W tym te¿
+	 * momencie wybierane s¹ odpowiednie elementy, które maj¹ zastaæ narysowane na danym arkuszu, 
+	 * na podstawie ich lokalizacji ElementLocation.sheetId, nastêpnie ka¿demu z obiektów
+	 * zakwalifikowanych, zlecane jest narysowanie "siebie" na dostarczonym w parametrze metody
+	 * obiekcie Graphics2D. W rysowaniu wykorzystany zosta³ podwójny bufor oraz filtr antyaliasingowy.
+	 * @param g Graphics - obiekt zawieraj¹cy prezentowan¹ grafikê
+	 */
+	public void paintComponent(Graphics g) {
+		g.setColor(new Color(0x00f0f0f0));
+		g.fillRect(0, 0, getWidth(), getHeight());
+		Graphics2D g2d = (Graphics2D) g.create();
+		if (isDrawMesh())
+			drawMesh(g2d);
+		drawPetriNet(g2d);
+	}
+
+	/**
+	 * 
+	 * @param g2d Graphics2D
+	 */
+	private void drawMesh(Graphics2D g2d) {
+		g2d.setColor(EditorResources.graphPanelMeshColor);
+		for (int i = meshSize; i < this.getWidth(); i += meshSize)
+			g2d.drawLine(i, 0, i, this.getHeight());
+		for (int i = meshSize; i < this.getHeight(); i += meshSize)
+			g2d.drawLine(0, i, this.getWidth(), i);
+	}
+
+	/**
+	 * Metoda odpowiedzialna za rysowanie sieci.
+	 * @param g2d Graphics2D - obiekt grafiki
+	 */
+	public void drawPetriNet(Graphics2D g2d) {
+		g2d.translate(0, 0);
+		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, // Anti-alias!
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		for (Arc a : getArcs()) {
+			a.draw(g2d, this.sheetId, getZoom());
+		}
+		if (this.isSimulationActive())
+			for (Arc a : getArcs()) {
+				a.drawSimulationToken(g2d, this.sheetId);
+			}
+		for (Node n : getNodes()) {
+			n.draw(g2d, this.sheetId);
+		}
+		if (getSelectingRect() != null) {
+			g2d.setColor(EditorResources.selectionRectColor);
+			g2d.setStroke(EditorResources.selectionRectStroke);
+			g2d.drawRoundRect(getSelectingRect().x, getSelectingRect().y,
+				getSelectingRect().width, getSelectingRect().height, 3, 3);
+			g2d.setColor(EditorResources.selectionRectFill);
+			g2d.fillRoundRect(getSelectingRect().x, getSelectingRect().y,
+				getSelectingRect().width, getSelectingRect().height, 3, 3);
+		}
+		if (drawnArc != null)
+			drawnArc.draw(g2d, this.sheetId, getZoom());
+	}
+
+	/**
+	 * Metoda s³u¿¹ca do ustawiania skali powiêkszenia.
+	 * @param zoom int - nowa wartoœæ powiêkszenia
+	 */
+	public void setZoom(int zoom, int oldZoom) {
+		if (getOriginSize() == null)
+		   setOriginSize(this.getSize());
+		
+		Dimension hidden = getOriginSize();
+		int orgHeight = (int) hidden.getHeight();
+		int orgWidth = (int) hidden.getWidth();
+		
+		if (getOriginSize().width * zoom / 100 < 10)
+			return;
+		
+		this.zoom = zoom;
+		//System.out.println(this.getOriginSize().width * zoom / 100);
+		//this.setSize(this.getOriginSize().width * zoom / 100, this.getOriginSize().height * zoom / 100);
+		int h = orgHeight;
+		h = (int) (h * (double)zoom / (double)100);
+		int w = orgWidth;
+		w = (int) (w * (double)zoom / (double)100);
+		this.setSize(w, h);
+		GUIManager gui = GUIManager.getDefaultGUIManager();
+		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
+		sheet.revalidate();
+		this.invalidate();
+		this.repaint();
+
+	}
+
+	/**
+	 * Metoda przewijania arkusza w poziomie za pomoc¹ wa³ka myszy.
+	 * @param delta int - wielkoœæ przewiniêcia
+	 */
+	public void scrollSheetHorizontal(int delta) {
+		GUIManager gui = GUIManager.getDefaultGUIManager();
+		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
+		sheet.scrollHorizontal(delta);
+	}
+
+	/**
+	 * Metoda przewijania arkusza w pionie za pomoc¹ wa³ka myszy.
+	 * @param delta int - wielkoœæ przewiniêcia
+	 */
+	public void scrollSheetVertical(int delta) {
+		GUIManager gui = GUIManager.getDefaultGUIManager();
+		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
+		sheet.scrollVertical(delta);
+	}
+
+	/**
+	 * Metoda realizuje zmianê rozmiaru arkusza, podczas przesuwania po jego lub poza
+	 * jego obszar, elementów. Jest ona jedynie wykonywana gdy automatyczne zwiêkszanie
+	 * rozmiaru arkusza jest aktywne (isAutoDragScroll = true). Zmiana rozmiaru liczona
+	 * jest na podstawie ró¿nicy pomiêdzy wczeœniejsz¹ pozycj¹ przeci¹ganego elementu a aktualn¹.
+	 * @param currentPoint Point - aktualna pozycja przeci¹ganego elementu
+	 * @param previousPoint Point - wczeœniejsza pozycja przeci¹ganego elementu
+	 */
+	public void adjustScroll(Point currentPoint, Point previousPoint) {
+		if (!isAutoDragScroll())
+			return;
+		GUIManager gui = GUIManager.getDefaultGUIManager();
+		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
+		Dimension viewSize = sheet.getViewport().getSize();
+		Point delta = new Point();
+		delta.setLocation(currentPoint.x - previousPoint.x, currentPoint.y - previousPoint.y);
+		JViewport viewport = sheet.getViewport();
+		Point viewPoint = new Point(currentPoint.x - viewport.getViewPosition().x, currentPoint.y
+				- viewport.getViewPosition().y);
+		if (isAutoDragScroll() && ((viewSize.width - 20) < viewPoint.x
+				|| (viewSize.height - 20) < viewPoint.y || (20 > viewPoint.x || (20 > viewPoint.y)))) {
+			sheet.scrollHorizontal(delta.x);
+			sheet.scrollVertical(delta.y);
+		}
+	}
+
+	/**
+	 * Dodawanie miejsca - menu kontekstowe.
+	 * @param p Point - punkt dodawania miejsca
+	 */
+	private void addNewPlace(Point p) {
+		if (isLegalLocation(p)) {
+			Place n = new Place(IdGenerator.getNextId(), this.sheetId, p);
+			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
+			getNodes().add(n);
+		}
+	}
+
+	/**
+	 * Metoda zwi¹zana z mousePressed(MouseEvent).
+	 * @param p Point - punkt dodawania tranzycji
+	 */
+	private void addNewTransition(Point p) {
+		if (isLegalLocation(p)) {
+			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, p);
+			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
+			getNodes().add(n);
+		}
+	}
+	
+	/**
+	 * Metoda zwi¹zana z mousePressed(MouseEvent).
+	 * @param p Point - punkt dodawania tranzycji czasowej
+	 */
+	private void addNewTimeTransition(Point p) {
+		if (isLegalLocation(p)) {
+			TimeTransition n = new TimeTransition(IdGenerator.getNextId(),this.sheetId, p);
+			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
+			getNodes().add(n);
+		}
+	}
+
+	/**
+	 * Metoda sprawdza czy podany punkt jest akceptowalny z punktu widzenia rozmiarów arkusza.
+	 * Wykorzystywana jets ta metoda podczas przeci¹gania elementów po arkuszu.
+	 * @param point Point - punkt, którego poprawnoœæ wspó³rzêdnych bêdzie sprawdzana
+	 * @return boolean - true jeœli podany w parametrze punkt jest poprawny; 
+	 * 		false w przypadku przeciwnym
+	 */
+	public boolean isLegalLocation(Point point) {
+		if (point.x > 20 && point.y > 20 && point.x < (getSize().width - 20)
+				&& point.y < (getSize().height - 20)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Usuwanie ³uku - rozkaz z menu kontekstowego na ³uku
+	 */
+	public void clearDrawnArc() {
+		if (this.drawnArc != null) {
+			drawnArc.unlinkElementLocations();
+			drawnArc = null;
+		}
+	}
+	
+	/**
+	 * Metoda zwraca obiekt przechowuj¹cy dane o ca³ej rysowanej sieci.
+	 * @return PetriNet - reprezentacja sieci w programie
+	 */
+	public PetriNet getPetriNet() {
+		return petriNet;
+	}
+	
+	/**
 	 * Metoda pozwala na ustawienie aktualnego prostok¹ta zaznaczenia, na podstawie którego
 	 * rysowany jest obszar zaznaczenia oraz wybierane s¹ obiekty, które kwalifikuj¹ siê aby
 	 * zostaæ zaznaczone.
@@ -202,39 +439,7 @@ public class GraphPanel extends JComponent {
 		this.drawMode = newMode;
 		this.setCursorForMode();
 	}
-
-	/**
-	 * Metoda ustawia odpowiedni kursor w zale¿noœci od wybranego elementu sieci.
-	 */
-	public void setCursorForMode() {
-		if (this.getDrawMode() == DrawModes.POINTER) {
-			setCursor(Cursor.getDefaultCursor());
-		} else {
-			Toolkit toolkit = Toolkit.getDefaultToolkit();
-			Image image = toolkit.getImage("resources/cursors/"
-					+ this.getDrawMode().toString() + ".gif");
-			Point hotSpot = new Point(0, 0);
-			Cursor cursor = toolkit.createCustomCursor(image, hotSpot, this
-					.getDrawMode().toString());
-			setCursor(cursor);
-		}
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public BufferedImage createImageFromSheet() {
-		Rectangle r = getBounds();
-		BufferedImage image = new BufferedImage(r.width, r.height,
-				BufferedImage.TYPE_INT_RGB);
-		Graphics g = image.getGraphics();
-		g.setColor(Color.white);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		drawPetriNet((Graphics2D) g.create());
-		return image;
-	}
-
+	
 	/**
 	 * Metoda pozwala na pobranie stanu symulacji. Jeœli symulacja jest aktywna
 	 * (isSimulationActive = true) wszelkie interakcje z arkuszem s¹ zablokowane.
@@ -376,37 +581,7 @@ public class GraphPanel extends JComponent {
 	public void setAutoDragScroll(boolean autoDragScroll) {
 		this.autoDragScroll = autoDragScroll;
 	}
-
-	/**
-	 * Przeci¹¿ona metoda paintComponent w klasie javax.swing.JComponent. Jej ka¿dorazowe
-	 * wywo³anie powoduje wyczyszczenie aktualnego widoku i narysowanie go od nowa. W tym te¿
-	 * momencie wybierane s¹ odpowiednie elementy, które maj¹ zastaæ narysowane na danym arkuszu, 
-	 * na podstawie ich lokalizacji ElementLocation.sheetId, nastêpnie ka¿demu z obiektów
-	 * zakwalifikowanych, zlecane jest narysowanie "siebie" na dostarczonym w parametrze metody
-	 * obiekcie Graphics2D. W rysowaniu wykorzystany zosta³ podwójny bufor oraz filtr antyaliasingowy.
-	 * @param g Graphics - obiekt zawieraj¹cy prezentowan¹ grafikê
-	 */
-	public void paintComponent(Graphics g) {
-		g.setColor(new Color(0x00f0f0f0));
-		g.fillRect(0, 0, getWidth(), getHeight());
-		Graphics2D g2d = (Graphics2D) g.create();
-		if (isDrawMesh())
-			drawMesh(g2d);
-		drawPetriNet(g2d);
-	}
-
-	/**
-	 * 
-	 * @param g2d Graphics2D
-	 */
-	private void drawMesh(Graphics2D g2d) {
-		g2d.setColor(EditorResources.graphPanelMeshColor);
-		for (int i = meshSize; i < this.getWidth(); i += meshSize)
-			g2d.drawLine(i, 0, i, this.getHeight());
-		for (int i = meshSize; i < this.getHeight(); i += meshSize)
-			g2d.drawLine(0, i, this.getWidth(), i);
-	}
-
+	
 	/**
 	 * 
 	 * @return boolean
@@ -424,74 +599,11 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za rysowanie sieci.
-	 * @param g2d Graphics2D - obiekt grafiki
-	 */
-	public void drawPetriNet(Graphics2D g2d) {
-		g2d.translate(0, 0);
-		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, // Anti-alias!
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		for (Arc a : getArcs()) {
-			a.draw(g2d, this.sheetId, getZoom());
-		}
-		if (this.isSimulationActive())
-			for (Arc a : getArcs()) {
-				a.drawSimulationToken(g2d, this.sheetId);
-			}
-		for (Node n : getNodes()) {
-			n.draw(g2d, this.sheetId);
-		}
-		if (getSelectingRect() != null) {
-			g2d.setColor(EditorResources.selectionRectColor);
-			g2d.setStroke(EditorResources.selectionRectStroke);
-			g2d.drawRoundRect(getSelectingRect().x, getSelectingRect().y,
-				getSelectingRect().width, getSelectingRect().height, 3, 3);
-			g2d.setColor(EditorResources.selectionRectFill);
-			g2d.fillRoundRect(getSelectingRect().x, getSelectingRect().y,
-				getSelectingRect().width, getSelectingRect().height, 3, 3);
-		}
-		if (drawnArc != null)
-			drawnArc.draw(g2d, this.sheetId, getZoom());
-	}
-
-	/**
 	 * Metoda zwracaj¹ca liczbow¹ wartoœæ powiêkszenia.
 	 * @return int - zoom
 	 */
 	public int getZoom() {
 		return zoom;
-	}
-
-	/**
-	 * Metoda s³u¿¹ca do ustawiania skali powiêkszenia.
-	 * @param zoom int - nowa wartoœæ powiêkszenia
-	 */
-	public void setZoom(int zoom, int oldZoom) {
-		if (getOriginSize() == null)
-		   setOriginSize(this.getSize());
-		
-		Dimension hidden = getOriginSize();
-		int orgHeight = (int) hidden.getHeight();
-		int orgWidth = (int) hidden.getWidth();
-		
-		if (getOriginSize().width * zoom / 100 < 10)
-			return;
-		
-		this.zoom = zoom;
-		//System.out.println(this.getOriginSize().width * zoom / 100);
-		//this.setSize(this.getOriginSize().width * zoom / 100, this.getOriginSize().height * zoom / 100);
-		int h = orgHeight;
-		h = (int) (h * (double)zoom / (double)100);
-		int w = orgWidth;
-		w = (int) (w * (double)zoom / (double)100);
-		this.setSize(w, h);
-		GUIManager gui = GUIManager.getDefaultGUIManager();
-		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
-		sheet.revalidate();
-		this.invalidate();
-		this.repaint();
-
 	}
 
 	/**
@@ -509,118 +621,16 @@ public class GraphPanel extends JComponent {
 	public void setOriginSize(Dimension originSize) {
 		this.originSize = originSize;
 	}
-
-	/**
-	 * Metoda przewijania arkusza w poziomie za pomoc¹ wa³ka myszy.
-	 * @param delta int - wielkoœæ przewiniêcia
-	 */
-	public void scrollSheetHorizontal(int delta) {
-		GUIManager gui = GUIManager.getDefaultGUIManager();
-		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
-		sheet.scrollHorizontal(delta);
-	}
-
-	/**
-	 * Metoda przewijania arkusza w pionie za pomoc¹ wa³ka myszy.
-	 * @param delta int - wielkoœæ przewiniêcia
-	 */
-	public void scrollSheetVertical(int delta) {
-		GUIManager gui = GUIManager.getDefaultGUIManager();
-		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
-		sheet.scrollVertical(delta);
-	}
-
-	/**
-	 * Metoda realizuje zmianê rozmiaru arkusza, podczas przesuwania po jego lub poza
-	 * jego obszar, elementów. Jest ona jedynie wykonywana gdy automatyczne zwiêkszanie
-	 * rozmiaru arkusza jest aktywne (isAutoDragScroll = true). Zmiana rozmiaru liczona
-	 * jest na podstawie ró¿nicy pomiêdzy wczeœniejsz¹ pozycj¹ przeci¹ganego elementu a aktualn¹.
-	 * @param currentPoint Point - aktualna pozycja przeci¹ganego elementu
-	 * @param previousPoint Point - wczeœniejsza pozycja przeci¹ganego elementu
-	 */
-	public void adjustScroll(Point currentPoint, Point previousPoint) {
-		if (!isAutoDragScroll())
-			return;
-		GUIManager gui = GUIManager.getDefaultGUIManager();
-		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
-		Dimension viewSize = sheet.getViewport().getSize();
-		Point delta = new Point();
-		delta.setLocation(currentPoint.x - previousPoint.x, currentPoint.y - previousPoint.y);
-		JViewport viewport = sheet.getViewport();
-		Point viewPoint = new Point(currentPoint.x - viewport.getViewPosition().x, currentPoint.y
-				- viewport.getViewPosition().y);
-		if (isAutoDragScroll() && ((viewSize.width - 20) < viewPoint.x
-				|| (viewSize.height - 20) < viewPoint.y || (20 > viewPoint.x || (20 > viewPoint.y)))) {
-			sheet.scrollHorizontal(delta.x);
-			sheet.scrollVertical(delta.y);
-		}
-	}
-
-	/**
-	 * Dodawanie miejsca - menu kontekstowe.
-	 * @param p Point - punkt dodawania miejsca
-	 */
-	private void addNewPlace(Point p) {
-		if (isLegalLocation(p)) {
-			Place n = new Place(IdGenerator.getNextId(), this.sheetId, p);
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
-		}
-	}
-
-	/**
-	 * Metoda zwi¹zana z mousePressed(MouseEvent).
-	 * @param p Point - punkt dodawania tranzycji
-	 */
-	private void addNewTransition(Point p) {
-		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, p);
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
-		}
-	}
 	
-	/**
-	 * Metoda zwi¹zana z mousePressed(MouseEvent).
-	 * @param p Point - punkt dodawania tranzycji czasowej
-	 */
-	private void addNewTimeTransition(Point p) {
-		if (isLegalLocation(p)) {
-			TimeTransition n = new TimeTransition(IdGenerator.getNextId(),this.sheetId, p);
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
-		}
-	}
+	//***********************************************************************************
+	//***********************************************************************************
+	//***********************************************************************************
+	//***********************************************************************************
+	//***********************************************************************************
 
 	/**
-	 * Metoda sprawdza czy podany punkt jest akceptowalny z punktu widzenia rozmiarów arkusza.
-	 * Wykorzystywana jets ta metoda podczas przeci¹gania elementów po arkuszu.
-	 * @param point Point - punkt, którego poprawnoœæ wspó³rzêdnych bêdzie sprawdzana
-	 * @return boolean - true jeœli podany w parametrze punkt jest poprawny; 
-	 * 		false w przypadku przeciwnym
-	 */
-	public boolean isLegalLocation(Point point) {
-		if (point.x > 20 && point.y > 20 && point.x < (getSize().width - 20)
-				&& point.y < (getSize().height - 20)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Usuwanie ³uku - rozkaz z menu kontekstowego na ³uku
-	 */
-	public void clearDrawnArc() {
-		if (this.drawnArc != null) {
-			drawnArc.unlinkElementLocations();
-			drawnArc = null;
-		}
-	}
-
-	/**
-	 * Prywatna klasa wewn¹trz GraphPanel, zajmuj¹ca siê skrótami klawiaturowymi,
-	 * realizowanymi przez GraphPanel.
+	 * Prywatna klasa wewn¹trz GraphPanel, zajmuj¹ca siê skrótami klawiatury,
+	 * obs³ugiwanymi przez obiekt klasy GraphPanel.
 	 * @author students
 	 *
 	 */

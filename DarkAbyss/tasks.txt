@@ -4,14 +4,19 @@ Metody do przejrzenia / napisania
 Poprawiæ problem z powtarzaj¹cym siê rozszerzeniem:
 [ ] GUIManager.exportProject
 [ ] GUIManager.exportGeneratedInvariants
-[ ] GUIManager.exportProjectToImage
-[ ] GUIManager.saveProject
+[*] GUIManager.exportProjectToImage
+[*] GUIManager.saveProject
 
 Struktura sieci
 [*] Klonowanie wierzcho³ków w ramach tworzenia Portali
+[*] Ogólne poprawki dotycz¹ce tworzenia portali
 
 Analiza
 [*] Generowanie inwariantów przy pomocy programu INA (AR, MR)
 
 
 [ ] Lokalizacja Node przyciskami w Properties - co 10 i align do linii
+
+Inne poprawki:
+[*] Poprawka zwi¹zana ze zmian¹ rozmiaru arkuszy
+[*] Przepisanie podokien programu na pozycjonowanie absolutne

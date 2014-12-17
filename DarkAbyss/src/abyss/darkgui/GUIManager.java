@@ -2,17 +2,16 @@ package abyss.darkgui;
 
 import abyss.analyzer.DarkAnalyzer;
 import abyss.analyzer.NetPropAnalyzer;
-import abyss.darkgui.box.Properties;
-import abyss.darkgui.box.Tools;
-import abyss.darkgui.box.Properties.PropertiesType;
 import abyss.darkgui.dockable.DeleteAction;
+import abyss.darkgui.properties.Properties;
+import abyss.darkgui.properties.PetriNetTools;
+import abyss.darkgui.properties.Properties.PropertiesType;
 import abyss.darkgui.toolbar.Toolbar;
 import abyss.math.PetriNet;
 import abyss.settings.SettingsManager;
+import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
-
-
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -23,12 +22,8 @@ import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.Action;
@@ -89,7 +84,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private SplitDock rightSplitDock;
 	private SplitDock totalSplitDock;
 	
-	private Tools toolBox;
+	private PetriNetTools toolBox;
 	private Properties propertiesBox, simulatorBox, selectionBox, analyzerBox, propAnalyzerBox, mctBox, invSimBox;
 	// docking listener
 	private DarkDockingListener dockingListener;
@@ -106,6 +101,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private String abyssPath; 	// scie¿ka dostêpu do katalogu g³ównego programu
 	private String tmpPath;		// œcie¿ka dostêpu do katalogu plików tymczasowych
 	private String toolPath;	// œcie¿ka dostêpu do katalogu narzedziowego
+	
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
 	 * @param frejm JFrame - g³ówna ramka kontener programu
@@ -117,7 +113,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		abyssPath = System.getProperty("user.dir");
 		tmpPath = abyssPath+"\\tmp\\";
 		toolPath = abyssPath+"\\tools\\";
-
+		//File fOut = new File(tmpPath);
+		File dirPath = new File(tmpPath);
+		if (!dirPath.exists()) dirPath.mkdirs();
+		
 		SettingsManager settingsManager = new SettingsManager();
 		settingsManager.loadSettings();
 		/*
@@ -167,7 +166,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// set docking listener
 		setDockingListener(new DarkDockingListener());
 
-		setToolBox(new Tools());
+		setToolBox(new PetriNetTools());
 		setPropertiesBox(new Properties(PropertiesType.EDITOR));
 		setSimulatorBox(new Properties(PropertiesType.SIMULATOR));
 		setSelectionBox(new Properties(PropertiesType.SELECTOR));
@@ -202,7 +201,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		leftSplitDock = new SplitDock();
 		leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
 		leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(),new Position(Position.CENTER));
-		leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 8);
+		//leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 10);
+		leftSplitDock.setDividerLocation(180);
 
 		rightSplitDock = new SplitDock();
 		rightSplitDock.addChildDock(topRightTabDock, new Position(Position.TOP));
@@ -213,7 +213,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		totalSplitDock.addChildDock(leftSplitDock, new Position(Position.LEFT));
 		totalSplitDock.addChildDock(rightSplitDock,new Position(Position.RIGHT));
 		totalSplitDock.setDividerLocation((int) screenSize.getWidth() - (int) screenSize.getWidth() / 6);
-
+		
 		// // Add root dock
 		getDockModel().addRootDock("totalSplitDock", totalSplitDock, getFrame());
 		add(totalSplitDock, BorderLayout.CENTER);
@@ -252,34 +252,42 @@ public class GUIManager extends JPanel implements ComponentListener {
 		manager.addKeyEventDispatcher(new KeyManager(this));
 	}
 
+	/**
+	 * Metoda odpowiedzialna za ustalenie domyœlnych lokalizacji pasków zmiany rozmiaru
+	 * podokien programu (Dividers).
+	 */
 	private void resetSplitDocks() {
 		if (getFrame().getExtendedState() == JFrame.MAXIMIZED_BOTH) {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 8);
-			totalSplitDock
-					.setDividerLocation((int) (screenSize.getWidth() * 5.6 / 7));
+			//leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 10);
+			leftSplitDock.setDividerLocation(180);
+			totalSplitDock.setDividerLocation((int) (screenSize.getWidth() * 5.6 / 7));
 		} else {
 			smallScreenSize = getFrame().getSize();
-			leftSplitDock
-					.setDividerLocation((int) smallScreenSize.getWidth() / 8);
+			//leftSplitDock.setDividerLocation((int) smallScreenSize.getWidth() / 8);
+			leftSplitDock.setDividerLocation(180);
 			totalSplitDock
 					.setDividerLocation((int) (smallScreenSize.getWidth() * 5.6 / 7));
 		}
 	}
 
-	public Dockable decorateDockableWithActions(Dockable dockable,
-			boolean deletable) {
+	/**
+	 * Metoda odpowiedzialna za dodawanie nowych ikonek w prawy górnym roku ka¿dego podokna
+	 * programu.
+	 * @param dockable - okno do przystrojenia dodatkowymi okienkami
+	 * @param deletable - true, jeœli dodajemy ikonê usuwania (g³ówne podokno arkuszy sieci)
+	 * @return Dockable - nowe okno po dodaniu elementów
+	 */
+	public Dockable decorateDockableWithActions(Dockable dockable, boolean deletable) {
 		Dockable wrapper = new StateActionDockable(dockable,
 				new DefaultDockableStateActionFactory(), new int[0]);
 		int[] states = { DockableState.NORMAL, DockableState.MINIMIZED,
-				DockableState.MAXIMIZED, DockableState.EXTERNALIZED,
-				DockableState.CLOSED };
-		wrapper = new StateActionDockable(wrapper,
-				new DefaultDockableStateActionFactory(), states);
+				DockableState.MAXIMIZED, DockableState.EXTERNALIZED, DockableState.CLOSED };
+		wrapper = new StateActionDockable(wrapper, new DefaultDockableStateActionFactory(), states);
 
 		if (deletable) {
 			DeleteAction deleteAction = new DeleteAction(this, "Delete",
-					new ImageIcon("resources/images/page_white_delete.png"));
+					new ImageIcon("resources/icons/page_white_delete.png"));
 			Action[][] actions = new Action[1][];
 			actions[0] = new Action[1];
 			actions[0][0] = deleteAction;
@@ -288,6 +296,22 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}
 
 		return wrapper;
+	}
+	
+	/**
+	 * Metoda zwraca œcie¿kê do ostatio u¿ywanego katalagu.
+	 * @return String - œcie¿ka do katalogu
+	 */
+	public String getLastPath() {
+		return lastPath;
+	}
+	
+	/**
+	 * Metoda ustawia now¹ œcie¿kê do ostatio u¿ywanego katalagu.
+	 * @return String - œcie¿ka do katalogu
+	 */
+	public void setLastPath(String path) {
+		lastPath = path;
 	}
 
 	@Override
@@ -298,7 +322,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void componentMoved(ComponentEvent arg0) {
 	}
 
-	@Override
+	/**
+	 * Diabli wiedz¹ co i kiedy wywo³uje tê metodê, tym niemniej zleca ona innej ustalenie
+	 * domyœlnych lokalizacji pasków zmiany rozmiarów podokien (Dividers).
+	 */
 	public void componentResized(ComponentEvent arg0) {
 		resetSplitDocks();
 	}
@@ -361,7 +388,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt paska narzêdziowego.
 	 * @return Tools - pasek przycisków
 	 */
-	public Tools getToolBox() {
+	public PetriNetTools getToolBox() {
 		return toolBox;
 	}
 
@@ -369,7 +396,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ustawia nowy obiekt paska narzêdziowego.
 	 * @param toolBox Tools - pasek przycisków
 	 */
-	private void setToolBox(Tools toolBox) {
+	private void setToolBox(PetriNetTools toolBox) {
 		this.toolBox = toolBox;
 	}
 
@@ -623,7 +650,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			workspace.getProject().loadFromFile(file.getPath());
-			lastPath = file.getParentFile().getPath();
+			setLastPath(file.getParentFile().getPath());
 		}
 		getSimulatorBox().createSimulatorProperties();
 	}
@@ -737,7 +764,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 				fileExtension = "";
 					
 			workspace.getProject().saveToFile(file.getPath() + fileExtension);
-			lastPath = file.getParentFile().getPath();
+			setLastPath(file.getParentFile().getPath());
 		}
 	}
 	
@@ -752,20 +779,32 @@ public class GUIManager extends JPanel implements ComponentListener {
 			fc = new JFileChooser(lastPath);
 		
 		FileFilter inaFilter = new ExtensionFileFilter(".inv - INA Invariants Files", new String[] { "INV" });
-		
-		String fileExtension = ".inv";
+		FileFilter csvFilter = new ExtensionFileFilter(".csv - Comma Separated Values", new String[] { "CSV" });
+		String fileExtension;
 		fc.setFileFilter(inaFilter);
 		fc.addChoosableFileFilter(inaFilter);
+		fc.addChoosableFileFilter(csvFilter);
 		fc.setAcceptAllFileFilterUsed(false);
 		int returnVal = fc.showSaveDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			
-			if(file.getPath().contains(".inv"))
-				fileExtension = "";
-			
-			workspace.getProject().saveInvariantsToInaFormat(file.getPath() + fileExtension);
-			lastPath = file.getParentFile().getPath();
+			String extension = fc.getFileFilter().getDescription();
+			if (extension.contains(".inv")) {
+				if(file.getPath().contains(".inv"))
+					fileExtension = "";
+				else
+					fileExtension = ".inv";
+				workspace.getProject().saveInvariantsToInaFormat(file.getPath() + fileExtension);
+				setLastPath(file.getParentFile().getPath());
+			}
+			if (extension.contains(".csv")) {
+				if(file.getPath().contains(".csv"))
+					fileExtension = "";
+				else
+					fileExtension = ".csv";
+				workspace.getProject().saveInvariantsToCSV(file.getPath() + fileExtension);
+				setLastPath(file.getParentFile().getPath());
+			}
 		}
 	}
 
@@ -824,7 +863,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 					ex.printStackTrace();
 				}
 			}
-			lastPath = file.getParentFile().getPath();
+			setLastPath(file.getParentFile().getPath());
 		}
 	}
 
@@ -851,7 +890,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			workspace.getProject().saveToFile(file.getPath() + fileExtension);
-			lastPath = file.getParentFile().getPath();
+			setLastPath(file.getParentFile().getPath());
 		}
 	}
 	
@@ -874,8 +913,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 			File file = fc.getSelectedFile();
 			PetriNet project = workspace.getProject();
 			project.loadInvariantsFromFile(file.getPath());
-			getAnalyzerBox().showExternalInvariants(project.getInvariants());
-			project.genInvariants = project.getCommunicator().getInvariantsList();
+			getAnalyzerBox().showExternalInvariants(project.getInaInvariants());
+			//project.genInvariants = project.getCommunicator().getInvariantsList();
 			
 			lastPath = file.getParentFile().getPath();
 		}
@@ -924,52 +963,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	//********************************************************************
 	
-	static void copyFileByPath(String source, String target) throws IOException{
-    	InputStream inStream = null;
-    	OutputStream outStream = null;
- 
-   	    File file1 =new File(source);
-   	    File file2 =new File(target);
- 
-   	    inStream = new FileInputStream(file1);
-   	    outStream = new FileOutputStream(file2);
- 
-   	    byte[] buffer = new byte[1024];
- 
-   	    int length;
-   	    while ((length = inStream.read(buffer)) > 0){
-   	    	outStream.write(buffer, 0, length);
-   	    }
- 
-   	    if (inStream != null)inStream.close();
-   	    if (outStream != null)outStream.close();
-    }
-	
-	static void copyFileDirectly(File source, File target) {
-    	InputStream inStream = null;
-    	OutputStream outStream = null;
- 
-   	    try {
-			inStream = new FileInputStream(source);
-			outStream = new FileOutputStream(target);
-			byte[] buffer = new byte[1024];
-			 
-	   	    int length;
-	   	    while ((length = inStream.read(buffer)) > 0){
-	   	    	outStream.write(buffer, 0, length);
-	   	    }
-	 
-	   	    if (inStream != null)
-	   	    	inStream.close();
-	   	    if (outStream != null)
-	   	    	outStream.close();
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null,
-					"I/O operation failed for reason unknown. You can now start panicking.\nHave a nice day!",
-					"Critical error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-    }
+
 	
 	/**
 	 * Metoda uruchamia sekwencjê zdarzeñ prowadz¹ca do wygenerowania inwariantów
@@ -984,10 +978,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 		workspace.getProject().saveToFile(x);
 		//zakoñczono zapis do pliku .pnt
 		long size = tmpPNTfile.length(); //124 dla nieistniej¹cej (pustej) sieci
-		if(size <124) {
+		if(size <154) {
 			JOptionPane.showMessageDialog(null,
-					"Net saving into .pnt file failed somehow. Please check file: \n"+x,
-					"Missing file",JOptionPane.ERROR_MESSAGE);
+					"Net saving into .pnt file failed. There is a possibility that for the\n"
+					+ "moment there is no network drawn. Please check file: \n"+x,
+					"Missing net or file",JOptionPane.ERROR_MESSAGE);
+			//tmpPNTfile.delete();
 			return;
 		}
 		
@@ -1007,10 +1003,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if(inaExe.exists() && commandFile.exists()) {
 			try {
 				//kopiowanie plików:
-				copyFileByPath(inaExe.getPath(), abyssPath+"\\INAwin32.exe");
-				copyFileByPath(batFile.getPath(), abyssPath+"\\ina.bat");
-				copyFileByPath(commandFile.getPath(), abyssPath+"\\COMMAND.ina");
-				copyFileByPath(tmpPNTfile.getPath(), abyssPath+"\\siec.pnt");
+				Tools.copyFileByPath(inaExe.getPath(), abyssPath+"\\INAwin32.exe");
+				Tools.copyFileByPath(batFile.getPath(), abyssPath+"\\ina.bat");
+				Tools.copyFileByPath(commandFile.getPath(), abyssPath+"\\COMMAND.ina");
+				Tools.copyFileByPath(tmpPNTfile.getPath(), abyssPath+"\\siec.pnt");
 				
 				String[] command = {"ina.bat"};
 			    ProcessBuilder b = new ProcessBuilder(command);
@@ -1020,7 +1016,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 				BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 				while (in.readLine() != null) ; 
 				//while (in.readLine() != null) ;
-				Thread.sleep(2000);
+				Thread.sleep(200);
 				proc.destroy();
 				
 				new File(abyssPath+"\\INAwin32.exe").delete();
@@ -1059,8 +1055,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 			//wczytywanie inwariantów do systemu:
 			PetriNet project = workspace.getProject();
 			project.loadInvariantsFromFile(invariantsFile.getPath());
-			project.genInvariants = project.getCommunicator().getInvariantsList();
-			getAnalyzerBox().showExternalInvariants(project.getInvariants());
+			//project.genInvariants = project.getCommunicator().getInvariantsList();
+			getAnalyzerBox().showExternalInvariants(project.getInaInvariants());
 			getSimulatorBox().createSimulatorProperties();
 		
 			//co dalej z plikiem?
@@ -1089,23 +1085,39 @@ public class GUIManager extends JPanel implements ComponentListener {
 					if(!file.getPath().contains(".inv"))
 						ext = ".inv";
 					File properName = new File(file.getPath()+ext);
-					copyFileDirectly(invariantsFile, properName);
+					Tools.copyFileDirectly(invariantsFile, properName);
 					//workspace.getProject().writeInvariantsToInaFormat(file.getPath() + fileExtension);
-					lastPath = file.getParentFile().getPath();
+					setLastPath(file.getParentFile().getPath());
 				}
 			}
-			// check if destination path exists
-			//if (pathOut.isEmpty()) pathOut = "tmp";
-			//File fOut = new File(pathOut);
-			//File dirPath = new File(fOut.getAbsolutePath());
-			//if (!dirPath.exists()) dirPath.mkdirs();
-			//copyFile("siec.inv", dirPath.toString()+"\\siec.inv");
 			invariantsFile.delete();
 			
 		} else { //brak plikow
 			JOptionPane.showMessageDialog(null,
 					"Missing executables in the tool directory! Needed: INAwin32.exe, ina.bat and COMMAND.ina",
 					"Missing programs",JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public void saveInvCSV() {
+		JFileChooser fc;
+		if(lastPath==null)
+			fc = new JFileChooser();
+		else
+			fc = new JFileChooser(lastPath);
+		
+		FileFilter csvFilter = new ExtensionFileFilter(".csv - Comma Separated Value", new String[] { "CSV" });
+		String fileExtension = ".csv";
+		fc.setFileFilter(csvFilter);
+		fc.addChoosableFileFilter(csvFilter);
+		fc.setAcceptAllFileFilterUsed(false);
+		int returnVal = fc.showSaveDialog(null);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			if(file.getPath().contains(".csv"))
+				fileExtension = "";
+			workspace.getProject().saveInvariantsToCSV(file.getPath() + fileExtension);
+			setLastPath(file.getParentFile().getPath());
 		}
 	}
 }

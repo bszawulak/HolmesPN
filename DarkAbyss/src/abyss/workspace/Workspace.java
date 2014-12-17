@@ -76,7 +76,6 @@ public class Workspace implements SelectionActionListener {
 		this.getProject().addActionListener(this);
 
 		newTab();
-
 	}
 
 	/**
@@ -117,7 +116,7 @@ public class Workspace implements SelectionActionListener {
 	 * @param sheet WorkspaceSheet - arkusz do usuniêcia
 	 */
 	public void deleteSheetFromArrays(WorkspaceSheet sheet) {
-		int id = sheets.indexOf(sheet) + 1 - 1;
+		int id = sheets.indexOf(sheet);// + 1 - 1;
 		getProject().removeGraphPanel(id);
 		getWorkspaceDock().emptyChild(docks.get(id));
 		docks.remove(id);
@@ -131,9 +130,7 @@ public class Workspace implements SelectionActionListener {
 	 */
 	public void deleteTab(Dockable dockable) {
 		int index = dockables.indexOf(dockable);
-		int n = JOptionPane
-				.showOptionDialog(
-						null,
+		int n = JOptionPane.showOptionDialog(null,
 						"Are you sure you want to delete this sheet? You will not be able to retrieve it later.",
 						"Are you sure?", JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, null, null);
@@ -143,25 +140,16 @@ public class Workspace implements SelectionActionListener {
 			guiManager.getMenu().deleteSheetItem(dockables.get(index));
 		} else {
 			if (sheets.size() == 1 && n == 0)
-				JOptionPane
-						.showMessageDialog(
-								null,
-								"Can't delete this sheet! A project must contain at least one sheet!",
-								"Can't delete this sheet!",
-								JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,
+						"Can't delete this sheet! A project must contain at least one sheet!",
+						"Can't delete this sheet!", JOptionPane.ERROR_MESSAGE);
 			Point position = new Point(0, 0);
-			dockables.set(
-					index,
-					withListener(new DefaultDockable("Sheet "
-							+ Integer.toString(sheets.get(index).getId()),
-							sheets.get(index), "Sheet "
-									+ Integer.toString(sheets.get(index)
-											.getId()))));
-
-			docks.get(index).addDockable(dockables.get(index), position,
-					position);
+			dockables.set(index,withListener(new DefaultDockable(
+					"Sheet " + Integer.toString(sheets.get(index).getId()),
+					sheets.get(index), 
+					"Sheet " + Integer.toString(sheets.get(index).getId()))));
+			docks.get(index).addDockable(dockables.get(index), position, position);
 		}
-
 	}
 
 	private Dockable withListener(Dockable dockable) {
@@ -337,5 +325,13 @@ public class Workspace implements SelectionActionListener {
 	 */
 	private void setDockFactory(DockFactory dockFactory) {
 		this.dockFactory = dockFactory;
+	}
+	
+	/**
+	 * Metoda zwraca obiekt g³ówny interfejsu.
+	 * @return GUIManager - nadobiekt dla wszystkich elementów programu
+	 */
+	public GUIManager getGUI() {
+		return guiManager;
 	}
 }

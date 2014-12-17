@@ -16,7 +16,7 @@ import abyss.math.parser.AbyssWriter;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.parser.NetHandler_Colored;
 import abyss.math.parser.NetHandler_Extended;
-import abyss.math.parser.INAprotocols;
+import abyss.math.parser.IOprotocols;
 import abyss.math.parser.NetHandler;
 import abyss.math.parser.NetHandler_Classic;
 import abyss.math.parser.NetHandler_Time;
@@ -52,7 +52,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public SAXParserFactory readerSNOOPY;
 	private AbyssWriter ABYSSwriter;
 	private AbyssReader ABYSSReader;
-	private INAprotocols communicationProtocol;
+	private IOprotocols communicationProtocol;
 	private ArrayList<ArrayList<InvariantTransition>> invariants = new ArrayList<ArrayList<InvariantTransition>>();
 	public NetHandler handler;
 	private Workspace workspace;
@@ -74,7 +74,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public PetriNet(ArrayList<Node> nod, ArrayList<Arc> ar) {
 		getData().nodes = nod;
 		getData().arcs = ar;
-		communicationProtocol = new INAprotocols();
+		communicationProtocol = new IOprotocols();
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.workspace = workspace;
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
 		this.setAnalyzer(new DarkAnalyzer(this));
-		communicationProtocol = new INAprotocols();
+		communicationProtocol = new IOprotocols();
 	}
 
 	/**
@@ -431,7 +431,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * metody I/O dla programu / formatu INA.
 	 * @return INAprotocols - obiekt klasy odpowiedzialnej za pliki
 	 */
-	public INAprotocols getCommunicator() {
+	public IOprotocols getCommunicator() {
 		return communicationProtocol;
 	}
 	
@@ -620,24 +620,55 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda zapisuj¹ca inwarianty do pliku w formacie INA
+	 * Metoda zapisuj¹ca inwarianty do pliku w formacie CSV.
 	 * @param path String - œcie¿ka do pliku zapisu
+	 * @return int - 0 jeœli operacja siê uda³a, -1 w przeciwnym wypadku
 	 */
-	public void saveInvariantsToInaFormat(String path) {
+	public int saveInvariantsToCSV(String path) {
+		int result = -1;
+		try {
+			if (genInvariants != null) {
+				communicationProtocol.writeInvToCSV(path, genInvariants, getTransitions());
+				JOptionPane.showMessageDialog(null, 
+						"Invariants saved to file:\n"+path,
+						"Success",JOptionPane.INFORMATION_MESSAGE);
+				result = 0;
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"There are no invariants to export.",
+						"Warning",JOptionPane.WARNING_MESSAGE);
+				result = -1;
+			}
+		} catch (Throwable err) {
+			err.printStackTrace();
+		}
+		return result;
+	}
+	
+	/**
+	 * Metoda zapisuj¹ca inwarianty do pliku w formacie INA.
+	 * @param path String - œcie¿ka do pliku zapisu
+	 * @return int - 0 jeœli operacja siê uda³a, -1 w przeciwnym wypadku
+	 */
+	public int saveInvariantsToInaFormat(String path) {
+		int result = -1;
 		try {
 			if (genInvariants != null) {
 				communicationProtocol.writeINV(path, genInvariants, getTransitions());
 				JOptionPane.showMessageDialog(null,
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
+				result = 0;
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"There are no invariants to export",
-						"Uwaga!  Achtung!  Attention!",JOptionPane.WARNING_MESSAGE);
+						"Warning",JOptionPane.WARNING_MESSAGE);
+				result = -1;
 			}
 		} catch (Throwable err) {
 			err.printStackTrace();
 		}
+		return result;
 	}
 	
 	/**
@@ -646,10 +677,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void loadInvariantsFromFile(String sciezka) {
 		try {
-			//invariantsINA = new INAinvariants();
-			//invariantsINA.read(sciezka);
-			//communicationProtocol = new INAprotocols();
 			communicationProtocol.readINV(sciezka);
+			genInvariants = communicationProtocol.getInvariantsList();
 		} catch (Throwable err) {
 			err.printStackTrace();
 		}
@@ -769,7 +798,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda zwracaj¹ca macierz inwariantów. 
 	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inw.
 	 */
-	public ArrayList<ArrayList<InvariantTransition>> getInvariants() {
+	public ArrayList<ArrayList<InvariantTransition>> getInaInvariants() {
 		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
 		InvariantTransition currentTransition;
 		invariantsBinaryList = communicationProtocol.getInvariantsList();

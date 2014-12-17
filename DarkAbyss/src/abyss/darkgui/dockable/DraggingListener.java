@@ -10,18 +10,11 @@ import com.javadocking.drag.DraggerFactory;
  * A listener that installs a dragger factory.
  */
 public class DraggingListener implements ActionListener {
-
-	// Fields.
-
 	private DraggerFactory draggerFactory;
-
-	// Constructor.
 
 	public DraggingListener(DraggerFactory draggerFactory) {
 		this.draggerFactory = draggerFactory;
 	}
-
-	// Implementations of ItemListener.
 
 	public void actionPerformed(ActionEvent actionEvent) {
 		DockingManager.setDraggerFactory(draggerFactory);

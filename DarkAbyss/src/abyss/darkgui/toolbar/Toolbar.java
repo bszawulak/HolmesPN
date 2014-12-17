@@ -316,7 +316,7 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("GenerateINAinv",generateINAinvariants));
 		
 		ToolbarButtonAction xxx = new ToolbarButtonAction(this, "Podpowiedz przycisku II",
-				new ImageIcon("resources/icons/toolbar/terminal.png")) {
+				new ImageIcon("resources/icons/toolbar/terminal2.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				//GUIManager.getDefaultGUIManager().getWorkspace().getProject()

@@ -25,18 +25,13 @@ public class DockableMediator implements ItemListener, DockingListener {
 	private JMenuItem dockableMenuItem;
 
 	public DockableMediator(Dockable dockable, JMenuItem dockableMenuItem) {
-
 		this.dockable = dockable;
 		this.dockableMenuItem = dockableMenuItem;
-		closeAction = new DefaultDockableStateAction(dockable,
-				DockableState.CLOSED);
-		restoreAction = new DefaultDockableStateAction(dockable,
-				DockableState.NORMAL);
-
+		closeAction = new DefaultDockableStateAction(dockable, DockableState.CLOSED);
+		restoreAction = new DefaultDockableStateAction(dockable, DockableState.NORMAL);
 	}
 
 	public void itemStateChanged(ItemEvent itemEvent) {
-
 		dockable.removeDockingListener(this);
 		if (itemEvent.getStateChange() == ItemEvent.DESELECTED) {
 			// Close the dockable.

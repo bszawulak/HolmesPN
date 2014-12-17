@@ -419,6 +419,9 @@ public class InvariantsSimulator {
 					JOptionPane.ERROR_MESSAGE);
 	}
 
+	/**
+	 * Metoda obs³uguj¹ca wciœniêcie przycisku zatrzymania symulacji.
+	 */
 	private void stopSimulation() {
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties()
 				.allowOnlySimulationInitiateButtons();
