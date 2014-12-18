@@ -624,17 +624,19 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param path String - œcie¿ka do pliku zapisu
 	 * @return int - 0 jeœli operacja siê uda³a, -1 w przeciwnym wypadku
 	 */
-	public int saveInvariantsToCSV(String path) {
+	public int saveInvariantsToCSV(String path, boolean silence) {
 		int result = -1;
 		try {
 			if (genInvariants != null) {
 				communicationProtocol.writeInvToCSV(path, genInvariants, getTransitions());
-				JOptionPane.showMessageDialog(null, 
+				if(!silence)
+					JOptionPane.showMessageDialog(null, 
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
 				result = 0;
 			} else {
-				JOptionPane.showMessageDialog(null,
+				if(!silence)
+					JOptionPane.showMessageDialog(null,
 						"There are no invariants to export.",
 						"Warning",JOptionPane.WARNING_MESSAGE);
 				result = -1;
@@ -662,6 +664,32 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"There are no invariants to export",
+						"Warning",JOptionPane.WARNING_MESSAGE);
+				result = -1;
+			}
+		} catch (Throwable err) {
+			err.printStackTrace();
+		}
+		return result;
+	}
+	
+	/**
+	 * Metoda zapisuj¹ca inwarianty do pliku w formacie CSV.
+	 * @param path String - œcie¿ka do pliku zapisu
+	 * @return int - 0 jeœli operacja siê uda³a, -1 w przeciwnym wypadku
+	 */
+	public int saveInvariantsToCharlie(String path) {
+		int result = -1;
+		try {
+			if (genInvariants != null) {
+				communicationProtocol.writeCharlieInv(path, genInvariants, getTransitions());
+				JOptionPane.showMessageDialog(null, 
+						"Invariants saved to file:\n"+path,
+						"Success",JOptionPane.INFORMATION_MESSAGE);
+				result = 0;
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"There are no invariants to export.",
 						"Warning",JOptionPane.WARNING_MESSAGE);
 				result = -1;
 			}

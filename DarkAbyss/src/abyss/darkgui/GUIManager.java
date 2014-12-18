@@ -1,5 +1,6 @@
 package abyss.darkgui;
 
+import abyss.adam.mct.Runner;
 import abyss.analyzer.DarkAnalyzer;
 import abyss.analyzer.NetPropAnalyzer;
 import abyss.darkgui.dockable.DeleteAction;
@@ -778,31 +779,39 @@ public class GUIManager extends JPanel implements ComponentListener {
 		else
 			fc = new JFileChooser(lastPath);
 		
-		FileFilter inaFilter = new ExtensionFileFilter(".inv - INA Invariants Files", new String[] { "INV" });
+		FileFilter inaFilter = new ExtensionFileFilter(".inv - INA Invariants File", new String[] { "INV" });
+		FileFilter charlieFilter = new ExtensionFileFilter(".inv - Charlie Invariants File", new String[] { "INV" });
 		FileFilter csvFilter = new ExtensionFileFilter(".csv - Comma Separated Values", new String[] { "CSV" });
 		String fileExtension;
 		fc.setFileFilter(inaFilter);
 		fc.addChoosableFileFilter(inaFilter);
+		fc.addChoosableFileFilter(charlieFilter);
 		fc.addChoosableFileFilter(csvFilter);
 		fc.setAcceptAllFileFilterUsed(false);
 		int returnVal = fc.showSaveDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			String extension = fc.getFileFilter().getDescription();
-			if (extension.contains(".inv")) {
+			String description = fc.getFileFilter().getDescription();
+			if (description.contains("INA")) {
 				if(file.getPath().contains(".inv"))
 					fileExtension = "";
 				else
 					fileExtension = ".inv";
 				workspace.getProject().saveInvariantsToInaFormat(file.getPath() + fileExtension);
 				setLastPath(file.getParentFile().getPath());
-			}
-			if (extension.contains(".csv")) {
+			} else if (description.contains("Comma")) {
 				if(file.getPath().contains(".csv"))
 					fileExtension = "";
 				else
 					fileExtension = ".csv";
-				workspace.getProject().saveInvariantsToCSV(file.getPath() + fileExtension);
+				workspace.getProject().saveInvariantsToCSV(file.getPath() + fileExtension, false);
+				setLastPath(file.getParentFile().getPath());
+			} else if (description.contains("Charlie")) {
+				if(file.getPath().contains(".inv"))
+					fileExtension = "";
+				else
+					fileExtension = ".inv";
+				workspace.getProject().saveInvariantsToCharlie(file.getPath() + fileExtension);
 				setLastPath(file.getParentFile().getPath());
 			}
 		}
@@ -1091,14 +1100,24 @@ public class GUIManager extends JPanel implements ComponentListener {
 				}
 			}
 			invariantsFile.delete();
-			
 		} else { //brak plikow
 			JOptionPane.showMessageDialog(null,
 					"Missing executables in the tool directory! Needed: INAwin32.exe, ina.bat and COMMAND.ina",
 					"Missing programs",JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
+	public void generateSimpleMCTFile() {
+		String filePath = tmpPath + "input.csv";
+		int result = workspace.getProject().saveInvariantsToCSV(filePath, true);
+		if(result == -1)
+			return;
+		Runner mctRunner = new Runner();
+		String[] args;
+		//mctRunner.activate(args);
+	}
 	
+	/*
 	public void saveInvCSV() {
 		JFileChooser fc;
 		if(lastPath==null)
@@ -1120,4 +1139,5 @@ public class GUIManager extends JPanel implements ComponentListener {
 			setLastPath(file.getParentFile().getPath());
 		}
 	}
+	*/
 }

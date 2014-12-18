@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="javadocking1.5.0/javadocking/lib/tinylaf.jar"/>
 	<classpathentry kind="lib" path="xstream-1.4.4.jar"/>
 	<classpathentry kind="lib" path="simple-xml-2.6.9.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Rince/git/ipne/DarkAbyss/RCaller-2.4-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

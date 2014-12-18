@@ -61,19 +61,47 @@ public class IOprotocols {
 
 	/**
 	 * Wczytywanie pliki t-inwariantow INA, wczesniej: INAinvariants.read
+	 * Dodano poprawki oraz drug¹ œciê¿kê odczytu - jako plik inwariantów Charliego.
 	 * @param sciezka String - scie¿ka do pliku
 	 */
 	public void readINV(String sciezka) {
 		try {
 			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
-			@SuppressWarnings("resource")
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
 			String wczytanaLinia = buffer.readLine();
+			String backup = wczytanaLinia;
 			// invariantow dla miejsc nie ma, bo nie mam na czy sie wzorowac, a INA
 			// mnie nie slucha (student)	
 			// brzydka, niedobra INA... (MR)
-			
+			//transition invariants basis
 			if (wczytanaLinia.contains("transition sub/sur/invariants for net")) {
+				//to znaczy, ¿e wczytujemy plik INA, po prostu
+			} else if (wczytanaLinia.contains("minimal semipositive transition")) {
+				buffer.close();
+				readCharlieINV(sciezka);
+				return;
+			} else {
+				Object[] options = {"Force read as INA file", "Force read as Charlie file", "Terminate reading",};
+				int decision = JOptionPane.showOptionDialog(null,
+								"Unknown or corrupted invariants file format. Force read as INA or Charlie invariants?",
+								"Error reading file header", JOptionPane.YES_NO_OPTION,
+								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+				if (decision == 2) {
+					buffer.close();
+					return;
+				} else if (decision == 1) { //Charlie
+					buffer.close();
+					readCharlieINV(sciezka);
+					return;
+				}
+				//jeœli nie 2 i nie 1, to znaczy, ¿e 0, czyli na si³ê czytamy dalej jako INA inv.
+			}
+			
+			if(backup.contains("transition invariants basis")) {
+				JOptionPane.showMessageDialog(null,"Wrong invariants. Only semipositives are acceptable.",
+						"ERROR:readINV",JOptionPane.ERROR_MESSAGE);
+				buffer.close();
+				return;
 			}
 			
 			buffer.readLine();
@@ -81,22 +109,20 @@ public class IOprotocols {
 				wczytanaLinia = buffer.readLine();
 			}
 			buffer.readLine();
-			//System.out.println("Etap I");
-			// Etap I - ilosc tranzycji/miejsc
+			
+			// Etap I - Liczba tranzycji/miejsc
 			while (!(wczytanaLinia = buffer.readLine()).endsWith("~~~~~~~~~~~")) {
 				if(wczytanaLinia.endsWith("~~~~~~~~~~~")){break;}
 				String[] sformatowanaLinia = wczytanaLinia.split(" ");
-				//System.out.println(wczytanaLinia);
 				for (int j = 0; j < sformatowanaLinia.length; j++) {
-					if ((sformatowanaLinia[j].isEmpty()) || sformatowanaLinia[j].contains("Nr.")) {
-					} else {
+					if (!(sformatowanaLinia[j].isEmpty() || sformatowanaLinia[j].contains("Nr."))) {
 						try {
 							nodesList.add(Integer.parseInt(sformatowanaLinia[j]));
 						} catch (NumberFormatException e) {}
 					}
 				}
 			}
-			// Etap II - lista T/P - invariantow
+			// Etap II - lista T-inwariantow
 			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
 			while ((wczytanaLinia = buffer.readLine()) != null) {
 				if(wczytanaLinia.contains("@")||wczytanaLinia.isEmpty()){break;}
@@ -115,9 +141,82 @@ public class IOprotocols {
 					tmpInvariant = new ArrayList<Integer>();
 				}
 			}
+			buffer.close();
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
-		}
+			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR:readINV",JOptionPane.ERROR_MESSAGE);
+		} 
+	}
+	
+//TODO
+	
+	private void readCharlieINV(String sciezka) {
+		if(sciezka!=null)
+			return; //trololo
+		
+		
+		try {
+			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+			String wczytanaLinia = buffer.readLine();
+
+			if (!wczytanaLinia.contains("minimal semipositive transition")) {
+				Object[] options = {"Force read as Charlie file", "Terminate reading",};
+				int n = JOptionPane.showOptionDialog(null,
+								"Unknown or corrupted invariants file format! Read anyway as INA invariants?",
+								"Error reading file header", JOptionPane.YES_NO_OPTION,
+								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+
+				if (n == 1) {
+					buffer.close();
+					return;
+				}
+				
+			}
+			
+			buffer.readLine();
+			while (!wczytanaLinia.contains("semipositive transition invariants =")) {
+				wczytanaLinia = buffer.readLine();
+			}
+			buffer.readLine();
+			
+			// Etap I - Liczba tranzycji/miejsc
+			while (!(wczytanaLinia = buffer.readLine()).endsWith("~~~~~~~~~~~")) {
+				if(wczytanaLinia.endsWith("~~~~~~~~~~~")){break;}
+				String[] sformatowanaLinia = wczytanaLinia.split(" ");
+				for (int j = 0; j < sformatowanaLinia.length; j++) {
+					if (!(sformatowanaLinia[j].isEmpty() || sformatowanaLinia[j].contains("Nr."))) {
+						try {
+							nodesList.add(Integer.parseInt(sformatowanaLinia[j]));
+						} catch (NumberFormatException e) {}
+					}
+				}
+			}
+			// Etap II - lista T-inwariantow
+			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+			while ((wczytanaLinia = buffer.readLine()) != null) {
+				if(wczytanaLinia.contains("@")||wczytanaLinia.isEmpty()){break;}
+				String[] sformatowanaLinia = wczytanaLinia.split("\\|");
+				sformatowanaLinia = sformatowanaLinia[1].split(" ");
+				for(int i = 0; i<sformatowanaLinia.length;i++)
+				{
+					if(sformatowanaLinia[i].isEmpty()){}else
+					{
+						tmpInvariant.add(Integer.parseInt(sformatowanaLinia[i]));
+					}
+				}
+				if(tmpInvariant.size() == nodesList.size())
+				{
+					invariantsList.add(tmpInvariant);
+					tmpInvariant = new ArrayList<Integer>();
+				}
+			}
+			buffer.close();
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR:readINV",JOptionPane.ERROR_MESSAGE);
+		} 
+		
 	}
 
 	/**
@@ -171,15 +270,13 @@ public class IOprotocols {
 				multipl = 1;
 				for (int t = 0; t < invariants.get(i).size(); t++) {
 					int tr = invariants.get(i).get(t);
-
 					if (transNo >= 100)
-						pw.print(conIntToStr(true, tr));
+						pw.print(conIntToStr(true, tr)); //tutaj wstawiamy wartoœæ dla tranz. w inw.
 					else
-						pw.print(conIntToStr(false, tr));
-					//buffor += tr;
-					if (t == (multipl*delimiter)-1 ) { //&& invariants.size() > 16) {
+						pw.print(conIntToStr(false, tr)); //tutaj wstawiamy wartoœæ dla tranz. w inw.
+					
+					if (t == (multipl*delimiter)-1 ) { //rozdzielnik wierszy
 						pw.print("\r\n");
-						//buffor += "     |   ";
 						if(transNo>=100)
 							pw.print("      |   ");
 						else
@@ -729,26 +826,36 @@ public class IOprotocols {
 	public void writeCharlieInv(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
 		try {
 			String extension = "";
-			if(!path.contains(".csv"))
-				extension = ".csv";
+			if(!path.contains(".inv"))
+				extension = ".inv";
 			PrintWriter pw = new PrintWriter(path + extension);
-			pw.print("minimal semipositive transition invariants=\r\n");
+			pw.print("minimal semipositive transition invariants=");
 
 			for (int i = 0; i < invariants.size(); i++) { //po wszystkich inwariantach
 				//pw.print(i+1);
+				boolean nrPlaced = false;
 				for (int t = 0; t < invariants.get(i).size(); t++) { //po wszystkich tranzycjach
-					if(t==0)
-						pw.print(i+"\t|\t");
-					else
-						pw.print("\t|\t");
 					int value = invariants.get(i).get(t);
-					String name = transitions.get(t).getName();
-					pw.print((t+1)+"."+name+"\t\t:"+value);
+					if(value == 0) {
+						continue;
+					}
 					
-					if(!(t == invariants.size() - 1))
-						pw.print(",");
+					if(nrPlaced == false) {
+						pw.print("\r\n"+(i+1)+"\t|\t");
+						nrPlaced = true;
+					} else {
+						pw.print(",\r\n");
+						pw.print("\t|\t");
+					}
+					String name = transitions.get(t).getName();
+					pw.print(t+"."+name+"\t\t:"+value);
+					
+					//if(!(t == invariants.size() - 1))
+					//	pw.print(",");
+					
+					//pw.print("\r\n");
 				}
-				pw.print("\r\n");
+				//pw.print("\r\n");
 			}
 			pw.close();
 		} catch (Exception e) {

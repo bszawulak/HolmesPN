@@ -21,7 +21,7 @@ import abyss.workspace.WorkspaceSheet;
 import com.javadocking.dockable.Dockable;
 
 /**
- * Klasa implementuj�ca metody tworzenia i obs�ugi g��wnego menu programu.
+ * Klasa implementująca metody tworzenia i obsługi głównego menu programu.
  * @author students
  *
  */
@@ -35,16 +35,14 @@ public class DarkMenu extends JMenuBar {
 	private JMenu windowMenu;
 	private JMenu analysisMenu;
 	private JMenu sheetsMenu;
-	private JMenu openMenu;
-	private JMenu saveMenu;
-	private JMenu newMenu;
+	private JMenu mctMenu;
 	private JMenu invMenu;
 	// dockable
 	private ArrayList<Dockable> dockables;
 	private ArrayList<DockableMenuItem> sheetItems;
 
 	/**
-	 * Konstruktor domy�lny obiektu klasy DarkMenu.
+	 * Konstruktor domyślny obiektu klasy DarkMenu.
 	 */
 	public DarkMenu() {
 		guiManager = GUIManager.getDefaultGUIManager();
@@ -60,11 +58,6 @@ public class DarkMenu extends JMenuBar {
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		fileMenu.getAccessibleContext().setAccessibleDescription("The File Menu");
 		this.add(fileMenu);
-
-		//newMenu = new JMenu("New");
-		//newMenu.setMnemonic(KeyEvent.VK_N);
-		//newMenu.getAccessibleContext().setAccessibleDescription("New - Menu");
-		//fileMenu.add(newMenu);
 
 		// New Project
 		JMenuItem projectMenuItem = new JMenuItem("New Project",  KeyEvent.VK_N);
@@ -182,7 +175,6 @@ public class DarkMenu extends JMenuBar {
 		//saveMenu.setMnemonic(KeyEvent.VK_S);
 		//saveMenu.getAccessibleContext().setAccessibleDescription("Save - Menu");
 		//fileMenu.add(saveMenu);
-		
 
 		// export file
 		JMenuItem exportMenuItem = new JMenuItem("Export network...", KeyEvent.VK_E);
@@ -315,7 +307,7 @@ public class DarkMenu extends JMenuBar {
 
 		// The JMenuItem for external analysis
 		JMenuItem genMCTGroups = new JMenuItem("Generate MCT Groups", KeyEvent.VK_4);
-		genMCTGroups.setIcon(new ImageIcon("resources/icons/menu/menu_InvExp.png"));
+		genMCTGroups.setIcon(new ImageIcon("resources/icons/menu/menu_genMCT.png"));
 		genMCTGroups.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4,ActionEvent.ALT_MASK));
 		genMCTGroups.getAccessibleContext().setAccessibleDescription("Generate MCT Groups");
 		genMCTGroups.addActionListener(new ActionListener() {
@@ -327,11 +319,13 @@ public class DarkMenu extends JMenuBar {
 		
 		// The JMenuItem for invariants simulation
 		JMenuItem invSimul = new JMenuItem("Start Invariants Simulation", KeyEvent.VK_5);
+		invSimul.setIcon(new ImageIcon("resources/icons/menu/menu_invSim.png"));
 		invSimul.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5,ActionEvent.ALT_MASK));
 		invSimul.getAccessibleContext().setAccessibleDescription("Start Invariants Simulation");
 		invSimul.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
+					// poniższa linia:   ╯°□°）╯︵ ┻━━┻
 					GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
 				} catch (CloneNotSupportedException e) {
 					// TODO Auto-generated catch block
@@ -341,23 +335,30 @@ public class DarkMenu extends JMenuBar {
 		});
 		analysisMenu.add(invSimul);
 
+		
+		mctMenu = new JMenu("MCT Files");
+		mctMenu.setIcon(new ImageIcon("resources/icons/menu/menu_genMCT.png"));
+		mctMenu.getAccessibleContext().setAccessibleDescription("MCT Generator");
+		analysisMenu.add(mctMenu);
+		
 		JMenuItem mctItem = new JMenuItem("MCT");
+		mctItem.setIcon(new ImageIcon("resources/icons/menu/menu_genMCT.png"));
 		mctItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
-				} catch (CloneNotSupportedException e) {
+					//GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		});
-		analysisMenu.add(mctItem);
+		mctMenu.add(mctItem);
 		
 	}
 
 	/**
-	 * Metoda odpowiedzialna za dodanie do menu zak�adek w Windows->Project... nazwy nowo utworzonego arkusza.
+	 * Metoda odpowiedzialna za dodanie do menu zakładek w Windows->Project... nazwy nowo utworzonego arkusza.
 	 * @param dockableItem Dockable - obiekt menu do osadzenia.
 	 */
 	public void addSheetItem(Dockable dockableItem) {
@@ -369,7 +370,7 @@ public class DarkMenu extends JMenuBar {
 
 	/**
 	 * Metoda odpowiedzialna za usuwanie z menu Windows->Project wpisu o arkuszu.
-	 * @param dockableItem Dockable - obiekt menu do usuni�cia
+	 * @param dockableItem Dockable - obiekt menu do usunięcia
 	 */
 	public void deleteSheetItem(Dockable dockableItem) {
 		int index = dockables.indexOf(dockableItem);

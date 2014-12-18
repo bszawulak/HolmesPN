@@ -140,7 +140,6 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 		analMenu.add(createMenuItem("Generate Invariants (INA)", "generateINA", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().generateINAinvariants();
-				//getGraphPanel().setZoom(30, getGraphPanel().getZoom());
 			}
 		}));
 		analMenu.add(createMenuItem("Generate PN MCT sets", "generateMCT", null, new ActionListener() {
@@ -148,12 +147,13 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 				GUIManager.getDefaultGUIManager().generateMCT();
 			}
 		}));
+		
 		JMenu mctSubMenu = new JMenu("MCT Advanced Generation");
 		analMenu.add(mctSubMenu);
 		
 		mctSubMenu.add(createMenuItem("Simple MCT file", "", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//GUIManager.getDefaultGUIManager().generateMCT();
+				GUIManager.getDefaultGUIManager().generateSimpleMCTFile();
 			}
 		}));
 		
