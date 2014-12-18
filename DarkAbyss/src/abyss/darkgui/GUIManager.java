@@ -11,11 +11,14 @@ import abyss.darkgui.toolbar.Toolbar;
 import abyss.math.PetriNet;
 import abyss.settings.SettingsManager;
 import abyss.utilities.Tools;
+import abyss.wasteland.PanelTable;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
@@ -28,7 +31,9 @@ import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -1115,6 +1120,49 @@ public class GUIManager extends JPanel implements ComponentListener {
 		Runner mctRunner = new Runner();
 		String[] args;
 		//mctRunner.activate(args);
+	}
+	
+	public void Explode() {
+
+        JFrame frame = new JFrame("SimpleTableDemo");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        JPanel mainPanel = new JPanel();
+        //mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        mainPanel.setLayout(new GridBagLayout());
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.1;
+        gbc.weighty = 1.0;
+        
+        PanelTable tablePanel = new PanelTable();
+        tablePanel.setOpaque(true); 
+        mainPanel.add(tablePanel, gbc);
+        
+        JPanel textPanel = new JPanel();
+        //textPanel.setSize(100, 200);
+        //textPanel.setMaximumSize( textPanel.getPreferredSize() );
+        //textPanel.setMinimumSize( textPanel.getPreferredSize() );
+        JButton x = new JButton("aaaaa");
+        textPanel.add(x);
+
+        gbc.gridx = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        mainPanel.add(textPanel, gbc);
+        
+        
+        frame.setContentPane(mainPanel);
+
+        //String data[] =  tablePanel.getRowAt(2);
+        //Display the window.
+        frame.pack();
+        frame.setVisible(true);
 	}
 	
 	/*

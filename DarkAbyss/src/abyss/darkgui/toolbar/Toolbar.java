@@ -319,6 +319,7 @@ public class Toolbar extends BorderDock {
 				new ImageIcon("resources/icons/toolbar/terminal2.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().Explode();
 				//GUIManager.getDefaultGUIManager().getWorkspace().getProject()
 				//	.getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
 			}
