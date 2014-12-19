@@ -11,7 +11,8 @@ import abyss.darkgui.toolbar.Toolbar;
 import abyss.math.PetriNet;
 import abyss.settings.SettingsManager;
 import abyss.utilities.Tools;
-import abyss.wasteland.PanelTable;
+import abyss.windows.WindowConsole;
+import abyss.windows.WindowTableClusters;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
 
@@ -108,6 +109,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private String tmpPath;		// œcie¿ka dostêpu do katalogu plików tymczasowych
 	private String toolPath;	// œcie¿ka dostêpu do katalogu narzedziowego
 	
+	// okna:
+	private JFrame windowClusters; //okno tabeli 
+	private JFrame windowConsole;
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
 	 * @param frejm JFrame - g³ówna ramka kontener programu
@@ -1123,9 +1127,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	public void Explode() {
-
-        JFrame frame = new JFrame("SimpleTableDemo");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		if(windowClusters != null) {
+			windowClusters.setVisible(true);
+			return;
+		}
+        windowClusters = new JFrame("Clusters table");
+        windowClusters.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
         JPanel mainPanel = new JPanel();
         //mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
@@ -1140,7 +1147,7 @@ public class GUIManager extends JPanel implements ComponentListener {
         gbc.weightx = 0.1;
         gbc.weighty = 1.0;
         
-        PanelTable tablePanel = new PanelTable();
+        WindowTableClusters tablePanel = new WindowTableClusters();
         tablePanel.setOpaque(true); 
         mainPanel.add(tablePanel, gbc);
         
@@ -1157,14 +1164,53 @@ public class GUIManager extends JPanel implements ComponentListener {
         mainPanel.add(textPanel, gbc);
         
         
-        frame.setContentPane(mainPanel);
+        windowClusters.setContentPane(mainPanel);
 
         //String data[] =  tablePanel.getRowAt(2);
         //Display the window.
-        frame.pack();
-        frame.setVisible(true);
+        windowClusters.pack();
+        windowClusters.setVisible(true);
 	}
 	
+	public void showConsole() {
+		if(windowConsole != null) {
+			windowConsole.setVisible(true);
+		}
+	}
+	
+	public void createHiddenConsole() {
+		if(windowConsole != null) {
+			windowConsole.setVisible(true);
+			return;
+		}
+		windowConsole = new JFrame("Abyss Status Console");
+		windowConsole.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		windowConsole.setMinimumSize(new Dimension(1000, 400));
+		windowConsole.setMaximumSize(new Dimension(1000, 400));
+		windowConsole.setResizable(false);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        
+        WindowConsole tablePanel = new WindowConsole();
+        tablePanel.setOpaque(true); 
+        //mainPanel.add(tablePanel);
+        
+        windowConsole.setContentPane(tablePanel);
+        windowConsole.pack();
+        windowConsole.setVisible(true);
+        
+        //JPanel textPanel = new JPanel();
+        //textPanel.setSize(100, 200);
+        //textPanel.setMaximumSize( textPanel.getPreferredSize() );
+        //textPanel.setMinimumSize( textPanel.getPreferredSize() );
+        //JButton x = new JButton("aaaaa");
+        //textPanel.add(x);
+        // mainPanel.add(textPanel);
+        
+  
+        
+	}
 	/*
 	public void saveInvCSV() {
 		JFileChooser fc;

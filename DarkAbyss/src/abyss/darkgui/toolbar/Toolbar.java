@@ -326,6 +326,17 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("Przycisk II", xxx));
 		
+		ToolbarButtonAction yyy = new ToolbarButtonAction(this, "Podpowiedz przycisku II",
+				new ImageIcon("resources/icons/toolbar/terminal.png")) {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().createHiddenConsole();
+				//GUIManager.getDefaultGUIManager().getWorkspace().getProject()
+				//	.getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
+			}
+		};
+		analysisDockables.add(createButtonDockable("Przycisk II", yyy));
+		
 		return analysisDockables;
 	}
 

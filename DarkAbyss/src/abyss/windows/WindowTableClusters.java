@@ -1,4 +1,4 @@
-package abyss.wasteland;
+package abyss.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -15,12 +15,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-public class PanelTable extends JPanel {
+public class WindowTableClusters extends JPanel {
 	private static final long serialVersionUID = 6942814230861358341L;
 	private boolean DEBUG = false;
     public final JTable table;
     
-    public PanelTable() {
+    public WindowTableClusters() {
         //super(new GridLayout(1,0));
     	super(new BorderLayout());
         //super(new GridLayout(1,0));
