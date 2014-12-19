@@ -20,7 +20,6 @@ import abyss.graphpanel.IdGenerator;
  */
 public class Transition extends Node {
 	private static final long serialVersionUID = 2673581001465115432L;
-	
 	/*
 	 * UWAGA!!! NIE WOLNO ZMIENIAÆ NAZW, DODAWAÆ LUB USUWAÆ PÓL TEJ KLASY
 	 * (przestanie byæ mo¿liwe wczytywanie zapisanych projektów .abyss)
@@ -29,7 +28,6 @@ public class Transition extends Node {
 	protected double maxFireTime = 999;
 	protected double absoluteFireTime = 0;
 	private double FireTime = -1;
-	
 	protected boolean isLaunching;
 	protected boolean isGlowed = false;
 	private boolean isGlowedMTC = false;

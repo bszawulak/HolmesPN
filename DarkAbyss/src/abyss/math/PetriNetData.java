@@ -3,7 +3,7 @@ package abyss.math;
 import java.util.ArrayList;
 
 /**
- * Klasa kontener dla danych definiuj¹cych sieæ Petriego - wierzcho³ków i ³uków
+ * Klasa kontener dla danych definiuj¹cych sieæ Petriego - wierzcho³ków i ³uków.
  * @author students
  *
  */

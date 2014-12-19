@@ -16,10 +16,14 @@ import javax.swing.KeyStroke;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
 
+/**
+ * Klasa odpowiedzialna za tworzenie menu kontekstowego dla sieci narysowanej na danym panelu.
+ * @author students
+ *
+ */
 public class GraphPanelPopupMenu extends JPopupMenu {
 	//private static final long serialVersionUID = 1L;
 	private static final long serialVersionUID = -8272632051140705976L;
-	
 	@SuppressWarnings("unused")
 	private GUIManager guiManager;
 	private GraphPanel graphPanel;
@@ -28,13 +32,20 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	protected JMenuItem copyMenuItem;
 	protected JMenuItem pasteMenuItem;
 
+	/**
+	 * Konstruktor obiektu klasy GraphPanelPopupMenu.
+	 * @param graphPanel GraphPanel - obiekt dla którego powstaje menu kontekstowe
+	 */
 	public GraphPanelPopupMenu(GraphPanel graphPanel) {
 		this.guiManager = GUIManager.getDefaultGUIManager();
 		this.setGraphPanel(graphPanel);
-		this.createPredefinetMenuItems();
+		this.createPredefineMenuItems();
 	}
 
-	public void createPredefinetMenuItems() {
+	/**
+	 * Metoda pomocnicza konstruktora, tworzy podstawowe elementy menu kontekstowego sieci.
+	 */
+	public void createPredefineMenuItems() {
 		cutMenuItem = this.createMenuItem("Cut", "cut",
 				KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK),
 				new ActionListener() {
@@ -65,37 +76,42 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 		pasteMenuItem.setEnabled(false);
 	}
 
-	public void serializeObjectToXML(String xmlFileLocation,
-			Object objectToSerialize) throws Exception {
+	public void serializeObjectToXML(String xmlFileLocation, Object objectToSerialize) throws Exception {
 		FileOutputStream os = new FileOutputStream(xmlFileLocation);
 		XMLEncoder encoder = new XMLEncoder(os);
 		encoder.writeObject(objectToSerialize);
 		encoder.close();
 	}
 
+	/**
+	 * Metoda pokazuj¹ca menu w danym klikniêtym miejscu.
+	 * @param e MouseEvent - zdarzenie klikniêcia
+	 */
 	public void show(MouseEvent e) {
 		super.show(this.getGraphPanel(), e.getX(), e.getY());
 	}
 
+	/**
+	 * Metoda zwracaj¹ca nowy obiekt panelu graficznego.
+	 * @return GraphPanel - obiekt
+	 */
 	public GraphPanel getGraphPanel() {
 		return graphPanel;
 	}
 
+	/**
+	 * Metoda ustawiaj¹ca nowy obiekt panelu graficznego.
+	 * @param graphPanel GraphPanel - obiekt
+	 */
 	public void setGraphPanel(GraphPanel graphPanel) {
 		this.graphPanel = graphPanel;
 	}
 
 	/**
-	 * Method generates and add new menu item to current popup menu
-	 * 
-	 * @param text
-	 *            - text that will be displayed in menu item
-	 * @param iconName
-	 *            - icon name that will displayed in menu item. A directory
-	 *            (resources/icons/) and file extension (.png) will be added
-	 *            automatically
-	 * @param actionListener
-	 *            - action listener of menu action
+	 * Metoda generuj¹ca i dodaj¹ca do menu kontekstowego now¹ opcjê.
+	 * @param text String - nazwa elementu
+	 * @param iconName String - œcie¿ka do ikony
+	 * @param actionListener ActionListener - obiekt nas³uchuj¹cy
 	 */
 	protected void addMenuItem(String text, String iconName, ActionListener actionListener) {
 		JMenuItem menuItem = new JMenuItem(text, new ImageIcon("resources/icons/" + iconName + ".png"));
@@ -103,6 +119,14 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 		this.add(menuItem);
 	}
 
+	/**
+	 * Metoda odpowiedzialna za tworzenie obiektu JMenuItem
+	 * @param text String - nazwa do wyœwietlania
+	 * @param iconName String - œcie¿ka do ikonki
+	 * @param accelerator KeyStroke - skrót klawiszowy
+	 * @param actionListener ActionListener - obiekt nas³uchuj¹cy
+	 * @return JMenuItem - gotowy obiekt menu
+	 */
 	protected JMenuItem createMenuItem(String text, String iconName,
 			KeyStroke accelerator, ActionListener actionListener) {
 		JMenuItem menuItem = new JMenuItem(text, new ImageIcon("resources/icons/" + iconName + ".png"));

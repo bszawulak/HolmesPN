@@ -33,15 +33,15 @@ public class SelectionManager {
 	private ArrayList<Arc> selectedArcs = new ArrayList<Arc>();
 	private SelectionActionListener actionListener;
 
+	/**
+	 * Konstruktor domyœlny obiektu klasy SelectionManager.
+	 * @param parentGraphPanel GraphPanel - obiekt panelu
+	 */
 	public SelectionManager(GraphPanel parentGraphPanel) {
 		this.setGraphPanel(parentGraphPanel);
 		this.graphPanelNodes = parentGraphPanel.getNodes();
 		this.graphPanelArcs = parentGraphPanel.getArcs();
 	}
-
-	// ================================================================================
-	// Setters & getters
-	// ================================================================================
 
 	/**
 	 * Metoda pobieraj¹ca aktualny obiekt arkusza do rysowania sieci.
@@ -76,11 +76,19 @@ public class SelectionManager {
 		this.graphPanelNodes = graphPanelNodes;
 	}
 
+	/**
+	 * Metoda zwracaj¹ca listê ³uków panelu graficznego.
+	 * @return ArrayList[Arc] - lista ³uków
+	 */
 	private ArrayList<Arc> getGraphPanelArcs() {
 		return graphPanelArcs;
 	}
 
 	@SuppressWarnings("unused")
+	/**
+	 * Metoda ustawiaj¹ca now¹ listê ³uków panelu graficznego.
+	 * @param graphPanelArcs ArrayList[Arc] - lista ³uków
+	 */
 	private void setGraphPanelArcs(ArrayList<Arc> graphPanelArcs) {
 		this.graphPanelArcs = graphPanelArcs;
 	}
@@ -831,8 +839,7 @@ public class SelectionManager {
 	 * aktualny arkusz.
 	 */
 	public void selectSheet() {
-		SelectionActionEvent actionEvent = new SelectionActionEvent(
-				getGraphPanel().getSheetId());
+		SelectionActionEvent actionEvent = new SelectionActionEvent(getGraphPanel().getSheetId());
 		this.getActionListener().actionPerformed(actionEvent);
 	}
 

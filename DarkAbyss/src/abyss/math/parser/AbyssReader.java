@@ -31,10 +31,10 @@ public class AbyssReader {
 
 	/**
 	 * Metoda odpowiedzialna za czytanie plików projektu formatu .abyss.
-	 * @param sciezka String - œcie¿ka dostêpu do pliku
+	 * @param path String - œcie¿ka dostêpu do pliku
 	 */
-	public void read(String sciezka) {
-		File source = new File(sciezka);
+	public void read(String path) {
+		File source = new File(path);
 
 		try {
 
@@ -79,13 +79,18 @@ public class AbyssReader {
 			IdGenerator.setStartId(maxGlobalId+1);
 			
 			xstream.fromXML(source);
+			GUIManager.getDefaultGUIManager().log("Petri net successfully read from file "+path, "text", true);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
 		}
 
 	}
 	
+	/**
+	 * Metoda pomocnicza ustawiaj¹ca rozmiar obszaru rysowania wczytanej sieci.
+	 * @param aln ArrayList[Node] - elementy z lokalizacjami
+	 */
 	private void setWorkframeBoundary(ArrayList<Node> aln)
 	{
 		int x=0;

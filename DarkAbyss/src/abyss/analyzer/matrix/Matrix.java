@@ -36,7 +36,7 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Metoda ustawiaj¹ca now¹ wartoœæ w komórce tablicy
+	 * Metoda ustawiaj¹ca now¹ wartoœæ w komórce tablicy.
 	 * @param transitionIndex int - indeks tranzycji
 	 * @param placeIndex int - indeks miejsca
 	 * @param value int - nowa wartoœæ
@@ -47,7 +47,7 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za zamianê wierszy
+	 * Metoda odpowiedzialna za zamianê wierszy.
 	 * @param rowA int - indeks wiersza A
 	 * @param rowB int - indeks wiersza B
 	 */
@@ -60,7 +60,7 @@ public abstract class Matrix {
 	}
 
 	/**
-	 * Metoda zwraca macierz
+	 * Metoda zwraca macierz.
 	 * @return int[][] - macierz
 	 */
 	public int[][] getMatrix() {
@@ -68,7 +68,7 @@ public abstract class Matrix {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca now¹ macierz
+	 * Metoda ustawiaj¹ca now¹ macierz.
 	 * @param matrix int[][] - nowa macierz
 	 */
 	private void setMatrix(int[][] matrix) {

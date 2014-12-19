@@ -9,6 +9,11 @@ import abyss.math.Node;
 import abyss.math.Place;
 import abyss.math.Transition;
 
+/**
+ * Klasa odpowiedzialna za analizê w³aœciwoœci sieci.
+ * @author students
+ *
+ */
 public class NetPropAnalyzer {
 
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
@@ -19,6 +24,9 @@ public class NetPropAnalyzer {
 
 	ArrayList<Node> checked = new ArrayList<Node>();
 
+	/**
+	 * Konstruktor domyœlny obiektu klasy NetPropAnalyzer.
+	 */
 	public NetPropAnalyzer() {
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -26,6 +34,10 @@ public class NetPropAnalyzer {
 		nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
 	}
 
+	/**
+	 * Metoda analizuj¹ w³aœciwoœci i zwracaj¹ca je jako tablicê obiektów.
+	 * @return ArrayList[ArrayList[Object]] - macierz obiektów reprezentuj¹cych w³aœciwoœci
+	 */
 	public ArrayList<ArrayList<Object>> propAnalyze() {
 		ArrayList<ArrayList<Object>> NetProps = new ArrayList<ArrayList<Object>>();
 
@@ -260,6 +272,14 @@ public class NetPropAnalyzer {
 	}
 
 	@SuppressWarnings("unused")
+	/**
+	 * Metoda sprawdzaj¹ca silne po³¹czenie elementów sieci.
+	 * @param n1 Node - wierzcho³ek nr 1
+	 * @param n2 Node - wierzcho³ek nr 2
+	 * @param last Node - ostatni wierzcho³ek
+	 * @param mode boolean - 
+	 * @return boolean - true, jeœli silnie po³¹czona
+	 */
 	private boolean checkStronglyConnectionExist(Node n1, Node n2, Node last, boolean mode) {
 		if (mode == true && n1.getID() == n2.getID())
 			return false;
@@ -280,6 +300,10 @@ public class NetPropAnalyzer {
 	}
 
 	@SuppressWarnings("unused")
+	/**
+	 * 
+	 * @param n1
+	 */
 	private void checkConnectionExist(Node n1) {
 
 	}

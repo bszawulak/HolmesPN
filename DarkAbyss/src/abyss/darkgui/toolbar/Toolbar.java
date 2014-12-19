@@ -295,7 +295,6 @@ public class Toolbar extends BorderDock {
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableStepFwdSim", stepFwdSimButton));
-		
 		return simulationDockables;
 	}
 	
@@ -330,9 +329,14 @@ public class Toolbar extends BorderDock {
 				new ImageIcon("resources/icons/toolbar/terminal.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().createHiddenConsole();
-				//GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-				//	.getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
+				GUIManager.getDefaultGUIManager().showConsole(true); 
+				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "text", true);
+				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "warning", true);
+				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "error", true);
+				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "text", true);
+				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "warning", true);
+				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "error", true);
+				
 			}
 		};
 		analysisDockables.add(createButtonDockable("Przycisk II", yyy));

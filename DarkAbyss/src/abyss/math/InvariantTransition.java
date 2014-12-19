@@ -1,7 +1,7 @@
 package abyss.math;
 
 /**
- * Klasa definiuj¹ca inwariant dla tranzycji
+ * Klasa definiuj¹ca inwariant dla tranzycji.
  * @author students
  *
  */

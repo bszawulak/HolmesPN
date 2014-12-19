@@ -291,7 +291,6 @@ public class GraphPanel extends JComponent {
 		sheet.revalidate();
 		this.invalidate();
 		this.repaint();
-
 	}
 
 	/**
@@ -784,7 +783,7 @@ public class GraphPanel extends JComponent {
 			}
 			e.getComponent().repaint();
 		}
-	} //end class MouseHandler
+	} 
 
 	/**
 	 * Prywatna klasa wewn¹trz GraphPanel, realizuj¹ca interakcje ze strony

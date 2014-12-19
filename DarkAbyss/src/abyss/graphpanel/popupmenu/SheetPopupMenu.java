@@ -17,8 +17,16 @@ import abyss.graphpanel.GraphPanel;
 import abyss.workspace.ExtensionFileFilter;
 
 @SuppressWarnings("serial")
+/**
+ * Klasa tworząca obiekty menu kontekstowego dla arkusza z rysunkiem sieci.
+ * @author students
+ *
+ */
 public class SheetPopupMenu extends GraphPanelPopupMenu {
-
+	/**
+	 * Konstruktor obiektu klasy SheetPopupMenu.
+	 * @param graphPanel GraphPanel - panel dla którego powstaje menu
+	 */
 	public SheetPopupMenu(GraphPanel graphPanel) {
 		super(graphPanel);
 
@@ -171,6 +179,9 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 	}
 	
 	@SuppressWarnings("unused")
+	/**
+	 * Metoda eksportująca rysunek sieci do pliku - dla klikniętego arkusza.
+	 */
 	private void exportToFile() {
 		JFileChooser fc = new JFileChooser();
 		FileFilter pngFilter = new ExtensionFileFilter(
@@ -200,11 +211,11 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 			}
 			BufferedImage image = getGraphPanel().createImageFromSheet();
 			try {
-				ImageIO.write(image, ext.substring(1),
-						new File(file.getPath() + ext));
+				ImageIO.write(image, ext.substring(1),new File(file.getPath() + ext));
+				GUIManager.getDefaultGUIManager().log("Network image save to file "+file.getPath() + ext, "text", true);
 			} catch (IOException ex) {
 				ex.printStackTrace();
-
+				GUIManager.getDefaultGUIManager().log("Error: " + ex.getMessage(), "error", true);
 			}
 		}
 	}

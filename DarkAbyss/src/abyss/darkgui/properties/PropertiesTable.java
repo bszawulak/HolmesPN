@@ -1,6 +1,5 @@
 package abyss.darkgui.properties;
 
-//import java.awt.BorderLayout;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -16,17 +15,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.ParseException;
 import java.util.ArrayList;
-//import java.awt.Dialog;
-
-
-
-
-
-
-
-
-
-
 
 import javax.swing.AbstractButton;
 import javax.swing.Box;

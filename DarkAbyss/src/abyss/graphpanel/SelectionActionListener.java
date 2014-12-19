@@ -21,6 +21,9 @@ public interface SelectionActionListener {
 		private int sheetId;
 		private SelectionActionType actionType;
 
+		/**
+		 * Konstruktor bezargumentowy obiektu klasy SelectionActionListener.
+		 */
 		public SelectionActionEvent() {
 		}
 		

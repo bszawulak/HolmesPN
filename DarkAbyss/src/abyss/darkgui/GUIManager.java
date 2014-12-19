@@ -11,7 +11,7 @@ import abyss.darkgui.toolbar.Toolbar;
 import abyss.math.PetriNet;
 import abyss.settings.SettingsManager;
 import abyss.utilities.Tools;
-import abyss.windows.WindowConsole;
+import abyss.windows.AbyssConsole;
 import abyss.windows.WindowTableClusters;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
@@ -108,10 +108,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private String abyssPath; 	// scie¿ka dostêpu do katalogu g³ównego programu
 	private String tmpPath;		// œcie¿ka dostêpu do katalogu plików tymczasowych
 	private String toolPath;	// œcie¿ka dostêpu do katalogu narzedziowego
+	private String logPath;
 	
 	// okna:
 	private JFrame windowClusters; //okno tabeli 
-	private JFrame windowConsole;
+	private AbyssConsole windowConsole;
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
 	 * @param frejm JFrame - g³ówna ramka kontener programu
@@ -123,9 +124,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 		abyssPath = System.getProperty("user.dir");
 		tmpPath = abyssPath+"\\tmp\\";
 		toolPath = abyssPath+"\\tools\\";
-		//File fOut = new File(tmpPath);
+		logPath = abyssPath+"\\log\\";
+
 		File dirPath = new File(tmpPath);
 		if (!dirPath.exists()) dirPath.mkdirs();
+		dirPath = new File(logPath);
+		if (!dirPath.exists()) dirPath.mkdirs();
+		
+		createHiddenConsole();	//tworzy ukryte okno konsoli logowania zdarzeñ
+	
 		
 		SettingsManager settingsManager = new SettingsManager();
 		settingsManager.loadSettings();
@@ -1172,17 +1179,21 @@ public class GUIManager extends JPanel implements ComponentListener {
         windowClusters.setVisible(true);
 	}
 	
-	public void showConsole() {
+	/**
+	 * Metoda s³u¿y do pokazywania lub chowania okna konsoli.
+	 */
+	public void showConsole(boolean value) {
 		if(windowConsole != null) {
-			windowConsole.setVisible(true);
+			windowConsole.setVisible(value);
 		}
 	}
 	
-	public void createHiddenConsole() {
-		if(windowConsole != null) {
-			windowConsole.setVisible(true);
-			return;
-		}
+	/**
+	 * Metoda s³u¿y do tworzenia ukrytego okna konsoli logów.
+	 */
+	private void createHiddenConsole() {
+		windowConsole = new AbyssConsole();
+		/*
 		windowConsole = new JFrame("Abyss Status Console");
 		windowConsole.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		windowConsole.setMinimumSize(new Dimension(1000, 400));
@@ -1194,22 +1205,15 @@ public class GUIManager extends JPanel implements ComponentListener {
         
         WindowConsole tablePanel = new WindowConsole();
         tablePanel.setOpaque(true); 
-        //mainPanel.add(tablePanel);
-        
+
         windowConsole.setContentPane(tablePanel);
         windowConsole.pack();
-        windowConsole.setVisible(true);
-        
-        //JPanel textPanel = new JPanel();
-        //textPanel.setSize(100, 200);
-        //textPanel.setMaximumSize( textPanel.getPreferredSize() );
-        //textPanel.setMinimumSize( textPanel.getPreferredSize() );
-        //JButton x = new JButton("aaaaa");
-        //textPanel.add(x);
-        // mainPanel.add(textPanel);
-        
-  
-        
+        windowConsole.setVisible(false);   
+        */   
+	}
+	
+	public void log(String text, String mode, boolean time) {
+		windowConsole.addText(text, mode, time);
 	}
 	/*
 	public void saveInvCSV() {

@@ -328,8 +328,8 @@ public class DarkMenu extends JMenuBar {
 					// poniższa linia:   ╯°□°）╯︵ ┻━━┻
 					GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
 				} catch (CloneNotSupportedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
 				}
 			}
 		});

@@ -406,8 +406,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return GraphPanel - który w wyniku wywo³ania metoda zosta³ utworzony
 	 */
 	public GraphPanel createAndAddGraphPanel(int sheetId) {
-		GraphPanel gp = new GraphPanel(sheetId, this, this.getData().nodes,
-				this.getData().arcs);
+		GraphPanel gp = new GraphPanel(sheetId, this, this.getData().nodes, this.getData().arcs);
 		gp.setDrawMode(this.drawMode);
 		this.getGraphPanels().add(gp);
 		return gp;
@@ -463,8 +462,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			System.out.println(n);
 		for (Arc n : getArcs())
 			System.out.println(n);
-		for (Iterator<GraphPanel> gpIterator = getGraphPanels().iterator(); gpIterator
-				.hasNext();)
+		for (Iterator<GraphPanel> gpIterator = getGraphPanels().iterator(); gpIterator.hasNext();)
 			if (gpIterator.next().getSheetId() == sheetID) {
 				gpIterator.remove();
 				for (Iterator<Node> nodeIterator = getNodes().iterator(); nodeIterator.hasNext();) {
@@ -555,10 +553,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void saveToFile(String sciezka) {
 		if (sciezka.endsWith(".pnt")) {
 			sciezka = sciezka.substring(0, sciezka.length() - 4);
-			//communicationProtocol = new INAprotocols();
 			communicationProtocol.writePNT(sciezka, getPlaces(), getTransitions(), getArcs());
-			//writerINA = new INAwriter();
-			//writerINA.write(sciezka, getPlaces(), getTranstions(), getArcs());
 		}
 		if (sciezka.endsWith(".abyss")) {
 			sciezka = sciezka.substring(0, sciezka.length() - 6);
@@ -572,50 +567,52 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda pozwala na odczyt ca³ej sieci z pliku podanego w parametrze
 	 * metody. wczytana sieæ zostaje dodana do istniej¹cego ju¿ projektu,
 	 * bez naruszania jego struktury logicznej.
-	 * @param sciezka String - œcie¿ka do pliku odczytu
+	 * @param path String - œcie¿ka do pliku odczytu
 	 */
-	public void loadFromFile(String sciezka) {
+	public void loadFromFile(String path) {
 		
 		//TODO: czyszczenie projektu!!!!!!!!!!!!!!!!!!!!!!!
 
 		readerSNOOPY = SAXParserFactory.newInstance();
 		try {
 			// Format wlasny
-			if (sciezka.endsWith(".abyss")) {
+			if (path.endsWith(".abyss")) {
 				ABYSSReader = new AbyssReader();
-				ABYSSReader.read(sciezka);
+				ABYSSReader.read(path);
 				addArcsAndNodes(ABYSSReader.getArcArray(), ABYSSReader.getNodeArray());
 			}
 			// Formaty Snoopiego
-			if (sciezka.endsWith(".spped") || sciezka.endsWith(".spept") || sciezka.endsWith(".colpn")
-					|| sciezka.endsWith(".sptpt")) {
-				InputStream xmlInput = new FileInputStream(sciezka);
+			if (path.endsWith(".spped") || path.endsWith(".spept") || path.endsWith(".colpn")
+					|| path.endsWith(".sptpt")) {
+				InputStream xmlInput = new FileInputStream(path);
 
 				SAXParser saxParser = readerSNOOPY.newSAXParser();
 				// Wybor parsera
-				if (sciezka.endsWith(".spped")) {
+				if (path.endsWith(".spped")) {
 					handler = new NetHandler_Classic();
 				}
-				if (sciezka.endsWith(".spept")) {
+				if (path.endsWith(".spept")) {
 					handler = new NetHandler_Extended();
 				}
-				if (sciezka.endsWith(".colpn")) {
+				if (path.endsWith(".colpn")) {
 					handler = new NetHandler_Colored();
 				}
-				if (sciezka.endsWith(".sptpt")) {
+				if (path.endsWith(".sptpt")) {
 					handler = new NetHandler_Time();
 				}
 				saxParser.parse(xmlInput, handler);
 				addArcsAndNodes(handler.getArcList(), handler.getNodesList());
 			}
 			// Format INY
-			if (sciezka.endsWith(".pnt")) {
+			if (path.endsWith(".pnt")) {
 				//communicationProtocol = new INAprotocols();
-				communicationProtocol.readPNT(sciezka);
+				communicationProtocol.readPNT(path);
 				addArcsAndNodes(communicationProtocol.getArcArray(),communicationProtocol.getNodeArray());
 			}
+			GUIManager.getDefaultGUIManager().log("Snoopy Petri net successfully imported from file "+path, "text", true);
 		} catch (Throwable err) {
 			err.printStackTrace();
+			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
 		}
 	}
 
@@ -643,6 +640,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 		} catch (Throwable err) {
 			err.printStackTrace();
+			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -669,6 +667,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 		} catch (Throwable err) {
 			err.printStackTrace();
+			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -695,6 +694,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 		} catch (Throwable err) {
 			err.printStackTrace();
+			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -709,6 +709,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			genInvariants = communicationProtocol.getInvariantsList();
 		} catch (Throwable err) {
 			err.printStackTrace();
+			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
 		}
 	}
 
@@ -723,6 +724,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			myThread.start();
 		} catch (Throwable err) {
 			err.printStackTrace();
+			GUIManager.getDefaultGUIManager().log("Analyzer Error: " + err.getMessage(), "error", true);
 		}
 	}
 	
@@ -790,16 +792,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			int k = 0;
 			for (k = 0; k < GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size(); k++)
 				sheetList.add(GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(k).getId());
-			System.out.println(sheetList.size());
-			System.out.println(GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(k - 1).getId());
+			//System.out.println(sheetList.size());
+			//System.out.println(GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(k - 1).getId());
 			int[] tabSID = new int[GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(k - 1).getId() + 1];
 
 			for (int j = 0; j < getData().nodes.size(); j++) {
 				for (int i = 0; i < getData().nodes.get(j).getNodeLocations().size(); i++) {
 					tSID = getData().nodes.get(j).getNodeLocations().get(i).getSheetID();
-					// System.out.println(tSID);
 					tabSID[tSID]++;
-					// System.out.println(tabSID[tSID]);
 				}
 			}
 			boolean emptySheet = false;
@@ -857,6 +857,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 								"The currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.",
 								"Project mismatch error!",
 								JOptionPane.ERROR_MESSAGE);
+				GUIManager.getDefaultGUIManager().log("Error: the currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.", "error", true);
 			}
 		} else {
 			JOptionPane
@@ -865,6 +866,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 							"There is something terribly wrong with your loaded external invariant file, as there are no invariants in it, actually. It's corrupt, is my guess.",
 							"Invariant file does not contain invariants",
 							JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed.", "error", true);
 		}
 		return getInvariantsList();
 	}
@@ -910,11 +912,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				JOptionPane.showMessageDialog(null,
 					"The currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.",
 					"Project mismatch error!", JOptionPane.ERROR_MESSAGE);
+				GUIManager.getDefaultGUIManager().log("Error: currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.", "error", true);
 			}
 		} else {
 			JOptionPane.showMessageDialog(null,
 				"There is something terribly wrong with your loaded external invariant file, as there are no invariants in it, actually. It's corrupt, is my guess.",
 				"Invariant file does not contain invariants", JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed.", "error", true);
 		}
 		return getInvariantsList();
 	}

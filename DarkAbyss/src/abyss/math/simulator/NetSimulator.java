@@ -905,6 +905,7 @@ public class NetSimulator {
 					stopSimulation();
 					JOptionPane.showMessageDialog(null, "Simulation ended",
 						"No more available steps!",JOptionPane.INFORMATION_MESSAGE);
+					GUIManager.getDefaultGUIManager().log("Simulation ended - no more available steps.", "text", true);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {

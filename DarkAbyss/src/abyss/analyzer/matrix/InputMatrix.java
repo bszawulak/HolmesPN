@@ -12,7 +12,6 @@ import abyss.math.Transition;
  *
  */
 public class InputMatrix extends Matrix {
-	
 	/**
 	 * Konstruktor obiektu klasy InputMatrix
 	 * @param transitionList ArrayList[Transition] - lista tranzycji

@@ -13,12 +13,11 @@ import abyss.graphpanel.GraphPanel;
 public class TransitionPopupMenu extends PetriNetElementPopupMenu {
 	private static final long serialVersionUID = 1268637178521514216L;
 	/**
-	 * Konstruktor obiektu 
-	 * @param graphPanel
+	 * Konstruktor obiektu klasy TransitionPopupMenu.
+	 * @param graphPanel GraphPanel - arkusz dla którego powstaje menu
 	 */
 	public TransitionPopupMenu(GraphPanel graphPanel) {
 		super(graphPanel);
-
 		this.addMenuItem("Change selected Transitions into T-Portals", "portal",
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -33,5 +32,4 @@ public class TransitionPopupMenu extends PetriNetElementPopupMenu {
 					}
 				});
 	}
-
 }

@@ -12,9 +12,8 @@ import abyss.math.Transition;
  *
  */
 public class IncidenceMatrix extends Matrix {
-
 	/**
-	 * Konstruktor obiektu klasy IncidenceMatrix
+	 * Konstruktor obiektu klasy IncidenceMatrix.
 	 * @param transitionList ArrayList[Transition] - lista tranzycji
 	 * @param placeList ArrayList [Place] - lista miejsc
 	 * @param inMatrix InputMatrix - macierz wejœciowa
@@ -43,8 +42,8 @@ public class IncidenceMatrix extends Matrix {
 	}
 	
 	/**
-	 * Metoda znajduj¹ca niezerowy wiersz w zadanej kolumnie
-	 * @param l - nr kolumny tranzycji
+	 * Metoda znajduj¹ca niezerowy wiersz w zadanej kolumnie.
+	 * @param l int - nr kolumny tranzycji
 	 * @return int - numer wiersza miejsc w którym s¹ same zera
 	 */
 	public int findNonZeroRowInColumn(int l) {
@@ -58,7 +57,7 @@ public class IncidenceMatrix extends Matrix {
 	}
 	
 	/**
-	 * Zamiana dwóch wierszy ze sob¹ w tablicy
+	 * Zamiana dwóch wierszy ze sob¹ w tablicy.
 	 * @param k int - pierwszy wiersz
 	 * @param l int - drugi wiersz
 	 */

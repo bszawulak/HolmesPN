@@ -74,7 +74,6 @@ public class Workspace implements SelectionActionListener {
 
 		setProject(new PetriNet(this));
 		this.getProject().addActionListener(this);
-
 		newTab();
 	}
 

@@ -10,7 +10,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 public class AbyssWriter {
 
-	public void write(String sciezka) {
+	public void write(String path) {
 		// Tu kiedys bylo pole testów parserów do XMLa. Polegly 2 z nich
 		// (Xstream i simpleXML). Programisto (nieszczsniku) który tu zagladasz,
 		// masz lepsze rzeczy do robienia ni¿ babranie sie z nimi, czy z
@@ -25,18 +25,19 @@ public class AbyssWriter {
 
 			String xml = xstream.toXML(GUIManager.getDefaultGUIManager()
 					.getWorkspace().getProject().getData());
-			if(sciezka.contains(".abyss")) {
-				if(sciezka.indexOf(".abyss") == sciezka.length()-6) {
-					sciezka = sciezka.replace(".abyss", "");
+			if(path.contains(".abyss")) {
+				if(path.indexOf(".abyss") == path.length()-6) {
+					path = path.replace(".abyss", "");
 				}
 			}
-			PrintWriter zapis = new PrintWriter(sciezka + ".abyss");
+			PrintWriter zapis = new PrintWriter(path + ".abyss");
 
 			zapis.println(xml);
 			zapis.close();
-
+			GUIManager.getDefaultGUIManager().log("Network save into file "+path + ".abyss", "text", true);
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
+			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
 		}
 
 	}

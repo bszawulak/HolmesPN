@@ -2,8 +2,8 @@ Metody do przejrzenia / napisania
 [ ]GUIManager.restoreDefaultVisuals - przejrzeæ i przywróciæ do dzia³ania
 
 Poprawiæ problem z powtarzaj¹cym siê rozszerzeniem:
-[ ] GUIManager.exportProject
-[ ] GUIManager.exportGeneratedInvariants
+[*] GUIManager.exportProject
+[*] GUIManager.exportGeneratedInvariants
 [*] GUIManager.exportProjectToImage
 [*] GUIManager.saveProject
 
@@ -20,3 +20,7 @@ Analiza
 Inne poprawki:
 [*] Poprawka zwi¹zana ze zmian¹ rozmiaru arkuszy
 [*] Przepisanie podokien programu na pozycjonowanie absolutne
+
+Okna:
+[*] Konsola logów
+[ ] Okno tabeli klastrów

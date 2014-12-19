@@ -27,6 +27,11 @@ import abyss.math.Transition;
 import abyss.math.simulator.SimulationStep;
 import abyss.settings.SettingsManager;
 
+/**
+ * Klasa odpowiadzialna za symulacjê wykonywania inwariantów w sieci.
+ * @author students
+ *
+ */
 public class InvariantsSimulator {
 	private NetType simulationType;
 	private SimulatorMode mode = SimulatorMode.STOPPED;
@@ -86,6 +91,14 @@ public class InvariantsSimulator {
 		TIME, CYCLE, STEP
 	}
 
+	/**
+	 * Konstruktor obiektu klasy InvariantsSimulator.
+	 * @param type NetType - rodzaj sieci
+	 * @param net PetriNet - sieæ w reprezentacji wewnêtrznej
+	 * @param inv ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
+	 * @param st int - rodzaj symulacji
+	 * @param simV int - krok
+	 */
 	public InvariantsSimulator(NetType type, PetriNet net,
 			ArrayList<ArrayList<InvariantTransition>> inv, int st, int simV) {
 		simulationType = type;
@@ -107,6 +120,11 @@ public class InvariantsSimulator {
 		clearGenInvariants();
 	}
 
+	/**
+	 * Metoda sprawdza, czy krok jest mo¿liwy, tj. czy choæ jedna tranzycja jest aktualnie
+	 * aktywna.
+	 * @return boolean - true, jeœli choæ jedna tranzycja jest w danej chwili aktywna
+	 */
 	private boolean isPossibleStep() {
 		for (Transition transition : petriNet.getTransitions()) {
 			if (transition.isActive())
@@ -115,6 +133,10 @@ public class InvariantsSimulator {
 		return false;
 	}
 
+	/**
+	 * Metoda ustawiaj¹ca model sieci.
+	 * @param type int - 0 - BASIC, 1 - TIME
+	 */
 	public void setSimulatorNetType(int type) {
 		switch (type) {
 		case (0):
@@ -129,8 +151,11 @@ public class InvariantsSimulator {
 	}
 
 	@SuppressWarnings("incomplete-switch")
+	/**
+	 * Metoda rozpoczynaj¹ca symulacjê inwariantów.
+	 * @param simulatorMode SimulatorMode - tryb pracy symulatora
+	 */
 	public void startSimulation(SimulatorMode simulatorMode) {
-
 		timeFrame.setBounds(185, 115, 80, 30);
 		timeFrame.getContentPane().add(
 				new JLabel(String.valueOf(timeNetStepCounter)),
@@ -171,6 +196,10 @@ public class InvariantsSimulator {
 		getTimer().start();
 	}
 
+	/**
+	 * Metoda weryfikuj¹ca zbiór tranzycji do uruchomienia.
+	 * @return ArrayList[Transition] - zbiór tranzycji
+	 */
 	private ArrayList<Transition> generateValidLaunchingTransitions() {
 		boolean generated = false;
 		ArrayList<Transition> launchingTransitions = new ArrayList<Transition>();
@@ -183,6 +212,10 @@ public class InvariantsSimulator {
 	}
 
 	@SuppressWarnings("unused")
+	/**
+	 * Metoda generuj¹ca zbiór tranzycji do uruchomienia.
+	 * @return ArrayList[Transition] - zbiór tranzycji
+	 */
 	private ArrayList<Transition> generateLaunchingTransitions() {
 		Random randomLaunch = new Random();
 		ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
@@ -256,11 +289,22 @@ public class InvariantsSimulator {
 		return launchableTransitions;
 	}
 
+	/**
+	 * 
+	 * @param t
+	 * @param list
+	 * @return
+	 */
 	public ArrayList<Transition> searchConflict(Transition t,
 			ArrayList<Transition> list) {
 		return null;
 	}
 
+	/**
+	 * Metoda uruchamiaj¹ca fazê pobierania substratów dla tranzycji.
+	 * @param transitions ArrayList[Transition] - zbiór tranzycji
+	 * @param backtracking boolean - true, jeœli symulacja siê cofa
+	 */
 	public void launchSubtractPhase(ArrayList<Transition> transitions,
 			boolean backtracking) {
 		ArrayList<Arc> arcs;
@@ -284,6 +328,13 @@ public class InvariantsSimulator {
 		}
 	}
 
+	/**
+	 * Metoda uruchamiaj¹ca pojedyncz¹ fazê pobrania substratów.
+	 * @param transitions ArrayList[Transition] - zbiór tranzycji
+	 * @param backtracking boolean - true, jeœli symulacja siê cofa
+	 * @param chosenTransitionTransition - wybrana tranzycja
+	 * @return boolean - zwraca true, jeœli siê uda³o coœ odpaliæ
+	 */
 	public boolean launchSingleSubtractPhase(ArrayList<Transition> transitions,
 			boolean backtracking, Transition chosenTransition) {
 		if (transitions.size() < 1)
@@ -313,6 +364,11 @@ public class InvariantsSimulator {
 		}
 	}
 
+	/**
+	 * 
+	 * @param transitions
+	 * @param backtracking
+	 */
 	public void launchAddPhaseGraphics(ArrayList<Transition> transitions,
 			boolean backtracking) {
 		ArrayList<Arc> arcs;
@@ -603,9 +659,9 @@ public class InvariantsSimulator {
 					// simulation ends, no possible steps remaining
 					setSimulationActive(false);
 					stopSimulation();
-					JOptionPane.showMessageDialog(null, "Backtracking ended",
-							"No more available actions to backtrack!",
+					JOptionPane.showMessageDialog(null, "Backtracking ended", "No more available actions to backtrack!",
 							JOptionPane.INFORMATION_MESSAGE);
+					GUIManager.getDefaultGUIManager().log("Backtracking ended, no more available actions to backtrack.", "text", true);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
@@ -754,17 +810,13 @@ public class InvariantsSimulator {
 											generatedInvariants.get(invariant)[tran]++;
 										}
 								}
-							
 					} else {
 
 					}
 
 					//
-					
-					actionStack
-							.push(new SimulationStep(
-									abyss.math.simulator.NetSimulator.SimulatorMode.STEP,
-									cloneTransitionArray(launchingTransitions)));
+					actionStack.push(new SimulationStep(abyss.math.simulator.NetSimulator.SimulatorMode.STEP,
+							cloneTransitionArray(launchingTransitions)));
 					if (actionStack.peek().getPendingTransitions() == null)
 						SettingsManager.log("Yay");
 					launchSubtractPhase(launchingTransitions, false);
@@ -773,9 +825,9 @@ public class InvariantsSimulator {
 					// simulation ends, no possible steps remaining
 					setSimulationActive(false);
 					stopSimulation();
-					JOptionPane.showMessageDialog(null, "Simulation ended",
-							"No more available steps!",
+					JOptionPane.showMessageDialog(null, "Simulation ended", "No more available steps!",
 							JOptionPane.INFORMATION_MESSAGE);
+					GUIManager.getDefaultGUIManager().log("Simulation ended, no more available steps.", "text", true);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
@@ -810,10 +862,9 @@ public class InvariantsSimulator {
 						GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().setEnabledInvariantSimulationInitiateButtons(true);
 				}
 				counter++;
-			} else
+			} else {
 				counter++; // empty steps
-
-			
+			}
 			stepCounter++;
 		}
 	}
@@ -842,20 +893,18 @@ public class InvariantsSimulator {
 						remainingTransitionsAmount = launchingTransitions
 								.size();
 					}
-					actionStack
-							.push(new SimulationStep(
-									abyss.math.simulator.NetSimulator.SimulatorMode.SINGLE_TRANSITION,
-									launchingTransitions.get(0),
-									cloneTransitionArray(launchingTransitions)));
+					actionStack.push(new SimulationStep(
+							abyss.math.simulator.NetSimulator.SimulatorMode.SINGLE_TRANSITION,
+							launchingTransitions.get(0), cloneTransitionArray(launchingTransitions)));
 					launchSingleSubtractPhase(launchingTransitions, false, null);
 					subtractPhase = false;
 				} else {
 					// simulation ends, no possible steps remaining
 					setSimulationActive(false);
 					stopSimulation();
-					JOptionPane.showMessageDialog(null, "Simulation ended",
-							"No more available steps!",
+					JOptionPane.showMessageDialog(null, "Simulation ended", "No more available steps!",
 							JOptionPane.INFORMATION_MESSAGE);
+					GUIManager.getDefaultGUIManager().log("Simulation ended, no more available steps.", "text", true);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
@@ -911,10 +960,10 @@ public class InvariantsSimulator {
 								
 			} catch (Exception e) {
 				System.err.println("Error: " + e.getMessage());
-				JOptionPane.showMessageDialog(null,"Program can not write invariants in to file", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,"Program cannot write invariants into file", "Error", JOptionPane.ERROR_MESSAGE);
+				GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", true);
 			}
 		}
-		
 	}
 	
 	@SuppressWarnings("unused")

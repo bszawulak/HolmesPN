@@ -26,8 +26,6 @@ import javax.swing.border.Border;
  */
 public class ToolbarButton extends JLabel
 {
-
-	// Static fields.
 	private static final long serialVersionUID = 3034370365062643549L;
 	/** The button will always have this size. */
 	private static final Dimension DEFAULT_SIZE = new Dimension(48, 48);
@@ -42,12 +40,8 @@ public class ToolbarButton extends JLabel
 					BorderFactory.createLineBorder(Color.gray)),
 			BorderFactory.createEmptyBorder(1, 1, 1, 1));
 	
-	// Fields.
-
 	/** The action that will be performed when this button is clicked. */
 	private Action action;
-
-	// Constructors.
 
 	/**
 	 * Constructs an icon button with the given action. 
@@ -63,8 +57,6 @@ public class ToolbarButton extends JLabel
 		setOpaque(false);
 	}
 	
-	// Getters / Setters.
-
 	/**
 	 * Gets the action that will be performed when this button is clicked.
 	 * 
@@ -80,9 +72,7 @@ public class ToolbarButton extends JLabel
 	 * 
 	 * @param action		The action that will be performed when this button is clicked.
 	 */
-	public void setAction(Action action)
-	{
-		
+	public void setAction(Action action) {
 		if (action == null)
 		{
 			throw new IllegalArgumentException("Acion is null.");
@@ -96,19 +86,14 @@ public class ToolbarButton extends JLabel
 			String description = (String)action.getValue(Action.SHORT_DESCRIPTION);
 			this.setToolTipText(description);
 		}
-		
 	}
-
-	// Private classes.
 
 	/**
 	 * This mouse listener performs the action when the mouse is clicked.
 	 */
 	private class ClickListener extends MouseAdapter
 	{
-
 		// Overwritten methods of MouseAdapter.
-
 		public void mouseClicked(MouseEvent mouseEvent)
 		{
 			// Create the action event.
@@ -130,17 +115,13 @@ public class ToolbarButton extends JLabel
 		
 	}
 	
-	// Private methods.
-
 	/**
 	 * Sets the preferred, maximum and minimum size of the button.
 	 */
 	private void setDimensions()
 	{
-		
 		setPreferredSize(DEFAULT_SIZE);
 		setMaximumSize(DEFAULT_SIZE);
 		setMinimumSize(DEFAULT_SIZE);
-		
 	}
 }

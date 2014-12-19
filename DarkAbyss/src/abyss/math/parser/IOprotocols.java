@@ -142,9 +142,11 @@ public class IOprotocols {
 				}
 			}
 			buffer.close();
+			GUIManager.getDefaultGUIManager().log("Invariants from INA file have been read.", "text", true);
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR:readINV",JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error: "+e.getMessage(), "error", true);
 		} 
 	}
 	
@@ -289,92 +291,12 @@ public class IOprotocols {
 			pw.print("\r\n");
 			pw.print("@");
 			pw.close();
+			GUIManager.getDefaultGUIManager().log("Invariants in INA file format saved to "+path, "text", true);
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writeINV",JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
 		}
-		/*
-		String buffor = "transition sub/sur/invariants for net 0.t";
-		try {
-			String extension = "";
-			if(!path.contains(".inv"))
-				extension = ".inv";
-			PrintWriter pw = new PrintWriter(path + extension);
-
-			//buffor += getNazwaPliku(path);
-			buffor += "\r\n";
-			buffor += "\r\n";
-			// Dod pokrycie
-			buffor += "semipositive transition invariants =\r\n";
-			buffor += "\r\n";
-			buffor += "Nr.      ";
-
-			//int[] tabTransitions = new int[transitions.size()];
-			int delimiter = 13;
-			if(transitions.size() < 100)
-				delimiter = 17;
-			int multipl = 1;
-			int transNo = invariants.get(0).size();
-			
-			for (int i = 0; i < transitions.size(); i++) {
-				if(transNo >= 100)
-					buffor += conIntToStr(true,i);
-				else
-					buffor += conIntToStr(false,i);
-				
-				if (i == (multipl*delimiter) - 1) {
-					buffor += "\r\n";
-					buffor += "        ";
-					multipl++;
-				}
-			}
-			buffor += "\r\n";
-			buffor += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
-			buffor += "\r\n";
-
-			for (int i = 0; i < invariants.size(); i++) {
-				
-				if(transNo >= 100) {
-					buffor += conIntToStr(true,i) + " |   ";
-				} else
-					buffor += conIntToStr(false,i) + " |   ";
-				
-				multipl = 1;
-				for (int t = 0; t < invariants.get(i).size(); t++) {
-					int tr = invariants.get(i).get(t);
-
-					if (transNo >= 100)
-						buffor += conIntToStr(true, tr);
-					else
-						buffor += conIntToStr(false, tr);
-					//buffor += tr;
-					if (t == (multipl*delimiter)-1 ) { //&& invariants.size() > 16) {
-						buffor += "\r\n";
-						//buffor += "     |   ";
-						if(transNo>=100)
-							buffor += "      |   ";
-						else
-							buffor += "     |   ";
-						multipl++;
-					}
-				}
-				buffor += "\r\n";
-
-			}
-
-			//
-			buffor += "\r\n";
-			buffor += "@";
-			//System.out.println(buffor);
-			
-			pw.println(buffor);
-			pw.close();
-			
-		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
-
-		}
-		*/
 	}
 	
 	/**
@@ -666,26 +588,28 @@ public class IOprotocols {
 				}
 			}
 			in.close();
+			GUIManager.getDefaultGUIManager().log("Petri net from INA .pnt file successfully read.", "text", true);
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: readPNT",JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
 		}
 
 	}
 
 	/**
 	 * Metoda s³u¿¹ca do zapisywaniu pliku sieci Petriego w formacie programu INA.
-	 * @param sciezka - œcie¿ka zapisu pliku
+	 * @param path - œcie¿ka zapisu pliku
 	 * @param placeList ArrayList[Place] - lista miejsc sieci
 	 * @param transitionList ArrayList[Transition] - lista tranzycji sieci
 	 * @param arcList ArrayList[Arc] - lista ³uków sieci
 	 */
-	public void writePNT(String sciezka, ArrayList<Place> placeList,
+	public void writePNT(String path, ArrayList<Place> placeList,
 			ArrayList<Transition> transitionList, ArrayList<Arc> arcList) {
 		String zawartoscPliku = "P   M   PRE,POST  NETZ 0:";
 		try {
-			PrintWriter zapis = new PrintWriter(sciezka + ".pnt");
-			zawartoscPliku += getNazwaPliku(sciezka);
+			PrintWriter zapis = new PrintWriter(path + ".pnt");
+			zawartoscPliku += getNazwaPliku(path);
 			zawartoscPliku += "\r\n";
 			//int[] tabPlace = new int[placeList.size()];
 
@@ -811,9 +735,11 @@ public class IOprotocols {
 			zawartoscPliku += "@";
 			zapis.println(zawartoscPliku);
 			zapis.close();
+			GUIManager.getDefaultGUIManager().log("Petri net in INA .pnt format save to "+path, "text", true);
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writePNT",JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
 		}
 	}
 	
@@ -858,9 +784,11 @@ public class IOprotocols {
 				//pw.print("\r\n");
 			}
 			pw.close();
+			GUIManager.getDefaultGUIManager().log("Invariants in Charlie file format saved to "+path, "text", true);
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR:writeCharlieInv",JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
 		}
 	}
 	
@@ -891,9 +819,11 @@ public class IOprotocols {
 				pw.print("\r\n");
 			}
 			pw.close();
+			GUIManager.getDefaultGUIManager().log("Invariants in CSV format saved to "+path, "text", true);
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR:writeInvToCSV",JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
 		}
 	}
 }
