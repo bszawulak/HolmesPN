@@ -338,6 +338,38 @@ public class GUIManager extends JPanel implements ComponentListener {
 						+ "manually from www2.informatik.hu-berlin.de/~starke/ina.html and put in the right directory.", "error", true);
 			}
 		}
+		
+		String Rpath = settingsManager.getValue("r_path");
+		File rF = new File(Rpath);
+		if(!rF.exists()) {
+			log("Invalid path ("+Rpath+") to Rscript executable file.", "error", true);
+			
+			Object[] options = {"Manually locate Rscript.exe", "R not installed",};
+			int n = JOptionPane.showOptionDialog(null,
+					"Rscript.exe missing in path "+Rpath,
+					"Missing executable", JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+			if (n == 0) {
+				JFileChooser fc = new JFileChooser();
+				FileFilter exeFile = new ExtensionFileFilter(".exe - Rscript",  new String[] { "EXE" });
+				fc.setFileFilter(exeFile);
+				fc.addChoosableFileFilter(exeFile);
+				fc.setAcceptAllFileFilterUsed(false);
+				int returnVal = fc.showSaveDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+					if(file.getName().equals("Rscript.exe")) {
+						settingsManager.setValue("r_path", file.getPath());
+						settingsManager.saveSettings();
+						log("Rscript.exe manually located at "+file.getPath()+". Settings file updated.", "text", true);
+					} else {
+						log("Rscript executable file inaccessible. Some features will be disabled.", "error", true);
+					}
+				}
+			}
+			
+
+		}
 	}
 
 
@@ -1157,7 +1189,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 							"Do you want to save generated .inv file?",
 							"Save the invariants?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-
 			if (n == 0) { //save the file
 				JFileChooser fc;
 				if(lastPath==null)
@@ -1193,14 +1224,55 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}
 	}
 
+	/**
+	 * Metoda generuj¹ca najbardziej postawow¹ wersjê pliku zbiorów MCT.
+	 */
 	public void generateSimpleMCTFile() {
 		String filePath = tmpPath + "input.csv";
 		int result = workspace.getProject().saveInvariantsToCSV(filePath, true);
-		if(result == -1)
+		if(result == -1) {
+			String msg = "Saving CSV file failed.";
+			JOptionPane.showMessageDialog(null,msg,	"Write error",JOptionPane.ERROR_MESSAGE);
+			log(msg, "error", true);
 			return;
+		}
+		log("Starting MCT generator.","text",true);
 		Runner mctRunner = new Runner();
-		String[] args;
-		//mctRunner.activate(args);
+		String[] args = new String[1];
+		args[0] = filePath;
+		try {
+			mctRunner.activate(args);
+			
+			JFileChooser fc;
+			if(lastPath==null)
+				fc = new JFileChooser();
+			else
+				fc = new JFileChooser(lastPath);
+			
+			FileFilter mctFilter = new ExtensionFileFilter(".mct - MCT sets",  new String[] { "MCT" });
+			fc.setFileFilter(mctFilter);
+			fc.addChoosableFileFilter(mctFilter);
+			fc.setAcceptAllFileFilterUsed(false);
+			int returnVal = fc.showSaveDialog(null);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				String ext = "";
+				if(!fc.getSelectedFile().getPath().contains(".mct"))
+					ext = ".mct";
+				File properName = new File(fc.getSelectedFile().getPath()+ext);
+				File generatedMCT = new File(tmpPath+"input.csv.analysed.txt");
+				Tools.copyFileDirectly(generatedMCT, properName);
+				
+				generatedMCT.delete();
+				File csvFile = new File(filePath);
+				csvFile.delete();
+				setLastPath(fc.getSelectedFile().getParentFile().getPath());
+			}
+			JOptionPane.showMessageDialog(null,"MCT file created","Operation successful.",JOptionPane.INFORMATION_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "File operation failed when creating MCT sets.", 
+					"MCT generator error",JOptionPane.ERROR_MESSAGE);
+			log("MCT generator failed: "+e.getMessage(), "error", true);
+		}
 	}
 	
 	public void Explode() {

@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
@@ -145,12 +146,17 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 		this.addSeparator();
 		JMenu analMenu = new JMenu("Network Analysis"); // (⌐■_■) 
 		this.add(analMenu);
-		analMenu.add(createMenuItem("Generate Invariants (INA)", "generateINA", null, new ActionListener() {
+		analMenu.add(createMenuItem("Generate invariants (INA)", "generateINA", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().generateINAinvariants();
 			}
 		}));
-		analMenu.add(createMenuItem("Generate PN MCT sets", "generateMCT", null, new ActionListener() {
+		analMenu.add(createMenuItem("Import invariants from file", "invImportPopup", null, new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().loadExternalAnalysis();
+			}
+		}));
+		analMenu.add(createMenuItem("Generate MCT sets", "generateMCT", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().generateMCT();
 			}
@@ -159,23 +165,28 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 		JMenu mctSubMenu = new JMenu("MCT Advanced Generation");
 		analMenu.add(mctSubMenu);
 		
-		mctSubMenu.add(createMenuItem("Simple MCT file", "", null, new ActionListener() {
+		JMenuItem mct1 = createMenuItem("Simple MCT file", "", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().generateSimpleMCTFile();
 			}
-		}));
+		});
+		mctSubMenu.add(mct1);
 		
-		mctSubMenu.add(createMenuItem("Tex output file", "", null, new ActionListener() {
+		JMenuItem mct2 = createMenuItem("Tex output file", "", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//GUIManager.getDefaultGUIManager().generateMCT();
 			}
-		}));
+		});
+		mct2.setEnabled(false);
+		mctSubMenu.add(mct2);
 		
-		mctSubMenu.add(createMenuItem("Other file", "", null, new ActionListener() {
+		JMenuItem mct3 = createMenuItem("Other file", "", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//GUIManager.getDefaultGUIManager().generateMCT();
 			}
-		}));
+		});
+		mct3.setEnabled(false);
+		mctSubMenu.add(mct3);
 	}
 	
 	@SuppressWarnings("unused")

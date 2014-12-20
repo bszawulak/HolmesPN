@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.*;
 
+import abyss.darkgui.GUIManager;
+
 public class Runner {
 	private PrintWriter out = null;
 
@@ -208,13 +210,15 @@ public class Runner {
 		PrintWriter vOut = fileName.endsWith(".csv") ? null : new PrintWriter(ps.csvOutputFilePath);
 		SortedSet<TInvariant> tInvariants;
 		MCTPetriNet petriNet = new MCTPetriNet();
-		if (file.getName().toLowerCase().endsWith(".inv"))
+		if (file.getName().toLowerCase().endsWith(".inv")) 
 			tInvariants = Utils.readFromCharlie(is, petriNet);
 		else if (file.getName().toLowerCase().endsWith(".csv"))
 			tInvariants = Utils.readFromCSV(is, petriNet);
 		else
 			tInvariants = Utils.readTInvariants(is, true, petriNet);
 		Map <String, String> renameMap = ps.mctRenameFile != null ? Utils.readMCTNameMap(ps.mctRenameFile) : null;
+		
+		GUIManager.getDefaultGUIManager().log("MCT Generator: input file read.", "text", true);
 		
 		SortedSet<MCTSet> mctSets = Utils.buildMCT(tInvariants, renameMap);
 		SortedSet<MCTSet> properMctSets = new TreeSet<MCTSet>();
@@ -229,6 +233,9 @@ public class Runner {
 			println("---Invariants---------------------------");
 			println(Utils.invariantsToString(tInvariants));
 		}
+		
+		GUIManager.getDefaultGUIManager().log("MCT Generator: invariants section written.", "text", true);
+		
 		println("---Invariants[VECTORS]---------------------------");
 		String header = ";";
 		for (MCTTransition t : petriNet.getTransitions())
@@ -254,6 +261,9 @@ public class Runner {
 			else 
 				println((mct.getPrintName(false)) + " [" + mct.getTransitionSet().size() + "]. " + mct);
 		}
+		
+		GUIManager.getDefaultGUIManager().log("MCT Generator: properMCTsets section finished.", "text", true);
+		
 		println("Single MCT sets (size = 1): ");
 		for (MCTSet mct : single)
 		{
@@ -340,5 +350,8 @@ public class Runner {
 				}
 			}
 		}
+		
+		if(out != null)
+			out.close();
 	}
 }

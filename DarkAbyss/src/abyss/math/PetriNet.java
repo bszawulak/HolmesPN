@@ -33,7 +33,6 @@ import javax.swing.JOptionPane;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import abyss.settings.SettingsManager;
 import abyss.workspace.Workspace;
 import abyss.workspace.WorkspaceSheet;
 
@@ -570,9 +569,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param path String - œcie¿ka do pliku odczytu
 	 */
 	public void loadFromFile(String path) {
-		
 		//TODO: czyszczenie projektu!!!!!!!!!!!!!!!!!!!!!!!
-
 		readerSNOOPY = SAXParserFactory.newInstance();
 		try {
 			// Format wlasny
@@ -626,16 +623,16 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		try {
 			if (genInvariants != null) {
 				communicationProtocol.writeInvToCSV(path, genInvariants, getTransitions());
+				GUIManager.getDefaultGUIManager().log("Invariants saved as CSV file.","text", true);
 				if(!silence)
-					JOptionPane.showMessageDialog(null, 
-						"Invariants saved to file:\n"+path,
+					JOptionPane.showMessageDialog(null,  "Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
 				result = 0;
 			} else {
 				if(!silence)
-					JOptionPane.showMessageDialog(null,
-						"There are no invariants to export.",
+					JOptionPane.showMessageDialog(null, "There are no invariants to export.",
 						"Warning",JOptionPane.WARNING_MESSAGE);
+				GUIManager.getDefaultGUIManager().log("No invariants, saving into CSV file failed.","error", true);
 				result = -1;
 			}
 		} catch (Throwable err) {
@@ -658,11 +655,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				JOptionPane.showMessageDialog(null,
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
+				GUIManager.getDefaultGUIManager().log("Invariants saved into .inv INA file.","text", true);
 				result = 0;
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"There are no invariants to export",
 						"Warning",JOptionPane.WARNING_MESSAGE);
+				GUIManager.getDefaultGUIManager().log("No invariants, saving into CSV file failed.","error", true);
 				result = -1;
 			}
 		} catch (Throwable err) {
@@ -685,11 +684,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				JOptionPane.showMessageDialog(null, 
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
+				GUIManager.getDefaultGUIManager().log("Invariants saved in Charlie file format.","text", true);
 				result = 0;
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"There are no invariants to export.",
 						"Warning",JOptionPane.WARNING_MESSAGE);
+				GUIManager.getDefaultGUIManager().log("No invariants, saving into CSV file failed.","error", true);
 				result = -1;
 			}
 		} catch (Throwable err) {
