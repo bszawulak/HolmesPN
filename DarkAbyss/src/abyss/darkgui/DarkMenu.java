@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import abyss.darkgui.dockable.DockableMenuItem;
@@ -209,8 +210,14 @@ public class DarkMenu extends JMenuBar {
 		exitMenuItem.getAccessibleContext().setAccessibleDescription("Exit the application");
 		exitMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.exit(0);
+				if (JOptionPane.showConfirmDialog(null, "Are you sure you want to close the program?", "Really Closing?", 
+			            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+			        	{
+			            	GUIManager.getDefaultGUIManager().getConsoleWindow().saveLogToFile(null);
+			            	System.exit(0);
+			        	}
 			}
+			
 		});
 		fileMenu.add(exitMenuItem);
 		

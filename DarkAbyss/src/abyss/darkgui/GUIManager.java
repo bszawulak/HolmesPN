@@ -40,6 +40,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
 import com.javadocking.DockingManager;
@@ -255,6 +256,17 @@ public class GUIManager extends JPanel implements ComponentListener {
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new KeyManager(this));
 
+		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        if (JOptionPane.showConfirmDialog(frame, "Are you sure you want to close the program?", "Really Closing?", 
+		            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+		        	{
+		            	windowConsole.saveLogToFile(null);
+		            	System.exit(0);
+		        	}
+		    	}
+		});
 	}
 
 	/**
@@ -371,7 +383,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		}
 	}
-
 
 	/**
 	 * Metoda odpowiedzialna za ustalenie domyœlnych lokalizacji pasków zmiany rozmiaru
@@ -735,6 +746,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void setPropAnalyzerBox(Properties analyzerBox) {
 		this.propAnalyzerBox = analyzerBox;
+	}
+	
+	/**
+	 * Metoda zwraca obiekt okna konsoli programu.
+	 * @return AbyssConsole - obiekt konsoli
+	 */
+	public AbyssConsole getConsoleWindow() {
+		return windowConsole;
 	}
 	
 // ************************************************************************************************

@@ -169,7 +169,7 @@ public class AbyssConsole extends JFrame {
 	        System.err.println("Couldn't insert initial text into text pane.");
 	    }
 		
-		saveLogToFile(null);
+		//saveLogToFile(null);
 	}
 
 	/**

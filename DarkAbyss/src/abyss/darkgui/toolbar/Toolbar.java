@@ -315,7 +315,7 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("GenerateINAinv",generateINAinvariants));
 		
 		ToolbarButtonAction xxx = new ToolbarButtonAction(this, "Podpowiedz przycisku II",
-				new ImageIcon("resources/icons/toolbar/terminal2.png")) {
+				new ImageIcon("resources/icons/toolbar/aaa.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().Explode();
@@ -326,17 +326,11 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("Przycisk II", xxx));
 		
 		ToolbarButtonAction yyy = new ToolbarButtonAction(this, "Podpowiedz przycisku II",
-				new ImageIcon("resources/icons/toolbar/terminal.png")) {
+				new ImageIcon("resources/icons/toolbar/terminal2.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().showConsole(true); 
-				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "text", true);
-				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "warning", true);
-				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "error", true);
-				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "text", true);
-				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "warning", true);
-				//GUIManager.getDefaultGUIManager().log("Testowy napis nr 1", "error", true);
-				
+
 			}
 		};
 		analysisDockables.add(createButtonDockable("Przycisk II", yyy));
