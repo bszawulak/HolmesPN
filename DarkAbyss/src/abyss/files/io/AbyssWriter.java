@@ -1,4 +1,4 @@
-package abyss.math.parser;
+package abyss.files.io;
 
 import java.io.PrintWriter;
 

@@ -18,7 +18,6 @@ import abyss.math.Arc;
 import abyss.math.PetriNet;
 import abyss.math.Place;
 import abyss.math.Transition;
-import abyss.settings.SettingsManager;
 
 /**
  * Klasa zajmuj¹ca siê zarz¹dzaniem ca³ym procesem symulacji.
@@ -816,8 +815,10 @@ public class NetSimulator {
 					}
 					actionStack.push(new SimulationStep(SimulatorMode.STEP,
 						cloneTransitionArray(launchingTransitions)));
-					if (actionStack.peek().getPendingTransitions() == null)
-						SettingsManager.log("Yay");
+					if (actionStack.peek().getPendingTransitions() == null) {
+						//SettingsManager.log("Yay");
+						GUIManager.getDefaultGUIManager().log("Uknown problem in actionPerformed(ActionEvent event) in NetSimulator class", "error", true);
+					}
 					launchSubtractPhase(launchingTransitions, false);
 					subtractPhase = false;
 				} else {

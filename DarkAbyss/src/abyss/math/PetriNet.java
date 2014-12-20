@@ -6,20 +6,20 @@ import abyss.analyzer.InvariantsSimulator;
 import abyss.analyzer.InvariantsSimulator.SimulatorMode;
 import abyss.analyzer.NetPropAnalyzer;
 import abyss.darkgui.GUIManager;
+import abyss.files.io.AbyssReader;
+import abyss.files.io.AbyssWriter;
+import abyss.files.io.IOprotocols;
+import abyss.files.io.NetHandler;
+import abyss.files.io.NetHandler_Classic;
+import abyss.files.io.NetHandler_Colored;
+import abyss.files.io.NetHandler_Extended;
+import abyss.files.io.NetHandler_Time;
 import abyss.graphpanel.SelectionActionListener;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.Node;
-import abyss.math.parser.AbyssReader;
-import abyss.math.parser.AbyssWriter;
 import abyss.math.PetriNetElement.PetriNetElementType;
-import abyss.math.parser.NetHandler_Colored;
-import abyss.math.parser.NetHandler_Extended;
-import abyss.math.parser.IOprotocols;
-import abyss.math.parser.NetHandler;
-import abyss.math.parser.NetHandler_Classic;
-import abyss.math.parser.NetHandler_Time;
 import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
 
@@ -831,7 +831,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		InvariantTransition currentTransition;
 		invariantsBinaryList = communicationProtocol.getInvariantsList();
 		setInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
-		SettingsManager.log("start logging");
+		//SettingsManager.log("start logging");
 		if (invariantsBinaryList.size() > 0) {
 			if (invariantsBinaryList.get(0).size() == getTransitions().size()) {
 				ArrayList<InvariantTransition> currentInvariant;
@@ -851,21 +851,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					getInvariantsList().add(currentInvariant);
 				}
 			} else {
-				JOptionPane
-						.showMessageDialog(
-								null,
-								"The currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.",
-								"Project mismatch error!",
-								JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,
+					"The currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.",
+					"Project mismatch error!", JOptionPane.ERROR_MESSAGE);
 				GUIManager.getDefaultGUIManager().log("Error: the currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.", "error", true);
 			}
 		} else {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"There is something terribly wrong with your loaded external invariant file, as there are no invariants in it, actually. It's corrupt, is my guess.",
-							"Invariant file does not contain invariants",
-							JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,
+				"There is something terribly wrong with your loaded external invariant file, as there are no invariants in it, actually. It's corrupt, is my guess.",
+				"Invariant file does not contain invariants", JOptionPane.ERROR_MESSAGE);
 			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed.", "error", true);
 		}
 		return getInvariantsList();
@@ -880,7 +874,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		InvariantTransition currentTransition;
 		invariantsBinaryList = eia.getListaInvatianow();
 		setInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
-		SettingsManager.log("start logging");
+		//SettingsManager.log("start logging");
 		//String invariantLog;
 		if (invariantsBinaryList.size() > 0) {
 			if (invariantsBinaryList.get(0).size() == getTransitions().size()) {

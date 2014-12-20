@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -30,7 +29,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
-import abyss.math.simulator.NetSimulator.SimulatorMode;
 
 /**
  * Klasa ta tworzy okno konsoli programu, na którym pojawiaj¹ siê informacje na temat wykonywania
@@ -135,7 +133,10 @@ public class AbyssConsole extends JFrame {
 	 * @param mode String - tryb pisania
 	 * @param time boolean - true, jeœli ma byæ wyœwietlony czas wpisu
 	 */
-	public void addText(String text, String mode, boolean time) {
+	public void addText(String text, String mode, boolean time, boolean enter) {
+		String newLn = "";
+		if(enter) newLn = newline;
+			
 		int style = 0;
 		if(mode.equals("warning")) {
 			if(noWarnings) return;
@@ -152,11 +153,9 @@ public class AbyssConsole extends JFrame {
 		} else {
 			style = 0;
 		}
-		
 		if(time) {
 			
 		}
-		
 		if(style < 0 || style > 6)
 			style = 0;
 		
@@ -165,7 +164,7 @@ public class AbyssConsole extends JFrame {
 				String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
 				doc.insertString(doc.getLength(), "["+timeStamp+"]   ", doc.getStyle("time"));
 			}
-	        doc.insertString(doc.getLength(), text+newline, doc.getStyle(initStyles[style]));
+	        doc.insertString(doc.getLength(), text+newLn, doc.getStyle(initStyles[style]));
 	    } catch (BadLocationException ble) {
 	        System.err.println("Couldn't insert initial text into text pane.");
 	    }

@@ -25,7 +25,6 @@ import abyss.math.PetriNet;
 import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.math.simulator.SimulationStep;
-import abyss.settings.SettingsManager;
 
 /**
  * Klasa odpowiadzialna za symulacjê wykonywania inwariantów w sieci.
@@ -817,8 +816,10 @@ public class InvariantsSimulator {
 					//
 					actionStack.push(new SimulationStep(abyss.math.simulator.NetSimulator.SimulatorMode.STEP,
 							cloneTransitionArray(launchingTransitions)));
-					if (actionStack.peek().getPendingTransitions() == null)
-						SettingsManager.log("Yay");
+					if (actionStack.peek().getPendingTransitions() == null) {
+						//SettingsManager.log("Yay");
+						GUIManager.getDefaultGUIManager().log("Uknown problem in actionPerformed(ActionEvent event) in InvariantsSimulator class", "error", true);
+					}
 					launchSubtractPhase(launchingTransitions, false);
 					subtractPhase = false;
 				} else {

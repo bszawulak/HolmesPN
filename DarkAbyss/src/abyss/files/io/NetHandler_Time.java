@@ -1,4 +1,4 @@
-package abyss.math.parser;
+package abyss.files.io;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -15,14 +15,16 @@ import abyss.math.Arc;
 import abyss.math.ElementLocation;
 import abyss.math.Node;
 import abyss.math.Place;
+import abyss.math.TimeTransition;
 import abyss.math.Transition;
 
 /**
- * Klasa zajmuj¹ca siê wczytaniem standardowej sieci Petriego z formatu .spped.
- * @author students
+ * Klasa zajmuj¹ca siê wczytaniem czasowej sieci Petriego z formatu .sptpt
+ * @author MR
  *
  */
-public class NetHandler_Classic extends NetHandler {
+public class NetHandler_Time extends NetHandler {
+
 	// Zmienne boolowskie parsera
 	public boolean Snoopy = false;
 	public boolean node = false;
@@ -35,6 +37,12 @@ public class NetHandler_Classic extends NetHandler {
 	public boolean edge = false;
 	public boolean metadata = false;
 	public boolean endAtribute = false;
+	
+	//TPN:
+	public boolean colTime = false;
+	public boolean readEFT = false;
+	public boolean readLFT = false;
+	public boolean timeTrans = false;
 
 	private ArrayList<ElementLocation> tmpElementLocationList = new ArrayList<ElementLocation>();
 	private ArrayList<Integer> graphicPointsIdList = new ArrayList<Integer>();
@@ -52,6 +60,7 @@ public class NetHandler_Classic extends NetHandler {
 	public boolean variableMarking = false;
 	public boolean variableLogic = false;
 	public boolean variableComent = false;
+	public boolean variableInterval = false;
 	public Node tmpNode;
 	public String nodeType;
 	public String nodeName;
@@ -60,6 +69,10 @@ public class NetHandler_Classic extends NetHandler {
 	public int nodeMarking;
 	public int nodeLogic;
 	public String nodeComment;
+	//TPN
+	public double nodeEFT;
+	public double nodeLFT;
+	
 	public String readString = "";
 	public ArrayList<Transition> tmpTransitionList = new ArrayList<Transition>();
 
@@ -71,19 +84,17 @@ public class NetHandler_Classic extends NetHandler {
 	 * @param attributes - atrybut elementu
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		//System.out.print("uri  ");
-		//System.out.println(uri);
-		//System.out.print("localName  ");
-		//System.out.println(localName);
-		//System.out.print("qName  ");
-		//System.out.println(qName);
+		System.out.print("uri  ");
+		System.out.println(uri);
+		System.out.print("localName  ");
+		System.out.println(localName);
+		System.out.print("qName  ");
+		System.out.println(qName);
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
 			nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().checkSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 		}
-
 		// Ustawianie typu noda
-
 		if (qName.equalsIgnoreCase("nodeclass")) {
 			if (attributes.getValue(1).equals("Place")) {
 				nodeType = "Place";
@@ -93,6 +104,7 @@ public class NetHandler_Classic extends NetHandler {
 		}
 		if (qName.equalsIgnoreCase("node")) {
 			node = true;
+
 			nodeID = IdGenerator.getNextId(); // Integer.parseInt(attributes.getValue(0));
 		}
 		if (qName.equalsIgnoreCase("attribute")) {
@@ -113,13 +125,36 @@ public class NetHandler_Classic extends NetHandler {
 			if (attributes.getValue(0).equals("Multiplicity")) {
 				variableMultiplicity = true;
 			}
+			if (attributes.getValue(0).equals("Interval")) {
+				variableInterval = true; //sekcja Interval TPN, sklada sie z dalszych podwezlow (inaczej, niz powyzsze if'y)
+			}
 		}
-		if (qName.equalsIgnoreCase("graphics")) {
-			graphics = true;
+		
+		if (qName.equalsIgnoreCase("colList_body") && variableInterval == true)
+			colTime = true; //jestesmy w sekcji gdzie beda zmienne czasowe
+		
+		if(readLFT) {
+			nodeLFT = Double.parseDouble(readString);
+			readLFT = false;
+			readEFT = false;
+			colTime = false;
+			variableInterval = false;
+			timeTrans = true;
 		}
-		if (qName.equalsIgnoreCase("graphic")) {
-			graphic = true;
+		
+		if(readEFT) {
+			nodeEFT = Double.parseDouble(readString);
+			readLFT = true;
+			readEFT = false;
 		}
+		
+		if(colTime == true && readString.equals("Main")) {
+			readEFT = true;
+		}
+
+		
+		if (qName.equalsIgnoreCase("graphics")) graphics = true;
+		if (qName.equalsIgnoreCase("graphic")) graphic = true;
 
 		// Wczytywanie informacji odnosnie ID i pozycji noda
 
@@ -151,7 +186,7 @@ public class NetHandler_Classic extends NetHandler {
 			edge = true;
 		}
 
-		// Zapis do zmiennej globalnej ID sorce i target Arca
+		// Zapis do zmiennej globalnej ID source i targetArc
 
 		if ((endAtribute == true) && (atribute == false) && (graphics == true)
 				&& (graphic == true) && (metadata == false)
@@ -176,28 +211,15 @@ public class NetHandler_Classic extends NetHandler {
 	 * @param qName - nazwa elementu
 	 */
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if (qName.equalsIgnoreCase("points")) {
-			points = false;
-		}
-		if (qName.equalsIgnoreCase("point")) {
-			point = false;
-		}
+		if (qName.equalsIgnoreCase("points")) points = false;
+		if (qName.equalsIgnoreCase("point")) point = false;
+		if (qName.equalsIgnoreCase("edgeclass")) edgeclass = false;
+		if (qName.equalsIgnoreCase("edge")) edge = false;
+		if (qName.equalsIgnoreCase("node")) node = false;
+		if (qName.equalsIgnoreCase("graphics")) graphics = false;
+		if (qName.equalsIgnoreCase("graphic")) graphic = false;
+		
 
-		if (qName.equalsIgnoreCase("edgeclass")) {
-			edgeclass = false;
-		}
-		if (qName.equalsIgnoreCase("edge")) {
-			edge = false;
-		}
-		if (qName.equalsIgnoreCase("node")) {
-			node = false;
-		}
-		if (qName.equalsIgnoreCase("graphics")) {
-			graphics = false;
-		}
-		if (qName.equalsIgnoreCase("graphic")) {
-			graphic = false;
-		}
 
 		// Zapis atrybutow noda i arca
 
@@ -229,6 +251,13 @@ public class NetHandler_Classic extends NetHandler {
 				if (variableComent == true) {
 					nodeComment = readString;
 					variableComent = false;
+					readString = "";
+				}
+				if (variableInterval == true && colTime == true) {
+					if(!readString.equals("Main"))
+						nodeLFT = Integer.parseInt(readString);
+					
+					colTime = false;
 					readString = "";
 				}
 			}
@@ -307,8 +336,16 @@ public class NetHandler_Classic extends NetHandler {
 				tmpNode = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
 				nodesList.add(tmpNode);
 			} else {	
-				Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
-				tmpTransitionList.add(tmpTran);
+				if(timeTrans) {
+					timeTrans = false;
+					TimeTransition tmpTTran = new TimeTransition(nodeID, tmpElementLocationList, nodeName, nodeComment);
+					tmpTTran.setMinFireTime(nodeEFT);
+					tmpTTran.setMaxFireTime(nodeLFT);
+					tmpTransitionList.add(tmpTTran);
+				} else {
+					Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
+					tmpTransitionList.add(tmpTran);
+				}
 			}
 
 			// Zerowanie zmiennych
@@ -317,6 +354,8 @@ public class NetHandler_Classic extends NetHandler {
 			nodeMarking = 0;
 			nodeLogic = 0;
 			nodeComment = "";
+			nodeEFT = 0.0;
+			nodeLFT = 0.0;
 			node = false;
 			graphicPointsList.clear();
 		}

@@ -29,6 +29,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import javax.imageio.ImageIO;
 import javax.swing.Action;
@@ -97,7 +98,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private DarkDockingListener dockingListener;
 	private Toolbar shortcutsBar;
 
-	
 	// main frame
 	private JFrame frame;
 	// other components
@@ -110,9 +110,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private String toolPath;	// œcie¿ka dostêpu do katalogu narzedziowego
 	private String logPath;
 	
-	// okna:
+	// okna niezale¿ne (o tyle o ile):
 	private JFrame windowClusters; //okno tabeli 
-	private AbyssConsole windowConsole;
+	private AbyssConsole windowConsole; //konsola logów
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
 	 * @param frejm JFrame - g³ówna ramka kontener programu
@@ -120,26 +120,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public GUIManager(JFrame frejm) {
 		super(new BorderLayout());
 		guiManager = this;
-		lastPath = null;
-		abyssPath = System.getProperty("user.dir");
-		tmpPath = abyssPath+"\\tmp\\";
-		toolPath = abyssPath+"\\tools\\";
-		logPath = abyssPath+"\\log\\";
-
-		File dirPath = new File(tmpPath);
-		if (!dirPath.exists()) dirPath.mkdirs();
-		dirPath = new File(logPath);
-		if (!dirPath.exists()) dirPath.mkdirs();
 		
-		createHiddenConsole();	//tworzy ukryte okno konsoli logowania zdarzeñ
-	
+		createHiddenConsole();//tworzy ukryte okno konsoli logowania zdarzeñ
+		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnêtrzne zmienne programu
 		
-		SettingsManager settingsManager = new SettingsManager();
-		settingsManager.loadSettings();
 		/*
 		 * Runtime.getRuntime().addShutdownHook(new Thread() { public void run()
 		 * { getSettingsManager().saveSettings(); } });
 		 */
+		
 		frame = frejm;
 		frame.getContentPane().add(this);
 		frame.addComponentListener(this);
@@ -182,7 +171,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		// set docking listener
 		setDockingListener(new DarkDockingListener());
-
 		setToolBox(new PetriNetTools());
 		setPropertiesBox(new Properties(PropertiesType.EDITOR));
 		setSimulatorBox(new Properties(PropertiesType.SIMULATOR));
@@ -257,7 +245,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// default screen size unmaximized
 		smallScreenSize = new Dimension((int) (screenSize.getWidth() * 0.9),
 				(int) (screenSize.getHeight() * 0.9));
-
 		setShortcutsBar(new Toolbar());
 
 		// Add the shortcuts bar also as root dock to the dock model.
@@ -267,7 +254,92 @@ public class GUIManager extends JPanel implements ComponentListener {
 		this.add(getShortcutsBar().getToolBarBorderDock(), BorderLayout.CENTER);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new KeyManager(this));
+
 	}
+
+	/**
+	 * Metoda pomocnicza konstruktora. Ustawia g³ówne zmienne programu, wczytuje plik
+	 * w³aœciwoœci, itd.
+	 */
+	private void initializeEnvironment() {
+		// ustawienie œcie¿ek dostêpu
+		lastPath = null;
+		abyssPath = System.getProperty("user.dir");
+		tmpPath = abyssPath+"\\tmp\\";
+		toolPath = abyssPath+"\\tools\\";
+		logPath = abyssPath+"\\log\\";
+		
+		settingsManager = new SettingsManager();
+		settingsManager.loadSettings();
+		//settingsManager.restoreDefaultSetting();
+		
+		File checkFile = new File(tmpPath);
+		if (!checkFile.exists()) checkFile.mkdirs();
+		checkFile = new File(logPath);
+		if (!checkFile.exists()) checkFile.mkdirs();
+		
+		// Katalog /tools i pliki INY:
+		File checkFileINA0 = new File(toolPath);
+		File checkFileINA1 = new File(toolPath+"//INAwin32.exe");
+		File checkFileINA2 = new File(toolPath+"//COMMAND.ina");
+		File checkFileINA3 = new File(toolPath+"//ina.bat");
+		if (!checkFileINA0.exists() || !checkFileINA1.exists() 
+				|| !checkFileINA2.exists() || !(checkFileINA2.length() == 80)
+				|| !checkFileINA3.exists() || !(checkFileINA3.length() == 30) ) {
+			
+			log("Something wrong with the INA tools directory.", "warning",true);
+			if(!checkFileINA0.exists()) {
+				checkFileINA0.mkdirs();
+				logNoEnter("Tools directory does not exist. ", "error",true);
+				log("Fixed", "italic", false);
+				
+				JOptionPane.showMessageDialog(null, "Warning! Tools directory does not exists. INAwin32.exe required \n"
+						+ "there in order to work properly!",
+						"Tool directory empty.",
+						JOptionPane.WARNING_MESSAGE);
+			}
+			
+			if(!checkFileINA2.exists() || !(checkFileINA2.length() == 80)) { //COMMAND.ina
+				try {
+					PrintWriter pw = new PrintWriter(checkFileINA2.getPath());
+					pw.print(settingsManager.getValue("ina_COMMAND1")+"\r");
+					pw.print(settingsManager.getValue("ina_COMMAND2")+"\r");
+					pw.print(settingsManager.getValue("ina_COMMAND3")+"\r");
+					pw.print(settingsManager.getValue("ina_COMMAND4"));
+					pw.close();
+					logNoEnter("File COMMAND.ina does not exist or is corrupted. ", "error",true);
+					log("Fixed", "italic", false);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "Unable to recreate COMMAND.ina. Invariants generator will work"
+							+ "in manual mode only.","Error - COMMAND.ina", JOptionPane.ERROR_MESSAGE);
+					log("Unable to recreate COMMAND.ina. Invariants generator will work in manual mode only.", "error", true);
+				}
+			} 
+			
+			if(!checkFileINA3.exists() || !(checkFileINA3.length() == 30)) { //ina.bat
+				try {
+					PrintWriter pw = new PrintWriter(checkFileINA3.getPath());
+					pw.print(settingsManager.getValue("ina_bat"));
+					pw.close();
+					logNoEnter("File ina.bat does not exist or is corrupted. ", "error",true);
+					log("Fixed", "italic", false);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "Unable to recreate ina.bat. This is critical error, possible write"
+							+ "protection issues in program directory. All in all, invariants generation using INAwin32 will"
+							+ "most likely fail.","Error - writing", JOptionPane.ERROR_MESSAGE);
+					log("Critical error, unable to recreate ina.bat file. Invariants generator will not work.", "error", true);
+				}
+			} 
+			
+			if(!checkFileINA1.exists()) { //no INAwin32.exe
+				String msg = "INAwin32.exe missing in\n "+checkFileINA0.getPath()+"directory.\n Please download manually from and put in the right directory.";
+				JOptionPane.showMessageDialog(null, msg, "Error - no INAwin32.exe", JOptionPane.ERROR_MESSAGE);
+				log("INAwin32.exe missing in "+checkFileINA0+"directory. Please download "
+						+ "manually from www2.informatik.hu-berlin.de/~starke/ina.html and put in the right directory.", "error", true);
+			}
+		}
+	}
+
 
 	/**
 	 * Metoda odpowiedzialna za ustalenie domyœlnych lokalizacji pasków zmiany rozmiaru
@@ -998,35 +1070,29 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * operacji na plikach.
 	 */
 	public void generateINAinvariants() {
+		String stars = "************************************************************************************************";
+		//showConsole(true);
 		File tmpPNTfile = new File(toolPath+"siec.pnt");
 		String x = tmpPNTfile.getPath();
 		workspace.getProject().saveToFile(x);
 		//zakoñczono zapis do pliku .pnt
 		long size = tmpPNTfile.length(); //124 dla nieistniej¹cej (pustej) sieci
 		if(size <154) {
-			JOptionPane.showMessageDialog(null,
-					"Net saving into .pnt file failed. There is a possibility that for the\n"
-					+ "moment there is no network drawn. Please check file: \n"+x,
-					"Missing net or file",JOptionPane.ERROR_MESSAGE);
-			//tmpPNTfile.delete();
+			String msg = "Net saving into .pnt file failed. There is a possibility that for the\n"
+					+ "moment there is no network drawn. Please check file: \n"+x;
+			JOptionPane.showMessageDialog(null, msg, "Missing net or file", JOptionPane.ERROR_MESSAGE);
+			log(msg, "error", true);
 			return;
 		}
 		
-		/*
-		FileWriter batFile;
-		try {
-			batFile = new FileWriter(toolPath+"ina.bat");
-			batFile.write("START INAwin32.exe COMMAND.ina");
-			batFile.close();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		*/
 		File inaExe = new File(toolPath+"INAwin32.exe");
 		File batFile = new File(toolPath+"ina.bat");
 		File commandFile = new File(toolPath+"COMMAND.ina");
 		if(inaExe.exists() && commandFile.exists()) {
 			try {
+				JOptionPane.showMessageDialog(null, "INAwin32.exe will now start. Click OK and please wait.", "Patience is a virtue", JOptionPane.INFORMATION_MESSAGE);
+				log(stars, "text", false);
+				log("Activating INAwin32.exe. Please wait, this may take a few seconds due to OS delays.", "text", true);
 				//kopiowanie plików:
 				Tools.copyFileByPath(inaExe.getPath(), abyssPath+"\\INAwin32.exe");
 				Tools.copyFileByPath(batFile.getPath(), abyssPath+"\\ina.bat");
@@ -1058,10 +1124,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 					t2.delete();
 				if(t3.exists())
 					t3.delete();
+				log("INAwin32.exe process terminated. Reading results into network now.", "text",true);
 			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null,
-						"I/O operation: activating INA process failed.",
-						"Critical error", JOptionPane.ERROR_MESSAGE);
+				String msg = "I/O operation: activating INA process failed.";
+				JOptionPane.showMessageDialog(null, msg, "Critical error", JOptionPane.ERROR_MESSAGE);
+				log(msg, "error", true);
+				log(stars, "text", false);
 				return;
 			}
 			
@@ -1070,11 +1138,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 			File invariantsFile = new File("siec.inv");
 			if (!invariantsFile.exists())  
 			{
-				JOptionPane.showMessageDialog(null,
-						"Creating invariants using INAwin32.exe failed.",
-						"Critical error",JOptionPane.ERROR_MESSAGE);
+				String msg = "No invariants file - creating using INAwin32.exe unsuccessful.";
+				JOptionPane.showMessageDialog(null,msg,	"Critical error",JOptionPane.ERROR_MESSAGE);
+				log(msg, "error", true);
 				return;
-				//throw new FileNotFoundException("File with T-invariants has not been created");
 			}
 			
 			//wczytywanie inwariantów do systemu:
@@ -1115,11 +1182,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 					setLastPath(file.getParentFile().getPath());
 				}
 			}
+			log("Invariants generation successful.", "text", true);
+			log(stars, "text", false);
 			invariantsFile.delete();
+			//showConsole(false);
 		} else { //brak plikow
-			JOptionPane.showMessageDialog(null,
-					"Missing executables in the tool directory! Needed: INAwin32.exe, ina.bat and COMMAND.ina",
-					"Missing programs",JOptionPane.ERROR_MESSAGE);
+			String msg = "Missing executables in the tools directory. Required: INAwin32.exe, ina.bat and COMMAND.ina";
+			JOptionPane.showMessageDialog(null,msg,	"Missing files",JOptionPane.ERROR_MESSAGE);
+			log(msg, "error", true);
 		}
 	}
 
@@ -1189,31 +1259,27 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda s³u¿y do tworzenia ukrytego okna konsoli logów.
+	 * Metoda pomocnicza konstruktora, s³u¿y do tworzenia ukrytego okna konsoli logów.
 	 */
 	private void createHiddenConsole() {
 		windowConsole = new AbyssConsole();
-		/*
-		windowConsole = new JFrame("Abyss Status Console");
-		windowConsole.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		windowConsole.setMinimumSize(new Dimension(1000, 400));
-		windowConsole.setMaximumSize(new Dimension(1000, 400));
-		windowConsole.setResizable(false);
-
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        
-        WindowConsole tablePanel = new WindowConsole();
-        tablePanel.setOpaque(true); 
-
-        windowConsole.setContentPane(tablePanel);
-        windowConsole.pack();
-        windowConsole.setVisible(false);   
-        */   
+		windowConsole.setLocationRelativeTo(this);
 	}
 	
+	/**
+	 * Metoda zapisuj¹ca nowe zdarzenie w oknie logów.
+	 * @param text String - tekst zdarzenia
+	 * @param mode String - tryb zapisu w oknie
+	 * @param time boolean - true, jeœli ma byæ podany czas zdarzenia
+	 */
 	public void log(String text, String mode, boolean time) {
-		windowConsole.addText(text, mode, time);
+		windowConsole.addText(text, mode, time, true);
+	}
+	/**
+	 * Jak wy¿ej, tylko bez entera.
+	 */
+	public void logNoEnter(String text, String mode, boolean time) {
+		windowConsole.addText(text, mode, time, false);
 	}
 	/*
 	public void saveInvCSV() {
