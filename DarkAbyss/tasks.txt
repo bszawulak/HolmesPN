@@ -23,4 +23,5 @@ Inne poprawki:
 
 Okna:
 [*] Konsola logów
+[*] Obs³uga pliku konfiguracyjnego programu
 [ ] Okno tabeli klastrów

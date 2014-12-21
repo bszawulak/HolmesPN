@@ -40,8 +40,10 @@ import org.simpleframework.xml.Root;
 
 @Root
 /**
- * Klasa przechowuj¹ca listy wszystkich obiektów projektu oraz arkusze.
- * @author students
+ * Klasa przechowuj¹ca listy wszystkich obiektów projektu oraz arkusze. Dodatkowo agreguje
+ * metody dzia³aj¹ce na sieci - zapis, odczyt, generowanie MCT, klastrów, itd.
+ * @author students - pierwsza wersja
+ * @author MR - dodatkowe metody
  *
  */
 public class PetriNet implements SelectionActionListener, Cloneable {
@@ -570,6 +572,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void loadFromFile(String path) {
 		//TODO: czyszczenie projektu!!!!!!!!!!!!!!!!!!!!!!!
+		
+		
 		readerSNOOPY = SAXParserFactory.newInstance();
 		try {
 			// Format wlasny
@@ -623,10 +627,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		try {
 			if (genInvariants != null) {
 				communicationProtocol.writeInvToCSV(path, genInvariants, getTransitions());
-				GUIManager.getDefaultGUIManager().log("Invariants saved as CSV file.","text", true);
+				//GUIManager.getDefaultGUIManager().log("Invariants saved as CSV file.","text", true);
 				if(!silence)
 					JOptionPane.showMessageDialog(null,  "Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
+				
 				result = 0;
 			} else {
 				if(!silence)

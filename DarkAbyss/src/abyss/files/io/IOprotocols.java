@@ -8,18 +8,13 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-import rcaller.RCaller;
-import rcaller.RCode;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
 import abyss.math.Arc;
@@ -824,63 +819,11 @@ public class IOprotocols {
 				pw.print("\r\n");
 			}
 			pw.close();
-			GUIManager.getDefaultGUIManager().log("Invariants in CSV format saved to "+path, "text", true);
+			GUIManager.getDefaultGUIManager().log("Invariants saved as CSV file "+path, "text", true);
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR:writeInvToCSV",JOptionPane.ERROR_MESSAGE);
 			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
 		}
-	}
-	
-	void RClusteringSingle (String pathToR, String pathOutput, String fileNameCSV, String scriptName, String miara_odl, String algorytm_c, int nrClusters) throws IOException{
-		File file = new File(scriptName);
-		FileInputStream fis = new FileInputStream(file);
-		byte[] data = new byte[(int) file.length()];
-		fis.read(data);
-		fis.close();
-		
-		String str = new String(data, "UTF-8");
-		
-		RCaller rcaller = new RCaller();
-		RCode code = new RCode();
-		rcaller.setRscriptExecutable(pathToR);
-		rcaller.cleanRCode();
-		code.addRCode(str);
-		String function = new String("veni1(\""+miara_odl+"\",\""+algorytm_c+"\", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
-		code.addRCode(function);
-		String filename = new String(pathOutput+algorytm_c+"_"+miara_odl+"_clusters_ext_"+nrClusters+".txt");
-		rcaller.redirectROutputToFile(filename, false);
-		rcaller.setRCode(code);
-		rcaller.runOnly();
-	}
-	
-	void RClusteringAll(String pathToR, String pathOutput, String fileNameCSV, String scriptName, String commands, int nrClusters) throws IOException{		
-		File file = new File(scriptName);
-		FileInputStream fis = new FileInputStream(file);
-		byte[] data = new byte[(int) file.length()];
-		fis.read(data);
-		fis.close();
-
-		String str = new String(data, "UTF-8");
-		
-		BufferedReader br = new BufferedReader(new FileReader(commands));
-		String line;
-		
-		while ((line = br.readLine()) != null) {
-			RCaller rcaller = new RCaller();
-			RCode code = new RCode();
-			rcaller.setRscriptExecutable(pathToR);
-			rcaller.cleanRCode();
-			code.addRCode(str);
-			String function = new String("veni1("+line+", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
-			code.addRCode(function);
-			String replaced = line.replace("\"", "");
-			String[] parts = replaced.split(",");
-			String filename = new String(pathOutput+parts[1]+"_"+parts[0]+	"_clusters.txt");
-			rcaller.redirectROutputToFile(filename, false);
-			rcaller.setRCode(code);
-			rcaller.runOnly();
-		}
-		br.close();
 	}
 }

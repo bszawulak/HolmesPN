@@ -22,7 +22,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -39,7 +41,10 @@ import javax.swing.text.StyledDocument;
 public class AbyssConsole extends JFrame {
 	private static final long serialVersionUID = -2286636544180010192L;
 	private String newline = "\n";
-	private StyledDocument doc;
+	private StyledDocument doc; //
+	private JTextPane textPane; //panel z tekstem -> paneScrollPane
+	private JPanel editPanel; //g³ówny panel okna
+	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
 	/**
 	 * regular, italic, bold, small, large, warning, error
 	 */
@@ -69,8 +74,12 @@ public class AbyssConsole extends JFrame {
         setVisible(false); 
 	}
 	
+	/**
+	 * Metoda pomocnicza konstruktora okna konsoli.
+	 * @return JPanel - g³ówny panel okna
+	 */
 	private JPanel createEditor() {
-		JPanel editPanel = new JPanel();
+		editPanel = new JPanel();
 		//this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		editPanel.setLayout(new GridBagLayout());
         
@@ -82,15 +91,12 @@ public class AbyssConsole extends JFrame {
         gbc.weightx = 0.1;
         gbc.weighty = 1.0;
            
-        JTextPane textPane = createTextPane();
-        JScrollPane paneScrollPane = new JScrollPane(textPane);
+        textPane = createTextPane();
+        textPane.setEditable(false);
+        paneScrollPane = new JScrollPane(textPane);
         paneScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        //paneScrollPane.setPreferredSize(new Dimension(250, 155));
-        //paneScrollPane.setMinimumSize(new Dimension(10, 10));
+      
         editPanel.add(paneScrollPane, gbc);
-        
-        //this.add(textPane, gbc);
-
         gbc.insets = new Insets(5,10,5,10);  //top padding
         gbc.gridy = 1; 
         gbc.weightx = 0.0;
@@ -114,21 +120,19 @@ public class AbyssConsole extends JFrame {
 	 */
 	private JTextPane createTextPane() {
 		String initString = "Console initiated"+newline;
-	    JTextPane textPane = new JTextPane();
-	    doc = textPane.getStyledDocument();
+	    JTextPane txtPane = new JTextPane();
+	    doc = txtPane.getStyledDocument();
 	    addStylesToDocument(doc);
-
 	    try {
 	        doc.insertString(doc.getLength(), initString, doc.getStyle("regular"));
-	        //doc.insertString(doc.getLength(), "\ndupa dupa dupa", doc.getStyle("regular"));
 	    } catch (BadLocationException ble) {
 	        System.err.println("Couldn't insert initial text into text pane.");
 	    }
-	    return textPane;
+	    return txtPane;
 	}
 	
 	/**
-	 * Metoda wpisuje now¹ liniê do logu.
+	 * Metoda wpisuje now¹ liniê do okna logów.
 	 * @param text String - text do wpisania
 	 * @param mode String - tryb pisania
 	 * @param time boolean - true, jeœli ma byæ wyœwietlony czas wpisu
@@ -169,7 +173,12 @@ public class AbyssConsole extends JFrame {
 	        System.err.println("Couldn't insert initial text into text pane.");
 	    }
 		
-		//saveLogToFile(null);
+		int len = textPane.getDocument().getLength();
+		textPane.setCaretPosition(len);
+		
+		//int pos = paneScrollPane.getVerticalScrollBar().getValue();
+		//paneScrollPane.getVerticalScrollBar().setValue(pos);
+		//editPanel.update(editPanel.getGraphics());
 	}
 
 	/**

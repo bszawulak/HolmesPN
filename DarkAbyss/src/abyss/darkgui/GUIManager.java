@@ -8,6 +8,7 @@ import abyss.darkgui.properties.Properties;
 import abyss.darkgui.properties.PetriNetTools;
 import abyss.darkgui.properties.Properties.PropertiesType;
 import abyss.darkgui.toolbar.Toolbar;
+import abyss.files.io.Rprotocols;
 import abyss.math.PetriNet;
 import abyss.settings.SettingsManager;
 import abyss.utilities.Tools;
@@ -114,6 +115,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	// okna niezale¿ne (o tyle o ile):
 	private JFrame windowClusters; //okno tabeli 
 	private AbyssConsole windowConsole; //konsola logów
+	private boolean rReady = false; // true, jeœli program dostêp do pliku Rscript.exe
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
 	 * @param frejm JFrame - g³ówna ramka kontener programu
@@ -351,9 +353,20 @@ public class GUIManager extends JPanel implements ComponentListener {
 			}
 		}
 		
+		//check status of Rscript.exe location:
+		r_env_missing();
+	}
+
+	/**
+	 * Metoda uruchamiana na starcie programu oraz wtedy, gdy chcemy uzyskaæ dostêp do lokalizacji
+	 * pliku Rscript.exe.
+	 */
+	private void r_env_missing() {
+		rReady = true;
 		String Rpath = settingsManager.getValue("r_path");
 		File rF = new File(Rpath);
 		if(!rF.exists()) {
+			rReady = false;
 			log("Invalid path ("+Rpath+") to Rscript executable file.", "error", true);
 			
 			Object[] options = {"Manually locate Rscript.exe", "R not installed",};
@@ -373,14 +386,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 					if(file.getName().equals("Rscript.exe")) {
 						settingsManager.setValue("r_path", file.getPath());
 						settingsManager.saveSettings();
+						rReady = true;
 						log("Rscript.exe manually located at "+file.getPath()+". Settings file updated.", "text", true);
 					} else {
 						log("Rscript executable file inaccessible. Some features will be disabled.", "error", true);
 					}
 				}
 			}
-			
-
 		}
 	}
 
@@ -1372,6 +1384,104 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void logNoEnter(String text, String mode, boolean time) {
 		windowConsole.addText(text, mode, time, false);
 	}
+	
+	/**
+	 * Metoda odpowiedzialna za generowanie klastrowañ na podstawie sieci.
+	 */
+	public void generateClusters() {
+		showConsole(true);
+		if(!rReady) { //sprawdŸ, czy Rscript.exe jest na miejscu
+			r_env_missing(); // zapytanie gdzie siê podziewa Rscript.exe
+			if(!rReady) { //jeœli wci¹¿...
+				return;
+			}
+		}
+		
+		//generowanie CSV, uda siê, jeœli inwarianty istniej¹
+		String filePath = tmpPath + "cluster.csv";
+		int result = workspace.getProject().saveInvariantsToCSV(filePath, true);
+		if(result == -1) {
+			String msg = "Saving CSV file failed. Cluster procedure cannot begin without invariants.";
+			JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);
+			log(msg, "error", true);
+			return;
+		}
+		
+		try{
+			//TODO: a mo¿e w osobnym oknie? wybór klastrów, metod, itd.
+			int c_number = 20;
+			String dir_path = "";
+			
+			Object[] options = {"Select cluster directory", "Use temporary directory",};
+			int n = JOptionPane.showOptionDialog(null,
+					"Multiple cluster files can we written into default temporary directory (inadvised) or into\n"
+					+ "the selected one. What to do?",
+					"Directory selection", JOptionPane.YES_NO_OPTION,
+					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+			if (n == 0) {
+				JFileChooser fc;// = new JFileChooser();
+				if(lastPath == null)
+					fc = new JFileChooser();
+				else
+					fc = new JFileChooser(lastPath);
+				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fc.setAcceptAllFileFilterUsed(false);
+				int returnVal = fc.showSaveDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File dir = fc.getSelectedFile();
+					dir_path = dir.getPath() + "//";
+					
+					Tools.copyFileByPath(tmpPath + "cluster.csv", dir_path+"cluster.csv");
+					log("Cluster files will be put into the "+dir_path, "text", true);
+					
+				} else { //default one
+					dir_path = tmpPath;
+					log("Cluster files will be put into the "+dir_path, "text", true);
+				}
+			} else { //default one
+				dir_path = tmpPath;
+				log("Cluster files will be put into the "+dir_path, "text", true);
+			}
+			
+			dir_path = dir_path.replace("\\", "/");
+			
+			log("Cluster files will be put into the ", "text", true);
+			log("Cluster files will be put into the ", "text", true);
+			log("Cluster files will be put into the ", "text", true);
+			log("Cluster files will be put into the ", "text", true);
+			log("Cluster files will be put into the ", "text", true);
+			
+			
+			Runnable runnable = new Rprotocols();
+			((Rprotocols)runnable).setForAllClusters(settingsManager.getValue("r_path"), dir_path, "cluster.csv", 
+					"scripts\\f_clusters.r", "scripts\\f_clusters_run.r", 
+					"scripts\\f_clusters_Pearson.r", "scripts\\f_clusters_Pearson_run.r", c_number);
+			((Rprotocols)runnable).setType(0);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            
+			//Rprotocols rp = new Rprotocols();
+			//rp.setR1(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
+			//rp.setType(1);
+			
+			//rp.RClusteringAll(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
+			//rp.RClusteringAll(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusers_Pearson.r", "scripts\\f_clusers_Pearson_run.r", c_number);
+			
+			//rp.RClusteringAll(settingsManager.getValue("r_path"), "tmp/", "cluster.csv", 
+			//		"scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
+			//rp.RClusteringAll(settingsManager.getValue("r_path"), "tmp/", "cluster.csv", 
+			//		"scripts\\f_clusers_Pearson.r", "scripts\\f_clusers_Pearson_run.r", c_number);
+			
+			
+			//Konkretne klastrowanie, wersja FUNKCJA 1: Biblioteki: cluster; generuje listy inwariantow
+			//runner.RClusteringSingle("c:\\Program Files\\R\\R-3.1.2\\bin\\Rscript.exe", "tmp/", "cluster.csv", "tools\\Function2.r", "binary", "average", 20);
+			//Konkretne klastrowanie, wersja FUNKCJA 4: Biblioteki: amap, cluster; funkcja umozliwiajaca analize, uzywajaca miary Pearsona; generuje liste inwariantow
+			//runner.RClusteringSingle("c:\\Program Files\\R\\R-3.1.2\\bin\\Rscript.exe", "tmp/", "cluster.csv", "tools\\Function3.r", "pearson", "average", 20);
+		}catch (IOException e){
+			e.printStackTrace();
+		}
+	}
+	
 	/*
 	public void saveInvCSV() {
 		JFileChooser fc;

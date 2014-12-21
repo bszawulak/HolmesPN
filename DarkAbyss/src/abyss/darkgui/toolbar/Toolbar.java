@@ -315,12 +315,12 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("GenerateINAinv",generateINAinvariants));
 		
 		ToolbarButtonAction xxx = new ToolbarButtonAction(this, "Podpowiedz przycisku II",
-				new ImageIcon("resources/icons/toolbar/aaa.png")) {
+				new ImageIcon("resources/icons/toolbar/clusters.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().Explode();
-				//GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-				//	.getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
+				//GUIManager.getDefaultGUIManager().Explode();
+				GUIManager.getDefaultGUIManager().generateClusters();
+				
 			}
 		};
 		analysisDockables.add(createButtonDockable("Przycisk II", xxx));
