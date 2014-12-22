@@ -31,7 +31,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
-
 /**
  * Klasa ta tworzy okno konsoli programu, na którym pojawiaj¹ siê informacje na temat wykonywania
  * ró¿nych funkcji. Pozwala na zapis logu do pliku.

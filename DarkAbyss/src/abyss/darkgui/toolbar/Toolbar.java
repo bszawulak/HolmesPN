@@ -314,7 +314,7 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("GenerateINAinv",generateINAinvariants));
 		
-		ToolbarButtonAction xxx = new ToolbarButtonAction(this, "Podpowiedz przycisku II",
+		ToolbarButtonAction clusterButton = new ToolbarButtonAction(this, "Cluster analysis",
 				new ImageIcon("resources/icons/toolbar/clusters.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -323,9 +323,9 @@ public class Toolbar extends BorderDock {
 				
 			}
 		};
-		analysisDockables.add(createButtonDockable("Przycisk II", xxx));
+		analysisDockables.add(createButtonDockable("Clusters", clusterButton));
 		
-		ToolbarButtonAction yyy = new ToolbarButtonAction(this, "Podpowiedz przycisku II",
+		ToolbarButtonAction consoleButton = new ToolbarButtonAction(this, "Show console",
 				new ImageIcon("resources/icons/toolbar/terminal2.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -333,7 +333,17 @@ public class Toolbar extends BorderDock {
 
 			}
 		};
-		analysisDockables.add(createButtonDockable("Przycisk II", yyy));
+		analysisDockables.add(createButtonDockable("Console", consoleButton));
+		
+		ToolbarButtonAction clusterWindow = new ToolbarButtonAction(this, "Cluster Analysis",
+				new ImageIcon("resources/icons/toolbar/clusterWindow.png")) {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().fillClusterTable(); 
+
+			}
+		};
+		analysisDockables.add(createButtonDockable("CAnalysis", clusterWindow));
 		
 		return analysisDockables;
 	}

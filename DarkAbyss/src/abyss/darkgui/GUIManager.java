@@ -8,6 +8,7 @@ import abyss.darkgui.properties.Properties;
 import abyss.darkgui.properties.PetriNetTools;
 import abyss.darkgui.properties.Properties.PropertiesType;
 import abyss.darkgui.toolbar.Toolbar;
+import abyss.files.io.ClusterReader;
 import abyss.files.io.Rprotocols;
 import abyss.math.PetriNet;
 import abyss.settings.SettingsManager;
@@ -66,7 +67,7 @@ import com.javadocking.visualizer.SingleMaximizer;
 
 /**
  * G³ówna klasa programu odpowiedzialna za w³aœciwie wszystko. Zaczyna od utworzenia elementów
- * graficznych programu, a dalej jakoœ to bêdzie... :)
+ * graficznych programu, a dalej jakoœ tak siê samo ju¿ toczy wszystko...
  * @author students
  *
  */
@@ -1480,6 +1481,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}catch (IOException e){
 			e.printStackTrace();
 		}
+	}
+	
+	public void fillClusterTable() {
+		ClusterReader test = new ClusterReader();
+		test.readClusterFile(tmpPath+"average_binary_clusters.txt","UPGMA","binary");
 	}
 	
 	/*
