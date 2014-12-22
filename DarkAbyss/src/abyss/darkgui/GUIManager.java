@@ -3,6 +3,7 @@ package abyss.darkgui;
 import abyss.adam.mct.Runner;
 import abyss.analyzer.DarkAnalyzer;
 import abyss.analyzer.NetPropAnalyzer;
+import abyss.clusters.ClusteringInfoMatrix;
 import abyss.darkgui.dockable.DeleteAction;
 import abyss.darkgui.properties.Properties;
 import abyss.darkgui.properties.PetriNetTools;
@@ -1485,7 +1486,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	public void fillClusterTable() {
 		ClusterReader test = new ClusterReader();
-		test.readClusterFile(tmpPath+"average_binary_clusters.txt","UPGMA","binary");
+		//test.readClusterFile(tmpPath+"average_binary_clusters.txt","UPGMA","binary");
+		
+		ClusteringInfoMatrix x = new ClusteringInfoMatrix();
+		x.readDataDirectory(tmpPath+"1");
+		
+		//test.readDirectory();
 	}
 	
 	/*
