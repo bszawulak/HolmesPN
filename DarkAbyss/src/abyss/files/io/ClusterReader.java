@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import abyss.clusters.Clustering;
 import abyss.darkgui.GUIManager;
 import abyss.utilities.Tools;
-import abyss.wasteland.ObjectSizeFetcher;
 
 /**
  * Klasa odpowiedzialna za wczytywanie plików z klastrowaniem dla danej sieci.
@@ -19,9 +18,6 @@ import abyss.wasteland.ObjectSizeFetcher;
  *
  */
 public class ClusterReader {
-	
-	
-	
 	private String fileInfo[];
 
 	/**
@@ -30,7 +26,6 @@ public class ClusterReader {
 	public ClusterReader() {
 		fillFileInfo();
 	}
-	
 	
 	/**
 	 * Metoda czyta dany katalog klastrowañ i zwraca pe³n¹ tablicê danych.
@@ -54,6 +49,7 @@ public class ClusterReader {
 				String fileName = fileInfo[tableLocation];
 				String[] splited = fileName.split("_");
 				ArrayList<Clustering> table = readClusterFile(path+"\\"+fileName, splited[0], splited[1]);
+				GUIManager.getDefaultGUIManager().log("reading: "+ splited[0] + " " + splited[1], "text",true);
 				if(table == null) {
 					GUIManager.getDefaultGUIManager().log("Failure to fill the data for "+splited[0]+"/"+splited[1], "error", true);
 				}
@@ -299,5 +295,3 @@ public class ClusterReader {
 		fileInfo[56] = "ward.D_minkowski_clusters.txt";
 	}
 }
-
-

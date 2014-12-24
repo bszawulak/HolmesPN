@@ -3,26 +3,22 @@ package abyss.darkgui;
 import abyss.adam.mct.Runner;
 import abyss.analyzer.DarkAnalyzer;
 import abyss.analyzer.NetPropAnalyzer;
-import abyss.clusters.ClusteringInfoMatrix;
 import abyss.darkgui.dockable.DeleteAction;
 import abyss.darkgui.properties.Properties;
 import abyss.darkgui.properties.PetriNetTools;
 import abyss.darkgui.properties.Properties.PropertiesType;
 import abyss.darkgui.toolbar.Toolbar;
-import abyss.files.io.ClusterReader;
 import abyss.files.io.Rprotocols;
 import abyss.math.PetriNet;
 import abyss.settings.SettingsManager;
 import abyss.utilities.Tools;
 import abyss.windows.AbyssConsole;
-import abyss.windows.WindowTableClusters;
+import abyss.windows.AbyssClusters;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
@@ -36,9 +32,7 @@ import java.io.PrintWriter;
 
 import javax.imageio.ImageIO;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -115,7 +109,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private String logPath;
 	
 	// okna niezale¿ne (o tyle o ile):
-	private JFrame windowClusters; //okno tabeli 
+	private AbyssClusters windowClusters; //okno tabeli 
 	private AbyssConsole windowConsole; //konsola logów
 	private boolean rReady = false; // true, jeœli program dostêp do pliku Rscript.exe
 	/**
@@ -125,22 +119,21 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public GUIManager(JFrame frejm) {
 		super(new BorderLayout());
 		guiManager = this;
-		
-		createHiddenConsole();//tworzy ukryte okno konsoli logowania zdarzeñ
-		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnêtrzne zmienne programu
-		
-		/*
-		 * Runtime.getRuntime().addShutdownHook(new Thread() { public void run()
-		 * { getSettingsManager().saveSettings(); } });
-		 */
-		
+	
 		frame = frejm;
 		frame.getContentPane().add(this);
 		frame.addComponentListener(this);
 		setFrame(frejm);
 		getFrame().getContentPane().add(this);
 		getFrame().addComponentListener(this);
+		
+		
+		createHiddenConsole();//tworzy ukryte okno konsoli logowania zdarzeñ
+		createClusterWindow();
+		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnêtrzne zmienne programu
 
+		
+		
 		// Set the frame properties and show it.
 		getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -1308,58 +1301,20 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}
 	}
 	
-	public void Explode() {
-		if(windowClusters != null) {
-			windowClusters.setVisible(true);
-			return;
-		}
-        windowClusters = new JFrame("Clusters table");
-        windowClusters.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-
-        JPanel mainPanel = new JPanel();
-        //mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        mainPanel.setLayout(new GridBagLayout());
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0.1;
-        gbc.weighty = 1.0;
-        
-        WindowTableClusters tablePanel = new WindowTableClusters();
-        tablePanel.setOpaque(true); 
-        mainPanel.add(tablePanel, gbc);
-        
-        JPanel textPanel = new JPanel();
-        //textPanel.setSize(100, 200);
-        //textPanel.setMaximumSize( textPanel.getPreferredSize() );
-        //textPanel.setMinimumSize( textPanel.getPreferredSize() );
-        JButton x = new JButton("aaaaa");
-        textPanel.add(x);
-
-        gbc.gridx = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        mainPanel.add(textPanel, gbc);
-        
-        
-        windowClusters.setContentPane(mainPanel);
-
-        //String data[] =  tablePanel.getRowAt(2);
-        //Display the window.
-        windowClusters.pack();
-        windowClusters.setVisible(true);
+	/**
+	 * Metoda pomocnicza konstruktora, tworzy nowe okno tabeli klastrów.
+	 */
+	public void createClusterWindow() {
+		windowClusters = new AbyssClusters(0);
+		windowClusters.setLocationRelativeTo(this);
 	}
 	
 	/**
-	 * Metoda s³u¿y do pokazywania lub chowania okna konsoli.
+	 * Metoda s³u¿y do pokazywania lub chowania okna klastrów.
 	 */
-	public void showConsole(boolean value) {
-		if(windowConsole != null) {
-			windowConsole.setVisible(value);
+	public void showClusterWindow(boolean value) {
+		if(windowClusters != null) {
+			windowClusters.setVisible(value);
 		}
 	}
 	
@@ -1369,6 +1324,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private void createHiddenConsole() {
 		windowConsole = new AbyssConsole();
 		windowConsole.setLocationRelativeTo(this);
+	}
+	
+	/**
+	 * Metoda s³u¿y do pokazywania lub chowania okna konsoli.
+	 */
+	public void showConsole(boolean value) {
+		if(windowConsole != null) {
+			windowConsole.setVisible(value);
+		}
 	}
 	
 	/**
@@ -1485,13 +1449,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	public void fillClusterTable() {
-		ClusterReader test = new ClusterReader();
-		//test.readClusterFile(tmpPath+"average_binary_clusters.txt","UPGMA","binary");
-		
-		ClusteringInfoMatrix x = new ClusteringInfoMatrix();
-		x.readDataDirectory(tmpPath+"1");
-		
-		//test.readDirectory();
+		showClusterWindow(true);
+		windowClusters.setClusterPath(tmpPath+"cl50");
 	}
 	
 	/*
