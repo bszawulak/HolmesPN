@@ -1,0 +1,131 @@
+P   M   PRE,POST  NETZ 0:siec
+  0 0     0, 1
+  1 0     1 13 17, 2 18
+  2 0     2 20 19 18, 3
+  3 0     3 4, 6
+  4 0     5, 4
+  5 0     6 11, 7
+  6 0     7, 8
+  7 0     9 32, 8 14 17
+  8 0     8, 12
+ 9 0     10, 8
+ 10 0     15, 11
+ 11 0     12, 16 22
+ 12 0     14, 4
+ 13 0     16, 38
+ 14 0     17 32, 20
+ 15 0     17, 19
+ 16 0     21, 9
+ 17 0     21, 25
+ 18 0     25, 21
+ 19 0     23 31, 25 30 27 35
+ 20 0     27, 21 33 43
+ 21 0     21, 28
+ 22 0     22, 23
+ 23 0     24, 23 9 37 32
+ 24 0     29, 27
+ 25 0     30, 36 32
+ 26 0     43, 33
+ 27 0     33 37, 34 21
+ 28 0     25 33 44, 23 37 31
+ 29 0     39, 37
+ 30 0     23, 37
+ 31 1     37, 39
+ 32 0     36 35, 37
+ 33 0     37, 30
+ 34 0     38 3, 40
+ 35 0     30 35, 0 40 38 17 36 43
+ 36 0     42, 0 35
+ 37 0     3 38, 40
+ 38 0     41, 31
+ 39 0     23 37, 26
+@
+place nr.             name capacity time
+       0: inflammed_endothelium                  65535    0
+       1: VCAM1                  65535    0
+       2: early_leukocytes_in_inflammed_endothelium                  65535    0
+       3: monocytes_in_intima_media                  65535    0
+       4: CCR2                  65535    0
+       5: intimal_macrophages                  65535    0
+       6: macrophages_with_scavanger_receptors_SRA_or_CD36                  65535    0
+       7: lipoprotein_particles_modified_by_oxidation                  65535    0
+       8: scavanger_receptors_modyfied_lipoprotein_particles_complex                  65535    0
+      9: modyfied_by_glycation_lipoprotein_particles                  65535    0
+      10: M_CSF                  65535    0
+      11: macrophage_foam_cell                  65535    0
+      12: MCP1                  65535    0
+      13: apoptotic_bodies                  65535    0
+      14: ICAM1                  65535    0
+      15: selectin_E                  65535    0
+      16: wysoce_toksyczny_rodnik_hydroksylowy                  65535    0
+      17: iron_ion_Fe3                  65535    0
+      18: iron_ions_Fe2                  65535    0
+      19: anionorodnik_ponadtlenkowy                  65535    0
+      20: nadtlenek_wodoru_hydrogen_peroxide                  65535    0
+      21: hydroxyl_ion                  65535    0
+      22: newly_formed_NADPH_oxidase_enzyme_complex                  65535    0
+      23: NADPH                  65535    0
+      24: dysmutaza_ponadtlenkowa_SOD                  65535    0
+      25: peroxynitrite_OONO_anion                  65535    0
+      26: katalaza_or_peroksydaza                  65535    0
+      27: woda                  65535    0
+      28: tlen                  65535    0
+      29: L_arginine                  65535    0
+      30: jon_wodorowy                  65535    0
+      31: citruline                  65535    0
+      32: iNOS                  65535    0
+      33: nitric_oxide                  65535    0
+      34: injured_endothelium                  65535    0
+      35: cytokines                  65535    0
+      36: inflammation                  65535    0
+      37: atherosclerotic_plaque_increased                  65535    0
+      38: electrons                  65535    0
+      39: NADP_kation                  65535    0
+@
+trans nr.             name priority time
+       0: endotelial_cells_activation_by_inflammation                      0    0
+       1: increased_expression_leukocyte_adhesion_molecules                      0    0
+       2: early_leukocytes_recruitment_to_the_nascent_atherosclerotic_lesion_VCAM1_VLA4_binding                      0    0
+       3: monocytes_penetrate_intima_media                      0    0
+       4: MCP1_CCR2_binding                      0    0
+       5: CCR2_expression                      0    0
+       6: monocytes_acquires_characteristics_of_tissue_macrophages                      0    0
+       7: scavanger_receptors_expression                      0    0
+       8: scavanger_receptors_modyfied_lipoprotein_particles_binding                      0    0
+       9: lipids_peroxidation_by_hydroxyl_radical                      0    0
+      10: glycation_process                      0    0
+      11: activation                      0    0
+      12: transformation                      0    0
+      13: rich_cholesterol_diet                      0    0
+      14: MCP1_expression                      0    0
+      15: MCF1_synthesis_by_endotelium_and_smooth_muscles                      0    0
+      16: transformation_into_apoptotic_bodies                      0    0
+      17: endotelial_stimulation_for_adhesion_proteines_expression                      0    0
+      18: monocytes_binding_to_endothelium_by_VCAM1                      0    0
+      19: monocytes_binding_to_endothelium_by_selectin_E                      0    0
+      20: monocytes_binding_to_endothelium_by_ICAM1                      0    0
+      21: iron_catalyzed_Fenton_reaction                      0    0
+      22: cytostolic_components_translocate_to_the_membrane                      0    0
+      23: processes_catalysed_by_NADPH_oxidase                      0    0
+      24: tworzenie_NADPH                      0    0
+      25: Fe_reduction_reaction                      0    0
+      26: NADP_cation_usage                      0    0
+      27: reakcja_dysmutacji                      0    0
+      28: hydroxyl_ion_usage                      0    0
+      29: activation_of_defense_mechanisms                      0    0
+      30: reaction_catalyzed_by_NO                      0    0
+      31: superoxide_anion_synthesis                      0    0
+      32: lipids_peroxidation_by_peroxynitrite                      0    0
+      33: reaction_catalyzed_by_catalase_or_peroxydase                      0    0
+      34: water_usage                      0    0
+      35: mast_cells_degranulation                      0    0
+      36: iNOS_activation_by_cytokines                      0    0
+      37: reaction_catalyzed_by_iNOS                      0    0
+      38: endothelial_injury                      0    0
+      39: cykl_mocznikowy                      0    0
+      40: atherosclerosis_progression                      0    0
+      41: powstawanie_elektronow_w_reakcjach                      0    0
+      42: inflammatory_process                      0    0
+      43: aktywnosc_katalazy_pobudzona_obecnoscia_nadtlenkow                      0    0
+      44: powstawanie_tlenu_w_procesach                      0    0
+@

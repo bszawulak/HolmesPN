@@ -189,8 +189,6 @@ public class AbyssClusters extends JFrame {
 				}
 				*/
 			}
-
-			
 		});
         case56Button.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(case56Button);
@@ -650,7 +648,7 @@ public class AbyssClusters extends JFrame {
   	  	    		spinnerClusters.setEnabled(false);
   	  	    	}
   	  	    	
-  	  	    	System.out.println("Window Activated Event");
+  	  	    	//System.out.println("Window Activated Event");
   	  	    }
 
   	  	    public void windowDeactivated(WindowEvent e) {

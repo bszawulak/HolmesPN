@@ -135,6 +135,13 @@ public class AbyssConsole extends JFrame {
 	 * @param time boolean - true, jeœli ma byæ wyœwietlony czas wpisu
 	 */
 	public void addText(String text, String mode, boolean time, boolean enter) {
+		Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+		StyleConstants.setFontFamily(def, "SansSerif");
+		StyleConstants.setFontSize(def, 12);
+		//doc.removeStyle("regular"); 
+		//doc.addStyle("regular", def);
+        
+		
 		String newLn = "";
 		if(enter) newLn = newline;
 			
@@ -172,10 +179,7 @@ public class AbyssConsole extends JFrame {
 		
 		int len = textPane.getDocument().getLength();
 		textPane.setCaretPosition(len);
-		
-		//int pos = paneScrollPane.getVerticalScrollBar().getValue();
-		//paneScrollPane.getVerticalScrollBar().setValue(pos);
-		//editPanel.update(editPanel.getGraphics());
+
 	}
 
 	/**
