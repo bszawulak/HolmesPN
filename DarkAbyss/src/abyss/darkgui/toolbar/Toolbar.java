@@ -319,7 +319,7 @@ public class Toolbar extends BorderDock {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				//GUIManager.getDefaultGUIManager().Explode();
-				GUIManager.getDefaultGUIManager().generateClusters();
+				//GUIManager.getDefaultGUIManager().generateClusters();
 				
 			}
 		};
@@ -339,7 +339,7 @@ public class Toolbar extends BorderDock {
 				new ImageIcon("resources/icons/toolbar/clusterWindow.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().fillClusterTable(); 
+				GUIManager.getDefaultGUIManager().showClusterWindow(true); 
 
 			}
 		};

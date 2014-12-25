@@ -17,14 +17,12 @@ public class AbyssWriter {
 		// zawartoscia klasy tej.
 		
 		//tu bylem, Tony Halik
-
 		XStream xstream = new XStream(new StaxDriver());
 		xstream.alias("petriNet", PetriNetData.class);
 
 		try {
 
-			String xml = xstream.toXML(GUIManager.getDefaultGUIManager()
-					.getWorkspace().getProject().getData());
+			String xml = xstream.toXML(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getData());
 			if(path.contains(".abyss")) {
 				if(path.indexOf(".abyss") == path.length()-6) {
 					path = path.replace(".abyss", "");
@@ -39,6 +37,5 @@ public class AbyssWriter {
 			System.err.println("Error: " + e.getMessage());
 			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
 		}
-
 	}
 }

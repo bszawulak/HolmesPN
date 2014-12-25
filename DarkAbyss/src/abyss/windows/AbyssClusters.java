@@ -7,14 +7,21 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -24,6 +31,8 @@ import javax.swing.table.TableCellRenderer;
 
 import abyss.clusters.Clustering;
 import abyss.clusters.ClusteringInfoMatrix;
+import abyss.darkgui.GUIManager;
+import abyss.utilities.MyFileChooser;
 
 /**
  * Klasa obs³uguj¹ca okno klastrów dla danej sieci.
@@ -50,8 +59,11 @@ public class AbyssClusters extends JFrame {
     	this.setTitle("Abyss Cluster Window");
 
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		setMinimumSize(new Dimension(900, 700));
-		setMaximumSize(new Dimension(900, 700));
+		this.setLocation(25, 25);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		setMinimumSize(new Dimension(900, screenSize.height-100));
+		setMaximumSize(new Dimension(900, screenSize.height-100));
 		setResizable(false);
 
         JPanel mainPanel = new JPanel();
@@ -75,19 +87,7 @@ public class AbyssClusters extends JFrame {
         tablePanel.setOpaque(true); 
         mainPanel.add(tablePanel, gbc);
         
-        JPanel textPanel = new JPanel();
-        JButton case56Button = new JButton("Case 56");
-        case56Button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				//ClusterReader test = new ClusterReader();
-				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
-				clusterMatrix.readDataDirectory(clustersPath);
-				handleStandardClusterTableCase56(clusterMatrix);
-			}
-		});
-        
-        textPanel.add(case56Button);
+        JPanel textPanel = createButtonsPanelCase56();
 
         gbc.gridx = 1;
         gbc.weightx = 0;
@@ -98,12 +98,110 @@ public class AbyssClusters extends JFrame {
         this.pack();
         this.setVisible(false);
     }
+
+    /**
+     * Metoda zwracaj¹ca panel boczny dla g³ównego okna, wype³niony przyciskami.
+     * @return JPanel - obiekt panelu bocznego
+     */
+	private JPanel createButtonsPanelCase56() {
+		JPanel textPanel = new JPanel();
+		textPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		textPanel.setLayout(new BoxLayout(textPanel,BoxLayout.Y_AXIS));
+		
+		JButton generateButton = createStandardButton("Generate data", null);
+		generateButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().generateClusters();
+			}
+		});
+		generateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        textPanel.add(generateButton);
+        
+        
+        JButton case56Button = createStandardButton("Load directory", null);
+        case56Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				JFileChooser fc = null;
+				String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+				String chosenPath = "";
+				if(lastPath == null)
+					fc = new JFileChooser();
+				else
+					fc = new JFileChooser(lastPath);
+				
+				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setApproveButtonText("Select cluster dir");
+				fc.setApproveButtonToolTipText("Directory with 56 generated text R-clusters files.");
+				int returnVal = fc.showDialog(fc, lastPath);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File x = fc.getSelectedFile();
+					chosenPath = x.getAbsolutePath();
+					setClusterPath(chosenPath);
+				} else { //default one
+					return;
+				}
+				
+				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
+				int result = clusterMatrix.readDataDirectory(clustersPath);
+				if(result == -1) {
+					JOptionPane.showMessageDialog(null, "Cluster reading failed. Possible wrong directory chosen.", "Error",JOptionPane.ERROR_MESSAGE);
+				} else {
+					handleStandardClusterTableCase56(clusterMatrix);
+				}
+			}
+		});
+        case56Button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        textPanel.add(case56Button);
+        
+        
+		return textPanel;
+	}
+
+	private JButton createStandardButton(String text, Icon icon) {
+		JButton resultButton = new JButton(); 
+        //resultButton.setLayout(new BoxLayout(resultButton,BoxLayout.Y_AXIS));
+		resultButton.setLayout(new BorderLayout());
+        
+        JLabel tmp;
+        tmp = new JLabel(text);
+        tmp.setFont(new Font("Arial", Font.PLAIN, 9));
+    	//tmp.setAlignmentX(Component.BOTTOM_ALIGNMENT);
+    	resultButton.add(tmp, BorderLayout.PAGE_END);
+        /*
+        for(int i=0; i<text.length; i++) {
+        	tmp = new JLabel(text[i]);
+        	tmp.setFont(new Font("Arial", Font.PLAIN, 8));
+        	tmp.setAlignmentX(Component.TOP_ALIGNMENT);
+        	resultButton.add(tmp);
+        }
+      */
+		   
+        resultButton.setPreferredSize(new Dimension(100, 60));
+        resultButton.setMinimumSize(new Dimension(100, 60));
+        resultButton.setMaximumSize(new Dimension(100, 60));
+        
+        resultButton.setIcon(icon);
+        
+        
+		return resultButton;
+	}
     
+	/**
+	 * Metoda ustawia tryb pracy okna.
+	 * @param mode int: 0 - tabela 56-u podtabel
+	 */
     public AbyssClusters(int mode) {
     	this();
     	this.mode = mode;
     }
     
+    /**
+     * Metoda ustawia œcie¿kê dostêpu do katalogu klastrów.
+     * @param path String - œcie¿ka do katalogu
+     */
     public void setClusterPath(String path) {
     	clustersPath = path;
     }
@@ -134,13 +232,9 @@ public class AbyssClusters extends JFrame {
         model.addColumn("Column14");
         model.addColumn("Column15");
         
-        //String[] socrates = { "Socrates", "", "469-399 B.C." };
-       // model.addRow(socrates);   
-        
         table = new JTable(model);
-        table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
-        
         table.setDefaultRenderer(Object.class, tabRenderer); // 0 - case 56
         
         table.addMouseListener(new MouseAdapter() { //listener klikniêæ
@@ -198,16 +292,14 @@ public class AbyssClusters extends JFrame {
         table.getColumnModel().getColumn(13).setHeaderValue("");
         table.getColumnModel().getColumn(14).setHeaderValue("Ward");
         
-        table.getColumnModel().getColumn(0).setPreferredWidth(60);
-        for(int index=1; index<table.getColumnCount(); index++) {
+        //rozmiary kolumn:
+        for(int index=0; index<table.getColumnCount(); index++) {
         	if(index % 2 == 0) {
         		table.getColumnModel().getColumn(index).setPreferredWidth(60);
         	} else {
         		table.getColumnModel().getColumn(index).setPreferredWidth(20);
         	}
         }
-        
-        table.getColumnModel().getColumn(1).setPreferredWidth(30);
 
         JScrollPane scrollPane = new JScrollPane(table);
         main.add(scrollPane);

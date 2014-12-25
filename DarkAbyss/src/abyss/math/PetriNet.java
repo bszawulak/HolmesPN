@@ -47,28 +47,32 @@ import org.simpleframework.xml.Root;
  *
  */
 public class PetriNet implements SelectionActionListener, Cloneable {
-	private PetriNetData data = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>());
+	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
+	private ArrayList<ArrayList<InvariantTransition>> invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
+	private ArrayList<ArrayList<Integer>> invariantsMatrix;
 	private ArrayList<GraphPanel> graphPanels;
+	private PetriNetData data = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>());
 	private IdGenerator idGenerator;
-	public SAXParserFactory readerSNOOPY;
+	
 	private AbyssWriter ABYSSwriter;
 	private AbyssReader ABYSSReader;
 	private IOprotocols communicationProtocol;
-	private ArrayList<ArrayList<InvariantTransition>> invariants = new ArrayList<ArrayList<InvariantTransition>>();
-	public NetHandler handler;
+	private NetHandler handler;
+	private SAXParserFactory readerSNOOPY;
+	
 	private Workspace workspace;
 	private DrawModes drawMode = DrawModes.POINTER;
-	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
+	
 	private boolean isSimulationActive = false;
 	private NetSimulator simulator;
 	private InvariantsSimulator invSimulator;
-	private EarlyInvariantsAnalyzer eia;
-	public ArrayList<ArrayList<Integer>> genInvariants;
 	private DarkAnalyzer analyzer;
 	private NetPropAnalyzer netPropAna; // Propanbutan
+	private EarlyInvariantsAnalyzer eia;
+
 	
 	/**
-	 * Konstruktor obiektu klasy PetriNet.
+	 * Konstruktor obiektu klasy PetriNet - dzia³a dla symulatora inwariantów.
 	 * @param nod ArrayList[Node] - lista wierzcho³ków sieci
 	 * @param ar ArrayList[Arc] - lista ³uków sieci
 	 */
@@ -76,18 +80,20 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		getData().nodes = nod;
 		getData().arcs = ar;
 		communicationProtocol = new IOprotocols();
+		data.netName = "";
 	}
 
 	/**
-	 * Konstruktor obiektu klasy PetriNet.
+	 * Konstruktor obiektu klasy PetriNet - g³ówny konstruktor dla workspace.
 	 * @param workspace Workspace - obiekt obszaru roboczego dla sieci
 	 */
-	public PetriNet(Workspace workspace) {
+	public PetriNet(Workspace workspace, String name) {
 		this.setGraphPanels(new ArrayList<GraphPanel>());
 		this.workspace = workspace;
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
 		this.setAnalyzer(new DarkAnalyzer(this));
 		communicationProtocol = new IOprotocols();
+		data.netName = "";
 	}
 
 	/**
@@ -130,6 +136,22 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.getData().nodes = nodes;
 		for (GraphPanel gp : this.getGraphPanels())
 			gp.setNodes(nodes);
+	}
+	
+	/**
+	 * Metoda ustawia nazwê dla sieci Petriego.
+	 * @param name String - nowa nazwa
+	 */
+	public void setName(String name) {
+		data.netName = name;
+	}
+	
+	/**
+	 * Metoda zwraca nazwê sieci petriego.
+	 * @return String - nazwa sieci
+	 */
+	public String getName() {
+		return data.netName;
 	}
 
 	/**
@@ -341,19 +363,35 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda ustawiaj¹ca macierz inwariantów sieci.
+	 * Metoda ustala nowy obiekt macierzy inwariantów 2ej formy.
 	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
 	 */
-	public void setInvariantsList(ArrayList<ArrayList<InvariantTransition>> invariants) {
-		this.invariants = invariants;
+	public void set2ndFormInvariantsList(ArrayList<ArrayList<InvariantTransition>> invariants) {
+		this.invariants2ndForm = invariants;
 	}
 	
 	/**
-	 * Metoda zwracaj¹ca listê inwariantów sieci.
+	 * Metoda zwraca obiekt macierzy inwariantów 2ej formy.
 	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
 	 */
-	public ArrayList<ArrayList<InvariantTransition>> getInvariantsList() {
-		return invariants;
+	public ArrayList<ArrayList<InvariantTransition>> get2ndFormInvariantsList() {
+		return invariants2ndForm;
+	}
+	
+	/**
+	 * Metoda ustawia now¹ macierz inwariantów sieci.
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 */
+	public void setInvariantsMatrix(ArrayList<ArrayList<Integer>> invariants) {
+		this.invariantsMatrix = invariants;
+	}
+	
+	/**
+	 * Metoda zwraca macierz inwariantów sieci.
+	 * @return ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 */
+	public ArrayList<ArrayList<Integer>> getInvariantsMatrix() {
+		return invariantsMatrix;
 	}
 
 	/**
@@ -566,8 +604,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda pozwala na odczyt ca³ej sieci z pliku podanego w parametrze
-	 * metody. wczytana sieæ zostaje dodana do istniej¹cego ju¿ projektu,
-	 * bez naruszania jego struktury logicznej.
+	 * metody. Wczytana sieæ zostaje dodana do istniej¹cego ju¿ projektu,
+	 * bez naruszania jego struktury.
 	 * @param path String - œcie¿ka do pliku odczytu
 	 */
 	public void loadFromFile(String path) {
@@ -581,6 +619,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				ABYSSReader = new AbyssReader();
 				ABYSSReader.read(path);
 				addArcsAndNodes(ABYSSReader.getArcArray(), ABYSSReader.getNodeArray());
+				setName(ABYSSReader.getPNname());
 			}
 			// Formaty Snoopiego
 			if (path.endsWith(".spped") || path.endsWith(".spept") || path.endsWith(".colpn")
@@ -603,6 +642,16 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				}
 				saxParser.parse(xmlInput, handler);
 				addArcsAndNodes(handler.getArcList(), handler.getNodesList());
+				
+				String name = path;
+				int ind = name.lastIndexOf("\\");
+				if(ind > 1)
+					name = name.substring(ind+1);
+				name = name.replace(".spped", "");
+				name = name.replace(".spept", "");
+				name = name.replace(".colpn", "");
+				name = name.replace(".sptpt", "");
+				setName(name);
 			}
 			// Format INY
 			if (path.endsWith(".pnt")) {
@@ -625,8 +674,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToCSV(String path, boolean silence) {
 		int result = -1;
 		try {
-			if (genInvariants != null) {
-				communicationProtocol.writeInvToCSV(path, genInvariants, getTransitions());
+			if (invariantsMatrix != null) {
+				communicationProtocol.writeInvToCSV(path, invariantsMatrix, getTransitions());
 				//GUIManager.getDefaultGUIManager().log("Invariants saved as CSV file.","text", true);
 				if(!silence)
 					JOptionPane.showMessageDialog(null,  "Invariants saved to file:\n"+path,
@@ -655,8 +704,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToInaFormat(String path) {
 		int result = -1;
 		try {
-			if (genInvariants != null) {
-				communicationProtocol.writeINV(path, genInvariants, getTransitions());
+			if (invariantsMatrix != null) {
+				communicationProtocol.writeINV(path, invariantsMatrix, getTransitions());
 				JOptionPane.showMessageDialog(null,
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
@@ -684,8 +733,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToCharlie(String path) {
 		int result = -1;
 		try {
-			if (genInvariants != null) {
-				communicationProtocol.writeCharlieInv(path, genInvariants, getTransitions());
+			if (invariantsMatrix != null) {
+				communicationProtocol.writeCharlieInv(path, invariantsMatrix, getTransitions());
 				JOptionPane.showMessageDialog(null, 
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
@@ -712,7 +761,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void loadInvariantsFromFile(String sciezka) {
 		try {
 			communicationProtocol.readINV(sciezka);
-			genInvariants = communicationProtocol.getInvariantsList();
+			invariantsMatrix = communicationProtocol.getInvariantsList();
 		} catch (Throwable err) {
 			err.printStackTrace();
 			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
@@ -836,7 +885,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
 		InvariantTransition currentTransition;
 		invariantsBinaryList = communicationProtocol.getInvariantsList();
-		setInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
+		set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
 		//SettingsManager.log("start logging");
 		if (invariantsBinaryList.size() > 0) {
 			if (invariantsBinaryList.get(0).size() == getTransitions().size()) {
@@ -854,7 +903,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 						i++;
 					}
 					// SettingsManager.log(invariantLog);
-					getInvariantsList().add(currentInvariant);
+					get2ndFormInvariantsList().add(currentInvariant);
 				}
 			} else {
 				JOptionPane.showMessageDialog(null,
@@ -868,7 +917,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				"Invariant file does not contain invariants", JOptionPane.ERROR_MESSAGE);
 			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed.", "error", true);
 		}
-		return getInvariantsList();
+		return get2ndFormInvariantsList();
 	}
 
 	/**
@@ -879,7 +928,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
 		InvariantTransition currentTransition;
 		invariantsBinaryList = eia.getListaInvatianow();
-		setInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
+		set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
 		//SettingsManager.log("start logging");
 		//String invariantLog;
 		if (invariantsBinaryList.size() > 0) {
@@ -905,7 +954,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					}
 					// if (count < 5)
 					// SettingsManager.log(invariantLog);
-					getInvariantsList().add(currentInvariant);
+					get2ndFormInvariantsList().add(currentInvariant);
 					//count++;
 				}
 			} else {
@@ -920,7 +969,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				"Invariant file does not contain invariants", JOptionPane.ERROR_MESSAGE);
 			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed.", "error", true);
 		}
-		return getInvariantsList();
+		return get2ndFormInvariantsList();
 	}
 
 	/**
@@ -947,7 +996,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		
 		this.invSimulator = new InvariantsSimulator(
 				abyss.analyzer.InvariantsSimulator.NetType.BASIC, new PetriNet(
-						getData().nodes, getData().arcs), getInvariantsList(),type, value);
+						getData().nodes, getData().arcs), get2ndFormInvariantsList(),type, value);
 
 		invSimulator.startSimulation(SimulatorMode.LOOP);
 	}

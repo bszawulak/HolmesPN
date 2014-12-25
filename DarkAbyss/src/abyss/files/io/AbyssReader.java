@@ -28,6 +28,7 @@ public class AbyssReader {
 
 	private ArrayList<Node> nodeArray = new ArrayList<Node>();
 	private ArrayList<Arc> arcArray = new ArrayList<Arc>();
+	private String pnName;
 
 	/**
 	 * Metoda odpowiedzialna za czytanie plików projektu formatu .abyss.
@@ -73,6 +74,7 @@ public class AbyssReader {
 			setWorkframeBoundary(PND.nodes);
 			getNodeArray().addAll(PND.nodes);
 			getArcArray().addAll(PND.arcs);
+			pnName = PND.netName;
 			
 			IdGenerator.setTransitionId(maxTransitionId+1);
 			IdGenerator.setPlaceId(maxPlaceId+1);
@@ -110,21 +112,40 @@ public class AbyssReader {
 		
 		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0).getGraphPanel();
 		graphPanel.setSize(new Dimension(x + 90, y + 90));
-		
+	}
+	
+	public String getPNname() {
+		return pnName;
 	}
 
+	/**
+	 * Metoda zwraca listê wêz³ów sieci.
+	 * @return ArrayList[Node] - wierzcho³ki sieci
+	 */
 	public ArrayList<Node> getNodeArray() {
 		return nodeArray;
 	}
 
+	/**
+	 * Metoda ustawia now¹ listê wierzcho³ków sieci.
+	 * @param nodeArray ArrayList[Node] - nowe wierzcho³ki sieci
+	 */
 	public void setNodeArray(ArrayList<Node> nodeArray) {
 		this.nodeArray = nodeArray;
 	}
 
+	/**
+	 * Metdoa zwraca listê ³uków sieci.
+	 * @return ArrayList[Arc] - lista ³uków
+	 */
 	public ArrayList<Arc> getArcArray() {
 		return arcArray;
 	}
 
+	/**
+	 * Metoda ustawia now¹ listê ³uków sieci.
+	 * @param arcArray ArrayList[Arc] - nowa lista ³uków
+	 */
 	public void setArcArray(ArrayList<Arc> arcArray) {
 		this.arcArray = arcArray;
 	}

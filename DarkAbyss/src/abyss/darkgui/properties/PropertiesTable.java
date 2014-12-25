@@ -1084,11 +1084,36 @@ public class PropertiesTable extends JPanel {
 		currentSheet = sheet;
 
 		// SHEET ID
+		JLabel netNameLabel = new JLabel("PN Name:", JLabel.LEFT);
+		netNameLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+		components.add(netNameLabel);
+
+		JFormattedTextField netNameField = new JFormattedTextField();
+		netNameField.setLocation(columnB_posX, columnB_Y += 10);
+		netNameField.setSize(colBCompLength, 20);
+		netNameField.setMaximumSize(new Dimension(colBCompLength,20));
+		netNameField.setMinimumSize(new Dimension(colBCompLength,20));
+		netNameField.setText(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getName());
+		netNameField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newName = (String) field.getText();
+				
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setName(newName);
+			}
+		});
+		components.add(netNameField);
+		
+		
 		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
-		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+		idLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(idLabel);
 		JLabel idLabel2 = new JLabel(Integer.toString(sheet.getId()));
-		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+		idLabel2.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
 		components.add(idLabel2);
 		
 		// SHEET ZOOM
@@ -1402,7 +1427,7 @@ public class PropertiesTable extends JPanel {
 		startButton.setSize(colBCompLength, 40);
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsList().size()>0)
+				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().get2ndFormInvariantsList().size()>0)
 				{
 					//blokowanie
 					setEnabledInvariantSimulationInitiateButtons(false);

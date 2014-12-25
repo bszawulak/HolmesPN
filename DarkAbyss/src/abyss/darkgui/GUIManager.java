@@ -1136,8 +1136,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//zakoñczono zapis do pliku .pnt
 		long size = tmpPNTfile.length(); //124 dla nieistniej¹cej (pustej) sieci
 		if(size <154) {
-			String msg = "Net saving into .pnt file failed. There is a possibility that for the\n"
-					+ "moment there is no network drawn. Please check file: \n"+x;
+			String msg = "Net saving as .pnt file failed. There may be problems with file: \n"+x + 
+					"\nor there is no network yet.";
 			JOptionPane.showMessageDialog(null, msg, "Missing net or file", JOptionPane.ERROR_MESSAGE);
 			log(msg, "error", true);
 			return;
@@ -1306,7 +1306,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void createClusterWindow() {
 		windowClusters = new AbyssClusters(0);
-		windowClusters.setLocationRelativeTo(this);
+		//windowClusters.setLocationRelativeTo(this);
 	}
 	
 	/**
@@ -1315,6 +1315,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void showClusterWindow(boolean value) {
 		if(windowClusters != null) {
 			windowClusters.setVisible(value);
+			
+			//windowClusters.setClusterPath(tmpPath+"cl50");
 		}
 	}
 	
@@ -1446,11 +1448,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}catch (IOException e){
 			e.printStackTrace();
 		}
-	}
-	
-	public void fillClusterTable() {
-		showClusterWindow(true);
-		windowClusters.setClusterPath(tmpPath+"cl50");
 	}
 	
 	/*

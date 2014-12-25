@@ -81,6 +81,13 @@ public class ClusterReader {
 			}
 		}
 		
+		if(!firstFound) { //ERROR: not a single file		
+			result = -2;
+			GUIManager.getDefaultGUIManager().log("Critical error. Directory "+path+" does not contain "
+					+ "any cluster file.", "error", true);
+			return result;
+		}
+		
 		for(int i=1; i<56; i++) {
 			if(checkList[i] == 0) { //dla ka¿dego brakuj¹cego pliku
 				//stwórz kopiê:
@@ -95,12 +102,6 @@ public class ClusterReader {
 					result = -1;
 				}
 			}
-		}
-		
-		if(!firstFound) { //ERROR: not a single file		
-			result = -2;
-			GUIManager.getDefaultGUIManager().log("Critical error. Directory "+path+" does not contain "
-					+ "any cluster file.", "error", true);
 		}
 		return result;
 	}

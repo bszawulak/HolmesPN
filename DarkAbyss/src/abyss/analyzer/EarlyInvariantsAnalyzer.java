@@ -35,7 +35,8 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 		PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		GUIManager.getDefaultGUIManager().getPropAnalyzerBox().showNetProperties(NPA.propAnalyze());
 		GUIManager.getDefaultGUIManager().getAnalyzerBox().showInvariants(project.getGeneratedInvariants());
-		project.genInvariants = invariantsList;
+		project.setInvariantsMatrix(invariantsList);
+		//project.invariantsMatrix = invariantsList;
 	}
 
 	public EarlyInvariantsAnalyzer() {

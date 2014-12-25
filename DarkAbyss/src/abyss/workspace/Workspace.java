@@ -39,7 +39,7 @@ public class Workspace implements SelectionActionListener {
 	private ArrayList<Integer> sheetsIDtable;
 
 	// filler
-//	private WorkspaceFiller filler;
+	//	private WorkspaceFiller filler;
 	private Dock fillerDock;
 	private Dockable fillerDockable;
 
@@ -66,13 +66,12 @@ public class Workspace implements SelectionActionListener {
 		sheetsIDtable = new ArrayList<Integer>();
 
 		// filler = new WorkspaceFiller();
-		setFillerDockable(new DefaultDockable("Workspace",
-				new WorkspaceFiller(), "Workspace"));
+		setFillerDockable(new DefaultDockable("Workspace", new WorkspaceFiller(), "Workspace"));
 		setFillerDock(getDockFactory().createDock(getFillerDockable(), DockingMode.SINGLE));
 		Point position = new Point(0, 0);
 		getFillerDock().addDockable(getFillerDockable(), position, position);
 
-		setProject(new PetriNet(this));
+		setProject(new PetriNet(this, "default"));
 		this.getProject().addActionListener(this);
 		newTab();
 	}

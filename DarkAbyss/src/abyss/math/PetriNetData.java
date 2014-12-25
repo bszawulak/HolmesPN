@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class PetriNetData {
 	public ArrayList<Node> nodes;
 	public ArrayList<Arc> arcs;
+	public String netName;
 
 	/**
 	 * Konstruktor obiektu klasy PetriNetData
