@@ -10,6 +10,12 @@ import abyss.darkgui.GUIManager;
 import rcaller.RCaller;
 import rcaller.RCode;
 
+/**
+ * Klasa odpowiedzialna za uruchamianie skryptów œrodowiska R.
+ * @author AR - g³ówne metody komunikacji z R
+ * @author MR - otoczka Runnable, metody pomocnicze do dzia³ania w w¹tkach
+ *
+ */
 public class Rprotocols implements Runnable {
 	String pathToR;
 	String pathOutput;
@@ -22,17 +28,21 @@ public class Rprotocols implements Runnable {
 	
 	String scriptNamePearson;
 	String commandsPearson;
-	int type = 0; //default : all clusters
+	int processingMode = 0; //default : all clusters
 	
+	/**
+	 * G³ówna metoda wykonywalna, odpowiedzialna za uruchomienie procesu uruchamiania
+	 * skryptów R.
+	 */
 	public void run() {
 		try {
-			if(type==0) {
-				RClusteringAll2();
+			if(processingMode==0) {
+				rClusteringAll2();
 				scriptName = scriptNamePearson;
 				commands = commandsPearson;
-				RClusteringAll2();
+				rClusteringAll2();
 			} else {
-				RClusteringSingle2();
+				rClusteringSingle2();
 			}
 		} catch (Exception e) {
 			
@@ -57,20 +67,22 @@ public class Rprotocols implements Runnable {
 		this.nrClusters = nrClusters;
 		this.commands = commands;
 		
-		
 		this.scriptNamePearson = pearsonScript;
 		this.commandsPearson = pearsonCommand;
 	}
-	 
+	
+	/**
+	 * Konstruktor domyœlny klasy potrzebny do niczego :)
+	 */
 	public Rprotocols() {
 		
 	}
 	
-	public void setType(int x) {
-		type = x;
+	public void setWorkingMode(int mode) {
+		processingMode = mode;
 	}
 	
-	public void RClusteringSingle (String pathToR, String pathOutput, String fileNameCSV, String scriptName, String miara_odl, String algorytm_c, int nrClusters) throws IOException{
+	public void rClusteringSingleOriginal (String pathToR, String pathOutput, String fileNameCSV, String scriptName, String miara_odl, String algorytm_c, int nrClusters) throws IOException{
 		File file = new File(scriptName);
 		FileInputStream fis = new FileInputStream(file);
 		byte[] data = new byte[(int) file.length()];
@@ -92,7 +104,7 @@ public class Rprotocols implements Runnable {
 		rcaller.runOnly();
 	}
 	
-	public void RClusteringAll(String pathToR, String pathOutput, String fileNameCSV, String scriptName, String commands, int nrClusters) throws IOException{		
+	public void rClusteringAllOriginal(String pathToR, String pathOutput, String fileNameCSV, String scriptName, String commands, int nrClusters) throws IOException{		
 		File file = new File(scriptName);
 		FileInputStream fis = new FileInputStream(file);
 		byte[] data = new byte[(int) file.length()];
@@ -127,7 +139,12 @@ public class Rprotocols implements Runnable {
 		br.close();
 	}
 	
-	public void RClusteringSingle2 () throws IOException{
+	/**
+	 * Metoda odpowiedzialna za klastrowanie precyzyjne dla algorytmu i metryki. Tworzy
+	 * plik z numerami inwariantów dla ka¿dego klastra.
+	 * @throws IOException - wyj¹tek operacji na plikach
+	 */
+	public void rClusteringSingle2() throws IOException{
 		File file = new File(scriptName);
 		FileInputStream fis = new FileInputStream(file);
 		byte[] data = new byte[(int) file.length()];
@@ -149,7 +166,7 @@ public class Rprotocols implements Runnable {
 		rcaller.runOnly();
 	}
 	
-	public void RClusteringAll2() throws IOException{		
+	public void rClusteringAll2() throws IOException{		
 		File file = new File(scriptName);
 		FileInputStream fis = new FileInputStream(file);
 		byte[] data = new byte[(int) file.length()];
