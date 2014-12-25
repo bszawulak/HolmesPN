@@ -12,27 +12,38 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import abyss.clusters.Clustering;
 import abyss.clusters.ClusteringInfoMatrix;
+import abyss.files.clusters.ClusterReader;
+import abyss.files.clusters.RClusteringParserToXLS;
+import abyss.utilities.Tools;
+import abyss.workspace.ExtensionFileFilter;
 import abyss.darkgui.GUIManager;
-import abyss.utilities.MyFileChooser;
 
 /**
  * Klasa obs³uguj¹ca okno klastrów dla danej sieci.
@@ -47,6 +58,9 @@ public class AbyssClusters extends JFrame {
     private ClusteringInfoMatrix internalDataTables;
     private String clustersPath = "";
     private final AbyssClusters myself;
+    private int clustersToGenerate = 0;
+    private SpinnerModel spinnerClustersModel;
+    private JSpinner spinnerClusters;
     
     private int mode = 0; // 0 - tryb 56 klastrowañ
     private MyRenderer tabRenderer = new MyRenderer(mode, 18);
@@ -57,6 +71,8 @@ public class AbyssClusters extends JFrame {
     public AbyssClusters() {
     	myself = this;
     	this.setTitle("Abyss Cluster Window");
+    	clustersToGenerate = 0;	
+    	initiateListeners();
 
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setLocation(25, 25);
@@ -108,58 +124,154 @@ public class AbyssClusters extends JFrame {
 		textPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		textPanel.setLayout(new BoxLayout(textPanel,BoxLayout.Y_AXIS));
 		
+		JLabel clLabel = new JLabel("Generate clusters:");
+		clLabel.setFont(new Font("Arial", Font.BOLD, 11));
+		clLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		textPanel.add(clLabel);	
+		
+		spinnerClustersModel = new SpinnerNumberModel(0, 0, 1, 1);
+		spinnerClusters = new JSpinner(spinnerClustersModel);
+		spinnerClusters.setPreferredSize(new Dimension(100, 30));
+		spinnerClusters.setMinimumSize(new Dimension(100, 30));
+		spinnerClusters.setMaximumSize(new Dimension(100, 30));
+		spinnerClusters.setEnabled(false);
+		spinnerClusters.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				clustersToGenerate = (int) spinner.getValue();
+			}
+		});
+		spinnerClusters.setAlignmentX(Component.CENTER_ALIGNMENT);
+		textPanel.add(spinnerClusters);	
+
+		// Przycisk rozpoczêcia procedury generowania klastrów na bazie inwariantów
 		JButton generateButton = createStandardButton("Generate data", null);
 		generateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().generateClusters();
+				if(clustersToGenerate > 1)
+					GUIManager.getDefaultGUIManager().generateClusters(clustersToGenerate);
 			}
 		});
 		generateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(generateButton);
         
+        textPanel.add(Box.createVerticalStrut(7));
         
+        // Przycisk wczytania katalogu z 56 klastrowaniami
         JButton case56Button = createStandardButton("Load directory", null);
         case56Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				JFileChooser fc = null;
 				String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-				String chosenPath = "";
-				if(lastPath == null)
-					fc = new JFileChooser();
-				else
-					fc = new JFileChooser(lastPath);
-				
-				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				fc.setAcceptAllFileFilterUsed(false);
-				fc.setApproveButtonText("Select cluster dir");
-				fc.setApproveButtonToolTipText("Directory with 56 generated text R-clusters files.");
-				int returnVal = fc.showDialog(fc, lastPath);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File x = fc.getSelectedFile();
-					chosenPath = x.getAbsolutePath();
-					setClusterPath(chosenPath);
-				} else { //default one
+				String choosenDir = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
+							"Directory with 56 generated text R-clusters files.");
+				if(choosenDir.equals(""))
 					return;
-				}
 				
+				//setClusterPath(choosenDir);
 				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
-				int result = clusterMatrix.readDataDirectory(clustersPath);
+				int result = clusterMatrix.readDataDirectory(choosenDir);
 				if(result == -1) {
 					JOptionPane.showMessageDialog(null, "Cluster reading failed. Possible wrong directory chosen.", "Error",JOptionPane.ERROR_MESSAGE);
 				} else {
 					handleStandardClusterTableCase56(clusterMatrix);
 				}
+				
+				//test/debug
+				/* 
+				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
+				int result = clusterMatrix.readDataDirectory("tmp//");
+				if(result == -1) {
+					JOptionPane.showMessageDialog(null, "Cluster reading failed. Possible wrong directory chosen.", "Error",JOptionPane.ERROR_MESSAGE);
+				} else {
+					handleStandardClusterTableCase56(clusterMatrix);
+				}
+				*/
 			}
+
+			
 		});
         case56Button.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(case56Button);
         
+        textPanel.add(Box.createVerticalStrut(7));
+        
+        // Przycisk exportu tabeli danych do excela
+        JButton excelExport = createStandardButton("Export to excel", null);
+        excelExport.addActionListener(new ActionListener() {
+ 			@Override
+ 			public void actionPerformed(ActionEvent actionEvent) {
+ 				try{
+ 					//okno dialogowe do wskazania katalogu:
+ 					String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+ 					GUIManager.getDefaultGUIManager().log("Attempting to export cluster table to excel",
+ 							"text", true);
+ 					
+ 					String dirPath = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
+ 							"Directory with 56 generated text R-clusters files.");
+ 					if(dirPath.equals("")) { // czy wskazano cokolwiek
+ 						return;
+ 					} else
+ 						setClusterPath(dirPath);
+ 					//jeœli powy¿sze siê uda, wtedy w 'clustersPath' bêdzie œcie¿ka do katalogu
+ 					
+ 					//sprawdziæ czy s¹ wszystkie pliki / odtworzyæ if necessary
+ 					ClusterReader cr = new ClusterReader();
+ 					if(cr.checkFiles(clustersPath) == -2) { //no cluster files
+ 						JOptionPane.showMessageDialog(null, "Directory does not contain a single cluster file.",
+ 								"Error",JOptionPane.ERROR_MESSAGE);
+ 						GUIManager.getDefaultGUIManager().log("Directory: "+clustersPath+ 
+ 								"does not contain even a single cluster file.", "error", true);
+ 					}
+ 					
+ 					RClusteringParserToXLS r = new abyss.files.clusters.RClusteringParserToXLS();
+ 					r.extractAllRClusteringToXLS(clustersPath, clustersPath+"//ClustersSummary.xls");
+ 					
+ 					File test = new File(clustersPath+"//ClustersSummary.xls");
+ 					if(test.exists()) {
+ 						FileFilter filter[] = new FileFilter[1];
+ 						filter[0] = new ExtensionFileFilter(".xls - Excel 2003",  new String[] { "XLS" });
+ 						String newLocation = Tools.selectFileDialog(dirPath, filter, "", "");
+ 						if(newLocation.equals("")) { //czy chcemy przenieœæ plik w inne miejsce
+ 							//leave it in cluster folder
+ 							GUIManager.getDefaultGUIManager().log("Exporting table succeed. Created file: "
+ 									+clustersPath+"//ClustersSummary.xls", "text", true);
+ 						} else {
+ 							if(!newLocation.contains(".xls"))
+ 								newLocation += ".xls";
+ 							Tools.copyFileByPath(clustersPath+"//ClustersSummary.xls", newLocation);
+ 							test.delete(); //kasujemy oryginalny
+ 							GUIManager.getDefaultGUIManager().log("Exporting table succeed. Created file: "
+ 									+newLocation, "text", true);
+ 						}
+ 						
+ 					} else {
+ 						String msg = "Unknown error, excel file does not exist.";
+ 						GUIManager.getDefaultGUIManager().log(msg, "error", true);
+ 					}
+ 				} catch (Exception e){
+ 					String msg = "Excel export procedure failed for directory: "+clustersPath;
+ 					GUIManager.getDefaultGUIManager().log(msg, "error", true);
+ 					GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", true);
+ 				}  
+ 				
+ 			}
+ 		});
+        excelExport.setAlignmentX(Component.CENTER_ALIGNMENT);
+        textPanel.add(excelExport);
+         
+        textPanel.add(Box.createVerticalStrut(7));
         
 		return textPanel;
 	}
-
+	
+	/**
+	 * Metoda pomocnicza do tworzenia przycisków do panelu bocznego.
+	 * @param text String - tekst przycisku
+	 * @param icon Icon - ikona
+	 * @return JButton - nowy przycisk
+	 */
 	private JButton createStandardButton(String text, Icon icon) {
 		JButton resultButton = new JButton(); 
         //resultButton.setLayout(new BoxLayout(resultButton,BoxLayout.Y_AXIS));
@@ -168,7 +280,6 @@ public class AbyssClusters extends JFrame {
         JLabel tmp;
         tmp = new JLabel(text);
         tmp.setFont(new Font("Arial", Font.PLAIN, 9));
-    	//tmp.setAlignmentX(Component.BOTTOM_ALIGNMENT);
     	resultButton.add(tmp, BorderLayout.PAGE_END);
         /*
         for(int i=0; i<text.length; i++) {
@@ -177,15 +288,14 @@ public class AbyssClusters extends JFrame {
         	tmp.setAlignmentX(Component.TOP_ALIGNMENT);
         	resultButton.add(tmp);
         }
-      */
+        */
 		   
         resultButton.setPreferredSize(new Dimension(100, 60));
         resultButton.setMinimumSize(new Dimension(100, 60));
         resultButton.setMaximumSize(new Dimension(100, 60));
         
         resultButton.setIcon(icon);
-        
-        
+
 		return resultButton;
 	}
     
@@ -262,7 +372,8 @@ public class AbyssClusters extends JFrame {
           	    			headerRowNumber /= (subRowsSize+1);
           	    			
           	    			Clustering omg = internalDataTables.getClustering((headerRowNumber*7)+algID, clusterNumber-2);
-          	    			new AbyssClusterSubWindow(myself, omg);
+          	    			//new AbyssClusterSubWindow(myself, omg, 0);
+          	    			new AbyssClusterSubWindow(myself, omg, 1);
           	    			
           	    			//AbyssClusterSubWindow w = new AbyssClusterSubWindow(myself, omg);
             	    	 } catch (Exception ex) {
@@ -492,5 +603,71 @@ public class AbyssClusters extends JFrame {
 			return Color.white;
 		}
 	}
-}
+    
+    private void initiateListeners() {
+    	addWindowListener(new WindowAdapter() {
+    		public void windowOpened(WindowEvent e) {
+  	    		//System.out.println("Window Opened Event");
+  	    	}
+  	    	
+  	    	public void windowClosing(WindowEvent e) {
+  	  	    	//System.out.println("Window Closing Event");
+  	  	    }
 
+  	  	    public void windowClosed(WindowEvent e) {
+  	  	    	//System.out.println("Window Close Event");
+  	  	    }
+
+  	  	    public void windowIconified(WindowEvent e) {
+  	  	    	//System.out.println("Window Iconified Event");
+  	  	    }
+
+  	  	    public void windowDeiconified(WindowEvent e) {
+	  	    	//System.out.println("Window Deiconified Event");
+  	  	    }
+
+  	  	    public void windowActivated(WindowEvent e) {
+  	  	    	try {
+  	  	    		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix() != null) {
+  	  	    			int invNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix().size();
+  	  	    			int currentValue = 20;
+  	  	    			if(invNumber < currentValue)
+  	  	    				currentValue = invNumber;
+  	  	    			
+  	  	    			int minNumber = 2;
+  	  	    			if(invNumber < minNumber)
+  	  	    				minNumber = 0;
+	  	    			
+  	  	    			int maxNumber = invNumber;
+  	  	    			clustersToGenerate = currentValue;
+  	  	    			spinnerClustersModel = new SpinnerNumberModel(currentValue, minNumber, maxNumber, 1);
+  	  	    			spinnerClusters.setModel(spinnerClustersModel);
+  	  	    			spinnerClusters.setEnabled(true);
+  	  	    		} else {
+  	  	    			spinnerClusters.setEnabled(false);
+  	  	    		}
+  	  	    	} catch (Exception ex) {
+  	  	    		spinnerClusters.setEnabled(false);
+  	  	    	}
+  	  	    	
+  	  	    	System.out.println("Window Activated Event");
+  	  	    }
+
+  	  	    public void windowDeactivated(WindowEvent e) {
+  	  	    	//System.out.println("Window Deactivated Event");
+  	  	    }
+
+  	  	    public void windowStateChanged(WindowEvent e) {
+  	  	    	//System.out.println("Window State Changed Event");
+  	  	    }
+
+  	  	    public void windowGainedFocus(WindowEvent e) {
+  	  	    	//System.out.println("Window Gained Focus Event");
+  	  	    }
+
+  	  	    public void windowLostFocus(WindowEvent e) {
+  	  	    	//System.out.println("Window Lost Focus Event");
+  	  	    }
+    	});
+    }
+}

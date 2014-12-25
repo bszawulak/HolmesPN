@@ -1,4 +1,4 @@
-package abyss.files.io;
+package abyss.files.clusters;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -64,7 +64,7 @@ public class ClusterReader {
 	 * wywo³ujê metodê pomocniczn¹ odtwarzaj¹c¹ brakuj¹ce pliki w formie szkieletowej wype³nionej zerami.
 	 * @param path String - œcie¿ka do katalogu
 	 */
-	private int checkFiles(String path) {
+	public int checkFiles(String path) {
 		int result = 0;
 		boolean firstFound = false;
 		String foundTemplateName = "";

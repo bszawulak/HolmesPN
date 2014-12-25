@@ -3,7 +3,7 @@ package abyss.clusters;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.files.io.ClusterReader;
+import abyss.files.clusters.ClusterReader;
 
 /**
  * Klasa zarz¹dzaj¹ca informacjami o klastrowaniach danej sieci.

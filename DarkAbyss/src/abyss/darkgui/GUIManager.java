@@ -259,6 +259,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		        if (JOptionPane.showConfirmDialog(frame, "Are you sure you want to close the program?", "Really Closing?", 
 		            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
 		        	{
+		        		log("Exiting program","text",true);
 		            	windowConsole.saveLogToFile(null);
 		            	System.exit(0);
 		        	}
@@ -333,9 +334,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 					logNoEnter("File ina.bat does not exist or is corrupted. ", "error",true);
 					log("Fixed", "italic", false);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Unable to recreate ina.bat. This is critical error, possible write"
-							+ "protection issues in program directory. All in all, invariants generation using INAwin32 will"
-							+ "most likely fail.","Error - writing", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Unable to recreate ina.bat. This is a critical error, possible write"
+							+ " protection issues in program directory. All in all, invariants generation using INAwin32 will"
+							+ " most likely fail.","Critical error - writing", JOptionPane.ERROR_MESSAGE);
 					log("Critical error, unable to recreate ina.bat file. Invariants generator will not work.", "error", true);
 				}
 			} 
@@ -370,6 +371,24 @@ public class GUIManager extends JPanel implements ComponentListener {
 					"Missing executable", JOptionPane.YES_NO_OPTION,
 					JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 			if (n == 0) {
+				
+				FileFilter[] filters = new FileFilter[1];
+				filters[0] = new ExtensionFileFilter(".exe - Rscript",  new String[] { "EXE" });
+				String selectedFile = Tools.selectFileDialog("", filters, "Select Rscript.exe", 
+						"Please select Rscript exe, usually located in R/Rx.x.x/bin directory.");
+				if(selectedFile.equals("")) {
+					log("Rscript executable file inaccessible. Some features will be disabled.", "error", true);
+				} else {
+					//File f = new File(choosenDir);
+					//if(!f.exists()) return;
+					
+					settingsManager.setValue("r_path", selectedFile);
+					settingsManager.saveSettings();
+					rReady = true;
+					log("Rscript.exe manually located in "+selectedFile+". Settings file updated.", "text", true);
+				
+				}
+				/*
 				JFileChooser fc = new JFileChooser();
 				FileFilter exeFile = new ExtensionFileFilter(".exe - Rscript",  new String[] { "EXE" });
 				fc.setFileFilter(exeFile);
@@ -387,6 +406,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 						log("Rscript executable file inaccessible. Some features will be disabled.", "error", true);
 					}
 				}
+				*/
 			}
 		}
 	}
@@ -405,8 +425,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 			smallScreenSize = getFrame().getSize();
 			//leftSplitDock.setDividerLocation((int) smallScreenSize.getWidth() / 8);
 			leftSplitDock.setDividerLocation(180);
-			totalSplitDock
-					.setDividerLocation((int) (smallScreenSize.getWidth() * 5.6 / 7));
+			totalSplitDock.setDividerLocation((int) (smallScreenSize.getWidth() * 5.6 / 7));
 		}
 	}
 
@@ -776,29 +795,20 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * w formacie programu INA.
 	 */
 	public void importProject() {
-		JFileChooser fc;
-		if(lastPath==null)
-			fc = new JFileChooser();
-		else
-			fc = new JFileChooser(lastPath);
+		FileFilter[] filters = new FileFilter[3];
+		filters[0] = new ExtensionFileFilter(".spped - Snoopy PN Files", new String[] { "SPPED" });
+		filters[1] = new ExtensionFileFilter(".sptpt - Snoopy TPN Files", new String[] { "SPTPT" });
+		filters[2] = new ExtensionFileFilter(".pnt - INA Files", new String[] { "PNT" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select PN", "Select petri net file");
+		if(selectedFile.equals(""))
+			return;
 		
-		FileFilter snoopyFilter = new ExtensionFileFilter(
-			".spped - Snoopy PN Files", new String[] { "SPPED" });
-		FileFilter snoopyFilterTime = new ExtensionFileFilter(
-				".sptpt - Snoopy TPN Files", new String[] { "SPTPT" });
-		FileFilter inaFilter = new ExtensionFileFilter(".pnt - INA Files",
-				new String[] { "PNT" });
-		fc.setFileFilter(snoopyFilter);
-		fc.addChoosableFileFilter(snoopyFilter);
-		fc.addChoosableFileFilter(snoopyFilterTime);
-		fc.addChoosableFileFilter(inaFilter);
-		fc.setAcceptAllFileFilterUsed(false);
-		int returnVal = fc.showOpenDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			workspace.getProject().loadFromFile(file.getPath());
-			setLastPath(file.getParentFile().getPath());
-		}
+		File file = new File(selectedFile);
+		if(!file.exists())
+			return;
+		
+		workspace.getProject().loadFromFile(file.getPath());
+		setLastPath(file.getParentFile().getPath());
 		getSimulatorBox().createSimulatorProperties();
 	}
 
@@ -806,23 +816,19 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda odpowiedzialna za otwieranie pliku z zapisan¹ sieci¹ w formacie .abyss.
 	 */
 	public void openProject() {
-		JFileChooser fc;
-		if(lastPath==null)
-			fc = new JFileChooser();
-		else
-			fc = new JFileChooser(lastPath);
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter(".abyss - Abyss Petri Net Files", new String[] { "ABYSS" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select Abyss PN", 
+				"Select petri net file in program native format");
+		if(selectedFile.equals(""))
+			return;
 		
-		FileFilter fileFilter = new ExtensionFileFilter(
-				".abyss - Abyss Petri Net Files", new String[] { "ABYSS" });
-		fc.setFileFilter(fileFilter);
-		fc.addChoosableFileFilter(fileFilter);
-		fc.setAcceptAllFileFilterUsed(false);
-		int returnVal = fc.showOpenDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			workspace.getProject().loadFromFile(file.getPath());
-			lastPath = file.getParentFile().getPath();
-		}
+		File file = new File(selectedFile);
+		if(!file.exists()) 
+			return;
+		
+		workspace.getProject().loadFromFile(file.getPath());
+		lastPath = file.getParentFile().getPath();
 		getSimulatorBox().createSimulatorProperties();
 	}
 
@@ -887,38 +893,31 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda odpowiedzialna za eksport sieci do pliku w formacie programu INA.
 	 */
-	public void exportProject() {
-		JFileChooser fc;
-		if(lastPath==null)
-			fc = new JFileChooser();
-		else
-			fc = new JFileChooser(lastPath);	
-
-		// FileFilter snoopyFilter = new ExtensionFileFilter(
-		// ".spped - Snoopy Files", new String[] { "SPPED" });
-		FileFilter inaFilter = new ExtensionFileFilter(".pnt - INA Files",
-				new String[] { "PNT" });
+	public void exportAsPNT() {
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter(".pnt - INA Files", new String[] { "PNT" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", 
+				"Accept directory and filename");
+		if(selectedFile.equals(""))
+			return;
+		
+		File file = new File(selectedFile);
 		String fileExtension = ".pnt";
-		fc.setFileFilter(inaFilter);
-		// fc.addChoosableFileFilter(snoopyFilter);
-		fc.addChoosableFileFilter(inaFilter);
-		fc.setAcceptAllFileFilterUsed(false);
-		int returnVal = fc.showSaveDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			
-			if(file.getPath().contains(".pnt"))
-				fileExtension = "";
-					
-			workspace.getProject().saveToFile(file.getPath() + fileExtension);
-			setLastPath(file.getParentFile().getPath());
-		}
+		if(selectedFile.contains(".pnt"))
+			fileExtension = "";
+		
+		workspace.getProject().saveToFile(file.getPath() + fileExtension);
+		setLastPath(file.getParentFile().getPath());
+
 	}
 	
 	/**
 	 * Metoda odpowiedzialna za zapis wygenerowanych inwariantów do pliku programu INA.
 	 */
 	public void exportGeneratedInvariants() {
+		//Nie da siê ³atwo u¿yæ Tools.selectFileDialog, gdy¿ metoda musi mieæ
+		//dostêp do filtrów i wybranego typu! Zostawiæ jak jest.
+		
 		JFileChooser fc;
 		if(lastPath==null)
 			fc = new JFileChooser();
@@ -967,6 +966,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda odpowiedzialna za eksport projektu do pliku graficznego w okreœlonym formacie.
 	 */
 	public void exportProjectToImage() {
+		//Nie da siê ³atwo u¿yæ Tools.selectFileDialog, gdy¿ metoda musi mieæ
+		//dostêp do filtrów i wybranego typu! Zostawiæ jak jest.
+		
 		JFileChooser fc;
 		if(lastPath==null)
 			fc = new JFileChooser();
@@ -1025,54 +1027,43 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda odpowiedzialna za zapis projektu sieci do pliku natywnego aplikacji.
 	 */
-	public void saveProject() {
-		JFileChooser fc;
-		if(lastPath==null)
-			fc = new JFileChooser();
-		else
-			fc = new JFileChooser(lastPath);
+	public void saveAsAbyssFile() {
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter(".abyss - Abyss Petri Net files", new String[] { "ABYSS" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", 
+				"Accept directory and filename");
+		if(selectedFile.equals(""))
+			return;
 		
-		// FileFilter snoopyFilter = new ExtensionFileFilter(
-		// ".spped - Snoopy Files", new String[] { "SPPED" });
-		FileFilter fileFilter = new ExtensionFileFilter(
-				".abyss - Abyss Petri Net files", new String[] { "ABYSS" });
+		File file = new File(selectedFile);
 		String fileExtension = ".abyss";
-		fc.setFileFilter(fileFilter);
-		// fc.addChoosableFileFilter(snoopyFilter);
-		fc.addChoosableFileFilter(fileFilter);
-		fc.setAcceptAllFileFilterUsed(false);
-		int returnVal = fc.showSaveDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			workspace.getProject().saveToFile(file.getPath() + fileExtension);
-			setLastPath(file.getParentFile().getPath());
-		}
+		if(selectedFile.contains(".abyss"))
+			fileExtension = "";
+		
+		String tmp = file.getPath();
+		workspace.getProject().saveToFile(file.getPath() + fileExtension);
+		setLastPath(file.getParentFile().getPath());
 	}
 	
 	/**
 	 * Metoda odpowiedzialna za wczytywanie inwariantów z pliku wygenerowanego programem INA.
 	 */
 	public void loadExternalAnalysis() {
-		JFileChooser fc;
-		if(lastPath==null)
-			fc = new JFileChooser();
-		else
-			fc = new JFileChooser(lastPath);	
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter(".inv - INA Invariants Files", new String[] { "INV" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", 
+				"Select invariant file");
+		if(selectedFile.equals(""))
+			return;
+		
+		File file = new File(selectedFile);
+		if(!file.exists())
+			return;
 
-		FileFilter inaFilter = new ExtensionFileFilter(".inv - INA Invariants Files", new String[] { "INV" });
-		fc.setFileFilter(inaFilter);
-		fc.addChoosableFileFilter(inaFilter);
-		fc.setAcceptAllFileFilterUsed(false);
-		int returnVal = fc.showOpenDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			PetriNet project = workspace.getProject();
-			project.loadInvariantsFromFile(file.getPath());
-			getAnalyzerBox().showExternalInvariants(project.getInaInvariants());
-			//project.genInvariants = project.getCommunicator().getInvariantsList();
-			
-			lastPath = file.getParentFile().getPath();
-		}
+		PetriNet project = workspace.getProject();
+		project.loadInvariantsFromFile(file.getPath());
+		getAnalyzerBox().showExternalInvariants(project.getInaInvariants());
+		lastPath = file.getParentFile().getPath();
 		getSimulatorBox().createSimulatorProperties();
 	}
 	
@@ -1116,8 +1107,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 		this.getWorkspace().getProject().startInvSim(type, value);
 	}
 	
-	//********************************************************************
-	
+	//*******************************************************************************************
+	//*******************************************************************************************
+	//*******************************************************************************************
 
 	
 	/**
@@ -1216,26 +1208,18 @@ public class GUIManager extends JPanel implements ComponentListener {
 							"Save the invariants?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (n == 0) { //save the file
-				JFileChooser fc;
-				if(lastPath==null)
-					fc = new JFileChooser();
-				else
-					fc = new JFileChooser(lastPath);
+				FileFilter[] filters = new FileFilter[1];
+				filters[0] = new ExtensionFileFilter(".inv - INA Invariants Files",  new String[] { "INV" });
+				String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", 
+						"Select invariants target path");
 				
-				FileFilter inaFilter = new ExtensionFileFilter(".inv - INA Invariants Files", 
-						new String[] { "INV" });
-				fc.setFileFilter(inaFilter);
-				fc.addChoosableFileFilter(inaFilter);
-				fc.setAcceptAllFileFilterUsed(false);
-				int returnVal = fc.showSaveDialog(null);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
+				if(!selectedFile.equals("")) { //jeœli wskazano plik
+					File file = new File(selectedFile);
 					String ext = "";
 					if(!file.getPath().contains(".inv"))
 						ext = ".inv";
-					File properName = new File(file.getPath()+ext);
+					File properName = new File(file.getPath() + ext);
 					Tools.copyFileDirectly(invariantsFile, properName);
-					//workspace.getProject().writeInvariantsToInaFormat(file.getPath() + fileExtension);
 					setLastPath(file.getParentFile().getPath());
 				}
 			}
@@ -1262,38 +1246,42 @@ public class GUIManager extends JPanel implements ComponentListener {
 			log(msg, "error", true);
 			return;
 		}
-		log("Starting MCT generator.","text",true);
-		Runner mctRunner = new Runner();
-		String[] args = new String[1];
-		args[0] = filePath;
+		
 		try {
-			mctRunner.activate(args);
+			log("Starting MCT generator.","text",true);
+			Runner mctRunner = new Runner();
+			String[] args = new String[1];
+			args[0] = filePath;
+			mctRunner.activate(args); //throwable
 			
-			JFileChooser fc;
-			if(lastPath==null)
-				fc = new JFileChooser();
-			else
-				fc = new JFileChooser(lastPath);
+			FileFilter[] filters = new FileFilter[1];
+			filters[0] = new ExtensionFileFilter(".mct - MCT sets",  new String[] { "MCT" });
+			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select MCT target path");
 			
-			FileFilter mctFilter = new ExtensionFileFilter(".mct - MCT sets",  new String[] { "MCT" });
-			fc.setFileFilter(mctFilter);
-			fc.addChoosableFileFilter(mctFilter);
-			fc.setAcceptAllFileFilterUsed(false);
-			int returnVal = fc.showSaveDialog(null);
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
+			if(selectedFile.equals("")) { //jeœli nie wybrano lokalizacji, zostaje w tmp
+				File csvFile = new File(filePath);
+				csvFile.delete();
+				
+				JOptionPane.showMessageDialog(null,"MCT file created","Operation successful.",JOptionPane.INFORMATION_MESSAGE);
+				log("MCT file saved. Path: "+tmpPath + "input.csv.analysed.txt", "text", true);
+			} else {
+				File file = new File(selectedFile);
+				
 				String ext = "";
-				if(!fc.getSelectedFile().getPath().contains(".mct"))
+				if(!file.getPath().contains(".mct"))
 					ext = ".mct";
-				File properName = new File(fc.getSelectedFile().getPath()+ext);
-				File generatedMCT = new File(tmpPath+"input.csv.analysed.txt");
+				File properName = new File(file.getPath() + ext);
+				File generatedMCT = new File(tmpPath + "input.csv.analysed.txt");
 				Tools.copyFileDirectly(generatedMCT, properName);
 				
 				generatedMCT.delete();
 				File csvFile = new File(filePath);
 				csvFile.delete();
-				setLastPath(fc.getSelectedFile().getParentFile().getPath());
+				setLastPath(file.getParentFile().getPath());
+				
+				JOptionPane.showMessageDialog(null,"MCT file created","Operation successful.",JOptionPane.INFORMATION_MESSAGE);
+				log("MCT file saved. Path: "+filePath, "text", true);
 			}
-			JOptionPane.showMessageDialog(null,"MCT file created","Operation successful.",JOptionPane.INFORMATION_MESSAGE);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "File operation failed when creating MCT sets.", 
 					"MCT generator error",JOptionPane.ERROR_MESSAGE);
@@ -1345,6 +1333,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void log(String text, String mode, boolean time) {
 		windowConsole.addText(text, mode, time, true);
+		if(mode.equals("error"))
+			windowConsole.setVisible(true);
 	}
 	/**
 	 * Jak wy¿ej, tylko bez entera.
@@ -1356,7 +1346,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda odpowiedzialna za generowanie klastrowañ na podstawie sieci.
 	 */
-	public void generateClusters() {
+	public void generateClusters(int howMany) {
 		showConsole(true);
 		if(!rReady) { //sprawdŸ, czy Rscript.exe jest na miejscu
 			r_env_missing(); // zapytanie gdzie siê podziewa Rscript.exe
@@ -1377,7 +1367,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		try{
 			//TODO: a mo¿e w osobnym oknie? wybór klastrów, metod, itd.
-			int c_number = 20;
+			int invNumber = getWorkspace().getProject().getInvariantsMatrix().size();
+			if(invNumber < howMany)
+				howMany = invNumber;
+			
+			int c_number = howMany;
 			String dir_path = "";
 			
 			Object[] options = {"Select cluster directory", "Use temporary directory",};
@@ -1387,23 +1381,16 @@ public class GUIManager extends JPanel implements ComponentListener {
 					"Directory selection", JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
-				JFileChooser fc;// = new JFileChooser();
-				if(lastPath == null)
-					fc = new JFileChooser();
-				else
-					fc = new JFileChooser(lastPath);
-				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				fc.setAcceptAllFileFilterUsed(false);
-				int returnVal = fc.showSaveDialog(null);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File dir = fc.getSelectedFile();
+				String choosenDir = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
+						"Target directory for cluster results");
+				if(choosenDir.equals("")) {
+					dir_path = tmpPath;
+					log("Cluster files will be put into the "+dir_path, "text", true);
+				} else {
+					File dir = new File(choosenDir);
 					dir_path = dir.getPath() + "//";
 					
 					Tools.copyFileByPath(tmpPath + "cluster.csv", dir_path+"cluster.csv");
-					log("Cluster files will be put into the "+dir_path, "text", true);
-					
-				} else { //default one
-					dir_path = tmpPath;
 					log("Cluster files will be put into the "+dir_path, "text", true);
 				}
 			} else { //default one
@@ -1413,18 +1400,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 			
 			dir_path = dir_path.replace("\\", "/");
 			
-			log("Cluster files will be put into the ", "text", true);
-			log("Cluster files will be put into the ", "text", true);
-			log("Cluster files will be put into the ", "text", true);
-			log("Cluster files will be put into the ", "text", true);
-			log("Cluster files will be put into the ", "text", true);
-			
-			
 			Runnable runnable = new Rprotocols();
 			((Rprotocols)runnable).setForAllClusters(settingsManager.getValue("r_path"), dir_path, "cluster.csv", 
 					"scripts\\f_clusters.r", "scripts\\f_clusters_run.r", 
 					"scripts\\f_clusters_Pearson.r", "scripts\\f_clusters_Pearson_run.r", c_number);
-			((Rprotocols)runnable).setType(0);
+			((Rprotocols)runnable).setWorkingMode(0);
             Thread thread = new Thread(runnable);
             thread.start();
             

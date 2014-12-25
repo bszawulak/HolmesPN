@@ -587,17 +587,17 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda pozwala na zapis ca³ej sieci z projektu do pliku. Format
 	 * pliku zostaje okreœlony na podstawie rozszerzenia podanego w œcie¿ce
 	 * do pliku przekazanej w parametrze metody
-	 * @param sciezka String - œcie¿ka do pliku zapisu
+	 * @param filePath String - œcie¿ka do pliku zapisu
 	 */
-	public void saveToFile(String sciezka) {
-		if (sciezka.endsWith(".pnt")) {
-			sciezka = sciezka.substring(0, sciezka.length() - 4);
-			communicationProtocol.writePNT(sciezka, getPlaces(), getTransitions(), getArcs());
+	public void saveToFile(String filePath) {
+		if (filePath.endsWith(".pnt")) {
+			filePath = filePath.substring(0, filePath.length() - 4);
+			communicationProtocol.writePNT(filePath, getPlaces(), getTransitions(), getArcs());
 		}
-		if (sciezka.endsWith(".abyss")) {
-			sciezka = sciezka.substring(0, sciezka.length() - 6);
+		if (filePath.endsWith(".abyss")) {
+			filePath = filePath.substring(0, filePath.length() - 6);
 			ABYSSwriter = new AbyssWriter();
-			ABYSSwriter.write(sciezka);
+			ABYSSwriter.write(filePath);
 		}
 		//if (sciezka.endsWith(".png")) { } //wykonywane w GUIManager.exportProjectToImage
 	}
