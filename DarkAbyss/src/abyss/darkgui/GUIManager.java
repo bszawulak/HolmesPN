@@ -62,7 +62,7 @@ import com.javadocking.visualizer.SingleMaximizer;
 
 /**
  * G³ówna klasa programu odpowiedzialna za w³aœciwie wszystko. Zaczyna od utworzenia elementów
- * graficznych programu, a dalej jakoœ tak siê samo ju¿ toczy wszystko...
+ * graficznych programu, a dalej jakoœ tak siê samo ju¿ toczy wszystko.
  * @author students
  *
  */
@@ -1040,7 +1040,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if(selectedFile.contains(".abyss"))
 			fileExtension = "";
 		
-		String tmp = file.getPath();
+		//String tmp = file.getPath();
 		workspace.getProject().saveToFile(file.getPath() + fileExtension);
 		setLastPath(file.getParentFile().getPath());
 	}
