@@ -735,7 +735,7 @@ public class IOprotocols {
 			zawartoscPliku += "@";
 			zapis.println(zawartoscPliku);
 			zapis.close();
-			GUIManager.getDefaultGUIManager().log("Petri net in INA .pnt format save to "+path, "text", true);
+			GUIManager.getDefaultGUIManager().log("Petri net exported as .pnt INA format. File: "+path, "text", true);
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writePNT",JOptionPane.ERROR_MESSAGE);

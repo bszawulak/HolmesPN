@@ -16,6 +16,7 @@ import javax.swing.KeyStroke;
 import abyss.darkgui.dockable.DockableMenuItem;
 import abyss.math.Arc;
 import abyss.math.Node;
+import abyss.windows.AbyssAbout;
 import abyss.workspace.Workspace;
 import abyss.workspace.WorkspaceSheet;
 
@@ -52,8 +53,8 @@ public class DarkMenu extends JMenuBar {
 		
 		JMenu xMenu = new JMenu(" ");
 		xMenu.setEnabled(false);
-		//fileMenu.getAccessibleContext().setAccessibleDescription("The File Menu");
 		this.add(xMenu);
+		
 		// Build the File menu.
 		fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
@@ -167,7 +168,8 @@ public class DarkMenu extends JMenuBar {
 		saveMenuItem.getAccessibleContext().setAccessibleDescription("Save project");
 		saveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				guiManager.saveProject();
+				guiManager.saveAsAbyssFile();  //test
+				int x;
 			}
 		});
 		fileMenu.add(saveMenuItem);
@@ -184,7 +186,7 @@ public class DarkMenu extends JMenuBar {
 		exportMenuItem.getAccessibleContext().setAccessibleDescription("Export project");
 		exportMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				guiManager.exportProject();
+				guiManager.exportAsPNT();
 			}
 		});
 		fileMenu.add(exportMenuItem);
@@ -362,6 +364,21 @@ public class DarkMenu extends JMenuBar {
 		});
 		mctMenu.add(mctItem);
 		
+		JMenu aboutMenu = new JMenu("Help");
+		aboutMenu.setMnemonic(KeyEvent.VK_H);
+		aboutMenu.getAccessibleContext().setAccessibleDescription("Help");
+		this.add(aboutMenu);
+		
+		JMenuItem aboutItem = new JMenuItem("About...");
+		aboutItem.setIcon(new ImageIcon("resources/icons/menu/menu_InvGen.png"));
+		aboutItem.getAccessibleContext().setAccessibleDescription("About the program");
+		aboutItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//GUIManager.getDefaultGUIManager().tInvariantsAnalyse();
+				new AbyssAbout(GUIManager.getDefaultGUIManager().getFrame());
+			}
+		});
+		aboutMenu.add(aboutItem);
 	}
 
 	/**
