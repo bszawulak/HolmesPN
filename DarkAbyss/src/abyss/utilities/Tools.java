@@ -42,6 +42,7 @@ public final class Tools {
    	    File file2 =new File(target);
  
    	    inStream = new FileInputStream(file1);
+   	    
    	    outStream = new FileOutputStream(file2);
  
    	    byte[] buffer = new byte[1024];

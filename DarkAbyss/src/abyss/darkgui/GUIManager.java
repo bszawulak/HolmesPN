@@ -8,7 +8,7 @@ import abyss.darkgui.properties.Properties;
 import abyss.darkgui.properties.PetriNetTools;
 import abyss.darkgui.properties.Properties.PropertiesType;
 import abyss.darkgui.toolbar.Toolbar;
-import abyss.files.io.Rprotocols;
+import abyss.files.clusters.Rprotocols;
 import abyss.math.PetriNet;
 import abyss.settings.SettingsManager;
 import abyss.utilities.Tools;

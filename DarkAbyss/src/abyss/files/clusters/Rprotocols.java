@@ -1,4 +1,4 @@
-package abyss.files.io;
+package abyss.files.clusters;
 
 import java.io.BufferedReader;
 import java.io.File;
