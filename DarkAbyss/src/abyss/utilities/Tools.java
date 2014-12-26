@@ -25,7 +25,7 @@ public final class Tools {
 	 * Prywatny konstruktor. To powinno za³atwiæ problem obiektów.
 	 */
 	private Tools() {
-		int x;
+
 	}
 	
 	/**
@@ -37,21 +37,17 @@ public final class Tools {
 	public static void copyFileByPath(String source, String target) throws IOException{
     	InputStream inStream = null;
     	OutputStream outStream = null;
- 
    	    File file1 =new File(source);
    	    File file2 =new File(target);
- 
    	    inStream = new FileInputStream(file1);
-   	    
    	    outStream = new FileOutputStream(file2);
  
    	    byte[] buffer = new byte[1024];
- 
    	    int length;
    	    while ((length = inStream.read(buffer)) > 0){
    	    	outStream.write(buffer, 0, length);
    	    }
- 
+   	    
    	    if (inStream != null)inStream.close();
    	    if (outStream != null)outStream.close();
     }
@@ -64,17 +60,16 @@ public final class Tools {
 	public static void copyFileDirectly(File source, File target) {
     	InputStream inStream = null;
     	OutputStream outStream = null;
- 
    	    try {
 			inStream = new FileInputStream(source);
 			outStream = new FileOutputStream(target);
 			byte[] buffer = new byte[1024];
-			 
+			
 	   	    int length;
 	   	    while ((length = inStream.read(buffer)) > 0){
 	   	    	outStream.write(buffer, 0, length);
 	   	    }
-	 
+	   	    
 	   	    if (inStream != null)
 	   	    	inStream.close();
 	   	    if (outStream != null)

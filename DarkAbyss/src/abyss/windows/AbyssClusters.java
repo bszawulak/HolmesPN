@@ -149,8 +149,12 @@ public class AbyssClusters extends JFrame {
 		generateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(clustersToGenerate > 1)
-					GUIManager.getDefaultGUIManager().generateClusters(clustersToGenerate);
+				if(clustersToGenerate > 1) {
+					clustersPath = GUIManager.getDefaultGUIManager().generateClustersCase56(clustersToGenerate);
+					
+					if(clustersPath == null) //jeœli coœ siê sta³o siê... :)
+						clustersPath = "";
+				}
 			}
 		});
 		generateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -169,7 +173,7 @@ public class AbyssClusters extends JFrame {
 				if(choosenDir.equals(""))
 					return;
 				
-				//setClusterPath(choosenDir);
+				setClusterPath(choosenDir);
 				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
 				int result = clusterMatrix.readDataDirectory(choosenDir);
 				if(result == -1) {
@@ -207,7 +211,7 @@ public class AbyssClusters extends JFrame {
  							"text", true);
  					
  					String dirPath = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
- 							"Directory with 56 generated text R-clusters files.");
+ 							"Directory with 56 generated R-clusters text files.");
  					if(dirPath.equals("")) { // czy wskazano cokolwiek
  						return;
  					} else
@@ -312,6 +316,14 @@ public class AbyssClusters extends JFrame {
      */
     public void setClusterPath(String path) {
     	clustersPath = path;
+    }
+    
+    /**
+     * Metoda zwraca œcie¿kê dostêpu do katalogu klastrów.
+     * @return String - œcie¿ka do katalogu
+     */
+    public String getClusterPath() {
+    	return clustersPath;
     }
     
     /**
@@ -448,7 +460,7 @@ public class AbyssClusters extends JFrame {
     	model.setNumRows(0);
     	table.revalidate();
     	
-    	String[] metricName = { "Binary", "Correlation", "Pearson", "Canberra", "Euclidean", "Manhattan", "Maximum", "Minkowski" };
+    	String[] metricName = { "Correlation", "Pearson", "Binary", "Canberra", "Euclidean", "Manhattan", "Maximum", "Minkowski" };
     	
     	for(int metric=0; metric <8; metric++) { //dla ka¿dej z oœmiu metryk:
     		String[] data = { metricName[metric],"0:","MSS","0:","MSS","0:","MSS","0:","MSS","0:","MSS","0:","MSS","0:","MSS"};

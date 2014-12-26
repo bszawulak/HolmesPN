@@ -37,12 +37,12 @@ public class Rprotocols implements Runnable {
 	public void run() {
 		try {
 			if(processingMode==0) {
-				rClusteringAll2();
+				generate56Clusterings();
 				scriptName = scriptNamePearson;
 				commands = commandsPearson;
-				rClusteringAll2();
+				generate56Clusterings();
 			} else {
-				rClusteringSingle2();
+				//rClusteringSingle2();
 			}
 		} catch (Exception e) {
 			
@@ -59,7 +59,7 @@ public class Rprotocols implements Runnable {
 		this.nrClusters = nrClusters;
 	}
 	
-	public void setForAllClusters(String pathToR, String pathOutput, String fileNameCSV, String scriptName, String commands, String pearsonScript, String pearsonCommand, int nrClusters) {
+	public void setForRunnableAllClusters(String pathToR, String pathOutput, String fileNameCSV, String scriptName, String commands, String pearsonScript, String pearsonCommand, int nrClusters) {
 		this.pathToR = pathToR;
 		this.pathOutput = pathOutput;
 		this.fileNameCSV = fileNameCSV;
@@ -82,7 +82,14 @@ public class Rprotocols implements Runnable {
 		processingMode = mode;
 	}
 	
-	public void rClusteringSingleOriginal (String pathToR, String pathOutput, String fileNameCSV, String scriptName, String miara_odl, String algorytm_c, int nrClusters) throws IOException{
+	
+	/**
+	 * Metoda odpowiedzialna za klastrowanie precyzyjne dla algorytmu i metryki. Tworzy
+	 * plik z numerami inwariantów dla ka¿dego klastra.
+	 * @throws IOException - wyj¹tek operacji na plikach
+	 */
+	/*
+	public void rClusteringSingle2() throws IOException{
 		File file = new File(scriptName);
 		FileInputStream fis = new FileInputStream(file);
 		byte[] data = new byte[(int) file.length()];
@@ -103,7 +110,69 @@ public class Rprotocols implements Runnable {
 		rcaller.setRCode(code);
 		rcaller.runOnly();
 	}
+	*/
 	
+	public void generate56Clusterings() throws IOException{		
+		File file = new File(scriptName);
+		FileInputStream fis = new FileInputStream(file);
+		byte[] data = new byte[(int) file.length()];
+		fis.read(data);
+		fis.close();
+
+		String str = new String(data, "UTF-8");
+		
+		BufferedReader br = new BufferedReader(new FileReader(commands));
+		String line;
+		
+		//int counter = 0;
+		while ((line = br.readLine()) != null) {
+			//counter++;
+			RCaller rcaller = new RCaller();
+			RCode code = new RCode();
+			rcaller.setRscriptExecutable(pathToR);
+			rcaller.cleanRCode();
+			code.addRCode(str);
+			
+			GUIManager.getDefaultGUIManager().log("Processing: "+line, "text", true);
+			//tu wstawiæ logi w zale¿noœci od 'line'
+			String function = new String("veni1("+line+", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
+			code.addRCode(function);
+			String replaced = line.replace("\"", "");
+			String[] parts = replaced.split(",");
+			String filename = new String(pathOutput+parts[1]+"_"+parts[0]+	"_clusters.txt");
+			rcaller.redirectROutputToFile(filename, false);
+			rcaller.setRCode(code);
+			rcaller.runOnly();
+		}
+		br.close();
+	}
+	
+	public String generateSingleClustering(String pathToR, String pathOutput, String fileNameCSV, 
+			String scriptName, String miara_odl, String algorytm_c, int nrClusters) throws IOException{
+		File file = new File(scriptName);
+		FileInputStream fis = new FileInputStream(file);
+		byte[] data = new byte[(int) file.length()];
+		fis.read(data);
+		fis.close();
+		
+		String str = new String(data, "UTF-8");
+		
+		RCaller rcaller = new RCaller();
+		RCode code = new RCode();
+		rcaller.setRscriptExecutable(pathToR);
+		rcaller.cleanRCode();
+		code.addRCode(str);
+		String function = new String("veni1(\""+miara_odl+"\",\""+algorytm_c+"\", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
+		code.addRCode(function);
+		String filename = new String(pathOutput+algorytm_c+"_"+miara_odl+"_clusters_ext_"+nrClusters+".txt");
+		rcaller.redirectROutputToFile(filename, false);
+		rcaller.setRCode(code);
+		rcaller.runOnly();
+		
+		return filename;
+	}
+	
+	/*
 	public void rClusteringAllOriginal(String pathToR, String pathOutput, String fileNameCSV, String scriptName, String commands, int nrClusters) throws IOException{		
 		File file = new File(scriptName);
 		FileInputStream fis = new FileInputStream(file);
@@ -138,66 +207,6 @@ public class Rprotocols implements Runnable {
 		}
 		br.close();
 	}
+	*/
 	
-	/**
-	 * Metoda odpowiedzialna za klastrowanie precyzyjne dla algorytmu i metryki. Tworzy
-	 * plik z numerami inwariantów dla ka¿dego klastra.
-	 * @throws IOException - wyj¹tek operacji na plikach
-	 */
-	public void rClusteringSingle2() throws IOException{
-		File file = new File(scriptName);
-		FileInputStream fis = new FileInputStream(file);
-		byte[] data = new byte[(int) file.length()];
-		fis.read(data);
-		fis.close();
-		
-		String str = new String(data, "UTF-8");
-		
-		RCaller rcaller = new RCaller();
-		RCode code = new RCode();
-		rcaller.setRscriptExecutable(pathToR);
-		rcaller.cleanRCode();
-		code.addRCode(str);
-		String function = new String("veni1(\""+miara_odl+"\",\""+algorytm_c+"\", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
-		code.addRCode(function);
-		String filename = new String(pathOutput+algorytm_c+"_"+miara_odl+"_clusters_ext_"+nrClusters+".txt");
-		rcaller.redirectROutputToFile(filename, false);
-		rcaller.setRCode(code);
-		rcaller.runOnly();
-	}
-	
-	public void rClusteringAll2() throws IOException{		
-		File file = new File(scriptName);
-		FileInputStream fis = new FileInputStream(file);
-		byte[] data = new byte[(int) file.length()];
-		fis.read(data);
-		fis.close();
-
-		String str = new String(data, "UTF-8");
-		
-		BufferedReader br = new BufferedReader(new FileReader(commands));
-		String line;
-		
-		//int counter = 0;
-		while ((line = br.readLine()) != null) {
-			//counter++;
-			RCaller rcaller = new RCaller();
-			RCode code = new RCode();
-			rcaller.setRscriptExecutable(pathToR);
-			rcaller.cleanRCode();
-			code.addRCode(str);
-			
-			GUIManager.getDefaultGUIManager().log("Processing: "+line, "text", true);
-			//tu wstawiæ logi w zale¿noœci od 'line'
-			String function = new String("veni1("+line+", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
-			code.addRCode(function);
-			String replaced = line.replace("\"", "");
-			String[] parts = replaced.split(",");
-			String filename = new String(pathOutput+parts[1]+"_"+parts[0]+	"_clusters.txt");
-			rcaller.redirectROutputToFile(filename, false);
-			rcaller.setRCode(code);
-			rcaller.runOnly();
-		}
-		br.close();
-	}
 }

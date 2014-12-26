@@ -1241,7 +1241,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		String filePath = tmpPath + "input.csv";
 		int result = workspace.getProject().saveInvariantsToCSV(filePath, true);
 		if(result == -1) {
-			String msg = "Saving CSV file failed.";
+			String msg = "Exporting net into CSV file failed.";
 			JOptionPane.showMessageDialog(null,msg,	"Write error",JOptionPane.ERROR_MESSAGE);
 			log(msg, "error", true);
 			return;
@@ -1346,12 +1346,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda odpowiedzialna za generowanie klastrowañ na podstawie sieci.
 	 */
-	public void generateClusters(int howMany) {
+	public String generateClustersCase56(int howMany) {
 		showConsole(true);
 		if(!rReady) { //sprawdŸ, czy Rscript.exe jest na miejscu
 			r_env_missing(); // zapytanie gdzie siê podziewa Rscript.exe
 			if(!rReady) { //jeœli wci¹¿...
-				return;
+				return null;
 			}
 		}
 		
@@ -1359,20 +1359,21 @@ public class GUIManager extends JPanel implements ComponentListener {
 		String filePath = tmpPath + "cluster.csv";
 		int result = workspace.getProject().saveInvariantsToCSV(filePath, true);
 		if(result == -1) {
-			String msg = "Saving CSV file failed. Cluster procedure cannot begin without invariants.";
+			String msg = "Exporting net into CSV file failed. \nCluster procedure cannot begin without invariants.";
 			JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);
 			log(msg, "error", true);
-			return;
+			return null;
 		}
 		
+		String dir_path = "";
+		int c_number = howMany;
+		
 		try{
-			//TODO: a mo¿e w osobnym oknie? wybór klastrów, metod, itd.
 			int invNumber = getWorkspace().getProject().getInvariantsMatrix().size();
 			if(invNumber < howMany)
 				howMany = invNumber;
 			
-			int c_number = howMany;
-			String dir_path = "";
+			
 			
 			Object[] options = {"Select cluster directory", "Use temporary directory",};
 			int n = JOptionPane.showOptionDialog(null,
@@ -1401,34 +1402,115 @@ public class GUIManager extends JPanel implements ComponentListener {
 			dir_path = dir_path.replace("\\", "/");
 			
 			Runnable runnable = new Rprotocols();
-			((Rprotocols)runnable).setForAllClusters(settingsManager.getValue("r_path"), dir_path, "cluster.csv", 
+			((Rprotocols)runnable).setForRunnableAllClusters(settingsManager.getValue("r_path"), dir_path, "cluster.csv", 
 					"scripts\\f_clusters.r", "scripts\\f_clusters_run.r", 
 					"scripts\\f_clusters_Pearson.r", "scripts\\f_clusters_Pearson_run.r", c_number);
 			((Rprotocols)runnable).setWorkingMode(0);
             Thread thread = new Thread(runnable);
             thread.start();
             
-			//Rprotocols rp = new Rprotocols();
-			//rp.setR1(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
-			//rp.setType(1);
-			
-			//rp.RClusteringAll(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
-			//rp.RClusteringAll(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusers_Pearson.r", "scripts\\f_clusers_Pearson_run.r", c_number);
-			
-			//rp.RClusteringAll(settingsManager.getValue("r_path"), "tmp/", "cluster.csv", 
-			//		"scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
-			//rp.RClusteringAll(settingsManager.getValue("r_path"), "tmp/", "cluster.csv", 
-			//		"scripts\\f_clusers_Pearson.r", "scripts\\f_clusers_Pearson_run.r", c_number);
-			
-			
-			//Konkretne klastrowanie, wersja FUNKCJA 1: Biblioteki: cluster; generuje listy inwariantow
-			//runner.RClusteringSingle("c:\\Program Files\\R\\R-3.1.2\\bin\\Rscript.exe", "tmp/", "cluster.csv", "tools\\Function2.r", "binary", "average", 20);
-			//Konkretne klastrowanie, wersja FUNKCJA 4: Biblioteki: amap, cluster; funkcja umozliwiajaca analize, uzywajaca miary Pearsona; generuje liste inwariantow
-			//runner.RClusteringSingle("c:\\Program Files\\R\\R-3.1.2\\bin\\Rscript.exe", "tmp/", "cluster.csv", "tools\\Function3.r", "pearson", "average", 20);
+            return dir_path;
 		}catch (IOException e){
-			e.printStackTrace();
+			String msg = "Clustering generation failed for "+c_number+" clusters.\nPath: "+dir_path;
+			JOptionPane.showMessageDialog(null, msg, "Critical error",JOptionPane.ERROR_MESSAGE);
+			log(msg, "error", true);
+			log(e.getMessage(), "error", false);
+			return null;
 		}
 	}
+	
+	/**
+	 * Metoda odpowiedzialna za wygenerowanie jednego klastrowania z inwariantami.
+	 * @param clustersPath
+	 */
+	public String generateSingleClustering(String clustersPath, String algorithm, String metric, int howMany) {
+		String filePath = clustersPath + "//cluster.csv";
+		File csvFile = new File(filePath);
+		if(csvFile.exists() == false) { //jeœli nie ma pliku
+			Object[] options = {"Manually locate file", "Cancel procedure",};
+			int n = JOptionPane.showOptionDialog(null,
+							"No input.csv file in:\n"+filePath+ "\nDo you want to select location manually?",
+							"No CSV invariants file", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			if (n == 0) {
+				FileFilter[] filters = new FileFilter[1];
+				filters[0] = new ExtensionFileFilter(".csv - Comma Separated Values", new String[] { "CSV" });
+				filePath = Tools.selectFileDialog(clustersPath, filters, "Select", 
+						"Select CSV invariants file");
+				if(filePath.equals(""))
+					return null;
+				
+				csvFile = new File(filePath);
+				if(csvFile.exists() == false)
+					return null;
+			} else { 
+				return null;
+			}
+		}
+
+		String msg = "CSV invariants file: "+filePath+" located. Starting single clustering procedure." ;
+		log(msg, "error", true);
+		
+		try {
+			log("Starting MCT generator for file: "+filePath, "text", true);
+			Runner mctRunner = new Runner();
+			mctRunner.activate(new String[] { filePath } ); //throwable
+		} catch (Exception e) {
+			msg = "MCT generation(file) failed for: "+filePath;
+			log(msg, "text", true);
+			JOptionPane.showMessageDialog(null, msg, "Critical error",JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+
+		Rprotocols rp = new Rprotocols();
+		String rPath = settingsManager.getValue("r_path");
+		String csvFileName = csvFile.getName();
+		String absolutePath = csvFile.getAbsolutePath();
+		String pathOutput = absolutePath.substring(0,absolutePath.lastIndexOf(File.separator)) + "//";
+		String resultFileName = "";
+		pathOutput = pathOutput.replace("\\", "/");
+		try {
+			if(algorithm.equals("pearson") || algorithm.equals("correlation")) {
+				resultFileName = rp.generateSingleClustering(rPath, pathOutput, csvFileName, 
+						"scripts\\f_SingleCluster_Pearson.r", metric, algorithm, howMany);
+			} else {
+				resultFileName = rp.generateSingleClustering(rPath, pathOutput, csvFileName, 
+						"scripts\\f_SingleCluster.r", metric, algorithm, howMany);
+			}
+		} catch (Exception e) {
+			log("R function failed for parameters:", "error", true);
+			log("File name: "+csvFileName, "error", false);
+			log("Output dir: "+pathOutput, "error", false);
+			log("Algorithm: "+algorithm, "error", false);
+			log("Metric: "+metric, "error", false);
+			log("No. of clusters: "+howMany, "error", false);
+			JOptionPane.showMessageDialog(null, "Clustering failed. Check log.", "Critical error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		
+		return resultFileName;	
+	}
+}
+
+
+//Rprotocols rp = new Rprotocols();
+//rp.setR1(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
+//rp.setType(1);
+
+//rp.RClusteringAll(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
+//rp.RClusteringAll(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusers_Pearson.r", "scripts\\f_clusers_Pearson_run.r", c_number);
+
+//rp.RClusteringAll(settingsManager.getValue("r_path"), "tmp/", "cluster.csv", 
+//		"scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
+//rp.RClusteringAll(settingsManager.getValue("r_path"), "tmp/", "cluster.csv", 
+//		"scripts\\f_clusers_Pearson.r", "scripts\\f_clusers_Pearson_run.r", c_number);
+
+
+//Konkretne klastrowanie, wersja FUNKCJA 1: Biblioteki: cluster; generuje listy inwariantow
+//runner.RClusteringSingle("c:\\Program Files\\R\\R-3.1.2\\bin\\Rscript.exe", "tmp/", "cluster.csv", "tools\\Function2.r", "binary", "average", 20);
+//Konkretne klastrowanie, wersja FUNKCJA 4: Biblioteki: amap, cluster; funkcja umozliwiajaca analize, uzywajaca miary Pearsona; generuje liste inwariantow
+//runner.RClusteringSingle("c:\\Program Files\\R\\R-3.1.2\\bin\\Rscript.exe", "tmp/", "cluster.csv", "tools\\Function3.r", "pearson", "average", 20);
+
 	
 	/*
 	public void saveInvCSV() {
@@ -1453,4 +1535,3 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}
 	}
 	*/
-}

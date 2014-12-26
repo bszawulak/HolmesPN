@@ -23,6 +23,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import abyss.clusters.Clustering;
+import abyss.darkgui.GUIManager;
 
 /**
  * Klasa tworz¹ca okno informacyjne wzglêdem tabeli klastrów. Zawiera ono informacje o
@@ -40,6 +41,8 @@ public class AbyssClusterSubWindow extends JFrame {
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
 	private JPanel editPanel; //g³ówny panel okna
 	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
+	
+	private String clusterPath;
 	/**
 	 * Konstruktor domyœlny obiektu klasy AbyssClusterSubWindow.
 	 */
@@ -54,6 +57,11 @@ public class AbyssClusterSubWindow extends JFrame {
 	 */
 	public AbyssClusterSubWindow(AbyssClusters parent, Clustering dataPackage, int mode) {
 		this();
+		clusterPath = parent.getClusterPath();
+		this.data = dataPackage;
+		this.parentFrame = parent;
+		parentFrame.setEnabled(false);
+		
 		if(mode==0) {
 			initiateSimpleMode(parent, dataPackage);
 		} else {
@@ -67,10 +75,6 @@ public class AbyssClusterSubWindow extends JFrame {
 	 * @param dataPackage Clustering - dane do wyœwietlenia
 	 */
 	private void initiateSimpleMode(AbyssClusters parent, Clustering dataPackage) {
-		this.data = dataPackage;
-		this.parentFrame = parent;
-		parentFrame.setEnabled(false);
-		
 		JTextArea area = new JTextArea();
 		area.setLineWrap(true);
 		area.setWrapStyleWord(true);
@@ -117,9 +121,6 @@ public class AbyssClusterSubWindow extends JFrame {
 	private void initiateExtendedMode(AbyssClusters parent, Clustering dataPackage) {
 		this.setTitle("Details for "+dataPackage.clusterNumber + " clusters from " 
 				+dataPackage.algorithmName + "/"+dataPackage.metricName);
-		this.data = dataPackage;
-		this.parentFrame = parent;
-		parentFrame.setEnabled(false);
 
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setMinimumSize(new Dimension(600, 600));
@@ -182,7 +183,10 @@ public class AbyssClusterSubWindow extends JFrame {
 		    	}
 		    	doc.insertString(doc.getLength(), nL, doc.getStyle("regular"));
 		    	// 
-		    	doc.insertString(doc.getLength(), " Min.  | 1st Qu.| Median |  Mean  | 3rd Qu.|  Max."+nL, doc.getStyle("bold"));
+		    	String sepSpace = "";
+		    	if(data.vectorMSS[0] < 0)
+		    		sepSpace = " ";
+		    	doc.insertString(doc.getLength(), sepSpace+" Min.  | 1st Qu.| Median |  Mean  | 3rd Qu.|  Max."+nL, doc.getStyle("bold"));
 		    	for(int i=0; i<6; i++) {
 		    		doc.insertString(doc.getLength(), addSpaceRight(data.vectorMSS[i]+"",6)+ " | ", doc.getStyle("bold"));
 		    	}
@@ -254,7 +258,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 	
 	/**
-	 * Metoda pomocnicza konstruktora klasy, tworzy style dla wypisywanych komunikatów.
+	 * Metoda pomocnicza, tworzy style dla wypisywanych danych.
 	 * @param doc StyledDocument - obiekt dokumentu przechowuj¹cego style
 	 */
 	private void addStylesToDocument(StyledDocument doc) {
@@ -303,8 +307,8 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 	
 	/**
-	 * Metoda pomocnicza konstruktora, tworzy obiekt edytora.
-	 * @return JTextPane - obiekt edytora / konsoli
+	 * Metoda pomocnicza, tworzy obiekt edytora.
+	 * @return JTextPane - obiekt edytora
 	 */
 	private JTextPane createTextPane() {
 		String initString = "Clustering details:"+newline;
@@ -320,7 +324,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 	
 	/**
-	 * Metoda pomocnicza konstruktora okna konsoli.
+	 * Metoda pomocnicza tworz¹ca Panel widoku klastrowania z przyciskami
 	 * @return JPanel - g³ówny panel okna
 	 */
 	private JPanel createEditor() {
@@ -351,7 +355,18 @@ public class AbyssClusterSubWindow extends JFrame {
         JButton button = new JButton("Button");
         button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//saveDialog();
+				if(clusterPath != null && !clusterPath.equals("")) {
+					String alg = data.algorithmName;
+					if(alg.equals("UPGMA"))
+						alg = "average";
+					
+					String resultFile = GUIManager.getDefaultGUIManager().generateSingleClustering(
+							clusterPath, alg, data.metricName, data.clusterNumber);
+					
+					if(resultFile != null) {
+						
+					}
+				}
 			}
 		});
         editPanel.add(button, gbc);

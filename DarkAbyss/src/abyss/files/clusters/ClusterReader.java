@@ -231,29 +231,29 @@ public class ClusterReader {
 	 */
 	private void fillFileInfo() {
 		fileInfo = new String[57];
-		fileInfo[1] = "average_binary_clusters.txt";
-		fileInfo[2] = "centroid_binary_clusters.txt";
-		fileInfo[3] = "complete_binary_clusters.txt";
-		fileInfo[4] = "mcquitty_binary_clusters.txt";
-		fileInfo[5] = "median_binary_clusters.txt";
-		fileInfo[6] = "single_binary_clusters.txt";
-		fileInfo[7] = "ward.D_binary_clusters.txt";
+		fileInfo[1] = "average_correlation_clusters.txt";
+		fileInfo[2] = "centroid_correlation_clusters.txt";
+		fileInfo[3] = "complete_correlation_clusters.txt";
+		fileInfo[4] = "mcquitty_correlation_clusters.txt";
+		fileInfo[5] = "median_correlation_clusters.txt";
+		fileInfo[6] = "single_correlation_clusters.txt";
+		fileInfo[7] = "ward_correlation_clusters.txt";
 		
-		fileInfo[8] = "average_correlation_clusters.txt";
-		fileInfo[9] = "centroid_correlation_clusters.txt";
-		fileInfo[10] = "complete_correlation_clusters.txt";
-		fileInfo[11] = "mcquitty_correlation_clusters.txt";
-		fileInfo[12] = "median_correlation_clusters.txt";
-		fileInfo[13] = "single_correlation_clusters.txt";
-		fileInfo[14] = "ward_correlation_clusters.txt";
+		fileInfo[8] = "average_pearson_clusters.txt";
+		fileInfo[9] = "centroid_pearson_clusters.txt";
+		fileInfo[10] = "complete_pearson_clusters.txt";
+		fileInfo[11] = "mcquitty_pearson_clusters.txt";
+		fileInfo[12] = "median_pearson_clusters.txt";
+		fileInfo[13] = "single_pearson_clusters.txt";
+		fileInfo[14] = "ward_pearson_clusters.txt";
 		
-		fileInfo[15] = "average_pearson_clusters.txt";
-		fileInfo[16] = "centroid_pearson_clusters.txt";
-		fileInfo[17] = "complete_pearson_clusters.txt";
-		fileInfo[18] = "mcquitty_pearson_clusters.txt";
-		fileInfo[19] = "median_pearson_clusters.txt";
-		fileInfo[20] = "single_pearson_clusters.txt";
-		fileInfo[21] = "ward_pearson_clusters.txt";
+		fileInfo[15] = "average_binary_clusters.txt";
+		fileInfo[16] = "centroid_binary_clusters.txt";
+		fileInfo[17] = "complete_binary_clusters.txt";
+		fileInfo[18] = "mcquitty_binary_clusters.txt";
+		fileInfo[19] = "median_binary_clusters.txt";
+		fileInfo[20] = "single_binary_clusters.txt";
+		fileInfo[21] = "ward.D_binary_clusters.txt";
 		
 		fileInfo[22] = "average_canberra_clusters.txt";
 		fileInfo[23] = "centroid_canberra_clusters.txt";

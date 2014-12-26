@@ -169,7 +169,6 @@ public class DarkMenu extends JMenuBar {
 		saveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				guiManager.saveAsAbyssFile();  //test
-				int x;
 			}
 		});
 		fileMenu.add(saveMenuItem);
