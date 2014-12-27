@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -23,7 +24,10 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import abyss.clusters.Clustering;
+import abyss.clusters.ClusteringExtended;
 import abyss.darkgui.GUIManager;
+import abyss.files.clusters.ClusterReader;
+import abyss.files.clusters.ExcelWriter;
 
 /**
  * Klasa tworz¹ca okno informacyjne wzglêdem tabeli klastrów. Zawiera ono informacje o
@@ -34,7 +38,7 @@ import abyss.darkgui.GUIManager;
 public class AbyssClusterSubWindow extends JFrame {
 	private static final long serialVersionUID = -5663572683374020754L;
 	private JFrame parentFrame;
-	private Clustering data;
+	private Clustering clusteringMetaData;
 	private String nL = "\n";
 	private String newline = "\n";
 	private StyledDocument doc; //
@@ -53,12 +57,12 @@ public class AbyssClusterSubWindow extends JFrame {
 	/**
 	 * G³ówny konstruktor parametrowy okna klasy AbyssClusterSubWindow.
 	 * @param parent AbyssClusters - obiekt okna wywo³uj¹cego
-	 * @param data Clustering - dane do wyœwietlenia
+	 * @param clusteringMetaData Clustering - dane do wyœwietlenia
 	 */
 	public AbyssClusterSubWindow(AbyssClusters parent, Clustering dataPackage, int mode) {
 		this();
 		clusterPath = parent.getClusterPath();
-		this.data = dataPackage;
+		this.clusteringMetaData = dataPackage;
 		this.parentFrame = parent;
 		parentFrame.setEnabled(false);
 		
@@ -93,22 +97,22 @@ public class AbyssClusterSubWindow extends JFrame {
 		setLocationRelativeTo(null);
 		setVisible(true);
 		
-		if(data != null) {
-			area.append("Algorithm name: "+data.algorithmName+nL);
-			area.append("Metric name: "+data.metricName+nL);
+		if(clusteringMetaData != null) {
+			area.append("Algorithm name: "+clusteringMetaData.algorithmName+nL);
+			area.append("Metric name: "+clusteringMetaData.metricName+nL);
 			area.append(nL);
-			area.append("Invariants number: "+data.invNumber+nL);
-			area.append("Clusters number: "+data.clusterNumber+nL);
-			area.append("Zero-clusters: "+data.zeroClusters+nL);
-			area.append("MSS evaluation: "+data.evalMSS+nL);
-			area.append("C-H evaluation: "+data.evalCH+nL);
+			area.append("Invariants number: "+clusteringMetaData.invNumber+nL);
+			area.append("Clusters number: "+clusteringMetaData.clusterNumber+nL);
+			area.append("Zero-clusters: "+clusteringMetaData.zeroClusters+nL);
+			area.append("MSS evaluation: "+clusteringMetaData.evalMSS+nL);
+			area.append("C-H evaluation: "+clusteringMetaData.evalCH+nL);
 			area.append(nL);
-			for(int i=0; i<data.clusterNumber; i++) {
-				area.append("Cluster "+i+" size: "+data.clusterSize[i]+"  MSS: "+data.clusterMSS[i]+nL);
+			for(int i=0; i<clusteringMetaData.clusterNumber; i++) {
+				area.append("Cluster "+i+" size: "+clusteringMetaData.clusterSize[i]+"  MSS: "+clusteringMetaData.clusterMSS[i]+nL);
 			}
 			area.append(nL);
 			for(int i=0; i<6; i++) {
-				area.append(data.vectorMSS[i]+ " | ");
+				area.append(clusteringMetaData.vectorMSS[i]+ " | ");
 			}
 		}
 	}
@@ -142,53 +146,53 @@ public class AbyssClusterSubWindow extends JFrame {
 		    }
 		});
 		
-		if(data != null) {
+		if(clusteringMetaData != null) {
 			try {
 				doc.insertString(doc.getLength(), addSpaceRight("Algorithm name: ",20), doc.getStyle("regular"));
-				doc.insertString(doc.getLength(), data.algorithmName+nL, doc.getStyle("bold"));
+				doc.insertString(doc.getLength(), clusteringMetaData.algorithmName+nL, doc.getStyle("bold"));
 		    	
 				doc.insertString(doc.getLength(), addSpaceRight("Metric name: ",20), doc.getStyle("regular"));
-				doc.insertString(doc.getLength(), data.metricName+nL, doc.getStyle("bold"));
+				doc.insertString(doc.getLength(), clusteringMetaData.metricName+nL, doc.getStyle("bold"));
 				
 		    	doc.insertString(doc.getLength(), nL, doc.getStyle("regular"));
 		    	
 		    	doc.insertString(doc.getLength(), addSpaceRight("Invariants number: ",20), doc.getStyle("regular"));
-		    	doc.insertString(doc.getLength(), data.invNumber+nL, doc.getStyle("bold"));
+		    	doc.insertString(doc.getLength(), clusteringMetaData.invNumber+nL, doc.getStyle("bold"));
 		    	
 		    	doc.insertString(doc.getLength(), addSpaceRight("Clusters number: ",20), doc.getStyle("regular"));
-		    	doc.insertString(doc.getLength(), data.clusterNumber+nL, doc.getStyle("bold"));
+		    	doc.insertString(doc.getLength(), clusteringMetaData.clusterNumber+nL, doc.getStyle("bold"));
 		    	
 		    	doc.insertString(doc.getLength(), addSpaceRight("Zero-clusters: ",20), doc.getStyle("regular"));
-		    	doc.insertString(doc.getLength(), data.zeroClusters+nL, doc.getStyle("bold"));
+		    	doc.insertString(doc.getLength(), clusteringMetaData.zeroClusters+nL, doc.getStyle("bold"));
 		    	
 		    	doc.insertString(doc.getLength(), addSpaceRight("MSS evaluation: ",20), doc.getStyle("regular"));
-		    	doc.insertString(doc.getLength(), data.evalMSS+nL, doc.getStyle("bold"));
+		    	doc.insertString(doc.getLength(), clusteringMetaData.evalMSS+nL, doc.getStyle("bold"));
 		    	
 		    	doc.insertString(doc.getLength(), addSpaceRight("C-H evaluation: ",20), doc.getStyle("regular"));
-		    	doc.insertString(doc.getLength(), data.evalCH+nL, doc.getStyle("bold"));
+		    	doc.insertString(doc.getLength(), clusteringMetaData.evalCH+nL, doc.getStyle("bold"));
 		    	
 		    	doc.insertString(doc.getLength(), nL, doc.getStyle("regular"));
 		    	
 		    	//dane o klastrach
-		    	for(int i=0; i<data.clusterNumber; i++) {
+		    	for(int i=0; i<clusteringMetaData.clusterNumber; i++) {
 		    		doc.insertString(doc.getLength(), "Cluster "+addSpaceLeft((i+1)+"",3)+" invariants: ",
 		    				doc.getStyle("regular"));
-		    		doc.insertString(doc.getLength(), addSpaceLeft(data.clusterSize[i]+"",4), doc.getStyle("bold"));
+		    		doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterSize[i]+"",4), doc.getStyle("bold"));
 		    		
 		    		doc.insertString(doc.getLength(),"  MSS: ", doc.getStyle("regular"));
-		    		doc.insertString(doc.getLength(), addSpaceLeft(data.clusterMSS[i]+"",12)+nL,
-		    				doc.getStyle(returnStyle(data.clusterMSS[i])));
+		    		doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterMSS[i]+"",12)+nL,
+		    				doc.getStyle(returnStyle(clusteringMetaData.clusterMSS[i])));
 		    		
 		    		//doc.insertString(doc.getLength(), "Cluster "+i+" size: "+data.clusterSize[i]+"  MSS: "+data.clusterMSS[i]+nL, doc.getStyle("regular"));
 		    	}
 		    	doc.insertString(doc.getLength(), nL, doc.getStyle("regular"));
 		    	// 
 		    	String sepSpace = "";
-		    	if(data.vectorMSS[0] < 0)
+		    	if(clusteringMetaData.vectorMSS[0] < 0)
 		    		sepSpace = " ";
 		    	doc.insertString(doc.getLength(), sepSpace+" Min.  | 1st Qu.| Median |  Mean  | 3rd Qu.|  Max."+nL, doc.getStyle("bold"));
 		    	for(int i=0; i<6; i++) {
-		    		doc.insertString(doc.getLength(), addSpaceRight(data.vectorMSS[i]+"",6)+ " | ", doc.getStyle("bold"));
+		    		doc.insertString(doc.getLength(), addSpaceRight(clusteringMetaData.vectorMSS[i]+"",6)+ " | ", doc.getStyle("bold"));
 		    	}
 		    	
 		    	textPane.setCaretPosition(0);
@@ -352,19 +356,43 @@ public class AbyssClusterSubWindow extends JFrame {
         gbc.weighty = 0.0;
         gbc.fill = GridBagConstraints.SOUTH;
         
-        JButton button = new JButton("Button");
+        JButton button = new JButton("Create detailed clustering");
         button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(clusterPath != null && !clusterPath.equals("")) {
-					String alg = data.algorithmName;
+					String alg = clusteringMetaData.algorithmName;
 					if(alg.equals("UPGMA"))
 						alg = "average";
 					
-					String resultFile = GUIManager.getDefaultGUIManager().generateSingleClustering(
-							clusterPath, alg, data.metricName, data.clusterNumber);
+					String resultFiles[] = GUIManager.getDefaultGUIManager().generateSingleClustering(
+							clusterPath, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 					
-					if(resultFile != null) {
+					if(resultFiles != null) {
+						ClusterReader reader = new ClusterReader();
+						ClusteringExtended fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
 						
+						ExcelWriter ew;
+						
+						ew = new ExcelWriter(0, fullData, "tmp//testSheets.xls");
+						int x=1;
+						x=2;
+						
+						/*
+						Object[] options = {"Save data file and Excel file", "Make Excel file only",};
+						int n = JOptionPane.showOptionDialog(null,
+										"Clustering data extraction succeed. What to do now?",
+										"Choose output file", JOptionPane.YES_NO_OPTION,
+										JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+						if (n == 0) { //both files
+							ew = new ExcelWriter(0, fullData, "tmp//testSheets.xls");
+						} else { //only excel
+							ew = new ExcelWriter(0, fullData, "tmp//testSheets.xls");
+						}
+						*/
+					} else {
+						GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
+								+ "contacting authors about the problem please attach *all* three files mentioned in"
+								+ "this log above this message.", "error", true);
 					}
 				}
 			}

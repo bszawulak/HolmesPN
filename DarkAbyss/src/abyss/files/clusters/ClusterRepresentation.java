@@ -2,6 +2,11 @@ package abyss.files.clusters;
 
 import java.util.ArrayList;
 
+/**
+ * Klasa pomocnicza w procesie tworzenia pliku excel tabeli klastrów
+ * @author AR
+ *
+ */
 public class ClusterRepresentation {
 	ArrayList<Integer> nrInvariantsPerCluster = new ArrayList<Integer>();
 	ArrayList<Double> mssPerCluster = new ArrayList<Double>();

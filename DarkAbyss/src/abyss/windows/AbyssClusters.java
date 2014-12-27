@@ -167,6 +167,7 @@ public class AbyssClusters extends JFrame {
         case56Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
+				/*
 				String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 				String choosenDir = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
 							"Directory with 56 generated text R-clusters files.");
@@ -181,17 +182,19 @@ public class AbyssClusters extends JFrame {
 				} else {
 					handleStandardClusterTableCase56(clusterMatrix);
 				}
-				
+				*/
 				//test/debug
-				/* 
+				 
+				
 				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
-				int result = clusterMatrix.readDataDirectory("tmp//");
+				int result = clusterMatrix.readDataDirectory("tmp//IL18C40");
+				setClusterPath("tmp//IL18C40");
 				if(result == -1) {
 					JOptionPane.showMessageDialog(null, "Cluster reading failed. Possible wrong directory chosen.", "Error",JOptionPane.ERROR_MESSAGE);
 				} else {
 					handleStandardClusterTableCase56(clusterMatrix);
 				}
-				*/
+				
 			}
 		});
         case56Button.setAlignmentX(Component.CENTER_ALIGNMENT);

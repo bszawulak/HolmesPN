@@ -1421,9 +1421,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda odpowiedzialna za wygenerowanie jednego klastrowania z inwariantami.
-	 * @param clustersPath
+	 * @param clustersPath String - domyœlna lokalizacja pliku CSV
+	 * @param algorithm String - nazwa algorytmu klastrowania
+	 * @param metric String - nazwa metryki dla powy¿szego
+	 * @param howMany int - ile klastrów ma mieæ klastrowanie
+	 * @return String[3] - œcie¿ki do plików:
+	 * 	resultFilePath_r; resultFilePath_MCT; resultFilePath_clusterCSV;
 	 */
-	public String generateSingleClustering(String clustersPath, String algorithm, String metric, int howMany) {
+	public String[] generateSingleClustering(String clustersPath, String algorithm, String metric, int howMany) {
 		String filePath = clustersPath + "//cluster.csv";
 		File csvFile = new File(filePath);
 		if(csvFile.exists() == false) { //jeœli nie ma pliku
@@ -1449,12 +1454,17 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}
 
 		String msg = "CSV invariants file: "+filePath+" located. Starting single clustering procedure." ;
-		log(msg, "error", true);
-		
+		log(msg, "text", true);
+		String resultFilePath_MCT = "";
+		String resultFilePath_clusterCSV = filePath;
 		try {
 			log("Starting MCT generator for file: "+filePath, "text", true);
 			Runner mctRunner = new Runner();
 			mctRunner.activate(new String[] { filePath } ); //throwable
+			
+			resultFilePath_MCT = filePath + ".analysed.txt";
+			
+			
 		} catch (Exception e) {
 			msg = "MCT generation(file) failed for: "+filePath;
 			log(msg, "text", true);
@@ -1467,14 +1477,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 		String csvFileName = csvFile.getName();
 		String absolutePath = csvFile.getAbsolutePath();
 		String pathOutput = absolutePath.substring(0,absolutePath.lastIndexOf(File.separator)) + "//";
-		String resultFileName = "";
+		String resultFilePath_r = "";
 		pathOutput = pathOutput.replace("\\", "/");
 		try {
-			if(algorithm.equals("pearson") || algorithm.equals("correlation")) {
-				resultFileName = rp.generateSingleClustering(rPath, pathOutput, csvFileName, 
+			if(metric.equals("pearson") || metric.equals("correlation")) {
+				resultFilePath_r = rp.generateSingleClustering(rPath, pathOutput, csvFileName, 
 						"scripts\\f_SingleCluster_Pearson.r", metric, algorithm, howMany);
 			} else {
-				resultFileName = rp.generateSingleClustering(rPath, pathOutput, csvFileName, 
+				resultFilePath_r = rp.generateSingleClustering(rPath, pathOutput, csvFileName, 
 						"scripts\\f_SingleCluster.r", metric, algorithm, howMany);
 			}
 		} catch (Exception e) {
@@ -1487,8 +1497,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 			JOptionPane.showMessageDialog(null, "Clustering failed. Check log.", "Critical error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-		
-		return resultFileName;	
+		String result[] = new String[3];
+		result[0] = resultFilePath_clusterCSV;
+		result[1] = resultFilePath_r;
+		result[2] = resultFilePath_MCT;
+		return result;
 	}
 }
 

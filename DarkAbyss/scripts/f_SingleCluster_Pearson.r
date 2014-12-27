@@ -21,7 +21,7 @@ veni1 <- function(miara_odl,algorytm_c,sciezka,plik_csv,ile)
    
    clusters.idx <- cutree(klastry,ile)
    clusters <- split(row.names(plik), clusters.idx)
-   for(i in 2:ile) {print(clusters[[i]])}
+   for(i in 1:ile) {print(clusters[[i]])}
 
    dev.off()
 }

@@ -166,7 +166,8 @@ public class RClusteringParserToXLS{
 	// parsowanie do pliku XLS
 	public void extractAllRClusteringToXLS(String pathInput, String outputFile) throws IOException, WriteException{
 		int[] tabIndexes = new int[100];
-		for (int i = 0; i < tabIndexes.length; ++i) tabIndexes[i] = 3;
+		for (int i = 0; i < tabIndexes.length; ++i) 
+			tabIndexes[i] = 3;
 		RClusteringParserToXLS r = new RClusteringParserToXLS();
 		
 		// tworzy arkusz o zadanej nazwie
