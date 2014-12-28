@@ -2,9 +2,11 @@ package abyss.darkgui.toolbar;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+
 import javax.swing.ImageIcon;
 
 import abyss.darkgui.GUIManager;
+import abyss.files.clusters.CHmetricReader;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 
 import com.javadocking.DockingManager;
@@ -331,17 +333,19 @@ public class Toolbar extends BorderDock {
 
 			}
 		};
-		analysisDockables.add(createButtonDockable("Console", consoleButton));
+		analysisDockables.add(createButtonDockable("Test button", consoleButton));
 		
-		ToolbarButtonAction clusterWindow = new ToolbarButtonAction(this, "Cluster Analysis",
+		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug test purpose",
 				new ImageIcon("resources/icons/toolbar/clusterWindow.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				
+				//GUIManager.getDefaultGUIManager().generateAllCHindexes(20);
+				CHmetricReader chReader = new CHmetricReader();
+				chReader.executeReader("");
 			}
 		};
-		clusterWindow.setEnabled(false);
-		analysisDockables.add(createButtonDockable("CAnalysis", clusterWindow));
+		testButton.setEnabled(false);
+		analysisDockables.add(createButtonDockable("Testing", testButton));
 		
 		return analysisDockables;
 	}

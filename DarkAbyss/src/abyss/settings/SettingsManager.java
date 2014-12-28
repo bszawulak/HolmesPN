@@ -1,5 +1,6 @@
 package abyss.settings;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -82,6 +83,7 @@ public class SettingsManager {
 	public void restoreDefaultSetting() {
 		addSetting("abyss_version","1.1 alpha");
 		addSetting("r_path","c://Program Files//R//R-3.1.2//bin//Rscript.exe");
+		addSetting("r_path64","c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
 		addSetting("ina_bat","START INAwin32.exe COMMAND.ina");
 		addSetting("ina_COMMAND1"," 80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec");
 		addSetting("ina_COMMAND2","nnsyp");

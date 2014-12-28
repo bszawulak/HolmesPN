@@ -35,10 +35,14 @@ public class DarkMenu extends JMenuBar {
 	// menus
 	private JMenu fileMenu;
 	private JMenu windowMenu;
-	private JMenu analysisMenu;
+	private JMenu invariantsOperationsMenu;
+	private JMenu mctOperationsMenu;
+	private JMenu clustersOperationsMenu;
+	
+	//private JMenu analysisMenu;
 	private JMenu sheetsMenu;
-	private JMenu mctMenu;
-	private JMenu invMenu;
+	//private JMenu mctMenu;
+	//private JMenu invMenu;
 	// dockable
 	private ArrayList<Dockable> dockables;
 	private ArrayList<DockableMenuItem> sheetItems;
@@ -262,78 +266,69 @@ public class DarkMenu extends JMenuBar {
 		//*********************************************************************************************
 		//*********************************************************************************************
 	
-		
-		// build the Analysis menu
-		analysisMenu = new JMenu("Analysis");
-		analysisMenu.setMnemonic(KeyEvent.VK_A);
-		analysisMenu.getAccessibleContext().setAccessibleDescription("The Analysis Menu");
-		
-		invMenu = new JMenu("Invariants");
-		invMenu.setIcon(new ImageIcon("resources/icons/menu/menu_InvariantsMenu.png"));
-		invMenu.setMnemonic(KeyEvent.VK_S);
-		invMenu.getAccessibleContext().setAccessibleDescription("Invariants - Menu");
-		analysisMenu.add(invMenu);
+		//INVARIANTS MENU
+		invariantsOperationsMenu = new JMenu("Invariants");
+		invariantsOperationsMenu.setMnemonic(KeyEvent.VK_I);
+		invariantsOperationsMenu.getAccessibleContext().setAccessibleDescription("Invariants - Menu");
+		this.add(invariantsOperationsMenu);
 
-		this.add(analysisMenu);
-		
-
-		// The JMenuItem for external analysis
-		JMenuItem genTInvItem = new JMenuItem("Generate and analyze T-invariants", KeyEvent.VK_1);
-		genTInvItem.setIcon(new ImageIcon("resources/icons/menu/menu_InvGen.png"));
-		genTInvItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
-		genTInvItem.getAccessibleContext().setAccessibleDescription("Generate MCT Groups");
-		genTInvItem.addActionListener(new ActionListener() {
+		// The JMenuItem for INA generator
+		JMenuItem genINAinvItem = new JMenuItem("Generate INA invariants", KeyEvent.VK_1);
+		genINAinvItem.setIcon(new ImageIcon("resources/icons/menu/menu_INA_invGen.png"));
+		genINAinvItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		genINAinvItem.getAccessibleContext().setAccessibleDescription("Generate invariants using INA external program");
+		genINAinvItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().tInvariantsAnalyse();
+				GUIManager.getDefaultGUIManager().generateINAinvariants();
 			}
 		});
-		invMenu.add(genTInvItem);
+		invariantsOperationsMenu.add(genINAinvItem);		
 
 		// The JMenuItem for external analysis
-		JMenuItem importInvMenuItem = new JMenuItem("Import invariants", KeyEvent.VK_2);
+		JMenuItem importInvMenuItem = new JMenuItem("Import invariants", KeyEvent.VK_1);
 		importInvMenuItem.setIcon(new ImageIcon("resources/icons/menu/menu_InvImport.png"));
-		importInvMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,ActionEvent.ALT_MASK));
+		importInvMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
 		importInvMenuItem.getAccessibleContext().setAccessibleDescription("Load analysis result from external source");
 		importInvMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().loadExternalAnalysis();
 			}
 		});
-		invMenu.add(importInvMenuItem);
+		invariantsOperationsMenu.add(importInvMenuItem);
 		
 		// The JMenuItem for exportInvariants
-		JMenuItem exportInv = new JMenuItem("Export invariants", KeyEvent.VK_3);
+		JMenuItem exportInv = new JMenuItem("Export invariants", KeyEvent.VK_2);
 		exportInv.setIcon(new ImageIcon("resources/icons/menu/menu_InvExp.png"));
-		exportInv.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3,ActionEvent.ALT_MASK));
+		exportInv.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,ActionEvent.ALT_MASK));
 		exportInv.getAccessibleContext().setAccessibleDescription("Export generated invariants");
 		exportInv.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().exportGeneratedInvariants();
 			}
 		});
-		invMenu.add(exportInv);
-
+		invariantsOperationsMenu.add(exportInv);
+		
 		// The JMenuItem for external analysis
-		JMenuItem genMCTGroups = new JMenuItem("Generate MCT Groups", KeyEvent.VK_4);
-		genMCTGroups.setIcon(new ImageIcon("resources/icons/menu/menu_genMCT.png"));
-		genMCTGroups.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4,ActionEvent.ALT_MASK));
-		genMCTGroups.getAccessibleContext().setAccessibleDescription("Generate MCT Groups");
-		genMCTGroups.addActionListener(new ActionListener() {
+		JMenuItem genTInvItem = new JMenuItem("Generate and analyze T-invariants", KeyEvent.VK_3);
+		genTInvItem.setIcon(new ImageIcon("resources/icons/menu/menu_InvGen.png"));
+		genTInvItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3,ActionEvent.ALT_MASK));
+		genTInvItem.getAccessibleContext().setAccessibleDescription("Generate Invariants");
+		genTInvItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().generateMCT();
+				GUIManager.getDefaultGUIManager().tInvariantsAnalyse();
 			}
 		});
-		analysisMenu.add(genMCTGroups);
+		invariantsOperationsMenu.add(genTInvItem);
 		
 		// The JMenuItem for invariants simulation
-		JMenuItem invSimul = new JMenuItem("Start Invariants Simulation", KeyEvent.VK_5);
+		JMenuItem invSimul = new JMenuItem("Start Invariants Simulation", KeyEvent.VK_4);
 		invSimul.setIcon(new ImageIcon("resources/icons/menu/menu_invSim.png"));
-		invSimul.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5,ActionEvent.ALT_MASK));
+		invSimul.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4,ActionEvent.ALT_MASK));
 		invSimul.getAccessibleContext().setAccessibleDescription("Start Invariants Simulation");
 		invSimul.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					// poniższa linia:   ╯°□°）╯︵ ┻━━┻
+					// poniższa linia:   ╯°□°）╯︵  ┻━━┻
 					GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
@@ -341,16 +336,48 @@ public class DarkMenu extends JMenuBar {
 				}
 			}
 		});
-		analysisMenu.add(invSimul);
+		invariantsOperationsMenu.add(invSimul);
 
+		//MCT MENU
+				
+		mctOperationsMenu = new JMenu("MCT");
+		mctOperationsMenu.setMnemonic(KeyEvent.VK_M);
+		mctOperationsMenu.getAccessibleContext().setAccessibleDescription("MCT Operations menu");
+		this.add(mctOperationsMenu);
 		
-		mctMenu = new JMenu("MCT Files");
-		mctMenu.setIcon(new ImageIcon("resources/icons/menu/menu_genMCT.png"));
-		mctMenu.getAccessibleContext().setAccessibleDescription("MCT Generator");
-		analysisMenu.add(mctMenu);
+		// The JMenuItem for external analysis
+		JMenuItem genMCTGroups = new JMenuItem("Generate MCT Groups", KeyEvent.VK_1);
+		genMCTGroups.setIcon(new ImageIcon("resources/icons/menu/menu_genMCT.png"));
+		genMCTGroups.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		genMCTGroups.getAccessibleContext().setAccessibleDescription("Generate MCT Groups");
+		genMCTGroups.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().generateMCT();
+			}
+		});
+		mctOperationsMenu.add(genMCTGroups);
 		
-		JMenuItem mctItem = new JMenuItem("MCT");
+		// The JMenuItem for simple MCT file
+		JMenuItem createMCTFile = new JMenuItem("Create simple MCT file", KeyEvent.VK_1);
+		createMCTFile.setIcon(new ImageIcon("resources/icons/menu/menu_genMCT.png"));
+		createMCTFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		createMCTFile.getAccessibleContext().setAccessibleDescription("Create simple MCT file");
+		createMCTFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().generateSimpleMCTFile();
+			}
+		});
+		mctOperationsMenu.add(createMCTFile);
+
+		//mct sub menu
+		JMenu mctSubMenu = new JMenu("MCT Files");
+		mctSubMenu.setIcon(new ImageIcon("resources/icons/menu/menu_genMCT.png"));
+		mctSubMenu.getAccessibleContext().setAccessibleDescription("MCT Generator");
+		mctOperationsMenu.add(mctSubMenu);
+		
+		JMenuItem mctItem = new JMenuItem("MCT", KeyEvent.VK_2);
 		mctItem.setIcon(new ImageIcon("resources/icons/menu/menu_genMCT.png"));
+		mctItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,ActionEvent.ALT_MASK));
 		mctItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -361,7 +388,27 @@ public class DarkMenu extends JMenuBar {
 				}
 			}
 		});
-		mctMenu.add(mctItem);
+		mctItem.setEnabled(false);
+		mctSubMenu.add(mctItem);
+		
+		//CLUSTERS MENU
+		//private JMenu clustersOperationsMenu;
+		
+		clustersOperationsMenu = new JMenu("Clusters");
+		clustersOperationsMenu.setMnemonic(KeyEvent.VK_A);
+		clustersOperationsMenu.getAccessibleContext().setAccessibleDescription("Clusters menu");
+		this.add(clustersOperationsMenu);
+		
+		JMenuItem showClustersItem = new JMenuItem("Show clusters window", KeyEvent.VK_1);
+		showClustersItem.setIcon(new ImageIcon("resources/icons/menu/menu_InvariantsMenu.png"));
+		showClustersItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		showClustersItem.getAccessibleContext().setAccessibleDescription("Show clusters window");
+		showClustersItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().showClusterWindow(true); 
+			}
+		});
+		clustersOperationsMenu.add(showClustersItem);
 		
 		JMenu aboutMenu = new JMenu("Help");
 		aboutMenu.setMnemonic(KeyEvent.VK_H);

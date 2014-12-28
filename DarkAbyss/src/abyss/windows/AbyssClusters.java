@@ -147,13 +147,13 @@ public class AbyssClusters extends JFrame {
 		textPanel.add(spinnerClusters);	
 
 		// Przycisk rozpoczêcia procedury generowania klastrów na bazie inwariantów
-		JButton generateButton = createStandardButton("Generate data", null);
+		JButton generateButton = createStandardButton("Generate clusterings", null);
+		generateButton.setToolTipText("Generate all clusterings for a given number of clusters.");
 		generateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(clustersToGenerate > 1) {
 					clustersPath = GUIManager.getDefaultGUIManager().generateClustersCase56(clustersToGenerate);
-					
 					if(clustersPath == null) //jeœli coœ siê sta³o siê... :)
 						clustersPath = "";
 				}
@@ -165,7 +165,8 @@ public class AbyssClusters extends JFrame {
         textPanel.add(Box.createVerticalStrut(7));
         
         // Przycisk wczytania katalogu z 56 klastrowaniami
-        JButton case56Button = createStandardButton("Load directory", null);
+        JButton case56Button = createStandardButton("Load clusterings", null);
+        case56Button.setToolTipText("Load clusterings data into table from a selected directory.");
         case56Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -185,8 +186,7 @@ public class AbyssClusters extends JFrame {
 					handleStandardClusterTableCase56(clusterMatrix);
 				}
 				
-				//test/debug
-				 
+				// test / debug
 				/*
 				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
 				int result = clusterMatrix.readDataDirectory("tmp//IL18C40");
@@ -205,7 +205,8 @@ public class AbyssClusters extends JFrame {
         textPanel.add(Box.createVerticalStrut(7));
         
         // Przycisk exportu tabeli danych do excela
-        JButton excelExport = createStandardButton("Export to excel", null);
+        JButton excelExport = createStandardButton("Export to XLS", null);
+        excelExport.setToolTipText("Export clustering table into Excel document.");
         excelExport.addActionListener(new ActionListener() {
  			@Override
  			public void actionPerformed(ActionEvent actionEvent) {
@@ -269,6 +270,36 @@ public class AbyssClusters extends JFrame {
         textPanel.add(excelExport);
          
         textPanel.add(Box.createVerticalStrut(7));
+        
+        // Przycisk rozpoczêcia procedury generowania metryk Celinskieg-Harabasza dla tabeli klastrowañ
+     	JButton generateCHButton = createStandardButton("Compute C-H", null);
+     	generateCHButton.setToolTipText("Compute Caliñski-Harabasz metrics for a given number of clusters.");
+     	generateCHButton.addActionListener(new ActionListener() {
+     		public void actionPerformed(ActionEvent actionEvent) {
+     			if(clustersToGenerate > 1) {
+     				clustersPath = GUIManager.getDefaultGUIManager().generateAllCHindexes(clustersToGenerate);
+     				if(clustersPath == null) //jeœli coœ siê sta³o siê... :)
+     					clustersPath = "";
+     			}
+     		}
+     	});
+     	generateCHButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+     	textPanel.add(generateCHButton);
+             
+        textPanel.add(Box.createVerticalStrut(7));
+        
+        // Przycisk wczytywania metryk C-H dla tabeli
+     	JButton loadCHButton = createStandardButton("Load C-H", null);
+     	loadCHButton.setToolTipText("Load Caliñski-Harabasz metrics from a selected directory.");
+     	loadCHButton.addActionListener(new ActionListener() {
+     		public void actionPerformed(ActionEvent actionEvent) {
+     			
+     			//GUIManager.getDefaultGUIManager().generateAllCHindexes(clustersToGenerate);
+     				
+     		}
+     	});
+     	loadCHButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+     	textPanel.add(loadCHButton);
         
 		return textPanel;
 	}

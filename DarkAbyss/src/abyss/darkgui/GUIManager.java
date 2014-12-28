@@ -381,6 +381,16 @@ public class GUIManager extends JPanel implements ComponentListener {
 				} else {
 					//File f = new File(choosenDir);
 					//if(!f.exists()) return;
+					if(!selectedFile.contains("x64")) { //jeœli wskazano 64b
+						
+						//File test = new File(selectedFile);
+						//String dest = test.getAbsolutePath();
+						String dest = selectedFile.substring(0,selectedFile.lastIndexOf(File.separator));
+						dest += "\\x64\\Rscript.exe";
+						settingsManager.setValue("r_path64", dest);
+					} else {
+						settingsManager.setValue("r_path64", selectedFile);
+					}
 					
 					settingsManager.setValue("r_path", selectedFile);
 					settingsManager.saveSettings();
@@ -1344,6 +1354,88 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
+	 * Metoda odpowiedzialna za obliczanie metryk Calinskiego-Harabasza dla klastrów
+	 * sieci Petriego.
+	 * @param howMany int - maksymalna liczba klastrów
+	 * @return String - katalog z plikami miar
+	 */
+	public String generateAllCHindexes(int howMany) {
+		showConsole(true);
+		if(!rReady) { //sprawdŸ, czy Rscript.exe jest na miejscu
+			r_env_missing(); // zapytanie gdzie siê podziewa Rscript.exe
+			if(!rReady) { //jeœli wci¹¿...
+				return null;
+			}
+		}
+
+		String filePath = tmpPath + "cluster.csv";
+		//generowanie CSV, uda siê, jeœli inwarianty istniej¹
+		int result = workspace.getProject().saveInvariantsToCSV(filePath, true);
+		if(result == -1) {
+			String msg = "Exporting net into CSV file failed. \nCluster procedure cannot begin without invariants.";
+			JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);
+			log(msg, "error", true);
+			return null;
+		}
+		
+		String dir_path = "";
+		int c_number = howMany;
+		try{
+			int invNumber = getWorkspace().getProject().getInvariantsMatrix().size();
+			if(invNumber < howMany)
+				howMany = invNumber;
+
+			Object[] options = {"Select CH metric directory", "Use temporary directory",};
+			int n = JOptionPane.showOptionDialog(null,
+					"Multiple CH metric files can we written into default temporary directory (inadvised) or into\n"
+					+ "the selected one. What to do?",
+					"Directory selection", JOptionPane.YES_NO_OPTION,
+					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+			if (n == 0) {
+				String choosenDir = Tools.selectDirectoryDialog(lastPath, "Select CH metric dir",
+						"Target directory for CH metric results");
+				if(choosenDir.equals("")) {
+					dir_path = tmpPath;
+					log("CH metric files will be put into the "+dir_path, "text", true);
+				} else {
+					File dir = new File(choosenDir);
+					dir_path = dir.getPath() + "//";
+					
+					Tools.copyFileByPath(tmpPath + "cluster.csv", dir_path+"cluster.csv");
+					log("Cluster files will be put into the "+dir_path, "text", true);
+				}
+			} else { //default one
+				dir_path = tmpPath;
+				log("Cluster files will be put into the "+dir_path, "text", true);
+			}
+			dir_path = dir_path.replace("\\", "/");
+			
+			File test64 = new File(settingsManager.getValue("r_path64"));
+			String r_path = "";
+			if(test64.exists())
+				r_path = settingsManager.getValue("r_path64");
+			else {
+				r_path = settingsManager.getValue("r_path");
+				log("Warning: Celinski-Harabasz metric computation in 32bit mode for large number of invariants can cause R/system crash","warning",true);
+			}
+			
+			Runnable runnable = new Rprotocols(1);
+			((Rprotocols)runnable).setForRunnableAllClusters(r_path, dir_path, "cluster.csv", 
+					"scripts\\f_CHindex.r", "scripts\\f_clusters_run.r", 
+					"scripts\\f_CHindex_Pearson.r", "scripts\\f_clusters_Pearson_run.r", howMany);
+	        Thread thread = new Thread(runnable);
+	        thread.start();
+	        return dir_path;
+		} catch (IOException e){
+			String msg = "CH metric computation failed for " + c_number + " clusters.\nPath: "+dir_path;
+			JOptionPane.showMessageDialog(null, msg, "Critical error",JOptionPane.ERROR_MESSAGE);
+			log(msg, "error", true);
+			log(e.getMessage(), "error", false);
+			return null;
+		}
+	}
+	
+	/**
 	 * Metoda odpowiedzialna za generowanie klastrowañ na podstawie sieci.
 	 */
 	public String generateClustersCase56(int howMany) {
@@ -1367,14 +1459,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		String dir_path = "";
 		int c_number = howMany;
-		
 		try{
 			int invNumber = getWorkspace().getProject().getInvariantsMatrix().size();
 			if(invNumber < howMany)
 				howMany = invNumber;
-			
-			
-			
+
 			Object[] options = {"Select cluster directory", "Use temporary directory",};
 			int n = JOptionPane.showOptionDialog(null,
 					"Multiple cluster files can we written into default temporary directory (inadvised) or into\n"
@@ -1527,26 +1616,4 @@ public class GUIManager extends JPanel implements ComponentListener {
 //runner.RClusteringSingle("c:\\Program Files\\R\\R-3.1.2\\bin\\Rscript.exe", "tmp/", "cluster.csv", "tools\\Function3.r", "pearson", "average", 20);
 
 	
-	/*
-	public void saveInvCSV() {
-		JFileChooser fc;
-		if(lastPath==null)
-			fc = new JFileChooser();
-		else
-			fc = new JFileChooser(lastPath);
-		
-		FileFilter csvFilter = new ExtensionFileFilter(".csv - Comma Separated Value", new String[] { "CSV" });
-		String fileExtension = ".csv";
-		fc.setFileFilter(csvFilter);
-		fc.addChoosableFileFilter(csvFilter);
-		fc.setAcceptAllFileFilterUsed(false);
-		int returnVal = fc.showSaveDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			if(file.getPath().contains(".csv"))
-				fileExtension = "";
-			workspace.getProject().saveInvariantsToCSV(file.getPath() + fileExtension);
-			setLastPath(file.getParentFile().getPath());
-		}
-	}
-	*/
+	
