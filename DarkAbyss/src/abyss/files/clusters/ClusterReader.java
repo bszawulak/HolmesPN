@@ -232,7 +232,7 @@ public class ClusterReader {
 	 * @return ClusteringExtended - obiekt kontener danych
 	 */
 	public ClusteringExtended readSingleClustering(String[] filePaths, Clustering dataPackage) {
-		if(filePaths.length != 3)
+		if(filePaths.length < 3)
 			return null;
 		
 		ClusteringExtended data = new ClusteringExtended();

@@ -8,6 +8,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -17,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -28,6 +31,8 @@ import abyss.clusters.ClusteringExtended;
 import abyss.darkgui.GUIManager;
 import abyss.files.clusters.ClusterReader;
 import abyss.files.clusters.ExcelWriter;
+import abyss.utilities.Tools;
+import abyss.workspace.ExtensionFileFilter;
 
 /**
  * Klasa tworz¹ca okno informacyjne wzglêdem tabeli klastrów. Zawiera ono informacje o
@@ -364,40 +369,139 @@ public class AbyssClusterSubWindow extends JFrame {
 					if(alg.equals("UPGMA"))
 						alg = "average";
 					
+					//generowanie klastrowania:
 					String resultFiles[] = GUIManager.getDefaultGUIManager().generateSingleClustering(
 							clusterPath, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
-					
 					if(resultFiles != null) {
 						ClusterReader reader = new ClusterReader();
+						// czytanie wyników:
 						ClusteringExtended fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
+						if(fullData==null) {
+							GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to Excel cannot begin.", "error", true);
+							return;
+						}
 						
-						ExcelWriter ew;
-						
-						ew = new ExcelWriter(0, fullData, "tmp//testSheets.xls");
-						int x=1;
-						x=2;
-						
-						/*
-						Object[] options = {"Save data file and Excel file", "Make Excel file only",};
+						Object[] options = {"Save data files and Excel file", "Make Excel file only",};
 						int n = JOptionPane.showOptionDialog(null,
 										"Clustering data extraction succeed. What to do now?",
 										"Choose output file", JOptionPane.YES_NO_OPTION,
 										JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 						if (n == 0) { //both files
-							ew = new ExcelWriter(0, fullData, "tmp//testSheets.xls");
+							boolean success = saveAllFiles(fullData, resultFiles);
+							if(success) {
+								deleteTmpFile(resultFiles);
+							}
 						} else { //only excel
-							ew = new ExcelWriter(0, fullData, "tmp//testSheets.xls");
+							String path = saveExcelOnly(fullData);
+							if(path != null) {
+								deleteTmpFile(resultFiles);
+							}
 						}
-						*/
+						
 					} else {
 						GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
 								+ "contacting authors about the problem please attach *all* three files mentioned in"
 								+ "this log above this message.", "error", true);
 					}
 				}
-			}
+			}	
 		});
         editPanel.add(button, gbc);
         return editPanel;
+	}
+	
+	/**
+	 * Metoda usuwaj¹ca pliki powsta³e w wyniku tworzenie konkretnego klastrowania.
+	 * @param resultFiles String[5] - 5 plików, usuwanie od 2 do 5 (1szy to cluster.csv)
+	 */
+	private void deleteTmpFile(String[] resultFiles) {
+		try {
+			for(int i=1; i<resultFiles.length; i++) { // z wyj¹tkiem pliku csv
+				File del = new File(resultFiles[i]);
+				if(del.exists())
+					del.delete();
+			}
+			
+			//dodatkowo:
+			File excelTmp = new File("tmp\\testSheets.xls");
+			if(excelTmp.exists())
+				excelTmp.delete();
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Removing temporary files failed.", "error", true);
+		}
+	}
+	
+	/**
+	 * Metdoa odpowiedzialna za zapis pliku excela oraz plików powsta³ych w wyniku dzia³ania
+	 * procesu tworzenia konkretnego klastrowania dla sieci.
+	 * @param fullData ClusteringExtended - pakiet danych dla pliku excel
+	 * @param files String[] - pliki pomocnicze
+	 * @return boolean - true, jeœli wszystko siê uda³o
+	 */
+	private boolean saveAllFiles(ClusteringExtended fullData, String[] files) {
+		String whereExcelIs = saveExcelOnly(fullData);
+		if(whereExcelIs == null)
+			return false;
+		
+		File test = new File(whereExcelIs);
+		String excelDestinationFolder = test.getAbsolutePath();
+		excelDestinationFolder = excelDestinationFolder.
+			    substring(0,excelDestinationFolder.lastIndexOf(File.separator));
+		try {
+			//copy cluster pdf where excel already is:
+			File pdf1 = new File(files[3]);
+			if(pdf1.exists()) {
+				String pdf1Name = pdf1.getName();
+				Tools.copyFileByPath(files[3], excelDestinationFolder+"\\"+pdf1Name);
+			}
+			
+			//copy cluster dendrogram where excel already is:
+			File pdf2 = new File(files[4]);
+			if(pdf2.exists()) {
+				String pdf2Name = pdf2.getName();
+				Tools.copyFileByPath(files[4], excelDestinationFolder+"\\"+pdf2Name);
+			}
+
+			//copy cluster dendrogram where excel already is:
+			File mctFile = new File(files[2]);
+			if(mctFile.exists()) {
+				String mcfFileName = mctFile.getName();
+				Tools.copyFileByPath(files[2], excelDestinationFolder+"\\"+mcfFileName);
+		}
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("File copy error.", "error", true);
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Metoda odpowiedzialna za zapis wyników klastrowania do pliku excela.
+	 * @param fullData ClusteringExtended - pakiet danych dla pliku .xls
+	 * @return String - œcie¿ka do pliku excela
+	 */
+	private String saveExcelOnly(ClusteringExtended fullData) {
+		ExcelWriter ew = new ExcelWriter(0, fullData, "tmp\\testSheets.xls");
+		if(ew.isSuccess() == false)
+			return null;
+		
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter("Microsoft Excel 97/2000/XP/2003 (.xls)", new String[] { "XLS" });
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Save clusters as Excel document");
+		if(selectedFile.equals(""))
+			return null;
+		
+		if(!selectedFile.contains(".xls"))
+			selectedFile += ".xls";
+		//File file = new File(selectedFile);
+		try {
+			Tools.copyFileByPath("tmp//testSheets.xls", selectedFile);
+		} catch (IOException e) {
+			GUIManager.getDefaultGUIManager().log("Copying tmp\\testSheets.xls to "+selectedFile
+					+" failed." , "error", true);
+			return null;
+		}
+		return selectedFile;
 	}
 }

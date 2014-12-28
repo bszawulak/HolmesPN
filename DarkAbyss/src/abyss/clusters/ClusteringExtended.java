@@ -85,10 +85,12 @@ public class ClusteringExtended {
 	 * wektora transNames, liczba oznacza ile razy dana tranzycja wystêpuje w klastrze, z wy³¹czeniem
 	 * zbiorów MCT. 
 	 * @param clusterIndex int - nr klastra
-	 * @return int[2][] - pierwszy wektor to liczba wystêpuj¹cych w klastrze tranzycji które nie
+	 * @return int[4][] - pierwszy wektor to liczba wystêpuj¹cych w klastrze tranzycji które nie
 	 * wchodz¹ w sk³ad zbiorów MCT dla tego klastra, drugi wektor podobnie, z tym ¿e wartoœci w nim
 	 * to rzeczywiste liczby uruchomieñ tranzycji w ramach inwariantu (i dalej: w ramach wszystkich
-	 * inwariantów badanego klastra)
+	 * inwariantów badanego klastra).
+	 * Trzeci wektor to liczba rzeczywistych odpaleñ w klastrze tych tranzycji, które wchodz¹ w sk³ad
+	 * zbiorów MCT, wektor czwarty zawiera numery zbiorów MCT dla tranzycji z wektora trzeciego.
 	 */
 	public int[][] getTransitionFrequencyNoMCT(int clusterIndex, ArrayList<Integer> getMCTFrequencyInCluster) {
 		int[] transFrequency = new int[transNames.length]; //binarne wystêpowanie
@@ -116,26 +118,34 @@ public class ClusteringExtended {
 			//kolumny to iloœæ wyst¹pieñ tranzycji w inwariantach klastra ³¹cznie
 		}
 		
-		int[] mctTransitions = new int[transNames.length];
+		//poni¿szy wektor zawiera liczbê odpaleñ tranzycji ze zbiorów MCT z klastrze (binarnie)
+		int[] mctTransitions = new int[transNames.length]; 
+		//poni¿szy wektor zawiera nr zbioru MCT na odpowiedniej pozycji definiuj¹cej odp. tranzycjê
+		int[] mctTransNumber = new int[transNames.length];
+		
 		for(int mctNumber=0; mctNumber<getMCTFrequencyInCluster.size(); mctNumber++) {
 			if(getMCTFrequencyInCluster.get(mctNumber) > 0) { //tylko dla faktycznie wystêpuj¹cych MCT
 				//teraz dla ka¿dego wystêpuj¹cego w klastrze MCT przetwarzamy go
 				//na jego tranzycje sk³adowe
 				ArrayList<Integer> mctRow = mctSets.get(mctNumber);
 				for(int j=0; j<mctRow.size(); j++) { //dla wszystkich tranzycji tego MCT
-					int inv = mctRow.get(j); 
-					mctTransitions[inv] += getMCTFrequencyInCluster.get(mctNumber); 
+					int trans = mctRow.get(j); 
+					mctTransitions[trans] += getMCTFrequencyInCluster.get(mctNumber); 
+					mctTransNumber[trans] = (mctNumber+1);
 				}
 			}
 		}
 		//teraz wektor mctTransitions zawiera licznoœæ wszystkich tranzycji ze zbiorów MCT
+		int[] realMCTTransFirings = new int[transNames.length];
 		for(int i=1; i<transFrequency.length; i++) {
 			transFrequency[i] -= mctTransitions[i];
-			if(mctTransitions[i] > 0)
+			if(mctTransitions[i] > 0) {
+				realMCTTransFirings[i] = realFrequency[i]; //mamy info o tranzycjach z MCT
 				realFrequency[i] = 0;
+			}
 		}
 		
-		int[][] result = { transFrequency, realFrequency };
+		int[][] result = { transFrequency, realFrequency, realMCTTransFirings, mctTransNumber};
 		return result;
 	}
 	
@@ -188,8 +198,6 @@ public class ClusteringExtended {
 				result.add(transName+":"+firing);
 			}
 		}
-		
-		
 		return result;
 	}
 	

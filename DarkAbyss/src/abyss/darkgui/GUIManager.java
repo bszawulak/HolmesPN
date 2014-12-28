@@ -1425,8 +1425,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * @param algorithm String - nazwa algorytmu klastrowania
 	 * @param metric String - nazwa metryki dla powy¿szego
 	 * @param howMany int - ile klastrów ma mieæ klastrowanie
-	 * @return String[3] - œcie¿ki do plików:
-	 * 	resultFilePath_r; resultFilePath_MCT; resultFilePath_clusterCSV;
+	 * @return String[5] - œcie¿ki do plików:
+	 * 	resultFilePath_r; resultFilePath_MCT; resultFilePath_clusterCSV; cluster.pdf; dendrogram.pdf
 	 */
 	public String[] generateSingleClustering(String clustersPath, String algorithm, String metric, int howMany) {
 		String filePath = clustersPath + "//cluster.csv";
@@ -1497,10 +1497,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 			JOptionPane.showMessageDialog(null, "Clustering failed. Check log.", "Critical error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-		String result[] = new String[3];
+		String result[] = new String[5];
 		result[0] = resultFilePath_clusterCSV;
 		result[1] = resultFilePath_r;
 		result[2] = resultFilePath_MCT;
+		result[3] = clustersPath+"//"+algorithm+"_"+metric+"_clusters_ext_"+howMany+".pdf";
+		result[4] = clustersPath+"//"+algorithm+"_"+metric+"_dendrogram_ext_"+howMany+".pdf";
 		return result;
 	}
 }

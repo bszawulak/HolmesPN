@@ -61,6 +61,7 @@ public class AbyssClusters extends JFrame {
     private int clustersToGenerate = 0;
     private SpinnerModel spinnerClustersModel;
     private JSpinner spinnerClusters;
+    private boolean spinnerBlocked;
     
     private int mode = 0; // 0 - tryb 56 klastrowañ
     private MyRenderer tabRenderer = new MyRenderer(mode, 18);
@@ -72,6 +73,7 @@ public class AbyssClusters extends JFrame {
     	myself = this;
     	this.setTitle("Abyss Cluster Window");
     	clustersToGenerate = 0;	
+    	spinnerBlocked = true;
     	initiateListeners();
 
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -167,7 +169,7 @@ public class AbyssClusters extends JFrame {
         case56Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				/*
+				
 				String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 				String choosenDir = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
 							"Directory with 56 generated text R-clusters files.");
@@ -182,10 +184,10 @@ public class AbyssClusters extends JFrame {
 				} else {
 					handleStandardClusterTableCase56(clusterMatrix);
 				}
-				*/
+				
 				//test/debug
 				 
-				
+				/*
 				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
 				int result = clusterMatrix.readDataDirectory("tmp//IL18C40");
 				setClusterPath("tmp//IL18C40");
@@ -194,7 +196,7 @@ public class AbyssClusters extends JFrame {
 				} else {
 					handleStandardClusterTableCase56(clusterMatrix);
 				}
-				
+				*/
 			}
 		});
         case56Button.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -642,15 +644,20 @@ public class AbyssClusters extends JFrame {
   	  	    public void windowActivated(WindowEvent e) {
   	  	    	try {
   	  	    		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix() != null) {
+  	  	    			if(spinnerBlocked) {
+  	  	    				spinnerBlocked=false;
+  	  	    			} else {
+  	  	    				return;
+  	  	    			}
   	  	    			int invNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix().size();
   	  	    			int currentValue = 20;
   	  	    			if(invNumber < currentValue)
   	  	    				currentValue = invNumber;
-  	  	    			
+
   	  	    			int minNumber = 2;
   	  	    			if(invNumber < minNumber)
   	  	    				minNumber = 0;
-	  	    			
+  	  	    			
   	  	    			int maxNumber = invNumber;
   	  	    			clustersToGenerate = currentValue;
   	  	    			spinnerClustersModel = new SpinnerNumberModel(currentValue, minNumber, maxNumber, 1);
@@ -658,12 +665,12 @@ public class AbyssClusters extends JFrame {
   	  	    			spinnerClusters.setEnabled(true);
   	  	    		} else {
   	  	    			spinnerClusters.setEnabled(false);
+  	  	    			spinnerBlocked = true;
   	  	    		}
   	  	    	} catch (Exception ex) {
   	  	    		spinnerClusters.setEnabled(false);
+  	  	    		spinnerBlocked = true;
   	  	    	}
-  	  	    	
-  	  	    	//System.out.println("Window Activated Event");
   	  	    }
 
   	  	    public void windowDeactivated(WindowEvent e) {
