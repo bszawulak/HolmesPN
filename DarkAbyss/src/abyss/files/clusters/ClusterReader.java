@@ -25,7 +25,7 @@ public class ClusterReader {
 	 * Konstruktor domyślny obiektu ClusterReader.
 	 */
 	public ClusterReader() {
-		fillFileInfo();
+		fileInfo = fillFileInfo();
 	}
 	
 	/**
@@ -171,8 +171,8 @@ public class ClusterReader {
 	        		entry.clusterNumber = Integer.parseInt(splited[5]);
 	        		if(entry.clusterNumber<1)
 	        			entry.clusterNumber = 1;
-	        		entry.clusterSize = new int[entry.clusterNumber];
-	        		entry.clusterMSS = new float[entry.clusterNumber];
+	        		//entry.clusterSize = new int[entry.clusterNumber];
+	        		//entry.clusterMSS = new float[entry.clusterNumber];
 	        		if(nameAlg.equals("average"))
 	        			nameAlg = "UPGMA";
 	        		entry.algorithmName = nameAlg;
@@ -188,8 +188,10 @@ public class ClusterReader {
 	        			String line2[] = line.split("\\s+"); //miara MSS
 	        			
 	        			for(int i=1; i<line1.length; i++) {
-	        				entry.clusterSize[readValues] = Integer.parseInt(line1[i]);
-	        				entry.clusterMSS[readValues] = Float.parseFloat(line2[i]);
+	        				entry.clusterSize.add(Integer.parseInt(line1[i]));
+	        				//entry.clusterSize[readValues] = Integer.parseInt(line1[i]);
+	        				entry.clusterMSS.add(Float.parseFloat(line2[i]));
+	        				//entry.clusterMSS[readValues] = Float.parseFloat(line2[i]);
 	        				readValues++;
 	        				if(readValues-1 > entry.clusterNumber) { //przepełnienie zakresu tablicy
 	        					throw new Exception();
@@ -203,13 +205,16 @@ public class ClusterReader {
 	        		if(splited.length != 7) 
 	        			throw new Exception();
 	        		else {
-	        			for(int i=1; i<7; i++)
-	        				entry.vectorMSS[i-1] = Float.parseFloat(splited[i]);
+	        			for(int i=1; i<7; i++) {
+	        				entry.vectorMSS.add(Float.parseFloat(splited[i]));
+	        				//entry.vectorMSS[i-1] = Float.parseFloat(splited[i]);
+	        			}
 	        		}
 	        		entry.evalMSS = Float.parseFloat(splited[4]);
 	        		
 	        		for(int i=0; i<entry.clusterNumber;i++) {
-	        			if(entry.clusterSize[i] == 1)
+	        			//if(entry.clusterSize[i] == 1)
+	        			if(entry.clusterSize.get(i) == 1)
 	        				entry.zeroClusters++;
 	        		}
 	        		
@@ -435,71 +440,74 @@ public class ClusterReader {
 	/**
 	 * Metoda pomocnicza, buduje wewnętrzną listę plików pełnego klastrowania
 	 */
-	private void fillFileInfo() {
-		fileInfo = new String[57];
-		fileInfo[1] = "average_correlation_clusters.txt";
-		fileInfo[2] = "centroid_correlation_clusters.txt";
-		fileInfo[3] = "complete_correlation_clusters.txt";
-		fileInfo[4] = "mcquitty_correlation_clusters.txt";
-		fileInfo[5] = "median_correlation_clusters.txt";
-		fileInfo[6] = "single_correlation_clusters.txt";
-		fileInfo[7] = "ward_correlation_clusters.txt";
+	public static String[] fillFileInfo() {
+		String[] fileNames = new String[57];
 		
-		fileInfo[8] = "average_pearson_clusters.txt";
-		fileInfo[9] = "centroid_pearson_clusters.txt";
-		fileInfo[10] = "complete_pearson_clusters.txt";
-		fileInfo[11] = "mcquitty_pearson_clusters.txt";
-		fileInfo[12] = "median_pearson_clusters.txt";
-		fileInfo[13] = "single_pearson_clusters.txt";
-		fileInfo[14] = "ward_pearson_clusters.txt";
+		fileNames[1] = "average_correlation_clusters.txt";
+		fileNames[2] = "centroid_correlation_clusters.txt";
+		fileNames[3] = "complete_correlation_clusters.txt";
+		fileNames[4] = "mcquitty_correlation_clusters.txt";
+		fileNames[5] = "median_correlation_clusters.txt";
+		fileNames[6] = "single_correlation_clusters.txt";
+		fileNames[7] = "ward_correlation_clusters.txt";
 		
-		fileInfo[15] = "average_binary_clusters.txt";
-		fileInfo[16] = "centroid_binary_clusters.txt";
-		fileInfo[17] = "complete_binary_clusters.txt";
-		fileInfo[18] = "mcquitty_binary_clusters.txt";
-		fileInfo[19] = "median_binary_clusters.txt";
-		fileInfo[20] = "single_binary_clusters.txt";
-		fileInfo[21] = "ward.D_binary_clusters.txt";
+		fileNames[8] = "average_pearson_clusters.txt";
+		fileNames[9] = "centroid_pearson_clusters.txt";
+		fileNames[10] = "complete_pearson_clusters.txt";
+		fileNames[11] = "mcquitty_pearson_clusters.txt";
+		fileNames[12] = "median_pearson_clusters.txt";
+		fileNames[13] = "single_pearson_clusters.txt";
+		fileNames[14] = "ward_pearson_clusters.txt";
 		
-		fileInfo[22] = "average_canberra_clusters.txt";
-		fileInfo[23] = "centroid_canberra_clusters.txt";
-		fileInfo[24] = "complete_canberra_clusters.txt";
-		fileInfo[25] = "mcquitty_canberra_clusters.txt";
-		fileInfo[26] = "median_canberra_clusters.txt";
-		fileInfo[27] = "single_canberra_clusters.txt";
-		fileInfo[28] = "ward.D_canberra_clusters.txt";
+		fileNames[15] = "average_binary_clusters.txt";
+		fileNames[16] = "centroid_binary_clusters.txt";
+		fileNames[17] = "complete_binary_clusters.txt";
+		fileNames[18] = "mcquitty_binary_clusters.txt";
+		fileNames[19] = "median_binary_clusters.txt";
+		fileNames[20] = "single_binary_clusters.txt";
+		fileNames[21] = "ward.D_binary_clusters.txt";
 		
-		fileInfo[29] = "average_euclidean_clusters.txt";
-		fileInfo[30] = "centroid_euclidean_clusters.txt";
-		fileInfo[31] = "complete_euclidean_clusters.txt";
-		fileInfo[32] = "mcquitty_euclidean_clusters.txt";
-		fileInfo[33] = "median_euclidean_clusters.txt";
-		fileInfo[34] = "single_euclidean_clusters.txt";
-		fileInfo[35] = "ward.D_euclidean_clusters.txt";
+		fileNames[22] = "average_canberra_clusters.txt";
+		fileNames[23] = "centroid_canberra_clusters.txt";
+		fileNames[24] = "complete_canberra_clusters.txt";
+		fileNames[25] = "mcquitty_canberra_clusters.txt";
+		fileNames[26] = "median_canberra_clusters.txt";
+		fileNames[27] = "single_canberra_clusters.txt";
+		fileNames[28] = "ward.D_canberra_clusters.txt";
 		
-		fileInfo[36] = "average_manhattan_clusters.txt";
-		fileInfo[37] = "centroid_manhattan_clusters.txt";
-		fileInfo[38] = "complete_manhattan_clusters.txt";
-		fileInfo[39] = "mcquitty_manhattan_clusters.txt";
-		fileInfo[40] = "median_manhattan_clusters.txt";
-		fileInfo[41] = "single_manhattan_clusters.txt";
-		fileInfo[42] = "ward.D_manhattan_clusters.txt";
+		fileNames[29] = "average_euclidean_clusters.txt";
+		fileNames[30] = "centroid_euclidean_clusters.txt";
+		fileNames[31] = "complete_euclidean_clusters.txt";
+		fileNames[32] = "mcquitty_euclidean_clusters.txt";
+		fileNames[33] = "median_euclidean_clusters.txt";
+		fileNames[34] = "single_euclidean_clusters.txt";
+		fileNames[35] = "ward.D_euclidean_clusters.txt";
 		
-		fileInfo[43] = "average_maximum_clusters.txt";
-		fileInfo[44] = "centroid_maximum_clusters.txt";
-		fileInfo[45] = "complete_maximum_clusters.txt";
-		fileInfo[46] = "mcquitty_maximum_clusters.txt";
-		fileInfo[47] = "median_maximum_clusters.txt";
-		fileInfo[48] = "single_maximum_clusters.txt";
-		fileInfo[49] = "ward.D_maximum_clusters.txt";
+		fileNames[36] = "average_manhattan_clusters.txt";
+		fileNames[37] = "centroid_manhattan_clusters.txt";
+		fileNames[38] = "complete_manhattan_clusters.txt";
+		fileNames[39] = "mcquitty_manhattan_clusters.txt";
+		fileNames[40] = "median_manhattan_clusters.txt";
+		fileNames[41] = "single_manhattan_clusters.txt";
+		fileNames[42] = "ward.D_manhattan_clusters.txt";
 		
-		fileInfo[50] = "average_minkowski_clusters.txt";
-		fileInfo[51] = "centroid_minkowski_clusters.txt";
-		fileInfo[52] = "complete_minkowski_clusters.txt";
-		fileInfo[53] = "mcquitty_minkowski_clusters.txt";
-		fileInfo[54] = "median_minkowski_clusters.txt";
-		fileInfo[55] = "single_minkowski_clusters.txt";
-		fileInfo[56] = "ward.D_minkowski_clusters.txt";
+		fileNames[43] = "average_maximum_clusters.txt";
+		fileNames[44] = "centroid_maximum_clusters.txt";
+		fileNames[45] = "complete_maximum_clusters.txt";
+		fileNames[46] = "mcquitty_maximum_clusters.txt";
+		fileNames[47] = "median_maximum_clusters.txt";
+		fileNames[48] = "single_maximum_clusters.txt";
+		fileNames[49] = "ward.D_maximum_clusters.txt";
+		
+		fileNames[50] = "average_minkowski_clusters.txt";
+		fileNames[51] = "centroid_minkowski_clusters.txt";
+		fileNames[52] = "complete_minkowski_clusters.txt";
+		fileNames[53] = "mcquitty_minkowski_clusters.txt";
+		fileNames[54] = "median_minkowski_clusters.txt";
+		fileNames[55] = "single_minkowski_clusters.txt";
+		fileNames[56] = "ward.D_minkowski_clusters.txt";
+		
+		return fileNames;
 	}
 	
 	

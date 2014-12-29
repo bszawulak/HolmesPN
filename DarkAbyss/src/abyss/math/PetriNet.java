@@ -674,8 +674,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToCSV(String path, boolean silence) {
 		int result = -1;
 		try {
-			if (invariantsMatrix != null) {
-				communicationProtocol.writeInvToCSV(path, invariantsMatrix, getTransitions());
+			if (getInvariantsMatrix() != null) {
+				communicationProtocol.writeInvToCSV(path, getInvariantsMatrix(), getTransitions());
 				//GUIManager.getDefaultGUIManager().log("Invariants saved as CSV file.","text", true);
 				if(!silence)
 					JOptionPane.showMessageDialog(null,  "Invariants saved to file:\n"+path,
@@ -704,8 +704,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToInaFormat(String path) {
 		int result = -1;
 		try {
-			if (invariantsMatrix != null) {
-				communicationProtocol.writeINV(path, invariantsMatrix, getTransitions());
+			if (getInvariantsMatrix() != null) {
+				communicationProtocol.writeINV(path, getInvariantsMatrix(), getTransitions());
 				JOptionPane.showMessageDialog(null,
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
@@ -733,8 +733,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToCharlie(String path) {
 		int result = -1;
 		try {
-			if (invariantsMatrix != null) {
-				communicationProtocol.writeCharlieInv(path, invariantsMatrix, getTransitions());
+			if (getInvariantsMatrix() != null) {
+				communicationProtocol.writeCharlieInv(path, getInvariantsMatrix(), getTransitions());
 				JOptionPane.showMessageDialog(null, 
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
@@ -761,7 +761,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void loadInvariantsFromFile(String sciezka) {
 		try {
 			communicationProtocol.readINV(sciezka);
-			invariantsMatrix = communicationProtocol.getInvariantsList();
+			setInvariantsMatrix(communicationProtocol.getInvariantsList());
+			//invariantsMatrix = communicationProtocol.getInvariantsList();
 		} catch (Throwable err) {
 			err.printStackTrace();
 			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
@@ -873,7 +874,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				SID = GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 			}
 		}
-
 		return SID;
 	}
 
@@ -885,9 +885,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
 		InvariantTransition currentTransition;
 		invariantsBinaryList = communicationProtocol.getInvariantsList();
-		set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
-		//SettingsManager.log("start logging");
+		
 		if (invariantsBinaryList.size() > 0) {
+			set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
 			if (invariantsBinaryList.get(0).size() == getTransitions().size()) {
 				ArrayList<InvariantTransition> currentInvariant;
 				int i; //iterator po tranzycjach sieci
@@ -913,7 +913,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 		} else {
 			JOptionPane.showMessageDialog(null,
-				"There is something terribly wrong with your loaded external invariant file, as there are no invariants in it, actually. It's corrupt, is my guess.",
+				"There is something wrong with loaded external invariant file, as there are no invariants in it.",
 				"Invariant file does not contain invariants", JOptionPane.ERROR_MESSAGE);
 			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed.", "error", true);
 		}

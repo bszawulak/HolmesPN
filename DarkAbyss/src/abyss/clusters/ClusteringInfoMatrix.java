@@ -1,5 +1,6 @@
 package abyss.clusters;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
@@ -10,12 +11,13 @@ import abyss.files.clusters.ClusterReader;
  * @author MR
  *
  */
-public class ClusteringInfoMatrix {
+public class ClusteringInfoMatrix implements Serializable {
+	private static final long serialVersionUID = 5927650729868670543L;
 	private ArrayList<ArrayList<Clustering>> bigTable; //56 przypadków, ka¿dy po liczbnie od 2 do x klastrowañ
 	public int mainTablesNumber = 0;
 	public boolean secondaryTablesSameSize = true;
 	public int secondaryTablesMinNumber = 0;
-	public boolean matrixFull = false;
+	//public boolean matrixFull = false;
 	
 	/**
 	 * Konstruktor domyœlny obiektu klasy ClusteringInfoMatrix.

@@ -117,7 +117,8 @@ public class ExcelWriter {
 		int transStartRow = 0;
 		//int colIndex = 0;
 		String txt = "";
-		double clusterMSS = dataCore.metaData.clusterMSS[clusterIndex];
+		//double clusterMSS = dataCore.metaData.clusterMSS[clusterIndex];
+		double clusterMSS = dataCore.metaData.clusterMSS.get(clusterIndex);
 		int clusterSize = dataCore.clustersInv.get(clusterIndex).size();
 		
 		//nag³ówek:

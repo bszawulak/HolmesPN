@@ -15,6 +15,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -39,6 +45,7 @@ import javax.swing.table.TableCellRenderer;
 
 import abyss.clusters.Clustering;
 import abyss.clusters.ClusteringInfoMatrix;
+import abyss.files.clusters.CHmetricReader;
 import abyss.files.clusters.ClusterReader;
 import abyss.files.clusters.RClusteringParserToXLS;
 import abyss.utilities.Tools;
@@ -55,8 +62,6 @@ public class AbyssClusters extends JFrame {
 	private JTable table;
 	private DefaultTableModel  model;
 	private int subRowsSize = 0;
-    private ClusteringInfoMatrix internalDataTables;
-    private String clustersPath = "";
     private final AbyssClusters myself;
     private int clustersToGenerate = 0;
     private SpinnerModel spinnerClustersModel;
@@ -65,6 +70,12 @@ public class AbyssClusters extends JFrame {
     
     private int mode = 0; // 0 - tryb 56 klastrowañ
     private MyRenderer tabRenderer = new MyRenderer(mode, 18);
+    
+    private ClusteringInfoMatrix dataTableCase56 = null;
+    private String pathCSVfile = "";
+    private String pathClustersDir = "";
+    private String pathCHmetricsDir = "";
+    
     /**
      * Konstruktor domyœlny obiektu okna klasy AbyssClusters. Tworzy wszystkie elementy okna
      * z tabel¹ klastrów.
@@ -72,7 +83,7 @@ public class AbyssClusters extends JFrame {
     public AbyssClusters() {
     	myself = this;
     	this.setTitle("Abyss Cluster Window");
-    	clustersToGenerate = 0;	
+    	clustersToGenerate = 20;	
     	spinnerBlocked = true;
     	initiateListeners();
 
@@ -131,12 +142,14 @@ public class AbyssClusters extends JFrame {
 		clLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		textPanel.add(clLabel);	
 		
-		spinnerClustersModel = new SpinnerNumberModel(0, 0, 1, 1);
+		// Komponent okreœlenie górnego limitu klastrów dla obliczeñ
+		spinnerClustersModel = new SpinnerNumberModel(20, 2, 300, 1);
+		clustersToGenerate = 20;
 		spinnerClusters = new JSpinner(spinnerClustersModel);
 		spinnerClusters.setPreferredSize(new Dimension(100, 30));
 		spinnerClusters.setMinimumSize(new Dimension(100, 30));
 		spinnerClusters.setMaximumSize(new Dimension(100, 30));
-		spinnerClusters.setEnabled(false);
+		//spinnerClusters.setEnabled(false);
 		spinnerClusters.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -152,140 +165,48 @@ public class AbyssClusters extends JFrame {
 		generateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(clustersToGenerate > 1) {
-					clustersPath = GUIManager.getDefaultGUIManager().generateClustersCase56(clustersToGenerate);
-					if(clustersPath == null) //jeœli coœ siê sta³o siê... :)
-						clustersPath = "";
-				}
+				buttonGenerateClusterings();
 			}
 		});
 		generateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(generateButton);
-        
         textPanel.add(Box.createVerticalStrut(7));
         
         // Przycisk wczytania katalogu z 56 klastrowaniami
         JButton case56Button = createStandardButton("Load clusterings", null);
         case56Button.setToolTipText("Load clusterings data into table from a selected directory.");
         case56Button.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				
-				String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-				String choosenDir = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
-							"Directory with 56 generated text R-clusters files.");
-				if(choosenDir.equals(""))
-					return;
-				
-				setClusterPath(choosenDir);
-				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
-				int result = clusterMatrix.readDataDirectory(choosenDir);
-				if(result == -1) {
-					JOptionPane.showMessageDialog(null, "Cluster reading failed. Possible wrong directory chosen.", "Error",JOptionPane.ERROR_MESSAGE);
-				} else {
-					handleStandardClusterTableCase56(clusterMatrix);
-				}
-				
-				// test / debug
-				/*
-				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
-				int result = clusterMatrix.readDataDirectory("tmp//IL18C40");
-				setClusterPath("tmp//IL18C40");
-				if(result == -1) {
-					JOptionPane.showMessageDialog(null, "Cluster reading failed. Possible wrong directory chosen.", "Error",JOptionPane.ERROR_MESSAGE);
-				} else {
-					handleStandardClusterTableCase56(clusterMatrix);
-				}
-				*/
+				buttonLoadClusteringDirectory();
 			}
 		});
         case56Button.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(case56Button);
-        
         textPanel.add(Box.createVerticalStrut(7));
         
         // Przycisk exportu tabeli danych do excela
-        JButton excelExport = createStandardButton("Export to XLS", null);
-        excelExport.setToolTipText("Export clustering table into Excel document.");
+        JButton excelExport = createStandardButton("Result -> XLS", null);
+        excelExport.setToolTipText("Export results files into Excel document.");
         excelExport.addActionListener(new ActionListener() {
  			@Override
  			public void actionPerformed(ActionEvent actionEvent) {
- 				try{
- 					//okno dialogowe do wskazania katalogu:
- 					String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
- 					GUIManager.getDefaultGUIManager().log("Attempting to export cluster table to excel",
- 							"text", true);
- 					
- 					String dirPath = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
- 							"Directory with 56 generated R-clusters text files.");
- 					if(dirPath.equals("")) { // czy wskazano cokolwiek
- 						return;
- 					} else
- 						setClusterPath(dirPath);
- 					//jeœli powy¿sze siê uda, wtedy w 'clustersPath' bêdzie œcie¿ka do katalogu
- 					
- 					//sprawdziæ czy s¹ wszystkie pliki / odtworzyæ if necessary
- 					ClusterReader cr = new ClusterReader();
- 					if(cr.checkFiles(clustersPath) == -2) { //no cluster files
- 						JOptionPane.showMessageDialog(null, "Directory does not contain a single cluster file.",
- 								"Error",JOptionPane.ERROR_MESSAGE);
- 						GUIManager.getDefaultGUIManager().log("Directory: "+clustersPath+ 
- 								"does not contain even a single cluster file.", "error", true);
- 					}
- 					
- 					RClusteringParserToXLS r = new abyss.files.clusters.RClusteringParserToXLS();
- 					r.extractAllRClusteringToXLS(clustersPath, clustersPath+"//ClustersSummary.xls");
- 					
- 					File test = new File(clustersPath+"//ClustersSummary.xls");
- 					if(test.exists()) {
- 						FileFilter filter[] = new FileFilter[1];
- 						filter[0] = new ExtensionFileFilter(".xls - Excel 2003",  new String[] { "XLS" });
- 						String newLocation = Tools.selectFileDialog(dirPath, filter, "", "");
- 						if(newLocation.equals("")) { //czy chcemy przenieœæ plik w inne miejsce
- 							//leave it in cluster folder
- 							GUIManager.getDefaultGUIManager().log("Exporting table succeed. Created file: "
- 									+clustersPath+"//ClustersSummary.xls", "text", true);
- 						} else {
- 							if(!newLocation.contains(".xls"))
- 								newLocation += ".xls";
- 							Tools.copyFileByPath(clustersPath+"//ClustersSummary.xls", newLocation);
- 							test.delete(); //kasujemy oryginalny
- 							GUIManager.getDefaultGUIManager().log("Exporting table succeed. Created file: "
- 									+newLocation, "text", true);
- 						}
- 						
- 					} else {
- 						String msg = "Unknown error, excel file does not exist.";
- 						GUIManager.getDefaultGUIManager().log(msg, "error", true);
- 					}
- 				} catch (Exception e){
- 					String msg = "Excel export procedure failed for directory: "+clustersPath;
- 					GUIManager.getDefaultGUIManager().log(msg, "error", true);
- 					GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", true);
- 				}  
- 				
+ 				buttonExportTableToExcel();
  			}
  		});
         excelExport.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(excelExport);
-         
         textPanel.add(Box.createVerticalStrut(7));
         
-        // Przycisk rozpoczêcia procedury generowania metryk Celinskieg-Harabasza dla tabeli klastrowañ
+        // Przycisk rozpoczêcia procedury generowania metryk Celiñskiego-Harabasza dla tabeli klastrowañ
      	JButton generateCHButton = createStandardButton("Compute C-H", null);
      	generateCHButton.setToolTipText("Compute Caliñski-Harabasz metrics for a given number of clusters.");
      	generateCHButton.addActionListener(new ActionListener() {
      		public void actionPerformed(ActionEvent actionEvent) {
-     			if(clustersToGenerate > 1) {
-     				clustersPath = GUIManager.getDefaultGUIManager().generateAllCHindexes(clustersToGenerate);
-     				if(clustersPath == null) //jeœli coœ siê sta³o siê... :)
-     					clustersPath = "";
-     			}
+     			buttonComputeCHmetrics();
      		}
      	});
      	generateCHButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(generateCHButton);
-             
         textPanel.add(Box.createVerticalStrut(7));
         
         // Przycisk wczytywania metryk C-H dla tabeli
@@ -293,13 +214,37 @@ public class AbyssClusters extends JFrame {
      	loadCHButton.setToolTipText("Load Caliñski-Harabasz metrics from a selected directory.");
      	loadCHButton.addActionListener(new ActionListener() {
      		public void actionPerformed(ActionEvent actionEvent) {
-     			
-     			//GUIManager.getDefaultGUIManager().generateAllCHindexes(clustersToGenerate);
-     				
+     			buttonLoadCHmetricIntoTables();
      		}
      	});
      	loadCHButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(loadCHButton);
+     	
+     	textPanel.add(Box.createVerticalStrut(7));
+        
+        // Przycisk zapisu tabeli danych
+     	JButton saveTableButton = createStandardButton("Save table", null);
+     	saveTableButton.setToolTipText("Save table data into the selected file");
+     	saveTableButton.addActionListener(new ActionListener() {
+     		public void actionPerformed(ActionEvent actionEvent) {
+     			buttonSerializeDataTable();
+     		}
+     	});
+     	saveTableButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+     	textPanel.add(saveTableButton);
+     	
+     	textPanel.add(Box.createVerticalStrut(7));
+        
+        // Przycisk zapisu tabeli danych
+     	JButton loadTableButton = createStandardButton("Load table", null);
+     	loadTableButton.setToolTipText("Load table data from the selected file");
+     	loadTableButton.addActionListener(new ActionListener() {
+     		public void actionPerformed(ActionEvent actionEvent) {
+     			buttonDeserializeFile();
+     		}
+     	});
+     	loadTableButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+     	textPanel.add(loadTableButton);
         
 		return textPanel;
 	}
@@ -331,9 +276,7 @@ public class AbyssClusters extends JFrame {
         resultButton.setPreferredSize(new Dimension(100, 60));
         resultButton.setMinimumSize(new Dimension(100, 60));
         resultButton.setMaximumSize(new Dimension(100, 60));
-        
         resultButton.setIcon(icon);
-
 		return resultButton;
 	}
     
@@ -351,7 +294,7 @@ public class AbyssClusters extends JFrame {
      * @param path String - œcie¿ka do katalogu
      */
     public void setClusterPath(String path) {
-    	clustersPath = path;
+    	pathClustersDir = path;
     }
     
     /**
@@ -359,7 +302,7 @@ public class AbyssClusters extends JFrame {
      * @return String - œcie¿ka do katalogu
      */
     public String getClusterPath() {
-    	return clustersPath;
+    	return pathClustersDir;
     }
     
     /**
@@ -417,7 +360,7 @@ public class AbyssClusters extends JFrame {
           	    			//zmiana na nr miary, pierwszy blok, to miara 0, nastêpny 1, itd. a¿ do 7
           	    			headerRowNumber /= (subRowsSize+1);
           	    			
-          	    			Clustering omg = internalDataTables.getClustering((headerRowNumber*7)+algID, clusterNumber-2);
+          	    			Clustering omg = dataTableCase56.getClustering((headerRowNumber*7)+algID, clusterNumber-2);
           	    			//new AbyssClusterSubWindow(myself, omg, 0);
           	    			new AbyssClusterSubWindow(myself, omg, 1);
           	    			
@@ -479,16 +422,20 @@ public class AbyssClusters extends JFrame {
     
     /**
      * Metoda s³u¿¹ca do wype³nienia tabeli w przypadku kiedy mamy 56 klastrowañ.
-     * @param littleBoy ClusteringInfoMatrix - g³ówna baza-tabela danych
+     * @param newTable ClusteringInfoMatrix - g³ówna baza-tabela danych
      */
-	public void handleStandardClusterTableCase56(ClusteringInfoMatrix littleBoy) {
-    	internalDataTables = littleBoy;
-    	subRowsSize = littleBoy.secondaryTablesMinNumber;
-    	int checkSize = littleBoy.mainTablesNumber;
+	public void registerDataCase56(ClusteringInfoMatrix newTable) {
+		if(newTable == null) return; //you no take candle!
+		
+    	dataTableCase56 = newTable;
+    	subRowsSize = newTable.secondaryTablesMinNumber;
+    	int checkSize = newTable.mainTablesNumber;
     	if(checkSize != 56) {
-    		//problem
+    		GUIManager.getDefaultGUIManager().log("Invalid number of subtables. Operation terminated.", "error", true);
     		return;
     	} 
+    	
+    	GUIManager.getDefaultGUIManager().log("Clearing old clusterings data table", "text", true);
     	
     	tabRenderer.setMode(mode);  // !!!
     	tabRenderer.setSubRows(subRowsSize); // !!! z³a wartoœæ i tabela idzie w ....
@@ -509,17 +456,344 @@ public class AbyssClusters extends JFrame {
     				// Average, Centroid, Complete, McQuitty, Median, Single, Ward
         			int tableIndex = (metric*7)+alg; //która tabelka
             		
-        			dataRow[1+alg*2] = ""+internalDataTables.getMatrix().get(tableIndex).get(rows).zeroClusters;
-        			dataRow[1+alg*2+1] = ""+internalDataTables.getMatrix().get(tableIndex).get(rows).evalMSS;
+        			dataRow[1+alg*2] = ""+dataTableCase56.getMatrix().get(tableIndex).get(rows).zeroClusters;
+        			dataRow[1+alg*2+1] = ""+dataTableCase56.getMatrix().get(tableIndex).get(rows).evalMSS;
             	}
     			model.addRow(dataRow);
 			}
     	}
+    	GUIManager.getDefaultGUIManager().log("New clustering data table has been successfully read.", "text", true);
     }
     
     public void addDataRow15(String[] data) {
     	model.addRow(data);
     }
+
+    public Color getColor(double power)
+	{
+	    //double H = power * 0.4; // Hue (note 0.4 = Green, see huge chart below)
+	    //double S = 0.9; // Saturation
+	    //double B = 0.9; // Brightness
+	    //return Color.getHSBColor((float)H, (float)S, (float)B);
+		double R = (255 * power) / 100;
+		double G = (255 * (100 - power)) / 100; 
+		double B = 0;
+		try {
+			return new Color((int)R,(int)G,(int)B);
+		} catch (Exception e) {
+			return Color.white;
+		}
+	}
+    
+    //**************************************************************************************************
+    //**************************************           *************************************************
+    //**************************************  BUTTONS  *************************************************
+    //**************************************           *************************************************
+    //**************************************************************************************************
+    
+    /**
+     * Metoda realizuje generowanie klastrowañ dla inwariantów z sieci. Inwarianty bêd¹ 
+     * w formie pliku CSV, który bêdzie utworzony automatycznie, tak wiêc sieæ i inwarianty
+     * musz¹ ju¿ istnieæ w programie. W jej efekcie powstaje katalog z klastrowaniami.
+     */
+    private void buttonGenerateClusterings() {
+		if(clustersToGenerate > 1) {
+			pathCSVfile = GUIManager.getDefaultGUIManager().generateClustersCase56(clustersToGenerate);
+			if(pathCSVfile == null) { //jeœli coœ siê nie uda³o
+				//pathClustersDir = ""; //œcie¿ka do katalogu klastrowañ
+				pathCSVfile = ""; //œcie¿ka do pliku CSV
+			} else {
+				JOptionPane.showMessageDialog(null, "Clustering procedure for all cases initiated. This make take so time to finish.", 
+						"R computation initiated", JOptionPane.INFORMATION_MESSAGE);
+				//pathClustersDir = new File(pathCSVfile).getParent(); //uzyskanie katalogu z klastrowaniami
+				//przy czym tam wci¹¿ pewnie trwa praca (dopiero siê zaczê³a) tworzenia w osobnym
+				//w¹tku plików klastrowañ poprzez skrypty R
+			}
+		}
+	}
+    
+    /**
+     * Metoda odpowiada za utworzenie tabeli danych i jej wyœwietlenie. Tabela bêdzie
+     * tworzona na podstawie danych ze wskazanego katalogu z wygenerowanymi plikami
+     * klastrowañ.
+     */
+    private void buttonLoadClusteringDirectory() {
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath2 = pathClustersDir;
+		String chosenPath="";
+		if(lastPath2.equals(""))
+			chosenPath = lastPath;
+		else
+			chosenPath = lastPath2;
+		
+		String choosenDir = Tools.selectDirectoryDialog(chosenPath, "Select cluster dir",
+					"Directory with 56 generated text R-clusters files.");
+		if(choosenDir.equals(""))
+			return;
+		
+		ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
+		int result = clusterMatrix.readDataDirectory(choosenDir);
+		if(result == -1) {
+			JOptionPane.showMessageDialog(null, "Cluster reading failed. Possible wrong directory chosen.", 
+					"Error", JOptionPane.ERROR_MESSAGE);
+		} else {
+			registerDataCase56(clusterMatrix);
+			pathClustersDir = choosenDir;
+		}
+		
+		//czy plik startowy jest na miejscu?
+		pathCSVfile = choosenDir+"/cluster.csv";
+		File csv = new File(pathCSVfile);
+		if(csv.exists() == false) {
+			String msg = "Selected directory does not contain cluster.csv file. Further calculations may not be possible.";
+			JOptionPane.showMessageDialog(null, "msg", "warning",JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log(msg, "warning", true);
+		}
+		
+		// test / debug
+		/*
+		ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
+		int result = clusterMatrix.readDataDirectory("tmp//IL18C40");
+		setClusterPath("tmp//IL18C40");
+		if(result == -1) {
+			JOptionPane.showMessageDialog(null, "Cluster reading failed. Possible wrong directory chosen.", "Error",JOptionPane.ERROR_MESSAGE);
+		} else {
+			handleStandardClusterTableCase56(clusterMatrix);
+		}
+		*/
+	}
+    
+    /**
+     * Metoda odpowiedzialna za utworzenie dokumentu w formacie .xls programu Excel
+     * wyœwietlanej w oknie tabeli danych o klastrowaniach.
+     */
+    private void buttonExportTableToExcel() {
+		try{
+			//String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+			GUIManager.getDefaultGUIManager().log("Attempting to export cluster table to excel",
+					"text", true);
+			
+			String dirPath = Tools.selectDirectoryDialog(pathClustersDir, "Select cluster dir",
+					"Directory with 56 generated R-clusters text files.");
+			if(dirPath.equals("")) { // czy wskazano cokolwiek
+				return;
+			} 
+			
+			//sprawdziæ czy s¹ wszystkie pliki / odtworzyæ if necessary
+			ClusterReader cr = new ClusterReader();
+			if(cr.checkFiles(dirPath) == -2) { //no cluster files
+				JOptionPane.showMessageDialog(null, "Directory does not contain a single cluster file.",
+						"Error",JOptionPane.ERROR_MESSAGE);
+				GUIManager.getDefaultGUIManager().log("Directory: "+dirPath+ 
+						"does not contain even a single cluster file.", "error", true);
+			}
+			
+			RClusteringParserToXLS r = new abyss.files.clusters.RClusteringParserToXLS();
+			r.extractAllRClusteringToXLS(dirPath, dirPath+"//ClustersSummary.xls");
+			
+			File test = new File(dirPath+"//ClustersSummary.xls");
+			if(test.exists()) {
+				FileFilter filter[] = new FileFilter[1];
+				filter[0] = new ExtensionFileFilter(".xls - Excel 2003",  new String[] { "XLS" });
+				String newLocation = Tools.selectFileDialog(dirPath, filter, "", "");
+				if(newLocation.equals("")) { //czy chcemy przenieœæ plik w inne miejsce
+					//leave it in cluster folder
+					GUIManager.getDefaultGUIManager().log("Exporting table succeed. Created file: "
+							+dirPath+"//ClustersSummary.xls", "text", true);
+				} else {
+					if(!newLocation.contains(".xls"))
+						newLocation += ".xls";
+					Tools.copyFileByPath(dirPath+"//ClustersSummary.xls", newLocation);
+					test.delete(); //kasujemy oryginalny
+					GUIManager.getDefaultGUIManager().log("Exporting table succeed. Created file: "
+							+newLocation, "text", true);
+				}
+				
+			} else {
+				String msg = "Unknown error, excel file does not exist.";
+				GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			}
+		} catch (Exception e){
+			String msg = "Excel export procedure failed for directory: "+pathClustersDir;
+			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", true);
+		}
+	}
+    
+    /**
+     * Metoda odpowiedzialna za wygenerowanie metryk Celiñskiego-Harabasza dla
+     * zadanego limitu liczby klastrów.
+     */
+    private void buttonComputeCHmetrics() {
+		if(clustersToGenerate > 1) {
+			String newCHpath = GUIManager.getDefaultGUIManager().generateAllCHindexes(clustersToGenerate);
+			if(newCHpath != null) //jeœli coœ siê sta³o siê... :)
+				pathCHmetricsDir = newCHpath;
+			//uwaga! w powy¿szym miary dopiero powstaj¹!
+		}
+	}
+    
+    /**
+     * Obs³uga wczytywania miar Celiñskiego-Harabasz do tabeli g³ównej.
+     */
+	private void buttonLoadCHmetricIntoTables() {
+		if(dataTableCase56 == null) {
+			JOptionPane.showMessageDialog(null,"There is no table to fill.","Warning",JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
+		String dirPath = Tools.selectDirectoryDialog(pathCHmetricsDir, "Select directory",
+				"Directory with 56 R-generated files containing Celiñski-Harabasz metrics");
+		if(dirPath.equals("")) { // czy wskazano cokolwiek
+			return;
+		} 
+		CHmetricReader chReader = new CHmetricReader();
+		ArrayList<ArrayList<Double>> chDataCore = chReader.readCHmetricsDirectory(dirPath);
+		
+		integrateCHIntoDatabase(chDataCore);
+	}
+	
+	/**
+	 * Metoda wczytuje miary Celiñskiego-Harabasz do tabeli g³ównej. Tak siê mi³o sk³ada, ¿e
+	 * indeksy podtabel (algorytm-miara) s¹ te same, bo pliki w obu przypadkach (klastrowanie 
+	 * oraz miary C-H) by³y czytane w tym samym porz¹dku. A jeœli siê nie da³o, to w ogóle nie
+	 * by³y przeczytane, wiêc i tak nie ma co wczytywaæ :)
+	 * @param chDataCore ArrayList[ArrayList[Double]] - metryka CH
+	 */
+	private void integrateCHIntoDatabase(ArrayList<ArrayList<Double>> chDataCore) {
+		int size1Order = dataTableCase56.getMatrix().size();
+		int sizeCH = chDataCore.size();
+		
+		if(size1Order != sizeCH || size1Order != 56)
+			return;
+		
+		int clusters = dataTableCase56.getMatrix().get(0).size(); //bo od 2 do cNumber
+		
+		
+		for(int i=0; i<size1Order; i++) {
+			for(int cl=0; cl<clusters; cl++) { //od 2 do limitu w tabeli
+				try {
+					dataTableCase56.getMatrix().get(i).get(cl).evalCH = chDataCore.get(i).get(cl);
+				} catch (Exception e) {
+					GUIManager.getDefaultGUIManager().log("Filling CH metric failed for subtable "+i+" row: "+cl, "error", false);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Metoda odpowiedzialna za zapis tabeli danych do pliku, za pomoc¹ mechanizmu
+	 * serializacji.
+	 */
+	private void buttonSerializeDataTable() {
+		try{
+			FileFilter filter[] = new FileFilter[1];
+			filter[0] = new ExtensionFileFilter("Abyss CLustering file (.acl)",  new String[] { "acl" });
+			String newLocation = Tools.selectFileDialog(pathClustersDir, filter, "", "");
+			if(newLocation.equals(""))
+				return;
+			
+			if(!newLocation.contains(".acl"))
+				newLocation += ".acl";
+
+			FileOutputStream fos= new FileOutputStream(newLocation);
+			ObjectOutputStream oos= new ObjectOutputStream(fos);
+			oos.writeObject(dataTableCase56);
+			oos.close();
+			fos.close();
+		} catch(IOException ioe){
+		    ioe.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Metoda odpowiedzialna za odczyt pliku z zserializowanymi danymi obiektów 
+	 * tablicy danych do... tablicy danych. Makes sense actually.
+	 */
+	private void buttonDeserializeFile() {
+		ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
+		String newLocation = "";
+		try
+		{
+			FileFilter filter[] = new FileFilter[1];
+			filter[0] = new ExtensionFileFilter("Abyss CLustering file (.acl)",  new String[] { "acl" });
+			newLocation = Tools.selectFileDialog(pathClustersDir, filter, "", "");
+			if(newLocation.equals("")) 
+				return;
+			
+			File test = new File(newLocation);
+			if(!test.exists()) 
+				return;
+			
+			FileInputStream fis = new FileInputStream(newLocation);
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			clusterMatrix = (ClusteringInfoMatrix) ois.readObject();
+			ois.close();
+			fis.close();
+			registerDataCase56(clusterMatrix);
+		} catch(Exception ioe){
+			String msg = "Program was unable to load data table from "+newLocation;
+			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			return;
+		} 
+	}
+    
+	/**
+	 * Inicjalizacja agentów nas³uchuj¹cych ró¿nych zdarzeñ dla okna klastrowañ.
+	 */
+    private void initiateListeners() {
+    	addWindowListener(new WindowAdapter() {
+    		public void windowOpened(WindowEvent e) {}
+  	    	public void windowClosing(WindowEvent e) {}
+  	  	    public void windowClosed(WindowEvent e) {}
+  	  	    public void windowIconified(WindowEvent e) {}
+  	  	    public void windowDeiconified(WindowEvent e) {}
+  	  	    public void windowDeactivated(WindowEvent e) {}
+	  	    public void windowStateChanged(WindowEvent e) {}
+	  	    public void windowGainedFocus(WindowEvent e) {}
+	  	    public void windowLostFocus(WindowEvent e) {}
+	  	    
+	  	    /**
+	  	     * Kiedy okno staje siê aktywne
+	  	     */
+  	  	    public void windowActivated(WindowEvent e) {
+  	  	    /*
+  	  	    	try {
+  	  	    		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix() != null) {
+  	  	    			
+  	  	    			if(spinnerBlocked) {
+  	  	    				spinnerBlocked=false;
+  	  	    			} else {
+  	  	    				return;
+  	  	    			}
+  	  	    			int invNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix().size();
+  	  	    			int currentValue = 20;
+  	  	    			if(invNumber < currentValue)
+  	  	    				currentValue = invNumber;
+
+  	  	    			int minNumber = 2;
+  	  	    			if(invNumber < minNumber)
+  	  	    				minNumber = 0;
+  	  	    			
+  	  	    			int maxNumber = invNumber;
+  	  	    			clustersToGenerate = currentValue;
+  	  	    			spinnerClustersModel = new SpinnerNumberModel(currentValue, minNumber, maxNumber, 1);
+  	  	    			spinnerClusters.setModel(spinnerClustersModel);
+  	  	    			spinnerClusters.setEnabled(true);
+  	  	    		} else {
+  	  	    			spinnerClusters.setEnabled(false);
+  	  	    			spinnerBlocked = true;
+  	  	    		}
+  	  	    	} catch (Exception ex) {
+  	  	    		spinnerClusters.setEnabled(false);
+  	  	    		spinnerBlocked = true;
+  	  	    	}
+  	  	    	*/
+  	  	    }  
+    	});
+    	
+    }  
+    
     
     /**
      * Klasa wewnêtrzna odpowiedzialna za rysowanie poszczególnych komórek.
@@ -629,96 +903,8 @@ public class AbyssClusters extends JFrame {
 		    } else {
 		    	result = new Color(1, 153, 19);
 		    }
-		    
 		    return result;
 		}
-    }
+    } // END CLASS MyRenderer IMPLEMENTS TableCellRenderer
     
-    public Color getColor(double power)
-	{
-	    //double H = power * 0.4; // Hue (note 0.4 = Green, see huge chart below)
-	    //double S = 0.9; // Saturation
-	    //double B = 0.9; // Brightness
-	    //return Color.getHSBColor((float)H, (float)S, (float)B);
-		double R = (255 * power) / 100;
-		double G = (255 * (100 - power)) / 100; 
-		double B = 0;
-		try {
-			return new Color((int)R,(int)G,(int)B);
-		} catch (Exception e) {
-			return Color.white;
-		}
-	}
-    
-    private void initiateListeners() {
-    	addWindowListener(new WindowAdapter() {
-    		public void windowOpened(WindowEvent e) {
-  	    		//System.out.println("Window Opened Event");
-  	    	}
-  	    	
-  	    	public void windowClosing(WindowEvent e) {
-  	  	    	//System.out.println("Window Closing Event");
-  	  	    }
-
-  	  	    public void windowClosed(WindowEvent e) {
-  	  	    	//System.out.println("Window Close Event");
-  	  	    }
-
-  	  	    public void windowIconified(WindowEvent e) {
-  	  	    	//System.out.println("Window Iconified Event");
-  	  	    }
-
-  	  	    public void windowDeiconified(WindowEvent e) {
-	  	    	//System.out.println("Window Deiconified Event");
-  	  	    }
-
-  	  	    public void windowActivated(WindowEvent e) {
-  	  	    	try {
-  	  	    		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix() != null) {
-  	  	    			if(spinnerBlocked) {
-  	  	    				spinnerBlocked=false;
-  	  	    			} else {
-  	  	    				return;
-  	  	    			}
-  	  	    			int invNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix().size();
-  	  	    			int currentValue = 20;
-  	  	    			if(invNumber < currentValue)
-  	  	    				currentValue = invNumber;
-
-  	  	    			int minNumber = 2;
-  	  	    			if(invNumber < minNumber)
-  	  	    				minNumber = 0;
-  	  	    			
-  	  	    			int maxNumber = invNumber;
-  	  	    			clustersToGenerate = currentValue;
-  	  	    			spinnerClustersModel = new SpinnerNumberModel(currentValue, minNumber, maxNumber, 1);
-  	  	    			spinnerClusters.setModel(spinnerClustersModel);
-  	  	    			spinnerClusters.setEnabled(true);
-  	  	    		} else {
-  	  	    			spinnerClusters.setEnabled(false);
-  	  	    			spinnerBlocked = true;
-  	  	    		}
-  	  	    	} catch (Exception ex) {
-  	  	    		spinnerClusters.setEnabled(false);
-  	  	    		spinnerBlocked = true;
-  	  	    	}
-  	  	    }
-
-  	  	    public void windowDeactivated(WindowEvent e) {
-  	  	    	//System.out.println("Window Deactivated Event");
-  	  	    }
-
-  	  	    public void windowStateChanged(WindowEvent e) {
-  	  	    	//System.out.println("Window State Changed Event");
-  	  	    }
-
-  	  	    public void windowGainedFocus(WindowEvent e) {
-  	  	    	//System.out.println("Window Gained Focus Event");
-  	  	    }
-
-  	  	    public void windowLostFocus(WindowEvent e) {
-  	  	    	//System.out.println("Window Lost Focus Event");
-  	  	    }
-    	});
-    }
 }

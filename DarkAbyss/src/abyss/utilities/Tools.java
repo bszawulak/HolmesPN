@@ -114,6 +114,8 @@ public final class Tools {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File f = fc.getSelectedFile();
 			resultPath = f.getPath();	
+		} else {
+			resultPath = "";
 		}
 		return resultPath;
 	}
@@ -130,6 +132,8 @@ public final class Tools {
 		String resultDir = "";
 		JFileChooser fc = null;
 		if(lastPath == null)
+			fc = new JFileChooser();
+		else if(lastPath == "")
 			fc = new JFileChooser();
 		else
 			fc = new JFileChooser(lastPath);

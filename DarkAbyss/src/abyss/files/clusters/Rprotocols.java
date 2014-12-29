@@ -4,12 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.utilities.ByExt;
 import rcaller.RCaller;
 import rcaller.RCode;
 
@@ -89,7 +86,7 @@ public class Rprotocols implements Runnable {
 	}
 	
 	/**
-	 * Konstruklor parametrowy klasy, okreœla tryb pracy
+	 * Konstruktor parametrowy klasy, okreœla tryb pracy
 	 * @param mode
 	 */
 	public Rprotocols(int mode) {
@@ -133,6 +130,8 @@ public class Rprotocols implements Runnable {
 			
 			GUIManager.getDefaultGUIManager().log("Processing CH: "+line, "text", true);
 			
+			//int reallyToCompute = nrClusters + 1; //don't ask (MR)
+			
 			String function = new String("veni1("+line+", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
 			code.addRCode(function);
 			String replaced = line.replace("\"", "");
@@ -143,6 +142,7 @@ public class Rprotocols implements Runnable {
 			rcaller.runOnly();
 		}
 		br.close();
+		GUIManager.getDefaultGUIManager().log("All Celinœki-Harabasz metrics has been computed.", "text", true);
 	}
 	
 	/**
@@ -183,6 +183,7 @@ public class Rprotocols implements Runnable {
 			rcaller.runOnly();
 		}
 		br.close();
+		GUIManager.getDefaultGUIManager().log("All clusterings has been computed.", "text", true);
 	}
 	
 	public String generateSingleClustering(String pathToR, String pathOutput, String fileNameCSV, 

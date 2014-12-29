@@ -113,11 +113,13 @@ public class AbyssClusterSubWindow extends JFrame {
 			area.append("C-H evaluation: "+clusteringMetaData.evalCH+nL);
 			area.append(nL);
 			for(int i=0; i<clusteringMetaData.clusterNumber; i++) {
-				area.append("Cluster "+i+" size: "+clusteringMetaData.clusterSize[i]+"  MSS: "+clusteringMetaData.clusterMSS[i]+nL);
+				area.append("Cluster "+i+" size: "+clusteringMetaData.clusterSize.get(i)+"  MSS: "+clusteringMetaData.clusterMSS.get(i)+nL);
+				//area.append("Cluster "+i+" size: "+clusteringMetaData.clusterSize[i]+"  MSS: "+clusteringMetaData.clusterMSS[i]+nL);
 			}
 			area.append(nL);
 			for(int i=0; i<6; i++) {
-				area.append(clusteringMetaData.vectorMSS[i]+ " | ");
+				//area.append(clusteringMetaData.vectorMSS[i]+ " | ");
+				area.append(clusteringMetaData.vectorMSS.get(i)+ " | ");
 			}
 		}
 	}
@@ -182,22 +184,27 @@ public class AbyssClusterSubWindow extends JFrame {
 		    	for(int i=0; i<clusteringMetaData.clusterNumber; i++) {
 		    		doc.insertString(doc.getLength(), "Cluster "+addSpaceLeft((i+1)+"",3)+" invariants: ",
 		    				doc.getStyle("regular"));
-		    		doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterSize[i]+"",4), doc.getStyle("bold"));
+		    		//doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterSize[i]+"",4), doc.getStyle("bold"));
+		    		doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterSize.get(i)+"",4), doc.getStyle("bold"));
 		    		
 		    		doc.insertString(doc.getLength(),"  MSS: ", doc.getStyle("regular"));
-		    		doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterMSS[i]+"",12)+nL,
-		    				doc.getStyle(returnStyle(clusteringMetaData.clusterMSS[i])));
-		    		
+		    		//doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterMSS[i]+"",12)+nL,
+		    		//		doc.getStyle(returnStyle(clusteringMetaData.clusterMSS[i])));
+		    		doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterMSS.get(i)+"",12)+nL,
+				    		doc.getStyle(returnStyle(clusteringMetaData.clusterMSS.get(i))));
+				    		
 		    		//doc.insertString(doc.getLength(), "Cluster "+i+" size: "+data.clusterSize[i]+"  MSS: "+data.clusterMSS[i]+nL, doc.getStyle("regular"));
 		    	}
 		    	doc.insertString(doc.getLength(), nL, doc.getStyle("regular"));
 		    	// 
 		    	String sepSpace = "";
-		    	if(clusteringMetaData.vectorMSS[0] < 0)
+		    	//if(clusteringMetaData.vectorMSS[0] < 0)
+		    	if(clusteringMetaData.vectorMSS.get(0) < 0)
 		    		sepSpace = " ";
 		    	doc.insertString(doc.getLength(), sepSpace+" Min.  | 1st Qu.| Median |  Mean  | 3rd Qu.|  Max."+nL, doc.getStyle("bold"));
 		    	for(int i=0; i<6; i++) {
-		    		doc.insertString(doc.getLength(), addSpaceRight(clusteringMetaData.vectorMSS[i]+"",6)+ " | ", doc.getStyle("bold"));
+		    		//doc.insertString(doc.getLength(), addSpaceRight(clusteringMetaData.vectorMSS[i]+"",6)+ " | ", doc.getStyle("bold"));
+		    		doc.insertString(doc.getLength(), addSpaceRight(clusteringMetaData.vectorMSS.get(i)+"",6)+ " | ", doc.getStyle("bold"));
 		    	}
 		    	
 		    	textPane.setCaretPosition(0);

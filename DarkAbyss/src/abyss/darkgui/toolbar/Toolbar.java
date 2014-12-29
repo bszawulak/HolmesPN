@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 import abyss.darkgui.GUIManager;
-import abyss.files.clusters.CHmetricReader;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 
 import com.javadocking.DockingManager;
@@ -340,8 +339,8 @@ public class Toolbar extends BorderDock {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				//GUIManager.getDefaultGUIManager().generateAllCHindexes(20);
-				CHmetricReader chReader = new CHmetricReader();
-				chReader.executeReader("");
+				//CHmetricReader chReader = new CHmetricReader();
+				//chReader.executeReader("");
 			}
 		};
 		testButton.setEnabled(false);

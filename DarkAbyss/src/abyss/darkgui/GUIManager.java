@@ -1351,6 +1351,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void logNoEnter(String text, String mode, boolean time) {
 		windowConsole.addText(text, mode, time, false);
+		if(mode.equals("error"))
+			windowConsole.setVisible(true);
 	}
 	
 	/**
@@ -1367,8 +1369,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 				return null;
 			}
 		}
+		
+		String CSVfilePath= "";
+		CSVfilePath = selectionOfSource();
 
+		/*
 		String filePath = tmpPath + "cluster.csv";
+		
 		//generowanie CSV, uda siê, jeœli inwarianty istniej¹
 		int result = workspace.getProject().saveInvariantsToCSV(filePath, true);
 		if(result == -1) {
@@ -1377,13 +1384,23 @@ public class GUIManager extends JPanel implements ComponentListener {
 			log(msg, "error", true);
 			return null;
 		}
+		*/
 		
 		String dir_path = "";
 		int c_number = howMany;
 		try{
-			int invNumber = getWorkspace().getProject().getInvariantsMatrix().size();
-			if(invNumber < howMany)
-				howMany = invNumber;
+			int invNumber = 0;
+			if(getWorkspace().getProject().getInvariantsMatrix() == null) {
+				log("Warning: unable to check if given clusters number ("+howMany+") exceeds invariants "
+						+ "number. If so, the procedure may fail.", "warning", true);
+			} else {
+				invNumber = getWorkspace().getProject().getInvariantsMatrix().size();
+				if(invNumber < howMany)
+					howMany = invNumber;
+			}
+			
+			File test = new File(CSVfilePath);
+			String CSVDirectoryPath = test.getParent();
 
 			Object[] options = {"Select CH metric directory", "Use temporary directory",};
 			int n = JOptionPane.showOptionDialog(null,
@@ -1392,7 +1409,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 					"Directory selection", JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
-				String choosenDir = Tools.selectDirectoryDialog(lastPath, "Select CH metric dir",
+				String choosenDir = Tools.selectDirectoryDialog(CSVDirectoryPath, "Select CH metric dir",
 						"Target directory for CH metric results");
 				if(choosenDir.equals("")) {
 					dir_path = tmpPath;
@@ -1401,7 +1418,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 					File dir = new File(choosenDir);
 					dir_path = dir.getPath() + "//";
 					
-					Tools.copyFileByPath(tmpPath + "cluster.csv", dir_path+"cluster.csv");
+					Tools.copyFileByPath(CSVfilePath, dir_path+"cluster.csv");
 					log("Cluster files will be put into the "+dir_path, "text", true);
 				}
 			} else { //default one
@@ -1437,6 +1454,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda odpowiedzialna za generowanie klastrowañ na podstawie sieci.
+	 * @return String - œcie¿ka do pliku cluster.csv na bazie którego powsta³y inne pliki
 	 */
 	public String generateClustersCase56(int howMany) {
 		showConsole(true);
@@ -1446,32 +1464,33 @@ public class GUIManager extends JPanel implements ComponentListener {
 				return null;
 			}
 		}
-		
-		//generowanie CSV, uda siê, jeœli inwarianty istniej¹
-		String filePath = tmpPath + "cluster.csv";
-		int result = workspace.getProject().saveInvariantsToCSV(filePath, true);
-		if(result == -1) {
-			String msg = "Exporting net into CSV file failed. \nCluster procedure cannot begin without invariants.";
-			JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);
-			log(msg, "error", true);
-			return null;
-		}
+		String CSVfilePath = "";
+		CSVfilePath = selectionOfSource();
 		
 		String dir_path = "";
 		int c_number = howMany;
 		try{
-			int invNumber = getWorkspace().getProject().getInvariantsMatrix().size();
-			if(invNumber < howMany)
-				howMany = invNumber;
+			int invNumber = 0;
+			if(getWorkspace().getProject().getInvariantsMatrix() == null) {
+				log("Warning: unable to check if given clusters number ("+howMany+") exceeds invariants "
+						+ "number. If so, the procedure may fail.", "warning", true);
+			} else {
+				invNumber = getWorkspace().getProject().getInvariantsMatrix().size();
+				if(invNumber < howMany)
+					howMany = invNumber;
+			}
+			
+			File test = new File(CSVfilePath);
+			String CSVDirectoryPath = test.getParent();
 
 			Object[] options = {"Select cluster directory", "Use temporary directory",};
 			int n = JOptionPane.showOptionDialog(null,
-					"Multiple cluster files can we written into default temporary directory (inadvised) or into\n"
+					"Multiple cluster files can we written into default temporary directory (not advised) or into\n"
 					+ "the selected one. What to do?",
 					"Directory selection", JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
-				String choosenDir = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
+				String choosenDir = Tools.selectDirectoryDialog(CSVDirectoryPath, "Select cluster dir",
 						"Target directory for cluster results");
 				if(choosenDir.equals("")) {
 					dir_path = tmpPath;
@@ -1480,7 +1499,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 					File dir = new File(choosenDir);
 					dir_path = dir.getPath() + "//";
 					
-					Tools.copyFileByPath(tmpPath + "cluster.csv", dir_path+"cluster.csv");
+					Tools.copyFileByPath(CSVfilePath, dir_path+"cluster.csv");
 					log("Cluster files will be put into the "+dir_path, "text", true);
 				}
 			} else { //default one
@@ -1498,13 +1517,61 @@ public class GUIManager extends JPanel implements ComponentListener {
             Thread thread = new Thread(runnable);
             thread.start();
             
-            return dir_path;
+            return dir_path+"/"+"cluster.csv";
 		}catch (IOException e){
 			String msg = "Clustering generation failed for "+c_number+" clusters.\nPath: "+dir_path;
 			JOptionPane.showMessageDialog(null, msg, "Critical error",JOptionPane.ERROR_MESSAGE);
 			log(msg, "error", true);
 			log(e.getMessage(), "error", false);
 			return null;
+		}
+	}
+	
+	/**
+	 * Metoda zwraca œcie¿kê do pliku CSV, najpierw jednak molestuje u¿ytkownika celem
+	 * okreœlenia sk¹d ma ten plik w³aœciwa sama wytrzasn¹æ.
+	 * @return String - œcie¿ka do pliku CSV
+	 */
+	private String selectionOfSource() {
+		if(getWorkspace().getProject().getInvariantsMatrix() == null) { //brak inwariantów
+			FileFilter[] filters = new FileFilter[1];
+			filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
+			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file");
+			
+			if(selectedFile.equals(""))
+				return null;
+			else
+				return selectedFile;
+		} else {
+			//wybór: z sieci, czy wskazanie CSV
+			Object[] options = {"Select CSV file manually", "Create CSV from net invariants",};
+			int n = JOptionPane.showOptionDialog(null,
+					"Select CSV file for clustering computation manually or extract CSV from the\n"
+					+ "current network invariants (but they must be computed already)?",
+					"Source CSV decision", JOptionPane.YES_NO_OPTION,
+					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+			if (n == 0) {
+				FileFilter[] filters = new FileFilter[1];
+				filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
+				String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file");
+				
+				if(selectedFile.equals(""))
+					return null;
+				else
+					return selectedFile;
+			} else {
+				//generowanie CSV, uda siê, jeœli inwarianty istniej¹
+				String CSVfilePath = tmpPath + "cluster.csv";
+				int result = workspace.getProject().saveInvariantsToCSV(CSVfilePath, true);
+				if(result == -1) {
+					String msg = "Exporting net into CSV file failed. \nCluster procedure cannot begin without invariants.";
+					JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);
+					log(msg, "error", true);
+					return null;
+				}
+				
+				return CSVfilePath;
+			}
 		}
 	}
 	
