@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -36,6 +38,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -53,7 +56,10 @@ import abyss.workspace.ExtensionFileFilter;
 import abyss.darkgui.GUIManager;
 
 /**
- * Klasa obs³uguj¹ca okno klastrów dla danej sieci.
+ * Klasa obs³uguj¹ca okno klastrów dla danej sieci. Poza tym mnóstwo przycisków przeznaczonych
+ * do wykonywania operacji na klastrach: generowanie, wczytywanie, eksport do plików (tak¿e
+ * Excel). Wywo³uje mniejsze okno informacji o klastrowaniu po klikniêciu na odpowiedni¹
+ * komórkê tabeli.
  * @author MR
  *
  */
@@ -66,7 +72,6 @@ public class AbyssClusters extends JFrame {
     private int clustersToGenerate = 0;
     private SpinnerModel spinnerClustersModel;
     private JSpinner spinnerClusters;
-    private boolean spinnerBlocked;
     
     private int mode = 0; // 0 - tryb 56 klastrowañ
     private MyRenderer tabRenderer = new MyRenderer(mode, 18);
@@ -84,15 +89,14 @@ public class AbyssClusters extends JFrame {
     	myself = this;
     	this.setTitle("Abyss Cluster Window");
     	clustersToGenerate = 20;	
-    	spinnerBlocked = true;
     	initiateListeners();
 
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		this.setLocation(25, 25);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(20, 20);
 		
-		setMinimumSize(new Dimension(900, screenSize.height-100));
-		setMaximumSize(new Dimension(900, screenSize.height-100));
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		setMinimumSize(new Dimension(1000, screenSize.height-100));
+		setMaximumSize(new Dimension(1000, screenSize.height-100));
 		setResizable(false);
 
         JPanel mainPanel = new JPanel();
@@ -315,14 +319,14 @@ public class AbyssClusters extends JFrame {
     	main.setLayout(new BorderLayout());
 
     	model = new DefaultTableModel();
-        model.addColumn("Column1");
-        model.addColumn("Column2");
-        model.addColumn("Column3");
-        model.addColumn("Column4");
-        model.addColumn("Column5");
+        model.addColumn("Column1"); //miara odleg³oœci
+        model.addColumn("Column2"); //zerowe klastry dla algorytmu klastrowania
+        model.addColumn("Column3"); //MSS algorytmu
+        model.addColumn("Column4"); //CH algorytmu
+        model.addColumn("Column5"); //kolejna trójka jak dla 2-4, itd,
         model.addColumn("Column6");
         model.addColumn("Column7");
-        model.addColumn("Column8");
+        model.addColumn("Column8"); //kolejna trójka jak dla 2-4, itd,
         model.addColumn("Column9");
         model.addColumn("Column10");
         model.addColumn("Column11");
@@ -330,6 +334,15 @@ public class AbyssClusters extends JFrame {
         model.addColumn("Column13");
         model.addColumn("Column14");
         model.addColumn("Column15");
+        model.addColumn("Column16");
+        model.addColumn("Column17");
+        model.addColumn("Column18");
+        model.addColumn("Column19");
+        model.addColumn("Column20");
+        model.addColumn("Column21");
+        model.addColumn("Column22");
+        
+       
         
         table = new JTable(model);
         //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
@@ -342,62 +355,47 @@ public class AbyssClusters extends JFrame {
           	    	JTable target = (JTable)e.getSource();
           	    	int row = target.getSelectedRow();
           	    	int column = target.getSelectedColumn();
-          	    	int sub = subRowsSize;
-          	    	if(column != 0 && row % (sub+1) != 0) { // NIE dla I kolumny i wierszy nag³ówkowych
-          	    		try {
-          	    			//tutaj dzieje siê magia na liczbach - jednako¿ dzieje siê prawid³owo, dlatego
-          	    			//lepiej tutaj niczego nie zmieniaæ we wzorach
-          	    			int clusterNumber = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
-          	    			int newC = 0;
-          	    			if(column % 2 == 1)
-          	    				newC = column + 1;
-          	    			else
-          	    				newC = column;
-          	    			int algID = (newC / 2)-1; //1-2 ->0, 3,4 ->1, etc.
-          	    			
-          	    			//obliczanie numery wiersza nag³ówego nad klikniêtym wierszem:
-          	    			int headerRowNumber = row - (clusterNumber-1);
-          	    			//zmiana na nr miary, pierwszy blok, to miara 0, nastêpny 1, itd. a¿ do 7
-          	    			headerRowNumber /= (subRowsSize+1);
-          	    			
-          	    			Clustering omg = dataTableCase56.getClustering((headerRowNumber*7)+algID, clusterNumber-2);
-          	    			//new AbyssClusterSubWindow(myself, omg, 0);
-          	    			new AbyssClusterSubWindow(myself, omg, 1);
-          	    			
-          	    			//AbyssClusterSubWindow w = new AbyssClusterSubWindow(myself, omg);
-            	    	 } catch (Exception ex) {
-            	    		  
-            	    	 }
-            	    	 
-            	     }
-            	      //JOptionPane.showMessageDialog(null,""+row+" "+column,"test",JOptionPane.INFORMATION_MESSAGE);
-            	      // do some action if appropriate column
+          	    	
+          	    	cellClickedEvent(row, column);
           	    }
           	 }
       	});
         
+       
         table.getColumnModel().getColumn(0).setHeaderValue("Metric:");
         table.getColumnModel().getColumn(1).setHeaderValue("");
         table.getColumnModel().getColumn(2).setHeaderValue("UPGMA");
         table.getColumnModel().getColumn(3).setHeaderValue("");
-        table.getColumnModel().getColumn(4).setHeaderValue("Centroid");
-        table.getColumnModel().getColumn(5).setHeaderValue("");
-        table.getColumnModel().getColumn(6).setHeaderValue("Complete");
+        table.getColumnModel().getColumn(4).setHeaderValue("");
+        table.getColumnModel().getColumn(5).setHeaderValue("Centroid");
+        table.getColumnModel().getColumn(6).setHeaderValue("");
         table.getColumnModel().getColumn(7).setHeaderValue("");
-        table.getColumnModel().getColumn(8).setHeaderValue("McQuitty");
+        table.getColumnModel().getColumn(8).setHeaderValue("Complete");
         table.getColumnModel().getColumn(9).setHeaderValue("");
-        table.getColumnModel().getColumn(10).setHeaderValue("Median");
-        table.getColumnModel().getColumn(11).setHeaderValue("");
-        table.getColumnModel().getColumn(12).setHeaderValue("Single");
+        table.getColumnModel().getColumn(10).setHeaderValue("");
+        table.getColumnModel().getColumn(11).setHeaderValue("McQuitty");
+        table.getColumnModel().getColumn(12).setHeaderValue("");
         table.getColumnModel().getColumn(13).setHeaderValue("");
-        table.getColumnModel().getColumn(14).setHeaderValue("Ward");
+        table.getColumnModel().getColumn(14).setHeaderValue("Median");
+        table.getColumnModel().getColumn(15).setHeaderValue("");
+        table.getColumnModel().getColumn(16).setHeaderValue("");
+        table.getColumnModel().getColumn(17).setHeaderValue("Single");
+        table.getColumnModel().getColumn(18).setHeaderValue("");
+        table.getColumnModel().getColumn(19).setHeaderValue("");
+        table.getColumnModel().getColumn(20).setHeaderValue("Ward");
+        table.getColumnModel().getColumn(21).setHeaderValue("");
         
         //rozmiary kolumn:
-        for(int index=0; index<table.getColumnCount(); index++) {
-        	if(index % 2 == 0) {
-        		table.getColumnModel().getColumn(index).setPreferredWidth(60);
-        	} else {
+        table.getColumnModel().getColumn(0).setPreferredWidth(80);
+        for(int index=1; index<table.getColumnCount(); index++) {
+        	if((index+2) % 3 == 0) { //trójka
         		table.getColumnModel().getColumn(index).setPreferredWidth(20);
+        		table.getColumnModel().getColumn(index+1).setPreferredWidth(50);
+        		table.getColumnModel().getColumn(index+2).setPreferredWidth(50);
+        		index++;
+        		index++;
+        	} else {
+        		//table.getColumnModel().getColumn(index).setPreferredWidth(20);
         	}
         }
 
@@ -406,6 +404,35 @@ public class AbyssClusters extends JFrame {
         return main;
     }
     
+    /**
+     * Obs³uga zdarzenia klikniêcia na komórkê. Metoda przelicza lokalizacjê komórki na lokalizacjê
+     * w tabeli danych. Nastêpnie wywo³uje podokno informacyjne.
+     * @param row int - nr klikniêtego wiersza
+     * @param column int - nr klikniêtej komórki
+     */
+    private void cellClickedEvent(int row, int column) {
+		int sub = subRowsSize;
+		if(column != 0 && row % (sub+1) != 0) { // NIE dla I kolumny i wierszy nag³ówkowych
+			try {
+				//tutaj dzieje siê magia na liczbach - jednako¿ dzieje siê prawid³owo, dlatego
+				//lepiej tutaj niczego nie zmieniaæ we wzorach
+				int clusterNumber = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+				int algID = (int)((column-1) / 3); //1,2,3 -> 0; 4,5,6->1, itd.
+				
+				//obliczanie numery wiersza nag³ówego nad klikniêtym wierszem:
+				int headerRowNumber = row - (clusterNumber-1);
+				//zmiana na nr miary, pierwszy blok, to miara 0, nastêpny 1, itd. a¿ do 7
+				headerRowNumber /= (subRowsSize+1);
+				
+				Clustering omg = dataTableCase56.getClustering((headerRowNumber*7)+algID, clusterNumber-2);
+				new AbyssClusterSubWindow(myself, omg, 1);
+				
+			 } catch (Exception ex) {
+				  
+			 }
+			 
+		 }
+	}
     /*
     protected void changeCellsInRowCase56(TableModelEvent e) {
     	try {
@@ -446,18 +473,25 @@ public class AbyssClusters extends JFrame {
     	String[] metricName = { "Correlation", "Pearson", "Binary", "Canberra", "Euclidean", "Manhattan", "Maximum", "Minkowski" };
     	
     	for(int metric=0; metric <8; metric++) { //dla ka¿dej z oœmiu metryk:
-    		String[] data = { metricName[metric],"0:","MSS","0:","MSS","0:","MSS","0:","MSS","0:","MSS","0:","MSS","0:","MSS"};
+    		String[] data = { metricName[metric],"0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H"};
 			model.addRow(data);
 			
     		for(int rows=0; rows < subRowsSize; rows++) { //dla odpowiedniej liczby wierszy:
-    			String[] dataRow = { "","","","","","","","","","","","","","",""}; //15 elementów
+    			String[] dataRow = { "","","","","","","","","","","","","","","","","","","","","",""}; //22 elementów
     			dataRow[0] = ""+(rows+2);
     			for(int alg=0; alg < 7; alg++ ) { // dla ka¿dego wiersza jedziemy po algorytmach
     				// Average, Centroid, Complete, McQuitty, Median, Single, Ward
         			int tableIndex = (metric*7)+alg; //która tabelka
             		
-        			dataRow[1+alg*2] = ""+dataTableCase56.getMatrix().get(tableIndex).get(rows).zeroClusters;
-        			dataRow[1+alg*2+1] = ""+dataTableCase56.getMatrix().get(tableIndex).get(rows).evalMSS;
+        			dataRow[1+alg*3] = ""+dataTableCase56.getMatrix().get(tableIndex).get(rows).zeroClusters;
+        			
+        			Double val = dataTableCase56.getMatrix().get(tableIndex).get(rows).evalMSS;
+        			String cuttedValue = cutValueMSS(val);
+        			dataRow[1+alg*3+1] = ""+cuttedValue;
+        			
+        			Double val2 = dataTableCase56.getMatrix().get(tableIndex).get(rows).evalCH;
+        			String cuttedValue2 = cutValueCH(val2);
+        			dataRow[1+alg*3+2] = ""+cuttedValue2;
             	}
     			model.addRow(dataRow);
 			}
@@ -465,9 +499,25 @@ public class AbyssClusters extends JFrame {
     	GUIManager.getDefaultGUIManager().log("New clustering data table has been successfully read.", "text", true);
     }
     
-    public void addDataRow15(String[] data) {
-    	model.addRow(data);
-    }
+    private String cutValueMSS(double evalMSS) {
+    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(getLocale());
+    	otherSymbols.setDecimalSeparator('.');
+    	//otherSymbols.setGroupingSeparator('.'); 
+    	DecimalFormat df = new DecimalFormat("#.####", otherSymbols);
+    	//DecimalFormat df = new DecimalFormat("#.####");
+        
+		return df.format(evalMSS);
+	}
+    
+    private String cutValueCH(double evalMSS) {
+    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(getLocale());
+    	otherSymbols.setDecimalSeparator('.');
+    	//otherSymbols.setGroupingSeparator('.'); 
+    	DecimalFormat df = new DecimalFormat("#.#", otherSymbols);
+    	//DecimalFormat df = new DecimalFormat("#.####");
+        
+		return df.format(evalMSS);
+	}
 
     public Color getColor(double power)
 	{
@@ -629,7 +679,7 @@ public class AbyssClusters extends JFrame {
 			String newCHpath = GUIManager.getDefaultGUIManager().generateAllCHindexes(clustersToGenerate);
 			if(newCHpath != null) //jeœli coœ siê sta³o siê... :)
 				pathCHmetricsDir = newCHpath;
-			//uwaga! w powy¿szym miary dopiero powstaj¹!
+			//uwaga! w powy¿szym katalogu miary dopiero powstaj¹!
 		}
 	}
     
@@ -702,7 +752,8 @@ public class AbyssClusters extends JFrame {
 			oos.close();
 			fos.close();
 		} catch(IOException ioe){
-		    ioe.printStackTrace();
+			GUIManager.getDefaultGUIManager().log("Saving data table failed.", "error", false);
+		    //ioe.printStackTrace();
 		}
 	}
 	
@@ -791,8 +842,13 @@ public class AbyssClusters extends JFrame {
   	  	    	*/
   	  	    }  
     	});
-    	
-    }  
+    }
+    
+    //**************************************************************************************************
+    //**************************************              **********************************************
+    //**************************************  MyRenderer  **********************************************
+    //**************************************    Class     **********************************************
+    //**************************************************************************************************
     
     
     /**
@@ -850,32 +906,82 @@ public class AbyssClusters extends JFrame {
          * @return Component - konkretnie: JTextField jako komórka tabeli
          */
 		private Component paintCellsCase56(Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		    
+			Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(
+					table, value, isSelected, hasFocus, row, column);
+
 		    if(column==0) {
-		    	renderer.setFont(new Font("Arial", Font.BOLD, 12));
+		    	((DefaultTableCellRenderer)renderer).setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
+		    	renderer.setFont(new Font("Arial", Font.BOLD, 10));
 		    	renderer.setBackground(Color.white);
 		    } else {
 		    	if(row == 0 || row % (subRows+1) == 0) { //wiersza nag³ówkowe nazw algorytmów
-		    		renderer.setFont(new Font("Arial", Font.BOLD, 12));
-		    	} else {
-		    		float f = -1.0f;
+		    		((DefaultTableCellRenderer)renderer).setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+		    		renderer.setFont(new Font("Arial", Font.BOLD, 10));
+		    	} else { //ca³a reszta wierszy
+		    		((DefaultTableCellRenderer)renderer).setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
+		    		renderer.setFont(new Font("Arial", Font.PLAIN, 12));
+		    		float cellValue = -1.0f;
+		    		
 		    		try {
-		    			f = Float.parseFloat(value.toString());	
+		    			cellValue = Float.parseFloat(value.toString());	
 		    		} catch (Exception e) { //invalid parse
-		    			
+		    			cellValue = -1.0f;
 		    		}
-		    		if(column % 2 != 0) { //parzyste id kolumn (id! bo samo kolumny s¹ nieparzyste)
-		    			if(f >=0 && f < 5) {
+		    		
+		    		if((column+2) % 3 == 0) { // 0-Clusters: kolumny 1, 4, 7, 10, 13, 16, 19
+		    			if(cellValue >=0 && cellValue < 5) {
 		    				renderer.setBackground(new Color(51, 212, 62));
-		    			} else if(f >= 5 && f < 10) {
+		    			} else if(cellValue >= 5 && cellValue < 10) {
 		    				renderer.setBackground(new Color(231 ,242, 15));
 		    			} else {
 		    				renderer.setBackground(new Color(242, 52, 15));
 		    			}
-		    		} else {
-		    			f = f * 100;
-		    			renderer.setBackground(getSimpleColor(f));
+		    		} else if((column+1) % 3 == 0) { //MSS kolumny: 2, 5, 8, 11, 14, 17, 20
+		    			cellValue = cellValue * 100;
+		    			renderer.setBackground(getSimpleColor(cellValue));
+		    		}
+		    		else { //C-H pozosta³e
+		    			 ((DefaultTableCellRenderer)renderer).setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		    			 renderer.setBackground(Color.lightGray);
+		    			 try {
+		    				 int r = (row) % (subRows+1); 
+		    				 // r - bezwzglêdny nr wiersza: 1 to pierwszy wiersz pod lini¹ nazw algorytmów
+		    				 // r = SubRows to ostatni wiersz przed kolejn¹ ramk¹
+
+		    				 if(r == 1) {
+		    					 Object nextCell = table.getValueAt(row+1, column);	
+		    					 Float next = Float.parseFloat(nextCell.toString());
+		    					 if(cellValue > next) {
+		    						 renderer.setFont(new Font("Arial", Font.BOLD, 12));
+		    						 //renderer.setBackground(Color.lightGray);
+		    						 
+		    					 } else {
+		    						 //renderer.setBackground(Color.white);
+		    					 }
+		    				 } else if (r == subRows) {
+		    					 Object previousCell = table.getValueAt(row-1, column);
+		    					 Float previous = Float.parseFloat(previousCell.toString());
+		    					 if(cellValue > previous) {
+		    						 renderer.setFont(new Font("Arial", Font.BOLD, 12));
+		    						 //renderer.setBackground(Color.lightGray);
+		    					 } else {
+		    						 //renderer.setBackground(Color.white);
+		    					 }
+		    				 } else {
+		    					 Object nextCell = table.getValueAt(row+1, column);
+		    					 Object previousCell = table.getValueAt(row-1, column);
+		    					 Float next = Float.parseFloat(nextCell.toString());
+		    					 Float previous = Float.parseFloat(previousCell.toString());
+		    					 if(cellValue > previous && cellValue > next) {
+		    						 renderer.setFont(new Font("Arial", Font.BOLD, 12));
+		    						 renderer.setBackground(Color.gray);
+		    					 } else {
+		    						 //renderer.setBackground(Color.white);
+		    					 }
+		    				 }	    				 
+		    			 } catch (Exception e) {
+		    				 
+		    			 } 
 		    		}
 		    	}
 		    }
