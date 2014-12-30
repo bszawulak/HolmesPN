@@ -128,7 +128,7 @@ public class DarkMenu extends JMenuBar {
 
 		// The New Tab for File
 		JMenuItem sheetMenuItem = new JMenuItem("New Sheet", KeyEvent.VK_T);
-		sheetMenuItem.setIcon(new ImageIcon("resources/icons/menu/menu_newTab.png"));
+		sheetMenuItem.setIcon(new ImageIcon(getClass().getResource("/icons/menu/menu_newTab.png")));
 		sheetMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,ActionEvent.ALT_MASK));
 		sheetMenuItem.getAccessibleContext().setAccessibleDescription("Create a new sheet (tab) in workspace");
 		sheetMenuItem.addActionListener(new ActionListener() {
