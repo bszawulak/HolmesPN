@@ -2,11 +2,11 @@ package abyss.darkgui;
 
 import abyss.adam.mct.Runner;
 import abyss.analyzer.DarkAnalyzer;
-import abyss.analyzer.NetPropAnalyzer;
+import abyss.analyzer.NetPropertiesAnalyzer;
 import abyss.darkgui.dockable.DeleteAction;
-import abyss.darkgui.properties.Properties;
+import abyss.darkgui.properties.AbyssDockWindow;
 import abyss.darkgui.properties.PetriNetTools;
-import abyss.darkgui.properties.Properties.PropertiesType;
+import abyss.darkgui.properties.AbyssDockWindow.DockWindowType;
 import abyss.darkgui.toolbar.Toolbar;
 import abyss.files.clusters.Rprotocols;
 import abyss.math.PetriNet;
@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.Action;
@@ -91,7 +92,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private SplitDock totalSplitDock;
 	
 	private PetriNetTools toolBox;
-	private Properties propertiesBox, simulatorBox, selectionBox, analyzerBox, propAnalyzerBox, mctBox, invSimBox;
+	
+	private AbyssDockWindow propertiesBox;
+	private AbyssDockWindow simulatorBox;
+	private AbyssDockWindow selectionBox;
+	private AbyssDockWindow analyzerBox;
+	private AbyssDockWindow propAnalyzerBox;
+	private AbyssDockWindow mctBox;
+	private AbyssDockWindow invSimBox;
 	// docking listener
 	private DarkDockingListener dockingListener;
 	private Toolbar shortcutsBar;
@@ -170,13 +178,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// set docking listener
 		setDockingListener(new DarkDockingListener());
 		setToolBox(new PetriNetTools());
-		setPropertiesBox(new Properties(PropertiesType.EDITOR));
-		setSimulatorBox(new Properties(PropertiesType.SIMULATOR));
-		setSelectionBox(new Properties(PropertiesType.SELECTOR));
-		setAnalyzerBox(new Properties(PropertiesType.InvANALYZER));
-		setPropAnalyzerBox(new Properties(PropertiesType.PropANALYZER));
-		setMctBox(new Properties(PropertiesType.MctANALYZER));
-		setInvSim(new Properties(PropertiesType.InvSIMULATOR));
+		setPropertiesBox(new AbyssDockWindow(DockWindowType.EDITOR));
+		setSimulatorBox(new AbyssDockWindow(DockWindowType.SIMULATOR));
+		setSelectionBox(new AbyssDockWindow(DockWindowType.SELECTOR));
+		setAnalyzerBox(new AbyssDockWindow(DockWindowType.InvANALYZER));
+		setPropAnalyzerBox(new AbyssDockWindow(DockWindowType.PropANALYZER));
+		setMctBox(new AbyssDockWindow(DockWindowType.MctANALYZER));
+		setInvSim(new AbyssDockWindow(DockWindowType.InvSIMULATOR));
 		
 		// create menu
 		setMenu(new DarkMenu());
@@ -507,7 +515,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca okno w³aœciwoœci dla zbiorów MCT.
 	 * @return Properties - okno w³aœciwoœci MCT
 	 */
-	public Properties getMctBox() {
+	public AbyssDockWindow getMctBox() {
 		return mctBox;
 	}
 
@@ -515,7 +523,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ta ustawia nowe okno w³aœciwoœci dla zbiorów MCT.
 	 * @param mctBox Properties - nowe okno w³aœciwoœci MCT
 	 */
-	public void setMctBox(Properties mctBox) {
+	public void setMctBox(AbyssDockWindow mctBox) {
 		this.mctBox = mctBox;
 	}
 	
@@ -523,7 +531,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ustawia nowe okno w³aœciwoœci symulatora inwariantów.
 	 * @param invSim Properties - okno w³aœciwoœci symulatora inwariantów
 	 */
-	public void setInvSim(Properties invSim)
+	public void setInvSim(AbyssDockWindow invSim)
 	{
 		this.invSimBox = invSim;
 	}
@@ -532,7 +540,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca aktywne okno w³aœciwoœci symulatora inwariantów.
 	 * @param invSim Properties - okno w³aœciwoœci symulatora inwariantów
 	 */
-	public Properties getInvSimBox() {
+	public AbyssDockWindow getInvSimBox() {
 		return invSimBox;
 	}
 
@@ -572,7 +580,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt podokna w³aœciwoœci.
 	 * @return Properties - podokno w³aœciwoœci
 	 */
-	public Properties getPropertiesBox() {
+	public AbyssDockWindow getPropertiesBox() {
 		return propertiesBox;
 	}
 
@@ -580,7 +588,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ustawia nowy obiekt podokna w³aœciwoœci.
 	 * @param propertiesBox Properties - podokno w³aœciwoœci
 	 */
-	private void setPropertiesBox(Properties propertiesBox) {
+	private void setPropertiesBox(AbyssDockWindow propertiesBox) {
 		this.propertiesBox = propertiesBox;
 	}
 
@@ -669,7 +677,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt okna symulatora sieci.
 	 * @return Properties - okno symulatora sieci
 	 */
-	public Properties getSimulatorBox() {
+	public AbyssDockWindow getSimulatorBox() {
 		return simulatorBox;
 	}
 
@@ -677,7 +685,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ta ustawia nowy obiekt okna symulatora sieci.
 	 * @param simulatorBox Properties - okno symulatora sieci
 	 */
-	private void setSimulatorBox(Properties simulatorBox) {
+	private void setSimulatorBox(AbyssDockWindow simulatorBox) {
 		this.simulatorBox = simulatorBox;
 	}
 
@@ -685,7 +693,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ta zwraca obiekt okna wyboru elementów.
 	 * @return Properties - okno wyboru elementów
 	 */
-	public Properties getSelectionBox() {
+	public AbyssDockWindow getSelectionBox() {
 		return selectionBox;
 	}
 
@@ -693,7 +701,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ta ustawia nowy obiekt okna wyboru elementów.
 	 * @param selectionBox Properties - okno wyboru elementów
 	 */
-	private void setSelectionBox(Properties selectionBox) {
+	private void setSelectionBox(AbyssDockWindow selectionBox) {
 		this.selectionBox = selectionBox;
 	}
 	
@@ -756,7 +764,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt w³aœciwoœci analizatora sieci.
 	 * @return Properties - obiekt w³aœciwoœci analizatora
 	 */
-	public Properties getAnalyzerBox() {
+	public AbyssDockWindow getAnalyzerBox() {
 		return analyzerBox;
 	}
 
@@ -764,7 +772,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ta ustawia nowy obiekt w³aœciwoœci analizatora sieci.
 	 * @param analyzerBox Properties - obiekt w³aœciwoœci analizatora
 	 */
-	public void setAnalyzerBox(Properties analyzerBox) {
+	public void setAnalyzerBox(AbyssDockWindow analyzerBox) {
 		this.analyzerBox = analyzerBox;
 	}
 	
@@ -772,7 +780,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt okna z w³aœciwoœciami sieci.
 	 * @return Properties - obiekt z w³aœciwoœciani sieci
 	 */
-	public Properties getPropAnalyzerBox() {
+	public AbyssDockWindow getPropAnalyzerBox() {
 		return propAnalyzerBox;
 	}
 
@@ -780,7 +788,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ta ustawia nowy obiekt okna z w³aœciwoœciami sieci.
 	 * @param analyzerBox Properties - obiekt z w³aœciwoœciami sieci
 	 */
-	public void setPropAnalyzerBox(Properties analyzerBox) {
+	public void setPropAnalyzerBox(AbyssDockWindow analyzerBox) {
 		this.propAnalyzerBox = analyzerBox;
 	}
 	
@@ -820,6 +828,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		workspace.getProject().loadFromFile(file.getPath());
 		setLastPath(file.getParentFile().getPath());
 		getSimulatorBox().createSimulatorProperties();
+		showNetworkProperties();  //poka¿ w³aœciwoœci sieci
 	}
 
 	/**
@@ -840,6 +849,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		workspace.getProject().loadFromFile(file.getPath());
 		lastPath = file.getParentFile().getPath();
 		getSimulatorBox().createSimulatorProperties();
+		
+		showNetworkProperties(); //poka¿ w³aœciwoœci sieci
 	}
 
 	/**
@@ -1102,9 +1113,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda zleca wyœwietlenie w³aœciwoœci sieci.
 	 */
-	public void generateNetProps(){
-		NetPropAnalyzer analyzer = getWorkspace().getProject().getNetPropAnal();
-		getPropAnalyzerBox().showNetProperties(analyzer.propAnalyze());
+	public void showNetworkProperties(){
+		try {
+			NetPropertiesAnalyzer analyzer = new NetPropertiesAnalyzer();
+			AbyssDockWindow propWindow = getPropAnalyzerBox();
+			ArrayList<ArrayList<Object>> newPropTable = analyzer.propAnalyze();
+			propWindow.showNetProperties(newPropTable);
+		} catch (Exception e) {
+			
+		}
 	}
 	
 	/**

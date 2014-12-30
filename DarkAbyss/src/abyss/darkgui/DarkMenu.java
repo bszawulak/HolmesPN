@@ -35,6 +35,7 @@ public class DarkMenu extends JMenuBar {
 	// menus
 	private JMenu fileMenu;
 	private JMenu windowMenu;
+	private JMenu netMenu;
 	private JMenu invariantsOperationsMenu;
 	private JMenu mctOperationsMenu;
 	private JMenu clustersOperationsMenu;
@@ -266,6 +267,25 @@ public class DarkMenu extends JMenuBar {
 		//*********************************************************************************************
 		//*********************************************************************************************
 	
+		netMenu = new JMenu("Net");
+		netMenu.setMnemonic(KeyEvent.VK_N);
+		netMenu.getAccessibleContext().setAccessibleDescription("Net menu");
+		this.add(netMenu);
+		
+		// Net properties
+		JMenuItem propItem = new JMenuItem("Net properties", KeyEvent.VK_1);
+		propItem.setPreferredSize(new Dimension(150, 38));
+		//propItem.setIcon(new ImageIcon("resources/icons/menu/menu_INA_invGen.png"));
+		propItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		propItem.getAccessibleContext().setAccessibleDescription("Show net properties");
+		propItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().showNetworkProperties();
+				//GUIManager.getDefaultGUIManager().generateINAinvariants();
+			}
+		});
+		netMenu.add(propItem);	
+		
 		//INVARIANTS MENU
 		invariantsOperationsMenu = new JMenu("Invariants");
 		invariantsOperationsMenu.setMnemonic(KeyEvent.VK_I);
@@ -329,7 +349,7 @@ public class DarkMenu extends JMenuBar {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					// poniższa linia:   ╯°□°）╯︵  ┻━━┻
-					GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
+					GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().spiner.getValue());
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
 					GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);

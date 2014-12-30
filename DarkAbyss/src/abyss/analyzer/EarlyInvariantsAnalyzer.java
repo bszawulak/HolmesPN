@@ -26,7 +26,7 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 	@SuppressWarnings("unused")
 	private int glebokosc = 0;
 	private boolean znalazl = false;
-	private NetPropAnalyzer NPA = new NetPropAnalyzer();
+	private NetPropertiesAnalyzer NPA = new NetPropertiesAnalyzer();
 
 	@Override
 	public void run() {

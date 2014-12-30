@@ -11,13 +11,12 @@ import abyss.math.Arc;
 import abyss.math.ElementLocation;
 
 /**
- * Klasa implementuj¹ca panel pokazuj¹cy zaznaczone elementy sieci.
+ * Klasa implementuj¹ca panel pokazuj¹cy informacje o zaznaczonych mysz¹ elementach sieci.
  * @author students
  *
  */
 public class SelectionPanel extends JPanel {
 	private static final long serialVersionUID = -7388729615923711657L;
-	
 	private GUIManager guiManager;
 	private DefaultListModel<String> selectedElementLocationList;
 	private DefaultListModel<String> selectedArcList;

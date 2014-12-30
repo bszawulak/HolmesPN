@@ -166,7 +166,7 @@ public class InvariantsSimulator {
 		setMode(simulatorMode);
 		setSimulationActive(true);
 		ActionListener taskPerformer = new SimulationPerformer();
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties()
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow()
 				.allowOnlySimulationDisruptButtons();
 		GUIManager.getDefaultGUIManager().getShortcutsBar()
 				.allowOnlySimulationDisruptButtons();
@@ -478,7 +478,7 @@ public class InvariantsSimulator {
 	 * Metoda obs³uguj¹ca wciœniêcie przycisku zatrzymania symulacji.
 	 */
 	private void stopSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties()
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow()
 				.allowOnlySimulationInitiateButtons();
 		GUIManager.getDefaultGUIManager().getShortcutsBar()
 				.allowOnlySimulationInitiateButtons();
@@ -488,7 +488,7 @@ public class InvariantsSimulator {
 	}
 
 	private void pauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties()
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow()
 				.allowOnlyUnpauseButton();
 		GUIManager.getDefaultGUIManager().getShortcutsBar()
 				.allowOnlyUnpauseButton();
@@ -498,7 +498,7 @@ public class InvariantsSimulator {
 	}
 
 	private void unpauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties()
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow()
 				.allowOnlySimulationDisruptButtons();
 		GUIManager.getDefaultGUIManager().getShortcutsBar()
 				.allowOnlySimulationDisruptButtons();
@@ -860,7 +860,7 @@ public class InvariantsSimulator {
 						
 						invariantsWriter.write(invariants, foundInvariants);
 						
-						GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().setEnabledInvariantSimulationInitiateButtons(true);
+						GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().setEnabledInvariantSimulationInitiateButtons(true);
 				}
 				counter++;
 			} else {

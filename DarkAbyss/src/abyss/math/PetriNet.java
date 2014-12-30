@@ -4,7 +4,6 @@ import abyss.analyzer.EarlyInvariantsAnalyzer;
 import abyss.analyzer.DarkAnalyzer;
 import abyss.analyzer.InvariantsSimulator;
 import abyss.analyzer.InvariantsSimulator.SimulatorMode;
-import abyss.analyzer.NetPropAnalyzer;
 import abyss.darkgui.GUIManager;
 import abyss.files.io.AbyssReader;
 import abyss.files.io.AbyssWriter;
@@ -67,7 +66,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private NetSimulator simulator;
 	private InvariantsSimulator invSimulator;
 	private DarkAnalyzer analyzer;
-	private NetPropAnalyzer netPropAna; // Propanbutan
 	private EarlyInvariantsAnalyzer eia;
 
 	
@@ -392,22 +390,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<ArrayList<Integer>> getInvariantsMatrix() {
 		return invariantsMatrix;
-	}
-
-	/**
-	 * Metoda zwracaj¹ca obiekt analizatora w³aœciwoœci sieci.
-	 * @return NetPropAnalyzer - obiekt analizatora w³aœciwoœci
-	 */
-	public NetPropAnalyzer getNetPropAnal() {
-		return netPropAna;
-	}
-	
-	/**
-	 * Metoda ustawiaj¹ca nowy analizator w³aœciwoœci sieci.
-	 * @param netPropAnal NetPropAnalyzer - analizator w³aœciwoœci
-	 */
-	public void setNetPropAna(NetPropAnalyzer netPropAnal) {
-		this.netPropAna = netPropAnal;
 	}
 
 	/**

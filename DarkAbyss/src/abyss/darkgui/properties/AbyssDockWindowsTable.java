@@ -78,14 +78,14 @@ import abyss.workspace.WorkspaceSheet;
  * (repaint) - bo tak. Z layoutami jakoœ pamiêta, ¿eby siê narysowaæ. Bez nich ju¿ nie.
  * 
  * Konkluzja. Ktoœ móg³by powiedzieæ, ¿e przecie¿ skoro chce siê rêcznie wszystko rozmieœciæ,
- * to nie nale¿y narzekaæ, ¿e jest du¿o roboty. ZOBACZCIE SOBIE DURNIE MICROSOFT VISUAL STUDIO.
+ * to nie nale¿y narzekaæ, ¿e jest du¿o roboty. ZOBACZCIE SOBIE DURNIE .NET MICROSOFTU!!!
  * S¹ panele, layouty i inne. Ale nie zmusz¹ siê nikogo m³otem do ich korzystania jak w Javie.
  * I okazuje siê, ¿e nagle jest mniej tam roboty z rozmieszczaniem, ni¿ nawet z layoutami w Javie.
- * Ten jêzyk powinien pozostaæ na etapie konsoli. Jego ¿a³osne próby udawania, ¿e s³u¿y do
- * tworzenia tak¿e aplikacji w oknach nabieraj¹ chyba tylko jego fanbojów.
+ * Ten jêzyk powinien pozostaæ na etapie konsoli. Jego próby udawania, ¿e s³u¿y do
+ * tworzenia tak¿e aplikacji w oknach kosztuj¹ wiêcej nerwów ni¿ jest to tego warte.
  * MR
  */
-public class PropertiesTable extends JPanel {
+public class AbyssDockWindowsTable extends JPanel {
 	private static final long serialVersionUID = 4510802239873443705L;
 	private ArrayList<JComponent> headers;
 	private ArrayList<JComponent> values;
@@ -127,7 +127,7 @@ public class PropertiesTable extends JPanel {
 	 * Konstruktor odpowiedzialny za tworzenie elementów podokna dla symulatora sieci.
 	 * @param sim NetSimulator - obiekt symulatora sieci
 	 */
-	public PropertiesTable(NetSimulator sim) {
+	public AbyssDockWindowsTable(NetSimulator sim) {
 		int columnA_posX = 10;
 		int columnB_posX = 80;
 		int columnA_Y = 0;
@@ -371,7 +371,7 @@ public class PropertiesTable extends JPanel {
 	 * @param place Place - obiekt miejsca
 	 * @param location ElementLocation - lokalizacja miejsca
 	 */
-	public PropertiesTable(Place place, ElementLocation location) {
+	public AbyssDockWindowsTable(Place place, ElementLocation location) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
 		int columnA_Y = 0;
@@ -553,7 +553,7 @@ public class PropertiesTable extends JPanel {
 	 * @param transition Transition - obiekt tranzycji sieci
 	 * @param location ElementLocation - lokalizacja tranzycji
 	 */
-	public PropertiesTable(Transition transition, ElementLocation location) {
+	public AbyssDockWindowsTable(Transition transition, ElementLocation location) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
 		int columnA_Y = 0;
@@ -727,7 +727,7 @@ public class PropertiesTable extends JPanel {
 	 * @param transition TimeTransition - obiekt tranzycji czasowej
 	 * @param location ElementLocation - lokalizacja tranzycji
 	 */
-	public PropertiesTable(final TimeTransition transition, ElementLocation location) {
+	public AbyssDockWindowsTable(final TimeTransition transition, ElementLocation location) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
 		int columnA_Y = 0;
@@ -931,7 +931,7 @@ public class PropertiesTable extends JPanel {
 	 * ³uku sieci.
 	 * @param arc Arc - obiekt ³uku
 	 */
-	public PropertiesTable(Arc arc) {
+	public AbyssDockWindowsTable(Arc arc) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
 		int columnA_Y = 0;
@@ -1071,7 +1071,7 @@ public class PropertiesTable extends JPanel {
 	 * Konstruktor odpowiedzialny za wype³nienie podokna w³aœciwoœci dla wybranego arkusza sieci. 
 	 * @param sheet WorkspaceSheet - obiekt arkusza
 	 */
-	public PropertiesTable(WorkspaceSheet sheet) {
+	public AbyssDockWindowsTable(WorkspaceSheet sheet) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
 		int columnA_Y = 0;
@@ -1235,7 +1235,7 @@ public class PropertiesTable extends JPanel {
 	 * inwariantów sieci.
 	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
 	 */
-	public PropertiesTable(ArrayList<ArrayList<InvariantTransition>> invariants) {
+	public AbyssDockWindowsTable(ArrayList<ArrayList<InvariantTransition>> invariants) {
 		if (invariants.size() > 0) {
 			initiateContainers();
 			// set mode
@@ -1274,10 +1274,10 @@ public class PropertiesTable extends JPanel {
 	/**
 	 * Konstruktor podokna w³aœciwoœci elementów sieci. Wype³niany w zale¿noœci od
 	 * tego, co przysz³o jako argument - tj. które w³aœciwoœci.
-	 * @param prop ArrayList[ArrayList[Object]] - macierz w³aœciwoœci
+	 * @param prop ArrayList[ArrayList[Object]] - "wektor" w³aœciwoœci
 	 * @param ref boolean - wartoœæ logiczna nie maj¹ca na nic wp³ywu :)
 	 */
-	public PropertiesTable(ArrayList<ArrayList<Object>> prop, boolean ref) {
+	public AbyssDockWindowsTable(ArrayList<ArrayList<Object>> prop, boolean ref) {
 		initiateContainers();
 		JPanel rowPanel = new JPanel();
 		rowPanel.setLayout(new BoxLayout(rowPanel,BoxLayout.X_AXIS));
@@ -1335,7 +1335,7 @@ public class PropertiesTable extends JPanel {
 	 * Konstruktor odpowiedzialny za utworzenie elementów podokna symulatora inwariantów
 	 * @param is
 	 */
-	public PropertiesTable(InvariantsSimulator is)
+	public AbyssDockWindowsTable(InvariantsSimulator is)
 	{
 		int columnA_posX = 10;
 		int columnB_posX = 60;
@@ -1463,7 +1463,7 @@ public class PropertiesTable extends JPanel {
 	 * @param mct ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
 	 * @param type Properties.PropertiesType - nic nie znacz¹cy tutaj element...
 	 */
-	public PropertiesTable(ArrayList<ArrayList<Transition>> mct, Properties.PropertiesType type) {
+	public AbyssDockWindowsTable(ArrayList<ArrayList<Transition>> mct, AbyssDockWindow.DockWindowType type) {
 		initiateContainers();
 		// set mode
 		mode = EXTERNAL_ANALYSIS;

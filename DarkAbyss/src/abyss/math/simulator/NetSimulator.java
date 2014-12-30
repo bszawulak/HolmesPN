@@ -121,7 +121,7 @@ public class NetSimulator {
 		setMode(simulatorMode);
 		setSimulationActive(true);
 		ActionListener taskPerformer = new SimulationPerformer();
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties().allowOnlySimulationDisruptButtons();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
 		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
 		switch (getMode()) {
 		case LOOP:
@@ -458,7 +458,7 @@ public class NetSimulator {
 	 * za zatrzymanie symulacji.
 	 */
 	private void stopSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties().allowOnlySimulationInitiateButtons();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtons();
 		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationInitiateButtons();
 		timer.stop();
 		previousMode = mode;
@@ -470,7 +470,7 @@ public class NetSimulator {
 	 * za pauzowanie symulacji.
 	 */
 	private void pauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties().allowOnlyUnpauseButton();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButton();
 		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlyUnpauseButton();
 		timer.stop();
 		previousMode = mode;
@@ -482,7 +482,7 @@ public class NetSimulator {
 	 * za ponowne uruchomienie (po pauzie) symulacji.
 	 */
 	private void unpauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getProperties().allowOnlySimulationDisruptButtons();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
 		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
 		if (previousMode != SimulatorMode.STOPPED) {
 			timer.start();
