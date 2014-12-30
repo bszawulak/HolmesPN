@@ -17,8 +17,9 @@ public class PetriNetData {
 	 * @param nodes ArrayList[Node] - lista wierzcho³ków sieci
 	 * @param arcs ArrayList[Arc] - lista ³uków sieci
 	 */
-	public PetriNetData(ArrayList<Node> nodes, ArrayList<Arc> arcs) {
+	public PetriNetData(ArrayList<Node> nodes, ArrayList<Arc> arcs, String name) {
 		this.nodes = nodes;
 		this.arcs = arcs;
+		this.netName = name;
 	}
 }

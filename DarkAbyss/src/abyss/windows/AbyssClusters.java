@@ -38,7 +38,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -64,7 +63,8 @@ import abyss.darkgui.GUIManager;
  *
  */
 public class AbyssClusters extends JFrame {
-	private static final long serialVersionUID = 6942814230861358341L;
+	private static final long serialVersionUID = -8420712475473581772L;
+	//private static final long serialVersionUID = 6942814230861358341L;
 	private JTable table;
 	private DefaultTableModel  model;
 	private int subRowsSize = 0;

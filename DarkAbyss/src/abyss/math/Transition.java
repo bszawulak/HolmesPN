@@ -27,12 +27,16 @@ public class Transition extends Node {
 	protected double minFireTime = 0;
 	protected double maxFireTime = 999;
 	protected double absoluteFireTime = 0;
-	private double FireTime = -1;
+	protected double FireTime = -1;
 	protected boolean isLaunching;
 	protected boolean isGlowed = false;
-	private boolean isGlowedMTC = false;
+	protected boolean isGlowedMTC = false;
+	protected boolean isGlowetCl = false;
+	protected Color glowedClColor;
+	
 	protected int firingNumber = 0;
 	private ArrayList<ArrayList<Transition>> containingInvariants = new ArrayList<ArrayList<Transition>>();
+	
 
 	/**
 	 * Konstruktor obiektu tranzycji sieci.
@@ -306,8 +310,8 @@ public class Transition extends Node {
 	 * Metoda pozwala okreœlic, czy tranzycja ma byc podœwietlona.
 	 * @param isGlowed boolean - true, jeœli ma œwiecic
 	 */
-	public void setGlowed(boolean isGlowed) {
-		this.isGlowed = isGlowed;
+	public void setGlowed(boolean value) {
+		this.isGlowed = value;
 	}
 
 	/**
@@ -322,10 +326,17 @@ public class Transition extends Node {
 	 * Metoda ustawia stan œwiecenia tranzycji jako czêœci MCT.
 	 * @param isGlowedMTC boolean - true je¿eli ma œwieciæ
 	 */
-	public void setGlowedMTC(boolean isGlowedMTC) {
-		this.isGlowedMTC = isGlowedMTC;
+	public void setGlowedMTC(boolean value) {
+		this.isGlowedMTC = value;
 	}
-
+	
+	public boolean isGlowedCluster() {
+		return isGlowetCl;
+	}
+	public void setGlowedCluster(boolean value, Color clColor) {
+		this.isGlowetCl = value;
+		this.glowedClColor = clColor;
+	}
 	/**
 	 * Metoda zwraca liczbê wyst¹pieñ uruchomieñ tranzycji w ramach niezmiennika.
 	 * @return int - liczba wyst¹pieñ uruchomieñ tranzycji w niezmienniku z pola firingNumber

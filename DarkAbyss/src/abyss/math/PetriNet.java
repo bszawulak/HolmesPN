@@ -50,7 +50,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<ArrayList<InvariantTransition>> invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
 	private ArrayList<ArrayList<Integer>> invariantsMatrix;
 	private ArrayList<GraphPanel> graphPanels;
-	private PetriNetData data = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>());
+	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
 	private IdGenerator idGenerator;
 	
 	private AbyssWriter ABYSSwriter;
@@ -78,7 +78,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		getData().nodes = nod;
 		getData().arcs = ar;
 		communicationProtocol = new IOprotocols();
-		data.netName = "";
+		dataCore.netName = "default";
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
 		this.setAnalyzer(new DarkAnalyzer(this));
 		communicationProtocol = new IOprotocols();
-		data.netName = "";
+		dataCore.netName = name;
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param name String - nowa nazwa
 	 */
 	public void setName(String name) {
-		data.netName = name;
+		dataCore.netName = name;
 	}
 	
 	/**
@@ -149,7 +149,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return String - nazwa sieci
 	 */
 	public String getName() {
-		return data.netName;
+		return dataCore.netName;
 	}
 
 	/**
@@ -342,7 +342,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return PetriNetData - wierzcho³ki i ³uki sieci
 	 */
 	public PetriNetData getData() {
-		return data;
+		return dataCore;
 	}
 
 	/**
@@ -350,7 +350,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param data PetriNetData - wierzcho³ki i ³uki sieci
 	 */
 	public void setData(PetriNetData data) {
-		this.data = data;
+		this.dataCore = data;
 	}
 	
 	/**

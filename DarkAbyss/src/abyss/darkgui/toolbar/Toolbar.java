@@ -319,7 +319,7 @@ public class Toolbar extends BorderDock {
 				new ImageIcon("resources/icons/toolbar/clusters.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().showClusterWindow(true); 
+				GUIManager.getDefaultGUIManager().showClusterWindow(); 
 			}
 		};
 		analysisDockables.add(createButtonDockable("Clusters", clusterButton));

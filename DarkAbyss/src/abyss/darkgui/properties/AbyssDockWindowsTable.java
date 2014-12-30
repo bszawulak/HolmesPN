@@ -59,31 +59,38 @@ import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.workspace.WorkspaceSheet;
 
 /**
- * Klasa zawierajπca szczegÛ≥y interfejsu podokien dokowalnych programu.
+ * Klasa zawierajƒÖca szczeg√≥≈Çy interfejsu podokien dokowalnych programu.
  * @author students
- * @author MR
- * W≥aúciwie, to wyleje tu swoje øale na Jave, opensourcowe podejúcia w tym jÍzyku i takie
- * tam. Nie ma to NIC wspÛlnego ze studentami, ktÛrzy siÍ serio postarali i zrobili okna ok.
- * Przerobi≥em metody na pozycjonowanie absolutne, wywali≥em w cholerÍ wszystkie layouty.
- * Bo tak. Bo ludzie padajπcy przed ich ideπ na kolana i bijπcy pok≥ony "Oh, layout, jak
- * cudownie, wszystko siÍ nam teraz automatycznie rozmieúci" nie zauwaøajπ, albo nie chcπ
- * zauwaøaÊ, øe to 'automatycznie' jest tak do dupy, tak bardzo z... øe juø bardziej siÍ
- * chyba nie da. PO CO MI LATAJ•CE WE WSZYSTKIE STRONY ELEMENTY OKNA, SKORO CHCIA£BYM
- * MIE∆ JE NA STA£E W JEDNYM MIEJSCU?! Ok, ale o co tu chodzi? No wiÍc albo siÍ uøywa w
- * Javie layoutÛw, 2 polecenia na krzyø i wszystko siÍ rozmieszcza gdzie chce i jak chce,
- * albo robi rÍcznie i okazuje siÍ, øe Java w najmniejszym stopniu nie wspiera takiego podejúcia.
- * Nagle miliard rzeczy naleøy rÍcznie ustawiaÊ, niepotrzebych na zdrowy rozsπdek (PO CO MI 
- * BORDERSIZE JAK MOG  USTAWI∆ START LOCATION I SIZE? PO NIC. ALE BEZ NIEGO JPANEL SIE NIE
- * WYåWIETLI. BO NIE!). Nagle okazuje siÍ, øe JPanel rÍcznie naleøy zmusiÊ do przerysowania siÍ
- * (repaint) - bo tak. Z layoutami jakoú pamiÍta, øeby siÍ narysowaÊ. Bez nich juø nie.
+ * @author MR<br>
+ * <br>
+ * <b>Absolute positioning. Of absolute everything here. <br>
+ * Nie obchodzi mnie, co o tym my≈õlisz. Id≈∫ w layout i nie wracaj. ‚îå‚à©‚îê(‚ó£_‚ó¢)‚îå‚à©‚îê
+ * </b><br>
+ * W≈Ça≈õciwie, to wyleje tu swoje ≈ºale na Jave, opensourcowe podej≈õcia w tym jƒôzyku i takie
+ * tam. Nie ma to NIC wsp√≥lnego ze studentami, kt√≥rzy siƒô serio postarali i zrobili okna ok.
+ * Przerobi≈Çem metody na pozycjonowanie absolutne, wywali≈Çem w cholerƒô wszystkie layouty.
+ * Bo tak. Bo ludzie padajƒÖcy przed ich ideƒÖ na kolana i bijƒÖcy pok≈Çony "Oh, layout, jak
+ * cudownie, wszystko siƒô nam teraz automatycznie rozmie≈õci" nie zauwa≈ºajƒÖ, albo nie chcƒÖ
+ * zauwa≈ºaƒá, ≈ºe to 'automatycznie' jest tak do dupy, tak bardzo z... ≈ºe ju≈º bardziej siƒô
+ * chyba nie da. PO CO MI LATAJƒÑCE WE WSZYSTKIE STRONY ELEMENTY OKNA, SKORO CHCIA≈ÅBYM
+ * MIEƒÜ JE NA STA≈ÅE W JEDNYM MIEJSCU?! Ok, ale o co tu chodzi? No wiƒôc albo siƒô u≈ºywa w
+ * Javie layout√≥w, 2 polecenia na krzy≈º i wszystko siƒô rozmieszcza gdzie chce i jak chce,
+ * albo robi rƒôcznie i okazuje siƒô, ≈ºe Java w najmniejszym stopniu nie wspiera takiego podej≈õcia.
+ * Nagle miliard rzeczy nale≈ºy rƒôcznie ustawiaƒá, niepotrzebych na zdrowy rozsƒÖdek (PO CO MI 
+ * BORDERSIZE JAK MOGƒò USTAWIƒÜ START LOCATION I SIZE? PO NIC. ALE BEZ NIEGO JPANEL SIE NIE
+ * WY≈öWIETLI. BO NIE!). Nagle okazuje siƒô, ≈ºe JPanel rƒôcznie nale≈ºy zmusiƒá do przerysowania siƒô
+ * (repaint) - bo tak. Z layoutami jako≈õ pamiƒôta, ≈ºeby siƒô narysowaƒá. Bez nich ju≈º nie.
  * 
- * Konkluzja. Ktoú mÛg≥by powiedzieÊ, øe przecieø skoro chce siÍ rÍcznie wszystko rozmieúciÊ,
- * to nie naleøy narzekaÊ, øe jest duøo roboty. ZOBACZCIE SOBIE DURNIE .NET MICROSOFTU!!!
- * Sπ panele, layouty i inne. Ale nie zmuszπ siÍ nikogo m≥otem do ich korzystania jak w Javie.
- * I okazuje siÍ, øe nagle jest mniej tam roboty z rozmieszczaniem, niø nawet z layoutami w Javie.
- * Ten jÍzyk powinien pozostaÊ na etapie konsoli. Jego prÛby udawania, øe s≥uøy do
- * tworzenia takøe aplikacji w oknach kosztujπ wiÍcej nerwÛw niø jest to tego warte.
- * MR
+ * Konkluzja. Kto≈õ m√≥g≈Çby powiedzieƒá, ≈ºe przecie≈º skoro chce siƒô rƒôcznie wszystko rozmie≈õciƒá,
+ * to nie nale≈ºy narzekaƒá, ≈ºe jest du≈ºo roboty. ZOBACZCIE SOBIE DURNIE .NET MICROSOFTU!!!
+ * SƒÖ panele, layouty i inne. Ale nie zmuszƒÖ siƒô nikogo m≈Çotem do ich korzystania jak w Javie.
+ * I okazuje siƒô, ≈ºe nagle jest mniej tam roboty z rozmieszczaniem, ni≈º nawet z layoutami w Javie.
+ * Ten jƒôzyk powinien pozostaƒá na etapie konsoli. Jego pr√≥by udawania, ≈ºe s≈Çu≈ºy do
+ * tworzenia tak≈ºe aplikacji w oknach kosztujƒÖ wiƒôcej nerw√≥w ni≈º jest to tego warte.
+ * 
+ * Ostatnia rzecz, je≈õli ciƒô to nie przekonuje. Otw√≥rz google. Wpisz dowolnƒÖ frazƒô ze s≈Çowami
+ * "java layout", "problem" wzglƒôdnie "does not". P√≥≈Ç internetu wyleci z pytaniami i (rzadziej) 
+ * odpowiedziami. Takie to wspania≈Çe layouty.
  */
 public class AbyssDockWindowsTable extends JPanel {
 	private static final long serialVersionUID = 4510802239873443705L;
@@ -124,7 +131,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	// private static final JComponent new JButton = null;
 
 	/**
-	 * Konstruktor odpowiedzialny za tworzenie elementÛw podokna dla symulatora sieci.
+	 * Konstruktor odpowiedzialny za tworzenie element√≥w podokna dla symulatora sieci.
 	 * @param sim NetSimulator - obiekt symulatora sieci
 	 */
 	public AbyssDockWindowsTable(NetSimulator sim) {
@@ -147,7 +154,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(netTypeLabel);
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		final JComboBox simMode = new JComboBox(simModeName); //final, aby listener przycisku odczyta≥ wartoúÊ
+		final JComboBox simMode = new JComboBox(simModeName); //final, aby listener przycisku odczyta≈Ç warto≈õƒá
 		simMode.setLocation(columnB_posX, columnB_Y += 10);
 		simMode.setSize(colBCompLength, 20);
 		simMode.setSelectedIndex(0);
@@ -161,8 +168,8 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		
 		// SIMULATOR CONTROLS
-		//metoda startSimulation obiektu simulator troszczy siÍ o wygaszanie
-		//i aktywowanie odpowiednich przyciskÛw
+		//metoda startSimulation obiektu simulator troszczy siƒô o wygaszanie
+		//i aktywowanie odpowiednich przycisk√≥w
 		JLabel controlsLabel = new JLabel("Simulation options:");
 		controlsLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength*2, 20);
 		components.add(controlsLabel);
@@ -337,6 +344,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		// getting the data
 		// Arcs total
+		/*
 		headers.add(new JLabel("General", JLabel.TRAILING));
 		values.add(new JLabel("Information"));
 		// Nodes total
@@ -354,6 +362,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		// Tokens total
 		headers.add(new JLabel("Tokens:", JLabel.TRAILING));
 		values.add(new JLabel(Integer.toString(simulator.getTokensAmount())));
+		*/
 		// put all contents on the pane
 		//putContents(panel);
 		
@@ -367,7 +376,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Konstruktor podokna wyúwietlajπcego w≥aúciwoúci klikniÍtego miejsca sieci.
+	 * Konstruktor podokna wy≈õwietlajƒÖcego w≈Ça≈õciwo≈õci klikniƒôtego miejsca sieci.
 	 * @param place Place - obiekt miejsca
 	 * @param location ElementLocation - lokalizacja miejsca
 	 */
@@ -416,7 +425,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 		components.add(nameField);
 		
-		// KOMENTARZE WIERZCHO£KA
+		// KOMENTARZE WIERZCHO≈ÅKA
 		JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
 		comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		columnA_Y += 20;
@@ -549,7 +558,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za wyúwietlenie w≥aúciwoúci klikniÍtej tranzycji.
+	 * Metoda odpowiedzialna za wy≈õwietlenie w≈Ça≈õciwo≈õci klikniƒôtej tranzycji.
 	 * @param transition Transition - obiekt tranzycji sieci
 	 * @param location ElementLocation - lokalizacja tranzycji
 	 */
@@ -601,7 +610,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 		components.add(nameField);
 		
-		//KOMENTARZE WIERZCHO£KA:
+		//KOMENTARZE WIERZCHO≈ÅKA:
 		JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
 		comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		columnA_Y += 20;
@@ -723,7 +732,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za wyúwietlenie w≥aúciwoúci klikniÍtej tranzycji czasowej.
+	 * Metoda odpowiedzialna za wy≈õwietlenie w≈Ça≈õciwo≈õci klikniƒôtej tranzycji czasowej.
 	 * @param transition TimeTransition - obiekt tranzycji czasowej
 	 * @param location ElementLocation - lokalizacja tranzycji
 	 */
@@ -927,9 +936,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Konstruktor odpowiedzialny za utworzenie elementÛw podokna w≥aúciwoúci klikniÍtego
-	 * ≥uku sieci.
-	 * @param arc Arc - obiekt ≥uku
+	 * Konstruktor odpowiedzialny za utworzenie element√≥w podokna w≈Ça≈õciwo≈õci klikniƒôtego
+	 * ≈Çuku sieci.
+	 * @param arc Arc - obiekt ≈Çuku
 	 */
 	public AbyssDockWindowsTable(Arc arc) {
 		int columnA_posX = 10;
@@ -1068,7 +1077,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Konstruktor odpowiedzialny za wype≥nienie podokna w≥aúciwoúci dla wybranego arkusza sieci. 
+	 * Konstruktor odpowiedzialny za wype≈Çnienie podokna w≈Ça≈õciwo≈õci dla wybranego arkusza sieci. 
 	 * @param sheet WorkspaceSheet - obiekt arkusza
 	 */
 	public AbyssDockWindowsTable(WorkspaceSheet sheet) {
@@ -1231,9 +1240,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Konstruktor odpowiedzialny za wype≥nienie podokna umoøliwiajπcego wybÛr poszczegÛlnych
-	 * inwariantÛw sieci.
-	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - macierz inwariantÛw
+	 * Konstruktor odpowiedzialny za wype≈Çnienie podokna umo≈ºliwiajƒÖcego wyb√≥r poszczeg√≥lnych
+	 * inwariant√≥w sieci.
+	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - macierz inwariant√≥w
 	 */
 	public AbyssDockWindowsTable(ArrayList<ArrayList<InvariantTransition>> invariants) {
 		if (invariants.size() > 0) {
@@ -1272,10 +1281,10 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Konstruktor podokna w≥aúciwoúci elementÛw sieci. Wype≥niany w zaleønoúci od
-	 * tego, co przysz≥o jako argument - tj. ktÛre w≥aúciwoúci.
-	 * @param prop ArrayList[ArrayList[Object]] - "wektor" w≥aúciwoúci
-	 * @param ref boolean - wartoúÊ logiczna nie majπca na nic wp≥ywu :)
+	 * Konstruktor podokna w≈Ça≈õciwo≈õci element√≥w sieci. Wype≈Çniany w zale≈ºno≈õci od
+	 * tego, co przysz≈Ço jako argument - tj. kt√≥re w≈Ça≈õciwo≈õci.
+	 * @param prop ArrayList[ArrayList[Object]] - "wektor" w≈Ça≈õciwo≈õci
+	 * @param ref boolean - warto≈õƒá logiczna nie majƒÖca na nic wp≈Çywu :)
 	 */
 	public AbyssDockWindowsTable(ArrayList<ArrayList<Object>> prop, boolean ref) {
 		initiateContainers();
@@ -1332,7 +1341,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 	
 	/**
-	 * Konstruktor odpowiedzialny za utworzenie elementÛw podokna symulatora inwariantÛw
+	 * Konstruktor odpowiedzialny za utworzenie element√≥w podokna symulatora inwariant√≥w
 	 * @param is
 	 */
 	public AbyssDockWindowsTable(InvariantsSimulator is)
@@ -1459,9 +1468,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Konstruktor odpowiedzialny za utworzenie podokna wyboru zbiorÛw MCT.
-	 * @param mct ArrayList[ArrayList[Transition]] - macierz zbiorÛw MCT
-	 * @param type Properties.PropertiesType - nic nie znaczπcy tutaj element...
+	 * Konstruktor odpowiedzialny za utworzenie podokna wyboru zbior√≥w MCT.
+	 * @param mct ArrayList[ArrayList[Transition]] - macierz zbior√≥w MCT
+	 * @param type Properties.PropertiesType - nic nie znaczƒÖcy tutaj element...
 	 */
 	public AbyssDockWindowsTable(ArrayList<ArrayList<Transition>> mct, AbyssDockWindow.DockWindowType type) {
 		initiateContainers();
@@ -1505,14 +1514,14 @@ public class AbyssDockWindowsTable extends JPanel {
 
 	/*
 	
-	 //Metoda odpowiedzialna za pokazanie szczegÛ≥Ûw wybranego zbioru MCT.
+	 //Metoda odpowiedzialna za pokazanie szczeg√≥≈Ç√≥w wybranego zbioru MCT.
 	 //@param mctIndex Integer - numer wybranego zbioru
 	 
 	@SuppressWarnings("unused")
 	private void showMct(Integer mctIndex) {
 		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		net.turnTransitionGlowingOff();
-		net.setTransitionGlowedMTC(false); //wy≥πczanie podúwietlenia MCT
+		net.setTransitionGlowedMTC(false); //wy≈ÇƒÖczanie pod≈õwietlenia MCT
 		headers.clear();
 		values.clear();
 		invariantPanel.removeAll();
@@ -1545,9 +1554,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	*/
 	
 	/**
-	 * Metoda odpowiedzialna za pokazanie szczegÛ≥Ûw wybranego zbioru MCT.
+	 * Metoda odpowiedzialna za pokazanie szczeg√≥≈Ç√≥w wybranego zbioru MCT.
 	 * @param mctIndex Integer - numer wybranego zbioru
-	 * @param mc boolean - true, jeúli dane majπ byÊ pokazane
+	 * @param mc boolean - true, je≈õli dane majƒÖ byƒá pokazane
 	 */
 	private void showMct(Integer mctIndex, boolean mc) {
 		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace() .getProject();
@@ -1588,9 +1597,9 @@ public class AbyssDockWindowsTable extends JPanel {
 
 	
 	/**
-	 * Metoda odpowiedzialna za podúwietlanie inwariantÛw.
+	 * Metoda odpowiedzialna za pod≈õwietlanie inwariant√≥w.
 	 * @param invariantIndex Integer - numer wybranego inwariantu
-	 * @param inv boolean - true, jeúli majπ byÊ pokazane dane szczegÛ≥owe w panelu
+	 * @param inv boolean - true, je≈õli majƒÖ byƒá pokazane dane szczeg√≥≈Çowe w panelu
 	 */
 	private void showInvariant(Integer invariantIndex, boolean inv) {
 		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace() .getProject();
@@ -1643,7 +1652,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 	
 	/**
-	 * Metoda pomocnicza tworzπca szkielet g≥Ûwnych komponentÛw podokna w≥aúciwoúci.
+	 * Metoda pomocnicza tworzƒÖca szkielet g≈Ç√≥wnych komponent√≥w podokna w≈Ça≈õciwo≈õci.
 	 */
 	private void initiateContainers() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -1657,9 +1666,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda pomocnicza odpowiedzialna za wype≥nanie okna danymi przy uøyciu
+	 * Metoda pomocnicza odpowiedzialna za wype≈Çnanie okna danymi przy u≈ºyciu
 	 * Layout Managera.
-	 * @param contentPanel JPanel - panel z zawartoúciπ
+	 * @param contentPanel JPanel - panel z zawarto≈õciƒÖ
 	 */
 	private void putContents(JPanel contentPanel) {
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
@@ -1708,8 +1717,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda zmienia szerokoúÊ arkusza dla sieci.
-	 * @param width int - nowa szerokoúÊ
+	 * Metoda zmienia szeroko≈õƒá arkusza dla sieci.
+	 * @param width int - nowa szeroko≈õƒá
 	 */
 	private void setSheetWidth(int width) {
 		if (mode == SHEET) {
@@ -1724,8 +1733,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda zmienia wysokoúÊ arkusza dla sieci.
-	 * @param width int - nowa wysokoúÊ
+	 * Metoda zmienia wysoko≈õƒá arkusza dla sieci.
+	 * @param width int - nowa wysoko≈õƒá
 	 */
 	private void setSheetHeight(int height) {
 		if (mode == SHEET) {
@@ -1740,9 +1749,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda zmienia szerokoúÊ wymiaru dla arkusza dla sieci.
-	 * @param width int - nowa szerokoúÊ
-	 * @param container JComponent - obiekt dla ktÛrego zmieniany jest wymiar
+	 * Metoda zmienia szeroko≈õƒá wymiaru dla arkusza dla sieci.
+	 * @param width int - nowa szeroko≈õƒá
+	 * @param container JComponent - obiekt dla kt√≥rego zmieniany jest wymiar
 	 */
 	private void setContainerWidth(int width, JComponent container) {
 		if (mode == SHEET) {
@@ -1753,9 +1762,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda zmienia wysokoúÊ dla wymiaru dla arkusza dla sieci.
-	 * @param width int - nowa wysokoúÊ
-	 * @param container JComponent - obiekt dla ktÛrego zmieniany jest wymiar
+	 * Metoda zmienia wysoko≈õƒá dla wymiaru dla arkusza dla sieci.
+	 * @param width int - nowa wysoko≈õƒá
+	 * @param container JComponent - obiekt dla kt√≥rego zmieniany jest wymiar
 	 */
 	private void setContainerHeight(int height, JComponent container) {
 		if (mode == SHEET) {
@@ -1766,8 +1775,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda ustawia opcjÍ autoscroll dla panelu graficznego w arkuszu sieci.
-	 * @param value boolean - true, jeúli autoscroll w≥πczony
+	 * Metoda ustawia opcjƒô autoscroll dla panelu graficznego w arkuszu sieci.
+	 * @param value boolean - true, je≈õli autoscroll w≈ÇƒÖczony
 	 */
 	private void setAutoscroll(boolean value) {
 		if (mode == SHEET) {
@@ -1776,7 +1785,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 	
 	/**
-	 * Metoda ustawia nowπ wartoúÊ czasu EFT dla tranzycji czasowej.
+	 * Metoda ustawia nowƒÖ warto≈õƒá czasu EFT dla tranzycji czasowej.
 	 * @param x int - nowe EFT
 	 */
 	private void setMinFireTime(double x) {
@@ -1788,7 +1797,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 	
 	/**
-	 * Metoda ustawia nowπ wartoúÊ czasu LFT dla tranzycji czasowej.
+	 * Metoda ustawia nowƒÖ warto≈õƒá czasu LFT dla tranzycji czasowej.
 	 * @param x int - nowe LFT
 	 */
 	private void setMaxFireTime(double x) {
@@ -1800,8 +1809,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda zmienia wspÛ≥rzÍdnπ X dla wierzcho≥ka sieci.
-	 * @param x int - nowa wartoúÊ
+	 * Metoda zmienia wsp√≥≈ÇrzƒôdnƒÖ X dla wierzcho≈Çka sieci.
+	 * @param x int - nowa warto≈õƒá
 	 */
 	private void setX(int x) {
 		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
@@ -1811,8 +1820,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda zmienia wspÛ≥rzÍdnπ Y dla wierzcho≥ka sieci.
-	 * @param y int - nowa wartoúÊ
+	 * Metoda zmienia wsp√≥≈ÇrzƒôdnƒÖ Y dla wierzcho≈Çka sieci.
+	 * @param y int - nowa warto≈õƒá
 	 */
 	private void setY(int y) {
 		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
@@ -1822,8 +1831,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 	
 	/**
-	 * Zmiana nazwy elementu sieci, dokonywana poza listenerem, ktÛry
-	 * jest klasa anonimowπ (i nie widzi pola element).
+	 * Zmiana nazwy elementu sieci, dokonywana poza listenerem, kt√≥ry
+	 * jest klasa anonimowƒÖ (i nie widzi pola element).
 	 * @param newName String - nowa nazwa
 	 */
 	private void changeName(String newName) {
@@ -1835,8 +1844,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 	
 	/**
-	 * Metoda zmienia komentarz dla elementu sieci, poza listenerem, ktÛry
-	 * jest klasπ anonimowπ (i nie widzi pola element).
+	 * Metoda zmienia komentarz dla elementu sieci, poza listenerem, kt√≥ry
+	 * jest klasƒÖ anonimowƒÖ (i nie widzi pola element).
 	 * @param newComment String - nowy komentarz
 	 */
 	private void changeComment(String newComment) {
@@ -1858,9 +1867,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda zmienia liczbÍ tokenÛw dla miejsca sieci, poza listenerem, ktÛry
-	 * jest klasπ anonimowπ (i nie widzi pola element).
-	 * @param tokenz int - nowa liczba tokenÛw
+	 * Metoda zmienia liczbƒô token√≥w dla miejsca sieci, poza listenerem, kt√≥ry
+	 * jest klasƒÖ anonimowƒÖ (i nie widzi pola element).
+	 * @param tokenz int - nowa liczba token√≥w
 	 */
 	private void setTokens(int tokenz) {
 		Place place = (Place) element;
@@ -1871,8 +1880,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda zmienia wagÍ dla ≥uku sieci, poza listenerem, ktÛry
-	 * jest klasπ anonimowπ (i nie widzi pola element).
+	 * Metoda zmienia wagƒô dla ≈Çuku sieci, poza listenerem, kt√≥ry
+	 * jest klasƒÖ anonimowƒÖ (i nie widzi pola element).
 	 * @param weight int - nowa waga
 	 */
 	private void setWeight(int weight) {
@@ -1905,9 +1914,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	// ================================================================================
 
 	/**
-	 * Metoda ustawia status wszystkich przyciskÛw rozpoczÍcia symulacji za wyjπtkiem
+	 * Metoda ustawia status wszystkich przycisk√≥w rozpoczƒôcia symulacji za wyjƒÖtkiem
 	 * Pauzy i Stopu
-	 * @param enabled boolean - true, jeúli majπ byÊ aktywne
+	 * @param enabled boolean - true, je≈õli majƒÖ byƒá aktywne
 	 */
 	public void setEnabledSimulationInitiateButtons(boolean enabled) {
 		for(JComponent comp: components) {
@@ -1925,8 +1934,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda ustawia status przyciskÛw Stop i Pauza.
-	 * @param enabled boolean - true, jeúli majπ byÊ aktywne
+	 * Metoda ustawia status przycisk√≥w Stop i Pauza.
+	 * @param enabled boolean - true, je≈õli majƒÖ byƒá aktywne
 	 */
 	public void setEnabledSimulationDisruptButtons(boolean enabled) {
 		for(JComponent comp: components) {

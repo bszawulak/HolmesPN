@@ -47,9 +47,9 @@ public class NetPropertiesAnalyzer {
 		String[] purTxt = { 
 				"Pure", 
 				"There are no two nodes, directly connected in both directions. This precludes "
-				+ "read arcs and double arcs.",
+				+ "\nread arcs and double arcs.",
 				"No component is produced and consumed by the same reaction. Thus, enzymatic "
-				+ "or enzyme-like reactions are formulated in more detail."};
+				+ "\nor enzyme-like reactions are formulated in more detail."};
 		purProp.add(purTxt);
 		NetProps.add(purProp);
 		
@@ -70,7 +70,7 @@ public class NetPropertiesAnalyzer {
 				"Homogeneous", 
 				"All outgoing arcs of a given place have the same multiplicity.",
 				"Each consuming reaction associated with one component takes the same "
-				+ "amount of molecules of this component."};
+				+ "\namount of molecules of this component."};
 		homProp.add(homTxt);
 		NetProps.add(homProp);
 		
@@ -80,11 +80,11 @@ public class NetPropertiesAnalyzer {
 		String[] conTxt = { 
 				"Connected", 
 				"A Petri net is connected if it holds for every two nodes a and b that "
-				+ "there is an undirected path between a and b. Disconnected parts of a "
-				+ "Petri net can not influence each other, so they can be usually analysed "
-				+ "separately."
-				+ "All components in a system are directly or indirectly connected with "
-				+ "each other through a set of reactions, e.g., metabolic paths, signal flows."};
+				+ "\nthere is an undirected path between a and b. Disconnected parts of a "
+				+ "\nPetri net can not influence each other, so they can be usually analysed "
+				+ "\nseparately.",
+				"All components in a system are directly or indirectly connected with "
+				+ "\neach other through a set of reactions, e.g., metabolic paths, signal flows."};
 		conProp.add(conTxt);
 		NetProps.add(conProp);
 		
@@ -94,11 +94,11 @@ public class NetPropertiesAnalyzer {
 		String[] scTxt = { 
 				"Strongly Connected", 
 				"A Petri net is strongly connected if it holds for every two nodes a and b that "
-				+ "there is a directed path from a to b, vice versa. Strong connectedness "
-				+ "involves connectedness and the absence of boundary nodes. It is a necessary "
-				+ "condition for a Petri net to be live and bounded at the same time."
-				+ "All components in a system are directly connected with each other through a set "
-				+ "of reactions, e.g., metabolic paths, signal flows."};
+				+ "\nthere is a directed path from a to b, vice versa. Strong connectedness "
+				+ "\ninvolves connectedness and the absence of boundary nodes. It is a necessary "
+				+ "\ncondition for a Petri net to be live and bounded at the same time.",
+				"All components in a system are directly connected with each other through a set "
+				+ "\nof reactions, e.g., metabolic paths, signal flows."};
 		scProp.add(scTxt);
 		NetProps.add(scProp);
 		
@@ -108,9 +108,9 @@ public class NetPropertiesAnalyzer {
 		String[] nbmTxt = { 
 				"Non-blocking Multiplicity", 
 				"The minimum of the multiplicity of the incoming arcs for a place is not "
-				+ "less than the maximum of the multiplicities of its outgoing arcs.",
+				+ "\nless than the maximum of the multiplicities of its outgoing arcs.",
 				"The amount of produced and consumed molecules of a certain component "
-				+ "is always equal."};
+				+ "\nis always equal."};
 		nbmProp.add(nbmTxt);
 		NetProps.add(nbmProp);
 		
@@ -120,10 +120,10 @@ public class NetPropertiesAnalyzer {
 		String[] csvTxt = { 
 				"Conservative", 
 				"All transitions add exactly as many tokens to their post-places as they "
-				+ "subtract from their pre-places (token-preservingly firing). A conservative "
-				+ "Petri net is structurally bounded.",
+				+ "\nsubtract from their pre-places (token-preservingly firing). A conservative "
+				+ "\nPetri net is structurally bounded.",
 				"The total amount of consumed and produced molecules by a certain reaction "
-				+ "is always equal."};
+				+ "\nis always equal."};
 		csvProp.add(csvTxt);
 		NetProps.add(csvProp);
 		
@@ -133,9 +133,9 @@ public class NetPropertiesAnalyzer {
 		String[] scfTxt = { 
 				"Static Conflict Free", 
 				"There are no two transitions sharing a pre-place. Transitions involved in a "
-				+ "dynamic conflict compete for the tokens on shared places.",
+				+ "\ndynamic conflict compete for the tokens on shared places.",
 				"For every reactant exist just one possible reaction or there are no two "
-				+ "reactions sharing at least one reactant."};
+				+ "\nreactions sharing at least one reactant."};
 		scfProp.add(scfTxt);
 		NetProps.add(scfProp);
 		
@@ -164,9 +164,9 @@ public class NetPropertiesAnalyzer {
 		fp0Prop.add(false);
 		String[] fp0Txt = { 
 				"No input place", 
-				"There exist no places without pretransitions.",
+				"There exist no places without pre-transitions.",
 				"The component can not be produced by any reaction. Thus, such components "
-				+ "are limiting."};
+				+ "\nare limiting."};
 		fp0Prop.add(fp0Txt);
 		NetProps.add(fp0Prop);
 		
@@ -177,7 +177,7 @@ public class NetPropertiesAnalyzer {
 				"No output place", 
 				"There exist no places without post-transitions",
 				"Components can infinitely accumulate in the system. Thus, they are not "
-				+ "consumed by any reaction."};
+				+ "\nconsumed by any reaction."};
 		pf0Prop.add(pf0Txt);
 		NetProps.add(pf0Prop);
 
@@ -185,14 +185,11 @@ public class NetPropertiesAnalyzer {
 			return NetProps;
 		}
 		
-		// FT0 - a transition without pre place
-		boolean isFT0 = false;
-		// TF0- a transitions without post place
-		boolean isTF0 = false;
-		// FP0 - a place without pre transitions
-		boolean isFP0 = false;
-		// PF0 - a place without post transitions
-		boolean isPF0 = false;
+		
+		boolean isFT0 = false; // FT0 - a transition without pre place
+		boolean isTF0 = false; // TF0- a transitions without post place
+		boolean isFP0 = false; // FP0 - a place without pre transitions
+		boolean isPF0 = false; // PF0 - a place without post transitions
 
 		for (Transition t : transitions) {
 			boolean arcIn = false;

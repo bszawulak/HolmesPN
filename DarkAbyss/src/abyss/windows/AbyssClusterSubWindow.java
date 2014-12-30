@@ -41,7 +41,8 @@ import abyss.workspace.ExtensionFileFilter;
  *
  */
 public class AbyssClusterSubWindow extends JFrame {
-	private static final long serialVersionUID = -5663572683374020754L;
+	private static final long serialVersionUID = 6818230680946396781L;
+	//private static final long serialVersionUID = -5663572683374020754L;
 	private JFrame parentFrame;
 	private Clustering clusteringMetaData;
 	private String nL = "\n";

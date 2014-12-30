@@ -16,7 +16,6 @@ import javax.swing.KeyStroke;
 import abyss.darkgui.dockable.DockableMenuItem;
 import abyss.math.Arc;
 import abyss.math.Node;
-import abyss.windows.AbyssAbout;
 import abyss.workspace.Workspace;
 import abyss.workspace.WorkspaceSheet;
 
@@ -59,6 +58,12 @@ public class DarkMenu extends JMenuBar {
 		JMenu xMenu = new JMenu(" ");
 		xMenu.setEnabled(false);
 		this.add(xMenu);
+		
+		//*********************************************************************************************
+		//***********************************                 *****************************************
+		//***********************************    FILE MENU    *****************************************
+		//***********************************                 *****************************************
+		//*********************************************************************************************
 		
 		// Build the File menu.
 		fileMenu = new JMenu("File");
@@ -161,11 +166,6 @@ public class DarkMenu extends JMenuBar {
 		
 		fileMenu.addSeparator();
 		
-		//openMenu = new JMenu("Open");
-		//openMenu.setMnemonic(KeyEvent.VK_O);
-		//openMenu.getAccessibleContext().setAccessibleDescription("Open - Menu");
-		//fileMenu.add(openMenu);
-		
 		// save file
 		JMenuItem saveMenuItem = new JMenuItem("Save...", KeyEvent.VK_S);
 		saveMenuItem.setIcon(new ImageIcon("resources/icons/menu/menu_save.png"));
@@ -178,12 +178,7 @@ public class DarkMenu extends JMenuBar {
 		});
 		fileMenu.add(saveMenuItem);
 
-		//saveMenu = new JMenu("Save");
-		//saveMenu.setMnemonic(KeyEvent.VK_S);
-		//saveMenu.getAccessibleContext().setAccessibleDescription("Save - Menu");
-		//fileMenu.add(saveMenu);
-
-		// export file
+		// Export net as .pnt file
 		JMenuItem exportMenuItem = new JMenuItem("Export network...", KeyEvent.VK_E);
 		exportMenuItem.setIcon(new ImageIcon("resources/icons/menu/menu_exportNet.png"));
 		exportMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,ActionEvent.CTRL_MASK));
@@ -195,7 +190,7 @@ public class DarkMenu extends JMenuBar {
 		});
 		fileMenu.add(exportMenuItem);
 
-		// export image file
+		// Export image file
 		JMenuItem expImgMenuItem = new JMenuItem("Export to image...", KeyEvent.VK_E);
 		expImgMenuItem.setIcon(new ImageIcon("resources/icons/menu/menu_exportPicture.png"));
 		expImgMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,ActionEvent.CTRL_MASK));
@@ -209,7 +204,7 @@ public class DarkMenu extends JMenuBar {
 		
 		fileMenu.addSeparator();
 
-		// The JMenuItem for File
+		// Exit program Item
 		JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_E);
 		exitMenuItem.setPreferredSize(new Dimension(WIDTH, 38));
 		exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,ActionEvent.ALT_MASK));
@@ -228,7 +223,9 @@ public class DarkMenu extends JMenuBar {
 		fileMenu.add(exitMenuItem);
 		
 		//*********************************************************************************************
-		//*********************************************************************************************
+		//***********************************                 *****************************************
+		//***********************************  WINDOWS MENU   *****************************************
+		//***********************************                 *****************************************
 		//*********************************************************************************************
 		
 		// Build the Window menu.
@@ -264,9 +261,11 @@ public class DarkMenu extends JMenuBar {
 				
 		
 		//*********************************************************************************************
+		//***********************************                 *****************************************
+		//***********************************  NET PROPERTIES *****************************************
+		//***********************************                 *****************************************
 		//*********************************************************************************************
-		//*********************************************************************************************
-	
+		
 		netMenu = new JMenu("Net");
 		netMenu.setMnemonic(KeyEvent.VK_N);
 		netMenu.getAccessibleContext().setAccessibleDescription("Net menu");
@@ -280,11 +279,19 @@ public class DarkMenu extends JMenuBar {
 		propItem.getAccessibleContext().setAccessibleDescription("Show net properties");
 		propItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().showNetworkProperties();
+				GUIManager.getDefaultGUIManager().showNetPropertiesWindow();
+				//GUIManager.getDefaultGUIManager().showNetworkProperties();
 				//GUIManager.getDefaultGUIManager().generateINAinvariants();
 			}
 		});
 		netMenu.add(propItem);	
+		
+		//*********************************************************************************************
+		//***********************************                 *****************************************
+		//*********************************** INVARIANTS MENU *****************************************
+		//***********************************                 *****************************************
+		//*********************************************************************************************
+			
 		
 		//INVARIANTS MENU
 		invariantsOperationsMenu = new JMenu("Invariants");
@@ -349,7 +356,11 @@ public class DarkMenu extends JMenuBar {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					// poniższa linia:   ╯°□°）╯︵  ┻━━┻
-					GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().spiner.getValue());
+					GUIManager.getDefaultGUIManager().startInvariantsSimulation(
+						Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox()
+								.getCurrentDockWindow().group.getSelection().getActionCommand())
+						,(Integer)GUIManager.getDefaultGUIManager().getInvSimBox()
+								.getCurrentDockWindow().spiner.getValue());
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
 					GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
@@ -358,6 +369,12 @@ public class DarkMenu extends JMenuBar {
 		});
 		invariantsOperationsMenu.add(invSimul);
 
+		//*********************************************************************************************
+		//***********************************                 *****************************************
+		//***********************************    MCT MENU     *****************************************
+		//***********************************                 *****************************************
+		//*********************************************************************************************
+		
 		//MCT MENU
 				
 		mctOperationsMenu = new JMenu("MCT");
@@ -378,9 +395,9 @@ public class DarkMenu extends JMenuBar {
 		mctOperationsMenu.add(genMCTGroups);
 		
 		// The JMenuItem for simple MCT file
-		JMenuItem createMCTFile = new JMenuItem("Create simple MCT file", KeyEvent.VK_1);
+		JMenuItem createMCTFile = new JMenuItem("Create simple MCT file", KeyEvent.VK_2);
 		createMCTFile.setIcon(new ImageIcon("resources/icons/menu/menu_genMCT.png"));
-		createMCTFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		createMCTFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
 		createMCTFile.getAccessibleContext().setAccessibleDescription("Create simple MCT file");
 		createMCTFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -395,15 +412,15 @@ public class DarkMenu extends JMenuBar {
 		mctSubMenu.getAccessibleContext().setAccessibleDescription("MCT Generator");
 		mctOperationsMenu.add(mctSubMenu);
 		
-		JMenuItem mctItem = new JMenuItem("MCT", KeyEvent.VK_2);
+		JMenuItem mctItem = new JMenuItem("MCT", KeyEvent.VK_3);
 		mctItem.setIcon(new ImageIcon("resources/icons/menu/menu_genMCT.png"));
-		mctItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,ActionEvent.ALT_MASK));
+		mctItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, ActionEvent.ALT_MASK));
 		mctItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
+					//TODO anything
 					//GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -411,11 +428,17 @@ public class DarkMenu extends JMenuBar {
 		mctItem.setEnabled(false);
 		mctSubMenu.add(mctItem);
 		
+		
+		//*********************************************************************************************
+		//***********************************                 *****************************************
+		//***********************************  CLUSTERS MENU  *****************************************
+		//***********************************                 *****************************************
+		//*********************************************************************************************
+		
 		//CLUSTERS MENU
-		//private JMenu clustersOperationsMenu;
 		
 		clustersOperationsMenu = new JMenu("Clusters");
-		clustersOperationsMenu.setMnemonic(KeyEvent.VK_A);
+		clustersOperationsMenu.setMnemonic(KeyEvent.VK_C);
 		clustersOperationsMenu.getAccessibleContext().setAccessibleDescription("Clusters menu");
 		this.add(clustersOperationsMenu);
 		
@@ -425,10 +448,12 @@ public class DarkMenu extends JMenuBar {
 		showClustersItem.getAccessibleContext().setAccessibleDescription("Show clusters window");
 		showClustersItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().showClusterWindow(true); 
+				GUIManager.getDefaultGUIManager().showClusterWindow(); 
 			}
 		});
 		clustersOperationsMenu.add(showClustersItem);
+		
+		
 		
 		JMenu aboutMenu = new JMenu("Help");
 		aboutMenu.setMnemonic(KeyEvent.VK_H);
@@ -440,8 +465,7 @@ public class DarkMenu extends JMenuBar {
 		aboutItem.getAccessibleContext().setAccessibleDescription("About the program");
 		aboutItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//GUIManager.getDefaultGUIManager().tInvariantsAnalyse();
-				new AbyssAbout(GUIManager.getDefaultGUIManager().getFrame());
+				GUIManager.getDefaultGUIManager().createAboutWindow();
 			}
 		});
 		aboutMenu.add(aboutItem);

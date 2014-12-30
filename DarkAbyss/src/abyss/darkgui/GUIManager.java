@@ -12,8 +12,10 @@ import abyss.files.clusters.Rprotocols;
 import abyss.math.PetriNet;
 import abyss.settings.SettingsManager;
 import abyss.utilities.Tools;
+import abyss.windows.AbyssAbout;
 import abyss.windows.AbyssConsole;
 import abyss.windows.AbyssClusters;
+import abyss.windows.AbyssProperties;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
 
@@ -63,23 +65,26 @@ import com.javadocking.visualizer.SingleMaximizer;
 
 /**
  * G³ówna klasa programu odpowiedzialna za w³aœciwie wszystko. Zaczyna od utworzenia elementów
- * graficznych programu, a dalej jakoœ tak siê samo ju¿ toczy wszystko.
- * @author students
- *
+ * graficznych programu, a dalej jakoœ tak siê samo ju¿ wszystko toczy. Albo wywala.
+ * @author students - ktoœ musia³ zacz¹æ :)
+ * @author MR - Metody, Metody. Nowe Metody. Podpisano: Cyryl
  */
 public class GUIManager extends JPanel implements ComponentListener {
 	private static final long serialVersionUID = -817072868916096442L;
 	// Static fields.
 	private static GUIManager guiManager;
-	private Dimension screenSize; // praca w maksymalizacji
-	private Dimension smallScreenSize; // praca poza maksymalizowanym oknem
+	private Dimension screenSize; 		// praca w maksymalizacji
+	private Dimension smallScreenSize;	// praca poza maksymalizowanym oknem
 	private FloatDockModel dockModel;
+	
 	// settings
 	private SettingsManager settingsManager;
+	
 	// visualizers
 	private LineMinimizer minimizer;
 	private SingleMaximizer maximizer;
 	private FloatExternalizer externalizer;
+	
 	// main Docks
 	private Workspace workspace;
 	private CompositeTabDock leftTabDock;
@@ -93,6 +98,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	private PetriNetTools toolBox;
 	
+	// podokna dokowalne g³ównego okna Abyss:
 	private AbyssDockWindow propertiesBox;
 	private AbyssDockWindow simulatorBox;
 	private AbyssDockWindow selectionBox;
@@ -100,14 +106,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssDockWindow propAnalyzerBox;
 	private AbyssDockWindow mctBox;
 	private AbyssDockWindow invSimBox;
+	
 	// docking listener
 	private DarkDockingListener dockingListener;
 	private Toolbar shortcutsBar;
 
 	// main frame
-	private JFrame frame;
+	private JFrame frame;	//g³ówna ramka okna programu, tworzona w Main()
 	// other components
-	private DarkMenu menu;
+	private DarkMenu menu;	//komponent menu programu
 
 	// inne wa¿ne zmienne
 	private String lastPath;	// ostatnia otwarta œcie¿ka
@@ -116,9 +123,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private String toolPath;	// œcie¿ka dostêpu do katalogu narzedziowego
 	private String logPath;
 	
-	// okna niezale¿ne (o tyle o ile):
+	// okna niezale¿ne:
 	private AbyssClusters windowClusters; //okno tabeli 
 	private AbyssConsole windowConsole; //konsola logów
+	private AbyssProperties windowNetProperties; //okno w³aœciwoœci sieci
+	private AbyssAbout windowAbout; //okno About...
+	
 	private boolean rReady = false; // true, jeœli program dostêp do pliku Rscript.exe
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
@@ -127,20 +137,17 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public GUIManager(JFrame frejm) {
 		super(new BorderLayout());
 		guiManager = this;
-	
-		frame = frejm;
+		setFrame(frejm);
 		frame.getContentPane().add(this);
 		frame.addComponentListener(this);
-		setFrame(frejm);
 		getFrame().getContentPane().add(this);
 		getFrame().addComponentListener(this);
 		
+		createHiddenConsole(); //tworzy ukryte okno konsoli logowania zdarzeñ
+		createClusterWindow(); //niewidoczne na starcie okno tabeli klastrów
+		createNetPropertiesWindow(); //niewidoczne na starcie okno w³aœciwoœci sieci
 		
-		createHiddenConsole();//tworzy ukryte okno konsoli logowania zdarzeñ
-		createClusterWindow();
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnêtrzne zmienne programu
-
-		
 		
 		// Set the frame properties and show it.
 		getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1319,19 +1326,49 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda pomocnicza konstruktora, tworzy nowe okno tabeli klastrów.
 	 */
-	public void createClusterWindow() {
+	private void createClusterWindow() {
 		windowClusters = new AbyssClusters(0);
 		//windowClusters.setLocationRelativeTo(this);
 	}
 	
 	/**
-	 * Metoda s³u¿y do pokazywania lub chowania okna klastrów.
+	 * Metoda s³u¿y do wyœwietlenia okna klastrów.
 	 */
-	public void showClusterWindow(boolean value) {
+	public void showClusterWindow() {
 		if(windowClusters != null) {
-			windowClusters.setVisible(value);
-			
-			//windowClusters.setClusterPath(tmpPath+"cl50");
+			windowClusters.setVisible(true);
+		}
+	}
+	
+	/**
+	 * Metoda pomocnicza konstruktora, tworzy okno w³aœciwoœci sieci.
+	 */
+	private void createNetPropertiesWindow() {
+		windowNetProperties = new AbyssProperties();
+	}
+	
+	/**
+	 * Metoda s³u¿y do wyœwietlenia okna w³aœciwoœci sieci.
+	 */
+	public void showNetPropertiesWindow() {
+		if(windowNetProperties != null) {
+			windowNetProperties.setVisible(true);
+		}
+	}
+	
+	/**
+	 * Metoda pomocnicza konstruktora, tworzy okno informacji o programie.
+	 */
+	public void createAboutWindow() {
+		windowAbout = new AbyssAbout(frame);
+	}
+	
+	/**
+	 * Metoda s³u¿y do wyœwietlenia okna informacji o programie.
+	 */
+	public void showAboutWindow() {
+		if(windowAbout != null) {
+			windowAbout.setVisible(true);
 		}
 	}
 	
