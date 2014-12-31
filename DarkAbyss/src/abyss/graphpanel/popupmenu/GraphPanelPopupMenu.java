@@ -8,13 +8,13 @@ import java.awt.event.MouseEvent;
 import java.beans.XMLEncoder;
 import java.io.FileOutputStream;
 
-import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
+import abyss.utilities.Tools;
 
 /**
  * Klasa odpowiedzialna za tworzenie menu kontekstowego dla sieci narysowanej na danym panelu.
@@ -46,7 +46,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	 * Metoda pomocnicza konstruktora, tworzy podstawowe elementy menu kontekstowego sieci.
 	 */
 	public void createPredefineMenuItems() {
-		cutMenuItem = this.createMenuItem("Cut", "cut",
+		cutMenuItem = this.createMenuItem("Cut", "cut.png",
 				KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK),
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -54,7 +54,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 					}
 				});
 
-		copyMenuItem = this.createMenuItem("Copy", "copying_and_distribution",
+		copyMenuItem = this.createMenuItem("Copy", "copying_and_distribution.png",
 				KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -64,7 +64,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 					}
 				});
 
-		pasteMenuItem = this.createMenuItem("Paste", "paste_plain",
+		pasteMenuItem = this.createMenuItem("Paste", "paste_plain.png",
 				KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK),
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -114,9 +114,19 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	 * @param actionListener ActionListener - obiekt nas³uchuj¹cy
 	 */
 	protected void addMenuItem(String text, String iconName, ActionListener actionListener) {
-		JMenuItem menuItem = new JMenuItem(text, new ImageIcon("resources/icons/" + iconName + ".png"));
-		menuItem.addActionListener(actionListener);
-		this.add(menuItem);
+		try {
+			JMenuItem menuItem;
+			if(!iconName.equals(""))
+				menuItem = new JMenuItem(text, Tools.getResIcon16("/icons/" + iconName));
+			else
+				menuItem = new JMenuItem(text);
+			menuItem.addActionListener(actionListener);
+			this.add(menuItem);
+		} catch (Exception e) {
+			JMenuItem menuItem = new JMenuItem(text);
+			menuItem.addActionListener(actionListener);
+			this.add(menuItem);
+		}
 	}
 
 	/**
@@ -129,9 +139,21 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	 */
 	protected JMenuItem createMenuItem(String text, String iconName,
 			KeyStroke accelerator, ActionListener actionListener) {
-		JMenuItem menuItem = new JMenuItem(text, new ImageIcon("resources/icons/" + iconName + ".png"));
-		menuItem.addActionListener(actionListener);
-		menuItem.setAccelerator(accelerator);
-		return menuItem;
+		try {
+			JMenuItem menuItem;
+			if(!iconName.equals(""))
+				menuItem = new JMenuItem(text, Tools.getResIcon16("/icons/" + iconName));
+			else
+				menuItem = new JMenuItem(text);
+			//JMenuItem menuItem = new JMenuItem(text, new ImageIcon("resources/icons/" + iconName + ".png"));
+			menuItem.addActionListener(actionListener);
+			menuItem.setAccelerator(accelerator);
+			return menuItem;
+		} catch (Exception e) {
+			JMenuItem menuItem = new JMenuItem(text);
+			menuItem.addActionListener(actionListener);
+			menuItem.setAccelerator(accelerator);
+			return menuItem;
+		}
 	}
 }

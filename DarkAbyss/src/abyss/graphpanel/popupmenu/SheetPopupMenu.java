@@ -48,14 +48,14 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
 		this.addSeparator();
 
-		this.addMenuItem("Refresh", "refresh", new ActionListener() {
+		this.addMenuItem("Refresh", "refresh.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				getGraphPanel().invalidate();
 				getGraphPanel().repaint();
 			}
 		});
 
-		this.addMenuItem("Save to image file", "picture_save",
+		this.addMenuItem("Save to image file", "picture_save.png",
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						exportToPicture();
@@ -146,17 +146,17 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 		this.addSeparator();
 		JMenu analMenu = new JMenu("Network Analysis"); // (⌐■_■) 
 		this.add(analMenu);
-		analMenu.add(createMenuItem("Generate invariants (INA)", "generateINA", null, new ActionListener() {
+		analMenu.add(createMenuItem("Generate invariants (INA)", "generateINA.png", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().generateINAinvariants();
 			}
 		}));
-		analMenu.add(createMenuItem("Import invariants from file", "invImportPopup", null, new ActionListener() {
+		analMenu.add(createMenuItem("Import invariants from file", "invImportPopup.png", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().loadExternalAnalysis();
 			}
 		}));
-		analMenu.add(createMenuItem("Generate MCT sets", "generateMCT", null, new ActionListener() {
+		analMenu.add(createMenuItem("Generate MCT sets", "generateMCT.png", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().generateMCT();
 			}

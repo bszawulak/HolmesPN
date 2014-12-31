@@ -262,7 +262,7 @@ public class IOprotocols {
 			pw.print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 			pw.print("\r\n");
 
-			for (int i = 0; i < invariants.size(); i++) {
+			for (int i = 0; i < invariants.size(); i++) { //po wszystkich inwariantach
 				
 				if(transNo >= 100) {
 					pw.print(conIntToStr(true,i) + " |   ");
@@ -270,8 +270,8 @@ public class IOprotocols {
 					pw.print(conIntToStr(false,i) + " |   ");
 				
 				multipl = 1;
-				for (int t = 0; t < invariants.get(i).size(); t++) {
-					int tr = invariants.get(i).get(t);
+				for (int t = 0; t < invariants.get(i).size(); t++) { //po wszystkich tranzycja inwariantu
+					int tr = invariants.get(i).get(t); // nr tranzycji
 					if (transNo >= 100)
 						pw.print(conIntToStr(true, tr)); //tutaj wstawiamy wartoœæ dla tranz. w inw.
 					else

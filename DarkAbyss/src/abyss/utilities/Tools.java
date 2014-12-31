@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -151,5 +152,87 @@ public final class Tools {
 			resultDir = fc.getSelectedFile().getPath();
 		} 
 		return resultDir;
+	}
+
+	/*
+	 * Zestaw poni¿szych metod zapewnia bezpieczny sposób pobierania plików z zasobów.
+	 * Innymi s³owy program siê nie wy³o¿y tylko dlatego, ¿e ikonki zabrak³o. Ikony i
+	 * inne obrazki programu s¹ natomiast w zasobach (a nie w zwyczajnym katalogu)
+	 * dlatego, aby zapewniæ np. bezproblemowe otrzymanie wykonywalnego pliku JAR.
+	 */
+	/**
+	 * Pobiera z zasobów ikonê o podanej nazwie. Albo zwraca awaryjn.
+	 * @param resPath String - œcie¿ka do zasobów
+	 * @return ImageIcon - ikona obrazek z zasobów
+	 */
+	public static ImageIcon getResIcon16(String resPath) {
+		ImageIcon icon=null;
+		try {
+			icon = new ImageIcon(Tools.class.getResource(resPath));
+		} catch (Exception e) {
+			try {
+				icon = new ImageIcon(Tools.class.getResource("/nullIcon16.png"));
+			} catch (Exception e2) {
+				icon = new ImageIcon();
+			}
+		}
+		return icon;
+	}
+	
+	/**
+	 * Pobiera z zasobów ikonê o podanej nazwie. Albo zwraca awaryjn.
+	 * @param resPath String - œcie¿ka do zasobów
+	 * @return ImageIcon - ikona obrazek z zasobów
+	 */
+	public static ImageIcon getResIcon22(String resPath) {
+		ImageIcon icon=null;
+		try {
+			icon = new ImageIcon(Tools.class.getResource(resPath));
+		} catch (Exception e) {
+			try {
+				icon = new ImageIcon(Tools.class.getResource("/nullIcon22.png"));
+			} catch (Exception e2) {
+				icon = new ImageIcon();
+			}
+		}
+		return icon;
+	}
+	
+	/**
+	 * Pobiera z zasobów ikonê o podanej nazwie. Albo zwraca awaryjn.
+	 * @param resPath String - œcie¿ka do zasobów
+	 * @return ImageIcon - ikona obrazek z zasobów
+	 */
+	public static ImageIcon getResIcon32(String resPath) {
+		ImageIcon icon=null;
+		try {
+			icon = new ImageIcon(Tools.class.getResource(resPath));
+		} catch (Exception e) {
+			try {
+				icon = new ImageIcon(Tools.class.getResource("/nullIcon32.png"));
+			} catch (Exception e2) {
+				icon = new ImageIcon();
+			}
+		}
+		return icon;
+	}
+	
+	/**
+	 * Pobiera z zasobów ikonê o podanej nazwie. Albo zwraca awaryjn.
+	 * @param resPath String - œcie¿ka do zasobów
+	 * @return ImageIcon - ikona obrazek z zasobów
+	 */
+	public static ImageIcon getResIcon48(String resPath) {
+		ImageIcon icon=null;
+		try {
+			icon = new ImageIcon(Tools.class.getResource(resPath));
+		} catch (Exception e) {
+			try {
+				icon = new ImageIcon(Tools.class.getResource("/nullIcon48.png"));
+			} catch (Exception e2) {
+				icon = new ImageIcon();
+			}
+		}
+		return icon;
 	}
 }

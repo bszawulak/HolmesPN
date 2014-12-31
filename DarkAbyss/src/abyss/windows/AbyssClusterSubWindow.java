@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -369,7 +370,10 @@ public class AbyssClusterSubWindow extends JFrame {
         gbc.weighty = 0.0;
         gbc.fill = GridBagConstraints.SOUTH;
         
-        JButton button = new JButton("Create detailed clustering");
+        JButton button = new JButton("Export clustering", 
+        		Tools.getResIcon48("/icons/clustWindow/buttonExportSingleToExcel.png"));
+        button.setBounds(new Rectangle(150, 40));
+        //button.setPreferredSize(new Dimension(150,40));
         button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(clusterPath != null && !clusterPath.equals("")) {

@@ -20,7 +20,7 @@ public class PetriNetElementPopupMenu extends GraphPanelPopupMenu {
 	public PetriNetElementPopupMenu(GraphPanel graphPanel) {
 		super(graphPanel);
 		
-		this.addMenuItem("Delete", "cross", new ActionListener() {
+		this.addMenuItem("Delete", "cross.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				getGraphPanel().getSelectionManager().deleteAllSelectedElements();
 			}

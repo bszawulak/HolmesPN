@@ -164,8 +164,9 @@ public class AbyssClusters extends JFrame {
 		textPanel.add(spinnerClusters);	
 
 		// Przycisk rozpoczêcia procedury generowania klastrów na bazie inwariantów
-		JButton generateButton = createStandardButton("Generate clusterings", null);
-		generateButton.setToolTipText("Generate all clusterings for a given number of clusters.");
+		JButton generateButton = createStandardButton("", 
+				Tools.getResIcon48("/icons/clustWindow/buttonGen56.png"));
+		generateButton.setToolTipText("Generate all 56 clusterings for a selected number of clusters.");
 		generateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -176,33 +177,9 @@ public class AbyssClusters extends JFrame {
         textPanel.add(generateButton);
         textPanel.add(Box.createVerticalStrut(7));
         
-        // Przycisk wczytania katalogu z 56 klastrowaniami
-        JButton case56Button = createStandardButton("Load clusterings", null);
-        case56Button.setToolTipText("Load clusterings data into table from a selected directory.");
-        case56Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				buttonLoadClusteringDirectory();
-			}
-		});
-        case56Button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        textPanel.add(case56Button);
-        textPanel.add(Box.createVerticalStrut(7));
-        
-        // Przycisk exportu tabeli danych do excela
-        JButton excelExport = createStandardButton("Result -> XLS", null);
-        excelExport.setToolTipText("Export results files into Excel document.");
-        excelExport.addActionListener(new ActionListener() {
- 			@Override
- 			public void actionPerformed(ActionEvent actionEvent) {
- 				buttonExportTableToExcel();
- 			}
- 		});
-        excelExport.setAlignmentX(Component.CENTER_ALIGNMENT);
-        textPanel.add(excelExport);
-        textPanel.add(Box.createVerticalStrut(7));
-        
         // Przycisk rozpoczêcia procedury generowania metryk Celiñskiego-Harabasza dla tabeli klastrowañ
-     	JButton generateCHButton = createStandardButton("Compute C-H", null);
+     	JButton generateCHButton = createStandardButton("", 
+     			Tools.getResIcon48("/icons/clustWindow/buttonComputeCH.png"));
      	generateCHButton.setToolTipText("Compute Caliñski-Harabasz metrics for a given number of clusters.");
      	generateCHButton.addActionListener(new ActionListener() {
      		public void actionPerformed(ActionEvent actionEvent) {
@@ -213,9 +190,23 @@ public class AbyssClusters extends JFrame {
      	textPanel.add(generateCHButton);
         textPanel.add(Box.createVerticalStrut(7));
         
+        // Przycisk wczytania katalogu z 56 klastrowaniami
+        JButton case56Button = createStandardButton("", 
+        		Tools.getResIcon48("/icons/clustWindow/buttonLoadClusterDir.png"));
+        case56Button.setToolTipText("Load 56 clusterings into table from the selected directory.");
+        case56Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				buttonLoadClusteringDirectory();
+			}
+		});
+        case56Button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        textPanel.add(case56Button);
+        textPanel.add(Box.createVerticalStrut(7));
+        
         // Przycisk wczytywania metryk C-H dla tabeli
-     	JButton loadCHButton = createStandardButton("Load C-H", null);
-     	loadCHButton.setToolTipText("Load Caliñski-Harabasz metrics from a selected directory.");
+     	JButton loadCHButton = createStandardButton("", 
+     			Tools.getResIcon48("/icons/clustWindow/buttonLoadCHDir.png"));
+     	loadCHButton.setToolTipText("Load Caliñski-Harabasz metrics from the selected directory.");
      	loadCHButton.addActionListener(new ActionListener() {
      		public void actionPerformed(ActionEvent actionEvent) {
      			buttonLoadCHmetricIntoTables();
@@ -223,11 +214,11 @@ public class AbyssClusters extends JFrame {
      	});
      	loadCHButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(loadCHButton);
-     	
      	textPanel.add(Box.createVerticalStrut(7));
         
         // Przycisk zapisu tabeli danych
-     	JButton saveTableButton = createStandardButton("Save table", null);
+     	JButton saveTableButton = createStandardButton("", 
+     			Tools.getResIcon48("/icons/clustWindow/buttonSaveTable.png"));
      	saveTableButton.setToolTipText("Save table data into the selected file");
      	saveTableButton.addActionListener(new ActionListener() {
      		public void actionPerformed(ActionEvent actionEvent) {
@@ -236,11 +227,11 @@ public class AbyssClusters extends JFrame {
      	});
      	saveTableButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(saveTableButton);
-     	
      	textPanel.add(Box.createVerticalStrut(7));
         
         // Przycisk zapisu tabeli danych
-     	JButton loadTableButton = createStandardButton("Load table", null);
+     	JButton loadTableButton = createStandardButton("", 
+     			Tools.getResIcon48("/icons/clustWindow/buttonLoadTable.png"));
      	loadTableButton.setToolTipText("Load table data from the selected file");
      	loadTableButton.addActionListener(new ActionListener() {
      		public void actionPerformed(ActionEvent actionEvent) {
@@ -249,6 +240,21 @@ public class AbyssClusters extends JFrame {
      	});
      	loadTableButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(loadTableButton);
+     	textPanel.add(Box.createVerticalStrut(7));
+     	
+     	// Przycisk exportu tabeli danych do excela
+        JButton excelExport = createStandardButton("", 
+        		Tools.getResIcon48("/icons/clustWindow/buttonExportToExcel.png"));
+        excelExport.setToolTipText("Export results files into Excel document.");
+        excelExport.addActionListener(new ActionListener() {
+ 			@Override
+ 			public void actionPerformed(ActionEvent actionEvent) {
+ 				buttonExportTableToExcel();
+ 			}
+ 		});
+        excelExport.setAlignmentX(Component.CENTER_ALIGNMENT);
+        textPanel.add(excelExport);
+        textPanel.add(Box.createVerticalStrut(7));
         
 		return textPanel;
 	}
@@ -266,7 +272,7 @@ public class AbyssClusters extends JFrame {
         
         JLabel tmp;
         tmp = new JLabel(text);
-        tmp.setFont(new Font("Arial", Font.PLAIN, 9));
+        tmp.setFont(new Font("Arial", Font.PLAIN, 8));
     	resultButton.add(tmp, BorderLayout.PAGE_END);
         /*
         for(int i=0; i<text.length; i++) {

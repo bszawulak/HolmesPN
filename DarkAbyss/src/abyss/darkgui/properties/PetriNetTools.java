@@ -3,12 +3,8 @@ package abyss.darkgui.properties;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Point;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
-//import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -25,6 +21,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel.DrawModes;
+import abyss.utilities.Tools;
 
 import com.javadocking.dock.SingleDock;
 import com.javadocking.dockable.DefaultDockable;
@@ -165,15 +162,16 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				eraserIcon, timeTransitionIcon;
 
 		/**
-		 * Konstruktor domyœlny obiektu klasy wewnêtrznej LeafRenderer
+		 * Konstruktor domyœlny obiektu klasy wewnêtrznej LeafRenderer. Tworzy ikony
+		 * narzêdzi rysowania sieci Petriego.
 		 */
 		public LeafRenderer() {
-			placeIcon = new ImageIcon("resources/icons/place.gif");
-			transitionIcon = new ImageIcon("resources/icons/transition.gif");
-			timeTransitionIcon = new ImageIcon("resources/icons/timeTransition.gif");
-			arcIcon = new ImageIcon("resources/icons/arc.gif");
-			pointerIcon = new ImageIcon("resources/icons/pointer.gif");
-			eraserIcon = new ImageIcon("resources/icons/eraser.gif");
+			placeIcon = Tools.getResIcon16("/icons/place.gif");
+			transitionIcon = Tools.getResIcon16("/icons/transition.gif");
+			timeTransitionIcon = Tools.getResIcon16("/icons/timeTransition.gif");
+			arcIcon = Tools.getResIcon16("/icons/arc.gif");
+			pointerIcon = Tools.getResIcon16("/icons/pointer.gif");
+			eraserIcon = Tools.getResIcon16("/icons/eraser.gif");
 		}
 
 		/**

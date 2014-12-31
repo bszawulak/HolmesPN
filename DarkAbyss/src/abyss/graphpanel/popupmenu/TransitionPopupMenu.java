@@ -18,14 +18,14 @@ public class TransitionPopupMenu extends PetriNetElementPopupMenu {
 	 */
 	public TransitionPopupMenu(GraphPanel graphPanel) {
 		super(graphPanel);
-		this.addMenuItem("Change selected Transitions into T-Portals", "portal",
+		this.addMenuItem("Change selected Transitions into T-Portals", "portal.png",
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
 					}
 				});
 		
-		this.addMenuItem("Clone one Transition into Portals", "portal",
+		this.addMenuItem("Clone one Transition into Portals", "portal.png",
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						getGraphPanel().getSelectionManager().cloneNodeIntoPortal();

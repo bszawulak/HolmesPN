@@ -32,5 +32,4 @@ public class NetHandler extends DefaultHandler {
 	public ArrayList<Node> getNodesList() {
 		return nodesList;
 	}
-
 }

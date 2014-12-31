@@ -7,7 +7,7 @@ import org.xml.sax.SAXException;
 /**
  * 
  * @author students - szkielet klasy, nazwa, 4 metody, ogólnie nic :)
- * @author Rince - ca³a reszta, czyli w zasadzie wszystko tutaj
+ * @author MR - ca³a reszta, czyli w zasadzie te¿ jeszcze nic :)
  *
  */
 public class NetHandler_Extended extends NetHandler {

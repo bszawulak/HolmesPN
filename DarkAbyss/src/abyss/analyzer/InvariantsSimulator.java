@@ -860,7 +860,7 @@ public class InvariantsSimulator {
 						
 						invariantsWriter.write(invariants, foundInvariants);
 						
-						GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().setEnabledInvariantSimulationInitiateButtons(true);
+						//GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().setEnabledInvariantSimulationInitiateButtons(true);
 				}
 				counter++;
 			} else {

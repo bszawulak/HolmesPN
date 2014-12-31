@@ -70,7 +70,7 @@ public class ToolbarButton extends JLabel
 	/**
 	 * Sets the action that will be performed when this button is clicked.
 	 * 
-	 * @param action		The action that will be performed when this button is clicked.
+	 * @param action - The action that will be performed when this button is clicked.
 	 */
 	public void setAction(Action action) {
 		if (action == null)

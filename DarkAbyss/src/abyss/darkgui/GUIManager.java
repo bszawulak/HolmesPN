@@ -865,7 +865,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void restoreDefaultVisuals() {
 		getSimulatorBox().createSimulatorProperties();
-		getInvSimBox().createInvSimulatorProperties();
+		
+		//getInvSimBox().createInvSimulatorProperties();
 		// // repaint all sheets in workspace
 		// for (WorkspaceSheet sheet : workspace.getSheets()) {
 		// sheet.getGraphPanel().repaint();
@@ -1162,8 +1163,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//zakoñczono zapis do pliku .pnt
 		long size = tmpPNTfile.length(); //124 dla nieistniej¹cej (pustej) sieci
 		if(size <154) {
-			String msg = "Net saving as .pnt file failed. There may be problems with file: \n"+x + 
-					"\nor there is no network yet.";
+			String msg = "Net saving as .pnt file failed. There may be problems with file: "+x + 
+					" or there is no network yet.";
 			JOptionPane.showMessageDialog(null, msg, "Missing net or file", JOptionPane.ERROR_MESSAGE);
 			log(msg, "error", true);
 			return;
@@ -1216,7 +1217,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 				log(stars, "text", false);
 				return;
 			}
-			
 			
 			// check whether the file with T-invariants has been generated
 			File invariantsFile = new File("siec.inv");
@@ -1345,6 +1345,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	private void createNetPropertiesWindow() {
 		windowNetProperties = new AbyssProperties();
+		windowNetProperties.setLocationRelativeTo(frame);
 	}
 	
 	/**

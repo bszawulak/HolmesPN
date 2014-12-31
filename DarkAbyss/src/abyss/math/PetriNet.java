@@ -581,7 +581,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			ABYSSwriter = new AbyssWriter();
 			ABYSSwriter.write(filePath);
 		}
-		//if (sciezka.endsWith(".png")) { } //wykonywane w GUIManager.exportProjectToImage
 	}
 
 	/**

@@ -23,7 +23,7 @@ public class Main {
 			public void run() {
 				guiManager = new GUIManager(new JFrame("Abyss - Zintegrowane œrodowisko do edycji, symulacji i analizy Sieci Petriego"));
 				guiManager.getSimulatorBox().createSimulatorProperties();
-				guiManager.getInvSimBox().createInvSimulatorProperties();
+				//guiManager.getInvSimBox().createInvSimulatorProperties();
 			}
 		};
 		SwingUtilities.invokeLater(doCreateAndShowGUI);

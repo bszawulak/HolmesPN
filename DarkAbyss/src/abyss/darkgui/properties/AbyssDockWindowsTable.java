@@ -17,10 +17,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -56,6 +56,7 @@ import abyss.math.TimeTransition;
 import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
+import abyss.utilities.Tools;
 import abyss.workspace.WorkspaceSheet;
 
 /**
@@ -63,7 +64,7 @@ import abyss.workspace.WorkspaceSheet;
  * @author students
  * @author MR<br>
  * <br>
- * <b>Absolute positioning. Of absolute everything here. <br>
+ * <b>Absolute positioning. Of almost absolute everything here. <br>
  * Nie obchodzi mnie, co o tym myślisz. Idź w layout i nie wracaj. ┌∩┐(◣_◢)┌∩┐
  * </b><br>
  * Właściwie, to wyleje tu swoje żale na Jave, opensourcowe podejścia w tym języku i takie
@@ -134,7 +135,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	 * Konstruktor odpowiedzialny za tworzenie elementów podokna dla symulatora sieci.
 	 * @param sim NetSimulator - obiekt symulatora sieci
 	 */
-	public AbyssDockWindowsTable(NetSimulator sim) {
+	public AbyssDockWindowsTable(NetSimulator sim, InvariantsSimulator is) {
 		int columnA_posX = 10;
 		int columnB_posX = 80;
 		int columnA_Y = 0;
@@ -147,6 +148,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		String[] simModeName = {"Classic", "Time"};
 		mode = SIMULATOR;
 		simulator = sim;
+		invSimulator = is;
 		
 		// SIMULATION MODE
 		JLabel netTypeLabel = new JLabel("Net:");
@@ -161,22 +163,27 @@ public class AbyssDockWindowsTable extends JPanel {
 		simMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				simulator.setSimulatorNetType(simMode.getSelectedIndex());
+				int selectedModeIndex = simMode.getSelectedIndex();
+				simulator.setSimulatorNetType(selectedModeIndex);
+				
+				if(invSimulator != null)
+					invSimulator.setSimulatorNetType(selectedModeIndex);
 			}
+			
 		});
 		components.add(simMode);
 		
 		
 		// SIMULATOR CONTROLS
-		//metoda startSimulation obiektu simulator troszczy się o wygaszanie
-		//i aktywowanie odpowiednich przycisków
+		// metoda startSimulation obiektu simulator troszczy się o wygaszanie
+		// i aktywowanie odpowiednich przycisków
 		JLabel controlsLabel = new JLabel("Simulation options:");
 		controlsLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength*2, 20);
 		components.add(controlsLabel);
 		columnB_Y += 20;
 		
 		JButton oneActionBack = new JButton(
-				new ImageIcon("resources/icons/simulation/control_sim_back.png"));
+				Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
 		oneActionBack.setName("simB1");
 		oneActionBack.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
 		oneActionBack.setLocation(columnA_posX, columnA_Y);
@@ -191,7 +198,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(oneActionBack);
 		
 		JButton oneTransitionForward = new JButton(
-				new ImageIcon("resources/icons/simulation/control_sim_fwd.png"));
+				Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
 		oneTransitionForward.setName("simB2");
 		oneTransitionForward.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 30);
 		oneTransitionForward.setLocation(columnB_posX, columnB_Y);
@@ -206,7 +213,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(oneTransitionForward);
 		
 		JButton loopBack = new JButton(
-				new ImageIcon("resources/icons/simulation/control_sim_backLoop.png"));
+				Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
 		loopBack.setName("simB3");
 		loopBack.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
 		loopBack.setLocation(columnA_posX, columnA_Y);
@@ -220,7 +227,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 		components.add(loopBack);
 		JButton oneStepForward = new JButton(
-				new ImageIcon("resources/icons/simulation/control_sim_fwdLoop.png"));
+				Tools.getResIcon22("/icons/simulation/control_sim_fwdLoop.png"));
 		oneStepForward.setName("simB4");
 		oneStepForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
 		oneStepForward.setLocation(columnB_posX, columnB_Y);
@@ -234,7 +241,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 		components.add(oneStepForward);
 		JButton loopSimulation = new JButton(
-				new ImageIcon("resources/icons/simulation/control_sim_loop.png"));
+				Tools.getResIcon22("/icons/simulation/control_sim_loop.png"));
 		loopSimulation.setName("simB5");
 		loopSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
 		loopSimulation.setLocation(columnA_posX, columnA_Y);
@@ -248,7 +255,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 		components.add(loopSimulation);
 		JButton singleTransitionLoopSimulation = new JButton(
-				new ImageIcon("resources/icons/simulation/control_sim_1transLoop.png"));
+				Tools.getResIcon22("/icons/simulation/control_sim_1transLoop.png"));
 		singleTransitionLoopSimulation.setName("simB6");
 		singleTransitionLoopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
 		singleTransitionLoopSimulation.setLocation(columnB_posX, columnB_Y);
@@ -263,7 +270,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(singleTransitionLoopSimulation);
 		
 		JButton pauseSimulation = new JButton(
-				new ImageIcon("resources/icons/simulation/control_sim_pause.png"));
+				Tools.getResIcon22("/icons/simulation/control_sim_pause.png"));
 		pauseSimulation.setName("stop");
 		pauseSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
 		pauseSimulation.setLocation(columnA_posX, columnA_Y);
@@ -279,7 +286,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(pauseSimulation);
 		
 		JButton stopSimulation = new JButton(
-				new ImageIcon("resources/icons/simulation/control_sim_stop.png"));
+				Tools.getResIcon22("/icons/simulation/control_sim_stop.png"));
 		stopSimulation.setName("stop");
 		stopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
 		stopSimulation.setLocation(columnB_posX, columnB_Y);
@@ -326,45 +333,100 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 		components.add(maximumMode);
 		
+		//PANEL SYMULATORA INWARIANTÓW
+		JPanel staticPropertiesPanel = new JPanel();
+		staticPropertiesPanel.setLayout(null);
+		staticPropertiesPanel.setBorder(BorderFactory.createTitledBorder("Invariants simulator"));
+		staticPropertiesPanel.setBounds(columnA_posX-5, columnA_Y += 20, 160, 160);
 		
-		JButton fillDataButton = new JButton("Net Data");
-		fillDataButton.setBounds(columnA_posX, columnA_Y += 30, colBCompLength, 20);
-		fillDataButton.setLocation(columnA_posX, columnA_Y);
-		fillDataButton.setSize(colBCompLength, 20);
-		fillDataButton.setToolTipText("Fill network data");
-		fillDataButton.setEnabled(false);
-		fillDataButton.addActionListener(new ActionListener() {
-			@Override
+		int internalXA = 10;
+		int internalXB = 60;
+		int internalY = 20;
+		
+		JLabel simTypeLabel = new JLabel("Mode:");
+		simTypeLabel.setBounds(internalXA, internalY, 50, 20);
+		staticPropertiesPanel.add(simTypeLabel);
+		
+		JRadioButton TimeMode = new JRadioButton("Time Mode");
+		TimeMode.setBounds(internalXB, internalY, 90, 20);
+		TimeMode.setLocation(internalXB, internalY);
+		internalY+=20;
+		TimeMode.setSize(90, 20);
+		TimeMode.setActionCommand("0");
+		staticPropertiesPanel.add(TimeMode);
+		group.add(TimeMode);
+		
+		columnA_Y += 20;
+		JRadioButton StepMode = new JRadioButton("Step Mode");
+		StepMode.setBounds(internalXB, internalY, 90, 20);
+		StepMode.setLocation(internalXB, internalY);
+		internalY+=20;
+		StepMode.setSize(90, 20);
+		StepMode.setActionCommand("1");
+		staticPropertiesPanel.add(StepMode);
+		group.add(StepMode);
+		
+		columnA_Y += 20;
+		JRadioButton CycleMode = new JRadioButton("Cycle Mode");
+		CycleMode.setBounds(internalXB, internalY, 90, 20);
+		CycleMode.setLocation(internalXB, internalY);
+		internalY+=20;
+		CycleMode.setSize(90, 20);
+		CycleMode.setActionCommand("2");
+		staticPropertiesPanel.add(CycleMode);
+		group.add(CycleMode);
+		group.setSelected(TimeMode.getModel(), true);
+		
+		JLabel timeLabel = new JLabel("Time (min):");
+		timeLabel.setBounds(internalXA, internalY, 70, 20);
+		staticPropertiesPanel.add(timeLabel);
+		
+		SpinnerModel timeCycle = new SpinnerNumberModel(1,1,9999,1);
+		spiner = new JSpinner(timeCycle);
+		spiner.setLocation(internalXB+20, internalY+3);
+		spiner.setSize(70, 20);
+		internalY+=25;
+		staticPropertiesPanel.add(spiner);
+		
+		// INVARIANTS SIMULATION START BUTTON
+		//JButton startButton = new JButton("Start");
+		JButton startButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
+		startButton.setBounds(internalXA, internalY, 80, 20);
+		startButton.setLocation(internalXA, internalY);
+		startButton.setSize(80, 40);
+		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//simulator.stop();
+				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().get2ndFormInvariantsList().size()>0)
+				{
+					setEnabledSimulationInitiateButtons(false);
+					setEnabledSimulationDisruptButtons(false);
+					GUIManager.getDefaultGUIManager().getShortcutsBar().setEnabledSimulationInitiateButtons(false);
+					GUIManager.getDefaultGUIManager().getShortcutsBar().setEnabledSimulationDisruptButtons(false);
+					
+					try {
+						GUIManager.getDefaultGUIManager().startInvariantsSimulation(
+								Integer.valueOf(group.getSelection().getActionCommand()), 
+								(Integer) spiner.getValue()); //jaki tryb
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+					}
+					//STOP:
+					setEnabledSimulationInitiateButtons(true);
+					setEnabledSimulationDisruptButtons(false);
+					GUIManager.getDefaultGUIManager().getShortcutsBar().setEnabledSimulationInitiateButtons(true);
+					GUIManager.getDefaultGUIManager().getShortcutsBar().setEnabledSimulationDisruptButtons(false);
+					
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(new JFrame(),"There are no invariants to simulate.",
+						    "Invariant simulator",JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
 		});
-		components.add(fillDataButton);
 		
-		
-		// getting the data
-		// Arcs total
-		/*
-		headers.add(new JLabel("General", JLabel.TRAILING));
-		values.add(new JLabel("Information"));
-		// Nodes total
-		headers.add(new JLabel("Nodes:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(simulator.getNodesAmount())));
-		// Places total
-		headers.add(new JLabel("Places:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(simulator.getPlacesAmount())));
-		// Transitions total
-		headers.add(new JLabel("Transitions:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(simulator.getTransitionsAmount())));
-		// Arcs total
-		headers.add(new JLabel("Arcs:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(simulator.getArcsAmount())));
-		// Tokens total
-		headers.add(new JLabel("Tokens:", JLabel.TRAILING));
-		values.add(new JLabel(Integer.toString(simulator.getTokensAmount())));
-		*/
-		// put all contents on the pane
-		//putContents(panel);
+		staticPropertiesPanel.add(startButton);
+		components.add(staticPropertiesPanel);
 		
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
@@ -1439,7 +1501,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().get2ndFormInvariantsList().size()>0)
 				{
 					//blokowanie
-					setEnabledInvariantSimulationInitiateButtons(false);
+					//setEnabledInvariantSimulationInitiateButtons(false);
 					//odpalanie
 					try {
 						GUIManager.getDefaultGUIManager().startInvariantsSimulation(
@@ -1892,25 +1954,9 @@ public class AbyssDockWindowsTable extends JPanel {
 		}
 	}
 	
-	// ================================================================================
-	// invariants simulation specific operations
-	// ================================================================================
 
-	public void setEnabledInvariantSimulationInitiateButtons(boolean enabled) {
-		for (int i = 0; i < 5; i++) {
-			headers.get(i).setEnabled(enabled);
-			values.get(i).setEnabled(enabled);
-		}
-	}
-
-	public void setEnabledInvariantSimulationDisruptButtons(boolean enabled) {
-		headers.get(5).setEnabled(enabled);
-		values.get(5).setEnabled(enabled);
-	}
-	
 
 	// ================================================================================
-	// simulation specific operations
 	// ================================================================================
 
 	/**
@@ -1927,10 +1973,6 @@ public class AbyssDockWindowsTable extends JPanel {
 				}
 			}
 		}
-		//for (int i = 0; i < 4; i++) {
-		//	headers.get(i).setEnabled(enabled);
-		//	values.get(i).setEnabled(enabled);
-		//}
 	}
 
 	/**
@@ -1945,21 +1987,27 @@ public class AbyssDockWindowsTable extends JPanel {
 				}
 			}
 		}
-		//headers.get(4).setEnabled(enabled);
-		//values.get(4).setEnabled(enabled);
 	}
 
+	/**
+	 * Metoda uaktywnia tylko przycisku startu dla symulatora, bloku stop i pauzę.
+	 */
 	public void allowOnlySimulationInitiateButtons() {
 		setEnabledSimulationInitiateButtons(true);
 		setEnabledSimulationDisruptButtons(false);
 	}
 
+	/**
+	 * Metoda uaktywnia tylko przyciski stop i pauza dla symulatora. Cała reszta - nieaktywna.
+	 */
 	public void allowOnlySimulationDisruptButtons() {
 		setEnabledSimulationInitiateButtons(false);
 		setEnabledSimulationDisruptButtons(true);
 	}
 
-	
+	/**
+	 * Metoda zostawia aktywny tylko przycisku od-pauzowania.
+	 */
 	public void allowOnlyUnpauseButton() {
 		allowOnlySimulationDisruptButtons();
 		//values.get(4).setEnabled(false);

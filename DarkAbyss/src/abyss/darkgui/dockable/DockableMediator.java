@@ -59,6 +59,6 @@ public class DockableMediator implements ItemListener, DockingListener {
 	}
 
 	public void dockingWillChange(DockingEvent dockingEvent) {
+		
 	}
-
 }

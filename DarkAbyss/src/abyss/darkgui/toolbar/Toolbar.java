@@ -3,10 +3,9 @@ package abyss.darkgui.toolbar;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-
 import abyss.darkgui.GUIManager;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
+import abyss.utilities.Tools;
 
 import com.javadocking.DockingManager;
 import com.javadocking.dock.BorderDock;
@@ -147,7 +146,7 @@ public class Toolbar extends BorderDock {
 		//nowa zak³adka
 		@SuppressWarnings("serial")
 		ToolbarButtonAction addButton = new ToolbarButtonAction(this, 
-				"New tab", new ImageIcon("resources/icons/toolbar/add_panel.png")) {
+				"New tab", Tools.getResIcon48("/icons/toolbar/add_panel.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().newTab();
@@ -157,7 +156,7 @@ public class Toolbar extends BorderDock {
 		
 		@SuppressWarnings("serial")
 		ToolbarButtonAction openButton = new ToolbarButtonAction(this,
-				"Open project...", new ImageIcon("resources/icons/toolbar/open.png")) {
+				"Open project...", Tools.getResIcon48("/icons/toolbar/open.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().openProject();
@@ -168,7 +167,7 @@ public class Toolbar extends BorderDock {
 		//import projektu ze snoopiego
 		@SuppressWarnings("serial")
 		ToolbarButtonAction importButton = new ToolbarButtonAction(this,
-				"Import project...", new ImageIcon("resources/icons/toolbar/import_net.png")) {
+				"Import project...", Tools.getResIcon48("/icons/toolbar/import_net.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().importProject();
@@ -179,7 +178,7 @@ public class Toolbar extends BorderDock {
 		//zapis obrazu sieci do pliku
 		@SuppressWarnings("serial")
 		ToolbarButtonAction pictureButton = new ToolbarButtonAction(this,
-				"Save picture...", new ImageIcon("resources/icons/toolbar/save_picture.png")) {
+				"Save picture...", Tools.getResIcon48("/icons/toolbar/save_picture.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().exportProjectToImage();
@@ -190,7 +189,7 @@ public class Toolbar extends BorderDock {
 		//odswiezanie
 		@SuppressWarnings("serial")
 		ToolbarButtonAction refreshButton = new ToolbarButtonAction(this,
-				"Refresh", new ImageIcon("resources/icons/toolbar/refresh.png")) {
+				"Refresh", Tools.getResIcon48("/icons/toolbar/refresh.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().restoreDefaultVisuals();
@@ -201,7 +200,7 @@ public class Toolbar extends BorderDock {
 		//czyszczenie arkuszy
 		@SuppressWarnings("serial")
 		ToolbarButtonAction clearProject = new ToolbarButtonAction(this,
-				"Clear project", new ImageIcon("resources/icons/toolbar/clear_project.png")) {
+				"Clear project", Tools.getResIcon48("/icons/toolbar/clear_project.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().clearProject();
@@ -218,7 +217,7 @@ public class Toolbar extends BorderDock {
 	private ArrayList<ButtonDockable> createSimulationBar() {
 		ArrayList<ButtonDockable> simulationDockables = new ArrayList<ButtonDockable>();
 		reverseLoopButton = new ToolbarButtonAction(this, "Loop back to oldest action saved",
-			new ImageIcon( "resources/icons/toolbar/sim_back.png")) {
+				Tools.getResIcon48("/icons/toolbar/sim_back.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
@@ -228,7 +227,7 @@ public class Toolbar extends BorderDock {
 		simulationDockables.add(createButtonDockable("ButtonDockableStepBack",reverseLoopButton));
 		
 		reverseStepButton = new ToolbarButtonAction(this,"Single action back simulation",
-				new ImageIcon("resources/icons/toolbar/sim_back_step.png")) {
+				Tools.getResIcon48("/icons/toolbar/sim_back_step.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
@@ -238,7 +237,7 @@ public class Toolbar extends BorderDock {
 		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepBack", reverseStepButton));
 		
 		loopSimButton = new ToolbarButtonAction(this,"Loop simulation",
-				new ImageIcon("resources/icons/toolbar/sim_start.png")) {
+				Tools.getResIcon48("/icons/toolbar/sim_start.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
@@ -248,7 +247,7 @@ public class Toolbar extends BorderDock {
 		simulationDockables.add(createButtonDockable("ButtonDockableLoopSim",loopSimButton));
 		
 		singleTransitionLoopSimButton = new ToolbarButtonAction(this, "Loop single transition simulation", 
-				new ImageIcon("resources/icons/toolbar/sim_start_single.png")) {
+				Tools.getResIcon48("/icons/toolbar/sim_start_single.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
@@ -259,7 +258,7 @@ public class Toolbar extends BorderDock {
 				singleTransitionLoopSimButton));
 		
 		pauseSimButton = new ToolbarButtonAction(this,"Pause simulation",
-				new ImageIcon("resources/icons/toolbar/sim_pause.png")) {
+				Tools.getResIcon48("/icons/toolbar/sim_pause.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().pause();
@@ -268,7 +267,7 @@ public class Toolbar extends BorderDock {
 		simulationDockables.add(createButtonDockable("ButtonDockablePauseSim",pauseSimButton));
 		
 		stopSimButton = new ToolbarButtonAction(this,"Schedule a stop for the simulation",
-				new ImageIcon("resources/icons/toolbar/sim_stop.png")) {
+				Tools.getResIcon48("/icons/toolbar/sim_stop.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
@@ -278,7 +277,7 @@ public class Toolbar extends BorderDock {
 		simulationDockables.add(createButtonDockable("ButtonDockableStopSim",stopSimButton));
 		
 		smallStepFwdSimButton = new ToolbarButtonAction(this,"Single transition forward simulation",
-				new ImageIcon("resources/icons/toolbar/sim_forward_step.png")) {
+				Tools.getResIcon48("/icons/toolbar/sim_forward_step.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
@@ -288,7 +287,7 @@ public class Toolbar extends BorderDock {
 		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepFwdSim", smallStepFwdSimButton));
 		
 		stepFwdSimButton = new ToolbarButtonAction(this,"Step forward simulation",
-				new ImageIcon("resources/icons/toolbar/sim_forward.png")) {
+				Tools.getResIcon48("/icons/toolbar/sim_forward.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
@@ -307,7 +306,7 @@ public class Toolbar extends BorderDock {
 	private ArrayList<ButtonDockable> createAnalysisBar() {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
 		ToolbarButtonAction generateINAinvariants = new ToolbarButtonAction(this, "Generate INA Invariants", 
-				new ImageIcon( "resources/icons/toolbar/terminal.png")) {
+				Tools.getResIcon48("/icons/toolbar/terminal.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().generateINAinvariants();
@@ -316,7 +315,7 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("GenerateINAinv",generateINAinvariants));
 		
 		ToolbarButtonAction clusterButton = new ToolbarButtonAction(this, "Cluster analysis",
-				new ImageIcon("resources/icons/toolbar/clusters.png")) {
+				Tools.getResIcon48("/icons/toolbar/clusters.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().showClusterWindow(); 
@@ -325,7 +324,7 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("Clusters", clusterButton));
 		
 		ToolbarButtonAction consoleButton = new ToolbarButtonAction(this, "Show console",
-				new ImageIcon("resources/icons/toolbar/terminal2.png")) {
+				Tools.getResIcon48("/icons/toolbar/terminal2.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().showConsole(true); 
@@ -335,7 +334,7 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("Test button", consoleButton));
 		
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug test purpose",
-				new ImageIcon("resources/icons/toolbar/clusterWindow.png")) {
+				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				//GUIManager.getDefaultGUIManager().generateAllCHindexes(20);
@@ -352,16 +351,11 @@ public class Toolbar extends BorderDock {
 	/**
 	 * Creates a dockable with a button as content.
 	 * 
-	 * @param id
-	 *            The ID of the dockable that has to be created.
-	 * @param title
-	 *            The title of the dialog that will be displayed.
-	 * @param icon
-	 *            The icon that will be put on the button.
-	 * @param message
-	 *            The message that will be displayed when the action is
-	 *            performed.
-	 * @return The dockable with a button as content.
+	 * @param id String - The ID of the dockable that has to be created.
+	 * @param title - The title of the dialog that will be displayed.
+	 * @param icon - The icon that will be put on the button.
+	 * @param message - The message that will be displayed when the action is performed.
+	 * @return ButtonDockable - The dockable with a button as content.
 	 */
 	private ButtonDockable createButtonDockable(String id,ToolbarButtonAction action) {
 		// Create the action.

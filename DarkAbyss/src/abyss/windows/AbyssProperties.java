@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -18,6 +21,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.filechooser.FileFilter;
 
 import abyss.analyzer.NetPropertiesAnalyzer;
 import abyss.darkgui.GUIManager;
@@ -25,6 +31,8 @@ import abyss.math.Arc;
 import abyss.math.Node;
 import abyss.math.Place;
 import abyss.math.Transition;
+import abyss.utilities.Tools;
+import abyss.workspace.ExtensionFileFilter;
 
 /**
  * Klasa odpowiedzialna za wyświetlanie okna informacji o sieci, jej właściwościach, itd.
@@ -41,6 +49,7 @@ public class AbyssProperties extends JFrame {
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
 	private ArrayList<Node> nodes = new ArrayList<Node>();
 	private ArrayList<ArrayList<Integer>> invariantsMatrix;
+	private ArrayList<ArrayList<Object>> properties = new ArrayList<ArrayList<Object>>();
 	
 	//komponenty do ustawienia:
 	JLabel label_netName;
@@ -51,6 +60,7 @@ public class AbyssProperties extends JFrame {
 	JLabel label_invNumber;
 	
 	JPanel staticPropertiesPanel; //panel właściwości
+	JTextArea textField;
 	
 	/**
 	 * Konstruktor domyślny okna klasy AbyssProperties.
@@ -66,7 +76,6 @@ public class AbyssProperties extends JFrame {
 		setLocation(50, 50);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setResizable(false);
-		
 		
 		JPanel main = createMainPanel();
 		JPanel buttonsPanel = createButtonsPanel();
@@ -102,12 +111,72 @@ public class AbyssProperties extends JFrame {
 		label_transitionsNumber.setText(transitions.size()+"");
 		label_placesNumber.setText(places.size()+"");
 		label_arcNumber.setText(arcs.size()+"");
-		if(invariantsMatrix == null)
-			label_invNumber.setText(0+"");
-		else
-			label_invNumber.setText(invariantsMatrix.size()+"");
+		int inv_number = 0;
+		if(invariantsMatrix == null) {
+			inv_number = 0;
+		}
+		else {
+			inv_number = invariantsMatrix.size();
+		}
+		label_invNumber.setText(inv_number+"");
 		
 		fillStaticProperties();
+		
+		ArrayList<Integer> idTransNoInv = new ArrayList<Integer>();
+		ArrayList<Integer> transInInv = new ArrayList<Integer>();
+		ArrayList<Integer> transFiresInInv = new ArrayList<Integer>();
+		for(int trans=0; trans<transitions.size(); trans++) { //zerowanie wektorów
+			transInInv.add(0);
+			transFiresInInv.add(0);
+		}
+		
+		int transInNoInvariant = 0;
+		if(inv_number > 0) {
+			for(int inv=0; inv < invariantsMatrix.size(); inv++) { // po wszystkich inwariantach
+				for(int trans=0; trans < invariantsMatrix.get(0).size(); trans++) { //po wszystkich tranzycjach
+					if(invariantsMatrix.get(inv).get(trans) > 0) {
+						int oldVal = transInInv.get(trans);
+						oldVal++;
+						transInInv.set(trans, oldVal);
+						
+						oldVal = transFiresInInv.get(trans);
+						oldVal += invariantsMatrix.get(inv).get(trans);
+						transFiresInInv.set(trans, oldVal);
+					}
+				}
+			}
+			for(int trans=0; trans<transitions.size(); trans++) { //policz nieaktywne tranzycje
+				if(transInInv.get(trans) == 0) {
+					idTransNoInv.add(trans);
+					transInNoInvariant++;
+				}
+			}
+			textField.setText("");
+			//WYŚWIETLANIE DANYCH:
+			if(transInNoInvariant==0) {
+				textField.append("The net is covered by t-invariants.\n");
+				textField.append("\n");
+			} else {
+				textField.append("The net is not covered by t-invariants. Transitions outside invariants set:\n");
+				for(int i=0; i<idTransNoInv.size(); i++) {
+					int tNumber = idTransNoInv.get(i);
+					textField.append("ID: "+tNumber+"  t_"+(tNumber)+transitions.get(tNumber).getName()+"\n");
+				}
+				textField.append("\n");
+			}
+			
+			textField.append("Transitions data:\n");
+			for(int i=0; i<transitions.size(); i++) {
+				if(transInInv.get(i) > 0) { //dla tranz. w inwariantach
+					int transInv = transInInv.get(i);
+					int transFire = transFiresInInv.get(i);
+					String transName = transitions.get(i).getName();
+					
+					textField.append("ID: "+(i)+" INV: "+transInv+" Fired: "+transFire);
+					textField.append("    | t_"+(i)+" "+transName+"\n");
+				}
+			}
+		}
 	}
 	
 	/**
@@ -173,15 +242,25 @@ public class AbyssProperties extends JFrame {
 		label_invNumber.setBounds(currentXAxis+label6.getWidth()+10, label6.getLocation().y, numberLabelWidth, 20);
 		panel.add(label_invNumber);
 		
-		//JLabel label11 = new JLabel("Net static properties:");
-		//label11.setBounds(label1.getLocation().x+400, label1.getLocation().y, 200, 20);
-		//panel.add(label11);
 		//Panel właściwości
 		staticPropertiesPanel = new JPanel(new FlowLayout());
 		staticPropertiesPanel.setBorder(BorderFactory.createTitledBorder("Net static properties:"));
 		staticPropertiesPanel.setBounds(label2.getLocation().x+200, label2.getLocation().y, 300, 100);
 		panel.add(staticPropertiesPanel);
 		
+		//Panel informacji o invariantach
+		JPanel invInfoPanel = new JPanel(new BorderLayout());
+		invInfoPanel.setBorder(BorderFactory.createTitledBorder("Invariants details:"));
+		invInfoPanel.setBounds(currentXAxis-5, currentYAxis+=spacing, 506, 325);
+		
+		textField = new JTextArea();
+		textField.setLineWrap(true);
+		textField.setEditable(false);
+		JScrollPane areaScrollPane = new JScrollPane(textField);
+		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		invInfoPanel.add(areaScrollPane);
+		
+		panel.add(invInfoPanel);
 		panel.repaint();
 		return panel;
 	}
@@ -198,9 +277,9 @@ public class AbyssProperties extends JFrame {
 		staticPropertiesPanel.revalidate();
 		
 		NetPropertiesAnalyzer analyzer = new NetPropertiesAnalyzer();
-		ArrayList<ArrayList<Object>> prop = analyzer.propAnalyze();
+		properties = analyzer.propAnalyze();
 		
-		for(ArrayList<Object> pr : prop) { //for each property
+		for(ArrayList<Object> pr : properties) { //for each property
 			JButton pButton = new JButton();
 			pButton.setPreferredSize(new Dimension(66,20));
 			if (pr.size() < 2) {
@@ -230,7 +309,7 @@ public class AbyssProperties extends JFrame {
 				    	yesWeCan = codeInjection;
 				        return this;
 				    }
-				}.goForthMyMinions(dataTxt)  );
+				}.goForthMyMinions(dataTxt) );
 				/*
 				pButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent actionEvent) {
@@ -266,26 +345,80 @@ public class AbyssProperties extends JFrame {
 		//refreshButton.setPreferredSize(new Dimension(80,40)); //BoxLayout ma to gdzieś, dlatego patrz wyżej
 		refreshButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//fillData();
+				fillData();
 			}
 		});
 		inPanel.add(refreshButton);
-		inPanel.add(Box.createVerticalStrut(spaceY));
-		 
-		JButton staticPropButton = new JButton("Properties");
-		staticPropButton.setMinimumSize(new Dimension(buttonX, buttonY)); 
-		staticPropButton.setMaximumSize(new Dimension(buttonX, buttonY));
-		inPanel.add(staticPropButton);
 		inPanel.add(Box.createVerticalStrut(spaceY));
 		
 		JButton saveButton = new JButton("Save to file");
 		saveButton.setMinimumSize(new Dimension(buttonX, buttonY)); 
 		saveButton.setMaximumSize(new Dimension(buttonX, buttonY));
+		saveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				saveToFile();
+			}
+		});
 		inPanel.add(saveButton);
 		inPanel.add(Box.createVerticalStrut(spaceY));
 		
 		panel.add(inPanel);
 		return panel;
+	}
+	
+	/**
+	 * Metoda zapisuje aktualną wersję właściwości sieci do wskazanego pliku tekstowego.
+	 */
+	private void saveToFile() {
+		FileFilter[] filters = new FileFilter[1];
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		filters[0] = new ExtensionFileFilter("Normal text file (.txt)",  new String[] { "TXT" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		
+		if(!selectedFile.equals("")) { //jeśli wskazano plik
+			String fileName = selectedFile.substring(selectedFile.lastIndexOf(File.separator)+1);
+			if(!fileName.contains(".txt")) //(⌐■_■)
+				selectedFile += ".txt";
+			
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
+				
+				bw.write("Petri net name: "+label_netName.getText()+"\n");
+				bw.write("Number of nodes: "+label_nodesNumber.getText()+"\n");
+				bw.write("Number of transitions: "+label_transitionsNumber.getText()+"\n");
+				bw.write("Number of places: "+label_placesNumber.getText()+"\n");
+				bw.write("Number of arcs: "+label_arcNumber.getText()+"\n");
+				
+				bw.write("\n");
+				bw.write("Net static properties: \n");
+				int count = 1;
+				for(int i=0; i<properties.size(); i++) {
+					boolean isNet = (boolean)properties.get(i).get(1);
+					if(isNet) {
+						String[] data = (String[]) properties.get(i).get(2);
+						bw.write("Property "+count+": "+data[0]+"\n");
+						String txt = data[1];
+						txt = txt.replace("\n", "");
+						bw.write("Meaning: "+txt+"\n");
+						txt = data[2];
+						txt = txt.replace("\n", "");
+						bw.write("Biological: "+data[2]+"\n\n");
+						count++;
+					}
+				}
+				bw.write("\n");
+				if(invariantsMatrix != null) {
+					int inv_number = invariantsMatrix.size();
+					bw.write("Number of invariants: "+inv_number+"\n");
+					bw.write(textField.getText());
+				}
+
+				
+				bw.close();
+			} catch (Exception e) {
+				
+			}
+		}
 	}
 	
 	/**

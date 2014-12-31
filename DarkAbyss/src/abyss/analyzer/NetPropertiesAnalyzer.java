@@ -48,8 +48,7 @@ public class NetPropertiesAnalyzer {
 				"Pure", 
 				"There are no two nodes, directly connected in both directions. This precludes "
 				+ "\nread arcs and double arcs.",
-				"No component is produced and consumed by the same reaction. Thus, enzymatic "
-				+ "\nor enzyme-like reactions are formulated in more detail."};
+				"No component is produced and consumed by the same reaction."};
 		purProp.add(purTxt);
 		NetProps.add(purProp);
 		
@@ -144,8 +143,8 @@ public class NetPropertiesAnalyzer {
 		ft0Prop.add(false);
 		String[] ft0Txt = { 
 				"No input transition", 
-				"There exist no transitions without pre-places.",
-				"Infinite source of a component."};
+				"Every transition has at least one pre-place.",
+				"Sink of a component."};
 		ft0Prop.add(ft0Txt);
 		NetProps.add(ft0Prop);
 		
@@ -154,8 +153,8 @@ public class NetPropertiesAnalyzer {
 		tf0Prop.add(false);
 		String[] tf0Txt = { 
 				"No output transition", 
-				"There exist no transitions without post-places.",
-				"Sink of a component."};
+				"Every transition has at laest one post-place.",
+				"Infinite source of a component."};
 		tf0Prop.add(tf0Txt);
 		NetProps.add(tf0Prop);
 		
@@ -164,9 +163,8 @@ public class NetPropertiesAnalyzer {
 		fp0Prop.add(false);
 		String[] fp0Txt = { 
 				"No input place", 
-				"There exist no places without pre-transitions.",
-				"The component can not be produced by any reaction. Thus, such components "
-				+ "\nare limiting."};
+				"Every place has at least one pre-transition.",
+				"Components can infinitely accumulate in the system."};
 		fp0Prop.add(fp0Txt);
 		NetProps.add(fp0Prop);
 		
@@ -175,9 +173,8 @@ public class NetPropertiesAnalyzer {
 		pf0Prop.add(false);
 		String[] pf0Txt = { 
 				"No output place", 
-				"There exist no places without post-transitions",
-				"Components can infinitely accumulate in the system. Thus, they are not "
-				+ "\nconsumed by any reaction."};
+				"Every place has at least one post-transition.",
+				"Every component can be consumed by a reaction."};
 		pf0Prop.add(pf0Txt);
 		NetProps.add(pf0Prop);
 
@@ -201,9 +198,11 @@ public class NetPropertiesAnalyzer {
 					arcOut = true;
 			}
 			if (arcIn == false && arcOut == true)
-				isFT0 = true;
-			if (arcIn == true && arcOut == false)
 				isTF0 = true;
+				//isFT0 = true;
+			if (arcIn == true && arcOut == false)
+				isFT0 = true;
+				//isTF0 = true;
 		}
 
 		for (Place p : places) {
@@ -216,9 +215,11 @@ public class NetPropertiesAnalyzer {
 					arcOut = true;
 			}
 			if (arcIn == false && arcOut == true)
-				isFP0 = true;
-			if (arcIn == true && arcOut == false)
 				isPF0 = true;
+				//isFP0 = true;
+			if (arcIn == true && arcOut == false)
+				isFP0 = true;
+				//isPF0 = true;
 		}
 		ft0Prop.set(1, isFT0);
 		tf0Prop.set(1, isTF0);

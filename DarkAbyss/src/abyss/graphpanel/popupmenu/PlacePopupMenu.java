@@ -20,13 +20,13 @@ public class PlacePopupMenu extends PetriNetElementPopupMenu {
 	public PlacePopupMenu(GraphPanel graphPanel) {
 		super(graphPanel);
 		
-		this.addMenuItem("Change selected Places into P-Portals", "portal", new ActionListener() {
+		this.addMenuItem("Change selected Places into P-Portals", "portal.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
 			}
 		});
 		
-		this.addMenuItem("Clone one Place into Portals", "portal", new ActionListener() {
+		this.addMenuItem("Clone one Place into Portals", "portal.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 			}

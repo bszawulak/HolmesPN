@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
 
+import abyss.analyzer.InvariantsSimulator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
@@ -16,6 +17,7 @@ import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
 import abyss.math.TimeTransition;
 import abyss.math.Transition;
+import abyss.math.simulator.NetSimulator;
 
 import com.javadocking.dock.SingleDock;
 import com.javadocking.dockable.DefaultDockable;
@@ -109,7 +111,10 @@ public class AbyssDockWindow extends SingleDock {
 	 */
 	public void createSimulatorProperties() {
 		if (type == DockWindowType.SIMULATOR) {
-			setCurrentDockWindow(new AbyssDockWindowsTable(GUIManager.getDefaultGUIManager().getWorkspace() .getProject().getSimulator()));
+			NetSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
+			InvariantsSimulator invSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvSimulator();
+			
+			setCurrentDockWindow(new AbyssDockWindowsTable(netSim, invSim));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}
@@ -117,7 +122,7 @@ public class AbyssDockWindow extends SingleDock {
 	/**
 	 * Metoda odpowiedzialna za wype³nienie sekcji symulatora inwariantów sieci.
 	 */
-	public void createInvSimulatorProperties() {
+	public void createInvSimulatorProperties2() {
 		if (type == DockWindowType.InvSIMULATOR) {
 			//poni¿sza metoda wywo³uje odpowiedni konstruktor obiektu klasy PropertiesTable
 			setCurrentDockWindow(new AbyssDockWindowsTable(GUIManager.getDefaultGUIManager().getWorkspace()
@@ -219,16 +224,17 @@ public class AbyssDockWindow extends SingleDock {
 	/**
 	 * Metoda zwracaj¹ca odpowiedni obiekt w³aœciwoœci, czyli obiekt zawieraj¹cy komponenty
 	 * któregoœ z podokien programu wyœwietlaj¹ce przyciski, napisy, itd.
-	 * @return PropertiesTable - obiekt podokna z ramach okna w³aœciwoœci
+	 * @return AbyssDockWindowsTable - obiekt podokna z ramach okna w³aœciwoœci
 	 */
 	public AbyssDockWindowsTable getCurrentDockWindow() {
 		return dockWindowPanel;
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca odpowiedni obiekt w³aœciwoœci, czyli obiekt zawieraj¹cy komponenty
-	 * któregoœ z podokien programu wyœwietlaj¹ce przyciski, napisy, itd.
-	 * @return PropertiesTable - obiekt podokna z ramach okna w³aœciwoœci
+	 * Metoda ustawiaj¹ca odpowiedni obiekt podokna, czyli obiekt zawieraj¹cy komponenty
+	 * któregoœ z podokien programu wyœwietlaj¹cego np. przyciski symulatora czy informacje
+	 * o elementach sieci.
+	 * @return AbyssDockWindowsTable - obiekt podokna z ramach okna w³aœciwoœci
 	 */
 	private void setCurrentDockWindow(AbyssDockWindowsTable properties) {
 		this.dockWindowPanel = properties;
