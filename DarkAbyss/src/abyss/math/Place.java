@@ -5,7 +5,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import org.simpleframework.xml.Element;
 
@@ -127,6 +130,15 @@ public class Place extends Node {
 				g.setColor(EditorResources.selectionColorLevel3);
 				g.setStroke(EditorResources.glowStrokeLevel3);
 				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				
+				try {
+					BufferedImage img = ImageIO.read(getClass().getResource("/icons/selectedSign.png"));
+					g.drawImage(img, null, 
+							nodeBounds.x-(this.getRadius()-4), 
+							nodeBounds.y-(this.getRadius()-4));
+				} catch (Exception e) {
+					
+				}
 			} else if (el.isPortalSelected()) {
 				g.setColor(EditorResources.glowPortalColorLevel1);
 				g.setStroke(EditorResources.glowStrokeLevel1);

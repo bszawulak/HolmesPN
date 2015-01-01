@@ -1,6 +1,7 @@
 package abyss.darkgui;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -195,7 +196,6 @@ public class DarkMenu extends JMenuBar {
 		// Export image file
 		JMenuItem expImgMenuItem = new JMenuItem("Export to image...", KeyEvent.VK_E);
 		expImgMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportPicture.png"));
-		expImgMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,ActionEvent.CTRL_MASK));
 		expImgMenuItem.getAccessibleContext().setAccessibleDescription("Export project to image");
 		expImgMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -209,7 +209,6 @@ public class DarkMenu extends JMenuBar {
 		// Exit program Item
 		JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_E);
 		exitMenuItem.setPreferredSize(new Dimension(WIDTH, 38));
-		exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,ActionEvent.ALT_MASK));
 		exitMenuItem.getAccessibleContext().setAccessibleDescription("Exit the application");
 		exitMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -260,7 +259,19 @@ public class DarkMenu extends JMenuBar {
 				Tools.getResIcon32("/icons/menu/menu_WindowsAnalysis.png")));
 		windowMenu.add(new DockableMenuItem(guiManager.getMctBox().getDockable(),
 				Tools.getResIcon32("/icons/menu/menu_WindowMCT.png")));
-				
+		
+		windowMenu.addSeparator();
+		
+		JMenuItem consoleItem = new JMenuItem("Log Console", KeyEvent.VK_1);
+		consoleItem.setIcon(Tools.getResIcon32("/icons/menu/menu_console.png"));
+		consoleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
+		consoleItem.getAccessibleContext().setAccessibleDescription("Show Abyss log window");
+		consoleItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().showConsole(true);
+			}
+		});
+		windowMenu.add(consoleItem);
 		
 		//*********************************************************************************************
 		//***********************************                 *****************************************
@@ -275,18 +286,29 @@ public class DarkMenu extends JMenuBar {
 		
 		// Net properties
 		JMenuItem propItem = new JMenuItem("Net properties", KeyEvent.VK_1);
-		//propItem.setPreferredSize(new Dimension(200, 38));
 		propItem.setIcon(Tools.getResIcon32("/icons/menu/menu_NetProp.png"));
-		propItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		propItem.setAccelerator(KeyStroke.getKeyStroke('P', 
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		propItem.getAccessibleContext().setAccessibleDescription("Show net properties");
 		propItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().showNetPropertiesWindow();
-				//GUIManager.getDefaultGUIManager().showNetworkProperties();
-				//GUIManager.getDefaultGUIManager().generateINAinvariants();
 			}
 		});
-		netMenu.add(propItem);	
+		netMenu.add(propItem);
+		
+		JMenuItem searchItem = new JMenuItem("Search node...", KeyEvent.VK_2);
+		searchItem.setIcon(Tools.getResIcon32("/icons/menu/menu_search.png"));
+		searchItem.setAccelerator(KeyStroke.getKeyStroke('F', 
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		
+		searchItem.getAccessibleContext().setAccessibleDescription("Show net properties");
+		searchItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().showSearchWindow();
+			}
+		});
+		netMenu.add(searchItem);	
 		
 		//*********************************************************************************************
 		//***********************************                 *****************************************
@@ -304,7 +326,8 @@ public class DarkMenu extends JMenuBar {
 		// The JMenuItem for INA generator
 		JMenuItem genINAinvItem = new JMenuItem("Generate INA invariants", KeyEvent.VK_1);
 		genINAinvItem.setIcon(Tools.getResIcon32("/icons/menu/menu_INA_invGen.png"));
-		genINAinvItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		genINAinvItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
+		//genINAinvItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
 		genINAinvItem.getAccessibleContext().setAccessibleDescription("Generate invariants using INA external program");
 		genINAinvItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -316,7 +339,7 @@ public class DarkMenu extends JMenuBar {
 		// The JMenuItem for external analysis
 		JMenuItem importInvMenuItem = new JMenuItem("Import invariants", KeyEvent.VK_1);
 		importInvMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_InvImport.png"));
-		importInvMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		//importInvMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
 		importInvMenuItem.getAccessibleContext().setAccessibleDescription("Load analysis result from external source");
 		importInvMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -328,7 +351,7 @@ public class DarkMenu extends JMenuBar {
 		// The JMenuItem for exportInvariants
 		JMenuItem exportInv = new JMenuItem("Export invariants", KeyEvent.VK_2);
 		exportInv.setIcon(Tools.getResIcon32("/icons/menu/menu_InvExp.png"));
-		exportInv.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,ActionEvent.ALT_MASK));
+		//exportInv.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,ActionEvent.ALT_MASK));
 		exportInv.getAccessibleContext().setAccessibleDescription("Export generated invariants");
 		exportInv.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -340,7 +363,7 @@ public class DarkMenu extends JMenuBar {
 		// The JMenuItem for external analysis
 		JMenuItem genTInvItem = new JMenuItem("Generate and analyze T-invariants", KeyEvent.VK_3);
 		genTInvItem.setIcon(Tools.getResIcon32("/icons/menu/menu_InvGen.png"));
-		genTInvItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3,ActionEvent.ALT_MASK));
+		//genTInvItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3,ActionEvent.ALT_MASK));
 		genTInvItem.getAccessibleContext().setAccessibleDescription("Generate Invariants");
 		genTInvItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -352,7 +375,7 @@ public class DarkMenu extends JMenuBar {
 		// The JMenuItem for invariants simulation
 		JMenuItem invSimul = new JMenuItem("Start Invariants Simulation", KeyEvent.VK_4);
 		invSimul.setIcon(Tools.getResIcon32("/icons/menu/menu_invSim.png"));
-		invSimul.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4,ActionEvent.ALT_MASK));
+		//invSimul.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4,ActionEvent.ALT_MASK));
 		invSimul.getAccessibleContext().setAccessibleDescription("Start Invariants Simulation");
 		invSimul.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -387,7 +410,7 @@ public class DarkMenu extends JMenuBar {
 		// The JMenuItem for external analysis
 		JMenuItem genMCTGroups = new JMenuItem("Generate MCT Groups", KeyEvent.VK_1);
 		genMCTGroups.setIcon(Tools.getResIcon32("/icons/menu/menu_genMCT.png"));
-		genMCTGroups.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		genMCTGroups.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,ActionEvent.CTRL_MASK));
 		genMCTGroups.getAccessibleContext().setAccessibleDescription("Generate MCT Groups");
 		genMCTGroups.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -399,7 +422,7 @@ public class DarkMenu extends JMenuBar {
 		// The JMenuItem for simple MCT file
 		JMenuItem createMCTFile = new JMenuItem("Create simple MCT file", KeyEvent.VK_2);
 		createMCTFile.setIcon(Tools.getResIcon32("/icons/menu/menu_genMCT.png"));
-		createMCTFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
+		//createMCTFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
 		createMCTFile.getAccessibleContext().setAccessibleDescription("Create simple MCT file");
 		createMCTFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -416,7 +439,7 @@ public class DarkMenu extends JMenuBar {
 		
 		JMenuItem mctItem = new JMenuItem("MCT", KeyEvent.VK_3);
 		mctItem.setIcon(Tools.getResIcon32("/icons/menu/menu_genMCT.png"));
-		mctItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, ActionEvent.ALT_MASK));
+		//mctItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, ActionEvent.ALT_MASK));
 		mctItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -446,7 +469,7 @@ public class DarkMenu extends JMenuBar {
 		
 		JMenuItem showClustersItem = new JMenuItem("Show clusters window", KeyEvent.VK_1);
 		showClustersItem.setIcon(Tools.getResIcon32("/icons/menu/menu_ClustersAnalysis.png"));
-		showClustersItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		showClustersItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));
 		showClustersItem.getAccessibleContext().setAccessibleDescription("Show clusters window");
 		showClustersItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

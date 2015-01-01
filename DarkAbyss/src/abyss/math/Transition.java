@@ -5,7 +5,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.IdGenerator;
@@ -145,8 +148,8 @@ public class Transition extends Node {
 			Rectangle nodeBounds = new Rectangle(
 				el.getPosition().x - getRadius(), el.getPosition().y - getRadius(),
 					this.getRadius() * 2, this.getRadius() * 2);
-			if (!isLaunching) {
-				if (isGlowedMTC()) {
+			if (!isLaunching) { //jeœli nieaktywna
+				if (isGlowedMTC()) { //jeœli ma siê œwieciæ jako MCT
 					g.setColor(EditorResources.glowMTCTransitonColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -182,6 +185,15 @@ public class Transition extends Node {
 					g.setColor(EditorResources.selectionColorLevel3);
 					g.setStroke(EditorResources.glowStrokeLevel3);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					
+					try {
+						BufferedImage img = ImageIO.read(getClass().getResource("/icons/selectedSign.png"));
+						g.drawImage(img, null, 
+								nodeBounds.x-(this.getRadius()+2), 
+								nodeBounds.y-(this.getRadius()+2));
+					} catch (Exception e) {
+						
+					}
 				} else if (el.isPortalSelected()) {
 					g.setColor(EditorResources.glowPortalColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
@@ -211,17 +223,21 @@ public class Transition extends Node {
 			}
 			//g.setColor(Color.white);
 			
-			if (isGlowed())
-				g.setColor(Color.blue);
-			else if(isGlowedMTC())
-				g.setColor(Color.green);
-			else
+			if (isGlowed()) {
+				//g.setColor(Color.blue);
+				g.setColor(EditorResources.glowTransitonColorLevel3);
+			}
+			else if(isGlowedMTC()) {
+				//g.setColor(Color.green);
+				g.setColor(EditorResources.glowMTCTransitonColorLevel3);
+			}
+			else {
 				g.setColor(new Color(224,224,224));
 				//g.setColor(Color.lightGray);
 			
 				//g.setColor(new Color(0,102,0));
 				//g.setColor(Color.lightGray);
-			
+			}
 			
 			
 			g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);

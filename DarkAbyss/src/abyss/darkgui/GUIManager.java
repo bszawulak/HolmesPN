@@ -16,6 +16,7 @@ import abyss.windows.AbyssAbout;
 import abyss.windows.AbyssConsole;
 import abyss.windows.AbyssClusters;
 import abyss.windows.AbyssProperties;
+import abyss.windows.AbyssSearch;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
 
@@ -128,6 +129,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssConsole windowConsole; //konsola logów
 	private AbyssProperties windowNetProperties; //okno w³aœciwoœci sieci
 	private AbyssAbout windowAbout; //okno About...
+	private AbyssSearch windowSearch;
 	
 	private boolean rReady = false; // true, jeœli program dostêp do pliku Rscript.exe
 	/**
@@ -138,6 +140,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		super(new BorderLayout());
 		guiManager = this;
 		setFrame(frejm);
+		try {
+			frame.setIconImage(getToolkit().getImage(getClass().getResource("/icons/blackHole.png")));
+		} catch (Exception e ) {
+			
+		}
 		frame.getContentPane().add(this);
 		frame.addComponentListener(this);
 		getFrame().getContentPane().add(this);
@@ -146,6 +153,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createHiddenConsole(); //tworzy ukryte okno konsoli logowania zdarzeñ
 		createClusterWindow(); //niewidoczne na starcie okno tabeli klastrów
 		createNetPropertiesWindow(); //niewidoczne na starcie okno w³aœciwoœci sieci
+		createSearchWindow();
 		
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnêtrzne zmienne programu
 		
@@ -281,7 +289,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		    	}
 		});
 	}
-
 	/**
 	 * Metoda pomocnicza konstruktora. Ustawia g³ówne zmienne programu, wczytuje plik
 	 * w³aœciwoœci, itd.
@@ -1370,6 +1377,22 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void showAboutWindow() {
 		if(windowAbout != null) {
 			windowAbout.setVisible(true);
+		}
+	}
+	
+	/**
+	 * Metoda ta tworzy nowe okno szukania elementów sieci.
+	 */
+	private void createSearchWindow() {
+		windowSearch = new AbyssSearch();
+	}
+	
+	/**
+	 * Metoda wyœwietla okno szukania elementów sieci na ekranie.
+	 */
+	public void showSearchWindow() {
+		if(windowSearch != null) {
+			windowSearch.setVisible(true);
 		}
 	}
 	

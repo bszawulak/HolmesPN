@@ -68,6 +68,11 @@ public class AbyssClusterSubWindow extends JFrame {
 	 */
 	public AbyssClusterSubWindow(AbyssClusters parent, Clustering dataPackage, int mode) {
 		this();
+    	try {
+    		setIconImage(getToolkit().getImage(getClass().getResource("/icons/blackHole.png")));
+		} catch (Exception e ) {
+			
+		}
 		clusterPath = parent.getClusterPath();
 		this.clusteringMetaData = dataPackage;
 		this.parentFrame = parent;

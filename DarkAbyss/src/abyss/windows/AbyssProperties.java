@@ -67,9 +67,12 @@ public class AbyssProperties extends JFrame {
 	 */
 	public AbyssProperties() {
 		ego = this;
-		//this.parentFrame = parent;
+		try {
+			ego.setIconImage(getToolkit().getImage(getClass().getResource("/icons/blackHole.png")));
+		} catch (Exception e ) {
+			
+		}
 		this.setTitle("Petri net general information and properties");
-		//parentFrame.setEnabled(false);
 		
 		setLayout(new BorderLayout());
 		setSize(new Dimension(650, 500));

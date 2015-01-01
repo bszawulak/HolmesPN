@@ -87,7 +87,12 @@ public class AbyssClusters extends JFrame {
      */
     public AbyssClusters() {
     	myself = this;
-    	this.setTitle("Abyss Cluster Window");
+    	myself.setTitle("Abyss Cluster Window");
+    	try {
+    		myself.setIconImage(getToolkit().getImage(getClass().getResource("/icons/blackHole.png")));
+		} catch (Exception e ) {
+			
+		}
     	clustersToGenerate = 20;	
     	initiateListeners();
 

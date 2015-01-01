@@ -91,7 +91,7 @@ import abyss.workspace.WorkspaceSheet;
  * 
  * Ostatnia rzecz, jeśli cię to nie przekonuje. Otwórz google. Wpisz dowolną frazę ze słowami
  * "java layout", "problem" względnie "does not". Pół internetu wyleci z pytaniami i (rzadziej) 
- * odpowiedziami. Takie to wspaniałe layouty.
+ * odpowiedziami. Takie to wspaniałe layouty. (ノ ゜Д゜)ノ ︵ ┻━━┻ 
  */
 public class AbyssDockWindowsTable extends JPanel {
 	private static final long serialVersionUID = 4510802239873443705L;
@@ -186,8 +186,8 @@ public class AbyssDockWindowsTable extends JPanel {
 				Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
 		oneActionBack.setName("simB1");
 		oneActionBack.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
-		oneActionBack.setLocation(columnA_posX, columnA_Y);
-		oneActionBack.setSize(colACompLength, 30);
+		//oneActionBack.setLocation(columnA_posX, columnA_Y);
+		//oneActionBack.setSize(colACompLength, 30);
 		oneActionBack.setToolTipText("One action back");
 		oneActionBack.addActionListener(new ActionListener() {
 			@Override
@@ -201,8 +201,8 @@ public class AbyssDockWindowsTable extends JPanel {
 				Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
 		oneTransitionForward.setName("simB2");
 		oneTransitionForward.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 30);
-		oneTransitionForward.setLocation(columnB_posX, columnB_Y);
-		oneTransitionForward.setSize(colBCompLength, 30);
+		//oneTransitionForward.setLocation(columnB_posX, columnB_Y);
+		//oneTransitionForward.setSize(colBCompLength, 30);
 		oneTransitionForward.setToolTipText("One transition forward");
 		oneTransitionForward.addActionListener(new ActionListener() {
 			@Override
@@ -216,8 +216,8 @@ public class AbyssDockWindowsTable extends JPanel {
 				Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
 		loopBack.setName("simB3");
 		loopBack.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-		loopBack.setLocation(columnA_posX, columnA_Y);
-		loopBack.setSize(colACompLength, 30);
+		//loopBack.setLocation(columnA_posX, columnA_Y);
+		//loopBack.setSize(colACompLength, 30);
 		loopBack.setToolTipText("Loop back to oldest saved action");
 		loopBack.addActionListener(new ActionListener() {
 			@Override
@@ -230,8 +230,8 @@ public class AbyssDockWindowsTable extends JPanel {
 				Tools.getResIcon22("/icons/simulation/control_sim_fwdLoop.png"));
 		oneStepForward.setName("simB4");
 		oneStepForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-		oneStepForward.setLocation(columnB_posX, columnB_Y);
-		oneStepForward.setSize(colBCompLength, 30);
+		//oneStepForward.setLocation(columnB_posX, columnB_Y);
+		//oneStepForward.setSize(colBCompLength, 30);
 		oneStepForward.setToolTipText("One step forward");
 		oneStepForward.addActionListener(new ActionListener() {
 			@Override
@@ -244,8 +244,8 @@ public class AbyssDockWindowsTable extends JPanel {
 				Tools.getResIcon22("/icons/simulation/control_sim_loop.png"));
 		loopSimulation.setName("simB5");
 		loopSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-		loopSimulation.setLocation(columnA_posX, columnA_Y);
-		loopSimulation.setSize(colACompLength, 30);
+		//loopSimulation.setLocation(columnA_posX, columnA_Y);
+		//loopSimulation.setSize(colACompLength, 30);
 		loopSimulation.setToolTipText("Loop simulation");
 		loopSimulation.addActionListener(new ActionListener() {
 			@Override
@@ -258,8 +258,8 @@ public class AbyssDockWindowsTable extends JPanel {
 				Tools.getResIcon22("/icons/simulation/control_sim_1transLoop.png"));
 		singleTransitionLoopSimulation.setName("simB6");
 		singleTransitionLoopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-		singleTransitionLoopSimulation.setLocation(columnB_posX, columnB_Y);
-		singleTransitionLoopSimulation.setSize(colBCompLength, 30);
+		//singleTransitionLoopSimulation.setLocation(columnB_posX, columnB_Y);
+		//singleTransitionLoopSimulation.setSize(colBCompLength, 30);
 		singleTransitionLoopSimulation.setToolTipText("Loop single transition simulation");
 		singleTransitionLoopSimulation.addActionListener(new ActionListener() {
 			@Override
@@ -273,8 +273,8 @@ public class AbyssDockWindowsTable extends JPanel {
 				Tools.getResIcon22("/icons/simulation/control_sim_pause.png"));
 		pauseSimulation.setName("stop");
 		pauseSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-		pauseSimulation.setLocation(columnA_posX, columnA_Y);
-		pauseSimulation.setSize(colACompLength, 30);
+		//pauseSimulation.setLocation(columnA_posX, columnA_Y);
+		//pauseSimulation.setSize(colACompLength, 30);
 		pauseSimulation.setToolTipText("Pause simulation");
 		pauseSimulation.setEnabled(false);
 		pauseSimulation.addActionListener(new ActionListener() {
@@ -289,8 +289,8 @@ public class AbyssDockWindowsTable extends JPanel {
 				Tools.getResIcon22("/icons/simulation/control_sim_stop.png"));
 		stopSimulation.setName("stop");
 		stopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-		stopSimulation.setLocation(columnB_posX, columnB_Y);
-		stopSimulation.setSize(colBCompLength, 30);
+		//stopSimulation.setLocation(columnB_posX, columnB_Y);
+		//stopSimulation.setSize(colBCompLength, 30);
 		stopSimulation.setToolTipText("Schedule a stop for the simulation");
 		stopSimulation.setEnabled(false);
 		stopSimulation.addActionListener(new ActionListener() {
@@ -320,7 +320,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		JCheckBox maximumMode = new JCheckBox("");
 		maximumMode.setBounds(columnA_posX, columnA_Y += 30, 20, 20);
-		maximumMode.setLocation(columnA_posX-4, columnA_Y);
+		//maximumMode.setLocation(columnA_posX-4, columnA_Y);
 		maximumMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -349,7 +349,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		JRadioButton TimeMode = new JRadioButton("Time Mode");
 		TimeMode.setBounds(internalXB, internalY, 90, 20);
-		TimeMode.setLocation(internalXB, internalY);
+		//TimeMode.setLocation(internalXB, internalY);
 		internalY+=20;
 		TimeMode.setSize(90, 20);
 		TimeMode.setActionCommand("0");
@@ -359,7 +359,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		columnA_Y += 20;
 		JRadioButton StepMode = new JRadioButton("Step Mode");
 		StepMode.setBounds(internalXB, internalY, 90, 20);
-		StepMode.setLocation(internalXB, internalY);
+		//StepMode.setLocation(internalXB, internalY);
 		internalY+=20;
 		StepMode.setSize(90, 20);
 		StepMode.setActionCommand("1");
@@ -369,7 +369,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		columnA_Y += 20;
 		JRadioButton CycleMode = new JRadioButton("Cycle Mode");
 		CycleMode.setBounds(internalXB, internalY, 90, 20);
-		CycleMode.setLocation(internalXB, internalY);
+		//CycleMode.setLocation(internalXB, internalY);
 		internalY+=20;
 		CycleMode.setSize(90, 20);
 		CycleMode.setActionCommand("2");
@@ -391,9 +391,9 @@ public class AbyssDockWindowsTable extends JPanel {
 		// INVARIANTS SIMULATION START BUTTON
 		//JButton startButton = new JButton("Start");
 		JButton startButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
-		startButton.setBounds(internalXA, internalY, 80, 20);
-		startButton.setLocation(internalXA, internalY);
-		startButton.setSize(80, 40);
+		startButton.setBounds(internalXA, internalY, 80, 30);
+		//startButton.setLocation(internalXA, internalY);
+		//startButton.setSize(80, 40);
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().get2ndFormInvariantsList().size()>0)
@@ -428,7 +428,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		staticPropertiesPanel.add(startButton);
 		components.add(staticPropertiesPanel);
 		
-		panel.setLayout(null);
+		panel.setLayout(null); 
 		for (int i = 0; i < components.size(); i++)
 			 panel.add(components.get(i));
 		panel.setOpaque(true);
@@ -1429,8 +1429,6 @@ public class AbyssDockWindowsTable extends JPanel {
 		JComboBox simMode = new JComboBox(simModeName);
 		simMode.setLocation(columnB_posX+5, columnB_Y += 10);
 		simMode.setSize(colBCompLength-60, 20);
-		//simMode.setMaximumSize(new Dimension(colBCompLength,20));
-		//simMode.setMinimumSize(new Dimension(colBCompLength,20));
 		simMode.setSelectedIndex(0);
 		simMode.addActionListener(new ActionListener() {
 			@Override
@@ -1495,7 +1493,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		JButton startButton = new JButton("Start");
 		startButton.setBounds(columnA_posX, columnB_Y += 40, colBCompLength*2, 40);
 		startButton.setLocation(columnA_posX, columnB_Y);
-		startButton.setSize(colBCompLength, 40);
+		//startButton.setSize(colBCompLength, 40);
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().get2ndFormInvariantsList().size()>0)

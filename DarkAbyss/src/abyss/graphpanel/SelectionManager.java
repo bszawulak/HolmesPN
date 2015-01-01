@@ -262,7 +262,7 @@ public class SelectionManager {
 	 * znajduje siê na liœcie zaznaczonych lokalizacji wierzcho³ków.
 	 * @param el ElementLocation - lokalizacja wierzcho³ka której obecnoœæ na liœcie zaznaczenia
 	 * 		ma zostaæ sprawdzona
-	 * @return boolean - true} jeœli podany w parametrze ElementLocation znajduje siê na liœcie
+	 * @return boolean - true, jeœli podany w parametrze ElementLocation znajduje siê na liœcie
 	 * 		zaznaczonych; false w sytuacji przeciwnej
 	 */
 	public boolean isElementLocationSelected(ElementLocation el) {

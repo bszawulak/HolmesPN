@@ -6,7 +6,10 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.IdGenerator;
@@ -147,6 +150,15 @@ public class TimeTransition extends Transition {
 					g.setColor(EditorResources.selectionColorLevel3);
 					g.setStroke(EditorResources.glowStrokeLevel3);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					
+					try {
+						BufferedImage img = ImageIO.read(getClass().getResource("/icons/selectedSign.png"));
+						g.drawImage(img, null, 
+								nodeBounds.x-(this.getRadius()+2), 
+								nodeBounds.y-(this.getRadius()+2));
+					} catch (Exception e) {
+						
+					}
 				} else if (el.isPortalSelected()) {
 					g.setColor(EditorResources.glowPortalColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);

@@ -53,7 +53,12 @@ public class AbyssConsole extends JFrame {
 	 * Konstruktor domyœlny obiektu klasy WindowConsole.
 	 */
 	public AbyssConsole() {
-		this.setTitle("Abyss Status Console");
+		setTitle("Abyss Status Console");
+    	try {
+    		setIconImage(getToolkit().getImage(getClass().getResource("/icons/blackHole.png")));
+		} catch (Exception e ) {
+			
+		}
 
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setMinimumSize(new Dimension(1000, 400));
