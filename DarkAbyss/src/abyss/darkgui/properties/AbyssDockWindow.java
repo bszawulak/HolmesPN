@@ -122,6 +122,7 @@ public class AbyssDockWindow extends SingleDock {
 	/**
 	 * Metoda odpowiedzialna za wype³nienie sekcji symulatora inwariantów sieci.
 	 */
+	//TODO: unused
 	public void createInvSimulatorProperties2() {
 		if (type == DockWindowType.InvSIMULATOR) {
 			//poni¿sza metoda wywo³uje odpowiedni konstruktor obiektu klasy PropertiesTable

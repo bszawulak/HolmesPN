@@ -1316,10 +1316,12 @@ public class AbyssDockWindowsTable extends JPanel {
 			JLabel chooseInvariantLabel = new JLabel("Choose invariant: ");
 			chooseInvariantLabel.setMaximumSize(chooseInvariantLabel.getMinimumSize());
 			headers.add(chooseInvariantLabel);
+			
 			String[] invariantHeaders = new String[invariants.size() + 1];
 			invariantHeaders[0] = "---";
 			for (int i = 0; i < invariants.size(); i++)
 				invariantHeaders[i + 1] = "Invariant no. " + Integer.toString(i);
+			
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			JComboBox chooseInvariantBox = new JComboBox(invariantHeaders);
 			chooseInvariantBox.setMaximumSize(chooseInvariantBox.getMinimumSize());
@@ -1406,6 +1408,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	 * Konstruktor odpowiedzialny za utworzenie elementów podokna symulatora inwariantów
 	 * @param is
 	 */
+	//TODO: UNUSED
 	public AbyssDockWindowsTable(InvariantsSimulator is)
 	{
 		int columnA_posX = 10;
@@ -1547,6 +1550,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		mctHeaders[0] = "---";
 		for (int i = 0; i < mctGroups.size(); i++)
 			mctHeaders[i + 1] = "MCT no. " + Integer.toString(i);
+		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		JComboBox chooseMctBox = new JComboBox(mctHeaders);
 		chooseMctBox.setMaximumSize(chooseMctBox.getMinimumSize());
@@ -1695,14 +1699,10 @@ public class AbyssDockWindowsTable extends JPanel {
 			//int i = 0;
 			int counter = 0;
 			for (InvariantTransition transition : invariant) {
-				headers.add(new JLabel(Integer.toString(transition
-						.getTransition().getID())
-						+ " : "
-						+ transition.getTransition().getName()));
-				values.add(new JLabel(transition.getAmountOfFirings()
-						.toString()));
-				transition.getTransition().setGlowed(true,
-						transition.getAmountOfFirings());
+				headers.add(new JLabel(Integer.toString(transition.getTransition().getID())
+						+ " : " + transition.getTransition().getName()));
+				values.add(new JLabel(transition.getAmountOfFirings().toString()));
+				transition.getTransition().setGlowed(true,transition.getAmountOfFirings());
 				counter++;
 				number.setText(Integer.toString(counter));
 				putContents(invariantPanel);

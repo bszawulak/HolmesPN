@@ -519,6 +519,7 @@ public class AbyssSearch extends JFrame {
 	}
 	
 	protected void showFound(String mode) {
+		try {
 		if(mode.equals("prev")) {
 			if(foundNodes.size() > 0 && selectedFound > 0) {
 				selectedFound--;
@@ -530,7 +531,7 @@ public class AbyssSearch extends JFrame {
 				}
 			}
 		} else if(mode.equals("next")) {
-			if(foundNodes.size() > 0 && selectedFound < foundNodes.size()) {
+			if(foundNodes.size() > 0 && selectedFound + 1 < foundNodes.size()) {
 				selectedFound++;
 				int id = foundNodes.get(selectedFound);
 				if(foundType.get(selectedFound)==0) { //jeśli to miejsce
@@ -540,7 +541,9 @@ public class AbyssSearch extends JFrame {
 				}
 			}
 		}
-		
+		} catch (Exception e) {
+			return;
+		}
 	}
 	
 	/**

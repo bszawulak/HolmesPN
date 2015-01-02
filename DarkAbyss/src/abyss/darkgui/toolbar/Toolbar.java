@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
+import abyss.files.Snoopy.SnoopyWriter;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
 
@@ -334,12 +335,14 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("Test button", consoleButton));
 		
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug test purpose",
-				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
+				Tools.getResIcon48("/icons/toolbar/clusterWindow22.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				//GUIManager.getDefaultGUIManager().generateAllCHindexes(20);
 				//CHmetricReader chReader = new CHmetricReader();
 				//chReader.executeReader("");
+				SnoopyWriter sWr = new SnoopyWriter();
+				sWr.writeSPPED();
 			}
 		};
 		testButton.setEnabled(false);

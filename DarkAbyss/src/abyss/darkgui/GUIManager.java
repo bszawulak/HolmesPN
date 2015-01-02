@@ -120,7 +120,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	// inne wa¿ne zmienne
 	private String lastPath;	// ostatnia otwarta œcie¿ka
 	private String abyssPath; 	// scie¿ka dostêpu do katalogu g³ównego programu
-	private String tmpPath;		// œcie¿ka dostêpu do katalogu plików tymczasowych
+	public String tmpPath;		// œcie¿ka dostêpu do katalogu plików tymczasowych
 	private String toolPath;	// œcie¿ka dostêpu do katalogu narzedziowego
 	private String logPath;
 	
