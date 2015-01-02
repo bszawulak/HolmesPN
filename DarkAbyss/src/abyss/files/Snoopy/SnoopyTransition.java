@@ -18,11 +18,11 @@ import abyss.math.Transition;
  */
 public class SnoopyTransition {
 	private Transition abyssTransition;
-	private int nodeID; // identyfikator podstawowy tranzycji
-	private int transID; // identyfikator g³ówny tranzycji (od zera do liczby tranzycji)
-	private ArrayList<Integer> grParents; // identyfikatory I typu dla jednej tranzycji, na ich bazie
+	public int nodeID; // identyfikator podstawowy tranzycji
+	public int transID; // identyfikator g³ówny tranzycji (od zera do liczby tranzycji)
+	public ArrayList<Integer> grParents; // identyfikatory I typu dla jednej tranzycji, na ich bazie
 	 	// obliczane s¹ identyfikatory II typu dla... wszystkiego
-	private ArrayList<Point> grParentsLocation; // lokalizacje powy¿szych, wiêcej ni¿ 1 dla portali
+	public ArrayList<Point> grParentsLocation; // lokalizacje powy¿szych, wiêcej ni¿ 1 dla portali
 	public boolean portal;
 	
 	public SnoopyTransition() {
@@ -70,6 +70,9 @@ public class SnoopyTransition {
 			grParentsLocation.add(pxy);
 			locations++;
 		}
+		//powy¿sza pêtla jest œciœle zwi¹zana z szukaniem danych ³uków w SnoopyWriter
+		//³apy precz od niej! I od w³aœciwie czegokolwiek w tej metodzie/klasie!
+		
 		locations--; //odj¹c ostatnie dodawanie
 		currID = nodeID; //reset, i zaczynamy dodawaæ (np 357)
 		if(locations == 1) 

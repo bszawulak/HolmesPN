@@ -166,7 +166,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ wierzcho³ek wejœciowy ³uku.
+	 * Metoda pozwala pobraæ wierzcho³ek pocz¹tkowy ³uku.
 	 * @return Node - wierzcho³ek wejœciowy ³uku
 	 */
 	public Node getStartNode() {
@@ -174,7 +174,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ wierzcho³ek wyjœciowy ³uku.
+	 * Metoda pozwala pobraæ wierzcho³ek koñcowy ³uku.
 	 * @return Node - wierzcho³ek wyjœciowy ³uku
 	 */
 	public Node getEndNode() {

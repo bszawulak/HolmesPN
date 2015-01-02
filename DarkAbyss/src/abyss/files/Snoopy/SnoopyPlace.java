@@ -16,11 +16,11 @@ import abyss.math.Place;
  */
 public class SnoopyPlace {
 	private Place abyssPlace;
-	private int nodeID; // identyfikator podstawowy miejsca (pierwsze miejsce w sieci ma nr 226, kolejne to ju¿ zale¿y)
-	private int placeID; // identyfikator g³ówny miejsca (od zera do liczby miejsc)
-	private ArrayList<Integer> grParents; // identyfikatory I typu dla jednego miejsca, na ich bazie
+	public int nodeID; // identyfikator podstawowy miejsca (pierwsze miejsce w sieci ma nr 226, kolejne to ju¿ zale¿y)
+	public int placeID; // identyfikator g³ówny miejsca (od zera do liczby miejsc)
+	public ArrayList<Integer> grParents; // identyfikatory I typu dla jednego miejsca, na ich bazie
 	 	// obliczane s¹ identyfikatory II typu dla... wszystkiego
-	private ArrayList<Point> grParentsLocation; // lokalizacje powy¿szych, wiêcej ni¿ 1 dla portali
+	public ArrayList<Point> grParentsLocation; // lokalizacje powy¿szych, wiêcej ni¿ 1 dla portali
 	public boolean portal;
 	
 	public SnoopyPlace() {
@@ -68,6 +68,9 @@ public class SnoopyPlace {
 			grParentsLocation.add(pxy);
 			locations++;
 		}
+		//powy¿sza pêtla jest œciœle zwi¹zana z szukaniem danych ³uków w SnoopyWriter
+		//³apy precz od niej! I od w³aœciwie czegokolwiek w tej metodzie/klasie!
+		
 		locations--; //odj¹c ostatnie dodawanie
 		currID = nodeID; //226
 		if(locations == 1) 
