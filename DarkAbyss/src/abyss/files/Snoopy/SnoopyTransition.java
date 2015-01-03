@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
 import abyss.math.ElementLocation;
-import abyss.math.Place;
 import abyss.math.Transition;
 
 
@@ -25,12 +24,19 @@ public class SnoopyTransition {
 	public ArrayList<Point> grParentsLocation; // lokalizacje powy¿szych, wiêcej ni¿ 1 dla portali
 	public boolean portal;
 	
+	/**
+	 * Konstruktor domyœlny obiektu klasy SnoopyTransition.
+	 */
 	public SnoopyTransition() {
 		grParents = new ArrayList<Integer>();
 		grParentsLocation = new ArrayList<Point>();
 		portal = false;
 	}
 	
+	/**
+	 * Konstruktor g³ówny, otrzymuje jako parametr obiekt tranzycji Abyss.
+	 * @param t Transition - obiekt tranzycji w programie g³ównym
+	 */
 	public SnoopyTransition(Transition t) {
 		this();
 		abyssTransition = t;
@@ -199,7 +205,11 @@ public class SnoopyTransition {
 		return lastParentID;
 	}
 
-	
+	/**
+	 * Metoda pomocnicza, zapisuj¹ca ka¿d¹ liniê + enter.
+	 * @param bw BufferedWriter - obiekt zapisuj¹cy
+	 * @param text String - linia tekstu
+	 */
 	private void write(BufferedWriter bw, String text) {
 		try {
 			bw.write(text+"\n");

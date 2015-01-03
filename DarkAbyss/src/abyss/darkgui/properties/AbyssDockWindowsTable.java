@@ -2,7 +2,6 @@ package abyss.darkgui.properties;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -15,10 +14,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -26,7 +26,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -36,20 +35,18 @@ import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
 import abyss.analyzer.InvariantsSimulator;
 import abyss.darkgui.GUIManager;
-import abyss.darkgui.SpringUtilities;
+import abyss.darkgui.properties.AbyssDockWindow.DockWindowType;
 import abyss.graphpanel.GraphPanel;
 import abyss.math.Arc;
 import abyss.math.ElementLocation;
 import abyss.math.InvariantTransition;
 import abyss.math.Node;
-import abyss.math.PetriNet;
 import abyss.math.PetriNetElement;
 import abyss.math.Place;
 import abyss.math.TimeTransition;
@@ -95,27 +92,23 @@ import abyss.workspace.WorkspaceSheet;
  */
 public class AbyssDockWindowsTable extends JPanel {
 	private static final long serialVersionUID = 4510802239873443705L;
-	private ArrayList<JComponent> headers;
-	private ArrayList<JComponent> values;
 	private ArrayList<JComponent> components;
 	private int mode;
 	// Containers
-	private JPanel panel, invariantPanel, mainPanel;
-	// sheet reference
-	WorkspaceSheet currentSheet;
-	// petri net reference
-	PetriNetElement element;
-	ElementLocation elementLocation;
-	NetSimulator simulator;
-	InvariantsSimulator invSimulator;
-	// other
-	ArrayList<ArrayList<InvariantTransition>> externalInvariants;
-	ArrayList<ArrayList<Transition>> mctGroups;
+	private JPanel panel; // główny panel okna
 	public ButtonGroup group = new ButtonGroup();
 	public JSpinner spiner = new JSpinner();
+	private JTextArea mctTextArea; // tutaj są wyświetlane szczegóły podświetlonego MCT
+	private JTextArea invTextArea;
+	
+	private WorkspaceSheet currentSheet;
+	private PetriNetElement element;
+	private ElementLocation elementLocation;
+	private NetSimulator simulator;
+	private InvariantsSimulator invSimulator;
 
-	Dimension headerSize;
-	JFrame timeFrame = new JFrame("Zegar");
+	private ArrayList<ArrayList<InvariantTransition>> invariantsDock2Form;
+	private ArrayList<ArrayList<Transition>> mctGroups; //używane tylko w przypadku, gdy obiekt jest typu DockWindowType.MctANALYZER
 
 	// modes
 	private static final int PLACE = 0;
@@ -123,14 +116,20 @@ public class AbyssDockWindowsTable extends JPanel {
 	private static final int ARC = 2;
 	private static final int SHEET = 3;
 	private static final int SIMULATOR = 4;
-	private static final int EXTERNAL_ANALYSIS = 5;
-	@SuppressWarnings("unused")
+	private static final int INVARIANTS = 5;
 	private static final int MCT = 6;
 	private static final int TIMETRANSITION = 7;
 	private static final int INVARIANTSSIMULATOR = 8;
 
 	// private static final JComponent new JButton = null;
 
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************    SYMULATOR     ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+	
+	
 	/**
 	 * Konstruktor odpowiedzialny za tworzenie elementów podokna dla symulatora sieci.
 	 * @param sim NetSimulator - obiekt symulatora sieci
@@ -169,7 +168,6 @@ public class AbyssDockWindowsTable extends JPanel {
 				if(invSimulator != null)
 					invSimulator.setSimulatorNetType(selectedModeIndex);
 			}
-			
 		});
 		components.add(simMode);
 		
@@ -182,17 +180,15 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(controlsLabel);
 		columnB_Y += 20;
 		
-		JButton oneActionBack = new JButton(
-				Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
+		JButton oneActionBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
 		oneActionBack.setName("simB1");
 		oneActionBack.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
-		//oneActionBack.setLocation(columnA_posX, columnA_Y);
-		//oneActionBack.setSize(colACompLength, 30);
 		oneActionBack.setToolTipText("One action back");
 		oneActionBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				simulator.startSimulation(SimulatorMode.ACTION_BACK);
+				mode = SIMULATOR;
 			}
 		});
 		components.add(oneActionBack);
@@ -201,28 +197,25 @@ public class AbyssDockWindowsTable extends JPanel {
 				Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
 		oneTransitionForward.setName("simB2");
 		oneTransitionForward.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 30);
-		//oneTransitionForward.setLocation(columnB_posX, columnB_Y);
-		//oneTransitionForward.setSize(colBCompLength, 30);
 		oneTransitionForward.setToolTipText("One transition forward");
 		oneTransitionForward.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION);
+				mode = SIMULATOR;
 			}
 		});
 		components.add(oneTransitionForward);
 		
-		JButton loopBack = new JButton(
-				Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
+		JButton loopBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
 		loopBack.setName("simB3");
 		loopBack.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-		//loopBack.setLocation(columnA_posX, columnA_Y);
-		//loopBack.setSize(colACompLength, 30);
 		loopBack.setToolTipText("Loop back to oldest saved action");
 		loopBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				simulator.startSimulation(SimulatorMode.LOOP_BACK);
+				mode = SIMULATOR;
 			}
 		});
 		components.add(loopBack);
@@ -230,73 +223,66 @@ public class AbyssDockWindowsTable extends JPanel {
 				Tools.getResIcon22("/icons/simulation/control_sim_fwdLoop.png"));
 		oneStepForward.setName("simB4");
 		oneStepForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-		//oneStepForward.setLocation(columnB_posX, columnB_Y);
-		//oneStepForward.setSize(colBCompLength, 30);
 		oneStepForward.setToolTipText("One step forward");
 		oneStepForward.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				simulator.startSimulation(SimulatorMode.STEP);
+				mode = SIMULATOR;
 			}
 		});
 		components.add(oneStepForward);
-		JButton loopSimulation = new JButton(
-				Tools.getResIcon22("/icons/simulation/control_sim_loop.png"));
+		
+		JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_loop.png"));
 		loopSimulation.setName("simB5");
 		loopSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-		//loopSimulation.setLocation(columnA_posX, columnA_Y);
-		//loopSimulation.setSize(colACompLength, 30);
 		loopSimulation.setToolTipText("Loop simulation");
 		loopSimulation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				simulator.startSimulation(SimulatorMode.LOOP);
+				mode = SIMULATOR;
 			}
 		});
 		components.add(loopSimulation);
-		JButton singleTransitionLoopSimulation = new JButton(
-				Tools.getResIcon22("/icons/simulation/control_sim_1transLoop.png"));
+		
+		JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_1transLoop.png"));
 		singleTransitionLoopSimulation.setName("simB6");
 		singleTransitionLoopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-		//singleTransitionLoopSimulation.setLocation(columnB_posX, columnB_Y);
-		//singleTransitionLoopSimulation.setSize(colBCompLength, 30);
 		singleTransitionLoopSimulation.setToolTipText("Loop single transition simulation");
 		singleTransitionLoopSimulation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
+				mode = SIMULATOR;
 			}
 		});
 		components.add(singleTransitionLoopSimulation);
 		
-		JButton pauseSimulation = new JButton(
-				Tools.getResIcon22("/icons/simulation/control_sim_pause.png"));
+		JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_pause.png"));
 		pauseSimulation.setName("stop");
 		pauseSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-		//pauseSimulation.setLocation(columnA_posX, columnA_Y);
-		//pauseSimulation.setSize(colACompLength, 30);
 		pauseSimulation.setToolTipText("Pause simulation");
 		pauseSimulation.setEnabled(false);
 		pauseSimulation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				simulator.pause();
+				mode = SIMULATOR;
 			}
 		});
 		components.add(pauseSimulation);
 		
-		JButton stopSimulation = new JButton(
-				Tools.getResIcon22("/icons/simulation/control_sim_stop.png"));
+		JButton stopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_stop.png"));
 		stopSimulation.setName("stop");
 		stopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-		//stopSimulation.setLocation(columnB_posX, columnB_Y);
-		//stopSimulation.setSize(colBCompLength, 30);
 		stopSimulation.setToolTipText("Schedule a stop for the simulation");
 		stopSimulation.setEnabled(false);
 		stopSimulation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				simulator.stop();
+				mode = SIMULATOR;
 			}
 		});
 		components.add(stopSimulation);
@@ -398,6 +384,7 @@ public class AbyssDockWindowsTable extends JPanel {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().get2ndFormInvariantsList().size()>0)
 				{
+					mode = INVARIANTSSIMULATOR;
 					setEnabledSimulationInitiateButtons(false);
 					setEnabledSimulationDisruptButtons(false);
 					GUIManager.getDefaultGUIManager().getShortcutsBar().setEnabledSimulationInitiateButtons(false);
@@ -417,10 +404,9 @@ public class AbyssDockWindowsTable extends JPanel {
 					GUIManager.getDefaultGUIManager().getShortcutsBar().setEnabledSimulationDisruptButtons(false);
 					
 				}
-				else
-				{
-					JOptionPane.showMessageDialog(new JFrame(),"There are no invariants to simulate.",
-						    "Invariant simulator",JOptionPane.INFORMATION_MESSAGE);
+				else {
+					JOptionPane.showMessageDialog(null, "There are no invariants to simulate.",
+						    "Invariant simulator", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
@@ -429,14 +415,21 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(staticPropertiesPanel);
 		
 		panel.setLayout(null); 
-		for (int i = 0; i < components.size(); i++)
+		for (int i = 0; i < components.size(); i++) {
 			 panel.add(components.get(i));
+		}
 		panel.setOpaque(true);
 		panel.repaint();
 		panel.setVisible(true);
 		add(panel);
 	}
 
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************     MIEJSCE      ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+	
 	/**
 	 * Konstruktor podokna wyświetlającego właściwości klikniętego miejsca sieci.
 	 * @param place Place - obiekt miejsca
@@ -516,6 +509,11 @@ public class AbyssDockWindowsTable extends JPanel {
         tokenLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(tokenLabel);
         int tok = place.getTokensNumber();
+        if(tok < 0)
+        {
+        	//TODO: ERROR - SYMULATOR, MAXMODE, CRITICAL
+        	tok = 0;
+        }
 		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok, 0, 
 				Integer.MAX_VALUE, 1);
 		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
@@ -619,6 +617,12 @@ public class AbyssDockWindowsTable extends JPanel {
 		add(panel);
 	}
 
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************    TRANZYCJA     ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+	
 	/**
 	 * Metoda odpowiedzialna za wyświetlenie właściwości klikniętej tranzycji.
 	 * @param transition Transition - obiekt tranzycji sieci
@@ -792,6 +796,12 @@ public class AbyssDockWindowsTable extends JPanel {
 		panel.repaint();
 		add(panel);
 	}
+	
+	//**************************************************************************************
+	//*********************************    TRANZYCJA     ***********************************
+	//*********************************     CZASOWA      ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
 
 	/**
 	 * Metoda odpowiedzialna za wyświetlenie właściwości klikniętej tranzycji czasowej.
@@ -996,6 +1006,12 @@ public class AbyssDockWindowsTable extends JPanel {
 		panel.repaint();
 		add(panel);
 	}
+	
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************       ŁUK        ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
 
 	/**
 	 * Konstruktor odpowiedzialny za utworzenie elementów podokna właściwości klikniętego
@@ -1138,6 +1154,12 @@ public class AbyssDockWindowsTable extends JPanel {
 		add(panel);
 	}
 
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************      ARKUSZ      ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+	
 	/**
 	 * Konstruktor odpowiedzialny za wypełnienie podokna właściwości dla wybranego arkusza sieci. 
 	 * @param sheet WorkspaceSheet - obiekt arkusza
@@ -1301,57 +1323,272 @@ public class AbyssDockWindowsTable extends JPanel {
 		add(panel);
 	}
 
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************    INWARIANTY    ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+	
 	/**
 	 * Konstruktor odpowiedzialny za wypełnienie podokna umożliwiającego wybór poszczególnych
 	 * inwariantów sieci.
 	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
 	 */
 	public AbyssDockWindowsTable(ArrayList<ArrayList<InvariantTransition>> invariants) {
-		if (invariants.size() > 0) {
-			initiateContainers();
-			// set mode
-			mode = EXTERNAL_ANALYSIS;
-			externalInvariants = invariants;
-			// getting the data
-			JLabel chooseInvariantLabel = new JLabel("Choose invariant: ");
-			chooseInvariantLabel.setMaximumSize(chooseInvariantLabel.getMinimumSize());
-			headers.add(chooseInvariantLabel);
-			
-			String[] invariantHeaders = new String[invariants.size() + 1];
-			invariantHeaders[0] = "---";
-			for (int i = 0; i < invariants.size(); i++)
-				invariantHeaders[i + 1] = "Invariant no. " + Integer.toString(i);
-			
-			@SuppressWarnings({ "rawtypes", "unchecked" })
-			JComboBox chooseInvariantBox = new JComboBox(invariantHeaders);
-			chooseInvariantBox.setMaximumSize(chooseInvariantBox.getMinimumSize());
-			chooseInvariantBox.setVisible(true);
-			chooseInvariantBox.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent actionEvent) {
-					@SuppressWarnings("rawtypes")
-					JComboBox comboBox = (JComboBox) actionEvent.getSource();
-					if (comboBox.getSelectedIndex() == 0) {
-						showInvariant(0, false);
-					} else {
-						showInvariant(comboBox.getSelectedIndex() - 1, true);
-					}
-				}
-			});
-			values.add(chooseInvariantBox);
-			// put all contents on the pane
-			putContents(panel);
+		if(invariants == null || invariants.size() == 0) {
+			return;
+		} else {
+			mode = INVARIANTS;
+			invariantsDock2Form = invariants;
 		}
+		
+		int colA_posX = 10;
+		int colB_posX = 100;
+		int positionY = 10;
+		initiateContainers();
+
+		JLabel chooseInvLabel = new JLabel("Invariant: ");
+		chooseInvLabel.setBounds(colA_posX, positionY, 80, 20);
+		components.add(chooseInvLabel);
+		
+		String[] invariantHeaders = new String[invariants.size() + 1];
+		invariantHeaders[0] = "---";
+		for (int i = 0; i < invariants.size(); i++) {
+			invariantHeaders[i + 1] = "Inv. #" + Integer.toString(i) +" (size: "+invariants.get(i).size()+")";;
+		}
+		
+		JComboBox<String> chooseInvBox = new JComboBox<String>(invariantHeaders);
+		chooseInvBox.setBounds(colB_posX, positionY, 150, 20);
+		chooseInvBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				@SuppressWarnings("unchecked")
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				if (comboBox.getSelectedIndex() == 0) {
+					showInvariant(0, false);
+				} else {
+					showInvariant(comboBox.getSelectedIndex() - 1, true);
+				}
+			}
+		});
+		components.add(chooseInvBox);
+		positionY += 30;
+		
+		invTextArea = new JTextArea();
+		invTextArea.setEditable(false);
+		JPanel textAreaPanel = new JPanel();
+		textAreaPanel.setLayout(new BorderLayout());
+		textAreaPanel.add(new JScrollPane(
+				invTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+        		BorderLayout.CENTER);
+		
+		int w = GUIManager.getDefaultGUIManager().getMctBox().getWidth();
+		int h = GUIManager.getDefaultGUIManager().getMctBox().getHeight();
+		textAreaPanel.setBounds(colA_posX, positionY, w-30, h-60);
+		components.add(textAreaPanel);
+		
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			 panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		panel.setVisible(true);
+		add(panel);
 	}
+	
+	/**
+	 * Metoda odpowiedzialna za podświetlanie inwariantów.
+	 * @param invariantIndex Integer - numer wybranego inwariantu
+	 * @param inv boolean - true, jeśli mają być pokazane dane szczegółowe w panelu
+	 */
+	@SuppressWarnings("unused")
+	private void showInvariant(Integer invariantIndex, boolean isThereInv) {
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
+
+		if(isThereInv)
+		{
+			invTextArea.setText("");
+			invTextArea.append("Transitions of INV #" + invariantIndex + ":\n");
+			ArrayList<InvariantTransition> invariant = invariantsDock2Form.get(invariantIndex);
+			long mintime = 0;
+			long maxtime = 0;
+			
+			for (InvariantTransition transition : invariant) {
+				mintime+=transition.getTransition().getMinFireTime();
+				maxtime+=transition.getTransition().getMaxFireTime();
+			}
+			
+			for (InvariantTransition invTrans : invariant) {
+				Transition realT = invTrans.getTransition(); //prawdziwy obiekt tranzycji
+				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
+						.getTransitions().lastIndexOf(realT);
+				invTextArea.append("t"+globalIndex+" fired: "+invTrans.getAmountOfFirings().toString()
+						+"   "+invTrans.getTransition().getName()+"\n");
+				
+				//!!!!!!!!!!!!!!! TODO: CLUSTERS
+				invTrans.getTransition().setGlowed(true, invTrans.getAmountOfFirings());
+			}
+		}
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+	}
+	
+
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************       MCT        ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
 
 	/**
-	 * Konstruktor podokna właściwości elementów sieci. Wypełniany w zależności od
-	 * tego, co przyszło jako argument - tj. które właściwości.
-	 * @param prop ArrayList[ArrayList[Object]] - "wektor" właściwości
+	 * Konstruktor odpowiedzialny za utworzenie podokna wyboru zbiorów MCT.
+	 * @param mct ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
+	 * @param type Properties.PropertiesType - nic nie znaczący tutaj element...
+	 */
+	@SuppressWarnings("unchecked")
+	public AbyssDockWindowsTable(ArrayList<ArrayList<Transition>> mct, AbyssDockWindow.DockWindowType type) {
+		if(!(type == DockWindowType.MctANALYZER)) {
+			return;
+			//błędna wywołanie
+		} else {
+			mode = MCT;
+		}
+		
+		int colA_posX = 10;
+		int colB_posX = 100;
+		int positionY = 10;
+		
+		initiateContainers();
+		this.mctGroups = mct;
+		//ogranicz MCT do nietrywialnych
+		ArrayList<Transition> unused = new ArrayList<Transition>();
+		for(int i=0; i<mctGroups.size(); i++) {
+			ArrayList<Transition> mctRow = mctGroups.get(i);
+			if(mctRow.size()==1) {
+				unused.add(mctRow.get(0));
+				mctGroups.set(i, null);
+			}
+		}
+		for(int i=0; i<mctGroups.size(); i++) {
+			ArrayList<Transition> mctRow = mctGroups.get(i);
+			if(mctRow == null) {
+				mctGroups.remove(i);
+				i--;
+			}
+		}
+		Object [] temp = mctGroups.toArray();
+		Arrays.sort(temp, new Comparator<Object>() {
+			public int compare(Object o1, Object o2) {
+		        ArrayList<Transition> temp1 = (ArrayList<Transition>)o1;
+		        ArrayList<Transition> temp2 = (ArrayList<Transition>)o2;
+
+		        if(temp1.size() > temp2.size())
+		        	return -1;
+		        else if(temp1.size() == temp2.size()) {
+		        	return 0;
+		        } else
+		        	return 1;
+		    }
+		});
+		
+		mctGroups.clear();
+		for(Object o: temp) {
+			mctGroups.add((ArrayList<Transition>)o);
+		}
+		mctGroups.add(unused); //dodaj wszystkie pojedzyncze tranzycje w jeden 'mct'
+		
+		String[] mctHeaders = new String[mctGroups.size() + 1];
+		mctHeaders[0] = "---";
+		for (int i = 0; i < mctGroups.size(); i++) {
+			if(i < mctGroups.size()-1)
+				mctHeaders[i + 1] = "MCT #" + Integer.toString(i) +" (size: "+mctGroups.get(i).size()+")";
+			else
+				mctHeaders[i + 1] = "No-MCT transitions";
+		}
+				
+		// getting the data
+		JLabel chooseMctLabel = new JLabel("Choose MCT: ");
+		chooseMctLabel.setBounds(colA_posX, positionY, 60, 20);
+		components.add(chooseMctLabel);
+
+		JComboBox<String> chooseMctBox = new JComboBox<String>(mctHeaders);
+		chooseMctBox.setBounds(colB_posX, positionY, 150, 20);
+		chooseMctBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				if (comboBox.getSelectedIndex() == 0) {
+					showMct(0, false);
+				} else {
+					showMct(comboBox.getSelectedIndex()-1, true);
+				}
+			}
+		});
+		components.add(chooseMctBox);
+		positionY += 30;
+		
+		mctTextArea = new JTextArea();
+		mctTextArea.setEditable(false);
+		//mctTextArea.setLineWrap(true);
+		//mctTextArea.setWrapStyleWord(true);
+		JPanel textAreaPanel = new JPanel();
+		textAreaPanel.setLayout(new BorderLayout());
+		textAreaPanel.add(new JScrollPane(
+				mctTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+        		BorderLayout.CENTER);
+		
+		int w = GUIManager.getDefaultGUIManager().getMctBox().getWidth();
+		int h = GUIManager.getDefaultGUIManager().getMctBox().getHeight();
+		textAreaPanel.setBounds(colA_posX, positionY, w-30, h-60);
+		components.add(textAreaPanel);
+		
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			 panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		panel.setVisible(true);
+		add(panel);
+	}
+	
+	/**
+	 * Metoda odpowiedzialna za pokazanie szczegółów wybranego zbioru MCT.
+	 * @param mctIndex Integer - numer wybranego zbioru
+	 * @param isThereMCT boolean - true, jeśli wybrano zbiór mct, false jeśli "---"
+	 */
+	private void showMct(Integer mctIndex, boolean isThereMCT) {
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
+		
+		if(isThereMCT)
+		{
+			mctTextArea.setText("");
+			mctTextArea.append("Transitions of MCT #" + mctIndex + ":\n");
+			ArrayList<Transition> mct = mctGroups.get(mctIndex);
+			for (Transition transition : mct) {
+				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
+						.getTransitions().lastIndexOf(transition);
+				String line = "t"+globalIndex+"  "+transition.getName()+"\n";
+				mctTextArea.append(line);
+				transition.setGlowedMTC(true);
+			}
+		}
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+	}
+	
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************                  ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+
+	/**
+	 * Tu jest miejsce na twój kod :)
+	 * @param prop ArrayList[ArrayList[Object]] - "wektor" właściwości - były
 	 * @param ref boolean - wartość logiczna nie mająca na nic wpływu :)
 	 */
+	//TODO: UNUSED
 	public AbyssDockWindowsTable(ArrayList<ArrayList<Object>> prop, boolean ref) {
 		initiateContainers();
+		/*
 		JPanel rowPanel = new JPanel();
 		rowPanel.setLayout(new BoxLayout(rowPanel,BoxLayout.X_AXIS));
 		ArrayList<Object> row = new ArrayList<Object>();
@@ -1402,15 +1639,24 @@ public class AbyssDockWindowsTable extends JPanel {
 		}
 		values.add(new JLabel());
 		putContents(panel);
+		*/
 	}
+	
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************                  ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
 	
 	/**
 	 * Konstruktor odpowiedzialny za utworzenie elementów podokna symulatora inwariantów
 	 * @param is
 	 */
-	//TODO: UNUSED
 	public AbyssDockWindowsTable(InvariantsSimulator is)
 	{
+		initiateContainers();
+		//TODO: UNUSED
+		/*
 		int columnA_posX = 10;
 		int columnB_posX = 60;
 		int columnA_Y = 0;
@@ -1528,226 +1774,23 @@ public class AbyssDockWindowsTable extends JPanel {
 		panel.repaint();
 		panel.setVisible(true);
 		add(panel);
-	}
-
-	/**
-	 * Konstruktor odpowiedzialny za utworzenie podokna wyboru zbiorów MCT.
-	 * @param mct ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
-	 * @param type Properties.PropertiesType - nic nie znaczący tutaj element...
-	 */
-	public AbyssDockWindowsTable(ArrayList<ArrayList<Transition>> mct, AbyssDockWindow.DockWindowType type) {
-		initiateContainers();
-		// set mode
-		mode = EXTERNAL_ANALYSIS;
-		//mode = MCT;
-		this.mctGroups = mct;
-		// getting the data
-		JLabel chooseMctLabel = new JLabel("Choose invariant: ");
-		chooseMctLabel.setMaximumSize(chooseMctLabel.getMinimumSize());
-		headers.add(chooseMctLabel);
-				
-		String[] mctHeaders = new String[mctGroups.size() + 1];
-		mctHeaders[0] = "---";
-		for (int i = 0; i < mctGroups.size(); i++)
-			mctHeaders[i + 1] = "MCT no. " + Integer.toString(i);
-		
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		JComboBox chooseMctBox = new JComboBox(mctHeaders);
-		chooseMctBox.setMaximumSize(chooseMctBox.getMinimumSize());
-		chooseMctBox.setVisible(true);
-		chooseMctBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				@SuppressWarnings("rawtypes")
-				JComboBox comboBox = (JComboBox) actionEvent.getSource();
-				if (comboBox.getSelectedIndex() == 0) {
-					showMct(0, false);
-				} else {
-					showMct(comboBox.getSelectedIndex()-1, true);
-				}
-				
-				invariantPanel.repaint();
-				mainPanel.repaint();
-				invariantPanel.repaint();
-			}
-		});
-		values.add(chooseMctBox);
-		// put all contents on the pane
-		putContents(panel);
-	}
-
-	/*
-	
-	 //Metoda odpowiedzialna za pokazanie szczegółów wybranego zbioru MCT.
-	 //@param mctIndex Integer - numer wybranego zbioru
-	 
-	@SuppressWarnings("unused")
-	private void showMct(Integer mctIndex) {
-		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		net.turnTransitionGlowingOff();
-		net.setTransitionGlowedMTC(false); //wyłączanie podświetlenia MCT
-		headers.clear();
-		values.clear();
-		invariantPanel.removeAll();
-		this.remove(invariantPanel);
-		invariantPanel = new JPanel();
-		this.add(invariantPanel);
-		
-		ArrayList<Transition> mct = mctGroups.get(mctIndex);
-		JLabel number = new JLabel("0");
-		headers.add(new JLabel("Transitions: "));
-		values.add(number);
-		headers.add(new JLabel(""));
-		values.add(new JLabel(""));
-		headers.add(new JLabel("ID"));
-		values.add(new JLabel("Name"));
-		headers.add(new JLabel(""));
-		values.add(new JLabel(""));
-		//int i = 0;
-		int counter = 0;
-		for (Transition transition : mct) {
-			headers.add(new JLabel(Integer.toString(transition.getID())));
-			values.add(new JLabel(transition.getName()));
-			transition.setGlowedMTC(true);
-			counter++;
-			number.setText(Integer.toString(counter));
-			putContents(invariantPanel);
-		}
-		net.repaintAllGraphPanels();
-	}
-	*/
-	
-	/**
-	 * Metoda odpowiedzialna za pokazanie szczegółów wybranego zbioru MCT.
-	 * @param mctIndex Integer - numer wybranego zbioru
-	 * @param mc boolean - true, jeśli dane mają być pokazane
-	 */
-	private void showMct(Integer mctIndex, boolean mc) {
-		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace() .getProject();
-		net.turnTransitionGlowingOff();
-		net.setTransitionGlowedMTC(false);
-		headers.clear();
-		values.clear();
-		invariantPanel.removeAll();
-		this.remove(invariantPanel);
-		invariantPanel = new JPanel();
-		this.add(invariantPanel);
-		
-		if(mc)
-		{
-			ArrayList<Transition> mct = mctGroups.get(mctIndex);
-			JLabel number = new JLabel("0");
-			headers.add(new JLabel("Transitions: "));
-			values.add(number);
-			headers.add(new JLabel(""));
-			values.add(new JLabel(""));
-			headers.add(new JLabel("ID"));
-			values.add(new JLabel("Name"));
-			headers.add(new JLabel(""));
-			values.add(new JLabel(""));
-			//int i = 0;
-			int counter = 0;
-			for (Transition transition : mct) {
-				headers.add(new JLabel(Integer.toString(transition.getID())));
-				values.add(new JLabel(transition.getName()));
-				transition.setGlowedMTC(true);
-				counter++;
-				number.setText(Integer.toString(counter));
-				putContents(invariantPanel);
-			}
-		}
-		net.repaintAllGraphPanels();
-	}
-
-	
-	/**
-	 * Metoda odpowiedzialna za podświetlanie inwariantów.
-	 * @param invariantIndex Integer - numer wybranego inwariantu
-	 * @param inv boolean - true, jeśli mają być pokazane dane szczegółowe w panelu
-	 */
-	private void showInvariant(Integer invariantIndex, boolean inv) {
-		PetriNet net = GUIManager.getDefaultGUIManager().getWorkspace() .getProject();
-		net.turnTransitionGlowingOff(); //!!!!!
-		headers.clear();
-		values.clear();
-		invariantPanel.removeAll();
-		ArrayList<InvariantTransition> invariant = externalInvariants.get(invariantIndex);
-		if (inv) {
-			JLabel number = new JLabel("0");
-			headers.add(new JLabel("Transitions: "));
-			values.add(number);
-			long mintime = 0;
-			long maxtime = 0;
-			
-			for (InvariantTransition transition : invariant) {
-				mintime+=transition.getTransition().getMinFireTime();
-				maxtime+=transition.getTransition().getMaxFireTime();
-			}
-			
-			headers.add(new JLabel("Min. Time: "));
-			values.add(new JLabel(String.valueOf(mintime)));
-			
-			headers.add(new JLabel("Max Time: "));
-			values.add(new JLabel(String.valueOf(maxtime)));
-			
-			headers.add(new JLabel(""));
-			values.add(new JLabel(""));
-			headers.add(new JLabel("Transition"));
-			values.add(new JLabel("Firings"));
-			headers.add(new JLabel(""));
-			values.add(new JLabel(""));
-			//int i = 0;
-			int counter = 0;
-			for (InvariantTransition transition : invariant) {
-				headers.add(new JLabel(Integer.toString(transition.getTransition().getID())
-						+ " : " + transition.getTransition().getName()));
-				values.add(new JLabel(transition.getAmountOfFirings().toString()));
-				transition.getTransition().setGlowed(true,transition.getAmountOfFirings());
-				counter++;
-				number.setText(Integer.toString(counter));
-				putContents(invariantPanel);
-			}
-		}
-		net.repaintAllGraphPanels();
+		*/
 	}
 	
+	//**************************************************************************************
+	//**************************************************************************************
+	//**************************************************************************************
+	//**************************************************************************************
+	//**************************************************************************************
+	
 	/**
-	 * Metoda pomocnicza tworząca szkielet głównych komponentów podokna właściwości.
+	 * Metoda pomocnicza tworząca szkielet podokna właściwości.
 	 */
 	private void initiateContainers() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		headerSize = new Dimension(300, 30);
-		headers = new ArrayList<JComponent>();
-		values = new ArrayList<JComponent>();
+		//headerSize = new Dimension(300, 30);
 		components = new ArrayList<JComponent>();
 		panel = new JPanel();
-		invariantPanel = new JPanel();
-		mainPanel = this;
-	}
-
-	/**
-	 * Metoda pomocnicza odpowiedzialna za wypełnanie okna danymi przy użyciu
-	 * Layout Managera.
-	 * @param contentPanel JPanel - panel z zawartością
-	 */
-	private void putContents(JPanel contentPanel) {
-		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-		for (JComponent component : headers) {
-			component.setMaximumSize(component.getMinimumSize());
-		}
-		for (JComponent component : values)
-			component.setMaximumSize(component.getMinimumSize());
-		
-		contentPanel.setLayout(new SpringLayout());
-		for (int i = 0; i < headers.size(); i++) {
-			contentPanel.add(headers.get(i));
-			contentPanel.add(values.get(i));
-		}
-		SpringUtilities.makeCompactGrid(contentPanel, headers.size(), 2, 5, 5, 5, 5);
-		contentPanel.setOpaque(true);
-		//contentPanel.repaint();
-		add(contentPanel);
-		
 	}
 
 	/**
@@ -1785,10 +1828,6 @@ public class AbyssDockWindowsTable extends JPanel {
 			setContainerWidth(width, currentSheet.getGraphPanel());
 			setContainerWidth(width, currentSheet.getContainerPanel());
 			currentSheet.getGraphPanel().setOriginSize(currentSheet.getGraphPanel().getSize());
-			//Dimension dim = currentSheet.getGraphPanel().getSize();
-			//dim.setSize(width, dim.height);
-			//currentSheet.getGraphPanel().setSize(dim);
-			//currentSheet.getContainerPanel().setSize(dim);
 		}
 	}
 
@@ -1801,10 +1840,6 @@ public class AbyssDockWindowsTable extends JPanel {
 			setContainerHeight(height, currentSheet.getGraphPanel());
 			setContainerHeight(height, currentSheet.getContainerPanel());
 			currentSheet.getGraphPanel().setOriginSize(currentSheet.getGraphPanel().getSize());
-			//Dimension dim = currentSheet.getGraphPanel().getSize();
-			//dim.setSize(dim.width, height);
-			//currentSheet.getGraphPanel().setSize(dim);
-			//currentSheet.getContainerPanel().setSize(dim);
 		}
 	}
 
@@ -1952,11 +1987,6 @@ public class AbyssDockWindowsTable extends JPanel {
 		}
 	}
 	
-
-
-	// ================================================================================
-	// ================================================================================
-
 	/**
 	 * Metoda ustawia status wszystkich przycisków rozpoczęcia symulacji za wyjątkiem
 	 * Pauzy i Stopu
@@ -2017,12 +2047,5 @@ public class AbyssDockWindowsTable extends JPanel {
 				}
 			}
 		}
-	}
-
-	/**
-	 * hmmm....
-	 */
-	public void updateSimulatorProperties() {
-		// TODO Auto-generated method stub
 	}
 }

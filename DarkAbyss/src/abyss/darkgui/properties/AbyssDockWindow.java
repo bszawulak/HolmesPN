@@ -45,12 +45,15 @@ public class AbyssDockWindow extends SingleDock {
 	 * EDITOR, SIMULATOR, SELECTOR, InvANALYZER, PropANALYZER, MctANALYZER,InvSIMULATOR
 	 */
 	public enum DockWindowType {
-		EDITOR, SIMULATOR, SELECTOR, InvANALYZER, PropANALYZER, MctANALYZER,InvSIMULATOR
+		EDITOR, SIMULATOR, SELECTOR, InvANALYZER, PropANALYZER, MctANALYZER, InvSIMULATOR
 	}
 
 	/**
-	 * Konstruktor obiektu klasy Properties
-	 * @param propertiesType PropertiesType - typ w³aœciwoœci do dodania
+	 * Konstruktor obiektu klasy AbyssDockWindow. Tworzy czyste podokienko dokowane
+	 * do interfejsu programu (wywo³anie pochodzi z konstruktora GUIManager).
+	 * Wype³nianie okna elementami jest ju¿ wykonywane zdalnie, na rz¹danie, odpowiedni¹
+	 * metod¹.
+	 * @param propertiesType DockWindowType - typ w³aœciwoœci do dodania
 	 */ 
 	public AbyssDockWindow(DockWindowType propertiesType) {
 		type = propertiesType;
@@ -185,7 +188,7 @@ public class AbyssDockWindow extends SingleDock {
 	 */
 	public void updateSimulatorProperties() {
 		if (type == DockWindowType.SIMULATOR) {
-			getCurrentDockWindow().updateSimulatorProperties(); //pusta metoda
+			//getCurrentDockWindow().updateSimulatorProperties(); //pusta metoda
 		}
 	}
 

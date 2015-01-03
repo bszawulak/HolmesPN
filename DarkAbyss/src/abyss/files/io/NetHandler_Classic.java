@@ -131,6 +131,11 @@ public class NetHandler_Classic extends NetHandler {
 				double o1 = Double.parseDouble(attributes.getValue(0));
 				double o2 = Double.parseDouble(attributes.getValue(1));
 				int o3 = Integer.parseInt(attributes.getValue(2));
+				
+				//
+				//o1 *= 1.2;
+				//o2 *= 1.2;
+				
 				int p1 = (int) o1;
 				int p2 = (int) o2;
 				graphicPointsList.add(new Point(p1, p2));

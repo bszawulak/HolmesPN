@@ -651,6 +651,8 @@ public class NetSimulator {
 		 */
 		protected void updateStep() {
 			GUIManager.getDefaultGUIManager().getWorkspace().incrementSimulationStep();
+			
+			//tutaj nic siê nie dzieje: a chyba chodzi³o o update podokna w³aœciwoœci z liczb¹ tokenów
 			GUIManager.getDefaultGUIManager().getSimulatorBox().updateSimulatorProperties();
 		}
 

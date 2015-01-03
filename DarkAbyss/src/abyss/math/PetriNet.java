@@ -5,6 +5,7 @@ import abyss.analyzer.DarkAnalyzer;
 import abyss.analyzer.InvariantsSimulator;
 import abyss.analyzer.InvariantsSimulator.SimulatorMode;
 import abyss.darkgui.GUIManager;
+import abyss.files.Snoopy.SnoopyWriter;
 import abyss.files.io.AbyssReader;
 import abyss.files.io.AbyssWriter;
 import abyss.files.io.IOprotocols;
@@ -566,21 +567,29 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda pozwala na zapis ca³ej sieci z projektu do pliku. Format
-	 * pliku zostaje okreœlony na podstawie rozszerzenia podanego w œcie¿ce
-	 * do pliku przekazanej w parametrze metody
+	 * Metoda pozwala na zapis ca³ej sieci z projektu do pliku PNT
 	 * @param filePath String - œcie¿ka do pliku zapisu
 	 */
-	public void saveToFile(String filePath) {
-		if (filePath.endsWith(".pnt")) {
-			filePath = filePath.substring(0, filePath.length() - 4);
-			communicationProtocol.writePNT(filePath, getPlaces(), getTransitions(), getArcs());
-		}
-		if (filePath.endsWith(".abyss")) {
-			filePath = filePath.substring(0, filePath.length() - 6);
-			ABYSSwriter = new AbyssWriter();
-			ABYSSwriter.write(filePath);
-		}
+	public void saveAsPNT(String filePath) {
+		communicationProtocol.writePNT(filePath, getPlaces(), getTransitions(), getArcs());
+	}
+	
+	/**
+	 * Metoda pozwala na zapis ca³ej sieci z projektu do pliku ABYSS.
+	 * @param filePath String - œcie¿ka do pliku zapisu
+	 */
+	public void saveAsAbyss(String filePath) {
+		ABYSSwriter = new AbyssWriter();
+		ABYSSwriter.write(filePath);
+	}
+	
+	/**
+	 * Metoda pozwala zapisaæ sieæ do formatu SPPED programu Snoopy.
+	 * @param filePath String - œcie¿ka docelowa pliku
+	 */
+	public void saveAsSPPED(String filePath) {
+		SnoopyWriter sWr = new SnoopyWriter();
+		sWr.writeSPPED(filePath);
 	}
 
 	/**

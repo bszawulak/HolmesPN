@@ -179,6 +179,7 @@ public class AbyssProperties extends JFrame {
 					textField.append("    | t_"+(i)+" "+transName+"\n");
 				}
 			}
+			textField.setCaretPosition(0);
 		}
 	}
 	

@@ -3,8 +3,6 @@ package abyss.files.Snoopy;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
@@ -14,9 +12,14 @@ import abyss.math.Place;
 import abyss.math.Transition;
 
 /**
- * Autor w�o�y� ogromny wysi�ek, aby ta klasa wraz z pomocniczymi potrafi�a zasymulowa�
- * ob��d tw�rc�w programu Snoopy, kt�ry objawia si� na ka�dym etapie zapisu danych
- * sieci do pliku.
+ * Autor włożył ogromny wysiłek, aby ta klasa wraz z pomocniczymi potrafiła zasymulować
+ * obłęd twórców programu Snoopy, który objawia się na każdym etapie zapisu danych
+ * sieci do pliku. I nawet nie chodzi o ręczne symulowanie parsera, który jest tam
+ * użyty. Ten parser działa błędnie. Np. komentarze dla tranzycji są przesuniętę względem
+ * osi oX, a powinny oY jak dla miejsc. Poza tym parser pluje danymi jak karabin maszynowy,
+ * z czego 60% tych danych jest redundantnych, a kilka zupełnie ignorowanych przez Snoopiego
+ * wczytującego tenże plik (np. punkty startu i końca dla łuków)
+ * 
  * @author MR
  *
  */
@@ -31,6 +34,9 @@ public class SnoopyWriter {
 	
 	private String dateAndTime = "2015-01-02 10:44:56";
 
+	/**
+	 * Konstruktor obiektu klasy SnoopyWriter uzyskujący dostęp do zasobów sieci.
+	 */
 	public SnoopyWriter() {
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -39,14 +45,19 @@ public class SnoopyWriter {
 		snoopyTransitions = new ArrayList<SnoopyTransition>();
 	}
 	
-	public void writeSPPED() {
+	/**
+	 * Metoda realizująca zapis do pliku SPPED. Działa - 03.01.2015. I na tym
+	 * się zatrzymajmy w opisach.
+	 */
+	public void writeSPPED(String filePath) {
 		int startNodeId = 226; // bo tak
 		int currentActiveID = startNodeId;
 		int arcsNumber = 0;
 		try {
-			String tPath = GUIManager.getDefaultGUIManager().tmpPath;
-			BufferedWriter bw = new BufferedWriter(new FileWriter(tPath+"argh.spped"));
-			//NAG��WEK:
+			
+			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+			
+			//NAGŁÓWEK:
 			write(bw, "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 			write(bw, "<?xml-stylesheet type=\"text/xsl\" href=\"/xsl/spped2svg.xsl\"?>");
 			write(bw, "<Snoopy version=\"2\" revision=\"1.13\">");
@@ -65,12 +76,12 @@ public class SnoopyWriter {
 				
 				ArrayList<ElementLocation> clones = p.getElementLocations();
 				for(ElementLocation el : clones) {
-					arcsNumber += el.getOutArcs().size(); //pobie� wszystkie wychodz�ce
+					arcsNumber += el.getOutArcs().size(); //pobież wszystkie wychodzące
 				}
 				
 				currentActiveID = sPlace.writePlaceInfoToFile(bw, currentActiveID, globalPlaceId);
 				
-				if(sPlace.portal == true) { //je�li w�a�nie dodane by�o portalem
+				if(sPlace.portal == true) { //jeśli właśnie dodane było portalem
 					currentActiveID += 13; //bo tak, pytajcie w Brandenburgu 'a a a czymuuu?'
 				} else {
 					currentActiveID ++;
@@ -92,7 +103,7 @@ public class SnoopyWriter {
 				
 				ArrayList<ElementLocation> clones = t.getElementLocations();
 				for(ElementLocation el : clones) {
-					arcsNumber += el.getOutArcs().size(); //pobie� wszystkie wychodz�ce
+					arcsNumber += el.getOutArcs().size(); //pobież wszystkie wychodzące
 				}
 				
 				
@@ -102,61 +113,64 @@ public class SnoopyWriter {
 			}
 			write(bw, "    </nodeclass>");
 			
-			
-			
+			//TEGO NA RAZIE NIE RUSZAMY (DA BÓG: NIGDY)
 			write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
 			write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
 			write(bw, "  </nodeclasses>");
 			
-			//�UKI:
+			//ŁUKI:
 			write(bw, "  <edgeclasses count=\"1\">");
 			write(bw, "    <edgeclass count=\"" + arcsNumber + "\" name=\"Edge\">");
-			
 			addArcInfo(bw, currentActiveID);
-			
 			write(bw, "    </edgeclass>");
 			write(bw, "  </edgeclasses>");
 			
 			writeEnding(bw);
 			bw.write("</Snoopy>\n");
 			bw.close();
-		} catch (Exception e) {
 			
+			GUIManager.getDefaultGUIManager().log("Net has been exported as SPPED file: "+filePath, "text", true);
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Critical error while exporting net to the SPPED file: "+filePath, "error", true);		
 		}
 	}
 	
 	/**
-	 * Stopie� odjechania poni�szej metody przewy�sza normy niczym Czarnobyl w kwestii promieniowania.
-	 * @param bw BufferedWriter - obiekt zapisuj�cy
-	 * @param currentActiveID int - od tego ID zaczynamy dodawa� �uki
+	 * Stopień odjechania poniższej metody przewyższa normy niczym Czarnobyl w kwestii promieniowania.
+	 * A skoro już o tym mowa...
+	 * -Вот это от усталости, это от нервного напряжения, а это от депрессии...
+	 * -Спасибо, доктор, спасибо... А у вас, кроме водки, ничего нет?
+	 * 
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @param currentActiveID int - od tego ID zaczynamy dodawać łuki
 	 */
 	private void addArcInfo(BufferedWriter bw, int currentActiveID) {
-		try {
+		int howMany = 0;
 		int nextID = currentActiveID;
-		int iteracja = 0;
+		//int iteracja = 0;
 		int xOff = 0;
-		int yOff = 0;
-		for(Place p : places) { //najpierw wyj�ciowe z miejsc
+		//int yOff = 0;
+		for(Place p : places) { //najpierw wyjściowe z miejsc
 			//ArrayList<ElementLocation> clones = p.getElementLocations();
 			int location = -1;
 			for(ElementLocation el : p.getElementLocations()) { // dla wszystkich jego lokalizacji
-				location++; // kt�ra faktycznie, je�li to portal
+				location++; // która faktycznie to jest, jeśli przetwarzamy portal
 				
-				ArrayList<Arc> outArcs = el.getOutArcs(); //pobie� list� �uk�w wyj�ciowych (portalu)
+				ArrayList<Arc> outArcs = el.getOutArcs(); //pobież listę łuków wyjściowych (portalu)
 				
 				//kolekcjonowanie danych:
-				for(Arc a : outArcs) { //dla ka�dego �uku
-					int weight = a.getWeight(); //waga �uku
+				for(Arc a : outArcs) { //dla każdego łuku
+					int weight = a.getWeight(); //waga łuku
 					String comment = a.getComment();
 					int grParent = currentActiveID + 5;
 					
-					Node targetAbyss = a.getEndNode(); //tutaj trafia �uk w Abyss
-					Node sourceAbyss = a.getStartNode(); //st�d wychodzi
-					//przy czym nale�y okresli�, do kt�rej lokalizacji
+					Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss
+					Node sourceAbyss = a.getStartNode(); //stąd wychodzi
+					//przy czym należy okreslić, do której lokalizacji
 					
 					//sourceAbyss == p
 					
-					int addToSPPEDAsSource = snoopyPlacesID.lastIndexOf(sourceAbyss.getID()); //kt�ry to by�
+					int addToSPPEDAsSource = snoopyPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
 					if(addToSPPEDAsSource == -1) {
 						@SuppressWarnings("unused")
 						int WTF= 1; //!!! IMPOSSIBRU!!!!
@@ -172,14 +186,14 @@ public class SnoopyWriter {
 					//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
 					int addToSPPEDAsTarget = snoopyTransitionsID.lastIndexOf(targetAbyss.getID());
 					SnoopyTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
-					//teraz nale�y okre�li do kt�rej lokalizacji portalu trafia �uk
+					//teraz należy określi do której lokalizacji portalu trafia łuk
 					
 					ElementLocation destinationLoc = a.getEndLocation();
 					int counter = -1;
 					for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
 						counter++;
-						//szukamy w w�lie docelowym, kt�ra to w kolejno�ci lokalizacja je�li to portal
-						//je�li to: to i tak sko�czy si� na 1 iteracji
+						//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+						//jeśli to: to i tak skończy się na 1 iteracji
 						if(whichOne.equals(destinationLoc)) {
 							break; //w counter mamy wtedy nr
 						}
@@ -192,7 +206,7 @@ public class SnoopyWriter {
 					int halfX = (realTargetX + realSourceX) / 2;
 					int halfY = (realTargetY + realSourceY) / 2;
 					
-					//tutaj wchodz� g��wne numery miejsc:
+					//tutaj wchodzą główne numery główne:
 					write(bw, "      <edge source=\""+nodeSourceID+"\""
 							+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
 					nextID++; //444
@@ -224,31 +238,145 @@ public class SnoopyWriter {
 					write(bw, "        </attribute>");
 					write(bw, "        <graphics count=\"1\">");
 					
-					//TUTAJ WCHODZ� REALNE X,Y I ID PORTALI:
+					//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
 					write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
 							+ " source=\""+realSourceID+"\""
 							+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
 							+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
 					
-					//teoretycznie poni�sze powinny by� wyliczone z uk�adu r�wna� do rozwi�zywania
-					//problemu wsp�rz�dnych przeci�cia prostej z okr�giem (lub z rogiem kwadratu - tr.)
-					//na szcz�cie mo�na wpisa� wsp�rz�dne docelowe w�z��w, Snoopy jest tu wyrozumia�y
-					write(bw, "            <points count=\"2\">"); //bez �ama�c�w
+					//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+					//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+					//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+					write(bw, "            <points count=\"2\">"); //bez łamańców
 					write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
 					write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
 					write(bw, "            </points>");
 					write(bw, "          </graphic>");
 					write(bw, "        </graphics>");
 					write(bw, "      </edge>");
-					//sourceX = source.
+					
+					howMany++;
 				}
 				
 			} //dla wszystkich lokalizacji
-			iteracja++;
+			//iteracja++;
 		} //dla wszystkich miejsc
-		} catch (Exception e) {
-			int wtf = 1;
-			wtf = 2;
+		
+		//teraz wszystkie wychodzące z tranzycji:
+		for(Transition t : transitions) { //najpierw wyjściowe z tranzycji
+			int location = -1;
+			for(ElementLocation el : t.getElementLocations()) { // dla wszystkich jego lokalizacji
+				location++; // która faktycznie to jest, jeśli trafiliśmy w portal
+				ArrayList<Arc> outArcs = el.getOutArcs(); //pobież listę łuków wyjściowych (portalu)
+				
+				//kolekcjonowanie danych:
+				for(Arc a : outArcs) { //dla każdego łuku
+					int weight = a.getWeight(); //waga łuku
+					String comment = a.getComment();
+					int grParent = currentActiveID + 5;
+					
+					Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss (w miejsce)
+					Node sourceAbyss = a.getStartNode(); //stąd wychodzi (tranzycja)
+					//przy czym należy okreslić, do której lokalizacji
+					
+					//sourceAbyss == t
+					
+					int addToSPPEDAsSource = snoopyTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
+					if(addToSPPEDAsSource == -1) {
+						@SuppressWarnings("unused")
+						int WTF= 1; //!!! IMPOSSIBRU!!!!
+						return;
+					}
+					SnoopyTransition source = snoopyTransitions.get(addToSPPEDAsSource);
+					int nodeSourceID = source.nodeID;
+					int realSourceID = source.grParents.get(location); //k
+					int realSourceX = source.grParentsLocation.get(location).x;
+					int realSourceY = source.grParentsLocation.get(location).y;
+					
+					
+					//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
+					int addToSPPEDAsTarget = snoopyPlacesID.lastIndexOf(targetAbyss.getID());
+					SnoopyPlace target = snoopyPlaces.get(addToSPPEDAsTarget);
+					//teraz należy określi do której lokalizacji portalu trafia łuk
+					
+					ElementLocation destinationLoc = a.getEndLocation();
+					int counter = -1;
+					for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
+						counter++;
+						//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+						//jeśli to: to i tak skończy się na 1 iteracji
+						if(whichOne.equals(destinationLoc)) {
+							break; //w counter mamy wtedy nr
+						}
+					}
+					int nodeTargetID = target.nodeID;
+					int realTargetID = target.grParents.get(counter); 
+					int realTargetX = target.grParentsLocation.get(counter).x;
+					int realTargetY = target.grParentsLocation.get(counter).y;
+					
+					int halfX = (realTargetX + realSourceX) / 2;
+					int halfY = (realTargetY + realSourceY) / 2;
+					
+					//tutaj wchodzą główne numery:
+					write(bw, "      <edge source=\""+nodeSourceID+"\""
+							+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
+					nextID++; //444
+					write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
+					nextID++; //445
+					write(bw, "          <![CDATA["+weight+"]]>");
+					write(bw, "          <graphics count=\"1\">");
+					xOff = 20;
+					write(bw, "            <graphic xoff=\""+xOff+".00\""
+							+ " x=\""+(halfX+xOff)+".00\""
+							+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+							+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+					nextID++; //446
+					write(bw, "          </graphics>");
+					write(bw, "        </attribute>");
+					write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
+					nextID++; //447
+					write(bw, "          <![CDATA["+comment+"]]>");
+					write(bw, "          <graphics count=\"1\">");
+					xOff = 40;
+					write(bw, "            <graphic xoff=\""+xOff+".00\""
+							+ " x=\""+(halfX+xOff)+".00\""
+							+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+							+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+					nextID++; //448 == grParent
+					write(bw, "          </graphics>");
+					write(bw, "        </attribute>");
+					write(bw, "        <graphics count=\"1\">");
+					
+					//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
+					write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
+							+ " source=\""+realSourceID+"\""
+							+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
+							+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
+					
+					//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+					//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+					//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+					write(bw, "            <points count=\"2\">"); //bez łamańców
+					write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+					write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+					write(bw, "            </points>");
+					write(bw, "          </graphic>");
+					write(bw, "        </graphics>");
+					write(bw, "      </edge>");
+
+					howMany++;
+				}
+				
+			} //dla wszystkich lokalizacji
+			//iteracja++;
+		} //dla wszystkich tranzycji
+		
+		if(howMany != GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().size()) {
+			GUIManager.getDefaultGUIManager().log("Arcs saved do not match size of Arcs internal set."
+					+ " Meaning: Snoopy SPPED write error. File may be there, but the saved net may be"
+					+ " corrupt.", "error", true);
 		}
 	}
 
@@ -256,7 +384,7 @@ public class SnoopyWriter {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception e) {
-			
+			return;
 		}
 	}
 	
@@ -310,7 +438,7 @@ public class SnoopyWriter {
 			write(bw, "    <metadataclass count=\"0\" name=\"Constant Class\"/>");
 			write(bw, "  </metadataclasses>");
 		} catch (Exception e) {
-			
+			GUIManager.getDefaultGUIManager().log("File access error", "error", true);
 		}
 	}
 }

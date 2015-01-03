@@ -559,7 +559,7 @@ public class AbyssClusters extends JFrame {
      */
     private void buttonGenerateClusterings() {
 		if(clustersToGenerate > 1) {
-			pathCSVfile = GUIManager.getDefaultGUIManager().generateClustersCase56(clustersToGenerate);
+			pathCSVfile = GUIManager.getDefaultGUIManager().io.generateClustersCase56(clustersToGenerate);
 			if(pathCSVfile == null) { //jeœli coœ siê nie uda³o
 				//pathClustersDir = ""; //œcie¿ka do katalogu klastrowañ
 				pathCSVfile = ""; //œcie¿ka do pliku CSV
@@ -687,7 +687,7 @@ public class AbyssClusters extends JFrame {
      */
     private void buttonComputeCHmetrics() {
 		if(clustersToGenerate > 1) {
-			String newCHpath = GUIManager.getDefaultGUIManager().generateAllCHindexes(clustersToGenerate);
+			String newCHpath = GUIManager.getDefaultGUIManager().io.generateAllCHindexes(clustersToGenerate);
 			if(newCHpath != null) //jeœli coœ siê sta³o siê... :)
 				pathCHmetricsDir = newCHpath;
 			//uwaga! w powy¿szym katalogu miary dopiero powstaj¹!

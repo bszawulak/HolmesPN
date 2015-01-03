@@ -608,7 +608,7 @@ public class IOprotocols {
 			ArrayList<Transition> transitionList, ArrayList<Arc> arcList) {
 		String zawartoscPliku = "P   M   PRE,POST  NETZ 0:";
 		try {
-			PrintWriter zapis = new PrintWriter(path + ".pnt");
+			PrintWriter zapis = new PrintWriter(path);
 			zawartoscPliku += getNazwaPliku(path);
 			zawartoscPliku += "\r\n";
 			//int[] tabPlace = new int[placeList.size()];

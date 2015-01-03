@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.files.Snoopy.SnoopyWriter;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
 
@@ -160,7 +159,7 @@ public class Toolbar extends BorderDock {
 				"Open project...", Tools.getResIcon48("/icons/toolbar/open.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().openProject();
+				GUIManager.getDefaultGUIManager().io.openAbyssProject();
 			}
 		};
 		buttonDockables.add(createButtonDockable("ButtonDockableOpen", openButton));
@@ -171,7 +170,7 @@ public class Toolbar extends BorderDock {
 				"Import project...", Tools.getResIcon48("/icons/toolbar/import_net.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().importProject();
+				GUIManager.getDefaultGUIManager().io.importProject();
 			}
 		};
 		buttonDockables.add(createButtonDockable("ButtonDockableImport", importButton));
@@ -182,7 +181,7 @@ public class Toolbar extends BorderDock {
 				"Save picture...", Tools.getResIcon48("/icons/toolbar/save_picture.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().exportProjectToImage();
+				GUIManager.getDefaultGUIManager().io.exportProjectToImage();
 			}
 		};
 		buttonDockables.add(createButtonDockable("ButtonDockableImport", pictureButton));
@@ -310,7 +309,7 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/terminal.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().generateINAinvariants();
+				GUIManager.getDefaultGUIManager().io.generateINAinvariants();
 			}
 		};
 		analysisDockables.add(createButtonDockable("GenerateINAinv",generateINAinvariants));
@@ -341,8 +340,8 @@ public class Toolbar extends BorderDock {
 				//GUIManager.getDefaultGUIManager().generateAllCHindexes(20);
 				//CHmetricReader chReader = new CHmetricReader();
 				//chReader.executeReader("");
-				SnoopyWriter sWr = new SnoopyWriter();
-				sWr.writeSPPED();
+				//SnoopyWriter sWr = new SnoopyWriter();
+				//sWr.writeSPPED();
 			}
 		};
 		testButton.setEnabled(false);

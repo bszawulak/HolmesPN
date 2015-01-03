@@ -387,7 +387,7 @@ public class AbyssClusterSubWindow extends JFrame {
 						alg = "average";
 					
 					//generowanie klastrowania:
-					String resultFiles[] = GUIManager.getDefaultGUIManager().generateSingleClustering(
+					String resultFiles[] = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
 							clusterPath, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 					if(resultFiles != null) {
 						ClusterReader reader = new ClusterReader();

@@ -22,6 +22,8 @@ import javax.swing.filechooser.FileFilter;
  *
  */
 public final class Tools {
+	public static String lastExtension = "";
+	
 	/**
 	 * Prywatny konstruktor. To powinno za³atwiæ problem obiektów.
 	 */
@@ -104,20 +106,22 @@ public final class Tools {
 			fc.addChoosableFileFilter(filter[i]);
 		}
 		fc.setFileFilter(filter[0]);
-		
+
 		if(!buttonText.equals(""))
 			fc.setApproveButtonText(buttonText);
 		if(!buttonToolTip.equals(""))
 			fc.setApproveButtonToolTipText(buttonToolTip);
 		
 		fc.setAcceptAllFileFilterUsed(false);
-		int returnVal = fc.showSaveDialog(null);
+		int returnVal = fc.showDialog(fc, fc.getApproveButtonText());
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File f = fc.getSelectedFile();
 			resultPath = f.getPath();	
 		} else {
 			resultPath = "";
 		}
+		
+		lastExtension = fc.getFileFilter().getDescription().toLowerCase();
 		return resultPath;
 	}
 	

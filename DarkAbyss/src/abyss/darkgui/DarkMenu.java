@@ -150,7 +150,7 @@ public class DarkMenu extends JMenuBar {
 		openMenuItem.getAccessibleContext().setAccessibleDescription("Open project");
 		openMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				guiManager.openProject();
+				guiManager.io.openAbyssProject();
 			}
 		});
 		fileMenu.add(openMenuItem);
@@ -162,7 +162,7 @@ public class DarkMenu extends JMenuBar {
 		importMenuItem.getAccessibleContext().setAccessibleDescription("Import project");
 		importMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				guiManager.importProject();
+				guiManager.io.importProject();
 			}
 		});
 		fileMenu.add(importMenuItem);
@@ -176,19 +176,31 @@ public class DarkMenu extends JMenuBar {
 		saveMenuItem.getAccessibleContext().setAccessibleDescription("Save project");
 		saveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				guiManager.saveAsAbyssFile();  //test
+				guiManager.io.saveAsAbyssFile();
 			}
 		});
 		fileMenu.add(saveMenuItem);
+		
+		// saveAs file
+		JMenuItem saveAsMenuItem = new JMenuItem("Save As...", KeyEvent.VK_S);
+		saveAsMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_saveAs.png"));
+		saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
+		saveAsMenuItem.getAccessibleContext().setAccessibleDescription("Save project");
+		saveAsMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				guiManager.io.saveAsGlobal();
+			}
+		});
+		fileMenu.add(saveAsMenuItem);
 
 		// Export net as .pnt file
-		JMenuItem exportMenuItem = new JMenuItem("Export network...", KeyEvent.VK_E);
+		JMenuItem exportMenuItem = new JMenuItem("Export as PNT...", KeyEvent.VK_E);
 		exportMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportNet.png"));
 		exportMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,ActionEvent.CTRL_MASK));
-		exportMenuItem.getAccessibleContext().setAccessibleDescription("Export project");
+		exportMenuItem.getAccessibleContext().setAccessibleDescription("Export project to PNT file");
 		exportMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				guiManager.exportAsPNT();
+				guiManager.io.exportAsPNT();
 			}
 		});
 		fileMenu.add(exportMenuItem);
@@ -199,7 +211,7 @@ public class DarkMenu extends JMenuBar {
 		expImgMenuItem.getAccessibleContext().setAccessibleDescription("Export project to image");
 		expImgMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				guiManager.exportProjectToImage();
+				guiManager.io.exportProjectToImage();
 			}
 		});
 		fileMenu.add(expImgMenuItem);
@@ -331,7 +343,7 @@ public class DarkMenu extends JMenuBar {
 		genINAinvItem.getAccessibleContext().setAccessibleDescription("Generate invariants using INA external program");
 		genINAinvItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().generateINAinvariants();
+				GUIManager.getDefaultGUIManager().io.generateINAinvariants();
 			}
 		});
 		invariantsOperationsMenu.add(genINAinvItem);		
@@ -343,7 +355,7 @@ public class DarkMenu extends JMenuBar {
 		importInvMenuItem.getAccessibleContext().setAccessibleDescription("Load analysis result from external source");
 		importInvMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().loadExternalAnalysis();
+				GUIManager.getDefaultGUIManager().io.loadExternalAnalysis();
 			}
 		});
 		invariantsOperationsMenu.add(importInvMenuItem);
@@ -355,7 +367,7 @@ public class DarkMenu extends JMenuBar {
 		exportInv.getAccessibleContext().setAccessibleDescription("Export generated invariants");
 		exportInv.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().exportGeneratedInvariants();
+				GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
 			}
 		});
 		invariantsOperationsMenu.add(exportInv);
@@ -426,7 +438,7 @@ public class DarkMenu extends JMenuBar {
 		createMCTFile.getAccessibleContext().setAccessibleDescription("Create simple MCT file");
 		createMCTFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().generateSimpleMCTFile();
+				GUIManager.getDefaultGUIManager().io.generateSimpleMCTFile();
 			}
 		});
 		mctOperationsMenu.add(createMCTFile);
@@ -479,14 +491,13 @@ public class DarkMenu extends JMenuBar {
 		clustersOperationsMenu.add(showClustersItem);
 		
 		
-		
 		JMenu aboutMenu = new JMenu("Help");
 		aboutMenu.setMnemonic(KeyEvent.VK_H);
 		aboutMenu.getAccessibleContext().setAccessibleDescription("Help");
 		this.add(aboutMenu);
 		
-		JMenuItem aboutItem = new JMenuItem("About...");
-		aboutItem.setIcon(Tools.getResIcon32("/icons/menu/menu_InvGen.png"));
+		JMenuItem aboutItem = new JMenuItem("About Abyss IPNE");
+		aboutItem.setIcon(Tools.getResIcon32("/icons/menu/menu_about.png"));
 		aboutItem.getAccessibleContext().setAccessibleDescription("About the program");
 		aboutItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

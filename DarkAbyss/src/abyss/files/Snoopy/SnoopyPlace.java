@@ -23,12 +23,19 @@ public class SnoopyPlace {
 	public ArrayList<Point> grParentsLocation; // lokalizacje powy¿szych, wiêcej ni¿ 1 dla portali
 	public boolean portal;
 	
+	/**
+	 * Konstruktor domyœlny obiektu klasy SnoopyPlace.
+	 */
 	public SnoopyPlace() {
 		grParents = new ArrayList<Integer>();
 		grParentsLocation = new ArrayList<Point>();
 		portal = false;
 	}
 	
+	/**
+	 * Konstruktor g³ówny obiektu klasy SnoopyPlace. Dostaje obiekt miejsca z Abyss.
+	 * @param p Place - obiekt miejsca w programie
+	 */
 	public SnoopyPlace(Place p) {
 		this();
 		abyssPlace = p;
@@ -134,10 +141,11 @@ public class SnoopyPlace {
 		write(bw, "          </graphics>");
 		write(bw, "        </attribute>");
 		
-		//SEKCJA TOKENÓW W MIEJSCU/MIEJSACH LOGICZNYCH. KOMENTARZ JAK WY¯EJ, TYLKO MOCNIEJ.
+		//SEKCJA TOKENÓW W MIEJSCU/MIEJSACH LOGICZNYCH. KOMENTARZ JAK WY¯EJ, TYLKO BARDZIEJ ABSURDALNIE.
 		write(bw, "        <attribute name=\"Marking\" id=\"" + currID + "\" net=\"1\">");
 		currID++; //teraz: 232
-		write(bw, "          <![CDATA[0]]>");
+		int tokens = abyssPlace.getTokensNumber();
+		write(bw, "          <![CDATA["+tokens+"]]>");
 		write(bw, "          <graphics count=\"" + locations + "\">");
 		for(int i=0; i<locations; i++) { 
 			if(i==0) {//tylko g³ówne miejsce
@@ -220,6 +228,11 @@ public class SnoopyPlace {
 		return lastParentID;
 	}
 	
+	/**
+	 * Metoda pomocnicza, zapisuj¹ca ka¿d¹ liniê + enter.
+	 * @param bw BufferedWriter - obiekt zapisuj¹cy
+	 * @param text String - linia tekstu
+	 */
 	private void write(BufferedWriter bw, String text) {
 		try {
 			bw.write(text+"\n");

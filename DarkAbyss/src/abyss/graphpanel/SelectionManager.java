@@ -869,7 +869,7 @@ public class SelectionManager {
 	// ================================================================================
 
 	/**
-	 * Metoda usuwaj¹ca œwiecenie tranzycji (zwyk³ych i czasowych). Wykorzystywana (poœrednio
+	 * Metoda usuwaj¹ca status œwiecenia tranzycji (zwyk³ych i czasowych). Wykorzystywana (poœrednio
 	 * poprzez metodê z obiektu klasy PetriNet) przez metody odpowiedzialne za podœwietlanie
 	 * wybranych tranzycji oraz zbiorów MCT.
 	 */
