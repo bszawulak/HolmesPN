@@ -1,7 +1,8 @@
 package abyss.math;
 
 /**
- * Klasa definiuj¹ca inwariant dla tranzycji.
+ * Klasa rozszerzenie dla Transition. Definiuj dla ka¿dej tranzycji jej lizbê odpaleñ.
+ * Jest ona u¿ywana jako pojedzyñczy obiekt dla macierzy inwariantów II typu. 
  * @author students
  *
  */

@@ -1,7 +1,6 @@
 package abyss.darkgui;
 
 import abyss.analyzer.DarkAnalyzer;
-import abyss.analyzer.NetPropertiesAnalyzer;
 import abyss.darkgui.dockable.DeleteAction;
 import abyss.darkgui.properties.AbyssDockWindow;
 import abyss.darkgui.properties.PetriNetTools;
@@ -21,6 +20,7 @@ import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
@@ -99,12 +99,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private PetriNetTools toolBox;
 	
 	// podokna dokowalne g³ównego okna Abyss:
-	private AbyssDockWindow propertiesBox;
-	private AbyssDockWindow simulatorBox;
-	private AbyssDockWindow selectionBox;
-	private AbyssDockWindow analyzerBox;
-	private AbyssDockWindow propAnalyzerBox;
-	private AbyssDockWindow mctBox;
+	private AbyssDockWindow simulatorBox;	//podokno przycisków symulatorów sieci
+	private AbyssDockWindow selectionBox;	//podokno zaznaczonych elementów sieci
+	private AbyssDockWindow mctBox;			//podokno MCT
+	private AbyssDockWindow invariantsBox;	//podokno inwariantów
+	private AbyssDockWindow selElementBox;  //podokno klikniêtego elementu sieci
+	private AbyssDockWindow clustersBox;	//podokno podœwietlania klastrów
+	
+	//UNUSED
 	private AbyssDockWindow invSimBox;
 	
 	// docking listener
@@ -124,7 +126,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private String logPath;
 	
 	// okna niezale¿ne:
-	private AbyssClusters windowClusters; //okno tabeli 
+	public AbyssClusters windowClusters; //okno tabeli 
 	private AbyssConsole windowConsole; //konsola logów
 	private AbyssProperties windowNetProperties; //okno w³aœciwoœci sieci
 	private AbyssAbout windowAbout; //okno About...
@@ -197,8 +199,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setPropertiesBox(new AbyssDockWindow(DockWindowType.EDITOR));
 		setSimulatorBox(new AbyssDockWindow(DockWindowType.SIMULATOR));
 		setSelectionBox(new AbyssDockWindow(DockWindowType.SELECTOR));
-		setAnalyzerBox(new AbyssDockWindow(DockWindowType.InvANALYZER));
-		setPropAnalyzerBox(new AbyssDockWindow(DockWindowType.PropANALYZER));
+		setInvariantsBox(new AbyssDockWindow(DockWindowType.InvANALYZER));
+		setClusterSelectionBox(new AbyssDockWindow(DockWindowType.ClusterSELECTOR));
+		
 			//aktywuj obiekt podokna wyœwietlania zbiorów MCT
 		setMctBox(new AbyssDockWindow(DockWindowType.MctANALYZER)); 
 		setInvSim(new AbyssDockWindow(DockWindowType.InvSIMULATOR));
@@ -220,9 +223,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 		topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
 		topRightTabDock.setSelectedDock(getPropertiesBox());
 		//bottomRightTabDock.addChildDock(getSimulatorBox(), new Position(0));
-		bottomRightTabDock.addChildDock(getAnalyzerBox(), new Position(1));
+		bottomRightTabDock.addChildDock(getInvariantsBox(), new Position(1));
 		bottomRightTabDock.addChildDock(getMctBox(), new Position(2));
-		bottomRightTabDock.addChildDock(getPropAnalyzerBox(), new Position(3));
+		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(3));
 		bottomRightTabDock.addChildDock(getInvSimBox(), new Position(4));
 
 		// create the split docks
@@ -529,15 +532,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda zwraca podokno dedykowane do wyœwietlania zbiorów MCT.
-	 * @return Properties - okno w³aœciwoœci MCT
+	 * @return AbyssDockWindow - okno wyboru MCT
 	 */
 	public AbyssDockWindow getMctBox() {
 		return mctBox;
 	}
 
 	/**
-	 * Metoda ta ustawia nowe okno w³aœciwoœci dla zbiorów MCT.
-	 * @param mctBox Properties - nowe okno w³aœciwoœci MCT
+	 * Metoda ta ustawia nowe podokno dedykowane do wyœwietlania zbiorów MCT.
+	 * @param mctBox AbyssDockWindow - nowe okno wyboru MCT
 	 */
 	public void setMctBox(AbyssDockWindow mctBox) {
 		this.mctBox = mctBox;
@@ -545,7 +548,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda ustawia nowe okno w³aœciwoœci symulatora inwariantów.
-	 * @param invSim Properties - okno w³aœciwoœci symulatora inwariantów
+	 * @param invSim AbyssDockWindow - okno w³aœciwoœci symulatora inwariantów
 	 */
 	public void setInvSim(AbyssDockWindow invSim)
 	{
@@ -554,7 +557,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda zwraca aktywne okno w³aœciwoœci symulatora inwariantów.
-	 * @param invSim Properties - okno w³aœciwoœci symulatora inwariantów
+	 * @param invSim AbyssDockWindow - okno w³aœciwoœci symulatora inwariantów
 	 */
 	public AbyssDockWindow getInvSimBox() {
 		return invSimBox;
@@ -578,7 +581,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	/**
 	 * Metoda zwraca obiekt paska narzêdziowego.
-	 * @return Tools - pasek przycisków
+	 * @return PetriNetTools - pasek przycisków
 	 */
 	public PetriNetTools getToolBox() {
 		return toolBox;
@@ -586,26 +589,26 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	/**
 	 * Metoda ustawia nowy obiekt paska narzêdziowego.
-	 * @param toolBox Tools - pasek przycisków
+	 * @param toolBox PetriNetTools - pasek przycisków
 	 */
 	private void setToolBox(PetriNetTools toolBox) {
 		this.toolBox = toolBox;
 	}
 
 	/**
-	 * Metoda zwraca obiekt podokna w³aœciwoœci.
-	 * @return Properties - podokno w³aœciwoœci
+	 * Metoda zwraca obiekt podokna do wyœwietlania w³aœciwoœci klikniêtego elementu sieci.
+	 * @return AbyssDockWindow - podokno w³aœciwoœci
 	 */
 	public AbyssDockWindow getPropertiesBox() {
-		return propertiesBox;
+		return selElementBox;
 	}
 
 	/**
-	 * Metoda ustawia nowy obiekt podokna w³aœciwoœci.
-	 * @param propertiesBox Properties - podokno w³aœciwoœci
+	 * Metoda ustawia nowy obiekt podokna do wyœwietlania w³aœciwoœci klikniêtego elementu sieci.
+	 * @param propertiesBox AbyssDockWindow - podokno w³aœciwoœci
 	 */
 	private void setPropertiesBox(AbyssDockWindow propertiesBox) {
-		this.propertiesBox = propertiesBox;
+		this.selElementBox = propertiesBox;
 	}
 
 	/**
@@ -735,7 +738,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	/**
 	 * Metoda ta zwraca obiekt okna wyboru elementów.
-	 * @return Properties - okno wyboru elementów
+	 * @return AbyssDockWindow - okno wyboru elementów
 	 */
 	public AbyssDockWindow getSelectionBox() {
 		return selectionBox;
@@ -743,7 +746,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	/**
 	 * Metoda ta ustawia nowy obiekt okna wyboru elementów.
-	 * @param selectionBox Properties - okno wyboru elementów
+	 * @param selectionBox AbyssDockWindow - okno wyboru elementów
 	 */
 	private void setSelectionBox(AbyssDockWindow selectionBox) {
 		this.selectionBox = selectionBox;
@@ -794,35 +797,35 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda zwraca obiekt w³aœciwoœci analizatora sieci.
-	 * @return Properties - obiekt w³aœciwoœci analizatora
+	 * Metoda zwraca obiekt podokna dla podœwietlania inwariantów sieci.
+	 * @return AbyssDockWindow - podokno inwariantów
 	 */
-	public AbyssDockWindow getAnalyzerBox() {
-		return analyzerBox;
+	public AbyssDockWindow getInvariantsBox() {
+		return invariantsBox;
 	}
 
 	/**
-	 * Metoda ta ustawia nowy obiekt w³aœciwoœci analizatora sieci.
-	 * @param analyzerBox Properties - obiekt w³aœciwoœci analizatora
+	 * Metoda ta ustawia obiekt podokna dla podœwietlania inwariantów sieci.
+	 * @param analyzerBox AbyssDockWindow - podokno inwariantów
 	 */
-	public void setAnalyzerBox(AbyssDockWindow analyzerBox) {
-		this.analyzerBox = analyzerBox;
+	public void setInvariantsBox(AbyssDockWindow analyzerBox) {
+		this.invariantsBox = analyzerBox;
 	}
 	
 	/**
-	 * Metoda zwraca obiekt okna z w³aœciwoœciami sieci.
-	 * @return Properties - obiekt z w³aœciwoœciani sieci
+	 * Metoda zwraca obiekt podokna wyboru klastrów do podœwietlania.
+	 * @return AbyssDockWindow - obiekt z w³aœciwoœciani sieci
 	 */
-	public AbyssDockWindow getPropAnalyzerBox() {
-		return propAnalyzerBox;
+	public AbyssDockWindow getClusterSelectionBox() {
+		return clustersBox;
 	}
 
 	/**
-	 * Metoda ta ustawia nowy obiekt okna z w³aœciwoœciami sieci.
-	 * @param analyzerBox Properties - obiekt z w³aœciwoœciami sieci
+	 * Metoda ta ustawia nowy obiekt podokna wyboru klastrów do podœwietlania.
+	 * @param clusterBox AbyssDockWindow - obiekt z w³aœciwoœciami sieci
 	 */
-	public void setPropAnalyzerBox(AbyssDockWindow analyzerBox) {
-		this.propAnalyzerBox = analyzerBox;
+	public void setClusterSelectionBox(AbyssDockWindow clusterBox) {
+		this.clustersBox = clusterBox;
 	}
 	
 	/**
@@ -951,17 +954,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zleca wyœwietlenie w³aœciwoœci sieci.
+	 * Metoda zleca wyœwietlenie podokna podœwietlania klastrowania
 	 */
-	public void showNetworkProperties(){
-		try {
-			NetPropertiesAnalyzer analyzer = new NetPropertiesAnalyzer();
-			AbyssDockWindow propWindow = getPropAnalyzerBox();
-			ArrayList<ArrayList<Object>> newPropTable = analyzer.propAnalyze();
-			propWindow.showNetProperties(newPropTable);
-		} catch (Exception e) {
-			
-		}
+	public void showClusterSelectionBox(ArrayList<ArrayList<Color>> data){
+		getClusterSelectionBox().showClusterSelector(data);
 	}
 	
 	/**

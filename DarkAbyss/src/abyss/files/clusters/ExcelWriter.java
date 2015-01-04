@@ -23,7 +23,12 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
-
+/**
+ * Zadaniem obiektu tej klasy jest utworzenie dokumentu programu Excel (.xls) z pe³nymi
+ * danymi dotycz¹cymi konkretnego klastrowania dla sieci. Koniec z robótkami rêcznymi!
+ * @author MR
+ *
+ */
 public class ExcelWriter {
 	private WritableCellFormat defCellFormat; //standardowe formatowanie
 	private WritableCellFormat defCellFormatBold;
@@ -39,6 +44,9 @@ public class ExcelWriter {
 	
 	private boolean success = false;
 	
+	/**
+	 * Konstruktor domyœlny obiektu klasy ExcelWriter.
+	 */
 	public ExcelWriter() {
 		succeed = false;
 		errorMsg = "";
@@ -60,6 +68,10 @@ public class ExcelWriter {
 		}
 	}
 	
+	/**
+	 * Zwraca stan flagi, czy ca³oœæ siê uda³a.
+	 * @return boolean - true, jeœli wszystko posz³o dobrze
+	 */
 	public boolean isSuccess() {
 		return success;
 	}
@@ -219,6 +231,11 @@ public class ExcelWriter {
 		
 	}
 	
+	/**
+	 * Metoda zwraca opis s³owny dla wartoœci miary MSS.
+	 * @param clusterMSS double - wartoœæ miary
+	 * @return String - opis
+	 */
 	private String getMSSEval(double clusterMSS) {
         DecimalFormat df = new DecimalFormat("#.###");
         String txt = "MSS: ";
@@ -240,7 +257,12 @@ public class ExcelWriter {
         
 		return txt;
 	}
-
+	
+	/**
+	 * Metoda zwraca kolor dla wartoœci miary MSS.
+	 * @param clusterMSS double - wartoœæ MSS
+	 * @return Colour - znormalizowany kolor dla Excel2003
+	 */
 	private Colour setMSSEval(double clusterMSS) {
 		if (clusterMSS > 0.8) return Colour.GREEN;
 		else if (clusterMSS > 0.60) return Colour.SEA_GREEN;
@@ -274,9 +296,7 @@ public class ExcelWriter {
 		else if (pie > 0.25) return Colour.LIGHT_ORANGE;
 		else if (pie <= 0.25) return Colour.RED;
 		
-		return Colour.WHITE;
-
-		
+		return Colour.WHITE;	
 	}
 	
 	/**
@@ -379,6 +399,17 @@ public class ExcelWriter {
 		cv.setAutosize(true);
 	}
 
+	/**
+	 * Metoda dodaje wartoœæ liczbow¹ do komórki arkusza.
+	 * @param sheet WritableSheet - arkusz o którym mowa
+	 * @param column int - nr kolumny od 0
+	 * @param row int - nr wiersza od 0
+	 * @param value Integer - wartoœæ int do wpisania
+	 * @param format WritableCellFormat - domyœlny format czcionek
+	 * @param col Colour - jeœli jest podany (a nie null) to wtedy jest uwzglêdniany
+	 * @throws WriteException
+	 * @throws RowsExceededException
+	 */
 	private void addIntCell(WritableSheet sheet, int column, int row, Integer value, WritableCellFormat format, Colour col) throws WriteException, RowsExceededException {
 		if(col != null) {
 			WritableFont cellFont = (WritableFont) format.getFont();
@@ -406,10 +437,19 @@ public class ExcelWriter {
 			Number cell = new Number(column, row, value, format);
 			sheet.addCell(cell);
 		}
-		//Number cell = new Number(column, row, value, format);
-		//sheet.addCell(cell);
 	}
 
+	/**
+	 * Metoda dodaje ³añcuch znaków do komórki arkusza.
+	 * @param sheet WritableSheet - arkusz o którym mowa
+	 * @param column int - nr kolumny od 0
+	 * @param row int - nr wiersza od 0
+	 * @param s String - wartoœæ int do wpisania
+	 * @param format WritableCellFormat - domyœlny format czcionek
+	 * @param col Colour - jeœli jest podany (a nie null) to wtedy jest uwzglêdniany
+	 * @throws WriteException
+	 * @throws RowsExceededException
+	 */
 	private void addTextCell(WritableSheet sheet, int column, int row, String s, WritableCellFormat format, Colour col) throws WriteException, RowsExceededException {
 		if(col != null) {
 			WritableFont cellFont = (WritableFont) format.getFont();
@@ -422,7 +462,5 @@ public class ExcelWriter {
 			Label label = new Label(column, row, s, format);
 			sheet.addCell(label);
 		}
-		//Label label = new Label(column, row, s, format);
-		//sheet.addCell(label);
 	}
 }

@@ -267,7 +267,7 @@ public class DarkMenu extends JMenuBar {
 				Tools.getResIcon32("/icons/menu/menu_WindowProperties.png")));
 		windowMenu.add(new DockableMenuItem(guiManager.getSimulatorBox().getDockable(),
 				Tools.getResIcon32("/icons/menu/menu_WindowSimulator.png")));
-		windowMenu.add(new DockableMenuItem(guiManager.getAnalyzerBox().getDockable(),
+		windowMenu.add(new DockableMenuItem(guiManager.getInvariantsBox().getDockable(),
 				Tools.getResIcon32("/icons/menu/menu_WindowsAnalysis.png")));
 		windowMenu.add(new DockableMenuItem(guiManager.getMctBox().getDockable(),
 				Tools.getResIcon32("/icons/menu/menu_WindowMCT.png")));

@@ -11,8 +11,12 @@ import abyss.math.PetriNet;
 import abyss.math.Place;
 import abyss.math.Transition;
 
+/**
+ * Metoda stara siê liczyæ inwarianty. Cosik nie wysz³o do koñca...
+ * @author Bart³omiej Szawulak
+ *
+ */
 public class EarlyInvariantsAnalyzer implements Runnable {
-
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
 	private ArrayList<Place> places = new ArrayList<Place>();
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
@@ -26,17 +30,15 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 	@SuppressWarnings("unused")
 	private int glebokosc = 0;
 	private boolean znalazl = false;
-	private NetPropertiesAnalyzer NPA = new NetPropertiesAnalyzer();
+	//private NetPropertiesAnalyzer NPA = new NetPropertiesAnalyzer();
 
 	@Override
 	public void run() {
 		this.CreateIncidanceMatrixAndTxTMatrix();
 		this.Analyze();
 		PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		GUIManager.getDefaultGUIManager().getPropAnalyzerBox().showNetProperties(NPA.propAnalyze());
-		GUIManager.getDefaultGUIManager().getAnalyzerBox().showInvariants(project.getGeneratedInvariants());
+		GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getGeneratedInvariants());
 		project.setInvariantsMatrix(invariantsList);
-		//project.invariantsMatrix = invariantsList;
 	}
 
 	public EarlyInvariantsAnalyzer() {

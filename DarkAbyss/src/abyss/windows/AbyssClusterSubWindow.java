@@ -3,14 +3,11 @@ package abyss.windows;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -54,6 +51,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
 	
 	private String clusterPath;
+	
 	/**
 	 * Konstruktor domyœlny obiektu klasy AbyssClusterSubWindow.
 	 */
@@ -237,7 +235,6 @@ public class AbyssClusterSubWindow extends JFrame {
 			for(int i=0; i< value-result.length(); i++ )
 				spaces += " ";
 		}
-		
 		return result+spaces;
 	}
 	
@@ -352,78 +349,41 @@ public class AbyssClusterSubWindow extends JFrame {
 	 */
 	private JPanel createEditor() {
 		editPanel = new JPanel();
-		//this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		editPanel.setLayout(new GridBagLayout());
+		//editPanel.setBorder(BorderFactory.createTitledBorder("SSSSSSS"));
+		editPanel.setLayout(null);
+		editPanel.setBounds(0, 0, 500, 500);
         
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0.1;
-        gbc.weighty = 1.0;
            
         textPane = createTextPane();
         textPane.setEditable(false);
         paneScrollPane = new JScrollPane(textPane);
         paneScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-      
-        editPanel.add(paneScrollPane, gbc);
-        gbc.insets = new Insets(5,10,5,10);  //top padding
-        gbc.gridy = 1; 
-        gbc.weightx = 0.0;
-        gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.SOUTH;
+        paneScrollPane.setBounds(5, 5, 585, 500);
+        editPanel.add(paneScrollPane);
+        
         
         JButton button = new JButton("Export clustering", 
         		Tools.getResIcon48("/icons/clustWindow/buttonExportSingleToExcel.png"));
-        button.setBounds(new Rectangle(150, 40));
-        //button.setPreferredSize(new Dimension(150,40));
+        button.setBounds(5, 505, 220, 50);
+        //button.setBounds(new Rectangle(150, 40));
         button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(clusterPath != null && !clusterPath.equals("")) {
-					String alg = clusteringMetaData.algorithmName;
-					if(alg.equals("UPGMA"))
-						alg = "average";
-					
-					//generowanie klastrowania:
-					String resultFiles[] = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
-							clusterPath, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
-					if(resultFiles != null) {
-						ClusterReader reader = new ClusterReader();
-						// czytanie wyników:
-						ClusteringExtended fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
-						if(fullData==null) {
-							GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to Excel cannot begin.", "error", true);
-							return;
-						}
-						
-						Object[] options = {"Save data files and Excel file", "Make Excel file only",};
-						int n = JOptionPane.showOptionDialog(null,
-										"Clustering data extraction succeed. What to do now?",
-										"Choose output file", JOptionPane.YES_NO_OPTION,
-										JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-						if (n == 0) { //both files
-							boolean success = saveAllFiles(fullData, resultFiles);
-							if(success) {
-								deleteTmpFile(resultFiles);
-							}
-						} else { //only excel
-							String path = saveExcelOnly(fullData);
-							if(path != null) {
-								deleteTmpFile(resultFiles);
-							}
-						}
-						
-					} else {
-						GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
-								+ "contacting authors about the problem please attach *all* three files mentioned in"
-								+ "this log above this message.", "error", true);
-					}
-				}
+				exportDataToExcel();
 			}	
 		});
-        editPanel.add(button, gbc);
+        editPanel.add(button);
+        
+        JButton buttonInjectCluster = new JButton("Export clustering", 
+        		Tools.getResIcon48("/icons/clustWindow/buttonExportSingleToExcelaaa.png"));
+        buttonInjectCluster.setBounds(260, 505, 220, 50);
+        buttonInjectCluster.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				exportToAbyss();
+			}	
+		});
+        editPanel.add(buttonInjectCluster);
+        
+        editPanel.repaint();
         return editPanel;
 	}
 	
@@ -520,5 +480,128 @@ public class AbyssClusterSubWindow extends JFrame {
 			return null;
 		}
 		return selectedFile;
+	}
+
+	/**
+	 * Metoda obs³uguje zdarzenie klikniêcia na przycisk eksportu danych do .xls
+	 */
+	protected void exportDataToExcel() {
+		String targetDir = getCSVLocation();
+		if(targetDir == null)
+			return;
+		
+		String alg = clusteringMetaData.algorithmName;
+		if(alg.equals("UPGMA"))
+			alg = "average";
+		
+		//generowanie klastrowania:
+		String resultFiles[] = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
+				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
+		if(resultFiles != null) {
+			ClusterReader reader = new ClusterReader();
+			// czytanie wyników:
+			ClusteringExtended fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
+			if(fullData==null) {
+				GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to Excel cannot begin.", "error", true);
+				return;
+			}
+			
+			Object[] options = {"Save data files and Excel file", "Make Excel file only",};
+			int n = JOptionPane.showOptionDialog(null,
+							"Clustering data extraction succeed. What to do now?",
+							"Choose output file", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			if (n == 0) { //both files
+				boolean success = saveAllFiles(fullData, resultFiles);
+				if(success) {
+					deleteTmpFile(resultFiles);
+				}
+			} else { //only excel
+				String path = saveExcelOnly(fullData);
+				if(path != null) {
+					deleteTmpFile(resultFiles);
+				}
+			}
+			
+		} else {
+			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
+					+ "contacting authors about the problem please attach *all* three files mentioned in"
+					+ "this log above this message.", "error", true);
+		}
+		
+	}
+
+	/**
+	 * Metoda ta zwraca œcie¿kê do katalogu, w którym znajduje siê cluster.csv.
+	 * @return String - œcie¿ka do katalogu
+	 */
+	protected String getCSVLocation() {
+		String targetDir = "";
+		if(clusterPath == null || clusterPath.equals("")) {
+			JOptionPane.showMessageDialog(null, "Please select csv file containing invariants.", 
+					"Selection",JOptionPane.INFORMATION_MESSAGE);
+			
+			FileFilter[] filters = new FileFilter[1];
+			filters[0] = new ExtensionFileFilter("Invariants csv file (.csv)", new String[] { "CSV" });
+			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select", "");
+			if(selectedFile.equals(""))
+				return null;
+			
+			File x = new File(selectedFile);
+			String name = x.getName();
+			String path = Tools.getFilePath(x);
+			if(!name.equals("cluster.csv")) {
+				try {
+					Tools.copyFileByPath(x.getAbsolutePath(), path+"cluster.csv");
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			targetDir = path;
+			
+		} else {
+			targetDir = clusterPath;
+		}
+		return targetDir;
+	}
+	
+	/**
+	 * Metoda obs³uguje zdarzenie klikniêcia na przycisk eksportu danych do okna g³ównego.
+	 */
+	protected void exportToAbyss() {
+		String targetDir = getCSVLocation();
+		if(targetDir == null)
+			return;
+		
+		
+		String alg = clusteringMetaData.algorithmName;
+		if(alg.equals("UPGMA"))
+			alg = "average";
+		
+		//generowanie klastrowania:
+		String resultFiles[] = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
+				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
+		if(resultFiles != null) {
+			ClusterReader reader = new ClusterReader();
+			ClusteringExtended fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
+			if(fullData==null) {
+				GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to Excel cannot begin.", "error", true);
+				return;
+			}
+			
+			ArrayList<ArrayList<Color>> data = fullData.getClusteringColored();
+			
+			GUIManager.getDefaultGUIManager().showClusterSelectionBox(data);
+			
+			deleteTmpFile(resultFiles);
+		} else {
+			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
+					+ "contacting authors about the problem please attach *all* three files mentioned in"
+					+ "this log above this message.", "error", true);
+		}
+		
 	}
 }

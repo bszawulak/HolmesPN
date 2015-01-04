@@ -1,5 +1,6 @@
 package abyss.clusters;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 /**
@@ -16,14 +17,17 @@ public class ClusteringExtended {
 	public Clustering metaData; //meta dane o klastrowaniu
 	/**
 	 * Wektor przechowuj¹cy nazwy tranzycji sieci, indeks to numer porz¹dkowy, indeks=0 - puste miejsce
+	 * Pobrany z pliku csv, tak wiêc od pozycji nr 1 do ostatniej zawieraæ powinien tranzycje w takiej
+	 * kolejnoœci jak wystêpuj¹ w csv, czyli jak wystêpujê w zbiorze tranzycji obiektu PetriNet programu.
+	 * Wszystko szlag trafi, jeœli bêdzie inaczej :) czyli jeœli u¿yto nieprawid³owego pliku csv
+	 * do aktualnie analizowanej sieci...
 	 */
-	public String[] transNames; //nazwy tranzycji
+	public String[] transNames; //nazwy tranzycji, 
 	/**
 	 * Tablica inwariantów, przepisana z pliku CSV. Pierwsza kolumna w ka¿dym wierszu to nr porz¹dkowy
 	 * inwariantu, nastêpnie pola s¹ równe 0 lub wiêcej w zale¿noœci, które tranzycje s¹ wsparciem
 	 * inwariantu. Nr indeksu kolumny w tej macierzy to dok³adnie nr indeksu nazwy tranzycji w transNames.
 	 */
-	//public int[][] csvInvariants; //tablica inwariantów z pliku CSV
 	public ArrayList<ArrayList<Integer>> csvInvariants; //tablica inwariantów z pliku CSV
 	/**
 	 * Nr wpisany w macierzy mctSets to indeks nazwy tranzycji w wektorze String[] transNames. Pierwsza
@@ -37,17 +41,17 @@ public class ClusteringExtended {
 	 */
 	public ArrayList<ArrayList<Integer>> clustersInv;
 	
-	//public int[][] transInClusters; // ile tranzycji (na bazie binarnej licznoœci inwariantów)
-	//public int[][] transInClustersReal; //ile naprawdê tranzycji w klastrze
-	
-	//public int MCTinClusters[][];
-	//public int transInClustersNoMCT[][];
-	//public int transInClustersNoMCTReal[][];
-	
+	/**
+	 * Konstruktor domyœlny obiektu klasy ClusteringExtended.
+	 */
 	public ClusteringExtended() {
-		
+		metaData = null;
+		transNames = new String[1];
+		csvInvariants = new ArrayList<ArrayList<Integer>>();
+		mctSets = new ArrayList<ArrayList<Integer>>();
+		clustersInv = new ArrayList<ArrayList<Integer>>();
 	}
-	
+
 	/**
 	 * Metoda ta zwraca wektor o licznoœci zbiorów MCT, ka¿da liczba oznacza ile razy MCT 
 	 * wyst¹pi³ w 'sumie' inwariantów klastra
@@ -149,6 +153,13 @@ public class ClusteringExtended {
 		return result;
 	}
 	
+	/**
+	 * Metoda ta zwraca tablicê ³añcuchów znaków. Pierwszym elementem jest numer inwariantu
+	 * wraz z fraz¹ Inv. #, drugi element to wszystkie zbiory MCT wchodz¹ce w sk³ad inwariantu
+	 * w formie [ ... ], nastêpnie ka¿dy element to nazwa tranzycji inwariantu poza MCT.
+	 * @param invNumber int - nr inwariantu
+	 * @return ArrayList[String] - nazwa-opis inwariantu
+	 */
 	public ArrayList<String> getNormalizedInvariant(int invNumber) {
 		ArrayList<String> result = new ArrayList<String>();
 		ArrayList<Integer> invRow = new ArrayList<Integer>( csvInvariants.get(invNumber) ); 
@@ -201,6 +212,126 @@ public class ClusteringExtended {
 		return result;
 	}
 	
+	/**
+	 * Metoda zwraca macierz klastrów/tranzycji, z kolorami dla ka¿dej tranzycji.
+	 * @return ArrayList[ArrayList[Color]] - macierz kolorów dla tranzycji w klastrach
+	 */
+	public ArrayList<ArrayList<Color>> getClusteringColored() {
+		ArrayList<ArrayList<Color>> coloredClustering = new ArrayList<ArrayList<Color>>();
+		if(clustersInv.size() > 0) {
+			for(int c=0; c<clustersInv.size(); c++) {
+				ArrayList<Color> colorRow = getTransitionColorsType1(c);
+				coloredClustering.add(colorRow);
+			}
+		}
+		
+		return coloredClustering;
+	}
+	
+	/**
+	 * Zwraca wektor kolorów tranzycji dla wybranego klastra, dzia³a w trybie binarnym
+	 * @param clusterNumber int - nr klastra
+	 * @return ArrayList[Color] - wektor kolorów tranzycji
+	 */
+	private ArrayList<Color> getTransitionColorsType1(int clusterNumber) {
+		ArrayList<Integer> clusterTransitions = getTransitionFromCluster(clusterNumber, false);
+		//policz maks
+		int max=0;
+		for(int i=0; i<clusterTransitions.size(); i++) {
+			if(clusterTransitions.get(i) > max)
+				max = clusterTransitions.get(i);
+		}
+		//wzglêdem tego kolory
+		return getColorsForTransitions(clusterTransitions, max);
+	}
+	
+	/**
+	 * Metoda zwraca wektor kolorów dla ka¿dej tranzycji w zale¿noœci od jej 'mocy'
+	 * w klastrze
+	 * @param clusterTransitions ArrayList[Integer] - wektor tranzycji
+	 * @param value int - wartoœæ referencyjna
+	 * @return ArrayList[Colors] - wektor kolorów dla tranzycji
+	 */
+	private ArrayList<Color> getColorsForTransitions(ArrayList<Integer> clusterTransitions, int value) {
+		ArrayList<Color> colors = new ArrayList<Color>();
+		double max = value;
+		double step = max / 10;
+		
+		for(int i=0; i<clusterTransitions.size(); i++) {
+			double power = clusterTransitions.get(i);
+			if(power >= 9*step) {
+				colors.add(new Color(25, 105, 0)); //dark green
+			} else if(power >= 8*step) {
+				colors.add(new Color(55, 235, 0)); // light green
+			} else if(power >= 7*step) {
+				colors.add(new Color(145, 255, 0)); //green-yellow
+			} else if(power >= 6*step) {
+				colors.add(new Color(239, 255, 0)); //yellow
+			} else if(power >= 5*step) {
+				colors.add(new Color(255, 205, 0)); //gold
+			} else if(power >= 4*step) {
+				colors.add(new Color(255, 162, 0)); //orange
+			} else if(power >= 3*step) {
+				colors.add(new Color(255, 94, 0)); //darker orange
+			} else if(power == 0) {
+				colors.add(Color.white); //null
+			} else if(power < 3*step) {
+				colors.add(new Color(255, 0, 0)); //red
+			}
+		}
+
+		return colors;
+	}
+
+	/**
+	 * Metoda zwraca wektor o licznoœci tranzycji w sieci. W zale¿noœci od flagi real wektor
+	 * ten zawiera sumê wszystkich odpaleñ tranzycji w klastrze, lub tylko liczbê ich wyst¹pieñ
+	 * w ramach inwariantów.
+	 * @param clusterNumber int - nr klastra
+	 * @param real boolean - false, jeœli liczymy tylko wyst¹pienia tranzycji w inwariantach 
+	 * 		klastra, true - jeœli sumaryczn¹ wartoœæ odpaleñ
+	 * @return ArrayList[Integer] - wektor wartoœci dla tranzycji
+	 */
+	private ArrayList<Integer> getTransitionFromCluster(int clusterNumber, boolean real) {
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		
+		for(int inv=0; inv<clustersInv.get(clusterNumber).size(); inv++) {
+			int invID = clustersInv.get(clusterNumber).get(inv); //prawdziwy nr inwariantu
+			ArrayList<Integer> transVector = csvInvariants.get(invID); //pobierz wektor tranzycji
+			
+			if(inv==0) {
+				for(int tr=1; tr<transVector.size(); tr++) {//1 element to nr porz¹dkowy - ignore
+					int value = transVector.get(tr);
+					if(real) { //jeœli dodajemy rzeczywiste odpalenia
+						result.add(value); //dodaj wartoœci odpaleñ
+					} else { //jeœli tylko odnotowujemy czy wsparcie jest czy go nie ma
+						if(value>0)
+							result.add(1);
+						else
+							result.add(0);
+					}
+				}
+			} else { //jeœli wartoœci wektor wynikowego ju¿ istniej¹
+				for(int tr=1; tr<transVector.size(); tr++) {//1 element to nr porz¹dkowy - ignore
+					int value = transVector.get(tr);
+					if(real) { //jeœli dodajemy rzeczywiste odpalenia
+						int oldValue = result.get(tr-1);
+						oldValue += value;
+						result.set(tr-1, oldValue); //dodaj wartoœci odpaleñ
+					} else { //jeœli tylko odnotowujemy czy wsparcie jest czy go nie ma
+						if(value>0) {
+							int oldValue = result.get(tr-1);
+							result.set(tr-1, oldValue+1); //odnotuj wsparcie
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+
+
 	/**
 	 * Metoda ta sprawdza, czy elementy zbioru subset (nr tranzycji) znajduj¹ siê na odpowiednich
 	 * miejsach w zbiorze superset (tj. nr tranzycji z subset to indeks z superset i > 0 w tym miejscu)

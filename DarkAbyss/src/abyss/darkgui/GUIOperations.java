@@ -67,7 +67,6 @@ public class GUIOperations {
 		overlord.getWorkspace().getProject().loadFromFile(file.getPath());
 		overlord.setLastPath(file.getParentFile().getPath());
 		overlord.getSimulatorBox().createSimulatorProperties();
-		overlord.showNetworkProperties();  //poka¿ w³aœciwoœci sieci
 	}
 	
 	/**
@@ -89,7 +88,6 @@ public class GUIOperations {
 		overlord.getWorkspace().getProject().loadFromFile(file.getPath());
 		overlord.setLastPath(file.getParentFile().getPath());
 		overlord.getSimulatorBox().createSimulatorProperties();
-		overlord.showNetworkProperties(); //poka¿ w³aœciwoœci sieci
 	}
 	
 	/**
@@ -320,7 +318,7 @@ public class GUIOperations {
 
 		PetriNet project = overlord.getWorkspace().getProject();
 		project.loadInvariantsFromFile(file.getPath());
-		overlord.getAnalyzerBox().showExternalInvariants(project.getInaInvariants());
+		overlord.getInvariantsBox().showInvariants(project.getInaInvariants());
 		overlord.setLastPath(file.getParentFile().getPath());
 		overlord.getSimulatorBox().createSimulatorProperties();
 	}
@@ -411,8 +409,9 @@ public class GUIOperations {
 			//wczytywanie inwariantów do systemu:
 			PetriNet project = overlord.getWorkspace().getProject();
 			project.loadInvariantsFromFile(invariantsFile.getPath());
-			//project.genInvariants = project.getCommunicator().getInvariantsList();
-			overlord.getAnalyzerBox().showExternalInvariants(project.getInaInvariants());
+
+			overlord.getInvariantsBox().showInvariants(project.getInaInvariants());
+			//overlord.getInvariantsBox().showExternalInvariants(project.getInaInvariants());
 			overlord.getSimulatorBox().createSimulatorProperties();
 		
 			//co dalej z plikiem?

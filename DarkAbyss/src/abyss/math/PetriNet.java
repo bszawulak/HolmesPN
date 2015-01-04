@@ -23,6 +23,7 @@ import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -972,6 +973,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				((Transition) n).setGlowedMTC(isGlowedMTC);
 			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
 				((TimeTransition) n).setGlowedMTC(isGlowedMTC);
+	}
+	
+	/**
+	 * Metoda wygasza kolorowanie tranzycji w ramach klastra
+	 * @param isColorActive boolean - true jeœli ma siê wyœwietlaæ
+	 */
+	public void setColorClusterToNeutral() {
+		for (Node n : getNodes())
+			if (n.getType() == PetriNetElementType.TRANSITION)
+				((Transition) n).setGlowedCluster(false, Color.white);
+			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
+				((TimeTransition) n).setGlowedCluster(false, Color.white);
 	}
 	
 	/**

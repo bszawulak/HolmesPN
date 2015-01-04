@@ -1,5 +1,6 @@
 package abyss.darkgui.properties;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -45,7 +46,7 @@ public class AbyssDockWindow extends SingleDock {
 	 * EDITOR, SIMULATOR, SELECTOR, InvANALYZER, PropANALYZER, MctANALYZER,InvSIMULATOR
 	 */
 	public enum DockWindowType {
-		EDITOR, SIMULATOR, SELECTOR, InvANALYZER, PropANALYZER, MctANALYZER, InvSIMULATOR
+		EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR
 	}
 
 	/**
@@ -70,19 +71,20 @@ public class AbyssDockWindow extends SingleDock {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Selection", scrollPane,
 					"Selection"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == DockWindowType.InvANALYZER)
-			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants analysis", scrollPane,
+			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_analysis", scrollPane,
 					"Invariants"),GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == DockWindowType.MctANALYZER)
-			setDockable(GUIManager.externalWithListener(new DefaultDockable("MCT Groups", scrollPane,
+			setDockable(GUIManager.externalWithListener(new DefaultDockable("MCT_Groups", scrollPane,
 					"MCT"),GUIManager.getDefaultGUIManager().getDockingListener()));
-		else if (type == DockWindowType.PropANALYZER)
-			setDockable(GUIManager.externalWithListener(new DefaultDockable("Net properties", scrollPane,
-					"Net Properties"),GUIManager.getDefaultGUIManager().getDockingListener()));
+		else if (type == DockWindowType.ClusterSELECTOR)
+			setDockable(GUIManager.externalWithListener(new DefaultDockable("Clusters_Selection", scrollPane,
+					"Clusters"),GUIManager.getDefaultGUIManager().getDockingListener()));
+		
 		else if (type == DockWindowType.InvSIMULATOR)
-			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants simulator", scrollPane,
+			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_simulator", scrollPane,
 					"InvSim"),GUIManager.getDefaultGUIManager().getDockingListener()));
-//		setDockable(GUIManager.getDefaultGUIManager()
-//				.decorateDockableWithActions(getDockable(), false));
+
+		
 
 		position = new Point(0, 0);
 		this.addDockable(getDockable(), position, position);
@@ -136,18 +138,6 @@ public class AbyssDockWindow extends SingleDock {
 	}
 	
 	/**
-	 * Metoda wywo³ywana podczas wczytywania inwariantów z programu INA
-	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - inwarianty
-	 */
-	public void showExternalInvariants(ArrayList<ArrayList<InvariantTransition>> invariants) {
-		if (type == DockWindowType.InvANALYZER) {
-			setCurrentDockWindow(new AbyssDockWindowsTable(invariants));
-			scrollPane.getViewport().add(getCurrentDockWindow());
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer().settInvariants(invariants); 
-		}
-	}
-	
-	/**
 	 * Metoda wywo³ywana po wygenerowaniu inwariantów przez program. Zleca wykonanie
 	 * elementów interfejsu dla pokazywania inwariantów. W zasadzie nie ró¿ni siê od
 	 * showExternalInvariants(...)
@@ -162,12 +152,13 @@ public class AbyssDockWindow extends SingleDock {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za pokazanie w³aœciwoœci sieci Petriego.
-	 * @param arrayList ArrayList[ArrayList[Object]] - macierz obiektów z w³aœciwoœciami
+	 * Metoda wywo³ywa w momencie, kiedy z okna klastrów wp³yn¹ dane o kolorach
+	 * tranzycji w ka¿dym klastrze. Wtedy tworzy ca³¹ resztê elementów podokna klastrów.
+	 * @param coloredClustering ArrayList[ArrayList[Color]] - macierz kolorów
 	 */
-	public void showNetProperties(ArrayList<ArrayList<Object>> arrayList) {
-		if (type == DockWindowType.PropANALYZER) {
-			setCurrentDockWindow(new AbyssDockWindowsTable(arrayList,true));
+	public void showClusterSelector(ArrayList<ArrayList<Color>> coloredClustering) {
+		if (type == DockWindowType.ClusterSELECTOR) {
+			setCurrentDockWindow(new AbyssDockWindowsTable(coloredClustering, true));
 			scrollPane.getViewport().add(getCurrentDockWindow());			
 		}
 	}
@@ -195,6 +186,7 @@ public class AbyssDockWindow extends SingleDock {
 	/**
 	 * Metoda odpowiedzialna za wykrycie tego, co zosta³o klikniête w programie, i o ile
 	 * to mo¿liwe - wyœwietlenie w³aœciwoœci tego czegoœ.
+	 * Dzia³a dla podokna EDYTOR
 	 * @param e SelectionActionEvent - zdarzenie wyboru elementów
 	 */
 	public void selectElement(SelectionActionEvent e) {

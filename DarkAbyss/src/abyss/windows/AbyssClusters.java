@@ -444,19 +444,6 @@ public class AbyssClusters extends JFrame {
 			 
 		 }
 	}
-    /*
-    protected void changeCellsInRowCase56(TableModelEvent e) {
-    	try {
-    		DefaultTableModel m = (DefaultTableModel) e.getSource();
-    		int rowNumber = m.getDataVector().size();
-    		for (int col = 0; col < 15; col++) {
-    			table.getModel().getValueAt(rowNumber-1, col);
-			}
-    	} catch (ClassCastException exc) {
-			
-		}
-	}
-	*/
     
     /**
      * Metoda s³u¿¹ca do wype³nienia tabeli w przypadku kiedy mamy 56 klastrowañ.
@@ -580,7 +567,7 @@ public class AbyssClusters extends JFrame {
      */
     private void buttonLoadClusteringDirectory() {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-		String lastPath2 = pathClustersDir;
+		String lastPath2 = getClusterPath();
 		String chosenPath="";
 		if(lastPath2.equals(""))
 			chosenPath = lastPath;
@@ -599,7 +586,7 @@ public class AbyssClusters extends JFrame {
 					"Error", JOptionPane.ERROR_MESSAGE);
 		} else {
 			registerDataCase56(clusterMatrix);
-			pathClustersDir = choosenDir;
+			setClusterPath(choosenDir);
 		}
 		
 		//czy plik startowy jest na miejscu?
@@ -634,7 +621,7 @@ public class AbyssClusters extends JFrame {
 			GUIManager.getDefaultGUIManager().log("Attempting to export cluster table to excel",
 					"text", true);
 			
-			String dirPath = Tools.selectDirectoryDialog(pathClustersDir, "Select cluster dir",
+			String dirPath = Tools.selectDirectoryDialog(getClusterPath(), "Select cluster dir",
 					"Directory with 56 generated R-clusters text files.");
 			if(dirPath.equals("")) { // czy wskazano cokolwiek
 				return;
@@ -675,7 +662,7 @@ public class AbyssClusters extends JFrame {
 				GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			}
 		} catch (Exception e){
-			String msg = "Excel export procedure failed for directory: "+pathClustersDir;
+			String msg = "Excel export procedure failed for directory: "+getClusterPath();
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", true);
 		}
@@ -750,7 +737,7 @@ public class AbyssClusters extends JFrame {
 		try{
 			FileFilter filter[] = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Abyss CLustering file (.acl)",  new String[] { "acl" });
-			String newLocation = Tools.selectFileDialog(pathClustersDir, filter, "", "");
+			String newLocation = Tools.selectFileDialog(getClusterPath(), filter, "", "");
 			if(newLocation.equals(""))
 				return;
 			
@@ -779,7 +766,7 @@ public class AbyssClusters extends JFrame {
 		{
 			FileFilter filter[] = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Abyss CLustering file (.acl)",  new String[] { "acl" });
-			newLocation = Tools.selectFileDialog(pathClustersDir, filter, "", "");
+			newLocation = Tools.selectFileDialog(getClusterPath(), filter, "", "");
 			if(newLocation.equals("")) 
 				return;
 			

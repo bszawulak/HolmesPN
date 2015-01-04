@@ -34,11 +34,12 @@ public class Transition extends Node {
 	protected boolean isLaunching;
 	protected boolean isGlowed = false;
 	protected boolean isGlowedMTC = false;
+	
 	protected boolean isGlowetCl = false;
-	protected Color glowedClColor;
+	protected Color clusterColorForTransition = new Color(255,255,255);
 	
 	protected int firingNumber = 0;
-	private ArrayList<ArrayList<Transition>> containingInvariants = new ArrayList<ArrayList<Transition>>();
+	//private ArrayList<ArrayList<Transition>> containingInvariants = new ArrayList<ArrayList<Transition>>();
 	
 
 	/**
@@ -221,22 +222,18 @@ public class Transition extends Node {
 				g.setStroke(EditorResources.glowStrokeLevel3);
 				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 			}
-			//g.setColor(Color.white);
 			
 			if (isGlowed()) {
-				//g.setColor(Color.blue);
 				g.setColor(EditorResources.glowTransitonColorLevel3);
 			}
 			else if(isGlowedMTC()) {
-				//g.setColor(Color.green);
 				g.setColor(EditorResources.glowMTCTransitonColorLevel3);
+			}
+			else if(isGlowedCluster()) {
+				g.setColor(clusterColorForTransition);
 			}
 			else {
 				g.setColor(new Color(224,224,224));
-				//g.setColor(Color.lightGray);
-			
-				//g.setColor(new Color(0,102,0));
-				//g.setColor(Color.lightGray);
 			}
 			
 			
@@ -244,8 +241,10 @@ public class Transition extends Node {
 			g.setColor(Color.DARK_GRAY);
 			g.setStroke(new BasicStroke(1.5F));
 			g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+			
 			if (this.isPortal())
 				g.drawRect(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
+			
 			g.setColor(EditorResources.glowTransitonTextColor);
 			if (this.isGlowed && this.firingNumber > 0)
 				g.drawString(
@@ -346,12 +345,22 @@ public class Transition extends Node {
 		this.isGlowedMTC = value;
 	}
 	
+	/**
+	 * Metoda zwraca wartoœæ flagi koloru dla klastra
+	 * @return boolean - true, jeœli ma mieæ dany kolor
+	 */
 	public boolean isGlowedCluster() {
 		return isGlowetCl;
 	}
+	
+	/**
+	 * Metoda ustawia flagê koloru dla tranzycji w ramach klastra oraz kolor.
+	 * @param value boolean - true, jeœli ma rysowaæ siê w kolorze
+	 * @param clColor Color - na jaki kolor
+	 */
 	public void setGlowedCluster(boolean value, Color clColor) {
 		this.isGlowetCl = value;
-		this.glowedClColor = clColor;
+		this.clusterColorForTransition = clColor;
 	}
 	/**
 	 * Metoda zwraca liczbê wyst¹pieñ uruchomieñ tranzycji w ramach niezmiennika.
@@ -433,7 +442,7 @@ public class Transition extends Node {
 	 * @return ArrayList[ArrayList[Transition]] - macierz inwariantow
 	 */
 	public ArrayList<ArrayList<Transition>> getContainingInvariants() {
-		return containingInvariants;
+		return null;
 	}
 
 	/**
@@ -441,7 +450,7 @@ public class Transition extends Node {
 	 * @param containingInvariants ArrayList[ArrayList[Transition]] - macierz niezmienników
 	 */
 	public void setContainingInvariants(ArrayList<ArrayList<Transition>> containingInvariants) {
-		this.containingInvariants = containingInvariants;
+		//this.containingInvariants = containingInvariants;
 	}
 	
 	/**

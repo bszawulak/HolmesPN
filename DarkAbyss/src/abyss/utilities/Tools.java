@@ -157,6 +157,20 @@ public final class Tools {
 		} 
 		return resultDir;
 	}
+	
+	/**
+	 * Zwraca tylko œcie¿kê dostêpu do pliku.
+	 * @param x File - plik
+	 * @return String - œcie¿ka do katalogu
+	 */
+	public static String getFilePath(File x) {
+		if(x == null)
+			return null;
+		
+		String absolutePath = x.getAbsolutePath();
+		String filePath = absolutePath. substring(0, absolutePath.lastIndexOf(File.separator));
+		return filePath + "\\";
+	}
 
 	/*
 	 * Zestaw poni¿szych metod zapewnia bezpieczny sposób pobierania plików z zasobów.
