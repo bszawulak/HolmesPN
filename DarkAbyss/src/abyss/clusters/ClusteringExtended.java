@@ -3,6 +3,8 @@ package abyss.clusters;
 import java.awt.Color;
 import java.util.ArrayList;
 
+import abyss.math.ClusterTransition;
+
 /**
  * Klasa kontener do przechowywania wszystkich struktur danych opisuj¹cych konkretny przypadek
  * klastrowania. Zawiera te¿ pe³ne dane pliku CSV, mo¿liwe jest wiêc z ka¿dego jej obiektu
@@ -213,28 +215,47 @@ public class ClusteringExtended {
 	}
 	
 	/**
-	 * Metoda zwraca macierz klastrów/tranzycji, z kolorami dla ka¿dej tranzycji.
-	 * @return ArrayList[ArrayList[Color]] - macierz kolorów dla tranzycji w klastrach
+	 * Metoda pod wezwaniem ArrayListy, zwraca macierz klastrów/tranzycji, z kolorami 
+	 * dla ka¿dej tranzycji.
+	 * @return ArrayList[ArrayList[Color]] - macierz danych dla tranzycji w klastrach
 	 */
-	public ArrayList<ArrayList<Color>> getClusteringColored() {
-		ArrayList<ArrayList<Color>> coloredClustering = new ArrayList<ArrayList<Color>>();
+	public ArrayList<ArrayList<ClusterTransition>> getClusteringColored() {
+		ArrayList<ArrayList<ClusterTransition>> coloredClustering = new ArrayList<ArrayList<ClusterTransition>>();
 		if(clustersInv.size() > 0) {
 			for(int c=0; c<clustersInv.size(); c++) {
-				ArrayList<Color> colorRow = getTransitionColorsType1(c);
-				coloredClustering.add(colorRow);
+				ArrayList<ClusterTransition> dataRow = new ArrayList<ClusterTransition>();
+				ArrayList<Integer> cTrans = getTransitionFromCluster(c, false);
+				ArrayList<Integer> cFired = getTransitionFromCluster(c, true);
+				
+				ArrayList<Color> colorRowTransGrade = getTransitionColorsType1(c, false, cTrans);
+				ArrayList<Color> colorRowTransScale = getTransitionColorsType1(c, true, cTrans);
+				ArrayList<Color> colorRowFiredGrade = getTransitionColorsType1(c, false, cFired);
+				ArrayList<Color> colorRowFiredScale = getTransitionColorsType1(c, true, cFired);
+				
+				for(int trans=0; trans<colorRowTransGrade.size(); trans++) {
+					ClusterTransition atomicData = new ClusterTransition(
+							colorRowTransGrade.get(trans), colorRowTransScale.get(trans),
+							colorRowFiredGrade.get(trans), colorRowFiredScale.get(trans),
+							cTrans.get(trans), cFired.get(trans));
+					dataRow.add(atomicData);
+				}
+				coloredClustering.add(dataRow);
 			}
 		}
-		
 		return coloredClustering;
 	}
 	
 	/**
 	 * Zwraca wektor kolorów tranzycji dla wybranego klastra, dzia³a w trybie binarnym
 	 * @param clusterNumber int - nr klastra
+	 * @param scale boolean - true jeœli chcemy skalê od zielonego do czerwonego, false
+	 * 		jeœli maj¹ byæ wartoœci krokowe kolorów
+	 * @param data ArrayList[Integer] - wektor liczby tranzycji w klastrze lub ich odpaleñ
 	 * @return ArrayList[Color] - wektor kolorów tranzycji
 	 */
-	private ArrayList<Color> getTransitionColorsType1(int clusterNumber) {
-		ArrayList<Integer> clusterTransitions = getTransitionFromCluster(clusterNumber, false);
+	private ArrayList<Color> getTransitionColorsType1(int clusterNumber, boolean scale,
+			ArrayList<Integer> data) {
+		ArrayList<Integer> clusterTransitions = data;
 		//policz maks
 		int max=0;
 		for(int i=0; i<clusterTransitions.size(); i++) {
@@ -242,7 +263,10 @@ public class ClusteringExtended {
 				max = clusterTransitions.get(i);
 		}
 		//wzglêdem tego kolory
-		return getColorsForTransitions(clusterTransitions, max);
+		if(scale)
+			return getColorScale(clusterTransitions, max);
+		else
+			return getColorsForTransitions(clusterTransitions, max);
 	}
 	
 	/**
@@ -279,8 +303,48 @@ public class ClusteringExtended {
 				colors.add(new Color(255, 0, 0)); //red
 			}
 		}
-
 		return colors;
+	}
+	
+	public ArrayList<Color> getColorScale(ArrayList<Integer> clusterTransitions, int value)
+	{
+		double max = value;
+		double blue = 0.0;
+		double green = 0.0;
+		double red = 0.0;
+		ArrayList<Color> colors = new ArrayList<Color>();
+		for(int i=0; i<clusterTransitions.size(); i++) {
+			double trValue = clusterTransitions.get(i);
+			
+			if(trValue == 0) {
+				colors.add(Color.white);
+				continue;
+			}
+			
+			double power = trValue / max; //od 0 do 1.
+			power = 1 - power;
+			
+			if(power >= 0 && power < 0.5) {
+				green = 1.0;
+				red = 2 * power;
+			} else {
+				red = 1.0;
+				green = 1.0 - 2 * (power - 0.5);
+			}
+			red *= 255;
+			blue *= 255;
+			green *= 255;   
+			
+			colors.add(new Color((int)red, (int)green, (int)blue));
+		}
+		
+	    //double H = power * 0.4; // Hue (note 0.4 = Green, see huge chart below)
+	   // double S = 0.9; // Saturation
+	    //double B = 0.9; // Brightness
+
+	    //return Color.getHSBColor((float)H, (float)S, (float)B);
+	    
+	    return colors;
 	}
 
 	/**

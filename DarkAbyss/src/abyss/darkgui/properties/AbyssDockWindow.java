@@ -1,6 +1,5 @@
 package abyss.darkgui.properties;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -8,9 +7,9 @@ import javax.swing.JScrollPane;
 
 import abyss.analyzer.InvariantsSimulator;
 import abyss.darkgui.GUIManager;
+import abyss.files.clusters.ClusterDataPackage;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
-//import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.math.Arc;
 import abyss.math.InvariantTransition;
 import abyss.math.Node;
@@ -156,9 +155,9 @@ public class AbyssDockWindow extends SingleDock {
 	 * tranzycji w ka¿dym klastrze. Wtedy tworzy ca³¹ resztê elementów podokna klastrów.
 	 * @param coloredClustering ArrayList[ArrayList[Color]] - macierz kolorów
 	 */
-	public void showClusterSelector(ArrayList<ArrayList<Color>> coloredClustering) {
+	public void showClusterSelector(ClusterDataPackage data) {
 		if (type == DockWindowType.ClusterSELECTOR) {
-			setCurrentDockWindow(new AbyssDockWindowsTable(coloredClustering, true));
+			setCurrentDockWindow(new AbyssDockWindowsTable(data, true));
 			scrollPane.getViewport().add(getCurrentDockWindow());			
 		}
 	}

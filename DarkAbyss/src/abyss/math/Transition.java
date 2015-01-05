@@ -2,6 +2,7 @@ package abyss.math;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -37,6 +38,7 @@ public class Transition extends Node {
 	
 	protected boolean isGlowetCl = false;
 	protected Color clusterColorForTransition = new Color(255,255,255);
+	protected int clNumber = 0;
 	
 	protected int firingNumber = 0;
 	//private ArrayList<ArrayList<Transition>> containingInvariants = new ArrayList<ArrayList<Transition>>();
@@ -246,12 +248,33 @@ public class Transition extends Node {
 				g.drawRect(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
 			
 			g.setColor(EditorResources.glowTransitonTextColor);
-			if (this.isGlowed && this.firingNumber > 0)
-				g.drawString(
-						Integer.toString(this.getTokensNumber()),
-						nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics()
-						.stringWidth(Integer.toString(this.getTokensNumber())) / 2, 
-						nodeBounds.y + nodeBounds.height / 2 + 5);
+			
+			//WYŒWIETLANIE DANYCH O ODPALENIACH
+			if (this.isGlowed && this.firingNumber > 0) {
+				int posX = nodeBounds.x + nodeBounds.width / 2 
+						- g.getFontMetrics().stringWidth(Integer.toString(this.getTokensNumber())) / 2;
+				int posY = nodeBounds.y + nodeBounds.height / 2 + 5;
+				g.drawString(Integer.toString(this.getTokensNumber()), posX, posY);
+			}
+			
+			//WYŒWIETLANIE DANYCH ODNOŒNIE WYSTÊPOWANIA TRANZYCJI W KLASTRZE:
+			if(this.isGlowetCl && this.clNumber > 0) {
+				//int posX = nodeBounds.x + (nodeBounds.width / 2)
+				//		- (g.getFontMetrics().stringWidth(Integer.toString(this.clNumber)) / 2);
+				int posX = nodeBounds.x + nodeBounds.width
+						- (g.getFontMetrics().stringWidth(Integer.toString(this.clNumber)) / 2);
+				int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
+				Font old = g.getFont();
+				Color oldC = g.getColor();
+				
+				g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
+				g.setColor(Color.black);
+				g.drawString(Integer.toString(this.clNumber), posX, posY);
+				
+				g.setFont(old);
+				g.setColor(oldC);
+			}
+			
 		}
 		super.draw(g, sheetId);
 	}
@@ -358,9 +381,10 @@ public class Transition extends Node {
 	 * @param value boolean - true, jeœli ma rysowaæ siê w kolorze
 	 * @param clColor Color - na jaki kolor
 	 */
-	public void setGlowedCluster(boolean value, Color clColor) {
+	public void setGlowedCluster(boolean value, Color clColor, int clNumber) {
 		this.isGlowetCl = value;
 		this.clusterColorForTransition = clColor;
+		this.clNumber = clNumber;
 	}
 	/**
 	 * Metoda zwraca liczbê wyst¹pieñ uruchomieñ tranzycji w ramach niezmiennika.

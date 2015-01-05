@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -27,6 +26,7 @@ import javax.swing.text.StyledDocument;
 import abyss.clusters.Clustering;
 import abyss.clusters.ClusteringExtended;
 import abyss.darkgui.GUIManager;
+import abyss.files.clusters.ClusterDataPackage;
 import abyss.files.clusters.ClusterReader;
 import abyss.files.clusters.ExcelWriter;
 import abyss.utilities.Tools;
@@ -364,7 +364,7 @@ public class AbyssClusterSubWindow extends JFrame {
         
         JButton button = new JButton("Export clustering", 
         		Tools.getResIcon48("/icons/clustWindow/buttonExportSingleToExcel.png"));
-        button.setBounds(5, 505, 220, 50);
+        button.setBounds(5, 510, 240, 50);
         //button.setBounds(new Rectangle(150, 40));
         button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -373,9 +373,9 @@ public class AbyssClusterSubWindow extends JFrame {
 		});
         editPanel.add(button);
         
-        JButton buttonInjectCluster = new JButton("Export clustering", 
-        		Tools.getResIcon48("/icons/clustWindow/buttonExportSingleToExcelaaa.png"));
-        buttonInjectCluster.setBounds(260, 505, 220, 50);
+        JButton buttonInjectCluster = new JButton("Send to net", 
+        		Tools.getResIcon48("/icons/clustWindow/button_sendToAbyss.png"));
+        buttonInjectCluster.setBounds(350, 510, 240, 50);
         buttonInjectCluster.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				exportToAbyss();
@@ -569,7 +569,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 	
 	/**
-	 * Metoda obs³uguje zdarzenie klikniêcia na przycisk eksportu danych do okna g³ównego.
+	 * Metoda obs³uguje zdarzenie klikniêcia przycisku eksportu danych do okna g³ównego.
 	 */
 	protected void exportToAbyss() {
 		String targetDir = getCSVLocation();
@@ -586,17 +586,23 @@ public class AbyssClusterSubWindow extends JFrame {
 				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 		if(resultFiles != null) {
 			ClusterReader reader = new ClusterReader();
-			ClusteringExtended fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
-			if(fullData==null) {
+			ClusteringExtended clExtData = reader.readSingleClustering(resultFiles, clusteringMetaData);
+			if(clExtData==null) {
 				GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to Excel cannot begin.", "error", true);
 				return;
 			}
 			
-			ArrayList<ArrayList<Color>> data = fullData.getClusteringColored();
-			
-			GUIManager.getDefaultGUIManager().showClusterSelectionBox(data);
+			ClusterDataPackage dataCore = new ClusterDataPackage();
+			dataCore.dataMatrix = clExtData.getClusteringColored(); //najbardziej czasoch³onne
+			dataCore.algorithm = clExtData.metaData.algorithmName;
+			dataCore.metric = clExtData.metaData.metricName;
+			dataCore.clNumber = clExtData.metaData.clusterNumber;
+			GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyœlij do Abyss (JFrame)
 			
 			deleteTmpFile(resultFiles);
+			
+			JOptionPane.showMessageDialog(null, "Operation successfull. Clusters are ready to show.", 
+					"Status",JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
 					+ "contacting authors about the problem please attach *all* three files mentioned in"

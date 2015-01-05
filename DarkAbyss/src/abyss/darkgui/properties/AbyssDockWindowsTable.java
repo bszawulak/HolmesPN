@@ -42,8 +42,10 @@ import javax.swing.text.DefaultFormatter;
 import abyss.analyzer.InvariantsSimulator;
 import abyss.darkgui.GUIManager;
 import abyss.darkgui.properties.AbyssDockWindow.DockWindowType;
+import abyss.files.clusters.ClusterDataPackage;
 import abyss.graphpanel.GraphPanel;
 import abyss.math.Arc;
+import abyss.math.ClusterTransition;
 import abyss.math.ElementLocation;
 import abyss.math.InvariantTransition;
 import abyss.math.Node;
@@ -100,6 +102,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	public JSpinner spiner = new JSpinner();
 	private JTextArea mctTextArea; // tutaj są wyświetlane szczegóły podświetlonego MCT
 	private JTextArea invTextArea;
+	private JComboBox<String> chooseCluster;
 	
 	private WorkspaceSheet currentSheet;
 	private PetriNetElement element;
@@ -109,7 +112,7 @@ public class AbyssDockWindowsTable extends JPanel {
 
 	private ArrayList<ArrayList<InvariantTransition>> invariantsDock2Form; //używane w podoknie inwariantów
 	private ArrayList<ArrayList<Transition>> mctGroups; //używane tylko w przypadku, gdy obiekt jest typu DockWindowType.MctANALYZER
-	private ArrayList<ArrayList<Color>> clusterColors;
+	private ClusterDataPackage clusterColorsData;
 	// modes
 	private static final int PLACE = 0;
 	private static final int TRANSITION = 1;
@@ -1583,32 +1586,57 @@ public class AbyssDockWindowsTable extends JPanel {
 	 * 
 	 * @param windowType int - w zależności od tego, tworzy dane okno
 	 */
-	public AbyssDockWindowsTable(ArrayList<ArrayList<Color>> clusteringData, boolean ImNotHere) {
+	public AbyssDockWindowsTable(ClusterDataPackage clusteringData, boolean ImNotHere) {
 		initiateContainers();
 			
-		if(clusteringData == null || clusteringData.size() == 0) {
+		if(clusteringData == null || clusteringData.dataMatrix.size() == 0) {
 			return;
 		} else {
 			mode = CLUSTERS;
-			clusterColors = clusteringData;
+			clusterColorsData = clusteringData;
 		}
 		
 		int colA_posX = 10;
 		int colB_posX = 100;
 		int positionY = 10;
 		initiateContainers();
-
-		JLabel chooseInvLabel = new JLabel("Cluster: ");
+		
+		JLabel label1 = new JLabel("Algorithm: ");
+		label1.setBounds(colA_posX, positionY, 80, 20);
+		components.add(label1);
+		JLabel label2 = new JLabel(clusterColorsData.algorithm);
+		label2.setBounds(colB_posX, positionY, 80, 20);
+		components.add(label2);
+		positionY += 20;
+		JLabel label3 = new JLabel("Metric: ");
+		label3.setBounds(colA_posX, positionY, 80, 20);
+		components.add(label3);
+		JLabel label4 = new JLabel(clusterColorsData.metric);
+		label4.setBounds(colB_posX, positionY, 80, 20);
+		components.add(label4);
+		positionY += 20;
+		JLabel label5 = new JLabel("Clusters: ");
+		label5.setBounds(colA_posX, positionY, 80, 20);
+		components.add(label5);
+		JLabel label6 = new JLabel(clusterColorsData.clNumber+"");
+		label6.setBounds(colB_posX, positionY, 80, 20);
+		components.add(label6);
+		
+		
+		
+		positionY += 20;
+		JLabel chooseInvLabel = new JLabel("Selected: ");
 		chooseInvLabel.setBounds(colA_posX, positionY, 80, 20);
 		components.add(chooseInvLabel);
 		
-		String[] clustersHeaders = new String[clusterColors.size() + 1];
+		// PRZEWIJALNA LISTA KLASTRÓW:
+		String[] clustersHeaders = new String[clusterColorsData.dataMatrix.size() + 1];
 		clustersHeaders[0] = "---";
-		for (int i = 0; i < clusterColors.size(); i++) {
+		for (int i = 0; i < clusterColorsData.dataMatrix.size(); i++) {
 			clustersHeaders[i + 1] = "Cluster " + Integer.toString(i+1);
 		}
 		
-		JComboBox<String> chooseCluster = new JComboBox<String>(clustersHeaders);
+		chooseCluster = new JComboBox<String>(clustersHeaders);
 		chooseCluster.setBounds(colB_posX, positionY, 150, 20);
 		chooseCluster.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -1622,22 +1650,45 @@ public class AbyssDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(chooseCluster);
-		positionY += 30;
+		positionY += 20;
 		
-		/*
-		invTextArea = new JTextArea();
-		invTextArea.setEditable(false);
-		JPanel textAreaPanel = new JPanel();
-		textAreaPanel.setLayout(new BorderLayout());
-		textAreaPanel.add(new JScrollPane(
-				invTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-        		BorderLayout.CENTER);
+		//SPOSÓB WYŚWIETLANIA - TRANZYCJE CZY ODPALENIA
+		JCheckBox transFiringMode = new JCheckBox("Show transition firing ");
+		transFiringMode.setBounds(colA_posX-3, positionY, 150, 20);
+		transFiringMode.setSelected(false);;
+		transFiringMode.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					clusterColorsData.showFirings = true;
+				} else {
+					clusterColorsData.showFirings = false;
+				}
+				int selected = chooseCluster.getSelectedIndex();
+				chooseCluster.setSelectedIndex(selected);
+				//chooseCluster.setSelectedItem(selected);
+			}
+		});
+		components.add(transFiringMode);
 		
-		int w = GUIManager.getDefaultGUIManager().getMctBox().getWidth();
-		int h = GUIManager.getDefaultGUIManager().getMctBox().getHeight();
-		textAreaPanel.setBounds(colA_posX, positionY, w-30, h-60);
-		components.add(textAreaPanel);
-		*/
+		positionY += 20;
+		JCheckBox scaleMode = new JCheckBox("Show scaled colors");
+		scaleMode.setBounds(colA_posX-3, positionY, 150, 20);
+		scaleMode.setSelected(false);;
+		scaleMode.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					clusterColorsData.showScale = true;
+				} else {
+					clusterColorsData.showScale = false;
+				}
+				int selected = chooseCluster.getSelectedIndex();
+				chooseCluster.setSelectedIndex(selected);
+				//chooseCluster.setSelectedItem(selected);
+			}
+		});
+		components.add(scaleMode);
 		
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
@@ -1655,14 +1706,34 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		if(isThereCluser)
 		{
-			ArrayList<Color> transColors = clusterColors.get(clusterNo);
-			
+			ArrayList<ClusterTransition> transColors = clusterColorsData.dataMatrix.get(clusterNo);
 			ArrayList<Transition> holyVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 			for(int i=0; i<transColors.size(); i++) { //ustaw kolory dla tranzycji
 				if(transColors.get(i).equals(Color.white)) {
-					holyVector.get(i).setGlowedCluster(false, Color.white);
+					holyVector.get(i).setGlowedCluster(false, Color.white, -1);
 				} else {
-					holyVector.get(i).setGlowedCluster(true, transColors.get(i));
+					if(clusterColorsData.showFirings == true) { //pokazuj liczbę odpaleń
+						if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
+							int tranNumber = transColors.get(i).firedInCluster;
+							Color tranColor = transColors.get(i).colorFiredScale;
+							holyVector.get(i).setGlowedCluster(true, tranColor, tranNumber);
+						} else { //pokazuj kolory z krokiem 10%
+							int tranNumber = transColors.get(i).firedInCluster;
+							Color tranColor = transColors.get(i).colorFiredGrade;
+							holyVector.get(i).setGlowedCluster(true, tranColor, tranNumber);
+						}
+					} else { //pokazuj tylko liczbę wystąpień jako część inwariantów
+						if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
+							int tranNumber = transColors.get(i).transInCluster;
+							Color tranColor = transColors.get(i).colorTransScale;
+							holyVector.get(i).setGlowedCluster(true, tranColor, tranNumber);
+						} else { //pokazuj kolory z krokiem 10%
+							int tranNumber = transColors.get(i).transInCluster;
+							Color tranColor = transColors.get(i).colorTransGrade;
+							holyVector.get(i).setGlowedCluster(true, tranColor, tranNumber);
+						}
+					}
+					
 				}
 			}	
 		}

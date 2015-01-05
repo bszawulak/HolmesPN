@@ -6,6 +6,7 @@ import abyss.darkgui.properties.AbyssDockWindow;
 import abyss.darkgui.properties.PetriNetTools;
 import abyss.darkgui.properties.AbyssDockWindow.DockWindowType;
 import abyss.darkgui.toolbar.Toolbar;
+import abyss.files.clusters.ClusterDataPackage;
 import abyss.math.InvariantTransition;
 import abyss.math.PetriNet;
 import abyss.math.Transition;
@@ -20,7 +21,6 @@ import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
@@ -956,7 +956,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda zleca wyœwietlenie podokna podœwietlania klastrowania
 	 */
-	public void showClusterSelectionBox(ArrayList<ArrayList<Color>> data){
+	public void showClusterSelectionBox(ClusterDataPackage data){
 		getClusterSelectionBox().showClusterSelector(data);
 	}
 	

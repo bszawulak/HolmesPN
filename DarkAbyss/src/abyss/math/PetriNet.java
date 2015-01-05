@@ -982,9 +982,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void setColorClusterToNeutral() {
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION)
-				((Transition) n).setGlowedCluster(false, Color.white);
+				((Transition) n).setGlowedCluster(false, Color.white, -1);
 			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
-				((TimeTransition) n).setGlowedCluster(false, Color.white);
+				((TimeTransition) n).setGlowedCluster(false, Color.white, -1);
 	}
 	
 	/**
