@@ -21,9 +21,12 @@ public class Main {
 	public static void main(String[] args) {
 		Runnable doCreateAndShowGUI = new Runnable() {
 			public void run() {
-				guiManager = new GUIManager(new JFrame("Abyss - Zintegrowane œrodowisko do edycji, symulacji i analizy Sieci Petriego"));
-				guiManager.getSimulatorBox().createSimulatorProperties();
-				//guiManager.getInvSimBox().createInvSimulatorProperties();
+				try {
+					guiManager = new GUIManager(new JFrame("Abyss - Zintegrowane œrodowisko do edycji, symulacji i analizy Sieci Petriego"));
+					guiManager.getSimulatorBox().createSimulatorProperties();
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
 		};
 		SwingUtilities.invokeLater(doCreateAndShowGUI);

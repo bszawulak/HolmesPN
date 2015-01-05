@@ -29,6 +29,8 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import abyss.utilities.Tools;
+
 /**
  * Klasa ta tworzy okno konsoli programu, na którym pojawiaj¹ siê informacje na temat wykonywania
  * ró¿nych funkcji. Pozwala na zapis logu do pliku.
@@ -55,7 +57,7 @@ public class AbyssConsole extends JFrame {
 	public AbyssConsole() {
 		setTitle("Abyss Status Console");
     	try {
-    		setIconImage(getToolkit().getImage(getClass().getResource("/icons/blackHole.png")));
+    		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {
 			
 		}

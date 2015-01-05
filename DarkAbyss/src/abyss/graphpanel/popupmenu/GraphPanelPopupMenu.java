@@ -145,7 +145,6 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 				menuItem = new JMenuItem(text, Tools.getResIcon16("/icons/" + iconName));
 			else
 				menuItem = new JMenuItem(text);
-			//JMenuItem menuItem = new JMenuItem(text, new ImageIcon("resources/icons/" + iconName + ".png"));
 			menuItem.addActionListener(actionListener);
 			menuItem.setAccelerator(accelerator);
 			return menuItem;

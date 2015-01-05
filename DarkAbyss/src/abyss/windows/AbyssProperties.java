@@ -69,7 +69,7 @@ public class AbyssProperties extends JFrame {
 	public AbyssProperties() {
 		ego = this;
 		try {
-			ego.setIconImage(getToolkit().getImage(getClass().getResource("/icons/blackHole.png")));
+			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {
 			
 		}

@@ -3,6 +3,7 @@
  */
 package abyss.utilities;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -209,6 +210,7 @@ public final class Tools {
 		} catch (Exception e) {
 			try {
 				icon = new ImageIcon(Tools.class.getResource("/nullIcon22.png"));
+				
 			} catch (Exception e2) {
 				icon = new ImageIcon();
 			}
@@ -230,6 +232,7 @@ public final class Tools {
 				icon = new ImageIcon(Tools.class.getResource("/nullIcon32.png"));
 			} catch (Exception e2) {
 				icon = new ImageIcon();
+				
 			}
 		}
 		return icon;
@@ -252,6 +255,37 @@ public final class Tools {
 			}
 		}
 		return icon;
+	}
+	
+	/**
+	 * TO JEST KURWA CHORE. ImageIcon mo¿e byæ spokojnie przechowywany w Jar i getResource
+	 * bez problemu znajduje do niego dostêp, ale ju¿ Image - ZA CHOLERÊ. W Eclipse zadzia³a,
+	 * w exporcie do Jara - wywali ca³y program nieobs³ugiwalnym wyj¹tkiem (catch (Exception e))
+	 * mo¿na sobie wsadziæ gdzie S³oñce nie dochodzi. Metoda obchodzi ten problem, ale
+	 * nazwanie tego partyzantk¹ do niedopowiedzenie.
+	 * Oto metoda. Klêkajcie narody, kosztowa³a 2 godziny pracy, jak zawsze wynik to kilka linii.
+	 * TYCH linii.
+	 * @param resPath String - œcie¿ka do source katalogu zasobów
+	 * @return Image - obiekt klasy Image, niegodny Jara jak siê okazuje
+	 */
+	public static Image getImageFromIcon(String resPath) {
+		resPath = resPath.toLowerCase();
+		ImageIcon icon=null;
+		Image result = null;
+		try {
+			icon = new ImageIcon(Tools.class.getResource(resPath));
+			result = icon.getImage();
+		} catch (Exception e) {
+			try {
+				icon = new ImageIcon(Tools.class.getResource("/nullIcon16.png"));
+				result = icon.getImage();
+			} catch (Exception e2) {
+				System.out.println("CRITICAL EXCEPTION IN getImageFromIcon. "
+						+ "No FAILSAFE IMAGE: /nullIcon16.png IN JAR");
+				return null;
+			}
+		}
+		return result;
 	}
 	
 	/**

@@ -64,7 +64,7 @@ public class AbyssSearch extends JFrame {
 		ego = this;
 		ego.setTitle("Net nodes search window");
 		try {
-			ego.setIconImage(getToolkit().getImage(getClass().getResource("/icons/blackHole.png")));
+			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {
 			
 		}

@@ -31,7 +31,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -143,11 +142,22 @@ public class GUIManager extends JPanel implements ComponentListener {
 		io = new GUIOperations(this); //rise, my minion!!
 		
 		setFrame(frejm);
-		try {
-			frame.setIconImage(getToolkit().getImage(getClass().getResource("/icons/blackHole.png")));
-		} catch (Exception e ) {
+		try {	
+			//TE TRZY PIERD... LINIJKI KOSZTOWA£Y MNIE PRAWIE 2 GODZINY SZUKANIA PO NECIE
+			//Po Eclipsem oczywiœcie getClass().getResource dzia³a jak marzenie
+			//przy eksporcie do Jar, okazuje siê ¿e nic nie dzia³a a wyj¹tek który
+			//wyskakuje jest NIEMO¯LIWE DO OBS£U¯ENIA przez nawet catch (Exception e )
+			//po prostu k... super, kochamy Jave
+			//linijki, zast¹pione dalej wywo³aniem metody statycznej:
+			//ImageIcon x = Tools.getResIcon16("/icons/blackhole.png"); 
+			//Image y = x.getImage();
+			//frame.setIconImage(y);
 			
+			frame.setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+		} catch (Exception e ) {
+	
 		}
+		
 		frame.getContentPane().add(this);
 		frame.addComponentListener(this);
 		getFrame().getContentPane().add(this);
@@ -481,8 +491,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		wrapper = new StateActionDockable(wrapper, new DefaultDockableStateActionFactory(), states);
 
 		if (deletable) {
-			DeleteAction deleteAction = new DeleteAction(this, "Delete",
-					new ImageIcon("resources/icons/page_white_delete.png"));
+			DeleteAction deleteAction = new DeleteAction(this, "Delete", Tools.getResIcon16("/icons/page_white_delete.png"));
 			Action[][] actions = new Action[1][];
 			actions[0] = new Action[1];
 			actions[0][0] = deleteAction;

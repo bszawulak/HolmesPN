@@ -20,6 +20,7 @@ import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
 import abyss.math.TimeTransition;
 import abyss.math.Transition;
+import abyss.utilities.Tools;
 import abyss.workspace.WorkspaceSheet;
 
 /**
@@ -121,8 +122,14 @@ public class GraphPanel extends JComponent {
 			setCursor(Cursor.getDefaultCursor());
 		} else {
 			Toolkit toolkit = Toolkit.getDefaultToolkit();
-			Image image = toolkit.getImage("resources/cursors/"
-					+ this.getDrawMode().toString() + ".gif");
+			//Image image = toolkit.getImage("resources/cursors/"+ this.getDrawMode().toString() + ".gif");
+			Image image = null;
+			try {
+				//image = getToolkit().getImage(getClass().getResource("/cursors/"+ this.getDrawMode().toString() + ".gif") );
+				image = Tools.getImageFromIcon("/cursors/"+ this.getDrawMode().toString() + ".gif");
+			} catch (Exception e ) {
+				//i tak nic nie pomo¿e, jak powy¿sze siê zawali. Taka nasza Java piêkna i weso³a.
+			}
 			Point hotSpot = new Point(0, 0);
 			Cursor cursor = toolkit.createCustomCursor(image, hotSpot, this
 					.getDrawMode().toString());

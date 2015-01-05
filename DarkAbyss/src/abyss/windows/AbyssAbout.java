@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import abyss.utilities.Tools;
+
 /**
  * Klasa tworz¹co okienko informacji o programie.
  * @author MR
@@ -27,7 +29,7 @@ public class AbyssAbout extends JFrame {
 		parentFrame = parent;
 		parentFrame.setEnabled(false);
 		try {
-			setIconImage(getToolkit().getImage(getClass().getResource("/icons/blackHole.png")));
+			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {
 			
 		}

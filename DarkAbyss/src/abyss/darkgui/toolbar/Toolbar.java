@@ -337,7 +337,7 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("Test button", consoleButton));
 		
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug test purpose",
-				Tools.getResIcon48("/icons/toolbar/clusterWindow22.png")) {
+				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				

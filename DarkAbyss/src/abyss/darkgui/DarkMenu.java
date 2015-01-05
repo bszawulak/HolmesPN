@@ -74,8 +74,6 @@ public class DarkMenu extends JMenuBar {
 
 		// New Project
 		JMenuItem projectMenuItem = new JMenuItem("New Project",  KeyEvent.VK_N);
-		//projectMenuItem.setIcon(new ImageIcon("resources/icons/menu/menu_newProject.png"));
-		//projectMenuItem.setIcon(new ImageIcon(getClass().getResource("/icons/menu/menu_newProject.png")));
 		projectMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_newProject.png"));
 		projectMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
 		projectMenuItem.getAccessibleContext().setAccessibleDescription("New project");
