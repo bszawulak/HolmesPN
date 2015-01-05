@@ -20,6 +20,7 @@ import abyss.graphpanel.IdGenerator;
  * na potrzeby symulacji dynamiki sieci Petriego, jak rezerwowanie tokenów
  * i wykrywanie aktywacji.
  * @author students
+ * @author MR - poprawki, obs³uga klastrów, inne
  *
  */
 public class Transition extends Node {
@@ -41,7 +42,10 @@ public class Transition extends Node {
 	protected int clNumber = 0;
 	
 	protected int firingNumber = 0;
-	//private ArrayList<ArrayList<Transition>> containingInvariants = new ArrayList<ArrayList<Transition>>();
+	
+	//TODO: tak nie mo¿e byæ, to poni¿ej jest u¿ywane przez funkcjê generuj¹c¹ MCT, ale ostatni¹ rzecz¹
+	//jak¹ obiekt klasy Transition potrzebuje, to kolejny wielki wektor danych...
+	private ArrayList<ArrayList<Transition>> containingInvariants = new ArrayList<ArrayList<Transition>>();
 	
 
 	/**
@@ -466,7 +470,7 @@ public class Transition extends Node {
 	 * @return ArrayList[ArrayList[Transition]] - macierz inwariantow
 	 */
 	public ArrayList<ArrayList<Transition>> getContainingInvariants() {
-		return null;
+		return containingInvariants;
 	}
 
 	/**

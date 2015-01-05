@@ -1,4 +1,4 @@
-package abyss.math;
+package abyss.clusters;
 
 import java.awt.Color;
 

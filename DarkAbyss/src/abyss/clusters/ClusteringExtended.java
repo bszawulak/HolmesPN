@@ -3,8 +3,6 @@ package abyss.clusters;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import abyss.math.ClusterTransition;
-
 /**
  * Klasa kontener do przechowywania wszystkich struktur danych opisuj¹cych konkretny przypadek
  * klastrowania. Zawiera te¿ pe³ne dane pliku CSV, mo¿liwe jest wiêc z ka¿dego jej obiektu

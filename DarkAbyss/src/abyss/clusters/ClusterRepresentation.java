@@ -1,4 +1,4 @@
-package abyss.files.clusters;
+package abyss.clusters;
 
 import java.util.ArrayList;
 
@@ -8,14 +8,14 @@ import java.util.ArrayList;
  *
  */
 public class ClusterRepresentation {
-	ArrayList<Integer> nrInvariantsPerCluster = new ArrayList<Integer>();
-	ArrayList<Double> mssPerCluster = new ArrayList<Double>();
-	double meanValue;
-	int nrClusters;
+	public ArrayList<Integer> nrInvariantsPerCluster = new ArrayList<Integer>();
+	public ArrayList<Double> mssPerCluster = new ArrayList<Double>();
+	public double meanValue;
+	public int nrClusters;
 	
-	ClusterRepresentation() {}
+	public ClusterRepresentation() {}
 	
-	double ParseDouble(String strNumber) {
+	public double ParseDouble(String strNumber) {
 	   if (strNumber != null && strNumber.length() > 0) {
 	       try {
 	          return Double.parseDouble(strNumber);

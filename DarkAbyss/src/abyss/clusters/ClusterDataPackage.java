@@ -1,8 +1,6 @@
-package abyss.files.clusters;
+package abyss.clusters;
 
 import java.util.ArrayList;
-
-import abyss.math.ClusterTransition;
 
 /**
  * Klasa kontener s³u¿¹ca do przechowywania danych przesy³anych z podokna klastrowania
@@ -15,6 +13,7 @@ public class ClusterDataPackage {
 	public String algorithm;
 	public String metric;
 	public int clNumber;
+	public ArrayList<Integer> clSize;
 	
 	public boolean showFirings = false;
 	public boolean showScale = false;

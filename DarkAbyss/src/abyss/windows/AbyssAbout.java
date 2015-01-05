@@ -84,15 +84,20 @@ public class AbyssAbout extends JFrame {
 			
 		}
 		
-		JLabel nameLabel = new JLabel("Abyss v1.21");
+		JLabel nameLabel = new JLabel("Abyss v1.22");
 		nameLabel.setFont(new Font("Consolas", Font.PLAIN, 30));
-		nameLabel.setBounds(170, 60, 200,40);
+		nameLabel.setBounds(170, 40, 200,40);
 		panel.add(nameLabel);
 		
 		JLabel nameLabel2 = new JLabel("Integrated Petri Net Environment");
 		nameLabel2.setFont(new Font("Consolas", Font.PLAIN, 18));
-		nameLabel2.setBounds(170, 90, 330, 40);
+		nameLabel2.setBounds(170, 70, 330, 40);
 		panel.add(nameLabel2);
+		
+		JLabel nameLabel3 = new JLabel("Release: 05-01-2015");
+		nameLabel3.setFont(new Font("Consolas", Font.PLAIN, 14));
+		nameLabel3.setBounds(170, 110, 330, 40);
+		panel.add(nameLabel3);
 		
 		return panel;
 	}

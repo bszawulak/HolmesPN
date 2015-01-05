@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -155,6 +156,7 @@ public class AbyssProperties extends JFrame {
 				}
 			}
 			textField.setText("");
+			
 			//WYŚWIETLANIE DANYCH:
 			if(transInNoInvariant==0) {
 				textField.append("The net is covered by t-invariants.\n");
@@ -163,7 +165,8 @@ public class AbyssProperties extends JFrame {
 				textField.append("The net is not covered by t-invariants. Transitions outside invariants set:\n");
 				for(int i=0; i<idTransNoInv.size(); i++) {
 					int tNumber = idTransNoInv.get(i);
-					textField.append("ID: "+tNumber+"  t_"+(tNumber)+transitions.get(tNumber).getName()+"\n");
+					String txt1 = Tools.setToSize("t"+tNumber, 5, false);
+					textField.append(txt1+" "+(tNumber)+transitions.get(tNumber).getName()+"\n");
 				}
 				textField.append("\n");
 			}
@@ -175,8 +178,12 @@ public class AbyssProperties extends JFrame {
 					int transFire = transFiresInInv.get(i);
 					String transName = transitions.get(i).getName();
 					
-					textField.append("ID: "+(i)+" INV: "+transInv+" Fired: "+transFire);
-					textField.append("    | t_"+(i)+" "+transName+"\n");
+					String txt1 = Tools.setToSize("t"+i, 5, false);
+					String txt2 = Tools.setToSize("Inv:"+transInv, 10, false);
+					String txt3 = Tools.setToSize("Fired:"+transFire, 12, false);
+					textField.append(txt1 + txt2 + txt3 + "  t"+(i)+"_"+transName+"\n");
+					//textField.append("ID: "+(i)+" INV: "+transInv+" Fired: "+transFire);
+					//textField.append("    | t_"+(i)+" "+transName+"\n");
 				}
 			}
 			textField.setCaretPosition(0);
@@ -258,8 +265,9 @@ public class AbyssProperties extends JFrame {
 		invInfoPanel.setBounds(currentXAxis-5, currentYAxis+=spacing, 506, 325);
 		
 		textField = new JTextArea();
-		textField.setLineWrap(true);
+		//textField.setLineWrap(true);
 		textField.setEditable(false);
+		textField.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		JScrollPane areaScrollPane = new JScrollPane(textField);
 		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		invInfoPanel.add(areaScrollPane);
@@ -307,20 +315,14 @@ public class AbyssProperties extends JFrame {
 				    			+yesWeCan[1]
 				    			+"\n\nBiological interpretation:\n"
 				    			+yesWeCan[2],
-				    			yesWeCan[0],JOptionPane.INFORMATION_MESSAGE);
+				    			yesWeCan[0], JOptionPane.INFORMATION_MESSAGE);
 				    }
-				    private ActionListener goForthMyMinions(String[] codeInjection){
+				    private ActionListener goForthMyMinion(String[] codeInjection){
 				    	yesWeCan = codeInjection;
 				        return this;
 				    }
-				}.goForthMyMinions(dataTxt) );
-				/*
-				pButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent actionEvent) {
-						CustomDialog txt = new CustomDialog(ego, dataTxt[0], "");
-					}
-				});
-				*/
+				}.goForthMyMinion(dataTxt) );
+
 			}
 			pButton.setText(pr.get(0).toString());
 			pButton.setVisible(true);

@@ -253,4 +253,26 @@ public final class Tools {
 		}
 		return icon;
 	}
+	
+	/**
+	 * Metoda wstawia spacje przez napis, aby rozszerzyæ go do odpowiedniej d³ugoœci.
+	 * @param source String - ³añcuch do rozszerzenia
+	 * @param size int - rozmiar do rozszerzenia
+	 * @param left boolean - true jeœli dodajemy space od lewej strony napisu
+	 * @return String - ³añcuch wynikowy
+	 */
+	public static String setToSize(String source, int size, boolean left) {
+		if(size <= source.length())
+			return source;
+		
+		int oldSize = source.length();
+		for(int i=0; i<size-oldSize; i++) {
+			if(left)
+				source = " "+source;
+			else
+				source += " ";
+		}
+		
+		return source;
+	}
 }

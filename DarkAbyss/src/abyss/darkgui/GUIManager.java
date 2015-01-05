@@ -1,12 +1,12 @@
 package abyss.darkgui;
 
 import abyss.analyzer.DarkAnalyzer;
+import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.dockable.DeleteAction;
 import abyss.darkgui.properties.AbyssDockWindow;
 import abyss.darkgui.properties.PetriNetTools;
 import abyss.darkgui.properties.AbyssDockWindow.DockWindowType;
 import abyss.darkgui.toolbar.Toolbar;
-import abyss.files.clusters.ClusterDataPackage;
 import abyss.math.InvariantTransition;
 import abyss.math.PetriNet;
 import abyss.math.Transition;

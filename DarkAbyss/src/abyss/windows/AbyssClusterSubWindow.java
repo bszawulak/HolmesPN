@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -23,10 +24,10 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import abyss.clusters.ClusterDataPackage;
 import abyss.clusters.Clustering;
 import abyss.clusters.ClusteringExtended;
 import abyss.darkgui.GUIManager;
-import abyss.files.clusters.ClusterDataPackage;
 import abyss.files.clusters.ClusterReader;
 import abyss.files.clusters.ExcelWriter;
 import abyss.utilities.Tools;
@@ -597,6 +598,8 @@ public class AbyssClusterSubWindow extends JFrame {
 			dataCore.algorithm = clExtData.metaData.algorithmName;
 			dataCore.metric = clExtData.metaData.metricName;
 			dataCore.clNumber = clExtData.metaData.clusterNumber;
+			dataCore.clSize = new ArrayList<Integer>(clExtData.metaData.clusterSize);
+			
 			GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyœlij do Abyss (JFrame)
 			
 			deleteTmpFile(resultFiles);

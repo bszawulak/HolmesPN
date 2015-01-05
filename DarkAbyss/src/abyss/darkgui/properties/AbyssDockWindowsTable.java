@@ -3,6 +3,7 @@ package abyss.darkgui.properties;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,12 +41,12 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
 import abyss.analyzer.InvariantsSimulator;
+import abyss.clusters.ClusterDataPackage;
+import abyss.clusters.ClusterTransition;
 import abyss.darkgui.GUIManager;
 import abyss.darkgui.properties.AbyssDockWindow.DockWindowType;
-import abyss.files.clusters.ClusterDataPackage;
 import abyss.graphpanel.GraphPanel;
 import abyss.math.Arc;
-import abyss.math.ClusterTransition;
 import abyss.math.ElementLocation;
 import abyss.math.InvariantTransition;
 import abyss.math.Node;
@@ -102,6 +103,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	public JSpinner spiner = new JSpinner();
 	private JTextArea mctTextArea; // tutaj są wyświetlane szczegóły podświetlonego MCT
 	private JTextArea invTextArea;
+	private JTextArea clTextArea;
 	private JComboBox<String> chooseCluster;
 	
 	private WorkspaceSheet currentSheet;
@@ -1376,6 +1378,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		invTextArea = new JTextArea();
 		invTextArea.setEditable(false);
+		invTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		JPanel textAreaPanel = new JPanel();
 		textAreaPanel.setLayout(new BorderLayout());
 		textAreaPanel.add(new JScrollPane(
@@ -1424,15 +1427,16 @@ public class AbyssDockWindowsTable extends JPanel {
 				Transition realT = invTrans.getTransition(); //prawdziwy obiekt tranzycji
 				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
 						.getTransitions().lastIndexOf(realT);
-				invTextArea.append("t"+globalIndex+" fired: "+invTrans.getAmountOfFirings().toString()
-						+"   "+invTrans.getTransition().getName()+"\n");
+				String t1 = Tools.setToSize("t"+globalIndex, 5, false);
+				String t2 = Tools.setToSize("Fired: "+invTrans.getAmountOfFirings(), 12, false);
+				invTextArea.append(t1 + t2 + " ; "+invTrans.getTransition().getName()+"\n");
 				
 				invTrans.getTransition().setGlowed(true, invTrans.getAmountOfFirings());
 			}
+			invTextArea.setCaretPosition(0);
 		}
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
-	
 
 	//**************************************************************************************
 	//*********************************                  ***********************************
@@ -1528,6 +1532,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		mctTextArea = new JTextArea();
 		mctTextArea.setEditable(false);
+		mctTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		//mctTextArea.setLineWrap(true);
 		//mctTextArea.setWrapStyleWord(true);
 		JPanel textAreaPanel = new JPanel();
@@ -1568,10 +1573,11 @@ public class AbyssDockWindowsTable extends JPanel {
 			for (Transition transition : mct) {
 				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
 						.getTransitions().lastIndexOf(transition);
-				String line = "t"+globalIndex+"  "+transition.getName()+"\n";
-				mctTextArea.append(line);
+				String t1 = Tools.setToSize("t"+globalIndex, 5, false);
+				mctTextArea.append(t1 + " ; "+transition.getName()+"\n");
 				transition.setGlowedMTC(true);
 			}
+			mctTextArea.setCaretPosition(0);
 		}
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
@@ -1633,7 +1639,8 @@ public class AbyssDockWindowsTable extends JPanel {
 		String[] clustersHeaders = new String[clusterColorsData.dataMatrix.size() + 1];
 		clustersHeaders[0] = "---";
 		for (int i = 0; i < clusterColorsData.dataMatrix.size(); i++) {
-			clustersHeaders[i + 1] = "Cluster " + Integer.toString(i+1);
+			clustersHeaders[i + 1] = "Cluster " + Integer.toString(i+1) 
+					+ " (size: "+clusterColorsData.clSize.get(i)+")";
 		}
 		
 		chooseCluster = new JComboBox<String>(clustersHeaders);
@@ -1689,6 +1696,21 @@ public class AbyssDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(scaleMode);
+		positionY += 20;
+		
+		clTextArea = new JTextArea();
+		clTextArea.setEditable(false);
+		clTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		JPanel textAreaPanel = new JPanel();
+		textAreaPanel.setLayout(new BorderLayout());
+		textAreaPanel.add(new JScrollPane(
+				clTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+        		BorderLayout.CENTER);
+		
+		int w = GUIManager.getDefaultGUIManager().getMctBox().getWidth();
+		int h = GUIManager.getDefaultGUIManager().getMctBox().getHeight();
+		textAreaPanel.setBounds(colA_posX, positionY, w-20, h-(positionY+20));
+		components.add(textAreaPanel);
 		
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
@@ -1699,6 +1721,11 @@ public class AbyssDockWindowsTable extends JPanel {
 		add(panel);
 	}
 	
+	/**
+	 * Metoda pokazująca dane o klastrze na ekranie sieci oraz w podoknie programu.
+	 * @param clusterNo int - nr klastra
+	 * @param isThereCluser boolean - false, jeśli wskazano "---";
+	 */
 	protected void showClusters(int clusterNo, boolean isThereCluser) {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
@@ -1706,6 +1733,10 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		if(isThereCluser)
 		{
+			clTextArea.setText("");
+			clTextArea.append("Cluster: "+clusterNo + " ("+clusterColorsData.clSize.get(clusterNo)+1
+					+") alg.: "+clusterColorsData.algorithm
+					+" metric: "+clusterColorsData.metric+"\n\n");
 			ArrayList<ClusterTransition> transColors = clusterColorsData.dataMatrix.get(clusterNo);
 			ArrayList<Transition> holyVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 			for(int i=0; i<transColors.size(); i++) { //ustaw kolory dla tranzycji
@@ -1733,11 +1764,19 @@ public class AbyssDockWindowsTable extends JPanel {
 							holyVector.get(i).setGlowedCluster(true, tranColor, tranNumber);
 						}
 					}
-					
 				}
-			}	
+				int trInCluster = transColors.get(i).transInCluster;
+				int firedInCluster = transColors.get(i).firedInCluster;
+				if(trInCluster>0) {
+					String t1 = Tools.setToSize("t"+(i), 5, false);
+					String t2 = Tools.setToSize("Freq.: "+trInCluster, 12, false);
+					String t3 = Tools.setToSize("Fired: "+firedInCluster, 12, false);
+					String txt = t1 + t2 + t3 + " ; "+holyVector.get(i).getName();
+					clTextArea.append(txt+"\n");
+				}
+			}
+			clTextArea.setCaretPosition(0);
 		}
-		
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
@@ -1748,132 +1787,12 @@ public class AbyssDockWindowsTable extends JPanel {
 	//**************************************************************************************
 
 	/**
-	 * Konstruktor odpowiedzialny za utworzenie elementów podokna symulatora inwariantów
+	 * Konstruktor 
 	 * @param is
 	 */
 	public AbyssDockWindowsTable(InvariantsSimulator is)
 	{
-		/*
-		initiateContainers();
-		
-		int columnA_posX = 10;
-		int columnB_posX = 60;
-		int columnA_Y = 0;
-		int columnB_Y = 0;
-		int colACompLength = 50;
-		int colBCompLength = 140;
-		String[] simModeName = {"Classic", "TPN"};
-		
-		initiateContainers();
-		mode = INVARIANTSSIMULATOR;
-		invSimulator = is;
-		
-		// INVARIANTS SIMULATION NETWORK TYPE
-		JLabel netTypeLabel = new JLabel("Net:");
-		netTypeLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
-		components.add(netTypeLabel);
-		
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		JComboBox simMode = new JComboBox(simModeName);
-		simMode.setLocation(columnB_posX+5, columnB_Y += 10);
-		simMode.setSize(colBCompLength-60, 20);
-		simMode.setSelectedIndex(0);
-		simMode.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				@SuppressWarnings("rawtypes")
-				JComboBox comboBox = (JComboBox) actionEvent.getSource();
-				if (comboBox.getSelectedIndex() == 0) {
-					if(invSimulator != null)
-						invSimulator.setSimulatorNetType(0);
-				} else {
-					if(invSimulator != null)
-						invSimulator.setSimulatorNetType(1);
-				}
-			}
-		});
-		components.add(simMode);
-		
-		// INVARIANTS SIMULATION MODE
-		JLabel simTypeLabel = new JLabel("Mode:");
-		simTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-		components.add(simTypeLabel);
-		
-		JRadioButton TimeMode = new JRadioButton("Time Mode");
-		TimeMode.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
-		TimeMode.setLocation(columnB_posX, columnB_Y);
-		TimeMode.setSize(colBCompLength, 20);
-		TimeMode.setActionCommand("0");
-		components.add(TimeMode);
-		group.add(TimeMode);
-		
-		columnA_Y += 20;
-		JRadioButton StepMode = new JRadioButton("Step Mode");
-		StepMode.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
-		StepMode.setLocation(columnB_posX, columnB_Y);
-		StepMode.setSize(colBCompLength, 20);
-		StepMode.setActionCommand("1");
-		components.add(StepMode);
-		group.add(StepMode);
 
-		columnA_Y += 20;
-		JRadioButton CycleMode = new JRadioButton("Cycle Mode");
-		CycleMode.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
-		CycleMode.setLocation(columnB_posX, columnB_Y);
-		CycleMode.setSize(colBCompLength, 20);
-		CycleMode.setActionCommand("2");
-		components.add(CycleMode);
-		group.add(CycleMode);
-		group.setSelected(TimeMode.getModel(), true);
-		
-		// INVARIANTS SIMULATION TIME
-		JLabel timeLabel = new JLabel("Time:");
-		timeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-		components.add(timeLabel);
-		
-		SpinnerModel timeCycle = new SpinnerNumberModel(1,1,9999,1);
-		spiner = new JSpinner(timeCycle);
-		spiner.setLocation(columnB_posX+5, columnB_Y += 20);
-		spiner.setSize(colBCompLength-60, 20);
-		components.add(spiner);
-		
-		// INVARIANTS SIMULATION START
-		JButton startButton = new JButton("Start");
-		startButton.setBounds(columnA_posX, columnB_Y += 40, colBCompLength*2, 40);
-		startButton.setLocation(columnA_posX, columnB_Y);
-		//startButton.setSize(colBCompLength, 40);
-		startButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().get2ndFormInvariantsList().size()>0)
-				{
-					//blokowanie
-					//setEnabledInvariantSimulationInitiateButtons(false);
-					//odpalanie
-					try {
-						GUIManager.getDefaultGUIManager().startInvariantsSimulation(
-								Integer.valueOf(group.getSelection().getActionCommand()), 
-								(Integer) spiner.getValue()); //jaki tryb
-					} catch (CloneNotSupportedException e) {
-						e.printStackTrace();
-					}
-				}
-				else
-				{
-					JOptionPane.showMessageDialog(null,"There are no invariants to simulate",
-						    "Ina warning",JOptionPane.WARNING_MESSAGE);
-				}
-			}
-		});
-		components.add(startButton);
-		 
-		panel.setLayout(null);
-		for (int i = 0; i < components.size(); i++)
-			 panel.add(components.get(i));
-		panel.setOpaque(true);
-		panel.repaint();
-		panel.setVisible(true);
-		add(panel);
-		*/
 	}
 	
 	//**************************************************************************************
@@ -1887,11 +1806,10 @@ public class AbyssDockWindowsTable extends JPanel {
 	 */
 	private void initiateContainers() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		//headerSize = new Dimension(300, 30);
 		components = new ArrayList<JComponent>();
 		panel = new JPanel();
 	}
-
+	
 	/**
 	 * Metoda zwraca okno tekstowe na bazie podanego comboBox.
 	 * @param spinner JSpinner - ComboBox po ludzku

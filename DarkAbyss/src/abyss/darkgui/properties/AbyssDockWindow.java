@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import javax.swing.JScrollPane;
 
 import abyss.analyzer.InvariantsSimulator;
+import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.GUIManager;
-import abyss.files.clusters.ClusterDataPackage;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import abyss.math.Arc;
