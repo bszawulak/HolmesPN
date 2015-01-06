@@ -39,11 +39,8 @@ public class DarkMenu extends JMenuBar {
 	private JMenu invariantsOperationsMenu;
 	private JMenu mctOperationsMenu;
 	private JMenu clustersOperationsMenu;
-	
-	//private JMenu analysisMenu;
 	private JMenu sheetsMenu;
-	//private JMenu mctMenu;
-	//private JMenu invMenu;
+
 	// dockable
 	private ArrayList<Dockable> dockables;
 	private ArrayList<DockableMenuItem> sheetItems;

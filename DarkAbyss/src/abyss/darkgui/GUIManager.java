@@ -3,9 +3,9 @@ package abyss.darkgui;
 import abyss.analyzer.DarkAnalyzer;
 import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.dockable.DeleteAction;
-import abyss.darkgui.properties.AbyssDockWindow;
-import abyss.darkgui.properties.PetriNetTools;
-import abyss.darkgui.properties.AbyssDockWindow.DockWindowType;
+import abyss.darkgui.dockwindows.AbyssDockWindow;
+import abyss.darkgui.dockwindows.PetriNetTools;
+import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.darkgui.toolbar.Toolbar;
 import abyss.math.InvariantTransition;
 import abyss.math.PetriNet;
@@ -58,9 +58,9 @@ import com.javadocking.visualizer.LineMinimizer;
 import com.javadocking.visualizer.SingleMaximizer;
 
 /**
- * G≥Ûwna klasa programu odpowiedzialna za w≥aúciwie wszystko. Zaczyna od utworzenia elementÛw
- * graficznych programu, a dalej jakoú tak siÍ samo juø wszystko toczy. Albo wywala.
- * @author students - ktoú musia≥ zaczπÊ :)
+ * G≈Ç√≥wna klasa programu odpowiedzialna za w≈Ça≈õciwie wszystko. Zaczyna od utworzenia elementÔøΩw
+ * graficznych programu, a dalej jako≈õ tak siƒô samo ju≈º wszystko toczy. Albo wywala.
+ * @author students - kto≈õ musia≈Ç zaczƒÖƒá :)
  * @author MR - Metody, Metody. Nowe Metody. Podpisano: Cyryl
  */
 public class GUIManager extends JPanel implements ComponentListener {
@@ -97,13 +97,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	private PetriNetTools toolBox;
 	
-	// podokna dokowalne g≥Ûwnego okna Abyss:
-	private AbyssDockWindow simulatorBox;	//podokno przyciskÛw symulatorÛw sieci
-	private AbyssDockWindow selectionBox;	//podokno zaznaczonych elementÛw sieci
+	// podokna dokowalne g≈Ç√≥wnego okna Abyss:
+	private AbyssDockWindow simulatorBox;	//podokno przycisk√≥w symulator√≥w sieci
+	private AbyssDockWindow selectionBox;	//podokno zaznaczonych element√≥w sieci
 	private AbyssDockWindow mctBox;			//podokno MCT
-	private AbyssDockWindow invariantsBox;	//podokno inwariantÛw
-	private AbyssDockWindow selElementBox;  //podokno klikniÍtego elementu sieci
-	private AbyssDockWindow clustersBox;	//podokno podúwietlania klastrÛw
+	private AbyssDockWindow invariantsBox;	//podokno inwariant√≥w
+	private AbyssDockWindow selElementBox;  //podokno klikniƒôtego elementu sieci
+	private AbyssDockWindow clustersBox;	//podokno pod≈õwietlania klastr√≥w
 	
 	//UNUSED
 	private AbyssDockWindow invSimBox;
@@ -113,28 +113,28 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private Toolbar shortcutsBar;
 
 	// main frame
-	private JFrame frame;	//g≥Ûwna ramka okna programu, tworzona w Main()
+	private JFrame frame;	//g≈Ç√≥wna ramka okna programu, tworzona w Main()
 	// other components
 	private DarkMenu menu;	//komponent menu programu
 
-	// inne waøne zmienne
-	private String lastPath;	// ostatnia otwarta úcieøka
-	private String abyssPath; 	// scieøka dostÍpu do katalogu g≥Ûwnego programu
-	private String tmpPath;		// úcieøka dostÍpu do katalogu plikÛw tymczasowych
-	private String toolPath;	// úcieøka dostÍpu do katalogu narzedziowego
+	// inne waÔøΩne zmienne
+	private String lastPath;	// ostatnia otwarta scie≈ºka
+	private String abyssPath; 	// scie≈ºka dostƒôpu do katalogu g≈Ç√≥wnego programu
+	private String tmpPath;		// ≈õcie≈ºka dostƒôpu do katalogu plik√≥w tymczasowych
+	private String toolPath;	// ≈õcie≈ºka dostƒôpu do katalogu narzedziowego
 	private String logPath;
 	
-	// okna niezaleøne:
+	// okna niezaleÔøΩne:
 	public AbyssClusters windowClusters; //okno tabeli 
-	private AbyssConsole windowConsole; //konsola logÛw
-	private AbyssProperties windowNetProperties; //okno w≥aúciwoúci sieci
+	private AbyssConsole windowConsole; //konsola log√≥w
+	private AbyssProperties windowNetProperties; //okno w≈Ça≈õciwo≈õci sieci
 	private AbyssAbout windowAbout; //okno About...
 	private AbyssSearch windowSearch;
 	
-	private boolean rReady = false; // true, jeúli program dostÍp do pliku Rscript.exe
+	private boolean rReady = false; // true, je≈ºeli program ma dostƒôp do pliku Rscript.exe
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
-	 * @param frejm JFrame - g≥Ûwna ramka kontener programu
+	 * @param frejm JFrame - g≈Ç√≥wna ramka kontener programu
 	 */
 	public GUIManager(JFrame frejm) {
 		super(new BorderLayout());
@@ -143,12 +143,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		setFrame(frejm);
 		try {	
-			//TE TRZY PIERD... LINIJKI KOSZTOWA£Y MNIE PRAWIE 2 GODZINY SZUKANIA PO NECIE
-			//Po Eclipsem oczywiúcie getClass().getResource dzia≥a jak marzenie
-			//przy eksporcie do Jar, okazuje siÍ øe nic nie dzia≥a a wyjπtek ktÛry
-			//wyskakuje jest NIEMOØLIWE DO OBS£UØENIA przez nawet catch (Exception e )
+			//TE TRZY PIERD... LINIJKI KOSZTOWAÔøΩY MNIE PRAWIE 2 GODZINY SZUKANIA PO NECIE
+			//Po Eclipsem oczywi≈õcie getClass().getResource dzia≈Ça jak marzenie
+			//przy eksporcie do Jar, okazuje siƒô ≈ºe nic nie dzia≈Ça a wyjƒÖtek kt√≥ry
+			//wyskakuje jest NIEMO≈ªLIWE DO OBS≈ÅU≈ªENIA przez nawet catch (Exception e )
 			//po prostu k... super, kochamy Jave
-			//linijki, zastπpione dalej wywo≥aniem metody statycznej:
+			//linijki, zastƒÖpione dalej wywo≈Çaniem metody statycznej:
 			//ImageIcon x = Tools.getResIcon16("/icons/blackhole.png"); 
 			//Image y = x.getImage();
 			//frame.setIconImage(y);
@@ -163,12 +163,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().getContentPane().add(this);
 		getFrame().addComponentListener(this);
 		
-		createHiddenConsole(); //tworzy ukryte okno konsoli logowania zdarzeÒ
-		createClusterWindow(); //niewidoczne na starcie okno tabeli klastrÛw
-		createNetPropertiesWindow(); //niewidoczne na starcie okno w≥aúciwoúci sieci
+		createHiddenConsole(); //tworzy ukryte okno konsoli logowania zdarze≈Ñ
+		createClusterWindow(); //niewidoczne na starcie okno tabeli klastr√≥w
+		createNetPropertiesWindow(); //niewidoczne na starcie okno w≈Ça≈õciwo≈õci sieci
 		createSearchWindow();
 		
-		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnÍtrzne zmienne programu
+		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnƒôtrzne zmienne programu
 		
 		// Set the frame properties and show it.
 		getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -212,7 +212,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setInvariantsBox(new AbyssDockWindow(DockWindowType.InvANALYZER));
 		setClusterSelectionBox(new AbyssDockWindow(DockWindowType.ClusterSELECTOR));
 		
-			//aktywuj obiekt podokna wyúwietlania zbiorÛw MCT
+			//aktywuj obiekt podokna wyÔøΩwietlania zbiorÔøΩw MCT
 		setMctBox(new AbyssDockWindow(DockWindowType.MctANALYZER)); 
 		setInvSim(new AbyssDockWindow(DockWindowType.InvSIMULATOR));
 		
@@ -305,11 +305,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		});
 	}
 	/**
-	 * Metoda pomocnicza konstruktora. Ustawia g≥Ûwne zmienne programu, wczytuje plik
-	 * w≥aúciwoúci, itd.
+	 * Metoda pomocnicza konstruktora. Ustawia g≈Ç√≥wne zmienne programu, wczytuje plik
+	 * w≈Ça≈õciwo≈õci, itd.
 	 */
 	private void initializeEnvironment() {
-		// ustawienie úcieøek dostÍpu
+		// ustawienie ≈õcie≈ºek dostƒôpu
 		lastPath = null;
 		abyssPath = System.getProperty("user.dir");
 		tmpPath = abyssPath+"\\tmp\\";
@@ -391,7 +391,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda uruchamiana na starcie programu oraz wtedy, gdy chcemy uzyskaÊ dostÍp do lokalizacji
+	 * Metoda uruchamiana na starcie programu oraz wtedy, gdy chcemy uzyskaÔøΩ dostÔøΩp do lokalizacji
 	 * pliku Rscript.exe.
 	 */
 	public void r_env_missing() {
@@ -418,7 +418,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 				} else {
 					//File f = new File(choosenDir);
 					//if(!f.exists()) return;
-					if(!selectedFile.contains("x64")) { //jeúli wskazano 64b
+					if(!selectedFile.contains("x64")) { //je≈õli wskazano 64b
 						
 						//File test = new File(selectedFile);
 						//String dest = test.getAbsolutePath();
@@ -459,7 +459,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za ustalenie domyúlnych lokalizacji paskÛw zmiany rozmiaru
+	 * Metoda odpowiedzialna za ustalenie domy≈õlnych lokalizacji pask√≥w zmiany rozmiaru
 	 * podokien programu (Dividers).
 	 */
 	private void resetSplitDocks() {
@@ -477,11 +477,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za dodawanie nowych ikonek w prawy gÛrnym roku kaødego podokna
+	 * Metoda odpowiedzialna za dodawanie nowych ikonek w prawy g√≥rnym roku ka≈ºdego podokna
 	 * programu.
 	 * @param dockable - okno do przystrojenia dodatkowymi okienkami
-	 * @param deletable - true, jeúli dodajemy ikonÍ usuwania (g≥Ûwne podokno arkuszy sieci)
-	 * @return Dockable - nowe okno po dodaniu elementÛw
+	 * @param deletable - true, je≈õli dodajemy ikonƒô usuwania (g≈Ç√≥wne podokno arkuszy sieci)
+	 * @return Dockable - nowe okno po dodaniu element√≥w
 	 */
 	public Dockable decorateDockableWithActions(Dockable dockable, boolean deletable) {
 		Dockable wrapper = new StateActionDockable(dockable,
@@ -503,16 +503,16 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zwraca úcieøkÍ do ostatio uøywanego katalagu.
-	 * @return String - úcieøka do katalogu
+	 * Metoda zwraca ≈õcie≈ºki do ostatio u≈ºywanego katalagu.
+	 * @return String - ≈õcie≈ºka do katalogu
 	 */
 	public String getLastPath() {
 		return lastPath;
 	}
 	
 	/**
-	 * Metoda ustawia nowπ úcieøkÍ do ostatio uøywanego katalagu.
-	 * @return String - úcieøka do katalogu
+	 * Metoda ustawia nowƒÖ ≈õcie≈ºkƒô do ostatio u≈ºywanego katalagu.
+	 * @return String - ≈õcie≈ºka do katalogu
 	 */
 	public void setLastPath(String path) {
 		lastPath = path;
@@ -527,8 +527,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Diabli wiedzπ co i kiedy wywo≥uje tÍ metodÍ, tym niemniej zleca ona innej ustalenie
-	 * domyúlnych lokalizacji paskÛw zmiany rozmiarÛw podokien (Dividers).
+	 * Diabli wiedzƒÖ co i kiedy wywo≈Çuje tƒÖ metodƒô, tym niemniej zleca ona innej ustalenie
+	 * domy≈õlnych lokalizacji pask√≥w zmiany rozmiar√≥w podokien (Dividers).
 	 */
 	public void componentResized(ComponentEvent arg0) {
 		resetSplitDocks();
@@ -540,7 +540,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zwraca podokno dedykowane do wyúwietlania zbiorÛw MCT.
+	 * Metoda zwraca podokno dedykowane do wy≈õwietlania zbior√≥w MCT.
 	 * @return AbyssDockWindow - okno wyboru MCT
 	 */
 	public AbyssDockWindow getMctBox() {
@@ -548,7 +548,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda ta ustawia nowe podokno dedykowane do wyúwietlania zbiorÛw MCT.
+	 * Metoda ta ustawia nowe podokno dedykowane do wy≈õwietlania zbior√≥w MCT.
 	 * @param mctBox AbyssDockWindow - nowe okno wyboru MCT
 	 */
 	public void setMctBox(AbyssDockWindow mctBox) {
@@ -556,8 +556,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda ustawia nowe okno w≥aúciwoúci symulatora inwariantÛw.
-	 * @param invSim AbyssDockWindow - okno w≥aúciwoúci symulatora inwariantÛw
+	 * Metoda ustawia nowe okno w≈Ça≈õciwo≈õci symulatora inwariant√≥w.
+	 * @param invSim AbyssDockWindow - okno w≈Ça≈õciwo≈õci symulatora inwariant√≥w
 	 */
 	public void setInvSim(AbyssDockWindow invSim)
 	{
@@ -565,15 +565,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zwraca aktywne okno w≥aúciwoúci symulatora inwariantÛw.
-	 * @param invSim AbyssDockWindow - okno w≥aúciwoúci symulatora inwariantÛw
+	 * Metoda zwraca aktywne okno w≈Ça≈õciwo≈õci symulatora inwariant√≥w.
+	 * @param invSim AbyssDockWindow - okno w≈Ça≈õciwo≈õci symulatora inwariant√≥w
 	 */
 	public AbyssDockWindow getInvSimBox() {
 		return invSimBox;
 	}
 
 	/**
-	 * Metoda odpowiedzialna za zwrÛcenie obiektu obszaru roboczego.
+	 * Metoda odpowiedzialna za zwr√≥cenie obiektu obszaru roboczego.
 	 * @return Workspace - obszar roboczy
 	 */
 	public Workspace getWorkspace() {
@@ -589,32 +589,32 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda zwraca obiekt paska narzÍdziowego.
-	 * @return PetriNetTools - pasek przyciskÛw
+	 * Metoda zwraca obiekt paska narzƒôdziowego.
+	 * @return PetriNetTools - pasek przycisk√≥w
 	 */
 	public PetriNetTools getToolBox() {
 		return toolBox;
 	}
 
 	/**
-	 * Metoda ustawia nowy obiekt paska narzÍdziowego.
-	 * @param toolBox PetriNetTools - pasek przyciskÛw
+	 * Metoda ustawia nowy obiekt paska narzƒôdziowego.
+	 * @param toolBox PetriNetTools - pasek przycisk√≥w
 	 */
 	private void setToolBox(PetriNetTools toolBox) {
 		this.toolBox = toolBox;
 	}
 
 	/**
-	 * Metoda zwraca obiekt podokna do wyúwietlania w≥aúciwoúci klikniÍtego elementu sieci.
-	 * @return AbyssDockWindow - podokno w≥aúciwoúci
+	 * Metoda zwraca obiekt podokna do wy≈õwietlania w≈Ça≈õciwo≈õci klikniƒôtego elementu sieci.
+	 * @return AbyssDockWindow - podokno w≈Ça≈õciwo≈õci
 	 */
 	public AbyssDockWindow getPropertiesBox() {
 		return selElementBox;
 	}
 
 	/**
-	 * Metoda ustawia nowy obiekt podokna do wyúwietlania w≥aúciwoúci klikniÍtego elementu sieci.
-	 * @param propertiesBox AbyssDockWindow - podokno w≥aúciwoúci
+	 * Metoda ustawia nowy obiekt podokna do wy≈õwietlania w≈Ça≈õciwo≈õci klikniƒôtego elementu sieci.
+	 * @param propertiesBox AbyssDockWindow - podokno w≈Ça≈õciwo≈õci
 	 */
 	private void setPropertiesBox(AbyssDockWindow propertiesBox) {
 		this.selElementBox = propertiesBox;
@@ -653,7 +653,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda zwraca obiekt - referencjÍ swojej klasy.
+	 * Metoda zwraca obiekt - referencji swojej klasy.
 	 * @return GUIManager - obiekt managaera
 	 */
 	public static GUIManager getDefaultGUIManager() {
@@ -670,7 +670,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Zwraca obiekt przycisku powiÍkszajπcego okno do rozmiarÛw ekranu.
+	 * Zwraca obiekt przycisku powiƒôkszajƒÖcego okno do rozmiar√≥w ekranu.
 	 * @return SingleMaximizer
 	 */
 	public SingleMaximizer getMaximizer() {
@@ -678,7 +678,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Ustawia obiekt przycisku powiÍkszajπcego okno do rozmiarÛw ekranu.
+	 * Ustawia obiekt przycisku powiƒôkszajƒÖcego okno do rozmiar√≥w ekranu.
 	 * @param maximizer SingleMaximizer
 	 */
 	private void setMaximizer(SingleMaximizer maximizer) {
@@ -686,7 +686,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Zwraca obiekt przycisku pomniejszajπcego okno do paska zadaÒ.
+	 * Zwraca obiekt przycisku pomniejszajƒÖcego okno do paska zada≈Ñ.
 	 * @return LineMinimizer
 	 */
 	public LineMinimizer getMinimizer() {
@@ -694,7 +694,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Ustawia obiekt przycisku pomniejszajπcego okno do paska zadaÒ.
+	 * Ustawia obiekt przycisku pomniejszajƒÖcego okno do paska zada≈Ñ.
 	 * @param minimizer LineMinimizer
 	 */
 	private void setMinimizer(LineMinimizer minimizer) {
@@ -746,32 +746,32 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda ta zwraca obiekt okna wyboru elementÛw.
-	 * @return AbyssDockWindow - okno wyboru elementÛw
+	 * Metoda ta zwraca obiekt okna wyboru element√≥w.
+	 * @return AbyssDockWindow - okno wyboru element√≥w
 	 */
 	public AbyssDockWindow getSelectionBox() {
 		return selectionBox;
 	}
 
 	/**
-	 * Metoda ta ustawia nowy obiekt okna wyboru elementÛw.
-	 * @param selectionBox AbyssDockWindow - okno wyboru elementÛw
+	 * Metoda ta ustawia nowy obiekt okna wyboru element√≥w.
+	 * @param selectionBox AbyssDockWindow - okno wyboru element√≥w
 	 */
 	private void setSelectionBox(AbyssDockWindow selectionBox) {
 		this.selectionBox = selectionBox;
 	}
 	
 	/**
-	 * Metoda zwraca obiekt okna przyciskÛw programu.
-	 * @return Toolbar - obiekt okna przyciskÛw
+	 * Metoda zwraca obiekt okna przycisk√≥w programu.
+	 * @return Toolbar - obiekt okna przycisk√≥w
 	 */
 	public Toolbar getShortcutsBar() {
 		return shortcutsBar;
 	}
 
 	/**
-	 * Metoda ta ustawia nowy obiekt okna przyciskÛw programu.
-	 * @param shortcutsBar Toolbar - obiekt okna przyciskÛw
+	 * Metoda ta ustawia nowy obiekt okna przycisk√≥w programu.
+	 * @param shortcutsBar Toolbar - obiekt okna przycisk√≥w
 	 */
 	private void setShortcutsBar(Toolbar shortcutsBar) {
 		this.shortcutsBar = shortcutsBar;
@@ -790,48 +790,48 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda zwracajπca obiekt nas≥uchujπcy zdarzenia dokowania podokna.
-	 * @return DarkDockingListener - obiekt nas≥uchujπcy
+	 * Metoda zwracajƒÖca obiekt nas≈ÇuchujƒÖcy zdarzenia dokowania podokna.
+	 * @return DarkDockingListener - obiekt nas≈ÇuchujƒÖcy
 	 */
 	public DarkDockingListener getDockingListener() {
 		return dockingListener;
 	}
 
 	/**
-	 * Metoda ustawiajπca nowy obiekt nas≥uchujπcy zdarzenia dokowania podokna.
-	 * @param dockingListener DarkDockingListener - nowy obiekt nas≥uchujπcy
+	 * Metoda ustawiajƒÖca nowy obiekt nas≈ÇuchujƒÖcy zdarzenia dokowania podokna.
+	 * @param dockingListener DarkDockingListener - nowy obiekt nas≈ÇuchujƒÖcy
 	 */
 	public void setDockingListener(DarkDockingListener dockingListener) {
 		this.dockingListener = dockingListener;
 	}
 
 	/**
-	 * Metoda zwraca obiekt podokna dla podúwietlania inwariantÛw sieci.
-	 * @return AbyssDockWindow - podokno inwariantÛw
+	 * Metoda zwraca obiekt podokna dla pod≈õwietlania inwariant√≥w sieci.
+	 * @return AbyssDockWindow - podokno inwariant√≥w
 	 */
 	public AbyssDockWindow getInvariantsBox() {
 		return invariantsBox;
 	}
 
 	/**
-	 * Metoda ta ustawia obiekt podokna dla podúwietlania inwariantÛw sieci.
-	 * @param analyzerBox AbyssDockWindow - podokno inwariantÛw
+	 * Metoda ta ustawia obiekt podokna dla pod≈õwietlania inwariant√≥w sieci.
+	 * @param analyzerBox AbyssDockWindow - podokno inwariant√≥w
 	 */
 	public void setInvariantsBox(AbyssDockWindow analyzerBox) {
 		this.invariantsBox = analyzerBox;
 	}
 	
 	/**
-	 * Metoda zwraca obiekt podokna wyboru klastrÛw do podúwietlania.
-	 * @return AbyssDockWindow - obiekt z w≥aúciwoúciani sieci
+	 * Metoda zwraca obiekt podokna wyboru klastr√≥w do pod≈õwietlania.
+	 * @return AbyssDockWindow - obiekt z w≈Ça≈õciwo≈õciani sieci
 	 */
 	public AbyssDockWindow getClusterSelectionBox() {
 		return clustersBox;
 	}
 
 	/**
-	 * Metoda ta ustawia nowy obiekt podokna wyboru klastrÛw do podúwietlania.
-	 * @param clusterBox AbyssDockWindow - obiekt z w≥aúciwoúciami sieci
+	 * Metoda ta ustawia nowy obiekt podokna wyboru klastr√≥w do pod≈õwietlania.
+	 * @param clusterBox AbyssDockWindow - obiekt z w≈Ça≈õciwo≈õciami sieci
 	 */
 	public void setClusterSelectionBox(AbyssDockWindow clusterBox) {
 		this.clustersBox = clusterBox;
@@ -846,7 +846,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zwraca úcieøkÍ do katalogu narzedzi.
+	 * Metoda zwraca ≈õcie≈ºkƒô do katalogu narzedzi.
 	 * @return String
 	 */
 	public String getToolPath() {
@@ -854,7 +854,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zwraca úcieøkÍ do katalogu programu.
+	 * Metoda zwraca ≈õcie≈ºkƒô do katalogu programu.
 	 * @return String
 	 */
 	public String getAbyssPath() {
@@ -862,7 +862,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zwraca úcieøkÍ do katalogu plikÛw tymczasowych.
+	 * Metoda zwraca ≈õcie≈ºkƒô do katalogu plik√≥w tymczasowych.
 	 * @return String
 	 */
 	public String getTmpPath() {
@@ -878,7 +878,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 
 	/**
-	 * Metoda odpowiedzialna za przywrÛcenie widoku domyúlnego.
+	 * Metoda odpowiedzialna za przywrÔøΩcenie widoku domyÔøΩlnego.
 	 */
 	public void restoreDefaultVisuals() {
 		getSimulatorBox().createSimulatorProperties();
@@ -937,21 +937,18 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda ta mia≥a na celu rozpoczÍcia analizy sieci Petriego w ramach
-	 * pracy inøynierskiej. Plan by≥ dobry, aczkolwiek w ramach pracy magisterskiej
-	 * zaczÍ≥a w koÒcu dzia≥aÊ i uruchamia analizator inwariantÛw. Nie dzia≥ajπcy
-	 * tak jak naleøy, ale w sumie pewien postÍp jest... (MR 8.12.2014)
+	 * Metoda ta mia≈Ça na celu rozpoczƒôcia analizy sieci Petriego w ramach
+	 * pracy in≈ºynierskiej. Plan by≈Ç dobry, aczkolwiek w ramach pracy magisterskiej
+	 * zaczƒÖa w ko≈Ñcu dzia≈Çaƒá i uruchamia analizator inwariant√≥w. Nie dzia≈ÇajƒÖcy
+	 * tak jak nale≈ºy, ale w sumie pewien postƒôp jest... (MR 8.12.2014)
 	 */
 	public void tInvariantsAnalyse(){
 		PetriNet project = workspace.getProject();
 		project.tInvariantsAnalyze();
-		//System.out.println("*%^$(*$)$ Barona!!!!!!!!!!!");	
-		//powyøsza metoda przekazuje na konsolÍ wyrazy uznania od jednego ze studentÛw
-		//dla kolegi, ktÛry implementowa≥ inne czÍúci programu (MR)
 	}
 
 	/**
-	 * Metoda odpowiedzialna za rozpoczÍcie generowania zbiorÛw MCT.
+	 * Metoda odpowiedzialna za rozpoczÔøΩcie generowania zbior√≥w MCT.
 	 */
 	public void generateMCT() {
 		DarkAnalyzer analyzer = getWorkspace().getProject().getAnalyzer();
@@ -963,16 +960,16 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zleca wyúwietlenie podokna podúwietlania klastrowania
+	 * Metoda zleca wy≈õwietlenie podokna pod≈õwietlania klastrowania
 	 */
 	public void showClusterSelectionBox(ClusterDataPackage data){
 		getClusterSelectionBox().showClusterSelector(data);
 	}
 	
 	/**
-	 * Metoda rozpoczyna symulacjÍ uruchamiania inwariantÛw.
+	 * Metoda rozpoczyna symulacjÔøΩ uruchamiania inwariant√≥w.
 	 * @param type int - 0-basic, 1- time
-	 * @param value - wartoúÊ
+	 * @param value - wartoÔøΩÔøΩ
 	 * @throws CloneNotSupportedException
 	 */
 	public void startInvariantsSimulation(int type, int value) throws CloneNotSupportedException{
@@ -980,7 +977,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda pomocnicza konstruktora, tworzy nowe okno tabeli klastrÛw.
+	 * Metoda pomocnicza konstruktora, tworzy nowe okno tabeli klastr√≥w.
 	 */
 	private void createClusterWindow() {
 		windowClusters = new AbyssClusters(0);
@@ -988,7 +985,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda s≥uøy do wyúwietlenia okna klastrÛw.
+	 * Metoda s≈Çu≈ºy do wy≈õwietlania okna klastr√≥w.
 	 */
 	public void showClusterWindow() {
 		if(windowClusters != null) {
@@ -997,7 +994,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda pomocnicza konstruktora, tworzy okno w≥aúciwoúci sieci.
+	 * Metoda pomocnicza konstruktora, tworzy okno w≈Ça≈õciwo≈õci sieci.
 	 */
 	private void createNetPropertiesWindow() {
 		windowNetProperties = new AbyssProperties();
@@ -1005,7 +1002,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda s≥uøy do wyúwietlenia okna w≥aúciwoúci sieci.
+	 * Metoda s≈Çu≈ºy do wy≈õwietlania okna w≈Ça≈õciwo≈õci sieci.
 	 */
 	public void showNetPropertiesWindow() {
 		if(windowNetProperties != null) {
@@ -1021,7 +1018,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda s≥uøy do wyúwietlenia okna informacji o programie.
+	 * Metoda s≈Çu≈ºy do wy≈õwietlenia okna informacji o programie.
 	 */
 	public void showAboutWindow() {
 		if(windowAbout != null) {
@@ -1030,14 +1027,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda ta tworzy nowe okno szukania elementÛw sieci.
+	 * Metoda ta tworzy nowe okno szukania element√≥w sieci.
 	 */
 	private void createSearchWindow() {
 		windowSearch = new AbyssSearch();
 	}
 	
 	/**
-	 * Metoda wyúwietla okno szukania elementÛw sieci na ekranie.
+	 * Metoda wy≈õwietla okno szukania element√≥w sieci na ekranie.
 	 */
 	public void showSearchWindow() {
 		if(windowSearch != null) {
@@ -1046,7 +1043,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda pomocnicza konstruktora, s≥uøy do tworzenia ukrytego okna konsoli logÛw.
+	 * Metoda pomocnicza konstruktora, s≈Çu≈ºy do tworzenia ukrytego okna konsoli log√≥w.
 	 */
 	private void createHiddenConsole() {
 		windowConsole = new AbyssConsole();
@@ -1054,7 +1051,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda s≥uøy do pokazywania lub chowania okna konsoli.
+	 * Metoda s≈Çu≈ºy do pokazywania lub chowania okna konsoli.
 	 */
 	public void showConsole(boolean value) {
 		if(windowConsole != null) {
@@ -1063,10 +1060,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zapisujπca nowe zdarzenie w oknie logÛw.
+	 * Metoda zapisujƒÖca nowe zdarzenie w oknie log√≥w.
 	 * @param text String - tekst zdarzenia
 	 * @param mode String - tryb zapisu w oknie
-	 * @param time boolean - true, jeúli ma byÊ podany czas zdarzenia
+	 * @param time boolean - true, je≈õli ma byƒá podany czas zdarzenia
 	 */
 	public void log(String text, String mode, boolean time) {
 		windowConsole.addText(text, mode, time, true);
@@ -1074,7 +1071,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 			windowConsole.setVisible(true);
 	}
 	/**
-	 * Jak wyøej, tylko bez entera.
+	 * Jak wy≈ºej, tylko bez entera.
 	 */
 	public void logNoEnter(String text, String mode, boolean time) {
 		windowConsole.addText(text, mode, time, false);
@@ -1083,15 +1080,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zwraca status úrodowiska narzÍdziowego R.
-	 * @return boolean - true, jeúli Abyss dysponuje prawid≥owπ úcieøkπ dostÍpu do Rscript.exe
+	 * Metoda zwraca status ≈õrodowiska narzƒôdziowego R.
+	 * @return boolean - true, je≈õli Abyss dysponuje prawid≈ÇowƒÖ ≈õcie≈ºkƒÖ dostƒôpu do Rscript.exe
 	 */
 	public boolean getRStatus() {
 		return rReady;
 	}
 	
 	/**
-	 * Metoda zwraca obiekt kontrolujπcy ustawienia programu.
+	 * Metoda zwraca obiekt kontrolujƒÖcy ustawienia programu.
 	 * @return SettingsManager
 	 */
 	public SettingsManager getSettingsManager() {

@@ -1,4 +1,4 @@
-package abyss.darkgui.properties;
+package abyss.darkgui.dockwindows;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -44,7 +44,7 @@ import abyss.analyzer.InvariantsSimulator;
 import abyss.clusters.ClusterDataPackage;
 import abyss.clusters.ClusterTransition;
 import abyss.darkgui.GUIManager;
-import abyss.darkgui.properties.AbyssDockWindow.DockWindowType;
+import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.graphpanel.GraphPanel;
 import abyss.math.Arc;
 import abyss.math.ElementLocation;
@@ -65,7 +65,7 @@ import abyss.workspace.WorkspaceSheet;
  * @author MR<br>
  * <br>
  * <b>Absolute positioning. Of almost absolute everything here. <br>
- * Nie obchodzi mnie, co o tym myślisz. Idź w layout i nie wracaj. ┌∩┐(◣_◢)┌∩┐
+ * Nie obchodzi mnie, co o tym myślisz. Idź w layout i nie wracaj. ┌∩┐(◣_◢)┌∩┐ 
  * </b><br>
  * Właściwie, to wyleje tu swoje żale na Jave, opensourcowe podejścia w tym języku i takie
  * tam. Nie ma to NIC wspólnego ze studentami, którzy się serio postarali i zrobili okna ok.
@@ -78,7 +78,7 @@ import abyss.workspace.WorkspaceSheet;
  * Javie layoutów, 2 polecenia na krzyż i wszystko się rozmieszcza gdzie chce i jak chce,
  * albo robi ręcznie i okazuje się, że Java w najmniejszym stopniu nie wspiera takiego podejścia.
  * Nagle miliard rzeczy należy ręcznie ustawiać, niepotrzebych na zdrowy rozsądek (PO CO MI 
- * BORDERSIZE JAK MOGĘ USTAWIĆ START LOCATION I SIZE? PO NIC. ALE BEZ NIEGO JPANEL SIE NIE
+ * BORDERSIZE JAK MOGŁ USTAWIĆ START LOCATION I SIZE? PO NIC. ALE BEZ NIEGO JPANEL SIE NIE
  * WYŚWIETLI. BO NIE!). Nagle okazuje się, że JPanel ręcznie należy zmusić do przerysowania się
  * (repaint) - bo tak. Z layoutami jakoś pamięta, żeby się narysować. Bez nich już nie.
  * 
@@ -91,7 +91,7 @@ import abyss.workspace.WorkspaceSheet;
  * 
  * Ostatnia rzecz, jeśli cię to nie przekonuje. Otwórz google. Wpisz dowolną frazę ze słowami
  * "java layout", "problem" względnie "does not". Pół internetu wyleci z pytaniami i (rzadziej) 
- * odpowiedziami. Takie to wspaniałe layouty. (ノ ゜Д゜)ノ ︵ ┻━━┻ 
+ * odpowiedziami. Takie to wspaniałe layouty. (╯゜Д゜）╯︵ ┻━━━┻)   
  */
 public class AbyssDockWindowsTable extends JPanel {
 	private static final long serialVersionUID = 4510802239873443705L;
@@ -290,6 +290,20 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 		components.add(stopSimulation);
 		
+		JButton restoreButton = new JButton(Tools.getResIcon22("ff"));
+		restoreButton.setName("reset");
+		restoreButton.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
+		restoreButton.setToolTipText("Reset");
+		restoreButton.setEnabled(false);
+		restoreButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				//simulator.pause();
+				mode = SIMULATOR;
+			}
+		});
+		components.add(restoreButton);
+		
 		// JButton saveState = new JButton(new ImageIcon(
 		// "resources/icons/simulation_icons/control_cursor_blue.png"));
 		// saveState.setEnabled(false);
@@ -303,12 +317,13 @@ public class AbyssDockWindowsTable extends JPanel {
 		// ===============================================
 		// tryb maximum
 		
-		JLabel maxLabel = new JLabel("Maximum mode", JLabel.LEFT);
-		maxLabel.setBounds(columnB_posX-50, columnB_Y += 30, colBCompLength+40, 20);
-		components.add(maxLabel);
+		//JLabel maxLabel = new JLabel("Maximum mode", JLabel.LEFT);
+		//maxLabel.setBounds(columnB_posX-50, columnB_Y += 30, colBCompLength+40, 20);
+		//components.add(maxLabel);
 		
-		JCheckBox maximumMode = new JCheckBox("");
-		maximumMode.setBounds(columnA_posX, columnA_Y += 30, 20, 20);
+		columnB_Y += 30;
+		JCheckBox maximumMode = new JCheckBox("Maximum mode");
+		maximumMode.setBounds(columnA_posX, columnA_Y += 30, 200, 20);
 		//maximumMode.setLocation(columnA_posX-4, columnA_Y);
 		maximumMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {

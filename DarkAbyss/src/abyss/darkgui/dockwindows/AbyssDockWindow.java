@@ -1,4 +1,4 @@
-package abyss.darkgui.properties;
+package abyss.darkgui.dockwindows;
 
 import java.awt.Point;
 import java.util.ArrayList;

@@ -11,7 +11,7 @@ import abyss.math.PetriNet;
 import abyss.math.Transition;
 
 /**
- * Klasa analizatora, aktualnie odpowiedzialna za generowanie zbiorów MCT.
+ * Klasa analizatora, aktualnie odpowiedzialna za generowanie zbiorÃ³w MCT.
  * @author students
  *
  */
@@ -31,8 +31,8 @@ public class DarkAnalyzer {
 	}
 
 	/**
-	 * Metoda tworz¹ca macierze wejœciowe i wyjœciowe (in/out arcs) oraz na ich
-	 * bazie tworz¹ca now¹ macierz incydencji
+	 * Metoda tworzÄ…ca macierze wejÅ›ciowe i wyjÅ›ciowe (in/out arcs) oraz na ich
+	 * bazie tworzÄ…ca nowÄ… macierz incydencji
 	 */
 	public void initiateData() {
 		inMatrix = new InputMatrix(petriNet.getTransitions(), petriNet.getPlaces());
@@ -41,7 +41,7 @@ public class DarkAnalyzer {
 	}
 
 	/**
-	 * Metoda zwracaj¹ aktualn¹ macierz incydencji.
+	 * Metoda zwracajÄ… aktualnÄ… macierz incydencji.
 	 * @return IncidenceMatrix - obiekt klasy IncidenceMatrix
 	 */
 	public IncidenceMatrix getMatrix() {
@@ -49,7 +49,7 @@ public class DarkAnalyzer {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca now¹ macierz incydencji.
+	 * Metoda ustawiajÄ…ca nowÄ… macierz incydencji.
 	 * @param matrix IncidenceMatrix - nowa macierz
 	 */
 	private void setMatrix(IncidenceMatrix matrix) {
@@ -57,9 +57,9 @@ public class DarkAnalyzer {
 	}
 
 	/**
-	 * Metoda generuj¹ca zbiory MCT na bazie t-inwariantów
-	 * @param tInvariantsList ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
-	 * @return ArrayList[ArrayList[Transition]] - macierz wyjœciowa
+	 * Metoda generujÄ…ca zbiory MCT na bazie t-inwariantÃ³w
+	 * @param tInvariantsList ArrayList[ArrayList[InvariantTransition]] - macierz inwariantÃ³w
+	 * @return ArrayList[ArrayList[Transition]] - macierz wyjÅ›ciowa
 	 */
 	public ArrayList<ArrayList<Transition>> generateMCT(ArrayList<ArrayList<InvariantTransition>> tInvariantsList) {
 		// konwersja z InvariantTransitions na Transitions
@@ -71,7 +71,7 @@ public class DarkAnalyzer {
 			}
 			invariants.add(currentInvariant);
 		}
-		// dodaje do ka¿dej tranzycji liste inwariantow, ktore ja zawieraja...
+		// dodaje do kaï¿½dej tranzycji liste inwariantow, ktore ja zawieraja...
 		ArrayList<Transition> allTransitions = GUIManager
 				.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		for (Transition transition : allTransitions) {
@@ -96,16 +96,16 @@ public class DarkAnalyzer {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca macierz t-inwariantów
-	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
+	 * Metoda zwracajÄ…ca macierz t-inwariantÃ³w
+	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inwariantÃ³w
 	 */
 	public ArrayList<ArrayList<InvariantTransition>> gettInvariants() {
 		return tInvariants;
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca now¹ macierz t-inwariantów
-	 * @return ArrayList[ArrayList[InvariantTransition]] - nowa macierz inwariantów
+	 * Metoda ustawiajÄ…ca nowÄ… macierz t-inwariantÃ³w
+	 * @return ArrayList[ArrayList[InvariantTransition]] - nowa macierz inwariantÃ³w
 	 */
 	public void settInvariants(ArrayList<ArrayList<InvariantTransition>> tInvariants) {
 		this.tInvariants = tInvariants;

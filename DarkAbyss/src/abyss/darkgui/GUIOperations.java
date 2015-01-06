@@ -18,10 +18,10 @@ import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 
 /**
- * Klasa odpowiedzialna za meta-obs³ugê wszystkich metod wejœcia-wyjœcia i paru innych, dla GUIManager.
- * W ogólnoœci, inne elementy interfejsu wywo³uj¹ zawarte tutaj metody, a z nich sterowania w miarê 
- * potrzeby idzie dalej, aby zrealizowaæ dan¹ funkcjê programu.
- * Krótko: kiedyœ wszystkie metody tu zawarte by³y w klasie GUIManager. Ale zrobi³o siê tam zbyt t³oczno.
+ * Klasa odpowiedzialna za meta-obsÅ‚ugÄ™ wszystkich metod wejÅ›cia-wyjÅ›cia i paru innych, dla GUIManager.
+ * W ogÃ³lnoÅ›ci, inne elementy interfejsu wywoÅ‚ujÅ› zawarte tutaj metody, a z nich sterowania w miarÄ™ 
+ * potrzeby idzie dalej, aby zrealizowaÄ‡ danÄ… funkcjÄ™ programu.
+ * KrÃ³tko: kiedyÅ› wszystkie metody tu zawarte byÅ‚y w klasie GUIManager. Ale zrobiÅ‚o siÄ™ tam zbyt tÅ‚oczno.
  * @author MR
  *
  */
@@ -29,14 +29,14 @@ public class GUIOperations {
 	GUIManager overlord;
 
 	/**
-	 * Konstruktor domyœlny obiektu klasy GUIOperations. A nó¿ do czegoœ siê przyda...
+	 * Konstruktor domyÅ›lny obiektu klasy GUIOperations. A nÃ³Å¼ do czegoÅ› siÄ™ przyda...
 	 */
 	public GUIOperations() {
 		
 	}
 	
 	/**
-	 * Konstruktor g³ówny obiektu klasy GUIOperations. Pobiera obiekt GUIManagera.
+	 * Konstruktor gÅ‚Ã³wny obiektu klasy GUIOperations. Pobiera obiekt GUIManagera.
 	 * @param mastah GUIManager
 	 */
 	public GUIOperations(GUIManager mastah) {
@@ -45,8 +45,8 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za import projektu z plików programów zewnêtrznych.
-	 * Obs³uguje miêdzy innymi sieci zwyk³e i czasowe programu Snoopy oraz sieci
+	 * Metoda odpowiedzialna za import projektu z plikÃ³w programÃ³w zewnÄ™trznych.
+	 * ObsÅ‚uguje miÄ™dzy innymi sieci zwykÅ‚e i czasowe programu Snoopy oraz sieci
 	 * w formacie programu INA.
 	 */
 	public void importProject() {
@@ -70,7 +70,7 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za otwieranie pliku z zapisan¹ sieci¹ w formacie .abyss.
+	 * Metoda odpowiedzialna za otwieranie pliku z zapisanÄ… sieciÄ… w formacie .abyss.
 	 */
 	public void openAbyssProject() {
 		String lastPath = overlord.getLastPath();
@@ -112,12 +112,12 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za zapis wygenerowanych inwariantów do pliku programu INA.
+	 * Metoda odpowiedzialna za zapis wygenerowanych inwariantÃ³w do pliku programu INA.
 	 */
 	public void exportGeneratedInvariants() {
-		//TODO: da siê: Tools.lastExtension
-		//Nie da siê ³atwo u¿yæ Tools.selectFileDialog, gdy¿ metoda musi mieæ
-		//dostêp do filtrów i wybranego typu! Zostawiæ jak jest.
+		//TODO: da siï¿½: Tools.lastExtension
+		//Nie da siï¿½ ï¿½atwo uï¿½yï¿½ Tools.selectFileDialog, gdyï¿½ metoda musi mieï¿½
+		//dostï¿½p do filtrï¿½w i wybranego typu! Zostawiï¿½ jak jest.
 		String lastPath = overlord.getLastPath();
 		JFileChooser fc;
 		if(lastPath==null)
@@ -164,12 +164,12 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za eksport projektu do pliku graficznego w okreœlonym formacie.
+	 * Metoda odpowiedzialna za eksport projektu do pliku graficznego w okreï¿½lonym formacie.
 	 */
 	public void exportProjectToImage() {
-		//TODO: da siê: Tools.lastExtension
-		//Nie da siê ³atwo u¿yæ Tools.selectFileDialog, gdy¿ metoda musi mieæ
-		//dostêp do filtrów i wybranego typu! Zostawiæ jak jest.
+		//TODO: da siÄ™: Tools.lastExtension
+		//Nie da siï¿½ ï¿½atwo uï¿½yï¿½ Tools.selectFileDialog, gdyï¿½ metoda musi mieï¿½
+		//dostï¿½p do filtrï¿½w i wybranego typu! Zostawiï¿½ jak jest.
 		String lastPath = overlord.getLastPath();
 		JFileChooser fc;
 		if(lastPath==null)
@@ -201,6 +201,7 @@ public class GUIOperations {
 				ext = ".jpeg";
 			}
 			//int index = 0;
+			String fullPath = "";
 			for (BufferedImage bi : overlord.getWorkspace().getProject().getImagesFromGraphPanels()) {
 				try {
 					String ext2 = "";
@@ -213,12 +214,12 @@ public class GUIOperations {
 					String fileName = file.getName();
 					String pathOutput = file.getAbsolutePath().substring(0, 
 							file.getAbsolutePath().lastIndexOf(File.separator)) + "//";
-					String fullPath = pathOutput+fileName+ext2;
+					fullPath = pathOutput+fileName+ext2;
 					
 					ImageIO.write(bi, ext.substring(1), new File(fullPath));
 					//index++;
 				} catch (IOException ex) {
-					ex.printStackTrace();
+					overlord.log("Unable to extract net as image. Cannot save to file "+fullPath, "error", true);
 				}
 			}
 			overlord.setLastPath(file.getParentFile().getPath());
@@ -243,13 +244,12 @@ public class GUIOperations {
 		if(selectedFile.toLowerCase().contains(".abyss"))
 			fileExtension = "";
 		
-		//String tmp = file.getPath();
 		overlord.getWorkspace().getProject().saveAsAbyss(file.getPath() + fileExtension);
 		overlord.setLastPath(file.getParentFile().getPath());
 	}
 	
 	/**
-	 * Metoda ogólnego zapisu, pozwala wybraæ format wyjœciowy. Domyœlnie SPPED
+	 * Metoda ogÃ³lnego zapisu, pozwala wybraÄ‡ format wyjÅ›ciowy. DomyÅ›lnie SPPED
 	 */
 	public void saveAsGlobal() {
 		String lastPath = overlord.getLastPath();
@@ -301,7 +301,7 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za wczytywanie inwariantów z pliku wygenerowanego programem INA.
+	 * Metoda odpowiedzialna za wczytywanie inwariantÃ³w z pliku wygenerowanego programem INA.
 	 */
 	public void loadExternalAnalysis() {
 		String lastPath = overlord.getLastPath();
@@ -324,10 +324,10 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda uruchamia sekwencjê zdarzeñ prowadz¹ca do wygenerowania inwariantów
-	 * za pomoc¹ programu INA dzia³aj¹cego jako niezale¿na aplikacja. Zaleca siê
-	 * nie zagl¹danie jak i co ona robi (metoda, nie INA), gdy¿ mo¿e to doprawadziæ
-	 * do s³abszych duchem programistów do rozstroju nerwowego, szczególnie w kontekscie
+	 * Metoda uruchamia sekwencjÄ™ zdarzeÅ„ prowadzÄ…ca do wygenerowania inwariantÃ³w
+	 * za pomocÄ… programu INA dziaÅ‚ajÄ…cego jako niezaleÅ¼na aplikacja. Zaleca siÄ™
+	 * nie zaglÄ…danie jak i co ona robi (metoda, nie INA), gdyÅ¼ moÅ¼e to doprawadziÅº
+	 * do sÅ‚abszych duchem programistÃ³w do rozstroju nerwowego, szczegÃ³lnie w kontekscie
 	 * operacji na plikach.
 	 */
 	public void generateINAinvariants() {
@@ -337,8 +337,8 @@ public class GUIOperations {
 		File tmpPNTfile = new File(toolPath+"siec.pnt");
 		String x = tmpPNTfile.getPath();
 		overlord.getWorkspace().getProject().saveAsPNT(x);
-		//zakoñczono zapis do pliku .pnt
-		long size = tmpPNTfile.length(); //124 dla nieistniej¹cej (pustej) sieci
+		//zakoï¿½czono zapis do pliku .pnt
+		long size = tmpPNTfile.length(); //124 dla nieistniejÄ…cej (pustej) sieci
 		if(size <154) {
 			String msg = "Net saving as .pnt file failed. There may be problems with file: "+x + 
 					" or there is no network yet.";
@@ -356,7 +356,7 @@ public class GUIOperations {
 				JOptionPane.showMessageDialog(null, "INAwin32.exe will now start. Click OK and please wait.", "Patience is a virtue", JOptionPane.INFORMATION_MESSAGE);
 				overlord.log(stars, "text", false);
 				overlord.log("Activating INAwin32.exe. Please wait, this may take a few seconds due to OS delays.", "text", true);
-				//kopiowanie plików:
+				//kopiowanie plikï¿½w:
 				Tools.copyFileByPath(inaExe.getPath(), abyssPath+"\\INAwin32.exe");
 				Tools.copyFileByPath(batFile.getPath(), abyssPath+"\\ina.bat");
 				Tools.copyFileByPath(commandFile.getPath(), abyssPath+"\\COMMAND.ina");
@@ -406,7 +406,7 @@ public class GUIOperations {
 				return;
 			}
 			
-			//wczytywanie inwariantów do systemu:
+			//wczytywanie inwariantÃ³w do systemu:
 			PetriNet project = overlord.getWorkspace().getProject();
 			project.loadInvariantsFromFile(invariantsFile.getPath());
 
@@ -427,7 +427,7 @@ public class GUIOperations {
 				String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", 
 						"Select invariants target path");
 				
-				if(!selectedFile.equals("")) { //jeœli wskazano plik
+				if(!selectedFile.equals("")) { //jeÅ›li wskazano plik
 					File file = new File(selectedFile);
 					String ext = "";
 					if(!file.getPath().contains(".inv"))
@@ -449,7 +449,7 @@ public class GUIOperations {
 	}
 
 	/**
-	 * Metoda generuj¹ca najbardziej postawow¹ wersjê pliku zbiorów MCT.
+	 * Metoda generujÄ…ca najbardziej postawowÄ… wersjÄ™ pliku zbiorÃ³w MCT.
 	 */
 	public void generateSimpleMCTFile() {
 		String filePath = overlord.getTmpPath() + "input.csv";
@@ -473,7 +473,7 @@ public class GUIOperations {
 			filters[0] = new ExtensionFileFilter("MCT sets file (.mct)",  new String[] { "MCT" });
 			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select MCT target path");
 			
-			if(selectedFile.equals("")) { //jeœli nie wybrano lokalizacji, zostaje w tmp
+			if(selectedFile.equals("")) { //jeï¿½li nie wybrano lokalizacji, zostaje w tmp
 				File csvFile = new File(filePath);
 				csvFile.delete();
 				
@@ -505,16 +505,16 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za obliczanie metryk Calinskiego-Harabasza dla klastrów
+	 * Metoda odpowiedzialna za obliczanie metryk Calinskiego-Harabasza dla klastrÃ³w
 	 * sieci Petriego.
-	 * @param howMany int - maksymalna liczba klastrów
+	 * @param howMany int - maksymalna liczba klastrÃ³w
 	 * @return String - katalog z plikami miar
 	 */
 	public String generateAllCHindexes(int howMany) {
 		overlord.showConsole(true);
-		if(!overlord.getRStatus()) { //sprawdŸ, czy Rscript.exe jest na miejscu
-			overlord.r_env_missing(); // zapytanie gdzie siê podziewa Rscript.exe
-			if(!overlord.getRStatus()) { //jeœli wci¹¿...
+		if(!overlord.getRStatus()) { //sprawdï¿½, czy Rscript.exe jest na miejscu
+			overlord.r_env_missing(); // zapytanie gdzie siï¿½ podziewa Rscript.exe
+			if(!overlord.getRStatus()) { //jeï¿½li wciï¿½ï¿½...
 				return null;
 			}
 		}
@@ -525,7 +525,7 @@ public class GUIOperations {
 		/*
 		String filePath = tmpPath + "cluster.csv";
 		
-		//generowanie CSV, uda siê, jeœli inwarianty istniej¹
+		//generowanie CSV, uda siï¿½, jeï¿½li inwarianty istniejï¿½
 		int result = workspace.getProject().saveInvariantsToCSV(filePath, true);
 		if(result == -1) {
 			String msg = "Exporting net into CSV file failed. \nCluster procedure cannot begin without invariants.";
@@ -602,14 +602,14 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za generowanie klastrowañ na podstawie sieci.
-	 * @return String - œcie¿ka do pliku cluster.csv na bazie którego powsta³y inne pliki
+	 * Metoda odpowiedzialna za generowanie klastrowaÅ„ na podstawie sieci.
+	 * @return String - Å›cieÅ¼ka do pliku cluster.csv na bazie ktÃ³rego powstaÅ‚y inne pliki
 	 */
 	public String generateClustersCase56(int howMany) {
 		overlord.showConsole(true);
-		if(!overlord.getRStatus()) { //sprawdŸ, czy Rscript.exe jest na miejscu
-			overlord.r_env_missing(); // zapytanie gdzie siê podziewa Rscript.exe
-			if(!overlord.getRStatus()) { //jeœli wci¹¿...
+		if(!overlord.getRStatus()) { //sprawdÅº, czy Rscript.exe jest na miejscu
+			overlord.r_env_missing(); // zapytanie gdzie siÄ™ podziewa Rscript.exe
+			if(!overlord.getRStatus()) { //jeÅ›li wciÄ…Å¼...
 				return null;
 			}
 		}
@@ -677,13 +677,13 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda zwraca œcie¿kê do pliku CSV, najpierw jednak molestuje u¿ytkownika celem
-	 * okreœlenia sk¹d ma ten plik w³aœciwa sama wytrzasn¹æ.
-	 * @return String - œcie¿ka do pliku CSV
+	 * Metoda zwraca Å›cieÅ¼kÄ™ do pliku CSV, najpierw jednak molestuje uÅ¼ytkownika celem
+	 * okreÅ›lenia skÄ…d ma ten plik wÅ‚aÅ›ciwa sama wytrzasnÄ…Ä‡.
+	 * @return String - Å›cieÅ¼ka do pliku CSV
 	 */
 	private String selectionOfSource() {
 		String lastPath = overlord.getLastPath();
-		if(overlord.getWorkspace().getProject().getInvariantsMatrix() == null) { //brak inwariantów
+		if(overlord.getWorkspace().getProject().getInvariantsMatrix() == null) { //brak inwariantÃ³w
 			FileFilter[] filters = new FileFilter[1];
 			filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
 			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file");
@@ -693,7 +693,7 @@ public class GUIOperations {
 			else
 				return selectedFile;
 		} else {
-			//wybór: z sieci, czy wskazanie CSV
+			//wybï¿½r: z sieci, czy wskazanie CSV
 			Object[] options = {"Select CSV file manually", "Create CSV from net invariants",};
 			int n = JOptionPane.showOptionDialog(null,
 					"Select CSV file for clustering computation manually or extract CSV from the\n"
@@ -710,7 +710,7 @@ public class GUIOperations {
 				else
 					return selectedFile;
 			} else {
-				//generowanie CSV, uda siê, jeœli inwarianty istniej¹
+				//generowanie CSV, uda siÄ™, jeÅ›li inwarianty istniejÄ…
 				String CSVfilePath = overlord.getTmpPath() + "cluster.csv";
 				int result = overlord.getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true);
 				if(result == -1) {
@@ -727,17 +727,17 @@ public class GUIOperations {
 	
 	/**
 	 * Metoda odpowiedzialna za wygenerowanie jednego klastrowania z inwariantami.
-	 * @param clustersPath String - domyœlna lokalizacja pliku CSV
+	 * @param clustersPath String - domyÅ›lna lokalizacja pliku CSV
 	 * @param algorithm String - nazwa algorytmu klastrowania
-	 * @param metric String - nazwa metryki dla powy¿szego
-	 * @param howMany int - ile klastrów ma mieæ klastrowanie
-	 * @return String[5] - œcie¿ki do plików:
+	 * @param metric String - nazwa metryki dla powyÅ¼szego
+	 * @param howMany int - ile klastrÃ³w ma mieÄ‡ klastrowanie
+	 * @return String[5] - Å›cieÅ¼ki do plikÃ³w:
 	 * 	resultFilePath_r; resultFilePath_MCT; resultFilePath_clusterCSV; cluster.pdf; dendrogram.pdf
 	 */
 	public String[] generateSingleClustering(String clustersPath, String algorithm, String metric, int howMany) {
 		String filePath = clustersPath + "//cluster.csv";
 		File csvFile = new File(filePath);
-		if(csvFile.exists() == false) { //jeœli nie ma pliku
+		if(csvFile.exists() == false) { //jeÅ›li nie ma pliku
 			Object[] options = {"Manually locate file", "Cancel procedure",};
 			int n = JOptionPane.showOptionDialog(null,
 							"No input.csv file in:\n"+filePath+ "\nDo you want to select location manually?",

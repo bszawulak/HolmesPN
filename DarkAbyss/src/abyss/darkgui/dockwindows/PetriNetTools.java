@@ -1,4 +1,4 @@
-package abyss.darkgui.properties;
+package abyss.darkgui.dockwindows;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

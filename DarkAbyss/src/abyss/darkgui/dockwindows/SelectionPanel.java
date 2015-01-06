@@ -1,4 +1,4 @@
-package abyss.darkgui.properties;
+package abyss.darkgui.dockwindows;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
