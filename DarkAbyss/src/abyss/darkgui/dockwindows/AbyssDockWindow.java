@@ -24,10 +24,10 @@ import com.javadocking.dockable.DefaultDockable;
 import com.javadocking.dockable.Dockable;
 
 /**
- * Metoda odpowiedzialna za podokno programu, w ktÛrym gromadzone sπ kolejne zak≥adki
- * jak np. symulator, analizator, edytor, itd. Wychwytuje ona miÍdzy innymi
- * zdarzenia klikniÍcia na jakiú element np. sieci, nastÍpnie zlecajπc utworzenie
- * podokna wyúwietlajπcego odpowiednie w≥aúciwoúci, przyciski, opcje, itd.
+ * Metoda odpowiedzialna za podokno programu, w kt√≥rym gromadzone sƒÖ kolejne zak≈Çadki
+ * jak np. symulator, analizator, edytor, itd. Wychwytuje ona miƒôdzy innymi
+ * zdarzenia klikniƒôcia na jaki≈õ element np. sieci, nastƒôpnie zlecajƒÖc utworzenie
+ * podokna wy≈õwietlajƒÖcego odpowiednie w≈Ça≈õciwo≈õci, przyciski, opcje, itd.
  * @author students
  *
  */
@@ -50,10 +50,10 @@ public class AbyssDockWindow extends SingleDock {
 
 	/**
 	 * Konstruktor obiektu klasy AbyssDockWindow. Tworzy czyste podokienko dokowane
-	 * do interfejsu programu (wywo≥anie pochodzi z konstruktora GUIManager).
-	 * Wype≥nianie okna elementami jest juø wykonywane zdalnie, na rzπdanie, odpowiedniπ
-	 * metodπ.
-	 * @param propertiesType DockWindowType - typ w≥aúciwoúci do dodania
+	 * do interfejsu programu (wywo≈Çanie pochodzi z konstruktora GUIManager).
+	 * Wype≈Çnianie okna elementami jest ju≈º wykonywane zdalnie, na rzƒÖdanie odpowiedniƒÖ
+	 * metodƒÖ.
+	 * @param propertiesType DockWindowType - typ w≈Ça≈õciwo≈õci do dodania
 	 */ 
 	public AbyssDockWindow(DockWindowType propertiesType) {
 		type = propertiesType;
@@ -95,7 +95,7 @@ public class AbyssDockWindow extends SingleDock {
 	}
 
 	/**
-	 * Metoda zwracajπca podokno dokowalne intefejsu programu.
+	 * Metoda zwracajƒÖca podokno dokowalne intefejsu programu.
 	 * @return Dockable - obiekt dokowalny
 	 */
 	public Dockable getDockable() {
@@ -103,7 +103,7 @@ public class AbyssDockWindow extends SingleDock {
 	}
 
 	/**
-	 * Metoda ustawiajπca podokno dokowalne intefejsu programu.
+	 * Metoda ustawiajƒÖca podokno dokowalne intefejsu programu.
 	 * @return Dockable - nowy obiekt dokowalny
 	 */
 	private void setDockable(Dockable dockable) {
@@ -111,7 +111,7 @@ public class AbyssDockWindow extends SingleDock {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za wype≥nienie sekcji symulatora sieci.
+	 * Metoda odpowiedzialna za wype≈Çnienie sekcji symulatora sieci.
 	 */
 	public void createSimulatorProperties() {
 		if (type == DockWindowType.SIMULATOR) {
@@ -124,12 +124,12 @@ public class AbyssDockWindow extends SingleDock {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za wype≥nienie sekcji symulatora inwariantÛw sieci.
+	 * Metoda odpowiedzialna za wype≈Çnienie sekcji symulatora inwariant√≥w sieci.
 	 */
 	//TODO: unused
 	public void createInvSimulatorProperties2() {
 		if (type == DockWindowType.InvSIMULATOR) {
-			//poniøsza metoda wywo≥uje odpowiedni konstruktor obiektu klasy PropertiesTable
+			//poni≈ºsza metoda wywo≈Çuje odpowiedni konstruktor obiektu klasy PropertiesTable
 			setCurrentDockWindow(new AbyssDockWindowsTable(GUIManager.getDefaultGUIManager().getWorkspace()
 					.getProject().getInvSimulator()));
 			scrollPane.getViewport().add(getCurrentDockWindow());
@@ -137,8 +137,8 @@ public class AbyssDockWindow extends SingleDock {
 	}
 	
 	/**
-	 * Metoda wywo≥ywana po wygenerowaniu inwariantÛw przez program. Zleca wykonanie
-	 * elementÛw interfejsu dla pokazywania inwariantÛw. W zasadzie nie rÛøni siÍ od
+	 * Metoda wywo≈Çywana po wygenerowaniu inwariant√≥w przez program. Zleca wykonanie
+	 * element√≥w interfejsu dla pokazywania inwariant√≥w. W zasadzie nie r√≥ni siƒô od
 	 * showExternalInvariants(...)
 	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - inwarianty
 	 */
@@ -151,9 +151,9 @@ public class AbyssDockWindow extends SingleDock {
 	}
 	
 	/**
-	 * Metoda wywo≥ywa w momencie, kiedy z okna klastrÛw wp≥ynπ dane o kolorach
-	 * tranzycji w kaødym klastrze. Wtedy tworzy ca≥π resztÍ elementÛw podokna klastrÛw.
-	 * @param coloredClustering ArrayList[ArrayList[Color]] - macierz kolorÛw
+	 * Metoda wywo≈Çywana w momencie, kiedy z okna klastr√≥w wp≈ÇynƒÖ dane o kolorach
+	 * tranzycji w ka≈ºdym klastrze. Wtedy tworzy ca≈ÇƒÖ resztƒô element√≥w podokna klastr√≥w.
+	 * @param coloredClustering ArrayList[ArrayList[Color]] - macierz kolor√≥w
 	 */
 	public void showClusterSelector(ClusterDataPackage data) {
 		if (type == DockWindowType.ClusterSELECTOR) {
@@ -164,7 +164,7 @@ public class AbyssDockWindow extends SingleDock {
 	
 	/**
 	 * Metoda odpowiedzialna za pokazanie podokna ze zbiorami MCT sieci.
-	 * @param mctGroups ArrayList[ArrayList[Transition]] - macierz zbiorÛw MCT
+	 * @param mctGroups ArrayList[ArrayList[Transition]] - macierz zbior√≥w MCT
 	 */
 	public void showMCT(ArrayList<ArrayList<Transition>> mctGroups) {
 		if (type == DockWindowType.MctANALYZER) {
@@ -174,7 +174,7 @@ public class AbyssDockWindow extends SingleDock {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za uaktualnienie w≥aúciwoúci.
+	 * Metoda odpowiedzialna za uaktualnienie w≈Ça≈õciwo≈õci.
 	 */
 	public void updateSimulatorProperties() {
 		if (type == DockWindowType.SIMULATOR) {
@@ -183,10 +183,10 @@ public class AbyssDockWindow extends SingleDock {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za wykrycie tego, co zosta≥o klikniÍte w programie, i o ile
-	 * to moøliwe - wyúwietlenie w≥aúciwoúci tego czegoú.
-	 * Dzia≥a dla podokna EDYTOR
-	 * @param e SelectionActionEvent - zdarzenie wyboru elementÛw
+	 * Metoda odpowiedzialna za wykrycie tego, co zosta≈Ço klikniƒôte w programie, i o ile
+	 * to mo≈ºliwe - wy≈õwietlenie w≈Ça≈õciwo≈õci tego czego≈õ.
+	 * Dzia≈Ça dla podokna EDYTOR
+	 * @param e SelectionActionEvent - zdarzenie wyboru element√≥w
 	 */
 	public void selectElement(SelectionActionEvent e) {
 		if (e.getActionType() == SelectionActionType.SELECTED_ONE) {
@@ -217,26 +217,26 @@ public class AbyssDockWindow extends SingleDock {
 	}
 
 	/**
-	 * Metoda zwracajπca odpowiedni obiekt w≥aúciwoúci, czyli obiekt zawierajπcy komponenty
-	 * ktÛregoú z podokien programu wyúwietlajπce przyciski, napisy, itd.
-	 * @return AbyssDockWindowsTable - obiekt podokna z ramach okna w≥aúciwoúci
+	 * Metoda zwracajƒÖca odpowiedni obiekt w≈Ça≈õciwo≈õci, czyli obiekt zawierajƒÖcy komponenty
+	 * kt√≥rego≈õ z podokien programu wy≈õwietlajƒÖce przyciski, napisy, itd.
+	 * @return AbyssDockWindowsTable - obiekt podokna z ramach okna w≈Ça≈õciwo≈õci
 	 */
 	public AbyssDockWindowsTable getCurrentDockWindow() {
 		return dockWindowPanel;
 	}
 
 	/**
-	 * Metoda ustawiajπca odpowiedni obiekt podokna, czyli obiekt zawierajπcy komponenty
-	 * ktÛregoú z podokien programu wyúwietlajπcego np. przyciski symulatora czy informacje
+	 * Metoda ustawiajƒÖca odpowiedni obiekt podokna, czyli obiekt zawierajƒÖcy komponenty
+	 * kt√≥rego≈õ z podokien programu wy≈õwietlajƒÖcego np. przyciski symulatora czy informacje
 	 * o elementach sieci.
-	 * @return AbyssDockWindowsTable - obiekt podokna z ramach okna w≥aúciwoúci
+	 * @return AbyssDockWindowsTable - obiekt podokna z ramach okna w≈Ça≈õciwo≈õci
 	 */
 	private void setCurrentDockWindow(AbyssDockWindowsTable properties) {
 		this.dockWindowPanel = properties;
 	}
 
 	/**
-	 * Metoda zwracajπca obiekt panelu wyúwietlajπcego zaznaczone elementy sieci.
+	 * Metoda zwracajƒÖca obiekt panelu wy≈õwietlajƒÖcego zaznaczone elementy sieci.
 	 * @return SelectionPanel - obiekt panelu
 	 */
 	public SelectionPanel getSelectionPanel() {
@@ -244,7 +244,7 @@ public class AbyssDockWindow extends SingleDock {
 	}
 
 	/**
-	 * Metoda ustawiajπca nowy obiekt panelu wyúwietlajπcego zaznaczone elementy sieci.
+	 * Metoda ustawiajƒÖca nowy obiekt panelu wyƒÖwietlajƒÖcego zaznaczone elementy sieci.
 	 * @return SelectionPanel - obiekt panelu
 	 */
 	private void setSelectionPanel(SelectionPanel selectionPanel) {

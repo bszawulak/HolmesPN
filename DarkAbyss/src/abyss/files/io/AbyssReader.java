@@ -17,7 +17,7 @@ import abyss.math.PetriNetData;
 import abyss.math.PetriNetElement.PetriNetElementType;
 
 /**
- * Klasa odpowiedzialna za odczyt plików projektu.<br><br>
+ * Klasa odpowiedzialna za odczyt plikÃ³w projektu.<br><br>
  *
  * Poprawiono:<br>
  * wczytywanie pliku - uaktualnianie zmiennych ID generatora
@@ -31,8 +31,8 @@ public class AbyssReader {
 	private String pnName;
 
 	/**
-	 * Metoda odpowiedzialna za czytanie plików projektu formatu .abyss.
-	 * @param path String - œcie¿ka dostêpu do pliku
+	 * Metoda odpowiedzialna za czytanie plikÃ³w projektu formatu .abyss.
+	 * @param path String - Å›cieÅ¼ka dostÄ™pu do pliku
 	 */
 	public void read(String path) {
 		File source = new File(path);
@@ -90,7 +90,7 @@ public class AbyssReader {
 	}
 	
 	/**
-	 * Metoda pomocnicza ustawiaj¹ca rozmiar obszaru rysowania wczytanej sieci.
+	 * Metoda pomocnicza ustawiajÄ…ca rozmiar obszaru rysowania wczytanej sieci.
 	 * @param aln ArrayList[Node] - elementy z lokalizacjami
 	 */
 	private void setWorkframeBoundary(ArrayList<Node> aln)
@@ -119,32 +119,32 @@ public class AbyssReader {
 	}
 
 	/**
-	 * Metoda zwraca listê wêz³ów sieci.
-	 * @return ArrayList[Node] - wierzcho³ki sieci
+	 * Metoda zwraca listÄ™ wÄ™zÅ‚Ã³w sieci.
+	 * @return ArrayList[Node] - wierzchoÅ‚ki sieci
 	 */
 	public ArrayList<Node> getNodeArray() {
 		return nodeArray;
 	}
 
 	/**
-	 * Metoda ustawia now¹ listê wierzcho³ków sieci.
-	 * @param nodeArray ArrayList[Node] - nowe wierzcho³ki sieci
+	 * Metoda ustawia nowÄ… listÄ™ wierzchoÅ‚kÃ³w sieci.
+	 * @param nodeArray ArrayList[Node] - nowe wierzchoÅ‚ki sieci
 	 */
 	public void setNodeArray(ArrayList<Node> nodeArray) {
 		this.nodeArray = nodeArray;
 	}
 
 	/**
-	 * Metdoa zwraca listê ³uków sieci.
-	 * @return ArrayList[Arc] - lista ³uków
+	 * Metdoa zwraca listÄ™ Å‚ukÃ³w sieci.
+	 * @return ArrayList[Arc] - lista Å‚ukÃ³w
 	 */
 	public ArrayList<Arc> getArcArray() {
 		return arcArray;
 	}
 
 	/**
-	 * Metoda ustawia now¹ listê ³uków sieci.
-	 * @param arcArray ArrayList[Arc] - nowa lista ³uków
+	 * Metoda ustawia nowÄ… listÄ™ Å‚ukÃ³w sieci.
+	 * @param arcArray ArrayList[Arc] - nowa lista Å‚ukÃ³w
 	 */
 	public void setArcArray(ArrayList<Arc> arcArray) {
 		this.arcArray = arcArray;

@@ -6,12 +6,13 @@ import java.awt.event.ActionListener;
 import abyss.graphpanel.GraphPanel;
 
 /**
- * Klasa odpowiedzialna za utworzenie menu kontekstowego dla wierzcho�k�w sieci.
+ * Klasa odpowiedzialna za utworzenie menu kontekstowego dla wierzchołków sieci.
  * @author students
  *
  */
 public class PetriNetElementPopupMenu extends GraphPanelPopupMenu {
-	private static final long serialVersionUID = 3466116227209643358L;
+	// BACKUP:  -8988739887642243733L  (ŁAPY PRECZ OD PONIŻSZEJ ZMIENNEJ)
+	private static final long serialVersionUID = -8988739887642243733L;
 
 	/**
 	 * Konstruktor obiektu klasy PetriNetElementPopupMenu.
@@ -33,5 +34,4 @@ public class PetriNetElementPopupMenu extends GraphPanelPopupMenu {
 		
 		this.addSeparator();
 	}
-
 }

@@ -4,7 +4,7 @@ import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 
 /**
- * Klasa odpowiedzialna za przechwytywanie naciœnieæ przycisków.
+ * Klasa odpowiedzialna za przechwytywanie naciÅ›nieÄ‡ przyciskÃ³w.
  * @author students
  *
  */
@@ -15,7 +15,7 @@ class KeyManager implements KeyEventDispatcher {
 
 	/**
 	 * Konstruktor obiektu klasy KeyManager.
-	 * @param guiManager GUIManager - manager g³ównego interfejsu programu
+	 * @param guiManager GUIManager - manager gÅ‚Ã³wnego interfejsu programu
 	 */
 	public KeyManager(GUIManager guiManager) {
 		this.guiManager = guiManager;

@@ -1,7 +1,7 @@
 package abyss.graphpanel;
 
 /**
- * Generator identyfikatorów dla wierzcho³ków.
+ * Generator identyfikatorÃ³w dla wierzchoÅ‚kÃ³w.
  * @author students
  *
  */
@@ -12,7 +12,7 @@ public class IdGenerator {
 	
 	/**
 	 * Metoda zwraca nowy wolny identyfikator.
-	 * @return int - wartoœæ ID
+	 * @return int - wartoÅ›Ä‡ ID
 	 */
 	public static int getNextId()
 	{
@@ -20,8 +20,8 @@ public class IdGenerator {
 	}
 	
 	/**
-	 * Metoda ustawia pocz¹tkow¹ wartoœæ identyfikatora.
-	 * @param id int - nowa wartoœæ startowa
+	 * Metoda ustawia poczÄ…tkowÄ… wartoÅ›Ä‡ identyfikatora.
+	 * @param id int - nowa wartoÅ›Ä‡ startowa
 	 */
 	public static void setStartId(int id)
 	{
@@ -29,7 +29,7 @@ public class IdGenerator {
 	}
 
 	/**
-	 * Metoda zwraca ostatni¹ wartoœæ identyfikatora dla miejsca.
+	 * Metoda zwraca ostatniÄ… wartoÅ›Ä‡ identyfikatora dla miejsca.
 	 * @return int - identyfikator miejsca
 	 */
 	public static int getNextPlaceId() 
@@ -38,7 +38,7 @@ public class IdGenerator {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca ostatni¹ wartoœæ identyfikatora dla miejsca.
+	 * Metoda ustawiajÄ…ca ostatniÄ… wartoÅ›Ä‡ identyfikatora dla miejsca.
 	 * @param lastPlaceId int - nowy ostatni identyfikator miejsca
 	 */
 	public static void setPlaceId(int lastPlaceId) 
@@ -47,7 +47,7 @@ public class IdGenerator {
 	}
 
 	/**
-	 * Metoda zwraca ostatni¹ wartoœæ identyfikatora dla tranzycji.
+	 * Metoda zwraca ostatniÄ… wartoÅ›Ä‡ identyfikatora dla tranzycji.
 	 * @return int - identyfikator tranzycji
 	 */
 	public static int getNextTransitionId() 
@@ -56,7 +56,7 @@ public class IdGenerator {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca ostatni¹ wartoœæ identyfikatora dla tranzycji.
+	 * Metoda ustawiajÄ…ca ostatniÄ… wartoÅ›Ä‡ identyfikatora dla tranzycji.
 	 * @param lastTransitionId int - identyfikator tranzycji
 	 */
 	public static void setTransitionId(int lastTransitionId) 

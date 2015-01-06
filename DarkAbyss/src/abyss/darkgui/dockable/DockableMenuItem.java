@@ -9,15 +9,16 @@ import com.javadocking.dockable.Dockable;
 
 /**
  * Klasa odpowiedzialna za dodawanie nowych pozycji w menu programu, precyzyjniej
- * w podmenu odpowiedzialnym za wyœwietlanie statusu widocznoœæ podokien programu.
+ * w podmenu odpowiedzialnym za wyÅ›wietlanie statusu widocznoÅ›Ä‡ podokien programu.
  * @author students
  * @author MR
  */
 public class DockableMenuItem extends JCheckBoxMenuItem {
+	// BACKUP: -690559183213842322L;
 	private static final long serialVersionUID = -690559183213842322L;
 
 	/**
-	 * Konstruktor tworz¹cy nowy wpis w menu, oraz ustawiaj¹cy jego ikonê.
+	 * Konstruktor tworzÄ…cy nowy wpis w menu, oraz ustawiajÄ…cy jego ikonÄ™.
 	 * @param dockable Dockable - obiekt do dodania
 	 * @param icon ImageIcon - ikonka
 	 */

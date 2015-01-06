@@ -1,7 +1,7 @@
 package abyss.analyzer.matrix;
 
 /**
- * Klasa abstrakcyjna definiuj¹ca podstawowe operacje na macierz t x p, gdzie
+ * Klasa abstrakcyjna definiujÄ…ca podstawowe operacje na macierz t x p, gdzie
  * t to liczba tranzycji, p to liczba miejsc.
  * @author students
  *
@@ -12,7 +12,7 @@ public abstract class Matrix {
 	protected int amountOfPlaces;
 
 	/**
-	 * Metoda tworz¹ca tablicê.
+	 * Metoda tworzÄ…ca tablicÄ™.
 	 * @param numberOfPlaces int - liczba miejsc
 	 * @param numberOfTransitions - liczba tranzycji
 	 */
@@ -23,10 +23,10 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Metoda pobieraj¹ca wartoœæ z tablicy.
+	 * Metoda pobierajÄ…ca wartoÅ›Ä‡ z tablicy.
 	 * @param transitionIndex int - indeks tranzycji
 	 * @param placeIndex int - indeks miejsca
-	 * @return int - wartoœæ z tablicy
+	 * @return int - wartoÅ›Ä‡ z tablicy
 	 */
 	public int getValue(int transitionIndex, int placeIndex) {
 		if(transitionIndex < amountOfTransitions && placeIndex < amountOfPlaces)
@@ -36,10 +36,10 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Metoda ustawiaj¹ca now¹ wartoœæ w komórce tablicy.
+	 * Metoda ustawiajÄ…ca nowÄ… wartoÅ›Ä‡ w komÃ³rce tablicy.
 	 * @param transitionIndex int - indeks tranzycji
 	 * @param placeIndex int - indeks miejsca
-	 * @param value int - nowa wartoœæ
+	 * @param value int - nowa wartoÅ›Ä‡
 	 */
 	protected void setValue(int transitionIndex, int placeIndex, int value) {
 		if(transitionIndex < amountOfTransitions && placeIndex < amountOfPlaces)
@@ -47,7 +47,7 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za zamianê wierszy.
+	 * Metoda odpowiedzialna za zamianÄ™ wierszy.
 	 * @param rowA int - indeks wiersza A
 	 * @param rowB int - indeks wiersza B
 	 */
@@ -68,7 +68,7 @@ public abstract class Matrix {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca now¹ macierz.
+	 * Metoda ustawiajÄ…ca nowÄ… macierz.
 	 * @param matrix int[][] - nowa macierz
 	 */
 	private void setMatrix(int[][] matrix) {

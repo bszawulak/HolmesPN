@@ -28,8 +28,8 @@ import com.javadocking.dockable.DefaultDockable;
 import com.javadocking.dockable.Dockable;
 
 /**
- * Klasa odpowiedzialna za tworzenie okna narzêdziowego, w którym sk³adowane
- * s¹ komponenty mo¿liwe do dodania w ró¿nych rodzajach sieci Petriego.
+ * Klasa odpowiedzialna za tworzenie okna narzÄ™dziowego, w ktÃ³rym skÅ‚adowane
+ * sÄ… komponenty moÅ¼liwe do dodania w rÃ³Å¼nych rodzajach sieci Petriego.
  * @author students
  *
  */
@@ -45,7 +45,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	JButton place, transition, arc, none;
 
 	/**
-	 * Konstruktor domyœlny obiektu klasy Tools.
+	 * Konstruktor domyÅ›lny obiektu klasy Tools.
 	 */
 	public PetriNetTools() {
 		guiManager = GUIManager.getDefaultGUIManager();
@@ -103,7 +103,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca podokno dokowalne narzêdzi intefejsu programu.
+	 * Metoda zwracajÄ…ca podokno dokowalne narzÄ™dzi intefejsu programu.
 	 * @return Dockable - obiekt dokowalny
 	 */
 	public Dockable getDockable() {
@@ -111,7 +111,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca podokno dokowalne narzêdzi intefejsu programu.
+	 * Metoda ustawiajÄ…ca podokno dokowalne narzÄ™dzi intefejsu programu.
 	 * @return Dockable - obiekt dokowalny
 	 */
 	private void setDockable(Dockable dockable) {
@@ -119,8 +119,8 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	}
 
 	/**
-	 * Przeci¹¿ona metoda odpowiedzialna za reakcjê na zmianê narzêdzia rysowania sieci.
-	 * @param e TreeSelectionEvent - zdarzenie wybrania wêz³a w drzewie narzêdzi
+	 * PrzeciÄ…Å¼ona metoda odpowiedzialna za reakcjÄ™ na zmianÄ™ narzÄ™dzia rysowania sieci.
+	 * @param e TreeSelectionEvent - zdarzenie wybrania wÄ™zÅ‚a w drzewie narzÄ™dzi
 	 */
 	public void valueChanged(TreeSelectionEvent e) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)toolTree.getLastSelectedPathComponent();
@@ -152,7 +152,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	}
 
 	/**
-	 * Klasa wewnêtrzna odpowiedzialna za kszta³t wêz³ów drzewa narzêdziowego.
+	 * Klasa wewnÄ™trzna odpowiedzialna za ksztaÅ‚t wÄ™zÅ‚Ã³w drzewa narzÄ™dziowego.
 	 * @author students
 	 *
 	 */
@@ -162,8 +162,8 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				eraserIcon, timeTransitionIcon;
 
 		/**
-		 * Konstruktor domyœlny obiektu klasy wewnêtrznej LeafRenderer. Tworzy ikony
-		 * narzêdzi rysowania sieci Petriego.
+		 * Konstruktor domyÅ›lny obiektu klasy wewnÄ™trznej LeafRenderer. Tworzy ikony
+		 * narzÄ™dzi rysowania sieci Petriego.
 		 */
 		public LeafRenderer() {
 			placeIcon = Tools.getResIcon16("/icons/place.gif");
@@ -175,12 +175,12 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		}
 
 		/**
-		 * Metoda odpowiedzialna za obs³ugê wyboru wêz³a w drzewie narzêdziowym.
-		 * @param tree JTree - drzewo narzêdzi programu
-		 * @param value Object - wartoœæ
+		 * Metoda odpowiedzialna za obsÅ‚ugÄ™ wyboru wÄ™zÅ‚a w drzewie narzÄ™dziowym.
+		 * @param tree JTree - drzewo narzÄ™dzi programu
+		 * @param value Object - wartoÅ›Ä‡
 		 * @param sel boolean - czy wybrany
-		 * @param expanded boolean - czy wêze³ otwarty
-		 * @param leaf boolean - czy jest liœciem
+		 * @param expanded boolean - czy wÄ™zeÅ‚ otwarty
+		 * @param leaf boolean - czy jest liÅ›ciem
 		 * @param row int - nr wiersza
 		 * @param hasFocus boolean - czy jest nad nim kursor
 		 * @return Component - komponent wybrany z drzewa

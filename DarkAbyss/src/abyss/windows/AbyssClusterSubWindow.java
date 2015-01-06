@@ -34,7 +34,7 @@ import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 
 /**
- * Klasa tworz¹ca okno informacyjne wzglêdem tabeli klastrów. Zawiera ono informacje o
+ * Klasa tworzÄ…ca okno informacyjne wzglÄ™dem tabeli klastrÃ³w. Zawiera ono informacje o
  * konkretnych wybranym klastrowaniu.
  * @author MR
  *
@@ -48,22 +48,22 @@ public class AbyssClusterSubWindow extends JFrame {
 	private String newline = "\n";
 	private StyledDocument doc; //
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
-	private JPanel editPanel; //g³ówny panel okna
+	private JPanel editPanel; //gÅ‚Ã³wny panel okna
 	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
 	
 	private String clusterPath;
 	
 	/**
-	 * Konstruktor domyœlny obiektu klasy AbyssClusterSubWindow.
+	 * Konstruktor domyÅ›lny obiektu klasy AbyssClusterSubWindow.
 	 */
 	public AbyssClusterSubWindow() {
 		
 	}
 	
 	/**
-	 * G³ówny konstruktor parametrowy okna klasy AbyssClusterSubWindow.
-	 * @param parent AbyssClusters - obiekt okna wywo³uj¹cego
-	 * @param clusteringMetaData Clustering - dane do wyœwietlenia
+	 * GÅ‚Ã³wny konstruktor parametrowy okna klasy AbyssClusterSubWindow.
+	 * @param parent AbyssClusters - obiekt okna wywoÅ‚ujÄ…cego
+	 * @param clusteringMetaData Clustering - dane do wyÅ›wietlenia
 	 */
 	public AbyssClusterSubWindow(AbyssClusters parent, Clustering dataPackage, int mode) {
 		this();
@@ -85,9 +85,9 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 
 	/**
-	 * Metoda tworzy najprostsz¹ wersjê okna informacyjnego.
-	 * @param parent AbyssClusters - okno wywo³uj¹ce
-	 * @param dataPackage Clustering - dane do wyœwietlenia
+	 * Metoda tworzy najprostszÄ… wersjÄ™ okna informacyjnego.
+	 * @param parent AbyssClusters - okno wywoÅ‚ujÄ…ce
+	 * @param dataPackage Clustering - dane do wyÅ›wietlenia
 	 */
 	private void initiateSimpleMode(AbyssClusters parent, Clustering dataPackage) {
 		JTextArea area = new JTextArea();
@@ -131,9 +131,9 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 
 	/**
-	 * Metoda tworzy podstawow¹ wersjê okna informacyjnego.
-	 * @param parent AbyssClusters - okno wywo³uj¹ce
-	 * @param dataPackage Clustering - dane do wyœwietlenia
+	 * Metoda tworzy podstawowÄ… wersjÄ™ okna informacyjnego.
+	 * @param parent AbyssClusters - okno wywoÅ‚ujÅ›ce
+	 * @param dataPackage Clustering - dane do wyÅ›wietlenia
 	 */
 	private void initiateExtendedMode(AbyssClusters parent, Clustering dataPackage) {
 		this.setTitle("Details for "+dataPackage.clusterNumber + " clusters from " 
@@ -223,10 +223,11 @@ public class AbyssClusterSubWindow extends JFrame {
 		setVisible(true);
 	}
 	
+	//TODO: Tools siÄ™ kÅ‚ania
 	/**
 	 * Metoda pomocnicza, dodaje spacje na prawo od tekstu.
 	 * @param text String - tekst do rozszerzenia
-	 * @param value int - maksymalna szerokoœæ tekstu
+	 * @param value int - maksymalna szerokoÅ›Ä‡ tekstu
 	 * @return String - nowy tekst
 	 */
 	private String addSpaceRight(String text, int value) {
@@ -238,11 +239,11 @@ public class AbyssClusterSubWindow extends JFrame {
 		}
 		return result+spaces;
 	}
-	
+	//TODO: Tools siÄ™ kÅ‚ania
 	/**
 	 * Metoda pomocnicza, dodaje spacje na lewo od tekstu.
 	 * @param text String - tekst do rozszerzenia
-	 * @param value int - maksymalna szerokoœæ tekstu
+	 * @param value int - maksymalna szerokoÅ›Ä‡ tekstu
 	 * @return String - nowy tekst
 	 */
 	private String addSpaceLeft(String text, int value) {
@@ -257,7 +258,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 	
 	/**
-	 * Metoda zwraca styl wyœwietlania (kolory) w zale¿noœci od wartoœci liczby
+	 * Metoda zwraca styl wyÅ›wietlania (kolory) w zaleÅ¼noÅ›ci od wartoÅ›ci liczby
 	 * @param value float - od -1 do +1.0
 	 * @return String - nazwa stylu - koloru
 	 */
@@ -280,7 +281,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	
 	/**
 	 * Metoda pomocnicza, tworzy style dla wypisywanych danych.
-	 * @param doc StyledDocument - obiekt dokumentu przechowuj¹cego style
+	 * @param doc StyledDocument - obiekt dokumentu przechowujÄ…cego style
 	 */
 	private void addStylesToDocument(StyledDocument doc) {
         Style baseStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
@@ -345,8 +346,8 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 	
 	/**
-	 * Metoda pomocnicza tworz¹ca Panel widoku klastrowania z przyciskami
-	 * @return JPanel - g³ówny panel okna
+	 * Metoda pomocnicza tworzÄ…ca Panel widoku klastrowania z przyciskami
+	 * @return JPanel - gÅ‚Ã³wny panel okna
 	 */
 	private JPanel createEditor() {
 		editPanel = new JPanel();
@@ -389,12 +390,12 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 	
 	/**
-	 * Metoda usuwaj¹ca pliki powsta³e w wyniku tworzenie konkretnego klastrowania.
-	 * @param resultFiles String[5] - 5 plików, usuwanie od 2 do 5 (1szy to cluster.csv)
+	 * Metoda usuwajÄ…ca pliki powstaÅ‚e w wyniku tworzenie konkretnego klastrowania.
+	 * @param resultFiles String[5] - 5 plikÃ³w, usuwanie od 2 do 5 (1szy to cluster.csv)
 	 */
 	private void deleteTmpFile(String[] resultFiles) {
 		try {
-			for(int i=1; i<resultFiles.length; i++) { // z wyj¹tkiem pliku csv
+			for(int i=1; i<resultFiles.length; i++) { // z wyjÄ…tkiem pliku csv
 				File del = new File(resultFiles[i]);
 				if(del.exists())
 					del.delete();
@@ -410,11 +411,11 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 	
 	/**
-	 * Metdoa odpowiedzialna za zapis pliku excela oraz plików powsta³ych w wyniku dzia³ania
+	 * Metdoa odpowiedzialna za zapis pliku excela oraz plikÃ³w powstaÅ‚ych w wyniku dziaÅ‚ania
 	 * procesu tworzenia konkretnego klastrowania dla sieci.
 	 * @param fullData ClusteringExtended - pakiet danych dla pliku excel
 	 * @param files String[] - pliki pomocnicze
-	 * @return boolean - true, jeœli wszystko siê uda³o
+	 * @return boolean - true, jeÅ›li wszystko siÄ™ udaÅ‚o
 	 */
 	private boolean saveAllFiles(ClusteringExtended fullData, String[] files) {
 		String whereExcelIs = saveExcelOnly(fullData);
@@ -454,9 +455,9 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za zapis wyników klastrowania do pliku excela.
+	 * Metoda odpowiedzialna za zapis wynikÃ³w klastrowania do pliku excela.
 	 * @param fullData ClusteringExtended - pakiet danych dla pliku .xls
-	 * @return String - œcie¿ka do pliku excela
+	 * @return String - Å›cieÅ¼ka do pliku excela
 	 */
 	private String saveExcelOnly(ClusteringExtended fullData) {
 		ExcelWriter ew = new ExcelWriter(0, fullData, "tmp\\testSheets.xls");
@@ -484,7 +485,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 
 	/**
-	 * Metoda obs³uguje zdarzenie klikniêcia na przycisk eksportu danych do .xls
+	 * Metoda obsÅ‚uguje zdarzenie klikniÄ™cia na przycisk eksportu danych do .xls
 	 */
 	protected void exportDataToExcel() {
 		String targetDir = getCSVLocation();
@@ -500,7 +501,7 @@ public class AbyssClusterSubWindow extends JFrame {
 				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 		if(resultFiles != null) {
 			ClusterReader reader = new ClusterReader();
-			// czytanie wyników:
+			// czytanie wynikÃ³w:
 			ClusteringExtended fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
 			if(fullData==null) {
 				GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to Excel cannot begin.", "error", true);
@@ -533,8 +534,8 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 
 	/**
-	 * Metoda ta zwraca œcie¿kê do katalogu, w którym znajduje siê cluster.csv.
-	 * @return String - œcie¿ka do katalogu
+	 * Metoda ta zwraca Å›cieÅ¼ki do katalogu, w ktÃ³rym znajduje siÄ™ cluster.csv.
+	 * @return String - Å›cieÅ¼ka do katalogu
 	 */
 	protected String getCSVLocation() {
 		String targetDir = "";
@@ -570,7 +571,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 	
 	/**
-	 * Metoda obs³uguje zdarzenie klikniêcia przycisku eksportu danych do okna g³ównego.
+	 * Metoda obsÅ‚uguje zdarzenie klikniÄ™cia przycisku eksportu danych do okna gÅ‚Ã³wnego.
 	 */
 	protected void exportToAbyss() {
 		String targetDir = getCSVLocation();
@@ -594,13 +595,13 @@ public class AbyssClusterSubWindow extends JFrame {
 			}
 			
 			ClusterDataPackage dataCore = new ClusterDataPackage();
-			dataCore.dataMatrix = clExtData.getClusteringColored(); //najbardziej czasoch³onne
+			dataCore.dataMatrix = clExtData.getClusteringColored(); //najbardziej czasochÅ‚onne
 			dataCore.algorithm = clExtData.metaData.algorithmName;
 			dataCore.metric = clExtData.metaData.metricName;
 			dataCore.clNumber = clExtData.metaData.clusterNumber;
 			dataCore.clSize = new ArrayList<Integer>(clExtData.metaData.clusterSize);
 			
-			GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyœlij do Abyss (JFrame)
+			GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyÅ›lij do Abyss (JFrame)
 			
 			deleteTmpFile(resultFiles);
 			

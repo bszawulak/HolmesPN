@@ -3,7 +3,7 @@ package abyss.clusters;
 import java.util.ArrayList;
 
 /**
- * Klasa pomocnicza w procesie tworzenia pliku excel tabeli klastrów
+ * Klasa pomocnicza w procesie tworzenia pliku excel tabeli klastrÃ³w
  * @author AR
  *
  */

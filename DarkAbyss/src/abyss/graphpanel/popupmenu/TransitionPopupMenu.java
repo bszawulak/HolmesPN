@@ -6,15 +6,17 @@ import java.awt.event.ActionListener;
 import abyss.graphpanel.GraphPanel;
 
 /**
- * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji zwi�zanych z tranzycjami.
+ * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji związanych z tranzycjami.
  * @author students
  *
  */
 public class TransitionPopupMenu extends PetriNetElementPopupMenu {
+	// BACKUP:  1268637178521514216L   (ŁAPY PRECZ OD PONIŻSZEJ ZMIENNEJ)
 	private static final long serialVersionUID = 1268637178521514216L;
+
 	/**
 	 * Konstruktor obiektu klasy TransitionPopupMenu.
-	 * @param graphPanel GraphPanel - arkusz dla kt�rego powstaje menu
+	 * @param graphPanel GraphPanel - arkusz dla którego powstaje menu
 	 */
 	public TransitionPopupMenu(GraphPanel graphPanel) {
 		super(graphPanel);

@@ -71,7 +71,7 @@ public class DarkAnalyzer {
 			}
 			invariants.add(currentInvariant);
 		}
-		// dodaje do ka�dej tranzycji liste inwariantow, ktore ja zawieraja...
+		// dodaje do każdej tranzycji liste inwariantow, ktore ja zawieraja...
 		ArrayList<Transition> allTransitions = GUIManager
 				.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		for (Transition transition : allTransitions) {

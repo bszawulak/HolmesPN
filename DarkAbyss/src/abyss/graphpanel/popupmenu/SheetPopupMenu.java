@@ -17,13 +17,15 @@ import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
 import abyss.workspace.ExtensionFileFilter;
 
-@SuppressWarnings("serial")
 /**
  * Klasa tworząca obiekty menu kontekstowego dla arkusza z rysunkiem sieci.
  * @author students
  *
  */
 public class SheetPopupMenu extends GraphPanelPopupMenu {
+	// BACKUP:  3206422633820189233L   (ŁAPY PRECZ OD PONIŻSZEJ ZMIENNEJ)
+	private static final long serialVersionUID = 3206422633820189233L;
+
 	/**
 	 * Konstruktor obiektu klasy SheetPopupMenu.
 	 * @param graphPanel GraphPanel - panel dla którego powstaje menu

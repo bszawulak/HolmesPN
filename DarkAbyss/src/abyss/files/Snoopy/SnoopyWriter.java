@@ -18,7 +18,7 @@ import abyss.math.Transition;
  * użyty. Ten parser działa błędnie. Np. komentarze dla tranzycji są przesuniętę względem
  * osi oX, a powinny oY jak dla miejsc. Poza tym parser pluje danymi jak karabin maszynowy,
  * z czego 60% tych danych jest redundantnych, a kilka zupełnie ignorowanych przez Snoopiego
- * wczytującego tenże plik (np. punkty startu i końca dla łuków)
+ * wczytującego tenże plik (np. punkty startu i końca dla łuków).
  * 
  * @author MR
  *

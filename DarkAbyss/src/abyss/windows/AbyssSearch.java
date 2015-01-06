@@ -31,6 +31,11 @@ import abyss.math.Transition;
 import abyss.utilities.Tools;
 import abyss.workspace.WorkspaceSheet;
 
+/**
+ * Klasa implementująca okno wyszukiwania elementów sieci.
+ * @author MR
+ *
+ */
 public class AbyssSearch extends JFrame {
 	private static final long serialVersionUID = 8885161841467059860L;
 	private JFrame ego;

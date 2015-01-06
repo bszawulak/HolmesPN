@@ -6,7 +6,7 @@ import abyss.math.Place;
 import abyss.math.Transition;
 
 /**
- * Klasa tworz¹ca macierz wyjœciow¹ do obliczeñ, dziedzicz¹ca z Matrix
+ * Klasa tworzÄ…ca macierz wyjÅ›ciowÄ… do obliczeÅ„, dziedziczÄ…ca z Matrix
  * @author students
  *
  */

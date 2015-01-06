@@ -58,7 +58,7 @@ import com.javadocking.visualizer.LineMinimizer;
 import com.javadocking.visualizer.SingleMaximizer;
 
 /**
- * Główna klasa programu odpowiedzialna za właściwie wszystko. Zaczyna od utworzenia element�w
+ * Główna klasa programu odpowiedzialna za właściwie wszystko. Zaczyna od utworzenia elementów
  * graficznych programu, a dalej jakoś tak się samo już wszystko toczy. Albo wywala.
  * @author students - ktoś musiał zacząć :)
  * @author MR - Metody, Metody. Nowe Metody. Podpisano: Cyryl
@@ -117,14 +117,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	// other components
 	private DarkMenu menu;	//komponent menu programu
 
-	// inne wa�ne zmienne
+	// inne ważne zmienne
 	private String lastPath;	// ostatnia otwarta scieżka
 	private String abyssPath; 	// scieżka dostępu do katalogu głównego programu
 	private String tmpPath;		// ścieżka dostępu do katalogu plików tymczasowych
 	private String toolPath;	// ścieżka dostępu do katalogu narzedziowego
 	private String logPath;
 	
-	// okna niezale�ne:
+	// okna niezależne:
 	public AbyssClusters windowClusters; //okno tabeli 
 	private AbyssConsole windowConsole; //konsola logów
 	private AbyssProperties windowNetProperties; //okno właściwości sieci
@@ -143,7 +143,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		setFrame(frejm);
 		try {	
-			//TE TRZY PIERD... LINIJKI KOSZTOWA�Y MNIE PRAWIE 2 GODZINY SZUKANIA PO NECIE
+			//TE TRZY PIERD... LINIJKI KOSZTOWAŁY MNIE PRAWIE 2 GODZINY SZUKANIA PO NECIE
 			//Po Eclipsem oczywiście getClass().getResource działa jak marzenie
 			//przy eksporcie do Jar, okazuje się że nic nie działa a wyjątek który
 			//wyskakuje jest NIEMOŻLIWE DO OBSŁUŻENIA przez nawet catch (Exception e )
@@ -212,7 +212,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setInvariantsBox(new AbyssDockWindow(DockWindowType.InvANALYZER));
 		setClusterSelectionBox(new AbyssDockWindow(DockWindowType.ClusterSELECTOR));
 		
-			//aktywuj obiekt podokna wy�wietlania zbior�w MCT
+			//aktywuj obiekt podokna wyświetlania zbiorów MCT
 		setMctBox(new AbyssDockWindow(DockWindowType.MctANALYZER)); 
 		setInvSim(new AbyssDockWindow(DockWindowType.InvSIMULATOR));
 		
@@ -391,7 +391,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda uruchamiana na starcie programu oraz wtedy, gdy chcemy uzyska� dost�p do lokalizacji
+	 * Metoda uruchamiana na starcie programu oraz wtedy, gdy chcemy uzyskać dostęp do lokalizacji
 	 * pliku Rscript.exe.
 	 */
 	public void r_env_missing() {
@@ -878,7 +878,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 
 	/**
-	 * Metoda odpowiedzialna za przywr�cenie widoku domy�lnego.
+	 * Metoda odpowiedzialna za przywrócenie widoku domyślnego.
 	 */
 	public void restoreDefaultVisuals() {
 		getSimulatorBox().createSimulatorProperties();
@@ -948,7 +948,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za rozpocz�cie generowania zbiorów MCT.
+	 * Metoda odpowiedzialna za rozpoczęcie generowania zbiorów MCT.
 	 */
 	public void generateMCT() {
 		DarkAnalyzer analyzer = getWorkspace().getProject().getAnalyzer();
@@ -967,9 +967,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda rozpoczyna symulacj� uruchamiania inwariantów.
+	 * Metoda rozpoczyna symulację uruchamiania inwariantów.
 	 * @param type int - 0-basic, 1- time
-	 * @param value - warto��
+	 * @param value - wartość
 	 * @throws CloneNotSupportedException
 	 */
 	public void startInvariantsSimulation(int type, int value) throws CloneNotSupportedException{

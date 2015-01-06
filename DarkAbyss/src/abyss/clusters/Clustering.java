@@ -9,28 +9,30 @@ import java.util.ArrayList;
  *
  */
 public class Clustering implements Serializable {
-	private static final long serialVersionUID = -4844202084986125686L;
+	/**
+	 * Poni偶szy numer jest 艣wi臋ty. Je艣li nawet wprowadzimy zmiany, NIE WOLNO go rusza膰, gdy偶
+	 * przestanie by膰 mo偶liwe wczytywanie tabel w formacie .acl programu!!!
+	 * Numer: -5381441187018735328L;
+	 */
+	private static final long serialVersionUID = -5381441187018735328L;
 	public String algorithmName;
 	public String metricName;
 	public int invNumber;
 	public int clusterNumber;
-	public int zeroClusters; //ile klastr體 z 1 inwariantem
+	public int zeroClusters; //ile klastr贸w z 1 inwariantem
 	public double evalMSS;
 	public double evalCH;
 	
-	public ArrayList<Integer> clusterSize;
-	public ArrayList<Float> clusterMSS;
-	public ArrayList<Float> vectorMSS;
-	//public int clusterSize[]; //wagi poszczeg髄nych klastr體
-	//public float clusterMSS[]; //MSS poszczeg髄nych klastr體
-	//public float vectorMSS[]; //6 warto渃i
+	public ArrayList<Integer> clusterSize; 	//wagi poszczeg贸lnych klastr贸w
+	public ArrayList<Float> clusterMSS;		//MSS poszczeg贸lnych klastr贸w
+	public ArrayList<Float> vectorMSS;		//6 warto艣ci
 	
 	//extended:
 	public int transNumber;
 	public int MCTnumber;
 	
 	/**
-	 * Konstruktor domy渓ny obiektu klasy Clustering.
+	 * Konstruktor domy艣lny obiektu klasy Clustering.
 	 */
 	public Clustering() {
 		algorithmName = "";
@@ -44,16 +46,13 @@ public class Clustering implements Serializable {
 		clusterSize = new ArrayList<Integer>();
 		clusterMSS = new ArrayList<Float>();
 		vectorMSS = new ArrayList<Float>();
-		//clusterSize = new int[2];
-		//clusterMSS = new float[2];
-		//vectorMSS = new float[6];
 		
 		transNumber = 0;
 		MCTnumber = 0;
 	}
 	
 	/**
-	 * Bezpieczne klonowanie obiekt體 klasy.
+	 * Bezpieczne klonowanie obiekt贸w klasy.
 	 * @param source Clustering - obiekt do skopiowania
 	 * @return Clustering - nowy obiekt kopia
 	 */
@@ -67,7 +66,6 @@ public class Clustering implements Serializable {
 		result.evalMSS = source.evalMSS;
 		result.evalCH = source.evalCH;
 		
-		
 		ArrayList<Integer> newClusterSize = new ArrayList<Integer>( source.clusterSize ); 
 		result.clusterSize = newClusterSize;
 		
@@ -79,24 +77,6 @@ public class Clustering implements Serializable {
 		
 		result.transNumber = source.transNumber;
 		result.MCTnumber = source.MCTnumber;
-		
-		/*
-		int arraySize = source.clusterSize.length;
-		result.clusterSize = new int[arraySize];
-		for(int i=0; i< arraySize; i++)
-			result.clusterSize[i] = source.clusterSize[i];
-		
-		arraySize = source.clusterMSS.length;
-		result.clusterMSS = new float[arraySize];
-		for(int i=0; i< arraySize; i++)
-			result.clusterMSS[i] = source.clusterMSS[i];
-		
-		arraySize = source.vectorMSS.length;
-		result.vectorMSS = new float[arraySize];
-		for(int i=0; i< arraySize; i++)
-			result.vectorMSS[i] = source.vectorMSS[i];
-		*/
-		
 				
 		return result;
 	}

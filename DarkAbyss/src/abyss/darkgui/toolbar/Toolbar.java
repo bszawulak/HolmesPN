@@ -25,7 +25,7 @@ import com.javadocking.drag.DragListener;
 import com.javadocking.visualizer.SingleMaximizer;
 
 /**
- * Klasa odpowiedzialna za tworzenie paska narzêdzi zaraz poni¿ej paska menu
+ * Klasa odpowiedzialna za tworzenie paska narzÄ™dzi zaraz poniÅ¼ej paska menu
  * programu.
  * @author students
  *
@@ -51,7 +51,7 @@ public class Toolbar extends BorderDock {
 	ArrayList<ButtonDockable> analysisDockables;
 
 	/**
-	 * Konstruktor domyœlny obiektu klasy Toolbar.
+	 * Konstruktor domyÅ›lny obiektu klasy Toolbar.
 	 */
 	public Toolbar() {
 		guiManager = GUIManager.getDefaultGUIManager();
@@ -61,7 +61,7 @@ public class Toolbar extends BorderDock {
 		// Create the buttons with a dockable around.
 		loadButtons();
 		simulationDockables = createSimulationBar();		
-		allowOnlySimulationInitiateButtons(); //na pocz¹tku aktywne tylko przyciski startu symulacji
+		allowOnlySimulationInitiateButtons(); //na poczÄ…tku aktywne tylko przyciski startu symulacji
 		//w ponizszej metodzie dodawac kolejne przyciski analizy!
 		analysisDockables = createAnalysisBar();
 
@@ -100,9 +100,9 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za dodawanie nowych przycisków w poziomie do podanego kontenera.
-	 * @param buttons ArrayList[ButtonDockable] - tablica przycisków do dodania
-	 * @param horizontalToolBarDock LineDock - obiekt kontenera przycisków
+	 * Metoda odpowiedzialna za dodawanie nowych przyciskÃ³w w poziomie do podanego kontenera.
+	 * @param buttons ArrayList[ButtonDockable] - tablica przyciskÃ³w do dodania
+	 * @param horizontalToolBarDock LineDock - obiekt kontenera przyciskÃ³w
 	 */
 	public void addAllButtonDockablesHorizontally(ArrayList<ButtonDockable> buttons, LineDock horizontalToolBarDock) {
 		int i = 0;
@@ -114,8 +114,8 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za dodawanie nowych przycisków w pionie.
-	 * @param buttons ArrayList[ButtonDockable] - tablica przycisków do dodania
+	 * Metoda odpowiedzialna za dodawanie nowych przyciskÃ³w w pionie.
+	 * @param buttons ArrayList[ButtonDockable] - tablica przyciskÃ³w do dodania
 	 */
 	public void addAllButtonDockablesVertically(ArrayList<ButtonDockable> buttons) {
 		int i = 0;
@@ -127,9 +127,9 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Metoda dodaj¹ca przyciski w poziomie do domyœlnego kontenera przycisków.
-	 * @param buttons ArrayList[ButtonDockable] - tablica przycisków
-	 * @return LineDock - obiekt kontera przycisków
+	 * Metoda dodajÄ…ca przyciski w poziomie do domyÅ›lnego kontenera przyciskÃ³w.
+	 * @param buttons ArrayList[ButtonDockable] - tablica przyciskÃ³w
+	 * @return LineDock - obiekt kontera przyciskÃ³w
 	 */
 	public LineDock createHorizontalBarDock(ArrayList<ButtonDockable> buttons) {
 		LineDock horizontalToolBarDock = new LineDock();
@@ -143,10 +143,10 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za tworzenie konkretnych instancji przycisków g³ównych.
+	 * Metoda odpowiedzialna za tworzenie konkretnych instancji przyciskÃ³w gÅ‚Ã³wnych.
 	 */
 	private void loadButtons() {
-		//nowa zak³adka
+		//nowa zakÅ‚adka
 		@SuppressWarnings("serial")
 		ToolbarButtonAction addButton = new ToolbarButtonAction(this, 
 				"New tab", Tools.getResIcon48("/icons/toolbar/add_panel.png")) {
@@ -214,8 +214,8 @@ public class Toolbar extends BorderDock {
 
 	@SuppressWarnings("serial")
 	/**
-	 * Metoda odpowiedzialna za tworzenie tablicy przycisków symulatora.
-	 * @return ArrayList[ButtonDockable] - tablica zawieraj¹ca obiekty przycisków
+	 * Metoda odpowiedzialna za tworzenie tablicy przyciskÃ³w symulatora.
+	 * @return ArrayList[ButtonDockable] - tablica zawierajÄ…ca obiekty przyciskÃ³w
 	 */
 	private ArrayList<ButtonDockable> createSimulationBar() {
 		ArrayList<ButtonDockable> simulationDockables = new ArrayList<ButtonDockable>();
@@ -303,8 +303,8 @@ public class Toolbar extends BorderDock {
 	
 	@SuppressWarnings("serial")
 	/**
-	 * Metoda odpowiedzialna za tworzenie tablicy przycisków analizatora.
-	 * @return ArrayList[ButtonDockable] - tablica zawieraj¹ca obiekty przycisków
+	 * Metoda odpowiedzialna za tworzenie tablicy przyciskÃ³w analizatora.
+	 * @return ArrayList[ButtonDockable] - tablica zawierajÄ…ca obiekty przyciskÃ³w
 	 */
 	private ArrayList<ButtonDockable> createAnalysisBar() {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
@@ -389,8 +389,8 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Metoda ustawia obiekt nas³uchuj¹cy, który monitoruje zdarzenia przeci¹gniêcia
-	 * grupy przycisków lub jednego z jednej lokalizacji w inn¹.
+	 * Metoda ustawia obiekt nasÅ‚uchujÄ…cy, ktÃ³ry monitoruje zdarzenia przeciÄ…gniÄ™cia
+	 * grupy przyciskÃ³w lub jednego z jednej lokalizacji w innÄ….
 	 * @param dockable Dockable - obiekt monitorowany
 	 */
 	private void createDockableDragger(Dockable dockable) {
@@ -401,7 +401,7 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Metoda zwraca obiekt dokowalny kontenera przycisków.
+	 * Metoda zwraca obiekt dokowalny kontenera przyciskÃ³w.
 	 * @return BorderDock - obiekt
 	 */
 	public BorderDock getToolBarBorderDock() {
@@ -409,7 +409,7 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Metoda ustawia nowy obiekt dokowalny kontenera przycisków.
+	 * Metoda ustawia nowy obiekt dokowalny kontenera przyciskÃ³w.
 	 * @param toolBarBorderDock BorderDock - obiekt
 	 */
 	private void setToolBarBorderDock(BorderDock toolBarBorderDock) {
@@ -417,9 +417,9 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Metoda ta ustawia stan wszystkich przycisków symulatora poza dwoma: pauz¹
+	 * Metoda ta ustawia stan wszystkich przyciskÃ³w symulatora poza dwoma: pauzÄ…
 	 * i przyciskiem zatrzymania symulacji.
-	 * @param enabled boolean - true, jeœli maj¹ byæ aktywne
+	 * @param enabled boolean - true, jeÅ›li majÄ… byÄ‡ aktywne
 	 */
 	public void setEnabledSimulationInitiateButtons(boolean enabled) {
 		for (int i = 0; i < simulationDockables.size(); i++) {
@@ -430,7 +430,7 @@ public class Toolbar extends BorderDock {
 
 	/**
 	 * Metoda ta uaktywnia przyciski Pauza i Stop dla symulacji.
-	 * @param enabled boolean - true jeœli Pauza i Stop maj¹ byæ aktywne
+	 * @param enabled boolean - true jeÅ›li Pauza i Stop majÄ… byÄ‡ aktywne
 	 */
 	public void setEnabledSimulationDisruptButtons(boolean enabled) {
 		simulationDockables.get(4).getContent().setEnabled(enabled);
@@ -438,7 +438,7 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za to, ¿e aktywne s¹ wszystkie przyciski 
+	 * Metoda odpowiedzialna za to, Å¼e aktywne sÄ… wszystkie przyciski 
 	 * poza dwoma: Pauza i Stop dla symulatora
 	 */
 	public void allowOnlySimulationInitiateButtons() {
@@ -447,7 +447,7 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Metoda ta uaktywnia tylko przyciski Pauzy i Stopu, reszta nieaktywna - gdy dzia³a symulacja.
+	 * Metoda ta uaktywnia tylko przyciski Pauzy i Stopu, reszta nieaktywna - gdy dziaÅ‚a symulacja.
 	 */
 	public void allowOnlySimulationDisruptButtons() {
 		setEnabledSimulationInitiateButtons(false);
@@ -455,7 +455,7 @@ public class Toolbar extends BorderDock {
 	}
 
 	/**
-	 * Metoda ustawia na aktywny tylko przycisk przerwania trwaj¹cej pauzy.
+	 * Metoda ustawia na aktywny tylko przycisk przerwania trwajÄ…cej pauzy.
 	 */
 	public void allowOnlyUnpauseButton() {
 		allowOnlySimulationDisruptButtons();

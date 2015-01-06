@@ -12,20 +12,21 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 
 /**
- * Klasa implementuj¹ca wierzcho³ek sieci Petriego. Dziedzicz¹ po niej klasy
- * reprezentuj¹ce miejsca (Place) oraz tranzycje (Transition). Zapewnia
- * implementacjê wspólnych dla nich funkcjonalnoœci, jak rysowanie ich na
- * odpowiednim arkuszu czy umo¿liwienie tworzenia portali (wielu odnoœników
- * graficznych do jednego wierzcho³ka sieci).
+ * Klasa implementujÄ…ca wierzchoÅ‚ek sieci Petriego. DziedziczÄ… po niej klasy
+ * reprezentujÄ…ce miejsca (Place) oraz tranzycje (Transition). Zapewnia
+ * implementacjÄ™ wspÃ³lnych dla nich funkcjonalnoÅ›ci, jak rysowanie ich na
+ * odpowiednim arkuszu czy umoÅ¼liwienie tworzenia portali (wielu odnoÅ›nikÃ³w
+ * graficznych do jednego wierzchoÅ‚ka sieci).
  * @author students
  *
  */
 public abstract class Node extends PetriNetElement {
+	// BACKUP: -8569201372990876149L;  (NIE DOTYKAÄ† PONIÅ»SZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = -8569201372990876149L;
 
 	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAÆ NAZW, DODAWAÆ LUB USUWAÆ PÓL TEJ KLASY
-	 * (przestanie byæ mo¿liwe wczytywanie zapisanych projektów .abyss)
+	 * UWAGA!!! NIE WOLNO ZMIENIAÄ† NAZW, DODAWAÄ† LUB USUWAÄ† PÃ“L TEJ KLASY
+	 * (przestanie byÄ‡ moÅ¼liwe wczytywanie zapisÄ†nych proejktÃ³w .abyss)
 	 */
 	
 	@ElementList
@@ -41,10 +42,10 @@ public abstract class Node extends PetriNetElement {
 	 * Konstruktor obiektu klasy Node.
 	 * @param sheetId int - identyfikator arkusza
 	 * @param nodeId int - identyfikator elementu sieci Petriego
-	 * @param nodePosition Point - punkt, w którym znajduje siê lokalizacja 
-	 * 				tego wierzcho³ka na odpowiednim arkuszu
-	 * @param radius int - promieñ okrêgu, na którym opisana jest figura 
-	 * 				geometryczna reprezentuj¹ca obiekt w edytorze graficznym
+	 * @param nodePosition Point - punkt, w ktÃ³rym znajduje siÄ™ lokalizacja 
+	 * 				tego wierzchoÅ‚ka na odpowiednim arkuszu
+	 * @param radius int - promieÅ„ okrÄ™gu, na ktÃ³rym opisana jest figura 
+	 * 				geometryczna reprezentujÄ…ca obiekt w edytorze graficznym
 	 */
 	public Node(int sheetId, int nodeId, Point nodePosition, int radius) {
 		this.setRadius(radius);
@@ -54,33 +55,33 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Konstruktor obiektu klasy Node. Jest wywo³ywany miêdzy innymi w czasie tworzenia portalu,
-	 * tj. wtedy, kiedy jeden wêze³ sieci ma 2 lub wiêcej lokalizacji
+	 * Konstruktor obiektu klasy Node. Jest wywoÅ‚ywany miÄ™dzy innymi w czasie tworzenia portalu,
+	 * tj. wtedy, kiedy jeden wÄ™zeÅ‚ sieci ma 2 lub wiÄ™cej lokalizacji
 	 * @param nodeId int - identyfikator elementu sieci Petriego
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji elementu sieci Petriego
-	 * @param radius int - promieñ okrêgu, na którym opisana jest figura 
-	 * 				geometryczna reprezentuj¹ca obiekt w edytorze graficznym
+	 * @param radius int - promieÅ„ okrÄ™gu, na ktÃ³rym opisana jest figura 
+	 * 				geometryczna reprezentujÄ…ca obiekt w edytorze graficznym
 	 */
 	public Node(int nodeId, ArrayList<ElementLocation> elementLocations, int radius) {
 		this.setRadius(radius);
 		this.setID(nodeId);
 		/*
-		 * Poni¿ej, dla wszystkich lokalizacji w elemenLocations a co za tym idzie
-		 * dla wszystkich przes³anych wewn¹trz tej tablicy wêz³ów, s¹ one podmieniane
-		 * na aktualnie tworzony konstruktorem - czyli np. jeœli przysz³y tu dane 3
-		 * starych tranzycji o id 1, 2, 3, s¹ one podmieniane na w³aœnie konstruowany
+		 * PoniÅ¼ej, dla wszystkich lokalizacji w elemenLocations a co za tym idzie
+		 * dla wszystkich przesÅ‚anych wewnÄ…trz tej tablicy wÄ™zÅ‚Ã³w, sÄ… one podmieniane
+		 * na aktualnie tworzony konstruktorem - czyli np. jeÅ›li przyszÅ‚y tu dane 3
+		 * starych tranzycji o id 1, 2, 3, sÄ… one podmieniane na wÅ‚aÅ›nie konstruowany
 		 * obiekt, o innym ID i innych danych - jest to ten sam portal.
 		 */
 		for (ElementLocation el : elementLocations)
 			el.setParentNode(this);
 		/*
-		 * Tablica elementLocations zawiera kolekcje ³uków wejœciowych i wyjœciowych, 
-		 * tak wiêc powy¿sze podmienienie ParentNode nie wp³ywa na nie - zostaj¹ takie,
-		 * jakie by³y dla starych kilku wêz³ów zmienianych w portal
+		 * Tablica elementLocations zawiera kolekcje Å‚ukÃ³w wejÅ›ciowych i wyjÅ›ciowych, 
+		 * tak wiÄ™c powyÅ¼sze podmienienie ParentNode nie wpÅ‚ywa na nie - zostajÄ… takie,
+		 * jakie byÅ‚y dla starych kilku wÄ™zÅ‚Ã³w zmienianych w portal
 		 */
 		this.setNodeLocations(elementLocations);
-		if (elementLocations.size() > 1) { // oczywiœcie konstruktor mo¿e te¿ tworzyæ zwyk³y wêze³
-			setPortal(true); //skoro po coœ ta metoda w ogóle powsta³a...
+		if (elementLocations.size() > 1) { // oczywiÅ›cie konstruktor moÅ¼e teÅ¼ tworzyÄ‡ zwykÅ‚y wÄ™zeÅ‚
+			setPortal(true); //skoro po coÅ› ta metoda w ogÃ³le powstaÅ‚a...
 		}
 	}
 
@@ -88,8 +89,8 @@ public abstract class Node extends PetriNetElement {
 	 * Konstruktor obiektu klasy Node.
 	 * @param nodeId int - identyfikator elementu sieci Petriego
 	 * @param elementLocation ElementLocation - lokalizacja elementu sieci Petriego
-	 * @param radius int - promieñ okrêgu, na którym opisana jest figura 
-	 * 		geometryczna reprezentuj¹ca obiekt w edytorze graficznym
+	 * @param radius int - promieÅ„ okrÄ™gu, na ktÃ³rym opisana jest figura 
+	 * 		geometryczna reprezentujÄ…ca obiekt w edytorze graficznym
 	 */
 	public Node(int nodeId, ElementLocation elementLocation, int radius) {
 		this.setRadius(radius);
@@ -99,10 +100,10 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ listê wszystkich punktów lokalizacji 
-	 * wierzcho³ka na arkuszu o okreœlonym identyfikatorze.
+	 * Metoda pozwala pobraÄ‡ listÄ™ wszystkich punktÃ³w lokalizacji 
+	 * wierzchoÅ‚ka na arkuszu o okreÅ›lonym identyfikatorze.
 	 * @param sheetId int - identyfikator arkusza
-	 * @return ArrayList[Point] - lista punktów lokalizacji wierzcho³ka na wybranym arkuszu
+	 * @return ArrayList[Point] - lista punktÃ³w lokalizacji wierzchoÅ‚ka na wybranym arkuszu
 	 */
 	public ArrayList<Point> getNodePositions(int sheetId) {
 		ArrayList<Point> returnPoints = new ArrayList<Point>();
@@ -113,10 +114,10 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ listê wszystkich lokacji wierzcho³ka na arkuszu 
-	 * o okreœlonym identyfikatorze
+	 * Metoda pozwala pobraÄ‡ listÄ™ wszystkich lokacji wierzchoÅ‚ka na arkuszu 
+	 * o okreÅ›lonym identyfikatorze
 	 * @param sheetId int - identyfikator arkusza
-	 * @return ArrayList[ElementLocation] - lista lokalizacji wierzcho³ka na wybranym arkuszu
+	 * @return ArrayList[ElementLocation] - lista lokalizacji wierzchoÅ‚ka na wybranym arkuszu
 	 */
 	public ArrayList<ElementLocation> getNodeLocations(int sheetId) {
 		ArrayList<ElementLocation> returnPoints = new ArrayList<ElementLocation>();
@@ -127,7 +128,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ ostatni¹ poœród dodanych dla tego wierzcho³ka lokacjê.
+	 * Metoda pozwala pobraÄ‡ ostatniÄ… poÅ›rÃ³d dodanych dla tego wierzchoÅ‚ka lokacjÄ™.
 	 * @return ElementLocation - ostatnia dodana lokalizacja
 	 */
 	public ElementLocation getLastLocation() {
@@ -137,7 +138,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala narysowaæ wierzcho³ek sieci Petriego na odpowiednim arkuszu.
+	 * Metoda pozwala narysowaÄ‡ wierzchoÅ‚ek sieci Petriego na odpowiednim arkuszu.
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza
 	 */
@@ -150,12 +151,12 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ, czy dany punkt na danym arkuszu zawiera siê
-	 * w obszarze rysowania tego wierzcho³ka sieci Petriego.
+	 * Metoda pozwala sprawdziÄ‡, czy dany punkt na danym arkuszu zawiera siÄ™
+	 * w obszarze rysowania tego wierzchoÅ‚ka sieci Petriego.
 	 * @param point Point - sprawdzany punkt
 	 * @param sheetId int - identyfikator arkusza
-	 * @return boolean - true, jeœli lokalizacja faktycznie zawiera siê w obszarze 
-	 * 	rysowania tego wierzcho³ka sieci Petriego; false w przeciwnym wypadku
+	 * @return boolean - true, jeÅ›li lokalizacja faktycznie zawiera siÄ™ w obszarze 
+	 * 	rysowania tego wierzchoÅ‚ka sieci Petriego; false w przeciwnym wypadku
 	 */
 	public boolean contains(Point point, int sheetId) {
 		for (Point p : this.getNodePositions(sheetId))
@@ -167,12 +168,12 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ lokacjê wierzcho³ka sieci Petriego, której 
+	 * Metoda pozwala pobraÄ‡ lokacjÄ™ wierzchoÅ‚ka sieci Petriego, ktÃ³rej 
 	 * obszar rysowania zawiera dany punkt na danym arkuszu.
 	 * @param point Point - sprawdzany punkt
 	 * @param sheetId int - identyfikator arkusza
-	 * @return ElementLocation - lokalizacja wierzcho³ka sieci Petriego, 
-	 * 		której obszar rysowania zawiera wybrany punkt na wybranym arkuszu
+	 * @return ElementLocation - lokalizacja wierzchoÅ‚ka sieci Petriego, 
+	 * 		ktÃ³rej obszar rysowania zawiera wybrany punkt na wybranym arkuszu
 	 */
 	public ElementLocation getLocationWhichContains(Point point, int sheetId) {
 		for (ElementLocation e : this.getNodeLocations(sheetId))
@@ -185,12 +186,12 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ listê lokacji, które zawieraj¹ siê w danym
-	 * prostok¹tnym obszarze na danym arkuszu.
-	 * @param rectangle Rectangle - prostok¹tny obszar
+	 * Metoda pozwala pobraÄ‡ listÄ™ lokacji, ktÃ³re zawierajÄ… siÄ™ w danym
+	 * prostokÄ…tnym obszarze na danym arkuszu.
+	 * @param rectangle Rectangle - prostokÄ…tny obszar
 	 * @param sheetId int - identyfikator arkusza
-	 * @return ArrayList[ElementLocation] - lista lokalizacji, które
-	 * 			zawieraj¹ siê w wybranym prostok¹tnym obszarze na wybranym arkuszu
+	 * @return ArrayList[ElementLocation] - lista lokalizacji, ktÃ³re
+	 * 			zawierajÄ… siÄ™ w wybranym prostokÄ…tnym obszarze na wybranym arkuszu
 	 */
 	public ArrayList<ElementLocation> getLocationsWhichAreContained(Rectangle rectangle, int sheetId) {
 		ArrayList<ElementLocation> returnElementLocations = new ArrayList<ElementLocation>();
@@ -201,7 +202,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Wykonanie tej metody oznacza wszystkie lokacje tego wierzcho³ka
+	 * Wykonanie tej metody oznacza wszystkie lokacje tego wierzchoÅ‚ka
 	 * sieci Petriego jako wybrane.
 	 */
 	public void selectAllPortals() {
@@ -213,7 +214,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Wykonanie tej metody oznacza wszystkie lokacje tego wierzcho³ka
+	 * Wykonanie tej metody oznacza wszystkie lokacje tego wierzchoÅ‚ka
 	 * sieci Petriego jako nie wybrane.
 	 */
 	public void deselectAllPortals() {
@@ -224,9 +225,9 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ, czy wszystkie lokacje tego wierzcho³ka 
-	 * sieci Petriego s¹ oznaczone jako wybrane.
-	 * @return boolean - true jeœli wierzcho³ek jest portalem; false w przeciwnym wypadku
+	 * Metoda pozwala sprawdziÄ‡, czy wszystkie lokacje tego wierzchoÅ‚ka 
+	 * sieci Petriego sÄ… oznaczone jako wybrane.
+	 * @return boolean - true jeÅ›li wierzchoÅ‚ek jest portalem; false w przeciwnym wypadku
 	 */
 	public boolean checkAllPortalsSelection() {
 		if (!isPortal())
@@ -238,62 +239,62 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda sprawdza, czy wierzcho³ek sieci Petriego jest portalem 
-	 * (czy ma wiêcej ni¿ jedn¹ lokacjê).
-	 * @return boolean - true, jeœli wierzcho³ek jest portalem; false w przeciwnym wypadku
+	 * Metoda sprawdza, czy wierzchoÅ‚ek sieci Petriego jest portalem 
+	 * (czy ma wiÄ™cej niÅ¼ jednÄ… lokacjÄ™).
+	 * @return boolean - true, jeÅ›li wierzchoÅ‚ek jest portalem; false w przeciwnym wypadku
 	 */
 	public boolean isPortal() {
 		return isPortal;
 	}
 
 	/**
-	 * Metoda pozwala oznaczyæ, czy wierzcho³ek jest portalem (czy ma 
-	 * wiêcej ni¿ jedn¹ lokacjê).
-	 * @param isPortal boolean - wartoœæ okreœlaj¹ca, czy wierzcho³ek ma byæ portalem
+	 * Metoda pozwala oznaczyÄ‡, czy wierzchoÅ‚ek jest portalem (czy ma 
+	 * wiÄ™cej niÅ¼ jednÄ… lokacjÄ™).
+	 * @param isPortal boolean - wartoÅ›Ä‡ okreÅ›lajÄ…ca, czy wierzchoÅ‚ek ma byÄ‡ portalem
 	 */
 	public void setPortal(boolean isPortal) {
 		this.isPortal = isPortal;
 	}
 
 	/**
-	 * Metoda pozwala pobraæ promieñ okrêgu, na którym opisana jest figura
-	 * geometryczna reprezentuj¹ca obiekt w edytorze graficznym. 
-	 * @return int - promieñ okrêgu, na którym opisana jest figura 
-	 * 		geometryczna reprezentuj¹ca obiekt w edytorze graficznym
+	 * Metoda pozwala pobraÄ‡ promieÅ„ okrÄ™gu, na ktÃ³rym opisana jest figura
+	 * geometryczna reprezentujÄ…ca obiekt w edytorze graficznym. 
+	 * @return int - promieÅ„ okrÄ™gu, na ktÃ³rym opisana jest figura 
+	 * 		geometryczna reprezentujÄ…ca obiekt w edytorze graficznym
 	 */
 	public int getRadius() {
 		return radius;
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ promieñ okrêgu, na którym opisana jest figura
-	 * geometryczna reprezentuj¹ca obiekt w edytorze graficznym. 
-	 * @param radius int - promieñ okrêgu 
+	 * Metoda pozwala ustawiÄ‡ promieÅ„ okrÄ™gu, na ktÃ³rym opisana jest figura
+	 * geometryczna reprezentujÄ…ca obiekt w edytorze graficznym. 
+	 * @param radius int - promien okrÄ™gu 
 	 */
 	public void setRadius(int radius) {
 		this.radius = radius;
 	}
 
 	/**
-	 * Metoda pozwala pobraæ listê wszystkich lokacji wierzcho³ka.
-	 * @return ArrayList[ElementLocation] - lista wszystkich lokalizacji wierzcho³ka
+	 * Metoda pozwala pobraÄ‡ listÄ™ wszystkich lokacji wierzchoÅ‚ka.
+	 * @return ArrayList[ElementLocation] - lista wszystkich lokalizacji wierzchoÅ‚ka
 	 */
 	public ArrayList<ElementLocation> getNodeLocations() {
 		return getElementLocations();
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ listê wszystkich lokalizacji wierzcho³ka.
-	 * @param ArrayList[ElementLocation] nodeLocations - lista nowucj lokalizacji wierzcho³ka
+	 * Metoda pozwala ustawiÄ‡ listÄ™ wszystkich lokalizacji wierzchoÅ‚ka.
+	 * @param ArrayList[ElementLocation] nodeLocations - lista nowucj lokalizacji wierzchoÅ‚ka
 	 */
 	public void setNodeLocations(ArrayList<ElementLocation> nodeLocations) {
 		this.setElementLocations(nodeLocations);
 	}
 
 	/**
-	 * Metoda pozwala usun¹æ lokacjê z listy wszystkich lokacji wierzcho³ka.
-	 * @param el ElementLocation - lokalizacja do usuniêcia 
-	 * @return boolean - true, jeœli lokalizacja zosta³a pomyœlnie usuniêta; false w przeciwnym wypadku
+	 * Metoda pozwala usunÄ…Ä‡ lokacjÄ™ z listy wszystkich lokacji wierzchoÅ‚ka.
+	 * @param el ElementLocation - lokalizacja do usuniÄ™cia 
+	 * @return boolean - true, jeÅ›li lokalizacja zostaÅ‚a pomyÅ›lnie usuniÄ™ta; false w przeciwnym wypadku
 	 */
 	public boolean removeElementLocation(ElementLocation el) {
 		this.getNodeLocations().remove(el);
@@ -304,8 +305,8 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ listê ³uków wejœciowych.
-	 * @return ArrayList[Arc] - lista ³uków wejœciowych
+	 * Metoda pozwala pobraÄ‡ listÄ™ Å‚ukÃ³w wejÅ›ciowych.
+	 * @return ArrayList[Arc] - lista Å‚ukÃ³w wejÅ›ciowych
 	 */
 	public ArrayList<Arc> getInArcs() {
 		ArrayList<Arc> totalInArcs = new ArrayList<Arc>();
@@ -316,8 +317,8 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ listê ³uków wyjœciowych.
-	 * @return ArrayList[Arc] - lista ³uków wyjœciowych
+	 * Metoda pozwala pobraÄ‡ listÄ™ Å‚ukÃ³w wyjÅ›ciowych.
+	 * @return ArrayList[Arc] - lista Å‚ukÃ³w wyjÅ›ciowych
 	 */
 	public ArrayList<Arc> getOutArcs() {
 		ArrayList<Arc> totalOutArcs = new ArrayList<Arc>();
@@ -328,8 +329,8 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ listê wierzcho³ków wejœciowych.
-	 * @return ArrayList[Node] - lista wierzcho³ków wejœciowych
+	 * Metoda pozwala pobraÄ‡ listÄ™ wierzchoÅ‚kÃ³w wejÅ›ciowych.
+	 * @return ArrayList[Node] - lista wierzchoÅ‚kÃ³w wejÅ›ciowych
 	 */
 	public ArrayList<Node> getInNodes() {
 		ArrayList<Node> totalInNodes = new ArrayList<Node>();
@@ -340,8 +341,8 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ listê wierzcho³ków wyjœciowych.
-	 * @return ArrayList[Node] - lista wierzcho³ków wyjœciowych
+	 * Metoda pozwala pobraÄ‡ listÄ™ wierzchoÅ‚kÃ³w wyjÅ›ciowych.
+	 * @return ArrayList[Node] - lista wierzchoÅ‚kÃ³w wyjÅ›ciowych
 	 */
 	public ArrayList<Node> getOutNodes() {
 		ArrayList<Node> totalOutNodes = new ArrayList<Node>();
@@ -352,8 +353,8 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Zwraca wartoœæ identyfikatora wêz³a.
-	 * @return String - ³añcuch znaków ID
+	 * Zwraca wartoÅ›Ä‡ identyfikatora wÄ™zÅ‚a.
+	 * @return String - Å‚aÅ„cuch znakÃ³w ID
 	 */
 	public String toString() {
 		String s = "ID: " + Integer.toString(this.getID());
@@ -361,8 +362,8 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda zwraca lokalizacjê obiektu - portalu.
-	 * @return ArrayList[ElementLocation] - tablica wspo³rzêdnych portalu
+	 * Metoda zwraca lokalizacjÄ™ obiektu - portalu.
+	 * @return ArrayList[ElementLocation] - tablica wspoÅ‚rzÄ™dnych portalu
 	 */
 	public ArrayList<ElementLocation> getElementLocations() {
 		return elementLocations;
@@ -370,7 +371,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda ustawia nowe lokalizacje obiektu - portalu
-	 * @param elementLocations ArrayList[ElementLocation] - tablica lokalizacji wêz³a - portalu
+	 * @param elementLocations ArrayList[ElementLocation] - tablica lokalizacji wÄ™zÅ‚a - portalu
 	 */
 	public void setElementLocations(ArrayList<ElementLocation> elementLocations) {
 		this.elementLocations = elementLocations;

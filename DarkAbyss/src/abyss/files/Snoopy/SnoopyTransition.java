@@ -10,7 +10,7 @@ import abyss.math.Transition;
 
 
 /**
- * Klasa symuluje szaleÒstwo zapisu miejsc w programie Snoopy. To juø nawet nie Sparta,
+ * Klasa symuluje szale≈Ñstwo zapisu miejsc w programie Snoopy. To ju≈º nawet nie Sparta,
  * tylko o wiele gorzej...
  * @author MR
  *
@@ -18,14 +18,14 @@ import abyss.math.Transition;
 public class SnoopyTransition {
 	private Transition abyssTransition;
 	public int nodeID; // identyfikator podstawowy tranzycji
-	public int transID; // identyfikator g≥Ûwny tranzycji (od zera do liczby tranzycji)
+	public int transID; // identyfikator g≈Ç√≥wny tranzycji (od zera do liczby tranzycji)
 	public ArrayList<Integer> grParents; // identyfikatory I typu dla jednej tranzycji, na ich bazie
-	 	// obliczane sπ identyfikatory II typu dla... wszystkiego
-	public ArrayList<Point> grParentsLocation; // lokalizacje powyøszych, wiÍcej niø 1 dla portali
+	 	// obliczane sƒÖ identyfikatory II typu dla... wszystkiego
+	public ArrayList<Point> grParentsLocation; // lokalizacje powy≈ºszych, wiƒôcej ni≈º 1 dla portali
 	public boolean portal;
 	
 	/**
-	 * Konstruktor domyúlny obiektu klasy SnoopyTransition.
+	 * Konstruktor domy≈õlny obiektu klasy SnoopyTransition.
 	 */
 	public SnoopyTransition() {
 		grParents = new ArrayList<Integer>();
@@ -34,8 +34,8 @@ public class SnoopyTransition {
 	}
 	
 	/**
-	 * Konstruktor g≥Ûwny, otrzymuje jako parametr obiekt tranzycji Abyss.
-	 * @param t Transition - obiekt tranzycji w programie g≥Ûwnym
+	 * Konstruktor g≈Ç√≥wny, otrzymuje jako parametr obiekt tranzycji Abyss.
+	 * @param t Transition - obiekt tranzycji w programie g≈Ç√≥wnym
 	 */
 	public SnoopyTransition(Transition t) {
 		this();
@@ -43,13 +43,13 @@ public class SnoopyTransition {
 	}
 	
 	/**
-	 * Odradzam czytaÊ kod tej metody. Zostaliúcie ostrzeøeni.
-	 * P.S. Jak ktoú coú tu bez mojej wiedzy zmieni - zabijÍ. MR
+	 * Odradzam czytaƒá kod tej metody. Zostali≈õcie ostrze≈ºeni.
+	 * P.S. Jak kto≈õ co≈õ tu bez mojej wiedzy zmieni - zabijƒô. MR
 	 * 
-	 * @param bw BufferedWriter - obiekt zapisujπcy
-	 * @param newFreeId int - aktualne wolne ID snoopiego dla wÍz≥a
+	 * @param bw BufferedWriter - obiekt zapisujƒÖcy
+	 * @param newFreeId int - aktualne wolne ID snoopiego dla wƒôz≈Ça
 	 * @param globalID int - globalny nr tranzycji, od zera of course
-	 * @return int - ostatni uøyty ID snoopiego w tym kodzie
+	 * @return int - ostatni u≈ºyty ID snoopiego w tym kodzie
 	 */
 	public int writeTransitionInfoToFile(BufferedWriter bw, int newFreeId, int globalID) {
 		nodeID = newFreeId;
@@ -59,9 +59,9 @@ public class SnoopyTransition {
 		int xOff = 25;
 		int yOff = 25;
 		
-		//sprawdü, ile jest lokalizacji (portal check)
+		//sprawd≈∫, ile jest lokalizacji (portal check)
 		for(ElementLocation el : abyssTransition.getElementLocations()) {
-			if(locations == 1) { //g≥Ûwny wÍze≥
+			if(locations == 1) { //g≈Ç√≥wny wƒôze≈Ç
 				currID += 8;
 			} else if (locations == 2){ //pierwsze miejsce logiczne
 				currID += 31;
@@ -76,11 +76,11 @@ public class SnoopyTransition {
 			grParentsLocation.add(pxy);
 			locations++;
 		}
-		//powyøsza pÍtla jest úciúle zwiπzana z szukaniem danych ≥ukÛw w SnoopyWriter
-		//≥apy precz od niej! I od w≥aúciwie czegokolwiek w tej metodzie/klasie!
+		//powy≈ºsza pƒôtla jest ≈õci≈õle zwiƒÖzana z szukaniem danych ≈Çuk√≥w w SnoopyWriter
+		//≈Çapy precz od niej! I od w≈Ça≈õciwie czegokolwiek w tej metodzie/klasie!
 		
-		locations--; //odjπc ostatnie dodawanie
-		currID = nodeID; //reset, i zaczynamy dodawaÊ (np 357)
+		locations--; //odjƒÖƒá ostatnie dodawanie
+		currID = nodeID; //reset, i zaczynamy dodawaƒá (np 357)
 		if(locations == 1) 
 			write(bw, "      <node id=\"" + currID + "\" net=\"1\">");
 		else
@@ -96,7 +96,7 @@ public class SnoopyTransition {
 		xOff = 25;
 		yOff = 20;
 		for(int i=0; i<locations; i++) { 
-			if(i==0) {//tylko g≥Ûwne miejsce
+			if(i==0) {//tylko g≈Ç√≥wne miejsce
 				write(bw, "            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
 						+ " x=\""+(grParentsLocation.get(i).x+xOff)+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+currID+"\""
@@ -114,17 +114,17 @@ public class SnoopyTransition {
 		write(bw, "          </graphics>");
 		write(bw, "        </attribute>");
 		
-		//SEKCJA WYåWIETLANYCH IDENTYFIKATOR”W, ODDZIELNIE DLA KAØDEGO PORTALU
-		//I NAPRAWD  NIEWAØNE, ØE TE ID S• DLA NICH IDENTYCZNE. JESTEåMY W åWIECIE
-		//TW”RC”W SNOOPIEGO
+		//SEKCJA WY≈öWIETLANYCH IDENTYFIKATOR√ìW, ODDZIELNIE DLA KA≈ªDEGO PORTALU
+		//I NAPRAWDƒò NIEWA≈ªNE, ≈ªE TE ID SƒÑ DLA NICH IDENTYCZNE. JESTE≈öMY W ≈öWIECIE
+		//TW√ìRC√ìW SNOOPIEGO
 		write(bw, "        <attribute name=\"ID\" id=\"" + currID + "\" net=\"1\">");
 		currID++; //teraz: 361
-		write(bw, "          <![CDATA[" + transID + "]]>"); //ID OD ZERA W G”R 
+		write(bw, "          <![CDATA[" + transID + "]]>"); //ID OD ZERA W G√ìRƒò
 		write(bw, "          <graphics count=\"" + locations + "\">");
 		xOff = 25;
 		yOff = 20;
 		for(int i=0; i<locations; i++) { 
-			if(i==0) {//tylko g≥Ûwne miejsce
+			if(i==0) {//tylko g≈Ç√≥wne miejsce
 				write(bw, "            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
 						+ " x=\""+(grParentsLocation.get(i).x+xOff)+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+currID+"\""
@@ -146,22 +146,22 @@ public class SnoopyTransition {
 		write(bw, "        <attribute name=\"Logic\" id=\""+currID+"\" net=\"1\">");
 		currID++; //teraz: 363
 		if(locations == 1)
-			write(bw, "          <![CDATA[0]]>"); //zwyk≥a, plebejska tranzycja
+			write(bw, "          <![CDATA[0]]>"); //zwyk≈Ça, plebejska tranzycja
 		else
 			write(bw, "          <![CDATA[1]]>"); //habemus portal!
 		write(bw, "          <graphics count=\"0\"/>");
 		write(bw, "        </attribute>");
 		
-		//SEKCJA KOMENTARZA. KOMENTARZY... TO ZNACZY JEDNEGO, ALE DLA KAØDEGO PORTALU... NEVERMIND...
+		//SEKCJA KOMENTARZA. KOMENTARZY... TO ZNACZY JEDNEGO, ALE DLA KA≈ªDEGO PORTALU... NEVERMIND...
 		write(bw, "        <attribute name=\"Comment\" id=\"" + currID + "\" net=\"1\">");
 		currID++; //teraz: 364
 		write(bw, "          <![CDATA[" + abyssTransition.getComment() + "]]>"); //achtung enters!
-		write(bw, "          <graphics count=\"" + locations + "\">"); //do liczby portali liczyÊ bÍdziesz,
-		 //a liczbπ, do ktÛrej bÍdziesz liczyÊ, bÍdzie liczba portali. Mniej jest wykluczone.
+		write(bw, "          <graphics count=\"" + locations + "\">"); //do liczby portali liczyƒá bƒôdziesz,
+		 //a liczbƒÖ, do kt√≥rej bƒôdziesz liczyƒá, bƒôdzie liczba portali. Mniej jest wykluczone.
 		xOff = 40;
-		yOff = 0; //TO JEST CHYBA B£•D W SNOOPYM. NIE JEDYNY... POWINNO BYC YOFF, NIE XOFF, tak jak w miejscach
+		yOff = 0; //TO JEST CHYBA B≈ÅAD W SNOOPYM. NIE JEDYNY... POWINNO BYC YOFF, NIE XOFF, tak jak w miejscach
 		for(int i=0; i<locations; i++) { 
-			if(i==0) {//tylko g≥Ûwne miejsce
+			if(i==0) {//tylko g≈Ç√≥wne miejsce
 				write(bw, "            <graphic xoff=\""+xOff+".00\""
 						+ " x=\"" + (grParentsLocation.get(i).x+xOff) + ".00\""
 						+ " y=\""+grParentsLocation.get(i).y+".00\""
@@ -182,8 +182,8 @@ public class SnoopyTransition {
 		write(bw, "          </graphics>");
 		write(bw, "        </attribute>");
 		
-		//SEKCJA WYåWIETLANIA MIEJSCA I JEGO KOPII. TAK JAKBYåMY JUØ REDUNDATNIE NIE WYåWIETLILI
-		//JEGO ELEMENT”W NIE WIADOMO ILE RAZY...
+		//SEKCJA WY≈öWIETLANIA MIEJSCA I JEGO KOPII. TAK JAKBY≈öMY JU≈ª REDUNDATNIE NIE WY≈öWIETLILI
+		//JEGO ELEMENT√ìW NIE WIADOMO ILE RAZY...
 		write(bw, "        <graphics count=\""+locations+"\">");
 		
 		if(currID != grParents.get(0)) {
@@ -206,8 +206,8 @@ public class SnoopyTransition {
 	}
 
 	/**
-	 * Metoda pomocnicza, zapisujπca kaødπ liniÍ + enter.
-	 * @param bw BufferedWriter - obiekt zapisujπcy
+	 * Metoda pomocnicza, zapisujƒÖca ka≈ºdƒÖ liniƒô + enter.
+	 * @param bw BufferedWriter - obiekt zapisujƒÖcy
 	 * @param text String - linia tekstu
 	 */
 	private void write(BufferedWriter bw, String text) {

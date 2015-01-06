@@ -22,8 +22,9 @@ import abyss.utilities.Tools;
  *
  */
 public class GraphPanelPopupMenu extends JPopupMenu {
-	//private static final long serialVersionUID = 1L;
-	private static final long serialVersionUID = -8272632051140705976L;
+	// BACKUP:  2192129184059718857L  (≈ÅAPY PRECZ OD PONI≈ªSZEJ ZMIENNEJ)
+	private static final long serialVersionUID = 2192129184059718857L;
+	
 	@SuppressWarnings("unused")
 	private GUIManager guiManager;
 	private GraphPanel graphPanel;
@@ -34,7 +35,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 
 	/**
 	 * Konstruktor obiektu klasy GraphPanelPopupMenu.
-	 * @param graphPanel GraphPanel - obiekt dla ktÛrego powstaje menu kontekstowe
+	 * @param graphPanel GraphPanel - obiekt dla kt√≥rego powstaje menu kontekstowe
 	 */
 	public GraphPanelPopupMenu(GraphPanel graphPanel) {
 		this.guiManager = GUIManager.getDefaultGUIManager();
@@ -84,15 +85,15 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	}
 
 	/**
-	 * Metoda pokazujπca menu w danym klikniÍtym miejscu.
-	 * @param e MouseEvent - zdarzenie klikniÍcia
+	 * Metoda pokazujƒÖca menu w danym klikniƒôtym miejscu.
+	 * @param e MouseEvent - zdarzenie klikniƒôcia
 	 */
 	public void show(MouseEvent e) {
 		super.show(this.getGraphPanel(), e.getX(), e.getY());
 	}
 
 	/**
-	 * Metoda zwracajπca nowy obiekt panelu graficznego.
+	 * Metoda zwracajƒÖca nowy obiekt panelu graficznego.
 	 * @return GraphPanel - obiekt
 	 */
 	public GraphPanel getGraphPanel() {
@@ -100,7 +101,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	}
 
 	/**
-	 * Metoda ustawiajπca nowy obiekt panelu graficznego.
+	 * Metoda ustawiajƒÖca nowy obiekt panelu graficznego.
 	 * @param graphPanel GraphPanel - obiekt
 	 */
 	public void setGraphPanel(GraphPanel graphPanel) {
@@ -108,10 +109,10 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	}
 
 	/**
-	 * Metoda generujπca i dodajπca do menu kontekstowego nowπ opcjÍ.
+	 * Metoda generujƒÖca i dodajƒÖca do menu kontekstowego nowƒÖ opcjƒô.
 	 * @param text String - nazwa elementu
-	 * @param iconName String - úcieøka do ikony
-	 * @param actionListener ActionListener - obiekt nas≥uchujπcy
+	 * @param iconName String - ≈õcie≈ºka do ikony
+	 * @param actionListener ActionListener - obiekt nas≈ÇuchujƒÖcy
 	 */
 	protected void addMenuItem(String text, String iconName, ActionListener actionListener) {
 		try {
@@ -131,10 +132,10 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 
 	/**
 	 * Metoda odpowiedzialna za tworzenie obiektu JMenuItem
-	 * @param text String - nazwa do wyúwietlania
-	 * @param iconName String - úcieøka do ikonki
-	 * @param accelerator KeyStroke - skrÛt klawiszowy
-	 * @param actionListener ActionListener - obiekt nas≥uchujπcy
+	 * @param text String - nazwa do wy≈õwietlania
+	 * @param iconName String - ≈õcie≈ºka do ikonki
+	 * @param accelerator KeyStroke - skr√≥t klawiszowy
+	 * @param actionListener ActionListener - obiekt nas≈ÇuchujƒÖcy
 	 * @return JMenuItem - gotowy obiekt menu
 	 */
 	protected JMenuItem createMenuItem(String text, String iconName,

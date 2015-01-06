@@ -19,16 +19,13 @@ import com.javadocking.dockable.Dockable;
 import com.javadocking.dockable.DockingMode;
 
 /**
- * G³owna klasa odpowiedzialna za zarz¹dzanie przestrzeni¹ programu, w której
- * rysowana jest sieæ Petriego. Posiada w sobie miêdzy innymi zak³adki
+ * GÅ‚owna klasa odpowiedzialna za zarzÄ…dzanie przestrzeniÄ… programu, w ktÃ³rej
+ * rysowana jest sieÄ‡ Petriego. Posiada w sobie miÄ™dzy innymi zakÅ‚adki
  * otwarte w programie.
  * @author students
  *
  */
 public class Workspace implements SelectionActionListener {
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = -7304351849692823097L;
-
 	// misc
 	private DockFactory dockFactory;
 
@@ -54,7 +51,7 @@ public class Workspace implements SelectionActionListener {
 
 	/**
 	 * Konstruktor obiektu klasy Workspace.
-	 * @param gui GUIManager - obiekt managera œrodowiska graficznego programu
+	 * @param gui GUIManager - obiekt managera Å›rodowiska graficznego programu
 	 */
 	public Workspace(GUIManager gui) {
 		setWorkspaceDock(new CompositeTabDock());
@@ -77,8 +74,8 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za utworzenie nowej zak³adki sieci w projekcie.
-	 * @return int - numer bêd¹cy identyfikatorem nowej zak³adki
+	 * Metoda odpowiedzialna za utworzenie nowej zakÅ‚adki sieci w projekcie.
+	 * @return int - numer bÄ™dÄ…cy identyfikatorem nowej zakÅ‚adki
 	 */
 	public int newTab() {
 		int index = sheetsIDtable.size();
@@ -101,7 +98,7 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda opdowiedzialna za ustawienie nowego trybu rysowania sieci, zale¿na od
+	 * Metoda odpowiedzialna za ustawienie nowego trybu rysowania sieci, zaleÅ¼na od
 	 * tego, co wybrano z prawego panelu narzedziowego programu.
 	 * @param mode DrawModes - aktualny tryb rysowania sieci
 	 */
@@ -111,7 +108,7 @@ public class Workspace implements SelectionActionListener {
 
 	/**
 	 * Metoda usuwa dane arkusza z listy arkuszy obiektu klasy Workspace.
-	 * @param sheet WorkspaceSheet - arkusz do usuniêcia
+	 * @param sheet WorkspaceSheet - arkusz do usuniÄ™cia
 	 */
 	public void deleteSheetFromArrays(WorkspaceSheet sheet) {
 		int id = sheets.indexOf(sheet);// + 1 - 1;
@@ -124,7 +121,7 @@ public class Workspace implements SelectionActionListener {
 
 	/**
 	 * Metoda odpowiedzialna za usuwanie arkusza rysowania sieci z przestrzeni roboczej.
-	 * @param dockable Dockable - obiekt do usuniêcia
+	 * @param dockable Dockable - obiekt do usuniÄ™cia
 	 */
 	public void deleteTab(Dockable dockable) {
 		int index = dockables.indexOf(dockable);
@@ -157,9 +154,9 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda zwraca maksymaln¹ wartoœæ identyfikatora z tablicy zak³adek (czyli
+	 * Metoda zwraca maksymalnÄ… wartoÅ›Ä‡ identyfikatora z tablicy zakÅ‚adek (czyli
 	 * id ostatniej dodanej)
-	 * @return int - id ostatniej zak³adki
+	 * @return int - id ostatniej zakÅ‚adki
 	 */
 	private int getMaximumTabIndex() {
 		int index = 0;
@@ -171,23 +168,23 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda zwraca tablicê zadokowanych elementów w Workspace.
-	 * @return ArrayList[Dockable] - tablica elementów
+	 * Metoda zwraca tablicÄ™ zadokowanych elementÃ³w w Workspace.
+	 * @return ArrayList[Dockable] - tablica elementÃ³w
 	 */
 	public ArrayList<Dockable> getDockables() {
 		return dockables;
 	}
 
 	/**
-	 * Metoda zwraca tablicê zadokowanych zak³adek w Workspace.
-	 * @return ArrayList[WorkspaceSheet] - tablica zak³adek
+	 * Metoda zwraca tablicÄ™ zadokowanych zakÅ‚adek w Workspace.
+	 * @return ArrayList[WorkspaceSheet] - tablica zakÅ‚adek
 	 */
 	public ArrayList<WorkspaceSheet> getSheets() {
 		return sheets;
 	}
 
 	/**
-	 * Metoda zwracaj¹ca obiekt zawieraj¹cy sieæ Petriego.
+	 * Metoda zwracajÄ…ca obiekt zawierajÄ…cy sieÄ‡ Petriego.
 	 * @return PetriNet - obiekt z danymi sieci
 	 */
 	public PetriNet getProject() {
@@ -195,7 +192,7 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca nowy obiekt zawieraj¹cy sieæ Petriego.
+	 * Metoda ustawiajÄ…ca nowy obiekt zawierajÄ…cy sieÄ‡ Petriego.
 	 * @return PetriNet - obiekt z danymi sieci
 	 */
 	private void setProject(PetriNet project) {
@@ -203,9 +200,9 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca ostatni indeks arkusza w programie.
+	 * Metoda zwracajÄ…ca ostatni indeks arkusza w programie.
 	 * @param id int - nr arkusza
-	 * @return int - nr arkusza. Nie, te¿ nie ogarniam o co tu chodzi (MR).
+	 * @return int - nr arkusza. Nie, teÅº nie ogarniam o co tu chodzi (MR).
 	 */
 	public int getIndexOfId(int id) {
 		Integer ajDi = new Integer(id);
@@ -228,10 +225,10 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za zainicjowanie sekwencji rozkazów zwi¹zanych z wyœwietleniem
-	 * w³aœciwoœci (lub wype³nieniem którychœ podokien zawartoœci¹) w zale¿noœci od tego, co
-	 * w³aœnie zosta³o klikniête.
-	 * @param e SelectionActionEvent - zdarzenie wyboru elementu mysz¹
+	 * Metoda odpowiedzialna za zainicjowanie sekwencji rozkazÃ³w zwiÄ…zanych z wyÅ›wietleniem
+	 * wÅ‚aÅ›ciwoÅ›ci (lub wypeÅ‚nieniem ktÃ³rychÅ› podokien zawartoÅ›ciÄ…) w zaleÅ¼noÅ›ci od tego, co
+	 * wÅ‚aÅ›nie zostaÅ‚o klikniÄ™te.
+	 * @param e SelectionActionEvent - zdarzenie wyboru elementu myszÄ…
 	 */
 	public void actionPerformed(SelectionActionEvent e) {
 		guiManager.getPropertiesBox().selectElement(e);
@@ -239,8 +236,8 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda s³u¿¹ca do pobierania aktualnie klikniêtego arkusza sieci.
-	 * @return WorkspaceSheet - klikniêty arkusz
+	 * Metoda sÅ‚uÅ¼Ä…ca do pobierania aktualnie klikniÄ™tego arkusza sieci.
+	 * @return WorkspaceSheet - klikniÄ™ty arkusz
 	 */
 	public WorkspaceSheet getSelectedSheet() {
 		int index = docks.indexOf(workspaceDock.getSelectedDock());
@@ -248,7 +245,7 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca obiekt dokowalny.
+	 * Metoda zwracajÄ…ca obiekt dokowalny.
 	 * @return CompositeTabDock - obiekt
 	 */
 	public CompositeTabDock getWorkspaceDock() {
@@ -256,7 +253,7 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca nowy obiekt dokowalny.
+	 * Metoda ustawiajÄ…ca nowy obiekt dokowalny.
 	 * @return CompositeTabDock - obiekt
 	 */
 	private void setWorkspaceDock(CompositeTabDock workspaceDock) {
@@ -264,21 +261,21 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda inicjuj¹ca przerysowanie wszystkich paneli.
+	 * Metoda inicjujÄ…ca przerysowanie wszystkich paneli.
 	 */
 	public void repaintAllGraphPanels() {
 		this.getProject().repaintAllGraphPanels();
 	}
 
 	/**
-	 * Metoda zwiêkszaj¹ca krok symulacji.
+	 * Metoda zwiÄ™kszajÄ…ca krok symulacji.
 	 */
 	public void incrementSimulationStep() {
 		this.getProject().incrementSimulationStep();
 	}
 
 	/**
-	 * Metoda zwracaj¹ca obiekt dokowalny.
+	 * Metoda zwracajÄ…ca obiekt dokowalny.
 	 * @return Dock - obiekt
 	 */
 	public Dock getFillerDock() {
@@ -286,7 +283,7 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca nowy obiekt dokowalny.
+	 * Metoda ustawiajÄ…ca nowy obiekt dokowalny.
 	 * @return Dock - obiekt
 	 */
 	public void setFillerDock(Dock fillerDock) {
@@ -294,7 +291,7 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca obiekt dokowalny-wype³niaj¹cy.
+	 * Metoda zwracajÄ…ca obiekt dokowalny-wypeÅ‚niajÄ…cy.
 	 * @return Dock - obiekt
 	 */
 	public Dockable getFillerDockable() {
@@ -302,7 +299,7 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca nowy obiekt dokowalny-wype³niaj¹cy.
+	 * Metoda ustawiajÄ…ca nowy obiekt dokowalny-wypeÅ‚niajÄ…cy.
 	 * @return Dock - obiekt
 	 */
 	public void setFillerDockable(Dockable fillerDockable) {
@@ -310,7 +307,7 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca obiekt fabryki dokowalnej.
+	 * Metoda zwracajÄ…ca obiekt fabryki dokowalnej.
 	 * @return Dock - obiekt
 	 */
 	public DockFactory getDockFactory() {
@@ -318,7 +315,7 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca nowy fabryki dokowalnej.
+	 * Metoda ustawiajÄ…ca nowy fabryki dokowalnej.
 	 * @return Dock - obiekt
 	 */
 	private void setDockFactory(DockFactory dockFactory) {
@@ -326,8 +323,8 @@ public class Workspace implements SelectionActionListener {
 	}
 	
 	/**
-	 * Metoda zwraca obiekt g³ówny interfejsu.
-	 * @return GUIManager - nadobiekt dla wszystkich elementów programu
+	 * Metoda zwraca obiekt gÅ‚Ã³wny interfejsu.
+	 * @return GUIManager - nadobiekt dla wszystkich elementÃ³w programu
 	 */
 	public GUIManager getGUI() {
 		return guiManager;

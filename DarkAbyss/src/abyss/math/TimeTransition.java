@@ -15,17 +15,18 @@ import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.IdGenerator;
 
 /**
- * Klasa implementuj¹ca tranzycje czasowe w modelu TPN (Time Petri Net)
+ * Klasa implementujÄ…ca tranzycje czasowe w modelu TPN (Time Petri Net)
  * 
- * @author Bart³omiej Szawulak
+ * @author BartÅ‚omiej Szawulak
  *
  */
 public class TimeTransition extends Transition {
+	//BACKUP: -7512230002147987244L   (NIE DOTYKAÄ† PONIÅ»SZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = -7512230002147987244L;
 	
 	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAÆ NAZW, DODAWAÆ LUB USUWAÆ PÓL TEJ KLASY
-	 * (przestanie byæ mo¿liwe wczytywanie zapisanych proejktów .abyss)
+	 * UWAGA!!! NIE WOLNO ZMIENIAÄ† NAZW, DODAWAÄ† LUB USUWAÄ† PÃ“L TEJ KLASY
+	 * (przestanie byÄ‡ moÅ¼liwe wczytywanie zapisÄ†nych proejktÃ³w .abyss)
 	 */
 	
 	/**
@@ -103,7 +104,7 @@ public class TimeTransition extends Transition {
 	}
 
 	/**
-	 * Metoda rysuj¹ca tranzycjê na danym arkuszu.
+	 * Metoda rysujÄ…ca tranzycjÄ™ na danym arkuszu.
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza 
 	 */
@@ -235,9 +236,9 @@ public class TimeTransition extends Transition {
 	}
 
 	/**
-	 * Metoda umieszczaj¹ca nazwê tranzycji pod jej symbole. Ostatnia wartoœæ
-	 * w metodzie - 15 - oznacza nieco poni¿ej kwadratu. Jej zwiêkszenie
-	 * obni¿a napis.
+	 * Metoda umieszczajÄ…ca nazwÄ™ tranzycji pod jej symbole. Ostatnia wartoÅ›Ä‡
+	 * w metodzie - 15 - oznacza nieco poniÅ¼ej kwadratu. Jej zwiÄ™kszenie
+	 * obniÅ¼a napis.
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza 
 	 */
@@ -250,7 +251,7 @@ public class TimeTransition extends Transition {
 	}
 
 	/**
-	 * Metoda ustala dolny limit niezerowego czasu gotowoœci - EFT.
+	 * Metoda ustala dolny limit niezerowego czasu gotowoÅ›ci - EFT.
 	 * @param minFireTime double - czas EFT
 	 */
 	public void setMinFireTime(double minFireTime) {
@@ -260,7 +261,7 @@ public class TimeTransition extends Transition {
 	}
 	
 	/**
-	 * Metoda pozwala odczytaæ przypisany czas EFT tranzycji.
+	 * Metoda pozwala odczytaÄ‡ przypisany czas EFT tranzycji.
 	 * @return double - czas EFT
 	 */
 	public double getMinFireTime() {
@@ -268,7 +269,7 @@ public class TimeTransition extends Transition {
 	}
 
 	/**
-	 * Metoda ustala górny limit nieujemnego czasu krytycznego - LFT.
+	 * Metoda ustala gÃ³rny limit nieujemnego czasu krytycznego - LFT.
 	 * @param maxFireTime double - czas LFT (deadline na uruchomienie)
 	 */
 	public void setMaxFireTime(double maxFireTime) {
@@ -278,7 +279,7 @@ public class TimeTransition extends Transition {
 	}
 
 	/**
-	 * Metoda pozwala odczytaæ przypisany czas LFT tranzycji.
+	 * Metoda pozwala odczytaÄ‡ przypisany czas LFT tranzycji.
 	 * @return double - czas LFT
 	 */
 	public double getMaxFireTime() {

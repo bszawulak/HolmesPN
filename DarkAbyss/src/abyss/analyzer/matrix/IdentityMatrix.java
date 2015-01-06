@@ -1,7 +1,7 @@
 package abyss.analyzer.matrix;
 
 /**
- * Klasa pomocnicza, dziedzicz¹ca z klasy Matrix. Definiuje macierz n x n
+ * Klasa pomocnicza, dziedziczÄ…ca z klasy Matrix. Definiuje macierz n x n
  * @author students
  *
  */

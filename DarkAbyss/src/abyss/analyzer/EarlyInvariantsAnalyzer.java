@@ -12,8 +12,8 @@ import abyss.math.Place;
 import abyss.math.Transition;
 
 /**
- * Metoda stara siê liczyæ inwarianty. Cosik nie wysz³o do koñca...
- * @author Bart³omiej Szawulak
+ * Metoda stara siÄ™ liczyÄ‡ inwarianty. Cosik nie wyszÅ‚o do koÅ„ca...
+ * @author BartÅ‚omiej Szawulak
  *
  */
 public class EarlyInvariantsAnalyzer implements Runnable {
@@ -76,11 +76,11 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 					|| oneArc.getStartNode().getType() == PetriNetElementType.TIMETRANSITION) {
 				tPosition = transitionsMap.get(oneArc.getStartNode());
 				pPosition = placesMap.get(oneArc.getEndNode());
-				incidanceValue = -1 * oneArc.getWeight(); // sprawdŸ
+				incidanceValue = -1 * oneArc.getWeight(); // sprawdï¿½
 			} else {
 				tPosition = transitionsMap.get(oneArc.getEndNode());
 				pPosition = placesMap.get(oneArc.getStartNode());
-				incidanceValue = 1 * oneArc.getWeight(); // sprawdŸ
+				incidanceValue = 1 * oneArc.getWeight(); // sprawdï¿½
 			}
 
 			incidanceMatrixL.get(tPosition).set(pPosition, incidanceValue);

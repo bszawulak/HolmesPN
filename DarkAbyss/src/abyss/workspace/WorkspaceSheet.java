@@ -12,13 +12,14 @@ import javax.swing.JScrollPane;
 import abyss.graphpanel.GraphPanel;
 
 /**
- * Klasa konkretnego obszaru roboczego. Jej obiekty sπ trzymane w tablicy, znajdujπcej
- * siÍ w klasie WorkSpace.
+ * Klasa konkretnego obszaru roboczego. Jej obiekty sƒÖ trzymane w tablicy, znajdujƒÖcej
+ * siƒô w klasie WorkSpace.
  * @author students
  *
  */
 public class WorkspaceSheet extends JScrollPane {
-	private static final long serialVersionUID = -3420561980683001607L;
+	//BACKUP:  -3216362854094205041L  (≈ÅAPY PRECZ OD PONI≈ªSZEJ ZMIENNEJ)
+	private static final long serialVersionUID = -3216362854094205041L;
 	private final int id; // aktualne id sheeta w workspace
 	private GraphPanel graphPanel;
 	private Workspace workspace;
@@ -28,7 +29,7 @@ public class WorkspaceSheet extends JScrollPane {
 	 * Konstruktor obiektu klasy WorkspaceSheet
 	 * @param text String - opis
 	 * @param ID int - identyfikator
-	 * @param work Workspace - referencja na obiekt inicjujπcy i przechowujπcy
+	 * @param work Workspace - referencja na obiekt inicjujƒÖcy i przechowujƒÖcy
 	 */
 	public WorkspaceSheet(String text, int ID, Workspace work) {
 		// super(new FlowLayout());
@@ -68,7 +69,7 @@ public class WorkspaceSheet extends JScrollPane {
 	}
 
 	/**
-	 * Metoda zwracajπca obiekt GraphPanel.
+	 * Metoda zwracajƒÖca obiekt GraphPanel.
 	 * @return GraphPanel - obiekt
 	 */
 	public GraphPanel getGraphPanel() {
@@ -76,7 +77,7 @@ public class WorkspaceSheet extends JScrollPane {
 	}
 
 	/**
-	 * Metoda ustawiajπca nowy obiekt GraphPanel.
+	 * Metoda ustawiajƒÖca nowy obiekt GraphPanel.
 	 * @return GraphPanel - obiekt
 	 */
 	private void setGraphPanel(GraphPanel graphPanel) {
@@ -85,7 +86,7 @@ public class WorkspaceSheet extends JScrollPane {
 	
 	/**
 	 * Metoda odpowiedzialna za przewijanie w poziomie.
-	 * @param delta int - d≥ugoúÊ przewiniÍcia
+	 * @param delta int - d≈Çugo≈õƒá przewiniƒôcia
 	 */
 	public void scrollHorizontal(int delta) {
 		JScrollBar bar = this.getHorizontalScrollBar();
@@ -96,7 +97,7 @@ public class WorkspaceSheet extends JScrollPane {
 	
 	/**
 	 * Metoda odpowiedzialna za przewijanie w pionie.
-	 * @param delta int - d≥ugoúÊ przewiniÍcia
+	 * @param delta int - d≈Çugo≈õƒá przewiniƒôcia
 	 */
 	public void scrollVertical(int delta) {
 		JScrollBar bar = this.getVerticalScrollBar();
@@ -106,7 +107,7 @@ public class WorkspaceSheet extends JScrollPane {
 	}
 
 	/**
-	 * Klasa narzÍdziowa wewnπtrz WorkspaceSheet.
+	 * Klasa narzƒôdziowa wewnƒÖtrz WorkspaceSheet.
 	 * @author students
 	 *
 	 */
@@ -116,7 +117,7 @@ public class WorkspaceSheet extends JScrollPane {
 
 		/**
 		 * Konstruktor obiektu klasy SheetPanel
-		 * @param sheet WorkspaceSheet - referencja obiektu nadrzÍdnego
+		 * @param sheet WorkspaceSheet - referencja obiektu nadrzƒôdnego
 		 */
 		SheetPanel(WorkspaceSheet sheet) {
 			this.sheet = sheet;

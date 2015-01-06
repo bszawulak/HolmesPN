@@ -10,17 +10,17 @@ import abyss.darkgui.GUIManager;
 import abyss.utilities.ByExt;
 
 /**
- * Klasa odpowiedzialna za odczytanie wynikÛw miar CeliÒskiego-Harabasza i zwrÛcenie w formie
- * macierzy wartoúci.
- * @author AR - g≥Ûwne metody
+ * Klasa odpowiedzialna za odczytanie wynik√≥w miar Celi≈Ñskiego-Harabasza i zwr√≥cenie w formie
+ * macierzy warto≈õci.
+ * @author AR - g≈Ç√≥wne metody
  * @author MR - drobne poprawki - dostowanie do programu
  *
  */
 public class CHmetricReader {
 	/**
-	 * DoúÊ niezwyk≥y sposÛb przeprowadzania elementarnej operacji konwersji :)
-	 * @param strNumber String - ≥aÒcuch znakÛw, ktÛry z pietyzmem zmieniamy w Double
-	 * @return double - úwiÍta liczba rzeczywista
+	 * Do≈õƒá niezwyk≈Çy spos√≥b przeprowadzania elementarnej operacji konwersji :)
+	 * @param strNumber String - ≈Ça≈Ñcuch znak√≥w, kt√≥ry z pietyzmem zmieniamy w Double
+	 * @return double - ≈õwiƒôta liczba rzeczywista
 	 */
 	double ParseDouble(String strNumber) {
 		if (strNumber != null && strNumber.length() > 0) {
@@ -34,10 +34,10 @@ public class CHmetricReader {
 	}
 		
 	/**
-	 * Metoda czyta odpowiedni plik z miarπ CeliÒskiego-Harabasza i zmienia wartoúci
-	 * w nim zawarte na obiekt ArrayList<Double>
-	 * @param source String - úcieøka do pliku
-	 * @return ArrayList<Double> - wartoúci miary
+	 * Metoda czyta odpowiedni plik z miarƒÖ Celi≈Ñskiego-Harabasza i zmienia warto≈õci
+	 * w nim zawarte na obiekt ArrayList[Double]
+	 * @param source String - ≈õcie≈ºka do pliku
+	 * @return ArrayList[Double] - warto≈õci miary
 	 * @throws NumberFormatException
 	 * @throws IOException
 	 */
@@ -61,9 +61,9 @@ public class CHmetricReader {
 	}
 		
 	/**
-	 * Metoda odpowiedzialna za wczytanie plikÛw miar i zwrÛcenie macierzy wynikÛw.
-	 * @param CHmetricsPath String - úcieøka do katalogu z miarami
-	 * @return ArrayList[ArrayList[Double]] - wyniki dla 56 klastrowaÒ
+	 * Metoda odpowiedzialna za wczytanie plik√≥w miar i zwr√≥cenie macierzy wynik√≥w.
+	 * @param CHmetricsPath String - ≈õcie≈ºka do katalogu z miarami
+	 * @return ArrayList[ArrayList[Double]] - wyniki dla 56 klastrowa≈Ñ
 	 */
 	public ArrayList<ArrayList<Double>> readCHmetricsDirectory(String CHmetricsPath) {
 		ArrayList<ArrayList<Double>> chData = new ArrayList<ArrayList<Double>>();
@@ -90,7 +90,7 @@ public class CHmetricReader {
 				//.out.println("");
 			}
 		} catch (IOException e){
-			GUIManager.getDefaultGUIManager().log("Reading failed for CeliÒski-Harabasz metric in file "+currentFile, "error", true);
+			GUIManager.getDefaultGUIManager().log("Reading failed for Celi≈Ñski-Harabasz metric in file "+currentFile, "error", true);
 		}
 		return chData;
 	}

@@ -1,8 +1,8 @@
 package abyss.math;
 
 /**
- * Klasa rozszerzenie dla Transition. Definiuj dla ka¿dej tranzycji jej lizbê odpaleñ.
- * Jest ona u¿ywana jako pojedzyñczy obiekt dla macierzy inwariantów II typu. 
+ * Klasa rozszerzenie dla Transition. Definiuj dla kaÅ¼dej tranzycji jej lizbÄ™ odpaleÅ„.
+ * Jest ona uÅ¼ywana jako pojedzyÅ„czy obiekt dla macierzy inwariantÃ³w II typu. 
  * @author students
  *
  */
@@ -13,7 +13,7 @@ public class InvariantTransition {
 	/**
 	 * Konstruktor obiektu klasy InvariantTransition.
 	 * @param trans Transition - tranzycja
-	 * @param firings Integer - liczba uruchomieñ w inwariancie
+	 * @param firings Integer - liczba uruchomieÅ„ w inwariancie
 	 */
 	public InvariantTransition(Transition trans, Integer firings) {
 		setTransition(trans);
@@ -21,7 +21,7 @@ public class InvariantTransition {
 	}
 
 	/**
-	 * Metoda zwraca tranzycjê dla danego inwariantu.
+	 * Metoda zwraca tranzycjÄ™ dla danego inwariantu.
 	 * @return Transition - tranzycja
 	 */
 	public Transition getTransition() {
@@ -29,7 +29,7 @@ public class InvariantTransition {
 	}
 
 	/**
-	 * Metoda ustawia tranzycjê dla danego inwariantu.
+	 * Metoda ustawia tranzycjÄ™ dla danego inwariantu.
 	 * @return Transition - tranzycja
 	 */
 	public void setTransition(Transition transition) {
@@ -37,16 +37,16 @@ public class InvariantTransition {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca liczbê uruchomieñ tranzycji w inwariancie.
-	 * @return Integer - liczba uruchomieñ
+	 * Metoda zwracajÄ…ca liczbÄ™ uruchomieÅ„ tranzycji w inwariancie.
+	 * @return Integer - liczba uruchomieÅ„
 	 */
 	public Integer getAmountOfFirings() {
 		return amountOfFirings;
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca liczbê uruchomieñ tranzycji w inwariancie.
-	 * @return Integer - nowa liczba uruchomieñ
+	 * Metoda ustawiajÄ…ca liczbÄ™ uruchomieÅ„ tranzycji w inwariancie.
+	 * @return Integer - nowa liczba uruchomieÅ„
 	 */
 	public void setAmountOfFirings(Integer amountOfFirings) {
 		this.amountOfFirings = amountOfFirings;

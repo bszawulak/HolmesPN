@@ -5,8 +5,8 @@ import java.awt.Color;
 import java.awt.Stroke;
 
 /**
- * Klasa zasobów programu, ogólnie mówiaæ definiuje sta³e zwi¹zane z grafik¹.
- * @author Rince
+ * Klasa zasobÃ³w programu, ogÃ³lnie mÃ³wiac definiuje staÅ‚e zwiÄ…zane z grafikÄ….
+ * @author students
  *
  */
 public class EditorResources {

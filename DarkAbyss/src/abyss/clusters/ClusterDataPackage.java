@@ -3,8 +3,8 @@ package abyss.clusters;
 import java.util.ArrayList;
 
 /**
- * Klasa kontener s≥uøπca do przechowywania danych przesy≥anych z podokna klastrowania
- * szczegÛ≥owego do podokna programu Abyss s≥uøπcego podúwietlaniu elementÛw klastra.
+ * Klasa kontener s≈Çu≈ºƒÖca do przechowywania danych przesy≈Çanych z podokna klastrowania
+ * szczeg√≥≈Çowego do podokna programu Abyss s≈Çu≈ºƒÖcego pod≈õwietlaniu element√≥w klastra.
  * @author MR
  *
  */

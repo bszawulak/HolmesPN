@@ -1,7 +1,7 @@
 package abyss.settings;
 
 /**
- * Klasa s³ownikowa, s³u¿y do przechowywania w³aœciwoœci programu w formie par ID/wartoœæ.
+ * Klasa sÅ‚ownikowa, sÅ‚uÅ¼y do przechowywania wÅ‚aÅ›ciwoÅ›ci programu w formie par ID/wartoÅ›Ä‡.
  * @author students
  *
  */
@@ -12,7 +12,7 @@ public class Setting {
 	/**
 	 * Konstruktor obiektu klasy Setting.
 	 * @param ID String - identyfikator
-	 * @param value String - wartoœæ w³aœciwoœci
+	 * @param value String - wartoÅ›Ä‡ wÅ‚aÅ›ciwoÅ›ci
 	 */
 	public Setting(String ID, String value) {
 		setID(ID);
@@ -20,31 +20,31 @@ public class Setting {
 	}
 
 	/**
-	 * Metoda zwraca aktualn¹ wartoœæ w³aœciwoœci.
-	 * @return String - w³aœciwoœæ
+	 * Metoda zwraca aktualnÄ… wartoÅ›Ä‡ wÅ‚aÅ›ciwoÅ›ci.
+	 * @return String - wÅ‚aÅ›ciwoÅ›Ä‡
 	 */
 	public String getValue() {
 		return value;
 	}
 
 	/**
-	 * Metoda ustawia now¹ dla wartoœæ w³aœciwoœci.
-	 * @param value String - w³aœciwoœæ
+	 * Metoda ustawia nowÄ… dla wartoÅ›Ä‡ wÅ‚aÅ›ciwoÅ›ci.
+	 * @param value String - wÅ‚aÅ›ciwoÅ›Ä‡
 	 */
 	public void setValue(String value) {
 		this.value = value;
 	}
 
 	/**
-	 * Metoda zwraca aktualn¹ wartoœæ identyfikatora.
-	 * @return String - identyfikator w³aœciwoœci
+	 * Metoda zwraca aktualnÄ… wartoÅ›Ä‡ identyfikatora.
+	 * @return String - identyfikator wÅ‚aÅ›ciwoÅ›ci
 	 */
 	public String getID() {
 		return ID;
 	}
 
 	/**
-	 * Metoda ustawia now¹ dla wartoœæ identyfikatora.
+	 * Metoda ustawia nowÄ… dla wartoÅ›Ä‡ identyfikatora.
 	 * @param iD String - identyfikator
 	 */
 	public void setID(String iD) {

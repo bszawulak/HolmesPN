@@ -14,25 +14,25 @@ import javax.swing.JOptionPane;
 import abyss.darkgui.GUIManager;
 
 /**
- * Klasa zarz¹dzaj¹ca plikiem konfiguracyjnym programu.
+ * Klasa zarzÄ…dzajÄ…ca plikiem konfiguracyjnym programu.
  * @author students - pierwsza podstawowa wersja
- * @author MR - w tej chwili ponad po³owa dodatkowego kodu tutaj
+ * @author MR - w tej chwili ponad poÅ‚owa dodatkowego kodu tutaj
  *
  */
 public class SettingsManager {
 	private ArrayList<Setting> settings;
 
 	/**
-	 * Konstruktor domyœlny obiektu klasy SettingsManager.
+	 * Konstruktor domyÅ›lny obiektu klasy SettingsManager.
 	 */
 	public SettingsManager() {
 		settings = new ArrayList<Setting>();
 	}
 	
 	/**
-	 * Metoda zwraca wartoœæ zwi¹zan¹ z podawanym ID.
-	 * @param ID String - identyfikator w³aœciwoœci
-	 * @return String - w³aœciwoœæ
+	 * Metoda zwraca wartoÅ›Ä‡ zwiÄ…zanÄ… z podawanym ID.
+	 * @param ID String - identyfikator wÅ‚aÅ›ciwoÅ›ci
+	 * @return String - wÅ‚aÅ›ciwoÅ›Ä‡
 	 */
 	public String getValue(String ID) {
 		for(Setting s : settings) {
@@ -43,9 +43,9 @@ public class SettingsManager {
 	}
 	
 	/**
-	 * Metoda ustawia now¹ wartoœæ zwi¹zan¹ z podawanym ID.
-	 * @param ID String - identyfikator w³aœciwoœci
-	 * @param value String - nowa wartoœæ w³aœciwoœci
+	 * Metoda ustawia nowÄ… wartoÅ›Ä‡ zwiÄ…zanÄ… z podawanym ID.
+	 * @param ID String - identyfikator wÅ‚aÅ›ciwoÅ›ci
+	 * @param value String - nowa wartoÅ›Ä‡ wÅ‚aÅ›ciwoÅ›ci
 	 */
 	public int setValue(String ID, String value) {
 		boolean found= false;
@@ -61,9 +61,9 @@ public class SettingsManager {
 	}
 	
 	/**
-	 * Metoda dodaje now¹ w³aœciwoœæ z ID oraz wartoœci¹
+	 * Metoda dodaje nowÄ… wÅ‚aÅ›ciwoÅ›Ä‡ z ID oraz wartoÅ›ciÄ…
 	 * @param ID String - unikalny ID
-	 * @param value String - wartoœæ w³aœciwoœci
+	 * @param value String - wartoÅ›Ä‡ wÅ‚aÅ›ciwoÅ›ci
 	 */
 	public void addSetting(String ID, String value) {
 		for(Setting s : settings) {
@@ -77,7 +77,7 @@ public class SettingsManager {
 	}
 	
 	/**
-	 * Metoda przywraca domyœlne wartoœci ustawieñ programu.
+	 * Metoda przywraca domyÅ›lne wartoÅ›ci ustawieÅ„ programu.
 	 */
 	public void restoreDefaultSetting() {
 		addSetting("abyss_version","1.1 alpha");
@@ -93,9 +93,9 @@ public class SettingsManager {
 	}
 	
 	/**
-	 * Metoda sprawdza, czy krytyczne w³aœciwoœci zosta³y wczytane, tj. czy s¹ w 
-	 * (nieuszkodzonym) pliku w³aœciwoœci, który w³aœnie zosta³ przeczytany.
-	 * @return boolean - true, jeœli wszystkie wa¿ne zosta³y wczytane
+	 * Metoda sprawdza, czy krytyczne wÅ‚aÅ›ciwoÅ›ci zostaÅ‚y wczytane, tj. czy sÄ… w 
+	 * (nieuszkodzonym) pliku wÅ‚aÅ›ciwoÅ›ci, ktÃ³ry wÅ‚aÅ›nie zostaÅ‚ przeczytany.
+	 * @return boolean - true, jeÅ›li wszystkie waÅ¼ne zostaÅ‚y wczytane
 	 */
 	private boolean checkCriticalSetting() {
 		if(getValue("abyss_version") == null) return false;
@@ -109,7 +109,7 @@ public class SettingsManager {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za zapis w³aœciwoœci programu do pliku.
+	 * Metoda odpowiedzialna za zapis wÅ‚aÅ›ciwoÅ›ci programu do pliku.
 	 */
 	public void write() {
 		try {
@@ -128,9 +128,9 @@ public class SettingsManager {
 	}
 
 	/**
-	 * Metoda wczytuje plik w³aœciwoœci albo go odtwarza w razie braku.
-	 * @param err boolean - true, jeœli wywo³a³a sam¹ siebie, bo nie da³o siê wczytaæ pliku, w takim
-	 * 		wypadku podejmowana jest jeszcze tylko jedna próba bez dalszej rekurencji
+	 * Metoda wczytuje plik wÅ‚aÅ›ciwoÅ›ci albo go odtwarza w razie braku.
+	 * @param err boolean - true, jeÅ›li wywoÅ‚aÅ‚a samÄ… siebie, bo nie daÅ‚o siÄ™ wczytaÄ‡ pliku, w takim
+	 * 		wypadku podejmowana jest jeszcze tylko jedna prÃ³ba bez dalszej rekurencji
 	 */
 	public void read(boolean err) {
 		Path path = Paths.get("abyss.cfg");
@@ -168,9 +168,9 @@ public class SettingsManager {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za wczytanie w³aœciwoœci i jej ID w lini (ID do pierwszej spacji).
+	 * Metoda odpowiedzialna za wczytanie wÅ‚aÅ›ciwoÅ›ci i jej ID w lini (ID do pierwszej spacji).
 	 * @param line String - linia z pliku
-	 * @return Setting - w³aœciwoœæ programu
+	 * @return Setting - wÅ‚aÅ›ciwoÅ›Ä‡ programu
 	 */
 	private Setting convertLineToSetting(String line) {
 		try {

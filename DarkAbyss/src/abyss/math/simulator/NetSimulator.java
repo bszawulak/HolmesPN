@@ -20,7 +20,7 @@ import abyss.math.Place;
 import abyss.math.Transition;
 
 /**
- * Klasa zajmująca się zarz�dzaniem całym procesem symulacji.
+ * Klasa zajmująca się zarządzaniem całym procesem symulacji.
  * @author students
  *
  */
@@ -56,7 +56,7 @@ public class NetSimulator {
 		LOOP, SINGLE_TRANSITION_LOOP, SINGLE_TRANSITION, STEP, STOPPED, PAUSED, ACTION_BACK, LOOP_BACK
 	}
 
-	//rodzaj symulowanej sieci (przygotowane do ewentualnych, dalszych rozszerze� o
+	//rodzaj symulowanej sieci (przygotowane do ewentualnych, dalszych rozszerzeń o
 	//kolejne rodzaje, poza podstawowym
 	public enum NetType {
 		BASIC, COLORED, TIME
@@ -65,7 +65,7 @@ public class NetSimulator {
 	/**
 	 * Konstruktor obiektu symulatora sieci
 	 * @param type NetType - typ sieci
-	 * @param net PetriNet - sie� do symulacji 
+	 * @param net PetriNet - sieć do symulacji 
 	 */
 	public NetSimulator(NetType type, PetriNet net) {
 		simulationType = type;
@@ -76,9 +76,9 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda sprawdzająca, czy krok jest możliwy - czy istnieje cho� jedna aktywna
+	 * Metoda sprawdzająca, czy krok jest możliwy - czy istnieje choć jedna aktywna
 	 * tranzycja.
-	 * @return boolean - true je�li jest cho� jedna aktywna tranzycja; false w przeciwnym wypadku
+	 * @return boolean - true jeśli jest choć jedna aktywna tranzycja; false w przeciwnym wypadku
 	 */
 	private boolean isPossibleStep() {
 		for (Transition transition : petriNet.getTransitions()) {
@@ -89,7 +89,7 @@ public class NetSimulator {
 	}
 	
 	/**
-	 * Metoda ustawiaj�ca tryb sieci do symulacji
+	 * Metoda ustawiająca tryb sieci do symulacji
 	 * @param type int - typ sieci.
 	 */
 	public void setSimulatorNetType(int type)
@@ -106,8 +106,8 @@ public class NetSimulator {
 
 	@SuppressWarnings("incomplete-switch")
 	/**
-	 * Metoda rozpoczyna symulacj� w odpowiednim trybie. W zale�no�ci od wybranego trybu,
-	 * w oddzielnym w�tku symulacji zainicjalizowana zostaje odpowiednia klasa dziedzicz�ca
+	 * Metoda rozpoczyna symulację w odpowiednim trybie. W zależności od wybranego trybu,
+	 * w oddzielnym wątku symulacji zainicjalizowana zostaje odpowiednia klasa dziedzicząca
 	 * po StepPerformer.
 	 * @param simulatorMode SimulatorMode - wybrany tryb symulacji
 	 */
@@ -149,8 +149,8 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda generuje zbi�r tranzycji do uruchomienia.
-	 * @return ArrayList[Transition] - zbi�r tranzycji do uruchomienia.
+	 * Metoda generuje zbiór tranzycji do uruchomienia.
+	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia.
 	 */
 	private ArrayList<Transition> generateValidLaunchingTransitions() {
 		boolean generated = false;
@@ -165,9 +165,9 @@ public class NetSimulator {
 
 	/**
 	 * Metoda pomocnicza dla generateValidLaunchingTransitions(), odpowiedzialna za sprawdzenie
-	 * kt�re tranzycje nadaj� si� do uruchomienia. Aktualnie dzia�a dla modelu klasycznego PN
+	 * które tranzycje nadają się do uruchomienia. Aktualnie działa dla modelu klasycznego PN
 	 * oraz czasowego.
-	 * @return ArrayList[Transition] - zbi�r tranzycji do uruchomienia.
+	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia.
 	 */
 	private ArrayList<Transition> generateLaunchingTransitions() {
 		Random randomLaunch = new Random();
@@ -235,7 +235,7 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Nieu�ywana, nieopisana
+	 * Nieużywana, nieopisana
 	 * @param t
 	 * @param list
 	 * @return
@@ -245,10 +245,10 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda uruchamia faz� odejmowania token�w z miejsc wej�ciowych odpalonych tranzycji
-	 * (lub wyj�ciowych, dla trybu cofania). 
+	 * Metoda uruchamia fazę odejmowania tokenów z miejsc wejściowych odpalonych tranzycji
+	 * (lub wyjściowych, dla trybu cofania). 
 	 * @param transitions ArrayList[Transition] - lista uruchamianych tranzycji
-	 * @param backtracking boolean - true, je�li symulator pracuje w trybie cofania;
+	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania;
 	 * 		false w przeciwnym wypadku
 	 */
 	public void launchSubtractPhase(ArrayList<Transition> transitions, boolean backtracking) {
@@ -274,13 +274,13 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda uruchamia faz� odejmowania token�w z miejsc wej�ciowych jednej odpalonej tranzycji
-	 * (lub wyj�ciowych, dla trybu cofania). 
+	 * Metoda uruchamia fazę odejmowania tokenów z miejsc wejściowych jednej odpalonej tranzycji
+	 * (lub wyjściowych, dla trybu cofania). 
 	 * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
-	 * @param backtracking boolean - true, je�li symulator pracuje w trybie cofania;
+	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania;
 	 * 		false w przeciwnym wypadku
-	 * @param chosenTransition Transition - wybrana tranzycja, kt�rej dotyczy uruchomienie tej metody
-	 * @return boolean - true, je�li faza zosta�a pomy�lnie uruchomiona; false w przeciwnym razie
+	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
+	 * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
 	 */
 	public boolean launchSingleSubtractPhase(ArrayList<Transition> transitions,
 			boolean backtracking, Transition chosenTransition) {
@@ -312,10 +312,10 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda uruchamia faz� wizualizacji dodawania token�w do miejsc wyj�ciowych odpalonych tranzycji
-	 * (lub wej�ciowych, dla trybu cofania). 
+	 * Metoda uruchamia fazę wizualizacji dodawania tokenów do miejsc wyjściowych odpalonych tranzycji
+	 * (lub wejściowych, dla trybu cofania). 
 	 * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
-	 * @param backtracking boolean - true, je�li symulator pracuje w trybie cofania;
+	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania;
 	 * 		false w przeciwnym wypadku
 	 */
 	public void launchAddPhaseGraphics(ArrayList<Transition> transitions, boolean backtracking) {
@@ -334,13 +334,13 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda uruchamia faz� wizualizacji dodawania token�w do miejsc wyj�ciowych dla pojedynczej
-	 * spo�r�d odpalanych tranzycji (lub wej�ciowych, dla trybu cofania).
+	 * Metoda uruchamia fazę wizualizacji dodawania tokenów do miejsc wyjściowych dla pojedynczej
+	 * spośród odpalanych tranzycji (lub wejściowych, dla trybu cofania).
 	 * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
-	 * @param backtracking boolean - true, je�li symulator pracuje w trybie cofania;
+	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania;
 	 * 		false w przeciwnym wypadku
-	 * @param chosenTransition Transition - wybrana tranzycja, kt�rej dotyczy uruchomienie tej metody
-	 * @return boolean - true, je�li faza zosta�a pomy�lnie uruchomiona; false w przeciwnym razie
+	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
+	 * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
 	 */
 	public boolean launchSingleAddPhaseGraphics( ArrayList<Transition> transitions, boolean backtracking,
 			Transition chosenTransition) {
@@ -366,10 +366,10 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda uruchamia faz� faktycznego dodawania token�w do miejsc wyj�ciowych odpalonych
-	 * tranzycji (lub wej�ciowych, dla trybu cofania). 
+	 * Metoda uruchamia fazę faktycznego dodawania tokenów do miejsc wyjściowych odpalonych
+	 * tranzycji (lub wejściowych, dla trybu cofania). 
 	 * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
-	 * @param backtracking boolean - true, je�li symulator pracuje w trybie cofania;
+	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania;
 	 * 		false w przeciwnym wypadku
 	 */
 	public void launchAddPhase(ArrayList<Transition> transitions,
@@ -394,13 +394,13 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda uruchamia faz� faktycznego dodawania token�w do miejsc wyj�ciowych dla pojedynczej
-	 * spo�r�d odpalanych tranzycji (lub wej�ciowych, dla trybu cofania).
+	 * Metoda uruchamia fazę faktycznego dodawania tokenów do miejsc wyjściowych dla pojedynczej
+	 * spośród odpalanych tranzycji (lub wejściowych, dla trybu cofania).
 	 * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
-	 * @param backtracking boolean - true, je�li symulator pracuje w trybie cofania;
+	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania;
 	 * 		false w przeciwnym wypadku
-	 * @param chosenTransition Transition - wybrana tranzycja, kt�rej dotyczy uruchomienie tej metody
-	 * @return boolean - true, je�li faza zosta�a pomy�lnie uruchomiona; false w przeciwnym razie
+	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
+	 * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
 	 */
 	public boolean launchSingleAddPhase(ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
 		if (transitions.size() < 1)
@@ -429,7 +429,7 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda zatrzymuje symulacj� po zako�czeniu aktualnego kroku (gdy zostan� odpalone
+	 * Metoda zatrzymuje symulację po zakończeniu aktualnego kroku (gdy zostaną odpalone
 	 * wszystkie odpalane w tym momencie tranzycje).
 	 */
 	public void stop() {
@@ -437,10 +437,10 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Je�li aktualnie trwa symulacja, metoda ta przerwie j� natychmiast, i zablokuje wszystkie
-	 * inne funkcje w symulatorze, poza opcj� uruchomienia tej metody. Je�li symulacja zosta�a
-	 * ju� zatrzymana t� metod�, ponowne jej wywo�anie spowoduje kontynuowanie jej od momentu, w
-	 * kt�rym zosta�a przerwana.
+	 * Jeśli aktualnie trwa symulacja, metoda ta przerwie ją natychmiast, i zablokuje wszystkie
+	 * inne funkcje w symulatorze, poza opcją uruchomienia tej metody. Jeśli symulacja została
+	 * już zatrzymana tą metodą, ponowne jej wywołanie spowoduje kontynuowanie jej od momentu, w
+	 * którym została przerwana.
 	 */
 	public void pause() {
 		if ((getMode() != SimulatorMode.PAUSED)
@@ -454,7 +454,7 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda uruchamiana przez klasy pomocniczne dziedzic�ace z SimulationPerformer, odpowiedzialna
+	 * Metoda uruchamiana przez klasy pomocniczne dziedziczące z SimulationPerformer, odpowiedzialna
 	 * za zatrzymanie symulacji.
 	 */
 	private void stopSimulation() {
@@ -466,7 +466,7 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda uruchamiana przez klasy pomocniczne dziedzic�ace z SimulationPerformer, odpowiedzialna
+	 * Metoda uruchamiana przez klasy pomocniczne dziedziczące z SimulationPerformer, odpowiedzialna
 	 * za pauzowanie symulacji.
 	 */
 	private void pauseSimulation() {
@@ -478,7 +478,7 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda uruchamiana przez klasy pomocniczne dziedzic�ace z SimulationPerformer, odpowiedzialna
+	 * Metoda uruchamiana przez klasy pomocniczne dziedziczące z SimulationPerformer, odpowiedzialna
 	 * za ponowne uruchomienie (po pauzie) symulacji.
 	 */
 	private void unpauseSimulation() {
@@ -491,16 +491,16 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda pozwala sprawdzi�, czy symulacja jest w tym momencie aktywna.
-	 * @return boolean - true, je�li symulacja jest aktywna; false w przeciwnym wypadku
+	 * Metoda pozwala sprawdzić, czy symulacja jest w tym momencie aktywna.
+	 * @return boolean - true, jeśli symulacja jest aktywna; false w przeciwnym wypadku
 	 */
 	public boolean isSimulationActive() {
 		return simulationActive;
 	}
 
 	/**
-	 * Metoda pozwala ustawi�, czy symulacja jest w tym momencie aktywna.
-	 * @param simulationActive boolean - warto�� aktywno�ci symulacji
+	 * Metoda pozwala ustawić, czy symulacja jest w tym momencie aktywna.
+	 * @param simulationActive boolean - wartość aktywności symulacji
 	 */
 	public void setSimulationActive(boolean simulationActive) {
 		this.simulationActive = simulationActive;
@@ -508,15 +508,15 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda pozwala pobra� liczb� wierzcho�k�w w sieci Petriego.
-	 * @return int - liczba wierzcho�k�w w sieci Petriego
+	 * Metoda pozwala pobrać liczbę wierzchołków w sieci Petriego.
+	 * @return int - liczba wierzchołków w sieci Petriego
 	 */
 	public int getNodesAmount() {
 		return petriNet.getNodes().size();
 	}
 
 	/**
-	 * Metoda pozwala pobra� liczb� miejsc w sieci Petriego.
+	 * Metoda pozwala pobrać liczbę miejsc w sieci Petriego.
 	 * @return int - liczba miejsc w sieci Petriego
 	 */
 	public int getPlacesAmount() {
@@ -524,7 +524,7 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda pozwala pobra� liczb� tranzycji w sieci Petriego.
+	 * Metoda pozwala pobrać liczbę tranzycji w sieci Petriego.
 	 * @return int  - liczba tranzycji w sieci Petriego
 	 */
 	public int getTransitionsAmount() {
@@ -532,16 +532,16 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda pozwala pobra� liczb� �uk�w w sieci Petriego.
-	 * @return int - liczba �uk�w w sieci Petriego
+	 * Metoda pozwala pobrać liczbę łuków w sieci Petriego.
+	 * @return int - liczba łuków w sieci Petriego
 	 */
 	public int getArcsAmount() {
 		return petriNet.getArcs().size();
 	}
 
 	/**
-	 * Metoda pozwala pobra� ��czn� liczb� wszystkich token�w w sieci Petriego.
-	 * @return int - liczba token�w w sieci Petriego
+	 * Metoda pozwala pobrać łączną liczbę wszystkich tokenów w sieci Petriego.
+	 * @return int - liczba tokenów w sieci Petriego
 	 */
 	public int getTokensAmount() {
 		int tokenAmount = 0;
@@ -552,15 +552,15 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda pozwala pobra� zegar odpowiadaj�cy za w�tek symulacji.
-	 * @return Timer - zegar odpowiadaj�cy za w�tek symulacji
+	 * Metoda pozwala pobrać zegar odpowiadający za wątek symulacji.
+	 * @return Timer - zegar odpowiadający za wątek symulacji
 	 */
 	public Timer getTimer() {
 		return timer;
 	}
 
 	/**
-	 * Metoda pozwalaj�ca ustawi� nowy zegar dla w�tku symulacji.
+	 * Metoda pozwalająca ustawić nowy zegar dla wątku symulacji.
 	 * @param timer Timer - zegar
 	 */
 	private void setTimer(Timer timer) {
@@ -568,16 +568,16 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda pozwala pobra� interwa� czasowy pomi�dzy kolejnymi krokami symulacji.
-	 * @return Integer - interwa� czasowy pomi�dzy kolejnymi krokami symulacji wyra�ony w milisekundach
+	 * Metoda pozwala pobrać interwał czasowy pomiędzy kolejnymi krokami symulacji.
+	 * @return Integer - interwał czasowy pomiędzy kolejnymi krokami symulacji wyrażony w milisekundach
 	 */
 	public Integer getDelay() {
 		return delay;
 	}
 
 	/**
-	 * Metoda pozwala ustawi� interwa� czasowy pomi�dzy kolejnymi krokami symulacji.
-	 * @param delay Integer - interwa� czasowy pomi�dzy kolejnymi krokami symulacji wyra�ony w milisekundach
+	 * Metoda pozwala ustawić interwał czasowy pomiędzy kolejnymi krokami symulacji.
+	 * @param delay Integer - interwał czasowy pomiędzy kolejnymi krokami symulacji wyrażony w milisekundach
 	 */
 	public void setDelay(Integer delay) {
 		if (timer != null)
@@ -594,7 +594,7 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda ustawiaj�ca nowy tryb pracy dla symulatora.
+	 * Metoda ustawiająca nowy tryb pracy dla symulatora.
 	 * @param mode SimulatorMode - tryb pracy
 	 */
 	private void setMode(SimulatorMode mode) {
@@ -613,9 +613,9 @@ public class NetSimulator {
 	// ================================================================================
 
 	/**
-	 * Metoda sprawdzaj�ca, czy symulator pracuje w trybie maksymalnego uruchamiania
+	 * Metoda sprawdzająca, czy symulator pracuje w trybie maksymalnego uruchamiania
 	 * tranzycji.
-	 * @return boolean - true, je�li w��czony tryb maksymalnego uruchamiania; 
+	 * @return boolean - true, jeśli włączony tryb maksymalnego uruchamiania; 
 	 * 		false w przeciwnym wypadku
 	 */
 	public boolean isMaximumMode() {
@@ -623,8 +623,8 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda ustwaiaj�ca trybie maksymalnego uruchamiania tranzycji.
-	 * @return boolean - true, je�li w��czany jest tryb maksymalnego uruchamiania; 
+	 * Metoda ustwaiająca trybie maksymalnego uruchamiania tranzycji.
+	 * @return boolean - true, jeśli włączany jest tryb maksymalnego uruchamiania; 
 	 * 		false w przeciwnym wypadku
 	 */
 	public void setMaximumMode(boolean maximumMode) {
@@ -632,8 +632,8 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Po tej klasie dziedziczy szereg klas implementuj�cych konkretne tryby pracy symulatora.
-	 * Metoda actionPerformed() jest wykonywana w ka�dym kroku symulacji przez timer obiektu
+	 * Po tej klasie dziedziczy szereg klas implementujących konkretne tryby pracy symulatora.
+	 * Metoda actionPerformed() jest wykonywana w każdym kroku symulacji przez timer obiektu
 	 * NetSimulator. 
 	 * @author students
 	 *
@@ -647,24 +647,24 @@ public class NetSimulator {
 		protected int remainingTransitionsAmount = launchingTransitions.size();
 
 		/**
-		 * Metoda aktualizuje wy�wietlanie graficznej cz�ci symulacji po wykonaniu ka�dego kroku.
+		 * Metoda aktualizuje wyświetlanie graficznej części symulacji po wykonaniu każdego kroku.
 		 */
 		protected void updateStep() {
 			GUIManager.getDefaultGUIManager().getWorkspace().incrementSimulationStep();
 			
-			//tutaj nic si� nie dzieje: a chyba chodzi�o o update podokna w�a�ciwo�ci z liczb� token�w
+			//tutaj nic się nie dzieje: a chyba chodziło o update podokna właściwości z liczbą tokenów
 			GUIManager.getDefaultGUIManager().getSimulatorBox().updateSimulatorProperties();
 		}
 
 		/**
-		 * Metoda inicjuje zatrzymanie symulacji po zako�czeniu aktualnego kroku.
+		 * Metoda inicjuje zatrzymanie symulacji po zakończeniu aktualnego kroku.
 		 */
 		public void scheduleStop() {
 			scheduledStop = true;
 		}
 
 		/**
-		 * Metoda natychmiast zatrzymuje symulacj�.
+		 * Metoda natychmiast zatrzymuje symulację.
 		 */
 		public void executeScheduledStop() {
 			stopSimulation();
@@ -672,10 +672,10 @@ public class NetSimulator {
 		}
 
 		/**
-		 * Metoda faktycznie wykonywana jako ka�dy kolejny krok przez symulator.
-		 * Szkielet oferowany przez StepPerformer automatycznie aktualizuje graficzn�
-		 * cz�� symulacji na pocz�tku ka�dego kroku.
-		 * @param event ActionEvent - zdarzenie, kt�re spowodowa�o wykonanie metody 
+		 * Metoda faktycznie wykonywana jako każdy kolejny krok przez symulator.
+		 * Szkielet oferowany przez StepPerformer automatycznie aktualizuje graficzną
+		 * część symulacji na początku każdego kroku.
+		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
 			updateStep();
@@ -683,12 +683,12 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Klasa implementuj�ca cofanie wykonanych w innych trybach krok�w. Tryb ACTION_BACK
-	 * wykonuje fazy analogiczne do StepPerformer lub SingleTransitionPerformer (zale�nie od
-	 * tego, jaki krok zostaje cofni�ty), jednak�e w odwr�conej kolejno�ci. Cofane tranzycje
-	 * nie s� losowane, lecz zdejmowane ze stosu historii wykonanych krok�w. Tryb LOOP_BACK
-	 * wykonuje kroki ACTION_BACK w p�tli do czasu wyczerpania stosu historii (przywr�cenia
-	 * stanu globalnego pocz�tkowego sieci Petriego).
+	 * Klasa implementująca cofanie wykonanych w innych trybach kroków. Tryb ACTION_BACK
+	 * wykonuje fazy analogiczne do StepPerformer lub SingleTransitionPerformer (zależnie od
+	 * tego, jaki krok zostaje cofnięty), jednakże w odwróconej kolejności. Cofane tranzycje
+	 * nie są losowane, lecz zdejmowane ze stosu historii wykonanych kroków. Tryb LOOP_BACK
+	 * wykonuje kroki ACTION_BACK w pętli do czasu wyczerpania stosu historii (przywrócenia
+	 * stanu globalnego początkowego sieci Petriego).
 	 * @author students
 	 *
 	 */
@@ -708,7 +708,7 @@ public class NetSimulator {
 
 		/**
 		 * Konstruktor obiektu klasy StepBackPerformer.
-		 * @param looping boolean - true, je�li w p�tli
+		 * @param looping boolean - true, jeśli w pętli
 		 */
 		public StepBackPerformer(boolean looping) {
 			currentTransitions = new ArrayList<Transition>();
@@ -716,8 +716,8 @@ public class NetSimulator {
 		}
 
 		/**
-		 * Metoda faktycznie wykonywana jako ka�dy kolejny krok przez symulator.
-		 * @param event ActionEvent - zdarzenie, kt�re spowodowa�o wykonanie metody 
+		 * Metoda faktycznie wykonywana jako każdy kolejny krok przez symulator.
+		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
 			updateStep(); // update graphics
@@ -773,14 +773,14 @@ public class NetSimulator {
 	}
 
 	/**
-	 *  Klasa implementuj�ca wykonywanie krok�w dla najbardziej podstawowych tryb�w symulacji
-	 *  LOOP oraz STEP. Dla trybu STEP na pocz�tku ka�dego kroku generowana jest lista tranzycji
-	 *  faktycznie odpalanych spo�r�d istniej�cych w sieci Petriego tranzycji aktywnych (dla
-	 *  trybu pe�nego - wszystkie aktywne tranzycje), a nast�pnie symulowany jest proces
-	 *  odpalenia tranzycji w 3 roz��cznych fazach dla ka�dej pozycji z listy r�wnocze�nie:<br><br>
-	 *  faza odejmowania w kt�rej tokeny zostaj� zabrane z odpowiednich miejsc wej�ciowych<br>
-	 *  faza graficznego dodawania - w kt�rej wy�wietlone zostaje przejscie token�w<br>
-	 *  faza dodawania - w kt�rej tokeny zostaj� dodane do odpowiednich miejsc wyj�ciowych
+	 *  Klasa implementująca wykonywanie kroków dla najbardziej podstawowych trybów symulacji
+	 *  LOOP oraz STEP. Dla trybu STEP na początku każdego kroku generowana jest lista tranzycji
+	 *  faktycznie odpalanych spośród istniejących w sieci Petriego tranzycji aktywnych (dla
+	 *  trybu pełnego - wszystkie aktywne tranzycje), a następnie symulowany jest proces
+	 *  odpalenia tranzycji w 3 rozłącznych fazach dla każdej pozycji z listy równocześnie:<br><br>
+	 *  faza odejmowania w której tokeny zostają zabrane z odpowiednich miejsc wejściowych<br>
+	 *  faza graficznego dodawania - w której wyświetlone zostaje przejscie tokenów<br>
+	 *  faza dodawania - w której tokeny zostaja dodane do odpowiednich miejsc wyjściowych
 	 * @author students
 	 */
 	private class StepPerformer extends SimulationPerformer {
@@ -795,15 +795,15 @@ public class NetSimulator {
 
 		/**
 		 * Konstruktor obiektu klasy StepPerformer
-		 * @param looping boolean - true, je�li dzia�anie w p�tli
+		 * @param looping boolean - true, jeśli działanie w pętli
 		 */
 		public StepPerformer(boolean looping) {
 			loop = looping;
 		}
 
 		/**
-		 * Metoda faktycznie wykonywana jako ka�dy kolejny krok przez symulator.
-		 * @param event ActionEvent - zdarzenie, kt�re spowodowa�o wykonanie metody 
+		 * Metoda faktycznie wykonywana jako każdy kolejny krok przez symulator.
+		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
 			updateStep(); // update graphics
@@ -855,10 +855,10 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Klasa implementuj�ca wykonywanie krok�w dla tryb�w symulacji SINGLE_TRANSITION oraz 
-	 * SINGLE_TRANSITION_LOOP. Dzia�a analogicznie do StepPerformer, za wyj�tkiem 2 r�nic:
+	 * Klasa implementująca wykonywanie kroków dla trybów symulacji SINGLE_TRANSITION oraz 
+	 * SINGLE_TRANSITION_LOOP. Działa analogicznie do StepPerformer, za wyjątkiem 2 różnic:
 	 * w danym kroku odpalana jest tylko jedna tranzycja z listy, po czym jest z niej usuwana;
-	 * nowa lista generowana jest dopiero, gdy poprzednia zostanie opr�niona z tranzycji.
+	 * nowa lista generowana jest dopiero, gdy poprzednia zostanie opróżniona z tranzycji.
 	 * SINGLE_TRANSITION odpowiada trybowi STEP w StepPerformer, SINGLE_TRANSITION_LOOP natomiast LOOP.
 	 * @author students
 	 *
@@ -875,15 +875,15 @@ public class NetSimulator {
 
 		/**
 		 * Konstruktor obiektu klasy SingleTransitionPerformer
-		 * @param looping boolean - true, je�li dzia�anie w p�tli
+		 * @param looping boolean - true, jeśli działanie w pętli
 		 */
 		public SingleTransitionPerformer(boolean looping) {
 			loop = looping;
 		}
 
 		/**
-		 * Metoda faktycznie wykonywana jako ka�dy kolejny krok przez symulator.
-		 * @param event ActionEvent - zdarzenie, kt�re spowodowa�o wykonanie metody 
+		 * Metoda faktycznie wykonywana jako każdy kolejny krok przez symulator.
+		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
 			updateStep(); // update graphics

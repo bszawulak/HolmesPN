@@ -25,11 +25,11 @@ import abyss.math.Transition;
 import abyss.math.PetriNetElement.PetriNetElementType;
 
 /**
- * Klasa odpowiedzialna za protoko³y komunikacyjne z programem INA, Charlie, itd. Precyzyjnie,
- * posiada ona metody zapisu i odczytu plików sieci, inwariantów i innych zbiorów analitycznych
- * do/z ró¿nych formatów plików.
+ * Klasa odpowiedzialna za protokoÅ‚y komunikacyjne z programem INA, Charlie, itd. Precyzyjnie,
+ * posiada ona metody zapisu i odczytu plikÃ³w sieci, inwariantÃ³w i innych zbiorÃ³w analitycznych
+ * do/z rÃ³Å¼nych formatÃ³w plikÃ³w.
  * @author students - pierwsze wersje metod w czterech oddzielnych klasach
- * @author MR - integracja w jedn¹ klasê, writeINV - przeróbka, aby w ogóle dzia³a³o
+ * @author MR - integracja w jednÄ… klasÄ™, writeINV - przerÃ³bka, aby w ogÃ³le dziaÅ‚aÅ‚o
  *
  */
 public class IOprotocols {
@@ -53,16 +53,16 @@ public class IOprotocols {
 	
 	/**
 	 * Zwraca tablice inwariantow z wczytanego pliku INA
-	 * @return invariantsList - lista inwariantów
+	 * @return invariantsList - lista inwariantÃ³w
 	 */
 	public ArrayList<ArrayList<Integer>> getInvariantsList() {
 		return invariantsList;
 	}  
 
 	/**
-	 * Wczytywanie pliki t-inwariantow INA, wczesniej: INAinvariants.read
-	 * Dodano poprawki oraz drug¹ œciê¿kê odczytu - jako plik inwariantów Charliego.
-	 * @param sciezka String - scie¿ka do pliku
+	 * Wczytywanie pliki t-inwariantÃ³w INA, wczeÅ›niej: INAinvariants.read
+	 * Dodano poprawki oraz drugÄ… Å›ciÄ™kÄ™ odczytu - jako plik inwariantÃ³w Charliego.
+	 * @param sciezka String - scieÅ¼ka do pliku
 	 */
 	public void readINV(String sciezka) {
 		try {
@@ -75,7 +75,7 @@ public class IOprotocols {
 			// brzydka, niedobra INA... (MR)
 			//transition invariants basis
 			if (wczytanaLinia.contains("transition sub/sur/invariants for net")) {
-				//to znaczy, ¿e wczytujemy plik INA, po prostu
+				//to znaczy, Å¼e wczytujemy plik INA, po prostu
 			} else if (wczytanaLinia.contains("minimal semipositive transition")) {
 				buffer.close();
 				readCharlieINV(sciezka);
@@ -94,7 +94,7 @@ public class IOprotocols {
 					readCharlieINV(sciezka);
 					return;
 				}
-				//jeœli nie 2 i nie 1, to znaczy, ¿e 0, czyli na si³ê czytamy dalej jako INA inv.
+				//jeÅ›li nie 2 i nie 1, to znaczy, Å¼e 0, czyli na sieÄ‡ czytamy dalej jako INA inv.
 			}
 			
 			if(backup.contains("transition invariants basis")) {
@@ -223,8 +223,8 @@ public class IOprotocols {
 
 	/**
 	 * Zapis inwariantow w formacie INA.
-	 * @param path - scie¿ka do pliku
-	 * @param invariants ArrayList[ArrayList[Integer]] - lista niezmienników
+	 * @param path - scieÅ›ka do pliku
+	 * @param invariants ArrayList[ArrayList[Integer]] - lista niezmiennikÃ³w
 	 * @param transitions ArrayList[Transition] - lista tranzycji
 	 */
 	public void writeINV(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
@@ -273,9 +273,9 @@ public class IOprotocols {
 				for (int t = 0; t < invariants.get(i).size(); t++) { //po wszystkich tranzycja inwariantu
 					int tr = invariants.get(i).get(t); // nr tranzycji
 					if (transNo >= 100)
-						pw.print(conIntToStr(true, tr)); //tutaj wstawiamy wartoœæ dla tranz. w inw.
+						pw.print(conIntToStr(true, tr)); //tutaj wstawiamy wartoÅ›Ä‡ dla tranz. w inw.
 					else
-						pw.print(conIntToStr(false, tr)); //tutaj wstawiamy wartoœæ dla tranz. w inw.
+						pw.print(conIntToStr(false, tr)); //tutaj wstawiamy wartoÅ›Ä‡ dla tranz. w inw.
 					
 					if (t == (multipl*delimiter)-1 ) { //rozdzielnik wierszy
 						pw.print("\r\n");
@@ -300,9 +300,9 @@ public class IOprotocols {
 	}
 	
 	/**
-	 * Metoda pomocnicza zwracaj¹ca liczbê w formie String z odpowiedni¹ liczb¹ spacji.
-	 * Metoda ta jest niezbêdna do zapisu pliku inwariantów w formacie programu INA
-	 * @param large boolean - true, jeœli dla du¿ej sieci.
+	 * Metoda pomocnicza zwracajÄ…ca liczbÄ™ w formie String z odpowiedniÄ… liczbÄ… spacji.
+	 * Metoda ta jest niezbÄ™dna do zapisu pliku inwariantÃ³w w formacie programu INA
+	 * @param large boolean - true, jeÅ›li dla duÅ¼ej sieci.
 	 * @param tr int - liczba do konwersji
 	 * @return String - liczba po konwersji
 	 */
@@ -329,8 +329,8 @@ public class IOprotocols {
 	}
 
 	/**
-	 * Metoda zwraca nazwê pliku.
-	 * @param sciezka - scie¿ka do pliku
+	 * Metoda zwraca nazwÄ™ pliku.
+	 * @param sciezka - scieÅ¼ka do pliku
 	 * @return String - nazwa pliku
 	 */
 	public String getNazwaPliku(String sciezka) {
@@ -339,8 +339,8 @@ public class IOprotocols {
 	}
 	
 	/**
-	 * Metoda zwraca listê wez³ów sieci po tym jak readPNT przeczyta plik INY
-	 * @return nodeArray[Node] - tablica wêz³ów sieci
+	 * Metoda zwraca listÄ™ wezÅ‚Ã³w sieci po tym jak readPNT przeczyta plik INY
+	 * @return nodeArray[Node] - tablica wÄ™zÅ‚Ã³w sieci
 	 */
 	public ArrayList<Node> getNodeArray() {
 		return nodeArray;
@@ -348,7 +348,7 @@ public class IOprotocols {
 
 	/**
 	 * Zwraca liste krawedzi sieci po tym jak readPNT przeczyta plik INY
-	 * @return arcArray[Arc] - lista ³uków sieci
+	 * @return arcArray[Arc] - lista Å‚ukÃ³w sieci
 	 */
 	public ArrayList<Arc> getArcArray() {
 		return arcArray;
@@ -356,7 +356,7 @@ public class IOprotocols {
 
 	/**
 	 * Czyta plik PNT w formacie INA z siecia standardowa
-	 * @param scie¿ka String - scie¿ka do pliku
+	 * @param scieÅ¼ka String - scieÅ¼ka do pliku
 	 */
 	public void readPNT(String sciezka) {
 		try {
@@ -506,7 +506,7 @@ public class IOprotocols {
 					}
 					break;
 				case 4:
-					// Tworzenie Arców, szerokosci okna
+					// Tworzenie ArcÃ³w, szerokosci okna
 					// tworzenie dla kazdego noda element location
 					for (int j = 0; j < nodeArray.size(); j++) {
 						if (nodeArray.get(j).getType() == PetriNetElementType.PLACE) {
@@ -598,11 +598,11 @@ public class IOprotocols {
 	}
 
 	/**
-	 * Metoda s³u¿¹ca do zapisywaniu pliku sieci Petriego w formacie programu INA.
-	 * @param path - œcie¿ka zapisu pliku
+	 * Metoda sÅ‚uÅ¼Ä…ca do zapisywaniu pliku sieci Petriego w formacie programu INA.
+	 * @param path - Å›cieÅ¼ka zapisu pliku
 	 * @param placeList ArrayList[Place] - lista miejsc sieci
 	 * @param transitionList ArrayList[Transition] - lista tranzycji sieci
-	 * @param arcList ArrayList[Arc] - lista ³uków sieci
+	 * @param arcList ArrayList[Arc] - lista Å‚ukÃ³w sieci
 	 */
 	public void writePNT(String path, ArrayList<Place> placeList,
 			ArrayList<Transition> transitionList, ArrayList<Arc> arcList) {
@@ -625,7 +625,7 @@ public class IOprotocols {
 				zawartoscPliku += placeList.get(i).getTokensNumber();
 				zawartoscPliku += "    ";
 
-				// £uki
+				// Å‚uki
 				if (placeList.get(i).getInArcs().isEmpty()
 						&& placeList.get(i).getOutArcs().isEmpty()) {
 					zawartoscPliku += " ";
@@ -744,9 +744,9 @@ public class IOprotocols {
 	}
 	
 	/**
-	 * Metoda zapisuj¹ca inwarianty w pliku w formacie programu Charlie.
-	 * @param path String - œcie¿ka do pliku
-	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * Metoda zapisujÄ…ca inwarianty w pliku w formacie programu Charlie.
+	 * @param path String - Å›cieÅ¼ka do pliku
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantÃ³w
 	 * @param transitions ArrayList[Transition] - wektor tranzycji
 	 */
 	public void writeCharlieInv(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
@@ -793,9 +793,9 @@ public class IOprotocols {
 	}
 	
 	/**
-	 * Metoda zapisuj¹ca inwarianty w formacie Comma Separated Value.
-	 * @param path String - œcie¿ka do pliku zapisu
-	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * Metoda zapisujÄ…ca inwarianty w formacie Comma Separated Value.
+	 * @param path String - Å›cieÅ¼ka do pliku zapisu
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantÃ³w
 	 * @param transitions ArrayList[Transition] - wektor tranzycji
 	 */
 	public void writeInvToCSV(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {

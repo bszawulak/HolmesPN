@@ -10,10 +10,10 @@ import abyss.math.Place;
 import abyss.math.Transition;
 
 /**
- * Klasa odpowiedzialna za analizê w³aœciwoœci sieci Petriego. Tworzona rêcznie, do dzia³ania
- * wymaga istniej¹cych: miejsc, tranzycji oraz ³uków (niepuste zbiory).
+ * Klasa odpowiedzialna za analizÄ™ wÅ‚aÅ›ciwoÅ›ci sieci Petriego. Tworzona rÄ™cznie, do dziaÅ‚ania
+ * wymaga istniejÄ…cych: miejsc, tranzycji oraz Å‚ukÃ³w (niepuste zbiory).
  * @author students
- * @author MR - porz¹dek w klasie, dodanie opisów i dzia³aj¹cego sprawdzania CN i SCN
+ * @author MR - porzÄ…dek w klasie, dodanie opisÃ³w i dziaÅ‚ajÄ…cego sprawdzania CN i SCN
  *
  */
 public class NetPropertiesAnalyzer {
@@ -25,7 +25,7 @@ public class NetPropertiesAnalyzer {
 	ArrayList<Node> checked = new ArrayList<Node>();
 
 	/**
-	 * Konstruktor domyœlny obiektu klasy NetPropAnalyzer.
+	 * Konstruktor domyÅ›lny obiektu klasy NetPropAnalyzer.
 	 */
 	public NetPropertiesAnalyzer() {
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
@@ -35,8 +35,8 @@ public class NetPropertiesAnalyzer {
 	}
 
 	/**
-	 * Metoda analizuj¹ w³aœciwoœci i zwracaj¹ca je jako tablicê obiektów.
-	 * @return ArrayList[ArrayList[Object]] - macierz obiektów reprezentuj¹cych w³aœciwoœci
+	 * Metoda analizujÄ…ca wÅ‚aÅ›ciwoÅ›ci i zwracajÄ…ca je jako tablicÄ™ obiektÃ³w.
+	 * @return ArrayList[ArrayList[Object]] - macierz obiektÃ³w reprezentujÄ…cych wÅ‚aÅ›ciwoÅ›ci
 	 */
 	public ArrayList<ArrayList<Object>> propAnalyze() {
 		ArrayList<ArrayList<Object>> NetProps = new ArrayList<ArrayList<Object>>();
@@ -341,12 +341,12 @@ public class NetPropertiesAnalyzer {
 
 	@SuppressWarnings("unused")
 	/**
-	 * Metoda sprawdzaj¹ca silne po³¹czenie elementów sieci.
-	 * @param n1 Node - wierzcho³ek nr 1
-	 * @param n2 Node - wierzcho³ek nr 2
-	 * @param last Node - ostatni wierzcho³ek
+	 * Metoda sprawdzajÄ…ca silne poÅ‚Ä…czenie elementÃ³w sieci.
+	 * @param n1 Node - wierzchoÅ‚ek nr 1
+	 * @param n2 Node - wierzchoÅ‚ek nr 2
+	 * @param last Node - ostatni wierzchoÅ‚ek
 	 * @param mode boolean - 
-	 * @return boolean - true, jeœli silnie po³¹czona
+	 * @return boolean - true, jeÅ›li silnie poÅ‚Ä…czona
 	 */
 	private boolean checkStronglyConnectionExist(Node n1, Node n2, Node last, boolean mode) {
 		if (mode == true && n1.getID() == n2.getID())
@@ -368,25 +368,25 @@ public class NetPropertiesAnalyzer {
 	}
 
 	/**
-	 * Metoda sprawdza w³aœciwoœæ Connected sieci. Dla startowego wêz³a stara siê zgromadziæ
-	 * identyfikatory wszystkich innych wêz³ów sieci przechodz¹c po ³ukach IN/OUT (czyli w sposób
-	 * nieskierowany). Jeœli sieæ jest po³¹czona, liczba odwiedzonych wêz³ów powinna byæ równa
-	 * ca³kowitej liczbie wierzcho³ków sieci.
-	 * @param start Node - wierzcho³ek startowy/aktualny
-	 * @param reachable ArrayList<Node> - lista odwiedzonych unikalnych wêz³ów
-	 * @return int - liczba odwiedzonych wêz³ów sieci
+	 * Metoda sprawdza wÅ‚aÅ›ciwoÅ›Ä‡ Connected sieci. Dla startowego wÄ™zÅ‚a stara siÄ™ zgromadziÄ‡
+	 * identyfikatory wszystkich innych wÄ™zÅ‚Ã³w sieci przechodzÄ…c po Å‚ukach IN/OUT (czyli w sposÃ³b
+	 * nieskierowany). JeÅ›li sieÄ‡ jest poÅ‚Ä…czona, liczba odwiedzonych wÄ™zÅ‚Ã³w powinna byÄ‡ rÃ³wna
+	 * caÅ‚kowitej liczbie wierzchoÅ‚kÃ³w sieci.
+	 * @param start Node - wierzchoÅ‚ek startowy/aktualny
+	 * @param reachable ArrayList<Node> - lista odwiedzonych unikalnych wÄ™zÅ‚Ã³w
+	 * @return int - liczba odwiedzonych wÄ™zÅ‚Ã³w sieci
 	 * @author MR
 	 */
 	private int checkNetConnectivity(Node start, ArrayList<Node> reachable) {
-		if(!reachable.contains(start)) { //jeœli jeszcze nie ma
+		if(!reachable.contains(start)) { //jeÅ›li jeszcze nie ma
 			reachable.add(start);
 		}
 		
 		if (start.getInArcs()!=null)
 		{
-			for (Arc a : start.getInArcs()) { //³uki wchodz¹ce do aktualnie badanego wierzcho³ka
-				Node nod = a.getStartNode(); //wierzcho³ek pocz¹tkowy ³uku
-				if(!reachable.contains(nod)) { //jeœli jeszcze nie ma
+			for (Arc a : start.getInArcs()) { //Å‚uki wchodzÄ…ce do aktualnie badanego wierzchoÅ‚ka
+				Node nod = a.getStartNode(); //wierzchoÅ‚ek poczÄ…tkowy Å‚uku
+				if(!reachable.contains(nod)) { //jeÅ›li jeszcze nie ma
 					reachable.add(nod);
 					checkNetConnectivity(nod, reachable);
 				}
@@ -394,9 +394,9 @@ public class NetPropertiesAnalyzer {
 		}
 		if (start.getOutArcs()!=null)
 		{
-			for (Arc a : start.getOutArcs()) { //³uki wychodz¹ce z aktualnego
-				Node nod = a.getEndNode(); //wierzcho³ek koñcowy ³uku
-				if(!reachable.contains(nod)) {//jeœli jeszcze nie ma
+			for (Arc a : start.getOutArcs()) { //Å‚uki wychodzÄ…ce z aktualnego
+				Node nod = a.getEndNode(); //wierzchoÅ‚ek koÅ„cowy Å‚uku
+				if(!reachable.contains(nod)) {//jeÅ›li jeszcze nie ma
 					reachable.add(nod);
 					checkNetConnectivity(nod, reachable);
 				}
@@ -406,21 +406,21 @@ public class NetPropertiesAnalyzer {
 	}
 	
 	/**
-	 * Jak wy¿ej, tylko metoda idzie po ³ukach wychodz¹cych dla ka¿dego wierzcho³ka.
-	 * @param start Node - wierzcho³ek startowy/aktualny
-	 * @param reachable ArrayList<Node> - lista odwiedzonych unikalnych wêz³ów
-	 * @return int - liczba odwiedzonych wêz³ów sieci
+	 * Jak wyÅ¼ej, tylko metoda idzie po Å‚ukach wychodzÄ…cych dla kaÅ¼dego wierzchoÅ‚ka.
+	 * @param start Node - wierzchoÅ‚ek startowy/aktualny
+	 * @param reachable ArrayList<Node> - lista odwiedzonych unikalnych wÄ™zÅ‚Ã³w
+	 * @return int - liczba odwiedzonych wÄ™zÅ‚Ã³w sieci
 	 * @author MR
 	 */
 	private int checkNetStrongConnectivity(Node start, ArrayList<Node> reachable) {
-		if(!reachable.contains(start)) { //jeœli jeszcze nie ma
+		if(!reachable.contains(start)) { //jeÅ›li jeszcze nie ma
 			reachable.add(start);
 		}
 		if (start.getOutArcs()!=null)
 		{
-			for (Arc a : start.getOutArcs()) { //³uki wychodz¹ce z aktualnego
-				Node nod = a.getEndNode(); //wierzcho³ek koñcowy ³uku
-				if(!reachable.contains(nod)) {//jeœli jeszcze nie ma
+			for (Arc a : start.getOutArcs()) { //Å‚uki wychodzÄ…ce z aktualnego
+				Node nod = a.getEndNode(); //wierzchoÅ‚ek koÅ„cowy Å‚uku
+				if(!reachable.contains(nod)) {//jeÅ›li jeszcze nie ma
 					reachable.add(nod);
 					checkNetConnectivity(nod, reachable);
 				}

@@ -16,7 +16,7 @@ import javax.swing.JTextArea;
 import abyss.utilities.Tools;
 
 /**
- * Klasa tworzπco okienko informacji o programie.
+ * Klasa tworzƒÖca okienko informacji o programie.
  * @author MR
  *
  */
@@ -67,7 +67,7 @@ public class AbyssAbout extends JFrame {
 	}
 
 	/**
-	 * Metoda tworzy gÛrny panel, z logo PP oraz nazwπ programu.
+	 * Metoda tworzy g√≥rny panel, z logo PP oraz nazwƒÖ programu.
 	 * @return JPanel - panel
 	 */
 	private JPanel upperPanel() {
@@ -105,7 +105,7 @@ public class AbyssAbout extends JFrame {
 	}
 	
 	/**
-	 * Metoda wype≥nia pole tekstowe informacjami o programie, bibliotekach, licencjach, wersjach, etc.
+	 * Metoda wype≈Çnia pole tekstowe informacjami o programie, bibliotekach, licencjach, wersjach, etc.
 	 */
 	private void fillText() {
 		textArea.append("Versions and authors:\n");
@@ -114,13 +114,13 @@ public class AbyssAbout extends JFrame {
 		textArea.append("  Rybarczyk Agnieszka, Ph.D.\n");
 		textArea.append("\n");
 		textArea.append("Version 1.1, 2013-2014, 10k lines of code total\n");
-		textArea.append("  Bart≥omiej Szawulak, M.Sc. thesis\n");
+		textArea.append("  Bart≈Çomiej Szawulak, M.Sc. thesis\n");
 		textArea.append("  (supervisor: Radom Marcin, Ph.D.)\n");
 		textArea.append("\n");
 		textArea.append("Version 1.0, 2012-2013, 7k lines od code total\n");
 		textArea.append("  Andrzejewski Hubert, B.Sc. thesis\n");
 		textArea.append("  Chabelski Piotr, B.Sc. thesis\n");
-		textArea.append("  Szawulak Bart≥omiej, B.Sc. thesis\n");
+		textArea.append("  Szawulak Bart≈Çomiej, B.Sc. thesis\n");
 		textArea.append("  (supervisor: Formanowicz Piotr Ph.D. hab.)\n");
 		textArea.append("\n");
 		textArea.append("Abyss IPNE is a free scientific software distributed under GNU GPL, developed in "

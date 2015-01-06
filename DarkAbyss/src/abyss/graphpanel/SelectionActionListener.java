@@ -6,7 +6,7 @@ import abyss.math.Arc;
 import abyss.math.ElementLocation;
 
 /**
- * Klasa przekazuj¹ca informacje zwi¹zane ze zdarzeniem zaznaczania, wywo³ywanym przez SelectionManager.
+ * Klasa przekazujÄ…ca informacje zwiÄ…zane ze zdarzeniem zaznaczania, wywoÅ‚ywanym przez SelectionManager.
  * @author students
  *
  */
@@ -40,7 +40,7 @@ public interface SelectionActionListener {
 
 		/**
 		 * Konstruktor obiektu klasy SelectionActionEvent.
-		 * @param arcGroup ArrayList[Arc] - tablica ³uków
+		 * @param arcGroup ArrayList[Arc] - tablica Å‚ukÃ³w
 		 * @param elementLocationGroup ArrayList[ElementLocation] - tablica lokalizacji
 		 * @param actionType SelectionActionType - rodzaj
 		 */
@@ -53,8 +53,8 @@ public interface SelectionActionListener {
 
 		/**
 		 * Konstruktor obiektu klasy SelectionActionEvent.
-		 * @param arc Arc - konkretny ³uk sieci
-		 * @param el ElementLocation - lokalizacja ³uku
+		 * @param arc Arc - konkretny Å‚uk sieci
+		 * @param el ElementLocation - lokalizacja Å‚uku
 		 * @param actionType - typ akcji
 		 */
 		public SelectionActionEvent(Arc arc, ElementLocation el, SelectionActionType actionType) {
@@ -64,24 +64,24 @@ public interface SelectionActionListener {
 		}
 
 		/**
-		 * Metoda pozwala pobraæ listê ³uków, których dotyczy wywo³ane zdarzenie zaznaczenia.
-		 * @return ArrayList[Arc] - lista ³uków
+		 * Metoda pozwala pobraÄ‡ listÄ™ Å‚ukÃ³w, ktÃ³rych dotyczy wywoÅ‚ane zdarzenie zaznaczenia.
+		 * @return ArrayList[Arc] - lista Å‚ukÃ³w
 		 */
 		public ArrayList<Arc> getArcGroup() {
 			return arcGroup;
 		}
 
 		/**
-		 * Metoda pozwala ustawiæ listê ³uków, których dotyczy wywo³ane zdarzenie zaznaczenia.
-		 * @param arcGroup ArrayList[Arc] - lista ³uków
+		 * Metoda pozwala ustawiÄ‡ listÄ™ Å‚ukÃ³w, ktÃ³rych dotyczy wywoÅ‚ane zdarzenie zaznaczenia.
+		 * @param arcGroup ArrayList[Arc] - lista Å‚ukÃ³w
 		 */
 		public void setArcGroup(ArrayList<Arc> arcGroup) {
 			this.arcGroup = arcGroup;
 		}
 
 		/**
-		 * Metoda pozwala pobraæ pojedynczy ³uk, którego dotyczy wywo³ane zdarzenie zaznaczenia.
-		 * @return Arc - zaznaczony ³uk
+		 * Metoda pozwala pobraÄ‡ pojedynczy Å‚uk, ktÃ³rego dotyczy wywoÅ‚ane zdarzenie zaznaczenia.
+		 * @return Arc - zaznaczony Å‚uk
 		 */
 		public Arc getArc() {
 			if (getArcGroup() == null || getArcGroup().size() == 0)
@@ -90,8 +90,8 @@ public interface SelectionActionListener {
 		}
 
 		/**
-		 * Metoda pozwala ustawiæ pojedynczy ³uk, którego dotyczy wywo³ane zdarzenie zaznaczenia.
-		 * @param arc Arc - zaznaczony ³uk
+		 * Metoda pozwala ustawiÄ‡ pojedynczy Å‚uk, ktÃ³rego dotyczy wywoÅ‚ane zdarzenie zaznaczenia.
+		 * @param arc Arc - zaznaczony Å‚uk
 		 */
 		public void setArc(Arc arc) {
 			setArcGroup(new ArrayList<Arc>());
@@ -99,26 +99,26 @@ public interface SelectionActionListener {
 		}
 
 		/**
-		 * Metoda pozwala pobraæ listê lokalizacji wierzcho³ków, których dotyczy wywo³ane
+		 * Metoda pozwala pobraÄ‡ listÄ™ lokalizacji wierzchoÅ‚kÃ³w, ktÃ³rych dotyczy wywoÅ‚ane
 		 * zdarzenie zaznaczenia.
-		 * @return ArrayList[ElementLocation] - lista lokalizacji wierzcho³ków, w sytuacji, gdy
-		 * 		¿adna lokalizacja wierzcho³ka nie zosta³a zaznaczona, zwracana jest wartoœæ null
+		 * @return ArrayList[ElementLocation] - lista lokalizacji wierzchoÅ‚kÃ³w, w sytuacji, gdy
+		 * 		Å¼adna lokalizacja wierzchoÅ‚ka nie zostaÅ‚a zaznaczona, zwracana jest wartoÅ›Ä‡ null
 		 */
 		public ArrayList<ElementLocation> getElementLocationGroup() {
 			return elementLocationGroup;
 		}
 
 		/**
-		 * Metoda pozwala ustawiæ listê lokalizacji wierzcho³ków (Arc), których dotyczy wywo³ane
+		 * Metoda pozwala ustawiÄ‡ listÄ™ lokalizacji wierzchoÅ‚kÃ³w (Arc), ktÃ³rych dotyczy wywoÅ‚ane
 		 * zdarzenie zaznaczenia.
-		 * @param elementLocationGroup ArrayList[ElementLocation] - lista ³uków zaznaczonych
+		 * @param elementLocationGroup ArrayList[ElementLocation] - lista Å‚ukÃ³w zaznaczonych
 		 */
 		public void setElementLocationGroup(ArrayList<ElementLocation> elementLocationGroup) {
 			this.elementLocationGroup = elementLocationGroup;
 		}
 
 		/**
-		 * Metoda zwraca identyfikator arkusza na którym zosta³o wykonane zaznaczenie.
+		 * Metoda zwraca identyfikator arkusza na ktÃ³rym zostaÅ‚o wykonane zaznaczenie.
 		 * @return int - identyfikator arkusza
 		 */
 		public int getSheetId() {
@@ -126,7 +126,7 @@ public interface SelectionActionListener {
 		}
 
 		/**
-		 * Metoda pozwala ustawiæ identyfikator arkusza na którym zosta³o wykonane zaznaczenie.
+		 * Metoda pozwala ustawiÄ‡ identyfikator arkusza na ktÃ³rym zostaÅ‚o wykonane zaznaczenie.
 		 * @param sheetId int - nowy identyfikator arkusza 
 		 */
 		public void setSheetId(int sheetId) {
@@ -134,8 +134,8 @@ public interface SelectionActionListener {
 		}
 
 		/**
-		 * Metoda pozwala pobraæ pojedyncza lokalizacjê wierzcho³ka (ElementLocation), której dotyczy
-		 * wywo³ane zdarzenie zaznaczenia.
+		 * Metoda pozwala pobraÄ‡ pojedyncza lokalizacjÄ™ wierzchoÅ‚ka (ElementLocation), ktÃ³rej dotyczy
+		 * wywoÅ‚ane zdarzenie zaznaczenia.
 		 * @return ElementLocation - lokalizacja zaznaczonego elementu
 		 */
 		public ElementLocation getElementLocation() {
@@ -145,9 +145,9 @@ public interface SelectionActionListener {
 		}
 
 		/**
-		 * Metoda pozwala ustawiæ pojedyncza lokalizacjê wierzcho³ka (ElementLocation),
-		 * której dotyczy wywo³ane zdarzenie.
-		 * @param el ElementLocation - zaznaczona lokalizacja wierzcho³ka
+		 * Metoda pozwala ustawiÄ‡ pojedyncza lokalizacjÄ™ wierzchoÅ‚ka (ElementLocation),
+		 * ktÃ³rej dotyczy wywoÅ‚ane zdarzenie.
+		 * @param el ElementLocation - zaznaczona lokalizacja wierzchoÅ‚ka
 		 */
 		public void setElementLocation(ElementLocation el) {
 			if (el == null)
@@ -165,7 +165,7 @@ public interface SelectionActionListener {
 		}
 
 		/**
-		 * Metoda pozwala ustawiæ typ wykonanego zdarzenia, definiowany przez typ SelectionActionType.
+		 * Metoda pozwala ustawiÄ‡ typ wykonanego zdarzenia, definiowany przez typ SelectionActionType.
 		 * @param actionType SelectionActionType - typ zdarzenia
 		 */
 		public void setActionType(SelectionActionType actionType) {

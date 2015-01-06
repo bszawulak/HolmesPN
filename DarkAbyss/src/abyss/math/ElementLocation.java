@@ -10,12 +10,13 @@ import abyss.darkgui.GUIManager;
 import abyss.workspace.Workspace;
 
 /**
- * Klasa s³u¿¹ca do przechowywania lokalizacji wierzcho³ka oraz przy³¹czonych
- * do niej ³uków.
+ * Klasa sÅ‚uÅ¼Ä…ca do przechowywania lokalizacji wierzchoÅ‚ka oraz przyÅ‚Ä…czonych
+ * do niej Å‚ukÃ³w.
  * @author students
  *
  */
 public class ElementLocation implements Serializable {
+	//BACKUP: 2775375770782696276L;  (NIE DOTYKAÄ† PONIÅ»SZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = 2775375770782696276L;
 	private int sheetId;
 	private Point position;
@@ -27,10 +28,10 @@ public class ElementLocation implements Serializable {
 	private ArrayList<Arc> outArcs = new ArrayList<Arc>();
 
 	/**
-	 * Konstruktor obiektów ElementLocation.
+	 * Konstruktor obiektÃ³w ElementLocation.
 	 * @param sheetId int - identyfikator arkusza w programie
 	 * @param position Point - punkt lokalizacji
-	 * @param parentNode Node - wierzcho³ek, do którego nale¿y lokalizacja
+	 * @param parentNode Node - wierzchoÅ‚ek, do ktÃ³rego naleÅ¼y lokalizacja
 	 */
 	public ElementLocation(int sheetId, Point position, Node parentNode) {
 		this.position = position;
@@ -40,7 +41,7 @@ public class ElementLocation implements Serializable {
 	}
 	
 	/**
-	 * Metoda pozwala pobraæ identyfikator arkusza.
+	 * Metoda pozwala pobraÄ‡ identyfikator arkusza.
 	 * @return int - identyfikator arkusza
 	 */
 	public int getSheetID() {
@@ -48,7 +49,7 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ identyfikator arkusza.
+	 * Metoda pozwala ustawiÄ‡ identyfikator arkusza.
 	 * @param sheetId int - identyfikator arkusza
 	 */
 	public void setSheetID(int sheetId) {
@@ -56,7 +57,7 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ punkt lokalizacji.
+	 * Metoda pozwala pobraÄ‡ punkt lokalizacji.
 	 * @return position Point - punkt lokalizacji
 	 */
 	public Point getPosition() {
@@ -64,7 +65,7 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ punkt lokalizacji.
+	 * Metoda pozwala ustawiÄ‡ punkt lokalizacji.
 	 * @param position Point - punkt lokalizacji
 	 */
 	public void setPosition(Point position) {
@@ -76,24 +77,24 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ wierzcho³ek, do którego nale¿y lokalizacja.
-	 * @return Node - wierzcho³ek, do którego nale¿y lokalizacja
+	 * Metoda pozwala pobraÄ‡ wierzchoÅ‚ek, do ktÃ³rego naleÅ¼y lokalizacja.
+	 * @return Node - wierzchoÅ‚ek, do ktÃ³rego naleÅ¼y lokalizacja
 	 */
 	public Node getParentNode() {
 		return parentNode;
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ wierzcho³ek, do którego nale¿y lokalizacja.
-	 * @param parentNode Node - wierzcho³ek, do którego nale¿y lokalizacja 
+	 * Metoda pozwala ustawiÄ‡ wierzchoÅ‚ek, do ktÃ³rego naleÅ¼y lokalizacja.
+	 * @param parentNode Node - wierzchoÅ‚ek, do ktÃ³rego naleÅ¼y lokalizacja 
 	 */
 	public void setParentNode(Node parentNode) {
 		this.parentNode = parentNode;
 	}
 
 	/**
-	 * Metoda przesuwa wspó³rzêdne x i y lokalizacji punktu (w³aœciwie wektora).
-	 * @param delta Point - wektor przesuniêcia
+	 * Metoda przesuwa wspÃ³Å‚rzÄ™dne x i y lokalizacji punktu (wÅ‚aÅ›ciwie wektora).
+	 * @param delta Point - wektor przesuniÄ™cia
 	 */
 	public void updateLocation(Point delta) {
 		Point tempPosition = new Point(position.x + delta.x, position.y + delta.y);
@@ -105,10 +106,10 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda przesuwa wspó³rzêdne x i y lokalizacji punktu (w³aœciwie wektora)
-	 * bior¹c dodatkowo pod uwagê wartoœci meshSize.
-	 * @param delta Point - wektor przesuniêcia
-	 * @param meshSize int - domyœlnie 20, zale¿enie od ruchu myszy
+	 * Metoda przesuwa wspÃ³Å‚rzÄ™dne x i y lokalizacji punktu (wÅ‚aÅ›ciwie wektora)
+	 * biorÄ…c dodatkowo pod uwagÄ™ wartoÅ›ci meshSize.
+	 * @param delta Point - wektor przesuniÄ™cia
+	 * @param meshSize int - domyÅ›lnie 20, zaleÅ¼nie od ruchu myszy
 	 */
 	public void updateLocationWithMeshSnap(Point delta, int meshSize) {
 		notSnappedPosition.setLocation(notSnappedPosition.x + delta.x, notSnappedPosition.y + delta.y);
@@ -121,72 +122,72 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ listê ³uków wyjœciowych.
-	 * @return ArrayList[Arc] - lista ³uków wyjœciowych
+	 * Metoda pozwala pobraÄ‡ listÄ™ Å‚ukÃ³w wyjÅ›ciowych.
+	 * @return ArrayList[Arc] - lista Å‚ukÃ³w wyjÅ›ciowych
 	 */
 	public ArrayList<Arc> getOutArcs() {
 		return outArcs;
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ listê ³uków wyjœciowych
-	 * @param outArcs ArrayList[Arc] - lista ³uków wyjœciowych do zast¹pienia aktualnej
+	 * Metoda pozwala ustawiÄ‡ listÄ™ Å‚ukÃ³w wyjÅ›ciowych
+	 * @param outArcs ArrayList[Arc] - lista Å‚ukÃ³w wyjÅ›ciowych do zastÄ…pienia aktualnej
 	 */
 	public void setOutArcs(ArrayList<Arc> outArcs) {
 		this.outArcs = outArcs;
 	}
 
 	/**
-	 * Metoda pozwala pobraæ listê ³uków wejœciowych.
-	 * @return ArrayList[Arc] - lista ³uków wejœciowych
+	 * Metoda pozwala pobraÄ‡ listÄ™ Å‚ukÃ³w wejÅ›ciowych.
+	 * @return ArrayList[Arc] - lista Å‚ukÃ³w wejÅ›ciowych
 	 */
 	public ArrayList<Arc> getInArcs() {
 		return inArcs;
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ listê ³uków wejœciowych.
-	 * @param inArcs ArrayList[Arc] - lista ³uków wejœciowych do zast¹pienia aktualnej
+	 * Metoda pozwala ustawiÄ‡ listÄ™ Å‚ukÃ³w wejÅ›ciowych.
+	 * @param inArcs ArrayList[Arc] - lista Å‚ukÃ³w wejÅ›ciowych do zastÄ…pienia aktualnej
 	 */
 	public void setInArcs(ArrayList<Arc> inArcs) {
 		this.inArcs = inArcs;
 	}
 
 	/**
-	 * Metoda pozwala dodaæ ³uk wejœciowy.
-	 * @param a Arc - ³uk wejœciowy do dodania
+	 * Metoda pozwala dodaÄ‡ Å‚uk wejÅ›ciowy.
+	 * @param a Arc - Å‚uk wejÅ›ciowy do dodania
 	 */
 	public void addInArc(Arc a) {
 		this.getInArcs().add(a);
 	}
 
 	/**
-	 * Metoda pozwala usun¹æ ³uk wejœciowy.
-	 * @param a Arc - ³uk wejœciowy do usuniêcia
+	 * Metoda pozwala usunÄ…Ä‡ Å‚uk wejÅ›ciowy.
+	 * @param a Arc - Å‚uk wejÅ›ciowy do usuniÄ™cia
 	 */
 	public void removeInArc(Arc a) {
 		this.getInArcs().remove(a);
 	}
 
 	/**
-	 * Metoda pozwala dodaæ ³uk wyjœciowy.
-	 * @param a Arc - ³uk wyjœciowy
+	 * Metoda pozwala dodaÄ‡ Å‚uk wyjÅ›ciowy.
+	 * @param a Arc - Å‚uk wyjÅ›ciowy
 	 */
 	public void addOutArc(Arc a) {
 		this.getOutArcs().add(a);
 	}
 
 	/**
-	 * Metoda pozwala usun¹æ ³uk wyjœciowy.
-	 * @param a Arc - ³uk wyjœciowy do usuniêcia
+	 * Metoda pozwala usunÄ…Ä‡ Å‚uk wyjÅ›ciowy.
+	 * @param a Arc - Å‚uk wyjÅ›ciowy do usuniÄ™cia
 	 */
 	public void removeOutArc(Arc a) {
 		this.getOutArcs().remove(a);
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ, czy lokalizacja jest oznaczona jako wybrana.
-	 * @return boolean - true, jeœli lokalizacja jest oznaczona jako wybrana; 
+	 * Metoda pozwala sprawdziÄ‡, czy lokalizacja jest oznaczona jako wybrana.
+	 * @return boolean - true, jeÅ›li lokalizacja jest oznaczona jako wybrana; 
 	 * 		false w przeciwnym wypadku
 	 */
 	public boolean isSelected() {
@@ -194,8 +195,8 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala oznaczyæ lokalizacjê jako wybran¹, b¹dŸ tak¹ wartoœæ odznaczyæ.
-	 * @param isSelected boolean - wartoœæ oznaczenia lokalizacji jako wybranej, true jeœli zaznaczona
+	 * Metoda pozwala oznaczyÄ‡ lokalizacjÄ™ jako wybranÄ…, bÄ…dÅº takÄ… wartoÅ›Ä‡ odznaczyÄ‡.
+	 * @param isSelected boolean - wartoÅ›Ä‡ oznaczenia lokalizacji jako wybranej, true jeÅ›li zaznaczona
 	 */
 	public void setSelected(boolean isSelected) {
 		this.isSelected = isSelected;
@@ -207,9 +208,9 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ, czy istnieje inna lokacja nale¿¹ca do tego
-	 * samego wierzcho³ka (portal), która jest aktualnie oznaczona jako wybrana.
-	 * @return boolean - true, jeœli istnieje oznaczony jako wybrany odpowiedni portal
+	 * Metoda pozwala sprawdziÄ‡, czy istnieje inna lokacja naleÅ¼Ä…ca do tego
+	 * samego wierzchoÅ‚ka (portal), ktÃ³ra jest aktualnie oznaczona jako wybrana.
+	 * @return boolean - true, jeÅ›li istnieje oznaczony jako wybrany odpowiedni portal
 	 * 		false w przeciwnym wypadku
 	 */
 	public boolean isPortalSelected() {
@@ -217,7 +218,7 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala oznaczyæ portal jako wybrany, b¹dŸ tak¹ wartoœæ odznaczyæ.
+	 * Metoda pozwala oznaczyÄ‡ portal jako wybrany, bÄ…dÅº takÄ… wartoÅ›Ä‡ odznaczyÄ‡.
 	 * @param isPortalSelected boolean - true / false
 	 */
 	public void setPortalSelected(boolean isPortalSelected) {
@@ -225,8 +226,8 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda zamieniaj¹ca dane o krawêdzi sieci na ³añcuch znaków.
-	 * @return String - ³añcuch znaków
+	 * Metoda zamieniajÄ…ca dane o krawÄ™dzi sieci na Å‚aÅ„cuch znakÃ³w.
+	 * @return String - Å‚aÅ„cuch znakÃ³w
 	 */
 	public String toString() {
 		String s = "sheetID: " + this.getSheetID() + "; position"

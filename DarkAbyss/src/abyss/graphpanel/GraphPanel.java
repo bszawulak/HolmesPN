@@ -24,9 +24,9 @@ import abyss.utilities.Tools;
 import abyss.workspace.WorkspaceSheet;
 
 /**
- * Klasa, której zadaniem jest reprezentacja graficzna u¿ywanej w programie
- * sieci Petriego oraz oferowanie interfejsu umo¿liwiaj¹cego interakcjê ze
- * strony u¿ytkownika.
+ * Klasa, ktÃ³rej zadaniem jest reprezentacja graficzna uÅ¼ywanej w programie
+ * sieci Petriego oraz oferowanie interfejsu umoÅ¼liwiajÄ…cego interakcjÄ™ ze
+ * strony uÅ¼ytkownika.
  * @author students
  *
  */
@@ -57,9 +57,9 @@ public class GraphPanel extends JComponent {
 	/**
 	 * Konstruktor obiektu klasy GraphPanel
 	 * @param sheetId int - nr arkusza
-	 * @param petriNet PetriNet - sieæ Petriego
-	 * @param nodesList ArrayList[Node]- lista wierzcho³ków
-	 * @param arcsList ArrayList[Arc]- lista ³uków
+	 * @param petriNet PetriNet - sieÄ‡ Petriego
+	 * @param nodesList ArrayList[Node]- lista wierzchoÅ‚kÃ³w
+	 * @param arcsList ArrayList[Arc]- lista Å‚ukÃ³w
 	 */
 	public GraphPanel(int sheetId, PetriNet petriNet, ArrayList<Node> nodesList, ArrayList<Arc> arcsList) {
 		this.petriNet = petriNet;
@@ -69,7 +69,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Inicjalizacja obiektów dla panelu
+	 * Inicjalizacja obiektÃ³w dla panelu
 	 */
 	public void Initialize() {
 		this.setBorder(BorderFactory.createLineBorder(Color.lightGray));
@@ -87,12 +87,12 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala na ustawienie zbioru wierzcho³ków oraz ³uków dla danego arkusza.
-	 * Zbiór ten jest wspólny dla wszystkich arkuszy i jest przechowywana w obiekcie
+	 * Metoda pozwala na ustawienie zbioru wierzchoÅ‚kÃ³w oraz Å‚ukÃ³w dla danego arkusza.
+	 * ZbiÃ³r ten jest wspÃ³lny dla wszystkich arkuszy i jest przechowywana w obiekcie
 	 * PetriNet, o tym gdzie dany element zostanie narysowany decyduje jego lokalizacja
 	 * ElementLocation.SheetId.
-	 * @param nodes ArrayList[Nodes] - lista wêz³ów przekazywana do danego arkusza
-	 * @param arcs ArrayList[Arc] - lista ³uków przekazywana do danego arkusza
+	 * @param nodes ArrayList[Nodes] - lista wÄ™zÅ‚Ã³w przekazywana do danego arkusza
+	 * @param arcs ArrayList[Arc] - lista Å‚ukÃ³w przekazywana do danego arkusza
 	 */
 	public void setNodesAndArcs(ArrayList<Node> nodes, ArrayList<Arc> arcs) {
 		this.nodes = nodes;
@@ -102,11 +102,11 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala na ustawienie zbioru wierzcho³ków dla danego arkusza.
-	 * Zbiór ten jest wspólny dla wszystkich arkuszy i jest przechowywana w
+	 * Metoda pozwala na ustawienie zbioru wierzchoÅ‚kÃ³w dla danego arkusza.
+	 * ZbiÃ³r ten jest wspÃ³lny dla wszystkich arkuszy i jest przechowywana w
 	 * obiekcie PetriNet, o tym gdzie dany element zostanie narysowany decyduje
 	 * jego lokalizacja
-	 * @param nodes ArrayList[Node] - lista wêz³ów przekazywana do danego arkusza
+	 * @param nodes ArrayList[Node] - lista wÄ™zÅ‚Ã³w przekazywana do danego arkusza
 	 */
 	public void setNodes(ArrayList<Node> nodes) {
 		this.nodes = nodes;
@@ -115,7 +115,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda ustawia odpowiedni kursor w zale¿noœci od wybranego elementu sieci.
+	 * Metoda ustawia odpowiedni kursor w zaleÅ¼noÅ›ci od wybranego elementu sieci.
 	 */
 	public void setCursorForMode() {
 		if (this.getDrawMode() == DrawModes.POINTER) {
@@ -128,7 +128,7 @@ public class GraphPanel extends JComponent {
 				//image = getToolkit().getImage(getClass().getResource("/cursors/"+ this.getDrawMode().toString() + ".gif") );
 				image = Tools.getImageFromIcon("/cursors/"+ this.getDrawMode().toString() + ".gif");
 			} catch (Exception e ) {
-				//i tak nic nie pomo¿e, jak powy¿sze siê zawali. Taka nasza Java piêkna i weso³a.
+				//i tak nic nie pomoÅ¼e, jak powyÅ¼sze siÄ™ zawali. Taka nasza Java piÄ™kna i wesoÅ‚a.
 			}
 			Point hotSpot = new Point(0, 0);
 			Cursor cursor = toolkit.createCustomCursor(image, hotSpot, this
@@ -138,7 +138,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za konwersjê czêœci sieci wyœwietlanej w komponencie
+	 * Metoda odpowiedzialna za konwersjÄ™ czÄ™Å›ci sieci wyÅ›wietlanej w komponencie
 	 * GraphPanel na obiekt typu BufferedImage.
 	 * @return BufferedImage - obraz arkusza sieci
 	 */
@@ -169,19 +169,19 @@ public class GraphPanel extends JComponent {
 	}
 	
 	/**
-	 * Metoda pozwala na pobrania listy wierzcho³ków przypisanych do danego arkusza.
-	 * Lista ta jest wspólna dla wszystkich arkuszy i jest przechowywana w obiekcie PetriNet.
-	 * @return ArrayList[Node] - lista wêz³ów
+	 * Metoda pozwala na pobrania listy wierzchoÅ‚kÃ³w przypisanych do danego arkusza.
+	 * Lista ta jest wspÃ³lna dla wszystkich arkuszy i jest przechowywana w obiekcie PetriNet.
+	 * @return ArrayList[Node] - lista wÄ™zÅ‚Ã³w
 	 */
 	public ArrayList<Node> getNodes() {
 		return this.nodes;
 	}
 
 	/**
-	 * Metoda pozwala na ustawienie zbioru ³uków dla danego arkusza. Zbiór ten jest wspólny
+	 * Metoda pozwala na ustawienie zbioru Å‚ukÃ³w dla danego arkusza. ZbiÃ³r ten jest wspÃ³lny
 	 * dla wszystkich arkuszy, o tym gdzie dany element zostanie narysowany, decyduje jego
-	 * lokalizacja startowa i koñcowa (ElementLocation.SheetId).
-	 * @param arcs ArrayList[Arc] - lista ³uków przekazywana do danego arkusza
+	 * lokalizacja startowa i koÅ„cowa (ElementLocation.SheetId).
+	 * @param arcs ArrayList[Arc] - lista Å‚ukÃ³w przekazywana do danego arkusza
 	 */
 	public void setArcs(ArrayList<Arc> arcs) {
 		this.arcs = arcs;
@@ -190,32 +190,32 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala na pobrania listy ³uków przypisanych do danego arkusza. Lista ta jest
-	 * wspólna dla wszystkich arkuszy i jest przechowywana w obiekcie PetriNet.
-	 * @return ArrayList[Arc] - zwraca listê ³uków
+	 * Metoda pozwala na pobrania listy Å‚ukÃ³w przypisanych do danego arkusza. Lista ta jest
+	 * wspÃ³lna dla wszystkich arkuszy i jest przechowywana w obiekcie PetriNet.
+	 * @return ArrayList[Arc] - zwraca listÄ™ Å‚ukÃ³w
 	 */
 	public ArrayList<Arc> getArcs() {
 		return arcs;
 	}
 
 	/**
-	 * Metoda pozwala na pobrania aktualnego prostok¹ta zaznaczenia, na podstawie którego
-	 * rysowany jest obszar zaznaczenia oraz wybierane s¹ obiekty, które kwalifikuj¹ siê aby
-	 * zostaæ zaznaczone. W sytuacji gdy zaznaczenie nie jest rysowane, przyjmuje wartoœæ null.
-	 * @return Rectangle - prostok¹d aktualnego zaznaczenia, z pola this.selectingRect
+	 * Metoda pozwala na pobrania aktualnego prostokÄ…ta zaznaczenia, na podstawie ktÃ³rego
+	 * rysowany jest obszar zaznaczenia oraz wybierane sÄ… obiekty, ktÃ³re kwalifikujÄ… siÄ™ aby
+	 * zostaÅ‚ zaznaczone. W sytuacji gdy zaznaczenie nie jest rysowane, przyjmuje wartoÅ›Ä‡ null.
+	 * @return Rectangle - prostokÄ…d aktualnego zaznaczenia, z pola this.selectingRect
 	 */
 	public Rectangle getSelectingRect() {
 		return selectingRect;
 	}
 
 	/**
-	 * Przeci¹¿ona metoda paintComponent w klasie javax.swing.JComponent. Jej ka¿dorazowe
-	 * wywo³anie powoduje wyczyszczenie aktualnego widoku i narysowanie go od nowa. W tym te¿
-	 * momencie wybierane s¹ odpowiednie elementy, które maj¹ zastaæ narysowane na danym arkuszu, 
-	 * na podstawie ich lokalizacji ElementLocation.sheetId, nastêpnie ka¿demu z obiektów
+	 * PrzeciÄ…Å¼ona metoda paintComponent w klasie javax.swing.JComponent. Jej kaÅ¼dorazowe
+	 * wywoÅ‚anie powoduje wyczyszczenie aktualnego widoku i narysowanie go od nowa. W tym teÅ¼
+	 * momencie wybierane sÄ… odpowiednie elementy, ktÃ³re majÄ… zastaÄ‡ narysowane na danym arkuszu, 
+	 * na podstawie ich lokalizacji ElementLocation.sheetId, nastÄ™pnie kaÅ¼demu z obiektÃ³w
 	 * zakwalifikowanych, zlecane jest narysowanie "siebie" na dostarczonym w parametrze metody
-	 * obiekcie Graphics2D. W rysowaniu wykorzystany zosta³ podwójny bufor oraz filtr antyaliasingowy.
-	 * @param g Graphics - obiekt zawieraj¹cy prezentowan¹ grafikê
+	 * obiekcie Graphics2D. W rysowaniu wykorzystany zostaÅ‚ podwÃ³jny bufor oraz filtr antyaliasingowy.
+	 * @param g Graphics - obiekt zawierajÄ…cy prezentowanÄ… grafikÄ™
 	 */
 	public void paintComponent(Graphics g) {
 		g.setColor(new Color(0x00f0f0f0));
@@ -271,8 +271,8 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda s³u¿¹ca do ustawiania skali powiêkszenia.
-	 * @param zoom int - nowa wartoœæ powiêkszenia
+	 * Metoda sÅ‚uÅ¼Ä…ca do ustawiania skali powiÄ™kszenia.
+	 * @param zoom int - nowa wartoÅ›Ä‡ powiÄ™kszenia
 	 */
 	public void setZoom(int zoom, int oldZoom) {
 		if (getOriginSize() == null)
@@ -301,8 +301,8 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda przewijania arkusza w poziomie za pomoc¹ wa³ka myszy.
-	 * @param delta int - wielkoœæ przewiniêcia
+	 * Metoda przewijania arkusza w poziomie za pomocÄ… waÅ‚ka myszy.
+	 * @param delta int - wielkoÅ›Ä‡ przewiniÄ™cia
 	 */
 	public void scrollSheetHorizontal(int delta) {
 		GUIManager gui = GUIManager.getDefaultGUIManager();
@@ -311,8 +311,8 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda przewijania arkusza w pionie za pomoc¹ wa³ka myszy.
-	 * @param delta int - wielkoœæ przewiniêcia
+	 * Metoda przewijania arkusza w pionie za pomocÄ… waÅ‚ka myszy.
+	 * @param delta int - wielkoÅ›Ä‡ przewiniÄ™cia
 	 */
 	public void scrollSheetVertical(int delta) {
 		GUIManager gui = GUIManager.getDefaultGUIManager();
@@ -321,12 +321,12 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda realizuje zmianê rozmiaru arkusza, podczas przesuwania po jego lub poza
-	 * jego obszar, elementów. Jest ona jedynie wykonywana gdy automatyczne zwiêkszanie
+	 * Metoda realizuje zmianÄ™ rozmiaru arkusza, podczas przesuwania po jego lub poza
+	 * jego obszar, elementÃ³w. Jest ona jedynie wykonywana gdy automatyczne zwiÄ™kszanie
 	 * rozmiaru arkusza jest aktywne (isAutoDragScroll = true). Zmiana rozmiaru liczona
-	 * jest na podstawie ró¿nicy pomiêdzy wczeœniejsz¹ pozycj¹ przeci¹ganego elementu a aktualn¹.
-	 * @param currentPoint Point - aktualna pozycja przeci¹ganego elementu
-	 * @param previousPoint Point - wczeœniejsza pozycja przeci¹ganego elementu
+	 * jest na podstawie rÃ³Å¼nicy pomiÄ™dzy wczeÅ›niejszÄ… pozycjÄ… przeciÄ…ganego elementu a aktualnÄ….
+	 * @param currentPoint Point - aktualna pozycja przeciÄ…ganego elementu
+	 * @param previousPoint Point - wczeÅ›niejsza pozycja przeciÄ…ganego elementu
 	 */
 	public void adjustScroll(Point currentPoint, Point previousPoint) {
 		if (!isAutoDragScroll())
@@ -359,7 +359,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda zwi¹zana z mousePressed(MouseEvent).
+	 * Metoda zwiÄ…zana z mousePressed(MouseEvent).
 	 * @param p Point - punkt dodawania tranzycji
 	 */
 	private void addNewTransition(Point p) {
@@ -371,7 +371,7 @@ public class GraphPanel extends JComponent {
 	}
 	
 	/**
-	 * Metoda zwi¹zana z mousePressed(MouseEvent).
+	 * Metoda zwiÄ…zana z mousePressed(MouseEvent).
 	 * @param p Point - punkt dodawania tranzycji czasowej
 	 */
 	private void addNewTimeTransition(Point p) {
@@ -383,10 +383,10 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda sprawdza czy podany punkt jest akceptowalny z punktu widzenia rozmiarów arkusza.
-	 * Wykorzystywana jets ta metoda podczas przeci¹gania elementów po arkuszu.
-	 * @param point Point - punkt, którego poprawnoœæ wspó³rzêdnych bêdzie sprawdzana
-	 * @return boolean - true jeœli podany w parametrze punkt jest poprawny; 
+	 * Metoda sprawdza czy podany punkt jest akceptowalny z punktu widzenia rozmiarÃ³w arkusza.
+	 * Wykorzystywana jest ta metoda podczas przeciÄ…gania elementÃ³w po arkuszu.
+	 * @param point Point - punkt, ktÃ³rego poprawnoÅ›Ä‡ wspÃ³Å‚rzÄ™dnych bÄ™dzie sprawdzana
+	 * @return boolean - true jeÅ›li podany w parametrze punkt jest poprawny; 
 	 * 		false w przypadku przeciwnym
 	 */
 	public boolean isLegalLocation(Point point) {
@@ -399,7 +399,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Usuwanie ³uku - rozkaz z menu kontekstowego na ³uku
+	 * Usuwanie Å‚uku - rozkaz z menu kontekstowego na Å‚uku
 	 */
 	public void clearDrawnArc() {
 		if (this.drawnArc != null) {
@@ -409,7 +409,7 @@ public class GraphPanel extends JComponent {
 	}
 	
 	/**
-	 * Metoda zwraca obiekt przechowuj¹cy dane o ca³ej rysowanej sieci.
+	 * Metoda zwraca obiekt przechowujÄ…cy dane o caÅ‚ej rysowanej sieci.
 	 * @return PetriNet - reprezentacja sieci w programie
 	 */
 	public PetriNet getPetriNet() {
@@ -417,18 +417,18 @@ public class GraphPanel extends JComponent {
 	}
 	
 	/**
-	 * Metoda pozwala na ustawienie aktualnego prostok¹ta zaznaczenia, na podstawie którego
-	 * rysowany jest obszar zaznaczenia oraz wybierane s¹ obiekty, które kwalifikuj¹ siê aby
-	 * zostaæ zaznaczone.
-	 * @param selectingRect Rectangle - obszar prostok¹tny definiuj¹cy zaznaczenie
+	 * Metoda pozwala na ustawienie aktualnego prostokÄ…ta zaznaczenia, na podstawie ktÃ³rego
+	 * rysowany jest obszar zaznaczenia oraz wybierane sÄ… obiekty, ktÃ³re kwalifikujÄ… siÄ™ aby
+	 * zostaÅ‚ zaznaczone.
+	 * @param selectingRect Rectangle - obszar prostokÄ…tny definiujÄ…cy zaznaczenie
 	 */
 	public void setSelectingRect(Rectangle selectingRect) {
 		this.selectingRect = selectingRect;
 	}
 
 	/**
-	 * Metoda pozwala na pobranie aktualnie u¿ywanego trybu rysowania. Dostêpne tryby definiowane
-	 * s¹ przez typ DrawModes.
+	 * Metoda pozwala na pobranie aktualnie uÅ¼ywanego trybu rysowania. DostÄ™pne tryby definiowane
+	 * sÄ… przez typ DrawModes.
 	 * @return DrawModes - aktualny tryb rysowania, z pola this.drawMode
 	 */
 	public DrawModes getDrawMode() {
@@ -436,8 +436,8 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala na ustawienie aktualnego trybu rysowania na bie¿¹cym arkuszu. Tryby
-	 * definiowane s¹ przez typ DrawModes. Ustawienie trybu rysowania powoduje zmianê
+	 * Metoda pozwala na ustawienie aktualnego trybu rysowania na bieÅ¼Ä…cym arkuszu. Tryby
+	 * definiowane sÄ… przez typ DrawModes. Ustawienie trybu rysowania powoduje zmianÄ™
 	 * kursora na arkuszu.
 	 * @param newMode DrawModes - nowy tryb rysowania
 	 */
@@ -447,10 +447,10 @@ public class GraphPanel extends JComponent {
 	}
 	
 	/**
-	 * Metoda pozwala na pobranie stanu symulacji. Jeœli symulacja jest aktywna
-	 * (isSimulationActive = true) wszelkie interakcje z arkuszem s¹ zablokowane.
-	 * @return boolean - true jeœli symulacja jest aktualnie aktywna;
-	 * 		false jeœli symulacja jest zatrzymana
+	 * Metoda pozwala na pobranie stanu symulacji. JeÅ›li symulacja jest aktywna
+	 * (isSimulationActive = true) wszelkie interakcje z arkuszem sÄ… zablokowane.
+	 * @return boolean - true jeÅ›li symulacja jest aktualnie aktywna;
+	 * 		false jeÅ›li symulacja jest zatrzymana
 	 */
 	public boolean isSimulationActive() {
 		return isSimulationActive;
@@ -458,16 +458,16 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Metoda pozwala na ustawienie stanu symulacji dla danego arkusza. W sytuacji gdy symulacja
-	 * jest aktywna (isSimulationActive = true) wszelkie interakcje z danym arkuszem zostaj¹
-	 * zablokowane do momentu jej zakoñczenia.
-	 * @param isSimulationActive boolean - true jeœli symulacja ma byæ aktywna
+	 * jest aktywna (isSimulationActive = true) wszelkie interakcje z danym arkuszem zostajÄ…
+	 * zablokowane do momentu jej zakoÅ„czenia.
+	 * @param isSimulationActive boolean - true jeÅ›li symulacja ma byÄ‡ aktywna
 	 */
 	public void setSimulationActive(boolean isSimulationActive) {
 		this.isSimulationActive = isSimulationActive;
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ obiekt klasy SelectionManager zarz¹dzaj¹cy zaznaczeniem
+	 * Metoda pozwala ustawiÄ‡ obiekt klasy SelectionManager zarzÅ›dzajÅ›cy zaznaczeniem
 	 * na danym arkuszu.
 	 * @param selectionManager SelectionManager - nowy manager zaznaczenia
 	 */
@@ -476,7 +476,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ obiekt klasy SelectionManager zarz¹dzaj¹cy zaznaczeniem na
+	 * Metoda pozwala pobraÄ‡ obiekt klasy SelectionManager zarzÅ›dzajÅ›cy zaznaczeniem na
 	 * danym arkuszu.
 	 * @return SelectionManager - manager selekcji
 	 */
@@ -485,7 +485,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ obiekt bêd¹cy menu kontekstowym dla danego arkusza.
+	 * Metoda pozwala pobraÄ‡ obiekt bÄ™dÄ…cy menu kontekstowym dla danego arkusza.
 	 * @return SheetPopupMenu - obiekt menu kontekstowego
 	 */
 	public SheetPopupMenu getSheetPopupMenu() {
@@ -493,7 +493,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Pozwala ustawiæ obiekt bêd¹cy menu kontekstowym danego arkusza.
+	 * Pozwala ustawiÄ‡ obiekt bÄ™dÄ…cy menu kontekstowym danego arkusza.
 	 * @param sheetPopupMenu SheetPopupMenu - obiekt menu kontekstowego
 	 */
 	public void setSheetPopupMenu(SheetPopupMenu sheetPopupMenu) {
@@ -501,7 +501,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ obiekt bêd¹cy menu kontekstowym dla ka¿dego miejsca.
+	 * Metoda pozwala pobraÄ‡ obiekt bÄ™dÄ…cy menu kontekstowym dla kaÅ¼dego miejsca.
 	 * @return PlacePopupMenu - obiekt menu kontekstowego
 	 */
 	public PlacePopupMenu getPlacePopupMenu() {
@@ -509,7 +509,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ obiekt bêd¹cy menu kontekstowym dla ka¿dego miejsca.
+	 * Metoda pozwala ustawiÄ‡ obiekt bÄ™dÄ…cy menu kontekstowym dla kaÅ¼dego miejsca.
 	 * @param placePopupMenu PlacePopupMenu - nowe menu kontekstowe
 	 */
 	public void setPlacePopupMenu(PlacePopupMenu placePopupMenu) {
@@ -517,7 +517,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ obiekt bêd¹cy menu kontekstowym dla ka¿dej tranzycji.
+	 * Metoda pozwala pobraÄ‡ obiekt bÄ™dÄ…cy menu kontekstowym dla kaÅ¼dej tranzycji.
 	 * @return TransitionPopupMenu - obiekt menu kontekstowego tranzycji
 	 */
 	public TransitionPopupMenu getTransitionPopupMenu() {
@@ -525,7 +525,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ obiekt bêd¹cy menu kontekstowym dla ka¿dej tranzycji.
+	 * Metoda pozwala ustawiÄ‡ obiekt bÄ™dÄ…cy menu kontekstowym dla kaÅ¼dej tranzycji.
 	 * @param transitionPopupMenu TransitionPopupMenu - nowe menu kontekstowe
 	 */
 	public void setTransitionPopupMenu(TransitionPopupMenu transitionPopupMenu) {
@@ -533,7 +533,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ obiekt bêd¹cy menu kontekstowym dla ka¿dego ³uku.
+	 * Metoda pozwala pobraÄ‡ obiekt bÄ™dÄ…cy menu kontekstowym dla kaÅ¼dego Å‚uku.
 	 * @return ArcPopupMenu - obiekt menu kontekstowego
 	 */
 	public ArcPopupMenu getArcPopupMenu() {
@@ -541,7 +541,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ obiekt bêd¹cy menu kontekstowym dla ka¿dego ³uku.
+	 * Metoda pozwala ustawiÄ‡ obiekt bÄ™dÄ…cy menu kontekstowym dla kaÅ¼dego Å‚uku.
 	 * @param arcPopupMenu ArcPopupMenu - nowe menu kontekstowe
 	 */
 	public void setArcPopupMenu(ArcPopupMenu arcPopupMenu) {
@@ -567,11 +567,11 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala na sprawdzenie stanu automatycznego zwiêkszania rozmiaru arkusza
-	 * podczas przeci¹gania obiektu poza jego prawy b¹dŸ dolny brzeg. Jeœli przyjmuje
-	 * wartoœæ true, to podczas przeci¹gania obiektów poza obszar arkusza, zostanie on
-	 * automatycznie zwiêkszony.
-	 * @return boolean - true jeœli automatyczna zmiana arkusza jest aktywna; 
+	 * Metoda pozwala na sprawdzenie stanu automatycznego zwiÄ™kszania rozmiaru arkusza
+	 * podczas przeciÄ…gania obiektu poza jego prawy bÄ…dÅº dolny brzeg. JeÅ›li przyjmuje
+	 * wartoÅ›Ä‡ true, to podczas przeciÄ…gania obiektÃ³w poza obszar arkusza, zostanie on
+	 * automatycznie zwiÄ™kszony.
+	 * @return boolean - true jeÅ›li automatyczna zmiana arkusza jest aktywna; 
 	 * 		false w przypadku przeciwnym
 	 */
 	public boolean isAutoDragScroll() {
@@ -579,10 +579,10 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala na ustawienie stanu automatycznego zwiêkszania rozmiaru arkusza podczas
-	 * przeci¹gania obiektu poza jego prawy b¹dŸ dolny brzeg. Jeœli przyjmuje wartoœæ true, to
-	 * podczas przeci¹gania obiektów poza obszar arkusza, zostanie on automatycznie zwiêkszony.
-	 * @param autoDragScroll boolean - nowy stan automatycznego zwiêkszania rozmiaru arkusza
+	 * Metoda pozwala na ustawienie stanu automatycznego zwiÄ™kszania rozmiaru arkusza podczas
+	 * przeciÄ…gania obiektu poza jego prawy bÄ…dÅº dolny brzeg. JeÅ›li przyjmuje wartoÅ›Ä‡ true, to
+	 * podczas przeciÄ…gania obiektÃ³w poza obszar arkusza, zostanie on automatycznie zwiÄ™kszony.
+	 * @param autoDragScroll boolean - nowy stan automatycznego zwiÄ™kszania rozmiaru arkusza
 	 */
 	public void setAutoDragScroll(boolean autoDragScroll) {
 		this.autoDragScroll = autoDragScroll;
@@ -605,7 +605,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca liczbow¹ wartoœæ powiêkszenia.
+	 * Metoda zwracajÄ…ca liczbowÄ… wartoÅ›Ä‡ powiÄ™kszenia.
 	 * @return int - zoom
 	 */
 	public int getZoom() {
@@ -613,16 +613,16 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca obiekt wymiarów obrazu. Zwi¹zana z metod¹ setZoom().
-	 * @return Dimension - obiekt wymiarów
+	 * Metoda zwracajÄ…ca obiekt wymiarÃ³w obrazu. ZwiÄ…zana z metodÄ… setZoom().
+	 * @return Dimension - obiekt wymiarÃ³w
 	 */
 	public Dimension getOriginSize() {
 		return originSize;
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca wymiary obrazu. Zwi¹zana z metod¹ setZoom().
-	 * @param originSize Dimension - obiekt wymiarów
+	 * Metoda ustawiajÄ…ca wymiary obrazu. ZwiÄ…zana z metodÄ… setZoom().
+	 * @param originSize Dimension - obiekt wymiarÃ³w
 	 */
 	public void setOriginSize(Dimension originSize) {
 		this.originSize = originSize;
@@ -635,8 +635,8 @@ public class GraphPanel extends JComponent {
 	//***********************************************************************************
 
 	/**
-	 * Prywatna klasa wewn¹trz GraphPanel, zajmuj¹ca siê skrótami klawiatury,
-	 * obs³ugiwanymi przez obiekt klasy GraphPanel.
+	 * Prywatna klasa wewnÄ…trz GraphPanel, zajmujÄ…ca siÄ™ skrÃ³tami klawiatury,
+	 * obsÅ‚ugiwanymi przez obiekt klasy GraphPanel.
 	 * @author students
 	 *
 	 */
@@ -658,8 +658,8 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Prywatna klasa wewn¹trz GraphPanel, zajmuj¹ca siê realizacj¹ interakcji
-	 * wywo³ywanych ze strony klikniêæ mysz¹. 
+	 * Prywatna klasa wewnÄ…trz GraphPanel, zajmujÄ…ca siÄ™ realizacjÄ… interakcji
+	 * wywoÅ‚ywanych ze strony klikniÄ™Ä‡ myszÄ…. 
 	 * @author students
 	 *
 	 */
@@ -673,8 +673,8 @@ public class GraphPanel extends JComponent {
 		}
 
 		/**
-		 * Metoda aktywowana przez podwójne klikniêcie przycisku myszy.
-		 * @param e MouseEvent - obiekt przekazywany w efekcie podwójnego klikniêcia
+		 * Metoda aktywowana przez podwÃ³jne klikniÄ™cie przycisku myszy.
+		 * @param e MouseEvent - obiekt przekazywany w efekcie podwÃ³jnego klikniÄ™cia
 		 */
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
@@ -687,22 +687,22 @@ public class GraphPanel extends JComponent {
 		}
 
 		/**
-		 * Przeci¹¿ona metoda \textit{mousePressed} w klasie jjava.awt.event.MouseAdapter,
-		 * zostaje wywo³ana za ka¿dym razem, gdy którekolwiek z klawiszy myszy zostanie
-		 * naciœniêty nad obszarem arkusza. W nastêpstwie tego zdarzenia sprawdzane jest dla
-		 * miejsca klikniêcia zosta³y spe³nione warunki przeciêcia z którymkolwiek z lokalizacji
-		 * wierzcho³ków ElementLocation lub ³uków znajduj¹cych siê na bie¿¹cym arkuszu. W
-		 * zale¿noœci od wyniku tego sprawdzenia oraz trybu rysowania i modyfikatorów klikniêcia
-		 * (prawy i lewy przycisk myszy, klawisz Ctrl, Alt, Shift podejmowane s¹ odpowiednie
-		 * akcje, w du¿ej mierze przy wykorzystaniu obiektu SelectionManager.
-		 * @param e MouseEvent - obiekt klasy przekazywany w efekcie klikniêcia mysz¹
+		 * PrzeciÄ…Å¼ona metoda \textit{mousePressed} w klasie jjava.awt.event.MouseAdapter,
+		 * zostaje wywoÅ‚ana za kaÅ¼dym razem, gdy ktÃ³rekolwiek z klawiszy myszy zostanie
+		 * naciÅ›niÄ™ty nad obszarem arkusza. W nastÄ™pstwie tego zdarzenia sprawdzane jest dla
+		 * miejsca klikniÄ™cia czy zostaÅ‚y speÅ‚nione warunki przeciÄ™cia z ktÃ³rymkolwiek z lokalizacji
+		 * wierzchoÅ‚kÃ³w ElementLocation lub Å‚ukÃ³w znajdujÄ…cych siÄ™ na bieÅ¼Ä…cym arkuszu. W
+		 * zaleÅ¼noÅ›ci od wyniku tego sprawdzenia oraz trybu rysowania i modyfikatorÃ³w klikniÄ™cia
+		 * (prawy i lewy przycisk myszy, klawisz Ctrl, Alt, Shift podejmowane sÄ… odpowiednie
+		 * akcje, w duÅ¼ej mierze przy wykorzystaniu obiektu SelectionManager.
+		 * @param e MouseEvent - obiekt klasy przekazywany w efekcie klikniÄ™cia myszÄ…
 		 */
 		public void mousePressed(MouseEvent e) {
 			mousePt = e.getPoint();
 			mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);
 			ElementLocation el = getSelectionManager().getPossiblySelectedElementLocation(mousePt);
 			Arc a = getSelectionManager().getPossiblySelectedArc(mousePt);
-			// nie kliniêto ani Node ani Arc
+			// nie kliniÄ™to ani Node ani Arc
 			if (el == null && a == null) {
 				if (e.getButton() == MouseEvent.BUTTON3) {
 					if (getDrawMode() == DrawModes.POINTER)
@@ -735,7 +735,7 @@ public class GraphPanel extends JComponent {
 				}
 			}
 			// klinieto w Node, mozliwe ze tez a Arc, ale nie zostanie ono
-			// zaznaczone, poniewa¿ to Node jest na wierzchu
+			// zaznaczone, poniewaÅ¼ to Node jest na wierzchu
 			else if (el != null) {
 				if (getDrawMode() == DrawModes.ARC) {
 					getSelectionManager().deselectAllElements();
@@ -793,8 +793,8 @@ public class GraphPanel extends JComponent {
 	} 
 
 	/**
-	 * Prywatna klasa wewn¹trz GraphPanel, realizuj¹ca interakcje ze strony
-	 * myszy zwi¹zane z jej poruszaniem siê po arkuszu.
+	 * Prywatna klasa wewnÄ…trz GraphPanel, realizujÄ…ca interakcje ze strony
+	 * myszy zwiÄ…zane z jej poruszaniem siÄ™ po arkuszu.
 	 * @author students
 	 *
 	 */
@@ -802,18 +802,18 @@ public class GraphPanel extends JComponent {
 		Point delta = new Point();
 
 		/**
-		 * Przeci¹¿ona metoda mouseDragged w klasie jjava.awt.event.MouseMotionAdapter,
-		 * zostaje wywo³ana za ka¿dym razem, gdy którekolwiek z klawiszy myszy zostanie
-		 * naciœniêty w po³¹czeniu z przesuwaniem myszy nad obszarem arkusza. W nastêpstwie
-		 * tego zdarzenia sprawdzane jest dla miejsca klikniêcia zosta³y spe³nione warunki
-		 * przeciêcia z którymkolwiek z lokalizacji wierzcho³ków ElementLocation lub ³uków
-		 * znajduj¹cych siê na bie¿¹cym arkuszu. Jeœli warunki zosta³ spe³nione, wykonywane
-		 * jest przesuniêcie pozycji wszystkich zaznaczonych lokalizacji wierzcho³ków, a co
-		 * za tym idzie ³uków, o wektor przesuniêcia myszy. W przypadku niespe³nienia tych
-		 * warunków oraz gdy aktualnym narzêdziem rysowania jest wskaŸnik, rysowany jest
-		 * prostok¹t zaznaczenia, po³¹czony ze sprawdzaniem na bie¿¹co, które elementy
-		 * zawieraj¹ siê w obszarze zaznaczenia.
-		 * @param e MouseEvent - obiekt klasy przekazywany w efekcie przeci¹gniêcia mysz¹
+		 * PrzeciÄ…Å¼ona metoda mouseDragged w klasie jjava.awt.event.MouseMotionAdapter,
+		 * zostaje wywoÅ‚ana za kaÅ¼dym razem, gdy ktÃ³rekolwiek z klawiszy myszy zostanie
+		 * naciÅ›niÄ™ty w poÅ‚Ä…czeniu z przesuwaniem myszy nad obszarem arkusza. W nastÄ™pstwie
+		 * tego zdarzenia sprawdzane jest dla miejsca klikniÄ™cia zostaÅ‚y speÅ‚nione warunki
+		 * przeciÄ™cia z ktÃ³rymkolwiek z lokalizacji wierzchoÅ‚kÃ³w ElementLocation lub Å‚ukÃ³w
+		 * znajdujÄ…cych siÄ™ na bieÅ¼Ä…cym arkuszu. JeÅ›li warunki zostanÄ… speÅ‚nione, wykonywane
+		 * jest przesuniÄ™cie pozycji wszystkich zaznaczonych lokalizacji wierzchoÅ‚kÃ³w, a co
+		 * za tym idzie Å‚ukÃ³w, o wektor przesuniÄ™cia myszy. W przypadku niespeÅ‚nienia tych
+		 * warunkÃ³w oraz gdy aktualnym narzÄ™dziem rysowania jest wskaÅºnik, rysowany jest
+		 * prostokÄ…t zaznaczenia, poÅ‚Ä…czony ze sprawdzaniem na bieÅ¼Ä…co, ktÃ³re elementy
+		 * zawierajÄ… siÄ™ w obszarze zaznaczenia.
+		 * @param e MouseEvent - obiekt klasy przekazywany w efekcie przeciÄ…gniÄ™cia myszÄ…
 		 */
 		public void mouseDragged(MouseEvent e) {
 			Point dragPoint = e.getPoint();
@@ -857,16 +857,16 @@ public class GraphPanel extends JComponent {
 	} //end class MouseMotionHandler
 
 	/**
-	 * Wewnêtrzna klasa odpowiedzialna za ob³usgê rolki myszy.
+	 * WewnÄ…trzna klasa odpowiedzialna za obÅ‚usgÄ™ rolki myszy.
 	 * @author students
 	 *
 	 */
 	public class MouseWheelHandler implements MouseWheelListener {
 		/**
-		 * Metoda odpowiedzialna za dzia³anie rozpoczête przez przesuwanie rolki
-		 * myszy nad arkusze. W zale¿noœci czy wciœniêtych jest klawisz CTRL czy
-		 * te¿ SHIFT czy te¿ ¿aden klawisz - dzia³ania s¹ ró¿ne.
-		 * @param e MouseWheelEvent - obiekt klasy przekazywany w efekcie u¿ycia wa³ka myszy
+		 * Metoda odpowiedzialna za dziaÅ‚anie rozpoczÄ™te przez przesuwanie rolki
+		 * myszy nad arkusze. W zaleÅ¼noÅ›ci czy wciÅ›niÄ™tych jest klawisz CTRL czy
+		 * teÅ¼ SHIFT czy teÅ¼ Å¼aden klawisz - dziaÅ‚ania sÄ… rÃ³Å¼ne.
+		 * @param e MouseWheelEvent - obiekt klasy przekazywany w efekcie uÅ¼ycia waÅ‚ka myszy
 		 */
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			if (e.isControlDown())

@@ -12,8 +12,8 @@ import com.javadocking.event.DockingEvent;
 import com.javadocking.event.DockingListener;
 
 /**
- * Klasa implementuj¹ca interfejs DockingListener. Jedna z klas odpowiedzialnych
- * za przesuwanie elementów interfejsu programu.
+ * Klasa implementujÄ…ca interfejs DockingListener. Jedna z klas odpowiedzialnych
+ * za przesuwanie elementÃ³w interfejsu programu.
  * @author students
  *
  */

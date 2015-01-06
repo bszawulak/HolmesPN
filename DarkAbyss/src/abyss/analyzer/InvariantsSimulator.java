@@ -27,7 +27,7 @@ import abyss.math.Transition;
 import abyss.math.simulator.SimulationStep;
 
 /**
- * Klasa odpowiadzialna za symulacjê wykonywania inwariantów w sieci.
+ * Klasa odpowiadzialna za symulacjÄ™ wykonywania inwariantÃ³w w sieci.
  * @author students
  *
  */
@@ -93,8 +93,8 @@ public class InvariantsSimulator {
 	/**
 	 * Konstruktor obiektu klasy InvariantsSimulator.
 	 * @param type NetType - rodzaj sieci
-	 * @param net PetriNet - sieæ w reprezentacji wewnêtrznej
-	 * @param inv ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
+	 * @param net PetriNet - sieÄ‡ w reprezentacji wewnÄ™trznej
+	 * @param inv ArrayList[ArrayList[InvariantTransition]] - macierz inwariantÃ³w
 	 * @param st int - rodzaj symulacji
 	 * @param simV int - krok
 	 */
@@ -120,9 +120,9 @@ public class InvariantsSimulator {
 	}
 
 	/**
-	 * Metoda sprawdza, czy krok jest mo¿liwy, tj. czy choæ jedna tranzycja jest aktualnie
+	 * Metoda sprawdza, czy krok jest moÅ¼liwy, tj. czy choÄ‡ jedna tranzycja jest aktualnie
 	 * aktywna.
-	 * @return boolean - true, jeœli choæ jedna tranzycja jest w danej chwili aktywna
+	 * @return boolean - true, jeÅ›li choÄ‡ jedna tranzycja jest w danej chwili aktywna
 	 */
 	private boolean isPossibleStep() {
 		for (Transition transition : petriNet.getTransitions()) {
@@ -133,7 +133,7 @@ public class InvariantsSimulator {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca model sieci.
+	 * Metoda ustawiajÄ…ca model sieci.
 	 * @param type int - 0 - BASIC, 1 - TIME
 	 */
 	public void setSimulatorNetType(int type) {
@@ -151,7 +151,7 @@ public class InvariantsSimulator {
 
 	@SuppressWarnings("incomplete-switch")
 	/**
-	 * Metoda rozpoczynaj¹ca symulacjê inwariantów.
+	 * Metoda rozpoczynajÄ…ca symulacjÄ™ inwariantÃ³w.
 	 * @param simulatorMode SimulatorMode - tryb pracy symulatora
 	 */
 	public void startSimulation(SimulatorMode simulatorMode) {
@@ -196,8 +196,8 @@ public class InvariantsSimulator {
 	}
 
 	/**
-	 * Metoda weryfikuj¹ca zbiór tranzycji do uruchomienia.
-	 * @return ArrayList[Transition] - zbiór tranzycji
+	 * Metoda weryfikujÄ…ca zbiÃ³r tranzycji do uruchomienia.
+	 * @return ArrayList[Transition] - zbiÃ³r tranzycji
 	 */
 	private ArrayList<Transition> generateValidLaunchingTransitions() {
 		boolean generated = false;
@@ -212,8 +212,8 @@ public class InvariantsSimulator {
 
 	@SuppressWarnings("unused")
 	/**
-	 * Metoda generuj¹ca zbiór tranzycji do uruchomienia.
-	 * @return ArrayList[Transition] - zbiór tranzycji
+	 * Metoda generujÄ…ca zbiÃ³r tranzycji do uruchomienia.
+	 * @return ArrayList[Transition] - zbiÃ³r tranzycji
 	 */
 	private ArrayList<Transition> generateLaunchingTransitions() {
 		Random randomLaunch = new Random();
@@ -300,9 +300,9 @@ public class InvariantsSimulator {
 	}
 
 	/**
-	 * Metoda uruchamiaj¹ca fazê pobierania substratów dla tranzycji.
-	 * @param transitions ArrayList[Transition] - zbiór tranzycji
-	 * @param backtracking boolean - true, jeœli symulacja siê cofa
+	 * Metoda uruchamiajÄ…ca fazÄ™ pobierania substratÃ³w dla tranzycji.
+	 * @param transitions ArrayList[Transition] - zbiÃ³r tranzycji
+	 * @param backtracking boolean - true, jeÅ›li symulacja siÄ™ cofa
 	 */
 	public void launchSubtractPhase(ArrayList<Transition> transitions,
 			boolean backtracking) {
@@ -328,11 +328,11 @@ public class InvariantsSimulator {
 	}
 
 	/**
-	 * Metoda uruchamiaj¹ca pojedyncz¹ fazê pobrania substratów.
-	 * @param transitions ArrayList[Transition] - zbiór tranzycji
-	 * @param backtracking boolean - true, jeœli symulacja siê cofa
+	 * Metoda uruchamiajÄ…ca pojedynczÄ… fazÄ™ pobrania substratÃ³w.
+	 * @param transitions ArrayList[Transition] - zbiÃ³r tranzycji
+	 * @param backtracking boolean - true, jeÅ›li symulacja siÄ™ cofa
 	 * @param chosenTransitionTransition - wybrana tranzycja
-	 * @return boolean - zwraca true, jeœli siê uda³o coœ odpaliæ
+	 * @return boolean - zwraca true, jeÅ›li siÄ™ udaÅ‚o coÅ› odpaliÄ‡
 	 */
 	public boolean launchSingleSubtractPhase(ArrayList<Transition> transitions,
 			boolean backtracking, Transition chosenTransition) {
@@ -475,7 +475,7 @@ public class InvariantsSimulator {
 	}
 
 	/**
-	 * Metoda obs³uguj¹ca wciœniêcie przycisku zatrzymania symulacji.
+	 * Metoda obsÅ‚ugujÄ…ca wciÅ›niÄ™cie przycisku zatrzymania symulacji.
 	 */
 	private void stopSimulation() {
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow()
@@ -601,7 +601,7 @@ public class InvariantsSimulator {
 		protected void updateStep() {
 			GUIManager.getDefaultGUIManager().getWorkspace().incrementSimulationStep();
 			
-			//tutaj nic siê nie dzieje: a chyba chodzi³o o update podokna w³aœciwoœci z liczb¹ tokenów
+			//tutaj nic siï¿½ nie dzieje: a chyba chodziï¿½o o update podokna wï¿½aï¿½ciwoï¿½ci z liczbï¿½ tokenï¿½w
 			GUIManager.getDefaultGUIManager().getSimulatorBox().updateSimulatorProperties();
 		}
 
@@ -846,7 +846,7 @@ public class InvariantsSimulator {
 				// in loop mode, a stop will be
 				// scheduled
 				if (!loop)
-				{//ZAPISYWANIE WYNIKÓW
+				{//ZAPISYWANIE WYNIKï¿½W
 					scheduleStop();
 					
 					//for(Integer[] in : generatedInvariants)

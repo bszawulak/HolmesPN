@@ -15,20 +15,22 @@ import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.IdGenerator;
 
 /**
- * Klasa implementuj¹ca tranzycjê w sieci Petriego. Zapewnia implementacjê
- * szeregu funkcjonalnoœci powi¹zanych z aktywacj¹ i odpalaniem tranzycji
- * na potrzeby symulacji dynamiki sieci Petriego, jak rezerwowanie tokenów
+ * Klasa implementujÄ…ca tranzycjÄ™ w sieci Petriego. Zapewnia implementacjÄ™
+ * szeregu funkcjonalnoÅ›ci powiÄ…zanych z aktywacjÄ… i odpalaniem tranzycji
+ * na potrzeby symulacji dynamiki sieci Petriego, jak rezerwowanie tokenÃ³w
  * i wykrywanie aktywacji.
  * @author students
- * @author MR - poprawki, obs³uga klastrów, inne
+ * @author MR - poprawki, obsÅ‚uga klastrÃ³w, inne
  *
  */
 public class Transition extends Node {
+	//BACKUP:  2673581001465115432L  ((NIE DOTYKAÄ† PONIÅ»SZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = 2673581001465115432L;
 	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAÆ NAZW, DODAWAÆ LUB USUWAÆ PÓL TEJ KLASY
-	 * (przestanie byæ mo¿liwe wczytywanie zapisanych projektów .abyss)
+	 * UWAGA!!! NIE WOLNO ZMIENIAÄ† NAZW, DODAWAÄ† LUB USUWAÄ† PÃ“L TEJ KLASY
+	 * (przestanie byÄ‡ moÅ¼liwe wczytywanie zapisÄ†nych proejktÃ³w .abyss)
 	 */
+	
 	protected double minFireTime = 0;
 	protected double maxFireTime = 999;
 	protected double absoluteFireTime = 0;
@@ -43,8 +45,8 @@ public class Transition extends Node {
 	
 	protected int firingNumber = 0;
 	
-	//TODO: tak nie mo¿e byæ, to poni¿ej jest u¿ywane przez funkcjê generuj¹c¹ MCT, ale ostatni¹ rzecz¹
-	//jak¹ obiekt klasy Transition potrzebuje, to kolejny wielki wektor danych...
+	//TODO: tak nie moÅ¼e byÄ‡, to poniÅ¼ej jest uÅ¼ywane przez funkcjÄ™ generujÄ…cÄ… MCT, ale ostatniÄ… rzeczÄ…
+	//jakÄ… obiekt klasy Transition potrzebuje, to kolejny wielki wektor danych...
 	private ArrayList<ArrayList<Transition>> containingInvariants = new ArrayList<ArrayList<Transition>>();
 	
 
@@ -52,7 +54,7 @@ public class Transition extends Node {
 	 * Konstruktor obiektu tranzycji sieci.
 	 * @param transitionId int - identyfikator tranzycji
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji
-	 * @param pn int - promien okrêgu na którym opisana jest figura geometryczna
+	 * @param pn int - promien okrÄ™gu na ktÃ³rym opisana jest figura geometryczna
 	 */
 	public Transition(int transitionId, ArrayList<ElementLocation> elementLocations, int pn) {
 		super(transitionId, elementLocations, pn);
@@ -62,8 +64,8 @@ public class Transition extends Node {
 	 * Konstruktor obiektu tranzycji sieci.
 	 * @param sheetId int - identyfikator arkusza
 	 * @param transitionId int - identyfikator tranzycji
-	 * @param transitionPosition Point - punkt, w którym znajduje siê lokalizacja wierzcho³ka
-	 * @param pn int - promien okrêgu na którym opisana jest figura geometryczna
+	 * @param transitionPosition Point - punkt, w ktÃ³rym znajduje siÄ™ lokalizacja wierzchoÅ‚ka
+	 * @param pn int - promien okrÄ™gu na ktÃ³rym opisana jest figura geometryczna
 	 */
 	public Transition(int sheetId, int transitionId, Point transitionPosition, int pn) {
 		super(sheetId, transitionId, transitionPosition, pn);
@@ -73,7 +75,7 @@ public class Transition extends Node {
 	 * Konstruktor obiektu tranzycji sieci.
 	 * @param transitionId int - identyfikator tranzycji
 	 * @param elementLocation ElementLocation - lokalizacja elementu sieci
-	 * @param pn int - promieñ okrêgu na którym opisana jest figura geometryczna
+	 * @param pn int - promieÅ„ okrÄ™gu na ktÃ³rym opisana jest figura geometryczna
 	 */
 	public Transition(int transitionId, ElementLocation elementLocation, int pn) {
 		super(transitionId, elementLocation, pn);
@@ -146,7 +148,7 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda rysuj¹ca tranzycjê na danym arkuszu.
+	 * Metoda rysujÄ…ca tranzycjÄ™ na danym arkuszu.
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza 
 	 */
@@ -155,8 +157,8 @@ public class Transition extends Node {
 			Rectangle nodeBounds = new Rectangle(
 				el.getPosition().x - getRadius(), el.getPosition().y - getRadius(),
 					this.getRadius() * 2, this.getRadius() * 2);
-			if (!isLaunching) { //jeœli nieaktywna
-				if (isGlowedMTC()) { //jeœli ma siê œwieciæ jako MCT
+			if (!isLaunching) { //jeÅ›li nieaktywna
+				if (isGlowedMTC()) { //jeÅ›li ma siÄ™ Å›wieciÄ‡ jako MCT
 					g.setColor(EditorResources.glowMTCTransitonColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -253,7 +255,7 @@ public class Transition extends Node {
 			
 			g.setColor(EditorResources.glowTransitonTextColor);
 			
-			//WYŒWIETLANIE DANYCH O ODPALENIACH
+			//WYÅšWIETLANIE DANYCH O ODPALENIACH
 			if (this.isGlowed && this.firingNumber > 0) {
 				int posX = nodeBounds.x + nodeBounds.width / 2 
 						- g.getFontMetrics().stringWidth(Integer.toString(this.getTokensNumber())) / 2;
@@ -261,7 +263,7 @@ public class Transition extends Node {
 				g.drawString(Integer.toString(this.getTokensNumber()), posX, posY);
 			}
 			
-			//WYŒWIETLANIE DANYCH ODNOŒNIE WYSTÊPOWANIA TRANZYCJI W KLASTRZE:
+			//WYÅšWIETLANIE DANYCH ODNOÅšNIE WYSTÄ˜POWANIA TRANZYCJI W KLASTRZE:
 			if(this.isGlowetCl && this.clNumber > 0) {
 				//int posX = nodeBounds.x + (nodeBounds.width / 2)
 				//		- (g.getFontMetrics().stringWidth(Integer.toString(this.clNumber)) / 2);
@@ -284,8 +286,8 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ ³¹czn¹ liczbê dostêpnych tokenów ze wszystkich miejsc wejœciowych.
-	 * @return int - liczba dostêpnych tokenów z pola availableTokens.
+	 * Metoda pozwala pobraÄ‡ Å‚Ä…cznÄ… liczbÄ™ dostÄ™pnych tokenÃ³w ze wszystkich miejsc wejÅ›ciowych.
+	 * @return int - liczba dostÄ™pnych tokenÃ³w z pola availableTokens.
 	 */
 	public int getAvailableTokens() {
 		int availableTokens = 0;
@@ -297,8 +299,8 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ ³¹czna liczbê tokenów niezbêdnych do aktywacji tej tranzycji.
-	 * @return int - liczba tokenów potrzebnych do aktywacji z pola requiredTokens
+	 * Metoda pozwala pobraÄ‡ Å‚Ä…czna liczbÄ™ tokenÃ³w niezbÄ™dnych do aktywacji tej tranzycji.
+	 * @return int - liczba tokenÃ³w potrzebnych do aktywacji z pola requiredTokens
 	 */
 	public int getRequiredTokens() {
 		int requiredTokens = 0;
@@ -309,8 +311,8 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ, czy tranzycja jest aktywna i mo¿e zostaæ odpalona.
-	 * @return boolean - true, jeœli tranzycja jest aktywna i mo¿e zostaæ odpalona; false w przeciwnym wypadku
+	 * Metoda pozwala sprawdziÄ‡, czy tranzycja jest aktywna i moÅ¼e zostaÄ‡ odpalona.
+	 * @return boolean - true, jeÅ›li tranzycja jest aktywna i moÅ¼e zostaÄ‡ odpalona; false w przeciwnym wypadku
 	 */
 	public boolean isActive() {
 		for (Arc arc : getInArcs()) {
@@ -322,26 +324,26 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ, czy tranzycja jest w tej chwili odpalana.
-	 * @return boolean - true, jeœli tranzycja jest aktualnie odpalana; false w przeciwnym wypadku
+	 * Metoda pozwala sprawdziÄ‡, czy tranzycja jest w tej chwili odpalana.
+	 * @return boolean - true, jeÅ›li tranzycja jest aktualnie odpalana; false w przeciwnym wypadku
 	 */
 	public boolean isLaunching() {
 		return isLaunching;
 	}
 
 	/**
-	 * Metoda informuj¹ca, czy tranzycja jest podœwietlona kolorem
-	 * @return boolean - true jeœli œwieci; false w przeciwnym wypadku
+	 * Metoda informujÄ…ca, czy tranzycja jest podÅ›wietlona kolorem
+	 * @return boolean - true jeÅ›li Å›wieci; false w przeciwnym wypadku
 	 */
 	public boolean isGlowed() {
 		return isGlowed;
 	}
 
 	/**
-	 * Metoda pozwala okreœli, czy tranzycja ma byc podœwietlona oraz ile razy
-	 * wystêpuje ona w ramach niezmiennika.
-	 * @param isGlowed boolean - true, jeœli ma œwieciæ
-	 * @param firingNumber int - liczba uruchomieñ tranzycji w niezmienniku
+	 * Metoda pozwala okreÅ›liÄ‡, czy tranzycja ma byc podÅ›wietlona oraz ile razy
+	 * wystÄ™puje ona w ramach niezmiennika.
+	 * @param isGlowed boolean - true, jeÅ›li ma Å›wieciÄ‡
+	 * @param firingNumber int - liczba uruchomieÅ„ tranzycji w niezmienniku
 	 */
 	public void setGlowed(boolean isGlowed, int firingNumber) {
 		this.isGlowed = isGlowed;
@@ -349,40 +351,40 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda pozwala okreœlic, czy tranzycja ma byc podœwietlona.
-	 * @param isGlowed boolean - true, jeœli ma œwiecic
+	 * Metoda pozwala okreÅ›lic, czy tranzycja ma byc podÅ›wietlona.
+	 * @param isGlowed boolean - true, jeÅ›li ma Å›wieciÄ‡
 	 */
 	public void setGlowed(boolean value) {
 		this.isGlowed = value;
 	}
 
 	/**
-	 * Metoda sprawdza, czy tranzycja œwieci bêd¹c czêœci¹ zbioru MCT.
-	 * @return boolean - true je¿eli œwieci jako MCT; false w przeciwnym wypadku
+	 * Metoda sprawdza, czy tranzycja Å›wieci bÄ™dÄ…c czÄ™ciÄ… zbioru MCT.
+	 * @return boolean - true jeÅ¼eli Å›wieci jako MCT; false w przeciwnym wypadku
 	 */
 	public boolean isGlowedMTC() {
 		return isGlowedMTC;
 	}
 
 	/**
-	 * Metoda ustawia stan œwiecenia tranzycji jako czêœci MCT.
-	 * @param isGlowedMTC boolean - true je¿eli ma œwieciæ
+	 * Metoda ustawia stan Å›wiecenia tranzycji jako czÄ™ci MCT.
+	 * @param isGlowedMTC boolean - true jeÅ¼eli ma Å›wieciÄ‡
 	 */
 	public void setGlowedMTC(boolean value) {
 		this.isGlowedMTC = value;
 	}
 	
 	/**
-	 * Metoda zwraca wartoœæ flagi koloru dla klastra
-	 * @return boolean - true, jeœli ma mieæ dany kolor
+	 * Metoda zwraca wartoÅ›Ä‡ flagi koloru dla klastra
+	 * @return boolean - true, jeÅ›li ma mieÄ‡ dany kolor
 	 */
 	public boolean isGlowedCluster() {
 		return isGlowetCl;
 	}
 	
 	/**
-	 * Metoda ustawia flagê koloru dla tranzycji w ramach klastra oraz kolor.
-	 * @param value boolean - true, jeœli ma rysowaæ siê w kolorze
+	 * Metoda ustawia flagÄ™ koloru dla tranzycji w ramach klastra oraz kolor.
+	 * @param value boolean - true, jeÅ›li ma rysowaÄ‡ siÄ™ w kolorze
 	 * @param clColor Color - na jaki kolor
 	 */
 	public void setGlowedCluster(boolean value, Color clColor, int clNumber) {
@@ -391,16 +393,16 @@ public class Transition extends Node {
 		this.clNumber = clNumber;
 	}
 	/**
-	 * Metoda zwraca liczbê wyst¹pieñ uruchomieñ tranzycji w ramach niezmiennika.
-	 * @return int - liczba wyst¹pieñ uruchomieñ tranzycji w niezmienniku z pola firingNumber
+	 * Metoda zwraca liczbÄ™ wystÄ…pieÅ„ uruchomieÅ„ tranzycji w ramach niezmiennika.
+	 * @return int - liczba wystÄ…pieÅ„ uruchomieÅ„ tranzycji w niezmienniku z pola firingNumber
 	 */
 	public int getTokensNumber() {
 		return this.firingNumber;
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ, czy tranzycja jest teraz uruchamiana.
-	 * @param isLunching boolean - true, je¿eli tranzycja jest w³aœnie uruchamiana;
+	 * Metoda pozwala ustawiÄ‡, czy tranzycja jest teraz uruchamiana.
+	 * @param isLunching boolean - true, jeÅ›eli tranzycja jest wÅ‚aÅ›nie uruchamiana;
 	 * 		false w przeciwnym wypadku
 	 */
 	public void setLaunching(boolean isLaunching) {
@@ -408,8 +410,8 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda pozwala zarezerwowaæ we wszystkich miejscach wejœciowych
-	 * niezbêdne do uruchomienia tokeny. Inne tranzycje nie mog¹ ich odebraæ.
+	 * Metoda pozwala zarezerwowaÄ‡ we wszystkich miejscach wejÅ›ciowych
+	 * niezbÄ™dne do uruchomienia tokeny. Inne tranzycje nie mogÄ… ich odebraÄ‡.
 	 */
 	public void bookRequiredTokens() {
 		for (Arc arc : getInArcs()) {
@@ -419,8 +421,8 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda pozwala zwolniæ wszystkie zarezerwowane tokeny we wszystkich
-	 * miejscach wejœciowych. Staj¹ siê one dostêpne dla innych tranzycji.
+	 * Metoda pozwala zwolniÄ‡ wszystkie zarezerwowane tokeny we wszystkich
+	 * miejscach wejÅ›ciowych. StajÄ… siÄ™ one dostÄ™pne dla innych tranzycji.
 	 */
 	public void returnBookedTokens() {
 		for (Arc arc : getInArcs()) {
@@ -438,9 +440,9 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda zwraca wagê ³uku wyjœciowego do wskazanego miejsca.
-	 * @param outPlace Place - miejsce po³¹czone z dan¹ tranzycj¹ (od niej)
-	 * @return int - waga ³uku ³¹cz¹cego
+	 * Metoda zwraca wagÄ™ Å‚uku wyjÅ›ciowego do wskazanego miejsca.
+	 * @param outPlace Place - miejsce poÅ‚Ä…czone z danÄ… tranzycjÄ… (od niej)
+	 * @return int - waga Å‚uku Å‚Ä…czÄ…cego
 	 */
 	public int getOutArcWeightTo(Place outPlace) {
 		int weight = 0;
@@ -452,9 +454,9 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda zwraca wagê ³uku wejœciowego do wskazanego miejsca.
-	 * @param inPlace Place - miejsce po³¹czone do danej tranzycji
-	 * @return int - waga ³uku ³¹cz¹cego
+	 * Metoda zwraca wagÄ™ Å‚uku wejÅ›ciowego do wskazanego miejsca.
+	 * @param inPlace Place - miejsce poÅ‚Ä…czone do danej tranzycji
+	 * @return int - waga Å‚uku Å‚Ä…czÄ…cego
 	 */
 	public int getInArcWeightFrom(Place inPlace) {
 		int weight = 0;
@@ -466,16 +468,16 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda zwraca listê inwariantów z dan¹ tranzycj¹.
-	 * @return ArrayList[ArrayList[Transition]] - macierz inwariantow
+	 * Metoda zwraca listÄ™ inwariantÃ³w z danÄ… tranzycjÄ….
+	 * @return ArrayList[ArrayList[Transition]] - macierz inwariantÃ³w
 	 */
 	public ArrayList<ArrayList<Transition>> getContainingInvariants() {
 		return containingInvariants;
 	}
 
 	/**
-	 * Metoda pozwala wpisaæ inwarianty w której jest dana tranzycja.
-	 * @param containingInvariants ArrayList[ArrayList[Transition]] - macierz niezmienników
+	 * Metoda pozwala wpisaÄ‡ inwarianty w ktÃ³rej jest dana tranzycja.
+	 * @param containingInvariants ArrayList[ArrayList[Transition]] - macierz niezmiennikÃ³w
 	 */
 	public void setContainingInvariants(ArrayList<ArrayList<Transition>> containingInvariants) {
 		//this.containingInvariants = containingInvariants;

@@ -11,7 +11,7 @@ import abyss.math.Arc;
 import abyss.math.ElementLocation;
 
 /**
- * Klasa implementuj¹ca panel pokazuj¹cy informacje o zaznaczonych mysz¹ elementach sieci.
+ * Klasa implementujÄ…ca panel pokazujÄ…cy informacje o zaznaczonych myszÄ… elementach sieci.
  * @author students
  *
  */
@@ -22,7 +22,7 @@ public class SelectionPanel extends JPanel {
 	private DefaultListModel<String> selectedArcList;
 
 	/**
-	 * Konstruktor domyœlny obiektu klasy SelectionPanel.
+	 * Konstruktor domyÅ›lny obiektu klasy SelectionPanel.
 	 */
 	public SelectionPanel() {
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -41,7 +41,7 @@ public class SelectionPanel extends JPanel {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca obiekt managera interfejsu.
+	 * Metoda zwracajÄ…ca obiekt managera interfejsu.
 	 * @return GUIManager - obiekt managera
 	 */
 	protected GUIManager getGuiManager() {
@@ -49,7 +49,7 @@ public class SelectionPanel extends JPanel {
 	}
 
 	/**
-	 * Metoda ustwiaj¹ca nowy obiekt managera interfejsu.
+	 * Metoda ustwiajÄ…ca nowy obiekt managera interfejsu.
 	 * @return GUIManager - obiekt managera
 	 */
 	protected void setGuiManager(GUIManager guiManager) {
@@ -57,16 +57,16 @@ public class SelectionPanel extends JPanel {
 	}
 	
 	/**
-	 * Metoda zwraca listê z opisami wybranych wierzcho³ków.
-	 * @return DefaultListModel[String] - lista informacji o wierzcho³kach
+	 * Metoda zwraca listÄ™ z opisami wybranych wierzchoÅ‚kÃ³w.
+	 * @return DefaultListModel[String] - lista informacji o wierzchoÅ‚kach
 	 */
 	public DefaultListModel<String> getSelectedElementLocationList() {
 		return selectedElementLocationList;
 	}
 
 	/**
-	 * Metoda ustawia now¹ listê z opisami wybranych wierzcho³ków.
-	 * @param selectedElementLocationList DefaultListModel[String] - lista informacji o wierzcho³kach
+	 * Metoda ustawia nowÄ… listÄ™ z opisami wybranych wierzchoÅ‚kÃ³w.
+	 * @param selectedElementLocationList DefaultListModel[String] - lista informacji o wierzchoÅ‚kach
 	 */
 	public void setSelectedElementLocationList(
 			DefaultListModel<String> selectedElementLocationList) {
@@ -74,26 +74,26 @@ public class SelectionPanel extends JPanel {
 	}
 
 	/**
-	 * Metoda zwraca listê z opisami wybranych ³uków.
-	 * @return DefaultListModel[String] - lista informacji o ³ukach
+	 * Metoda zwraca listÄ™ z opisami wybranych Å‚ukÃ³w.
+	 * @return DefaultListModel[String] - lista informacji o Å‚ukach
 	 */
 	public DefaultListModel<String> getSelectedArcList() {
 		return selectedArcList;
 	}
 
 	/**
-	 * Metoda ustawia now¹ listê z opisami wybranych ³uków.
-	 * @param selectedArcList DefaultListModel[String] - lista informacji o ³ukach
+	 * Metoda ustawia nowÄ… listÄ™ z opisami wybranych Å‚ukÃ³w.
+	 * @param selectedArcList DefaultListModel[String] - lista informacji o Å‚ukach
 	 */
 	public void setSelectedArcList(DefaultListModel<String> selectedArcList) {
 		this.selectedArcList = selectedArcList;
 	}
 
 	/**
-	 * Metoda odpowiedzialna za wype³nienie tablic przechowuj¹cych informacje
-	 * o wybranych (zaznaczonych) przez u¿ytkownika elementach sieci - ³ukach
-	 * i/lub wierzcho³kach. 
-	 * @param e SelectionActionEvent - obiekt zdarzenia wywo³uj¹cego
+	 * Metoda odpowiedzialna za wypeÅ‚nienie tablic przechowujÄ…cych informacje
+	 * o wybranych (zaznaczonych) przez uÅ¼ytkownika elementach sieci - Å‚ukach
+	 * i/lub wierzchoÅ‚kach. 
+	 * @param e SelectionActionEvent - obiekt zdarzenia wywoÅ‚ujÄ…cego
 	 */
 	public void actionPerformed(SelectionActionEvent e) {
 		this.getSelectedElementLocationList().clear();

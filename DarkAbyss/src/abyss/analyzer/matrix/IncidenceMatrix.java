@@ -6,8 +6,8 @@ import abyss.math.Place;
 import abyss.math.Transition;
 
 /**
- * Klasa tworz¹ca macierz incydencji, dziedziczy z Matrix.
- * W notacji sieci jest to macierz wartoœci ³uków wyjœciowych (out-arcs).
+ * Klasa tworzÄ…ca macierz incydencji, dziedziczy z Matrix.
+ * W notacji sieci jest to macierz wartoÅ›ci Å‚ukÃ³w wyjÅ›ciowych (out-arcs).
  * @author studens
  *
  */
@@ -16,8 +16,8 @@ public class IncidenceMatrix extends Matrix {
 	 * Konstruktor obiektu klasy IncidenceMatrix.
 	 * @param transitionList ArrayList[Transition] - lista tranzycji
 	 * @param placeList ArrayList [Place] - lista miejsc
-	 * @param inMatrix InputMatrix - macierz wejœciowa
-	 * @param outMatrix OutputMatrix - macierz wyjœciowa
+	 * @param inMatrix InputMatrix - macierz wejÅ›ciowa
+	 * @param outMatrix OutputMatrix - macierz wyjÅ›ciowa
 	 */
 	public IncidenceMatrix(ArrayList<Transition> transitionList, 
 			ArrayList<Place> placeList, InputMatrix inMatrix, OutputMatrix outMatrix) {
@@ -29,9 +29,9 @@ public class IncidenceMatrix extends Matrix {
 	}
 
 	/**
-	 * Metoda sprawdzaj¹ca, czy dla wszystkich miejsc, kolumna tranzycji jest zerowa
+	 * Metoda sprawdzajÄ…ca, czy dla wszystkich miejsc, kolumna tranzycji jest zerowa
 	 * @param l - nr kolumny tranzycji
-	 * @return boolean - true, jeœli s¹ same zera w kolumnie l; false w przeciwnym wypadku
+	 * @return boolean - true, jeÅ›li sÄ… same zera w kolumnie l; false w przeciwnym wypadku
 	 */
 	public boolean restOfColumnZero(int l) {
 		boolean result = true;
@@ -42,9 +42,9 @@ public class IncidenceMatrix extends Matrix {
 	}
 	
 	/**
-	 * Metoda znajduj¹ca niezerowy wiersz w zadanej kolumnie.
+	 * Metoda znajdujÄ…ca niezerowy wiersz w zadanej kolumnie.
 	 * @param l int - nr kolumny tranzycji
-	 * @return int - numer wiersza miejsc w którym s¹ same zera
+	 * @return int - numer wiersza miejsc w ktÃ³rym sÄ… same zera
 	 */
 	public int findNonZeroRowInColumn(int l) {
 		int row = -1;
@@ -57,7 +57,7 @@ public class IncidenceMatrix extends Matrix {
 	}
 	
 	/**
-	 * Zamiana dwóch wierszy ze sob¹ w tablicy.
+	 * Zamiana dwÃ³ch wierszy ze sobÄ… w tablicy.
 	 * @param k int - pierwszy wiersz
 	 * @param l int - drugi wiersz
 	 */

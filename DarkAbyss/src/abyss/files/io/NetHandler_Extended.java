@@ -6,14 +6,14 @@ import org.xml.sax.SAXException;
 
 /**
  * 
- * @author students - szkielet klasy, nazwa, 4 metody, ogólnie nic :)
- * @author MR - ca³a reszta, czyli w zasadzie te¿ jeszcze nic :)
+ * @author students - szkielet klasy, nazwa, 4 metody, ogÃ³lnie nic :)
+ * @author MR - caÅ‚a reszta, czyli w zasadzie teÅ¼ jeszcze nic
  *
  */
 public class NetHandler_Extended extends NetHandler {
 
 	/**
-	 * Metoda wykrywaj¹ca rozpoczêcie nowego elementu.
+	 * Metoda wykrywajÄ…ca rozpoczÄ™cie nowego elementu.
 	 * @param uri - adres zasobu
 	 * @param localName - lokalna nazwa elementu
 	 * @param qName - nazwa elementu
@@ -24,9 +24,9 @@ public class NetHandler_Extended extends NetHandler {
 	}
 	
 	/**
-	 * Metoda wykrywaj¹ca koniec bie¿¹cego. To w niej po wczytaniu elementu i
-	 * wszystkich jego w³asnoœci, zostaje uruchomiony k¹kretny konstruktor
-	 * odpowiedzialny za utworzenie nowego wierzcho³ka, lub ³uku.
+	 * Metoda wykrywajÄ…ca koniec bieÅ¼Ä…cego. To w niej po wczytaniu elementu i
+	 * wszystkich jego wÅ‚asnoÅ›ci, zostaje uruchomiony konkretny konstruktor
+	 * odpowiedzialny za utworzenie nowego wierzchoÅ‚ka, lub Å‚uku.
 	 * @param uri - adres zasobu
 	 * @param localName - lokalna nazwa elementu
 	 * @param qName - nazwa elementu
@@ -37,20 +37,20 @@ public class NetHandler_Extended extends NetHandler {
 	}
 
 	/**
-	 * Metoda odczytuj¹ca zawartoœæ elementu.
-	 * @param ch[] - tablica wczytanych znaków
-	 * @param start - indeks pocz¹tkowy
-	 * @param length - iloœæ wczytanych znaków
+	 * Metoda odczytujÄ…ca zawartoÅ›Ä‡ elementu.
+	 * @param ch[] - tablica wczytanych znakÃ³w
+	 * @param start - indeks poczÄ…tkowy
+	 * @param length - iloÅ›Ä‡ wczytanych znakÃ³w
 	 */
 	public void characters(char ch[], int start, int length) throws SAXException {
 		// Wyluskiwanie zawartosci <![CDATA[]]>
 	}
 	
 	/**
-	 * Metoda s³u¿¹ca do wy³apywania i ignorowania pustych przestrzeni.
-	 * @param ch[] - tablica wczytanych znaków
-	 * @param start - indeks pocz¹tkowy
-	 * @param length - wielkoœæ pustej przestrzeni
+	 * Metoda sÅ‚uÅ¼Ä…ca do wyÅ‚apywania i ignorowania pustych przestrzeni.
+	 * @param ch[] - tablica wczytanych znakÃ³w
+	 * @param start - indeks poczÄ…tkowy
+	 * @param length - wielkoÅ›Ä‡ pustej przestrzeni
 	 */
 	public void ignorableWhitespace(char ch[], int start, int length)
 			throws SAXException {

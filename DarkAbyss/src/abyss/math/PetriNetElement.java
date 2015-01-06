@@ -5,19 +5,20 @@ import java.io.Serializable;
 import org.simpleframework.xml.Element;
 
 /**
- * Wszystkie elementy sieci Petriego, na poziomie logiki programu, s¹ klasami 
- * dziedzicz¹cymi po tej klasie. Zapewnia ona im konieczne elementy wspólne - 
- * generowanie unikalnych (w obrêbie wszystkich elementów, a nie jednej klasy) 
+ * Wszystkie elementy sieci Petriego, na poziomie logiki programu, sÄ… klasami 
+ * dziedziczÄ…cymi po tej klasie. Zapewnia ona im konieczne elementy wspÃ³lne - 
+ * generowanie unikalnych (w obrÄ™bie wszystkich elementÃ³w, a nie jednej klasy) 
  * numery identyfikacyjne, przechowywanie nazw i komentarzy.
  * @author students
  *
  */
 public class PetriNetElement implements Serializable {
+	//BACKUP: 3428968829261305581L; (NIE DOTYKAÄ† PONIÅ»SZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = 3428968829261305581L;
 
 	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAÆ NAZW, DODAWAÆ LUB USUWAÆ PÓL TEJ KLASY
-	 * (przestanie byæ mo¿liwe wczytywanie zapisanych proejktów .abyss)
+	 * UWAGA!!! NIE WOLNO ZMIENIAÄ† NAZW, DODAWAÄ† LUB USUWAÄ† PÃ“L TEJ KLASY
+	 * (przestanie byÄ‡ moÅ¼liwe wczytywanie zapisÄ†nych proejktÃ³w .abyss)
 	 */
 	public enum PetriNetElementType { ARC, PLACE, TRANSITION, UNKNOWN, TIMETRANSITION }
 	@Element
@@ -29,7 +30,7 @@ public class PetriNetElement implements Serializable {
 	protected PetriNetElementType petriNetElementType;
 
 	/**
-	 * Metoda pozwala pobraæ typ elementu sieci Petriego.
+	 * Metoda pozwala pobraÄ‡ typ elementu sieci Petriego.
 	 * @return PetriNetElementType - obiekt elementu sieci 
 	 */
 	public PetriNetElementType getType() {
@@ -37,7 +38,7 @@ public class PetriNetElement implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ typ elementu sieci Petriego.
+	 * Metoda pozwala ustawiÄ‡ typ elementu sieci Petriego.
 	 * @param petriNetElementType PetriNetElementType - typ elementu sieci Petriego  
 	 */
 	public void setType(PetriNetElementType petriNetElementType) {
@@ -45,7 +46,7 @@ public class PetriNetElement implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ identyfikator elementu sieci Petriego.
+	 * Metoda pozwala pobraÄ‡ identyfikator elementu sieci Petriego.
 	 * @return int - identyfikator przypisany do tego elementu sieci Petriego
 	 */
 	public int getID() {
@@ -53,7 +54,7 @@ public class PetriNetElement implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ identyfikator elementu sieci Petriego.
+	 * Metoda pozwala ustawiÄ‡ identyfikator elementu sieci Petriego.
 	 * @param iD int - identyfikator elementu sieci Petriego
 	 */
 	protected void setID(int iD) {
@@ -61,7 +62,7 @@ public class PetriNetElement implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ komentarz do elementu sieci Petriego.
+	 * Metoda pozwala pobraÄ‡ komentarz do elementu sieci Petriego.
 	 * @return String - tekst komentarza do elementu sieci Petriego
 	 */
 	public String getComment() {
@@ -69,7 +70,7 @@ public class PetriNetElement implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ komentarz do elementu sieci Petriego.
+	 * Metoda pozwala ustawiÄ‡ komentarz do elementu sieci Petriego.
 	 * @param comment String - komentarz do elementu sieci Petriego
 	 */
 	public void setComment(String comment) {
@@ -77,7 +78,7 @@ public class PetriNetElement implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ nazwê elementu sieci Petriego.
+	 * Metoda pozwala pobraÄ‡ nazwÄ™ elementu sieci Petriego.
 	 * @return String - nazwa elementu sieci Petriego
 	 */
 	public String getName() {
@@ -85,7 +86,7 @@ public class PetriNetElement implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ nazwê elementu sieci Petriego.
+	 * Metoda pozwala ustawiÄ‡ nazwÄ™ elementu sieci Petriego.
 	 * @param name String - nazwa elementu sieci Petriego
 	 */
 	public void setName(String name) {

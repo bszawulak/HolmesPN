@@ -16,16 +16,16 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 public class AbyssWriter {
 
 	/**
-	 * G³ówna i jedyna metoda, zapisuj¹ca plik sieci.
-	 * @param path String - œcie¿ka do pliku
+	 * GÅ‚Ã³wna i jedyna metoda, zapisujÄ…ca plik sieci.
+	 * @param path String - Å›cieÅ¼ka do pliku
 	 */
 	public void write(String path) {
-		// Tu kiedys bylo pole testów parserów do XMLa. Polegly 2 z nich
-		// (Xstream i simpleXML). Programisto (nieszczêœniku) który tu zagl¹dasz,
-		// masz lepsze rzeczy do robienia ni¿ babranie sie z nimi, czy z
+		// Tu kiedys bylo pole testÃ³w parserÃ³w do XMLa. PolegÅ‚y 2 z nich
+		// (Xstream i simpleXML). Programisto (nieszczÄ™Å›niku) ktÃ³ry tu zaglÄ…dasz,
+		// masz lepsze rzeczy do robienia niÅ¼ babranie sie z nimi, czy z
 		// zawartoscia klasy tej. (student)
 		
-		//tu by³em, Tony Halik (MR)
+		//tu byÅ‚em, Tony Halik (MR)
 		XStream xstream = new XStream(new StaxDriver());
 		xstream.alias("petriNet", PetriNetData.class);
 

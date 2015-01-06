@@ -115,9 +115,8 @@ public class GUIOperations {
 	 * Metoda odpowiedzialna za zapis wygenerowanych inwariantów do pliku programu INA.
 	 */
 	public void exportGeneratedInvariants() {
-		//TODO: da si�: Tools.lastExtension
-		//Nie da si� �atwo u�y� Tools.selectFileDialog, gdy� metoda musi mie�
-		//dost�p do filtr�w i wybranego typu! Zostawi� jak jest.
+		//TODO: da się: Tools.lastExtension
+
 		String lastPath = overlord.getLastPath();
 		JFileChooser fc;
 		if(lastPath==null)
@@ -164,12 +163,11 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za eksport projektu do pliku graficznego w okre�lonym formacie.
+	 * Metoda odpowiedzialna za eksport projektu do pliku graficznego w określonym formacie.
 	 */
 	public void exportProjectToImage() {
 		//TODO: da się: Tools.lastExtension
-		//Nie da si� �atwo u�y� Tools.selectFileDialog, gdy� metoda musi mie�
-		//dost�p do filtr�w i wybranego typu! Zostawi� jak jest.
+
 		String lastPath = overlord.getLastPath();
 		JFileChooser fc;
 		if(lastPath==null)
@@ -337,7 +335,7 @@ public class GUIOperations {
 		File tmpPNTfile = new File(toolPath+"siec.pnt");
 		String x = tmpPNTfile.getPath();
 		overlord.getWorkspace().getProject().saveAsPNT(x);
-		//zako�czono zapis do pliku .pnt
+		//zakończono zapis do pliku .pnt
 		long size = tmpPNTfile.length(); //124 dla nieistniejącej (pustej) sieci
 		if(size <154) {
 			String msg = "Net saving as .pnt file failed. There may be problems with file: "+x + 
@@ -356,7 +354,7 @@ public class GUIOperations {
 				JOptionPane.showMessageDialog(null, "INAwin32.exe will now start. Click OK and please wait.", "Patience is a virtue", JOptionPane.INFORMATION_MESSAGE);
 				overlord.log(stars, "text", false);
 				overlord.log("Activating INAwin32.exe. Please wait, this may take a few seconds due to OS delays.", "text", true);
-				//kopiowanie plik�w:
+				//kopiowanie plików:
 				Tools.copyFileByPath(inaExe.getPath(), abyssPath+"\\INAwin32.exe");
 				Tools.copyFileByPath(batFile.getPath(), abyssPath+"\\ina.bat");
 				Tools.copyFileByPath(commandFile.getPath(), abyssPath+"\\COMMAND.ina");
@@ -473,7 +471,7 @@ public class GUIOperations {
 			filters[0] = new ExtensionFileFilter("MCT sets file (.mct)",  new String[] { "MCT" });
 			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select MCT target path");
 			
-			if(selectedFile.equals("")) { //je�li nie wybrano lokalizacji, zostaje w tmp
+			if(selectedFile.equals("")) { //jeśli nie wybrano lokalizacji, zostaje w tmp
 				File csvFile = new File(filePath);
 				csvFile.delete();
 				
@@ -512,9 +510,9 @@ public class GUIOperations {
 	 */
 	public String generateAllCHindexes(int howMany) {
 		overlord.showConsole(true);
-		if(!overlord.getRStatus()) { //sprawd�, czy Rscript.exe jest na miejscu
-			overlord.r_env_missing(); // zapytanie gdzie si� podziewa Rscript.exe
-			if(!overlord.getRStatus()) { //je�li wci��...
+		if(!overlord.getRStatus()) { //sprawda, czy Rscript.exe jest na miejscu
+			overlord.r_env_missing(); // zapytanie gdzie się podziewa Rscript.exe
+			if(!overlord.getRStatus()) { //jeśli wciąż...
 				return null;
 			}
 		}
@@ -525,7 +523,7 @@ public class GUIOperations {
 		/*
 		String filePath = tmpPath + "cluster.csv";
 		
-		//generowanie CSV, uda si�, je�li inwarianty istniej�
+		//generowanie CSV, uda się, jeśli inwarianty istnieją
 		int result = workspace.getProject().saveInvariantsToCSV(filePath, true);
 		if(result == -1) {
 			String msg = "Exporting net into CSV file failed. \nCluster procedure cannot begin without invariants.";
@@ -693,7 +691,7 @@ public class GUIOperations {
 			else
 				return selectedFile;
 		} else {
-			//wyb�r: z sieci, czy wskazanie CSV
+			//wybór: z sieci, czy wskazanie CSV
 			Object[] options = {"Select CSV file manually", "Create CSV from net invariants",};
 			int n = JOptionPane.showOptionDialog(null,
 					"Select CSV file for clustering computation manually or extract CSV from the\n"

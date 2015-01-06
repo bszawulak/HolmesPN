@@ -6,9 +6,9 @@ import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 
 /**
- * Klasa przechowuj¹ca krok symulacji. Za ka¿dym razem, gdy wykonywany jest krok symulacji
- * (równie¿ w trybach zapêtlonych), na stos dodany zostaje obiekt tej klasy przechowuj¹cy
- * informacje o nim. Dziêki temu mo¿liwa by³a implementacja trybów cofania.
+ * Klasa przechowujÄ…ca krok symulacji. Za kaÅ¼dym razem, gdy wykonywany jest krok symulacji
+ * (rÃ³wnieÅ¼ w trybach zapÄ™tlonych), na stos dodany zostaje obiekt tej klasy przechowujÄ…cy
+ * informacje o nim. DziÄ™ki temu moÅ¼liwa byÅ‚a implementacja trybÃ³w cofania.
  * @author students
  *
  */
@@ -40,7 +40,7 @@ public class SimulationStep {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ tryb symulacji, w jakim zapisany zosta³ krok.
+	 * Metoda pozwala pobraÄ‡ tryb symulacji, w jakim zapisany zostaÅ‚ krok.
 	 * @return SimulatorMode - tryb symulacji
 	 */
 	public SimulatorMode getType() {
@@ -48,7 +48,7 @@ public class SimulationStep {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ tryb symulacji, w jakim zapisany zosta³ krok.
+	 * Metoda pozwala ustawiÄ‡ tryb symulacji, w jakim zapisany zostaÅ‚ krok.
 	 * @param type SimulatorMode - tryb symulacji
 	 */
 	public void setType(SimulatorMode type) {
@@ -56,8 +56,8 @@ public class SimulationStep {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ listê uruchomionych tranzycji (lub oczekuj¹cych na
-	 * odpalenie, jeœli krok dotyczy pojedynczej tranzycji).
+	 * Metoda pozwala pobraÄ‡ listÄ™ uruchomionych tranzycji (lub oczekujÄ…cych na
+	 * odpalenie, jeÅ›li krok dotyczy pojedynczej tranzycji).
 	 * @return ArrayList[Transition] - lista tranzycji
 	 */
 	public ArrayList<Transition> getPendingTransitions() {
@@ -65,8 +65,8 @@ public class SimulationStep {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ listê uruchomionych tranzycji (lub oczekuj¹cych na odpalenie,
-	 * jeœli krok dotyczy pojedynczej tranzycji).
+	 * Metoda pozwala ustawiÄ‡ listÄ™ uruchomionych tranzycji (lub oczekujÄ…cych na odpalenie,
+	 * jeÅ›li krok dotyczy pojedynczej tranzycji).
 	 * @param pendingTransitions ArrayList[Transition] - lista tranzycji
 	 */
 	public void setPendingTransitions(ArrayList<Transition> pendingTransitions) {
@@ -74,7 +74,7 @@ public class SimulationStep {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ uruchomion¹ tranzycjê.
+	 * Metoda pozwala pobraÄ‡ uruchomionÄ… tranzycjÄ™.
 	 * @return Transition - uruchomiona tranzycja
 	 */
 	public Transition getLaunchedTransition() {
@@ -82,7 +82,7 @@ public class SimulationStep {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ uruchomion¹ tranzycjê.
+	 * Metoda pozwala ustawiÄ‡ uruchomionÄ… tranzycjÄ™.
 	 * @param launchedTransition Transition - uruchomiona tranzycja
 	 */
 	public void setLaunchedTransition(Transition launchedTransition) {

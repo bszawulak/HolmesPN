@@ -6,8 +6,8 @@ import abyss.math.Place;
 import abyss.math.Transition;
 
 /**
- * Klasa tworz¹ca macierz wejœciow¹ do obliczeñ, dziedzicz¹ca z Matrix.
- * W notacji sieci jest to macierz wartoœci ³uków wyjœciowych (in-arcs).
+ * Klasa tworzÄ…ca macierz wejÅ›ciowÄ… do obliczeÅ„, dziedziczÄ…ca z Matrix.
+ * W notacji sieci jest to macierz wartoÅ›ci Å‚ukÃ³w wyjÅ›ciowych (in-arcs).
  * @author students
  *
  */

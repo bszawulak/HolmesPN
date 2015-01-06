@@ -3,7 +3,7 @@ package abyss.math;
 import java.util.ArrayList;
 
 /**
- * Klasa kontener dla danych definiuj¹cych sieæ Petriego - wierzcho³ków i ³uków.
+ * Klasa kontener dla danych definiujÄ…cych sieÄ‡ Petriego - wierzchoÅ‚kÃ³w i Å‚ukÃ³w.
  * @author students
  *
  */
@@ -14,8 +14,8 @@ public class PetriNetData {
 
 	/**
 	 * Konstruktor obiektu klasy PetriNetData
-	 * @param nodes ArrayList[Node] - lista wierzcho³ków sieci
-	 * @param arcs ArrayList[Arc] - lista ³uków sieci
+	 * @param nodes ArrayList[Node] - lista wierzchoÅ‚kÃ³w sieci
+	 * @param arcs ArrayList[Arc] - lista Å‚ukÃ³w sieci
 	 */
 	public PetriNetData(ArrayList<Node> nodes, ArrayList<Arc> arcs, String name) {
 		this.nodes = nodes;

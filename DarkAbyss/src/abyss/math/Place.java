@@ -16,18 +16,19 @@ import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.IdGenerator;
 
 /**
- * Klasa implementuj¹ca miejsce sieci Petriego. Zapewnia implementacjê 
- * stanu (przechowywania tokenów) oraz powi¹zane z tym funkcjonalnoœci
- * (funkcjonalnoœæ wierzcho³ka dziedzyczy po Node).
+ * Klasa implementujÄ…ca miejsce sieci Petriego. Zapewnia implementacjÄ™ 
+ * stanu (przechowywania tokenÃ³w) oraz powiÄ…zane z tym funkcjonalnoÅ›ci
+ * (funkcjonalnoÅ›Ä‡ wierzchoÅ‚ka dziedzyczy po Node).
  * @author students
  *
  */
 public class Place extends Node {
+	// BACKUP: 2346995422046987174L  (NIE DOTYKAÄ† PONIÅ»SZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = 2346995422046987174L;
 	
 	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAÆ NAZW, DODAWAÆ LUB USUWAÆ PÓL TEJ KLASY
-	 * (przestanie byæ mo¿liwe wczytywanie zapisanych proejktów .abyss)
+	 * UWAGA!!! NIE WOLNO ZMIENIAÄ† NAZW, DODAWAÄ† LUB USUWAÄ† PÃ“L TEJ KLASY
+	 * (przestanie byÄ‡ moÅ¼liwe wczytywanie zapisÄ†nych proejktÃ³w .abyss)
 	 */
 	
 	@Element
@@ -37,12 +38,12 @@ public class Place extends Node {
 	
 	/**
 	 * Konstruktor obiektu miejsca sieci.
-	 * @param nodeId int - identyfikator wierzcho³ka
+	 * @param nodeId int - identyfikator wierzchoÅ‚ka
 	 * @param sheetId int - identyfikator arkusza
 	 * @param placePosition Point - punkt lokalizacji
 	 * @param name String - nazwa miejsca
 	 * @param comment String - komentarz miejsca
-	 * @param tokensNumber int - liczba tokenów
+	 * @param tokensNumber int - liczba tokenÃ³w
 	 */
 	public Place(int nodeId, int sheetId, Point placePosition, String name, String comment, int tokensNumber) {
 		super(sheetId, nodeId, placePosition, 18);
@@ -54,7 +55,7 @@ public class Place extends Node {
 	
 	/**
 	 * Konstruktor obiektu miejsca sieci.
-	 * @param nodeId int - identyfikator wierzcho³ka
+	 * @param nodeId int - identyfikator wierzchoÅ‚ka
 	 * @param sheetId int - identyfikator arkusza
 	 * @param placePosition Point - punkt lokalizacji
 	 */
@@ -66,11 +67,11 @@ public class Place extends Node {
 
 	/**
 	 * Konstruktor obiektu miejsca sieci.
-	 * @param nodeId int - identyfikator wierzcho³ka
+	 * @param nodeId int - identyfikator wierzchoÅ‚ka
 	 * @param elementLocation ElementLocation - lokalizacja miejsca
 	 * @param name String - nazwa miejsca
 	 * @param comment String - komentarz miejsca
-	 * @param tokensNumber int - liczba tokenów
+	 * @param tokensNumber int - liczba tokenÃ³w
 	 */
 	public Place(int nodeId, ElementLocation elementLocation, String name, String comment, int tokensNumber) {
 		super(nodeId, elementLocation, 18);
@@ -82,11 +83,11 @@ public class Place extends Node {
 
 	/**
 	 * Konstruktor obiektu miejsca sieci.
-	 * @param nodeId int - identyfikator wierzcho³ka
+	 * @param nodeId int - identyfikator wierzchoÅ‚ka
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji 
 	 * @param name String - nazwa miejsca
 	 * @param comment String - komentarz miejsca
-	 * @param tokensNumber int - liczba tokenów
+	 * @param tokensNumber int - liczba tokenÃ³w
 	 */
 	public Place(int nodeId, ArrayList<ElementLocation> elementLocations, String name, String comment, int tokensNumber) {
 		super(nodeId, elementLocations, 18);
@@ -98,7 +99,7 @@ public class Place extends Node {
 
 	/**
 	 * Konstruktor obiektu miejsca sieci.
-	 * @param nodeId int - identyfikator wierzcho³ka
+	 * @param nodeId int - identyfikator wierzchoÅ‚ka
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji 
 	 */
 	public Place(int nodeId, ArrayList<ElementLocation> elementLocations) {
@@ -108,7 +109,7 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Metoda rysuj¹ca miejsce na danym arkuszu.
+	 * Metoda rysujÄ…ca miejsce na danym arkuszu.
 	 * @param g Graphics2D - grafika 2D 
 	 * @param sheetId int - identyfikator arkusza
 	 */
@@ -171,16 +172,16 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ aktualn¹ liczbê tokenów.
-	 * @return int - liczba tokenów
+	 * Metoda pozwala pobraÄ‡ aktualnÄ… liczbÄ™ tokenÃ³w.
+	 * @return int - liczba tokenÃ³w
 	 */
 	public int getTokensNumber() {
 		return tokensNumber;
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ liczbê tokenów
-	 * @param tokensNumber int - liczba tokenów
+	 * Metoda pozwala ustawiÄ‡ liczbÄ™ tokenÃ³w
+	 * @param tokensNumber int - liczba tokenÃ³w
 	 */
 	public void setTokensNumber(int tokensNumber) {
 		this.tokensNumber = tokensNumber;
@@ -191,8 +192,8 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Metoda pozwala zmieniæ liczbê tokenów, dodaj¹c do niej okreœlon¹ wartoœæ.
-	 * @param delta int - wartoœæ o któr¹ zmieni siê liczba tokenów
+	 * Metoda pozwala zmieniÄ‡ liczbÄ™ tokenÃ³w, dodajÄ…c do niej okreÅ›lonÄ… wartoÅ›Ä‡.
+	 * @param delta int - wartoÅ›Ä‡ o ktÃ³rÄ… zmieni siÄ™ liczba tokenÃ³w
 	 */
 	public void modifyTokensNumber(int delta) {
 		this.tokensNumber = this.tokensNumber + delta;
@@ -204,33 +205,33 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ liczbê zajêtych (zarezerwowanych 
-	 * przez aktywowan¹ tranzycjê) tokenów.
-	 * @return int - liczba zarezerwowanych tokenów
+	 * Metoda pozwala pobraÄ‡ liczbÄ™ zajÄ™tych (zarezerwowanych 
+	 * przez aktywowanÄ… tranzycjÄ™) tokenÃ³w.
+	 * @return int - liczba zarezerwowanych tokenÃ³w
 	 */
 	public int getTokensTaken() {
 		return tokensTaken;
 	}
 
 	/**
-	 * Metoda pozwala zarezerwowaæ okreœlon¹ liczbê tokenów
-	 * @param tokensTaken int - liczba zajmowanych tokenów
+	 * Metoda pozwala zarezerwowaÄ‡ okreÅ›lonÄ… liczbÄ™ tokenÃ³w
+	 * @param tokensTaken int - liczba zajmowanych tokenÃ³w
 	 */
 	public void bookTokens(int tokensTaken) {
 		this.tokensTaken = tokensTaken;
 	}
 
 	/**
-	 * Metoda pozwala zwolniæ wszystkie zarezerwowane tokeny.
+	 * Metoda pozwala zwolniÄ‡ wszystkie zarezerwowane tokeny.
 	 */
 	public void returnTokens() {
 		this.tokensTaken = 0;
 	}
 
 	/**
-	 * Metoda pozwala pobraæ liczbê wolnych (dostêpnych, nie 
-	 * zarezerwowanych przez ¿adn¹ tranzycjê) tokenów.
-	 * @return int - liczba dostêpnych tokenów
+	 * Metoda pozwala pobraÄ‡ liczbÄ™ wolnych (dostÄ™pnych, nie 
+	 * zarezerwowanych przez Å¼adnÄ… tranzycjÄ™) tokenÃ³w.
+	 * @return int - liczba dostÄ™pnych tokenÃ³w
 	 */
 	public int getFreeTokensNumber() {
 		return tokensNumber - tokensTaken;

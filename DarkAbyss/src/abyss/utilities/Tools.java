@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * Klasa u¿ytkowa, odpowiednik klasy statycznej w normalnym jêzyku programowania
+ * Klasa uÅ¼ytkowa, odpowiednik klasy statycznej w normalnym jÄ™zyku programowania
  * jak np. C#. testing testing
  * @author Rince
  *
@@ -26,17 +26,17 @@ public final class Tools {
 	public static String lastExtension = "";
 	
 	/**
-	 * Prywatny konstruktor. To powinno za³atwiæ problem obiektów.
+	 * Prywatny konstruktor. To powinno zaÅ‚atwiÄ‡ problem obiektÃ³w.
 	 */
 	private Tools() {
 
 	}
 	
 	/**
-	 * Metoda pomocnicza s³u¿¹ca do kopiowania pliku z pierwszej lokalizacji w drug¹.
-	 * @param source String - œcie¿ka do pliku kopiowanego
-	 * @param target String - œcie¿ka do miejsca gdzie kopiujemy
-	 * @throws IOException - siê zepsu³o siê...
+	 * Metoda pomocnicza sÅ‚uÅ¼Ä…ca do kopiowania pliku z pierwszej lokalizacji w drugÄ….
+	 * @param source String - Å›cieÅ¼ka do pliku kopiowanego
+	 * @param target String - Å›cieÅ¼ka do miejsca gdzie kopiujemy
+	 * @throws IOException - siÄ™ zepsuÅ‚o siÄ™...
 	 */
 	public static void copyFileByPath(String source, String target) throws IOException{
     	InputStream inStream = null;
@@ -57,9 +57,9 @@ public final class Tools {
     }
 	
 	/**
-	 * Metoda kopiuj¹ca plik Ÿród³owy do docelowego.
+	 * Metoda kopiujÄ…ca plik ÅºrÃ³dÅ‚owy do docelowego.
 	 * @param source File - plik do kopiowania
-	 * @param target File - plik który zastêpujemy kopiowanym
+	 * @param target File - plik ktÃ³ry zastÄ™pujemy kopiowanym
 	 */
 	public static void copyFileDirectly(File source, File target) {
     	InputStream inStream = null;
@@ -89,10 +89,10 @@ public final class Tools {
 	/**
 	 * Okno dialogowe do wskazywania pliku.
 	 * @param lastPath String - ostatnia otwarta lokalizacja
-	 * @param filter FileFilter[] - filtry plików, pierwszy - domyœlny
+	 * @param filter FileFilter[] - filtry plikÃ³w, pierwszy - domyÅ›lny
 	 * @param buttonText String - tekst na przycisku akceptacji
-	 * @param buttonToolTip String - tekst wyjaœnienia dla przycisku akceptacji
-	 * @return String - œcie¿ka do pliku
+	 * @param buttonToolTip String - tekst wyjaÅ›nienia dla przycisku akceptacji
+	 * @return String - Å›cieÅ¼ka do pliku
 	 */
 	public static String selectFileDialog(String lastPath, FileFilter[] filter, 
 			String buttonText, String buttonToolTip) {
@@ -127,11 +127,11 @@ public final class Tools {
 	}
 	
 	/**
-	 * Metoda wyœwietla okno dialogowe dla wskazania katalogu z plikami klastrów
-	 * @param lastPath String - ostatnia otwarta œcie¿ka dostêpu
+	 * Metoda wyÅ›wietla okno dialogowe dla wskazania katalogu.
+	 * @param lastPath String - ostatnia otwarta Å›cieÅ¼ka dostÄ™pu
 	 * @param buttonText String - tekst na przycisku akceptacji
-	 * @param buttonToolTip String - tekst wyjaœnienia dla przycisku akceptacji
-	 * @return boolean - true, jeœli wskazano jakikolwiek katalog, false w przeciwnym
+	 * @param buttonToolTip String - tekst wyjaÅ›nienia dla przycisku akceptacji
+	 * @return boolean - true, jeÅ›li wskazano jakikolwiek katalog, false w przeciwnym
 	 * 		wypadku
 	 */
 	public static String selectDirectoryDialog(String lastPath, String buttonText, String buttonToolTip) {
@@ -160,9 +160,9 @@ public final class Tools {
 	}
 	
 	/**
-	 * Zwraca tylko œcie¿kê dostêpu do pliku.
+	 * Zwraca tylko Å›cieÅ¼kÄ™ dostÄ™pu do pliku.
 	 * @param x File - plik
-	 * @return String - œcie¿ka do katalogu
+	 * @return String - Å›cieÅ¼ka do katalogu
 	 */
 	public static String getFilePath(File x) {
 		if(x == null)
@@ -174,15 +174,15 @@ public final class Tools {
 	}
 
 	/*
-	 * Zestaw poni¿szych metod zapewnia bezpieczny sposób pobierania plików z zasobów.
-	 * Innymi s³owy program siê nie wy³o¿y tylko dlatego, ¿e ikonki zabrak³o. Ikony i
-	 * inne obrazki programu s¹ natomiast w zasobach (a nie w zwyczajnym katalogu)
-	 * dlatego, aby zapewniæ np. bezproblemowe otrzymanie wykonywalnego pliku JAR.
+	 * Zestaw poniÅ¼szych metod zapewnia bezpieczny sposÃ³b pobierania plikÃ³w z zasobÃ³w.
+	 * Innymi sÅ‚owy program siÄ™ nie wyÅ‚oÅ¼y tylko dlatego, Å¼e ikonki zabrakÅ‚o. Ikony i
+	 * inne obrazki programu sÄ… natomiast w zasobach (a nie w zwyczajnym katalogu)
+	 * dlatego, aby zapewniÄ… np. bezproblemowe otrzymanie wykonywalnego pliku JAR.
 	 */
 	/**
-	 * Pobiera z zasobów ikonê o podanej nazwie. Albo zwraca awaryjn.
-	 * @param resPath String - œcie¿ka do zasobów
-	 * @return ImageIcon - ikona obrazek z zasobów
+	 * Pobiera z zasobÃ³w ikonÄ™ o podanej nazwie. Albo zwraca awaryjnÄ….
+	 * @param resPath String - Å›cieÅ¼ka do zasobÃ³w
+	 * @return ImageIcon - ikona obrazek z zasobÃ³w
 	 */
 	public static ImageIcon getResIcon16(String resPath) {
 		ImageIcon icon=null;
@@ -199,9 +199,9 @@ public final class Tools {
 	}
 	
 	/**
-	 * Pobiera z zasobów ikonê o podanej nazwie. Albo zwraca awaryjn.
-	 * @param resPath String - œcie¿ka do zasobów
-	 * @return ImageIcon - ikona obrazek z zasobów
+	 * Pobiera z zasobÃ³w ikonÄ™ o podanej nazwie. Albo zwraca awaryjnÄ….
+	 * @param resPath String - Å›cieÅ¼ka do zasobÃ³w
+	 * @return ImageIcon - ikona obrazek z zasobÃ³w
 	 */
 	public static ImageIcon getResIcon22(String resPath) {
 		ImageIcon icon=null;
@@ -219,9 +219,9 @@ public final class Tools {
 	}
 	
 	/**
-	 * Pobiera z zasobów ikonê o podanej nazwie. Albo zwraca awaryjn.
-	 * @param resPath String - œcie¿ka do zasobów
-	 * @return ImageIcon - ikona obrazek z zasobów
+	 * Pobiera z zasobÃ³w ikonÄ™ o podanej nazwie. Albo zwraca awaryjnÄ….
+	 * @param resPath String - Å›cieÅ¼ka do zasobÃ³w
+	 * @return ImageIcon - ikona obrazek z zasobÃ³w
 	 */
 	public static ImageIcon getResIcon32(String resPath) {
 		ImageIcon icon=null;
@@ -239,9 +239,9 @@ public final class Tools {
 	}
 	
 	/**
-	 * Pobiera z zasobów ikonê o podanej nazwie. Albo zwraca awaryjn.
-	 * @param resPath String - œcie¿ka do zasobów
-	 * @return ImageIcon - ikona obrazek z zasobów
+	 * Pobiera z zasobÃ³w ikonÄ™ o podanej nazwie. Albo zwraca awaryjnÄ….
+	 * @param resPath String - Å›cieÅ¼ka do zasobÃ³w
+	 * @return ImageIcon - ikona obrazek z zasobÃ³w
 	 */
 	public static ImageIcon getResIcon48(String resPath) {
 		ImageIcon icon=null;
@@ -258,15 +258,15 @@ public final class Tools {
 	}
 	
 	/**
-	 * TO JEST KURWA CHORE. ImageIcon mo¿e byæ spokojnie przechowywany w Jar i getResource
-	 * bez problemu znajduje do niego dostêp, ale ju¿ Image - ZA CHOLERÊ. W Eclipse zadzia³a,
-	 * w exporcie do Jara - wywali ca³y program nieobs³ugiwalnym wyj¹tkiem (catch (Exception e))
-	 * mo¿na sobie wsadziæ gdzie S³oñce nie dochodzi. Metoda obchodzi ten problem, ale
-	 * nazwanie tego partyzantk¹ do niedopowiedzenie.
-	 * Oto metoda. Klêkajcie narody, kosztowa³a 2 godziny pracy, jak zawsze wynik to kilka linii.
+	 * TO JEST KURWA CHORE. ImageIcon moÅ¼e byÄ‡ spokojnie przechowywany w Jar i getResource
+	 * bez problemu znajduje do niego dostÄ™p, ale juÅ¼ Image - ZA CHOLERÄ˜. W Eclipse zadziaÅ‚a,
+	 * w exporcie do Jara - wywali caÅ‚y program nieobsÅ‚ugiwalnym wyjÄ…tkiem (catch (Exception e))
+	 * moÅ¼na sobie wsadziÄ‡ gdzie SÅ‚oÅ„ce nie dochodzi. Metoda obchodzi ten problem, ale
+	 * nazwanie tego partyzantkÄ… to niedopowiedzenie.
+	 * Oto metoda. KlÄ™kajcie narody, kosztowaÅ‚a 2 godziny pracy, jak zawsze wynik to kilka linii.
 	 * TYCH linii.
-	 * @param resPath String - œcie¿ka do source katalogu zasobów
-	 * @return Image - obiekt klasy Image, niegodny Jara jak siê okazuje
+	 * @param resPath String - Å›cieÅ¼ka do source katalogu zasobÃ³w
+	 * @return Image - obiekt klasy Image, niegodny Jara jak siÄ™ okazuje
 	 */
 	public static Image getImageFromIcon(String resPath) {
 		resPath = resPath.toLowerCase();
@@ -289,11 +289,11 @@ public final class Tools {
 	}
 	
 	/**
-	 * Metoda wstawia spacje przez napis, aby rozszerzyæ go do odpowiedniej d³ugoœci.
-	 * @param source String - ³añcuch do rozszerzenia
+	 * Metoda wstawia spacje przez napis, aby rozszerzyÄ‡ go do odpowiedniej dÅ‚ugoÅ›ci.
+	 * @param source String - Å‚aÅ„cuch do rozszerzenia
 	 * @param size int - rozmiar do rozszerzenia
-	 * @param left boolean - true jeœli dodajemy space od lewej strony napisu
-	 * @return String - ³añcuch wynikowy
+	 * @param left boolean - true jeÅ›li dodajemy space od lewej strony napisu
+	 * @return String - Å‚aÅ„cuch wynikowy
 	 */
 	public static String setToSize(String source, int size, boolean left) {
 		if(size <= source.length())

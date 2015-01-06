@@ -55,10 +55,10 @@ import abyss.workspace.ExtensionFileFilter;
 import abyss.darkgui.GUIManager;
 
 /**
- * Klasa obs³uguj¹ca okno klastrów dla danej sieci. Poza tym mnóstwo przycisków przeznaczonych
- * do wykonywania operacji na klastrach: generowanie, wczytywanie, eksport do plików (tak¿e
- * Excel). Wywo³uje mniejsze okno informacji o klastrowaniu po klikniêciu na odpowiedni¹
- * komórkê tabeli.
+ * Klasa obsÅ‚ugujÄ…ca okno klastrÃ³w dla danej sieci. Poza tym mnÃ³stwo przyciskÃ³w przeznaczonych
+ * do wykonywania operacji na klastrach: generowanie, wczytywanie, eksport do plikÃ³w (takÅ¼e
+ * Excel). WywoÅ‚uje mniejsze okno informacji o klastrowaniu po klikniÄ™ciu na odpowiedniÄ…
+ * komÃ³rkÄ™ tabeli.
  * @author MR
  *
  */
@@ -73,7 +73,7 @@ public class AbyssClusters extends JFrame {
     private SpinnerModel spinnerClustersModel;
     private JSpinner spinnerClusters;
     
-    private int mode = 0; // 0 - tryb 56 klastrowañ
+    private int mode = 0; // 0 - tryb 56 klastrowaÅ„
     private MyRenderer tabRenderer = new MyRenderer(mode, 18);
     
     private ClusteringInfoMatrix dataTableCase56 = null;
@@ -82,8 +82,8 @@ public class AbyssClusters extends JFrame {
     private String pathCHmetricsDir = "";
     
     /**
-     * Konstruktor domyœlny obiektu okna klasy AbyssClusters. Tworzy wszystkie elementy okna
-     * z tabel¹ klastrów.
+     * Konstruktor domyÅ›lny obiektu okna klasy AbyssClusters. Tworzy wszystkie elementy okna
+     * z tabelÄ… klastrÃ³w.
      */
     public AbyssClusters() {
     	myself = this;
@@ -138,7 +138,7 @@ public class AbyssClusters extends JFrame {
     }
 
     /**
-     * Metoda zwracaj¹ca panel boczny dla g³ównego okna, wype³niony przyciskami.
+     * Metoda zwracajÄ…ca panel boczny dla gÅ‚Ã³wnego okna, wypeÅ‚niony przyciskami.
      * @return JPanel - obiekt panelu bocznego
      */
 	private JPanel createButtonsPanelCase56() {
@@ -151,7 +151,7 @@ public class AbyssClusters extends JFrame {
 		clLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		textPanel.add(clLabel);	
 		
-		// Komponent okreœlenie górnego limitu klastrów dla obliczeñ
+		// Komponent okreÅ›lenie gÃ³rnego limitu klastrÃ³w dla obliczeÅ„
 		spinnerClustersModel = new SpinnerNumberModel(20, 2, 300, 1);
 		clustersToGenerate = 20;
 		spinnerClusters = new JSpinner(spinnerClustersModel);
@@ -168,7 +168,7 @@ public class AbyssClusters extends JFrame {
 		spinnerClusters.setAlignmentX(Component.CENTER_ALIGNMENT);
 		textPanel.add(spinnerClusters);	
 
-		// Przycisk rozpoczêcia procedury generowania klastrów na bazie inwariantów
+		// Przycisk rozpoczÄ™cia procedury generowania klastrÃ³w na bazie inwariantÃ³w
 		JButton generateButton = createStandardButton("", 
 				Tools.getResIcon48("/icons/clustWindow/buttonGen56.png"));
 		generateButton.setToolTipText("Generate all 56 clusterings for a selected number of clusters.");
@@ -182,10 +182,10 @@ public class AbyssClusters extends JFrame {
         textPanel.add(generateButton);
         textPanel.add(Box.createVerticalStrut(7));
         
-        // Przycisk rozpoczêcia procedury generowania metryk Celiñskiego-Harabasza dla tabeli klastrowañ
+        // Przycisk rozpoczÄ™cia procedury generowania metryk CeliÅ„skiego-Harabasza dla tabeli klastrowaÅ„
      	JButton generateCHButton = createStandardButton("", 
      			Tools.getResIcon48("/icons/clustWindow/buttonComputeCH.png"));
-     	generateCHButton.setToolTipText("Compute Caliñski-Harabasz metrics for a given number of clusters.");
+     	generateCHButton.setToolTipText("Compute CaliÅ„ski-Harabasz metrics for a given number of clusters.");
      	generateCHButton.addActionListener(new ActionListener() {
      		public void actionPerformed(ActionEvent actionEvent) {
      			buttonComputeCHmetrics();
@@ -211,7 +211,7 @@ public class AbyssClusters extends JFrame {
         // Przycisk wczytywania metryk C-H dla tabeli
      	JButton loadCHButton = createStandardButton("", 
      			Tools.getResIcon48("/icons/clustWindow/buttonLoadCHDir.png"));
-     	loadCHButton.setToolTipText("Load Caliñski-Harabasz metrics from the selected directory.");
+     	loadCHButton.setToolTipText("Load CaliÅ„ski-Harabasz metrics from the selected directory.");
      	loadCHButton.addActionListener(new ActionListener() {
      		public void actionPerformed(ActionEvent actionEvent) {
      			buttonLoadCHmetricIntoTables();
@@ -265,7 +265,7 @@ public class AbyssClusters extends JFrame {
 	}
 	
 	/**
-	 * Metoda pomocnicza do tworzenia przycisków do panelu bocznego.
+	 * Metoda pomocnicza do tworzenia przyciskÃ³w do panelu bocznego.
 	 * @param text String - tekst przycisku
 	 * @param icon Icon - ikona
 	 * @return JButton - nowy przycisk
@@ -305,39 +305,39 @@ public class AbyssClusters extends JFrame {
     }
     
     /**
-     * Metoda ustawia œcie¿kê dostêpu do katalogu klastrów.
-     * @param path String - œcie¿ka do katalogu
+     * Metoda ustawia Å›cieÅ¼kÄ™ dostÄ™pu do katalogu klastrÃ³w.
+     * @param path String - Å›cieÅ¼ka do katalogu
      */
     public void setClusterPath(String path) {
     	pathClustersDir = path;
     }
     
     /**
-     * Metoda zwraca œcie¿kê dostêpu do katalogu klastrów.
-     * @return String - œcie¿ka do katalogu
+     * Metoda zwraca Å›cieÅ¼kÄ™ dostÄ™pu do katalogu klastrÃ³w.
+     * @return String - Å›cieÅ¼ka do katalogu
      */
     public String getClusterPath() {
     	return pathClustersDir;
     }
     
     /**
-     * Metoda pomocnicza konstruktora, tworzy panel z tabel¹ danych na 15 kolumn.
-     * 7 x 8 = 56 podtabel klastrowañ, standardowy przypadek.
-     * @return JPanel - panel zawieraj¹cy tabelê danych
+     * Metoda pomocnicza konstruktora, tworzy panel z tabelÄ… danych na 15 kolumn.
+     * 7 x 8 = 56 podtabel klastrowaÅ„, standardowy przypadek.
+     * @return JPanel - panel zawierajÄ…cy tabelÄ™ danych
      */
     private JPanel createTablePanelCase56() {
     	JPanel main = new JPanel();
     	main.setLayout(new BorderLayout());
 
     	model = new DefaultTableModel();
-        model.addColumn("Column1"); //miara odleg³oœci
+        model.addColumn("Column1"); //miara odlegÅ‚oÅ›ci
         model.addColumn("Column2"); //zerowe klastry dla algorytmu klastrowania
         model.addColumn("Column3"); //MSS algorytmu
         model.addColumn("Column4"); //CH algorytmu
-        model.addColumn("Column5"); //kolejna trójka jak dla 2-4, itd,
+        model.addColumn("Column5"); //kolejna trÃ³jka jak dla 2-4, itd,
         model.addColumn("Column6");
         model.addColumn("Column7");
-        model.addColumn("Column8"); //kolejna trójka jak dla 2-4, itd,
+        model.addColumn("Column8"); //kolejna trÃ³jka jak dla 2-4, itd,
         model.addColumn("Column9");
         model.addColumn("Column10");
         model.addColumn("Column11");
@@ -360,7 +360,7 @@ public class AbyssClusters extends JFrame {
         table.setFillsViewportHeight(true);
         table.setDefaultRenderer(Object.class, tabRenderer); // 0 - case 56
         
-        table.addMouseListener(new MouseAdapter() { //listener klikniêæ
+        table.addMouseListener(new MouseAdapter() { //listener klikniÄ™Ä‡
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
           	    	JTable target = (JTable)e.getSource();
@@ -399,7 +399,7 @@ public class AbyssClusters extends JFrame {
         //rozmiary kolumn:
         table.getColumnModel().getColumn(0).setPreferredWidth(80);
         for(int index=1; index<table.getColumnCount(); index++) {
-        	if((index+2) % 3 == 0) { //trójka
+        	if((index+2) % 3 == 0) { //trÃ³jka
         		table.getColumnModel().getColumn(index).setPreferredWidth(20);
         		table.getColumnModel().getColumn(index+1).setPreferredWidth(50);
         		table.getColumnModel().getColumn(index+2).setPreferredWidth(50);
@@ -416,23 +416,23 @@ public class AbyssClusters extends JFrame {
     }
     
     /**
-     * Obs³uga zdarzenia klikniêcia na komórkê. Metoda przelicza lokalizacjê komórki na lokalizacjê
-     * w tabeli danych. Nastêpnie wywo³uje podokno informacyjne.
-     * @param row int - nr klikniêtego wiersza
-     * @param column int - nr klikniêtej komórki
+     * ObsÅ‚uga zdarzenia klikniÄ™cia na komÃ³rkÄ™. Metoda przelicza lokalizacjÄ™ komÃ³rki na lokalizacjÄ™
+     * w tabeli danych. NastÄ™pnie wywoÅ‚uje podokno informacyjne.
+     * @param row int - nr klikniÄ™tego wiersza
+     * @param column int - nr klikniÄ™tej komÃ³rki
      */
     private void cellClickedEvent(int row, int column) {
 		int sub = subRowsSize;
-		if(column != 0 && row % (sub+1) != 0) { // NIE dla I kolumny i wierszy nag³ówkowych
+		if(column != 0 && row % (sub+1) != 0) { // NIE dla I kolumny i wierszy nagÅ‚Ã³	wkowych
 			try {
-				//tutaj dzieje siê magia na liczbach - jednako¿ dzieje siê prawid³owo, dlatego
-				//lepiej tutaj niczego nie zmieniaæ we wzorach
+				//tutaj dzieje siÄ™ magia na liczbach - jednakoÅ¼ dzieje siÄ™ prawidÅ‚owo, dlatego
+				//lepiej tutaj niczego nie zmieniaÄ‡ we wzorach
 				int clusterNumber = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
 				int algID = (int)((column-1) / 3); //1,2,3 -> 0; 4,5,6->1, itd.
 				
-				//obliczanie numery wiersza nag³ówego nad klikniêtym wierszem:
+				//obliczanie numery wiersza nagÅ‚Ã³wkowego nad klikniÄ™tym wierszem:
 				int headerRowNumber = row - (clusterNumber-1);
-				//zmiana na nr miary, pierwszy blok, to miara 0, nastêpny 1, itd. a¿ do 7
+				//zmiana na nr miary, pierwszy blok, to miara 0, nastÄ™pny 1, itd. aÅ¼ do 7
 				headerRowNumber /= (subRowsSize+1);
 				
 				Clustering omg = dataTableCase56.getClustering((headerRowNumber*7)+algID, clusterNumber-2);
@@ -446,8 +446,8 @@ public class AbyssClusters extends JFrame {
 	}
     
     /**
-     * Metoda s³u¿¹ca do wype³nienia tabeli w przypadku kiedy mamy 56 klastrowañ.
-     * @param newTable ClusteringInfoMatrix - g³ówna baza-tabela danych
+     * Metoda sÅ‚uÅ¼Ä…ca do wypeÅ‚nienia tabeli w przypadku kiedy mamy 56 klastrowaÅ„.
+     * @param newTable ClusteringInfoMatrix - gÅ‚Ã³wna baza-tabela danych
      */
 	public void registerDataCase56(ClusteringInfoMatrix newTable) {
 		if(newTable == null) return; //you no take candle!
@@ -463,23 +463,23 @@ public class AbyssClusters extends JFrame {
     	GUIManager.getDefaultGUIManager().log("Clearing old clusterings data table", "text", true);
     	
     	tabRenderer.setMode(mode);  // !!!
-    	tabRenderer.setSubRows(subRowsSize); // !!! z³a wartoœæ i tabela idzie w ....
+    	tabRenderer.setSubRows(subRowsSize); // !!! zÅ‚a wartoÅ›Ä‡ i tabela idzie w ....
     	//CLEAR OLD TABLE ROWS:
     	model.setNumRows(0);
     	table.revalidate();
     	
     	String[] metricName = { "Correlation", "Pearson", "Binary", "Canberra", "Euclidean", "Manhattan", "Maximum", "Minkowski" };
     	
-    	for(int metric=0; metric <8; metric++) { //dla ka¿dej z oœmiu metryk:
+    	for(int metric=0; metric <8; metric++) { //dla kaÅ¼dej z oÅ›miu metryk:
     		String[] data = { metricName[metric],"0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H"};
 			model.addRow(data);
 			
     		for(int rows=0; rows < subRowsSize; rows++) { //dla odpowiedniej liczby wierszy:
-    			String[] dataRow = { "","","","","","","","","","","","","","","","","","","","","",""}; //22 elementów
+    			String[] dataRow = { "","","","","","","","","","","","","","","","","","","","","",""}; //22 elementÃ³w
     			dataRow[0] = ""+(rows+2);
-    			for(int alg=0; alg < 7; alg++ ) { // dla ka¿dego wiersza jedziemy po algorytmach
+    			for(int alg=0; alg < 7; alg++ ) { // dla kaÅ¼dego wiersza jedziemy po algorytmach
     				// Average, Centroid, Complete, McQuitty, Median, Single, Ward
-        			int tableIndex = (metric*7)+alg; //która tabelka
+        			int tableIndex = (metric*7)+alg; //ktÃ³ra tabelka
             		
         			dataRow[1+alg*3] = ""+dataTableCase56.getMatrix().get(tableIndex).get(rows).zeroClusters;
         			
@@ -497,26 +497,37 @@ public class AbyssClusters extends JFrame {
     	GUIManager.getDefaultGUIManager().log("New clustering data table has been successfully read.", "text", true);
     }
     
+	/**
+	 * Metoda formatuje liczbÄ™ typu double do wyznaczonej liczby miejsc po przecinku, a nastÄ™pnie
+	 * zwraca jÄ… jako String.
+	 * @param evalMSS double - liczba do przyciÄ™cia
+	 * @return String - reprezentacja liczby
+	 */
     private String cutValueMSS(double evalMSS) {
     	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(getLocale());
     	otherSymbols.setDecimalSeparator('.');
-    	//otherSymbols.setGroupingSeparator('.'); 
     	DecimalFormat df = new DecimalFormat("#.####", otherSymbols);
-    	//DecimalFormat df = new DecimalFormat("#.####");
-        
 		return df.format(evalMSS);
 	}
     
-    private String cutValueCH(double evalMSS) {
+    /**
+	 * Metoda formatuje liczbÄ™ typu double do wyznaczonej liczby miejsc po przecinku, a nastÄ™pnie
+	 * zwraca jÄ… jako String.
+	 * @param evalMSS double - liczba do przyciÄ™cia
+	 * @return String - reprezentacja liczby
+	 */
+    private String cutValueCH(double evalCH) {
     	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(getLocale());
     	otherSymbols.setDecimalSeparator('.');
-    	//otherSymbols.setGroupingSeparator('.'); 
     	DecimalFormat df = new DecimalFormat("#.#", otherSymbols);
-    	//DecimalFormat df = new DecimalFormat("#.####");
-        
-		return df.format(evalMSS);
+		return df.format(evalCH);
 	}
 
+    /**
+     * Metoda zwraca skalowalny kolor dla liczby.
+     * @param power
+     * @return
+     */
     public Color getColor(double power)
 	{
 	    //double H = power * 0.4; // Hue (note 0.4 = Green, see huge chart below)
@@ -540,30 +551,30 @@ public class AbyssClusters extends JFrame {
     //**************************************************************************************************
     
     /**
-     * Metoda realizuje generowanie klastrowañ dla inwariantów z sieci. Inwarianty bêd¹ 
-     * w formie pliku CSV, który bêdzie utworzony automatycznie, tak wiêc sieæ i inwarianty
-     * musz¹ ju¿ istnieæ w programie. W jej efekcie powstaje katalog z klastrowaniami.
+     * Metoda realizuje generowanie klastrowaÅ„ dla inwariantÃ³w z sieci. Inwarianty bÄ™dÄ… 
+     * w formie pliku CSV, ktÃ³ry bÄ™dzie utworzony automatycznie, tak wiÄ™c sieÄ‡ i inwarianty
+     * muszÄ… juÅ¼ istnieÄ‡ w programie. W jej efekcie powstaje katalog z klastrowaniami.
      */
     private void buttonGenerateClusterings() {
 		if(clustersToGenerate > 1) {
 			pathCSVfile = GUIManager.getDefaultGUIManager().io.generateClustersCase56(clustersToGenerate);
-			if(pathCSVfile == null) { //jeœli coœ siê nie uda³o
-				//pathClustersDir = ""; //œcie¿ka do katalogu klastrowañ
-				pathCSVfile = ""; //œcie¿ka do pliku CSV
+			if(pathCSVfile == null) { //jeÅ›li coÅ› siÄ™ nie udaÅ‚o
+				//pathClustersDir = ""; //Å›cieÅ¼ka do katalogu klastrowaÅ„
+				pathCSVfile = ""; //Å›cieÅ¼ka do pliku CSV
 			} else {
 				JOptionPane.showMessageDialog(null, "Clustering procedure for all cases initiated. This make take so time to finish.", 
 						"R computation initiated", JOptionPane.INFORMATION_MESSAGE);
 				//pathClustersDir = new File(pathCSVfile).getParent(); //uzyskanie katalogu z klastrowaniami
-				//przy czym tam wci¹¿ pewnie trwa praca (dopiero siê zaczê³a) tworzenia w osobnym
-				//w¹tku plików klastrowañ poprzez skrypty R
+				//przy czym tam wciÄ…Å¼ pewnie trwa praca (dopiero siÄ™ zaczÄ™Å‚a) tworzenia w osobnym
+				//wÄ…tku plikÃ³w klastrowaÅ„ poprzez skrypty R
 			}
 		}
 	}
     
     /**
-     * Metoda odpowiada za utworzenie tabeli danych i jej wyœwietlenie. Tabela bêdzie
+     * Metoda odpowiada za utworzenie tabeli danych i jej wyÅ›wietlenie. Tabela bÄ™dzie
      * tworzona na podstawie danych ze wskazanego katalogu z wygenerowanymi plikami
-     * klastrowañ.
+     * klastrowaÅ„.
      */
     private void buttonLoadClusteringDirectory() {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
@@ -613,7 +624,7 @@ public class AbyssClusters extends JFrame {
     
     /**
      * Metoda odpowiedzialna za utworzenie dokumentu w formacie .xls programu Excel
-     * wyœwietlanej w oknie tabeli danych o klastrowaniach.
+     * wyÅ›wietlanej w oknie tabeli danych o klastrowaniach.
      */
     private void buttonExportTableToExcel() {
 		try{
@@ -627,7 +638,7 @@ public class AbyssClusters extends JFrame {
 				return;
 			} 
 			
-			//sprawdziæ czy s¹ wszystkie pliki / odtworzyæ if necessary
+			//sprawdziÄ‡ czy sÄ… wszystkie pliki / odtworzyÄ‡ if necessary
 			ClusterReader cr = new ClusterReader();
 			if(cr.checkFiles(dirPath) == -2) { //no cluster files
 				JOptionPane.showMessageDialog(null, "Directory does not contain a single cluster file.",
@@ -644,7 +655,7 @@ public class AbyssClusters extends JFrame {
 				FileFilter filter[] = new FileFilter[1];
 				filter[0] = new ExtensionFileFilter(".xls - Excel 2003",  new String[] { "XLS" });
 				String newLocation = Tools.selectFileDialog(dirPath, filter, "", "");
-				if(newLocation.equals("")) { //czy chcemy przenieœæ plik w inne miejsce
+				if(newLocation.equals("")) { //czy chcemy przenieÅ›Ä‡ plik w inne miejsce
 					//leave it in cluster folder
 					GUIManager.getDefaultGUIManager().log("Exporting table succeed. Created file: "
 							+dirPath+"//ClustersSummary.xls", "text", true);
@@ -669,20 +680,20 @@ public class AbyssClusters extends JFrame {
 	}
     
     /**
-     * Metoda odpowiedzialna za wygenerowanie metryk Celiñskiego-Harabasza dla
-     * zadanego limitu liczby klastrów.
+     * Metoda odpowiedzialna za wygenerowanie metryk CeliÅ„skiego-Harabasza dla
+     * zadanego limitu liczby klastrÃ³w.
      */
     private void buttonComputeCHmetrics() {
 		if(clustersToGenerate > 1) {
 			String newCHpath = GUIManager.getDefaultGUIManager().io.generateAllCHindexes(clustersToGenerate);
-			if(newCHpath != null) //jeœli coœ siê sta³o siê... :)
+			if(newCHpath != null) //jeÅ›li coÅ› siÄ™ staÅ‚o siÄ™... :)
 				pathCHmetricsDir = newCHpath;
-			//uwaga! w powy¿szym katalogu miary dopiero powstaj¹!
+			//uwaga! w powyÅ¼szym katalogu miary dopiero powstajÄ…!
 		}
 	}
     
     /**
-     * Obs³uga wczytywania miar Celiñskiego-Harabasz do tabeli g³ównej.
+     * ObsÅ‚uga wczytywania miar CeliÅ„skiego-Harabasz do tabeli gÅ‚Ã³wnej.
      */
 	private void buttonLoadCHmetricIntoTables() {
 		if(dataTableCase56 == null) {
@@ -691,7 +702,7 @@ public class AbyssClusters extends JFrame {
 		}
 		
 		String dirPath = Tools.selectDirectoryDialog(pathCHmetricsDir, "Select directory",
-				"Directory with 56 R-generated files containing Celiñski-Harabasz metrics");
+				"Directory with 56 R-generated files containing CeliÅ„ski-Harabasz metrics");
 		if(dirPath.equals("")) { // czy wskazano cokolwiek
 			return;
 		} 
@@ -702,10 +713,10 @@ public class AbyssClusters extends JFrame {
 	}
 	
 	/**
-	 * Metoda wczytuje miary Celiñskiego-Harabasz do tabeli g³ównej. Tak siê mi³o sk³ada, ¿e
-	 * indeksy podtabel (algorytm-miara) s¹ te same, bo pliki w obu przypadkach (klastrowanie 
-	 * oraz miary C-H) by³y czytane w tym samym porz¹dku. A jeœli siê nie da³o, to w ogóle nie
-	 * by³y przeczytane, wiêc i tak nie ma co wczytywaæ :)
+	 * Metoda wczytuje miary CeliÅ„skiego-Harabasz do tabeli gÅ‚Ã³wnej. Tak siÄ™ miÅ‚o skÅ‚ada, Å¼e
+	 * indeksy podtabel (algorytm-miara) sÄ… te same, bo pliki w obu przypadkach (klastrowanie 
+	 * oraz miary C-H) byÅ‚y czytane w tym samym porzÅ›dku. A jeÅ›li siÄ™ nie daÅ‚o, to w ogÃ³le nie
+	 * byÅ‚y przeczytane, wiÄ™c i tak nie ma co wczytywaÄ‡ :)
 	 * @param chDataCore ArrayList[ArrayList[Double]] - metryka CH
 	 */
 	private void integrateCHIntoDatabase(ArrayList<ArrayList<Double>> chDataCore) {
@@ -730,7 +741,7 @@ public class AbyssClusters extends JFrame {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za zapis tabeli danych do pliku, za pomoc¹ mechanizmu
+	 * Metoda odpowiedzialna za zapis tabeli danych do pliku, za pomocÄ… mechanizmu
 	 * serializacji.
 	 */
 	private void buttonSerializeDataTable() {
@@ -756,7 +767,7 @@ public class AbyssClusters extends JFrame {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za odczyt pliku z zserializowanymi danymi obiektów 
+	 * Metoda odpowiedzialna za odczyt pliku z zserializowanymi danymi obiektÃ³w 
 	 * tablicy danych do... tablicy danych. Makes sense actually.
 	 */
 	private void buttonDeserializeFile() {
@@ -788,7 +799,7 @@ public class AbyssClusters extends JFrame {
 	}
     
 	/**
-	 * Inicjalizacja agentów nas³uchuj¹cych ró¿nych zdarzeñ dla okna klastrowañ.
+	 * Inicjalizacja agentÃ³w nasÅ‚uchujÄ…cych rÃ³Å¼ne zdarzenia dla okna klastrowaÅ„.
 	 */
     private void initiateListeners() {
     	addWindowListener(new WindowAdapter() {
@@ -803,7 +814,7 @@ public class AbyssClusters extends JFrame {
 	  	    public void windowLostFocus(WindowEvent e) {}
 	  	    
 	  	    /**
-	  	     * Kiedy okno staje siê aktywne
+	  	     * Kiedy okno staje siÄ™ aktywne
 	  	     */
   	  	    public void windowActivated(WindowEvent e) {
   	  	    /*
@@ -850,7 +861,7 @@ public class AbyssClusters extends JFrame {
     
     
     /**
-     * Klasa wewnêtrzna odpowiedzialna za rysowanie poszczególnych komórek.
+     * Klasa wewnÄ™trzna odpowiedzialna za rysowanie poszczegÃ³lnych komÃ³rek.
      * @author MR
      *
      */
@@ -859,18 +870,18 @@ public class AbyssClusters extends JFrame {
     	private int mode = 0;
     	private int subRows = 0;
     	/**
-    	 * Konstruktor domyœlny obiektów klasy MyRenderer.
+    	 * Konstruktor domyÅ›lny obiektÃ³w klasy MyRenderer.
     	 */
     	public MyRenderer() {
     		
     	}
     	
     	/**
-    	 * Konstruktor obiektów klasy MyRenderer przyjmuj¹cy numer trybu rysowania.
+    	 * Konstruktor obiektÃ³w klasy MyRenderer przyjmujÄ…cy numer trybu rysowania.
     	 * @param mode int - tryb rysowania
     	 */
     	public MyRenderer(int mode, int rows) {
-    		this(); //wywo³anie konstruktora domyœlnego
+    		this(); //wywoÅ‚anie konstruktora domyÅ›lnego
     		this.mode = mode;
     		this.subRows = rows;
     	}
@@ -884,7 +895,7 @@ public class AbyssClusters extends JFrame {
     	}
     	
     	/**
-    	 * Przeci¹¿ona metoda odpowiedzialna za zwrócenie komórki tabeli.
+    	 * PrzeciÄ…Å¼ona metoda odpowiedzialna za zwrÃ³cenie komÃ³rki tabeli.
     	 */
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
@@ -895,13 +906,13 @@ public class AbyssClusters extends JFrame {
         }
 
         /**
-         * Metoda trybu rysowania dla 56 klastrów, uruchamia siê DLA KA¯DEJ komórki dodawanej do tabeli.
-         * @param value Object - wartoœæ do wpisania
-         * @param isSelected boolean - czy komórka jest wybrana
+         * Metoda trybu rysowania dla 56 klastrÃ³w, uruchamia siÄ™ DLA KAÅ»DEJ komÃ³rki dodawanej do tabeli.
+         * @param value Object - wartoÅ›Ä‡ do wpisania
+         * @param isSelected boolean - czy komÃ³rka jest wybrana
          * @param hasFocus boolean - czy jest aktywna
          * @param row int - nr wiersza
          * @param column int - nr kolumny
-         * @return Component - konkretnie: JTextField jako komórka tabeli
+         * @return Component - konkretnie: JTextField jako komÃ³rka tabeli
          */
 		private Component paintCellsCase56(Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(
@@ -912,10 +923,10 @@ public class AbyssClusters extends JFrame {
 		    	renderer.setFont(new Font("Arial", Font.BOLD, 10));
 		    	renderer.setBackground(Color.white);
 		    } else {
-		    	if(row == 0 || row % (subRows+1) == 0) { //wiersza nag³ówkowe nazw algorytmów
+		    	if(row == 0 || row % (subRows+1) == 0) { //wiersza nagÅ‚Ã³wkowe nazw algorytmÃ³w
 		    		((DefaultTableCellRenderer)renderer).setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
 		    		renderer.setFont(new Font("Arial", Font.BOLD, 10));
-		    	} else { //ca³a reszta wierszy
+		    	} else { //caÅ‚a reszta wierszy
 		    		((DefaultTableCellRenderer)renderer).setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
 		    		renderer.setFont(new Font("Arial", Font.PLAIN, 12));
 		    		float cellValue = -1.0f;
@@ -938,13 +949,13 @@ public class AbyssClusters extends JFrame {
 		    			cellValue = cellValue * 100;
 		    			renderer.setBackground(getSimpleColor(cellValue));
 		    		}
-		    		else { //C-H pozosta³e
+		    		else { //C-H pozostaÅ‚e
 		    			 ((DefaultTableCellRenderer)renderer).setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
 		    			 renderer.setBackground(Color.lightGray);
 		    			 try {
 		    				 int r = (row) % (subRows+1); 
-		    				 // r - bezwzglêdny nr wiersza: 1 to pierwszy wiersz pod lini¹ nazw algorytmów
-		    				 // r = SubRows to ostatni wiersz przed kolejn¹ ramk¹
+		    				 // r - bezwzglÄ™dny nr wiersza: 1 to pierwszy wiersz pod liniÄ… nazw algorytmÃ³w
+		    				 // r = SubRows to ostatni wiersz przed kolejnÄ… ramkÄ…
 
 		    				 if(r == 1) {
 		    					 Object nextCell = table.getValueAt(row+1, column);	
@@ -987,9 +998,9 @@ public class AbyssClusters extends JFrame {
 		}
 		
 		/**
-		 * Metoda zwraca kolor w zale¿noœci od skali w formie proste skali kolorów zieleñ-czerwieñ.
-		 * @param power double - wartoœæ od 0 do 100;
-		 * @return Color - kolor w zale¿noœci od skali
+		 * Metoda zwraca kolor w zaleÅ¼noÅ›ci od skali w formie proste skali kolorÃ³w zieleÅ„-czerwieÅ„.
+		 * @param power double - wartoÅ›Ä‡ od 0 do 100;
+		 * @return Color - kolor w zaleÅ¼noÅ›ci od skali
 		 */
 		public Color getSimpleColor(double power)
 		{

@@ -24,8 +24,8 @@ import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
 /**
- * Zadaniem obiektu tej klasy jest utworzenie dokumentu programu Excel (.xls) z pe³nymi
- * danymi dotycz¹cymi konkretnego klastrowania dla sieci. Koniec z robótkami rêcznymi!
+ * Zadaniem obiektu tej klasy jest utworzenie dokumentu programu Excel (.xls) z peÅ‚nymi
+ * danymi dotyczÄ…cymi konkretnego klastrowania dla sieci. Koniec z robÃ³tkami rÄ™cznymi!
  * @author MR
  *
  */
@@ -45,7 +45,7 @@ public class ExcelWriter {
 	private boolean success = false;
 	
 	/**
-	 * Konstruktor domyœlny obiektu klasy ExcelWriter.
+	 * Konstruktor domyÅ›lny obiektu klasy ExcelWriter.
 	 */
 	public ExcelWriter() {
 		succeed = false;
@@ -56,7 +56,7 @@ public class ExcelWriter {
 	 * Kontruktor obiektu klasy ExcelWriter.
 	 * @param mode int - jaki tym dokumentu Excela tworzymy
 	 * @param data ClusteringExtended - dane klastrowania
-	 * @param path String - œcie¿ka do pliku
+	 * @param path String - Å›cieÅ¼ka do pliku
 	 */
 	public ExcelWriter(int mode, ClusteringExtended data, String path) {
 		this();
@@ -69,15 +69,15 @@ public class ExcelWriter {
 	}
 	
 	/**
-	 * Zwraca stan flagi, czy ca³oœæ siê uda³a.
-	 * @return boolean - true, jeœli wszystko posz³o dobrze
+	 * Zwraca stan flagi, czy caÅ‚oÅ›Ä‡ siÄ™ udaÅ‚a.
+	 * @return boolean - true, jeÅ›li wszystko poszÅ‚o dobrze
 	 */
 	public boolean isSuccess() {
 		return success;
 	}
 	
 	/**
-	 * G³ówna metoda do tworzenia arkusza w formacie .xls dla danego klastrowania
+	 * GÅ‚Ã³wna metoda do tworzenia arkusza w formacie .xls dla danego klastrowania
 	 */
 	public void makeClusteringFile() {
 		try {
@@ -119,10 +119,10 @@ public class ExcelWriter {
 	}
 	
 	/**
-	 * Metoda wype³nia kolejne arkusze klastrów danymi.
-	 * @param clusterSheet WritableSheet - który arkusz
+	 * Metoda wypeÅ‚nia kolejne arkusze klastrÃ³w danymi.
+	 * @param clusterSheet WritableSheet - ktÃ³ry arkusz
 	 * @param clusterIndex int - nr klastra
-	 * @throws Exception - p³acze i jêki jxl'a
+	 * @throws Exception - pÅ‚acze i jÄ™ki jxl'a
 	 */
 	private void fillClusterDatasheet(WritableSheet clusterSheet, int clusterIndex, boolean extended) throws Exception {
 		int rowIndex = 0;
@@ -133,7 +133,7 @@ public class ExcelWriter {
 		double clusterMSS = dataCore.metaData.clusterMSS.get(clusterIndex);
 		int clusterSize = dataCore.clustersInv.get(clusterIndex).size();
 		
-		//nag³ówek:
+		//nagÅ‚Ã³wek:
 		txt = "Cluster #"+(clusterIndex+1)+" ("+dataCore.metaData.algorithmName+"/"
 				+dataCore.metaData.metricName+") Size: "+clusterSize; //+" MSS: "+clusterMSS;
 		addTextCell(clusterSheet, 0, 0, txt, defCellFormatBold, null);
@@ -147,7 +147,7 @@ public class ExcelWriter {
 		
 		ArrayList<Integer> mctInCluster = dataCore.getMCTFrequencyInCluster(clusterIndex);
 		rowIndex = 3;
-		for(int i=0; i<mctInCluster.size(); i++) { //tabelka zbiorów MCT
+		for(int i=0; i<mctInCluster.size(); i++) { //tabelka zbiorÃ³w MCT
 			if(mctInCluster.get(i) > 0) {
 				addTextCell(clusterSheet, 1, rowIndex, "MCT "+(i+1), defCellFormat, null);
 				addIntCell(clusterSheet, 2, rowIndex, mctInCluster.get(i), defCellFormat,
@@ -211,7 +211,7 @@ public class ExcelWriter {
 		addTextCell(clusterSheet, 4, rowIndex, "Transitions:", defCellFormatBold, null);
 		rowIndex++;
 		
-		for(int inv=0; inv<dataCore.clustersInv.get(clusterIndex).size(); inv++) { //tabelka inwariantów
+		for(int inv=0; inv<dataCore.clustersInv.get(clusterIndex).size(); inv++) { //tabelka inwariantÃ³w
 			int invNo = dataCore.clustersInv.get(clusterIndex).get(inv);
 			ArrayList<String> invArray = dataCore.getNormalizedInvariant(invNo);
 			String nr = invArray.get(0);
@@ -232,8 +232,8 @@ public class ExcelWriter {
 	}
 	
 	/**
-	 * Metoda zwraca opis s³owny dla wartoœci miary MSS.
-	 * @param clusterMSS double - wartoœæ miary
+	 * Metoda zwraca opis sÅ‚owny dla wartoÅ›ci miary MSS.
+	 * @param clusterMSS double - wartoÅ›Ä‡ miary
 	 * @return String - opis
 	 */
 	private String getMSSEval(double clusterMSS) {
@@ -259,8 +259,8 @@ public class ExcelWriter {
 	}
 	
 	/**
-	 * Metoda zwraca kolor dla wartoœci miary MSS.
-	 * @param clusterMSS double - wartoœæ MSS
+	 * Metoda zwraca kolor dla wartoÅ›ci miary MSS.
+	 * @param clusterMSS double - wartosÄ‡ MSS
 	 * @return Colour - znormalizowany kolor dla Excel2003
 	 */
 	private Colour setMSSEval(double clusterMSS) {
@@ -273,10 +273,10 @@ public class ExcelWriter {
 	}
 
 	/**
-	 * Metoda zwraca kolor dla t³a komórki w zale¿noœci od wartoœci I wzglêdem II
-	 * @param meanValue int - wartoœæ w komórce
-	 * @param maxValue int - wartoœæ referencyjna, maksymalna
-	 * @return Colour - obiekt z klasy kolekcji kolorów (Excel2003)
+	 * Metoda zwraca kolor dla tÅ‚a komÃ³rki w zaleÅ¼noÅ›ci od wartoÅ›ci I wzglÄ™dem II
+	 * @param meanValue int - wartoÅ›Ä‡ w komÃ³rce
+	 * @param maxValue int - wartoÅ›Ä‡ referencyjna, maksymalna
+	 * @return Colour - obiekt z klasy kolekcji kolorÃ³w (Excel2003)
 	 */
 	private Colour setColour(int meanValue, int maxValue){
 		/*
@@ -300,9 +300,9 @@ public class ExcelWriter {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za wype³nienie arkusza zbiorów MCT danymi.
-	 * @param mctSheet WritableSheet - zak³ada tworzonego arkusza Excel
-	 * @throws Exception - coœ siê zepsu³o, p³acze i jêki jxl'a
+	 * Metoda odpowiedzialna za wypeÅ‚nienie arkusza zbiorÃ³w MCT danymi.
+	 * @param mctSheet WritableSheet - zakÅ‚ada tworzonego arkusza Excel
+	 * @throws Exception - coÅ› siÄ™ zepsuÅ‚o, pÅ‚acze i jÄ™ki jxl'a
 	 */
 	private void fillMCTdatasheet(WritableSheet mctSheet) throws Exception {
 		int rowIndex = 0;
@@ -338,12 +338,12 @@ public class ExcelWriter {
 	}
 
 	/**
-	 * Metoda ustawia szerokoœci kolumn dla odpowiednich klas arkuszy.
+	 * Metoda ustawia szerokoÅ›ci kolumn dla odpowiednich klas arkuszy.
 	 * @param sheet WritableSheet - obiekt arkusza
 	 * @param type String - jaki typ arkusza
 	 */
 	private void setColumns(WritableSheet sheet, String type) {
-		// setColumnView(ind_col, width) width: ka¿da 1 to: 9px / 0.56czegoœ-tam
+		// setColumnView(ind_col, width) width: kaÅ¼da 1 to: 9px / 0.56czegoÅ›-tam
 		if(type.equals("mct")) {
 			sheet.setColumnView(0, 12); //nr MCT
 			sheet.setColumnView(1, 12); //ile tranz
@@ -352,8 +352,8 @@ public class ExcelWriter {
 		} else if(type.equals("clusterStd")) {
 			sheet.setColumnView(0, 18); // zarys, nazwa, info, etc
 			sheet.setColumnView(1, 12); // numery mct, tranzycji, inw.
-			sheet.setColumnView(2, 12); // licznoœæ
-			sheet.setColumnView(3, 10); // licznoœæ (real)
+			sheet.setColumnView(2, 12); // licznoÅ›Ä‡
+			sheet.setColumnView(3, 10); // licznoÅ›Ä‡ (real)
 			sheet.setColumnView(4, 41); //nazwy tranzycji
 			sheet.setColumnView(7, 12); //mct extended
 
@@ -361,8 +361,8 @@ public class ExcelWriter {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za utworzenie stylów wype³niania komórek dla obiektu klasy.
-	 * @throws WriteException - jeœli coœ nie zadzia³a
+	 * Metoda odpowiedzialna za utworzenie stylÃ³w wypeÅ‚niania komÃ³rek dla obiektu klasy.
+	 * @throws WriteException - jeÅ›li coÅ› nie zadziaÅ‚a
 	 */
 	private void initiateFonts() throws WriteException {
 		WritableFont times10pt = new WritableFont(WritableFont.TIMES, 10);
@@ -400,13 +400,13 @@ public class ExcelWriter {
 	}
 
 	/**
-	 * Metoda dodaje wartoœæ liczbow¹ do komórki arkusza.
-	 * @param sheet WritableSheet - arkusz o którym mowa
+	 * Metoda dodaje wartoÅ›Ä‡ liczbowÄ… do komÃ³rki arkusza.
+	 * @param sheet WritableSheet - arkusz o ktÃ³rym mowa
 	 * @param column int - nr kolumny od 0
 	 * @param row int - nr wiersza od 0
-	 * @param value Integer - wartoœæ int do wpisania
-	 * @param format WritableCellFormat - domyœlny format czcionek
-	 * @param col Colour - jeœli jest podany (a nie null) to wtedy jest uwzglêdniany
+	 * @param value Integer - wartoÅ›Ä‡ int do wpisania
+	 * @param format WritableCellFormat - domyÅ›lny format czcionek
+	 * @param col Colour - jeÅ›li jest podany (a nie null) to wtedy jest uwzglÄ™dniany
 	 * @throws WriteException
 	 * @throws RowsExceededException
 	 */
@@ -440,13 +440,13 @@ public class ExcelWriter {
 	}
 
 	/**
-	 * Metoda dodaje ³añcuch znaków do komórki arkusza.
-	 * @param sheet WritableSheet - arkusz o którym mowa
+	 * Metoda dodaje Å‚aÅ„cuch znakÃ³w do komÃ³rki arkusza.
+	 * @param sheet WritableSheet - arkusz o ktÃ³rym mowa
 	 * @param column int - nr kolumny od 0
 	 * @param row int - nr wiersza od 0
-	 * @param s String - wartoœæ int do wpisania
-	 * @param format WritableCellFormat - domyœlny format czcionek
-	 * @param col Colour - jeœli jest podany (a nie null) to wtedy jest uwzglêdniany
+	 * @param s String - wartoÅ›Ä‡ int do wpisania
+	 * @param format WritableCellFormat - domyÅ›lny format czcionek
+	 * @param col Colour - jeÅ›li jest podany (a nie null) to wtedy jest uwzglÄ™dniany
 	 * @throws WriteException
 	 * @throws RowsExceededException
 	 */

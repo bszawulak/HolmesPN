@@ -19,9 +19,9 @@ import abyss.math.TimeTransition;
 import abyss.math.Transition;
 
 /**
- * Zadaniem klasy SelectionManager jest zarz¹dzanie zaznaczeniem oraz obiektami które s¹ aktualnie
+ * Zadaniem klasy SelectionManager jest zarzÄ…dzanie zaznaczeniem oraz obiektami ktÃ³re sÄ… aktualnie
  * zaznaczone na danym arkuszu. SelectionManager zawsze ma przypisanego arkusza-rodzica
- * GraphPanel, którego obiektami zarz¹dza nie wp³ywaj¹c nigdy na obiekty pozosta³ych arkuszy.
+ * GraphPanel, ktÃ³rego obiektami zarzÄ…dza nie wpÅ‚ywajÄ…c nigdy na obiekty pozostaÅ‚ych arkuszy.
  * @author Antrov
  * 
  */
@@ -34,7 +34,7 @@ public class SelectionManager {
 	private SelectionActionListener actionListener;
 
 	/**
-	 * Konstruktor domyœlny obiektu klasy SelectionManager.
+	 * Konstruktor domyÅ›lny obiektu klasy SelectionManager.
 	 * @param parentGraphPanel GraphPanel - obiekt panelu
 	 */
 	public SelectionManager(GraphPanel parentGraphPanel) {
@@ -44,7 +44,7 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda pobieraj¹ca aktualny obiekt arkusza do rysowania sieci.
+	 * Metoda pobierajÄ…ca aktualny obiekt arkusza do rysowania sieci.
 	 * @return GraphPanel - obiekt arkusza
 	 */
 	private GraphPanel getGraphPanel() {
@@ -52,7 +52,7 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca nowy obiekt jako arkusz rysowania sieci.
+	 * Metoda ustawiajÄ…ca nowy obiekt jako arkusz rysowania sieci.
 	 * @param parentGraphPanel GraphPanel - nowy obiekt arkusza
 	 */
 	private void setGraphPanel(GraphPanel parentGraphPanel) {
@@ -60,8 +60,8 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca wszystkie wierzcho³ki znajduj¹ce siê w danym arkuszu rysowania.
-	 * @return ArrayList[Node] - lista wierzcho³ków sieci w arkuszu
+	 * Metoda zwracajÄ…ca wszystkie wierzchoÅ‚ki znajdujÄ…ce siÄ™ w danym arkuszu rysowania.
+	 * @return ArrayList[Node] - lista wierzchoÅ‚kÃ³w sieci w arkuszu
 	 */
 	private ArrayList<Node> getGraphPanelNodes() {
 		return graphPanelNodes;
@@ -69,16 +69,16 @@ public class SelectionManager {
 
 	@SuppressWarnings("unused")
 	/**
-	 * Metoda ustawiaj¹ca now¹ tablicê wierzcho³ków arkusza sieci.
-	 * @param graphPanelNodes ArrayList[Node] - nowa tablica wêz³ów
+	 * Metoda ustawiajÄ…ca nowÄ… tablicÄ™ wierzchoÅ‚kÃ³w arkusza sieci.
+	 * @param graphPanelNodes ArrayList[Node] - nowa tablica wÄ™zÅ‚Ã³w
 	 */
 	private void setGraphPanelNodes(ArrayList<Node> graphPanelNodes) {
 		this.graphPanelNodes = graphPanelNodes;
 	}
 
 	/**
-	 * Metoda zwracaj¹ca listê ³uków panelu graficznego.
-	 * @return ArrayList[Arc] - lista ³uków
+	 * Metoda zwracajÄ…ca listÄ™ Å‚ukÃ³w panelu graficznego.
+	 * @return ArrayList[Arc] - lista Å‚ukÃ³w
 	 */
 	private ArrayList<Arc> getGraphPanelArcs() {
 		return graphPanelArcs;
@@ -86,16 +86,16 @@ public class SelectionManager {
 
 	@SuppressWarnings("unused")
 	/**
-	 * Metoda ustawiaj¹ca now¹ listê ³uków panelu graficznego.
-	 * @param graphPanelArcs ArrayList[Arc] - lista ³uków
+	 * Metoda ustawiajÄ…ca nowÄ… listÄ™ Å‚ukÃ³w panelu graficznego.
+	 * @param graphPanelArcs ArrayList[Arc] - lista Å‚ukÃ³w
 	 */
 	private void setGraphPanelArcs(ArrayList<Arc> graphPanelArcs) {
 		this.graphPanelArcs = graphPanelArcs;
 	}
 
 	/**
-	 * Metoda umo¿liwia pobranie aktualnej listy zaznaczonych lokalizacji wierzcho³ków
-	 * (jeden wierzcho³ek mo¿e zawieraæ wiêcej ni¿ jedn¹ lokalizacjê reprezentowan¹ graficznie)
+	 * Metoda umoÅ¼liwia pobranie aktualnej listy zaznaczonych lokalizacji wierzchoÅ‚kÃ³w
+	 * (jeden wierzchoÅ‚ek moÅ¼e zawieraÄ‡ wiÄ™cej niÅ¼ jednÄ… lokalizacjÄ™ reprezentowanÄ… graficznie)
 	 * @return ArrayList[ElementLocation] - lista zaznaczonych lokalizacji
 	 */
 	public ArrayList<ElementLocation> getSelectedElementLocations() {
@@ -103,52 +103,52 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda umo¿liwia ustawienie aktualnej listy zaznaczonych lokalizacji wierzcho³ków
-	 * (jeden wierzcho³ek mo¿e zawieraæ wiêcej ni¿ jedn¹ lokalizacjê reprezentowan¹ graficznie)
+	 * Metoda umoÅ¼liwia ustawienie aktualnej listy zaznaczonych lokalizacji wierzchoÅ‚kÃ³w
+	 * (jeden wierzchoÅ‚ek moÅ¼e zawieraÄ‡ wiÄ™cej niÅ¼ jednÄ… lokalizacjÄ™ reprezentowanÄ… graficznie)
 	 * @param selectedElementLocations ArrayList[ElementLocation] - nowa lista zaznaczonych 
-	 * 		lokalizacji wierzcho³ków
+	 * 		lokalizacji wierzchoÅ‚kÃ³w
 	 */
 	public void setSelectedElementLocations(ArrayList<ElementLocation> selectedElementLocations) {
 		this.selectedElementLocations = selectedElementLocations;
 	}
 
 	/**
-	 * Metoda umo¿liwia pobranie aktualnej listy zaznaczonych ³uków.
-	 * @return ArrayList[Arc] - listê zaznaczonych ³uków
+	 * Metoda umoÅ¼liwia pobranie aktualnej listy zaznaczonych Å‚ukÃ³w.
+	 * @return ArrayList[Arc] - lista zaznaczonych Å‚ukÃ³w
 	 */
 	public ArrayList<Arc> getSelectedArcs() {
 		return selectedArcs;
 	}
 
 	/**
-	 * Metoda umo¿liwia ustawienie aktualnej listy zaznaczonych ³uków.
-	 * @param selectedArcs ArrayList[Arc] - nowa lista zaznaczonych ³uków
+	 * Metoda umoÅ¼liwia ustawienie aktualnej listy zaznaczonych Å‚ukÃ³w.
+	 * @param selectedArcs ArrayList[Arc] - nowa lista zaznaczonych Å‚ukÃ³w
 	 */
 	public void setSelectedArcs(ArrayList<Arc> selectedArcs) {
 		this.selectedArcs = selectedArcs;
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ obiekt nas³uchuj¹cy zmian zaznaczenia. Przy ka¿dej
-	 * zmianie zaznaczenia, zostanie wywo³ana metoda actionPerfomed w obiekcie
-	 * implementuj¹cym interfejs SelectionActionListener, w której parametrze zostanie
+	 * Metoda pozwala ustawiÄ‡ obiekt nasÅ‚uchujÄ…cy zmian zaznaczenia. Przy kaÅ¼dej
+	 * zmianie zaznaczenia, zostanie wywoÅ‚ana metoda actionPerfomed w obiekcie
+	 * implementujÄ…cym interfejs SelectionActionListener, w ktÃ³rej parametrze zostanie
 	 * przekazany obiekt SelectionActionEvent.
-	 * @param e SelectionActionListener - obiekt nas³uchuj¹cy, implementuj¹cy interfejs SelectionActionListener
+	 * @param e SelectionActionListener - obiekt nasÅ‚uchujÄ…cy, implementujÄ…cy interfejs SelectionActionListener
 	 */
 	public void setActionListener(SelectionActionListener e) {
 		this.actionListener = e;
 	}
 
 	/**
-	 * Metoda pozwala pobrania obiektu nas³uchuj¹cego zmian zaznaczenia.
-	 * @return SelectionActionListener - obiekt nas³uchuj¹cy, implementuj¹cy interfejs SelectionActionListener
+	 * Metoda pozwala pobrania obiektu nasÅ‚uchujÄ…cego zmian zaznaczenia.
+	 * @return SelectionActionListener - obiekt nasÅ‚uchujÄ…cy, implementujÄ…cy interfejs SelectionActionListener
 	 */
 	public SelectionActionListener getActionListener() {
 		return actionListener;
 	}
 
 	/**
-	 * Metoda aktywuj¹ca dalsze metody, w zale¿noœci od tego, co zosta³o klikniête lub
+	 * Metoda aktywujÄ…ca dalsze metody, w zaleÅºnoÅ›ci od tego, co zostaÅ‚o klikniÄ™te lub
 	 * zaznaczone na modelu rysowanej sieci.
 	 */
 	private void invokeActionListener() {
@@ -168,16 +168,16 @@ public class SelectionManager {
 	// ================================================================================
 
 	/**
-	 * Metoda dodaje podan¹ w parametrze lokalizacjê wierzcho³ka (pojedynczy wierzcho³ek
-	 * posiada 1 lub wiêcej lokalizacjê wyœwietlania, reprezentowan¹ klas¹ ElementLocation
-	 * do listy zaznaczonych lokalizacji wierzcho³ków oraz ustawia pole 
-	 * ElementLocation.isSelected = true. Powoduje to automatyczne odœwie¿enie widoku rysowania
-	 * oraz wywo³anie obiektu nas³uchuj¹cego. Jeœli po wykonaniu tej operacji, na liœcie
-	 * zaznaczonych lokalizacji wierzcho³ków istniej¹ wiêcej ni¿ dwa obiekty, prawdopodobnym
-	 * jest ¿e s¹ one po³¹czone ³ukiem, który w takiej sytuacji powinien zostaæ automatycznie
-	 * zaznaczony. Sprawdzenie tej mo¿liwoœci dokonywane jest za pomoc¹ wywo³ania metody
+	 * Metoda dodaje podanÄ… w parametrze lokalizacjÄ™ wierzchoÅ‚ka (pojedynczy wierzchoÅ‚ek
+	 * posiada 1 lub wiÄ™cej lokalizacji wyÅ›wietlania, reprezentowanÄ… klasÄ… ElementLocation
+	 * do listy zaznaczonych lokalizacji wierzchoÅ‚kÃ³w oraz ustawia pole 
+	 * ElementLocation.isSelected = true. Powoduje to automatyczne odÅ›wieÅ¼enie widoku rysowania
+	 * oraz wywoÅ‚anie obiektu nasÅ‚uchujÄ…cego. JeÅ›li po wykonaniu tej operacji, na liÅ›cie
+	 * zaznaczonych lokalizacji wierzchoÅ‚kÃ³w istniejÄ… wiÄ™cej niÅ¼ dwa obiekty, prawdopodobnym
+	 * jest Å¼e sÄ… one poÅ‚Ä…czone Å‚ukiem, ktÃ³ry w takiej sytuacji powinien zostaÄ‡ automatycznie
+	 * zaznaczony. Sprawdzenie tej moÅ¼liwoÅ›ci dokonywane jest za pomocÄ… wywoÅ‚ania metody
 	 * checkArcsForSelection.
-	 * @param el ElementLocation - lokalizacja wierzcho³ka która ma zostaæ zaznaczona
+	 * @param el ElementLocation - lokalizacja wierzchoÅ‚ka ktÃ³ra ma zostaÄ‡ zaznaczona
 	 */
 	public void selectElementLocation(ElementLocation el) {
 		if (!this.getSelectedElementLocations().contains(el)) {
@@ -189,14 +189,14 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje zaznaczenie tylko podanej w parametrze lokalizacji wierzcho³ka.
-	 * Wszelkie pozosta³e lokalizacje wierzcho³ków zostaj¹ odznaczone
-	 * ElementLocation.isSelected = false oraz wszystkie ³uki rc.isSelected = false,
-	 * a listy przechowuj¹cych elementy zaznaczone (zarówno dla ElementLocation jak i
-	 * Arc) zostaj¹ wyczyszczone. Nastêpnie korzystaj¹c z metody 
-	 * selectElementLocation(abyss.math.ElementLocation el podana lokalizacja wierzcho³ka
+	 * Metoda powoduje zaznaczenie tylko podanej w parametrze lokalizacji wierzchoÅ‚ka.
+	 * Wszelkie pozostaÅ‚e lokalizacje wierzchoÅ‚kÃ³w zostajÄ… odznaczone
+	 * ElementLocation.isSelected = false oraz wszystkie Å‚uki rc.isSelected = false,
+	 * a listy przechowujÄ…cych elementy zaznaczone (zarÃ³wno dla ElementLocation jak i
+	 * Arc) zostajÄ… wyczyszczone. NastÄ™pnie korzystajÄ…c z metody 
+	 * selectElementLocation(abyss.math.ElementLocation el podana lokalizacja wierzchoÅ‚ka
 	 * zostaje zaznaczona.
-	 * @param el ElementLocation - lokalizacja wierzcho³ka która jedyny ma zostaæ zaznaczona
+	 * @param el ElementLocation - lokalizacja wierzchoÅ‚ka ktÃ³ry jedyny ma zostaÄ‡ zaznaczony
 	 */
 	public void selectOneElementLocation(ElementLocation el) {
 		this.deselectAllElementLocations();
@@ -206,11 +206,11 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje odwrócenie zaznaczenia podanej w parametrze lokalizacji wierzcho³ka.
-	 * Jeœli podana w parametrze lokalizacja wierzcho³ka jest zaznaczona
+	 * Metoda powoduje odwrÃ³cenie zaznaczenia podanej w parametrze lokalizacji wierzchoÅ‚ka.
+	 * JeÅ›li podana w parametrze lokalizacja wierzchoÅ‚ka jest zaznaczona
 	 * ElementLocation.isSelected == true wykonana zostaje metoda deselectElementLocation(el)
 	 * , w przeciwnym przypadku wykonana zostaje metoda selectElementLocation(el).
-	 * @param el ElementLocation - lokalizacja wierzcho³ka której zaznaczenie ma zostaæ odwrócone
+	 * @param el ElementLocation - lokalizacja wierzchoÅ‚ka ktÃ³rej zaznaczenie ma zostaÄ‡ odwrÃ³cone
 	 */
 	public void toggleElementLocationSelection(ElementLocation el) {
 		if (!this.isElementLocationSelected(el))
@@ -220,14 +220,14 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda zwraca pierwsz¹ lokalizacjê wierzcho³ka, dla której spe³niony jest warunek
-	 * przeciêcia z podanym w parametrze punktem. Metoda przeszukuje wszystkie lokalizacje
-	 * ElementLocation wszystkich wierzcho³ków zawartych na danym arkuszu, dla których
-	 * odleg³oœæ punktu przekazanego w parametrze od punktu œrodkowego pozycji Point danej
-	 * lokalizacji wierzcho³ka ElementLocation.Postion jest mniejsza od promienia danego wierzcho³ka.
-	 * @param p Point - punkt dla którego bêd¹ sprawdzane warunki przeciêcia
-	 * @return ElementLocation - dla którego warunek przeciêcia zosta³ spe³niony. Jeœli taka
-	 * 		lokalizacja nie zosta³a znaleziona, zwracana jest wartoœæ null
+	 * Metoda zwraca pierwszÄ… lokalizacjÄ™ wierzchoÅ‚ka, dla ktÃ³rej speÅ‚niony jest warunek
+	 * przeciÄ™cia z podanym w parametrze punktem. Metoda przeszukuje wszystkie lokalizacje
+	 * ElementLocation wszystkich wierzchoÅ‚kÃ³w zawartych na danym arkuszu, dla ktÃ³rych
+	 * odlegÅ‚oÅ›Ä‡ punktu przekazanego w parametrze od punktu Å›rodkowego pozycji Point danej
+	 * lokalizacji wierzchoÅ‚ka ElementLocation.Postion jest mniejsza od promienia danego wierzchoÅ‚ka.
+	 * @param p Point - punkt dla ktÃ³rego bÄ™dÄ… sprawdzane warunki przeciÄ™cia
+	 * @return ElementLocation - dla ktÃ³rego warunek przeciÄ™cia zostaÅ‚ speÅ‚niony. JeÅ›li taka
+	 * 		lokalizacja nie zostaÅ‚a znaleziona, zwracana jest wartoÅ›Ä‡ null
 	 */
 	public ElementLocation getPossiblySelectedElementLocation(Point p) {
 		for (Node n : this.getGraphPanelNodes()) {
@@ -239,14 +239,14 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje odznaczenie podanej w parametrze lokalizacji wierzcho³ka ElementLocation.
-	 * Podany w parametrze \textit{ElementLocation} zostaje usuniêty z list zaznaczonych lokalizacji
-	 * wierzcho³ka \textit{ElementLocation} oraz zostaje on odznaczony ElementLocation.isSelected = false.
-	 * Jeœli po wykonaniu tej operacji, na liœcie zaznaczonych lokalizacji wierzcho³ków zosta³y wiêcej
-	 * ni¿ dwa obiekty, prawdopodobnym jest ¿e s¹ one po³¹czone ³ukiem, który w takiej sytuacji powinien
-	 * zostaæ automatycznie zaznaczony. Sprawdzenie tej mo¿liwoœci dokonywane jest za pomoc¹ wywo³ania
+	 * Metoda powoduje odznaczenie podanej w parametrze lokalizacji wierzchoÅ‚ka ElementLocation.
+	 * Podany w parametrze \textit{ElementLocation} zostaje usuniÄ™ty z list zaznaczonych lokalizacji
+	 * wierzchoÅ‚ka \textit{ElementLocation} oraz zostaje on odznaczony ElementLocation.isSelected = false.
+	 * JeÅ›li po wykonaniu tej operacji, na liÅ›cie zaznaczonych lokalizacji wierzchoÅ‚kÃ³w zostaÅ‚y wiÄ™cej
+	 * niÅ¼ dwa obiekty, prawdopodobnym jest Å¼e sÄ… one poÅ‚Ä…czone Å‚ukiem, ktÃ³ry w takiej sytuacji powinien
+	 * zostaÄ‡ automatycznie zaznaczony. Sprawdzenie tej moÅ¼liwoÅ›ci dokonywane jest za pomocÄ… wywoÅ‚ania
 	 * metody checkArcsForSelection().
-	 * @param el ElementLocation - lokalizacja wierzcho³ka która ma zostaæ odznaczona
+	 * @param el ElementLocation - lokalizacja wierzchoÅ‚ka ktÃ³ra ma zostaÄ‡ odznaczona
 	 */
 	public void deselectElementLocation(ElementLocation el) {
 		this.getSelectedElementLocations().remove(el);
@@ -258,11 +258,11 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ czy podana w parametrze lokalizacja wierzcho³ka ElementLocation
-	 * znajduje siê na liœcie zaznaczonych lokalizacji wierzcho³ków.
-	 * @param el ElementLocation - lokalizacja wierzcho³ka której obecnoœæ na liœcie zaznaczenia
-	 * 		ma zostaæ sprawdzona
-	 * @return boolean - true, jeœli podany w parametrze ElementLocation znajduje siê na liœcie
+	 * Metoda pozwala sprawdziÄ‡ czy podana w parametrze lokalizacja wierzchoÅ‚ka ElementLocation
+	 * znajduje siÄ™ na liÅ›cie zaznaczonych lokalizacji wierzchoÅ‚kÃ³w.
+	 * @param el ElementLocation - lokalizacja wierzchoÅ‚ka ktÃ³rej obecnoÅ›Ä‡ na liÅ›cie zaznaczenia
+	 * 		ma zostaÄ‡ sprawdzona
+	 * @return boolean - true, jeÅ›li podany w parametrze ElementLocation znajduje siÄ™ na liÅ›cie
 	 * 		zaznaczonych; false w sytuacji przeciwnej
 	 */
 	public boolean isElementLocationSelected(ElementLocation el) {
@@ -270,10 +270,10 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda usuwa podan¹ w parametrze lokalizacjê wierzcho³ka oraz wszystkie przy³¹czone do
-	 * niego ³uki (Arc). W sytuacji gdy podana lokalizacja by³a jedn¹ lokalizacj¹ jej
-	 * wierzcho³ka-rodzica, wierzcho³ek ten równie¿ zostaje usuniêty.
-	 * @param el ElementLocation - lokalizacja wierzcho³ka który ma zostaæ usuniêty
+	 * Metoda usuwa podanÄ… w parametrze lokalizacjÄ™ wierzchoÅ‚ka oraz wszystkie przyÅ‚Ä…czone do
+	 * niego Å‚uki (Arc). W sytuacji gdy podana lokalizacja byÅ‚a jednÄ… lokalizacjÄ… jej
+	 * wierzchoÅ‚ka-rodzica, wierzchoÅ‚ek ten rÃ³wnieÅ¼ zostaje usuniÄ™ty.
+	 * @param el ElementLocation - lokalizacja wierzchoÅ‚ka ktÃ³ry ma zostaÅ‚ usuniÄ™ty
 	 */
 	public void deleteElementLocation(ElementLocation el) {
 		this.deselectElementLocation(el);
@@ -300,15 +300,15 @@ public class SelectionManager {
 	// ================================================================================
 
 	/**
-	 * Metoda powoduje zaznaczanie zbioru lokalizacji wierzcho³ków podanego w parametrze metody.
-	 * Dla ka¿dej lokalizacji z podanego zbioru, sprawdzane jest czy dany obiekt nie znajduje siê
-	 * ju¿ na liœcie lokalizacji zaznaczonych. Jeœli nie, jest on do niej dodawany oraz ustawiany
-	 * jest dla niego zaznaczenie (ElementLocation.isSelected = true). Jeœli po wykonaniu tej
-	 * operacji, na liœcie zaznaczonych lokalizacji wierzcho³ków zosta³y wiêcej ni¿ dwa obiekty,
-	 * prawdopodobnym jest ¿e s¹ one po³¹czone ³ukiem (Arc), który w takiej sytuacji powinien
-	 * zostaæ automatycznie zaznaczony. Sprawdzenie tej mo¿liwoœci dokonywane jest za pomoc¹
-	 * wywo³ania metody checkArcsForSelection().
-	 * @param elementLocationGroup ArrayList[ElementLocation] - zbiór który ma zostaæ zaznaczony
+	 * Metoda powoduje zaznaczanie zbioru lokalizacji wierzchoÅ‚kÃ³w podanego w parametrze metody.
+	 * Dla kaÅ¼dej lokalizacji z podanego zbioru, sprawdzane jest czy dany obiekt nie znajduje siÄ™
+	 * juz na liÅ›cie lokalizacji zaznaczonych. JeÅ›li nie, jest on do niej dodawany oraz ustawiany
+	 * jest dla niego zaznaczenie (ElementLocation.isSelected = true). JeÅ›li po wykonaniu tej
+	 * operacji, na liÅ›cie zaznaczonych lokalizacji wierzchoÅ‚kÃ³w zostaÅ‚y wiÄ™cej niÅ¼ dwa obiekty,
+	 * prawdopodobnym jest Å¼e sÄ… one poÅ‚Ä…czone Å‚ukiem (Arc), ktÃ³ry w takiej sytuacji powinien
+	 * zostaÅ‚ automatycznie zaznaczony. Sprawdzenie tej moÅ¼liwoÅ›ci dokonywane jest za pomocÄ…
+	 * wywoÅ‚ania metody checkArcsForSelection().
+	 * @param elementLocationGroup ArrayList[ElementLocation] - zbiÃ³r ktÃ³ry ma zostaÄ‡ zaznaczony
 	 */
 	public void selectElementLocationGroup(ArrayList<ElementLocation> elementLocationGroup) {
 		if (elementLocationGroup == null)
@@ -326,10 +326,10 @@ public class SelectionManager {
 
 	/**
 	 * Metoda powoduje zaznaczanie wszystkich lokalizacji (ElementLocation) wszystkich
-	 * wierzcho³ków (Node) oraz co za tym idzie, wszystkich ³uków (Arc) znajduj¹cych siê
-	 * na danym arkuszu. W jej wyniku wszystkie lokalizacje wierzcho³ków z danego arkusza
-	 * oraz ³uki zostan¹ okreœlone jako zaznaczone (odpowiednio ElementLocation.isSelected = true
-	 *  oraz Arc.isSelected = true) i dodane do list obiektów zaznaczonych.
+	 * wierzchoÅ‚kÃ³w (Node) oraz co za tym idzie, wszystkich Å‚ukÃ³w (Arc) znajdujÄ…cych siÄ™
+	 * na danym arkuszu. W jej wyniku wszystkie lokalizacje wierzchoÅ‚kÃ³w z danego arkusza
+	 * oraz Å‚uki zostanÄ… okreÅ›lone jako zaznaczone (odpowiednio ElementLocation.isSelected = true
+	 *  oraz Arc.isSelected = true) i dodane do list obiektÃ³w zaznaczonych.
 	 */
 	public void selectAllElementLocations() {
 		this.getSelectedElementLocations().clear();
@@ -350,11 +350,11 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje odznaczenie wszystkich lokalizacji wierzcho³ków ElementLocation
-	 * oraz co za tym idzie, wszystkich ³uków znajduj¹cych siê na danym arkuszu. W jej
-	 * wyniku wszystkie lokalizacje wierzcho³ków z danego arkusza oraz ³uki zostan¹
+	 * Metoda powoduje odznaczenie wszystkich lokalizacji wierzchoÅ‚kÃ³w ElementLocation
+	 * oraz co za tym idzie, wszystkich Å‚ukÃ³w znajdujÄ…cych siÄ™ na danym arkuszu. W jej
+	 * wyniku wszystkie lokalizacje wierzchoÅ‚kÃ³w z danego arkusza oraz Å‚uki zostanÄ…
 	 * odznaczone (odpowiednio ElementLocation.isSelected = false oraz Arc.isSelected = false),
-	 * a listy obiektów zaznaczonych wyczyszczone.
+	 * a listy obiektÃ³w zaznaczonych wyczyszczone.
 	 */
 	public void deselectAllElementLocations() {
 		for (ElementLocation el : this.getSelectedElementLocations()) 
@@ -366,10 +366,10 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda zmienia aktualnie zaznaczone elementy w portal, przenosz¹c je do
+	 * Metoda zmienia aktualnie zaznaczone elementy w portal, przenoszÄ…c je do
 	 * jednego obiektu Node.
-	 * Dodano komunikaty ostrzegaj¹ce oraz zachowywanie starych danych pierwszego
-	 * zaznaczonego obiektu wêz³a
+	 * Dodano komunikaty ostrzegajÄ…ce oraz zachowywanie starych danych pierwszego
+	 * zaznaczonego obiektu wÄ™zÅ‚a sieci.
 	 * @author students
 	 * @author MR
 	 */
@@ -389,9 +389,9 @@ public class SelectionManager {
 				for (ElementLocation e : el.getParentNode().getNodeLocations())
 					e.setPortalSelected(false);
 			if (!el.getParentNode().removeElementLocation(el))
-				this.getGraphPanelNodes().remove(el.getParentNode()); //usuwanie wêz³a sieci z danych sieci
+				this.getGraphPanelNodes().remove(el.getParentNode()); //usuwanie wÄ™zÅ‚a sieci z danych sieci
 		}
-		//tutaj jednak obiekt(y) wci¹¿ istnieje i mo¿na np. sprawdziæ jego typ
+		//tutaj jednak obiekt(y) wciÄ…Å¼ istnieje i moÅ¼na np. sprawdziÄ‡ jego typ
 		if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.PLACE) {
 			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
@@ -433,7 +433,7 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda zmienia aktualnie klikniêty element w portal, tworz¹c jego klona.
+	 * Metoda zmienia aktualnie klikniÄ™ty element w portal, tworzÄ…c jego klona.
 	 * @author MR
 	 */
 	@SuppressWarnings("unchecked")
@@ -448,7 +448,7 @@ public class SelectionManager {
 		
 		//dodawanie innych miejsc dla samego portalu do selectedElementLocations
 		ElementLocation nodeSelecredEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
-		Node nodeSelected = nodeSelecredEL.getParentNode(); //wybrany wierzcho³ek
+		Node nodeSelected = nodeSelecredEL.getParentNode(); //wybrany wierzchoÅ‚ek
 		ArrayList<ElementLocation> otherNodes = nodeSelected.getElementLocations(); //lista jego (innych?) lokacji
 		for (ElementLocation el : otherNodes) { 
 			if(!el.equals(nodeSelecredEL)) {
@@ -461,7 +461,7 @@ public class SelectionManager {
 				for (ElementLocation e : el.getParentNode().getNodeLocations())
 					e.setPortalSelected(false);
 			if (!el.getParentNode().removeElementLocation(el))
-				this.getGraphPanelNodes().remove(el.getParentNode()); //usuwanie wêz³a sieci z danych sieci
+				this.getGraphPanelNodes().remove(el.getParentNode()); //usuwanie wÄ™zÅ‚a sieci z danych sieci
 		}
 		
 		if (getSelectedElementLocations().get(0).getParentNode().getType() 
@@ -545,8 +545,8 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda zwi¹zana w mouseClicked(MouseEvent), odpowiedzialna za zwiêkszenie tokenów
-	 * w miejscu, po wykryciu podwójnego klikniêcia.
+	 * Metoda zwiÄ…zana w mouseClicked(MouseEvent), odpowiedzialna za zwiÄ™kszenie tokenÃ³w
+	 * w miejscu, po wykryciu podwÃ³jnego klikniÄ™cia.
 	 */
 	public void increaseTokensNumber() {
 		ArrayList<Node> safetyNodesList = new ArrayList<Node>();
@@ -561,8 +561,8 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda zwi¹zana w mouseClicked(MouseEvent), odpowiedzialna za zmniejszenie tokenów
-	 * w miejscu, po wykryciu podwójnego klikniêcia.
+	 * Metoda zwiÄ…zana w mouseClicked(MouseEvent), odpowiedzialna za zmniejszenie tokenÃ³w
+	 * w miejscu, po wykryciu podwÃ³jnego klikniÄ™cia.
 	 */
 	public void decreaseTokensNumber() {
 		ArrayList<Node> safetyNodesList = new ArrayList<Node>();
@@ -580,9 +580,9 @@ public class SelectionManager {
 	// Single Arc operations
 	// ================================================================================
 	/**
-	 * Metoda powoduje zaznaczenie ³uku podanego w parametrze metody (Arc.isSelected = true)
-	 * oraz dodanie go do listy zaznaczonych ³uków.
-	 * @param arc Arc - ³uk który ma zostaæ zaznaczony
+	 * Metoda powoduje zaznaczenie Å‚uku podanego w parametrze metody (Arc.isSelected = true)
+	 * oraz dodanie go do listy zaznaczonych Å‚ukÃ³w.
+	 * @param arc Arc - Å‚uk ktÃ³ry ma zostaÄ‡ zaznaczony
 	 */
 	public void selectArc(Arc arc) {
 		if (!this.getSelectedArcs().contains(arc)) {
@@ -594,10 +594,10 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje zaznaczenie tylko jednego ³uku (Arc.isSelected = true)ze wszystkich
-	 * ³uków znajduj¹cych siê na danym arkuszu. W wyniku wykonania tej metody, wszystkie
-	 * ³uki poza wybranym zostaj¹ odznaczone, a lista zaznaczonych ³uków zostaje wyczyszczona.
-	 * @param arc Arc - ³uk który jako jedyny ma zostaæ zaznaczony
+	 * Metoda powoduje zaznaczenie tylko jednego Å‚uku (Arc.isSelected = true)ze wszystkich
+	 * Å‚ukÃ³w znajdujÄ…cych siÄ™ na danym arkuszu. W wyniku wykonania tej metody, wszystkie
+	 * Å‚uki poza wybranym zostajÄ… odznaczone, a lista zaznaczonych Å‚ukÃ³w zostaje wyczyszczona.
+	 * @param arc Arc - Å‚uk ktÃ³ry jako jedyny ma zostaÄ‡ zaznaczony
 	 */
 	public void selectOneArc(Arc arc) {
 		for (Arc a : this.getGraphPanelArcs())
@@ -608,13 +608,13 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda zwraca pierwszy ³uk, dla którego spe³niony jest warunek przeciêcia z podanym
-	 * w parametrze punktem. Metoda przeszukuje wszystkie ³uki zawarte na danym arkuszu,
-	 * wybieraj¹c pierwszy, dla którego odleg³oœæ punktu podanego w parametrze jest mniejsza
-	 * ni¿ 2 od odcinka stanowi¹cego ³uk.
-	 * @param p Point - punkt wzglêdem którego ma byæ badane przeciêcie
-	 * @return Arc - pierwszy obiekty klasy Arc, dla którego warunek przeciêcia zosta³ spe³niony.
-	 * 		Jeœli takiego ³uku nie znaleziono, zostaje zwrócona wartoœæ null
+	 * Metoda zwraca pierwszy Å‚uk, dla ktÃ³rego speÅ‚niony jest warunek przeciÄ™cia z podanym
+	 * w parametrze punktem. Metoda przeszukuje wszystkie Å‚uki zawarte na danym arkuszu,
+	 * wybierajÄ…c pierwszy, dla ktÃ³rego odlegÅ‚oÅ›Ä‡ punktu podanego w parametrze jest mniejsza
+	 * niÅ¼ 2 od odcinka stanowiÄ…cego Å‚uk.
+	 * @param p Point - punkt wzglÄ™dem ktÃ³rego ma byÄ‡ badane przeciÄ™cie
+	 * @return Arc - pierwszy obiekty klasy Arc, dla ktÃ³rego warunek przeciÄ™cia zostaÅ‚ speÅ‚niony.
+	 * 		JeÅ›li takiego Å‚uku nie znaleziono, zostaje zwrÃ³cona wartoÅ›Ä‡ null
 	 */
 	public Arc getPossiblySelectedArc(Point p) {
 		for (Arc a : this.getGraphPanelArcs()) {
@@ -630,9 +630,9 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ czy podany w parametrze ³uk znajduje siê na liœcie zaznaczonych ³uków.
-	 * @param arc Arc - ³uk dla którego bêdzie sprawdzona obecnoœæ na liœcie .
-	 * @return boolean - true w przypadku gdy podany ³uk znajduje siê siê na liœcie zaznaczonych ³uków.
+	 * Metoda pozwala sprawdziÄ‡ czy podany w parametrze Å‚uk znajduje siÄ™ na liÅ›cie zaznaczonych Å‚ukÃ³w.
+	 * @param arc Arc - Å‚uk dla ktÃ³rego bÄ™dzie sprawdzona obecnoÅ›Ä‡ na liÅ›cie .
+	 * @return boolean - true w przypadku gdy podany Å‚uk znajduje siÄ™ siÄ™ na liÅ›cie zaznaczonych Å‚ukÃ³w.
 	 * 		W przeciwnym przypadku zwraca false
 	 */
 	public boolean isArcSelected(Arc arc) {
@@ -640,9 +640,9 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje odznaczanie podanego w parametrze ³uku (Arc.isSelected = false) oraz
-	 * usuniêcie go z listy zaznaczonych ³uków.
-	 * @param arc Arc - ³uk który ma zostaæ odznaczony
+	 * Metoda powoduje odznaczanie podanego w parametrze Å‚uku (Arc.isSelected = false) oraz
+	 * usuniÄ™cie go z listy zaznaczonych Å‚ukÃ³w.
+	 * @param arc Arc - Å‚uk ktÃ³ry ma zostaÄ‡ odznaczony
 	 */
 	public void deselectArc(Arc arc) {
 		this.getSelectedArcs().remove(arc);
@@ -652,11 +652,11 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje odwrócenie zaznaczenia podanego w parametrze ³uku. W sytuacji gdy
-	 * podany ³uk jest zaznaczony (Arc.isSelected == true), zostaje on odznaczony poprzez
-	 * wywo³anie metody deselectArc(arc). Jeœli natomiast nie jest on zaznaczony, wywo³ana
-	 * zostaje metoda selectArc(arc) zaznaczaj¹ca go.
-	 * @param arc Arc - ³uk którego zaznaczenie ma zostaæ odwrócone
+	 * Metoda powoduje odwrÃ³cenie zaznaczenia podanego w parametrze Å‚uku. W sytuacji gdy
+	 * podany Å‚uk jest zaznaczony (Arc.isSelected == true), zostaje on odznaczony poprzez
+	 * wywoÅ‚anie metody deselectArc(arc). JeÅ›li natomiast nie jest on zaznaczony, wywoÅ‚ana
+	 * zostaje metoda selectArc(arc) zaznaczajÄ…ca go.
+	 * @param arc Arc - Å‚uk ktÃ³rego zaznaczenie ma zostaÄ‡ odwrÃ³cone
 	 */
 	public void toggleArcSelection(Arc arc) {
 		if (arc.getSelected())
@@ -666,8 +666,8 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje usuniêcie podanego w parametrze ³uku.
-	 * @param arc Arc - ³uk który ma zostaæ usuniêty
+	 * Metoda powoduje usuniÄ™cie podanego w parametrze Å‚uku.
+	 * @param arc Arc - Å‚uk ktÃ³ry ma zostaÄ‡ usuniÄ™ty
 	 */
 	public void deleteArc(Arc arc) {
 		arc.unlinkElementLocations();
@@ -687,10 +687,10 @@ public class SelectionManager {
 	// ================================================================================
 
 	/**
-	 * Metoda sprawdza dla ka¿dego ³uku istniej¹cego w sieci, czy jego pocz¹tkowa oraz
-	 * koñcowa lokalizacja wierzcho³ka s¹ zaznaczone. W takiej sytuacji, ³uk ³¹cz¹cy dwa
-	 * zaznaczone lokalizacje wierzcho³ków (ElementLocation.isSelected = true) zostaje
-	 * równie¿ automatycznie zaznaczony.
+	 * Metoda sprawdza dla kaÅ¼dego Å‚uku istniejÄ…cego w sieci, czy jego poczÄ…tkowa oraz
+	 * koÅ„cowa lokalizacja wierzchoÅ‚ka sÄ… zaznaczone. W takiej sytuacji, Å‚uk Å‚Ä…czÄ…cy dwa
+	 * zaznaczone lokalizacje wierzchoÅ‚kÃ³w (ElementLocation.isSelected = true) zostaje
+	 * rÃ³wnieÅ¼ automatycznie zaznaczony.
 	 */
 	public void checkArcsForSelection() {
 		for (Arc a : this.getGraphPanelArcs())
@@ -701,8 +701,8 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje odznaczenie wszystkich ³uków Arc.isSelected = false znajduj¹cych siê
-	 * na bie¿¹cym arkuszu.
+	 * Metoda powoduje odznaczenie wszystkich Å‚ukÃ³w Arc.isSelected = false znajdujÄ…cych siÄ™
+	 * na bieÅ¼Ä…cym arkuszu.
 	 */
 	public void deselectAllArcs() {
 		for (Arc a : this.getSelectedArcs())
@@ -717,9 +717,9 @@ public class SelectionManager {
 	// ================================================================================
 
 	/**
-	 * Metoda powoduje odznaczenie wszystkich lokalizacji wierzcho³ków
-	 * (ElementLocation.isSelected = false) oraz ³uków (Arc.isSelected = false) znajduj¹cych
-	 * siê na listach zaznaczenia dla danego arkusza. Listy te nastêpnie s¹ czyszczone.
+	 * Metoda powoduje odznaczenie wszystkich lokalizacji wierzchoÅ‚kÃ³w
+	 * (ElementLocation.isSelected = false) oraz Å‚ukÃ³w (Arc.isSelected = false) znajdujÄ…cych
+	 * siÄ™ na listach zaznaczenia dla danego arkusza. Listy te nastÄ™pnie sÄ… czyszczone.
 	 */
 	public void deselectAllElements() {
 		for (Arc a : this.getSelectedArcs())
@@ -732,13 +732,13 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje odznaczenie wszystkich lokalizacji wierzcho³ków
-	 * (ElementLocation.isSelected = false) oraz ³uków (Arc.isSelected = false) znajduj¹cych
-	 * siê na bie¿¹cym arkuszu. W przeciwieñstwie do metody deselectAllElements() przeszukiwane
-	 * s¹ wszystkie lokalizacje wierzcho³ków oraz ³uki z których zbudowana jest sieæ, a nie
-	 * tylko te które znajduj¹ siê na listach zaznaczenia. Metoda ta jest zdecydowanie bardziej
-	 * obci¹¿aj¹ca dla procesora, zapewnia jednak ¿e wszystkie elementy zostan¹ odznaczone. Nie
-	 * zaleca siê jednak jej stosowania, gdy¿ b³êdy tego typu s¹ napotykane niezwykle rzadko.
+	 * Metoda powoduje odznaczenie wszystkich lokalizacji wierzchoÅ‚kÃ³w
+	 * (ElementLocation.isSelected = false) oraz Å‚ukÃ³w (Arc.isSelected = false) znajdujÄ…cych
+	 * siÄ™ na bieÅ¼Ä…cym arkuszu. W przeciwieÅ„stwie do metody deselectAllElements() przeszukiwane
+	 * sÄ… wszystkie lokalizacje wierzchoÅ‚kÃ³w oraz Å‚uki z ktÃ³rych zbudowana jest sieÄ‡, a nie
+	 * tylko te ktÃ³re znajdujÄ… siÄ™ na listach zaznaczenia. Metoda ta jest zdecydowanie bardziej
+	 * obciÄ…Å¼ajÄ…ca dla procesora, zapewnia jednak Å¼e wszystkie elementy zostanÄ… odznaczone. Nie
+	 * zaleca siÄ™ jednak jej stosowania, gdyÅ¼ bÅ‚Ä™dy tego typu sÄ… napotykane niezwykle rzadko.
 	 */
 	public void forceDeselectAllElements() {
 		for (Arc a : this.getGraphPanelArcs())
@@ -753,10 +753,10 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje usuniêcie wszystkich lokalizacji wierzcho³ków (ElementLocation) oraz ³uków
-	 * (Arc) znajduj¹cych siê na listach zaznaczenia. Zasady stosowane podczas usuwanie s¹
-	 * identyczne z tymi pojawiaj¹cymi siê w metodach deleteElementLocation(el) oraz deleteArc(arc),
-	 * jednak nie s¹ one tutaj wywo³ywane.
+	 * Metoda powoduje usuniÄ™cie wszystkich lokalizacji wierzchoÅ‚kÃ³w (ElementLocation) oraz Å‚ukÃ³w
+	 * (Arc) znajdujÄ…cych siÄ™ na listach zaznaczenia. Zasady stosowane podczas usuwanie sÄ…
+	 * identyczne z tymi pojawiajÄ…cymi siÄ™ w metodach deleteElementLocation(el) oraz deleteArc(arc),
+	 * jednak nie sÄ… one tutaj wywoÅ‚ywane.
 	 */
 	public void deleteAllSelectedElements() {
 		// code below looks similar to other function but not use them to reduce
@@ -803,10 +803,10 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda powoduje zaznaczenie wszystkich lokalizacji wierzcho³ków (ElementLocation) oraz
-	 * co za tym idzie, wszystkich ³uków znajduj¹cych siê wewn¹trz podanego w parametrze
-	 * prostok¹tnego obszaru.
-	 * @param rectangle Rectangle - prostok¹tny obszar, wewn¹trz którego elementy maj¹ zostaæ zaznaczone
+	 * Metoda powoduje zaznaczenie wszystkich lokalizacji wierzchoÅ‚kÃ³w (ElementLocation) oraz
+	 * co za tym idzie, wszystkich Å‚ukÃ³w znajdujÄ…cych siÄ™ wewnÄ…trz podanego w parametrze
+	 * prostokÄ…tnego obszaru.
+	 * @param rectangle Rectangle - prostokÄ…tny obszar, wewnÄ…trz ktÃ³rego elementy majÄ… zostaÄ‡ zaznaczone
 	 */
 	public void selectInRect(Rectangle rectangle) {
 		for (ElementLocation el : this.getSelectedElementLocations())
@@ -834,8 +834,8 @@ public class SelectionManager {
 	// ================================================================================
 
 	/**
-	 * Metoda wywo³ywana w sytuacji zaznaczenia arkusza. Powoduje wywo³anie metody actionPerformed 
-	 * biektu nas³uchuj¹cego przypisanego do danego SelectionManager, z parametrami przekazuj¹cymi
+	 * Metoda wywoÅ‚ywana w sytuacji zaznaczenia arkusza. Powoduje wywoÅ‚anie metody actionPerformed 
+	 * biektu nasÅ‚uchujÄ…cego przypisanego do danego SelectionManager, z parametrami przekazujÄ…cymi
 	 * aktualny arkusz.
 	 */
 	public void selectSheet() {
@@ -848,10 +848,10 @@ public class SelectionManager {
 	// ================================================================================
 
 	/**
-	 * Metoda wywo³ywana w sytuacji gdy grupa zaznaczonych obiektów jest przenoszona. Powoduje
-	 * wywo³anie metody actionPerformed obiektu nas³uchuj¹cego przypisanego do danego SelectionManager,
-	 * z parametrami przekazuj¹cymi aktualnie zaznaczone obiekty. Umo¿liwia to m. in. podgl¹d na
-	 * bie¿¹co zmiany wspó³rzêdnych pozycji obiektu który jest aktualnie przemieszczany.
+	 * Metoda wywoÅ‚ywana w sytuacji gdy grupa zaznaczonych obiektÃ³w jest przenoszona. Powoduje
+	 * wywoÅ‚anie metody actionPerformed obiektu nasÅ‚uchujÄ…cego przypisanego do danego SelectionManager,
+	 * z parametrami przekazujÄ…cymi aktualnie zaznaczone obiekty. UmoÅ¼liwia to m. in. podglÄ…d na
+	 * bieÅ¼Ä…co zmiany wspÃ³Å‚rzÄ™dnych pozycji obiektu ktÃ³ry jest aktualnie przemieszczany.
 	 */
 	public void dragSelected() {
 		SelectionActionEvent actionEvent = new SelectionActionEvent();
@@ -869,9 +869,9 @@ public class SelectionManager {
 	// ================================================================================
 
 	/**
-	 * Metoda usuwaj¹ca status œwiecenia tranzycji (zwyk³ych i czasowych). Wykorzystywana (poœrednio
-	 * poprzez metodê z obiektu klasy PetriNet) przez metody odpowiedzialne za podœwietlanie
-	 * wybranych tranzycji oraz zbiorów MCT.
+	 * Metoda usuwajÄ…ca status Å›wiecenia tranzycji (zwykÅ‚ych i czasowych). Wykorzystywana (poÅ›rednio
+	 * poprzez metodÄ™ z obiektu klasy PetriNet) przez metody odpowiedzialne za podÅ›wietlanie
+	 * wybranych tranzycji oraz zbiorÃ³w MCT.
 	 */
 	public void removeTransitionsGlowing() {
 		for (Node n : getGraphPanelNodes())

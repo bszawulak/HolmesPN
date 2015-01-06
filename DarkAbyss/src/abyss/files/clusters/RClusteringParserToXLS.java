@@ -25,7 +25,7 @@ import abyss.clusters.ClusterRepresentation;
 import abyss.utilities.ByExt;
 
 /**
- * Klasa odpowiedzialna za export wskazanego katalogu z plikami klastrowaÒ do
+ * Klasa odpowiedzialna za export wskazanego katalogu z plikami klastrowa≈Ñ do
  * arkusza excela.
  * @author AR
  *
@@ -89,7 +89,7 @@ public class RClusteringParserToXLS{
 		WritableCellFormat cellFormat = new WritableCellFormat(cellFont);
 		cellFormat.setWrap(true);
 		cellFormat.setAlignment(Alignment.CENTRE);
-		sheet.addCell(new Label(column, 2, "Przedzia≥y zarys", cellFormat));
+		sheet.addCell(new Label(column, 2, "Przedzia≈Çy zarys", cellFormat));
 		sheet.setColumnView(column, 30);
 		sheet.addCell(new Label(column+1, 2, "Interpretacja", cellFormat));
 		sheet.setColumnView(column+1, 20);

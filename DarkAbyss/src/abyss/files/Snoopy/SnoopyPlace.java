@@ -9,22 +9,22 @@ import abyss.math.ElementLocation;
 import abyss.math.Place;
 
 /**
- * Klasa symuluje szaleñstwo zapisu miejsc w programie Snoopy. To ju¿ nawet nie Sparta,
+ * Klasa symuluje szaleÅ„stwo zapisu miejsc w programie Snoopy. To juÅ¼ nawet nie Sparta,
  * tylko o wiele gorzej...
  * @author MR
  *
  */
 public class SnoopyPlace {
 	private Place abyssPlace;
-	public int nodeID; // identyfikator podstawowy miejsca (pierwsze miejsce w sieci ma nr 226, kolejne to ju¿ zale¿y)
-	public int placeID; // identyfikator g³ówny miejsca (od zera do liczby miejsc)
+	public int nodeID; // identyfikator podstawowy miejsca (pierwsze miejsce w sieci ma nr 226, kolejne to juÅ¼ zaleÅ¼y)
+	public int placeID; // identyfikator gÅ‚Ã³wny miejsca (od zera do liczby miejsc)
 	public ArrayList<Integer> grParents; // identyfikatory I typu dla jednego miejsca, na ich bazie
-	 	// obliczane s¹ identyfikatory II typu dla... wszystkiego
-	public ArrayList<Point> grParentsLocation; // lokalizacje powy¿szych, wiêcej ni¿ 1 dla portali
+	 	// obliczane sÄ… identyfikatory II typu dla... wszystkiego
+	public ArrayList<Point> grParentsLocation; // lokalizacje powyÅ¼szych, wiÄ™cej niÅ¼ 1 dla portali
 	public boolean portal;
 	
 	/**
-	 * Konstruktor domyœlny obiektu klasy SnoopyPlace.
+	 * Konstruktor domyÅ›lny obiektu klasy SnoopyPlace.
 	 */
 	public SnoopyPlace() {
 		grParents = new ArrayList<Integer>();
@@ -33,7 +33,7 @@ public class SnoopyPlace {
 	}
 	
 	/**
-	 * Konstruktor g³ówny obiektu klasy SnoopyPlace. Dostaje obiekt miejsca z Abyss.
+	 * Konstruktor gÅ‚Ã³wny obiektu klasy SnoopyPlace. Dostaje obiekt miejsca z Abyss.
 	 * @param p Place - obiekt miejsca w programie
 	 */
 	public SnoopyPlace(Place p) {
@@ -42,13 +42,13 @@ public class SnoopyPlace {
 	}
 
 	/**
-	 * Odradzam czytaæ kod tej metody. Zostaliœcie ostrze¿eni.
-	 * P.S. Jak ktoœ coœ tu bez mojej wiedzy zmieni - zabijê. MR
+	 * Odradzam czytaÄ‡ kod tej metody. ZostaliÅ›cie ostrzeÅ¼eni.
+	 * P.S. Jak ktoÅ› coÅ› tu bez mojej wiedzy zmieni - zabijÄ™. MR
 	 * 
-	 * @param bw BufferedWriter - obiekt zapisuj¹cy
-	 * @param newFreeId int - aktualne wolne ID snoopiego dla wêz³a
+	 * @param bw BufferedWriter - obiekt zapisujÄ…cy
+	 * @param newFreeId int - aktualne wolne ID snoopiego dla wÄ™zÅ‚a
 	 * @param globalID int - globalny nr miejsca, od zera of course
-	 * @return int - ostatni u¿yty ID snoopiego w tym kodzie
+	 * @return int - ostatni uÅ¼yty ID snoopiego w tym kodzie
 	 */
 	public int writePlaceInfoToFile(BufferedWriter bw, int newFreeId, int globalID) {
 		nodeID = newFreeId;
@@ -58,9 +58,9 @@ public class SnoopyPlace {
 		int xOff = 25;
 		int yOff = 25;
 		
-		//sprawdŸ, ile jest lokalizacji (portal check)
+		//sprawdÅº, ile jest lokalizacji (portal check)
 		for(ElementLocation el : abyssPlace.getElementLocations()) {
-			if(locations == 1) { //g³ówny wêze³
+			if(locations == 1) { //gÅ‚Ã³wny wÄ™zeÅ‚
 				currID += 10;
 			} else if (locations == 2){ //pierwsze miejsce logiczne
 				currID += 36;
@@ -70,15 +70,15 @@ public class SnoopyPlace {
 				portal = true;
 			}
 			grParents.add(currID);
-			Point pxy = el.getPosition(); //Bogom dziêki, to to samo w Abyss i Snoopy...
+			Point pxy = el.getPosition(); //Bogom dziÄ™ki, to to samo w Abyss i Snoopy...
 			pxy = setTo20Grid(pxy);
 			grParentsLocation.add(pxy);
 			locations++;
 		}
-		//powy¿sza pêtla jest œciœle zwi¹zana z szukaniem danych ³uków w SnoopyWriter
-		//³apy precz od niej! I od w³aœciwie czegokolwiek w tej metodzie/klasie!
+		//powyÅ¼sza pÄ™tla jest Å›ciÅ›le zwiÄ…zana z szukaniem danych Å‚ukÃ³w w SnoopyWriter
+		//Å‚apy precz od niej! I od wÅ‚aÅ›ciwie czegokolwiek w tej metodzie/klasie!
 		
-		locations--; //odj¹c ostatnie dodawanie
+		locations--; //odjÄ…Ä‡ ostatnie dodawanie
 		currID = nodeID; //226
 		if(locations == 1) 
 			write(bw, "      <node id=\"" + currID + "\" net=\"1\">");
@@ -95,7 +95,7 @@ public class SnoopyPlace {
 		xOff = 25;
 		yOff = 20;
 		for(int i=0; i<locations; i++) { 
-			if(i==0) {//tylko g³ówne miejsce
+			if(i==0) {//tylko gÅ‚Ã³wne miejsce
 				write(bw,"            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
 						+ " x=\""+(grParentsLocation.get(i).x+xOff)+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+currID+"\""
@@ -113,17 +113,17 @@ public class SnoopyPlace {
 		write(bw, "          </graphics>");
 		write(bw, "        </attribute>");
 		
-		//SEKCJA WYŒWIETLANYCH IDENTYFIKATORÓW, ODDZIELNIE DLA KA¯DEGO PORTALU
-		//I NAPRAWDÊ NIEWA¯NE, ¯E TE ID S¥ DLA NICH IDENTYCZNE. JESTEŒMY W ŒWIECIE
-		//TWÓRCÓW SNOOPIEGO
+		//SEKCJA WYÅšWIETLANYCH IDENTYFIKATORÃ“W, ODDZIELNIE DLA KAÅ»DEGO PORTALU
+		//I NAPRAWDÄ˜ NIEWAÅ»NE, Å»E TE ID SÄ„ DLA NICH IDENTYCZNE. JESTEÅšMY W ÅšWIECIE
+		//TWÃ“RCÃ“W SNOOPIEGO
 		write(bw, "        <attribute name=\"ID\" id=\"" + currID + "\" net=\"1\">");
 		currID++; //teraz: 230
-		write(bw, "          <![CDATA[" + placeID + "]]>"); //ID OD ZERA W GÓRÊ
+		write(bw, "          <![CDATA[" + placeID + "]]>"); //ID OD ZERA W GÃ“RÄ˜
 		write(bw, "          <graphics count=\"" + locations + "\">");
 		xOff = 25;
 		yOff = 20;
 		for(int i=0; i<locations; i++) { 
-			if(i==0) {//tylko g³ówne miejsce
+			if(i==0) {//tylko gÅ‚Ã³wne miejsce
 				write(bw,"            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
 						+ " x=\""+(grParentsLocation.get(i).x+xOff)+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+currID+"\""
@@ -141,14 +141,14 @@ public class SnoopyPlace {
 		write(bw, "          </graphics>");
 		write(bw, "        </attribute>");
 		
-		//SEKCJA TOKENÓW W MIEJSCU/MIEJSACH LOGICZNYCH. KOMENTARZ JAK WY¯EJ, TYLKO BARDZIEJ ABSURDALNIE.
+		//SEKCJA TOKENÃ“W W MIEJSCU/MIEJSACH LOGICZNYCH. KOMENTARZ JAK WYÅ»EJ, TYLKO BARDZIEJ ABSURDALNIE.
 		write(bw, "        <attribute name=\"Marking\" id=\"" + currID + "\" net=\"1\">");
 		currID++; //teraz: 232
 		int tokens = abyssPlace.getTokensNumber();
 		write(bw, "          <![CDATA["+tokens+"]]>");
 		write(bw, "          <graphics count=\"" + locations + "\">");
 		for(int i=0; i<locations; i++) { 
-			if(i==0) {//tylko g³ówne miejsce
+			if(i==0) {//tylko gÅ‚Ã³wne miejsce
 				write(bw,"            <graphic x=\""+grParentsLocation.get(i).x+".00\""
 					+ " y=\""+grParentsLocation.get(i).y+".00\""
 					+ " id=\""+currID+"\" net=\"1\" show=\"1\" grparent=\""+grParents.get(i)+"\""
@@ -169,22 +169,22 @@ public class SnoopyPlace {
 		write(bw, "        <attribute name=\"Logic\" id=\""+currID+"\" net=\"1\">");
 		currID++; //teraz: 234
 		if(locations == 1)
-			write(bw, "          <![CDATA[0]]>"); //zwyk³e, plebejskie miejsce
+			write(bw, "          <![CDATA[0]]>"); //zwykÅ‚e, plebejskie miejsce
 		else
 			write(bw, "          <![CDATA[1]]>"); //habemus portal
 		write(bw, "          <graphics count=\"0\"/>");
 		write(bw, "        </attribute>");
 		
-		//SEKCJA KOMENTARZA. KOMENTARZY... TO ZNACZY JEDNEGO, ALE DLA KA¯DEGO PORTALU... OH, FUCK IT...
+		//SEKCJA KOMENTARZA. KOMENTARZY... TO ZNACZY JEDNEGO, ALE DLA KAÅ»DEGO PORTALU... OH, FUCK IT...
 		write(bw, "        <attribute name=\"Comment\" id=\"" + currID + "\" net=\"1\">");
 		currID++; //teraz: 235
 		write(bw, "          <![CDATA[" + abyssPlace.getComment() + "]]>"); //achtung enters!
-		write(bw, "          <graphics count=\"" + locations + "\">"); //do liczby portali liczyæ bêdziesz,
-		 //a liczb¹, do której bêdziesz liczyæ, bêdzie liczba portali. Mniej jest wykluczone.
+		write(bw, "          <graphics count=\"" + locations + "\">"); //do liczby portali liczyÄ‡ bÄ™dziesz,
+		 //a liczbÄ…, do ktÃ³rej bÄ™dziesz liczyÄ‡, bÄ™dzie liczba portali. Mniej jest wykluczone.
 		xOff = 0;
 		yOff = 40;
 		for(int i=0; i<locations; i++) { 
-			if(i==0) {//tylko g³ówne miejsce
+			if(i==0) {//tylko gÅ‚Ã³wne miejsce
 				write(bw, "            <graphic yoff=\""+yOff+".00\""
 						+ " x=\""+grParentsLocation.get(i).x+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\""
@@ -205,8 +205,8 @@ public class SnoopyPlace {
 		write(bw, "          </graphics>");
 		write(bw, "        </attribute>");
 		
-		//SEKCJA WYŒWIETLANIA MIEJSCA I JEGO KOPII. TAK JAKBYŒMY JU¯ REDUNDATNIE NIE WYŒWIETLILI
-		//JEGO ELEMENTÓW NIE WIADOMO ILE RAZY...
+		//SEKCJA WYÅšWIETLANIA MIEJSCA I JEGO KOPII. TAK JAKBYÅšMY JUÅ» REDUNDATNIE NIE WYÅšWIETLILI
+		//JEGO ELEMENTÃ“W NIE WIADOMO ILE RAZY...
 		write(bw, "        <graphics count=\""+locations+"\">");
 		
 		if(currID != grParents.get(0)) {
@@ -229,8 +229,8 @@ public class SnoopyPlace {
 	}
 	
 	/**
-	 * Metoda pomocnicza, zapisuj¹ca ka¿d¹ liniê + enter.
-	 * @param bw BufferedWriter - obiekt zapisuj¹cy
+	 * Metoda pomocnicza, zapisujÄ…ca kaÅ¼dÄ… liniÄ™ + enter.
+	 * @param bw BufferedWriter - obiekt zapisujÄ…cy
 	 * @param text String - linia tekstu
 	 */
 	private void write(BufferedWriter bw, String text) {

@@ -5,7 +5,7 @@ import javax.swing.SpringLayout;
 import java.awt.*;
 
 /**
- * Jak siê okazuje - nieu¿ywana klasa nie bardzo wiadomo do czego.
+ * Jak siÄ™ okazuje - nieuÅ¼ywana klasa nie bardzo wiadomo do czego.
  * @author students
  *
  */

@@ -11,9 +11,9 @@ import rcaller.RCaller;
 import rcaller.RCode;
 
 /**
- * Klasa odpowiedzialna za uruchamianie skryptÛw úrodowiska R.
- * @author AR - g≥Ûwne metody komunikacji z R
- * @author MR - otoczka Runnable, metody pomocnicze do dzia≥ania w wπtkach
+ * Klasa odpowiedzialna za uruchamianie skrypt√≥w ≈õrodowiska R.
+ * @author AR - g≈Ç√≥wne metody komunikacji z R
+ * @author MR - otoczka Runnable, metody pomocnicze do dzia≈Çania w wƒÖƒÖkach
  *
  */
 public class Rprotocols implements Runnable {
@@ -31,8 +31,8 @@ public class Rprotocols implements Runnable {
 	int processingMode = 0; //default : all clusters
 	
 	/**
-	 * G≥Ûwna metoda wykonywalna, odpowiedzialna za uruchomienie procesu uruchamiania
-	 * skryptÛw R.
+	 * G≈Ç√≥wna metoda wykonywalna, odpowiedzialna za uruchomienie procesu uruchamiania
+	 * skrypt√≥w R.
 	 */
 	public void run() {
 		try {
@@ -53,18 +53,18 @@ public class Rprotocols implements Runnable {
 	}
 	
 	/**
-	 * Metoda s≥uøπca do ustawienia wszystkich parametrÛw klastrowania 56 przypadkÛw algorytmÛw
-	 * i miar odleg≥oúci. Musi byÊ wywo≥ana, zanim ruszy g≥Ûwny proces klastrowania w osobnym
-	 * wπtku. Metoda executeAllClustersScripts() wymaga, aby wszystkie dane poniøej by≥y
-	 * prawid≥owo okreslone.
-	 * @param pathToR String - úcieøka dostÍpu do programu Rscript.exe
+	 * Metoda s≈Çu≈ºƒÖca do ustawienia wszystkich parametr√≥w klastrowania 56 przypadk√≥w algorytm√≥w
+	 * i miar odleg≈Ço≈õci. Musi byƒá wywo≈Çana, zanim ruszy g≈Ç√≥wny proces klastrowania w osobnym
+	 * wƒÖtku. Metoda executeAllClustersScripts() wymaga, aby wszystkie dane poni≈ºej by≈Çy
+	 * prawid≈Çowo okreslone.
+	 * @param pathToR String - ≈õcie≈ºka dostƒôpu do programu Rscript.exe
 	 * @param pathOutput String - katalog in/out
 	 * @param fileNameCSV String - nazwa pliku CSV
-	 * @param scriptName String - úcieøka do skryptu do wywo≥ania
-	 * @param commands String - úcieøka do parametrÛw wywo≥ywania skryptu powyøej
-	 * @param pearsonScript String - skrypt dla metryk Personoa
-	 * @param pearsonCommand - úcieøka do parametrÛw wywo≥ania skrypu wyøej
-	 * @param nrClusters int - liczba klastrÛw do przetworzenia w kaødym z 56 przypadkÛw
+	 * @param scriptName String - ≈õcie≈ºka do skryptu do wywo≈Çania
+	 * @param commands String - ≈õcie≈ºka do parametr√≥w wywo≈Çywania skryptu powy≈ºej
+	 * @param pearsonScript String - skrypt dla metryk Persona
+	 * @param pearsonCommand - ≈õcie≈ºka do parametr√≥w wywo≈Çania skrypu wy≈ºej
+	 * @param nrClusters int - liczba klastr√≥w do przetworzenia w ka≈ºdym z 56 przypadk√≥w
 	 */
 	public void setForRunnableAllClusters(String pathToR, String pathOutput, String fileNameCSV, String scriptName, String commands, String pearsonScript, String pearsonCommand, int nrClusters) {
 		this.pathToR = pathToR;
@@ -79,14 +79,14 @@ public class Rprotocols implements Runnable {
 	}
 	
 	/**
-	 * Konstruktor domyúlny klasy potrzebny do niczego :)
+	 * Konstruktor domy≈õlny klasy potrzebny do niczego :)
 	 */
 	public Rprotocols() {
 		
 	}
 	
 	/**
-	 * Konstruktor parametrowy klasy, okreúla tryb pracy
+	 * Konstruktor parametrowy klasy, okre≈õla tryb pracy
 	 * @param mode
 	 */
 	public Rprotocols(int mode) {
@@ -142,13 +142,13 @@ public class Rprotocols implements Runnable {
 			rcaller.runOnly();
 		}
 		br.close();
-		GUIManager.getDefaultGUIManager().log("All Celinúki-Harabasz metrics has been computed.", "text", true);
+		GUIManager.getDefaultGUIManager().log("All Celi≈Ñski-Harabasz metrics has been computed.", "text", true);
 	}
 	
 	/**
 	 * Metoda odpowiedzialna za klastrowanie precyzyjne dla algorytmu i metryki. Tworzy
-	 * plik z numerami inwariantÛw dla kaødego klastra.
-	 * @throws IOException - wyjπtek operacji na plikach
+	 * plik z numerami inwariant√≥w dla ka≈ºdego klastra.
+	 * @throws IOException - wyjƒÖtek operacji na plikach
 	 */
 	public void executeAllClustersScripts() throws IOException{		
 		File file = new File(scriptName);
@@ -172,7 +172,7 @@ public class Rprotocols implements Runnable {
 			code.addRCode(str);
 			
 			GUIManager.getDefaultGUIManager().log("Processing: "+line, "text", true);
-			//tu wstawiÊ logi w zaleønoúci od 'line'
+			//tu wstawiƒá logi w zale≈ºno≈õci od 'line'
 			String function = new String("veni1("+line+", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
 			code.addRCode(function);
 			String replaced = line.replace("\"", "");

@@ -15,20 +15,21 @@ import abyss.graphpanel.IdGenerator;
 import abyss.math.simulator.NetSimulator;
 
 /**
- * Klasa implementuj¹ca ³uk w sieci Petriego. Przechowuje referencje
- * lokalizacji na swoim pocz¹tku i  koñcu (istotne: lokacji, nie bezpoœrednio 
- * wierzcho³ków). Poprzez owe lokacje mo¿na uzyskaæ dostêp do wierzcho³ków, 
- * do których nale¿¹.
+ * Klasa implementujÄ…ca Å‚uk w sieci Petriego. Przechowuje referencje
+ * lokalizacji na swoim poczÄ…tku i  koÅ„cu (istotne: lokacji, nie bezpoÅ›rednio 
+ * wierzchoÅ‚kÃ³w). Poprzez owe lokacje moÅ¼na uzyskaÄ‡ dostÄ™p do wierzchoÅ‚kÃ³w, 
+ * do ktÃ³rych naleÅ¼y.
  * @author students
  *
  */
 public class Arc extends PetriNetElement {
+	//BACKUP: 5365625190238686098L; (NIE DOTYKAÄ† PONIÅ»SZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = 5365625190238686098L;
 	private final int STEP_COUNT = NetSimulator.DEFAULT_COUNTER - 5;
 
 	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAÆ NAZW, DODAWAÆ LUB USUWAÆ PÓL TEJ KLASY
-	 * (przestanie byæ mo¿liwe wczytywanie zapisanych proejktów .abyss)
+	 * UWAGA!!! NIE WOLNO ZMIENIAÄ† NAZW, DODAWAÄ† LUB USUWAÄ† PÃ“L TEJ KLASY
+	 * (przestanie byÄ‡ moÅ¼liwe wczytywanie zapisÄ†nych proejktÃ³w .abyss)
 	 */
 	private ElementLocation startLocation;
 	private ElementLocation endLocation = null;
@@ -44,8 +45,8 @@ public class Arc extends PetriNetElement {
 
 	/**
 	 * Konstruktor
-	 * @param startPosition ElementLocation - lokalicja Ÿród³a ³uku
-	 * @param endPosition ElementLocation - lokalicja celu ³uku
+	 * @param startPosition ElementLocation - lokalicja Å¼rÃ³dÅ‚a Å‚uku
+	 * @param endPosition ElementLocation - lokalicja celu Å‚uku
 	 */
 	public Arc(ElementLocation startPosition, ElementLocation endPosition) {
 		this.setStartLocation(startPosition);
@@ -57,14 +58,14 @@ public class Arc extends PetriNetElement {
 
 	/**
 	 * Konstruktor obiektu klasy Arc.
-	 * @param arcId int - identyfikator ³uku
-	 * @param startPosition ElementLocation - lokacja Ÿród³a ³uku
-	 * @param endPosition ElementLocation - lokacja celu ³uku
+	 * @param arcId int - identyfikator Å‚uku
+	 * @param startPosition ElementLocation - lokacja ÅºrÃ³dÅ‚a Å‚uku
+	 * @param endPosition ElementLocation - lokacja celu Å‚uku
 	 */
 	public Arc(int arcId, ElementLocation startPosition, ElementLocation endPosition) {
-		//this(startPosition,endPosition); //uwaga, ponowna generacja ID, naprawa poni¿ej
+		//this(startPosition,endPosition); //uwaga, ponowna generacja ID, naprawa poniÅ¼ej
 		//this.setID(arcId);
-		//IdGenerator.setStartId(arcId+1); //zapobiega zwiêkszaniu ID dwukrotnie	
+		//IdGenerator.setStartId(arcId+1); //zapobiega zwiÄ™kszaniu ID dwukrotnie	
 		this.setStartLocation(startPosition);
 		this.setEndLocation(endPosition);
 		this.setType(PetriNetElementType.ARC);
@@ -74,8 +75,8 @@ public class Arc extends PetriNetElement {
 
 	/**
 	 * Konstruktor obiektu klasy Arc.
-	 * @param startPosition ElementLocation - lokacja Ÿród³a ³uku
-	 * @param endPosition ElementLocation - lokacja celu ³uku
+	 * @param startPosition ElementLocation - lokacja ÅºrÃ³dÅ‚a Å‚uku
+	 * @param endPosition ElementLocation - lokacja celu Å‚uku
 	 * @param comment String - komentarz
 	 */
 	public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment) {
@@ -90,10 +91,10 @@ public class Arc extends PetriNetElement {
 
 	/**
 	 * Konstruktor obiektu klasy Arc.
-	 * @param startPosition ElementLocation - lokacja Ÿród³a ³uku
-	 * @param endPosition ElementLocation - lokacja celu ³uku
+	 * @param startPosition ElementLocation - lokacja ÅºrÃ³dÅ‚a Å‚uku
+	 * @param endPosition ElementLocation - lokacja celu Å‚uku
 	 * @param comment String - komentarz
-	 * @param weight int - waga ³uku
+	 * @param weight int - waga Å‚uku
 	 */
 	public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment, int weight) {
 		this.setID(IdGenerator.getNextId());
@@ -108,7 +109,7 @@ public class Arc extends PetriNetElement {
 
 	/**
 	 * Konstruktor obiektu klasy Arc.
-	 * @param startPosition ElementLocation - lokalizacja Ÿród³a ³uku
+	 * @param startPosition ElementLocation - lokalizacja ÅºrÃ³dÅ‚a Å‚uku
 	 */
 	public Arc(ElementLocation startPosition) {
 		this.setStartLocation(startPosition);
@@ -117,8 +118,8 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda sprawdza, czy aktualny ³uk jest ³ukiem odczytu (read-arc).
-	 * Jeœli tak, ustala wartoœæ obiektu ³uku 
+	 * Metoda sprawdza, czy aktualny Å‚uk jest Å‚ukiem odczytu (read-arc).
+	 * JeÅ›li tak, ustala wartoÅ›Ä‡ obiektu Å‚uku 
 	 */
 	public void lookForArcPair() {
 		for (Arc a : getEndLocation().getOutArcs())
@@ -130,16 +131,16 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca wagê ³uku.
-	 * @return int - waga ³uku
+	 * Metoda zwracajÄ…ca wagÄ™ Å‚uku.
+	 * @return int - waga Å‚uku
 	 */
 	public int getWeight() {
 		return weight;
 	}
 
 	/**
-	 * Metoda pozwalaj¹ca ustawiæ wagê ³uku.
-	 * @param weight int - waga ³uku
+	 * Metoda pozwalajÄ…ca ustawiÄ‡ wagÄ™ Å‚uku.
+	 * @param weight int - waga Å‚uku
 	 */
 	public void setWeight(int weight) {
 		this.weight = weight;
@@ -148,16 +149,16 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda zwraca komentarz zwi¹zany z ³ukiem.
-	 * @return comment String - komentarz do ³uku
+	 * Metoda zwraca komentarz zwiÄ…zany z Å‚ukiem.
+	 * @return comment String - komentarz do Å‚uku
 	 */
 	public String getComment() {
 		return comment;
 	}
 
 	/**
-	 * Metoda ustawiaj¹ca komentarz dla ³uku.
-	 * @param com String - komentarz do ³uku
+	 * Metoda ustawiajÄ…ca komentarz dla Å‚uku.
+	 * @param com String - komentarz do Å‚uku
 	 */
 	public void setComment(String com) {
 		comment = com;
@@ -166,16 +167,16 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ wierzcho³ek pocz¹tkowy ³uku.
-	 * @return Node - wierzcho³ek wejœciowy ³uku
+	 * Metoda pozwala pobraÄ‡ wierzchoÅ‚ek poczÄ…tkowy Å‚uku.
+	 * @return Node - wierzchoÅ‚ek wejÅ›ciowy Å‚uku
 	 */
 	public Node getStartNode() {
 		return this.startLocation.getParentNode();
 	}
 
 	/**
-	 * Metoda pozwala pobraæ wierzcho³ek koñcowy ³uku.
-	 * @return Node - wierzcho³ek wyjœciowy ³uku
+	 * Metoda pozwala pobraÄ‡ wierzchoÅ‚ek koÅ„cowy Å‚uku.
+	 * @return Node - wierzchoÅ‚ek wyjÅ›ciowy Å‚uku
 	 */
 	public Node getEndNode() {
 		if (this.endLocation != null)
@@ -184,7 +185,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ identyfikator arkusza, na którym znajduje siê ³uk.
+	 * Metoda pozwala pobraÄ‡ identyfikator arkusza, na ktÃ³rym znajduje siÄ™ Å‚uk.
 	 * @return int - identyfikator arkusza
 	 */
 	public int getLocationSheetId() {
@@ -192,8 +193,8 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala obliczyæ d³ugoœæ ³uku na arkuszu w pikselach.
-	 * @return double - d³ugoœæ ³uku
+	 * Metoda pozwala obliczyÄ‡ dÅ‚ugoÅ›Ä‡ Å‚uku na arkuszu w pikselach.
+	 * @return double - dÅ‚ugoÅ›Ä‡ Å‚uku
 	 */
 	public double getWidth() {
 		Point A = this.getStartLocation().getPosition();
@@ -202,8 +203,8 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca dane o ³uku w formie ³añcucha znaków.
-	 * @return String - ³añcuch znaków informacji o ³uku sieci
+	 * Metoda zwracajÅ›ca dane o Å‚uku w formie Å‚aÅ„cucha znakÃ³w.
+	 * @return String - Å‚aÅ„cuch znakÃ³w informacji o Å‚uku sieci
 	 */
 	public String toString() {
 		// return String.format("%s weight: %d; width: %f;", this.getName(),
@@ -219,7 +220,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala narysowaæ token na ³uku w czasie symulacji.
+	 * Metoda pozwala narysowaÄ‡ token na Å‚uku w czasie symulacji.
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza
 	 */
@@ -266,7 +267,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda przechodzi do kolejnego kroku rysowania symulacji na ³uku.
+	 * Metoda przechodzi do kolejnego kroku rysowania symulacji na Å‚uku.
 	 */
 	public void incrementSimulationStep() {
 		if (!this.isTransportingTokens)
@@ -279,7 +280,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda rysuj¹ca ³uk na danym arkuszu przy zmienionych rozmiarach arkusza.
+	 * Metoda rysujÄ…ca Å‚uk na danym arkuszu przy zmienionych rozmiarach arkusza.
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza
 	 * @param zoom int - zoom, unused
@@ -346,18 +347,18 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ, czy ³uk jest poprawny.
-	 * @return boolean - true, jeœli ³uk jest poprawny; false w przeciwnym wypadku
+	 * Metoda pozwala sprawdziÄ‡, czy Å‚uk jest poprawny.
+	 * @return boolean - true, jeÅ›li Å‚uk jest poprawny; false w przeciwnym wypadku
 	 */
 	public boolean getIsCorect() {
 		return this.isCorrect;
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ, czy ³uk by³by poprawny dla danej lokalizacji
-	 * wierzcho³ka wyjœciowego.
-	 * @param e ElementLocation - lokalizacja wierzcho³ka wyjœciowego
-	 * @return boolean - true, jeœli ³uk by³by poprawny; false w przeciwnym wypadku
+	 * Metoda pozwala sprawdziÄ‡, czy Å‚uk byÅ‚by poprawny dla danej lokalizacji
+	 * wierzchoÅ‚ka wyjÅ›ciowego.
+	 * @param e ElementLocation - lokalizacja wierzchoÅ‚ka wyjÅ›ciowego
+	 * @return boolean - true, jeÅ›li Å‚uk byÅ‚by poprawny; false w przeciwnym wypadku
 	 */
 	public boolean checkIsCorect(ElementLocation e) {
 		this.isCorrect = true;
@@ -368,16 +369,16 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ punkt lokacji wierzcho³ka wyjœciowego ³uku.
-	 * @param p Point - punkt lokalizacji wierzcho³ka wyjœciowego
+	 * Metoda pozwala ustawiÄ‡ punkt lokacji wierzchoÅ‚ka wyjÅ›ciowego Å‚uku.
+	 * @param p Point - punkt lokalizacji wierzchoÅ‚ka wyjÅ›ciowego
 	 */
 	public void setEndPoint(Point p) {
 		this.tempEndPoint = p;
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ lokacjê wierzcho³ka wyjœciowego ³uku.
-	 * @param elementLocation ElementLocation - lokalizacja wierzcho³ka wyjœciowego
+	 * Metoda pozwala ustawiÄ‡ lokacjÄ™ wierzchoÅ‚ka wyjÅ›ciowego Å‚uku.
+	 * @param elementLocation ElementLocation - lokalizacja wierzchoÅ‚ka wyjÅ›ciowego
 	 */
 	public void setEndLocation(ElementLocation elementLocation) {
 		if (elementLocation == null)
@@ -389,16 +390,16 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ stan zaznaczenia ³uku.
-	 * @return boolean - true, jeœli ³uk jest zaznaczony; false w przeciwnym wypadku
+	 * Metoda pozwala pobraÄ‡ stan zaznaczenia Å‚uku.
+	 * @return boolean - true, jeÅ›li Å‚uk jest zaznaczony; false w przeciwnym wypadku
 	 */
 	public boolean getSelected() {
 		return selected;
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ czy ³uk zostanie zaznaczony.
-	 * @return true, jeœli ³uk zostanie zaznaczony; false w przeciwnym wypadku
+	 * Metoda pozwala sprawdziÄ‡ czy Å‚uk zostanie zaznaczony.
+	 * @return true, jeÅ›li Å‚uk zostanie zaznaczony; false w przeciwnym wypadku
 	 */
 	public boolean checkSelection() {
 		if (this.endLocation == null || this.startLocation == null)
@@ -409,17 +410,17 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ zaznaczenie ³uku.
-	 * @param select boolean - wartoœæ zaznaczenia ³uku
+	 * Metoda pozwala ustawiÄ‡ zaznaczenie Å‚uku.
+	 * @param select boolean - wartoÅ›Ä‡ zaznaczenia Å‚uku
 	 */
 	public void setSelected(boolean select) {
 		this.selected = select;
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ, czy punkt jest czêœci¹ ³uku.
+	 * Metoda pozwala sprawdziÄ‡, czy punkt jest czÄ™ciÄ… Å‚uku.
 	 * @param P Point - punkt (x,y)
-	 * @return boolean - true, jeœli ³uk jest czêœci¹ ³uku; false w przeciwnym wypadku
+	 * @return boolean - true, jeÅ›li Å‚uk jest czÄ™ciÄ… Å‚uku; false w przeciwnym wypadku
 	 */
 	public boolean checkIntersection(Point P) {
 		Point A = getStartLocation().getPosition();
@@ -431,16 +432,16 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ lokacjê wierzcho³ka wejœciowego ³uku.
-	 * @return startLocation ElementLocation - lokalizacja wierzcho³ka wejœciowego ³uku
+	 * Metoda pozwala pobraÄ‡ lokacjÄ™ wierzchoÅ‚ka wejÅ›ciowego Å‚uku.
+	 * @return startLocation ElementLocation - lokalizacja wierzchoÅ‚ka wejÅ›ciowego Å‚uku
 	 */
 	public ElementLocation getStartLocation() {
 		return startLocation;
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ lokalizacjê wierzcho³ka wejœciowego ³uku.
-	 * @param startLocation ElementLocation - lokalizacja wierzcho³ka wejœciowego
+	 * Metoda pozwala ustawiÄ‡ lokalizacjÄ™ wierzchoÅ‚ka wejÅ›ciowego Å‚uku.
+	 * @param startLocation ElementLocation - lokalizacja wierzchoÅ‚ka wejÅ›ciowego
 	 */
 	public void setStartLocation(ElementLocation startLocation) {
 		this.startLocation = startLocation;
@@ -448,16 +449,16 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ lokalizacjê wierzcho³ka wyjœciowego ³uku.
-	 * @return ElementLocation - lokalizacja wierzcho³ka wyjœciowego ³uku
+	 * Metoda pozwala pobraÄ‡ lokalizacjÄ™ wierzchoÅ‚ka wyjÅ›ciowego Å‚uku.
+	 * @return ElementLocation - lokalizacja wierzchoÅ‚ka wyjÅ›ciowego Å‚uku
 	 */
 	public ElementLocation getEndLocation() {
 		return endLocation;
 	}
 
 	/**
-	 * Usuwa ³uk z referencji lokacji obu wierzcho³ków (wejœciowego i
-	 * wyjœciowego) ³uku (od³¹cza ³uk od wierzcho³ków).
+	 * Usuwa Å‚uk z referencji lokacji obu wierzchoÅ‚kÃ³w (wejÅ›ciowego i
+	 * wyjÅ›ciowego) Å‚uku (odÅ‚Ä…cza Å‚uk od wierzchoÅ‚kÃ³w).
 	 */
 	public void unlinkElementLocations() {
 		if (this.startLocation != null)
@@ -467,16 +468,16 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ, czy ³uk aktualnie transportuje tokeny.
-	 * @return boolean - true, jeœli ³uk transportuje tokeny; false w przeciwnym wypadku
+	 * Metoda pozwala sprawdziÄ‡, czy Å‚uk aktualnie transportuje tokeny.
+	 * @return boolean - true, jeÅ›li Å‚uk transportuje tokeny; false w przeciwnym wypadku
 	 */
 	public boolean isTransportingTokens() {
 		return isTransportingTokens;
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ, czy ³uk aktualnie transportuje tokeny.
-	 * @param isTransportingTokens boolean - wartoœæ okreœlaj¹ca, czy ³uk transportuje aktualnie tokeny
+	 * Metoda pozwala ustawiÄ‡, czy Å‚uk aktualnie transportuje tokeny.
+	 * @param isTransportingTokens boolean - wartoÅ›Ä‡ okreÅ›lajÄ…ca, czy Å‚uk transportuje aktualnie tokeny
 	 */
 	public void setTransportingTokens(boolean isTransportingTokens) {
 		this.isTransportingTokens = isTransportingTokens;
@@ -492,7 +493,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobraæ aktualny krok wizualizacji symulacji.
+	 * Metoda pozwala pobraÄ‡ aktualny krok wizualizacji symulacji.
 	 * @return int - numer aktualnego kroku wizualizacji symulacji
 	 */
 	public int getSimulationStep() {
@@ -500,7 +501,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ aktualny krok wizualizacji symulacji.
+	 * Metoda pozwala ustawiÄ‡ aktualny krok wizualizacji symulacji.
 	 * @param symulationStep int - numer kroku symulacji
 	 */
 	public void setSimulationStep(int symulationStep) {
@@ -508,9 +509,9 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala sprawdziæ, czy symulacja zachodzi zgodnie ze 
-	 * skierowaniem ³uku (do przodu).
-	 * @return boolean - true, jeœli symulacja zachodzi zgodnie ze skierowaniem ³uku (do przodu);
+	 * Metoda pozwala sprawdziÄ‡, czy symulacja zachodzi zgodnie ze 
+	 * skierowaniem Å‚uku (do przodu).
+	 * @return boolean - true, jeÅ›li symulacja zachodzi zgodnie ze skierowaniem Å‚uku (do przodu);
 	 * 		false w przeciwnym wypadku
 	 */
 	public boolean isSimulationForwardDirection() {
@@ -518,7 +519,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala ustawiæ kierunek wizualizacji symulacji na ³uku.
+	 * Metoda pozwala ustawiÄ‡ kierunek wizualizacji symulacji na Å‚uku.
 	 * @param simulationForwardDirection boolean - true dla symulacji 'do przodu';
 	 * 		false w przeciwnym wypadku
 	 */
@@ -527,32 +528,32 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda zwracaj¹ca ³uk odczytu dla danego ³uku.
-	 * @return Arc - ³uk odczytu
+	 * Metoda zwracajÄ…ca Å‚uk odczytu dla danego Å‚uku.
+	 * @return Arc - Å‚uk odczytu
 	 */
 	public Arc getPairedArc() {
 		return pairedArc;
 	}
 
 	/**
-	 * Metoda ustawia wartoœæ pairedArc jeœli ³uk jest ³ukiem odczytu.
-	 * @param pairedArc Arc - ³uk odczytu
+	 * Metoda ustawia wartoÅ›Ä‡ pairedArc jeÅ›li Å‚uk jest Å‚ukiem odczytu.
+	 * @param pairedArc Arc - Å‚uk odczytu
 	 */
 	public void setPairedArc(Arc pairedArc) {
 		this.pairedArc = pairedArc;
 	}
 
 	/**
-	 * Metoda informuje, czy ³uk jest g³ównym ³ukiem z pary (read-arc)
-	 * @return boolean - true je¿eli ³uk jest g³ównym z pary; false w przeciwnym wypadku
+	 * Metoda informuje, czy Å‚uk jest gÅ‚Ã³wnym Å‚ukiem z pary (read-arc)
+	 * @return boolean - true jeÅ¼eli Å‚uk jest gÅ‚Ã³wnym z pary; false w przeciwnym wypadku
 	 */
 	public boolean isMainArcOfPair() {
 		return isMainArcOfPair;
 	}
 
 	/**
-	 * Metoda pozwala ustaliæ wartoœæ flagi, czy ³uk jest g³ównym w parze (read-arc)
-	 * @param isMainArcOfPair boolean - true jeœli jest; false w przeciwnym wypadku
+	 * Metoda pozwala ustaliÄ‡ wartoÅ›Ä‡ flagi, czy Å‚uk jest gÅ‚Ã³wnym w parze (read-arc)
+	 * @param isMainArcOfPair boolean - true jeÅ›li jest; false w przeciwnym wypadku
 	 */
 	public void setMainArcOfPair(boolean isMainArcOfPair) {
 		this.isMainArcOfPair = isMainArcOfPair;

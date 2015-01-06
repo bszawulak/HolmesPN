@@ -32,8 +32,8 @@ import javax.swing.text.StyledDocument;
 import abyss.utilities.Tools;
 
 /**
- * Klasa ta tworzy okno konsoli programu, na którym pojawiaj¹ siê informacje na temat wykonywania
- * ró¿nych funkcji. Pozwala na zapis logu do pliku.
+ * Klasa ta tworzy okno konsoli programu, na ktÃ³rym pojawiajÄ… siÄ™ informacje na temat wykonywania
+ * rÃ³Å¼nych funkcji programu. Pozwala na zapis logu do pliku.
  * @author MR
  *
  */
@@ -42,7 +42,7 @@ public class AbyssConsole extends JFrame {
 	private String newline = "\n";
 	private StyledDocument doc; //
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
-	private JPanel editPanel; //g³ówny panel okna
+	private JPanel editPanel; //gÅ‚Ã³wny panel okna
 	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
 	/**
 	 * regular, italic, bold, small, large, warning, error
@@ -52,7 +52,7 @@ public class AbyssConsole extends JFrame {
 	private boolean noErrors = false;
 	
 	/**
-	 * Konstruktor domyœlny obiektu klasy WindowConsole.
+	 * Konstruktor domyÅ›lny obiektu klasy WindowConsole.
 	 */
 	public AbyssConsole() {
 		setTitle("Abyss Status Console");
@@ -80,7 +80,7 @@ public class AbyssConsole extends JFrame {
 	
 	/**
 	 * Metoda pomocnicza konstruktora okna konsoli.
-	 * @return JPanel - g³ówny panel okna
+	 * @return JPanel - gÅ‚Ã³wny panel okna
 	 */
 	private JPanel createEditor() {
 		editPanel = new JPanel();
@@ -136,10 +136,10 @@ public class AbyssConsole extends JFrame {
 	}
 	
 	/**
-	 * Metoda wpisuje now¹ liniê do okna logów.
+	 * Metoda wpisuje nowÄ… liniÄ™ do okna logÃ³w.
 	 * @param text String - text do wpisania
 	 * @param mode String - tryb pisania
-	 * @param time boolean - true, jeœli ma byæ wyœwietlony czas wpisu
+	 * @param time boolean - true, jeÅ›li ma byÄ‡ wyÅ›wietlony czas wpisu
 	 */
 	public void addText(String text, String mode, boolean time, boolean enter) {
 		Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
@@ -190,8 +190,8 @@ public class AbyssConsole extends JFrame {
 	}
 
 	/**
-	 * Metoda pomocnicza konstruktora klasy, tworzy style dla wypisywanych komunikatów.
-	 * @param doc StyledDocument - obiekt dokumentu przechowuj¹cego style
+	 * Metoda pomocnicza konstruktora klasy, tworzy style dla wypisywanych komunikatÃ³w.
+	 * @param doc StyledDocument - obiekt dokumentu przechowujÄ…cego style
 	 */
 	private void addStylesToDocument(StyledDocument doc) {
         Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
@@ -223,23 +223,23 @@ public class AbyssConsole extends JFrame {
 	}
 	
 	/**
-	 * Metoda ustawia flagê odpowiadaj¹c¹ za dopuszczenie do zapisywania ostrze¿eñ.
-	 * @param value boolean - true, jeœli ostrze¿enia maj¹ byæ zapamiêtywane
+	 * Metoda ustawia flagÄ™ odpowiadajÄ…cÄ… za dopuszczenie do zapisywania ostrzeÅ¼eÅ„.
+	 * @param value boolean - true, jeÅ›li ostrzeÅ¼enia majÄ… byÄ‡ zapamiÄ™tywane
 	 */
 	public void silenceWarnings(boolean value) {
 		noWarnings = value;
 	}
 	
 	/**
-	 * Metoda ustawia flagê odpowiadaj¹c¹ za dopuszczenie do zapisywania b³êdów.
-	 * @param value boolean - true, jeœli b³êdy maj¹ byæ zapamiêtywane
+	 * Metoda ustawia flagÄ™ odpowiadajÄ…cÄ… za dopuszczenie do zapisywania bÅ‚Ä™dÃ³w.
+	 * @param value boolean - true, jeÅ›li bÅ‚Ä™dy majÄ… byÄ‡ zapamiÄ™tywane
 	 */
 	public void silenceErrors(boolean value) {
 		noErrors = value;
 	}
 	
 	/**
-	 * Metoda pytaj¹ca w formie dialogu gdzie zapisaæ plik loga.
+	 * Metoda pytajÄ…ca w formie dialogu gdzie zapisaÄ‡ plik loga.
 	 */
 	private void saveDialog()
 	{
@@ -253,8 +253,8 @@ public class AbyssConsole extends JFrame {
 	}
 
 	/**
-	 * Metoda zapisuje log do wybranego pliku lub do pliku domyœlnego.
-	 * @param file File - plik do zapisu, jeœli == null, wtedy zapis domyœlny
+	 * Metoda zapisuje log do wybranego pliku lub do pliku domyÅ›lnego.
+	 * @param file File - plik do zapisu, jeÅ›li == null, wtedy zapis domyÅ›lny
 	 */
 	public void saveLogToFile(File file) {
 		File saveFile = null;
