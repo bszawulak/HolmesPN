@@ -602,24 +602,12 @@ public class AbyssClusters extends JFrame {
 		
 		//czy plik startowy jest na miejscu?
 		pathCSVfile = choosenDir+"/cluster.csv";
-		File csv = new File(pathCSVfile);
-		if(csv.exists() == false) {
-			String msg = "Selected directory does not contain cluster.csv file. Further calculations may not be possible.";
+		if(Tools.ifExist(pathCSVfile) == false) {
+			String msg = "Selected directory does not contain cluster.csv file. Further calculations "
+					+ "may not be possible.";
 			JOptionPane.showMessageDialog(null, "msg", "warning",JOptionPane.ERROR_MESSAGE);
 			GUIManager.getDefaultGUIManager().log(msg, "warning", true);
 		}
-		
-		// test / debug
-		/*
-		ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
-		int result = clusterMatrix.readDataDirectory("tmp//IL18C40");
-		setClusterPath("tmp//IL18C40");
-		if(result == -1) {
-			JOptionPane.showMessageDialog(null, "Cluster reading failed. Possible wrong directory chosen.", "Error",JOptionPane.ERROR_MESSAGE);
-		} else {
-			handleStandardClusterTableCase56(clusterMatrix);
-		}
-		*/
 	}
     
     /**
@@ -728,7 +716,6 @@ public class AbyssClusters extends JFrame {
 		
 		int clusters = dataTableCase56.getMatrix().get(0).size(); //bo od 2 do cNumber
 		
-		
 		for(int i=0; i<size1Order; i++) {
 			for(int cl=0; cl<clusters; cl++) { //od 2 do limitu w tabeli
 				try {
@@ -738,17 +725,19 @@ public class AbyssClusters extends JFrame {
 				}
 			}
 		}
+		
+		registerDataCase56(dataTableCase56);
 	}
 
 	/**
-	 * Metoda odpowiedzialna za zapis tabeli danych do pliku, za pomocą mechanizmu
+	 * Metoda odpowiedzialna za zapis tabeli danych do pliku za pomocą mechanizmu
 	 * serializacji.
 	 */
 	private void buttonSerializeDataTable() {
 		try{
 			FileFilter filter[] = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Abyss CLustering file (.acl)",  new String[] { "acl" });
-			String newLocation = Tools.selectFileDialog(getClusterPath(), filter, "", "");
+			String newLocation = Tools.selectFileDialog(getClusterPath(), filter, "Save table", "");
 			if(newLocation.equals(""))
 				return;
 			
@@ -762,7 +751,6 @@ public class AbyssClusters extends JFrame {
 			fos.close();
 		} catch(IOException ioe){
 			GUIManager.getDefaultGUIManager().log("Saving data table failed.", "error", false);
-		    //ioe.printStackTrace();
 		}
 	}
 	
@@ -777,7 +765,7 @@ public class AbyssClusters extends JFrame {
 		{
 			FileFilter filter[] = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Abyss CLustering file (.acl)",  new String[] { "acl" });
-			newLocation = Tools.selectFileDialog(getClusterPath(), filter, "", "");
+			newLocation = Tools.selectFileDialog(getClusterPath(), filter, "Load table", "");
 			if(newLocation.equals("")) 
 				return;
 			

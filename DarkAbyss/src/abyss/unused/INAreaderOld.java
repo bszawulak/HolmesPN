@@ -1,4 +1,4 @@
-package abyss.wasteland;
+package abyss.unused;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -289,10 +289,10 @@ public class INAreaderOld {
 					}
 					break;
 				case 4:
-					// Tworzenie Arców, szerokosci okna
+					// Tworzenie Arcï¿½w, szerokosci okna
 					int SID = GUIManager.getDefaultGUIManager().getWorkspace()
 							.newTab();
-					// tworzenie dla ka¿dego noda element location
+					// tworzenie dla kaï¿½dego noda element location
 					for (int j = 0; j < nodeArray.size(); j++) {
 						if (nodeArray.get(j).getType() == PetriNetElementType.PLACE) {
 							elemArray.add(new ElementLocation(SID, new Point(

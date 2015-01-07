@@ -7,6 +7,7 @@ import abyss.darkgui.dockwindows.AbyssDockWindow;
 import abyss.darkgui.dockwindows.PetriNetTools;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.darkgui.toolbar.Toolbar;
+import abyss.files.io.TexExporter;
 import abyss.math.InvariantTransition;
 import abyss.math.PetriNet;
 import abyss.math.Transition;
@@ -71,6 +72,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Obiekt klasy GUIOperations, minion od czarnej roboty.
 	 */
 	public GUIOperations io;
+	public TexExporter tex;
 	
 	private Dimension screenSize; 		// praca w maksymalizacji
 	private Dimension smallScreenSize;	// praca poza maksymalizowanym oknem
@@ -140,19 +142,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		super(new BorderLayout());
 		guiManager = this;
 		io = new GUIOperations(this); //rise, my minion!!
+		tex = new TexExporter();
 		
 		setFrame(frejm);
 		try {	
-			//TE TRZY PIERD... LINIJKI KOSZTOWAŁY MNIE PRAWIE 2 GODZINY SZUKANIA PO NECIE
-			//Po Eclipsem oczywiście getClass().getResource działa jak marzenie
-			//przy eksporcie do Jar, okazuje się że nic nie działa a wyjątek który
-			//wyskakuje jest NIEMOŻLIWE DO OBSŁUŻENIA przez nawet catch (Exception e )
-			//po prostu k... super, kochamy Jave
-			//linijki, zastąpione dalej wywołaniem metody statycznej:
-			//ImageIcon x = Tools.getResIcon16("/icons/blackhole.png"); 
-			//Image y = x.getImage();
-			//frame.setIconImage(y);
-			
 			frame.setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {
 	

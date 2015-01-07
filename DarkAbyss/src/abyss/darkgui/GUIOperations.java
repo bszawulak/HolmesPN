@@ -231,8 +231,7 @@ public class GUIOperations {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", 
-				"");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
 		if(selectedFile.equals(""))
 			return;
 		
@@ -255,8 +254,7 @@ public class GUIOperations {
 		filters[0] = new ExtensionFileFilter("Snoopy Petri Net (.spped)", new String[] { "SPPED" });
 		filters[1] = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
 		filters[2] = new ExtensionFileFilter("INA PNT format (.pnt)", new String[] { "PNT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", 
-				"");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
 		if(selectedFile.equals("")) {
 			return;
 		}
@@ -305,8 +303,7 @@ public class GUIOperations {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("INA Invariants file (.inv)", new String[] { "INV" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", 
-				"Select invariant file");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file");
 		if(selectedFile.equals(""))
 			return;
 		

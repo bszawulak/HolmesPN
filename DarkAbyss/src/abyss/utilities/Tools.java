@@ -172,6 +172,11 @@ public final class Tools {
 		String filePath = absolutePath. substring(0, absolutePath.lastIndexOf(File.separator));
 		return filePath + "\\";
 	}
+	
+	public static boolean ifExist(String path) {
+		File tmp = new File(path);
+		return tmp.exists();
+	}
 
 	/*
 	 * Zestaw poniższych metod zapewnia bezpieczny sposób pobierania plików z zasobów.
@@ -260,8 +265,8 @@ public final class Tools {
 	/**
 	 * TO JEST KURWA CHORE. ImageIcon może być spokojnie przechowywany w Jar i getResource
 	 * bez problemu znajduje do niego dostęp, ale już Image - ZA CHOLERĘ. W Eclipse zadziała,
-	 * w exporcie do Jara - wywali cały program nieobsługiwalnym wyjątkiem (catch (Exception e))
-	 * można sobie wsadzić gdzie Słońce nie dochodzi. Metoda obchodzi ten problem, ale
+	 * w exporcie do Jara - wywali cały program nieobsługiwalnym wyjątkiem (catch (Exception e)
+	 * można sobie wsadzić gdzie Słońce nie dochodzi). Metoda obchodzi ten problem, ale
 	 * nazwanie tego partyzantką to niedopowiedzenie.
 	 * Oto metoda. Klękajcie narody, kosztowała 2 godziny pracy, jak zawsze wynik to kilka linii.
 	 * TYCH linii.
@@ -270,15 +275,25 @@ public final class Tools {
 	 */
 	public static Image getImageFromIcon(String resPath) {
 		resPath = resPath.toLowerCase();
-		ImageIcon icon=null;
+		ImageIcon icon = null;
 		Image result = null;
 		try {
 			icon = new ImageIcon(Tools.class.getResource(resPath));
 			result = icon.getImage();
 		} catch (Exception e) {
 			try {
+				//TRZY PIERD... LINIJKI KOSZTOWAŁY MNIE PRAWIE 2 GODZINY SZUKANIA PO NECIE
+				//Po Eclipsem oczywiście getClass().getResource działa jak marzenie
+				//przy eksporcie do Jar, okazuje się że nic nie działa a wyjątek który
+				//wyskakuje jest NIEMOŻLIWE DO OBSŁUŻENIA przez nawet catch (Exception e )
+				//po prostu k... super, kochamy Jave
+				//linijki, zastąpione dalej podobą formą:
+				//ImageIcon x = Tools.getResIcon16("/icons/blackhole.png"); 
+				//Image y = x.getImage();
+				//frame.setIconImage(y);
+				
 				icon = new ImageIcon(Tools.class.getResource("/nullIcon16.png"));
-				result = icon.getImage();
+				result = icon.getImage(); //geniusz, zaiste geniusz to wymyślił w Javie...
 			} catch (Exception e2) {
 				System.out.println("CRITICAL EXCEPTION IN getImageFromIcon. "
 						+ "No FAILSAFE IMAGE: /nullIcon16.png IN JAR");

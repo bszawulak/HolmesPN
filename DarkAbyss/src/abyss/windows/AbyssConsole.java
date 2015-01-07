@@ -145,9 +145,6 @@ public class AbyssConsole extends JFrame {
 		Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
 		StyleConstants.setFontFamily(def, "SansSerif");
 		StyleConstants.setFontSize(def, 12);
-		//doc.removeStyle("regular"); 
-		//doc.addStyle("regular", def);
-        
 		
 		String newLn = "";
 		if(enter) newLn = newline;
@@ -239,7 +236,7 @@ public class AbyssConsole extends JFrame {
 	}
 	
 	/**
-	 * Metoda pytająca w formie dialogu gdzie zapisać plik loga.
+	 * Metoda pytająca w formie dialogu gdzie zapisać plik logów programu.
 	 */
 	private void saveDialog()
 	{
@@ -266,7 +263,7 @@ public class AbyssConsole extends JFrame {
 		
 		try
         {
-			PrintStream p = new PrintStream(new BufferedOutputStream(new FileOutputStream(saveFile, true)));
+			PrintStream p = new PrintStream(new BufferedOutputStream(new FileOutputStream(saveFile, true))); // (•_•)
 		    p.println("*********************************************************************");
 		    p.close();
 		      

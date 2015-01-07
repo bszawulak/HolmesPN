@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -29,7 +30,7 @@ import abyss.clusters.Clustering;
 import abyss.clusters.ClusteringExtended;
 import abyss.darkgui.GUIManager;
 import abyss.files.clusters.ClusterReader;
-import abyss.files.clusters.ExcelWriter;
+import abyss.files.clusters.ClusteringExcelWriter;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 
@@ -50,8 +51,11 @@ public class AbyssClusterSubWindow extends JFrame {
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
 	private JPanel editPanel; //główny panel okna
 	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
-	
+	private JButton buttonExcel;
+	private JButton buttonInjectCluster;
+    
 	private String clusterPath;
+	private ClusteringExtended fullData = null;
 	
 	/**
 	 * Konstruktor domyślny obiektu klasy AbyssClusterSubWindow.
@@ -118,8 +122,11 @@ public class AbyssClusterSubWindow extends JFrame {
 			area.append("MSS evaluation: "+clusteringMetaData.evalMSS+nL);
 			area.append("C-H evaluation: "+clusteringMetaData.evalCH+nL);
 			area.append(nL);
+			
+			//kolejne wiersze z MSS dla klastrów:
 			for(int i=0; i<clusteringMetaData.clusterNumber; i++) {
-				area.append("Cluster "+i+" size: "+clusteringMetaData.clusterSize.get(i)+"  MSS: "+clusteringMetaData.clusterMSS.get(i)+nL);
+				String value = getMSSFormatted(clusteringMetaData.clusterMSS.get(i));
+				area.append("Cluster "+i+" size: "+clusteringMetaData.clusterSize.get(i)+"  MSS: "+value+nL);
 				//area.append("Cluster "+i+" size: "+clusteringMetaData.clusterSize[i]+"  MSS: "+clusteringMetaData.clusterMSS[i]+nL);
 			}
 			area.append(nL);
@@ -128,6 +135,26 @@ public class AbyssClusterSubWindow extends JFrame {
 				area.append(clusteringMetaData.vectorMSS.get(i)+ " | ");
 			}
 		}
+	}
+	
+	/**
+	 * Formatuje wartość do liczby z 8 miejscami po przecinku.
+	 * @param clusterMSS double - miara MSS
+	 * @return String - formatowany tekst miary
+	 */
+	private String getMSSFormatted(double clusterMSS) {
+        DecimalFormat df = new DecimalFormat("#.########");
+        String txt = "";
+        txt += df.format(clusterMSS);
+        txt = txt.replace(",", ".");
+        if(txt.indexOf(".") == -1)
+        	txt += ".";
+        int size = txt.length();
+        for(int i=0; i<10-size; i++) {
+        	txt += "0";
+        }
+        
+		return txt;
 	}
 
 	/**
@@ -161,56 +188,57 @@ public class AbyssClusterSubWindow extends JFrame {
 		
 		if(clusteringMetaData != null) {
 			try {
-				doc.insertString(doc.getLength(), addSpaceRight("Algorithm name: ",20), doc.getStyle("regular"));
+				doc.insertString(doc.getLength(), Tools.setToSize("Algorithm name: ",20,false), doc.getStyle("regular"));
 				doc.insertString(doc.getLength(), clusteringMetaData.algorithmName+nL, doc.getStyle("bold"));
 		    	
-				doc.insertString(doc.getLength(), addSpaceRight("Metric name: ",20), doc.getStyle("regular"));
+				doc.insertString(doc.getLength(), Tools.setToSize("Metric name: ",20,false), doc.getStyle("regular"));
 				doc.insertString(doc.getLength(), clusteringMetaData.metricName+nL, doc.getStyle("bold"));
 				
 		    	doc.insertString(doc.getLength(), nL, doc.getStyle("regular"));
 		    	
-		    	doc.insertString(doc.getLength(), addSpaceRight("Invariants number: ",20), doc.getStyle("regular"));
+		    	doc.insertString(doc.getLength(), Tools.setToSize("Invariants number: ",20,false), doc.getStyle("regular"));
 		    	doc.insertString(doc.getLength(), clusteringMetaData.invNumber+nL, doc.getStyle("bold"));
 		    	
-		    	doc.insertString(doc.getLength(), addSpaceRight("Clusters number: ",20), doc.getStyle("regular"));
+		    	doc.insertString(doc.getLength(), Tools.setToSize("Clusters number: ",20,false), doc.getStyle("regular"));
 		    	doc.insertString(doc.getLength(), clusteringMetaData.clusterNumber+nL, doc.getStyle("bold"));
 		    	
-		    	doc.insertString(doc.getLength(), addSpaceRight("Zero-clusters: ",20), doc.getStyle("regular"));
+		    	doc.insertString(doc.getLength(), Tools.setToSize("Zero-clusters: ",20,false), doc.getStyle("regular"));
 		    	doc.insertString(doc.getLength(), clusteringMetaData.zeroClusters+nL, doc.getStyle("bold"));
 		    	
-		    	doc.insertString(doc.getLength(), addSpaceRight("MSS evaluation: ",20), doc.getStyle("regular"));
-		    	doc.insertString(doc.getLength(), clusteringMetaData.evalMSS+nL, doc.getStyle("bold"));
+		    	doc.insertString(doc.getLength(), Tools.setToSize("MSS evaluation: ",20,false), doc.getStyle("regular"));
+		    	String value = getMSSFormatted(clusteringMetaData.evalMSS);
+		    	doc.insertString(doc.getLength(), value+nL, doc.getStyle("bold"));
 		    	
-		    	doc.insertString(doc.getLength(), addSpaceRight("C-H evaluation: ",20), doc.getStyle("regular"));
+		    	doc.insertString(doc.getLength(), Tools.setToSize("C-H evaluation: ",20,false), doc.getStyle("regular"));
 		    	doc.insertString(doc.getLength(), clusteringMetaData.evalCH+nL, doc.getStyle("bold"));
 		    	
 		    	doc.insertString(doc.getLength(), nL, doc.getStyle("regular"));
 		    	
 		    	//dane o klastrach
 		    	for(int i=0; i<clusteringMetaData.clusterNumber; i++) {
-		    		doc.insertString(doc.getLength(), "Cluster "+addSpaceLeft((i+1)+"",3)+" invariants: ",
-		    				doc.getStyle("regular"));
-		    		//doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterSize[i]+"",4), doc.getStyle("bold"));
-		    		doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterSize.get(i)+"",4), doc.getStyle("bold"));
+		    		doc.insertString(doc.getLength(), "Cluster "
+		    				+Tools.setToSize((i+1)+"",3,true)+" invariants: ", doc.getStyle("regular"));
+
+		    		doc.insertString(doc.getLength(), 
+		    				Tools.setToSize(clusteringMetaData.clusterSize.get(i)+"",4,true), doc.getStyle("bold"));
 		    		
 		    		doc.insertString(doc.getLength(),"  MSS: ", doc.getStyle("regular"));
-		    		//doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterMSS[i]+"",12)+nL,
-		    		//		doc.getStyle(returnStyle(clusteringMetaData.clusterMSS[i])));
-		    		doc.insertString(doc.getLength(), addSpaceLeft(clusteringMetaData.clusterMSS.get(i)+"",12)+nL,
+		    		
+		    		value = getMSSFormatted(clusteringMetaData.clusterMSS.get(i));
+		    		
+		    		doc.insertString(doc.getLength(), value+nL,
 				    		doc.getStyle(returnStyle(clusteringMetaData.clusterMSS.get(i))));
-				    		
-		    		//doc.insertString(doc.getLength(), "Cluster "+i+" size: "+data.clusterSize[i]+"  MSS: "+data.clusterMSS[i]+nL, doc.getStyle("regular"));
+				    
 		    	}
 		    	doc.insertString(doc.getLength(), nL, doc.getStyle("regular"));
-		    	// 
+		    	
 		    	String sepSpace = "";
-		    	//if(clusteringMetaData.vectorMSS[0] < 0)
 		    	if(clusteringMetaData.vectorMSS.get(0) < 0)
 		    		sepSpace = " ";
 		    	doc.insertString(doc.getLength(), sepSpace+" Min.  | 1st Qu.| Median |  Mean  | 3rd Qu.|  Max."+nL, doc.getStyle("bold"));
 		    	for(int i=0; i<6; i++) {
 		    		//doc.insertString(doc.getLength(), addSpaceRight(clusteringMetaData.vectorMSS[i]+"",6)+ " | ", doc.getStyle("bold"));
-		    		doc.insertString(doc.getLength(), addSpaceRight(clusteringMetaData.vectorMSS.get(i)+"",6)+ " | ", doc.getStyle("bold"));
+		    		doc.insertString(doc.getLength(), Tools.setToSize(clusteringMetaData.vectorMSS.get(i)+"",6,false)+ " | ", doc.getStyle("bold"));
 		    	}
 		    	
 		    	textPane.setCaretPosition(0);
@@ -221,40 +249,6 @@ public class AbyssClusterSubWindow extends JFrame {
 		}
 		setLocationRelativeTo(null);
 		setVisible(true);
-	}
-	
-	//TODO: Tools się kłania
-	/**
-	 * Metoda pomocnicza, dodaje spacje na prawo od tekstu.
-	 * @param text String - tekst do rozszerzenia
-	 * @param value int - maksymalna szerokość tekstu
-	 * @return String - nowy tekst
-	 */
-	private String addSpaceRight(String text, int value) {
-		String result = text;
-		String spaces = "";
-		if(result.length() < value) {
-			for(int i=0; i< value-result.length(); i++ )
-				spaces += " ";
-		}
-		return result+spaces;
-	}
-	//TODO: Tools się kłania
-	/**
-	 * Metoda pomocnicza, dodaje spacje na lewo od tekstu.
-	 * @param text String - tekst do rozszerzenia
-	 * @param value int - maksymalna szerokość tekstu
-	 * @return String - nowy tekst
-	 */
-	private String addSpaceLeft(String text, int value) {
-		String result = text;
-		String spaces = "";
-		if(result.length() < value) {
-			for(int i=0; i< value-result.length(); i++ )
-				spaces += " ";
-		}
-		
-		return spaces+result;
 	}
 	
 	/**
@@ -362,25 +356,28 @@ public class AbyssClusterSubWindow extends JFrame {
         paneScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         paneScrollPane.setBounds(5, 5, 585, 500);
         editPanel.add(paneScrollPane);
-        
-        
-        JButton button = new JButton("Export clustering", 
+
+        buttonExcel = new JButton("Excel", 
         		Tools.getResIcon48("/icons/clustWindow/buttonExportSingleToExcel.png"));
-        button.setBounds(5, 510, 240, 50);
+        buttonExcel.setBounds(5, 510, 190, 50);
         //button.setBounds(new Rectangle(150, 40));
-        button.addActionListener(new ActionListener() {
+        buttonExcel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				turnOffButtons();
 				exportDataToExcel();
+				turnOnButtons();
 			}	
 		});
-        editPanel.add(button);
+        editPanel.add(buttonExcel);
         
-        JButton buttonInjectCluster = new JButton("Send to net", 
-        		Tools.getResIcon48("/icons/clustWindow/button_sendToAbyss.png"));
-        buttonInjectCluster.setBounds(350, 510, 240, 50);
+        buttonInjectCluster = new JButton("To Net", 
+        		Tools.getResIcon48("/icons/clustWindow/buttonSendToAbyss.png"));
+        buttonInjectCluster.setBounds(200, 510, 190, 50);
         buttonInjectCluster.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				turnOffButtons();
 				exportToAbyss();
+				turnOnButtons();
 			}	
 		});
         editPanel.add(buttonInjectCluster);
@@ -388,7 +385,23 @@ public class AbyssClusterSubWindow extends JFrame {
         editPanel.repaint();
         return editPanel;
 	}
-	
+
+	/**
+	 * Metoda włącza dostęp do przycisków.
+	 */
+	protected void turnOnButtons() {
+		buttonExcel.setEnabled(true);
+		buttonInjectCluster.setEnabled(true);
+	}
+
+	/**
+	 * Metoda na czas trwania operacji klastrowania wyłącza dostęp do przycisków.
+	 */
+	protected void turnOffButtons() {
+		buttonExcel.setEnabled(false);
+		buttonInjectCluster.setEnabled(false);
+	}
+
 	/**
 	 * Metoda usuwająca pliki powstałe w wyniku tworzenie konkretnego klastrowania.
 	 * @param resultFiles String[5] - 5 plików, usuwanie od 2 do 5 (1szy to cluster.csv)
@@ -460,7 +473,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	 * @return String - ścieżka do pliku excela
 	 */
 	private String saveExcelOnly(ClusteringExtended fullData) {
-		ExcelWriter ew = new ExcelWriter(0, fullData, "tmp\\testSheets.xls");
+		ClusteringExcelWriter ew = new ClusteringExcelWriter(0, fullData, "tmp\\testSheets.xls");
 		if(ew.isSuccess() == false)
 			return null;
 		
@@ -488,6 +501,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	 * Metoda obsługuje zdarzenie kliknięcia na przycisk eksportu danych do .xls
 	 */
 	protected void exportDataToExcel() {
+		//generowanie klastrowania:
 		String targetDir = getCSVLocation();
 		if(targetDir == null)
 			return;
@@ -496,41 +510,39 @@ public class AbyssClusterSubWindow extends JFrame {
 		if(alg.equals("UPGMA"))
 			alg = "average";
 		
-		//generowanie klastrowania:
 		String resultFiles[] = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
 				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 		if(resultFiles != null) {
 			ClusterReader reader = new ClusterReader();
 			// czytanie wyników:
-			ClusteringExtended fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
+			fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
 			if(fullData==null) {
 				GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to Excel cannot begin.", "error", true);
 				return;
 			}
-			
-			Object[] options = {"Save data files and Excel file", "Make Excel file only",};
-			int n = JOptionPane.showOptionDialog(null,
-							"Clustering data extraction succeed. What to do now?",
-							"Choose output file", JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-			if (n == 0) { //both files
-				boolean success = saveAllFiles(fullData, resultFiles);
-				if(success) {
-					deleteTmpFile(resultFiles);
-				}
-			} else { //only excel
-				String path = saveExcelOnly(fullData);
-				if(path != null) {
-					deleteTmpFile(resultFiles);
-				}
-			}
-			
 		} else {
 			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
 					+ "contacting authors about the problem please attach *all* three files mentioned in"
 					+ "this log above this message.", "error", true);
+			return;
 		}
 		
+		Object[] options = {"Save data files and Excel file", "Make Excel file only",};
+		int n = JOptionPane.showOptionDialog(null,
+						"Clustering data extraction succeed. What to do now?",
+						"Choose output file", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		if (n == 0) { //both files
+			boolean success = saveAllFiles(fullData, resultFiles);
+			if(success) {
+				deleteTmpFile(resultFiles);
+			}
+		} else { //only excel
+			String path = saveExcelOnly(fullData);
+			if(path != null) {
+				deleteTmpFile(resultFiles);
+			}
+		}
 	}
 
 	/**
@@ -574,10 +586,44 @@ public class AbyssClusterSubWindow extends JFrame {
 	 * Metoda obsługuje zdarzenie kliknięcia przycisku eksportu danych do okna głównego.
 	 */
 	protected void exportToAbyss() {
+		boolean proceed = true;
+		if(fullData != null) {
+			//ask what to do
+			Object[] options = {"Use existing data", "Create anew",};
+			int n = JOptionPane.showOptionDialog(null,
+							"Detailed clustering data already exists. Use it or create anew?",
+							"Data package found", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			if (n == 0) {
+				int transNumber = fullData.transNames.length-1;
+				int netTransNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+				if(transNumber != netTransNumber) {
+					JOptionPane.showMessageDialog(null, "Transition number discrepancy! \n"
+							+ "Data table transition number: "+transNumber
+							+"\nLoaded network transition number: "+netTransNumber
+							+"\nExporting cannon proceed.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				ClusterDataPackage dataCore = new ClusterDataPackage();
+				dataCore.dataMatrix = fullData.getClusteringColored(); //najbardziej czasochłonne
+				dataCore.algorithm = fullData.metaData.algorithmName;
+				dataCore.metric = fullData.metaData.metricName;
+				dataCore.clNumber = fullData.metaData.clusterNumber;
+				dataCore.clSize = new ArrayList<Integer>(fullData.metaData.clusterSize);
+				GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Abyss (JFrame)
+				JOptionPane.showMessageDialog(null, "Operation successfull. Clusters are ready to show.", 
+						"Status",JOptionPane.INFORMATION_MESSAGE);
+				proceed = false;
+			}
+		}
+		
+		if(!proceed)
+			return;
+		
 		String targetDir = getCSVLocation();
 		if(targetDir == null)
 			return;
-		
 		
 		String alg = clusteringMetaData.algorithmName;
 		if(alg.equals("UPGMA"))
@@ -588,18 +634,28 @@ public class AbyssClusterSubWindow extends JFrame {
 				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 		if(resultFiles != null) {
 			ClusterReader reader = new ClusterReader();
-			ClusteringExtended clExtData = reader.readSingleClustering(resultFiles, clusteringMetaData);
-			if(clExtData==null) {
+			fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
+			if(fullData==null) {
 				GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to Excel cannot begin.", "error", true);
 				return;
 			}
 			
+			int transNumber = fullData.transNames.length-1;
+			int netTransNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+			if(transNumber != netTransNumber) {
+				JOptionPane.showMessageDialog(null, "Transition number discrepancy! \n"
+						+ "Data table transition number: "+transNumber
+						+"\nLoaded network transition number: "+netTransNumber
+						+"\nExporting cannon proceed.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
 			ClusterDataPackage dataCore = new ClusterDataPackage();
-			dataCore.dataMatrix = clExtData.getClusteringColored(); //najbardziej czasochłonne
-			dataCore.algorithm = clExtData.metaData.algorithmName;
-			dataCore.metric = clExtData.metaData.metricName;
-			dataCore.clNumber = clExtData.metaData.clusterNumber;
-			dataCore.clSize = new ArrayList<Integer>(clExtData.metaData.clusterSize);
+			dataCore.dataMatrix = fullData.getClusteringColored(); //najbardziej czasochłonne
+			dataCore.algorithm = fullData.metaData.algorithmName;
+			dataCore.metric = fullData.metaData.metricName;
+			dataCore.clNumber = fullData.metaData.clusterNumber;
+			dataCore.clSize = new ArrayList<Integer>(fullData.metaData.clusterSize);
 			
 			GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Abyss (JFrame)
 			
@@ -607,6 +663,7 @@ public class AbyssClusterSubWindow extends JFrame {
 			
 			JOptionPane.showMessageDialog(null, "Operation successfull. Clusters are ready to show.", 
 					"Status",JOptionPane.INFORMATION_MESSAGE);
+			
 		} else {
 			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
 					+ "contacting authors about the problem please attach *all* three files mentioned in"

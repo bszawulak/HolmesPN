@@ -1,4 +1,4 @@
-package abyss.wasteland;
+package abyss.unused;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;

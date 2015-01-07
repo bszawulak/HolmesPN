@@ -29,7 +29,7 @@ import jxl.write.biff.RowsExceededException;
  * @author MR
  *
  */
-public class ExcelWriter {
+public class ClusteringExcelWriter {
 	private WritableCellFormat defCellFormat; //standardowe formatowanie
 	private WritableCellFormat defCellFormatBold;
 	private WritableCellFormat defCellFormatItalic;
@@ -47,7 +47,7 @@ public class ExcelWriter {
 	/**
 	 * Konstruktor domyślny obiektu klasy ExcelWriter.
 	 */
-	public ExcelWriter() {
+	public ClusteringExcelWriter() {
 		succeed = false;
 		errorMsg = "";
 	}
@@ -58,7 +58,7 @@ public class ExcelWriter {
 	 * @param data ClusteringExtended - dane klastrowania
 	 * @param path String - ścieżka do pliku
 	 */
-	public ExcelWriter(int mode, ClusteringExtended data, String path) {
+	public ClusteringExcelWriter(int mode, ClusteringExtended data, String path) {
 		this();
 		if(mode == 0) {
 			dataCore = data;

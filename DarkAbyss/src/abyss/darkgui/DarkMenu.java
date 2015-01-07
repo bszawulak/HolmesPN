@@ -71,6 +71,8 @@ public class DarkMenu extends JMenuBar {
 
 		// New Project
 		JMenuItem projectMenuItem = new JMenuItem("New Project",  KeyEvent.VK_N);
+		//TODO: naprawić. kiedyś. jakoś.
+		projectMenuItem.setEnabled(false);
 		projectMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_newProject.png"));
 		projectMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
 		projectMenuItem.getAccessibleContext().setAccessibleDescription("New project");
@@ -316,6 +318,41 @@ public class DarkMenu extends JMenuBar {
 			}
 		});
 		netMenu.add(searchItem);	
+		
+		JMenu texSubMenu = new JMenu("Tex Export");
+		texSubMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
+		texSubMenu.getAccessibleContext().setAccessibleDescription("MCT Generator");
+		netMenu.add(texSubMenu);
+		
+		JMenuItem exportTexPTItem = new JMenuItem("Places and transitions table...", KeyEvent.VK_1);
+		exportTexPTItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
+		exportTexPTItem.getAccessibleContext().setAccessibleDescription("Export places and transitions tables");
+		exportTexPTItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().tex.writePlacesTransitions();
+			}
+		});
+		texSubMenu.add(exportTexPTItem);	
+		
+		JMenuItem exportTexInvItem = new JMenuItem("Invariants table...", KeyEvent.VK_2);
+		exportTexInvItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
+		exportTexInvItem.getAccessibleContext().setAccessibleDescription("Export places and transitions tables");
+		exportTexInvItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().tex.writeInvariants();
+			}
+		});
+		texSubMenu.add(exportTexInvItem);	
+		
+		JMenuItem exportTexMCTItem = new JMenuItem("MCT table...", KeyEvent.VK_3);
+		exportTexMCTItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
+		exportTexMCTItem.getAccessibleContext().setAccessibleDescription("Export places and transitions tables");
+		exportTexMCTItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().tex.writeMCT();
+			}
+		});
+		texSubMenu.add(exportTexMCTItem);	
 		
 		//*********************************************************************************************
 		//***********************************                 *****************************************

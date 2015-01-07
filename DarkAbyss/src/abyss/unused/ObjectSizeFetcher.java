@@ -1,4 +1,4 @@
-package abyss.wasteland;
+package abyss.unused;
 
 import java.lang.instrument.Instrumentation;
 
