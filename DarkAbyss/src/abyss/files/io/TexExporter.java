@@ -7,12 +7,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import abyss.adam.mct.Runner;
+import abyss.analyzer.DarkAnalyzer;
 import abyss.darkgui.GUIManager;
+import abyss.files.Snoopy.SnoopyWriter;
+import abyss.math.InvariantTransition;
 import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
@@ -126,6 +131,29 @@ public class TexExporter {
 			
 			bw.write(""+newline);
 			bw.close();
+			
+			//a teraz coś z zupełnie innej beczki, zapis do SPPED w znormalizowanej formie
+			ArrayList<String> placesNames = new ArrayList<String>();
+			for(int i=0; i<places.size(); i++) {
+				placesNames.add(places.get(i).getName());
+				places.get(i).setName("p"+i);
+			}
+			ArrayList<String> transitionsNames = new ArrayList<String>();
+			for(int i=0; i<transitions.size(); i++) {
+				transitionsNames.add(transitions.get(i).getName());
+				transitions.get(i).setName("t"+i);
+			}
+			SnoopyWriter sw = new SnoopyWriter();
+			String path = Tools.getFilePath(new File(selectedFile));
+			sw.writeSPPED(path+"net.spped");
+			
+			//przywróć nazwy
+			for(int i=0; i<places.size(); i++) {
+				places.get(i).setName(placesNames.get(i));
+			}
+			for(int i=0; i<transitions.size(); i++) {
+				transitions.get(i).setName(transitionsNames.get(i));
+			}
 		} catch (Exception e) {
 			String msg = "Unable to save places and transition data to: "+selectedFile;
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
@@ -135,6 +163,9 @@ public class TexExporter {
 		}
 	}
 	
+	/**
+	 * Metoda odpowiedzialna za zapis inwariantów do pliku.
+	 */
 	public void writeInvariants() {
 		String mctFile = invMCTSubroutines();
 		if(mctFile == null) {
@@ -145,9 +176,8 @@ public class TexExporter {
 			return;
 		}
 		
-		try {
-			ArrayList<ArrayList<String>> invariantsTable = new ArrayList<ArrayList<String>>();
-			
+		ArrayList<ArrayList<String>> invariantsTable = new ArrayList<ArrayList<String>>();
+		try { //ekstrakcja informacji na bazie algorytmów MCT (Adam)
 			String line = "";
 			BufferedReader br = new BufferedReader(new FileReader(mctFile));
 			while((line = br.readLine()) != null && !line.contains("Invariants[IN MCT]")) 
@@ -156,31 +186,94 @@ public class TexExporter {
 			line = br.readLine(); //nazwy tranzycji
 			while((line = br.readLine()) != null && !line.equals("")) {
 				//parsowanie linii
-				ArrayList<String> invRow = new ArrayList<String>();
+				ArrayList<String> invTableRow = new ArrayList<String>();
 				line = line.replace(" ", "");
-				String[] cells = line.split(";");
-				invRow.add("$x_{"+cells[0].replace(".", "")+"}$	");
+				String[] cells = line.split(";|\\t"); // tnij po średnikach i tab
+				invTableRow.add("$x_{"+cells[0].replace(".", "")+"}$");
 				if(cells[1].length() > 2) { //jeśli coś więcej niż [ ]
 					String[] mctSet = cells[1].replace("]", "").replace("[", "").split(",");
+					String mctTableCell = "";
 					for(int mct=0; mct<mctSet.length; mct++) {
-						
+						mctTableCell += "$m_{";
+						mctTableCell += mctSet[mct].replace("m", ""); //sam numer, m już dodano wyżej
+						mctTableCell += "}$";
+						if(mct+1 < mctSet.length) //jeśli będą kolejne: przecinek
+							mctTableCell += ",";
 					}
+					invTableRow.add(mctTableCell); //dodaj zbiór MCT
 				} else {
-					invRow.add("");
+					invTableRow.add(""); //NO MCT
 				}
+				//teraz same tranzycje
+				
+				if(cells[2].length() > 2) { //jeśli coś więcej niż [ ]
+					String[] transSet = cells[2].split(",");
+					String transTableCell = "";
+					for(int tr=0; tr<transSet.length; tr++) {
+						transTableCell += "$t_{";
+						transTableCell += transSet[tr].replace("t", ""); //sam numer, t już dodano wyżej
+						transTableCell += "}$";
+						if(tr+1 < transSet.length) //jeśli będą kolejne: przecinek
+							transTableCell += ", ";
+					}
+					invTableRow.add(transTableCell + " \\\\ \\hline"); //dodaj zbiór MCT
+				} else {
+					invTableRow.add(" \\\\ \\hline"); //NO MCT
+				}
+				
+				invariantsTable.add(invTableRow);
 			}
-			
 	        br.close();
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Error. Cannot extract MCT from file "+mctFile, "error", true);
 		}
 		
+		//TERAZ ZAPIS DO PLIKU:
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		if(selectedFile.equals(""))
+			return;
+		if(!selectedFile.contains(".txt"))
+			selectedFile += ".txt";
+		
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
+			
+			bw.write("{\\footnotesize"+newline);
+			bw.write("\\begin{longtable}{| p{1.2cm} | p{4.5cm} | p{5cm}|}"+newline);
+			bw.write("\\caption{List of invariants} \\label{tab:invariants} \\\\"+newline);
+			bw.write("\\endfirsthead"+newline);
+			bw.write("\\hline"+newline);
+			bw.write("\\bf Invariant & \\bf MCT & \\bf Contained transitions \\\\  \\hline "+newline);
+			bw.write("\\endhead"+newline);
+			bw.write("\\hline "+newline);
+			bw.write("\\bf Invariant & \\bf MCT & \\bf Contained transitions  \\\\  \\hline "+newline);
+			
+			for(int i=0; i<invariantsTable.size(); i++) {
+				ArrayList<String> row = invariantsTable.get(i);
+				bw.write(row.get(0)+" & "+row.get(1)+" & "+row.get(2)+newline);
+			}
+			
+			bw.write("\\end{longtable}"+newline);
+			bw.write("}"+newline);
+			
+			bw.write(""+newline);
+			bw.close();
+		} catch (Exception e) {
+			String msg = "Unable to save invariants data to: "+selectedFile;
+			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			msg = msg.replace(": ", ":\n");
+			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+					"Write error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	/**
-	 * Metoda pomocnicza dla zapisu inwariantów. Zleca utworzenie pliku generatorem MCT, w którym,
-	 * tak się miło składa, 3 sekcja zawiera rozpisane inwarianty ze zbiorami MCT.
-	 * @return
+	 * Metoda pomocnicza dla zapisu zbiorów MCT. Zleca utworzenie pliku generatorem MCT, w którym,
+	 * tak się miło składa, 4 sekcja zawiera rozpisane MCT.
+	 * @return Stri
 	 */
 	private String invMCTSubroutines() {
 		String filePath = GUIManager.getDefaultGUIManager().getTmpPath() + "input.csv";
@@ -211,7 +304,110 @@ public class TexExporter {
 		}
 	}
 	
+	/**
+	 * Metoda zapisująca zbiory MCT do pliku w formie tabeli Texa. Używa wewnętrznego generatora
+	 * MCT programu, po zweryfikowaniu - zgodnego z algorytmem mct.jar do tej pory stosowanym 
+	 * (i zawartym w pakiecie abyss.adam.mct)
+	 */
+	@SuppressWarnings("unchecked") //różne badziewne ostrzeżenia Eclipsa
 	public void writeMCT() {
+		DarkAnalyzer analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
+		ArrayList<ArrayList<InvariantTransition>> invTr = analyzer.gettInvariants();
+		ArrayList<ArrayList<Transition>> mctSet = analyzer.generateMCT(invTr);
 		
+		if(mctSet == null || mctSet.size() == 0) {
+			String msg = "Unable to extract MCT data from the net.";
+			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+					"MCT export error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		//ArrayList<Transition> unused = new ArrayList<Transition>();
+		for(int i=0; i<mctSet.size(); i++) { //wyzeruj MCT 1-elementowe
+			ArrayList<Transition> mctRow = mctSet.get(i);
+			if(mctRow.size()==1) {
+				//unused.add(mctRow.get(0));
+				mctSet.set(i, null);
+			}
+		}
+		for(int i=0; i<mctSet.size(); i++) { //skasuj MCT 1-elementowe
+			ArrayList<Transition> mctRow = mctSet.get(i);
+			if(mctRow == null) {
+				mctSet.remove(i);
+				i--;
+			}
+		}
+		Object [] temp = mctSet.toArray(); 
+		Arrays.sort(temp, new Comparator<Object>() { //sortuj MCT od najliczniejszego
+			public int compare(Object o1, Object o2) {
+		        ArrayList<Transition> temp1 = (ArrayList<Transition>)o1;
+		        ArrayList<Transition> temp2 = (ArrayList<Transition>)o2;
+		        if(temp1.size() > temp2.size())
+		        	return -1;
+		        else if(temp1.size() == temp2.size()) {
+		        	return 0;
+		        } else
+		        	return 1;
+		    }
+		});
+		
+		mctSet.clear();
+		for(Object o: temp) {
+			mctSet.add((ArrayList<Transition>)o);
+		}
+		
+		//TERAZ ZAPIS DO PLIKU:
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		if(selectedFile.equals(""))
+			return;
+		if(!selectedFile.contains(".txt"))
+			selectedFile += ".txt";
+		
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
+			
+			bw.write("{\\footnotesize"+newline);
+			bw.write("\\begin{longtable}{| p{1.2cm} | p{4.2cm} | p{7.5cm} |}" + newline);
+			bw.write("\\caption{List of non-trivial MCT sets} \\label{tab:mct} \\\\" + newline);
+			bw.write("\\endfirsthead" + newline);
+			bw.write("\\hline" + newline);
+			bw.write("\\bf MCT-set & \\bf Contained transitions & \\bf Biological interpretation  \\\\  \\hline " + newline);
+			bw.write("\\endhead" + newline);
+			bw.write("\\hline " + newline);
+			bw.write("\\bf MCT-set & \\bf Contained transitions & \\bf Biological meaning  \\\\  \\hline " + newline);
+			
+			for(int i=0; i<mctSet.size(); i++) {
+				String mctNo = "$m_{"+(i+1)+"}$";
+				String transLine = "";
+				for(int t=0; t<mctSet.get(i).size(); t++) {
+					transLine += " $t_{";
+					Transition trNumber = mctSet.get(i).get(t);
+					int trID = transitions.lastIndexOf(trNumber);
+					transLine += ""+trID;
+					transLine += "}$";
+					if(t+1 < mctSet.get(i).size())
+						transLine += ",";
+				}
+				bw.write(mctNo+" & "+transLine+" & \\\\ \\hline " + newline);
+			}
+			
+			bw.write("\\end{longtable}"+newline);
+			bw.write("}"+newline);
+			
+			bw.write(""+newline);
+			bw.close();
+		} catch (Exception e) {
+			String msg = "Unable to save invariants data to: "+selectedFile;
+			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			msg = msg.replace(": ", ":\n");
+			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+					"Write error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

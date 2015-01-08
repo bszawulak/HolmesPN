@@ -304,6 +304,12 @@ public class ClusteringExtended {
 		return colors;
 	}
 	
+	/**
+	 * Metoda dla danego wektora tranzycji zwraca wektor kolorów w skali od zieleni do czerwonego.
+	 * @param clusterTransitions ArrayList[Integer] - wektor tranzycji
+	 * @param value int - wartość referencyjna
+	 * @return ArrayList[Color] - wektor kolorów
+	 */
 	public ArrayList<Color> getColorScale(ArrayList<Integer> clusterTransitions, int value)
 	{
 		double max = value;

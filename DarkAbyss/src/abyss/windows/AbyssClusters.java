@@ -642,7 +642,7 @@ public class AbyssClusters extends JFrame {
 			if(test.exists()) {
 				FileFilter filter[] = new FileFilter[1];
 				filter[0] = new ExtensionFileFilter(".xls - Excel 2003",  new String[] { "XLS" });
-				String newLocation = Tools.selectFileDialog(dirPath, filter, "", "");
+				String newLocation = Tools.selectFileDialog(dirPath, filter, "Save", "");
 				if(newLocation.equals("")) { //czy chcemy przenieść plik w inne miejsce
 					//leave it in cluster folder
 					GUIManager.getDefaultGUIManager().log("Exporting table succeed. Created file: "

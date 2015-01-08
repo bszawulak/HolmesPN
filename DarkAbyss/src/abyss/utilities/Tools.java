@@ -160,7 +160,7 @@ public final class Tools {
 	}
 	
 	/**
-	 * Zwraca tylko ścieżkę dostępu do pliku.
+	 * Zwraca tylko ścieżkę dostępu do pliku zakończoną "\\".
 	 * @param x File - plik
 	 * @return String - ścieżka do katalogu
 	 */

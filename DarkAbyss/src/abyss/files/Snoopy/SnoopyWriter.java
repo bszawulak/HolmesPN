@@ -380,6 +380,11 @@ public class SnoopyWriter {
 		}
 	}
 
+	/**
+	 * Metoda realizuje zapis pojedyńczej linii do pliku - zakończonej enterem.
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @param text String - linia
+	 */
 	private void write(BufferedWriter bw, String text) {
 		try {
 			bw.write(text+"\n");
@@ -388,6 +393,10 @@ public class SnoopyWriter {
 		}
 	}
 	
+	/**
+	 * Metoda ta zapisuje końcówkę pliku sieci SPPED.
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 */
 	private void writeEnding(BufferedWriter bw) {
 		try {
 			write(bw, "  <metadataclasses count=\"3\">");
