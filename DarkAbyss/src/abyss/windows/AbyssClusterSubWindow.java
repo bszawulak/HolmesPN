@@ -1,6 +1,5 @@
 package abyss.windows;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLayer;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -56,6 +56,8 @@ public class AbyssClusterSubWindow extends JFrame {
     
 	private String clusterPath;
 	private ClusteringExtended fullData = null;
+	
+	final WaitLayerUI layerUI = new WaitLayerUI();
 	
 	/**
 	 * Konstruktor domyślny obiektu klasy AbyssClusterSubWindow.
@@ -171,13 +173,26 @@ public class AbyssClusterSubWindow extends JFrame {
 		setMaximumSize(new Dimension(600, 600));
 		setResizable(false);
 
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BorderLayout());
+		//JPanel mainPanel = new JPanel();
+		//mainPanel.setLayout(new BorderLayout());
+		
+		
 		JPanel tablePanel = createEditor();
 		tablePanel.setOpaque(true); 
+	    JLayer<JPanel> jlayer = new JLayer<JPanel>(tablePanel, layerUI);
+	    
+	    /* 
+	    final Timer stopper = new Timer(4000, new ActionListener() {
+	    	public void actionPerformed(ActionEvent ae) {
+		    		layerUI.stop();
+	    	}
+	    });
+	    stopper.setRepeats(false);
+	     */
+	 
+	    add(jlayer);
+		//add(tablePanel);
 
-		setContentPane(tablePanel);
-		pack();
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
@@ -375,9 +390,21 @@ public class AbyssClusterSubWindow extends JFrame {
         buttonInjectCluster.setBounds(200, 510, 190, 50);
         buttonInjectCluster.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				layerUI.start();
 				turnOffButtons();
 				exportToAbyss();
 				turnOnButtons();
+				layerUI.stop();
+			}	
+		});
+        editPanel.add(buttonInjectCluster);
+        
+        buttonInjectCluster = new JButton("test", 
+        		Tools.getResIcon48(""));
+        buttonInjectCluster.setBounds(400, 510, 190, 50);
+        buttonInjectCluster.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				layerUI.start();
 			}	
 		});
         editPanel.add(buttonInjectCluster);
