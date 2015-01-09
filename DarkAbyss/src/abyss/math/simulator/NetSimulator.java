@@ -29,7 +29,7 @@ public class NetSimulator {
 	private SimulatorMode mode = SimulatorMode.STOPPED;
 	private SimulatorMode previousMode = SimulatorMode.STOPPED;
 	private PetriNet petriNet;
-	private Integer delay = new Integer(30);
+	private Integer delay = new Integer(30);	//opóźnienie
 	private boolean simulationActive = false;
 	private Timer timer;
 	private ArrayList<Transition> launchingTransitions;
@@ -63,7 +63,7 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Konstruktor obiektu symulatora sieci
+	 * Konstruktor obiektu symulatora sieci.
 	 * @param type NetType - typ sieci
 	 * @param net PetriNet - sieć do symulacji 
 	 */
@@ -73,6 +73,57 @@ public class NetSimulator {
 
 		launchingTransitions = new ArrayList<Transition>();
 		actionStack = new Stack<SimulationStep>();
+	}
+
+	@SuppressWarnings("incomplete-switch")
+	/**
+	 * Metoda rozpoczyna symulację w odpowiednim trybie. W zależności od wybranego trybu,
+	 * w oddzielnym wątku symulacji zainicjalizowana zostaje odpowiednia klasa dziedzicząca
+	 * po StepPerformer.
+	 * @param simulatorMode SimulatorMode - wybrany tryb symulacji
+	 */
+	public void startSimulation(SimulatorMode simulatorMode) {
+		//timeFrame.setBounds(185, 115, 80, 30);	
+		//timeFrame.getContentPane().add(new JLabel(String.valueOf(timeNetStepCounter)), BorderLayout.CENTER);
+		//timeFrame.pack();
+		//timeFrame.setVisible(true);
+		
+		//zapisz stan tokenów w miejscach przed rozpoczęciem:
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == false) {
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup = true;
+		}
+		
+		previousMode = getMode();
+		setMode(simulatorMode);
+		setSimulationActive(true);
+		ActionListener taskPerformer = new SimulationPerformer();
+		//ustawiania stanu przycisków symulacji:
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
+		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
+		switch (getMode()) {
+		case LOOP:
+			taskPerformer = new StepPerformer(true);
+			break;
+		case SINGLE_TRANSITION_LOOP:
+			taskPerformer = new SingleTransitionPerformer(true);
+			break;
+		case SINGLE_TRANSITION:
+			taskPerformer = new SingleTransitionPerformer();
+			break;
+		case STEP:
+			taskPerformer = new StepPerformer();
+			break;
+		case ACTION_BACK:
+			taskPerformer = new StepBackPerformer();
+			break;
+		case LOOP_BACK:
+			launchingTransitions.clear();
+			taskPerformer = new StepBackPerformer(true);
+			break;
+		}
+		setTimer(new Timer(getDelay(), taskPerformer));
+		getTimer().start();
 	}
 
 	/**
@@ -102,50 +153,6 @@ public class NetSimulator {
 				simulationType = NetType.TIME;
 				break;
 		}
-	}
-
-	@SuppressWarnings("incomplete-switch")
-	/**
-	 * Metoda rozpoczyna symulację w odpowiednim trybie. W zależności od wybranego trybu,
-	 * w oddzielnym wątku symulacji zainicjalizowana zostaje odpowiednia klasa dziedzicząca
-	 * po StepPerformer.
-	 * @param simulatorMode SimulatorMode - wybrany tryb symulacji
-	 */
-	public void startSimulation(SimulatorMode simulatorMode) {
-		//timeFrame.setBounds(185, 115, 80, 30);	
-		//timeFrame.getContentPane().add(new JLabel(String.valueOf(timeNetStepCounter)), BorderLayout.CENTER);
-		//timeFrame.pack();
-		//timeFrame.setVisible(true);
-		
-		previousMode = getMode();
-		setMode(simulatorMode);
-		setSimulationActive(true);
-		ActionListener taskPerformer = new SimulationPerformer();
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
-		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
-		switch (getMode()) {
-		case LOOP:
-			taskPerformer = new StepPerformer(true);
-			break;
-		case SINGLE_TRANSITION_LOOP:
-			taskPerformer = new SingleTransitionPerformer(true);
-			break;
-		case SINGLE_TRANSITION:
-			taskPerformer = new SingleTransitionPerformer();
-			break;
-		case STEP:
-			taskPerformer = new StepPerformer();
-			break;
-		case ACTION_BACK:
-			taskPerformer = new StepBackPerformer();
-			break;
-		case LOOP_BACK:
-			launchingTransitions.clear();
-			taskPerformer = new StepBackPerformer(true);
-			break;
-		}
-		setTimer(new Timer(getDelay(), taskPerformer));
-		getTimer().start();
 	}
 
 	/**
@@ -725,6 +732,8 @@ public class NetSimulator {
 				if (scheduledStop) { // executing scheduled stop
 					executeScheduledStop();
 				} else if (!actionStack.empty()) { // if steps remaining
+					
+					//tutaj zdejmowany jest ostatni wykonany krok w symulacji:
 					currentStep = actionStack.pop();
 					if (currentStep.getType() == SimulatorMode.STEP) {
 						launchSubtractPhase(
@@ -815,11 +824,12 @@ public class NetSimulator {
 						launchingTransitions = generateValidLaunchingTransitions();
 						remainingTransitionsAmount = launchingTransitions.size();
 					}
+					//tutaj dodawany jest nowy krok w symulacji:
 					actionStack.push(new SimulationStep(SimulatorMode.STEP,
 						cloneTransitionArray(launchingTransitions)));
 					if (actionStack.peek().getPendingTransitions() == null) {
 						//SettingsManager.log("Yay");
-						GUIManager.getDefaultGUIManager().log("Uknown problem in actionPerformed(ActionEvent event) in NetSimulator class", "error", true);
+						GUIManager.getDefaultGUIManager().log("Unknown problem in actionPerformed(ActionEvent event) in NetSimulator class.", "error", true);
 					}
 					launchSubtractPhase(launchingTransitions, false);
 					subtractPhase = false;
@@ -896,9 +906,10 @@ public class NetSimulator {
 						remainingTransitionsAmount = launchingTransitions
 								.size();
 					}
+					
+					//tutaj dodawany jest nowy krok w symulacji:
 					actionStack.push(new SimulationStep(
-							SimulatorMode.SINGLE_TRANSITION,
-							launchingTransitions.get(0),
+							SimulatorMode.SINGLE_TRANSITION, launchingTransitions.get(0),
 							cloneTransitionArray(launchingTransitions)));
 					launchSingleSubtractPhase(launchingTransitions, false, null);
 					subtractPhase = false;

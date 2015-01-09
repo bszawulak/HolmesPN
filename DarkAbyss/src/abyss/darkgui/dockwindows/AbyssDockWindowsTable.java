@@ -105,11 +105,12 @@ public class AbyssDockWindowsTable extends JPanel {
 	private JTextArea invTextArea;
 	private JTextArea clTextArea;
 	private JComboBox<String> chooseCluster;
+	public JComboBox<String> simMode;
 	
 	private WorkspaceSheet currentSheet;
 	private PetriNetElement element;
 	private ElementLocation elementLocation;
-	private NetSimulator simulator;
+	private NetSimulator simulator;  // obiekt symulatora
 	private InvariantsSimulator invSimulator;
 
 	private ArrayList<ArrayList<InvariantTransition>> invariantsDock2Form; //używane w podoknie inwariantów
@@ -137,6 +138,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	 * Konstruktor odpowiedzialny za tworzenie elementów podokna dla symulatora sieci.
 	 * @param sim NetSimulator - obiekt symulatora sieci
 	 */
+	//@SuppressWarnings({ "unchecked", "rawtypes" })
 	public AbyssDockWindowsTable(NetSimulator sim, InvariantsSimulator is) {
 		int columnA_posX = 10;
 		int columnB_posX = 80;
@@ -149,7 +151,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		String[] simModeName = {"Classic", "Time"};
 		mode = SIMULATOR;
-		simulator = sim;
+		setSimulator(sim);
 		invSimulator = is;
 		
 		// SIMULATION MODE
@@ -157,8 +159,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		netTypeLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
 		components.add(netTypeLabel);
 		
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		final JComboBox simMode = new JComboBox(simModeName); //final, aby listener przycisku odczytał wartość
+		simMode = new JComboBox<String>(simModeName);
 		simMode.setLocation(columnB_posX, columnB_Y += 10);
 		simMode.setSize(colBCompLength, 20);
 		simMode.setSelectedIndex(0);
@@ -290,19 +291,22 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 		components.add(stopSimulation);
 		
-		JButton restoreButton = new JButton(Tools.getResIcon22("ff"));
-		restoreButton.setName("reset");
-		restoreButton.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-		restoreButton.setToolTipText("Reset");
-		restoreButton.setEnabled(false);
-		restoreButton.addActionListener(new ActionListener() {
+		JButton resetButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_reset.png"));
+		resetButton.setName("reset");
+		resetButton.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
+		resetButton.setToolTipText("Reset all tokens in places.");
+		resetButton.setEnabled(false);
+		resetButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				//simulator.pause();
-				mode = SIMULATOR;
+				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup = false;
+				}
+				//mode = SIMULATOR;
 			}
 		});
-		components.add(restoreButton);
+		components.add(resetButton);
 		
 		// JButton saveState = new JButton(new ImageIcon(
 		// "resources/icons/simulation_icons/control_cursor_blue.png"));
@@ -2020,15 +2024,25 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 	
 	/**
+	 * Metoda ustawia nowy obiekt symulatora sieci.
+	 * @param netSim NetSimulator - nowy obiekt
+	 */
+	public void setSimulator(NetSimulator netSim) {
+		simulator = netSim;
+	}
+	
+	/**
 	 * Metoda ustawia status wszystkich przycisków rozpoczęcia symulacji za wyjątkiem
-	 * Pauzy i Stopu
+	 * Pauzy, Stopu - w przypadku startu / stopu symulacji
 	 * @param enabled boolean - true, jeśli mają być aktywne
 	 */
 	public void setEnabledSimulationInitiateButtons(boolean enabled) {
 		for(JComponent comp: components) {
 			if(comp instanceof JButton && comp != null && comp.getName() != null) {
 				if(comp.getName().equals("simB1") || comp.getName().equals("simB2")
-						|| comp.getName().equals("simB3") || comp.getName().equals("simB4") ) {
+						|| comp.getName().equals("simB3") || comp.getName().equals("simB4")
+						|| comp.getName().equals("simB5") || comp.getName().equals("simB6")
+						|| comp.getName().equals("reset")) {
 					comp.setEnabled(enabled);
 				}
 			}
@@ -2036,13 +2050,13 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	/**
-	 * Metoda ustawia status przycisków Stop i Pauza.
+	 * Metoda ustawia status przycisków Stop, Pauza.
 	 * @param enabled boolean - true, jeśli mają być aktywne
 	 */
 	public void setEnabledSimulationDisruptButtons(boolean enabled) {
 		for(JComponent comp: components) {
 			if(comp instanceof JButton && comp != null && comp.getName() != null) {
-				if(comp.getName().equals("stop") || comp.getName().equals("pause") ) {
+				if(comp.getName().equals("stop") || comp.getName().equals("pause")) {
 					comp.setEnabled(enabled);
 				}
 			}
@@ -2073,7 +2087,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		//values.get(4).setEnabled(false);
 		for(JComponent comp: components) {
 			if(comp instanceof JButton && comp != null && comp.getName() != null) {
-				if(comp.getName().equals("stop") ) {
+				if(comp.getName().equals("pause") ) {
 					comp.setEnabled(false);
 					break;
 				}

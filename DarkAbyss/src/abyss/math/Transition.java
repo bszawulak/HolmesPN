@@ -31,10 +31,10 @@ public class Transition extends Node {
 	 * (przestanie być możliwe wczytywanie zapisĆnych proejktów .abyss)
 	 */
 	
-	protected double minFireTime = 0;
-	protected double maxFireTime = 999;
-	protected double absoluteFireTime = 0;
-	protected double FireTime = -1;
+	protected double minFireTime = 0; //TPN
+	protected double maxFireTime = 999;	//TPN
+	//protected double absoluteFireTime = 0; diabli wiedzą od czego to, nic nie robi
+	protected double FireTime = -1; //zmienna związana z modelem sieci TPN
 	protected boolean isLaunching;
 	protected boolean isGlowed = false;
 	protected boolean isGlowedMTC = false;
@@ -43,7 +43,7 @@ public class Transition extends Node {
 	protected Color clusterColorForTransition = new Color(255,255,255);
 	protected int clNumber = 0;
 	
-	protected int firingNumber = 0;
+	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 	
 	//TODO: tak nie może być, to poniżej jest używane przez funkcję generującą MCT, ale ostatnią rzeczą
 	//jaką obiekt klasy Transition potrzebuje, to kolejny wielki wektor danych...
@@ -256,7 +256,7 @@ public class Transition extends Node {
 			g.setColor(EditorResources.glowTransitonTextColor);
 			
 			//WYŚWIETLANIE DANYCH O ODPALENIACH
-			if (this.isGlowed && this.firingNumber > 0) {
+			if (this.isGlowed && this.firingValueInInvariant > 0) {
 				int posX = nodeBounds.x + nodeBounds.width / 2 
 						- g.getFontMetrics().stringWidth(Integer.toString(this.getTokensNumber())) / 2;
 				int posY = nodeBounds.y + nodeBounds.height / 2 + 5;
@@ -324,14 +324,6 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda pozwala sprawdzić, czy tranzycja jest w tej chwili odpalana.
-	 * @return boolean - true, jeśli tranzycja jest aktualnie odpalana; false w przeciwnym wypadku
-	 */
-	public boolean isLaunching() {
-		return isLaunching;
-	}
-
-	/**
 	 * Metoda informująca, czy tranzycja jest podświetlona kolorem
 	 * @return boolean - true jeśli świeci; false w przeciwnym wypadku
 	 */
@@ -347,7 +339,7 @@ public class Transition extends Node {
 	 */
 	public void setGlowed(boolean isGlowed, int firingNumber) {
 		this.isGlowed = isGlowed;
-		this.firingNumber = firingNumber;
+		this.firingValueInInvariant = firingNumber;
 	}
 
 	/**
@@ -397,7 +389,7 @@ public class Transition extends Node {
 	 * @return int - liczba wystąpień uruchomień tranzycji w niezmienniku z pola firingNumber
 	 */
 	public int getTokensNumber() {
-		return this.firingNumber;
+		return this.firingValueInInvariant;
 	}
 
 	/**
@@ -409,6 +401,14 @@ public class Transition extends Node {
 		this.isLaunching = isLaunching;
 	}
 
+	/**
+	 * Metoda pozwala sprawdzić, czy tranzycja jest w tej chwili odpalana.
+	 * @return boolean - true, jeśli tranzycja jest aktualnie odpalana; false w przeciwnym wypadku
+	 */
+	public boolean isLaunching() {
+		return isLaunching;
+	}
+	
 	/**
 	 * Metoda pozwala zarezerwować we wszystkich miejscach wejściowych
 	 * niezbędne do uruchomienia tokeny. Inne tranzycje nie mogą ich odebrać.

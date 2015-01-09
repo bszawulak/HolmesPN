@@ -76,7 +76,7 @@ public class GUIOperations {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Abyss Petri Net file (.abyss)", new String[] { "ABYSS" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select Abyss PN", 
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", 
 				"Select petri net file in program native format");
 		if(selectedFile.equals(""))
 			return;

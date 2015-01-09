@@ -50,8 +50,8 @@ import org.simpleframework.xml.Root;
 public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
 	private ArrayList<ArrayList<InvariantTransition>> invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
-	private ArrayList<ArrayList<Integer>> invariantsMatrix;
-	private ArrayList<GraphPanel> graphPanels;
+	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
+	private ArrayList<GraphPanel> graphPanels;		// panele sieci
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
 	private IdGenerator idGenerator;
 	
@@ -70,6 +70,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private DarkAnalyzer analyzer;
 	private EarlyInvariantsAnalyzer eia;
 
+	//wektor tokenów dla miejsc:
+	private ArrayList<Integer> backupMarkingZero = new ArrayList<Integer>();
+	/** Wartość flagi == true jeżeli został już utworzony backup PRZEZ symulator */
+	public boolean isBackup = false;
 	
 	/**
 	 * Konstruktor obiektu klasy PetriNet - działa dla symulatora inwariantów.
@@ -459,6 +463,44 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	//*********************************************************************************
 
+	/**
+	 * Metoda ta zapisuje liczbę tokenów każdego miejsca
+	 */
+	public void saveMarkingZero() {
+		ArrayList<Place> places = getPlaces();
+		//ArrayList<Transition> transitions = getTransitions();
+		
+		for(int i=0; i<places.size(); i++) {
+			backupMarkingZero.add(places.get(i).getTokensNumber());
+		}
+	}
+	
+	/**
+	 * Metoda ta przywraca stan sieci przed rozpoczęciem symulacji.
+	 */
+	public void restoreMarkingZero() {
+		ArrayList<Place> places = getPlaces();
+		ArrayList<Transition> transitions = getTransitions();
+		
+		for(int i=0; i<places.size(); i++) {
+			places.get(i).setTokensNumber(backupMarkingZero.get(i));
+			places.get(i).returnTokens();
+			//backupMarkingZero.add(places.get(i).getTokensNumber());
+		}
+		
+		for(int i=0; i<transitions.size(); i++) {
+			transitions.get(i).setLaunching(false);
+			transitions.get(i).setFireTime(-1);
+		}
+		isBackup = false;
+		
+		setSimulator(new NetSimulator(NetType.BASIC, this));
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().
+			setSimulator(getSimulator()); //podmienia ten z podokna na nowo utworzony
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
+		repaintAllGraphPanels();
+	}
+	
 	/**
 	 * Metoda wyłączająca świecenie tranzycji np. w ramach aktywacji niezmiennika.
 	 */
@@ -920,33 +962,22 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		InvariantTransition currentTransition;
 		invariantsBinaryList = eia.getListaInvatianow();
 		set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
-		//SettingsManager.log("start logging");
-		//String invariantLog;
 		if (invariantsBinaryList.size() > 0) {
 			if (invariantsBinaryList.get(0).size() == getTransitions().size()) {
 				ArrayList<InvariantTransition> currentInvariant;
-				//int count = 0;
 				int i;
 				for (ArrayList<Integer> binaryInvariant : invariantsBinaryList) {
 					currentInvariant = new ArrayList<InvariantTransition>();
 					i = 0;
-					// SettingsManager.log("next invariant");
-					//invariantLog = new String("");
+					// kolejny inwariant
 					for (Integer amountOfFirings : binaryInvariant) {
 						if (amountOfFirings > 0) {
-							// invariantLog += " " + amountOfFirings.toString();
 							currentTransition = new InvariantTransition( getTransitions().get(i), amountOfFirings);
-							// invariantLog += " " + amountOfFirings.toString();
 							currentInvariant.add(currentTransition);
-							// invariantLog += " " +
-							// currentInvariant.get(currentInvariant.size()-1).getAmountOfFirings().toString();
 						}
 						i++;
 					}
-					// if (count < 5)
-					// SettingsManager.log(invariantLog);
 					get2ndFormInvariantsList().add(currentInvariant);
-					//count++;
 				}
 			} else {
 				JOptionPane.showMessageDialog(null,

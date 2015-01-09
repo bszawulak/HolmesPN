@@ -234,6 +234,6 @@ public class Place extends Node {
 	 * @return int - liczba dostępnych tokenów
 	 */
 	public int getFreeTokensNumber() {
-		return tokensNumber - tokensTaken;
+		return tokensNumber - getTokensTaken();
 	}
 }

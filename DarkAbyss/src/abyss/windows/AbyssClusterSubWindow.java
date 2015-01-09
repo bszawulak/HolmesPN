@@ -378,9 +378,11 @@ public class AbyssClusterSubWindow extends JFrame {
         //button.setBounds(new Rectangle(150, 40));
         buttonExcel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				layerUI.start();
 				turnOffButtons();
 				exportDataToExcel();
 				turnOnButtons();
+				layerUI.stop();
 			}	
 		});
         editPanel.add(buttonExcel);
@@ -398,7 +400,7 @@ public class AbyssClusterSubWindow extends JFrame {
 			}	
 		});
         editPanel.add(buttonInjectCluster);
-        
+        /*
         buttonInjectCluster = new JButton("test", 
         		Tools.getResIcon48(""));
         buttonInjectCluster.setBounds(400, 510, 190, 50);
@@ -408,7 +410,7 @@ public class AbyssClusterSubWindow extends JFrame {
 			}	
 		});
         editPanel.add(buttonInjectCluster);
-        
+        */
         editPanel.repaint();
         return editPanel;
 	}

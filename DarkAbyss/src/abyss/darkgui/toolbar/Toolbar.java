@@ -43,7 +43,7 @@ public class Toolbar extends BorderDock {
 	// simulator buttons
 	ToolbarButtonAction reverseLoopButton, reverseStepButton, loopSimButton,
 			singleTransitionLoopSimButton, pauseSimButton, stopSimButton,
-			smallStepFwdSimButton, stepFwdSimButton;
+			smallStepFwdSimButton, stepFwdSimButton, resetSimButton;
 
 	// arrays
 	ArrayList<ButtonDockable> buttonDockables;
@@ -273,8 +273,7 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/sim_stop.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-					.getSimulator().stop();
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().stop();
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableStopSim",stopSimButton));
@@ -298,6 +297,17 @@ public class Toolbar extends BorderDock {
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableStepFwdSim", stepFwdSimButton));
+		
+		resetSimButton = new ToolbarButtonAction(this,"Reset simulator",
+				Tools.getResIcon48("/icons/toolbar/sim_reset.png")) {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true)
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+			}
+		};
+		simulationDockables.add(createButtonDockable("ButtonDockableResetSim", resetSimButton));
+		
 		return simulationDockables;
 	}
 	
@@ -435,6 +445,7 @@ public class Toolbar extends BorderDock {
 	public void setEnabledSimulationDisruptButtons(boolean enabled) {
 		simulationDockables.get(4).getContent().setEnabled(enabled);
 		simulationDockables.get(5).getContent().setEnabled(enabled);
+		//simulationDockables.get(8).getContent().setEnabled(enabled);
 	}
 
 	/**

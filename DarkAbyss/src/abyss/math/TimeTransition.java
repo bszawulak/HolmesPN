@@ -220,7 +220,7 @@ public class TimeTransition extends Transition {
 			g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 20, nodeBounds.y + 9);
 
 			g.setColor(EditorResources.glowTransitonTextColor);
-			if (this.isGlowed && this.firingNumber > 0)
+			if (this.isGlowed && this.firingValueInInvariant > 0)
 			{
 				g.setColor(Color.black);
 				g.setFont(new Font("TimesRoman", Font.PLAIN, 10));
@@ -290,15 +290,15 @@ public class TimeTransition extends Transition {
 	 * Metoda ta zwraca czas dla danej tranzcji.
 	 * @return double - czas dla tranzycji - pole absoluteFireTime
 	 */
-	public double getAbsoluteFireTime() {
-		return absoluteFireTime;
-	}
+	//public double getAbsoluteFireTime() {
+	//	return absoluteFireTime;
+	//}
 
 	/**
 	 * Metoda ustawia czas dla tranzycji.
 	 * @param absoluteFireTime double - ustawia pole this.absoluteFireTime
 	 */
-	public void setAbsoluteFireTime(double absoluteFireTime) {
-		this.absoluteFireTime = absoluteFireTime;
-	}
+	//public void setAbsoluteFireTime(double absoluteFireTime) {
+	//	this.absoluteFireTime = absoluteFireTime;
+	//}
 }

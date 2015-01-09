@@ -26,7 +26,7 @@ public abstract class Node extends PetriNetElement {
 
 	/*
 	 * UWAGA!!! NIE WOLNO ZMIENIAĆ NAZW, DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
-	 * (przestanie być możliwe wczytywanie zapisĆnych proejktów .abyss)
+	 * (przestanie być możliwe wczytywanie zapisanych projektów w formacie .abyss)
 	 */
 	
 	@ElementList
