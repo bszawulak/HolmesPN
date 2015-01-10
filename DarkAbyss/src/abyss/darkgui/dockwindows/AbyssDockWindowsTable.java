@@ -1450,7 +1450,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				String t2 = Tools.setToSize("Fired: "+invTrans.getAmountOfFirings(), 12, false);
 				invTextArea.append(t1 + t2 + " ; "+invTrans.getTransition().getName()+"\n");
 				
-				invTrans.getTransition().setGlowed(true, invTrans.getAmountOfFirings());
+				invTrans.getTransition().setGlowed_INV(true, invTrans.getAmountOfFirings());
 			}
 			invTextArea.setCaretPosition(0);
 		}
@@ -1594,7 +1594,7 @@ public class AbyssDockWindowsTable extends JPanel {
 						.getTransitions().lastIndexOf(transition);
 				String t1 = Tools.setToSize("t"+globalIndex, 5, false);
 				mctTextArea.append(t1 + " ; "+transition.getName()+"\n");
-				transition.setGlowedMTC(true);
+				transition.setGlowed_MTC(true);
 			}
 			mctTextArea.setCaretPosition(0);
 		}
@@ -1760,27 +1760,27 @@ public class AbyssDockWindowsTable extends JPanel {
 			ArrayList<Transition> holyVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 			for(int i=0; i<transColors.size(); i++) { //ustaw kolory dla tranzycji
 				if(transColors.get(i).equals(Color.white)) {
-					holyVector.get(i).setGlowedCluster(false, Color.white, -1);
+					holyVector.get(i).setGlowed_Cluster(false, Color.white, -1);
 				} else {
 					if(clusterColorsData.showFirings == true) { //pokazuj liczbę odpaleń
 						if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
 							int tranNumber = transColors.get(i).firedInCluster;
 							Color tranColor = transColors.get(i).colorFiredScale;
-							holyVector.get(i).setGlowedCluster(true, tranColor, tranNumber);
+							holyVector.get(i).setGlowed_Cluster(true, tranColor, tranNumber);
 						} else { //pokazuj kolory z krokiem 10%
 							int tranNumber = transColors.get(i).firedInCluster;
 							Color tranColor = transColors.get(i).colorFiredGrade;
-							holyVector.get(i).setGlowedCluster(true, tranColor, tranNumber);
+							holyVector.get(i).setGlowed_Cluster(true, tranColor, tranNumber);
 						}
 					} else { //pokazuj tylko liczbę wystąpień jako część inwariantów
 						if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
 							int tranNumber = transColors.get(i).transInCluster;
 							Color tranColor = transColors.get(i).colorTransScale;
-							holyVector.get(i).setGlowedCluster(true, tranColor, tranNumber);
+							holyVector.get(i).setGlowed_Cluster(true, tranColor, tranNumber);
 						} else { //pokazuj kolory z krokiem 10%
 							int tranNumber = transColors.get(i).transInCluster;
 							Color tranColor = transColors.get(i).colorTransGrade;
-							holyVector.get(i).setGlowedCluster(true, tranColor, tranNumber);
+							holyVector.get(i).setGlowed_Cluster(true, tranColor, tranNumber);
 						}
 					}
 				}

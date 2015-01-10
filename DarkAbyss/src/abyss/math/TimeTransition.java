@@ -1,17 +1,12 @@
 package abyss.math;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-
-import abyss.graphpanel.EditorResources;
+import abyss.graphpanel.ElementDraw;
 import abyss.graphpanel.IdGenerator;
 
 /**
@@ -109,12 +104,13 @@ public class TimeTransition extends Transition {
 	 * @param sheetId int - identyfikator arkusza 
 	 */
 	public void draw(Graphics2D g, int sheetId) {
+		/*
 		for (ElementLocation el : this.getNodeLocations(sheetId)) {
 			Rectangle nodeBounds = new Rectangle(
 				el.getPosition().x - getRadius(), el.getPosition().y - getRadius(),
 					this.getRadius() * 2, this.getRadius() * 2);
 			if (!isLaunching) {
-				if (isGlowedMTC()) {
+				if (isGlowed_MTC()) {
 					g.setColor(EditorResources.glowMTCTransitonColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -198,19 +194,16 @@ public class TimeTransition extends Transition {
 			g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 			if (this.isPortal())
 				g.drawRect(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
-			// Draw min and max firing time
 
+			//specific for t-trans
 			g.setColor(Color.black);
 			g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 			String miFT = String.valueOf(this.minFireTime);
-
 			g.drawString(miFT, nodeBounds.x+35, nodeBounds.y + 8);
 
 			g.setColor(Color.black);
 			g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
-			
 			String mxFT = String.valueOf(this.maxFireTime);
-			
 			g.drawString(mxFT, nodeBounds.x +35, nodeBounds.y + 28);
 
 			g.setColor(Color.LIGHT_GRAY);
@@ -225,14 +218,18 @@ public class TimeTransition extends Transition {
 				g.setColor(Color.black);
 				g.setFont(new Font("TimesRoman", Font.PLAIN, 10));
 				g.drawString(
-						Integer.toString(this.getTokensNumber()),
+						Integer.toString(this.getFiring_INV()),
 						nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics()
-							.stringWidth(Integer.toString(this .getTokensNumber()))
+							.stringWidth(Integer.toString(this .getFiring_INV()))
 							/ 2, nodeBounds.y + nodeBounds.height / 2 + 5);
 			
 			}
 		}
+		*/
+
+		g = ElementDraw.drawElement(this, g, sheetId);
 		drawNode(g, sheetId);
+		
 	}
 
 	/**

@@ -1001,9 +1001,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void setTransitionGlowedMTC(boolean isGlowedMTC) {
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION)
-				((Transition) n).setGlowedMTC(isGlowedMTC);
+				((Transition) n).setGlowed_MTC(isGlowedMTC);
 			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
-				((TimeTransition) n).setGlowedMTC(isGlowedMTC);
+				((TimeTransition) n).setGlowed_MTC(isGlowedMTC);
 	}
 	
 	/**
@@ -1013,9 +1013,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void setColorClusterToNeutral() {
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION)
-				((Transition) n).setGlowedCluster(false, Color.white, -1);
+				((Transition) n).setGlowed_Cluster(false, Color.white, -1);
 			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
-				((TimeTransition) n).setGlowedCluster(false, Color.white, -1);
+				((TimeTransition) n).setGlowed_Cluster(false, Color.white, -1);
 	}
 	
 	/**

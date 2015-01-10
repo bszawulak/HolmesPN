@@ -876,8 +876,8 @@ public class SelectionManager {
 	public void removeTransitionsGlowing() {
 		for (Node n : getGraphPanelNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION )
-				((Transition) n).setGlowed(false, 0);
+				((Transition) n).setGlowed_INV(false, 0);
 			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
-				((TimeTransition) n).setGlowed(false, 0);
+				((TimeTransition) n).setGlowed_INV(false, 0);
 	}
 }

@@ -1,18 +1,12 @@
 package abyss.math;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 
 import org.simpleframework.xml.Element;
 
-import abyss.graphpanel.EditorResources;
+import abyss.graphpanel.ElementDraw;
 import abyss.graphpanel.IdGenerator;
 
 /**
@@ -115,6 +109,7 @@ public class Place extends Node {
 	 */
 	public void draw(Graphics2D g, int sheetId)
 	{
+		/*
 		for (ElementLocation el : this.getNodeLocations(sheetId)) {
 			Rectangle nodeBounds = new Rectangle(
 					el.getPosition().x - getRadius(), el.getPosition().y - getRadius(), 
@@ -168,6 +163,8 @@ public class Place extends Node {
 				g.drawOval(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
 			}
 		}
+		*/
+		g = ElementDraw.drawElement(this, g, sheetId);
 		super.draw(g, sheetId);
 	}
 

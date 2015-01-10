@@ -1,17 +1,11 @@
 package abyss.math;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-
-import abyss.graphpanel.EditorResources;
+import abyss.graphpanel.ElementDraw;
 import abyss.graphpanel.IdGenerator;
 
 /**
@@ -153,6 +147,7 @@ public class Transition extends Node {
 	 * @param sheetId int - identyfikator arkusza 
 	 */
 	public void draw(Graphics2D g, int sheetId) {
+		/*
 		for (ElementLocation el : this.getNodeLocations(sheetId)) {
 			Rectangle nodeBounds = new Rectangle(
 				el.getPosition().x - getRadius(), el.getPosition().y - getRadius(),
@@ -282,6 +277,9 @@ public class Transition extends Node {
 			}
 			
 		}
+		*/
+		
+		g = ElementDraw.drawElement(this, g, sheetId);
 		super.draw(g, sheetId);
 	}
 
@@ -337,7 +335,7 @@ public class Transition extends Node {
 	 * @param isGlowed boolean - true, jeśli ma świecić
 	 * @param firingNumber int - liczba uruchomień tranzycji w niezmienniku
 	 */
-	public void setGlowed(boolean isGlowed, int firingNumber) {
+	public void setGlowed_INV(boolean isGlowed, int firingNumber) {
 		this.isGlowed = isGlowed;
 		this.firingValueInInvariant = firingNumber;
 	}
@@ -346,7 +344,7 @@ public class Transition extends Node {
 	 * Metoda pozwala określic, czy tranzycja ma byc podświetlona.
 	 * @param isGlowed boolean - true, jeśli ma świecić
 	 */
-	public void setGlowed(boolean value) {
+	public void isGlowed_INV(boolean value) {
 		this.isGlowed = value;
 	}
 
@@ -354,7 +352,7 @@ public class Transition extends Node {
 	 * Metoda sprawdza, czy tranzycja świeci będąc częcią zbioru MCT.
 	 * @return boolean - true jeżeli świeci jako MCT; false w przeciwnym wypadku
 	 */
-	public boolean isGlowedMTC() {
+	public boolean isGlowed_MTC() {
 		return isGlowedMTC;
 	}
 
@@ -362,7 +360,7 @@ public class Transition extends Node {
 	 * Metoda ustawia stan świecenia tranzycji jako częci MCT.
 	 * @param isGlowedMTC boolean - true jeżeli ma świecić
 	 */
-	public void setGlowedMTC(boolean value) {
+	public void setGlowed_MTC(boolean value) {
 		this.isGlowedMTC = value;
 	}
 	
@@ -370,7 +368,7 @@ public class Transition extends Node {
 	 * Metoda zwraca wartość flagi koloru dla klastra
 	 * @return boolean - true, jeśli ma mieć dany kolor
 	 */
-	public boolean isGlowedCluster() {
+	public boolean isGlowed_Cluster() {
 		return isGlowetCl;
 	}
 	
@@ -379,16 +377,33 @@ public class Transition extends Node {
 	 * @param value boolean - true, jeśli ma rysować się w kolorze
 	 * @param clColor Color - na jaki kolor
 	 */
-	public void setGlowedCluster(boolean value, Color clColor, int clNumber) {
+	public void setGlowed_Cluster(boolean value, Color clColor, int clNumber) {
 		this.isGlowetCl = value;
 		this.clusterColorForTransition = clColor;
 		this.clNumber = clNumber;
 	}
+	
+	/**
+	 * Zwraca liczbę wystąpień tranzycji w ramach inwariantów w ramach klastra.
+	 * @return int - liczba wystąpień
+	 */
+	public int getFreq_Cluster() {
+		return clNumber;
+	}
+	
+	/**
+	 * Metoda zwraca aktualnie ustawiony kolor dla trybu wyświetlania klastrów.
+	 * @return Color - kolor
+	 */
+	public Color getColor_Cluster() {
+		return clusterColorForTransition;
+	}
+	
 	/**
 	 * Metoda zwraca liczbę wystąpień uruchomień tranzycji w ramach niezmiennika.
 	 * @return int - liczba wystąpień uruchomień tranzycji w niezmienniku z pola firingNumber
 	 */
-	public int getTokensNumber() {
+	public int getFiring_INV() {
 		return this.firingValueInInvariant;
 	}
 
