@@ -40,7 +40,7 @@ import abyss.workspace.ExtensionFileFilter;
  * @author MR
  *
  */
-public class AbyssProperties extends JFrame {
+public class AbyssNetProperties extends JFrame {
 	private static final long serialVersionUID = -4382182770445745847L;
 	private JFrame ego;
 	
@@ -66,7 +66,7 @@ public class AbyssProperties extends JFrame {
 	/**
 	 * Konstruktor domyślny okna klasy AbyssProperties.
 	 */
-	public AbyssProperties() {
+	public AbyssNetProperties() {
 		ego = this;
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
@@ -282,9 +282,6 @@ public class AbyssProperties extends JFrame {
 	 * sieci. Celem ich obliczenia wywoływany jest obiekt klasy NetPropertiesAnalyzer.
 	 */
 	private void fillStaticProperties() {
-		//JPanel rowPanel = new JPanel();
-		//rowPanel.setLayout(new BoxLayout(rowPanel,BoxLayout.X_AXIS));
-		//ArrayList<Object> row = new ArrayList<Object>();
 		staticPropertiesPanel.removeAll();
 		staticPropertiesPanel.revalidate();
 		

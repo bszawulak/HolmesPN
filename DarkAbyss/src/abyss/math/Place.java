@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.simpleframework.xml.Element;
 
+import abyss.darkgui.GUIManager;
 import abyss.graphpanel.ElementDraw;
 import abyss.graphpanel.IdGenerator;
 
@@ -169,7 +170,7 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Metoda pozwala pobrać aktualną liczbę tokenów.
+	 * Metoda pozwala pobrać aktualną liczbę tokenów z miejsca.
 	 * @return int - liczba tokenów
 	 */
 	public int getTokensNumber() {
@@ -177,33 +178,31 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Metoda pozwala ustawić liczbę tokenów
-	 * @param tokensNumber int - liczba tokenów
+	 * Metoda pozwala ustawić wartość liczby tokenów dla miejsca.
+	 * @param tokensNumber int - nowa liczba tokenów
 	 */
 	public void setTokensNumber(int tokensNumber) {
 		this.tokensNumber = tokensNumber;
 		if(tokensNumber < 0) {
-			@SuppressWarnings("unused")
-			int error = 1;
+			GUIManager.getDefaultGUIManager().log("Critical simulation error. Number of tokens in place: "
+					+this.getName()+ " below zero: ("+this.getTokensNumber()+").", "error", true);
 		}
 	}
 
 	/**
-	 * Metoda pozwala zmienić liczbę tokenów, dodając do niej określoną wartość.
+	 * Metoda pozwala zmienić liczbę tokenów w miejscu, dodając do niej określoną wartość.
 	 * @param delta int - wartość o którą zmieni się liczba tokenów
 	 */
 	public void modifyTokensNumber(int delta) {
 		this.tokensNumber = this.tokensNumber + delta;
 		if(tokensNumber < 0) {
-			@SuppressWarnings("unused")
-			int error = 1;
-			error = 2;
+			GUIManager.getDefaultGUIManager().log("Critical simulation error. Number of tokens in place: "
+					+this.getName()+ " below zero: ("+this.getTokensNumber()+").", "error", true);
 		}
 	}
 
 	/**
-	 * Metoda pozwala pobrać liczbę zajętych (zarezerwowanych 
-	 * przez aktywowaną tranzycję) tokenów.
+	 * Metoda pozwala pobrać liczbę zajętych (zarezerwowanych  przez aktywowaną tranzycję) tokenów.
 	 * @return int - liczba zarezerwowanych tokenów
 	 */
 	public int getTokensTaken() {
@@ -211,11 +210,11 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Metoda pozwala zarezerwować określoną liczbę tokenów
+	 * Metoda pozwala zarezerwować określoną liczbę tokenów w miejscu.
 	 * @param tokensTaken int - liczba zajmowanych tokenów
 	 */
 	public void bookTokens(int tokensTaken) {
-		this.tokensTaken = tokensTaken;
+		this.tokensTaken += tokensTaken; // TU BYŁ BŁĄD, BYŁO = ZAMIAST +=
 	}
 
 	/**

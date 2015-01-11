@@ -16,7 +16,8 @@ import abyss.utilities.Tools;
 import abyss.windows.AbyssAbout;
 import abyss.windows.AbyssConsole;
 import abyss.windows.AbyssClusters;
-import abyss.windows.AbyssProperties;
+import abyss.windows.AbyssNetProperties;
+import abyss.windows.AbyssProgramProperties;
 import abyss.windows.AbyssSearch;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
@@ -129,9 +130,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	// okna niezależne:
 	public AbyssClusters windowClusters; //okno tabeli 
 	private AbyssConsole windowConsole; //konsola logów
-	private AbyssProperties windowNetProperties; //okno właściwości sieci
+	private AbyssNetProperties windowNetProperties; //okno właściwości sieci
 	private AbyssAbout windowAbout; //okno About...
 	private AbyssSearch windowSearch;
+	private AbyssProgramProperties windowProperties;
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	/**
@@ -160,7 +162,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createClusterWindow(); //niewidoczne na starcie okno tabeli klastrów
 		createNetPropertiesWindow(); //niewidoczne na starcie okno właściwości sieci
 		createSearchWindow();
-		
+
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnętrzne zmienne programu
 		
 		// Set the frame properties and show it.
@@ -296,6 +298,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 		        	}
 		    	}
 		});
+		
+		//na samym końcu, gdy już wszystko 'działa'
+		createPropertiesWindow();
 	}
 	/**
 	 * Metoda pomocnicza konstruktora. Ustawia główne zmienne programu, wczytuje plik
@@ -401,7 +406,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 					"Missing executable", JOptionPane.YES_NO_OPTION,
 					JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 			if (n == 0) {
-				
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter(".exe - Rscript",  new String[] { "EXE" });
 				String selectedFile = Tools.selectFileDialog("", filters, "Select Rscript.exe", 
@@ -409,44 +413,29 @@ public class GUIManager extends JPanel implements ComponentListener {
 				if(selectedFile.equals("")) {
 					log("Rscript executable file inaccessible. Some features will be disabled.", "error", true);
 				} else {
-					//File f = new File(choosenDir);
-					//if(!f.exists()) return;
 					if(!selectedFile.contains("x64")) { //jeśli wskazano 64b
-						
-						//File test = new File(selectedFile);
-						//String dest = test.getAbsolutePath();
 						String dest = selectedFile.substring(0,selectedFile.lastIndexOf(File.separator));
 						dest += "\\x64\\Rscript.exe";
-						settingsManager.setValue("r_path64", dest);
+						if(Tools.ifExist(dest))
+							settingsManager.setValue("r_path64", dest);
+						else
+							settingsManager.setValue("r_path64", "");
 					} else {
 						settingsManager.setValue("r_path64", selectedFile);
 					}
 					
-					settingsManager.setValue("r_path", selectedFile);
-					settingsManager.saveSettings();
-					rReady = true;
-					log("Rscript.exe manually located in "+selectedFile+". Settings file updated.", "text", true);
-				
-				}
-				/*
-				JFileChooser fc = new JFileChooser();
-				FileFilter exeFile = new ExtensionFileFilter(".exe - Rscript",  new String[] { "EXE" });
-				fc.setFileFilter(exeFile);
-				fc.addChoosableFileFilter(exeFile);
-				fc.setAcceptAllFileFilterUsed(false);
-				int returnVal = fc.showSaveDialog(null);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					if(file.getName().equals("Rscript.exe")) {
-						settingsManager.setValue("r_path", file.getPath());
+					if(Tools.ifExist(selectedFile)) {
+						settingsManager.setValue("r_path", selectedFile);
 						settingsManager.saveSettings();
-						rReady = true;
-						log("Rscript.exe manually located at "+file.getPath()+". Settings file updated.", "text", true);
+						setRStatus(true);
+						log("Rscript.exe manually located in "+selectedFile+". Settings file updated.", "text", true);
+					
 					} else {
-						log("Rscript executable file inaccessible. Some features will be disabled.", "error", true);
+						settingsManager.setValue("r_path", "");
+						setRStatus(false);
+						log("Rscript.exe location unknown. R environment inaccessbile.", "error", true);	
 					}
 				}
-				*/
 			}
 		}
 	}
@@ -990,7 +979,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda pomocnicza konstruktora, tworzy okno właściwości sieci.
 	 */
 	private void createNetPropertiesWindow() {
-		windowNetProperties = new AbyssProperties();
+		windowNetProperties = new AbyssNetProperties();
 		windowNetProperties.setLocationRelativeTo(frame);
 	}
 	
@@ -1032,6 +1021,22 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void showSearchWindow() {
 		if(windowSearch != null) {
 			windowSearch.setVisible(true);
+		}
+	}
+	
+	/**
+	 * Metoda tworzy nowe okno właściwości programu.
+	 */
+	private void createPropertiesWindow() {
+		windowProperties = new AbyssProgramProperties(frame);
+	}
+	
+	/**
+	 * Metoda pokazuje okno właściwości programu.
+	 */
+	public void showPropertiesWindow() {
+		if(windowProperties != null) {
+			windowProperties.setVisible(true);
 		}
 	}
 	
@@ -1078,6 +1083,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public boolean getRStatus() {
 		return rReady;
+	}
+	
+	/**
+	 * Metoda ustawie flagę gotowości środowiska R.
+	 * @param status boolean - true, jeśli znana jest ścieżka dostępu do Rscript.exe
+	 */
+	public void setRStatus(boolean status) {
+		rReady = status;
 	}
 	
 	/**

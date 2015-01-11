@@ -239,7 +239,7 @@ public class DarkMenu extends JMenuBar {
 		//*********************************************************************************************
 		
 		// Build the Window menu.
-		windowMenu = new JMenu("Window");
+		windowMenu = new JMenu("Windows");
 		windowMenu.setMnemonic(KeyEvent.VK_W);
 		windowMenu.getAccessibleContext().setAccessibleDescription("The Window Menu");
 		this.add(windowMenu);
@@ -281,6 +281,17 @@ public class DarkMenu extends JMenuBar {
 			}
 		});
 		windowMenu.add(consoleItem);
+		
+		JMenuItem propertiesItem = new JMenuItem("Properties", KeyEvent.VK_1);
+		propertiesItem.setIcon(Tools.getResIcon32("/icons/menu/menu_properties.png"));
+		propertiesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
+		propertiesItem.getAccessibleContext().setAccessibleDescription("Show Abyss properties window");
+		propertiesItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().showPropertiesWindow();
+			}
+		});
+		windowMenu.add(propertiesItem);
 		
 		//*********************************************************************************************
 		//***********************************                 *****************************************

@@ -35,7 +35,7 @@ public class NetSimulator {
 	private ArrayList<Transition> launchingTransitions;
 	private Stack<SimulationStep> actionStack;
 	private boolean maximumMode = false;
-	public static int DEFAULT_COUNTER = 50;
+	public static int DEFAULT_COUNTER = 50;			// wartość ta ma wpływ na szybkość poruszania się tokenów
 	public JFrame timeFrame = new JFrame("Zegar");
 	public double timeNetStepCounter = 0;
 	public double timeNetPartStepCounter = 0;
@@ -56,8 +56,11 @@ public class NetSimulator {
 		LOOP, SINGLE_TRANSITION_LOOP, SINGLE_TRANSITION, STEP, STOPPED, PAUSED, ACTION_BACK, LOOP_BACK
 	}
 
-	//rodzaj symulowanej sieci (przygotowane do ewentualnych, dalszych rozszerzeń o
-	//kolejne rodzaje, poza podstawowym
+	/**
+	 * BASIC<br>
+	 * COLORED<br>
+	 * TIME<br>
+	 */
 	public enum NetType {
 		BASIC, COLORED, TIME
 	}
@@ -70,9 +73,8 @@ public class NetSimulator {
 	public NetSimulator(NetType type, PetriNet net) {
 		simulationType = type;
 		petriNet = net;
-
 		launchingTransitions = new ArrayList<Transition>();
-		actionStack = new Stack<SimulationStep>();
+		actionStack = new Stack<SimulationStep>(); //historia kroków
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -103,7 +105,7 @@ public class NetSimulator {
 		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
 		switch (getMode()) {
 		case LOOP:
-			taskPerformer = new StepPerformer(true);
+			taskPerformer = new StepPerformer(true); //główny tryb
 			break;
 		case SINGLE_TRANSITION_LOOP:
 			taskPerformer = new SingleTransitionPerformer(true);
@@ -140,7 +142,7 @@ public class NetSimulator {
 	}
 	
 	/**
-	 * Metoda ustawiająca tryb sieci do symulacji
+	 * Metoda ustawiająca tryb sieci do symulacji.
 	 * @param type int - typ sieci.
 	 */
 	public void setSimulatorNetType(int type)
@@ -156,16 +158,29 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda generuje zbiór tranzycji do uruchomienia.
-	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia.
+	 * Metoda generuje zbiór tranzycji do uruchomienia w ramach symulatora.
+	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia
 	 */
 	private ArrayList<Transition> generateValidLaunchingTransitions() {
 		boolean generated = false;
 		ArrayList<Transition> launchingTransitions = new ArrayList<Transition>();
+		int safetyCounter = 0;
 		while (!generated) {
 			launchingTransitions = generateLaunchingTransitions();
-			if (launchingTransitions.size() > 0)
-				generated = true;
+			if (launchingTransitions.size() > 0) {
+				generated = true; // wcześniej w algorytmie stwierdzono, że są jakieś aktywne 
+				// tranzycje, tak więc jeśli to nie tryb maksimum i żadna się nie wygenerowała 
+				// (przez pechowe rzuty kostką:) ) to powtarzamy do skutku. Prawie...:
+			} else {
+				safetyCounter++;
+				if(safetyCounter == 999) { // safety measure
+					if(isPossibleStep() == false) {
+						GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
+								+ "has been activated. Please advise authors.", "error", true);
+						return launchingTransitions;
+					}
+				}
+			}
 		}
 		return launchingTransitions;
 	}
@@ -191,7 +206,7 @@ public class NetSimulator {
 			for (i = 0; i < allTransitions.size(); i++) {
 				Transition transition = allTransitions.get(indexList.get(i));
 				if (transition.isActive() )
-					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // why 4?
+					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -383,6 +398,8 @@ public class NetSimulator {
 			boolean backtracking) {
 		ArrayList<Arc> arcs;
 		for (Transition transition : transitions) {
+			transition.setLaunching(false);  // skoro tutaj dotarliśmy, to znaczy że tranzycja już
+			//swoje zrobiła i jej status aktywnej się kończy w tym kroku
 			if (!backtracking)
 				arcs = transition.getOutArcs();
 			else
@@ -397,6 +414,7 @@ public class NetSimulator {
 				place.modifyTokensNumber(arc.getWeight());
 			}
 		}
+		
 		transitions.clear();
 	}
 
@@ -646,7 +664,7 @@ public class NetSimulator {
 	 *
 	 */
 	private class SimulationPerformer implements ActionListener {
-		protected int counter = DEFAULT_COUNTER;
+		protected int counter = DEFAULT_COUNTER;		// licznik kroków graficznych
 		protected boolean subtractPhase = true; // true - subtract, false - add
 		// phases
 		protected boolean finishedAddPhase = true;
@@ -658,7 +676,6 @@ public class NetSimulator {
 		 */
 		protected void updateStep() {
 			GUIManager.getDefaultGUIManager().getWorkspace().incrementSimulationStep();
-			
 			//tutaj nic się nie dzieje: a chyba chodziło o update podokna właściwości z liczbą tokenów
 			GUIManager.getDefaultGUIManager().getSimulatorBox().updateSimulatorProperties();
 		}
@@ -815,11 +832,12 @@ public class NetSimulator {
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
-			updateStep(); // update graphics
-			if (counter == DEFAULT_COUNTER && subtractPhase) { // subtract phase
-				if (scheduledStop) { // executing scheduled stop
+			updateStep(); // rusz tokeny
+			if (counter == DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
+				//z miejsc wejściowych i oddawania ich tranzycjom
+				if (scheduledStop) { // jeśli symulacja ma się zatrzymać
 					executeScheduledStop();
-				} else if (isPossibleStep()) { // if steps remaining
+				} else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
 					if (remainingTransitionsAmount == 0) {
 						launchingTransitions = generateValidLaunchingTransitions();
 						remainingTransitionsAmount = launchingTransitions.size();
@@ -828,34 +846,30 @@ public class NetSimulator {
 					actionStack.push(new SimulationStep(SimulatorMode.STEP,
 						cloneTransitionArray(launchingTransitions)));
 					if (actionStack.peek().getPendingTransitions() == null) {
-						//SettingsManager.log("Yay");
 						GUIManager.getDefaultGUIManager().log("Unknown problem in actionPerformed(ActionEvent event) in NetSimulator class.", "error", true);
 					}
-					launchSubtractPhase(launchingTransitions, false);
+					launchSubtractPhase(launchingTransitions, false); //zabierz tokeny aktywnym tranzycjom
 					subtractPhase = false;
 				} else {
 					// simulation ends, no possible steps remaining
 					setSimulationActive(false);
 					stopSimulation();
-					JOptionPane.showMessageDialog(null, "Simulation ended",
-							"No more available steps!",
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Simulation ended, no active transitions.",
+							"Simulation ended", JOptionPane.INFORMATION_MESSAGE);
 				}
 				counter = 0;
-			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
-				// subtract phase ended, commencing add phase
+			} else if (counter == DEFAULT_COUNTER && !subtractPhase) { 
+				// koniec fazy zabierania tokenów, tutaj realizowany jest graficzny przepływ tokenów
 				launchAddPhaseGraphics(launchingTransitions, false);
 				finishedAddPhase = false;
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
-				// ending add phase
+				// koniec fazy przepływu tokenów, tutaj uaktualniane są wartości tokenów dla miejsc wyjściowych
 				launchAddPhase(launchingTransitions, false);
 				finishedAddPhase = true;
 				subtractPhase = true;
 				remainingTransitionsAmount = 0; // all transitions launched
-				// if not
-				// in loop mode, a stop will be
-				// scheduled
+				// jeśli to nie tryb LOOP, zatrzymaj symulację
 				if (!loop)
 					scheduleStop();
 				counter++;

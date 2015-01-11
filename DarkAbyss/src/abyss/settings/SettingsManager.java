@@ -80,7 +80,7 @@ public class SettingsManager {
 	 * Metoda przywraca domyślne wartości ustawień programu.
 	 */
 	public void restoreDefaultSetting() {
-		addSetting("abyss_version","1.1 alpha");
+		addSetting("abyss_version","1.23 release 11-1-2015");
 		addSetting("r_path","c://Program Files//R//R-3.1.2//bin//Rscript.exe");
 		addSetting("r_path64","c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
 		addSetting("ina_bat","START INAwin32.exe COMMAND.ina");

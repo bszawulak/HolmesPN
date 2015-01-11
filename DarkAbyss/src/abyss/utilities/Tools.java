@@ -17,9 +17,9 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * Klasa użytkowa, odpowiednik klasy statycznej w normalnym języku programowania
- * jak np. C#. testing testing
- * @author Rince
+ * Klasa narzędziowa, odpowiednik klasy statycznej w <b>NORMALNYM</b> języku programowania
+ * jak np. C#.
+ * @author MR
  *
  */
 public final class Tools {
@@ -29,7 +29,6 @@ public final class Tools {
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
 	 */
 	private Tools() {
-
 	}
 	
 	/**

@@ -840,10 +840,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda pozwala na zwiększenie koku symulacji o 1. Jest ona wywoływana przez
-	 * symulator danego projektu NetSimulator, co powoduje wywołanie metody 
-	 * incrementSimulationStep() dla każdego łuku zawartego w projekcie, odpowiedzialnego
-	 * za wyświetlanie animacji tokenów przemieszczających się w trakcie symulacji.
+	 * Metoda pozwala na zwiększenie kroku symulacji o 1. Jest ona wywoływana przez
+	 * NetSimulator danego projektu, co powoduje wywołanie metody incrementSimulationStep() 
+	 * dla każdego łuku zawartego w projekcie, odpowiedzialnego za wyświetlanie animacji 
+	 * tokenów przemieszczających się w trakcie symulacji.
 	 */
 	public void incrementSimulationStep() {
 		for (Arc a : getArcs())
