@@ -205,7 +205,6 @@ public class AbyssSearch extends JFrame {
 		JFormattedTextField idField = new JFormattedTextField(format);
 		idField.setLocation(choiceColPx + 415, choiceRowPx);
 		idField.setSize(60, 20);
-	    
 		idField.setValue("");
 		idField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
@@ -356,7 +355,6 @@ public class AbyssSearch extends JFrame {
 		
 		if(places.size() == 0 || transitions.size() ==0)
 			return; //nothing else to do here
-
 	}
 	
 	/**
@@ -409,9 +407,7 @@ public class AbyssSearch extends JFrame {
 				else
 					nodeIsPortal.setText("no");
 			}
-			
-			
-			
+
 			//Ustawienie zoomu na normalne 100% wyświetlania
 			WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(sheetID);
 			ws.getGraphPanel().setZoom(100, ws.getGraphPanel().getZoom()); //zoom na normal
@@ -419,9 +415,6 @@ public class AbyssSearch extends JFrame {
 			ws.getGraphPanel().getSelectionManager().selectOneElementLocation(loc1st); //zaznacz element
 			
 			//Przewinięcie na zaznaczony element:
-			//Dimension shD = ws.getGraphPanel().getOriginSize();
-			//int sheetX = shD.width; // maksymalna ustawiona szerokość panelu rysowania
-			//int sheetY = shD.height; // j.w.: wysokość
 			CompositeTabDock xxx = GUIManager.getDefaultGUIManager().getWorkspace().getWorkspaceDock();
 			int visibleX = xxx.getWidth(); //widocza na ekranie szerokość panelu rysowania (+24)
 			int visibleY = xxx.getHeight(); //j.w. wysokość (+63)
@@ -446,9 +439,7 @@ public class AbyssSearch extends JFrame {
 			
 		} else { 
 			//TODO: skakanie po portalach
-			
 		}
-		
 	}
 	
 	/**

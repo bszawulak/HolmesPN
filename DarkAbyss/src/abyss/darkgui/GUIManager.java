@@ -19,6 +19,7 @@ import abyss.windows.AbyssClusters;
 import abyss.windows.AbyssNetProperties;
 import abyss.windows.AbyssProgramProperties;
 import abyss.windows.AbyssSearch;
+import abyss.windows.AbyssStateSimulator;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
 
@@ -134,6 +135,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssAbout windowAbout; //okno About...
 	private AbyssSearch windowSearch;
 	private AbyssProgramProperties windowProperties;
+	private AbyssStateSimulator windowStateSim;
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	/**
@@ -301,6 +303,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		//na samym końcu, gdy już wszystko 'działa'
 		createPropertiesWindow();
+		createStateSimulatorWindow();
 	}
 	/**
 	 * Metoda pomocnicza konstruktora. Ustawia główne zmienne programu, wczytuje plik
@@ -1037,6 +1040,22 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void showPropertiesWindow() {
 		if(windowProperties != null) {
 			windowProperties.setVisible(true);
+		}
+	}
+	
+	/**
+	 * Metoda tworzy nowe okno symulatora stanów programu.
+	 */
+	private void createStateSimulatorWindow() {
+		windowStateSim = new AbyssStateSimulator();
+	}
+	
+	/**
+	 * Metoda pokazuje okno symulatora stanów programu.
+	 */
+	public void showStateSimulatorWindow() {
+		if(windowStateSim != null) {
+			windowStateSim.setVisible(true);
 		}
 	}
 	

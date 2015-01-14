@@ -321,7 +321,6 @@ public class DarkMenu extends JMenuBar {
 		searchItem.setIcon(Tools.getResIcon32("/icons/menu/menu_search.png"));
 		searchItem.setAccelerator(KeyStroke.getKeyStroke('F', 
 				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-		
 		searchItem.getAccessibleContext().setAccessibleDescription("Show net properties");
 		searchItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -329,6 +328,18 @@ public class DarkMenu extends JMenuBar {
 			}
 		});
 		netMenu.add(searchItem);	
+
+		JMenuItem netSimItem = new JMenuItem("State Simulator", KeyEvent.VK_2);
+		netSimItem.setIcon(Tools.getResIcon32("/icons/menu/menu_search.png"));
+		netSimItem.setAccelerator(KeyStroke.getKeyStroke('Q', 
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		netSimItem.getAccessibleContext().setAccessibleDescription("Show state simulator window");
+		netSimItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().showStateSimulatorWindow();
+			}
+		});
+		netMenu.add(netSimItem);	
 		
 		JMenu texSubMenu = new JMenu("Tex Export");
 		texSubMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));

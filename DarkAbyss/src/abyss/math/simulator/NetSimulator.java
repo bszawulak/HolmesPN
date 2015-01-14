@@ -404,7 +404,7 @@ public class NetSimulator {
 				arcs = transition.getOutArcs();
 			else
 				arcs = transition.getInArcs();
-			// add adequate number of tokens to destinations
+			//dodaj odpowiednią liczbę tokenów do miejsc
 			for (Arc arc : arcs) {
 				Place place;
 				if (!backtracking)
@@ -415,7 +415,7 @@ public class NetSimulator {
 			}
 		}
 		
-		transitions.clear();
+		transitions.clear();  //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
 	}
 
 	/**
@@ -848,7 +848,7 @@ public class NetSimulator {
 					if (actionStack.peek().getPendingTransitions() == null) {
 						GUIManager.getDefaultGUIManager().log("Unknown problem in actionPerformed(ActionEvent event) in NetSimulator class.", "error", true);
 					}
-					launchSubtractPhase(launchingTransitions, false); //zabierz tokeny aktywnym tranzycjom
+					launchSubtractPhase(launchingTransitions, false); //zabierz tokeny poprzez aktywne tranzycje
 					subtractPhase = false;
 				} else {
 					// simulation ends, no possible steps remaining

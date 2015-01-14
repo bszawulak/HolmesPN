@@ -87,7 +87,7 @@ public class AbyssClusters extends JFrame {
      */
     public AbyssClusters() {
     	myself = this;
-    	myself.setTitle("Abyss Cluster Window");
+    	myself.setTitle("Cluster Analyzer");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {
