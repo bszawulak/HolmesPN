@@ -351,6 +351,24 @@ public class Toolbar extends BorderDock {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				
+				/*
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().loadFromFile(
+						"C:/Users/Rince/Desktop/Sieci/BER/BERv3.4max.spped");
+				GUIManager.getDefaultGUIManager().getSimulatorBox().createSimulatorProperties();
+				
+				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
+				try
+				{
+					FileInputStream fis = new FileInputStream(
+							"C:/Users/Rince/Desktop/Sieci/BER/dataTableC40.acl");
+					ObjectInputStream ois = new ObjectInputStream(fis);
+					clusterMatrix = (ClusteringInfoMatrix) ois.readObject();
+					ois.close();
+					fis.close();
+					GUIManager.getDefaultGUIManager().windowClusters.registerDataCase56(clusterMatrix);
+				} catch (Exception ee) {}
+				*/
+				
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().loadFromFile(
 						"C:/Users/Rince/Desktop/Sieci/IL18/IL18_2012-08-05_1.spped");
 				GUIManager.getDefaultGUIManager().getSimulatorBox().createSimulatorProperties();
@@ -365,9 +383,9 @@ public class Toolbar extends BorderDock {
 					ois.close();
 					fis.close();
 					GUIManager.getDefaultGUIManager().windowClusters.registerDataCase56(clusterMatrix);
-				} catch (Exception ee) {
-					
-				}
+				} catch (Exception ee) {}
+				
+				
 			}
 		};
 		testButton.setEnabled(false);

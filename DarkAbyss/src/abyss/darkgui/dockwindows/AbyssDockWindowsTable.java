@@ -474,7 +474,11 @@ public class AbyssDockWindowsTable extends JPanel {
 		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
 		//components.add(idLabel);
 		components.add(idLabel);
-		JLabel idLabel2 = new JLabel(Integer.toString(place.getID()));
+		
+		int gID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().lastIndexOf(place);
+		
+		//JLabel idLabel2 = new JLabel(Integer.toString(place.getID()));
+		JLabel idLabel2 = new JLabel(Integer.toString(gID));
 		idLabel2.setBounds(columnB_posX, columnB_Y += 10, 50, 20);
 		components.add(idLabel2);
 
@@ -667,7 +671,10 @@ public class AbyssDockWindowsTable extends JPanel {
 		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
 		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
 		components.add(idLabel);
-		JLabel idLabel2 = new JLabel(Integer.toString(transition.getID()));
+		
+		int gID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().lastIndexOf(transition);
+		JLabel idLabel2 = new JLabel(Integer.toString(gID));
+		//JLabel idLabel2 = new JLabel(Integer.toString(transition.getID()));
 		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
 		components.add(idLabel2);
 

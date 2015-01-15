@@ -13,6 +13,12 @@ import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator.NetType;
 
+/**
+ * Klasa symulująca główny symulator programu :) Różnica jest taka, że poniższe metody potrafią wygenerować
+ * tysiące stanów na sekundę (raczej dziesiątki tysięcy).
+ * @author MR
+ *
+ */
 public class StateSimulator {
 	private ArrayList<Transition> transitions;
 	private ArrayList<Place> places;
@@ -25,6 +31,9 @@ public class StateSimulator {
 	private ArrayList<ArrayList<Integer>> placesData = null;
 	private ArrayList<ArrayList<Integer>> transitionsData = null;
 	
+	/**
+	 * Główny konstruktor obiektu klasy StateSimulator.
+	 */
 	public StateSimulator() {
 		transitions = new ArrayList<Transition>();
 		places = new ArrayList<Place>();
@@ -32,6 +41,13 @@ public class StateSimulator {
 		transitionsData = new ArrayList<ArrayList<Integer>>();
 	}
 	
+	/**
+	 * Metoda ta musi być wywołana przed każdym startem symulatora. Inicjalizuje początkowe struktury
+	 * danych dla symulatora.
+	 * @param netT NetType - typ sieci
+	 * @param mode boolean - maximum (true), lub nie
+	 * @return boolean - true, jeśli wszystko się udało
+	 */
 	public boolean initiateSim(NetType netT, boolean mode) {
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
@@ -39,6 +55,8 @@ public class StateSimulator {
 			ready = false;
 			return ready;
 		}
+		placesData = new ArrayList<ArrayList<Integer>>();
+		transitionsData = new ArrayList<ArrayList<Integer>>();
 		simulationType = netT;
 		maximumMode = mode;
 		
@@ -52,7 +70,8 @@ public class StateSimulator {
 	
 	/**
 	 * Metoda symuluje podaną liczbę kroków sieci Petriego.
-	 * @param steps
+	 * @param steps int - liczba kroków do symulacji
+	 * @param pBar JProgressBar - pasek postępu
 	 */
 	public void simulateNet(int steps, JProgressBar pBar) {
 		if(ready == false) {
@@ -63,8 +82,15 @@ public class StateSimulator {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		
 		ArrayList<Transition> launchingTransitions = null;
+		
+		int updateTime = steps / 100;
+		
 		for(int i=0; i<steps; i++) {
 			pBar.setValue(i+1);
+			
+			if(i % updateTime == 0)
+				pBar.update(pBar.getGraphics()); // (╯°□°）╯︵ ┻━┻)  
+			
 			if (isPossibleStep()){ 
 				launchingTransitions = generateValidLaunchingTransitions();
 				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje

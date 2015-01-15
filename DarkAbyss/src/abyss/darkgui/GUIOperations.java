@@ -97,8 +97,7 @@ public class GUIOperations {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("INA PNT file (.pnt)", new String[] { "PNT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", 
-				"Accept directory and filename");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
 		if(selectedFile.equals(""))
 			return;
 		
