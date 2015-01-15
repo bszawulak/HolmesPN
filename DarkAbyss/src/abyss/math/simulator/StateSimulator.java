@@ -1,12 +1,11 @@
 package abyss.math.simulator;
 
-import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
@@ -55,7 +54,7 @@ public class StateSimulator {
 	 * Metoda symuluje podaną liczbę kroków sieci Petriego.
 	 * @param steps
 	 */
-	public void simulateNet(int steps) {
+	public void simulateNet(int steps, JProgressBar pBar) {
 		if(ready == false) {
 			JOptionPane.showMessageDialog(null,"Simulation cannot start, initializization phase failed.", 
 					"State Simulation problem",JOptionPane.ERROR_MESSAGE);
@@ -65,9 +64,20 @@ public class StateSimulator {
 		
 		ArrayList<Transition> launchingTransitions = null;
 		for(int i=0; i<steps; i++) {
+			pBar.setValue(i+1);
 			if (isPossibleStep()){ 
 				launchingTransitions = generateValidLaunchingTransitions();
 				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
+				
+				ArrayList<Integer> transRow = new ArrayList<Integer>();
+				for(int t=0; t<transitions.size(); t++) {
+					transRow.add(0);
+				}
+				for(Transition trans : launchingTransitions) {
+					int index = transitions.lastIndexOf(trans);
+					transRow.set(index, 1);
+				}
+				transitionsData.add(transRow);
 			} else {
 				break;
 			}
@@ -212,7 +222,7 @@ public class StateSimulator {
 			if (timeNetPartStepCounter == 1000) {
 				this.timeNetPartStepCounter = 0;
 				this.timeNetStepCounter++;
-				
+
 			}
 		}
 
@@ -220,5 +230,21 @@ public class StateSimulator {
 			transition.returnBookedTokens();
 		}
 		return launchableTransitions;
+	}
+	
+	/**
+	 * Metoda zwraca tablicę stanów dla miejsc.
+	 * @return ArrayList[ArrayList[Integer]] - tablica po symulacji
+	 */
+	public ArrayList<ArrayList<Integer>> getPlacesData() {
+		return placesData;
+	}
+	
+	/**
+	 * Metoda zwraca tablicę stanów dla tranzycji.
+	 * @return ArrayList[ArrayList[Integer]] - tablica po symulacji
+	 */
+	public ArrayList<ArrayList<Integer>> getTransitionsData() {
+		return transitionsData;
 	}
 }
