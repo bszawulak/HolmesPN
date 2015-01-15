@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -15,13 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
@@ -61,11 +65,15 @@ public class AbyssStateSimulator extends JFrame {
 	private ArrayList<Integer> placesInChart;
 	private ArrayList<String> placesInChartStr;
 	
-	private XYSeriesCollection xySeriesDataSet = null;
-	private JFreeChart xyChart;
+	private XYSeriesCollection placesSeriesDataSet = null;
+	private XYSeriesCollection transitionsSeriesDataSet = null;
+	private JFreeChart placesChart;
+	private JFreeChart transitionsChart;
+	
 	private boolean listenerStart = false;
 	private JPanel mainChartPanel;
 	private JPanel toolPanel;
+	private JTabbedPane tabbedPane; //zakładki
 	private JFrame ego;
 	
 	public AbyssStateSimulator() {
@@ -97,75 +105,31 @@ public class AbyssStateSimulator extends JFrame {
 		
 		toolPanel = crateToolsPanel(); //panel opcji i przycisków
 		main.add(toolPanel);
-		
-		mainChartPanel = new JPanel(new BorderLayout()); //panel wykresów
-		mainChartPanel.setBorder(BorderFactory.createTitledBorder("Charts"));
-		mainChartPanel.setBounds(0, 180, this.getWidth()-20, this.getHeight()-toolPanel.getHeight()-40);
-		
-		createSimpleDataset();
-		JPanel cP = createChartPanel();
-		mainChartPanel.add(cP, BorderLayout.CENTER);
-		
-		
-		main.add(mainChartPanel);
+
+		tabbedPane = new JTabbedPane();
+		tabbedPane.setBounds(0, toolPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-toolPanel.getHeight()-40);
+		ImageIcon icon = Tools.getResIcon16("images/middle.gif");
+		tabbedPane.addTab("Places dynamics", icon, createPlacesTabPanel(), "Places dynamics");
+		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+		tabbedPane.addTab("Transistions dynamics", icon, makeTextPanel("ghgxhxgh"), "Transistions dynamics");
+		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+
+		main.add(tabbedPane);
 		initiateListeners(); //all hail Sithis
 		repaint();
 	}
-	
+
 	/**
-	 * Metoda tworzy panel opcji okna symulatora stanów sieci.
+	 * Metoda ta tworzy panel dla zakładki miejsc.
 	 * @return JPanel - panel
 	 */
-	private JPanel crateToolsPanel() {
+	private JPanel createPlacesTabPanel() {
 		JPanel result = new JPanel(null);
-		//result.setBorder(BorderFactory.createTitledBorder("Tools"));
 		result.setBounds(0, 0, this.getWidth()-20, 180);
 		
-		JPanel dataAcquisitionPanel = new JPanel(null);
-		dataAcquisitionPanel.setBorder(BorderFactory.createTitledBorder("Data acquisition"));
-		dataAcquisitionPanel.setBounds(0, 0, 600, 100);
-		int posXda = 10;
-		int posYda = 20;
-		
-		JButton acqDataButton = new JButton("Acquire data");
-		acqDataButton.setBounds(posXda, posYda, 110, 30);
-		//acqDataButton.setIcon(Tools.getResIcon32(""));
-		acqDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				acquireData();
-			}
-		});
-		dataAcquisitionPanel.add(acqDataButton);
-		
-		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(200, 0, Integer.MAX_VALUE, 10);
-		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
-		tokenSpinner.setBounds(posXda +120, posYda, 80, 30);
-		tokenSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				simSteps = val;
-			}
-		});
-		dataAcquisitionPanel.add(tokenSpinner);
-		
-		posYda += 40;
-		progressBar = new JProgressBar();
-		progressBar.setBounds(posXda, posYda-7, 550, 40);
-		progressBar.setMaximum(100);
-		progressBar.setMinimum(0);
-	    progressBar.setValue(0);
-	    progressBar.setStringPainted(true);
-	    Border border = BorderFactory.createTitledBorder("Progress");
-	    progressBar.setBorder(border);
-	    dataAcquisitionPanel.add(progressBar);
-	    
-		result.add(dataAcquisitionPanel);
-		
-		//--------------------------------------------------------------------
 		JPanel chartOptionsPanel = new JPanel(null);
 		chartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Chart options"));
-		chartOptionsPanel.setBounds(0, 100, 600, 80);
+		chartOptionsPanel.setBounds(0, 0, 600, 80);
 		int posXchart = 10;
 		int posYchart = 20;
 		
@@ -244,8 +208,66 @@ public class AbyssStateSimulator extends JFrame {
 			}
 		});
 		chartOptionsPanel.add(saveChartButton);
-		
 		result.add(chartOptionsPanel);
+				
+		
+		mainChartPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
+		 	//my zmieniać wymiary jeśli całe okno ma zmieniane w dowolnej chwili
+		mainChartPanel.setBorder(BorderFactory.createTitledBorder("Charts"));
+		mainChartPanel.setBounds(0, 80, this.getWidth()-20, this.getHeight()-toolPanel.getHeight()-40);
+		mainChartPanel.add(createLineChartPanel(), BorderLayout.CENTER);
+		result.add(mainChartPanel);
+		
+		return result;
+	}
+	
+	/**
+	 * Metoda tworzy panel opcji okna symulatora stanów sieci.
+	 * @return JPanel - panel
+	 */
+	private JPanel crateToolsPanel() {
+		JPanel result = new JPanel(null);
+		result.setBounds(0, 0, this.getWidth()-20, 100);
+		
+		JPanel dataAcquisitionPanel = new JPanel(null);
+		dataAcquisitionPanel.setBorder(BorderFactory.createTitledBorder("Data acquisition"));
+		dataAcquisitionPanel.setBounds(0, 0, 600, 100);
+		int posXda = 10;
+		int posYda = 20;
+		
+		JButton acqDataButton = new JButton("Acquire data");
+		acqDataButton.setBounds(posXda, posYda, 110, 30);
+		//acqDataButton.setIcon(Tools.getResIcon32(""));
+		acqDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				acquireData();
+			}
+		});
+		dataAcquisitionPanel.add(acqDataButton);
+		
+		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(200, 0, Integer.MAX_VALUE, 10);
+		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
+		tokenSpinner.setBounds(posXda +120, posYda, 80, 30);
+		tokenSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int val = (int) spinner.getValue();
+				simSteps = val;
+			}
+		});
+		dataAcquisitionPanel.add(tokenSpinner);
+		
+		posYda += 40;
+		progressBar = new JProgressBar();
+		progressBar.setBounds(posXda, posYda-7, 550, 40);
+		progressBar.setMaximum(100);
+		progressBar.setMinimum(0);
+	    progressBar.setValue(0);
+	    progressBar.setStringPainted(true);
+	    Border border = BorderFactory.createTitledBorder("Progress");
+	    progressBar.setBorder(border);
+	    dataAcquisitionPanel.add(progressBar);
+		result.add(dataAcquisitionPanel);
 		
 		return result;
 	}
@@ -269,7 +291,7 @@ public class AbyssStateSimulator extends JFrame {
 		int height = 768;
 		 
 		try {
-		    ChartUtilities.saveChartAsPNG(imageFile, xyChart, width, height);
+		    ChartUtilities.saveChartAsPNG(imageFile, placesChart, width, height);
 		} catch (IOException ex) {
 		    System.err.println(ex);
 		}
@@ -291,8 +313,14 @@ public class AbyssStateSimulator extends JFrame {
 		}
 	}
 	
-	private JPanel createChartPanel() {
-	    String chartTitle = "Net dynamics";
+	/**
+	 * Metoda ta tworzy wykres liniowy dla miejsc.
+	 * @return JPanel - panel z wykresem
+	 */
+	private JPanel createLineChartPanel() {
+		createSimpleDataset();
+		
+	    String chartTitle = "Places dynamics";
 	    String xAxisLabel = "Tokens";
 	    String yAxisLabel = "Step";
 	    
@@ -300,16 +328,19 @@ public class AbyssStateSimulator extends JFrame {
 	    boolean createURL = false;
 	    boolean createTooltip = true;
 
-	    xyChart = ChartFactory.createXYLineChart(chartTitle,
-	            xAxisLabel, yAxisLabel, xySeriesDataSet,
+	    placesChart = ChartFactory.createXYLineChart(chartTitle,
+	            xAxisLabel, yAxisLabel, placesSeriesDataSet,
 	            PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
 
-	    ChartPanel res = new ChartPanel(xyChart);
+	    ChartPanel res = new ChartPanel(placesChart);
 	    return res;
 	}
 	
+	/**
+	 * Metoda uaktualniania stylu wyświetlania
+	 */
 	private void updateGraphic() {
-		XYPlot plot = xyChart.getXYPlot();
+		XYPlot plot = placesChart.getXYPlot();
 		//XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 		//renderer.setSeriesLinesVisible(0, true);
         //renderer.setSeriesShapesVisible(0, false);
@@ -319,7 +350,7 @@ public class AbyssStateSimulator extends JFrame {
 	    //plot.setRenderer(renderer);
 	    //plot.setBackgroundPaint(Color.DARK_GRAY);
 		
-		int count =  xyChart.getXYPlot().getSeriesCount();
+		int count =  placesChart.getXYPlot().getSeriesCount();
 		
 		for(int i=0; i<count; i++) {
 			plot.getRenderer().setSeriesStroke(i, new BasicStroke(2.0f));
@@ -334,7 +365,7 @@ public class AbyssStateSimulator extends JFrame {
 	 */
 	private void addNewPlaceSeries(int selected, String name) {
 		@SuppressWarnings("unchecked")
-		List<XYSeries> x = xySeriesDataSet.getSeries();
+		List<XYSeries> x = placesSeriesDataSet.getSeries();
 		for(XYSeries xys : x) {
 			if(xys.getKey().equals(name))
 				return;
@@ -347,23 +378,23 @@ public class AbyssStateSimulator extends JFrame {
 			test.add(value);
 			series.add(step, value);
 		}
-		xySeriesDataSet.addSeries(series);
+		placesSeriesDataSet.addSeries(series);
 	}
 	
 	private void removePlaceSeries(String name) {
 		@SuppressWarnings("unchecked")
-		List<XYSeries> x = xySeriesDataSet.getSeries();
+		List<XYSeries> x = placesSeriesDataSet.getSeries();
 		for(XYSeries xys : x) {
 			if(xys.getKey().equals(name)) {
-				xySeriesDataSet.removeSeries(xys);
+				placesSeriesDataSet.removeSeries(xys);
 				return;
 			}
 		}
 	}
 	
 	private XYDataset createSimpleDataset() {
-		xySeriesDataSet = new XYSeriesCollection();
-		return xySeriesDataSet;
+		placesSeriesDataSet = new XYSeriesCollection();
+		return placesSeriesDataSet;
 	}
 
 	
@@ -382,12 +413,14 @@ public class AbyssStateSimulator extends JFrame {
             public void componentResized(ComponentEvent e) {
             	if(!listenerStart)
             		return;
-            	mainChartPanel.setBounds(0, 180, ego.getWidth()-20, ego.getHeight()-toolPanel.getHeight()-40);
+            	tabbedPane.setBounds(0, toolPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-toolPanel.getHeight()-40);
+            	mainChartPanel.setBounds(0, 80, ego.getWidth()-30, ego.getHeight()-toolPanel.getHeight()-150);
             }
             public void componentMoved(ComponentEvent e) {
             	if(!listenerStart)
             		return;
-            	mainChartPanel.setBounds(0, 180, ego.getWidth()-20, ego.getHeight()-toolPanel.getHeight()-40);
+            	tabbedPane.setBounds(0, toolPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-toolPanel.getHeight()-40);
+            	mainChartPanel.setBounds(0, 80, ego.getWidth()-30, ego.getHeight()-toolPanel.getHeight()-150);
             }
         });
     }
@@ -418,7 +451,7 @@ public class AbyssStateSimulator extends JFrame {
 	 * Metoda czyszcząca dane okna.
 	 */
 	private void clearAllData() {
-		xySeriesDataSet.removeAllSeries();
+		placesSeriesDataSet.removeAllSeries();
 		
 		placesInChart = new ArrayList<Integer>();
 		placesInChartStr  = new ArrayList<String>();
@@ -428,4 +461,13 @@ public class AbyssStateSimulator extends JFrame {
 		}
 	}
 
+	protected JComponent makeTextPanel(String text) {
+        JPanel panel = new JPanel(false);
+        JLabel filler = new JLabel(text);
+        filler.setHorizontalAlignment(JLabel.CENTER);
+        //panel.setLayout(new GridLayout(1, 1));
+        panel.add(filler);
+        panel.setBounds(0, 0, 640, 480);
+        return panel;
+    }
 }
