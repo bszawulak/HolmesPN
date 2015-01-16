@@ -536,12 +536,9 @@ public class AbyssDockWindowsTable extends JPanel {
         components.add(tokenLabel);
         int tok = place.getTokensNumber();
         if(tok < 0)
-        {
-        	//TODO: ERROR - SYMULATOR, MAXMODE, CRITICAL
-        	tok = 0;
-        }
-		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok, 0, 
-				Integer.MAX_VALUE, 1);
+        	GUIManager.getDefaultGUIManager().log("Negative number of tokens in "+place.getName(), "error", true);
+        
+		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok, 0, Integer.MAX_VALUE, 1);
 		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
 		tokenSpinner.setLocation(columnB_posX, columnB_Y += 20);
 		tokenSpinner.setSize(colBCompLength, 20);
@@ -1077,14 +1074,14 @@ public class AbyssDockWindowsTable extends JPanel {
 		JTextArea commentField = new JTextArea(arc.getComment());
 		commentField.setLineWrap(true);
 		commentField.addFocusListener(new FocusAdapter() {
-	            public void focusLost(FocusEvent e) {
-	            	JTextArea field = (JTextArea) e.getSource();
-	            	String newComment = "";
-	            	if(field != null)
-	            		newComment = field.getText();
-					changeComment(newComment);
-	            }
-	        });
+			public void focusLost(FocusEvent e) {
+            	JTextArea field = (JTextArea) e.getSource();
+            	String newComment = "";
+            	if(field != null)
+            		newComment = field.getText();
+				changeComment(newComment);
+            }
+        });
 		
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());

@@ -69,10 +69,10 @@ public class TexExporter {
 				places2Col.add(" &  & \\\\ \\hline");
 			} else {
 				for(int i=0; i<(places.size()+1)/2; i++) { //zawsze I kolumna ma tyle samo lub o 1 więcej niż II
-					places1Col.add("$p_{"+i+"}$ & "+places.get(i).getName());
+					places1Col.add("$p_{"+i+"}$ & "+places.get(i).getName().replace("_", " "));
 				}
 				for(int i=(places.size()+1)/2; i<places.size(); i++) {
-					places2Col.add(" & $p_{"+i+"}$ & "+places.get(i).getName()+"\\\\  \\hline");
+					places2Col.add(" & $p_{"+i+"}$ & "+places.get(i).getName().replace("_", " ")+"\\\\  \\hline");
 				}
 				if(places1Col.size() != places2Col.size()) {
 					places2Col.add(" &  & \\\\ \\hline");
@@ -86,10 +86,10 @@ public class TexExporter {
 				trans2Col.add(" &  & \\\\ \\hline");
 			} else {
 				for(int i=0; i<(transitions.size()+1)/2; i++) { //zawsze I kolumna ma tyle samo lub o 1 więcej niż II
-					trans1Col.add("$t_{"+i+"}$ & "+transitions.get(i).getName());
+					trans1Col.add("$t_{"+i+"}$ & "+transitions.get(i).getName().replace("_", " "));
 				}
 				for(int i=(transitions.size()+1)/2; i<transitions.size(); i++) {
-					trans2Col.add(" & $t_{"+i+"}$ & "+transitions.get(i).getName()+"\\\\  \\hline");
+					trans2Col.add(" & $t_{"+i+"}$ & "+transitions.get(i).getName().replace("_", " ")+"\\\\  \\hline");
 				}
 				if(trans1Col.size() != trans2Col.size()) {
 					trans2Col.add(" &  & \\\\ \\hline");
@@ -118,10 +118,10 @@ public class TexExporter {
 			bw.write("\\caption{List of transitions}\\label{tab:transitions}"+newline);
 			bw.write("\\endfirsthead"+newline);
 			bw.write("\\hline"+newline);
-			bw.write("\\bf Trans. & \\bf Biological meaning & \\bf Trans. & \\bf Biological meaning \\\\ \\hline"+newline);
+			bw.write("\\bf Transition & \\bf Biological meaning & \\bf Transition & \\bf Biological meaning \\\\ \\hline"+newline);
 			bw.write("\\endhead"+newline);
 			bw.write("\\hline"+newline);
-			bw.write("\\bf Trans. & \\bf Biological meaning & \\bf Trans. & \\bf Biological meaning \\\\ \\hline"+newline);
+			bw.write("\\bf Transition & \\bf Biological meaning & \\bf Transition & \\bf Biological meaning \\\\ \\hline"+newline);
 			for(int i=0; i<trans1Col.size(); i++) {
 				bw.write(trans1Col.get(i)+trans2Col.get(i)+newline);
 				

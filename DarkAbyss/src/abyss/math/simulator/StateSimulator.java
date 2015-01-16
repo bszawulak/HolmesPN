@@ -24,12 +24,13 @@ public class StateSimulator {
 	private ArrayList<Place> places;
 	private boolean ready = false;
 	private NetType simulationType;
-	private boolean maximumMode = true;
+	private boolean maximumMode = false;
 	public double timeNetStepCounter = 0;
 	public double timeNetPartStepCounter = 0;
 	
 	private ArrayList<ArrayList<Integer>> placesData = null;
 	private ArrayList<ArrayList<Integer>> transitionsData = null;
+	private ArrayList<Integer> transitionsCompactData = null; //wektor sumy odpaleń tranzycji
 	
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
@@ -39,6 +40,7 @@ public class StateSimulator {
 		places = new ArrayList<Place>();
 		placesData = new ArrayList<ArrayList<Integer>>();
 		transitionsData = new ArrayList<ArrayList<Integer>>();
+		transitionsCompactData = new ArrayList<Integer>();
 	}
 	
 	/**
@@ -57,6 +59,10 @@ public class StateSimulator {
 		}
 		placesData = new ArrayList<ArrayList<Integer>>();
 		transitionsData = new ArrayList<ArrayList<Integer>>();
+		transitionsCompactData = new ArrayList<Integer>();
+		for(int t=0; t<transitions.size(); t++)
+			transitionsCompactData.add(0);
+		
 		simulationType = netT;
 		maximumMode = mode;
 		
@@ -80,9 +86,7 @@ public class StateSimulator {
 		}
 		
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
-		
 		ArrayList<Transition> launchingTransitions = null;
-		
 		int updateTime = steps / 100;
 		
 		for(int i=0; i<steps; i++) {
@@ -102,6 +106,9 @@ public class StateSimulator {
 				for(Transition trans : launchingTransitions) {
 					int index = transitions.lastIndexOf(trans);
 					transRow.set(index, 1);
+					
+					int fired = transitionsCompactData.get(index);
+					transitionsCompactData.set(index, fired+1);
 				}
 				transitionsData.add(transRow);
 			} else {
@@ -259,7 +266,7 @@ public class StateSimulator {
 	}
 	
 	/**
-	 * Metoda zwraca tablicę stanów dla miejsc.
+	 * Metoda zwraca tablicę liczb tokenów w czasie dla miejsc.
 	 * @return ArrayList[ArrayList[Integer]] - tablica po symulacji
 	 */
 	public ArrayList<ArrayList<Integer>> getPlacesData() {
@@ -267,10 +274,18 @@ public class StateSimulator {
 	}
 	
 	/**
-	 * Metoda zwraca tablicę stanów dla tranzycji.
+	 * Metoda zwraca tablicę uruchomień dla tranzycji.
 	 * @return ArrayList[ArrayList[Integer]] - tablica po symulacji
 	 */
 	public ArrayList<ArrayList<Integer>> getTransitionsData() {
 		return transitionsData;
+	}
+	
+	/**
+	 * Metoda zwraca wektór sumy uruchomień dla tranzycji.
+	 * @return ArrayList[Integer] - wektor tranzycji po symulacji
+	 */
+	public ArrayList<Integer> getTransitionsCompactData() {
+		return transitionsCompactData;
 	}
 }
