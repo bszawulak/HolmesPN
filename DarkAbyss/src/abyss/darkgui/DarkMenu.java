@@ -330,7 +330,7 @@ public class DarkMenu extends JMenuBar {
 		netMenu.add(searchItem);	
 
 		JMenuItem netSimItem = new JMenuItem("State Simulator", KeyEvent.VK_2);
-		netSimItem.setIcon(Tools.getResIcon32("/icons/menu/menu_search.png"));
+		netSimItem.setIcon(Tools.getResIcon32("/icons/menu/menu_stateSim.png"));
 		netSimItem.setAccelerator(KeyStroke.getKeyStroke('Q', 
 				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		netSimItem.getAccessibleContext().setAccessibleDescription("Show state simulator window");

@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
+import java.awt.Insets;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -142,15 +143,120 @@ public class AbyssStateSimulator extends JFrame {
 
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, dataToolsPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-dataToolsPanel.getHeight()-40);
-		ImageIcon icon = Tools.getResIcon16("images/middle.gif");
+		ImageIcon icon = Tools.getResIcon16("/icons/stateSim/placesDyn.png");
 		tabbedPane.addTab("Places dynamics", icon, createPlacesTabPanel(), "Places dynamics");
+		
+		ImageIcon icon2 = Tools.getResIcon16("/icons/stateSim/transDyn.png");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Transitions dynamics", icon, createTransitionsTabPanel(), "Transistions dynamics");
+		tabbedPane.addTab("Transitions dynamics", icon2, createTransitionsTabPanel(), "Transistions dynamics");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
 		main.add(tabbedPane);
 		initiateListeners(); //all hail Sithis
 		repaint();
+	}
+	
+	/**
+	 * Metoda tworzy panel opcji okna symulatora stanów sieci.
+	 * @return JPanel - panel opcji pobrania danych
+	 */
+	private JPanel crateToolsPanel() {
+		JPanel result = new JPanel(null);
+		result.setBounds(0, 0, this.getWidth()-20, 100);
+		
+		JPanel dataAcquisitionPanel = new JPanel(null);
+		dataAcquisitionPanel.setBorder(BorderFactory.createTitledBorder("Data acquisition"));
+		dataAcquisitionPanel.setBounds(0, 0, 600, 100);
+		int posXda = 10;
+		int posYda = 20;
+		
+		JButton acqDataButton = new JButton("SimStart");
+		acqDataButton.setBounds(posXda, posYda, 110, 30);
+		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
+		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
+		acqDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				acquireDataFromSimulation();
+			}
+		});
+		dataAcquisitionPanel.add(acqDataButton);
+		
+		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(simSteps, 0, 1000000, 100);
+		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
+		tokenSpinner.setBounds(posXda +120, posYda, 80, 30);
+		tokenSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int val = (int) spinner.getValue();
+				simSteps = val;
+				
+				//update spinner przerw/srednich dla tranzycji:
+				int cVal = simSteps / 100;
+				int mVal = simSteps / 5;
+				if(cVal < 1)
+					cVal = 1;
+				if(cVal > mVal) {
+					cVal = 1;
+					mVal = 20;
+				}
+				try {
+					SpinnerNumberModel spinnerClustersModel = new SpinnerNumberModel(cVal, 1, mVal, 1);
+					transIntervalSpinner.setModel(spinnerClustersModel);
+					transInterval = cVal;
+				} catch (Exception ex) {
+					GUIManager.getDefaultGUIManager().log("spinnerClustersModel error", "warning", true);
+				}
+			}
+		});
+		dataAcquisitionPanel.add(tokenSpinner);
+		
+		JLabel label1 = new JLabel("Mode:");
+		label1.setBounds(posXda+210, posYda+5, 50, 20);
+		dataAcquisitionPanel.add(label1);
+		
+		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
+		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+		simMode.setBounds(posXda+250, posYda, 120, 30);
+		simMode.setSelectedIndex(1);
+		simMode.setMaximumRowCount(6);
+		simMode.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = simMode.getSelectedIndex();
+				if(selected == 0)
+					maximumMode = true;
+				else
+					maximumMode = false;
+			}
+		});
+		dataAcquisitionPanel.add(simMode);
+		
+		JButton clearDataButton = new JButton("Clear");
+		clearDataButton.setBounds(posXda+380, posYda, 110, 30);
+		clearDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/clearData.png"));
+		clearDataButton.setToolTipText("Clear all charts and data vectors. Reset simulator.");
+		clearDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				clearPlacesChart();
+				clearTransitionsChart();
+				clearAllData();
+			}
+		});
+		dataAcquisitionPanel.add(clearDataButton);
+		
+		posYda += 40;
+		progressBar = new JProgressBar();
+		progressBar.setBounds(posXda, posYda-7, 550, 40);
+		progressBar.setMaximum(100);
+		progressBar.setMinimum(0);
+	    progressBar.setValue(0);
+	    progressBar.setStringPainted(true);
+	    Border border = BorderFactory.createTitledBorder("Progress");
+	    progressBar.setBorder(border);
+	    dataAcquisitionPanel.add(progressBar);
+		result.add(dataAcquisitionPanel);
+		
+		return result;
 	}
 
 	/**
@@ -162,14 +268,16 @@ public class AbyssStateSimulator extends JFrame {
 		result.setBounds(0, 0, this.getWidth()-20, 180);
 		
 		placesChartOptionsPanel = new JPanel(null);
-		placesChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Chart options"));
+		placesChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Places chart options"));
 		placesChartOptionsPanel.setBounds(0, 0, 610, 120);
 		int posXchart = 10;
 		int posYchart = 20;
 		
 		JButton showAllButton = new JButton("Show all");
-		showAllButton.setBounds(posXchart, posYchart, 100, 20);
-		//acqDataButton.setIcon(Tools.getResIcon32(""));
+		showAllButton.setBounds(posXchart, posYchart, 100, 24);
+		showAllButton.setMargin(new Insets(0, 0, 0, 0));
+		showAllButton.setIcon(Tools.getResIcon16("/icons/stateSim/showAll.png"));
+		showAllButton.setToolTipText("Show average numbers of token in places through simulation steps.");
 		showAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				showAllPlacesData();
@@ -198,8 +306,10 @@ public class AbyssStateSimulator extends JFrame {
 		posYchart += 30;
 		
 		JButton addPlaceButton = new JButton("Add to chart");
-		addPlaceButton.setBounds(posXchart, posYchart+2, 110, 20);
-		//addPlaceButton.setIcon(Tools.getResIcon32(""));
+		addPlaceButton.setBounds(posXchart, posYchart+2, 110, 24);
+		addPlaceButton.setMargin(new Insets(0, 0, 0, 0));
+		addPlaceButton.setIcon(Tools.getResIcon16("/icons/stateSim/addChart.png"));
+		addPlaceButton.setToolTipText("Add data about place tokens to the chart.");
 		addPlaceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(placesRawData.size() == 0)
@@ -221,8 +331,10 @@ public class AbyssStateSimulator extends JFrame {
 		placesChartOptionsPanel.add(addPlaceButton);
 		
 		JButton removePlaceButton = new JButton("Remove");
-		removePlaceButton.setBounds(posXchart+120, posYchart+2, 110, 20);
-		//removePlaceButton.setIcon(Tools.getResIcon32(""));
+		removePlaceButton.setBounds(posXchart+120, posYchart+2, 110, 24);
+		removePlaceButton.setMargin(new Insets(0, 0, 0, 0));
+		removePlaceButton.setIcon(Tools.getResIcon16("/icons/stateSim/removeChart.png"));
+		removePlaceButton.setToolTipText("Remove data about place tokens from the chart.");
 		removePlaceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(placesRawData.size() == 0)
@@ -242,9 +354,11 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		placesChartOptionsPanel.add(removePlaceButton);
 		
-		JButton clearPlacesChartButton = new JButton("Clear");
-		clearPlacesChartButton.setBounds(posXchart+240, posYchart+2, 110, 20);
-		//clearPlacesChartButton.setIcon(Tools.getResIcon32(""));
+		JButton clearPlacesChartButton = new JButton("Clear chart");
+		clearPlacesChartButton.setBounds(posXchart+240, posYchart+2, 110, 24);
+		clearPlacesChartButton.setMargin(new Insets(0, 0, 0, 0));
+		clearPlacesChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/clearChart.png"));
+		clearPlacesChartButton.setToolTipText("Clears the chart.");
 		clearPlacesChartButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				clearPlacesChart();
@@ -253,8 +367,10 @@ public class AbyssStateSimulator extends JFrame {
 		placesChartOptionsPanel.add(clearPlacesChartButton);
 		
 		JButton savePlacesChartButton = new JButton("Save Image");
-		savePlacesChartButton.setBounds(posXchart+360, posYchart+2, 110, 20);
-		//savePlacesChartButton.setIcon(Tools.getResIcon32(""));
+		savePlacesChartButton.setBounds(posXchart+360, posYchart+2, 110, 24);
+		savePlacesChartButton.setMargin(new Insets(0, 0, 0, 0));
+		savePlacesChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/saveImage.png"));
+		savePlacesChartButton.setToolTipText("Saves the chart as image file.");
 		savePlacesChartButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				saveChartImage("places", 1200, 1024);
@@ -262,9 +378,11 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		placesChartOptionsPanel.add(savePlacesChartButton);
 		
-		JButton showPlaceButton = new JButton("Show");
-		showPlaceButton.setBounds(posXchart+480, posYchart+2, 110, 20);
-		//showPlaceButton.setIcon(Tools.getResIcon32(""));
+		JButton showPlaceButton = new JButton("Find place");
+		showPlaceButton.setBounds(posXchart+480, posYchart+2, 110, 24);
+		showPlaceButton.setMargin(new Insets(0, 0, 0, 0));
+		showPlaceButton.setIcon(Tools.getResIcon16("/icons/stateSim/findNode.png"));
+		showPlaceButton.setToolTipText("Find selected place within the net.");
 		showPlaceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = placesCombo.getSelectedIndex();
@@ -353,14 +471,16 @@ public class AbyssStateSimulator extends JFrame {
 		result.setBounds(0, 0, this.getWidth()-20, 180);
 		
 		transChartOptionsPanel = new JPanel(null);
-		transChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Chart options"));
+		transChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Transitions chart options"));
 		transChartOptionsPanel.setBounds(0, 0, 610, 120);
 		int posXchart = 10;
 		int posYchart = 20;
 		
 		JButton showAllButton = new JButton("Show all");
-		showAllButton.setBounds(posXchart, posYchart, 100, 20);
-		//acqDataButton.setIcon(Tools.getResIcon32(""));
+		showAllButton.setBounds(posXchart, posYchart, 100, 24);
+		showAllButton.setMargin(new Insets(0, 0, 0, 0));
+		showAllButton.setIcon(Tools.getResIcon16("/icons/stateSim/showAll.png"));
+		showAllButton.setToolTipText("Show average numbers of firings of transitions through simulation steps.");
 		showAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				showAllTransData();
@@ -406,8 +526,10 @@ public class AbyssStateSimulator extends JFrame {
 		posYchart += 30;
 		
 		JButton addTransitionButton = new JButton("Add to chart");
-		addTransitionButton.setBounds(posXchart, posYchart+2, 110, 20);
-		//addTransitionButton.setIcon(Tools.getResIcon32(""));
+		addTransitionButton.setBounds(posXchart, posYchart+2, 110, 24);
+		addTransitionButton.setMargin(new Insets(0, 0, 0, 0));
+		addTransitionButton.setIcon(Tools.getResIcon16("/icons/stateSim/addChart.png"));
+		addTransitionButton.setToolTipText("Add data about transition firing to the chart.");
 		addTransitionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(transitionsRawData.size() == 0)
@@ -426,8 +548,10 @@ public class AbyssStateSimulator extends JFrame {
 		transChartOptionsPanel.add(addTransitionButton);
 		
 		JButton removeTransitionButton = new JButton("Remove");
-		removeTransitionButton.setBounds(posXchart+120, posYchart+2, 110, 20);
-		//removeTransitionButton.setIcon(Tools.getResIcon32(""));
+		removeTransitionButton.setBounds(posXchart+120, posYchart+2, 110, 24);
+		removeTransitionButton.setMargin(new Insets(0, 0, 0, 0));
+		removeTransitionButton.setIcon(Tools.getResIcon16("/icons/stateSim/removeChart.png"));
+		removeTransitionButton.setToolTipText("Remove data about transition firing from the chart.");
 		removeTransitionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(transitionsRawData.size() == 0)
@@ -444,9 +568,11 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		transChartOptionsPanel.add(removeTransitionButton);
 		
-		JButton clearTransChartButton = new JButton("Clear");
-		clearTransChartButton.setBounds(posXchart+240, posYchart+2, 110, 20);
-		//clearTransChartButton.setIcon(Tools.getResIcon32(""));
+		JButton clearTransChartButton = new JButton("Clear chart");
+		clearTransChartButton.setBounds(posXchart+240, posYchart+2, 110, 24);
+		clearTransChartButton.setMargin(new Insets(0, 0, 0, 0));
+		clearTransChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/clearChart.png"));
+		clearTransChartButton.setToolTipText("Clears the transitions chart.");
 		clearTransChartButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				clearTransitionsChart();
@@ -455,8 +581,10 @@ public class AbyssStateSimulator extends JFrame {
 		transChartOptionsPanel.add(clearTransChartButton);
 		
 		JButton saveTransitionsChartButton = new JButton("Save Image");
-		saveTransitionsChartButton.setBounds(posXchart+360, posYchart+2, 110, 20);
-		//saveTransitionsChartButton.setIcon(Tools.getResIcon32(""));
+		saveTransitionsChartButton.setBounds(posXchart+360, posYchart+2, 110, 24);
+		saveTransitionsChartButton.setMargin(new Insets(0, 0, 0, 0));
+		saveTransitionsChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/saveImage.png"));
+		saveTransitionsChartButton.setToolTipText("Saves the chart as image file.");
 		saveTransitionsChartButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				saveChartImage("transitions", 1200, 1024);
@@ -464,9 +592,11 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		transChartOptionsPanel.add(saveTransitionsChartButton);
 		
-		JButton showTransButton = new JButton("Show");
-		showTransButton.setBounds(posXchart+480, posYchart+2, 110, 20);
-		//showPlaceButton.setIcon(Tools.getResIcon32(""));
+		JButton showTransButton = new JButton("Find trans.");
+		showTransButton.setBounds(posXchart+480, posYchart+2, 110, 24);
+		showTransButton.setMargin(new Insets(0, 0, 0, 0));
+		showTransButton.setIcon(Tools.getResIcon16("/icons/stateSim/findNode.png"));
+		showTransButton.setToolTipText("Find selected transition within the net.");
 		showTransButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = transitionsCombo.getSelectedIndex();
@@ -542,106 +672,6 @@ public class AbyssStateSimulator extends JFrame {
 		transitionsChartPanel.add(createTransChartPanel(), BorderLayout.CENTER);
 		result.add(transitionsChartPanel);
 
-		return result;
-	}
-	
-	/**
-	 * Metoda tworzy panel opcji okna symulatora stanów sieci.
-	 * @return JPanel - panel opcji pobrania danych
-	 */
-	private JPanel crateToolsPanel() {
-		JPanel result = new JPanel(null);
-		result.setBounds(0, 0, this.getWidth()-20, 100);
-		
-		JPanel dataAcquisitionPanel = new JPanel(null);
-		dataAcquisitionPanel.setBorder(BorderFactory.createTitledBorder("Data acquisition"));
-		dataAcquisitionPanel.setBounds(0, 0, 600, 100);
-		int posXda = 10;
-		int posYda = 20;
-		
-		JButton acqDataButton = new JButton("Acquire data");
-		acqDataButton.setBounds(posXda, posYda, 110, 30);
-		//acqDataButton.setIcon(Tools.getResIcon32(""));
-		acqDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				acquireDataFromSimulation();
-			}
-		});
-		dataAcquisitionPanel.add(acqDataButton);
-		
-		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(simSteps, 0, 1000000, 100);
-		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
-		tokenSpinner.setBounds(posXda +120, posYda, 80, 30);
-		tokenSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				simSteps = val;
-				
-				//update spinner przerw/srednich dla tranzycji:
-				int cVal = simSteps / 100;
-				int mVal = simSteps / 5;
-				if(cVal < 1)
-					cVal = 1;
-				if(cVal > mVal) {
-					cVal = 1;
-					mVal = 20;
-				}
-				try {
-					SpinnerNumberModel spinnerClustersModel = new SpinnerNumberModel(cVal, 1, mVal, 1);
-					transIntervalSpinner.setModel(spinnerClustersModel);
-					transInterval = cVal;
-				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("spinnerClustersModel error", "warning", true);
-				}
-			}
-		});
-		dataAcquisitionPanel.add(tokenSpinner);
-		
-		JLabel label1 = new JLabel("Mode:");
-		label1.setBounds(posXda+210, posYda+5, 50, 20);
-		dataAcquisitionPanel.add(label1);
-		
-		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
-		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
-		simMode.setBounds(posXda+250, posYda, 120, 30);
-		simMode.setSelectedIndex(1);
-		simMode.setMaximumRowCount(6);
-		simMode.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = simMode.getSelectedIndex();
-				if(selected == 0)
-					maximumMode = true;
-				else
-					maximumMode = false;
-			}
-		});
-		dataAcquisitionPanel.add(simMode);
-		
-		JButton clearDataButton = new JButton("Clear all");
-		clearDataButton.setBounds(posXda+380, posYda, 110, 30);
-		//clearDataButton.setIcon(Tools.getResIcon32(""));
-		clearDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				clearPlacesChart();
-				clearTransitionsChart();
-				clearAllData();
-			}
-		});
-		dataAcquisitionPanel.add(clearDataButton);
-		
-		posYda += 40;
-		progressBar = new JProgressBar();
-		progressBar.setBounds(posXda, posYda-7, 550, 40);
-		progressBar.setMaximum(100);
-		progressBar.setMinimum(0);
-	    progressBar.setValue(0);
-	    progressBar.setStringPainted(true);
-	    Border border = BorderFactory.createTitledBorder("Progress");
-	    progressBar.setBorder(border);
-	    dataAcquisitionPanel.add(progressBar);
-		result.add(dataAcquisitionPanel);
-		
 		return result;
 	}
 	
