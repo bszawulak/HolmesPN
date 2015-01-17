@@ -13,6 +13,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1683,8 +1684,8 @@ public class AbyssDockWindowsTable extends JPanel {
 		positionY += 20;
 		
 		//SPOSÓB WYŚWIETLANIA - TRANZYCJE CZY ODPALENIA
-		JCheckBox transFiringMode = new JCheckBox("Show transition firing ");
-		transFiringMode.setBounds(colA_posX-3, positionY, 150, 20);
+		JCheckBox transFiringMode = new JCheckBox("Show transition average firing");
+		transFiringMode.setBounds(colA_posX-3, positionY, 180, 20);
 		transFiringMode.setSelected(false);;
 		transFiringMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -1766,13 +1767,13 @@ public class AbyssDockWindowsTable extends JPanel {
 				if(transColors.get(i).equals(Color.white)) {
 					holyVector.get(i).setGlowed_Cluster(false, Color.white, -1);
 				} else {
-					if(clusterColorsData.showFirings == true) { //pokazuj liczbę odpaleń
+					if(clusterColorsData.showFirings == true) { //pokazuj średnią liczbę odpaleń
 						if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
-							int tranNumber = transColors.get(i).firedInCluster;
+							double tranNumber = transColors.get(i).firedInCluster;
 							Color tranColor = transColors.get(i).colorFiredScale;
 							holyVector.get(i).setGlowed_Cluster(true, tranColor, tranNumber);
 						} else { //pokazuj kolory z krokiem 10%
-							int tranNumber = transColors.get(i).firedInCluster;
+							double tranNumber = transColors.get(i).firedInCluster;
 							Color tranColor = transColors.get(i).colorFiredGrade;
 							holyVector.get(i).setGlowed_Cluster(true, tranColor, tranNumber);
 						}
@@ -1789,11 +1790,11 @@ public class AbyssDockWindowsTable extends JPanel {
 					}
 				}
 				int trInCluster = transColors.get(i).transInCluster;
-				int firedInCluster = transColors.get(i).firedInCluster;
+				double firedInCluster = transColors.get(i).firedInCluster; // ????
 				if(trInCluster>0) {
 					String t1 = Tools.setToSize("t"+(i), 5, false);
 					String t2 = Tools.setToSize("Freq.: "+trInCluster, 12, false);
-					String t3 = Tools.setToSize("Fired: "+firedInCluster, 12, false);
+					String t3 = Tools.setToSize("Fired: "+formatD(firedInCluster), 15, false);
 					String txt = t1 + t2 + t3 + " ; "+holyVector.get(i).getName();
 					clTextArea.append(txt+"\n");
 				}
@@ -1801,6 +1802,18 @@ public class AbyssDockWindowsTable extends JPanel {
 			clTextArea.setCaretPosition(0);
 		}
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+	}
+	
+	/**
+	 * Metoda zmienia liczbę double na formatowany ciąg znaków.
+	 * @param value double - liczba
+	 * @return String - ciąg znaków
+	 */
+	private static String formatD(double value) {
+        DecimalFormat df = new DecimalFormat("#.####");
+        String txt = df.format(value);
+        txt = txt.replace(",", ".");
+		return txt;
 	}
 	
 	//**************************************************************************************

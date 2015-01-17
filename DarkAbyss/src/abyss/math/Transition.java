@@ -35,7 +35,7 @@ public class Transition extends Node {
 	
 	protected boolean isGlowetCl = false;
 	protected Color clusterColorForTransition = new Color(255,255,255);
-	protected int clNumber = 0;
+	protected double clNumber = 0.0;
 	
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 	
@@ -376,18 +376,19 @@ public class Transition extends Node {
 	 * Metoda ustawia flagę koloru dla tranzycji w ramach klastra oraz kolor.
 	 * @param value boolean - true, jeśli ma rysować się w kolorze
 	 * @param clColor Color - na jaki kolor
+	 * @param double clNumber - średnia liczba uruchomień
 	 */
-	public void setGlowed_Cluster(boolean value, Color clColor, int clNumber) {
+	public void setGlowed_Cluster(boolean value, Color clColor, double clNumber) {
 		this.isGlowetCl = value;
 		this.clusterColorForTransition = clColor;
 		this.clNumber = clNumber;
 	}
 	
 	/**
-	 * Zwraca liczbę wystąpień tranzycji w ramach inwariantów w ramach klastra.
-	 * @return int - liczba wystąpień
+	 * Zwraca liczbę średnich uruchomień tranzycji w ramach inwariantów w ramach klastra.
+	 * @return double - liczba wystąpień
 	 */
-	public int getFreq_Cluster() {
+	public double getFreq_Cluster() {
 		return clNumber;
 	}
 	

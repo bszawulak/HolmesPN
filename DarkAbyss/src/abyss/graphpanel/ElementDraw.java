@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 
@@ -164,17 +165,17 @@ public final class ElementDraw {
 				
 				//WYŚWIETLANIE DANYCH ODNOŚNIE WYSTĘPOWANIA TRANZYCJI W KLASTRZE:
 				if(trans.isGlowed_Cluster() && trans.getFreq_Cluster() > 0) {
-					//int posX = nodeBounds.x + (nodeBounds.width / 2)
-					//		- (g.getFontMetrics().stringWidth(Integer.toString(this.clNumber)) / 2);
+					String clNumber = formatD(trans.getFreq_Cluster());
+
 					int posX = nodeBounds.x + nodeBounds.width
-							- (g.getFontMetrics().stringWidth(Integer.toString(trans.getFreq_Cluster())) / 2);
+							- (g.getFontMetrics().stringWidth(clNumber) / 2);
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
 					Font old = g.getFont();
 					Color oldC = g.getColor();
 					
 					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
 					g.setColor(Color.black);
-					g.drawString(Integer.toString(trans.getFreq_Cluster()), posX, posY);
+					g.drawString(clNumber, posX, posY);
 					
 					g.setFont(old);
 					g.setColor(oldC);
@@ -257,5 +258,18 @@ public final class ElementDraw {
 		}
 		
 		return g;
+	}
+	
+	/**
+	 * Metoda zmienia liczbę double na formatowany ciąg znaków.
+	 * @param value double - liczba
+	 * @return String - ciąg znaków
+	 */
+	private static String formatD(double value) {
+        DecimalFormat df = new DecimalFormat("#.####");
+        String txt = "";
+        txt += df.format(value);
+        txt = txt.replace(",", ".");
+		return txt;
 	}
 }

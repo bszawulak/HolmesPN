@@ -31,7 +31,7 @@ public class ClusterTransition {
 	/**
 	 * Liczba odpaleń tranzycji w klastrze
 	 */
-	public int firedInCluster;
+	public double firedInCluster;
 	
 	/**
 	 * Konstruktor główny obiektu klasy ClusterTransition.
@@ -43,7 +43,7 @@ public class ClusterTransition {
 	 * @param firedInCluster int - liczba odpaleń tranzycji w klastrze
 	 */
 	public ClusterTransition(Color colorTransGrade, Color colorTransScale, Color colorFiredGrade,
-			Color colorFiredScale, int transInCluster, int firedInCluster) {
+			Color colorFiredScale, int transInCluster, double firedInCluster) {
 		this.colorTransGrade = colorTransGrade;
 		this.colorTransScale = colorTransScale;
 		this.colorFiredGrade = colorFiredGrade;

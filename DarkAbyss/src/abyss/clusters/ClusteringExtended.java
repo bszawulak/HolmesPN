@@ -225,16 +225,27 @@ public class ClusteringExtended {
 				ArrayList<Integer> cTrans = getTransitionFromCluster(c, false);
 				ArrayList<Integer> cFired = getTransitionFromCluster(c, true);
 				
-				ArrayList<Color> colorRowTransGrade = getTransitionColorsType1(c, false, cTrans);
-				ArrayList<Color> colorRowTransScale = getTransitionColorsType1(c, true, cTrans);
-				ArrayList<Color> colorRowFiredGrade = getTransitionColorsType1(c, false, cFired);
-				ArrayList<Color> colorRowFiredScale = getTransitionColorsType1(c, true, cFired);
+				ArrayList<Double> avgFire = new ArrayList<Double>();
+				double clSize = clustersInv.get(c).size();
+				for(int i=0; i<cFired.size(); i++) {
+					avgFire.add(cFired.get(i).doubleValue() / clSize );
+				}
+				
+				ArrayList<Double> tmpCTrans = new ArrayList<Double>();
+				for(int i=0; i<cTrans.size(); i++) {
+					tmpCTrans.add(cTrans.get(i).doubleValue());
+				}
+				
+				ArrayList<Color> colorRowTransGrade = getTransitionColorsType1(c, false, tmpCTrans);  //cTrans
+				ArrayList<Color> colorRowTransScale = getTransitionColorsType1(c, true, tmpCTrans); //cTrans
+				ArrayList<Color> colorRowFiredGrade = getTransitionColorsType1(c, false, avgFire); //cFired
+				ArrayList<Color> colorRowFiredScale = getTransitionColorsType1(c, true, avgFire); //cFired
 				
 				for(int trans=0; trans<colorRowTransGrade.size(); trans++) {
 					ClusterTransition atomicData = new ClusterTransition(
 							colorRowTransGrade.get(trans), colorRowTransScale.get(trans),
 							colorRowFiredGrade.get(trans), colorRowFiredScale.get(trans),
-							cTrans.get(trans), cFired.get(trans));
+							cTrans.get(trans), avgFire.get(trans)); //last one: cFired.get(trans)
 					dataRow.add(atomicData);
 				}
 				coloredClustering.add(dataRow);
@@ -252,10 +263,10 @@ public class ClusteringExtended {
 	 * @return ArrayList[Color] - wektor kolorów tranzycji
 	 */
 	private ArrayList<Color> getTransitionColorsType1(int clusterNumber, boolean scale,
-			ArrayList<Integer> data) {
-		ArrayList<Integer> clusterTransitions = data;
+			ArrayList<Double> data) {
+		ArrayList<Double> clusterTransitions = data;
 		//policz maks
-		int max=0;
+		double max=0;
 		for(int i=0; i<clusterTransitions.size(); i++) {
 			if(clusterTransitions.get(i) > max)
 				max = clusterTransitions.get(i);
@@ -270,11 +281,11 @@ public class ClusteringExtended {
 	/**
 	 * Metoda zwraca wektor kolorów dla każdej tranzycji w zależności od jej 'mocy'
 	 * w klastrze
-	 * @param clusterTransitions ArrayList[Integer] - wektor tranzycji
-	 * @param value int - wartość referencyjna
+	 * @param clusterTransitions ArrayList[Double] - wektor tranzycji
+	 * @param value double - wartość referencyjna
 	 * @return ArrayList[Colors] - wektor kolorów dla tranzycji
 	 */
-	private ArrayList<Color> getColorsForTransitions(ArrayList<Integer> clusterTransitions, int value) {
+	private ArrayList<Color> getColorsForTransitions(ArrayList<Double> clusterTransitions, double value) {
 		ArrayList<Color> colors = new ArrayList<Color>();
 		double max = value;
 		double step = max / 10;
@@ -307,10 +318,10 @@ public class ClusteringExtended {
 	/**
 	 * Metoda dla danego wektora tranzycji zwraca wektor kolorów w skali od zieleni do czerwonego.
 	 * @param clusterTransitions ArrayList[Integer] - wektor tranzycji
-	 * @param value int - wartość referencyjna
+	 * @param value double - wartość referencyjna
 	 * @return ArrayList[Color] - wektor kolorów
 	 */
-	public ArrayList<Color> getColorScale(ArrayList<Integer> clusterTransitions, int value)
+	public ArrayList<Color> getColorScale(ArrayList<Double> clusterTransitions, double value)
 	{
 		double max = value;
 		double blue = 0.0;
@@ -397,8 +408,6 @@ public class ClusteringExtended {
 		}
 		return result;
 	}
-
-
 
 	/**
 	 * Metoda ta sprawdza, czy elementy zbioru subset (nr tranzycji) znajdują się na odpowiednich
