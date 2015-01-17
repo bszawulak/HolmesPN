@@ -15,18 +15,21 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerModel;
@@ -40,24 +43,15 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.LegendItem;
-import org.jfree.chart.LegendItemCollection;
-import org.jfree.chart.axis.SubCategoryAxis;
-import org.jfree.chart.axis.SymbolAxis;
+import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.chart.renderer.category.GroupedStackedBarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
-import org.jfree.data.KeyToGroupMap;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.GradientPaintTransformType;
-import org.jfree.ui.StandardGradientPaintTransformer;
 
 import abyss.darkgui.GUIManager;
 import abyss.math.Place;
@@ -82,6 +76,8 @@ public class AbyssStateSimulator extends JFrame {
 	private ArrayList<ArrayList<Integer>> placesRawData; //dane o historii miejsc z symulatora
 	private ArrayList<ArrayList<Integer>> transitionsRawData; //j.w. : dla tranzycji
 	private ArrayList<Integer> transitionsCompactData; // suma odpaleń tranzycji
+	private ArrayList<Double> transAvgData;
+	private ArrayList<Double> placesAvgData;
 	private int transInterval = 10;
 	private ArrayList<Integer> placesInChart;
 	private ArrayList<String> placesInChartStr;
@@ -91,6 +87,7 @@ public class AbyssStateSimulator extends JFrame {
 	private JFreeChart placesChart;
 	private JFreeChart transitionsChart;
 	private int transChartType = 0; //suma odpaleń, 1=konkretne tranzycje
+	private int placesChartType = 0; //j.w. dla miejsc
 	
 	private boolean listenerStart = false;
 	private JPanel placesChartPanel;
@@ -104,14 +101,22 @@ public class AbyssStateSimulator extends JFrame {
 	private JComboBox<String> placesCombo = null;
 	private JComboBox<String> transitionsCombo = null;
 	
+	private ChartProperties chartDetails;
+	
+	/**
+	 * Konstruktor domyślny obiektu klasy StateSimulator (podokna Abyss)
+	 */
 	public AbyssStateSimulator() {
 		ego = this;
 		ssim = new StateSimulator();
+		chartDetails = new ChartProperties();
 		placesRawData = new ArrayList<ArrayList<Integer>>();
 		transitionsRawData = new ArrayList<ArrayList<Integer>>();
 		transitionsCompactData = new ArrayList<Integer>();
 		placesInChart = new ArrayList<Integer>();
 		placesInChartStr = new ArrayList<String>();
+		transAvgData = new ArrayList<Double>();
+		placesAvgData = new ArrayList<Double>();
 		
 		initializeComponents();
 	}
@@ -158,9 +163,20 @@ public class AbyssStateSimulator extends JFrame {
 		
 		placesChartOptionsPanel = new JPanel(null);
 		placesChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Chart options"));
-		placesChartOptionsPanel.setBounds(0, 0, 600, 80);
+		placesChartOptionsPanel.setBounds(0, 0, 610, 120);
 		int posXchart = 10;
 		int posYchart = 20;
+		
+		JButton showAllButton = new JButton("Show all");
+		showAllButton.setBounds(posXchart, posYchart, 100, 20);
+		//acqDataButton.setIcon(Tools.getResIcon32(""));
+		showAllButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				showAllPlacesData();
+			}
+		});
+		placesChartOptionsPanel.add(showAllButton);
+		posYchart += 30;
 		
 		JLabel label1 = new JLabel("Places:");
 		label1.setBounds(posXchart, posYchart, 70, 20);
@@ -171,10 +187,10 @@ public class AbyssStateSimulator extends JFrame {
 		placesCombo.setLocation(posXchart + 75, posYchart+2);
 		placesCombo.setSize(500, 20);
 		placesCombo.setSelectedIndex(0);
-		placesCombo.setMaximumRowCount(6);
+		placesCombo.setMaximumRowCount(12);
 		placesCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//int selected = placesCombo.getSelectedIndex();
+				
 			}
 		});
 		placesChartOptionsPanel.add(placesCombo);
@@ -183,18 +199,22 @@ public class AbyssStateSimulator extends JFrame {
 		
 		JButton addPlaceButton = new JButton("Add to chart");
 		addPlaceButton.setBounds(posXchart, posYchart+2, 110, 20);
-		//acqDataButton.setIcon(Tools.getResIcon32(""));
+		//addPlaceButton.setIcon(Tools.getResIcon32(""));
 		addPlaceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(placesRawData.size() == 0)
+					return;
+				
 				int selected = placesCombo.getSelectedIndex();
 				if(selected>0) {
 					selected--;
 					String name = placesCombo.getSelectedItem().toString();
+					name = trimNodeName(name);
 					placesInChart.set(selected, 1);
 					placesInChartStr.set(selected, name);
 					
 					addNewPlaceSeries(selected, name);
-					updatePlacesGraphicChart();
+					updatePlacesGraphicChart("places");
 				}
 			}
 		});
@@ -202,14 +222,18 @@ public class AbyssStateSimulator extends JFrame {
 		
 		JButton removePlaceButton = new JButton("Remove");
 		removePlaceButton.setBounds(posXchart+120, posYchart+2, 110, 20);
-		//acqDataButton.setIcon(Tools.getResIcon32(""));
+		//removePlaceButton.setIcon(Tools.getResIcon32(""));
 		removePlaceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(placesRawData.size() == 0)
+					return;
+				
 				int selected = placesCombo.getSelectedIndex();
 				if(selected>0) {
 					selected--;
 					String name = placesCombo.getSelectedItem().toString();
-					placesInChart.set(selected, 0);
+					name = trimNodeName(name);
+					placesInChart.set(selected, -1);
 					placesInChartStr.set(selected, "");
 					
 					removePlaceSeries(name);
@@ -218,27 +242,96 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		placesChartOptionsPanel.add(removePlaceButton);
 		
-		JButton clearChartButton = new JButton("Clear");
-		clearChartButton.setBounds(posXchart+240, posYchart+2, 110, 20);
-		//acqDataButton.setIcon(Tools.getResIcon32(""));
-		clearChartButton.addActionListener(new ActionListener() {
+		JButton clearPlacesChartButton = new JButton("Clear");
+		clearPlacesChartButton.setBounds(posXchart+240, posYchart+2, 110, 20);
+		//clearPlacesChartButton.setIcon(Tools.getResIcon32(""));
+		clearPlacesChartButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				clearPlacesChart();
 			}
 		});
-		placesChartOptionsPanel.add(clearChartButton);
+		placesChartOptionsPanel.add(clearPlacesChartButton);
 		
-		JButton saveChartButton = new JButton("Save");
-		saveChartButton.setBounds(posXchart+400, posYchart+2, 110, 20);
-		//acqDataButton.setIcon(Tools.getResIcon32(""));
-		saveChartButton.addActionListener(new ActionListener() {
+		JButton savePlacesChartButton = new JButton("Save Image");
+		savePlacesChartButton.setBounds(posXchart+360, posYchart+2, 110, 20);
+		//savePlacesChartButton.setIcon(Tools.getResIcon32(""));
+		savePlacesChartButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				savePlacesChartImage();
+				saveChartImage("places", 1200, 1024);
 			}
 		});
-		placesChartOptionsPanel.add(saveChartButton);
+		placesChartOptionsPanel.add(savePlacesChartButton);
+		
+		JButton showPlaceButton = new JButton("Show");
+		showPlaceButton.setBounds(posXchart+480, posYchart+2, 110, 20);
+		//showPlaceButton.setIcon(Tools.getResIcon32(""));
+		showPlaceButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = placesCombo.getSelectedIndex();
+				if(selected>0) {
+					selected--;
+					//String name = placesCombo.getSelectedItem().toString();
+					//name = trimNodeName(name);
+					GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
+					GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(true, selected);
+				}
+			}
+		});
+		placesChartOptionsPanel.add(showPlaceButton);
 		result.add(placesChartOptionsPanel);
+		
+		//************************************************************************************************************
+		//************************************************************************************************************
+		
+		JPanel placesChartGraphicPanel = new JPanel(null);
+		placesChartGraphicPanel.setBorder(BorderFactory.createTitledBorder("Chart graphic"));
+		placesChartGraphicPanel.setBounds(placesChartOptionsPanel.getWidth(), 
+				0, 200, placesChartOptionsPanel.getHeight());
+		int posXGchart = 10;
+		int posYGchart = 20;
+		result.add(placesChartGraphicPanel);
+		
+		ButtonGroup groupWidth = new ButtonGroup();
+		JRadioButton width1 = new JRadioButton("Width 1");
+		width1.setBounds(posXGchart, posYGchart, 70, 20);
+		width1.setActionCommand("0");
+		width1.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
+			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+				chartDetails.p_StrokeWidth = 1.0f;
+				updatePlacesGraphicChart("places");
+			}
+		}});
+		placesChartGraphicPanel.add(width1);
+		groupWidth.add(width1);
+		groupWidth.setSelected(width1.getModel(), true);
+		
+		JRadioButton width2 = new JRadioButton("Width 2");
+		width2.setBounds(posXGchart, posYGchart+20, 70, 20);
+		width2.setActionCommand("1");
+		width2.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
+			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+				chartDetails.p_StrokeWidth = 2.0f;
+				updatePlacesGraphicChart("places");
+			}
+		}});
+		placesChartGraphicPanel.add(width2);
+		groupWidth.add(width2);
+		
+		JRadioButton width3 = new JRadioButton("Width 3");
+		width3.setBounds(posXGchart, posYGchart+40, 70, 20);
+		width3.setActionCommand("2");
+		width3.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
+			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+				chartDetails.p_StrokeWidth = 3.0f;
+				updatePlacesGraphicChart("places");
+			}
+		}});
+		placesChartGraphicPanel.add(width3);
+		groupWidth.add(width3);
 				
+		//************************************************************************************************************
+		//************************************************************************************************************
+		
 		placesChartPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
 		 	//my zmieniać wymiary jeśli całe okno ma zmieniane w dowolnej chwili
 		placesChartPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
@@ -247,6 +340,7 @@ public class AbyssStateSimulator extends JFrame {
 		placesChartPanel.add(createPlacesChartPanel(), BorderLayout.CENTER);
 		result.add(placesChartPanel);
 		
+
 		return result;
 	}
 	
@@ -260,7 +354,7 @@ public class AbyssStateSimulator extends JFrame {
 		
 		transChartOptionsPanel = new JPanel(null);
 		transChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Chart options"));
-		transChartOptionsPanel.setBounds(0, 0, 600, 120);
+		transChartOptionsPanel.setBounds(0, 0, 610, 120);
 		int posXchart = 10;
 		int posYchart = 20;
 		
@@ -285,6 +379,7 @@ public class AbyssStateSimulator extends JFrame {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
 				transInterval = (int) spinner.getValue();
+				clearTransitionsChart();
 			}
 		});
 		transChartOptionsPanel.add(transIntervalSpinner);
@@ -300,7 +395,7 @@ public class AbyssStateSimulator extends JFrame {
 		transitionsCombo.setLocation(posXchart + 75, posYchart+2);
 		transitionsCombo.setSize(500, 20);
 		transitionsCombo.setSelectedIndex(0);
-		transitionsCombo.setMaximumRowCount(6);
+		transitionsCombo.setMaximumRowCount(12);
 		transitionsCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				//int selected = placesCombo.getSelectedIndex();
@@ -308,26 +403,136 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		transChartOptionsPanel.add(transitionsCombo);
 		
-		posYchart += 20;
+		posYchart += 30;
 		
-		JButton addPlaceButton = new JButton("Add to chart");
-		addPlaceButton.setBounds(posXchart, posYchart+2, 110, 20);
-		//acqDataButton.setIcon(Tools.getResIcon32(""));
-		addPlaceButton.addActionListener(new ActionListener() {
+		JButton addTransitionButton = new JButton("Add to chart");
+		addTransitionButton.setBounds(posXchart, posYchart+2, 110, 20);
+		//addTransitionButton.setIcon(Tools.getResIcon32(""));
+		addTransitionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(transitionsRawData.size() == 0)
+					return;
+				
 				int selected = transitionsCombo.getSelectedIndex();
 				if(selected>0) {
 					selected--;
 					String name = transitionsCombo.getSelectedItem().toString();
-
+					name = trimNodeName(name);
 					addNewTransitionSeries(selected, name);
 					//updateTransitionsGraphicChart();
 				}
 			}
 		});
-		transChartOptionsPanel.add(addPlaceButton);
+		transChartOptionsPanel.add(addTransitionButton);
 		
+		JButton removeTransitionButton = new JButton("Remove");
+		removeTransitionButton.setBounds(posXchart+120, posYchart+2, 110, 20);
+		//removeTransitionButton.setIcon(Tools.getResIcon32(""));
+		removeTransitionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(transitionsRawData.size() == 0)
+					return;
+				
+				int selected = transitionsCombo.getSelectedIndex();
+				if(selected>0) {
+					//selected--;
+					String name = transitionsCombo.getSelectedItem().toString();
+					name = trimNodeName(name);
+					removeTransitionSeries(name);
+				}
+			}
+		});
+		transChartOptionsPanel.add(removeTransitionButton);
+		
+		JButton clearTransChartButton = new JButton("Clear");
+		clearTransChartButton.setBounds(posXchart+240, posYchart+2, 110, 20);
+		//clearTransChartButton.setIcon(Tools.getResIcon32(""));
+		clearTransChartButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				clearTransitionsChart();
+			}
+		});
+		transChartOptionsPanel.add(clearTransChartButton);
+		
+		JButton saveTransitionsChartButton = new JButton("Save Image");
+		saveTransitionsChartButton.setBounds(posXchart+360, posYchart+2, 110, 20);
+		//saveTransitionsChartButton.setIcon(Tools.getResIcon32(""));
+		saveTransitionsChartButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				saveChartImage("transitions", 1200, 1024);
+			}
+		});
+		transChartOptionsPanel.add(saveTransitionsChartButton);
+		
+		JButton showTransButton = new JButton("Show");
+		showTransButton.setBounds(posXchart+480, posYchart+2, 110, 20);
+		//showPlaceButton.setIcon(Tools.getResIcon32(""));
+		showTransButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = transitionsCombo.getSelectedIndex();
+				if(selected>0) {
+					selected--;
+					//String name = placesCombo.getSelectedItem().toString();
+					//name = trimNodeName(name);
+					GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
+					GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(false, selected);
+				}
+			}
+		});
+		transChartOptionsPanel.add(showTransButton);
 		result.add(transChartOptionsPanel);
+		
+		//************************************************************************************************************
+		//************************************************************************************************************
+				
+		JPanel transChartGraphicPanel = new JPanel(null);
+		transChartGraphicPanel.setBorder(BorderFactory.createTitledBorder("Chart graphic"));
+		transChartGraphicPanel.setBounds(transChartOptionsPanel.getWidth(), 
+				0, 200, transChartOptionsPanel.getHeight());
+		int posXGchart = 10;
+		int posYGchart = 20;
+		result.add(transChartGraphicPanel);
+		
+		ButtonGroup groupWidth = new ButtonGroup();
+		JRadioButton width1 = new JRadioButton("Width 1");
+		width1.setBounds(posXGchart, posYGchart, 70, 20);
+		width1.setActionCommand("0");
+		width1.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
+			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+				chartDetails.t_StrokeWidth = 1.0f;
+				updatePlacesGraphicChart("transitions");
+			}
+		}});
+		transChartGraphicPanel.add(width1);
+		groupWidth.add(width1);
+		groupWidth.setSelected(width1.getModel(), true);
+		
+		JRadioButton width2 = new JRadioButton("Width 2");
+		width2.setBounds(posXGchart, posYGchart+20, 70, 20);
+		width2.setActionCommand("1");
+		width2.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
+			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+				chartDetails.t_StrokeWidth = 2.0f;
+				updatePlacesGraphicChart("transitions");
+			}
+		}});
+		transChartGraphicPanel.add(width2);
+		groupWidth.add(width2);
+		
+		JRadioButton width3 = new JRadioButton("Width 3");
+		width3.setBounds(posXGchart, posYGchart+40, 70, 20);
+		width3.setActionCommand("2");
+		width3.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
+			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+				chartDetails.t_StrokeWidth = 3.0f;
+				updatePlacesGraphicChart("transitions");
+			}
+		}});
+		transChartGraphicPanel.add(width3);
+		groupWidth.add(width3);
+						
+		//************************************************************************************************************
+		//************************************************************************************************************
 		
 		transitionsChartPanel = new JPanel(new BorderLayout());
 		transitionsChartPanel.setBorder(BorderFactory.createTitledBorder("Transitions chart"));
@@ -359,12 +564,12 @@ public class AbyssStateSimulator extends JFrame {
 		//acqDataButton.setIcon(Tools.getResIcon32(""));
 		acqDataButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				acquireData();
+				acquireDataFromSimulation();
 			}
 		});
 		dataAcquisitionPanel.add(acqDataButton);
 		
-		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(simSteps, 0, Integer.MAX_VALUE, 100);
+		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(simSteps, 0, 1000000, 100);
 		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
 		tokenSpinner.setBounds(posXda +120, posYda, 80, 30);
 		tokenSpinner.addChangeListener(new ChangeListener() {
@@ -393,8 +598,13 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		dataAcquisitionPanel.add(tokenSpinner);
 		
+		JLabel label1 = new JLabel("Mode:");
+		label1.setBounds(posXda+210, posYda+5, 50, 20);
+		dataAcquisitionPanel.add(label1);
+		
 		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
-		simMode.setBounds(posXda+250, posYda, 80, 30);
+		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+		simMode.setBounds(posXda+250, posYda, 120, 30);
 		simMode.setSelectedIndex(1);
 		simMode.setMaximumRowCount(6);
 		simMode.addActionListener(new ActionListener() {
@@ -407,6 +617,18 @@ public class AbyssStateSimulator extends JFrame {
 			}
 		});
 		dataAcquisitionPanel.add(simMode);
+		
+		JButton clearDataButton = new JButton("Clear all");
+		clearDataButton.setBounds(posXda+380, posYda, 110, 30);
+		//clearDataButton.setIcon(Tools.getResIcon32(""));
+		clearDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				clearPlacesChart();
+				clearTransitionsChart();
+				clearAllData();
+			}
+		});
+		dataAcquisitionPanel.add(clearDataButton);
 		
 		posYda += 40;
 		progressBar = new JProgressBar();
@@ -450,33 +672,21 @@ public class AbyssStateSimulator extends JFrame {
 	}
 	
 	/**
-	 * Metoda uaktualniania stylu wyświetlania
-	 */
-	private void updatePlacesGraphicChart() {
-		XYPlot plot = placesChart.getXYPlot();
-		//XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-		//renderer.setSeriesLinesVisible(0, true);
-        //renderer.setSeriesShapesVisible(0, false);
-        //renderer.setSeriesLinesVisible(1, false);
-        //renderer.setSeriesShapesVisible(1, true); 
-		 //XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-	    //plot.setRenderer(renderer);
-	    //plot.setBackgroundPaint(Color.DARK_GRAY);
-		
-		int count =  placesChart.getXYPlot().getSeriesCount();
-		
-		for(int i=0; i<count; i++) {
-			plot.getRenderer().setSeriesStroke(i, new BasicStroke(1.0f));
-		}
-		//plot.setRenderer(renderer);
-	}
-	
-	/**
 	 * Metoda dodaje nową linię do wykresu.
 	 * @param selPlaceID int - indeks miejsca
 	 * @param name String - nazwa miejsca
 	 */
 	private void addNewPlaceSeries(int selPlaceID, String name) {
+		if(placesChartType == 0) { //replace chart
+			placesChartPanel.removeAll();
+			placesChartPanel.add(createPlacesChartPanel(), BorderLayout.CENTER);
+			placesChartPanel.revalidate();
+			placesChartPanel.repaint();
+			placesChartType = 1;
+			
+			placesSeriesDataSet.removeAllSeries(); // ??
+		}
+		
 		@SuppressWarnings("unchecked")
 		List<XYSeries> x = placesSeriesDataSet.getSeries();
 		for(XYSeries xys : x) {
@@ -510,31 +720,6 @@ public class AbyssStateSimulator extends JFrame {
 	}
 	
 	/**
-	 * Metoda zapisująca aktualnie wyświetlany wykres do pliku.
-	 */
-	private void savePlacesChartImage() {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-		FileFilter[] filters = new FileFilter[1];
-		filters[0] = new ExtensionFileFilter("Portable Network Graphics (.png)", new String[] { "PNG" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
-		if(selectedFile.equals(""))
-			return;
-		
-		if(!selectedFile.contains(".png"))
-			selectedFile += ".png";
-		
-		File imageFile = new File(selectedFile);
-		int width = 1024;
-		int height = 768;
-		 
-		try {
-		    ChartUtilities.saveChartAsPNG(imageFile, placesChart, width, height);
-		} catch (IOException ex) {
-		    System.err.println(ex);
-		}
-	}
-	
-	/**
 	 * Metoda czyszcząca dane okna.
 	 */
 	private void clearPlacesChart() {
@@ -546,6 +731,66 @@ public class AbyssStateSimulator extends JFrame {
 			placesInChartStr.add("");
 		}
 	}
+	
+	/**
+	 * Metoda ta pokazuje na wykresie średnią liczbę tokenów w miejscach
+	 */
+	private void showAllPlacesData() {
+		if(placesAvgData.size() == 0)
+			return;
+
+		placesChartType = 0;
+		//int steps = placesRawData.size();
+		double max = 0.0;
+		for(int p=0; p<placesAvgData.size(); p++) {
+			if(placesAvgData.get(p) > max)
+				max = placesAvgData.get(p);
+		}
+		
+	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+	    for(int t=0; t<placesAvgData.size(); t++) {
+			String tName = "t"+t+"_"+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(t).getName();
+			double value = placesAvgData.get(t);
+			dataset.addValue(value, "Firing", tName);
+			dataset.addValue((int)(max-value), "NotFiring", tName);
+		}
+	    
+	    String chartTitle = "Places dynamics";
+	    String xAxisLabel = "Place";
+	    String yAxisLabel = "Tokens";
+	    boolean showLegend = true;
+	    boolean createTooltip = true;
+	    boolean createURL = false;
+		placesChart = ChartFactory.createStackedBarChart(chartTitle, xAxisLabel, yAxisLabel, dataset,
+			PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
+		
+		
+		CategoryPlot plot = (CategoryPlot) placesChart.getPlot();
+		LogAxis yAxis = new LogAxis("Tokens");
+		yAxis.setLowerBound(0.9);
+		yAxis.setUpperBound(max+10);
+		yAxis.setBase(10.0);
+		yAxis.setMinorTickMarksVisible(true);
+		plot.setRangeAxis(yAxis);
+		
+	    StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
+	    //CategoryItemRenderer renderer = plot.getRenderer();
+	    renderer.setBase(1);
+
+		
+		//CategoryItemRenderer renderer = plot.getRenderer();
+		Paint p1 = new GradientPaint(0.0f, 0.0f, Color.red, 0.0f, 0.0f, Color.red);
+        renderer.setSeriesPaint(0, p1);
+        Paint p2 = new GradientPaint(0.0f, 0.0f, Color.lightGray, 0.0f, 0.0f, Color.lightGray);
+        renderer.setSeriesPaint(1, p2);
+        plot.setRenderer(renderer);
+
+		placesChartPanel.removeAll();
+		placesChartPanel.add(new ChartPanel(placesChart), BorderLayout.CENTER);
+		placesChartPanel.revalidate();
+		placesChartPanel.repaint();
+	}
+	
 
 	//**************************************************************************************
 	//*********************************                  ***********************************
@@ -598,10 +843,12 @@ public class AbyssStateSimulator extends JFrame {
 		
 		XYSeries series = new XYSeries(name);
 		//ArrayList<Integer> test = new ArrayList<Integer>();
-		int counter = 0;
+		//int counter = 0;
 		for(int step=0; step<transitionsRawData.size(); step++) {
-			//TODO: check interval
-			
+			if(transInterval > (transitionsRawData.size()/10)) {
+				transInterval = transitionsRawData.size()/10;
+				
+			}
 			int value = 0; //suma odpaleń w przedziale czasu
 			for(int i=0; i<transInterval; i++) {
 				try {
@@ -611,13 +858,35 @@ public class AbyssStateSimulator extends JFrame {
 				}
 			}
 			
-			
 			//test.add(value);
 			series.add(step, value);
 			step += transInterval;
-			counter++;
+			//counter++;
 		}
 		transitionsSeriesDataSet.addSeries(series);
+	}
+	
+	/**
+	 * Metoda ta usuwa z wykresu dane o wskazanym miejscu.
+	 * @param name String - nazwa miejsca (unikalna)
+	 */
+	private void removeTransitionSeries(String name) {
+		@SuppressWarnings("unchecked")
+		List<XYSeries> x = transitionsSeriesDataSet.getSeries();
+		for(XYSeries xys : x) {
+			if(xys.getKey().equals(name)) {
+				transitionsSeriesDataSet.removeSeries(xys);
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * Metoda czyszcząca dane okna.
+	 */
+	private void clearTransitionsChart() {
+		if(transitionsSeriesDataSet.getSeriesCount() > 0)
+			transitionsSeriesDataSet.removeAllSeries();	
 	}
 	
 	/**
@@ -661,20 +930,41 @@ public class AbyssStateSimulator extends JFrame {
 		transitionsChartPanel.revalidate();
 		transitionsChartPanel.repaint();
 	}
-
-	/**
-	 * Metoda czyszcząca dane okna.
-	 */
-	private void clearTransitionsChart() {
-		transitionsSeriesDataSet.removeAllSeries();
-		
-	}
 	
 	//**************************************************************************************
 	//*********************************                  ***********************************
 	//*********************************      OGÓLNE      ***********************************
 	//*********************************                  ***********************************
 	//**************************************************************************************
+	
+	/**
+	 * Metoda zapisująca aktualnie wyświetlany wykres do pliku.
+	 */
+	private void saveChartImage(String chartType, int w, int h) {
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter("Portable Network Graphics (.png)", new String[] { "PNG" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		if(selectedFile.equals(""))
+			return;
+		
+		if(!selectedFile.contains(".png"))
+			selectedFile += ".png";
+		
+		File imageFile = new File(selectedFile);
+		int width = w; //1024;
+		int height = h; //768;
+		 
+		try {
+			if(chartType.equals("places")) {
+				ChartUtilities.saveChartAsPNG(imageFile, placesChart, width, height);
+			} else if(chartType.equals("transitions")) {
+				ChartUtilities.saveChartAsPNG(imageFile, transitionsChart, width, height);
+			}
+		} catch (IOException ex) {
+		    System.err.println(ex);
+		}
+	}
 	
 	/**
 	 * Metoda wypełnia komponenty rozwijalne danymi o miejscach i tranzycjach.
@@ -686,8 +976,14 @@ public class AbyssStateSimulator extends JFrame {
 		
 		placesCombo.removeAllItems();
 		placesCombo.addItem("---");
-		for(int p=0; p < places.size(); p++) {
-			placesCombo.addItem("p"+(p)+"."+places.get(p).getName());
+		if(placesAvgData.size() == places.size()) {
+			for(int p=0; p < places.size(); p++) {
+				placesCombo.addItem("p"+(p)+"."+places.get(p).getName() + " "+formatD(placesAvgData.get(p)));
+			}
+		} else {
+			for(int p=0; p < places.size(); p++) {
+				placesCombo.addItem("p"+(p)+"."+places.get(p).getName());
+			}
 		}
 		
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -696,8 +992,15 @@ public class AbyssStateSimulator extends JFrame {
 		
 		transitionsCombo.removeAllItems();
 		transitionsCombo.addItem("---");
-		for(int t=0; t < transitions.size(); t++) {
-			transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
+		
+		if(transAvgData.size() == transitions.size()) {
+			for(int t=0; t < transitions.size(); t++) {
+				transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName() + " "+formatD(transAvgData.get(t)));
+			}
+		} else {
+			for(int t=0; t < transitions.size(); t++) {
+				transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
+			}
 		}
 	}
 	
@@ -713,12 +1016,14 @@ public class AbyssStateSimulator extends JFrame {
     	});
     	
     	listenerStart = true; //na wszelki wypadek
+    	
+    	//poniżej dynamiczne :) ustalanie wielkości i ustawienia głównych paneli w ramach zakładek
 		addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
             	if(!listenerStart)
             		return;
             	tabbedPane.setBounds(0, dataToolsPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-dataToolsPanel.getHeight()-40);
-            	placesChartPanel.setBounds(0, 80, ego.getWidth()-30, 
+            	placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
             			tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
             	transitionsChartPanel.setBounds(0, transChartOptionsPanel.getHeight(), ego.getWidth()-30, 
             			tabbedPane.getHeight() - transChartOptionsPanel.getHeight()-40);
@@ -727,7 +1032,7 @@ public class AbyssStateSimulator extends JFrame {
             	if(!listenerStart)
             		return;
             	tabbedPane.setBounds(0, dataToolsPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-dataToolsPanel.getHeight()-40);
-            	placesChartPanel.setBounds(0, 80, ego.getWidth()-30, 
+            	placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
             			tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
             	transitionsChartPanel.setBounds(0, transChartOptionsPanel.getHeight(), ego.getWidth()-30, 
             			tabbedPane.getHeight() - transChartOptionsPanel.getHeight()-40);
@@ -740,20 +1045,21 @@ public class AbyssStateSimulator extends JFrame {
      * pobiera tablice i wektory danych z obiektu symulatora do struktur wewnętrznych
      * obiektu klasy AbyssStateSimulator - czyli podokna programu głównego.
      */
-	private void acquireData() {
+	private void acquireDataFromSimulation() {
 		clearTransitionsChart();
 		clearPlacesChart();
+		clearAllData();
 		
 		progressBar.setMaximum(simSteps);
 		ssim.initiateSim(NetType.BASIC, maximumMode);
 		ssim.simulateNet(simSteps, progressBar);
 		
-		placesRawData.clear();
-		transitionsRawData.clear();
-		
+		//pobieranie wektorów danych zebranych w symulacji:
 		placesRawData = ssim.getPlacesData();
+		placesAvgData = ssim.getPlacesAvgData();
 		transitionsRawData = ssim.getTransitionsData();
 		transitionsCompactData = ssim.getTransitionsCompactData();
+		transAvgData = ssim.getTransitionsAvgData();
 		
 		placesInChart = new ArrayList<Integer>();
 		placesInChartStr  = new ArrayList<String>();
@@ -761,8 +1067,53 @@ public class AbyssStateSimulator extends JFrame {
 			placesInChart.add(-1);
 			placesInChartStr.add("");
 		}
+		
+		fillPlacesAndTransitionsData();
+	}
+	
+	/**
+	 * Metoda czyści wszystkie sturktury danych.
+	 */
+	private void clearAllData() {
+		ssim = new StateSimulator();
+		placesRawData.clear();
+		placesAvgData.clear();
+		transitionsRawData.clear();
+		transitionsCompactData.clear();
+		transAvgData.clear();
+	}
+	
+	/**
+	 * Konwersja liczby double do określonej długości łańcucha znaków.
+	 * @param value double - liczba do konwersji
+	 * @return String - liczba sformatowana
+	 */
+	private String formatD(double value) {
+        DecimalFormat df = new DecimalFormat("#.#######");
+        String txt = "(avg: ";
+        txt += df.format(value);
+        txt += ")";
+        txt = txt.replace(",", ".");
+		return txt;
+	}
+	
+	/**
+	 * Metoda przycina nazwę węzła, obcinając informacje o średniej liczbie wystąpień
+	 * w symulacji stanów.
+	 * @param name String - nazwa z comboBox
+	 * @return String - przycięta nazwa
+	 */
+	private String trimNodeName(String name) {
+		int i = name.indexOf("(avg");
+		if(i<0) {
+			return name;
+		} else {
+			name = name.substring(0, i-1);
+			return name;
+		}
 	}
 
+	/*
 	protected JComponent makeTextPanel(String text) {
         JPanel panel = new JPanel(false);
         JLabel filler = new JLabel(text);
@@ -772,4 +1123,49 @@ public class AbyssStateSimulator extends JFrame {
         panel.setBounds(0, 0, 640, 480);
         return panel;
     }
+    */
+	
+	/**
+	 * Metoda uaktualniania stylu wyświetlania
+	 */
+	private void updatePlacesGraphicChart(String chartType) {
+		if(chartType.equals("places")) {
+			if(placesChartType == 0)
+				return;
+			
+			XYPlot plot = placesChart.getXYPlot();
+			int count =  placesChart.getXYPlot().getSeriesCount();
+			for(int i=0; i<count; i++) {
+				plot.getRenderer().setSeriesStroke(i, new BasicStroke(chartDetails.p_StrokeWidth));
+			}
+		} else if(chartType.equals("transitions")){
+			if(transChartType == 0)
+				return;
+			
+			XYPlot plot = transitionsChart.getXYPlot();
+			int count =  transitionsChart.getXYPlot().getSeriesCount();
+			for(int i=0; i<count; i++) {
+				plot.getRenderer().setSeriesStroke(i, new BasicStroke(chartDetails.t_StrokeWidth));
+			}
+		}
+		
+		//XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+		//renderer.setSeriesLinesVisible(0, true);
+        //renderer.setSeriesShapesVisible(0, false);
+        //renderer.setSeriesLinesVisible(1, false);
+        //renderer.setSeriesShapesVisible(1, true); 
+		 //XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+	    //plot.setRenderer(renderer);
+	    //plot.setBackgroundPaint(Color.DARK_GRAY);
+		//plot.setRenderer(renderer);
+	}
+	
+	private class ChartProperties {
+		public float p_StrokeWidth = 1.0f;
+		public float t_StrokeWidth = 1.0f;
+		
+		public ChartProperties() {
+			
+		}
+	}
 }

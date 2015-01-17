@@ -1028,6 +1028,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
+	 * Metoda ta zwraca obiekt okna wyszukiwania elementów, używana przez StateSimulator.
+	 * @return AbyssSearch - okno wyszukiwania elementów
+	 */
+	public AbyssSearch getSearchWindow() {
+		return windowSearch;
+	}
+	
+	/**
 	 * Metoda tworzy nowe okno właściwości programu.
 	 */
 	private void createPropertiesWindow() {

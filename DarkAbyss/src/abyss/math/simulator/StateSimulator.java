@@ -29,18 +29,16 @@ public class StateSimulator {
 	public double timeNetPartStepCounter = 0;
 	
 	private ArrayList<ArrayList<Integer>> placesData = null;
+	private ArrayList<Double> placesAvgData = null; //średnia liczba tokenów w miejscu
 	private ArrayList<ArrayList<Integer>> transitionsData = null;
 	private ArrayList<Integer> transitionsCompactData = null; //wektor sumy odpaleń tranzycji
+	private ArrayList<Double> transitionsAvgData = null;
 	
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
 	 */
 	public StateSimulator() {
-		transitions = new ArrayList<Transition>();
-		places = new ArrayList<Place>();
-		placesData = new ArrayList<ArrayList<Integer>>();
-		transitionsData = new ArrayList<ArrayList<Integer>>();
-		transitionsCompactData = new ArrayList<Integer>();
+		
 	}
 	
 	/**
@@ -58,10 +56,17 @@ public class StateSimulator {
 			return ready;
 		}
 		placesData = new ArrayList<ArrayList<Integer>>();
+		placesAvgData = new ArrayList<Double>();
 		transitionsData = new ArrayList<ArrayList<Integer>>();
 		transitionsCompactData = new ArrayList<Integer>();
-		for(int t=0; t<transitions.size(); t++)
+		transitionsAvgData = new ArrayList<Double>();
+		for(int t=0; t<transitions.size(); t++) {
 			transitionsCompactData.add(0);
+		}
+		for(int p=0; p<places.size(); p++) {
+			placesAvgData.add(0.0);
+		}
+		
 		
 		simulationType = netT;
 		maximumMode = mode;
@@ -75,13 +80,14 @@ public class StateSimulator {
 	}
 	
 	/**
-	 * Metoda symuluje podaną liczbę kroków sieci Petriego.
+	 * Metoda symuluje podaną liczbę kroków sieci Petriego dla wybranego wcześniej trybu, tj.
+	 * jeśli maximumMode = true, wtedy każda aktywna tranzycja musi się uruchomić.
 	 * @param steps int - liczba kroków do symulacji
 	 * @param pBar JProgressBar - pasek postępu
 	 */
 	public void simulateNet(int steps, JProgressBar pBar) {
 		if(ready == false) {
-			JOptionPane.showMessageDialog(null,"Simulation cannot start, initializization phase failed.", 
+			JOptionPane.showMessageDialog(null,"Simulation cannot start, no network found.", 
 					"State Simulation problem",JOptionPane.ERROR_MESSAGE);
 		}
 		
@@ -89,6 +95,10 @@ public class StateSimulator {
 		ArrayList<Transition> launchingTransitions = null;
 		int updateTime = steps / 100;
 		
+		String max = "50% firing chance";
+		if(maximumMode)
+			max = "maximum";
+		GUIManager.getDefaultGUIManager().log("Starting states simulation for "+steps+" steps in "+max+" mode.", "text", true);
 		for(int i=0; i<steps; i++) {
 			pBar.setValue(i+1);
 			
@@ -119,11 +129,24 @@ public class StateSimulator {
 			//zbierz informacje o tokenach w miejsach:
 			ArrayList<Integer> marking = new ArrayList<Integer>();
 			for(int p=0; p<places.size(); p++) {
-				marking.add(places.get(p).getTokensNumber());
+				int tokens = places.get(p).getTokensNumber();
+				marking.add(tokens);
+				
+				double sumOfTokens = placesAvgData.get(p);
+				placesAvgData.set(p, sumOfTokens+tokens);
 			}
 			placesData.add(marking);
 		}
 		
+		for(int t=0; t<transitions.size(); t++) {
+			transitionsAvgData.add((double) ((double)transitionsCompactData.get(t)/(double)steps));
+		}
+		for(int p=0; p<places.size(); p++) {
+			double sumOfTokens = placesAvgData.get(p);
+			placesAvgData.set(p, sumOfTokens/(double)steps);
+		}
+		
+		GUIManager.getDefaultGUIManager().log("Simulation ended. Restoring zero marking.", "text", true);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 		ready = false;
 	}
@@ -282,10 +305,26 @@ public class StateSimulator {
 	}
 	
 	/**
-	 * Metoda zwraca wektór sumy uruchomień dla tranzycji.
+	 * Metoda zwraca wektor sumy uruchomień dla tranzycji.
 	 * @return ArrayList[Integer] - wektor tranzycji po symulacji
 	 */
 	public ArrayList<Integer> getTransitionsCompactData() {
 		return transitionsCompactData;
+	}
+	
+	/**
+	 * Metoda zwraca wektor średnich uruchomień tranzycji po wszystkich krokach.
+	 * @return ArrayList[Double] - wektor średniej liczby uruchomień tranzycji po symulacji
+	 */
+	public ArrayList<Double> getTransitionsAvgData() {
+		return transitionsAvgData;
+	}
+	
+	/**
+	 * Metoda zwraca wektor średniej liczby tokenów w miejsach po wszystkich krokach.
+	 * @return ArrayList[Double] - wektor średniej liczby tokenów
+	 */
+	public ArrayList<Double> getPlacesAvgData() {
+		return placesAvgData;
 	}
 }

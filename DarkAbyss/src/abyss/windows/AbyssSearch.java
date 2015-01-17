@@ -11,6 +11,7 @@ import java.beans.PropertyChangeListener;
 import java.text.ParseException;
 import java.util.ArrayList;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -32,7 +33,9 @@ import abyss.utilities.Tools;
 import abyss.workspace.WorkspaceSheet;
 
 /**
- * Klasa implementująca okno wyszukiwania elementów sieci.
+ * Klasa implementująca okno wyszukiwania elementów sieci - miejsc lub tranzycji. Można
+ * ręcznie wskazać odpowiedni wierzchołek na listach rozwijalnych, względnie wyszukać go
+ * po nazwie lub identyfikatorze.
  * @author MR
  *
  */
@@ -50,6 +53,7 @@ public class AbyssSearch extends JFrame {
 	private JComboBox<String> transitionsCombo = null;
 	private ButtonGroup group = new ButtonGroup();
 	private JFormattedTextField searchField;
+	private JFormattedTextField idField;
 	private JRadioButton transitionMode;
 	
 	private JLabel nodeName;
@@ -57,11 +61,6 @@ public class AbyssSearch extends JFrame {
 	private JLabel nodeInArcs;
 	private JLabel nodeOutArcs;
 	private JLabel nodeIsPortal;
-	
-	//private int lastPlaceIndex = 0;
-	//private int lastTransitionIndex = 0;
-	//private int lastPlacesNumber = 0;
-	//private int lastTransitionsNumber = 0;
 	
 	private boolean listenerAllowed = true; //jeśli true, comboBoxy działają
 	
@@ -81,7 +80,6 @@ public class AbyssSearch extends JFrame {
 		setResizable(false);
 		
 		JPanel main = createMainPanel();
-
 		add(main, BorderLayout.CENTER);
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
@@ -179,7 +177,6 @@ public class AbyssSearch extends JFrame {
 	    searchField = new JFormattedTextField(format);
 		searchField.setLocation(choiceColPx + 75, choiceRowPx);
 		searchField.setSize(270, 20);
-	    
 		searchField.setValue("");
 		searchField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
@@ -187,7 +184,8 @@ public class AbyssSearch extends JFrame {
 				try {
 					field.commitEdit();
 					String newName = (String) field.getText();
-					searchForString(newName);
+					if(newName.length() > 0)
+						searchForString(newName);
 				} catch (ParseException ex) {
 				}
 				
@@ -202,7 +200,7 @@ public class AbyssSearch extends JFrame {
 		
 		DefaultFormatter formatID = new DefaultFormatter();
 		formatID.setOverwriteMode(false);
-		JFormattedTextField idField = new JFormattedTextField(format);
+		idField = new JFormattedTextField(format);
 		idField.setLocation(choiceColPx + 415, choiceRowPx);
 		idField.setSize(60, 20);
 		idField.setValue("");
@@ -212,14 +210,13 @@ public class AbyssSearch extends JFrame {
 				try {
 					field.commitEdit();
 					String IDstr = (String) field.getText();
+					if(IDstr.length() == 0)
+						return;
 					int id = Integer.parseInt(IDstr);
 					selectByID(id);
-					
 				} catch (Exception ex) {
 				}
-				
-				
-				//changeName(newName);
+
 			}
 		});
 		choicePanel.add(idField);	
@@ -229,6 +226,19 @@ public class AbyssSearch extends JFrame {
 		placesMode.setBounds(choiceColPx, choiceRowPx, 120, 20);
 		placesMode.setLocation(choiceColPx, choiceRowPx);
 		placesMode.setActionCommand("0");
+		ActionListener placesModeActionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+				if(aButton.isSelected() == true) {
+					String newName = (String) searchField.getText();
+					idField.setText("");
+					if(newName.length() > 0)
+						searchForString(newName);
+					//System.out.println("Selected: " + aButton.getText());
+				}
+			}
+		};
+		placesMode.addActionListener(placesModeActionListener);
 		choicePanel.add(placesMode);
 		group.add(placesMode);
 		
@@ -236,6 +246,19 @@ public class AbyssSearch extends JFrame {
 		transitionMode.setBounds(choiceColPx+140, choiceRowPx, 140, 20);
 		transitionMode.setLocation(choiceColPx+140, choiceRowPx);
 		transitionMode.setActionCommand("1");
+		ActionListener transitionModeActionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+				if(aButton.isSelected() == true) {
+					String newName = (String) searchField.getText();
+					idField.setText("");
+					if(newName.length() > 0)
+						searchForString(newName);
+					//System.out.println("Selected: " + aButton.getText());
+				}
+			}
+		};
+		transitionMode.addActionListener(transitionModeActionListener);
 		choicePanel.add(transitionMode);
 		group.add(transitionMode);
 		
@@ -324,16 +347,16 @@ public class AbyssSearch extends JFrame {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za wypełnianie okna danymi
+	 * Metoda odpowiedzialna za wypełnianie okna danymi, tj. aktualizuje listy rozwijalne
+	 * wypełniając je aktualnymi nazwami miejsc i trazycji
 	 */
-	public void fillData() {
+	public void fillComboBoxesData() {
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		//nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
 		
+		//nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
 		//int newPlaceNumber = places.size();
 		//int newTransitionsNumber = transitions.size();
-		
 		//fill the data:
 		//doJump = false;
 		placesCombo.removeAllItems();
@@ -364,6 +387,7 @@ public class AbyssSearch extends JFrame {
 	 */
 	protected void centerOnElement(String type, int index, ElementLocation portalLoc) {
 		/**
+		 // HOLY CODE, ZOSTAWIĆ JAKO KOMENTARZ, NIE RAZ SIĘ PRZYDA
 		ArrayList<Node> nod = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
 		if(nod.size() > 0) {
 		ArrayList<ElementLocation> el = nod.get(0).getElementLocations();
@@ -446,7 +470,7 @@ public class AbyssSearch extends JFrame {
 	 * Metoda wybierająca i wskazująca element sieci po jego ID
 	 * @param id int - id wierzchołka
 	 */
-	protected void selectByID(int id) {
+	private void selectByID(int id) {
 		int mode = Integer.valueOf(group.getSelection().getActionCommand());
 		if(mode == 0) {
 			int maxPlaces = places.size();
@@ -465,10 +489,10 @@ public class AbyssSearch extends JFrame {
 	}
 	
 	/**
-	 * Metoda wyszukuje miejsce lub tranzycję zawierającą daną frazę
+	 * Metoda wyszukuje miejsce lub tranzycję zawierającą dany podciąg znaków.
 	 * @param searchString String - podciąg znaków
 	 */
-	protected void searchForString(String searchString) {
+	private void searchForString(String searchString) {
 		int mode = Integer.valueOf(group.getSelection().getActionCommand());
 		searchString = searchString.toLowerCase();
 		selectedFound = -1;
@@ -514,7 +538,12 @@ public class AbyssSearch extends JFrame {
 		}
 	}
 	
-	protected void showFound(String mode) {
+	/**
+	 * Metoda odpowiedzialna za przeskakiwanie po miejsach lub tranzycjach znalezionych
+	 * wcześniej.
+	 * @param mode String - prev lub next, czyli poprzednie/następne znalezione
+	 */
+	private void showFound(String mode) {
 		try {
 		if(mode.equals("prev")) {
 			if(foundNodes.size() > 0 && selectedFound > 0) {
@@ -543,12 +572,31 @@ public class AbyssSearch extends JFrame {
 	}
 	
 	/**
+	 * Metoda ustawia odpowiedni comboBox i powoduje przeskok w oknie programu na miejsce lub tranzycję.
+	 * Wywoływana z far far away, np. z okna symulatora stanów.
+	 * @param place boolean - true, jeśli miejsca, false - tranzycje
+	 * @param index int - indeks na comboBox
+	 */
+	public void selectedManually(boolean place, int index) {
+		try {
+			if(place) {
+				placesCombo.setSelectedIndex( index+1);
+			} else {
+				transitionsCombo.setSelectedIndex(index+1);
+			}
+		} catch (Exception e) {
+			@SuppressWarnings("unused")
+			int x=1;
+		}
+	}
+	
+	/**
 	 * Inicjalizacja agentów nasłuchujących różnych zdarzeń dla okna poszukiwania.
 	 */
     private void initiateListeners() {
     	addWindowListener(new WindowAdapter() {
   	  	    public void windowActivated(WindowEvent e) {
-  	  	    	fillData();
+  	  	    	fillComboBoxesData();
   	  	    	searchField.requestFocusInWindow();
   	  	    }  
     	});
