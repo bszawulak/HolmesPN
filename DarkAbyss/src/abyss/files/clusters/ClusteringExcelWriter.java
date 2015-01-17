@@ -163,7 +163,7 @@ public class ClusteringExcelWriter {
 		rowIndex++;
 		addTextCell(clusterSheet, 1, rowIndex, "Trans.#:", defCellFormatBold, null);
 		addTextCell(clusterSheet, 2, rowIndex, "Freq.:", defCellFormatBold, null);
-		addTextCell(clusterSheet, 3, rowIndex, "Fired:", defCellFormatBold, null);
+		addTextCell(clusterSheet, 3, rowIndex, "Avg.Fired:", defCellFormatBold, null);
 		addTextCell(clusterSheet, 4, rowIndex, "Transition name:", defCellFormatBold, null);
 		transStartRow = rowIndex;
 		rowIndex++;
@@ -174,8 +174,10 @@ public class ClusteringExcelWriter {
 				addTextCell(clusterSheet, 1, rowIndex, "Trans. "+trans, defCellFormat, null);
 				addIntCell(clusterSheet, 2, rowIndex, transInCluster[0][trans], defCellFormat,
 						setColour(transInCluster[0][trans], clusterSize));
-				addIntCell(clusterSheet, 3, rowIndex, transInCluster[1][trans], defCellFormat,
-						null);
+				//addIntCell(clusterSheet, 3, rowIndex, transInCluster[1][trans], defCellFormat, null);
+				//clusterSize
+				double value = (double)(transInCluster[1][trans]) / (double)clusterSize;
+				addDoubleCell(clusterSheet, 3, rowIndex, value, defCellFormat, null);
 				addTextCell(clusterSheet, 4, rowIndex, dataCore.transNames[trans], defCellFormat, null);
 				rowIndex++;
 			}
@@ -185,7 +187,7 @@ public class ClusteringExcelWriter {
 			addTextCell(clusterSheet, 6, transStartRow, "Trans.#:", defCellFormatBold, null);
 			addTextCell(clusterSheet, 7, transStartRow, "from MCT:", defCellFormatBold, null);
 			addTextCell(clusterSheet, 8, transStartRow, "Freq:", defCellFormatBold, null);
-			addTextCell(clusterSheet, 9, transStartRow, "Fired:", defCellFormatBold, null);
+			addTextCell(clusterSheet, 9, transStartRow, "Avg.fired:", defCellFormatBold, null);
 			addTextCell(clusterSheet, 10, transStartRow, "Transition name:", defCellFormatBold, null);
 			transStartRow++;
 			for(int trans=0; trans<dataCore.transNames.length; trans++) { //tabelka tranzycji
@@ -193,10 +195,12 @@ public class ClusteringExcelWriter {
 					addTextCell(clusterSheet, 6, transStartRow, "Trans. "+trans, defCellFormat, null);
 					addTextCell(clusterSheet, 7, transStartRow, "MCT "+transInCluster[3][trans], defCellFormat, null);
 					addIntCell(clusterSheet, 8, transStartRow, mctInCluster.get(transInCluster[3][trans]-1)
-							, defCellFormat
-							, setColour( mctInCluster.get(transInCluster[3][trans]-1), clusterSize));
-					addIntCell(clusterSheet, 9, transStartRow, transInCluster[2][trans], defCellFormat,
-							null);
+							, defCellFormat, setColour( mctInCluster.get(transInCluster[3][trans]-1), clusterSize));
+
+					//addIntCell(clusterSheet, 9, transStartRow, transInCluster[2][trans], defCellFormat, null);
+					double value = (double)(transInCluster[2][trans]) / (double)clusterSize;
+					addDoubleCell(clusterSheet, 9, transStartRow, value, defCellFormat, null);
+					
 					addTextCell(clusterSheet, 10, transStartRow, dataCore.transNames[trans], defCellFormat, null);
 					transStartRow++;
 				}
@@ -424,7 +428,6 @@ public class ClusteringExcelWriter {
 		}
 	}
 	
-	@SuppressWarnings("unused")
 	private void addDoubleCell(WritableSheet sheet, int column, int row, Double value, WritableCellFormat format, Colour col) throws WriteException, RowsExceededException {
 		if(col != null) {
 			WritableFont cellFont = (WritableFont) format.getFont();
