@@ -801,12 +801,11 @@ public class AbyssStateSimulator extends JFrame {
 		yAxis.setUpperBound(max+10);
 		yAxis.setBase(10.0);
 		yAxis.setMinorTickMarksVisible(true);
-		plot.setRangeAxis(yAxis);
+		//plot.setRangeAxis(yAxis);
 		
 	    StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
 	    //CategoryItemRenderer renderer = plot.getRenderer();
 	    renderer.setBase(1);
-
 		
 		//CategoryItemRenderer renderer = plot.getRenderer();
 		Paint p1 = new GradientPaint(0.0f, 0.0f, Color.red, 0.0f, 0.0f, Color.red);
@@ -928,14 +927,20 @@ public class AbyssStateSimulator extends JFrame {
 			return;
 
 		transChartType = 0;
-		int steps = transitionsRawData.size();
+		//int steps = transitionsRawData.size();
+		
+		double max = 0.0;
+		for(int p=0; p<transitionsCompactData.size(); p++) {
+			if(transitionsCompactData.get(p) > max)
+				max = transitionsCompactData.get(p);
+		}
 		
 	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 	    for(int t=0; t<transitionsCompactData.size(); t++) {
 			String tName = "t"+t+"_"+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(t).getName();
 			int value = transitionsCompactData.get(t);
 			dataset.addValue(value, "Firing", tName);
-			dataset.addValue(steps-value, "NotFiring", tName);
+			dataset.addValue(max-value, "NotFiring", tName);
 		}
 	    
 	    String chartTitle = "Transitions dynamics";

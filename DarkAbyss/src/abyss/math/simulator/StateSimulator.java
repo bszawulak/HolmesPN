@@ -55,6 +55,11 @@ public class StateSimulator {
 			ready = false;
 			return ready;
 		}
+		if(!(transitions.size() > 0 && places.size() > 0)) {
+			ready = false;
+			return ready;
+		}
+		
 		placesData = new ArrayList<ArrayList<Integer>>();
 		placesAvgData = new ArrayList<Double>();
 		transitionsData = new ArrayList<ArrayList<Integer>>();
@@ -67,15 +72,9 @@ public class StateSimulator {
 			placesAvgData.add(0.0);
 		}
 		
-		
 		simulationType = netT;
 		maximumMode = mode;
-		
-		if(transitions.size() > 0 && places.size() > 0)
-			ready = true;
-		else
-			ready = false;
-		
+		ready = true;
 		return ready;
 	}
 	
