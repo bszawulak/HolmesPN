@@ -15,6 +15,7 @@ import javax.swing.filechooser.FileFilter;
 
 import abyss.adam.mct.Runner;
 import abyss.analyzer.DarkAnalyzer;
+import abyss.clusters.ClusteringExtended;
 import abyss.darkgui.GUIManager;
 import abyss.files.Snoopy.SnoopyWriter;
 import abyss.math.InvariantTransition;
@@ -404,6 +405,194 @@ public class TexExporter {
 			bw.close();
 		} catch (Exception e) {
 			String msg = "Unable to save invariants data to: "+selectedFile;
+			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			msg = msg.replace(": ", ":\n");
+			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+					"Write error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	
+
+	public void writeCluster(ClusteringExtended data) {
+		
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		if(selectedFile.equals(""))
+			return;
+		
+		if(!selectedFile.contains(".txt"))
+			selectedFile += ".txt";
+		
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
+			//Tabelka główna:
+			
+			bw.write("{\\footnotesize"+newline);
+			bw.write("\\begin{longtable}{| p{0.8cm} | p{1.2cm} |  p{4.8cm} | p{8.0cm} |}" + newline);
+			bw.write("\\caption{Clusters composition} \\label{tab:clusterExt} \\\\" + newline);
+			bw.write("\\endfirsthead" + newline);
+			bw.write("\\hline" + newline);
+			bw.write("\\bf Clust. & \\bf Invariant & \\bf MCTs: & \\bf No-MCT Transitions:  \\\\  \\hline " + newline);
+			bw.write("\\endhead" + newline);
+			bw.write("\\hline " + newline);
+			bw.write("\\bf Clust. & \\bf Invariant & \\bf MCTs: & \\bf No-MCT Transitions:  \\\\  \\hline " + newline);
+		
+			for(int cl=0; cl<data.metaData.clusterNumber; cl++) {	
+				String clCell = "$c_{"+(cl+1)+"}$ & ";  //nr klastra I komorka
+				String line = "";
+				for(int inv=0; inv<data.clustersInv.get(cl).size(); inv++) { //tabelka inwariantów
+					line = "";
+					int invNumber = data.clustersInv.get(cl).get(inv);		
+					ArrayList<String> invArray = data.getNormalizedInvariant(invNumber, true);
+					//String nr = invArray.get(0);// ID
+					
+					
+					line += "$x_{"+(invNumber+1)+"}$ & "; // nr inwariantu: II komorka
+					
+					String mctLine = invArray.get(1); //MCT
+					mctLine = mctLine.replace("[", "");
+					mctLine = mctLine.replace("]", "");
+					if(mctLine.length()>0) {
+						String[] mctVector = mctLine.split(",");
+						for(int mct=0; mct<mctVector.length; mct++) {
+							String mctTmp = mctVector[mct];
+							line += "$m_{"+(mctTmp)+"}$,";
+						}
+					}
+
+					line += "&";
+					line = line.replace(",&", " & ");
+					
+					for(int i=2; i<invArray.size(); i++)
+					{
+						String t = invArray.get(i);
+						line += "$t_{"+t+"}$, ";
+					}
+					line += "\\\\ \\hline ";
+					line = line.replace(", \\\\", " \\\\");
+					
+					if(inv==0) {
+						bw.write(clCell+line+newline);
+					} else {
+						bw.write("      & "+line+newline);
+					}
+				}
+			} 
+			
+			bw.write("\\end{longtable}"+newline);
+			bw.write("}"+newline);
+			
+			bw.write(""+newline);
+			bw.close();
+		} catch (Exception e) {
+			String msg = "Unable to save cluster tables to: "+selectedFile;
+			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			msg = msg.replace(": ", ":\n");
+			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+					"Write error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	
+	public void writeClusterExt(ClusteringExtended data) {
+		ArrayList<ArrayList<Integer>> clustersMCT = new ArrayList<ArrayList<Integer>>();
+		ArrayList<ArrayList<Integer>> clustersTransitions = new ArrayList<ArrayList<Integer>>();
+		
+		for(int cl=0; cl<data.metaData.clusterNumber; cl++) {	
+			ArrayList<Integer> mctRow = new ArrayList<Integer>();
+			ArrayList<Integer> transRow = new ArrayList<Integer>();
+			for(int tmp=0; tmp<data.mctSets.size(); tmp++) {
+				mctRow.add(0);
+			}
+			for(int tmp=0; tmp<data.transNames.length-1; tmp++) {
+				transRow.add(0);
+			}
+			
+			for(int inv=0; inv<data.clustersInv.get(cl).size(); inv++) { //tabelka inwariantów
+				int invNo = data.clustersInv.get(cl).get(inv);
+				ArrayList<String> invArray = data.getNormalizedInvariant(invNo, true);
+				//String nr = invArray.get(0); //
+				String mctLine = invArray.get(1);
+				
+				mctLine = mctLine.replace("[", "");
+				mctLine = mctLine.replace("]", "");
+				if(mctLine.length()>0) {
+					String[] mctVector = mctLine.split(",");
+					for(int mct=0; mct<mctVector.length; mct++) {
+						try{
+							int mctNumber = Integer.parseInt(mctVector[mct]);
+							int oldValue = mctRow.get(mctNumber);
+							oldValue++;
+							mctRow.set(mctNumber, oldValue); //występuje
+						} catch (Exception xx1) {}
+					}
+				}
+				
+				for(int i=2; i<invArray.size(); i++)
+				{
+					try{
+						int tranNumber = Integer.parseInt(invArray.get(i));
+						int oldValue = mctRow.get(tranNumber);
+						oldValue++;
+						transRow.set(tranNumber, oldValue); //występuje
+					} catch (Exception xx1) {}
+					
+				}
+			}
+			
+			clustersMCT.add(mctRow);
+			clustersTransitions.add(transRow);
+			
+		}
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		if(selectedFile.equals(""))
+			return;
+		
+		if(!selectedFile.contains(".txt"))
+			selectedFile += ".txt";
+		
+		//ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
+			//Tabelka główna:
+			
+			bw.write("{\\footnotesize"+newline);
+			bw.write("\\begin{longtable}{| p{1.2cm} | p{4.2cm} | p{7.5cm} |}" + newline);
+			bw.write("\\caption{Clusters composition} \\label{tab:clusterExt} \\\\" + newline);
+			bw.write("\\endfirsthead" + newline);
+			bw.write("\\hline" + newline);
+			bw.write("\\bf Cluster no & \\bf Contained MCT & \\bf Contained transitions  \\\\  \\hline " + newline);
+			bw.write("\\endhead" + newline);
+			bw.write("\\hline " + newline);
+			bw.write("\\bf Cluster no & \\bf Contained MCT & \\bf Contained transitions  \\\\  \\hline " + newline);
+		
+			for(int cl=0; cl<data.metaData.clusterNumber; cl++) {	
+				String line = "$c_{"+(cl+1)+"$ & ";  //nr klastra
+				for(int mct=0; mct<clustersMCT.get(cl).size(); mct++) {
+					int number = clustersMCT.get(cl).get(mct);
+					if(number>0) {
+						line += "$m_{"+(mct+1)+"$, ";
+					}
+				}
+				
+				line += "&";
+				line = line.replace(", &", " &");
+			}
+			
+			bw.write("\\end{longtable}"+newline);
+			bw.write("}"+newline);
+			
+			bw.write(""+newline);
+			bw.close();
+		} catch (Exception e) {
+			String msg = "Unable to save cluster tables to: "+selectedFile;
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			msg = msg.replace(": ", ":\n");
 			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 

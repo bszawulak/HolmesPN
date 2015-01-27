@@ -158,9 +158,10 @@ public class ClusteringExtended {
 	 * wraz z frazą Inv. #, drugi element to wszystkie zbiory MCT wchodzące w skład inwariantu
 	 * w formie [ ... ], następnie każdy element to nazwa tranzycji inwariantu poza MCT.
 	 * @param invNumber int - nr inwariantu
+	 * @param transIndexOnly boolean - jeśli true, zwraca tylko ID tranzycji
 	 * @return ArrayList[String] - nazwa-opis inwariantu
 	 */
-	public ArrayList<String> getNormalizedInvariant(int invNumber) {
+	public ArrayList<String> getNormalizedInvariant(int invNumber, boolean transIndexOnly) {
 		ArrayList<String> result = new ArrayList<String>();
 		ArrayList<Integer> invRow = new ArrayList<Integer>( csvInvariants.get(invNumber) ); 
 		//z wyjątkiem I miejsca
@@ -206,7 +207,11 @@ public class ClusteringExtended {
 			if(invRow.get(i) > 0) {
 				String transName = transNames[i];
 				int firing = invRow.get(i);
-				result.add(transName+":"+firing);
+				
+				if(transIndexOnly)
+					result.add((i-1)+"");
+				else
+					result.add(transName+":"+firing);
 			}
 		}
 		return result;

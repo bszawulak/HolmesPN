@@ -53,6 +53,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
 	private JButton buttonExcel;
 	private JButton buttonInjectCluster;
+	private JButton buttonTexTable;
     
 	private String clusterPath;
 	private ClusteringExtended fullData = null;
@@ -372,8 +373,7 @@ public class AbyssClusterSubWindow extends JFrame {
         paneScrollPane.setBounds(5, 5, 585, 500);
         editPanel.add(paneScrollPane);
 
-        buttonExcel = new JButton("Excel", 
-        		Tools.getResIcon48("/icons/clustWindow/buttonExportSingleToExcel.png"));
+        buttonExcel = new JButton(">> Excel", Tools.getResIcon48("/icons/clustWindow/buttonExportSingleToExcel.png"));
         buttonExcel.setBounds(5, 510, 190, 50);
         //button.setBounds(new Rectangle(150, 40));
         buttonExcel.addActionListener(new ActionListener() {
@@ -387,8 +387,7 @@ public class AbyssClusterSubWindow extends JFrame {
 		});
         editPanel.add(buttonExcel);
         
-        buttonInjectCluster = new JButton("To Net", 
-        		Tools.getResIcon48("/icons/clustWindow/buttonSendToAbyss.png"));
+        buttonInjectCluster = new JButton(">> Net structure", Tools.getResIcon48("/icons/clustWindow/buttonSendToAbyss.png"));
         buttonInjectCluster.setBounds(200, 510, 190, 50);
         buttonInjectCluster.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -400,6 +399,19 @@ public class AbyssClusterSubWindow extends JFrame {
 			}	
 		});
         editPanel.add(buttonInjectCluster);
+        
+        buttonTexTable = new JButton(">> Cluster table", Tools.getResIcon48("/icons/menu/menu_exportTex.png"));
+        buttonTexTable.setBounds(400, 510, 190, 50);
+        buttonTexTable.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				layerUI.start();
+				turnOffButtons();
+				exportToLatex();
+				turnOnButtons();
+				layerUI.stop();
+			}	
+		});
+        editPanel.add(buttonTexTable);
         /*
         buttonInjectCluster = new JButton("test", 
         		Tools.getResIcon48(""));
@@ -421,6 +433,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	protected void turnOnButtons() {
 		buttonExcel.setEnabled(true);
 		buttonInjectCluster.setEnabled(true);
+		buttonTexTable.setEnabled(true);
 	}
 
 	/**
@@ -429,6 +442,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	protected void turnOffButtons() {
 		buttonExcel.setEnabled(false);
 		buttonInjectCluster.setEnabled(false);
+		buttonTexTable.setEnabled(false);
 	}
 
 	/**
@@ -665,7 +679,7 @@ public class AbyssClusterSubWindow extends JFrame {
 			ClusterReader reader = new ClusterReader();
 			fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
 			if(fullData==null) {
-				GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to Excel cannot begin.", "error", true);
+				GUIManager.getDefaultGUIManager().log("Reading data files failed. Sending to net cannot begin.", "error", true);
 				return;
 			}
 			
@@ -675,7 +689,7 @@ public class AbyssClusterSubWindow extends JFrame {
 				JOptionPane.showMessageDialog(null, "Transition number discrepancy! \n"
 						+ "Data table transition number: "+transNumber
 						+"\nLoaded network transition number: "+netTransNumber
-						+"\nExporting cannon proceed.", "Error", JOptionPane.ERROR_MESSAGE);
+						+"\nExporting cannot proceed.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			
@@ -693,6 +707,73 @@ public class AbyssClusterSubWindow extends JFrame {
 			JOptionPane.showMessageDialog(null, "Operation successfull. Clusters are ready to show.", 
 					"Status",JOptionPane.INFORMATION_MESSAGE);
 			
+		} else {
+			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
+					+ "contacting authors about the problem please attach *all* three files mentioned in"
+					+ "this log above this message.", "error", true);
+		}
+		
+	}
+	
+	
+	/**
+	 * Metoda obsługuje zdarzenie kliknięcia przycisku eksportu danych do okna głównego.
+	 */
+	protected void exportToLatex() {
+		boolean proceed = true;
+		
+		if(fullData != null) {
+			//ask what to do
+			Object[] options = {"Use existing data", "Create anew",};
+			int n = JOptionPane.showOptionDialog(null,
+							"Detailed clustering data already exists. Use it or create anew?",
+							"Data package found", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			if (n == 0) {
+				int transNumber = fullData.transNames.length-1;
+				int netTransNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+				if(transNumber != netTransNumber) {
+					JOptionPane.showMessageDialog(null, "Transition number discrepancy! \n"
+							+ "Data table transition number: "+transNumber
+							+"\nLoaded network transition number: "+netTransNumber
+							+"\nExporting cannot proceed.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				GUIManager.getDefaultGUIManager().tex.writeCluster(fullData);
+				
+				JOptionPane.showMessageDialog(null, "Operation successfull. Clusters exportet to files", 
+						"Status",JOptionPane.INFORMATION_MESSAGE);
+				proceed = false;
+			}
+		}
+		
+		if(proceed == false)
+			return;
+		
+		String targetDir = getCSVLocation();
+		if(targetDir == null)
+			return;
+		
+		String alg = clusteringMetaData.algorithmName;
+		if(alg.equals("UPGMA"))
+			alg = "average";
+		
+		//generowanie klastrowania:
+		String resultFiles[] = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
+				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
+		if(resultFiles != null) {
+			ClusterReader reader = new ClusterReader();
+			fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
+			if(fullData==null) {
+				GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to tables cannot begin.", "error", true);
+				return;
+			}
+			
+			GUIManager.getDefaultGUIManager().tex.writeCluster(fullData);
+			deleteTmpFile(resultFiles);
+			JOptionPane.showMessageDialog(null, "Operation successfull. Clusters exportet to files", 
+					"Status",JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
 					+ "contacting authors about the problem please attach *all* three files mentioned in"

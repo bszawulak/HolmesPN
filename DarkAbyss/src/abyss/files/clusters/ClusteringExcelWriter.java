@@ -217,7 +217,7 @@ public class ClusteringExcelWriter {
 		
 		for(int inv=0; inv<dataCore.clustersInv.get(clusterIndex).size(); inv++) { //tabelka inwariantów
 			int invNo = dataCore.clustersInv.get(clusterIndex).get(inv);
-			ArrayList<String> invArray = dataCore.getNormalizedInvariant(invNo);
+			ArrayList<String> invArray = dataCore.getNormalizedInvariant(invNo, false);
 			String nr = invArray.get(0);
 			String mct = invArray.get(1);
 			String transitions = "";

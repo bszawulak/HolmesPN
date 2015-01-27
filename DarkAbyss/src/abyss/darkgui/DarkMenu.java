@@ -358,7 +358,7 @@ public class DarkMenu extends JMenuBar {
 		
 		JMenuItem exportTexInvItem = new JMenuItem("Invariants table...", KeyEvent.VK_2);
 		exportTexInvItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
-		exportTexInvItem.getAccessibleContext().setAccessibleDescription("Export places and transitions tables");
+		exportTexInvItem.getAccessibleContext().setAccessibleDescription("Export invariants into table");
 		exportTexInvItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().tex.writeInvariants();
@@ -368,13 +368,14 @@ public class DarkMenu extends JMenuBar {
 		
 		JMenuItem exportTexMCTItem = new JMenuItem("MCT table...", KeyEvent.VK_3);
 		exportTexMCTItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
-		exportTexMCTItem.getAccessibleContext().setAccessibleDescription("Export places and transitions tables");
+		exportTexMCTItem.getAccessibleContext().setAccessibleDescription("Export MCT table");
 		exportTexMCTItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().tex.writeMCT();
 			}
 		});
 		texSubMenu.add(exportTexMCTItem);	
+		
 		
 		//*********************************************************************************************
 		//***********************************                 *****************************************
