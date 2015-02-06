@@ -7,7 +7,31 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import abyss.darkgui.GUIManager;
+
 public class AbyssStateSimulatorActions {
+	
+	public AbyssStateSimulatorActions() {
+		
+	}
+	
+	/**
+	 * Metoda ta dostaje pełną nazwę dla wierzchołka z comboBoxa, następnie zwraca prawdziwy
+	 * ID tego wierzchołka w bazie tychże.
+	 * @param string String - preformatowana nazwa wierzchołka, zaczynająca się od p/t[ID].[nazwa]
+	 * @return int - ID tranzycji
+	 */
+	protected int getRealNodeID(String name) {
+		name = name.substring(1, name.indexOf("."));
+		int result = -1;
+		try {
+			result = Integer.parseInt(name);
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("System malfunction: unable to extract transition ID", "error", true);
+			return -1;
+		}
+		return result;
+	}
 
 	public static <K, V extends Comparable<? super V>> Map<K, V> crunchifySortMap(final Map<K, V> mapToSort) {
 		List<Map.Entry<K, V>> entries = new ArrayList<Map.Entry<K, V>>(mapToSort.size());

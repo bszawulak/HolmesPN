@@ -73,7 +73,7 @@ import abyss.workspace.ExtensionFileFilter;
 public class AbyssStateSimulator extends JFrame {
 	private static final long serialVersionUID = 5287992734385359453L;
 	
-	//private AbyssStateSimulatorActions actum = new AbyssStateSimulatorActions();
+	private AbyssStateSimulatorActions actum = new AbyssStateSimulatorActions();
 	private StateSimulator ssim;
 	private boolean maximumMode = false;
 	
@@ -340,7 +340,7 @@ public class AbyssStateSimulator extends JFrame {
 				int selected = placesCombo.getSelectedIndex();
 				if(selected>0) {
 					String name = placesCombo.getSelectedItem().toString();
-					int sel = getRealNodeID(name);
+					int sel = actum.getRealNodeID(name);
 					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
 					name = trimNodeName(name);
@@ -367,7 +367,7 @@ public class AbyssStateSimulator extends JFrame {
 				int selected = placesCombo.getSelectedIndex();
 				if(selected>0) {
 					String name = placesCombo.getSelectedItem().toString();
-					int sel = getRealNodeID(name);
+					int sel = actum.getRealNodeID(name);
 					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
 					name = trimNodeName(name);
@@ -413,7 +413,7 @@ public class AbyssStateSimulator extends JFrame {
 				int selected = placesCombo.getSelectedIndex();
 				if(selected>0) {
 					String name = placesCombo.getSelectedItem().toString();
-					int sel = getRealNodeID(name);
+					int sel = actum.getRealNodeID(name);
 					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
 					GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
@@ -475,12 +475,16 @@ public class AbyssStateSimulator extends JFrame {
 				
 		//************************************************************************************************************
 		//************************************************************************************************************
-		
+		//TODO
 		placesChartPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
 		 	//my zmieniać wymiary jeśli całe okno ma zmieniane w dowolnej chwili
 		placesChartPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
-		placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(), this.getWidth()-30, 
-				tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
+
+		//placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(), this.getWidth()-30, 
+		//		tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
+		
+		placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(),2000,  tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
+		
 		placesChartPanel.add(createPlacesChartPanel(), BorderLayout.CENTER);
 		result.add(placesChartPanel);
 		
@@ -580,7 +584,7 @@ public class AbyssStateSimulator extends JFrame {
 				int selected = transitionsCombo.getSelectedIndex();
 				if(selected>0) {
 					String name = transitionsCombo.getSelectedItem().toString();
-					int sel = getRealNodeID(name);
+					int sel = actum.getRealNodeID(name);
 					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
 					//selected--;
@@ -646,7 +650,7 @@ public class AbyssStateSimulator extends JFrame {
 				int selected = transitionsCombo.getSelectedIndex();
 				if(selected>0) {
 					//ustalanie prawdziwego ID:
-					int sel = getRealNodeID(transitionsCombo.getSelectedItem().toString());
+					int sel = actum.getRealNodeID(transitionsCombo.getSelectedItem().toString());
 					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
 					GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
@@ -726,23 +730,7 @@ public class AbyssStateSimulator extends JFrame {
 	//*********************************                  ***********************************
 	//**************************************************************************************
 
-	/**
-	 * Metoda ta dostaje pełną nazwę dla wierzchołka z comboBoxa, następnie zwraca prawdziwy
-	 * ID tego wierzchołka w bazie tychże.
-	 * @param string String - preformatowana nazwa wierzchołka, zaczynająca się od p/t[ID].[nazwa]
-	 * @return int - ID tranzycji
-	 */
-	protected int getRealNodeID(String name) {
-		name = name.substring(1, name.indexOf("."));
-		int result = -1;
-		try {
-			result = Integer.parseInt(name);
-		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("System malfunction: unable to extract transition ID", "error", true);
-			return -1;
-		}
-		return result;
-	}
+	
 
 	/**
 	 * Metoda ta tworzy wykres liniowy dla miejsc.
@@ -760,7 +748,9 @@ public class AbyssStateSimulator extends JFrame {
 	    placesChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, placesSeriesDataSet, 
 	    		PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
 	
+	    //placesChart.s
 	    ChartPanel res = new ChartPanel(placesChart);
+	    res.setSize(2000, 400);
 	    return res;
 	}
 	
@@ -1149,8 +1139,9 @@ public class AbyssStateSimulator extends JFrame {
             	if(!listenerStart)
             		return;
             	tabbedPane.setBounds(0, dataToolsPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-dataToolsPanel.getHeight()-40);
-            	placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
-            			tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
+            	//placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
+            	//		tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
+            	
             	transitionsChartPanel.setBounds(0, transChartOptionsPanel.getHeight(), ego.getWidth()-30, 
             			tabbedPane.getHeight() - transChartOptionsPanel.getHeight()-40);
             }
@@ -1158,8 +1149,11 @@ public class AbyssStateSimulator extends JFrame {
             	if(!listenerStart)
             		return;
             	tabbedPane.setBounds(0, dataToolsPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-dataToolsPanel.getHeight()-40);
-            	placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
-            			tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
+            	//placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
+            	//	tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
+            	
+            	//placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(),2000,  tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
+            	
             	transitionsChartPanel.setBounds(0, transChartOptionsPanel.getHeight(), ego.getWidth()-30, 
             			tabbedPane.getHeight() - transChartOptionsPanel.getHeight()-40);
             }
