@@ -138,7 +138,7 @@ public class AbyssDockWindow extends SingleDock {
 	
 	/**
 	 * Metoda wywoływana po wygenerowaniu inwariantów przez program. Zleca wykonanie
-	 * elementów interfejsu dla pokazywania inwariantów. W zasadzie nie róni się od
+	 * elementów interfejsu dla pokazywania inwariantów. W zasadzie nie różni się od
 	 * showExternalInvariants(...)
 	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - inwarianty
 	 */

@@ -1,189 +1,535 @@
 P   M   PRE,POST  NETZ 0:siec.pnt
-  0 0     44: 2 45 46: 2, 0
-  1 0     53 8, 2 54
-  2 0     8, 10
-  3 0     11, 36
-  4 0     6, 7
-  5 0     7, 14
-  6 0     2, 8
-  7 0     39 42, 3 65 46 57
-  8 0     62, 9 38
- 9 0     9, 63
- 10 0     9 12 68, 13 7
- 11 0     21 50 69, 38 47
- 12 0     13, 48 16
- 13 0     40, 22 32
- 14 0     47, 15
- 15 0     41, 0
- 16 0     0, 1 49 48 50 51 14
- 17 0     1, 42 32
- 18 0     16, 43 64
- 19 0     36, 6
- 20 0     61, 8 44 38 48
- 21 0     4, 17
- 22 0     4, 17
- 23 0     17, 18
- 24 0     18, 22
- 25 0     19, 37
- 26 0     19, 20
- 27 0     20, 21 60 61 62 67
- 28 0     30, 31
- 29 0     22 32, 23
- 30 0     23, 24
- 31 0     24, 25
- 32 0     25, 26
- 33 0     26, 27
- 34 0     27, 28
- 35 0     28, 29
- 36 0     10, 33 52
- 37 0     30, 5
- 38 0     52, 34
- 39 0     34, 35
- 40 0     31, 19
- 41 0     4 65, 1
- 42 0     15, 56
- 43 0     60 48, 38 47
- 44 0     55, 11
- 45 0     29 35, 30
- 46 0     38: 2, 66 52: 2
- 47 0     33, 55
- 48 0     56 3, 16 41 9
- 49 0     57, 58
- 50 0     58, 59
- 51 0     59, 9 62
- 52 0     63, 64
- 53 0     67 50 70, 38 47
- 54 0     68, 70 69 64
- 55 0     51, 36 30
+  0 1     48 46 102 105 47, 3 4 52 15 2 16 85 11 8 7 53 55 190 191
+  1 0     59, 0
+  2 0     60, 1
+  3 0     7 4 15 52 3 11 55 16 2, 32
+  4 0     91, 41
+  5 0     1, 50
+  6 0     0, 49
+  7 0     9, 8
+  8 0     54, 53 193 194
+ 9 0     57, 47
+ 10 0     58, 48
+ 11 0     50, 58
+ 12 0     49, 57
+ 13 0     10, 85 192 98
+ 14 1     107 47 48, 102 49 103 50
+ 15 1     47 48 107, 57 58 106
+ 16 1     56 94, -1 93
+ 17 1     202 201 2, 63 62 187
+ 18 1     3 197 198, 64
+ 19 1     87 191, 84 167 172 69 67 168 98 171 173 66 194 196 198 199 201 204 205
+ 20 1     8 7, 71 68 153 154
+ 21 1     11 85 192 98, 77 76 151 178
+ 22 0     47 48 107, 12
+ 23 1     14 12, 13 59 -1
+ 24 0     13, 14 60
+ 25 1     94, 87 88
+ 26 0     41 1 0 92 42 101, 43
+ 27 1     15 199 200, 79 134 148 78 80
+ 28 1     16 204 203, 82 81
+ 29 0     17, 143
+ 30 0     28 36, 142
+ 31 0     81, 21
+ 32 0     37 35, 2 201 202
+ 33 0     39 21, 16 204 203
+ 34 0     29 30 34 24 189, 54 52
+ 35 0     40 133 145 147, 55 205 206
+ 36 0     62, 35
+ 37 0     63, 37
+ 38 0     65, 22
+ 39 0     78, 31
+ 40 0     79, 36
+ 41 0     80, 38
+ 42 0     82, 39
+ 43 0     74, 24
+ 44 0     72, 29
+ 45 0     73, 30
+ 46 0     75, 34
+ 47 0     83 131, 40
+ 48 0     41, 95 59 60 -1
+ 49 0     22, 4 195 196
+ 50 0     33 25 169 170 174 175 176 18 23 196 198 199 201 204 205, 5 191
+ 51 0     19 166 165 163 162 164 195 197 200 202 203 206, 6 190
+ 52 0     20 26 155 156, 9 7
+ 53 0     36 31 38 135 149, 15 199 200
+ 54 0     28 152 27 179, 11 10
+ 55 0     64, 17
+ 56 0     17, 3 197 198
+ 57 0     67, 18
+ 58 0     69, 23
+ 59 0     66, 25
+ 60 0     84, 33
+ 61 0     70, 19
+ 62 0     68, 20
+ 63 0     71, 26
+ 64 0     76, 28
+ 65 0     77, 27
+ 66 0     86, 61
+ 67 0     61, 42
+ 68 0     42 95, -1
+ 69 0     56, 46
+ 70 0     -1, 56
+ 71 0     29, 141
+ 72 0     51, 41 44 42 0 1 97 101
+ 73 0     86 95 102, 45
+ 74 0     31 35, 140
+ 75 0     27 25 24 162 165, 139
+ 76 1     4 195 196, 65
+ 77 1     52 53 193 194, 73 75 74 72 188
+ 78 1     55 205 206, 83 131 186 132 144 146
+ 79 1     47, 59
+ 80 1     48, 60
+ 81 1     46 94 60 59 107, 61 91 92
+ 82 1     182 184, 120 121 122 123 124 125 126 127 128 129 130 108 109 110 111 112 113 114 115 116 117 118 119 185
+ 83 0     170 166 155, 138
+ 84 0     33 169 175 34 156, 137
+ 85 0     38 40 133 21 39 145 147 135 18 174 20 19 164 30 37 189, 136
+ 86 0     85 8 53 190 191, 86
+ 87 0     5, 87
+ 88 0     6, 88
+ 89 0     87 88, 89
+ 90 0     50 49, 90
+ 91 0     32, 91
+ 92 0     89, 92
+ 93 0     97, 93
+ 94 0     93, 94
+ 95 0     89, 96
+ 96 0     92, 97
+ 97 0     99, 100 11 7 52
+ 98 1     100 11 7 52, 99
+99 0     -1, 101 102
+100 0     101, 103
+101 0     102, 104
+102 0     103, 105
+103 0     106, 107
+104 0     105 104, 106
+105 0     108, 81 83 80
+106 0     109, 82 131
+107 0     110, 132 134
+108 0     111, 70 144 68 67
+109 0     112, 146
+110 0     113, 62 78
+111 0     114, 63
+112 0     115, 148
+113 0     116, 79 76
+114 0     117, 77 66 161
+115 0     118, 151 69
+116 0     119, 178
+117 0     120, 65
+118 0     121, 64
+119 0     122, 73 171 159
+120 0     123, 75 84
+121 0     124, 74 158
+122 0     125, 72
+123 0     126, 168 157 153
+124 0     127, 173 160
+125 0     128, 172 154
+126 0     129, 167
+127 0     130, 71
+128 0     132, 133
+129 0     134, 135
+130 0     144, 145
+131 0     146, 147
+132 0     148, 149
+133 0     149, 150
+134 0     151, 152
+135 0     153, 155
+136 0     154, 156
+137 0     161, 162
+138 0     160, 163
+139 0     159, 164
+140 0     158, 165
+141 0     157, 166
+142 0     167, 169
+143 0     168, 170
+144 0     171, 174
+145 0     173, 176
+146 0     172, 175
+147 0     23 152 179 22, 177
+148 0     178, 179
+149 0     176 163, 180
+150 0     26, 181
+151 0     47 48 107 46 94, 182
+152 0     184, 183
+153 1     183, 184
+154 0     185, 186 187 188
+155 0     186, 40
+156 0     187, 37
+157 0     188, 189
+158 0     98 194
+159 1     88 190, 70 159 160 161 158 157 192 193 195 197 200 202 203 206
+160 0     192 193
 @
 place nr.             name capacity time
-       0: caspase_1_protease_ICE                  65535    0
-       1: SODD                  65535    0
-       2: active_TNFR1_signalling_complex                  65535    0
-       3: pro_caspase_8_recruited                  65535    0
-       4: caspase_8_active                  65535    0
-       5: caspase_3_active                  65535    0
-       6: TNFR1_stable_with_SODD                  65535    0
-       7: INF_gamma_synthsized_by_T_and_NK_cells                  65535    0
-       8: iNOS_activated                  65535    0
-      9: nitric_oxide_NO                  65535    0
-      10: peroxynitrite                  65535    0
-      11: ICAM1                  65535    0
-      12: modified_oxidized_LDL                  65535    0
-      13: MyD88                  65535    0
-      14: monocytes                  65535    0
-      15: pro_IL_18                  65535    0
-      16: IL_18                  65535    0
-      17: active_IL_18_IL18Rs_alpha_and_beta_complex                  65535    0
-      18: foamy_cells                  65535    0
-      19: DISC                  65535    0
-      20: TNF                  65535    0
-      21: microbial_infection_LPS                  65535    0
-      22: LPS_binding_protein_LBP                  65535    0
-      23: LPS_LPB_complex                  65535    0
-      24: TL4_activated                  65535    0
-      25: IkappaB_phosphorylated                  65535    0
-      26: p50_p65_dimer_NF_KappaB_early_phase                  65535    0
-      27: p50_p65_dimer_in_the_nucleus                  65535    0
-      28: IKK_complex_phosphorylated_activated                  65535    0
-      29: Receptors_MyD88_complex                  65535    0
-      30: TLR_Myd88_IRAK4_complex                  65535    0
-      31: TLR_MyD88_IRAK4_IRAK_1P_complex                  65535    0
-      32: TLR_MyD88_IRAK4_IRAK1P_TRAF6_complex                  65535    0
-      33: IRAK1P_TRAF6_TAB2_TAB1_TAK1_complex_at_plasma_membrane                  65535    0
-      34: IRAK1_degraded                  65535    0
-      35: UBC13_UEV1A_TRAF6_TAK1P_TAB2P_TAB1_complex                  65535    0
-      36: TRAF2__TRADD_RIP1_TRAF5_TNFR_complex                  65535    0
-      37: MAP_kinase_phosphorylation_activation                  65535    0
-      38: TRAF2_autoubiquitinated                  65535    0
-      39: RIP1_ubiquitinated                  65535    0
-      40: p50_p65_IKappaB_phosporylated_complex                  65535    0
-      41: IL_18R                  65535    0
-      42: macropphages                  65535    0
-      43: MCP1                  65535    0
-      44: FADD_recruited                  65535    0
-      45: TAK1_activated                  65535    0
-      46: FLIP                  65535    0
-      47: TNFR1_endocytosed                  65535    0
-      48: activated_macrophages                  65535    0
-      49: IFN_gamma_IFNRs                  65535    0
-      50: JAK_STAT_pathway_activted                  65535    0
-      51: IFR1                  65535    0
-      52: contractility_failure                  65535    0
-      53: VCAM1                  65535    0
-      54: high_shear_stress                  65535    0
-      55: FASL_and_FAS                  65535    0
+       0: APE                  65535    0
+       1: DNA_1nt_APE_polDELTA_PCNA                  65535    0
+       2: DNA_1nt_APE_polEPSILON_PCNA                  65535    0
+       3: DNA_APsite_with_APE                  65535    0
+       4: complex_DNA_break_APE_BETA                  65535    0
+       5: DNA_flap_APE_poEPSILON_PCNA                  65535    0
+       6: DNA_flap_APE_polDELTA_PCNA                  65535    0
+       7: complex_DNA_3dRP_NEIL3                  65535    0
+       8: complex_DNA_3dRP_hNTH1                  65535    0
+      9: DNA_ligated_APE_polDELTA_PCNA_LIG1                  65535    0
+      10: DNA_ligated_APE_polEPSILON_PCNA_LIG1                  65535    0
+      11: DNA_unligpatch_APE_pEPSILON_PCNA                  65535    0
+      12: DNA_unligpatch_APE_polDELTA_PCNA                  65535    0
+      13: complex_DNA_3dRP_OGG1                  65535    0
+      14: FEN1                  65535    0
+      15: LIG1                  65535    0
+      16: LIG3_XRCC1                  65535    0
+      17: MBD4                  65535    0
+      18: MPG                  65535    0
+      19: NEIL1                  65535    0
+      20: NEIL3                  65535    0
+      21: OGG1                  65535    0
+      22: PCNA                  65535    0
+      23: PCNA_high_level                  65535    0
+      24: PCNA_low_level                  65535    0
+      25: PNKP                  65535    0
+      26: PPi                  65535    0
+      27: TDG                  65535    0
+      28: UNG2                  65535    0
+      29: group14_waste                  65535    0
+      30: _8oxoAC                  65535    0
+      31: compleDNA_UNG2_5hydroUra                  65535    0
+      32: complexDNA_APs_MBD4                  65535    0
+      33: complexDNA_APs_UNG2                  65535    0
+      34: complexDNA_APs_hNTH1                  65535    0
+      35: complexDNA_APs_hSMUG1                  65535    0
+      36: complexDNA_MBD4_ethenoC                  65535    0
+      37: complexDNA_MBD4_uracil                  65535    0
+      38: complexDNA_MYH_8oxoG                  65535    0
+      39: complexDNA_TDG_ethenocytosine                  65535    0
+      40: complexDNA_TDG_8oxoAC                  65535    0
+      41: complexDNA_TDG_uracil                  65535    0
+      42: complexDNA_UNG2_uracil                  65535    0
+      43: complexDNA_hNTH1_FapyG                  65535    0
+      44: complexDNA_hNTH1_cytGlycol                  65535    0
+      45: complexDNA_hNTH1_5hydrouracil                  65535    0
+      46: complexDNA_hNTH1_thymGlycol                  65535    0
+      47: complexDNA_hSMUG1_uracil                  65535    0
+      48: complex_DNA_1nt_5dRP_APE_polBETA                  65535    0
+      49: complex_DNA_APs_MYH                  65535    0
+      50: complex_DNA_APs_NEIL1                  65535    0
+      51: complex_DNA_APs_NEIL2                  65535    0
+      52: complex_DNA_APs_NEIL3                  65535    0
+      53: complex_DNA_APs_TDG                  65535    0
+      54: complex_DNA_APs_OGG1                  65535    0
+      55: complex_DNA_MPG_gr14                  65535    0
+      56: complex_DNA_MPGbound_AP_site                  65535    0
+      57: complex_DNA_NEIL1_5hydroxyU                  65535    0
+      58: complex_DNA_NEIL1_8oxyG                  65535    0
+      59: complex_DNA_NEIL1_FapyGC                  65535    0
+      60: complex_DNA_NEIL1_thymineGlicol                  65535    0
+      61: complex_DNA_NEIL2_5hydroxyU                  65535    0
+      62: complex_DNA_NEIL3_5hydroxyU                  65535    0
+      63: complex_DNA_NEIL3_gr23waste                  65535    0
+      64: complex_DNA_OGG1_8oxoG                  65535    0
+      65: complex_DNA_OGG1_FoPy                  65535    0
+      66: complex_DNA_with_1nt_gap_APE                  65535    0
+      67: complex_DNA_with_1nt_gap_APE_polBETA                  65535    0
+      68: complex_DNA_not_ligated_APE_polBeta                  65535    0
+      69: complex_DNA_ligated_polBETA_LIG3_XRCC1                  65535    0
+      70: complex_DNA_unligatedres_polBETA_LIG3_XRCC1                  65535    0
+      71: cytosineGlycol                  65535    0
+      72: dNTP                  65535    0
+      73: dRP                  65535    0
+      74: ethenocytosine                  65535    0
+      75: FapyGC                  65535    0
+      76: MYH                  65535    0
+      77: hNTH1                  65535    0
+      78: hSMUG1                  65535    0
+      79: polDELTA                  65535    0
+      80: polEPSILON                  65535    0
+      81: polBETA                  65535    0
+      82: repaired_DNA                  65535    0
+      83: _5hydroxyC                  65535    0
+      84: thymineGlicol                  65535    0
+      85: uracil                  65535    0
+      86: complex_DNA_3dRP_APE                  65535    0
+      87: complex_DNA_3P_NEIL1                  65535    0
+      88: complex_DNA_3P_NEIL2                  65535    0
+      89: complex_DNA_3P_PKNP                  65535    0
+      90: flap                  65535    0
+      91: complex_DNA_break_APE                  65535    0
+      92: complex_DNA_1nt_gap_PNKP                  65535    0
+      93: complex_DNA_unligated_polBETA_PNKP                  65535    0
+      94: complex_DNA_ligated_polBETA_LIG3_XRCC1_PNKP                  65535    0
+      95: _3P                  65535    0
+      96: complex_DNA_with_1nt_gap_polBETA_PKNP                  65535    0
+      97: APE_high_level                  65535    0
+      98: APE_low_level                  65535    0
+     99: complex_DNA_1nt_5dRP_APE_polBETA_PCNA                  65535    0
+     100: complex_DNA_flapStructure_APE_polBETA                  65535    0
+     101: complex_DNA_1ntgap_FEN1_polBETA                  65535    0
+     102: complex_DNA_unligated_APE_polBETA_FEN1                  65535    0
+     103: complex_DNAligated_polBETA_FEN1_LIG1                  65535    0
+     104: complex_DNAunligated_polBETA_FEN1                  65535    0
+     105: g1_U5fluoroUG                  65535    0
+     106: g2_other_U_5fluoroU                  65535    0
+     107: g3_5hmU_G                  65535    0
+     108: g4_5hU_ssDNA                  65535    0
+     109: g5_other5hU_5hmU                  65535    0
+     110: g6_ethenoC                  65535    0
+     111: g7_TU_5fluoroU_CpG                  65535    0
+     112: g8_T_and_TG_error                  65535    0
+     113: g9_8oxoA_C                  65535    0
+     114: g10_FapyG_C                  65535    0
+     115: g11_8oxoG_with_C_T_G                  65535    0
+     116: g12_8oxoG_withm5CA_Fapy7meG                  65535    0
+     117: g13_A_8_8oxoG_C_hydroxA                  65535    0
+     118: g14_37_MeAG_ethenoA_m6A_hypoxanth                  65535    0
+     119: g15_5hydroxyC_U_dsDNA                  65535    0
+     120: g16_thymineGlycol_ex_TgG                  65535    0
+     121: g17_FapyG_with_A_G_T_dihydroUra                  65535    0
+     122: gr18_cytosineGlycol_from_dsDNA                  65535    0
+     123: g19_5hydroxyC_ssDNA                  65535    0
+     124: gr20_FapyA                  65535    0
+     125: gr21_thymineGlycol_in_ssDNA                  65535    0
+     126: gr22_thymineGlycol_in_dsDNA                  65535    0
+     127: gr23_NEIL3_others_damages                  65535    0
+     128: complexDNA_hSMUG1_g3_5hmU_G                  65535    0
+     129: complexDNA_TDG_5methUrac                  65535    0
+     130: complexDNA_hSMUG1_5hydroxyU                  65535    0
+     131: complexDNA_hSMUG1_otherUrac                  65535    0
+     132: complexDNA_TDG_grp8                  65535    0
+     133: group8_waste                  65535    0
+     134: complex_DNA_8oxoG_CTG                  65535    0
+     135: complex_DNA_NEIL3_5hydroxyC                  65535    0
+     136: complex_DNA_NEIL3_thymGlycol_ssDNA                  65535    0
+     137: complex_DNA_NEIL2_FapyGC                  65535    0
+     138: complex_DNA_NEIL2_FapyA                  65535    0
+     139: complex_DNA_NEIL2_5hydroxyC_U                  65535    0
+     140: complex_DNA_NEIL2_FapyG_gr17                  65535    0
+     141: complex_DNA_NEIL2_5hydroxyC                  65535    0
+     142: complex_DNA_NEIL1_thymGlyc_dsDNA                  65535    0
+     143: complex_DNA_NEIL1_5hydroxyC                  65535    0
+     144: complex_DNA_NEIL1_5hydroxyCU                  65535    0
+     145: complex_DNA_NEIL1_FapyA                  65535    0
+     146: complex_DNA_NEIL1_thymGlyc_ssDNA                  65535    0
+     147: _8oxoG                  65535    0
+     148: complex_DNA_OGG1_9oxoG_5CA_Fapy7meG                  65535    0
+     149: FapyA                  65535    0
+     150: gr23_waste                  65535    0
+     151: repaired_DNA_after_damage                  65535    0
+     152: intact_DNA_low_level                  65535    0
+     153: DNA_high_level                  65535    0
+     154: gr24_5formylU                  65535    0
+     155: complexDNA_hSMUG1_uracil_gr24                  65535    0
+     156: complexDNA_MBD4_uracil_gr24                  65535    0
+     157: complexDNA_hNTH1_5formylU                  65535    0
+     158: complexDNA_3dRP_NEIL1                  65535    0
+     159: NEIL2                  65535    0
+     160: complexDNA_3dRP_NEIL2                  65535    0
 @
 trans nr.             name priority time
-       0: pro_IL_18_activation_by_caspase_1_enzymatic_cleavage                      0    0
-       1: IL_18_IL_18R                      0    0
-       2: TNFR1_stabilisation                      0    0
-       3: classical_macrophages_activation_by_INF_gamma                      0    0
-       4: high_inflammation                      0    0
-       5: p38_MAPK_signalling_pathway                      0    0
-       6: caspase_8_autocleavage_and_activation                      0    0
-       7: caspase_3_activation                      0    0
-       8: TNFR1_trimerization                      0    0
-       9: nitric_oxide_synthesis                      0    0
-      10: forming_TRAF2_TRADD_RIP1_TRAF5_complex                      0    0
-      11: pro_caspase_8_recruitment                      0    0
-      12: reaction_catalysed_by_NADPH_oxydase                      0    0
-      13: lipids_peroxydation                      0    0
-      14: apoptosis_enhancement                      0    0
-      15: transformation_into_macrophages                      0    0
-      16: transformation_into_foamy_cells                      0    0
-      17: LPS_LBP_binding                      0    0
-      18: LPS_presentation_to_TLR4_and_CD14                      0    0
-      19: IkappaB_dissociationon_from_the_complex                      0    0
-      20: p50_p65_translocation_to_the_nucleus                      0    0
-      21: ICAM1_transcription                      0    0
-      22: TLR4_MyD88_conection                      0    0
-      23: IRAK4_recruitment                      0    0
-      24: connection_with_IRAK1_and_its_phosphorylation                      0    0
-      25: TRAF6_recriutment_and_binding_to_IRAK1                      0    0
-      26: IRAK1P_TRAF6_dyssociation                      0    0
-      27: TAK1_TAB2_phosphorylation                      0    0
-      28: TRAF6_TAK1P_TAB2P_TAB1_complex_transclocation_to_cytosol                      0    0
-      29: TRAF6_ubiquitylation                      0    0
-      30: IKK_complex_phosphorylation                      0    0
-      31: phosphorylation_cascade_initiation                      0    0
-      32: active_IL_18_IL18RS_alpha_and_beta_MyD88_conection                      0    0
-      33: TNFR1_endocytosis                      0    0
-      34: RIP1_ubiquitination                      0    0
-      35: RIP1_recruites_TAK1_via_TAB2                      0    0
-      36: connection_through_DDs                      0    0
-      37: ubiquitylation_and_degradation                      0    0
-      38: pro_inflammatory_response                      0    0
-      39: induction_cell_mediated_immunity                      0    0
-      40: MyD88_recruitment                      0    0
-      41: pro_IL_18_synthesis                      0    0
-      42: INF_gamma_syntheis_influencing                      0    0
-      43: atherosclerotic_plaque                      0    0
-      44: modulation_by_TNF                      0    0
-      45: caspase_constitutively_present_in_cells_as_zymogen                      0    0
-      46: modulation_by_INF_gamma                      0    0
-      47: atracting_monocytes                      0    0
-      48: neighboring_endothelial_cells_stimulation                      0    0
-      49: neovascularization_inhibition                      0    0
-      50: ICAM1_and_VCAM1_up_regulation                      0    0
-      51: FasL_expression_on_inflammatory_cells                      0    0
-      52: TRAF2_ubiquitination                      0    0
-      53: SODD_expression                      0    0
-      54: usage                      0    0
-      55: FADD_recruitment                      0    0
-      56: activation                      0    0
-      57: INF_gamma_IFNRs_interraction                      0    0
-      58: JAK_and_STAT_pathway_activation                      0    0
-      59: IFR1_synthesis                      0    0
-      60: MCP1_gene_transcription                      0    0
-      61: TNF_gene_transcription                      0    0
-      62: iNOS_gene_transcription                      0    0
-      63: cardiac_contractile_dysfunction                      0    0
-      64: Cardio_vascular_disease                      0    0
-      65: infection_modulation                      0    0
-      66: no_apoptosis                      0    0
-      67: VCAM1_transcription                      0    0
-      68: HD                      0    0
-      69: ICAM_increasing                      0    0
-      70: VCAM_decreasing                      0    0
+       0: DNA_synthesis_LP_delta                      0    0
+       1: DNA_synthesis_LP_epsilon                      0    0
+       2: MBD4_displacement_by_APE                      0    0
+       3: MPG_displacement_by_APE                      0    0
+       4: MYH_displacement_by_APE                      0    0
+       5: NEIL1_liase_activity                      0    0
+       6: NEIL2_liase_activity                      0    0
+       7: NEIL3_displacement_byAPE                      0    0
+       8: NEIL3_displacement                      0    0
+       9: NEIL3_liase_activity                      0    0
+      10: OGG1_liase_activity                      0    0
+      11: OGG1_displacement_by_APE                      0    0
+      12: PCNA_freed                      0    0
+      13: PCNA_decreasing                      0    0
+      14: PCNA_increasing                      0    0
+      15: TDG_displacement_by_APE                      0    0
+      16: UNG2_displacement_by_APE                      0    0
+      17: cleavage_gr14_by_MPG                      0    0
+      18: cleavage_5hydroxyU_by_NEIL1                      0    0
+      19: cleavage_5hydroxyU_by_NEIL2                      0    0
+      20: cleavage_5hydroxyU_by_NEIL3                      0    0
+      21: cleavage_5hydrouracil_by_UNG2                      0    0
+      22: cleavage_8oxoG_by_MYH                      0    0
+      23: cleavage_8oxyG_by_NEIL1                      0    0
+      24: cleavage_FapyG_by_hNTH1                      0    0
+      25: cleavage_FapyGC_by_NEIL1                      0    0
+      26: cleavage_gr23waste_by_NEIL3                      0    0
+      27: cleavage_FoPy_by_OGG1                      0    0
+      28: cleavage_8oxoG_by_OGG1                      0    0
+      29: cleavage_cytGlyc_by_hNTH1                      0    0
+      30: cleavage_5HydUrac_by_hNTH1                      0    0
+      31: cleavage_ethenCyto_by_TDG                      0    0
+      32: cleavage_of_APs_by_APE                      0    0
+      33: cleavage_thymGlic_by_NEIL1                      0    0
+      34: cleavage_thymGlyc_by_hNTH1                      0    0
+      35: cleavage_ethenoC_by_MBD4                      0    0
+      36: cleavage_8oxoAC_by_TDG                      0    0
+      37: cleavage_uracil_by_MBD4                      0    0
+      38: cleavage_uracil_by_TDG                      0    0
+      39: cleavage_uracil_by_UNG2                      0    0
+      40: cleavage_uracil_by_hSMUG1                      0    0
+      41: incorporation_1nt                      0    0
+      42: polBeta_incorporates_1nt                      0    0
+      43: disposal_of_PPi                      0    0
+      44: disposal_of_dNTP                      0    0
+      45: disposal_of_dRP                      0    0
+      46: dissociation_SP_complex                      0    0
+      47: dissociation_LPDelta_complex                      0    0
+      48: dissociation_LPEpsilon_complex                      0    0
+      49: flap_cleavage_LP_delta                      0    0
+      50: flap_cleavage_LP_epsilon                      0    0
+      51: generate_dNTP                      0    0
+      52: hNTH1_displacement_by_APE                      0    0
+      53: hNTH1_displacement                      0    0
+      54: hNTH1_liase_activity                      0    0
+      55: hSMUG1_displacement_by_APE                      0    0
+      56: ligation_LIG3                      0    0
+      57: ligation_in_LP_delta                      0    0
+      58: ligation_in_LP_epsilon                      0    0
+      59: pBETA_displacement_by_pDELTA                      0    0
+      60: pBETA_displacement_polEPISOLON                      0    0
+      61: polBETA_recruitment                      0    0
+      62: recognMBD4_ethenoC                      0    0
+      63: recognMBD4_uracil_gr7                      0    0
+      64: recognMPG_of_gr14                      0    0
+      65: recognMYH_of_8oxoG                      0    0
+      66: recognNEIL1_FapyGC                      0    0
+      67: recognNEIL1_of_5hydroxyU_ssDNA                      0    0
+      68: recognNEIL3_of_5hydroxyU_ssDNA                      0    0
+      69: recognNEIL1_of_8oxyG                      0    0
+      70: recognNEIL2_of_5hydroxyU_ssDNA                      0    0
+      71: recognNEIL3_of_gr23                      0    0
+      72: recognNTH1_of_cytosineGlycol                      0    0
+      73: recognNTH1_of_5hydrouracil                      0    0
+      74: recognNTH1_of_FapyG                      0    0
+      75: recognNTH1_of_thymineGlycol                      0    0
+      76: recognOGG1_of_8oxoG_dmg                      0    0
+      77: recognOGG1_of_formamidopyrimidine_dmg                      0    0
+      78: recognTDG_ethenocytosine                      0    0
+      79: recognTDG_of_8oxoAC                      0    0
+      80: recognTDG_uracilGroup1                      0    0
+      81: recognUNG2_of_5hydroUra                      0    0
+      82: recognUNG2_of_OtherUracilGroup2                      0    0
+      83: recogn_hSMUG1_uracilGroup1                      0    0
+      84: recognitionNEIL1_of_thymineGlicol                      0    0
+      85: OGG1_displacement                      0    0
+      86: removal_3dRP_by_APE                      0    0
+      87: NEIL1_displacement                      0    0
+      88: NEIL2_displacement                      0    0
+      89: removal_3P_by_PNKP                      0    0
+      90: flap_out                      0    0
+      91: polBeta_recruitment                      0    0
+      92: polBETA_recruitment_and_1nt_incorp_with_PNKP                      0    0
+      93: ligation_forPNKP                      0    0
+      94: dissociation_SP_complex_PKNP_path                      0    0
+      95: polBETA_removes_5dRP                      0    0
+      96: disposal_of_3P                      0    0
+      97: polBeta_incorporates_1nt_PKNP_path                      0    0
+      98: NEIL1_stimulated_displacement_of_OGG1                      0    0
+      99: APE_increasing                      0    0
+     100: APE_decreasing                      0    0
+     101: DNA_synthesis                      0    0
+     102: FEN1_cleavage                      0    0
+     103: flap_excision                      0    0
+     104: polBETA_gap_filling                      0    0
+     105: APE_removal                      0    0
+     106: ligation_LIG1                      0    0
+     107: dissociation_otherLP                      0    0
+     108: U5fluoroUG_dmgCreation                      0    0
+     109: other_U_5fluoroU_dmgCreation                      0    0
+     110: _5hmU_G_dmgCreation                      0    0
+     111: _5hU_ssDNA_dmgCreation                      0    0
+     112: other_5hU_and_5hmU_dmgCreation                      0    0
+     113: ethenoC_dmgCreation                      0    0
+     114: TU_5fluoroU_CpG_dmgCreation                      0    0
+     115: TG_malfunction_dmgCreation                      0    0
+     116: _8oxoA_C_dmgCreation                      0    0
+     117: FapyG_C_dmgCreation                      0    0
+     118: _8oxoG_with_CGT_dmgCreation                      0    0
+     119: _8oxoG_withm5CA_Fapy7meG_dmgCreation                      0    0
+     120: A_8_8oxoC_C_hydroxA_dmgCreation                      0    0
+     121: _37_MeAG_ethenoA_m6A_hypoxanth_dmgCreation                      0    0
+     122: _5hydroxyC_U_dsDNA_dmgCreation                      0    0
+     123: thymineGlycol_ex_TgG_dmgCreation                      0    0
+     124: FapyG_with_A_G_T_dihydroUra_dmgCreation                      0    0
+     125: cytosineGlycol_from_dsDNA_dmgCreation                      0    0
+     126: _5hydroxyC_ssDNA_dmgCreation                      0    0
+     127: FapyA_dmgCreation                      0    0
+     128: thymineGlycol_in_ssDNA_dmgCreation                      0    0
+     129: thymineGlycol_in_dsDNA_dmgCreation                      0    0
+     130: NEIL3_others_damages_dmgCreation                      0    0
+     131: recogn_hSMUG1_uracilGroup2                      0    0
+     132: recogn_hSMUG1_g3_5hmUG_gr3                      0    0
+     133: cleavege_g3_5hmUG_by_hSMUG1                      0    0
+     134: recognTDG_of_5methUrac_gr3                      0    0
+     135: cleavage_5methUrac_by_TDG                      0    0
+     136: disposal_of_uracil                      0    0
+     137: disposal_of_thymineGlicol                      0    0
+     138: disposal_of_5hydroxyC                      0    0
+     139: disposal_of_FapyAC                      0    0
+     140: disposal_of_ethenocytosine                      0    0
+     141: disposal_of_cytosineGlycol                      0    0
+     142: disposal_of_8oxoAC                      0    0
+     143: disposal_of_grp14waste                      0    0
+     144: recogn_SMUG1_of_5hydroxyU_ssDNA                      0    0
+     145: cleavage_5hydroxyU_by_hSMUG1                      0    0
+     146: recogn_hSMUG1_otherUracil_gr5                      0    0
+     147: cleavage_otherUrac_by_hSMUG1                      0    0
+     148: recognTDG_grp8                      0    0
+     149: cleavage_grp8_by_TDG                      0    0
+     150: disposal_of_grp8waste                      0    0
+     151: recognOGG1_of_8oxoG_CTG                      0    0
+     152: cleavage_8oxoG_CTG_by_OGG1                      0    0
+     153: recognNEIL3_5hydroxyC                      0    0
+     154: recognNEIL3_thymGlycol_in_ssDNA                      0    0
+     155: cleavage_5hydroxyC_by_NEIL3                      0    0
+     156: cleavage_thymGlycol_ssDNA_by_NEIL3                      0    0
+     157: recognNEIL2_5hydroxyC                      0    0
+     158: recognNEIL2_FapyG_gr17                      0    0
+     159: recognNEIL2_of_5hydroxyC_U                      0    0
+     160: recognNEIL2_FapyA                      0    0
+     161: recognNEIL2_FapyGC                      0    0
+     162: cleavage_FapyGC_by_NEIL2                      0    0
+     163: cleavage_FapyA_by_NEIL2                      0    0
+     164: cleavage_5hydroxyCU_by_NEIL2                      0    0
+     165: cleavage_FapyG_gr17_by_NEIL2                      0    0
+     166: cleavage_5hydroxyC_by_NEIL2                      0    0
+     167: recognNEIL1_thymGlyc_dsDNA                      0    0
+     168: recognNEIL1_5hydroxyC                      0    0
+     169: cleavage_thymGlyc_dsDNA_by_NEIL1                      0    0
+     170: cleavage_5hydroxyC_by_NEIL1                      0    0
+     171: recognNEIL1_of_5hydroxyCU                      0    0
+     172: recognNEIL1_thymGlyc_ssDNA                      0    0
+     173: recognNEIL1_FapyA                      0    0
+     174: cleavage_5hydroxyCU_by_NEIL1                      0    0
+     175: cleavage_thymGlyc_ssDNA_by_NEIL1                      0    0
+     176: cleavage_FapyA_by_NEIL1                      0    0
+     177: disposal_of_8oxoG                      0    0
+     178: recognOGG1_of_9oxoG_5CA_Fapy7meG                      0    0
+     179: cleavage_9oxoG_5CA_Fapy7meG_by_OGG1                      0    0
+     180: disposal_of_FapyA                      0    0
+     181: disposal_of_gr23waste                      0    0
+     182: DNA_back_to_pool                      0    0
+     183: intact_DNA_increasing                      0    0
+     184: intact_DNA_decreasing                      0    0
+     185: gr24_5formyldU_dmgCreation                      0    0
+     186: recogn_hSMUG1_uracilGroup24                      0    0
+     187: recognMBD4_uracil_gr24                      0    0
+     188: recognNTH1_5formyldU                      0    0
+     189: cleavage_5formyldU_byNTH1                      0    0
+     190: NEIL2_displacement_by_APE                      0    0
+     191: NEIL1_displacement_by_APE                      0    0
+     192: NEIL2_stimulated_displacement_of_OGG1                      0    0
+     193: NEIL2_stimulated_displacement_of_hNTH1                      0    0
+     194: NEIL1_stimulated_displacement_of_hNTH1                      0    0
+     195: NEIL2_stimulated_displacement_of_MYH                      0    0
+     196: NEIL1_stimulated_displacement_of_MYH                      0    0
+     197: NEIL2_stimulated_displacement_of_MPG                      0    0
+     198: NEIL1_stimulated_displacement_of_MPG                      0    0
+     199: NEIL1_stimulated_displacement_of_TDG                      0    0
+     200: NEIL2_stimulated_displacement_of_TDG                      0    0
+     201: NEIL1_stimulated_displacement_of_MBD4                      0    0
+     202: NEIL2_stimulated_displacement_of_MBD4                      0    0
+     203: NEIL2_stimulated_displacement_of_UNG2                      0    0
+     204: NEIL1_stimulated_displacement_of_UNG2                      0    0
+     205: NEIL1_stimulated_displacement_of_hSMUG1                      0    0
+     206: NEIL2_stimulated_displacement_of_hSMUG1                      0    0
 @

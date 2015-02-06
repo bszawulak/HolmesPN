@@ -929,8 +929,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					i = 0;
 					for (Integer amountOfFirings : binaryInvariant) {
 						if (amountOfFirings > 0) {
-							currentTransition = new InvariantTransition(
-									getTransitions().get(i), amountOfFirings);
+							currentTransition = new InvariantTransition(getTransitions().get(i), amountOfFirings);
 							currentInvariant.add(currentTransition);
 						}
 						i++;

@@ -335,8 +335,7 @@ public class SelectionManager {
 		this.getSelectedElementLocations().clear();
 		this.getSelectedArcs().clear();
 		for (Node n : this.getGraphPanelNodes())
-			for (ElementLocation el : n.getNodeLocations(getGraphPanel()
-					.getSheetId())) {
+			for (ElementLocation el : n.getNodeLocations(getGraphPanel().getSheetId())) {
 				this.getSelectedElementLocations().add(el);
 				el.setSelected(true);
 			}
@@ -761,12 +760,11 @@ public class SelectionManager {
 	public void deleteAllSelectedElements() {
 		// code below looks similar to other function but not use them to reduce
 		// the number of requests repaint
-		for (Iterator<ElementLocation> i = this.getSelectedElementLocations()
-				.iterator(); i.hasNext();) {
+		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
 			ElementLocation el = i.next();
 			Node n = el.getParentNode();
 			// if ElementLocation was the only Node location, it's deleted
-			if (!n.removeElementLocation(el)) {
+			if (n.removeElementLocation(el) == false) {
 				this.getGraphPanelNodes().remove(n);
 			}
 			// deletes all in arcs of current ElementLocation

@@ -857,7 +857,7 @@ public class GraphPanel extends JComponent {
 	} //end class MouseMotionHandler
 
 	/**
-	 * Wewnątrzna klasa odpowiedzialna za obłusgę rolki myszy.
+	 * Wewnątrzna klasa odpowiedzialna za obługę rolki myszy.
 	 * @author students
 	 *
 	 */
@@ -869,12 +869,12 @@ public class GraphPanel extends JComponent {
 		 * @param e MouseWheelEvent - obiekt klasy przekazywany w efekcie użycia wałka myszy
 		 */
 		public void mouseWheelMoved(MouseWheelEvent e) {
-			if (e.isControlDown())
+			if (e.isControlDown()) //zoom
 				setZoom(getZoom() - 10 * e.getWheelRotation(), getZoom());
-			else if (e.isShiftDown())
-				scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 2);
-			else
-				scrollSheetVertical(e.getWheelRotation() * e.getScrollAmount() * 2);
+			else if (e.isShiftDown()) // przewijanie góra/dół
+				scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 30);
+			else // przewijanie lewo/prawo
+				scrollSheetVertical(e.getWheelRotation() * e.getScrollAmount() * 30);
 		}
 	}
 }

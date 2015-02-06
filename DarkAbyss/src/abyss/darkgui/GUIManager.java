@@ -75,6 +75,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public GUIOperations io;
 	public TexExporter tex;
+	public GUIReset reset;
 	
 	private Dimension screenSize; 		// praca w maksymalizacji
 	private Dimension smallScreenSize;	// praca poza maksymalizowanym oknem
@@ -147,6 +148,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		guiManager = this;
 		io = new GUIOperations(this); //rise, my minion!!
 		tex = new TexExporter();
+		reset = new GUIReset();
 		
 		setFrame(frejm);
 		try {	

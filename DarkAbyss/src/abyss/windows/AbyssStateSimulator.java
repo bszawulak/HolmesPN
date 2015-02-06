@@ -18,13 +18,16 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -69,6 +72,8 @@ import abyss.workspace.ExtensionFileFilter;
  */
 public class AbyssStateSimulator extends JFrame {
 	private static final long serialVersionUID = 5287992734385359453L;
+	
+	//private AbyssStateSimulatorActions actum = new AbyssStateSimulatorActions();
 	private StateSimulator ssim;
 	private boolean maximumMode = false;
 	
@@ -82,10 +87,12 @@ public class AbyssStateSimulator extends JFrame {
 	private int transInterval = 10;
 	private ArrayList<Integer> placesInChart;
 	private ArrayList<String> placesInChartStr;
+	private boolean sortedP = false;
+	private boolean sortedT = false;
 	
-	private XYSeriesCollection placesSeriesDataSet = null;
+	XYSeriesCollection placesSeriesDataSet = null;
 	private XYSeriesCollection transitionsSeriesDataSet = null;
-	private JFreeChart placesChart;
+	JFreeChart placesChart;
 	private JFreeChart transitionsChart;
 	private int transChartType = 0; //suma odpaleń, 1=konkretne tranzycje
 	private int placesChartType = 0; //j.w. dla miejsc
@@ -284,6 +291,21 @@ public class AbyssStateSimulator extends JFrame {
 			}
 		});
 		placesChartOptionsPanel.add(showAllButton);
+		
+		JCheckBox sortedCheckBox = new JCheckBox("Sorted by tokens");
+		sortedCheckBox.setBounds(posXchart+460, posYchart+10, 130, 20);
+		sortedCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					sortedP = true;
+				} else {
+					sortedP = false;
+				}
+				fillPlacesAndTransitionsData();
+			}
+		});
+		placesChartOptionsPanel.add(sortedCheckBox);
 		posYchart += 30;
 		
 		JLabel label1 = new JLabel("Places:");
@@ -317,13 +339,15 @@ public class AbyssStateSimulator extends JFrame {
 				
 				int selected = placesCombo.getSelectedIndex();
 				if(selected>0) {
-					selected--;
 					String name = placesCombo.getSelectedItem().toString();
-					name = trimNodeName(name);
-					placesInChart.set(selected, 1);
-					placesInChartStr.set(selected, name);
+					int sel = getRealNodeID(name);
+					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
-					addNewPlaceSeries(selected, name);
+					name = trimNodeName(name);
+					placesInChart.set(sel, 1);
+					placesInChartStr.set(sel, name);
+					
+					addNewPlaceSeries(sel, name);
 					updatePlacesGraphicChart("places");
 				}
 			}
@@ -342,12 +366,13 @@ public class AbyssStateSimulator extends JFrame {
 				
 				int selected = placesCombo.getSelectedIndex();
 				if(selected>0) {
-					selected--;
 					String name = placesCombo.getSelectedItem().toString();
-					name = trimNodeName(name);
-					placesInChart.set(selected, -1);
-					placesInChartStr.set(selected, "");
+					int sel = getRealNodeID(name);
+					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
+					name = trimNodeName(name);
+					placesInChart.set(sel, -1);
+					placesInChartStr.set(sel, "");
 					removePlaceSeries(name);
 				}
 			}
@@ -387,11 +412,12 @@ public class AbyssStateSimulator extends JFrame {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = placesCombo.getSelectedIndex();
 				if(selected>0) {
-					selected--;
-					//String name = placesCombo.getSelectedItem().toString();
-					//name = trimNodeName(name);
+					String name = placesCombo.getSelectedItem().toString();
+					int sel = getRealNodeID(name);
+					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
+					
 					GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
-					GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(true, selected);
+					GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(true, sel);
 				}
 			}
 		});
@@ -504,6 +530,20 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		transChartOptionsPanel.add(transIntervalSpinner);
 
+		JCheckBox sortedCheckBox = new JCheckBox("Sorted by firing");
+		sortedCheckBox.setBounds(posXchart+460, posYchart+10, 130, 20);
+		sortedCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					sortedT = true;
+				} else {
+					sortedT = false;
+				}
+				fillPlacesAndTransitionsData();
+			}
+		});
+		transChartOptionsPanel.add(sortedCheckBox);
 		posYchart += 30;
 		
 		JLabel label2 = new JLabel("Transition:");
@@ -516,11 +556,13 @@ public class AbyssStateSimulator extends JFrame {
 		transitionsCombo.setSize(500, 20);
 		transitionsCombo.setSelectedIndex(0);
 		transitionsCombo.setMaximumRowCount(12);
+		/*
 		transitionsCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				//int selected = placesCombo.getSelectedIndex();
 			}
 		});
+		*/
 		transChartOptionsPanel.add(transitionsCombo);
 		
 		posYchart += 30;
@@ -537,10 +579,13 @@ public class AbyssStateSimulator extends JFrame {
 				
 				int selected = transitionsCombo.getSelectedIndex();
 				if(selected>0) {
-					selected--;
 					String name = transitionsCombo.getSelectedItem().toString();
+					int sel = getRealNodeID(name);
+					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
+					
+					//selected--;
 					name = trimNodeName(name);
-					addNewTransitionSeries(selected, name);
+					addNewTransitionSeries(sel, name);
 					//updateTransitionsGraphicChart();
 				}
 			}
@@ -559,7 +604,6 @@ public class AbyssStateSimulator extends JFrame {
 				
 				int selected = transitionsCombo.getSelectedIndex();
 				if(selected>0) {
-					//selected--;
 					String name = transitionsCombo.getSelectedItem().toString();
 					name = trimNodeName(name);
 					removeTransitionSeries(name);
@@ -601,11 +645,12 @@ public class AbyssStateSimulator extends JFrame {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = transitionsCombo.getSelectedIndex();
 				if(selected>0) {
-					selected--;
-					//String name = placesCombo.getSelectedItem().toString();
-					//name = trimNodeName(name);
+					//ustalanie prawdziwego ID:
+					int sel = getRealNodeID(transitionsCombo.getSelectedItem().toString());
+					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
+					
 					GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
-					GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(false, selected);
+					GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(false, sel);
 				}
 			}
 		});
@@ -682,10 +727,28 @@ public class AbyssStateSimulator extends JFrame {
 	//**************************************************************************************
 
 	/**
+	 * Metoda ta dostaje pełną nazwę dla wierzchołka z comboBoxa, następnie zwraca prawdziwy
+	 * ID tego wierzchołka w bazie tychże.
+	 * @param string String - preformatowana nazwa wierzchołka, zaczynająca się od p/t[ID].[nazwa]
+	 * @return int - ID tranzycji
+	 */
+	protected int getRealNodeID(String name) {
+		name = name.substring(1, name.indexOf("."));
+		int result = -1;
+		try {
+			result = Integer.parseInt(name);
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("System malfunction: unable to extract transition ID", "error", true);
+			return -1;
+		}
+		return result;
+	}
+
+	/**
 	 * Metoda ta tworzy wykres liniowy dla miejsc.
 	 * @return JPanel - panel z wykresem
 	 */
-	private JPanel createPlacesChartPanel() {
+	JPanel createPlacesChartPanel() {
 		String chartTitle = "Places dynamics";
 	    String xAxisLabel = "Step";
 	    String yAxisLabel = "Tokens";
@@ -696,7 +759,7 @@ public class AbyssStateSimulator extends JFrame {
 		placesSeriesDataSet = new XYSeriesCollection();
 	    placesChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, placesSeriesDataSet, 
 	    		PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
-
+	
 	    ChartPanel res = new ChartPanel(placesChart);
 	    return res;
 	}
@@ -778,9 +841,9 @@ public class AbyssStateSimulator extends JFrame {
 		}
 		
 	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-	    for(int t=0; t<placesAvgData.size(); t++) {
-			String tName = "t"+t+"_"+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(t).getName();
-			double value = placesAvgData.get(t);
+	    for(int p=0; p<placesAvgData.size(); p++) {
+			String tName = "p"+p+"_"+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(p).getName();
+			double value = placesAvgData.get(p);
 			dataset.addValue(value, "Firing", tName);
 			dataset.addValue((int)(max-value), "NotFiring", tName);
 		}
@@ -1012,8 +1075,22 @@ public class AbyssStateSimulator extends JFrame {
 		placesCombo.removeAllItems();
 		placesCombo.addItem("---");
 		if(placesAvgData.size() == places.size()) {
-			for(int p=0; p < places.size(); p++) {
-				placesCombo.addItem("p"+(p)+"."+places.get(p).getName() + " "+formatD(placesAvgData.get(p)));
+			if(sortedP == false) {
+				for(int p=0; p < places.size(); p++) {
+					placesCombo.addItem("p"+(p)+"."+places.get(p).getName() + " "+formatD(placesAvgData.get(p)));
+				}
+			} else {
+				//sortowanie po odpaleniach:
+				Map<Integer, Double> map = new HashMap<Integer, Double>();
+				for(int j=0; j<placesAvgData.size(); j++) {
+					map.put(j, placesAvgData.get(j));
+				}
+				//sortuj po value (frequency)
+				Map<Integer, Double> sortedByValues = new HashMap<Integer, Double>(); 
+				sortedByValues = AbyssStateSimulatorActions.crunchifySortMap(map); // dark magic happens here
+				for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
+					placesCombo.addItem("p"+(entry.getKey())+"."+places.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
+				}
 			}
 		} else {
 			for(int p=0; p < places.size(); p++) {
@@ -1029,8 +1106,22 @@ public class AbyssStateSimulator extends JFrame {
 		transitionsCombo.addItem("---");
 		
 		if(transAvgData.size() == transitions.size()) {
-			for(int t=0; t < transitions.size(); t++) {
-				transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName() + " "+formatD(transAvgData.get(t)));
+			if(sortedT == false) {
+				for(int t=0; t < transitions.size(); t++) {
+					transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName() + " "+formatD(transAvgData.get(t)));
+				}
+			} else {
+				//sortowanie po odpaleniach:
+				Map<Integer, Double> map = new HashMap<Integer, Double>();
+				for(int j=0; j<transAvgData.size(); j++) {
+					map.put(j, transAvgData.get(j));
+				}
+				//sortuj po value (frequency)
+				Map<Integer, Double> sortedByValues = new HashMap<Integer, Double>(); 
+				sortedByValues = AbyssStateSimulatorActions.crunchifySortMap(map); // dark magic happens here
+				for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
+					transitionsCombo.addItem("t"+(entry.getKey())+"."+transitions.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
+				}
 			}
 		} else {
 			for(int t=0; t < transitions.size(); t++) {
@@ -1203,4 +1294,7 @@ public class AbyssStateSimulator extends JFrame {
 			
 		}
 	}
+	
+	
+	
 }

@@ -25,9 +25,9 @@ import com.javadocking.drag.DragListener;
 import com.javadocking.visualizer.SingleMaximizer;
 
 /**
- * Klasa odpowiedzialna za tworzenie paska narzędzi zaraz poniżej paska menu
- * programu.
+ * Klasa odpowiedzialna za tworzenie paska narzędzi zaraz poniżej paska menu programu.
  * @author students
+ * @author MR
  *
  */
 public class Toolbar extends BorderDock {
@@ -335,7 +335,7 @@ public class Toolbar extends BorderDock {
 			}
 		};
 		analysisDockables.add(createButtonDockable("Clusters", clusterButton));
-		
+
 		ToolbarButtonAction consoleButton = new ToolbarButtonAction(this, "Show console",
 				Tools.getResIcon48("/icons/toolbar/terminal2.png")) {
 			@Override
@@ -345,6 +345,15 @@ public class Toolbar extends BorderDock {
 			}
 		};
 		analysisDockables.add(createButtonDockable("Test button", consoleButton));
+		
+		ToolbarButtonAction cleanButton = new ToolbarButtonAction(this, "Clear all colors",
+				Tools.getResIcon48("/icons/toolbar/cleanGraphColors.png")) {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().reset.clearGraphColors();
+			}
+		};
+		analysisDockables.add(createButtonDockable("CleanColor", cleanButton));
 		
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug test purpose",
 				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
@@ -370,14 +379,14 @@ public class Toolbar extends BorderDock {
 				*/
 				
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().loadFromFile(
-						"C:/Users/Rince/Desktop/Sieci/IL18/IL18_2012-08-05_1.spped");
+						"C:/Users/Rince/Desktop/Sieci/BER371/BERv3.7.1.spped");
 				GUIManager.getDefaultGUIManager().getSimulatorBox().createSimulatorProperties();
 				
 				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
 				try
 				{
 					FileInputStream fis = new FileInputStream(
-							"C:/Users/Rince/Desktop/Sieci/IL18/datatable.acl");
+							"C:/Users/Rince/Desktop/Sieci/BER371/BER371table.acl");
 					ObjectInputStream ois = new ObjectInputStream(fis);
 					clusterMatrix = (ClusteringInfoMatrix) ois.readObject();
 					ois.close();

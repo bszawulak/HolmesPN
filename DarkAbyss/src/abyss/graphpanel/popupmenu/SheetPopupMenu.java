@@ -56,6 +56,12 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 				getGraphPanel().repaint();
 			}
 		});
+		
+		this.addMenuItem("Clear colors", "clearColors.png", new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GUIManager.getDefaultGUIManager().reset.clearGraphColors();
+			}
+		});
 
 		this.addMenuItem("Save to image file", "picture_save.png",
 				new ActionListener() {
@@ -116,6 +122,12 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 				});
 
 		this.addSeparator();
+		
+		this.addMenuItem("Fast zoom reset", "", new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				getGraphPanel().setZoom(100, getGraphPanel().getZoom());
+			}
+		});
 
 		JMenu zoomMenu = new JMenu("Zoom");
 

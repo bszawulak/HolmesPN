@@ -109,7 +109,7 @@ public class IOprotocols {
 				wczytanaLinia = buffer.readLine();
 			}
 			buffer.readLine();
-			
+			nodesList.clear();
 			// Etap I - Liczba tranzycji/miejsc
 			while (!(wczytanaLinia = buffer.readLine()).endsWith("~~~~~~~~~~~")) {
 				if(wczytanaLinia.endsWith("~~~~~~~~~~~")){break;}
@@ -124,6 +124,7 @@ public class IOprotocols {
 			}
 			// Etap II - lista T-inwariantow
 			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+			invariantsList.clear();
 			while ((wczytanaLinia = buffer.readLine()) != null) {
 				if(wczytanaLinia.contains("@")||wczytanaLinia.isEmpty()){break;}
 				String[] sformatowanaLinia = wczytanaLinia.split("\\|");
@@ -181,7 +182,7 @@ public class IOprotocols {
 				wczytanaLinia = buffer.readLine();
 			}
 			buffer.readLine();
-			
+			nodesList.clear();
 			// Etap I - Liczba tranzycji/miejsc
 			while (!(wczytanaLinia = buffer.readLine()).endsWith("~~~~~~~~~~~")) {
 				if(wczytanaLinia.endsWith("~~~~~~~~~~~")){break;}
@@ -196,6 +197,7 @@ public class IOprotocols {
 			}
 			// Etap II - lista T-inwariantow
 			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+			invariantsList.clear();
 			while ((wczytanaLinia = buffer.readLine()) != null) {
 				if(wczytanaLinia.contains("@")||wczytanaLinia.isEmpty()){break;}
 				String[] sformatowanaLinia = wczytanaLinia.split("\\|");
@@ -214,6 +216,7 @@ public class IOprotocols {
 				}
 			}
 			buffer.close();
+			GUIManager.getDefaultGUIManager().log("Invariants from Charlie file have been read.", "text", true);
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR:readINV",JOptionPane.ERROR_MESSAGE);
