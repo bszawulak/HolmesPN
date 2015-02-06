@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Insets;
 import java.awt.Paint;
@@ -34,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerModel;
@@ -47,12 +49,12 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -98,9 +100,9 @@ public class AbyssStateSimulator extends JFrame {
 	private int placesChartType = 0; //j.w. dla miejsc
 	
 	private boolean listenerStart = false;
-	private JPanel placesChartPanel;
+	private JPanel placesJPanel;
 	private JPanel placesChartOptionsPanel;
-	private JPanel transitionsChartPanel;
+	private JPanel transitionsJPanel;
 	private JPanel transChartOptionsPanel;
 	private JPanel dataToolsPanel;
 	private JTabbedPane tabbedPane; //zakładki
@@ -476,18 +478,15 @@ public class AbyssStateSimulator extends JFrame {
 		//************************************************************************************************************
 		//************************************************************************************************************
 		//TODO
-		placesChartPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
+		placesJPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
 		 	//my zmieniać wymiary jeśli całe okno ma zmieniane w dowolnej chwili
-		placesChartPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
+		placesJPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
 
-		//placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(), this.getWidth()-30, 
-		//		tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
+		placesJPanel.setBounds(0, placesChartOptionsPanel.getHeight(), this.getWidth()-30, 
+			tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
 		
-		placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(),2000,  tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
-		
-		placesChartPanel.add(createPlacesChartPanel(), BorderLayout.CENTER);
-		result.add(placesChartPanel);
-		
+		placesJPanel.add(createPlacesChartPanel(), BorderLayout.CENTER);
+		result.add(placesJPanel);
 
 		return result;
 	}
@@ -713,13 +712,13 @@ public class AbyssStateSimulator extends JFrame {
 		//************************************************************************************************************
 		//************************************************************************************************************
 		
-		transitionsChartPanel = new JPanel(new BorderLayout());
-		transitionsChartPanel.setBorder(BorderFactory.createTitledBorder("Transitions chart"));
-		transitionsChartPanel.setBounds(0, transChartOptionsPanel.getHeight(), this.getWidth()-20, 
+		transitionsJPanel = new JPanel(new BorderLayout());
+		transitionsJPanel.setBorder(BorderFactory.createTitledBorder("Transitions chart"));
+		transitionsJPanel.setBounds(0, transChartOptionsPanel.getHeight(), this.getWidth()-20, 
 				tabbedPane.getHeight() - transChartOptionsPanel.getHeight()-40);
 		
-		transitionsChartPanel.add(createTransChartPanel(), BorderLayout.CENTER);
-		result.add(transitionsChartPanel);
+		transitionsJPanel.add(createTransChartPanel(), BorderLayout.CENTER);
+		result.add(transitionsJPanel);
 
 		return result;
 	}
@@ -729,8 +728,6 @@ public class AbyssStateSimulator extends JFrame {
 	//*********************************     MIEJSCA      ***********************************
 	//*********************************                  ***********************************
 	//**************************************************************************************
-
-	
 
 	/**
 	 * Metoda ta tworzy wykres liniowy dla miejsc.
@@ -748,10 +745,8 @@ public class AbyssStateSimulator extends JFrame {
 	    placesChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, placesSeriesDataSet, 
 	    		PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
 	
-	    //placesChart.s
-	    ChartPanel res = new ChartPanel(placesChart);
-	    res.setSize(2000, 400);
-	    return res;
+	    ChartPanel placesChartPanel = new ChartPanel(placesChart);
+	    return placesChartPanel;
 	}
 	
 	/**
@@ -761,10 +756,10 @@ public class AbyssStateSimulator extends JFrame {
 	 */
 	private void addNewPlaceSeries(int selPlaceID, String name) {
 		if(placesChartType == 0) { //replace chart
-			placesChartPanel.removeAll();
-			placesChartPanel.add(createPlacesChartPanel(), BorderLayout.CENTER);
-			placesChartPanel.revalidate();
-			placesChartPanel.repaint();
+			placesJPanel.removeAll();
+			placesJPanel.add(createPlacesChartPanel(), BorderLayout.CENTER);
+			placesJPanel.revalidate();
+			placesJPanel.repaint();
 			placesChartType = 1;
 			
 			placesSeriesDataSet.removeAllSeries(); // ??
@@ -834,8 +829,16 @@ public class AbyssStateSimulator extends JFrame {
 	    for(int p=0; p<placesAvgData.size(); p++) {
 			String tName = "p"+p+"_"+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(p).getName();
 			double value = placesAvgData.get(p);
+			
 			dataset.addValue(value, "Firing", tName);
-			dataset.addValue((int)(max-value), "NotFiring", tName);
+			
+			if(value > 0) {
+				dataset.addValue(max-value, "NotFiring", tName);
+				dataset.addValue(0, "zero", tName);
+			} else {
+				dataset.addValue(0, "NotFiring", tName);
+				dataset.addValue(max, "zero", tName);
+			}
 		}
 	    
 	    String chartTitle = "Places dynamics";
@@ -846,14 +849,14 @@ public class AbyssStateSimulator extends JFrame {
 	    boolean createURL = false;
 		placesChart = ChartFactory.createStackedBarChart(chartTitle, xAxisLabel, yAxisLabel, dataset,
 			PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
-		
-		
+
 		CategoryPlot plot = (CategoryPlot) placesChart.getPlot();
-		LogAxis yAxis = new LogAxis("Tokens");
-		yAxis.setLowerBound(0.9);
-		yAxis.setUpperBound(max+10);
-		yAxis.setBase(10.0);
-		yAxis.setMinorTickMarksVisible(true);
+
+		//LogAxis yAxis = new LogAxis("Tokens");
+		//yAxis.setLowerBound(0.9);
+		//yAxis.setUpperBound(max+10);
+		//yAxis.setBase(10.0);
+		//yAxis.setMinorTickMarksVisible(true);
 		//plot.setRangeAxis(yAxis);
 		
 	    StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
@@ -865,12 +868,28 @@ public class AbyssStateSimulator extends JFrame {
         renderer.setSeriesPaint(0, p1);
         Paint p2 = new GradientPaint(0.0f, 0.0f, Color.lightGray, 0.0f, 0.0f, Color.lightGray);
         renderer.setSeriesPaint(1, p2);
+        Paint p3 = new GradientPaint(0.0f, 0.0f, Color.gray, 0.0f, 0.0f, Color.gray);
+        renderer.setSeriesPaint(2, p3);
         plot.setRenderer(renderer);
+        
+        Font font3 = new Font("Dialog", Font.PLAIN, 12); 
+      	plot.getDomainAxis().setLabelFont(font3);
+      	plot.getRangeAxis().setLabelFont(font3);
+      	
+      	LegendTitle legend = placesChart.getLegend();
+      	Font labelFont = new Font("Arial", Font.BOLD, 12);
+      	legend.setItemFont(labelFont);
 
-		placesChartPanel.removeAll();
-		placesChartPanel.add(new ChartPanel(placesChart), BorderLayout.CENTER);
-		placesChartPanel.revalidate();
-		placesChartPanel.repaint();
+		placesJPanel.removeAll();
+		ChartPanel placesChartPanel = new ChartPanel(placesChart);
+		int places = placesAvgData.size();
+		placesChartPanel.setPreferredSize(new Dimension(places*30, 270)); 
+		placesChartPanel.setMaximumDrawWidth(places*30);
+		
+	    JScrollPane sPane = new JScrollPane(placesChartPanel); 
+		placesJPanel.add(sPane, BorderLayout.CENTER);
+		placesJPanel.revalidate();
+		placesJPanel.repaint();
 	}
 	
 
@@ -907,10 +926,10 @@ public class AbyssStateSimulator extends JFrame {
 	 */
 	private void addNewTransitionSeries(int selTransID, String name) {
 		if(transChartType == 0) { //replace chart
-			transitionsChartPanel.removeAll();
-			transitionsChartPanel.add(createTransChartPanel(), BorderLayout.CENTER);
-			transitionsChartPanel.revalidate();
-			transitionsChartPanel.repaint();
+			transitionsJPanel.removeAll();
+			transitionsJPanel.add(createTransChartPanel(), BorderLayout.CENTER);
+			transitionsJPanel.revalidate();
+			transitionsJPanel.repaint();
 			transChartType = 1;
 			
 			transitionsSeriesDataSet.removeAllSeries(); // ??
@@ -993,7 +1012,15 @@ public class AbyssStateSimulator extends JFrame {
 			String tName = "t"+t+"_"+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(t).getName();
 			int value = transitionsCompactData.get(t);
 			dataset.addValue(value, "Firing", tName);
-			dataset.addValue(max-value, "NotFiring", tName);
+			//dataset.addValue(max-value, "NotFiring", tName);
+			
+			if(value > 0) {
+				dataset.addValue(max-value, "NotFiring", tName);
+				dataset.addValue(0, "zero", tName);
+			} else {
+				dataset.addValue(0, "NotFiring", tName);
+				dataset.addValue(max, "zero", tName);
+			}
 		}
 	    
 	    String chartTitle = "Transitions dynamics";
@@ -1011,12 +1038,28 @@ public class AbyssStateSimulator extends JFrame {
         renderer.setSeriesPaint(0, p1);
         Paint p2 = new GradientPaint(0.0f, 0.0f, Color.lightGray, 0.0f, 0.0f, Color.lightGray);
         renderer.setSeriesPaint(1, p2);
+        Paint p3 = new GradientPaint(0.0f, 0.0f, Color.gray, 0.0f, 0.0f, Color.gray);
+        renderer.setSeriesPaint(2, p3);
         plot.setRenderer(renderer);
+        
+        Font font3 = new Font("Dialog", Font.PLAIN, 12); 
+      	plot.getDomainAxis().setLabelFont(font3);
+      	plot.getRangeAxis().setLabelFont(font3);
+      	
+      	LegendTitle legend = transitionsChart.getLegend();
+      	Font labelFont = new Font("Arial", Font.BOLD, 12);
+      	legend.setItemFont(labelFont);
 
-		transitionsChartPanel.removeAll();
-		transitionsChartPanel.add(new ChartPanel(transitionsChart), BorderLayout.CENTER);
-		transitionsChartPanel.revalidate();
-		transitionsChartPanel.repaint();
+      	transitionsJPanel.removeAll();
+		ChartPanel placesChartPanel = new ChartPanel(transitionsChart);
+		int transitions = transitionsCompactData.size();
+		placesChartPanel.setPreferredSize(new Dimension(transitions*30, 270)); 
+		placesChartPanel.setMaximumDrawWidth(transitions*30);
+		
+	    JScrollPane sPane = new JScrollPane(placesChartPanel); 
+	    transitionsJPanel.add(sPane, BorderLayout.CENTER);
+	    transitionsJPanel.revalidate();
+	    transitionsJPanel.repaint();
 	}
 	
 	//**************************************************************************************
@@ -1139,22 +1182,22 @@ public class AbyssStateSimulator extends JFrame {
             	if(!listenerStart)
             		return;
             	tabbedPane.setBounds(0, dataToolsPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-dataToolsPanel.getHeight()-40);
-            	//placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
-            	//		tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
+            	placesJPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
+            			tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
             	
-            	transitionsChartPanel.setBounds(0, transChartOptionsPanel.getHeight(), ego.getWidth()-30, 
+            	transitionsJPanel.setBounds(0, transChartOptionsPanel.getHeight(), ego.getWidth()-30, 
             			tabbedPane.getHeight() - transChartOptionsPanel.getHeight()-40);
             }
             public void componentMoved(ComponentEvent e) {
             	if(!listenerStart)
             		return;
             	tabbedPane.setBounds(0, dataToolsPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-dataToolsPanel.getHeight()-40);
-            	//placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
-            	//	tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
+            	placesJPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
+            		tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
             	
             	//placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(),2000,  tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
             	
-            	transitionsChartPanel.setBounds(0, transChartOptionsPanel.getHeight(), ego.getWidth()-30, 
+            	transitionsJPanel.setBounds(0, transChartOptionsPanel.getHeight(), ego.getWidth()-30, 
             			tabbedPane.getHeight() - transChartOptionsPanel.getHeight()-40);
             }
         });
@@ -1166,6 +1209,10 @@ public class AbyssStateSimulator extends JFrame {
      * obiektu klasy AbyssStateSimulator - czyli podokna programu głównego.
      */
 	private void acquireDataFromSimulation() {
+		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		if(places == null || places.size() == 0)
+			return;
+		
 		clearTransitionsChart();
 		clearPlacesChart();
 		clearAllData();
