@@ -79,7 +79,7 @@ public class NetHandler_Classic extends NetHandler {
 		//System.out.println(qName);
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
-			nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().checkSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
+			nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 		}
 
 		// Ustawianie typu noda
@@ -316,7 +316,7 @@ public class NetHandler_Classic extends NetHandler {
 				tmpTransitionList.add(tmpTran);
 			}
 
-			// Zerowanie zmiennych
+			// zerowanie zmiennych
 			nodeName = "";
 			nodeID = 0;
 			nodeMarking = 0;
@@ -326,7 +326,7 @@ public class NetHandler_Classic extends NetHandler {
 			graphicPointsList.clear();
 		}
 
-		// Tworzenie arca
+		// tworzenie łuku
 
 		if (qName.equalsIgnoreCase("edge")) {
 			int tmpSource = 0;

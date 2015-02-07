@@ -685,6 +685,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				name = name.replace(".colpn", "");
 				name = name.replace(".sptpt", "");
 				setName(name);
+				
+				int nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size() - 1;
+				int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
+				GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(SIN).getGraphPanel();
+				graphPanel.setOriginSize(graphPanel.getSize());
+				
 			}
 			// Format INY
 			if (path.endsWith(".pnt")) {
@@ -867,10 +873,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda zwracająca identyfikator arkusza sieci.
-	 * @return int - id arkusza sieci
+	 * Metoda zwracająca identyfikator czystego arkusza sieci. Jeśli już jest jakaś sieć - tworzy
+	 * nową zakłądkę i zwraca jej numer. 
+	 * @return int - id arkusza sieci do zapełnienia
 	 */
-	public int checkSheetID() {
+	public int returnCleanSheetID() {
 		int SID = 0;
 
 		if (getData().nodes.isEmpty()) {

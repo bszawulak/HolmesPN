@@ -42,7 +42,7 @@ public class AbyssReader {
 			XStream xstream = new XStream(new StaxDriver());
 			xstream.alias("petriNet", PetriNetData.class);
 			PetriNetData PND = (PetriNetData) xstream.fromXML(source);
-			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().checkSheetID();
+			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();
 			
 			//IdGenerator.setStartId(0);
 			//IdGenerator.setPlaceId(0);
@@ -71,7 +71,7 @@ public class AbyssReader {
 					maxGlobalId = n.getID();
 			}
 			
-			setWorkframeBoundary(PND.nodes);
+			setWorkframeBoundary(PND.nodes); //ustawianie szerokości okna
 			getNodeArray().addAll(PND.nodes);
 			getArcArray().addAll(PND.arcs);
 			pnName = PND.netName;
@@ -81,7 +81,7 @@ public class AbyssReader {
 			IdGenerator.setStartId(maxGlobalId+1);
 			
 			xstream.fromXML(source);
-			GUIManager.getDefaultGUIManager().log("Petri net successfully read from file "+path, "text", true);
+			GUIManager.getDefaultGUIManager().log("Petri net (.abyss) successfully read from file "+path, "text", true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
@@ -112,6 +112,8 @@ public class AbyssReader {
 		
 		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0).getGraphPanel();
 		graphPanel.setSize(new Dimension(x + 90, y + 90));
+		
+		graphPanel.setOriginSize(graphPanel.getSize());
 	}
 	
 	public String getPNname() {

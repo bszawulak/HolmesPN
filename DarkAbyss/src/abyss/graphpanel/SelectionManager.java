@@ -446,11 +446,11 @@ public class SelectionManager {
 		}
 		
 		//dodawanie innych miejsc dla samego portalu do selectedElementLocations
-		ElementLocation nodeSelecredEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
-		Node nodeSelected = nodeSelecredEL.getParentNode(); //wybrany wierzchołek
+		ElementLocation nodeSelectedEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
+		Node nodeSelected = nodeSelectedEL.getParentNode(); //wybrany wierzchołek
 		ArrayList<ElementLocation> otherNodes = nodeSelected.getElementLocations(); //lista jego (innych?) lokacji
 		for (ElementLocation el : otherNodes) { 
-			if(!el.equals(nodeSelecredEL)) {
+			if(el.equals(nodeSelectedEL) == false) {
 				selectedElementLocations.add(el);
 			}
 		}
@@ -459,7 +459,7 @@ public class SelectionManager {
 			if (el.getParentNode().isPortal()) //usuwanie statusu portal
 				for (ElementLocation e : el.getParentNode().getNodeLocations())
 					e.setPortalSelected(false);
-			if (!el.getParentNode().removeElementLocation(el))
+			if (el.getParentNode().removeElementLocation(el) == false)
 				this.getGraphPanelNodes().remove(el.getParentNode()); //usuwanie węzła sieci z danych sieci
 		}
 		
@@ -763,17 +763,17 @@ public class SelectionManager {
 		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
 			ElementLocation el = i.next();
 			Node n = el.getParentNode();
-			// if ElementLocation was the only Node location, it's deleted
+			// jeżeli ElementLocation to jedyna lokalizacja dla Node, tutaj jest kasowana:
 			if (n.removeElementLocation(el) == false) {
 				this.getGraphPanelNodes().remove(n);
 			}
-			// deletes all in arcs of current ElementLocation
+			// kasowanie wszystkich in-arcs danej ElementLocation
 			for (Iterator<Arc> j = el.getInArcs().iterator(); j.hasNext();) {
 
 				this.getGraphPanelArcs().remove(j.next());
 				j.remove();
 			}
-			// deletes all out arcs of current ElementLocation
+			// kasowanie wszystkich out-arcs danej ElementLocation
 			for (Iterator<Arc> j = el.getOutArcs().iterator(); j.hasNext();) {
 
 				this.getGraphPanelArcs().remove(j.next());
@@ -781,7 +781,7 @@ public class SelectionManager {
 			}
 			i.remove();
 		}
-		// deletes all selected Arcs
+		// kasuje wszystkie zaznaczone łuki:
 		for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
 			Arc a = i.next();
 			this.getGraphPanelArcs().remove(a);
@@ -793,7 +793,7 @@ public class SelectionManager {
 			}
 			i.remove();
 		}
-		// as a fascist, clears all the selection list
+		// Kasuj wszystko. I wszystkich. Wszędzie. Kill'em all:
 		this.getSelectedArcs().clear();
 		this.getSelectedElementLocations().clear();
 		this.getGraphPanel().repaint();

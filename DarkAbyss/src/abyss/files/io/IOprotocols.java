@@ -251,9 +251,9 @@ public class IOprotocols {
 			
 			for (int i = 0; i < transitions.size(); i++) {
 				if(transNo >= 100)
-					pw.print(conIntToStr(true,i));
+					pw.print(convertIntToStr(true,i));
 				else
-					pw.print(conIntToStr(false,i));
+					pw.print(convertIntToStr(false,i));
 				
 				if (i == (multipl*delimiter) - 1) {
 					pw.print("\r\n");
@@ -268,17 +268,17 @@ public class IOprotocols {
 			for (int i = 0; i < invariants.size(); i++) { //po wszystkich inwariantach
 				
 				if(transNo >= 100) {
-					pw.print(conIntToStr(true,i) + " |   ");
+					pw.print(convertIntToStr(true,i) + " |   ");
 				} else
-					pw.print(conIntToStr(false,i) + " |   ");
+					pw.print(convertIntToStr(false,i) + " |   ");
 				
 				multipl = 1;
 				for (int t = 0; t < invariants.get(i).size(); t++) { //po wszystkich tranzycja inwariantu
 					int tr = invariants.get(i).get(t); // nr tranzycji
 					if (transNo >= 100)
-						pw.print(conIntToStr(true, tr)); //tutaj wstawiamy wartość dla tranz. w inw.
+						pw.print(convertIntToStr(true, tr)); //tutaj wstawiamy wartość dla tranz. w inw.
 					else
-						pw.print(conIntToStr(false, tr)); //tutaj wstawiamy wartość dla tranz. w inw.
+						pw.print(convertIntToStr(false, tr)); //tutaj wstawiamy wartość dla tranz. w inw.
 					
 					if (t == (multipl*delimiter)-1 ) { //rozdzielnik wierszy
 						pw.print("\r\n");
@@ -309,7 +309,7 @@ public class IOprotocols {
 	 * @param tr int - liczba do konwersji
 	 * @return String - liczba po konwersji
 	 */
-	private String conIntToStr(boolean large, int tr) {
+	private String convertIntToStr(boolean large, int tr) {
 		//String result = "";
 		if(large) {
 			if(tr<10)
@@ -358,12 +358,12 @@ public class IOprotocols {
 	}
 
 	/**
-	 * Czyta plik PNT w formacie INA z siecia standardowa
+	 * Czyta plik sieci petriego w formacie PNT (INA)
 	 * @param scieżka String - scieżka do pliku
 	 */
 	public void readPNT(String sciezka) {
 		try {
-			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().checkSheetID();	
+			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();	
 			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
 			String wczytanaLinia = buffer.readLine();
@@ -587,9 +587,11 @@ public class IOprotocols {
 						graphPanel.setSize(new Dimension(elemArray.get(tmpX)
 								.getPosition().x + 90, elemArray.get(tmpY).getPosition().y + 90));
 					}
+					graphPanel.setOriginSize(graphPanel.getSize());
 					break;
 				}
 			}
+			
 			in.close();
 			GUIManager.getDefaultGUIManager().log("Petri net from INA .pnt file successfully read.", "text", true);
 		} catch (Exception e) {

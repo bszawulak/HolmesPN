@@ -31,7 +31,9 @@ import abyss.workspace.WorkspaceSheet;
  *
  */
 public class GraphPanel extends JComponent {
+	//BACKUP: -5746225670483573975L; nie ruszać poniższej zmiennej
 	private static final long serialVersionUID = -5746225670483573975L;
+	
 	private static final int meshSize = 20;
 	private PetriNet petriNet;
 	private ArrayList<Node> nodes = new ArrayList<Node>();
@@ -128,7 +130,7 @@ public class GraphPanel extends JComponent {
 				//image = getToolkit().getImage(getClass().getResource("/cursors/"+ this.getDrawMode().toString() + ".gif") );
 				image = Tools.getImageFromIcon("/cursors/"+ this.getDrawMode().toString() + ".gif");
 			} catch (Exception e ) {
-				//i tak nic nie pomoże, jak powyższe się zawali. Taka nasza Java piękna i wesoła.
+				//i tak nic nie pomoże, jak powyższe się wywali. Taka nasza Java piękna i wesoła.
 			}
 			Point hotSpot = new Point(0, 0);
 			Cursor cursor = toolkit.createCustomCursor(image, hotSpot, this
@@ -285,6 +287,8 @@ public class GraphPanel extends JComponent {
 		if (getOriginSize().width * zoom / 100 < 10)
 			return;
 		
+		
+		
 		this.zoom = zoom;
 		//System.out.println(this.getOriginSize().width * zoom / 100);
 		//this.setSize(this.getOriginSize().width * zoom / 100, this.getOriginSize().height * zoom / 100);
@@ -390,8 +394,16 @@ public class GraphPanel extends JComponent {
 	 * 		false w przypadku przeciwnym
 	 */
 	public boolean isLegalLocation(Point point) {
-		if (point.x > 20 && point.y > 20 && point.x < (getSize().width - 20)
-				&& point.y < (getSize().height - 20)) {
+		//TODO poprawić dla zoom: done. Przetestować: ongoing...
+		//int panelWidht = getSize().width;
+		//int panelHeight = getSize().height;
+		
+		Dimension orgSize = getOriginSize();
+		int panelWidht = orgSize.width;
+		int panelHeight = orgSize.height;
+		
+		//if(point.x > 20 && point.y > 20 && point.x < (getSize().width - 20) && point.y < (getSize().height - 20)) {
+		if(point.x > 20 && point.y > 20 && point.x < (panelWidht - 20) && point.y < (panelHeight - 20)) {
 			return true;
 		} else {
 			return false;
@@ -687,7 +699,7 @@ public class GraphPanel extends JComponent {
 		}
 
 		/**
-		 * Przeciążona metoda \textit{mousePressed} w klasie jjava.awt.event.MouseAdapter,
+		 * Przeciążona metoda mousePressed w klasie java.awt.event.MouseAdapter,
 		 * zostaje wywołana za każdym razem, gdy którekolwiek z klawiszy myszy zostanie
 		 * naciśnięty nad obszarem arkusza. W następstwie tego zdarzenia sprawdzane jest dla
 		 * miejsca kliknięcia czy zostały spełnione warunki przecięcia z którymkolwiek z lokalizacji
@@ -702,7 +714,7 @@ public class GraphPanel extends JComponent {
 			mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);
 			ElementLocation el = getSelectionManager().getPossiblySelectedElementLocation(mousePt);
 			Arc a = getSelectionManager().getPossiblySelectedArc(mousePt);
-			// nie klinięto ani Node ani Arc
+			// nie kliknięto ani w Node ani w Arc
 			if (el == null && a == null) {
 				if (e.getButton() == MouseEvent.BUTTON3) {
 					if (getDrawMode() == DrawModes.POINTER)
@@ -734,8 +746,8 @@ public class GraphPanel extends JComponent {
 					break;
 				}
 			}
-			// klinieto w Node, mozliwe ze tez a Arc, ale nie zostanie ono
-			// zaznaczone, ponieważ to Node jest na wierzchu
+			// kliknięto w Node, możliwe ze też w łuk, ale nie zostanie on
+			// zaznaczony, ponieważ to Node jest na wierzchu
 			else if (el != null) {
 				if (getDrawMode() == DrawModes.ARC) {
 					getSelectionManager().deselectAllElements();
@@ -769,7 +781,7 @@ public class GraphPanel extends JComponent {
 						getTransitionPopupMenu().show(e);
 				}
 			}
-			// klinieto w Arc, wiec zostanie ono zaznaczone
+			// kliknięto w Arc, wiec zostanie on zaznaczony
 			else if (a != null) {
 				if (getDrawMode() == DrawModes.ERASER) {
 					getSelectionManager().deleteArc(a);
@@ -802,7 +814,7 @@ public class GraphPanel extends JComponent {
 		Point delta = new Point();
 
 		/**
-		 * Przeciążona metoda mouseDragged w klasie jjava.awt.event.MouseMotionAdapter,
+		 * Przeciążona metoda mouseDragged w klasie java.awt.event.MouseMotionAdapter,
 		 * zostaje wywołana za każdym razem, gdy którekolwiek z klawiszy myszy zostanie
 		 * naciśnięty w połączeniu z przesuwaniem myszy nad obszarem arkusza. W następstwie
 		 * tego zdarzenia sprawdzane jest dla miejsca kliknięcia zostały spełnione warunki
@@ -829,7 +841,7 @@ public class GraphPanel extends JComponent {
 			} else {
 				delta.setLocation(dragPoint.getX() - mousePt.x, dragPoint.getY() - mousePt.y);
 				for (ElementLocation el : getSelectionManager().getSelectedElementLocations()) {
-					if (isSnapToMesh())
+					if (isSnapToMesh()) //TODO
 						el.updateLocationWithMeshSnap(delta, meshSize);
 					else
 						el.updateLocation(delta);
@@ -869,12 +881,18 @@ public class GraphPanel extends JComponent {
 		 * @param e MouseWheelEvent - obiekt klasy przekazywany w efekcie użycia wałka myszy
 		 */
 		public void mouseWheelMoved(MouseWheelEvent e) {
-			if (e.isControlDown()) //zoom
+			//TODO: zoom z centrowaniem:
+			Point dragPoint = e.getPoint();
+			dragPoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
+
+			if (e.isControlDown()) { //zoom
+				//TODO: tu wstawić centrowanie na kursor
 				setZoom(getZoom() - 10 * e.getWheelRotation(), getZoom());
-			else if (e.isShiftDown()) // przewijanie góra/dół
+			} else if (e.isShiftDown()) { // przewijanie góra/dół
 				scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 30);
-			else // przewijanie lewo/prawo
+			} else {// przewijanie lewo/prawo
 				scrollSheetVertical(e.getWheelRotation() * e.getScrollAmount() * 30);
+			}
 		}
 	}
 }

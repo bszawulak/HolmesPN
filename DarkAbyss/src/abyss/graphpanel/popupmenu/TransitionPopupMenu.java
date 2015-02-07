@@ -27,7 +27,7 @@ public class TransitionPopupMenu extends PetriNetElementPopupMenu {
 					}
 				});
 		
-		this.addMenuItem("Clone one Transition into Portals", "portal.png",
+		this.addMenuItem("Clone one Transition into Portal", "portal.png",
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						getGraphPanel().getSelectionManager().cloneNodeIntoPortal();

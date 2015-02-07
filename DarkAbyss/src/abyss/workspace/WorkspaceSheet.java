@@ -48,7 +48,7 @@ public class WorkspaceSheet extends JScrollPane {
 		panel.add(getGraphPanel());
 		panel.setOpaque(true);
 		getViewport().add(panel);
-
+		graphPanel.setOriginSize(graphPanel.getSize());
 		id = ID;
 	}
 

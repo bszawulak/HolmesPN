@@ -1250,8 +1250,8 @@ public class AbyssDockWindowsTable extends JPanel {
 			heightOrg =  sheet.getGraphPanel().getSize().height;
 		}
 		
-		widthOrg = (int) (((double)100/(double)zoom) * widthOrg);
-		heightOrg = (int) (((double)100/(double)zoom) * heightOrg);
+		//widthOrg = (int) (((double)100/(double)zoom) * widthOrg);
+		//heightOrg = (int) (((double)100/(double)zoom) * heightOrg);
 		
 		JLabel zoomLabel1 = new JLabel("Zoom:", JLabel.LEFT);
 		zoomLabel1.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);

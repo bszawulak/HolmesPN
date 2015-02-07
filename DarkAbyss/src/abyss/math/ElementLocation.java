@@ -112,7 +112,8 @@ public class ElementLocation implements Serializable {
 	 * @param meshSize int - domyślnie 20, zależnie od ruchu myszy
 	 */
 	public void updateLocationWithMeshSnap(Point delta, int meshSize) {
-		notSnappedPosition.setLocation(notSnappedPosition.x + delta.x, notSnappedPosition.y + delta.y);
+		Point notSnPos = notSnappedPosition;
+		notSnappedPosition.setLocation(notSnPos.x + delta.x, notSnPos.y + delta.y);
 		Point tempPosition = new Point((notSnappedPosition.x + delta.x) / meshSize * meshSize, (notSnappedPosition.y + delta.y) / meshSize * meshSize);
 		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
 		int sheetIndex = workspace.getIndexOfId(sheetId);

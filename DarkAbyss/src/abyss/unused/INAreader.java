@@ -48,7 +48,7 @@ public class INAreader {
 
 	public void read(String sciezka) {
 		try {
-			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().checkSheetID();
+			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();
 
 			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
@@ -283,27 +283,23 @@ public class INAreader {
 						}
 					}
 					if (xFound == true && yFound == false) {
-						graphPanel.setSize(new Dimension(elemArray.get(tmpX)
-								.getPosition().x + 90,
+						graphPanel.setSize(new Dimension(elemArray.get(tmpX).getPosition().x + 90,
 								graphPanel.getSize().height));
 					}
 					if (yFound == true && xFound == false) {
 						graphPanel.setSize(new Dimension(
-								graphPanel.getSize().width, elemArray.get(tmpY)
-										.getPosition().y + 90));
+								graphPanel.getSize().width, elemArray.get(tmpY).getPosition().y + 90));
 					}
 					if (xFound == true && yFound == true) {
 						graphPanel.setSize(new Dimension(elemArray.get(tmpX)
-								.getPosition().x + 90, elemArray.get(tmpY)
-								.getPosition().y + 90));
+								.getPosition().x + 90, elemArray.get(tmpY).getPosition().y + 90));
 					}
 					break;
 				}
 			}
 			in.close();
 		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
+			GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", true);
 		}
-
 	}
 }

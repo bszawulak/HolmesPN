@@ -92,7 +92,7 @@ public class NetHandler_Time extends NetHandler {
 		System.out.println(qName);
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
-			nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().checkSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
+			nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 		}
 		// Ustawianie typu noda
 		if (qName.equalsIgnoreCase("nodeclass")) {
