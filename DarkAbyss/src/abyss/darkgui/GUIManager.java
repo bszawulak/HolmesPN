@@ -210,9 +210,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setSelectionBox(new AbyssDockWindow(DockWindowType.SELECTOR));
 		setInvariantsBox(new AbyssDockWindow(DockWindowType.InvANALYZER));
 		setClusterSelectionBox(new AbyssDockWindow(DockWindowType.ClusterSELECTOR));
-		
-			//aktywuj obiekt podokna wyświetlania zbiorów MCT
-		setMctBox(new AbyssDockWindow(DockWindowType.MctANALYZER)); 
+		setMctBox(new AbyssDockWindow(DockWindowType.MctANALYZER)); //aktywuj obiekt podokna wyświetlania zbiorów MCT
 		setInvSim(new AbyssDockWindow(DockWindowType.InvSIMULATOR));
 		
 		// create menu
@@ -765,7 +763,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Opis: I have no idea...
+	 * Metoda pomocnicza wywoływana w trakcie tworzenia podokien Abyss (inwarianty, mct, inne, także 
+	 * narzedzia do rysowania).
 	 * @param dockable Dockable
 	 * @param listener DockingListener
 	 * @return Dockable
@@ -802,10 +801,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	/**
 	 * Metoda ta ustawia obiekt podokna dla podświetlania inwariantów sieci.
-	 * @param analyzerBox AbyssDockWindow - podokno inwariantów
+	 * @param invariantsBox AbyssDockWindow - podokno inwariantów
 	 */
-	public void setInvariantsBox(AbyssDockWindow analyzerBox) {
-		this.invariantsBox = analyzerBox;
+	public void setInvariantsBox(AbyssDockWindow invariantsBox) {
+		this.invariantsBox = invariantsBox;
 	}
 	
 	/**
@@ -939,10 +938,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void generateMCT() {
 		DarkAnalyzer analyzer = getWorkspace().getProject().getAnalyzer();
-		
 		ArrayList<ArrayList<InvariantTransition>> invTr = analyzer.gettInvariants();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT(invTr);
-		
 		getMctBox().showMCT(mct);
 	}
 	
@@ -951,6 +948,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void showClusterSelectionBox(ClusterDataPackage data){
 		getClusterSelectionBox().showClusterSelector(data);
+		GUIManager.getDefaultGUIManager().reset.setClustersStatus(true); //status klastrów: wczytane
 	}
 	
 	/**

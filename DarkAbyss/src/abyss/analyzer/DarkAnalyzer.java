@@ -92,6 +92,7 @@ public class DarkAnalyzer {
 			if ((currentMCT.size() > 0) && !mctGroups.contains(currentMCT))
 				mctGroups.add(currentMCT);
 		}
+		GUIManager.getDefaultGUIManager().reset.setMCTStatus(true); //status zbiorów MCT: wczytane
 		return mctGroups;
 	}
 

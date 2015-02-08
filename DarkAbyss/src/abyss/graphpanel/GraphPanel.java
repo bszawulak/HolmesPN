@@ -397,7 +397,6 @@ public class GraphPanel extends JComponent {
 		//TODO poprawić dla zoom: done. Przetestować: ongoing...
 		//int panelWidht = getSize().width;
 		//int panelHeight = getSize().height;
-		
 		Dimension orgSize = getOriginSize();
 		int panelWidht = orgSize.width;
 		int panelHeight = orgSize.height;
@@ -670,10 +669,10 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Prywatna klasa wewnątrz GraphPanel, zajmująca się realizacją interakcji
-	 * wywoływanych ze strony kliknięć myszą. 
+	 * Prywatna klasa wewnątrz GraphPanel, zajmująca się realizacją funkcji programu
+	 * wywoływanych za pomocą myszy. 
 	 * @author students
-	 *
+	 * @author MR
 	 */
 	private class MouseHandler extends MouseAdapter {
 		/**
@@ -724,26 +723,39 @@ public class GraphPanel extends JComponent {
 				if (!e.isShiftDown() && !e.isControlDown()) {
 					getSelectionManager().deselectAllElements();
 				}
+				
+				if(e.isAltDown()) //wycentruj ekran
+					centerOnPoint(mousePt);
+				
 				switch (getDrawMode()) {
-				case POINTER:
-					getSelectionManager().selectSheet();
-					setSelectingRect(new Rectangle(mousePt.x, mousePt.y, 0, 0));
-					clearDrawnArc();
-					break;
-				case PLACE:
-					addNewPlace(mousePt);
-					break;
-				case TRANSITION:
-					addNewTransition(mousePt);
-					break;
-				case ARC:
-					clearDrawnArc();
-					break;
-				case TIMETRANSITION:
-					addNewTimeTransition(mousePt);
-					break;
-				default:
-					break;
+					case POINTER:
+						getSelectionManager().selectSheet();
+						setSelectingRect(new Rectangle(mousePt.x, mousePt.y, 0, 0));
+						clearDrawnArc();
+						break;
+					case PLACE:
+						addNewPlace(mousePt);
+						
+						//TODO: reset
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						break;
+					case TRANSITION:
+						addNewTransition(mousePt);
+						
+						//TODO: reset
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						break;
+					case ARC:
+						clearDrawnArc();
+						break;
+					case TIMETRANSITION:
+						addNewTimeTransition(mousePt);
+						
+						//TODO: reset
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						break;
+					default:
+						break;
 				}
 			}
 			// kliknięto w Node, możliwe ze też w łuk, ale nie zostanie on
@@ -755,14 +767,19 @@ public class GraphPanel extends JComponent {
 						drawnArc = new Arc(el);
 					} else {
 						if (drawnArc.checkIsCorect(el)) {
-							Arc arc = new Arc(IdGenerator.getNextId(),
-									drawnArc.getStartLocation(), el);
+							Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), el);
 							getArcs().add(arc);
+							
+							//TODO: reset
+							GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
 						}
 						clearDrawnArc();
 					}
 				} else if (getDrawMode() == DrawModes.ERASER) {
 					getSelectionManager().deleteElementLocation(el);
+					
+					//TODO: reset
+					GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
 				} else {
 					if (e.isShiftDown())
 						getSelectionManager().selectElementLocation(el);
@@ -785,6 +802,9 @@ public class GraphPanel extends JComponent {
 			else if (a != null) {
 				if (getDrawMode() == DrawModes.ERASER) {
 					getSelectionManager().deleteArc(a);
+					
+					//TODO: reset
+					GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
 				} else {
 					if (e.isShiftDown())
 						a.setSelected(true);
@@ -841,7 +861,7 @@ public class GraphPanel extends JComponent {
 			} else {
 				delta.setLocation(dragPoint.getX() - mousePt.x, dragPoint.getY() - mousePt.y);
 				for (ElementLocation el : getSelectionManager().getSelectedElementLocations()) {
-					if (isSnapToMesh()) //TODO
+					if (isSnapToMesh())
 						el.updateLocationWithMeshSnap(delta, meshSize);
 					else
 						el.updateLocation(delta);
@@ -880,19 +900,73 @@ public class GraphPanel extends JComponent {
 		 * też SHIFT czy też żaden klawisz - działania są różne.
 		 * @param e MouseWheelEvent - obiekt klasy przekazywany w efekcie użycia wałka myszy
 		 */
+		@SuppressWarnings("unused")
 		public void mouseWheelMoved(MouseWheelEvent e) {
-			//TODO: zoom z centrowaniem:
-			Point dragPoint = e.getPoint();
-			dragPoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
-
 			if (e.isControlDown()) { //zoom
-				//TODO: tu wstawić centrowanie na kursor
+				double oldZoom = getZoom();
 				setZoom(getZoom() - 10 * e.getWheelRotation(), getZoom());
+				double newZoom = getZoom();
+	
+				//double deviation = newZoom - oldZoom;
+				Point dragPoint = e.getPoint();
+				Point newPoint = new Point();
+				newPoint.setLocation(e.getX() * 100 / newZoom, e.getY() * 100 / newZoom);
+				
+				centerOnPoint(newPoint);
+				
+				try {
+					//Robot robot = new Robot();
+					//robot.mouseMove(dragPoint.x, dragPoint.y);
+				} catch (Exception e1) {
+					//e1.printStackTrace();
+				}
 			} else if (e.isShiftDown()) { // przewijanie góra/dół
 				scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 30);
 			} else {// przewijanie lewo/prawo
 				scrollSheetVertical(e.getWheelRotation() * e.getScrollAmount() * 30);
 			}
 		}
+	}
+
+	/**
+	 * Zadaniem tej metody jest wycentrowanie ekranu na klikniętych współrzędnych.
+	 * @param mousePt Point - współrzędne centrowania
+	 */
+	public void centerOnPoint(Point mousePt) {
+		//CompositeTabDock xxx = GUIManager.getDefaultGUIManager().getWorkspace().getWorkspaceDock();
+		WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet();
+		int visibleX = ws.getWidth(); 
+		int visibleY = ws.getHeight(); //tyle pikseli dokładnie widać na ekranie
+		//jeśli odejmiemy powyższe od getSize otrzymamy dane ile w pionie i w poziomie nie widać
+		int clickedX = mousePt.x;
+		int clickedY = mousePt.y;
+		
+		int centerX = visibleX / 2;
+		int centerY = visibleY / 2; //współrzedne środka panelu
+		
+		int barHorX =  ws.getHorizontalScrollBar().getValue(); // aktualna wartość przesunięcia 
+		int barVerY =  ws.getVerticalScrollBar().getValue();
+		
+		centerX += barHorX;
+		centerY += barVerY;
+		
+		double zoom = getZoom();
+		zoom = 100/zoom;
+		centerX *= zoom;
+		centerY *= zoom;
+		
+		if(clickedX <= centerX && clickedY <= centerY) { //I cwiartka, przesuwanie w lewo/góra
+			scrollSheetHorizontal(-(centerX - clickedX)); // w lewo
+			scrollSheetVertical(-(centerY - clickedY)); //w górę
+		} else if(clickedX > centerX && clickedY <= centerY) { //II cwiartka, przesuwanie w prawo/góra
+			scrollSheetHorizontal(clickedX - centerX); //w prawo
+			scrollSheetVertical(-(centerY - clickedY)); //w górę
+		} else if(clickedX > centerX && clickedY > centerY) { //III cwiartka, przesuwanie w prawo/dół
+			scrollSheetHorizontal(clickedX - centerX); //w prawo
+			scrollSheetVertical(clickedY - centerY); //w dół
+		} else if(clickedX <= centerX && clickedY > centerY) { //IV cwiartka, przesuwanie w lewo/dół
+			scrollSheetHorizontal(-(centerX - clickedX)); // w lewo
+			scrollSheetVertical(clickedY - centerY); //w dół
+		} 
 	}
 }

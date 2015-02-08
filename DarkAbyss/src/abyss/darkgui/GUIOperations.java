@@ -114,8 +114,6 @@ public class GUIOperations {
 	 * Metoda odpowiedzialna za zapis wygenerowanych inwariantów do pliku programu INA.
 	 */
 	public void exportGeneratedInvariants() {
-		//TODO: da się: Tools.lastExtension
-
 		String lastPath = overlord.getLastPath();
 		JFileChooser fc;
 		if(lastPath==null)
@@ -165,8 +163,6 @@ public class GUIOperations {
 	 * Metoda odpowiedzialna za eksport projektu do pliku graficznego w określonym formacie.
 	 */
 	public void exportProjectToImage() {
-		//TODO: da się: Tools.lastExtension
-
 		String lastPath = overlord.getLastPath();
 		JFileChooser fc;
 		if(lastPath==null)
@@ -403,9 +399,7 @@ public class GUIOperations {
 			//wczytywanie inwariantów do systemu:
 			PetriNet project = overlord.getWorkspace().getProject();
 			project.loadInvariantsFromFile(invariantsFile.getPath());
-
 			overlord.getInvariantsBox().showInvariants(project.getInaInvariants());
-			//overlord.getInvariantsBox().showExternalInvariants(project.getInaInvariants());
 			overlord.getSimulatorBox().createSimulatorProperties();
 		
 			//co dalej z plikiem?

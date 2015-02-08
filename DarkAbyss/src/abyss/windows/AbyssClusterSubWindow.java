@@ -616,9 +616,7 @@ public class AbyssClusterSubWindow extends JFrame {
 					e.printStackTrace();
 				}
 			}
-			
 			targetDir = path;
-			
 		} else {
 			targetDir = clusterPath;
 		}
@@ -701,21 +699,17 @@ public class AbyssClusterSubWindow extends JFrame {
 			dataCore.clSize = new ArrayList<Integer>(fullData.metaData.clusterSize);
 			
 			GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Abyss (JFrame)
-			
 			deleteTmpFile(resultFiles);
 			
 			JOptionPane.showMessageDialog(null, "Operation successfull. Clusters are ready to show.", 
 					"Status",JOptionPane.INFORMATION_MESSAGE);
-			
 		} else {
 			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
 					+ "contacting authors about the problem please attach *all* three files mentioned in"
 					+ "this log above this message.", "error", true);
 		}
-		
 	}
-	
-	
+
 	/**
 	 * Metoda obsługuje zdarzenie kliknięcia przycisku eksportu danych do okna głównego.
 	 */
@@ -779,6 +773,5 @@ public class AbyssClusterSubWindow extends JFrame {
 					+ "contacting authors about the problem please attach *all* three files mentioned in"
 					+ "this log above this message.", "error", true);
 		}
-		
 	}
 }

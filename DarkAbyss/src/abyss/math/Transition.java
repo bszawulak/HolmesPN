@@ -496,7 +496,7 @@ public class Transition extends Node {
 	 * @param containingInvariants ArrayList[ArrayList[Transition]] - macierz niezmienników
 	 */
 	public void setContainingInvariants(ArrayList<ArrayList<Transition>> containingInvariants) {
-		//this.containingInvariants = containingInvariants;
+		this.containingInvariants = containingInvariants;
 	}
 	
 	/**

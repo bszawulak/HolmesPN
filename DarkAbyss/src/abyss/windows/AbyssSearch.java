@@ -23,8 +23,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.text.DefaultFormatter;
 
-import com.javadocking.dock.CompositeTabDock;
-
 import abyss.darkgui.GUIManager;
 import abyss.math.ElementLocation;
 import abyss.math.Place;
@@ -439,9 +437,12 @@ public class AbyssSearch extends JFrame {
 			ws.getGraphPanel().getSelectionManager().selectOneElementLocation(loc1st); //zaznacz element
 			
 			//Przewinięcie na zaznaczony element:
-			CompositeTabDock xxx = GUIManager.getDefaultGUIManager().getWorkspace().getWorkspaceDock();
-			int visibleX = xxx.getWidth(); //widocza na ekranie szerokość panelu rysowania (+24)
-			int visibleY = xxx.getHeight(); //j.w. wysokość (+63)
+			//CompositeTabDock xxx = GUIManager.getDefaultGUIManager().getWorkspace().getWorkspaceDock();
+			//int visibleX = xxx.getWidth(); //widocza na ekranie szerokość panelu rysowania (+24)
+			//int visibleY = xxx.getHeight(); //j.w. wysokość (+63)
+			
+			int visibleX = ws.getWidth(); 
+			int visibleY = ws.getHeight(); //tyle pikseli dokładnie widać na ekranie
 
 			int barHorX =  ws.getHorizontalScrollBar().getValue(); // aktualna wartość przesunięcia 
 			int barVerY =  ws.getVerticalScrollBar().getValue();

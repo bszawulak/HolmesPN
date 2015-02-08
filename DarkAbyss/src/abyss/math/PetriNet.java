@@ -96,8 +96,17 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.workspace = workspace;
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
 		this.setAnalyzer(new DarkAnalyzer(this));
-		communicationProtocol = new IOprotocols();
+		resetComm();
 		dataCore.netName = name;
+	}
+	
+	/**
+	 * Reset obiektu protokołu komunikacyjnego. Odpowiada on za większość operacji I/O, posiada
+	 * sporo pół wewnętrznych, które najłatwiej zresetować wymieniając cały obiekt. Czyszczeniem
+	 * pamięci niech zajmie się JRE.
+	 */
+	public void resetComm() {
+		communicationProtocol = new IOprotocols();
 	}
 
 	/**
@@ -801,7 +810,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		try {
 			communicationProtocol.readINV(sciezka);
 			setInvariantsMatrix(communicationProtocol.getInvariantsList());
-			//invariantsMatrix = communicationProtocol.getInvariantsList();
+			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true); //status inwariantów: wczytane
 		} catch (Throwable err) {
 			err.printStackTrace();
 			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);

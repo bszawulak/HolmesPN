@@ -40,7 +40,7 @@ public class IOprotocols {
 	private ArrayList<Node> nodeArray = new ArrayList<Node>();
 	private ArrayList<Arc> arcArray = new ArrayList<Arc>();
 	private ArrayList<ElementLocation> elemArray = new ArrayList<ElementLocation>();
-	private int MatSiz = 999999;
+	private int MatSiz = 99999;
 	@SuppressWarnings("unused")
 	private String netName = "";
 	private int globalPlaceNumber = 0;

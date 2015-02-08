@@ -62,22 +62,22 @@ public class AbyssDockWindow extends SingleDock {
 
 		if (type == DockWindowType.EDITOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("NetElement", scrollPane,
-					"Net Element"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"Net Element"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == DockWindowType.SIMULATOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Simulator", scrollPane,
-					"Simulator"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"Simulator"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == DockWindowType.SELECTOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Selection", scrollPane,
-					"Selection"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"Selection"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == DockWindowType.InvANALYZER)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_analysis", scrollPane,
-					"Invariants"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"Invariants"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == DockWindowType.MctANALYZER)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("MCT_Groups", scrollPane,
-					"MCT"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"MCT"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == DockWindowType.ClusterSELECTOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Clusters_Selection", scrollPane,
-					"Clusters"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"Clusters"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		
 		else if (type == DockWindowType.InvSIMULATOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_simulator", scrollPane,
@@ -231,7 +231,7 @@ public class AbyssDockWindow extends SingleDock {
 	 * o elementach sieci.
 	 * @return AbyssDockWindowsTable - obiekt podokna z ramach okna właściwości
 	 */
-	private void setCurrentDockWindow(AbyssDockWindowsTable properties) {
+	public void setCurrentDockWindow(AbyssDockWindowsTable properties) {
 		this.dockWindowPanel = properties;
 	}
 

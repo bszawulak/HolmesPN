@@ -1367,6 +1367,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		} else {
 			mode = INVARIANTS;
 			invariantsDock2Form = invariants;
+			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
 		}
 		
 		int colA_posX = 10;
@@ -1475,11 +1476,12 @@ public class AbyssDockWindowsTable extends JPanel {
 	 */
 	@SuppressWarnings("unchecked")
 	public AbyssDockWindowsTable(ArrayList<ArrayList<Transition>> mct, AbyssDockWindow.DockWindowType type) {
-		if(!(type == DockWindowType.MctANALYZER)) {
+		if(!(type == DockWindowType.MctANALYZER) || mct == null || mct.size() == 0) {
 			return;
 			//błędna wywołanie
 		} else {
 			mode = MCT;
+			GUIManager.getDefaultGUIManager().reset.setMCTStatus(true);
 		}
 		
 		int colA_posX = 10;
@@ -1624,6 +1626,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		} else {
 			mode = CLUSTERS;
 			clusterColorsData = clusteringData;
+			GUIManager.getDefaultGUIManager().reset.setClustersStatus(true);
 		}
 		
 		int colA_posX = 10;
@@ -2110,5 +2113,26 @@ public class AbyssDockWindowsTable extends JPanel {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Metoda czyści dane o inwariantach.
+	 */
+	public void resetInvariants() {
+		invariantsDock2Form = null;	
+	}
+	
+	/**
+	 * Metoda czyści dane o zbiorach MCT.
+	 */
+	public void resetMCT() {
+		mctGroups = null;	
+	}
+	
+	/**
+	 * Metoda czyści dane o klastrach.
+	 */
+	public void resetClusters() {
+		clusterColorsData = null;	
 	}
 }
