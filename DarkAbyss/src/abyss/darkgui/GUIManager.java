@@ -17,6 +17,7 @@ import abyss.windows.AbyssAbout;
 import abyss.windows.AbyssConsole;
 import abyss.windows.AbyssClusters;
 import abyss.windows.AbyssNetProperties;
+import abyss.windows.AbyssNetTables;
 import abyss.windows.AbyssProgramProperties;
 import abyss.windows.AbyssSearch;
 import abyss.windows.AbyssStateSimulator;
@@ -137,6 +138,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssSearch windowSearch;
 	private AbyssProgramProperties windowProperties;
 	private AbyssStateSimulator windowStateSim;
+	private AbyssNetTables windowNetTables;
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	/**
@@ -146,26 +148,25 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public GUIManager(JFrame frejm) {
 		super(new BorderLayout());
 		guiManager = this;
-		io = new GUIOperations(this); //rise, my minion!!
+		io = new GUIOperations(this); //rise my minion!
 		tex = new TexExporter();
 		reset = new GUIReset();
 		
 		setFrame(frejm);
 		try {	
 			frame.setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
-		} catch (Exception e ) {
-	
-		}
+		} catch (Exception e ) { }
 		
 		frame.getContentPane().add(this);
 		frame.addComponentListener(this);
 		getFrame().getContentPane().add(this);
 		getFrame().addComponentListener(this);
 		
-		createHiddenConsole(); //tworzy ukryte okno konsoli logowania zdarzeń
-		createClusterWindow(); //niewidoczne na starcie okno tabeli klastrów
-		createNetPropertiesWindow(); //niewidoczne na starcie okno właściwości sieci
-		createSearchWindow();
+		createHiddenConsole(); // okno konsoli logowania zdarzeń
+		createClusterWindow(); // okno tabeli klastrów
+		createNetPropertiesWindow(); // okno właściwości sieci
+		createSearchWindow(); // okno wyszukiwania elementów sieci
+		createNetTablesWindow(); // okno tabel sieci
 
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnętrzne zmienne programu
 		
@@ -1064,6 +1065,22 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void showStateSimulatorWindow() {
 		if(windowStateSim != null) {
 			windowStateSim.setVisible(true);
+		}
+	}
+	
+	/**
+	 * Metoda tworzy nowe okno tabel sieci.
+	 */
+	private void createNetTablesWindow() {
+		windowNetTables = new AbyssNetTables(frame);
+	}
+	
+	/**
+	 * Metoda pokazuje okno tabel sieci.
+	 */
+	public void showNetTablesWindow() {
+		if(windowNetTables != null) {
+			windowNetTables.setVisible(true);
 		}
 	}
 	

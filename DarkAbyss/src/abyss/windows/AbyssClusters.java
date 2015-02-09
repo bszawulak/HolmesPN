@@ -352,9 +352,7 @@ public class AbyssClusters extends JFrame {
         model.addColumn("Column20");
         model.addColumn("Column21");
         model.addColumn("Column22");
-        
-       
-        
+
         table = new JTable(model);
         //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
@@ -439,9 +437,8 @@ public class AbyssClusters extends JFrame {
 				new AbyssClusterSubWindow(myself, omg, 1);
 				
 			 } catch (Exception ex) {
-				  
+				  GUIManager.getDefaultGUIManager().log("Critical error when recounting clicked cell.", "error", true);
 			 }
-			 
 		 }
 	}
     
@@ -617,8 +614,7 @@ public class AbyssClusters extends JFrame {
     private void buttonExportTableToExcel() {
 		try{
 			//String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-			GUIManager.getDefaultGUIManager().log("Attempting to export cluster table to excel",
-					"text", true);
+			GUIManager.getDefaultGUIManager().log("Attempting to export cluster table to excel","text", true);
 			
 			String dirPath = Tools.selectDirectoryDialog(getClusterPath(), "Select cluster dir",
 					"Directory with 56 generated R-clusters text files.");

@@ -307,8 +307,7 @@ public class DarkMenu extends JMenuBar {
 		// Net properties
 		JMenuItem propItem = new JMenuItem("Net properties", KeyEvent.VK_1);
 		propItem.setIcon(Tools.getResIcon32("/icons/menu/menu_NetProp.png"));
-		propItem.setAccelerator(KeyStroke.getKeyStroke('P', 
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		propItem.setAccelerator(KeyStroke.getKeyStroke('P', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		propItem.getAccessibleContext().setAccessibleDescription("Show net properties");
 		propItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -319,27 +318,36 @@ public class DarkMenu extends JMenuBar {
 		
 		JMenuItem searchItem = new JMenuItem("Search node...", KeyEvent.VK_2);
 		searchItem.setIcon(Tools.getResIcon32("/icons/menu/menu_search.png"));
-		searchItem.setAccelerator(KeyStroke.getKeyStroke('F', 
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		searchItem.setAccelerator(KeyStroke.getKeyStroke('F', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		searchItem.getAccessibleContext().setAccessibleDescription("Show net properties");
 		searchItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().showSearchWindow();
 			}
 		});
-		netMenu.add(searchItem);	
+		netMenu.add(searchItem);
 
-		JMenuItem netSimItem = new JMenuItem("State Simulator", KeyEvent.VK_2);
+		JMenuItem netSimItem = new JMenuItem("State Simulator", KeyEvent.VK_3);
 		netSimItem.setIcon(Tools.getResIcon32("/icons/menu/menu_stateSim.png"));
-		netSimItem.setAccelerator(KeyStroke.getKeyStroke('Q', 
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		netSimItem.setAccelerator(KeyStroke.getKeyStroke('Q', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		netSimItem.getAccessibleContext().setAccessibleDescription("Show state simulator window");
 		netSimItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().showStateSimulatorWindow();
 			}
 		});
-		netMenu.add(netSimItem);	
+		netMenu.add(netSimItem);
+		
+		JMenuItem netTablesItem = new JMenuItem("Net data tables", KeyEvent.VK_4);
+		netTablesItem.setIcon(Tools.getResIcon32("/icons/menu/menu_netTables.png"));
+		netTablesItem.setAccelerator(KeyStroke.getKeyStroke('X', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		netTablesItem.getAccessibleContext().setAccessibleDescription("Show net data tables window");
+		netTablesItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().showNetTablesWindow();
+			}
+		});
+		netMenu.add(netTablesItem);
 		
 		JMenu texSubMenu = new JMenu("Tex Export");
 		texSubMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));

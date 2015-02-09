@@ -335,6 +335,15 @@ public class Toolbar extends BorderDock {
 			}
 		};
 		analysisDockables.add(createButtonDockable("Clusters", clusterButton));
+		
+		ToolbarButtonAction netTablesButton = new ToolbarButtonAction(this, "Net data tables",
+				Tools.getResIcon48("/icons/toolbar/netTables.png")) {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().showNetTablesWindow(); 
+			}
+		};
+		analysisDockables.add(createButtonDockable("NetTables", netTablesButton));
 
 		ToolbarButtonAction consoleButton = new ToolbarButtonAction(this, "Show console",
 				Tools.getResIcon48("/icons/toolbar/terminal2.png")) {
