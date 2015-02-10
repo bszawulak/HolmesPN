@@ -10,6 +10,9 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -31,6 +34,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	private static final long serialVersionUID = 8429744762731301629L;
 	
 	//interface components:
+	private final JFrame ego;
 	private JFrame parentFrame;
 	private JPanel mainPanel;
 	private JPanel rightSubPanel;
@@ -47,6 +51,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	 * @param parent JFrame - ramka okna głównego
 	 */
 	public AbyssNetTables(JFrame parent) {
+		ego = this;
 		parentFrame = parent;
 		
 		try {
@@ -76,6 +81,14 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		
 		setSize(new Dimension(800,600));
 		addComponentListener(this); //konieczne, aby listenery (przede wszystkim resize) działały
+		addWindowStateListener(new WindowAdapter() {
+			public void windowStateChanged(WindowEvent e) {
+				if(e.getNewState() == JFrame.MAXIMIZED_BOTH) {
+					ego.setExtendedState(JFrame.NORMAL);
+					resizeComponents();
+				}
+			}
+		});
 		
 		mainPanel = new JPanel();
 		mainPanel.setLayout(null);
@@ -83,6 +96,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		mainPanel.add(createButtonsPanel());
 		add(mainPanel);
 	}
+
 
 	/**
 	 * Metoda pomocnicza tworząca panel boczny przycisków.
@@ -185,7 +199,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
         table.getColumnModel().getColumn(1).setHeaderValue("Name");
         table.getColumnModel().getColumn(1).setPreferredWidth(300);
     	table.getColumnModel().getColumn(1).setMinWidth(100);
-    	table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+    	
     	
         table.getColumnModel().getColumn(2).setHeaderValue("Tok:");
         table.getColumnModel().getColumn(2).setPreferredWidth(40);
@@ -215,6 +229,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
         table.setDefaultRenderer(Object.class, tableRenderer);
 
         action.addPlacesToModel(model); // metoda generująca dane o miejscach
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.validate();
     }
     
@@ -250,9 +265,9 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
     	table.getColumnModel().getColumn(3).setMaxWidth(40);
     	
         table.getColumnModel().getColumn(4).setHeaderValue("Fired");
-        table.getColumnModel().getColumn(4).setPreferredWidth(40);
-    	table.getColumnModel().getColumn(4).setMinWidth(40);
-    	table.getColumnModel().getColumn(4).setMaxWidth(40);
+        table.getColumnModel().getColumn(4).setPreferredWidth(60);
+    	table.getColumnModel().getColumn(4).setMinWidth(60);
+    	table.getColumnModel().getColumn(4).setMaxWidth(60);
     	
         table.getColumnModel().getColumn(5).setHeaderValue("Inv");
         table.getColumnModel().getColumn(5).setPreferredWidth(40);
@@ -305,15 +320,18 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	 * tabel i przycisków.
 	 */
 	public void componentResized(ComponentEvent e) {
-		rightSubPanel.setLocation(0, 0);
-		rightSubPanel.setSize(mainPanel.getWidth()-150, mainPanel.getHeight());
-		buttonsPanel.setLocation(rightSubPanel.getWidth(), 0);
-		buttonsPanel.setSize(150, mainPanel.getHeight());
+		resizeComponents();
 	}
 	public void componentHidden(ComponentEvent e) {} //unused
 	public void componentMoved(ComponentEvent e) {} //unused
 	public void componentShown(ComponentEvent e) {} //unused
 	
+	private void resizeComponents() {
+		rightSubPanel.setLocation(0, 0);
+		rightSubPanel.setSize(mainPanel.getWidth()-150, mainPanel.getHeight());
+		buttonsPanel.setLocation(rightSubPanel.getWidth(), 0);
+		buttonsPanel.setSize(150, mainPanel.getHeight());
+	}
 	
 	
 	//*************************************************************************************************************************

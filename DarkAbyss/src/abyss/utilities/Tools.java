@@ -10,11 +10,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+
+import abyss.darkgui.GUIManager;
 
 /**
  * Klasa narzędziowa, odpowiednik klasy statycznej w <b>NORMALNYM</b> języku programowania
@@ -322,5 +326,18 @@ public final class Tools {
 		}
 		
 		return source;
+	}
+	
+	/**
+	 * Metoda formatuje liczbę typu double do wyznaczonej liczby miejsc po przecinku, a następnie
+	 * zwraca ją jako String.
+	 * @param evalMSS double - liczba do przycięcia
+	 * @return String - reprezentacja liczby
+	 */
+	public static String cutValue(double value) {
+    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(GUIManager.getDefaultGUIManager().getLocale());
+    	otherSymbols.setDecimalSeparator('.');
+    	DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
+		return df.format(value);
 	}
 }

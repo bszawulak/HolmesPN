@@ -54,6 +54,7 @@ public class GUIReset {
 			mastah.getInvariantsBox().repaint();
 
 			invGenerated = false;
+			GUIManager.getDefaultGUIManager().log("Invariants data removed from memory.", "text", true);
 		}
 		
 		if(mctGenerated == true) {
@@ -69,6 +70,7 @@ public class GUIReset {
 			mastah.getMctBox().repaint();
 			
 			mctGenerated = false;
+			GUIManager.getDefaultGUIManager().log("MCT data removed from memory.", "text", true);
 		}
 		
 		if(clustersGenerated == true) {
@@ -79,6 +81,7 @@ public class GUIReset {
 			mastah.getClusterSelectionBox().repaint();
 			
 			clustersGenerated = false;
+			GUIManager.getDefaultGUIManager().log("Clustering data removed from memory.", "text", true);
 		}
 	}
 	

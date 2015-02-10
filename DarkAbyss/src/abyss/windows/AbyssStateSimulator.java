@@ -1218,8 +1218,12 @@ public class AbyssStateSimulator extends JFrame {
 		clearAllData();
 		
 		progressBar.setMaximum(simSteps);
-		ssim.initiateSim(NetType.BASIC, maximumMode);
+		boolean success = ssim.initiateSim(NetType.BASIC, maximumMode);
 		ssim.simulateNet(simSteps, progressBar);
+		
+		if(success == false) {
+			return;
+		}
 		
 		//pobieranie wektorów danych zebranych w symulacji:
 		placesRawData = ssim.getPlacesData();
@@ -1335,7 +1339,4 @@ public class AbyssStateSimulator extends JFrame {
 			
 		}
 	}
-	
-	
-	
 }

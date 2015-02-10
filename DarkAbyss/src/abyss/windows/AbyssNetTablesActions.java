@@ -9,6 +9,9 @@ import abyss.darkgui.GUIManager;
 import abyss.math.ElementLocation;
 import abyss.math.Place;
 import abyss.math.Transition;
+import abyss.math.simulator.StateSimulator;
+import abyss.math.simulator.NetSimulator.NetType;
+import abyss.utilities.Tools;
 
 public class AbyssNetTablesActions {
 	
@@ -64,6 +67,11 @@ public class AbyssNetTablesActions {
 			return;
 		}
 		
+		StateSimulator ss = new StateSimulator();
+		ss.initiateSim(NetType.BASIC, false);
+		ss.simulateNetSimple(10000);
+		ArrayList<Double> resVector = ss.getTransitionsAvgData();
+		
 		int iterIndex = -1;
 		for(Transition t : transitions) {
 			iterIndex++;
@@ -82,10 +90,13 @@ public class AbyssNetTablesActions {
 				postP += el.getOutArcs().size();
 			}
 			
-			int avgFired = 0; //TODO: SS
+			double avgFired = 0;
+			if(resVector.size() > 0)
+				avgFired = resVector.get(iterIndex); //TODO: SS
+			avgFired *= 100;
 			int inInv = 0; //TODO
 			
-			String[] dataRow = { ""+index, name, ""+postP, ""+preP, ""+avgFired, ""+inInv};
+			String[] dataRow = { ""+index, name, ""+postP, ""+preP, ""+Tools.cutValue(avgFired)+"%", ""+inInv};
 			model.addRow(dataRow);
 		}
 	}

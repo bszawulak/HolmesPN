@@ -31,7 +31,7 @@ public class StateSimulator {
 	private ArrayList<ArrayList<Integer>> placesData = null;
 	private ArrayList<Double> placesAvgData = null; //średnia liczba tokenów w miejscu
 	private ArrayList<ArrayList<Integer>> transitionsData = null;
-	private ArrayList<Integer> transitionsCompactData = null; //wektor sumy odpaleń tranzycji
+	private ArrayList<Integer> transitionsTotalFiring = null; //wektor sumy odpaleń tranzycji
 	private ArrayList<Double> transitionsAvgData = null;
 	
 	/**
@@ -63,10 +63,10 @@ public class StateSimulator {
 		placesData = new ArrayList<ArrayList<Integer>>();
 		placesAvgData = new ArrayList<Double>();
 		transitionsData = new ArrayList<ArrayList<Integer>>();
-		transitionsCompactData = new ArrayList<Integer>();
+		transitionsTotalFiring = new ArrayList<Integer>();
 		transitionsAvgData = new ArrayList<Double>();
 		for(int t=0; t<transitions.size(); t++) {
-			transitionsCompactData.add(0);
+			transitionsTotalFiring.add(0);
 		}
 		for(int p=0; p<places.size(); p++) {
 			placesAvgData.add(0.0);
@@ -88,7 +88,10 @@ public class StateSimulator {
 		if(ready == false) {
 			JOptionPane.showMessageDialog(null,"Simulation cannot start, no network found.", 
 					"State Simulation problem",JOptionPane.ERROR_MESSAGE);
+			return;
 		}
+		
+		//TODO: reset symulatora głównego jeśli działał/działa!!!!
 		
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		ArrayList<Transition> launchingTransitions = null;
@@ -109,15 +112,15 @@ public class StateSimulator {
 				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
 				
 				ArrayList<Integer> transRow = new ArrayList<Integer>();
-				for(int t=0; t<transitions.size(); t++) {
+				for(int t=0; t<transitions.size(); t++)
 					transRow.add(0);
-				}
+				
 				for(Transition trans : launchingTransitions) {
 					int index = transitions.lastIndexOf(trans);
-					transRow.set(index, 1);
+					transRow.set(index, 1); //dodaj tylko tranzycjom, które odpaliły
 					
-					int fired = transitionsCompactData.get(index);
-					transitionsCompactData.set(index, fired+1);
+					int fired = transitionsTotalFiring.get(index);
+					transitionsTotalFiring.set(index, fired+1); //wektor sumy odpaleń
 				}
 				transitionsData.add(transRow);
 			} else {
@@ -138,16 +141,146 @@ public class StateSimulator {
 		}
 		
 		for(int t=0; t<transitions.size(); t++) {
-			transitionsAvgData.add((double) ((double)transitionsCompactData.get(t)/(double)steps));
+			transitionsAvgData.add((double) ((double)transitionsTotalFiring.get(t)/(double)steps));
 		}
 		for(int p=0; p<places.size(); p++) {
 			double sumOfTokens = placesAvgData.get(p);
 			placesAvgData.set(p, sumOfTokens/(double)steps);
 		}
-		
 		GUIManager.getDefaultGUIManager().log("Simulation ended. Restoring zero marking.", "text", true);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 		ready = false;
+	}
+	
+	/**
+	 * Metoda symuluje podaną liczbę kroków sieci Petriego dla wybranego wcześniej trybu, tj.
+	 * jeśli maximumMode = true, wtedy każda aktywna tranzycja musi się uruchomić.
+	 * Od simulate różni się tym, że nie zbiera historii odpaleń i tokenów dla miejsc, tylko
+	 * średnie wartości. Dzięki temu działa szybciej i nie zabiera tyle miejsca w pamięci.
+	 * @param steps int - liczba kroków do symulacji
+	 */
+	public void simulateNetSimple(int steps) {
+		if(ready == false) {
+			GUIManager.getDefaultGUIManager().log("Simulation simple mode cannot start.", "error", true);
+			return;
+		}
+		
+		//TODO: reset symulatora głównego jeśli działał/działa!!!!
+		
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
+		ArrayList<Transition> launchingTransitions = null;
+		
+		//String max = "50% firing chance";
+		//if(maximumMode)
+		//	max = "maximum";
+		//GUIManager.getDefaultGUIManager().log("Starting states simulation for "+steps+" steps in "+max+" mode.", "text", true);
+		for(int i=0; i<steps; i++) {
+			if (isPossibleStep()){ 
+				launchingTransitions = generateValidLaunchingTransitions();
+				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
+				
+				for(Transition trans : launchingTransitions) {
+					int index = transitions.lastIndexOf(trans);
+					int fired = transitionsTotalFiring.get(index);
+					transitionsTotalFiring.set(index, fired+1); //wektor sumy odpaleń
+				}
+			} else {
+				break;
+			}
+			launchAddPhase(launchingTransitions, false);
+			
+			//zbierz informacje o tokenach w miejsach:
+			//ArrayList<Integer> marking = new ArrayList<Integer>();
+			for(int p=0; p<places.size(); p++) {
+				int tokens = places.get(p).getTokensNumber();
+				//marking.add(tokens);
+				
+				double sumOfTokens = placesAvgData.get(p);
+				placesAvgData.set(p, sumOfTokens+tokens);
+			}
+			//placesData.add(marking);
+		}
+		
+		for(int t=0; t<transitions.size(); t++) {
+			transitionsAvgData.add((double) ((double)transitionsTotalFiring.get(t)/(double)steps));
+		}
+		for(int p=0; p<places.size(); p++) {
+			double sumOfTokens = placesAvgData.get(p);
+			placesAvgData.set(p, sumOfTokens/(double)steps);
+		}
+		//GUIManager.getDefaultGUIManager().log("Simulation ended. Restoring zero marking.", "text", true);
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+		ready = false;
+	}
+	
+	/**
+	 * Metoda symuluje podaną liczbę kroków sieci Petriego dla wybranego wcześniej trybu, dla konkretnego
+	 * miejsca. Dane dla wybranego miejsca funkcja zwraca jako ArrayList[Integer].
+	 * @param steps int - liczba kroków do symulacji
+	 * @param plc Place - wybrane miejsce do testowania
+	 * @return ArrayList[Integer] - wektor danych o tokenach w miejscu
+	 */
+	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place plc) {
+		if(ready == false) {
+			GUIManager.getDefaultGUIManager().log("Simulation for place "+plc.getName()+" cannot start.", "error", true);
+			return null;
+		}
+		
+		//TODO: reset symulatora głównego jeśli działał/działa!!!!
+		
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
+		ArrayList<Transition> launchingTransitions = null;
+		ArrayList<Integer> singlePlaceData = new ArrayList<Integer>();
+		for(int i=0; i<steps; i++) {
+			if (isPossibleStep()){ 
+				launchingTransitions = generateValidLaunchingTransitions();
+				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
+			} else {
+				break;
+			}
+			launchAddPhase(launchingTransitions, false);
+			singlePlaceData.add(plc.getTokensNumber());
+		}
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+		ready = false;
+		return singlePlaceData;
+	}
+	
+	/**
+	 * Metoda symuluje podaną liczbę kroków sieci Petriego dla wybranego wcześniej trybu, dla konkretnej
+	 * tranzycji. Dane dla wybranej tranzycji funkcja zwraca jako ArrayList[Integer].
+	 * @param steps int - liczba kroków do symulacji
+	 * @param trans Transition - wybrana tranzycja do testowania
+	 * @return ArrayList[Integer] - wektor danych o odpalaniu tranzycji
+	 */
+	public ArrayList<Integer> simulateNetSingleTransition(int steps, Transition trans) {
+		if(ready == false) {
+			GUIManager.getDefaultGUIManager().log("Simulation for transition "+trans.getName()+" cannot start.", "error", true);
+			return null;
+		}
+		
+		//TODO: reset symulatora głównego jeśli działał/działa!!!!
+		
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
+		ArrayList<Transition> launchingTransitions = null;
+		ArrayList<Integer> singleTransitionData = new ArrayList<Integer>();
+		for(int i=0; i<steps; i++) {
+			if (isPossibleStep()){ 
+				launchingTransitions = generateValidLaunchingTransitions();
+				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
+			} else {
+				break;
+			}
+			launchAddPhase(launchingTransitions, false);
+			
+			if(launchingTransitions.contains(trans))
+				singleTransitionData.add(1);
+			else
+				singleTransitionData.add(0);
+		}
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+		ready = false;
+		return singleTransitionData;
 	}
 	
 	/**
@@ -308,7 +441,7 @@ public class StateSimulator {
 	 * @return ArrayList[Integer] - wektor tranzycji po symulacji
 	 */
 	public ArrayList<Integer> getTransitionsCompactData() {
-		return transitionsCompactData;
+		return transitionsTotalFiring;
 	}
 	
 	/**
