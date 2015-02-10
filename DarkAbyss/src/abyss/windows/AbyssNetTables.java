@@ -1,7 +1,6 @@
 package abyss.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -27,7 +26,6 @@ import javax.swing.table.TableCellRenderer;
 
 import abyss.darkgui.GUIManager;
 import abyss.utilities.Tools;
-import abyss.windows.AbyssClusters.MyRenderer;
 
 public class AbyssNetTables extends JFrame implements ComponentListener {
 	private static final long serialVersionUID = 8429744762731301629L;
@@ -39,8 +37,10 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	private JPanel buttonsPanel;
 	//data components:
 	private JTable table;
-	private DefaultTableModel  model;
-	private MyRenderer tabRenderer = new MyRenderer();
+	private DefaultTableModel model;
+	private MyRenderer tableRenderer = new MyRenderer();
+	
+	private final AbyssNetTablesActions action = new AbyssNetTablesActions();
 	
 	/**
 	 * Główny konstruktor okna tabel sieci.
@@ -103,7 +103,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		transitionsButton.setBounds(xPos, yPos, bWidth, bHeight);
 		transitionsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				createTablePanelCase565();
+				createPlacesTables();
 			}
 		});
 		transitionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -117,7 +117,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		placesButton.setBounds(xPos, yPos, bWidth, bHeight);
 		placesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				createTablePanelCase56();
+				createTransitionTables();
 			}
 		});
 		placesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -138,93 +138,140 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		rightSubPanel.setBounds(0, 0, 650, 560);
 		rightSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
 		
-		
-		model = new DefaultTableModel();
-		table = new JTable(model);
-		
-		//createTablePanelCase56();
+		createTableConstruct();
+
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-		
 		rightSubPanel.add(scrollPane, BorderLayout.CENTER);
 		
 		return rightSubPanel;
 	}
 	
-    private void createTablePanelCase56() {
-    	model = new DefaultTableModel();
-        model.addColumn("Column1"); //miara odległości
-        model.addColumn("Column2"); //zerowe klastry dla algorytmu klastrowania
-        model.addColumn("Column3"); //MSS algorytmu
-        model.addColumn("Column4"); //CH algorytmu
-        table.setModel(model);
-        //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-        table.setFillsViewportHeight(true);
-        table.setDefaultRenderer(Object.class, tabRenderer); // 0 - case 56
-        
-        table.addMouseListener(new MouseAdapter() { //listener kliknięć
+	/**
+	 * Metoda ta tworzy obiekty modelu i tabeli, inicjalizuje listenery tablicy.
+	 */
+	private void createTableConstruct() {
+		model = new DefaultTableModel();
+		table = new JTable(model);
+		
+		table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	JTable target = (JTable)e.getSource();
-          	    	int row = target.getSelectedRow();
-          	    	int column = target.getSelectedColumn();
-          	    	//cellClickedEvent(row, column);
+          	    	action.cellClickAction(table);
           	    }
           	 }
       	});
+	}
+	
+	/**
+	 * Metoda tworząca tabelę miejsc sieci.
+	 */
+    private void createPlacesTables() {
+    	model = new DefaultTableModel();
+        model.addColumn("C01");
+        model.addColumn("C02");
+        model.addColumn("C03");
+        model.addColumn("C04");
+        model.addColumn("C05");
+        model.addColumn("C06");
         
-        //rozmiary kolumn:
-        table.getColumnModel().getColumn(0).setPreferredWidth(80);
-        for(int index=0; index<table.getColumnCount(); index++) {
-        	table.getColumnModel().getColumn(index).setPreferredWidth(50);
-        	table.getColumnModel().getColumn(index).setMinWidth(50);
-        	table.getColumnModel().getColumn(index).setMaxWidth(50);
-        }
+        table.setModel(model);
         
-        String[] dataRow = { "a","b","b","b"};
-        model.addRow(dataRow);
+        table.getColumnModel().getColumn(0).setHeaderValue("ID");
+        table.getColumnModel().getColumn(0).setPreferredWidth(30);
+    	table.getColumnModel().getColumn(0).setMinWidth(30);
+    	table.getColumnModel().getColumn(0).setMaxWidth(30);
+    	
+        table.getColumnModel().getColumn(1).setHeaderValue("Name");
+        table.getColumnModel().getColumn(1).setPreferredWidth(300);
+    	table.getColumnModel().getColumn(1).setMinWidth(100);
+    	table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+    	
+        table.getColumnModel().getColumn(2).setHeaderValue("Tok:");
+        table.getColumnModel().getColumn(2).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(2).setMinWidth(40);
+    	table.getColumnModel().getColumn(2).setMaxWidth(40);
+    	
+        table.getColumnModel().getColumn(3).setHeaderValue("In-T");
+        table.getColumnModel().getColumn(3).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(3).setMinWidth(40);
+    	table.getColumnModel().getColumn(3).setMaxWidth(40);
+    	
+        table.getColumnModel().getColumn(4).setHeaderValue("Out-T");
+        table.getColumnModel().getColumn(4).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(4).setMinWidth(40);
+    	table.getColumnModel().getColumn(4).setMaxWidth(40);
+    	
+        table.getColumnModel().getColumn(5).setHeaderValue("Avg.Tk");
+        table.getColumnModel().getColumn(5).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(5).setMinWidth(40);
+    	table.getColumnModel().getColumn(5).setMaxWidth(40);
+        
+        table.setName("PlacesTable");
+        tableRenderer.setMode(0); //mode: places
+        
+        //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+        table.setDefaultRenderer(Object.class, tableRenderer);
+
+        action.addPlacesToModel(model); // metoda generująca dane o miejscach
         table.validate();
     }
     
-    private void createTablePanelCase565() {
+    private void createTransitionTables() {
     	model = new DefaultTableModel();
-        model.addColumn("Column1"); //miara odległości
-        model.addColumn("Column2"); //zerowe klastry dla algorytmu klastrowania
-        model.addColumn("Column3"); //MSS algorytmu
-        model.addColumn("Column4"); //CH algorytmu
-        model.addColumn("Column5"); //CH algorytmu
-        model.addColumn("Column6"); //CH algorytmu
-
+        model.addColumn("C01");
+        model.addColumn("C02");
+        model.addColumn("C03");
+        model.addColumn("C04");
+        model.addColumn("C05");
+        model.addColumn("C06");
+        
         table.setModel(model);
+        
+        table.getColumnModel().getColumn(0).setHeaderValue("ID");
+        table.getColumnModel().getColumn(0).setPreferredWidth(30);
+    	table.getColumnModel().getColumn(0).setMinWidth(30);
+    	table.getColumnModel().getColumn(0).setMaxWidth(30);
+    	
+        table.getColumnModel().getColumn(1).setHeaderValue("Name");
+        table.getColumnModel().getColumn(1).setPreferredWidth(300);
+    	table.getColumnModel().getColumn(1).setMinWidth(100);
+    	
+    	
+        table.getColumnModel().getColumn(2).setHeaderValue("Pre-P");
+        table.getColumnModel().getColumn(2).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(2).setMinWidth(40);
+    	table.getColumnModel().getColumn(2).setMaxWidth(40);
+    	
+        table.getColumnModel().getColumn(3).setHeaderValue("Post-P");
+        table.getColumnModel().getColumn(3).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(3).setMinWidth(40);
+    	table.getColumnModel().getColumn(3).setMaxWidth(40);
+    	
+        table.getColumnModel().getColumn(4).setHeaderValue("Fired");
+        table.getColumnModel().getColumn(4).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(4).setMinWidth(40);
+    	table.getColumnModel().getColumn(4).setMaxWidth(40);
+    	
+        table.getColumnModel().getColumn(5).setHeaderValue("Inv");
+        table.getColumnModel().getColumn(5).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(5).setMinWidth(40);
+    	table.getColumnModel().getColumn(5).setMaxWidth(40);
+        
+        table.setName("TransitionTable");
+        tableRenderer.setMode(1); //mode: transitions
+        
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+       // TableColumnAdjuster tca = new TableColumnAdjuster(table);
+       // tca.adjustColumns();
+        
         //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-        table.setFillsViewportHeight(true);
-        table.setDefaultRenderer(Object.class, tabRenderer); // 0 - case 56
-        
-        table.addMouseListener(new MouseAdapter() { //listener kliknięć
-        	public void mouseClicked(MouseEvent e) {
-          	    if (e.getClickCount() == 1) {
-          	    	JTable target = (JTable)e.getSource();
-          	    	int row = target.getSelectedRow();
-          	    	int column = target.getSelectedColumn();
-          	    	//cellClickedEvent(row, column);
-          	    }
-          	 }
-      	});
-        //rozmiary kolumn:
-        table.getColumnModel().getColumn(0).setPreferredWidth(80);
-        for(int index=0; index<table.getColumnCount(); index++) {
-        	table.getColumnModel().getColumn(index).setPreferredWidth(50);
-        	table.getColumnModel().getColumn(index).setMinWidth(50);
-        	table.getColumnModel().getColumn(index).setMaxWidth(50);
-        }
-        
-        String[] dataRow = { "a","b","b","b"};
-        model.addRow(dataRow);
-        model.addRow(dataRow);
-        model.addRow(dataRow);
-        model.addRow(dataRow);
-        model.addRow(dataRow);
+        table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+        table.setDefaultRenderer(Object.class, tableRenderer);
+
+        action.addTransitionsToModel(model); // metoda generująca dane o tranzycjach
+        table.validate();
     }
 	
 	/**
@@ -282,8 +329,9 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
      */
     class MyRenderer implements TableCellRenderer {
     	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
-    	private int mode = 0;
+    	private int mode = 0; //0 -places
     	private int subRows = 0;
+    	
     	/**
     	 * Konstruktor domyślny obiektów klasy MyRenderer.
     	 */
@@ -311,6 +359,12 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
     	
     	/**
     	 * Przeciążona metoda odpowiedzialna za zwrócenie komórki tabeli.
+    	 * @param table Jtable - 
+    	 * @param value Object - 
+    	 * @param isSelected boolean - 
+    	 * @param hasFocus boolean - 
+    	 * @param row int -
+    	 * @param columnt int - 
     	 */
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
