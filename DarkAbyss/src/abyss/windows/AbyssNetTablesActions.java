@@ -1,6 +1,7 @@
 package abyss.windows;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -9,6 +10,7 @@ import abyss.darkgui.GUIManager;
 import abyss.math.ElementLocation;
 import abyss.math.Place;
 import abyss.math.Transition;
+import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.StateSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
 import abyss.utilities.Tools;
@@ -70,6 +72,7 @@ public class AbyssNetTablesActions {
 		StateSimulator ss = new StateSimulator();
 		ss.initiateSim(NetType.BASIC, false);
 		ss.simulateNetSimple(10000);
+		
 		ArrayList<Double> resVector = ss.getTransitionsAvgData();
 		
 		int iterIndex = -1;
@@ -101,4 +104,16 @@ public class AbyssNetTablesActions {
 		}
 	}
 
+	public class SimState implements Callable<Boolean> {
+		NetSimulator ns;
+		public SimState(NetSimulator ns) {
+			this.ns = ns;
+		}
+        public Boolean call() throws Exception {
+        	StateSimulator ss = new StateSimulator();
+    		ss.initiateSim(NetType.BASIC, false);
+    		ss.simulateNetSimple(10000);
+            return true;
+        }
+    }
 }

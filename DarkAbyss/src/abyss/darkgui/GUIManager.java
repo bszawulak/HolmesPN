@@ -11,6 +11,8 @@ import abyss.files.io.TexExporter;
 import abyss.math.InvariantTransition;
 import abyss.math.PetriNet;
 import abyss.math.Transition;
+import abyss.math.simulator.NetSimulator;
+import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.settings.SettingsManager;
 import abyss.utilities.Tools;
 import abyss.windows.AbyssAbout;
@@ -38,6 +40,7 @@ import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
@@ -1080,7 +1083,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void showNetTablesWindow() {
 		if(windowNetTables != null) {
-			windowNetTables.setVisible(true);
+			NetSimulator ns = getSimulatorBox().getCurrentDockWindow().getSimulator();
+			if(ns.getMode() == SimulatorMode.STOPPED) {
+				windowNetTables.setVisible(true);
+			} else {
+				JOptionPane.showMessageDialog(null, "Warning: simulator active. Cannot proceed until manually stopped.",
+						"Net simulator working", JOptionPane.WARNING_MESSAGE);
+			}
 		}
 	}
 	

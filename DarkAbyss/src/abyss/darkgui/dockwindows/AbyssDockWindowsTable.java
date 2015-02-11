@@ -2052,6 +2052,14 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 	
 	/**
+	 * Metoda zwraca obiekt aktywnego symulatora z podokna symulacji.
+	 * @return NetSimulator - obiekt symulatora
+	 */
+	public NetSimulator getSimulator() {
+		return simulator;
+	}
+	
+	/**
 	 * Metoda ustawia status wszystkich przycisków rozpoczęcia symulacji za wyjątkiem
 	 * Pauzy, Stopu - w przypadku startu / stopu symulacji
 	 * @param enabled boolean - true, jeśli mają być aktywne

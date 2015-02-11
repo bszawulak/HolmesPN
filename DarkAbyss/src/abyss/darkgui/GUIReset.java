@@ -1,12 +1,23 @@
 package abyss.darkgui;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.math.InvariantTransition;
 import abyss.math.Transition;
+import abyss.math.simulator.NetSimulator;
+import abyss.math.simulator.NetSimulator.SimulatorMode;
 
 /**
  * Klasa odpowiedzialna za różne rzeczy związane z czyszczeniem wszystkiego i niczego w ramach
@@ -32,7 +43,7 @@ public class GUIReset {
 	}
 	
 	/**
-	 * Kasowanie informacji o: inwariantanch, MCT, klastrach, przede wszstkich w kontekście
+	 * Kasowanie informacji o: inwariantanch, MCT, klastrach, przede wszystkich w kontekście
 	 * podokien programu. Przy okazji reset protokołu I/O.
 	 */
 	public void reset2ndOrderData() {
