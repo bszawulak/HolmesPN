@@ -12,7 +12,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -35,6 +34,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	
 	//interface components:
 	private final JFrame ego;
+	@SuppressWarnings("unused")
 	private JFrame parentFrame;
 	private JPanel mainPanel;
 	private JPanel rightSubPanel;
@@ -43,20 +43,18 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	private JTable table;
 	private DefaultTableModel model;
 	private MyRenderer tableRenderer = new MyRenderer();
+	public int currentClickedRow;
 	
-	private final AbyssNetTablesActions action = new AbyssNetTablesActions();
+	private final AbyssNetTablesActions action;
 	
 	/**
 	 * Główny konstruktor okna tabel sieci.
-	 * @param parent JFrame - ramka okna głównego
+	 * @param papa JFrame - ramka okna głównego
 	 */
-	public AbyssNetTables(JFrame parent) {
+	public AbyssNetTables(JFrame papa) {
 		ego = this;
-		parentFrame = parent;
-		
-		try {
-			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
-		} catch (Exception e ) {}
+		action  = new AbyssNetTablesActions(this);
+		parentFrame = papa;
 		
 		try {
 			initialize_components();
@@ -66,6 +64,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 			GUIManager.getDefaultGUIManager().log("Critical error, cannot create Abyss Net Tables window:", "error", true);
 			GUIManager.getDefaultGUIManager().log(msg, "error", false);
 		}
+		
 	}
 	
 	/**
@@ -309,6 +308,10 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		return resultButton;
 	}
 	
+	public void updateRow(String data, int column) {
+		table.getModel().setValueAt(data, currentClickedRow, column);
+	}
+	
 	//*************************************************************************************************************************
 	//**************************************************               ********************************************************
 	//**************************************************   LISTENERS   ********************************************************
@@ -348,7 +351,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
     class MyRenderer implements TableCellRenderer {
     	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
     	private int mode = 0; //0 -places
-    	private int subRows = 0;
+    	//private int subRows = 0;
     	
     	/**
     	 * Konstruktor domyślny obiektów klasy MyRenderer.
@@ -364,11 +367,11 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
     	public MyRenderer(int mode, int rows) {
     		this(); //wywołanie konstruktora domyślnego
     		this.mode = mode;
-    		this.subRows = rows;
+    		//this.subRows = rows;
     	}
     	
     	public void setSubRows(int rows) {
-    		this.subRows = rows;
+    		//this.subRows = rows;
     	}
     	
     	public void setMode(int mode) {

@@ -477,7 +477,7 @@ public class AbyssStateSimulator extends JFrame {
 				
 		//************************************************************************************************************
 		//************************************************************************************************************
-		//TODO
+
 		placesJPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
 		 	//my zmieniać wymiary jeśli całe okno ma zmieniane w dowolnej chwili
 		placesJPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));

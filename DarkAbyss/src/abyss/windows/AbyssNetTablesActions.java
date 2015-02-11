@@ -3,6 +3,7 @@ package abyss.windows;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
+import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -16,17 +17,30 @@ import abyss.math.simulator.NetSimulator.NetType;
 import abyss.utilities.Tools;
 
 public class AbyssNetTablesActions {
+	private AbyssNetTables antWindow; 
 	
-	public AbyssNetTablesActions() {
-		
+	public AbyssNetTablesActions(AbyssNetTables overlord) {
+		antWindow = overlord;
 	}
 	
 	public void cellClickAction(JTable table) {
-		String name = table.getName();
-		if(name.equals("PlacesTable")) {
-  	    	int row = table.getSelectedRow();
-  	    	int column = table.getSelectedColumn();
-  	    	//cellClickedEvent(row, column);
+		try {
+			String name = table.getName();
+			if(name.equals("PlacesTable")) {
+	  	    	int row = table.getSelectedRow();
+	  	    	antWindow.currentClickedRow = row;
+	  	    	int index = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+	  	    	AbyssNodeInfo window = new AbyssNodeInfo(
+	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(index), 
+	  	    			antWindow);
+	  	    	window.setVisible(true);
+	  	    	//int column = table.getSelectedColumn();
+	  	    	//cellClickedEvent(row, column);
+			} else if(name.equals("TransitionTable")) {
+				
+			}
+		} catch (Exception e) {
+			
 		}
 	}
 
@@ -72,7 +86,6 @@ public class AbyssNetTablesActions {
 		StateSimulator ss = new StateSimulator();
 		ss.initiateSim(NetType.BASIC, false);
 		ss.simulateNetSimple(10000);
-		
 		ArrayList<Double> resVector = ss.getTransitionsAvgData();
 		
 		int iterIndex = -1;
