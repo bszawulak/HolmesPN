@@ -75,7 +75,7 @@ import abyss.workspace.ExtensionFileFilter;
 public class AbyssStateSimulator extends JFrame {
 	private static final long serialVersionUID = 5287992734385359453L;
 	
-	private AbyssStateSimulatorActions actum = new AbyssStateSimulatorActions();
+	private AbyssStateSimulatorActions action = new AbyssStateSimulatorActions();
 	private StateSimulator ssim;
 	private boolean maximumMode = false;
 	
@@ -92,9 +92,9 @@ public class AbyssStateSimulator extends JFrame {
 	private boolean sortedP = false;
 	private boolean sortedT = false;
 	
-	XYSeriesCollection placesSeriesDataSet = null;
+	private XYSeriesCollection placesSeriesDataSet = null;
 	private XYSeriesCollection transitionsSeriesDataSet = null;
-	JFreeChart placesChart;
+	private JFreeChart placesChart;
 	private JFreeChart transitionsChart;
 	private int transChartType = 0; //suma odpaleń, 1=konkretne tranzycje
 	private int placesChartType = 0; //j.w. dla miejsc
@@ -161,7 +161,7 @@ public class AbyssStateSimulator extends JFrame {
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
 		main.add(tabbedPane);
-		initiateListeners(); //all hail Sithis
+		initiateListeners(); // hail Sithis
 		repaint();
 	}
 	
@@ -342,7 +342,7 @@ public class AbyssStateSimulator extends JFrame {
 				int selected = placesCombo.getSelectedIndex();
 				if(selected>0) {
 					String name = placesCombo.getSelectedItem().toString();
-					int sel = actum.getRealNodeID(name);
+					int sel = action.getRealNodeID(name);
 					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
 					name = trimNodeName(name);
@@ -369,7 +369,7 @@ public class AbyssStateSimulator extends JFrame {
 				int selected = placesCombo.getSelectedIndex();
 				if(selected>0) {
 					String name = placesCombo.getSelectedItem().toString();
-					int sel = actum.getRealNodeID(name);
+					int sel = action.getRealNodeID(name);
 					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
 					name = trimNodeName(name);
@@ -415,7 +415,7 @@ public class AbyssStateSimulator extends JFrame {
 				int selected = placesCombo.getSelectedIndex();
 				if(selected>0) {
 					String name = placesCombo.getSelectedItem().toString();
-					int sel = actum.getRealNodeID(name);
+					int sel = action.getRealNodeID(name);
 					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
 					GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
@@ -583,7 +583,7 @@ public class AbyssStateSimulator extends JFrame {
 				int selected = transitionsCombo.getSelectedIndex();
 				if(selected>0) {
 					String name = transitionsCombo.getSelectedItem().toString();
-					int sel = actum.getRealNodeID(name);
+					int sel = action.getRealNodeID(name);
 					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
 					//selected--;
@@ -649,7 +649,7 @@ public class AbyssStateSimulator extends JFrame {
 				int selected = transitionsCombo.getSelectedIndex();
 				if(selected>0) {
 					//ustalanie prawdziwego ID:
-					int sel = actum.getRealNodeID(transitionsCombo.getSelectedItem().toString());
+					int sel = action.getRealNodeID(transitionsCombo.getSelectedItem().toString());
 					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 					
 					GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();

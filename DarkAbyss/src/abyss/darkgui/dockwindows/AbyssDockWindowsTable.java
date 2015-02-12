@@ -536,9 +536,12 @@ public class AbyssDockWindowsTable extends JPanel {
         tokenLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(tokenLabel);
         int tok = place.getTokensNumber();
-        if(tok < 0)
+        boolean problem = false;
+        if(tok < 0) {
         	GUIManager.getDefaultGUIManager().log("Negative number of tokens in "+place.getName(), "error", true);
-        
+        	tok = 0;
+        	problem = true;
+        }
 		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok, 0, Integer.MAX_VALUE, 1);
 		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
 		tokenSpinner.setLocation(columnB_posX, columnB_Y += 20);
@@ -552,6 +555,8 @@ public class AbyssDockWindowsTable extends JPanel {
 				setTokens(tokenz);
 			}
 		});
+		if(problem)
+			tokenSpinner.setEnabled(false);
 		components.add(tokenSpinner);
 
 		//SHEET ID

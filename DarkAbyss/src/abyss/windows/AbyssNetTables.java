@@ -29,6 +29,11 @@ import javax.swing.table.TableCellRenderer;
 import abyss.darkgui.GUIManager;
 import abyss.utilities.Tools;
 
+/**
+ * Klasa odpowiedzialna za rysowanie i obsługę okna tabel elementów sieci.
+ * @author MR
+ *
+ */
 public class AbyssNetTables extends JFrame implements ComponentListener {
 	private static final long serialVersionUID = 8429744762731301629L;
 	
@@ -64,7 +69,6 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 			GUIManager.getDefaultGUIManager().log("Critical error, cannot create Abyss Net Tables window:", "error", true);
 			GUIManager.getDefaultGUIManager().log(msg, "error", false);
 		}
-		
 	}
 	
 	/**
@@ -95,7 +99,6 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		mainPanel.add(createButtonsPanel());
 		add(mainPanel);
 	}
-
 
 	/**
 	 * Metoda pomocnicza tworząca panel boczny przycisków.
@@ -195,7 +198,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
     	table.getColumnModel().getColumn(0).setMinWidth(30);
     	table.getColumnModel().getColumn(0).setMaxWidth(30);
     	
-        table.getColumnModel().getColumn(1).setHeaderValue("Name");
+        table.getColumnModel().getColumn(1).setHeaderValue("Place name:");
         table.getColumnModel().getColumn(1).setPreferredWidth(300);
     	table.getColumnModel().getColumn(1).setMinWidth(100);
     	
@@ -248,10 +251,9 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
     	table.getColumnModel().getColumn(0).setMinWidth(30);
     	table.getColumnModel().getColumn(0).setMaxWidth(30);
     	
-        table.getColumnModel().getColumn(1).setHeaderValue("Name");
+        table.getColumnModel().getColumn(1).setHeaderValue("Transition name");
         table.getColumnModel().getColumn(1).setPreferredWidth(300);
     	table.getColumnModel().getColumn(1).setMinWidth(100);
-    	
     	
         table.getColumnModel().getColumn(2).setHeaderValue("Pre-P");
         table.getColumnModel().getColumn(2).setPreferredWidth(40);

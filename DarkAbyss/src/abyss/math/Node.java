@@ -37,15 +37,17 @@ public abstract class Node extends PetriNetElement {
 	final static float dash1[] = { 2.0f };
 	final static BasicStroke dashed = new BasicStroke(1.0f,
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+	private int nameOffsetX = 0;
+	private int nameOffsetY = 0;
 
 	/**
 	 * Konstruktor obiektu klasy Node.
 	 * @param sheetId int - identyfikator arkusza
 	 * @param nodeId int - identyfikator elementu sieci Petriego
 	 * @param nodePosition Point - punkt, w którym znajduje się lokalizacja 
-	 * 				tego wierzchołka na odpowiednim arkuszu
+	 * 		tego wierzchołka na odpowiednim arkuszu
 	 * @param radius int - promień okręgu, na którym opisana jest figura 
-	 * 				geometryczna reprezentująca obiekt w edytorze graficznym
+	 * 		geometryczna reprezentująca obiekt w edytorze graficznym
 	 */
 	public Node(int sheetId, int nodeId, Point nodePosition, int radius) {
 		this.setRadius(radius);
@@ -138,11 +140,19 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala narysować wierzchołek sieci Petriego na odpowiednim arkuszu.
+	 * Metoda pozwala narysować NAZWĘ wierzchołka sieci Petriego na odpowiednim arkuszu.
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza
 	 */
 	public void draw(Graphics2D g, int sheetId) {
+		g.setColor(Color.black);
+		g.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		int width = g.getFontMetrics().stringWidth(getName());
+		for (Point p : this.getNodePositions(sheetId))
+			g.drawString(getName(), p.x - width / 2, p.y + getRadius() + 15);
+	}
+	
+	public void drawName(Graphics2D g, int sheetId) {
 		g.setColor(Color.black);
 		g.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		int width = g.getFontMetrics().stringWidth(getName());
@@ -375,5 +385,21 @@ public abstract class Node extends PetriNetElement {
 	 */
 	public void setElementLocations(ArrayList<ElementLocation> elementLocations) {
 		this.elementLocations = elementLocations;
+	}
+	
+	public int getNameOffX() {
+		return nameOffsetX;
+	}
+	
+	public void setNameOffX(int value) {
+		nameOffsetX = value;
+	}
+	
+	public int getNameOffY() {
+		return nameOffsetY;
+	}
+	
+	public void setNameOffY(int value) {
+		nameOffsetY = value;
 	}
 }

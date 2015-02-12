@@ -259,7 +259,6 @@ public class NetHandler_Classic extends NetHandler {
 		}
 
 		if (qName.equalsIgnoreCase("Snoopy")) {
-
 			int wid = Toolkit.getDefaultToolkit().getScreenSize().width - 20;
 			int hei = Toolkit.getDefaultToolkit().getScreenSize().height - 20;
 			int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);

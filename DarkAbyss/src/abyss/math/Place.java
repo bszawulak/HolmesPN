@@ -110,63 +110,8 @@ public class Place extends Node {
 	 */
 	public void draw(Graphics2D g, int sheetId)
 	{
-		/*
-		for (ElementLocation el : this.getNodeLocations(sheetId)) {
-			Rectangle nodeBounds = new Rectangle(
-					el.getPosition().x - getRadius(), el.getPosition().y - getRadius(), 
-					this.getRadius() * 2, this.getRadius() * 2);
-			if (el.isSelected() && !el.isPortalSelected()) {
-				g.setColor(EditorResources.selectionColorLevel1);
-				g.setStroke(EditorResources.glowStrokeLevel1);
-				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-				g.setColor(EditorResources.selectionColorLevel2);
-				g.setStroke(EditorResources.glowStrokeLevel2);
-				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-				g.setColor(EditorResources.selectionColorLevel3);
-				g.setStroke(EditorResources.glowStrokeLevel3);
-				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				
-				try {
-					BufferedImage img = ImageIO.read(getClass().getResource("/icons/selectedSign.png"));
-					g.drawImage(img, null, 
-							nodeBounds.x-(this.getRadius()-4), 
-							nodeBounds.y-(this.getRadius()-4));
-				} catch (Exception e) {
-					
-				}
-			} else if (el.isPortalSelected()) {
-				g.setColor(EditorResources.glowPortalColorLevel1);
-				g.setStroke(EditorResources.glowStrokeLevel1);
-				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-				g.setColor(EditorResources.glowPortalColorLevel2);
-				g.setStroke(EditorResources.glowStrokeLevel2);
-				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-				g.setColor(EditorResources.glowPortalColorLevel3);
-				g.setStroke(EditorResources.glowStrokeLevel3);
-				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-			}
-			g.setColor(Color.white);
-			g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-			g.setColor(Color.DARK_GRAY);
-			g.setStroke(new BasicStroke(1.5F));
-			g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-			if (this.getTokensNumber() > 0)
-				g.drawString(
-						Integer.toString(this.getTokensNumber()),
-						nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics()
-						.stringWidth(Integer.toString(this.getTokensNumber())) / 2, 
-						nodeBounds.y + nodeBounds.height / 2 + 5);
-			if (isPortal) {
-				g.drawOval(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
-			}
-		}
-		*/
 		g = ElementDraw.drawElement(this, g, sheetId);
-		super.draw(g, sheetId);
+		//super.draw(g, sheetId);
 	}
 
 	/**

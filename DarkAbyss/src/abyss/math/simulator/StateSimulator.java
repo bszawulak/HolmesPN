@@ -260,26 +260,31 @@ public class StateSimulator {
 		}
 		
 		//TODO: reset symulatora głównego jeśli działał/działa!!!!
-		
+		int sum = 0;
+		int internalSteps = 0;
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		ArrayList<Transition> launchingTransitions = null;
 		ArrayList<Integer> singleTransitionData = new ArrayList<Integer>();
 		for(int i=0; i<steps; i++) {
+			internalSteps++;
 			if (isPossibleStep()){ 
 				launchingTransitions = generateValidLaunchingTransitions();
 				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
 			} else {
 				break;
 			}
-			launchAddPhase(launchingTransitions, false);
-			
-			if(launchingTransitions.contains(trans))
+			if(launchingTransitions.contains(trans)) {
 				singleTransitionData.add(1);
-			else
+				sum++;
+			} else {
 				singleTransitionData.add(0);
+			}
+			launchAddPhase(launchingTransitions, false);
 		}
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 		ready = false;
+		singleTransitionData.add(sum);
+		singleTransitionData.add(internalSteps);
 		return singleTransitionData;
 	}
 	

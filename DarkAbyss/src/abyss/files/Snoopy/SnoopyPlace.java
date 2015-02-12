@@ -9,8 +9,7 @@ import abyss.math.ElementLocation;
 import abyss.math.Place;
 
 /**
- * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie Sparta,
- * tylko o wiele gorzej...
+ * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie jest Sparta...
  * @author MR
  *
  */
@@ -92,8 +91,8 @@ public class SnoopyPlace {
 		currID++; //teraz: 228
 		write(bw, "          <![CDATA[" + abyssPlace.getName() + "]]>");
 		write(bw,"          <graphics count=\"" + locations + "\">"); //ile logicznych
-		xOff = 25;
-		yOff = 20;
+		xOff = 25; //TODO: + abyssPlace.getNameOffX();
+		yOff = 20; //TODO: + abyssPlace.getNameOffY();
 		for(int i=0; i<locations; i++) { 
 			if(i==0) {//tylko główne miejsce
 				write(bw,"            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""

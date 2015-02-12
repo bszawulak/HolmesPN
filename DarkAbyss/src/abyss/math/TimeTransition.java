@@ -104,142 +104,18 @@ public class TimeTransition extends Transition {
 	 * @param sheetId int - identyfikator arkusza 
 	 */
 	public void draw(Graphics2D g, int sheetId) {
-		/*
-		for (ElementLocation el : this.getNodeLocations(sheetId)) {
-			Rectangle nodeBounds = new Rectangle(
-				el.getPosition().x - getRadius(), el.getPosition().y - getRadius(),
-					this.getRadius() * 2, this.getRadius() * 2);
-			if (!isLaunching) {
-				if (isGlowed_MTC()) {
-					g.setColor(EditorResources.glowMTCTransitonColorLevel1);
-					g.setStroke(EditorResources.glowStrokeLevel1);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-					g.setColor(EditorResources.glowMTCTransitonColorLevel2);
-					g.setStroke(EditorResources.glowStrokeLevel2);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-					g.setColor(EditorResources.glowMTCTransitonColorLevel3);
-					g.setStroke(EditorResources.glowStrokeLevel3);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				} else if (isGlowed()) {
-					g.setColor(EditorResources.glowTransitonColorLevel1);
-					g.setStroke(EditorResources.glowStrokeLevel1);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-					g.setColor(EditorResources.glowTransitonColorLevel2);
-					g.setStroke(EditorResources.glowStrokeLevel2);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-					g.setColor(EditorResources.glowTransitonColorLevel3);
-					g.setStroke(EditorResources.glowStrokeLevel3);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				} else if (el.isSelected() && !el.isPortalSelected()) {
-					g.setColor(EditorResources.selectionColorLevel1);
-					g.setStroke(EditorResources.glowStrokeLevel1);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					
-
-					g.setColor(EditorResources.selectionColorLevel2);
-					g.setStroke(EditorResources.glowStrokeLevel2);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-					g.setColor(EditorResources.selectionColorLevel3);
-					g.setStroke(EditorResources.glowStrokeLevel3);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					
-					try {
-						BufferedImage img = ImageIO.read(getClass().getResource("/icons/selectedSign.png"));
-						g.drawImage(img, null, 
-								nodeBounds.x-(this.getRadius()+2), 
-								nodeBounds.y-(this.getRadius()+2));
-					} catch (Exception e) {
-						
-					}
-				} else if (el.isPortalSelected()) {
-					g.setColor(EditorResources.glowPortalColorLevel1);
-					g.setStroke(EditorResources.glowStrokeLevel1);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-					g.setColor(EditorResources.glowPortalColorLevel2);
-					g.setStroke(EditorResources.glowStrokeLevel2);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-					g.setColor(EditorResources.glowPortalColorLevel3);
-					g.setStroke(EditorResources.glowStrokeLevel3);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				}
-			}
-			if (isLaunching()) {
-				g.setColor(EditorResources.launchColorLevel1);
-				g.setStroke(EditorResources.glowStrokeLevel1);
-				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-				g.setColor(EditorResources.launchColorLevel2);
-				g.setStroke(EditorResources.glowStrokeLevel2);
-				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-				g.setColor(EditorResources.launchColorLevel3);
-				g.setStroke(EditorResources.glowStrokeLevel3);
-				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-			}
-			g.setColor(Color.white);
-			
-			//g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-			g.setColor(Color.gray);
-			
-			g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-			g.setColor(Color.DARK_GRAY);
-			g.setStroke(new BasicStroke(1.5F));
-			g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-			if (this.isPortal())
-				g.drawRect(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
-
-			//specific for t-trans
-			g.setColor(Color.black);
-			g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
-			String miFT = String.valueOf(this.minFireTime);
-			g.drawString(miFT, nodeBounds.x+35, nodeBounds.y + 8);
-
-			g.setColor(Color.black);
-			g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
-			String mxFT = String.valueOf(this.maxFireTime);
-			g.drawString(mxFT, nodeBounds.x +35, nodeBounds.y + 28);
-
-			g.setColor(Color.LIGHT_GRAY);
-			g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 20, nodeBounds.y + 9);
-			g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 20, nodeBounds.y + 21);
-			g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 20, nodeBounds.y + 21);
-			g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 20, nodeBounds.y + 9);
-
-			g.setColor(EditorResources.glowTransitonTextColor);
-			if (this.isGlowed && this.firingValueInInvariant > 0)
-			{
-				g.setColor(Color.black);
-				g.setFont(new Font("TimesRoman", Font.PLAIN, 10));
-				g.drawString(
-						Integer.toString(this.getFiring_INV()),
-						nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics()
-							.stringWidth(Integer.toString(this .getFiring_INV()))
-							/ 2, nodeBounds.y + nodeBounds.height / 2 + 5);
-			
-			}
-		}
-		*/
-
 		g = ElementDraw.drawElement(this, g, sheetId);
-		drawNode(g, sheetId);
-		
+		//drawName(g, sheetId);
 	}
 
 	/**
-	 * Metoda umieszczająca nazwę tranzycji pod jej symbole. Ostatnia wartość
+	 * Metoda umieszczająca nazwę tranzycji pod jej symbolem. Ostatnia wartość
 	 * w metodzie - 15 - oznacza nieco poniżej kwadratu. Jej zwiększenie
 	 * obniża napis.
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza 
 	 */
-	public void drawNode(Graphics2D g, int sheetId) {
+	public void drawNameTT(Graphics2D g, int sheetId) {
 		g.setColor(Color.black);
 		g.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		int width = g.getFontMetrics().stringWidth(getName());

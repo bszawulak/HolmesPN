@@ -16,6 +16,11 @@ import abyss.math.Place;
 import abyss.math.TimeTransition;
 import abyss.math.Transition;
 
+/**
+ * Klasa pomocnicza, odpowiedzialna za operacje rysowania grafiki w panelach dla sieci.
+ * @author MR
+ *
+ */
 public final class ElementDraw {
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.

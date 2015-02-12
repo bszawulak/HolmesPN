@@ -258,6 +258,11 @@ public class GraphPanel extends JComponent {
 			}
 		for (Node n : getNodes()) {
 			n.draw(g2d, this.sheetId);
+			//n.drawName(g2d, this.sheetId);
+		}
+		for (Node n : getNodes()) {
+			//n.draw(g2d, this.sheetId);
+			n.drawName(g2d, this.sheetId);
 		}
 		if (getSelectingRect() != null) {
 			g2d.setColor(EditorResources.selectionRectColor);
