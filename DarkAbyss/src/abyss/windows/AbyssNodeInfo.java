@@ -5,15 +5,21 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GradientPaint;
+import java.awt.Insets;
 import java.awt.Paint;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -34,6 +40,7 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import abyss.darkgui.GUIManager;
@@ -63,6 +70,10 @@ public class AbyssNodeInfo extends JFrame {
 	
 	private XYSeriesCollection dynamicsSeriesDataSet = null;
 	private JFreeChart dynamicsChart;
+	private int simSteps = 1000;
+	private JSpinner transIntervalSpinner;
+	private boolean maximumMode = false;
+	private int transInterval = 10;
 	
 	/**
 	 * Konstruktor do tworzenia okna właściwości miejsca.
@@ -118,10 +129,10 @@ public class AbyssNodeInfo extends JFrame {
 	 */
 	private void initializePlaceInfo() {
 		this.setLocation(20, 20);
-		setSize(new Dimension(600, 500));
+		setSize(new Dimension(600, 450));
 
 		mainPanel = new JPanel(null);
-		mainPanel.setBounds(0, 0, 600, 500);
+		mainPanel.setBounds(0, 0, 600, 450);
 		
 		int mPanelX = 0;
 		int mPanelY = 0;
@@ -272,64 +283,78 @@ public class AbyssNodeInfo extends JFrame {
 		mainPanel.add(infoPanel);
 		
 		
-		JPanel placesJPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
-		placesJPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
-		placesJPanel.setBounds(0, infoPanel.getHeight(), mainPanel.getWidth()-10, 250);
-		placesJPanel.add(createPlacesChartPanel(place), BorderLayout.CENTER);
-		mainPanel.add(placesJPanel);
+		JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
+		chartMainPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
+		chartMainPanel.setBounds(0, infoPanel.getHeight(), mainPanel.getWidth()-10, 250);
+		chartMainPanel.add(createChartPanel(place), BorderLayout.CENTER);
+		mainPanel.add(chartMainPanel);
 		
-		//SS, chart:
-		if(mainSimulatorActive == false) {
-			
-		} else {
-			placesJPanel.setEnabled(false);
-			TextTitle title = dynamicsChart.getTitle();   
-			//title.setBorder(0, 0, 2, 0);   
-			//title.setBackgroundPaint(Color.white); 
-			title.setFont(new Font("Dialog", Font.PLAIN, 20));
-			title.setExpandToFitSpace(true);
-			title.setPaint(Color.red);
-			title.setText("Chart unavailable, main simulator is active.");
-	           
-			//dynamicsChart.getTitle().setFont(new Font("Dialog", Font.PLAIN, 18));
-			//dynamicsChart.setTitle("Chart unavailable, main simulator is active.");
-		}
+		JPanel chartButtonPanel = new JPanel(null);
+		chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainPanel.getWidth()-10, 50);
+		
+		int chartX = 5;
+		int chartY = 5;
+		
+		JButton acqDataButton = new JButton("SimStart");
+		acqDataButton.setBounds(chartX, chartY, 110, 25);
+		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
+		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
+		acqDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				acquireNewPlaceData();
+			}
+		});
+		chartButtonPanel.add(acqDataButton);
+		
+		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 50000, 100);
+		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
+		simStepsSpinner.setBounds(chartX +120, chartY, 80, 25);
+		simStepsSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int val = (int) spinner.getValue();
+				simSteps = val;
+			}
+		});
+		chartButtonPanel.add(simStepsSpinner);
+		
+		JLabel label1 = new JLabel("Mode:");
+		label1.setBounds(chartX+210, chartY+2, 50, 20);
+		chartButtonPanel.add(label1);
+		
+		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
+		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+		simMode.setBounds(chartX+250, chartY, 120, 25);
+		simMode.setSelectedIndex(1);
+		simMode.setMaximumRowCount(6);
+		simMode.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = simMode.getSelectedIndex();
+				if(selected == 0)
+					maximumMode = true;
+				else
+					maximumMode = false;
+			}
+		});
+		chartButtonPanel.add(simMode);
+		
+		mainPanel.add(chartButtonPanel);
+		
+		fillPlaceDynamicData(chartMainPanel);
 
 		add(mainPanel);
 	}
 	
-	JPanel createPlacesChartPanel(Node node) {
-		String chartTitle = node.getName()+ " dynamics";
-	    String xAxisLabel = "Simulation steps";
-	    String yAxisLabel = "Tokens";
-	    if(node instanceof Transition)
-	    	yAxisLabel = "Firings";
-	    
-	    boolean showLegend = false;
-	    boolean createTooltip = true;
-	    boolean createURL = false;
-	    
-		dynamicsSeriesDataSet = new XYSeriesCollection();
-	    dynamicsChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dynamicsSeriesDataSet, 
-	    		PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
-	    
-	    dynamicsChart.getTitle().setFont(new Font("Dialog", Font.PLAIN, 14));
-	    //NOT UNTIL PLOT IN PLACE:
-	    //CategoryPlot plot = (CategoryPlot) placesChart.getPlot();
-        //Font font = new Font("Dialog", Font.PLAIN, 12); 
-      	//plot.getDomainAxis().setLabelFont(font);
-      	//plot.getRangeAxis().setLabelFont(font);
-	
-	    ChartPanel placesChartPanel = new ChartPanel(dynamicsChart);
-	    return placesChartPanel;
-	}
-	
+	/**
+	 * Metoda odpowiedzialna za elementy interfejsu właściwości dla tranzycji sieci.
+	 */
 	private void initializeTransitionInfo() {
 		this.setLocation(20, 20);
-		setSize(new Dimension(600, 500));
+		setSize(new Dimension(600, 450));
 
 		mainPanel = new JPanel(null);
-		mainPanel.setBounds(0, 0, 600, 500);
+		mainPanel.setBounds(0, 0, 600, 450);
 		
 		int mPanelX = 0;
 		int mPanelY = 0;
@@ -371,21 +396,7 @@ public class AbyssNodeInfo extends JFrame {
         infoPanel.add(avgFiredLabel);
         
         JFormattedTextField avgFiredTextBox = new JFormattedTextField(id);
-        if(mainSimulatorActive == false) {
-        	//TODO: inne modele sieci
-        	StateSimulator ss = new StateSimulator();
-    		ss.initiateSim(NetType.BASIC, false);
-    		ArrayList<Integer> dataVector = ss.simulateNetSingleTransition(1000, transition);
-    		int sum = dataVector.get(dataVector.size()-2);
-    		int steps = dataVector.get(dataVector.size()-1);
-    		double avgFired = sum;
-    		avgFired /= steps;
-    		avgFired *= 100; // * 100%
-    		avgFiredTextBox.setText(Tools.cutValue(avgFired)+"%");
-        } else {
-        	avgFiredTextBox.setEnabled(false);
-        	avgFiredTextBox.setText("n/a");
-        }
+        //wypełnianie niżej
         avgFiredTextBox.setBounds(infPanelX+180, infPanelY, 50, 20);
         avgFiredTextBox.setEditable(false);
 		infoPanel.add(avgFiredTextBox);
@@ -470,10 +481,245 @@ public class AbyssNodeInfo extends JFrame {
 
         infoPanel.add(creationPanel);
         infPanelY += 60;
+        mainPanel.add(infoPanel);
         
-		mainPanel.add(infoPanel);
-
+        //************************* NEWLINE *************************
+        
+        JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
+        chartMainPanel.setBorder(BorderFactory.createTitledBorder("Transition chart"));
+        chartMainPanel.setBounds(0, infoPanel.getHeight(), mainPanel.getWidth()-10, 250);
+        chartMainPanel.add(createChartPanel(transition), BorderLayout.CENTER);
+		mainPanel.add(chartMainPanel);
+		
+		JPanel chartButtonPanel = new JPanel(null);
+		chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainPanel.getWidth()-10, 50);
+		
+		int chartX = 5;
+		int chartY = 5;
+		
+		JButton acqDataButton = new JButton("SimStart");
+		acqDataButton.setBounds(chartX, chartY, 110, 25);
+		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
+		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
+		acqDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				acquireNewTransitionData();
+			}
+		});
+		chartButtonPanel.add(acqDataButton);
+		
+		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 50000, 100);
+		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
+		simStepsSpinner.setBounds(chartX +120, chartY, 80, 25);
+		simStepsSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int val = (int) spinner.getValue();
+				simSteps = val;
+				
+				//update spinner przerw/srednich dla tranzycji:
+				int cVal = simSteps / 100;
+				int mVal = simSteps / 5;
+				if(cVal < 1)
+					cVal = 1;
+				if(cVal > mVal) {
+					cVal = 1;
+					mVal = 20;
+				}
+				try {
+					SpinnerNumberModel spinnerClustersModel = new SpinnerNumberModel(cVal, 1, mVal, 1);
+					transIntervalSpinner.setModel(spinnerClustersModel);
+					transInterval = cVal;
+				} catch (Exception ex) {
+					GUIManager.getDefaultGUIManager().log("Cannot update transition interval for simulator (Transition Info Windows).", "warning", true);
+				}
+			}
+		});
+		chartButtonPanel.add(simStepsSpinner);
+		
+		JLabel label1 = new JLabel("Mode:");
+		label1.setBounds(chartX+210, chartY+2, 50, 20);
+		chartButtonPanel.add(label1);
+		
+		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
+		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+		simMode.setBounds(chartX+250, chartY, 120, 25);
+		simMode.setSelectedIndex(1);
+		simMode.setMaximumRowCount(6);
+		simMode.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = simMode.getSelectedIndex();
+				if(selected == 0)
+					maximumMode = true;
+				else
+					maximumMode = false;
+			}
+		});
+		chartButtonPanel.add(simMode);
+		
+		JLabel labelInterval = new JLabel("Interval:");
+		labelInterval.setBounds(chartX+380, chartY+2, 80, 20);
+		chartButtonPanel.add(labelInterval);
+		
+		int maxVal = simSteps / 10;
+		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(10, 1, maxVal, 1);
+		transIntervalSpinner = new JSpinner(intervSpinnerModel);
+		transIntervalSpinner.setBounds(chartX +430, chartY, 60, 25);
+		transIntervalSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				transInterval = (int) spinner.getValue();
+				//clearTransitionsChart();
+			}
+		});
+		chartButtonPanel.add(transIntervalSpinner);
+		
+		mainPanel.add(chartButtonPanel);
+		
 		add(mainPanel);
 		
+		fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
+	}
+
+	/**
+	 * Metoda wypełnia pola danych dynamicznych dla miejsca, tj. symuluje 1000 kroków sieci na bazie
+	 * czego ustala liczbę tekenów dla w ramach tej symulacji 
+	 * @param avgFiredTextBox JFormattedTextField - pole z wartością procentową
+	 * @param chartMainPanel JPanel - panel wykresu
+	 */
+	private void fillPlaceDynamicData(JPanel chartMainPanel) {
+		if(mainSimulatorActive == false) {
+			acquireNewPlaceData();			
+		} else {
+			chartMainPanel.setEnabled(false);
+			TextTitle title = dynamicsChart.getTitle();   
+			title.setBorder(2, 2, 2, 2);   
+			//title.setBackgroundPaint(Color.white); 
+			title.setFont(new Font("Dialog", Font.PLAIN, 20));
+			title.setExpandToFitSpace(true);
+			title.setPaint(Color.red);
+			title.setText("Chart unavailable, main simulator is active.");
+		}
+	}
+
+	/**
+	 * Metoda wypełnia pola danych dynamicznych dla tranzycji, tj. symuluje 1000 kroków sieci na bazie
+	 * czego ustala prawdopodobieństwo uruchomienia tranzycji oraz przedstawia wykres dla symulacji. 
+	 * @param avgFiredTextBox JFormattedTextField - pole z wartością procentową
+	 * @param chartMainPanel JPanel - panel wykresu
+	 */
+	private void fillTransitionDynamicData(JFormattedTextField avgFiredTextBox, JPanel chartMainPanel,
+			JPanel chartButtonPanel) {
+		if(mainSimulatorActive == false) {
+			ArrayList<Integer> dataVector = acquireNewTransitionData();
+			
+    		int sum = dataVector.get(dataVector.size()-2);
+    		int steps = dataVector.get(dataVector.size()-1);
+    		double avgFired = sum;
+    		avgFired /= steps;
+    		avgFired *= 100; // * 100%
+    		avgFiredTextBox.setText(Tools.cutValue(avgFired)+"%");  
+		} else {
+			avgFiredTextBox.setEnabled(false);
+        	avgFiredTextBox.setText("n/a");
+        	//*********************************************
+			chartMainPanel.setEnabled(false);
+			chartButtonPanel.setEnabled(false);
+			//*********************************************
+			TextTitle title = dynamicsChart.getTitle();   
+			title.setBorder(2, 2, 2, 2);   
+			//title.setBackgroundPaint(Color.white); 
+			title.setFont(new Font("Dialog", Font.PLAIN, 20));
+			title.setExpandToFitSpace(true);
+			title.setPaint(Color.red);
+			title.setText("Chart unavailable, main simulator is active.");
+		}
+	}
+	
+	/**
+	 * Metoda aktywuje symulator dla jednej tranzycji w ustalonym wcześniej trybie i dla wcześniej
+	 * ustalonej liczby kroków. Wyniki zapisuje na wykresie.
+	 */
+	private void acquireNewPlaceData() {
+		StateSimulator ss = new StateSimulator();
+		ss.initiateSim(NetType.BASIC, false);
+		ArrayList<Integer> dataVector = ss.simulateNetSinglePlace(simSteps, place);
+		
+		dynamicsSeriesDataSet.removeAllSeries();
+		
+		XYSeries series = new XYSeries("Number of tokens");
+		for(int step=0; step<dataVector.size(); step++) {
+			int value = dataVector.get(step);
+			series.add(step, value);
+		}
+		dynamicsSeriesDataSet.addSeries(series);
+	}
+	
+	/**
+	 * Metoda aktywuje symulator dla jednej tranzycji w ustalonym wcześniej trybie i dla wcześniej
+	 * ustalonej liczby kroków. Wyniki zapisuje na wykresie, zwraca też wektor danych.
+	 * @return ArrayList[Integer] - wektor danych z symulatora
+	 */
+	private ArrayList<Integer> acquireNewTransitionData() {
+		StateSimulator ss = new StateSimulator();
+		ss.initiateSim(NetType.BASIC, maximumMode);
+		ArrayList<Integer> dataVector = ss.simulateNetSingleTransition(simSteps, transition);
+		
+		dynamicsSeriesDataSet.removeAllSeries();
+		
+		XYSeries series = new XYSeries("Average firing");
+		for(int step=0; step<dataVector.size()-2; step++) {
+			//if(transInterval > (transitionsRawData.size()/10)) {
+			//	transInterval = transitionsRawData.size()/10;
+			//}
+			int value = 0; //suma odpaleń w przedziale czasu
+			int interval = transInterval;
+			if(step+interval >= dataVector.size()-2)
+				interval = dataVector.size() - 2 - step;
+			
+			for(int i=0; i<interval; i++) {
+				try {
+					value += dataVector.get(step+i);
+				} catch (Exception e) {
+					
+				}
+			}
+			series.add(step, value);
+			step += interval;
+		}
+		dynamicsSeriesDataSet.addSeries(series);
+		return dataVector;
+	}
+	
+	/**
+	 * Metoda tworząca podstawowe elementy wykresu okna.
+	 * @param node Node - klieknięty wierzchołek
+	 * @return JPanel - panel komponentów
+	 */
+	JPanel createChartPanel(Node node) {
+		String chartTitle = node.getName()+ " dynamics";
+	    String xAxisLabel = "Simulation steps";
+	    String yAxisLabel = "Tokens";
+	    if(node instanceof Transition)
+	    	yAxisLabel = "Firings";
+	    
+	    boolean showLegend = false;
+	    boolean createTooltip = true;
+	    boolean createURL = false;
+	    
+		dynamicsSeriesDataSet = new XYSeriesCollection();
+	    dynamicsChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dynamicsSeriesDataSet, 
+	    		PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
+	    
+	    dynamicsChart.getTitle().setFont(new Font("Dialog", Font.PLAIN, 14));
+	    //NOT UNTIL PLOT IN PLACE:
+	    //CategoryPlot plot = (CategoryPlot) placesChart.getPlot();
+        //Font font = new Font("Dialog", Font.PLAIN, 12); 
+      	//plot.getDomainAxis().setLabelFont(font);
+      	//plot.getRangeAxis().setLabelFont(font);
+	
+	    ChartPanel placesChartPanel = new ChartPanel(dynamicsChart);
+	    return placesChartPanel;
 	}
 }

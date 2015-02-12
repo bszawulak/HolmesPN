@@ -191,10 +191,10 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		dataAcquisitionPanel.add(acqDataButton);
 		
-		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(simSteps, 0, 1000000, 100);
-		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
-		tokenSpinner.setBounds(posXda +120, posYda, 80, 30);
-		tokenSpinner.addChangeListener(new ChangeListener() {
+		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 1000000, 100);
+		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
+		simStepsSpinner.setBounds(posXda +120, posYda, 80, 30);
+		simStepsSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
 				int val = (int) spinner.getValue();
@@ -214,11 +214,11 @@ public class AbyssStateSimulator extends JFrame {
 					transIntervalSpinner.setModel(spinnerClustersModel);
 					transInterval = cVal;
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("spinnerClustersModel error", "warning", true);
+					GUIManager.getDefaultGUIManager().log("Cannot update transition interval for simulator.", "warning", true);
 				}
 			}
 		});
-		dataAcquisitionPanel.add(tokenSpinner);
+		dataAcquisitionPanel.add(simStepsSpinner);
 		
 		JLabel label1 = new JLabel("Mode:");
 		label1.setBounds(posXda+210, posYda+5, 50, 20);
@@ -521,7 +521,8 @@ public class AbyssStateSimulator extends JFrame {
 		label1.setBounds(posXchart+110, posYchart, 80, 20);
 		transChartOptionsPanel.add(label1);
 		
-		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(100, 0, Integer.MAX_VALUE, 100);
+		int mValue = simSteps/10;
+		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(100, 0, mValue, 10);
 		transIntervalSpinner = new JSpinner(intervSpinnerModel);
 		transIntervalSpinner.setBounds(posXchart +170, posYchart, 60, 20);
 		transIntervalSpinner.addChangeListener(new ChangeListener() {

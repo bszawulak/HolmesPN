@@ -226,8 +226,6 @@ public class StateSimulator {
 			return null;
 		}
 		
-		//TODO: reset symulatora głównego jeśli działał/działa!!!!
-		
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		ArrayList<Transition> launchingTransitions = null;
 		ArrayList<Integer> singlePlaceData = new ArrayList<Integer>();
@@ -258,8 +256,7 @@ public class StateSimulator {
 			GUIManager.getDefaultGUIManager().log("Simulation for transition "+trans.getName()+" cannot start.", "error", true);
 			return null;
 		}
-		
-		//TODO: reset symulatora głównego jeśli działał/działa!!!!
+
 		int sum = 0;
 		int internalSteps = 0;
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
