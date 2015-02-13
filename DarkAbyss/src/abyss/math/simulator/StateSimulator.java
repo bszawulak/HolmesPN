@@ -158,11 +158,13 @@ public class StateSimulator {
 	 * Od simulate różni się tym, że nie zbiera historii odpaleń i tokenów dla miejsc, tylko
 	 * średnie wartości. Dzięki temu działa szybciej i nie zabiera tyle miejsca w pamięci.
 	 * @param steps int - liczba kroków do symulacji
+	 * @param placesToo boolean - true, jeśli ma gromadzić też dane dla miejsc
+	 * @return int - liczba rzeczywiście wykonanych kroków
 	 */
-	public void simulateNetSimple(int steps) {
+	public int simulateNetSimple(int steps, boolean placesToo) {
 		if(ready == false) {
 			GUIManager.getDefaultGUIManager().log("Simulation simple mode cannot start.", "error", true);
-			return;
+			return 0;
 		}
 		
 		//TODO: reset symulatora głównego jeśli działał/działa!!!!
@@ -170,11 +172,9 @@ public class StateSimulator {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		ArrayList<Transition> launchingTransitions = null;
 		
-		//String max = "50% firing chance";
-		//if(maximumMode)
-		//	max = "maximum";
-		//GUIManager.getDefaultGUIManager().log("Starting states simulation for "+steps+" steps in "+max+" mode.", "text", true);
+		int internalSteps = 0;
 		for(int i=0; i<steps; i++) {
+			internalSteps++;
 			if (isPossibleStep()){ 
 				launchingTransitions = generateValidLaunchingTransitions();
 				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
@@ -189,28 +189,27 @@ public class StateSimulator {
 			}
 			launchAddPhase(launchingTransitions, false);
 			
-			//zbierz informacje o tokenach w miejsach:
-			//ArrayList<Integer> marking = new ArrayList<Integer>();
-			for(int p=0; p<places.size(); p++) {
-				int tokens = places.get(p).getTokensNumber();
-				//marking.add(tokens);
-				
-				double sumOfTokens = placesAvgData.get(p);
-				placesAvgData.set(p, sumOfTokens+tokens);
-			}
-			//placesData.add(marking);
+			if(placesToo == true)
+				for(int p=0; p<places.size(); p++) {
+					int tokens = places.get(p).getTokensNumber();
+					double sumOfTokens = placesAvgData.get(p);
+					placesAvgData.set(p, sumOfTokens+tokens);
+				}
+			
 		}
 		
 		for(int t=0; t<transitions.size(); t++) {
-			transitionsAvgData.add((double) ((double)transitionsTotalFiring.get(t)/(double)steps));
+			transitionsAvgData.add((double) ((double)transitionsTotalFiring.get(t)/(double)internalSteps));
 		}
-		for(int p=0; p<places.size(); p++) {
-			double sumOfTokens = placesAvgData.get(p);
-			placesAvgData.set(p, sumOfTokens/(double)steps);
-		}
-		//GUIManager.getDefaultGUIManager().log("Simulation ended. Restoring zero marking.", "text", true);
+		
+		if(placesToo == true)
+			for(int p=0; p<places.size(); p++) {
+				double sumOfTokens = placesAvgData.get(p);
+				placesAvgData.set(p, sumOfTokens/(double)internalSteps);
+			}
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 		ready = false;
+		return internalSteps;
 	}
 	
 	/**
@@ -229,7 +228,9 @@ public class StateSimulator {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		ArrayList<Transition> launchingTransitions = null;
 		ArrayList<Integer> singlePlaceData = new ArrayList<Integer>();
+		int internalSteps = 0;
 		for(int i=0; i<steps; i++) {
+			internalSteps++;
 			if (isPossibleStep()){ 
 				launchingTransitions = generateValidLaunchingTransitions();
 				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje

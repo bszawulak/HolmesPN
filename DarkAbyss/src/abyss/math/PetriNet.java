@@ -51,6 +51,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
 	private ArrayList<ArrayList<InvariantTransition>> invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
 	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
+	private ArrayList<Integer> invariantsSize;
 	private ArrayList<GraphPanel> graphPanels;		// panele sieci
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
 	private IdGenerator idGenerator;
@@ -405,6 +406,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<ArrayList<Integer>> getInvariantsMatrix() {
 		return invariantsMatrix;
+	}
+	
+	/**
+	 * Metoda zwraca wektor określający liczność każdego inwariantu.
+	 * Zakłada, że została wywołana metoda 
+	 * @return ArrayList[Integer] - wektor liczności inwariantów
+	 */
+	public ArrayList<Integer> getInvariantsSize() {
+		return invariantsSize;
 	}
 
 	/**
@@ -927,24 +937,29 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda zwracająca macierz inwariantów. 
+	 * Metoda zwracająca macierz inwariantów drugiego typu. Przy okazji ustala liczność
+	 * każdego inwariantu w ramach wektora invariantsSize (globalny).
 	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inw.
 	 */
 	public ArrayList<ArrayList<InvariantTransition>> getInaInvariants() {
 		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
 		InvariantTransition currentTransition;
 		invariantsBinaryList = communicationProtocol.getInvariantsList();
+		invariantsSize = new ArrayList<Integer>();
 		
 		if (invariantsBinaryList.size() > 0) {
 			set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
 			if (invariantsBinaryList.get(0).size() == getTransitions().size()) {
 				ArrayList<InvariantTransition> currentInvariant;
 				int i; //iterator po tranzycjach sieci
+				int invSize = 0;
 				for (ArrayList<Integer> binaryInvariant : invariantsBinaryList) {
 					currentInvariant = new ArrayList<InvariantTransition>();
 					i = 0;
+					invSize = 0;
 					for (Integer amountOfFirings : binaryInvariant) {
-						if (amountOfFirings > 0) {
+						if (amountOfFirings > 0) { //
+							invSize++;
 							currentTransition = new InvariantTransition(getTransitions().get(i), amountOfFirings);
 							currentInvariant.add(currentTransition);
 						}
@@ -952,6 +967,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					}
 					// SettingsManager.log(invariantLog);
 					get2ndFormInvariantsList().add(currentInvariant);
+					invariantsSize.add(invSize);
+					invSize = 0;
 				}
 			} else {
 				JOptionPane.showMessageDialog(null,

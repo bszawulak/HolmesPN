@@ -1,9 +1,7 @@
 package abyss.windows;
 
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 
-import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -11,18 +9,30 @@ import abyss.darkgui.GUIManager;
 import abyss.math.ElementLocation;
 import abyss.math.Place;
 import abyss.math.Transition;
-import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.StateSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
 import abyss.utilities.Tools;
 
+/**
+ * Klasa z metodami obsługującymi okno tabel programu - klasy AbyssNetTables.
+ * @author MR
+ *
+ */
 public class AbyssNetTablesActions {
 	private AbyssNetTables antWindow; 
 	
+	/**
+	 * Konstruktor klasy.
+	 * @param overlord AbyssNetTables - obiekt obsługiwanego okna
+	 */
 	public AbyssNetTablesActions(AbyssNetTables overlord) {
 		antWindow = overlord;
 	}
 	
+	/**
+	 * Metoda obsługująca kliknięcie komórki tabeli danych.
+	 * @param table JTable - tabela danych
+	 */
 	public void cellClickAction(JTable table) {
 		try {
 			String name = table.getName();
@@ -37,13 +47,23 @@ public class AbyssNetTablesActions {
 	  	    	//int column = table.getSelectedColumn();
 	  	    	//cellClickedEvent(row, column);
 			} else if(name.equals("TransitionTable")) {
-				
+				int row = table.getSelectedRow();
+	  	    	antWindow.currentClickedRow = row;
+	  	    	int index = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+	  	    	AbyssNodeInfo window = new AbyssNodeInfo(
+	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(index), 
+	  	    			antWindow);
+	  	    	window.setVisible(true);
 			}
 		} catch (Exception e) {
 			
 		}
 	}
 
+	/**
+	 * Metoda wypełniająca tabelę miejsc danymi.
+	 * @param model DefaultTableModel - obiekt danych
+	 */
 	public void addPlacesToModel(DefaultTableModel model) {
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		if(places.size() == 0) {
@@ -77,6 +97,10 @@ public class AbyssNetTablesActions {
 		}
 	}
 
+	/**
+	 * Metoda wypełniająca tabelę tramzycji danymi.
+	 * @param model DefaultTableModel - obiekt danych
+	 */
 	public void addTransitionsToModel(DefaultTableModel model) {
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		if(transitions.size() == 0) {
@@ -85,7 +109,7 @@ public class AbyssNetTablesActions {
 		
 		StateSimulator ss = new StateSimulator();
 		ss.initiateSim(NetType.BASIC, false);
-		ss.simulateNetSimple(10000);
+		ss.simulateNetSimple(10000, false);
 		ArrayList<Double> resVector = ss.getTransitionsAvgData();
 		
 		int iterIndex = -1;
@@ -116,17 +140,4 @@ public class AbyssNetTablesActions {
 			model.addRow(dataRow);
 		}
 	}
-
-	public class SimState implements Callable<Boolean> {
-		NetSimulator ns;
-		public SimState(NetSimulator ns) {
-			this.ns = ns;
-		}
-        public Boolean call() throws Exception {
-        	StateSimulator ss = new StateSimulator();
-    		ss.initiateSim(NetType.BASIC, false);
-    		ss.simulateNetSimple(10000);
-            return true;
-        }
-    }
 }

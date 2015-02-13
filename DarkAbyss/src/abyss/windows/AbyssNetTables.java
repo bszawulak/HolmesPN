@@ -12,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -27,6 +28,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import abyss.darkgui.GUIManager;
+import abyss.math.Place;
+import abyss.math.Transition;
+import abyss.math.simulator.StateSimulator;
+import abyss.math.simulator.NetSimulator.NetType;
 import abyss.utilities.Tools;
 
 /**
@@ -114,12 +119,12 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		int bWidth = 120;
 		int bHeight = 30;
 		
-		JButton transitionsButton = createStandardButton("", Tools.getResIcon32("/icons/clustWindow/xxx.png"));
+		JButton transitionsButton = createStandardButton("Places", Tools.getResIcon32(""));
 		transitionsButton.setToolTipText("    ");
 		transitionsButton.setBounds(xPos, yPos, bWidth, bHeight);
 		transitionsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				createPlacesTables();
+				createPlacesTable();
 			}
 		});
 		transitionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -128,16 +133,30 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		
 		yPos = yPos + bHeight + 5;
 		
-		JButton placesButton = createStandardButton("", Tools.getResIcon32("/icons/clustWindow/xxx.png"));
+		JButton placesButton = createStandardButton("Transitions", Tools.getResIcon32(""));
 		placesButton.setToolTipText("    ");
 		placesButton.setBounds(xPos, yPos, bWidth, bHeight);
 		placesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				createTransitionTables();
+				createTransitionTable();
 			}
 		});
 		placesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		buttonsPanel.add(placesButton);
+		buttonsPanel.add(Box.createVerticalStrut(7));
+		
+		yPos = yPos + bHeight + 5;
+		
+		JButton invariantsButton = createStandardButton("Invariants", Tools.getResIcon32(""));
+		invariantsButton.setToolTipText("    ");
+		invariantsButton.setBounds(xPos, yPos, bWidth, bHeight);
+		invariantsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				createInvariantsTable();
+			}
+		});
+		invariantsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		buttonsPanel.add(invariantsButton);
 		buttonsPanel.add(Box.createVerticalStrut(7));
 		
 		yPos = yPos + bHeight + 15;
@@ -182,14 +201,14 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	/**
 	 * Metoda tworząca tabelę miejsc sieci.
 	 */
-    private void createPlacesTables() {
+    private void createPlacesTable() {
     	model = new DefaultTableModel();
-        model.addColumn("C01");
-        model.addColumn("C02");
-        model.addColumn("C03");
-        model.addColumn("C04");
-        model.addColumn("C05");
-        model.addColumn("C06");
+        model.addColumn("C0");
+        model.addColumn("C1");
+        model.addColumn("C2");
+        model.addColumn("C3");
+        model.addColumn("C4");
+        model.addColumn("C5");
         
         table.setModel(model);
         
@@ -235,14 +254,17 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
         table.validate();
     }
     
-    private void createTransitionTables() {
+    /**
+     * Metoda przygotowująca tabelę dla tranzycji.
+     */
+    private void createTransitionTable() {
     	model = new DefaultTableModel();
-        model.addColumn("C01");
-        model.addColumn("C02");
-        model.addColumn("C03");
-        model.addColumn("C04");
-        model.addColumn("C05");
-        model.addColumn("C06");
+        model.addColumn("C0");
+        model.addColumn("C1");
+        model.addColumn("C2");
+        model.addColumn("C3");
+        model.addColumn("C4");
+        model.addColumn("C5");
         
         table.setModel(model);
         
@@ -287,6 +309,101 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
         table.setDefaultRenderer(Object.class, tableRenderer);
 
         action.addTransitionsToModel(model); // metoda generująca dane o tranzycjach
+        table.validate();
+    }
+    
+    /**
+     * Metoda przygotowująca tabelę dla inwariantów.
+     */
+    private void createInvariantsTable() {
+    	ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+    	if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
+    		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size() == 0) return;
+    		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size() == 0) return;
+    		
+    		GUIManager.getDefaultGUIManager().io.generateINAinvariants();
+    		invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+    	}
+    	
+    	if(invariantsMatrix == null || invariantsMatrix.size() == 0) return; //final check
+    	
+    	ArrayList<Integer> invSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsSize();
+    		
+    	/*
+    	int largestInvariantSize = 0;
+    	for(int i=0; i<invSize.size(); i++) {
+    		int size = invSize.get(i);
+    		if(size > largestInvariantSize)
+    			largestInvariantSize = size;
+    	}
+    	*/
+    	int transNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+    	
+    	model = new DefaultTableModel();
+        model.addColumn("C0"); //ID
+        model.addColumn("C1"); //size
+        for(int i=0; i<transNumber; i++) {
+        	int x = i+3;
+        	model.addColumn("C2"+x);
+        }
+        
+        table.setModel(model);
+        
+        table.getColumnModel().getColumn(0).setHeaderValue("ID");
+        table.getColumnModel().getColumn(0).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(0).setMinWidth(40);
+    	table.getColumnModel().getColumn(0).setMaxWidth(40);
+    	
+        table.getColumnModel().getColumn(1).setHeaderValue("Trans. #:");
+        table.getColumnModel().getColumn(1).setPreferredWidth(50);
+    	table.getColumnModel().getColumn(1).setMinWidth(50);
+    	table.getColumnModel().getColumn(1).setMaxWidth(50);
+    	
+    	for(int i=0; i<transNumber; i++) {
+        	int x = i+2;
+        	table.getColumnModel().getColumn(x).setHeaderValue("t"+i);
+            table.getColumnModel().getColumn(x).setPreferredWidth(70);
+        	table.getColumnModel().getColumn(x).setMinWidth(70);
+        	table.getColumnModel().getColumn(x).setMaxWidth(70);
+        }
+        
+        table.setName("InvariantsTable");
+        tableRenderer.setMode(2); //mode: transitions
+
+        
+        //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+        table.setDefaultRenderer(Object.class, tableRenderer);
+        
+        
+        StateSimulator ss = new StateSimulator();
+		ss.initiateSim(NetType.BASIC, false);
+		ss.simulateNetSimple(10000, false);
+		ArrayList<Double> resVector = ss.getTransitionsAvgData();
+		
+		for(int i=0; i<invariantsMatrix.size(); i++) {
+			ArrayList<Integer> dataV = invariantsMatrix.get(i);
+			int posCounter=2; //która pozycja w dataRow
+			String[] dataRow = new String[transNumber+2];
+			dataRow[0] = ""+i;
+			dataRow[1] = ""+invSize.get(i);
+			for(int t=0; t<dataV.size(); t++) {
+				int value = dataV.get(t);
+				if(value>0) {
+					double avg = resVector.get(t);
+					avg *= 100; // do 100%
+					String cell = ""+value+"("+Tools.cutValue(avg)+"%)";
+					dataRow[posCounter] = cell;
+					posCounter++;
+				} else {
+					dataRow[posCounter] = "";
+					posCounter++;
+				}
+			}
+			model.addRow(dataRow);
+		}
+
+        //action.addTransitionsToModel(model); // metoda generująca dane o tranzycjach
         table.validate();
     }
 	

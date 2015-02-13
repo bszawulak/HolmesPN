@@ -30,6 +30,8 @@ public class PetriNetElementPopupMenu extends GraphPanelPopupMenu {
 			public void actionPerformed(ActionEvent e) {
 				//NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
 				//if(ns.getMode() == SimulatorMode.STOPPED) {
+				
+				//TODO: wykrywanie kliknięcia łuku, inaczej wylatuje wyjątek:
 					Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
 					if(n instanceof Place) {
 						AbyssNodeInfo ani = new AbyssNodeInfo((Place)n, GUIManager.getDefaultGUIManager().getFrame());
