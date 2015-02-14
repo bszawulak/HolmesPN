@@ -476,7 +476,8 @@ public class AbyssDockWindowsTable extends JPanel {
 		//components.add(idLabel);
 		components.add(idLabel);
 		
-		int gID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().lastIndexOf(place);
+		//int gID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().lastIndexOf(place);
+		int gID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(place);
 		
 		//JLabel idLabel2 = new JLabel(Integer.toString(place.getID()));
 		JLabel idLabel2 = new JLabel(Integer.toString(gID));

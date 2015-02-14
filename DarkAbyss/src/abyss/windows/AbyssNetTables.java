@@ -15,7 +15,6 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,15 +22,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.Place;
-import abyss.math.Transition;
 import abyss.math.simulator.StateSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
+import abyss.tables.InvariantsTableModel;
+import abyss.tables.PTITableRenderer;
+import abyss.tables.PlacesTableModel;
+import abyss.tables.TransitionsTableModel;
 import abyss.utilities.Tools;
 
 /**
@@ -47,12 +48,17 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	@SuppressWarnings("unused")
 	private JFrame parentFrame;
 	private JPanel mainPanel;
-	private JPanel rightSubPanel;
+	private JPanel tablesSubPanel;
 	private JPanel buttonsPanel;
+	private JScrollPane tableScrollPane;
 	//data components:
 	private JTable table;
+	
 	private DefaultTableModel model;
-	private MyRenderer tableRenderer = new MyRenderer();
+	private PlacesTableModel modelPlaces;
+	private TransitionsTableModel modelTransition;
+	private InvariantsTableModel modelInvariants;
+	private PTITableRenderer tableRenderer; // = new PTITableRenderer();
 	public int currentClickedRow;
 	
 	private final AbyssNetTablesActions action;
@@ -104,6 +110,42 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		mainPanel.add(createButtonsPanel());
 		add(mainPanel);
 	}
+	
+	/**
+	 * Metoda ta tworzy obiekty modelu i tabeli, inicjalizuje listenery tablicy.
+	 */
+	private void createTableConstruct() {
+		model = new DefaultTableModel();
+		table = new JTable(model);
+		tableRenderer = new PTITableRenderer(table);
+		
+		table.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+          	    if (e.getClickCount() == 1) {
+          	    	if(e.isControlDown() == false)
+          	    		action.cellClickAction(table);
+          	    }
+          	 }
+      	});
+	}
+	
+	/**
+	 * Metoda tworząca panel główny okna służący do wyświetlania tabeli danych.
+	 * @return JPanel - panel główny
+	 */
+	private JPanel createTablePanel() {
+		tablesSubPanel = new JPanel(new BorderLayout());
+		tablesSubPanel.setBounds(0, 0, 670, 560);
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
+		
+		createTableConstruct();
+
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		tableScrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
+		
+		return tablesSubPanel;
+	}
 
 	/**
 	 * Metoda pomocnicza tworząca panel boczny przycisków.
@@ -111,12 +153,18 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	 */
 	private JPanel createButtonsPanel() {
 		buttonsPanel = new JPanel(null);
-		buttonsPanel.setBounds(650, 0, 140, 560);
-		buttonsPanel.setBorder(BorderFactory.createTitledBorder("Buttons:"));
+		buttonsPanel.setBounds(670, 0, 130, 560);
+		//buttonsPanel.setBorder(BorderFactory.createTitledBorder("Buttons:"));
+		
+		//********************************************** NODES ****************************************************
+		
+		JPanel buttonNodePanel = new JPanel(null);
+		buttonNodePanel.setBounds(0, 0, 130, 120);
+		buttonNodePanel.setBorder(BorderFactory.createTitledBorder("Nodes tables"));
 		
 		int yPos = 20;
-		int xPos = 20;
-		int bWidth = 120;
+		int xPos = 10;
+		int bWidth = 110;
 		int bHeight = 30;
 		
 		JButton transitionsButton = createStandardButton("Places", Tools.getResIcon32(""));
@@ -128,9 +176,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 			}
 		});
 		transitionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		buttonsPanel.add(transitionsButton);
-		buttonsPanel.add(Box.createVerticalStrut(7));
-		
+		buttonNodePanel.add(transitionsButton);
 		yPos = yPos + bHeight + 5;
 		
 		JButton placesButton = createStandardButton("Transitions", Tools.getResIcon32(""));
@@ -142,10 +188,37 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 			}
 		});
 		placesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		buttonsPanel.add(placesButton);
-		buttonsPanel.add(Box.createVerticalStrut(7));
-		
+		buttonNodePanel.add(placesButton);
 		yPos = yPos + bHeight + 5;
+		
+		JButton switchButton = createStandardButton("Switch pos.", Tools.getResIcon32(""));
+		switchButton.setToolTipText("    ");
+		switchButton.setBounds(xPos, yPos, bWidth, 20);
+		switchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				boolean status = action.switchSelected(table);
+				if(status == true) {
+					if(table.getName().equals("PlacesTable")) {
+						createPlacesTable();
+					} else if(table.getName().equals("TransitionTable")) {
+						createTransitionTable();
+					}
+				}
+			}
+		});
+		switchButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		buttonNodePanel.add(switchButton);
+		
+		buttonsPanel.add(buttonNodePanel);
+		
+		//********************************************** INVARIANTS ****************************************************
+		
+		JPanel buttonsInvariantsPanel = new JPanel(null);
+		buttonsInvariantsPanel.setBounds(0, buttonNodePanel.getHeight(), 130, 220);
+		buttonsInvariantsPanel.setBorder(BorderFactory.createTitledBorder("Invariants table"));
+		
+		yPos = 20;
+		xPos = 10;
 		
 		JButton invariantsButton = createStandardButton("Invariants", Tools.getResIcon32(""));
 		invariantsButton.setToolTipText("    ");
@@ -156,8 +229,9 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 			}
 		});
 		invariantsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		buttonsPanel.add(invariantsButton);
-		buttonsPanel.add(Box.createVerticalStrut(7));
+		buttonsInvariantsPanel.add(invariantsButton);
+		
+		buttonsPanel.add(buttonsInvariantsPanel);
 		
 		yPos = yPos + bHeight + 15;
 		
@@ -165,91 +239,45 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	}
 
 	/**
-	 * Metoda tworząca panel główny okna służący do wyświetlania tabeli danych.
-	 * @return JPanel - panel główny
-	 */
-	private JPanel createTablePanel() {
-		rightSubPanel = new JPanel(new BorderLayout());
-		rightSubPanel.setBounds(0, 0, 650, 560);
-		rightSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
-		
-		createTableConstruct();
-
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		rightSubPanel.add(scrollPane, BorderLayout.CENTER);
-		
-		return rightSubPanel;
-	}
-	
-	/**
-	 * Metoda ta tworzy obiekty modelu i tabeli, inicjalizuje listenery tablicy.
-	 */
-	private void createTableConstruct() {
-		model = new DefaultTableModel();
-		table = new JTable(model);
-		
-		table.addMouseListener(new MouseAdapter() {
-        	public void mouseClicked(MouseEvent e) {
-          	    if (e.getClickCount() == 1) {
-          	    	action.cellClickAction(table);
-          	    }
-          	 }
-      	});
-	}
-	
-	/**
-	 * Metoda tworząca tabelę miejsc sieci.
+	 * Metoda tworząca tabelę miejsc
 	 */
     private void createPlacesTable() {
-    	model = new DefaultTableModel();
-        model.addColumn("C0");
-        model.addColumn("C1");
-        model.addColumn("C2");
-        model.addColumn("C3");
-        model.addColumn("C4");
-        model.addColumn("C5");
-        
-        table.setModel(model);
+    	modelPlaces = new PlacesTableModel();
+        table.setModel(modelPlaces);
         
         table.getColumnModel().getColumn(0).setHeaderValue("ID");
         table.getColumnModel().getColumn(0).setPreferredWidth(30);
     	table.getColumnModel().getColumn(0).setMinWidth(30);
     	table.getColumnModel().getColumn(0).setMaxWidth(30);
-    	
         table.getColumnModel().getColumn(1).setHeaderValue("Place name:");
         table.getColumnModel().getColumn(1).setPreferredWidth(300);
     	table.getColumnModel().getColumn(1).setMinWidth(100);
-    	
-    	
         table.getColumnModel().getColumn(2).setHeaderValue("Tok:");
         table.getColumnModel().getColumn(2).setPreferredWidth(40);
     	table.getColumnModel().getColumn(2).setMinWidth(40);
     	table.getColumnModel().getColumn(2).setMaxWidth(40);
-    	
         table.getColumnModel().getColumn(3).setHeaderValue("In-T");
         table.getColumnModel().getColumn(3).setPreferredWidth(40);
     	table.getColumnModel().getColumn(3).setMinWidth(40);
     	table.getColumnModel().getColumn(3).setMaxWidth(40);
-    	
         table.getColumnModel().getColumn(4).setHeaderValue("Out-T");
         table.getColumnModel().getColumn(4).setPreferredWidth(40);
     	table.getColumnModel().getColumn(4).setMinWidth(40);
     	table.getColumnModel().getColumn(4).setMaxWidth(40);
-    	
         table.getColumnModel().getColumn(5).setHeaderValue("Avg.Tk");
-        table.getColumnModel().getColumn(5).setPreferredWidth(40);
-    	table.getColumnModel().getColumn(5).setMinWidth(40);
-    	table.getColumnModel().getColumn(5).setMaxWidth(40);
+        table.getColumnModel().getColumn(5).setPreferredWidth(50);
+    	table.getColumnModel().getColumn(5).setMinWidth(50);
+    	table.getColumnModel().getColumn(5).setMaxWidth(50);
+    	
+    	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(table.getModel());
+		table.setRowSorter(sorter);
         
         table.setName("PlacesTable");
         tableRenderer.setMode(0); //mode: places
-        
-        //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
         table.setDefaultRenderer(Object.class, tableRenderer);
 
-        action.addPlacesToModel(model); // metoda generująca dane o miejscach
+        action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.validate();
     }
@@ -257,65 +285,48 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
     /**
      * Metoda przygotowująca tabelę dla tranzycji.
      */
-    private void createTransitionTable() {
-    	model = new DefaultTableModel();
-        model.addColumn("C0");
-        model.addColumn("C1");
-        model.addColumn("C2");
-        model.addColumn("C3");
-        model.addColumn("C4");
-        model.addColumn("C5");
-        
-        table.setModel(model);
+    private void createTransitionTable() { 
+        modelTransition = new TransitionsTableModel();
+        table.setModel(modelTransition);
         
         table.getColumnModel().getColumn(0).setHeaderValue("ID");
         table.getColumnModel().getColumn(0).setPreferredWidth(30);
     	table.getColumnModel().getColumn(0).setMinWidth(30);
     	table.getColumnModel().getColumn(0).setMaxWidth(30);
-    	
         table.getColumnModel().getColumn(1).setHeaderValue("Transition name");
         table.getColumnModel().getColumn(1).setPreferredWidth(300);
     	table.getColumnModel().getColumn(1).setMinWidth(100);
-    	
         table.getColumnModel().getColumn(2).setHeaderValue("Pre-P");
         table.getColumnModel().getColumn(2).setPreferredWidth(40);
     	table.getColumnModel().getColumn(2).setMinWidth(40);
     	table.getColumnModel().getColumn(2).setMaxWidth(40);
-    	
         table.getColumnModel().getColumn(3).setHeaderValue("Post-P");
         table.getColumnModel().getColumn(3).setPreferredWidth(40);
     	table.getColumnModel().getColumn(3).setMinWidth(40);
     	table.getColumnModel().getColumn(3).setMaxWidth(40);
-    	
         table.getColumnModel().getColumn(4).setHeaderValue("Fired");
         table.getColumnModel().getColumn(4).setPreferredWidth(60);
     	table.getColumnModel().getColumn(4).setMinWidth(60);
     	table.getColumnModel().getColumn(4).setMaxWidth(60);
-    	
         table.getColumnModel().getColumn(5).setHeaderValue("Inv");
         table.getColumnModel().getColumn(5).setPreferredWidth(40);
     	table.getColumnModel().getColumn(5).setMinWidth(40);
     	table.getColumnModel().getColumn(5).setMaxWidth(40);
         
+    	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(table.getModel());
+		table.setRowSorter(sorter);
+		
         table.setName("TransitionTable");
         tableRenderer.setMode(1); //mode: transitions
-        
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-       // TableColumnAdjuster tca = new TableColumnAdjuster(table);
-       // tca.adjustColumns();
-        
-        //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
         table.setDefaultRenderer(Object.class, tableRenderer);
 
-        action.addTransitionsToModel(model); // metoda generująca dane o tranzycjach
+        action.addTransitionsToModel(modelTransition); // metoda generująca dane o tranzycjach
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.validate();
-    }
+	}
     
-    /**
-     * Metoda przygotowująca tabelę dla inwariantów.
-     */
-    private void createInvariantsTable() {
+	private void createInvariantsTable() {
     	ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
     	if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
     		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size() == 0) return;
@@ -324,58 +335,36 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
     		GUIManager.getDefaultGUIManager().io.generateINAinvariants();
     		invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
     	}
-    	
     	if(invariantsMatrix == null || invariantsMatrix.size() == 0) return; //final check
     	
     	ArrayList<Integer> invSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsSize();
-    		
-    	/*
-    	int largestInvariantSize = 0;
-    	for(int i=0; i<invSize.size(); i++) {
-    		int size = invSize.get(i);
-    		if(size > largestInvariantSize)
-    			largestInvariantSize = size;
-    	}
-    	*/
     	int transNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
     	
-    	model = new DefaultTableModel();
-        model.addColumn("C0"); //ID
-        model.addColumn("C1"); //size
-        for(int i=0; i<transNumber; i++) {
-        	int x = i+3;
-        	model.addColumn("C2"+x);
-        }
-        
-        table.setModel(model);
+    	modelInvariants = new InvariantsTableModel(transNumber);        
+        table.setModel(modelInvariants);
         
         table.getColumnModel().getColumn(0).setHeaderValue("ID");
         table.getColumnModel().getColumn(0).setPreferredWidth(40);
     	table.getColumnModel().getColumn(0).setMinWidth(40);
     	table.getColumnModel().getColumn(0).setMaxWidth(40);
-    	
         table.getColumnModel().getColumn(1).setHeaderValue("Trans. #:");
         table.getColumnModel().getColumn(1).setPreferredWidth(50);
     	table.getColumnModel().getColumn(1).setMinWidth(50);
     	table.getColumnModel().getColumn(1).setMaxWidth(50);
-    	
     	for(int i=0; i<transNumber; i++) {
-        	int x = i+2;
-        	table.getColumnModel().getColumn(x).setHeaderValue("t"+i);
-            table.getColumnModel().getColumn(x).setPreferredWidth(70);
-        	table.getColumnModel().getColumn(x).setMinWidth(70);
-        	table.getColumnModel().getColumn(x).setMaxWidth(70);
+        	table.getColumnModel().getColumn(i+2).setHeaderValue("t"+i);
+            table.getColumnModel().getColumn(i+2).setPreferredWidth(70);
+        	table.getColumnModel().getColumn(i+2).setMinWidth(70);
+        	table.getColumnModel().getColumn(i+2).setMaxWidth(70);
         }
         
         table.setName("InvariantsTable");
-        tableRenderer.setMode(2); //mode: transitions
-
-        
-        //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        tableRenderer.setMode(2); //mode: invariants
         table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
         table.setDefaultRenderer(Object.class, tableRenderer);
-        
-        
+		table.setRowSorter(null);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
         StateSimulator ss = new StateSimulator();
 		ss.initiateSim(NetType.BASIC, false);
 		ss.simulateNetSimple(10000, false);
@@ -383,27 +372,23 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		
 		for(int i=0; i<invariantsMatrix.size(); i++) {
 			ArrayList<Integer> dataV = invariantsMatrix.get(i);
-			int posCounter=2; //która pozycja w dataRow
-			String[] dataRow = new String[transNumber+2];
-			dataRow[0] = ""+i;
-			dataRow[1] = ""+invSize.get(i);
+			ArrayList<String> newRow = new ArrayList<String>();
+			newRow.add(""+i);
+			newRow.add(""+invSize.get(i));
+			
 			for(int t=0; t<dataV.size(); t++) {
 				int value = dataV.get(t);
 				if(value>0) {
 					double avg = resVector.get(t);
 					avg *= 100; // do 100%
 					String cell = ""+value+"("+Tools.cutValue(avg)+"%)";
-					dataRow[posCounter] = cell;
-					posCounter++;
+					newRow.add(cell);
 				} else {
-					dataRow[posCounter] = "";
-					posCounter++;
+					newRow.add("");
 				}
 			}
-			model.addRow(dataRow);
+			modelInvariants.addNew(newRow);
 		}
-
-        //action.addTransitionsToModel(model); // metoda generująca dane o tranzycjach
         table.validate();
     }
 	
@@ -418,8 +403,8 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		resultButton.setLayout(new BorderLayout());
         JLabel tmp;
         tmp = new JLabel(text);
-        tmp.setFont(new Font("Arial", Font.PLAIN, 8));
-    	resultButton.add(tmp, BorderLayout.PAGE_END);
+        tmp.setFont(new Font("Arial", Font.PLAIN, 12));
+    	resultButton.add(tmp, BorderLayout.CENTER);
         resultButton.setPreferredSize(new Dimension(100, 60));
         resultButton.setMinimumSize(new Dimension(100, 60));
         resultButton.setMaximumSize(new Dimension(100, 60));
@@ -449,86 +434,9 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	public void componentShown(ComponentEvent e) {} //unused
 	
 	private void resizeComponents() {
-		rightSubPanel.setLocation(0, 0);
-		rightSubPanel.setSize(mainPanel.getWidth()-150, mainPanel.getHeight());
-		buttonsPanel.setLocation(rightSubPanel.getWidth(), 0);
-		buttonsPanel.setSize(150, mainPanel.getHeight());
+		tablesSubPanel.setLocation(0, 0);
+		tablesSubPanel.setSize(mainPanel.getWidth()-130, mainPanel.getHeight());
+		buttonsPanel.setLocation(tablesSubPanel.getWidth(), 0);
+		buttonsPanel.setSize(130, mainPanel.getHeight());
 	}
-	
-	
-	//*************************************************************************************************************************
-	//**************************************************               ********************************************************
-	//**************************************************   t-RENDERER  ********************************************************
-	//**************************************************               ********************************************************
-	//*************************************************************************************************************************
-	
-	/**
-     * Klasa wewnętrzna odpowiedzialna za rysowanie poszczególnych komórek.
-     * @author MR
-     *
-     */
-    class MyRenderer implements TableCellRenderer {
-    	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
-    	private int mode = 0; //0 -places
-    	//private int subRows = 0;
-    	
-    	/**
-    	 * Konstruktor domyślny obiektów klasy MyRenderer.
-    	 */
-    	public MyRenderer() {
-    		
-    	}
-    	
-    	/**
-    	 * Konstruktor obiektów klasy MyRenderer przyjmujący numer trybu rysowania.
-    	 * @param mode int - tryb rysowania
-    	 */
-    	public MyRenderer(int mode, int rows) {
-    		this(); //wywołanie konstruktora domyślnego
-    		this.mode = mode;
-    		//this.subRows = rows;
-    	}
-    	
-    	public void setSubRows(int rows) {
-    		//this.subRows = rows;
-    	}
-    	
-    	public void setMode(int mode) {
-    		this.mode = mode;
-    	}
-    	
-    	/**
-    	 * Przeciążona metoda odpowiedzialna za zwrócenie komórki tabeli.
-    	 * @param table Jtable - 
-    	 * @param value Object - 
-    	 * @param isSelected boolean - 
-    	 * @param hasFocus boolean - 
-    	 * @param row int -
-    	 * @param columnt int - 
-    	 */
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int row, int column) {
-        	if(mode == 0)
-        		return paintCellsCase56(value, isSelected, hasFocus, row, column);
-        	else
-        		return paintCellsCase56(value, isSelected, hasFocus, row, column);
-        }
-
-        /**
-         * Metoda trybu rysowania dla 56 klastrów, uruchamia się DLA KAŻDEJ komórki dodawanej do tabeli.
-         * @param value Object - wartość do wpisania
-         * @param isSelected boolean - czy komórka jest wybrana
-         * @param hasFocus boolean - czy jest aktywna
-         * @param row int - nr wiersza
-         * @param column int - nr kolumny
-         * @return Component - konkretnie: JTextField jako komórka tabeli
-         */
-		private Component paintCellsCase56(Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(
-					table, value, isSelected, hasFocus, row, column);
-
-		    
-		    return renderer;
-		}
-    } // END CLASS MyRenderer IMPLEMENTS TableCellRenderer
 }

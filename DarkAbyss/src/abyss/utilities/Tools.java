@@ -340,4 +340,11 @@ public final class Tools {
     	DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
 		return df.format(value);
 	}
+	
+	public static String cutValueExt(double value) {
+    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(GUIManager.getDefaultGUIManager().getLocale());
+    	otherSymbols.setDecimalSeparator('.');
+    	DecimalFormat df = new DecimalFormat("#.###", otherSymbols);
+		return df.format(value);
+	}
 }

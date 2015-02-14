@@ -228,7 +228,10 @@ public class StateSimulator {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		ArrayList<Transition> launchingTransitions = null;
 		ArrayList<Integer> singlePlaceData = new ArrayList<Integer>();
+		
+		@SuppressWarnings("unused")
 		int internalSteps = 0;
+		
 		for(int i=0; i<steps; i++) {
 			internalSteps++;
 			if (isPossibleStep()){ 

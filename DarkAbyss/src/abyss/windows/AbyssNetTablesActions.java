@@ -1,9 +1,10 @@
 package abyss.windows;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 
 import abyss.darkgui.GUIManager;
 import abyss.math.ElementLocation;
@@ -11,7 +12,8 @@ import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.math.simulator.StateSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
-import abyss.utilities.Tools;
+import abyss.tables.PlacesTableModel;
+import abyss.tables.TransitionsTableModel;
 
 /**
  * Klasa z metodami obsługującymi okno tabel programu - klasy AbyssNetTables.
@@ -59,16 +61,21 @@ public class AbyssNetTablesActions {
 			
 		}
 	}
-
+	
 	/**
 	 * Metoda wypełniająca tabelę miejsc danymi.
-	 * @param model DefaultTableModel - obiekt danych
+	 * @param modelPlaces PlacesTableModel - obiekt danych
 	 */
-	public void addPlacesToModel(DefaultTableModel model) {
+	public void addPlacesToModel(PlacesTableModel modelPlaces) {
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		if(places.size() == 0) {
 			return;
 		}
+		
+		StateSimulator ss = new StateSimulator();
+		ss.initiateSim(NetType.BASIC, false);
+		ss.simulateNetSimple(10000, true);
+		ArrayList<Double> resVector = ss.getPlacesAvgData();
 		
 		int iterIndex = -1;
 		for(Place p : places) {
@@ -90,10 +97,11 @@ public class AbyssNetTablesActions {
 				outTrans += el.getOutArcs().size();
 			}
 			
-			int avgTokens = 0; //TODO: SS
+			double avgTokens = 0;
+			if(resVector.size() > 0)
+				avgTokens = resVector.get(iterIndex);
 			
-			String[] dataRow = { ""+index, name, ""+tokens, ""+inTrans, ""+outTrans, ""+avgTokens};
-			model.addRow(dataRow);
+			modelPlaces.addNew(index, name, tokens, inTrans, outTrans, (float)avgTokens);
 		}
 	}
 
@@ -101,7 +109,7 @@ public class AbyssNetTablesActions {
 	 * Metoda wypełniająca tabelę tramzycji danymi.
 	 * @param model DefaultTableModel - obiekt danych
 	 */
-	public void addTransitionsToModel(DefaultTableModel model) {
+	public void addTransitionsToModel(TransitionsTableModel modelTransitions) {
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		if(transitions.size() == 0) {
 			return;
@@ -132,12 +140,67 @@ public class AbyssNetTablesActions {
 			
 			double avgFired = 0;
 			if(resVector.size() > 0)
-				avgFired = resVector.get(iterIndex); //TODO: SS
+				avgFired = resVector.get(iterIndex);
 			avgFired *= 100;
-			int inInv = 0; //TODO
+			int inInv = 0;
 			
-			String[] dataRow = { ""+index, name, ""+postP, ""+preP, ""+Tools.cutValue(avgFired)+"%", ""+inInv};
-			model.addRow(dataRow);
+			modelTransitions.addNew(index, name, postP, preP, (float)avgFired, inInv);
+			//String[] dataRow = { ""+index, name, ""+postP, ""+preP, ""+Tools.cutValue(avgFired)+"%", ""+inInv};
+			//model.addRow(dataRow);
 		}
+	}
+
+	/**
+	 * Metoda ta zamienia miejscami obiekty w tablicy miejsc lub tranzycji, wpływając na identyfikatory
+	 * powyższych.
+	 * @param table JTable - tablica z zaznaczonymi wierszami
+	 * @return boolean - true, jeśli udało się zamienić
+	 */
+	public boolean switchSelected(JTable table) {
+		try {
+			String name = table.getName();
+			if(!name.equals("PlacesTable") && !name.equals("TransitionsTable")) {
+				JOptionPane.showMessageDialog(null, "Swap operation allowed only for places or transitions.",
+						"Invalid table", JOptionPane.WARNING_MESSAGE);
+				return false;
+			}
+			
+			int selRows[] = table.getSelectedRows();
+			if(selRows.length != 2) {
+				JOptionPane.showMessageDialog(null, "Please select two rows (SHIFT key + mouse click).",
+						"Invalid number of rows selected", JOptionPane.WARNING_MESSAGE);
+				return false;
+			}
+			
+			GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+			
+			if(name.equals("PlacesTable")) {
+				ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+				int pos1 = selRows[0];
+				int pos2 = selRows[1];
+				Place p1 = places.get(pos1);
+				Place p2 = places.get(pos2);
+				
+				pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p1); 
+				pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p2);
+				Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
+				
+				GUIManager.getDefaultGUIManager().log("Swapping places "+p1.getName()+" and "+p2.getName()+" successfull.", "text", true);
+			} else if(name.equals("TransitionTable")) {
+				ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+				int pos1 = selRows[0];
+				int pos2 = selRows[1];
+				Transition t1 = transitions.get(pos1);
+				Transition t2 = transitions.get(pos2);
+				
+				pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t1); 
+				pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t2);
+				Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
+				GUIManager.getDefaultGUIManager().log("Swapping transitions "+t1.getName()+" and "+t2.getName()+" successfull.", "text", true);
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
 	}
 }
