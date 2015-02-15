@@ -75,7 +75,7 @@ public class AbyssClusters extends JFrame {
     private JSpinner spinnerClusters;
     
     private int mode = 0; // 0 - tryb 56 klastrowań
-    private MyRenderer tabRenderer = new MyRenderer(mode, 18);
+    private ClusterTableRenderer tabRenderer = new ClusterTableRenderer(mode, 18);
     
     private ClusteringInfoMatrix dataTableCase56 = null;
     private String pathCSVfile = "";
@@ -843,21 +843,20 @@ public class AbyssClusters extends JFrame {
     //**************************************              **********************************************
     //**************************************    Class     **********************************************
     //**************************************************************************************************
-    
-    
+
     /**
      * Klasa wewnętrzna odpowiedzialna za rysowanie poszczególnych komórek.
      * @author MR
      *
      */
-    class MyRenderer implements TableCellRenderer {
+    class ClusterTableRenderer implements TableCellRenderer {
     	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
     	private int mode = 0;
     	private int subRows = 0;
     	/**
     	 * Konstruktor domyślny obiektów klasy MyRenderer.
     	 */
-    	public MyRenderer() {
+    	public ClusterTableRenderer() {
     		
     	}
     	
@@ -865,7 +864,7 @@ public class AbyssClusters extends JFrame {
     	 * Konstruktor obiektów klasy MyRenderer przyjmujący numer trybu rysowania.
     	 * @param mode int - tryb rysowania
     	 */
-    	public MyRenderer(int mode, int rows) {
+    	public ClusterTableRenderer(int mode, int rows) {
     		this(); //wywołanie konstruktora domyślnego
     		this.mode = mode;
     		this.subRows = rows;

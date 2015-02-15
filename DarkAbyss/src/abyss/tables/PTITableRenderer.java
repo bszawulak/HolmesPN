@@ -1,5 +1,6 @@
 package abyss.tables;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 
@@ -23,6 +24,8 @@ public class PTITableRenderer implements TableCellRenderer {
 	public PTITableRenderer(JTable table) {
 		this.table = table;
 	}
+	
+	
 	
 	/**
 	 * Konstruktor obiektów klasy MyRenderer przyjmujący numer trybu rysowania.
@@ -53,7 +56,7 @@ public class PTITableRenderer implements TableCellRenderer {
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
-    	if(mode == 2)
+    	if(mode == 2) //model tablicy inwariantów
     		return paintCellsInvariants(value, isSelected, hasFocus, row, column);
     	else
     		return paintCellsDefault(value, isSelected, hasFocus, row, column);
@@ -69,12 +72,21 @@ public class PTITableRenderer implements TableCellRenderer {
      * @return Component - konkretnie: JTextField jako komórka tabeli
      */
 	private Component paintCellsInvariants(Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(
-				table, value, isSelected, hasFocus, row, column);
+		Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		
-		//((DefaultTableCellRenderer)renderer).setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
+		renderer.setBackground(Color.white);
     	renderer.setFont(new Font("Arial", Font.BOLD, 9));
-    	//renderer.setBackground(Color.white);
+    	InvariantsTableModel modelInvariants = (InvariantsTableModel) table.getModel();
+    	
+		if(modelInvariants.getInfeasibleInvariants().contains(row) == true) { //cały inw. na jasno szary
+			renderer.setBackground(Color.lightGray);
+			if(column > 1) {
+				if(((String)modelInvariants.getValueAt(row, column)).contains("(0%)")) { // zagłodzona tranz. na ciemno szary
+        			renderer.setBackground(Color.gray);
+        		}
+			}
+		}
+		
 	    return renderer;
 	}
 	
@@ -88,9 +100,9 @@ public class PTITableRenderer implements TableCellRenderer {
      * @return Component - konkretnie: JTextField jako komórka tabeli
      */
 	private Component paintCellsDefault(Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(
-				table, value, isSelected, hasFocus, row, column);
-
+		Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		//renderer.setFont(new Font("Arial", Font.BOLD, 9));
+    	//renderer.setBackground(Color.white);
 	    return renderer;
 	}
 }

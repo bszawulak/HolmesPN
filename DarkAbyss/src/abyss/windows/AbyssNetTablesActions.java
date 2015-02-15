@@ -12,8 +12,10 @@ import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.math.simulator.StateSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
+import abyss.tables.InvariantsTableModel;
 import abyss.tables.PlacesTableModel;
 import abyss.tables.TransitionsTableModel;
+import abyss.utilities.Tools;
 
 /**
  * Klasa z metodami obsługującymi okno tabel programu - klasy AbyssNetTables.
@@ -148,6 +150,49 @@ public class AbyssNetTablesActions {
 			//String[] dataRow = { ""+index, name, ""+postP, ""+preP, ""+Tools.cutValue(avgFired)+"%", ""+inInv};
 			//model.addRow(dataRow);
 		}
+	}
+	
+	/**
+	 * Metoda służąca do wypełniania tabeli inwariantów.
+	 * @param modelInvariants InvariantsTableModel - model tablicy inwariantów
+	 * @param invariantsMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @param invSize ArrayList[Integer] invSize - wektor wielkości inwariantów
+	 */
+	public void addInvariantsToModel(InvariantsTableModel modelInvariants, ArrayList<ArrayList<Integer>> invariantsMatrix,
+			ArrayList<Integer> invSize) {
+		StateSimulator ss = new StateSimulator();
+		ss.initiateSim(NetType.BASIC, false);
+		ss.simulateNetSimple(10000, false);
+		ArrayList<Double> resVector = ss.getTransitionsAvgData();
+		
+		ArrayList<Integer> rowsWithZero = new ArrayList<Integer>();
+
+		for(int row=0; row<invariantsMatrix.size(); row++) {
+			ArrayList<Integer> dataV = invariantsMatrix.get(row);
+			ArrayList<String> newRow = new ArrayList<String>();
+			newRow.add(""+row);
+			newRow.add(""+invSize.get(row));
+			
+			for(int t=0; t<dataV.size(); t++) {
+				int value = dataV.get(t);
+				if(value>0) {
+					double avg = resVector.get(t);
+					
+					if(avg == 0) { //dane o inwariantach z zagłodzonymi tranzycjami
+						if(rowsWithZero.contains(row) == false)
+							rowsWithZero.add(row);
+					}
+					
+					avg *= 100; // do 100%
+					String cell = ""+value+"("+Tools.cutValue(avg)+"%)";
+					newRow.add(cell);
+				} else {
+					newRow.add("");
+				}
+			}
+			modelInvariants.addNew(newRow);
+		}
+		modelInvariants.setInfeasibleInvariants(rowsWithZero);
 	}
 
 	/**

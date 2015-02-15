@@ -326,6 +326,9 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
         table.validate();
 	}
     
+    /**
+     * Metoda tworząca tablicę inwariantów.
+     */
 	private void createInvariantsTable() {
     	ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
     	if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
@@ -353,9 +356,9 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
     	table.getColumnModel().getColumn(1).setMaxWidth(50);
     	for(int i=0; i<transNumber; i++) {
         	table.getColumnModel().getColumn(i+2).setHeaderValue("t"+i);
-            table.getColumnModel().getColumn(i+2).setPreferredWidth(70);
-        	table.getColumnModel().getColumn(i+2).setMinWidth(70);
-        	table.getColumnModel().getColumn(i+2).setMaxWidth(70);
+            table.getColumnModel().getColumn(i+2).setPreferredWidth(55);
+        	table.getColumnModel().getColumn(i+2).setMinWidth(55);
+        	table.getColumnModel().getColumn(i+2).setMaxWidth(55);
         }
         
         table.setName("InvariantsTable");
@@ -365,30 +368,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		table.setRowSorter(null);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        StateSimulator ss = new StateSimulator();
-		ss.initiateSim(NetType.BASIC, false);
-		ss.simulateNetSimple(10000, false);
-		ArrayList<Double> resVector = ss.getTransitionsAvgData();
-		
-		for(int i=0; i<invariantsMatrix.size(); i++) {
-			ArrayList<Integer> dataV = invariantsMatrix.get(i);
-			ArrayList<String> newRow = new ArrayList<String>();
-			newRow.add(""+i);
-			newRow.add(""+invSize.get(i));
-			
-			for(int t=0; t<dataV.size(); t++) {
-				int value = dataV.get(t);
-				if(value>0) {
-					double avg = resVector.get(t);
-					avg *= 100; // do 100%
-					String cell = ""+value+"("+Tools.cutValue(avg)+"%)";
-					newRow.add(cell);
-				} else {
-					newRow.add("");
-				}
-			}
-			modelInvariants.addNew(newRow);
-		}
+		action.addInvariantsToModel(modelInvariants, invariantsMatrix, invSize);
         table.validate();
     }
 	

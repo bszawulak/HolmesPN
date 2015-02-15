@@ -13,7 +13,7 @@ import abyss.darkgui.GUIManager;
 public class InvariantsTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -1557850148390063580L;
 	
-	//private String[] columnNames = {"ID", "Transition name", "Pre-P", "Post-P", "Fired", "Inv"};
+	private ArrayList<Integer> infeasibleInvariants;
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
@@ -33,7 +33,10 @@ public class InvariantsTableModel extends AbstractTableModel {
 		dataSize = 0;
 	}
 	
-	
+	/**
+	 * Metoda służaca do dodawania nowego wiersza (inwariantu) do tabeli danych.
+	 * @param dataRow ArrayList[String] - wiersz danych
+	 */
 	public void addNew(ArrayList<String> dataRow) {
 		dataMatrix.add(dataRow);
 		dataSize++;
@@ -98,7 +101,24 @@ public class InvariantsTableModel extends AbstractTableModel {
 			}
 		} else {
 			returnValue = dataMatrix.get(rowIndex).get(columnIndex);
+			return returnValue.toString();
 		}
         return returnValue;
+	}
+	
+	/**
+	 * Metoda ustawia nowy wektor z informacją które inwarianty mają zagłodzone tranzycje.
+	 * @param infInv ArrayList[Integer] - wektor danych
+	 */
+	public void setInfeasibleInvariants(ArrayList<Integer> infInv) {
+		this.infeasibleInvariants = infInv;
+	}
+	
+	/**
+	 * Metoda zwraca wektor danych o inwariantach z zagłodzonymi tranzycjami.
+	 * @return ArrayList[Integer] - wektor danych
+	 */
+	public ArrayList<Integer> getInfeasibleInvariants() {
+		return infeasibleInvariants;
 	}
 }
