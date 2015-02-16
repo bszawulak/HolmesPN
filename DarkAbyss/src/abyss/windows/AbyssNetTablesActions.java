@@ -166,6 +166,10 @@ public class AbyssNetTablesActions {
 		ArrayList<Double> resVector = ss.getTransitionsAvgData();
 		
 		ArrayList<Integer> rowsWithZero = new ArrayList<Integer>();
+		ArrayList<Integer> zeroDeadTrans = new ArrayList<Integer>();
+		int transNo = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+		for(int i=0; i<transNo; i++)
+			zeroDeadTrans.add(0); //to co pozostanie zerem jest niepokrytą żadnym inwariantem tranzycją
 
 		for(int row=0; row<invariantsMatrix.size(); row++) {
 			ArrayList<Integer> dataV = invariantsMatrix.get(row);
@@ -173,26 +177,31 @@ public class AbyssNetTablesActions {
 			newRow.add(""+row);
 			newRow.add(""+invSize.get(row));
 			
-			for(int t=0; t<dataV.size(); t++) {
+			for(int t=0; t<dataV.size(); t++) { //dla każdej tranzycji
 				int value = dataV.get(t);
-				if(value>0) {
+				if(value>0) { //jeśli działa w ramach inwariantu
+					zeroDeadTrans.set(t, 1); //ustaw stan tranzycji na aktywną w inwariancie
 					double avg = resVector.get(t);
 					
 					if(avg == 0) { //dane o inwariantach z zagłodzonymi tranzycjami
 						if(rowsWithZero.contains(row) == false)
 							rowsWithZero.add(row);
+						zeroDeadTrans.set(t, -1); //aktywna, ale zagłodzona
 					}
 					
 					avg *= 100; // do 100%
 					String cell = ""+value+"("+Tools.cutValue(avg)+"%)";
 					newRow.add(cell);
+					
 				} else {
 					newRow.add("");
+					
 				}
 			}
 			modelInvariants.addNew(newRow);
 		}
 		modelInvariants.setInfeasibleInvariants(rowsWithZero);
+		modelInvariants.setZeroDeadTransitions(zeroDeadTrans);
 	}
 
 	/**

@@ -14,6 +14,7 @@ public class InvariantsTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -1557850148390063580L;
 	
 	private ArrayList<Integer> infeasibleInvariants;
+	private ArrayList<Integer> zeroDeadTransitions;
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
@@ -94,8 +95,8 @@ public class InvariantsTableModel extends AbstractTableModel {
 		if(columnIndex < 2) {
 			try {
 				returnValue = dataMatrix.get(rowIndex).get(columnIndex);
-				int value = Integer.parseInt(returnValue.toString());
-				return value;
+				//int value = Integer.parseInt(returnValue.toString());
+				return returnValue;
 			} catch (Exception e) {
 				GUIManager.getDefaultGUIManager().log("Invariants table malfunction: non-numerical value in 1st or 2nd column.", "error", true);
 			}
@@ -120,5 +121,22 @@ public class InvariantsTableModel extends AbstractTableModel {
 	 */
 	public ArrayList<Integer> getInfeasibleInvariants() {
 		return infeasibleInvariants;
+	}
+	
+	/**
+	 * Metoda ustawia nowy wektor z informacją które tranzycje są zagłodzone lub
+	 * niepokryte inwariantami.
+	 * @param zeroTrans ArrayList[Integer] - wektor danych
+	 */
+	public void setZeroDeadTransitions(ArrayList<Integer> zeroTrans) {
+		this.zeroDeadTransitions = zeroTrans;
+	}
+	
+	/**
+	 * Metoda zwraca wektor danych z martwymi lub niepokrytymi tranzycjami.
+	 * @return ArrayList[Integer] - wektor danych
+	 */
+	public ArrayList<Integer> getZeroDeadTransitions() {
+		return zeroDeadTransitions;
 	}
 }

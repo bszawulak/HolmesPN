@@ -10,9 +10,12 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -23,12 +26,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.simulator.StateSimulator;
-import abyss.math.simulator.NetSimulator.NetType;
+import abyss.math.Transition;
 import abyss.tables.InvariantsTableModel;
 import abyss.tables.PTITableRenderer;
 import abyss.tables.PlacesTableModel;
@@ -356,9 +361,9 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
     	table.getColumnModel().getColumn(1).setMaxWidth(50);
     	for(int i=0; i<transNumber; i++) {
         	table.getColumnModel().getColumn(i+2).setHeaderValue("t"+i);
-            table.getColumnModel().getColumn(i+2).setPreferredWidth(55);
-        	table.getColumnModel().getColumn(i+2).setMinWidth(55);
-        	table.getColumnModel().getColumn(i+2).setMaxWidth(55);
+            //table.getColumnModel().getColumn(i+2).setPreferredWidth(55);
+        	//table.getColumnModel().getColumn(i+2).setMinWidth(55);
+        	//table.getColumnModel().getColumn(i+2).setMaxWidth(55);
         }
         
         table.setName("InvariantsTable");
@@ -369,8 +374,41 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		action.addInvariantsToModel(modelInvariants, invariantsMatrix, invSize);
-        table.validate();
+		
+		//ustawianie komentarzy dla kolumn:
+		ColumnHeaderToolTips tips = new ColumnHeaderToolTips();
+		JTableHeader header = table.getTableHeader();
+		ArrayList<Transition> transition = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+	    for (int c = 2; c < table.getColumnCount(); c++) {
+	    	TableColumn col = table.getColumnModel().getColumn(c);
+	    	tips.setToolTip(col, "t"+(c-2)+"_"+transition.get(c-2).getName());
+	    }
+	    header.addMouseMotionListener(tips);
+		
+		resizeColumnWidth(table);
+        //table.validate();
     }
+	
+	public void resizeColumnWidth(JTable table) {
+	    TableColumnModel columnModel = table.getColumnModel();
+	    InvariantsTableModel itm = (InvariantsTableModel)table.getModel();
+	    ArrayList<Integer> dTrans = itm.getZeroDeadTransitions();
+	    for (int column = 2; column < table.getColumnCount(); column++) {
+	        if(dTrans.get(column-2) == 0) {
+	        	columnModel.getColumn(column).setPreferredWidth(35);
+	        	columnModel.getColumn(column).setMinWidth(35);
+	        	columnModel.getColumn(column).setMaxWidth(35);
+	        } else if(dTrans.get(column-2) == -1) {
+	        	columnModel.getColumn(column).setPreferredWidth(40);
+	        	columnModel.getColumn(column).setMinWidth(40);
+	        	columnModel.getColumn(column).setMaxWidth(40);
+	        } else if(dTrans.get(column-2) == 1) {
+	        	columnModel.getColumn(column).setPreferredWidth(50);
+	        	columnModel.getColumn(column).setMinWidth(50);
+	        	columnModel.getColumn(column).setMaxWidth(50);
+	        }
+	    }
+	}
 	
 	/**
 	 * Metoda pomocnicza do tworzenia przycisków do panelu bocznego.
@@ -418,5 +456,38 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		tablesSubPanel.setSize(mainPanel.getWidth()-130, mainPanel.getHeight());
 		buttonsPanel.setLocation(tablesSubPanel.getWidth(), 0);
 		buttonsPanel.setSize(130, mainPanel.getHeight());
+	}
+	
+	/**
+	 * Klasa wewnętrzna, służy do wyświetlania komentarz gdy kursor znajduje się nad nazwą kolumny
+	 * danej tabeli danych.
+	 * @author MR
+	 *
+	 */
+	class ColumnHeaderToolTips extends MouseMotionAdapter {
+		TableColumn curCol;
+		Map<TableColumn, String> tips = new HashMap<TableColumn, String>();
+		public void setToolTip(TableColumn col, String tooltip) {
+			if (tooltip == null) {
+				tips.remove(col);
+			} else {
+				tips.put(col, tooltip);
+			}
+		}
+		
+		public void mouseMoved(MouseEvent evt) {
+			JTableHeader header = (JTableHeader) evt.getSource();
+			JTable table = header.getTable();
+			TableColumnModel colModel = table.getColumnModel();
+			int vColIndex = colModel.getColumnIndexAtX(evt.getX());
+			TableColumn col = null;
+			if (vColIndex >= 0) {
+				col = colModel.getColumn(vColIndex);
+			}
+			if (col != curCol) {
+				header.setToolTipText((String) tips.get(col));
+				curCol = col;
+			}
+		}
 	}
 }

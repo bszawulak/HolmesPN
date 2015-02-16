@@ -87,6 +87,14 @@ public class PTITableRenderer implements TableCellRenderer {
 			}
 		}
 		
+		if(column > 1) {
+			if(modelInvariants.getZeroDeadTransitions().get(column-2) == 0) { //niepokryta tranzycja
+				renderer.setBackground(Color.red);
+			} else if(modelInvariants.getZeroDeadTransitions().get(column-2) == -1) { //zagłodzona
+				renderer.setBackground(Color.gray);
+			}
+		}
+		
 	    return renderer;
 	}
 	
