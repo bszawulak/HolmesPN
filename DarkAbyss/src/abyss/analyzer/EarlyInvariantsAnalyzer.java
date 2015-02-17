@@ -37,7 +37,7 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 		this.CreateIncidanceMatrixAndTxTMatrix();
 		this.Analyze();
 		PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getGeneratedInvariants());
+		GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getEIAgeneratedInv_old());
 		project.setInvariantsMatrix(invariantsList);
 	}
 

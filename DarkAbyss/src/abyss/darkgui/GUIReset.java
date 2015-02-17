@@ -44,7 +44,9 @@ public class GUIReset {
 			resetCommunicationProtocol();
 			
 			mastah.getWorkspace().getProject().set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
-			mastah.getWorkspace().getProject().setInvariantsMatrix(null);		
+			mastah.getWorkspace().getProject().setInvariantsMatrix(null);
+			mastah.getWorkspace().getProject().setInvariantsSize(null);
+			mastah.getWorkspace().getProject().setUncoveredInvariants(null);
 			
 			mastah.getInvariantsBox().getCurrentDockWindow().resetInvariants();
 			mastah.getInvariantsBox().getCurrentDockWindow().removeAll();

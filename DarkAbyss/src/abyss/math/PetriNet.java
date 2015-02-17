@@ -52,6 +52,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<ArrayList<InvariantTransition>> invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
 	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
 	private ArrayList<Integer> invariantsSize;
+	private ArrayList<Integer> uncoveredTransitions;
 	private ArrayList<GraphPanel> graphPanels;		// panele sieci
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
 	private IdGenerator idGenerator;
@@ -409,12 +410,36 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
+	 * Metoda ustawia nowy wektor danych rozmiarów inwariantów.
+	 * @param newVector ArrayList[Integer] - nowy wektor danych
+	 */
+	public void setInvariantsSize(ArrayList<Integer> newVector) {
+		invariantsSize = newVector;
+	}
+	
+	/**
 	 * Metoda zwraca wektor określający liczność każdego inwariantu.
 	 * Zakłada, że została wywołana metoda 
 	 * @return ArrayList[Integer] - wektor liczności inwariantów
 	 */
 	public ArrayList<Integer> getInvariantsSize() {
 		return invariantsSize;
+	}
+	
+	/**
+	 * Metoda ustawia nowy wektor danych nieaktywnych tranzycjai.
+	 * @param newVector ArrayList[Integer] - nowy wektor danych
+	 */
+	public void setUncoveredInvariants(ArrayList<Integer> newVector) {
+		uncoveredTransitions = newVector;
+	}
+	
+	/**
+	 * Metoda zwraca wektor określający, które tranzycje nie są pokryte inwariantami.
+	 * @return ArrayList[Integer] - wektor niedziałających (w inw.) tranzycji
+	 */
+	public ArrayList<Integer> getUncoveredInvariants() {
+		return uncoveredTransitions;
 	}
 
 	/**
@@ -813,13 +838,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda wczytująca plik inwariantów z pliku .inv
+	 * Metoda wczytująca plik inwariantów z pliku .inv (format INA)
 	 * @param sciezka String - ścieżka do pliku INA
 	 */
 	public void loadInvariantsFromFile(String sciezka) {
 		try {
 			communicationProtocol.readINV(sciezka);
 			setInvariantsMatrix(communicationProtocol.getInvariantsList());
+			compute2ndFormInv();
 			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true); //status inwariantów: wczytane
 		} catch (Throwable err) {
 			err.printStackTrace();
@@ -937,59 +963,64 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda zwracająca macierz inwariantów drugiego typu. Przy okazji ustala liczność
-	 * każdego inwariantu w ramach wektora invariantsSize (globalny).
-	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inw.
+	 * Metoda obliczająca macierz inwariantów drugiego typu. Przy okazji ustala liczność
+	 * każdego inwariantu w ramach wektora invariantsSize (globalny) oraz które tranzycje nie
+	 * są pokryte inwariantami.
 	 */
-	public ArrayList<ArrayList<InvariantTransition>> getInaInvariants() {
-		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
+	public void compute2ndFormInv() {
 		InvariantTransition currentTransition;
-		invariantsBinaryList = communicationProtocol.getInvariantsList();
 		invariantsSize = new ArrayList<Integer>();
+		uncoveredTransitions = new ArrayList<Integer>();
 		
-		if (invariantsBinaryList.size() > 0) {
-			set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
-			if (invariantsBinaryList.get(0).size() == getTransitions().size()) {
+		for(int i=0; i<getTransitions().size(); i++)
+			uncoveredTransitions.add(0);
+		
+		if (invariantsMatrix.size() > 0) {
+			invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
+			if (invariantsMatrix.get(0).size() == getTransitions().size()) {
 				ArrayList<InvariantTransition> currentInvariant;
 				int i; //iterator po tranzycjach sieci
 				int invSize = 0;
-				for (ArrayList<Integer> binaryInvariant : invariantsBinaryList) {
+				for (ArrayList<Integer> binaryInvariant : invariantsMatrix) {
 					currentInvariant = new ArrayList<InvariantTransition>();
 					i = 0;
 					invSize = 0;
 					for (Integer amountOfFirings : binaryInvariant) {
-						if (amountOfFirings > 0) { //
+						if (amountOfFirings > 0) { // dla tranzycji odpalananych
 							invSize++;
 							currentTransition = new InvariantTransition(getTransitions().get(i), amountOfFirings);
 							currentInvariant.add(currentTransition);
+							uncoveredTransitions.set(i, 1); //aktywna tranzycja
 						}
 						i++;
 					}
-					// SettingsManager.log(invariantLog);
-					get2ndFormInvariantsList().add(currentInvariant);
+					invariants2ndForm.add(currentInvariant);
 					invariantsSize.add(invSize);
 					invSize = 0;
 				}
 			} else {
 				JOptionPane.showMessageDialog(null,
-					"The currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.",
+					"The currently opened project does not match with loaded external invariants. \nPlease make sure you are loading the correct invariant file for the correct Petri net.",
 					"Project mismatch error!", JOptionPane.ERROR_MESSAGE);
 				GUIManager.getDefaultGUIManager().log("Error: the currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.", "error", true);
 			}
 		} else {
 			JOptionPane.showMessageDialog(null,
-				"There is something wrong with loaded external invariant file, as there are no invariants in it.",
-				"Invariant file does not contain invariants", JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed.", "error", true);
+				"Invariants data matrix unavailable. Possible cause: invariants generation or reading from file failed.",
+				"No invariants data", JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed. 1st level invariants matrix unavailable.", "error", true);
 		}
-		return get2ndFormInvariantsList();
 	}
 
 	/**
-	 * Metoda zwracająca macierz wygenerowanych inwariantów.
+	 * Metoda zwracająca macierz wygenerowanych inwariantów, i przy okazji tworząca drugą
+	 * postać inwariantów.
+	 * 
+	 * Działa w ramach EarlyInvariantsAnalizer i tylko jego. Na razie zostawić.
+	 * 
 	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inw.
 	 */
-	public ArrayList<ArrayList<InvariantTransition>> getGeneratedInvariants() {
+	public ArrayList<ArrayList<InvariantTransition>> getEIAgeneratedInv_old() {
 		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
 		InvariantTransition currentTransition;
 		invariantsBinaryList = eia.getListaInvatianow();

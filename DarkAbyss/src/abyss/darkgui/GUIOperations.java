@@ -308,7 +308,8 @@ public class GUIOperations {
 
 		PetriNet project = overlord.getWorkspace().getProject();
 		project.loadInvariantsFromFile(file.getPath());
-		overlord.getInvariantsBox().showInvariants(project.getInaInvariants());
+
+		overlord.getInvariantsBox().showInvariants(project.get2ndFormInvariantsList());
 		overlord.setLastPath(file.getParentFile().getPath());
 		overlord.getSimulatorBox().createSimulatorProperties();
 	}
@@ -399,7 +400,8 @@ public class GUIOperations {
 			//wczytywanie inwariantów do systemu:
 			PetriNet project = overlord.getWorkspace().getProject();
 			project.loadInvariantsFromFile(invariantsFile.getPath());
-			overlord.getInvariantsBox().showInvariants(project.getInaInvariants());
+			//project.getInaInvariants();
+			overlord.getInvariantsBox().showInvariants(project.get2ndFormInvariantsList());
 			overlord.getSimulatorBox().createSimulatorProperties();
 		
 			//co dalej z plikiem?

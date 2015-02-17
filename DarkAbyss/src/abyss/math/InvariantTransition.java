@@ -1,7 +1,7 @@
 package abyss.math;
 
 /**
- * Klasa rozszerzenie dla Transition. Definiuj dla każdej tranzycji jej lizbę odpaleń.
+ * Klasa rozszerzenie dla Transition. Definiuj dla każdej tranzycji jej liczbę uruchomień.
  * Jest ona używana jako pojedzyńczy obiekt dla macierzy inwariantów II typu. 
  * @author students
  *

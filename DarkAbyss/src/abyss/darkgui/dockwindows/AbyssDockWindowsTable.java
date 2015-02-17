@@ -1385,11 +1385,12 @@ public class AbyssDockWindowsTable extends JPanel {
 		chooseInvLabel.setBounds(colA_posX, positionY, 80, 20);
 		components.add(chooseInvLabel);
 		
-		String[] invariantHeaders = new String[invariants.size() + 1];
+		String[] invariantHeaders = new String[invariants.size() + 2];
 		invariantHeaders[0] = "---";
 		for (int i = 0; i < invariants.size(); i++) {
-			invariantHeaders[i + 1] = "Inv. #" + Integer.toString(i) +" (size: "+invariants.get(i).size()+")";;
+			invariantHeaders[i + 1] = "Inv. #" + Integer.toString(i) +" (size: "+invariants.get(i).size()+")";
 		}
+		invariantHeaders[invariantHeaders.length-1] = "null transitions";
 		
 		JComboBox<String> chooseInvBox = new JComboBox<String>(invariantHeaders);
 		chooseInvBox.setBounds(colB_posX, positionY, 150, 20);
@@ -1397,8 +1398,11 @@ public class AbyssDockWindowsTable extends JPanel {
 			public void actionPerformed(ActionEvent actionEvent) {
 				@SuppressWarnings("unchecked")
 				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				int items = comboBox.getItemCount();
 				if (comboBox.getSelectedIndex() == 0) {
 					showInvariant(0, false);
+				} else if(comboBox.getSelectedIndex() == items-1) { 
+					showDeadInv();
 				} else {
 					showInvariant(comboBox.getSelectedIndex() - 1, true);
 				}
@@ -1466,6 +1470,37 @@ public class AbyssDockWindowsTable extends JPanel {
 			}
 			invTextArea.setCaretPosition(0);
 		}
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+	}
+	
+	private void showDeadInv() {
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setColorClusterToNeutral();
+		
+		invTextArea.setText("");
+		invTextArea.append("Transitions uncovered by invariants::\n");
+		ArrayList<Integer> deadTrans = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getUncoveredInvariants();
+		if(deadTrans == null) {
+			JOptionPane.showMessageDialog(null, "No invariants data available.", "No invariants", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			for(int i=0; i<deadTrans.size(); i++) {
+				int active = deadTrans.get(i);
+				if(active == 1)
+					continue;
+				
+				Transition realT = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i);
+				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
+						.getTransitions().lastIndexOf(realT);
+				
+				String t1 = Tools.setToSize("t"+globalIndex, 5, false);
+				invTextArea.append(t1 + " | "+realT.getName()+"\n");
+				
+				realT.setGlowed_INV(true, 0);
+			}
+		}
+		invTextArea.setCaretPosition(0);
+		
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
 
