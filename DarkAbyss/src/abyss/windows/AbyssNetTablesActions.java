@@ -193,6 +193,7 @@ public class AbyssNetTablesActions {
 					String cell = ""+value+"("+Tools.cutValue(avg)+"%)";
 					newRow.add(cell);
 					
+					int c=1;
 				} else {
 					newRow.add("");
 					
