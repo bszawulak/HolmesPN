@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -20,11 +21,17 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
@@ -65,6 +72,8 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	private InvariantsTableModel modelInvariants;
 	private PTITableRenderer tableRenderer; // = new PTITableRenderer();
 	public int currentClickedRow;
+	private int simStepsForInv = 10000;
+	private boolean maxModeForSSInv = false;
 	
 	private final AbyssNetTablesActions action;
 	
@@ -235,9 +244,67 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		});
 		invariantsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		buttonsInvariantsPanel.add(invariantsButton);
+		yPos += 30;
 		
+		JLabel ssLabel = new JLabel("StateSim:");
+		ssLabel.setBounds(xPos, yPos, 80, 20);
+		buttonsInvariantsPanel.add(ssLabel);
+		yPos += 20;
+		
+		JButton acqDataButton = new JButton("SimStart");
+		acqDataButton.setBounds(xPos, yPos, 110, 25);
+		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
+		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+		acqDataButton.setToolTipText("Compute new transitions firing statistics.");
+		acqDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				String name = table.getName();
+				if(name == null)
+					return;
+				else if(name.equals("InvariantsTable")) {
+					createInvariantsTable();
+				}
+			}
+		});
+		buttonsInvariantsPanel.add(acqDataButton);
+		yPos += 30;
+		
+		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simStepsForInv, 0, 1000000, 10000);
+		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
+		simStepsSpinner.setBounds(xPos, yPos, 110, 25);
+		simStepsSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int val = (int) spinner.getValue();
+				simStepsForInv = val;
+			}
+		});
+		buttonsInvariantsPanel.add(simStepsSpinner);
+		yPos += 25;
+		
+		JLabel label1 = new JLabel("Mode:");
+		label1.setBounds(xPos, yPos, 80, 15);
+		buttonsInvariantsPanel.add(label1);
+		yPos += 15;
+		
+		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
+		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+		simMode.setBounds(xPos, yPos, 110, 25);
+		simMode.setSelectedIndex(1);
+		simMode.setMaximumRowCount(6);
+		simMode.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = simMode.getSelectedIndex();
+				if(selected == 0)
+					maxModeForSSInv = true;
+				else
+					maxModeForSSInv = false;
+			}
+		});
+		buttonsInvariantsPanel.add(simMode);
+
+		//****
 		buttonsPanel.add(buttonsInvariantsPanel);
-		
 		yPos = yPos + bHeight + 15;
 		
 		return buttonsPanel;
@@ -373,7 +440,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		table.setRowSorter(null);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		action.addInvariantsToModel(modelInvariants, invariantsMatrix, invSize);
+		action.addInvariantsToModel(modelInvariants, invariantsMatrix, invSize, simStepsForInv, maxModeForSSInv);
 		
 		//ustawianie komentarzy dla kolumn:
 		ColumnHeaderToolTips tips = new ColumnHeaderToolTips();
@@ -389,6 +456,10 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
         //table.validate();
     }
 	
+	/**
+	 * Metoda pomocnicza dla tablicy inwariantów, dostosowująca szerokość kolumn.
+	 * @param table JTable - tablica danych
+	 */
 	public void resizeColumnWidth(JTable table) {
 	    TableColumnModel columnModel = table.getColumnModel();
 	    InvariantsTableModel itm = (InvariantsTableModel)table.getModel();

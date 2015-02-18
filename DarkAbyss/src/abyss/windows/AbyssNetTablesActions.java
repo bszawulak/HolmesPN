@@ -159,10 +159,10 @@ public class AbyssNetTablesActions {
 	 * @param invSize ArrayList[Integer] invSize - wektor wielkości inwariantów
 	 */
 	public void addInvariantsToModel(InvariantsTableModel modelInvariants, ArrayList<ArrayList<Integer>> invariantsMatrix,
-			ArrayList<Integer> invSize) {
+			ArrayList<Integer> invSize, int simSteps, boolean maximumMode) {
 		StateSimulator ss = new StateSimulator();
-		ss.initiateSim(NetType.BASIC, false);
-		ss.simulateNetSimple(10000, false);
+		ss.initiateSim(NetType.BASIC, maximumMode);
+		ss.simulateNetSimple(simSteps, false);
 		ArrayList<Double> resVector = ss.getTransitionsAvgData();
 		
 		ArrayList<Integer> rowsWithZero = new ArrayList<Integer>();

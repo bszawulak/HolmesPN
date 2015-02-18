@@ -22,4 +22,5 @@ public class PetriNetData {
 		this.arcs = arcs;
 		this.netName = name;
 	}
+	
 }

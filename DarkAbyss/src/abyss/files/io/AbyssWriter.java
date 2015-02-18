@@ -30,8 +30,8 @@ public class AbyssWriter {
 		xstream.alias("petriNet", PetriNetData.class);
 
 		try {
-
-			String xml = xstream.toXML(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getData());
+			PetriNetData dataModule = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getData();
+			String xml = xstream.toXML(dataModule);
 			
 			/*
 			if(path.contains(".abyss")) {
