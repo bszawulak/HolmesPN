@@ -60,7 +60,7 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda zwracająca wszystkie wierzchołki znajdujące się w danym arkuszu rysowania.
+	 * Metoda zwracająca wszystkie wierzchołki sieci.
 	 * @return ArrayList[Node] - lista wierzchołków sieci w arkuszu
 	 */
 	private ArrayList<Node> getGraphPanelNodes() {
@@ -77,7 +77,7 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda zwracająca listę łuków panelu graficznego.
+	 * Metoda zwracająca listę łuków sieci.
 	 * @return ArrayList[Arc] - lista łuków
 	 */
 	private ArrayList<Arc> getGraphPanelArcs() {
@@ -278,7 +278,8 @@ public class SelectionManager {
 	public void deleteElementLocation(ElementLocation el) {
 		this.deselectElementLocation(el);
 		Node n = el.getParentNode();
-		if (!n.removeElementLocation(el)) {
+		if (n.removeElementLocation(el) == false) {
+			ArrayList<Node> list = this.getGraphPanelNodes();
 			this.getGraphPanelNodes().remove(n);
 		}
 		for (Iterator<Arc> i = el.getInArcs().iterator(); i.hasNext();) {

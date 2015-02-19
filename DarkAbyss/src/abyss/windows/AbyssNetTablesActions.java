@@ -100,7 +100,7 @@ public class AbyssNetTablesActions {
 			}
 			
 			double avgTokens = 0;
-			if(resVector.size() > 0)
+			if(resVector != null && resVector.size() > 0)
 				avgTokens = resVector.get(iterIndex);
 			
 			modelPlaces.addNew(index, name, tokens, inTrans, outTrans, (float)avgTokens);
