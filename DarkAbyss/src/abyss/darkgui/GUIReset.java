@@ -144,13 +144,12 @@ public class GUIReset {
 	 * Metoda zwraca wartość true jeśli symulator działa. Dodatkowo wyświetla okno z ostrzeżeniem
 	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
-	public boolean isSimulatorActiveWarning() {
+	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
 		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
 		if(ns.getMode() == SimulatorMode.STOPPED) {
 			return false;
 		} else {
-			JOptionPane.showMessageDialog(null, "Warning: simulator active. Cannot proceed until manually stopped.",
-					"Net simulator working", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, msg, msgTitle, JOptionPane.WARNING_MESSAGE);
 			return true;
 		}
 	}

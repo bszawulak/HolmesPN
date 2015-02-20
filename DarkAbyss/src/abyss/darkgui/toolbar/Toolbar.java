@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import abyss.clusters.ClusteringInfoMatrix;
 import abyss.darkgui.GUIManager;
+import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
 
@@ -223,8 +224,8 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/sim_back.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-					.getSimulator().startSimulation(SimulatorMode.LOOP_BACK);
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP_BACK);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableStepBack",reverseLoopButton));
@@ -233,8 +234,8 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/sim_back_step.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-					.getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepBack", reverseStepButton));
@@ -243,8 +244,8 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/sim_start.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-					.getSimulator().startSimulation(SimulatorMode.LOOP);
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableLoopSim",loopSimButton));
@@ -253,8 +254,8 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/sim_start_single.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-					.getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableLoopSingleTransitionSim",
@@ -264,6 +265,7 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/sim_pause.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().pause();
 			}
 		};
@@ -282,8 +284,8 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/sim_forward_step.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION);
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepFwdSim", smallStepFwdSimButton));
@@ -292,8 +294,8 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/sim_forward.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getSimulator().startSimulation(SimulatorMode.STEP);
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.STEP);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableStepFwdSim", stepFwdSimButton));
@@ -388,7 +390,7 @@ public class Toolbar extends BorderDock {
 				*/
 				
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().loadFromFile(
-						"C:/Users/Rince/Desktop/Sieci/BER371/BERv3.7.1.spped");
+						"C:/Users/Rince/Desktop/Sieci/BER371/BER3.8.1.spped");
 				GUIManager.getDefaultGUIManager().getSimulatorBox().createSimulatorProperties();
 				
 				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();

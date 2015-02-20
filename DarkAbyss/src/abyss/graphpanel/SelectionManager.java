@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import javax.swing.JOptionPane;
 
+import abyss.darkgui.GUIManager;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import abyss.math.Arc;
@@ -293,16 +294,7 @@ public class SelectionManager {
 			//dostań się do lokacji docelowej łuku i usuń go tam z listy wejściowych:
 			arc.getEndLocation().removeInArc(arc);
 		}
-		/*
-		for (Iterator<Arc> i = el.getInArcs().iterator(); i.hasNext();) {
-			this.getGraphPanelArcs().remove(i.next());
-			i.remove();
-		}
-		for (Iterator<Arc> i = el.getOutArcs().iterator(); i.hasNext();) {
-
-			this.getGraphPanelArcs().remove(i.next());
-			i.remove();
-		}*/
+		
 		this.getGraphPanel().repaint();
 		this.invokeActionListener();
 	}
@@ -395,13 +387,23 @@ public class SelectionManager {
 				return;
 			}
 		}
-		for (ElementLocation el : this.getSelectedElementLocations()) { 
+		
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+		}
+		int selectedNodeIndex = getGraphPanelNodes().indexOf(getSelectedElementLocations().get(0).getParentNode());
+		
+		for (ElementLocation el : this.getSelectedElementLocations()) {
+			if(selectedNodeIndex > getGraphPanelNodes().indexOf(el.getParentNode()))
+				selectedNodeIndex = getGraphPanelNodes().indexOf(el.getParentNode());
+			
 			if (el.getParentNode().isPortal()) //usuwanie statusu portal
 				for (ElementLocation e : el.getParentNode().getNodeLocations())
 					e.setPortalSelected(false);
 			if (!el.getParentNode().removeElementLocation(el))
 				this.getGraphPanelNodes().remove(el.getParentNode()); //usuwanie węzła sieci z danych sieci
 		}
+		
 		//tutaj jednak obiekt(y) wciąż istnieje i można np. sprawdzić jego typ
 		if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.PLACE) {
 			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
@@ -414,10 +416,11 @@ public class SelectionManager {
 			portal.setComment(oldComment);
 			portal.setTokensNumber(oldTokensNumber);
 			portal.bookTokens(oldTokensTaken);
-			getGraphPanelNodes().add(portal);
+			//getGraphPanelNodes().add(portal);
+			getGraphPanelNodes().add(selectedNodeIndex, portal);
 		} else {
-			@SuppressWarnings("unused")
-			String test = getSelectedElementLocations().get(0).getParentNode().getType().toString();
+			//@SuppressWarnings("unused")
+			//String test = getSelectedElementLocations().get(0).getParentNode().getType().toString();
 			if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TIMETRANSITION) {
 				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
@@ -429,7 +432,8 @@ public class SelectionManager {
 				portal.setComment(oldComment);
 				portal.setMinFireTime(oldEFT);
 				portal.setMaxFireTime(oldLFT);
-				getGraphPanelNodes().add(portal);
+				//getGraphPanelNodes().add(portal);
+				getGraphPanelNodes().add(selectedNodeIndex, portal);
 			} else if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TRANSITION){
 				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
@@ -437,7 +441,8 @@ public class SelectionManager {
 						((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
 				portal.setName(oldName);
 				portal.setComment(oldComment);
-				getGraphPanelNodes().add(portal);
+				//getGraphPanelNodes().add(portal);
+				getGraphPanelNodes().add(selectedNodeIndex, portal);
 			}
 		}
 		getGraphPanel().repaint();
@@ -457,9 +462,14 @@ public class SelectionManager {
 			return;
 		}
 		
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+		}
 		//dodawanie innych miejsc dla samego portalu do selectedElementLocations
 		ElementLocation nodeSelectedEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
 		Node nodeSelected = nodeSelectedEL.getParentNode(); //wybrany wierzchołek
+		int selectedNodeIndex = getGraphPanelNodes().indexOf(nodeSelected);
+		
 		ArrayList<ElementLocation> otherNodes = nodeSelected.getElementLocations(); //lista jego (innych?) lokacji
 		for (ElementLocation el : otherNodes) { 
 			if(el.equals(nodeSelectedEL) == false) {
@@ -475,8 +485,7 @@ public class SelectionManager {
 				this.getGraphPanelNodes().remove(el.getParentNode()); //usuwanie węzła sieci z danych sieci
 		}
 		
-		if (getSelectedElementLocations().get(0).getParentNode().getType() 
-				== PetriNetElementType.PLACE) {
+		if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.PLACE) {
 			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
 			int oldTokensNumber = ((Place)getSelectedElementLocations().get(0).getParentNode()).getTokensNumber();
@@ -499,7 +508,8 @@ public class SelectionManager {
 			portal.setComment(oldComment);
 			portal.setTokensNumber(oldTokensNumber);
 			portal.bookTokens(oldTokensTaken);
-			getGraphPanelNodes().add(portal);
+			//getGraphPanelNodes().add(portal);
+			getGraphPanelNodes().add(selectedNodeIndex, portal);
 		} else {
 			@SuppressWarnings("unused")
 			String test = getSelectedElementLocations().get(0).getParentNode().getType().toString();
@@ -528,7 +538,8 @@ public class SelectionManager {
 				portal.setMinFireTime(oldEFT);
 				portal.setMaxFireTime(oldLFT);
 				
-				getGraphPanelNodes().add(portal);
+				//getGraphPanelNodes().add(portal);
+				getGraphPanelNodes().add(selectedNodeIndex, portal);
 			} else if (getSelectedElementLocations().get(0).getParentNode().getType() 
 					== PetriNetElementType.TRANSITION){
 				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
@@ -549,7 +560,8 @@ public class SelectionManager {
 						((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
 				portal.setName(oldName);
 				portal.setComment(oldComment);
-				getGraphPanelNodes().add(portal);
+				//getGraphPanelNodes().add(portal);
+				getGraphPanelNodes().add(selectedNodeIndex, portal);
 			}
 		}
 		getGraphPanel().repaint();
@@ -562,8 +574,7 @@ public class SelectionManager {
 	public void increaseTokensNumber() {
 		ArrayList<Node> safetyNodesList = new ArrayList<Node>();
 		for (ElementLocation el : getSelectedElementLocations()) {
-			if (el.getParentNode().getType() == PetriNetElementType.PLACE 
-					&& !safetyNodesList.contains(el.getParentNode())) {
+			if (el.getParentNode().getType() == PetriNetElementType.PLACE && !safetyNodesList.contains(el.getParentNode())) {
 				safetyNodesList.add(el.getParentNode());
 				((Place) el.getParentNode()).modifyTokensNumber(1);
 			}
@@ -578,10 +589,11 @@ public class SelectionManager {
 	public void decreaseTokensNumber() {
 		ArrayList<Node> safetyNodesList = new ArrayList<Node>();
 		for (ElementLocation el : getSelectedElementLocations()) {
-			if (el.getParentNode().getType() == PetriNetElementType.PLACE
-					&& !safetyNodesList.contains(el.getParentNode())) {
+			if (el.getParentNode().getType() == PetriNetElementType.PLACE && !safetyNodesList.contains(el.getParentNode())) {
 				safetyNodesList.add(el.getParentNode());
-				((Place) el.getParentNode()).modifyTokensNumber(-1);
+				int tokens = ((Place) el.getParentNode()).getTokensNumber();
+				if(tokens >= 1)
+					((Place) el.getParentNode()).modifyTokensNumber(-1);
 			}
 		}
 		invokeActionListener();

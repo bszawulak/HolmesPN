@@ -508,19 +508,20 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	//*********************************************************************************
 
 	/**
-	 * Metoda ta zapisuje liczbę tokenów każdego miejsca
+	 * Metoda ta zapisuje liczbę tokenów każdego miejsca tworząc kopię zapasową stanu m0.
 	 */
 	public void saveMarkingZero() {
 		ArrayList<Place> places = getPlaces();
-		//ArrayList<Transition> transitions = getTransitions();
-		
 		for(int i=0; i<places.size(); i++) {
 			backupMarkingZero.add(places.get(i).getTokensNumber());
 		}
+		isBackup = true;
 	}
 	
 	/**
-	 * Metoda ta przywraca stan sieci przed rozpoczęciem symulacji.
+	 * Metoda ta przywraca stan sieci przed rozpoczęciem symulacji. Liczba tokenów jest przywracana
+	 * z wektora danych pamiętających ostatni backup, tranzycje są resetowane wewnętrznie. Następnie
+	 * flaga oznaczające istnienie backupu ustawiana jest na false.
 	 */
 	public void restoreMarkingZero() {
 		ArrayList<Place> places = getPlaces();

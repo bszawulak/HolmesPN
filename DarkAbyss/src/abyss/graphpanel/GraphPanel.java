@@ -399,9 +399,6 @@ public class GraphPanel extends JComponent {
 	 * 		false w przypadku przeciwnym
 	 */
 	public boolean isLegalLocation(Point point) {
-		//TODO poprawić dla zoom: done. Przetestować: ongoing...
-		//int panelWidht = getSize().width;
-		//int panelHeight = getSize().height;
 		Dimension orgSize = getOriginSize();
 		int panelWidht = orgSize.width;
 		int panelHeight = orgSize.height;
@@ -694,10 +691,9 @@ public class GraphPanel extends JComponent {
 		 */
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
-				if (e.getButton() == MouseEvent.BUTTON1)
+				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown() == false)
 					getSelectionManager().increaseTokensNumber();
-				// nie dziala, trzeba by jakos ograniczyc sytuacje dla popupmenu
-				if (e.getButton() == MouseEvent.BUTTON3)
+				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown() == true)
 					getSelectionManager().decreaseTokensNumber();
 			}
 		}
@@ -739,24 +735,34 @@ public class GraphPanel extends JComponent {
 						clearDrawnArc();
 						break;
 					case PLACE:
-						addNewPlace(mousePt);
+						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						}
 						
-						//TODO: reset
+						addNewPlace(mousePt);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
 						break;
 					case TRANSITION:
-						addNewTransition(mousePt);
+						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						}
 						
-						//TODO: reset
+						addNewTransition(mousePt);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
 						break;
 					case ARC:
+						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						}
+						
 						clearDrawnArc();
 						break;
 					case TIMETRANSITION:
-						addNewTimeTransition(mousePt);
+						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						}
 						
-						//TODO: reset
+						addNewTimeTransition(mousePt);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
 						break;
 					default:
@@ -767,6 +773,10 @@ public class GraphPanel extends JComponent {
 			// zaznaczony, ponieważ to Node jest na wierzchu
 			else if (el != null) {
 				if (getDrawMode() == DrawModes.ARC) {
+					if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+					}
+					
 					getSelectionManager().deselectAllElements();
 					if (drawnArc == null) {
 						drawnArc = new Arc(el);
@@ -781,9 +791,11 @@ public class GraphPanel extends JComponent {
 						clearDrawnArc();
 					}
 				} else if (getDrawMode() == DrawModes.ERASER) {
-					getSelectionManager().deleteElementLocation(el);
+					if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+					}
 					
-					//TODO: reset
+					getSelectionManager().deleteElementLocation(el);
 					GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
 				} else {
 					if (e.isShiftDown())
@@ -806,9 +818,11 @@ public class GraphPanel extends JComponent {
 			// kliknięto w Arc, wiec zostanie on zaznaczony
 			else if (a != null) {
 				if (getDrawMode() == DrawModes.ERASER) {
-					getSelectionManager().deleteArc(a);
+					if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+					}
 					
-					//TODO: reset
+					getSelectionManager().deleteArc(a);
 					GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
 				} else {
 					if (e.isShiftDown())

@@ -93,7 +93,6 @@ public class NetSimulator {
 		//zapisz stan tokenów w miejscach przed rozpoczęciem:
 		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == false) {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup = true;
 		}
 		
 		previousMode = getMode();

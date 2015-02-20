@@ -11,8 +11,6 @@ import abyss.files.io.TexExporter;
 import abyss.math.InvariantTransition;
 import abyss.math.PetriNet;
 import abyss.math.Transition;
-import abyss.math.simulator.NetSimulator;
-import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.settings.SettingsManager;
 import abyss.utilities.Tools;
 import abyss.windows.AbyssAbout;
@@ -1082,7 +1080,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void showNetTablesWindow() {
 		if(windowNetTables != null) {
-			if(reset.isSimulatorActiveWarning() == false) {
+			if(reset.isSimulatorActiveWarning("Warning: simulator active. Cannot proceed until manually stopped."
+					, "Net simulator working") == false) {
 				windowNetTables.setVisible(true);
 			}
 		}

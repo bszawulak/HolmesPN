@@ -34,6 +34,8 @@ public class StateSimulator {
 	private ArrayList<Integer> transitionsTotalFiring = null; //wektor sumy odpaleń tranzycji
 	private ArrayList<Double> transitionsAvgData = null;
 	
+	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
+	
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
 	 */
@@ -91,9 +93,8 @@ public class StateSimulator {
 			return;
 		}
 		
-		//TODO: reset symulatora głównego jeśli działał/działa!!!!
+		prepareNetM0();
 		
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		ArrayList<Transition> launchingTransitions = null;
 		int updateTime = steps / 100;
 		
@@ -148,8 +149,9 @@ public class StateSimulator {
 			placesAvgData.set(p, sumOfTokens/(double)steps);
 		}
 		GUIManager.getDefaultGUIManager().log("Simulation ended. Restoring zero marking.", "text", true);
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 		ready = false;
+		
+		restoreInternalMarkingZero();
 	}
 	
 	/**
@@ -167,11 +169,9 @@ public class StateSimulator {
 			return 0;
 		}
 		
-		//TODO: reset symulatora głównego jeśli działał/działa!!!!
+		prepareNetM0();
 		
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		ArrayList<Transition> launchingTransitions = null;
-		
 		int internalSteps = 0;
 		for(int i=0; i<steps; i++) {
 			internalSteps++;
@@ -207,8 +207,9 @@ public class StateSimulator {
 				double sumOfTokens = placesAvgData.get(p);
 				placesAvgData.set(p, sumOfTokens/(double)internalSteps);
 			}
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+	
 		ready = false;
+		restoreInternalMarkingZero();
 		return internalSteps;
 	}
 	
@@ -224,8 +225,8 @@ public class StateSimulator {
 			GUIManager.getDefaultGUIManager().log("Simulation for place "+plc.getName()+" cannot start.", "warning", true);
 			return null;
 		}
+		prepareNetM0();
 		
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		ArrayList<Transition> launchingTransitions = null;
 		ArrayList<Integer> singlePlaceData = new ArrayList<Integer>();
 		
@@ -243,8 +244,8 @@ public class StateSimulator {
 			launchAddPhase(launchingTransitions, false);
 			singlePlaceData.add(plc.getTokensNumber());
 		}
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 		ready = false;
+		restoreInternalMarkingZero();
 		return singlePlaceData;
 	}
 	
@@ -260,10 +261,10 @@ public class StateSimulator {
 			GUIManager.getDefaultGUIManager().log("Simulation for transition "+trans.getName()+" cannot start.", "warning", true);
 			return null;
 		}
-
+		prepareNetM0();
+		
 		int sum = 0;
 		int internalSteps = 0;
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		ArrayList<Transition> launchingTransitions = null;
 		ArrayList<Integer> singleTransitionData = new ArrayList<Integer>();
 		for(int i=0; i<steps; i++) {
@@ -282,10 +283,10 @@ public class StateSimulator {
 			}
 			launchAddPhase(launchingTransitions, false);
 		}
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 		ready = false;
 		singleTransitionData.add(sum);
 		singleTransitionData.add(internalSteps);
+		restoreInternalMarkingZero();
 		return singleTransitionData;
 	}
 	
@@ -464,5 +465,45 @@ public class StateSimulator {
 	 */
 	public ArrayList<Double> getPlacesAvgData() {
 		return placesAvgData;
+	}
+	
+	//******************************************************************************************************
+	//****************************************   INTERNAL   ************************************************
+	//****************************************              ************************************************
+	//****************************************    BACKUP    ************************************************
+	//******************************************************************************************************
+	
+	public void prepareNetM0() {
+		//zapis aktualnego stanu jako m0
+		saveInternalMarkingZero();
+		//jeżeli istnieje backup, przywróć sieć do stanu m0:
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+		}
+	}
+	
+	/**
+	 * Metoda ta zapisuje liczbę tokenów każdego miejsca tworząc kopię zapasową stanu m0.
+	 */
+	public void saveInternalMarkingZero() {
+		for(int i=0; i<places.size(); i++) {
+			internalBackupMarkingZero.add(places.get(i).getTokensNumber());
+		}
+	}
+	
+	/**
+	 * Metoda ta przywraca stan sieci przed rozpoczęciem symulacji. Liczba tokenów jest przywracana
+	 * z wektora danych pamiętających ostatni backup, tranzycje są resetowane wewnętrznie. 
+	 */
+	public void restoreInternalMarkingZero() {
+		for(int i=0; i<places.size(); i++) {
+			places.get(i).setTokensNumber(internalBackupMarkingZero.get(i));
+			places.get(i).returnTokens();
+		}
+		
+		for(int i=0; i<transitions.size(); i++) {
+			transitions.get(i).setLaunching(false);
+			transitions.get(i).setFireTime(-1);
+		}
 	}
 }

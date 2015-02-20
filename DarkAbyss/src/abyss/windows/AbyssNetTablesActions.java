@@ -147,9 +147,7 @@ public class AbyssNetTablesActions {
 			avgFired *= 100;
 			int inInv = 0;
 			
-			modelTransitions.addNew(index, name, postP, preP, (float)avgFired, inInv);
-			//String[] dataRow = { ""+index, name, ""+postP, ""+preP, ""+Tools.cutValue(avgFired)+"%", ""+inInv};
-			//model.addRow(dataRow);
+			modelTransitions.addNew(index, name, preP, postP, (float)avgFired, inInv);
 		}
 	}
 	
@@ -193,8 +191,6 @@ public class AbyssNetTablesActions {
 					avg *= 100; // do 100%
 					String cell = ""+value+"("+Tools.cutValue(avg)+"%)";
 					newRow.add(cell);
-					
-					int c=1;
 				} else {
 					newRow.add("");
 					

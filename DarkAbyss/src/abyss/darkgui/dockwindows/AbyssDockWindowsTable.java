@@ -47,6 +47,7 @@ import abyss.clusters.ClusterTransition;
 import abyss.darkgui.GUIManager;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.graphpanel.GraphPanel;
+import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.Arc;
 import abyss.math.ElementLocation;
 import abyss.math.InvariantTransition;
@@ -192,6 +193,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		oneActionBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				simulator.startSimulation(SimulatorMode.ACTION_BACK);
 				mode = SIMULATOR;
 			}
@@ -206,6 +208,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		oneTransitionForward.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION);
 				mode = SIMULATOR;
 			}
@@ -219,6 +222,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		loopBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				simulator.startSimulation(SimulatorMode.LOOP_BACK);
 				mode = SIMULATOR;
 			}
@@ -232,6 +236,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		oneStepForward.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				simulator.startSimulation(SimulatorMode.STEP);
 				mode = SIMULATOR;
 			}
@@ -245,6 +250,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		loopSimulation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				simulator.startSimulation(SimulatorMode.LOOP);
 				mode = SIMULATOR;
 			}
@@ -258,6 +264,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		singleTransitionLoopSimulation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
 				mode = SIMULATOR;
 			}
@@ -272,6 +279,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		pauseSimulation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				simulator.pause();
 				mode = SIMULATOR;
 			}
