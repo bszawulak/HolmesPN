@@ -2,11 +2,15 @@ package abyss.darkgui;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.math.InvariantTransition;
 import abyss.math.Transition;
+import abyss.math.simulator.NetSimulator;
+import abyss.math.simulator.NetSimulator.SimulatorMode;
 
 /**
  * Klasa odpowiedzialna za różne rzeczy związane z czyszczeniem wszystkiego i niczego w ramach
@@ -121,5 +125,33 @@ public class GUIReset {
 	 */
 	public void setClustersStatus(boolean status) {
 		clustersGenerated = status;
+	}
+	
+	/**
+	 * Metoda zwraca wartość true jeśli symulator działa.
+	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
+	 */
+	public boolean isSimulatorActive() {
+		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		if(ns.getMode() == SimulatorMode.STOPPED) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	/**
+	 * Metoda zwraca wartość true jeśli symulator działa. Dodatkowo wyświetla okno z ostrzeżeniem
+	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
+	 */
+	public boolean isSimulatorActiveWarning() {
+		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		if(ns.getMode() == SimulatorMode.STOPPED) {
+			return false;
+		} else {
+			JOptionPane.showMessageDialog(null, "Warning: simulator active. Cannot proceed until manually stopped.",
+					"Net simulator working", JOptionPane.WARNING_MESSAGE);
+			return true;
+		}
 	}
 }

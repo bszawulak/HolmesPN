@@ -163,7 +163,7 @@ public class StateSimulator {
 	 */
 	public int simulateNetSimple(int steps, boolean placesToo) {
 		if(ready == false) {
-			GUIManager.getDefaultGUIManager().log("Simulation simple mode cannot start.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Simulation simple mode cannot start.", "warning", true);
 			return 0;
 		}
 		
@@ -221,7 +221,7 @@ public class StateSimulator {
 	 */
 	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place plc) {
 		if(ready == false) {
-			GUIManager.getDefaultGUIManager().log("Simulation for place "+plc.getName()+" cannot start.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Simulation for place "+plc.getName()+" cannot start.", "warning", true);
 			return null;
 		}
 		
@@ -257,7 +257,7 @@ public class StateSimulator {
 	 */
 	public ArrayList<Integer> simulateNetSingleTransition(int steps, Transition trans) {
 		if(ready == false) {
-			GUIManager.getDefaultGUIManager().log("Simulation for transition "+trans.getName()+" cannot start.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Simulation for transition "+trans.getName()+" cannot start.", "warning", true);
 			return null;
 		}
 

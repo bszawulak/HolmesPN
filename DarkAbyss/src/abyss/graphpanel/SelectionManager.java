@@ -279,11 +279,22 @@ public class SelectionManager {
 		this.deselectElementLocation(el);
 		Node n = el.getParentNode();
 		if (n.removeElementLocation(el) == false) {
-			ArrayList<Node> list = this.getGraphPanelNodes();
 			this.getGraphPanelNodes().remove(n);
 		}
+		
+		for(Arc arc : el.getInArcs()) {
+			this.getGraphPanelArcs().remove(arc);
+			//dostań się do lokacji startowej łuku i usuń go tam z listy wyjściowych:
+			arc.getStartLocation().removeOutArc(arc);
+		}
+		
+		for(Arc arc : el.getOutArcs()) {
+			this.getGraphPanelArcs().remove(arc);
+			//dostań się do lokacji docelowej łuku i usuń go tam z listy wejściowych:
+			arc.getEndLocation().removeInArc(arc);
+		}
+		/*
 		for (Iterator<Arc> i = el.getInArcs().iterator(); i.hasNext();) {
-
 			this.getGraphPanelArcs().remove(i.next());
 			i.remove();
 		}
@@ -291,7 +302,7 @@ public class SelectionManager {
 
 			this.getGraphPanelArcs().remove(i.next());
 			i.remove();
-		}
+		}*/
 		this.getGraphPanel().repaint();
 		this.invokeActionListener();
 	}

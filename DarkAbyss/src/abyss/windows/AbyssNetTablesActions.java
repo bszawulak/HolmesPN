@@ -74,10 +74,11 @@ public class AbyssNetTablesActions {
 			return;
 		}
 		
+		ArrayList<Double> resVector = null;
 		StateSimulator ss = new StateSimulator();
 		ss.initiateSim(NetType.BASIC, false);
 		ss.simulateNetSimple(10000, true);
-		ArrayList<Double> resVector = ss.getPlacesAvgData();
+		resVector = ss.getPlacesAvgData();
 		
 		int iterIndex = -1;
 		for(Place p : places) {

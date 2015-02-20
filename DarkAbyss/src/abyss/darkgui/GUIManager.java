@@ -1082,12 +1082,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void showNetTablesWindow() {
 		if(windowNetTables != null) {
-			NetSimulator ns = getSimulatorBox().getCurrentDockWindow().getSimulator();
-			if(ns.getMode() == SimulatorMode.STOPPED) {
+			if(reset.isSimulatorActiveWarning() == false) {
 				windowNetTables.setVisible(true);
-			} else {
-				JOptionPane.showMessageDialog(null, "Warning: simulator active. Cannot proceed until manually stopped.",
-						"Net simulator working", JOptionPane.WARNING_MESSAGE);
 			}
 		}
 	}

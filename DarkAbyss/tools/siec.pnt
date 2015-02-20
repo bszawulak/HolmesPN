@@ -36,7 +36,7 @@ P   M   PRE,POST  NETZ 0:siec.pnt
  34 0     29 30 34 24 191, 54 52
  35 0     40 135 147 149, 55 207 208
  36 0     63, 35
- 37 0     64, 37
+ 37 0     64 189, 37
  38 0     66, 22
  39 0     79, 31
  40 0     80, 36
@@ -46,7 +46,7 @@ P   M   PRE,POST  NETZ 0:siec.pnt
  44 0     73, 29
  45 0     74, 30
  46 0     76, 34
- 47 0     84 133, 40
+ 47 0     84 133 188, 40
  48 0     41, 96 60 61 102
  49 0     22, 4 197 198
  50 0     33 25 171 172 176 177 178 18 23 198 200 201 203 206 207, 5 193
@@ -86,8 +86,8 @@ P   M   PRE,POST  NETZ 0:siec.pnt
  84 0     33 171 177 34 158, 139
  85 0     38 40 135 21 39 147 149 137 18 176 20 19 166 30 37 191, 138
  86 0     86 8 53 192 193, 87
- 87 0     5, 88
- 88 0     6, 89
+ 87 0     5 209, 88
+ 88 0     6 210, 89
  89 0     88 89, 90
  90 0     50 49, 91
  91 0     32, 92
@@ -154,12 +154,10 @@ P   M   PRE,POST  NETZ 0:siec.pnt
 152 0     186, 185
 153 1     185, 186
 154 0     187, 188 189 190
-155 0     188, 40
-156 0     189, 37
-157 0     190, 191
-158 0     99 196, 5
-159 1     89 192, 71 161 162 163 160 159 194 195 197 199 202 204 205 208
-160 0     194 195, 6
+155 0     190, 191
+156 0     99 196, 209
+157 1     89 192, 71 161 162 163 160 159 194 195 197 199 202 204 205 208
+158 0     194 195, 210
 @
 place nr.             name capacity time
        0: APE                  65535    0
@@ -317,12 +315,10 @@ place nr.             name capacity time
      152: intact_DNA_low_level                  65535    0
      153: DNA_high_level                  65535    0
      154: gr24_5formylU                  65535    0
-     155: complexDNA_hSMUG1_uracil_gr24                  65535    0
-     156: complexDNA_MBD4_uracil_gr24                  65535    0
-     157: complexDNA_hNTH1_5formylU                  65535    0
-     158: complexDNA_3dRP_NEIL1                  65535    0
-     159: NEIL2                  65535    0
-     160: complexDNA_3dRP_NEIL2                  65535    0
+     155: complexDNA_hNTH1_5formylU                  65535    0
+     156: complexDNA_3dRP_NEIL1                  65535    0
+     157: NEIL2                  65535    0
+     158: complexDNA_3dRP_NEIL2                  65535    0
 @
 trans nr.             name priority time
        0: DNA_synthesis_LP_delta                      0    0
@@ -534,4 +530,6 @@ trans nr.             name priority time
      206: NEIL1_stimulated_displacement_of_UNG2                      0    0
      207: NEIL1_stimulated_displacement_of_hSMUG1                      0    0
      208: NEIL2_stimulated_displacement_of_hSMUG1                      0    0
+     209: Transition0                      0    0
+     210: Transition1                      0    0
 @
