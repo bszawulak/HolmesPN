@@ -86,7 +86,7 @@ public class Weird {
 		}
         public Boolean call() throws Exception {
         	int safeCounter = 0;
-    		while(ns.getMode() != SimulatorMode.STOPPED) {
+    		while(ns.getSimulatorStatus() != SimulatorMode.STOPPED) {
     			try {
     			    Thread.sleep(1000);
     			    safeCounter++;
@@ -101,7 +101,7 @@ public class Weird {
     			}
     		}
     		
-    		if(ns.getMode() == SimulatorMode.STOPPED)
+    		if(ns.getSimulatorStatus() == SimulatorMode.STOPPED)
     			return true;
     		else
     			return false;

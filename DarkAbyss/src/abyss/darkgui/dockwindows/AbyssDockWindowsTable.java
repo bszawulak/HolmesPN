@@ -108,6 +108,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	private JTextArea clTextArea;
 	private JComboBox<String> chooseCluster;
 	public JComboBox<String> simMode;
+	public JLabel timeStepLabelValue;
 	
 	private WorkspaceSheet currentSheet;
 	private PetriNetElement element;
@@ -151,24 +152,25 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		initiateContainers();
 		
-		String[] simModeName = {"Classic", "Time"};
+		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
 		mode = SIMULATOR;
 		setSimulator(sim);
 		invSimulator = is;
 		
 		// SIMULATION MODE
-		JLabel netTypeLabel = new JLabel("Net:");
+		JLabel netTypeLabel = new JLabel("Mode:");
 		netTypeLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
 		components.add(netTypeLabel);
 		
 		simMode = new JComboBox<String>(simModeName);
-		simMode.setLocation(columnB_posX, columnB_Y += 10);
-		simMode.setSize(colBCompLength, 20);
+		simMode.setLocation(columnB_posX-30, columnB_Y += 10);
+		simMode.setSize(colBCompLength+30, 20);
 		simMode.setSelectedIndex(0);
 		simMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selectedModeIndex = simMode.getSelectedIndex();
+				
 				simulator.setSimulatorNetType(selectedModeIndex);
 				
 				if(invSimulator != null)
@@ -177,6 +179,13 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 		components.add(simMode);
 		
+		JLabel timeStepLabel = new JLabel("Time/step:");
+		timeStepLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(timeStepLabel);
+		
+		timeStepLabelValue = new JLabel("0");
+		timeStepLabelValue.setBounds(columnA_posX+70, columnB_Y += 20, colACompLength, 20);
+		components.add(timeStepLabelValue);
 		
 		// SIMULATOR CONTROLS
 		// metoda startSimulation obiektu simulator troszczy się o wygaszanie
@@ -302,7 +311,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		JButton resetButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_reset.png"));
 		resetButton.setName("reset");
-		resetButton.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
+		resetButton.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
 		resetButton.setToolTipText("Reset all tokens in places.");
 		resetButton.setEnabled(false);
 		resetButton.addActionListener(new ActionListener() {
@@ -317,22 +326,27 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 		components.add(resetButton);
 		
-		// JButton saveState = new JButton(new ImageIcon(
-		// "resources/icons/simulation_icons/control_cursor_blue.png"));
-		// saveState.setEnabled(false);
-		// saveState.setToolTipText("Save current state");
-		// headers.add(saveState);
-		// JButton revertSimulation = new JButton(new ImageIcon(
-		// "resources/icons/simulation_icons/control_equalizer_blue.png"));
-		// revertSimulation.setToolTipText("Revert to saved state");
-		// revertSimulation.setEnabled(false);
-		// values.add(revertSimulation);
-		// ===============================================
-		// tryb maximum
-		
-		//JLabel maxLabel = new JLabel("Maximum mode", JLabel.LEFT);
-		//maxLabel.setBounds(columnB_posX-50, columnB_Y += 30, colBCompLength+40, 20);
-		//components.add(maxLabel);
+		JButton saveButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_save_m0.png"));
+		saveButton.setName("Save m0");
+		saveButton.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
+		saveButton.setToolTipText("Save m0 state.");
+		saveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning("Operation impossible when simulator is working."
+						, "Warning") == true)
+					return;
+				
+				Object[] options = {"Save new m0 state", "Cancel",};
+				int n = JOptionPane.showOptionDialog(null,
+								"Do you want to replace saved m0 state with the current one?",
+								"Saving m0 state", JOptionPane.YES_NO_OPTION,
+								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+				if (n == 0)
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
+			}
+		});
+		components.add(saveButton);
 		
 		columnB_Y += 30;
 		JCheckBox maximumMode = new JCheckBox("Maximum mode");
@@ -1447,7 +1461,6 @@ public class AbyssDockWindowsTable extends JPanel {
 	 * @param invariantIndex Integer - numer wybranego inwariantu
 	 * @param inv boolean - true, jeśli mają być pokazane dane szczegółowe w panelu
 	 */
-	@SuppressWarnings("unused")
 	private void showInvariant(Integer invariantIndex, boolean isThereInv) {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
@@ -1458,13 +1471,13 @@ public class AbyssDockWindowsTable extends JPanel {
 			invTextArea.setText("");
 			invTextArea.append("Transitions of INV #" + invariantIndex + ":\n");
 			ArrayList<InvariantTransition> invariant = invariantsDock2Form.get(invariantIndex);
-			long mintime = 0;
-			long maxtime = 0;
 			
-			for (InvariantTransition transition : invariant) {
-				mintime+=transition.getTransition().getMinFireTime();
-				maxtime+=transition.getTransition().getMaxFireTime();
-			}
+			//long mintime = 0;
+			//long maxtime = 0;
+			//for (InvariantTransition transition : invariant) {
+				//mintime+=transition.getTransition().getMinFireTime();
+				//maxtime+=transition.getTransition().getMaxFireTime();
+			//}
 			
 			for (InvariantTransition invTrans : invariant) {
 				Transition realT = invTrans.getTransition(); //prawdziwy obiekt tranzycji

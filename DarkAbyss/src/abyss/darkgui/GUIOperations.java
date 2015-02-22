@@ -801,4 +801,12 @@ public class GUIOperations {
 		result[4] = clustersPath+"//"+algorithm+"_"+metric+"_dendrogram_ext_"+howMany+".pdf";
 		return result;
 	}
+	
+	/**
+	 * Metoda odpowiedzialna za wpisanie nowej wartości czasu/kroku w podoknie symulatora.
+	 * @param value String - nowa wartość kroku symulacji
+	 */
+	public void updateTimeStep(String value) {
+		overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText(value);
+	}
 }

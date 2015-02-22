@@ -13,7 +13,7 @@ import org.simpleframework.xml.Element;
  *
  */
 public class PetriNetElement implements Serializable {
-	//BACKUP: 3428968829261305581L; (NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
+	//BACKUP: 3428968829261305581L; (nie zmieniać poniższej zmiennej)
 	private static final long serialVersionUID = 3428968829261305581L;
 
 	/*
@@ -90,6 +90,23 @@ public class PetriNetElement implements Serializable {
 	 * @param name String - nazwa elementu sieci Petriego
 	 */
 	public void setName(String name) {
-		this.name = name;
+		if(name.length() == 0)
+			return;
+		
+		this.name = normalizeName(name);
+	}
+	
+	/**
+	 * Metoda pomocnicza zapewniająca, że nazwa nie zawiera spacji oraz nie zaczyna się od cyfry.
+	 * @param name String - nowa nazwa
+	 * @return String - znormalizowana nazwa
+	 */
+	protected String normalizeName(String name) {
+		name = name.replace(" ", "_");
+		String letter = name.substring(0, 1);
+		if(letter.matches("\\d+"))
+			name = "_"+name;
+		
+		return name;
 	}
 }

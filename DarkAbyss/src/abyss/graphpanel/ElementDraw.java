@@ -34,8 +34,8 @@ public final class ElementDraw {
 			Transition trans = (Transition)node;
 			for (ElementLocation el : trans.getNodeLocations(sheetId)) {
 				Rectangle nodeBounds = new Rectangle(
-					el.getPosition().x - trans.getRadius(), el.getPosition().y - trans.getRadius(),
-						trans.getRadius() * 2, trans.getRadius() * 2);
+					el.getPosition().x - trans.getRadius(), el.getPosition().y - trans.getRadius(), 
+					trans.getRadius() * 2, trans.getRadius() * 2);
 				if (!trans.isLaunching()) { //jeśli nieaktywna
 					if (trans.isGlowed_MTC()) { //jeśli ma się świecić jako MCT
 						g.setColor(EditorResources.glowMTCTransitonColorLevel1);
@@ -134,8 +134,14 @@ public final class ElementDraw {
 				g.setColor(Color.DARK_GRAY);
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				
+				
 				if (trans.isPortal()) {
-					g.drawRect(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
+					if(node instanceof TimeTransition ) {
+						g.drawRect(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
+					} else {
+						g.drawRect(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
+					}
 				}
 				// -------- do tego miejsca wspólne dla Transition i TimeTransition --------
 				
@@ -143,13 +149,18 @@ public final class ElementDraw {
 				if(node instanceof TimeTransition) {
 					g.setColor(Color.black);
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
-					String miFT = String.valueOf( ((TimeTransition)node).getMinFireTime() );
-					g.drawString(miFT, nodeBounds.x+35, nodeBounds.y + 8);
+					String eft = String.valueOf( ((TimeTransition)node).getMinFireTime() );
+					g.drawString(eft, nodeBounds.x+35, nodeBounds.y + 8);
 
 					g.setColor(Color.black);
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
-					String mxFT = String.valueOf( ((TimeTransition)node).getMaxFireTime() );
-					g.drawString(mxFT, nodeBounds.x +35, nodeBounds.y + 28);
+					String lft = String.valueOf( ((TimeTransition)node).getMaxFireTime() );
+					g.drawString(lft, nodeBounds.x +35, nodeBounds.y + 28);
+					
+					int intTimer = (int) ((TimeTransition)node).getInternalTimer();
+					int intFireTime = (int) ((TimeTransition)node).getInternalFireTime();
+					String timeInfo = ""+intTimer+"  /  "+intFireTime;
+					g.drawString(timeInfo, nodeBounds.x +5, nodeBounds.y + -4);
 
 					g.setColor(Color.LIGHT_GRAY);
 					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 20, nodeBounds.y + 9);

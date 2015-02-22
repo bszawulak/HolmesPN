@@ -1,6 +1,5 @@
 package abyss.math.simulator;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -9,25 +8,26 @@ import java.util.Random;
 import java.util.Stack;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
+import abyss.math.Node;
 import abyss.math.PetriNet;
 import abyss.math.Place;
+import abyss.math.TimeTransition;
 import abyss.math.Transition;
 
 /**
  * Klasa zajmująca się zarządzaniem całym procesem symulacji.
- * @author students
- *
+ * @author students - pierwsza wersja, klasyczne PN oraz TPN
+ * @author MR - poprawki, zmiany, kolejne rodzaje trubów symulacji
  */
 public class NetSimulator {
 	private NetType simulationType;
-	private SimulatorMode mode = SimulatorMode.STOPPED;
-	private SimulatorMode previousMode = SimulatorMode.STOPPED;
+	private SimulatorMode simulatorStatus = SimulatorMode.STOPPED;
+	private SimulatorMode previousSimStatus = SimulatorMode.STOPPED;
 	private PetriNet petriNet;
 	private Integer delay = new Integer(30);	//opóźnienie
 	private boolean simulationActive = false;
@@ -39,8 +39,10 @@ public class NetSimulator {
 	public JFrame timeFrame = new JFrame("Zegar");
 	public double timeNetStepCounter = 0;
 	public double timeNetPartStepCounter = 0;
+	
+	private boolean writeHistory = true;
+	private long timeCounter = -1;
 
-	//tryb symulacji
 	/**
 	 * Enumeracja przechowująca tryb pracy symulatora. Dostępne wartości:<br><br>
 	 * ACTION_BACK - tryb cofnięcia pojedynczej akcji<br>
@@ -62,8 +64,9 @@ public class NetSimulator {
 	 * TIME<br>
 	 */
 	public enum NetType {
-		BASIC, COLORED, TIME
+		BASIC, TIME, HYBRID
 	}
+	
 
 	/**
 	 * Konstruktor obiektu symulatora sieci.
@@ -76,8 +79,22 @@ public class NetSimulator {
 		launchingTransitions = new ArrayList<Transition>();
 		actionStack = new Stack<SimulationStep>(); //historia kroków
 	}
+	
+	public void resetSimulator() {
+		simulatorStatus = SimulatorMode.STOPPED;
+		previousSimStatus = SimulatorMode.STOPPED;
+		simulationActive = false;
+		maximumMode = false;
+		DEFAULT_COUNTER = 50;
+		timeNetStepCounter = 0;
+		timeNetPartStepCounter = 0;
+		writeHistory = true;
+		timeCounter = -1;
+		
+		actionStack.removeAllElements();
+	}
 
-	@SuppressWarnings("incomplete-switch")
+	//@SuppressWarnings("incomplete-switch")
 	/**
 	 * Metoda rozpoczyna symulację w odpowiednim trybie. W zależności od wybranego trybu,
 	 * w oddzielnym wątku symulacji zainicjalizowana zostaje odpowiednia klasa dziedzicząca
@@ -95,41 +112,51 @@ public class NetSimulator {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
 		}
 		
-		previousMode = getMode();
-		setMode(simulatorMode);
+		previousSimStatus = getSimulatorStatus();
+		setSimulatorStatus(simulatorMode);
 		setSimulationActive(true);
 		ActionListener taskPerformer = new SimulationPerformer();
 		//ustawiania stanu przycisków symulacji:
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
 		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
-		switch (getMode()) {
-		case LOOP:
-			taskPerformer = new StepPerformer(true); //główny tryb
-			break;
-		case SINGLE_TRANSITION_LOOP:
-			taskPerformer = new SingleTransitionPerformer(true);
-			break;
-		case SINGLE_TRANSITION:
-			taskPerformer = new SingleTransitionPerformer();
-			break;
-		case STEP:
-			taskPerformer = new StepPerformer();
-			break;
-		case ACTION_BACK:
-			taskPerformer = new StepBackPerformer();
-			break;
-		case LOOP_BACK:
-			launchingTransitions.clear();
-			taskPerformer = new StepBackPerformer(true);
-			break;
+		
+		checkSimulatorNetType(); //trust no one
+		
+		switch (getSimulatorStatus()) {
+			case LOOP:
+				taskPerformer = new StepLoopPerformer(true); //główny tryb
+				break;
+			case SINGLE_TRANSITION_LOOP:
+				taskPerformer = new SingleTransitionPerformer(true);
+				break;
+			case SINGLE_TRANSITION:
+				taskPerformer = new SingleTransitionPerformer();
+				break;
+			case STEP:
+				taskPerformer = new StepLoopPerformer();
+				break;
+			case ACTION_BACK:
+				taskPerformer = new StepBackPerformer();
+				break;
+			case LOOP_BACK:
+				launchingTransitions.clear();
+				taskPerformer = new StepBackPerformer(true);
+				break;
+			case PAUSED:
+				break;
+			case STOPPED:
+				break;
+			default:
+				break;
 		}
 		setTimer(new Timer(getDelay(), taskPerformer));
 		getTimer().start();
 	}
 
 	/**
-	 * Metoda sprawdzająca, czy krok jest możliwy - czy istnieje choć jedna aktywna
-	 * tranzycja.
+	 * Metoda sprawdzająca, czy krok jest możliwy - czy istnieje choć jedna aktywna tranzycja.
+	 * Nie ma znaczenie jaki jest tryb symulacji, jesli żadna tranzycja nie ma odpowiedniej liczby tokenów
+	 * w miejsach wejściowych, symulacja musi się zakończyć.
 	 * @return boolean - true jeśli jest choć jedna aktywna tranzycja; false w przeciwnym wypadku
 	 */
 	private boolean isPossibleStep() {
@@ -142,22 +169,63 @@ public class NetSimulator {
 	
 	/**
 	 * Metoda ustawiająca tryb sieci do symulacji.
-	 * @param type int - typ sieci.
+	 * @param type int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
 	 */
 	public void setSimulatorNetType(int type)
 	{
-		switch(type) {
-			case(0) :
-				simulationType = NetType.BASIC;
-				break;
-			case(1) :
-				simulationType = NetType.TIME;
-				break;
-		}
+		//sprawdzenie poprawności trybu, zakładamy że Basic działa zawsze
+		if(type == 0) {
+			simulationType = NetType.BASIC;
+		} else if(type == 1) {
+			for(Node n : petriNet.getNodes()) {
+				if(n instanceof Place) { //miejsca ignorujemy
+					continue;
+				}
+				
+				if(!(n instanceof TimeTransition)) {
+					JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
+							"Invalid mode", JOptionPane.ERROR_MESSAGE);
+					GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
+					simulationType = NetType.HYBRID;
+					return;
+				}
+			}
+			
+			simulationType = NetType.TIME;
+		} else if (type == 2) {
+			simulationType = NetType.HYBRID;
+		}		
+	}
+	
+	/**
+	 * Metoda podobna do setSimulatorNetType(...), sprawdza, czy aktualna sieć jest poprawna
+	 * z punktu widzenia ustawionego trybu symulacji
+	 */
+	private void checkSimulatorNetType() {
+		if(simulationType == NetType.BASIC) {
+			return;
+		} else if(simulationType == NetType.TIME) {
+			for(Node n : petriNet.getNodes()) {
+				if(n instanceof Place) { //miejsca ignorujemy
+					continue;
+				}
+				
+				if(!(n instanceof TimeTransition)) {
+					JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
+							"Invalid mode", JOptionPane.ERROR_MESSAGE);
+					GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
+					simulationType = NetType.HYBRID;
+					return;
+				}
+			}
+		} else if (simulationType == NetType.HYBRID) {
+			//simulationType = NetType.HYBRID;
+		}		
 	}
 
 	/**
-	 * Metoda generuje zbiór tranzycji do uruchomienia w ramach symulatora.
+	 * Metoda generuje zbiór tranzycji do uruchomienia w ramach symulatora. Jej działanie jest zależne od 
+	 * sieci jaka jest symulowana, tj. w jakim trybie
 	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia
 	 */
 	private ArrayList<Transition> generateValidLaunchingTransitions() {
@@ -171,10 +239,14 @@ public class NetSimulator {
 				// tranzycje, tak więc jeśli to nie tryb maksimum i żadna się nie wygenerowała 
 				// (przez pechowe rzuty kostką:) ) to powtarzamy do skutku. Prawie...:
 			} else {
+				if (simulationType == NetType.TIME) {
+					return launchingTransitions; //koniec symulacji
+				}
+				
 				safetyCounter++;
-				if(safetyCounter == 999) { // safety measure
+				if(safetyCounter == 99) { // safety measure
 					if(isPossibleStep() == false) {
-						GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
+						GUIManager.getDefaultGUIManager().log("Error, no active transition but generateValidLaunchingTransitions "
 								+ "has been activated. Please advise authors.", "error", true);
 						return launchingTransitions;
 					}
@@ -194,15 +266,15 @@ public class NetSimulator {
 		Random randomLaunch = new Random();
 		ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
 		ArrayList<Transition> allTransitions = petriNet.getTransitions();
-		ArrayList<Integer> indexList = new ArrayList<Integer>();
-		int i = 0;
-		for (@SuppressWarnings("unused") Transition transition : allTransitions) {
-			indexList.add(i);
-			i++;
-		}
-		Collections.shuffle(indexList);
-		if (simulationType == NetType.BASIC)
-			for (i = 0; i < allTransitions.size(); i++) {
+		
+		
+		if (simulationType == NetType.BASIC) {
+			ArrayList<Integer> indexList = new ArrayList<Integer>();
+			for(int i=0; i<allTransitions.size(); i++)
+				indexList.add(i);
+			Collections.shuffle(indexList);
+
+			for (int i = 0; i < allTransitions.size(); i++) {
 				Transition transition = allTransitions.get(indexList.get(i));
 				if (transition.isActive() )
 					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
@@ -210,7 +282,146 @@ public class NetSimulator {
 						launchableTransitions.add(transition);
 					}
 			}
-
+		} else if (simulationType == NetType.HYBRID) { 
+			/**
+			 * 22.02.2015 : PN + TPN
+			 */
+			//podzbiór tranzycji TT które MUSZĄ być już uruchomione
+			ArrayList<TimeTransition> timeTransitions = petriNet.getTimeTransitions();
+			
+			ArrayList<Integer> indexTTList = new ArrayList<Integer>();
+			for(int i=0; i<timeTransitions.size(); i++)
+				indexTTList.add(i);
+			Collections.shuffle(indexTTList); //wymieszanie T tranzycji
+			
+			boolean ttPriority = false;
+			
+			for (int i = 0; i < timeTransitions.size(); i++) {
+				TimeTransition ttransition = timeTransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
+				if(ttransition.isActive()) { //jeśli aktywna
+					if(ttransition.isForcedToFired() == true) {
+						//musi zostać uruchomiona
+						
+						if(ttPriority) {
+							launchableTransitions.add(ttransition);
+							ttransition.bookRequiredTokens();
+						}
+						
+					} else { //jest tylko aktywna
+						if(ttransition.getInternalFireTime() == -1) { //czyli poprzednio nie była aktywna
+							int eft = (int) ttransition.getMinFireTime();
+							int lft = (int) ttransition.getMaxFireTime();
+							int randomTime = GUIManager.getDefaultGUIManager().getRandomInt(eft, lft);
+							ttransition.setInternalFireTime(randomTime);
+							ttransition.setInternalTimer(0);
+							
+							if(ttPriority) { 
+								if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
+									launchableTransitions.add(ttransition);
+									ttransition.bookRequiredTokens();
+									//TAK, na pewno tu, a nie w kolejne iteracji, wtedy czas wzrośnie, więc
+									//byłoby wbrew idei natychmiastowości
+								}
+							}
+						} else { //update time
+							int oldTimer = (int) ttransition.getInternalTimer();
+							oldTimer++;
+							ttransition.setInternalTimer(oldTimer);
+							
+							//TODO: jeśli to tu zostanie, to oznacza, że TT majuą pierwszeństwo nad zwykłymi
+							// alternatywnie (opcje programu) można ustawić, że będzie to razem ze zwykłymi robione
+							
+							if(ttPriority) { 
+								if(ttransition.isForcedToFired() == true) {
+									launchableTransitions.add(ttransition);
+									ttransition.bookRequiredTokens();
+								}
+							}
+						}
+					}
+				} else { //reset zegara
+					ttransition.setInternalFireTime(-1);
+					ttransition.setInternalTimer(-1);
+				}
+			}
+			//teraz wybieranie tranzycji do odpalenia:
+			
+			if(ttPriority) { //usuwanie ze zbioru kandydatów tych t-tranzycji, które już są w kolejce do odpalenia
+				for(Transition t : launchableTransitions) {
+					allTransitions.remove(t);
+				}
+			}
+			
+			ArrayList<Integer> indexList = new ArrayList<Integer>();
+			for(int i=0; i<allTransitions.size(); i++)
+				indexList.add(i);
+			Collections.shuffle(indexList);
+			
+			for (int i = 0; i < allTransitions.size(); i++) {
+				Transition transition = allTransitions.get(indexList.get(i));
+				
+				if(transition instanceof TimeTransition) { //jeśli czasowa
+					if(transition.isActive()) { //i aktywna
+						if(((TimeTransition)transition).isForcedToFired() == true) { //i musi się uruchomić
+							launchableTransitions.add(transition);
+							transition.bookRequiredTokens();
+						}
+					} else { //reset
+						((TimeTransition)transition).setInternalFireTime(-1);
+						((TimeTransition)transition).setInternalTimer(-1);
+					}
+				} else if (transition.isActive() ) {
+					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
+						transition.bookRequiredTokens();
+						launchableTransitions.add(transition);
+					}
+				}
+			} 
+		} else if (simulationType == NetType.TIME) { 
+			ArrayList<TimeTransition> timeTransitions = petriNet.getTimeTransitions(); //nie ma innych
+			ArrayList<Integer> indexTTList = new ArrayList<Integer>();
+			for(int i=0; i<timeTransitions.size(); i++)
+				indexTTList.add(i);
+			Collections.shuffle(indexTTList); //wymieszanie T tranzycji
+			
+			for (int i = 0; i < timeTransitions.size(); i++) {
+				TimeTransition ttransition = timeTransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
+				if(ttransition.isActive()) { //jeśli aktywna
+					if(ttransition.isForcedToFired() == true) {
+						launchableTransitions.add(ttransition);
+						ttransition.bookRequiredTokens();
+					} else { //jest tylko aktywna
+						if(ttransition.getInternalFireTime() == -1) { //czyli poprzednio nie była aktywna
+							int eft = (int) ttransition.getMinFireTime();
+							int lft = (int) ttransition.getMaxFireTime();
+							int randomTime = GUIManager.getDefaultGUIManager().getRandomInt(eft, lft);
+							ttransition.setInternalFireTime(randomTime);
+							ttransition.setInternalTimer(0);
+							
+							if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
+								launchableTransitions.add(ttransition);
+								ttransition.bookRequiredTokens();
+								//TAK, na pewno tu, a nie w kolejne iteracji, wtedy czas wzrośnie, więc
+								//byłoby wbrew idei natychmiastowości
+							}
+						} else { //update time
+							int oldTimer = (int) ttransition.getInternalTimer();
+							oldTimer++;
+							ttransition.setInternalTimer(oldTimer);
+							
+							if(ttransition.isForcedToFired() == true) {
+								launchableTransitions.add(ttransition);
+								ttransition.bookRequiredTokens();
+							}
+						}
+					}
+				} else { //reset zegara
+					ttransition.setInternalFireTime(-1);
+					ttransition.setInternalTimer(-1);
+				}
+			}
+		}
+		/*
 		if (simulationType == NetType.TIME) {
 			for (i = 0; i < allTransitions.size(); i++) {
 				Transition transition = allTransitions.get(indexList.get(i));
@@ -244,10 +455,12 @@ public class NetSimulator {
 				
 			}
 			timeFrame.getContentPane().removeAll();// remove(0);
-			timeFrame.getContentPane().add(new JLabel(String.valueOf((int)timeNetStepCounter) + 
-					String.valueOf("." + (int)timeNetPartStepCounter)), BorderLayout.CENTER);
+			timeFrame.getContentPane().add(
+					new JLabel(String.valueOf((int)timeNetStepCounter) + String.valueOf("." + (int)timeNetPartStepCounter)),
+					BorderLayout.CENTER);
 			timeFrame.pack();
 		}
+		*/
 
 		for (Transition transition : launchableTransitions) {
 			transition.returnBookedTokens();
@@ -393,8 +606,7 @@ public class NetSimulator {
 	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania;
 	 * 		false w przeciwnym wypadku
 	 */
-	public void launchAddPhase(ArrayList<Transition> transitions,
-			boolean backtracking) {
+	public void launchAddPhase(ArrayList<Transition> transitions, boolean backtracking) {
 		ArrayList<Arc> arcs;
 		for (Transition transition : transitions) {
 			transition.setLaunching(false);  // skoro tutaj dotarliśmy, to znaczy że tranzycja już
@@ -412,7 +624,13 @@ public class NetSimulator {
 					place = (Place) arc.getStartNode();
 				place.modifyTokensNumber(arc.getWeight());
 			}
+			
+			if(transition instanceof TimeTransition) {
+				((TimeTransition)transition).setInternalFireTime(-1);
+				((TimeTransition)transition).setInternalTimer(-1);
+			}
 		}
+		
 		
 		transitions.clear();  //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
 	}
@@ -467,14 +685,13 @@ public class NetSimulator {
 	 * którym została przerwana.
 	 */
 	public void pause() {
-		if ((getMode() != SimulatorMode.PAUSED)
-				&& (getMode() != SimulatorMode.STOPPED))
+		if ((getSimulatorStatus() != SimulatorMode.PAUSED) && (getSimulatorStatus() != SimulatorMode.STOPPED))
 			pauseSimulation();
-		else if (getMode() == SimulatorMode.PAUSED)
+		else if (getSimulatorStatus() == SimulatorMode.PAUSED)
 			unpauseSimulation();
-		else if (getMode() == SimulatorMode.STOPPED)
+		else if (getSimulatorStatus() == SimulatorMode.STOPPED)
 			JOptionPane.showMessageDialog(null,
-				"Can't pause a stopped simulation!", "The simulator is already stopped!",JOptionPane.ERROR_MESSAGE);
+				"Can't pause a stopped simulation!", "The simulator is already stopped!", JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**
@@ -485,8 +702,8 @@ public class NetSimulator {
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtons();
 		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationInitiateButtons();
 		timer.stop();
-		previousMode = mode;
-		setMode(SimulatorMode.STOPPED);
+		previousSimStatus = simulatorStatus;
+		setSimulatorStatus(SimulatorMode.STOPPED);
 	}
 
 	/**
@@ -497,8 +714,8 @@ public class NetSimulator {
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButton();
 		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlyUnpauseButton();
 		timer.stop();
-		previousMode = mode;
-		setMode(SimulatorMode.PAUSED);
+		previousSimStatus = simulatorStatus;
+		setSimulatorStatus(SimulatorMode.PAUSED);
 	}
 
 	/**
@@ -508,9 +725,9 @@ public class NetSimulator {
 	private void unpauseSimulation() {
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
 		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
-		if (previousMode != SimulatorMode.STOPPED) {
+		if (previousSimStatus != SimulatorMode.STOPPED) {
 			timer.start();
-			setMode(previousMode);
+			setSimulatorStatus(previousSimStatus);
 		}
 	}
 
@@ -613,16 +830,40 @@ public class NetSimulator {
 	 * Metoda pozwala pobrać aktualny tryb pracy symulatora.
 	 * @return SimulatorMode - tryb pracy
 	 */
-	public SimulatorMode getMode() {
-		return mode;
+	public SimulatorMode getSimulatorStatus() {
+		return simulatorStatus;
 	}
 
 	/**
 	 * Metoda ustawiająca nowy tryb pracy dla symulatora.
 	 * @param mode SimulatorMode - tryb pracy
 	 */
-	private void setMode(SimulatorMode mode) {
-		this.mode = mode;
+	private void setSimulatorStatus(SimulatorMode mode) {
+		this.simulatorStatus = mode;
+	}
+	
+	/**
+	 * Metoda pozwala ustawić czy symulator będzie zapamiętywac historię kroków.
+	 * @param status boolean - true, jeśli ma być zapisywana historia stanów
+	 */
+	public void setHistoryMode(boolean status) {
+		this.writeHistory = status;
+	}
+	
+	/**
+	 * Metoda pozwala okreslić, czy zapisywana jest historia stanów symulacji.
+	 * @return boolean - true, jeśli symulator zapisuje historię, false w przeciwnym wypadku
+	 */
+	public boolean getHistoryMode() {
+		return writeHistory;
+	}
+	
+	/**
+	 * Metoda zwraca wartość aktualnego kroku symulacji (numer, tj. czas).
+	 * @return long - nr kroku symulacji
+	 */
+	public long getSimulatorTimeStep() {
+		return timeCounter;
 	}
 
 	private ArrayList<Transition> cloneTransitionArray(ArrayList<Transition> transitions) {
@@ -706,98 +947,6 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Klasa implementująca cofanie wykonanych w innych trybach kroków. Tryb ACTION_BACK
-	 * wykonuje fazy analogiczne do StepPerformer lub SingleTransitionPerformer (zależnie od
-	 * tego, jaki krok zostaje cofnięty), jednakże w odwróconej kolejności. Cofane tranzycje
-	 * nie są losowane, lecz zdejmowane ze stosu historii wykonanych kroków. Tryb LOOP_BACK
-	 * wykonuje kroki ACTION_BACK w pętli do czasu wyczerpania stosu historii (przywrócenia
-	 * stanu globalnego początkowego sieci Petriego).
-	 * @author students
-	 *
-	 */
-	private class StepBackPerformer extends SimulationPerformer {
-		private boolean loop;
-		@SuppressWarnings("unused")
-		ArrayList<Transition> currentTransitions;
-		SimulationStep currentStep;
-
-		/**
-		 * Konstruktor bezparametrowy obiektu klasy StepBackPerformer.
-		 */
-		public StepBackPerformer() {
-			currentTransitions = new ArrayList<Transition>();
-			loop = false;
-		}
-
-		/**
-		 * Konstruktor obiektu klasy StepBackPerformer.
-		 * @param looping boolean - true, jeśli w pętli
-		 */
-		public StepBackPerformer(boolean looping) {
-			currentTransitions = new ArrayList<Transition>();
-			loop = looping;
-		}
-
-		/**
-		 * Metoda faktycznie wykonywana jako każdy kolejny krok przez symulator.
-		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
-		 */
-		public void actionPerformed(ActionEvent event) {
-			updateStep(); // update graphics
-			if (counter == DEFAULT_COUNTER && subtractPhase) { // subtract phase
-				if (scheduledStop) { // executing scheduled stop
-					executeScheduledStop();
-				} else if (!actionStack.empty()) { // if steps remaining
-					
-					//tutaj zdejmowany jest ostatni wykonany krok w symulacji:
-					currentStep = actionStack.pop();
-					if (currentStep.getType() == SimulatorMode.STEP) {
-						launchSubtractPhase(
-								currentStep.getPendingTransitions(), true);
-					} else if (currentStep.getType() == SimulatorMode.SINGLE_TRANSITION) {
-						launchSingleSubtractPhase(
-								currentStep.getPendingTransitions(), true,
-								currentStep.getLaunchedTransition());
-					}
-					subtractPhase = false;
-				} else {
-					// simulation ends, no possible steps remaining
-					setSimulationActive(false);
-					stopSimulation();
-					JOptionPane.showMessageDialog(null, "Backtracking ended",
-						"No more available actions to backtrack!", JOptionPane.INFORMATION_MESSAGE);
-				}
-				counter = 0;
-			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
-				// subtract phase ended, commencing add phase
-				if (currentStep.getType() == SimulatorMode.STEP)
-					launchAddPhaseGraphics(currentStep.getPendingTransitions(), true);
-				else if (currentStep.getType() == SimulatorMode.SINGLE_TRANSITION)
-					launchSingleAddPhaseGraphics(currentStep.getPendingTransitions(), true,
-						currentStep.getLaunchedTransition());
-				finishedAddPhase = false;
-				counter = 0;
-			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
-				// ending add phase
-				if (currentStep.getType() == SimulatorMode.STEP)
-					launchAddPhase(currentStep.getPendingTransitions(), true);
-				else if (currentStep.getType() == SimulatorMode.SINGLE_TRANSITION)
-					launchSingleAddPhase(currentStep.getPendingTransitions(),
-						true, currentStep.getLaunchedTransition());
-				finishedAddPhase = true;
-				subtractPhase = true;
-				// if not
-				// in loop mode, a stop will be
-				// scheduled
-				if (!loop)
-					scheduleStop();
-				counter++;
-			} else
-				counter++; // empty steps
-		}
-	}
-
-	/**
 	 *  Klasa implementująca wykonywanie kroków dla najbardziej podstawowych trybów symulacji
 	 *  LOOP oraz STEP. Dla trybu STEP na początku każdego kroku generowana jest lista tranzycji
 	 *  faktycznie odpalanych spośród istniejących w sieci Petriego tranzycji aktywnych (dla
@@ -806,15 +955,16 @@ public class NetSimulator {
 	 *  faza odejmowania w której tokeny zostają zabrane z odpowiednich miejsc wejściowych<br>
 	 *  faza graficznego dodawania - w której wyświetlone zostaje przejscie tokenów<br>
 	 *  faza dodawania - w której tokeny zostaja dodane do odpowiednich miejsc wyjściowych
-	 * @author students
+	 *  @author students
+	 *  @author MR
 	 */
-	private class StepPerformer extends SimulationPerformer {
+	private class StepLoopPerformer extends SimulationPerformer {
 		private boolean loop;
 
 		/**
 		 * Konstruktor bezparametrowy obiektu klasy StepPerformer
 		 */
-		public StepPerformer() {
+		public StepLoopPerformer() {
 			loop = false;
 		}
 
@@ -822,12 +972,12 @@ public class NetSimulator {
 		 * Konstruktor obiektu klasy StepPerformer
 		 * @param looping boolean - true, jeśli działanie w pętli
 		 */
-		public StepPerformer(boolean looping) {
+		public StepLoopPerformer(boolean looping) {
 			loop = looping;
 		}
 
 		/**
-		 * Metoda faktycznie wykonywana jako każdy kolejny krok przez symulator.
+		 * Metoda wykonywana jako kolejny krok przez symulator.
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
@@ -838,15 +988,21 @@ public class NetSimulator {
 					executeScheduledStop();
 				} else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
 					if (remainingTransitionsAmount == 0) {
+						timeCounter++;
+						GUIManager.getDefaultGUIManager().io.updateTimeStep(""+timeCounter);
+						
 						launchingTransitions = generateValidLaunchingTransitions();
 						remainingTransitionsAmount = launchingTransitions.size();
 					}
+					
 					//tutaj dodawany jest nowy krok w symulacji:
-					actionStack.push(new SimulationStep(SimulatorMode.STEP,
-						cloneTransitionArray(launchingTransitions)));
-					if (actionStack.peek().getPendingTransitions() == null) {
-						GUIManager.getDefaultGUIManager().log("Unknown problem in actionPerformed(ActionEvent event) in NetSimulator class.", "error", true);
+					if(getHistoryMode() == true) {
+						actionStack.push(new SimulationStep(SimulatorMode.STEP, cloneTransitionArray(launchingTransitions)));
+						if (actionStack.peek().getPendingTransitions() == null) {
+							GUIManager.getDefaultGUIManager().log("Unknown problem in actionPerformed(ActionEvent event) in NetSimulator class.", "error", true);
+						}
 					}
+				
 					launchSubtractPhase(launchingTransitions, false); //zabierz tokeny poprzez aktywne tranzycje
 					subtractPhase = false;
 				} else {
@@ -915,23 +1071,25 @@ public class NetSimulator {
 					executeScheduledStop();
 				} else if (isPossibleStep()) { // if steps remaining
 					if (remainingTransitionsAmount == 0) {
+						timeCounter++;
+						GUIManager.getDefaultGUIManager().io.updateTimeStep(""+timeCounter);
 						launchingTransitions = generateValidLaunchingTransitions();
-						remainingTransitionsAmount = launchingTransitions
-								.size();
+						remainingTransitionsAmount = launchingTransitions.size();
 					}
 					
 					//tutaj dodawany jest nowy krok w symulacji:
-					actionStack.push(new SimulationStep(
-							SimulatorMode.SINGLE_TRANSITION, launchingTransitions.get(0),
+					if(getHistoryMode() == true) {
+						actionStack.push(new SimulationStep(SimulatorMode.SINGLE_TRANSITION, launchingTransitions.get(0),
 							cloneTransitionArray(launchingTransitions)));
+					}
 					launchSingleSubtractPhase(launchingTransitions, false, null);
+					
 					subtractPhase = false;
 				} else {
 					// simulation ends, no possible steps remaining
 					setSimulationActive(false);
 					stopSimulation();
-					JOptionPane.showMessageDialog(null, "Simulation ended",
-						"No more available steps!",JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Simulation ended","No more available steps!",JOptionPane.INFORMATION_MESSAGE);
 					GUIManager.getDefaultGUIManager().log("Simulation ended - no more available steps.", "text", true);
 				}
 				counter = 0;
@@ -947,6 +1105,95 @@ public class NetSimulator {
 				finishedAddPhase = true;
 				subtractPhase = true;
 				if (!loop) // if not in loop mode, a stop will be scheduled
+					scheduleStop();
+				counter++;
+			} else
+				counter++; // empty steps
+		}
+	}
+	
+	/**
+	 * Klasa implementująca cofanie wykonanych w innych trybach kroków. Tryb ACTION_BACK
+	 * wykonuje fazy analogiczne do StepPerformer lub SingleTransitionPerformer (zależnie od
+	 * tego, jaki krok zostaje cofnięty), jednakże w odwróconej kolejności. Cofane tranzycje
+	 * nie są losowane, lecz zdejmowane ze stosu historii wykonanych kroków. Tryb LOOP_BACK
+	 * wykonuje kroki ACTION_BACK w pętli do czasu wyczerpania stosu historii (przywrócenia
+	 * stanu globalnego początkowego sieci Petriego).
+	 * @author students
+	 *
+	 */
+	private class StepBackPerformer extends SimulationPerformer {
+		private boolean loop;
+		@SuppressWarnings("unused")
+		ArrayList<Transition> currentTransitions;
+		SimulationStep currentStep;
+
+		/**
+		 * Konstruktor bezparametrowy obiektu klasy StepBackPerformer.
+		 */
+		public StepBackPerformer() {
+			currentTransitions = new ArrayList<Transition>();
+			loop = false;
+		}
+
+		/**
+		 * Konstruktor obiektu klasy StepBackPerformer.
+		 * @param looping boolean - true, jeśli w pętli
+		 */
+		public StepBackPerformer(boolean looping) {
+			currentTransitions = new ArrayList<Transition>();
+			loop = looping;
+		}
+
+		/**
+		 * Metoda faktycznie wykonywana jako każdy kolejny krok przez symulator.
+		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
+		 */
+		public void actionPerformed(ActionEvent event) {
+			updateStep(); // update graphics
+			if (counter == DEFAULT_COUNTER && subtractPhase) { // subtract phase
+				if (scheduledStop) { // executing scheduled stop
+					executeScheduledStop();
+				} else if (!actionStack.empty()) { // if steps remaining
+					
+					//tutaj zdejmowany jest ostatni wykonany krok w symulacji:
+					currentStep = actionStack.pop();
+					if (currentStep.getType() == SimulatorMode.STEP) {
+						launchSubtractPhase(currentStep.getPendingTransitions(), true);
+					} else if (currentStep.getType() == SimulatorMode.SINGLE_TRANSITION) {
+						launchSingleSubtractPhase(currentStep.getPendingTransitions(), true, currentStep.getLaunchedTransition());
+					}
+					subtractPhase = false;
+				} else {
+					// simulation ends, no possible steps remaining
+					setSimulationActive(false);
+					stopSimulation();
+					JOptionPane.showMessageDialog(null, "Backtracking ended",
+						"No more available actions to backtrack!", JOptionPane.INFORMATION_MESSAGE);
+				}
+				counter = 0;
+			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
+				// subtract phase ended, commencing add phase
+				if (currentStep.getType() == SimulatorMode.STEP) {
+					launchAddPhaseGraphics(currentStep.getPendingTransitions(), true);
+				} else if (currentStep.getType() == SimulatorMode.SINGLE_TRANSITION) {
+					launchSingleAddPhaseGraphics(currentStep.getPendingTransitions(), true, currentStep.getLaunchedTransition());
+				}
+				finishedAddPhase = false;
+				counter = 0;
+			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
+				// ending add phase
+				if (currentStep.getType() == SimulatorMode.STEP) {
+					launchAddPhase(currentStep.getPendingTransitions(), true);
+				} else if (currentStep.getType() == SimulatorMode.SINGLE_TRANSITION) {
+					launchSingleAddPhase(currentStep.getPendingTransitions(), true, currentStep.getLaunchedTransition());
+				}
+				finishedAddPhase = true;
+				subtractPhase = true;
+				// if not
+				// in loop mode, a stop will be
+				// scheduled
+				if (!loop)
 					scheduleStop();
 				counter++;
 			} else

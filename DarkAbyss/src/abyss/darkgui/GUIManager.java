@@ -33,6 +33,7 @@ import java.awt.event.ComponentListener;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.Action;
 import javax.swing.JFrame;
@@ -71,6 +72,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private static final long serialVersionUID = -817072868916096442L;
 	// Static fields.
 	private static GUIManager guiManager;
+	private Random generator = new Random(System.currentTimeMillis());
 	/**
 	 * Obiekt klasy GUIOperations, minion od czarnej roboty.
 	 */
@@ -1147,26 +1149,16 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public SettingsManager getSettingsManager() {
 		return settingsManager;
 	}
+	
+	/**
+	 * Metoda zwraca liczbę losową typu int z podanego zakresu.
+	 * @param min int - dolna granica
+	 * @param max int - górna granica
+	 * @return int - liczba z zakresu [min, max]
+	 */
+	public int getRandomInt(int min, int max) {
+		if(min == 0 && max == 0)
+			return 0;
+		return generator.nextInt((max - min) + 1) + min;
+	}
 }
-
-
-//Rprotocols rp = new Rprotocols();
-//rp.setR1(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
-//rp.setType(1);
-
-//rp.RClusteringAll(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
-//rp.RClusteringAll(settingsManager.getValue("r_path"), dir_path, "cluster.csv", "scripts\\f_clusers_Pearson.r", "scripts\\f_clusers_Pearson_run.r", c_number);
-
-//rp.RClusteringAll(settingsManager.getValue("r_path"), "tmp/", "cluster.csv", 
-//		"scripts\\f_clusters.r", "scripts\\f_clusters_run.r", c_number);
-//rp.RClusteringAll(settingsManager.getValue("r_path"), "tmp/", "cluster.csv", 
-//		"scripts\\f_clusers_Pearson.r", "scripts\\f_clusers_Pearson_run.r", c_number);
-
-
-//Konkretne klastrowanie, wersja FUNKCJA 1: Biblioteki: cluster; generuje listy inwariantow
-//runner.RClusteringSingle("c:\\Program Files\\R\\R-3.1.2\\bin\\Rscript.exe", "tmp/", "cluster.csv", "tools\\Function2.r", "binary", "average", 20);
-//Konkretne klastrowanie, wersja FUNKCJA 4: Biblioteki: amap, cluster; funkcja umozliwiajaca analize, uzywajaca miary Pearsona; generuje liste inwariantow
-//runner.RClusteringSingle("c:\\Program Files\\R\\R-3.1.2\\bin\\Rscript.exe", "tmp/", "cluster.csv", "tools\\Function3.r", "pearson", "average", 20);
-
-	
-	

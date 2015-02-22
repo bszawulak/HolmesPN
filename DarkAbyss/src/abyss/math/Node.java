@@ -156,8 +156,16 @@ public abstract class Node extends PetriNetElement {
 		g.setColor(Color.black);
 		g.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		int width = g.getFontMetrics().stringWidth(getName());
-		for (Point p : this.getNodePositions(sheetId))
-			g.drawString(getName(), p.x - width / 2, p.y + getRadius() + 15);
+		for (Point p : this.getNodePositions(sheetId)) {
+			int drawX = (p.x - width / 2) + getNameOffX();
+			int drawY =  (p.y + getRadius() + 15) + getNameOffY();
+			
+			if(drawX < 0 )
+				drawX = (p.x - width / 2); //oryginalny kod
+			if(drawY < 0 )
+				drawY = p.y + getRadius() + 15; //oryginalny kod
+			g.drawString(getName(), drawX, drawY);
+		}
 	}
 
 	/**

@@ -135,8 +135,21 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public ArrayList<Transition> getTransitions() {
 		ArrayList<Transition> returnTransitions = new ArrayList<Transition>();
 		for (Node n : this.getData().nodes) {
-			if (n instanceof Transition)
+			if (n instanceof Transition || n instanceof TimeTransition)
 				returnTransitions.add((Transition) n);
+		}
+		return returnTransitions;
+	}
+	
+	/**
+	 * Metoda pozwala pobrać wszystkie obiekty tranzycji czasowych w danej sieci.
+	 * @return ArrayList[TimeTransition] - lista tranzycji czasowych projektu sieci
+	 */
+	public ArrayList<TimeTransition> getTimeTransitions() {
+		ArrayList<TimeTransition> returnTransitions = new ArrayList<TimeTransition>();
+		for (Node n : this.getData().nodes) {
+			if (n instanceof TimeTransition)
+				returnTransitions.add((TimeTransition) n);
 		}
 		return returnTransitions;
 	}
@@ -535,14 +548,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		
 		for(int i=0; i<transitions.size(); i++) {
 			transitions.get(i).setLaunching(false);
-			transitions.get(i).setFireTime(-1);
+			
+			if(transitions.get(i) instanceof TimeTransition) {
+				((TimeTransition)transitions.get(i)).setInternalFireTime(-1);
+				((TimeTransition)transitions.get(i)).setInternalTimer(-1);	
+			}
 		}
 		isBackup = false;
 		
 		setSimulator(new NetSimulator(NetType.BASIC, this));
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().
-			setSimulator(getSimulator()); //podmienia ten z podokna na nowo utworzony
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
+		GUIManager.getDefaultGUIManager().io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
 		repaintAllGraphPanels();
 	}
 	

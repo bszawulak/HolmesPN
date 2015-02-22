@@ -10,6 +10,7 @@ import javax.swing.JProgressBar;
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
 import abyss.math.Place;
+import abyss.math.TimeTransition;
 import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator.NetType;
 
@@ -35,6 +36,7 @@ public class StateSimulator {
 	private ArrayList<Double> transitionsAvgData = null;
 	
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
+	private boolean mainSimMaximumMode = false;
 	
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
@@ -389,6 +391,7 @@ public class StateSimulator {
 					}
 			}
 
+		/*
 		if (simulationType == NetType.TIME) {
 			for (i = 0; i < transitions.size(); i++) {
 				Transition transition = transitions.get(indexList.get(i));
@@ -420,7 +423,8 @@ public class StateSimulator {
 
 			}
 		}
-
+*/
+		
 		for (Transition transition : launchableTransitions) {
 			transition.returnBookedTokens();
 		}
@@ -477,6 +481,8 @@ public class StateSimulator {
 		//zapis aktualnego stanu jako m0
 		saveInternalMarkingZero();
 		//jeżeli istnieje backup, przywróć sieć do stanu m0:
+		mainSimMaximumMode = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().isMaximumMode();
+		
 		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 		}
@@ -496,6 +502,8 @@ public class StateSimulator {
 	 * z wektora danych pamiętających ostatni backup, tranzycje są resetowane wewnętrznie. 
 	 */
 	public void restoreInternalMarkingZero() {
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().setMaximumMode(mainSimMaximumMode);
+		
 		for(int i=0; i<places.size(); i++) {
 			places.get(i).setTokensNumber(internalBackupMarkingZero.get(i));
 			places.get(i).returnTokens();
@@ -503,7 +511,12 @@ public class StateSimulator {
 		
 		for(int i=0; i<transitions.size(); i++) {
 			transitions.get(i).setLaunching(false);
-			transitions.get(i).setFireTime(-1);
+			if(transitions.get(i) instanceof TimeTransition) {
+				((TimeTransition)transitions.get(i)).setInternalFireTime(-1);
+				((TimeTransition)transitions.get(i)).setInternalTimer(-1);
+			}
 		}
+		
+		
 	}
 }

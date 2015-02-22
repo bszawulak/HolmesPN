@@ -133,7 +133,7 @@ public class GUIReset {
 	 */
 	public boolean isSimulatorActive() {
 		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
-		if(ns.getMode() == SimulatorMode.STOPPED) {
+		if(ns.getSimulatorStatus() == SimulatorMode.STOPPED) {
 			return false;
 		} else {
 			return true;
@@ -146,7 +146,7 @@ public class GUIReset {
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
 		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
-		if(ns.getMode() == SimulatorMode.STOPPED) {
+		if(ns.getSimulatorStatus() == SimulatorMode.STOPPED) {
 			return false;
 		} else {
 			JOptionPane.showMessageDialog(null, msg, msgTitle, JOptionPane.WARNING_MESSAGE);

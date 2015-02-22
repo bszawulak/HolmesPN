@@ -19,6 +19,12 @@ public class TimeTransition extends Transition {
 	//BACKUP: -7512230002147987244L   (NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = -7512230002147987244L;
 	
+	protected double minFireTime = 0; //TPN
+	protected double maxFireTime = 999;	//TPN
+	//protected double absoluteFireTime = 0; diabli wiedzą od czego to, nic nie robi
+	protected double internalFireTime = -1; //zmienna związana z modelem sieci TPN
+	protected double internalTimer = -1;
+	
 	/*
 	 * UWAGA!!! NIE WOLNO ZMIENIAĆ NAZW, DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
 	 * (przestanie być możliwe wczytywanie zapisĆnych proejktów .abyss)
@@ -128,8 +134,14 @@ public class TimeTransition extends Transition {
 	 * @param minFireTime double - czas EFT
 	 */
 	public void setMinFireTime(double minFireTime) {
-		if (minFireTime < 0.001 && minFireTime > 0)
-			minFireTime = 0.001;
+		if(minFireTime < 0) {
+			this.minFireTime = 0;
+			return;
+		}
+		if(minFireTime > maxFireTime) {
+			this.minFireTime = maxFireTime;
+			return;
+		}
 		this.minFireTime = minFireTime;
 	}
 	
@@ -146,8 +158,11 @@ public class TimeTransition extends Transition {
 	 * @param maxFireTime double - czas LFT (deadline na uruchomienie)
 	 */
 	public void setMaxFireTime(double maxFireTime) {
-		if (maxFireTime > 99)
-			maxFireTime = 99;
+		if(maxFireTime < minFireTime) {
+			this.maxFireTime = minFireTime;
+			return;
+		}
+		
 		this.maxFireTime = maxFireTime;
 	}
 
@@ -158,20 +173,51 @@ public class TimeTransition extends Transition {
 	public double getMaxFireTime() {
 		return this.maxFireTime;
 	}
-	
-	/**
-	 * Metoda ta zwraca czas dla danej tranzcji.
-	 * @return double - czas dla tranzycji - pole absoluteFireTime
-	 */
-	//public double getAbsoluteFireTime() {
-	//	return absoluteFireTime;
-	//}
 
 	/**
-	 * Metoda ustawia czas dla tranzycji.
-	 * @param absoluteFireTime double - ustawia pole this.absoluteFireTime
+	 * Metoda zwraca aktualny czas uruchomienia.
+	 * @return double - czas uruchomienia - pole FireTime
 	 */
-	//public void setAbsoluteFireTime(double absoluteFireTime) {
-	//	this.absoluteFireTime = absoluteFireTime;
-	//}
+	public double getInternalFireTime() {
+		return internalFireTime;
+	}
+
+	/**
+	 * Metoda pozwala ustawic czas uruchomienia tranzycji.
+	 * @param fireTime double - czas uruchomienia tranzycji
+	 */
+	public void setInternalFireTime(double fireTime) {
+		internalFireTime = fireTime;
+	}
+	
+	/**
+	 * Metoda zwraca aktualny zegar uruchomienia dla tranzycji.
+	 * @return double - czas uruchomienia - pole FireTime
+	 */
+	public double getInternalTimer() {
+		return internalTimer;
+	}
+
+	/**
+	 * Metoda pozwala ustawic zegar uruchomienia tranzycji.
+	 * @param fireTime double - czas uruchomienia tranzycji
+	 */
+	public void setInternalTimer(double fireTime) {
+		internalTimer = fireTime;
+	}
+	
+	/**
+	 * Metoda informująca czy tramzycja czasowa MUSI zostać uruchomiona.
+	 * @return boolean - true, jeśli wewnętrzny zegar (!= -1) jest równy deadlinowi
+	 */
+	public boolean isForcedToFired() {
+		if(internalFireTime != -1) {
+			if(internalFireTime == internalTimer)
+				return true;
+			else
+				return false;
+		} else {
+			return false; //nieaktywna
+		}
+	}
 }

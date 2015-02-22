@@ -13,7 +13,6 @@ import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
 import abyss.math.Arc;
 import abyss.math.ElementLocation;
-import abyss.math.Node;
 import abyss.math.Place;
 import abyss.math.Transition;
 
@@ -52,7 +51,7 @@ public class NetHandler_Classic extends NetHandler {
 	public boolean variableMarking = false;
 	public boolean variableLogic = false;
 	public boolean variableComent = false;
-	public Node tmpNode;
+	//public Node tmpNode;
 	public String nodeType;
 	public String nodeName;
 	public int nodeID;
@@ -62,6 +61,9 @@ public class NetHandler_Classic extends NetHandler {
 	public String nodeComment;
 	public String readString = "";
 	public ArrayList<Transition> tmpTransitionList = new ArrayList<Transition>();
+	
+	public int xoff_name;
+	public int yoff_name;
 
 	/**
 	 * Metoda wykrywająca rozpoczęcie nowego elementu.
@@ -119,6 +121,40 @@ public class NetHandler_Classic extends NetHandler {
 		}
 		if (qName.equalsIgnoreCase("graphic")) {
 			graphic = true;
+		}
+		
+		if(variableName && graphics && qName.equalsIgnoreCase("graphic")) {
+			String tmp1 = attributes.getLocalName(0);
+			String tmp2 = attributes.getLocalName(1);
+			String xoff = "";
+			String yoff = "";
+			
+			if(tmp1.equals("xoff") && tmp2.equals("yoff") ) { //oba na miejscu
+				xoff = attributes.getValue(0);
+				yoff = attributes.getValue(1);
+			} else if(tmp1.equals("xoff") && !tmp2.equals("yoff") ) { 
+				//brak y, durne Snoopy nie pisze 0 tylko wywala cały atrybut... co za idioci to pisali...
+				xoff = attributes.getValue(0);
+				yoff = "0.00";
+			} else if(tmp1.equals("yoff") ) { //brak x
+				yoff = attributes.getValue(0);
+				xoff = "0.00";
+			} else if(!tmp1.equals("xoff") && !tmp2.equals("yoff")) { //brak x i y
+				xoff = "0.00";
+				yoff = "0.00";
+			}
+			
+			xoff_name = 0;
+			yoff_name = 0;
+			try {
+				xoff_name = (int)Float.parseFloat(xoff);
+				yoff_name = (int)Float.parseFloat(yoff);
+				//comment, bo i tak jest przesunięcie w lewo domyslnie w Snoopy
+				//xoff_name -= 25; //25 default, czyli 0 w oX w Abyss
+				yoff_name -= 20; //20 default, czyli 0 w oY w Abyss
+			} catch (Exception e) {} 
+			
+			
 		}
 
 		// Wczytywanie informacji odnosnie ID i pozycji noda
@@ -307,11 +343,16 @@ public class NetHandler_Classic extends NetHandler {
 			for (int u = 0; u < tmpElementLocationList.size(); u++) {
 				elementLocationList.add(tmpElementLocationList.get(u));
 			}
-			if (nodeType == "Place") {		
-				tmpNode = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
-				nodesList.add(tmpNode);
+			if (nodeType == "Place") {
+				//tmpNode = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
+				Place tmpPlace = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
+				//tmpPlace.setNameOffX(xoff_name);
+				//tmpPlace.setNameOffY(yoff_name);
+				nodesList.add(tmpPlace);
 			} else {	
 				Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
+				//tmpTran.setNameOffX(xoff_name);
+				//tmpTran.setNameOffY(yoff_name);
 				tmpTransitionList.add(tmpTran);
 			}
 

@@ -106,7 +106,7 @@ public class AbyssNodeInfo extends JFrame {
 			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {}
 		
-		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getMode() != SimulatorMode.STOPPED)
+		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
 			mainSimulatorActive = true;
 		
 		parentFrame.setEnabled(false);

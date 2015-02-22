@@ -20,23 +20,13 @@ import abyss.graphpanel.IdGenerator;
 public class Transition extends Node {
 	//BACKUP:  2673581001465115432L  ((NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = 2673581001465115432L;
-	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAĆ NAZW, DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
-	 * (przestanie być możliwe wczytywanie zapisĆnych proejktów .abyss)
-	 */
 	
-	protected double minFireTime = 0; //TPN
-	protected double maxFireTime = 999;	//TPN
-	//protected double absoluteFireTime = 0; diabli wiedzą od czego to, nic nie robi
-	protected double FireTime = -1; //zmienna związana z modelem sieci TPN
 	protected boolean isLaunching;
 	protected boolean isGlowed = false;
 	protected boolean isGlowedMTC = false;
-	
 	protected boolean isGlowetCl = false;
-	protected Color clusterColorForTransition = new Color(255,255,255);
 	protected double clNumber = 0.0;
-	
+	protected Color clusterColorForTransition = new Color(255,255,255);
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 	
 	//TODO: tak nie może być, to poniżej jest używane przez funkcję generującą MCT, ale ostatnią rzeczą
@@ -365,37 +355,5 @@ public class Transition extends Node {
 	 */
 	public void setContainingInvariants(ArrayList<ArrayList<Transition>> containingInvariants) {
 		this.containingInvariants = containingInvariants;
-	}
-	
-	/**
-	 * Metoda zwraca minimalny czas uruchomienia tranzycji.
-	 * @return double - czas minimalny uruchomienia tranzycji, z pola minFireTime
-	 */
-	public double getMinFireTime() {
-		return minFireTime;
-	}
-
-	/**
-	 * Metoda zwraca maksymalny czas uruchomienia tranzycji.
-	 * @return double - czas maksymalny do uruchomienia, z pola maxFireTime
-	 */
-	public double getMaxFireTime() {
-		return maxFireTime;
-	}
-
-	/**
-	 * Metoda zwraca aktualny czas uruchomienia.
-	 * @return double - czas uruchomienia - pole FireTime
-	 */
-	public double getFireTime() {
-		return FireTime;
-	}
-
-	/**
-	 * Metoda pozwala ustawic czas uruchomienia tranzycji.
-	 * @param fireTime double - czas uruchomienia tranzycji
-	 */
-	public void setFireTime(double fireTime) {
-		FireTime = fireTime;
 	}
 }

@@ -236,6 +236,7 @@ public class InvariantsSimulator {
 					}
 			}
 
+		/*
 		if (simulationType == NetType.TIME) {
 			for (i = 0; i < allTransitions.size(); i++) {
 				Transition transition = allTransitions.get(indexList.get(i));
@@ -281,7 +282,8 @@ public class InvariantsSimulator {
 					BorderLayout.CENTER);
 			timeFrame.pack();
 		}
-
+*/
+		
 		for (Transition transition : launchableTransitions) {
 			transition.returnBookedTokens();
 		}
