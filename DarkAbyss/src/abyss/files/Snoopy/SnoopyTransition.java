@@ -93,7 +93,7 @@ public class SnoopyTransition {
 		currID++; //teraz: 359
 		write(bw, "          <![CDATA[" + abyssTransition.getName() + "]]>");
 		write(bw, "          <graphics count=\"" + locations + "\">"); //ile logicznych
-		xOff = 25; //TODO: + abyssPlace.getNameOffX();
+		xOff = 5; //TODO: + abyssPlace.getNameOffX();
 		yOff = 20; //TODO: + abyssPlace.getNameOffY();
 		for(int i=0; i<locations; i++) { 
 			if(i==0) {//tylko główne miejsce
