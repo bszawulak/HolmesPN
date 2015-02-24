@@ -22,6 +22,7 @@ import abyss.math.simulator.NetSimulator.NetType;
  */
 public class StateSimulator {
 	private ArrayList<Transition> transitions;
+	private ArrayList<TimeTransition> ttransitions;
 	private ArrayList<Place> places;
 	private boolean ready = false;
 	private NetType simulationType;
@@ -54,6 +55,7 @@ public class StateSimulator {
 	 */
 	public boolean initiateSim(NetType netT, boolean mode) {
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ttransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTimeTransitions();
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		if(transitions == null || places == null) {
 			ready = false;
@@ -80,6 +82,218 @@ public class StateSimulator {
 		maximumMode = mode;
 		ready = true;
 		return ready;
+	}
+	
+	/**
+	 * Metoda sprawdzająca, czy krok jest możliwy - czy istnieje choć jedna aktywna
+	 * tranzycja.
+	 * @return boolean - true jeśli jest choć jedna aktywna tranzycja; false w przeciwnym wypadku
+	 */
+	private boolean isPossibleStep() {
+		for (Transition transition : transitions) {
+			if (transition.isActive())
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Metoda generuje zbiór tranzycji do uruchomienia w ramach symulatora.
+	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia
+	 */
+	private ArrayList<Transition> generateValidLaunchingTransitions() {
+		boolean generated = false;
+		ArrayList<Transition> launchingTransitions = new ArrayList<Transition>();
+		int safetyCounter = 0;
+		while (!generated) {
+			launchingTransitions = generateLaunchingTransitions();
+			if (launchingTransitions.size() > 0) {
+				generated = true; 
+			} else {
+				if (simulationType == NetType.TIME || simulationType == NetType.HYBRID) {
+					return launchingTransitions; //koniec symulacji
+				}
+				
+				safetyCounter++;
+				if(safetyCounter == 999) { // safety measure
+					if(isPossibleStep() == false) {
+						GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
+								+ "has been activated. Please advise authors.", "error", true);
+						return launchingTransitions;
+					}
+				}
+			}
+		}
+		return launchingTransitions;
+	}
+
+	/**
+	 * Metoda pomocnicza dla generateValidLaunchingTransitions(), odpowiedzialna za sprawdzenie
+	 * które tranzycje nadają się do uruchomienia. Aktualnie działa dla modelu klasycznego PN
+	 * oraz czasowego.
+	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia.
+	 */
+	private ArrayList<Transition> generateLaunchingTransitions() {
+		Random randomLaunch = new Random();
+		ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
+
+		if (simulationType == NetType.BASIC) {
+			ArrayList<Integer> indexList = new ArrayList<Integer>();
+			for(int i=0; i<transitions.size(); i++)
+				indexList.add(i);
+			Collections.shuffle(indexList);
+
+			for (int i = 0; i < transitions.size(); i++) {
+				Transition transition = transitions.get(indexList.get(i));
+				if (transition.isActive() )
+					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
+						transition.bookRequiredTokens();
+						launchableTransitions.add(transition);
+					}
+			}
+		} else if (simulationType == NetType.HYBRID) { 
+			/**
+			 * 22.02.2015 : PN + TPN
+			 */
+			//podzbiór tranzycji TT które MUSZĄ być już uruchomione
+
+			ArrayList<Integer> indexTTList = new ArrayList<Integer>();
+			for(int i=0; i<ttransitions.size(); i++)
+				indexTTList.add(i);
+			Collections.shuffle(indexTTList); //wymieszanie T tranzycji
+			
+			boolean ttPriority = false;
+			
+			for (int i = 0; i < ttransitions.size(); i++) {
+				TimeTransition ttransition = ttransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
+				if(ttransition.isActive()) { //jeśli aktywna
+					if(ttransition.isForcedToFired() == true) {
+						//musi zostać uruchomiona
+						
+						if(ttPriority) {
+							launchableTransitions.add(ttransition);
+							ttransition.bookRequiredTokens();
+						}
+						
+					} else { //jest tylko aktywna
+						if(ttransition.getInternalFireTime() == -1) { //czyli poprzednio nie była aktywna
+							int eft = (int) ttransition.getMinFireTime();
+							int lft = (int) ttransition.getMaxFireTime();
+							int randomTime = GUIManager.getDefaultGUIManager().getRandomInt(eft, lft);
+							ttransition.setInternalFireTime(randomTime);
+							ttransition.setInternalTimer(0);
+							
+							if(ttPriority) { 
+								if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
+									launchableTransitions.add(ttransition);
+									ttransition.bookRequiredTokens();
+									//TAK, na pewno tu, a nie w kolejne iteracji, wtedy czas wzrośnie, więc
+									//byłoby wbrew idei natychmiastowości
+								}
+							}
+						} else { //update time
+							int oldTimer = (int) ttransition.getInternalTimer();
+							oldTimer++;
+							ttransition.setInternalTimer(oldTimer);
+							
+							//jeśli to tu zostanie, to oznacza, że TT mają pierwszeństwo nad zwykłymi
+							// alternatywnie (opcje programu) można ustawić, że będzie to razem ze zwykłymi robione
+							
+							if(ttPriority) { 
+								if(ttransition.isForcedToFired() == true) {
+									launchableTransitions.add(ttransition);
+									ttransition.bookRequiredTokens();
+								}
+							}
+						}
+					}
+				} else { //reset zegara
+					ttransition.setInternalFireTime(-1);
+					ttransition.setInternalTimer(-1);
+				}
+			}
+			//teraz wybieranie tranzycji do odpalenia:
+			
+			ArrayList<Integer> indexList = new ArrayList<Integer>();
+			for(int i=0; i<transitions.size(); i++)
+				indexList.add(i);
+			Collections.shuffle(indexList);
+			
+			for (int i = 0; i < transitions.size(); i++) {
+				Transition transition = transitions.get(indexList.get(i));
+				if(launchableTransitions.contains(transition)) {
+					continue;
+					//TODO: czy działa to w ogóle?
+					//usuwanie ze zbioru kandydatów tych t-tranzycji, które już są w kolejce do odpalenia
+				}
+				if(transition instanceof TimeTransition) { //jeśli czasowa
+					if(transition.isActive()) { //i aktywna
+						if(((TimeTransition)transition).isForcedToFired() == true) { //i musi się uruchomić
+							launchableTransitions.add(transition);
+							transition.bookRequiredTokens();
+						}
+					} else { //reset
+						((TimeTransition)transition).setInternalFireTime(-1);
+						((TimeTransition)transition).setInternalTimer(-1);
+					}
+				} else if (transition.isActive() ) {
+					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
+						transition.bookRequiredTokens();
+						launchableTransitions.add(transition);
+					}
+				}
+			} 
+		} else if (simulationType == NetType.TIME) { 
+			ArrayList<Integer> indexTTList = new ArrayList<Integer>();
+			for(int i=0; i<ttransitions.size(); i++)
+				indexTTList.add(i);
+			Collections.shuffle(indexTTList); //wymieszanie T tranzycji
+			
+			for (int i = 0; i < ttransitions.size(); i++) {
+				TimeTransition ttransition = ttransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
+				if(ttransition.isActive()) { //jeśli aktywna
+					if(ttransition.isForcedToFired() == true) {
+						launchableTransitions.add(ttransition);
+						ttransition.bookRequiredTokens();
+					} else { //jest tylko aktywna
+						if(ttransition.getInternalFireTime() == -1) { //czyli poprzednio nie była aktywna
+							int eft = (int) ttransition.getMinFireTime();
+							int lft = (int) ttransition.getMaxFireTime();
+							int randomTime = GUIManager.getDefaultGUIManager().getRandomInt(eft, lft);
+							ttransition.setInternalFireTime(randomTime);
+							ttransition.setInternalTimer(0);
+							
+							if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
+								launchableTransitions.add(ttransition);
+								ttransition.bookRequiredTokens();
+								//TAK, na pewno tu, a nie w kolejne iteracji, wtedy czas wzrośnie, więc
+								//byłoby wbrew idei natychmiastowości
+							}
+						} else { //update time
+							int oldTimer = (int) ttransition.getInternalTimer();
+							oldTimer++;
+							ttransition.setInternalTimer(oldTimer);
+							
+							if(ttransition.isForcedToFired() == true) {
+								launchableTransitions.add(ttransition);
+								ttransition.bookRequiredTokens();
+							}
+						}
+					}
+				} else { //reset zegara
+					ttransition.setInternalFireTime(-1);
+					ttransition.setInternalTimer(-1);
+				}
+			}
+		}
+		
+		
+
+		
+		for (Transition transition : launchableTransitions) {
+			transition.returnBookedTokens();
+		}
+		return launchableTransitions;
 	}
 	
 	/**
@@ -327,111 +541,6 @@ public class StateSimulator {
 	}
 	
 	/**
-	 * Metoda generuje zbiór tranzycji do uruchomienia w ramach symulatora.
-	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia
-	 */
-	private ArrayList<Transition> generateValidLaunchingTransitions() {
-		boolean generated = false;
-		ArrayList<Transition> launchingTransitions = new ArrayList<Transition>();
-		int safetyCounter = 0;
-		while (!generated) {
-			launchingTransitions = generateLaunchingTransitions();
-			if (launchingTransitions.size() > 0) {
-				generated = true; 
-			} else {
-				safetyCounter++;
-				if(safetyCounter == 999) { // safety measure
-					if(isPossibleStep() == false) {
-						GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
-								+ "has been activated. Please advise authors.", "error", true);
-						return launchingTransitions;
-					}
-				}
-			}
-		}
-		return launchingTransitions;
-	}
-	
-	/**
-	 * Metoda sprawdzająca, czy krok jest możliwy - czy istnieje choć jedna aktywna
-	 * tranzycja.
-	 * @return boolean - true jeśli jest choć jedna aktywna tranzycja; false w przeciwnym wypadku
-	 */
-	private boolean isPossibleStep() {
-		for (Transition transition : transitions) {
-			if (transition.isActive())
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Metoda pomocnicza dla generateValidLaunchingTransitions(), odpowiedzialna za sprawdzenie
-	 * które tranzycje nadają się do uruchomienia. Aktualnie działa dla modelu klasycznego PN
-	 * oraz czasowego.
-	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia.
-	 */
-	private ArrayList<Transition> generateLaunchingTransitions() {
-		Random randomLaunch = new Random();
-		ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
-		ArrayList<Integer> indexList = new ArrayList<Integer>();
-		int i = 0;
-		for (@SuppressWarnings("unused") Transition transition : transitions) {
-			indexList.add(i);
-			i++;
-		}
-		Collections.shuffle(indexList);
-		if (simulationType == NetType.BASIC)
-			for (i = 0; i < transitions.size(); i++) {
-				Transition transition = transitions.get(indexList.get(i));
-				if (transition.isActive() )
-					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
-						transition.bookRequiredTokens();
-						launchableTransitions.add(transition);
-					}
-			}
-
-		/*
-		if (simulationType == NetType.TIME) {
-			for (i = 0; i < transitions.size(); i++) {
-				Transition transition = transitions.get(indexList.get(i));
-				if (transition.getFireTime() == -1 && transition.isActive()) //!!!!!!!!!!!!!!!!!!!!!
-					transition.setFireTime(timeNetStepCounter);
-
-				if (transition.isActive()) {
-					boolean deadLineTime = false;
-					double tmp1 = transition.getMinFireTime() + transition.getFireTime();
-					double tmp2 = (timeNetPartStepCounter / 1000) + timeNetStepCounter;
-					if (tmp1 <= tmp2) {
-						if (tmp2 >= transition.getMaxFireTime())
-							deadLineTime = true;
-						// calkowite
-						if ((randomLaunch.nextInt(1000) < 4) || maximumMode || deadLineTime) {
-							transition.bookRequiredTokens();
-							launchableTransitions.add(transition);
-							transition.setFireTime(-1);
-						}
-					}
-				} else {
-					transition.setFireTime(-1);
-				}
-			}
-			this.timeNetPartStepCounter++;
-			if (timeNetPartStepCounter == 1000) {
-				this.timeNetPartStepCounter = 0;
-				this.timeNetStepCounter++;
-
-			}
-		}
-*/
-		
-		for (Transition transition : launchableTransitions) {
-			transition.returnBookedTokens();
-		}
-		return launchableTransitions;
-	}
-	
-	/**
 	 * Metoda zwraca tablicę liczb tokenów w czasie dla miejsc.
 	 * @return ArrayList[ArrayList[Integer]] - tablica po symulacji
 	 */
@@ -516,7 +625,5 @@ public class StateSimulator {
 				((TimeTransition)transitions.get(i)).setInternalTimer(-1);
 			}
 		}
-		
-		
 	}
 }

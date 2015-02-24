@@ -148,33 +148,43 @@ public final class ElementDraw {
 				//TIME TRANSITION
 				if(node instanceof TimeTransition) {
 					g.setColor(Color.black);
-					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
+					g.setFont(new Font("TimesRoman", Font.PLAIN, 10));
 					String eft = String.valueOf( ((TimeTransition)node).getMinFireTime() );
 					g.drawString(eft, nodeBounds.x+35, nodeBounds.y + 8);
 
-					g.setColor(Color.black);
-					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 					String lft = String.valueOf( ((TimeTransition)node).getMaxFireTime() );
 					g.drawString(lft, nodeBounds.x +35, nodeBounds.y + 28);
 					
 					int intTimer = (int) ((TimeTransition)node).getInternalTimer();
 					int intFireTime = (int) ((TimeTransition)node).getInternalFireTime();
 					String timeInfo = ""+intTimer+"  /  "+intFireTime;
-					g.drawString(timeInfo, nodeBounds.x +5, nodeBounds.y + -4);
+					int offset = -9;
+					if(timeInfo.length() < 9)
+						offset = 1;
+					else if(timeInfo.length() < 10)
+						offset = -3;
+					else if(timeInfo.length() < 11)
+						offset = -5;
+					else if(timeInfo.length() < 12)
+						offset = -7;
+					
+					g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y + -4);
 
 					g.setColor(Color.LIGHT_GRAY);
 					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 20, nodeBounds.y + 9);
 					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 20, nodeBounds.y + 21);
 					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 20, nodeBounds.y + 21);
 					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 20, nodeBounds.y + 9);
+					
+					g.setColor(Color.black);
+					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 				}
 				
 				g.setColor(EditorResources.glowTransitonTextColor);
 				
 				//WYŚWIETLANIE DANYCH O ODPALENIACH
 				if (trans.isGlowed() && trans.getFiring_INV() > 0) {
-					int posX = nodeBounds.x + nodeBounds.width / 2 
-							- g.getFontMetrics().stringWidth(Integer.toString(trans.getFiring_INV())) / 2;
+					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth(Integer.toString(trans.getFiring_INV())) / 2;
 					int posY = nodeBounds.y + nodeBounds.height / 2 + 5;
 					g.drawString(Integer.toString(trans.getFiring_INV()), posX, posY);
 				}
@@ -183,8 +193,7 @@ public final class ElementDraw {
 				if(trans.isGlowed_Cluster() && trans.getFreq_Cluster() > 0) {
 					String clNumber = formatD(trans.getFreq_Cluster());
 
-					int posX = nodeBounds.x + nodeBounds.width
-							- (g.getFontMetrics().stringWidth(clNumber) / 2);
+					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(clNumber) / 2);
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
 					Font old = g.getFont();
 					Color oldC = g.getColor();
@@ -244,22 +253,25 @@ public final class ElementDraw {
 				//wypełnianie kolorem:
 				if(el.isPortalSelected()) { //dla wszystkich innych ElLocations portalu właśnie klikniętego
 					g.setColor(EditorResources.selectionColorLevel3);
-				} else
+				} else {
 					g.setColor(Color.white);
+				}
 				g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				
 				g.setColor(Color.DARK_GRAY);
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				if (place.getTokensNumber() > 0)
-					g.drawString(
-							Integer.toString(place.getTokensNumber()),
-							nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics()
-							.stringWidth(Integer.toString(place.getTokensNumber())) / 2, 
-							nodeBounds.y + nodeBounds.height / 2 + 5);
+
+				drawTokens(g, place, nodeBounds);
+				
+				//RYSOWANIE PORTALU - OKRĄG W ŚRODKU
+				g.setColor(Color.BLACK);
+				g.setStroke(new BasicStroke(1.5F));
 				if (place.isPortal()) {
-					g.drawOval(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
+					//g.drawOval(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
+					g.drawOval(nodeBounds.x + 8, nodeBounds.y + 8, nodeBounds.width - 16, nodeBounds.height - 16);
 				}
+				
 				/*
 				if (el.isPortalSelected()) {
 					try {
@@ -274,6 +286,90 @@ public final class ElementDraw {
 		}
 		
 		return g;
+	}
+
+	private static void drawTokens(Graphics2D g, Place place, Rectangle nodeBounds) {
+		g.setColor(Color.black);
+		g.setFont(new Font("TimesRoman", Font.BOLD, 14));
+		
+		if (place.getTokensNumber() == 1) {
+			int x = nodeBounds.x + nodeBounds.width / 2;
+			int y = nodeBounds.y + nodeBounds.height / 2;
+			
+			g.setColor(EditorResources.tokenDefaultColor);
+			g.fillOval(x-5, y-5, 10, 10);
+			g.setColor(Color.black);
+			g.setStroke(EditorResources.tokenDefaultStroke);
+			g.drawOval(x-5, y-5, 10, 10);	
+		} else if (place.getTokensNumber() == 2) {
+			int x = nodeBounds.x + nodeBounds.width / 2;
+			int y = nodeBounds.y + nodeBounds.height / 2;
+			
+			g.setColor(EditorResources.tokenDefaultColor); //lewy
+			g.fillOval(x-12, y-5, 10, 10);
+			g.setColor(Color.black);
+			g.setStroke(EditorResources.tokenDefaultStroke);
+			g.drawOval(x-12, y-5, 10, 10);
+			
+			g.setColor(EditorResources.tokenDefaultColor); //prawy
+			g.fillOval(x+2, y-5, 10, 10);
+			g.setColor(Color.black);
+			g.setStroke(EditorResources.tokenDefaultStroke);
+			g.drawOval(x+2, y-5, 10, 10);
+		} else if (place.getTokensNumber() == 3) {
+			int x = nodeBounds.x + nodeBounds.width / 2;
+			int y = nodeBounds.y + nodeBounds.height / 2;
+			
+			g.setColor(EditorResources.tokenDefaultColor); //środkowy górny
+			g.fillOval(x-5, y-10, 10, 10);
+			g.setColor(Color.black);
+			g.setStroke(EditorResources.tokenDefaultStroke);
+			g.drawOval(x-5, y-10, 10, 10);	
+			
+			g.setColor(EditorResources.tokenDefaultColor); //lewy dolny
+			g.fillOval(x-12, y+1, 10, 10);
+			g.setColor(Color.black);
+			g.setStroke(EditorResources.tokenDefaultStroke);
+			g.drawOval(x-12, y+1, 10, 10);
+			
+			g.setColor(EditorResources.tokenDefaultColor); //prawy dolny
+			g.fillOval(x+2, y+1, 10, 10);
+			g.setColor(Color.black);
+			g.setStroke(EditorResources.tokenDefaultStroke);
+			g.drawOval(x+2, y+1, 10, 10);
+		} else if (place.getTokensNumber() == 4) {
+			int x = nodeBounds.x + nodeBounds.width / 2;
+			int y = nodeBounds.y + nodeBounds.height / 2;
+			
+			g.setColor(EditorResources.tokenDefaultColor); //lewy górny
+			g.fillOval(x-12, y-11, 10, 10);
+			g.setColor(Color.black);
+			g.setStroke(EditorResources.tokenDefaultStroke);
+			g.drawOval(x-12, y-11, 10, 10);
+			
+			g.setColor(EditorResources.tokenDefaultColor); //prawy górny
+			g.fillOval(x+2, y-11, 10, 10);
+			g.setColor(Color.black);
+			g.setStroke(EditorResources.tokenDefaultStroke);
+			g.drawOval(x+2, y-11, 10, 10);
+			
+			g.setColor(EditorResources.tokenDefaultColor); //lewy dolny
+			g.fillOval(x-12, y+1, 10, 10);
+			g.setColor(Color.black);
+			g.setStroke(EditorResources.tokenDefaultStroke);
+			g.drawOval(x-12, y+1, 10, 10);
+			
+			g.setColor(EditorResources.tokenDefaultColor); //prawy dolny
+			g.fillOval(x+2, y+1, 10, 10);
+			g.setColor(Color.black);
+			g.setStroke(EditorResources.tokenDefaultStroke);
+			g.drawOval(x+2, y+1, 10, 10);
+		} else if (place.getTokensNumber() > 4) {
+			g.drawString(
+					Integer.toString(place.getTokensNumber()), 
+					nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth(Integer.toString(place.getTokensNumber())) / 2, 
+					nodeBounds.y + nodeBounds.height / 2 + 5);
+		}
 	}
 	
 	/**

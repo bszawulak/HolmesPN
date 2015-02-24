@@ -123,7 +123,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
 		this.addSeparator();
 		
-		this.addMenuItem("Fast zoom reset", "", new ActionListener() {
+		this.addMenuItem("Fast zoom reset", "undo.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				getGraphPanel().setZoom(100, getGraphPanel().getZoom());
 			}

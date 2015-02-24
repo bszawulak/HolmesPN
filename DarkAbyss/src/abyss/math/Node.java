@@ -8,9 +8,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
-
 /**
  * Klasa implementująca wierzchołek sieci Petriego. Dziedziczą po niej klasy
  * reprezentujące miejsca (Place) oraz tranzycje (Transition). Zapewnia
@@ -29,14 +26,12 @@ public abstract class Node extends PetriNetElement {
 	 * (przestanie być możliwe wczytywanie zapisanych projektów w formacie .abyss)
 	 */
 	
-	@ElementList
 	private ArrayList<ElementLocation> elementLocations = new ArrayList<ElementLocation>();
-	@Element
+	private ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
 	protected boolean isPortal = false;
 	private int radius = 20;
 	final static float dash1[] = { 2.0f };
-	final static BasicStroke dashed = new BasicStroke(1.0f,
-			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+	final static BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 	private int nameOffsetX = 0;
 	private int nameOffsetY = 0;
 
@@ -52,8 +47,7 @@ public abstract class Node extends PetriNetElement {
 	public Node(int sheetId, int nodeId, Point nodePosition, int radius) {
 		this.setRadius(radius);
 		this.setID(nodeId);
-		this.getNodeLocations().add(
-				new ElementLocation(sheetId, nodePosition, this));
+		this.getNodeLocations().add(new ElementLocation(sheetId, nodePosition, this));
 	}
 
 	/**
@@ -382,20 +376,37 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda zwraca lokalizację obiektu - portalu.
-	 * @return ArrayList[ElementLocation] - tablica wspołrzędnych portalu
+	 * Metoda zwraca wektor lokalizacji wierzchołka.
+	 * @return ArrayList[ElementLocation] - tablica lokalizacji
 	 */
 	public ArrayList<ElementLocation> getElementLocations() {
 		return elementLocations;
 	}
 
 	/**
-	 * Metoda ustawia nowe lokalizacje obiektu - portalu
-	 * @param elementLocations ArrayList[ElementLocation] - tablica lokalizacji węzła - portalu
+	 * Metoda ustawia nowy wektor lokalizacji wierzchołka.
+	 * @param elementLocations ArrayList[ElementLocation] - wektor lokalizacji wierzchołka
 	 */
 	public void setElementLocations(ArrayList<ElementLocation> elementLocations) {
 		this.elementLocations = elementLocations;
 	}
+	
+	/**
+	 * Metoda zwraca wektor lokalizacji nazw.
+	 * @return ArrayList[ElementLocation] - wektor lokalizacji nazw
+	 */
+	public ArrayList<ElementLocation> getNamesLocations() {
+		return namesLocations;
+	}
+
+	/**
+	 * Metoda ustawia nowy wektor lokalizacji nazw.
+	 * @param namesLocations ArrayList[ElementLocation] - wektor lokalizacji nazw.
+	 */
+	public void setNamesLocations(ArrayList<ElementLocation> namesLocations) {
+		this.namesLocations = namesLocations;
+	}
+	
 	
 	public int getNameOffX() {
 		return nameOffsetX;

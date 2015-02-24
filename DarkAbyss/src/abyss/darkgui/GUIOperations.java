@@ -353,6 +353,8 @@ public class GUIOperations {
 				Tools.copyFileByPath(commandFile.getPath(), abyssPath+"\\COMMAND.ina");
 				Tools.copyFileByPath(tmpPNTfile.getPath(), abyssPath+"\\siec.pnt");
 				
+				tmpPNTfile.delete();
+				
 				String[] command = {"ina.bat"};
 			    ProcessBuilder b = new ProcessBuilder(command);
 			    Process proc;
@@ -368,6 +370,8 @@ public class GUIOperations {
 				new File(abyssPath+"\\ina.bat").delete();
 				new File(abyssPath+"\\COMMAND.ina").delete();
 				new File(abyssPath+"\\siec.pnt").delete();
+				
+				
 				
 				File t1 = new File(abyssPath+"\\SESSION.ina");
 				File t2 = new File(abyssPath+"\\OPTIONS.ina");

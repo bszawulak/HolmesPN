@@ -248,15 +248,14 @@ public class Arc extends PetriNetElement {
 		g.setColor(Color.black);
 		g.setStroke(EditorResources.tokenDefaultStroke);
 		g.drawOval((int) a - 5, (int) b - 5, 10, 10);
+		
 		Font font1 = new Font("Tahoma", Font.BOLD, 14);
 		Font font2 = new Font("Tahoma", Font.BOLD, 13);
 		Font font3 = new Font("Tahoma", Font.PLAIN, 12);
-		TextLayout textLayout1 = new TextLayout(Integer.toString(this.weight),
-				font1, g.getFontRenderContext());
-		TextLayout textLayout2 = new TextLayout(Integer.toString(this.weight),
-				font2, g.getFontRenderContext());
-		TextLayout textLayout3 = new TextLayout(Integer.toString(this.weight),
-				font3, g.getFontRenderContext());
+		TextLayout textLayout1 = new TextLayout(Integer.toString(this.weight), font1, g.getFontRenderContext());
+		TextLayout textLayout2 = new TextLayout(Integer.toString(this.weight), font2, g.getFontRenderContext());
+		TextLayout textLayout3 = new TextLayout(Integer.toString(this.weight), font3, g.getFontRenderContext());
+		
 		g.setColor(new Color(255, 255, 255, 70));
 		textLayout1.draw(g, (int) a + 10, (int) b);
 		g.setColor(new Color(255, 255, 255, 150));

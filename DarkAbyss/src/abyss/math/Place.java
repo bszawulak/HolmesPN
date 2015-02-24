@@ -4,8 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 
-import org.simpleframework.xml.Element;
-
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.ElementDraw;
 import abyss.graphpanel.IdGenerator;
@@ -21,12 +19,6 @@ public class Place extends Node {
 	// BACKUP: 2346995422046987174L  (NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = 2346995422046987174L;
 	
-	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAĆ NAZW, DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
-	 * (przestanie być możliwe wczytywanie zapisĆnych proejktów .abyss)
-	 */
-	
-	@Element
 	private int tokensNumber = 0;
 	private int tokensTaken = 0;
 	//public Place()

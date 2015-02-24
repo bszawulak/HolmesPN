@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Stack;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
@@ -35,8 +34,8 @@ public class NetSimulator {
 	private ArrayList<Transition> launchingTransitions;
 	private Stack<SimulationStep> actionStack;
 	private boolean maximumMode = false;
-	public static int DEFAULT_COUNTER = 50;			// wartość ta ma wpływ na szybkość poruszania się tokenów
-	public JFrame timeFrame = new JFrame("Zegar");
+	public static int DEFAULT_COUNTER = 25;			// wartość ta ma wpływ na szybkość poruszania się tokenów
+	//public JFrame timeFrame = new JFrame("Zegar");
 	public double timeNetStepCounter = 0;
 	public double timeNetPartStepCounter = 0;
 	
@@ -239,7 +238,7 @@ public class NetSimulator {
 				// tranzycje, tak więc jeśli to nie tryb maksimum i żadna się nie wygenerowała 
 				// (przez pechowe rzuty kostką:) ) to powtarzamy do skutku. Prawie...:
 			} else {
-				if (simulationType == NetType.TIME) {
+				if (simulationType == NetType.TIME || simulationType == NetType.HYBRID) {
 					return launchingTransitions; //koniec symulacji
 				}
 				
@@ -328,7 +327,7 @@ public class NetSimulator {
 							oldTimer++;
 							ttransition.setInternalTimer(oldTimer);
 							
-							//TODO: jeśli to tu zostanie, to oznacza, że TT majuą pierwszeństwo nad zwykłymi
+							//jeśli to tu zostanie, to oznacza, że TT mają pierwszeństwo nad zwykłymi
 							// alternatywnie (opcje programu) można ustawić, że będzie to razem ze zwykłymi robione
 							
 							if(ttPriority) { 

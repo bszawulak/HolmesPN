@@ -1,11 +1,8 @@
 package abyss.darkgui.toolbar;
 
 import java.awt.event.ActionEvent;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
-import abyss.clusters.ClusteringInfoMatrix;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
@@ -390,9 +387,10 @@ public class Toolbar extends BorderDock {
 				*/
 				
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().loadFromFile(
-						"C:/Users/Rince/Desktop/Sieci/BER371/BER3.8.1.spped");
+						"C:/Users/Rince/Desktop/Sieci/BER3.7.2/BERv3.8.2ab.spped");
 				GUIManager.getDefaultGUIManager().getSimulatorBox().createSimulatorProperties();
 				
+				/*
 				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
 				try
 				{
@@ -404,7 +402,7 @@ public class Toolbar extends BorderDock {
 					fis.close();
 					GUIManager.getDefaultGUIManager().windowClusters.registerDataCase56(clusterMatrix);
 				} catch (Exception ee) {}
-				
+				*/
 				
 			}
 		};
