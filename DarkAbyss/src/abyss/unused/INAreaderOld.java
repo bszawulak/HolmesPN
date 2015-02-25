@@ -299,8 +299,7 @@ public class INAreaderOld {
 									80, 30 + j * 60), nodeArray.get(j)));
 							ArrayList<ElementLocation> tempElementLocationArry = new ArrayList<ElementLocation>();
 							tempElementLocationArry.add(elemArray.get(j));
-							nodeArray.get(j).setNodeLocations(
-									tempElementLocationArry);
+							nodeArray.get(j).setElementLocations(tempElementLocationArry);
 						}
 
 						if (nodeArray.get(j).getType() == PetriNetElementType.TRANSITION) {
@@ -309,8 +308,7 @@ public class INAreaderOld {
 									.get(j)));
 							ArrayList<ElementLocation> tempElementLocationArry = new ArrayList<ElementLocation>();
 							tempElementLocationArry.add(elemArray.get(j));
-							nodeArray.get(j).setNodeLocations(
-									tempElementLocationArry);
+							nodeArray.get(j).setElementLocations(tempElementLocationArry);
 						}
 					}
 

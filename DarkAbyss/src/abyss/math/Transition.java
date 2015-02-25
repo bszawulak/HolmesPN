@@ -95,7 +95,7 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Konstruktor obiektu tranzycji sieci.
+	 * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
 	 * @param transitionId int - identyfikator tranzycji
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
 	 * @param name String - nazwa tranzycji
@@ -109,7 +109,7 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Konstruktor obiektu tranzycji sieci.
+	 * Konstruktor obiektu tranzycji sieci. Używany przez procedury tworzenia portali.
 	 * @param transitionId int - identyfikator tranzycji
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
 	 */

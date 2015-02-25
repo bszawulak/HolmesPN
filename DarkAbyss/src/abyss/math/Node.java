@@ -36,7 +36,7 @@ public abstract class Node extends PetriNetElement {
 	private int nameOffsetY = 0;
 
 	/**
-	 * Konstruktor obiektu klasy Node.
+	 * Konstruktor obiektu klasy Node. Ustawia też początkowe wartości przesunięcia nazwy wierzchołka.
 	 * @param sheetId int - identyfikator arkusza
 	 * @param nodeId int - identyfikator elementu sieci Petriego
 	 * @param nodePosition Point - punkt, w którym znajduje się lokalizacja 
@@ -48,6 +48,8 @@ public abstract class Node extends PetriNetElement {
 		this.setRadius(radius);
 		this.setID(nodeId);
 		this.getNodeLocations().add(new ElementLocation(sheetId, nodePosition, this));
+		//napis - przesunięcie startowe:
+		this.getNamesLocations().add(new ElementLocation(sheetId, new Point(0,0), this));
 	}
 
 	/**
@@ -75,14 +77,14 @@ public abstract class Node extends PetriNetElement {
 		 * tak więc powyższe podmienienie ParentNode nie wpływa na nie - zostają takie,
 		 * jakie były dla starych kilku węzłów zmienianych w portal
 		 */
-		this.setNodeLocations(elementLocations);
+		this.setElementLocations(elementLocations);
 		if (elementLocations.size() > 1) { // oczywiście konstruktor może też tworzyć zwykły węzeł
 			setPortal(true); //skoro po coś ta metoda w ogóle powstała...
 		}
 	}
 
 	/**
-	 * Konstruktor obiektu klasy Node.
+	 * Konstruktor obiektu klasy Node. Ustawia też początkowe wartości przesunięcia nazwy wierzchołka.
 	 * @param nodeId int - identyfikator elementu sieci Petriego
 	 * @param elementLocation ElementLocation - lokalizacja elementu sieci Petriego
 	 * @param radius int - promień okręgu, na którym opisana jest figura 
@@ -93,6 +95,8 @@ public abstract class Node extends PetriNetElement {
 		this.setID(nodeId);
 		elementLocation.setParentNode(this);
 		this.getElementLocations().add(elementLocation);
+		//napis - przesunięcie startowe:
+		this.getNamesLocations().add(new ElementLocation(elementLocation.getSheetID(), new Point(0,0), this));
 	}
 
 	/**
@@ -104,6 +108,20 @@ public abstract class Node extends PetriNetElement {
 	public ArrayList<Point> getNodePositions(int sheetId) {
 		ArrayList<Point> returnPoints = new ArrayList<Point>();
 		for (ElementLocation e : this.getNodeLocations())
+			if (e.getSheetID() == sheetId)
+				returnPoints.add(e.getPosition());
+		return returnPoints;
+	}
+	
+	/**
+	 * Metoda pozwala pobrać listę wszystkich punktów lokalizacji 
+	 * nazwy wierzchołka na arkuszu o określonym identyfikatorze.
+	 * @param sheetId int - identyfikator arkusza
+	 * @return ArrayList[Point] - lista punktów lokalizacji nazwy wierzchołka na wybranym arkuszu
+	 */
+	public ArrayList<Point> getNodeNamePositions(int sheetId) {
+		ArrayList<Point> returnPoints = new ArrayList<Point>();
+		for (ElementLocation e : this.getNamesLocations())
 			if (e.getSheetID() == sheetId)
 				returnPoints.add(e.getPosition());
 		return returnPoints;
@@ -149,15 +167,22 @@ public abstract class Node extends PetriNetElement {
 	public void drawName(Graphics2D g, int sheetId) {
 		g.setColor(Color.black);
 		g.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		int width = g.getFontMetrics().stringWidth(getName());
-		for (Point p : this.getNodePositions(sheetId)) {
-			int drawX = (p.x - width / 2) + getNameOffX();
-			int drawY =  (p.y + getRadius() + 15) + getNameOffY();
+		int name_width = g.getFontMetrics().stringWidth(getName());
+		
+		ArrayList<Point> namesPoints = getNodeNamePositions(sheetId);
+		ArrayList<Point> nodePoints = this.getNodePositions(sheetId);
+		//for (Point p : nodePoints) {
+		for (int i=0; i<nodePoints.size(); i++) {
+			Point nodePoint = nodePoints.get(i);
+			Point namePoint = namesPoints.get(i);
+			
+			int drawX = (nodePoint.x - name_width / 2) + namePoint.x;
+			int drawY =  (nodePoint.y + getRadius() + 15) + namePoint.y;
 			
 			if(drawX < 0 )
-				drawX = (p.x - width / 2); //oryginalny kod
+				drawX = (nodePoint.x - name_width / 2); //oryginalny kod
 			if(drawY < 0 )
-				drawY = p.y + getRadius() + 15; //oryginalny kod
+				drawY = nodePoint.y + getRadius() + 15; //oryginalny kod
 			g.drawString(getName(), drawX, drawY);
 		}
 	}
@@ -296,20 +321,16 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala ustawić listę wszystkich lokalizacji wierzchołka.
-	 * @param ArrayList[ElementLocation] nodeLocations - lista nowucj lokalizacji wierzchołka
-	 */
-	public void setNodeLocations(ArrayList<ElementLocation> nodeLocations) {
-		this.setElementLocations(nodeLocations);
-	}
-
-	/**
 	 * Metoda pozwala usunąć lokalizację z listy wszystkich lokalizacji wierzchołka.
 	 * @param el ElementLocation - lokalizacja do usunięcia 
 	 * @return boolean - true, jeśli usunięto jedyną (czyli ostatnią) lokalizację wierzchołka, 
 	 * 		false jeżeli wierzchołek ma jeszcze inne lokalizacje
 	 */
 	public boolean removeElementLocation(ElementLocation el) {
+		
+		int nodeElLocIndex = this.getNodeLocations().indexOf(el);
+		this.getNamesLocations().remove(nodeElLocIndex);
+		
 		this.getNodeLocations().remove(el);
 		
 		if (this.getNodeLocations().size() > 0)
@@ -384,7 +405,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda ustawia nowy wektor lokalizacji wierzchołka.
+	 * Metoda pozwala ustawić listę wszystkich lokalizacji wierzchołka.
 	 * @param elementLocations ArrayList[ElementLocation] - wektor lokalizacji wierzchołka
 	 */
 	public void setElementLocations(ArrayList<ElementLocation> elementLocations) {
@@ -392,7 +413,7 @@ public abstract class Node extends PetriNetElement {
 	}
 	
 	/**
-	 * Metoda zwraca wektor lokalizacji nazw.
+	 * Metoda zwraca wektor lokalizacji nazwy wierzchołka.
 	 * @return ArrayList[ElementLocation] - wektor lokalizacji nazw
 	 */
 	public ArrayList<ElementLocation> getNamesLocations() {
@@ -408,19 +429,19 @@ public abstract class Node extends PetriNetElement {
 	}
 	
 	
-	public int getNameOffX() {
+	public int getaNameOffX() {
 		return nameOffsetX;
 	}
 	
-	public void setNameOffX(int value) {
+	public void setaNameOffX(int value) {
 		nameOffsetX = value;
 	}
 	
-	public int getNameOffY() {
+	public int getaNameOffY() {
 		return nameOffsetY;
 	}
 	
-	public void setNameOffY(int value) {
+	public void setaNameOffY(int value) {
 		nameOffsetY = value;
 	}
 }

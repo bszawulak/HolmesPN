@@ -63,7 +63,7 @@ public class AbyssReader {
 					if(n.getID() > maxGlobalId)
 						maxGlobalId = n.getID();
 				}
-				for(ElementLocation el : n.getElementLocations())
+				for(ElementLocation el : n.getElementLocations()) 
 					el.setSheetID(SID);
 			}
 			for(Arc n : PND.arcs) {

@@ -214,22 +214,17 @@ public class INAreader {
 					// tworzenie dla ka�dego noda element location
 					for (int j = 0; j < nodeArray.size(); j++) {
 						if (nodeArray.get(j).getType() == PetriNetElementType.PLACE) {
-							elemArray.add(new ElementLocation(SID, new Point(
-									80, 30 + j * 60), nodeArray.get(j)));
+							elemArray.add(new ElementLocation(SID, new Point(80, 30 + j * 60), nodeArray.get(j)));
 							ArrayList<ElementLocation> tempElementLocationArry = new ArrayList<ElementLocation>();
 							tempElementLocationArry.add(elemArray.get(j));
-							nodeArray.get(j).setNodeLocations(
-									tempElementLocationArry);
+							nodeArray.get(j).setElementLocations(tempElementLocationArry);
 						}
 
 						if (nodeArray.get(j).getType() == PetriNetElementType.TRANSITION) {
-							elemArray.add(new ElementLocation(SID, new Point(
-									280, 30 + (j - placeCount) * 60), nodeArray
-									.get(j)));
+							elemArray.add(new ElementLocation(SID, new Point(280, 30 + (j - placeCount) * 60), nodeArray.get(j)));
 							ArrayList<ElementLocation> tempElementLocationArry = new ArrayList<ElementLocation>();
 							tempElementLocationArry.add(elemArray.get(j));
-							nodeArray.get(j).setNodeLocations(
-									tempElementLocationArry);
+							nodeArray.get(j).setElementLocations(tempElementLocationArry);
 						}
 					}
 
@@ -237,9 +232,7 @@ public class INAreader {
 					// Arki
 					for (int k = 0; k < placeArcListPre.size(); k++) {
 						for (int j = 0; j < placeArcListPre.get(k).length; j++) {
-
-							int t1 = trans[Integer.parseInt(placeArcListPre
-									.get(k)[j])][1];
+							int t1 = trans[Integer.parseInt(placeArcListPre.get(k)[j])][1];
 
 							arcArray.add(new Arc(nodeArray.get(t1 - 1).getLastLocation(), nodeArray.get(k).getLastLocation(), "",placeArcListPreWeight.get(0).get(pozycja_a)));
 							pozycja_a++;

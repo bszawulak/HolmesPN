@@ -8,7 +8,9 @@ import abyss.darkgui.dockwindows.PetriNetTools;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.darkgui.toolbar.Toolbar;
 import abyss.files.io.TexExporter;
+import abyss.math.ElementLocation;
 import abyss.math.InvariantTransition;
+import abyss.math.Node;
 import abyss.math.PetriNet;
 import abyss.math.Transition;
 import abyss.settings.SettingsManager;
@@ -30,6 +32,7 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseWheelEvent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -143,6 +146,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssNetTables windowNetTables;
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
+	
+	private boolean nameLocChangeMode = false; //jeśli true, zmieniamy offset napisu
+	private Node nameSelectedNode = null;
+	private ElementLocation nameNodeEL = null;
+	
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
 	 * @param frejm JFrame - główna ramka kontener programu
@@ -1160,5 +1168,34 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if(min == 0 && max == 0)
 			return 0;
 		return generator.nextInt((max - min) + 1) + min;
+	}
+	
+	/**
+	 * Metoda ustawia lub resetuje tryb zmieniania lokalizacji napisu dla klikniętego wierzchołka.
+	 * Faktyczna realizacja tego trybu odbywa się w GraphPanel.MouseWheelHandler.mouseWheelMoved(MouseWheelEvent e)
+	 * @param n Node - wybrany wierzchołek
+	 * @param el ElementLocation - wybrana lokalizacja wierzchołka (portal)
+	 * @param mode boolean - tryb: true jeśli przesuwamy.
+	 */
+	public void setNameLocationChangeMode(Node n, ElementLocation el, boolean mode) {
+		this.nameSelectedNode = n;
+		this.nameNodeEL = el;
+		this.nameLocChangeMode = mode;
+	}
+	
+	/**
+	 * Metoda zwraca wartość flagi dla trybu zmiany lokalizacji nazwy wybranego wierzchołka sieci.
+	 * @return boolean - true, jeśli włączony tryb zmiany lokalizacji nazwy
+	 */
+	public boolean getNameLocChangeMode() {
+		return nameLocChangeMode;
+	}
+	
+	public Node getNameLocChangeNode() {
+		return nameSelectedNode;
+	}
+	
+	public ElementLocation getNameLocChangeEL() {
+		return nameNodeEL;
 	}
 }

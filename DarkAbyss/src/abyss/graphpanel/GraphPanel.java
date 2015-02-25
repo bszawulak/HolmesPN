@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import abyss.darkgui.GUIManager;
+import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.graphpanel.popupmenu.ArcPopupMenu;
 import abyss.graphpanel.popupmenu.PlacePopupMenu;
 import abyss.graphpanel.popupmenu.SheetPopupMenu;
@@ -55,6 +56,8 @@ public class GraphPanel extends JComponent {
 	private boolean drawMesh = false;
 	private boolean snapToMesh = false;
 	public enum DrawModes { POINTER, PLACE, TRANSITION, ARC, ERASER, TIMETRANSITION; }
+	
+	//private Graphics2D oldState = null;
 
 	/**
 	 * Konstruktor obiektu klasy GraphPanel
@@ -133,8 +136,7 @@ public class GraphPanel extends JComponent {
 				//i tak nic nie pomoże, jak powyższe się wywali. Taka nasza Java piękna i wesoła.
 			}
 			Point hotSpot = new Point(0, 0);
-			Cursor cursor = toolkit.createCustomCursor(image, hotSpot, this
-					.getDrawMode().toString());
+			Cursor cursor = toolkit.createCustomCursor(image, hotSpot, this.getDrawMode().toString());
 			setCursor(cursor);
 		}
 	}
@@ -226,6 +228,8 @@ public class GraphPanel extends JComponent {
 		if (isDrawMesh())
 			drawMesh(g2d);
 		drawPetriNet(g2d);
+		
+		//oldState = g2d;
 	}
 
 	/**
@@ -257,13 +261,19 @@ public class GraphPanel extends JComponent {
 				a.drawSimulationToken(g2d, this.sheetId);
 			}
 		for (Node n : getNodes()) {
+			
+			//if(GUIManager.getDefaultGUIManager().getNameLocChangeMode() == true)
+			//	break;
+			
 			n.draw(g2d, this.sheetId);
-			//n.drawName(g2d, this.sheetId);
+			
+			
 		}
 		for (Node n : getNodes()) {
 			//n.draw(g2d, this.sheetId);
 			n.drawName(g2d, this.sheetId);
 		}
+		
 		if (getSelectingRect() != null) {
 			g2d.setColor(EditorResources.selectionRectColor);
 			g2d.setStroke(EditorResources.selectionRectStroke);
@@ -318,6 +328,30 @@ public class GraphPanel extends JComponent {
 		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
 		sheet.scrollHorizontal(delta);
 	}
+	
+	/**
+	 * Metoda zmiany lokalizacji nazwy wskazanego wierzchołka w poziomie.
+	 * @param delta int - wielkość przewinięcia
+	 * @return Point - współrzędne po zmianie
+	 */
+	public Point nameLocationChangeHorizontal(int delta) {
+		Node n = GUIManager.getDefaultGUIManager().getNameLocChangeNode();
+		ElementLocation el = GUIManager.getDefaultGUIManager().getNameLocChangeEL();
+		
+		int nameLocIndex = n.getElementLocations().indexOf(el);
+		
+		int oldX = n.getNamesLocations().get(nameLocIndex).getPosition().x;
+		int oldY = n.getNamesLocations().get(nameLocIndex).getPosition().y;
+		oldX += delta;
+		
+		int x = oldX+el.getPosition().x;
+		int y = oldY+el.getPosition().y;
+		
+		if(isLegalLocation(new Point(x, y)) == true)
+			n.getNamesLocations().get(nameLocIndex).getPosition().setLocation(oldX+delta, oldY);
+	
+		return n.getNamesLocations().get(nameLocIndex).getPosition();
+	}
 
 	/**
 	 * Metoda przewijania arkusza w pionie za pomocą wałka myszy.
@@ -327,6 +361,31 @@ public class GraphPanel extends JComponent {
 		GUIManager gui = GUIManager.getDefaultGUIManager();
 		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
 		sheet.scrollVertical(delta);
+	}
+	
+	/**
+	 * Metoda zmiany lokalizacji nazwy wskazanego wierzchołka w pionie.
+	 * @param delta int - wielkość przewinięcia
+	 * @return Point - współrzędne po zmianie
+	 */
+	public Point nameLocationChangeVertical(int delta) {
+		Node n = GUIManager.getDefaultGUIManager().getNameLocChangeNode();
+		ElementLocation el = GUIManager.getDefaultGUIManager().getNameLocChangeEL();
+		
+		int nameLocIndex = n.getElementLocations().indexOf(el);
+		
+		int oldX = n.getNamesLocations().get(nameLocIndex).getPosition().x;
+		int oldY = n.getNamesLocations().get(nameLocIndex).getPosition().y;
+		
+		oldY += delta;
+		
+		int x = oldX+el.getPosition().x;
+		int y = oldY+el.getPosition().y;
+		
+		if(isLegalLocation(new Point(x, y)) == true)
+			n.getNamesLocations().get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+		
+		return n.getNamesLocations().get(nameLocIndex).getPosition();
 	}
 
 	/**
@@ -710,6 +769,9 @@ public class GraphPanel extends JComponent {
 		 * @param e MouseEvent - obiekt klasy przekazywany w efekcie kliknięcia myszą
 		 */
 		public void mousePressed(MouseEvent e) {
+			//reset trybu przesuwania napisu:
+			GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
+			
 			mousePt = e.getPoint();
 			mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);
 			ElementLocation el = getSelectionManager().getPossiblySelectedElementLocation(mousePt);
@@ -892,18 +954,29 @@ public class GraphPanel extends JComponent {
 			e.getComponent().repaint();
 		}
 
+		/**
+		 * Metoda pochłaniająca zasoby jak czarna dziura. Wywoływana za każdym razem, gdy kursor
+		 * znajdzie się nad panelem rysowania. Nie trzeba mówić, że przerysowywanie sieci w każdej
+		 * takiej chwili nie jest najlepszym pomysłem. PRAWDA PANOWIE STUDENCI, KTÓRZY TO PISALIŚCIE?
+		 * MR
+		 */
 		@Override
-		public void mouseMoved(MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON3)
+		public void mouseMoved(MouseEvent e) { 
+			if (e.getButton() == MouseEvent.BUTTON3) {
 				return;
+			}
+			
 			if (getDrawMode() == DrawModes.ARC && drawnArc != null) {
 				Point movePoint = e.getPoint();
 				movePoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
 				drawnArc.setEndPoint(movePoint);
 				drawnArc.checkIsCorect(getSelectionManager().getPossiblySelectedElementLocation(movePoint));
-			} else
-				clearDrawnArc();
-			e.getComponent().repaint();
+				e.getComponent().repaint();
+			} else {
+				//clearDrawnArc(); //WTH?!
+				//e.getComponent().repaint(); //DZYZYS!!!!!!!!!!!!
+			}
+			//e.getComponent().repaint(); //WTF?!
 		}
 	} //end class MouseMotionHandler
 
@@ -939,10 +1012,32 @@ public class GraphPanel extends JComponent {
 				} catch (Exception e1) {
 					//e1.printStackTrace();
 				}
-			} else if (e.isShiftDown()) { // przewijanie góra/dół
-				scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 30);
-			} else {// przewijanie lewo/prawo
-				scrollSheetVertical(e.getWheelRotation() * e.getScrollAmount() * 30);
+			} else if (e.isShiftDown()) {  // przewijanie lewo/prawo
+				if(GUIManager.getDefaultGUIManager().getNameLocChangeMode() == true) {
+					GUIManager gui = GUIManager.getDefaultGUIManager();
+					Point newP = nameLocationChangeHorizontal(e.getWheelRotation() * e.getScrollAmount());
+					e.getComponent().repaint(); // bo samo się nie wywoła (P.S. NIE. Nie kombinuj. NIE!)
+					
+					if(gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
+						gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
+						gui.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
+					}
+				} else {
+					scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 30);
+				}
+			} else { // przewijanie góra/dół
+				if(GUIManager.getDefaultGUIManager().getNameLocChangeMode() == true) {
+					GUIManager gui = GUIManager.getDefaultGUIManager();
+					Point newP =  nameLocationChangeVertical(e.getWheelRotation() * e.getScrollAmount());
+					e.getComponent().repaint(); // bo samo się nie wywoła (P.S. NIE. Nie kombinuj. NIE!)
+					
+					if(gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
+						gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
+						gui.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
+					}
+				} else {
+					scrollSheetVertical(e.getWheelRotation() * e.getScrollAmount() * 30);
+				}
 			}
 		}
 	}

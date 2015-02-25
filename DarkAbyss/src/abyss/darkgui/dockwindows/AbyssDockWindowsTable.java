@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -110,6 +111,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	public JComboBox<String> simMode;
 	public JLabel timeStepLabelValue;
 	
+	private boolean nameLocChangeMode = false;
+	
 	private WorkspaceSheet currentSheet;
 	private PetriNetElement element;
 	private ElementLocation elementLocation;
@@ -130,6 +133,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	private static final int TIMETRANSITION = 7;
 	private static final int INVARIANTSSIMULATOR = 8;
 	private static final int CLUSTERS = 9;
+	
+	public SpinnerModel nameLocationXSpinnerModel = null;
+	public SpinnerModel nameLocationYSpinnerModel = null;
 	
 	//**************************************************************************************
 	//*********************************                  ***********************************
@@ -604,7 +610,8 @@ public class AbyssDockWindowsTable extends JPanel {
 		zoomLabel.setBounds(columnB_posX+100, columnB_Y, colBCompLength, 20);
 		if(zoom != 100)
 			zoomLabel.setForeground(Color.red);
-		components.add(zoomLabel);	
+		components.add(zoomLabel);
+		
 		//LOKALIZACJA:
 		JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
 		locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
@@ -659,6 +666,83 @@ public class AbyssDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(portalBox);
+		
+		// WSPÓŁRZĘDNE NAPISU:
+		
+		columnA_Y += 20;
+		columnB_Y += 20;
+		
+		JLabel locNameLabel = new JLabel("Name offset:", JLabel.LEFT);
+		locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength+10, 20);
+		components.add(locNameLabel);
+
+		int locationIndex = place.getElementLocations().indexOf(location);
+		int xNameOffset = place.getNamesLocations().get(locationIndex).getPosition().x;
+		int yNameOffset = place.getNamesLocations().get(locationIndex).getPosition().y;
+		
+		nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
+		nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
+		
+		JLabel locNameLabelX = new JLabel("xOff: ", JLabel.LEFT);
+		locNameLabelX.setBounds(columnA_posX+90, columnA_Y, 40, 20);
+		components.add(locNameLabelX);
+		
+		JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
+		nameLocationXSpinner.setBounds(columnA_posX+125, columnA_Y, 60, 20);
+		nameLocationXSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int x = (int) spinner.getValue();
+				//setX(x);
+			}
+		});
+		components.add(nameLocationXSpinner);
+		
+		JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
+		locNameLabelY.setBounds(columnA_posX+195, columnB_Y, 40, 20);
+		components.add(locNameLabelY);
+		
+		JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
+		nameLocationYSpinner.setBounds(columnA_posX+230, columnA_Y, 60, 20);
+		nameLocationYSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int y = (int) spinner.getValue();
+				//setY(y);
+			}
+		});
+		components.add(nameLocationYSpinner);
+		
+		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/simulation/co"));
+		nameLocChangeButton.setName("LocNameChanger");
+		nameLocChangeButton.setText("Name location change: OFF");
+		nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+		nameLocChangeButton.setBounds(columnA_posX, columnA_Y += 20, 200, 30);
+		nameLocChangeButton.setToolTipText("   ");
+		nameLocChangeButton.addActionListener(new ActionListener() {
+			// anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+			private Place place_tmp;
+			private ElementLocation el_tmp;
+			public void actionPerformed(ActionEvent actionEvent) {
+				JButton button_tmp = (JButton) actionEvent.getSource();
+				
+				if(nameLocChangeMode == false) {
+					button_tmp.setText("Name location change: ON");
+					nameLocChangeMode = true;
+					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(place_tmp, el_tmp, true);
+				} else {
+					button_tmp.setText("Name location change: OFF");
+					nameLocChangeMode = false;
+					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
+				}
+			} 
+			private ActionListener yesWeCan(Place inPlace, ElementLocation inLoc){
+				place_tmp = inPlace;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(place, location) ); 
+		components.add(nameLocChangeButton);
 		
 		panel.setLayout(null);
 		for (JComponent component : components) {

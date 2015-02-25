@@ -513,21 +513,17 @@ public class IOprotocols {
 					// tworzenie dla kazdego noda element location
 					for (int j = 0; j < nodeArray.size(); j++) {
 						if (nodeArray.get(j).getType() == PetriNetElementType.PLACE) {
-							elemArray.add(new ElementLocation(SID, new Point(
-									80, 30 + j * 60), nodeArray.get(j)));
+							elemArray.add(new ElementLocation(SID, new Point(80, 30 + j * 60), nodeArray.get(j)));
 							ArrayList<ElementLocation> tempElementLocationArry = new ArrayList<ElementLocation>();
 							tempElementLocationArry.add(elemArray.get(j));
-							nodeArray.get(j).setNodeLocations(
-									tempElementLocationArry);
+							nodeArray.get(j).setElementLocations(tempElementLocationArry);
 						}
 
 						if (nodeArray.get(j).getType() == PetriNetElementType.TRANSITION) {
-							elemArray.add(new ElementLocation(SID, new Point(
-									280, 30 + (j - placeCount) * 60), nodeArray.get(j)));
+							elemArray.add(new ElementLocation(SID, new Point(280, 30 + (j - placeCount) * 60), nodeArray.get(j)));
 							ArrayList<ElementLocation> tempElementLocationArry = new ArrayList<ElementLocation>();
 							tempElementLocationArry.add(elemArray.get(j));
-							nodeArray.get(j).setNodeLocations(
-									tempElementLocationArry);
+							nodeArray.get(j).setElementLocations(tempElementLocationArry);
 						}
 					}
 

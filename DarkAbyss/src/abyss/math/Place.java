@@ -69,7 +69,7 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Konstruktor obiektu miejsca sieci.
+	 * Konstruktor obiektu miejsca sieci - wczytywanie sieci zewnętrznej, np. ze Snoopy
 	 * @param nodeId int - identyfikator wierzchołka
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji 
 	 * @param name String - nazwa miejsca
@@ -85,7 +85,7 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Konstruktor obiektu miejsca sieci.
+	 * Konstruktor obiektu miejsca sieci - tworzenie portali.
 	 * @param nodeId int - identyfikator wierzchołka
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji 
 	 */

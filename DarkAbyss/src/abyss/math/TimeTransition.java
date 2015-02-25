@@ -29,14 +29,6 @@ public class TimeTransition extends Transition {
 	 * UWAGA!!! NIE WOLNO ZMIENIAĆ NAZW, DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
 	 * (przestanie być możliwe wczytywanie zapisĆnych proejktów .abyss)
 	 */
-	
-	/**
-	 * Metoda zwraca typ tranzycji, w tym wypadku - czasowa
-	 * @return PetriNetElementType - element sieci
-	 */
-	public PetriNetElementType getType() {
-		return PetriNetElementType.TIMETRANSITION;
-	}
 
 	/**
 	 * Konstruktor obiektu tranzycji czasowej.
@@ -103,6 +95,14 @@ public class TimeTransition extends Transition {
 		this.setName("Transition" + Integer.toString(IdGenerator.getNextTransitionId()));
 		this.setType(PetriNetElementType.TIMETRANSITION);
 	}
+	
+	/**
+	 * Metoda zwraca typ tranzycji, w tym wypadku - czasowa
+	 * @return PetriNetElementType - element sieci
+	 */
+	public PetriNetElementType getType() {
+		return PetriNetElementType.TIMETRANSITION;
+	}
 
 	/**
 	 * Metoda rysująca tranzycję na danym arkuszu.
@@ -121,7 +121,7 @@ public class TimeTransition extends Transition {
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza 
 	 */
-	public void drawNameTT(Graphics2D g, int sheetId) {
+	public void unused_drawNameTT(Graphics2D g, int sheetId) {
 		g.setColor(Color.black);
 		g.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		int width = g.getFontMetrics().stringWidth(getName());

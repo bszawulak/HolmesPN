@@ -39,6 +39,9 @@ public class NetHandler_Classic extends NetHandler {
 	private ArrayList<Integer> graphicPointsIdList = new ArrayList<Integer>();
 	public ArrayList<Point> graphicPointsList = new ArrayList<Point>();
 	private ArrayList<ElementLocation> elementLocationList = new ArrayList<ElementLocation>();
+	
+	public ArrayList<Point> graphicNamesPointsList = new ArrayList<Point>();
+	//private ArrayList<ElementLocation> namesLocationList = new ArrayList<ElementLocation>();
 
 	// Edge
 	public int arcMultiplicity;
@@ -150,11 +153,13 @@ public class NetHandler_Classic extends NetHandler {
 				xoff_name = (int)Float.parseFloat(xoff);
 				yoff_name = (int)Float.parseFloat(yoff);
 				//comment, bo i tak jest przesunięcie w lewo domyslnie w Snoopy
-				//xoff_name -= 25; //25 default, czyli 0 w oX w Abyss
+				//xoff_name -= 22; //25 default, 0 w oX w Abyss to ustawienie na 3 - centrum, czyli 22 (25-3)
 				yoff_name -= 20; //20 default, czyli 0 w oY w Abyss
+				if(yoff_name < -8)
+					yoff_name = -55; //nad node, uwzględnia różnicę
 			} catch (Exception e) {} 
 			
-			
+			graphicNamesPointsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
 		}
 
 		// Wczytywanie informacji odnosnie ID i pozycji noda
@@ -168,10 +173,8 @@ public class NetHandler_Classic extends NetHandler {
 				double o2 = Double.parseDouble(attributes.getValue(1));
 				int o3 = Integer.parseInt(attributes.getValue(2));
 				
-				//
 				//o1 *= 1.2;
 				//o2 *= 1.2;
-				
 				int p1 = (int) o1;
 				int p2 = (int) o2;
 				graphicPointsList.add(new Point(p1, p2));
@@ -316,12 +319,10 @@ public class NetHandler_Classic extends NetHandler {
 				}
 			}
 			if (xFound == true && yFound == false) {
-				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX)
-					.getPosition().x + 90, graphPanel.getSize().height));
+				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX).getPosition().x + 90, graphPanel.getSize().height));
 			}
 			if (yFound == true && xFound == false) {
-				graphPanel.setSize(new Dimension(graphPanel.getSize().width,
-					elementLocationList.get(tmpY).getPosition().y + 90));
+				graphPanel.setSize(new Dimension(graphPanel.getSize().width,elementLocationList.get(tmpY).getPosition().y + 90));
 			}
 			if (xFound == true && yFound == true) {
 				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX)
@@ -336,9 +337,16 @@ public class NetHandler_Classic extends NetHandler {
 
 		if (qName.equalsIgnoreCase("node")) {
 			tmpElementLocationList = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> namesElLocations = new ArrayList<ElementLocation>();
+			
+			if(graphicPointsList.size() != graphicNamesPointsList.size()) {
+				int wtf = 1;
+			}
+			
 			for (int k = 0; k < graphicPointsList.size(); k++) {
-				tmpElementLocationList.add(new ElementLocation(nodeSID, graphicPointsList.get(k),
-						null));
+				tmpElementLocationList.add(new ElementLocation(nodeSID, graphicPointsList.get(k), null));
+				
+				namesElLocations.add(new ElementLocation(nodeSID, graphicNamesPointsList.get(k), null));
 			}
 			for (int u = 0; u < tmpElementLocationList.size(); u++) {
 				elementLocationList.add(tmpElementLocationList.get(u));
@@ -346,11 +354,15 @@ public class NetHandler_Classic extends NetHandler {
 			if (nodeType == "Place") {
 				//tmpNode = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
 				Place tmpPlace = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
+				tmpPlace.setNamesLocations(namesElLocations);
+				
 				//tmpPlace.setNameOffX(xoff_name);
 				//tmpPlace.setNameOffY(yoff_name);
 				nodesList.add(tmpPlace);
 			} else {	
 				Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
+				tmpTran.setNamesLocations(namesElLocations);
+				
 				//tmpTran.setNameOffX(xoff_name);
 				//tmpTran.setNameOffY(yoff_name);
 				tmpTransitionList.add(tmpTran);
@@ -364,6 +376,7 @@ public class NetHandler_Classic extends NetHandler {
 			nodeComment = "";
 			node = false;
 			graphicPointsList.clear();
+			graphicNamesPointsList.clear();
 		}
 
 		// tworzenie łuku

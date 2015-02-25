@@ -412,6 +412,15 @@ public class SelectionManager {
 			int oldTokensTaken = ((Place)getSelectedElementLocations().get(0).getParentNode()).getTokensTaken();
 			Place portal = new Place(IdGenerator.getNextId(),
 					(ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
+			
+			//TODO: poprawić, bo teraz tylko zeruje przesunięcie napisów
+			ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
+			int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
+			for(int i=0; i<getSelectedElementLocations().size(); i++) {	
+				namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
+			}
+			portal.setNamesLocations(namesLocations);
+			
 			portal.setName(oldName);
 			portal.setComment(oldComment);
 			portal.setTokensNumber(oldTokensNumber);
@@ -428,6 +437,15 @@ public class SelectionManager {
 				double oldLFT = ((TimeTransition)getSelectedElementLocations().get(0).getParentNode()).getMaxFireTime();
 				TimeTransition portal = new TimeTransition(IdGenerator.getNextId(),
 						(ArrayList<ElementLocation>)getSelectedElementLocations().clone());
+				
+				//TODO: poprawić, bo teraz tylko zeruje przesunięcie napisów
+				ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
+				int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
+				for(int i=0; i<getSelectedElementLocations().size(); i++) {	
+					namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				}
+				portal.setNamesLocations(namesLocations);
+				
 				portal.setName(oldName);
 				portal.setComment(oldComment);
 				portal.setMinFireTime(oldEFT);
@@ -439,6 +457,15 @@ public class SelectionManager {
 				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
 				Transition portal = new Transition(IdGenerator.getNextId(),
 						((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
+				
+				//TODO: poprawić, bo teraz tylko zeruje przesunięcie napisów
+				ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
+				int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
+				for(int i=0; i<getSelectedElementLocations().size(); i++) {	
+					namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				}
+				portal.setNamesLocations(namesLocations);
+				
 				portal.setName(oldName);
 				portal.setComment(oldComment);
 				//getGraphPanelNodes().add(portal);
@@ -504,6 +531,14 @@ public class SelectionManager {
 			
 			Place portal = new Place(IdGenerator.getNextId(),
 					(ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
+			
+			//klonowanie lokalizacji nazw + dodatkowy wpis:
+			ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
+			int sid = namesLocations.get(0).getSheetID();
+			namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
+			portal.setNamesLocations(namesLocations);
+			//portal.getNamesLocations().add(e)
+			
 			portal.setName(oldName);
 			portal.setComment(oldComment);
 			portal.setTokensNumber(oldTokensNumber);
@@ -513,8 +548,7 @@ public class SelectionManager {
 		} else {
 			@SuppressWarnings("unused")
 			String test = getSelectedElementLocations().get(0).getParentNode().getType().toString();
-			if (getSelectedElementLocations().get(0).getParentNode().getType() 
-					== PetriNetElementType.TIMETRANSITION) {
+			if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TIMETRANSITION) {
 				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
 				double oldEFT = ((TimeTransition)getSelectedElementLocations().get(0).getParentNode()).getMinFireTime();
@@ -533,6 +567,13 @@ public class SelectionManager {
 				
 				TimeTransition portal = new TimeTransition(IdGenerator.getNextId(),
 						(ArrayList<ElementLocation>)getSelectedElementLocations().clone());
+				
+				//klonowanie lokalizacji nazw + dodatkowy wpis:
+				ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
+				int sid = namesLocations.get(0).getSheetID();
+				namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				portal.setNamesLocations(namesLocations);
+				
 				portal.setName(oldName);
 				portal.setComment(oldComment);
 				portal.setMinFireTime(oldEFT);
@@ -558,6 +599,13 @@ public class SelectionManager {
 				
 				Transition portal = new Transition(IdGenerator.getNextId(),
 						((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
+				
+				//klonowanie lokalizacji nazw + dodatkowy wpis:
+				ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
+				int sid = namesLocations.get(0).getSheetID();
+				namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				portal.setNamesLocations(namesLocations);
+				
 				portal.setName(oldName);
 				portal.setComment(oldComment);
 				//getGraphPanelNodes().add(portal);
