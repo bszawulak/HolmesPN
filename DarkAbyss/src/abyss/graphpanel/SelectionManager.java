@@ -13,7 +13,6 @@ import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionAc
 import abyss.math.Arc;
 import abyss.math.ElementLocation;
 import abyss.math.Node;
-//import abyss.math.PetriNetElement;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
 import abyss.math.TimeTransition;
@@ -495,13 +494,20 @@ public class SelectionManager {
 		//dodawanie innych miejsc dla samego portalu do selectedElementLocations
 		ElementLocation nodeSelectedEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
 		Node nodeSelected = nodeSelectedEL.getParentNode(); //wybrany wierzchołek
+		//ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>(nodeSelected.getNamesLocations());
+		ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
 		int selectedNodeIndex = getGraphPanelNodes().indexOf(nodeSelected);
 		
 		ArrayList<ElementLocation> otherNodes = nodeSelected.getElementLocations(); //lista jego (innych?) lokacji
+		
+		int indClicked = nodeSelected.getElementLocations().indexOf(nodeSelectedEL);
+		namesLocations.add(nodeSelected.getNamesLocations().get(indClicked));
 		for (ElementLocation el : otherNodes) { 
 			if(el.equals(nodeSelectedEL) == false) {
 				selectedElementLocations.add(el);
-			}
+				indClicked = nodeSelected.getElementLocations().indexOf(el); //odtwarzanie nowej kolejności dla namesLocations
+				namesLocations.add(nodeSelected.getNamesLocations().get(indClicked));
+			} 
 		}
 		
 		for (ElementLocation el : this.getSelectedElementLocations()) { 
@@ -521,19 +527,16 @@ public class SelectionManager {
 			ElementLocation clonedNode = getSelectedElementLocations().get(0);
 			Point newPosition = new Point();
 			newPosition.setLocation(clonedNode.getPosition().getX()+30, clonedNode.getPosition().getY()+30);
-			ElementLocation clone = new ElementLocation(clonedNode.getSheetID(), 
-					newPosition, clonedNode.getParentNode());
+			ElementLocation clone = new ElementLocation(clonedNode.getSheetID(), newPosition, clonedNode.getParentNode());
 			//clone.setInArcs((ArrayList<Arc>)clonedNode.getInArcs().clone());
 			//clone.setOutArcs((ArrayList<Arc>)clonedNode.getOutArcs().clone());
 			clone.setSelected(clonedNode.isSelected());
 			clone.setPortalSelected(clonedNode.isPortalSelected());
 			selectedElementLocations.add(clone);
 			
-			Place portal = new Place(IdGenerator.getNextId(),
-					(ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
-			
+			Place portal = new Place(IdGenerator.getNextId(), (ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
+
 			//klonowanie lokalizacji nazw + dodatkowy wpis:
-			ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
 			int sid = namesLocations.get(0).getSheetID();
 			namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
 			portal.setNamesLocations(namesLocations);
@@ -569,7 +572,7 @@ public class SelectionManager {
 						(ArrayList<ElementLocation>)getSelectedElementLocations().clone());
 				
 				//klonowanie lokalizacji nazw + dodatkowy wpis:
-				ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
+				//ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
 				int sid = namesLocations.get(0).getSheetID();
 				namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
 				portal.setNamesLocations(namesLocations);
@@ -581,8 +584,7 @@ public class SelectionManager {
 				
 				//getGraphPanelNodes().add(portal);
 				getGraphPanelNodes().add(selectedNodeIndex, portal);
-			} else if (getSelectedElementLocations().get(0).getParentNode().getType() 
-					== PetriNetElementType.TRANSITION){
+			} else if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TRANSITION){
 				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
 				ElementLocation clonedNode = getSelectedElementLocations().get(0);
@@ -601,7 +603,7 @@ public class SelectionManager {
 						((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
 				
 				//klonowanie lokalizacji nazw + dodatkowy wpis:
-				ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
+				//ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
 				int sid = namesLocations.get(0).getSheetID();
 				namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
 				portal.setNamesLocations(namesLocations);

@@ -8,6 +8,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import abyss.darkgui.GUIManager;
+
 /**
  * Klasa implementująca wierzchołek sieci Petriego. Dziedziczą po niej klasy
  * reprezentujące miejsca (Place) oraz tranzycje (Transition). Zapewnia
@@ -32,8 +34,6 @@ public abstract class Node extends PetriNetElement {
 	private int radius = 20;
 	final static float dash1[] = { 2.0f };
 	final static BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
-	private int nameOffsetX = 0;
-	private int nameOffsetY = 0;
 
 	/**
 	 * Konstruktor obiektu klasy Node. Ustawia też początkowe wartości przesunięcia nazwy wierzchołka.
@@ -327,7 +327,6 @@ public abstract class Node extends PetriNetElement {
 	 * 		false jeżeli wierzchołek ma jeszcze inne lokalizacje
 	 */
 	public boolean removeElementLocation(ElementLocation el) {
-		
 		int nodeElLocIndex = this.getNodeLocations().indexOf(el);
 		this.getNamesLocations().remove(nodeElLocIndex);
 		
@@ -428,20 +427,29 @@ public abstract class Node extends PetriNetElement {
 		this.namesLocations = namesLocations;
 	}
 	
-	
-	public int getaNameOffX() {
-		return nameOffsetX;
+	/**
+	 * Metoda zwraca pozycję X nazwy wierzchołka o pozycji danej jako argument.
+	 * @param index int - indeks w wektorze ElementLocations
+	 * @return int - pozycja X napisu
+	 */
+	public int getXNameLoc(int index) {
+		if(index >= namesLocations.size()) {
+			GUIManager.getDefaultGUIManager().log("Internal error: invalid index for name location (X position). Node: "+getName(), "error", true);
+			return 0;
+		}
+		return namesLocations.get(index).getPosition().x;
 	}
 	
-	public void setaNameOffX(int value) {
-		nameOffsetX = value;
-	}
-	
-	public int getaNameOffY() {
-		return nameOffsetY;
-	}
-	
-	public void setaNameOffY(int value) {
-		nameOffsetY = value;
+	/**
+	 * Metoda zwraca pozycję Y nazwy wierzchołka o pozycji danej jako argument.
+	 * @param index int - indeks w wektorze ElementLocations
+	 * @return int - pozycja Y napisu
+	 */
+	public int getYNameLoc(int index) {
+		if(index >= namesLocations.size()) {
+			GUIManager.getDefaultGUIManager().log("Internal error: invalid index for name location (Y position). Node: "+getName(), "error", true);
+			return 0;
+		}
+		return namesLocations.get(index).getPosition().y;
 	}
 }

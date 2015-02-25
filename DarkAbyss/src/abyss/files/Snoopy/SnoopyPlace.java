@@ -94,6 +94,11 @@ public class SnoopyPlace {
 		xOff = 5; //TODO: + abyssPlace.getNameOffX();
 		yOff = 20; //TODO: + abyssPlace.getNameOffY();
 		for(int i=0; i<locations; i++) { 
+			//TODO: decyzja, czy środkować czy brać offset z Abyss
+			xOff = abyssPlace.getXNameLoc(i);
+			yOff = abyssPlace.getYNameLoc(i);
+			yOff = SnoopyToolClass.getNormalizedY(yOff);
+			
 			if(i==0) {//tylko główne miejsce
 				write(bw,"            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
 						+ " x=\""+(grParentsLocation.get(i).x+xOff)+".00\""

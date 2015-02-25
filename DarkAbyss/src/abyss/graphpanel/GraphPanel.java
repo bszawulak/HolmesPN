@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import abyss.darkgui.GUIManager;
-import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.graphpanel.popupmenu.ArcPopupMenu;
 import abyss.graphpanel.popupmenu.PlacePopupMenu;
 import abyss.graphpanel.popupmenu.SheetPopupMenu;
@@ -34,7 +33,6 @@ import abyss.workspace.WorkspaceSheet;
 public class GraphPanel extends JComponent {
 	//BACKUP: -5746225670483573975L; nie ruszać poniższej zmiennej
 	private static final long serialVersionUID = -5746225670483573975L;
-	
 	private static final int meshSize = 20;
 	private PetriNet petriNet;
 	private ArrayList<Node> nodes = new ArrayList<Node>();
@@ -1019,8 +1017,10 @@ public class GraphPanel extends JComponent {
 					e.getComponent().repaint(); // bo samo się nie wywoła (P.S. NIE. Nie kombinuj. NIE!)
 					
 					if(gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
+						gui.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
 						gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
 						gui.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
+						gui.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
 					}
 				} else {
 					scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 30);
@@ -1032,8 +1032,10 @@ public class GraphPanel extends JComponent {
 					e.getComponent().repaint(); // bo samo się nie wywoła (P.S. NIE. Nie kombinuj. NIE!)
 					
 					if(gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
+						gui.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
 						gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
 						gui.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
+						gui.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
 					}
 				} else {
 					scrollSheetVertical(e.getWheelRotation() * e.getScrollAmount() * 30);

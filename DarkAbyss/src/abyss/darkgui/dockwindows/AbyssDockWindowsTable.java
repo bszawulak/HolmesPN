@@ -136,6 +136,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	
 	public SpinnerModel nameLocationXSpinnerModel = null;
 	public SpinnerModel nameLocationYSpinnerModel = null;
+	public boolean doNotUpdate = false;
 	
 	//**************************************************************************************
 	//*********************************                  ***********************************
@@ -668,7 +669,6 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(portalBox);
 		
 		// WSPÓŁRZĘDNE NAPISU:
-		
 		columnA_Y += 20;
 		columnB_Y += 20;
 		
@@ -690,12 +690,25 @@ public class AbyssDockWindowsTable extends JPanel {
 		JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
 		nameLocationXSpinner.setBounds(columnA_posX+125, columnA_Y, 60, 20);
 		nameLocationXSpinner.addChangeListener(new ChangeListener() {
+			private Place place_tmp;
+			private ElementLocation el_tmp;
 			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate==true)
+					return;
 				JSpinner spinner = (JSpinner) e.getSource();
 				int x = (int) spinner.getValue();
-				//setX(x);
+				Point res = setNameOffsetX(x, place_tmp, el_tmp);
+				doNotUpdate = true;
+				nameLocationXSpinnerModel.setValue(res.x);
+				doNotUpdate = false;
 			}
-		});
+			private ChangeListener yesWeCan(Place inPlace, ElementLocation inLoc){
+				place_tmp = inPlace;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(place, location) ); 
+		
 		components.add(nameLocationXSpinner);
 		
 		JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
@@ -705,12 +718,24 @@ public class AbyssDockWindowsTable extends JPanel {
 		JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
 		nameLocationYSpinner.setBounds(columnA_posX+230, columnA_Y, 60, 20);
 		nameLocationYSpinner.addChangeListener(new ChangeListener() {
+			private Place place_tmp;
+			private ElementLocation el_tmp;
 			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate==true)
+					return;
 				JSpinner spinner = (JSpinner) e.getSource();
 				int y = (int) spinner.getValue();
-				//setY(y);
+				Point res = setNameOffsetY(y, place_tmp, el_tmp);
+				doNotUpdate = true;
+				nameLocationYSpinnerModel.setValue(res.y);
+				doNotUpdate = false;	
 			}
-		});
+			private ChangeListener yesWeCan(Place inPlace, ElementLocation inLoc){
+				place_tmp = inPlace;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(place, location) ); 
 		components.add(nameLocationYSpinner);
 		
 		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/simulation/co"));
@@ -758,7 +783,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	//*********************************    TRANZYCJA     ***********************************
 	//*********************************                  ***********************************
 	//**************************************************************************************
-	
+
 	/**
 	 * Metoda odpowiedzialna za wyświetlenie właściwości klikniętej tranzycji.
 	 * @param transition Transition - obiekt tranzycji sieci
@@ -918,19 +943,113 @@ public class AbyssDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(portalBox);
-		// put all contents on the pane
+
+		// WSPÓŁRZĘDNE NAPISU:
+		columnA_Y += 20;
+		columnB_Y += 20;
+		
+		JLabel locNameLabel = new JLabel("Name offset:", JLabel.LEFT);
+		locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength+10, 20);
+		components.add(locNameLabel);
+
+		int locationIndex = transition.getElementLocations().indexOf(location);
+		int xNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().x;
+		int yNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().y;
+		
+		nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
+		nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
+		
+		JLabel locNameLabelX = new JLabel("xOff: ", JLabel.LEFT);
+		locNameLabelX.setBounds(columnA_posX+90, columnA_Y, 40, 20);
+		components.add(locNameLabelX);
+		
+		JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
+		nameLocationXSpinner.setBounds(columnA_posX+125, columnA_Y, 60, 20);
+		nameLocationXSpinner.addChangeListener(new ChangeListener() {
+			private Transition trans_tmp;
+			private ElementLocation el_tmp;
+			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate==true)
+					return;
+				JSpinner spinner = (JSpinner) e.getSource();
+				int x = (int) spinner.getValue();
+				Point res = setNameOffsetX(x, trans_tmp, el_tmp);
+				doNotUpdate = true;
+				nameLocationXSpinnerModel.setValue(res.x);
+				doNotUpdate = false;
+			}
+			private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc){
+				trans_tmp = transition;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(transition, location) ); 
+		
+		components.add(nameLocationXSpinner);
+		
+		JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
+		locNameLabelY.setBounds(columnA_posX+195, columnB_Y, 40, 20);
+		components.add(locNameLabelY);
+		
+		JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
+		nameLocationYSpinner.setBounds(columnA_posX+230, columnA_Y, 60, 20);
+		nameLocationYSpinner.addChangeListener(new ChangeListener() {
+			private Transition trans_tmp;
+			private ElementLocation el_tmp;
+			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate==true)
+					return;
+				JSpinner spinner = (JSpinner) e.getSource();
+				int y = (int) spinner.getValue();
+				Point res = setNameOffsetY(y, trans_tmp, el_tmp);
+				doNotUpdate = true;
+				nameLocationYSpinnerModel.setValue(res.y);
+				doNotUpdate = false;	
+			}
+			private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc){
+				trans_tmp = transition;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(transition, location) ); 
+		components.add(nameLocationYSpinner);
+		
+		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/simulation/co"));
+		nameLocChangeButton.setName("LocNameChanger");
+		nameLocChangeButton.setText("Name location change: OFF");
+		nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+		nameLocChangeButton.setBounds(columnA_posX, columnA_Y += 20, 200, 30);
+		nameLocChangeButton.setToolTipText("   ");
+		nameLocChangeButton.addActionListener(new ActionListener() {
+			// anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+			private Transition trans_tmp;
+			private ElementLocation el_tmp;
+			public void actionPerformed(ActionEvent actionEvent) {
+				JButton button_tmp = (JButton) actionEvent.getSource();
+				
+				if(nameLocChangeMode == false) {
+					button_tmp.setText("Name location change: ON");
+					nameLocChangeMode = true;
+					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(trans_tmp, el_tmp, true);
+				} else {
+					button_tmp.setText("Name location change: OFF");
+					nameLocChangeMode = false;
+					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
+				}
+			} 
+			private ActionListener yesWeCan(Transition transition, ElementLocation inLoc){
+				trans_tmp = transition;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(transition, location) ); 
+		components.add(nameLocChangeButton);
 		 
-		//putContents(panel);
 		panel.setLayout(null);
 		for (JComponent component : components) {
 			panel.add(component);
 		}
 
-		//contentPanel.setLayout(new SpringLayout());
-		for (int i = 0; i < components.size(); i++) {
-			//panel.add(components.get(i));
-		}
-		//SpringUtilities.makeCompactGrid(contentPanel, headers.size(), 2, 5, 2, 2, 5);
 		panel.setOpaque(true);
 		panel.repaint();
 		add(panel);
@@ -1137,10 +1256,112 @@ public class AbyssDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(portalBox);
+		
+		// WSPÓŁRZĘDNE NAPISU:
+		columnA_Y += 20;
+		columnB_Y += 20;
+		
+		JLabel locNameLabel = new JLabel("Name offset:", JLabel.LEFT);
+		locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength+10, 20);
+		components.add(locNameLabel);
+
+		int locationIndex = transition.getElementLocations().indexOf(location);
+		int xNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().x;
+		int yNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().y;
+		
+		nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
+		nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
+		
+		JLabel locNameLabelX = new JLabel("xOff: ", JLabel.LEFT);
+		locNameLabelX.setBounds(columnA_posX+90, columnA_Y, 40, 20);
+		components.add(locNameLabelX);
+		
+		JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
+		nameLocationXSpinner.setBounds(columnA_posX+125, columnA_Y, 60, 20);
+		nameLocationXSpinner.addChangeListener(new ChangeListener() {
+			private TimeTransition trans_tmp;
+			private ElementLocation el_tmp;
+			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate==true)
+					return;
+				JSpinner spinner = (JSpinner) e.getSource();
+				int x = (int) spinner.getValue();
+				Point res = setNameOffsetX(x, trans_tmp, el_tmp);
+				doNotUpdate = true;
+				nameLocationXSpinnerModel.setValue(res.x);
+				doNotUpdate = false;
+			}
+			private ChangeListener yesWeCan(TimeTransition transition, ElementLocation inLoc){
+				trans_tmp = transition;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(transition, location) ); 
+		
+		components.add(nameLocationXSpinner);
+		
+		JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
+		locNameLabelY.setBounds(columnA_posX+195, columnB_Y, 40, 20);
+		components.add(locNameLabelY);
+		
+		JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
+		nameLocationYSpinner.setBounds(columnA_posX+230, columnA_Y, 60, 20);
+		nameLocationYSpinner.addChangeListener(new ChangeListener() {
+			private TimeTransition trans_tmp;
+			private ElementLocation el_tmp;
+			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate==true)
+					return;
+				JSpinner spinner = (JSpinner) e.getSource();
+				int y = (int) spinner.getValue();
+				Point res = setNameOffsetY(y, trans_tmp, el_tmp);
+				doNotUpdate = true;
+				nameLocationYSpinnerModel.setValue(res.y);
+				doNotUpdate = false;	
+			}
+			private ChangeListener yesWeCan(TimeTransition transition, ElementLocation inLoc){
+				trans_tmp = transition;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(transition, location) ); 
+		components.add(nameLocationYSpinner);
+		
+		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/simulation/co"));
+		nameLocChangeButton.setName("LocNameChanger");
+		nameLocChangeButton.setText("Name location change: OFF");
+		nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+		nameLocChangeButton.setBounds(columnA_posX, columnA_Y += 20, 200, 30);
+		nameLocChangeButton.setToolTipText("   ");
+		nameLocChangeButton.addActionListener(new ActionListener() {
+			// anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+			private TimeTransition trans_tmp;
+			private ElementLocation el_tmp;
+			public void actionPerformed(ActionEvent actionEvent) {
+				JButton button_tmp = (JButton) actionEvent.getSource();
+				
+				if(nameLocChangeMode == false) {
+					button_tmp.setText("Name location change: ON");
+					nameLocChangeMode = true;
+					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(trans_tmp, el_tmp, true);
+				} else {
+					button_tmp.setText("Name location change: OFF");
+					nameLocChangeMode = false;
+					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
+				}
+			} 
+			private ActionListener yesWeCan(TimeTransition transition, ElementLocation inLoc){
+				trans_tmp = transition;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(transition, location) ); 
+		components.add(nameLocChangeButton);
 
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
 			panel.add(components.get(i));
+		
 		panel.setOpaque(true);
 		panel.repaint();
 		add(panel);
@@ -2125,6 +2346,41 @@ public class AbyssDockWindowsTable extends JPanel {
 			elementLocation.setPosition(new Point(elementLocation.getPosition().x, y));
 			repaintGraphPanel();
 		}
+	}
+	
+	protected Point setNameOffsetY(int y, Node n, ElementLocation el) {
+		int nameLocIndex = n.getElementLocations().indexOf(el);
+		int oldX = n.getNamesLocations().get(nameLocIndex).getPosition().x;
+		int oldY = y;
+		int newx = oldX+el.getPosition().x;
+		int newy = oldY+el.getPosition().y;
+		
+		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(el.getSheetID());
+		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		
+		if(graphPanel.isLegalLocation(new Point(newx, newy)) == true) {
+			n.getNamesLocations().get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+			graphPanel.repaint();
+		}
+		return n.getNamesLocations().get(nameLocIndex).getPosition();
+	}
+
+	protected Point setNameOffsetX(int x, Node n, ElementLocation el) {
+		int nameLocIndex = n.getElementLocations().indexOf(el);
+		int oldX = x;
+		int oldY = n.getNamesLocations().get(nameLocIndex).getPosition().y;
+		int newx = oldX+el.getPosition().x;
+		int newy = oldY+el.getPosition().y;
+		
+		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(el.getSheetID());
+		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		
+		if(graphPanel.isLegalLocation(new Point(newx, newy)) == true) {
+			n.getNamesLocations().get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+			graphPanel.repaint();
+		}
+		
+		return n.getNamesLocations().get(nameLocIndex).getPosition();
 	}
 	
 	/**

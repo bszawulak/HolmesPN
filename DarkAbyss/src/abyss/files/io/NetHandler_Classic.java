@@ -244,7 +244,6 @@ public class NetHandler_Classic extends NetHandler {
 		}
 
 		// Zapis atrybutow noda i arca
-
 		if (qName.equalsIgnoreCase("attribute")) {
 			if (node == true) {
 				if (variableName == true) {
@@ -340,31 +339,24 @@ public class NetHandler_Classic extends NetHandler {
 			ArrayList<ElementLocation> namesElLocations = new ArrayList<ElementLocation>();
 			
 			if(graphicPointsList.size() != graphicNamesPointsList.size()) {
-				int wtf = 1;
+				GUIManager.getDefaultGUIManager().log("Critical error reading Snoopy file. Wrong number of names locations and nodes locations.", "error", true);
 			}
 			
 			for (int k = 0; k < graphicPointsList.size(); k++) {
 				tmpElementLocationList.add(new ElementLocation(nodeSID, graphicPointsList.get(k), null));
-				
 				namesElLocations.add(new ElementLocation(nodeSID, graphicNamesPointsList.get(k), null));
 			}
 			for (int u = 0; u < tmpElementLocationList.size(); u++) {
 				elementLocationList.add(tmpElementLocationList.get(u));
 			}
+			
 			if (nodeType == "Place") {
-				//tmpNode = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
 				Place tmpPlace = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
 				tmpPlace.setNamesLocations(namesElLocations);
-				
-				//tmpPlace.setNameOffX(xoff_name);
-				//tmpPlace.setNameOffY(yoff_name);
 				nodesList.add(tmpPlace);
 			} else {	
 				Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
 				tmpTran.setNamesLocations(namesElLocations);
-				
-				//tmpTran.setNameOffX(xoff_name);
-				//tmpTran.setNameOffY(yoff_name);
 				tmpTransitionList.add(tmpTran);
 			}
 
