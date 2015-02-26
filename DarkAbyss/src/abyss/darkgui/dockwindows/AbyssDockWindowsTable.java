@@ -2034,7 +2034,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		clustersHeaders[0] = "---";
 		for (int i = 0; i < clusterColorsData.dataMatrix.size(); i++) {
 			clustersHeaders[i + 1] = "Cluster " + Integer.toString(i+1) 
-					+ " (size: "+clusterColorsData.clSize.get(i)+")";
+					+ " (size: "+clusterColorsData.clSize.get(i)+" inv.)";
 		}
 		
 		chooseCluster = new JComboBox<String>(clustersHeaders);
@@ -2128,8 +2128,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		if(isThereCluser)
 		{
 			clTextArea.setText("");
-			clTextArea.append("Cluster: "+clusterNo + " ("+clusterColorsData.clSize.get(clusterNo)+1
-					+") alg.: "+clusterColorsData.algorithm
+			clTextArea.append("Cluster: "+clusterNo + " ("+clusterColorsData.clSize.get(clusterNo)+" inv.) alg.: "+clusterColorsData.algorithm
 					+" metric: "+clusterColorsData.metric+"\n\n");
 			ArrayList<ClusterTransition> transColors = clusterColorsData.dataMatrix.get(clusterNo);
 			ArrayList<Transition> holyVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();

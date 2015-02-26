@@ -280,7 +280,7 @@ public class AbyssNodeInfo extends JFrame {
 		
 		JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
 		chartMainPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
-		chartMainPanel.setBounds(0, infoPanel.getHeight(), mainPanel.getWidth()-10, 235);
+		chartMainPanel.setBounds(0, infoPanel.getHeight(), mainPanel.getWidth()-10, 245);
 		chartMainPanel.add(createChartPanel(place), BorderLayout.CENTER);
 		mainPanel.add(chartMainPanel);
 		
@@ -294,13 +294,13 @@ public class AbyssNodeInfo extends JFrame {
 
 	/**
 	 * Metoda tworzy dolny panel / pasek przycisków okna miejsc.
-	 * @param infoPanel
-	 * @param chartMainPanel
+	 * @param infoPanel JPanel - panel informacji o tranzycji
+	 * @param chartMainPanel JPanel - panel wykresu
 	 * @return JPanel - panel dolnych przycisków
 	 */
 	private JPanel panelButtonsPlace(JPanel infoPanel, JPanel chartMainPanel) {
 		JPanel chartButtonPanel = new JPanel(null);
-		chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainPanel.getWidth()-10, 55);
+		chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainPanel.getWidth()-10, 50);
 		
 		int chartX = 5;
 		int chartY_1st = 0;
@@ -516,18 +516,34 @@ public class AbyssNodeInfo extends JFrame {
         
         JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
         chartMainPanel.setBorder(BorderFactory.createTitledBorder("Transition chart"));
-        chartMainPanel.setBounds(0, infoPanel.getHeight(), mainPanel.getWidth()-10, 250);
+        chartMainPanel.setBounds(0, infoPanel.getHeight(), mainPanel.getWidth()-10, 245);
         chartMainPanel.add(createChartPanel(transition), BorderLayout.CENTER);
 		mainPanel.add(chartMainPanel);
 		
+		JPanel chartButtonPanel = panelButtonsTransition(infoPanel, chartMainPanel);
+		mainPanel.add(chartButtonPanel);
+		
+		add(mainPanel);
+		
+		fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
+	}
+
+	/**
+	 * Metoda tworzy dolny panel / pasek przycisków okna tranzycji.
+	 * @param infoPanel JPanel - panel informacji o tranzycji
+	 * @param chartMainPanel JPanel - panel wykresu
+	 * @return JPanel - panel dolnych przycisków okna tramzycji
+	 */
+	private JPanel panelButtonsTransition(JPanel infoPanel, JPanel chartMainPanel) {
 		JPanel chartButtonPanel = new JPanel(null);
 		chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainPanel.getWidth()-10, 50);
 		
 		int chartX = 5;
-		int chartY = 5;
+		int chartY_1st = 0;
+		int chartY_2nd = 15;
 		
 		JButton acqDataButton = new JButton("SimStart");
-		acqDataButton.setBounds(chartX, chartY, 110, 25);
+		acqDataButton.setBounds(chartX, chartY_2nd, 110, 25);
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
 		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
@@ -538,9 +554,13 @@ public class AbyssNodeInfo extends JFrame {
 		});
 		chartButtonPanel.add(acqDataButton);
 		
+		JLabel labelSteps = new JLabel("Sim. Steps:");
+		labelSteps.setBounds(chartX+120, chartY_1st, 70, 15);
+		chartButtonPanel.add(labelSteps);
+		
 		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 50000, 100);
 		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
-		simStepsSpinner.setBounds(chartX +120, chartY, 80, 25);
+		simStepsSpinner.setBounds(chartX+120, chartY_2nd, 80, 25);
 		simStepsSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -567,13 +587,13 @@ public class AbyssNodeInfo extends JFrame {
 		});
 		chartButtonPanel.add(simStepsSpinner);
 		
-		JLabel label1 = new JLabel("Mode:");
-		label1.setBounds(chartX+210, chartY+2, 50, 20);
-		chartButtonPanel.add(label1);
+		JLabel labelMode = new JLabel("Simulation mode:");
+		labelMode.setBounds(chartX+210, chartY_1st, 110, 15);
+		chartButtonPanel.add(labelMode);
 		
 		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
 		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
-		simMode.setBounds(chartX+250, chartY, 120, 25);
+		simMode.setBounds(chartX+210, chartY_2nd, 120, 25);
 		simMode.setSelectedIndex(1);
 		simMode.setMaximumRowCount(6);
 		simMode.addActionListener(new ActionListener() {
@@ -588,13 +608,13 @@ public class AbyssNodeInfo extends JFrame {
 		chartButtonPanel.add(simMode);
 		
 		JLabel labelInterval = new JLabel("Interval:");
-		labelInterval.setBounds(chartX+380, chartY+2, 80, 20);
+		labelInterval.setBounds(chartX+340, chartY_1st, 80, 15);
 		chartButtonPanel.add(labelInterval);
 		
 		int maxVal = simSteps / 10;
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(10, 1, maxVal, 1);
 		transIntervalSpinner = new JSpinner(intervSpinnerModel);
-		transIntervalSpinner.setBounds(chartX +430, chartY, 60, 25);
+		transIntervalSpinner.setBounds(chartX +340, chartY_2nd, 60, 25);
 		transIntervalSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -603,12 +623,7 @@ public class AbyssNodeInfo extends JFrame {
 			}
 		});
 		chartButtonPanel.add(transIntervalSpinner);
-		
-		mainPanel.add(chartButtonPanel);
-		
-		add(mainPanel);
-		
-		fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
+		return chartButtonPanel;
 	}
 
 	/**

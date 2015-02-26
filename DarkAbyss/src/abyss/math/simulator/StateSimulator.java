@@ -120,8 +120,7 @@ public class StateSimulator {
 	}
 	
 	/**
-	 * Metoda sprawdzająca, czy krok jest możliwy - czy istnieje choć jedna aktywna
-	 * tranzycja.
+	 * Metoda sprawdzająca, czy krok jest możliwy - czy istnieje choć jedna aktywna tranzycja.
 	 * @return boolean - true jeśli jest choć jedna aktywna tranzycja; false w przeciwnym wypadku
 	 */
 	private boolean isPossibleStep() {
@@ -153,7 +152,7 @@ public class StateSimulator {
 				}
 				
 				safetyCounter++;
-				if(safetyCounter == 999) { // safety measure
+				if(safetyCounter == 9) { // safety measure
 					if(isPossibleStep() == false) {
 						GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
 								+ "has been activated. Please advise authors.", "error", true);
@@ -171,9 +170,8 @@ public class StateSimulator {
 	 * Metoda pomocnicza dla generateValidLaunchingTransitions(), odpowiedzialna za sprawdzenie
 	 * które tranzycje nadają się do uruchomienia. Aktualnie działa dla modelu klasycznego PN
 	 * oraz czasowego.
-	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia.
 	 */
-	private ArrayList<Transition> generateLaunchingTransitions() {
+	private void generateLaunchingTransitions() {
 		Random randomLaunch = new Random();
 		//ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
 
@@ -190,12 +188,8 @@ public class StateSimulator {
 					}
 			}
 		} else if (simulationType == NetType.HYBRID) { 
-			/**
-			 * 22.02.2015 : PN + TPN
-			 */
-			//podzbiór tranzycji TT które MUSZĄ być już uruchomione
-
-			Collections.shuffle(indexTTList); //wymieszanie T tranzycji
+			/** 22.02.2015 : PN + TPN */
+			Collections.shuffle(indexTTList); //wymieszanie T-tranzycji
 			boolean ttPriority = false;
 			
 			for (int i = 0; i < ttransitions.size(); i++) {
@@ -203,7 +197,6 @@ public class StateSimulator {
 				if(ttransition.isActive()) { //jeśli aktywna
 					if(ttransition.isForcedToFired() == true) {
 						//musi zostać uruchomiona
-						
 						if(ttPriority) {
 							launchableTransitions.add(ttransition);
 							ttransition.bookRequiredTokens();
@@ -245,11 +238,10 @@ public class StateSimulator {
 					ttransition.setInternalFireTime(-1);
 					ttransition.setInternalTimer(-1);
 				}
-			}
-			//teraz wybieranie tranzycji do odpalenia:
+			} 
 			
 			Collections.shuffle(indexList);
-			
+			//teraz wybieranie tranzycji do odpalenia:
 			for (int i = 0; i < transitions.size(); i++) {
 				Transition transition = transitions.get(indexList.get(i));
 				if(launchableTransitions.contains(transition)) {
@@ -318,7 +310,7 @@ public class StateSimulator {
 		for (Transition transition : launchableTransitions) {
 			transition.returnBookedTokens();
 		}
-		return launchableTransitions;
+		//return launchableTransitions;
 	}
 	
 	/**
@@ -409,18 +401,16 @@ public class StateSimulator {
 			GUIManager.getDefaultGUIManager().log("Simulation simple mode cannot start.", "warning", true);
 			return 0;
 		}
+		prepareNetM0(); //backup, m0, etc.
 		
-		prepareNetM0();
-		
-		ArrayList<Transition> launchingTransitions = null;
 		int internalSteps = 0;
 		for(int i=0; i<steps; i++) {
 			internalSteps++;
 			if (isPossibleStep()){ 
-				launchingTransitions = generateValidLaunchingTransitions();
-				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
+				generateValidLaunchingTransitions();
+				launchSubtractPhase(launchableTransitions);
 				
-				for(Transition trans : launchingTransitions) {
+				for(Transition trans : launchableTransitions) {
 					int index = transitions.lastIndexOf(trans);
 					int fired = transitionsTotalFiring.get(index);
 					transitionsTotalFiring.set(index, fired+1); //wektor sumy odpaleń
@@ -428,7 +418,7 @@ public class StateSimulator {
 			} else {
 				break;
 			}
-			launchAddPhase(launchingTransitions, false);
+			launchAddPhase(launchableTransitions, false);
 			
 			if(placesToo == true)
 				for(int p=0; p<places.size(); p++) {
@@ -461,15 +451,15 @@ public class StateSimulator {
 	 * @param plc Place - wybrane miejsce do testowania
 	 * @return ArrayList[Integer] - wektor danych o tokenach w miejscu
 	 */
-	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place plc) {
+	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place place) {
 		if(ready == false) {
-			GUIManager.getDefaultGUIManager().log("Simulation for place "+plc.getName()+" cannot start.", "warning", true);
+			GUIManager.getDefaultGUIManager().log("Simulation for place "+place.getName()+" cannot start.", "warning", true);
 			return null;
 		}
 		prepareNetM0();
 		
 		//ArrayList<Transition> launchingTransitions = null;
-		ArrayList<Integer> singlePlaceData = new ArrayList<Integer>();
+		ArrayList<Integer> placeDataVector = new ArrayList<Integer>();
 		
 		@SuppressWarnings("unused")
 		int internalSteps = 0;
@@ -483,11 +473,11 @@ public class StateSimulator {
 				break;
 			}
 			launchAddPhase(launchableTransitions, false);
-			singlePlaceData.add(plc.getTokensNumber());
+			placeDataVector.add(place.getTokensNumber());
 		}
 		ready = false;
 		restoreInternalMarkingZero();
-		return singlePlaceData;
+		return placeDataVector;
 	}
 	
 	/**
@@ -506,29 +496,29 @@ public class StateSimulator {
 		
 		int sum = 0;
 		int internalSteps = 0;
-		ArrayList<Transition> launchingTransitions = null;
-		ArrayList<Integer> singleTransitionData = new ArrayList<Integer>();
+		ArrayList<Integer> transDataVector = new ArrayList<Integer>();
 		for(int i=0; i<steps; i++) {
 			internalSteps++;
 			if (isPossibleStep()){ 
-				launchingTransitions = generateValidLaunchingTransitions();
-				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
+				generateValidLaunchingTransitions();
+				launchSubtractPhase(launchableTransitions); //zabierz tokeny poprzez aktywne tranzycje
 			} else {
 				break;
 			}
-			if(launchingTransitions.contains(trans)) {
-				singleTransitionData.add(1);
+			
+			if(launchableTransitions.contains(trans)) {
+				transDataVector.add(1);
 				sum++;
 			} else {
-				singleTransitionData.add(0);
+				transDataVector.add(0);
 			}
-			launchAddPhase(launchingTransitions, false);
+			launchAddPhase(launchableTransitions, false);
 		}
 		ready = false;
-		singleTransitionData.add(sum);
-		singleTransitionData.add(internalSteps);
+		transDataVector.add(sum);
+		transDataVector.add(internalSteps);
 		restoreInternalMarkingZero();
-		return singleTransitionData;
+		return transDataVector;
 	}
 	
 	/**
