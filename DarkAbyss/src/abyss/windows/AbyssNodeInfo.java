@@ -66,6 +66,7 @@ public class AbyssNodeInfo extends JFrame {
 	private XYSeriesCollection dynamicsSeriesDataSet = null;
 	private JFreeChart dynamicsChart;
 	private int simSteps = 1000;
+	private int repeated = 10;
 	private JSpinner transIntervalSpinner;
 	private boolean maximumMode = false;
 	private int transInterval = 10;
@@ -127,7 +128,7 @@ public class AbyssNodeInfo extends JFrame {
 		setSize(new Dimension(600, 450));
 
 		mainPanel = new JPanel(null);
-		mainPanel.setBounds(0, 0, 600, 450);
+		mainPanel.setBounds(0, 0, 600, 480);
 		
 		int mPanelX = 0;
 		int mPanelY = 0;
@@ -277,21 +278,36 @@ public class AbyssNodeInfo extends JFrame {
         
 		mainPanel.add(infoPanel);
 		
-		
 		JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
 		chartMainPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
-		chartMainPanel.setBounds(0, infoPanel.getHeight(), mainPanel.getWidth()-10, 250);
+		chartMainPanel.setBounds(0, infoPanel.getHeight(), mainPanel.getWidth()-10, 235);
 		chartMainPanel.add(createChartPanel(place), BorderLayout.CENTER);
 		mainPanel.add(chartMainPanel);
 		
+		
+		JPanel chartButtonPanel = panelButtonsPlace(infoPanel, chartMainPanel); //dolny panel przycisków
+		mainPanel.add(chartButtonPanel);
+		
+		fillPlaceDynamicData(chartMainPanel);
+		add(mainPanel);
+	}
+
+	/**
+	 * Metoda tworzy dolny panel / pasek przycisków okna miejsc.
+	 * @param infoPanel
+	 * @param chartMainPanel
+	 * @return JPanel - panel dolnych przycisków
+	 */
+	private JPanel panelButtonsPlace(JPanel infoPanel, JPanel chartMainPanel) {
 		JPanel chartButtonPanel = new JPanel(null);
-		chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainPanel.getWidth()-10, 50);
+		chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainPanel.getWidth()-10, 55);
 		
 		int chartX = 5;
-		int chartY = 5;
+		int chartY_1st = 0;
+		int chartY_2nd = 15;
 		
 		JButton acqDataButton = new JButton("SimStart");
-		acqDataButton.setBounds(chartX, chartY, 110, 25);
+		acqDataButton.setBounds(chartX, chartY_2nd, 110, 25);
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
 		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
@@ -302,9 +318,13 @@ public class AbyssNodeInfo extends JFrame {
 		});
 		chartButtonPanel.add(acqDataButton);
 		
+		JLabel labelSteps = new JLabel("Sim. Steps:");
+		labelSteps.setBounds(chartX+120, chartY_1st, 70, 15);
+		chartButtonPanel.add(labelSteps);
+		
 		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 50000, 100);
 		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
-		simStepsSpinner.setBounds(chartX +120, chartY, 80, 25);
+		simStepsSpinner.setBounds(chartX +120, chartY_2nd, 80, 25);
 		simStepsSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -314,13 +334,30 @@ public class AbyssNodeInfo extends JFrame {
 		});
 		chartButtonPanel.add(simStepsSpinner);
 		
+		JLabel labelRep = new JLabel("Repeated:");
+		labelRep.setBounds(chartX+210, chartY_1st, 70, 15);
+		chartButtonPanel.add(labelRep);
+		
+		SpinnerModel simStepsRepeatedSpinnerModel = new SpinnerNumberModel(repeated, 1, 50, 1);
+		JSpinner simStepsRepeatedSpinner = new JSpinner(simStepsRepeatedSpinnerModel);
+		simStepsRepeatedSpinner.setBounds(chartX +210, chartY_2nd, 60, 25);
+		simStepsRepeatedSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int val = (int) spinner.getValue();
+				repeated = val;
+			}
+		});
+		chartButtonPanel.add(simStepsRepeatedSpinner);
+		
+		
 		JLabel label1 = new JLabel("Mode:");
-		label1.setBounds(chartX+210, chartY+2, 50, 20);
+		label1.setBounds(chartX+280, chartY_1st, 50, 15);
 		chartButtonPanel.add(label1);
 		
 		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
 		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
-		simMode.setBounds(chartX+250, chartY, 120, 25);
+		simMode.setBounds(chartX+280, chartY_2nd, 120, 25);
 		simMode.setSelectedIndex(1);
 		simMode.setMaximumRowCount(6);
 		simMode.addActionListener(new ActionListener() {
@@ -333,13 +370,10 @@ public class AbyssNodeInfo extends JFrame {
 			}
 		});
 		chartButtonPanel.add(simMode);
-		
-		mainPanel.add(chartButtonPanel);
-		
-		fillPlaceDynamicData(chartMainPanel);
-
-		add(mainPanel);
+		return chartButtonPanel;
 	}
+	
+	
 	
 	/**
 	 * Metoda odpowiedzialna za elementy interfejsu właściwości dla tranzycji sieci.
@@ -634,21 +668,71 @@ public class AbyssNodeInfo extends JFrame {
 	
 	/**
 	 * Metoda aktywuje symulator dla jednej tranzycji w ustalonym wcześniej trybie i dla wcześniej
-	 * ustalonej liczby kroków. Wyniki zapisuje na wykresie.
+	 * ustalonej liczby kroków. Testy są powtarzane ustaloną liczbę razy. Wyniki zapisuje na wykresie.
 	 */
 	private void acquireNewPlaceData() {
 		StateSimulator ss = new StateSimulator();
 		ss.initiateSim(NetType.BASIC, false);
+		
 		ArrayList<Integer> dataVector = ss.simulateNetSinglePlace(simSteps, place);
+		ArrayList<ArrayList<Integer>> dataMatrix = new ArrayList<ArrayList<Integer>>();
+		dataMatrix.add(dataVector);
+		
+		int problemCounter = 0;
+		int rep_succeed = 1;
+		for(int i=1; i<repeated; i++) {
+			ss.clearData();
+			ArrayList<Integer> newData = ss.simulateNetSinglePlace(simSteps, place);
+			if(newData.size() < dataVector.size()) { //powtórz test, zły rozmiar danych
+				problemCounter++;
+				i--;
+				if(problemCounter == 10) {
+					GUIManager.getDefaultGUIManager().log("Unable to gather "+repeated+" data vectors (places) of same size. "
+							+ "State simulator cannot proceed "+simSteps+ " steps. First pass had: "+ dataVector.size() +" steps.", "error", true);
+					break;
+				} else {
+					continue; 
+				}
+			} else { //ok, taki sam lub dłuższy
+				rep_succeed++;
+				dataMatrix.add(newData);
+				
+			}
+		}
 		
 		dynamicsSeriesDataSet.removeAllSeries();
-		
 		XYSeries series = new XYSeries("Number of tokens");
-		for(int step=0; step<dataVector.size(); step++) {
-			int value = dataVector.get(step);
-			series.add(step, value);
+		
+		if(repeated != 1) {
+			ArrayList<Double> dataDVector = new ArrayList<Double>();
+			for(int i=0; i<repeated; i++) {
+				if(i==0) {
+					for(int j=0; j<dataMatrix.get(0).size(); j++) {
+						dataDVector.add((double)dataMatrix.get(0).get(j));
+					}
+				} else {
+					for(int j=0; j<dataMatrix.get(i).size(); j++) {
+						double oldval = dataDVector.get(j);
+						oldval += dataMatrix.get(i).get(j);
+						dataDVector.set(j, oldval);
+					}
+				}
+			}
+
+			for(int step=0; step<dataDVector.size(); step++) {
+				double value = dataDVector.get(step);
+				value /= rep_succeed;
+				series.add(step, value);
+			}
+		} else {
+			for(int step=0; step<dataVector.size(); step++) {
+				int value = dataVector.get(step);
+				series.add(step, value);
+			}
 		}
 		dynamicsSeriesDataSet.addSeries(series);
+		
+		dataMatrix.clear();
 	}
 	
 	/**

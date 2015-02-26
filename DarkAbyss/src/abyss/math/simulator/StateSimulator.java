@@ -35,9 +35,13 @@ public class StateSimulator {
 	private ArrayList<ArrayList<Integer>> transitionsData = null;
 	private ArrayList<Integer> transitionsTotalFiring = null; //wektor sumy odpaleń tranzycji
 	private ArrayList<Double> transitionsAvgData = null;
+	private ArrayList<Integer> indexList = null;
+	private ArrayList<Integer> indexTTList = null;
 	
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
 	private boolean mainSimMaximumMode = false;
+	
+	ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
 	
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
@@ -71,17 +75,48 @@ public class StateSimulator {
 		transitionsData = new ArrayList<ArrayList<Integer>>();
 		transitionsTotalFiring = new ArrayList<Integer>();
 		transitionsAvgData = new ArrayList<Double>();
+		indexList = new ArrayList<Integer>();
+		indexTTList = new ArrayList<Integer>();
+		
 		for(int t=0; t<transitions.size(); t++) {
 			transitionsTotalFiring.add(0);
+			indexList.add(t);
 		}
 		for(int p=0; p<places.size(); p++) {
 			placesAvgData.add(0.0);
+		}
+		for(int i=0; i<ttransitions.size(); i++) {
+			indexTTList.add(i);
 		}
 		
 		simulationType = netT;
 		maximumMode = mode;
 		ready = true;
 		return ready;
+	}
+	
+	/**
+	 * Szybsza wersja initiateSim(...), metoda zeruje wektory danych.
+	 */
+	public void clearData() {
+		placesData = new ArrayList<ArrayList<Integer>>();
+		placesAvgData = new ArrayList<Double>();
+		transitionsData = new ArrayList<ArrayList<Integer>>();
+		transitionsTotalFiring = new ArrayList<Integer>();
+		transitionsAvgData = new ArrayList<Double>();
+		indexList = new ArrayList<Integer>();
+		indexTTList = new ArrayList<Integer>();
+		for(int t=0; t<transitions.size(); t++) {
+			transitionsTotalFiring.add(0);
+			indexList.add(t);
+		}
+		for(int p=0; p<places.size(); p++) {
+			placesAvgData.add(0.0);
+		}
+		for(int i=0; i<ttransitions.size(); i++) {
+			indexTTList.add(i);
+		}
+		ready = true;
 	}
 	
 	/**
@@ -103,15 +138,18 @@ public class StateSimulator {
 	 */
 	private ArrayList<Transition> generateValidLaunchingTransitions() {
 		boolean generated = false;
-		ArrayList<Transition> launchingTransitions = new ArrayList<Transition>();
+		//ArrayList<Transition> launchingTransitions = new ArrayList<Transition>();
 		int safetyCounter = 0;
 		while (!generated) {
-			launchingTransitions = generateLaunchingTransitions();
-			if (launchingTransitions.size() > 0) {
+			//launchingTransitions = generateLaunchingTransitions();
+			generateLaunchingTransitions();
+			//if (launchingTransitions.size() > 0) { //launchableTransitions
+			if (launchableTransitions.size() > 0) {
 				generated = true; 
 			} else {
 				if (simulationType == NetType.TIME || simulationType == NetType.HYBRID) {
-					return launchingTransitions; //koniec symulacji
+					//return launchingTransitions; //koniec symulacji
+					return launchableTransitions; 
 				}
 				
 				safetyCounter++;
@@ -119,12 +157,14 @@ public class StateSimulator {
 					if(isPossibleStep() == false) {
 						GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
 								+ "has been activated. Please advise authors.", "error", true);
-						return launchingTransitions;
+						//return launchingTransitions;
+						return launchableTransitions; 
 					}
 				}
 			}
 		}
-		return launchingTransitions;
+		//return launchingTransitions;
+		return launchableTransitions; 
 	}
 
 	/**
@@ -135,12 +175,10 @@ public class StateSimulator {
 	 */
 	private ArrayList<Transition> generateLaunchingTransitions() {
 		Random randomLaunch = new Random();
-		ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
+		//ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
 
+		launchableTransitions.clear();
 		if (simulationType == NetType.BASIC) {
-			ArrayList<Integer> indexList = new ArrayList<Integer>();
-			for(int i=0; i<transitions.size(); i++)
-				indexList.add(i);
 			Collections.shuffle(indexList);
 
 			for (int i = 0; i < transitions.size(); i++) {
@@ -157,11 +195,7 @@ public class StateSimulator {
 			 */
 			//podzbiór tranzycji TT które MUSZĄ być już uruchomione
 
-			ArrayList<Integer> indexTTList = new ArrayList<Integer>();
-			for(int i=0; i<ttransitions.size(); i++)
-				indexTTList.add(i);
 			Collections.shuffle(indexTTList); //wymieszanie T tranzycji
-			
 			boolean ttPriority = false;
 			
 			for (int i = 0; i < ttransitions.size(); i++) {
@@ -214,9 +248,6 @@ public class StateSimulator {
 			}
 			//teraz wybieranie tranzycji do odpalenia:
 			
-			ArrayList<Integer> indexList = new ArrayList<Integer>();
-			for(int i=0; i<transitions.size(); i++)
-				indexList.add(i);
 			Collections.shuffle(indexList);
 			
 			for (int i = 0; i < transitions.size(); i++) {
@@ -244,9 +275,6 @@ public class StateSimulator {
 				}
 			} 
 		} else if (simulationType == NetType.TIME) { 
-			ArrayList<Integer> indexTTList = new ArrayList<Integer>();
-			for(int i=0; i<ttransitions.size(); i++)
-				indexTTList.add(i);
 			Collections.shuffle(indexTTList); //wymieszanie T tranzycji
 			
 			for (int i = 0; i < ttransitions.size(); i++) {
@@ -286,10 +314,7 @@ public class StateSimulator {
 				}
 			}
 		}
-		
-		
 
-		
 		for (Transition transition : launchableTransitions) {
 			transition.returnBookedTokens();
 		}
@@ -443,7 +468,7 @@ public class StateSimulator {
 		}
 		prepareNetM0();
 		
-		ArrayList<Transition> launchingTransitions = null;
+		//ArrayList<Transition> launchingTransitions = null;
 		ArrayList<Integer> singlePlaceData = new ArrayList<Integer>();
 		
 		@SuppressWarnings("unused")
@@ -452,12 +477,12 @@ public class StateSimulator {
 		for(int i=0; i<steps; i++) {
 			internalSteps++;
 			if (isPossibleStep()){ 
-				launchingTransitions = generateValidLaunchingTransitions();
-				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
+				generateValidLaunchingTransitions(); //wypełnia launchableTransitions
+				launchSubtractPhase(launchableTransitions);
 			} else {
 				break;
 			}
-			launchAddPhase(launchingTransitions, false);
+			launchAddPhase(launchableTransitions, false);
 			singlePlaceData.add(plc.getTokensNumber());
 		}
 		ready = false;
@@ -601,6 +626,7 @@ public class StateSimulator {
 	 * Metoda ta zapisuje liczbę tokenów każdego miejsca tworząc kopię zapasową stanu m0.
 	 */
 	public void saveInternalMarkingZero() {
+		internalBackupMarkingZero.clear();
 		for(int i=0; i<places.size(); i++) {
 			internalBackupMarkingZero.add(places.get(i).getTokensNumber());
 		}

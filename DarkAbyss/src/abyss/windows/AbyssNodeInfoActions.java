@@ -74,7 +74,4 @@ public class AbyssNodeInfoActions {
 			//P.S. NIE, NIE MOŻNA ZASTĄPIĆ PRZEZ this.parentFrame! Nie ten obiekt!
 		}
 	}
-
-	
-
 }
