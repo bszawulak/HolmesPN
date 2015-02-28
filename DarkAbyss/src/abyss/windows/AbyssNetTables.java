@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -168,7 +169,6 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	private JPanel createButtonsPanel() {
 		buttonsPanel = new JPanel(null);
 		buttonsPanel.setBounds(670, 0, 130, 560);
-		//buttonsPanel.setBorder(BorderFactory.createTitledBorder("Buttons:"));
 		
 		//********************************************** NODES ****************************************************
 		
@@ -186,6 +186,8 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		transitionsButton.setBounds(xPos, yPos, bWidth, bHeight);
 		transitionsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				setSize(new Dimension(800,600));
+				resizeComponents();
 				createPlacesTable();
 			}
 		});
@@ -198,7 +200,9 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		placesButton.setBounds(xPos, yPos, bWidth, bHeight);
 		placesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				createTransitionTable();
+				setSize(new Dimension(800,600));
+				resizeComponents();
+				createTransitionTable();		
 			}
 		});
 		placesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -239,6 +243,13 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		invariantsButton.setBounds(xPos, yPos, bWidth, bHeight);
 		invariantsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+				double width = screenSize.getWidth();
+				double height = screenSize.getHeight();
+				setSize(new Dimension((int)width-50, (int)height-100));
+				setLocation(20, 20);
+				resizeComponents();
+				
 				createInvariantsTable();
 			}
 		});
@@ -522,9 +533,15 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	public void componentMoved(ComponentEvent e) {} //unused
 	public void componentShown(ComponentEvent e) {} //unused
 	
+	/**
+	 * Metoda odpowiedzialna za ustalenie nowych rozmiarów paneli okna.
+	 */
 	private void resizeComponents() {
 		tablesSubPanel.setLocation(0, 0);
 		tablesSubPanel.setSize(mainPanel.getWidth()-130, mainPanel.getHeight());
+		tablesSubPanel.revalidate();
+		tablesSubPanel.repaint();
+		
 		buttonsPanel.setLocation(tablesSubPanel.getWidth(), 0);
 		buttonsPanel.setSize(130, mainPanel.getHeight());
 	}

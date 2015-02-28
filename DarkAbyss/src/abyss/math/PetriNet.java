@@ -561,6 +561,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
 		GUIManager.getDefaultGUIManager().io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
 		repaintAllGraphPanels();
+		getSimulator().getSimLogger().logSimReset();
 	}
 	
 	/**

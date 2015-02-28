@@ -7,6 +7,7 @@ import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
+import abyss.windows.AbyssNotepad;
 
 import com.javadocking.DockingManager;
 import com.javadocking.dock.BorderDock;
@@ -343,6 +344,16 @@ public class Toolbar extends BorderDock {
 			}
 		};
 		analysisDockables.add(createButtonDockable("NetTables", netTablesButton));
+		
+		ToolbarButtonAction netSimLogButton = new ToolbarButtonAction(this, "Net simulation log",
+				Tools.getResIcon32("/icons/toolbar/simLog.png")) {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().showSimLogWindow();
+			}
+		};
+		netSimLogButton.setEnabled(false);
+		analysisDockables.add(createButtonDockable("SimLog", netSimLogButton));
 
 		ToolbarButtonAction consoleButton = new ToolbarButtonAction(this, "Show console",
 				Tools.getResIcon48("/icons/toolbar/terminal2.png")) {
@@ -352,7 +363,7 @@ public class Toolbar extends BorderDock {
 
 			}
 		};
-		analysisDockables.add(createButtonDockable("Test button", consoleButton));
+		analysisDockables.add(createButtonDockable("ShowConsole", consoleButton));
 		
 		ToolbarButtonAction cleanButton = new ToolbarButtonAction(this, "Clear all colors",
 				Tools.getResIcon48("/icons/toolbar/cleanGraphColors.png")) {
@@ -408,6 +419,8 @@ public class Toolbar extends BorderDock {
 		};
 		testButton.setEnabled(false);
 		analysisDockables.add(createButtonDockable("Testing", testButton));
+		
+		
 		
 		return analysisDockables;
 	}

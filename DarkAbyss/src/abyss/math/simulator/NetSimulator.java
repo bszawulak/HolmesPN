@@ -36,11 +36,14 @@ public class NetSimulator {
 	private boolean maximumMode = false;
 	public static int DEFAULT_COUNTER = 25;			// wartość ta ma wpływ na szybkość poruszania się tokenów
 	//public JFrame timeFrame = new JFrame("Zegar");
-	public double timeNetStepCounter = 0;
-	public double timeNetPartStepCounter = 0;
+	//public double timeNetStepCounter = 0;
+	//public double timeNetPartStepCounter = 0;
 	
 	private boolean writeHistory = true;
 	private long timeCounter = -1;
+	private NetSimulatorLogger nsl = new NetSimulatorLogger();
+	
+	private boolean detailedLogging = true;
 
 	/**
 	 * Enumeracja przechowująca tryb pracy symulatora. Dostępne wartości:<br><br>
@@ -59,8 +62,8 @@ public class NetSimulator {
 
 	/**
 	 * BASIC<br>
-	 * COLORED<br>
 	 * TIME<br>
+	 * HYBRID<br>
 	 */
 	public enum NetType {
 		BASIC, TIME, HYBRID
@@ -85,8 +88,8 @@ public class NetSimulator {
 		simulationActive = false;
 		maximumMode = false;
 		DEFAULT_COUNTER = 50;
-		timeNetStepCounter = 0;
-		timeNetPartStepCounter = 0;
+		//timeNetStepCounter = 0;
+		//timeNetPartStepCounter = 0;
 		writeHistory = true;
 		timeCounter = -1;
 		
@@ -106,9 +109,12 @@ public class NetSimulator {
 		//timeFrame.pack();
 		//timeFrame.setVisible(true);
 		
+		nsl.logStart(simulationType, writeHistory, simulatorMode, maximumMode);
+		
 		//zapisz stan tokenów w miejscach przed rozpoczęciem:
 		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == false) {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
+			nsl.logBackupCreated();
 		}
 		
 		previousSimStatus = getSimulatorStatus();
@@ -195,6 +201,8 @@ public class NetSimulator {
 			simulationType = NetType.HYBRID;
 		}		
 	}
+	
+	
 	
 	/**
 	 * Metoda podobna do setSimulatorNetType(...), sprawdza, czy aktualna sieć jest poprawna
@@ -610,17 +618,18 @@ public class NetSimulator {
 		for (Transition transition : transitions) {
 			transition.setLaunching(false);  // skoro tutaj dotarliśmy, to znaczy że tranzycja już
 			//swoje zrobiła i jej status aktywnej się kończy w tym kroku
-			if (!backtracking)
+			if (backtracking == false)
 				arcs = transition.getOutArcs();
 			else
 				arcs = transition.getInArcs();
 			//dodaj odpowiednią liczbę tokenów do miejsc
 			for (Arc arc : arcs) {
 				Place place;
-				if (!backtracking)
+				if (backtracking == false)
 					place = (Place) arc.getEndNode();
 				else
 					place = (Place) arc.getStartNode();
+				
 				place.modifyTokensNumber(arc.getWeight());
 			}
 			
@@ -703,6 +712,8 @@ public class NetSimulator {
 		timer.stop();
 		previousSimStatus = simulatorStatus;
 		setSimulatorStatus(SimulatorMode.STOPPED);
+		
+		nsl.logSimStopped(timeCounter);
 	}
 
 	/**
@@ -715,6 +726,8 @@ public class NetSimulator {
 		timer.stop();
 		previousSimStatus = simulatorStatus;
 		setSimulatorStatus(SimulatorMode.PAUSED);
+		
+		nsl.logSimPause(true);
 	}
 
 	/**
@@ -728,6 +741,8 @@ public class NetSimulator {
 			timer.start();
 			setSimulatorStatus(previousSimStatus);
 		}
+		
+		nsl.logSimPause(false);
 	}
 
 	/**
@@ -863,6 +878,14 @@ public class NetSimulator {
 	 */
 	public long getSimulatorTimeStep() {
 		return timeCounter;
+	}
+	
+	/**
+	 * Metoda zwraca obiekt zapisujący informacje o symulacji.
+	 * @return NetSimulatorLogger - obiekt komunikatora
+	 */
+	public NetSimulatorLogger getSimLogger() {
+		return nsl;
 	}
 
 	private ArrayList<Transition> cloneTransitionArray(ArrayList<Transition> transitions) {
@@ -1018,6 +1041,8 @@ public class NetSimulator {
 				finishedAddPhase = false;
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
+				nsl.logSimStepFinished(launchingTransitions, detailedLogging);
+				
 				// koniec fazy przepływu tokenów, tutaj uaktualniane są wartości tokenów dla miejsc wyjściowych
 				launchAddPhase(launchingTransitions, false);
 				finishedAddPhase = true;
@@ -1098,6 +1123,8 @@ public class NetSimulator {
 				finishedAddPhase = false;
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
+				//nsl.logSimStepFinished(launchingTransitions, detailedLogging);
+				
 				// ending add phase
 				launchSingleAddPhase(launchingTransitions, false, null);
 				remainingTransitionsAmount = launchingTransitions.size();

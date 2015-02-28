@@ -20,6 +20,7 @@ import abyss.windows.AbyssConsole;
 import abyss.windows.AbyssClusters;
 import abyss.windows.AbyssNetProperties;
 import abyss.windows.AbyssNetTables;
+import abyss.windows.AbyssNotepad;
 import abyss.windows.AbyssProgramProperties;
 import abyss.windows.AbyssSearch;
 import abyss.windows.AbyssStateSimulator;
@@ -139,10 +140,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssConsole windowConsole; //konsola logów
 	private AbyssNetProperties windowNetProperties; //okno właściwości sieci
 	private AbyssAbout windowAbout; //okno About...
-	private AbyssSearch windowSearch;
-	private AbyssProgramProperties windowProperties;
-	private AbyssStateSimulator windowStateSim;
-	private AbyssNetTables windowNetTables;
+	private AbyssSearch windowSearch; //okno wyszukiwania elementów sieci
+	private AbyssProgramProperties windowProperties; //okno właściwości sieci
+	private AbyssStateSimulator windowStateSim; //okno symulatora stanów
+	private AbyssNetTables windowNetTables; //okno tabel sieci
+	private AbyssNotepad windowSimulationLog; //okno logów symulatora
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	
@@ -157,9 +159,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public GUIManager(JFrame frejm) {
 		super(new BorderLayout());
 		guiManager = this;
-		io = new GUIOperations(this); //rise my minion!
+		io = new GUIOperations(this); //obiekt klasy operacji głównych
 		tex = new TexExporter();
-		reset = new GUIReset();
+		reset = new GUIReset(); //obiekt odpowiadający za resetowanie danych / kasowanie / czyszczenie
 		
 		setFrame(frejm);
 		try {	
@@ -176,6 +178,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createNetPropertiesWindow(); // okno właściwości sieci
 		createSearchWindow(); // okno wyszukiwania elementów sieci
 		createNetTablesWindow(); // okno tabel sieci
+		createSimLogWindow(); // okno logów symulatora
 
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnętrzne zmienne programu
 		
@@ -267,10 +270,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		add(totalSplitDock, BorderLayout.CENTER);
 
 		// save docking paths
-		DockingManager.getDockingPathModel().add(
-				DefaultDockingPath.createDockingPath(getToolBox().getDockable()));
-		DockingManager.getDockingPathModel().add(
-				DefaultDockingPath.createDockingPath(getPropertiesBox().getDockable()));
+		DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getToolBox().getDockable()));
+		DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getPropertiesBox().getDockable()));
 
 		// Create an externalizer.
 		setExternalizer(new FloatExternalizer(getFrame()));
@@ -286,8 +287,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		this.add(getMaximizer(), BorderLayout.CENTER);
 
 		// default screen size unmaximized
-		smallScreenSize = new Dimension((int) (screenSize.getWidth() * 0.9),
-				(int) (screenSize.getHeight() * 0.9));
+		smallScreenSize = new Dimension((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
 		setShortcutsBar(new Toolbar());
 
 		// Add the shortcuts bar also as root dock to the dock model.
@@ -1094,6 +1094,31 @@ public class GUIManager extends JPanel implements ComponentListener {
 				windowNetTables.setVisible(true);
 			}
 		}
+	}
+	
+	/**
+	 * Metoda tworzy nowe okno logów symulatora sieci (na bazie okna notatnika programu).
+	 */
+	private void createSimLogWindow() {
+		windowSimulationLog = new AbyssNotepad(800,600);
+		windowSimulationLog.setVisible(false);
+	}
+	
+	/**
+	 * Metoda pokazuje okno logów symulatora sieci (okno na bazie okna notatnika programu).
+	 */
+	public void showSimLogWindow() {
+		if(windowSimulationLog != null) {
+			windowSimulationLog.setVisible(true);
+		}
+	}
+	
+	/**
+	 * Metoda zwraca obiekt notatnika logów symulatora programu.
+	 * @return AbyssNotepad - obiekt okna symulatora
+	 */
+	public AbyssNotepad getSimLog() {
+		return windowSimulationLog;
 	}
 	
 	/**

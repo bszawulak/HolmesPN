@@ -1,6 +1,5 @@
 package abyss.windows;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -67,8 +66,8 @@ public class AbyssConsole extends JFrame {
 		setMaximumSize(new Dimension(1000, 400));
 		setResizable(false);
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
+        //JPanel mainPanel = new JPanel();
+       // mainPanel.setLayout(new BorderLayout());
         
         JPanel tablePanel = createEditor();
         tablePanel.setOpaque(true); 
@@ -130,7 +129,7 @@ public class AbyssConsole extends JFrame {
 	    try {
 	        doc.insertString(doc.getLength(), initString, doc.getStyle("regular"));
 	    } catch (BadLocationException ble) {
-	        System.err.println("Couldn't insert initial text into text pane.");
+	    	System.err.println("Couldn't initialize the console.");
 	    }
 	    return txtPane;
 	}
@@ -178,7 +177,7 @@ public class AbyssConsole extends JFrame {
 			}
 	        doc.insertString(doc.getLength(), text+newLn, doc.getStyle(initStyles[style]));
 	    } catch (BadLocationException ble) {
-	        System.err.println("Couldn't insert initial text into text pane.");
+	    	System.err.println("Couldn't insert text into console.");
 	    }
 		
 		int len = textPane.getDocument().getLength();
