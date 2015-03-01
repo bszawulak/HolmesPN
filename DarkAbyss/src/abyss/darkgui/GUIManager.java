@@ -1100,7 +1100,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda tworzy nowe okno logów symulatora sieci (na bazie okna notatnika programu).
 	 */
 	private void createSimLogWindow() {
-		windowSimulationLog = new AbyssNotepad(800,600);
+		windowSimulationLog = new AbyssNotepad(900,600);
 		windowSimulationLog.setVisible(false);
 	}
 	

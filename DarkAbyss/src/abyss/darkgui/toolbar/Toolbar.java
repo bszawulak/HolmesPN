@@ -7,7 +7,6 @@ import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
-import abyss.windows.AbyssNotepad;
 
 import com.javadocking.DockingManager;
 import com.javadocking.dock.BorderDock;

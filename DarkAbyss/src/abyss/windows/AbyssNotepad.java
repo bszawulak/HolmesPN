@@ -2,7 +2,6 @@ package abyss.windows;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -37,7 +36,7 @@ public class AbyssNotepad extends JFrame {
 	/**
 	 * regular, italic, bold, small, large, warning, error
 	 */
-	private String[] initStyles = { "regular", "italic", "bold", "small", "large", "warning", "error" };
+	private String[] initStyles = { "regular", "italic", "bold", "small", "large", "warning", "error", "time", "node" };
 	
 	/**
 	 * Główny konstruktor domyślny okna notatnika.
@@ -167,11 +166,12 @@ public class AbyssNotepad extends JFrame {
 	 * @return int - numer stylu
 	 */
 	private int setWritingStyle(String mode) {
-		Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-		StyleConstants.setFontFamily(def, "monospaced");
-		StyleConstants.setFontSize(def, 10);
+		//Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+		//StyleConstants.setFontFamily(def, "monospaced");
+		//StyleConstants.setFontSize(def, 10);
 
 		int style = 0;
+		
 		if(mode.equals("text") || mode.equals("t")) {
 			style = 0;
 		} else if(mode.equals("italic") || mode.equals("i")) {
@@ -186,8 +186,12 @@ public class AbyssNotepad extends JFrame {
 			style = 5;
 		} else if(mode.equals("error")) {
 			style = 6;
-		}else {
-			style = 0;
+		} else if(mode.equals("time")) {
+			style = 7;
+		} else if(mode.equals("nodeName")) {
+			style = 8;
+		} else {
+			style = 1;
 		}
 		return style;
 	}
@@ -198,30 +202,36 @@ public class AbyssNotepad extends JFrame {
 	 */
 	private void addStylesToDocument(StyledDocument doc) {
         Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+        StyleConstants.setFontFamily(def, "Consolas"); //Monospaced
+        StyleConstants.setFontSize(def, 14);
         
-        Style regular = doc.addStyle("regular", def);
-        StyleConstants.setFontFamily(def, "monospaced");
-        //StyleConstants.setFontFamily(def, "SansSerif");
+        Style regular = doc.addStyle("regular", def); //0
+        StyleConstants.setFontFamily(regular, "Consolas");
+        StyleConstants.setFontSize(regular, 14);
 
-        Style s = doc.addStyle("italic", regular);
+        Style s = doc.addStyle("italic", regular); //1
         StyleConstants.setItalic(s, true);
 
-        s = doc.addStyle("bold", regular);
+        s = doc.addStyle("bold", regular); //2
         StyleConstants.setBold(s, true);
 
-        s = doc.addStyle("small", regular);
+        s = doc.addStyle("small", regular); //3
         StyleConstants.setFontSize(s, 10);
 
-        s = doc.addStyle("large", regular);
-        StyleConstants.setFontSize(s, 16);
+        s = doc.addStyle("large", regular); //4
+        StyleConstants.setFontSize(s, 18);
         
-        s = doc.addStyle("warning", regular);
+        s = doc.addStyle("warning", regular); //5
         StyleConstants.setForeground(s, Color.orange);
         
-        s = doc.addStyle("error", regular);
+        s = doc.addStyle("error", regular); //6
         StyleConstants.setForeground(s, Color.red);
         
-        s = doc.addStyle("time", regular);
+        s = doc.addStyle("time", regular); //7
+        StyleConstants.setForeground(s, Color.darkGray);
+        StyleConstants.setBold(s, true);
+        
+        s = doc.addStyle("node", regular); //8
         StyleConstants.setForeground(s, Color.darkGray);
         StyleConstants.setBold(s, true);
 	}

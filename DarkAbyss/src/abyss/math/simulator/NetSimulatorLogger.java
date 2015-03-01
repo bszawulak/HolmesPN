@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
 import abyss.math.Node;
-import abyss.math.Place;
-import abyss.math.TimeTransition;
 import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator.NetType;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
@@ -121,38 +119,41 @@ public class NetSimulatorLogger {
 			
 			log.addText("  *Transition: ", "t", false, false);
 			log.addText(transition.getName(), "b", false, false);
-			log.addText(". Tokens consumed: ", "t", false, false);
+			log.addText("  tokens consumed: ", "t", false, false);
 			log.addText(""+tokensTaken, "b", false, false);
-			log.addText(". Tokens produced: ", "t", false, false);
-			log.addText(""+tokensProduced, "b", false, true);
+			log.addText("  tokens produced: ", "t", false, false);
+			log.addText(""+tokensProduced, "b", false, false);
+			log.addText("  pre-Places: ", "t", false, false); //lista miejsc wejściowych
+			log.addText(prePlacesInfo.size()+"", "b", false, false);
+			log.addText("", "t", false, false);
+			log.addText("  post-Places: ", "t", false, false);
+			log.addText(postPlacesInfo.size()+"", "b", false, false);
+			log.addText("", "t", false, true);
 			
 			if(details == true) {
-				log.addText("    pre-Places (", "t", false, false); //lista miejsc wejściowych
-				log.addText(prePlacesInfo.size()+"", "b", false, false);
-				log.addText("):", "t", false, true);
-				int m = getMaxLength(prePlacesInfo);
+				int m = getMaxLength(prePlacesInfo, 0);
+				m = getMaxLength(postPlacesInfo, m);
 				
 				if(prePlacesInfo.size() > 0) {
 					for(int i=0; i<prePlacesInfo.size(); i++) {
-						log.addText("     "+Tools.setToSize(prePlacesInfo.get(i),m+5,false)+": ","t",false,false);
+						log.addText("     (preP) ","t",false,false);
+						log.addText(Tools.setToSize(prePlacesInfo.get(i),m+2,false)+": ","nodeName",false,false);
 						log.addText("-"+prePlacesInfoTokens.get(i), "b", false, true);
 					}
 				} else {
-					log.addText("     no prePlaces: input transiton", "t", false, true);
+					log.addText("     (preP) "+Tools.setToSize("---",m+2,false)+": ", "t", false, false);
+					log.addText("input transition", "b", false, true);
 				}
-				
-				log.addText("    post-Places (", "t", false, false);
-				log.addText(postPlacesInfo.size()+"", "b", false, false);
-				log.addText("):", "t", false, true);
-				m = getMaxLength(postPlacesInfo);
-				
+
 				if(postPlacesInfo.size() > 0) {
 					for(int i=0; i<postPlacesInfo.size(); i++) {
-						log.addText("     "+Tools.setToSize(postPlacesInfo.get(i),m+5,false)+": ","t",false,false);
-						log.addText(""+postPlacesInfoTokens.get(i), "b", false, true);
+						log.addText("     (postP)","t",false,false);
+						log.addText(Tools.setToSize(postPlacesInfo.get(i),m+2,false)+": ","nodeName",false,false);
+						log.addText("+"+postPlacesInfoTokens.get(i), "b", false, true);
 					}
 				} else {
-					log.addText("     no postPlaces: output transiton", "t", false, true);
+					log.addText("     (postP)"+Tools.setToSize("---",m+2,false)+": ", "t", false, false);
+					log.addText("output transition", "b", false, true);
 				}
 			}
 			
@@ -165,8 +166,8 @@ public class NetSimulatorLogger {
 	 * @param prePlacesInfo ArrayList[String] - lista miejsc
 	 * @return int - długość najdłuższej nazwy
 	 */
-	private int getMaxLength(ArrayList<String> prePlacesInfo) {
-		int max = 0;
+	private int getMaxLength(ArrayList<String> prePlacesInfo, int currentMax) {
+		int max = currentMax;
 		for(int i=0; i<prePlacesInfo.size(); i++) {
 			if(prePlacesInfo.get(i).length() > max)
 				max = prePlacesInfo.get(i).length();
