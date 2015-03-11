@@ -655,24 +655,27 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 		TxTMatrixTM.add(NR);
 	}
 
-	private void findAndCreateNewRowL(
-			ArrayList<ArrayList<Integer>> incidanceMatrixTMP,
-			ArrayList<ArrayList<Integer>> newRow, int j) {
-		for (int t1 = 0; t1 < incidanceMatrixTMP.size(); t1++) {
-			if (incidanceMatrixTMP.get(t1).get(j) != 0) {
-				
-				for (int t2 = t1; t2 < incidanceMatrixTMP.size(); t2++) {
-					if (incidanceMatrixTMP.get(t2).get(j) != 0)
+	private void findAndCreateNewRowL(ArrayList<ArrayList<Integer>> incidanceMatrixTMP, ArrayList<ArrayList<Integer>> newRow, int j) {
+		int sizeM = incidanceMatrixTMP.size();
+		for (int t1 = 0; t1 < sizeM; t1++) {
+			int val1 = incidanceMatrixTMP.get(t1).get(j); // #
+			//if (incidanceMatrixTMP.get(t1).get(j) != 0) {
+			if (val1 != 0) { //#
+				for (int t2 = t1; t2 < sizeM; t2++) {
+					int val2 = incidanceMatrixTMP.get(t2).get(j); // #
+					//if (incidanceMatrixTMP.get(t2).get(j) != 0)
+					if (val2 != 0) {
 						if (t2 != t1) {
-							if ((incidanceMatrixTMP.get(t1).get(j) > 0 && incidanceMatrixTMP
-									.get(t2).get(j) < 0)
-									|| (incidanceMatrixTMP.get(t1).get(j) < 0 && incidanceMatrixTMP
-											.get(t2).get(j) > 0)) {
-								int l1 = bezwzgledna(incidanceMatrixTMP.get(t1)
-										.get(j));
-								int l2 = bezwzgledna(incidanceMatrixTMP.get(t2)
-										.get(j));
-
+							//if ((incidanceMatrixTMP.get(t1).get(j) > 0 && incidanceMatrixTMP.get(t2).get(j) < 0)
+							//		|| (incidanceMatrixTMP.get(t1).get(j) < 0 && incidanceMatrixTMP.get(t2).get(j) > 0)) {
+							//	int l1 = bezwzgledna(incidanceMatrixTMP.get(t1).get(j));
+							//	int l2 = bezwzgledna(incidanceMatrixTMP.get(t2).get(j));
+							if ((val1 > 0 && val2 < 0) || (val1 < 0 && val2 > 0)) {
+								//int l1 = bezwzgledna(incidanceMatrixTMP.get(t1).get(j));
+								//int l2 = bezwzgledna(incidanceMatrixTMP.get(t2).get(j));
+								int l1 = bezwzgledna(val1);
+								int l2 = bezwzgledna(val2);
+								
 								// ((x*y)/nwd(x,y))
 								int nwd = (l1 * l2) / nwd(l1, l2);
 								ArrayList<Integer> tab = new ArrayList<Integer>();
@@ -684,6 +687,7 @@ public class EarlyInvariantsAnalyzer implements Runnable {
 								newRow.add(tab);
 							}
 						}
+					}
 				}
 			}
 		}
