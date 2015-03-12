@@ -1,6 +1,6 @@
 package abyss.math;
 
-import abyss.analyzer.EarlyInvariantsAnalyzer;
+import abyss.analyzer.InvariantsAnalyzer;
 import abyss.analyzer.DarkAnalyzer;
 import abyss.analyzer.InvariantsSimulator;
 import abyss.analyzer.InvariantsSimulator.SimulatorMode;
@@ -70,7 +70,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private NetSimulator simulator;
 	private InvariantsSimulator invSimulator;
 	private DarkAnalyzer analyzer;
-	private EarlyInvariantsAnalyzer eia;
+	private InvariantsAnalyzer eia;
 
 	//wektor tokenów dla miejsc:
 	private ArrayList<Integer> backupMarkingZero = new ArrayList<Integer>();
@@ -878,7 +878,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void tInvariantsAnalyze() {
 		try {
-			eia = new EarlyInvariantsAnalyzer();
+			eia = new InvariantsAnalyzer();
 			Thread myThread = new Thread(eia);
 			myThread.start();
 		} catch (Throwable err) {
