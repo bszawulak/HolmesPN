@@ -147,9 +147,8 @@ public class InvariantsAnalyzer implements Runnable {
 		// Etap I z artykulu
 		log("Phase I inititated. Performing only for all 1-in/1-out places.","text");
 		for (int p = 0; p < places.size(); p++) {
-			// wystepuje tylko jedno wejscie i wyjscie z miejsca
-			if (checkEtapI(incMatrix, p)) {
-				findAndCreateNewRowL(incMatrix, rowsPhaseI, p);
+			if (isSimplePlace(incMatrix, p)) { // wystepuje tylko jedno wejscie i wyjscie z miejsca
+				findNewRowsPhaseI(incMatrix, rowsPhaseI, p);
 				sumRowsForIEtap(incMatrix, identMatrix, rowsPhaseI);
 
 			}
@@ -261,7 +260,7 @@ public class InvariantsAnalyzer implements Runnable {
 						txt.add(tmp);
 					}
 
-					findAndCreateNewRowL(im, newRowL, p);
+					findNewRowsPhaseI(im, newRowL, p);
 
 					if (newRowL.size() > 0) {
 						addRows(im, txt, newRowL, true);
@@ -291,42 +290,39 @@ public class InvariantsAnalyzer implements Runnable {
 		}
 	}
 
-	private void sumRowsForIEtap(ArrayList<ArrayList<Integer>> incidanceMatrixTMPL,
-			ArrayList<ArrayList<Integer>> TxTMatrixTMPL,
-			ArrayList<ArrayList<Integer>> newRowL) {
-		if (newRowL.size() > 0) {
-			ArrayList<ArrayList<Integer>> incidanceMatrixTML = new ArrayList<ArrayList<Integer>>();
-			ArrayList<ArrayList<Integer>> TxTMatrixTML = new ArrayList<ArrayList<Integer>>();
+	private void sumRowsForIEtap(ArrayList<ArrayList<Integer>> incidenceMatrix, ArrayList<ArrayList<Integer>> indentityMatrix,
+			ArrayList<ArrayList<Integer>> newRowsMatrix) {
+		if (newRowsMatrix.size() > 0) { //jeśli są nowe wiersze do dodania
+			ArrayList<ArrayList<Integer>> incidenceMatrixNew = new ArrayList<ArrayList<Integer>>();
+			ArrayList<ArrayList<Integer>> identityMatrixNew = new ArrayList<ArrayList<Integer>>();
 
-			for (int l = 0; l < newRowL.size(); l++) {
-				int tr = newRowL.get(l).get(0);
-				int pl = newRowL.get(l).get(4);
+			for (int row = 0; row < newRowsMatrix.size(); row++) {
+				int tr = newRowsMatrix.get(row).get(0); //tranzycja 1
+				int pl = newRowsMatrix.get(row).get(4); //miejsce
 
-				if (incidanceMatrixTMPL.get(tr).get(pl) < 0)
-					addNewRowVerIL(incidanceMatrixTMPL, TxTMatrixTMPL, newRowL,
-							incidanceMatrixTML, TxTMatrixTML, l);
+				if (incidenceMatrix.get(tr).get(pl) < 0)
+					addNewRowVerIL(incidenceMatrix, indentityMatrix, newRowsMatrix, incidenceMatrixNew, identityMatrixNew, row);
 				else
-					addNewRowVerIIL(incidanceMatrixTMPL, TxTMatrixTMPL,
-							newRowL, incidanceMatrixTML, TxTMatrixTML, l);
+					addNewRowVerIIL(incidenceMatrix, indentityMatrix,newRowsMatrix, incidenceMatrixNew, identityMatrixNew, row);
 
 			}
 
-			addOldRowsL(incidanceMatrixTMPL, TxTMatrixTMPL, newRowL, incidanceMatrixTML, TxTMatrixTML);
+			addOldRowsL(incidenceMatrix, indentityMatrix, newRowsMatrix, incidenceMatrixNew, identityMatrixNew);
 
-			incidanceMatrixTMPL.clear();
-			for (int i = 0; i < incidanceMatrixTML.size(); i++) {
+			incidenceMatrix.clear();
+			for (int i = 0; i < incidenceMatrixNew.size(); i++) {
 				ArrayList<Integer> tmp = new ArrayList<Integer>();
-				for (int j = 0; j < incidanceMatrixTML.get(i).size(); j++)
-					tmp.add(incidanceMatrixTML.get(i).get(j));
-				incidanceMatrixTMPL.add(tmp);
+				for (int j = 0; j < incidenceMatrixNew.get(i).size(); j++)
+					tmp.add(incidenceMatrixNew.get(i).get(j));
+				incidenceMatrix.add(tmp);
 			}
 			// incidanceMatrixTMPL.add(incidanceMatrixTML.get(i));
-			TxTMatrixTMPL.clear();
-			for (int i = 0; i < TxTMatrixTML.size(); i++) {
+			indentityMatrix.clear();
+			for (int i = 0; i < identityMatrixNew.size(); i++) {
 				ArrayList<Integer> tmp = new ArrayList<Integer>();
-				for (int j = 0; j < TxTMatrixTML.get(i).size(); j++)
-					tmp.add(TxTMatrixTML.get(i).get(j));
-				TxTMatrixTMPL.add(tmp);
+				for (int j = 0; j < identityMatrixNew.get(i).size(); j++)
+					tmp.add(identityMatrixNew.get(i).get(j));
+				indentityMatrix.add(tmp);
 			}
 			// TxTMatrixTMPL.add(TxTMatrixTML.get(i));
 		}
@@ -509,13 +505,20 @@ public class InvariantsAnalyzer implements Runnable {
 		}
 	}
 
-	private boolean checkEtapI(ArrayList<ArrayList<Integer>> incidanceMatrixTMP, int place) {
+	/**
+	 * Metoda pomocnicza I fazy obliczeń: sprawdza, czy dane miejsce ma tylko 1 tranzycję wejściową
+	 * i tylko 1 wyjściową
+	 * @param incidenceMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
+	 * @param place int - indeks miejsca
+	 * @return boolean - true, jeśli dane miejsce ma tylko 1 tranzycję IN i 1 OUT
+	 */
+	private boolean isSimplePlace(ArrayList<ArrayList<Integer>> incidenceMatrix, int place) {
 		int input = 0;
 		int output = 0;
-		for (int t = 0; t < incidanceMatrixTMP.size(); t++) {
-			if (incidanceMatrixTMP.get(t).get(place) > 0)
+		for (int t = 0; t < incidenceMatrix.size(); t++) {
+			if (incidenceMatrix.get(t).get(place) > 0)
 				input++;
-			if (incidanceMatrixTMP.get(t).get(place) < 0)
+			if (incidenceMatrix.get(t).get(place) < 0)
 				output++;
 			
 			if(input == 2 || output == 2)
@@ -542,87 +545,95 @@ public class InvariantsAnalyzer implements Runnable {
 			return false;
 	}
 
-	private void addNewRowVerIL(
-			ArrayList<ArrayList<Integer>> incidanceMatrixTMP,
-			ArrayList<ArrayList<Integer>> TxTMatrixTMP,
-			ArrayList<ArrayList<Integer>> newRow,
-			ArrayList<ArrayList<Integer>> incidanceMatrixTM,
-			ArrayList<ArrayList<Integer>> TxTMatrixTM, int l) {
+	private void addNewRowVerIL(ArrayList<ArrayList<Integer>> incidenceMatrix,ArrayList<ArrayList<Integer>> identityMatrix,
+			ArrayList<ArrayList<Integer>> newRowsMatrix,  ArrayList<ArrayList<Integer>> incidenceMatrixResult, 
+			ArrayList<ArrayList<Integer>> identityMatrixResult, int rowNumber) {
 
 		ArrayList<Integer> NR = new ArrayList<Integer>();
-		for (int b = 0; b < places.size(); b++)
-			NR.add(-(incidanceMatrixTMP.get(newRow.get(l).get(0)).get(b) * newRow
-					.get(l).get(2))
-					+ (incidanceMatrixTMP.get(newRow.get(l).get(1)).get(b) * newRow
-							.get(l).get(3)));
+		ArrayList<Integer> newRowData = newRowsMatrix.get(rowNumber);
+		for (int b = 0; b < places.size(); b++) {
+			int t1 = newRowData.get(0);
+			int t2 = newRowData.get(1);
+			int multFactorT1 = newRowData.get(2);
+			int multFactorT2 = newRowData.get(3);
+			
+			NR.add(-(incidenceMatrix.get(t1).get(b) * multFactorT1) + (incidenceMatrix.get(t2).get(b) * multFactorT2));
+			
+			//NR.add(-(incidenceMatrix.get(newRowsMatrix.get(rowNumber).get(0)).get(b) * newRowsMatrix.get(rowNumber).get(2))
+			//		+ (incidenceMatrix.get(newRowsMatrix.get(rowNumber).get(1)).get(b) * newRowsMatrix.get(rowNumber).get(3)));
 
-		incidanceMatrixTM.add(NR);
+		}
+		incidenceMatrixResult.add(NR);
 		NR = new ArrayList<Integer>();
 
-		for (int b = 0; b < transitions.size(); b++)
-			NR.add(bezwzgledna(-(TxTMatrixTMP.get(newRow.get(l).get(0)).get(b) * newRow
-					.get(l).get(2))
-					+ (TxTMatrixTMP.get(newRow.get(l).get(1)).get(b) * newRow
-							.get(l).get(3))));
-
-		TxTMatrixTM.add(NR);
+		for (int b = 0; b < transitions.size(); b++) {
+			int t1 = newRowData.get(0);
+			int t2 = newRowData.get(1);
+			int multFactorT1 = newRowData.get(2);
+			int multFactorT2 = newRowData.get(3);
+			//TODO : bezwzgledna ???
+			NR.add(bezwzgledna(-(identityMatrix.get(t1).get(b) * multFactorT1) + (identityMatrix.get(t2).get(b) * multFactorT2)));
+		}
+		
+		identityMatrixResult.add(NR);
 	}
 
-	private void addNewRowVerIIL(
-			ArrayList<ArrayList<Integer>> incidanceMatrixTMP,
-			ArrayList<ArrayList<Integer>> TxTMatrixTMP,
-			ArrayList<ArrayList<Integer>> newRow,
-			ArrayList<ArrayList<Integer>> incidanceMatrixTM,
-			ArrayList<ArrayList<Integer>> TxTMatrixTM, int l) {
+	private void addNewRowVerIIL(ArrayList<ArrayList<Integer>> incidenceMatrix, ArrayList<ArrayList<Integer>> identityMatrix,
+			ArrayList<ArrayList<Integer>> newRowsMatrix, ArrayList<ArrayList<Integer>> incidenceMatrixResult,
+			ArrayList<ArrayList<Integer>> identityMatrixResult, int rowNumber) {
 
 		ArrayList<Integer> NR = new ArrayList<Integer>();
-		for (int b = 0; b < places.size(); b++)
-			NR.add((incidanceMatrixTMP.get(newRow.get(l).get(0)).get(b) * newRow
-					.get(l).get(2))
-					- (incidanceMatrixTMP.get(newRow.get(l).get(1)).get(b) * newRow
-							.get(l).get(3)));
+		ArrayList<Integer> newRowData = newRowsMatrix.get(rowNumber);
+		for (int b = 0; b < places.size(); b++) {
+			int t1 = newRowData.get(0);
+			int t2 = newRowData.get(1);
+			int multFactorT1 = newRowData.get(2);
+			int multFactorT2 = newRowData.get(3);
+			
+			NR.add((incidenceMatrix.get(t1).get(b) * multFactorT1) - (incidenceMatrix.get(t2).get(b) * multFactorT2));
 
-		incidanceMatrixTM.add(NR);
+		}
+		incidenceMatrixResult.add(NR);
 		NR = new ArrayList<Integer>();
 
-		for (int b = 0; b < transitions.size(); b++)
-			NR.add(bezwzgledna((TxTMatrixTMP.get(newRow.get(l).get(0)).get(b) * newRow
-					.get(l).get(2))
-					- (TxTMatrixTMP.get(newRow.get(l).get(1)).get(b) * newRow
-							.get(l).get(3))));
-
-		TxTMatrixTM.add(NR);
+		for (int b = 0; b < transitions.size(); b++) {
+			int t1 = newRowData.get(0);
+			int t2 = newRowData.get(1);
+			int multFactorT1 = newRowData.get(2);
+			int multFactorT2 = newRowData.get(3);
+			
+			NR.add(bezwzgledna((identityMatrix.get(t1).get(b) * multFactorT1) - (identityMatrix.get(t2).get(b) * multFactorT2)));
+		}
+		identityMatrixResult.add(NR);
 	}
 
-	private void findAndCreateNewRowL(ArrayList<ArrayList<Integer>> incidanceMatrixTMP, ArrayList<ArrayList<Integer>> newRow, int j) {
+	/**
+	 * Metoda znajduje nowe wiersze na bazie linowej kombinacji dwóch innych w ramach której suma w kolumnie 
+	 * placeIndex jest zerowa.
+	 * @param incidanceMatrixTMP ArrayList[ArrayList[Integer]] - macierz incydencji
+	 * @param newRow ArrayList[ArrayList[Integer]] - macierz wyników
+	 * @param placeIndex int - nr miejsca
+	 */
+	private void findNewRowsPhaseI(ArrayList<ArrayList<Integer>> incidanceMatrixTMP, ArrayList<ArrayList<Integer>> newRow, int placeIndex) {
 		int sizeM = incidanceMatrixTMP.size();
 		for (int t1 = 0; t1 < sizeM; t1++) {
-			int val1 = incidanceMatrixTMP.get(t1).get(j); // #
-			//if (incidanceMatrixTMP.get(t1).get(j) != 0) {
+			int val1 = incidanceMatrixTMP.get(t1).get(placeIndex);
 			if (val1 != 0) { //#
 				for (int t2 = t1; t2 < sizeM; t2++) {
-					int val2 = incidanceMatrixTMP.get(t2).get(j); // #
-					//if (incidanceMatrixTMP.get(t2).get(j) != 0)
+					int val2 = incidanceMatrixTMP.get(t2).get(placeIndex);
 					if (val2 != 0) {
 						if (t2 != t1) {
-							//if ((incidanceMatrixTMP.get(t1).get(j) > 0 && incidanceMatrixTMP.get(t2).get(j) < 0)
-							//		|| (incidanceMatrixTMP.get(t1).get(j) < 0 && incidanceMatrixTMP.get(t2).get(j) > 0)) {
-							//	int l1 = bezwzgledna(incidanceMatrixTMP.get(t1).get(j));
-							//	int l2 = bezwzgledna(incidanceMatrixTMP.get(t2).get(j));
 							if ((val1 > 0 && val2 < 0) || (val1 < 0 && val2 > 0)) {
-								//int l1 = bezwzgledna(incidanceMatrixTMP.get(t1).get(j));
-								//int l2 = bezwzgledna(incidanceMatrixTMP.get(t2).get(j));
 								int l1 = bezwzgledna(val1);
 								int l2 = bezwzgledna(val2);
 								
-								// ((x*y)/nwd(x,y))
 								int nwd = (l1 * l2) / nwd(l1, l2);
 								ArrayList<Integer> tab = new ArrayList<Integer>();
 								tab.add(t1);
 								tab.add(t2);
-								tab.add(nwd / incidanceMatrixTMP.get(t1).get(j));
-								tab.add(nwd / incidanceMatrixTMP.get(t2).get(j));
-								tab.add(j);
+								tab.add(nwd / incidanceMatrixTMP.get(t1).get(placeIndex));
+								tab.add(nwd / incidanceMatrixTMP.get(t2).get(placeIndex));
+								tab.add(placeIndex);
 								newRow.add(tab);
 							}
 						}
