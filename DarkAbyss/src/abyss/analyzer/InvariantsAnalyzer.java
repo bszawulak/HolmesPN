@@ -32,6 +32,11 @@ public class InvariantsAnalyzer implements Runnable {
 	private ArrayList<Integer> zeroColumnVectorP;
 	private ArrayList<Integer> nonZeroColumnVectorP;
 	
+	//private int placesNumber = 0;
+	//private int transNumber = 0;
+	private int vectorSize = 0;
+	private boolean transCalculation = true;
+	
 	//private ArrayList<ArrayList<Integer>> globalIncidenceMatrixTMP;
 	//private ArrayList<ArrayList<Integer>> globalIdentityMatrixTMP;
 	@SuppressWarnings("unused")
@@ -41,11 +46,20 @@ public class InvariantsAnalyzer implements Runnable {
 	
 	/**
 	 * Konstruktor obiektu klasy InvariantsAnalyzer. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.
+	 * @param transCal boolean - true, jeśli liczymy T-inwarianty, false dla P-inwariantów
 	 */
-	public InvariantsAnalyzer() {
+	public InvariantsAnalyzer(boolean transCal) {
+		transCalculation = transCal;
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
+		
+		if(transCalculation == true)
+			vectorSize = transitions.size();
+		else
+			vectorSize = places.size(); 
+			
+
 		
 		zeroColumnVectorT = new ArrayList<Integer>();
 		nonZeroColumnVectorT = new ArrayList<Integer>();
@@ -172,7 +186,9 @@ public class InvariantsAnalyzer implements Runnable {
 			int newSize = globalIncidenceMatrix.size();
 		}
 		
-		getMinimal(invariantsList);
+		invariantsList = new ArrayList<ArrayList<Integer>>(globalIdentityMatrix);
+		
+		//getMinimal(invariantsList);
 	}
 	
 	/**
@@ -196,7 +212,7 @@ public class InvariantsAnalyzer implements Runnable {
 		}
 		
 		if(input == 0 && output == 0) { 
-			//cykl 2T 2P zamiast łuku odczytu powoduje takie cuda w tej fazie - następuje zerowanie 2 kolumn
+			//cykl T1->P1->T2->P2->T1 (zamiast łuku odczytu) powoduje takie cuda w tej fazie - następuje zerowanie 2 kolumn
 			//za pomocą jednego przekształcenia liniowego
 			return true;
 		}
@@ -298,6 +314,12 @@ public class InvariantsAnalyzer implements Runnable {
 		return newRows;
 	}
 	
+	/**
+	 * Metoda odpowiedzialna za dodawnie i usuwanie wierszy w wyniku wykonywania wygenerowanych przekształceń
+	 * liniowych wektorów zawartych w newRowsMatrix.
+	 * @param newRowsMatrix ArrayList[ArrayList[Integer]] - macierz informacji o przekształceniach
+	 * @param placeIndex int - nr kolumny zerowanej
+	 */
 	private void rewriteIncidenceIntegrityMatrices_MR(ArrayList<ArrayList<Integer>> newRowsMatrix, int placeIndex) {
 		if (newRowsMatrix.size() > 0) { //jeśli są nowe wiersze do dodania
 			for (int row = 0; row < newRowsMatrix.size(); row++) {
@@ -305,14 +327,13 @@ public class InvariantsAnalyzer implements Runnable {
 				int pl = newRowsMatrix.get(row).get(4); //miejsce (kolumna)
 				
 				if (globalIncidenceMatrix.get(tr).get(pl) < 0) { //OK, działa poniższe (tutaj), sprawdzono
-					addNewRowVer_MR(newRowsMatrix, row, -1);
+					addNewRowsToMatrix(newRowsMatrix, row, -1);
 				} else {
-					addNewRowVer_MR(newRowsMatrix, row, 1);
+					addNewRowsToMatrix(newRowsMatrix, row, 1);
 				}
 			}
-			//skopiuj stare wiersze za wyjątkiech tych wymienionych w newRowsMatrix
-			//addOldRows(incidenceMatrix, indentityMatrix, newRowsMatrix, incidenceMatrixNew, identityMatrixNew);
 			
+			//usuwanie wierszy z niezerowym elementem w zerowanej kolumnie
 			int mSize = globalIncidenceMatrix.size();
 			for(int row=0; row < mSize; row++) {
 				if(globalIncidenceMatrix.get(row).get(placeIndex) != 0) {
@@ -325,8 +346,15 @@ public class InvariantsAnalyzer implements Runnable {
 		}
 	}
 	
-	private void addNewRowVer_MR(ArrayList<ArrayList<Integer>> newRowsMatrix, int rowNumber, int factor) {
-		ArrayList<Integer> NR = new ArrayList<Integer>();
+	/**
+	 * Metoda dodaje nowo wygenerowane wiersze do macierzy. Sprawdza jednak przed dodaniem, czy nowy
+	 * wiersz jest minimalnym inwariantem.
+	 * @param newRowsMatrix ArrayList[ArrayList[Integer]] - macierz przekształcen liniowych
+	 * @param rowNumber int - numer wygenerowanego przekształcenia do dodania
+	 * @param factor int - 1 lub -1 w zależności od znaku elementu wektora macierzy C w kolumnie zerowanej
+	 */
+	private void addNewRowsToMatrix(ArrayList<ArrayList<Integer>> newRowsMatrix, int rowNumber, int factor) {
+		ArrayList<Integer> incMatrixNewRow = new ArrayList<Integer>();
 		ArrayList<Integer> newRowData = newRowsMatrix.get(rowNumber);
 		int t1 = newRowData.get(0);
 		int t2 = newRowData.get(1);
@@ -334,21 +362,66 @@ public class InvariantsAnalyzer implements Runnable {
 		int multFactorT2 = newRowData.get(3);
 		
 		for (int b = 0; b < places.size(); b++) {
-			NR.add((factor)*(globalIncidenceMatrix.get(t1).get(b) * multFactorT1) + 
+			incMatrixNewRow.add((factor)*(globalIncidenceMatrix.get(t1).get(b) * multFactorT1) + 
 					(-factor)*(globalIncidenceMatrix.get(t2).get(b) * multFactorT2)); //ok
 			//if(globalIncidenceMatrix.get(tr).get(pl) < 0)
 			//NR.add(-(globalIncidenceMatrix.get(t1).get(b) * multFactorT1) + (globalIncidenceMatrix.get(t2).get(b) * multFactorT2));
 			//else
 			//NR.add((globalIncidenceMatrix.get(t1).get(b) * multFactorT1) - (globalIncidenceMatrix.get(t2).get(b) * multFactorT2));
 		}
-		globalIncidenceMatrix.add(NR);
 		
-		NR = new ArrayList<Integer>();
+		ArrayList<Integer> invCandidate = new ArrayList<Integer>();
 		for (int b = 0; b < transitions.size(); b++) {	
-			NR.add(bezwzgledna((factor)*(globalIdentityMatrix.get(t1).get(b) * multFactorT1) + 
+			invCandidate.add(bezwzgledna((factor)*(globalIdentityMatrix.get(t1).get(b) * multFactorT1) + 
 					(-factor)*(globalIdentityMatrix.get(t2).get(b) * multFactorT2)));
 		}
-		globalIdentityMatrix.add(NR);
+		
+		boolean minimal = minimalityTest(invCandidate);
+		if(minimal) {
+			globalIncidenceMatrix.add(incMatrixNewRow);
+			globalIdentityMatrix.add(invCandidate);
+		}
+	}
+
+	
+	private boolean minimalityTest(ArrayList<Integer> invCandidate) {
+		int size = globalIdentityMatrix.size();
+		//boolean minimal = true;
+		int supportSize = 0;
+		
+		for(int i=0; i<vectorSize; i++) {
+			if(invCandidate.get(i) > 0)
+				supportSize++;
+		}
+		
+		int newMinimalTest = 0; // czy nowy jest minimalny
+		int oldMaximalityTest = 0; //czy może jest lepszy od którego już w macierzy...?
+		for(int vector=0; vector<size; vector++) {
+			newMinimalTest = 0;
+			oldMaximalityTest = 0;
+			for(int i=0; i<vectorSize; i++) { //dla każdego elementu inwariantu
+				int matrixElement = globalIdentityMatrix.get(vector).get(i);
+				if(matrixElement > 0 && matrixElement >= invCandidate.get(i)) {
+					oldMaximalityTest++;
+					//break; //testujemy następny z tabeli I
+				} 
+				
+				if(matrixElement > 0 && invCandidate.get(i) >= matrixElement) {
+					newMinimalTest++;
+				}
+			}
+			
+			if(newMinimalTest > 0 && newMinimalTest == supportSize) { //jest w macierzy wektor, który zawiera się w całości w kandydacie
+				return false;
+			}
+			//dopiero jako drugie, bo jeśli są równe, to nowego nie dodajemy, ale nie ma sensu zastępować sterego, wyjdzie na to samo:
+			if(oldMaximalityTest == supportSize) {
+				//TODO: mamy kandydata do usunięcia z macierzy i zastąpienia aktualnym! zapamiętać vector & i
+				return true;
+			}
+		}
+		
+		return true;
 	}
 
 	private void printMatrix(ArrayList<ArrayList<Integer>> matrix) {
@@ -566,8 +639,7 @@ public class InvariantsAnalyzer implements Runnable {
 	}
 
 	@SuppressWarnings("unused")
-	private int checkIfExist(ArrayList<ArrayList<Integer>> LI,
-			ArrayList<Integer> INV) {
+	private int checkIfExist(ArrayList<ArrayList<Integer>> LI, ArrayList<Integer> INV) {
 		//Tu wsadzi minimalny
 		
 		int exist = 0;

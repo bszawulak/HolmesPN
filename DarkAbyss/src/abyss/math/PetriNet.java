@@ -878,7 +878,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void tInvariantsAnalyze() {
 		try {
-			eia = new InvariantsAnalyzer();
+			eia = new InvariantsAnalyzer(true);
 			Thread myThread = new Thread(eia);
 			myThread.start();
 		} catch (Throwable err) {
