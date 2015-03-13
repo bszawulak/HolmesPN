@@ -1110,8 +1110,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		//Timer timer = new Timer();
 		//Date date = new Date();
 		
-		this.invSimulator = new InvariantsSimulator(
-				abyss.analyzer.InvariantsSimulator.NetType.BASIC, new PetriNet(
+		this.invSimulator = new InvariantsSimulator(abyss.analyzer.InvariantsSimulator.NetType.BASIC, new PetriNet(
 						getData().nodes, getData().arcs), get2ndFormInvariantsList(),type, value);
 
 		invSimulator.startSimulation(SimulatorMode.LOOP);

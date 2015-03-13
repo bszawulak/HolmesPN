@@ -456,12 +456,14 @@ public class DarkMenu extends JMenuBar {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					// poniższa linia:   ╯°□°）╯︵  ┻━━┻
+					/*
 					GUIManager.getDefaultGUIManager().startInvariantsSimulation(
 						Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox()
 								.getCurrentDockWindow().group.getSelection().getActionCommand())
 						,(Integer)GUIManager.getDefaultGUIManager().getInvSimBox()
 								.getCurrentDockWindow().spiner.getValue());
-				} catch (CloneNotSupportedException e) {
+								*/
+				} catch (Exception e) {
 					e.printStackTrace();
 					GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
 				}
