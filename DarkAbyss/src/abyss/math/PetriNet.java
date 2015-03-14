@@ -753,7 +753,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
 				GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(SIN).getGraphPanel();
 				graphPanel.setOriginSize(graphPanel.getSize());
-				
+				graphPanel.repaint();
 			}
 			// Format INY
 			if (path.endsWith(".pnt")) {
