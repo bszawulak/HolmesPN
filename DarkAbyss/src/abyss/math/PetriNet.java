@@ -1042,7 +1042,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public ArrayList<ArrayList<InvariantTransition>> getEIAgeneratedInv_old() {
 		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
 		InvariantTransition currentTransition;
-		invariantsBinaryList = eia.getListaInvatianow();
+		invariantsBinaryList = eia.getInvariants();
 		set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
 		if (invariantsBinaryList.size() > 0) {
 			if (invariantsBinaryList.get(0).size() == getTransitions().size()) {

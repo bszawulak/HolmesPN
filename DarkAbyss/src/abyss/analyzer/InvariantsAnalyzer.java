@@ -16,6 +16,7 @@ import abyss.math.Transition;
  * 11.03.2015: No więc czas ją naprawić. MR <br>
  * 13.03.2015: Naprawianie w toku. Tu się takie cuda działy, że głowa mała. Poprzednia wersja miała wymagania
  * pamięciowe serwerowni PCSS. Aż cud, że była w stanie cokolwiek liczyć. O błędach lepiej nie pisać. <br>
+ * 14.03.2015: Pierwszy sukces, coś działa. Poprawienie macierzy incydencji (1 na -1) w każdym polu PEWNIE TEŻ POMOGŁO!!! 
  * 
  * @author BR
  * @author MR
@@ -45,6 +46,8 @@ public class InvariantsAnalyzer implements Runnable {
 	private int oldReplaced = 0;
 	private int notCanonical = 0;
 	
+	private ArrayList<ArrayList<Integer>> invINAMatrix;
+	
 	/**
 	 * Konstruktor obiektu klasy InvariantsAnalyzer. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.
 	 * @param transCal boolean - true, jeśli liczymy T-inwarianty, false dla P-inwariantów
@@ -64,6 +67,10 @@ public class InvariantsAnalyzer implements Runnable {
 		nonZeroColumnVectorT = new ArrayList<Integer>();
 		zeroColumnVectorP = new ArrayList<Integer>();
 		nonZeroColumnVectorP = new ArrayList<Integer>();
+		
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix() != null) {
+			invINAMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+		}
 	}
 	
 	/**
@@ -74,7 +81,7 @@ public class InvariantsAnalyzer implements Runnable {
 		this.searchTInvariants();
 		PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getEIAgeneratedInv_old());
-		project.setInvariantsMatrix(invariantsList);
+		project.setInvariantsMatrix(getInvariants());
 	}
 	
 	private void log(String msg, String type, boolean clean) {
@@ -90,7 +97,7 @@ public class InvariantsAnalyzer implements Runnable {
 	 * (TP-macierz z literatury)
 	 */
 	public void createTPIncidenceAndIdentityMatrix() {
-		//hashmapy do ustalania lokalizacji miejsca/tramzycji. Równie dobrze 
+		//hashmapy do ustalania lokalizacji miejsca/tranzycji. Równie dobrze 
 		//działałoby (niżej, gdy są używane): np. places.indexOf(...)
 		HashMap<Place, Integer> placesMap = new HashMap<Place, Integer>();
 		HashMap<Transition, Integer> transitionsMap = new HashMap<Transition, Integer>();
@@ -127,9 +134,11 @@ public class InvariantsAnalyzer implements Runnable {
 					|| oneArc.getStartNode().getType() == PetriNetElementType.TIMETRANSITION) {
 				tPosition = transitionsMap.get(oneArc.getStartNode());
 				pPosition = placesMap.get(oneArc.getEndNode());
-				// incidenceValue = -1 * oneArc.getWeight();  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				// 		https://www.youtube.com/watch?v=oxiJrcFo724
-				// 		(14.03) ja go chyba zamorduję... 
+				// incidenceValue = -1 * oneArc.getWeight();  // CO TO K**** JEST ?! JAKIE -1 ?!
+				// 	(14.03.2015) ja go chyba zamorduję... 
+				// 	
+				//   https://www.youtube.com/watch?v=oxiJrcFo724
+				// 		
 				incidenceValue = 1 * oneArc.getWeight();
 			} else {
 				tPosition = transitionsMap.get(oneArc.getEndNode());
@@ -158,7 +167,7 @@ public class InvariantsAnalyzer implements Runnable {
 	}
 
 	/**
-	 * Główna metoda klasy odpowiedzialna za wyszukiwania T-inwariantów
+	 * Główna metoda klasy odpowiedzialna za wyszukiwanie T-inwariantów. Algorytm
 	 */
 	@SuppressWarnings("unused")
 	public void searchTInvariants() {
@@ -166,36 +175,38 @@ public class InvariantsAnalyzer implements Runnable {
 		printMatrix(globalIdentityMatrix);
 		
 		// Etap I - miejsca 1-in 1-out
-		ArrayList<ArrayList<Integer>> rowsPhaseI = new ArrayList<ArrayList<Integer>>();
+		ArrayList<ArrayList<Integer>> generatedRows = new ArrayList<ArrayList<Integer>>();
 		log("Phase I inititated. Performing only for all 1-in/1-out places.","text", false);
 		int placesNumber = globalIncidenceMatrix.get(0).size();
 		for (int p = 0; p < placesNumber; p++) {
 			if (isSimplePlace(globalIncidenceMatrix, p) == true) { // wystepuje tylko jedno wejście i wyjście z miejsca
-				rowsPhaseI = findNewRows_MR(p); // na bazie globalIncidenceMatrix i Identity
-				rewriteIncidenceIntegrityMatrices_MR(rowsPhaseI, p);
+				generatedRows = findNewRows_MR(p); // na bazie globalIncidenceMatrix i Identity
+				rewriteIncidenceIntegrityMatrices_MR(generatedRows, p);
 				zeroColumnVectorP.add(p);
-				rowsPhaseI.clear(); //wyczyść macierz przekształceń
+				generatedRows.clear(); //wyczyść macierz przekształceń
 			} else {
 				//rowsPhaseI.clear(); 
 				nonZeroColumnVectorP.add(p);
 			}
 		}
+		
+		//TODO: sprawdzić co z niekanonicznymi - usunąć, czy zmienić w kanoniczne!
 
+		int breakPoint = 1;
 		// Etap II - cała reszta
 		while(nonZeroColumnVectorP.size() != 0) {
-			rowsPhaseI.clear(); //wyczyść macierz przekształceń
+			generatedRows.clear(); //wyczyść macierz przekształceń
 			
 			int stepsToFinish = nonZeroColumnVectorP.size();
-			int[] res = chooseNextPlace();
+			int[] res = chooseNextColumn();
 			int cand = res[0];
 			int rowsChange = res[1];
 			//int pos = res[2];
 			//int neg = res[3];
-			
-			
 			int oldSize = globalIncidenceMatrix.size();
-			rowsPhaseI = findNewRows_MR(cand); // na bazie globalIncidenceMatrix i Identity
-			rewriteIncidenceIntegrityMatrices_MR(rowsPhaseI, cand);
+			
+			generatedRows = findNewRows_MR(cand); // na bazie globalIncidenceMatrix i Identity
+			rewriteIncidenceIntegrityMatrices_MR(generatedRows, cand);
 			int indCand = nonZeroColumnVectorP.indexOf(cand);
 			nonZeroColumnVectorP.remove(indCand);
 			zeroColumnVectorP.add(indCand);
@@ -207,7 +218,22 @@ public class InvariantsAnalyzer implements Runnable {
 			int xxx=1;
 		}
 		
-		invariantsList = new ArrayList<ArrayList<Integer>>(globalIdentityMatrix);
+		//invariantsList = new ArrayList<ArrayList<Integer>>(globalIdentityMatrix);
+		setInvariants(globalIdentityMatrix);
+		
+		if(invINAMatrix != null) {
+			ArrayList<ArrayList<Integer>> res =  compareInv();
+			System.out.println();
+			System.out.println("Reference set size:   "+invINAMatrix.size());
+			System.out.println("Computed set size:    "+getInvariants().size());
+			System.out.println("Common set size:      "+res.get(0).size());
+			System.out.println("Not in reference set: "+res.get(1).size());
+			System.out.println("Not in computed set:  "+res.get(2).size());
+			
+			System.out.println("Repeated in common set: "+res.get(3).get(0));
+			System.out.println("Repeated not in ref.set:"+res.get(3).get(1));
+		}
+		
 	}
 	
 	/**
@@ -245,11 +271,13 @@ public class InvariantsAnalyzer implements Runnable {
 	
 	/**
 	 * Metoda odpowiedzialna za wybór kolumny dla której powstanie najmniej nowych wierszy. Działa w II fazie
-	 * pracy algorytmu.
-	 * @return int[] - tablica int[2], gdzie [0] to nr miejsca z [1] najmniejsza liczbą nowych wierszy
-	 * 		po utworzeniu kombinacji liniowych
+	 * pracy algorytmu. Podaje pierszy indeks kolumny z najmniejszą wartością [1] - tj. kolumnę dla której przekształcenia
+	 * liniowe dodadzą najmniej nowych wierszy do macierzy przekształceń.
+	 * @return int[] - tablica int[4], gdzie [0] to nr kolumny z najmniejsza liczbą nowych wierszy które będą utworzone 
+	 * 		po utworzeniu kombinacji liniowych [1]; [2] to liczba wierszy z wartością >0 w wybranej kolumnie,
+	 * 		[3] to liczba wierszy z wartością <0 w wybranej kolumnie
 	 */
-	private int[] chooseNextPlace() {
+	private int[] chooseNextColumn() {
 		ArrayList<Integer> numberOfNewRows = new ArrayList<Integer>();
 		ArrayList<Integer> positives = new ArrayList<Integer>();
 		ArrayList<Integer> negatives = new ArrayList<Integer>();
@@ -324,6 +352,7 @@ public class InvariantsAnalyzer implements Runnable {
 								rowsTransformation.add(placeIndex);
 								newRows.add(rowsTransformation);
 								
+								//niczego jeszcze nie usuwaj, dodaj indeksy składowych do zbioru usunięć
 								if(removalList.contains(t1) == false)
 									removalList.add(t1);
 								if(removalList.contains(t2) == false)
@@ -367,7 +396,6 @@ public class InvariantsAnalyzer implements Runnable {
 						System.out.println();
 						justGotHere = false;
 					}
-					
 					if(steps == (int)interval) {
 						percent++;
 						steps = 0;
@@ -376,7 +404,6 @@ public class InvariantsAnalyzer implements Runnable {
 						steps++;
 					}
 				}
-				
 			}
 			
 			//tutaj usuwanie U+ i U-
@@ -442,20 +469,20 @@ public class InvariantsAnalyzer implements Runnable {
 	 * @param t2 int - druga składowa inwariantu
 	 */
 	private void addOrNot(ArrayList<Integer> incMatrixNewRow, ArrayList<Integer> invCandidate, int t1, int t2) {
-		ArrayList<Integer> supports = getSupport(invCandidate);
+		ArrayList<Integer> candidateSupport = getSupport(invCandidate);
 		
-		boolean canonical = checkCanonity(invCandidate, supports);
+		boolean canonical = checkCanonity(invCandidate, candidateSupport);
 		if(!canonical) {
 			//Burn the heretic. Kill the mutant. Purge the unclean.
 			notCanonical++;
 			return;
 		}
 		
-		boolean fmtResult = fastMinimalityTest(invCandidate, supports);
+		boolean fmtResult = fastMinimalityTest(invCandidate, candidateSupport);
 		if(fmtResult == true) { //jak obleje, to w ogóle nie kombinujemy dalej - nie będzie dodany
-			ArrayList<Integer> resList = supportMinimalityTest(invCandidate, supports, t1, t2);
-			//ArrayList<Integer> resList = supportMinimalityTest2(invCandidate, supports, t1, t2);
-			if(resList.get(0) == -1) {
+			//ArrayList<Integer> resList = supportMinimalityTest(invCandidate, candidateSupport, t1, t2);
+			ArrayList<Integer> resList = supportMinimalityTestNew(invCandidate, candidateSupport, t1, t2);
+			if(resList.get(0) == -1) { //jest minimalny
 				globalIncidenceMatrix.add(incMatrixNewRow);
 				globalIdentityMatrix.add(invCandidate);
 			}
@@ -466,7 +493,7 @@ public class InvariantsAnalyzer implements Runnable {
 			resList.remove(0); // -1 lub -99
 			
 			if(resList.size() > 1) {
-				@SuppressWarnings("unused")
+				System.out.println("Inwariant się nie nadaje, ale jest jest mniejszy niż obecne w macierzy! ERROR!");
 				int check=1;
 			}
 			
@@ -517,18 +544,18 @@ public class InvariantsAnalyzer implements Runnable {
 	 * Zgroza. Jeśli coś nie działa, to problem jest tutaj na 99%.
 	 * 
 	 * @param invCandidate
-	 * @param supports
+	 * @param candSupport
 	 * @param t1
 	 * @param t2
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	private ArrayList<Integer> supportMinimalityTest(ArrayList<Integer> invCandidate, ArrayList<Integer> supports, int t1, int t2) {
+	private ArrayList<Integer> supportMinimalityTest(ArrayList<Integer> invCandidate, ArrayList<Integer> candSupport, int t1, int t2) {
 		ArrayList<Integer> removeList = new ArrayList<Integer>();
 		removeList.add(-1); //domyślnie można dodać nowy inw
 		
 		int size = globalIdentityMatrix.size();
-		int supportSize = supports.size();
+		int supportSize = candSupport.size();
 		int matrixElementSupportSize = 0;
 		int invNotMinimalFactor = 0; // ">=" czy nowy jest minimalny >
 		int invNotMinimalFactorStrong = 0; // ">"
@@ -550,8 +577,9 @@ public class InvariantsAnalyzer implements Runnable {
 
 				if(matrixVectorElement > 0 && matrixVectorElement >= invariantElement) {
 					invBelongToMVector++;  //jeśli element kandydata zawiera się w niezerowym elemencie już obecnym w macierzy I
-					if(matrixVectorElement > invariantElement)
+					if(matrixVectorElement > invariantElement) {
 						invBelongToMVectorStrong++;
+					}
 				} 
 				if(invariantElement > 0 && invariantElement >= matrixVectorElement) {
 					invNotMinimalFactor++; //jeśli element wsparcia inwariantu zawiera element wsparcia już obecnego w macierzy wiersza
@@ -559,8 +587,8 @@ public class InvariantsAnalyzer implements Runnable {
 						invNotMinimalFactorStrong++;
 				}
 				
-				//if(invNotMinimalFactor > 0 && invBelongToMVector > 0 ) {
-				if(invNotMinimalFactor > 0 && invBelongToMVectorStrong > 0 ) {
+				//if(invNotMinimalFactor > 0 && invBelongToMVectorStrong > 0 ) {
+				if(invNotMinimalFactorStrong > 0 && invBelongToMVectorStrong > 0 ) {
 					// wsparcia się rozmijają w n-wymiarowej przestrzeni
 					invNotMinimalFactor = invBelongToMVector = -1;
 					break;
@@ -594,6 +622,176 @@ public class InvariantsAnalyzer implements Runnable {
 		return removeList;
 	}
 	
+	/**
+	 * Metoda porównująca aktualny zbiór inwariantów (referencyjny, skądkolwiek wcześniej wzięty i
+	 * obecny w programie w chwili uruchamiania generatora) z tym, który powstał z generatora programu.
+	 * @return ArrayList[ArrayList[Integer]] - macierz wyników, 3 wektory: <br>
+	 *  1 - część wspólna inwariantów ze zbiorem referencyjnym <br>
+	 *  2 - inwarianty których nie ma w referencyjnym<br>
+	 *  3 - inwarianty referencyjnego których nie ma w wygenerowanym zbiorze
+	 */
+	private ArrayList<ArrayList<Integer>> compareInv() {
+		int myInvSize = getInvariants().size();
+		int INAInvSize = invINAMatrix.size();
+		
+		ArrayList<Integer> ourFoundInINA = new ArrayList<Integer>();
+		ArrayList<Integer> inaFoundInOur = new ArrayList<Integer>();
+		ArrayList<Integer> nonInINA = new ArrayList<Integer>(); //są u nas, nie ma w INA - minimalne??
+		ArrayList<Integer> nonInMySet = new ArrayList<Integer>(); //są w INA, nie ma u nas
+		
+		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
+		
+		int repeated = 0;
+		int repeatedNotFound = 0;
+
+		boolean presentInINASet = false;
+		for(int invMy=0; invMy<myInvSize; invMy++) {
+			presentInINASet = false;
+			ArrayList<Integer> myInvariant = getInvariants().get(invMy);
+			
+			for(int invINA=0; invINA < INAInvSize; invINA++) {
+				if(invINAMatrix.get(invINA).equals(myInvariant)) {
+					
+					ourFoundInINA.add(invMy);
+					if(inaFoundInOur.contains(invINA)) {
+						repeated++;
+					} else {
+						inaFoundInOur.add(invINA);
+					}
+					
+					presentInINASet = true;
+					break;
+				}
+			}
+			if(presentInINASet == false) {
+				if(nonInINA.contains(invMy))
+					repeatedNotFound++;
+				nonInINA.add(invMy);
+			}
+		}
+		
+		for(int i=0; i<INAInvSize; i++) {
+			if(inaFoundInOur.contains(i) == false) {
+				nonInMySet.add(i);
+			}
+		}
+		ArrayList<Integer> repeatedVector = new ArrayList<Integer>();
+		repeatedVector.add(repeated);
+		repeatedVector.add(repeatedNotFound);
+		
+		result.add(ourFoundInINA); //część wspolna
+		result.add(nonInINA); //nasze, ale nie ma INA
+		result.add(nonInMySet); //inwarianty INY których nie mamy
+		result.add(repeatedVector);
+		return result;
+	}
+	
+	private ArrayList<Integer> supportMinimalityTestNew(ArrayList<Integer> invCandidate, ArrayList<Integer> invSupport, int t1, int t2) {
+		ArrayList<Integer> removeList = new ArrayList<Integer>();
+		removeList.add(-1); //domyślnie można dodać nowy inw
+		
+		int matrixSize = globalIdentityMatrix.size();
+		int invSuppSize = invSupport.size();
+		int successCounter = 0;
+		
+		for(int vector=0; vector<matrixSize; vector++) {
+			if(vector == t1 || vector == t2) //nie testujemy ze składowymi
+				continue;
+
+			ArrayList<Integer> refSupport = getSupport(globalIdentityMatrix.get(vector));
+			int result = checkCoverability(globalIdentityMatrix.get(vector), refSupport, invCandidate, invSupport);
+			
+			if(result == 0 || result == -1) { //identyczny jak znaleziony w macierzy lub referencyjny jest w nim zawarty: nie dodajemy
+				newRejected++;
+				removeList.set(0, -99);
+				if(removeList.size() > 1) { // to niby jak? kandydat odpada, bo nie jest minimalny, a w macierzy sa jeszcze większe?!
+					int somethingVERYWRONG = 1;
+				}
+				
+				return removeList;
+			} else if(result == 1 ) { //jest lepszy od testowanego referencyjnego:
+				//referencyjny do wywalenia
+				successCounter++;
+				oldReplaced ++;		//mamy kandydata do usunięcia z macierzy i zastąpienia aktualnym! zapamiętać vector
+				removeList.add(vector);
+			} else if(result == -99) {
+				successCounter++;
+			}
+		}
+			
+		if(successCounter == matrixSize - 2)
+			return removeList;
+		else {
+			return removeList; //WTF! nie powinno być możliwe!
+		}
+	}
+	
+	private int checkCoverability(ArrayList<Integer> refInv, ArrayList<Integer> refSupport, ArrayList<Integer> candidateInv,
+			ArrayList<Integer> candSupport) {
+		int sizeRef = refInv.size();
+		int sizeCan = candidateInv.size();
+		if(sizeRef != sizeCan)
+			return -99; // z czym do ludzi?
+		
+		int refElement = 0;
+		int canElement = 0;
+		int CanInRef = 0; // >=  - każdy element wsparcia referencyjnego jest >= od elementu kandydata
+		int CanInRefStrong = 0; // >
+		int RefInCan = 0; // >=  - każdy element wsparcia kandydata jest >= od elementu referencyjnego
+		int RefInCanStrong = 0; // >
+		int refSuppSize = refSupport.size();
+		int candSuppSize = candSupport.size();
+		
+		for(int ind=0; ind<sizeRef; ind++) { //po każdym elemencie inwariantów
+			refElement = refInv.get(ind);
+			canElement = candidateInv.get(ind);
+			
+			if(refElement > 0 && refElement >= canElement) {
+				CanInRef++;  // zawieranie kandydata w refencyjnym
+				if(refElement > canElement) { 
+					CanInRefStrong++;
+				}
+			} 
+			if(canElement > 0 && canElement >= refElement) {
+				RefInCan++; // zawieranie referencyjnego w kandydacie
+				if(canElement > refElement)
+					RefInCanStrong++;
+			}
+			
+			if(CanInRefStrong > 0 && RefInCanStrong > 0 ) {
+				// wsparcia się rozmijają w n-wymiarowej przestrzeni
+				// niezależne
+				return -99;
+			}
+		}
+		
+		//decyzja:
+		if(CanInRef == refSuppSize && RefInCan == candSuppSize && CanInRefStrong == 0 && RefInCanStrong == 0) {
+			return 0; //identyczne
+			/* Każdy element wsparcia dla referencyjnego jest >= od el. kandydata (CanInRef == refSuppSize) a precyzyjnie to
+			 * równy (bo CanInRefStrong == 0), i odwrotnie: każdy element wsparcia kandydata jest >= od el. refencyjnego 
+			 * (RefInCan == candSuppSize) a dokładnie to = (bo: RefInCanStrong == 0)
+			 */
+		}
+		
+		if(RefInCan == candSuppSize && RefInCanStrong > 0) {
+			return -1; // kandydat nie jest minimalny: referencyjny się w nim zawiera
+			/* Referencyjny wektor zawiera się w kandydacie na każdym elemencie wsparcia kandydata (RefInCan == candSuppSize) oraz
+			 * choć na jednym elemencie jest mniejszy (a nie tylko mniejszy/równy, tj: RefInCanStrong > 0). Gdyby było inaczej to
+			 * byłby identyczny (warunek wyżej), lub w ogóle niezależny (CanInRefStrong > 0 && RefInCanStrong > 0 w pętli)
+			 */
+		}
+		
+		if(CanInRef == refSuppSize && CanInRefStrong > 0) {
+			return 1; // kandydat jest mniejszy niż wektor referencyjny który testujemy
+			/* Kandydat zawiera się w referencyjnym na każdym elemencie wsparcia elementu referencyjnego (CanInRef == refSuppSize) oraz
+			 * na jakimś elemencie jest mniejszy, a nie tylko mniejszy/równy (CanInRefStrong > 0).
+			 */
+		} else {
+			System.out.println("Niemożliwy stan został osiągnięty. Konkluzja: znajdź sobie inny zbiór inwariantów niż ten.");
+			return -99; //teoretycznie NIGDY nie powinniśmy się tu pojawić
+		}
+	}
 	
 	private void finalSupportMinimalityTest() {	
 		int size = globalIdentityMatrix.size();
@@ -618,12 +816,18 @@ public class InvariantsAnalyzer implements Runnable {
 		}
 	}
 	
+	/**
+	 * Metoda zwraca wsparcie wektora wejściowego - numery pozycji na których w wektorze
+	 * znajdują się wartości dodatnie.
+	 * @param inv ArrayList[Integer] - wektor wejściowy
+	 * @return ArrayList[Integer] - wsparcie
+	 */
 	private ArrayList<Integer> getSupport(ArrayList<Integer> inv) {
 		ArrayList<Integer> supports = new ArrayList<Integer>();
 		int size = inv.size();
 		for(int i=0; i<size; i++) {
-			if(inv.get(i) > 0) {
-				supports.add(i);
+			if(inv.get(i) > 0) { //jeśli na danej pozycji jest wartość >0
+				supports.add(i); //dodaj pozycję jako wsparcie
 			}
 		}
 		return supports;
@@ -677,12 +881,20 @@ public class InvariantsAnalyzer implements Runnable {
 	}
 
 
-	public ArrayList<ArrayList<Integer>> getListaInvatianow() {
+	/**
+	 * Metoda zwraca macierz inwariantów.
+	 * @return ArrayList[ArrayList[Integer]] - macierz inwariantów (wiersze)
+	 */
+	public ArrayList<ArrayList<Integer>> getInvariants() {
 		return invariantsList;
 	}
 
-	public void setListaInvatianow(ArrayList<ArrayList<Integer>> listaInvatianow) {
-		this.invariantsList = listaInvatianow;
+	/**
+	 * Metoda ustala nową macierz inwariantów.
+	 * @param invMatrix ArrayList[ArrayList[Integer]] - nowa macierz inwariantów
+	 */
+	public void setInvariants(ArrayList<ArrayList<Integer>> invMatrix) {
+		this.invariantsList = invMatrix;
 	}
 	
 }
