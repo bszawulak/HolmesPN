@@ -307,7 +307,7 @@ public final class Tools {
 	}
 	
 	/**
-	 * Metoda wstawia spacje przez napis, aby rozszerzyć go do odpowiedniej długości.
+	 * Metoda wstawia spacje przed napis, aby rozszerzyć go do odpowiedniej długości.
 	 * @param source String - łańcuch do rozszerzenia
 	 * @param size int - rozmiar do rozszerzenia
 	 * @param left boolean - true jeśli dodajemy space od lewej strony napisu
