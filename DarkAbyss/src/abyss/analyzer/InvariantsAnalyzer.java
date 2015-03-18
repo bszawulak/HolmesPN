@@ -1,18 +1,15 @@
 package abyss.analyzer;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import Jama.Matrix;
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.PetriNet;
 import abyss.math.Place;
 import abyss.math.Transition;
-import abyss.utilities.Tools;
 
 /**
  * 10.06.2014: Metoda stara się liczyć inwarianty. Coś nie wyszło i to ostro...<br>
@@ -31,20 +28,13 @@ public class InvariantsAnalyzer implements Runnable {
 	private ArrayList<ArrayList<Integer>> invariantsList = new ArrayList<ArrayList<Integer>>();
 
 	private ArrayList<ArrayList<Integer>> globalIncidenceMatrix; //aktualna macierz przekształceń liniowych
-	private ArrayList<ArrayList<Integer>> globalIncidenceMatrixNewRows;
 	private ArrayList<ArrayList<Integer>> globalIdentityMatrix; //macierz przekształacna w inwarianty
-	private ArrayList<ArrayList<Integer>> globalIdentityMatrixNewRows;
 	private ArrayList<ArrayList<Integer>> CMatrix; //oryginalna macierz incydencji sieci
 	private ArrayList<Integer> removalList;
 	
-	private ArrayList<Integer> zeroColumnVectorT;
-	private ArrayList<Integer> nonZeroColumnVectorT;
 	private ArrayList<Integer> zeroColumnVectorP;
 	private ArrayList<Integer> nonZeroColumnVectorP;
 	
-	//private int placesNumber = 0;
-	//private int transNumber = 0;
-	private int vectorSize = 0;
 	private boolean transCalculation = true;
 	
 	private int aac = 0;
@@ -56,10 +46,6 @@ public class InvariantsAnalyzer implements Runnable {
 	
 	private ArrayList<ArrayList<Integer>> invINAMatrix;
 	
-	private ArrayList<Integer> testList = new ArrayList<Integer>();
-	
-	private ArrayList<Integer> testInv = new ArrayList<Integer>();
-	
 	/**
 	 * Konstruktor obiektu klasy InvariantsAnalyzer. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.
 	 * @param transCal boolean - true, jeśli liczymy T-inwarianty, false dla P-inwariantów
@@ -70,13 +56,6 @@ public class InvariantsAnalyzer implements Runnable {
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
 		
-		if(transCalculation == true)
-			vectorSize = transitions.size();
-		else
-			vectorSize = places.size(); 
-
-		zeroColumnVectorT = new ArrayList<Integer>();
-		nonZeroColumnVectorT = new ArrayList<Integer>();
 		zeroColumnVectorP = new ArrayList<Integer>();
 		nonZeroColumnVectorP = new ArrayList<Integer>();
 		
@@ -175,26 +154,13 @@ public class InvariantsAnalyzer implements Runnable {
 			globalIdentityMatrix.add(identRow);
 		}
 		
-		globalIncidenceMatrixNewRows = new ArrayList<ArrayList<Integer>>();
-		globalIdentityMatrixNewRows = new ArrayList<ArrayList<Integer>>();
-		
 		log("Identity matrix created for "+transitions.size()+" transitions","text", false);
 	}
 
 	/**
 	 * Główna metoda klasy odpowiedzialna za wyszukiwanie T-inwariantów.
 	 */
-	@SuppressWarnings("unused")
 	public void searchTInvariants() {
-		/*
-		int[] intArray = new int[] { 3, 2, 2, 2, 2, 2, 1, 3, 0, 0, 0, 0, 8, 0, 3, 0, 3, 0, 1, 1, 3, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 0, 1, 1, 2, 1, 1, 2, 2, 0, 2, 2, 0, 0, 0, 3, 0, 0, 3, 3, 0, 4, 1, 0 };
-		testInv = new ArrayList<Integer>();
-		for(int intValue : intArray)
-			testInv.add(intValue);
-		
-		boolean theQuestion = InvariantsTools.checkInvariant(CMatrix, testInv, true);
-		*/
-		
 		// Etap I - miejsca 1-in 1-out
 		ArrayList<ArrayList<Integer>> generatedRows = new ArrayList<ArrayList<Integer>>();
 		log("Phase I inititated. Performing only for all 1-in/1-out places.","text", false);
@@ -240,6 +206,8 @@ public class InvariantsAnalyzer implements Runnable {
 		//invariantsList = new ArrayList<ArrayList<Integer>>(globalIdentityMatrix);
 		setInvariants(globalIdentityMatrix);
 		
+		InvariantsTools.finalSupportMinimalityTest(getInvariants());
+		
 		if(invINAMatrix != null) {
 			ArrayList<ArrayList<Integer>> res =  compareInv();
 			System.out.println();
@@ -254,14 +222,14 @@ public class InvariantsAnalyzer implements Runnable {
 			
 			ArrayList<ArrayList<Integer>> problemSet = new ArrayList<ArrayList<Integer>>();
 			for(int el : res.get(1)) {
-				problemSet.add(globalIdentityMatrix.get(el));
+				problemSet.add(getInvariants().get(el));
 			}
 			
 			ArrayList<ArrayList<Integer>> noInvariants = InvariantsTools.isTInvariantSet(CMatrix, problemSet);
 			
 			ArrayList<ArrayList<Integer>> finalInv = new ArrayList<ArrayList<Integer>>();
 			for(int i=0; i<res.get(0).size(); i++) {
-				ArrayList<Integer> inv = new ArrayList<Integer>(globalIdentityMatrix.get(res.get(0).get(i)));
+				ArrayList<Integer> inv = new ArrayList<Integer>(getInvariants().get(res.get(0).get(i)));
 				finalInv.add(inv);
 			}
 			setInvariants(finalInv);
@@ -437,9 +405,6 @@ public class InvariantsAnalyzer implements Runnable {
 					(globalIdentityMatrix.get(t2).get(b) * multFactorT2));
 		}
 		
-		//globalIncidenceMatrix.add(incMatrixNewRow);
-		//globalIdentityMatrix.add(invCandidate);
-		
 		addOrNot(incMatrixNewRow, invCandidate, t1, t2);
 	}
 	
@@ -477,22 +442,20 @@ public class InvariantsAnalyzer implements Runnable {
 				}
 			}
 		}
-//TODO:
+		//TODO:
 		//boolean fmtResult = fastMinimalityTest(invCandidate, candidateSupport);
 		//boolean fmtResult = true;
 		
 		boolean fmtResult = true; //nadmiarowy
-		if(candidateSupport.size() > zeroColumnVectorP.size()+2)
+		//if(candidateSupport.size() > zeroColumnVectorP.size()+2)
+		if(candidateSupport.size() > aac+2)
 			fmtResult = false;
 		
 		if(fmtResult == true) { //jak obleje, to w ogóle nie kombinujemy dalej - nie będzie dodany
-			//ArrayList<Integer> resList = supportMinimalityTest(invCandidate, candidateSupport, t1, t2);
-			ArrayList<Integer> resList = supportMinimalityTestNew(invCandidate, candidateSupport, t1, t2);
+			ArrayList<Integer> resList = supportMinimalityTest(invCandidate, candidateSupport, t1, t2);
 			boolean added = false;
 			if(resList.get(0) == -1) { //jest minimalny
-				globalIncidenceMatrixNewRows.add(incMatrixNewRow);
 				globalIncidenceMatrix.add(incMatrixNewRow);
-				globalIdentityMatrixNewRows.add(invCandidate);
 				globalIdentityMatrix.add(invCandidate);
 				added = true;
 			}
@@ -526,12 +489,12 @@ public class InvariantsAnalyzer implements Runnable {
 	 * @return ArrayList[Integer] - pierwszy element mówi czy jest minimalny czy nie, kolejne to nr wektorów do usunięcia
 	 *  	z macierzy przekształceń
 	 */
-	private ArrayList<Integer> supportMinimalityTestNew(ArrayList<Integer> invCandidate, ArrayList<Integer> invSupport, int t1, int t2) {
+	private ArrayList<Integer> supportMinimalityTest(ArrayList<Integer> invCandidate, ArrayList<Integer> invSupport, int t1, int t2) {
 		ArrayList<Integer> removeList = new ArrayList<Integer>();
 		removeList.add(-1); //domyślnie można dodać nowy inw
 		
 		int matrixSize = globalIdentityMatrix.size();
-		int invSuppSize = invSupport.size();
+		//int invSuppSize = invSupport.size();
 		int successCounter = 0;
 		
 		for(int vector=0; vector<matrixSize; vector++) {
@@ -539,6 +502,20 @@ public class InvariantsAnalyzer implements Runnable {
 				continue;
 
 			ArrayList<Integer> refSupport = InvariantsTools.getSupport(globalIdentityMatrix.get(vector));
+			
+			if(invSupport.equals(refSupport)) { //zależność liniowa
+				newRejected++;
+				removeList.set(0, -99);
+				return removeList;
+			}
+			
+			if(InvariantsTools.supportInclusionCheck(invSupport, refSupport) == true) { //zawieranie się wsparć
+				newRejected++;
+				removeList.set(0, -99);
+				return removeList;
+			}
+			
+			
 			int result = checkCoverability(globalIdentityMatrix.get(vector), refSupport, invCandidate, invSupport);
 			//0 - identyczne lub nie jest minimalny, nie dodajemy 
 			//1 - inne powody, nie dodajemy 
@@ -555,8 +532,7 @@ public class InvariantsAnalyzer implements Runnable {
 					//JAKIM CUDEM? zupełnie nie pasuje, ale jest mniejszy od znalezionego w macierzy?!
 				}
 
-				return removeList; //TODO: a co gdyby kontynuować szukanie dalej?
-				
+				return removeList; //TODO: a co gdyby kontynuować szukanie dalej? A: nic ciekawego, tylko dłużej
 			} else if(result == 2) { //jest lepszy od testowanego referencyjnego - referencyjny do wywalenia
 				successCounter++;
 				oldReplaced ++;		//mamy kandydata do usunięcia z macierzy i zastąpienia aktualnym! zapamiętać vector
@@ -603,7 +579,17 @@ public class InvariantsAnalyzer implements Runnable {
 		int refSuppSize = refSupport.size();
 		int candSuppSize = candSupport.size();
 		
-		for(int ind=0; ind<sizeRef; ind++) { //po każdym elemencie inwariantów
+		//TODO: po sumie wzbiorów wsparć - będzie szybciej
+		ArrayList<Integer> sumOfSupport = new ArrayList<Integer>();
+		for(int el : refSupport)
+			sumOfSupport.add(el);
+		for(int el : candSupport) {
+			if(sumOfSupport.contains(el) == false)
+				sumOfSupport.add(el);
+		}
+		
+		//for(int ind=0; ind<sizeRef; ind++) { //po każdym elemencie inwariantów
+		for(int ind : sumOfSupport) { //po każdym elemencie wektorów
 			refElement = refInv.get(ind);
 			canElement = candidateInv.get(ind);
 			
@@ -684,21 +670,9 @@ public class InvariantsAnalyzer implements Runnable {
 				}
 			}
 			
-			/*
-			for(int i=0; i<globalIdentityMatrix.size(); i++) {
-				ArrayList<Integer> test = globalIdentityMatrix.get(i);
-				if(testInv.equals(test)) {
-					@SuppressWarnings("unused")
-					int WUYGUDHGI = 1111;
-				}
-			}*/
-			
 			//tutaj usuwanie U+ i U-
 			int removedSoFar = 0;
 			Collections.sort(removalList);
-			if(removalList.size()>1) {
-				int x=1;
-			}
 			for(int el : removalList) {
 				int index = el - removedSoFar;
 				globalIncidenceMatrix.remove(index);
@@ -707,7 +681,6 @@ public class InvariantsAnalyzer implements Runnable {
 			}
 			
 			removalList.clear();
-			
 			
 			//usuwanie wierszy z niezerowym elementem w zerowanej kolumnie
 			int mSize = globalIncidenceMatrix.size();
@@ -720,16 +693,19 @@ public class InvariantsAnalyzer implements Runnable {
 				}
 			}
 			
-			aac++;
+			aac++; //actively annuled columns
 		} else {
 			//nothing to add;
 			naac++;
-			//System.out.println("INCIDENCE MATRIX, column: "+placeIndex);
-			//printMatrix(globalIncidenceMatrix);
-			//System.out.println("");
 		}
 	}
 
+	/**
+	 * Metoda odpowiedzialna za doprowadzenie wektora do postaci kanonicznej poprzez podzielenie jego elementów
+	 * przez ich największy wspólny dzielnik.
+	 * @param invCandidate ArrayList[Integer] - inwariant lub inny wektor
+	 * @param nwd int - największy wspólny dzielnik
+	 */
 	private void canonize(ArrayList<Integer> invCandidate, int nwd) {
 		for(int i=0; i<invCandidate.size(); i++) {
 			invCandidate.set(i, invCandidate.get(i)/nwd);
@@ -837,49 +813,6 @@ public class InvariantsAnalyzer implements Runnable {
 		return result;
 	}
 	
-	private void finalSupportMinimalityTest() {	
-		int size = globalIdentityMatrix.size();
-		ArrayList<ArrayList<Integer>> getRidOfMatrix = new ArrayList<ArrayList<Integer>>();
-		
-		boolean allChecked = true;
-		int tested1 = 0;
-		while(allChecked == false) {
-			ArrayList<Integer> inv = globalIdentityMatrix.get(tested1);
-			
-		}
-		
-		for(int t1=0; t1<size; t1++) {
-			ArrayList<Integer> inv = globalIdentityMatrix.get(t1);
-			ArrayList<Integer> supports = InvariantsTools.getSupport(inv);
-			boolean minimal = true;
-			for(int t2=0; t2<size; t2++) {
-				if(t1 != t2) {
-					
-				}
-			}
-		}
-	}
-	
-	
-
-	private void printMatrix(ArrayList<ArrayList<Integer>> matrix) {
-		String colNames = "";
-		for (int jo = 0; jo < matrix.get(0).size(); jo++) {
-			colNames = colNames + Tools.setToSize(jo+"", 3, true);
-		}
-		System.out.println(colNames);
-		for (int it = 0; it < matrix.size(); it++) {
-			String msg = "";
-			msg = msg +  Tools.setToSize("t"+it, 4, true);
-			for (int jo = 0; jo < matrix.get(0).size(); jo++) {
-				//System.out.print(incMatrix.get(it).get(jo) + " ");
-				msg = msg + Tools.setToSize(matrix.get(it).get(jo)+"", 3, true);
-			}
-			//log(msg, "text", true);
-			System.out.println(msg);
-		}
-	}
-	
 	/**
 	 * Metoda zwraca największy wspólny dzielnik dwóch liczb naturalnych dodatnich.
 	 * @param x int - I liczba
@@ -908,13 +841,17 @@ public class InvariantsAnalyzer implements Runnable {
 			return i;
 	}
 	
+	/**
+	 * Metoda oblicza silnię. Z bliżej nieznanych powodów.
+	 * @param i int - liczba wyjściowa
+	 * @return int - wynik i!
+	 */
 	public int silnia(int i) {
 		if (i == 0)
 			return 1;
 		else
 			return i * silnia(i - 1);
 	}
-
 
 	/**
 	 * Metoda zwraca macierz inwariantów.
@@ -930,87 +867,5 @@ public class InvariantsAnalyzer implements Runnable {
 	 */
 	public void setInvariants(ArrayList<ArrayList<Integer>> invMatrix) {
 		this.invariantsList = invMatrix;
-	}
-	
-	
-	
-	private int test1get() {
-		if(testList.size() > 0) {
-			int val = testList.get(0);
-			int index = testList.indexOf(val);
-			testList.remove(index);
-			return val;
-		} else 
-		return 0;
-	}
-
-	private void test1Prepare() {
-		testList.add(0);
-		testList.add(1);
-		testList.add(2);
-		
-		testList.add(4);
-		testList.add(5);
-		testList.add(6);
-		testList.add(7);
-		testList.add(8);
-		testList.add(9);
-		testList.add(10);
-		testList.add(11);
-		testList.add(12);
-		testList.add(13);
-		testList.add(14);
-		testList.add(15);
-		
-		testList.add(17);
-		testList.add(18);
-		testList.add(19);
-		testList.add(20);
-		testList.add(21);
-		testList.add(22);
-		testList.add(23);
-		testList.add(24);
-		testList.add(25);
-		testList.add(26);
-		testList.add(27);
-		testList.add(28);
-		testList.add(29);
-		testList.add(30);
-		testList.add(31);
-		testList.add(32);
-		testList.add(33);
-		testList.add(34);
-		testList.add(35);
-		testList.add(36);
-		testList.add(37);
-		testList.add(38);
-		
-		testList.add(40);
-		testList.add(41);
-		testList.add(42);
-		testList.add(43);
-		testList.add(44);
-		testList.add(45);
-		testList.add(46);
-		testList.add(47);
-		testList.add(48);
-		testList.add(49);
-		
-		testList.add(51);
-		testList.add(52);
-		testList.add(53);
-		testList.add(54);
-		testList.add(55);
-		testList.add(56);
-		testList.add(57);
-		testList.add(58);
-		testList.add(59);
-		testList.add(60);
-		testList.add(61);
-		
-		testList.add(50);
-		testList.add(3);
-		testList.add(62);
-		testList.add(16);
 	}
 }
