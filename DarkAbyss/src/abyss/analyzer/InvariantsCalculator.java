@@ -21,7 +21,7 @@ import abyss.math.Transition;
  * @author BR
  * @author MR
  */
-public class InvariantsAnalyzer implements Runnable {
+public class InvariantsCalculator implements Runnable {
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
 	private ArrayList<Place> places = new ArrayList<Place>();
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
@@ -50,7 +50,7 @@ public class InvariantsAnalyzer implements Runnable {
 	 * Konstruktor obiektu klasy InvariantsAnalyzer. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.
 	 * @param transCal boolean - true, jeśli liczymy T-inwarianty, false dla P-inwariantów
 	 */
-	public InvariantsAnalyzer(boolean transCal) {
+	public InvariantsCalculator(boolean transCal) {
 		transCalculation = transCal;
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -435,7 +435,7 @@ public class InvariantsAnalyzer implements Runnable {
 						int check=1; //athero: ani razu! Hurray!!!!
 					}
 					canonize(incMatrixNewRow, canonicalNWD);
-					//canonize(incMatrixNewRow, matrixNWD); //TEST: BAD IDEA: po prostu nie działa, powstają nie-inwarianty, a inwariantów jest za mało
+					//canonize(incMatrixNewRow, matrixNWD); //TEST: BAD IDEA, po prostu nie działa, powstają nie-inwarianty, a inwariantów jest za mało
 				} else {
 					@SuppressWarnings("unused") 
 					int check=1; //tutaj też ani razu!!!! :D

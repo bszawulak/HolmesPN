@@ -6,12 +6,20 @@ import java.util.Collections;
 import abyss.utilities.Tools;
 
 /**
- *
- *
+ * Klasa narzędziowa, zawierająca metody (głównie statyczne) do testów związanych z inwariantami.
+ * @author MR
  */
-public class InvariantsTools {
+public final class InvariantsTools {
+	private InvariantsTools() {} // to + final = klasa statyczna w NORMALNYM języku, jak np. C#
 
-
+	/**
+	 * Metoda sprawdza czy zbiór inwariantów faktycznie w całości zeruje macierz incydencji. Zwraca macierz wektorów,
+	 * które okazały się nie być inwariantami.
+	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
+	 * @param invSet ArrayList[ArrayList[ArrayList]] - macierz inwariantów (nie wiadomo)
+	 * @return ArrayList[ArrayList[Integer]] - null jeśli wszystkie wektory to inwarianty, zwraca w formie tej macierzy listę
+	 *  wektorów, które inwariantami jednak nie są
+	 */
 	public static ArrayList<ArrayList<Integer>> isTInvariantSet(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {
 		ArrayList<ArrayList<Integer>> noInv = new ArrayList<ArrayList<Integer>>();
 		for(ArrayList<Integer> inv : invSet) {
@@ -22,6 +30,13 @@ public class InvariantsTools {
 		return noInv;
 	}
 	
+	/**
+	 * Metoda sprawdza, czy inwariant jest prawidłowy, tj. czy zeruje macierz incydencji podaną jako parametr.
+	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji sieci, każdy wiersza to wektor po miejscach (kolumny)
+	 * @param inv ArrayList[Integer] - inwariant
+	 * @param tInv boolean - true, jeśli testujemy T-inwarianty
+	 * @return boolean - true jeśli inwariant przeszedł test, false jeśli nie wyzerował macierzy
+	 */
 	public static boolean checkInvariant(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> inv, boolean tInv) {
 		//CMatrix - każdy wiersz to wektor miejsc indeksowany numerem tranzycji [2][3] - 2 tranzycja, 3 miejsce
 		if(tInv == true && CMatrix.size() > 0) {
@@ -46,14 +61,12 @@ public class InvariantsTools {
 				}
 			}
 			
-			boolean isInv = true;
 			for(int p=0; p<placesNumber; p++) {
 				if(placesSumVector.get(p) != 0)
 					return false;
 			}
-			return isInv;
+			return true;
 		} else {
-			
 			return false;
 		}
 	}
@@ -68,7 +81,6 @@ public class InvariantsTools {
 		ArrayList<Integer> supports = new ArrayList<Integer>();
 		int size = inv.size();
 		for(int i=0; i<size; i++) {
-			//TODO: != lub >
 			if(inv.get(i) != 0) { //jeśli na danej pozycji jest wartość >0
 				supports.add(i); //dodaj pozycję jako wsparcie
 			}
@@ -154,6 +166,12 @@ public class InvariantsTools {
 		}
 	}
 	
+	/**
+	 * Metoda działająca dla całego zbioru inwariantów, sprawdza czy są w nim inwarianty nie mające
+	 * <i>minimalnego wsparcia</i> (<i>minimal support</i> test, nie mylić z mimalnością inwariantu jako
+	 * takiego). Jeśli są, to je usuwa.
+	 * @param invariantsMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów, wierszami
+	 */
 	public static void finalSupportMinimalityTest(ArrayList<ArrayList<Integer>> invariantsMatrix) {	
 		int invNumber = invariantsMatrix.size();
 		ArrayList<Integer> getRidOfMatrix = new ArrayList<Integer>();
@@ -161,9 +179,7 @@ public class InvariantsTools {
 		boolean justGotHere = true;
 		double interval = (double)invNumber / 10; 
 		int steps = 0;
-		int linearDependence = 0;
-		boolean lD = false;
-		
+
 		for(int i=0; i<invNumber; i++) {
 			if(justGotHere) {
 				System.out.println();
@@ -175,7 +191,6 @@ public class InvariantsTools {
 			} else
 				steps++;
 			
-			lD = false;
 			ArrayList<Integer> inv = invariantsMatrix.get(i);
 			ArrayList<Integer> invSupport = getSupport(inv);
 			for(int j=0; j<invNumber; j++) {

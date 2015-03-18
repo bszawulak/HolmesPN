@@ -2,9 +2,13 @@ package abyss.darkgui.toolbar;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
+import abyss.analyzer.MCSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel.DrawModes;
+import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
 
@@ -375,27 +379,7 @@ public class Toolbar extends BorderDock {
 		
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug test purpose",
 				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				
-				/*
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().loadFromFile(
-						"C:/Users/Rince/Desktop/Sieci/BER/BERv3.4max.spped");
-				GUIManager.getDefaultGUIManager().getSimulatorBox().createSimulatorProperties();
-				
-				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
-				try
-				{
-					FileInputStream fis = new FileInputStream(
-							"C:/Users/Rince/Desktop/Sieci/BER/dataTableC40.acl");
-					ObjectInputStream ois = new ObjectInputStream(fis);
-					clusterMatrix = (ClusteringInfoMatrix) ois.readObject();
-					ois.close();
-					fis.close();
-					GUIManager.getDefaultGUIManager().windowClusters.registerDataCase56(clusterMatrix);
-				} catch (Exception ee) {}
-				*/
-				
+			public void actionPerformed(ActionEvent actionEvent) {	
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().loadFromFile(
 						"C:/Users/Rince/Desktop/Sieci/BER3.7.2/BERv3.8.2ab.spped");
 				GUIManager.getDefaultGUIManager().getSimulatorBox().createSimulatorProperties();
@@ -420,6 +404,18 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("Testing", testButton));
 		
 		
+		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", Tools.getResIcon48("/icons/toolbar/a.png")) {
+			@SuppressWarnings("unused")
+			public void actionPerformed(ActionEvent actionEvent) { 
+				
+				ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+				Transition test = transitions.get(51);
+				MCSCalculator mcs = new MCSCalculator(51);
+				
+				List<Set<Integer>> sets= mcs.findMcs(5);
+			}
+		};
+		analysisDockables.add(createButtonDockable("Testing2", testButton2));
 		
 		return analysisDockables;
 	}
@@ -435,8 +431,7 @@ public class Toolbar extends BorderDock {
 	 */
 	private ButtonDockable createButtonDockable(String id,ToolbarButtonAction action) {
 		// Create the action.
-		// ToolbarButtonAction action = new ToolbarButtonAction(this, title,
-		// icon, message);
+		// ToolbarButtonAction action = new ToolbarButtonAction(this, title, icon, message);
 		// Create the button.
 		ToolbarButton button = new ToolbarButton(action);
 		// Create the dockable with the button as component.

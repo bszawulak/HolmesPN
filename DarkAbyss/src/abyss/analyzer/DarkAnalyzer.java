@@ -57,7 +57,7 @@ public class DarkAnalyzer {
 	}
 
 	/**
-	 * Metoda generująca zbiory MCT na bazie t-inwariantów
+	 * Metoda generująca zbiory MCT na bazie t-inwariantów.
 	 * @param tInvariantsList ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
 	 * @return ArrayList[ArrayList[Transition]] - macierz wyjściowa
 	 */

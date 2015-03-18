@@ -443,10 +443,9 @@ public class AbyssDockWindowsTable extends JPanel {
 					GUIManager.getDefaultGUIManager().getShortcutsBar().setEnabledSimulationDisruptButtons(false);
 					
 					try {
-						GUIManager.getDefaultGUIManager().startInvariantsSimulation(
-								Integer.valueOf(group.getSelection().getActionCommand()), 
-								(Integer) spiner.getValue()); //jaki tryb
-					} catch (CloneNotSupportedException e) {
+						//GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(group.getSelection().getActionCommand()), 
+						//		(Integer) spiner.getValue()); //jaki tryb
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					//STOP:
