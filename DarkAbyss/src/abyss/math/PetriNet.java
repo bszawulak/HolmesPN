@@ -1,9 +1,8 @@
 package abyss.math;
 
 import abyss.analyzer.InvariantsCalculator;
-import abyss.analyzer.DarkAnalyzer;
+import abyss.analyzer.MCTCalculator;
 import abyss.analyzer.InvariantsSimulator;
-import abyss.analyzer.InvariantsSimulator.SimulatorMode;
 import abyss.darkgui.GUIManager;
 import abyss.files.Snoopy.SnoopyWriter;
 import abyss.files.io.AbyssReader;
@@ -49,11 +48,9 @@ import org.simpleframework.xml.Root;
  */
 public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
-	private ArrayList<ArrayList<InvariantTransition>> invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
+	//private ArrayList<ArrayList<InvariantTransition>> invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
 	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
-	private ArrayList<Integer> invariantsSize;
-	private ArrayList<Integer> uncoveredTransitions;
-	private ArrayList<GraphPanel> graphPanels;		// panele sieci
+	private ArrayList<GraphPanel> graphPanels;
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
 	private IdGenerator idGenerator;
 	
@@ -69,10 +66,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private boolean isSimulationActive = false;
 	private NetSimulator simulator;
 	private InvariantsSimulator invSimulator;
-	private DarkAnalyzer analyzer;
+	private MCTCalculator analyzer;
 	private InvariantsCalculator eia;
 
-	//wektor tokenów dla miejsc:
+	/** wektor tokenów dla miejsc: */
 	private ArrayList<Integer> backupMarkingZero = new ArrayList<Integer>();
 	/** Wartość flagi == true jeżeli został już utworzony backup PRZEZ symulator */
 	public boolean isBackup = false;
@@ -97,7 +94,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.setGraphPanels(new ArrayList<GraphPanel>());
 		this.workspace = workspace;
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
-		this.setAnalyzer(new DarkAnalyzer(this));
+		this.setAnalyzer(new MCTCalculator(this));
 		resetComm();
 		dataCore.netName = name;
 	}
@@ -339,7 +336,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda zwracająca obiekt analizatora, np. na potrzeby generacji MCT.
 	 * @return DarkAnalyzer - obiekt analizatora
 	 */
-	public DarkAnalyzer getAnalyzer() {
+	public MCTCalculator getAnalyzer() {
 		return analyzer;
 	}
 
@@ -347,7 +344,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda ustawiająca aktualny analizator dla obiektu sieci.
 	 * @param analyzer DarkAnalyzer - analizator dla sieci
 	 */
-	private void setAnalyzer(DarkAnalyzer analyzer) {
+	private void setAnalyzer(MCTCalculator analyzer) {
 		this.analyzer = analyzer;
 	}
 	
@@ -391,22 +388,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda ustala nowy obiekt macierzy inwariantów 2ej formy.
-	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
-	 */
-	public void set2ndFormInvariantsList(ArrayList<ArrayList<InvariantTransition>> invariants) {
-		this.invariants2ndForm = invariants;
-	}
-	
-	/**
-	 * Metoda zwraca obiekt macierzy inwariantów 2ej formy.
-	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
-	 */
-	public ArrayList<ArrayList<InvariantTransition>> get2ndFormInvariantsList() {
-		return invariants2ndForm;
-	}
-	
-	/**
 	 * Metoda ustawia nową macierz inwariantów sieci.
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 */
@@ -420,39 +401,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<ArrayList<Integer>> getInvariantsMatrix() {
 		return invariantsMatrix;
-	}
-	
-	/**
-	 * Metoda ustawia nowy wektor danych rozmiarów inwariantów.
-	 * @param newVector ArrayList[Integer] - nowy wektor danych
-	 */
-	public void setInvariantsSize(ArrayList<Integer> newVector) {
-		invariantsSize = newVector;
-	}
-	
-	/**
-	 * Metoda zwraca wektor określający liczność każdego inwariantu.
-	 * Zakłada, że została wywołana metoda 
-	 * @return ArrayList[Integer] - wektor liczności inwariantów
-	 */
-	public ArrayList<Integer> getInvariantsSize() {
-		return invariantsSize;
-	}
-	
-	/**
-	 * Metoda ustawia nowy wektor danych nieaktywnych tranzycjai.
-	 * @param newVector ArrayList[Integer] - nowy wektor danych
-	 */
-	public void setUncoveredInvariants(ArrayList<Integer> newVector) {
-		uncoveredTransitions = newVector;
-	}
-	
-	/**
-	 * Metoda zwraca wektor określający, które tranzycje nie są pokryte inwariantami.
-	 * @return ArrayList[Integer] - wektor niedziałających (w inw.) tranzycji
-	 */
-	public ArrayList<Integer> getUncoveredInvariants() {
-		return uncoveredTransitions;
 	}
 
 	/**
@@ -864,7 +812,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		try {
 			communicationProtocol.readINV(sciezka);
 			setInvariantsMatrix(communicationProtocol.getInvariantsList());
-			compute2ndFormInv();
+			//compute2ndFormInv();
 			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true); //status inwariantów: wczytane
 		} catch (Throwable err) {
 			err.printStackTrace();
@@ -982,64 +930,16 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda obliczająca macierz inwariantów drugiego typu. Przy okazji ustala liczność
-	 * każdego inwariantu w ramach wektora invariantsSize (globalny) oraz które tranzycje nie
-	 * są pokryte inwariantami.
-	 */
-	public void compute2ndFormInv() {
-		InvariantTransition currentTransition;
-		invariantsSize = new ArrayList<Integer>();
-		uncoveredTransitions = new ArrayList<Integer>();
-		
-		for(int i=0; i<getTransitions().size(); i++)
-			uncoveredTransitions.add(0);
-		
-		if (invariantsMatrix.size() > 0) {
-			invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
-			if (invariantsMatrix.get(0).size() == getTransitions().size()) {
-				ArrayList<InvariantTransition> currentInvariant;
-				int i; //iterator po tranzycjach sieci
-				int invSize = 0;
-				for (ArrayList<Integer> binaryInvariant : invariantsMatrix) {
-					currentInvariant = new ArrayList<InvariantTransition>();
-					i = 0;
-					invSize = 0;
-					for (Integer amountOfFirings : binaryInvariant) {
-						if (amountOfFirings > 0) { // dla tranzycji odpalananych
-							invSize++;
-							currentTransition = new InvariantTransition(getTransitions().get(i), amountOfFirings);
-							currentInvariant.add(currentTransition);
-							uncoveredTransitions.set(i, 1); //aktywna tranzycja
-						}
-						i++;
-					}
-					invariants2ndForm.add(currentInvariant);
-					invariantsSize.add(invSize);
-					invSize = 0;
-				}
-			} else {
-				JOptionPane.showMessageDialog(null,
-					"The currently opened project does not match with loaded external invariants. \nPlease make sure you are loading the correct invariant file for the correct Petri net.",
-					"Project mismatch error!", JOptionPane.ERROR_MESSAGE);
-				GUIManager.getDefaultGUIManager().log("Error: the currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.", "error", true);
-			}
-		} else {
-			JOptionPane.showMessageDialog(null,
-				"Invariants data matrix unavailable. Possible cause: invariants generation or reading from file failed.",
-				"No invariants data", JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed. 1st level invariants matrix unavailable.", "error", true);
-		}
-	}
-
-	/**
 	 * Metoda zwracająca macierz wygenerowanych inwariantów, i przy okazji tworząca drugą
 	 * postać inwariantów.
 	 * 
 	 * Działa w ramach EarlyInvariantsAnalizer i tylko jego. Na razie zostawić.
-	 * 
+	 * TODO: usunąć po testach
 	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inw.
 	 */
-	public ArrayList<ArrayList<InvariantTransition>> getEIAgeneratedInv_old() {
+	public ArrayList<ArrayList<InvariantTransition>> getEIAgeneratedInv_old222() {
+		return null;
+		/*
 		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
 		InvariantTransition currentTransition;
 		invariantsBinaryList = eia.getInvariants();
@@ -1074,6 +974,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed.", "error", true);
 		}
 		return get2ndFormInvariantsList();
+		*/
 	}
 
 	/**
@@ -1110,9 +1011,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		//Timer timer = new Timer();
 		//Date date = new Date();
 		
-		this.invSimulator = new InvariantsSimulator(abyss.analyzer.InvariantsSimulator.NetType.BASIC, new PetriNet(
-						getData().nodes, getData().arcs), get2ndFormInvariantsList(),type, value);
+		//this.invSimulator = new InvariantsSimulator(abyss.analyzer.InvariantsSimulator.NetType.BASIC, new PetriNet(
+		//				getData().nodes, getData().arcs), get2ndFormInvariantsList(),type, value);
 
-		invSimulator.startSimulation(SimulatorMode.LOOP);
+		//invSimulator.startSimulation(SimulatorMode.LOOP);
 	}
 }

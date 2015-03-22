@@ -7,7 +7,6 @@ import javax.swing.JOptionPane;
 import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
-import abyss.math.InvariantTransition;
 import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
@@ -47,15 +46,16 @@ public class GUIReset {
 		if(invGenerated == true) {
 			resetCommunicationProtocol();
 			
-			mastah.getWorkspace().getProject().set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
+			//mastah.getWorkspace().getProject().set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
+			
 			mastah.getWorkspace().getProject().setInvariantsMatrix(null);
-			mastah.getWorkspace().getProject().setInvariantsSize(null);
-			mastah.getWorkspace().getProject().setUncoveredInvariants(null);
+			//mastah.getWorkspace().getProject().setInvariantsSize(null);
+			//mastah.getWorkspace().getProject().setUncoveredInvariants(null);
 			
 			mastah.getInvariantsBox().getCurrentDockWindow().resetInvariants();
 			mastah.getInvariantsBox().getCurrentDockWindow().removeAll();
 			mastah.getInvariantsBox().setCurrentDockWindow(new AbyssDockWindowsTable(
-					mastah.getWorkspace().getProject().get2ndFormInvariantsList()));	
+					mastah.getWorkspace().getProject().getInvariantsMatrix()));	
 			mastah.getInvariantsBox().validate();
 			mastah.getInvariantsBox().repaint();
 

@@ -14,11 +14,10 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import abyss.adam.mct.Runner;
-import abyss.analyzer.DarkAnalyzer;
+import abyss.analyzer.MCTCalculator;
 import abyss.clusters.ClusteringExtended;
 import abyss.darkgui.GUIManager;
 import abyss.files.Snoopy.SnoopyWriter;
-import abyss.math.InvariantTransition;
 import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
@@ -310,11 +309,14 @@ public class TexExporter {
 	 * MCT programu, po zweryfikowaniu - zgodnego z algorytmem mct.jar do tej pory stosowanym 
 	 * (i zawartym w pakiecie abyss.adam.mct)
 	 */
-	@SuppressWarnings("unchecked") //różne badziewne ostrzeżenia Eclipsa
+	@SuppressWarnings("unchecked") //różne badziewne ostrzeżenia Eclipse
 	public void writeMCT() {
-		DarkAnalyzer analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
-		ArrayList<ArrayList<InvariantTransition>> invTr = analyzer.gettInvariants();
-		ArrayList<ArrayList<Transition>> mctSet = analyzer.generateMCT(invTr);
+		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
+		ArrayList<ArrayList<Transition>> mctSet = analyzer.generateMCT();
+		if(mctSet == null) {
+			GUIManager.getDefaultGUIManager().log("No MCT sets returned to writeMCT(). Writing operation terminated.", "error", true);
+			return;
+		}
 		
 		if(mctSet == null || mctSet.size() == 0) {
 			String msg = "Unable to extract MCT data from the net.";

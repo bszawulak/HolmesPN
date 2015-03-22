@@ -43,6 +43,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
 import abyss.analyzer.InvariantsSimulator;
+import abyss.analyzer.InvariantsTools;
 import abyss.clusters.ClusterDataPackage;
 import abyss.clusters.ClusterTransition;
 import abyss.darkgui.GUIManager;
@@ -51,7 +52,6 @@ import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.Arc;
 import abyss.math.ElementLocation;
-import abyss.math.InvariantTransition;
 import abyss.math.Node;
 import abyss.math.PetriNetElement;
 import abyss.math.Place;
@@ -119,7 +119,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	private NetSimulator simulator;  // obiekt symulatora
 	private InvariantsSimulator invSimulator;
 
-	private ArrayList<ArrayList<InvariantTransition>> invariantsDock2Form; //używane w podoknie inwariantów
+	private ArrayList<ArrayList<Integer>> invariantsMatrix; //używane w podoknie inwariantów
+	private ArrayList<Transition> transitions; // j.w.
 	private ArrayList<ArrayList<Transition>> mctGroups; //używane tylko w przypadku, gdy obiekt jest typu DockWindowType.MctANALYZER
 	private ClusterDataPackage clusterColorsData;
 	// modes
@@ -131,6 +132,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	private static final int INVARIANTS = 5;
 	private static final int MCT = 6;
 	private static final int TIMETRANSITION = 7;
+	@SuppressWarnings("unused")
 	private static final int INVARIANTSSIMULATOR = 8;
 	private static final int CLUSTERS = 9;
 	
@@ -434,8 +436,10 @@ public class AbyssDockWindowsTable extends JPanel {
 		//startButton.setSize(80, 40);
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				/*
 				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().get2ndFormInvariantsList().size()>0)
 				{
+					
 					mode = INVARIANTSSIMULATOR;
 					setEnabledSimulationInitiateButtons(false);
 					setEnabledSimulationDisruptButtons(false);
@@ -459,6 +463,7 @@ public class AbyssDockWindowsTable extends JPanel {
 					JOptionPane.showMessageDialog(null, "There are no invariants to simulate.",
 						    "Invariant simulator", JOptionPane.INFORMATION_MESSAGE);
 				}
+				*/
 			}
 		});
 		
@@ -1691,9 +1696,77 @@ public class AbyssDockWindowsTable extends JPanel {
 	/**
 	 * Konstruktor odpowiedzialny za wypełnienie podokna umożliwiającego wybór poszczególnych
 	 * inwariantów sieci.
-	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 */
-	public AbyssDockWindowsTable(ArrayList<ArrayList<InvariantTransition>> invariants) {
+	public AbyssDockWindowsTable(ArrayList<ArrayList<Integer>> invariantsData) {
+	//public AbyssDockWindowsTable(ArrayList<ArrayList<InvariantTransition>> invariants) {
+		
+		if(invariantsData == null || invariantsData.size() == 0) {
+			return;
+		} else {
+			mode = INVARIANTS;
+			invariantsMatrix = invariantsData;
+			transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
+		}
+		
+		int colA_posX = 10;
+		int colB_posX = 100;
+		int positionY = 10;
+		initiateContainers();
+
+		JLabel chooseInvLabel = new JLabel("Invariant: ");
+		chooseInvLabel.setBounds(colA_posX, positionY, 80, 20);
+		components.add(chooseInvLabel);
+		
+		String[] invariantHeaders = new String[invariantsMatrix.size() + 2];
+		invariantHeaders[0] = "---";
+		for (int i = 0; i < invariantsMatrix.size(); i++) {
+			invariantHeaders[i + 1] = "Inv. #" + Integer.toString(i) +" (size: "+invariantsMatrix.get(i).size()+")";
+		}
+		invariantHeaders[invariantHeaders.length-1] = "null transitions";
+		
+		JComboBox<String> chooseInvBox = new JComboBox<String>(invariantHeaders);
+		chooseInvBox.setBounds(colB_posX, positionY, 150, 20);
+		chooseInvBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				@SuppressWarnings("unchecked")
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				int items = comboBox.getItemCount();
+				if (comboBox.getSelectedIndex() == 0) {
+					showInvariant(0, false);
+				} else if(comboBox.getSelectedIndex() == items-1) { 
+					showDeadInv();
+				} else {
+					showInvariant(comboBox.getSelectedIndex() - 1, true);
+				}
+			}
+		});
+		components.add(chooseInvBox);
+		positionY += 30;
+		
+		invTextArea = new JTextArea();
+		invTextArea.setEditable(false);
+		invTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		JPanel textAreaPanel = new JPanel();
+		textAreaPanel.setLayout(new BorderLayout());
+		textAreaPanel.add(new JScrollPane(
+				invTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+        		BorderLayout.CENTER);
+		
+		int w = GUIManager.getDefaultGUIManager().getMctBox().getWidth();
+		int h = GUIManager.getDefaultGUIManager().getMctBox().getHeight();
+		textAreaPanel.setBounds(colA_posX, positionY, w-30, h-60);
+		components.add(textAreaPanel);
+		
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			 panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		panel.setVisible(true);
+		add(panel);
+		/*
 		if(invariants == null || invariants.size() == 0) {
 			return;
 		} else {
@@ -1758,12 +1831,13 @@ public class AbyssDockWindowsTable extends JPanel {
 		panel.repaint();
 		panel.setVisible(true);
 		add(panel);
+		*/
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za podświetlanie inwariantów.
+	 * Metoda odpowiedzialna za podświetlanie inwariantów na rysunku sieci.
 	 * @param invariantIndex Integer - numer wybranego inwariantu
-	 * @param inv boolean - true, jeśli mają być pokazane dane szczegółowe w panelu
+	 * @param inv isThereInv - false, jeśli wybrano opcję '---'
 	 */
 	private void showInvariant(Integer invariantIndex, boolean isThereInv) {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
@@ -1774,7 +1848,15 @@ public class AbyssDockWindowsTable extends JPanel {
 		{
 			invTextArea.setText("");
 			invTextArea.append("Transitions of INV #" + invariantIndex + ":\n");
-			ArrayList<InvariantTransition> invariant = invariantsDock2Form.get(invariantIndex);
+			ArrayList<Integer> invariant = invariantsMatrix.get(invariantIndex);
+			if(transitions.size() != invariant.size()) {
+				transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+				if(transitions == null || transitions.size() != invariant.size()) {
+					GUIManager.getDefaultGUIManager().log("Critical error in invariants subwindow. "
+							+ "Invariants size differ from transition set cardinality!", "error", true);
+					return;
+				}
+			}
 			
 			//long mintime = 0;
 			//long maxtime = 0;
@@ -1783,6 +1865,19 @@ public class AbyssDockWindowsTable extends JPanel {
 				//maxtime+=transition.getTransition().getMaxFireTime();
 			//}
 			
+			for(int t=0; t<invariant.size(); t++) {
+				int fireValue = invariant.get(t);
+				if(fireValue == 0)
+					continue;
+				
+				Transition realT = transitions.get(t);
+				String t1 = Tools.setToSize("t"+t, 5, false);
+				String t2 = Tools.setToSize("Fired: "+fireValue, 12, false);
+				invTextArea.append(t1 + t2 + " ; "+realT.getName()+"\n");
+				
+				realT.setGlowed_INV(true, fireValue);
+			}
+			/*
 			for (InvariantTransition invTrans : invariant) {
 				Transition realT = invTrans.getTransition(); //prawdziwy obiekt tranzycji
 				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
@@ -1793,6 +1888,8 @@ public class AbyssDockWindowsTable extends JPanel {
 				
 				invTrans.getTransition().setGlowed_INV(true, invTrans.getAmountOfFirings());
 			}
+			*/
+			
 			invTextArea.setCaretPosition(0);
 		}
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
@@ -1804,8 +1901,9 @@ public class AbyssDockWindowsTable extends JPanel {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setColorClusterToNeutral();
 		
 		invTextArea.setText("");
-		invTextArea.append("Transitions uncovered by invariants::\n");
-		ArrayList<Integer> deadTrans = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getUncoveredInvariants();
+		invTextArea.append("Transitions not covered by invariants:\n");
+		//ArrayList<Integer> deadTrans = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getUncoveredInvariants();
+		ArrayList<Integer> deadTrans = InvariantsTools.detectUncovered(invariantsMatrix);
 		if(deadTrans == null) {
 			JOptionPane.showMessageDialog(null, "No invariants data available.", "No invariants", JOptionPane.INFORMATION_MESSAGE);
 		} else {
@@ -2527,7 +2625,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	 * Metoda czyści dane o inwariantach.
 	 */
 	public void resetInvariants() {
-		invariantsDock2Form = null;	
+		invariantsMatrix = null;
 	}
 	
 	/**

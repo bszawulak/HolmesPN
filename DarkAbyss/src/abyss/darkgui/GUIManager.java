@@ -1,6 +1,6 @@
 package abyss.darkgui;
 
-import abyss.analyzer.DarkAnalyzer;
+import abyss.analyzer.MCTCalculator;
 import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.dockable.DeleteAction;
 import abyss.darkgui.dockwindows.AbyssDockWindow;
@@ -9,7 +9,6 @@ import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.darkgui.toolbar.Toolbar;
 import abyss.files.io.TexExporter;
 import abyss.math.ElementLocation;
-import abyss.math.InvariantTransition;
 import abyss.math.Node;
 import abyss.math.PetriNet;
 import abyss.math.Transition;
@@ -18,6 +17,8 @@ import abyss.utilities.Tools;
 import abyss.windows.AbyssAbout;
 import abyss.windows.AbyssConsole;
 import abyss.windows.AbyssClusters;
+import abyss.windows.AbyssInvariants;
+import abyss.windows.AbyssMCS;
 import abyss.windows.AbyssNetProperties;
 import abyss.windows.AbyssNetTables;
 import abyss.windows.AbyssNotepad;
@@ -944,12 +945,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za rozpoczęcie generowania zbiorów MCT.
+	 * Główna metoda odpowiedzialna za generowanie zbiorów MCT.
 	 */
 	public void generateMCT() {
-		DarkAnalyzer analyzer = getWorkspace().getProject().getAnalyzer();
-		ArrayList<ArrayList<InvariantTransition>> invTr = analyzer.gettInvariants();
-		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT(invTr);
+		MCTCalculator analyzer = getWorkspace().getProject().getAnalyzer();
+		//ArrayList<ArrayList<InvariantTransition>> invTr = analyzer.gettInvariants();
+		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
 		getMctBox().showMCT(mct);
 	}
 	
@@ -976,7 +977,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	private void createClusterWindow() {
 		windowClusters = new AbyssClusters(0);
-		//windowClusters.setLocationRelativeTo(this);
 	}
 	
 	/**
@@ -1137,6 +1137,24 @@ public class GUIManager extends JPanel implements ComponentListener {
 			windowConsole.setVisible(value);
 		}
 	}
+	
+	/**
+	 * Metoda wywołująca okno narzędzi inwariantów.
+	 */
+	public void createInvariantsWindow() {
+		AbyssInvariants ai = new AbyssInvariants();
+		ai.setVisible(true);
+	}
+	
+	/**
+	 * Metoda wywołująca okno generatora MCS.
+	 */
+	public void createMCSWindow() {
+		//TODO: brak inv
+		AbyssMCS mcsWindow = new AbyssMCS();
+		mcsWindow.setVisible(true);
+	}
+	
 	
 	/**
 	 * Metoda zapisująca nowe zdarzenie w oknie logów.

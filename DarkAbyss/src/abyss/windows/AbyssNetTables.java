@@ -423,7 +423,6 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
     	}
     	if(invariantsMatrix == null || invariantsMatrix.size() == 0) return; //final check
     	
-    	ArrayList<Integer> invSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsSize();
     	int transNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
     	
     	modelInvariants = new InvariantsTableModel(transNumber);        
@@ -451,7 +450,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		table.setRowSorter(null);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		action.addInvariantsToModel(modelInvariants, invariantsMatrix, invSize, simStepsForInv, maxModeForSSInv);
+		action.addInvariantsToModel(modelInvariants, invariantsMatrix, simStepsForInv, maxModeForSSInv);
 		
 		//ustawianie komentarzy dla kolumn:
 		ColumnHeaderToolTips tips = new ColumnHeaderToolTips();

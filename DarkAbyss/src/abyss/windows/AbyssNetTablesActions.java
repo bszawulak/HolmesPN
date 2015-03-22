@@ -6,6 +6,7 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
+import abyss.analyzer.InvariantsTools;
 import abyss.darkgui.GUIManager;
 import abyss.math.ElementLocation;
 import abyss.math.Place;
@@ -158,7 +159,7 @@ public class AbyssNetTablesActions {
 	 * @param invSize ArrayList[Integer] invSize - wektor wielkości inwariantów
 	 */
 	public void addInvariantsToModel(InvariantsTableModel modelInvariants, ArrayList<ArrayList<Integer>> invariantsMatrix,
-			ArrayList<Integer> invSize, int simSteps, boolean maximumMode) {
+			int simSteps, boolean maximumMode) {
 		StateSimulator ss = new StateSimulator();
 		ss.initiateSim(NetType.BASIC, maximumMode);
 		ss.simulateNetSimple(simSteps, false);
@@ -173,8 +174,12 @@ public class AbyssNetTablesActions {
 		for(int row=0; row<invariantsMatrix.size(); row++) {
 			ArrayList<Integer> dataV = invariantsMatrix.get(row);
 			ArrayList<String> newRow = new ArrayList<String>();
+			
+			ArrayList<Integer> invSupport = InvariantsTools.getSupport(dataV);
+			 
 			newRow.add(""+row);
-			newRow.add(""+invSize.get(row));
+			//newRow.add(""+invSize.get(row));
+			newRow.add(""+invSupport.size());
 			
 			for(int t=0; t<dataV.size(); t++) { //dla każdej tranzycji
 				int value = dataV.get(t);

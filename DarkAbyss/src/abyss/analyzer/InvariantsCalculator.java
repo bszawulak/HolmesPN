@@ -17,6 +17,7 @@ import abyss.math.Transition;
  * 13.03.2015: Naprawianie w toku. Tu się takie cuda działy, że głowa mała. Poprzednia wersja miała wymagania
  * pamięciowe serwerowni PCSS. Aż cud, że była w stanie cokolwiek liczyć. O błędach lepiej nie pisać. <br>
  * 14.03.2015: Pierwszy sukces, coś działa. Poprawienie macierzy incydencji (1 na -1) w każdym polu PEWNIE TEŻ POMOGŁO!!! 
+ * 17.03.2015: Pełen sukces. Działa i wiadomo dlaczego. Cud.
  * 
  * @author BR
  * @author MR
@@ -71,7 +72,7 @@ public class InvariantsCalculator implements Runnable {
 		this.createTPIncidenceAndIdentityMatrix();
 		this.searchTInvariants();
 		PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getEIAgeneratedInv_old());
+		GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants());
 		project.setInvariantsMatrix(getInvariants());
 	}
 	
@@ -844,7 +845,7 @@ public class InvariantsCalculator implements Runnable {
 	/**
 	 * Metoda oblicza silnię. Z bliżej nieznanych powodów.
 	 * @param i int - liczba wyjściowa
-	 * @return int - wynik i!
+	 * @return int - wynik: i!
 	 */
 	public int silnia(int i) {
 		if (i == 0)

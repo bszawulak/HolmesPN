@@ -7,13 +7,13 @@ import abyss.darkgui.GUIManager;
 
 /**
  * Główna klasa programu. Jedna metoda, odpowiedzialna za tworzenie środowiska graficznego Abyss. I całej reszty.
+ * Przy okazji jedyna zrozumiała.
  * @author students
  *
  * "Czy położyłby się Pan pod kroplówką obsługiwaną przez ten algorytm? -A co by w niej było? -Denaturat." A.D. circa 2001
  * 
  */
 public class Main {
-
 	public static GUIManager guiManager;
 
 	/**

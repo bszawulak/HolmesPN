@@ -13,20 +13,21 @@ import abyss.math.Transition;
 /**
  * Klasa analizatora, aktualnie odpowiedzialna za generowanie zbiorów MCT.
  * @author students
+ * @author MR
  *
  */
-public class DarkAnalyzer {
+public class MCTCalculator {
 	private InputMatrix inMatrix;
 	private OutputMatrix outMatrix;
 	private IncidenceMatrix matrix;
 	private PetriNet petriNet;
-	private ArrayList<ArrayList<InvariantTransition>> tInvariants = new ArrayList<ArrayList<InvariantTransition>>();
+	//private ArrayList<ArrayList<InvariantTransition>> tInvariants = new ArrayList<ArrayList<InvariantTransition>>();
 
 	/**
 	 * Konstruktor obiektu analizatora
 	 * @param petriNet
 	 */
-	public DarkAnalyzer(PetriNet petriNet) {
+	public MCTCalculator(PetriNet petriNet) {
 		this.petriNet = petriNet;
 	}
 
@@ -57,14 +58,22 @@ public class DarkAnalyzer {
 	}
 
 	/**
-	 * Metoda generująca zbiory MCT na bazie t-inwariantów.
-	 * @param tInvariantsList ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
+	 * Metoda generująca zbiory MCT na bazie macierzy T-inwariantów.
 	 * @return ArrayList[ArrayList[Transition]] - macierz wyjściowa
 	 */
-	public ArrayList<ArrayList<Transition>> generateMCT(ArrayList<ArrayList<InvariantTransition>> tInvariantsList) {
+	public ArrayList<ArrayList<Transition>> generateMCT() {
+		//ArrayList<ArrayList<InvariantTransition>> tInvariantsList;
 		// konwersja z InvariantTransitions na Transitions
-		ArrayList<ArrayList<Transition>> invariants = new ArrayList<ArrayList<Transition>>();
-		for (ArrayList<InvariantTransition> invariant : tInvariantsList) {
+		ArrayList<ArrayList<Transition>> invariants = new ArrayList<ArrayList<Transition>>();	
+		ArrayList<ArrayList<InvariantTransition>> invTr2nd; // = analyzer.gettInvariants();
+		
+		invTr2nd = InvariantsTools.compute2ndFormInv(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix());
+		if(invTr2nd == null) {
+			GUIManager.getDefaultGUIManager().log("Unable to calculate 2nd order invariant matrix in generateMCT()", "error", true);
+			return null;
+		}
+		
+		for (ArrayList<InvariantTransition> invariant : invTr2nd) {
 			ArrayList<Transition> currentInvariant = new ArrayList<Transition>();
 			for (InvariantTransition invariantTransition : invariant) {
 				currentInvariant.add(invariantTransition.getTransition());
@@ -94,21 +103,5 @@ public class DarkAnalyzer {
 		}
 		GUIManager.getDefaultGUIManager().reset.setMCTStatus(true); //status zbiorów MCT: wczytane
 		return mctGroups;
-	}
-
-	/**
-	 * Metoda zwracająca macierz t-inwariantów
-	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów
-	 */
-	public ArrayList<ArrayList<InvariantTransition>> gettInvariants() {
-		return tInvariants;
-	}
-
-	/**
-	 * Metoda ustawiająca nową macierz t-inwariantów
-	 * @return ArrayList[ArrayList[InvariantTransition]] - nowa macierz inwariantów
-	 */
-	public void settInvariants(ArrayList<ArrayList<InvariantTransition>> tInvariants) {
-		this.tInvariants = tInvariants;
 	}
 }

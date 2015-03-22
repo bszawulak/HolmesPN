@@ -11,7 +11,6 @@ import abyss.darkgui.GUIManager;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import abyss.math.Arc;
-import abyss.math.InvariantTransition;
 import abyss.math.Node;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
@@ -142,11 +141,11 @@ public class AbyssDockWindow extends SingleDock {
 	 * showExternalInvariants(...)
 	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - inwarianty
 	 */
-	public void showInvariants(ArrayList<ArrayList<InvariantTransition>> invariants) {
+	public void showInvariants(ArrayList<ArrayList<Integer>> invariants) {
 		if (type == DockWindowType.InvANALYZER) {
 			setCurrentDockWindow(new AbyssDockWindowsTable(invariants));
 			scrollPane.getViewport().add(getCurrentDockWindow());
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer().settInvariants(invariants); 
+			//GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer().settInvariants(invariants); 
 		}
 	}
 	

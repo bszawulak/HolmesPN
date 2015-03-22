@@ -309,7 +309,7 @@ public class GUIOperations {
 		PetriNet project = overlord.getWorkspace().getProject();
 		project.loadInvariantsFromFile(file.getPath());
 
-		overlord.getInvariantsBox().showInvariants(project.get2ndFormInvariantsList());
+		overlord.getInvariantsBox().showInvariants(project.getInvariantsMatrix());
 		overlord.setLastPath(file.getParentFile().getPath());
 		overlord.getSimulatorBox().createSimulatorProperties();
 	}
@@ -405,7 +405,7 @@ public class GUIOperations {
 			PetriNet project = overlord.getWorkspace().getProject();
 			project.loadInvariantsFromFile(invariantsFile.getPath());
 			//project.getInaInvariants();
-			overlord.getInvariantsBox().showInvariants(project.get2ndFormInvariantsList());
+			overlord.getInvariantsBox().showInvariants(project.getInvariantsMatrix());
 			overlord.getSimulatorBox().createSimulatorProperties();
 		
 			//co dalej z plikiem?
@@ -499,8 +499,7 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za obliczanie metryk Calinskiego-Harabasza dla klastrów
-	 * sieci Petriego.
+	 * Metoda odpowiedzialna za obliczanie metryk Calinskiego-Harabasza dla klastrów sieci Petriego.
 	 * @param howMany int - maksymalna liczba klastrów
 	 * @return String - katalog z plikami miar
 	 */

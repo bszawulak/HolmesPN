@@ -25,6 +25,7 @@ import com.javadocking.dockable.Dockable;
 /**
  * Klasa implementująca metody tworzenia i obsługi głównego menu programu.
  * @author students
+ * @author MR (2015: mostly)
  *
  */
 public class DarkMenu extends JMenuBar {
@@ -393,13 +394,37 @@ public class DarkMenu extends JMenuBar {
 			
 		
 		//INVARIANTS MENU
-		invariantsOperationsMenu = new JMenu("Invariants");
+		invariantsOperationsMenu = new JMenu("Analysis");
 		invariantsOperationsMenu.setMnemonic(KeyEvent.VK_I);
 		invariantsOperationsMenu.getAccessibleContext().setAccessibleDescription("Invariants - Menu");
 		this.add(invariantsOperationsMenu);
+		
+		// Invariants window
+		JMenuItem invWindowItem = new JMenuItem("Invariants...", KeyEvent.VK_1);
+		invWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_aaa.png"));
+		invWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
+		invWindowItem.getAccessibleContext().setAccessibleDescription("Invariants generator and tools");
+		invWindowItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().createInvariantsWindow();
+			}
+		});
+		invariantsOperationsMenu.add(invWindowItem);
+		
+		// Invariants window
+		JMenuItem mcsWindowItem = new JMenuItem("MCS...", KeyEvent.VK_2);
+		mcsWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_aaa.png"));
+		//mcsWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
+		mcsWindowItem.getAccessibleContext().setAccessibleDescription("MCS generator and tools");
+		mcsWindowItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().createMCSWindow();
+			}
+		});
+		invariantsOperationsMenu.add(mcsWindowItem);
 
 		// The JMenuItem for INA generator
-		JMenuItem genINAinvItem = new JMenuItem("Generate INA invariants", KeyEvent.VK_1);
+		JMenuItem genINAinvItem = new JMenuItem("Generate INA invariants", KeyEvent.VK_2);
 		genINAinvItem.setIcon(Tools.getResIcon32("/icons/menu/menu_INA_invGen.png"));
 		genINAinvItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
 		//genINAinvItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
@@ -412,7 +437,7 @@ public class DarkMenu extends JMenuBar {
 		invariantsOperationsMenu.add(genINAinvItem);		
 
 		// The JMenuItem for external analysis
-		JMenuItem importInvMenuItem = new JMenuItem("Import invariants", KeyEvent.VK_1);
+		JMenuItem importInvMenuItem = new JMenuItem("Import invariants", KeyEvent.VK_3);
 		importInvMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_InvImport.png"));
 		//importInvMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
 		importInvMenuItem.getAccessibleContext().setAccessibleDescription("Load analysis result from external source");
@@ -424,7 +449,7 @@ public class DarkMenu extends JMenuBar {
 		invariantsOperationsMenu.add(importInvMenuItem);
 		
 		// The JMenuItem for exportInvariants
-		JMenuItem exportInv = new JMenuItem("Export invariants", KeyEvent.VK_2);
+		JMenuItem exportInv = new JMenuItem("Export invariants", KeyEvent.VK_4);
 		exportInv.setIcon(Tools.getResIcon32("/icons/menu/menu_InvExp.png"));
 		//exportInv.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,ActionEvent.ALT_MASK));
 		exportInv.getAccessibleContext().setAccessibleDescription("Export generated invariants");
@@ -436,7 +461,7 @@ public class DarkMenu extends JMenuBar {
 		invariantsOperationsMenu.add(exportInv);
 		
 		// The JMenuItem for external analysis
-		JMenuItem genTInvItem = new JMenuItem("Generate and analyze T-invariants", KeyEvent.VK_3);
+		JMenuItem genTInvItem = new JMenuItem("Generate and analyze T-invariants", KeyEvent.VK_5);
 		genTInvItem.setIcon(Tools.getResIcon32("/icons/menu/menu_InvGen.png"));
 		//genTInvItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3,ActionEvent.ALT_MASK));
 		genTInvItem.getAccessibleContext().setAccessibleDescription("Generate Invariants");
@@ -448,21 +473,19 @@ public class DarkMenu extends JMenuBar {
 		invariantsOperationsMenu.add(genTInvItem);
 		
 		// The JMenuItem for invariants simulation
-		JMenuItem invSimul = new JMenuItem("Start Invariants Simulation", KeyEvent.VK_4);
+		JMenuItem invSimul = new JMenuItem("Start Invariants Simulation", KeyEvent.VK_6);
 		invSimul.setIcon(Tools.getResIcon32("/icons/menu/menu_invSim.png"));
 		//invSimul.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4,ActionEvent.ALT_MASK));
 		invSimul.getAccessibleContext().setAccessibleDescription("Start Invariants Simulation");
 		invSimul.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					// poniższa linia:   ╯°□°）╯︵  ┻━━┻
+					// poniższa 'linia':   ╯°□°）╯︵  ┻━━┻
 					/*
 					GUIManager.getDefaultGUIManager().startInvariantsSimulation(
-						Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox()
-								.getCurrentDockWindow().group.getSelection().getActionCommand())
-						,(Integer)GUIManager.getDefaultGUIManager().getInvSimBox()
-								.getCurrentDockWindow().spiner.getValue());
-								*/
+						Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().group.getSelection().getActionCommand())
+						,(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().spiner.getValue());
+					*/
 				} catch (Exception e) {
 					e.printStackTrace();
 					GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);

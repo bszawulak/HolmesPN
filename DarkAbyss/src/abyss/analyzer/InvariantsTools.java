@@ -3,6 +3,11 @@ package abyss.analyzer;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.JOptionPane;
+
+import abyss.darkgui.GUIManager;
+import abyss.math.InvariantTransition;
+import abyss.math.Transition;
 import abyss.utilities.Tools;
 
 /**
@@ -12,6 +17,25 @@ import abyss.utilities.Tools;
 public final class InvariantsTools {
 	private InvariantsTools() {} // to + final = klasa statyczna w NORMALNYM języku, jak np. C#
 
+	static ArrayList<ArrayList<Integer>> transposeMatrix(ArrayList<ArrayList<Integer>> matrix) {
+		if(matrix == null || matrix.size() == 0)
+			return null;
+		
+		int rows = matrix.size();
+		int columns = matrix.get(0).size();
+		ArrayList<ArrayList<Integer>> resultMatrix = new ArrayList<ArrayList<Integer>>();
+		
+		for(int c=0; c<columns; c++) {
+			ArrayList<Integer> transposedRow = new ArrayList<Integer>();
+			for(int r=0; r<rows; r++) {
+				transposedRow.add(matrix.get(r).get(c));
+			}
+			resultMatrix.add(transposedRow);
+		}
+		
+		return resultMatrix;
+	}
+	
 	/**
 	 * Metoda sprawdza czy zbiór inwariantów faktycznie w całości zeruje macierz incydencji. Zwraca macierz wektorów,
 	 * które okazały się nie być inwariantami.
@@ -264,6 +288,107 @@ public final class InvariantsTools {
 			//log(msg, "text", true);
 			System.out.println(msg);
 		}
+	}
+	
+	/**
+	 * Metoda wykrywa, które tranzycje są pokryte przez inwarianty.
+	 * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @return ArrayList[Integer] - zbiór ID tranzycji pokrytych inwariantami
+	 */
+	public static ArrayList<Integer> detectCovered(ArrayList<ArrayList<Integer>> invMatrix) {
+		ArrayList<Integer> coveredTransSet = new ArrayList<Integer>();
+		//for(int i=0; i<getTransitions().size(); i++)
+		//	uncoveredTransitions.add(0);
+		
+		if(invMatrix.size() > 0) {
+			int invSize = invMatrix.get(0).size();
+			for (ArrayList<Integer> inv : invMatrix) {
+				for(int t=0; t<invSize; t++) {
+					if(inv.get(t) != 0) { //TODO ?
+						if(coveredTransSet.contains(t) == false)
+							coveredTransSet.add(t);
+					}
+				}
+				if(coveredTransSet.size() == invSize)
+					break;
+			}
+		}
+		Collections.sort(coveredTransSet);
+		return coveredTransSet;
+	}
+	
+	/**
+	 * Metoda wykrywa, które tranzycje nie są pokryte przez inwarianty.
+	 * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @return ArrayList[Integer] - zbiór ID tranzycji nie pokrytych inwariantami
+	 */
+	public static ArrayList<Integer> detectUncovered(ArrayList<ArrayList<Integer>> invMatrix) {
+		ArrayList<Integer> uncoveredTransSet = null;
+		ArrayList<Integer> coveredSet = detectCovered(invMatrix);
+		
+		if(invMatrix != null && invMatrix.size() > 0) {
+			int invSize = invMatrix.get(0).size();
+			uncoveredTransSet = new ArrayList<Integer>();
+			for(int t=0; t<invSize; t++) {
+				if(coveredSet.contains(t) == false)
+					uncoveredTransSet.add(t);
+			}
+			
+		} else {
+			ArrayList<Transition> trans = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			if(trans != null && trans.size()>0) {
+				int transSize = trans.size();
+				uncoveredTransSet = new ArrayList<Integer>();
+				for(int t=0; t<transSize; t++) {
+					uncoveredTransSet.add(t);
+				}
+			}
+		}
+		return uncoveredTransSet;
+	}
+	
+	/**
+	 * Metoda tworząca macierz (drugiego typu) inwariantów - macierz obiektów klasy InvariantTransition.
+	 * @param invMatrix ArrayList[ArrayList[Integer] - macierz inwariantów
+	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inwariantów II typu
+	 */
+	public static ArrayList<ArrayList<InvariantTransition>> compute2ndFormInv(ArrayList<ArrayList<Integer>> invMatrix) {
+		InvariantTransition currentTransition;
+		ArrayList<ArrayList<InvariantTransition>> invariants2ndForm = null;
+		
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		
+		if (invMatrix != null && invMatrix.size() > 0) {
+			invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
+			if (transitions != null && invMatrix.get(0).size() == transitions.size()) {
+				ArrayList<InvariantTransition> currentInvariant;
+				int i; //iterator po tranzycjach sieci
+				for (ArrayList<Integer> binaryInvariant : invMatrix) {
+					currentInvariant = new ArrayList<InvariantTransition>();
+					i = 0;
+					for (Integer amountOfFirings : binaryInvariant) {
+						if (amountOfFirings > 0) { // dla tranzycji odpalananych
+							currentTransition = new InvariantTransition(transitions.get(i), amountOfFirings);
+							currentInvariant.add(currentTransition);
+						}
+						i++;
+					}
+					invariants2ndForm.add(currentInvariant);
+				}
+			} else {
+				JOptionPane.showMessageDialog(null,
+					"The currently opened project does not match with loaded external invariants. \nPlease make sure you are loading the correct invariant file for the correct Petri net.",
+					"Project mismatch error!", JOptionPane.ERROR_MESSAGE);
+				GUIManager.getDefaultGUIManager().log("Error: the currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.", "error", true);
+			}
+		} else {
+			JOptionPane.showMessageDialog(null,
+				"Invariants data matrix unavailable. Possible cause: invariants generation or reading from file failed.",
+				"No invariants data", JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed. 1st level invariants matrix unavailable.", "error", true);
+		}
+		
+		return invariants2ndForm;
 	}
 	
 	/*

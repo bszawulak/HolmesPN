@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import abyss.analyzer.KnockoutCalculator;
 import abyss.analyzer.MCSCalculator;
+import abyss.analyzer.MCSCalculatorShort;
+import abyss.analyzer.MDTSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.Transition;
@@ -409,10 +412,17 @@ public class Toolbar extends BorderDock {
 			public void actionPerformed(ActionEvent actionEvent) { 
 				
 				ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-				Transition test = transitions.get(51);
-				MCSCalculator mcs = new MCSCalculator(51);
+				Transition test = transitions.get(8);
+				MCSCalculatorShort mcs = new MCSCalculatorShort(2);
+				List<Set<Short>> sets = mcs.findMcs(16);
+
+				//ArrayList<Transition> knockoutList = new ArrayList<Transition>();
+				//knockoutList.add(test);
+				//KnockoutCalculator kc = new KnockoutCalculator();
+				//ArrayList<Transition> result = kc.calculateKnockout(knockoutList);
 				
-				List<Set<Integer>> sets= mcs.findMcs(5);
+				//MDTSCalculator mdts = new MDTSCalculator();
+				//List<Set<Integer>> results = mdts.calculateMDTS();
 			}
 		};
 		analysisDockables.add(createButtonDockable("Testing2", testButton2));
