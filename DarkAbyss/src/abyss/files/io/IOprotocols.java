@@ -395,13 +395,6 @@ public class IOprotocols {
 					int poz = 0;
 					int poZap = 0;
 					for (int j = 0; j < WczytanyString.length; j++) {
-						/*
-						  bylo: 
-						  if (WczytanyString[j].isEmpty()) {
-
-						} else {
-						
-						 */
 						if (!WczytanyString[j].isEmpty()) {
 							if (!Character.isWhitespace(WczytanyString[j].charAt(0))) 
 							{
@@ -478,8 +471,12 @@ public class IOprotocols {
 						globalPlaceNumber++;
 						tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
 						String placeName = tabWczytanaLinia[0];
-						nodeArray.add(new Place(placeNumber, new ArrayList<ElementLocation>(), 
-								placeName, "", wMark[placeNumber]));
+						Place tmpPlace = new Place(placeNumber, new ArrayList<ElementLocation>(), placeName, "", wMark[placeNumber]);
+						ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
+						namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
+						tmpPlace.setNamesLocations(namesLoc);
+						
+						nodeArray.add(tmpPlace);
 					}
 					break;
 				case 3:
@@ -503,8 +500,11 @@ public class IOprotocols {
 						int transNumber = globalPlaceNumber;
 						tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
 						String transName = tabWczytanaLinia[0];
-						nodeArray.add(new Transition(transNumber,
-							new ArrayList<ElementLocation>(), transName, ""));
+						Transition tmpTrans = new Transition(transNumber, new ArrayList<ElementLocation>(), transName, "");
+						ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
+						namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
+						tmpTrans.setNamesLocations(namesLoc);
+						nodeArray.add(tmpTrans);
 						//mark++;
 					}
 					break;

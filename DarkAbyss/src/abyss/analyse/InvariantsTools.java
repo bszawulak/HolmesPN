@@ -1,4 +1,4 @@
-package abyss.analyzer;
+package abyss.analyse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +17,11 @@ import abyss.utilities.Tools;
 public final class InvariantsTools {
 	private InvariantsTools() {} // to + final = klasa statyczna w NORMALNYM języku, jak np. C#
 
+	/**
+	 * Metoda zwraca macierz transponowaną.
+	 * @param matrix ArrayList[ArrayList[Integer]] - macierz wejściowa
+	 * @return ArrayList[ArrayList[Integer]] - macierz wyjściowa
+	 */
 	static ArrayList<ArrayList<Integer>> transposeMatrix(ArrayList<ArrayList<Integer>> matrix) {
 		if(matrix == null || matrix.size() == 0)
 			return null;
@@ -52,6 +57,22 @@ public final class InvariantsTools {
 			}
 		}
 		return noInv;
+	}
+	
+	/**
+	 * Jak wyżej, ale zwraca tylko liczbę nie-inwariantów.
+	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
+	 * @param invSet ArrayList[ArrayList[ArrayList]] - macierz inwariantów (nie wiadomo)
+	 * @return int - ile wektorów nie jest prawidłowymi inwariantami
+	 */
+	public static int countNonInvariants(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {
+		int result = 0;
+		for(ArrayList<Integer> inv : invSet) {
+			if(checkInvariant(CMatrix, inv, true) == false) {
+				result++;
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -272,6 +293,142 @@ public final class InvariantsTools {
 		return true;
 	}
 	
+	/**
+	 * Metoda zwraca liczbę niekanonicznych inwariantów.
+	 * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @return int - liczba niekanonicznych
+	 */
+	public static int checkCanonity(ArrayList<ArrayList<Integer>> invMatrix) {
+		int nonCardinal = 0;
+		int size = invMatrix.size();
+		for(int i=0; i<size; i++) {
+			ArrayList<Integer> inv = invMatrix.get(i);
+			int nextT = 0;
+			int result = 0;
+			
+			for(int t=0; t<inv.size(); t++) { //znajdź pierwszy element wsparcia
+				int value = inv.get(t);
+				if(value == 0) {
+					continue;
+				} else {
+					result =  bezwzgledna(value);
+					nextT = t;
+					break;
+				}
+			}
+			
+			boolean card = false;
+			
+			for(int t=nextT+1; t<inv.size(); t++) {
+				int value = inv.get(t);
+				if(value == 0)
+					continue;
+				
+				value = bezwzgledna(value);
+		        result = nwd(result, value);
+		        
+		        if(result == 1) {
+		        	card = true;
+		        	break;
+		        }
+			}
+			
+			if(card == false)
+				nonCardinal++;
+		}
+		
+		return nonCardinal;
+	}
+	
+	public static int checkSupportMinimality(ArrayList<ArrayList<Integer>> invMatrix) {
+		int nonMinimal = 0;
+		int invSize = invMatrix.size();
+		
+		for(int i=0; i<invSize; i++) {
+			ArrayList<Integer> invSupport = getSupport(invMatrix.get(i));
+			
+			for(int j=0; j<invSize; j++) {
+				if(j == i)
+					continue;
+				ArrayList<Integer> refSupport = getSupport(invMatrix.get(j));
+				
+				if(InvariantsTools.supportInclusionCheck(invSupport, refSupport) == true) {
+					nonMinimal++;
+					break;
+				}
+			}
+		}
+
+		return nonMinimal;
+	}
+	
+	/**
+	 * Metoda porównująca zbiór inwariantów bazowy oraz referencyjny. 
+	 * @return ArrayList[ArrayList[Integer]] - macierz wyników, 3 wektory: <br>
+	 *  1 - część wspólna inwariantów ze zbiorem referencyjnym <br>
+	 *  2 - inwarianty których nie ma w referencyjnym<br>
+	 *  3 - inwarianty referencyjnego których nie ma w wygenerowanym zbiorze
+	 */
+	public static ArrayList<ArrayList<Integer>> compareInv(ArrayList<ArrayList<Integer>> invMatrix,
+			ArrayList<ArrayList<Integer>> refInvMatrix) {
+		
+		int coreInvSize = invMatrix.size();
+		int refInvSize = refInvMatrix.size();
+		
+		ArrayList<Integer> coreFoundInRef = new ArrayList<Integer>();
+		ArrayList<Integer> refFoundInCore = new ArrayList<Integer>();
+		ArrayList<Integer> nonInRef = new ArrayList<Integer>(); //są u nas, nie ma w INA - minimalne??
+		ArrayList<Integer> refNotInCore = new ArrayList<Integer>(); //są w INA, nie ma u nas
+		
+		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
+		
+		int repeated = 0;
+		int repeatedNotFound = 0;
+
+		boolean presentInReferenceSet = false;
+		for(int invMy=0; invMy<coreInvSize; invMy++) {
+			presentInReferenceSet = false;
+			ArrayList<Integer> myInvariant = invMatrix.get(invMy);
+			
+			for(int invRefID=0; invRefID < refInvSize; invRefID++) {
+				if(refInvMatrix.get(invRefID).equals(myInvariant)) {
+					
+					coreFoundInRef.add(invMy);
+					if(refFoundInCore.contains(invRefID)) {
+						repeated++;
+					} else {
+						refFoundInCore.add(invRefID);
+					}
+					
+					presentInReferenceSet = true;
+					break;
+				}
+			}
+			if(presentInReferenceSet == false) {
+				if(nonInRef.contains(invMy)) {
+					repeatedNotFound++;
+				} else {
+					nonInRef.add(invMy);
+				}
+			}
+		}
+		
+		for(int i=0; i<refInvSize; i++) {
+			if(refFoundInCore.contains(i) == false) {
+				refNotInCore.add(i);
+			}
+		}
+		ArrayList<Integer> repeatedVector = new ArrayList<Integer>();
+		repeatedVector.add(repeated);
+		repeatedVector.add(repeatedNotFound);
+		
+		result.add(coreFoundInRef); //część wspolna
+		result.add(nonInRef); //core, ale nie ma Ref
+		result.add(refNotInCore); //inwarianty Ref których nie ma w CoreSet
+		result.add(repeatedVector);
+		return result;
+	}
+	
 	public static void printMatrix(ArrayList<ArrayList<Integer>> matrix) {
 		String colNames = "";
 		for (int jo = 0; jo < matrix.get(0).size(); jo++) {
@@ -389,6 +546,34 @@ public final class InvariantsTools {
 		}
 		
 		return invariants2ndForm;
+	}
+	
+	/**
+	 * Zwraca wartość bezwzględną liczby podanej jako argument.
+	 * @param i int - liczba
+	 * @return int - |i|
+	 */
+	private static int bezwzgledna(int i) {
+		if (i < 0)
+			return -i;
+		else
+			return i;
+	}
+	
+	/**
+	 * Metoda zwraca największy wspólny dzielnik dwóch liczb naturalnych dodatnich.
+	 * @param x int - I liczba
+	 * @param y int - II liczba
+	 * @return int - największy wspólny dzielnik
+	 */
+	public static int nwd(int x, int y) {
+		while (x != y) {
+			if (x > y)
+				x -= y;
+			else
+				y -= x;
+		}
+		return x;
 	}
 	
 	/*

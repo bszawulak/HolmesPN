@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import abyss.analyzer.KnockoutCalculator;
-import abyss.analyzer.MCSCalculator;
-import abyss.analyzer.MCSCalculatorShort;
-import abyss.analyzer.MDTSCalculator;
+import abyss.analyse.KnockoutCalculator;
+import abyss.analyse.MCSCalculator;
+import abyss.analyse.MCSCalculatorShort;
+import abyss.analyse.MDTSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.Transition;

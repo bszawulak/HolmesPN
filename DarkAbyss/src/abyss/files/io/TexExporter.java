@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import abyss.adam.mct.Runner;
-import abyss.analyzer.MCTCalculator;
+import abyss.analyse.MCTCalculator;
 import abyss.clusters.ClusteringExtended;
 import abyss.darkgui.GUIManager;
 import abyss.files.Snoopy.SnoopyWriter;

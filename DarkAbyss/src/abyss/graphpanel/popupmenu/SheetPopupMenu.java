@@ -160,16 +160,22 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 		this.addSeparator();
 		JMenu analMenu = new JMenu("Network Analysis"); // (⌐■_■) 
 		this.add(analMenu);
-		analMenu.add(createMenuItem("Generate invariants (INA)", "generateINA.png", null, new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().io.generateINAinvariants();
-			}
-		}));
 		analMenu.add(createMenuItem("Import invariants from file", "invImportPopup.png", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().io.loadExternalAnalysis();
 			}
 		}));
+		analMenu.add(createMenuItem("Generate invariants (Abyss)", "generateINA.png", null, new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().io.fastGenerateTinvariants();
+			}
+		}));
+		analMenu.add(createMenuItem("Generate invariants (INA)", "generateINA.png", null, new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().io.generateINAinvariants();
+			}
+		}));
+		
 		analMenu.add(createMenuItem("Generate MCT sets", "generateMCT.png", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().generateMCT();

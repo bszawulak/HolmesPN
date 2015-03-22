@@ -1,4 +1,4 @@
-package abyss.analyzer;
+package abyss.analyse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,16 +10,17 @@ import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.PetriNet;
 import abyss.math.Place;
 import abyss.math.Transition;
+import abyss.windows.AbyssInvariants;
 
 /**
  * 10.06.2014: Metoda stara się liczyć inwarianty. Coś nie wyszło i to ostro...<br>
- * 11.03.2015: No więc czas ją naprawić. MR <br>
+ * 11.03.2015: Czas ją naprawić. MR <br>
  * 13.03.2015: Naprawianie w toku. Tu się takie cuda działy, że głowa mała. Poprzednia wersja miała wymagania
  * pamięciowe serwerowni PCSS. Aż cud, że była w stanie cokolwiek liczyć. O błędach lepiej nie pisać. <br>
  * 14.03.2015: Pierwszy sukces, coś działa. Poprawienie macierzy incydencji (1 na -1) w każdym polu PEWNIE TEŻ POMOGŁO!!! 
  * 17.03.2015: Pełen sukces. Działa i wiadomo dlaczego. Cud.
  * 
- * @author BR
+ * @author BR (nic nie zostało prawie, i dobrze)
  * @author MR
  */
 public class InvariantsCalculator implements Runnable {
@@ -37,7 +38,6 @@ public class InvariantsCalculator implements Runnable {
 	private ArrayList<Integer> nonZeroColumnVectorP;
 	
 	private boolean transCalculation = true;
-	
 	private int aac = 0;
 	private int naac = 0;
 	
@@ -45,13 +45,15 @@ public class InvariantsCalculator implements Runnable {
 	private int oldReplaced = 0;
 	private int notCanonical = 0;
 	
-	private ArrayList<ArrayList<Integer>> invINAMatrix;
+	private AbyssInvariants master = null;
 	
 	/**
 	 * Konstruktor obiektu klasy InvariantsAnalyzer. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.
 	 * @param transCal boolean - true, jeśli liczymy T-inwarianty, false dla P-inwariantów
 	 */
 	public InvariantsCalculator(boolean transCal) {
+		master = GUIManager.getDefaultGUIManager().accessInvariantsWindow();
+		
 		transCalculation = transCal;
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -59,23 +61,41 @@ public class InvariantsCalculator implements Runnable {
 		
 		zeroColumnVectorP = new ArrayList<Integer>();
 		nonZeroColumnVectorP = new ArrayList<Integer>();
-		
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix() != null) {
-			invINAMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
-		}
 	}
 	
 	/**
 	 * Metoda wirtualna - nadpisana, odpowiada za działanie w niezależnym wątku
 	 */
 	public void run() {
-		this.createTPIncidenceAndIdentityMatrix();
-		this.searchTInvariants();
-		PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants());
-		project.setInvariantsMatrix(getInvariants());
+		try {
+			this.createTPIncidenceAndIdentityMatrix();
+			this.searchTInvariants();
+			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants());
+			project.setInvariantsMatrix(getInvariants());
+			logInternal("Operation successfull, invariants found: "+getInvariants().size()+"\n");
+		} catch (Exception e) {
+			log("Critical error while generating invariants. Possible net state change.", "error", false);
+		} finally {
+			master.resetInvariantGenerator(); //odłącz obiekt
+		}
 	}
 	
+	/**
+	 * Metoda zwracająca macierz incydencji sieci.
+	 * @return ArrayList[ArrayList[Integer]] - macierz incydencji
+	 */
+	public ArrayList<ArrayList<Integer>> getCMatrix() {
+		this.createTPIncidenceAndIdentityMatrix();
+		return CMatrix;
+	}
+	
+	/**
+	 * Metoda zapisująca komunikaty w oknie logów.
+	 * @param msg String - wiadomość
+	 * @param type String - klasa wiadomości
+	 * @param clean boolean - true jeśli ma być bez daty
+	 */
 	private void log(String msg, String type, boolean clean) {
 		if(clean) {
 			GUIManager.getDefaultGUIManager().log(msg, type, false);
@@ -83,10 +103,20 @@ public class InvariantsCalculator implements Runnable {
 			GUIManager.getDefaultGUIManager().log("InvModule: "+msg, type, true);
 		}
 	}
+	
+	/**
+	 * Metoda wysyłająca komunikaty do podokna logów generatora.
+	 * @param msg String - tekst do logów
+	 */
+	private void logInternal(String msg) {
+		if(master != null) {
+			master.accessLogField().append(msg);	
+		}
+	}
 
 	/**
 	 * Metoda tworząca macierze: incydencji i jednostkową dla modelu szukania T-inwariantów
-	 * (TP-macierz z literatury)
+	 * (TP-macierz z literatury).
 	 */
 	public void createTPIncidenceAndIdentityMatrix() {
 		//hashmapy do ustalania lokalizacji miejsca/tranzycji. Równie dobrze 
@@ -128,7 +158,6 @@ public class InvariantsCalculator implements Runnable {
 				pPosition = placesMap.get(oneArc.getEndNode());
 				// incidenceValue = -1 * oneArc.getWeight();  // CO TO K**** JEST ?! JAKIE -1 ?!
 				// 	(14.03.2015) ja go chyba zamorduję... 
-				// 	
 				//   https://www.youtube.com/watch?v=oxiJrcFo724
 				// 		
 				incidenceValue = 1 * oneArc.getWeight();
@@ -141,7 +170,7 @@ public class InvariantsCalculator implements Runnable {
 			globalIncidenceMatrix.get(tPosition).set(pPosition, incidenceValue);
 			CMatrix.get(tPosition).set(pPosition, incidenceValue);
 		}
-		log("TP-class incidence matrix created for "+transitions.size()+" transitions and "+places.size()+" places.","text", false);
+		logInternal("\nTP-class incidence matrix created for "+transitions.size()+" transitions and "+places.size()+" places.\n");
 		
 		//macierz jednostkowa
 		for (int trans = 0; trans < transitions.size(); trans++) {
@@ -155,7 +184,7 @@ public class InvariantsCalculator implements Runnable {
 			globalIdentityMatrix.add(identRow);
 		}
 		
-		log("Identity matrix created for "+transitions.size()+" transitions","text", false);
+		logInternal("Identity matrix created for "+transitions.size()+" transitions.\n");
 	}
 
 	/**
@@ -164,12 +193,12 @@ public class InvariantsCalculator implements Runnable {
 	public void searchTInvariants() {
 		// Etap I - miejsca 1-in 1-out
 		ArrayList<ArrayList<Integer>> generatedRows = new ArrayList<ArrayList<Integer>>();
-		log("Phase I inititated. Performing only for all 1-in/1-out places.","text", false);
+		logInternal("Phase I inititated. Performing only for all 1-in/1-out places.\n");
 		int placesNumber = globalIncidenceMatrix.get(0).size();
 		
 		for (int p = 0; p < placesNumber; p++) {
 			if (isSimplePlace(globalIncidenceMatrix, p) == true) { // wystepuje tylko jedno wejście i wyjście z miejsca
-				
+				logInternal("Processing simple-class column: "+p+"\n");
 				generatedRows = findNewRows(p); // na bazie globalIncidenceMatrix i Identity
 				rewriteIncidenceIntegrityMatrices_MR(generatedRows, p);
 				zeroColumnVectorP.add(p);
@@ -191,50 +220,22 @@ public class InvariantsCalculator implements Runnable {
 			//int neg = res[3];
 			int oldSize = globalIncidenceMatrix.size();
 			
+			logInternal("Processing column: "+cand+", projected rows change: "+(oldSize+rowsChange)+", remaining steps: "+stepsToFinish);
+			
 			generatedRows = findNewRows(cand); // na bazie globalIncidenceMatrix i Identity
 			rewriteIncidenceIntegrityMatrices_MR(generatedRows, cand);
 			int indCand = nonZeroColumnVectorP.indexOf(cand);
 			nonZeroColumnVectorP.remove(indCand);
 			zeroColumnVectorP.add(indCand);
-			int newRej = newRejected;
-			int oldRep = oldReplaced;
-			int nonCanon = notCanonical;
+			//int newRej = newRejected;
+			//int oldRep = oldReplaced;
+			//int nonCanon = notCanonical;
 			int newSize = globalIncidenceMatrix.size();
 			
-			int xxx=1;
+			logInternal("\nNew rows number: "+newSize+ " | rejected: "+newRejected+" replaced: "+oldReplaced+" not canonical: "+notCanonical+"\n");
 		}
 		
-		//invariantsList = new ArrayList<ArrayList<Integer>>(globalIdentityMatrix);
 		setInvariants(globalIdentityMatrix);
-		
-		InvariantsTools.finalSupportMinimalityTest(getInvariants());
-		
-		if(invINAMatrix != null) {
-			ArrayList<ArrayList<Integer>> res =  compareInv();
-			System.out.println();
-			System.out.println("Reference set size:   "+invINAMatrix.size());
-			System.out.println("Computed set size:    "+getInvariants().size());
-			System.out.println("Common set size:      "+res.get(0).size());
-			System.out.println("Not in reference set: "+res.get(1).size());
-			System.out.println("Not in computed set:  "+res.get(2).size());
-			
-			System.out.println("Repeated in common set: "+res.get(3).get(0));
-			System.out.println("Repeated not in ref.set:"+res.get(3).get(1));
-			
-			ArrayList<ArrayList<Integer>> problemSet = new ArrayList<ArrayList<Integer>>();
-			for(int el : res.get(1)) {
-				problemSet.add(getInvariants().get(el));
-			}
-			
-			ArrayList<ArrayList<Integer>> noInvariants = InvariantsTools.isTInvariantSet(CMatrix, problemSet);
-			
-			ArrayList<ArrayList<Integer>> finalInv = new ArrayList<ArrayList<Integer>>();
-			for(int i=0; i<res.get(0).size(); i++) {
-				ArrayList<Integer> inv = new ArrayList<Integer>(getInvariants().get(res.get(0).get(i)));
-				finalInv.add(inv);
-			}
-			setInvariants(finalInv);
-		}
 	}
 
 	/**
@@ -465,7 +466,8 @@ public class InvariantsCalculator implements Runnable {
 			
 			if(resList.size() > 1) {
 				if(added == false) {
-					System.out.println("Inwariant się nie nadaje, ale jest mniejszy niż obecne w macierzy! ERROR!");		
+					GUIManager.getDefaultGUIManager().log("Critical error calculating invariants. Error 00011", "error", true);
+					//System.out.println("Inwariant się nie nadaje, ale jest mniejszy niż obecne w macierzy! ERROR!");		
 				}
 				
 				while(resList.size()>0) { //inne do usunięcia
@@ -580,7 +582,7 @@ public class InvariantsCalculator implements Runnable {
 		int refSuppSize = refSupport.size();
 		int candSuppSize = candSupport.size();
 		
-		//TODO: po sumie wzbiorów wsparć - będzie szybciej
+		//TODO: po sumie zbiorów wsparć - będzie szybciej
 		ArrayList<Integer> sumOfSupport = new ArrayList<Integer>();
 		for(int el : refSupport)
 			sumOfSupport.add(el);
@@ -652,7 +654,7 @@ public class InvariantsCalculator implements Runnable {
 			
 			//dodawanie nowych wierszy
 			int size = newRowsMatrix.size();
-			double interval = (double)size / 100; 
+			double interval = (double)size / 50; 
 			int steps = 0;
 			for (int row = 0; row < size; row++) {	
 				addNewRowsToMatrix(newRowsMatrix, row);
@@ -661,10 +663,16 @@ public class InvariantsCalculator implements Runnable {
 					if(justGotHere) {
 						System.out.println();
 						justGotHere = false;
+						if(master != null) {
+							master.accessLogField().append("\n");
+						}
 					}
 					if(steps == (int)interval) {
 						steps = 0;
 						System.out.print("*");
+						if(master != null) {
+							master.accessLogField().append("*");
+						}
 					} else {
 						steps++;
 					}
@@ -700,6 +708,26 @@ public class InvariantsCalculator implements Runnable {
 			naac++;
 		}
 	}
+	
+	private boolean fastMinimalityTest(ArrayList<Integer> invCandidate, ArrayList<Integer> supports) {
+		int supportSize = supports.size();
+		int nonZeroColumn = 0;
+		for(int pl=0; pl<CMatrix.get(0).size(); pl++) {
+			for(int s : supports) { //inwarianty
+				int el = CMatrix.get(s).get(pl);
+				if(el != 0) {
+					nonZeroColumn++;
+					break;
+				}
+			}
+		}
+		if(supportSize > nonZeroColumn+1) {
+			return false; //non-minimal inv.
+		} else {
+			return true;
+		}
+	}
+	
 
 	/**
 	 * Metoda odpowiedzialna za doprowadzenie wektora do postaci kanonicznej poprzez podzielenie jego elementów
@@ -726,91 +754,6 @@ public class InvariantsCalculator implements Runnable {
 			int value = bezwzgledna(invCandidate.get(number));
 	        result = nwd(result, value);
 		}
-		return result;
-	}
-
-	private boolean fastMinimalityTest(ArrayList<Integer> invCandidate, ArrayList<Integer> supports) {
-		int supportSize = supports.size();
-		int nonZeroColumn = 0;
-		for(int pl=0; pl<CMatrix.get(0).size(); pl++) {
-			for(int s : supports) { //inwarianty
-				int el = CMatrix.get(s).get(pl);
-				if(el != 0) {
-					nonZeroColumn++;
-					break;
-				}
-			}
-		}
-		if(supportSize > nonZeroColumn+1) {
-			return false; //non-minimal inv.
-		} else {
-			return true;
-		}
-	}
-	
-	/**
-	 * Metoda porównująca aktualny zbiór inwariantów (referencyjny, skądkolwiek wcześniej wzięty i
-	 * obecny w programie w chwili uruchamiania generatora) z tym, który powstał z generatora programu.
-	 * @return ArrayList[ArrayList[Integer]] - macierz wyników, 3 wektory: <br>
-	 *  1 - część wspólna inwariantów ze zbiorem referencyjnym <br>
-	 *  2 - inwarianty których nie ma w referencyjnym<br>
-	 *  3 - inwarianty referencyjnego których nie ma w wygenerowanym zbiorze
-	 */
-	private ArrayList<ArrayList<Integer>> compareInv() {
-		int myInvSize = getInvariants().size();
-		int INAInvSize = invINAMatrix.size();
-		
-		ArrayList<Integer> ourFoundInINA = new ArrayList<Integer>();
-		ArrayList<Integer> inaFoundInOur = new ArrayList<Integer>();
-		ArrayList<Integer> nonInINA = new ArrayList<Integer>(); //są u nas, nie ma w INA - minimalne??
-		ArrayList<Integer> inaNotInOur = new ArrayList<Integer>(); //są w INA, nie ma u nas
-		
-		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
-		
-		int repeated = 0;
-		int repeatedNotFound = 0;
-
-		boolean presentInINASet = false;
-		for(int invMy=0; invMy<myInvSize; invMy++) {
-			presentInINASet = false;
-			ArrayList<Integer> myInvariant = getInvariants().get(invMy);
-			
-			for(int invINA=0; invINA < INAInvSize; invINA++) {
-				if(invINAMatrix.get(invINA).equals(myInvariant)) {
-					
-					ourFoundInINA.add(invMy);
-					if(inaFoundInOur.contains(invINA)) {
-						repeated++;
-					} else {
-						inaFoundInOur.add(invINA);
-					}
-					
-					presentInINASet = true;
-					break;
-				}
-			}
-			if(presentInINASet == false) {
-				if(nonInINA.contains(invMy)) {
-					repeatedNotFound++;
-				} else {
-					nonInINA.add(invMy);
-				}
-			}
-		}
-		
-		for(int i=0; i<INAInvSize; i++) {
-			if(inaFoundInOur.contains(i) == false) {
-				inaNotInOur.add(i);
-			}
-		}
-		ArrayList<Integer> repeatedVector = new ArrayList<Integer>();
-		repeatedVector.add(repeated);
-		repeatedVector.add(repeatedNotFound);
-		
-		result.add(ourFoundInINA); //część wspolna
-		result.add(nonInINA); //nasze, ale nie ma INA
-		result.add(inaNotInOur); //inwarianty INY których nie mamy
-		result.add(repeatedVector);
 		return result;
 	}
 	

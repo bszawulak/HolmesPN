@@ -26,7 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 
-import abyss.analyzer.NetPropertiesAnalyzer;
+import abyss.analyse.NetPropertiesAnalyzer;
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
 import abyss.math.Node;

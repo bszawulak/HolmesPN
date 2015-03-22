@@ -25,6 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -415,11 +416,13 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	private void createInvariantsTable() {
     	ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
     	if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
-    		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size() == 0) return;
-    		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size() == 0) return;
+    		JOptionPane.showMessageDialog(this, "Please generate T-invariants (Elementary Modes)", "No invariants", JOptionPane.INFORMATION_MESSAGE);
+    			return;
     		
-    		GUIManager.getDefaultGUIManager().io.generateINAinvariants();
-    		invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+    		//if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size() == 0) return;
+    		//if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size() == 0) return;
+    		//GUIManager.getDefaultGUIManager().io.generateINAinvariants();
+    		//invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
     	}
     	if(invariantsMatrix == null || invariantsMatrix.size() == 0) return; //final check
     	

@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import abyss.adam.mct.Runner;
+import abyss.analyse.InvariantsCalculator;
 import abyss.files.clusters.Rprotocols;
 import abyss.math.PetriNet;
 import abyss.utilities.Tools;
@@ -55,8 +56,7 @@ public class GUIOperations {
 		filters[0] = new ExtensionFileFilter("Snoopy PN file (.spped)", new String[] { "SPPED" });
 		filters[1] = new ExtensionFileFilter("Snoopy TPN file (.sptpt)", new String[] { "SPTPT" });
 		filters[2] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, 
-				"Select PN", "Select petri net file");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters,  "Select PN", "Select petri net file");
 		if(selectedFile.equals(""))
 			return;
 		
@@ -76,8 +76,7 @@ public class GUIOperations {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Abyss Petri Net file (.abyss)", new String[] { "ABYSS" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", 
-				"Select petri net file in program native format");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load",  "Select petri net file in program native format");
 		if(selectedFile.equals(""))
 			return;
 		
@@ -335,6 +334,7 @@ public class GUIOperations {
 					" or there is no network yet.";
 			JOptionPane.showMessageDialog(null, msg, "Missing net or file", JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);
+			GUIManager.getDefaultGUIManager().accessInvariantsWindow().setGeneratorStatus(false);
 			return;
 		}
 		
@@ -371,8 +371,6 @@ public class GUIOperations {
 				new File(abyssPath+"\\COMMAND.ina").delete();
 				new File(abyssPath+"\\siec.pnt").delete();
 				
-				
-				
 				File t1 = new File(abyssPath+"\\SESSION.ina");
 				File t2 = new File(abyssPath+"\\OPTIONS.ina");
 				File t3 = new File(abyssPath+"\\INVARI.hlp");
@@ -388,6 +386,7 @@ public class GUIOperations {
 				JOptionPane.showMessageDialog(null, msg, "Critical error", JOptionPane.ERROR_MESSAGE);
 				overlord.log(msg, "error", true);
 				overlord.log(stars, "text", false);
+				GUIManager.getDefaultGUIManager().accessInvariantsWindow().setGeneratorStatus(false);
 				return;
 			}
 			
@@ -398,6 +397,7 @@ public class GUIOperations {
 				String msg = "No invariants file - creating using INAwin32.exe unsuccessful.";
 				JOptionPane.showMessageDialog(null,msg,	"Critical error",JOptionPane.ERROR_MESSAGE);
 				overlord.log(msg, "error", true);
+				GUIManager.getDefaultGUIManager().accessInvariantsWindow().setGeneratorStatus(false);
 				return;
 			}
 			
@@ -435,10 +435,27 @@ public class GUIOperations {
 			overlord.log(stars, "text", false);
 			invariantsFile.delete();
 			//showConsole(false);
+			
+			GUIManager.getDefaultGUIManager().accessInvariantsWindow().setGeneratorStatus(false);
 		} else { //brak plikow
+			GUIManager.getDefaultGUIManager().accessInvariantsWindow().setGeneratorStatus(false);
 			String msg = "Missing executables in the tools directory. Required: INAwin32.exe, ina.bat and COMMAND.ina";
 			JOptionPane.showMessageDialog(null,msg,	"Missing files",JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);
+		}
+	}
+	
+	/**
+	 * Metoda szybkiego wywoływania generatora inwariantów algorytmem wewnętrznym.
+	 */
+	public void fastGenerateTinvariants() {
+		boolean status = overlord.accessInvariantsWindow().isGeneratorWorking;
+		if(status == true) {
+			JOptionPane.showMessageDialog(null, "Invariants generation already in progress.", "Generator working",JOptionPane.WARNING_MESSAGE);
+		} else {
+			InvariantsCalculator invGenerator = new InvariantsCalculator(true);
+			Thread myThread = new Thread(invGenerator);
+			myThread.start();
 		}
 	}
 
@@ -660,7 +677,7 @@ public class GUIOperations {
             thread.start();
             
             return dir_path+"/"+"cluster.csv";
-		}catch (IOException e){
+		} catch (Exception e) {
 			String msg = "Clustering generation failed for "+c_number+" clusters.\nPath: "+dir_path;
 			JOptionPane.showMessageDialog(null, msg, "Critical error",JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);

@@ -6,7 +6,7 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
-import abyss.analyzer.InvariantsTools;
+import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
 import abyss.math.ElementLocation;
 import abyss.math.Place;

@@ -1,4 +1,4 @@
-package abyss.analyzer;
+package abyss.analyse;
 
 import java.util.ArrayList;
 

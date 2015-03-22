@@ -42,8 +42,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
-import abyss.analyzer.InvariantsSimulator;
-import abyss.analyzer.InvariantsTools;
+import abyss.analyse.InvariantsSimulator;
+import abyss.analyse.InvariantsTools;
 import abyss.clusters.ClusterDataPackage;
 import abyss.clusters.ClusterTransition;
 import abyss.darkgui.GUIManager;

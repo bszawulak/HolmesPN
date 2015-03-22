@@ -1,8 +1,8 @@
 package abyss.math;
 
-import abyss.analyzer.InvariantsCalculator;
-import abyss.analyzer.MCTCalculator;
-import abyss.analyzer.InvariantsSimulator;
+import abyss.analyse.InvariantsCalculator;
+import abyss.analyse.InvariantsSimulator;
+import abyss.analyse.MCTCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.files.Snoopy.SnoopyWriter;
 import abyss.files.io.AbyssReader;
@@ -48,9 +48,10 @@ import org.simpleframework.xml.Root;
  */
 public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
-	//private ArrayList<ArrayList<InvariantTransition>> invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
 	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
 	private ArrayList<GraphPanel> graphPanels;
+	private MinCutSetData mcsData;
+	
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
 	private IdGenerator idGenerator;
 	
@@ -59,7 +60,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private IOprotocols communicationProtocol;
 	private NetHandler handler;
 	private SAXParserFactory readerSNOOPY;
-	
 	private Workspace workspace;
 	private DrawModes drawMode = DrawModes.POINTER;
 	
@@ -67,7 +67,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private NetSimulator simulator;
 	private InvariantsSimulator invSimulator;
 	private MCTCalculator analyzer;
-	private InvariantsCalculator eia;
+	private InvariantsCalculator invGenerator;
 
 	/** wektor tokenów dla miejsc: */
 	private ArrayList<Integer> backupMarkingZero = new ArrayList<Integer>();
@@ -84,6 +84,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		getData().arcs = ar;
 		communicationProtocol = new IOprotocols();
 		dataCore.netName = "default";
+		mcsData = new MinCutSetData();
 	}
 
 	/**
@@ -97,6 +98,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.setAnalyzer(new MCTCalculator(this));
 		resetComm();
 		dataCore.netName = name;
+		mcsData = new MinCutSetData();
 	}
 	
 	/**
@@ -654,8 +656,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void loadFromFile(String path) {
 		//TODO: czyszczenie projektu!!!!!!!!!!!!!!!!!!!!!!!
-		
-		
+
 		readerSNOOPY = SAXParserFactory.newInstance();
 		try {
 			// Format wlasny
@@ -826,8 +827,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void tInvariantsAnalyze() {
 		try {
-			eia = new InvariantsCalculator(true);
-			Thread myThread = new Thread(eia);
+			invGenerator = new InvariantsCalculator(true);
+			Thread myThread = new Thread(invGenerator);
 			myThread.start();
 		} catch (Throwable err) {
 			err.printStackTrace();
@@ -927,54 +928,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 		}
 		return SID;
-	}
-
-	/**
-	 * Metoda zwracająca macierz wygenerowanych inwariantów, i przy okazji tworząca drugą
-	 * postać inwariantów.
-	 * 
-	 * Działa w ramach EarlyInvariantsAnalizer i tylko jego. Na razie zostawić.
-	 * TODO: usunąć po testach
-	 * @return ArrayList[ArrayList[InvariantTransition]] - macierz inw.
-	 */
-	public ArrayList<ArrayList<InvariantTransition>> getEIAgeneratedInv_old222() {
-		return null;
-		/*
-		ArrayList<ArrayList<Integer>> invariantsBinaryList = new ArrayList<ArrayList<Integer>>();
-		InvariantTransition currentTransition;
-		invariantsBinaryList = eia.getInvariants();
-		set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
-		if (invariantsBinaryList.size() > 0) {
-			if (invariantsBinaryList.get(0).size() == getTransitions().size()) {
-				ArrayList<InvariantTransition> currentInvariant;
-				int i;
-				for (ArrayList<Integer> binaryInvariant : invariantsBinaryList) {
-					currentInvariant = new ArrayList<InvariantTransition>();
-					i = 0;
-					// kolejny inwariant
-					for (Integer amountOfFirings : binaryInvariant) {
-						if (amountOfFirings > 0) {
-							currentTransition = new InvariantTransition( getTransitions().get(i), amountOfFirings);
-							currentInvariant.add(currentTransition);
-						}
-						i++;
-					}
-					get2ndFormInvariantsList().add(currentInvariant);
-				}
-			} else {
-				JOptionPane.showMessageDialog(null,
-					"The currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.",
-					"Project mismatch error!", JOptionPane.ERROR_MESSAGE);
-				GUIManager.getDefaultGUIManager().log("Error: currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.", "error", true);
-			}
-		} else {
-			JOptionPane.showMessageDialog(null,
-				"There is something terribly wrong with your loaded external invariant file, as there are no invariants in it, actually. It's corrupt, is my guess.",
-				"Invariant file does not contain invariants", JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed.", "error", true);
-		}
-		return get2ndFormInvariantsList();
-		*/
 	}
 
 	/**

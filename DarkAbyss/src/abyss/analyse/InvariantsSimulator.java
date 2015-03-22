@@ -1,4 +1,4 @@
-package abyss.analyzer;
+package abyss.analyse;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;

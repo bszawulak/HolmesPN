@@ -1,4 +1,4 @@
-package abyss.analyzer;
+package abyss.analyse;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,9 +12,6 @@ import abyss.math.Transition;
  * Klasa obliczająca zbiory MCS (Mimimal Cut Set) według algorytmu z artykułu:
  * "Mimal cut sets in biochemical reaction networks" Steffen Klamt, Ernst Dieter Gilles, Bioinformatics, 2004, 20, pp. 226-234
  * 
- * Zapewne działałaby szybciej i sprawniej napisana w jakimś NORMALNYM języku, np. k**** takim w którym byte ma 1B, short 2B a dopiero
- * int ma 4B. W javie, believe it or not, wszystkie 3 wymienione mają 32 bity. Ten, kto to wymyślił, powinien być mordowany jakimś
- * tępym narzedziem. Długo.
  * @author MR
  *
  */

@@ -1,6 +1,6 @@
 package abyss.darkgui;
 
-import abyss.analyzer.MCTCalculator;
+import abyss.analyse.MCTCalculator;
 import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.dockable.DeleteAction;
 import abyss.darkgui.dockwindows.AbyssDockWindow;
@@ -146,6 +146,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssStateSimulator windowStateSim; //okno symulatora stanów
 	private AbyssNetTables windowNetTables; //okno tabel sieci
 	private AbyssNotepad windowSimulationLog; //okno logów symulatora
+	private AbyssInvariants windowInvariants; //okno generatora inwariantów
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	
@@ -180,6 +181,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createSearchWindow(); // okno wyszukiwania elementów sieci
 		createNetTablesWindow(); // okno tabel sieci
 		createSimLogWindow(); // okno logów symulatora
+		createInvariantsWindow();
 
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnętrzne zmienne programu
 		
@@ -932,17 +934,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// .getDockable()));
 		// this.repaint();
 	}
-	
-	/**
-	 * Metoda ta miała na celu rozpoczęcia analizy sieci Petriego w ramach
-	 * pracy inżynierskiej. Plan był dobry, aczkolwiek w ramach pracy magisterskiej
-	 * zacząa w końcu działać i uruchamia analizator inwariantów. Nie działający
-	 * tak jak należy, ale w sumie pewien postęp jest... (MR 8.12.2014)
-	 */
-	public void tInvariantsAnalyse(){
-		PetriNet project = workspace.getProject();
-		project.tInvariantsAnalyze();
-	}
 
 	/**
 	 * Główna metoda odpowiedzialna za generowanie zbiorów MCT.
@@ -1139,11 +1130,29 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda wywołująca okno narzędzi inwariantów.
+	 * Metoda tworząca okno generatora inwariantów.
 	 */
 	public void createInvariantsWindow() {
-		AbyssInvariants ai = new AbyssInvariants();
-		ai.setVisible(true);
+		windowInvariants = new AbyssInvariants();
+		windowInvariants.setVisible(false);
+	}
+	
+	/**
+	 * Metoda pokazująca okno generatora inwariantów.
+	 */
+	public void showInvariantsWindow() {
+		if(windowInvariants != null)
+			windowInvariants.setVisible(true);
+	}
+	
+	/**
+	 * Metoda umożliwa dostęp do okna generatora.
+	 */
+	public AbyssInvariants accessInvariantsWindow() {
+		if(windowInvariants != null)
+			return windowInvariants;
+		else
+			return null;
 	}
 	
 	/**

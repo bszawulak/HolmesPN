@@ -28,12 +28,20 @@ import abyss.darkgui.GUIManager;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
 
+/**
+ * Klasa tworząca okno narzedzi generowania i analizy zbiorów MCS.
+ * @author MR
+ *
+ */
 public class AbyssMCS extends JFrame {
 	private ArrayList<Transition> transitions;
 	private int maxCutSize = 0;
 	private int maximumMCS = 0;
 	private boolean generateAll = true;
 
+	/**
+	 * Konstruktor obiektu klasy AbyssMCS.
+	 */
 	public AbyssMCS() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
@@ -69,6 +77,10 @@ public class AbyssMCS extends JFrame {
 		setVisible(true);
 	}
 
+	/**
+	 * Metoda tworząca główny panel okna.
+	 * @return JPanel - panel okna
+	 */
 	private JPanel createMainPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);  /**  ╯°□°）╯︵  ┻━━┻   */
@@ -85,8 +97,14 @@ public class AbyssMCS extends JFrame {
 		return panel;
 	}
 	
-	
-
+	/**
+	 * Metoda tworząca górny panel przycisków.
+	 * @param x int - pozycja X
+	 * @param y int - pozycja Y
+	 * @param width int - szerokość panelu
+	 * @param height - wysokość panelu
+	 * @return JPanel - utworzony panel
+	 */
 	private JPanel createUpperButtonPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -147,7 +165,7 @@ public class AbyssMCS extends JFrame {
 		generateButton.setText("<html>Generate<br />MCS</html>");
 		generateButton.setBounds(posX, posY+55, 110, 32);
 		generateButton.setMargin(new Insets(0, 0, 0, 0));
-		generateButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+		generateButton.setIcon(Tools.getResIcon32("/icons/mcsWindow/computeData.png"));
 		generateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				//fillData();
@@ -160,7 +178,7 @@ public class AbyssMCS extends JFrame {
 		loadButton.setText("<html>Load one<br />objR MCS</html>");
 		loadButton.setBounds(posX+120, posY+55, 110, 32);
 		loadButton.setMargin(new Insets(0, 0, 0, 0));
-		loadButton.setIcon(Tools.getResIcon22("/icons/stateSim/aaa.png"));
+		loadButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadMCS.png"));
 		loadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				//fillData();
@@ -173,7 +191,7 @@ public class AbyssMCS extends JFrame {
 		loadAllButton.setText("<html>Load all<br />MCS</html>");
 		loadAllButton.setBounds(posX+240, posY+55, 110, 32);
 		loadAllButton.setMargin(new Insets(0, 0, 0, 0));
-		loadAllButton.setIcon(Tools.getResIcon22("/icons/stateSim/aaa.png"));
+		loadAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadAllMCS.png"));
 		loadAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				//fillData();
@@ -186,7 +204,7 @@ public class AbyssMCS extends JFrame {
 		saveButton.setText("<html>Save one<br />objR MCS</html>");
 		saveButton.setBounds(posX+360, posY+55, 110, 32);
 		saveButton.setMargin(new Insets(0, 0, 0, 0));
-		saveButton.setIcon(Tools.getResIcon22("/icons/stateSim/aaa.png"));
+		saveButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveMCS.png"));
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				//fillData();
@@ -202,7 +220,7 @@ public class AbyssMCS extends JFrame {
 		addToButton.setText("Add");
 		addToButton.setBounds(posX+500, posY, 65, 20);
 		addToButton.setMargin(new Insets(0, 0, 0, 0));
-		addToButton.setIcon(Tools.getResIcon16("/icons/stateSim/aaa.png"));
+		addToButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/add.png"));
 		addToButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				//fillData();
@@ -215,7 +233,7 @@ public class AbyssMCS extends JFrame {
 		removeButton.setText("Rem.");
 		removeButton.setBounds(posX+575, posY, 65, 20);
 		removeButton.setMargin(new Insets(0, 0, 0, 0));
-		removeButton.setIcon(Tools.getResIcon16("/icons/stateSim/aaa.png"));
+		removeButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/remove.png"));
 		removeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				//fillData();
@@ -228,7 +246,7 @@ public class AbyssMCS extends JFrame {
 		clearButton.setText("Clear");
 		clearButton.setBounds(posX+650, posY, 65, 20);
 		clearButton.setMargin(new Insets(0, 0, 0, 0));
-		clearButton.setIcon(Tools.getResIcon16("/icons/stateSim/aaa.png"));
+		clearButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/clear.png"));
 		clearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				//fillData();
@@ -249,10 +267,10 @@ public class AbyssMCS extends JFrame {
         
         
         JButton calcAllButton = new JButton();
-        calcAllButton.setText("<html>Compute<br />selected<br />MCSs</html>");
-        calcAllButton.setBounds(posX+730, posY+30, 90, 50);
+        calcAllButton.setText("<html>Comp.<br />select.<br />MCSs</html>");
+        calcAllButton.setBounds(posX+725, posY+30, 100, 60);
         calcAllButton.setMargin(new Insets(0, 0, 0, 0));
-        calcAllButton.setIcon(Tools.getResIcon22("/icons/stateSim/aaa.png"));
+        calcAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/computeSet.png"));
         calcAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				//fillData();
@@ -264,6 +282,14 @@ public class AbyssMCS extends JFrame {
 		return panel;
 	}
 	
+	/**
+	 * Metoda tworząca centralny panel okna MCS.
+	 * @param x int - pozycja X
+	 * @param y int - pozycja Y
+	 * @param width int - szerokość panelu
+	 * @param height - wysokość panelu
+	 * @return JPanel - utworzony panel
+	 */
 	private JPanel createMainPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -286,6 +312,14 @@ public class AbyssMCS extends JFrame {
 		return panel;
 	}
 	
+	/**
+	 * Metoda tworząca podpanel przycisków.
+	 * @param x int - pozycja X
+	 * @param y int - pozycja Y
+	 * @param width int - szerokość panelu
+	 * @param height - wysokość panelu
+	 * @return JPanel - utworzony panel
+	 */
 	private JPanel createSubButtonPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
