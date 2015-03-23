@@ -46,6 +46,7 @@ public class AbyssInvariants extends JFrame {
 		} catch (Exception e ) {
 			
 		}
+		setVisible(false);
 		this.setTitle("Invariants generator and tools");
 		ego = this;
 		
@@ -58,7 +59,7 @@ public class AbyssInvariants extends JFrame {
 		JPanel mainPanel = createMainPanel();
 		add(mainPanel, BorderLayout.CENTER);
 
-		setVisible(true);
+		
 	}
 
 	/**
@@ -117,7 +118,7 @@ public class AbyssInvariants extends JFrame {
 						myThread.start();
 					}
 				} else {
-					JOptionPane.showMessageDialog(ego, "Not implementen yet! Sorry!", "Warning", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(ego, "Not implementet yet! Sorry!", "Warning", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
@@ -230,6 +231,7 @@ public class AbyssInvariants extends JFrame {
 		
 		logField = new JTextArea();
 		logField.setLineWrap(true);
+		logField.setEditable(false);
 		DefaultCaret caret = (DefaultCaret)logField.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		
@@ -384,6 +386,10 @@ public class AbyssInvariants extends JFrame {
 		setGeneratorStatus(false);
 	}
 	
+	/**
+	 * Metoda ustawia status generatora MCS.
+	 * @param status boolean - true, jeśli właśnie działa w tle
+	 */
 	public void setGeneratorStatus(boolean status) {
 		isGeneratorWorking = status;
 	}

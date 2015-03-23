@@ -94,6 +94,8 @@ public class AbyssClusters extends JFrame {
 		} catch (Exception e ) {
 			
 		}
+    	this.setVisible(false);
+    	
     	clustersToGenerate = 20;	
     	initiateListeners();
 
@@ -135,7 +137,6 @@ public class AbyssClusters extends JFrame {
         
         this.setContentPane(mainPanel);
         this.pack();
-        this.setVisible(false);
     }
 
     /**

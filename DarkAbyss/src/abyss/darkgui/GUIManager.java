@@ -147,6 +147,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssNetTables windowNetTables; //okno tabel sieci
 	private AbyssNotepad windowSimulationLog; //okno logów symulatora
 	private AbyssInvariants windowInvariants; //okno generatora inwariantów
+	private AbyssMCS windowMCS; //okno generatora MCS
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	
@@ -181,7 +182,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createSearchWindow(); // okno wyszukiwania elementów sieci
 		createNetTablesWindow(); // okno tabel sieci
 		createSimLogWindow(); // okno logów symulatora
-		createInvariantsWindow();
+		createInvariantsWindow(); // okno generatora inwariantów
+		createMCSWindow(); // okno generatora MCS
 
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnętrzne zmienne programu
 		
@@ -1159,11 +1161,19 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda wywołująca okno generatora MCS.
 	 */
 	public void createMCSWindow() {
-		//TODO: brak inv
-		AbyssMCS mcsWindow = new AbyssMCS();
-		mcsWindow.setVisible(true);
+		if(windowMCS == null) {
+			windowMCS = new AbyssMCS();
+			windowMCS.setVisible(false);
+		}
 	}
 	
+	/**
+	 * Metoda pokazująca okno generatora zbiorów MCS.
+	 */
+	public void showMCSWindow() {
+		if(windowMCS != null)
+			windowMCS.setVisible(true);
+	}
 	
 	/**
 	 * Metoda zapisująca nowe zdarzenie w oknie logów.

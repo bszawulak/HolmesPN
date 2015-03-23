@@ -6,6 +6,9 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
@@ -15,6 +18,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -23,7 +27,10 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.DefaultCaret;
 
+import abyss.analyse.InvariantsCalculator;
+import abyss.analyse.MCSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
@@ -38,6 +45,13 @@ public class AbyssMCS extends JFrame {
 	private int maxCutSize = 0;
 	private int maximumMCS = 0;
 	private boolean generateAll = true;
+	
+	private MCSCalculator mcsGenerator = null;
+	private boolean isMCSGeneratorWorking = false;
+	
+	private JComboBox<String> transitionsCombo;
+	private JSpinner mcsSpinner;
+	private JTextArea logField;
 
 	/**
 	 * Konstruktor obiektu klasy AbyssMCS.
@@ -49,6 +63,7 @@ public class AbyssMCS extends JFrame {
 		} catch (Exception e ) {
 			
 		}
+		setVisible(false);
 		this.setTitle("Minimal Cutting Sets generator");
 		
 		if(transitions != null && transitions.size()>1) {
@@ -62,19 +77,23 @@ public class AbyssMCS extends JFrame {
 		setLayout(new BorderLayout());
 		setSize(new Dimension(850, 650));
 		setLocation(50, 50);
-		//setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setResizable(false);
 		
 		JPanel mainPanel = createMainPanel();
 		add(mainPanel, BorderLayout.CENTER);
 		
 		addWindowListener(new java.awt.event.WindowAdapter() {
-		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 		    	//parentFrame.setEnabled(true);
 		    }
 		});
-		setVisible(true);
+		
+		addWindowListener(new WindowAdapter() {
+  	  	    public void windowActivated(WindowEvent e) {
+  	  	    	fillComboBoxData();
+  	  	    }  
+    	});
 	}
 
 	/**
@@ -83,7 +102,7 @@ public class AbyssMCS extends JFrame {
 	 */
 	private JPanel createMainPanel() {
 		JPanel panel = new JPanel();
-		panel.setLayout(null);  /**  ╯°□°）╯︵  ┻━━┻   */
+		panel.setLayout(null);  /**  ╯°□°）╯︵  ┻━━━┻   */
 		
 		//Panel wyboru opcji szukania
 		JPanel buttonPanel = createUpperButtonPanel(0, 0, 844, 110);
@@ -119,7 +138,7 @@ public class AbyssMCS extends JFrame {
 		panel.add(mcsLabel1);
 		
 		String[] dataT = { "---" };
-		JComboBox<String> transitionsCombo = new JComboBox<String>(dataT);
+		transitionsCombo = new JComboBox<String>(dataT);
 		transitionsCombo.setBounds(posX+90, posY, 400, 20);
 		transitionsCombo.setSelectedIndex(0);
 		transitionsCombo.setMaximumRowCount(6);
@@ -137,7 +156,7 @@ public class AbyssMCS extends JFrame {
 		panel.add(mcsLabel2);
         
 		SpinnerModel mcsSpinnerModel = new SpinnerNumberModel(maxCutSize, 0, maximumMCS, 1);
-		JSpinner mcsSpinner = new JSpinner(mcsSpinnerModel);
+		mcsSpinner = new JSpinner(mcsSpinnerModel);
 		mcsSpinner.setBounds(posX+90, posY+25, 60, 20);
 		mcsSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -161,6 +180,7 @@ public class AbyssMCS extends JFrame {
 		});
 		panel.add(allCheckBox);
 		
+		//Generowanie zbiorów
 		JButton generateButton = new JButton();
 		generateButton.setText("<html>Generate<br />MCS</html>");
 		generateButton.setBounds(posX, posY+55, 110, 32);
@@ -168,7 +188,7 @@ public class AbyssMCS extends JFrame {
 		generateButton.setIcon(Tools.getResIcon32("/icons/mcsWindow/computeData.png"));
 		generateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//fillData();
+				launchMCSanalysis();
 			}
 		});
 		generateButton.setFocusPainted(false);
@@ -258,7 +278,6 @@ public class AbyssMCS extends JFrame {
 		JTextArea logField = new JTextArea();
 		logField.setLineWrap(true);
 		logField.setEditable(false);
-		logField.setText("t0; t1; t11; t23; etc.");
         JPanel logFieldPanel = new JPanel();
         logFieldPanel.setLayout(new BorderLayout());
         logFieldPanel.add(new JScrollPane(logField),BorderLayout.CENTER);
@@ -281,7 +300,7 @@ public class AbyssMCS extends JFrame {
 		
 		return panel;
 	}
-	
+
 	/**
 	 * Metoda tworząca centralny panel okna MCS.
 	 * @param x int - pozycja X
@@ -300,8 +319,12 @@ public class AbyssMCS extends JFrame {
 		panel.add(upperButtons);
 		
 		
-		JTextArea logField = new JTextArea();
+		logField = new JTextArea();
 		logField.setLineWrap(true);
+		logField.setEditable(false);
+		DefaultCaret caret = (DefaultCaret)logField.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		
         JPanel logFieldPanel = new JPanel();
         logFieldPanel.setBorder(BorderFactory.createTitledBorder("Log"));
         logFieldPanel.setLayout(new BorderLayout());
@@ -325,9 +348,102 @@ public class AbyssMCS extends JFrame {
 		panel.setLayout(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Computed MCS options"));
 		panel.setBounds(x, y, width, height); // -6pikseli do rozmiaru <---> (650)
-		
-		
-		
+
 		return panel;
 	}
+	
+	protected void launchMCSanalysis() {
+		if(isMCSGeneratorWorking == true) {
+			JOptionPane.showMessageDialog(null, "MCS calculation already in progress.", 
+					"MCS generator working", JOptionPane.WARNING_MESSAGE);
+		} else {
+			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			if(transitions == null || transitions.size() < 2) {
+				JOptionPane.showMessageDialog(null, "Not enough transitions in net. Operation cannot start.", 
+						"Warning", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			
+			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+			if(invariants == null || invariants.size() < 1) {
+				JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
+						"Warning", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			
+			int selectionObjR = transitionsCombo.getSelectedIndex();
+			if(selectionObjR == 0) {
+				JOptionPane.showMessageDialog(null, "Please select objective reaction (objR).", 
+						"Warning", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			
+			int minCutSize = (int) mcsSpinner.getValue();
+			if(minCutSize == 0) {
+				JOptionPane.showMessageDialog(null, "MCSs maximal cardinality too low!", 
+						"Warning", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			
+			mcsGenerator = new MCSCalculator(selectionObjR, invariants, transitions, minCutSize, this);
+			Thread myThread = new Thread(mcsGenerator);
+			setGeneratorStatus(true);
+			myThread.start();
+		}
+	}
+
+	/**
+	 * Metoda ustawia status generatora MCS - działa / nie działa.
+	 * @param status boolean - true, jeśli włączony w swoim wątku
+	 */
+	public void setGeneratorStatus(boolean status) {
+		isMCSGeneratorWorking = status;
+	}
+
+	/**
+	 * Metoda ustawia odpowiednie wartości komponentów okna za każdym razem gdy okno jest aktywowane.
+	 */
+	protected void fillComboBoxData() {
+		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		int selection = transitionsCombo.getSelectedIndex();
+		transitionsCombo.removeAllItems();
+		transitionsCombo.addItem("---");
+		for(int t=0; t < transitions.size(); t++) {
+			transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
+		}
+		
+		if(selection < transitions.size()+1)
+			transitionsCombo.setSelectedIndex(selection);
+		
+		int minimumValue = 0;
+		
+		if(transitions != null && transitions.size() > 1) {
+			maxCutSize = 2;
+			maximumMCS = transitions.size();
+			minimumValue = 1;
+		} else {
+			maxCutSize = 0;
+			maximumMCS = 0;
+			minimumValue = 0;
+		}
+		
+		SpinnerModel mcsSpinnerModel = new SpinnerNumberModel(maxCutSize, minimumValue, maximumMCS, 1);
+		mcsSpinner.setModel(mcsSpinnerModel);
+	}
+
+	/**
+	 * Metoda zwraca obiekt komponentu 'notatnika' w podoknie.
+	 * @return JTextAres - obiekt logów
+	 */
+	public JTextArea accessLogField() {
+		return logField;
+	}
+	
+	/**
+	 * Metoda resetuje połączenie z wątkiem generatora.
+	 */
+	public void resetMCSGenerator() {
+		mcsGenerator = null;
+		setGeneratorStatus(false);
+	}	
 }

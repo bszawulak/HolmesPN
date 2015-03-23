@@ -60,7 +60,7 @@ public class AbyssConsole extends JFrame {
 		} catch (Exception e ) {
 			
 		}
-
+    	setVisible(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setMinimumSize(new Dimension(1000, 400));
 		setMaximumSize(new Dimension(1000, 400));
@@ -74,7 +74,6 @@ public class AbyssConsole extends JFrame {
 
         setContentPane(tablePanel);
         pack();
-        setVisible(false); 
 	}
 	
 	/**

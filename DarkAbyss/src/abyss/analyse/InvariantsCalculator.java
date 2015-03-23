@@ -1,6 +1,8 @@
 package abyss.analyse;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -45,14 +47,14 @@ public class InvariantsCalculator implements Runnable {
 	private int oldReplaced = 0;
 	private int notCanonical = 0;
 	
-	private AbyssInvariants master = null;
+	private AbyssInvariants masterWindow = null;
 	
 	/**
 	 * Konstruktor obiektu klasy InvariantsAnalyzer. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.
 	 * @param transCal boolean - true, jeśli liczymy T-inwarianty, false dla P-inwariantów
 	 */
 	public InvariantsCalculator(boolean transCal) {
-		master = GUIManager.getDefaultGUIManager().accessInvariantsWindow();
+		masterWindow = GUIManager.getDefaultGUIManager().accessInvariantsWindow();
 		
 		transCalculation = transCal;
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
@@ -68,16 +70,18 @@ public class InvariantsCalculator implements Runnable {
 	 */
 	public void run() {
 		try {
+			logInternal("Invariant calculations started.\n", true);
 			this.createTPIncidenceAndIdentityMatrix();
 			this.searchTInvariants();
 			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants());
 			project.setInvariantsMatrix(getInvariants());
-			logInternal("Operation successfull, invariants found: "+getInvariants().size()+"\n");
+			logInternal("Operation successfull, invariants found: "+getInvariants().size()+"\n", true);
 		} catch (Exception e) {
 			log("Critical error while generating invariants. Possible net state change.", "error", false);
+			logInternal("Critical error while generating invariants. Possible net state change.\n", true);
 		} finally {
-			master.resetInvariantGenerator(); //odłącz obiekt
+			masterWindow.resetInvariantGenerator(); //odłącz obiekt
 		}
 	}
 	
@@ -107,10 +111,16 @@ public class InvariantsCalculator implements Runnable {
 	/**
 	 * Metoda wysyłająca komunikaty do podokna logów generatora.
 	 * @param msg String - tekst do logów
+	 * @param date boolean - true, jeśli ma być podany czas komunikatu
 	 */
-	private void logInternal(String msg) {
-		if(master != null) {
-			master.accessLogField().append(msg);	
+	private void logInternal(String msg, boolean date) {
+		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		if(masterWindow != null) {
+			if(date == false) {
+				masterWindow.accessLogField().append(msg);
+			} else {
+				masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
+			}
 		}
 	}
 
@@ -170,7 +180,7 @@ public class InvariantsCalculator implements Runnable {
 			globalIncidenceMatrix.get(tPosition).set(pPosition, incidenceValue);
 			CMatrix.get(tPosition).set(pPosition, incidenceValue);
 		}
-		logInternal("\nTP-class incidence matrix created for "+transitions.size()+" transitions and "+places.size()+" places.\n");
+		logInternal("\nTP-class incidence matrix created for "+transitions.size()+" transitions and "+places.size()+" places.\n", false);
 		
 		//macierz jednostkowa
 		for (int trans = 0; trans < transitions.size(); trans++) {
@@ -184,7 +194,7 @@ public class InvariantsCalculator implements Runnable {
 			globalIdentityMatrix.add(identRow);
 		}
 		
-		logInternal("Identity matrix created for "+transitions.size()+" transitions.\n");
+		logInternal("Identity matrix created for "+transitions.size()+" transitions.\n", false);
 	}
 
 	/**
@@ -193,12 +203,12 @@ public class InvariantsCalculator implements Runnable {
 	public void searchTInvariants() {
 		// Etap I - miejsca 1-in 1-out
 		ArrayList<ArrayList<Integer>> generatedRows = new ArrayList<ArrayList<Integer>>();
-		logInternal("Phase I inititated. Performing only for all 1-in/1-out places.\n");
+		logInternal("Phase I inititated. Performing only for all 1-in/1-out places.\n", false);
 		int placesNumber = globalIncidenceMatrix.get(0).size();
 		
 		for (int p = 0; p < placesNumber; p++) {
 			if (isSimplePlace(globalIncidenceMatrix, p) == true) { // wystepuje tylko jedno wejście i wyjście z miejsca
-				logInternal("Processing simple-class column: "+p+"\n");
+				logInternal("Processing simple-class column: "+p+"\n", false);
 				generatedRows = findNewRows(p); // na bazie globalIncidenceMatrix i Identity
 				rewriteIncidenceIntegrityMatrices_MR(generatedRows, p);
 				zeroColumnVectorP.add(p);
@@ -220,7 +230,7 @@ public class InvariantsCalculator implements Runnable {
 			//int neg = res[3];
 			int oldSize = globalIncidenceMatrix.size();
 			
-			logInternal("Processing column: "+cand+", projected rows change: "+(oldSize+rowsChange)+", remaining steps: "+stepsToFinish);
+			logInternal("Processing column: "+cand+", projected rows change: "+(oldSize+rowsChange)+", remaining steps: "+stepsToFinish, false);
 			
 			generatedRows = findNewRows(cand); // na bazie globalIncidenceMatrix i Identity
 			rewriteIncidenceIntegrityMatrices_MR(generatedRows, cand);
@@ -232,7 +242,7 @@ public class InvariantsCalculator implements Runnable {
 			//int nonCanon = notCanonical;
 			int newSize = globalIncidenceMatrix.size();
 			
-			logInternal("\nNew rows number: "+newSize+ " | rejected: "+newRejected+" replaced: "+oldReplaced+" not canonical: "+notCanonical+"\n");
+			logInternal("\nNew rows number: "+newSize+ " | rejected: "+newRejected+" replaced: "+oldReplaced+" not canonical: "+notCanonical+"\n", false);
 		}
 		
 		setInvariants(globalIdentityMatrix);
@@ -663,15 +673,15 @@ public class InvariantsCalculator implements Runnable {
 					if(justGotHere) {
 						System.out.println();
 						justGotHere = false;
-						if(master != null) {
-							master.accessLogField().append("\n");
+						if(masterWindow != null) {
+							masterWindow.accessLogField().append("\n");
 						}
 					}
 					if(steps == (int)interval) {
 						steps = 0;
 						System.out.print("*");
-						if(master != null) {
-							master.accessLogField().append("*");
+						if(masterWindow != null) {
+							masterWindow.accessLogField().append("*");
 						}
 					} else {
 						steps++;

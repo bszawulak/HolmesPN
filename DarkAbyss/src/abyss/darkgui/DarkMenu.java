@@ -407,7 +407,7 @@ public class DarkMenu extends JMenuBar {
 		mcsWindowItem.getAccessibleContext().setAccessibleDescription("MCS generator and tools");
 		mcsWindowItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().createMCSWindow();
+				GUIManager.getDefaultGUIManager().showMCSWindow();
 			}
 		});
 		invariantsOperationsMenu.add(mcsWindowItem);
