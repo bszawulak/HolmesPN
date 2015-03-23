@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import abyss.darkgui.GUIManager;
+import abyss.math.MinCutSetData;
 import abyss.math.Transition;
 import abyss.windows.AbyssInvariants;
 import abyss.windows.AbyssMCS;
@@ -22,11 +23,12 @@ import abyss.windows.AbyssMCS;
 public class MCSCalculator implements Runnable {
     private ArrayList<ArrayList<Integer>> em_obR;
     private ArrayList<Integer> transitions;
-    private List<Set<Integer>> mcs;
+    private ArrayList<Set<Integer>> mcs;
     private List<Set<Integer>> precutsets;
     private int maxCutSetSize;
     private boolean ready = false;
     private AbyssMCS masterWindow = null;
+    private int objective_Reaction;
     
     private int currentStep = 0;
     
@@ -49,14 +51,14 @@ public class MCSCalculator implements Runnable {
     		transitions = new ArrayList<Integer>();
         	mcs = new ArrayList<>();
             precutsets = new ArrayList<>();
-            
+            objective_Reaction = objR;
             masterWindow = mstWindow;
     	}
     	//ArrayList<Transition> transitionsList = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 
     	//STEP 2: zdefiniowana objR (int, argument funkcji MCSCalculator(int objR)
         for (ArrayList<Integer> inv : invariants) {
-            if (transInInvariant(inv, objR) == true) {
+            if (transInInvariant(inv, objective_Reaction) == true) {
             	em_obR.add(binaryInv(inv)); //STEP 3
             }
         }
@@ -84,44 +86,16 @@ public class MCSCalculator implements Runnable {
 	public void run() {
 		try {
 			logInternal("Searching MCS started.\n",true);
-			findMcs();
+			ArrayList<Set<Integer>> results = findMcs();
+			addNewDataVector(results);
 			if(masterWindow != null) {
 				masterWindow.resetMCSGenerator();
 				logInternal("MCS list created.\n",true);
 				showMCS();
+				
 			}
 		} catch (Exception e) {
 			
-		}
-	}
-	
-	private void showMCS() {
-		int mcsSize = mcs.size();
-		for(int s=0; s<mcsSize; s++) {
-			String msg = "Set "+s+ ": [";
-			Set<Integer> mcsSet = mcs.get(s);
-			for(int el : mcsSet) {
-				msg += el+", ";
-			}
-			msg += "]\n";
-			msg = msg.replace(", ]", "]");
-			logInternal(msg, false);
-		}
-	}
-
-	/**
-	 * Metoda wysyłająca komunikaty do podokna logów generatora.
-	 * @param msg String - tekst do logów
-	 * @param date boolean - true, jeśli ma być podany czas komunikatu
-	 */
-	private void logInternal(String msg, boolean date) {
-		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-		if(masterWindow != null) {
-			if(date == false) {
-				masterWindow.accessLogField().append(msg);
-			} else {
-				masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
-			}
 		}
 	}
     
@@ -158,7 +132,7 @@ public class MCSCalculator implements Runnable {
      * @param MAX_CUTSETSIZE int - do jakiego rozmiaru (uwaga! EKSPLOZJA stanów >6,7)
      * @return List[Set[Integer]] - zbiory MCS
      */
-	public List<Set<Integer>> findMcs() {
+	public ArrayList<Set<Integer>> findMcs() {
     	if(ready == false)
     		return null;
     	
@@ -199,6 +173,59 @@ public class MCSCalculator implements Runnable {
         }
         return mcs;
     }
+	
+	public HashSet<HashSet<Integer>> findMcs2() {
+		
+		
+		HashSet<HashSet<Integer>> result = new HashSet<HashSet<Integer>>();
+		int invMatrixSize = em_obR.size();
+		int invSize = transitions.size();
+		
+		int maxSize = 6;
+		maxSize =invSize;
+		
+		for(int i=0; i<invMatrixSize; i++) {
+			for(int j=0; j<invSize; j++) {
+				int val = em_obR.get(i).get(j);
+				if(val != 0) {
+					HashSet<Integer> newSet = new HashSet<Integer>();
+					
+					newSet.add(j);
+					result.add(newSet); //duplikatów nie doda
+					
+					int resSize = result.size();
+					for(HashSet<Integer> test : result) {
+						if(test.size() <= maxSize) {
+							test.add(j); //duplikatów i tak nie doda
+						}
+					}	
+				}
+			}
+		}
+		HashSet<HashSet<Integer>> minimal = new HashSet<HashSet<Integer>>(); 
+		
+		boolean found = false;
+		for(HashSet<Integer> test : result) {
+			found = false;
+			for(HashSet<Integer> ref : result) {
+				if(test.equals(ref) == false) {
+					if(test.containsAll(ref)) {
+						found = true;
+						break;
+					}
+					
+				}
+			}
+			if(found == false) {
+				minimal.add(test);
+			}
+			
+		}
+		
+		return minimal;
+	}
+	
+
     
     /**
      * Metoda usuwa ze zbioru precutsets wszystkie zbiory, które zawierają tranzycję trans.
@@ -336,6 +363,41 @@ public class MCSCalculator implements Runnable {
     	else
     		return false;
     }
+    
+    private void addNewDataVector(ArrayList<Set<Integer>> results) {
+		MinCutSetData mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+		mcsd.insertMCS(results, objective_Reaction, true);
+	}
+
+	private void showMCS() {
+		int mcsSize = mcs.size();
+		for(int s=0; s<mcsSize; s++) {
+			String msg = "Set "+s+ ": [";
+			Set<Integer> mcsSet = mcs.get(s);
+			for(int el : mcsSet) {
+				msg += el+", ";
+			}
+			msg += "]\n";
+			msg = msg.replace(", ]", "]");
+			logInternal(msg, false);
+		}
+	}
+
+	/**
+	 * Metoda wysyłająca komunikaty do podokna logów generatora.
+	 * @param msg String - tekst do logów
+	 * @param date boolean - true, jeśli ma być podany czas komunikatu
+	 */
+	private void logInternal(String msg, boolean date) {
+		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		if(masterWindow != null) {
+			if(date == false) {
+				masterWindow.accessLogField().append(msg);
+			} else {
+				masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
+			}
+		}
+	}
     
     /**
      * Obsolete

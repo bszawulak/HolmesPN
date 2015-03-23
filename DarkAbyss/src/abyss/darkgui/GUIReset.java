@@ -45,10 +45,8 @@ public class GUIReset {
 		// Księga Kononowicza
 		if(invGenerated == true) {
 			resetCommunicationProtocol();
-			
-			//mastah.getWorkspace().getProject().set2ndFormInvariantsList(new ArrayList<ArrayList<InvariantTransition>>());
-			
 			mastah.getWorkspace().getProject().setInvariantsMatrix(null);
+			mastah.getWorkspace().getProject().getMCSdataCore().resetMSC();
 			//mastah.getWorkspace().getProject().setInvariantsSize(null);
 			//mastah.getWorkspace().getProject().setUncoveredInvariants(null);
 			

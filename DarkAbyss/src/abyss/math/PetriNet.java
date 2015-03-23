@@ -468,6 +468,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		return communicationProtocol;
 	}
 	
+	/**
+	 * Metoda zwraca obiekt przechowujący zbiory MCS;
+	 * @return MinCutSetData - obiekt MCS
+	 */
+	public MinCutSetData getMCSdataCore() {
+		return mcsData;
+	}
+	
 	//*********************************************************************************
 
 	/**

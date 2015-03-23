@@ -387,6 +387,8 @@ public class Toolbar extends BorderDock {
 						"C:/Users/Rince/Desktop/Sieci/BER3.7.2/BERv3.8.2ab.spped");
 				GUIManager.getDefaultGUIManager().getSimulatorBox().createSimulatorProperties();
 				
+				GUIManager.getDefaultGUIManager().setLastPath("C:/Users/Rince/Desktop/Sieci/BER3.7.2/");
+				
 				/*
 				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
 				try

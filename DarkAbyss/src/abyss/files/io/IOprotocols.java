@@ -226,7 +226,7 @@ public class IOprotocols {
 
 	/**
 	 * Zapis inwariantow w formacie INA.
-	 * @param path - scieśka do pliku
+	 * @param path - scieżka do pliku
 	 * @param invariants ArrayList[ArrayList[Integer]] - lista niezmienników
 	 * @param transitions ArrayList[Transition] - lista tranzycji
 	 */

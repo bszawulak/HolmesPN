@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -32,6 +33,8 @@ import javax.swing.text.DefaultCaret;
 import abyss.analyse.InvariantsCalculator;
 import abyss.analyse.MCSCalculator;
 import abyss.darkgui.GUIManager;
+import abyss.files.io.MCSoperations;
+import abyss.math.MinCutSetData;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
 
@@ -41,6 +44,7 @@ import abyss.utilities.Tools;
  *
  */
 public class AbyssMCS extends JFrame {
+	private static final long serialVersionUID = -5765964470006303431L;
 	private ArrayList<Transition> transitions;
 	private int maxCutSize = 0;
 	private int maximumMCS = 0;
@@ -50,6 +54,8 @@ public class AbyssMCS extends JFrame {
 	private boolean isMCSGeneratorWorking = false;
 	
 	private JComboBox<String> transitionsCombo;
+	private JComboBox<String> transitionsResultsCombo;
+	private boolean listenerAllowed = true;
 	private JSpinner mcsSpinner;
 	private JTextArea logField;
 
@@ -233,6 +239,19 @@ public class AbyssMCS extends JFrame {
 		saveButton.setFocusPainted(false);
 		panel.add(saveButton);
 		
+		JButton saveAllButton = new JButton();
+		saveAllButton.setText("<html>Save all<br />MCS</html>");
+		saveAllButton.setBounds(posX+480, posY+55, 110, 32);
+		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
+		saveAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveMCS.png"));
+		saveAllButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				MCSoperations.saveAllMCS(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore());
+				//fillData();
+			}
+		});
+		saveAllButton.setFocusPainted(false);
+		panel.add(saveAllButton);
 		
 		// SETS OPERATIONS
 		
@@ -281,13 +300,13 @@ public class AbyssMCS extends JFrame {
         JPanel logFieldPanel = new JPanel();
         logFieldPanel.setLayout(new BorderLayout());
         logFieldPanel.add(new JScrollPane(logField),BorderLayout.CENTER);
-        logFieldPanel.setBounds(posX+500, posY+25, 220, 70);
+        logFieldPanel.setBounds(posX+500, posY+22, 215, 30);
         panel.add(logFieldPanel);
         
         
         JButton calcAllButton = new JButton();
         calcAllButton.setText("<html>Comp.<br />select.<br />MCSs</html>");
-        calcAllButton.setBounds(posX+725, posY+30, 100, 60);
+        calcAllButton.setBounds(posX+725, posY, 100, 50);
         calcAllButton.setMargin(new Insets(0, 0, 0, 0));
         calcAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/computeSet.png"));
         calcAllButton.addActionListener(new ActionListener() {
@@ -349,9 +368,44 @@ public class AbyssMCS extends JFrame {
 		panel.setBorder(BorderFactory.createTitledBorder("Computed MCS options"));
 		panel.setBounds(x, y, width, height); // -6pikseli do rozmiaru <---> (650)
 
+		int posX = 10;
+		int posY = 20;
+		
+		JLabel mcsLabel1 = new JLabel("ObjR MCSs:");
+		mcsLabel1.setBounds(posX, posY, 80, 20);
+		panel.add(mcsLabel1);
+		
+		String[] dataT = { "---" };
+		transitionsResultsCombo = new JComboBox<String>(dataT);
+		transitionsResultsCombo.setBounds(posX+90, posY, 400, 20);
+		transitionsResultsCombo.setSelectedIndex(0);
+		transitionsResultsCombo.setMaximumRowCount(6);
+		transitionsResultsCombo.removeAllItems();
+		transitionsResultsCombo.addItem("---");
+		if(transitions != null && transitions.size()>0) {
+			for(int t=0; t < transitions.size(); t++) {
+				transitionsResultsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
+			}
+		}
+		transitionsResultsCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(listenerAllowed == false) 
+					return;
+				int selected = transitionsResultsCombo.getSelectedIndex();
+				if(selected > 0) {
+					showMCSData(selected-1);
+				}
+			}
+			
+		});
+		panel.add(transitionsResultsCombo);
+		
 		return panel;
 	}
-	
+
+	/**
+	 * Metoda odpowiedzialna za generowanie zbioru MCS i dodanie go do bazy programu.
+	 */
 	protected void launchMCSanalysis() {
 		if(isMCSGeneratorWorking == true) {
 			JOptionPane.showMessageDialog(null, "MCS calculation already in progress.", 
@@ -372,11 +426,14 @@ public class AbyssMCS extends JFrame {
 			}
 			
 			int selectionObjR = transitionsCombo.getSelectedIndex();
+			
 			if(selectionObjR == 0) {
 				JOptionPane.showMessageDialog(null, "Please select objective reaction (objR).", 
 						"Warning", JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
+			
+			selectionObjR--;
 			
 			int minCutSize = (int) mcsSpinner.getValue();
 			if(minCutSize == 0) {
@@ -385,11 +442,66 @@ public class AbyssMCS extends JFrame {
 				return;
 			}
 			
+			int MCSdatacoreSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().returnSize();
+			
+			if(transitions.size() != MCSdatacoreSize) {
+				if(MCSdatacoreSize == 0) {
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().initiateMCS();
+				} else {
+					//co dalej?
+					Object[] options = {"Yes", "No"};
+					int decision = JOptionPane.showOptionDialog(null,
+									"MCS list detected with different size than current cardinality of the transition set.\nClean old MCS list?",
+									"Net change detected", JOptionPane.YES_NO_OPTION,
+									JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+					if (decision == 1) {
+						return;
+					} else {
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().initiateMCS();
+					}
+				}
+			}
+			
 			mcsGenerator = new MCSCalculator(selectionObjR, invariants, transitions, minCutSize, this);
 			Thread myThread = new Thread(mcsGenerator);
 			setGeneratorStatus(true);
 			myThread.start();
 		}
+	}
+	
+	/**
+	 * Metoda wyświetla informacje i zbiory MCS dla wskazanej tranzycji.
+	 * @param selected
+	 */
+	protected void showMCSData(int selected) {	
+		MinCutSetData mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+		
+		ArrayList<Set<Integer>> dataVector = mcsd.getMCSlist(selected);
+		
+		if(dataVector == null)
+			return;
+		
+		Transition objR = transitions.get(selected);
+		logField.append("==========================================================\n");
+		logField.append("Transition/objR: "+objR.getName()+"\n");
+		logField.append("Minimal Cuttin Sets list size: "+dataVector.size()+"\n");
+		
+		int counter = 0;
+		String msg = "";
+		for(Set<Integer> set : dataVector) {
+			logField.append("MSC#"+counter+" ");
+			msg = "[";
+			for(int el : set) {
+				msg += el+", ";
+			}
+			msg += "]";
+			msg = msg.replace(", ]", "]");
+			logField.append(msg+"\n");
+			counter++;
+		}
+		
+		logField.append("==========================================================\n");
+		logField.append("\n");
 	}
 
 	/**
@@ -411,6 +523,14 @@ public class AbyssMCS extends JFrame {
 		for(int t=0; t < transitions.size(); t++) {
 			transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
 		}
+		
+		listenerAllowed = false; //aby nie wywoływać wyświetlania
+		transitionsResultsCombo.removeAllItems();
+		transitionsResultsCombo.addItem("---");
+		for(int t=0; t < transitions.size(); t++) {
+			transitionsResultsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
+		}
+		listenerAllowed = true;
 		
 		if(selection < transitions.size()+1)
 			transitionsCombo.setSelectedIndex(selection);
