@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import abyss.darkgui.GUIManager;
+import abyss.files.io.MCSoperations;
 
 public class MinCutSetData {
 	private ArrayList<ArrayList<Set<Integer>>> mcsDataCore;
@@ -13,9 +14,7 @@ public class MinCutSetData {
 	private int matrixSize;
 
 	public MinCutSetData() {
-		mcsDataCore = new ArrayList<ArrayList<Set<Integer>>>();
-		transNames = new ArrayList<String>();
-		matrixSize = 0;
+		resetMSC();
 	}
 	
 	public void resetMSC() {
@@ -24,6 +23,10 @@ public class MinCutSetData {
 		matrixSize = 0;
 	}
 	
+	/**
+	 * Metoda tworzy nową strukturę danych umożliwiająca przechowywanie list zbiorów MCT dla
+	 * każdej tranzycji sieci.
+	 */
 	public void initiateMCS() {
 		ArrayList<Transition> transitions =  GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		matrixSize = transitions.size();
@@ -32,11 +35,14 @@ public class MinCutSetData {
 			ArrayList<Set<Integer>> newVector = new ArrayList<Set<Integer>>();
 			mcsDataCore.add(newVector);
 			transNames.add(transitions.get(i).getName());
-		}
-		
+		}	
 	}
 	
-	public int returnSize() {
+	/**
+	 * Metoda zwraca rozmiar głównej listy danych - liczba tranzycji.
+	 * @return int - dla ilu tranzycji jest miejsce
+	 */
+	public int getSize() {
 		return matrixSize;
 	}
 
@@ -48,7 +54,7 @@ public class MinCutSetData {
 	 */
 	public void insertMCS(ArrayList<Set<Integer>> mcsList, int pos, boolean warning) {
 		if(pos < matrixSize) {
-			if(warning = false)
+			if(warning == false)
 				mcsDataCore.set(pos, mcsList);
 			else {
 				if(mcsDataCore.get(pos).size() > 0) {
@@ -71,6 +77,25 @@ public class MinCutSetData {
 		}
 	}
 	
+	/**
+	 * Metoda zwraca liczbę obliczonych list zbiorów MCS.
+	 * @return int - liczba obliczonych list zbiorów
+	 */
+	public int getCalculatedMCSnumber() {
+		int size = 0;
+		for(ArrayList<Set<Integer>> list : mcsDataCore) {
+			if(list.size()>0) {
+				size++;
+			}
+		}
+		return size;
+	}
+
+	/**
+	 * Metoda zwraca listę zbiorów MCS z wybranej pozycji.
+	 * @param pos int - indeks tranzycji
+	 * @return ArrayList[Set[Integer]] - lista zbiorów MCS dla wybranej reakcji
+	 */
 	public ArrayList<Set<Integer>> getMCSlist(int pos) {
 		if(pos < matrixSize) {
 			return mcsDataCore.get(pos); 
@@ -94,5 +119,33 @@ public class MinCutSetData {
 	 */
 	public ArrayList<String> accessMCStransitions() {
 		return transNames;
+	}
+	
+	/**
+	 * Metoda sprawdza, czy nastąpi zastąpienie danych. Jeśli tak, daje opcję zatrzymania operacji, kontynuacji
+	 * zastępowania danych o MCS lub zapisania starych danych przed zastąpieniem.
+	 * @return boolean - true - można kontynuować operację zastępowania danych, false - nie można kontynuować
+	 */
+	public boolean checkDataReplacing() {
+		int dataSize = getCalculatedMCSnumber();
+		if(dataSize > 0) {
+			
+			Object[] options = {"Cancel", "Replace", "Save & replace"};
+			int decision = JOptionPane.showOptionDialog(null,
+							"MCS data for a given net is not empty. Cancel current operation, replace data or\n"
+							+ "save old data to file before replacing?",
+							"Net change detected", JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+			if (decision == 0) {
+				return false;
+			} else if (decision == 1) {
+				return true;
+			} else {
+				MCSoperations.saveAllMCS(this);
+				return true;
+			}
+		} else {
+			return true;
+		}
 	}
 }

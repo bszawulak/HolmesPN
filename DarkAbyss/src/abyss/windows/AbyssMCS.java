@@ -58,6 +58,7 @@ public class AbyssMCS extends JFrame {
 	private boolean listenerAllowed = true;
 	private JSpinner mcsSpinner;
 	private JTextArea logField;
+	private JTextArea reactionSetsTextField;
 
 	/**
 	 * Konstruktor obiektu klasy AbyssMCS.
@@ -171,21 +172,7 @@ public class AbyssMCS extends JFrame {
 			}
 		});
 		panel.add(mcsSpinner);
-		
-		JCheckBox allCheckBox = new JCheckBox("Compute all MCS", true);
-		allCheckBox.setBounds(posX+160, posY+25, 140, 20);
-		allCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					generateAll = true;
-				} else {
-					generateAll = false;
-				}
-			}
-		});
-		panel.add(allCheckBox);
-		
+
 		//Generowanie zbiorów
 		JButton generateButton = new JButton();
 		generateButton.setText("<html>Generate<br />MCS</html>");
@@ -207,7 +194,7 @@ public class AbyssMCS extends JFrame {
 		loadButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadMCS.png"));
 		loadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//fillData();
+				MCSoperations.loadSingleMCS();
 			}
 		});
 		loadButton.setFocusPainted(false);
@@ -220,28 +207,15 @@ public class AbyssMCS extends JFrame {
 		loadAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadAllMCS.png"));
 		loadAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//fillData();
+				MCSoperations.loadAllMCS();
 			}
 		});
 		loadAllButton.setFocusPainted(false);
 		panel.add(loadAllButton);
 		
-		JButton saveButton = new JButton();
-		saveButton.setText("<html>Save one<br />objR MCS</html>");
-		saveButton.setBounds(posX+360, posY+55, 110, 32);
-		saveButton.setMargin(new Insets(0, 0, 0, 0));
-		saveButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveMCS.png"));
-		saveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				//fillData();
-			}
-		});
-		saveButton.setFocusPainted(false);
-		panel.add(saveButton);
-		
 		JButton saveAllButton = new JButton();
 		saveAllButton.setText("<html>Save all<br />MCS</html>");
-		saveAllButton.setBounds(posX+480, posY+55, 110, 32);
+		saveAllButton.setBounds(posX+360, posY+55, 110, 32);
 		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
 		saveAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveMCS.png"));
 		saveAllButton.addActionListener(new ActionListener() {
@@ -262,7 +236,14 @@ public class AbyssMCS extends JFrame {
 		addToButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/add.png"));
 		addToButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//fillData();
+				//reactionSetsTextField
+				int selected = transitionsCombo.getSelectedIndex();
+				if(selected == 0)
+					return;
+				selected--;
+				String msg = "t"+selected+",";
+				if(reactionSetsTextField.getText().contains(msg) == false)
+					reactionSetsTextField.append(msg);
 			}
 		});
 		addToButton.setFocusPainted(false);
@@ -275,7 +256,14 @@ public class AbyssMCS extends JFrame {
 		removeButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/remove.png"));
 		removeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//fillData();
+				int selected = transitionsCombo.getSelectedIndex();
+				if(selected == 0)
+					return;
+				selected--;
+				String msg = "t"+selected+",";
+				String text = reactionSetsTextField.getText();
+				text = text.replace(msg, "");
+				reactionSetsTextField.setText(text);
 			}
 		});
 		removeButton.setFocusPainted(false);
@@ -288,20 +276,34 @@ public class AbyssMCS extends JFrame {
 		clearButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/clear.png"));
 		clearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//fillData();
+				reactionSetsTextField.setText("");
 			}
 		});
 		clearButton.setFocusPainted(false);
 		panel.add(clearButton);
 		
-		JTextArea logField = new JTextArea();
-		logField.setLineWrap(true);
-		logField.setEditable(false);
+		reactionSetsTextField = new JTextArea();
+		reactionSetsTextField.setLineWrap(true);
+		reactionSetsTextField.setEditable(false);
         JPanel logFieldPanel = new JPanel();
         logFieldPanel.setLayout(new BorderLayout());
-        logFieldPanel.add(new JScrollPane(logField),BorderLayout.CENTER);
+        logFieldPanel.add(new JScrollPane(reactionSetsTextField),BorderLayout.CENTER);
         logFieldPanel.setBounds(posX+500, posY+22, 215, 30);
         panel.add(logFieldPanel);
+        
+        JCheckBox allCheckBox = new JCheckBox("Compute all MCS", true);
+		allCheckBox.setBounds(posX+690, posY+55, 140, 20);
+		allCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					generateAll = true;
+				} else {
+					generateAll = false;
+				}
+			}
+		});
+		panel.add(allCheckBox);
         
         
         JButton calcAllButton = new JButton();
@@ -311,7 +313,7 @@ public class AbyssMCS extends JFrame {
         calcAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/computeSet.png"));
         calcAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//fillData();
+				calculateAllAction();
 			}
 		});
         calcAllButton.setFocusPainted(false);
@@ -400,6 +402,25 @@ public class AbyssMCS extends JFrame {
 		});
 		panel.add(transitionsResultsCombo);
 		
+		JButton saveButton = new JButton();
+		saveButton.setText("<html>Save this<br />objR MCS</html>");
+		saveButton.setBounds(posX, posY+25, 110, 32);
+		saveButton.setMargin(new Insets(0, 0, 0, 0));
+		saveButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveMCS.png"));
+		saveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = transitionsResultsCombo.getSelectedIndex();
+				if(selected == 0) {
+					return;
+				}
+				selected--;
+				String name = (String) transitionsResultsCombo.getSelectedItem();
+				MCSoperations.saveSingleMCS(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore(), selected, name);
+			}
+		});
+		saveButton.setFocusPainted(false);
+		panel.add(saveButton);
+		
 		return panel;
 	}
 
@@ -442,7 +463,7 @@ public class AbyssMCS extends JFrame {
 				return;
 			}
 			
-			int MCSdatacoreSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().returnSize();
+			int MCSdatacoreSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().getSize();
 			
 			if(transitions.size() != MCSdatacoreSize) {
 				if(MCSdatacoreSize == 0) {
@@ -462,10 +483,106 @@ public class AbyssMCS extends JFrame {
 				}
 			}
 			
-			mcsGenerator = new MCSCalculator(selectionObjR, invariants, transitions, minCutSize, this);
+			mcsGenerator = new MCSCalculator(selectionObjR, invariants, transitions, minCutSize, this, true);
 			Thread myThread = new Thread(mcsGenerator);
 			setGeneratorStatus(true);
 			myThread.start();
+		}
+	}
+	
+	protected void calculateAllAction() {
+		ArrayList<Integer> objReactions = new ArrayList<Integer>();
+		if(generateAll) {
+			int transSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+			
+			for(int t=0; t<transSize; t++) {
+				objReactions.add(t);
+			}
+		} else {
+			String all = reactionSetsTextField.getText();
+			
+			if(all.length() > 0) {
+				all = all.trim();
+				String[] splittedSets = all.split(",");
+				if(splittedSets.length > 0) {
+					for(String s : splittedSets) {
+						try {
+							s = s.replace("t", "");
+							int next = Integer.parseInt(s);
+							objReactions.add(next);
+						} catch (Exception e) {}
+					}
+					
+					
+				}
+			}
+		}
+		
+		launchMCSanalysis(objReactions);
+	}
+	
+	protected void launchMCSanalysis(ArrayList<Integer> objReactions) {
+		if(objReactions.size() == 0)
+			return;
+		
+		if(isMCSGeneratorWorking == true) {
+			JOptionPane.showMessageDialog(null, "MCS calculation already in progress.", 
+					"MCS generator working", JOptionPane.WARNING_MESSAGE);
+		} else {
+			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			if(transitions == null || transitions.size() < 2) {
+				JOptionPane.showMessageDialog(null, "Not enough transitions in net. Operation cannot start.", 
+						"Warning", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			
+			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+			if(invariants == null || invariants.size() < 1) {
+				JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
+						"Warning", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+
+			
+			int minCutSize = (int) mcsSpinner.getValue();
+			if(minCutSize == 0) {
+				JOptionPane.showMessageDialog(null, "MCSs maximal cardinality too low!", 
+						"Warning", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			
+			int MCSdatacoreSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().getSize();
+			
+			if(transitions.size() != MCSdatacoreSize) {
+				if(MCSdatacoreSize == 0) {
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().initiateMCS();
+				} else {
+					//co dalej?
+					Object[] options = {"Yes", "No"};
+					int decision = JOptionPane.showOptionDialog(null,
+									"MCS list detected with different size than current cardinality of the transition set.\nClean old MCS list?",
+									"Net change detected", JOptionPane.YES_NO_OPTION,
+									JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+					if (decision == 1) {
+						return;
+					} else {
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().initiateMCS();
+					}
+				}
+			}
+			
+			for(int el : objReactions) {
+				
+				while(getGeneratorStatus() == true) {
+					try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
+				}
+				
+				logField.append("Starting calculations for reaction: "+el+"\n");
+				mcsGenerator = new MCSCalculator(el, invariants, transitions, minCutSize, this, false);
+				Thread myThread = new Thread(mcsGenerator);
+				setGeneratorStatus(true);
+				myThread.start();
+			}
 		}
 	}
 	
@@ -475,6 +592,9 @@ public class AbyssMCS extends JFrame {
 	 */
 	protected void showMCSData(int selected) {	
 		MinCutSetData mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+		
+		if(mcsd.getSize() == 0)
+			return;
 		
 		ArrayList<Set<Integer>> dataVector = mcsd.getMCSlist(selected);
 		
@@ -510,6 +630,14 @@ public class AbyssMCS extends JFrame {
 	 */
 	public void setGeneratorStatus(boolean status) {
 		isMCSGeneratorWorking = status;
+	}
+
+	/**
+	 * Metoda zwraca stan generatora - ON/OFF.
+	 * @return boolean - true, jeśli trwa generowanie
+	 */
+	public boolean getGeneratorStatus() {
+		return isMCSGeneratorWorking;
 	}
 
 	/**

@@ -27,6 +27,7 @@ public class MCSCalculator implements Runnable {
     private List<Set<Integer>> precutsets;
     private int maxCutSetSize;
     private boolean ready = false;
+    private boolean askBeforeAdd = true;
     private AbyssMCS masterWindow = null;
     private int objective_Reaction;
     
@@ -42,7 +43,7 @@ public class MCSCalculator implements Runnable {
      * @param mstWindow AbyssMCS - okno generatora
      */
     public MCSCalculator(int objR, ArrayList<ArrayList<Integer>> invariants, 
-    		ArrayList<Transition> transitionsList, int MAX_CUTSETSIZE, AbyssMCS mstWindow) {
+    		ArrayList<Transition> transitionsList, int MAX_CUTSETSIZE, AbyssMCS mstWindow, boolean safe) {
     	//ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix(); 
     	if(invariants == null || invariants.size() == 0) { //STEP 1: EM obliczono
     		return;
@@ -53,6 +54,7 @@ public class MCSCalculator implements Runnable {
             precutsets = new ArrayList<>();
             objective_Reaction = objR;
             masterWindow = mstWindow;
+            askBeforeAdd = safe;
     	}
     	//ArrayList<Transition> transitionsList = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 
@@ -89,10 +91,9 @@ public class MCSCalculator implements Runnable {
 			ArrayList<Set<Integer>> results = findMcs();
 			addNewDataVector(results);
 			if(masterWindow != null) {
-				masterWindow.resetMCSGenerator();
 				logInternal("MCS list created.\n",true);
 				showMCS();
-				
+				masterWindow.resetMCSGenerator();
 			}
 		} catch (Exception e) {
 			
@@ -138,17 +139,16 @@ public class MCSCalculator implements Runnable {
     	
         List<Set<Integer>> newPrecutsets = null;
         int k = 1;
-        // TODO: a co, jeśli > 1 reakcja już jest w mcs??
         while (++k <= maxCutSetSize) {
         	currentStep = k;
             newPrecutsets = new ArrayList<>();
             
-    		System.out.println();
-    		System.out.print("Step: "+currentStep);
+    		//System.out.println();
+    		//System.out.print("Step: "+currentStep);
     		logInternal("Calculating for set size: "+k+": ", false);
     		
             for (int j : transitions) {
-            	System.out.print("*");
+            	//System.out.print("*");
             	logInternal("*", false);
             		//5.2.1 usuń z listy zbiorów precutsets, te w których występuje j
             	removeSetsContainingTransition2(j);
@@ -219,13 +219,9 @@ public class MCSCalculator implements Runnable {
 			if(found == false) {
 				minimal.add(test);
 			}
-			
 		}
-		
 		return minimal;
 	}
-	
-
     
     /**
      * Metoda usuwa ze zbioru precutsets wszystkie zbiory, które zawierają tranzycję trans.
@@ -366,7 +362,7 @@ public class MCSCalculator implements Runnable {
     
     private void addNewDataVector(ArrayList<Set<Integer>> results) {
 		MinCutSetData mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-		mcsd.insertMCS(results, objective_Reaction, true);
+		mcsd.insertMCS(results, objective_Reaction, askBeforeAdd);
 	}
 
 	private void showMCS() {

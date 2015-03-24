@@ -1175,6 +1175,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 			windowMCS.setVisible(true);
 	}
 	
+	public AbyssMCS accessMCSWindow() {
+		if(windowMCS != null)
+			return windowMCS;
+		else
+			return null;
+	}
+	
 	/**
 	 * Metoda zapisująca nowe zdarzenie w oknie logów.
 	 * @param text String - tekst zdarzenia
