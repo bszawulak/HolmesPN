@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -30,7 +29,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultCaret;
 
-import abyss.analyse.InvariantsCalculator;
 import abyss.analyse.MCSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.files.io.MCSoperations;

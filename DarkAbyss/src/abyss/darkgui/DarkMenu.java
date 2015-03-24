@@ -39,7 +39,7 @@ public class DarkMenu extends JMenuBar {
 	private JMenu netMenu;
 	private JMenu invariantsOperationsMenu;
 	private JMenu mctOperationsMenu;
-	private JMenu clustersOperationsMenu;
+	//private JMenu clustersOperationsMenu;
 	private JMenu sheetsMenu;
 
 	// dockable
@@ -377,7 +377,7 @@ public class DarkMenu extends JMenuBar {
 		
 		//*********************************************************************************************
 		//***********************************                 *****************************************
-		//*********************************** INVARIANTS MENU *****************************************
+		//***********************************  ANALYSIS MENU  *****************************************
 		//***********************************                 *****************************************
 		//*********************************************************************************************
 			
@@ -400,7 +400,7 @@ public class DarkMenu extends JMenuBar {
 		});
 		invariantsOperationsMenu.add(invWindowItem);
 		
-		// Invariants window
+		// MCS window
 		JMenuItem mcsWindowItem = new JMenuItem("Minimal Cutting Sets...", KeyEvent.VK_2);
 		mcsWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_analysis_MCS.png"));
 		mcsWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
@@ -412,7 +412,20 @@ public class DarkMenu extends JMenuBar {
 		});
 		invariantsOperationsMenu.add(mcsWindowItem);
 		
-		JMenuItem showClustersItem = new JMenuItem("Cluster analysis...", KeyEvent.VK_3);
+		// Knockout window
+		JMenuItem knockoutWindowItem = new JMenuItem("Knockout analysis...", KeyEvent.VK_3);
+		knockoutWindowItem.setIcon(Tools.getResIcon32("/icons/menu/a.png"));
+		knockoutWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.CTRL_MASK));
+		knockoutWindowItem.getAccessibleContext().setAccessibleDescription("Knockout analysis tools");
+		knockoutWindowItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().createKnockoutWindow();
+				GUIManager.getDefaultGUIManager().showKnockoutWindow();
+			}
+		});
+		invariantsOperationsMenu.add(knockoutWindowItem);
+		
+		JMenuItem showClustersItem = new JMenuItem("Cluster analysis...", KeyEvent.VK_4);
 		showClustersItem.setIcon(Tools.getResIcon32("/icons/menu/menu_ClustersAnalysis.png"));
 		showClustersItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));
 		showClustersItem.getAccessibleContext().setAccessibleDescription("Show clusters window");

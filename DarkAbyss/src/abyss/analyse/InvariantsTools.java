@@ -576,6 +576,67 @@ public final class InvariantsTools {
 		return x;
 	}
 	
+	/**
+	 * Metoda zwraca podzbiór inwariantów w których występuje dana reakcja.
+	 * @param globalInv ArrayList[ArrayList[Integer]] - macierz inwariantów 
+	 * @param transLoc id - nr reakcji
+	 * @return ArrayList[ArrayList[Integer]] - podzbiór inwariantów z reakcją
+	 */
+	public static ArrayList<ArrayList<Integer>> returnInvWithTransition(ArrayList<ArrayList<Integer>> globalInv, int transLoc) {
+		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
+		for(ArrayList<Integer> vector : globalInv) {
+			if(vector.get(transLoc) != 0) {
+				result.add(new ArrayList<Integer>(vector));
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Metoda zwraca podzbiór inwariantów w których NIE występuje dana reakcja.
+	 * @param globalInv ArrayList[ArrayList[Integer]] - macierz inwariantów 
+	 * @param transLoc id - nr reakcji
+	 * @return ArrayList[ArrayList[Integer]] - podzbiór inwariantów BEZ reakcji
+	 */
+	public static ArrayList<ArrayList<Integer>> returnInvWithoutTransition(ArrayList<ArrayList<Integer>> globalInv, int transLoc) {
+		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
+		for(ArrayList<Integer> vector : globalInv) {
+			if(vector.get(transLoc) == 0) {
+				result.add(new ArrayList<Integer>(vector));
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Metoda zwraca wektor mówiący o liczbie wystąpień danej tranzycji w inwariantach.
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @return ArrayList[Integer] - wektor frekwencji wystąpień tranzycji
+	 */
+	public static ArrayList<Integer> getFrequency(ArrayList<ArrayList<Integer>> invariants) {
+		ArrayList<Integer> frequency = new ArrayList<Integer>();
+		if(invariants == null || invariants.size() ==0)
+			return frequency;
+		
+		int invNumber = invariants.size();
+		int invSize = invariants.get(0).size();
+		
+		int freq = 0;
+		for(int column=0; column<invSize; column++) {
+			freq = 0;
+			for(int row=0; row<invNumber; row++) {
+				if(invariants.get(row).get(column) != 0) {
+					freq++;
+				}
+			}
+			frequency.add(freq);
+		}
+		
+		return frequency;
+	}
+	
 	/*
 	int supSize = candidateSupport.size();
 	ArrayList<ArrayList<Integer>> Hk = new ArrayList<ArrayList<Integer>>();

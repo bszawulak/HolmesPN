@@ -18,6 +18,7 @@ import abyss.windows.AbyssAbout;
 import abyss.windows.AbyssConsole;
 import abyss.windows.AbyssClusters;
 import abyss.windows.AbyssInvariants;
+import abyss.windows.AbyssKnockout;
 import abyss.windows.AbyssMCS;
 import abyss.windows.AbyssNetProperties;
 import abyss.windows.AbyssNetTables;
@@ -148,6 +149,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssNotepad windowSimulationLog; //okno logów symulatora
 	private AbyssInvariants windowInvariants; //okno generatora inwariantów
 	private AbyssMCS windowMCS; //okno generatora MCS
+	private AbyssKnockout windowsKnockout;
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	
@@ -184,6 +186,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createSimLogWindow(); // okno logów symulatora
 		createInvariantsWindow(); // okno generatora inwariantów
 		createMCSWindow(); // okno generatora MCS
+		
 
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnętrzne zmienne programu
 		
@@ -1175,11 +1178,33 @@ public class GUIManager extends JPanel implements ComponentListener {
 			windowMCS.setVisible(true);
 	}
 	
+	/**
+	 * Metoda umożliwia dostęp do obiektu okna narzedzi MCS
+	 * @return
+	 */
 	public AbyssMCS accessMCSWindow() {
 		if(windowMCS != null)
 			return windowMCS;
 		else
 			return null;
+	}
+	
+	/**
+	 * Metoda tworzy nowe okno analizatora wykluczeń.
+	 */
+	public void createKnockoutWindow() {
+		if(windowsKnockout == null) {
+			windowsKnockout = new AbyssKnockout();
+		}
+	}
+	
+	/**
+	 * Metoda pokazuje okno analizatora wykluczeń.
+	 */
+	public void showKnockoutWindow() {
+		if(windowsKnockout != null) {
+			windowsKnockout.setVisible(true);
+		}
 	}
 	
 	/**
