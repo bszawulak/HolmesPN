@@ -661,21 +661,21 @@ public class AbyssMCS extends JFrame {
 		if(selection < transitions.size()+1)
 			transitionsCombo.setSelectedIndex(selection);
 		
-		int minimumValue = 0;
+		//int minimumValue = 0;
 
 		if(transitions != null && transitions.size() > 1) {
 			if(maxCutSize >= transitions.size())
 				maxCutSize = 2;
 			
 			maximumMCS = transitions.size();
-			minimumValue = 1;
+			//minimumValue = 0;
 		} else {
 			maxCutSize = 0;
 			maximumMCS = 0;
-			minimumValue = 0;
+			//minimumValue = 0;
 		}
 		
-		SpinnerModel mcsSpinnerModel = new SpinnerNumberModel(maxCutSize, minimumValue, maximumMCS, 1);
+		SpinnerModel mcsSpinnerModel = new SpinnerNumberModel(maxCutSize, 0, maximumMCS, 1);
 		mcsSpinner.setModel(mcsSpinnerModel);
 	}
 
