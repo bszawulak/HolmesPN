@@ -38,6 +38,14 @@ public class MauritiusMapBT {
 	}
 	
 	/**
+	 * Metoda zwraca wierzchołek główny drzewa.
+	 * @return BTNode - root
+	 */
+	public BTNode getRoot() {
+		return root;
+	}
+	
+	/**
 	 * TEST
 	 */
 	public MauritiusMapBT() {
