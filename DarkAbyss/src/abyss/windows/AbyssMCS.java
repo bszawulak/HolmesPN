@@ -32,7 +32,7 @@ import javax.swing.text.DefaultCaret;
 import abyss.analyse.MCSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.files.io.MCSoperations;
-import abyss.math.MinCutSetData;
+import abyss.math.MCSDataMatrix;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
 
@@ -589,7 +589,7 @@ public class AbyssMCS extends JFrame {
 	 * @param selected
 	 */
 	protected void showMCSData(int selected) {	
-		MinCutSetData mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
 		
 		if(mcsd.getSize() == 0)
 			return;
@@ -662,9 +662,11 @@ public class AbyssMCS extends JFrame {
 			transitionsCombo.setSelectedIndex(selection);
 		
 		int minimumValue = 0;
-		
+
 		if(transitions != null && transitions.size() > 1) {
-			maxCutSize = 2;
+			if(maxCutSize >= transitions.size())
+				maxCutSize = 2;
+			
 			maximumMCS = transitions.size();
 			minimumValue = 1;
 		} else {

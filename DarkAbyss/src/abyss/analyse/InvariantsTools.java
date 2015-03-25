@@ -590,7 +590,7 @@ public final class InvariantsTools {
 			}
 		}
 		
-		return null;
+		return result;
 	}
 	
 	/**
@@ -607,7 +607,7 @@ public final class InvariantsTools {
 			}
 		}
 		
-		return null;
+		return result;
 	}
 	
 	/**

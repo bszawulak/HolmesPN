@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.MinCutSetData;
+import abyss.math.MCSDataMatrix;
 import abyss.math.Transition;
 import abyss.windows.AbyssInvariants;
 import abyss.windows.AbyssMCS;
@@ -361,7 +361,7 @@ public class MCSCalculator implements Runnable {
     }
     
     private void addNewDataVector(ArrayList<Set<Integer>> results) {
-		MinCutSetData mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
 		mcsd.insertMCS(results, objective_Reaction, askBeforeAdd);
 	}
 

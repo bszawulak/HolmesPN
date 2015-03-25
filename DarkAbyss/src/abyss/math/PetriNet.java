@@ -50,7 +50,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
 	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
 	private ArrayList<GraphPanel> graphPanels;
-	private MinCutSetData mcsData;
+	private MCSDataMatrix mcsData;
 	
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
 	private IdGenerator idGenerator;
@@ -84,7 +84,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		getData().arcs = ar;
 		communicationProtocol = new IOprotocols();
 		dataCore.netName = "default";
-		mcsData = new MinCutSetData();
+		mcsData = new MCSDataMatrix();
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.setAnalyzer(new MCTCalculator(this));
 		resetComm();
 		dataCore.netName = name;
-		mcsData = new MinCutSetData();
+		mcsData = new MCSDataMatrix();
 	}
 	
 	/**
@@ -472,7 +472,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda zwraca obiekt przechowujący zbiory MCS;
 	 * @return MinCutSetData - obiekt MCS
 	 */
-	public MinCutSetData getMCSdataCore() {
+	public MCSDataMatrix getMCSdataCore() {
 		return mcsData;
 	}
 	

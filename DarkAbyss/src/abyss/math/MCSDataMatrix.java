@@ -8,12 +8,20 @@ import javax.swing.JOptionPane;
 import abyss.darkgui.GUIManager;
 import abyss.files.io.MCSoperations;
 
-public class MinCutSetData {
+/**
+ * Klasa odpowiedzialna za zarządzanie informacjami o przechowywanych zbiorach MCS.
+ * @author MR
+ *
+ */
+public class MCSDataMatrix {
 	private ArrayList<ArrayList<Set<Integer>>> mcsDataCore;
 	private ArrayList<String> transNames;
 	private int matrixSize;
 
-	public MinCutSetData() {
+	/**
+	 * Konstruktor obiektu klasy MCSDataMatrix.
+	 */
+	public MCSDataMatrix() {
 		resetMSC();
 	}
 	
@@ -104,23 +112,7 @@ public class MinCutSetData {
 			return null;
 		}
 	}
-	
-	/**
-	 * Do użytku I/O
-	 * @return
-	 */
-	public ArrayList<ArrayList<Set<Integer>>> accessMCSdata() {
-		return mcsDataCore;
-	}
-	
-	/**
-	 * Do użytku I/O
-	 * @return
-	 */
-	public ArrayList<String> accessMCStransitions() {
-		return transNames;
-	}
-	
+
 	/**
 	 * Metoda sprawdza, czy nastąpi zastąpienie danych. Jeśli tak, daje opcję zatrzymania operacji, kontynuacji
 	 * zastępowania danych o MCS lub zapisania starych danych przed zastąpieniem.
@@ -147,5 +139,21 @@ public class MinCutSetData {
 		} else {
 			return true;
 		}
+	}
+	
+	/**
+	 * Do użytku I/O
+	 * @return ArrayList[ArrayList[Integer]] - główna macierz danych
+	 */
+	public ArrayList<ArrayList<Set<Integer>>> accessMCSdata() {
+		return mcsDataCore;
+	}
+	
+	/**
+	 * Do użytku I/O
+	 * @return ArrayList[String] - wektor nazw
+	 */
+	public ArrayList<String> accessMCStransitions() {
+		return transNames;
 	}
 }

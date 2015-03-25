@@ -1,6 +1,7 @@
 package abyss.math;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
@@ -10,14 +11,16 @@ import abyss.darkgui.GUIManager;
  * @author MR
  *
  */
-public class MauritiusMap {
+public class MauritiusMapBT {
 	BTNode root = null;
 	ArrayList<Transition> transitions = null;
+	
+	ArrayList<String> transitionsS = null;
 	public enum NodeType {
 		ROOT, BRANCH, LEAF, VERTEX
 	}
 
-	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants, int rootTransition) {
+	public MauritiusMapBT(ArrayList<ArrayList<Integer>> invariants, int rootTransition) {
 		root = new BTNode();
 		root.type = NodeType.ROOT;
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -26,7 +29,7 @@ public class MauritiusMap {
 		createMTree(subInvariants, rootTransition, root);
 	}
 	
-	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants) {
+	public MauritiusMapBT(ArrayList<ArrayList<Integer>> invariants) {
 		root = new BTNode();
 		root.type = NodeType.ROOT;
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -35,8 +38,44 @@ public class MauritiusMap {
 	}
 	
 	/**
-	 * 
-	 * @param rootT
+	 * TEST
+	 */
+	public MauritiusMapBT() {
+		Integer[] t1 = { 1, 0, 1, 1, 1, 0, 1, 0, 1 };
+		Integer[] t2 = { 0, 0, 1, 1, 1, 1, 1, 1, 0 };
+		Integer[] t3 = { 1, 0, 0, 1, 1, 0, 1, 0, 1 };
+		Integer[] t4 = { 0, 0, 1, 1, 1, 0, 0, 1, 0 };
+		Integer[] t5 = { 1, 0, 1, 1, 0, 1, 0, 1, 1 };
+		
+		ArrayList<Integer> x1 = new ArrayList<Integer>(Arrays.asList(t1));
+		ArrayList<Integer> x2 = new ArrayList<Integer>(Arrays.asList(t2));
+		ArrayList<Integer> x3 = new ArrayList<Integer>(Arrays.asList(t3));
+		ArrayList<Integer> x4 = new ArrayList<Integer>(Arrays.asList(t4));
+		ArrayList<Integer> x5 = new ArrayList<Integer>(Arrays.asList(t5));
+		
+		ArrayList<ArrayList<Integer>> invariants = new ArrayList<ArrayList<Integer>>();
+		invariants.add(x1);
+		invariants.add(x2);
+		invariants.add(x3);
+		invariants.add(x4);
+		invariants.add(x5);
+		
+		String[] s = {"t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"};
+		
+		transitionsS = new ArrayList<String>(Arrays.asList(s));
+
+		
+		root = new BTNode();
+		root.type = NodeType.ROOT;
+		
+		createMTree(invariants, -1, root);
+	}
+	
+	/**
+	 * Główna metoda rekurencyjnie tworząca drzewo przechowujące mapę Mauritiusa dla wybranej tranzycji sieci.
+	 * @param subInvariants ArrayList[ArrayList[Integer]] - podmacierz inwariantów
+	 * @param chosenTrans int - id wierzchołka początkowego
+	 * @param currentNode BTNode - aktualnie przetwarzany węzeł drzewa
 	 */
 	private void createMTree(ArrayList<ArrayList<Integer>> subInvariants, int chosenTrans, BTNode currentNode) {
 		int maxTransition = -1; //pierwsza tranzycja z największą # wystąpień w inwariantach
@@ -60,7 +99,8 @@ public class MauritiusMap {
 			// brak inwariantów bez tranzycji maxTransition: węzeł typu Data
 			// czyli: brak lewego podrzewa
 			
-			currentNode.transName = transitions.get(maxTransition).getName();
+			//currentNode.transName = transitions.get(maxTransition).getName();
+			currentNode.transName = transitionsS.get(maxTransition);
 			currentNode.transLocation = maxTransition;
 			currentNode.transFrequency = rightInvariants.size();
 			currentNode.leftChild = null;
@@ -86,7 +126,8 @@ public class MauritiusMap {
 			if(currentNode.type != NodeType.ROOT) //ale nie root
 				currentNode.type = NodeType.BRANCH;
 			
-			currentNode.transName = transitions.get(maxTransition).getName();
+			//currentNode.transName = transitions.get(maxTransition).getName();
+			currentNode.transName = transitionsS.get(maxTransition);
 			currentNode.transLocation = maxTransition;
 			currentNode.transFrequency = rightInvariants.size();
 			
@@ -119,6 +160,7 @@ public class MauritiusMap {
 	 * @param vector ArrayList[Integer] - wektor liczb
 	 * @return int - największa wartość
 	 */
+	@SuppressWarnings("unused")
 	private int getMaximumValue(ArrayList<Integer> vector) {
 		int maxVal = 0;
 		int size = vector.size();
@@ -154,6 +196,7 @@ public class MauritiusMap {
 	 * @param max int - szukana wartość
 	 * @return ArrayList[Integer] - wektor pozycji na których we 'freq' występuje 'max'
 	 */
+	@SuppressWarnings("unused")
 	private ArrayList<Integer> getMaximalPositions(ArrayList<Integer> freq, int max) {
 		ArrayList<Integer> result = new ArrayList<Integer>();
 		int size = freq.size();
@@ -175,7 +218,12 @@ public class MauritiusMap {
 		}
 	}
 	
-	class BTNode {
+	/**
+	 * Klasa wewnętrzna - węzeł drzewa BT
+	 * @author MR
+	 *
+	 */
+	public class BTNode {
 		public NodeType type = NodeType.VERTEX;
 		public String transName;
 		public int transLocation;

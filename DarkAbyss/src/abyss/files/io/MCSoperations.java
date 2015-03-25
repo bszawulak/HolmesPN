@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.MinCutSetData;
+import abyss.math.MCSDataMatrix;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 
@@ -29,7 +29,7 @@ public class MCSoperations {
 	 * @param name String - nazwa reakcji
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
-	public static boolean saveSingleMCS(MinCutSetData data, int pos, String name) {
+	public static boolean saveSingleMCS(MCSDataMatrix data, int pos, String name) {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("ObjR single MCS data file (.objR)",  new String[] { "OBJR" });
@@ -78,7 +78,7 @@ public class MCSoperations {
 	 * @param data MinCutSetData - obiekt danych MCS
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
-	public static boolean saveAllMCS(MinCutSetData data) {
+	public static boolean saveAllMCS(MCSDataMatrix data) {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("MCS full data file (.mcs)",  new String[] { "MCS" });
@@ -137,7 +137,7 @@ public class MCSoperations {
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
-			MinCutSetData dataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+			MCSDataMatrix dataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
 	
 			try {
 				DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
@@ -228,7 +228,7 @@ public class MCSoperations {
 			JOptionPane.showMessageDialog(null,"Incorrect file location.","Operation failed.",JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
-			MinCutSetData dataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+			MCSDataMatrix dataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
 		
 			try {
 				DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
