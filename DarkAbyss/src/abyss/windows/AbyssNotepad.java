@@ -102,13 +102,13 @@ public class AbyssNotepad extends JFrame {
 	 * @return JTextPane - panel edytora
 	 */
 	private JTextPane createTextPane() {
-		String initString = "Console initiated"+newline;
+		//String initString = "Console initiated"+newline;
 	    JTextPane txtPane = new JTextPane();
 	    doc = txtPane.getStyledDocument();
 	    addStylesToDocument(doc);
 	    try {
-	        doc.insertString(doc.getLength(), initString, doc.getStyle("regular"));
-	    } catch (BadLocationException ble) {
+	        //doc.insertString(doc.getLength(), initString, doc.getStyle("regular"));
+	    } catch (Exception e) {
 	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.","error", true);
 	    }
 	    return txtPane;
@@ -138,6 +138,28 @@ public class AbyssNotepad extends JFrame {
 	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
 	    }
 		
+		int len = textPane.getDocument().getLength();
+		textPane.setCaretPosition(len);
+	}
+	
+	public void addTextLine(String text, String mode) {
+		int style = setWritingStyle(mode);
+		try {
+	        doc.insertString(doc.getLength(), text, doc.getStyle(initStyles[style]));
+	    } catch (BadLocationException ble) {
+	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
+	    }
+		int len = textPane.getDocument().getLength();
+		textPane.setCaretPosition(len);
+	}
+	
+	public void addTextLineNL(String text, String mode) {
+		int style = setWritingStyle(mode);
+		try {
+	        doc.insertString(doc.getLength(), text+newline, doc.getStyle(initStyles[style]));
+	    } catch (BadLocationException ble) {
+	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
+	    }
 		int len = textPane.getDocument().getLength();
 		textPane.setCaretPosition(len);
 	}

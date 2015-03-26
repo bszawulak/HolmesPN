@@ -27,6 +27,7 @@ import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.MauritiusMapPanel;
 import abyss.math.MauritiusMapBT;
+import abyss.math.MauritiusMapBT.BTNode;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
 
@@ -38,7 +39,7 @@ import abyss.utilities.Tools;
  * BioSystems, 2008, 92, pp.189-205
  * 
  * 
- * @author Rince
+ * @author MR
  *
  */
 public class AbyssKnockout extends JFrame implements ComponentListener {
@@ -53,6 +54,9 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 	private JPanel buttonPanel;
 	private JPanel logMainPanel;
 	private JScrollPane scroller;
+	private MauritiusMapBT mmCurrentObject;
+	
+	private ArrayList<Integer> knockOutData = null;
 	
 	/**
 	 * Konstruktor obiektu klasy AbyssKnockout
@@ -69,7 +73,7 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		
 		setLayout(new BorderLayout());
 		setSize(new Dimension(900, 700));
-		setLocation(50, 50);
+		setLocation(15, 15);
 		
 		//setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		//setResizable(false);
@@ -88,7 +92,7 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 			public void windowStateChanged(WindowEvent e) {
 				if(e.getNewState() == JFrame.MAXIMIZED_BOTH) {
 					//ego.setExtendedState(JFrame.NORMAL);
-					//resizeComponents();
+					resizeComponents();
 				}
 			}
 		});
@@ -106,7 +110,7 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		
 		//Panel wyboru opcji szukania
 		buttonPanel = createUpperButtonPanel(0, 0, 900, 90);
-		logMainPanel = createLogMainPanel(0, 90, 900, 600);
+		logMainPanel = createGraphPanel(0, 90, 900, 600);
 		
 		panel.add(buttonPanel);
 		panel.add(logMainPanel);
@@ -156,7 +160,8 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		generateButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
 		generateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				generateMap();
+				mmCurrentObject = generateMap();
+				paintMap();
 				
 				//MauritiusMapBT kc = new MauritiusMapBT();
 				//mmp.addMMBT(kc);
@@ -166,25 +171,46 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		generateButton.setFocusPainted(false);
 		panel.add(generateButton);
 
-		JButton generate2Button = new JButton("CLEAN");
-		generate2Button.setBounds(posX+120, posY+30, 110, 30);
-		generate2Button.setMargin(new Insets(0, 0, 0, 0));
-		generate2Button.setIcon(Tools.getResIcon32("/icons/stateSim/aaa.png"));
-		generate2Button.addActionListener(new ActionListener() {
+		JButton showKnockoutButton = new JButton("Show knockout");
+		showKnockoutButton.setBounds(posX+120, posY+30, 110, 30);
+		showKnockoutButton.setMargin(new Insets(0, 0, 0, 0));
+		showKnockoutButton.setIcon(Tools.getResIcon32("/icons/stateSim/aaa.png"));
+		showKnockoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//MauritiusMapBT kc = new MauritiusMapBT();
+				
+				MauritiusMapBT infoMap = generateMap();
+				if(infoMap != null) {
+					AbyssNotepad notePad = new AbyssNotepad(900,600);
+					notePad.setVisible(true);
+					getKnockoutInfo(infoMap, notePad);
+				}
 				
 				//mmp = new MauritiusMapPanel(kc);
-				mmp.addMMBT(null);
-				mmp.repaint();
+				//mmp.addMMBT(null);
+				//mmp.repaint();
 			}
 		});
-		generate2Button.setFocusPainted(false);
-		panel.add(generate2Button);
+		showKnockoutButton.setFocusPainted(false);
+		panel.add(showKnockoutButton);
 		
 		return panel;
 	}
 	
+	
+	protected void getKnockoutInfo(MauritiusMapBT infoMap, AbyssNotepad notePad) {
+		collectInfo(infoMap.getRoot());
+		//knockOutData
+	}
+
+
+
+	private void collectInfo(BTNode root) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
 	/**
 	 * Metoda tworząca główmu panel mapy.
 	 * @param x int - współrzędna x
@@ -193,15 +219,15 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 	 * @param height int - wysokość panelu
 	 * @return JPanel - panel przycisków
 	 */
-	private JPanel createLogMainPanel(int x, int y, int width, int height) {
+	private JPanel createGraphPanel(int x, int y, int width, int height) {
 		JPanel gr_panel = new JPanel();
 		gr_panel.setLayout(null);
 		gr_panel.setBounds(x, y, width, height);
 		
 		mmp = new MauritiusMapPanel();
 		
-		intX = width-10;
-		intY = height-25;
+		intX = width - 10;
+		intY = height - 25;
 		
 		scroller = new JScrollPane(mmp, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scroller.setBounds(0, 0, intX, intY);
@@ -215,13 +241,14 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 	
 	/**
 	 * Metoda odpowiedzialna za wygenerowanie mapy.
+	 * @return MauritiusMapBT - obiekt mapy
 	 */
-	private void generateMap() {
+	private MauritiusMapBT generateMap() {
 		int selection = transitionsCombo.getSelectedIndex();
 		if(selection == 0) {
 			JOptionPane.showMessageDialog(null, "Please choose main reaction for Mauritius Map.", 
 					"No selection", JOptionPane.INFORMATION_MESSAGE);
-			return;
+			return null;
 		}
 		
 		selection--;
@@ -230,14 +257,24 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		if(invariants == null || invariants.size() < 1) {
 			JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
 					"Warning", JOptionPane.INFORMATION_MESSAGE);
-			return;
+			return null;
 		}
 
 		MauritiusMapBT mm = new MauritiusMapBT(invariants, selection);
-		mmp.addMMBT(mm);
+		return mm;
+	}
+	
+	/**
+	 * Metoda uruchamiania przerysowanie wyliczonej mapy.
+	 */
+	private void paintMap() {
+		mmp.addMMBT(mmCurrentObject);
 		mmp.repaint();
 	}
 	
+	/**
+	 * Metoda odpowiedzialna za dopasowywanie elementów okna.
+	 */
 	protected void resizeComponents() {
 		buttonPanel.setBounds(0, 0, mainPanel.getWidth(), 90);
 		logMainPanel.setBounds(0, 90, mainPanel.getWidth(), mainPanel.getHeight()-90);
