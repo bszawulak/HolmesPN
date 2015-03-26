@@ -47,6 +47,7 @@ public class AbyssMCS extends JFrame {
 	private int maxCutSize = 0;
 	private int maximumMCS = 0;
 	private boolean generateAll = true;
+	private int maxSetsNumber = 300;
 	
 	private MCSCalculator mcsGenerator = null;
 	private boolean isMCSGeneratorWorking = false;
@@ -170,6 +171,23 @@ public class AbyssMCS extends JFrame {
 			}
 		});
 		panel.add(mcsSpinner);
+		
+		JLabel mcsLabel3 = new JLabel("Max. set number:");
+		mcsLabel3.setBounds(posX+160, posY+25, 120, 20);
+		panel.add(mcsLabel3);
+		
+		SpinnerModel maxSizeSpinnerModel = new SpinnerNumberModel(300, 50, 5000, 100);
+		JSpinner maxSizeStepsSpinner = new JSpinner(maxSizeSpinnerModel);
+		maxSizeStepsSpinner.setBounds(posX+270, posY+25, 60, 20);
+		maxSizeStepsSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int val = (int) spinner.getValue();
+				maxSetsNumber = val;
+			}
+		});
+		panel.add(maxSizeStepsSpinner);
+		
 
 		//Generowanie zbiorów
 		JButton generateButton = new JButton();
@@ -185,9 +203,23 @@ public class AbyssMCS extends JFrame {
 		generateButton.setFocusPainted(false);
 		panel.add(generateButton);
 		
+		JButton cancelButton = new JButton();
+		cancelButton.setText("STOP");
+		cancelButton.setBounds(posX+110, posY+55, 50, 32);
+		cancelButton.setMargin(new Insets(0, 0, 0, 0));
+		//cancelButton.setIcon(Tools.getResIcon32("/icons/mcsWindow/a.png"));
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(mcsGenerator != null)
+					mcsGenerator.emergencyStop();
+			}
+		});
+		cancelButton.setFocusPainted(false);
+		panel.add(cancelButton);
+		
 		JButton loadButton = new JButton();
 		loadButton.setText("<html>Load one<br />objR MCS</html>");
-		loadButton.setBounds(posX+120, posY+55, 110, 32);
+		loadButton.setBounds(posX+170, posY+55, 110, 32);
 		loadButton.setMargin(new Insets(0, 0, 0, 0));
 		loadButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadMCS.png"));
 		loadButton.addActionListener(new ActionListener() {
@@ -200,7 +232,7 @@ public class AbyssMCS extends JFrame {
 		
 		JButton loadAllButton = new JButton();
 		loadAllButton.setText("<html>Load all<br />MCS</html>");
-		loadAllButton.setBounds(posX+240, posY+55, 110, 32);
+		loadAllButton.setBounds(posX+290, posY+55, 110, 32);
 		loadAllButton.setMargin(new Insets(0, 0, 0, 0));
 		loadAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadAllMCS.png"));
 		loadAllButton.addActionListener(new ActionListener() {
@@ -213,7 +245,7 @@ public class AbyssMCS extends JFrame {
 		
 		JButton saveAllButton = new JButton();
 		saveAllButton.setText("<html>Save all<br />MCS</html>");
-		saveAllButton.setBounds(posX+360, posY+55, 110, 32);
+		saveAllButton.setBounds(posX+410, posY+55, 110, 32);
 		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
 		saveAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveMCS.png"));
 		saveAllButton.addActionListener(new ActionListener() {
@@ -419,6 +451,19 @@ public class AbyssMCS extends JFrame {
 		saveButton.setFocusPainted(false);
 		panel.add(saveButton);
 		
+		JButton calculateFragilityButton = new JButton();
+		calculateFragilityButton.setText("Fragility");
+		calculateFragilityButton.setBounds(posX+120, posY+25, 110, 32);
+		calculateFragilityButton.setMargin(new Insets(0, 0, 0, 0));
+		calculateFragilityButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
+		calculateFragilityButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				
+			}
+		});
+		calculateFragilityButton.setFocusPainted(false);
+		panel.add(calculateFragilityButton);
+		
 		return panel;
 	}
 
@@ -481,7 +526,7 @@ public class AbyssMCS extends JFrame {
 				}
 			}
 			
-			mcsGenerator = new MCSCalculator(selectionObjR, invariants, transitions, minCutSize, this, true);
+			mcsGenerator = new MCSCalculator(selectionObjR, invariants, transitions, minCutSize, maxSetsNumber, this, true);
 			Thread myThread = new Thread(mcsGenerator);
 			setGeneratorStatus(true);
 			myThread.start();
@@ -576,7 +621,7 @@ public class AbyssMCS extends JFrame {
 				}
 				
 				logField.append("Starting calculations for reaction: "+el+"\n");
-				mcsGenerator = new MCSCalculator(el, invariants, transitions, minCutSize, this, false);
+				mcsGenerator = new MCSCalculator(el, invariants, transitions, minCutSize, maxSetsNumber, this, false);
 				Thread myThread = new Thread(mcsGenerator);
 				setGeneratorStatus(true);
 				myThread.start();

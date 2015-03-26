@@ -1,6 +1,7 @@
 package abyss.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -10,6 +11,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -56,7 +58,8 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 	private JScrollPane scroller;
 	private MauritiusMapBT mmCurrentObject;
 	
-	private ArrayList<Integer> knockOutData = null;
+	private ArrayList<Integer> knockOutDataFailed = null;
+	private ArrayList<Integer> knockOutDataObjR = null;
 	
 	/**
 	 * Konstruktor obiektu klasy AbyssKnockout
@@ -91,7 +94,7 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		addWindowStateListener(new WindowAdapter() {
 			public void windowStateChanged(WindowEvent e) {
 				if(e.getNewState() == JFrame.MAXIMIZED_BOTH) {
-					//ego.setExtendedState(JFrame.NORMAL);
+					ego.setExtendedState(JFrame.NORMAL);
 					resizeComponents();
 				}
 			}
@@ -198,15 +201,54 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 	
 	
 	protected void getKnockoutInfo(MauritiusMapBT infoMap, AbyssNotepad notePad) {
-		collectInfo(infoMap.getRoot());
+		int noteValue = infoMap.getRoot().transFrequency;
+		knockOutDataFailed = new ArrayList<Integer>();
+		knockOutDataObjR = new ArrayList<Integer>();
+		
+		collectInfo(infoMap.getRoot(), noteValue);
+		
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		
+		notePad.addTextLineNL("Reaction knocked out: "+infoMap.getRoot().transName, "text");
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("Reaction common maximum set: ", "text");
+		Collections.sort(knockOutDataObjR);
+		for(int element : knockOutDataObjR) {
+			notePad.addTextLineNL("["+element+"] : "+transitions.get(element).getName(), "text");
+		}
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("Chain reaction fail cascade: ", "text");
+		Collections.sort(knockOutDataFailed);
+		Collections.sort(knockOutDataFailed);
+		for(int element : knockOutDataFailed) {
+			notePad.addTextLineNL("["+element+"] : "+transitions.get(element).getName(), "text");
+		}
 		//knockOutData
 	}
 
 
 
-	private void collectInfo(BTNode root) {
+	private void collectInfo(BTNode node, int startSetValue) {
 		// TODO Auto-generated method stub
+		int freq = node.transFrequency;
+		int transID = node.transLocation;
+		if(freq == startSetValue) {
+			if(knockOutDataObjR.contains(transID) == false) {
+				knockOutDataObjR.add(transID);
+			}
+		} else {
+			if(knockOutDataFailed.contains(transID) == false) {
+				knockOutDataFailed.add(transID);
+			}
+		}
 		
+		if(node.rightChild != null) {
+			collectInfo(node.rightChild, startSetValue);
+    	}
+    	
+    	if(node.leftChild != null) {
+    		collectInfo(node.leftChild, startSetValue);
+    	}
 	}
 
 

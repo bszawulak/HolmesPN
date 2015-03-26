@@ -30,6 +30,9 @@ public class MCSCalculator implements Runnable {
     private boolean askBeforeAdd = true;
     private AbyssMCS masterWindow = null;
     private int objective_Reaction;
+    private int maxSetsNumber;
+    
+    private boolean terminate = false;
     
     private int currentStep = 0;
     
@@ -43,7 +46,7 @@ public class MCSCalculator implements Runnable {
      * @param mstWindow AbyssMCS - okno generatora
      */
     public MCSCalculator(int objR, ArrayList<ArrayList<Integer>> invariants, 
-    		ArrayList<Transition> transitionsList, int MAX_CUTSETSIZE, AbyssMCS mstWindow, boolean safe) {
+    		ArrayList<Transition> transitionsList, int MAX_CUTSETSIZE, int maxNumber, AbyssMCS mstWindow, boolean safe) {
     	//ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix(); 
     	if(invariants == null || invariants.size() == 0) { //STEP 1: EM obliczono
     		return;
@@ -55,6 +58,7 @@ public class MCSCalculator implements Runnable {
             objective_Reaction = objR;
             masterWindow = mstWindow;
             askBeforeAdd = safe;
+            maxSetsNumber = maxNumber;
     	}
     	//ArrayList<Transition> transitionsList = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 
@@ -95,8 +99,18 @@ public class MCSCalculator implements Runnable {
 				showMCS();
 				masterWindow.resetMCSGenerator();
 			}
+		} catch (OutOfMemoryError e) { // pray...
+			precutsets = null;
+			GUIManager.getDefaultGUIManager().log("Catastrophic error: out of memory. Attemting to recover."
+					+ " Operation terminated unconditionally.", "error", true);
+			addNewDataVector(mcs);
+			showMCS();
+			masterWindow.resetMCSGenerator();
 		} catch (Exception e) {
-			
+			logInternal("Operation malfuntion. Unknown error. \n", true);
+			addNewDataVector(mcs);
+			showMCS();
+			masterWindow.resetMCSGenerator();
 		}
 	}
     
@@ -151,12 +165,16 @@ public class MCSCalculator implements Runnable {
             	//System.out.print("*");
             	logInternal("*", false);
             		//5.2.1 usuń z listy zbiorów precutsets, te w których występuje j
+            	if(terminate) return mcs;
             	removeSetsContainingTransition2(j);
                 	//5.2.2 czarna magia, odsyłam do artykułu
+            	if(terminate) return mcs;
                 List<Set<Integer>> temp_precutsets = calculatePreliminaryCutsets(precutsets, j);
                 	//5.2.3 usuń wszystkie zbiory z temp_precutsets które zawierają jakikolwiek zbiór z listy mcs:
+                if(terminate) return mcs;
                 removeNonMinimalSets2(temp_precutsets);
                 	//5.2.4 zidentyfikuj zbiory MCS i usuń z precutsets
+                if(terminate) return mcs;
                 newPrecutsets.addAll(identifyNewMCSs2(temp_precutsets));
             }
             logInternal("\n", false);
@@ -166,7 +184,7 @@ public class MCSCalculator implements Runnable {
 
             logInternal("MCS found: "+sizeMCS+" Precutsets list size:"+sizePre+" \n", false);
             
-            if (newPrecutsets.isEmpty() == true)
+            if (newPrecutsets.isEmpty() == true || maxSetsNumber < mcs.size())
                 break;
             else
                 precutsets = newPrecutsets;
@@ -175,8 +193,6 @@ public class MCSCalculator implements Runnable {
     }
 	
 	public HashSet<HashSet<Integer>> findMcs2() {
-		
-		
 		HashSet<HashSet<Integer>> result = new HashSet<HashSet<Integer>>();
 		int invMatrixSize = em_obR.size();
 		int invSize = transitions.size();
@@ -360,11 +376,25 @@ public class MCSCalculator implements Runnable {
     		return false;
     }
     
+    /**
+     * Metoda służąca do przerywania obliczeń.
+     */
+    public void emergencyStop() {
+    	terminate = true;
+    }
+    
+    /**
+     * Metoda służąca do zapisywania w bazie programu kolejnej listy zbiorów MCS. 
+     * @param results ArrayList[Set[Integer]] - lista zbiorów MCS
+     */
     private void addNewDataVector(ArrayList<Set<Integer>> results) {
 		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
 		mcsd.insertMCS(results, objective_Reaction, askBeforeAdd);
 	}
 
+    /**
+     * Metoda służąca do wyświetlania zbiorów w formie tekstu.
+     */
 	private void showMCS() {
 		int mcsSize = mcs.size();
 		for(int s=0; s<mcsSize; s++) {
