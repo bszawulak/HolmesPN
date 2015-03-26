@@ -7,13 +7,20 @@ import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
 
 /**
- * Klasa tworząca mapę Mauritiusa dla wybranej tranzycji.
+ * Klasa tworząca mapę Mauritiusa dla wybranej tranzycji. Publikacja:
+ * 
+ * "Petri net modelling of gene regulation of the Duchenne muscular dystrophy"
+ * Stefanie Grunwald, Astrid Speer, Jorg Ackermann, Ina Koch
+ * BioSystems, 2008, 92, pp.189-205
+ * 
+ * 
  * @author MR
  *
  */
 public class MauritiusMapBT {
 	BTNode root = null;
 	ArrayList<Transition> transitions = null;
+	boolean testMode = false;
 	
 	ArrayList<String> transitionsS = null;
 	public enum NodeType {
@@ -46,7 +53,7 @@ public class MauritiusMapBT {
 	}
 	
 	/**
-	 * TEST
+	 * TEST ONLY
 	 */
 	public MauritiusMapBT() {
 		Integer[] t1 = { 1, 0, 1, 1, 1, 0, 1, 0, 1 };
@@ -67,15 +74,12 @@ public class MauritiusMapBT {
 		invariants.add(x3);
 		invariants.add(x4);
 		invariants.add(x5);
-		
 		String[] s = {"t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"};
 		
 		transitionsS = new ArrayList<String>(Arrays.asList(s));
-
-		
 		root = new BTNode();
 		root.type = NodeType.ROOT;
-		
+		testMode = true;
 		createMTree(invariants, -1, root);
 	}
 	
@@ -88,27 +92,34 @@ public class MauritiusMapBT {
 	private void createMTree(ArrayList<ArrayList<Integer>> subInvariants, int chosenTrans, BTNode currentNode) {
 		int maxTransition = -1; //pierwsza tranzycja z największą # wystąpień w inwariantach
 		int howManyLeft = 0; 
+		ArrayList<Integer> transFrequency;
 		if(chosenTrans == -1) { //sam wybierz tranzycję z max(inv)
-			ArrayList<Integer> transFrequency = InvariantsTools.getFrequency(subInvariants);
+			transFrequency = InvariantsTools.getFrequency(subInvariants);
 			maxTransition = getMaximumPosition(transFrequency);
 			howManyLeft = getSupportSize(transFrequency);
 		} else { // wybrana tranzycja
 			maxTransition = chosenTrans;
 			
-			ArrayList<Integer> transFrequency = InvariantsTools.getFrequency(subInvariants);
+			transFrequency = InvariantsTools.getFrequency(subInvariants);
 			howManyLeft = getSupportSize(transFrequency);
 		}
+		//TODO: howManyLeft == 0!!!!
+		
+		int invNo = transFrequency.get(maxTransition);
 		
 		//dla danej tranzycji wyznacz: jej inwarianty i całą resztę
 		ArrayList<ArrayList<Integer>> rightInvariants = InvariantsTools.returnInvWithTransition(subInvariants, maxTransition);
 		ArrayList<ArrayList<Integer>> leftInvariants = InvariantsTools.returnInvWithoutTransition(subInvariants, maxTransition);
 		
-		if(leftInvariants.size() == 0) {
+		if(leftInvariants.size() == 0 || howManyLeft == 0) {
 			// brak inwariantów bez tranzycji maxTransition: węzeł typu Data
 			// czyli: brak lewego podrzewa
 			
-			//currentNode.transName = transitions.get(maxTransition).getName();
-			currentNode.transName = transitionsS.get(maxTransition);
+			if(testMode == false)
+				currentNode.transName = transitions.get(maxTransition).getName();
+			else
+				currentNode.transName = transitionsS.get(maxTransition);
+			
 			currentNode.transLocation = maxTransition;
 			currentNode.transFrequency = rightInvariants.size();
 			currentNode.leftChild = null;
@@ -134,8 +145,11 @@ public class MauritiusMapBT {
 			if(currentNode.type != NodeType.ROOT) //ale nie root
 				currentNode.type = NodeType.BRANCH;
 			
-			//currentNode.transName = transitions.get(maxTransition).getName();
-			currentNode.transName = transitionsS.get(maxTransition);
+			if(testMode == false)
+				currentNode.transName = transitions.get(maxTransition).getName();
+			else
+				currentNode.transName = transitionsS.get(maxTransition);
+			
 			currentNode.transLocation = maxTransition;
 			currentNode.transFrequency = rightInvariants.size();
 			
@@ -143,7 +157,7 @@ public class MauritiusMapBT {
 			currentNode.rightChild = rightNode;
 			
 			BTNode leftNode = new BTNode();
-			currentNode.leftChild = rightNode;
+			currentNode.leftChild = leftNode;
 			
 			cleanTransDataInInv(rightInvariants, maxTransition);
 			createMTree(rightInvariants, -1, rightNode); //rekurencja
@@ -154,6 +168,11 @@ public class MauritiusMapBT {
 		
 	}
 	
+	/**
+	 * Metoda zwraca liczność podzbioru wsparcia dla wektora.
+	 * @param vector ArrayList[Integer] - wektor liczb
+	 * @return int - liczność wsparcia
+	 */
 	private int getSupportSize(ArrayList<Integer> vector) {
 		int res = 0;
 		for(int el : vector) {
