@@ -1880,7 +1880,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				String t2 = Tools.setToSize("Fired: "+fireValue, 12, false);
 				invTextArea.append(t1 + t2 + " ; "+realT.getName()+"\n");
 				
-				realT.setGlowed_INV(true, fireValue);
+				realT.setGlowedINV(true, fireValue);
 			}
 			/*
 			for (InvariantTransition invTrans : invariant) {
@@ -1924,7 +1924,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				String t1 = Tools.setToSize("t"+globalIndex, 5, false);
 				invTextArea.append(t1 + " | "+realT.getName()+"\n");
 				
-				realT.setGlowed_INV(true, 0);
+				realT.setGlowedINV(true, 0);
 			}
 		}
 		invTextArea.setCaretPosition(0);
@@ -2236,27 +2236,27 @@ public class AbyssDockWindowsTable extends JPanel {
 			ArrayList<Transition> holyVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 			for(int i=0; i<transColors.size(); i++) { //ustaw kolory dla tranzycji
 				if(transColors.get(i).equals(Color.white)) {
-					holyVector.get(i).setGlowed_Cluster(false, Color.white, -1);
+					holyVector.get(i).setColorWithNumber(false, Color.white, false, -1);
 				} else {
 					if(clusterColorsData.showFirings == true) { //pokazuj średnią liczbę odpaleń
 						if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
 							double tranNumber = transColors.get(i).firedInCluster;
 							Color tranColor = transColors.get(i).colorFiredScale;
-							holyVector.get(i).setGlowed_Cluster(true, tranColor, tranNumber);
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber);
 						} else { //pokazuj kolory z krokiem 10%
 							double tranNumber = transColors.get(i).firedInCluster;
 							Color tranColor = transColors.get(i).colorFiredGrade;
-							holyVector.get(i).setGlowed_Cluster(true, tranColor, tranNumber);
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber);
 						}
 					} else { //pokazuj tylko liczbę wystąpień jako część inwariantów
 						if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
 							int tranNumber = transColors.get(i).transInCluster;
 							Color tranColor = transColors.get(i).colorTransScale;
-							holyVector.get(i).setGlowed_Cluster(true, tranColor, tranNumber);
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber);
 						} else { //pokazuj kolory z krokiem 10%
 							int tranNumber = transColors.get(i).transInCluster;
 							Color tranColor = transColors.get(i).colorTransGrade;
-							holyVector.get(i).setGlowed_Cluster(true, tranColor, tranNumber);
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber);
 						}
 					}
 				}
@@ -2322,24 +2322,24 @@ public class AbyssDockWindowsTable extends JPanel {
 
 		//WYBÓR REAKCJI ZE ZBIORAMI MCS
 		mcsObjRCombo = new JComboBox<String>(objRset);
-		mcsObjRCombo.setBounds(posX+90, posY, 250, 20);
+		mcsObjRCombo.setBounds(posX+60, posY, 230, 20);
 		mcsObjRCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(stopAction == true)
 					return;
-				
 				@SuppressWarnings("unchecked")
 				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
 				int selected = comboBox.getSelectedIndex();
 				if (selected > 0) {
-					stopAction = true;
-					mcsMCSforObjRCombo.removeAllItems();
 					selected--;
 					MCSDataMatrix mcsDataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
 					ArrayList<Set<Integer>> sets = mcsDataCore.getMCSlist(selected--);
 					
-					//String[] mcsSets = new String[sets.size() + 1];
-					//mcsSets[0] = "---";
+					if(sets == null)
+						return;
+					
+					stopAction = true;
+					mcsMCSforObjRCombo.removeAllItems();
 					mcsMCSforObjRCombo.addItem("---");
 					
 					String newRow = "";
@@ -2354,8 +2354,6 @@ public class AbyssDockWindowsTable extends JPanel {
 					}
 					stopAction = false;
 				}
-				
-				
 			}
 		});
 		components.add(mcsObjRCombo);
@@ -2370,7 +2368,7 @@ public class AbyssDockWindowsTable extends JPanel {
 
 		//WYBÓR ZBIORU MCS:
 		mcsMCSforObjRCombo = new JComboBox<String>(init);
-		mcsMCSforObjRCombo.setBounds(posX+90, posY, 160, 20);
+		mcsMCSforObjRCombo.setBounds(posX+60, posY, 160, 20);
 		mcsMCSforObjRCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(stopAction == true)
@@ -2378,9 +2376,13 @@ public class AbyssDockWindowsTable extends JPanel {
 				
 				@SuppressWarnings("unchecked")
 				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
-				if (comboBox.getSelectedIndex() > 0) {
-					MCSDataMatrix mcsDataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-					showMCSDataInNet(mcsDataCore.getMCSlist(comboBox.getSelectedIndex()));
+				int selected = comboBox.getSelectedIndex();
+				if (selected > 0) {
+					selected--;
+					//MCSDataMatrix mcsDataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+					int selTrans = mcsObjRCombo.getSelectedIndex();
+					selTrans--;
+					showMCSDataInNet(comboBox.getSelectedItem().toString(), selTrans);
 				}
 			}
 		});
@@ -2388,7 +2390,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		JButton refreshButton = new JButton();
 		refreshButton.setText("Refresh");
-		refreshButton.setBounds(posX+260, posY, 80, 20);
+		refreshButton.setBounds(posX+225, posY, 70, 20);
 		//generateButton.setMargin(new Insets(0, 0, 0, 0));
 		//generateButton.setIcon(Tools.getResIcon32("/icons/mcsWindow/computeData.png"));
 		refreshButton.addActionListener(new ActionListener() {
@@ -2432,9 +2434,44 @@ public class AbyssDockWindowsTable extends JPanel {
 		add(panel);
 	}
 	
-	protected void showMCSDataInNet(ArrayList<Set<Integer>> mcSlist) {
-		// TODO Auto-generated method stub
-		
+	/**
+	 * Metoda pokazuje w kolorach tranzycje wchodzące w skład MCS oraz tramzycję bazową zbioru MCS.
+	 * @param sets String - zbiór w formie łańcucha znaków [x, y, z, ...]
+	 * @param objReactionID int - nr tranzycji bazowe
+	 */
+	protected void showMCSDataInNet(String sets, int objReactionID) {
+		try {
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setColorClusterToNeutral();
+			
+			
+			sets = sets.replace("[", "");
+			sets = sets.replace("]", "");
+			sets = sets.replace(" ", "");
+			
+			String[] elements = sets.split(",");
+			ArrayList<Integer> invIDs = new ArrayList<Integer>();
+			
+			for(String el : elements) {
+				invIDs.add(Integer.parseInt(el));
+			}
+			
+			Transition trans_TMP = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(objReactionID);
+			trans_TMP.setColorWithNumber(true, Color.red, false, -1);
+			
+			for(int id : invIDs) {
+				trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(id);
+				trans_TMP.setColorWithNumber(true, Color.black, false, -1);
+				//double tranNumber = transColors.get(i).firedInCluster;
+				//Color tranColor = transColors.get(i).colorFiredScale;
+				//holyVector.get(i).setColorWithNumber(true, tranColor, tranNumber);
+			}
+			
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+		} catch (Exception e) {
+			
+		}
 	}
 	
 	//**************************************************************************************

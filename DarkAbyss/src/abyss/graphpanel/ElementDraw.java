@@ -118,8 +118,9 @@ public final class ElementDraw {
 				else if(trans.isGlowed_MTC()) { //mct
 					g.setColor(EditorResources.glowMTCTransitonColorLevel3);
 				}
-				else if(trans.isGlowed_Cluster()) { //klaster
-					g.setColor(trans.getColor_Cluster());
+				else if(trans.isColorChanged()) { //klaster lub inny powód
+					g.setColor(trans.getTransitionNewColor());
+					
 				} else if(el.isPortalSelected()) { //inny ELoc portalu:
 					g.setColor(EditorResources.selectionColorLevel3);
 				}
@@ -190,8 +191,9 @@ public final class ElementDraw {
 				}
 				
 				//WYŚWIETLANIE DANYCH ODNOŚNIE WYSTĘPOWANIA TRANZYCJI W KLASTRZE:
-				if(trans.isGlowed_Cluster() && trans.getFreq_Cluster() > 0) {
-					String clNumber = formatD(trans.getFreq_Cluster());
+				//if(trans.isColorChanged() && trans.getNumericalValueDOUBLE() > 0) {
+				if(trans.isColorChanged() && trans.getNumericalValueVisibility()) {
+					String clNumber = formatD(trans.getNumericalValueDOUBLE());
 
 					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(clNumber) / 2);
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;

@@ -22,13 +22,19 @@ public class Transition extends Node {
 	private static final long serialVersionUID = 2673581001465115432L;
 	
 	protected boolean isLaunching;
-	protected boolean isGlowed = false;
+	protected boolean isGlowedINV = false;
 	protected boolean isGlowedMTC = false;
-	protected boolean isGlowetCl = false;
-	protected double clNumber = 0.0;
-	protected Color clusterColorForTransition = new Color(255,255,255);
-	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 	
+	protected boolean isColorChanged = false;
+	protected double transNumericalValue = 0.0;
+	//TODO:
+	protected boolean showIntOnly = false;
+	protected boolean valueVisibilityStatus = false;
+	
+	protected Color transColorValue = new Color(255,255,255);
+	
+	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
+
 	//TODO: tak nie może być, to poniżej jest używane przez funkcję generującą MCT, ale ostatnią rzeczą
 	//jaką obiekt klasy Transition potrzebuje, to kolejny wielki wektor danych...
 	private ArrayList<ArrayList<Transition>> containingInvariants = new ArrayList<ArrayList<Transition>>();
@@ -184,26 +190,26 @@ public class Transition extends Node {
 	 * @return boolean - true jeśli świeci; false w przeciwnym wypadku
 	 */
 	public boolean isGlowed() {
-		return isGlowed;
+		return isGlowedINV;
 	}
 
 	/**
 	 * Metoda pozwala określić, czy tranzycja ma byc podświetlona oraz ile razy
 	 * występuje ona w ramach niezmiennika.
 	 * @param isGlowed boolean - true, jeśli ma świecić
-	 * @param firingNumber int - liczba uruchomień tranzycji w niezmienniku
+	 * @param numericalValueShowed int - liczba uruchomień tranzycji w niezmienniku
 	 */
-	public void setGlowed_INV(boolean isGlowed, int firingNumber) {
-		this.isGlowed = isGlowed;
-		this.firingValueInInvariant = firingNumber;
+	public void setGlowedINV(boolean isGlowed, int numericalValueShowed) {
+		this.isGlowedINV = isGlowed;
+		this.firingValueInInvariant = numericalValueShowed;
 	}
 
 	/**
 	 * Metoda pozwala określic, czy tranzycja ma byc podświetlona.
-	 * @param isGlowed boolean - true, jeśli ma świecić
+	 * @param isGlowedINV boolean - true, jeśli ma świecić
 	 */
 	public void isGlowed_INV(boolean value) {
-		this.isGlowed = value;
+		this.isGlowedINV = value;
 	}
 
 	/**
@@ -222,40 +228,60 @@ public class Transition extends Node {
 		this.isGlowedMTC = value;
 	}
 	
+	
 	/**
-	 * Metoda zwraca wartość flagi koloru dla klastra
-	 * @return boolean - true, jeśli ma mieć dany kolor
+	 * Metoda informuje, czy tramzycja ma być rysowana z innym kolorem wypełnienia
+	 * @return boolean - true, jeśli ma mieć inny kolor niż domyślny
 	 */
-	public boolean isGlowed_Cluster() {
-		return isGlowetCl;
+	public boolean isColorChanged() {
+		return isColorChanged;
+	}
+	
+	//TODO:
+	/**
+	 * Metoda ustawia stan zmiany koloru oraz liczbę do wyświetlenia.
+	 * @param isColorChanged boolean - true, jeśli ma rysować się w kolorze
+	 * @param newColor Color - na jaki kolor
+	 * @param showNumber boolean - true, jeśli liczba ma się wyświetlać
+	 * @param double clNumber - liczba do wyświetlenia
+	 */
+	public void setColorWithNumber(boolean isColorChanged, Color newColor, boolean showNumber, double numberShowed) {
+		this.isColorChanged = isColorChanged;
+		this.transColorValue = newColor;
+		setNumericalValueVisibility(showNumber);
+		this.transNumericalValue = numberShowed;
 	}
 	
 	/**
-	 * Metoda ustawia flagę koloru dla tranzycji w ramach klastra oraz kolor.
-	 * @param value boolean - true, jeśli ma rysować się w kolorze
-	 * @param clColor Color - na jaki kolor
-	 * @param double clNumber - średnia liczba uruchomień
+	 * Metoda ustawia, czy liczba ma się wyświetlać obok tranzycji.
+	 * @param status boolean - true, jeśli ma się wyświetlać pewna dodatkowa wartość obok rysunku tranzycji
 	 */
-	public void setGlowed_Cluster(boolean value, Color clColor, double clNumber) {
-		this.isGlowetCl = value;
-		this.clusterColorForTransition = clColor;
-		this.clNumber = clNumber;
+	public void setNumericalValueVisibility(boolean status) {
+		valueVisibilityStatus = status;
 	}
 	
 	/**
-	 * Zwraca liczbę średnich uruchomień tranzycji w ramach inwariantów w ramach klastra.
-	 * @return double - liczba wystąpień
+	 * Metoda informuje, czy ma się wyświetlać dodatkowa wartośc liczbowa obok rysunku tranzycji.
+	 * @return boolean - true, jeśli ma się wyświetlać
 	 */
-	public double getFreq_Cluster() {
-		return clNumber;
+	public boolean getNumericalValueVisibility() {
+		return valueVisibilityStatus;
 	}
 	
 	/**
-	 * Metoda zwraca aktualnie ustawiony kolor dla trybu wyświetlania klastrów.
+	 * Zwraca liczbę która ma się wyświetlać obok kwadratu tranzycji.
+	 * @return double - liczba
+	 */
+	public double getNumericalValueDOUBLE() {
+		return transNumericalValue;
+	}
+	
+	/**
+	 * Metoda zwraca aktualnie ustawiony kolor dla tranzycji
 	 * @return Color - kolor
 	 */
-	public Color getColor_Cluster() {
-		return clusterColorForTransition;
+	public Color getTransitionNewColor() {
+		return transColorValue;
 	}
 	
 	/**

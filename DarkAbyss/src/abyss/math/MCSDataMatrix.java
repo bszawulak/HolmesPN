@@ -108,7 +108,7 @@ public class MCSDataMatrix {
 		if(pos < matrixSize) {
 			return mcsDataCore.get(pos); 
 		} else {
-			GUIManager.getDefaultGUIManager().log("Unable to return MCS list. DataCore size: "+matrixSize, "error", true);
+			GUIManager.getDefaultGUIManager().log("Unable to return MCS list. DataCore size: "+matrixSize, "warning", true);
 			return null;
 		}
 	}
