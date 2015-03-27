@@ -412,11 +412,11 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", Tools.getResIcon48("/icons/toolbar/a.png")) {
 			@SuppressWarnings("unused")
 			public void actionPerformed(ActionEvent actionEvent) { 
-				
-				ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-				Transition test = transitions.get(8);
-				MCSCalculatorShort mcs = new MCSCalculatorShort(2);
-				List<Set<Short>> sets = mcs.findMcs(16);
+				GUIManager.getDefaultGUIManager().showMCS();
+				//ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+				//Transition test = transitions.get(8);
+				//MCSCalculatorShort mcs = new MCSCalculatorShort(2);
+				//List<Set<Short>> sets = mcs.findMcs(16);
 
 				//ArrayList<Transition> knockoutList = new ArrayList<Transition>();
 				//knockoutList.add(test);

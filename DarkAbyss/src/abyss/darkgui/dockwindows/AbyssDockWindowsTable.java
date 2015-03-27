@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -52,6 +53,7 @@ import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.Arc;
 import abyss.math.ElementLocation;
+import abyss.math.MCSDataMatrix;
 import abyss.math.Node;
 import abyss.math.PetriNetElement;
 import abyss.math.Place;
@@ -109,6 +111,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	private JTextArea clTextArea;
 	private JComboBox<String> chooseCluster;
 	public JComboBox<String> simMode;
+	public JComboBox<String> mcsObjRCombo;
+	public JComboBox<String> mcsMCSforObjRCombo;
+	public boolean stopAction = false;
 	public JLabel timeStepLabelValue;
 	
 	private boolean nameLocChangeMode = false;
@@ -2284,9 +2289,161 @@ public class AbyssDockWindowsTable extends JPanel {
 	
 	//**************************************************************************************
 	//*********************************                  ***********************************
+	//*********************************        MCS       ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+//TODO:
+	/**
+	 * Konstruktor 
+	 * @param is
+	 */
+	public AbyssDockWindowsTable(MCSDataMatrix mcsData)
+	{
+		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		if(mcsData == null || transitions.size() == 0) {
+			//return;
+		} 
+		
+		initiateContainers();
+		
+		int posX = 10;
+		int posY = 10;
+
+		JLabel objRLabel = new JLabel("Reaction: ");
+		objRLabel.setBounds(posX, posY, 80, 20);
+		components.add(objRLabel);
+
+		String[] objRset = new String[transitions.size() + 1];
+		objRset[0] = "---";
+		for (int i = 0; i < transitions.size(); i++) {
+			objRset[i + 1] = "t"+i+transitions.get(i).getName();
+		}
+		
+
+		//WYBÓR REAKCJI ZE ZBIORAMI MCS
+		mcsObjRCombo = new JComboBox<String>(objRset);
+		mcsObjRCombo.setBounds(posX+90, posY, 250, 20);
+		mcsObjRCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(stopAction == true)
+					return;
+				
+				@SuppressWarnings("unchecked")
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				int selected = comboBox.getSelectedIndex();
+				if (selected > 0) {
+					stopAction = true;
+					mcsMCSforObjRCombo.removeAllItems();
+					selected--;
+					MCSDataMatrix mcsDataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+					ArrayList<Set<Integer>> sets = mcsDataCore.getMCSlist(selected--);
+					
+					//String[] mcsSets = new String[sets.size() + 1];
+					//mcsSets[0] = "---";
+					mcsMCSforObjRCombo.addItem("---");
+					
+					String newRow = "";
+					for(Set<Integer> set : sets) {
+						newRow = "[";
+						for(int el : set) {
+							newRow += el+", ";
+						}
+						newRow += "]";
+						newRow = newRow.replace(", ]", "]");
+						mcsMCSforObjRCombo.addItem(newRow);
+					}
+					stopAction = false;
+				}
+				
+				
+			}
+		});
+		components.add(mcsObjRCombo);
+		posY += 25;
+		
+		JLabel mcsLabel = new JLabel("MCS: ");
+		mcsLabel.setBounds(posX, posY, 80, 20);
+		components.add(mcsLabel);
+		
+		String[] init = new String[1];
+		init[0] = "---";
+
+		//WYBÓR ZBIORU MCS:
+		mcsMCSforObjRCombo = new JComboBox<String>(init);
+		mcsMCSforObjRCombo.setBounds(posX+90, posY, 160, 20);
+		mcsMCSforObjRCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(stopAction == true)
+					return;
+				
+				@SuppressWarnings("unchecked")
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				if (comboBox.getSelectedIndex() > 0) {
+					MCSDataMatrix mcsDataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+					showMCSDataInNet(mcsDataCore.getMCSlist(comboBox.getSelectedIndex()));
+				}
+			}
+		});
+		components.add(mcsMCSforObjRCombo);
+		
+		JButton refreshButton = new JButton();
+		refreshButton.setText("Refresh");
+		refreshButton.setBounds(posX+260, posY, 80, 20);
+		//generateButton.setMargin(new Insets(0, 0, 0, 0));
+		//generateButton.setIcon(Tools.getResIcon32("/icons/mcsWindow/computeData.png"));
+		refreshButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+				if(transitions.size() == 0)
+					return;
+					
+				String[] objRset = new String[transitions.size() + 1];
+				objRset[0] = "---";
+				for (int i = 0; i < transitions.size(); i++) {
+					objRset[i + 1] = "t"+i+"_"+transitions.get(i).getName();
+				}
+				stopAction = true;
+				
+				//GUIManager.getDefaultGUIManager().getMCSBox().getCurrentDockWindow().mcsObjRCombo.removeAllItems();
+				//GUIManager.getDefaultGUIManager().getMCSBox().getCurrentDockWindow().mcsObjRCombo = new JComboBox<String>(objRset);
+				mcsObjRCombo.removeAllItems();
+				for(String str : objRset) {
+					mcsObjRCombo.addItem(str);
+				}
+				//mcsObjRCombo.removeAllItems();
+				//mcsObjRCombo = new JComboBox<String>(objRset);
+				stopAction = false;
+			}
+		});
+		refreshButton.setFocusPainted(false);
+		panel.add(refreshButton);
+		
+		
+		posY += 20;
+		
+		
+		
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			 panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		panel.setVisible(true);
+		add(panel);
+	}
+	
+	protected void showMCSDataInNet(ArrayList<Set<Integer>> mcSlist) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	//**************************************************************************************
+	//*********************************                  ***********************************
 	//*********************************                  ***********************************
 	//*********************************                  ***********************************
 	//**************************************************************************************
+
+	
 
 	/**
 	 * Konstruktor 

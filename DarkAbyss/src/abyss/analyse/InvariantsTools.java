@@ -637,6 +637,24 @@ public final class InvariantsTools {
 		return frequency;
 	}
 	
+	/**
+     * 
+     * @param invMatrix
+     * @return
+     */
+    public static ArrayList<Integer> getActiveTransitions(ArrayList<ArrayList<Integer>> invMatrix) { 
+    	ArrayList<Integer> trans = new ArrayList<Integer>();
+    	for(int i=0; i<invMatrix.get(0).size(); i++) {
+    		for(int r=0; r<invMatrix.size(); r++) {
+    			if(invMatrix.get(r).get(i) > 0) {
+    				trans.add(i);
+    				break;
+    			}
+    		}
+    	}
+    	return trans;
+    }
+	
 	/*
 	int supSize = candidateSupport.size();
 	ArrayList<ArrayList<Integer>> Hk = new ArrayList<ArrayList<Integer>>();

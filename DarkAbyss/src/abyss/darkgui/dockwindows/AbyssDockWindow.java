@@ -11,6 +11,7 @@ import abyss.darkgui.GUIManager;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import abyss.math.Arc;
+import abyss.math.MCSDataMatrix;
 import abyss.math.Node;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
@@ -44,7 +45,7 @@ public class AbyssDockWindow extends SingleDock {
 	 * EDITOR, SIMULATOR, SELECTOR, InvANALYZER, PropANALYZER, MctANALYZER,InvSIMULATOR
 	 */
 	public enum DockWindowType {
-		EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR
+		EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR, MCSselector
 	}
 
 	/**
@@ -70,17 +71,20 @@ public class AbyssDockWindow extends SingleDock {
 					"Selection"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == DockWindowType.InvANALYZER)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_analysis", scrollPane,
-					"Invariants"), GUIManager.getDefaultGUIManager().getDockingListener()));
+					"T-inv"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == DockWindowType.MctANALYZER)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("MCT_Groups", scrollPane,
 					"MCT"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		else if (type == DockWindowType.ClusterSELECTOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Clusters_Selection", scrollPane,
 					"Clusters"), GUIManager.getDefaultGUIManager().getDockingListener()));
+		else if (type == DockWindowType.MCSselector)
+			setDockable(GUIManager.externalWithListener(new DefaultDockable("MCS_selector", scrollPane,
+					"MCS"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		
 		else if (type == DockWindowType.InvSIMULATOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_simulator", scrollPane,
-					"InvSim"),GUIManager.getDefaultGUIManager().getDockingListener()));
+					"InvSim"), GUIManager.getDefaultGUIManager().getDockingListener()));
 
 		
 
@@ -169,6 +173,16 @@ public class AbyssDockWindow extends SingleDock {
 		if (type == DockWindowType.MctANALYZER) {
 			setCurrentDockWindow(new AbyssDockWindowsTable(mctGroups, DockWindowType.MctANALYZER));
 			scrollPane.getViewport().add(getCurrentDockWindow());
+		}
+	}
+	//TODO:
+	public void showMCS() {
+		if (type == DockWindowType.MCSselector) {
+			MCSDataMatrix mcsData = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+			
+			setCurrentDockWindow(new AbyssDockWindowsTable(mcsData));
+			scrollPane.getViewport().add(getCurrentDockWindow());
+
 		}
 	}
 

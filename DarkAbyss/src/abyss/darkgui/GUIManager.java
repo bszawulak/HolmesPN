@@ -117,6 +117,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssDockWindow invariantsBox;	//podokno inwariantów
 	private AbyssDockWindow selElementBox;  //podokno klikniętego elementu sieci
 	private AbyssDockWindow clustersBox;	//podokno podświetlania klastrów
+	private AbyssDockWindow mcsBox;
 	
 	//UNUSED
 	private AbyssDockWindow invSimBox;
@@ -233,6 +234,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setClusterSelectionBox(new AbyssDockWindow(DockWindowType.ClusterSELECTOR));
 		setMctBox(new AbyssDockWindow(DockWindowType.MctANALYZER)); //aktywuj obiekt podokna wyświetlania zbiorów MCT
 		setInvSim(new AbyssDockWindow(DockWindowType.InvSIMULATOR));
+		setMCSBox(new AbyssDockWindow(DockWindowType.MCSselector));
 		
 		// create menu
 		setMenu(new DarkMenu());
@@ -244,22 +246,24 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		//leftTabDock.setHeaderPosition(Position.BOTTOM);
 		leftTabDock.addChildDock(getToolBox(), new Position(0));
-		
 		leftTabDock.addChildDock(getSimulatorBox(), new Position(1));
 		leftTabDock.setSelectedDock(getToolBox());
+		
 		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
 		topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
 		topRightTabDock.setSelectedDock(getPropertiesBox());
+		
 		//bottomRightTabDock.addChildDock(getSimulatorBox(), new Position(0));
 		bottomRightTabDock.addChildDock(getInvariantsBox(), new Position(1));
 		bottomRightTabDock.addChildDock(getMctBox(), new Position(2));
-		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(3));
-		bottomRightTabDock.addChildDock(getInvSimBox(), new Position(4));
+		bottomRightTabDock.addChildDock(getMCSBox(), new Position(3));
+		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(4));
+		bottomRightTabDock.addChildDock(getInvSimBox(), new Position(5));
 
 		// create the split docks
 		leftSplitDock = new SplitDock();
 		leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
-		leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(),new Position(Position.CENTER));
+		leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
 		//leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 10);
 		leftSplitDock.setDividerLocation(180);
 
@@ -271,6 +275,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		totalSplitDock = new SplitDock();
 		totalSplitDock.addChildDock(leftSplitDock, new Position(Position.LEFT));
 		totalSplitDock.addChildDock(rightSplitDock,new Position(Position.RIGHT));
+		//totalSplitDock.setDividerLocation(400);
 		totalSplitDock.setDividerLocation((int) screenSize.getWidth() - (int) screenSize.getWidth() / 6);
 		
 		// // Add root dock
@@ -470,6 +475,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			//leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 10);
 			leftSplitDock.setDividerLocation(180);
+			//totalSplitDock.setDividerLocation(600);
 			totalSplitDock.setDividerLocation((int) (screenSize.getWidth() * 5.6 / 7));
 		} else {
 			smallScreenSize = getFrame().getSize();
@@ -543,7 +549,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zwraca podokno dedykowane do wyświetlania zbiorów MCT.
+	 * Metoda zwraca obiekt podokna do wyświetlania zbiorów MCT.
 	 * @return AbyssDockWindow - okno wyboru MCT
 	 */
 	public AbyssDockWindow getMctBox() {
@@ -551,11 +557,28 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda ta ustawia nowe podokno dedykowane do wyświetlania zbiorów MCT.
+	 * Metoda ustawia nowe podokno dedykowane do wyświetlania zbiorów MCT.
 	 * @param mctBox AbyssDockWindow - nowe okno wyboru MCT
 	 */
 	public void setMctBox(AbyssDockWindow mctBox) {
 		this.mctBox = mctBox;
+	}
+	
+	
+	/**
+	 * Metoda zwraca obiekt podokna wyświetlania zbiorów MCS.
+	 * @return AbyssDockWindow - okno wyboru MCS
+	 */
+	public AbyssDockWindow getMCSBox() {
+		return mcsBox;
+	}
+	
+	/**
+	 * Metoda ustawia nowe podokno dedykowane do wyświetlania zbiorów MCS.
+	 * @param mcsBox AbyssDockWindow - nowe okno wyboru MCS
+	 */
+	public void setMCSBox(AbyssDockWindow mcsBox) {
+		this.mcsBox = mcsBox;
 	}
 	
 	/**
@@ -948,6 +971,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//ArrayList<ArrayList<InvariantTransition>> invTr = analyzer.gettInvariants();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
 		getMctBox().showMCT(mct);
+	}
+	
+	public void showMCS() {
+		getMCSBox().showMCS();
 	}
 	
 	/**

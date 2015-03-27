@@ -10,12 +10,14 @@ import java.util.Set;
 import abyss.darkgui.GUIManager;
 import abyss.math.MCSDataMatrix;
 import abyss.math.Transition;
-import abyss.windows.AbyssInvariants;
 import abyss.windows.AbyssMCS;
 
 /**
  * Klasa obliczająca zbiory MCS (Mimimal Cut Set) według algorytmu z artykułu:
- * "Mimal cut sets in biochemical reaction networks" Steffen Klamt, Ernst Dieter Gilles, Bioinformatics, 2004, 20, pp. 226-234
+ * 
+ * "Mimal cut sets in biochemical reaction networks" 
+ * Steffen Klamt, Ernst Dieter Gilles
+ * Bioinformatics, 2004, 20, pp. 226-234
  * 
  * @author MR
  *
@@ -31,11 +33,8 @@ public class MCSCalculator implements Runnable {
     private AbyssMCS masterWindow = null;
     private int objective_Reaction;
     private int maxSetsNumber;
-    
     private boolean terminate = false;
-    
-    private int currentStep = 0;
-    
+     
     /**
      * Konstruktor klasy MCSCalculator, odpowiedzialny za przygotowanie struktur danych niezbędnych
      * do dalszych obliczeń.
@@ -154,7 +153,6 @@ public class MCSCalculator implements Runnable {
         List<Set<Integer>> newPrecutsets = null;
         int k = 1;
         while (++k <= maxCutSetSize) {
-        	currentStep = k;
             newPrecutsets = new ArrayList<>();
             
     		//System.out.println();
@@ -172,10 +170,12 @@ public class MCSCalculator implements Runnable {
                 List<Set<Integer>> temp_precutsets = calculatePreliminaryCutsets(precutsets, j);
                 	//5.2.3 usuń wszystkie zbiory z temp_precutsets które zawierają jakikolwiek zbiór z listy mcs:
                 if(terminate) return mcs;
-                removeNonMinimalSets2(temp_precutsets);
+                removeNonMinimalSets(temp_precutsets);
                 	//5.2.4 zidentyfikuj zbiory MCS i usuń z precutsets
                 if(terminate) return mcs;
                 newPrecutsets.addAll(identifyNewMCSs2(temp_precutsets));
+                
+                temp_precutsets = null;
             }
             logInternal("\n", false);
             
@@ -192,6 +192,10 @@ public class MCSCalculator implements Runnable {
         return mcs;
     }
 	
+	/**
+	 * II algorytm - under construction
+	 * @return
+	 */
 	public HashSet<HashSet<Integer>> findMcs2() {
 		HashSet<HashSet<Integer>> result = new HashSet<HashSet<Integer>>();
 		int invMatrixSize = em_obR.size();
@@ -209,7 +213,7 @@ public class MCSCalculator implements Runnable {
 					newSet.add(j);
 					result.add(newSet); //duplikatów nie doda
 					
-					int resSize = result.size();
+					//int resSize = result.size();
 					for(HashSet<Integer> test : result) {
 						if(test.size() <= maxSize) {
 							test.add(j); //duplikatów i tak nie doda
@@ -313,7 +317,7 @@ public class MCSCalculator implements Runnable {
 	 * Metoda pozostawia tylko te zbiory precutset, które nie są nadzbiorami już znalezionych mcs.
      * @param precutsets List[Set[Integer]] - precutsets
 	 */
-	private void removeNonMinimalSets2(List<Set<Integer>> precutsets) {
+	private void removeNonMinimalSets(List<Set<Integer>> precutsets) {
 		int size = precutsets.size();
 		Set<Integer> precutset;
 		for(int s=0; s<size; s++) {
@@ -424,22 +428,4 @@ public class MCSCalculator implements Runnable {
 			}
 		}
 	}
-    
-    /**
-     * Obsolete
-     * @param invMatrix
-     * @return
-     */
-    private ArrayList<Integer> getActiveTransitions(ArrayList<ArrayList<Integer>> invMatrix) { 
-    	ArrayList<Integer> trans = new ArrayList<Integer>();
-    	for(int i=0; i<invMatrix.get(0).size(); i++) {
-    		for(int r=0; r<invMatrix.size(); r++) {
-    			if(invMatrix.get(r).get(i) > 0) {
-    				trans.add(i);
-    				break;
-    			}
-    		}
-    	}
-    	return trans;
-    }
 }

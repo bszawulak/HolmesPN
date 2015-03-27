@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.swing.AbstractButton;
@@ -43,19 +44,22 @@ import abyss.utilities.Tools;
  */
 public class AbyssMCS extends JFrame {
 	private static final long serialVersionUID = -5765964470006303431L;
-	private ArrayList<Transition> transitions;
-	private int maxCutSize = 0;
-	private int maximumMCS = 0;
-	private boolean generateAll = true;
-	private int maxSetsNumber = 300;
 	
 	private MCSCalculator mcsGenerator = null;
+	private ArrayList<Transition> transitions;
+	
+	private int maxCutSize = 0; //wybrana kardynalność zbiorów
+	private int maximumMCS = 0; //górne ograniczenie kardynalności - przy szukaniu
+	private int maxSetsNumber = 300; //maksymalna liczba zbiorów
+	
+	private boolean generateAll = true; 
 	private boolean isMCSGeneratorWorking = false;
+	private boolean showFullInfo = true;
+	private boolean listenerAllowed = true; //używane dla transitionsResultsCombo w odświeżaniu pól okna
 	
 	private JComboBox<String> transitionsCombo;
 	private JComboBox<String> transitionsResultsCombo;
-	private boolean listenerAllowed = true;
-	private JSpinner mcsSpinner;
+	private JSpinner mcsSpinner;	//ile zbiorów
 	private JTextArea logField;
 	private JTextArea reactionSetsTextField;
 
@@ -81,19 +85,13 @@ public class AbyssMCS extends JFrame {
 		}
 		
 		setLayout(new BorderLayout());
-		setSize(new Dimension(850, 650));
+		setSize(new Dimension(850, 750));
 		setLocation(50, 50);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setResizable(false);
 		
 		JPanel mainPanel = createMainPanel();
 		add(mainPanel, BorderLayout.CENTER);
-		
-		addWindowListener(new java.awt.event.WindowAdapter() {
-		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		    	//parentFrame.setEnabled(true);
-		    }
-		});
 		
 		addWindowListener(new WindowAdapter() {
   	  	    public void windowActivated(WindowEvent e) {
@@ -112,12 +110,10 @@ public class AbyssMCS extends JFrame {
 		
 		//Panel wyboru opcji szukania
 		JPanel buttonPanel = createUpperButtonPanel(0, 0, 844, 110);
-		JPanel logMainPanel = createMainPanel(0, 110, 844, 500);
-		//JPanel leftButtonPanel = createLeftButtonPanel(600, 150, 100, 400);
+		JPanel logMainPanel = createMainPanel(0, 110, 844, 610);
 		
 		panel.add(buttonPanel);
 		panel.add(logMainPanel);
-		//panel.add(leftButtonPanel);
 		panel.repaint();
 		return panel;
 	}
@@ -364,7 +360,7 @@ public class AbyssMCS extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
 		panel.setBorder(BorderFactory.createLineBorder(Color.black));
-		panel.setBounds(x, y, width, height);
+		panel.setBounds(x, y, width, height-5);
 		
 		JPanel upperButtons = createSubButtonPanel(2, 2, 844-4, 90);
 		panel.add(upperButtons);
@@ -380,7 +376,7 @@ public class AbyssMCS extends JFrame {
         logFieldPanel.setBorder(BorderFactory.createTitledBorder("Log"));
         logFieldPanel.setLayout(new BorderLayout());
         logFieldPanel.add(new JScrollPane(logField),BorderLayout.CENTER);
-        logFieldPanel.setBounds(2, 90, 840, height-94);
+        logFieldPanel.setBounds(2, 90, 840, height-98);
         panel.add(logFieldPanel);
 		
 		return panel;
@@ -432,6 +428,20 @@ public class AbyssMCS extends JFrame {
 		});
 		panel.add(transitionsResultsCombo);
 		
+		JCheckBox showAllCheckBox = new JCheckBox("Show full info", true);
+		showAllCheckBox.setBounds(posX+490, posY, 120, 20);
+		showAllCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					showFullInfo = true;
+				} else {
+					showFullInfo = false;
+				}
+			}
+		});
+		panel.add(showAllCheckBox);
+		
 		JButton saveButton = new JButton();
 		saveButton.setText("<html>Save this<br />objR MCS</html>");
 		saveButton.setBounds(posX, posY+25, 110, 32);
@@ -458,7 +468,10 @@ public class AbyssMCS extends JFrame {
 		calculateFragilityButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
 		calculateFragilityButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				
+				int selected = transitionsResultsCombo.getSelectedIndex();
+				if(selected > 0) {
+					calculateFragility(selected-1);
+				}
 			}
 		});
 		calculateFragilityButton.setFocusPainted(false);
@@ -533,6 +546,9 @@ public class AbyssMCS extends JFrame {
 		}
 	}
 	
+	/**
+	 * Metoda pomocnicza generowania zbiorów dla wielu reakcji.
+	 */
 	protected void calculateAllAction() {
 		ArrayList<Integer> objReactions = new ArrayList<Integer>();
 		if(generateAll) {
@@ -564,6 +580,10 @@ public class AbyssMCS extends JFrame {
 		launchMCSanalysis(objReactions);
 	}
 	
+	/**
+	 * Metoda służąca generowaniu wielu list zbiorów MCS dla wielu wybranych reakcji (po kolei).
+	 * @param objReactions ArrayList[Integer] - wektor numerów reakcji (tranzycji)
+	 */
 	protected void launchMCSanalysis(ArrayList<Integer> objReactions) {
 		if(objReactions.size() == 0)
 			return;
@@ -631,11 +651,10 @@ public class AbyssMCS extends JFrame {
 	
 	/**
 	 * Metoda wyświetla informacje i zbiory MCS dla wskazanej tranzycji.
-	 * @param selected
+	 * @param selected int - wybrana reakcja
 	 */
 	protected void showMCSData(int selected) {	
 		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-		
 		if(mcsd.getSize() == 0)
 			return;
 		
@@ -657,14 +676,77 @@ public class AbyssMCS extends JFrame {
 			for(int el : set) {
 				msg += el+", ";
 			}
-			msg += "]";
+			msg += "]   : ";
 			msg = msg.replace(", ]", "]");
+			
+			if(showFullInfo) {
+				int transSize = transitions.size();
+				String names = "";
+				for(int el : set) {
+					if(el < transSize) {
+						names += "t"+el+"_"+transitions.get(el).getName()+"; ";
+					}
+				}
+				msg += names;
+			}
+			
 			logField.append(msg+"\n");
 			counter++;
 		}
-		
+
 		logField.append("==========================================================\n");
 		logField.append("\n");
+	}
+	
+	/**
+	 * Metoda oblicza współczynik f_i dla każdej reakcji będącej częscią jakiegokolwiek zbioru
+	 * MCS obliczonego dla tranzycji o ID wysłanym jako argument.
+	 * @param selected int - numer tramzycji / reakcji
+	 */
+	protected void calculateFragility(int selected) {
+		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+		if(mcsd.getSize() == 0)
+			return;
+		ArrayList<Set<Integer>> dataVector = mcsd.getMCSlist(selected);
+		if(dataVector == null)
+			return;
+		
+		ArrayList<Integer> reactions = new ArrayList<Integer>();
+		ArrayList<Float> fi = new ArrayList<Float>();
+		
+		for(Set<Integer> set : dataVector) {
+			for(int el : set) {
+				if(reactions.contains(el) == false)
+					reactions.add(el);
+			}
+		}
+		
+		Collections.sort(reactions);
+		
+		float reactSum = 0;
+		float setSizeSum = 0;	
+		for(int reaction : reactions) {
+			reactSum = 0;
+			setSizeSum = 0;
+			
+			for(Set<Integer> set : dataVector) {
+				if(set.contains(reaction)) {
+					reactSum++;
+					setSizeSum += set.size();
+				}
+			}
+			fi.add(reactSum/setSizeSum);
+		}
+		
+		for(int i=0; i<fi.size(); i++) {
+			String msg="";
+			msg += "t"+reactions.get(i)+"_";
+			msg += transitions.get(reactions.get(i)).getName()+"    ";
+			msg += "fragility = "+fi.get(i);
+			logField.append(msg+"\n");
+		}
+		
+
 	}
 
 	/**
