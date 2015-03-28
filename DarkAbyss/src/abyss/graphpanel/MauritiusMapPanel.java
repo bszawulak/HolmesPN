@@ -8,11 +8,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import abyss.darkgui.GUIManager;
+import abyss.graphpanel.GraphPanel.MouseWheelHandler;
 import abyss.math.MauritiusMapBT;
 import abyss.math.MauritiusMapBT.BTNode;
 import abyss.math.MauritiusMapBT.NodeType;
@@ -33,6 +37,7 @@ public class MauritiusMapPanel extends JPanel {
 	private int maxUsedWidth = 0;
 	private boolean fullName = true; //czy pełna nazwa tranzycji ma być wyświetlona
 	private int baseThickness = 0;
+	private int zoom = 40;
 	
 	private int sizeX = 0;
 	private int sizeY = 0;
@@ -44,6 +49,8 @@ public class MauritiusMapPanel extends JPanel {
     	sizeX = 800;
     	sizeY = 600;
         setPreferredSize(new Dimension(sizeX, sizeY));
+        
+        this.addMouseWheelListener(new MouseWheelHandler());
     }
     
     /**
@@ -145,7 +152,7 @@ public class MauritiusMapPanel extends JPanel {
     	if(mmbt != null) {
     		baseThickness = mmbt.getRoot().transFrequency;
     		//normalizeBaseThickness();
-    		
+
 			readTree(mmbt.getRoot(), g, 100, 200, fullName);
     	}
     }
@@ -168,22 +175,24 @@ public class MauritiusMapPanel extends JPanel {
      * @param color Color - kolor
      */
     private void drawLine(Graphics graphics, int x1, int y1, int x2, int y2, int width, Color color) {
-    	 Graphics2D g = (Graphics2D) graphics.create();
+    	 Graphics2D g2d = (Graphics2D) graphics.create();
+    	 g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
+    	 
          double dx = x2 - x1, dy = y2 - y1;
          double angle = Math.atan2(dy, dx);
          int len = (int) Math.sqrt(dx*dx + dy*dy);
          
-         AffineTransform atOld = g.getTransform();
+         AffineTransform atOld = g2d.getTransform();
          AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
          at.concatenate(AffineTransform.getRotateInstance(angle));
-         g.transform(at);
+         g2d.transform(at);
 
-         Color old = g.getColor();
-         g.setPaint(color);
-         g.setStroke(new BasicStroke(width));
-         g.drawLine(0, 0, len, 0);
-         g.setPaint(old);
-         g.setTransform(atOld);
+         Color old = g2d.getColor();
+         g2d.setPaint(color);
+         g2d.setStroke(new BasicStroke(width));
+         g2d.drawLine(0, 0, len, 0);
+         g2d.setPaint(old);
+         g2d.setTransform(atOld);
     }
     
     /**
@@ -197,28 +206,30 @@ public class MauritiusMapPanel extends JPanel {
      * @param color Color - kolor
      */
 	private void drawArrow(Graphics graphics, int x1, int y1, int x2, int y2, int width, Color color) {
-		Graphics2D g = (Graphics2D) graphics.create();
+		Graphics2D g2d = (Graphics2D) graphics.create();
+		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
+		
         int ARR_SIZE = 6+width;
-        
         double dx = x2 - x1, dy = y2 - y1;
         double angle = Math.atan2(dy, dx);
+        
         int len = (int) Math.sqrt(dx*dx + dy*dy);
-        AffineTransform atOld = g.getTransform();
+        AffineTransform atOld = g2d.getTransform();
         AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
         at.concatenate(AffineTransform.getRotateInstance(angle));
-        g.transform(at);
+        g2d.transform(at);
         
-        Color old = g.getColor();
-        g.setPaint(color);
-        g.setStroke(new BasicStroke(width));
-        g.drawLine(0, 0, len, 0);
+        Color old = g2d.getColor();
+        g2d.setPaint(color);
+        g2d.setStroke(new BasicStroke(width));
+        g2d.drawLine(0, 0, len, 0);
         int offX = 6; // >0 przesunięcie do przodu
         int offY = 0; // >0 przesunięcie w dół pod kreskę
-        g.fillPolygon(new int[] {len + offX, len-ARR_SIZE+ offX, len-ARR_SIZE+ offX, len+ offX},
+        g2d.fillPolygon(new int[] {len + offX, len-ARR_SIZE+ offX, len-ARR_SIZE+ offX, len+ offX},
         			new int[] {0 + offY, -ARR_SIZE+ offY, ARR_SIZE+ offY, 0+ offY}, 4);
         
-        g.setPaint(old);
-        g.setTransform(atOld);
+        g2d.setPaint(old);
+        g2d.setTransform(atOld);
 	}
 	
 	 /**
@@ -232,22 +243,24 @@ public class MauritiusMapPanel extends JPanel {
      * @param color Color - kolor
      */
 	private void drawL_shapeArrow(Graphics graphics, int x1, int y1, int x2, int y2, int width, Color color) {
-		Graphics2D g = (Graphics2D) graphics.create();
+		Graphics2D g2d = (Graphics2D) graphics.create();
+		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
+		
         double dx = x2 - x1, dy = y2 - y1;
         double angle = Math.atan2(dy, dx);
         int len = (int) Math.sqrt(dx*dx + dy*dy);
-        AffineTransform atOld = g.getTransform();
+        AffineTransform atOld = g2d.getTransform();
         AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
         at.concatenate(AffineTransform.getRotateInstance(angle));
-        g.transform(at);
+        g2d.transform(at);
         
-        Color old = g.getColor();
-        g.setPaint(color);
-        g.setStroke(new BasicStroke(width));
-        g.drawLine(0, 0, len, 0);
+        Color old = g2d.getColor();
+        g2d.setPaint(color);
+        g2d.setStroke(new BasicStroke(width));
+        g2d.drawLine(0, 0, len, 0);
         
-        g.setPaint(old);
-        g.setTransform(atOld);
+        g2d.setPaint(old);
+        g2d.setTransform(atOld);
         
         drawArrow(graphics, x2, y2, x2+20, y2, width, color);
 	}
@@ -255,32 +268,47 @@ public class MauritiusMapPanel extends JPanel {
 	public void drawRotatedText(Graphics graphics, double x, double y, int angle, String text) 
 	{    
 		Graphics2D g2d = (Graphics2D) graphics.create();
+		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
+		
+		int baseSize = 12;
+		float zoom = getZoom();
+		baseSize *= (100/zoom);
+		
+		Font oldFont = g2d.getFont();
+		g2d.setFont(new Font("Tahoma", Font.PLAIN, baseSize));
+		
 	    g2d.translate((float)x,(float)y);
 	    g2d.rotate(Math.toRadians(angle));
 	    g2d.drawString(text,0,0);
 	    g2d.rotate(-Math.toRadians(angle));
 	    g2d.translate(-(float)x,-(float)y);
+	    
+	    g2d.setFont(oldFont);
+	    
 	}    
 	
 	private void drawText(Graphics graphics, int x, int y, String text, Color color) {
-		Graphics2D g = (Graphics2D) graphics.create();
-        Color oldColor = g.getColor();
-        g.setColor(color);
-        g.setFont(new Font("Tahoma", Font.BOLD, 14));
-        g.drawString(text, x, y);
-        g.setColor(oldColor);
+		Graphics2D g2d = (Graphics2D) graphics.create();
+		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
+		
+        Color oldColor = g2d.getColor();
+        g2d.setColor(color);
+        g2d.setFont(new Font("Tahoma", Font.BOLD, 14));
+        g2d.drawString(text, x, y);
+        g2d.setColor(oldColor);
 
     }
 	
 	private void drawTextOld(Graphics graphics, int x1, int y1, String text) {
-		Graphics2D g = (Graphics2D) graphics.create();
+		Graphics2D g2d = (Graphics2D) graphics.create();
+		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
 		
-        Color oldColor = g.getColor();
-        AffineTransform atOld = g.getTransform();
+        Color oldColor = g2d.getColor();
+        AffineTransform atOld = g2d.getTransform();
         
-        g.setColor(Color.black);
-        g.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        int name_width = g.getFontMetrics().stringWidth(text);
+        g2d.setColor(Color.black);
+        g2d.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        int name_width = g2d.getFontMetrics().stringWidth(text);
         
         int x2 = x1 + name_width;
         int y2 = y1 - name_width;
@@ -291,10 +319,10 @@ public class MauritiusMapPanel extends JPanel {
         AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
         at.concatenate(AffineTransform.getRotateInstance(angle));
         
-        g.transform(at);
-        g.drawString(text, 0, len);
-        g.setColor(oldColor);
-        g.setTransform(atOld);
+        g2d.transform(at);
+        g2d.drawString(text, 0, len);
+        g2d.setColor(oldColor);
+        g2d.setTransform(atOld);
     }
     
     
@@ -307,31 +335,61 @@ public class MauritiusMapPanel extends JPanel {
      * @param color Color - kolor
      */
     private void drawCenteredCircle(Graphics graphics, int x, int y, int r, Color color) {
-    	Graphics2D g = (Graphics2D)graphics.create();
+    	Graphics2D g2d = (Graphics2D)graphics.create();
+    	g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
+    	
     	int xPos = x-(r/2);
     	int yPos = y-(r/2);
     	
-    	Color old = g.getColor();
-    	Stroke oldStroke = g.getStroke();
+    	Color old = g2d.getColor();
+    	Stroke oldStroke = g2d.getStroke();
     	
-        g.setPaint(color);
+        g2d.setPaint(color);
         
-        g.setStroke(new BasicStroke(3));
-        g.drawOval(xPos, yPos, r, r);
+        g2d.setStroke(new BasicStroke(3));
+        g2d.drawOval(xPos, yPos, r, r);
         
         xPos = x-(r/2) +5;
     	yPos = y-(r/2) +5;
     	
-    	g.drawOval(xPos, yPos, r-10, r-10);
+    	g2d.drawOval(xPos, yPos, r-10, r-10);
     	//g.fillOval(x,y,r,r);
     	
-    	g.setStroke(oldStroke);
-    	g.setPaint(old);
+    	g2d.setStroke(oldStroke);
+    	g2d.setPaint(old);
     }
+    
+    public int getZoom() {
+		return zoom;
+	}
     
     public class Location {
     	public Point locXY;
     	
     	Location() {}
     }
+    
+    /**
+	 * Wewnątrzna klasa odpowiedzialna za obługę rolki myszy.
+	 * @author students
+	 *
+	 */
+	public class MouseWheelHandler implements MouseWheelListener {
+		/**
+		 * Metoda odpowiedzialna za działanie rozpoczęte przez przesuwanie rolki
+		 * myszy nad arkusze. W zależności czy wciśniętych jest klawisz CTRL czy
+		 * też SHIFT czy też żaden klawisz - działania są różne.
+		 * @param e MouseWheelEvent - obiekt klasy przekazywany w efekcie użycia wałka myszy
+		 */
+		@SuppressWarnings("unused")
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			if (e.isControlDown()) { //zoom
+				double oldZoom = getZoom();
+				//setZoom(getZoom() - 10 * e.getWheelRotation(), getZoom());
+				double newZoom = getZoom();
+
+
+			} 
+		}
+	}
 }

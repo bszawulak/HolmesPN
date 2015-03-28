@@ -187,47 +187,119 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 					notePad.setVisible(true);
 					getKnockoutInfo(infoMap, notePad);
 				}
-				
-				//mmp = new MauritiusMapPanel(kc);
-				//mmp.addMMBT(null);
-				//mmp.repaint();
 			}
 		});
 		showKnockoutButton.setFocusPainted(false);
 		panel.add(showKnockoutButton);
 		
+		JButton toNetKnockoutButton = new JButton("To Net");
+		toNetKnockoutButton.setBounds(posX+240, posY+30, 110, 30);
+		toNetKnockoutButton.setMargin(new Insets(0, 0, 0, 0));
+		toNetKnockoutButton.setIcon(Tools.getResIcon32("/icons/stateSim/aaa.png"));
+		toNetKnockoutButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				
+				MauritiusMapBT infoMap = generateMap();
+				if(infoMap != null) {
+					getKnockoutInfoToNet(infoMap);
+				}
+			}
+		});
+		toNetKnockoutButton.setFocusPainted(false);
+		panel.add(toNetKnockoutButton);
+		
 		return panel;
 	}
-	
-	
+
+	/**
+	 * Metoda wyświetla w notatniku dwa zbiory: zbiór tranzycji o tym samym stopniu występowania w inwariantach
+	 * co objectiveR, oraz zbiór reakcji które są zależne od objR.
+	 * @param infoMap MauritiusMapBT - obiekt danych mapy
+	 * @param notePad AbyssNotepad - obiekt notatnika dla wyników
+	 */
 	protected void getKnockoutInfo(MauritiusMapBT infoMap, AbyssNotepad notePad) {
-		int noteValue = infoMap.getRoot().transFrequency;
-		knockOutDataFailed = new ArrayList<Integer>();
-		knockOutDataObjR = new ArrayList<Integer>();
+		ArrayList<ArrayList<Integer>> dataMatrix = collectMapData(infoMap);
 		
-		collectInfo(infoMap.getRoot(), noteValue);
+		//int noteValue = infoMap.getRoot().transFrequency;
+		//knockOutDataFailed = new ArrayList<Integer>();
+		//knockOutDataObjR = new ArrayList<Integer>();
+		//collectInfo(infoMap.getRoot(), noteValue);
 		
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		
 		notePad.addTextLineNL("Reaction knocked out: "+infoMap.getRoot().transName, "text");
 		notePad.addTextLineNL("", "text");
 		notePad.addTextLineNL("Reaction common maximum set: ", "text");
-		Collections.sort(knockOutDataObjR);
-		for(int element : knockOutDataObjR) {
+		Collections.sort(dataMatrix.get(0));
+		for(int element : dataMatrix.get(0)) {
 			notePad.addTextLineNL("["+element+"] : "+transitions.get(element).getName(), "text");
 		}
 		notePad.addTextLineNL("", "text");
 		notePad.addTextLineNL("Chain reaction fail cascade: ", "text");
-		Collections.sort(knockOutDataFailed);
-		Collections.sort(knockOutDataFailed);
-		for(int element : knockOutDataFailed) {
+		
+		Collections.sort(dataMatrix.get(1));
+		for(int element : dataMatrix.get(1)) {
 			notePad.addTextLineNL("["+element+"] : "+transitions.get(element).getName(), "text");
 		}
 		//knockOutData
 	}
+	
+	protected void getKnockoutInfoToNet(MauritiusMapBT infoMap) {
+		ArrayList<ArrayList<Integer>> dataMatrix = collectMapData(infoMap);
+		
+		try {
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setColorClusterToNeutral();
 
+			Transition trans_TMP;// = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(0);
+			
+			for(int id : dataMatrix.get(0)) {
+				trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(id);
+				trans_TMP.setColorWithNumber(true, Color.black, false, -1);
+			}
+			for(int id : dataMatrix.get(1)) {
+				trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(id);
+				trans_TMP.setColorWithNumber(true, Color.blue, false, -1);
+			}
+			
+			int rootID = infoMap.getRoot().transLocation;
+			trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(rootID);
+			trans_TMP.setColorWithNumber(true, Color.red, false, -1);
+			
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+		} catch (Exception e) {
+			
+		}
+	}
+	
+	/**
+	 * Metoda uruchamia przeglądanie mapy a następnie agreguje wynik do obiektu wyjściowego.
+	 * @param infoMap MauritiusMapBT - obiekt mapu
+	 * @return ArrayList[ArrayList[Integer]] - pierszy zbiór .get(0) to reakcje zależne od objR, drugi zbiór .get(1)
+	 * 		to reakcje o tej samej frekwencji co objR
+	 */
+	private ArrayList<ArrayList<Integer>> collectMapData(MauritiusMapBT infoMap) {
+		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
+		
+		int noteValue = infoMap.getRoot().transFrequency;
+		knockOutDataFailed = new ArrayList<Integer>();
+		knockOutDataObjR = new ArrayList<Integer>();
+		collectInfo(infoMap.getRoot(), noteValue);
+		
+		ArrayList<Integer> set1 = new ArrayList<Integer>(knockOutDataFailed);
+		ArrayList<Integer> set2 = new ArrayList<Integer>(knockOutDataObjR);
+		result.add(set1);
+		result.add(set2);
+		return result;
+	}
 
-
+	/**
+	 * Rekurencyjna metoda przeszukująca mapę i tworząca zbiory reakcji zależnych i niezależnych od
+	 * objR (korzeń drzewa)
+	 * @param node BTNode - węzeł drzewa
+	 * @param startSetValue int - frequency dla objR
+	 */
 	private void collectInfo(BTNode node, int startSetValue) {
 		// TODO Auto-generated method stub
 		int freq = node.transFrequency;
@@ -250,8 +322,6 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
     		collectInfo(node.leftChild, startSetValue);
     	}
 	}
-
-
 
 	/**
 	 * Metoda tworząca główmu panel mapy.

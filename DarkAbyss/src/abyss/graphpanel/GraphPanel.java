@@ -249,37 +249,29 @@ public class GraphPanel extends JComponent {
 	public void drawPetriNet(Graphics2D g2d) {
 		g2d.translate(0, 0);
 		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, // Anti-alias!
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		for (Arc a : getArcs()) {
 			a.draw(g2d, this.sheetId, getZoom());
 		}
-		if (this.isSimulationActive())
+		if (this.isSimulationActive()) {
 			for (Arc a : getArcs()) {
 				a.drawSimulationToken(g2d, this.sheetId);
 			}
+		}
+		
 		for (Node n : getNodes()) {
-			
-			//if(GUIManager.getDefaultGUIManager().getNameLocChangeMode() == true)
-			//	break;
-			
-			n.draw(g2d, this.sheetId);
-			
-			
+			n.draw(g2d, this.sheetId);	
 		}
 		for (Node n : getNodes()) {
-			//n.draw(g2d, this.sheetId);
 			n.drawName(g2d, this.sheetId);
 		}
 		
 		if (getSelectingRect() != null) {
 			g2d.setColor(EditorResources.selectionRectColor);
 			g2d.setStroke(EditorResources.selectionRectStroke);
-			g2d.drawRoundRect(getSelectingRect().x, getSelectingRect().y,
-				getSelectingRect().width, getSelectingRect().height, 3, 3);
+			g2d.drawRoundRect(getSelectingRect().x, getSelectingRect().y, getSelectingRect().width, getSelectingRect().height, 3, 3);
 			g2d.setColor(EditorResources.selectionRectFill);
-			g2d.fillRoundRect(getSelectingRect().x, getSelectingRect().y,
-				getSelectingRect().width, getSelectingRect().height, 3, 3);
+			g2d.fillRoundRect(getSelectingRect().x, getSelectingRect().y, getSelectingRect().width, getSelectingRect().height, 3, 3);
 		}
 		if (drawnArc != null)
 			drawnArc.draw(g2d, this.sheetId, getZoom());
@@ -299,9 +291,7 @@ public class GraphPanel extends JComponent {
 		
 		if (getOriginSize().width * zoom / 100 < 10)
 			return;
-		
-		
-		
+
 		this.zoom = zoom;
 		//System.out.println(this.getOriginSize().width * zoom / 100);
 		//this.setSize(this.getOriginSize().width * zoom / 100, this.getOriginSize().height * zoom / 100);

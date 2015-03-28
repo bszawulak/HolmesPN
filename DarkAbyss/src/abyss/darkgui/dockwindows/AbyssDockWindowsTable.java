@@ -96,7 +96,7 @@ import abyss.workspace.WorkspaceSheet;
  * 
  * Ostatnia rzecz, jeśli cię to nie przekonuje. Otwórz google. Wpisz dowolną frazę ze słowami
  * "java layout", "problem" względnie "does not". Pół internetu wyleci z pytaniami i (rzadziej) 
- * odpowiedziami. Takie to wspaniałe layouty. (╯゜Д゜）╯︵ ┻━━━┻)   
+ * odpowiedziami. Takie to wspaniałe layouty. (╯゜Д゜）╯︵ ┻━┻)   
  */
 public class AbyssDockWindowsTable extends JPanel {
 	private static final long serialVersionUID = 4510802239873443705L;
@@ -2292,10 +2292,10 @@ public class AbyssDockWindowsTable extends JPanel {
 	//*********************************        MCS       ***********************************
 	//*********************************                  ***********************************
 	//**************************************************************************************
-//TODO:
+	//TODO:
 	/**
-	 * Konstruktor 
-	 * @param is
+	 * Konstruktor podokna zbiorów MCS.
+	 * @param mcsData MCSDataMatrix - obiekt danych zbiorów MCS
 	 */
 	public AbyssDockWindowsTable(MCSDataMatrix mcsData)
 	{
@@ -2638,6 +2638,14 @@ public class AbyssDockWindowsTable extends JPanel {
 		}
 	}
 	
+	/**
+	 * Metoda sprawdza, czy dla danego węzła sieci lokalizacja jego nazwy nie wykracza poza ramy
+	 * obrazu sieci - dla współrzędnej Y
+	 * @param y int - współrzędna Y
+	 * @param n Node - wierzchołek sieci
+	 * @param el ElementLocation - obiekt lokalizacji wierzchołka
+	 * @return Point - prawidłowe współrzędne
+	 */
 	protected Point setNameOffsetY(int y, Node n, ElementLocation el) {
 		int nameLocIndex = n.getElementLocations().indexOf(el);
 		int oldX = n.getNamesLocations().get(nameLocIndex).getPosition().x;
@@ -2654,7 +2662,15 @@ public class AbyssDockWindowsTable extends JPanel {
 		}
 		return n.getNamesLocations().get(nameLocIndex).getPosition();
 	}
-
+	
+	/**
+	 * Metoda sprawdza, czy dla danego węzła sieci lokalizacja jego nazwy nie wykracza poza ramy
+	 * obrazu sieci - dla współrzędnej X
+	 * @param x int - współrzędna X
+	 * @param n Node - wierzchołek sieci
+	 * @param el ElementLocation - obiekt lokalizacji wierzchołka
+	 * @return Point - prawidłowe współrzędne
+	 */
 	protected Point setNameOffsetX(int x, Node n, ElementLocation el) {
 		int nameLocIndex = n.getElementLocations().indexOf(el);
 		int oldX = x;
