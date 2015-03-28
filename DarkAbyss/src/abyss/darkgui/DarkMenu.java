@@ -414,7 +414,7 @@ public class DarkMenu extends JMenuBar {
 		
 		// Knockout window
 		JMenuItem knockoutWindowItem = new JMenuItem("Knockout analysis...", KeyEvent.VK_3);
-		knockoutWindowItem.setIcon(Tools.getResIcon32("/icons/menu/a.png"));
+		knockoutWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
 		knockoutWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.CTRL_MASK));
 		knockoutWindowItem.getAccessibleContext().setAccessibleDescription("Knockout analysis tools");
 		knockoutWindowItem.addActionListener(new ActionListener() {
