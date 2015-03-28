@@ -160,7 +160,7 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		JButton generateButton = new JButton("Generate");
 		generateButton.setBounds(posX, posY+30, 110, 30);
 		generateButton.setMargin(new Insets(0, 0, 0, 0));
-		generateButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+		generateButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/computeData.png"));
 		generateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				mmCurrentObject = generateMap();
@@ -174,10 +174,10 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		generateButton.setFocusPainted(false);
 		panel.add(generateButton);
 
-		JButton showKnockoutButton = new JButton("Show knockout");
+		JButton showKnockoutButton = new JButton("Show...");
 		showKnockoutButton.setBounds(posX+120, posY+30, 110, 30);
 		showKnockoutButton.setMargin(new Insets(0, 0, 0, 0));
-		showKnockoutButton.setIcon(Tools.getResIcon32("/icons/stateSim/aaa.png"));
+		showKnockoutButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/showNotepad.png"));
 		showKnockoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				
@@ -192,10 +192,10 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		showKnockoutButton.setFocusPainted(false);
 		panel.add(showKnockoutButton);
 		
-		JButton toNetKnockoutButton = new JButton("To Net");
+		JButton toNetKnockoutButton = new JButton("Show Net");
 		toNetKnockoutButton.setBounds(posX+240, posY+30, 110, 30);
 		toNetKnockoutButton.setMargin(new Insets(0, 0, 0, 0));
-		toNetKnockoutButton.setIcon(Tools.getResIcon32("/icons/stateSim/aaa.png"));
+		toNetKnockoutButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/sendToNet.png"));
 		toNetKnockoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				

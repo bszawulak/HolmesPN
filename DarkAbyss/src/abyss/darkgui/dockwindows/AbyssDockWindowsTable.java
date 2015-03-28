@@ -747,12 +747,12 @@ public class AbyssDockWindowsTable extends JPanel {
 		}.yesWeCan(place, location) ); 
 		components.add(nameLocationYSpinner);
 		
-		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/simulation/co"));
+		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
 		nameLocChangeButton.setName("LocNameChanger");
-		nameLocChangeButton.setText("Name location change: OFF");
 		nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
-		nameLocChangeButton.setBounds(columnA_posX, columnA_Y += 20, 200, 30);
-		nameLocChangeButton.setToolTipText("   ");
+		nameLocChangeButton.setBounds(columnA_posX+90, columnA_Y += 25, 150, 40);
+		nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
+		nameLocChangeButton.setFocusPainted(false);
 		nameLocChangeButton.addActionListener(new ActionListener() {
 			// anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
 			private Place place_tmp;
@@ -761,11 +761,11 @@ public class AbyssDockWindowsTable extends JPanel {
 				JButton button_tmp = (JButton) actionEvent.getSource();
 				
 				if(nameLocChangeMode == false) {
-					button_tmp.setText("Name location change: ON");
+					button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
 					nameLocChangeMode = true;
 					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(place_tmp, el_tmp, true);
 				} else {
-					button_tmp.setText("Name location change: OFF");
+					button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
 					nameLocChangeMode = false;
 					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
 				}
@@ -1023,12 +1023,11 @@ public class AbyssDockWindowsTable extends JPanel {
 		}.yesWeCan(transition, location) ); 
 		components.add(nameLocationYSpinner);
 		
-		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/simulation/co"));
+		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
 		nameLocChangeButton.setName("LocNameChanger");
-		nameLocChangeButton.setText("Name location change: OFF");
+		nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
 		nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
-		nameLocChangeButton.setBounds(columnA_posX, columnA_Y += 20, 200, 30);
-		nameLocChangeButton.setToolTipText("   ");
+		nameLocChangeButton.setBounds(columnA_posX+90, columnA_Y += 25, 150, 40);
 		nameLocChangeButton.addActionListener(new ActionListener() {
 			// anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
 			private Transition trans_tmp;
@@ -1037,11 +1036,11 @@ public class AbyssDockWindowsTable extends JPanel {
 				JButton button_tmp = (JButton) actionEvent.getSource();
 				
 				if(nameLocChangeMode == false) {
-					button_tmp.setText("Name location change: ON");
+					button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
 					nameLocChangeMode = true;
 					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(trans_tmp, el_tmp, true);
 				} else {
-					button_tmp.setText("Name location change: OFF");
+					button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
 					nameLocChangeMode = false;
 					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
 				}
@@ -1100,6 +1099,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
 		nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(nameLabel);
+		
 		DefaultFormatter format = new DefaultFormatter();
 	    format.setOverwriteMode(false);
 		JFormattedTextField nameField = new JFormattedTextField(format);
@@ -1336,12 +1336,11 @@ public class AbyssDockWindowsTable extends JPanel {
 		}.yesWeCan(transition, location) ); 
 		components.add(nameLocationYSpinner);
 		
-		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/simulation/co"));
+		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
 		nameLocChangeButton.setName("LocNameChanger");
-		nameLocChangeButton.setText("Name location change: OFF");
+		nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
 		nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
-		nameLocChangeButton.setBounds(columnA_posX, columnA_Y += 20, 200, 30);
-		nameLocChangeButton.setToolTipText("   ");
+		nameLocChangeButton.setBounds(columnA_posX+90, columnA_Y += 25, 150, 40);
 		nameLocChangeButton.addActionListener(new ActionListener() {
 			// anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
 			private TimeTransition trans_tmp;
@@ -1350,11 +1349,11 @@ public class AbyssDockWindowsTable extends JPanel {
 				JButton button_tmp = (JButton) actionEvent.getSource();
 				
 				if(nameLocChangeMode == false) {
-					button_tmp.setText("Name location change: ON");
+					button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
 					nameLocChangeMode = true;
 					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(trans_tmp, el_tmp, true);
 				} else {
-					button_tmp.setText("Name location change: OFF");
+					button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
 					nameLocChangeMode = false;
 					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
 				}
@@ -1526,7 +1525,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	//**************************************************************************************
 	//*********************************                  ***********************************
 	//*********************************      ARKUSZ      ***********************************
-	//*********************************                  ***********************************
+	//*********************************       SHEET      ***********************************
 	//**************************************************************************************
 	
 	/**
@@ -1727,7 +1726,8 @@ public class AbyssDockWindowsTable extends JPanel {
 		String[] invariantHeaders = new String[invariantsMatrix.size() + 2];
 		invariantHeaders[0] = "---";
 		for (int i = 0; i < invariantsMatrix.size(); i++) {
-			invariantHeaders[i + 1] = "Inv. #" + Integer.toString(i) +" (size: "+invariantsMatrix.get(i).size()+")";
+			int invSize = InvariantsTools.getSupport(invariantsMatrix.get(i)).size();
+			invariantHeaders[i + 1] = "Inv. #" + Integer.toString(i) +" (size: "+invSize+")";
 		}
 		invariantHeaders[invariantHeaders.length-1] = "null transitions";
 		
@@ -1771,72 +1771,6 @@ public class AbyssDockWindowsTable extends JPanel {
 		panel.repaint();
 		panel.setVisible(true);
 		add(panel);
-		/*
-		if(invariants == null || invariants.size() == 0) {
-			return;
-		} else {
-			mode = INVARIANTS;
-			invariantsDock2Form = invariants;
-			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
-		}
-		
-		int colA_posX = 10;
-		int colB_posX = 100;
-		int positionY = 10;
-		initiateContainers();
-
-		JLabel chooseInvLabel = new JLabel("Invariant: ");
-		chooseInvLabel.setBounds(colA_posX, positionY, 80, 20);
-		components.add(chooseInvLabel);
-		
-		String[] invariantHeaders = new String[invariants.size() + 2];
-		invariantHeaders[0] = "---";
-		for (int i = 0; i < invariants.size(); i++) {
-			invariantHeaders[i + 1] = "Inv. #" + Integer.toString(i) +" (size: "+invariants.get(i).size()+")";
-		}
-		invariantHeaders[invariantHeaders.length-1] = "null transitions";
-		
-		JComboBox<String> chooseInvBox = new JComboBox<String>(invariantHeaders);
-		chooseInvBox.setBounds(colB_posX, positionY, 150, 20);
-		chooseInvBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				@SuppressWarnings("unchecked")
-				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
-				int items = comboBox.getItemCount();
-				if (comboBox.getSelectedIndex() == 0) {
-					showInvariant(0, false);
-				} else if(comboBox.getSelectedIndex() == items-1) { 
-					showDeadInv();
-				} else {
-					showInvariant(comboBox.getSelectedIndex() - 1, true);
-				}
-			}
-		});
-		components.add(chooseInvBox);
-		positionY += 30;
-		
-		invTextArea = new JTextArea();
-		invTextArea.setEditable(false);
-		invTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		JPanel textAreaPanel = new JPanel();
-		textAreaPanel.setLayout(new BorderLayout());
-		textAreaPanel.add(new JScrollPane(
-				invTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-        		BorderLayout.CENTER);
-		
-		int w = GUIManager.getDefaultGUIManager().getMctBox().getWidth();
-		int h = GUIManager.getDefaultGUIManager().getMctBox().getHeight();
-		textAreaPanel.setBounds(colA_posX, positionY, w-30, h-60);
-		components.add(textAreaPanel);
-		
-		panel.setLayout(null);
-		for (int i = 0; i < components.size(); i++)
-			 panel.add(components.get(i));
-		panel.setOpaque(true);
-		panel.repaint();
-		panel.setVisible(true);
-		add(panel);
-		*/
 	}
 	
 	/**
@@ -1900,6 +1834,9 @@ public class AbyssDockWindowsTable extends JPanel {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
+	/**
+	 * Metoda pomicnicza do zaznaczania tranzycji nie pokrytych inwariantami.
+	 */
 	private void showDeadInv() {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);

@@ -243,7 +243,7 @@ public class AbyssMCS extends JFrame {
 		saveAllButton.setText("<html>Save all<br />MCS</html>");
 		saveAllButton.setBounds(posX+410, posY+55, 110, 32);
 		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
-		saveAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveMCS.png"));
+		saveAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveAllMCS.png"));
 		saveAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				MCSoperations.saveAllMCS(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore());
@@ -465,7 +465,7 @@ public class AbyssMCS extends JFrame {
 		calculateFragilityButton.setText("Fragility");
 		calculateFragilityButton.setBounds(posX+120, posY+25, 110, 32);
 		calculateFragilityButton.setMargin(new Insets(0, 0, 0, 0));
-		calculateFragilityButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
+		calculateFragilityButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/fragility.png"));
 		calculateFragilityButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = transitionsResultsCombo.getSelectedIndex();

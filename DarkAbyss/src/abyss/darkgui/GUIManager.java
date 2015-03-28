@@ -475,13 +475,17 @@ public class GUIManager extends JPanel implements ComponentListener {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			//leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 10);
 			leftSplitDock.setDividerLocation(180);
+			//
+			//int width = this.getWidth();
 			//totalSplitDock.setDividerLocation(600);
-			totalSplitDock.setDividerLocation((int) (screenSize.getWidth() * 5.6 / 7));
+			//totalSplitDock.setDividerLocation((int) (screenSize.getWidth() * 5.6 / 7));
+			totalSplitDock.setDividerLocation((int) (screenSize.getWidth() - 350));
 		} else {
 			smallScreenSize = getFrame().getSize();
 			//leftSplitDock.setDividerLocation((int) smallScreenSize.getWidth() / 8);
 			leftSplitDock.setDividerLocation(180);
-			totalSplitDock.setDividerLocation((int) (smallScreenSize.getWidth() * 5.6 / 7));
+			//totalSplitDock.setDividerLocation((int) (smallScreenSize.getWidth() * 5.6 / 7));
+			totalSplitDock.setDividerLocation((int) (screenSize.getWidth() - 350));
 		}
 	}
 
