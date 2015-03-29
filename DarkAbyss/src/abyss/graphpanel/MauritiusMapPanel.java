@@ -136,6 +136,8 @@ public class MauritiusMapPanel extends JPanel {
 		
 		double zoomMod = (double)zoom / (double)100;
 		
+		//i jedno i drugie potrzebne, aby scrollPanel działa i się aktualizował. No i borderlayout.
+		
 		setPreferredSize(new Dimension((int)(panelWidth*zoomMod), (int)(panelHeigth*zoomMod)));
 		setSize(new Dimension((int)(panelWidth*zoomMod), (int)(panelHeigth*zoomMod)));
 	}
