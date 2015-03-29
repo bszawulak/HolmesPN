@@ -90,12 +90,13 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
   	  	    }  
     	});
 		
-		addComponentListener(this);
+		//addComponentListener(this);
+		
 		addWindowStateListener(new WindowAdapter() {
 			public void windowStateChanged(WindowEvent e) {
 				if(e.getNewState() == JFrame.MAXIMIZED_BOTH) {
-					ego.setExtendedState(JFrame.NORMAL);
-					resizeComponents();
+					//ego.setExtendedState(JFrame.NORMAL);
+					//resizeComponents();
 				}
 			}
 		});
@@ -108,15 +109,14 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 	 * @return JPanel - panel główny
 	 */
 	private JPanel createMainPanel() {
-		JPanel panel = new JPanel();
-		panel.setLayout(null);
-		
+		JPanel panel = new JPanel(new BorderLayout());
+
 		//Panel wyboru opcji szukania
 		buttonPanel = createUpperButtonPanel(0, 0, 900, 90);
 		logMainPanel = createGraphPanel(0, 90, 900, 600);
 		
-		panel.add(buttonPanel);
-		panel.add(logMainPanel);
+		panel.add(buttonPanel, BorderLayout.NORTH);
+		panel.add(logMainPanel, BorderLayout.CENTER);
 		panel.repaint();
 		return panel;
 	}
@@ -133,7 +133,9 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Search options"));
-		panel.setBounds(x, y, width, height);
+		//panel.setBounds(x, y, width, height);
+		panel.setLocation(x, y);
+		panel.setPreferredSize(new Dimension(width, height));
 		
 		int posX = 10;
 		int posY = 20;
@@ -165,10 +167,9 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 			public void actionPerformed(ActionEvent actionEvent) {
 				mmCurrentObject = generateMap();
 				paintMap();
+
 				
-				//MauritiusMapBT kc = new MauritiusMapBT();
-				//mmp.addMMBT(kc);
-				//mmp.repaint();
+				
 			}
 		});
 		generateButton.setFocusPainted(false);
@@ -209,6 +210,32 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		panel.add(toNetKnockoutButton);
 		
 		return panel;
+	}
+	
+	/**
+	 * Metoda tworząca główmu panel mapy.
+	 * @param x int - współrzędna x
+	 * @param y int - współrzędna y
+	 * @param width int - szerokość panelu
+	 * @param height int - wysokość panelu
+	 * @return JPanel - panel przycisków
+	 */
+	private JPanel createGraphPanel(int x, int y, int width, int height) {
+		JPanel gr_panel = new JPanel(new BorderLayout());
+		//gr_panel.setBounds(x, y, width, height);
+		
+		gr_panel.setLocation(x, y);
+		gr_panel.setPreferredSize(new Dimension(width, height));
+		
+		mmp = new MauritiusMapPanel();
+		
+		intX = width - 10;
+		intY = height - 25;
+		
+		scroller = new JScrollPane(mmp, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		gr_panel.add(scroller, BorderLayout.CENTER);
+
+		return gr_panel;
 	}
 
 	/**
@@ -301,7 +328,6 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 	 * @param startSetValue int - frequency dla objR
 	 */
 	private void collectInfo(BTNode node, int startSetValue) {
-		// TODO Auto-generated method stub
 		int freq = node.transFrequency;
 		int transID = node.transLocation;
 		if(freq == startSetValue) {
@@ -323,34 +349,6 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
     	}
 	}
 
-	/**
-	 * Metoda tworząca główmu panel mapy.
-	 * @param x int - współrzędna x
-	 * @param y int - współrzędna y
-	 * @param width int - szerokość panelu
-	 * @param height int - wysokość panelu
-	 * @return JPanel - panel przycisków
-	 */
-	private JPanel createGraphPanel(int x, int y, int width, int height) {
-		JPanel gr_panel = new JPanel();
-		gr_panel.setLayout(null);
-		gr_panel.setBounds(x, y, width, height);
-		
-		mmp = new MauritiusMapPanel();
-		
-		intX = width - 10;
-		intY = height - 25;
-		
-		scroller = new JScrollPane(mmp, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scroller.setBounds(0, 0, intX, intY);
-		gr_panel.add(scroller);
-		
-		@SuppressWarnings("unused")
-		Dimension size = mmp.getSize();
-
-		return gr_panel;
-	}
-	
 	/**
 	 * Metoda odpowiedzialna za wygenerowanie mapy.
 	 * @return MauritiusMapBT - obiekt mapy
@@ -380,7 +378,7 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 	 * Metoda uruchamiania przerysowanie wyliczonej mapy.
 	 */
 	private void paintMap() {
-		mmp.addMMBT(mmCurrentObject);
+		mmp.addNewMap(mmCurrentObject);
 		mmp.repaint();
 	}
 	
@@ -393,7 +391,8 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		
 		intX = logMainPanel.getWidth();
 		intY = logMainPanel.getHeight();
-		scroller.setBounds(0, 0, intX, intY);
+		//scroller.setBounds(0, 0, intX, intY);
+		scroller.setPreferredSize(new Dimension(intX, intY));
 	}
 	
 	/**

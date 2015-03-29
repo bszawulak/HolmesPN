@@ -38,11 +38,13 @@ public class MauritiusMapPanel extends JPanel {
 	private int maxUsedWidth = 0;
 	private boolean fullName = true; //czy pełna nazwa tranzycji ma być wyświetlona
 	private int baseThickness = 0;
-	private int zoom = 40;
+	private int zoom = 100;
 	
 	private int panelWidth = 0;
 	private int panelHeigth = 0;
 	private Dimension originSize; //oryginalny rozmiar
+	
+	public boolean originalSizeKnown = false;
 	
 	/**
 	 * Główny konstruktor obiektu klasy MauritiusMapPanel.
@@ -59,8 +61,9 @@ public class MauritiusMapPanel extends JPanel {
      * Metoda dodająca obiekt mapy. Po tym wystarczy odświeżyć panel aby mapa została narysowana.
      * @param mmbt MauritiusMapBT - Mauritius Map Binary Tree
      */
-    public void addMMBT(MauritiusMapBT mmbt) {
+    public void addNewMap(MauritiusMapBT mmbt) {
     	this.mmbt = mmbt;
+    	this.originalSizeKnown = false;
     }
   
     /**
@@ -131,8 +134,10 @@ public class MauritiusMapPanel extends JPanel {
 		if(panelWidth < 200+maxUsedWidth)
 			panelWidth = 700+maxUsedWidth;
 		
-		setPreferredSize(new Dimension(panelWidth, panelHeigth));
-		setOriginSize(new Dimension(panelWidth, panelHeigth));
+		double zoomMod = (double)zoom / (double)100;
+		
+		setPreferredSize(new Dimension((int)(panelWidth*zoomMod), (int)(panelHeigth*zoomMod)));
+		setSize(new Dimension((int)(panelWidth*zoomMod), (int)(panelHeigth*zoomMod)));
 	}
     
     @Override
@@ -145,6 +150,12 @@ public class MauritiusMapPanel extends JPanel {
 
 			readAndPaintTree(mmbt.getRoot(), g, 100, 200, fullName);
 			normalizeSize();
+			verticalMulti = 0;
+			
+			if(originalSizeKnown == false) {
+				setOriginSize(new Dimension(panelWidth, panelHeigth));
+				originalSizeKnown = true;
+			}
     	}
     }
     
@@ -371,31 +382,38 @@ public class MauritiusMapPanel extends JPanel {
     	}
     }
     
+    /**
+     * Metoda zwraca poziom powiększenia panelu.
+     * @return int - zoom (0, inf)
+     */
     public int getZoom() {
 		return zoom;
 	}
     
+    /**
+     * Metoda ustala nowy poziom powiększenia.
+     * @param zoom int - nowy poziom
+     */
     public void setZoom(int zoom) {
-		Dimension hidden = getOriginSize();
-		int orgHeight = (int) hidden.getHeight();
-		int orgWidth = (int) hidden.getWidth();
-		
 		if (getOriginSize().width * zoom / 100 < 10)
-			return;
-		
-		if(zoom < 10)
 			return;
 
 		this.zoom = zoom;
 		
+		this.invalidate();
+		this.repaint();
+		
+		/*
+		Dimension hidden = getOriginSize();
+		int orgHeight = (int) hidden.getHeight();
+		int orgWidth = (int) hidden.getWidth();
 		int h = orgHeight;
 		h = (int) (h * (double)zoom / (double)100);
 		int w = orgWidth;
 		w = (int) (w * (double)zoom / (double)100);
 		this.setSize(w, h);
 		
-		this.invalidate();
-		this.repaint();
+		*/
 	}
     
     
