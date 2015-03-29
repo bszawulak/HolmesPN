@@ -20,6 +20,7 @@ import abyss.graphpanel.GraphPanel.MouseWheelHandler;
 import abyss.math.MauritiusMapBT;
 import abyss.math.MauritiusMapBT.BTNode;
 import abyss.math.MauritiusMapBT.NodeType;
+import abyss.workspace.WorkspaceSheet;
 
 /**
  * Metoda odpowiedzialna za rysowanie map Mauritiusa.
@@ -39,16 +40,17 @@ public class MauritiusMapPanel extends JPanel {
 	private int baseThickness = 0;
 	private int zoom = 40;
 	
-	private int sizeX = 0;
-	private int sizeY = 0;
+	private int panelWidth = 0;
+	private int panelHeigth = 0;
+	private Dimension originSize; //oryginalny rozmiar
 	
 	/**
 	 * Główny konstruktor obiektu klasy MauritiusMapPanel.
 	 */
     public MauritiusMapPanel() {
-    	sizeX = 800;
-    	sizeY = 600;
-        setPreferredSize(new Dimension(sizeX, sizeY));
+    	panelWidth = 800;
+    	panelHeigth = 600;
+        setPreferredSize(new Dimension(panelWidth, panelHeigth));
         
         this.addMouseWheelListener(new MouseWheelHandler());
     }
@@ -60,12 +62,7 @@ public class MauritiusMapPanel extends JPanel {
     public void addMMBT(MauritiusMapBT mmbt) {
     	this.mmbt = mmbt;
     }
-    
-    @Override
-    public Dimension getPreferredSize() {
-    	return new Dimension(sizeX, sizeY);
-    }
-    
+  
     /**
      * Metoda ustawia opcję wyświetlania pełnej nazwy tranzycji.
      * @param full boolean - jeśli true - pełna nazwa; false - format "t_"+lokalizacja w wektorze
@@ -73,16 +70,7 @@ public class MauritiusMapPanel extends JPanel {
     private void setFullName(boolean full) {
     	fullName = full;
     }
-    
-    /**
-     * Aktualizuje szerokość w zależności od rysunku.
-     * @param x int - stara wartość szerokości panelu
-     */
-    private void updateWidth(int x) {
-    	if(x>maxUsedWidth)
-    		maxUsedWidth = x;
-    }
-    
+
     /**
      * Główna metoda rysująca mapę Mauritiusa poprzez rekurencyjne przeglądanie drzewa binarnego danych o mapie.
      * @param node BTNode - aktualny węzeł drzewa
@@ -91,7 +79,7 @@ public class MauritiusMapPanel extends JPanel {
      * @param y int - pozycja startowa Y korzenia
      * @param fullName boolean - jeśli true, wyświetla pełne nazwy reakcji
      */
-    private void readTree(BTNode node, Graphics g, int x, int y, boolean fullName) {
+    private void readAndPaintTree(BTNode node, Graphics g, int x, int y, boolean fullName) {
     	updateWidth(x);
     	String name = node.transName;
     	int freq = node.transFrequency;
@@ -108,7 +96,7 @@ public class MauritiusMapPanel extends JPanel {
     	
     	if(node.rightChild != null) {
     		drawArrow(g, x+20, y, x+100, y, 3, Color.gray);
-    		readTree(node.rightChild, g, x+126, y, fullName); //120+6 (6=offest strzałki)
+    		readAndPaintTree(node.rightChild, g, x+126, y, fullName); //120+6 (6=offest strzałki)
     	}
     	
     	if(node.leftChild != null) {
@@ -127,23 +115,25 @@ public class MauritiusMapPanel extends JPanel {
     		
     		drawL_shapeArrow(g, x-45, currentAltitude, x-45, lowerAltitude, 3, Color.gray);
 
-    		readTree(node.leftChild, g, x, lowerAltitude, fullName);
+    		readAndPaintTree(node.leftChild, g, x, lowerAltitude, fullName);
     		verticalMulti++; //powrót z podwęzła, następny +1 odległość
     		currentVerticalLevel--; //powrót na starą wysokość
-    		
-    	}
-    	
-    	if(node.type == NodeType.ROOT) {
-    		if(sizeY < y+((offsetVertical+10)*verticalMulti))
-    			sizeY = y+((offsetVertical+10)*verticalMulti);
-    		
-    		if(sizeX < 200+maxUsedWidth)
-    			sizeX = 700+maxUsedWidth;
-    		
-    		setPreferredSize(new Dimension(sizeX, sizeY));
-    		verticalMulti=0;
     	}
     }
+
+    /**
+     * Metoda ustala ostateczne rozmiary panelu po narysowaniu drzewa.
+     */
+	private void normalizeSize() {
+		if(panelHeigth < 200+((offsetVertical+10)*verticalMulti))
+			panelHeigth = 200+((offsetVertical+10)*verticalMulti);
+		
+		if(panelWidth < 200+maxUsedWidth)
+			panelWidth = 700+maxUsedWidth;
+		
+		setPreferredSize(new Dimension(panelWidth, panelHeigth));
+		setOriginSize(new Dimension(panelWidth, panelHeigth));
+	}
     
     @Override
     public void paintComponent(Graphics g) {
@@ -153,7 +143,8 @@ public class MauritiusMapPanel extends JPanel {
     		baseThickness = mmbt.getRoot().transFrequency;
     		//normalizeBaseThickness();
 
-			readTree(mmbt.getRoot(), g, 100, 200, fullName);
+			readAndPaintTree(mmbt.getRoot(), g, 100, 200, fullName);
+			normalizeSize();
     	}
     }
     
@@ -324,8 +315,7 @@ public class MauritiusMapPanel extends JPanel {
         g2d.setColor(oldColor);
         g2d.setTransform(atOld);
     }
-    
-    
+
     /**
      * Metoda rysuje wypełniony kolorem okrąg.
      * @param graphics Graphics - obiekt grafiki
@@ -359,9 +349,55 @@ public class MauritiusMapPanel extends JPanel {
     	g2d.setPaint(old);
     }
     
+    //***********************************************************************************************************
+  	//***********************************************************************************************************
+  	//***********************************************************************************************************
+
+    public Dimension getOriginSize() {
+		return originSize;
+	}
+    
+    public void setOriginSize(Dimension originSize) {
+		this.originSize = originSize;
+	}
+    
+    /**
+     * Metoda zapamiętuje maksymalną szerokość panelu w miarę tworzenia mapy.
+     * @param x int - stara wartość szerokości panelu
+     */
+    private void updateWidth(int x) {
+    	if(x>maxUsedWidth) {
+    		maxUsedWidth = x;
+    	}
+    }
+    
     public int getZoom() {
 		return zoom;
 	}
+    
+    public void setZoom(int zoom) {
+		Dimension hidden = getOriginSize();
+		int orgHeight = (int) hidden.getHeight();
+		int orgWidth = (int) hidden.getWidth();
+		
+		if (getOriginSize().width * zoom / 100 < 10)
+			return;
+		
+		if(zoom < 10)
+			return;
+
+		this.zoom = zoom;
+		
+		int h = orgHeight;
+		h = (int) (h * (double)zoom / (double)100);
+		int w = orgWidth;
+		w = (int) (w * (double)zoom / (double)100);
+		this.setSize(w, h);
+		
+		this.invalidate();
+		this.repaint();
+	}
+    
     
     public class Location {
     	public Point locXY;
@@ -384,11 +420,7 @@ public class MauritiusMapPanel extends JPanel {
 		@SuppressWarnings("unused")
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			if (e.isControlDown()) { //zoom
-				double oldZoom = getZoom();
-				//setZoom(getZoom() - 10 * e.getWheelRotation(), getZoom());
-				double newZoom = getZoom();
-
-
+				setZoom(getZoom() - 10 * e.getWheelRotation());
 			} 
 		}
 	}

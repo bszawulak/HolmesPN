@@ -24,14 +24,14 @@ public class Transition extends Node {
 	protected boolean isLaunching;
 	protected boolean isGlowedINV = false;
 	protected boolean isGlowedMTC = false;
+	protected boolean offline = false;		// czy wyłączona (MCS, inne)
 	
-	protected boolean isColorChanged = false;
-	protected double transNumericalValue = 0.0;
+	protected boolean isColorChanged = false;		//zmiana koloru - status
+	protected double transNumericalValue = 0.0;		//dodatkowa liczba do wyświetlenia
+	protected Color transColorValue = new Color(255,255,255);
 	//TODO:
 	protected boolean showIntOnly = false;
 	protected boolean valueVisibilityStatus = false;
-	
-	protected Color transColorValue = new Color(255,255,255);
 	
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 
@@ -307,6 +307,22 @@ public class Transition extends Node {
 	 */
 	public boolean isLaunching() {
 		return isLaunching;
+	}
+	
+	/**
+	 * Metoda ustawia status wyłączenia tranzycji w symulatorze.
+	 * @param status boolean - true, jeśli ma być wyłączona
+	 */
+	public void setOffline(boolean status) {
+		offline = status;
+	}
+	
+	/**
+	 * Metoda zwraca status aktywności tranzycji.
+	 * @return boolean - true, jeśli tranzycja jest wyłączona (MCS)
+	 */
+	public boolean isOffline() {
+		return offline;
 	}
 	
 	/**
