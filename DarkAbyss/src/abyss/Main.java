@@ -24,7 +24,7 @@ public class Main {
 		Runnable fiatLux = new Runnable() {
 			public void run() {
 				try {
-					guiManager = new GUIManager(new JFrame("Abyss 1.25")); //and pray
+					guiManager = new GUIManager(new JFrame("Abyss 1.30")); //and pray
 					guiManager.getSimulatorBox().createSimulatorProperties();
 				} catch (Exception e) {
 					System.out.println(e.getMessage());

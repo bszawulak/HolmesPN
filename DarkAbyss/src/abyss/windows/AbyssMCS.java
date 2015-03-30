@@ -194,6 +194,7 @@ public class AbyssMCS extends JFrame {
 		generateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				launchMCSanalysis();
+				GUIManager.getDefaultGUIManager().showMCS();
 			}
 		});
 		generateButton.setFocusPainted(false);
@@ -221,6 +222,7 @@ public class AbyssMCS extends JFrame {
 		loadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				MCSoperations.loadSingleMCS();
+				GUIManager.getDefaultGUIManager().showMCS();
 			}
 		});
 		loadButton.setFocusPainted(false);
@@ -234,6 +236,7 @@ public class AbyssMCS extends JFrame {
 		loadAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				MCSoperations.loadAllMCS();
+				GUIManager.getDefaultGUIManager().showMCS();
 			}
 		});
 		loadAllButton.setFocusPainted(false);
