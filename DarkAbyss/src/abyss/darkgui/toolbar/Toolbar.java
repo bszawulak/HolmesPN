@@ -2,16 +2,9 @@ package abyss.darkgui.toolbar;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
-import abyss.analyse.KnockoutCalculator;
-import abyss.analyse.MCSCalculator;
-import abyss.analyse.MCSCalculatorShort;
-import abyss.analyse.MDTSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel.DrawModes;
-import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
 
@@ -410,7 +403,6 @@ public class Toolbar extends BorderDock {
 		
 		
 		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", Tools.getResIcon48("/icons/toolbar/a.png")) {
-			@SuppressWarnings("unused")
 			public void actionPerformed(ActionEvent actionEvent) { 
 				GUIManager.getDefaultGUIManager().showMCS();
 				//ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();

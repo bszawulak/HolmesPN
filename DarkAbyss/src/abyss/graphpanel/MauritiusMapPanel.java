@@ -15,12 +15,8 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import abyss.darkgui.GUIManager;
-import abyss.graphpanel.GraphPanel.MouseWheelHandler;
 import abyss.math.MauritiusMapBT;
 import abyss.math.MauritiusMapBT.BTNode;
-import abyss.math.MauritiusMapBT.NodeType;
-import abyss.workspace.WorkspaceSheet;
 
 /**
  * Metoda odpowiedzialna za rysowanie map Mauritiusa.
@@ -31,7 +27,7 @@ public class MauritiusMapPanel extends JPanel {
 	private static final long serialVersionUID = 1028800481995974984L;
 	
 	private MauritiusMapBT mmbt;
-	private ArrayList<Location> locationVector = new ArrayList<Location>();
+	private ArrayList<MapNodeInfo> locationVector = new ArrayList<MapNodeInfo>();
 	private int currentVerticalLevel = 0; //AKTUALNY popziom
 	private int verticalMulti = 0; //ile poddrzew
 	private int offsetVertical = 100;
@@ -70,7 +66,7 @@ public class MauritiusMapPanel extends JPanel {
      * Metoda ustawia opcję wyświetlania pełnej nazwy tranzycji.
      * @param full boolean - jeśli true - pełna nazwa; false - format "t_"+lokalizacja w wektorze
      */
-    private void setFullName(boolean full) {
+    public void setFullName(boolean full) {
     	fullName = full;
     }
 
@@ -161,7 +157,9 @@ public class MauritiusMapPanel extends JPanel {
     	}
     }
     
-    private int normalizeThickness(int transFrequency) {
+    //TODO ?
+    @SuppressWarnings("unused")
+	private int normalizeThickness(int transFrequency) {
     	double tFr = transFrequency;
     	double base = baseThickness;
     	double result = (tFr/base)*10;
@@ -178,7 +176,8 @@ public class MauritiusMapPanel extends JPanel {
      * @param width int - szerokość
      * @param color Color - kolor
      */
-    private void drawLine(Graphics graphics, int x1, int y1, int x2, int y2, int width, Color color) {
+    @SuppressWarnings("unused")
+	private void drawLine(Graphics graphics, int x1, int y1, int x2, int y2, int width, Color color) {
     	 Graphics2D g2d = (Graphics2D) graphics.create();
     	 g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
     	 
@@ -269,6 +268,14 @@ public class MauritiusMapPanel extends JPanel {
         drawArrow(graphics, x2, y2, x2+20, y2, width, color);
 	}
 	
+	/**
+	 * Metoda rysuje tekst obrócony o pewien kąt.
+	 * @param graphics Graphic - obiekt rysujący
+	 * @param x int - współrzędna x pierwszej litery
+	 * @param y int - współrzędna y pierwszej litery
+	 * @param angle int - kąt (zamiana na radiany)
+	 * @param text String - teks do wpisania
+	 */
 	public void drawRotatedText(Graphics graphics, double x, double y, int angle, String text) 
 	{    
 		Graphics2D g2d = (Graphics2D) graphics.create();
@@ -276,7 +283,12 @@ public class MauritiusMapPanel extends JPanel {
 		
 		int baseSize = 12;
 		float zoom = getZoom();
-		baseSize *= (100/zoom);
+		if(zoom < 70) {
+			baseSize = 10;
+			baseSize *= (100/zoom);
+		} else {
+			//baseSize *= (100/zoom);
+		}
 		
 		Font oldFont = g2d.getFont();
 		g2d.setFont(new Font("Tahoma", Font.PLAIN, baseSize));
@@ -291,6 +303,14 @@ public class MauritiusMapPanel extends JPanel {
 	    
 	}    
 	
+	/**
+	 * Metoda wypisuje tekst na rysunku.
+	 * @param graphics Graphic - obiekt rysujący
+	 * @param x int - współrzędna x pierwszej litery
+	 * @param y int - współrzędna y pierwszej litery
+	 * @param text String - teks do wpisania
+	 * @param color Color - kolor tekstu
+	 */
 	private void drawText(Graphics graphics, int x, int y, String text, Color color) {
 		Graphics2D g2d = (Graphics2D) graphics.create();
 		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
@@ -301,32 +321,6 @@ public class MauritiusMapPanel extends JPanel {
         g2d.drawString(text, x, y);
         g2d.setColor(oldColor);
 
-    }
-	
-	private void drawTextOld(Graphics graphics, int x1, int y1, String text) {
-		Graphics2D g2d = (Graphics2D) graphics.create();
-		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
-		
-        Color oldColor = g2d.getColor();
-        AffineTransform atOld = g2d.getTransform();
-        
-        g2d.setColor(Color.black);
-        g2d.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        int name_width = g2d.getFontMetrics().stringWidth(text);
-        
-        int x2 = x1 + name_width;
-        int y2 = y1 - name_width;
-        double dx = x2 - x1, dy = y2 - y1;
-        double angle = Math.atan2(dy, dx);
-        int len = (int) Math.sqrt(dx*dx + dy*dy);
-        
-        AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
-        at.concatenate(AffineTransform.getRotateInstance(angle));
-        
-        g2d.transform(at);
-        g2d.drawString(text, 0, len);
-        g2d.setColor(oldColor);
-        g2d.setTransform(atOld);
     }
 
     /**
@@ -419,15 +413,18 @@ public class MauritiusMapPanel extends JPanel {
 	}
     
     
-    public class Location {
-    	public Point locXY;
+    
+    public class MapNodeInfo {
+    	public Point locationXY;
+    	public int transLoc;
+    	public int frequency1;
     	
-    	Location() {}
+    	MapNodeInfo() {}
     }
     
     /**
 	 * Wewnątrzna klasa odpowiedzialna za obługę rolki myszy.
-	 * @author students
+	 * @author MR
 	 *
 	 */
 	public class MouseWheelHandler implements MouseWheelListener {
@@ -437,7 +434,6 @@ public class MauritiusMapPanel extends JPanel {
 		 * też SHIFT czy też żaden klawisz - działania są różne.
 		 * @param e MouseWheelEvent - obiekt klasy przekazywany w efekcie użycia wałka myszy
 		 */
-		@SuppressWarnings("unused")
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			if (e.isControlDown()) { //zoom
 				setZoom(getZoom() - 10 * e.getWheelRotation());

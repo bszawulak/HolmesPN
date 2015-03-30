@@ -70,10 +70,11 @@ public class IOprotocols {
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
 			String wczytanaLinia = buffer.readLine();
 			String backup = wczytanaLinia;
+			
 			// invariantow dla miejsc nie ma, bo nie mam na czy sie wzorowac, a INA
 			// mnie nie slucha (student)	
 			// brzydka, niedobra INA... (MR)
-			//transition invariants basis
+			
 			if (wczytanaLinia.contains("transition sub/sur/invariants for net")) {
 				//to znaczy, że wczytujemy plik INA, po prostu
 			} else if (wczytanaLinia.contains("minimal semipositive transition")) {
@@ -151,13 +152,10 @@ public class IOprotocols {
 		} 
 	}
 	
-//TODO
+
 	
 	private void readCharlieINV(String sciezka) {
-		if(sciezka!=null)
-			return; //trololo
-		
-		
+		//TODO
 		try {
 			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
@@ -176,45 +174,47 @@ public class IOprotocols {
 				}
 				
 			}
+			nodesList.clear();
 			
-			buffer.readLine();
-			while (!wczytanaLinia.contains("semipositive transition invariants =")) {
+			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+			int transNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+			for(int t=0; t<transNumber; t++)
+				tmpInvariant.add(0);
+			
+			wczytanaLinia = buffer.readLine();
+			while (wczytanaLinia != null && wczytanaLinia.length() > 0) {
+				String lineStart = wczytanaLinia.substring(0, wczytanaLinia.indexOf("|"));
+				lineStart = lineStart.replace(" ", "");
+				lineStart = lineStart.replace("\t", "");
+				
+				if(lineStart.length() > 0) { //początek inwariantu
+					//dodaj nowy, jeśli to nie I krok
+					
+					for(int t=0; t<transNumber; t++) //reset
+						tmpInvariant.set(t, 0);
+					
+					
+					int invNumber = Integer.parseInt(lineStart);
+					
+					wczytanaLinia = wczytanaLinia.substring(wczytanaLinia.indexOf("|")+1);
+					wczytanaLinia = wczytanaLinia.replace(" ", "");
+					wczytanaLinia = wczytanaLinia.replace("\t", "");
+				} else { //kolejne tranzycje
+					
+				}
+				
+				
+				
+				
 				wczytanaLinia = buffer.readLine();
 			}
-			buffer.readLine();
-			nodesList.clear();
-			// Etap I - Liczba tranzycji/miejsc
-			while (!(wczytanaLinia = buffer.readLine()).endsWith("~~~~~~~~~~~")) {
-				if(wczytanaLinia.endsWith("~~~~~~~~~~~")){break;}
-				String[] sformatowanaLinia = wczytanaLinia.split(" ");
-				for (int j = 0; j < sformatowanaLinia.length; j++) {
-					if (!(sformatowanaLinia[j].isEmpty() || sformatowanaLinia[j].contains("Nr."))) {
-						try {
-							nodesList.add(Integer.parseInt(sformatowanaLinia[j]));
-						} catch (NumberFormatException e) {}
-					}
-				}
-			}
-			// Etap II - lista T-inwariantow
-			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
-			invariantsList.clear();
-			while ((wczytanaLinia = buffer.readLine()) != null) {
-				if(wczytanaLinia.contains("@")||wczytanaLinia.isEmpty()){break;}
-				String[] sformatowanaLinia = wczytanaLinia.split("\\|");
-				sformatowanaLinia = sformatowanaLinia[1].split(" ");
-				for(int i = 0; i<sformatowanaLinia.length;i++)
-				{
-					if(sformatowanaLinia[i].isEmpty()){}else
-					{
-						tmpInvariant.add(Integer.parseInt(sformatowanaLinia[i]));
-					}
-				}
-				if(tmpInvariant.size() == nodesList.size())
-				{
-					invariantsList.add(tmpInvariant);
-					tmpInvariant = new ArrayList<Integer>();
-				}
-			}
+			
+			//dodaj ostatni inwariant do listy
+			invariantsList.add(tmpInvariant);
+			
+			
+			
+			
 			buffer.close();
 			GUIManager.getDefaultGUIManager().log("Invariants from Charlie file have been read.", "text", true);
 		} catch (Exception e) {

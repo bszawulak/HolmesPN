@@ -103,10 +103,7 @@ public class MauritiusMapBT {
 			transFrequency = InvariantsTools.getFrequency(subInvariants);
 			howManyLeft = getSupportSize(transFrequency);
 		}
-		//TODO: howManyLeft == 0!!!!
-		
-		int invNo = transFrequency.get(maxTransition);
-		
+			
 		//dla danej tranzycji wyznacz: jej inwarianty i całą resztę
 		ArrayList<ArrayList<Integer>> rightInvariants = InvariantsTools.returnInvWithTransition(subInvariants, maxTransition);
 		ArrayList<ArrayList<Integer>> leftInvariants = InvariantsTools.returnInvWithoutTransition(subInvariants, maxTransition);
@@ -122,6 +119,7 @@ public class MauritiusMapBT {
 			
 			currentNode.transLocation = maxTransition;
 			currentNode.transFrequency = rightInvariants.size();
+			currentNode.othersFrequency = leftInvariants.size();
 			currentNode.leftChild = null;
 			if(howManyLeft > 1) {
 				if(currentNode.type != NodeType.ROOT)  //ale nie root
@@ -152,6 +150,7 @@ public class MauritiusMapBT {
 			
 			currentNode.transLocation = maxTransition;
 			currentNode.transFrequency = rightInvariants.size();
+			currentNode.othersFrequency = leftInvariants.size();
 			
 			BTNode rightNode = new BTNode();
 			currentNode.rightChild = rightNode;
@@ -255,6 +254,7 @@ public class MauritiusMapBT {
 		public String transName;
 		public int transLocation;
 		public int transFrequency;
+		public int othersFrequency;
 		
 		public BTNode leftChild;
 		public BTNode rightChild;

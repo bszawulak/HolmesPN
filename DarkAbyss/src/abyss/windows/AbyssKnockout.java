@@ -6,26 +6,22 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
 
-import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.MauritiusMapPanel;
 import abyss.math.MauritiusMapBT;
@@ -44,10 +40,9 @@ import abyss.utilities.Tools;
  * @author MR
  *
  */
-public class AbyssKnockout extends JFrame implements ComponentListener {
+public class AbyssKnockout extends JFrame {
 	private static final long serialVersionUID = -9038958824842964847L;
-	
-	private JFrame ego;
+
 	private JComboBox<String> transitionsCombo;
 	private MauritiusMapPanel mmp;
 	private int intX=0;
@@ -67,7 +62,6 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 	public AbyssKnockout() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
-			ego = this;
 		} catch (Exception e ) {
 			
 		}
@@ -78,9 +72,6 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		setSize(new Dimension(900, 700));
 		setLocation(15, 15);
 		
-		//setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		//setResizable(false);
-		
 		mainPanel = createMainPanel();
 		add(mainPanel, BorderLayout.CENTER);
 		
@@ -90,8 +81,8 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
   	  	    }  
     	});
 		
-		//addComponentListener(this);
-		
+		/*
+		addComponentListener(this);
 		addWindowStateListener(new WindowAdapter() {
 			public void windowStateChanged(WindowEvent e) {
 				if(e.getNewState() == JFrame.MAXIMIZED_BOTH) {
@@ -100,6 +91,7 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 				}
 			}
 		});
+		*/
 	}
 
 
@@ -167,9 +159,6 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 			public void actionPerformed(ActionEvent actionEvent) {
 				mmCurrentObject = generateMap();
 				paintMap();
-
-				
-				
 			}
 		});
 		generateButton.setFocusPainted(false);
@@ -208,6 +197,22 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 		});
 		toNetKnockoutButton.setFocusPainted(false);
 		panel.add(toNetKnockoutButton);
+		
+		JCheckBox shortTextCheckBox = new JCheckBox("Show full names");
+		shortTextCheckBox.setBounds(posX+490, posY, 130, 20);
+		shortTextCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					mmp.setFullName(true);
+				} else {
+					mmp.setFullName(false);
+				}
+				mmp.repaint();
+			}
+		});
+		shortTextCheckBox.setSelected(true);
+		panel.add(shortTextCheckBox);
 		
 		return panel;
 	}
@@ -410,12 +415,4 @@ public class AbyssKnockout extends JFrame implements ComponentListener {
 			transitionsCombo.setSelectedIndex(selection);
 		
 	}
-
-	public void componentResized(ComponentEvent e) {
-		resizeComponents();
-	}
-	public void componentHidden(ComponentEvent e) {} //unused
-	public void componentMoved(ComponentEvent e) {} //unused
-	public void componentShown(ComponentEvent e) {} //unused
-	
 }
