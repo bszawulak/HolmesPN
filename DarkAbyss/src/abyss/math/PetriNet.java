@@ -816,16 +816,20 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda wczytująca plik inwariantów z pliku .inv (format INA)
 	 * @param sciezka String - ścieżka do pliku INA
+	 * @return boolean - true, jeśli operacja się powiodła
 	 */
-	public void loadInvariantsFromFile(String sciezka) {
+	public boolean loadInvariantsFromFile(String sciezka) {
 		try {
-			communicationProtocol.readINV(sciezka);
+			boolean status = communicationProtocol.readINV(sciezka);
+			if(status == false)
+				return false;
+			
 			setInvariantsMatrix(communicationProtocol.getInvariantsList());
-			//compute2ndFormInv();
 			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true); //status inwariantów: wczytane
-		} catch (Throwable err) {
-			err.printStackTrace();
-			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Invariants reading and/or adding to program failed.", "error", true);
+			return false;
 		}
 	}
 

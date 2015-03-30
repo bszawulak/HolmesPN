@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -17,12 +18,15 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.text.DefaultCaret;
 
 import abyss.analyse.InvariantsCalculator;
 import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
+import abyss.files.io.IOprotocols;
 import abyss.utilities.Tools;
+import abyss.workspace.ExtensionFileFilter;
 
 /**
  * Okno generatora inwariantów i związanych z nimi narzędzi.
@@ -344,7 +348,7 @@ public class AbyssInvariants extends JFrame {
 		loadRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
 		loadRefButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//fillData();
+				testReference();
 			}
 		});
 		loadRefButton.setFocusPainted(false);
@@ -353,20 +357,73 @@ public class AbyssInvariants extends JFrame {
 		return panel;
 	}
 	
+	protected void testReference() {
+		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+		if(invariants == null || invariants.size() < 1) {
+			JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
+					"Warning", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter("INA Invariants file (.inv)", new String[] { "INV" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file");
+		if(selectedFile.equals(""))
+			return;
+		
+		File file = new File(selectedFile);
+		if(!file.exists()) return;
+		
+		IOprotocols io = new IOprotocols();
+				//GUIManager.getDefaultGUIManager().getWorkspace().getProject().getCommunicator();
+		boolean status = io.readINV(file.getPath());
+		if(status == false) {
+			return;
+		}
+		refTest(invariants, io.getInvariantsList());
+		
+	}
+
 	private void refTest(ArrayList<ArrayList<Integer>> invRefMatrix, ArrayList<ArrayList<Integer>> invCoreMatrix) {
 		//InvariantsTools.finalSupportMinimalityTest(getInvariants());
 		
 		if(invRefMatrix != null) {
+			
 			ArrayList<ArrayList<Integer>> res =  InvariantsTools.compareInv(invCoreMatrix, invRefMatrix);
+			logField.append("\n");
+			logField.append("=====================================================================\n");
+			logField.append("Computed set size:   "+invRefMatrix.size()+"\n");
+			logField.append("Loaded set size:    "+invCoreMatrix.size()+"\n");
+			logField.append("Common set size:      "+res.get(0).size()+"\n");
+			logField.append("Loaded invariants not in a computed set:  "+res.get(1).size()+"\n");
+			logField.append("Computed invariants not in a loaded set:  "+res.get(2).size()+"\n");
+			logField.append("Repetitions in common set: "+res.get(3).get(0)+"\n");
+			logField.append("Repetitions in loaded set:"+res.get(3).get(1)+"\n");
+			logField.append("\n");
+			logField.append("Inititating further tests for the loaded "+invCoreMatrix.size()+" invariants.\n");
+			logField.append("\n");
+			int card = InvariantsTools.checkCanonity(invCoreMatrix);
+			logField.append("Non canonical : "+card+"\n");
+			int value = InvariantsTools.checkSupportMinimality(invCoreMatrix);
+			logField.append("Non support-minimal : "+value+"\n");
+			//logField.append("Checking invariants correctness for "+invCoreMatrix.size()+" invariants.\n");
+			InvariantsCalculator ic = new InvariantsCalculator(true);
+			value =  InvariantsTools.countNonInvariants(ic.getCMatrix(), invCoreMatrix);
+			logField.append("Vector that did not reset incidence matrix: "+value+"\n");
+			logField.append("=====================================================================\n");
+			logField.append("\n");
+			/*
 			System.out.println();
-			System.out.println("Reference set size:   "+invRefMatrix.size());
-			System.out.println("Computed set size:    "+invCoreMatrix.size());
+			System.out.println("Computed set size:   "+invRefMatrix.size());
+			System.out.println("Loaded set size:    "+invCoreMatrix.size());
 			System.out.println("Common set size:      "+res.get(0).size());
-			System.out.println("Not in reference set: "+res.get(1).size());
-			System.out.println("Not in computed set:  "+res.get(2).size());
+			System.out.println("Not in computed set: "+res.get(1).size());
+			System.out.println("Not in loaded set:  "+res.get(2).size());
 			
 			System.out.println("Repeated in common set: "+res.get(3).get(0));
-			System.out.println("Repeated not in ref.set:"+res.get(3).get(1));
+			System.out.println("Repeated not in computed set:"+res.get(3).get(1));
+			*/
 		}
 	}
 	

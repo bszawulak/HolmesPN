@@ -50,7 +50,7 @@ public class InvariantsCalculator implements Runnable {
 	private AbyssInvariants masterWindow = null;
 	
 	/**
-	 * Konstruktor obiektu klasy InvariantsAnalyzer. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.
+	 * Konstruktor obiektu klasy InvariantsCalculator. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.
 	 * @param transCal boolean - true, jeśli liczymy T-inwarianty, false dla P-inwariantów
 	 */
 	public InvariantsCalculator(boolean transCal) {
