@@ -71,7 +71,7 @@ public class InvariantsCalculator implements Runnable {
 	public void run() {
 		try {
 			logInternal("Invariant calculations started.\n", true);
-			this.createTPIncidenceAndIdentityMatrix();
+			this.createTPIncidenceAndIdentityMatrix(false);
 			this.searchTInvariants();
 			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants());
@@ -90,7 +90,7 @@ public class InvariantsCalculator implements Runnable {
 	 * @return ArrayList[ArrayList[Integer]] - macierz incydencji
 	 */
 	public ArrayList<ArrayList<Integer>> getCMatrix() {
-		this.createTPIncidenceAndIdentityMatrix();
+		this.createTPIncidenceAndIdentityMatrix(true);
 		return CMatrix;
 	}
 	
@@ -127,8 +127,9 @@ public class InvariantsCalculator implements Runnable {
 	/**
 	 * Metoda tworząca macierze: incydencji i jednostkową dla modelu szukania T-inwariantów
 	 * (TP-macierz z literatury).
+	 * @param silence boolean - true, jeśli nie ma wypisywać komunikatów
 	 */
-	public void createTPIncidenceAndIdentityMatrix() {
+	public void createTPIncidenceAndIdentityMatrix(boolean silence) {
 		//hashmapy do ustalania lokalizacji miejsca/tranzycji. Równie dobrze 
 		//działałoby (niżej, gdy są używane): np. places.indexOf(...)
 		HashMap<Place, Integer> placesMap = new HashMap<Place, Integer>();
@@ -180,7 +181,9 @@ public class InvariantsCalculator implements Runnable {
 			globalIncidenceMatrix.get(tPosition).set(pPosition, incidenceValue);
 			CMatrix.get(tPosition).set(pPosition, incidenceValue);
 		}
-		logInternal("\nTP-class incidence matrix created for "+transitions.size()+" transitions and "+places.size()+" places.\n", false);
+		
+		if(!silence)
+			logInternal("\nTP-class incidence matrix created for "+transitions.size()+" transitions and "+places.size()+" places.\n", false);
 		
 		//macierz jednostkowa
 		for (int trans = 0; trans < transitions.size(); trans++) {
@@ -194,7 +197,8 @@ public class InvariantsCalculator implements Runnable {
 			globalIdentityMatrix.add(identRow);
 		}
 		
-		logInternal("Identity matrix created for "+transitions.size()+" transitions.\n", false);
+		if(!silence)
+			logInternal("Identity matrix created for "+transitions.size()+" transitions.\n", false);
 	}
 
 	/**

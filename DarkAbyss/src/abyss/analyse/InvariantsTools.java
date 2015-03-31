@@ -364,67 +364,77 @@ public final class InvariantsTools {
 	
 	/**
 	 * Metoda porównująca zbiór inwariantów bazowy oraz referencyjny. 
+	 * @param ArrayList[ArrayList[Integer]] - macierz referencyjna (z programu)
+	 * @param ArrayList[ArrayList[Integer]] - macierz wczytana celem porównania z referencyjną
 	 * @return ArrayList[ArrayList[Integer]] - macierz wyników, 3 wektory: <br>
 	 *  1 - część wspólna inwariantów ze zbiorem referencyjnym <br>
-	 *  2 - inwarianty których nie ma w referencyjnym<br>
-	 *  3 - inwarianty referencyjnego których nie ma w wygenerowanym zbiorze
+	 *  2 - inwarianty których nie ma w referencyjnym ale są w załadowanym<br>
+	 *  3 - inwarianty referencyjnego których nie ma w załadowanym zbiorze
 	 */
-	public static ArrayList<ArrayList<Integer>> compareInv(ArrayList<ArrayList<Integer>> invMatrix,
-			ArrayList<ArrayList<Integer>> refInvMatrix) {
+	public static ArrayList<ArrayList<Integer>> compareInv(ArrayList<ArrayList<Integer>> refInvMatrix,
+			ArrayList<ArrayList<Integer>> invLoadedMatrix) {
 		
-		int coreInvSize = invMatrix.size();
+		int loadedInvSize = invLoadedMatrix.size();
 		int refInvSize = refInvMatrix.size();
 		
-		ArrayList<Integer> coreFoundInRef = new ArrayList<Integer>();
-		ArrayList<Integer> refFoundInCore = new ArrayList<Integer>();
-		ArrayList<Integer> nonInRef = new ArrayList<Integer>(); //są u nas, nie ma w INA - minimalne??
-		ArrayList<Integer> refNotInCore = new ArrayList<Integer>(); //są w INA, nie ma u nas
+		ArrayList<Integer> loadedFoundInRef = new ArrayList<Integer>();
+		ArrayList<Integer> loadedNotInRef = new ArrayList<Integer>(); //są w Loaded, nie ma w Ref
+		ArrayList<Integer> refNotInCore = new ArrayList<Integer>(); //są w Ref, nie ma w Loaded
 		
+		ArrayList<Integer> refFoundInLoaded = new ArrayList<Integer>();
 		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
 		
-		int repeated = 0;
-		int repeatedNotFound = 0;
+		ArrayList<ArrayList<Integer>> invLoadedRepetition = new ArrayList<ArrayList<Integer>>();
+		
+		int foundRepetitions = 0;
+		int totalRepetitions = 0;
 
 		boolean presentInReferenceSet = false;
-		for(int invMy=0; invMy<coreInvSize; invMy++) {
+		for(int invMy=0; invMy<loadedInvSize; invMy++) {
 			presentInReferenceSet = false;
-			ArrayList<Integer> myInvariant = invMatrix.get(invMy);
+			ArrayList<Integer> loadedInvariant = invLoadedMatrix.get(invMy);
+			
+			if(invLoadedRepetition.contains(loadedInvariant) == false) {
+				invLoadedRepetition.add(loadedInvariant);
+			} else {
+				totalRepetitions++;
+			}
 			
 			for(int invRefID=0; invRefID < refInvSize; invRefID++) {
-				if(refInvMatrix.get(invRefID).equals(myInvariant)) {
+				if(refInvMatrix.get(invRefID).equals(loadedInvariant)) {
 					
-					coreFoundInRef.add(invMy);
-					if(refFoundInCore.contains(invRefID)) {
-						repeated++;
+					loadedFoundInRef.add(invMy);
+					if(refFoundInLoaded.contains(invRefID)) {
+						foundRepetitions++;
 					} else {
-						refFoundInCore.add(invRefID);
+						refFoundInLoaded.add(invRefID);
 					}
 					
 					presentInReferenceSet = true;
 					break;
 				}
 			}
+			
 			if(presentInReferenceSet == false) {
-				if(nonInRef.contains(invMy)) {
-					repeatedNotFound++;
-				} else {
-					nonInRef.add(invMy);
-				}
+				loadedNotInRef.add(invMy);
+				//if(loadedNotInRef.contains(invMy)) {
+				//	repeatedNotFound++;
+				//} 
 			}
 		}
 		
 		for(int i=0; i<refInvSize; i++) {
-			if(refFoundInCore.contains(i) == false) {
+			if(refFoundInLoaded.contains(i) == false) {
 				refNotInCore.add(i);
 			}
 		}
 		ArrayList<Integer> repeatedVector = new ArrayList<Integer>();
-		repeatedVector.add(repeated);
-		repeatedVector.add(repeatedNotFound);
+		repeatedVector.add(foundRepetitions);
+		repeatedVector.add(totalRepetitions);
 		
-		result.add(coreFoundInRef); //część wspolna
-		result.add(nonInRef); //core, ale nie ma Ref
-		result.add(refNotInCore); //inwarianty Ref których nie ma w CoreSet
+		result.add(loadedFoundInRef); //część wspolna
+		result.add(loadedNotInRef); //Loaded, których nie ma w Reference
+		result.add(refNotInCore); //inwarianty Reference których nie ma w Loaded
 		result.add(repeatedVector);
 		return result;
 	}

@@ -28,6 +28,7 @@ public class MDTSCalculator {
 	public MDTSCalculator() {
 		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix(); 
     	if(invariants == null || invariants.size() == 0) { //STEP 1: EM obliczono
+    		GUIManager.getDefaultGUIManager().log("No invariants found!", "errer", true);
     		return;
     	} else {
     		invariantsNumber = invariants.size(); //wiersze w notacji pierwszej
@@ -37,8 +38,8 @@ public class MDTSCalculator {
     	}
 	}
 	
-	public List<Set<Integer>> calculateMDTS() {
-		List<Set<Integer>> resultList = new ArrayList<Set<Integer>>();
+	public ArrayList<Set<Integer>> calculateMDTS() {
+		ArrayList<Set<Integer>> resultList = new ArrayList<Set<Integer>>();
 		ArrayList<Integer> unassignedRows = new ArrayList<Integer>();
 		ArrayList<Integer> assignedRows = new ArrayList<Integer>();
 		for(int i=0; i<tmpInvariantsMatrix.size(); i++)

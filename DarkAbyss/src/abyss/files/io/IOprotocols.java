@@ -181,7 +181,10 @@ public class IOprotocols {
 			
 			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
 			boolean firstPass = true;
-			int transSetSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+			
+			ArrayList<Transition> namesCheck = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			
+			int transSetSize = namesCheck.size();
 			for(int t=0; t<transSetSize; t++) //init
 				tmpInvariant.add(0);
 			
@@ -198,7 +201,6 @@ public class IOprotocols {
 					for(int t=0; t<transSetSize; t++) // init
 						tmpInvariant.add(0);
 
-					//int invNumber = Integer.parseInt(lineStart);
 				} 
 				firstPass = false;
 				
@@ -207,7 +209,16 @@ public class IOprotocols {
 				wczytanaLinia = wczytanaLinia.replace("\t", "");
 				
 				String tmp =  wczytanaLinia.substring(0, wczytanaLinia.indexOf("."));
-				int transNumber = Integer.parseInt(tmp);
+				int transNumber = Integer.parseInt(tmp); //numer tramzycji w zbiorze
+				
+				wczytanaLinia = wczytanaLinia.substring(wczytanaLinia.indexOf(".")+1);
+				String transName = wczytanaLinia.substring(0, wczytanaLinia.indexOf(":"));
+				
+				String orgName = namesCheck.get(transNumber).getName();
+				if(!transName.equals(orgName)) {
+					GUIManager.getDefaultGUIManager().log("Transition name and location does not match!"
+							+ " Read transition: "+transName+" (loc:"+transNumber+"), while in net: "+orgName, "text", true);
+				}
 				
 				wczytanaLinia = wczytanaLinia.substring(wczytanaLinia.indexOf(":")+1);
 				wczytanaLinia = wczytanaLinia.replace(",", "");

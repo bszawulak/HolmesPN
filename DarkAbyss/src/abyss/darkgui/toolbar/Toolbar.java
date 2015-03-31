@@ -2,11 +2,14 @@ package abyss.darkgui.toolbar;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Set;
 
+import abyss.analyse.MDTSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
+import abyss.windows.AbyssNotepad;
 
 import com.javadocking.DockingManager;
 import com.javadocking.dock.BorderDock;
@@ -403,8 +406,10 @@ public class Toolbar extends BorderDock {
 		
 		
 		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", Tools.getResIcon48("/icons/toolbar/a.png")) {
-			public void actionPerformed(ActionEvent actionEvent) { 
-				GUIManager.getDefaultGUIManager().showMCS();
+			public void actionPerformed(ActionEvent actionEvent) 
+			
+			{ 
+				//GUIManager.getDefaultGUIManager().showMCS();
 				//ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 				//Transition test = transitions.get(8);
 				//MCSCalculatorShort mcs = new MCSCalculatorShort(2);
@@ -415,8 +420,27 @@ public class Toolbar extends BorderDock {
 				//KnockoutCalculator kc = new KnockoutCalculator();
 				//ArrayList<Transition> result = kc.calculateKnockout(knockoutList);
 				
-				//MDTSCalculator mdts = new MDTSCalculator();
-				//List<Set<Integer>> results = mdts.calculateMDTS();
+				MDTSCalculator mdts = new MDTSCalculator();
+				ArrayList<Set<Integer>> results = mdts.calculateMDTS();
+				
+				AbyssNotepad notePad = new AbyssNotepad(900,600);
+				notePad.setVisible(true);
+				
+				notePad.addTextLineNL("", "text");
+				notePad.addTextLineNL("Maximal Dependend Transition sets:", "text");
+				String text = "";
+				int setNo = 0;
+				for(Set<Integer> set : results) {
+					text = "";
+					setNo++;
+					text += "Set #"+setNo+": [";
+					for(int i : set) {
+						text += "t"+i+", ";
+					}
+					text += "]";
+					text = text.replace(", ]", "]");
+					notePad.addTextLineNL(text, "text");
+				}
 			}
 		};
 		analysisDockables.add(createButtonDockable("Testing2", testButton2));

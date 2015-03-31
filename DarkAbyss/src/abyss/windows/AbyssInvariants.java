@@ -385,32 +385,30 @@ public class AbyssInvariants extends JFrame {
 		
 	}
 
-	private void refTest(ArrayList<ArrayList<Integer>> invRefMatrix, ArrayList<ArrayList<Integer>> invCoreMatrix) {
+	private void refTest(ArrayList<ArrayList<Integer>> invRefMatrix, ArrayList<ArrayList<Integer>> invLoadedMatrix) {
 		//InvariantsTools.finalSupportMinimalityTest(getInvariants());
 		
 		if(invRefMatrix != null) {
 			
-			ArrayList<ArrayList<Integer>> res =  InvariantsTools.compareInv(invCoreMatrix, invRefMatrix);
+			ArrayList<ArrayList<Integer>> res =  InvariantsTools.compareInv(invRefMatrix, invLoadedMatrix);
 			logField.append("\n");
 			logField.append("=====================================================================\n");
-			logField.append("Computed set size:   "+invRefMatrix.size()+"\n");
-			logField.append("Loaded set size:    "+invCoreMatrix.size()+"\n");
-			logField.append("Common set size:      "+res.get(0).size()+"\n");
+			logField.append("Prev. computed set size:   "+invRefMatrix.size()+"\n");
+			logField.append("Loaded (now) set size:    "+invLoadedMatrix.size()+"\n");
+			logField.append("Common set size (load & ref): "+res.get(0).size()+"\n");
 			logField.append("Loaded invariants not in a computed set:  "+res.get(1).size()+"\n");
 			logField.append("Computed invariants not in a loaded set:  "+res.get(2).size()+"\n");
 			logField.append("Repetitions in common set: "+res.get(3).get(0)+"\n");
-			logField.append("Repetitions in loaded set:"+res.get(3).get(1)+"\n");
+			logField.append("Total repetitions in loaded:"+res.get(3).get(1)+"\n");
 			logField.append("\n");
-			logField.append("Inititating further tests for the loaded "+invCoreMatrix.size()+" invariants.\n");
-			logField.append("\n");
-			int card = InvariantsTools.checkCanonity(invCoreMatrix);
-			logField.append("Non canonical : "+card+"\n");
-			int value = InvariantsTools.checkSupportMinimality(invCoreMatrix);
-			logField.append("Non support-minimal : "+value+"\n");
-			//logField.append("Checking invariants correctness for "+invCoreMatrix.size()+" invariants.\n");
+			logField.append("Inititating further tests for the loaded set of "+invLoadedMatrix.size()+" invariants.\n");
+			int card = InvariantsTools.checkCanonity(invLoadedMatrix);
+			logField.append("-> Non canonical invariants found : "+card+"\n");
+			int value = InvariantsTools.checkSupportMinimality(invLoadedMatrix);
+			logField.append("-> Non support-minimal inv. found: "+value+"\n");
 			InvariantsCalculator ic = new InvariantsCalculator(true);
-			value =  InvariantsTools.countNonInvariants(ic.getCMatrix(), invCoreMatrix);
-			logField.append("Vector that did not reset incidence matrix: "+value+"\n");
+			value =  InvariantsTools.countNonInvariants(ic.getCMatrix(), invLoadedMatrix);
+			logField.append("-> Not-invariant vectors (Cx=0 test): "+value+"\n");
 			logField.append("=====================================================================\n");
 			logField.append("\n");
 			/*
