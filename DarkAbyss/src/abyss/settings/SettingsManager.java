@@ -93,8 +93,10 @@ public class SettingsManager {
 		addSetting("ina_COMMAND2","nnsyp");
 		addSetting("ina_COMMAND3","nnnfnn");
 		addSetting("ina_COMMAND4","eqqy");
-		addSetting("netExtFactor","0");
+		addSetting("netExtFactor","100");
 		addSetting("gridAlign","1");
+		addSetting("gridAlignWhenSaved","1");
+		addSetting("usesSnoopyOffsets","1");
 		//
 		writeSettingsFile();
 	}
@@ -114,12 +116,12 @@ public class SettingsManager {
 		if(getValue("ina_COMMAND2") == null) return false;
 		if(getValue("ina_COMMAND3") == null) return false;
 		if(getValue("ina_COMMAND4") == null) return false;
-		if((tmp = getValue("netExtFactor")) == null) {
-			return false;
-		} else {
-			try { int test = Integer.parseInt(tmp);	} catch (Exception e) { return false; }
-		}
+		if((tmp = getValue("netExtFactor")) == null) return false;
+			else try { int test = Integer.parseInt(tmp); } catch (Exception e) { return false; }
+
 		if(getValue("gridAlign") == null) return false;
+		if(getValue("gridAlignWhenSaved") == null) return false;
+		if(getValue("usesSnoopyOffsets") == null) return false;
 		return true;
 	}
 
@@ -170,12 +172,12 @@ public class SettingsManager {
 			}
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null,
-				"The file \"abyss\".cfg, which normally contains the settings for this application, has not been found \n"
-				+ "or contains invalid values. Recreating default file.",
+				"The file \"abyss\".cfg, which normally contains the settings for this application,\n"
+				+ "has not been found or contains invalid values. Restoring default file.",
 				"Settings file not found or damaged",
 				JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Settings file not found or damaged. The file \"settings\".stg, which normally "
-					+ "contains the settings for this application, has not been found or contains invalid values. Creating default file.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Settings file not found or damaged. The file \"abyss\".cfg, which normally "
+					+ "contains the settings for this application, has not been found or contains invalid values. Restoring default file.", "error", true);
 			
 			if(error) 
 				return;

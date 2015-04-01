@@ -75,21 +75,13 @@ public class NetHandler_Classic extends NetHandler {
 	 * @param qName - nazwa elementu
 	 * @param attributes - atrybut elementu
 	 */
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		//System.out.print("uri  ");
-		//System.out.println(uri);
-		//System.out.print("localName  ");
-		//System.out.println(localName);
-		//System.out.print("qName  ");
-		//System.out.println(qName);
-		
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {		
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
 			nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 		}
 
-		// Ustawianie typu noda
-
+		// Ustawianie typu wierzchołka
 		if (qName.equalsIgnoreCase("nodeclass")) {
 			if (attributes.getValue(1).equals("Place")) {
 				nodeType = "Place";
@@ -142,7 +134,7 @@ public class NetHandler_Classic extends NetHandler {
 				xoff = attributes.getValue(0);
 				yoff = attributes.getValue(1);
 			} else if(tmp1.equals("xoff") && !tmp2.equals("yoff") ) { 
-				//brak y, durne Snoopy nie pisze 0 tylko wywala cały atrybut... co za idioci to pisali...
+				//brak y, durne Snoopy nie pisze 0 tylko wywala cały atrybut... co za barany to pisały...
 				xoff = attributes.getValue(0);
 				yoff = "0.00";
 			} else if(tmp1.equals("yoff") ) { //brak x
@@ -155,16 +147,19 @@ public class NetHandler_Classic extends NetHandler {
 			
 			xoff_name = 0;
 			yoff_name = 0;
-			try {
-				xoff_name = (int)Float.parseFloat(xoff);
-				yoff_name = (int)Float.parseFloat(yoff);
-				//comment, bo i tak jest przesunięcie w lewo domyslnie w Snoopy
-				//xoff_name -= 22; //25 default, 0 w oX w Abyss to ustawienie na 3 - centrum, czyli 22 (25-3)
-				yoff_name -= 20; //20 default, czyli 0 w oY w Abyss
-				if(yoff_name < -8)
-					yoff_name = -55; //nad node, uwzględnia różnicę
-			} catch (Exception e) {} 
 			
+			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesSnoopyOffsets").equals("1")) {
+				try {
+					xoff_name = (int)Float.parseFloat(xoff);
+					yoff_name = (int)Float.parseFloat(yoff);
+					//comment, bo i tak jest przesunięcie w lewo domyslnie w Snoopy
+					//xoff_name -= 22; //25 default, 0 w oX w Abyss to ustawienie na 3 - centrum, czyli 22 (25-3)
+					yoff_name -= 20; //20 default, czyli 0 w oY w Abyss
+					if(yoff_name < -8)
+						yoff_name = -55; //nad node, uwzględnia różnicę
+				} catch (Exception e) {} 
+			}
+
 			graphicNamesPointsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
 		}
 
@@ -183,7 +178,10 @@ public class NetHandler_Classic extends NetHandler {
 				double resizeFactor = 1;
 				try {
 					int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("netExtFactor"));
-					resizeFactor += ((double)addF/(double)100);
+					resizeFactor = ((double)addF/(double)100);
+					
+					if(resizeFactor==0)
+						resizeFactor=1;
 				} catch (Exception e) { }
 				
 				o1 *= resizeFactor;

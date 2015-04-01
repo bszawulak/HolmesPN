@@ -137,7 +137,7 @@ public class SnoopyWriter {
 	
 	/**
 	 * Stopień odjechania poniższej metody przewyższa normy niczym Czarnobyl w kwestii promieniowania.
-	 * A skoro już o tym mowa...
+	 * A skoro już o tym mowa...<br>
 	 * -Вот это от усталости, это от нервного напряжения, а это от депрессии...
 	 * -Спасибо, доктор, спасибо... А у вас, кроме водки, ничего нет?
 	 * 

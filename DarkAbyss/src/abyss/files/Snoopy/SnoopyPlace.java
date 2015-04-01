@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import abyss.darkgui.GUIManager;
 import abyss.math.ElementLocation;
 import abyss.math.Place;
+import abyss.varia.NetworkTransformations;
 
 /**
  * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie jest Sparta...
@@ -70,7 +71,10 @@ public class SnoopyPlace {
 			}
 			grParents.add(currID);
 			Point pxy = el.getPosition(); //Bogom dzięki, to to samo w Abyss i Snoopy...
-			pxy = setTo20Grid(pxy);
+			
+			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlignWhenSaved").equals("1"))
+				pxy = NetworkTransformations.alignToGrid(pxy);
+			
 			grParentsLocation.add(pxy);
 			locations++;
 		}
@@ -243,11 +247,5 @@ public class SnoopyPlace {
 		} catch (Exception e) {
 			
 		}
-	}
-	
-	private Point setTo20Grid(Point p) {
-		//TODO:
-		//dzielenie przez 20 bez reszty
-		return p;
 	}
 }

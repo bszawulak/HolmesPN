@@ -6,13 +6,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
@@ -27,9 +31,11 @@ import abyss.utilities.Tools;
  */
 public class AbyssProgramProperties extends JFrame {
 	private static final long serialVersionUID = 2831478312283009975L;
+	@SuppressWarnings("unused")
 	private JFrame parentFrame;
 	private SettingsManager sm; //= new SettingsManager();
-	AbyssProgramPropertiesActions action;
+	private AbyssProgramPropertiesActions action;
+	private boolean noAction = false;
 	
 	/**
 	 * Główny konstruktor klasy AbyssProgramProperties.
@@ -103,10 +109,161 @@ public class AbyssProgramProperties extends JFrame {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(0, 0, 600, 500);
 		
-		//PANEL OPCJI ŚRODOWISKA R
+		//Panel opcji środowiska R
+		panel.add(createRoptionsPanel(0, 0, 590, 90)); //dodaj podpanel ustawień R
+
+		//Panel wczytywania sieci
+		panel.add(createSnoopyReadPanel(0, 90, 590, 150));
+		
+		panel.repaint();
+		return panel;
+	}
+
+	private JPanel createSnoopyReadPanel(int x, int y, int w, int h) {
+		JPanel ioPanel = new JPanel(null);
+		ioPanel.setBorder(BorderFactory.createTitledBorder("I/O operations"));
+		ioPanel.setBounds(x, y, w, h);
+		
+		int io_x = 10;
+		int io_y = 15;
+		noAction = true;
+		
+		JLabel labelIO1 = new JLabel("(Snoopy) Resize net when loaded:");
+		labelIO1.setBounds(io_x, io_y, 200, 20);
+		ioPanel.add(labelIO1);
+
+		ButtonGroup group = new ButtonGroup();
+		JRadioButton resize80Button = new JRadioButton("80%");
+		resize80Button.setBounds(io_x, io_y+20, 60, 20);
+		resize80Button.setActionCommand("0");
+		resize80Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "80");
+				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+			}
+		});
+		group.add(resize80Button);
+		ioPanel.add(resize80Button);
+		
+		
+		JRadioButton resize100Button = new JRadioButton("100%");
+		resize100Button.setBounds(io_x+60, io_y+20, 60, 20);
+		resize100Button.setActionCommand("1");
+		resize100Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "100");
+				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+			}
+		});
+		group.add(resize100Button);
+		ioPanel.add(resize100Button);
+		
+		JRadioButton resize120Button = new JRadioButton("120%");
+		resize120Button.setBounds(io_x+120, io_y+20, 60, 20);
+		resize120Button.setActionCommand("2");
+		resize120Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "120");
+				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+			}
+		});
+		group.add(resize120Button);
+		ioPanel.add(resize120Button);
+		
+		JRadioButton resize140Button = new JRadioButton("140%");
+		resize140Button.setBounds(io_x, io_y+40, 60, 20);
+		resize140Button.setActionCommand("3");
+		resize140Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "140");
+				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+			}
+		});
+		group.add(resize140Button);
+		ioPanel.add(resize140Button);
+		
+		JRadioButton resize160Button = new JRadioButton("160%");
+		resize160Button.setBounds(io_x+60, io_y+40, 60, 20);
+		resize160Button.setActionCommand("4");
+		resize160Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "160");
+				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+			}
+		});
+		group.add(resize160Button);
+		ioPanel.add(resize160Button);
+		
+		JRadioButton resize180Button = new JRadioButton("180%");
+		resize180Button.setBounds(io_x+120, io_y+40, 60, 20);
+		resize180Button.setActionCommand("5");
+		resize180Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "180");
+				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+			}
+		});
+		group.add(resize180Button);
+		ioPanel.add(resize180Button);
+		
+		String netExtFactorValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("netExtFactor");	
+		if(netExtFactorValue.equals("80")) group.setSelected(resize80Button.getModel(), true);
+		else if(netExtFactorValue.equals("120")) group.setSelected(resize120Button.getModel(), true);
+		else if(netExtFactorValue.equals("140")) group.setSelected(resize140Button.getModel(), true);
+		else if(netExtFactorValue.equals("160")) group.setSelected(resize160Button.getModel(), true);
+		else if(netExtFactorValue.equals("180")) group.setSelected(resize180Button.getModel(), true);
+		else group.setSelected(resize100Button.getModel(), true);
+		
+		JCheckBox alignGridWhenSavedCheckBox = new JCheckBox("(Snoopy) Align to grid when saved", true);
+		alignGridWhenSavedCheckBox.setBounds(io_x+200, io_y+20, 240, 20);
+		alignGridWhenSavedCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction) return;
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlignWhenSaved", "1");
+					GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlignWhenSaved", "0");
+					GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+				}
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlignWhenSaved").equals("1")) 
+			alignGridWhenSavedCheckBox.setSelected(true);
+		else
+			alignGridWhenSavedCheckBox.setSelected(false);
+		ioPanel.add(alignGridWhenSavedCheckBox);
+		
+		JCheckBox useOffsetsCheckBox = new JCheckBox("(Snoopy) Use Snoopy offsets for names", true);
+		useOffsetsCheckBox.setBounds(io_x+200, io_y+40, 260, 20);
+		useOffsetsCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction) return;
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesSnoopyOffsets", "1");
+					GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesSnoopyOffsets", "0");
+					GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+				}
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesSnoopyOffsets").equals("1")) 
+			useOffsetsCheckBox.setSelected(true);
+		else
+			useOffsetsCheckBox.setSelected(false);
+		ioPanel.add(useOffsetsCheckBox);
+		
+		noAction = false;
+		return ioPanel;
+	}
+
+	private JPanel createRoptionsPanel(int x, int y, int w, int h) {
 		JPanel rOptionsPanel = new JPanel(null);
 		rOptionsPanel.setBorder(BorderFactory.createTitledBorder("R settings"));
-		rOptionsPanel.setBounds(0, 0, 590, 90);
+		rOptionsPanel.setBounds(x, y, w, h);
 		
 		JLabel labelR_1 = new JLabel("R path:");
 		labelR_1.setBounds(10, 16, 60, 20);
@@ -139,23 +296,7 @@ public class AbyssProgramProperties extends JFrame {
 			}
 		});
 		rOptionsPanel.add(rSetPath);
-		panel.add(rOptionsPanel); //dodaj podpanel ustawień R
-		
-		//*********************************************************************************************
-		//*********************************************************************************************
-		//*********************************************************************************************
-		
-		//Panel wczytywania sieci
-		JPanel ioPanel = new JPanel(null);
-		ioPanel.setBorder(BorderFactory.createTitledBorder("File operations"));
-		ioPanel.setBounds(0, 90, 590, 150);
-		
-		
-		
-		panel.add(ioPanel);
-		
-		panel.repaint();
-		return panel;
+		return rOptionsPanel;
 	}
 	
 	/**

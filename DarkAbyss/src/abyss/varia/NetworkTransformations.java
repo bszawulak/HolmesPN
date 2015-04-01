@@ -84,6 +84,11 @@ public class NetworkTransformations {
 		}
 	}
 	
+	/**
+	 * Metoda pomocnicza zwracająca nowy obiekt punktu o znormalizowanych współrzędnych względem siatki 20/20px
+	 * @param coordinates Point - oryginalny punkt;
+	 * @return Point - znormalizowane współrzędne
+	 */
 	public static Point alignToGrid(Point coordinates) {
 		int x = coordinates.x;
 		int y = coordinates.y;

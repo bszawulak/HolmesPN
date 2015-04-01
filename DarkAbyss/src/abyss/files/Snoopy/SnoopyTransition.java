@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import abyss.darkgui.GUIManager;
 import abyss.math.ElementLocation;
 import abyss.math.Transition;
+import abyss.varia.NetworkTransformations;
 
 
 /**
@@ -72,7 +73,10 @@ public class SnoopyTransition {
 			}
 			grParents.add(currID);
 			Point pxy = el.getPosition();
-			pxy = setTo20Grid(pxy);
+			
+			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlignWhenSaved").equals("1"))
+				pxy = NetworkTransformations.alignToGrid(pxy);
+			
 			grParentsLocation.add(pxy);
 			locations++;
 		}
@@ -221,11 +225,5 @@ public class SnoopyTransition {
 		} catch (Exception e) {
 			
 		}
-	}
-	
-	private Point setTo20Grid(Point p) {
-		//TODO:
-		//dzielenie przez 20 bez reszty
-		return p;
 	}
 }

@@ -62,8 +62,6 @@ public class AbyssInvariants extends JFrame {
 		
 		JPanel mainPanel = createMainPanel();
 		add(mainPanel, BorderLayout.CENTER);
-
-		
 	}
 
 	/**
