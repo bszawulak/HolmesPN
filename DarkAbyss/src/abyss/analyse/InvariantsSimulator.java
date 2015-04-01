@@ -166,10 +166,8 @@ public class InvariantsSimulator {
 		setMode(simulatorMode);
 		setSimulationActive(true);
 		ActionListener taskPerformer = new SimulationPerformer();
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow()
-				.allowOnlySimulationDisruptButtons();
-		GUIManager.getDefaultGUIManager().getShortcutsBar()
-				.allowOnlySimulationDisruptButtons();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
+		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
 		switch (getMode()) {
 		case LOOP:
 			taskPerformer = new StepPerformer(true,simType,stepValue);
@@ -480,30 +478,24 @@ public class InvariantsSimulator {
 	 * Metoda obsługująca wciśnięcie przycisku zatrzymania symulacji.
 	 */
 	private void stopSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow()
-				.allowOnlySimulationInitiateButtons();
-		GUIManager.getDefaultGUIManager().getShortcutsBar()
-				.allowOnlySimulationInitiateButtons();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtons();
+		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationInitiateButtons();
 		timer.stop();
 		previousMode = mode;
 		setMode(SimulatorMode.STOPPED);
 	}
 
 	private void pauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow()
-				.allowOnlyUnpauseButton();
-		GUIManager.getDefaultGUIManager().getShortcutsBar()
-				.allowOnlyUnpauseButton();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButton();
+		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlyUnpauseButton();
 		timer.stop();
 		previousMode = mode;
 		setMode(SimulatorMode.PAUSED);
 	}
 
 	private void unpauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow()
-				.allowOnlySimulationDisruptButtons();
-		GUIManager.getDefaultGUIManager().getShortcutsBar()
-				.allowOnlySimulationDisruptButtons();
+		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
+		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
 		if (previousMode != SimulatorMode.STOPPED) {
 			timer.start();
 			setMode(previousMode);

@@ -712,12 +712,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				graphPanel.setOriginSize(graphPanel.getSize());
 				graphPanel.repaint();
 			}
-			// Format INY
+
 			if (path.endsWith(".pnt")) {
-				//communicationProtocol = new INAprotocols();
 				communicationProtocol.readPNT(path);
 				addArcsAndNodes(communicationProtocol.getArcArray(),communicationProtocol.getNodeArray());
 			}
+			
 			GUIManager.getDefaultGUIManager().log("Snoopy Petri net successfully imported from file "+path, "text", true);
 		} catch (Throwable err) {
 			err.printStackTrace();

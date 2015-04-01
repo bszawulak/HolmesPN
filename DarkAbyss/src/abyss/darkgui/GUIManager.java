@@ -90,7 +90,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private FloatDockModel dockModel;
 	
 	// settings
-	private SettingsManager settingsManager;
+	private final SettingsManager settingsManager;
 	
 	// visualizers
 	private LineMinimizer minimizer;
@@ -166,7 +166,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		super(new BorderLayout());
 		guiManager = this;
 		io = new GUIOperations(this); //obiekt klasy operacji głównych
-		tex = new TexExporter();
+		tex = new TexExporter(); //obiekt zarządzający eksportem tabel do formatu latex
 		reset = new GUIReset(); //obiekt odpowiadający za resetowanie danych / kasowanie / czyszczenie
 		
 		setFrame(frejm);
@@ -188,7 +188,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createInvariantsWindow(); // okno generatora inwariantów
 		createMCSWindow(); // okno generatora MCS
 		
-
+		settingsManager = new SettingsManager();
+		settingsManager.loadSettings();
+		frame.setTitle("Abyss "+settingsManager.getValue("abyss_version"));
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnętrzne zmienne programu
 		
 		// Set the frame properties and show it.
@@ -340,8 +342,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		toolPath = abyssPath+"\\tools\\";
 		logPath = abyssPath+"\\log\\";
 		
-		settingsManager = new SettingsManager();
-		settingsManager.loadSettings();
+		
 		//settingsManager.restoreDefaultSetting();
 		
 		File checkFile = new File(tmpPath);

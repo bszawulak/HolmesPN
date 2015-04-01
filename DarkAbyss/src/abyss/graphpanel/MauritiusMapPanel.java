@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -78,7 +79,7 @@ public class MauritiusMapPanel extends JPanel {
      * @param y int - pozycja startowa Y korzenia
      * @param fullName boolean - jeśli true, wyświetla pełne nazwy reakcji
      */
-    private void readAndPaintTree(BTNode node, Graphics g, int x, int y, boolean fullName) {
+    private void readAndPaintTree(BTNode node, Graphics2D g2d, int x, int y, boolean fullName) {
     	updateWidth(x);
     	String name = node.transName;
     	int freq = node.transFrequency;
@@ -89,13 +90,20 @@ public class MauritiusMapPanel extends JPanel {
     		name = "t_"+loc;
     	}
     	//rysowanie okręgu i tekstów:
-    	drawCenteredCircle(g, x, y, 40, Color.darkGray);
-    	drawRotatedText(g, x+15, y-15, -5, name);
-    	drawText(g, x-7, y+4, freq+"", Color.red); //częstość wystąpień w inwariantach DANEJ(rysowanej poziomo) ścieżki
+    	drawCenteredCircle(g2d, x, y, 40, Color.darkGray);
+    	drawRotatedText(g2d, x+15, y-15, -8, name);
+    	
+    	if(freq < 10)
+    		drawText(g2d, x-4, y+5, freq+"", Color.red); //częstość wystąpień w inwariantach DANEJ(rysowanej poziomo) ścieżki
+    	else if(freq < 100)
+    		drawText(g2d, x-8, y+5, freq+"", Color.red); 
+    	else
+    		drawText(g2d, x-14, y+5, freq+"", Color.red);
+    	
     	
     	if(node.rightChild != null) {
-    		drawArrow(g, x+20, y, x+100, y, 3, Color.gray);
-    		readAndPaintTree(node.rightChild, g, x+126, y, fullName); //120+6 (6=offest strzałki)
+    		drawArrow(g2d, x+20, y, x+100, y, 3, Color.gray);
+    		readAndPaintTree(node.rightChild, g2d, x+126, y, fullName); //120+6 (6=offest strzałki)
     	}
     	
     	if(node.leftChild != null) {
@@ -112,9 +120,9 @@ public class MauritiusMapPanel extends JPanel {
     		int currentAltitude = y;
     		int lowerAltitude = y+offsetVertical+additionalDown;
     		
-    		drawL_shapeArrow(g, x-45, currentAltitude, x-45, lowerAltitude, 3, Color.gray);
+    		drawL_shapeArrow(g2d, x-45, currentAltitude, x-45, lowerAltitude, 3, Color.gray);
 
-    		readAndPaintTree(node.leftChild, g, x, lowerAltitude, fullName);
+    		readAndPaintTree(node.leftChild, g2d, x, lowerAltitude, fullName);
     		verticalMulti++; //powrót z podwęzła, następny +1 odległość
     		currentVerticalLevel--; //powrót na starą wysokość
     	}
@@ -138,6 +146,9 @@ public class MauritiusMapPanel extends JPanel {
 		setSize(new Dimension((int)(panelWidth*zoomMod), (int)(panelHeigth*zoomMod)));
 	}
     
+	/**
+	 * Metoda główna odpowiedzialna za rysowanie mapy w ramach odświeżania ekranu.
+	 */
     @Override
     public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -146,7 +157,11 @@ public class MauritiusMapPanel extends JPanel {
     		baseThickness = mmbt.getRoot().transFrequency;
     		//normalizeBaseThickness();
 
-			readAndPaintTree(mmbt.getRoot(), g, 100, 200, fullName);
+    		Graphics2D g2d = (Graphics2D) g.create();
+    		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
+    		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    		
+			readAndPaintTree(mmbt.getRoot(), g2d, 100, 200, fullName);
 			normalizeSize();
 			verticalMulti = 0;
 			
@@ -168,7 +183,7 @@ public class MauritiusMapPanel extends JPanel {
 
 	/**
      * Metoda rysuje linię skierowaną w dowolną stronę.
-     * @param graphics Graphics - obiekt grafiki
+     * @param g2d Graphics2D - obiekt grafiki
      * @param x1 int - x1
      * @param y1 int - y1
      * @param x2 int - x2 (grot)
@@ -177,10 +192,7 @@ public class MauritiusMapPanel extends JPanel {
      * @param color Color - kolor
      */
     @SuppressWarnings("unused")
-	private void drawLine(Graphics graphics, int x1, int y1, int x2, int y2, int width, Color color) {
-    	 Graphics2D g2d = (Graphics2D) graphics.create();
-    	 g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
-    	 
+	private void drawLine(Graphics2D g2d, int x1, int y1, int x2, int y2, int width, Color color) {
          double dx = x2 - x1, dy = y2 - y1;
          double angle = Math.atan2(dy, dx);
          int len = (int) Math.sqrt(dx*dx + dy*dy);
@@ -200,7 +212,7 @@ public class MauritiusMapPanel extends JPanel {
     
     /**
      * Metoda rysuje strzałkę skierowaną w dowolną stronę.
-     * @param graphics Graphics - obiekt grafiki
+     * @param g2d Graphics2D - obiekt grafiki
      * @param x1 int - x1
      * @param y1 int - y1
      * @param x2 int - x2 (grot)
@@ -208,10 +220,7 @@ public class MauritiusMapPanel extends JPanel {
      * @param width int - szerokość
      * @param color Color - kolor
      */
-	private void drawArrow(Graphics graphics, int x1, int y1, int x2, int y2, int width, Color color) {
-		Graphics2D g2d = (Graphics2D) graphics.create();
-		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
-		
+	private void drawArrow(Graphics2D g2d, int x1, int y1, int x2, int y2, int width, Color color) {
         int ARR_SIZE = 6+width;
         double dx = x2 - x1, dy = y2 - y1;
         double angle = Math.atan2(dy, dx);
@@ -237,7 +246,7 @@ public class MauritiusMapPanel extends JPanel {
 	
 	 /**
      * Metoda rysuje strzałkę skierowaną w dół a potem w prawo (wykorzystuje drawArrow)
-     * @param graphics Graphics - obiekt grafiki
+     * @param g2d Graphics2D - obiekt grafiki
      * @param x1 int - x1
      * @param y1 int - y1
      * @param x2 int - x2 (grot)
@@ -245,10 +254,7 @@ public class MauritiusMapPanel extends JPanel {
      * @param width int - szerokość
      * @param color Color - kolor
      */
-	private void drawL_shapeArrow(Graphics graphics, int x1, int y1, int x2, int y2, int width, Color color) {
-		Graphics2D g2d = (Graphics2D) graphics.create();
-		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
-		
+	private void drawL_shapeArrow(Graphics2D g2d, int x1, int y1, int x2, int y2, int width, Color color) {
         double dx = x2 - x1, dy = y2 - y1;
         double angle = Math.atan2(dy, dx);
         int len = (int) Math.sqrt(dx*dx + dy*dy);
@@ -265,25 +271,22 @@ public class MauritiusMapPanel extends JPanel {
         g2d.setPaint(old);
         g2d.setTransform(atOld);
         
-        drawArrow(graphics, x2, y2, x2+20, y2, width, color);
+        drawArrow(g2d, x2, y2, x2+20, y2, width, color);
 	}
 	
 	/**
 	 * Metoda rysuje tekst obrócony o pewien kąt.
-	 * @param graphics Graphic - obiekt rysujący
+	 * @param g2d Graphics2D - obiekt rysujący
 	 * @param x int - współrzędna x pierwszej litery
 	 * @param y int - współrzędna y pierwszej litery
 	 * @param angle int - kąt (zamiana na radiany)
 	 * @param text String - teks do wpisania
 	 */
-	public void drawRotatedText(Graphics graphics, double x, double y, int angle, String text) 
+	public void drawRotatedText(Graphics2D g2d, double x, double y, int angle, String text) 
 	{    
-		Graphics2D g2d = (Graphics2D) graphics.create();
-		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
-		
-		int baseSize = 12;
+		int baseSize = 14;
 		float zoom = getZoom();
-		if(zoom < 70) {
+		if(zoom < 50) {
 			baseSize = 10;
 			baseSize *= (100/zoom);
 		} else {
@@ -291,50 +294,45 @@ public class MauritiusMapPanel extends JPanel {
 		}
 		
 		Font oldFont = g2d.getFont();
+		Color oldColor = g2d.getColor();
 		g2d.setFont(new Font("Tahoma", Font.PLAIN, baseSize));
+		g2d.setColor(Color.black);
 		
 	    g2d.translate((float)x,(float)y);
 	    g2d.rotate(Math.toRadians(angle));
-	    g2d.drawString(text,0,0);
+	    g2d.drawString(text, 0, 0);
 	    g2d.rotate(-Math.toRadians(angle));
 	    g2d.translate(-(float)x,-(float)y);
 	    
 	    g2d.setFont(oldFont);
-	    
+	    g2d.setColor(oldColor);
 	}    
 	
 	/**
 	 * Metoda wypisuje tekst na rysunku.
-	 * @param graphics Graphic - obiekt rysujący
+	 * @param g2d Graphics2D - obiekt rysujący
 	 * @param x int - współrzędna x pierwszej litery
 	 * @param y int - współrzędna y pierwszej litery
 	 * @param text String - teks do wpisania
 	 * @param color Color - kolor tekstu
 	 */
-	private void drawText(Graphics graphics, int x, int y, String text, Color color) {
-		Graphics2D g2d = (Graphics2D) graphics.create();
-		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
-		
+	private void drawText(Graphics2D g2d, int x, int y, String text, Color color) {
         Color oldColor = g2d.getColor();
         g2d.setColor(color);
         g2d.setFont(new Font("Tahoma", Font.BOLD, 14));
         g2d.drawString(text, x, y);
         g2d.setColor(oldColor);
-
     }
 
     /**
      * Metoda rysuje wypełniony kolorem okrąg.
-     * @param graphics Graphics - obiekt grafiki
+     * @param g2d Graphics2D - obiekt grafiki
      * @param x int - współrzędna x środka
      * @param y int - współrzędna y środka
      * @param r int - promień
      * @param color Color - kolor
      */
-    private void drawCenteredCircle(Graphics graphics, int x, int y, int r, Color color) {
-    	Graphics2D g2d = (Graphics2D)graphics.create();
-    	g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
-    	
+    private void drawCenteredCircle(Graphics2D g2d, int x, int y, int r, Color color) {
     	int xPos = x-(r/2);
     	int yPos = y-(r/2);
     	

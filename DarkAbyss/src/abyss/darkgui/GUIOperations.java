@@ -346,7 +346,8 @@ public class GUIOperations {
 		String abyssPath = overlord.getAbyssPath();
 		if(inaExe.exists() && commandFile.exists()) {
 			try {
-				JOptionPane.showMessageDialog(null, "INAwin32.exe will now start. Click OK and please wait.", "Patience is a virtue", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "INAwin32.exe will now start. This may take a while. Click OK and please wait.\n"
+						+ "When console shows in, please type Y, then N after invariants are computed.", "Patience is a virtue", JOptionPane.INFORMATION_MESSAGE);
 				overlord.log(stars, "text", false);
 				overlord.log("Activating INAwin32.exe. Please wait, this may take a few seconds due to OS delays.", "text", true);
 				//kopiowanie plików:

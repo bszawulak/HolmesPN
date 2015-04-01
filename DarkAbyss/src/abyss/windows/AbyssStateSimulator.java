@@ -32,6 +32,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
@@ -63,6 +64,7 @@ import abyss.darkgui.GUIManager;
 import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator.NetType;
+import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.math.simulator.StateSimulator;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
@@ -1210,6 +1212,14 @@ public class AbyssStateSimulator extends JFrame {
      * obiektu klasy AbyssStateSimulator - czyli podokna programu głównego.
      */
 	private void acquireDataFromSimulation() {
+		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+			//TODO:
+			JOptionPane.showMessageDialog(null,
+					"Main simulator active. Please turn if off before starting state simulator process", 
+					"Main simulator active", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		if(places == null || places.size() == 0)
 			return;

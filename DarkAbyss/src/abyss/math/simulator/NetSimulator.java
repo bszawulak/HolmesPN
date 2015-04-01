@@ -123,7 +123,7 @@ public class NetSimulator {
 		ActionListener taskPerformer = new SimulationPerformer();
 		//ustawiania stanu przycisków symulacji:
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
-		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
+		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
 		
 		checkSimulatorNetType(); //trust no one
 		
@@ -708,7 +708,7 @@ public class NetSimulator {
 	 */
 	private void stopSimulation() {
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtons();
-		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationInitiateButtons();
+		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationInitiateButtons();
 		timer.stop();
 		previousSimStatus = simulatorStatus;
 		setSimulatorStatus(SimulatorMode.STOPPED);
@@ -722,7 +722,7 @@ public class NetSimulator {
 	 */
 	private void pauseSimulation() {
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButton();
-		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlyUnpauseButton();
+		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlyUnpauseButton();
 		timer.stop();
 		previousSimStatus = simulatorStatus;
 		setSimulatorStatus(SimulatorMode.PAUSED);
@@ -736,7 +736,7 @@ public class NetSimulator {
 	 */
 	private void unpauseSimulation() {
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
-		GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
+		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
 		if (previousSimStatus != SimulatorMode.STOPPED) {
 			timer.start();
 			setSimulatorStatus(previousSimStatus);

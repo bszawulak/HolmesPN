@@ -75,6 +75,10 @@ public class NetHandler_Time extends NetHandler {
 	
 	public String readString = "";
 	public ArrayList<Transition> tmpTransitionList = new ArrayList<Transition>();
+	
+	public ArrayList<Point> graphicNamesPointsList = new ArrayList<Point>();
+	public int xoff_name;
+	public int yoff_name;
 
 	/**
 	 * Metoda wykrywająca rozpoczęcie nowego elementu.
@@ -84,12 +88,6 @@ public class NetHandler_Time extends NetHandler {
 	 * @param attributes - atrybut elementu
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		System.out.print("uri  ");
-		System.out.println(uri);
-		System.out.print("localName  ");
-		System.out.println(localName);
-		System.out.print("qName  ");
-		System.out.println(qName);
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
 			nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
@@ -102,11 +100,12 @@ public class NetHandler_Time extends NetHandler {
 				nodeType = "Transition";
 			}
 		}
+		
 		if (qName.equalsIgnoreCase("node")) {
 			node = true;
-
 			nodeID = IdGenerator.getNextId(); // Integer.parseInt(attributes.getValue(0));
 		}
+		
 		if (qName.equalsIgnoreCase("attribute")) {
 			atribute = true;
 			endAtribute = false;
@@ -166,8 +165,20 @@ public class NetHandler_Time extends NetHandler {
 				double o1 = Double.parseDouble(attributes.getValue(0));
 				double o2 = Double.parseDouble(attributes.getValue(1));
 				int o3 = Integer.parseInt(attributes.getValue(2));
+				
+				//TODO:
+				double resizeFactor = 1;
+				try {
+					int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("netExtFactor"));
+					resizeFactor += ((double)addF/(double)100);
+				} catch (Exception e) { }
+				
+				o1 *= resizeFactor;
+				o2 *= resizeFactor;
+				
 				int p1 = (int) o1;
 				int p2 = (int) o2;
+				
 				graphicPointsList.add(new Point(p1, p2));
 				graphicPointsIdList.add(o3);
 			}
@@ -184,6 +195,42 @@ public class NetHandler_Time extends NetHandler {
 		}
 		if (qName.equalsIgnoreCase("edge")) {
 			edge = true;
+		}
+		
+		if(variableName && graphics && qName.equalsIgnoreCase("graphic")) {
+			String tmp1 = attributes.getLocalName(0);
+			String tmp2 = attributes.getLocalName(1);
+			String xoff = "";
+			String yoff = "";
+			
+			if(tmp1.equals("xoff") && tmp2.equals("yoff") ) { //oba na miejscu
+				xoff = attributes.getValue(0);
+				yoff = attributes.getValue(1);
+			} else if(tmp1.equals("xoff") && !tmp2.equals("yoff") ) { 
+				//brak y, durne Snoopy nie pisze 0 tylko wywala cały atrybut... co za idioci to pisali...
+				xoff = attributes.getValue(0);
+				yoff = "0.00";
+			} else if(tmp1.equals("yoff") ) { //brak x
+				yoff = attributes.getValue(0);
+				xoff = "0.00";
+			} else if(!tmp1.equals("xoff") && !tmp2.equals("yoff")) { //brak x i y
+				xoff = "0.00";
+				yoff = "0.00";
+			}
+			
+			xoff_name = 0;
+			yoff_name = 0;
+			try {
+				xoff_name = (int)Float.parseFloat(xoff);
+				yoff_name = (int)Float.parseFloat(yoff);
+				//comment, bo i tak jest przesunięcie w lewo domyslnie w Snoopy
+				//xoff_name -= 22; //25 default, 0 w oX w Abyss to ustawienie na 3 - centrum, czyli 22 (25-3)
+				yoff_name -= 20; //20 default, czyli 0 w oY w Abyss
+				if(yoff_name < -8)
+					yoff_name = -55; //nad node, uwzględnia różnicę
+			} catch (Exception e) {} 
+			
+			graphicNamesPointsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
 		}
 
 		// Zapis do zmiennej globalnej ID source i targetArc
@@ -322,28 +369,41 @@ public class NetHandler_Time extends NetHandler {
 		}
 
 		// Tworzenie noda i wszystkich jego element location
-
 		if (qName.equalsIgnoreCase("node")) {
 			tmpElementLocationList = new ArrayList<ElementLocation>();
-			for (int k = 0; k < graphicPointsList.size(); k++) {
-				tmpElementLocationList.add(new ElementLocation(nodeSID, graphicPointsList.get(k),
-						null));
+			ArrayList<ElementLocation> namesElLocations = new ArrayList<ElementLocation>();
+			
+			if(graphicPointsList.size() != graphicNamesPointsList.size()) {
+				GUIManager.getDefaultGUIManager().log("Critical error reading Snoopy file. Wrong number of names locations and nodes locations.", "error", true);
 			}
+			
+			for (int k = 0; k < graphicPointsList.size(); k++) {
+				tmpElementLocationList.add(new ElementLocation(nodeSID, graphicPointsList.get(k), null));
+				namesElLocations.add(new ElementLocation(nodeSID, graphicNamesPointsList.get(k), null));
+			}
+
 			for (int u = 0; u < tmpElementLocationList.size(); u++) {
 				elementLocationList.add(tmpElementLocationList.get(u));
 			}
-			if (nodeType == "Place") {		
-				tmpNode = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
-				nodesList.add(tmpNode);
+			
+			if (nodeType == "Place") {
+				Place tmpPlace = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
+				tmpPlace.setNamesLocations(namesElLocations);
+				nodesList.add(tmpPlace);
+				
+				//tmpNode = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
+				//nodesList.add(tmpNode);
 			} else {	
-				if(timeTrans) {
+				if(timeTrans) {			
 					timeTrans = false;
 					TimeTransition tmpTTran = new TimeTransition(nodeID, tmpElementLocationList, nodeName, nodeComment);
 					tmpTTran.setMinFireTime(nodeEFT);
 					tmpTTran.setMaxFireTime(nodeLFT);
+					tmpTTran.setNamesLocations(namesElLocations);
 					tmpTransitionList.add(tmpTTran);
 				} else {
 					Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
+					tmpTran.setNamesLocations(namesElLocations);
 					tmpTransitionList.add(tmpTran);
 				}
 			}
@@ -358,6 +418,7 @@ public class NetHandler_Time extends NetHandler {
 			nodeLFT = 0.0;
 			node = false;
 			graphicPointsList.clear();
+			graphicNamesPointsList.clear();
 		}
 
 		// Tworzenie arca

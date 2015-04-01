@@ -28,8 +28,8 @@ public class Arc extends PetriNetElement {
 	private final int STEP_COUNT = NetSimulator.DEFAULT_COUNTER - 5;
 
 	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAĆ NAZW, DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
-	 * (przestanie być możliwe wczytywanie zapisĆnych proejktów .abyss)
+	 * UWAGA!!! NIE ZMIENIAĆ NAZW, NIE DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
+	 * (przestanie być możliwe wczytywanie zapisanych projektów .abyss)
 	 */
 	private ElementLocation startLocation;
 	private ElementLocation endLocation = null;

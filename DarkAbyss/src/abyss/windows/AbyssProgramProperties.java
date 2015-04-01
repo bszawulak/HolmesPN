@@ -27,12 +27,12 @@ import abyss.utilities.Tools;
  */
 public class AbyssProgramProperties extends JFrame {
 	private static final long serialVersionUID = 2831478312283009975L;
-	JFrame parentFrame;
-	SettingsManager sm = new SettingsManager();
+	private JFrame parentFrame;
+	private SettingsManager sm; //= new SettingsManager();
 	AbyssProgramPropertiesActions action;
 	
 	/**
-	 * Główny konstruktor klasy.
+	 * Główny konstruktor klasy AbyssProgramProperties.
 	 * @param parent
 	 */
 	public AbyssProgramProperties(JFrame parent) {
@@ -149,6 +149,8 @@ public class AbyssProgramProperties extends JFrame {
 		JPanel ioPanel = new JPanel(null);
 		ioPanel.setBorder(BorderFactory.createTitledBorder("File operations"));
 		ioPanel.setBounds(0, 90, 590, 150);
+		
+		
 		
 		panel.add(ioPanel);
 		

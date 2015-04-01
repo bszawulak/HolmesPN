@@ -9,7 +9,7 @@ import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 /**
- * An action that shows a message in a dialog.
+ * Klasa pomocnicza do tworzenia przycisków paska zadań.
  */
 public class ToolbarButtonAction extends AbstractAction {
 	private static final long serialVersionUID = -7314939115369528810L;
@@ -17,8 +17,7 @@ public class ToolbarButtonAction extends AbstractAction {
 	private String message = "";
 	private String name;
 
-	public ToolbarButtonAction(Component parentComponent, String name,
-			Icon icon, String message) {
+	public ToolbarButtonAction(Component parentComponent, String name, Icon icon, String message) {
 		super(null, icon);
 		putValue(Action.SHORT_DESCRIPTION, name);
 		this.message = message;
@@ -26,8 +25,7 @@ public class ToolbarButtonAction extends AbstractAction {
 		this.parentComponent = parentComponent;
 	}
 	
-	public ToolbarButtonAction(Component parentComponent, String name,
-			Icon icon) {
+	public ToolbarButtonAction(Component parentComponent, String name, Icon icon) {
 		super(null, icon);
 		putValue(Action.SHORT_DESCRIPTION, name);
 		this.name = name;
@@ -36,8 +34,7 @@ public class ToolbarButtonAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent actionEvent) {
-		JOptionPane.showMessageDialog(parentComponent, message, name,
-				JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(parentComponent, message, name, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 }

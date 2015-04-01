@@ -1,6 +1,8 @@
 package abyss.settings;
 
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -12,11 +14,12 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 import abyss.darkgui.GUIManager;
+import abyss.utilities.Tools;
 
 /**
  * Klasa zarządzająca plikiem konfiguracyjnym programu.
- * @author students - pierwsza podstawowa wersja
- * @author MR - w tej chwili ponad połowa dodatkowego kodu tutaj
+ * @author students - pierwsza podstawowa wersja która nic nie robiła :)
+ * @author MR - w tej chwili większość dodatkowego kodu tutaj
  *
  */
 public class SettingsManager {
@@ -73,6 +76,7 @@ public class SettingsManager {
 			    break;
 			}
 		}
+		
 		settings.add(new Setting(ID, value));
 	}
 	
@@ -80,6 +84,7 @@ public class SettingsManager {
 	 * Metoda przywraca domyślne wartości ustawień programu.
 	 */
 	public void restoreDefaultSetting() {
+		settings.clear();
 		addSetting("abyss_version","1.30 release 30-3-2015");
 		addSetting("r_path","c://Program Files//R//R-3.1.2//bin//Rscript.exe");
 		addSetting("r_path64","c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
@@ -88,8 +93,9 @@ public class SettingsManager {
 		addSetting("ina_COMMAND2","nnsyp");
 		addSetting("ina_COMMAND3","nnnfnn");
 		addSetting("ina_COMMAND4","eqqy");
+		addSetting("netExtFactor","0");
 		//
-		write();
+		writeSettingsFile();
 	}
 	
 	/**
@@ -97,7 +103,9 @@ public class SettingsManager {
 	 * (nieuszkodzonym) pliku właściwości, który właśnie został przeczytany.
 	 * @return boolean - true, jeśli wszystkie ważne zostały wczytane
 	 */
+	@SuppressWarnings("unused")
 	private boolean checkCriticalSetting() {
+		String tmp = "";
 		if(getValue("abyss_version") == null) return false;
 		if(getValue("r_path") == null) return false;
 		if(getValue("ina_bat") == null) return false;
@@ -105,23 +113,27 @@ public class SettingsManager {
 		if(getValue("ina_COMMAND2") == null) return false;
 		if(getValue("ina_COMMAND3") == null) return false;
 		if(getValue("ina_COMMAND4") == null) return false;
+		if((tmp = getValue("netExtFactor")) == null) {
+			return false;
+		} else {
+			try { int test = Integer.parseInt(tmp);	} catch (Exception e) { return false; }
+		}
 		return true;
 	}
 
 	/**
 	 * Metoda odpowiedzialna za zapis właściwości programu do pliku.
 	 */
-	public void write() {
+	private void writeSettingsFile() {
 		try {
-			FileOutputStream fileOut = new FileOutputStream("abyss.cfg");
-			PrintStream ps = new PrintStream(fileOut);
+			File configFile = new File("abyss.cfg");
+			FileWriter cfgFileWriter = new FileWriter(configFile, false);
 			for (Setting data : settings) {
-				ps.println(data.getID() + " " + data.getValue());
+				cfgFileWriter.write(data.getID() + " " + data.getValue()+"\n");
 			}
-			fileOut.close();
+			cfgFileWriter.close();
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Unknown error",
-					"For some reason, settings could not be saved.",
+			JOptionPane.showMessageDialog(null, "For some reason, settings could not be saved.", "Unknown error",
 					JOptionPane.ERROR_MESSAGE);
 			GUIManager.getDefaultGUIManager().log("Unknown error, for some reason, settings could not be saved.", "error", true);
 		}
@@ -129,10 +141,10 @@ public class SettingsManager {
 
 	/**
 	 * Metoda wczytuje plik właściwości albo go odtwarza w razie braku.
-	 * @param err boolean - true, jeśli wywołała samą siebie, bo nie dało się wczytać pliku, w takim
-	 * 		wypadku podejmowana jest jeszcze tylko jedna próba bez dalszej rekurencji
+	 * @param error boolean - true, jeśli wywołała samą siebie, bo nie dało się wczytać pliku, w takim
+	 * 		wypadku podejmowana jest jeszcze TYLKO jedna próba, bez dalszej rekurencji
 	 */
-	public void read(boolean err) {
+	private void readSettingsFile(boolean error) {
 		Path path = Paths.get("abyss.cfg");
 		String currentLine;
 		settings.clear();
@@ -151,19 +163,23 @@ public class SettingsManager {
 			}
 			
 			boolean status = checkCriticalSetting();
-			if(!status)
+			if(!status) {
 				throw new IOException();
+			}
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null,"Settings not found!",
-				"The file \"abyss\".cfg, which normally contains the settings for this application, has not been found.\n"
-				+ "Creating default file.",
+			JOptionPane.showMessageDialog(null,
+				"The file \"abyss\".cfg, which normally contains the settings for this application, has not been found \n"
+				+ "or contains invalid values. Recreating default file.",
+				"Settings file not found or damaged",
 				JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Settings not found! The file \"settings\".stg, which normally "
-					+ "contains the settings for this application, has not been found. Creating default file.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Settings file not found or damaged. The file \"settings\".stg, which normally "
+					+ "contains the settings for this application, has not been found or contains invalid values. Creating default file.", "error", true);
 			
-			if(err) return;
+			if(error) 
+				return;
+			
 			restoreDefaultSetting();
-			read(true);
+			readSettingsFile(true);
 		}
 	}
 
@@ -188,8 +204,9 @@ public class SettingsManager {
 			
 			return new Setting(ID, value);
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null,"Settings corrupt, converting line has failed.",
+			JOptionPane.showMessageDialog(null, 
 					"The file \"abyss\".cfg, which normally contains the settings for this application, is corrupt. Unable to load settings.",
+					"Settings corrupt, converting line has failed.",
 					JOptionPane.ERROR_MESSAGE);
 			GUIManager.getDefaultGUIManager().log("Settings corrupt! The file \"abyss\".cfg, which normally contains the "
 					+ "settings for this application, is corrupt. Unable to load setting line: ", "error", true);
@@ -198,11 +215,17 @@ public class SettingsManager {
 		}
 	}
 	
+	/**
+	 * Metoda wczytująca plik konfiguracyjny.
+	 */
 	public void loadSettings() {
-		read(false);
+		readSettingsFile(false);
 	}
 	
+	/**
+	 * Metoda zapisująca konfigurację do pliku.
+	 */
 	public void saveSettings() {
-		write();
+		writeSettingsFile();
 	}
 }
