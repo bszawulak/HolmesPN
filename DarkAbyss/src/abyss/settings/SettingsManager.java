@@ -94,6 +94,7 @@ public class SettingsManager {
 		addSetting("ina_COMMAND3","nnnfnn");
 		addSetting("ina_COMMAND4","eqqy");
 		addSetting("netExtFactor","0");
+		addSetting("gridAlign","1");
 		//
 		writeSettingsFile();
 	}
@@ -118,6 +119,7 @@ public class SettingsManager {
 		} else {
 			try { int test = Integer.parseInt(tmp);	} catch (Exception e) { return false; }
 		}
+		if(getValue("gridAlign") == null) return false;
 		return true;
 	}
 

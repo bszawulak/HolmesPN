@@ -107,10 +107,10 @@ public class Toolbar extends BorderDock {
 		//horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(simulationDockables), new Position(1));
 		
 		analysisDockables = createAnalysisBar();
-		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(analysisDockables), new Position(1));
+		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(analysisDockables), new Position(2));
 
 		netTransformDockables = createNetTransormBar();
-		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(netTransformDockables), new Position(2));
+		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(netTransformDockables), new Position(1));
 		
 		verticalCompositeToolBarDock.addChildDock(defaultVerticalToolBarDock, new Position(0));
 		
@@ -420,21 +420,45 @@ public class Toolbar extends BorderDock {
 	private ArrayList<ButtonDockable> createNetTransormBar() {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
 		
-		ToolbarButtonAction extendNetButton = new ToolbarButtonAction(this, "EXTnet", Tools.getResIcon32("/icons/toolbar/a.png")) {
+		ToolbarButtonAction extendNetButton = new ToolbarButtonAction(this, "Extend the net by 10%", Tools.getResIcon32("/icons/toolbar/resizeMax.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
 				NetworkTransformations nt = new NetworkTransformations();
-				nt.extendNetwork();
+				nt.extendNetwork(true);
 				//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 			}
 		};
-		analysisDockables.add(createButtonDockable("EXTnet", extendNetButton));
+		analysisDockables.add(createButtonDockable("EXTnetButton", extendNetButton));
 		
-		ToolbarButtonAction shrinkNetButton = new ToolbarButtonAction(this, "SHRnet", Tools.getResIcon32("/icons/toolbar/a.png")) {
+		ToolbarButtonAction shrinkNetButton = new ToolbarButtonAction(this, "Shrink the net by 10%", Tools.getResIcon32("/icons/toolbar/resizeMin.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
+				NetworkTransformations nt = new NetworkTransformations();
+				nt.extendNetwork(false);
 			}
 		};
-		analysisDockables.add(createButtonDockable("EXTnet", shrinkNetButton));
+		analysisDockables.add(createButtonDockable("SHRButton", shrinkNetButton));
+		
+		ToolbarButtonAction gridButton = new ToolbarButtonAction(this, "Show grid line", Tools.getResIcon32("/icons/toolbar/grid.png")) {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlign").equals("1"))
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlign", "0");
+				else
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlign", "1");
+				
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+			}
+		};
+		analysisDockables.add(createButtonDockable("GridButton", gridButton));
+		
+		
+		ToolbarButtonAction gridAlignButton = new ToolbarButtonAction(this, "Align net to grid line", Tools.getResIcon32("/icons/toolbar/gridAlign.png")) {
+			public void actionPerformed(ActionEvent actionEvent) {
+				NetworkTransformations nt = new NetworkTransformations();
+				nt.alignNetToGrid();
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+			}
+		};
+		analysisDockables.add(createButtonDockable("GridAlignButton", gridAlignButton));
+		
 		
 		return analysisDockables;
 	}

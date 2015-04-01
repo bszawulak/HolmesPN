@@ -250,6 +250,26 @@ public class GraphPanel extends JComponent {
 		g2d.translate(0, 0);
 		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlign").equals("1")) {
+			g2d.setColor(Color.lightGray);
+			
+			int maxWidth = (getWidth() * 100)/getZoom();
+			int maxHeight = (getHeight() * 100)/getZoom();
+			int counterVertical = 1;
+			int counterHorizontal = 1;
+			for(int i=1; i<(maxWidth/20); i++) {
+				g2d.drawLine(counterVertical*20, 0, counterVertical*20, maxHeight);
+				counterVertical++;
+			}
+			
+			for(int i=1; i<(maxHeight/20); i++) {
+				g2d.drawLine(0, counterHorizontal*20, maxWidth, counterHorizontal*20);
+				counterHorizontal++;
+			}
+		}
+		
+		
 		for (Arc a : getArcs()) {
 			a.draw(g2d, this.sheetId, getZoom());
 		}
