@@ -1,7 +1,5 @@
 package abyss.math;
 
-import abyss.analyse.InvariantsCalculator;
-import abyss.analyse.InvariantsSimulator;
 import abyss.analyse.MCTCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.files.Snoopy.SnoopyWriter;
@@ -15,7 +13,6 @@ import abyss.files.io.NetHandler_Extended;
 import abyss.files.io.NetHandler_Time;
 import abyss.graphpanel.SelectionActionListener;
 import abyss.graphpanel.GraphPanel;
-import abyss.graphpanel.IdGenerator;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.Node;
 import abyss.math.PetriNetElement.PetriNetElementType;
@@ -77,8 +74,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param ar ArrayList[Arc] - lista łuków sieci
 	 */
 	public PetriNet(ArrayList<Node> nod, ArrayList<Arc> ar) {
-		getData().nodes = nod;
-		getData().arcs = ar;
+		getDataCore().nodes = nod;
+		getDataCore().arcs = ar;
 		communicationProtocol = new IOprotocols();
 		dataCore.netName = "default";
 		mcsData = new MCSDataMatrix();
@@ -106,6 +103,19 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void resetComm() {
 		communicationProtocol = new IOprotocols();
 	}
+	
+	/**
+	 * Metoda TYLKO do użytku przygotowania przestrzeni dla nowego projektu. Czyści dane sieci, nieodracalnie.
+	 * Należy to zrobić w ten sposób, gdyż powiązania elementów logiki programu między sobą powodują, że proste
+	 * stworzenie nowego obiektu tablicy nodes oraz arcs powoduje błędy w wyniku braku propagacji tej zmiany w
+	 * w wielu obiektach programu.
+	 */
+	public void resetData() {
+		GUIManager.getDefaultGUIManager().log("Removing all nodes (places and transition) and all arcs.", "text", true);
+		getDataCore().nodes.clear();
+		getDataCore().arcs.clear();
+		getDataCore().netName = "default";
+	}
 
 	/**
 	 * Metoda pozwala pobrać wszystkie obiekty miejsc dla danej sieci.
@@ -115,7 +125,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<Place> getPlaces() {
 		ArrayList<Place> returnPlaces = new ArrayList<Place>();
-		for (Node n : this.getData().nodes) {
+		for (Node n : this.getDataCore().nodes) {
 			if (n instanceof Place)
 				returnPlaces.add((Place) n);
 		}
@@ -130,7 +140,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<Transition> getTransitions() {
 		ArrayList<Transition> returnTransitions = new ArrayList<Transition>();
-		for (Node n : this.getData().nodes) {
+		for (Node n : this.getDataCore().nodes) {
 			if (n instanceof Transition || n instanceof TimeTransition)
 				returnTransitions.add((Transition) n);
 		}
@@ -143,7 +153,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<TimeTransition> getTimeTransitions() {
 		ArrayList<TimeTransition> returnTransitions = new ArrayList<TimeTransition>();
-		for (Node n : this.getData().nodes) {
+		for (Node n : this.getDataCore().nodes) {
 			if (n instanceof TimeTransition)
 				returnTransitions.add((TimeTransition) n);
 		}
@@ -157,7 +167,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param nodes ArrayList[Node] - nowa lista wierzchołków
 	 */
 	public void setNodes(ArrayList<Node> nodes) {
-		this.getData().nodes = nodes;
+		this.getDataCore().nodes = nodes;
 		for (GraphPanel gp : this.getGraphPanels())
 			gp.setNodes(nodes);
 	}
@@ -167,7 +177,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param name String - nowa nazwa
 	 */
 	public void setName(String name) {
-		dataCore.netName = name;
+		getDataCore().netName = name;
 	}
 	
 	/**
@@ -175,7 +185,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return String - nazwa sieci
 	 */
 	public String getName() {
-		return dataCore.netName;
+		return getDataCore().netName;
 	}
 
 	/**
@@ -183,7 +193,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return ArrayList[Arc] - lista łuków zawartych w projekcie
 	 */
 	public ArrayList<Arc> getArcs() {
-		return this.getData().arcs;
+		return this.getDataCore().arcs;
 	}
 	
 	/**
@@ -204,9 +214,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param arcs ArrayList[Arc] - nowa lista łuków
 	 */
 	public void setArcs(ArrayList<Arc> arcs) {
-		this.getData().arcs = arcs;
+		this.getDataCore().arcs = arcs;
 		for (GraphPanel gp : this.getGraphPanels())
-			gp.setArcs(this.getData().arcs);
+			gp.setArcs(this.getDataCore().arcs);
 	}
 
 	/**
@@ -214,7 +224,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return ArrayList[Node] - lista wierzchołków sieci
 	 */
 	public ArrayList<Node> getNodes() {
-		return this.getData().nodes;
+		return this.getDataCore().nodes;
 	}
 	
 	/**
@@ -343,7 +353,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda zwracająca pełne dane sieci - wierzchołki i łuki.
 	 * @return PetriNetData - wierzchołki i łuki sieci
 	 */
-	public PetriNetData getData() {
+	public PetriNetData getDataCore() {
 		return dataCore;
 	}
 
@@ -402,7 +412,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param graphPanel - nowy arkusz
 	 */
 	public void addGraphPanel(GraphPanel graphPanel) {
-		graphPanel.setNodesAndArcs(this.getData().nodes, this.getData().arcs);
+		graphPanel.setNodesAndArcs(this.getDataCore().nodes, this.getDataCore().arcs);
 		this.getGraphPanels().add(graphPanel);
 	}
 
@@ -413,7 +423,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return GraphPanel - który w wyniku wywołania metody został utworzony
 	 */
 	public GraphPanel createAndAddGraphPanel(int sheetId) {
-		GraphPanel gp = new GraphPanel(sheetId, this, this.getData().nodes, this.getData().arcs);
+		GraphPanel gp = new GraphPanel(sheetId, this, this.getDataCore().nodes, this.getDataCore().arcs);
 		gp.setDrawMode(this.drawMode);
 		this.getGraphPanels().add(gp);
 		return gp;
@@ -586,34 +596,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		for (GraphPanel g : this.getGraphPanels())
 			images.add(g.createImageFromSheet());
 		return images;
-	}
-
-	/**
-	 * Metoda pozwala na wyczyszczenie projektu z całej sieci. Zostają usunięte
-	 * wszystkie wierzchołki, łuki oraz arkusze.
-	 */
-	public void deleteProjectData() {
-		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
-		for (GraphPanel gp : getGraphPanels()) {
-			gp.getSelectionManager().forceDeselectAllElements();
-		}
-		
-		setNodes(new ArrayList<Node>());
-		setArcs(new ArrayList<Arc>());
-		
-		repaintAllGraphPanels();
-		
-		ArrayList<GraphPanel> newGraphPanels = new ArrayList<GraphPanel>();
-		for (GraphPanel gp : getGraphPanels()) {
-			int sheetID = gp.getSheetId();
-			WorkspaceSheet.SheetPanel sheetPanel = (WorkspaceSheet.SheetPanel) gp.getParent();
-			sheetPanel.remove(gp);
-			GraphPanel newGraphPanel = new GraphPanel(sheetID, this,getNodes(), getArcs());
-			sheetPanel.add(newGraphPanel);
-			newGraphPanels.add(newGraphPanel);
-		}
-		setGraphPanels(newGraphPanels);
-		repaintAllGraphPanels();
 	}
 
 	/**
@@ -870,13 +852,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda zwracająca identyfikator czystego arkusza sieci. Jeśli już jest jakaś sieć - tworzy
-	 * nową zakłądkę i zwraca jej numer. 
+	 * nową zakładkę i zwraca jej numer. 
 	 * @return int - id arkusza sieci do zapełnienia
 	 */
 	public int returnCleanSheetID() {
 		int SID = 0;
 
-		if (getData().nodes.isEmpty()) {
+		if (getDataCore().nodes.isEmpty()) {
 			SID = 0;
 		} else {
 			int tSID;// nodes.get(0).getNodeLocations()
@@ -888,9 +870,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			//System.out.println(GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(k - 1).getId());
 			int[] tabSID = new int[GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(k - 1).getId() + 1];
 
-			for (int j = 0; j < getData().nodes.size(); j++) {
-				for (int i = 0; i < getData().nodes.get(j).getNodeLocations().size(); i++) {
-					tSID = getData().nodes.get(j).getNodeLocations().get(i).getSheetID();
+			for (int j = 0; j < getDataCore().nodes.size(); j++) {
+				for (int i = 0; i < getDataCore().nodes.get(j).getNodeLocations().size(); i++) {
+					tSID = getDataCore().nodes.get(j).getNodeLocations().get(i).getSheetID();
 					tabSID[tSID]++;
 				}
 			}
@@ -951,5 +933,33 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		//				getData().nodes, getData().arcs), get2ndFormInvariantsList(),type, value);
 
 		//invSimulator.startSimulation(SimulatorMode.LOOP);
+	}
+	
+	/**
+	 * UNUSED, OBSOLETE, MORE: DOES NOT WORK, ONLY MESSES UP
+	 * FOR EDUCATIONAL (EXAMPLE TYPE: "DON'T DO IT") PURPOSES
+	 */
+	public void deleteProjectData() {
+		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
+		for (GraphPanel gp : getGraphPanels()) {
+			gp.getSelectionManager().forceDeselectAllElements();
+		}
+		
+		setNodes(new ArrayList<Node>());
+		setArcs(new ArrayList<Arc>());
+		
+		repaintAllGraphPanels();
+		
+		ArrayList<GraphPanel> newGraphPanels = new ArrayList<GraphPanel>();
+		for (GraphPanel gp : getGraphPanels()) {
+			int sheetID = gp.getSheetId();
+			WorkspaceSheet.SheetPanel sheetPanel = (WorkspaceSheet.SheetPanel) gp.getParent();
+			sheetPanel.remove(gp);
+			GraphPanel newGraphPanel = new GraphPanel(sheetID, this,getNodes(), getArcs());
+			sheetPanel.add(newGraphPanel);
+			newGraphPanels.add(newGraphPanel);
+		}
+		setGraphPanels(newGraphPanels);
+		repaintAllGraphPanels();
 	}
 }

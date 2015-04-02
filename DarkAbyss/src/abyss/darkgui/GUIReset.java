@@ -11,6 +11,7 @@ import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.graphpanel.GraphPanel;
+import abyss.graphpanel.IdGenerator;
 import abyss.math.Arc;
 import abyss.math.MCSDataMatrix;
 import abyss.math.Node;
@@ -48,6 +49,8 @@ public class GUIReset {
 	public void newProjectInitiated() {
 		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		
+		ArrayList<GraphPanel> algp = pNet.getGraphPanels();
+		
 		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
 
 		for (GraphPanel gp : pNet.getGraphPanels()) {
@@ -55,8 +58,7 @@ public class GUIReset {
 		}
 		
 		//CLEAR PETRI NET DATA:
-		pNet.setNodes(new ArrayList<Node>());
-		pNet.setArcs(new ArrayList<Arc>());
+		pNet.resetData(); //!!!! 
 		pNet.setInvariantsMatrix(null);
 		pNet.setMCSdataCore(new MCSDataMatrix());
 		pNet.resetComm();
@@ -66,24 +68,8 @@ public class GUIReset {
 		
 		pNet.repaintAllGraphPanels();
 		
-		//podmiana SheetPanels na nowe, czyste wersje
-		/*
-		ArrayList<GraphPanel> newGraphPanels = new ArrayList<GraphPanel>();
-		for (GraphPanel gp : pNet.getGraphPanels()) {
-			int sheetID = gp.getSheetId();
-			WorkspaceSheet.SheetPanel sheetPanel = (WorkspaceSheet.SheetPanel) gp.getParent();
-			sheetPanel.remove(gp);
-			GraphPanel newGraphPanel = new GraphPanel(sheetID, pNet, pNet.getNodes(), pNet.getArcs());
-			sheetPanel.add(newGraphPanel);
-			newGraphPanels.add(newGraphPanel);
-		}
-		pNet.setGraphPanels(newGraphPanels);
-		*/
-		
 		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
-		
 		int dockableSize = workspace.getDockables().size();
-		
 		for(int d=0; d<dockableSize; d++) {
 			Dockable dockable = workspace.getDockables().get(d);
 			String x = dockable.getID();
@@ -96,8 +82,8 @@ public class GUIReset {
 			dockableSize--;
 		}
 		
-		//pNet.repaintAllGraphPanels();
-		
+		reset2ndOrderData();
+		IdGenerator.resetIDgenarator();
 	}
 	
 	/**

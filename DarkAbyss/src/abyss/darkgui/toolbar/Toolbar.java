@@ -274,7 +274,7 @@ public class Toolbar extends BorderDock {
 				"Clear project", "Clears the project", Tools.getResIcon48("/icons/toolbar/clear_project.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().deleteProjectData();
+				//GUIManager.getDefaultGUIManager().getWorkspace().getProject().deleteProjectData();
 			}
 		};
 		buttonDockables.add(createButtonDockable("ButtonDockableRefresh", clearProject));

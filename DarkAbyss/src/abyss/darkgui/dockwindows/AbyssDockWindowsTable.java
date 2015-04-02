@@ -521,6 +521,13 @@ public class AbyssDockWindowsTable extends JPanel {
 		JLabel idLabel2 = new JLabel(Integer.toString(gID));
 		idLabel2.setBounds(columnB_posX, columnB_Y += 10, 50, 20);
 		components.add(idLabel2);
+		
+		JLabel idLabel3 = new JLabel("gID:");
+		idLabel3.setBounds(columnB_posX+35, columnA_Y, 50, 20);
+		components.add(idLabel3);
+		JLabel idLabel4 = new JLabel(place.getID()+"");
+		idLabel4.setBounds(columnB_posX+60, columnB_Y, 50, 20);
+		components.add(idLabel4);
 
 		// NAME
 		JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
@@ -821,6 +828,13 @@ public class AbyssDockWindowsTable extends JPanel {
 		//JLabel idLabel2 = new JLabel(Integer.toString(transition.getID()));
 		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
 		components.add(idLabel2);
+		
+		JLabel idLabel3 = new JLabel("gID:");
+		idLabel3.setBounds(columnB_posX+35, columnA_Y, 50, 20);
+		components.add(idLabel3);
+		JLabel idLabel4 = new JLabel(transition.getID()+"");
+		idLabel4.setBounds(columnB_posX+60, columnB_Y, 50, 20);
+		components.add(idLabel4);
 
 		// TRANSITION NAME:
 		JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
@@ -1091,9 +1105,18 @@ public class AbyssDockWindowsTable extends JPanel {
 		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
 		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
 		components.add(idLabel);
-		JLabel idLabel2 = new JLabel(Integer.toString(transition.getID()));
+		
+		int gID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().lastIndexOf(transition);
+		JLabel idLabel2 = new JLabel(Integer.toString(gID));
 		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
 		components.add(idLabel2);
+		
+		JLabel idLabel3 = new JLabel("gID:");
+		idLabel3.setBounds(columnB_posX+35, columnA_Y, 50, 20);
+		components.add(idLabel3);
+		JLabel idLabel4 = new JLabel(transition.getID()+"");
+		idLabel4.setBounds(columnB_posX+60, columnB_Y, 50, 20);
+		components.add(idLabel4);
 
 		// T-TRANSITION NAME
 		JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
@@ -1400,7 +1423,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		elementLocation = arc.getStartLocation();
 		
 		// ARC ID
-		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
+		JLabel idLabel = new JLabel("gID:", JLabel.LEFT);
 		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
 		components.add(idLabel);
 		JLabel idLabel2 = new JLabel(Integer.toString(arc.getID()));

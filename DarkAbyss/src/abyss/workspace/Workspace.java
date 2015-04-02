@@ -118,8 +118,12 @@ public class Workspace implements SelectionActionListener {
 	 * @param sheet WorkspaceSheet - arkusz do usunięcia
 	 */
 	public void deleteSheetFromArrays(WorkspaceSheet sheet) {
+		//int gpIndex = getProject().getGraphPanels().indexOf(sheet.getGraphPanel());
+		int sheetID = sheet.getId();
+		getProject().removeGraphPanel(sheetID);
+		
 		int id = sheets.indexOf(sheet);// + 1 - 1;
-		getProject().removeGraphPanel(id);
+		//getProject().removeGraphPanel(id);
 		getWorkspaceDock().emptyChild(docks.get(id));
 		docks.remove(id);
 		sheets.remove(id);

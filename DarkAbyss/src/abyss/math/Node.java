@@ -213,12 +213,11 @@ public abstract class Node extends PetriNetElement {
 	 * 		której obszar rysowania zawiera wybrany punkt na wybranym arkuszu
 	 */
 	public ElementLocation getLocationWhichContains(Point point, int sheetId) {
-		for (ElementLocation e : this.getNodeLocations(sheetId))
-			if (e.getPosition().x - getRadius() < point.x
-					&& e.getPosition().y - getRadius() < point.y
-					&& e.getPosition().x + getRadius() > point.x
-					&& e.getPosition().y + getRadius() > point.y)
+		for (ElementLocation e : this.getNodeLocations(sheetId)) {
+			if (e.getPosition().x - getRadius() < point.x && e.getPosition().y - getRadius() < point.y
+					&& e.getPosition().x + getRadius() > point.x && e.getPosition().y + getRadius() > point.y)
 				return e;
+		}
 		return null;
 	}
 

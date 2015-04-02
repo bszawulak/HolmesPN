@@ -2,15 +2,19 @@ package abyss.graphpanel;
 
 /**
  * Generator identyfikatorów dla wierzchołków.
+ * 
  * @author students
- *
+ * @author MR
  */
 public class IdGenerator {
 	private static int lastId = 0;
 	private static int lastPlaceId = 0;
 	private static int lastTransitionId = 0;
 	
-	public static void reset() {
+	/**
+	 * Resetuje wartości id do zer.
+	 */
+	public static void resetIDgenarator() {
 		lastId = 0;
 		lastPlaceId = 0;
 		lastTransitionId = 0;

@@ -31,7 +31,7 @@ public class AbyssWriter {
 		xstream.alias("petriNet", PetriNetData.class);
 
 		try {
-			PetriNetData dataModule = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getData();
+			PetriNetData dataModule = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getDataCore();
 			String xml = xstream.toXML(dataModule);
 			
 			/*

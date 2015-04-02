@@ -103,6 +103,11 @@ public class GraphPanel extends JComponent {
 		this.revalidate();
 		this.repaint();
 	}
+	
+	public void resetNodesAndArcs(ArrayList<Node> nodes, ArrayList<Arc> arcs) {
+		this.nodes = nodes;
+		this.arcs = arcs;
+	}
 
 	/**
 	 * Metoda pozwala na ustawienie zbioru wierzchołków dla danego arkusza.

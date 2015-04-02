@@ -231,7 +231,8 @@ public class SelectionManager {
 	 */
 	public ElementLocation getPossiblySelectedElementLocation(Point p) {
 		for (Node n : this.getGraphPanelNodes()) {
-			ElementLocation el = n.getLocationWhichContains(p, this.getGraphPanel().getSheetId());
+			int sheetID = this.getGraphPanel().getSheetId();
+			ElementLocation el = n.getLocationWhichContains(p, sheetID);
 			if (el != null)
 				return el;
 		}
