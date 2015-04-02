@@ -217,7 +217,7 @@ public class Toolbar extends BorderDock {
 		//nowa zakładka
 		@SuppressWarnings("serial")
 		ToolbarButtonAction addButton = new ToolbarButtonAction(this, 
-				"New tab", Tools.getResIcon48("/icons/toolbar/add_panel.png")) {
+				"New tab", "Add new network tab/sheet", Tools.getResIcon48("/icons/toolbar/add_panel.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().newTab();
@@ -227,7 +227,7 @@ public class Toolbar extends BorderDock {
 		
 		@SuppressWarnings("serial")
 		ToolbarButtonAction openButton = new ToolbarButtonAction(this,
-				"Open project...", Tools.getResIcon48("/icons/toolbar/open.png")) {
+				"Open project...", "Open Abyss project (.abyss)", Tools.getResIcon48("/icons/toolbar/open.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().io.openAbyssProject();
@@ -238,7 +238,7 @@ public class Toolbar extends BorderDock {
 		//import projektu ze snoopiego
 		@SuppressWarnings("serial")
 		ToolbarButtonAction importButton = new ToolbarButtonAction(this,
-				"Import project...", Tools.getResIcon48("/icons/toolbar/import_net.png")) {
+				"Import project...", "Import PN in other formats", Tools.getResIcon48("/icons/toolbar/import_net.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().io.importProject();
@@ -249,7 +249,7 @@ public class Toolbar extends BorderDock {
 		//zapis obrazu sieci do pliku
 		@SuppressWarnings("serial")
 		ToolbarButtonAction pictureButton = new ToolbarButtonAction(this,
-				"Save picture...", Tools.getResIcon48("/icons/toolbar/save_picture.png")) {
+				"Save picture...", "Save the network as picture", Tools.getResIcon48("/icons/toolbar/save_picture.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().io.exportProjectToImage();
@@ -260,7 +260,7 @@ public class Toolbar extends BorderDock {
 		//odswiezanie
 		@SuppressWarnings("serial")
 		ToolbarButtonAction refreshButton = new ToolbarButtonAction(this,
-				"Refresh", Tools.getResIcon48("/icons/toolbar/refresh.png")) {
+				"Refresh", "Referesh", Tools.getResIcon48("/icons/toolbar/refresh.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().restoreDefaultVisuals();
@@ -271,10 +271,10 @@ public class Toolbar extends BorderDock {
 		//czyszczenie arkuszy
 		@SuppressWarnings("serial")
 		ToolbarButtonAction clearProject = new ToolbarButtonAction(this,
-				"Clear project", Tools.getResIcon48("/icons/toolbar/clear_project.png")) {
+				"Clear project", "Clears the project", Tools.getResIcon48("/icons/toolbar/clear_project.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().clearProject();
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().deleteProjectData();
 			}
 		};
 		buttonDockables.add(createButtonDockable("ButtonDockableRefresh", clearProject));
@@ -287,7 +287,7 @@ public class Toolbar extends BorderDock {
 	 */
 	private ArrayList<ButtonDockable> createAnalysisBar() {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
-		ToolbarButtonAction generateINAinvariants = new ToolbarButtonAction(this, "Generate INA Invariants", 
+		ToolbarButtonAction generateINAinvariants = new ToolbarButtonAction(this, "GenerateINA", "Generate invariants using INA", 
 				Tools.getResIcon48("/icons/toolbar/terminal.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -296,7 +296,7 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("GenerateINAinv",generateINAinvariants));
 		
-		ToolbarButtonAction clusterButton = new ToolbarButtonAction(this, "Cluster analysis",
+		ToolbarButtonAction clusterButton = new ToolbarButtonAction(this, "ClusterAnalysis", "Cluster creation and analysis", 
 				Tools.getResIcon48("/icons/toolbar/clusters.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -305,7 +305,7 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("Clusters", clusterButton));
 		
-		ToolbarButtonAction netTablesButton = new ToolbarButtonAction(this, "Net data tables",
+		ToolbarButtonAction netTablesButton = new ToolbarButtonAction(this, "NetDataTables", "Show net data as tables", 
 				Tools.getResIcon48("/icons/toolbar/netTables.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -314,7 +314,7 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("NetTables", netTablesButton));
 		
-		ToolbarButtonAction netSimLogButton = new ToolbarButtonAction(this, "Net simulation log",
+		ToolbarButtonAction netSimLogButton = new ToolbarButtonAction(this, "NetSimLog", "Network simulation log", 
 				Tools.getResIcon32("/icons/toolbar/simLog.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -324,7 +324,7 @@ public class Toolbar extends BorderDock {
 		netSimLogButton.setEnabled(false);
 		analysisDockables.add(createButtonDockable("SimLog", netSimLogButton));
 
-		ToolbarButtonAction consoleButton = new ToolbarButtonAction(this, "Show console",
+		ToolbarButtonAction consoleButton = new ToolbarButtonAction(this, "ShowConsole", "Show program log console", 
 				Tools.getResIcon48("/icons/toolbar/terminal2.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -334,7 +334,7 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("ShowConsole", consoleButton));
 		
-		ToolbarButtonAction cleanButton = new ToolbarButtonAction(this, "Clear all colors",
+		ToolbarButtonAction cleanButton = new ToolbarButtonAction(this, "ClearColors", "Restore net default colors", 
 				Tools.getResIcon48("/icons/toolbar/cleanGraphColors.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -343,7 +343,7 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("CleanColor", cleanButton));
 		
-		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug test purpose",
+		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", 
 				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {	
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().loadFromFile(
@@ -372,21 +372,11 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("Testing", testButton));
 		
 		
-		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", Tools.getResIcon48("/icons/toolbar/a.png")) {
+		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", 
+				Tools.getResIcon48("/icons/toolbar/a.png")) {
 			public void actionPerformed(ActionEvent actionEvent) 
-			
 			{ 
-				//GUIManager.getDefaultGUIManager().showMCS();
-				//ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-				//Transition test = transitions.get(8);
-				//MCSCalculatorShort mcs = new MCSCalculatorShort(2);
-				//List<Set<Short>> sets = mcs.findMcs(16);
-
-				//ArrayList<Transition> knockoutList = new ArrayList<Transition>();
-				//knockoutList.add(test);
-				//KnockoutCalculator kc = new KnockoutCalculator();
-				//ArrayList<Transition> result = kc.calculateKnockout(knockoutList);
-				
+				/*
 				MDTSCalculator mdts = new MDTSCalculator();
 				ArrayList<Set<Integer>> results = mdts.calculateMDTS();
 				
@@ -407,7 +397,9 @@ public class Toolbar extends BorderDock {
 					text += "]";
 					text = text.replace(", ]", "]");
 					notePad.addTextLineNL(text, "text");
-				}
+				}*/
+				
+				
 			}
 		};
 		analysisDockables.add(createButtonDockable("Testing2", testButton2));
@@ -419,8 +411,8 @@ public class Toolbar extends BorderDock {
 	@SuppressWarnings("serial")
 	private ArrayList<ButtonDockable> createNetTransormBar() {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
-		
-		ToolbarButtonAction extendNetButton = new ToolbarButtonAction(this, "Extend the net by 10%", Tools.getResIcon32("/icons/toolbar/resizeMax.png")) {
+		ToolbarButtonAction extendNetButton = new ToolbarButtonAction(this, "ExtNet",  "Extend the net by 10%",
+				Tools.getResIcon32("/icons/toolbar/resizeMax.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
 				NetworkTransformations nt = new NetworkTransformations();
 				nt.extendNetwork(true);
@@ -429,7 +421,8 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("EXTnetButton", extendNetButton));
 		
-		ToolbarButtonAction shrinkNetButton = new ToolbarButtonAction(this, "Shrink the net by 10%", Tools.getResIcon32("/icons/toolbar/resizeMin.png")) {
+		ToolbarButtonAction shrinkNetButton = new ToolbarButtonAction(this, "ShrNet", "Shrink the net by 10%", 
+				Tools.getResIcon32("/icons/toolbar/resizeMin.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
 				NetworkTransformations nt = new NetworkTransformations();
 				nt.extendNetwork(false);
@@ -437,20 +430,21 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("SHRButton", shrinkNetButton));
 		
-		ToolbarButtonAction gridButton = new ToolbarButtonAction(this, "Show grid line", Tools.getResIcon32("/icons/toolbar/grid.png")) {
+		ToolbarButtonAction gridButton = new ToolbarButtonAction(this, "ShowGrid", "Show grid line", 
+				Tools.getResIcon32("/icons/toolbar/grid.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlign").equals("1"))
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlign", "0");
+				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridLines").equals("1"))
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridLines", "0", true);
 				else
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlign", "1");
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridLines", "1", true);
 				
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 			}
 		};
 		analysisDockables.add(createButtonDockable("GridButton", gridButton));
-		
-		
-		ToolbarButtonAction gridAlignButton = new ToolbarButtonAction(this, "Align net to grid line", Tools.getResIcon32("/icons/toolbar/gridAlign.png")) {
+
+		ToolbarButtonAction gridAlignButton = new ToolbarButtonAction(this, "GridAlign", "Align net to grid line", 
+				Tools.getResIcon32("/icons/toolbar/gridAlign.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
 				NetworkTransformations nt = new NetworkTransformations();
 				nt.alignNetToGrid();
@@ -473,7 +467,7 @@ public class Toolbar extends BorderDock {
 	 */
 	private ArrayList<ButtonDockable> createSimulationBar() {
 		ArrayList<ButtonDockable> simulationDockables = new ArrayList<ButtonDockable>();
-		reverseLoopButton = new ToolbarButtonAction(this, "Loop back to oldest action saved",
+		reverseLoopButton = new ToolbarButtonAction(this, "LoopBack", "Loop back to oldest action saved",
 				Tools.getResIcon48("/icons/toolbar/sim_back.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -483,7 +477,7 @@ public class Toolbar extends BorderDock {
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableStepBack",reverseLoopButton));
 		
-		reverseStepButton = new ToolbarButtonAction(this,"Single action back simulation",
+		reverseStepButton = new ToolbarButtonAction(this, "StepBack", "Single action back simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_back_step.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -493,7 +487,7 @@ public class Toolbar extends BorderDock {
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepBack", reverseStepButton));
 		
-		loopSimButton = new ToolbarButtonAction(this,"Loop simulation",
+		loopSimButton = new ToolbarButtonAction(this, "Loop", "Loop simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_start.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -503,7 +497,7 @@ public class Toolbar extends BorderDock {
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableLoopSim",loopSimButton));
 		
-		singleTransitionLoopSimButton = new ToolbarButtonAction(this, "Loop single transition simulation", 
+		singleTransitionLoopSimButton = new ToolbarButtonAction(this, "LoopSingleTrans", "Loop single transition simulation", 
 				Tools.getResIcon48("/icons/toolbar/sim_start_single.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -514,7 +508,7 @@ public class Toolbar extends BorderDock {
 		simulationDockables.add(createButtonDockable("ButtonDockableLoopSingleTransitionSim",
 				singleTransitionLoopSimButton));
 		
-		pauseSimButton = new ToolbarButtonAction(this,"Pause simulation",
+		pauseSimButton = new ToolbarButtonAction(this, "Pause", "Pause simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_pause.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -524,7 +518,7 @@ public class Toolbar extends BorderDock {
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockablePauseSim",pauseSimButton));
 		
-		stopSimButton = new ToolbarButtonAction(this,"Schedule a stop for the simulation",
+		stopSimButton = new ToolbarButtonAction(this, "Stop", "Schedule a stop for the simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_stop.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -533,7 +527,7 @@ public class Toolbar extends BorderDock {
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableStopSim",stopSimButton));
 		
-		smallStepFwdSimButton = new ToolbarButtonAction(this,"Single transition forward simulation",
+		smallStepFwdSimButton = new ToolbarButtonAction(this, "SingleForward", "Single transition forward simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_forward_step.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -543,7 +537,7 @@ public class Toolbar extends BorderDock {
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepFwdSim", smallStepFwdSimButton));
 		
-		stepFwdSimButton = new ToolbarButtonAction(this,"Step forward simulation",
+		stepFwdSimButton = new ToolbarButtonAction(this, "StepForward", "Step forward simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_forward.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -553,7 +547,7 @@ public class Toolbar extends BorderDock {
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableStepFwdSim", stepFwdSimButton));
 		
-		resetSimButton = new ToolbarButtonAction(this,"Reset simulator",
+		resetSimButton = new ToolbarButtonAction(this, "Reset", "Reset simulator",
 				Tools.getResIcon48("/icons/toolbar/sim_reset.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {

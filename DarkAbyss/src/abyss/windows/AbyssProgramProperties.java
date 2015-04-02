@@ -138,8 +138,7 @@ public class AbyssProgramProperties extends JFrame {
 		resize80Button.setActionCommand("0");
 		resize80Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "80");
-				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "80", true);
 			}
 		});
 		group.add(resize80Button);
@@ -151,8 +150,7 @@ public class AbyssProgramProperties extends JFrame {
 		resize100Button.setActionCommand("1");
 		resize100Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "100");
-				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "100", true);
 			}
 		});
 		group.add(resize100Button);
@@ -163,8 +161,7 @@ public class AbyssProgramProperties extends JFrame {
 		resize120Button.setActionCommand("2");
 		resize120Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "120");
-				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "120", true);
 			}
 		});
 		group.add(resize120Button);
@@ -175,8 +172,7 @@ public class AbyssProgramProperties extends JFrame {
 		resize140Button.setActionCommand("3");
 		resize140Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "140");
-				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "140", true);
 			}
 		});
 		group.add(resize140Button);
@@ -187,8 +183,7 @@ public class AbyssProgramProperties extends JFrame {
 		resize160Button.setActionCommand("4");
 		resize160Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "160");
-				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "160", true);
 			}
 		});
 		group.add(resize160Button);
@@ -199,8 +194,7 @@ public class AbyssProgramProperties extends JFrame {
 		resize180Button.setActionCommand("5");
 		resize180Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "180");
-				GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "180", true);
 			}
 		});
 		group.add(resize180Button);
@@ -221,11 +215,9 @@ public class AbyssProgramProperties extends JFrame {
 				if(noAction) return;
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlignWhenSaved", "1");
-					GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlignWhenSaved", "1", true);
 				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlignWhenSaved", "0");
-					GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlignWhenSaved", "0", true);
 				}
 			}
 		});
@@ -242,11 +234,9 @@ public class AbyssProgramProperties extends JFrame {
 				if(noAction) return;
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesSnoopyOffsets", "1");
-					GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesSnoopyOffsets", "1", true);
 				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesSnoopyOffsets", "0");
-					GUIManager.getDefaultGUIManager().getSettingsManager().saveSettings();
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesSnoopyOffsets", "0", true);
 				}
 			}
 		});

@@ -73,12 +73,14 @@ public class DarkMenu extends JMenuBar {
 		// New Project
 		JMenuItem projectMenuItem = new JMenuItem("New Project",  KeyEvent.VK_N);
 		//TODO: naprawić. kiedyś. jakoś.
-		projectMenuItem.setEnabled(false);
+		projectMenuItem.setEnabled(true);
 		projectMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_newProject.png"));
 		projectMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
 		projectMenuItem.getAccessibleContext().setAccessibleDescription("New project");
 		projectMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
+				/*
 				Workspace workspace = guiManager.getWorkspace();
 				ArrayList<Dockable> dockablesToRemove = new ArrayList<Dockable>();
 				
@@ -102,26 +104,7 @@ public class DarkMenu extends JMenuBar {
 				workspace.getProject().setNodes(new ArrayList<Node>());
 				
 				workspace.newTab();
-				
-				//workspace = guiManager.getWorkspace();
-				//dockablesToRemove = new ArrayList<Dockable>();
-				//for (Dockable dockable : dockables)
-				//	dockablesToRemove.add(dockable);
-				//for (Dockable dockable : dockablesToRemove)
-				//	deleteSheetItem(dockable);
-				//workspace.newTab();
-				//lastIndex = workspace.getSheets().size() - 1;
-				//sheetsToRemove = new ArrayList<WorkspaceSheet>();
-				//for (WorkspaceSheet sheet : workspace.getSheets()) {
-				//	if (guiManager.IDtoIndex(sheet.getId()) != lastIndex) {
-				//		sheetsToRemove.add(sheet);
-				//	}
-				//}
-				//for (WorkspaceSheet sheet : sheetsToRemove) {
-				//	workspace.deleteSheetFromArrays(sheet);
-				//}
-				//workspace.getProject().setArcs(new ArrayList<Arc>());
-				//workspace.getProject().setNodes(new ArrayList<Node>());
+				*/
 			}
 		});
 		fileMenu.add(projectMenuItem);

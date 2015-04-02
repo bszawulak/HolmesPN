@@ -19,34 +19,41 @@ import com.javadocking.dockable.Dockable;
 import com.javadocking.dockable.DockingMode;
 
 /**
- * Głowna klasa odpowiedzialna za zarządzanie przestrzenią programu, w której
- * rysowana jest sieć Petriego. Posiada w sobie między innymi zakładki
- * otwarte w programie.
- * @author students
+ * Głowna klasa odpowiedzialna za zarządzanie przestrzenią programu, w której rysowana jest sieć Petriego. 
+ * Posiada w sobie między innymi zakładki otwarte w programie. Stanowi szczytowe osiągnięcie w kwestii tego
+ * jak nie zarządzać obiektami, vide: dockables, docks, sheets i sheetsIDtable. Wypada zapytać: tylko 4
+ * tablice *ŚCIŚLE POWIĄZANYCH ZE SOBĄ* obiektów? Czemu nie 40? Acha, 2 z nich są osobnymi tablicami w DarkMenu, 
+ * które należy aktualizować przy każdej zmianie liczby zakładek. Rozum nie jest w stanie tego ogarnąć, jak
+ * powiedział król Desmond zaglądając po skończonej potrzebie do nocnika.
+ * 
+ * @author students - byliście panowie wtedy trzeźwi? (MR)
+ * @author MR - zrozumiał jak to działa, czuje się przez to na równi z autorami tego kodu
  *
  */
 public class Workspace implements SelectionActionListener {
-	// misc
 	private DockFactory dockFactory;
-
-	// arrays
+	/**
+	 * Zawiera obiekty Dockable, czyli opakowanie w którym jest WorkspaceSheet. W tym miejscu kończy się ludzka logika.
+	 */
 	private ArrayList<Dockable> dockables;
+	/**
+	 * Zawiera elementy typu Dock, zawierające obiekty typu Dockable. One z kolei zawierają WorkspaceSheet, które zawiera SheetPanel, który
+	 * zawiera GraphPanel. Ku chwale ojczyzny.
+	 */
 	private ArrayList<Dock> docks;
+	/**
+	 * Tablica zawierająca obiekty WorkspaceSheet, które z kolei zawierają SheetPanel (JPanel) który zawiera GraphPanel. By żyło się lepiej.
+	 */
 	private ArrayList<WorkspaceSheet> sheets;
+	/**
+	 * Tablica identyfikatorów obiektów WorkspaceSheet przechowywanych w tablicy sheets
+	 */
 	private ArrayList<Integer> sheetsIDtable;
 
-	// filler
-	//	private WorkspaceFiller filler;
 	private Dock fillerDock;
 	private Dockable fillerDockable;
-
-	// project data
 	private PetriNet project;
-
-	// manager
 	private GUIManager guiManager;
-
-	// composite tab dock
 	private CompositeTabDock workspaceDock;
 
 	/**
@@ -84,12 +91,12 @@ public class Workspace implements SelectionActionListener {
 			id = getMaximumTabIndex() + 1;
 		Point position = new Point(0, 0);
 		sheetsIDtable.add(id);
+		
 		sheets.add(new WorkspaceSheet("I am sheet " + Integer.toString(id), id, this));
-		Dockable tempDockable = new DefaultDockable("Sheet "
-				+ Integer.toString(id), sheets.get(index), "Sheet "
-				+ Integer.toString(id));
+		Dockable tempDockable = new DefaultDockable("Sheet "+Integer.toString(id), sheets.get(index), "Sheet "+Integer.toString(id));
 		dockables.add(index, withListener(tempDockable));
-		docks.add(getDockFactory().createDock(dockables.get(index),DockingMode.SINGLE));
+		
+		docks.add(getDockFactory().createDock(dockables.get(index), DockingMode.SINGLE));
 		docks.get(index).addDockable(dockables.get(index), position, position);
 		getWorkspaceDock().addChildDock(docks.get(index), new Position(index));
 		// add menu item to the menu
@@ -122,8 +129,17 @@ public class Workspace implements SelectionActionListener {
 	/**
 	 * Metoda odpowiedzialna za usuwanie arkusza rysowania sieci z przestrzeni roboczej.
 	 * @param dockable Dockable - obiekt do usunięcia
+	 * @param boolean fastMode - true - szybkie usuwanie
 	 */
-	public void deleteTab(Dockable dockable) {
+	public void deleteTab(Dockable dockable, boolean fastMode) {
+		if(fastMode) {
+			int index = dockables.indexOf(dockable);
+			deleteSheetFromArrays(sheets.get(index));
+			guiManager.getMenu().deleteSheetItem(dockables.get(index));
+			dockables.remove(dockable);
+			return;
+		}
+		
 		int index = dockables.indexOf(dockable);
 		int n = JOptionPane.showOptionDialog(null,
 						"Are you sure you want to delete this sheet? You will not be able to retrieve it later.",
@@ -131,17 +147,17 @@ public class Workspace implements SelectionActionListener {
 						JOptionPane.QUESTION_MESSAGE, null, null, null);
 		if ((n == 0) && (sheets.size() > 1)) {
 			deleteSheetFromArrays(sheets.get(index));
-			JOptionPane.showMessageDialog(null, "Sheet deleted.");
+			//JOptionPane.showMessageDialog(null, "Sheet deleted.");
 			guiManager.getMenu().deleteSheetItem(dockables.get(index));
+			
+			dockables.remove(dockable);
 		} else {
 			if (sheets.size() == 1 && n == 0)
-				JOptionPane.showMessageDialog(null,
-						"Can't delete this sheet! A project must contain at least one sheet!",
+				JOptionPane.showMessageDialog(null, "Can't delete this sheet! A project must contain at least one sheet!",
 						"Can't delete this sheet!", JOptionPane.ERROR_MESSAGE);
 			Point position = new Point(0, 0);
-			dockables.set(index,withListener(new DefaultDockable(
-					"Sheet " + Integer.toString(sheets.get(index).getId()),
-					sheets.get(index), 
+			dockables.set(index, withListener(new DefaultDockable(
+					"Sheet " + Integer.toString(sheets.get(index).getId()), sheets.get(index), 
 					"Sheet " + Integer.toString(sheets.get(index).getId()))));
 			docks.get(index).addDockable(dockables.get(index), position, position);
 		}

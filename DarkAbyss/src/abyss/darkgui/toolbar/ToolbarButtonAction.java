@@ -17,17 +17,17 @@ public class ToolbarButtonAction extends AbstractAction {
 	private String message = "";
 	private String name;
 
-	public ToolbarButtonAction(Component parentComponent, String name, Icon icon, String message) {
+	public ToolbarButtonAction(Component parentComponent, String name, String description, Icon icon, String message) {
 		super(null, icon);
-		putValue(Action.SHORT_DESCRIPTION, name);
+		putValue(Action.SHORT_DESCRIPTION, description);
 		this.message = message;
 		this.name = name;
 		this.parentComponent = parentComponent;
 	}
 	
-	public ToolbarButtonAction(Component parentComponent, String name, Icon icon) {
+	public ToolbarButtonAction(Component parentComponent, String name, String description, Icon icon) {
 		super(null, icon);
-		putValue(Action.SHORT_DESCRIPTION, name);
+		putValue(Action.SHORT_DESCRIPTION, description);
 		this.name = name;
 		this.parentComponent = parentComponent;
 	}

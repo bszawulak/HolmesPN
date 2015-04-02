@@ -53,7 +53,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private MCSDataMatrix mcsData;
 	
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
-	private IdGenerator idGenerator;
 	
 	private AbyssWriter ABYSSwriter;
 	private AbyssReader ABYSSReader;
@@ -65,9 +64,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	private boolean isSimulationActive = false;
 	private NetSimulator simulator;
-	private InvariantsSimulator invSimulator;
 	private MCTCalculator analyzer;
-	private InvariantsCalculator invGenerator;
 
 	/** wektor tokenów dla miejsc: */
 	private ArrayList<Integer> backupMarkingZero = new ArrayList<Integer>();
@@ -249,22 +246,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda zwraca numer generatora identyfikatorów
-	 * @return IdGenerator - obiekt generatora
-	 */
-	public IdGenerator getIdGenerator() {
-		return idGenerator;
-	}
-
-	/**
-	 * Metoda ustawia nowy generator identyfikatorów elementów sieci.
-	 * @param idGenerator IdGenerator - nowy generator
-	 */
-	public void setIdGenerator(IdGenerator idGenerator) {
-		this.idGenerator = idGenerator;
-	}
-
-	/**
 	 * Metoda zwracająca obiekt w ramach którego działa aktualna sieć.
 	 * @return Workspace - obiekt zawierający obiekt sieci.
 	 */
@@ -325,14 +306,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void setSimulator(NetSimulator simulator) {
 		this.simulator = simulator;
 	}
-	
-	/**
-	 * Metoda zwraca obiekt symulatora inwariantów w ramach sieci.
-	 * @return InvariantsSimulator - symulator inwariantów
-	 */
-	public InvariantsSimulator getInvSimulator() {
-		return invSimulator;
-	}
 
 	/**
 	 * Metoda zwracająca obiekt analizatora, np. na potrzeby generacji MCT.
@@ -346,7 +319,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda ustawiająca aktualny analizator dla obiektu sieci.
 	 * @param analyzer DarkAnalyzer - analizator dla sieci
 	 */
-	private void setAnalyzer(MCTCalculator analyzer) {
+	public void setAnalyzer(MCTCalculator analyzer) {
 		this.analyzer = analyzer;
 	}
 	
@@ -474,6 +447,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public MCSDataMatrix getMCSdataCore() {
 		return mcsData;
+	}
+	
+	/**
+	 * Metoda ustawia nowy obiekt danych zbiorów MCS.
+	 * @param newMCS MCSDataMatrix - nowy obiekt
+	 */
+	public void setMCSdataCore(MCSDataMatrix newMCS) {
+		mcsData = newMCS;
 	}
 	
 	//*********************************************************************************
@@ -611,13 +592,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda pozwala na wyczyszczenie projektu z całej sieci. Zostają usunięte
 	 * wszystkie wierzchołki, łuki oraz arkusze.
 	 */
-	public void clearProject() {
-		for (GraphPanel gp : getGraphPanels())
+	public void deleteProjectData() {
+		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
+		for (GraphPanel gp : getGraphPanels()) {
 			gp.getSelectionManager().forceDeselectAllElements();
-
-		ArrayList<GraphPanel> newGraphPanels = new ArrayList<GraphPanel>();
+		}
+		
 		setNodes(new ArrayList<Node>());
 		setArcs(new ArrayList<Arc>());
+		
+		repaintAllGraphPanels();
+		
+		ArrayList<GraphPanel> newGraphPanels = new ArrayList<GraphPanel>();
 		for (GraphPanel gp : getGraphPanels()) {
 			int sheetID = gp.getSheetId();
 			WorkspaceSheet.SheetPanel sheetPanel = (WorkspaceSheet.SheetPanel) gp.getParent();
@@ -830,21 +816,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Invariants reading and/or adding to program failed.", "error", true);
 			return false;
-		}
-	}
-
-	/**
-	 * Metoda rozpoczynająca analizę inwariantów dla otwartej sieci w osobnym
-	 * watku.
-	 */
-	public void tInvariantsAnalyze() {
-		try {
-			invGenerator = new InvariantsCalculator(true);
-			Thread myThread = new Thread(invGenerator);
-			myThread.start();
-		} catch (Throwable err) {
-			err.printStackTrace();
-			GUIManager.getDefaultGUIManager().log("Analyzer Error: " + err.getMessage(), "error", true);
 		}
 	}
 	

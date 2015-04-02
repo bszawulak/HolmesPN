@@ -39,23 +39,22 @@ public class AbyssProgramPropertiesActions {
 				String dest = selectedFile.substring(0,selectedFile.lastIndexOf(File.separator));
 				dest += "\\x64\\Rscript.exe";
 				if(Tools.ifExist(dest))
-					sm.setValue("r_path64", dest);
+					sm.setValue("r_path64", dest, true);
 				else
-					sm.setValue("r_path64", "");
+					sm.setValue("r_path64", "", true);
 			} else {
-				sm.setValue("r_path64", selectedFile);
+				sm.setValue("r_path64", selectedFile, true);
 			}
 			
 			if(Tools.ifExist(selectedFile)) {
-				sm.setValue("r_path", selectedFile);
-				sm.saveSettings();
+				sm.setValue("r_path", selectedFile, true);
 				GUIManager.getDefaultGUIManager().setRStatus(true);
 				GUIManager.getDefaultGUIManager().log("Rscript.exe manually located in "+selectedFile+". Settings file updated.", "text", true);
 			
 			} else {
-				sm.setValue("r_path", "");
+				sm.setValue("r_path", "", true);
 				GUIManager.getDefaultGUIManager().setRStatus(false);
-				GUIManager.getDefaultGUIManager().log("Rscript.exe location unknown. R environment inaccessbile.", "warning", true);	
+				GUIManager.getDefaultGUIManager().log("Rscript.exe location unknown. Clustering procedures will not work.", "warning", true);	
 			}
 		}
 	}

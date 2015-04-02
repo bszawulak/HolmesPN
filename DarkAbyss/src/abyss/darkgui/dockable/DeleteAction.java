@@ -23,7 +23,7 @@ public class DeleteAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		guiManager.getWorkspace().deleteTab(dockable);
+		guiManager.getWorkspace().deleteTab(dockable, false);
 	}
 
 	public Dockable getDockable() {

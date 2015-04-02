@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
 
-import abyss.analyse.InvariantsSimulator;
 import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
@@ -119,9 +118,8 @@ public class AbyssDockWindow extends SingleDock {
 	public void createSimulatorProperties() {
 		if (type == DockWindowType.SIMULATOR) {
 			NetSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
-			InvariantsSimulator invSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvSimulator();
-			
-			setCurrentDockWindow(new AbyssDockWindowsTable(netSim, invSim));
+			//InvariantsSimulator invSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvSimulator();
+			setCurrentDockWindow(new AbyssDockWindowsTable(netSim, null));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}
@@ -133,9 +131,9 @@ public class AbyssDockWindow extends SingleDock {
 	public void createInvSimulatorProperties2() {
 		if (type == DockWindowType.InvSIMULATOR) {
 			//poniższa metoda wywołuje odpowiedni konstruktor obiektu klasy PropertiesTable
-			setCurrentDockWindow(new AbyssDockWindowsTable(GUIManager.getDefaultGUIManager().getWorkspace()
-					.getProject().getInvSimulator()));
-			scrollPane.getViewport().add(getCurrentDockWindow());
+			//setCurrentDockWindow(new AbyssDockWindowsTable(GUIManager.getDefaultGUIManager().getWorkspace()
+			//		.getProject().getInvSimulator()));
+			//scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}
 	

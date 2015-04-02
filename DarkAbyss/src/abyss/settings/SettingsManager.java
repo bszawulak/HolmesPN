@@ -1,10 +1,8 @@
 package abyss.settings;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -14,7 +12,6 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 import abyss.darkgui.GUIManager;
-import abyss.utilities.Tools;
 
 /**
  * Klasa zarządzająca plikiem konfiguracyjnym programu.
@@ -49,18 +46,27 @@ public class SettingsManager {
 	 * Metoda ustawia nową wartość związaną z podawanym ID.
 	 * @param ID String - identyfikator właściwości
 	 * @param value String - nowa wartość właściwości
+	 * @param save boolean - jeśli true to od razu zapis do pliku
+	 * @return int - 0 jeśli znaleziono id, -1 jeśli nie - dodawana jest wtedy od razu NOWA
+	 * 		właściwość pod podanym ID
 	 */
-	public int setValue(String ID, String value) {
+	public int setValue(String ID, String value, boolean save) {
 		boolean found= false;
 		for(Setting s : settings) {
 			if(s.getID().equals(ID)) {
 				found = true;
 				s.setValue(value);
-				return 0;
+				
 			}
 		}
-		if (!found) settings.add(new Setting(ID,value));
-		return -1;
+		if(save)
+			writeSettingsFile();
+		
+		if (found == false) {
+			settings.add(new Setting(ID,value));
+			return -1;
+		}
+		else return 0;
 	}
 	
 	/**
@@ -68,7 +74,7 @@ public class SettingsManager {
 	 * @param ID String - unikalny ID
 	 * @param value String - wartość właściwości
 	 */
-	public void addSetting(String ID, String value) {
+	private void addSetting(String ID, String value) {
 		for(Setting s : settings) {
 			if(s.getID().equals(ID)) {
 				Random rand = new Random();
@@ -76,7 +82,6 @@ public class SettingsManager {
 			    break;
 			}
 		}
-		
 		settings.add(new Setting(ID, value));
 	}
 	
@@ -94,7 +99,7 @@ public class SettingsManager {
 		addSetting("ina_COMMAND3","nnnfnn");
 		addSetting("ina_COMMAND4","eqqy");
 		addSetting("netExtFactor","100");
-		addSetting("gridAlign","1");
+		addSetting("gridLines","1");
 		addSetting("gridAlignWhenSaved","1");
 		addSetting("usesSnoopyOffsets","1");
 		//
@@ -119,7 +124,7 @@ public class SettingsManager {
 		if((tmp = getValue("netExtFactor")) == null) return false;
 			else try { int test = Integer.parseInt(tmp); } catch (Exception e) { return false; }
 
-		if(getValue("gridAlign") == null) return false;
+		if(getValue("gridLines") == null) return false;
 		if(getValue("gridAlignWhenSaved") == null) return false;
 		if(getValue("usesSnoopyOffsets") == null) return false;
 		return true;

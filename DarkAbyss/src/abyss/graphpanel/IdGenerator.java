@@ -10,6 +10,12 @@ public class IdGenerator {
 	private static int lastPlaceId = 0;
 	private static int lastTransitionId = 0;
 	
+	public static void reset() {
+		lastId = 0;
+		lastPlaceId = 0;
+		lastTransitionId = 0;
+	}
+	
 	/**
 	 * Metoda zwraca nowy wolny identyfikator.
 	 * @return int - wartość ID

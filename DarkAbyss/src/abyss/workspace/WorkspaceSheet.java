@@ -32,18 +32,14 @@ public class WorkspaceSheet extends JScrollPane {
 	 * @param work Workspace - referencja na obiekt inicjujący i przechowujący
 	 */
 	public WorkspaceSheet(String text, int ID, Workspace work) {
-		// super(new FlowLayout());
 		workspace = work;
-
-		// The pane
 		setMinimumSize(new Dimension(100, 100));
 		setBackground(Color.white);
 		setBorder(BorderFactory.createLineBorder(Color.lightGray));
 		panel = new SheetPanel(this);
 		panel.setLayout(null);
 		setGraphPanel(workspace.getProject().createAndAddGraphPanel(ID));
-		getGraphPanel().setBounds(0, 0,
-				(int) Toolkit.getDefaultToolkit().getScreenSize().width,
+		getGraphPanel().setBounds(0, 0, (int) Toolkit.getDefaultToolkit().getScreenSize().width,
 				(int) Toolkit.getDefaultToolkit().getScreenSize().height);
 		panel.add(getGraphPanel());
 		panel.setOpaque(true);
@@ -107,7 +103,8 @@ public class WorkspaceSheet extends JScrollPane {
 	}
 
 	/**
-	 * Klasa narzędziowa wewnątrz WorkspaceSheet.
+	 * Klasa narzędziowa wewnątrz WorkspaceSheet. To po prostu panel zawierający jednek dodatkową informację - 
+	 * pole sheet klasy WorkspaceSheet mówiące, który obiekt jest jego właścicielem
 	 * @author students
 	 *
 	 */

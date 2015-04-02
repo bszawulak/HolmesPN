@@ -251,7 +251,7 @@ public class GraphPanel extends JComponent {
 		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlign").equals("1")) {
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridLines").equals("1")) {
 			g2d.setColor(Color.lightGray);
 			
 			int maxWidth = (getWidth() * 100)/getZoom();

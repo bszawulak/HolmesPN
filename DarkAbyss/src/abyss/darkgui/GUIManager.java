@@ -442,23 +442,23 @@ public class GUIManager extends JPanel implements ComponentListener {
 						String dest = selectedFile.substring(0,selectedFile.lastIndexOf(File.separator));
 						dest += "\\x64\\Rscript.exe";
 						if(Tools.ifExist(dest))
-							settingsManager.setValue("r_path64", dest);
+							settingsManager.setValue("r_path64", dest, true);
 						else
-							settingsManager.setValue("r_path64", "");
+							settingsManager.setValue("r_path64", "", true);
 					} else {
-						settingsManager.setValue("r_path64", selectedFile);
+						settingsManager.setValue("r_path64", selectedFile, true);
 					}
 					
 					if(Tools.ifExist(selectedFile)) {
-						settingsManager.setValue("r_path", selectedFile);
+						settingsManager.setValue("r_path", selectedFile, true);
 						settingsManager.saveSettings();
 						setRStatus(true);
 						log("Rscript.exe manually located in "+selectedFile+". Settings file updated.", "text", true);
 					
 					} else {
-						settingsManager.setValue("r_path", "");
+						settingsManager.setValue("r_path", "", true);
 						setRStatus(false);
-						log("Rscript.exe location unknown. R environment inaccessbile.", "error", true);	
+						log("Rscript.exe location unknown. Clustering procedures will not work.", "error", true);	
 					}
 				}
 			}

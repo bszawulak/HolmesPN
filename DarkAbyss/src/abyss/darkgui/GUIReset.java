@@ -4,12 +4,23 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import com.javadocking.dockable.Dockable;
+
+import abyss.analyse.MCTCalculator;
 import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
+import abyss.graphpanel.GraphPanel;
+import abyss.math.Arc;
+import abyss.math.MCSDataMatrix;
+import abyss.math.Node;
+import abyss.math.PetriNet;
 import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator;
+import abyss.math.simulator.NetSimulator.NetType;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
+import abyss.workspace.Workspace;
+import abyss.workspace.WorkspaceSheet;
 
 /**
  * Klasa odpowiedzialna za różne rzeczy związane z czyszczeniem wszystkiego i niczego w ramach
@@ -34,6 +45,61 @@ public class GUIReset {
 		mastah.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
+	public void newProjectInitiated() {
+		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		
+		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
+
+		for (GraphPanel gp : pNet.getGraphPanels()) {
+			gp.getSelectionManager().forceDeselectAllElements();
+		}
+		
+		//CLEAR PETRI NET DATA:
+		pNet.setNodes(new ArrayList<Node>());
+		pNet.setArcs(new ArrayList<Arc>());
+		pNet.setInvariantsMatrix(null);
+		pNet.setMCSdataCore(new MCSDataMatrix());
+		pNet.resetComm();
+		pNet.setAnalyzer(new MCTCalculator(pNet));
+		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
+		pNet.setSimulationActive(false);
+		
+		pNet.repaintAllGraphPanels();
+		
+		//podmiana SheetPanels na nowe, czyste wersje
+		/*
+		ArrayList<GraphPanel> newGraphPanels = new ArrayList<GraphPanel>();
+		for (GraphPanel gp : pNet.getGraphPanels()) {
+			int sheetID = gp.getSheetId();
+			WorkspaceSheet.SheetPanel sheetPanel = (WorkspaceSheet.SheetPanel) gp.getParent();
+			sheetPanel.remove(gp);
+			GraphPanel newGraphPanel = new GraphPanel(sheetID, pNet, pNet.getNodes(), pNet.getArcs());
+			sheetPanel.add(newGraphPanel);
+			newGraphPanels.add(newGraphPanel);
+		}
+		pNet.setGraphPanels(newGraphPanels);
+		*/
+		
+		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		
+		int dockableSize = workspace.getDockables().size();
+		
+		for(int d=0; d<dockableSize; d++) {
+			Dockable dockable = workspace.getDockables().get(d);
+			String x = dockable.getID();
+			if(x.equals("Sheet 0")) {
+				continue;
+			}
+			
+			workspace.deleteTab(dockable, true);
+			d--;
+			dockableSize--;
+		}
+		
+		//pNet.repaintAllGraphPanels();
+		
+	}
+	
 	/**
 	 * Kasowanie informacji o: inwariantanch, MCT, klastrach, przede wszystkich w kontekście
 	 * podokien programu. Przy okazji reset protokołu I/O.
@@ -47,8 +113,6 @@ public class GUIReset {
 			resetCommunicationProtocol();
 			mastah.getWorkspace().getProject().setInvariantsMatrix(null);
 			mastah.getWorkspace().getProject().getMCSdataCore().resetMSC();
-			//mastah.getWorkspace().getProject().setInvariantsSize(null);
-			//mastah.getWorkspace().getProject().setUncoveredInvariants(null);
 			
 			mastah.getInvariantsBox().getCurrentDockWindow().resetInvariants();
 			mastah.getInvariantsBox().getCurrentDockWindow().removeAll();
