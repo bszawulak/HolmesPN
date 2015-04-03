@@ -1478,6 +1478,23 @@ public class AbyssDockWindowsTable extends JPanel {
 		// startNode
 		columnB_posX+= 30;
 		colACompLength += 40;
+		
+		
+		JLabel readArcLabel = new JLabel("Read arc:", JLabel.LEFT);
+		readArcLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(readArcLabel);
+		Arc readArc = arc.getPairedArc();
+		
+		String txt = "no";
+		if(readArc != null) {
+			txt = "yes [paired arc ID: "+readArc.getID()+"]";
+		}
+		
+		JLabel readArcLabel2 = new JLabel(txt);
+		readArcLabel2.setBounds(columnB_posX, columnB_Y += 20, colACompLength+40, 20);
+		components.add(readArcLabel2);
+		
+		
 		JLabel label1A = new JLabel("StartNode ID:", JLabel.LEFT);
 		label1A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(label1A);

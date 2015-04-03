@@ -12,16 +12,13 @@ import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
-import abyss.math.Arc;
 import abyss.math.MCSDataMatrix;
-import abyss.math.Node;
 import abyss.math.PetriNet;
 import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.workspace.Workspace;
-import abyss.workspace.WorkspaceSheet;
 
 /**
  * Klasa odpowiedzialna za różne rzeczy związane z czyszczeniem wszystkiego i niczego w ramach
@@ -46,11 +43,11 @@ public class GUIReset {
 		mastah.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
+	/**
+	 * Metoda odpowiedzialna za czyszczenie danych i przywracanie programu do stanu początkowego.
+	 */
 	public void newProjectInitiated() {
 		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		
-		ArrayList<GraphPanel> algp = pNet.getGraphPanels();
-		
 		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
 
 		for (GraphPanel gp : pNet.getGraphPanels()) {
@@ -58,7 +55,7 @@ public class GUIReset {
 		}
 		
 		//CLEAR PETRI NET DATA:
-		pNet.resetData(); //!!!! 
+		pNet.resetData(); // tylko w ten sposób!!!! 
 		pNet.setInvariantsMatrix(null);
 		pNet.setMCSdataCore(new MCSDataMatrix());
 		pNet.resetComm();

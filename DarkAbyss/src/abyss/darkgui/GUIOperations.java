@@ -52,10 +52,11 @@ public class GUIOperations {
 	 */
 	public void importProject() {
 		String lastPath = overlord.getLastPath();
-		FileFilter[] filters = new FileFilter[3];
-		filters[0] = new ExtensionFileFilter("Snoopy PN file (.spped)", new String[] { "SPPED" });
-		filters[1] = new ExtensionFileFilter("Snoopy TPN file (.sptpt)", new String[] { "SPTPT" });
-		filters[2] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
+		FileFilter[] filters = new FileFilter[4];
+		filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+		filters[1] = new ExtensionFileFilter("Snoopy Extended PN file (.spept)", new String[] { "SPEPT" });
+		filters[2] = new ExtensionFileFilter("Snoopy Time PN file (.sptpt)", new String[] { "SPTPT" });
+		filters[3] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters,  "Select PN", "Select petri net file");
 		if(selectedFile.equals(""))
 			return;

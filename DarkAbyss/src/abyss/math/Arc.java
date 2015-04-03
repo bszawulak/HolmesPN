@@ -10,6 +10,8 @@ import java.awt.geom.Line2D;
 
 //import org.simpleframework.xml.Element;
 
+import java.util.ArrayList;
+
 import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.IdGenerator;
 import abyss.math.simulator.NetSimulator;
@@ -31,8 +33,8 @@ public class Arc extends PetriNetElement {
 	 * UWAGA!!! NIE ZMIENIAĆ NAZW, NIE DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
 	 * (przestanie być możliwe wczytywanie zapisanych projektów .abyss)
 	 */
-	private ElementLocation startLocation;
-	private ElementLocation endLocation = null;
+	private ElementLocation locationStart;
+	private ElementLocation locationEnd = null;
 	private Point tempEndPoint = null;
 	private boolean selected = false;
 	private boolean isCorrect = false;
@@ -44,7 +46,7 @@ public class Arc extends PetriNetElement {
 	private boolean isMainArcOfPair = false;
 
 	/**
-	 * Konstruktor
+	 * Konstruktor obiektu klasy Arc.
 	 * @param startPosition ElementLocation - lokalicja żródła łuku
 	 * @param endPosition ElementLocation - lokalicja celu łuku
 	 */
@@ -57,15 +59,12 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Konstruktor obiektu klasy Arc.
+	 * Konstruktor obiektu klasy Arc - mousePressed(MouseEvent)
 	 * @param arcId int - identyfikator łuku
 	 * @param startPosition ElementLocation - lokacja źródła łuku
 	 * @param endPosition ElementLocation - lokacja celu łuku
 	 */
 	public Arc(int arcId, ElementLocation startPosition, ElementLocation endPosition) {
-		//this(startPosition,endPosition); //uwaga, ponowna generacja ID, naprawa poniżej
-		//this.setID(arcId);
-		//IdGenerator.setStartId(arcId+1); //zapobiega zwiększaniu ID dwukrotnie	
 		this.setStartLocation(startPosition);
 		this.setEndLocation(endPosition);
 		this.setType(PetriNetElementType.ARC);
@@ -90,7 +89,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Konstruktor obiektu klasy Arc.
+	 * Konstruktor obiektu klasy Arc - odczyt sieci z pliku
 	 * @param startPosition ElementLocation - lokacja źródła łuku
 	 * @param endPosition ElementLocation - lokacja celu łuku
 	 * @param comment String - komentarz
@@ -122,8 +121,9 @@ public class Arc extends PetriNetElement {
 	 * Jeśli tak, ustala wartość obiektu łuku 
 	 */
 	public void lookForArcPair() {
-		for (Arc a : getEndLocation().getOutArcs())
-			if (a.getEndLocation() == getStartLocation()) {
+		ArrayList<Arc> candidates = this.getEndLocation().getOutArcs();
+		for (Arc a : candidates)
+			if (a.getEndLocation() == this.getStartLocation()) {
 				a.setMainArcOfPair(true);
 				a.setPairedArc(this);
 				setPairedArc(a);
@@ -171,7 +171,7 @@ public class Arc extends PetriNetElement {
 	 * @return Node - wierzchołek wejściowy łuku
 	 */
 	public Node getStartNode() {
-		return this.startLocation.getParentNode();
+		return this.locationStart.getParentNode();
 	}
 
 	/**
@@ -179,8 +179,8 @@ public class Arc extends PetriNetElement {
 	 * @return Node - wierzchołek wyjściowy łuku
 	 */
 	public Node getEndNode() {
-		if (this.endLocation != null)
-			return this.endLocation.getParentNode();
+		if (this.locationEnd != null)
+			return this.locationEnd.getParentNode();
 		return null;
 	}
 
@@ -189,7 +189,7 @@ public class Arc extends PetriNetElement {
 	 * @return int - identyfikator arkusza
 	 */
 	public int getLocationSheetId() {
-		return this.startLocation.getSheetID();
+		return this.locationStart.getSheetID();
 	}
 
 	/**
@@ -354,8 +354,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala sprawdzić, czy łuk byłby poprawny dla danej lokalizacji
-	 * wierzchołka wyjściowego.
+	 * Metoda pozwala sprawdzić, czy łuk byłby poprawny dla danej lokalizacji wierzchołka wyjściowego.
 	 * @param e ElementLocation - lokalizacja wierzchołka wyjściowego
 	 * @return boolean - true, jeśli łuk byłby poprawny; false w przeciwnym wypadku
 	 */
@@ -382,8 +381,8 @@ public class Arc extends PetriNetElement {
 	public void setEndLocation(ElementLocation elementLocation) {
 		if (elementLocation == null)
 			return;
-		this.endLocation = elementLocation;
-		this.endLocation.addInArc(this);
+		this.locationEnd = elementLocation;
+		this.locationEnd.addInArc(this);
 		this.tempEndPoint = null;
 		this.isCorrect = true;
 	}
@@ -401,10 +400,10 @@ public class Arc extends PetriNetElement {
 	 * @return true, jeśli łuk zostanie zaznaczony; false w przeciwnym wypadku
 	 */
 	public boolean checkSelection() {
-		if (this.endLocation == null || this.startLocation == null)
+		if (this.locationEnd == null || this.locationStart == null)
 			return false;
-		setSelected(this.endLocation.isSelected()
-				&& this.startLocation.isSelected());
+		setSelected(this.locationEnd.isSelected()
+				&& this.locationStart.isSelected());
 		return this.getSelected();
 	}
 
@@ -435,7 +434,7 @@ public class Arc extends PetriNetElement {
 	 * @return startLocation ElementLocation - lokalizacja wierzchołka wejściowego łuku
 	 */
 	public ElementLocation getStartLocation() {
-		return startLocation;
+		return locationStart;
 	}
 
 	/**
@@ -443,8 +442,8 @@ public class Arc extends PetriNetElement {
 	 * @param startLocation ElementLocation - lokalizacja wierzchołka wejściowego
 	 */
 	public void setStartLocation(ElementLocation startLocation) {
-		this.startLocation = startLocation;
-		this.startLocation.addOutArc(this);
+		this.locationStart = startLocation;
+		this.locationStart.addOutArc(this);
 	}
 
 	/**
@@ -452,7 +451,7 @@ public class Arc extends PetriNetElement {
 	 * @return ElementLocation - lokalizacja wierzchołka wyjściowego łuku
 	 */
 	public ElementLocation getEndLocation() {
-		return endLocation;
+		return locationEnd;
 	}
 
 	/**
@@ -460,10 +459,10 @@ public class Arc extends PetriNetElement {
 	 * wyjściowego) łuku (odłącza łuk od wierzchołków).
 	 */
 	public void unlinkElementLocations() {
-		if (this.startLocation != null)
-			this.startLocation.removeOutArc(this);
-		if (this.endLocation != null)
-			this.endLocation.removeInArc(this);
+		if (this.locationStart != null)
+			this.locationStart.removeOutArc(this);
+		if (this.locationEnd != null)
+			this.locationEnd.removeInArc(this);
 	}
 
 	/**

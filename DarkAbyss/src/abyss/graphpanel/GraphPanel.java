@@ -857,11 +857,16 @@ public class GraphPanel extends JComponent {
 						drawnArc = new Arc(el);
 					} else {
 						if (drawnArc.checkIsCorect(el)) {
-							Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), el);
-							getArcs().add(arc);
+							if(isArcDuplicated(drawnArc.getStartLocation(), el)) {
+								JOptionPane.showMessageDialog(null,  "Arc already exists!", "Success",JOptionPane.INFORMATION_MESSAGE);
+							} else {
 							
-							//TODO: reset
-							GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+								Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), el);
+								getArcs().add(arc);
+								
+								//TODO: reset
+								GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+							}
 						}
 						clearDrawnArc();
 					}
@@ -1099,5 +1104,35 @@ public class GraphPanel extends JComponent {
 			scrollSheetHorizontal(-(centerX - clickedX)); // w lewo
 			scrollSheetVertical(clickedY - centerY); //w dół
 		} 
+	}
+
+	/**
+	 * Metoda pomocnicza, sprawdza czy rysowany właśnie łuk już istnieje.
+	 * @param startLocation
+	 * @param endLocation
+	 * @return
+	 */
+	public boolean isArcDuplicated(ElementLocation startLocation, ElementLocation endLocation) {
+		boolean result = false;
+		
+		for(ElementLocation el : startLocation.getParentNode().getElementLocations()) {
+			
+			ArrayList<Arc> outArcs = el.getOutArcs(); //wszystkie wychodzące ze start EL
+			for(Arc a : outArcs) { //dla każdego łuku:
+				ElementLocation arcEndLocation = a.getEndLocation();
+				if(arcEndLocation == null)
+					continue;
+				
+				Node endNode = arcEndLocation.getParentNode();
+				if(endLocation.getParentNode().equals(endNode)) {
+					result = true;
+					break;
+				}
+			}
+		}
+		
+		
+		
+		return result;
 	}
 }

@@ -89,7 +89,6 @@ public class SnoopyPlace {
 			write(bw, "      <node id=\"" + currID + "\" net=\"1\" logic=\"1\">");
 		currID++; //teraz: 227
 		
-		
 		// SEKCJA NAZW MIEJSC - ID, lokalizacje, inne
 		write(bw, "        <attribute name=\"Name\" id=\""+currID+"\" net=\"1\">"); //226
 		currID++; //teraz: 228

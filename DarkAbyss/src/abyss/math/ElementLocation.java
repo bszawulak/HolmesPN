@@ -231,12 +231,27 @@ public class ElementLocation implements Serializable {
 	 * @return String - łańcuch znaków
 	 */
 	public String toString() {
-		String s = "sheetID: " + this.getSheetID() + "; position"
-				+ this.getPosition().toString() + "; parentNodeID"
-				+ this.getParentNode().getID() + "; inArcsCount: "
-				+ Integer.toString(this.getInArcs().size())
-				+ "; outArcsCount: "
-				+ Integer.toString(this.getOutArcs().size());
+		String s = "";
+		if(this.getParentNode() == null) {
+			s = "ParentNode: null"
+					+ "SheetID: " + this.getSheetID() + "; Position: "
+					+ pointPos(this.getPosition()) 
+					+ "; inArcs: "+ Integer.toString(this.getInArcs().size())
+					+ "; outArcs: " + Integer.toString(this.getOutArcs().size());
+		} else {
+			s = "Node: " + this.getParentNode() +" [gID:"+this.getParentNode().getID()+" ];\n "
+					+ "SheetID: " + this.getSheetID() + "; Position: "
+					+ pointPos(this.getPosition()) 
+					+ "; inArcs: "+ Integer.toString(this.getInArcs().size())
+					+ "; outArcs: " + Integer.toString(this.getOutArcs().size());
+		}
 		return s;
+	}
+	
+	private String pointPos(Point p) {
+		if(p != null)
+			return "["+p.x+","+p.y+"]";
+		else
+			return "[null, null]";
 	}
 }

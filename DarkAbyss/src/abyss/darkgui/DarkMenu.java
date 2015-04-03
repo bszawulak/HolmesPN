@@ -14,11 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import abyss.darkgui.dockable.DockableMenuItem;
-import abyss.math.Arc;
-import abyss.math.Node;
 import abyss.utilities.Tools;
-import abyss.workspace.Workspace;
-import abyss.workspace.WorkspaceSheet;
 
 import com.javadocking.dockable.Dockable;
 

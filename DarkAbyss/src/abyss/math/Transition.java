@@ -398,4 +398,17 @@ public class Transition extends Node {
 	public void setContainingInvariants(ArrayList<ArrayList<Transition>> containingInvariants) {
 		this.containingInvariants = containingInvariants;
 	}
+	
+	/**
+	 * Metoda zamieniająca dane o krawędzi sieci na łańcuch znaków.
+	 * @return String - łańcuch znaków
+	 */
+	public String toString() {
+		String name =  getName();
+		if(name == null) {
+			return "(T)null";
+		} else {
+			return "(T)" + getName();
+		}
+	}
 }

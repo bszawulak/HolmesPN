@@ -169,4 +169,17 @@ public class Place extends Node {
 	public int getFreeTokensNumber() {
 		return tokensNumber - getTokensTaken();
 	}
+	
+	/**
+	 * Metoda zamieniająca dane o krawędzi sieci na łańcuch znaków.
+	 * @return String - łańcuch znaków
+	 */
+	public String toString() {
+		String name =  getName();
+		if(name == null) {
+			return "(P)null";
+		} else {
+			return "(P)" + getName();
+		}
+	}
 }

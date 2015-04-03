@@ -631,8 +631,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param path String - ścieżka do pliku odczytu
 	 */
 	public void loadFromFile(String path) {
-		//TODO: czyszczenie projektu!!!!!!!!!!!!!!!!!!!!!!!
-
+		if(checkIfEmpty() == false)
+			return;
+		
+		GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
+		
 		readerSNOOPY = SAXParserFactory.newInstance();
 		try {
 			// Format wlasny
@@ -917,6 +920,27 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				((Transition) n).setColorWithNumber(false, Color.white, false, -1);
 			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
 				((TimeTransition) n).setColorWithNumber(false, Color.white, false, -1);
+	}
+	
+	/**
+	 * Metoda sprawdza czy istnieje już rysowana wcześniej sieć.
+	 * @return boolean - false, jeśli nie należy kontynuować
+	 */
+	private boolean checkIfEmpty() {
+		if(getNodes().size() == 0) {
+			return true;
+		} else {
+			Object[] options = {"Load and replace project", "Cancel operation",};
+			int n = JOptionPane.showOptionDialog(null,
+							"New net will replace the old one. If latter has not been saved,\n please do it before contynuing.",
+							"Continue loading new net?", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			if (n == 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 	
 	/**

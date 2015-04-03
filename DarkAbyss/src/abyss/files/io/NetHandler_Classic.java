@@ -39,9 +39,7 @@ public class NetHandler_Classic extends NetHandler {
 	private ArrayList<Integer> graphicPointsIdList = new ArrayList<Integer>();
 	public ArrayList<Point> graphicPointsList = new ArrayList<Point>();
 	private ArrayList<ElementLocation> elementLocationList = new ArrayList<ElementLocation>();
-	
 	public ArrayList<Point> graphicNamesPointsList = new ArrayList<Point>();
-	//private ArrayList<ElementLocation> namesLocationList = new ArrayList<ElementLocation>();
 
 	// Edge
 	public int arcMultiplicity;
