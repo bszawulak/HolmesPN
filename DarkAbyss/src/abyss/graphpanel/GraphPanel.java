@@ -16,6 +16,7 @@ import abyss.math.Arc;
 import abyss.math.ElementLocation;
 import abyss.math.Node;
 import abyss.math.PetriNet;
+import abyss.math.Arc.TypesOfArcs;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
 import abyss.math.TimeTransition;
@@ -848,23 +849,27 @@ public class GraphPanel extends JComponent {
 			// zaznaczony, ponieważ to Node jest na wierzchu
 			else if (el != null) {
 				if (getDrawMode() == DrawModes.ARC) {
-					if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-					}
 					
 					getSelectionManager().deselectAllElements();
 					if (drawnArc == null) {
-						drawnArc = new Arc(el);
+						drawnArc = new Arc(el, TypesOfArcs.NORMAL);
 					} else {
 						if (drawnArc.checkIsCorect(el)) {
+							//TODO
 							if(isArcDuplicated(drawnArc.getStartLocation(), el)) {
-								JOptionPane.showMessageDialog(null,  "Arc already exists!", "Success",JOptionPane.INFORMATION_MESSAGE);
-							} else {
-							
-								Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), el);
-								getArcs().add(arc);
+								JOptionPane.showMessageDialog(null,  "Arc already exists!", "Problem", 
+										JOptionPane.WARNING_MESSAGE);
+							} if(invalidType(drawnArc.getStartLocation(), el) == true) {
+								JOptionPane.showMessageDialog(null,  "Non-standard arc leading in reverse direction!", "Problem", 
+										JOptionPane.WARNING_MESSAGE);
+							} else { //dokończ rysowanie łuku, dodaj do listy
+								if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+									GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+								}
 								
-								//TODO: reset
+								Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), el, TypesOfArcs.NORMAL);
+								getArcs().add(arc);
+
 								GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
 							}
 						}
@@ -1104,6 +1109,26 @@ public class GraphPanel extends JComponent {
 			scrollSheetHorizontal(-(centerX - clickedX)); // w lewo
 			scrollSheetVertical(clickedY - centerY); //w dół
 		} 
+	}
+
+	/**
+	 * Metoda sprawdza, czy z wierzchołka do którego prowadzimy łuk nie skierowany jest inny łuk, typu
+	 * różnego od NORMAL (np. INHIBITION, etc.) - wtedy zwraca true jako sygnał, że nie można dodawać.
+	 * @param startLocation ElementLocation - lokalizacja wierzchołka startowego
+	 * @param endLocation ElementLocation - lokalizacja wierzchołka docelowego
+	 * @return boolean - true, jeśli nie można dodać z uwagi na obecność nieprawidłowego typu łuku skierowanego z 
+	 * 		wierzchołka docelowego do wierzchołka startowego z którego prowadzony jest właśnie nowy łuk.
+	 */
+	public boolean invalidType(ElementLocation startLocation, ElementLocation endLocation) {
+		ArrayList<Arc> candidates = endLocation.getOutArcs();
+		for (Arc a : candidates) {
+			if (a.getEndLocation() == startLocation) {
+				if(a.getArcType() != TypesOfArcs.NORMAL) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**

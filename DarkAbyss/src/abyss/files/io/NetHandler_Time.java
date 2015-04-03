@@ -17,6 +17,7 @@ import abyss.math.Node;
 import abyss.math.Place;
 import abyss.math.TimeTransition;
 import abyss.math.Transition;
+import abyss.math.Arc.TypesOfArcs;
 
 /**
  * Klasa zajmująca się wczytaniem czasowej sieci Petriego z formatu .sptpt
@@ -436,7 +437,7 @@ public class NetHandler_Time extends NetHandler {
 				}
 			}
 			Arc nArc = new Arc(elementLocationList.get(tmpSource),
-					elementLocationList.get(tmpTarget), arcComment,arcMultiplicity);
+					elementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
 			arcList.add(nArc);
 			edge = false;
 		}

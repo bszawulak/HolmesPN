@@ -9,6 +9,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 //import org.xml.sax.helpers.DefaultHandler;
 
+
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
@@ -16,6 +17,7 @@ import abyss.math.Arc;
 import abyss.math.ElementLocation;
 import abyss.math.Place;
 import abyss.math.Transition;
+import abyss.math.Arc.TypesOfArcs;
 
 /**
  * 
@@ -399,12 +401,18 @@ public class NetHandler_Extended extends NetHandler {
 					}
 				}
 				arcComment += arcType;
-				Arc nArc = new Arc(elementLocationList.get(tmpSource), elementLocationList.get(tmpTarget), arcComment, arcMultiplicity);
-				arcList.add(nArc);
+				Arc newArc = new Arc(elementLocationList.get(tmpSource), elementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
+				arcList.add(newArc);
 				
 				if(arcType.equals("Read Edge")) {
-					Arc nArc2 = new Arc(elementLocationList.get(tmpTarget), elementLocationList.get(tmpSource), arcComment, arcMultiplicity);
+					Arc nArc2 = new Arc(elementLocationList.get(tmpTarget), elementLocationList.get(tmpSource), arcComment, arcMultiplicity, TypesOfArcs.READARC);
 					arcList.add(nArc2);
+				} else if(arcType.equals("Inhibitor Edge")) {
+					newArc.setArcType(TypesOfArcs.INHIBITOR);
+				} else if(arcType.equals("Reset Edge")) {
+					newArc.setArcType(TypesOfArcs.RESET);
+				} else if(arcType.equals("Equal Edge")) {
+					newArc.setArcType(TypesOfArcs.EQUAL);
 				}
 				
 				edge = false;

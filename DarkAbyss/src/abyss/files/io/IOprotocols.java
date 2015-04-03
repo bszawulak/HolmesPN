@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
 import abyss.math.Arc;
+import abyss.math.Arc.TypesOfArcs;
 import abyss.math.ElementLocation;
 import abyss.math.Node;
 import abyss.math.Place;
@@ -557,7 +558,7 @@ public class IOprotocols {
 							int t1 = trans[Integer.parseInt(placeArcListPre.get(k)[j])][1];
 							arcArray.add(new Arc(nodeArray.get(t1 - 1).getLastLocation(), 
 									nodeArray.get(k).getLastLocation(), "", 
-									placeArcListPreWeight.get(0).get(pozycja_a)));
+									placeArcListPreWeight.get(0).get(pozycja_a), TypesOfArcs.NORMAL));
 							pozycja_a++;
 						}
 					}
@@ -567,7 +568,7 @@ public class IOprotocols {
 							int t2 = trans[Integer.parseInt(placeArcListPost.get(k)[j])][1];
 							arcArray.add(new Arc(nodeArray.get(k).getLastLocation(), 
 									nodeArray.get(t2 - 1).getLastLocation(), "",
-									placeArcListPostWeight.get(0).get(pozycja_a)));
+									placeArcListPostWeight.get(0).get(pozycja_a), TypesOfArcs.NORMAL));
 							pozycja_a++;
 
 						}

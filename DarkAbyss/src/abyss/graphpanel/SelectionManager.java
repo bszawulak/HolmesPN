@@ -748,7 +748,7 @@ public class SelectionManager {
 		this.deselectArc(arc);
 		this.getGraphPanelArcs().remove(arc);
 		this.getGraphPanel().repaint();
-		if (arc.getPairedArc() != null) {
+		if (arc.getPairedArc() != null) { // jeśli to read-arc, usuń też łuk sparowany
 			Arc a = arc.getPairedArc();
 			a.unlinkElementLocations();
 			getGraphPanelArcs().remove(a);

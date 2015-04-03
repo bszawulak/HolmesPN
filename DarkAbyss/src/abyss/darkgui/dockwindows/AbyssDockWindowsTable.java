@@ -507,7 +507,8 @@ public class AbyssDockWindowsTable extends JPanel {
 		initiateContainers();
 		mode = PLACE;
 		element = place;
-
+		Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
+		
 		// ID
 		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
 		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
@@ -520,6 +521,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		//JLabel idLabel2 = new JLabel(Integer.toString(place.getID()));
 		JLabel idLabel2 = new JLabel(Integer.toString(gID));
 		idLabel2.setBounds(columnB_posX, columnB_Y += 10, 50, 20);
+		idLabel2.setFont(normalFont);
 		components.add(idLabel2);
 		
 		JLabel idLabel3 = new JLabel("gID:");
@@ -527,6 +529,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(idLabel3);
 		JLabel idLabel4 = new JLabel(place.getID()+"");
 		idLabel4.setBounds(columnB_posX+60, columnB_Y, 50, 20);
+		idLabel4.setFont(normalFont);
 		components.add(idLabel4);
 
 		// NAME
@@ -622,12 +625,19 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(sheetLabel);
 		JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
 		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
-		components.add(sheetIdLabel);		
-		JLabel zoomLabel = new JLabel("Zoom: "+zoom);
-		zoomLabel.setBounds(columnB_posX+100, columnB_Y, colBCompLength, 20);
-		if(zoom != 100)
-			zoomLabel.setForeground(Color.red);
+		sheetIdLabel.setFont(normalFont);
+		components.add(sheetIdLabel);
+		
+		//ZOOM:
+		JLabel zoomLabel = new JLabel("Zoom:");
+		zoomLabel.setBounds(columnB_posX+30, columnB_Y, 50, 20);
 		components.add(zoomLabel);
+		JLabel zoomLabel2 = new JLabel(""+zoom);
+		zoomLabel2.setBounds(columnB_posX+70, columnB_Y, colBCompLength, 20);
+		zoomLabel2.setFont(normalFont);
+		if(zoom != 100)
+			zoomLabel2.setForeground(Color.red);
+		components.add(zoomLabel2);
 		
 		//LOKALIZACJA:
 		JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
@@ -817,6 +827,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		elementLocation = location;
 		initiateContainers();
 		element = transition;
+		Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 		
 		// ID:
 		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
@@ -825,8 +836,8 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		int gID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().lastIndexOf(transition);
 		JLabel idLabel2 = new JLabel(Integer.toString(gID));
-		//JLabel idLabel2 = new JLabel(Integer.toString(transition.getID()));
 		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+		idLabel2.setFont(normalFont);
 		components.add(idLabel2);
 		
 		JLabel idLabel3 = new JLabel("gID:");
@@ -834,6 +845,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(idLabel3);
 		JLabel idLabel4 = new JLabel(transition.getID()+"");
 		idLabel4.setBounds(columnB_posX+60, columnB_Y, 50, 20);
+		idLabel4.setFont(normalFont);
 		components.add(idLabel4);
 
 		// TRANSITION NAME:
@@ -890,8 +902,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		//SHEET ID
         int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
-		GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
-				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 		int xPos = location.getPosition().x;
 		int width =  graphPanel.getSize().width;
 		int zoom = graphPanel.getZoom();
@@ -905,12 +916,20 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(sheetLabel);
 		JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
 		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		sheetIdLabel.setFont(normalFont);
 		components.add(sheetIdLabel);
-		JLabel zoomLabel = new JLabel("Zoom: "+zoom);
-		zoomLabel.setBounds(columnB_posX+100, columnB_Y, colBCompLength, 20);
+		
+		//ZOOM:
+		JLabel zoomLabel = new JLabel("Zoom:");
+		zoomLabel.setBounds(columnB_posX+30, columnB_Y, 50, 20);
+		components.add(zoomLabel);
+		JLabel zoomLabel2 = new JLabel(""+zoom);
+		zoomLabel2.setBounds(columnB_posX+70, columnB_Y, colBCompLength, 20);
+		zoomLabel2.setFont(normalFont);
 		if(zoom != 100)
-			zoomLabel.setForeground(Color.red);
-		components.add(zoomLabel);	
+			zoomLabel2.setForeground(Color.red);
+		components.add(zoomLabel2);
+		
 		//LOKALIZACJA:
 		JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
 		locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
@@ -1100,6 +1119,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		elementLocation = location;
 		initiateContainers(); //!!!
 		element = transition;
+		Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 		
 		// ID
 		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
@@ -1109,6 +1129,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		int gID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().lastIndexOf(transition);
 		JLabel idLabel2 = new JLabel(Integer.toString(gID));
 		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+		idLabel2.setFont(normalFont);
 		components.add(idLabel2);
 		
 		JLabel idLabel3 = new JLabel("gID:");
@@ -1116,6 +1137,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(idLabel3);
 		JLabel idLabel4 = new JLabel(transition.getID()+"");
 		idLabel4.setBounds(columnB_posX+60, columnB_Y, 50, 20);
+		idLabel4.setFont(normalFont);
 		components.add(idLabel4);
 
 		// T-TRANSITION NAME
@@ -1227,12 +1249,18 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(sheetLabel);
 		JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
 		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, 100, 20);
+		sheetIdLabel.setFont(normalFont);
 		components.add(sheetIdLabel);
-		JLabel zoomLabel = new JLabel("Zoom: "+zoom);
-		zoomLabel.setBounds(columnB_posX+100, columnB_Y, colBCompLength, 20);
+		
+		JLabel zoomLabel = new JLabel("Zoom:");
+		zoomLabel.setBounds(columnB_posX+30, columnB_Y, 50, 20);
+		components.add(zoomLabel);
+		JLabel zoomLabel2 = new JLabel(""+zoom);
+		zoomLabel2.setBounds(columnB_posX+70, columnB_Y, colBCompLength, 20);
+		zoomLabel2.setFont(normalFont);
 		if(zoom != 100)
-			zoomLabel.setForeground(Color.red);
-		components.add(zoomLabel);	
+			zoomLabel2.setForeground(Color.red);
+		components.add(zoomLabel2);
 		
 		// T-TRANSITION LOCATION:
 		JLabel comLabel2 = new JLabel("Location:", JLabel.LEFT);
@@ -1422,12 +1450,15 @@ public class AbyssDockWindowsTable extends JPanel {
 		element = arc;
 		elementLocation = arc.getStartLocation();
 		
+		Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
+		
 		// ARC ID
 		JLabel idLabel = new JLabel("gID:", JLabel.LEFT);
 		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
 		components.add(idLabel);
 		JLabel idLabel2 = new JLabel(Integer.toString(arc.getID()));
-		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+		idLabel2.setFont(normalFont);
+		idLabel2.setBounds(columnB_posX-10, columnB_Y += 10, colACompLength, 20);
 		components.add(idLabel2);
 		
 		// ARC COMMENT
@@ -1451,7 +1482,7 @@ public class AbyssDockWindowsTable extends JPanel {
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
         CreationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
-        CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
+        CreationPanel.setBounds(columnB_posX-10, columnB_Y += 20, colBCompLength, 40);
         columnB_Y += 20;
         components.add(CreationPanel);
 		
@@ -1462,7 +1493,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		SpinnerModel weightSpinnerModel = new SpinnerNumberModel(arc.getWeight(), 0, Integer.MAX_VALUE, 1);
 		JSpinner weightSpinner = new JSpinner(weightSpinnerModel);
-		weightSpinner.setLocation(columnB_posX, columnB_Y += 20);
+		weightSpinner.setLocation(columnB_posX-10, columnB_Y += 20);
 		weightSpinner.setSize(colBCompLength/3, 20);
 		weightSpinner.setMaximumSize(new Dimension(colBCompLength/3,20));
 		weightSpinner.setMinimumSize(new Dimension(colBCompLength/3,20));
@@ -1478,7 +1509,16 @@ public class AbyssDockWindowsTable extends JPanel {
 		// startNode
 		columnB_posX+= 30;
 		colACompLength += 40;
+
+		JLabel typeArcLabel = new JLabel("Type:", JLabel.LEFT);
+		//typeArcLabel.setFont(boldFont);
+		typeArcLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(typeArcLabel);
 		
+		JLabel typeArcLabel2 = new JLabel(arc.getArcType().toString());
+		typeArcLabel2.setFont(normalFont);
+		typeArcLabel2.setBounds(columnB_posX-40, columnB_Y += 20, colACompLength+40, 20);
+		components.add(typeArcLabel2);
 		
 		JLabel readArcLabel = new JLabel("Read arc:", JLabel.LEFT);
 		readArcLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
@@ -1486,72 +1526,89 @@ public class AbyssDockWindowsTable extends JPanel {
 		Arc readArc = arc.getPairedArc();
 		
 		String txt = "no";
-		if(readArc != null) {
+		if(readArc != null)
 			txt = "yes [paired arc ID: "+readArc.getID()+"]";
-		}
 		
 		JLabel readArcLabel2 = new JLabel(txt);
-		readArcLabel2.setBounds(columnB_posX, columnB_Y += 20, colACompLength+40, 20);
+		readArcLabel2.setFont(normalFont);
+		readArcLabel2.setBounds(columnB_posX-40, columnB_Y += 20, colACompLength+40, 20);
 		components.add(readArcLabel2);
 		
+		JLabel startNodeLabel = new JLabel("StartNode:", JLabel.LEFT);
+		startNodeLabel.setBounds(columnA_posX+90, columnA_Y += 20, colACompLength, 20);
+		components.add(startNodeLabel);
+		columnB_Y += 20;
 		
-		JLabel label1A = new JLabel("StartNode ID:", JLabel.LEFT);
-		label1A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-		components.add(label1A);
-		JLabel label1B = new JLabel(Integer.toString(arc.getStartNode().getID()));
-		label1B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
-		components.add(label1B);
-		
-		JLabel label2A = new JLabel("StartNode Name:", JLabel.LEFT);
+		JLabel label2A = new JLabel("Name:", JLabel.LEFT);
 		label2A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(label2A);
 		JLabel label2B = new JLabel(arc.getStartNode().getName());
-		label2B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		label2B.setFont(normalFont);
+		label2B.setBounds(columnA_posX+40, columnB_Y += 20, colBCompLength+40, 20);
 		components.add(label2B);
 		
-		JLabel label3A = new JLabel("StartNode Sheet:", JLabel.LEFT);
-		label3A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		JLabel label1A = new JLabel("ID:", JLabel.LEFT);
+		label1A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(label1A);
+		JLabel label1B = new JLabel(Integer.toString(arc.getStartNode().getID()));
+		label1B.setFont(normalFont);
+		label1B.setBounds(columnA_posX+40, columnB_Y += 20, 50, 20);
+		components.add(label1B);
+		
+		JLabel label3A = new JLabel("Sheet:", JLabel.LEFT);
+		label3A.setBounds(columnA_posX+80, columnA_Y, colACompLength, 20);
 		components.add(label3A);
 		JLabel label3B = new JLabel(Integer.toString(arc.getStartLocation().getSheetID()));
-		label3B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		label3B.setFont(normalFont);
+		label3B.setBounds(columnA_posX+120, columnB_Y, 40, 20);
 		components.add(label3B);
 		
 		JLabel label4A = new JLabel("Location:", JLabel.LEFT);
-		label4A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		label4A.setBounds(columnA_posX+150, columnA_Y, colACompLength, 20);
 		components.add(label4A);
 		JLabel label4B = new JLabel(Integer.toString(arc.getStartLocation().getPosition().x)+ ", "
 				+ Integer.toString(arc.getStartLocation().getPosition().y));
-		label4B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		label4B.setBounds(columnA_posX+210, columnB_Y, colBCompLength, 20);
+		label4B.setFont(normalFont);
 		components.add(label4B);
 		
 		// endNode
-		JLabel label5A = new JLabel("EndNode ID:", JLabel.LEFT);
-		label5A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-		components.add(label5A);
-		JLabel label5B = new JLabel(Integer.toString(arc.getEndNode().getID()));
-		label5B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
-		components.add(label5B);
-		
-		JLabel label6A = new JLabel("EndNode Name:", JLabel.LEFT);
+		JLabel endNodeLabel = new JLabel("End Node:", JLabel.LEFT);
+		endNodeLabel.setBounds(columnA_posX+90, columnA_Y += 20, colACompLength, 20);
+		components.add(endNodeLabel);
+		columnB_Y += 20;
+
+		JLabel label6A = new JLabel("Name:", JLabel.LEFT);
 		label6A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(label6A);
 		JLabel label6B = new JLabel(arc.getEndNode().getName());
-		label6B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		label6B.setFont(normalFont);
+		label6B.setBounds(columnA_posX+40, columnB_Y += 20, colBCompLength+40, 20);
 		components.add(label6B);
 		
-		JLabel label7A = new JLabel("EndNode Sheet:", JLabel.LEFT);
-		label7A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		JLabel label5A = new JLabel("ID:", JLabel.LEFT);
+		label5A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(label5A);
+		JLabel label5B = new JLabel(Integer.toString(arc.getEndNode().getID()));
+		label5B.setFont(normalFont);
+		label5B.setBounds(columnA_posX+40, columnB_Y += 20, colBCompLength, 20);
+		components.add(label5B);
+		
+		JLabel label7A = new JLabel("Sheet:", JLabel.LEFT);
+		label7A.setBounds(columnA_posX+80, columnA_Y, colACompLength, 20);
 		components.add(label7A);
 		JLabel label7B = new JLabel(Integer.toString(arc.getEndLocation().getSheetID()));
-		label7B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		label7B.setFont(normalFont);
+		label7B.setBounds(columnA_posX+120, columnB_Y, 40, 20);
 		components.add(label7B);
 		
-		JLabel label8A = new JLabel("EndNode Location:", JLabel.LEFT);
-		label8A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		JLabel label8A = new JLabel("Location:", JLabel.LEFT);
+		label8A.setBounds(columnA_posX+150, columnA_Y, colACompLength, 20);
 		components.add(label8A);
 		JLabel label8B = new JLabel(Integer.toString(arc.getEndLocation().getPosition().x)+ ", "
 				+ Integer.toString(arc.getEndLocation().getPosition().y));
-		label8B.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		label8B.setFont(normalFont);
+		label8B.setBounds(columnA_posX+210, columnB_Y, colBCompLength, 20);
 		components.add(label8B);
 		
 		panel.setLayout(null);
@@ -1563,8 +1620,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 
 	//**************************************************************************************
-	//*********************************                  ***********************************
 	//*********************************      ARKUSZ      ***********************************
+	//*********************************                  ***********************************
 	//*********************************       SHEET      ***********************************
 	//**************************************************************************************
 	

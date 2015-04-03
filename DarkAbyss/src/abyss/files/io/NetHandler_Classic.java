@@ -15,6 +15,7 @@ import abyss.math.Arc;
 import abyss.math.ElementLocation;
 import abyss.math.Place;
 import abyss.math.Transition;
+import abyss.math.Arc.TypesOfArcs;
 
 /**
  * Klasa zajmująca się wczytaniem standardowej sieci Petriego z formatu .spped.
@@ -396,7 +397,7 @@ public class NetHandler_Classic extends NetHandler {
 					tmpTarget = j;
 				}
 			}
-			Arc nArc = new Arc(elementLocationList.get(tmpSource), elementLocationList.get(tmpTarget), arcComment, arcMultiplicity);
+			Arc nArc = new Arc(elementLocationList.get(tmpSource), elementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
 			arcList.add(nArc);
 			edge = false;
 		}

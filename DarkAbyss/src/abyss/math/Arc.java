@@ -42,15 +42,23 @@ public class Arc extends PetriNetElement {
 	private boolean isTransportingTokens = false;
 	private int simulationStep = 0;
 	private boolean simulationForwardDirection = true;
+	//read-arc parameters:
 	private Arc pairedArc;
 	private boolean isMainArcOfPair = false;
+	private TypesOfArcs arcType;
 
+	/** NORMAL, READARC, INHIBITOR, RESET, EQUAL */
+	public enum TypesOfArcs {
+		NORMAL, READARC, INHIBITOR, RESET, EQUAL
+	}
+	
 	/**
 	 * Konstruktor obiektu klasy Arc.
 	 * @param startPosition ElementLocation - lokalicja żródła łuku
 	 * @param endPosition ElementLocation - lokalicja celu łuku
 	 */
-	public Arc(ElementLocation startPosition, ElementLocation endPosition) {
+	public Arc(ElementLocation startPosition, ElementLocation endPosition, TypesOfArcs type) {
+		this.arcType = type; 
 		this.setStartLocation(startPosition);
 		this.setEndLocation(endPosition);
 		this.setType(PetriNetElementType.ARC);
@@ -64,7 +72,8 @@ public class Arc extends PetriNetElement {
 	 * @param startPosition ElementLocation - lokacja źródła łuku
 	 * @param endPosition ElementLocation - lokacja celu łuku
 	 */
-	public Arc(int arcId, ElementLocation startPosition, ElementLocation endPosition) {
+	public Arc(int arcId, ElementLocation startPosition, ElementLocation endPosition, TypesOfArcs type) {
+		this.arcType = type;
 		this.setStartLocation(startPosition);
 		this.setEndLocation(endPosition);
 		this.setType(PetriNetElementType.ARC);
@@ -78,7 +87,8 @@ public class Arc extends PetriNetElement {
 	 * @param endPosition ElementLocation - lokacja celu łuku
 	 * @param comment String - komentarz
 	 */
-	public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment) {
+	public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment, TypesOfArcs type) {
+		this.arcType = type;
 		this.setID(IdGenerator.getNextId());
 		this.setStartLocation(startPosition);
 		this.setEndLocation(endPosition);
@@ -95,7 +105,8 @@ public class Arc extends PetriNetElement {
 	 * @param comment String - komentarz
 	 * @param weight int - waga łuku
 	 */
-	public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment, int weight) {
+	public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment, int weight, TypesOfArcs type) {
+		this.arcType = type;
 		this.setID(IdGenerator.getNextId());
 		this.setStartLocation(startPosition);
 		this.setEndLocation(endPosition);
@@ -110,7 +121,8 @@ public class Arc extends PetriNetElement {
 	 * Konstruktor obiektu klasy Arc.
 	 * @param startPosition ElementLocation - lokalizacja źródła łuku
 	 */
-	public Arc(ElementLocation startPosition) {
+	public Arc(ElementLocation startPosition, TypesOfArcs type) {
+		this.arcType = type;
 		this.setStartLocation(startPosition);
 		this.setEndPoint(startPosition.getPosition());
 		this.setType(PetriNetElementType.ARC);
@@ -122,12 +134,13 @@ public class Arc extends PetriNetElement {
 	 */
 	public void lookForArcPair() {
 		ArrayList<Arc> candidates = this.getEndLocation().getOutArcs();
-		for (Arc a : candidates)
+		for (Arc a : candidates) {
 			if (a.getEndLocation() == this.getStartLocation()) {
 				a.setMainArcOfPair(true);
 				a.setPairedArc(this);
-				setPairedArc(a);
+				this.setPairedArc(a);
 			}
+		}
 	}
 
 	/**
@@ -203,23 +216,6 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda zwracajśca dane o łuku w formie łańcucha znaków.
-	 * @return String - łańcuch znaków informacji o łuku sieci
-	 */
-	public String toString() {
-		// return String.format("%s weight: %d; width: %f;", this.getName(),
-		// this.getWeight(), this.getWidth());
-		String s = "startNodeELParentNodeID: "
-				+ Integer.toString(this.getStartLocation().getParentNode()
-						.getID())
-				+ "; endNodeELParentNodeID: "
-				+ Integer.toString(this.getEndLocation().getParentNode()
-						.getID()) + "; isPaired: "
-				+ Boolean.toString(getPairedArc() != null);
-		return s;
-	}
-
-	/**
 	 * Metoda pozwala narysować token na łuku w czasie symulacji.
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza
@@ -287,26 +283,18 @@ public class Arc extends PetriNetElement {
 	public void draw(Graphics2D g, int sheetId, int zoom) {
 		if (this.getLocationSheetId() != sheetId)
 			return;
+		
 		Point p1 = (Point)getStartLocation().getPosition();
 		Point p2 = new Point();
 		int endRadius = 0;
-		if (getEndLocation() == null)
+		if (getEndLocation() == null) {
 			p2 = (Point)this.tempEndPoint;
-		else {
+		} else {
 			p2 = (Point)getEndLocation().getPosition().clone();
 			endRadius = getEndLocation().getParentNode().getRadius();// * zoom / 100;
-		}/*
-		if(zoom != 100){
-			p1.x = p1.x * zoom / 100;
-			p1.y = p1.y * zoom / 100;
-			p2.x = p2.x * zoom / 100;
-			p2.y = p2.y * zoom / 100;
-		}*/
-		// int startRadius = getStartLocation().getParentNode().getRadius();
-		double alfa = p2.x - p1.x + p2.y - p1.y == 0 ? 0 : Math
-				.atan(((double) p2.y - (double) p1.y)
-						/ ((double) p2.x - (double) p1.x));
-
+		}
+		
+		double alfa = p2.x - p1.x + p2.y - p1.y == 0 ? 0 : Math.atan(((double) p2.y - (double) p1.y) / ((double) p2.x - (double) p1.x));
 		double alfaCos = Math.cos(alfa);
 		double alfaSin = Math.sin(alfa);
 		double sign = p2.x < getStartLocation().getPosition().x ? 1 : -1;
@@ -334,15 +322,17 @@ public class Arc extends PetriNetElement {
 		else
 			g.setColor(new Color(176, 23, 31));
 
-		g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, new int[] {
-				(int) yp, (int) yl, (int) yk }, 3);
-		if (getPairedArc() == null || isMainArcOfPair())
+		g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, new int[] { (int) yp, (int) yl, (int) yk }, 3);
+		
+		if (getPairedArc() == null || isMainArcOfPair()) {
 			g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
-
+		}
+		
 		int k = (p2.x + p1.x) / 2;
 		int j = (p2.y + p1.y) / 2;
-		if (this.getWeight() > 1)
+		if (this.getWeight() > 1) {
 			g.drawString(Integer.toString(this.getWeight()), k, j + 10);
+		}
 	}
 
 	/**
@@ -539,6 +529,7 @@ public class Arc extends PetriNetElement {
 	 */
 	public void setPairedArc(Arc pairedArc) {
 		this.pairedArc = pairedArc;
+		this.arcType = TypesOfArcs.READARC;
 	}
 
 	/**
@@ -555,5 +546,43 @@ public class Arc extends PetriNetElement {
 	 */
 	public void setMainArcOfPair(boolean isMainArcOfPair) {
 		this.isMainArcOfPair = isMainArcOfPair;
+	}
+	
+	/**
+	 * Metoda zwraca typ łuku.
+	 * @return TypesOfArcs
+	 */
+	public TypesOfArcs getArcType() {
+		return arcType;
+	}
+	
+	/**
+	 * Tylko do użytku wczytywania danych: ustawia typ łuku.
+	 * @param type TypesOfArcs - typ łuku
+	 */
+	public void setArcType(TypesOfArcs type) {
+		arcType = type;
+	}
+	
+	/**
+	 * Metoda zwracająca dane o łuku w formie łańcucha znaków.
+	 * @return String - łańcuch znaków informacji o łuku sieci
+	 */
+	public String toString() {
+		int startNodeID = -1;
+		if(this.getStartLocation() != null)
+			if(this.getStartLocation().getParentNode() != null)
+				startNodeID = this.getStartLocation().getParentNode().getID();
+		
+		int endNodeID = -1;
+		if(this.getEndLocation() != null)
+			if(this.getEndLocation().getParentNode() != null)
+				endNodeID = this.getEndLocation().getParentNode().getID();
+
+		String s = "StartNodeID: " + startNodeID
+				+ "; EndNodeID: " + endNodeID
+				+ "; Type: " + arcType.toString();
+				//+ "; TYPE: "+ Boolean.toString(getPairedArc() != null);
+		return s;
 	}
 }
