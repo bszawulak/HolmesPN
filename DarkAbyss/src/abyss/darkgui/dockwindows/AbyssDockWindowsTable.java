@@ -1547,7 +1547,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		label2B.setBounds(columnA_posX+40, columnB_Y += 20, colBCompLength+40, 20);
 		components.add(label2B);
 		
-		JLabel label1A = new JLabel("ID:", JLabel.LEFT);
+		JLabel label1A = new JLabel("gID:", JLabel.LEFT);
 		label1A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(label1A);
 		JLabel label1B = new JLabel(Integer.toString(arc.getStartNode().getID()));
@@ -1586,7 +1586,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		label6B.setBounds(columnA_posX+40, columnB_Y += 20, colBCompLength+40, 20);
 		components.add(label6B);
 		
-		JLabel label5A = new JLabel("ID:", JLabel.LEFT);
+		JLabel label5A = new JLabel("gID:", JLabel.LEFT);
 		label5A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(label5A);
 		JLabel label5B = new JLabel(Integer.toString(arc.getEndNode().getID()));

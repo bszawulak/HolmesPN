@@ -623,6 +623,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		SnoopyWriter sWr = new SnoopyWriter();
 		sWr.writeSPPED(filePath);
 	}
+	
+	/**
+	 * Metoda pozwala zapisać sieć do formatu SPEPT (Extended) programu Snoopy.
+	 * @param filePath String - ścieżka docelowa pliku
+	 */
+	public void saveAsSPEPT(String filePath) {
+		SnoopyWriter sWr = new SnoopyWriter();
+		sWr.writeSPEPT(filePath);
+	}
 
 	/**
 	 * Metoda pozwala na odczyt całej sieci z pliku podanego w parametrze

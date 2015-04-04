@@ -5,16 +5,16 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.font.TextLayout;
 import java.awt.geom.Line2D;
-
-//import org.simpleframework.xml.Element;
 
 import java.util.ArrayList;
 
 import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.IdGenerator;
 import abyss.math.simulator.NetSimulator;
+import abyss.utilities.Tools;
 
 /**
  * Klasa implementująca łuk w sieci Petriego. Przechowuje referencje
@@ -284,7 +284,9 @@ public class Arc extends PetriNetElement {
 		if (this.getLocationSheetId() != sheetId)
 			return;
 		
-		Point p1 = (Point)getStartLocation().getPosition();
+		Stroke sizeStroke = g.getStroke();
+		
+		Point p1 = new Point((Point)getStartLocation().getPosition());
 		Point p2 = new Point();
 		int endRadius = 0;
 		if (getEndLocation() == null) {
@@ -292,6 +294,13 @@ public class Arc extends PetriNetElement {
 		} else {
 			p2 = (Point)getEndLocation().getPosition().clone();
 			endRadius = getEndLocation().getParentNode().getRadius();// * zoom / 100;
+		}
+		
+		int distX = Tools.absolute(p1.x - p2.x);
+		int distY = Tools.absolute(p1.y - p2.y);
+		
+		if(distX == distY) {
+			p1.setLocation(p1.x+1, p1.y);
 		}
 		
 		double alfa = p2.x - p1.x + p2.y - p1.y == 0 ? 0 : Math.atan(((double) p2.y - (double) p1.y) / ((double) p2.x - (double) p1.x));
@@ -322,9 +331,53 @@ public class Arc extends PetriNetElement {
 		else
 			g.setColor(new Color(176, 23, 31));
 
-		g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, new int[] { (int) yp, (int) yl, (int) yk }, 3);
+		int leftRight = 0; //im wieksze, tym bardziej w prawo
+		int upDown = 0; //im większa, tym mocniej w dół
+
 		
-		if (getPairedArc() == null || isMainArcOfPair()) {
+		g.setStroke(sizeStroke);
+		if(getArcType() == TypesOfArcs.NORMAL || getArcType() == TypesOfArcs.READARC) {
+			g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
+					new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
+		} else if (getArcType() == TypesOfArcs.INHIBITOR) {
+			//g.fillOval((int)xp-4, (int)yp, 8, 8);
+			int xPos = (int) ((xl + xk)/2);
+	    	int yPos = (int) ((yl + yk)/2);
+	    	int xT = (int) ((xPos - xp)/3.14);
+	    	int yT = (int) ((yPos - yp)/3.14);
+	    	
+	    	g.drawOval((int)(xPos-5-xT), (int)(yPos-5-yT), 10, 10);
+		} else if (getArcType() == TypesOfArcs.RESET) {
+			g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
+					new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
+			
+			//int xPos = (int) ((xl + xk)/2);
+	    	//int yPos = (int) ((yl + yk)/2);
+			xl = p2.x + (endRadius + 30) * alfaCos * sign + M * alfaSin;
+			yl = p2.y + (endRadius + 30) * alfaSin * sign - M * alfaCos;
+			xk = p2.x + (endRadius + 30) * alfaCos * sign - M * alfaSin;
+			yk = p2.y + (endRadius + 30) * alfaSin * sign + M * alfaCos;
+			double newxp = p2.x - (endRadius-45) * alfaCos * sign;
+			double newyp = p2.y - (endRadius-45) * alfaSin * sign;
+			
+			g.fillPolygon(new int[] { (int) newxp, (int) xl+leftRight, (int) xk+leftRight }, 
+					new int[] { (int) newyp, (int) yl+upDown, (int) yk+upDown }, 3);
+		} else if (getArcType() == TypesOfArcs.EQUAL) {
+			int xPos = (int) ((xl + xk)/2);
+	    	int yPos = (int) ((yl + yk)/2);
+	    	int xT = (int) ((xPos - xp)/3.14);
+	    	int yT = (int) ((yPos - yp)/3.14);
+	    	
+	    	g.fillOval((int)(xPos-4-xT), (int)(yPos-4-yT), 8, 8);
+	    	
+	    	xT = (int) ((xPos - xp));
+	    	yT = (int) ((yPos - yp));
+	    	
+	    	g.fillOval((int)(xPos-4+xT), (int)(yPos-4+yT), 8, 8);
+		}
+			
+		if (getPairedArc() == null || isMainArcOfPair()) { 
+			//czyli nie rysuje kreski tylko wtedy, jeśli to podrzędny łuk w ramach read-arc - żeby nie dublować
 			g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
 		}
 		

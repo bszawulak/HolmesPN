@@ -245,10 +245,11 @@ public class GUIOperations {
 	 */
 	public void saveAsGlobal() {
 		String lastPath = overlord.getLastPath();
-		FileFilter[] filters = new FileFilter[3];
+		FileFilter[] filters = new FileFilter[4];
 		filters[0] = new ExtensionFileFilter("Snoopy Petri Net (.spped)", new String[] { "SPPED" });
-		filters[1] = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
-		filters[2] = new ExtensionFileFilter("INA PNT format (.pnt)", new String[] { "PNT" });
+		filters[1] = new ExtensionFileFilter("Snoopy Extended Petri Net (.spept)", new String[] { "SPEPT" });
+		filters[2] = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
+		filters[3] = new ExtensionFileFilter("INA PNT format (.pnt)", new String[] { "PNT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
 		if(selectedFile.equals("")) {
 			return;
@@ -259,8 +260,7 @@ public class GUIOperations {
 			JOptionPane.showMessageDialog(null, "File choosing error. Cannot proceed.", "Error", JOptionPane.ERROR_MESSAGE);
 			overlord.log("File choosing error. No extension: "+extension, "error", true);
 			return;
-		}
-		if (extension.contains(".spped")) {
+		} else if (extension.contains(".spped")) {
 			File file = new File(selectedFile);
 			String fileExtension = ".spped";
 			if(selectedFile.toLowerCase().contains(".spped"))
@@ -268,8 +268,15 @@ public class GUIOperations {
 			
 			overlord.getWorkspace().getProject().saveAsSPPED(file.getPath() + fileExtension);
 			overlord.setLastPath(file.getParentFile().getPath());
-		}
-		if (extension.contains(".abyss")) {
+		} else if (extension.contains(".spept")) {
+			File file = new File(selectedFile);
+			String fileExtension = ".spept";
+			if(selectedFile.toLowerCase().contains(".spept"))
+				fileExtension = "";
+			
+			overlord.getWorkspace().getProject().saveAsSPEPT(file.getPath() + fileExtension);
+			overlord.setLastPath(file.getParentFile().getPath());
+		} else if (extension.contains(".abyss")) {
 			File file = new File(selectedFile);
 			String fileExtension = ".abyss";
 			if(selectedFile.toLowerCase().contains(".abyss"))
@@ -277,8 +284,7 @@ public class GUIOperations {
 			
 			overlord.getWorkspace().getProject().saveAsAbyss(file.getPath() + fileExtension);
 			overlord.setLastPath(file.getParentFile().getPath());
-		}
-		if (extension.contains(".pnt") ) {
+		} else if (extension.contains(".pnt") ) {
 			File file = new File(selectedFile);
 			String fileExtension = ".pnt";
 			if(selectedFile.toLowerCase().contains(".pnt"))

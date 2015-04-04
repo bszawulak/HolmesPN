@@ -1,4 +1,4 @@
-package abyss.settings;
+package abyss.darkgui.settings;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,7 +16,7 @@ import abyss.darkgui.GUIManager;
 /**
  * Klasa zarządzająca plikiem konfiguracyjnym programu.
  * @author students - pierwsza podstawowa wersja która nic nie robiła :)
- * @author MR - w tej chwili większość dodatkowego kodu tutaj
+ * @author MR - w tej chwili większość kodu tutaj
  *
  */
 public class SettingsManager {
@@ -74,7 +74,7 @@ public class SettingsManager {
 	 * @param ID String - unikalny ID
 	 * @param value String - wartość właściwości
 	 */
-	private void addSetting(String ID, String value) {
+	private void addSetting(ArrayList<Setting> settings, String ID, String value) {
 		for(Setting s : settings) {
 			if(s.getID().equals(ID)) {
 				Random rand = new Random();
@@ -86,48 +86,53 @@ public class SettingsManager {
 	}
 	
 	/**
-	 * Metoda przywraca domyślne wartości ustawień programu.
+	 * Metoda odpowiedzialna za sprawdzenie wczytanych z pliku ustawień i w razie konieczności ich korektę.
 	 */
-	public void restoreDefaultSetting() {
-		settings.clear();
-		addSetting("abyss_version","1.30 release 30-3-2015");
-		addSetting("r_path","c://Program Files//R//R-3.1.2//bin//Rscript.exe");
-		addSetting("r_path64","c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
-		addSetting("ina_bat","START INAwin32.exe COMMAND.ina");
-		addSetting("ina_COMMAND1"," 80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec");
-		addSetting("ina_COMMAND2","nnsyp");
-		addSetting("ina_COMMAND3","nnnfnn");
-		addSetting("ina_COMMAND4","eqqy");
-		addSetting("netExtFactor","100");
-		addSetting("gridLines","1");
-		addSetting("gridAlignWhenSaved","1");
-		addSetting("usesSnoopyOffsets","1");
-		//
-		writeSettingsFile();
+	@SuppressWarnings("unused")
+	private void checkAndRestoreSetting() {
+		ArrayList<Setting> settingsNew = new ArrayList<Setting>();
+		
+		checkAndFix(settingsNew, "abyss_version", "1.30 release 30-3-2015");
+		checkAndFix(settingsNew, "r_path", "c://Program Files//R//R-3.1.2//bin//Rscript.exe");
+		checkAndFix(settingsNew, "r_path64","c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
+		checkAndFix(settingsNew, "ina_bat","START INAwin32.exe COMMAND.ina");
+		checkAndFix(settingsNew, "ina_COMMAND1"," 80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec");
+		checkAndFix(settingsNew, "ina_COMMAND2","nnsyp");
+		checkAndFix(settingsNew, "ina_COMMAND3", "nnnfnn");
+		checkAndFix(settingsNew, "ina_COMMAND4", "eqqy");
+		try { 
+			String tmp = getValue("netExtFactor");
+			int test = Integer.parseInt(tmp); 
+			checkAndFix(settingsNew, "netExtFactor", "100");
+		} catch (Exception e) { settingsNew.add(new Setting("netExtFactor", "100")); }
+		
+		checkAndFix(settingsNew, "gridLines","1");
+		checkAndFix(settingsNew, "gridAlignWhenSaved", "1");
+		checkAndFix(settingsNew, "usesSnoopyOffsets", "1");
+		try { 
+			String tmp = getValue("graphArcLineSize");
+			int test = Integer.parseInt(tmp);
+			if(test < 1 || test > 3)
+				throw new Exception();
+			checkAndFix(settingsNew, "graphArcLineSize", "1");
+		} catch (Exception e) { settingsNew.add(new Setting("graphArcLineSize", "1")); }
+		
+		
+		settings = new ArrayList<Setting>(settingsNew);
 	}
 	
 	/**
-	 * Metoda sprawdza, czy krytyczne właściwości zostały wczytane, tj. czy są w 
-	 * (nieuszkodzonym) pliku właściwości, który właśnie został przeczytany.
-	 * @return boolean - true, jeśli wszystkie ważne zostały wczytane
+	 * Metoda sprawdza, czy dane ustawienie istnieje - jeśli tak, dodaje je do nowej listy, jeśli nie - ustawia
+	 * jego nową wartość na domyślną.
+	 * @param settings ArrayList[Setting] - nowa tablica ustawień
+	 * @param ID String - identyfikator ustawienia
+	 * @param value String - wartość domyślna, jeśli nie udało się wczytać ustawienia z danym ID
 	 */
-	@SuppressWarnings("unused")
-	private boolean checkCriticalSetting() {
-		String tmp = "";
-		if(getValue("abyss_version") == null) return false;
-		if(getValue("r_path") == null) return false;
-		if(getValue("ina_bat") == null) return false;
-		if(getValue("ina_COMMAND1") == null) return false;
-		if(getValue("ina_COMMAND2") == null) return false;
-		if(getValue("ina_COMMAND3") == null) return false;
-		if(getValue("ina_COMMAND4") == null) return false;
-		if((tmp = getValue("netExtFactor")) == null) return false;
-			else try { int test = Integer.parseInt(tmp); } catch (Exception e) { return false; }
-
-		if(getValue("gridLines") == null) return false;
-		if(getValue("gridAlignWhenSaved") == null) return false;
-		if(getValue("usesSnoopyOffsets") == null) return false;
-		return true;
+	private void checkAndFix(ArrayList<Setting> settings, String ID, String value) {
+		if(getValue(ID) == null)
+			addSetting(settings, ID, value);
+		else
+			addSetting(settings, ID, getValue(ID));
 	}
 
 	/**
@@ -168,14 +173,15 @@ public class SettingsManager {
 				GUIManager.getDefaultGUIManager().logNoEnter(s.getID() , "italic", false);
 				GUIManager.getDefaultGUIManager().logNoEnter(" VALUE: " , "bold", false);
 				GUIManager.getDefaultGUIManager().log(s.getValue(), "italic", false);
-				//GUIManager.getDefaultGUIManager().log("ID: "+s.getID()+" VALUE: "+s.getValue(),"italic", false);
 			}
 			
-			boolean status = checkCriticalSetting();
-			if(!status) {
-				throw new IOException();
-			}
-		} catch (IOException e) {
+			checkAndRestoreSetting();
+			
+			//boolean status = checkCriticalSetting();
+			//if(!status) {
+			//	throw new IOException();
+			//}
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
 				"The file \"abyss\".cfg, which normally contains the settings for this application,\n"
 				+ "has not been found or contains invalid values. Restoring default file.",
@@ -187,8 +193,9 @@ public class SettingsManager {
 			if(error) 
 				return;
 			
-			restoreDefaultSetting();
-			readSettingsFile(true);
+			checkAndRestoreSetting();
+			writeSettingsFile();
+			//readSettingsFile(true);
 		}
 	}
 

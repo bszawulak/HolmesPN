@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
+import abyss.math.Arc.TypesOfArcs;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.PetriNet;
 import abyss.math.Place;
@@ -162,20 +163,28 @@ public class InvariantsCalculator implements Runnable {
 			int tPosition = 0;
 			int pPosition = 0;
 			int incidenceValue = 0;
+			
+			if(oneArc.getArcType() != TypesOfArcs.NORMAL) {
+				continue;
+			}
 
 			if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION
 					|| oneArc.getStartNode().getType() == PetriNetElementType.TIMETRANSITION) {
 				tPosition = transitionsMap.get(oneArc.getStartNode());
 				pPosition = placesMap.get(oneArc.getEndNode());
+				
 				// incidenceValue = -1 * oneArc.getWeight();  // CO TO K**** JEST ?! JAKIE -1 ?!
 				// 	(14.03.2015) ja go chyba zamorduję... 
 				//   https://www.youtube.com/watch?v=oxiJrcFo724
-				// 		
+				// 
+				
 				incidenceValue = 1 * oneArc.getWeight();
-			} else {
+			} else { //miejsca
 				tPosition = transitionsMap.get(oneArc.getEndNode());
 				pPosition = placesMap.get(oneArc.getStartNode());
+				
 				//incidenceValue = 1 * oneArc.getWeight(); ///JAK WYŻEJ...!!!!
+				
 				incidenceValue = -1 * oneArc.getWeight();
 			}
 			globalIncidenceMatrix.get(tPosition).set(pPosition, incidenceValue);

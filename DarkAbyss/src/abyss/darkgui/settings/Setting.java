@@ -1,4 +1,4 @@
-package abyss.settings;
+package abyss.darkgui.settings;
 
 /**
  * Klasa słownikowa, służy do przechowywania właściwości programu w formie par ID/wartość.
@@ -49,5 +49,12 @@ public class Setting {
 	 */
 	public void setID(String iD) {
 		ID = iD;
+	}
+	
+	public String toString() {
+		if(ID != null && value != null)
+			return "ID: "+ID+" VALUE: "+value;
+		else
+			return "ID: null VALUE: null";
 	}
 }

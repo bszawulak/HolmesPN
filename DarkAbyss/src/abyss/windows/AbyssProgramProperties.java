@@ -21,7 +21,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 import abyss.darkgui.GUIManager;
-import abyss.settings.SettingsManager;
+import abyss.darkgui.settings.SettingsManager;
 import abyss.utilities.Tools;
 
 /**
@@ -81,17 +81,20 @@ public class AbyssProgramProperties extends JFrame {
 		tabbedPane.addTab("System", icon, makeSysPanel(), "Abyss main options.");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-		JComponent panel2 = makeTextPanel("Simulator options will go here.");
-		tabbedPane.addTab("Simulator", icon, panel2, "Does nothing");
+		tabbedPane.addTab("Editor", icon, makeEditorPanel(), "Editor options");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+		
+		JComponent panel3 = makeTextPanel("Simulator options will go here.");
+		tabbedPane.addTab("Simulator", icon, panel3, "Does nothing");
+		tabbedPane.setMnemonicAt(1, KeyEvent.VK_3);
 
-		JComponent panel3 = makeTextPanel("Analyzer options will go here.");
-		tabbedPane.addTab("Analyzer", icon, panel3, "Does twice as much nothing");
-		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+		JComponent panel4 = makeTextPanel("Analyzer options will go here.");
+		tabbedPane.addTab("Analyzer", icon, panel4, "Does twice as much nothing");
+		tabbedPane.setMnemonicAt(2, KeyEvent.VK_4);
 
-		JComponent panel4 = makeTextPanel("Other options.");
-		tabbedPane.addTab("Other", icon, panel4, "Does nothing at all");
-		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+		JComponent panel5 = makeTextPanel("Other options.");
+		tabbedPane.addTab("Other", icon, panel5, "Does nothing at all");
+		tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
@@ -100,6 +103,10 @@ public class AbyssProgramProperties extends JFrame {
 		add(mainPanel);
 		repaint();
 	}
+	
+//**********************************************************************************************************************
+//*********************************************      SYSTEM TAB    *****************************************************
+//**********************************************************************************************************************
 	
 	/**
 	 * Metoda tworzy panel dla zakładki ogólnych ustawień programu.
@@ -288,6 +295,94 @@ public class AbyssProgramProperties extends JFrame {
 		rOptionsPanel.add(rSetPath);
 		return rOptionsPanel;
 	}
+	
+//**********************************************************************************************************************
+//*********************************************      EDITOR TAB    *****************************************************
+//**********************************************************************************************************************
+
+	/**
+	 * Metoda tworzy panel dla zakładki ogólnych ustawień programu.
+	 * @return JPanel - panel
+	 */
+	private JPanel makeEditorPanel() {
+		JPanel panel = new JPanel(null);
+		panel.setBounds(0, 0, 600, 500);
+		
+		//Panel opcji środowiska R
+		panel.add(createMainOptionsPanel(0, 0, 590, 90)); //dodaj podpanel ustawień R
+
+		//Panel wczytywania sieci
+		//panel.add(createSnoopyReadPanel(0, 90, 590, 150));
+		
+		panel.repaint();
+		return panel;
+	}
+	
+	private JPanel createMainOptionsPanel(int x, int y, int w, int h) {
+		JPanel panel = new JPanel(null);
+		panel.setBorder(BorderFactory.createTitledBorder("Graphical settings"));
+		panel.setBounds(x, y, w, h);
+		
+		int io_x = 10;
+		int io_y = 15;
+		noAction = true;
+		
+		JLabel labelIO1 = new JLabel("Default arc thickness:");
+		labelIO1.setBounds(io_x, io_y, 200, 20);
+		panel.add(labelIO1);
+
+		ButtonGroup group = new ButtonGroup();
+		JRadioButton size1Button = new JRadioButton("1");
+		size1Button.setBounds(io_x, io_y+20, 40, 20);
+		size1Button.setActionCommand("0");
+		size1Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "1", true);
+			}
+		});
+		group.add(size1Button);
+		panel.add(size1Button);
+
+		JRadioButton size2Button = new JRadioButton("2");
+		size2Button.setBounds(io_x+40, io_y+20, 40, 20);
+		size2Button.setActionCommand("1");
+		size2Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "2", true);
+			}
+		});
+		group.add(size2Button);
+		panel.add(size2Button);
+
+		JRadioButton size3Button = new JRadioButton("3");
+		size3Button.setBounds(io_x+80, io_y+20, 40, 20);
+		size3Button.setActionCommand("2");
+		size3Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "3", true);
+			}
+		});
+		group.add(size3Button);
+		panel.add(size3Button);
+		
+		String thickValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphArcLineSize");	
+		if(thickValue.equals("1")) group.setSelected(size1Button.getModel(), true);
+		else if(thickValue.equals("2")) group.setSelected(size2Button.getModel(), true);
+		else if(thickValue.equals("3")) group.setSelected(size3Button.getModel(), true);
+
+		
+		
+		
+		
+		noAction = false;
+		return panel;
+	}
+	
+	
+//**********************************************************************************************************************
+//*********************************************     DEFAULT TAB    *****************************************************
+//**********************************************************************************************************************
+
 	
 	/**
 	 * Wypełnianie pustą zawartością

@@ -40,6 +40,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	private Point position;
 	private GUIManager guiManager;
 	private JTree toolTree;
+	private DefaultMutableTreeNode pointerNode;
 
 	// buttons
 	JButton place, transition, arc, none;
@@ -59,13 +60,17 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		setDockable(GUIManager.externalWithListener(getDockable(),guiManager.getDockingListener()));
 
 		DefaultMutableTreeNode miscNode = new DefaultMutableTreeNode("Misc");
-		miscNode.add(new DefaultMutableTreeNode("Pointer"));
+		pointerNode = new DefaultMutableTreeNode("Pointer");
+		miscNode.add(pointerNode);
 		miscNode.add(new DefaultMutableTreeNode("Eraser"));
 
 		DefaultMutableTreeNode basicPetriNetsNode = new DefaultMutableTreeNode("Simple Petri Nets");
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Place"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Transition"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Arc"));
+		basicPetriNetsNode.add(new DefaultMutableTreeNode("Inhibitor Arc"));
+		basicPetriNetsNode.add(new DefaultMutableTreeNode("Reset Arc"));
+		basicPetriNetsNode.add(new DefaultMutableTreeNode("Equal Arc"));
 
 		DefaultMutableTreeNode timePetriNetsNode = new DefaultMutableTreeNode("Time Petri Nets");
 		timePetriNetsNode.add(new DefaultMutableTreeNode("TimeTransition"));		
@@ -117,6 +122,18 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	private void setDockable(Dockable dockable) {
 		this.dockable = dockable;
 	}
+	
+	public void selectPointer() {
+		//TreeNode[] nodes = model.getPathToRoot(nextNode);
+		//toolTree.setSelectionPath(new TreePath(pointerNode));
+		//int index = toolTree.getRowForPath(new TreePath(pointerNode));
+		
+		toolTree.setSelectionRow(2);
+	}
+	
+	public JTree getTree() {
+		return toolTree;
+	}
 
 	/**
 	 * Przeciążona metoda odpowiedzialna za reakcję na zmianę narzędzia rysowania sieci.
@@ -128,8 +145,8 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			return;
 		
 		if(!node.getUserObject().toString().equals("Pointer"))
-			if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning("Only Pointer is available when simulator is working."
-					, "Warning") == true) {
+			if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+					"Only Pointer is available when simulator is working.", "Warning") == true) {
 				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
 				return;
 			}
@@ -138,24 +155,36 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		if (node.isLeaf()) {
 			String description = (String) nodeInfo;
 			switch (description) {
+			case "Pointer":
+				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
+				break;
+			case "Eraser":
+				guiManager.getWorkspace().setGraphMode(DrawModes.ERASER);
+			
 			case "Place":
 				guiManager.getWorkspace().setGraphMode(DrawModes.PLACE);
 				break;
 			case "Transition":
 				guiManager.getWorkspace().setGraphMode(DrawModes.TRANSITION);
 				break;
-			case "Arc":
-				guiManager.getWorkspace().setGraphMode(DrawModes.ARC);
-				break;
-			case "Pointer":
-				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
-				break;
 			case "TimeTransition":
 				guiManager.getWorkspace().setGraphMode(DrawModes.TIMETRANSITION);
 				break;
-			case "Eraser":
-				guiManager.getWorkspace().setGraphMode(DrawModes.ERASER);
+			case "Arc":
+				guiManager.getWorkspace().setGraphMode(DrawModes.ARC);
+				break;
+			case "Inhibitor Arc":
+				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_INHIBITOR);
+				break;
+			case "Reset Arc":
+				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_RESET);
+				break;
+			case "Equal Arc":
+				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_EQUAL);
+				break;
+		
 			}
+			
 		}
 	}
 
@@ -166,9 +195,10 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	 */
 	private class LeafRenderer extends DefaultTreeCellRenderer {
 		private static final long serialVersionUID = 3169140404884453079L;
-		private ImageIcon placeIcon, transitionIcon, arcIcon, pointerIcon,
+		private ImageIcon placeIcon, transitionIcon, pointerIcon,
 				eraserIcon, timeTransitionIcon;
 
+		private ImageIcon arcIcon, arcIconInh, arcIconRst, arcIconEql;
 		/**
 		 * Konstruktor domyślny obiektu klasy wewnętrznej LeafRenderer. Tworzy ikony
 		 * narzędzi rysowania sieci Petriego.
@@ -177,9 +207,13 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			placeIcon = Tools.getResIcon16("/icons/place.gif");
 			transitionIcon = Tools.getResIcon16("/icons/transition.gif");
 			timeTransitionIcon = Tools.getResIcon16("/icons/timeTransition.gif");
-			arcIcon = Tools.getResIcon16("/icons/arc.gif");
 			pointerIcon = Tools.getResIcon16("/icons/pointer.gif");
 			eraserIcon = Tools.getResIcon16("/icons/eraser.gif");
+			
+			arcIcon = Tools.getResIcon16("/icons/arc.gif");
+			arcIconInh = Tools.getResIcon16("/icons/arcInh.gif");
+			arcIconRst = Tools.getResIcon16("/icons/arcReset.gif");
+			arcIconEql = Tools.getResIcon16("/icons/arcEqual.gif");
 		}
 
 		/**
@@ -194,11 +228,9 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		 * @return Component - komponent wybrany z drzewa
 		 */
 		public Component getTreeCellRendererComponent(JTree tree, Object value,
-				boolean sel, boolean expanded, boolean leaf, int row,
-				boolean hasFocus) {
+				boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
-			super.getTreeCellRendererComponent(tree, value, sel, expanded,
-					leaf, row, hasFocus);
+			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 			String nodeInfo = (String) (node.getUserObject());
 			if (leaf) {
@@ -225,7 +257,19 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 					break;
 				case "Arc":
 					setIcon(arcIcon);
-					setToolTipText("Allows you to place an Arc on the sheet.");
+					setToolTipText("Allows you to place an Arc/Readarc on the sheet.");
+					break;
+				case "Inhibitor Arc":
+					setIcon(arcIconInh);
+					setToolTipText("Allows you to place an Inhibitor Arc on the sheet.");
+					break;
+				case "Reset Arc":
+					setIcon(arcIconRst);
+					setToolTipText("Allows you to place a Reset Arc on the sheet.");
+					break;
+				case "Equal Arc":
+					setIcon(arcIconEql);
+					setToolTipText("Allows you to place an Equal Arc on the sheet.");
 					break;
 				}
 			} else {

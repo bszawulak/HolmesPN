@@ -347,4 +347,11 @@ public final class Tools {
     	DecimalFormat df = new DecimalFormat("#.###", otherSymbols);
 		return df.format(value);
 	}
+	
+	public static int absolute(int i) {
+		if (i < 0)
+			return -i;
+		else
+			return i;
+	}
 }

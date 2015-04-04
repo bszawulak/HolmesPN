@@ -173,11 +173,13 @@ public class AbyssDockWindow extends SingleDock {
 			scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}
-	//TODO:
+
+	/**
+	 * Metoda odpowiedzialna za pokazanie podokna ze zbiorami MCS sieci.
+	 */
 	public void showMCS() {
 		if (type == DockWindowType.MCSselector) {
 			MCSDataMatrix mcsData = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-			
 			setCurrentDockWindow(new AbyssDockWindowsTable(mcsData));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 

@@ -5,7 +5,7 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 import abyss.darkgui.GUIManager;
-import abyss.settings.SettingsManager;
+import abyss.darkgui.settings.SettingsManager;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 

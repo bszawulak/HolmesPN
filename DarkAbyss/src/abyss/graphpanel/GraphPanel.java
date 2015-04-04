@@ -54,7 +54,8 @@ public class GraphPanel extends JComponent {
 	private Dimension originSize;
 	private boolean drawMesh = false;
 	private boolean snapToMesh = false;
-	public enum DrawModes { POINTER, PLACE, TRANSITION, ARC, ERASER, TIMETRANSITION; }
+	//public enum DrawModes { POINTER, PLACE, TRANSITION, ARC, ERASER, TIMETRANSITION; }
+	public enum DrawModes { POINTER, ERASER, PLACE, TRANSITION, TIMETRANSITION, ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL}
 	
 	//private Graphics2D oldState = null;
 
@@ -131,11 +132,10 @@ public class GraphPanel extends JComponent {
 			setCursor(Cursor.getDefaultCursor());
 		} else {
 			Toolkit toolkit = Toolkit.getDefaultToolkit();
-			//Image image = toolkit.getImage("resources/cursors/"+ this.getDrawMode().toString() + ".gif");
 			Image image = null;
 			try {
-				//image = getToolkit().getImage(getClass().getResource("/cursors/"+ this.getDrawMode().toString() + ".gif") );
-				image = Tools.getImageFromIcon("/cursors/"+ this.getDrawMode().toString() + ".gif");
+				String modeName = this.getDrawMode().toString();
+				image = Tools.getImageFromIcon("/cursors/"+ modeName + ".gif");
 			} catch (Exception e ) {
 				//i tak nic nie pomoże, jak powyższe się wywali. Taka nasza Java piękna i wesoła.
 			}
@@ -277,6 +277,8 @@ public class GraphPanel extends JComponent {
 		
 		
 		for (Arc a : getArcs()) {
+			int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphArcLineSize"));
+			g2d.setStroke(new BasicStroke(sizeS));
 			a.draw(g2d, this.sheetId, getZoom());
 		}
 		if (this.isSimulationActive()) {
@@ -795,12 +797,14 @@ public class GraphPanel extends JComponent {
 				if (e.getButton() == MouseEvent.BUTTON3) {
 					if (getDrawMode() == DrawModes.POINTER)
 						getSheetPopupMenu().show(e);
+					
 					setDrawMode(DrawModes.POINTER);
+					GUIManager.getDefaultGUIManager().getToolBox().selectPointer(); //przywraca tryb wybierania
 				}
 				if (!e.isShiftDown() && !e.isControlDown()) {
 					getSelectionManager().deselectAllElements();
 				}
-				
+
 				if(e.isAltDown()) //wycentruj ekran
 					centerOnPoint(mousePt);
 				
@@ -844,37 +848,13 @@ public class GraphPanel extends JComponent {
 					default:
 						break;
 				}
-			}
-			// kliknięto w Node, możliwe ze też w łuk, ale nie zostanie on
-			// zaznaczony, ponieważ to Node jest na wierzchu
-			else if (el != null) {
-				if (getDrawMode() == DrawModes.ARC) {
+			} else if (el != null) {
+				// kliknięto w Node, możliwe ze też w łuk, ale nie zostanie on
+				// zaznaczony, ponieważ to Node jest na wierzchu
+				if (getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.ARC_INHIBITOR 
+						|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL) {
+					handleArcsDrawing(el, getDrawMode());
 					
-					getSelectionManager().deselectAllElements();
-					if (drawnArc == null) {
-						drawnArc = new Arc(el, TypesOfArcs.NORMAL);
-					} else {
-						if (drawnArc.checkIsCorect(el)) {
-							//TODO
-							if(isArcDuplicated(drawnArc.getStartLocation(), el)) {
-								JOptionPane.showMessageDialog(null,  "Arc already exists!", "Problem", 
-										JOptionPane.WARNING_MESSAGE);
-							} if(invalidType(drawnArc.getStartLocation(), el) == true) {
-								JOptionPane.showMessageDialog(null,  "Non-standard arc leading in reverse direction!", "Problem", 
-										JOptionPane.WARNING_MESSAGE);
-							} else { //dokończ rysowanie łuku, dodaj do listy
-								if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-									GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-								}
-								
-								Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), el, TypesOfArcs.NORMAL);
-								getArcs().add(arc);
-
-								GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
-							}
-						}
-						clearDrawnArc();
-					}
 				} else if (getDrawMode() == DrawModes.ERASER) {
 					if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
 						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
@@ -900,8 +880,8 @@ public class GraphPanel extends JComponent {
 						getTransitionPopupMenu().show(e);
 				}
 			}
-			// kliknięto w Arc, wiec zostanie on zaznaczony
-			else if (a != null) {
+			
+			else if (a != null) { // kliknięto w łuk, więc zostanie on zaznaczony
 				if (getDrawMode() == DrawModes.ERASER) {
 					if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
 						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
@@ -926,7 +906,55 @@ public class GraphPanel extends JComponent {
 			}
 			e.getComponent().repaint();
 		}
-	} 
+
+		/**
+		 * Metoda odpowiedzialna za rysowanie łuków.
+		 * @param el ElementLocation - gdzie kliknięto
+		 */
+		private void handleArcsDrawing(ElementLocation el, DrawModes arcType) {
+			getSelectionManager().deselectAllElements();
+			if (drawnArc == null) {
+				if(arcType == DrawModes.ARC)
+					drawnArc = new Arc(el, TypesOfArcs.NORMAL);
+				else if(arcType == DrawModes.ARC_INHIBITOR)
+					drawnArc = new Arc(el, TypesOfArcs.INHIBITOR);
+				else if(arcType == DrawModes.ARC_RESET)
+					drawnArc = new Arc(el, TypesOfArcs.RESET);
+				else if(arcType == DrawModes.ARC_EQUAL)
+					drawnArc = new Arc(el, TypesOfArcs.EQUAL);
+			} else {
+				if (drawnArc.checkIsCorect(el)) {
+					//TODO
+					if(isArcDuplicated(drawnArc.getStartLocation(), el)) {
+						JOptionPane.showMessageDialog(null,  "Arc already exists!", "Problem", JOptionPane.WARNING_MESSAGE);
+					} else if(invalidType(drawnArc.getStartLocation(), el) == true) {
+						JOptionPane.showMessageDialog(null,  "Non-standard arc leading in reverse direction!", "Problem", 
+								JOptionPane.WARNING_MESSAGE);
+					} else { //dokończ rysowanie łuku, dodaj do listy
+						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						}
+						
+						Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), el, TypesOfArcs.NORMAL);
+						
+						if(arcType == DrawModes.ARC_INHIBITOR)
+							arc.setArcType(TypesOfArcs.INHIBITOR);
+						else if(arcType == DrawModes.ARC_RESET)
+							arc.setArcType(TypesOfArcs.RESET);
+						else if(arcType == DrawModes.ARC_EQUAL)
+							arc.setArcType(TypesOfArcs.EQUAL);
+						
+						getArcs().add(arc);
+
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+					}
+				}
+				clearDrawnArc();
+			}
+		}
+		
+		
+	} //end class MouseHandler
 
 	/**
 	 * Prywatna klasa wewnątrz GraphPanel, realizująca interakcje ze strony
@@ -954,7 +982,9 @@ public class GraphPanel extends JComponent {
 		public void mouseDragged(MouseEvent e) {
 			Point dragPoint = e.getPoint();
 			dragPoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
-			if (getDrawMode() == DrawModes.ARC && drawnArc != null)
+			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.ARC_INHIBITOR 
+					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL)  
+					&& drawnArc != null)
 				return;
 			if (getSelectingRect() != null) {
 				getSelectingRect().setBounds(Math.min(mousePt.x, dragPoint.x),
@@ -980,7 +1010,8 @@ public class GraphPanel extends JComponent {
 		/**
 		 * Metoda pochłaniająca zasoby jak czarna dziura. Wywoływana za każdym razem, gdy kursor
 		 * znajdzie się nad panelem rysowania. Nie trzeba mówić, że przerysowywanie sieci w każdej
-		 * takiej chwili nie jest najlepszym pomysłem. PRAWDA PANOWIE STUDENCI, KTÓRZY TO PISALIŚCIE?
+		 * takiej chwili nie jest najlepszym pomysłem. A to tu było zanim przyszedłem. Cud, że program
+		 * się uruchamiał w ogóle...
 		 * MR
 		 */
 		@Override
@@ -989,7 +1020,8 @@ public class GraphPanel extends JComponent {
 				return;
 			}
 			
-			if (getDrawMode() == DrawModes.ARC && drawnArc != null) {
+			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.ARC_INHIBITOR 
+					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL) && drawnArc != null) {
 				Point movePoint = e.getPoint();
 				movePoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
 				drawnArc.setEndPoint(movePoint);
@@ -1067,7 +1099,7 @@ public class GraphPanel extends JComponent {
 				}
 			}
 		}
-	}
+	} // end class MouseWheelHandler
 
 	/**
 	 * Zadaniem tej metody jest wycentrowanie ekranu na klikniętych współrzędnych.

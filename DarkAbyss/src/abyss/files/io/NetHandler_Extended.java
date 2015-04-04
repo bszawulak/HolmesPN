@@ -400,7 +400,7 @@ public class NetHandler_Extended extends NetHandler {
 						tmpTarget = j;
 					}
 				}
-				arcComment += arcType;
+				//arcComment += arcType;
 				Arc newArc = new Arc(elementLocationList.get(tmpSource), elementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
 				arcList.add(newArc);
 				

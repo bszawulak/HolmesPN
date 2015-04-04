@@ -143,6 +143,7 @@ public class TexExporter {
 				transitionsNames.add(transitions.get(i).getName());
 				transitions.get(i).setName("t"+i);
 			}
+			
 			SnoopyWriter sw = new SnoopyWriter();
 			String path = Tools.getFilePath(new File(selectedFile));
 			sw.writeSPPED(path+"net.spped");

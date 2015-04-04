@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTree;
 
 import abyss.analyse.MDTSCalculator;
 import abyss.darkgui.GUIManager;
@@ -81,11 +82,9 @@ public class Toolbar extends BorderDock {
 
 		setToolBarBorderDock(new BorderDock(new CompositeToolBarDockFactory(),minimizerBorderDock));
 		getToolBarBorderDock().setMode(BorderDock.MODE_TOOL_BAR);
-		horizontalCompositeToolBarDock = new CompositeLineDock(
-			CompositeLineDock.ORIENTATION_HORIZONTAL, false,
+		horizontalCompositeToolBarDock = new CompositeLineDock(CompositeLineDock.ORIENTATION_HORIZONTAL, false,
 			new ToolBarDockFactory(), DockingMode.HORIZONTAL_TOOLBAR,DockingMode.VERTICAL_TOOLBAR);
-		verticalCompositeToolBarDock = new CompositeLineDock(
-			CompositeLineDock.ORIENTATION_VERTICAL, false,
+		verticalCompositeToolBarDock = new CompositeLineDock(CompositeLineDock.ORIENTATION_VERTICAL, false,
 			new ToolBarDockFactory(), DockingMode.HORIZONTAL_TOOLBAR,DockingMode.VERTICAL_TOOLBAR);
 		getToolBarBorderDock().setDock(horizontalCompositeToolBarDock,Position.TOP);
 		getToolBarBorderDock().setDock(verticalCompositeToolBarDock,Position.LEFT);
@@ -260,10 +259,11 @@ public class Toolbar extends BorderDock {
 		//odswiezanie
 		@SuppressWarnings("serial")
 		ToolbarButtonAction refreshButton = new ToolbarButtonAction(this,
-				"Refresh", "Referesh", Tools.getResIcon48("/icons/toolbar/refresh.png")) {
+				"Refresh", "Refresh", Tools.getResIcon48("/icons/toolbar/refresh.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().restoreDefaultVisuals();
+				//GUIManager.getDefaultGUIManager().restoreDefaultVisuals(); 
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 			}
 		};
 		buttonDockables.add(createButtonDockable("ButtonDockableRefresh", refreshButton));
@@ -376,6 +376,10 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/a.png")) {
 			public void actionPerformed(ActionEvent actionEvent) 
 			{ 
+				JTree test = GUIManager.getDefaultGUIManager().getToolBox().getTree();
+				GUIManager.getDefaultGUIManager().getToolBox().selectPointer();
+				//test.setSelectionPath(new TreePath());
+				int x = 1;
 				/*
 				MDTSCalculator mdts = new MDTSCalculator();
 				ArrayList<Set<Integer>> results = mdts.calculateMDTS();

@@ -6,13 +6,13 @@ import abyss.darkgui.dockable.DeleteAction;
 import abyss.darkgui.dockwindows.AbyssDockWindow;
 import abyss.darkgui.dockwindows.PetriNetTools;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
+import abyss.darkgui.settings.SettingsManager;
 import abyss.darkgui.toolbar.Toolbar;
 import abyss.files.io.TexExporter;
 import abyss.math.ElementLocation;
 import abyss.math.Node;
 import abyss.math.PetriNet;
 import abyss.math.Transition;
-import abyss.settings.SettingsManager;
 import abyss.utilities.Tools;
 import abyss.windows.AbyssAbout;
 import abyss.windows.AbyssConsole;
@@ -28,6 +28,7 @@ import abyss.windows.AbyssSearch;
 import abyss.windows.AbyssStateSimulator;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
+import abyss.workspace.WorkspaceSheet;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -910,60 +911,63 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda odpowiedzialna za przywrócenie widoku domyślnego.
 	 */
+	//TODO: prawdopodobnie w tej formie spowoduje katastrofę...
 	public void restoreDefaultVisuals() {
 		getSimulatorBox().createSimulatorProperties();
+
+		// repaint all sheets in workspace
+		for (WorkspaceSheet sheet : workspace.getSheets()) {
+			sheet.getGraphPanel().repaint();
+		}
+		// redock all sheets
+		workspace.redockSheets();
+		// recreate dock structure
+		//getDockModel().RootDock(totalSplitDock);
+		//
+		leftTabDock.emptyChild(getToolBox());
+		topRightTabDock.emptyChild(getPropertiesBox());
+
+		setToolBox(new PetriNetTools());
+		setPropertiesBox(new AbyssDockWindow(DockWindowType.EDITOR));
+		setSimulatorBox(new AbyssDockWindow(DockWindowType.SIMULATOR));
+		setSelectionBox(new AbyssDockWindow(DockWindowType.SELECTOR));
+		setInvariantsBox(new AbyssDockWindow(DockWindowType.InvANALYZER));
+		setClusterSelectionBox(new AbyssDockWindow(DockWindowType.ClusterSELECTOR));
+		setMctBox(new AbyssDockWindow(DockWindowType.MctANALYZER)); //aktywuj obiekt podokna wyświetlania zbiorów MCT
+		setInvSim(new AbyssDockWindow(DockWindowType.InvSIMULATOR));
+		setMCSBox(new AbyssDockWindow(DockWindowType.MCSselector));
 		
-		//getInvSimBox().createInvSimulatorProperties();
-		// // repaint all sheets in workspace
-		// for (WorkspaceSheet sheet : workspace.getSheets()) {
-		// sheet.getGraphPanel().repaint();
-		// }
-		// // redock all sheets
-		// workspace.redockSheets();
-		// // recreate dock structure
-		// getDockModel().RootDock(totalSplitDock);
 		//
-		// leftTabDock.emptyChild(getToolBox());
-		// topRightTabDock.emptyChild(getPropertiesBox());
-		// setToolBox(new Tools());
-		// setPropertiesBox(new Properties());
-		//
-		// leftTabDock = new CompositeTabDock(); // default Toolbox dock
-		// topRightTabDock = new CompositeTabDock(); // default propertiesdock
-		// leftTabDock.addChildDock(getToolBox(), new Position(0));
-		// topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
-		//
-		// // create the split docks
-		// leftSplitDock = new SplitDock();
-		// leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
-		// leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(),
-		// new Position(Position.CENTER));
-		// leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 8);
-		//
-		// rightSplitDock = new SplitDock();
-		// rightSplitDock.addChildDock(topRightTabDock, new Position(
-		// Position.RIGHT));
-		//
-		// totalSplitDock = new SplitDock();
-		// totalSplitDock.addChildDock(leftSplitDock, new
-		// Position(Position.LEFT));
-		// totalSplitDock.addChildDock(rightSplitDock,
-		// new Position(Position.RIGHT));
-		// totalSplitDock.setDividerLocation((int) screenSize.getWidth()
-		// - (int) screenSize.getWidth() / 6);
-		//
-		// // // Add root dock
-		// getDockModel().addRootDock("totalSplitDock", totalSplitDock, frame);
-		// add(totalSplitDock, BorderLayout.CENTER);
-		//
-		// // save docking paths
-		// DockingManager.getDockingPathModel().add(
-		// DefaultDockingPath
-		// .createDockingPath(getToolBox().getDockable()));
-		// DockingManager.getDockingPathModel().add(
-		// DefaultDockingPath.createDockingPath(getPropertiesBox()
-		// .getDockable()));
-		// this.repaint();
+		leftTabDock = new CompositeTabDock(); // default Toolbox dock
+		topRightTabDock = new CompositeTabDock(); // default propertiesdock
+		leftTabDock.addChildDock(getToolBox(), new Position(0));
+		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
+		
+		// create the split docks
+		leftSplitDock = new SplitDock();
+		leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
+		leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(),
+		new Position(Position.CENTER));
+		leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 8);
+		
+		rightSplitDock = new SplitDock();
+		rightSplitDock.addChildDock(topRightTabDock, new Position(Position.RIGHT));
+		
+		totalSplitDock = new SplitDock();
+		totalSplitDock.addChildDock(leftSplitDock, new Position(Position.LEFT));
+		totalSplitDock.addChildDock(rightSplitDock, new Position(Position.RIGHT));
+		totalSplitDock.setDividerLocation((int) screenSize.getWidth()- (int) screenSize.getWidth() / 6);
+		
+		// Add root dock
+		getDockModel().addRootDock("totalSplitDock", totalSplitDock, frame);
+		add(totalSplitDock, BorderLayout.CENTER);
+		
+		// save docking paths
+		DockingManager.getDockingPathModel().add(
+		DefaultDockingPath.createDockingPath(getToolBox().getDockable()));
+		DockingManager.getDockingPathModel().add(
+		DefaultDockingPath.createDockingPath(getPropertiesBox().getDockable()));
+		this.repaint();
 	}
 
 	/**

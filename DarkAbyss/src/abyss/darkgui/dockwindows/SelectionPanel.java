@@ -68,8 +68,7 @@ public class SelectionPanel extends JPanel {
 	 * Metoda ustawia nową listę z opisami wybranych wierzchołków.
 	 * @param selectedElementLocationList DefaultListModel[String] - lista informacji o wierzchołkach
 	 */
-	public void setSelectedElementLocationList(
-			DefaultListModel<String> selectedElementLocationList) {
+	public void setSelectedElementLocationList(DefaultListModel<String> selectedElementLocationList) {
 		this.selectedElementLocationList = selectedElementLocationList;
 	}
 
