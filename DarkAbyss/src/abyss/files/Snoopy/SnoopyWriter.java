@@ -11,6 +11,7 @@ import abyss.math.ElementLocation;
 import abyss.math.Node;
 import abyss.math.Place;
 import abyss.math.Transition;
+import abyss.varia.Check;
 
 /**
  * Autor włożył ogromny wysiłek, aby ta klasa wraz z pomocniczymi potrafiła zasymulować
@@ -143,7 +144,7 @@ public class SnoopyWriter {
 	public void writeSPEPT(String filePath) {
 		int startNodeId = 226; // bo tak
 		int currentActiveID = startNodeId;
-		int arcsNumber = 0;
+		//int arcsNumber = 0;
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
 			
@@ -164,15 +165,14 @@ public class SnoopyWriter {
 				snoopyPlaces.add(sPlace);
 				snoopyPlacesID.add(p.getID());
 				
-				ArrayList<ElementLocation> clones = p.getElementLocations();
-				for(ElementLocation el : clones) {
-					arcsNumber += el.getOutArcs().size(); //pobież wszystkie wychodzące
-				}
+				//ArrayList<ElementLocation> clones = p.getElementLocations();
+				//for(ElementLocation el : clones) {
+				//	arcsNumber += el.getOutArcs().size(); //pobież wszystkie wychodzące
+				//}
 				
 				currentActiveID = sPlace.writePlaceInfoToFile(bw, currentActiveID, globalPlaceId);
-				
 				if(sPlace.portal == true) { //jeśli właśnie dodane było portalem
-					currentActiveID += 13; //bo tak, pytajcie w Brandenburgu 'a a a czymuuu?'
+					currentActiveID += 13; //bo tak, 13, pytajcie w Brandenburgu 'a a a czymuuu?' Nie ja pisałem Snoopiego.
 				} else {
 					currentActiveID ++;
 				}
@@ -190,13 +190,11 @@ public class SnoopyWriter {
 				snoopyTransitions.add(sTransition);
 				snoopyTransitionsID.add(t.getID());
 				
-				
-				ArrayList<ElementLocation> clones = t.getElementLocations();
-				for(ElementLocation el : clones) {
-					arcsNumber += el.getOutArcs().size(); //pobież wszystkie wychodzące
-				}
-				
-				
+				//ArrayList<ElementLocation> clones = t.getElementLocations();
+				//for(ElementLocation el : clones) {
+				//	arcsNumber += el.getOutArcs().size(); //pobież wszystkie wychodzące
+				//}
+
 				currentActiveID = sTransition.writeTransitionInfoToFile(bw, currentActiveID, globalTransId);
 				currentActiveID ++;
 				globalTransId++;
@@ -211,7 +209,7 @@ public class SnoopyWriter {
 			//ŁUKI:
 			write(bw, "  <edgeclasses count=\"5\">");
 			
-			ArrayList<Integer> arcClasses = SnoopyToolClass.getArcClassCount();
+			ArrayList<Integer> arcClasses = Check.getArcClassCount();
 			if(arcClasses.get(0) == 0) {
 				write(bw, "    <edgeclass count=\"0\" name=\"Edge\">");
 			} else {

@@ -9,8 +9,8 @@ public class ObjectSizeFetcher {
         instrumentation = inst;
     }
 
-    public static long getObjectSize(Object o) {
-        return instrumentation.getObjectSize(o);
+    public static long getObjectSize(Object o) { 
+    	return instrumentation.getObjectSize(o); 
     }
 }
 

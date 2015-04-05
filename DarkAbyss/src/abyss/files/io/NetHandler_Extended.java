@@ -417,7 +417,7 @@ public class NetHandler_Extended extends NetHandler {
 				
 				edge = false;
 				
-				arcType = "";
+				//arcType = "";
 				arcComment = "";
 				arcMultiplicity = 0;
 			}

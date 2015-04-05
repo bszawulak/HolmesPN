@@ -55,7 +55,8 @@ public class GraphPanel extends JComponent {
 	private boolean drawMesh = false;
 	private boolean snapToMesh = false;
 	//public enum DrawModes { POINTER, PLACE, TRANSITION, ARC, ERASER, TIMETRANSITION; }
-	public enum DrawModes { POINTER, ERASER, PLACE, TRANSITION, TIMETRANSITION, ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL}
+	/** POINTER, ERASER, PLACE, TRANSITION, TIMETRANSITION, ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC */
+	public enum DrawModes { POINTER, ERASER, PLACE, TRANSITION, TIMETRANSITION, ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC }
 	
 	//private Graphics2D oldState = null;
 
@@ -133,10 +134,12 @@ public class GraphPanel extends JComponent {
 		} else {
 			Toolkit toolkit = Toolkit.getDefaultToolkit();
 			Image image = null;
+			String modeName = "";
 			try {
-				String modeName = this.getDrawMode().toString();
+				modeName = this.getDrawMode().toString();
 				image = Tools.getImageFromIcon("/cursors/"+ modeName + ".gif");
 			} catch (Exception e ) {
+				GUIManager.getDefaultGUIManager().log("Critical error, no "+modeName+".gif in jar file. Thank java un-catchable exceptions...", "error", true);
 				//i tak nic nie pomoże, jak powyższe się wywali. Taka nasza Java piękna i wesoła.
 			}
 			Point hotSpot = new Point(0, 0);
@@ -851,7 +854,7 @@ public class GraphPanel extends JComponent {
 			} else if (el != null) {
 				// kliknięto w Node, możliwe ze też w łuk, ale nie zostanie on
 				// zaznaczony, ponieważ to Node jest na wierzchu
-				if (getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.ARC_INHIBITOR 
+				if (getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.READARC ||getDrawMode() == DrawModes.ARC_INHIBITOR 
 						|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL) {
 					handleArcsDrawing(el, getDrawMode());
 					
@@ -908,45 +911,81 @@ public class GraphPanel extends JComponent {
 		}
 
 		/**
-		 * Metoda odpowiedzialna za rysowanie łuków.
-		 * @param el ElementLocation - gdzie kliknięto
+		 * Metoda odpowiedzialna za rysowanie łuków między wierzchołkami sieci.
+		 * @param clickedLocation ElementLocation - gdzie kliknięto
+		 * @param arcType DrawModes - tryb rysowania, tj. rodzaj rysowanego łuku
 		 */
-		private void handleArcsDrawing(ElementLocation el, DrawModes arcType) {
+		private void handleArcsDrawing(ElementLocation clickedLocation, DrawModes arcType) {
 			getSelectionManager().deselectAllElements();
 			if (drawnArc == null) {
 				if(arcType == DrawModes.ARC)
-					drawnArc = new Arc(el, TypesOfArcs.NORMAL);
+					drawnArc = new Arc(clickedLocation, TypesOfArcs.NORMAL);
+				else if(arcType == DrawModes.READARC)
+					drawnArc = new Arc(clickedLocation, TypesOfArcs.NORMAL);
 				else if(arcType == DrawModes.ARC_INHIBITOR)
-					drawnArc = new Arc(el, TypesOfArcs.INHIBITOR);
+					drawnArc = new Arc(clickedLocation, TypesOfArcs.INHIBITOR);
 				else if(arcType == DrawModes.ARC_RESET)
-					drawnArc = new Arc(el, TypesOfArcs.RESET);
+					drawnArc = new Arc(clickedLocation, TypesOfArcs.RESET);
 				else if(arcType == DrawModes.ARC_EQUAL)
-					drawnArc = new Arc(el, TypesOfArcs.EQUAL);
+					drawnArc = new Arc(clickedLocation, TypesOfArcs.EQUAL);
 			} else {
-				if (drawnArc.checkIsCorect(el)) {
+				if (drawnArc.checkIsCorect(clickedLocation)) {
 					//TODO
-					if(isArcDuplicated(drawnArc.getStartLocation(), el)) {
-						JOptionPane.showMessageDialog(null,  "Arc already exists!", "Problem", JOptionPane.WARNING_MESSAGE);
-					} else if(invalidType(drawnArc.getStartLocation(), el) == true) {
-						JOptionPane.showMessageDialog(null,  "Non-standard arc leading in reverse direction!", "Problem", 
+					if(isArcDuplicated(drawnArc.getStartLocation(), clickedLocation)) {
+						JOptionPane.showMessageDialog(null,  "Arc going in this direction already exists.", 
+								"Problem", JOptionPane.WARNING_MESSAGE);
+					} else if(isReverseArcPresent(drawnArc.getStartLocation(), clickedLocation) == true) {
+						if(arcType == DrawModes.ARC) {
+							JOptionPane.showMessageDialog(null, "Please use Read Arc drawing mode to draw a read-arc!", "Problem", 
+									JOptionPane.WARNING_MESSAGE);
+						} else if(arcType == DrawModes.READARC) {
+							JOptionPane.showMessageDialog(null, "Please remove arc between these two nodes in order to create a read-arc.", "Problem", 
+									JOptionPane.WARNING_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(null, "Non-standard arc leading in reverse direction!", "Problem", 
 								JOptionPane.WARNING_MESSAGE);
-					} else { //dokończ rysowanie łuku, dodaj do listy
-						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 						}
+					} else { //dokończ rysowanie łuku, dodaj do listy
 						
-						Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), el, TypesOfArcs.NORMAL);
 						
-						if(arcType == DrawModes.ARC_INHIBITOR)
-							arc.setArcType(TypesOfArcs.INHIBITOR);
-						else if(arcType == DrawModes.ARC_RESET)
-							arc.setArcType(TypesOfArcs.RESET);
-						else if(arcType == DrawModes.ARC_EQUAL)
-							arc.setArcType(TypesOfArcs.EQUAL);
-						
-						getArcs().add(arc);
+						if ((arcType == DrawModes.ARC_INHIBITOR || arcType == DrawModes.ARC_RESET || arcType == DrawModes.ARC_EQUAL) 
+								&& clickedLocation.getParentNode() instanceof Place) {
+							JOptionPane.showMessageDialog(null,  "This type of arc can only go FROM place TO transition!", "Problem", 
+									JOptionPane.WARNING_MESSAGE);
+							
+						} else {
+							if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+								GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+							}
+							
+							Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), clickedLocation, TypesOfArcs.NORMAL);
+							
+							if(arcType == DrawModes.ARC) {
+								arc.setArcType(TypesOfArcs.NORMAL);
+								getArcs().add(arc);
+							} else if(arcType == DrawModes.READARC) {
+								//arc.setArcType(TypesOfArcs.INHIBITOR);
+								getArcs().add(arc);
+								Arc arc2 = new Arc(IdGenerator.getNextId(), clickedLocation, drawnArc.getStartLocation(), TypesOfArcs.NORMAL);
+								getArcs().add(arc2);
+								
+								arc.setArcType(TypesOfArcs.READARC);
+								arc2.setArcType(TypesOfArcs.READARC);
+							}else if(arcType == DrawModes.ARC_INHIBITOR) {
+								arc.setArcType(TypesOfArcs.INHIBITOR);
+								getArcs().add(arc);
+							} else if(arcType == DrawModes.ARC_RESET) {
+								arc.setArcType(TypesOfArcs.RESET);
+								getArcs().add(arc);
+							} else if(arcType == DrawModes.ARC_EQUAL) {
+								arc.setArcType(TypesOfArcs.EQUAL);
+								getArcs().add(arc);
+							}
+							
+							
 
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+							GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						}
 					}
 				}
 				clearDrawnArc();
@@ -982,7 +1021,7 @@ public class GraphPanel extends JComponent {
 		public void mouseDragged(MouseEvent e) {
 			Point dragPoint = e.getPoint();
 			dragPoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
-			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.ARC_INHIBITOR 
+			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.READARC || getDrawMode() == DrawModes.ARC_INHIBITOR 
 					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL)  
 					&& drawnArc != null)
 				return;
@@ -1020,7 +1059,7 @@ public class GraphPanel extends JComponent {
 				return;
 			}
 			
-			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.ARC_INHIBITOR 
+			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.READARC ||getDrawMode() == DrawModes.ARC_INHIBITOR 
 					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL) && drawnArc != null) {
 				Point movePoint = e.getPoint();
 				movePoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
@@ -1144,36 +1183,53 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda sprawdza, czy z wierzchołka do którego prowadzimy łuk nie skierowany jest inny łuk, typu
-	 * różnego od NORMAL (np. INHIBITION, etc.) - wtedy zwraca true jako sygnał, że nie można dodawać.
+	 * Metoda sprawdza, czy z wierzchołka DO którego prowadzimy łuk nie wychodzi już inny łuk skierowany tam,
+	 * skąd właśnie wychodzi łuk aktualnie rysowany - wtedy zwraca true jako sygnał, że nie można dodawać.
 	 * @param startLocation ElementLocation - lokalizacja wierzchołka startowego
 	 * @param endLocation ElementLocation - lokalizacja wierzchołka docelowego
 	 * @return boolean - true, jeśli nie można dodać z uwagi na obecność nieprawidłowego typu łuku skierowanego z 
 	 * 		wierzchołka docelowego do wierzchołka startowego z którego prowadzony jest właśnie nowy łuk.
 	 */
-	public boolean invalidType(ElementLocation startLocation, ElementLocation endLocation) {
-		ArrayList<Arc> candidates = endLocation.getOutArcs();
-		for (Arc a : candidates) {
-			if (a.getEndLocation() == startLocation) {
-				if(a.getArcType() != TypesOfArcs.NORMAL) {
+	public boolean isReverseArcPresent(ElementLocation startLocation, ElementLocation endLocation) {
+		Node node = endLocation.getParentNode();
+		for(ElementLocation el : node.getElementLocations()) {
+			ArrayList<Arc> candidates = el.getOutArcs();
+			for (Arc a : candidates) {
+				if (locationFamily(a.getEndLocation(), startLocation) == true) {
+					//if(a.getArcType() != TypesOfArcs.NORMAL) {
 					return true;
+					//}
 				}
 			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Metoda sprawdza, czy testLoc należy do zbioru lokalizacji wierzchołka, do którego na pewno należy obiekt 'location'
+	 * @param location ElementLocation - sprawdzamy cały zbiór do którego on należy
+	 * @param testLoc ElementLocation - element testowany
+	 * @return boolean - true, jeśli testLoc należy do zbioru lokalizacji wierzchołka który na pewno zawiera lokalizację 
+	 * 		przesłaną jako 'location'
+	 */
+	private boolean locationFamily(ElementLocation location, ElementLocation testLoc ) {
+		Node node = location.getParentNode();
+		for(ElementLocation el : node.getElementLocations()) { //wszystkie, nie tylko samo location!
+			if(el == testLoc)
+				return true;
 		}
 		return false;
 	}
 
 	/**
 	 * Metoda pomocnicza, sprawdza czy rysowany właśnie łuk już istnieje.
-	 * @param startLocation
-	 * @param endLocation
-	 * @return
+	 * @param startLocation ElementLocation - lokalizacja startowa nowego łuku
+	 * @param endLocation ElementLocation - lokalizacja wierzchołka docelowego
+	 * @return boolean - true, jeśli istnieje już łuk pomiędzy lokalizacjami
 	 */
 	public boolean isArcDuplicated(ElementLocation startLocation, ElementLocation endLocation) {
 		boolean result = false;
-		
 		for(ElementLocation el : startLocation.getParentNode().getElementLocations()) {
-			
 			ArrayList<Arc> outArcs = el.getOutArcs(); //wszystkie wychodzące ze start EL
 			for(Arc a : outArcs) { //dla każdego łuku:
 				ElementLocation arcEndLocation = a.getEndLocation();
@@ -1187,9 +1243,6 @@ public class GraphPanel extends JComponent {
 				}
 			}
 		}
-		
-		
-		
 		return result;
 	}
 }

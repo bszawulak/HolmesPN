@@ -42,18 +42,17 @@ public class Arc extends PetriNetElement {
 	private boolean isTransportingTokens = false;
 	private int simulationStep = 0;
 	private boolean simulationForwardDirection = true;
+	
 	//read-arc parameters:
 	private Arc pairedArc;
 	private boolean isMainArcOfPair = false;
 	private TypesOfArcs arcType;
 
 	/** NORMAL, READARC, INHIBITOR, RESET, EQUAL */
-	public enum TypesOfArcs {
-		NORMAL, READARC, INHIBITOR, RESET, EQUAL
-	}
+	public enum TypesOfArcs { NORMAL, READARC, INHIBITOR, RESET, EQUAL }
 	
 	/**
-	 * Konstruktor obiektu klasy Arc.
+	 * Konstruktor obiektu klasy Arc - chwilowo nieużywany.
 	 * @param startPosition ElementLocation - lokalicja żródła łuku
 	 * @param endPosition ElementLocation - lokalicja celu łuku
 	 */
@@ -67,7 +66,8 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Konstruktor obiektu klasy Arc - mousePressed(MouseEvent)
+	 * Konstruktor obiektu klasy Arc - mousePressed(MouseEvent) - używany w momencie wybrania prawidłowego (!) 
+	 * wierzchołka docelowego dla łuku.
 	 * @param arcId int - identyfikator łuku
 	 * @param startPosition ElementLocation - lokacja źródła łuku
 	 * @param endPosition ElementLocation - lokacja celu łuku
@@ -82,7 +82,7 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Konstruktor obiektu klasy Arc.
+	 * Konstruktor obiektu klasy Arc - chwilowo nieużywany.
 	 * @param startPosition ElementLocation - lokacja źródła łuku
 	 * @param endPosition ElementLocation - lokacja celu łuku
 	 * @param comment String - komentarz
@@ -118,7 +118,8 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Konstruktor obiektu klasy Arc.
+	 * Konstruktor obiektu klasy Arc - bez ID, TYLKO na potrzeby rysowania konturu w momencie rozpoczęcia
+	 * rysowania (prowadzenia) łuku do miejsca docelowego.
 	 * @param startPosition ElementLocation - lokalizacja źródła łuku
 	 */
 	public Arc(ElementLocation startPosition, TypesOfArcs type) {

@@ -6,7 +6,6 @@ import java.awt.Point;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,7 +30,7 @@ import com.javadocking.dockable.Dockable;
  * Klasa odpowiedzialna za tworzenie okna narzędziowego, w którym składowane
  * są komponenty możliwe do dodania w różnych rodzajach sieci Petriego.
  * @author students
- *
+ * @author MR - wszystkie dodatkowe elementy sieci poza typowymi Place/Transition/Arc
  */
 public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	private static final long serialVersionUID = 5385847227073467035L;
@@ -41,9 +40,6 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	private GUIManager guiManager;
 	private JTree toolTree;
 	private DefaultMutableTreeNode pointerNode;
-
-	// buttons
-	JButton place, transition, arc, none;
 
 	/**
 	 * Konstruktor domyślny obiektu klasy Tools.
@@ -68,6 +64,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Place"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Transition"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Arc"));
+		basicPetriNetsNode.add(new DefaultMutableTreeNode("Read Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Inhibitor Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Reset Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Equal Arc"));
@@ -123,6 +120,9 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		this.dockable = dockable;
 	}
 	
+	/**
+	 * Metoda ustawiająca i podświetlająca wybór wskaźnika typu POINTER
+	 */
 	public void selectPointer() {
 		//TreeNode[] nodes = model.getPathToRoot(nextNode);
 		//toolTree.setSelectionPath(new TreePath(pointerNode));
@@ -131,6 +131,10 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		toolTree.setSelectionRow(2);
 	}
 	
+	/**
+	 * Metoda zwracająca obiekt drzewa narzedzi rysowania sieci.
+	 * @return JTree
+	 */
 	public JTree getTree() {
 		return toolTree;
 	}
@@ -160,7 +164,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				break;
 			case "Eraser":
 				guiManager.getWorkspace().setGraphMode(DrawModes.ERASER);
-			
+				break;
 			case "Place":
 				guiManager.getWorkspace().setGraphMode(DrawModes.PLACE);
 				break;
@@ -173,6 +177,9 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			case "Arc":
 				guiManager.getWorkspace().setGraphMode(DrawModes.ARC);
 				break;
+			case "Read Arc":
+				guiManager.getWorkspace().setGraphMode(DrawModes.READARC);
+				break;
 			case "Inhibitor Arc":
 				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_INHIBITOR);
 				break;
@@ -182,7 +189,6 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			case "Equal Arc":
 				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_EQUAL);
 				break;
-		
 			}
 			
 		}
@@ -198,7 +204,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		private ImageIcon placeIcon, transitionIcon, pointerIcon,
 				eraserIcon, timeTransitionIcon;
 
-		private ImageIcon arcIcon, arcIconInh, arcIconRst, arcIconEql;
+		private ImageIcon arcIcon, arcIconRead, arcIconInh, arcIconRst, arcIconEql;
 		/**
 		 * Konstruktor domyślny obiektu klasy wewnętrznej LeafRenderer. Tworzy ikony
 		 * narzędzi rysowania sieci Petriego.
@@ -211,6 +217,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			eraserIcon = Tools.getResIcon16("/icons/eraser.gif");
 			
 			arcIcon = Tools.getResIcon16("/icons/arc.gif");
+			arcIconRead = Tools.getResIcon16("/icons/arcRead.gif");
 			arcIconInh = Tools.getResIcon16("/icons/arcInh.gif");
 			arcIconRst = Tools.getResIcon16("/icons/arcReset.gif");
 			arcIconEql = Tools.getResIcon16("/icons/arcEqual.gif");
@@ -257,7 +264,11 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 					break;
 				case "Arc":
 					setIcon(arcIcon);
-					setToolTipText("Allows you to place an Arc/Readarc on the sheet.");
+					setToolTipText("Allows you to place an Arc on the sheet.");
+					break;
+				case "Read Arc":
+					setIcon(arcIconRead);
+					setToolTipText("Allows you to place an Readarc on the sheet.");
 					break;
 				case "Inhibitor Arc":
 					setIcon(arcIconInh);

@@ -941,9 +941,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		} else {
 			Object[] options = {"Load and replace project", "Cancel operation",};
 			int n = JOptionPane.showOptionDialog(null,
-							"New net will replace the old one. If latter has not been saved,\n please do it before contynuing.",
+							"New net will replace an old one already drawn. If the latter has not been saved,\n"
+							+ "please do it before continuing or it will be lost.",
 							"Continue loading new net?", JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				return true;
 			} else {

@@ -293,8 +293,6 @@ public class GUIOperations {
 			overlord.getWorkspace().getProject().saveAsPNT(file.getPath() + fileExtension);
 			overlord.setLastPath(file.getParentFile().getPath());
 		}
-		
-		
 	}
 	
 	/**

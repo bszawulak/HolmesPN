@@ -119,14 +119,14 @@ public final class InvariantsTools {
 	/**
 	 * Metoda zwraca wsparcie wektora wejściowego - numery pozycji na których w wektorze
 	 * znajdują się wartości dodatnie.
-	 * @param inv ArrayList[Integer] - wektor wejściowy
+	 * @param invariant ArrayList[Integer] - wektor wejściowy
 	 * @return ArrayList[Integer] - wsparcie
 	 */
-	public static ArrayList<Integer> getSupport(ArrayList<Integer> inv) {
+	public static ArrayList<Integer> getSupport(ArrayList<Integer> invariant) {
 		ArrayList<Integer> supports = new ArrayList<Integer>();
-		int size = inv.size();
+		int size = invariant.size();
 		for(int i=0; i<size; i++) {
-			if(inv.get(i) != 0) { //jeśli na danej pozycji jest wartość >0
+			if(invariant.get(i) != 0) { //jeśli na danej pozycji jest wartość =/= 0
 				supports.add(i); //dodaj pozycję jako wsparcie
 			}
 		}
@@ -207,6 +207,8 @@ public final class InvariantsTools {
 			 */
 		} else {
 			System.out.println("checkCoverability: Niemożliwy stan został osiągnięty. Konkluzja: znajdź sobie inny zbiór inwariantów niż ten.");
+			GUIManager.getDefaultGUIManager().log("Error #5a4f7ff3d45 - please advise authors of the program. Thank you."
+					+ " P.S. Do not trust this invariant set. Use INA generator instead. Apologies again!", "warning", true);
 			return 3; //teoretycznie NIGDY nie powinniśmy się tu pojawić
 		}
 	}
@@ -664,6 +666,7 @@ public final class InvariantsTools {
     	}
     	return trans;
     }
+
 	
 	/*
 	int supSize = candidateSupport.size();

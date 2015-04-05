@@ -22,10 +22,13 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.text.DefaultCaret;
 
 import abyss.analyse.InvariantsCalculator;
+import abyss.analyse.InvariantsCalculatorFeasible;
 import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
 import abyss.files.io.IOprotocols;
+import abyss.math.PetriNet;
 import abyss.utilities.Tools;
+import abyss.varia.Check;
 import abyss.workspace.ExtensionFileFilter;
 
 /**
@@ -40,6 +43,7 @@ public class AbyssInvariants extends JFrame {
 	private JTextArea logField;
 	private InvariantsCalculator invGenerator = null;
 	public boolean isGeneratorWorking = false;
+	public boolean noAction = false;
 
 	/**
 	 * Główny konstruktor okna generatora inwariantów.
@@ -114,7 +118,6 @@ public class AbyssInvariants extends JFrame {
 								"Generator working",JOptionPane.WARNING_MESSAGE);
 					} else {
 						setGeneratorStatus(true);
-						
 						invGenerator = new InvariantsCalculator(true);
 						Thread myThread = new Thread(invGenerator);
 						myThread.start();
@@ -154,6 +157,23 @@ public class AbyssInvariants extends JFrame {
 		panel.add(pInvariantsMode);
 		group.add(pInvariantsMode);
 		
+		/*
+		JCheckBox feasibilityCheckBox = new JCheckBox("Check feasibility", true);
+		feasibilityCheckBox.setBounds(posX+120, posY+40, 120, 20);
+		feasibilityCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					feasibilityTest = true;
+				} else {
+					feasibilityTest = false;
+				}
+			}
+		});
+		feasibilityCheckBox.setSelected(true);		
+		panel.add(feasibilityCheckBox);
+		*/
+		
 		// INA GENERATOR
 		JButton INAgenerateButton = new JButton();
 		INAgenerateButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA <br />generator</html>");
@@ -169,22 +189,6 @@ public class AbyssInvariants extends JFrame {
 		});
 		INAgenerateButton.setFocusPainted(false);
 		panel.add(INAgenerateButton);
-		
-		JButton showInvariantsButton = new JButton();
-		showInvariantsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Show <br />invariants</html>");
-		showInvariantsButton.setBounds(posX+250, posY+36, 120, 32);
-		showInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
-		showInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
-		showInvariantsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				//fillData();
-			}
-		});
-		showInvariantsButton.setFocusPainted(false);
-		
-		showInvariantsButton.setEnabled(false);
-		panel.add(showInvariantsButton);
-		
 		
 		JButton loadInvariantsButton = new JButton();
 		loadInvariantsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Load <br />invariants</html>");
@@ -213,10 +217,39 @@ public class AbyssInvariants extends JFrame {
 		});
 		saveInvariantsButton.setFocusPainted(false);
 		panel.add(saveInvariantsButton);
+		
+		//**************************************************************************************************
+		
+		JButton showInvariantsButton = new JButton();
+		showInvariantsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Show <br />invariants</html>");
+		showInvariantsButton.setBounds(posX+250, posY+36, 120, 32);
+		showInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
+		showInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
+		showInvariantsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				//fillData();
+			}
+		});
+		showInvariantsButton.setFocusPainted(false);
+		showInvariantsButton.setEnabled(false);
+		panel.add(showInvariantsButton);
+		
+		JButton makeFeasibleButton = new JButton();
+		makeFeasibleButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Make <br />&nbsp;&nbsp;feasible</html>");
+		makeFeasibleButton.setBounds(posX+380, posY+36, 120, 32);
+		makeFeasibleButton.setMargin(new Insets(0, 0, 0, 0));
+		makeFeasibleButton.setIcon(Tools.getResIcon22("/icons/invWindow/showts.png"));
+		makeFeasibleButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				checkAndMakeFeasible();
+			}
+		});
+		makeFeasibleButton.setFocusPainted(false);
+		panel.add(makeFeasibleButton);
 
 		return panel;
 	}
-	
+
 	/**
 	 * Metoda tworząca środkowy panel okna logów.
 	 * @param x int - pozycja X
@@ -355,13 +388,14 @@ public class AbyssInvariants extends JFrame {
 		return panel;
 	}
 	
+	/**
+	 * Metoda wczytująca nowy plik inwariantów (o ile już jakieś są w systemie - celem bycia zbiorem referencyjnym w
+	 * stosunku do wczytanego tutaj) oraz porównująca go ze zbiorem referencyjnym.
+	 */
 	protected void testReference() {
-		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
-		if(invariants == null || invariants.size() < 1) {
-			JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
-					"Warning", JOptionPane.INFORMATION_MESSAGE);
+		ArrayList<ArrayList<Integer>> invariants = Check.invExistsWithWarning();
+		if(invariants == null)
 			return;
-		}
 		
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
@@ -383,9 +417,12 @@ public class AbyssInvariants extends JFrame {
 		
 	}
 
+	/**
+	 * Metoda porównująca zbiory inwariantów: referencyjny i osobno wczytany.
+	 * @param invRefMatrix ArrayList[ArrayList[Integer]] - zbiór referencyjny inwariantów
+	 * @param invLoadedMatrix ArrayList[ArrayList[Integer]] - zbiór do porównania
+	 */
 	private void refTest(ArrayList<ArrayList<Integer>> invRefMatrix, ArrayList<ArrayList<Integer>> invLoadedMatrix) {
-		//InvariantsTools.finalSupportMinimalityTest(getInvariants());
-		
 		if(invRefMatrix != null) {
 			
 			ArrayList<ArrayList<Integer>> res =  InvariantsTools.compareInv(invRefMatrix, invLoadedMatrix);
@@ -409,18 +446,48 @@ public class AbyssInvariants extends JFrame {
 			logField.append("-> Not-invariant vectors (Cx=0 test): "+value+"\n");
 			logField.append("=====================================================================\n");
 			logField.append("\n");
-			/*
-			System.out.println();
-			System.out.println("Computed set size:   "+invRefMatrix.size());
-			System.out.println("Loaded set size:    "+invCoreMatrix.size());
-			System.out.println("Common set size:      "+res.get(0).size());
-			System.out.println("Not in computed set: "+res.get(1).size());
-			System.out.println("Not in loaded set:  "+res.get(2).size());
-			
-			System.out.println("Repeated in common set: "+res.get(3).get(0));
-			System.out.println("Repeated not in computed set:"+res.get(3).get(1));
-			*/
 		}
+	}
+	
+	/**
+	 * Metoda odpowiedzialna za obsługę przycisku tworzenia zbioru wykonalnych inwariantów.
+	 */
+	protected void checkAndMakeFeasible() {
+		ArrayList<ArrayList<Integer>> invariants = Check.invExistsWithWarning();
+		if(invariants == null)
+			return;
+		
+		InvariantsCalculatorFeasible invF = new InvariantsCalculatorFeasible(invariants, true);
+		invariants = invF.getMinFeasible();
+		
+		Object[] options = {"Save & replace", "Save only", "Replace only", "Cancel"};
+		int n = JOptionPane.showOptionDialog(null,
+						"New (feasible) invariants set computed. What to do now?\n"
+						+ "Save it to file and replace the current set.\n"
+						+ "Save it to file only (do not replace current set).\n"
+						+ "Do not save to file, only replace current set.\n"
+						+ "Discart new feasible invariants set.",
+						"What to do?", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, options, options[3]);
+		if (n == 0) {
+			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+			project.setInvariantsMatrix(invariants);
+			GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
+			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getInvariantsMatrix());
+		} else if(n == 1) {
+			ArrayList<ArrayList<Integer>> invBackup = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+			try {
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setInvariantsMatrix(invariants);
+				GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
+			} catch (Exception e) {}
+			finally {
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setInvariantsMatrix(invBackup);
+			}
+		} else if(n == 2) {
+			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+			project.setInvariantsMatrix(invariants);
+			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getInvariantsMatrix());
+		} //else: nic
 	}
 	
 	/**
