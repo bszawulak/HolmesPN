@@ -20,7 +20,7 @@ public class Place extends Node {
 	private static final long serialVersionUID = 2346995422046987174L;
 	
 	private int tokensNumber = 0;
-	private int tokensTaken = 0;
+	private int reservedTokens = 0;
 	//public Place()
 	
 	/**
@@ -132,8 +132,9 @@ public class Place extends Node {
 	 */
 	public void modifyTokensNumber(int delta) {
 		this.tokensNumber = this.tokensNumber + delta;
+		
 		if(tokensNumber < 0) {
-			GUIManager.getDefaultGUIManager().log("Critical simulation error. Number of tokens in place: "
+			GUIManager.getDefaultGUIManager().log("Simulation error: number of tokens in place: "
 					+this.getName()+ " below zero: ("+this.getTokensNumber()+").", "error", true);
 		}
 	}
@@ -142,23 +143,23 @@ public class Place extends Node {
 	 * Metoda pozwala pobrać liczbę zajętych (zarezerwowanych  przez aktywowaną tranzycję) tokenów.
 	 * @return int - liczba zarezerwowanych tokenów
 	 */
-	public int getTokensTaken() {
-		return tokensTaken;
+	public int getReservedTokens() {
+		return reservedTokens;
 	}
 
 	/**
 	 * Metoda pozwala zarezerwować określoną liczbę tokenów w miejscu.
 	 * @param tokensTaken int - liczba zajmowanych tokenów
 	 */
-	public void bookTokens(int tokensTaken) {
-		this.tokensTaken += tokensTaken; // TU BYŁ BŁĄD, BYŁO = ZAMIAST +=
+	public void reserveTokens(int tokensTaken) {
+		this.reservedTokens += tokensTaken;
 	}
 
 	/**
 	 * Metoda pozwala zwolnić wszystkie zarezerwowane tokeny.
 	 */
-	public void returnTokens() {
-		this.tokensTaken = 0;
+	public void freeReservedTokens() {
+		this.reservedTokens = 0;
 	}
 
 	/**
@@ -166,8 +167,8 @@ public class Place extends Node {
 	 * zarezerwowanych przez żadną tranzycję) tokenów.
 	 * @return int - liczba dostępnych tokenów
 	 */
-	public int getFreeTokensNumber() {
-		return tokensNumber - getTokensTaken();
+	public int getNonReservedTokensNumber() {
+		return tokensNumber - getReservedTokens();
 	}
 	
 	/**

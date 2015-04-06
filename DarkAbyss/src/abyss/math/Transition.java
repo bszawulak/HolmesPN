@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import abyss.graphpanel.ElementDraw;
 import abyss.graphpanel.IdGenerator;
+import abyss.math.Arc.TypesOfArcs;
 
 /**
  * Klasa implementująca tranzycję w sieci Petriego. Zapewnia implementację
@@ -173,19 +174,6 @@ public class Transition extends Node {
 	}
 
 	/**
-	 * Metoda pozwala sprawdzić, czy tranzycja jest aktywna i może zostać odpalona.
-	 * @return boolean - true, jeśli tranzycja jest aktywna i może zostać odpalona; false w przeciwnym wypadku
-	 */
-	public boolean isActive() {
-		for (Arc arc : getInArcs()) {
-			Place origin = (Place) arc.getStartNode();
-			if (!(origin.getFreeTokensNumber() >= arc.getWeight()))
-				return false;
-		}
-		return true;
-	}
-
-	/**
 	 * Metoda informująca, czy tranzycja jest podświetlona kolorem
 	 * @return boolean - true jeśli świeci; false w przeciwnym wypadku
 	 */
@@ -326,13 +314,70 @@ public class Transition extends Node {
 	}
 	
 	/**
+	 * Metoda pozwala sprawdzić, czy tranzycja jest aktywna i może zostać odpalona.
+	 * @return boolean - true, jeśli tranzycja jest aktywna i może zostać odpalona; false w przeciwnym wypadku
+	 */
+	public boolean isActive() {
+		boolean inhibitorOnly = true;
+		String name = getName();
+		for (Arc arc : getInArcs()) { //CASE: INHIBITORS ONLY
+			if(arc.getArcType() != TypesOfArcs.INHIBITOR) {
+				inhibitorOnly = false;
+				break;
+			} else { 
+				Place origin = (Place) arc.getStartNode();
+				if(origin.getNonReservedTokensNumber() > 0)	 {
+					inhibitorOnly = false;
+					break;
+				}
+			}
+		}
+		
+		if(inhibitorOnly == true) {
+			return true;
+		} else {
+			for (Arc arc : getInArcs()) {
+				Place origin = (Place) arc.getStartNode();
+				TypesOfArcs arcType = arc.getArcType();
+				int tokensLeft = origin.getNonReservedTokensNumber();
+				
+				if(arcType == TypesOfArcs.INHIBITOR && tokensLeft > 0)
+					return false;
+				else if(arcType == TypesOfArcs.INHIBITOR && tokensLeft == 0)
+					continue;
+				else if(arcType == TypesOfArcs.EQUAL && tokensLeft != 2)
+					return false;
+				else if(arcType == TypesOfArcs.RESET && tokensLeft == 0) // ??? wystarczy to poniżej?
+					return false;
+				else {
+					if (tokensLeft < arc.getWeight())
+						return false;
+				}
+					
+			}
+			return true;
+		}
+	}
+	
+	/**
 	 * Metoda pozwala zarezerwować we wszystkich miejscach wejściowych
 	 * niezbędne do uruchomienia tokeny. Inne tranzycje nie mogą ich odebrać.
 	 */
 	public void bookRequiredTokens() {
-		for (Arc arc : getInArcs()) {
+		for (Arc arc : getInArcs()) { //dla inhibitor nie działa, w ogóle tu nie wejdzie
 			Place origin = (Place) arc.getStartNode();
-			origin.bookTokens(arc.getWeight());
+			
+			if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+				//tylko gdy inhibitor jest jedynym łukiem IN dla tranzycji 'wejściowej' (w standardowym sensie)
+				origin.reserveTokens(0); //więcej nie ma, bo inaczej w ogóle by nas tu nie było
+			} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+				origin.reserveTokens(2); //więcej nie ma, bo inaczej w ogóle by nas tu nie było
+			} else if(arc.getArcType() == TypesOfArcs.RESET) {
+				int freeToken = origin.getNonReservedTokensNumber();
+				origin.reserveTokens(freeToken); //all left
+			} else { //read arc / normal			
+				origin.reserveTokens(arc.getWeight());
+			}
 		}
 	}
 
@@ -343,7 +388,7 @@ public class Transition extends Node {
 	public void returnBookedTokens() {
 		for (Arc arc : getInArcs()) {
 			Place origin = (Place) arc.getStartNode();
-			origin.returnTokens();
+			origin.freeReservedTokens();
 		}
 	}
 

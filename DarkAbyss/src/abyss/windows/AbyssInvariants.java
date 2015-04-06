@@ -457,6 +457,10 @@ public class AbyssInvariants extends JFrame {
 		if(invariants == null)
 			return;
 		
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+		}
+		
 		InvariantsCalculatorFeasible invF = new InvariantsCalculatorFeasible(invariants, true);
 		invariants = invF.getMinFeasible();
 		

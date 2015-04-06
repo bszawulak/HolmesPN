@@ -12,6 +12,7 @@ import javax.swing.Timer;
 
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
+import abyss.math.Arc.TypesOfArcs;
 import abyss.math.Node;
 import abyss.math.PetriNet;
 import abyss.math.Place;
@@ -44,6 +45,7 @@ public class NetSimulator {
 	private NetSimulatorLogger nsl = new NetSimulatorLogger();
 	
 	private boolean detailedLogging = true;
+	private Random generator;
 
 	/**
 	 * Enumeracja przechowująca tryb pracy symulatora. Dostępne wartości:<br><br>
@@ -79,6 +81,7 @@ public class NetSimulator {
 		simulationType = type;
 		petriNet = net;
 		launchingTransitions = new ArrayList<Transition>();
+		generator = new Random(System.currentTimeMillis());
 		actionStack = new Stack<SimulationStep>(); //historia kroków
 	}
 	
@@ -92,7 +95,7 @@ public class NetSimulator {
 		//timeNetPartStepCounter = 0;
 		writeHistory = true;
 		timeCounter = -1;
-		
+		generator = new Random(System.currentTimeMillis());
 		actionStack.removeAllElements();
 	}
 
@@ -165,7 +168,8 @@ public class NetSimulator {
 	 * @return boolean - true jeśli jest choć jedna aktywna tranzycja; false w przeciwnym wypadku
 	 */
 	private boolean isPossibleStep() {
-		for (Transition transition : petriNet.getTransitions()) {
+		ArrayList<Transition> transitions = petriNet.getTransitions();
+		for (Transition transition : transitions) {
 			if (transition.isActive())
 				return true;
 		}
@@ -270,7 +274,7 @@ public class NetSimulator {
 	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia.
 	 */
 	private ArrayList<Transition> generateLaunchingTransitions() {
-		Random randomLaunch = new Random();
+		//Random randomLaunch = new Random();
 		ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
 		ArrayList<Transition> allTransitions = petriNet.getTransitions();
 		
@@ -284,7 +288,7 @@ public class NetSimulator {
 			for (int i = 0; i < allTransitions.size(); i++) {
 				Transition transition = allTransitions.get(indexList.get(i));
 				if (transition.isActive() )
-					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
+					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -378,7 +382,7 @@ public class NetSimulator {
 						((TimeTransition)transition).setInternalTimer(-1);
 					}
 				} else if (transition.isActive() ) {
-					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
+					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -428,47 +432,6 @@ public class NetSimulator {
 				}
 			}
 		}
-		/*
-		if (simulationType == NetType.TIME) {
-			for (i = 0; i < allTransitions.size(); i++) {
-				Transition transition = allTransitions.get(indexList.get(i));
-				if (transition.getFireTime() == -1 && transition.isActive()) //!!!!!!!!!!!!!!!!!!!!!
-					transition.setFireTime(timeNetStepCounter);
-
-				if (transition.isActive()) {
-					boolean deadLineTime = false;
-					double tmp1 = transition.getMinFireTime() + transition.getFireTime();
-					double tmp2 = (timeNetPartStepCounter / 1000) + timeNetStepCounter;
-					if (tmp1 <= tmp2) {
-						if (tmp2 >= transition.getMaxFireTime())
-							deadLineTime = true;
-						// calkowite
-						if ((randomLaunch.nextInt(1000) < 4) || maximumMode || deadLineTime) {
-							transition.bookRequiredTokens();
-							launchableTransitions.add(transition);
-							transition.setFireTime(-1);
-						}
-					}
-				} else {
-					transition.setFireTime(-1);
-				}
-			}
-			this.timeNetPartStepCounter++;
-			
-			//timeFrame.repaint();
-			if (timeNetPartStepCounter == 1000) {
-				this.timeNetPartStepCounter = 0;
-				this.timeNetStepCounter++;
-				
-			}
-			timeFrame.getContentPane().removeAll();// remove(0);
-			timeFrame.getContentPane().add(
-					new JLabel(String.valueOf((int)timeNetStepCounter) + String.valueOf("." + (int)timeNetPartStepCounter)),
-					BorderLayout.CENTER);
-			timeFrame.pack();
-		}
-		*/
-
 		for (Transition transition : launchableTransitions) {
 			transition.returnBookedTokens();
 		}
@@ -496,21 +459,51 @@ public class NetSimulator {
 		ArrayList<Arc> arcs;
 		for (Transition transition : transitions) {
 			transition.setLaunching(true);
-			if (!backtracking)
+			if (backtracking == false)
 				arcs = transition.getInArcs();
 			else
 				arcs = transition.getOutArcs();
-			// subtract adequate number of tokens from origins
+			
+			// odejmij odpowiednią liczbę tokenów:
 			for (Arc arc : arcs) {
 				arc.setSimulationForwardDirection(!backtracking);
 				arc.setTransportingTokens(true);
 				Place place;
-				if (!backtracking)
+				if (backtracking == false) { //inArcs
 					place = (Place) arc.getStartNode();
-				else
+					
+					if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+						arc.setTransportingTokens(false);
+						// nic nie zabieraj
+					} else if(arc.getArcType() == TypesOfArcs.READARC) {
+						arc.setTransportingTokens(false);
+						// nic nie zabieraj
+					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+						int tokens = place.getTokensNumber();
+						place.modifyTokensNumber(-tokens);
+					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+						place.modifyTokensNumber(-2);
+					} else {
+						place.modifyTokensNumber(-arc.getWeight());
+					}
+				} else { //outArcs
 					place = (Place) arc.getEndNode();
-				place.modifyTokensNumber(-arc.getWeight());
-			}
+					if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+						arc.setTransportingTokens(false);
+						// nic nie oddawaj
+					} else if(arc.getArcType() == TypesOfArcs.READARC) {
+						arc.setTransportingTokens(false);
+						// nic nie oddawaj
+					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+						place.modifyTokensNumber(-1); 
+						// TODO: PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
+					}  else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+						place.modifyTokensNumber(-2);
+					} else {
+						place.modifyTokensNumber(-arc.getWeight());
+					}
+				} // if (backtracking == false)
+			} //for (Arc arc : arcs) {
 		}
 	}
 
@@ -523,8 +516,7 @@ public class NetSimulator {
 	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
 	 * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
 	 */
-	public boolean launchSingleSubtractPhase(ArrayList<Transition> transitions,
-			boolean backtracking, Transition chosenTransition) {
+	public boolean launchSingleSubtractPhase(ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
 		if (transitions.size() < 1)
 			return false;
 		else {
@@ -542,11 +534,41 @@ public class NetSimulator {
 				arc.setSimulationForwardDirection(!backtracking);
 				arc.setTransportingTokens(true);
 				Place place;
-				if (!backtracking)
+				
+				if (backtracking == false) { //inArcs
 					place = (Place) arc.getStartNode();
-				else
+					
+					if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+						arc.setTransportingTokens(false);
+						// nic nie zabieraj
+					} else if(arc.getArcType() == TypesOfArcs.READARC) {
+						arc.setTransportingTokens(false);
+						// nic nie zabieraj
+					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+						int tokens = place.getTokensNumber();
+						place.modifyTokensNumber(-tokens);
+					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+						place.modifyTokensNumber(-2);
+					} else {
+						place.modifyTokensNumber(-arc.getWeight());
+					}
+				} else { //outArcs
 					place = (Place) arc.getEndNode();
-				place.modifyTokensNumber(-arc.getWeight());
+					if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+						arc.setTransportingTokens(false);
+						// nic nie oddawaj
+					} else if(arc.getArcType() == TypesOfArcs.READARC) {
+						arc.setTransportingTokens(false);
+						// nic nie oddawaj
+					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+						place.modifyTokensNumber(-1); 
+						// TODO: PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
+					}  else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+						place.modifyTokensNumber(-2);
+					} else {
+						place.modifyTokensNumber(-arc.getWeight());
+					}
+				} // if (backtracking == false)
 			}
 			return true;
 		}
@@ -567,7 +589,11 @@ public class NetSimulator {
 				arcs = tran.getOutArcs();
 			else
 				arcs = tran.getInArcs();
+			
 			for (Arc arc : arcs) {
+				if(arc.getArcType() == TypesOfArcs.INHIBITOR || arc.getArcType() == TypesOfArcs.READARC)
+					continue;
+				
 				arc.setSimulationForwardDirection(!backtracking);
 				arc.setTransportingTokens(true);
 			}
@@ -583,8 +609,7 @@ public class NetSimulator {
 	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
 	 * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
 	 */
-	public boolean launchSingleAddPhaseGraphics( ArrayList<Transition> transitions, boolean backtracking,
-			Transition chosenTransition) {
+	public boolean launchSingleAddPhaseGraphics( ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
 		if (transitions.size() < 1)
 			return false;
 		else {
@@ -598,7 +623,11 @@ public class NetSimulator {
 				arcs = tran.getInArcs();
 			}
 			tran.setLaunching(true);
+			
 			for (Arc arc : arcs) {
+				if(arc.getArcType() == TypesOfArcs.INHIBITOR || arc.getArcType() == TypesOfArcs.READARC)
+					continue;
+				
 				arc.setSimulationForwardDirection(!backtracking);
 				arc.setTransportingTokens(true);
 			}
@@ -624,12 +653,20 @@ public class NetSimulator {
 				arcs = transition.getInArcs();
 			//dodaj odpowiednią liczbę tokenów do miejsc
 			for (Arc arc : arcs) {
+				if(arc.getArcType() == TypesOfArcs.READARC)
+					continue;
+				
 				Place place;
 				if (backtracking == false)
 					place = (Place) arc.getEndNode();
 				else
 					place = (Place) arc.getStartNode();
 				
+				if(arc.getArcType() != TypesOfArcs.NORMAL)
+					GUIManager.getDefaultGUIManager().log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
+							" arc: "+arc.toString(), "error", true);
+				
+				//tylko zwykły łuk
 				place.modifyTokensNumber(arc.getWeight());
 			}
 			
@@ -647,8 +684,7 @@ public class NetSimulator {
 	 * Metoda uruchamia fazę faktycznego dodawania tokenów do miejsc wyjściowych dla pojedynczej
 	 * spośród odpalanych tranzycji (lub wejściowych, dla trybu cofania).
 	 * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
-	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania;
-	 * 		false w przeciwnym wypadku
+	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania; false w przeciwnym wypadku
 	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
 	 * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
 	 */
@@ -666,11 +702,20 @@ public class NetSimulator {
 				arcs = tran.getInArcs();
 			}
 			for (Arc arc : arcs) {
+				if(arc.getArcType() == TypesOfArcs.READARC)
+					continue;
+				
 				Place place;
 				if (!backtracking)
 					place = (Place) arc.getEndNode();
 				else
 					place = (Place) arc.getStartNode();
+				
+				if(arc.getArcType() != TypesOfArcs.NORMAL)
+					GUIManager.getDefaultGUIManager().log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
+							" arc: "+arc.toString(), "error", true);
+				
+				//tylko zwykły łuk
 				place.modifyTokensNumber(arc.getWeight());
 			}
 			transitions.remove(tran);

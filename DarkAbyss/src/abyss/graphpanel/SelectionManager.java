@@ -409,7 +409,7 @@ public class SelectionManager {
 			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
 			int oldTokensNumber = ((Place)getSelectedElementLocations().get(0).getParentNode()).getTokensNumber();
-			int oldTokensTaken = ((Place)getSelectedElementLocations().get(0).getParentNode()).getTokensTaken();
+			int oldTokensTaken = ((Place)getSelectedElementLocations().get(0).getParentNode()).getReservedTokens();
 			Place portal = new Place(IdGenerator.getNextId(),
 					(ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
 			
@@ -424,7 +424,7 @@ public class SelectionManager {
 			portal.setName(oldName);
 			portal.setComment(oldComment);
 			portal.setTokensNumber(oldTokensNumber);
-			portal.bookTokens(oldTokensTaken);
+			portal.reserveTokens(oldTokensTaken);
 			//getGraphPanelNodes().add(portal);
 			getGraphPanelNodes().add(selectedNodeIndex, portal);
 		} else {
@@ -523,7 +523,7 @@ public class SelectionManager {
 			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
 			int oldTokensNumber = ((Place)getSelectedElementLocations().get(0).getParentNode()).getTokensNumber();
-			int oldTokensTaken = ((Place)getSelectedElementLocations().get(0).getParentNode()).getTokensTaken();
+			int oldTokensTaken = ((Place)getSelectedElementLocations().get(0).getParentNode()).getReservedTokens();
 			
 			ElementLocation clonedNode = getSelectedElementLocations().get(0);
 			Point newPosition = new Point();
@@ -546,7 +546,7 @@ public class SelectionManager {
 			portal.setName(oldName);
 			portal.setComment(oldComment);
 			portal.setTokensNumber(oldTokensNumber);
-			portal.bookTokens(oldTokensTaken);
+			portal.reserveTokens(oldTokensTaken);
 			//getGraphPanelNodes().add(portal);
 			getGraphPanelNodes().add(selectedNodeIndex, portal);
 		} else {

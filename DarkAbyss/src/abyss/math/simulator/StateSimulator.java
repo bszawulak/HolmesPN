@@ -12,6 +12,7 @@ import abyss.math.Arc;
 import abyss.math.Place;
 import abyss.math.TimeTransition;
 import abyss.math.Transition;
+import abyss.math.Arc.TypesOfArcs;
 import abyss.math.simulator.NetSimulator.NetType;
 
 /**
@@ -43,11 +44,13 @@ public class StateSimulator {
 	
 	ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
 	
+	private Random generator; // = new Random(System.currentTimeMillis());
+	
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
 	 */
 	public StateSimulator() {
-		
+		generator = new Random(System.currentTimeMillis());
 	}
 	
 	/**
@@ -91,6 +94,8 @@ public class StateSimulator {
 		
 		simulationType = netT;
 		maximumMode = mode;
+		
+		generator = new Random(System.currentTimeMillis());
 		ready = true;
 		return ready;
 	}
@@ -116,6 +121,7 @@ public class StateSimulator {
 		for(int i=0; i<ttransitions.size(); i++) {
 			indexTTList.add(i);
 		}
+		generator = new Random(System.currentTimeMillis());
 		ready = true;
 	}
 	
@@ -137,17 +143,13 @@ public class StateSimulator {
 	 */
 	private ArrayList<Transition> generateValidLaunchingTransitions() {
 		boolean generated = false;
-		//ArrayList<Transition> launchingTransitions = new ArrayList<Transition>();
 		int safetyCounter = 0;
 		while (!generated) {
-			//launchingTransitions = generateLaunchingTransitions();
 			generateLaunchingTransitions();
-			//if (launchingTransitions.size() > 0) { //launchableTransitions
 			if (launchableTransitions.size() > 0) {
 				generated = true; 
 			} else {
 				if (simulationType == NetType.TIME || simulationType == NetType.HYBRID) {
-					//return launchingTransitions; //koniec symulacji
 					return launchableTransitions; 
 				}
 				
@@ -156,7 +158,6 @@ public class StateSimulator {
 					if(isPossibleStep() == false) {
 						GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
 								+ "has been activated. Please advise authors.", "error", true);
-						//return launchingTransitions;
 						return launchableTransitions; 
 					}
 				}
@@ -172,9 +173,6 @@ public class StateSimulator {
 	 * oraz czasowego.
 	 */
 	private void generateLaunchingTransitions() {
-		Random randomLaunch = new Random();
-		//ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
-
 		launchableTransitions.clear();
 		if (simulationType == NetType.BASIC) {
 			Collections.shuffle(indexList);
@@ -182,7 +180,7 @@ public class StateSimulator {
 			for (int i = 0; i < transitions.size(); i++) {
 				Transition transition = transitions.get(indexList.get(i));
 				if (transition.isActive() )
-					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
+					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -260,7 +258,7 @@ public class StateSimulator {
 						((TimeTransition)transition).setInternalTimer(-1);
 					}
 				} else if (transition.isActive() ) {
-					if ((randomLaunch.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
+					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -457,15 +455,12 @@ public class StateSimulator {
 			return null;
 		}
 		prepareNetM0();
-		
-		//ArrayList<Transition> launchingTransitions = null;
+
 		ArrayList<Integer> placeDataVector = new ArrayList<Integer>();
-		
-		@SuppressWarnings("unused")
-		int internalSteps = 0;
+		//int internalSteps = 0;
 		
 		for(int i=0; i<steps; i++) {
-			internalSteps++;
+			//internalSteps++;
 			if (isPossibleStep()){ 
 				generateValidLaunchingTransitions(); //wypełnia launchableTransitions
 				launchSubtractPhase(launchableTransitions);
@@ -531,7 +526,22 @@ public class StateSimulator {
 			transition.setLaunching(true);
 			arcs = transition.getInArcs();
 			for (Arc arc : arcs) {
-				((Place) arc.getStartNode()).modifyTokensNumber(-arc.getWeight());
+				Place place = (Place)arc.getStartNode();
+				
+				if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+					// nic nie zabieraj
+				} else if(arc.getArcType() == TypesOfArcs.READARC) {
+					// nic nie zabieraj
+				} else if(arc.getArcType() == TypesOfArcs.RESET) {
+					int tokens = place.getTokensNumber();
+					place.modifyTokensNumber(-tokens);
+				} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+					place.modifyTokensNumber(-2);
+				} else {
+					place.modifyTokensNumber(-arc.getWeight());
+				}
+				
+				//((Place) arc.getStartNode()).modifyTokensNumber(-arc.getWeight());
 			}
 		}
 	}
@@ -549,7 +559,15 @@ public class StateSimulator {
 			arcs = transition.getOutArcs();
 			// dodaj odpowiednią liczbę tokenów do miejsc
 			for (Arc arc : arcs) {
-				((Place) arc.getEndNode()).modifyTokensNumber(arc.getWeight());
+				Place place = (Place)arc.getEndNode();
+				if(arc.getArcType() == TypesOfArcs.READARC)
+					continue;
+				
+				if(arc.getArcType() != TypesOfArcs.NORMAL)
+					GUIManager.getDefaultGUIManager().log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
+							" arc: "+arc.toString(), "error", true);
+				
+				place.modifyTokensNumber(arc.getWeight());
 			}
 		}
 		transitions.clear(); //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
@@ -631,7 +649,7 @@ public class StateSimulator {
 		
 		for(int i=0; i<places.size(); i++) {
 			places.get(i).setTokensNumber(internalBackupMarkingZero.get(i));
-			places.get(i).returnTokens();
+			places.get(i).freeReservedTokens();
 		}
 		
 		for(int i=0; i<transitions.size(); i++) {

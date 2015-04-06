@@ -491,7 +491,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		
 		for(int i=0; i<places.size(); i++) {
 			places.get(i).setTokensNumber(backupMarkingZero.get(i));
-			places.get(i).returnTokens();
+			places.get(i).freeReservedTokens();
 			//backupMarkingZero.add(places.get(i).getTokensNumber());
 		}
 		

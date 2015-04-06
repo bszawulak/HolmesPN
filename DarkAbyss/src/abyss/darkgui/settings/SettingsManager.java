@@ -92,7 +92,9 @@ public class SettingsManager {
 	private void checkAndRestoreSetting() {
 		ArrayList<Setting> settingsNew = new ArrayList<Setting>();
 		
-		checkAndFix(settingsNew, "abyss_version", "1.30 release 30-3-2015");
+		//checkAndFix(settingsNew, "abyss_version", "1.30 release 30-3-2015");
+		settingsNew.add(new Setting("abyss_version", "1.30 release 30-3-2015")); //always add new
+		
 		checkAndFix(settingsNew, "r_path", "c://Program Files//R//R-3.1.2//bin//Rscript.exe");
 		checkAndFix(settingsNew, "r_path64","c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
 		checkAndFix(settingsNew, "ina_bat","START INAwin32.exe COMMAND.ina");
@@ -119,6 +121,7 @@ public class SettingsManager {
 		
 		
 		settings = new ArrayList<Setting>(settingsNew);
+		writeSettingsFile();
 	}
 	
 	/**

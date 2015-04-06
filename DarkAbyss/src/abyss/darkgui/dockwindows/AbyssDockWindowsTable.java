@@ -593,10 +593,7 @@ public class AbyssDockWindowsTable extends JPanel {
         }
 		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok, 0, Integer.MAX_VALUE, 1);
 		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
-		tokenSpinner.setLocation(columnB_posX, columnB_Y += 20);
-		tokenSpinner.setSize(colBCompLength, 20);
-		tokenSpinner.setMaximumSize(new Dimension(colBCompLength,20));
-		tokenSpinner.setMinimumSize(new Dimension(colBCompLength,20));
+		tokenSpinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
 		tokenSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -856,11 +853,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		DefaultFormatter format = new DefaultFormatter();
 	    format.setOverwriteMode(false);
 		JFormattedTextField nameField = new JFormattedTextField(format);
-		nameField.setLocation(columnB_posX, columnB_Y += 20);
-		nameField.setSize(colBCompLength, 20);
-		nameField.setMaximumSize(new Dimension(colBCompLength,20));
-		nameField.setMinimumSize(new Dimension(colBCompLength,20));
-	    
+		nameField.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
 		nameField.setValue(transition.getName());
 		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
@@ -1148,10 +1141,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		DefaultFormatter format = new DefaultFormatter();
 	    format.setOverwriteMode(false);
 		JFormattedTextField nameField = new JFormattedTextField(format);
-		nameField.setLocation(columnB_posX, columnB_Y += 20);
-		nameField.setSize(colBCompLength, 20);
-		nameField.setMaximumSize(new Dimension(colBCompLength,20));
-		nameField.setMinimumSize(new Dimension(colBCompLength,20));
+		nameField.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
 		nameField.setValue(transition.getName());
 		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
@@ -1493,10 +1483,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		SpinnerModel weightSpinnerModel = new SpinnerNumberModel(arc.getWeight(), 0, Integer.MAX_VALUE, 1);
 		JSpinner weightSpinner = new JSpinner(weightSpinnerModel);
-		weightSpinner.setLocation(columnB_posX-10, columnB_Y += 20);
-		weightSpinner.setSize(colBCompLength/3, 20);
-		weightSpinner.setMaximumSize(new Dimension(colBCompLength/3,20));
-		weightSpinner.setMinimumSize(new Dimension(colBCompLength/3,20));
+		weightSpinner.setBounds(columnB_posX-10, columnB_Y += 20, colBCompLength/3, 20);
 		weightSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -1647,10 +1634,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(netNameLabel);
 
 		JFormattedTextField netNameField = new JFormattedTextField();
-		netNameField.setLocation(columnB_posX, columnB_Y += 10);
-		netNameField.setSize(colBCompLength, 20);
-		netNameField.setMaximumSize(new Dimension(colBCompLength,20));
-		netNameField.setMinimumSize(new Dimension(colBCompLength,20));
+		netNameField.setBounds(columnB_posX, columnB_Y += 10, colBCompLength, 20);
 		netNameField.setText(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getName());
 		netNameField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
@@ -1705,13 +1689,9 @@ public class AbyssDockWindowsTable extends JPanel {
 		widthLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(widthLabel);
 		
-		SpinnerModel widthSpinnerModel = new SpinnerNumberModel(sheet.getGraphPanel().getSize().width,
-				0, Integer.MAX_VALUE, 1);
+		SpinnerModel widthSpinnerModel = new SpinnerNumberModel(sheet.getGraphPanel().getSize().width, 0, Integer.MAX_VALUE, 1);
 		JSpinner widthSpinner = new JSpinner(widthSpinnerModel);
-		widthSpinner.setLocation(columnB_posX, columnB_Y += 20);
-		widthSpinner.setSize(colBCompLength/2, 20);
-		widthSpinner.setMaximumSize(new Dimension(colBCompLength/2,20));
-		widthSpinner.setMinimumSize(new Dimension(colBCompLength/2,20));
+		widthSpinner.setBounds(columnB_posX, columnB_Y += 20, colBCompLength/2, 20);
 		widthSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -1733,13 +1713,9 @@ public class AbyssDockWindowsTable extends JPanel {
 		heightLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(heightLabel);
 		
-		SpinnerModel heightSpinnerModel = new SpinnerNumberModel(sheet.getGraphPanel().getSize().height,
-				0, Integer.MAX_VALUE, 1);
+		SpinnerModel heightSpinnerModel = new SpinnerNumberModel(sheet.getGraphPanel().getSize().height, 0, Integer.MAX_VALUE, 1);
 		JSpinner heightSpinner = new JSpinner(heightSpinnerModel);
-		heightSpinner.setLocation(columnB_posX, columnB_Y += 20);
-		heightSpinner.setSize(colBCompLength/2, 20);
-		heightSpinner.setMaximumSize(new Dimension(colBCompLength/2,20));
-		heightSpinner.setMinimumSize(new Dimension(colBCompLength/2,20));
+		heightSpinner.setBounds(columnB_posX, columnB_Y += 20, colBCompLength/2, 20);
 		heightSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
