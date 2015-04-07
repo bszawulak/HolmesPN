@@ -86,7 +86,7 @@ public class AbyssAbout extends JFrame {
 			
 		}
 		
-		JLabel nameLabel = new JLabel("Abyss v1.30");
+		JLabel nameLabel = new JLabel("Abyss v1.31");
 		nameLabel.setFont(new Font("Consolas", Font.PLAIN, 30));
 		nameLabel.setBounds(170, 40, 200,40);
 		panel.add(nameLabel);
@@ -96,7 +96,7 @@ public class AbyssAbout extends JFrame {
 		nameLabel2.setBounds(170, 70, 330, 40);
 		panel.add(nameLabel2);
 		
-		JLabel nameLabel3 = new JLabel("Release: 30-03-2015");
+		JLabel nameLabel3 = new JLabel("Release: 7-04-2015");
 		nameLabel3.setFont(new Font("Consolas", Font.PLAIN, 14));
 		nameLabel3.setBounds(170, 110, 330, 40);
 		panel.add(nameLabel3);
