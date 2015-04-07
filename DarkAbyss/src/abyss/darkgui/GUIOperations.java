@@ -296,12 +296,12 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za wczytywanie inwariantów z pliku wygenerowanego programem INA.
+	 * Metoda odpowiedzialna za wczytywanie inwariantów z pliku.
 	 */
 	public void loadExternalAnalysis() {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
-		filters[0] = new ExtensionFileFilter("INA Invariants file (.inv)", new String[] { "INV" });
+		filters[0] = new ExtensionFileFilter("Invariants file (.inv)", new String[] { "INV" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file");
 		if(selectedFile.equals(""))
 			return;

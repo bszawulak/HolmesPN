@@ -22,7 +22,7 @@ public final class InvariantsTools {
 	 * @param matrix ArrayList[ArrayList[Integer]] - macierz wejściowa
 	 * @return ArrayList[ArrayList[Integer]] - macierz wyjściowa
 	 */
-	static ArrayList<ArrayList<Integer>> transposeMatrix(ArrayList<ArrayList<Integer>> matrix) {
+	public static ArrayList<ArrayList<Integer>> transposeMatrix(ArrayList<ArrayList<Integer>> matrix) {
 		if(matrix == null || matrix.size() == 0)
 			return null;
 		
@@ -36,6 +36,28 @@ public final class InvariantsTools {
 				transposedRow.add(matrix.get(r).get(c));
 			}
 			resultMatrix.add(transposedRow);
+		}
+		
+		return resultMatrix;
+	}
+	
+	public static ArrayList<ArrayList<Integer>> returnBinaryMatrix(ArrayList<ArrayList<Integer>> matrix) {
+		if(matrix == null || matrix.size() == 0)
+			return null;
+		
+		int rows = matrix.size();
+		int columns = matrix.get(0).size();
+		ArrayList<ArrayList<Integer>> resultMatrix = new ArrayList<ArrayList<Integer>>();
+		
+		for(int r=0; r<rows; r++) {
+			ArrayList<Integer> binaryRow = new ArrayList<Integer>();
+			for(int c=0; c<columns; c++) {
+				if(matrix.get(r).get(c) != 0)
+					binaryRow.add(1);
+				else
+					binaryRow.add(0);
+			}
+			resultMatrix.add(binaryRow);
 		}
 		
 		return resultMatrix;
@@ -286,7 +308,7 @@ public final class InvariantsTools {
 	 * @return boolean - true, jeżeli inwariant zawiera wszystkie elementy wsparcia z referencyjnego - wtedy albo
 	 * 		jest identyczny, albo nie jest minimalny.
 	 */
-	static boolean supportInclusionCheck(ArrayList<Integer> invSupp, ArrayList<Integer> refSupp) {
+	public static boolean supportInclusionCheck(ArrayList<Integer> invSupp, ArrayList<Integer> refSupp) {
 		for(int el : refSupp) {
 			if(invSupp.contains(el) == false)
 				return false;

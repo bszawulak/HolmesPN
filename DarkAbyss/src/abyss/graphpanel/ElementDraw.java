@@ -208,6 +208,21 @@ public final class ElementDraw {
 					g.setColor(oldC);
 				}
 				
+				if(trans.showAddText() == true) {
+					String txt = trans.returnAddText();
+					
+					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2);
+					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
+					Font old = g.getFont();
+					Color oldC = g.getColor();
+					
+					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
+					g.setColor(Color.black);
+					g.drawString(txt, posX, posY);
+					
+					g.setFont(old);
+					g.setColor(oldC);
+				}
 			}
 			
 		} else if(node instanceof Place) { // MIEJSCA

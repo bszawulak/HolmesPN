@@ -238,7 +238,7 @@ public class AbyssInvariants extends JFrame {
 		makeFeasibleButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Make <br />&nbsp;&nbsp;feasible</html>");
 		makeFeasibleButton.setBounds(posX+380, posY+36, 120, 32);
 		makeFeasibleButton.setMargin(new Insets(0, 0, 0, 0));
-		makeFeasibleButton.setIcon(Tools.getResIcon22("/icons/invWindow/showts.png"));
+		makeFeasibleButton.setIcon(Tools.getResIcon22("/icons/invWindow/makeFeasible.png"));
 		makeFeasibleButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				checkAndMakeFeasible();

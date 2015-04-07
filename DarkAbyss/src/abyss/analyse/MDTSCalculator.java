@@ -45,6 +45,8 @@ public class MDTSCalculator {
 		for(int i=0; i<tmpInvariantsMatrix.size(); i++)
 			unassignedRows.add(i);
 		
+		tmpInvariantsMatrix = InvariantsTools.returnBinaryMatrix(tmpInvariantsMatrix);
+		
 		while(unassignedRows.size() > 0) {
 			Set<Integer> mdts = new HashSet<Integer>();
 			int rowValue = unassignedRows.get(0);

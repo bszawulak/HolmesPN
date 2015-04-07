@@ -29,17 +29,13 @@ public class Transition extends Node {
 	
 	protected boolean isColorChanged = false;		//zmiana koloru - status
 	protected double transNumericalValue = 0.0;		//dodatkowa liczba do wyświetlenia
+	protected String transAdditionalText = "";
+	protected boolean showTransitionAddText = false;
 	protected Color transColorValue = new Color(255,255,255);
-	//TODO:
-	protected boolean showIntOnly = false;
+	protected boolean showIntOnly = false; //TODO
 	protected boolean valueVisibilityStatus = false;
 	
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
-
-	//TODO: tak nie może być, to poniżej jest używane przez funkcję generującą MCT, ale ostatnią rzeczą
-	//jaką obiekt klasy Transition potrzebuje, to kolejny wielki wektor danych...
-	private ArrayList<ArrayList<Transition>> containingInvariants = new ArrayList<ArrayList<Transition>>();
-	
 
 	/**
 	 * Konstruktor obiektu tranzycji sieci.
@@ -225,19 +221,39 @@ public class Transition extends Node {
 		return isColorChanged;
 	}
 	
-	//TODO:
+	/**
+	 * Metoda zwraca informację, czy ma być wyświetlany dodatkowy tekst obok rysunku tranzycji.
+	 * @return boolean - true, jeśli tak
+	 */
+	public boolean showAddText() {
+		return showTransitionAddText;
+	}
+	
+	/**
+	 * Metoda zwraca dodatkowy tekst do wyświetlenia.
+	 * @return String - tekst
+	 */
+	public String returnAddText() {
+		return transAdditionalText;
+	}
+	
 	/**
 	 * Metoda ustawia stan zmiany koloru oraz liczbę do wyświetlenia.
 	 * @param isColorChanged boolean - true, jeśli ma rysować się w kolorze
-	 * @param newColor Color - na jaki kolor
+	 * @param transColorValue Color - na jaki kolor
 	 * @param showNumber boolean - true, jeśli liczba ma się wyświetlać
-	 * @param double clNumber - liczba do wyświetlenia
+	 * @param transNumericalValue double - liczba do wyświetlenia
+	 * @param showText boolean - czy pokazać dodatkowy tekst
+	 * @param text String - dodatkowy tekst do wyświetlenia
 	 */
-	public void setColorWithNumber(boolean isColorChanged, Color newColor, boolean showNumber, double numberShowed) {
+	public void setColorWithNumber(boolean isColorChanged, Color transColorValue, 
+			boolean showNumber, double transNumericalValue, boolean showText, String text) {
 		this.isColorChanged = isColorChanged;
-		this.transColorValue = newColor;
+		this.transColorValue = transColorValue;
 		setNumericalValueVisibility(showNumber);
-		this.transNumericalValue = numberShowed;
+		this.transNumericalValue = transNumericalValue;
+		this.showTransitionAddText = showText;
+		this.transAdditionalText = text;
 	}
 	
 	/**
@@ -319,7 +335,7 @@ public class Transition extends Node {
 	 */
 	public boolean isActive() {
 		boolean inhibitorOnly = true;
-		String name = getName();
+		//String name = getName();
 		for (Arc arc : getInArcs()) { //CASE: INHIBITORS ONLY
 			if(arc.getArcType() != TypesOfArcs.INHIBITOR) {
 				inhibitorOnly = false;
@@ -432,17 +448,17 @@ public class Transition extends Node {
 	 * Metoda zwraca listę inwariantów z daną tranzycją.
 	 * @return ArrayList[ArrayList[Transition]] - macierz inwariantów
 	 */
-	public ArrayList<ArrayList<Transition>> getContainingInvariants() {
-		return containingInvariants;
-	}
+	//public ArrayList<ArrayList<Transition>> getContainingInvariants() {
+	//	return containingInvariants;
+	//}
 
 	/**
 	 * Metoda pozwala wpisać inwarianty w której jest dana tranzycja.
 	 * @param containingInvariants ArrayList[ArrayList[Transition]] - macierz niezmienników
 	 */
-	public void setContainingInvariants(ArrayList<ArrayList<Transition>> containingInvariants) {
-		this.containingInvariants = containingInvariants;
-	}
+	//public void setContainingInvariants(ArrayList<ArrayList<Transition>> containingInvariants) {
+	//	this.containingInvariants = containingInvariants;
+	//}
 	
 	/**
 	 * Metoda zamieniająca dane o krawędzi sieci na łańcuch znaków.

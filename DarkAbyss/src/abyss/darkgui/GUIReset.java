@@ -39,7 +39,7 @@ public class GUIReset {
 	public void clearGraphColors() {
 		mastah.getWorkspace().getProject().turnTransitionGlowingOff();
 		mastah.getWorkspace().getProject().setTransitionGlowedMTC(false);
-		mastah.getWorkspace().getProject().setColorClusterToNeutral();
+		mastah.getWorkspace().getProject().resetTransitionGraphics();
 		mastah.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
@@ -109,9 +109,9 @@ public class GUIReset {
 		}
 		
 		if(mctGenerated == true) {
-			for (Transition transition : mastah.getWorkspace().getProject().getTransitions()) {
-				transition.setContainingInvariants(new ArrayList<ArrayList<Transition>>()); //czyszczenie
-			}
+			//for (Transition transition : mastah.getWorkspace().getProject().getTransitions()) {
+			//	transition.setContainingInvariants(new ArrayList<ArrayList<Transition>>()); //czyszczenie
+			//}
 			
 			mastah.getMctBox().getCurrentDockWindow().removeAll();
 			mastah.getMctBox().getCurrentDockWindow().resetMCT();

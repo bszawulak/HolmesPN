@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 
@@ -112,7 +110,6 @@ public class Toolbar extends BorderDock {
 		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(netTransformDockables), new Position(1));
 		
 		verticalCompositeToolBarDock.addChildDock(defaultVerticalToolBarDock, new Position(0));
-		
 		
 		//horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDockVaria(createSubtoolsPanel()), new Position(2));
 	}
@@ -371,16 +368,15 @@ public class Toolbar extends BorderDock {
 		testButton.setEnabled(false);
 		analysisDockables.add(createButtonDockable("Testing", testButton));
 		
-		
-		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", 
-				Tools.getResIcon48("/icons/toolbar/a.png")) {
+		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", Tools.getResIcon48("/icons/toolbar/a.png")) {
+			@SuppressWarnings("unused")
 			public void actionPerformed(ActionEvent actionEvent) 
 			{ 
 				JTree test = GUIManager.getDefaultGUIManager().getToolBox().getTree();
 				GUIManager.getDefaultGUIManager().getToolBox().selectPointer();
 				//test.setSelectionPath(new TreePath());
 				int x = 1;
-				/*
+				
 				MDTSCalculator mdts = new MDTSCalculator();
 				ArrayList<Set<Integer>> results = mdts.calculateMDTS();
 				
@@ -401,7 +397,7 @@ public class Toolbar extends BorderDock {
 					text += "]";
 					text = text.replace(", ]", "]");
 					notePad.addTextLineNL(text, "text");
-				}*/
+				}
 				
 				
 			}
@@ -460,11 +456,105 @@ public class Toolbar extends BorderDock {
 		
 		return analysisDockables;
 	}
+	
+	/**
+	 * Creates a dockable with a button as content.
+	 * 
+	 * @param id String - The ID of the dockable that has to be created.
+	 * @param title - The title of the dialog that will be displayed.
+	 * @param icon - The icon that will be put on the button.
+	 * @param message - The message that will be displayed when the action is performed.
+	 * @return ButtonDockable - The dockable with a button as content.
+	 */
+	private ButtonDockable createButtonDockable(String id, ToolbarButtonAction action) {
+		// Create the action.
+		// ToolbarButtonAction action = new ToolbarButtonAction(this, title, icon, message);
+		// Create the button.
+		ToolbarButton button = new ToolbarButton(action);
+		// Create the dockable with the button as component.
+		ButtonDockable buttonDockable = new ButtonDockable(id, button);
+		// Add a dragger to the individual dockable.
+		createDockableDragger(buttonDockable);
+		return buttonDockable;
+	}
 
+	/**
+	 * Metoda ustawia obiekt nasłuchujący, który monitoruje zdarzenia przeciągnięcia
+	 * grupy przycisków lub jednego z jednej lokalizacji w inną.
+	 * @param dockable Dockable - obiekt monitorowany
+	 */
+	private void createDockableDragger(Dockable dockable) {
+		// Create the dragger for the dockable.
+		DragListener dragListener = DockingManager.getDockableDragListenerFactory().createDragListener(dockable);
+		dockable.getContent().addMouseListener(dragListener);
+		dockable.getContent().addMouseMotionListener(dragListener);
+	}
+
+	/**
+	 * Metoda zwraca obiekt dokowalny kontenera przycisków.
+	 * @return BorderDock - obiekt
+	 */
+	public BorderDock getToolBarBorderDock() {
+		return toolBarBorderDock;
+	}
+
+	/**
+	 * Metoda ustawia nowy obiekt dokowalny kontenera przycisków.
+	 * @param toolBarBorderDock BorderDock - obiekt
+	 */
+	private void setToolBarBorderDock(BorderDock toolBarBorderDock) {
+		this.toolBarBorderDock = toolBarBorderDock;
+	}
+
+	/**
+	 * Metoda ta ustawia stan wszystkich przycisków symulatora poza dwoma: pauzą
+	 * i przyciskiem zatrzymania symulacji.
+	 * @param enabled boolean - true, jeśli mają być aktywne
+	 */
+	public void setEnabledSimulationInitiateButtons(boolean enabled) {
+		for (int i = 0; i < simulationDockables.size(); i++) {
+			if (i != 4 && i != 5) //4 i 5 to pauza i stop
+				simulationDockables.get(i).getContent().setEnabled(enabled);
+		}
+	}
+
+	/**
+	 * Metoda ta uaktywnia przyciski Pauza i Stop dla symulacji.
+	 * @param enabled boolean - true jeśli Pauza i Stop mają być aktywne
+	 */
+	public void setEnabledSimulationDisruptButtons(boolean enabled) {
+		simulationDockables.get(4).getContent().setEnabled(enabled);
+		simulationDockables.get(5).getContent().setEnabled(enabled);
+	}
+
+	/**
+	 * Metoda odpowiedzialna za to, że aktywne są wszystkie przyciski 
+	 * poza dwoma: Pauza i Stop dla symulatora
+	 */
+	public void allowOnlySimulationInitiateButtons() {
+		setEnabledSimulationInitiateButtons(true);
+		setEnabledSimulationDisruptButtons(false);
+	}
+
+	/**
+	 * Metoda ta uaktywnia tylko przyciski Pauzy i Stopu, reszta nieaktywna - gdy działa symulacja.
+	 */
+	public void allowOnlySimulationDisruptButtons() {
+		setEnabledSimulationInitiateButtons(false);
+		setEnabledSimulationDisruptButtons(true);
+	}
+
+	/**
+	 * Metoda ustawia na aktywny tylko przycisk przerwania trwającej pauzy.
+	 */
+	public void allowOnlyUnpauseButton() {
+		allowOnlySimulationDisruptButtons();
+		simulationDockables.get(5).getContent().setEnabled(false);
+	}
 	
 	
 	
-	@SuppressWarnings("serial")
+	@SuppressWarnings({ "serial", "unused" })
 	/**
 	 * Metoda odpowiedzialna za tworzenie tablicy przycisków symulatora.
 	 * @return ArrayList[ButtonDockable] - tablica zawierająca obiekty przycisków
@@ -562,103 +652,5 @@ public class Toolbar extends BorderDock {
 		simulationDockables.add(createButtonDockable("ButtonDockableResetSim", resetSimButton));
 		
 		return simulationDockables;
-	}
-	
-	
-	
-	
-	/**
-	 * Creates a dockable with a button as content.
-	 * 
-	 * @param id String - The ID of the dockable that has to be created.
-	 * @param title - The title of the dialog that will be displayed.
-	 * @param icon - The icon that will be put on the button.
-	 * @param message - The message that will be displayed when the action is performed.
-	 * @return ButtonDockable - The dockable with a button as content.
-	 */
-	private ButtonDockable createButtonDockable(String id, ToolbarButtonAction action) {
-		// Create the action.
-		// ToolbarButtonAction action = new ToolbarButtonAction(this, title, icon, message);
-		// Create the button.
-		ToolbarButton button = new ToolbarButton(action);
-		// Create the dockable with the button as component.
-		ButtonDockable buttonDockable = new ButtonDockable(id, button);
-		// Add a dragger to the individual dockable.
-		createDockableDragger(buttonDockable);
-		return buttonDockable;
-	}
-
-	/**
-	 * Metoda ustawia obiekt nasłuchujący, który monitoruje zdarzenia przeciągnięcia
-	 * grupy przycisków lub jednego z jednej lokalizacji w inną.
-	 * @param dockable Dockable - obiekt monitorowany
-	 */
-	private void createDockableDragger(Dockable dockable) {
-		// Create the dragger for the dockable.
-		DragListener dragListener = DockingManager.getDockableDragListenerFactory().createDragListener(dockable);
-		dockable.getContent().addMouseListener(dragListener);
-		dockable.getContent().addMouseMotionListener(dragListener);
-	}
-
-	/**
-	 * Metoda zwraca obiekt dokowalny kontenera przycisków.
-	 * @return BorderDock - obiekt
-	 */
-	public BorderDock getToolBarBorderDock() {
-		return toolBarBorderDock;
-	}
-
-	/**
-	 * Metoda ustawia nowy obiekt dokowalny kontenera przycisków.
-	 * @param toolBarBorderDock BorderDock - obiekt
-	 */
-	private void setToolBarBorderDock(BorderDock toolBarBorderDock) {
-		this.toolBarBorderDock = toolBarBorderDock;
-	}
-
-	/**
-	 * Metoda ta ustawia stan wszystkich przycisków symulatora poza dwoma: pauzą
-	 * i przyciskiem zatrzymania symulacji.
-	 * @param enabled boolean - true, jeśli mają być aktywne
-	 */
-	public void setEnabledSimulationInitiateButtons(boolean enabled) {
-		for (int i = 0; i < simulationDockables.size(); i++) {
-			if (i != 4 && i != 5) //4 i 5 to pauza i stop
-				simulationDockables.get(i).getContent().setEnabled(enabled);
-		}
-	}
-
-	/**
-	 * Metoda ta uaktywnia przyciski Pauza i Stop dla symulacji.
-	 * @param enabled boolean - true jeśli Pauza i Stop mają być aktywne
-	 */
-	public void setEnabledSimulationDisruptButtons(boolean enabled) {
-		simulationDockables.get(4).getContent().setEnabled(enabled);
-		simulationDockables.get(5).getContent().setEnabled(enabled);
-	}
-
-	/**
-	 * Metoda odpowiedzialna za to, że aktywne są wszystkie przyciski 
-	 * poza dwoma: Pauza i Stop dla symulatora
-	 */
-	public void allowOnlySimulationInitiateButtons() {
-		setEnabledSimulationInitiateButtons(true);
-		setEnabledSimulationDisruptButtons(false);
-	}
-
-	/**
-	 * Metoda ta uaktywnia tylko przyciski Pauzy i Stopu, reszta nieaktywna - gdy działa symulacja.
-	 */
-	public void allowOnlySimulationDisruptButtons() {
-		setEnabledSimulationInitiateButtons(false);
-		setEnabledSimulationDisruptButtons(true);
-	}
-
-	/**
-	 * Metoda ustawia na aktywny tylko przycisk przerwania trwającej pauzy.
-	 */
-	public void allowOnlyUnpauseButton() {
-		allowOnlySimulationDisruptButtons();
-		simulationDockables.get(5).getContent().setEnabled(false);
 	}
 }

@@ -11,7 +11,6 @@ import abyss.darkgui.toolbar.Toolbar;
 import abyss.files.io.TexExporter;
 import abyss.math.ElementLocation;
 import abyss.math.Node;
-import abyss.math.PetriNet;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
 import abyss.windows.AbyssAbout;
@@ -87,6 +86,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public GUIReset reset;
 	
 	private Dimension screenSize; 		// praca w maksymalizacji
+	@SuppressWarnings("unused")
 	private Dimension smallScreenSize;	// praca poza maksymalizowanym oknem
 	private FloatDockModel dockModel;
 	
@@ -975,7 +975,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void generateMCT() {
 		MCTCalculator analyzer = getWorkspace().getProject().getAnalyzer();
-		//ArrayList<ArrayList<InvariantTransition>> invTr = analyzer.gettInvariants();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
 		getMctBox().showMCT(mct);
 	}

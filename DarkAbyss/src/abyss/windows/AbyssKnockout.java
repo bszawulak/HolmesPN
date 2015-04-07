@@ -282,22 +282,22 @@ public class AbyssKnockout extends JFrame {
 		try {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setColorClusterToNeutral();
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 
 			Transition trans_TMP;// = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(0);
 			
 			for(int id : dataMatrix.get(0)) {
 				trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(id);
-				trans_TMP.setColorWithNumber(true, Color.black, false, -1);
+				trans_TMP.setColorWithNumber(true, Color.black, false, -1, false, "");
 			}
 			for(int id : dataMatrix.get(1)) {
 				trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(id);
-				trans_TMP.setColorWithNumber(true, Color.blue, false, -1);
+				trans_TMP.setColorWithNumber(true, Color.blue, false, -1, false, "");
 			}
 			
 			int rootID = infoMap.getRoot().transLocation;
 			trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(rootID);
-			trans_TMP.setColorWithNumber(true, Color.red, false, -1);
+			trans_TMP.setColorWithNumber(true, Color.red, false, -1, false, "");
 			
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 		} catch (Exception e) {

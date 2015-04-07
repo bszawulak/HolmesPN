@@ -695,7 +695,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 			if (path.endsWith(".pnt")) {
 				communicationProtocol.readPNT(path);
-				addArcsAndNodes(communicationProtocol.getArcArray(),communicationProtocol.getNodeArray());
+				addArcsAndNodes(communicationProtocol.getArcArray(), communicationProtocol.getNodeArray());
 			}
 			
 			GUIManager.getDefaultGUIManager().log("Snoopy Petri net successfully imported from file "+path, "text", true);
@@ -774,14 +774,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		try {
 			if (getInvariantsMatrix() != null) {
 				communicationProtocol.writeCharlieInv(path, getInvariantsMatrix(), getTransitions());
-				JOptionPane.showMessageDialog(null, 
-						"Invariants saved to file:\n"+path,
+				JOptionPane.showMessageDialog(null, "Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
 				GUIManager.getDefaultGUIManager().log("Invariants saved in Charlie file format.","text", true);
 				result = 0;
 			} else {
-				JOptionPane.showMessageDialog(null,
-						"There are no invariants to export.",
+				JOptionPane.showMessageDialog(null, "There are no invariants to export.",
 						"Warning",JOptionPane.WARNING_MESSAGE);
 				GUIManager.getDefaultGUIManager().log("No invariants, saving into CSV file failed.","error", true);
 				result = -1;
@@ -920,15 +918,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda wygasza kolorowanie tranzycji w ramach klastra
-	 * @param isColorActive boolean - true jeśli ma się wyświetlać
+	 * Metoda wygasza kolorowanie tranzycji, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
-	public void setColorClusterToNeutral() {
+	public void resetTransitionGraphics() {
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION)
-				((Transition) n).setColorWithNumber(false, Color.white, false, -1);
+				((Transition) n).setColorWithNumber(false, Color.white, false, -1, false, "");
 			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
-				((TimeTransition) n).setColorWithNumber(false, Color.white, false, -1);
+				((TimeTransition) n).setColorWithNumber(false, Color.white, false, -1, false, "");
 	}
 	
 	/**

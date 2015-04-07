@@ -34,23 +34,26 @@ import abyss.math.PetriNetElement.PetriNetElementType;
  *
  */
 public class IOprotocols {
-	//dawniej: pola klas INAinvariants
-	private ArrayList<ArrayList<Integer>> invariantsList = new ArrayList<ArrayList<Integer>>();
-	private ArrayList<Integer> nodesList = new ArrayList<Integer>();
-	//dawniej: pola klasy INAreader
-	private ArrayList<Node> nodeArray = new ArrayList<Node>();
-	private ArrayList<Arc> arcArray = new ArrayList<Arc>();
-	private ArrayList<ElementLocation> elemArray = new ArrayList<ElementLocation>();
-	private int MatSiz = 99999;
+	private ArrayList<ArrayList<Integer>> invariantsList; // = new ArrayList<ArrayList<Integer>>();
+	private ArrayList<Integer> nodesList; // = new ArrayList<Integer>();
+	private ArrayList<Node> nodeArray; // = new ArrayList<Node>();
+	private ArrayList<Arc> arcArray; // = new ArrayList<Arc>();
+	private ArrayList<ElementLocation> elemArray; // = new ArrayList<ElementLocation>();
+	
+	private int MatSiz; // = 99999;
 	@SuppressWarnings("unused")
-	private String netName = "";
-	private int globalPlaceNumber = 0;
-	private int etap = 1;
-	private int placeCount = 0;
-	private ArrayList<String[]> placeArcListPost = new ArrayList<String[]>();
-	private ArrayList<ArrayList<Integer>> placeArcListPostWeight = new ArrayList<ArrayList<Integer>>();
-	private ArrayList<String[]> placeArcListPre = new ArrayList<String[]>();
-	private ArrayList<ArrayList<Integer>> placeArcListPreWeight = new ArrayList<ArrayList<Integer>>();
+	private String netName; // = "";
+	private int globalPlaceNumber; // = 0;
+	private int etap; // = 1;
+	private int placeCount;//  = 0;
+	private ArrayList<String[]> placeArcListPost; // = new ArrayList<String[]>();
+	private ArrayList<ArrayList<Integer>> placeArcListPostWeight; // = new ArrayList<ArrayList<Integer>>();
+	private ArrayList<String[]> placeArcListPre; // = new ArrayList<String[]>();
+	private ArrayList<ArrayList<Integer>> placeArcListPreWeight; // = new ArrayList<ArrayList<Integer>>();
+	
+	public IOprotocols() {
+		resetComponents();
+	}
 	
 	/**
 	 * Zwraca tablice inwariantow z wczytanego pliku INA
@@ -58,7 +61,28 @@ public class IOprotocols {
 	 */
 	public ArrayList<ArrayList<Integer>> getInvariantsList() {
 		return invariantsList;
-	}  
+	}
+	
+	/**
+	 * Metoda resetująca pola klasy.
+	 */
+	private void resetComponents() {
+		invariantsList = new ArrayList<ArrayList<Integer>>();
+		nodesList = new ArrayList<Integer>();
+		nodeArray = new ArrayList<Node>();
+		arcArray = new ArrayList<Arc>();
+		elemArray = new ArrayList<ElementLocation>();
+		
+		MatSiz = 99999;
+		netName = "";
+		globalPlaceNumber = 0;
+		etap = 1;
+		placeCount = 0;
+		placeArcListPost = new ArrayList<String[]>();
+		placeArcListPostWeight = new ArrayList<ArrayList<Integer>>();
+		placeArcListPre = new ArrayList<String[]>();
+		placeArcListPreWeight = new ArrayList<ArrayList<Integer>>();
+	}
 
 	/**
 	 * Wczytywanie pliki t-inwariantów INA, wcześniej: INAinvariants.read
@@ -68,34 +92,38 @@ public class IOprotocols {
 	 */
 	public boolean readINV(String sciezka) {
 		try {
+			resetComponents();
 			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
 			String wczytanaLinia = buffer.readLine();
 			String backup = wczytanaLinia;
 			
-			// invariantow dla miejsc nie ma, bo nie mam na czy sie wzorowac, a INA
-			// mnie nie slucha (student)	
-			// brzydka, niedobra INA... (MR)
 			
 			if (wczytanaLinia.contains("transition sub/sur/invariants for net")) {
 				//to znaczy, że wczytujemy plik INA, po prostu
-			} else if (wczytanaLinia.contains("minimal semipositive transition")) {
+			} else if (wczytanaLinia.contains("List of all elementary modes")) {
+				buffer.close();
+				return readMonaLisaINV(sciezka);
+			}else if (wczytanaLinia.contains("minimal semipositive transition")) {
 				buffer.close();
 				return readCharlieINV(sciezka);
 			} else {
-				Object[] options = {"Force read as INA file", "Force read as Charlie file", "Terminate reading",};
+				Object[] options = {"Read as INA file", "Read as MonaLisa file", "Read as Charlie file", "Terminate reading",};
 				int decision = JOptionPane.showOptionDialog(null,
-								"Unknown or corrupted invariants file format. Force read as INA or Charlie invariants?",
+								"Unknown or corrupted invariants file format. Please choose format for this invariants file?",
 								"Error reading file header", JOptionPane.YES_NO_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-				if (decision == 2) {
-					buffer.close();
-					return false;
-				} else if (decision == 1) { //Charlie
+				if (decision == 1) {
 					buffer.close();
 					return readCharlieINV(sciezka);
+				} else if (decision == 2) { //Charlie
+					buffer.close();
+					return readCharlieINV(sciezka);
+				} else if (decision == 3) {
+					buffer.close();
+					return false;
 				}
-				//jeśli nie 2 i nie 1, to znaczy, że 0, czyli na sieć czytamy dalej jako INA inv.
+				//jeśli nie 1, 2 lub 3 to znaczy, że 0, czyli na sieć czytamy dalej jako INA inv.
 			}
 			
 			if(backup.contains("transition invariants basis")) {
@@ -168,7 +196,7 @@ public class IOprotocols {
 			if (!wczytanaLinia.contains("minimal semipositive transition")) {
 				Object[] options = {"Force read as Charlie file", "Terminate reading",};
 				int n = JOptionPane.showOptionDialog(null,
-								"Unknown or corrupted invariants file format! Read anyway as INA invariants?",
+								"Unknown or corrupted invariants file format! Read anyway as Charlie invariants?",
 								"Error reading file header", JOptionPane.YES_NO_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
@@ -244,6 +272,83 @@ public class IOprotocols {
 			return true;
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Charlie invariants reading operation failed.", "text", true);
+			return false;
+		} 
+	}
+	
+	/**
+	 * Metoda wczytująca plik inwariantów wygenerowany programem Charlie.
+	 * @param sciezka String - ściezka do pliku
+	 * @return boolean - true, jeśli operacja się powiodła
+	 */
+	private boolean readMonaLisaINV(String sciezka) {
+		try {
+			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+			String line = buffer.readLine();
+
+			if (!line.contains("# List of all elementary modes")) {
+				Object[] options = {"Force read as Mona Lisa file", "Terminate reading",};
+				int n = JOptionPane.showOptionDialog(null,
+								"Unknown or corrupted invariants file format! Read anyway as Mona Lisa invariants?",
+								"Error reading file header", JOptionPane.YES_NO_OPTION,
+								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+
+				if (n == 1) {
+					buffer.close();
+					return false;
+				}
+				
+			}
+			nodesList.clear();
+			
+			
+			//boolean firstPass = true;
+			
+			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			int transSetSize = transitions.size();
+			
+			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+
+			line = buffer.readLine();
+			while (line != null && line.length() > 0 && line.contains("Elementary")) {
+				tmpInvariant = new ArrayList<Integer>();
+				for(int t=0; t<transSetSize; t++) //init
+					tmpInvariant.add(0);
+				
+				String lineNumber = line.substring(0, line.indexOf("."));
+				
+				try {
+					line = line.substring(line.indexOf(":")+1);
+					line = line.trim();
+					String[] tablica = line.split(" ");
+					for(String el : tablica) {
+						if(el.contains("*")) {
+							String valueS = el.substring(0, el.indexOf("*"));
+							int value = Integer.parseInt(valueS);
+							
+							el = el.substring(el.indexOf("*")+1);
+							int trans = Integer.parseInt(el);
+							trans--; //MonaLisa liczy od 1 tranzycje
+							tmpInvariant.set(trans, value);
+						} else {
+							int trans = Integer.parseInt(el);
+							trans--; //MonaLisa liczy od 1 tranzycje
+							tmpInvariant.set(trans, 1);
+						}
+					}
+					invariantsList.add(tmpInvariant);
+					line = buffer.readLine();
+				} catch (Exception e) {
+					GUIManager.getDefaultGUIManager().log("Error reading invariant #"+lineNumber, "error", true);
+					line = buffer.readLine();
+				}
+			}
+			buffer.close();
+			GUIManager.getDefaultGUIManager().log("Invariants from MonaLisa file have been read.", "text", true);
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("MonaLisa invariants reading operation failed.", "text", true);
 			return false;
 		} 
 	}
@@ -387,6 +492,7 @@ public class IOprotocols {
 	 */
 	public void readPNT(String sciezka) {
 		try {
+			resetComponents();
 			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();	
 			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
@@ -629,8 +735,7 @@ public class IOprotocols {
 	 * @param transitionList ArrayList[Transition] - lista tranzycji sieci
 	 * @param arcList ArrayList[Arc] - lista łuków sieci
 	 */
-	public void writePNT(String path, ArrayList<Place> placeList,
-			ArrayList<Transition> transitionList, ArrayList<Arc> arcList) {
+	public void writePNT(String path, ArrayList<Place> placeList, ArrayList<Transition> transitionList, ArrayList<Arc> arcList) {
 		String zawartoscPliku = "P   M   PRE,POST  NETZ 0:";
 		try {
 			PrintWriter zapis = new PrintWriter(path);
@@ -800,13 +905,7 @@ public class IOprotocols {
 					}
 					String name = transitions.get(t).getName();
 					pw.print(t+"."+name+"\t\t:"+value);
-					
-					//if(!(t == invariants.size() - 1))
-					//	pw.print(",");
-					
-					//pw.print("\r\n");
 				}
-				//pw.print("\r\n");
 			}
 			pw.close();
 			GUIManager.getDefaultGUIManager().log("Invariants in Charlie file format saved to "+path, "text", true);

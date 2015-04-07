@@ -6,7 +6,6 @@ import abyss.analyzer.matrix.IncidenceMatrix;
 import abyss.analyzer.matrix.InputMatrix;
 import abyss.analyzer.matrix.OutputMatrix;
 import abyss.darkgui.GUIManager;
-import abyss.math.InvariantTransition;
 import abyss.math.PetriNet;
 import abyss.math.Transition;
 
@@ -62,6 +61,37 @@ public class MCTCalculator {
 	 * @return ArrayList[ArrayList[Transition]] - macierz wyjściowa
 	 */
 	public ArrayList<ArrayList<Transition>> generateMCT() {
+		ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<ArrayList<Integer>> invariantsTranspose =	InvariantsTools.transposeMatrix(
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix() );
+		
+		invariantsTranspose = InvariantsTools.returnBinaryMatrix(invariantsTranspose);
+		
+		ArrayList<ArrayList<Transition>> mctGroups = new ArrayList<ArrayList<Transition>>();
+		int size = allTransitions.size();
+		
+		
+		for(int t1=0; t1<size; t1++) {
+			ArrayList<Transition> currentMCT = new ArrayList<Transition>();
+			ArrayList<Integer> invVector = invariantsTranspose.get(t1);
+			ArrayList<Integer> support = InvariantsTools.getSupport(invVector); //tutaj: niezerowy, jeśli t należy do inw
+			for(int t2=0; t2<size; t2++) {
+				
+				ArrayList<Integer> invVector2 = invariantsTranspose.get(t2);
+				if(invVector.equals(invVector2) && support.size()>0 ) {
+					currentMCT.add(allTransitions.get(t2));
+				}
+			}
+			if ((currentMCT.size() > 0) && !mctGroups.contains(currentMCT))
+				mctGroups.add(currentMCT);
+		}
+		GUIManager.getDefaultGUIManager().reset.setMCTStatus(true); //status zbiorów MCT: wczytane
+		return mctGroups;
+	}
+}
+
+/*
+	public ArrayList<ArrayList<Transition>> generateMCT() {
 		//ArrayList<ArrayList<InvariantTransition>> tInvariantsList;
 		// konwersja z InvariantTransitions na Transitions
 		ArrayList<ArrayList<Transition>> invariants = new ArrayList<ArrayList<Transition>>();	
@@ -81,14 +111,15 @@ public class MCTCalculator {
 			invariants.add(currentInvariant);
 		}
 		// dodaje do każdej tranzycji liste inwariantow, ktore ja zawieraja...
-		ArrayList<Transition> allTransitions = GUIManager
-				.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		
 		for (Transition transition : allTransitions) {
 			for (ArrayList<Transition> currentInvariant : invariants) {
 				if (currentInvariant.contains(transition))
 					transition.getContainingInvariants().add(currentInvariant);
 			}
 		}
+	
 		// tworzenie mct
 		ArrayList<ArrayList<Transition>> mctGroups = new ArrayList<ArrayList<Transition>>();
 		for (Transition transition : allTransitions) {
@@ -105,3 +136,4 @@ public class MCTCalculator {
 		return mctGroups;
 	}
 }
+*/

@@ -61,6 +61,7 @@ import abyss.math.TimeTransition;
 import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
+import abyss.utilities.ColorPalette;
 import abyss.utilities.Tools;
 import abyss.workspace.WorkspaceSheet;
 
@@ -1854,7 +1855,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	private void showInvariant(Integer invariantIndex, boolean isThereInv) {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setColorClusterToNeutral();
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 		
 		if(isThereInv)
 		{
@@ -1913,7 +1914,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	private void showDeadInv() {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setColorClusterToNeutral();
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 		
 		invTextArea.setText("");
 		invTextArea.append("Transitions not covered by invariants:\n");
@@ -2006,13 +2007,15 @@ public class AbyssDockWindowsTable extends JPanel {
 		}
 		mctGroups.add(unused); //dodaj wszystkie pojedzyncze tranzycje w jeden 'mct'
 		
-		String[] mctHeaders = new String[mctGroups.size() + 1];
+		String[] mctHeaders = new String[mctGroups.size() + 2];
 		mctHeaders[0] = "---";
 		for (int i = 0; i < mctGroups.size(); i++) {
 			if(i < mctGroups.size()-1)
 				mctHeaders[i + 1] = "MCT #" + Integer.toString(i) +" (size: "+mctGroups.get(i).size()+")";
-			else
+			else {
 				mctHeaders[i + 1] = "No-MCT transitions";
+				mctHeaders[i + 2] = "Show all";
+			}
 		}
 				
 		// getting the data
@@ -2025,10 +2028,13 @@ public class AbyssDockWindowsTable extends JPanel {
 		chooseMctBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
-				if (comboBox.getSelectedIndex() == 0) {
+				int selected = comboBox.getSelectedIndex();
+				if (selected == 0) {
 					showMct(0, false);
+				} else if(selected == comboBox.getItemCount()-1) {
+					showAllColors();
 				} else {
-					showMct(comboBox.getSelectedIndex()-1, true);
+					showMct(selected - 1, true);
 				}
 			}
 		});
@@ -2068,7 +2074,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	private void showMct(Integer mctIndex, boolean isThereMCT) {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setColorClusterToNeutral();
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 		
 		if(isThereMCT)
 		{
@@ -2083,6 +2089,25 @@ public class AbyssDockWindowsTable extends JPanel {
 				transition.setGlowed_MTC(true);
 			}
 			mctTextArea.setCaretPosition(0);
+		}
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+	}
+	
+	/**
+	 * Metoda odpowiedzialna za pokazanie wszystkich nietrywalniach zbiorów MCT w kolorach.
+	 */
+	private void showAllColors() {
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
+
+		ColorPalette cp = new ColorPalette();
+		for(int m=0; m<mctGroups.size()-1; m++) {
+			Color currentColor = cp.getColor();
+			ArrayList<Transition> mct = mctGroups.get(m);
+			for (Transition transition : mct) {
+				transition.setColorWithNumber(true, currentColor, false, m, true, "MCT #"+m);
+			}
 		}
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
@@ -2235,7 +2260,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	protected void showClusters(int clusterNo, boolean isThereCluser) {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setColorClusterToNeutral();
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 		
 		if(isThereCluser)
 		{
@@ -2246,27 +2271,27 @@ public class AbyssDockWindowsTable extends JPanel {
 			ArrayList<Transition> holyVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 			for(int i=0; i<transColors.size(); i++) { //ustaw kolory dla tranzycji
 				if(transColors.get(i).equals(Color.white)) {
-					holyVector.get(i).setColorWithNumber(false, Color.white, false, -1);
+					holyVector.get(i).setColorWithNumber(false, Color.white, false, -1, false, "");
 				} else {
 					if(clusterColorsData.showFirings == true) { //pokazuj średnią liczbę odpaleń
 						if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
 							double tranNumber = transColors.get(i).firedInCluster;
 							Color tranColor = transColors.get(i).colorFiredScale;
-							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber);
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "");
 						} else { //pokazuj kolory z krokiem 10%
 							double tranNumber = transColors.get(i).firedInCluster;
 							Color tranColor = transColors.get(i).colorFiredGrade;
-							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber);
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "");
 						}
 					} else { //pokazuj tylko liczbę wystąpień jako część inwariantów
 						if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
 							int tranNumber = transColors.get(i).transInCluster;
 							Color tranColor = transColors.get(i).colorTransScale;
-							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber);
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "");
 						} else { //pokazuj kolory z krokiem 10%
 							int tranNumber = transColors.get(i).transInCluster;
 							Color tranColor = transColors.get(i).colorTransGrade;
-							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber);
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "");
 						}
 					}
 				}
@@ -2453,7 +2478,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		try {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setColorClusterToNeutral();
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 			
 			
 			sets = sets.replace("[", "");
@@ -2468,11 +2493,11 @@ public class AbyssDockWindowsTable extends JPanel {
 			}
 			
 			Transition trans_TMP = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(objReactionID);
-			trans_TMP.setColorWithNumber(true, Color.red, false, -1);
+			trans_TMP.setColorWithNumber(true, Color.red, false, -1, false, "");
 			
 			for(int id : invIDs) {
 				trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(id);
-				trans_TMP.setColorWithNumber(true, Color.black, false, -1);
+				trans_TMP.setColorWithNumber(true, Color.black, false, -1, false, "");
 				//double tranNumber = transColors.get(i).firedInCluster;
 				//Color tranColor = transColors.get(i).colorFiredScale;
 				//holyVector.get(i).setColorWithNumber(true, tranColor, tranNumber);
