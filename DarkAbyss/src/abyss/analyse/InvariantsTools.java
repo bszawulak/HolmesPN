@@ -97,6 +97,34 @@ public final class InvariantsTools {
 		return result;
 	}
 	
+	public static ArrayList<Integer> countNonInvariantsV2(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		
+		int subInv = 0; // neg
+		int surInv = 0; // pos
+		int nonInv = 0;
+		int zeroInvariants = 0;
+		
+		for(ArrayList<Integer> inv : invSet) {
+			int result = checkInvariantV2(CMatrix, inv, true);
+			if(result == 0)
+				zeroInvariants++;
+			else if(result == -1)
+				subInv++;
+			else if(result == 1)
+				surInv++;
+			else
+				nonInv++;
+			
+		}
+		results.add(zeroInvariants);
+		results.add(subInv);
+		results.add(surInv);
+		results.add(nonInv);
+		
+		return results;
+	}
+	
 	/**
 	 * Metoda sprawdza, czy inwariant jest prawidłowy, tj. czy zeruje macierz incydencji podaną jako parametr.
 	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji sieci, każdy wiersza to wektor po miejscach (kolumny)
@@ -136,6 +164,59 @@ public final class InvariantsTools {
 		} else {
 			return false;
 		}
+	}
+	
+	public static int checkInvariantV2(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> inv, boolean tInv) {
+		if(tInv != true || CMatrix.size() == 0)
+			return -99;
+		
+		ArrayList<Integer> invSupport = getSupport(inv);
+		ArrayList<Integer> placesSumVector = new ArrayList<Integer>();
+		if(inv.size() != CMatrix.size())
+			return -99;
+		
+		int placesNumber = CMatrix.get(0).size();
+		for(int i=0; i<placesNumber; i++) {
+			placesSumVector.add(0);
+		}
+		
+		for(int sup : invSupport) { //dla wszystkich wektorów CMatrix ze wsparcia inwariantu
+			ArrayList<Integer> row = CMatrix.get(sup);
+			int multFactor = inv.get(sup);
+			
+			for(int p=0; p<placesNumber; p++) {
+				int oldVal = placesSumVector.get(p);
+				oldVal += row.get(p) * multFactor;
+				placesSumVector.set(p, oldVal);
+			}
+		}
+		
+		int positives = 0;
+		int negatives = 0;
+		int zeroes = 0;
+		
+		for(int p=0; p<placesNumber; p++) {
+			if(placesSumVector.get(p) == 0) {
+				zeroes++;
+			} else if(placesSumVector.get(p) > 0) {
+				positives++;
+			} else if(placesSumVector.get(p) < 0)
+				negatives++;
+		}
+		
+		if(positives>0 && negatives>0) {
+			return -50; //coś wybitnie nie tak z tym inwariantem
+		} 
+		if(zeroes == placesNumber)
+			return 0;
+		
+		if(positives>0)
+			return 1;
+		
+		if(negatives>0)
+			return -1;
+		
+		return -99;
 	}
 	
 	/**

@@ -363,8 +363,13 @@ public class AbyssInvariants extends JFrame {
 					logField.append("Checking invariants correctness for "+invariants.size()+" invariants.\n");
 					InvariantsCalculator ic = new InvariantsCalculator(true);
 					
-					int value =  InvariantsTools.countNonInvariants(ic.getCMatrix(), invariants);
-					logField.append("Non-invariants: "+value+"\n");
+					//int value =  InvariantsTools.countNonInvariants(ic.getCMatrix(), invariants);
+					ArrayList<Integer> results = InvariantsTools.countNonInvariantsV2(ic.getCMatrix(), invariants);
+					logField.append("Proper invariants (Cx = 0): "+results.get(0)+"\n");
+					logField.append("Sub-invariants (Cx < 0): "+results.get(1)+"\n");
+					logField.append("Sur-invariants (Cx > 0): "+results.get(2)+"\n");
+					logField.append("Non-invariants (Cx <=> 0): "+results.get(3)+"\n");
+					//logField.append("Non-invariants: "+value+"\n");
 					logField.append("=====================================================================\n");
 				}
 			}
@@ -442,7 +447,14 @@ public class AbyssInvariants extends JFrame {
 			int value = InvariantsTools.checkSupportMinimality(invLoadedMatrix);
 			logField.append("-> Non support-minimal inv. found: "+value+"\n");
 			InvariantsCalculator ic = new InvariantsCalculator(true);
-			value =  InvariantsTools.countNonInvariants(ic.getCMatrix(), invLoadedMatrix);
+			//value =  InvariantsTools.countNonInvariants(ic.getCMatrix(), invLoadedMatrix);
+			
+			ArrayList<Integer> results = InvariantsTools.countNonInvariantsV2(ic.getCMatrix(), invLoadedMatrix);
+			logField.append("Proper invariants (Cx = 0): "+results.get(0)+"\n");
+			logField.append("Sub-invariants (Cx < 0): "+results.get(1)+"\n");
+			logField.append("Sur-invariants (Cx > 0): "+results.get(2)+"\n");
+			logField.append("Non-invariants (Cx <=> 0): "+results.get(3)+"\n");
+			
 			logField.append("-> Not-invariant vectors (Cx=0 test): "+value+"\n");
 			logField.append("=====================================================================\n");
 			logField.append("\n");

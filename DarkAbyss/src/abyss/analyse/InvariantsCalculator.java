@@ -145,17 +145,34 @@ public class InvariantsCalculator implements Runnable {
 					|| oneArc.getStartNode().getType() == PetriNetElementType.TIMETRANSITION) {
 				tPosition = transitionsMap.get(oneArc.getStartNode());
 				pPosition = placesMap.get(oneArc.getEndNode());
+				incidenceValue = 1 * oneArc.getWeight();
+				
+				Transition tr = (Transition) oneArc.getStartNode();
+				Place pl = (Place) oneArc.getEndNode();
+				int tr_pos = transitions.indexOf(tr);
+				int pl_pos = places.indexOf(pl);
+				if(tPosition != tr_pos || pPosition != pl_pos) {
+					@SuppressWarnings("unused")
+					int x=1;
+				}
 				
 				// incidenceValue = -1 * oneArc.getWeight();  // CO TO K**** JEST ?! JAKIE -1 ?!
 				// 	(14.03.2015) ja go chyba zamorduję... 
 				//   https://www.youtube.com/watch?v=oxiJrcFo724
 				// 
-				
-				incidenceValue = 1 * oneArc.getWeight();
 			} else { //miejsca
 				tPosition = transitionsMap.get(oneArc.getEndNode());
 				pPosition = placesMap.get(oneArc.getStartNode());
 				incidenceValue = -1 * oneArc.getWeight();
+				
+				Transition tr = (Transition) oneArc.getEndNode();
+				Place pl = (Place) oneArc.getStartNode();
+				int tr_pos = transitions.indexOf(tr);
+				int pl_pos = places.indexOf(pl);
+				if(tPosition != tr_pos || pPosition != pl_pos) {
+					@SuppressWarnings("unused")
+					int x=1;
+				}
 			}
 			globalIncidenceMatrix.get(tPosition).set(pPosition, incidenceValue);
 			CMatrix.get(tPosition).set(pPosition, incidenceValue);

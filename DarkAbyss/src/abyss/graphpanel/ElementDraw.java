@@ -33,9 +33,10 @@ public final class ElementDraw {
 		if(node instanceof Transition || node instanceof TimeTransition) {
 			Transition trans = (Transition)node;
 			for (ElementLocation el : trans.getNodeLocations(sheetId)) {
-				Rectangle nodeBounds = new Rectangle(
-					el.getPosition().x - trans.getRadius(), el.getPosition().y - trans.getRadius(), 
-					trans.getRadius() * 2, trans.getRadius() * 2);
+				int radius = trans.getRadius();
+				//radius = 30;
+				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, 
+						radius * 2, radius * 2);
 				if (!trans.isLaunching()) { //jeśli nieaktywna
 					if (trans.isGlowed_MTC()) { //jeśli ma się świecić jako MCT
 						g.setColor(EditorResources.glowMTCTransitonColorLevel1);
