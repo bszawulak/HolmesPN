@@ -35,6 +35,7 @@ public class PlacePopupMenu extends PetriNetElementPopupMenu {
 						return;
 					
 					getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
+					GUIManager.getDefaultGUIManager().markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, "Option possible if more than one place is selected.", "Too few selections", 
 							JOptionPane.INFORMATION_MESSAGE);
@@ -52,6 +53,7 @@ public class PlacePopupMenu extends PetriNetElementPopupMenu {
 						return;
 					
 					getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
+					GUIManager.getDefaultGUIManager().markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, "Option possible for one place only.", "Too many selections", 
 							JOptionPane.INFORMATION_MESSAGE);

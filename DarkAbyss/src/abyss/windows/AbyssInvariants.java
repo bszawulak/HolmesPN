@@ -8,10 +8,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Set;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -27,6 +31,7 @@ import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
 import abyss.files.io.IOprotocols;
 import abyss.math.PetriNet;
+import abyss.math.Place;
 import abyss.utilities.Tools;
 import abyss.varia.Check;
 import abyss.workspace.ExtensionFileFilter;
@@ -44,6 +49,7 @@ public class AbyssInvariants extends JFrame {
 	private InvariantsCalculator invGenerator = null;
 	public boolean isGeneratorWorking = false;
 	public boolean noAction = false;
+	private boolean details = true;
 
 	/**
 	 * Główny konstruktor okna generatora inwariantów.
@@ -184,7 +190,7 @@ public class AbyssInvariants extends JFrame {
 			public void actionPerformed(ActionEvent actionEvent) {
 				setGeneratorStatus(true);
 				GUIManager.getDefaultGUIManager().io.generateINAinvariants();
-				
+				GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
 			}
 		});
 		INAgenerateButton.setFocusPainted(false);
@@ -198,7 +204,10 @@ public class AbyssInvariants extends JFrame {
 		loadInvariantsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().io.loadExternalAnalysis();
-				//TODO: komunikat do logu
+				logField.append("\n");
+				logField.append("=====================================================================\n");
+				logField.append("Loaded invariants: "+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix().size()+"\n");
+				logField.append("=====================================================================\n");
 			}
 		});
 		loadInvariantsButton.setFocusPainted(false);
@@ -212,7 +221,10 @@ public class AbyssInvariants extends JFrame {
 		saveInvariantsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
-				//TODO: komunikat do logu
+				logField.append("\n");
+				logField.append("=====================================================================\n");
+				logField.append("Saved invariants: "+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix().size()+"\n");
+				logField.append("=====================================================================\n");
 			}
 		});
 		saveInvariantsButton.setFocusPainted(false);
@@ -364,13 +376,16 @@ public class AbyssInvariants extends JFrame {
 					InvariantsCalculator ic = new InvariantsCalculator(true);
 					
 					//int value =  InvariantsTools.countNonInvariants(ic.getCMatrix(), invariants);
-					ArrayList<Integer> results = InvariantsTools.countNonInvariantsV2(ic.getCMatrix(), invariants);
-					logField.append("Proper invariants (Cx = 0): "+results.get(0)+"\n");
-					logField.append("Sub-invariants (Cx < 0): "+results.get(1)+"\n");
-					logField.append("Sur-invariants (Cx > 0): "+results.get(2)+"\n");
-					logField.append("Non-invariants (Cx <=> 0): "+results.get(3)+"\n");
+					ArrayList<ArrayList<Integer>> results = InvariantsTools.countNonT_InvariantsV2(ic.getCMatrix(), invariants);
+					logField.append("Proper invariants (Cx = 0): "+results.get(0).get(0)+"\n");
+					logField.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
+					logField.append("Sub-invariants (Cx < 0): "+results.get(0).get(2)+"\n");
+					logField.append("Non-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n");
 					//logField.append("Non-invariants: "+value+"\n");
 					logField.append("=====================================================================\n");
+					
+					if(details)
+						showSubSurInvInfo(results, invariants.size());
 				}
 			}
 		});
@@ -389,6 +404,21 @@ public class AbyssInvariants extends JFrame {
 		});
 		loadRefButton.setFocusPainted(false);
 		panel.add(loadRefButton);
+		
+		JCheckBox detailsCheckBox = new JCheckBox("Details");
+		detailsCheckBox.setBounds(posX, posY+144, 110, 32);
+		detailsCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					details = true;
+				} else {
+					details = false;
+				}
+			}
+		});
+		detailsCheckBox.setSelected(true);
+		panel.add(detailsCheckBox);
 
 		return panel;
 	}
@@ -413,7 +443,7 @@ public class AbyssInvariants extends JFrame {
 		if(!file.exists()) return;
 		
 		IOprotocols io = new IOprotocols();
-				//GUIManager.getDefaultGUIManager().getWorkspace().getProject().getCommunicator();
+		//GUIManager.getDefaultGUIManager().getWorkspace().getProject().getCommunicator();
 		boolean status = io.readINV(file.getPath());
 		if(status == false) {
 			return;
@@ -449,18 +479,91 @@ public class AbyssInvariants extends JFrame {
 			InvariantsCalculator ic = new InvariantsCalculator(true);
 			//value =  InvariantsTools.countNonInvariants(ic.getCMatrix(), invLoadedMatrix);
 			
-			ArrayList<Integer> results = InvariantsTools.countNonInvariantsV2(ic.getCMatrix(), invLoadedMatrix);
-			logField.append("Proper invariants (Cx = 0): "+results.get(0)+"\n");
-			logField.append("Sub-invariants (Cx < 0): "+results.get(1)+"\n");
-			logField.append("Sur-invariants (Cx > 0): "+results.get(2)+"\n");
-			logField.append("Non-invariants (Cx <=> 0): "+results.get(3)+"\n");
+			ArrayList<ArrayList<Integer>> results = InvariantsTools.countNonT_InvariantsV2(ic.getCMatrix(), invLoadedMatrix);
+			logField.append("Proper invariants (Cx = 0): "+results.get(0).get(0)+"\n");
+			logField.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
+			logField.append("Sun-invariants (Cx < 0): "+results.get(0).get(2)+"\n");
+			logField.append("Non-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n");
 			
 			logField.append("-> Not-invariant vectors (Cx=0 test): "+value+"\n");
 			logField.append("=====================================================================\n");
 			logField.append("\n");
+			
+			if(details)
+				showSubSurInvInfo(results, invLoadedMatrix.size());
 		}
 	}
 	
+	private void showSubSurInvInfo(ArrayList<ArrayList<Integer>> results, int invMatrixSize) {
+		int surPlaceMaxName = 0;
+		int subPlaceMaxName = 0;
+		ArrayList<Place> places = null;
+		int size = 0;
+		ArrayList<Integer> surInvVector = results.get(1);
+		ArrayList<Integer> subInvVector = results.get(2);
+		
+		AbyssNotepad notePad = new AbyssNotepad(900,600);
+		notePad.setVisible(true);
+		
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("Vectors analysed: "+invMatrixSize, "text");
+		notePad.addTextLineNL("Canonical invariants: "+results.get(0).get(0), "text");
+		notePad.addTextLineNL("Sur-invariants: "+results.get(0).get(1), "text");
+		notePad.addTextLineNL("Sub-invariants: "+results.get(0).get(2), "text");
+		notePad.addTextLineNL("Non invariants vectors: "+results.get(0).get(3), "text");
+		notePad.addTextLineNL("", "text");
+		
+		if(results.get(0).get(1) > 0 || results.get(0).get(2) > 0) {
+			places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+			size = places.size();
+			
+			// ustal maksymalną długość nazwy miejsca dla obu zbiorów:
+			for(int p=0; p<size; p++) {
+				int value = surInvVector.get(p);
+				if(value != 0) {
+					int nameSize = places.get(p).getName().length();
+					if(nameSize > surPlaceMaxName)
+						surPlaceMaxName = nameSize;
+				}
+				value = subInvVector.get(p);
+				if(value != 0) {
+					int nameSize = places.get(p).getName().length();
+					if(nameSize > subPlaceMaxName)
+						subPlaceMaxName = nameSize;
+				}
+			}
+		}
+		
+		if(results.get(0).get(1) > 0) {
+			notePad.addTextLineNL("Places for which sur-invariants did not zeroed C-matrix:", "text");
+			notePad.addTextLineNL("(in parenthesis number of sur-invariants for each place):", "text");
+			
+			
+			for(int p=0; p<size; p++) {
+				int value = surInvVector.get(p);
+				if(value != 0) {
+					String line = "p_"+p+Tools.setToSize(places.get(p).getName(), surPlaceMaxName+3, false) +": "+value;
+					notePad.addTextLineNL(line, "text");
+				}
+			}
+		}
+		notePad.addTextLineNL("", "text");
+		if(results.get(0).get(2) > 0) {
+			notePad.addTextLineNL("Places for which sub-invariants did not zeroed C-matrix:", "text");
+			notePad.addTextLineNL("(in parenthesis number of sub-invariants for each place):", "text");
+			
+			size = places.size();
+			for(int p=0; p<size; p++) {
+				int value = subInvVector.get(p);
+				if(value != 0) {
+					String line = "p_"+p+Tools.setToSize(places.get(p).getName(), subPlaceMaxName+2, false) +": "+value;
+					notePad.addTextLineNL(line, "text");
+				}
+			}
+		}
+		
+	}
+
 	/**
 	 * Metoda odpowiedzialna za obsługę przycisku tworzenia zbioru wykonalnych inwariantów.
 	 */

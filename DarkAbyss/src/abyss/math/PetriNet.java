@@ -68,6 +68,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/** Wartość flagi == true jeżeli został już utworzony backup PRZEZ symulator */
 	public boolean isBackup = false;
 	
+	public boolean anythingChanged = false;
+	
 	/**
 	 * Konstruktor obiektu klasy PetriNet - działa dla symulatora inwariantów.
 	 * @param nod ArrayList[Node] - lista wierzchołków sieci
@@ -601,53 +603,62 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda pozwala na zapis całej sieci z projektu do pliku PNT
 	 * @param filePath String - ścieżka do pliku zapisu
+	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
-	public void saveAsPNT(String filePath) {
-		communicationProtocol.writePNT(filePath, getPlaces(), getTransitions(), getArcs());
+	public boolean saveAsPNT(String filePath) {
+		boolean status = communicationProtocol.writePNT(filePath, getPlaces(), getTransitions(), getArcs());
+		return status;
 	}
 	
 	/**
 	 * Metoda pozwala na zapis całej sieci z projektu do pliku ABYSS.
 	 * @param filePath String - ścieżka do pliku zapisu
+	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
-	public void saveAsAbyss(String filePath) {
+	public boolean saveAsAbyss(String filePath) {
 		ABYSSwriter = new AbyssWriter();
-		ABYSSwriter.write(filePath);
+		boolean status = ABYSSwriter.write(filePath);
+		return status;
 	}
 	
 	/**
 	 * Metoda pozwala zapisać sieć do formatu SPPED programu Snoopy.
 	 * @param filePath String - ścieżka docelowa pliku
+	 * @return boolean - status operacji: true jeśli nie było błędów
 	 */
-	public void saveAsSPPED(String filePath) {
+	public boolean saveAsSPPED(String filePath) {
 		SnoopyWriter sWr = new SnoopyWriter();
-		sWr.writeSPPED(filePath);
+		boolean status = sWr.writeSPPED(filePath);
+		return status;
 	}
 	
 	/**
 	 * Metoda pozwala zapisać sieć do formatu SPEPT (Extended) programu Snoopy.
 	 * @param filePath String - ścieżka docelowa pliku
+	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
-	public void saveAsSPEPT(String filePath) {
+	public boolean saveAsSPEPT(String filePath) {
 		SnoopyWriter sWr = new SnoopyWriter();
-		sWr.writeSPEPT(filePath);
+		boolean status = sWr.writeSPEPT(filePath);
+		return status;
 	}
 
 	/**
-	 * Metoda pozwala na odczyt całej sieci z pliku podanego w parametrze
-	 * metody. Wczytana sieć zostaje dodana do istniejącego już projektu,
-	 * bez naruszania jego struktury.
+	 * Metoda pozwala na odczyt całej sieci z pliku podanego w parametrze metody.
 	 * @param path String - ścieżka do pliku odczytu
 	 */
-	public void loadFromFile(String path) {
-		if(checkIfEmpty() == false)
-			return;
+	public boolean loadFromFile(String path) {
+		//if(checkIfEmpty() == false)
+		//	return false;
 		
-		GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
+		boolean status = GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
+		if(status == false) {
+			return false;
+		}
 		
 		readerSNOOPY = SAXParserFactory.newInstance();
 		try {
-			// Format wlasny
+			// Format własny
 			if (path.endsWith(".abyss")) {
 				ABYSSReader = new AbyssReader();
 				ABYSSReader.read(path);
@@ -680,6 +691,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				int ind = name.lastIndexOf("\\");
 				if(ind > 1)
 					name = name.substring(ind+1);
+				
 				name = name.replace(".spped", "");
 				name = name.replace(".spept", "");
 				name = name.replace(".colpn", "");
@@ -699,9 +711,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 			
 			GUIManager.getDefaultGUIManager().log("Snoopy Petri net successfully imported from file "+path, "text", true);
+			return true;
 		} catch (Throwable err) {
 			err.printStackTrace();
 			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
+			return false;
 		}
 	}
 

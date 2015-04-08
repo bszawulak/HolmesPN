@@ -140,7 +140,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private String logPath;
 	
 	// okna niezależne:
-	public AbyssClusters windowClusters; //okno tabeli 
+	private AbyssClusters windowClusters; //okno tabeli 
 	private AbyssConsole windowConsole; //konsola logów
 	private AbyssNetProperties windowNetProperties; //okno właściwości sieci
 	private AbyssAbout windowAbout; //okno About...
@@ -317,9 +317,31 @@ public class GUIManager extends JPanel implements ComponentListener {
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		        if (JOptionPane.showConfirmDialog(frame, "Are you sure you want to close the program?", "Really Closing?", 
-		            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
-		        	{
+		    	boolean status = GUIManager.getDefaultGUIManager().getNetChangeStatus();
+				if(status == true) {
+					Object[] options = {"Exit", "Save and exit", "Cancel",};
+					int n = JOptionPane.showOptionDialog(null,
+									"Network has been changed since last save. Quit, save&quit or do not quit now?",
+									"Data lose warning", JOptionPane.YES_NO_OPTION,
+									JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+					if (n == 2) { //cancel
+						return;
+					} else if (n == 1) { //try to save
+						boolean savingStatus = io.saveAsGlobal();
+						if(savingStatus == false) {
+							return;
+						} else {
+							log("Exiting program","text",true);
+			            	windowConsole.saveLogToFile(null);
+			            	System.exit(0);
+						}
+					} else { // n == 0
+						log("Exiting program","text",true);
+		            	windowConsole.saveLogToFile(null);
+		            	System.exit(0);
+					}
+				} else if (JOptionPane.showConfirmDialog(frame, "Are you sure you want to close the program?", "Exit?", 
+		            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 		        		log("Exiting program","text",true);
 		            	windowConsole.saveLogToFile(null);
 		            	System.exit(0);
@@ -1251,6 +1273,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if(mode.equals("error"))
 			windowConsole.setVisible(true);
 	}
+	
 	/**
 	 * Jak wyżej, tylko bez entera.
 	 */
@@ -1317,11 +1340,43 @@ public class GUIManager extends JPanel implements ComponentListener {
 		return nameLocChangeMode;
 	}
 	
+	/**
+	 * Metoda zwraca wierzchołek dla którego trwa zmiana lokalizacji nazwy.
+	 * @return Node - wierzchołek sieci
+	 */
 	public Node getNameLocChangeNode() {
 		return nameSelectedNode;
 	}
 	
+	/**
+	 * Metoda zwraca lokalizację wierzchołka dla którego trwa zmiana położenia jego nazwy.
+	 * @return ElementLocation - lokalizacja wierzchołka
+	 */
 	public ElementLocation getNameLocChangeEL() {
 		return nameNodeEL;
+	}
+	
+	/**
+	 * Metoda ustawia flagę w projekcie na true, oznaczającą jakąkolwiek zmianę od czasu ostatniego zapisu.
+	 * Używana do ostrzeżeń przed wyjściem z programu / czyszczeniem projektu.
+	 */
+	public void markNetChange() {
+		getWorkspace().getProject().anythingChanged = true;
+	}
+	
+	/**
+	 *  Metoda ustawia flagę w projekcie na false, oznaczającą że właśnie zapisano sieć do pliku.
+	 *  Używana do ostrzeżeń przed wyjściem z programu / czyszczeniem projektu.
+	 */
+	public void markNetSaved() {
+		getWorkspace().getProject().anythingChanged = false;
+	}
+	
+	/**
+	 * Metoda zwraca wartość flagi zmiany sieci.
+	 * @return boolean - jeśli true, to znaczy że sieć się zmieniłą od ostatniego zapisu.
+	 */
+	public boolean getNetChangeStatus() {
+		return getWorkspace().getProject().anythingChanged;
 	}
 }

@@ -51,6 +51,9 @@ public class IOprotocols {
 	private ArrayList<String[]> placeArcListPre; // = new ArrayList<String[]>();
 	private ArrayList<ArrayList<Integer>> placeArcListPreWeight; // = new ArrayList<ArrayList<Integer>>();
 	
+	/**
+	 * Konstruktor obiektu klasy IOprotocols.
+	 */
 	public IOprotocols() {
 		resetComponents();
 	}
@@ -95,16 +98,16 @@ public class IOprotocols {
 			resetComponents();
 			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
-			String wczytanaLinia = buffer.readLine();
-			String backup = wczytanaLinia;
+			String readLine = buffer.readLine();
+			String backup = readLine;
 			
 			
-			if (wczytanaLinia.contains("transition sub/sur/invariants for net")) {
+			if (readLine.contains("transition sub/sur/invariants for net")) {
 				//to znaczy, że wczytujemy plik INA, po prostu
-			} else if (wczytanaLinia.contains("List of all elementary modes")) {
+			} else if (readLine.contains("List of all elementary modes")) {
 				buffer.close();
 				return readMonaLisaINV(sciezka);
-			}else if (wczytanaLinia.contains("minimal semipositive transition")) {
+			}else if (readLine.contains("minimal semipositive transition")) {
 				buffer.close();
 				return readCharlieINV(sciezka);
 			} else {
@@ -134,19 +137,19 @@ public class IOprotocols {
 			}
 			
 			buffer.readLine();
-			while (!wczytanaLinia.contains("semipositive transition invariants =")) {
-				wczytanaLinia = buffer.readLine();
+			while (!readLine.contains("semipositive transition invariants =")) {
+				readLine = buffer.readLine();
 			}
 			buffer.readLine();
 			nodesList.clear();
 			// Etap I - Liczba tranzycji/miejsc
-			while (!(wczytanaLinia = buffer.readLine()).endsWith("~~~~~~~~~~~")) {
-				if(wczytanaLinia.endsWith("~~~~~~~~~~~")){break;}
-				String[] sformatowanaLinia = wczytanaLinia.split(" ");
-				for (int j = 0; j < sformatowanaLinia.length; j++) {
-					if (!(sformatowanaLinia[j].isEmpty() || sformatowanaLinia[j].contains("Nr."))) {
+			while (!(readLine = buffer.readLine()).endsWith("~~~~~~~~~~~")) {
+				if(readLine.endsWith("~~~~~~~~~~~")){break;}
+				String[] formattedLine = readLine.split(" ");
+				for (int j = 0; j < formattedLine.length; j++) {
+					if (!(formattedLine[j].isEmpty() || formattedLine[j].contains("Nr."))) {
 						try {
-							nodesList.add(Integer.parseInt(sformatowanaLinia[j]));
+							nodesList.add(Integer.parseInt(formattedLine[j]));
 						} catch (NumberFormatException e) {}
 					}
 				}
@@ -154,15 +157,15 @@ public class IOprotocols {
 			// Etap II - lista T-inwariantow
 			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
 			invariantsList.clear();
-			while ((wczytanaLinia = buffer.readLine()) != null) {
-				if(wczytanaLinia.contains("@")||wczytanaLinia.isEmpty()){break;}
-				String[] sformatowanaLinia = wczytanaLinia.split("\\|");
-				sformatowanaLinia = sformatowanaLinia[1].split(" ");
-				for(int i = 0; i<sformatowanaLinia.length;i++)
+			while ((readLine = buffer.readLine()) != null) {
+				if(readLine.contains("@")||readLine.isEmpty()){break;}
+				String[] formattedLine = readLine.split("\\|");
+				formattedLine = formattedLine[1].split(" ");
+				for(int i = 0; i<formattedLine.length;i++)
 				{
-					if(sformatowanaLinia[i].isEmpty()){}else
+					if(formattedLine[i].isEmpty()){}else
 					{
-						tmpInvariant.add(Integer.parseInt(sformatowanaLinia[i]));
+						tmpInvariant.add(Integer.parseInt(formattedLine[i]));
 					}
 				}
 				if(tmpInvariant.size() == nodesList.size())
@@ -191,9 +194,9 @@ public class IOprotocols {
 		try {
 			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
-			String wczytanaLinia = buffer.readLine();
+			String readLine = buffer.readLine();
 
-			if (!wczytanaLinia.contains("minimal semipositive transition")) {
+			if (!readLine.contains("minimal semipositive transition")) {
 				Object[] options = {"Force read as Charlie file", "Terminate reading",};
 				int n = JOptionPane.showOptionDialog(null,
 								"Unknown or corrupted invariants file format! Read anyway as Charlie invariants?",
@@ -217,9 +220,9 @@ public class IOprotocols {
 			for(int t=0; t<transSetSize; t++) //init
 				tmpInvariant.add(0);
 			
-			wczytanaLinia = buffer.readLine();
-			while (wczytanaLinia != null && wczytanaLinia.length() > 0) {
-				String lineStart = wczytanaLinia.substring(0, wczytanaLinia.indexOf("|"));
+			readLine = buffer.readLine();
+			while (readLine != null && readLine.length() > 0) {
+				String lineStart = readLine.substring(0, readLine.indexOf("|"));
 				lineStart = lineStart.replace(" ", "");
 				lineStart = lineStart.replace("\t", "");
 				
@@ -233,15 +236,15 @@ public class IOprotocols {
 				} 
 				firstPass = false;
 				
-				wczytanaLinia = wczytanaLinia.substring(wczytanaLinia.indexOf("|")+1);
-				wczytanaLinia = wczytanaLinia.replace(" ", "");
-				wczytanaLinia = wczytanaLinia.replace("\t", "");
+				readLine = readLine.substring(readLine.indexOf("|")+1);
+				readLine = readLine.replace(" ", "");
+				readLine = readLine.replace("\t", "");
 				
-				String tmp =  wczytanaLinia.substring(0, wczytanaLinia.indexOf("."));
+				String tmp =  readLine.substring(0, readLine.indexOf("."));
 				int transNumber = Integer.parseInt(tmp); //numer tramzycji w zbiorze
 				
-				wczytanaLinia = wczytanaLinia.substring(wczytanaLinia.indexOf(".")+1);
-				String transName = wczytanaLinia.substring(0, wczytanaLinia.indexOf(":"));
+				readLine = readLine.substring(readLine.indexOf(".")+1);
+				String transName = readLine.substring(0, readLine.indexOf(":"));
 				
 				String orgName = namesCheck.get(transNumber).getName();
 				if(!transName.equals(orgName)) {
@@ -249,9 +252,9 @@ public class IOprotocols {
 							+ " Read transition: "+transName+" (loc:"+transNumber+"), while in net: "+orgName, "text", true);
 				}
 				
-				wczytanaLinia = wczytanaLinia.substring(wczytanaLinia.indexOf(":")+1);
-				wczytanaLinia = wczytanaLinia.replace(",", "");
-				int transValue = Integer.parseInt(wczytanaLinia);
+				readLine = readLine.substring(readLine.indexOf(":")+1);
+				readLine = readLine.replace(",", "");
+				int transValue = Integer.parseInt(readLine);
 				
 				if(transNumber >= transSetSize) {
 					GUIManager.getDefaultGUIManager().log("Charlie invariants file has reference to non existing transitions in the current net."
@@ -261,7 +264,7 @@ public class IOprotocols {
 				}
 				tmpInvariant.set(transNumber, transValue);
 				
-				wczytanaLinia = buffer.readLine();
+				readLine = buffer.readLine();
 			}
 			
 			//dodaj ostatni inwariant do listy
@@ -465,7 +468,7 @@ public class IOprotocols {
 	 * @param sciezka - scieżka do pliku
 	 * @return String - nazwa pliku
 	 */
-	public String getNazwaPliku(String sciezka) {
+	public String getFileName(String sciezka) {
 		String[] tablica = sciezka.split("\\\\");
 		return tablica[tablica.length - 1];
 	}
@@ -729,121 +732,106 @@ public class IOprotocols {
 	}
 
 	/**
-	 * Metoda służąca do zapisywaniu pliku sieci Petriego w formacie programu INA.
+	 * Metoda służąca do zapisywaniu pliku sieci Petriego w formacie PNT (INA).
 	 * @param path - ścieżka zapisu pliku
 	 * @param placeList ArrayList[Place] - lista miejsc sieci
 	 * @param transitionList ArrayList[Transition] - lista tranzycji sieci
 	 * @param arcList ArrayList[Arc] - lista łuków sieci
+	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
-	public void writePNT(String path, ArrayList<Place> placeList, ArrayList<Transition> transitionList, ArrayList<Arc> arcList) {
-		String zawartoscPliku = "P   M   PRE,POST  NETZ 0:";
+	public boolean writePNT(String path, ArrayList<Place> placeList, ArrayList<Transition> transitionList, ArrayList<Arc> arcList) {
+		String fileBuffer = "P   M   PRE,POST  NETZ 0:";
 		try {
-			PrintWriter zapis = new PrintWriter(path);
-			zawartoscPliku += getNazwaPliku(path);
-			zawartoscPliku += "\r\n";
+			PrintWriter writerObject = new PrintWriter(path);
+			fileBuffer += getFileName(path);
+			fileBuffer += "\r\n";
 			//int[] tabPlace = new int[placeList.size()];
 
 			for (int i = 0; i < placeList.size(); i++) {
 				if (i < 9) {
-					zawartoscPliku += " ";
+					fileBuffer += " ";
 				}
 				if (i < 99) {
-					zawartoscPliku += " ";
+					fileBuffer += " ";
 				}
-				zawartoscPliku += i;
-				zawartoscPliku += " ";
-				zawartoscPliku += placeList.get(i).getTokensNumber();
-				zawartoscPliku += "    ";
+				fileBuffer += i;
+				fileBuffer += " ";
+				fileBuffer += placeList.get(i).getTokensNumber();
+				fileBuffer += "    ";
 
 				// łuki
 				if (placeList.get(i).getInArcs().isEmpty()
 						&& placeList.get(i).getOutArcs().isEmpty()) {
-					zawartoscPliku += " ";
+					fileBuffer += " ";
 				}
-				if (placeList.get(i).getInArcs().size() > 0
-						&& placeList.get(i).getOutArcs().isEmpty()) {
+				if (placeList.get(i).getInArcs().size() > 0 && placeList.get(i).getOutArcs().isEmpty()) {
 					for (int j = 0; j < placeList.get(i).getInArcs().size(); j++) {
-						zawartoscPliku += " ";
-						zawartoscPliku += transitionList.indexOf(placeList
-								.get(i).getInArcs().get(j).getStartNode());
+						fileBuffer += " ";
+						fileBuffer += transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode());
 						if (placeList.get(i).getInArcs().get(j).getWeight() > 1) {
-							zawartoscPliku += ": "
-									+ placeList.get(i).getInArcs().get(j)
-											.getWeight();
+							fileBuffer += ": "+ placeList.get(i).getInArcs().get(j).getWeight();
 						}
 					}
 				}
-				if (placeList.get(i).getInArcs().size() > 0
-						&& placeList.get(i).getOutArcs().size() > 0) {
+				if (placeList.get(i).getInArcs().size() > 0 && placeList.get(i).getOutArcs().size() > 0) {
 					for (int j = 0; j < placeList.get(i).getInArcs().size(); j++) {
-						zawartoscPliku += " ";
-						zawartoscPliku += transitionList.indexOf(placeList
-								.get(i).getInArcs().get(j).getStartNode());
+						fileBuffer += " ";
+						fileBuffer += transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode());
 						if (placeList.get(i).getInArcs().get(j).getWeight() > 1) {
-							zawartoscPliku += ": "
-									+ placeList.get(i).getInArcs().get(j)
-											.getWeight();
+							fileBuffer += ": "+ placeList.get(i).getInArcs().get(j).getWeight();
 						}
 					}
-					zawartoscPliku += ",";
+					fileBuffer += ",";
 					for (int j = 0; j < placeList.get(i).getOutArcs().size(); j++) {
-						zawartoscPliku += " ";
-						zawartoscPliku += transitionList.indexOf(placeList
-								.get(i).getOutArcs().get(j).getEndNode());
+						fileBuffer += " ";
+						fileBuffer += transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode());
 						if (placeList.get(i).getOutArcs().get(j).getWeight() > 1) {
-							zawartoscPliku += ": "
-									+ placeList.get(i).getOutArcs().get(j)
-											.getWeight();
+							fileBuffer += ": "+ placeList.get(i).getOutArcs().get(j).getWeight();
 						}
 					}
 				}
-				if (placeList.get(i).getInArcs().isEmpty()
-						&& placeList.get(i).getOutArcs().size() > 0) {
-					zawartoscPliku += ",";
+				if (placeList.get(i).getInArcs().isEmpty() && placeList.get(i).getOutArcs().size() > 0) {
+					fileBuffer += ",";
 					for (int j = 0; j < placeList.get(i).getOutArcs().size(); j++) {
-						zawartoscPliku += " ";
-						zawartoscPliku += transitionList.indexOf(placeList
-								.get(i).getOutArcs().get(j).getEndNode());
+						fileBuffer += " ";
+						fileBuffer += transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode());
 						if (placeList.get(i).getOutArcs().get(j).getWeight() > 1) {
-							zawartoscPliku += ": "
-									+ placeList.get(i).getOutArcs().get(j)
-											.getWeight();
+							fileBuffer += ": "+ placeList.get(i).getOutArcs().get(j).getWeight();
 						}
 					}
 				}
-				// zawartoscPliku
-				zawartoscPliku += "\r\n";
+				fileBuffer += "\r\n";
 			}
-			zawartoscPliku += "@\r\n";
-			zawartoscPliku += "place nr.             name capacity time\r\n";
+			fileBuffer += "@\r\n";
+			fileBuffer += "place nr.             name capacity time\r\n";
 
 			for (int i = 0; i < placeList.size(); i++) {
-				zawartoscPliku += "     ";
+				fileBuffer += "     ";
 				if (i < 9) {
-					zawartoscPliku += " ";
+					fileBuffer += " ";
 				}
 				if (i < 99) {
-					zawartoscPliku += " ";
+					fileBuffer += " ";
 				}
-				zawartoscPliku += i;
-				zawartoscPliku += ": ";
-				zawartoscPliku += placeList.get(i).getName() + "                  ";
-				zawartoscPliku += "65535    0";
-				zawartoscPliku += "\r\n";
+				fileBuffer += i;
+				fileBuffer += ": ";
+				fileBuffer += placeList.get(i).getName() + "                  ";
+				fileBuffer += "65535    0";
+				fileBuffer += "\r\n";
 			}
 
-			zawartoscPliku += "@\r\n";
-			zawartoscPliku += "trans nr.             name priority time\r\n";
+			fileBuffer += "@\r\n";
+			fileBuffer += "trans nr.             name priority time\r\n";
 			for (int i = 0; i < transitionList.size(); i++) {
-				zawartoscPliku += "     ";
+				fileBuffer += "     ";
 				if (i <= 9) {
-					zawartoscPliku += " ";
+					fileBuffer += " ";
 				}
 				if (i <= 99) {
-					zawartoscPliku += " ";
+					fileBuffer += " ";
 				}
-				zawartoscPliku += i;
-				zawartoscPliku += ": ";
+				fileBuffer += i;
+				fileBuffer += ": ";
 				/*
 				if (transitionList.get(i).getName().length() > 16) {
 					tmpNazwy = transitionList.get(i).getName();
@@ -858,18 +846,22 @@ public class IOprotocols {
 					}
 				}*/
 				
-				zawartoscPliku += transitionList.get(i).getName() + "                      ";
-				zawartoscPliku += "0    0";
-				zawartoscPliku += "\r\n";
+				fileBuffer += transitionList.get(i).getName() + "                      ";
+				fileBuffer += "0    0";
+				fileBuffer += "\r\n";
 			}
-			zawartoscPliku += "@";
-			zapis.println(zawartoscPliku);
-			zapis.close();
+			
+			fileBuffer += "@";
+			writerObject.println(fileBuffer);
+			writerObject.close();
 			GUIManager.getDefaultGUIManager().log("Petri net exported as .pnt INA format. File: "+path, "text", true);
+			GUIManager.getDefaultGUIManager().markNetSaved();
+			return true;
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
-			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writePNT",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writePNT", JOptionPane.ERROR_MESSAGE);
 			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
+			return false;
 		}
 	}
 	

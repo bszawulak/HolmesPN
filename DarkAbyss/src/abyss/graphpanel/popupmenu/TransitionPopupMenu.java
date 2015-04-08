@@ -32,6 +32,7 @@ public class TransitionPopupMenu extends PetriNetElementPopupMenu {
 						return;
 					
 					getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
+					GUIManager.getDefaultGUIManager().markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, "Option possible if more than one transition is selected.", "Too few selections", 
 							JOptionPane.INFORMATION_MESSAGE);
@@ -48,6 +49,7 @@ public class TransitionPopupMenu extends PetriNetElementPopupMenu {
 						return;
 					
 					getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
+					GUIManager.getDefaultGUIManager().markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, "Option possible for one transition only.", "Too many selections", 
 							JOptionPane.INFORMATION_MESSAGE);

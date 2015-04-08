@@ -25,7 +25,6 @@ import abyss.math.Arc.TypesOfArcs;
  *
  */
 public class NetHandler_Time extends NetHandler {
-
 	// Zmienne boolowskie parsera
 	public boolean Snoopy = false;
 	public boolean node = false;
@@ -392,6 +391,7 @@ public class NetHandler_Time extends NetHandler {
 				Place tmpPlace = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
 				tmpPlace.setNamesLocations(namesElLocations);
 				nodesList.add(tmpPlace);
+				IdGenerator.getNextPlaceId();
 				
 				//tmpNode = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
 				//nodesList.add(tmpNode);
@@ -403,10 +403,13 @@ public class NetHandler_Time extends NetHandler {
 					tmpTTran.setMaxFireTime(nodeLFT);
 					tmpTTran.setNamesLocations(namesElLocations);
 					tmpTransitionList.add(tmpTTran);
+					
+					IdGenerator.getNextTransitionId();
 				} else {
 					Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
 					tmpTran.setNamesLocations(namesElLocations);
 					tmpTransitionList.add(tmpTran);
+					IdGenerator.getNextTransitionId();
 				}
 			}
 

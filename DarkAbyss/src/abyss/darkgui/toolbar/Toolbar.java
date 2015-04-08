@@ -372,6 +372,8 @@ public class Toolbar extends BorderDock {
 			@SuppressWarnings("unused")
 			public void actionPerformed(ActionEvent actionEvent) 
 			{ 
+				//TODO: 
+				
 				JTree test = GUIManager.getDefaultGUIManager().getToolBox().getTree();
 				GUIManager.getDefaultGUIManager().getToolBox().selectPointer();
 				//test.setSelectionPath(new TreePath());
@@ -407,7 +409,6 @@ public class Toolbar extends BorderDock {
 		return analysisDockables;
 	}
 	
-	//TODO:
 	@SuppressWarnings("serial")
 	private ArrayList<ButtonDockable> createNetTransormBar() {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
@@ -416,7 +417,6 @@ public class Toolbar extends BorderDock {
 			public void actionPerformed(ActionEvent actionEvent) {
 				NetworkTransformations nt = new NetworkTransformations();
 				nt.extendNetwork(true);
-				//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 			}
 		};
 		analysisDockables.add(createButtonDockable("EXTnetButton", extendNetButton));

@@ -80,6 +80,7 @@ public class InvariantsCalculator implements Runnable {
 			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants());
 			project.setInvariantsMatrix(getInvariants());
+			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
 			logInternal("Operation successfull, invariants found: "+getInvariants().size()+"\n", true);
 		} catch (Exception e) {
 			log("Critical error while generating invariants. Possible net state change.", "error", false);

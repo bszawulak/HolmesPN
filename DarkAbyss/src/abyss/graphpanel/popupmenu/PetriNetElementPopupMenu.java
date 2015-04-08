@@ -66,6 +66,7 @@ public class PetriNetElementPopupMenu extends GraphPanelPopupMenu {
 						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 					}
 					getGraphPanel().getSelectionManager().deleteAllSelectedElements();
+					GUIManager.getDefaultGUIManager().markNetChange();
 				}
 			}
 		});

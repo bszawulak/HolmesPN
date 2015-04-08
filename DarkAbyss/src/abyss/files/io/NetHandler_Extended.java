@@ -370,10 +370,12 @@ public class NetHandler_Extended extends NetHandler {
 					Place tmpPlace = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
 					tmpPlace.setNamesLocations(namesElLocations);
 					nodesList.add(tmpPlace);
+					IdGenerator.getNextPlaceId();
 				} else {	
 					Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
 					tmpTran.setNamesLocations(namesElLocations);
 					tmpTransitionList.add(tmpTran);
+					IdGenerator.getNextTransitionId();
 				}
 
 				// zerowanie zmiennych

@@ -797,12 +797,12 @@ public class GraphPanel extends JComponent {
 			Arc a = getSelectionManager().getPossiblySelectedArc(mousePt);
 			// nie kliknięto ani w Node ani w Arc
 			if (el == null && a == null) {
-				if (e.getButton() == MouseEvent.BUTTON3) {
+				if (e.getButton() == MouseEvent.BUTTON3) { //menu kontekstowe
 					if (getDrawMode() == DrawModes.POINTER)
 						getSheetPopupMenu().show(e);
 					
 					setDrawMode(DrawModes.POINTER);
-					GUIManager.getDefaultGUIManager().getToolBox().selectPointer(); //przywraca tryb wybierania
+					GUIManager.getDefaultGUIManager().getToolBox().selectPointer(); //przywraca tryb wybierania z JTree po lewej
 				}
 				if (!e.isShiftDown() && !e.isControlDown()) {
 					getSelectionManager().deselectAllElements();
@@ -824,6 +824,7 @@ public class GraphPanel extends JComponent {
 						
 						addNewPlace(mousePt);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						GUIManager.getDefaultGUIManager().markNetChange();
 						break;
 					case TRANSITION:
 						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
@@ -832,6 +833,7 @@ public class GraphPanel extends JComponent {
 						
 						addNewTransition(mousePt);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						GUIManager.getDefaultGUIManager().markNetChange();
 						break;
 					case ARC:
 						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
@@ -847,6 +849,7 @@ public class GraphPanel extends JComponent {
 						
 						addNewTimeTransition(mousePt);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						GUIManager.getDefaultGUIManager().markNetChange();
 						break;
 					default:
 						break;
@@ -858,13 +861,14 @@ public class GraphPanel extends JComponent {
 						|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL) {
 					handleArcsDrawing(el, getDrawMode());
 					
-				} else if (getDrawMode() == DrawModes.ERASER) {
+				} else if (getDrawMode() == DrawModes.ERASER) { //kasowanie czegoś
 					if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
 						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 					}
 					
 					getSelectionManager().deleteElementLocation(el);
 					GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+					GUIManager.getDefaultGUIManager().markNetChange();
 				} else {
 					if (e.isShiftDown())
 						getSelectionManager().selectElementLocation(el);
@@ -876,7 +880,7 @@ public class GraphPanel extends JComponent {
 					}
 					clearDrawnArc();
 				}
-				if (e.getButton() == MouseEvent.BUTTON3) {
+				if (e.getButton() == MouseEvent.BUTTON3) { //menu kontekstowe węzła
 					if (el.getParentNode().getType() == PetriNetElementType.PLACE)
 						getPlacePopupMenu().show(e);
 					else
@@ -892,6 +896,7 @@ public class GraphPanel extends JComponent {
 					
 					getSelectionManager().deleteArc(a);
 					GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+					GUIManager.getDefaultGUIManager().markNetChange();
 				} else {
 					if (e.isShiftDown())
 						a.setSelected(true);
@@ -903,7 +908,7 @@ public class GraphPanel extends JComponent {
 					}
 				}
 				clearDrawnArc();
-				if (e.getButton() == MouseEvent.BUTTON3) {
+				if (e.getButton() == MouseEvent.BUTTON3) { // menu konteksowe łuku
 					getArcPopupMenu().show(e);
 				}
 			}
@@ -981,10 +986,10 @@ public class GraphPanel extends JComponent {
 								arc.setArcType(TypesOfArcs.EQUAL);
 								getArcs().add(arc);
 							}
-							
-							
 
+							
 							GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+							GUIManager.getDefaultGUIManager().markNetChange();
 						}
 					}
 				}

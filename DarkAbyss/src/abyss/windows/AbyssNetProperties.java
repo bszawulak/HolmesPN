@@ -15,8 +15,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,6 +31,7 @@ import abyss.math.Node;
 import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
+import abyss.varia.Check;
 import abyss.workspace.ExtensionFileFilter;
 
 /**
@@ -53,12 +52,18 @@ public class AbyssNetProperties extends JFrame {
 	private ArrayList<ArrayList<Object>> properties = new ArrayList<ArrayList<Object>>();
 	
 	//komponenty do ustawienia:
-	JLabel label_netName;
-	JLabel label_nodesNumber;
-	JLabel label_transitionsNumber;
-	JLabel label_placesNumber;
-	JLabel label_arcNumber;
-	JLabel label_invNumber;
+	private JLabel label_netName;
+	private JLabel label_nodesNumber;
+	private JLabel label_transitionsNumber;
+	private JLabel label_placesNumber;
+	private JLabel label_arcNumber;
+	private JLabel label_invNumber;
+	
+	private JLabel label_arcNormal;
+	private JLabel label_arcReadarc;
+	private JLabel label_arcInhibitor;
+	private JLabel label_arcReset;
+	private JLabel label_arcEqual;
 	
 	JPanel staticPropertiesPanel; //panel właściwości
 	JTextArea textField;
@@ -76,16 +81,13 @@ public class AbyssNetProperties extends JFrame {
 		this.setTitle("Petri net general information and properties");
 		
 		setLayout(new BorderLayout());
-		setSize(new Dimension(650, 500));
+		setSize(new Dimension(650, 550));
 		setLocation(50, 50);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setResizable(false);
 		
 		JPanel main = createMainPanel();
-		JPanel buttonsPanel = createButtonsPanel();
-		
 		add(main, BorderLayout.CENTER);
-		add(buttonsPanel, BorderLayout.EAST);
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
@@ -123,6 +125,13 @@ public class AbyssNetProperties extends JFrame {
 			inv_number = invariantsMatrix.size();
 		}
 		label_invNumber.setText(inv_number+"");
+		
+		ArrayList<Integer> arcClasses = Check.getArcClassCount();
+		label_arcNormal.setText(arcClasses.get(0)+"");
+		label_arcReadarc.setText(arcClasses.get(1)+"");
+		label_arcInhibitor.setText(arcClasses.get(2)+"");
+		label_arcReset.setText(arcClasses.get(3)+"");
+		label_arcEqual.setText(arcClasses.get(4)+"");
 		
 		fillStaticProperties();
 		
@@ -201,68 +210,113 @@ public class AbyssNetProperties extends JFrame {
 		panel.setLayout(null);  /** (ノಠ益ಠ)ノ彡┻━━━┻ |   */
 		panel.setBorder(BorderFactory.createTitledBorder("General Petri net informations:"));
 		
-		int currentXAxis = 10;
-		int currentYAxis = 15;
+		int xPos = 10;
+		int yPosA = 15;
+		int yPosB = 15;
 		int spacing = 20;
 		int numberLabelWidth = 70;
 		
-		//Poniższe idą od lewego górnego rogu panelu
-		//JLabel label1 = new JLabel("General Petri net informations:");
-		//label1.setBounds(currentXAxis, currentYAxis, 200, 20);
-		//panel.add(label1);
 		//NET NAME:
 		JLabel label1 = new JLabel("Project name:");
-		label1.setBounds(currentXAxis, currentYAxis, 100, 20);
+		label1.setBounds(xPos, yPosA, 100, 20);
 		panel.add(label1);
 		label_netName = new JLabel("N/A");
-		label_netName.setBounds(currentXAxis+label1.getWidth()+10, label1.getLocation().y, 400, 20);
+		label_netName.setBounds(xPos+label1.getWidth()+10, label1.getLocation().y, 400, 20);
 		panel.add(label_netName);
 		//NET NODES:
 		JLabel label2 = new JLabel("Nodes:");
-		label2.setBounds(currentXAxis, currentYAxis+=spacing, 100, 20);
+		label2.setBounds(xPos, yPosA+=spacing, 100, 20);
 		panel.add(label2);
 		label_nodesNumber = new JLabel("N/A");
-		label_nodesNumber.setBounds(currentXAxis+label2.getWidth()+10, label2.getLocation().y, numberLabelWidth, 20);
+		label_nodesNumber.setBounds(xPos+label2.getWidth()+10, label2.getLocation().y, numberLabelWidth, 20);
 		panel.add(label_nodesNumber);
 		//NET TRANSITION:
 		JLabel label3 = new JLabel("Transitions:");
-		label3.setBounds(currentXAxis, currentYAxis+=spacing, 100, 20);
+		label3.setBounds(xPos, yPosA+=spacing, 100, 20);
 		panel.add(label3);
 		label_transitionsNumber = new JLabel("N/A");
-		label_transitionsNumber.setBounds(currentXAxis+label3.getWidth()+10, label3.getLocation().y, numberLabelWidth, 20);
+		label_transitionsNumber.setBounds(xPos+label3.getWidth()+10, label3.getLocation().y, numberLabelWidth, 20);
 		panel.add(label_transitionsNumber);
 		//NET PLACES:
 		JLabel label4 = new JLabel("Places:");
-		label4.setBounds(currentXAxis, currentYAxis+=spacing, 100, 20);
+		label4.setBounds(xPos, yPosA+=spacing, 100, 20);
 		panel.add(label4);
 		label_placesNumber = new JLabel("N/A");
-		label_placesNumber.setBounds(currentXAxis+label4.getWidth()+10, label4.getLocation().y, numberLabelWidth, 20);
+		label_placesNumber.setBounds(xPos+label4.getWidth()+10, label4.getLocation().y, numberLabelWidth, 20);
 		panel.add(label_placesNumber);
 		//NET PLACES:
 		JLabel label5 = new JLabel("Arcs:");
-		label5.setBounds(currentXAxis, currentYAxis+=spacing, 100, 20);
+		label5.setBounds(xPos, yPosA+=spacing, 100, 20);
 		panel.add(label5);
 		label_arcNumber = new JLabel("N/A");
-		label_arcNumber.setBounds(currentXAxis+label5.getWidth()+10, label5.getLocation().y, numberLabelWidth, 20);
+		label_arcNumber.setBounds(xPos+label5.getWidth()+10, label5.getLocation().y, numberLabelWidth, 20);
 		panel.add(label_arcNumber);
 		//NET INVARIANTS:
 		JLabel label6 = new JLabel("Invariants:");
-		label6.setBounds(currentXAxis, currentYAxis+=spacing, 100, 20);
+		label6.setBounds(xPos, yPosA+=spacing, 100, 20);
 		panel.add(label6);
 		label_invNumber = new JLabel("N/A");
-		label_invNumber.setBounds(currentXAxis+label6.getWidth()+10, label6.getLocation().y, numberLabelWidth, 20);
+		label_invNumber.setBounds(xPos+label6.getWidth()+10, label6.getLocation().y, numberLabelWidth, 20);
 		panel.add(label_invNumber);
+		
+		//II KOLUMNA:
+		JLabel label11 = new JLabel("Normal arc:");
+		label11.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		panel.add(label11);
+		label_arcNormal = new JLabel("0");
+		label_arcNormal.setBounds(xPos+240, yPosB, 60, 20);
+		panel.add(label_arcNormal);
+		
+		JLabel label12 = new JLabel("Read-arc:");
+		label12.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		panel.add(label12);
+		label_arcReadarc = new JLabel("0");
+		label_arcReadarc.setBounds(xPos+240, yPosB, 60, 20);
+		panel.add(label_arcReadarc);
+		
+		JLabel label13 = new JLabel("Inhibitor arc:");
+		label13.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		panel.add(label13);
+		label_arcInhibitor = new JLabel("0");
+		label_arcInhibitor.setBounds(xPos+240, yPosB, 60, 20);
+		panel.add(label_arcInhibitor);
+		
+		JLabel label14 = new JLabel("Reset arc:");
+		label14.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		panel.add(label14);
+		label_arcReset = new JLabel("0");
+		label_arcReset.setBounds(xPos+240, yPosB, 60, 20);
+		panel.add(label_arcReset);
+		
+		JLabel label15 = new JLabel("Equal arc:");
+		label15.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		panel.add(label15);
+		label_arcEqual = new JLabel("0");
+		label_arcEqual.setBounds(xPos+240, yPosB, 60, 20);
+		panel.add(label_arcEqual);
 		
 		//Panel właściwości
 		staticPropertiesPanel = new JPanel(new FlowLayout());
 		staticPropertiesPanel.setBorder(BorderFactory.createTitledBorder("Net static properties:"));
-		staticPropertiesPanel.setBounds(label2.getLocation().x+200, label2.getLocation().y, 300, 100);
+		staticPropertiesPanel.setBounds(330, 35, 300, 100);
 		panel.add(staticPropertiesPanel);
 		
+		yPosA += 25;
+		
+		JButton saveButton = new JButton("Save to file");
+		saveButton.setBounds(xPos, yPosA, 120, 30);
+		saveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				saveToFile();
+			}
+		});
+		panel.add(saveButton);
+		
+		yPosA += 10;
 		//Panel informacji o invariantach
 		JPanel invInfoPanel = new JPanel(new BorderLayout());
 		invInfoPanel.setBorder(BorderFactory.createTitledBorder("Invariants details:"));
-		invInfoPanel.setBounds(currentXAxis-5, currentYAxis+=spacing, 506, 325);
+		invInfoPanel.setBounds(xPos-5, yPosA+=spacing, 635, 345);
 		
 		textField = new JTextArea();
 		//textField.setLineWrap(true);
@@ -308,10 +362,8 @@ public class AbyssNetProperties extends JFrame {
 				    private String[] yesWeCan;
 				    public void actionPerformed(ActionEvent e) {
 				    	JOptionPane.showMessageDialog(ego, 
-				    			"Petri net meaning:\n"
-				    			+yesWeCan[1]
-				    			+"\n\nBiological interpretation:\n"
-				    			+yesWeCan[2],
+				    			"Petri net meaning:\n" + yesWeCan[1]
+				    			+ "\n\nBiological interpretation:\n" + yesWeCan[2],
 				    			yesWeCan[0], JOptionPane.INFORMATION_MESSAGE);
 				    }
 				    private ActionListener goForthMyMinion(String[] codeInjection){
@@ -326,49 +378,7 @@ public class AbyssNetProperties extends JFrame {
 			staticPropertiesPanel.add(pButton);
 		}
 	}
-	
-	/**
-	 * Metoda odpowiedzialna za tworzenia panelu bocznego z przyciskami okna.
-	 * @return JPanel - panel boczny przycisków
-	 */
-	private JPanel createButtonsPanel() {
-		int buttonX = 100;
-		int buttonY = 40;
-		int spaceY = 10;
-		JPanel panel = new JPanel();
-		panel.setBorder(BorderFactory.createTitledBorder("Options"));
-		JPanel inPanel = new JPanel();
-		inPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); //panel z odstępami
-		inPanel.setLayout(new BoxLayout(inPanel, BoxLayout.Y_AXIS));
-		
-		
-		JButton refreshButton = new JButton("Refresh");
-		refreshButton.setMinimumSize(new Dimension(buttonX, buttonY)); 
-		refreshButton.setMaximumSize(new Dimension(buttonX, buttonY));
-		//refreshButton.setPreferredSize(new Dimension(80,40)); //BoxLayout ma to gdzieś, dlatego patrz wyżej
-		refreshButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				fillData();
-			}
-		});
-		inPanel.add(refreshButton);
-		inPanel.add(Box.createVerticalStrut(spaceY));
-		
-		JButton saveButton = new JButton("Save to file");
-		saveButton.setMinimumSize(new Dimension(buttonX, buttonY)); 
-		saveButton.setMaximumSize(new Dimension(buttonX, buttonY));
-		saveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				saveToFile();
-			}
-		});
-		inPanel.add(saveButton);
-		inPanel.add(Box.createVerticalStrut(spaceY));
-		
-		panel.add(inPanel);
-		return panel;
-	}
-	
+
 	/**
 	 * Metoda zapisuje aktualną wersję właściwości sieci do wskazanego pliku tekstowego.
 	 */
@@ -415,8 +425,6 @@ public class AbyssNetProperties extends JFrame {
 					bw.write("Number of invariants: "+inv_number+"\n");
 					bw.write(textField.getText());
 				}
-
-				
 				bw.close();
 			} catch (Exception e) {
 				

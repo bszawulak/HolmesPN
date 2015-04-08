@@ -50,8 +50,9 @@ public class SnoopyWriter {
 	/**
 	 * Metoda realizująca zapis do pliku SPPED. Działa - 03.01.2015. I na tym
 	 * się zatrzymajmy w opisach.
+	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
-	public void writeSPPED(String filePath) {
+	public boolean writeSPPED(String filePath) {
 		int startNodeId = 226; // bo tak
 		int currentActiveID = startNodeId;
 		int arcsNumber = 0;
@@ -132,16 +133,19 @@ public class SnoopyWriter {
 			bw.close();
 			
 			GUIManager.getDefaultGUIManager().log("Net has been exported as SPPED file: "+filePath, "text", true);
+			GUIManager.getDefaultGUIManager().markNetSaved();
+			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Critical error while exporting net to the SPPED file: "+filePath, "error", true);		
+			GUIManager.getDefaultGUIManager().log("Critical error while exporting net to the SPPED file: "+filePath, "error", true);
+			return false;
 		}
 	}
 	
 	/**
-	 * Metoda realizująca zapis do pliku SPPED. Działa - 03.01.2015. I na tym
-	 * się zatrzymajmy w opisach.
+	 * Metoda realizująca zapis do pliku SPPED. Działa - 08.04.2015. I na tym zakończmy jej opis.
+	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
-	public void writeSPEPT(String filePath) {
+	public boolean writeSPEPT(String filePath) {
 		int startNodeId = 226; // bo tak
 		int currentActiveID = startNodeId;
 		//int arcsNumber = 0;
@@ -258,8 +262,11 @@ public class SnoopyWriter {
 			bw.close();
 			
 			GUIManager.getDefaultGUIManager().log("Net has been exported as SPPED file: "+filePath, "text", true);
+			GUIManager.getDefaultGUIManager().markNetSaved();
+			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Critical error while exporting net to the SPPED file: "+filePath, "error", true);		
+			GUIManager.getDefaultGUIManager().log("Critical error while exporting net to the SPPED file: "+filePath, "error", true);
+			return false;
 		}
 	}
 	

@@ -744,6 +744,7 @@ public class SelectionManager {
 	 * @param arc Arc - łuk który ma zostać usunięty
 	 */
 	public void deleteArc(Arc arc) {
+		GUIManager.getDefaultGUIManager().markNetChange();
 		arc.unlinkElementLocations();
 		this.deselectArc(arc);
 		this.getGraphPanelArcs().remove(arc);

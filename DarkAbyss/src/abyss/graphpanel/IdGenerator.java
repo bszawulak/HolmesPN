@@ -14,7 +14,7 @@ public class IdGenerator {
 	/**
 	 * Resetuje wartości id do zer.
 	 */
-	public static void resetIDgenarator() {
+	public static void resetIDgenerator() {
 		lastId = 0;
 		lastPlaceId = 0;
 		lastTransitionId = 0;

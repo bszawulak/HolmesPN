@@ -65,9 +65,11 @@ public class GUIOperations {
 		if(!file.exists())
 			return;
 		
-		overlord.getWorkspace().getProject().loadFromFile(file.getPath());
-		overlord.setLastPath(file.getParentFile().getPath());
-		overlord.getSimulatorBox().createSimulatorProperties();
+		boolean status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
+		if(status == true) {
+			overlord.setLastPath(file.getParentFile().getPath());
+			overlord.getSimulatorBox().createSimulatorProperties();
+		}
 	}
 	
 	/**
@@ -85,9 +87,11 @@ public class GUIOperations {
 		if(!file.exists()) 
 			return;
 		
-		overlord.getWorkspace().getProject().loadFromFile(file.getPath());
-		overlord.setLastPath(file.getParentFile().getPath());
-		overlord.getSimulatorBox().createSimulatorProperties();
+		boolean status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
+		if(status == true) {
+			overlord.setLastPath(file.getParentFile().getPath());
+			overlord.getSimulatorBox().createSimulatorProperties();
+		}
 	}
 	
 	/**
@@ -139,6 +143,7 @@ public class GUIOperations {
 					fileExtension = "";
 				else
 					fileExtension = ".inv";
+				
 				overlord.getWorkspace().getProject().saveInvariantsToInaFormat(file.getPath() + fileExtension);
 				overlord.setLastPath(file.getParentFile().getPath());
 			} else if (description.contains("Comma")) {
@@ -221,14 +226,15 @@ public class GUIOperations {
 
 	/**
 	 * Metoda odpowiedzialna za zapis projektu sieci do pliku natywnego aplikacji.
+	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
-	public void saveAsAbyssFile() {
+	public boolean saveAsAbyssFile() {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
 		if(selectedFile.equals(""))
-			return;
+			return false;
 		
 		File file = new File(selectedFile);
 
@@ -236,14 +242,16 @@ public class GUIOperations {
 		if(selectedFile.toLowerCase().contains(".abyss"))
 			fileExtension = "";
 		
-		overlord.getWorkspace().getProject().saveAsAbyss(file.getPath() + fileExtension);
+		boolean status = overlord.getWorkspace().getProject().saveAsAbyss(file.getPath() + fileExtension);
 		overlord.setLastPath(file.getParentFile().getPath());
+		return status;
 	}
 	
 	/**
 	 * Metoda ogólnego zapisu, pozwala wybrać format wyjściowy. Domyślnie SPPED
+	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
-	public void saveAsGlobal() {
+	public boolean saveAsGlobal() {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[4];
 		filters[0] = new ExtensionFileFilter("Snoopy Petri Net (.spped)", new String[] { "SPPED" });
@@ -252,47 +260,52 @@ public class GUIOperations {
 		filters[3] = new ExtensionFileFilter("INA PNT format (.pnt)", new String[] { "PNT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
 		if(selectedFile.equals("")) {
-			return;
+			return false;
 		}
 		
 		String extension = Tools.lastExtension;
 		if(extension == null || extension.equals("")) {
 			JOptionPane.showMessageDialog(null, "File choosing error. Cannot proceed.", "Error", JOptionPane.ERROR_MESSAGE);
 			overlord.log("File choosing error. No extension: "+extension, "error", true);
-			return;
+			return false;
 		} else if (extension.contains(".spped")) {
 			File file = new File(selectedFile);
 			String fileExtension = ".spped";
 			if(selectedFile.toLowerCase().contains(".spped"))
 				fileExtension = "";
 			
-			overlord.getWorkspace().getProject().saveAsSPPED(file.getPath() + fileExtension);
+			boolean status = overlord.getWorkspace().getProject().saveAsSPPED(file.getPath() + fileExtension);
 			overlord.setLastPath(file.getParentFile().getPath());
+			return status;
 		} else if (extension.contains(".spept")) {
 			File file = new File(selectedFile);
 			String fileExtension = ".spept";
 			if(selectedFile.toLowerCase().contains(".spept"))
 				fileExtension = "";
 			
-			overlord.getWorkspace().getProject().saveAsSPEPT(file.getPath() + fileExtension);
+			boolean status = overlord.getWorkspace().getProject().saveAsSPEPT(file.getPath() + fileExtension);
 			overlord.setLastPath(file.getParentFile().getPath());
+			return status;
 		} else if (extension.contains(".abyss")) {
 			File file = new File(selectedFile);
 			String fileExtension = ".abyss";
 			if(selectedFile.toLowerCase().contains(".abyss"))
 				fileExtension = "";
 			
-			overlord.getWorkspace().getProject().saveAsAbyss(file.getPath() + fileExtension);
+			boolean status = overlord.getWorkspace().getProject().saveAsAbyss(file.getPath() + fileExtension);
 			overlord.setLastPath(file.getParentFile().getPath());
+			return status;
 		} else if (extension.contains(".pnt") ) {
 			File file = new File(selectedFile);
 			String fileExtension = ".pnt";
 			if(selectedFile.toLowerCase().contains(".pnt"))
 				fileExtension = "";
 			
-			overlord.getWorkspace().getProject().saveAsPNT(file.getPath() + fileExtension);
+			boolean status = overlord.getWorkspace().getProject().saveAsPNT(file.getPath() + fileExtension);
 			overlord.setLastPath(file.getParentFile().getPath());
+			return status;
 		}
+		return false;
 	}
 	
 	/**

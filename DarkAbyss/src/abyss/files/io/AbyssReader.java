@@ -36,9 +36,7 @@ public class AbyssReader {
 	 */
 	public void read(String path) {
 		File source = new File(path);
-
 		try {
-
 			XStream xstream = new XStream(new StaxDriver());
 			xstream.alias("petriNet", PetriNetData.class);
 			PetriNetData PND = (PetriNetData) xstream.fromXML(source);

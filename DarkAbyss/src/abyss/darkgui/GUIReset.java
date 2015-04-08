@@ -46,7 +46,24 @@ public class GUIReset {
 	/**
 	 * Metoda odpowiedzialna za czyszczenie danych i przywracanie programu do stanu początkowego.
 	 */
-	public void newProjectInitiated() {
+	public boolean newProjectInitiated() {
+		boolean status = GUIManager.getDefaultGUIManager().getNetChangeStatus();
+		if(status == true) {
+			Object[] options = {"Continue", "Save and continue", "Cancel",};
+			int n = JOptionPane.showOptionDialog(null,
+							"Network has been changed since last save. Continue and clear all data?",
+							"Data clear warning", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+			if (n == 2) { //save the file
+				return false;
+			} else if (n == 1) {
+				boolean savingStatus = mastah.io.saveAsGlobal();
+				if(savingStatus == false)
+					return false;
+			}
+		}
+		
+		
 		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
 
@@ -80,7 +97,8 @@ public class GUIReset {
 		}
 		
 		reset2ndOrderData();
-		IdGenerator.resetIDgenarator();
+		IdGenerator.resetIDgenerator();
+		return true;
 	}
 	
 	/**
