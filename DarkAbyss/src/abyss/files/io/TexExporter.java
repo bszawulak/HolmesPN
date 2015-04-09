@@ -377,7 +377,7 @@ public class TexExporter {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
 			
 			bw.write("{\\footnotesize"+newline);
-			bw.write("\\begin{longtable}{| p{1.2cm} | p{10.2cm} | p{1.5cm} |}" + newline);
+			bw.write("\\begin{longtable}{| p{1.2cm} | p{5.2cm} | p{7.5cm} |}" + newline);
 			bw.write("\\caption{List of non-trivial MCT sets} \\label{tab:mct} \\\\" + newline);
 			bw.write("\\endfirsthead" + newline);
 			bw.write("\\hline" + newline);
@@ -390,16 +390,17 @@ public class TexExporter {
 				String mctNo = "$m_{"+(i+1)+"}$";
 				String transLine = "";
 				for(int t=0; t<mctSet.get(i).size(); t++) {
-					//transLine += " $t_{";
-					//Transition trNumber = mctSet.get(i).get(t);
-					//int trID = transitions.lastIndexOf(trNumber);
-					//transLine += ""+trID;
-					//transLine += "}$";
-					
-					transLine += " ";
+					transLine += " $t_{";
 					Transition trNumber = mctSet.get(i).get(t);
 					int trID = transitions.lastIndexOf(trNumber);
-					transLine += " "+transitions.get(trID).getName().replace("_", " ");
+					transLine += ""+trID;
+					transLine += "}$";
+					
+					//transLine += " ";
+					//Transition trNumber = mctSet.get(i).get(t);
+					//int trID = transitions.lastIndexOf(trNumber);
+					//transLine += " "+transitions.get(trID).getName().replace("_", " ");
+					
 					if(t+1 < mctSet.get(i).size())
 						transLine += ",";
 				}

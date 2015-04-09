@@ -17,4 +17,8 @@ public class ClusterDataPackage {
 	
 	public boolean showFirings = false;
 	public boolean showScale = false;
+	
+	public ClusterDataPackage() {
+		dataMatrix = new ArrayList<ArrayList<ClusterTransition>>();
+	}
 }
