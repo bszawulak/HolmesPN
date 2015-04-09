@@ -1152,6 +1152,12 @@ public class GraphPanel extends JComponent {
 	public void centerOnPoint(Point mousePt) {
 		//CompositeTabDock xxx = GUIManager.getDefaultGUIManager().getWorkspace().getWorkspaceDock();
 		WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet();
+		if(ws == null) {
+			GUIManager.getDefaultGUIManager().log("Unable to obtaint WorkspaceSheet object. Net sheet panel probably externized outside "
+					+ "program bounds.", "warning", true);
+			return;
+		}
+		
 		int visibleX = ws.getWidth(); 
 		int visibleY = ws.getHeight(); //tyle pikseli dokładnie widać na ekranie
 		//jeśli odejmiemy powyższe od getSize otrzymamy dane ile w pionie i w poziomie nie widać

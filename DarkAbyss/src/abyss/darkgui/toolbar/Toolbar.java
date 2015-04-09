@@ -47,8 +47,9 @@ public class Toolbar extends BorderDock {
 	private BorderDock toolBarBorderDock;
 	private CompositeLineDock horizontalCompositeToolBarDock;
 	private CompositeLineDock verticalCompositeToolBarDock;
-	private LineDock defaultHorizontalToolBarDock;
 	private LineDock defaultVerticalToolBarDock;
+	
+	private boolean buttonsDraggable = false;
 
 	// simulator buttons
 	ToolbarButtonAction reverseLoopButton, reverseStepButton, loopSimButton,
@@ -56,11 +57,11 @@ public class Toolbar extends BorderDock {
 			smallStepFwdSimButton, stepFwdSimButton, resetSimButton;
 
 	// arrays
-	ArrayList<ButtonDockable> buttonDockables;
-	ArrayList<ButtonDockable> simulationDockables;
+	ArrayList<ButtonDockable> ioButtonsDockables;
 	ArrayList<ButtonDockable> analysisDockables;
-	
 	ArrayList<ButtonDockable> netTransformDockables;
+	
+	ArrayList<ButtonDockable> simulationDockables;
 
 	/**
 	 * Konstruktor domyślny obiektu klasy Toolbar.
@@ -68,7 +69,7 @@ public class Toolbar extends BorderDock {
 	public Toolbar() {
 		guiManager = GUIManager.getDefaultGUIManager();
 		maximizePanel = guiManager.getMaximizer();
-		buttonDockables = new ArrayList<ButtonDockable>();
+		ioButtonsDockables = new ArrayList<ButtonDockable>();
 
 		createIObuttons();
 
@@ -88,71 +89,32 @@ public class Toolbar extends BorderDock {
 		getToolBarBorderDock().setDock(verticalCompositeToolBarDock,Position.LEFT);
 
 		// The line docks for the buttons
-		defaultHorizontalToolBarDock = new LineDock(LineDock.ORIENTATION_HORIZONTAL, false,
-			DockingMode.HORIZONTAL_TOOLBAR, DockingMode.VERTICAL_TOOLBAR);
+		//defaultHorizontalToolBarDock = new LineDock(LineDock.ORIENTATION_HORIZONTAL, false,
+		//	DockingMode.HORIZONTAL_TOOLBAR, DockingMode.VERTICAL_TOOLBAR);
+		
 		defaultVerticalToolBarDock = new LineDock(LineDock.ORIENTATION_VERTICAL, false,
 			DockingMode.HORIZONTAL_TOOLBAR, DockingMode.VERTICAL_TOOLBAR);
 
-		// add button to line docks
-		addAllButtonDockablesHorizontally(buttonDockables, defaultHorizontalToolBarDock);
-
-		
-		horizontalCompositeToolBarDock.addChildDock(defaultHorizontalToolBarDock, new Position(0));
+		//addAllButtonDockablesHorizontally(buttonDockables, defaultHorizontalToolBarDock);
+		//horizontalCompositeToolBarDock.addChildDock(defaultHorizontalToolBarDock, new Position(0));
 		
 		//simulationDockables = createSimulationBar();
 		//allowOnlySimulationInitiateButtons(); //na początku aktywne tylko przyciski startu symulacji
 		//horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(simulationDockables), new Position(1));
 		
-		analysisDockables = createAnalysisBar();
-		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(analysisDockables), new Position(2));
-
+		ioButtonsDockables = createIObuttons();
+		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(ioButtonsDockables), new Position(0));
+		
 		netTransformDockables = createNetTransormBar();
 		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(netTransformDockables), new Position(1));
 		
-		verticalCompositeToolBarDock.addChildDock(defaultVerticalToolBarDock, new Position(0));
-		
-		//horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDockVaria(createSubtoolsPanel()), new Position(2));
-	}
+		analysisDockables = createAnalysisBar();
+		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(analysisDockables), new Position(2));
 
-	private JPanel createSubtoolsPanel() {
-		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-		panel.setPreferredSize(new Dimension(200, 60));
-		panel.setMaximumSize(new Dimension(200, 60));
-		
-		/*
-		JLabel label1 = new JLabel("Transition:");
-		label2.setBounds(posXchart, posYchart, 70, 20);
-		transChartOptionsPanel.add(label2);
-		
-		String[] dataP = { "---" };
-		JComboBox<String> transitionsCombo = new JComboBox<String>(dataP); //final, aby listener przycisku odczytał wartość
-		transitionsCombo.setLocation(posXchart + 75, posYchart+2);
-		transitionsCombo.setSize(500, 20);
-		transitionsCombo.setSelectedIndex(0);
-		transitionsCombo.setMaximumRowCount(12);
-		transitionsCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = placesCombo.getSelectedIndex();
-			}
-		});
-		panel.add(transitionsCombo);
-		*/
 		
 		
-		JButton button1 = new JButton("Ext.Net");
-		button1.setName("extNet");
-		button1.setPreferredSize(new Dimension(60,40));
-		//button1.setBounds(0, 0, 60, 60);
-		button1.setToolTipText("Extend net elements");
-		button1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				
-			}
-		});
-		panel.add(button1);
-		
-		return panel;
+		verticalCompositeToolBarDock.addChildDock(defaultVerticalToolBarDock, new Position(0));
+		//horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDockVaria(createSubtoolsPanel()), new Position(2));
 	}
 
 	/**
@@ -164,7 +126,6 @@ public class Toolbar extends BorderDock {
 		int i = 0;
 		for (ButtonDockable button : buttons) {
 			horizontalToolBarDock.addDockable(button, new Position(i));
-			//addButtonHorizontally(button, i, horizontalToolBarDock);
 			i++;
 		}
 	}
@@ -177,7 +138,6 @@ public class Toolbar extends BorderDock {
 		int i = 0;
 		for (ButtonDockable button : buttons) {
 			defaultVerticalToolBarDock.addDockable(button, new Position(i));
-			//addButtonVertically(button, i);
 			i++;
 		}
 	}
@@ -209,72 +169,71 @@ public class Toolbar extends BorderDock {
 	/**
 	 * Metoda odpowiedzialna za tworzenie konkretnych instancji przycisków głównych.
 	 */
-	private void createIObuttons() {
+	private ArrayList<ButtonDockable> createIObuttons() {
+		ArrayList<ButtonDockable> ioDockables = new ArrayList<ButtonDockable>();
 		//nowa zakładka
-		@SuppressWarnings("serial")
 		ToolbarButtonAction addButton = new ToolbarButtonAction(this, 
 				"New tab", "Add new network tab/sheet", Tools.getResIcon48("/icons/toolbar/add_panel.png")) {
-			@Override
+					private static final long serialVersionUID = -3039335266465055547L;
+
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 			}
 		};
-		buttonDockables.add(createButtonDockable("ButtonDockableAdd", addButton));
+		ioDockables.add(createButtonDockable("ButtonDockableAdd", addButton));
 		
-		@SuppressWarnings("serial")
 		ToolbarButtonAction openButton = new ToolbarButtonAction(this,
-				"Open project...", "Open Abyss project (.abyss)", Tools.getResIcon48("/icons/toolbar/open.png")) {
-			@Override
+				"Open project...", "Open Abyss project file (.abyss)", Tools.getResIcon48("/icons/toolbar/open.png")) {
+					private static final long serialVersionUID = -8017306615290773915L;
+
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().io.openAbyssProject();
 			}
 		};
-		buttonDockables.add(createButtonDockable("ButtonDockableOpen", openButton));
-
+		ioDockables.add(createButtonDockable("ButtonDockableOpen", openButton));
+		
 		//import projektu ze snoopiego
-		@SuppressWarnings("serial")
 		ToolbarButtonAction importButton = new ToolbarButtonAction(this,
-				"Import project...", "Import PN in other formats", Tools.getResIcon48("/icons/toolbar/import_net.png")) {
-			@Override
+				"Import project...", "Import Petri net saved in other file formats", Tools.getResIcon48("/icons/toolbar/import_net.png")) {
+					private static final long serialVersionUID = 5723070117312880726L;
+
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().io.importProject();
 			}
 		};
-		buttonDockables.add(createButtonDockable("ButtonDockableImport", importButton));
+		ioDockables.add(createButtonDockable("ButtonDockableImport", importButton));
 		
 		//zapis obrazu sieci do pliku
-		@SuppressWarnings("serial")
 		ToolbarButtonAction pictureButton = new ToolbarButtonAction(this,
 				"Save picture...", "Save the network as picture", Tools.getResIcon48("/icons/toolbar/save_picture.png")) {
-			@Override
+					private static final long serialVersionUID = 932011484445458070L;
+
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().io.exportProjectToImage();
 			}
 		};
-		buttonDockables.add(createButtonDockable("ButtonDockableImport", pictureButton));
-		
-		//odswiezanie
-		@SuppressWarnings("serial")
+		ioDockables.add(createButtonDockable("ButtonDockableImport", pictureButton));
 		ToolbarButtonAction refreshButton = new ToolbarButtonAction(this,
-				"Refresh", "Refresh", Tools.getResIcon48("/icons/toolbar/refresh.png")) {
-			@Override
+				"Refresh", "Refresh all graph panels with net structures", Tools.getResIcon48("/icons/toolbar/refresh.png")) {
+					private static final long serialVersionUID = -5107926050446252487L;
+
 			public void actionPerformed(ActionEvent actionEvent) {
-				//GUIManager.getDefaultGUIManager().restoreDefaultVisuals(); 
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 			}
 		};
-		buttonDockables.add(createButtonDockable("ButtonDockableRefresh", refreshButton));
-		
-		//czyszczenie arkuszy
-		@SuppressWarnings("serial")
+		ioDockables.add(createButtonDockable("ButtonDockableRefresh", refreshButton));
+
 		ToolbarButtonAction clearProject = new ToolbarButtonAction(this,
-				"Clear project", "Clears the project", Tools.getResIcon48("/icons/toolbar/clear_project.png")) {
-			@Override
+				"Clear project", "Clears all data of the project", Tools.getResIcon48("/icons/toolbar/clear_project.png")) {
+					private static final long serialVersionUID = 2969893062492924300L;
+
 			public void actionPerformed(ActionEvent actionEvent) {
-				//GUIManager.getDefaultGUIManager().getWorkspace().getProject().deleteProjectData();
+				GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
 			}
 		};
-		buttonDockables.add(createButtonDockable("ButtonDockableRefresh", clearProject));
+		ioDockables.add(createButtonDockable("ButtonDockableRefresh", clearProject));
+		
+		return ioDockables;
 	}
 
 	@SuppressWarnings("serial")
@@ -286,7 +245,6 @@ public class Toolbar extends BorderDock {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
 		ToolbarButtonAction generateINAinvariants = new ToolbarButtonAction(this, "GenerateINA", "Generate invariants using INA", 
 				Tools.getResIcon48("/icons/toolbar/terminal.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().io.generateINAinvariants();
 			}
@@ -295,7 +253,6 @@ public class Toolbar extends BorderDock {
 		
 		ToolbarButtonAction clusterButton = new ToolbarButtonAction(this, "ClusterAnalysis", "Cluster creation and analysis", 
 				Tools.getResIcon48("/icons/toolbar/clusters.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().showClusterWindow(); 
 			}
@@ -304,7 +261,6 @@ public class Toolbar extends BorderDock {
 		
 		ToolbarButtonAction netTablesButton = new ToolbarButtonAction(this, "NetDataTables", "Show net data as tables", 
 				Tools.getResIcon48("/icons/toolbar/netTables.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().showNetTablesWindow(); 
 			}
@@ -313,7 +269,6 @@ public class Toolbar extends BorderDock {
 		
 		ToolbarButtonAction netSimLogButton = new ToolbarButtonAction(this, "NetSimLog", "Network simulation log", 
 				Tools.getResIcon32("/icons/toolbar/simLog.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().showSimLogWindow();
 			}
@@ -323,7 +278,6 @@ public class Toolbar extends BorderDock {
 
 		ToolbarButtonAction consoleButton = new ToolbarButtonAction(this, "ShowConsole", "Show program log console", 
 				Tools.getResIcon48("/icons/toolbar/terminal2.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().showConsole(true); 
 
@@ -333,7 +287,6 @@ public class Toolbar extends BorderDock {
 		
 		ToolbarButtonAction cleanButton = new ToolbarButtonAction(this, "ClearColors", "Restore net default colors", 
 				Tools.getResIcon48("/icons/toolbar/cleanGraphColors.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().reset.clearGraphColors();
 			}
@@ -372,8 +325,6 @@ public class Toolbar extends BorderDock {
 			@SuppressWarnings("unused")
 			public void actionPerformed(ActionEvent actionEvent) 
 			{ 
-				//TODO: 
-				
 				JTree test = GUIManager.getDefaultGUIManager().getToolBox().getTree();
 				GUIManager.getDefaultGUIManager().getToolBox().selectPointer();
 				//test.setSelectionPath(new TreePath());
@@ -458,33 +409,26 @@ public class Toolbar extends BorderDock {
 	}
 	
 	/**
-	 * Creates a dockable with a button as content.
-	 * 
-	 * @param id String - The ID of the dockable that has to be created.
-	 * @param title - The title of the dialog that will be displayed.
-	 * @param icon - The icon that will be put on the button.
-	 * @param message - The message that will be displayed when the action is performed.
-	 * @return ButtonDockable - The dockable with a button as content.
+	 * Tworzy dokowalny (lub nie) przycisk. 
+	 * @param id String - identyfikator obiektu dokowalnego
+	 * @param action ToolbarButtonAction - obiekt przycisku
+	 * @return ButtonDockable - otoczka na przycisk umożliwiająca dokowanie
 	 */
 	private ButtonDockable createButtonDockable(String id, ToolbarButtonAction action) {
-		// Create the action.
-		// ToolbarButtonAction action = new ToolbarButtonAction(this, title, icon, message);
-		// Create the button.
 		ToolbarButton button = new ToolbarButton(action);
-		// Create the dockable with the button as component.
 		ButtonDockable buttonDockable = new ButtonDockable(id, button);
-		// Add a dragger to the individual dockable.
-		createDockableDragger(buttonDockable);
+		if(buttonsDraggable)
+			createDockableDragger(buttonDockable);
+		
 		return buttonDockable;
 	}
 
 	/**
-	 * Metoda ustawia obiekt nasłuchujący, który monitoruje zdarzenia przeciągnięcia
+	 * Metoda ustawia obiekt nasłuchujący, który monitoruje zdarzenia przeciągnięcia obiektu.
 	 * grupy przycisków lub jednego z jednej lokalizacji w inną.
 	 * @param dockable Dockable - obiekt monitorowany
 	 */
 	private void createDockableDragger(Dockable dockable) {
-		// Create the dragger for the dockable.
 		DragListener dragListener = DockingManager.getDockableDragListenerFactory().createDragListener(dockable);
 		dockable.getContent().addMouseListener(dragListener);
 		dockable.getContent().addMouseMotionListener(dragListener);
@@ -506,6 +450,12 @@ public class Toolbar extends BorderDock {
 		this.toolBarBorderDock = toolBarBorderDock;
 	}
 
+	//***************************************************************************************************
+	//***************************************************************************************************
+	//***************************************************************************************************
+	//***************************************************************************************************
+	//***************************************************************************************************
+	
 	/**
 	 * Metoda ta ustawia stan wszystkich przycisków symulatora poza dwoma: pauzą
 	 * i przyciskiem zatrzymania symulacji.
@@ -563,7 +513,6 @@ public class Toolbar extends BorderDock {
 		ArrayList<ButtonDockable> simulationDockables = new ArrayList<ButtonDockable>();
 		reverseLoopButton = new ToolbarButtonAction(this, "LoopBack", "Loop back to oldest action saved",
 				Tools.getResIcon48("/icons/toolbar/sim_back.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP_BACK);
@@ -573,7 +522,6 @@ public class Toolbar extends BorderDock {
 		
 		reverseStepButton = new ToolbarButtonAction(this, "StepBack", "Single action back simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_back_step.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
@@ -583,7 +531,6 @@ public class Toolbar extends BorderDock {
 		
 		loopSimButton = new ToolbarButtonAction(this, "Loop", "Loop simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_start.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP);
@@ -593,7 +540,6 @@ public class Toolbar extends BorderDock {
 		
 		singleTransitionLoopSimButton = new ToolbarButtonAction(this, "LoopSingleTrans", "Loop single transition simulation", 
 				Tools.getResIcon48("/icons/toolbar/sim_start_single.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
@@ -604,7 +550,6 @@ public class Toolbar extends BorderDock {
 		
 		pauseSimButton = new ToolbarButtonAction(this, "Pause", "Pause simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_pause.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().pause();
@@ -614,7 +559,6 @@ public class Toolbar extends BorderDock {
 		
 		stopSimButton = new ToolbarButtonAction(this, "Stop", "Schedule a stop for the simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_stop.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().stop();
 			}
@@ -633,7 +577,6 @@ public class Toolbar extends BorderDock {
 		
 		stepFwdSimButton = new ToolbarButtonAction(this, "StepForward", "Step forward simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_forward.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.STEP);
@@ -643,7 +586,6 @@ public class Toolbar extends BorderDock {
 		
 		resetSimButton = new ToolbarButtonAction(this, "Reset", "Reset simulator",
 				Tools.getResIcon48("/icons/toolbar/sim_reset.png")) {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true)
 					GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
@@ -652,5 +594,27 @@ public class Toolbar extends BorderDock {
 		simulationDockables.add(createButtonDockable("ButtonDockableResetSim", resetSimButton));
 		
 		return simulationDockables;
+	}
+	
+	@SuppressWarnings("unused")
+	private JPanel createSubtoolsPanel() {
+		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+		panel.setPreferredSize(new Dimension(200, 60));
+		panel.setMaximumSize(new Dimension(200, 60));
+		
+		JButton button1 = new JButton("Ext.Net");
+		button1.setName("extNet");
+		button1.setPreferredSize(new Dimension(60,40));
+		//button1.setBounds(0, 0, 60, 60);
+		button1.setToolTipText("Extend net elements");
+		button1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				
+			}
+		});
+		panel.add(button1);
+		
+		return panel;
 	}
 }

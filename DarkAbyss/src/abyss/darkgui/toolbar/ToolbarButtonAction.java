@@ -17,6 +17,14 @@ public class ToolbarButtonAction extends AbstractAction {
 	private String message = "";
 	private String name;
 
+	/**
+	 * Konstuktor obiektów klasy ToolbarButtonAction.
+	 * @param parentComponent Component - obiekt swing
+	 * @param name String - nazwa
+	 * @param description String - opis
+	 * @param icon Icon - ikona
+	 * @param message String - tekst do wyświetlenia
+	 */
 	public ToolbarButtonAction(Component parentComponent, String name, String description, Icon icon, String message) {
 		super(null, icon);
 		putValue(Action.SHORT_DESCRIPTION, description);
@@ -25,6 +33,13 @@ public class ToolbarButtonAction extends AbstractAction {
 		this.parentComponent = parentComponent;
 	}
 	
+	/**
+	 * Konstuktor obiektów klasy ToolbarButtonAction.
+	 * @param parentComponent Component - obiekt swing
+	 * @param name String - nazwa
+	 * @param description String - opis
+	 * @param icon Icon - ikona
+	 */
 	public ToolbarButtonAction(Component parentComponent, String name, String description, Icon icon) {
 		super(null, icon);
 		putValue(Action.SHORT_DESCRIPTION, description);
@@ -32,6 +47,10 @@ public class ToolbarButtonAction extends AbstractAction {
 		this.parentComponent = parentComponent;
 	}
 
+	/**
+	 * Metoda wyświetlająca komunikat dla przycisku w ramach reakcji na zdarzenie zatrzymania kursora nad przyciskiem.
+	 * @param actionEvent ActionEvent
+	 */
 	@Override
 	public void actionPerformed(ActionEvent actionEvent) {
 		JOptionPane.showMessageDialog(parentComponent, message, name, JOptionPane.INFORMATION_MESSAGE);

@@ -327,6 +327,7 @@ public class AbyssProgramProperties extends JFrame {
 		int io_y = 15;
 		noAction = true;
 		
+		// ARC SIZE:
 		JLabel labelIO1 = new JLabel("Default arc thickness:");
 		labelIO1.setBounds(io_x, io_y, 200, 20);
 		panel.add(labelIO1);
@@ -370,6 +371,25 @@ public class AbyssProgramProperties extends JFrame {
 		else if(thickValue.equals("2")) group.setSelected(size2Button.getModel(), true);
 		else if(thickValue.equals("3")) group.setSelected(size3Button.getModel(), true);
 
+		
+		JCheckBox useShortNamesCheckBox = new JCheckBox("(Abyss) Show short default names only", true);
+		useShortNamesCheckBox.setBounds(io_x, io_y+40, 260, 20);
+		useShortNamesCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction) return;
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("showShortNames", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("showShortNames", "0", true);
+				}
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("showShortNames").equals("1")) 
+			useShortNamesCheckBox.setSelected(true);
+		else
+			useShortNamesCheckBox.setSelected(false);
+		panel.add(useShortNamesCheckBox);
 		
 		
 		

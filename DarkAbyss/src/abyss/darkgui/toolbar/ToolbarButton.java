@@ -59,8 +59,7 @@ public class ToolbarButton extends JLabel
 	
 	/**
 	 * Gets the action that will be performed when this button is clicked.
-	 * 
-	 * @return				The action that will be performed when this button is clicked.
+	 * @return	The action that will be performed when this button is clicked.
 	 */
 	public Action getAction()
 	{
@@ -97,7 +96,8 @@ public class ToolbarButton extends JLabel
 		public void mouseClicked(MouseEvent mouseEvent)
 		{
 			// Create the action event.
-			ActionEvent actionEvent = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, (String)action.getValue(Action.SHORT_DESCRIPTION), mouseEvent.getModifiers());
+			ActionEvent actionEvent = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, 
+					(String)action.getValue(Action.SHORT_DESCRIPTION), mouseEvent.getModifiers());
 			
 			// Perform the action.
 			action.actionPerformed(actionEvent);

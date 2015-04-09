@@ -51,7 +51,7 @@ public class InvariantsCalculatorFeasible {
 	 * Metoda startowa szukania zbioru inwariantów wykonalnych.
 	 * @return
 	 */
-	public ArrayList<ArrayList<Integer>> getMinFeasible() {
+	public ArrayList<ArrayList<Integer>> getMinFeasible(int mode) {
 		ArrayList<Integer> arcClassCount = Check.getArcClassCount();
 		if(arcClassCount.get(1) == 0) { //brak łuków odczytu
 			status = "No read arcs. All invariants are feasible.";
@@ -64,7 +64,10 @@ public class InvariantsCalculatorFeasible {
 			places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 			readArcTransLocations = getReadArcTransitions();
 			
-			searchFTInv();
+			if(mode == 0)
+				searchFTInvSimple();
+			else
+				searchFTInvAdvanced();
 			
 			status = "Set computed. Returning.";
 			success = true;
@@ -83,7 +86,7 @@ public class InvariantsCalculatorFeasible {
 	/**
 	 * Główna metoda odpowiedzialna za utworzenie zbioru inwariantów wykonalnych.
 	 */
-	private void searchFTInv() {
+	private void searchFTInvSimple() {
 		partitionInvariants();
 		
 		int size = non_feasibleInv.size();
@@ -100,7 +103,9 @@ public class InvariantsCalculatorFeasible {
 			for(Place pl : places_RA) {
 				ArrayList<Integer> connectedTransitions = getConnectedTransitionsSet(pl);
 				ArrayList<Integer> minimalFeasibleInvariant = findMinFeasibleSimple(connectedTransitions);
-				invToCombine.add(minimalFeasibleInvariant);
+				
+				if(invToCombine.contains(minimalFeasibleInvariant) == false)
+					invToCombine.add(minimalFeasibleInvariant);
 			}
 			invToCombine.add(nonFInvariant);
 			
@@ -109,6 +114,121 @@ public class InvariantsCalculatorFeasible {
 		}
 	}
 	
+	private void searchFTInvAdvanced() {
+		partitionInvariants();
+		int size = non_feasibleInv.size();
+		for(int i=0; i<size; i++) {
+			ArrayList<ArrayList<Integer>> invToCombine = new ArrayList<ArrayList<Integer>>(); //lista znalezionych
+			
+			ArrayList<Integer> nonFInvariant = non_feasibleInv.get(i); 
+			ArrayList<Integer> trans_RA = getInfeasibleTransitions(nonFInvariant);
+			
+			//zidentyfikuj ile miejsc jest związanych z każdą tranzycją (może być więcej niż 1!)
+			ArrayList<Place> places_RA = getRA_Places(trans_RA);
+			//dla każdego z powyższych miejsc należy zapewnić tokeny poprzez minimalne inwarianty
+			
+			ArrayList<ArrayList<Integer>> connectedTransitionsSet = new ArrayList<ArrayList<Integer>>();
+			
+			
+			for(Place pl : places_RA) {
+				ArrayList<Integer> connectedTransitions = getConnectedTransitionsSet(pl);
+				//ArrayList<Integer> minimalFeasibleInvariant = findMinFeasibleSimple(connectedTransitions);
+				
+				//if(invToCombine.contains(minimalFeasibleInvariant) == false)
+				//	invToCombine.add(minimalFeasibleInvariant);
+				connectedTransitionsSet.add(connectedTransitions);
+			}
+			
+			//teraz szukamy najmniejszego zbioru inwariantów pokrywającego min 1 elementent każdego zbioru w connectedTransitionsSet
+			int setsNumber = connectedTransitionsSet.size();
+			int found = 0;
+			int upperSearchBound = setsNumber;
+			
+			while(found != setsNumber) {
+				
+				ArrayList<Integer> foundVectors = searchCandidate(connectedTransitionsSet, upperSearchBound);
+				//int howManyFound = foundVectors.get(0).get(0);
+				if(foundVectors == null) {
+					upperSearchBound--; 
+					if(upperSearchBound == 0) {
+						//ERROR?!
+					}
+				} else {
+					found += upperSearchBound;
+					//usuń znalezione zbiory z connectedTransitionsSet
+					
+					//i zacznij kolejną iterację
+					if(invToCombine.contains(foundVectors) == false)
+						invToCombine.add(foundVectors);
+				}
+				
+			}
+			
+			
+			invToCombine.add(nonFInvariant);
+			
+			ArrayList<Integer> newFeasible = createFeasibleInvariant(invToCombine);
+			f_invariantsCreated.add(newFeasible);
+		}
+	}
+	
+	/**
+	 * Zadaniem metody jest znalezionie takiego inwariantu, który pokrywa #upperSearchBound tranzycji z każdego zbioru w 
+	 * connectedTransitionsSet. Jesli jest ich więcej - wybranie 'minimalnego'.
+	 * 
+	 * @param connectedTransitionsSet ArrayList[ArrayList[Integer]] - zbiór tramzycji związanych (z łukami odczytu)
+	 * @param upperSearchBound int - liczba zbiorów do pokrycia
+	 * @return ArrayList[Integer] - pierwszy wektor to informacja
+	 */
+	private ArrayList<Integer> searchCandidate(ArrayList<ArrayList<Integer>> connectedTransitionsSet, int upperSearchBound) {
+		// TODO Auto-generated method stub
+		int connSetsSize = connectedTransitionsSet.size();
+		int currentFound = 0;
+		int currentNotFound = 0;
+		int fCandidatesFound = 0;
+		
+		ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
+		
+		for(ArrayList<Integer> f_invariant : feasibleInv) {
+			currentFound = 0;
+			currentNotFound = 0;
+			for(ArrayList<Integer> connectedSet : connectedTransitionsSet) {
+				if(intersection(f_invariant, connectedSet).isEmpty() == false) {
+					currentFound++;
+					
+					if(currentFound == upperSearchBound)
+						break; //success
+				} else {
+					currentNotFound++;
+					
+					if(connSetsSize - currentNotFound > upperSearchBound)
+						break; //failure
+				}
+			}
+			
+			if(currentFound == upperSearchBound) {
+				results.add(f_invariant);
+				fCandidatesFound++;
+			}
+		}
+		
+		if(fCandidatesFound == 0) {
+			return null;
+		} else if(fCandidatesFound == 1) {
+			return results.get(0);
+		} else { //znajdź najlepszy
+			
+		}
+		
+		return null;
+	}
+	
+	public ArrayList<Integer> intersection(ArrayList<Integer> list1, ArrayList<Integer> list2) {   
+	    ArrayList<Integer> result = new ArrayList<Integer>(list1);
+	    result.retainAll(list2);
+	    return result;
+	}
+
 	//TODO: metoda uproszczona: 
 	/**
 	 * (SimpleSearchMode) Metoda szuka 'najmniejszego' inwariantu zawierającego jedną z tranzycji w zbiorze 

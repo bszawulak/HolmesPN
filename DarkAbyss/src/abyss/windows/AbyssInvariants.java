@@ -50,6 +50,7 @@ public class AbyssInvariants extends JFrame {
 	public boolean isGeneratorWorking = false;
 	public boolean noAction = false;
 	private boolean details = true;
+	private int feasibleCalcMode = 0; 
 
 	/**
 	 * Główny konstruktor okna generatora inwariantów.
@@ -258,6 +259,21 @@ public class AbyssInvariants extends JFrame {
 		});
 		makeFeasibleButton.setFocusPainted(false);
 		panel.add(makeFeasibleButton);
+		
+		JCheckBox feasModeCheckBox = new JCheckBox("Feasible adv. mode");
+		feasModeCheckBox.setBounds(posX+505, posY+36, 140, 20);
+		feasModeCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					feasibleCalcMode = 1;
+				} else {
+					feasibleCalcMode = 0;
+				}
+			}
+		});
+		feasModeCheckBox.setSelected(false);
+		panel.add(feasModeCheckBox);
 
 		return panel;
 	}
@@ -577,7 +593,7 @@ public class AbyssInvariants extends JFrame {
 		}
 		
 		InvariantsCalculatorFeasible invF = new InvariantsCalculatorFeasible(invariants, true);
-		invariants = invF.getMinFeasible();
+		invariants = invF.getMinFeasible(feasibleCalcMode);
 		
 		Object[] options = {"Save & replace", "Save only", "Replace only", "Cancel"};
 		int n = JOptionPane.showOptionDialog(null,

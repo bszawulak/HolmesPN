@@ -112,11 +112,14 @@ public class AbyssNetProperties extends JFrame {
 		nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
 		invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
 		
+		ArrayList<Integer> arcClasses = Check.getArcClassCount();
+		
 		label_netName.setText(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getName()+"");
 		label_nodesNumber.setText(nodes.size()+"");
 		label_transitionsNumber.setText(transitions.size()+"");
 		label_placesNumber.setText(places.size()+"");
-		label_arcNumber.setText(arcs.size()+"");
+		int readArcs = arcClasses.get(1) / 2;
+		label_arcNumber.setText((arcs.size()-readArcs)+"");
 		int inv_number = 0;
 		if(invariantsMatrix == null) {
 			inv_number = 0;
@@ -126,9 +129,9 @@ public class AbyssNetProperties extends JFrame {
 		}
 		label_invNumber.setText(inv_number+"");
 		
-		ArrayList<Integer> arcClasses = Check.getArcClassCount();
+		
 		label_arcNormal.setText(arcClasses.get(0)+"");
-		label_arcReadarc.setText(arcClasses.get(1)+"");
+		label_arcReadarc.setText(arcClasses.get(1)/2+"");
 		label_arcInhibitor.setText(arcClasses.get(2)+"");
 		label_arcReset.setText(arcClasses.get(3)+"");
 		label_arcEqual.setText(arcClasses.get(4)+"");

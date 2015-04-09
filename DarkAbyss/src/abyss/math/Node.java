@@ -164,13 +164,30 @@ public abstract class Node extends PetriNetElement {
 			g.drawString(getName(), p.x - width / 2, p.y + getRadius() + 15);
 	}
 	
+	/**
+	 * Metoda odpowiedzialna za rysowanie nazwy wierzchołka na obrazie sieci.
+	 * @param g Graphics2D - obiekt rysujący
+	 * @param sheetId int - identyfikator arkusza
+	 */
 	public void drawName(Graphics2D g, int sheetId) {
+		String name = getName();
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("showShortNames").equals("1")) {
+			if(this instanceof Place) {
+				int x = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(this);
+				name = "p"+x;
+			} else {
+				int x = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(this);
+				name = "t"+x;
+			}
+		}
+		
 		g.setColor(Color.black);
 		g.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		int name_width = g.getFontMetrics().stringWidth(getName());
+		int name_width = g.getFontMetrics().stringWidth(name);
 		
 		ArrayList<Point> namesPoints = getNodeNamePositions(sheetId);
 		ArrayList<Point> nodePoints = this.getNodePositions(sheetId);
+		
 		//for (Point p : nodePoints) {
 		for (int i=0; i<nodePoints.size(); i++) {
 			Point nodePoint = nodePoints.get(i);
@@ -183,7 +200,7 @@ public abstract class Node extends PetriNetElement {
 				drawX = (nodePoint.x - name_width / 2); //oryginalny kod
 			if(drawY < 0 )
 				drawY = nodePoint.y + getRadius() + 15; //oryginalny kod
-			g.drawString(getName(), drawX, drawY);
+			g.drawString(name, drawX, drawY);
 		}
 	}
 

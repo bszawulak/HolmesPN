@@ -8,12 +8,20 @@ import javax.swing.SpringLayout;
 
 import abyss.darkgui.SpringUtilities;
 
-
-@SuppressWarnings("serial")
+/**
+ * Klasa okna pomocniczego, zapewniającego trwałość środkowego podokna programu w wypadku np. zamknięcia
+ * ostatniej zakładki.
+ * @author students
+ *
+ */
 public class WorkspaceFiller extends JPanel {
+	private static final long serialVersionUID = 2789774405036709669L;
 	private JScrollPane scrollPane;
 	private JPanel innerPanel;
 	
+	/**
+	 * Konstruktor obiektu podokna pomocniczego klasy WorkspaceFiller.
+	 */
 	public WorkspaceFiller() {
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		scrollPane = new JScrollPane();

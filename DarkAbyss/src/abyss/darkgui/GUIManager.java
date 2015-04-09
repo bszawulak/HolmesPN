@@ -1001,6 +1001,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getMctBox().showMCT(mct);
 	}
 	
+	/**
+	 * Metoda pokazuje podokienko zbiorów MCS.
+	 */
 	public void showMCS() {
 		getMCSBox().showMCS();
 	}

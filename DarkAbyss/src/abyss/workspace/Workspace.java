@@ -145,11 +145,18 @@ public class Workspace implements SelectionActionListener {
 		}
 		
 		int index = dockables.indexOf(dockable);
+		if(index == 0) {
+			JOptionPane.showMessageDialog(null, "First sheet cannot be deleted. Please use clear project instead.",
+					"Cannot proceed", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
 		int n = JOptionPane.showOptionDialog(null,
 						"Are you sure you want to delete this sheet? You will not be able to retrieve it later.",
 						"Are you sure?", JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, null, null);
 		if ((n == 0) && (sheets.size() > 1)) {
+			
 			deleteSheetFromArrays(sheets.get(index));
 			//JOptionPane.showMessageDialog(null, "Sheet deleted.");
 			guiManager.getMenu().deleteSheetItem(dockables.get(index));
@@ -159,6 +166,7 @@ public class Workspace implements SelectionActionListener {
 			if (sheets.size() == 1 && n == 0)
 				JOptionPane.showMessageDialog(null, "Can't delete this sheet! A project must contain at least one sheet!",
 						"Can't delete this sheet!", JOptionPane.ERROR_MESSAGE);
+			
 			Point position = new Point(0, 0);
 			dockables.set(index, withListener(new DefaultDockable(
 					"Sheet " + Integer.toString(sheets.get(index).getId()), sheets.get(index), 
@@ -260,8 +268,12 @@ public class Workspace implements SelectionActionListener {
 	 * @return WorkspaceSheet - kliknięty arkusz
 	 */
 	public WorkspaceSheet getSelectedSheet() {
-		int index = docks.indexOf(workspaceDock.getSelectedDock());
-		return sheets.get(index);
+		try {
+			int index = docks.indexOf(workspaceDock.getSelectedDock());
+			return sheets.get(index);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**

@@ -119,6 +119,7 @@ public class SettingsManager {
 			checkAndFix(settingsNew, "graphArcLineSize", "1");
 		} catch (Exception e) { settingsNew.add(new Setting("graphArcLineSize", "1")); }
 		
+		checkAndFix(settingsNew, "showShortNames", "0");
 		
 		settings = new ArrayList<Setting>(settingsNew);
 		writeSettingsFile();

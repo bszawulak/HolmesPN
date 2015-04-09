@@ -179,26 +179,39 @@ public final class InvariantsTools {
 	/**
 	 * Metoda sprawdza, czy inwariant jest prawidłowy, tj. czy zeruje macierz incydencji podaną jako parametr.
 	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji sieci, każdy wiersza to wektor po miejscach (kolumny)
-	 * @param inv ArrayList[Integer] - inwariant
+	 * @param invariant ArrayList[Integer] - inwariant
 	 * @param tInv boolean - true, jeśli testujemy T-inwarianty
 	 * @return boolean - true jeśli inwariant przeszedł test, false jeśli nie wyzerował macierzy
 	 */
-	public static boolean checkInvariant(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> inv, boolean tInv) {
+	public static boolean checkInvariant(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> invariant, boolean tInv) {
 		//CMatrix - każdy wiersz to wektor miejsc indeksowany numerem tranzycji [2][3] - 2 tranzycja, 3 miejsce
 		if(tInv == true && CMatrix.size() > 0) {
-			ArrayList<Integer> invSupport = getSupport(inv);
+			ArrayList<Integer> invSupport = getSupport(invariant);
 			ArrayList<Integer> placesSumVector = new ArrayList<Integer>();
-			if(inv.size() != CMatrix.size())
+			if(invariant.size() != CMatrix.size())
 				return false;
 			
 			int placesNumber = CMatrix.get(0).size();
-			for(int i=0; i<placesNumber; i++) {
-				placesSumVector.add(0);
+			//for(int i=0; i<placesNumber; i++) {
+				//placesSumVector.add(0);
+			//}
+			
+			int transitionsNumber = invariant.size();
+			
+			
+			for(int p=0; p<placesNumber; p++) {
+				int sumForPlace = 0;
+				for(int t=0; t<transitionsNumber; t++) {
+					sumForPlace += CMatrix.get(t).get(p) * invariant.get(t);
+				}
+				placesSumVector.add(sumForPlace);
 			}
 			
+			
+			/*
 			for(int sup : invSupport) { //dla wszystkich wektorów CMatrix ze wsparcia inwariantu
 				ArrayList<Integer> row = CMatrix.get(sup);
-				int multFactor = inv.get(sup);
+				int multFactor = invariant.get(sup);
 				
 				for(int p=0; p<placesNumber; p++) {
 					int oldVal = placesSumVector.get(p);
@@ -206,7 +219,7 @@ public final class InvariantsTools {
 					placesSumVector.set(p, oldVal);
 				}
 			}
-			
+			*/
 			for(int p=0; p<placesNumber; p++) {
 				if(placesSumVector.get(p) != 0)
 					return false;
