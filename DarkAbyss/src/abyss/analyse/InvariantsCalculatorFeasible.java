@@ -132,10 +132,6 @@ public class InvariantsCalculatorFeasible {
 			
 			for(Place pl : places_RA) {
 				ArrayList<Integer> connectedTransitions = getConnectedTransitionsSet(pl);
-				//ArrayList<Integer> minimalFeasibleInvariant = findMinFeasibleSimple(connectedTransitions);
-				
-				//if(invToCombine.contains(minimalFeasibleInvariant) == false)
-				//	invToCombine.add(minimalFeasibleInvariant);
 				connectedTransitionsSet.add(connectedTransitions);
 			}
 			
@@ -149,19 +145,20 @@ public class InvariantsCalculatorFeasible {
 				ArrayList<Integer> foundVectors = searchCandidate(connectedTransitionsSet, upperSearchBound);
 				//int howManyFound = foundVectors.get(0).get(0);
 				if(foundVectors == null) {
-					upperSearchBound--; 
-					if(upperSearchBound == 0) {
-						//ERROR?!
-					}
+					upperSearchBound--; 	
 				} else {
 					found += upperSearchBound;
-					//usuń znalezione zbiory z connectedTransitionsSet
 					
-					//i zacznij kolejną iterację
+					if(upperSearchBound > connectedTransitionsSet.size())
+						upperSearchBound = connectedTransitionsSet.size();
+					//usuń znalezione zbiory z connectedTransitionsSet i zacznij kolejną iterację
 					if(invToCombine.contains(foundVectors) == false)
 						invToCombine.add(foundVectors);
 				}
 				
+				if(upperSearchBound == 0 || connectedTransitionsSet.size() == 0) {
+					break;
+				}
 			}
 			
 			
@@ -176,51 +173,117 @@ public class InvariantsCalculatorFeasible {
 	 * Zadaniem metody jest znalezionie takiego inwariantu, który pokrywa #upperSearchBound tranzycji z każdego zbioru w 
 	 * connectedTransitionsSet. Jesli jest ich więcej - wybranie 'minimalnego'.
 	 * 
-	 * @param connectedTransitionsSet ArrayList[ArrayList[Integer]] - zbiór tramzycji związanych (z łukami odczytu)
+	 * @param connectedTransitionsSet ArrayList[ArrayList[Integer]] - zbiór tranzycji związanych (z łukami odczytu) - ich ID
 	 * @param upperSearchBound int - liczba zbiorów do pokrycia
 	 * @return ArrayList[Integer] - pierwszy wektor to informacja
 	 */
 	private ArrayList<Integer> searchCandidate(ArrayList<ArrayList<Integer>> connectedTransitionsSet, int upperSearchBound) {
-		// TODO Auto-generated method stub
 		int connSetsSize = connectedTransitionsSet.size();
 		int currentFound = 0;
 		int currentNotFound = 0;
 		int fCandidatesFound = 0;
 		
 		ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
+		ArrayList<ArrayList<Integer>> forWhichConnSets = new ArrayList<ArrayList<Integer>>();
 		
 		for(ArrayList<Integer> f_invariant : feasibleInv) {
 			currentFound = 0;
 			currentNotFound = 0;
-			for(ArrayList<Integer> connectedSet : connectedTransitionsSet) {
-				if(intersection(f_invariant, connectedSet).isEmpty() == false) {
+			ArrayList<Integer> f_inv_support = InvariantsTools.getSupport(f_invariant); //potrzebne ID tranzycji inwariantu
+			ArrayList<Integer> intersectionSets = new ArrayList<Integer>();
+			for(int cs=0; cs<connSetsSize; cs++) {
+				ArrayList<Integer> connectedSet = connectedTransitionsSet.get(cs);
+			
+				if(intersection(f_inv_support, connectedSet).isEmpty() == false) {
 					currentFound++;
+					intersectionSets.add(cs);
 					
-					if(currentFound == upperSearchBound)
+					if(currentFound == upperSearchBound) { //jeśli obejmuje tyle zbiorów ile trzeba
+						results.add(f_invariant); //dodaj kandydata
+						forWhichConnSets.add(intersectionSets); //który zbiór obejmuje
+						fCandidatesFound++;
 						break; //success
+					}
 				} else {
 					currentNotFound++;
-					
-					if(connSetsSize - currentNotFound > upperSearchBound)
+					if(connSetsSize - currentNotFound < upperSearchBound)
 						break; //failure
 				}
 			}
 			
-			if(currentFound == upperSearchBound) {
-				results.add(f_invariant);
-				fCandidatesFound++;
-			}
 		}
 		
 		if(fCandidatesFound == 0) {
 			return null;
 		} else if(fCandidatesFound == 1) {
-			return results.get(0);
-		} else { //znajdź najlepszy
+
+			ArrayList<Integer> sets = forWhichConnSets.get(0);
+			ArrayList<ArrayList<Integer>> setsToRemove = new ArrayList<ArrayList<Integer>>();
+			for(int i=0; i<sets.size(); i++) {
+				int setIDToRemove = sets.get(i);
+				ArrayList<Integer> setToRemove = connectedTransitionsSet.get(setIDToRemove);
+				setsToRemove.add(setToRemove);
+				
+			}
+			for(ArrayList<Integer> set : setsToRemove)
+				connectedTransitionsSet.remove(set);
 			
+			 //usuń objęty inwariantem zbiór tranzycji wejściowych do P z read-arc
+			return results.get(0);
+		} else {
+			//procedura znajdowania najmniejszego kandydata:
+			
+			int minSupportCardinality = results.get(0).size();
+			int minSupportSum = 9999999;
+			int indexFound = -1;
+			int foundNumber = results.size();
+			for(int i=0; i<foundNumber; i++) {
+				ArrayList<Integer> cand_invariant = results.get(i);
+				int minSC = 0; //cardinality
+				int minSS = 0; //sum
+				boolean dontBother = false;	
+				for(int el : cand_invariant) { //przebadaj inwariant jako kandydata do minimalnego
+					if(el != 0) {
+						minSC++;
+						minSS += el;
+						if(minSC > minSupportCardinality) {
+							dontBother = true; //odpada, za duży niż do tej pory wybrany, nie marnuj więcej czasu
+							break;
+						}
+					}
+				}
+				
+				if(dontBother == false) { //zbadaj na minimalność (w kontekście procedury feasibility-search)
+					if(minSC < minSupportCardinality) {
+						minSupportCardinality = minSC;
+						minSupportSum = minSS;
+						indexFound = i;
+					} else if(minSC == minSupportCardinality) {
+						if(minSS < minSupportSum) {
+							minSupportCardinality = minSC;
+							minSupportSum = minSS;
+							indexFound = i;
+						}
+					}
+				}
+			}
+			
+			ArrayList<Integer> sets = forWhichConnSets.get(indexFound);
+			ArrayList<ArrayList<Integer>> setsToRemove = new ArrayList<ArrayList<Integer>>();
+			for(int i=0; i<sets.size(); i++) {
+				int setIDToRemove = sets.get(i);
+				ArrayList<Integer> setToRemove = connectedTransitionsSet.get(setIDToRemove);
+				setsToRemove.add(setToRemove);
+			}
+			for(ArrayList<Integer> set : setsToRemove)
+				connectedTransitionsSet.remove(set);
+			
+			//ArrayList<Integer> setToRemove = connectedTransitionsSet.get(forWhichConnSet.get(indexFound));
+			//connectedTransitionsSet.remove(setToRemove); //usuń objęty inwariantem zbiór tranzycji wejściowych do P z read-arc
+			return results.get(indexFound);
 		}
 		
-		return null;
+		//return null;
 	}
 	
 	public ArrayList<Integer> intersection(ArrayList<Integer> list1, ArrayList<Integer> list2) {   
@@ -247,16 +310,16 @@ public class InvariantsCalculatorFeasible {
 			
 			//for(ArrayList<Integer> inv : feasibleInv) {
 			for(int i=0; i<feasibleSize; i++) {
-				ArrayList<Integer> inv = feasibleInv.get(i);
+				ArrayList<Integer> f_invariant = feasibleInv.get(i);
 				
-				if(inv.get(transLoc) == 0)
-					continue;
+				if(f_invariant.get(transLoc) == 0)
+					continue; //jeśli nie, to znaczy, że mamy kandydata
 				
 				int minSC = 0; //cardinality
 				int minSS = 0; //sum
 				boolean dontBother = false;
 				
-				for(int el : inv) { //przebadaj inwariant jako kandydata do minimalnego
+				for(int el : f_invariant) { //przebadaj inwariant jako kandydata do minimalnego
 					if(el != 0) {
 						minSC++;
 						minSS += el;

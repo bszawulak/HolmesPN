@@ -5,16 +5,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,11 +49,11 @@ import abyss.utilities.Tools;
  * @author MR
  *
  */
-public class AbyssNetTables extends JFrame implements ComponentListener {
+public class AbyssNetTables extends JFrame {
 	private static final long serialVersionUID = 8429744762731301629L;
 	
 	//interface components:
-	private final JFrame ego;
+	//private final JFrame ego;
 	@SuppressWarnings("unused")
 	private JFrame parentFrame;
 	private JPanel mainPanel;
@@ -84,7 +79,7 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	 * @param papa JFrame - ramka okna głównego
 	 */
 	public AbyssNetTables(JFrame papa) {
-		ego = this;
+		//ego = this;
 		action  = new AbyssNetTablesActions(this);
 		parentFrame = papa;
 		
@@ -110,20 +105,20 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		this.setLocation(20, 20);
 		
 		setSize(new Dimension(800,600));
-		addComponentListener(this); //konieczne, aby listenery (przede wszystkim resize) działały
-		addWindowStateListener(new WindowAdapter() {
-			public void windowStateChanged(WindowEvent e) {
-				if(e.getNewState() == JFrame.MAXIMIZED_BOTH) {
-					ego.setExtendedState(JFrame.NORMAL);
-					resizeComponents();
-				}
-			}
-		});
+		//addComponentListener(this); //konieczne, aby listenery (przede wszystkim resize) działały
+		//addWindowStateListener(new WindowAdapter() {
+		//	public void windowStateChanged(WindowEvent e) {
+		//		if(e.getNewState() == JFrame.MAXIMIZED_BOTH) {
+		//			ego.setExtendedState(JFrame.NORMAL);
+		//			resizeComponents();
+		//		}
+		//	}
+		//});
 		
 		mainPanel = new JPanel();
-		mainPanel.setLayout(null);
-		mainPanel.add(createTablePanel());
-		mainPanel.add(createButtonsPanel());
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.add(createTablePanel(), BorderLayout.CENTER);
+		mainPanel.add(createButtonsPanel(), BorderLayout.EAST);
 		add(mainPanel);
 	}
 	
@@ -151,7 +146,9 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	 */
 	private JPanel createTablePanel() {
 		tablesSubPanel = new JPanel(new BorderLayout());
-		tablesSubPanel.setBounds(0, 0, 670, 560);
+		//tablesSubPanel.setBounds(0, 0, 670, 560);
+		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
+		tablesSubPanel.setLocation(0, 0);
 		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
 		
 		createTableConstruct();
@@ -169,8 +166,10 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	 */
 	private JPanel createButtonsPanel() {
 		buttonsPanel = new JPanel(null);
-		buttonsPanel.setBounds(670, 0, 130, 560);
+		//buttonsPanel.setBounds(670, 0, 130, 560);
 		
+		buttonsPanel.setPreferredSize(new Dimension(130, 560));
+		buttonsPanel.setLocation(670, 0);
 		//********************************************** NODES ****************************************************
 		
 		JPanel buttonNodePanel = new JPanel(null);
@@ -187,8 +186,8 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		transitionsButton.setBounds(xPos, yPos, bWidth, bHeight);
 		transitionsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				setSize(new Dimension(800,600));
-				resizeComponents();
+				//setSize(new Dimension(800,600));
+				//resizeComponents();
 				createPlacesTable();
 			}
 		});
@@ -201,8 +200,8 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		placesButton.setBounds(xPos, yPos, bWidth, bHeight);
 		placesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				setSize(new Dimension(800,600));
-				resizeComponents();
+				//setSize(new Dimension(800,600));
+				//resizeComponents();
 				createTransitionTable();		
 			}
 		});
@@ -244,12 +243,12 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 		invariantsButton.setBounds(xPos, yPos, bWidth, bHeight);
 		invariantsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-				double width = screenSize.getWidth();
-				double height = screenSize.getHeight();
-				setSize(new Dimension((int)width-50, (int)height-100));
-				setLocation(20, 20);
-				resizeComponents();
+				//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+				//double width = screenSize.getWidth();
+				//double height = screenSize.getHeight();
+				//setSize(new Dimension((int)width-50, (int)height-100));
+				//setLocation(20, 20);
+				//resizeComponents();
 				
 				createInvariantsTable();
 			}
@@ -517,23 +516,15 @@ public class AbyssNetTables extends JFrame implements ComponentListener {
 	public void updateRow(String data, int column) {
 		table.getModel().setValueAt(data, currentClickedRow, column);
 	}
-	
-	//*************************************************************************************************************************
-	//**************************************************               ********************************************************
-	//**************************************************   LISTENERS   ********************************************************
-	//**************************************************               ********************************************************
-	//*************************************************************************************************************************
-	
+		
 	/**
 	 * Metoda interfejsu ComponentListener, odpowiada za dopasowanie rozmiaru paneli
 	 * tabel i przycisków.
 	 */
-	public void componentResized(ComponentEvent e) {
-		resizeComponents();
-	}
-	public void componentHidden(ComponentEvent e) {} //unused
-	public void componentMoved(ComponentEvent e) {} //unused
-	public void componentShown(ComponentEvent e) {} //unused
+	//public void componentResized(ComponentEvent e) { resizeComponents(); }
+	//public void componentHidden(ComponentEvent e) {} //unused
+	//public void componentMoved(ComponentEvent e) {} //unused
+	//public void componentShown(ComponentEvent e) {} //unused
 	
 	/**
 	 * Metoda odpowiedzialna za ustalenie nowych rozmiarów paneli okna.

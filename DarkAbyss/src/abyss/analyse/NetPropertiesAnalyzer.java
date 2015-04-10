@@ -183,8 +183,8 @@ public class NetPropertiesAnalyzer {
 		}
 		
 		
-		boolean isFT0 = false; // FT0 - a transition without pre place
-		boolean isTF0 = false; // TF0- a transitions without post place
+		boolean isFT0 = false; // FT0 - a transition without pre place: input transitions
+		boolean isTF0 = false; // TF0- a transitions without post place: output transitions
 		boolean isFP0 = false; // FP0 - a place without pre transitions
 		boolean isPF0 = false; // PF0 - a place without post transitions
 
@@ -198,11 +198,9 @@ public class NetPropertiesAnalyzer {
 					arcOut = true;
 			}
 			if (arcIn == false && arcOut == true)
-				isTF0 = true;
-				//isFT0 = true;
-			if (arcIn == true && arcOut == false)
 				isFT0 = true;
-				//isTF0 = true;
+			if (arcIn == true && arcOut == false)
+				isTF0 = true;
 		}
 
 		for (Place p : places) {
@@ -215,11 +213,9 @@ public class NetPropertiesAnalyzer {
 					arcOut = true;
 			}
 			if (arcIn == false && arcOut == true)
-				isPF0 = true;
-				//isFP0 = true;
-			if (arcIn == true && arcOut == false)
 				isFP0 = true;
-				//isPF0 = true;
+			if (arcIn == true && arcOut == false)
+				isPF0 = true;
 		}
 		ft0Prop.set(1, isFT0);
 		tf0Prop.set(1, isTF0);

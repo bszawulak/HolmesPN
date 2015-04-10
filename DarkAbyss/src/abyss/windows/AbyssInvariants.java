@@ -422,7 +422,7 @@ public class AbyssInvariants extends JFrame {
 		panel.add(loadRefButton);
 		
 		JCheckBox detailsCheckBox = new JCheckBox("Details");
-		detailsCheckBox.setBounds(posX, posY+144, 110, 32);
+		detailsCheckBox.setBounds(posX, posY+144, 110, 20);
 		detailsCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -465,7 +465,6 @@ public class AbyssInvariants extends JFrame {
 			return;
 		}
 		refTest(invariants, io.getInvariantsList());
-		
 	}
 
 	/**
@@ -510,6 +509,11 @@ public class AbyssInvariants extends JFrame {
 		}
 	}
 	
+	/**
+	 * Metoda obsługuje pokazywanie informacji o sub i sur-inwariantach.
+	 * @param results ArrayList[ArrayList[Integer]] - macierz danych o sub i sur-inwariantach
+	 * @param invMatrixSize int - rozmiar macierzy inwariantów
+	 */
 	private void showSubSurInvInfo(ArrayList<ArrayList<Integer>> results, int invMatrixSize) {
 		int surPlaceMaxName = 0;
 		int subPlaceMaxName = 0;
@@ -577,7 +581,6 @@ public class AbyssInvariants extends JFrame {
 				}
 			}
 		}
-		
 	}
 
 	/**
