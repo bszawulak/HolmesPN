@@ -139,42 +139,42 @@ public class NetPropertiesAnalyzer {
 		NetProps.add(scfProp);
 		
 		ArrayList<Object> ft0Prop = new ArrayList<Object>();
-		ft0Prop.add("FT0");
+		ft0Prop.add("Ft0");
 		ft0Prop.add(false);
 		String[] ft0Txt = { 
-				"No input transition", 
-				"Every transition has at least one pre-place.",
-				"Sink of a component."};
+				"Input transitions", 
+				"There are transitions without a pre-place: Ft = {}",
+				"Infinite source of a component."};
 		ft0Prop.add(ft0Txt);
 		NetProps.add(ft0Prop);
 		
 		ArrayList<Object> tf0Prop = new ArrayList<Object>();
-		tf0Prop.add("TF0");
+		tf0Prop.add("tF0");
 		tf0Prop.add(false);
 		String[] tf0Txt = { 
-				"No output transition", 
-				"Every transition has at laest one post-place.",
-				"Infinite source of a component."};
+				"Output transitions", 
+				"There are transitions without a post-place: tF = {}",
+				"Sink of a component."};
 		tf0Prop.add(tf0Txt);
 		NetProps.add(tf0Prop);
 		
 		ArrayList<Object> fp0Prop = new ArrayList<Object>();
-		fp0Prop.add("FP0");
+		fp0Prop.add("Fp0");
 		fp0Prop.add(false);
 		String[] fp0Txt = { 
-				"No input place", 
-				"Every place has at least one pre-transition.",
-				"Components can infinitely accumulate in the system."};
+				"Input places", 
+				"There are places without pre-transitions: Fp = {}",
+				"Every component can be consumed by a reaction."};
 		fp0Prop.add(fp0Txt);
 		NetProps.add(fp0Prop);
 		
 		ArrayList<Object> pf0Prop = new ArrayList<Object>();
-		pf0Prop.add("PF0");
+		pf0Prop.add("pF0");
 		pf0Prop.add(false);
 		String[] pf0Txt = { 
-				"No output place", 
-				"Every place has at least one post-transition.",
-				"Every component can be consumed by a reaction."};
+				"Output places", 
+				"There are places without post-transitions: pF = {}",
+				"Components can infinitely accumulate in the system."};
 		pf0Prop.add(pf0Txt);
 		NetProps.add(pf0Prop);
 

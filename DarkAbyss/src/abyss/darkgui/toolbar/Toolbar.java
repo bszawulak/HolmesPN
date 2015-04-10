@@ -297,10 +297,10 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {	
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().loadFromFile(
-						"C:/Users/Rince/Desktop/Sieci/BER3.7.2/BERv3.8.2ab.spped");
+						"C:/Users/Rince/Desktop/Sieci/BER/BERv3.7.2.spped");
 				GUIManager.getDefaultGUIManager().getSimulatorBox().createSimulatorProperties();
 				
-				GUIManager.getDefaultGUIManager().setLastPath("C:/Users/Rince/Desktop/Sieci/BER3.7.2/");
+				GUIManager.getDefaultGUIManager().setLastPath("C:/Users/Rince/Desktop/Sieci/BER/");
 				
 				/*
 				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
