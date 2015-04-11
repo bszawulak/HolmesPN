@@ -1,45 +1,57 @@
 package abyss.tables;
 
 import java.util.ArrayList;
-
 import javax.swing.table.AbstractTableModel;
 
-import abyss.darkgui.GUIManager;
-
 /**
- * Klasa model dla tabeli inwariantów.
+ * Klasa model dla tabeli podstawowych informacji o inwariantach.
  * @author MR
  */
 public class InvariantsTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = -1557850148390063580L;
-	
-	private ArrayList<Integer> infeasibleInvariants;
-	private ArrayList<Integer> zeroDeadTransitions;
-	private String[] columnNames;
-	private ArrayList<ArrayList<String>> dataMatrix;
+	private static final long serialVersionUID = 5760866352155772825L;
+	private String[] columnNames = {"ID", "Tr.#", "Min.", "Feas.", "In-T", "Out-T", "R-arc", "Inh.", "Sur", "Sub", "Canon.", "Name"};
+	private ArrayList<InvariantContainer> dataMatrix;
 	private int dataSize;
 	
 	/**
 	 * Konstruktor klasy modelującej dla tablicy inwariantów.
 	 */
-	public InvariantsTableModel(int transNumber) {
-		columnNames = new String[transNumber+2];
-		columnNames[0] = "ID";
-		columnNames[1] = "Trans.#:";
-		for(int i=0; i<transNumber; i++) {
-			columnNames[i+2] = "t"+i;
-		}
-		
-		dataMatrix = new ArrayList<ArrayList<String>>();
+	public InvariantsTableModel() {
+		dataMatrix = new ArrayList<InvariantContainer>();
 		dataSize = 0;
 	}
 	
 	/**
-	 * Metoda służaca do dodawania nowego wiersza (inwariantu) do tabeli danych.
-	 * @param dataRow ArrayList[String] - wiersz danych
+	 * Metoda dodająca nowy wiersz do tablicy danych inwariantów.
+	 * @param id int - identyfikator porządkowy
+	 * @param transN int - liczba tranzycji
+	 * @param min boolean - true = minimalny
+	 * @param feas boolean - true = feasible, wykonalny
+	 * @param inT int - liczba tranzycji wejściowych
+	 * @param outT int - liczba tranzycji wyjściowych
+	 * @param readArcs int - liczba łuków odczytu
+	 * @param inhibitors int - liczba łuków blokujących
+	 * @param sur int - true = sur-invariant
+	 * @param sub int - true = sub-invariant
+	 * @param canonical boolean - kanoniczny, normalny inwariant (Cx=0)
+	 * @param name String - nazwa (if any)
 	 */
-	public void addNew(ArrayList<String> dataRow) {
-		dataMatrix.add(dataRow);
+	public void addNew(int id, int transN, boolean min, boolean feas, int inT, int outT, int readArcs, int inhibitors,
+			boolean sur, boolean sub, boolean canonical, String name) {
+		InvariantContainer ic = new InvariantContainer();
+		ic.ID = id;
+		ic.transNumber = transN;
+		ic.minimal = min;
+		ic.feasible = feas;
+		ic.inTransitions = inT;
+		ic.outTransitions = outT;
+		ic.readArcs = readArcs;
+		ic.inhibitors = inhibitors;
+		ic.sur = sur;
+		ic.sub = sub;
+		ic.canonical = canonical;
+		ic.name = name;
+		dataMatrix.add(ic);
 		dataSize++;
 	}
 	
@@ -78,7 +90,7 @@ public class InvariantsTableModel extends AbstractTableModel {
 	 */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        if (dataMatrix.isEmpty()) {
+        if (dataMatrix.isEmpty() || columnIndex > columnNames.length) {
             return Object.class;
         }
         return getValueAt(0, columnIndex).getClass();
@@ -92,51 +104,47 @@ public class InvariantsTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Object returnValue = null;
-		if(columnIndex < 2) {
-			try {
-				returnValue = dataMatrix.get(rowIndex).get(columnIndex);
-				//int value = Integer.parseInt(returnValue.toString());
-				return returnValue;
-			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Invariants table malfunction: non-numerical value in 1st or 2nd column.", "error", true);
-			}
-		} else {
-			returnValue = dataMatrix.get(rowIndex).get(columnIndex);
-			return returnValue.toString();
-		}
+		switch (columnIndex) {
+        case 0:
+            returnValue = dataMatrix.get(rowIndex).ID;
+            break;
+        case 1:
+        	returnValue = dataMatrix.get(rowIndex).transNumber;
+            break;
+        case 2:
+        	returnValue = dataMatrix.get(rowIndex).minimal;
+            break;
+        case 3:
+        	returnValue = dataMatrix.get(rowIndex).feasible;
+            break;
+        case 4:
+        	returnValue = dataMatrix.get(rowIndex).inTransitions;
+            break;
+        case 5:
+        	returnValue = dataMatrix.get(rowIndex).outTransitions;
+            break;
+        case 6:
+        	returnValue = dataMatrix.get(rowIndex).readArcs;
+            break;
+        case 7:
+        	returnValue = dataMatrix.get(rowIndex).inhibitors;
+            break;
+        case 8:
+        	returnValue = dataMatrix.get(rowIndex).sur;
+            break;
+        case 9:
+        	returnValue = dataMatrix.get(rowIndex).sub;
+            break;
+        case 10:
+        	returnValue = dataMatrix.get(rowIndex).canonical;
+            break;
+        case 11:
+        	returnValue = dataMatrix.get(rowIndex).name;
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid column index");
+        }
+         
         return returnValue;
-	}
-	
-	/**
-	 * Metoda ustawia nowy wektor z informacją które inwarianty mają zagłodzone tranzycje.
-	 * @param infInv ArrayList[Integer] - wektor danych
-	 */
-	public void setInfeasibleInvariants(ArrayList<Integer> infInv) {
-		this.infeasibleInvariants = infInv;
-	}
-	
-	/**
-	 * Metoda zwraca wektor danych o inwariantach z zagłodzonymi tranzycjami.
-	 * @return ArrayList[Integer] - wektor danych
-	 */
-	public ArrayList<Integer> getInfeasibleInvariants() {
-		return infeasibleInvariants;
-	}
-	
-	/**
-	 * Metoda ustawia nowy wektor z informacją które tranzycje są zagłodzone lub
-	 * niepokryte inwariantami.
-	 * @param zeroTrans ArrayList[Integer] - wektor danych
-	 */
-	public void setZeroDeadTransitions(ArrayList<Integer> zeroTrans) {
-		this.zeroDeadTransitions = zeroTrans;
-	}
-	
-	/**
-	 * Metoda zwraca wektor danych z martwymi lub niepokrytymi tranzycjami.
-	 * @return ArrayList[Integer] - wektor danych
-	 */
-	public ArrayList<Integer> getZeroDeadTransitions() {
-		return zeroDeadTransitions;
 	}
 }

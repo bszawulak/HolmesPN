@@ -15,7 +15,7 @@ import javax.swing.table.TableCellRenderer;
  */
 public class PTITableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
-	private int mode = 0; //0 -places
+	private int mode = 0; //0 - places, 1 - transitions, 2 - invSimulationData 3 - inv.Simple,
 	private JTable table;
 	
 	/**
@@ -56,10 +56,11 @@ public class PTITableRenderer implements TableCellRenderer {
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
-    	if(mode == 2) //model tablicy inwariantów
+    	if(mode == 2) { //model tablicy inwariantów w wersji szczegółowej (symulacji wykonań)
     		return paintCellsInvariants(value, isSelected, hasFocus, row, column);
-    	else
+    	} else { //cała reszta
     		return paintCellsDefault(value, isSelected, hasFocus, row, column);
+    	}
     }
 
     /**
@@ -76,7 +77,7 @@ public class PTITableRenderer implements TableCellRenderer {
 		
 		renderer.setBackground(Color.white);
     	renderer.setFont(new Font("Arial", Font.BOLD, 9));
-    	InvariantsTableModel modelInvariants = (InvariantsTableModel) table.getModel();
+    	InvariantsSimTableModel modelInvariants = (InvariantsSimTableModel) table.getModel();
     	
 		if(modelInvariants.getInfeasibleInvariants().contains(row) == true) { //cały inw. na jasno szary
 			renderer.setBackground(Color.lightGray);

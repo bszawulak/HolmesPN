@@ -46,6 +46,7 @@ import org.simpleframework.xml.Root;
 public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
 	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
+	
 	private ArrayList<GraphPanel> graphPanels;
 	private MCSDataMatrix mcsData;
 	
@@ -381,7 +382,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void setInvariantsMatrix(ArrayList<ArrayList<Integer>> invariants) {
 		this.invariantsMatrix = invariants;
 	}
-	
+
 	/**
 	 * Metoda zwraca macierz inwariantów sieci.
 	 * @return ArrayList[ArrayList[Integer]] - macierz inwariantów

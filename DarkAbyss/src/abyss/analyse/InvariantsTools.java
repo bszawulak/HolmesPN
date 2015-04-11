@@ -6,12 +6,43 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 
 import abyss.darkgui.GUIManager;
+import abyss.math.Arc;
+import abyss.math.Arc.TypesOfArcs;
+import abyss.math.ElementLocation;
 import abyss.math.InvariantTransition;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
 
 /**
  * Klasa narzędziowa, zawierająca metody (głównie statyczne) do testów związanych z inwariantami.
+ * <br>Metody:
+ * <br>
+ * transposeMatrix - macierz transpozowana<br>
+ * returnBinaryMatrix - zamiana macierzy na postać binarną<br>
+ * isTInvariantSet - sprawdza, czy zbiór inwariantów zeruje macierz incydencji<br>
+ * countNonInvariants - zwraca liczbę nie-inwariantó<br>
+ * countNonT_InvariantsV2 - zwraca dokładną informację o sub/sur inwariantach i miejscach których nie zerują<br>
+ * checkInvariant - sprawdza czy podany inwariant zeruje macierz incydencji<br>
+ * checkInvariantV2 - jak wyżej, tylko wolniejszy algorytm (mnoży i dodaje każdy element)<br>
+ * getSupport - zwraca wsparcie inwariantu<br>
+ * checkCoverability - sprawdza relację między 2 inwariantami (private)<br>
+ * finalSupportMinimalityTest - sprawdza czy są inwarianty nie-minimalne i je usuwa<br>
+ * supportInclusionCheck - sprawdza czy wsparcie inwariantu zawiera wszystkie elementy wsparcia drugiego inwariantu<br>
+ * checkCanonity - zwraca liczbę niekanonicznych inwariantów<br>
+ * checkSupportMinimality - sprawdza cały zbiór inwariantów i podaje liczbę nie-minimalnych<br>
+ * checkSupportMinimalityThorough - jak wyżej, ale podaje które są nie-minimalne i co zawierają<br>
+ * compareInv - porównanie dwóch zbiorów inwariantów ze sobą<br>
+ * printMatrix - pokazuje macierz na konsoli<br>
+ * detectCovered - podaje zbiór tranzycji pokrytych przez inwarianty<br>
+ * detectUncovered - j.w. : nie pokrytych<br>
+ * compute2ndFormInv - macierz inwariantów 2 formy (obsolete)<br>
+ * returnInvWithTransition - zwraca podzbiór inwariantów które zawierają wartość != 0 na podanej pozycji<br>
+ * returnInvWithoutTransition - jak wyżej, tylko zbiór bez danej tranzycji<br>
+ * getFrequency - zwraca wektor informujący w ilu inwariantach występuje każda tranzycja<br>
+ * getActiveTransitions - zwraca wektor pokrytych przez inwarianty tranzycji<br>
+ * getExtendedInvariantsInfo - informacje o inwariantach 'zawierających' niestandardowe łuki<br>
+ * getInOutTransInfo - zwraca informacje o tym, ile tranzycji IN/OUT ma każdy inwariant<br>
+ * 
  * @author MR
  */
 public final class InvariantsTools {
@@ -41,6 +72,11 @@ public final class InvariantsTools {
 		return resultMatrix;
 	}
 	
+	/**
+	 * Zamienia macierz na postać binarną.
+	 * @param matrix ArrayList[ArrayList[Integer]] - macierz
+	 * @return ArrayList[ArrayList[Integer]] - macierz 0-01
+	 */
 	public static ArrayList<ArrayList<Integer>> returnBinaryMatrix(ArrayList<ArrayList<Integer>> matrix) {
 		if(matrix == null || matrix.size() == 0)
 			return null;
@@ -186,19 +222,13 @@ public final class InvariantsTools {
 	public static boolean checkInvariant(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> invariant, boolean tInv) {
 		//CMatrix - każdy wiersz to wektor miejsc indeksowany numerem tranzycji [2][3] - 2 tranzycja, 3 miejsce
 		if(tInv == true && CMatrix.size() > 0) {
-			ArrayList<Integer> invSupport = getSupport(invariant);
 			ArrayList<Integer> placesSumVector = new ArrayList<Integer>();
 			if(invariant.size() != CMatrix.size())
 				return false;
 			
 			int placesNumber = CMatrix.get(0).size();
-			//for(int i=0; i<placesNumber; i++) {
-				//placesSumVector.add(0);
-			//}
-			
 			int transitionsNumber = invariant.size();
-			
-			
+
 			for(int p=0; p<placesNumber; p++) {
 				int sumForPlace = 0;
 				for(int t=0; t<transitionsNumber; t++) {
@@ -207,19 +237,6 @@ public final class InvariantsTools {
 				placesSumVector.add(sumForPlace);
 			}
 			
-			
-			/*
-			for(int sup : invSupport) { //dla wszystkich wektorów CMatrix ze wsparcia inwariantu
-				ArrayList<Integer> row = CMatrix.get(sup);
-				int multFactor = invariant.get(sup);
-				
-				for(int p=0; p<placesNumber; p++) {
-					int oldVal = placesSumVector.get(p);
-					oldVal += row.get(p) * multFactor;
-					placesSumVector.set(p, oldVal);
-				}
-			}
-			*/
 			for(int p=0; p<placesNumber; p++) {
 				if(placesSumVector.get(p) != 0)
 					return false;
@@ -528,19 +545,29 @@ public final class InvariantsTools {
 		return nonCardinal;
 	}
 	
+	/**
+	 * Metoda sprawdza zbiór inwariantów i testuje ich minimalność. 
+	 * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @return int - liczba nie-minimalnych inwariantów
+	 */
 	public static int checkSupportMinimality(ArrayList<ArrayList<Integer>> invMatrix) {
 		int nonMinimal = 0;
 		int invSize = invMatrix.size();
 		
+		ArrayList<ArrayList<Integer>> supportMatrix = new ArrayList<ArrayList<Integer>>();
 		for(int i=0; i<invSize; i++) {
-			ArrayList<Integer> invSupport = getSupport(invMatrix.get(i));
+			supportMatrix.add(getSupport(invMatrix.get(i)));
+		}
+		
+		for(int i=0; i<invSize; i++) {
+			//ArrayList<Integer> invSupport = getSupport(invMatrix.get(i));
 			
 			for(int j=0; j<invSize; j++) {
 				if(j == i)
 					continue;
-				ArrayList<Integer> refSupport = getSupport(invMatrix.get(j));
+				//ArrayList<Integer> refSupport = getSupport(invMatrix.get(j));
 				
-				if(InvariantsTools.supportInclusionCheck(invSupport, refSupport) == true) {
+				if(InvariantsTools.supportInclusionCheck(supportMatrix.get(i), supportMatrix.get(j)) == true) {
 					nonMinimal++;
 					break;
 				}
@@ -548,6 +575,40 @@ public final class InvariantsTools {
 		}
 
 		return nonMinimal;
+	}
+	
+	/**
+	 * Metoda sprawdza zawieranie się wsparć inwariantów.
+	 * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @return ArrayList[ArrayList[Integer]] - macierz w której każdy wiersz zawiera numery inwariantów które 
+	 * się w nim zawierają; jeśli wiersz na pozycji [0] nie zawiera numeru to znaczy że danych inwariant jest minimalny
+	 */
+	public static ArrayList<ArrayList<Integer>> checkSupportMinimalityThorough(ArrayList<ArrayList<Integer>> invMatrix) {
+		ArrayList<ArrayList<Integer>> resNonMinimal = new ArrayList<ArrayList<Integer>>();
+		
+		int invSize = invMatrix.size();
+		ArrayList<Integer> nonMinimalInfo = null;
+		
+		ArrayList<ArrayList<Integer>> supportMatrix = new ArrayList<ArrayList<Integer>>();
+		for(int i=0; i<invSize; i++) {
+			supportMatrix.add(getSupport(invMatrix.get(i)));
+		}
+		
+		for(int i=0; i<invSize; i++) {
+			nonMinimalInfo = new ArrayList<Integer>();
+			
+			for(int j=0; j<invSize; j++) {
+				if(j == i)
+					continue;
+				
+				if(InvariantsTools.supportInclusionCheck(supportMatrix.get(i), supportMatrix.get(j)) == true) {
+					nonMinimalInfo.add(j);
+				}
+			}
+			resNonMinimal.add(nonMinimalInfo);
+		}
+
+		return resNonMinimal;
 	}
 	
 	/**
@@ -627,6 +688,10 @@ public final class InvariantsTools {
 		return result;
 	}
 	
+	/**
+	 * Metoda pokazuje na konsoli macierz.
+	 * @param matrix ArrayList[ArrayList[Integer]] - macierz
+	 */
 	public static void printMatrix(ArrayList<ArrayList<Integer>> matrix) {
 		String colNames = "";
 		for (int jo = 0; jo < matrix.get(0).size(); jo++) {
@@ -836,9 +901,9 @@ public final class InvariantsTools {
 	}
 	
 	/**
-     * 
-     * @param invMatrix
-     * @return
+     * Zwraca wektor tranzycji które są w jakichkolwiek inwariantach.
+     * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+     * @return ArrayList[Integer] - wektor tranzycji pokrytych
      */
     public static ArrayList<Integer> getActiveTransitions(ArrayList<ArrayList<Integer>> invMatrix) { 
     	ArrayList<Integer> trans = new ArrayList<Integer>();
@@ -852,8 +917,119 @@ public final class InvariantsTools {
     	}
     	return trans;
     }
+    
+    /**
+     * Metoda zwraca informację o inwariantach które zawierają łuki odczytu, hamujące, resetujące i wyrównujące
+     * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+     * @return ArrayList[ArrayList[Integer]] - każdy wiersz: [0] - ID inwariantu, [1] # readarc [2] # inhibitor
+     *  [3] # reset [4] # equal
+     */
+    public static ArrayList<ArrayList<Integer>> getExtendedInvariantsInfo(ArrayList<ArrayList<Integer>> invMatrix) {
+    	ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
+    	ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+    	
+    	int invMatrixSize = invMatrix.size();
+    	for(int i=0; i<invMatrixSize; i++) {
+    		ArrayList<Integer> invariant = invMatrix.get(i);
+    		int readArcs = 0;
+    		int inhibitors = 0;
+    		int resets = 0;
+    		int equals = 0;
+    		
+    		for(int supp : invariant) {
+    			if(supp == 0) continue;
+    			
+    			Transition transition = transitions.get(supp);
+    			for(ElementLocation el : transition.getElementLocations()) {
+    				for(Arc arc : el.getInArcs()) {
+    					if(arc.getArcType() == TypesOfArcs.NORMAL)
+    						continue;
+    					
+    					if(arc.getArcType() == TypesOfArcs.READARC) {
+    						readArcs++;
+    					} else if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+    						inhibitors++;
+    					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+    						resets++;
+    					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+    						equals++;
+    					}
+    				}
+    			}
+    		}
+    		ArrayList<Integer> invInfo = new ArrayList<Integer>();
+			invInfo.add(i);
+			invInfo.add(readArcs);
+			invInfo.add(inhibitors);
+			invInfo.add(resets);
+			invInfo.add(equals);
+			
+			results.add(invInfo);	
+    	}
+    	return results;
+    }
 
-	
+    /**
+     * Metoda zwraca informację ile tranzycji wejściowych i ile wyjściowych znajduje się w
+     * inwariancie.
+     * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+     * @return ArrayList[ArrayList[Integer]] - macierz wyników
+     */
+    public static ArrayList<ArrayList<Integer>> getInOutTransInfo(ArrayList<ArrayList<Integer>> invMatrix) {
+    	ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
+    	ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+    	
+    	int invMatrixSize = invMatrix.size();
+    	for(int i=0; i<invMatrixSize; i++) {
+    		ArrayList<Integer> invariant = invMatrix.get(i);
+    		int inTrans = 0;
+    		int pureInTrans = 0;
+    		int outTrans = 0;
+    		
+    		for(int supp : invariant) {
+    			if(supp == 0) continue;
+    		
+    			Transition transition = transitions.get(supp);
+    			int inArcs = 0;
+    			int extInArcs = 0;
+    			int outArcs = 0;
+    			for(ElementLocation el : transition.getElementLocations()) {
+    				for(Arc a : el.getInArcs()) {
+    					if(a.getArcType() == TypesOfArcs.INHIBITOR || a.getArcType() == TypesOfArcs.READARC) {
+    						extInArcs++;
+    					} else {
+    						inArcs++;
+    					}
+    				}
+    				
+    				for(Arc a : el.getOutArcs()) {
+    					if(a.getArcType() != TypesOfArcs.READARC) //nie liczy się: to jest in-arc w myśl dziwnych definicji!
+    						outArcs++;
+    				}
+    			}
+    			
+    			if(inArcs == 0 && extInArcs == 0)
+    				pureInTrans++;
+    			
+    			if(inArcs == 0 && extInArcs > 0)
+    				inTrans++;
+    			
+    			if(outArcs == 0)
+    				outTrans++;
+    		}
+    		
+    		ArrayList<Integer> transInfo = new ArrayList<Integer>();
+    		transInfo.add(pureInTrans);
+    		transInfo.add(inTrans);
+    		transInfo.add(outTrans);
+    		results.add(transInfo);
+    	}
+    	
+    	return results;
+    }
+    
+    
+    
 	/*
 	int supSize = candidateSupport.size();
 	ArrayList<ArrayList<Integer>> Hk = new ArrayList<ArrayList<Integer>>();

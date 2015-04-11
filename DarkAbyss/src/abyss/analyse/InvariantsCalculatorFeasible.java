@@ -72,7 +72,7 @@ public class InvariantsCalculatorFeasible {
 			status = "Set computed. Returning.";
 			success = true;
 			//return f_invariantsCreated;
-			return feasibleSet();
+			return makeFeasibleSet();
 		} else {
 			JOptionPane.showMessageDialog(null, "Feasible P-inv search? Not implemented.", 
 					"Warning", JOptionPane.WARNING_MESSAGE);
@@ -116,6 +116,8 @@ public class InvariantsCalculatorFeasible {
 	
 	private void searchFTInvAdvanced() {
 		partitionInvariants();
+		f_invariantsCreated = new ArrayList<ArrayList<Integer>>();
+		
 		int size = non_feasibleInv.size();
 		for(int i=0; i<size; i++) {
 			ArrayList<ArrayList<Integer>> invToCombine = new ArrayList<ArrayList<Integer>>(); //lista znalezionych
@@ -152,16 +154,15 @@ public class InvariantsCalculatorFeasible {
 					if(upperSearchBound > connectedTransitionsSet.size())
 						upperSearchBound = connectedTransitionsSet.size();
 					//usuń znalezione zbiory z connectedTransitionsSet i zacznij kolejną iterację
-					if(invToCombine.contains(foundVectors) == false)
+					if(invToCombine.contains(foundVectors) == false) {
 						invToCombine.add(foundVectors);
+					}
 				}
 				
 				if(upperSearchBound == 0 || connectedTransitionsSet.size() == 0) {
 					break;
 				}
-			}
-			
-			
+			}	
 			invToCombine.add(nonFInvariant);
 			
 			ArrayList<Integer> newFeasible = createFeasibleInvariant(invToCombine);
@@ -353,7 +354,7 @@ public class InvariantsCalculatorFeasible {
 	 * Metoda zwraca nowy zbiór inwariantów - minimalne wykonalne oraz nie-minimalne ale wykonalne (feasible).
 	 * @return ArrayList[ArrayList[Integer]] - zbiór inwariantów
 	 */
-	private ArrayList<ArrayList<Integer>> feasibleSet() {
+	private ArrayList<ArrayList<Integer>> makeFeasibleSet() {
 		ArrayList<ArrayList<Integer>> resultSet = new ArrayList<ArrayList<Integer>>();
 		for(ArrayList<Integer> minFeasibleInvariant : feasibleInv)
 			resultSet.add(minFeasibleInvariant);

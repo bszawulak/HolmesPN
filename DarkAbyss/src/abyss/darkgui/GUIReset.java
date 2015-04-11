@@ -111,6 +111,8 @@ public class GUIReset {
 		//"I nie będzie niczego."
 		// Księga Kononowicza
 		if(invGenerated == true) {
+			mastah.accessNetTablesWindow().resetInvData();
+			
 			resetCommunicationProtocol();
 			mastah.getWorkspace().getProject().setInvariantsMatrix(null);
 			mastah.getWorkspace().getProject().getMCSdataCore().resetMSC();

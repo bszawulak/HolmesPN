@@ -1151,6 +1151,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
+	 * Metoda pozwala na dostęp do obiektu okna tabel sieci.
+	 * @return AbyssNetTables - obiekt okna danych (tabel) sieci
+	 */
+	public AbyssNetTables accessNetTablesWindow() {
+		return windowNetTables;
+	}
+	
+	/**
 	 * Metoda tworzy nowe okno logów symulatora sieci (na bazie okna notatnika programu).
 	 */
 	private void createSimLogWindow() {

@@ -38,6 +38,7 @@ import javax.swing.table.TableRowSorter;
 
 import abyss.darkgui.GUIManager;
 import abyss.math.Transition;
+import abyss.tables.InvariantsSimTableModel;
 import abyss.tables.InvariantsTableModel;
 import abyss.tables.PTITableRenderer;
 import abyss.tables.PlacesTableModel;
@@ -66,8 +67,9 @@ public class AbyssNetTables extends JFrame {
 	private DefaultTableModel model;
 	private PlacesTableModel modelPlaces;
 	private TransitionsTableModel modelTransition;
-	private InvariantsTableModel modelInvariants;
-	private PTITableRenderer tableRenderer; // = new PTITableRenderer();
+	private InvariantsTableModel modelBasicInvariants;
+	private InvariantsSimTableModel modelInvariantsSimData;
+	private PTITableRenderer tableRenderer;
 	public int currentClickedRow;
 	private int simStepsForInv = 10000;
 	private boolean maxModeForSSInv = false;
@@ -91,6 +93,13 @@ public class AbyssNetTables extends JFrame {
 			GUIManager.getDefaultGUIManager().log("Critical error, cannot create Abyss Net Tables window:", "error", true);
 			GUIManager.getDefaultGUIManager().log(msg, "error", false);
 		}
+	}
+	
+	/**
+	 * Metoda resetuje macierz danych o inwariantach.
+	 */
+	public void resetInvData() {
+		action.dataMatrix = null;
 	}
 	
 	/**
@@ -172,9 +181,9 @@ public class AbyssNetTables extends JFrame {
 		buttonsPanel.setLocation(670, 0);
 		//********************************************** NODES ****************************************************
 		
-		JPanel buttonNodePanel = new JPanel(null);
-		buttonNodePanel.setBounds(0, 0, 130, 120);
-		buttonNodePanel.setBorder(BorderFactory.createTitledBorder("Nodes tables"));
+		JPanel upperButtonsPanel = new JPanel(null);
+		upperButtonsPanel.setBounds(0, 0, 130, 160);
+		upperButtonsPanel.setBorder(BorderFactory.createTitledBorder("P / T / Inv. data"));
 		
 		int yPos = 20;
 		int xPos = 10;
@@ -182,35 +191,31 @@ public class AbyssNetTables extends JFrame {
 		int bHeight = 30;
 		
 		JButton transitionsButton = createStandardButton("Places", Tools.getResIcon32(""));
-		transitionsButton.setToolTipText("    ");
+		transitionsButton.setToolTipText("Shows places table");
 		transitionsButton.setBounds(xPos, yPos, bWidth, bHeight);
 		transitionsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//setSize(new Dimension(800,600));
-				//resizeComponents();
 				createPlacesTable();
 			}
 		});
 		transitionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		buttonNodePanel.add(transitionsButton);
+		upperButtonsPanel.add(transitionsButton);
 		yPos = yPos + bHeight + 5;
 		
 		JButton placesButton = createStandardButton("Transitions", Tools.getResIcon32(""));
-		placesButton.setToolTipText("    ");
+		placesButton.setToolTipText("Shows transitions table");
 		placesButton.setBounds(xPos, yPos, bWidth, bHeight);
 		placesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//setSize(new Dimension(800,600));
-				//resizeComponents();
-				createTransitionTable();		
+				createTransitionTable();
 			}
 		});
 		placesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		buttonNodePanel.add(placesButton);
+		upperButtonsPanel.add(placesButton);
 		yPos = yPos + bHeight + 5;
 		
-		JButton switchButton = createStandardButton("Switch pos.", Tools.getResIcon32(""));
-		switchButton.setToolTipText("    ");
+		JButton switchButton = createStandardButton("Switch P or T", Tools.getResIcon32(""));
+		switchButton.setToolTipText("Switch internal localization of two places or two transitions.");
 		switchButton.setBounds(xPos, yPos, bWidth, 20);
 		switchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -225,31 +230,39 @@ public class AbyssNetTables extends JFrame {
 			}
 		});
 		switchButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		buttonNodePanel.add(switchButton);
+		upperButtonsPanel.add(switchButton);
 		
-		buttonsPanel.add(buttonNodePanel);
+		yPos = yPos + bHeight - 5;
+		
+		JButton invButton = createStandardButton("Invariants", Tools.getResIcon32(""));
+		invButton.setToolTipText("Shows invariants information table");
+		invButton.setBounds(xPos, yPos, bWidth, bHeight);
+		invButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				createSimpleInvTable();
+			}
+		});
+		invButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		upperButtonsPanel.add(invButton);
+		yPos = yPos + bHeight + 5;
+		
+		
+		buttonsPanel.add(upperButtonsPanel);
 		
 		//********************************************** INVARIANTS ****************************************************
 		
 		JPanel buttonsInvariantsPanel = new JPanel(null);
-		buttonsInvariantsPanel.setBounds(0, buttonNodePanel.getHeight(), 130, 220);
-		buttonsInvariantsPanel.setBorder(BorderFactory.createTitledBorder("Invariants table"));
+		buttonsInvariantsPanel.setBounds(0, upperButtonsPanel.getHeight(), 130, 220);
+		buttonsInvariantsPanel.setBorder(BorderFactory.createTitledBorder("Invariants sim."));
 		
 		yPos = 20;
 		xPos = 10;
 		
-		JButton invariantsButton = createStandardButton("Invariants", Tools.getResIcon32(""));
+		JButton invariantsButton = createStandardButton("Show data", Tools.getResIcon32(""));
 		invariantsButton.setToolTipText("    ");
 		invariantsButton.setBounds(xPos, yPos, bWidth, bHeight);
 		invariantsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-				//double width = screenSize.getWidth();
-				//double height = screenSize.getHeight();
-				//setSize(new Dimension((int)width-50, (int)height-100));
-				//setLocation(20, 20);
-				//resizeComponents();
-				
 				createInvariantsTable();
 			}
 		});
@@ -410,6 +423,76 @@ public class AbyssNetTables extends JFrame {
 	}
     
     /**
+     * Metoda przygotowująca tabelę dla tranzycji.
+     */
+    private void createSimpleInvTable() { 
+        modelBasicInvariants = new InvariantsTableModel();
+        table.setModel(modelBasicInvariants);
+        
+        table.getColumnModel().getColumn(0).setHeaderValue("ID");
+        table.getColumnModel().getColumn(0).setPreferredWidth(30);
+    	table.getColumnModel().getColumn(0).setMinWidth(30);
+    	table.getColumnModel().getColumn(0).setMaxWidth(30);
+        table.getColumnModel().getColumn(1).setHeaderValue("Tr.#");
+        table.getColumnModel().getColumn(1).setPreferredWidth(30);
+    	table.getColumnModel().getColumn(1).setMinWidth(30);
+    	table.getColumnModel().getColumn(1).setMaxWidth(30);
+        table.getColumnModel().getColumn(2).setHeaderValue("Min.");
+        table.getColumnModel().getColumn(2).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(2).setMinWidth(40);
+    	table.getColumnModel().getColumn(2).setMaxWidth(40);
+        table.getColumnModel().getColumn(3).setHeaderValue("Feas.");
+        table.getColumnModel().getColumn(3).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(3).setMinWidth(40);
+    	table.getColumnModel().getColumn(3).setMaxWidth(40);
+        table.getColumnModel().getColumn(4).setHeaderValue("inT");
+        table.getColumnModel().getColumn(4).setPreferredWidth(30);
+    	table.getColumnModel().getColumn(4).setMinWidth(30);
+    	table.getColumnModel().getColumn(4).setMaxWidth(30);
+        table.getColumnModel().getColumn(5).setHeaderValue("outT");
+        table.getColumnModel().getColumn(5).setPreferredWidth(30);
+    	table.getColumnModel().getColumn(5).setMinWidth(30);
+    	table.getColumnModel().getColumn(5).setMaxWidth(30);
+        
+    	table.getColumnModel().getColumn(6).setHeaderValue("r-Arc");
+        table.getColumnModel().getColumn(6).setPreferredWidth(30);
+    	table.getColumnModel().getColumn(6).setMinWidth(30);
+    	table.getColumnModel().getColumn(6).setMaxWidth(30);
+    	table.getColumnModel().getColumn(7).setHeaderValue("Inh.");
+        table.getColumnModel().getColumn(7).setPreferredWidth(30);
+    	table.getColumnModel().getColumn(7).setMinWidth(30);
+    	table.getColumnModel().getColumn(7).setMaxWidth(30);
+    	table.getColumnModel().getColumn(8).setHeaderValue("Sur.");
+        table.getColumnModel().getColumn(8).setPreferredWidth(30);
+    	table.getColumnModel().getColumn(8).setMinWidth(30);
+    	table.getColumnModel().getColumn(8).setMaxWidth(30);
+    	table.getColumnModel().getColumn(9).setHeaderValue("Sub.");
+        table.getColumnModel().getColumn(9).setPreferredWidth(30);
+    	table.getColumnModel().getColumn(9).setMinWidth(30);
+    	table.getColumnModel().getColumn(9).setMaxWidth(30);
+    	table.getColumnModel().getColumn(10).setHeaderValue("Canon");
+        table.getColumnModel().getColumn(10).setPreferredWidth(30);
+    	table.getColumnModel().getColumn(10).setMinWidth(30);
+    	table.getColumnModel().getColumn(10).setMaxWidth(30);
+    	table.getColumnModel().getColumn(11).setHeaderValue("Name");
+        table.getColumnModel().getColumn(11).setPreferredWidth(100);
+    	table.getColumnModel().getColumn(11).setMinWidth(100);
+    	
+    	
+    	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(table.getModel());
+		table.setRowSorter(sorter);
+		
+        table.setName("BasicInvTable");
+        tableRenderer.setMode(3); //mode: basic invaritans
+        table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+        table.setDefaultRenderer(Object.class, tableRenderer);
+
+        action.addBasicInvDataToModel(modelBasicInvariants); // metoda generująca dane o tranzycjach
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.validate();
+	}
+    
+    /**
      * Metoda tworząca tablicę inwariantów.
      */
 	private void createInvariantsTable() {
@@ -427,8 +510,8 @@ public class AbyssNetTables extends JFrame {
     	
     	int transNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
     	
-    	modelInvariants = new InvariantsTableModel(transNumber);        
-        table.setModel(modelInvariants);
+    	modelInvariantsSimData = new InvariantsSimTableModel(transNumber);        
+        table.setModel(modelInvariantsSimData);
         
         table.getColumnModel().getColumn(0).setHeaderValue("ID");
         table.getColumnModel().getColumn(0).setPreferredWidth(40);
@@ -452,7 +535,7 @@ public class AbyssNetTables extends JFrame {
 		table.setRowSorter(null);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		action.addInvariantsToModel(modelInvariants, invariantsMatrix, simStepsForInv, maxModeForSSInv);
+		action.addInvariantsToModel(modelInvariantsSimData, invariantsMatrix, simStepsForInv, maxModeForSSInv);
 		
 		//ustawianie komentarzy dla kolumn:
 		ColumnHeaderToolTips tips = new ColumnHeaderToolTips();
@@ -474,7 +557,7 @@ public class AbyssNetTables extends JFrame {
 	 */
 	public void resizeColumnWidth(JTable table) {
 	    TableColumnModel columnModel = table.getColumnModel();
-	    InvariantsTableModel itm = (InvariantsTableModel)table.getModel();
+	    InvariantsSimTableModel itm = (InvariantsSimTableModel)table.getModel();
 	    ArrayList<Integer> dTrans = itm.getZeroDeadTransitions();
 	    for (int column = 2; column < table.getColumnCount(); column++) {
 	        if(dTrans.get(column-2) == 0) {

@@ -8,11 +8,15 @@ import javax.swing.JTable;
 
 import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
+import abyss.math.Arc;
 import abyss.math.ElementLocation;
+import abyss.math.PetriNet;
 import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.math.simulator.StateSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
+import abyss.tables.InvariantContainer;
+import abyss.tables.InvariantsSimTableModel;
 import abyss.tables.InvariantsTableModel;
 import abyss.tables.PlacesTableModel;
 import abyss.tables.TransitionsTableModel;
@@ -25,6 +29,7 @@ import abyss.utilities.Tools;
  */
 public class AbyssNetTablesActions {
 	private AbyssNetTables antWindow; 
+	public ArrayList<InvariantContainer> dataMatrix;
 	
 	/**
 	 * Konstruktor klasy.
@@ -32,6 +37,7 @@ public class AbyssNetTablesActions {
 	 */
 	public AbyssNetTablesActions(AbyssNetTables overlord) {
 		antWindow = overlord;
+		dataMatrix = null;
 	}
 	
 	/**
@@ -151,6 +157,63 @@ public class AbyssNetTablesActions {
 			modelTransitions.addNew(index, name, preP, postP, (float)avgFired, inInv);
 		}
 	}
+
+	/**
+	 * Metoda wypełniająca tabelę inwariantów podstawowymi informacjami o nich.
+	 * @param model DefaultTableModel - obiekt danych
+	 */
+	public void addBasicInvDataToModel(InvariantsTableModel modelInvariants) {
+		//TODO:
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		ArrayList<Transition> transitions = pn.getTransitions();
+		if(transitions.size() == 0) return;
+		
+		ArrayList<Arc> arcs = pn.getArcs();
+		if(arcs.size() == 0) return;
+		
+		ArrayList<ArrayList<Integer>> invMatrix = pn.getInvariantsMatrix();
+		if(invMatrix == null || invMatrix.size() == 0) return;
+		
+		int ID = 0;
+    	int transNumber = 0;
+    	boolean minimal = false;
+    	boolean feasible = false;
+    	int inTransitions = 0;
+    	int outTransitions = 0;
+    	int readArcs = 0;
+    	int inhibitors = 0;
+    	boolean sur = false;
+    	boolean sub = false;
+    	boolean canonical = false;    	
+    	String name = "";
+		
+    	if(dataMatrix == null || dataMatrix.size() == 0) {
+    		dataMatrix = new ArrayList<InvariantContainer>();
+    		ArrayList<ArrayList<Integer>> nonMinimalInvariants = InvariantsTools.checkSupportMinimalityThorough(invMatrix);
+    		ArrayList<ArrayList<Integer>> arcsInfoMatrix = InvariantsTools.getExtendedInvariantsInfo(invMatrix);
+    		ArrayList<ArrayList<Integer>> inOutInfoMatrix = InvariantsTools.getInOutTransInfo(invMatrix);
+    		
+    		int iterIndex = 0;
+    		for(ArrayList<Integer> invariant : invMatrix) {
+    			ArrayList<Integer> support = InvariantsTools.getSupport(invariant);
+    			
+    			InvariantContainer ic = new InvariantContainer();
+    			ic.ID = iterIndex++;
+    			ic.transNumber = support.size();
+    			
+    		
+    			dataMatrix.add(ic);
+    		}	
+    	}
+    	
+    	for(InvariantContainer ic : dataMatrix) {
+    		modelInvariants.addNew(ic.ID, ic.transNumber, ic.minimal, ic.feasible, ic.inTransitions, 
+    				ic.outTransitions, ic.readArcs, ic.inhibitors, ic.sur, ic.sub, ic.canonical, ic.name);
+    			
+    	}
+     	
+    	
+	}
 	
 	/**
 	 * Metoda służąca do wypełniania tabeli inwariantów.
@@ -158,7 +221,7 @@ public class AbyssNetTablesActions {
 	 * @param invariantsMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @param invSize ArrayList[Integer] invSize - wektor wielkości inwariantów
 	 */
-	public void addInvariantsToModel(InvariantsTableModel modelInvariants, ArrayList<ArrayList<Integer>> invariantsMatrix,
+	public void addInvariantsToModel(InvariantsSimTableModel modelInvariants, ArrayList<ArrayList<Integer>> invariantsMatrix,
 			int simSteps, boolean maximumMode) {
 		StateSimulator ss = new StateSimulator();
 		ss.initiateSim(NetType.BASIC, maximumMode);
