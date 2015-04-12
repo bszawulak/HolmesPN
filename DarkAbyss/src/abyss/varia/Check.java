@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import abyss.analyse.InvariantsCalculatorFeasible;
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
 import abyss.math.Arc.TypesOfArcs;
@@ -51,11 +52,15 @@ public final class Check {
 		int inhibitor = 0;
 		int reset = 0;
 		int equal = 0;
+		int doubleArc = 0;
 		ArrayList<Arc> arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
 		for(Arc a : arcs) {
-			if(a.getArcType() == TypesOfArcs.NORMAL)
-				normal++;
-			else if(a.getArcType() == TypesOfArcs.READARC)
+			if(a.getArcType() == TypesOfArcs.NORMAL) {
+				if(InvariantsCalculatorFeasible.isDoubleArc(a) == true) {
+					doubleArc++;
+				} else
+					normal++;
+			} else if(a.getArcType() == TypesOfArcs.READARC)
 				readArc++;
 			else if(a.getArcType() == TypesOfArcs.INHIBITOR)
 				inhibitor++;
@@ -69,7 +74,7 @@ public final class Check {
 		result.add(inhibitor);
 		result.add(reset);
 		result.add(equal);
-		
+		result.add(doubleArc);
 		return result;
 	}
 }

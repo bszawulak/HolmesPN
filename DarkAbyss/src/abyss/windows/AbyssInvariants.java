@@ -499,8 +499,6 @@ public class AbyssInvariants extends JFrame {
 			logField.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
 			logField.append("Sun-invariants (Cx < 0): "+results.get(0).get(2)+"\n");
 			logField.append("Non-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n");
-			
-			logField.append("-> Not-invariant vectors (Cx=0 test): "+value+"\n");
 			logField.append("=====================================================================\n");
 			logField.append("\n");
 			

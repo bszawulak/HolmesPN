@@ -53,7 +53,7 @@ public class InvariantsCalculatorFeasible {
 	 */
 	public ArrayList<ArrayList<Integer>> getMinFeasible(int mode) {
 		ArrayList<Integer> arcClassCount = Check.getArcClassCount();
-		if(arcClassCount.get(1) == 0) { //brak łuków odczytu
+		if(arcClassCount.get(1) == 0 && arcClassCount.get(5) == 0 ) { //brak łuków odczytu
 			status = "No read arcs. All invariants are feasible.";
 			success = false;
 			return invariants;
@@ -392,7 +392,7 @@ public class InvariantsCalculatorFeasible {
 	}
 
 	/**
-	 * Metoda zwraca zbiór lokalizacji tranzycji związanych łukami wejściowymi z danym miejscem.
+	 * Metoda zwraca zbiór lokalizacji tranzycji związanych łukami wejściowymi z danym miejscem które posiada łuk odczytu.
 	 * @param place Place - miejsce
 	 * @return ArrayList[Integer] - lista lokalizacji tranzycji
 	 */
@@ -429,8 +429,15 @@ public class InvariantsCalculatorFeasible {
 			
 			for(ElementLocation el : transition.getElementLocations()) {
 				for(Arc a : el.getOutArcs()) {
-					if(a.getArcType() != TypesOfArcs.READARC)
-						continue;
+					if(a.getArcType() != TypesOfArcs.READARC) {
+						
+						if(a.getArcType() == TypesOfArcs.NORMAL) {
+							if(isDoubleArc(a) == false)
+								continue;
+						} else {	
+							continue;
+						}
+					}
 					
 					Place p = (Place) a.getEndNode();
 					if(resultPlaces.contains(p) == false)
@@ -484,9 +491,45 @@ public class InvariantsCalculatorFeasible {
 					if(raTrans.contains(position) == false)
 						raTrans.add(position);
 				}
+			} else if(a.getArcType() == TypesOfArcs.NORMAL){
+				if(isDoubleArc(a) == true) {
+					Node n = a.getEndNode();
+					if(n instanceof Place) {
+						if(((Place) n).getTokensNumber() > 0)
+							continue;
+						else {
+							int position = transitions.indexOf((Transition)a.getStartNode());
+							if(raTrans.contains(position) == false)
+								raTrans.add(position);
+						}
+					} else { //a.getEndNode(); = tranzycja
+						n = a.getStartNode();
+						if(((Place) n).getTokensNumber() > 0)
+							continue;
+						else {
+							int position = transitions.indexOf((Transition)a.getEndNode());
+							if(raTrans.contains(position) == false)
+								raTrans.add(position);
+						}
+					}
+				}
 			}
 		}
 		return raTrans;
+	}
+	
+	public static boolean isDoubleArc(Arc arc) {
+		Node startN = arc.getStartNode();
+		Node endN = arc.getEndNode();
+		
+		for(ElementLocation el : endN.getElementLocations()) {
+			for(Arc a : el.getOutArcs()) {// w drugą stronę
+				if(a.getEndNode() == startN) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/**

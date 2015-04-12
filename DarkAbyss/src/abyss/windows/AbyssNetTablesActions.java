@@ -196,7 +196,7 @@ public class AbyssNetTablesActions {
     		ArrayList<ArrayList<Integer>> arcsInfoMatrix = InvariantsTools.getExtendedInvariantsInfo(invMatrix);
     		ArrayList<ArrayList<Integer>> inOutInfoMatrix = InvariantsTools.getInOutTransInfo(invMatrix);
     		ArrayList<Integer> invariantsClassVector = InvariantsTools.getInvariantsClassVector(invMatrix);
-    		//ArrayList<Integer> feasibleVector = InvariantsTools.getFeasibilityClassesStatic(invMatrix);
+    		ArrayList<Integer> feasibleVector = InvariantsTools.getFeasibilityClassesStatic(invMatrix);
     		
     		
     		//int iterIndex = 0;
@@ -212,8 +212,11 @@ public class AbyssNetTablesActions {
     				ic.minimal = true;
     			else
     				ic.minimal = false;
-    			//TODO: feasible
-    			ic.feasible = true;
+
+    			if(feasibleVector.get(i) == -1)
+    				ic.feasible = false;
+    			else
+    				ic.feasible = true;
     		
     			ic.pureInTransitions = inOutInfoMatrix.get(i).get(0);
     			ic.inTransitions = inOutInfoMatrix.get(i).get(1);

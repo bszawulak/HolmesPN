@@ -43,6 +43,9 @@ public class InvariantsCalculator implements Runnable {
 	private ArrayList<Integer> zeroColumnVectorP;
 	private ArrayList<Integer> nonZeroColumnVectorP;
 	
+	
+	private ArrayList<ArrayList<Integer>> doubleArcs;
+	
 	private boolean transCalculation = true;
 	private int aac = 0;
 	private int naac = 0;
@@ -83,6 +86,16 @@ public class InvariantsCalculator implements Runnable {
 			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
 			GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetInvData();
 			logInternal("Operation successfull, invariants found: "+getInvariants().size()+"\n", true);
+			
+			if(doubleArcs.size() > 0) {
+				logInternal("\n", false);
+				logInternal("WARNING! DOUBLE ARCS (READ-ARCS) DETECTED BETWEEN NODES:\n", false);
+				for(ArrayList<Integer> trouble : doubleArcs) {
+					logInternal("Place: p_"+trouble.get(0)+" and Transition t_"+trouble.get(1)+"\n", false);
+				}
+				logInternal("\n", false);
+				logInternal("THIS IS NOT SIMPLE PN MODEL BUT EXTENDED. FEASIBLE INVARIANTS COMPUTATION REQUIRED.\n", false);
+			}
 		} catch (Exception e) {
 			log("Critical error while generating invariants. Possible net state change.", "error", false);
 			logInternal("Critical error while generating invariants. Possible net state change.\n", true);
@@ -121,6 +134,7 @@ public class InvariantsCalculator implements Runnable {
 		globalIdentityMatrix = new ArrayList<ArrayList<Integer>>();
 		CMatrix = new ArrayList<ArrayList<Integer>>();
 		removalList = new ArrayList<Integer>();
+		doubleArcs = new ArrayList<ArrayList<Integer>>();
 
 		//tworzenie macierzy TP - precyzyjnie do obliczeń T-inwariantów
 		for (int trans = 0; trans < transitions.size(); trans++) {
@@ -176,8 +190,18 @@ public class InvariantsCalculator implements Runnable {
 					int x=1;
 				}
 			}
-			globalIncidenceMatrix.get(tPosition).set(pPosition, incidenceValue);
-			CMatrix.get(tPosition).set(pPosition, incidenceValue);
+			int oldValue = globalIncidenceMatrix.get(tPosition).get(pPosition);
+			if(oldValue != 0) {
+				@SuppressWarnings("unused")
+				int x=1;
+				ArrayList<Integer> hiddenReadArc = new ArrayList<Integer>();
+				hiddenReadArc.add(pPosition);
+				hiddenReadArc.add(tPosition);
+				doubleArcs.add(hiddenReadArc);
+			}
+			
+			globalIncidenceMatrix.get(tPosition).set(pPosition, oldValue+incidenceValue);
+			CMatrix.get(tPosition).set(pPosition, oldValue+incidenceValue);
 		}
 		
 		if(!silence)

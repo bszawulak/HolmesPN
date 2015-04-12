@@ -536,6 +536,7 @@ public final class InvariantsTools {
 	 * @return int - liczba niekanonicznych
 	 */
 	public static int checkCanonity(ArrayList<ArrayList<Integer>> invMatrix) {
+		//TODO:
 		int nonCardinal = 0;
 		int size = invMatrix.size();
 		for(int i=0; i<size; i++) {
@@ -1109,7 +1110,7 @@ public final class InvariantsTools {
 				results.add(1);
 		}
 		
-		return null;
+		return results;
 	}
     
     /**
