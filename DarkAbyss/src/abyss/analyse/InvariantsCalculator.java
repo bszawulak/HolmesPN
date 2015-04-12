@@ -81,6 +81,7 @@ public class InvariantsCalculator implements Runnable {
 			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants());
 			project.setInvariantsMatrix(getInvariants());
 			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
+			GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetInvData();
 			logInternal("Operation successfull, invariants found: "+getInvariants().size()+"\n", true);
 		} catch (Exception e) {
 			log("Critical error while generating invariants. Possible net state change.", "error", false);

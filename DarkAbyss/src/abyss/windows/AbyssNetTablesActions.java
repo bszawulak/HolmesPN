@@ -173,12 +173,14 @@ public class AbyssNetTablesActions {
 		
 		ArrayList<ArrayList<Integer>> invMatrix = pn.getInvariantsMatrix();
 		if(invMatrix == null || invMatrix.size() == 0) return;
+		int invMatrixSize = invMatrix.size();
 		
 		int ID = 0;
     	int transNumber = 0;
     	boolean minimal = false;
     	boolean feasible = false;
     	int inTransitions = 0;
+    	
     	int outTransitions = 0;
     	int readArcs = 0;
     	int inhibitors = 0;
@@ -186,28 +188,65 @@ public class AbyssNetTablesActions {
     	boolean sub = false;
     	boolean canonical = false;    	
     	String name = "";
+    	//non-minimal components number:
 		
     	if(dataMatrix == null || dataMatrix.size() == 0) {
     		dataMatrix = new ArrayList<InvariantContainer>();
     		ArrayList<ArrayList<Integer>> nonMinimalInvariants = InvariantsTools.checkSupportMinimalityThorough(invMatrix);
     		ArrayList<ArrayList<Integer>> arcsInfoMatrix = InvariantsTools.getExtendedInvariantsInfo(invMatrix);
     		ArrayList<ArrayList<Integer>> inOutInfoMatrix = InvariantsTools.getInOutTransInfo(invMatrix);
+    		ArrayList<Integer> invariantsClassVector = InvariantsTools.getInvariantsClassVector(invMatrix);
+    		//ArrayList<Integer> feasibleVector = InvariantsTools.getFeasibilityClassesStatic(invMatrix);
     		
-    		int iterIndex = 0;
-    		for(ArrayList<Integer> invariant : invMatrix) {
+    		
+    		//int iterIndex = 0;
+    		for(int i=0; i<invMatrixSize; i++) {
+    			ArrayList<Integer> invariant = invMatrix.get(i);
     			ArrayList<Integer> support = InvariantsTools.getSupport(invariant);
     			
     			InvariantContainer ic = new InvariantContainer();
-    			ic.ID = iterIndex++;
+    			ic.ID = i;
     			ic.transNumber = support.size();
     			
+    			if(nonMinimalInvariants.get(i).size() == 0)
+    				ic.minimal = true;
+    			else
+    				ic.minimal = false;
+    			//TODO: feasible
+    			ic.feasible = true;
     		
+    			ic.pureInTransitions = inOutInfoMatrix.get(i).get(0);
+    			ic.inTransitions = inOutInfoMatrix.get(i).get(1);
+    			ic.outTransitions = inOutInfoMatrix.get(i).get(2);
+    			
+    			ic.readArcs = arcsInfoMatrix.get(i).get(0);
+    			ic.inhibitors = arcsInfoMatrix.get(i).get(1);
+    			
+    			if(invariantsClassVector.get(i) == 0) {
+    				ic.canonical = true;
+    				ic.sub = false;
+    				ic.sur = false;
+    			} else if(invariantsClassVector.get(i) == 1) {
+    				ic.canonical = false;
+    				ic.sub = false;
+    				ic.sur = true;
+    			} else if(invariantsClassVector.get(i) == -1) {
+    				ic.canonical = false;
+    				ic.sub = true;
+    				ic.sur = false;
+    			} else {
+    				ic.canonical = false;
+    				ic.sub = false;
+    				ic.sur = false;
+    			}
+    			
+    			
     			dataMatrix.add(ic);
     		}	
     	}
     	
     	for(InvariantContainer ic : dataMatrix) {
-    		modelInvariants.addNew(ic.ID, ic.transNumber, ic.minimal, ic.feasible, ic.inTransitions, 
+    		modelInvariants.addNew(ic.ID, ic.transNumber, ic.minimal, ic.feasible, ic.pureInTransitions, ic.inTransitions, 
     				ic.outTransitions, ic.readArcs, ic.inhibitors, ic.sur, ic.sub, ic.canonical, ic.name);
     			
     	}

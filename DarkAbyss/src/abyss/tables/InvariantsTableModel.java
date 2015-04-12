@@ -9,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class InvariantsTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 5760866352155772825L;
-	private String[] columnNames = {"ID", "Tr.#", "Min.", "Feas.", "In-T", "Out-T", "R-arc", "Inh.", "Sur", "Sub", "Canon.", "Name"};
+	private String[] columnNames = {"ID", "Tr.#", "Min.", "Feas.", "In-T", "pIn-T", "Out-T", "R-arc", "Inh.", "Sur", "Sub", "Canon.", "Name"};
 	private ArrayList<InvariantContainer> dataMatrix;
 	private int dataSize;
 	
@@ -28,6 +28,7 @@ public class InvariantsTableModel extends AbstractTableModel {
 	 * @param min boolean - true = minimalny
 	 * @param feas boolean - true = feasible, wykonalny
 	 * @param inT int - liczba tranzycji wejściowych
+	 * @param pInT int - liczba czystych tranzycji wejściowych
 	 * @param outT int - liczba tranzycji wyjściowych
 	 * @param readArcs int - liczba łuków odczytu
 	 * @param inhibitors int - liczba łuków blokujących
@@ -36,13 +37,14 @@ public class InvariantsTableModel extends AbstractTableModel {
 	 * @param canonical boolean - kanoniczny, normalny inwariant (Cx=0)
 	 * @param name String - nazwa (if any)
 	 */
-	public void addNew(int id, int transN, boolean min, boolean feas, int inT, int outT, int readArcs, int inhibitors,
+	public void addNew(int id, int transN, boolean min, boolean feas, int pInT, int inT, int outT, int readArcs, int inhibitors,
 			boolean sur, boolean sub, boolean canonical, String name) {
 		InvariantContainer ic = new InvariantContainer();
 		ic.ID = id;
 		ic.transNumber = transN;
 		ic.minimal = min;
 		ic.feasible = feas;
+		ic.pureInTransitions = pInT;
 		ic.inTransitions = inT;
 		ic.outTransitions = outT;
 		ic.readArcs = readArcs;
@@ -118,27 +120,30 @@ public class InvariantsTableModel extends AbstractTableModel {
         	returnValue = dataMatrix.get(rowIndex).feasible;
             break;
         case 4:
-        	returnValue = dataMatrix.get(rowIndex).inTransitions;
+        	returnValue = dataMatrix.get(rowIndex).pureInTransitions;
             break;
         case 5:
-        	returnValue = dataMatrix.get(rowIndex).outTransitions;
+        	returnValue = dataMatrix.get(rowIndex).inTransitions;
             break;
         case 6:
-        	returnValue = dataMatrix.get(rowIndex).readArcs;
+        	returnValue = dataMatrix.get(rowIndex).outTransitions;
             break;
         case 7:
-        	returnValue = dataMatrix.get(rowIndex).inhibitors;
+        	returnValue = dataMatrix.get(rowIndex).readArcs;
             break;
         case 8:
-        	returnValue = dataMatrix.get(rowIndex).sur;
+        	returnValue = dataMatrix.get(rowIndex).inhibitors;
             break;
         case 9:
-        	returnValue = dataMatrix.get(rowIndex).sub;
+        	returnValue = dataMatrix.get(rowIndex).sur;
             break;
         case 10:
-        	returnValue = dataMatrix.get(rowIndex).canonical;
+        	returnValue = dataMatrix.get(rowIndex).sub;
             break;
         case 11:
+        	returnValue = dataMatrix.get(rowIndex).canonical;
+            break;
+        case 12:
         	returnValue = dataMatrix.get(rowIndex).name;
             break;
         default:

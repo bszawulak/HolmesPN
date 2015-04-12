@@ -11,6 +11,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import sun.security.action.GetLongAction;
 import abyss.adam.mct.Runner;
 import abyss.analyse.InvariantsCalculator;
 import abyss.files.clusters.Rprotocols;
@@ -145,21 +146,21 @@ public class GUIOperations {
 					fileExtension = ".inv";
 				
 				overlord.getWorkspace().getProject().saveInvariantsToInaFormat(file.getPath() + fileExtension);
-				overlord.setLastPath(file.getParentFile().getPath());
+				//overlord.setLastPath(file.getParentFile().getPath());
 			} else if (description.contains("Comma")) {
 				if(file.getPath().toLowerCase().contains(".csv"))
 					fileExtension = "";
 				else
 					fileExtension = ".csv";
 				overlord.getWorkspace().getProject().saveInvariantsToCSV(file.getPath() + fileExtension, false);
-				overlord.setLastPath(file.getParentFile().getPath());
+				//overlord.setLastPath(file.getParentFile().getPath());
 			} else if (description.contains("Charlie")) {
 				if(file.getPath().toLowerCase().contains(".inv"))
 					fileExtension = "";
 				else
 					fileExtension = ".inv";
 				overlord.getWorkspace().getProject().saveInvariantsToCharlie(file.getPath() + fileExtension);
-				overlord.setLastPath(file.getParentFile().getPath());
+				//overlord.setLastPath(file.getParentFile().getPath());
 			}
 		}
 	}
@@ -329,7 +330,7 @@ public class GUIOperations {
 			return;
 		}
 		overlord.getInvariantsBox().showInvariants(project.getInvariantsMatrix());
-		overlord.setLastPath(file.getParentFile().getPath());
+		//overlord.setLastPath(file.getParentFile().getPath());
 		overlord.getSimulatorBox().createSimulatorProperties();
 	}
 	
@@ -453,7 +454,7 @@ public class GUIOperations {
 						ext = ".inv";
 					File properName = new File(file.getPath() + ext);
 					Tools.copyFileDirectly(invariantsFile, properName);
-					overlord.setLastPath(file.getParentFile().getPath());
+					//overlord.setLastPath(file.getParentFile().getPath());
 				}
 			}
 			overlord.log("Invariants generation successful.", "text", true);
@@ -528,7 +529,7 @@ public class GUIOperations {
 				generatedMCT.delete();
 				File csvFile = new File(filePath);
 				csvFile.delete();
-				overlord.setLastPath(file.getParentFile().getPath());
+				//overlord.setLastPath(file.getParentFile().getPath());
 				
 				JOptionPane.showMessageDialog(null,"MCT file created","Operation successful.",JOptionPane.INFORMATION_MESSAGE);
 				overlord.log("MCT file saved. Path: "+filePath, "text", true);
@@ -546,7 +547,6 @@ public class GUIOperations {
 	 * @return String - katalog z plikami miar
 	 */
 	public String generateAllCHindexes(int howMany) {
-		overlord.showConsole(true);
 		if(!overlord.getRStatus()) { //sprawda, czy Rscript.exe jest na miejscu
 			overlord.r_env_missing(); // zapytanie gdzie się podziewa Rscript.exe
 			if(!overlord.getRStatus()) { //jeśli wciąż...
@@ -556,19 +556,8 @@ public class GUIOperations {
 		
 		String CSVfilePath= "";
 		CSVfilePath = selectionOfSource();
-
-		/*
-		String filePath = tmpPath + "cluster.csv";
-		
-		//generowanie CSV, uda się, jeśli inwarianty istnieją
-		int result = workspace.getProject().saveInvariantsToCSV(filePath, true);
-		if(result == -1) {
-			String msg = "Exporting net into CSV file failed. \nCluster procedure cannot begin without invariants.";
-			JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);
-			log(msg, "error", true);
+		if(CSVfilePath == null)
 			return null;
-		}
-		*/
 		
 		String dir_path = "";
 		int c_number = howMany;
@@ -583,8 +572,8 @@ public class GUIOperations {
 					howMany = invNumber;
 			}
 			
-			File test = new File(CSVfilePath);
-			String CSVDirectoryPath = test.getParent();
+			//File test = new File(CSVfilePath);
+			//String CSVDirectoryPath = test.getParent();
 
 			Object[] options = {"Select CH metric directory", "Use temporary directory",};
 			int n = JOptionPane.showOptionDialog(null,
@@ -593,7 +582,7 @@ public class GUIOperations {
 					"Directory selection", JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
-				String choosenDir = Tools.selectDirectoryDialog(CSVDirectoryPath, "Select CH metric dir",
+				String choosenDir = Tools.selectDirectoryDialog(overlord.getLastPath(), "Select CH metric dir",
 						"Target directory for CH metric results");
 				if(choosenDir.equals("")) {
 					dir_path = overlord.getTmpPath();
@@ -609,6 +598,8 @@ public class GUIOperations {
 				dir_path = overlord.getTmpPath();
 				overlord.log("Cluster files will be put into the "+dir_path, "text", true);
 			}
+			
+			overlord.showConsole(true);
 			dir_path = dir_path.replace("\\", "/");
 			
 			File test64 = new File(overlord.getSettingsManager().getValue("r_path64"));
@@ -641,7 +632,6 @@ public class GUIOperations {
 	 * @return String - ścieżka do pliku cluster.csv na bazie którego powstały inne pliki
 	 */
 	public String generateClustersCase56(int howMany) {
-		overlord.showConsole(true);
 		if(!overlord.getRStatus()) { //sprawdź, czy Rscript.exe jest na miejscu
 			overlord.r_env_missing(); // zapytanie gdzie się podziewa Rscript.exe
 			if(!overlord.getRStatus()) { //jeśli wciąż...
@@ -650,6 +640,8 @@ public class GUIOperations {
 		}
 		String CSVfilePath = "";
 		CSVfilePath = selectionOfSource();
+		if(CSVfilePath == null)
+			return null;
 		
 		String dir_path = "";
 		int c_number = howMany;
@@ -664,17 +656,17 @@ public class GUIOperations {
 					howMany = invNumber;
 			}
 			
-			File test = new File(CSVfilePath);
-			String CSVDirectoryPath = test.getParent();
+			//File test = new File(CSVfilePath);
+			//String CSVDirectoryPath = test.getParent();
 
-			Object[] options = {"Select cluster directory", "Use temporary directory",};
+			Object[] options = {"Select cluster directory", "Use temporary directory", "Cancel operation"};
 			int n = JOptionPane.showOptionDialog(null,
 					"Multiple cluster files can we written into default temporary directory (not advised) or into\n"
 					+ "the selected one. What to do?",
 					"Directory selection", JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
-				String choosenDir = Tools.selectDirectoryDialog(CSVDirectoryPath, "Select cluster dir",
+				String choosenDir = Tools.selectDirectoryDialog(overlord.getLastPath(), "Select cluster dir",
 						"Target directory for cluster results");
 				if(choosenDir.equals("")) {
 					dir_path = overlord.getTmpPath();
@@ -686,10 +678,14 @@ public class GUIOperations {
 					Tools.copyFileByPath(CSVfilePath, dir_path+"cluster.csv");
 					overlord.log("Cluster files will be put into the "+dir_path, "text", true);
 				}
-			} else { //default one
+			} else if(n==1) { //default one
 				dir_path = overlord.getTmpPath();
 				overlord.log("Cluster files will be put into the "+dir_path, "text", true);
+			} else {
+				return null;
 			}
+			
+			overlord.showConsole(true);
 			
 			dir_path = dir_path.replace("\\", "/");
 			
@@ -729,11 +725,11 @@ public class GUIOperations {
 				return selectedFile;
 		} else {
 			//wybór: z sieci, czy wskazanie CSV
-			Object[] options = {"Select CSV file manually", "Create CSV from net invariants",};
+			Object[] options = {"Select invariants file manually", "Use computed invariants", "Cancel operation"};
 			int n = JOptionPane.showOptionDialog(null,
-					"Select CSV file for clustering computation manually or extract CSV from the\n"
-					+ "current network invariants (but they must be computed already)?",
-					"Source CSV decision", JOptionPane.YES_NO_OPTION,
+					"Please select invariant file (.CSV) for the clustering manually or use invariants\n"
+					+ "from the current network (they MUST be computed/loaded already!).",
+					"Invariants source", JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				FileFilter[] filters = new FileFilter[1];
@@ -744,7 +740,7 @@ public class GUIOperations {
 					return null;
 				else
 					return selectedFile;
-			} else {
+			} else if(n == 1) {
 				//generowanie CSV, uda się, jeśli inwarianty istnieją
 				String CSVfilePath = overlord.getTmpPath() + "cluster.csv";
 				int result = overlord.getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true);
@@ -756,6 +752,8 @@ public class GUIOperations {
 				}
 				
 				return CSVfilePath;
+			} else {
+				return null;
 			}
 		}
 	}

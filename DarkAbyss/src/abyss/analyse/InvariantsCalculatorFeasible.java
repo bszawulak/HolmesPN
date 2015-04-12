@@ -114,6 +114,9 @@ public class InvariantsCalculatorFeasible {
 		}
 	}
 	
+	/**
+	 * Tworzenie wykonalnych inwariantów - wersja rozszerzona: mniejsze nie-minimalne, ale dłuższe obliczenia
+	 */
 	private void searchFTInvAdvanced() {
 		partitionInvariants();
 		f_invariantsCreated = new ArrayList<ArrayList<Integer>>();

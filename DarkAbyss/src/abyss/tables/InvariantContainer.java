@@ -10,6 +10,7 @@ public class InvariantContainer {
 	public int transNumber = 0;
 	public boolean minimal = false;
 	public boolean feasible = false;
+	public int pureInTransitions = 0;
 	public int inTransitions = 0;
 	public int outTransitions = 0;
 	public int readArcs = 0;

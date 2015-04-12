@@ -352,6 +352,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//na samym końcu, gdy już wszystko 'działa'
 		createPropertiesWindow();
 		createStateSimulatorWindow();
+		
+		String path = settingsManager.getValue("lastOpenedPath");
+		File f = new File(path);
+		if(f.exists())
+			lastPath = path;	
 	}
 	/**
 	 * Metoda pomocnicza konstruktora. Ustawia główne zmienne programu, wczytuje plik
@@ -546,11 +551,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda ustawia nową ścieżkę do ostatio używanego katalagu.
+	 * Metoda ustawia nową ścieżkę do ostatnio używanego katalagu. Zapisuje ją do pliku ustawień programu.
 	 * @return String - ścieżka do katalogu
 	 */
 	public void setLastPath(String path) {
 		lastPath = path;
+		settingsManager.setValue("lastOpenedPath", lastPath, true);
 	}
 
 	@Override

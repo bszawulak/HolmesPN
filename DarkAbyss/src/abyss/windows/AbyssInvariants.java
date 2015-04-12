@@ -8,14 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -192,6 +190,7 @@ public class AbyssInvariants extends JFrame {
 				setGeneratorStatus(true);
 				GUIManager.getDefaultGUIManager().io.generateINAinvariants();
 				GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
+				GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetInvData();
 			}
 		});
 		INAgenerateButton.setFocusPainted(false);
@@ -204,6 +203,7 @@ public class AbyssInvariants extends JFrame {
 		loadInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/loadInvariants.png"));
 		loadInvariantsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetInvData();
 				GUIManager.getDefaultGUIManager().io.loadExternalAnalysis();
 				logField.append("\n");
 				logField.append("=====================================================================\n");

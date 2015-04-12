@@ -10,6 +10,8 @@ import abyss.math.Arc;
 import abyss.math.Arc.TypesOfArcs;
 import abyss.math.ElementLocation;
 import abyss.math.InvariantTransition;
+import abyss.math.Node;
+import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
 
@@ -22,6 +24,7 @@ import abyss.utilities.Tools;
  * isTInvariantSet - sprawdza, czy zbiór inwariantów zeruje macierz incydencji<br>
  * countNonInvariants - zwraca liczbę nie-inwariantó<br>
  * countNonT_InvariantsV2 - zwraca dokładną informację o sub/sur inwariantach i miejscach których nie zerują<br>
+ * getInvariantsClassVector - zwraca wektor klasyfikujący każdy inwariant (o liczności zbioru inwariantów)<br>
  * checkInvariant - sprawdza czy podany inwariant zeruje macierz incydencji<br>
  * checkInvariantV2 - jak wyżej, tylko wolniejszy algorytm (mnoży i dodaje każdy element)<br>
  * getSupport - zwraca wsparcie inwariantu<br>
@@ -186,6 +189,35 @@ public final class InvariantsTools {
 	}
 	
 	/**
+	 * Metoda zwraca wektor o wielkości zbioru inwariantów. Każda pozycja określa za pomocą pojedynczej
+	 * wartości liczbowej rodzaj odpowiedniego inwariantu.
+	 * @param invSet ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @return ArrayList[Integer] - wektor klasy inwariantów: 0: normalny, -1: sub-inv., 1: sur-inv., -99: non-inv.
+	 */
+	public static ArrayList<Integer> getInvariantsClassVector(ArrayList<ArrayList<Integer>> invSet)
+	{
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		InvariantsCalculator ic = new InvariantsCalculator(true);
+		ArrayList<ArrayList<Integer>> incMatrix = ic.getCMatrix();
+		
+		for(ArrayList<Integer> inv : invSet) {
+			ArrayList<Integer> vector = checkInvariantV2(incMatrix, inv, true);
+			if(vector.get(0) == 0) {
+				results.add(0);
+			} else if(vector.get(0) == -1) {
+				results.add(-1);
+			} else if(vector.get(0) == 1) {
+				results.add(1);
+			} else {
+				results.add(-99);
+			}
+		}
+	
+		
+		return results;
+	}
+	
+	/**
 	 * Metoda pomocnicza dla countNonT_InvariantsV2 - dla każdego wystąpienia liczby różne od zera w wektorze 
 	 * resultVector, powiększa o 1 wartość odpowiedniego elementu wektora base. Wektor resultVector od pozycji [1] do
 	 * ostatniej zawiera informacje wektora wynikowego dla próby zerowania macierzy incydencji. Jakakolwiek wartość 
@@ -214,10 +246,10 @@ public final class InvariantsTools {
 	
 	/**
 	 * Metoda sprawdza, czy inwariant jest prawidłowy, tj. czy zeruje macierz incydencji podaną jako parametr.
-	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji sieci, każdy wiersza to wektor po miejscach (kolumny)
+	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji sieci, każdy wiersz to wektor po miejscach (kolumny)
 	 * @param invariant ArrayList[Integer] - inwariant
 	 * @param tInv boolean - true, jeśli testujemy T-inwarianty
-	 * @return boolean - true jeśli inwariant przeszedł test, false jeśli nie wyzerował macierzy
+	 * @return boolean - true, jeśli inwariant przeszedł test, false jeśli nie wyzerował macierzy
 	 */
 	public static boolean checkInvariant(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> invariant, boolean tInv) {
 		//CMatrix - każdy wiersz to wektor miejsc indeksowany numerem tranzycji [2][3] - 2 tranzycja, 3 miejsce
@@ -921,8 +953,8 @@ public final class InvariantsTools {
     /**
      * Metoda zwraca informację o inwariantach które zawierają łuki odczytu, hamujące, resetujące i wyrównujące
      * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
-     * @return ArrayList[ArrayList[Integer]] - każdy wiersz: [0] - ID inwariantu, [1] # readarc [2] # inhibitor
-     *  [3] # reset [4] # equal
+     * @return ArrayList[ArrayList[Integer]] - każdy wiersz: [0] # readarc [1] # inhibitor
+     *  [2] # reset [3] # equal
      */
     public static ArrayList<ArrayList<Integer>> getExtendedInvariantsInfo(ArrayList<ArrayList<Integer>> invMatrix) {
     	ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
@@ -936,10 +968,12 @@ public final class InvariantsTools {
     		int resets = 0;
     		int equals = 0;
     		
-    		for(int supp : invariant) {
+    		int invSize = invariant.size();
+    		for(int e=0; e<invSize; e++) {
+    			int supp = invariant.get(e);
     			if(supp == 0) continue;
     			
-    			Transition transition = transitions.get(supp);
+    			Transition transition = transitions.get(e);
     			for(ElementLocation el : transition.getElementLocations()) {
     				for(Arc arc : el.getInArcs()) {
     					if(arc.getArcType() == TypesOfArcs.NORMAL)
@@ -958,7 +992,6 @@ public final class InvariantsTools {
     			}
     		}
     		ArrayList<Integer> invInfo = new ArrayList<Integer>();
-			invInfo.add(i);
 			invInfo.add(readArcs);
 			invInfo.add(inhibitors);
 			invInfo.add(resets);
@@ -973,7 +1006,8 @@ public final class InvariantsTools {
      * Metoda zwraca informację ile tranzycji wejściowych i ile wyjściowych znajduje się w
      * inwariancie.
      * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
-     * @return ArrayList[ArrayList[Integer]] - macierz wyników
+     * @return ArrayList[ArrayList[Integer]] - macierz wyników, w postaci 3-el. wektorów: [0] - pure in-trans,
+     * 		[1] - in-trans (with inhibotors and/or readarcs), [2] - out-transitions
      */
     public static ArrayList<ArrayList<Integer>> getInOutTransInfo(ArrayList<ArrayList<Integer>> invMatrix) {
     	ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
@@ -986,10 +1020,12 @@ public final class InvariantsTools {
     		int pureInTrans = 0;
     		int outTrans = 0;
     		
-    		for(int supp : invariant) {
+    		int invSize = invariant.size();
+    		for(int e=0; e<invSize; e++) {
+    			int supp = invariant.get(e);
     			if(supp == 0) continue;
     		
-    			Transition transition = transitions.get(supp);
+    			Transition transition = transitions.get(e);
     			int inArcs = 0;
     			int extInArcs = 0;
     			int outArcs = 0;
@@ -1024,7 +1060,6 @@ public final class InvariantsTools {
     		transInfo.add(outTrans);
     		results.add(transInfo);
     	}
-    	
     	return results;
     }
     
@@ -1052,5 +1087,137 @@ public final class InvariantsTools {
 		newRejected++;
 	}
 	*/
+    
+	/**
+	 * Metoda zwraca wektor określający, czy dany inwarian jest wykonalny czy nie.
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @return ArrayList[Integer] - wektor wynikowy: -1: non-feasible; 1: feasible
+	 */
+	public static ArrayList<Integer> getFeasibilityClassesStatic(ArrayList<ArrayList<Integer>> invariants) {
+		int invSize = invariants.size();
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		ArrayList<Integer> readArcTransLocations = getReadArcTransitionsStatic();
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		
+		for(int i=0; i<invSize; i++) {
+			ArrayList<Integer> invariant = invariants.get(i);
+			ArrayList<Integer> support = InvariantsTools.getSupport(invariant);
+			
+			if(isNonFeasibleStatic(support, readArcTransLocations, transitions) == true)
+				results.add(-1);
+			else
+				results.add(1);
+		}
+		
+		return null;
+	}
+    
+    /**
+	 * (STATIC) Metoda ustala czy wsparcie inwariantu zawiera którąkolwiek z tranzycji związanych z łukiem odczytu.
+	 * @param support ArrayList[Integer] - wsparcie inwariantu
+	 * @param readArcTransLocations ArrayList[Integer] - wektor lokazalicji tranzycji z łukami odczytu
+	 * @return boolean - true, jeśli wsparcie zawiera choć jedną z tranzycji
+	 */
+	private static boolean isNonFeasibleStatic(ArrayList<Integer> support, ArrayList<Integer> readArcTransLocations,
+			ArrayList<Transition> transitions) {
+    	ArrayList<Integer> readarcTransitions = new ArrayList<Integer>();
+    	//
+    	
+		for(int trans : readArcTransLocations) {
+    		if(support.contains(trans) == true) {
+    			readarcTransitions.add(trans);
+    		}
+    	}
+		
+		if(readarcTransitions.size() > 0) {
+			for(int tID : readarcTransitions) { //dla każdej tranzycji 'readarc'
+				Transition transition = transitions.get(tID);
+				ArrayList<Place> connPlaces = new ArrayList<Place>();
+				
+				for(ElementLocation el : transition.getElementLocations()) {
+					
+					for(Arc arc : el.getInArcs()) {
+						if(arc.getArcType() == TypesOfArcs.READARC) {
+							Place p = (Place) arc.getStartNode();
+							
+							if((p.getTokensNumber() == 0) && connPlaces.contains(p) == false)
+								connPlaces.add(p);
+						}
+					}	
+				}
+				//mamy zbiór miejsc które muszą dostaczyć tokeny
+				ArrayList<ArrayList<Integer>> connectedTransitions = new ArrayList<ArrayList<Integer>>();
+				for(Place p : connPlaces) {
+					connectedTransitions.add(getConnectedTransitionsSet(p, transitions));
+				}
+				//teraz: inwariant musi zawiera min 1 tranzycję w każdym zbiorze, albo nie jest wykonalny
+				
+				
+				for(ArrayList<Integer> set : connectedTransitions) {
+					//intersection:
+					ArrayList<Integer> test = new ArrayList<Integer>(set);
+					
+				    test.retainAll(support);
+				    if(test.size() == 0)
+				    	return true; //non feasible   
+				}
+			}
+			return false; //feasible
+		} else { //if(readarcTransitions.size() > 0) 
+ 			return false; //feasible
+		}
+    }
 	
+	/**
+	 * (STATIC) Metoda zwraca pozycje wszystkich tranzycji, do których prowadzą łuki odczytu.
+	 * @return ArrayList[Integer] - pozycje tranzycji z readarc
+	 */
+	private static ArrayList<Integer> getReadArcTransitionsStatic() {
+		ArrayList<Integer> raTrans = new ArrayList<Integer>();
+		ArrayList<Arc> arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		
+		for(Arc a : arcs) {
+			if(a.getArcType() == TypesOfArcs.READARC) { //tylko łuki odczytu
+				Node node = a.getEndNode();
+				if(node instanceof Transition) { 
+					// nie trzeba dodatkowo dla Place, readarc to w programie 2 łuki: jeden w tą, drugi w drugą stronę
+					Place p = (Place) a.getStartNode(); //jeśli node = Transition, to StartNode musi być typu Place
+					if(p.getTokensNumber() > 0) //nie spełnia def. infeasible invariant
+						continue;
+					
+					int position = transitions.indexOf((Transition)node);
+					if(raTrans.contains(position) == false)
+						raTrans.add(position);
+				}
+			}
+		}
+		return raTrans;
+	}
+	
+	/**
+	 * Metoda zwraca zbiór lokalizacji tranzycji związanych łukami wejściowymi z danym miejscem.
+	 * @param place Place - miejsce
+	 * @return ArrayList[Integer] - lista lokalizacji tranzycji
+	 */
+	private static ArrayList<Integer> getConnectedTransitionsSet(Place place, ArrayList<Transition> transitions) {
+		ArrayList<Integer> connectedTransitions = new ArrayList<Integer>();
+
+		for(ElementLocation el : place.getElementLocations()) {
+			for(Arc a : el.getInArcs()) { //tylko łuki wejściowe
+				if(a.getArcType() == TypesOfArcs.READARC || a.getArcType() == TypesOfArcs.INHIBITOR) 
+					continue; //czyli poniższe działa tylko dla: NORMAL, RESET i EQUAL
+
+				Transition trans = (Transition) a.getStartNode();
+				int pos = transitions.indexOf(trans);
+				if(connectedTransitions.contains(pos) == false) {
+					connectedTransitions.add(pos);
+				}// else {
+					//GUIManager.getDefaultGUIManager().log("Internal error, net structure not canonical.", "error", true);
+				//}
+				
+			}
+		}
+		return connectedTransitions;
+	}
 }

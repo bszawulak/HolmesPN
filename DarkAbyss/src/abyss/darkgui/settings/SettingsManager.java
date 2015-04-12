@@ -56,17 +56,18 @@ public class SettingsManager {
 			if(s.getID().equals(ID)) {
 				found = true;
 				s.setValue(value);
-				
 			}
 		}
-		if(save)
-			writeSettingsFile();
-		
 		if (found == false) {
 			settings.add(new Setting(ID,value));
+			if(save) writeSettingsFile();
+			
 			return -1;
+		} else {
+			if(save) writeSettingsFile();
+			
+			return 0;
 		}
-		else return 0;
 	}
 	
 	/**
@@ -97,6 +98,7 @@ public class SettingsManager {
 		
 		checkAndFix(settingsNew, "r_path", "c://Program Files//R//R-3.1.2//bin//Rscript.exe");
 		checkAndFix(settingsNew, "r_path64","c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
+		checkAndFix(settingsNew, "lastOpenedPath", "");
 		checkAndFix(settingsNew, "ina_bat","START INAwin32.exe COMMAND.ina");
 		checkAndFix(settingsNew, "ina_COMMAND1"," 80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec");
 		checkAndFix(settingsNew, "ina_COMMAND2","nnsyp");

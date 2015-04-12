@@ -269,8 +269,19 @@ public class MCSCalculator implements Runnable {
     private List<Set<Integer>> calculatePreliminaryCutsets(List<Set<Integer>> precutsets, int trans) {
         List<Set<Integer>> newPrecutsets = new ArrayList<>();
         for (Set<Integer> precutset : precutsets) {
-            if (intersectsAnyInvariantContaining(trans, precutset) == true)
-                continue;
+        	boolean found = false;
+        	for (ArrayList<Integer> invariant : em_obR) { //dla każdego inwariantu z tablicy:
+            	if (transInInvariant(invariant, trans) == true && commonSubset(invariant, precutset).isEmpty() == false) {
+                	//jeśli inwariant zawiera tranzycję oraz precutset i inwariant mają jakąś część wspólną
+                    found = true;
+                    break;
+                }// 5.2.2 'intersekcja' to niby 'cover' ?!!! WTH?!
+            }
+        	if(found == true)
+        		continue;
+        	
+            //if (intersectsAnyInvariantContaining(trans, precutset) == true)
+              //  continue;
             // powyższe trwa tak długo, aż trafimy na precutset który nie ma części wspólnej z pewnym inwariantem
             // do którego należy tranzycja trans
             Set<Integer> newPrecutset = new HashSet<Integer>(precutset);

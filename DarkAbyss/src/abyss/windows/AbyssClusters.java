@@ -577,14 +577,16 @@ public class AbyssClusters extends JFrame {
      */
     private void buttonLoadClusteringDirectory() {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		/*
 		String lastPath2 = getClusterPath();
 		String chosenPath="";
 		if(lastPath2.equals(""))
 			chosenPath = lastPath;
 		else
 			chosenPath = lastPath2;
+		 */
 		
-		String choosenDir = Tools.selectDirectoryDialog(chosenPath, "Select cluster dir",
+		String choosenDir = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
 					"Directory with 56 generated text R-clusters files.");
 		if(choosenDir.equals(""))
 			return;
@@ -615,10 +617,11 @@ public class AbyssClusters extends JFrame {
      */
     private void buttonExportTableToExcel() {
 		try{
+			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 			//String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 			GUIManager.getDefaultGUIManager().log("Attempting to export cluster table to excel","text", true);
 			
-			String dirPath = Tools.selectDirectoryDialog(getClusterPath(), "Select cluster dir",
+			String dirPath = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
 					"Directory with 56 generated R-clusters text files.");
 			if(dirPath.equals("")) { // czy wskazano cokolwiek
 				return;
@@ -682,13 +685,17 @@ public class AbyssClusters extends JFrame {
      * Obsługa wczytywania miar Celińskiego-Harabasz do tabeli głównej.
      */
 	private void buttonLoadCHmetricIntoTables() {
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		if(dataTableCase56 == null) {
 			JOptionPane.showMessageDialog(null,"There is no table to fill.","Warning",JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
 		
-		String dirPath = Tools.selectDirectoryDialog(pathCHmetricsDir, "Select directory",
+		//String dirPath = Tools.selectDirectoryDialog(pathCHmetricsDir, "Select directory",
+		//		"Directory with 56 R-generated files containing Celiński-Harabasz metrics");
+		String dirPath = Tools.selectDirectoryDialog(lastPath, "Select directory",
 				"Directory with 56 R-generated files containing Celiński-Harabasz metrics");
+		
 		if(dirPath.equals("")) { // czy wskazano cokolwiek
 			return;
 		} 
@@ -733,9 +740,11 @@ public class AbyssClusters extends JFrame {
 	 */
 	private void buttonSerializeDataTable() {
 		try{
+			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+			
 			FileFilter filter[] = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Abyss CLustering file (.acl)",  new String[] { "acl" });
-			String newLocation = Tools.selectFileDialog(getClusterPath(), filter, "Save table", "");
+			String newLocation = Tools.selectFileDialog(lastPath, filter, "Save table", "");
 			if(newLocation.equals(""))
 				return;
 			
@@ -758,12 +767,14 @@ public class AbyssClusters extends JFrame {
 	 */
 	private void buttonDeserializeFile() {
 		ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		
 		String newLocation = "";
 		try
 		{
 			FileFilter filter[] = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Abyss CLustering file (.acl)",  new String[] { "acl" });
-			newLocation = Tools.selectFileDialog(getClusterPath(), filter, "Load table", "");
+			newLocation = Tools.selectFileDialog(lastPath, filter, "Load table", "");
 			if(newLocation.equals("")) 
 				return;
 			
