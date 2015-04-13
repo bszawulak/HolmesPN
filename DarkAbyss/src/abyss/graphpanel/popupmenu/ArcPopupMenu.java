@@ -17,7 +17,6 @@ public class ArcPopupMenu extends PetriNetElementPopupMenu {
 	 */
 	public ArcPopupMenu(GraphPanel graphPanel) {
 		super(graphPanel);
-		// TODO Auto-generated constructor stub
 	}
 
 }

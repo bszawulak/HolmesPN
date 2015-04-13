@@ -9,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class InvariantsTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 5760866352155772825L;
-	private String[] columnNames = {"ID", "Tr.#", "Min.", "Feas.", "In-T", "pIn-T", "Out-T", "R-arc", "Inh.", "Sur", "Sub", "Canon.", "Name"};
+	private String[] columnNames = {"ID", "Tr.#", "Min.", "Feas.", "In-T", "pIn-T", "Out-T", "R-arc", "Inh.", "Sur", "Sub", "Cx0", "Canon.", "Name"};
 	private ArrayList<InvariantContainer> dataMatrix;
 	private int dataSize;
 	
@@ -34,11 +34,12 @@ public class InvariantsTableModel extends AbstractTableModel {
 	 * @param inhibitors int - liczba łuków blokujących
 	 * @param sur int - true = sur-invariant
 	 * @param sub int - true = sub-invariant
-	 * @param canonical boolean - kanoniczny, normalny inwariant (Cx=0)
+	 * @param normal boolean - normalny inwariant (Cx=0)
+	 * @Param canon boolean - true oznacza kanoniczny
 	 * @param name String - nazwa (if any)
 	 */
 	public void addNew(int id, int transN, boolean min, boolean feas, int pInT, int inT, int outT, int readArcs, int inhibitors,
-			boolean sur, boolean sub, boolean canonical, String name) {
+			boolean sur, boolean sub, boolean normal, boolean canon, String name) {
 		InvariantContainer ic = new InvariantContainer();
 		ic.ID = id;
 		ic.transNumber = transN;
@@ -51,7 +52,8 @@ public class InvariantsTableModel extends AbstractTableModel {
 		ic.inhibitors = inhibitors;
 		ic.sur = sur;
 		ic.sub = sub;
-		ic.canonical = canonical;
+		ic.normalInv = normal;
+		ic.canonical = canon;
 		ic.name = name;
 		dataMatrix.add(ic);
 		dataSize++;
@@ -141,9 +143,12 @@ public class InvariantsTableModel extends AbstractTableModel {
         	returnValue = dataMatrix.get(rowIndex).sub;
             break;
         case 11:
-        	returnValue = dataMatrix.get(rowIndex).canonical;
+        	returnValue = dataMatrix.get(rowIndex).normalInv;
             break;
         case 12:
+        	returnValue = dataMatrix.get(rowIndex).canonical;
+            break;
+        case 13:
         	returnValue = dataMatrix.get(rowIndex).name;
             break;
         default:

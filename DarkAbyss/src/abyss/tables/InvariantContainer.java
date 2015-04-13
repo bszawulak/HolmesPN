@@ -18,7 +18,8 @@ public class InvariantContainer {
 	
 	public boolean sur = false;
 	public boolean sub = false;
-	public boolean canonical = false;   	
+	public boolean normalInv = false; 
+	public boolean canonical = false;
 	public String name = "";
 	
 	public InvariantContainer() {

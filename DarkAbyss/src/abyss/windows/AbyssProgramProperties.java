@@ -88,8 +88,7 @@ public class AbyssProgramProperties extends JFrame {
 		tabbedPane.addTab("Simulator", icon, panel3, "Does nothing");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_3);
 
-		JComponent panel4 = makeTextPanel("Analyzer options will go here.");
-		tabbedPane.addTab("Analyzer", icon, panel4, "Does twice as much nothing");
+		tabbedPane.addTab("Analyzer", icon, makeAnalysisPanel(), "Does twice as much nothing");
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_4);
 
 		JComponent panel5 = makeTextPanel("Other options.");
@@ -126,6 +125,14 @@ public class AbyssProgramProperties extends JFrame {
 		return panel;
 	}
 
+	/**
+	 * Metoda tworząca podpanel opcji Snoopiego.
+	 * @param x int - współrzędna X
+	 * @param y int - współrzedna Y
+	 * @param w int - szerokość
+	 * @param h int - wysokość
+	 * @return JPanel - panel
+	 */
 	private JPanel createSnoopyReadPanel(int x, int y, int w, int h) {
 		JPanel ioPanel = new JPanel(null);
 		ioPanel.setBorder(BorderFactory.createTitledBorder("I/O operations"));
@@ -257,6 +264,14 @@ public class AbyssProgramProperties extends JFrame {
 		return ioPanel;
 	}
 
+	/**
+	 * Metoda tworząca podpanel opcji środowiska R.
+	 * @param x int - współrzędna X
+	 * @param y int - współrzedna Y
+	 * @param w int - szerokość
+	 * @param h int - wysokość
+	 * @return JPanel - panel
+	 */
 	private JPanel createRoptionsPanel(int x, int y, int w, int h) {
 		JPanel rOptionsPanel = new JPanel(null);
 		rOptionsPanel.setBorder(BorderFactory.createTitledBorder("R settings"));
@@ -318,6 +333,14 @@ public class AbyssProgramProperties extends JFrame {
 		return panel;
 	}
 	
+	/**
+	 * Metoda tworząca podpanel opcji graficznych.
+	 * @param x int - współrzędna X
+	 * @param y int - współrzedna Y
+	 * @param w int - szerokość
+	 * @param h int - wysokość
+	 * @return JPanel - panel
+	 */
 	private JPanel createMainOptionsPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Graphical settings"));
@@ -371,12 +394,11 @@ public class AbyssProgramProperties extends JFrame {
 		else if(thickValue.equals("2")) group.setSelected(size2Button.getModel(), true);
 		else if(thickValue.equals("3")) group.setSelected(size3Button.getModel(), true);
 
-		
 		JCheckBox useShortNamesCheckBox = new JCheckBox("(Abyss) Show short default names only", true);
 		useShortNamesCheckBox.setBounds(io_x, io_y+40, 260, 20);
 		useShortNamesCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
+				if(noAction == true) return;
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
 					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("showShortNames", "1", true);
@@ -398,6 +420,93 @@ public class AbyssProgramProperties extends JFrame {
 		return panel;
 	}
 	
+	//**********************************************************************************************************************
+	//*********************************************    SIMULATOR TAB   *****************************************************
+	//**********************************************************************************************************************
+
+	
+	
+	
+	//**********************************************************************************************************************
+	//*********************************************     ANALYSIS TAB   *****************************************************
+	//**********************************************************************************************************************
+
+	/**
+	 * Metoda tworzy główny panel opcji analizatora.
+	 * @return JPanel - panel
+	 */
+	public JPanel makeAnalysisPanel() {
+		JPanel panel = new JPanel(null);
+		panel.setBounds(0, 0, 600, 500);
+		
+		panel.add(createInvariantsPanel(0, 0, 590, 90));
+		panel.add(createFeasibleInvPanel(0, 90, 590, 90));
+		
+		panel.repaint();
+		return panel;
+		
+	}
+	
+	/**
+	 * Metoda tworząca podpanel opcji Snoopiego.
+	 * @param x int - współrzędna X
+	 * @param y int - współrzedna Y
+	 * @param w int - szerokość
+	 * @param h int - wysokość
+	 * @return JPanel - panel
+	 */
+	private JPanel createInvariantsPanel(int x, int y, int w, int h) {
+		JPanel panel = new JPanel(null);
+		panel.setBorder(BorderFactory.createTitledBorder("Invariants generator"));
+		panel.setBounds(x, y, w, h);
+		
+		int io_x = 10;
+		int io_y = 15;
+		noAction = true;
+		
+		
+		return panel;
+	}
+	
+	/**
+	 * Metoda tworząca podpanel opcji Snoopiego.
+	 * @param x int - współrzędna X
+	 * @param y int - współrzedna Y
+	 * @param w int - szerokość
+	 * @param h int - wysokość
+	 * @return JPanel - panel
+	 */
+	private JPanel createFeasibleInvPanel(int x, int y, int w, int h) {
+		JPanel panel = new JPanel(null);
+		panel.setBorder(BorderFactory.createTitledBorder("Feasible invariants options"));
+		panel.setBounds(x, y, w, h);
+		
+		int io_x = 10;
+		int io_y = 15;
+		noAction = true;
+		
+		JCheckBox feasInvSelfPropCheckBox = new JCheckBox("Allow presence of self-propelled readarc regions", true);
+		feasInvSelfPropCheckBox.setBounds(io_x, io_y, 360, 20);
+		feasInvSelfPropCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction) return;
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisFeasibleSelfPropAccepted", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisFeasibleSelfPropAccepted", "0", true);
+				}
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisFeasibleSelfPropAccepted").equals("1")) 
+			feasInvSelfPropCheckBox.setSelected(true);
+		else
+			feasInvSelfPropCheckBox.setSelected(false);
+		panel.add(feasInvSelfPropCheckBox);
+		
+		noAction = false;
+		return panel;
+	}
 	
 //**********************************************************************************************************************
 //*********************************************     DEFAULT TAB    *****************************************************

@@ -174,22 +174,7 @@ public class AbyssNetTablesActions {
 		ArrayList<ArrayList<Integer>> invMatrix = pn.getInvariantsMatrix();
 		if(invMatrix == null || invMatrix.size() == 0) return;
 		int invMatrixSize = invMatrix.size();
-		
-		int ID = 0;
-    	int transNumber = 0;
-    	boolean minimal = false;
-    	boolean feasible = false;
-    	int inTransitions = 0;
-    	
-    	int outTransitions = 0;
-    	int readArcs = 0;
-    	int inhibitors = 0;
-    	boolean sur = false;
-    	boolean sub = false;
-    	boolean canonical = false;    	
-    	String name = "";
-    	//non-minimal components number:
-		
+
     	if(dataMatrix == null || dataMatrix.size() == 0) {
     		dataMatrix = new ArrayList<InvariantContainer>();
     		ArrayList<ArrayList<Integer>> nonMinimalInvariants = InvariantsTools.checkSupportMinimalityThorough(invMatrix);
@@ -197,7 +182,7 @@ public class AbyssNetTablesActions {
     		ArrayList<ArrayList<Integer>> inOutInfoMatrix = InvariantsTools.getInOutTransInfo(invMatrix);
     		ArrayList<Integer> invariantsClassVector = InvariantsTools.getInvariantsClassVector(invMatrix);
     		ArrayList<Integer> feasibleVector = InvariantsTools.getFeasibilityClassesStatic(invMatrix);
-    		
+    		ArrayList<Integer> canonicalVector = InvariantsTools.getCanonicalInfo(invMatrix);
     		
     		//int iterIndex = 0;
     		for(int i=0; i<invMatrixSize; i++) {
@@ -226,22 +211,27 @@ public class AbyssNetTablesActions {
     			ic.inhibitors = arcsInfoMatrix.get(i).get(1);
     			
     			if(invariantsClassVector.get(i) == 0) {
-    				ic.canonical = true;
+    				ic.normalInv = true;
     				ic.sub = false;
     				ic.sur = false;
     			} else if(invariantsClassVector.get(i) == 1) {
-    				ic.canonical = false;
+    				ic.normalInv = false;
     				ic.sub = false;
     				ic.sur = true;
     			} else if(invariantsClassVector.get(i) == -1) {
-    				ic.canonical = false;
+    				ic.normalInv = false;
     				ic.sub = true;
     				ic.sur = false;
     			} else {
-    				ic.canonical = false;
+    				ic.normalInv = false;
     				ic.sub = false;
     				ic.sur = false;
     			}
+    			
+    			if(canonicalVector.get(i) == 0)
+    				ic.canonical = true;
+    			else
+    				ic.canonical = false;
     			
     			
     			dataMatrix.add(ic);
@@ -250,7 +240,7 @@ public class AbyssNetTablesActions {
     	
     	for(InvariantContainer ic : dataMatrix) {
     		modelInvariants.addNew(ic.ID, ic.transNumber, ic.minimal, ic.feasible, ic.pureInTransitions, ic.inTransitions, 
-    				ic.outTransitions, ic.readArcs, ic.inhibitors, ic.sur, ic.sub, ic.canonical, ic.name);
+    				ic.outTransitions, ic.readArcs, ic.inhibitors, ic.sur, ic.sub, ic.normalInv, ic.canonical, ic.name);
     			
     	}
      	

@@ -113,7 +113,7 @@ public class AbyssNetTables extends JFrame {
     	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setLocation(20, 20);
 		
-		setSize(new Dimension(800,600));
+		setSize(new Dimension(900, 700));
 		//addComponentListener(this); //konieczne, aby listenery (przede wszystkim resize) działały
 		//addWindowStateListener(new WindowAdapter() {
 		//	public void windowStateChanged(WindowEvent e) {
@@ -457,7 +457,6 @@ public class AbyssNetTables extends JFrame {
         table.getColumnModel().getColumn(6).setPreferredWidth(40);
     	table.getColumnModel().getColumn(6).setMinWidth(40);
     	table.getColumnModel().getColumn(6).setMaxWidth(40);
-        
     	table.getColumnModel().getColumn(7).setHeaderValue("r-Arc");
         table.getColumnModel().getColumn(7).setPreferredWidth(40);
     	table.getColumnModel().getColumn(7).setMinWidth(40);
@@ -478,9 +477,13 @@ public class AbyssNetTables extends JFrame {
         table.getColumnModel().getColumn(11).setPreferredWidth(40);
     	table.getColumnModel().getColumn(11).setMinWidth(40);
     	table.getColumnModel().getColumn(11).setMaxWidth(40);
-    	table.getColumnModel().getColumn(12).setHeaderValue("Name");
-        table.getColumnModel().getColumn(12).setPreferredWidth(100);
-    	table.getColumnModel().getColumn(12).setMinWidth(100);
+    	table.getColumnModel().getColumn(12).setHeaderValue("Canonical");
+        table.getColumnModel().getColumn(12).setPreferredWidth(40);
+    	table.getColumnModel().getColumn(12).setMinWidth(40);
+    	table.getColumnModel().getColumn(12).setMaxWidth(40);
+    	table.getColumnModel().getColumn(13).setHeaderValue("Name");
+        table.getColumnModel().getColumn(13).setPreferredWidth(100);
+    	table.getColumnModel().getColumn(13).setMinWidth(100);
     	
     	
     	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(table.getModel());

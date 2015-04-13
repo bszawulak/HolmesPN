@@ -69,6 +69,11 @@ public class InvariantsCalculatorFeasible {
 			//places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 			readArcTransLocations = getReadArcTransitions();
 			
+			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisFeasibleSelfPropAccepted").equals("1"))
+				allowSelfPropelledInvariants = true;
+			else
+				allowSelfPropelledInvariants = false;
+			
 			if(mode == 0)
 				searchFTInvSimple();
 			else

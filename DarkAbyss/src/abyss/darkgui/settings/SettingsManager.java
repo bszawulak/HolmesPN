@@ -122,6 +122,7 @@ public class SettingsManager {
 		} catch (Exception e) { settingsNew.add(new Setting("graphArcLineSize", "1")); }
 		
 		checkAndFix(settingsNew, "showShortNames", "0");
+		checkAndFix(settingsNew, "analysisFeasibleSelfPropAccepted", "1");
 		
 		settings = new ArrayList<Setting>(settingsNew);
 		writeSettingsFile();

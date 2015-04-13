@@ -33,6 +33,7 @@ import abyss.utilities.Tools;
  * supportInclusionCheck - sprawdza czy wsparcie inwariantu zawiera wszystkie elementy wsparcia drugiego inwariantu<br>
  * checkCanonity - zwraca liczbę niekanonicznych inwariantów<br>
  * checkCanonitySingle - sprawdza, czy podany inwariant jest kanoniczny<br>
+ * getCanonicalInfo - zwraca wektor z informacją które inwarianty są kononiczne<br>
  * checkSupportMinimality - sprawdza cały zbiór inwariantów i podaje liczbę nie-minimalnych<br>
  * checkSupportMinimalityThorough - jak wyżej, ale podaje które są nie-minimalne i co zawierają<br>
  * compareInv - porównanie dwóch zbiorów inwariantów ze sobą<br>
@@ -537,7 +538,6 @@ public final class InvariantsTools {
 	 * @return int - liczba niekanonicznych
 	 */
 	public static int checkCanonity(ArrayList<ArrayList<Integer>> invMatrix) {
-		//TODO:
 		int nonCardinal = 0;
 		int size = invMatrix.size();
 		for(int i=0; i<size; i++) {
@@ -611,6 +611,23 @@ public final class InvariantsTools {
 	        }
 		}
 		return false;
+	}
+	
+	/**
+	 * 
+	 * @param invSet ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @return ArrayList[Integer] - wektor inwariantów: 0 - kanoniczny, -1 - niekanoniczny
+	 */
+	public static ArrayList<Integer> getCanonicalInfo(ArrayList<ArrayList<Integer>> invSet) {
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		for(ArrayList<Integer> invariant : invSet) {
+			boolean status = checkCanonitySingle(invariant);
+			if(status == true)
+				results.add(0);
+			else
+				results.add(-1);
+		}
+		return results;
 	}
 	
 	/**
@@ -792,7 +809,7 @@ public final class InvariantsTools {
 			int invSize = invMatrix.get(0).size();
 			for (ArrayList<Integer> inv : invMatrix) {
 				for(int t=0; t<invSize; t++) {
-					if(inv.get(t) != 0) { //TODO ?
+					if(inv.get(t) != 0) {
 						if(coveredTransSet.contains(t) == false)
 							coveredTransSet.add(t);
 					}
