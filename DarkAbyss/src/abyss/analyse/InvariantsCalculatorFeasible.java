@@ -1,8 +1,8 @@
 package abyss.analyse;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Calendar;
 
 import javax.swing.JOptionPane;
 
@@ -14,6 +14,7 @@ import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.math.Arc.TypesOfArcs;
 import abyss.varia.Check;
+import abyss.windows.AbyssInvariants;
 
 /**
  * Klasa odpowiedzialna za szukanie inwariantów wykonalnych (feasible invariants). Literatura: <br>
@@ -24,6 +25,7 @@ import abyss.varia.Check;
  *
  */
 public class InvariantsCalculatorFeasible {
+	private AbyssInvariants masterWindow = null;
 	
 	private String status = "";
 	private boolean success = false;
@@ -33,8 +35,10 @@ public class InvariantsCalculatorFeasible {
 	private ArrayList<ArrayList<Integer>> f_invariantsCreated;
 	private ArrayList<Transition> transitions;
 	private ArrayList<Integer> readArcTransLocations;
-	private ArrayList<Place> places;
 	private boolean tInv = true;
+	
+	private boolean allowSelfPropelledInvariants = true;
+	private int selfPropInvariants = 0;
 	
 	/**
 	 * Konstruktor klasy InvariantsCalculatorFeasible.
@@ -42,6 +46,7 @@ public class InvariantsCalculatorFeasible {
 	 * @param isTInv boolean - true jeśli to T-inwarianty, false jeśli P-inw.
 	 */
 	public InvariantsCalculatorFeasible(ArrayList<ArrayList<Integer>> invariants, boolean isTInv) {
+		masterWindow = GUIManager.getDefaultGUIManager().accessInvariantsWindow();
 		this.invariants = invariants;
 		this.tInv = isTInv;
 		f_invariantsCreated = new ArrayList<ArrayList<Integer>>();
@@ -61,7 +66,7 @@ public class InvariantsCalculatorFeasible {
 		
 		if(tInv == true) {
 			transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-			places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+			//places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 			readArcTransLocations = getReadArcTransitions();
 			
 			if(mode == 0)
@@ -71,7 +76,10 @@ public class InvariantsCalculatorFeasible {
 			
 			status = "Set computed. Returning.";
 			success = true;
-			//return f_invariantsCreated;
+			
+			logInternal("Created non-minimal feasible invariants: "+f_invariantsCreated.size()+"\n", false);
+			logInternal("Self-propelled readarc/double arcs invariants left unchanged: "+selfPropInvariants+"\n", false);
+			
 			return makeFeasibleSet();
 		} else {
 			JOptionPane.showMessageDialog(null, "Feasible P-inv search? Not implemented.", 
@@ -92,8 +100,8 @@ public class InvariantsCalculatorFeasible {
 		int size = non_feasibleInv.size();
 		for(int i=0; i<size; i++) {
 			ArrayList<ArrayList<Integer>> invToCombine = new ArrayList<ArrayList<Integer>>(); //lista znalezionych
-			
-			ArrayList<Integer> nonFInvariant = non_feasibleInv.get(i); 
+			ArrayList<Integer> nonFInvariant = non_feasibleInv.get(i);
+			ArrayList<Integer> nonFInvSupport = InvariantsTools.getSupport(nonFInvariant);
 			ArrayList<Integer> trans_RA = getInfeasibleTransitions(nonFInvariant);
 			
 			//zidentyfikuj ile miejsc jest związanych z każdą tranzycją (może być więcej niż 1!)
@@ -102,6 +110,13 @@ public class InvariantsCalculatorFeasible {
 			
 			for(Place pl : places_RA) {
 				ArrayList<Integer> connectedTransitions = getConnectedTransitionsSet(pl);
+				
+				if(allowSelfPropelledInvariants == true) {
+					if(intersection(nonFInvSupport, connectedTransitions).size() > 0) {
+						continue;
+					}
+				}
+				
 				ArrayList<Integer> minimalFeasibleInvariant = findMinFeasibleSimple(connectedTransitions);
 				
 				if(invToCombine.contains(minimalFeasibleInvariant) == false)
@@ -109,8 +124,13 @@ public class InvariantsCalculatorFeasible {
 			}
 			invToCombine.add(nonFInvariant);
 			
-			ArrayList<Integer> newFeasible = createFeasibleInvariant(invToCombine);
-			f_invariantsCreated.add(newFeasible);
+			if(invToCombine.size() == 1) {
+				feasibleInv.add(nonFInvariant);
+				selfPropInvariants++;
+			} else {
+				ArrayList<Integer> newFeasible = createFeasibleInvariant(invToCombine);
+				f_invariantsCreated.add(newFeasible);
+			}
 		}
 	}
 	
@@ -121,34 +141,40 @@ public class InvariantsCalculatorFeasible {
 		partitionInvariants();
 		f_invariantsCreated = new ArrayList<ArrayList<Integer>>();
 		
-		int size = non_feasibleInv.size();
-		for(int i=0; i<size; i++) {
+		int nonFeasibleNumber = non_feasibleInv.size();
+		for(int i=0; i<nonFeasibleNumber; i++) {
 			ArrayList<ArrayList<Integer>> invToCombine = new ArrayList<ArrayList<Integer>>(); //lista znalezionych
-			
 			ArrayList<Integer> nonFInvariant = non_feasibleInv.get(i); 
 			ArrayList<Integer> trans_RA = getInfeasibleTransitions(nonFInvariant);
 			
 			//zidentyfikuj ile miejsc jest związanych z każdą tranzycją (może być więcej niż 1!)
 			ArrayList<Place> places_RA = getRA_Places(trans_RA);
+			
 			//dla każdego z powyższych miejsc należy zapewnić tokeny poprzez minimalne inwarianty
-			
 			ArrayList<ArrayList<Integer>> connectedTransitionsSet = new ArrayList<ArrayList<Integer>>();
-			
-			
 			for(Place pl : places_RA) {
 				ArrayList<Integer> connectedTransitions = getConnectedTransitionsSet(pl);
 				connectedTransitionsSet.add(connectedTransitions);
 			}
 			
-			//teraz szukamy najmniejszego zbioru inwariantów pokrywającego min 1 elementent każdego zbioru w connectedTransitionsSet
+			//sam inwariant może zawiera jakieś tranzycje które zasilają inne przez łuk odczytu?
+			
+			int oldSize = connectedTransitionsSet.size();
+			ArrayList<ArrayList<Integer>> connectedTransitionsSetNew = checkSelfPropelledInv(nonFInvariant, connectedTransitionsSet);
+			int newSize = connectedTransitionsSetNew.size();
+			
+			if(allowSelfPropelledInvariants) {
+				connectedTransitionsSet = connectedTransitionsSetNew;
+			}
+			
+			//teraz szukamy najmniejszego zbioru inwariantów pokrywającego min 1 elementent każdego zbioru w connectedTransitionsSet			
 			int setsNumber = connectedTransitionsSet.size();
 			int found = 0;
 			int upperSearchBound = setsNumber;
 			
 			while(found != setsNumber) {
-				
 				ArrayList<Integer> foundVectors = searchCandidate(connectedTransitionsSet, upperSearchBound);
-				//int howManyFound = foundVectors.get(0).get(0);
+				
 				if(foundVectors == null) {
 					upperSearchBound--; 	
 				} else {
@@ -168,9 +194,48 @@ public class InvariantsCalculatorFeasible {
 			}	
 			invToCombine.add(nonFInvariant);
 			
-			ArrayList<Integer> newFeasible = createFeasibleInvariant(invToCombine);
-			f_invariantsCreated.add(newFeasible);
+			if(invToCombine.size() == 1) {
+				feasibleInv.add(nonFInvariant);
+				selfPropInvariants++;
+			} else {
+				ArrayList<Integer> newFeasible = createFeasibleInvariant(invToCombine);
+				int feasibleNumber = feasibleInv.size();
+				if(oldSize != newSize) {
+					logInternal("Non-feasible invariant (pos: "+(feasibleNumber+f_invariantsCreated.size())+
+							") already contains some required transitions: "+(oldSize-newSize)+" out of "+oldSize+".\n", false);
+				}
+				
+				if(InvariantsTools.checkCanonitySingle(newFeasible) == false) {
+					logInternal("Created feasible invariant number "+(feasibleNumber+f_invariantsCreated.size())+" is not canonical.\n", false);
+				}
+				
+				f_invariantsCreated.add(newFeasible);
+			}
 		}
+	}
+
+	/**
+	 * Metoda sprawdzająca, czy potrzebne tranzycje ze zbiorów 'zasilających' odpowiednie miejsca z łukami
+	 * odczytu są już zawarte w danym non-feasible (?) inwariancie.
+	 * @param nonFInvariant ArrayList[Integer] - inwariant 
+	 * @param connectedTransitionsSet ArrayList[ArrayList[Integer]] - zbiór potrzebnych tranzycji
+	 * @return ArrayList[ArrayList[Integer]] - nowy zbiór connectedTransitionsSet
+	 */
+	private ArrayList<ArrayList<Integer>> checkSelfPropelledInv(ArrayList<Integer> nonFInvariant, ArrayList<ArrayList<Integer>> connectedTransitionsSet) {
+		ArrayList<ArrayList<Integer>> newConnTransSet = new ArrayList<ArrayList<Integer>>();
+		ArrayList<Integer> support = InvariantsTools.getSupport(nonFInvariant);
+		
+		for(ArrayList<Integer> set : connectedTransitionsSet) {
+			
+			if(intersection(support, set).size() > 0) {
+				//jeśli true, wtedy nie dodajemy, i tego zbioru dalej nie będziemy szukać...
+				//newConnTransSet.add(set);
+			} else {
+				newConnTransSet.add(set);
+			}
+		}
+		
+		return newConnTransSet;
 	}
 	
 	/**
@@ -290,6 +355,12 @@ public class InvariantsCalculatorFeasible {
 		//return null;
 	}
 	
+	/**
+	 * Metoda zwraca wspólną część dwóch list.
+	 * @param list1 ArrayList[Integer] - I lista
+	 * @param list2 ArrayList[Integer] - II lista
+	 * @return ArrayList[Integer] - część wspólna
+	 */
 	public ArrayList<Integer> intersection(ArrayList<Integer> list1, ArrayList<Integer> list2) {   
 	    ArrayList<Integer> result = new ArrayList<Integer>(list1);
 	    result.retainAll(list2);
@@ -575,5 +646,21 @@ public class InvariantsCalculatorFeasible {
 	 */
 	public String getTextStatus() {
 		return status;
+	}
+	
+	/**
+	 * Metoda wysyłająca komunikaty do podokna logów generatora.
+	 * @param msg String - tekst do logów
+	 * @param date boolean - true, jeśli ma być podany czas komunikatu
+	 */
+	private void logInternal(String msg, boolean date) {
+		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		if(masterWindow != null) {
+			if(date == false) {
+				masterWindow.accessLogField().append(msg);
+			} else {
+				masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
+			}
+		}
 	}
 }

@@ -89,12 +89,13 @@ public class InvariantsCalculator implements Runnable {
 			
 			if(doubleArcs.size() > 0) {
 				logInternal("\n", false);
-				logInternal("WARNING! DOUBLE ARCS (READ-ARCS) DETECTED BETWEEN NODES:\n", false);
+				logInternal("WARNING! Double arcs (read-arcs) detected between nodes::\n", false);
 				for(ArrayList<Integer> trouble : doubleArcs) {
 					logInternal("Place: p_"+trouble.get(0)+" and Transition t_"+trouble.get(1)+"\n", false);
 				}
-				logInternal("\n", false);
-				logInternal("THIS IS NOT SIMPLE PN MODEL BUT EXTENDED. FEASIBLE INVARIANTS COMPUTATION REQUIRED.\n", false);
+				//logInternal("\n", false);
+				logInternal("Feasible invariants computation/check is recommended - "
+						+ "depending on the set it may or may not change during this procedure.\n", false);
 			}
 		} catch (Exception e) {
 			log("Critical error while generating invariants. Possible net state change.", "error", false);

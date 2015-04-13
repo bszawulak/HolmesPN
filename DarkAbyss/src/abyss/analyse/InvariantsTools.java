@@ -32,6 +32,7 @@ import abyss.utilities.Tools;
  * finalSupportMinimalityTest - sprawdza czy są inwarianty nie-minimalne i je usuwa<br>
  * supportInclusionCheck - sprawdza czy wsparcie inwariantu zawiera wszystkie elementy wsparcia drugiego inwariantu<br>
  * checkCanonity - zwraca liczbę niekanonicznych inwariantów<br>
+ * checkCanonitySingle - sprawdza, czy podany inwariant jest kanoniczny<br>
  * checkSupportMinimality - sprawdza cały zbiór inwariantów i podaje liczbę nie-minimalnych<br>
  * checkSupportMinimalityThorough - jak wyżej, ale podaje które są nie-minimalne i co zawierają<br>
  * compareInv - porównanie dwóch zbiorów inwariantów ze sobą<br>
@@ -579,6 +580,40 @@ public final class InvariantsTools {
 	}
 	
 	/**
+	 * Metoda sprawdza kanoniczność inwariantu
+	 * @param invariant ArrayList[Integer] - inwariant
+	 * @return boolean - true, jeśli kanoniczny
+	 */
+	public static boolean checkCanonitySingle(ArrayList<Integer> invariant) {
+		int nextT = 0;
+		int result = 0;
+		
+		for(int t=0; t<invariant.size(); t++) { //znajdź pierwszy element wsparcia
+			int value = invariant.get(t);
+			if(value == 0) {
+				continue;
+			} else {
+				result =  bezwzgledna(value);
+				nextT = t;
+				break;
+			}
+		}
+		for(int t=nextT+1; t<invariant.size(); t++) {
+			int value = invariant.get(t);
+			if(value == 0)
+				continue;
+			
+			value = bezwzgledna(value);
+	        result = nwd(result, value);
+	        
+	        if(result == 1) {
+	        	return true;
+	        }
+		}
+		return false;
+	}
+	
+	/**
 	 * Metoda sprawdza zbiór inwariantów i testuje ich minimalność. 
 	 * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @return int - liczba nie-minimalnych inwariantów
@@ -1090,7 +1125,7 @@ public final class InvariantsTools {
 	*/
     
 	/**
-	 * Metoda zwraca wektor określający, czy dany inwarian jest wykonalny czy nie.
+	 * Metoda zwraca wektor określający, czy dany inwariant jest wykonalny czy nie.
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @return ArrayList[Integer] - wektor wynikowy: -1: non-feasible; 1: feasible
 	 */
@@ -1121,7 +1156,8 @@ public final class InvariantsTools {
 	 */
 	private static boolean isNonFeasibleStatic(ArrayList<Integer> support, ArrayList<Integer> readArcTransLocations,
 			ArrayList<Transition> transitions) {
-    	ArrayList<Integer> readarcTransitions = new ArrayList<Integer>();
+    	
+		ArrayList<Integer> readarcTransitions = new ArrayList<Integer>();
     	//
     	
 		for(int trans : readArcTransLocations) {

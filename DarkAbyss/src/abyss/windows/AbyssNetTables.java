@@ -474,7 +474,7 @@ public class AbyssNetTables extends JFrame {
         table.getColumnModel().getColumn(10).setPreferredWidth(40);
     	table.getColumnModel().getColumn(10).setMinWidth(40);
     	table.getColumnModel().getColumn(10).setMaxWidth(40);
-    	table.getColumnModel().getColumn(11).setHeaderValue("Canon");
+    	table.getColumnModel().getColumn(11).setHeaderValue("Cx=0");
         table.getColumnModel().getColumn(11).setPreferredWidth(40);
     	table.getColumnModel().getColumn(11).setMinWidth(40);
     	table.getColumnModel().getColumn(11).setMaxWidth(40);
