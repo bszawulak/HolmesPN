@@ -362,6 +362,7 @@ public class AbyssProgramProperties extends JFrame {
 		size1Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "1", true);
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
 		group.add(size1Button);
@@ -373,6 +374,7 @@ public class AbyssProgramProperties extends JFrame {
 		size2Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "2", true);
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
 		group.add(size2Button);
@@ -384,6 +386,7 @@ public class AbyssProgramProperties extends JFrame {
 		size3Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "3", true);
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
 		group.add(size3Button);
@@ -405,6 +408,7 @@ public class AbyssProgramProperties extends JFrame {
 				} else {
 					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("showShortNames", "0", true);
 				}
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
 		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("showShortNames").equals("1")) 
@@ -441,7 +445,7 @@ public class AbyssProgramProperties extends JFrame {
 		
 		panel.add(createInvariantsPanel(0, 0, 590, 90));
 		panel.add(createFeasibleInvPanel(0, 90, 590, 90));
-		
+		panel.add(createMCSPanel(0, 180, 590, 90));
 		panel.repaint();
 		return panel;
 		
@@ -465,6 +469,8 @@ public class AbyssProgramProperties extends JFrame {
 		noAction = true;
 		
 		
+		
+		noAction = false;
 		return panel;
 	}
 	
@@ -485,6 +491,7 @@ public class AbyssProgramProperties extends JFrame {
 		int io_y = 15;
 		noAction = true;
 		
+		// Self-propelled read-arc regions ignored or not in feasible invariants algorith
 		JCheckBox feasInvSelfPropCheckBox = new JCheckBox("Allow presence of self-propelled readarc regions", true);
 		feasInvSelfPropCheckBox.setBounds(io_x, io_y, 360, 20);
 		feasInvSelfPropCheckBox.addActionListener(new ActionListener() {
@@ -503,6 +510,47 @@ public class AbyssProgramProperties extends JFrame {
 		else
 			feasInvSelfPropCheckBox.setSelected(false);
 		panel.add(feasInvSelfPropCheckBox);
+		
+		noAction = false;
+		return panel;
+	}
+	
+	/**
+	 * Metoda tworząca podpanel opcji Snoopiego.
+	 * @param x int - współrzędna X
+	 * @param y int - współrzedna Y
+	 * @param w int - szerokość
+	 * @param h int - wysokość
+	 * @return JPanel - panel
+	 */
+	private JPanel createMCSPanel(int x, int y, int w, int h) {
+		JPanel panel = new JPanel(null);
+		panel.setBorder(BorderFactory.createTitledBorder("MCS generator"));
+		panel.setBounds(x, y, w, h);
+		
+		int io_x = 10;
+		int io_y = 15;
+		noAction = true;
+		
+		JCheckBox cleanMCSusingStructureCheckBox = new JCheckBox("Eliminate MCS sets non directly connected with objR transition.", true);
+		cleanMCSusingStructureCheckBox.setBounds(io_x, io_y, 400, 20);
+		cleanMCSusingStructureCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction) return;
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "0", true);
+				}
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1")) 
+			cleanMCSusingStructureCheckBox.setSelected(true);
+		else
+			cleanMCSusingStructureCheckBox.setSelected(false);
+		panel.add(cleanMCSusingStructureCheckBox);
+		
 		
 		noAction = false;
 		return panel;

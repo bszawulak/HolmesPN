@@ -24,6 +24,8 @@ import abyss.windows.AbyssMCS;
  */
 public class MCSCalculator implements Runnable {
     private ArrayList<ArrayList<Integer>> em_obR;
+    private ArrayList<Integer> em_obRinvID;
+    
     private ArrayList<Integer> transitions;
     private ArrayList<Set<Integer>> mcs;
     private List<Set<Integer>> precutsets;
@@ -62,10 +64,14 @@ public class MCSCalculator implements Runnable {
     	//ArrayList<Transition> transitionsList = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 
     	//STEP 2: zdefiniowana objR (int, argument funkcji MCSCalculator(int objR)
+    	em_obRinvID = new ArrayList<Integer>();
+    	int counter = 0;
         for (ArrayList<Integer> inv : invariants) {
             if (transInInvariant(inv, objective_Reaction) == true) {
             	em_obR.add(binaryInv(inv)); //STEP 3
+            	em_obRinvID.add(counter);
             }
+            counter++;
         }
         
         for(Transition t : transitionsList)
@@ -100,7 +106,8 @@ public class MCSCalculator implements Runnable {
 			}
 		} catch (OutOfMemoryError e) { // pray...
 			precutsets = null;
-			GUIManager.getDefaultGUIManager().log("Catastrophic error: out of memory. Attemting to recover."
+			GUIManager.getDefaultGUIManager().log("Catastrophic error: out of memory. JRE will become unstable.\n"
+					+ "Please save your work immediatelly in *separate* files and restart the program."
 					+ " Operation terminated unconditionally.", "error", true);
 			addNewDataVector(mcs);
 			showMCS();
@@ -160,19 +167,28 @@ public class MCSCalculator implements Runnable {
     		logInternal("Calculating for set size: "+k+": ", false);
     		
             for (int j : transitions) {
+            	
+            	
+            	if(j==27) {
+            		@SuppressWarnings("unused")
+            		String tName = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(j).getName();
+            		@SuppressWarnings("unused")
+					int breakPoint = 1;	
+            	}
+            	
             	//System.out.print("*");
             	logInternal("*", false);
+            	if(terminate) return mcs;
             		//5.2.1 usuń z listy zbiorów precutsets, te w których występuje j
+            	removeSetsContainingTransition2(j); 
             	if(terminate) return mcs;
-            	removeSetsContainingTransition2(j);
-                	//5.2.2 czarna magia, odsyłam do artykułu
-            	if(terminate) return mcs;
+            		//5.2.2 czarna magia, odsyłam do artykułu
                 List<Set<Integer>> temp_precutsets = calculatePreliminaryCutsets(precutsets, j);
+                if(terminate) return mcs;
                 	//5.2.3 usuń wszystkie zbiory z temp_precutsets które zawierają jakikolwiek zbiór z listy mcs:
-                if(terminate) return mcs;
                 removeNonMinimalSets(temp_precutsets);
-                	//5.2.4 zidentyfikuj zbiory MCS i usuń z precutsets
                 if(terminate) return mcs;
+                	//5.2.4 zidentyfikuj zbiory MCS i usuń z precutsets
                 newPrecutsets.addAll(identifyNewMCSs2(temp_precutsets));
                 
                 temp_precutsets = null;
@@ -268,20 +284,42 @@ public class MCSCalculator implements Runnable {
      */
     private List<Set<Integer>> calculatePreliminaryCutsets(List<Set<Integer>> precutsets, int trans) {
         List<Set<Integer>> newPrecutsets = new ArrayList<>();
+        int invNumber = -1;
+        int invID = 0;
         for (Set<Integer> precutset : precutsets) {
-        	boolean found = false;
+	        if(terminate) return newPrecutsets;
+	        
+        	boolean correct = false;
+        	invNumber = -1;
         	for (ArrayList<Integer> invariant : em_obR) { //dla każdego inwariantu z tablicy:
+        		invNumber++;
+        		invID = em_obRinvID.get(invNumber);
+        		
+        		if (transInInvariant(invariant, trans) == true) {
+        			if(commonSubset(invariant, precutset).isEmpty() == true) {
+        				correct = true;
+                        break;
+        			} else {
+        				continue;
+        			}
+        		} else {
+        			continue;
+        		}
+                	//jeśli inwariant zawiera tranzycję oraz precutset i inwariant mają jakąś część wspólną
+                    
+            	
+        		/*
             	if (transInInvariant(invariant, trans) == true && commonSubset(invariant, precutset).isEmpty() == false) {
                 	//jeśli inwariant zawiera tranzycję oraz precutset i inwariant mają jakąś część wspólną
-                    found = true;
+                    incorrect = true;
                     break;
                 }// 5.2.2 'intersekcja' to niby 'cover' ?!!! WTH?!
+            	*/
             }
-        	if(found == true)
-        		continue;
+        	//if(incorrect == true)
+        		//continue;
+        	if(!correct) continue;
         	
-            //if (intersectsAnyInvariantContaining(trans, precutset) == true)
-              //  continue;
             // powyższe trwa tak długo, aż trafimy na precutset który nie ma części wspólnej z pewnym inwariantem
             // do którego należy tranzycja trans
             Set<Integer> newPrecutset = new HashSet<Integer>(precutset);
@@ -290,23 +328,6 @@ public class MCSCalculator implements Runnable {
         }
  
         return newPrecutsets;
-    }
-    
-    /**
-     * TODO: W-implementować w powyższą!!!
-     * @param transition
-     * @param precutset
-     * @return
-     */
-    private boolean intersectsAnyInvariantContaining(int transition, Set<Integer> precutset) {
-        for (ArrayList<Integer> invariant : em_obR) { //dla każdego inwariantu z tablicy:
-        	if (transInInvariant(invariant, transition) == true && commonSubset(invariant, precutset).isEmpty() == false) {
-            	//jeśli inwariant zawiera tranzycję oraz precutset i inwariant mają jakąś część wspólną
-                return true;
-            }
-            // 5.2.2 'intersekcja' to niby 'cover' ?!!! WTH?!
-        }
-        return false;
     }
     
     /**
@@ -403,6 +424,21 @@ public class MCSCalculator implements Runnable {
      * @param results ArrayList[Set[Integer]] - lista zbiorów MCS
      */
     private void addNewDataVector(ArrayList<Set<Integer>> results) {
+    	//TODO:
+    	ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+    	
+    	if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1")) {
+    		for(Set<Integer> mctSet : results) {
+    			for(int element : mctSet) {
+    				Transition trans = transitions.get(element);
+    				
+    			
+    			}
+    			//check directed connections
+    		}
+    	}
+    	
+    	
 		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
 		mcsd.insertMCS(results, objective_Reaction, askBeforeAdd);
 	}

@@ -367,7 +367,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobrać listę łuków wyjściowych.
+	 * Metoda pozwala pobrać listę WSZYSTKICH łuków wyjściowych wierzchołka.
 	 * @return ArrayList[Arc] - lista łuków wyjściowych
 	 */
 	public ArrayList<Arc> getOutArcs() {
@@ -379,7 +379,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobrać listę wierzchołków wejściowych.
+	 * Metoda pozwala pobrać listę WSZYSTKICH wierzchołków wejściowych wierzchołka.
 	 * @return ArrayList[Node] - lista wierzchołków wejściowych
 	 */
 	public ArrayList<Node> getInNodes() {

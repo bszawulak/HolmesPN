@@ -13,7 +13,8 @@ import abyss.math.Transition;
  * Klasa odpowiedzialna za analizę właściwości sieci Petriego. Tworzona ręcznie, do działania
  * wymaga istniejących: miejsc, tranzycji oraz łuków (niepuste zbiory).
  * @author students
- * @author MR - porządek w klasie, dodanie opisów i działającego sprawdzania CN i SCN
+ * @author MR - porządek w klasie, dodanie opisów i działającego sprawdzania CN i SCN oraz cała masa
+ *  niezbędnych poprawek błędów które tu były
  *
  */
 public class NetPropertiesAnalyzer {
@@ -298,24 +299,26 @@ public class NetPropertiesAnalyzer {
 		Node start = nodes.get(0);
 		int tNo = transitions.size();
 		int pNo = places.size();
-		int nNo = nodes.size();
-		if(tNo + pNo != nNo) {
+		int numberOfNodes = nodes.size();
+		if(tNo + pNo != numberOfNodes) {
 			GUIManager.getDefaultGUIManager().log("Network analyzer detected critical problem within the net. "
 				+ "Number of places: "+pNo+ " transitions: "+tNo+ " do not sum to the total stored "
-				+ "number of nodes: "+nNo+" Please save the net in separate file, close program, open it and "
+				+ "number of nodes: "+numberOfNodes+" Please save the net in separate file, close program, open it and "
 				+ "the net again. If the problem remains, please notice authors of program.", "error", true);
 		}
 		
 		int visitedNodes = checkNetConnectivity(start, new ArrayList<Node>());
-		if(visitedNodes == nNo)
+		if(visitedNodes == numberOfNodes)
 			isConnected = true;
 		conProp.set(1, isConnected);
 
 		// SC - strongly connected net
 		boolean isStronglyConnected = false;
-		visitedNodes = checkNetStrongConnectivity(start, new ArrayList<Node>());
-		if(visitedNodes == nNo)
-			isStronglyConnected = true;
+		if(fastStrongConnectivityTest() == true) {
+			visitedNodes = checkNetStrongConnectivity(start, new ArrayList<Node>());
+			if(visitedNodes == numberOfNodes)
+				isStronglyConnected = true;
+		}
 		scProp.set(1, isStronglyConnected);
 		
 		// SCF - static conflict free
@@ -327,8 +330,9 @@ public class NetPropertiesAnalyzer {
 						if (t.getID() != t2.getID())
 							for (ElementLocation el2 : t2.getElementLocations())
 								for (Arc a2 : el2.getInArcs())
-									if (a1.getStartNode().getID() == a2.getStartNode().getID())
+									if (a1.getStartNode().getID() == a2.getStartNode().getID()) {
 										;
+									}
 		isStaticConFree = false;
 		scfProp.set(1, isStaticConFree);
 		
@@ -371,7 +375,6 @@ public class NetPropertiesAnalyzer {
 	 * @param start Node - wierzchołek startowy/aktualny
 	 * @param reachable ArrayList<Node> - lista odwiedzonych unikalnych węzłów
 	 * @return int - liczba odwiedzonych węzłów sieci
-	 * @author MR
 	 */
 	private int checkNetConnectivity(Node start, ArrayList<Node> reachable) {
 		if(!reachable.contains(start)) { //jeśli jeszcze nie ma
@@ -406,7 +409,6 @@ public class NetPropertiesAnalyzer {
 	 * @param start Node - wierzchołek startowy/aktualny
 	 * @param reachable ArrayList<Node> - lista odwiedzonych unikalnych węzłów
 	 * @return int - liczba odwiedzonych węzłów sieci
-	 * @author MR
 	 */
 	private int checkNetStrongConnectivity(Node start, ArrayList<Node> reachable) {
 		if(!reachable.contains(start)) { //jeśli jeszcze nie ma
@@ -416,12 +418,25 @@ public class NetPropertiesAnalyzer {
 		{
 			for (Arc a : start.getOutArcs()) { //łuki wychodzące z aktualnego
 				Node nod = a.getEndNode(); //wierzchołek końcowy łuku
-				if(!reachable.contains(nod)) {//jeśli jeszcze nie ma
+				if(reachable.contains(nod) == false) {//jeśli jeszcze nie ma
 					reachable.add(nod);
-					checkNetConnectivity(nod, reachable);
+					checkNetStrongConnectivity(nod, reachable);
 				}
 			}
 		}
 		return reachable.size();
+	}
+	
+	/**
+	 * Szybkie sprawdzanie BRAKU właściwości Strong Connection - jeśli znajdzie się choć jeden wierzchołek
+	 * którego zbiór łuków IN lub łuków OUT jest pusty - sieć nie może być SC.
+	 * @return boolean - false, jeśli sieć na pewno nie jest silnie spójna, nie oznacza to, że JEST silnie spójna!
+	 */
+	private boolean fastStrongConnectivityTest() {
+		for(Node n : nodes) {
+			if(n.getInArcs().size() == 0 || n.getOutArcs().size() == 0)
+				return false;
+		}
+		return true;
 	}
 }

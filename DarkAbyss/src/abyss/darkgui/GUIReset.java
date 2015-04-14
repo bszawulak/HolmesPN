@@ -106,7 +106,7 @@ public class GUIReset {
 	 * podokien programu. Przy okazji reset protokołu I/O.
 	 */
 	public void reset2ndOrderData() {
-		clearGraphColors();
+		//clearGraphColors();
 		
 		//"I nie będzie niczego."
 		// Księga Kononowicza

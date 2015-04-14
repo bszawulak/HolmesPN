@@ -123,6 +123,7 @@ public class SettingsManager {
 		
 		checkAndFix(settingsNew, "showShortNames", "0");
 		checkAndFix(settingsNew, "analysisFeasibleSelfPropAccepted", "1");
+		checkAndFix(settingsNew, "analysisMCSReduction", "1");
 		
 		settings = new ArrayList<Setting>(settingsNew);
 		writeSettingsFile();

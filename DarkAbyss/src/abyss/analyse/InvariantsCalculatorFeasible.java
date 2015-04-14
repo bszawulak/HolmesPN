@@ -593,16 +593,19 @@ public class InvariantsCalculatorFeasible {
 		}
 		return raTrans;
 	}
-	
+
+	/**
+	 * Metoda wykrywająca łuk podwójny.
+	 * @param arc Arc - łuk
+	 * @return boolean - true jeśli istnieje łuk podwójny
+	 */
 	public static boolean isDoubleArc(Arc arc) {
 		Node startN = arc.getStartNode();
 		Node endN = arc.getEndNode();
 		
-		for(ElementLocation el : endN.getElementLocations()) {
-			for(Arc a : el.getOutArcs()) {// w drugą stronę
-				if(a.getEndNode() == startN) {
-					return true;
-				}
+		for(Arc a : endN.getOutArcs()) {
+			if(a.getEndNode() == startN) {
+				return true;
 			}
 		}
 		return false;

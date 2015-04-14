@@ -96,8 +96,6 @@ public class DarkMenu extends JMenuBar {
 		// open file
 		JMenuItem openMenuItem = new JMenuItem("Open...", KeyEvent.VK_O);
 		openMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_open.png"));
-		//openMenuItem.setPreferredSize(new Dimension(WIDTH, 38));
-		openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
 		openMenuItem.getAccessibleContext().setAccessibleDescription("Open project");
 		openMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -109,7 +107,7 @@ public class DarkMenu extends JMenuBar {
 		// import from file
 		JMenuItem importMenuItem = new JMenuItem("Import network...", KeyEvent.VK_I);
 		importMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_importNet.png"));
-		//importMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,ActionEvent.CTRL_MASK));
+		importMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
 		importMenuItem.getAccessibleContext().setAccessibleDescription("Import project");
 		importMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
