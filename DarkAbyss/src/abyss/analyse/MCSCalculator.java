@@ -307,12 +307,9 @@ public class MCSCalculator implements Runnable {
         		} else {
         			continue;
         		}
-                	//jeśli inwariant zawiera tranzycję oraz precutset i inwariant mają jakąś część wspólną
-                    
-            	
+                	
         		/*
             	if (transInInvariant(invariant, trans) == true && commonSubset(invariant, precutset).isEmpty() == false) {
-                	//jeśli inwariant zawiera tranzycję oraz precutset i inwariant mają jakąś część wspólną
                     incorrect = true;
                     break;
                 }// 5.2.2 'intersekcja' to niby 'cover' ?!!! WTH?!

@@ -75,24 +75,25 @@ public class AbyssProgramProperties extends JFrame {
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, 0, 600, 500);
-		ImageIcon icon = Tools.getResIcon16("images/middle.gif");
+		
+	
 
 		//zakładka głównych opcji programu:
-		tabbedPane.addTab("System", icon, makeSysPanel(), "Abyss main options.");
+		tabbedPane.addTab("System", Tools.getResIcon32("/icons/propertiesWindow/systemIcon.png"), makeSysPanel(), "Abyss main options.");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-		tabbedPane.addTab("Editor", icon, makeEditorPanel(), "Editor options");
+		tabbedPane.addTab("Editor", Tools.getResIcon32("/icons/propertiesWindow/editorIcon.png"), makeEditorPanel(), "Editor options");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 		
-		JComponent panel3 = makeTextPanel("Simulator options will go here.");
-		tabbedPane.addTab("Simulator", icon, panel3, "Does nothing");
+		JComponent panel3 = makeTextPanel("Simulation options will go here.");
+		tabbedPane.addTab("Simulator", Tools.getResIcon32("/icons/propertiesWindow/simulationIcon.png"), panel3, "Does nothing");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_3);
 
-		tabbedPane.addTab("Analyzer", icon, makeAnalysisPanel(), "Does twice as much nothing");
+		tabbedPane.addTab("Analyzer", Tools.getResIcon32("/icons/propertiesWindow/analysisIcon.png"), makeAnalysisPanel(), "Does twice as much nothing");
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_4);
 
 		JComponent panel5 = makeTextPanel("Other options.");
-		tabbedPane.addTab("Other", icon, panel5, "Does nothing at all");
+		tabbedPane.addTab("Other", Tools.getResIcon32("/icons/propertiesWindow/otherIcon.png"), panel5, "Does nothing at all");
 		tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
 		
 		JPanel mainPanel = new JPanel();
