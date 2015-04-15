@@ -17,7 +17,7 @@ import abyss.windows.AbyssNodeInfo;
  * @author students
  *
  */
-public class PetriNetElementPopupMenu extends GraphPanelPopupMenu {
+public class NodePopupMenu extends GraphPanelPopupMenu {
 	// BACKUP:  -8988739887642243733L  (ŁAPY PRECZ OD PONIŻSZEJ ZMIENNEJ)
 	private static final long serialVersionUID = -8988739887642243733L;
 
@@ -25,7 +25,7 @@ public class PetriNetElementPopupMenu extends GraphPanelPopupMenu {
 	 * Konstruktor obiektu klasy PetriNetElementPopupMenu.
 	 * @param graphPanel GraphPanel - obiekt panelu dla tworzonego menu
 	 */
-	public PetriNetElementPopupMenu(GraphPanel graphPanel) {
+	public NodePopupMenu(GraphPanel graphPanel) {
 		super(graphPanel);
 		
 		this.addMenuItem("Show details...", "", new ActionListener() {

@@ -7,7 +7,7 @@ import abyss.graphpanel.GraphPanel;
  * @author students
  *
  */
-public class ArcPopupMenu extends PetriNetElementPopupMenu {
+public class ArcPopupMenu extends NodePopupMenu {
 	// BACKUP:  6531877302888917900L (ŁAPY PRECZ OD PONIŻSZEJ ZMIENNEJ)
 	private static final long serialVersionUID = 6531877302888917900L;
 

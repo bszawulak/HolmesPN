@@ -334,6 +334,9 @@ public class Transition extends Node {
 	 * @return boolean - true, jeśli tranzycja jest aktywna i może zostać odpalona; false w przeciwnym wypadku
 	 */
 	public boolean isActive() {
+		if(offline == true)
+			return false;
+		
 		boolean inhibitorOnly = true;
 		//String name = getName();
 		for (Arc arc : getInArcs()) { //CASE: INHIBITORS ONLY

@@ -7,13 +7,15 @@ import javax.swing.JOptionPane;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
+import abyss.math.Node;
+import abyss.math.Transition;
 
 /**
  * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji związanych z tranzycjami.
  * @author students
  *
  */
-public class TransitionPopupMenu extends PetriNetElementPopupMenu {
+public class TransitionPopupMenu extends NodePopupMenu {
 	// BACKUP:  1268637178521514216L   (ŁAPY PRECZ OD PONIŻSZEJ ZMIENNEJ)
 	private static final long serialVersionUID = 1268637178521514216L;
 
@@ -23,6 +25,24 @@ public class TransitionPopupMenu extends PetriNetElementPopupMenu {
 	 */
 	public TransitionPopupMenu(GraphPanel graphPanel) {
 		super(graphPanel);
+		
+		this.addMenuItem("Transition ON/OFF", "offlineSmall.png", new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+					return;
+				
+				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
+				if(n instanceof Transition) {
+					if(((Transition) n).isOffline() == true)
+						((Transition) n).setOffline(false);
+					else
+						((Transition) n).setOffline(true);
+				}
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			}
+		});
+		
+		
 		this.addMenuItem("Change selected Transitions into T-Portals", "portal.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {

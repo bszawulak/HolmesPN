@@ -37,6 +37,9 @@ public final class ElementDraw {
 				//radius = 30;
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, 
 						radius * 2, radius * 2);
+				
+				
+				
 				if (!trans.isLaunching()) { //jeśli nieaktywna
 					if (trans.isGlowed_MTC()) { //jeśli ma się świecić jako MCT
 						g.setColor(EditorResources.glowMTCTransitonColorLevel1);
@@ -80,9 +83,7 @@ public final class ElementDraw {
 							g.drawImage(img, null, 
 									nodeBounds.x-(trans.getRadius()+2), 
 									nodeBounds.y-(trans.getRadius()+2));
-						} catch (Exception e) {
-							
-						}
+						} catch (Exception e) { }
 					} else if (el.isPortalSelected()) {
 						/*
 						g.setColor(EditorResources.glowPortalColorLevel1);
@@ -99,6 +100,7 @@ public final class ElementDraw {
 						*/
 					}
 				}
+
 				if (trans.isLaunching()) {
 					g.setColor(EditorResources.launchColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
@@ -207,6 +209,15 @@ public final class ElementDraw {
 					
 					g.setFont(old);
 					g.setColor(oldC);
+				}
+				
+				if(trans.isOffline() == true) {
+					try {
+						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/offlineTransition2.png"));
+						g.drawImage(img, null, 
+								nodeBounds.x-(trans.getRadius()+2), 
+								nodeBounds.y-(trans.getRadius()+2));
+					} catch (Exception e) { }
 				}
 				
 				if(trans.showAddText() == true) {
