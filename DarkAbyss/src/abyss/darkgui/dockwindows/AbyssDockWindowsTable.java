@@ -19,7 +19,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -78,7 +77,7 @@ import abyss.workspace.WorkspaceSheet;
  * Przerobiłem metody na pozycjonowanie absolutne, wywaliłem w cholerę wszystkie layouty.
  * Bo tak. Bo ludzie padający przed ich ideą na kolana i bijący pokłony "Oh, layout, jak
  * cudownie, wszystko się nam teraz automatycznie rozmieści" nie zauważają, albo nie chcą
- * zauważać, że to 'automatycznie' jest tak do dupy, tak bardzo z... że już bardziej się
+ * zauważać, że to 'automatycznie' jest tak do dupy, tak bardzo zj... że już bardziej się
  * chyba nie da. PO CO MI LATAJĄCE WE WSZYSTKIE STRONY ELEMENTY OKNA, SKORO CHCIAŁBYM
  * MIEĆ JE NA STAŁE W JEDNYM MIEJSCU?! Ok, ale o co tu chodzi? No więc albo się używa w
  * Javie layoutów, 2 polecenia na krzyż i wszystko się rozmieszcza gdzie chce i jak chce,
@@ -2368,7 +2367,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				if (selected > 0) {
 					selected--;
 					MCSDataMatrix mcsDataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-					ArrayList<Set<Integer>> sets = mcsDataCore.getMCSlist(selected--);
+					ArrayList<ArrayList<Integer>> sets = mcsDataCore.getMCSlist(selected--);
 					
 					if(sets == null)
 						return;
@@ -2378,7 +2377,7 @@ public class AbyssDockWindowsTable extends JPanel {
 					mcsMCSforObjRCombo.addItem("---");
 					
 					String newRow = "";
-					for(Set<Integer> set : sets) {
+					for(ArrayList<Integer> set : sets) {
 						newRow = "[";
 						for(int el : set) {
 							newRow += el+", ";

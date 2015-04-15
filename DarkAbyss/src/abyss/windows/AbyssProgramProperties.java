@@ -66,7 +66,7 @@ public class AbyssProgramProperties extends JFrame {
 	 * użyciu odpowiednich metod pomocniczych.
 	 */
 	private void initialize_components() {
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setLocation(20, 20);
 		setTitle("Settings");
 		setLayout(new BorderLayout());

@@ -3,12 +3,14 @@ package abyss.analyse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import abyss.darkgui.GUIManager;
 import abyss.math.MCSDataMatrix;
+import abyss.math.Node;
 import abyss.math.Transition;
 import abyss.windows.AbyssMCS;
 
@@ -426,21 +428,58 @@ public class MCSCalculator implements Runnable {
     private void addNewDataVector(ArrayList<Set<Integer>> results) {
     	//TODO:
     	ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-    	
-    	if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1")) {
-    		for(Set<Integer> mctSet : results) {
-    			for(int element : mctSet) {
-    				Transition trans = transitions.get(element);
-    				
-    			
+    	ArrayList<ArrayList<Integer>> mcsInfoMatrix = new ArrayList<ArrayList<Integer>>();
+		ArrayList<ArrayList<Integer>> mcsDataMatrix = new ArrayList<ArrayList<Integer>>();
+		
+    	if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1")) {	
+    		for(Set<Integer> mcsSet : results) {
+    			ArrayList<Integer> mcsSetData = new ArrayList<Integer>();
+    			for(int element : mcsSet) {
+    				mcsSetData.add(element);
     			}
-    			//check directed connections
+    			Collections.sort(mcsSetData);	
+    			ArrayList<Integer> mcsInfo = new ArrayList<Integer>();
+    			
+    			boolean cancel = false;
+    			for(int element : mcsSetData) {
+    				Transition setTransition = transitions.get(element);
+    				Transition target = transitions.get(objective_Reaction);
+    				int distance = InvariantsTools.calculateNodesDistance(setTransition, target, new ArrayList<Node>());
+    				if(distance < 0) {
+    					cancel = true;
+    					break;
+    				} else
+    					mcsInfo.add(distance);
+    			}
+    			if(cancel)
+    				continue;
+    			
+    			mcsDataMatrix.add(mcsSetData);
+    			mcsInfoMatrix.add(mcsInfo);
+    		}
+    		
+    		logInternal("Infeasible sets reduction completed. Remained: "+mcsDataMatrix.size()+"\n", false);
+    	} else { //bez redukcji zbiorów
+    		for(Set<Integer> mcsSet : results) {
+    			ArrayList<Integer> mcsSetData = new ArrayList<Integer>();
+    			for(int element : mcsSet) {
+    				mcsSetData.add(element);
+    			}
+    			Collections.sort(mcsSetData);	
+    			ArrayList<Integer> mcsInfo = new ArrayList<Integer>();
+    			
+    			for(int element : mcsSetData) {
+    				Transition setTransition = transitions.get(element);
+    				Transition target = transitions.get(objective_Reaction);
+    				int distance = InvariantsTools.calculateNodesDistance(setTransition, target, new ArrayList<Node>());
+    				mcsInfo.add(distance);
+    			}
+    			mcsDataMatrix.add(mcsSetData);
+    			mcsInfoMatrix.add(mcsInfo);
     		}
     	}
-    	
-    	
 		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-		mcsd.insertMCS(results, objective_Reaction, askBeforeAdd);
+		mcsd.insertMCS(mcsDataMatrix, mcsInfoMatrix, objective_Reaction, askBeforeAdd);
 	}
 
     /**

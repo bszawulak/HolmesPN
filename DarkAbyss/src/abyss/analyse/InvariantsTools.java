@@ -802,8 +802,6 @@ public final class InvariantsTools {
 	 */
 	public static ArrayList<Integer> detectCovered(ArrayList<ArrayList<Integer>> invMatrix) {
 		ArrayList<Integer> coveredTransSet = new ArrayList<Integer>();
-		//for(int i=0; i<getTransitions().size(); i++)
-		//	uncoveredTransitions.add(0);
 		
 		if(invMatrix.size() > 0) {
 			int invSize = invMatrix.get(0).size();
@@ -1269,9 +1267,46 @@ public final class InvariantsTools {
 				}// else {
 					//GUIManager.getDefaultGUIManager().log("Internal error, net structure not canonical.", "error", true);
 				//}
-				
 			}
 		}
 		return connectedTransitions;
+	}
+	
+	/**
+	 * Metoda sprawdza odległość między dwoma wierzchołkami.
+	 * @param currentNode Node - wierzchołek startowy/aktualny
+	 * @param target Node - wierzchołek poszukiwany
+	 * @param visited ArrayList[Node] - lista odwiedzonych unikalnych węzłów
+	 * @return int - liczba odwiedzonych węzłów sieci
+	 */
+	public static int calculateNodesDistance(Node currentNode, Node target, ArrayList<Node> visited) {
+		if(!visited.contains(currentNode)) { //jeśli jeszcze nie ma
+			visited.add(currentNode);
+		}
+		
+		if(currentNode.equals(target))
+			return 0;
+		
+		if (currentNode.getOutArcs()!=null) {
+			for (Arc a : currentNode.getOutArcs()) { //łuki wychodzące z aktualnego wierzchołka
+				Node node = a.getEndNode(); //wierzchołek końcowy łuku
+				if(visited.contains(node) == false) {//jeśli jeszcze nie ma
+					visited.add(node);
+					
+					if(currentNode.equals(target)) {
+						return 0;
+					} else {
+						int path = calculateNodesDistance(node, target, visited);
+						
+						if(path > -1) {
+							path++;
+							return path;
+						}
+					}
+					
+				}
+			}
+		}
+		return -1;
 	}
 }

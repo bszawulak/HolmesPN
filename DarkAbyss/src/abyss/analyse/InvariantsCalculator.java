@@ -44,6 +44,7 @@ public class InvariantsCalculator implements Runnable {
 	private ArrayList<Integer> nonZeroColumnVectorP;
 	
 	
+	
 	private ArrayList<ArrayList<Integer>> doubleArcs;
 	
 	private boolean transCalculation = true;
@@ -78,24 +79,29 @@ public class InvariantsCalculator implements Runnable {
 	public void run() {
 		try {
 			logInternal("Invariant calculations started.\n", true);
-			this.createTPIncidenceAndIdentityMatrix(false);
-			this.searchTInvariants();
-			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants());
-			project.setInvariantsMatrix(getInvariants());
-			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
-			GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetInvData();
-			logInternal("Operation successfull, invariants found: "+getInvariants().size()+"\n", true);
 			
-			if(doubleArcs.size() > 0) {
-				logInternal("\n", false);
-				logInternal("WARNING! Double arcs (read-arcs) detected between nodes::\n", false);
-				for(ArrayList<Integer> trouble : doubleArcs) {
-					logInternal("Place: p_"+trouble.get(0)+" and Transition t_"+trouble.get(1)+"\n", false);
+			if(transCalculation == true) {
+				this.createTPIncidenceAndIdentityMatrix(false);
+				this.searchTInvariants();
+				PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+				GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants());
+				project.setInvariantsMatrix(getInvariants());
+				GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
+				GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetInvData();
+				logInternal("Operation successfull, invariants found: "+getInvariants().size()+"\n", true);
+				
+				if(doubleArcs.size() > 0) {
+					logInternal("\n", false);
+					logInternal("WARNING! Double arcs (read-arcs) detected between nodes::\n", false);
+					for(ArrayList<Integer> trouble : doubleArcs) {
+						logInternal("Place: p_"+trouble.get(0)+" and Transition t_"+trouble.get(1)+"\n", false);
+					}
+					//logInternal("\n", false);
+					logInternal("Feasible invariants computation/check is recommended - "
+							+ "depending on the set it may or may not change during this procedure.\n", false);
 				}
-				//logInternal("\n", false);
-				logInternal("Feasible invariants computation/check is recommended - "
-						+ "depending on the set it may or may not change during this procedure.\n", false);
+			} else { //P-invariants
+				
 			}
 		} catch (Exception e) {
 			log("Critical error while generating invariants. Possible net state change.", "error", false);

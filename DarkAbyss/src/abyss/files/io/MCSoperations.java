@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -47,15 +45,27 @@ public class MCSoperations {
 				
 				String buffer = "";
 				//pw.write("[["+data.accessMCStransitions().get(pos)+"]]\n");
-				ArrayList<Set<Integer>> dataMatrix = data.getMCSlist(pos);
+				ArrayList<ArrayList<Integer>> dataMatrix = data.getMCSlist(pos);
+				ArrayList<ArrayList<Integer>> infoMatrix = data.getMCSlistInfo(pos);
 				
-				for(Set<Integer> set : dataMatrix) {
+				int currentProcessed = 0;
+				for(ArrayList<Integer> set : dataMatrix) {
 					buffer = "[";
 					for(int el : set) {
 						buffer += el+",";
 					}
 					buffer += "]";
+					buffer = buffer.replace(",]", "]");
+					
+					ArrayList<Integer> infoSet = infoMatrix.get(currentProcessed);
+					buffer += " info: [";
+					for(int el : infoSet) {
+						buffer += el+",";
+					}
+					buffer += "]";
 					buffer = buffer.replace(",]", "]\n");
+					
+					currentProcessed++;
 					pw.write(buffer);
 				}
 				
@@ -82,7 +92,7 @@ public class MCSoperations {
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select MCS data file target path");
 		
 		if(selectedFile.equals("")) {
-			JOptionPane.showMessageDialog(null,"Incorrect file location.","Operation failed.",JOptionPane.ERROR_MESSAGE);
+			//JOptionPane.showMessageDialog(null,"Incorrect file location.","Operation failed.",JOptionPane.ERROR_MESSAGE);
 		} else {
 			String extension = ".mcs";
 			if(selectedFile.contains(extension) == false)
@@ -96,15 +106,27 @@ public class MCSoperations {
 				for(int i=0; i<dataSize; i++) {
 					String buffer = "";
 					pw.write("[["+data.accessMCStransitions().get(i)+"]]\n");
-					ArrayList<Set<Integer>> dataMatrix = data.accessMCSdata().get(i);
+					ArrayList<ArrayList<Integer>> dataMatrix = data.accessMCSdata().get(i);
+					ArrayList<ArrayList<Integer>> infoMatrix = data.accessMCSinfo().get(i);
 					
-					for(Set<Integer> set : dataMatrix) {
+					int currentProcessed = 0;
+					for(ArrayList<Integer> set : dataMatrix) {
 						buffer = "--[";
 						for(int el : set) {
 							buffer += el+",";
 						}
 						buffer += "]";
+						buffer = buffer.replace(",]", "]");
+						
+						ArrayList<Integer> infoSet = infoMatrix.get(currentProcessed);
+						buffer += " info: [";
+						for(int el : infoSet) {
+							buffer += el+",";
+						}
+						buffer += "]";
 						buffer = buffer.replace(",]", "]\n");
+						
+						currentProcessed++;
 						pw.write(buffer);
 					}
 				}
@@ -169,11 +191,16 @@ public class MCSoperations {
 				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append("Net transition: "+
 						GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(insertPos).getName()+"\n");
 				
-				ArrayList<Set<Integer>> dataVector = new ArrayList<Set<Integer>>();
+				ArrayList<ArrayList<Integer>> dataMatrix = new ArrayList<ArrayList<Integer>>();
+				ArrayList<ArrayList<Integer>> infoMatrix = new ArrayList<ArrayList<Integer>>();
 				
 				line = buffer.readLine();
 				
 				while(line != null && line.contains("[")) {
+					int separator = line.indexOf("info");
+					String secondLine = line.substring(separator+5);
+					line = line.substring(0, separator-1);
+					
 					line = line.substring(line.indexOf("[")+1);
 					line = line.substring(0, line.length() - 1);
 					line = line.trim();
@@ -182,7 +209,7 @@ public class MCSoperations {
 						line = buffer.readLine();
 						continue; //następny
 					}
-					Set<Integer> set = new LinkedHashSet<Integer>();
+					ArrayList<Integer> set = new ArrayList<Integer>();
 					for(String element : numberOfSet) {
 						int t = Integer.parseInt(element);
 						if(t >= transSize) {
@@ -194,10 +221,28 @@ public class MCSoperations {
 						}
 						set.add(t);
 					}
-					dataVector.add(set);
+					dataMatrix.add(set);
+					
+					//wczytywanie drugiego zbioru danych:
+					secondLine = secondLine.substring(secondLine.indexOf("[")+1);
+					secondLine = secondLine.substring(0, secondLine.length() - 1);
+					secondLine = secondLine.trim();
+					String[] secondInfoSet = secondLine.split(",");
+					if(secondInfoSet.length == 0) {
+						line = buffer.readLine();
+						continue; //następny
+					}
+					ArrayList<Integer> infoSet = new ArrayList<Integer>();
+					for(String element : secondInfoSet) {
+						int t = Integer.parseInt(element);
+						infoSet.add(t);
+					}
+					infoMatrix.add(infoSet);
+					
+					
 					line = buffer.readLine();
 				}
-				dataCore.insertMCS(dataVector, insertPos, true);
+				dataCore.insertMCS(dataMatrix, infoMatrix, insertPos, true);
 
 				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append("MCS data for given transition read: success.\n");
 				
@@ -264,8 +309,14 @@ public class MCSoperations {
 						continue;
 					}
 					
-					ArrayList<Set<Integer>> dataVector = new ArrayList<Set<Integer>>();
+					ArrayList<ArrayList<Integer>> dataVector = new ArrayList<ArrayList<Integer>>();
+					ArrayList<ArrayList<Integer>> infoMatrix = new ArrayList<ArrayList<Integer>>();
+					
 					while(line.contains("--")) {
+						int separator = line.indexOf("info");
+						String secondLine = line.substring(separator+5);
+						line = line.substring(0, separator-1);
+						
 						line = line.substring(line.indexOf("[")+1);
 						line = line.substring(0, line.length() - 1);
 						line = line.trim();
@@ -274,18 +325,36 @@ public class MCSoperations {
 							line = buffer.readLine();
 							continue; //następny
 						}
-						Set<Integer> set = new LinkedHashSet<Integer>();
+						ArrayList<Integer> set = new ArrayList<Integer>();
 						for(String element : numberOfSet) {
 							int t = Integer.parseInt(element);
 							set.add(t);
 						}
 						dataVector.add(set);
+						
+						//wczytywanie drugiego zbioru danych:
+						secondLine = secondLine.substring(secondLine.indexOf("[")+1);
+						secondLine = secondLine.substring(0, secondLine.length() - 1);
+						secondLine = secondLine.trim();
+						String[] secondInfoSet = secondLine.split(",");
+						if(secondInfoSet.length == 0) {
+							line = buffer.readLine();
+							continue; //następny
+						}
+						ArrayList<Integer> infoSet = new ArrayList<Integer>();
+						for(String element : secondInfoSet) {
+							int t = Integer.parseInt(element);
+							infoSet.add(t);
+						}
+						infoMatrix.add(infoSet);
+						
+						
 						line = buffer.readLine();
 						if(line == null) {
 							break;
 						}
 					}
-					dataCore.insertMCS(dataVector, readData-1, false);
+					dataCore.insertMCS(dataVector, infoMatrix, readData-1, false);
 				}
 				if(transSize != readData) {
 					JOptionPane.showMessageDialog(null, "Warning! Not all MCS data have been read!", 

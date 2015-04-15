@@ -35,6 +35,7 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -350,7 +351,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		});
 		
 		//na samym końcu, gdy już wszystko 'działa'
-		createPropertiesWindow();
+		//createPropertiesWindow();
 		createStateSimulatorWindow();
 		
 		String path = settingsManager.getValue("lastOpenedPath");
@@ -1116,9 +1117,16 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda pokazuje okno właściwości programu.
 	 */
 	public void showPropertiesWindow() {
+		
 		if(windowProperties != null) {
-			windowProperties.setVisible(true);
+			//TODO: ??????????????????????????????:
+			windowProperties.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			//((JFrame)windowProperties).dispose();
+			createPropertiesWindow();
+		} else {
+			createPropertiesWindow();
 		}
+		windowProperties.setVisible(true);
 	}
 	
 	/**

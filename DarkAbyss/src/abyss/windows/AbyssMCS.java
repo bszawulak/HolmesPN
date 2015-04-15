@@ -10,7 +10,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -184,6 +183,19 @@ public class AbyssMCS extends JFrame {
 		});
 		panel.add(maxSizeStepsSpinner);
 		
+		JCheckBox cleanMCSusingStructureCheckBox = new JCheckBox("Reduce MCSs", true);
+		cleanMCSusingStructureCheckBox.setBounds(posX+340, posY+25, 140, 20);
+		cleanMCSusingStructureCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "0", true);
+				}
+			}
+		});
+		panel.add(cleanMCSusingStructureCheckBox);
 
 		//Generowanie zbiorów
 		JButton generateButton = new JButton();
@@ -661,7 +673,7 @@ public class AbyssMCS extends JFrame {
 		if(mcsd.getSize() == 0)
 			return;
 		
-		ArrayList<Set<Integer>> dataVector = mcsd.getMCSlist(selected);
+		ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(selected);
 		
 		if(dataVector == null)
 			return;
@@ -673,7 +685,7 @@ public class AbyssMCS extends JFrame {
 		
 		int counter = 0;
 		String msg = "";
-		for(Set<Integer> set : dataVector) {
+		for(ArrayList<Integer> set : dataVector) {
 			logField.append("MSC#"+counter+" ");
 			msg = "[";
 			for(int el : set) {
@@ -710,14 +722,14 @@ public class AbyssMCS extends JFrame {
 		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
 		if(mcsd.getSize() == 0)
 			return;
-		ArrayList<Set<Integer>> dataVector = mcsd.getMCSlist(selected);
+		ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(selected);
 		if(dataVector == null)
 			return;
 		
 		ArrayList<Integer> reactions = new ArrayList<Integer>();
 		ArrayList<Float> fi = new ArrayList<Float>();
 		
-		for(Set<Integer> set : dataVector) {
+		for(ArrayList<Integer> set : dataVector) {
 			for(int el : set) {
 				if(reactions.contains(el) == false)
 					reactions.add(el);
@@ -732,7 +744,7 @@ public class AbyssMCS extends JFrame {
 			reactSum = 0;
 			setSizeSum = 0;
 			
-			for(Set<Integer> set : dataVector) {
+			for(ArrayList<Integer> set : dataVector) {
 				if(set.contains(reaction)) {
 					reactSum++;
 					setSizeSum += set.size();
