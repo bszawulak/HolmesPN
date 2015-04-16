@@ -121,7 +121,7 @@ public class DarkMenu extends JMenuBar {
 		// save file
 		JMenuItem saveMenuItem = new JMenuItem("Save...", KeyEvent.VK_S);
 		saveMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_save.png"));
-		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
+		//saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
 		saveMenuItem.getAccessibleContext().setAccessibleDescription("Save project");
 		saveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
