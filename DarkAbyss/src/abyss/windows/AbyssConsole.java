@@ -207,7 +207,7 @@ public class AbyssConsole extends JFrame {
         StyleConstants.setFontSize(s, 16);
         
         s = doc.addStyle("warning", regular);
-        StyleConstants.setForeground(s, Color.orange);
+        StyleConstants.setForeground(s, Color.magenta);
         
         s = doc.addStyle("error", regular);
         StyleConstants.setForeground(s, Color.red);

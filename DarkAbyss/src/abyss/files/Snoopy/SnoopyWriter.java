@@ -393,7 +393,8 @@ public class SnoopyWriter {
 						
 						howMany++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log("Problem saving arc.", "warning", true);
+						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+								+ a.getEndNode().getName(), "error", true);
 					}
 				}
 				
@@ -508,18 +509,26 @@ public class SnoopyWriter {
 
 						howMany++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log("Problem saving arc.", "warning", true);
+						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+								+ a.getEndNode().getName(), "error", true);
 					}
 				}
 				
 			} //dla wszystkich lokalizacji
 			//iteracja++;
 		} //dla wszystkich tranzycji
-		
-		if(howMany != GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().size()) {
+		int arcNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().size();
+		if(howMany != arcNumber) {
 			GUIManager.getDefaultGUIManager().log("Arcs saved do not match size of Arcs internal set."
-					+ " Meaning: Snoopy SPPED write error. File may be there, but the saved net may be"
-					+ " corrupt.", "error", true);
+					+ " Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.",
+					 "error", true);
+			
+			if(howMany > arcNumber) 
+				GUIManager.getDefaultGUIManager().log("More arcs saved than should be present in the model. Please advise "
+						+ "authors of the program as this may be element-removal algorithmic error.", "error", true);
+			else
+				GUIManager.getDefaultGUIManager().log("Less arcs saved than should be present in the model. Please advise "
+						+ "authors of the program.", "error", true);
 		}
 	}
 
@@ -644,7 +653,8 @@ public class SnoopyWriter {
 						
 						howManySaved++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log("Problem saving arc.", "warning", true);
+						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+								+ a.getEndNode().getName(), "error", true);
 					}
 				}
 				
@@ -766,7 +776,8 @@ public class SnoopyWriter {
 
 						howManySaved++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log("Problem saving arc.", "warning", true);
+						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+								+ a.getEndNode().getName(), "error", true);
 					}
 				}
 				
@@ -776,8 +787,14 @@ public class SnoopyWriter {
 		
 		if(howManySaved != howManyToSave && arcClass != TypesOfArcs.READARC) {
 			GUIManager.getDefaultGUIManager().log("Arcs saved do not match size of Arcs internal set."
-					+ " Meaning: Snoopy SPPED write error. File may be there, but the saved net may be"
-					+ " corrupt.", "error", true);
+					+ " Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.",
+					 "error", true);
+			if(howManySaved > howManyToSave) 
+				GUIManager.getDefaultGUIManager().log("More arcs saved than should be present in the model. Please advise "
+						+ "authors of the program as this may be element-removal algorithmic error.", "error", true);
+			else
+				GUIManager.getDefaultGUIManager().log("Less arcs saved than should be present in the model. Please advise "
+						+ "authors of the program.", "error", true);
 		}
 		
 		return nextID;
