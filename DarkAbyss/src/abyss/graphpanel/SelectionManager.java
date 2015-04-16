@@ -298,6 +298,116 @@ public class SelectionManager {
 		this.getGraphPanel().repaint();
 		this.invokeActionListener();
 	}
+	
+	/**
+	 * Metoda powoduje usunięcie wszystkich lokalizacji wierzchołków (ElementLocation) oraz łuków
+	 * (Arc) znajdujących się na listach zaznaczenia. Zasady stosowane podczas usuwanie są
+	 * identyczne z tymi pojawiającymi się w metodach deleteElementLocation(el) oraz deleteArc(arc),
+	 * jednak nie są one tutaj wywoływane.
+	 */
+	public void deleteAllSelectedElements() {
+		/*
+		ArrayList<ElementLocation> elArray = this.getSelectedElementLocations();
+		if(elArray.size() == 0) {
+			//usuń łuki iteratorem:
+			for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
+				Arc a = i.next();
+				this.getGraphPanelArcs().remove(a);
+				a.unlinkElementLocations();
+				if (a.getPairedArc() != null) {
+					Arc arc = a.getPairedArc();
+					arc.unlinkElementLocations();
+					getGraphPanelArcs().remove(arc);
+				}
+				i.remove();
+			}
+		} else {
+			for(ElementLocation elItem : elArray) {
+				this.deselectElementLocation(elItem);
+				Node n = elItem.getParentNode();
+				if (n.removeElementLocation(elItem) == false) {
+					this.getGraphPanelNodes().remove(n);
+				}
+				
+				for(Arc arc : elItem.getInArcs()) {
+					this.getGraphPanelArcs().remove(arc);
+					//dostań się do lokacji startowej łuku i usuń go tam z listy wyjściowych:
+					arc.getStartLocation().removeOutArc(arc);
+				}
+				
+				for(Arc arc : elItem.getOutArcs()) {
+					this.getGraphPanelArcs().remove(arc);
+					//dostań się do lokacji docelowej łuku i usuń go tam z listy wejściowych:
+					arc.getEndLocation().removeInArc(arc);
+				}
+			}
+		}
+		
+		ArrayList<Arc> aArray = this.getSelectedArcs();
+		if(aArray.size() > 0) {
+			//usuń łuki iteratorem:
+			for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
+				Arc a = i.next();
+				this.getGraphPanelArcs().remove(a);
+				a.unlinkElementLocations();
+				if (a.getPairedArc() != null) {
+					Arc arc = a.getPairedArc();
+					arc.unlinkElementLocations();
+					getGraphPanelArcs().remove(arc);
+				}
+				i.remove();
+			}
+		} 
+		*/
+		
+		// code below looks similar to other function but not use them to reduce the number of requests repaint
+		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
+			ElementLocation el = i.next();
+			Node n = el.getParentNode();
+			// jeżeli ElementLocation to jedyna lokalizacja dla Node, tutaj jest kasowana:
+			if (n.removeElementLocation(el) == false) {
+				this.getGraphPanelNodes().remove(n);
+			}
+			// kasowanie wszystkich in-arcs danej ElementLocation
+			for (Iterator<Arc> j = el.getInArcs().iterator(); j.hasNext();) {
+				Arc begone = j.next();
+				this.getGraphPanelArcs().remove(begone);
+				begone.getStartLocation().removeOutArc(begone);
+				
+				//this.getGraphPanelArcs().remove(j.next());
+				j.remove();
+			}
+			// kasowanie wszystkich out-arcs danej ElementLocation
+			for (Iterator<Arc> j = el.getOutArcs().iterator(); j.hasNext();) {
+				Arc begone = j.next();
+				this.getGraphPanelArcs().remove(begone);
+				begone.getEndLocation().removeInArc(begone);
+				
+				//this.getGraphPanelArcs().remove(j.next());
+
+				j.remove();
+			}
+			i.remove();
+		}
+		// kasuje wszystkie zaznaczone łuki:
+		for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
+			Arc a = i.next();
+			this.getGraphPanelArcs().remove(a);
+			a.unlinkElementLocations();
+			if (a.getPairedArc() != null) {
+				Arc arc = a.getPairedArc();
+				arc.unlinkElementLocations();
+				getGraphPanelArcs().remove(arc);
+			}
+			i.remove();
+		}
+		
+		// Kasuj wszystko. I wszystkich. Wszędzie. Kill'em all:
+		this.getSelectedArcs().clear();
+		this.getSelectedElementLocations().clear();
+		this.getGraphPanel().repaint();
+		this.invokeActionListener();
+	}
 
 	// ================================================================================
 	// Group Element Location operations
@@ -824,55 +934,6 @@ public class SelectionManager {
 				el.setSelected(false);
 		this.getSelectedArcs().clear();
 		this.getSelectedElementLocations().clear();
-		this.invokeActionListener();
-	}
-
-	/**
-	 * Metoda powoduje usunięcie wszystkich lokalizacji wierzchołków (ElementLocation) oraz łuków
-	 * (Arc) znajdujących się na listach zaznaczenia. Zasady stosowane podczas usuwanie są
-	 * identyczne z tymi pojawiającymi się w metodach deleteElementLocation(el) oraz deleteArc(arc),
-	 * jednak nie są one tutaj wywoływane.
-	 */
-	public void deleteAllSelectedElements() {
-		// code below looks similar to other function but not use them to reduce
-		// the number of requests repaint
-		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
-			ElementLocation el = i.next();
-			Node n = el.getParentNode();
-			// jeżeli ElementLocation to jedyna lokalizacja dla Node, tutaj jest kasowana:
-			if (n.removeElementLocation(el) == false) {
-				this.getGraphPanelNodes().remove(n);
-			}
-			// kasowanie wszystkich in-arcs danej ElementLocation
-			for (Iterator<Arc> j = el.getInArcs().iterator(); j.hasNext();) {
-
-				this.getGraphPanelArcs().remove(j.next());
-				j.remove();
-			}
-			// kasowanie wszystkich out-arcs danej ElementLocation
-			for (Iterator<Arc> j = el.getOutArcs().iterator(); j.hasNext();) {
-
-				this.getGraphPanelArcs().remove(j.next());
-				j.remove();
-			}
-			i.remove();
-		}
-		// kasuje wszystkie zaznaczone łuki:
-		for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
-			Arc a = i.next();
-			this.getGraphPanelArcs().remove(a);
-			a.unlinkElementLocations();
-			if (a.getPairedArc() != null) {
-				Arc arc = a.getPairedArc();
-				arc.unlinkElementLocations();
-				getGraphPanelArcs().remove(arc);
-			}
-			i.remove();
-		}
-		// Kasuj wszystko. I wszystkich. Wszędzie. Kill'em all:
-		this.getSelectedArcs().clear();
-		this.getSelectedElementLocations().clear();
-		this.getGraphPanel().repaint();
 		this.invokeActionListener();
 	}
 

@@ -295,102 +295,106 @@ public class SnoopyWriter {
 				
 				//kolekcjonowanie danych:
 				for(Arc a : outArcs) { //dla każdego łuku
-					int weight = a.getWeight(); //waga łuku
-					String comment = a.getComment();
-					int grParent = currentActiveID + 5;
-					
-					Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss
-					Node sourceAbyss = a.getStartNode(); //stąd wychodzi
-					//przy czym należy okreslić, do której lokalizacji
-					
-					//sourceAbyss == p
-					
-					int addToSPPEDAsSource = snoopyPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
-					if(addToSPPEDAsSource == -1) {
-						@SuppressWarnings("unused")
-						int WTF= 1; //!!! IMPOSSIBRU!!!!
-						return;
-					}
-					SnoopyPlace source = snoopyPlaces.get(addToSPPEDAsSource);
-					int nodeSourceID = source.nodeID;
-					int realSourceID = source.grParents.get(location); //k
-					int realSourceX = source.grParentsLocation.get(location).x;
-					int realSourceY = source.grParentsLocation.get(location).y;
-					
-					
-					//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
-					int addToSPPEDAsTarget = snoopyTransitionsID.lastIndexOf(targetAbyss.getID());
-					SnoopyTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
-					//teraz należy określi do której lokalizacji portalu trafia łuk
-					
-					ElementLocation destinationLoc = a.getEndLocation();
-					int counter = -1;
-					for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
-						counter++;
-						//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
-						//jeśli to: to i tak skończy się na 1 iteracji
-						if(whichOne.equals(destinationLoc)) {
-							break; //w counter mamy wtedy nr
+					try {
+						int weight = a.getWeight(); //waga łuku
+						String comment = a.getComment();
+						int grParent = currentActiveID + 5;
+						
+						Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss
+						Node sourceAbyss = a.getStartNode(); //stąd wychodzi
+						//przy czym należy okreslić, do której lokalizacji
+						
+						//sourceAbyss == p
+						
+						int addToSPPEDAsSource = snoopyPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
+						if(addToSPPEDAsSource == -1) {
+							@SuppressWarnings("unused")
+							int WTF= 1; //!!! IMPOSSIBRU!!!!
+							return;
 						}
+						SnoopyPlace source = snoopyPlaces.get(addToSPPEDAsSource);
+						int nodeSourceID = source.nodeID;
+						int realSourceID = source.grParents.get(location); //k
+						int realSourceX = source.grParentsLocation.get(location).x;
+						int realSourceY = source.grParentsLocation.get(location).y;
+						
+						
+						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
+						int addToSPPEDAsTarget = snoopyTransitionsID.lastIndexOf(targetAbyss.getID());
+						SnoopyTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
+						//teraz należy określi do której lokalizacji portalu trafia łuk
+						
+						ElementLocation destinationLoc = a.getEndLocation();
+						int counter = -1;
+						for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
+							counter++;
+							//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+							//jeśli to: to i tak skończy się na 1 iteracji
+							if(whichOne.equals(destinationLoc)) {
+								break; //w counter mamy wtedy nr
+							}
+						}
+						int nodeTargetID = target.nodeID;
+						int realTargetID = target.grParents.get(counter); 
+						int realTargetX = target.grParentsLocation.get(counter).x;
+						int realTargetY = target.grParentsLocation.get(counter).y;
+						
+						int halfX = (realTargetX + realSourceX) / 2;
+						int halfY = (realTargetY + realSourceY) / 2;
+						
+						//tutaj wchodzą główne numery główne:
+						write(bw, "      <edge source=\""+nodeSourceID+"\""
+								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //444
+						write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //445
+						write(bw, "          <![CDATA["+weight+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 20;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //446
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //447
+						write(bw, "          <![CDATA["+comment+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 40;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //448 == grParent
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <graphics count=\"1\">");
+						
+						//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
+						write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
+								+ " source=\""+realSourceID+"\""
+								+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
+								+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
+						
+						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+						write(bw, "            <points count=\"2\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						write(bw, "            </points>");
+						write(bw, "          </graphic>");
+						write(bw, "        </graphics>");
+						write(bw, "      </edge>");
+						
+						howMany++;
+					} catch (Exception e) {
+						GUIManager.getDefaultGUIManager().log("Problem saving arc.", "warning", true);
 					}
-					int nodeTargetID = target.nodeID;
-					int realTargetID = target.grParents.get(counter); 
-					int realTargetX = target.grParentsLocation.get(counter).x;
-					int realTargetY = target.grParentsLocation.get(counter).y;
-					
-					int halfX = (realTargetX + realSourceX) / 2;
-					int halfY = (realTargetY + realSourceY) / 2;
-					
-					//tutaj wchodzą główne numery główne:
-					write(bw, "      <edge source=\""+nodeSourceID+"\""
-							+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
-					nextID++; //444
-					write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
-					nextID++; //445
-					write(bw, "          <![CDATA["+weight+"]]>");
-					write(bw, "          <graphics count=\"1\">");
-					xOff = 20;
-					write(bw, "            <graphic xoff=\""+xOff+".00\""
-							+ " x=\""+(halfX+xOff)+".00\""
-							+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
-							+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
-							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-					nextID++; //446
-					write(bw, "          </graphics>");
-					write(bw, "        </attribute>");
-					write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
-					nextID++; //447
-					write(bw, "          <![CDATA["+comment+"]]>");
-					write(bw, "          <graphics count=\"1\">");
-					xOff = 40;
-					write(bw, "            <graphic xoff=\""+xOff+".00\""
-							+ " x=\""+(halfX+xOff)+".00\""
-							+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
-							+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
-							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-					nextID++; //448 == grParent
-					write(bw, "          </graphics>");
-					write(bw, "        </attribute>");
-					write(bw, "        <graphics count=\"1\">");
-					
-					//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
-					write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
-							+ " source=\""+realSourceID+"\""
-							+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
-							+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
-					
-					//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
-					//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
-					//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
-					write(bw, "            <points count=\"2\">"); //bez łamańców
-					write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
-					write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
-					write(bw, "            </points>");
-					write(bw, "          </graphic>");
-					write(bw, "        </graphics>");
-					write(bw, "      </edge>");
-					
-					howMany++;
 				}
 				
 			} //dla wszystkich lokalizacji
@@ -406,102 +410,106 @@ public class SnoopyWriter {
 				
 				//kolekcjonowanie danych:
 				for(Arc a : outArcs) { //dla każdego łuku
-					int weight = a.getWeight(); //waga łuku
-					String comment = a.getComment();
-					int grParent = currentActiveID + 5;
-					
-					Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss (w miejsce)
-					Node sourceAbyss = a.getStartNode(); //stąd wychodzi (tranzycja)
-					//przy czym należy okreslić, do której lokalizacji
-					
-					//sourceAbyss == t
-					
-					int addToSPPEDAsSource = snoopyTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
-					if(addToSPPEDAsSource == -1) {
-						@SuppressWarnings("unused")
-						int WTF= 1; //!!! IMPOSSIBRU!!!!
-						return;
-					}
-					SnoopyTransition source = snoopyTransitions.get(addToSPPEDAsSource);
-					int nodeSourceID = source.nodeID;
-					int realSourceID = source.grParents.get(location); //k
-					int realSourceX = source.grParentsLocation.get(location).x;
-					int realSourceY = source.grParentsLocation.get(location).y;
-					
-					
-					//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
-					int addToSPPEDAsTarget = snoopyPlacesID.lastIndexOf(targetAbyss.getID());
-					SnoopyPlace target = snoopyPlaces.get(addToSPPEDAsTarget);
-					//teraz należy określi do której lokalizacji portalu trafia łuk
-					
-					ElementLocation destinationLoc = a.getEndLocation();
-					int counter = -1;
-					for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
-						counter++;
-						//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
-						//jeśli to: to i tak skończy się na 1 iteracji
-						if(whichOne.equals(destinationLoc)) {
-							break; //w counter mamy wtedy nr
+					try {
+						int weight = a.getWeight(); //waga łuku
+						String comment = a.getComment();
+						int grParent = currentActiveID + 5;
+						
+						Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss (w miejsce)
+						Node sourceAbyss = a.getStartNode(); //stąd wychodzi (tranzycja)
+						//przy czym należy okreslić, do której lokalizacji
+						
+						//sourceAbyss == t
+						
+						int addToSPPEDAsSource = snoopyTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
+						if(addToSPPEDAsSource == -1) {
+							@SuppressWarnings("unused")
+							int WTF= 1; //!!! IMPOSSIBRU!!!!
+							return;
 						}
-					}
-					int nodeTargetID = target.nodeID;
-					int realTargetID = target.grParents.get(counter); 
-					int realTargetX = target.grParentsLocation.get(counter).x;
-					int realTargetY = target.grParentsLocation.get(counter).y;
-					
-					int halfX = (realTargetX + realSourceX) / 2;
-					int halfY = (realTargetY + realSourceY) / 2;
-					
-					//tutaj wchodzą główne numery:
-					write(bw, "      <edge source=\""+nodeSourceID+"\""
-							+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
-					nextID++; //444
-					write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
-					nextID++; //445
-					write(bw, "          <![CDATA["+weight+"]]>");
-					write(bw, "          <graphics count=\"1\">");
-					xOff = 20;
-					write(bw, "            <graphic xoff=\""+xOff+".00\""
-							+ " x=\""+(halfX+xOff)+".00\""
-							+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
-							+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
-							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-					nextID++; //446
-					write(bw, "          </graphics>");
-					write(bw, "        </attribute>");
-					write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
-					nextID++; //447
-					write(bw, "          <![CDATA["+comment+"]]>");
-					write(bw, "          <graphics count=\"1\">");
-					xOff = 40;
-					write(bw, "            <graphic xoff=\""+xOff+".00\""
-							+ " x=\""+(halfX+xOff)+".00\""
-							+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
-							+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
-							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-					nextID++; //448 == grParent
-					write(bw, "          </graphics>");
-					write(bw, "        </attribute>");
-					write(bw, "        <graphics count=\"1\">");
-					
-					//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
-					write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
-							+ " source=\""+realSourceID+"\""
-							+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
-							+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
-					
-					//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
-					//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
-					//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
-					write(bw, "            <points count=\"2\">"); //bez łamańców
-					write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
-					write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
-					write(bw, "            </points>");
-					write(bw, "          </graphic>");
-					write(bw, "        </graphics>");
-					write(bw, "      </edge>");
+						SnoopyTransition source = snoopyTransitions.get(addToSPPEDAsSource);
+						int nodeSourceID = source.nodeID;
+						int realSourceID = source.grParents.get(location); //k
+						int realSourceX = source.grParentsLocation.get(location).x;
+						int realSourceY = source.grParentsLocation.get(location).y;
+						
+						
+						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
+						int addToSPPEDAsTarget = snoopyPlacesID.lastIndexOf(targetAbyss.getID());
+						SnoopyPlace target = snoopyPlaces.get(addToSPPEDAsTarget);
+						//teraz należy określi do której lokalizacji portalu trafia łuk
+						
+						ElementLocation destinationLoc = a.getEndLocation();
+						int counter = -1;
+						for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
+							counter++;
+							//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+							//jeśli to: to i tak skończy się na 1 iteracji
+							if(whichOne.equals(destinationLoc)) {
+								break; //w counter mamy wtedy nr
+							}
+						}
+						int nodeTargetID = target.nodeID;
+						int realTargetID = target.grParents.get(counter); 
+						int realTargetX = target.grParentsLocation.get(counter).x;
+						int realTargetY = target.grParentsLocation.get(counter).y;
+						
+						int halfX = (realTargetX + realSourceX) / 2;
+						int halfY = (realTargetY + realSourceY) / 2;
+						
+						//tutaj wchodzą główne numery:
+						write(bw, "      <edge source=\""+nodeSourceID+"\""
+								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //444
+						write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //445
+						write(bw, "          <![CDATA["+weight+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 20;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //446
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //447
+						write(bw, "          <![CDATA["+comment+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 40;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //448 == grParent
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <graphics count=\"1\">");
+						
+						//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
+						write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
+								+ " source=\""+realSourceID+"\""
+								+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
+								+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
+						
+						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+						write(bw, "            <points count=\"2\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						write(bw, "            </points>");
+						write(bw, "          </graphic>");
+						write(bw, "        </graphics>");
+						write(bw, "      </edge>");
 
-					howMany++;
+						howMany++;
+					} catch (Exception e) {
+						GUIManager.getDefaultGUIManager().log("Problem saving arc.", "warning", true);
+					}
 				}
 				
 			} //dla wszystkich lokalizacji
@@ -531,109 +539,113 @@ public class SnoopyWriter {
 				
 				//kolekcjonowanie danych:
 				for(Arc a : outArcs) { //dla każdego łuku
-					if(a.getArcType() != arcClass)
-						continue;
-					
-					int weight = a.getWeight(); //waga łuku
-					String comment = a.getComment();
-					int grParent = currentActiveID + 5;
-					
-					Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss
-					Node sourceAbyss = a.getStartNode(); //stąd wychodzi
-					//przy czym należy określić, do której lokalizacji
-					
-					//sourceAbyss == p
-					
-					int addToSPPEDAsSource = snoopyPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
-					if(addToSPPEDAsSource == -1) {
-						@SuppressWarnings("unused")
-						int WTF= 1; //!!! IMPOSSIBRU!!!!
-						return nextID+10;
-					}
-					SnoopyPlace source = snoopyPlaces.get(addToSPPEDAsSource);
-					int nodeSourceID = source.nodeID;
-					int realSourceID = source.grParents.get(location); //k
-					int realSourceX = source.grParentsLocation.get(location).x;
-					int realSourceY = source.grParentsLocation.get(location).y;
-					
-					
-					//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
-					int addToSPPEDAsTarget = snoopyTransitionsID.lastIndexOf(targetAbyss.getID());
-					SnoopyTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
-					//teraz należy określi do której lokalizacji portalu trafia łuk
-					
-					ElementLocation destinationLoc = a.getEndLocation();
-					int counter = -1;
-					for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
-						counter++;
-						//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
-						//jeśli to: to i tak skończy się na 1 iteracji
-						if(whichOne.equals(destinationLoc)) {
-							break; //w counter mamy wtedy nr
+					try {
+						if(a.getArcType() != arcClass)
+							continue;
+						
+						int weight = a.getWeight(); //waga łuku
+						String comment = a.getComment();
+						int grParent = currentActiveID + 5;
+						
+						Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss
+						Node sourceAbyss = a.getStartNode(); //stąd wychodzi
+						//przy czym należy określić, do której lokalizacji
+						
+						//sourceAbyss == p
+						
+						int addToSPPEDAsSource = snoopyPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
+						if(addToSPPEDAsSource == -1) {
+							@SuppressWarnings("unused")
+							int WTF= 1; //!!! IMPOSSIBRU!!!!
+							return nextID+10;
 						}
-					}
-					int nodeTargetID = target.nodeID;
-					int realTargetID = target.grParents.get(counter); 
-					int realTargetX = target.grParentsLocation.get(counter).x;
-					int realTargetY = target.grParentsLocation.get(counter).y;
-					
-					int halfX = (realTargetX + realSourceX) / 2;
-					int halfY = (realTargetY + realSourceY) / 2;
-					
-					//tutaj wchodzą główne numery główne:
-					write(bw, "      <edge source=\""+nodeSourceID+"\""
-							+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
-					nextID++; //444
-					
-					if(arcClass != TypesOfArcs.RESET) {
-						write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
-						nextID++; //445
-						write(bw, "          <![CDATA["+weight+"]]>");
+						SnoopyPlace source = snoopyPlaces.get(addToSPPEDAsSource);
+						int nodeSourceID = source.nodeID;
+						int realSourceID = source.grParents.get(location); //k
+						int realSourceX = source.grParentsLocation.get(location).x;
+						int realSourceY = source.grParentsLocation.get(location).y;
+						
+						
+						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
+						int addToSPPEDAsTarget = snoopyTransitionsID.lastIndexOf(targetAbyss.getID());
+						SnoopyTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
+						//teraz należy określi do której lokalizacji portalu trafia łuk
+						
+						ElementLocation destinationLoc = a.getEndLocation();
+						int counter = -1;
+						for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
+							counter++;
+							//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+							//jeśli to: to i tak skończy się na 1 iteracji
+							if(whichOne.equals(destinationLoc)) {
+								break; //w counter mamy wtedy nr
+							}
+						}
+						int nodeTargetID = target.nodeID;
+						int realTargetID = target.grParents.get(counter); 
+						int realTargetX = target.grParentsLocation.get(counter).x;
+						int realTargetY = target.grParentsLocation.get(counter).y;
+						
+						int halfX = (realTargetX + realSourceX) / 2;
+						int halfY = (realTargetY + realSourceY) / 2;
+						
+						//tutaj wchodzą główne numery główne:
+						write(bw, "      <edge source=\""+nodeSourceID+"\""
+								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //444
+						
+						if(arcClass != TypesOfArcs.RESET) {
+							write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
+							nextID++; //445
+							write(bw, "          <![CDATA["+weight+"]]>");
+							write(bw, "          <graphics count=\"1\">");
+							xOff = 20;
+							write(bw, "            <graphic xoff=\""+xOff+".00\""
+									+ " x=\""+(halfX+xOff)+".00\""
+									+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+									+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+									+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+							nextID++; //446
+							write(bw, "          </graphics>");
+							write(bw, "        </attribute>");
+						}
+						
+						write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //447
+						write(bw, "          <![CDATA["+comment+"]]>");
 						write(bw, "          <graphics count=\"1\">");
-						xOff = 20;
+						xOff = 40;
 						write(bw, "            <graphic xoff=\""+xOff+".00\""
 								+ " x=\""+(halfX+xOff)+".00\""
 								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
 								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
 								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-						nextID++; //446
+						nextID++; //448 == grParent
 						write(bw, "          </graphics>");
 						write(bw, "        </attribute>");
+						write(bw, "        <graphics count=\"1\">");
+						
+						//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
+						write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
+								+ " source=\""+realSourceID+"\""
+								+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
+								+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
+						
+						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+						write(bw, "            <points count=\"2\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						write(bw, "            </points>");
+						write(bw, "          </graphic>");
+						write(bw, "        </graphics>");
+						write(bw, "      </edge>");
+						
+						howManySaved++;
+					} catch (Exception e) {
+						GUIManager.getDefaultGUIManager().log("Problem saving arc.", "warning", true);
 					}
-					
-					write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
-					nextID++; //447
-					write(bw, "          <![CDATA["+comment+"]]>");
-					write(bw, "          <graphics count=\"1\">");
-					xOff = 40;
-					write(bw, "            <graphic xoff=\""+xOff+".00\""
-							+ " x=\""+(halfX+xOff)+".00\""
-							+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
-							+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
-							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-					nextID++; //448 == grParent
-					write(bw, "          </graphics>");
-					write(bw, "        </attribute>");
-					write(bw, "        <graphics count=\"1\">");
-					
-					//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
-					write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
-							+ " source=\""+realSourceID+"\""
-							+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
-							+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
-					
-					//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
-					//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
-					//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
-					write(bw, "            <points count=\"2\">"); //bez łamańców
-					write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
-					write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
-					write(bw, "            </points>");
-					write(bw, "          </graphic>");
-					write(bw, "        </graphics>");
-					write(bw, "      </edge>");
-					
-					howManySaved++;
 				}
 				
 			} //dla wszystkich lokalizacji
@@ -649,109 +661,113 @@ public class SnoopyWriter {
 				
 				//kolekcjonowanie danych:
 				for(Arc a : outArcs) { //dla każdego łuku
-					if(a.getArcType() != arcClass || a.getArcType() == TypesOfArcs.READARC)
-						continue;
-					
-					int weight = a.getWeight(); //waga łuku
-					String comment = a.getComment();
-					int grParent = currentActiveID + 5;
-					
-					Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss (w miejsce)
-					Node sourceAbyss = a.getStartNode(); //stąd wychodzi (tranzycja)
-					//przy czym należy okreslić, do której lokalizacji
-					
-					//sourceAbyss == t
-					
-					int addToSPPEDAsSource = snoopyTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
-					if(addToSPPEDAsSource == -1) {
-						@SuppressWarnings("unused")
-						int WTF= 1; //!!! IMPOSSIBRU!!!!
-						return nextID + 10;
-					}
-					SnoopyTransition source = snoopyTransitions.get(addToSPPEDAsSource);
-					int nodeSourceID = source.nodeID;
-					int realSourceID = source.grParents.get(location); //k
-					int realSourceX = source.grParentsLocation.get(location).x;
-					int realSourceY = source.grParentsLocation.get(location).y;
-					
-					
-					//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
-					int addToSPPEDAsTarget = snoopyPlacesID.lastIndexOf(targetAbyss.getID());
-					SnoopyPlace target = snoopyPlaces.get(addToSPPEDAsTarget);
-					//teraz należy określi do której lokalizacji portalu trafia łuk
-					
-					ElementLocation destinationLoc = a.getEndLocation();
-					int counter = -1;
-					for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
-						counter++;
-						//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
-						//jeśli to: to i tak skończy się na 1 iteracji
-						if(whichOne.equals(destinationLoc)) {
-							break; //w counter mamy wtedy nr
+					try {
+						if(a.getArcType() != arcClass || a.getArcType() == TypesOfArcs.READARC)
+							continue;
+						
+						int weight = a.getWeight(); //waga łuku
+						String comment = a.getComment();
+						int grParent = currentActiveID + 5;
+						
+						Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss (w miejsce)
+						Node sourceAbyss = a.getStartNode(); //stąd wychodzi (tranzycja)
+						//przy czym należy okreslić, do której lokalizacji
+						
+						//sourceAbyss == t
+						
+						int addToSPPEDAsSource = snoopyTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
+						if(addToSPPEDAsSource == -1) {
+							@SuppressWarnings("unused")
+							int WTF= 1; //!!! IMPOSSIBRU!!!!
+							return nextID + 10;
 						}
-					}
-					int nodeTargetID = target.nodeID;
-					int realTargetID = target.grParents.get(counter); 
-					int realTargetX = target.grParentsLocation.get(counter).x;
-					int realTargetY = target.grParentsLocation.get(counter).y;
-					
-					int halfX = (realTargetX + realSourceX) / 2;
-					int halfY = (realTargetY + realSourceY) / 2;
-					
-					//tutaj wchodzą główne numery:
-					write(bw, "      <edge source=\""+nodeSourceID+"\""
-							+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
-					nextID++; //444
-					
-					if(arcClass != TypesOfArcs.RESET) {
-						write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
-						nextID++; //445
-						write(bw, "          <![CDATA["+weight+"]]>");
+						SnoopyTransition source = snoopyTransitions.get(addToSPPEDAsSource);
+						int nodeSourceID = source.nodeID;
+						int realSourceID = source.grParents.get(location); //k
+						int realSourceX = source.grParentsLocation.get(location).x;
+						int realSourceY = source.grParentsLocation.get(location).y;
+						
+						
+						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
+						int addToSPPEDAsTarget = snoopyPlacesID.lastIndexOf(targetAbyss.getID());
+						SnoopyPlace target = snoopyPlaces.get(addToSPPEDAsTarget);
+						//teraz należy określi do której lokalizacji portalu trafia łuk
+						
+						ElementLocation destinationLoc = a.getEndLocation();
+						int counter = -1;
+						for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
+							counter++;
+							//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+							//jeśli to: to i tak skończy się na 1 iteracji
+							if(whichOne.equals(destinationLoc)) {
+								break; //w counter mamy wtedy nr
+							}
+						}
+						int nodeTargetID = target.nodeID;
+						int realTargetID = target.grParents.get(counter); 
+						int realTargetX = target.grParentsLocation.get(counter).x;
+						int realTargetY = target.grParentsLocation.get(counter).y;
+						
+						int halfX = (realTargetX + realSourceX) / 2;
+						int halfY = (realTargetY + realSourceY) / 2;
+						
+						//tutaj wchodzą główne numery:
+						write(bw, "      <edge source=\""+nodeSourceID+"\""
+								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //444
+						
+						if(arcClass != TypesOfArcs.RESET) {
+							write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
+							nextID++; //445
+							write(bw, "          <![CDATA["+weight+"]]>");
+							write(bw, "          <graphics count=\"1\">");
+							xOff = 20;
+							write(bw, "            <graphic xoff=\""+xOff+".00\""
+									+ " x=\""+(halfX+xOff)+".00\""
+									+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+									+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+									+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+							nextID++; //446
+							write(bw, "          </graphics>");
+							write(bw, "        </attribute>");
+						}
+						
+						write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //447
+						write(bw, "          <![CDATA["+comment+"]]>");
 						write(bw, "          <graphics count=\"1\">");
-						xOff = 20;
+						xOff = 40;
 						write(bw, "            <graphic xoff=\""+xOff+".00\""
 								+ " x=\""+(halfX+xOff)+".00\""
 								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
 								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
 								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-						nextID++; //446
+						nextID++; //448 == grParent
 						write(bw, "          </graphics>");
 						write(bw, "        </attribute>");
-					}
-					
-					write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
-					nextID++; //447
-					write(bw, "          <![CDATA["+comment+"]]>");
-					write(bw, "          <graphics count=\"1\">");
-					xOff = 40;
-					write(bw, "            <graphic xoff=\""+xOff+".00\""
-							+ " x=\""+(halfX+xOff)+".00\""
-							+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
-							+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
-							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-					nextID++; //448 == grParent
-					write(bw, "          </graphics>");
-					write(bw, "        </attribute>");
-					write(bw, "        <graphics count=\"1\">");
-					
-					//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
-					write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
-							+ " source=\""+realSourceID+"\""
-							+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
-							+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
-					
-					//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
-					//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
-					//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
-					write(bw, "            <points count=\"2\">"); //bez łamańców
-					write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
-					write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
-					write(bw, "            </points>");
-					write(bw, "          </graphic>");
-					write(bw, "        </graphics>");
-					write(bw, "      </edge>");
+						write(bw, "        <graphics count=\"1\">");
+						
+						//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
+						write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
+								+ " source=\""+realSourceID+"\""
+								+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
+								+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
+						
+						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+						write(bw, "            <points count=\"2\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						write(bw, "            </points>");
+						write(bw, "          </graphic>");
+						write(bw, "        </graphics>");
+						write(bw, "      </edge>");
 
-					howManySaved++;
+						howManySaved++;
+					} catch (Exception e) {
+						GUIManager.getDefaultGUIManager().log("Problem saving arc.", "warning", true);
+					}
 				}
 				
 			} //dla wszystkich lokalizacji
