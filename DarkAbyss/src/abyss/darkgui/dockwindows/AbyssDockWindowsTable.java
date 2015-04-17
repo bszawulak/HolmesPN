@@ -1513,15 +1513,20 @@ public class AbyssDockWindowsTable extends JPanel {
 		Arc readArc = arc.getPairedArc();
 		
 		String txt = "no";
-		if(readArc != null)
+		if(readArc != null) {
 			txt = "yes [paired arc ID: "+readArc.getID()+"]";
+		} else {
+			if(InvariantsTools.isDoubleArc(arc) == true) {
+				txt = "double arc (hidden readarc)";
+			}
+		}
 		
 		JLabel readArcLabel2 = new JLabel(txt);
 		readArcLabel2.setFont(normalFont);
-		readArcLabel2.setBounds(columnB_posX-40, columnB_Y += 20, colACompLength+40, 20);
+		readArcLabel2.setBounds(columnB_posX-40, columnB_Y += 20, colACompLength+60, 20);
 		components.add(readArcLabel2);
 		
-		JLabel startNodeLabel = new JLabel("StartNode:", JLabel.LEFT);
+		JLabel startNodeLabel = new JLabel("Start Node:", JLabel.LEFT);
 		startNodeLabel.setBounds(columnA_posX+90, columnA_Y += 20, colACompLength, 20);
 		components.add(startNodeLabel);
 		columnB_Y += 20;

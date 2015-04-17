@@ -862,13 +862,26 @@ public class GraphPanel extends JComponent {
 					handleArcsDrawing(el, getDrawMode());
 					
 				} else if (getDrawMode() == DrawModes.ERASER) { //kasowanie czegoś
-					if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+							"Operation impossible when simulator is working."
+							, "Warning") == true)
+						return;
+					
+					Object[] options = {"Delete", "Cancel",};
+					int n = JOptionPane.showOptionDialog(null,
+							"Do you want to delete selected elements?",
+							"Deletion warning?", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+					if (n == 0) {
+						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						}
+						
+						getSelectionManager().deleteElementLocation(el);
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						GUIManager.getDefaultGUIManager().markNetChange();
 					}
 					
-					getSelectionManager().deleteElementLocation(el);
-					GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
-					GUIManager.getDefaultGUIManager().markNetChange();
 				} else {
 					if (e.isShiftDown())
 						getSelectionManager().selectElementLocation(el);
@@ -890,13 +903,25 @@ public class GraphPanel extends JComponent {
 			
 			else if (a != null) { // kliknięto w łuk, więc zostanie on zaznaczony
 				if (getDrawMode() == DrawModes.ERASER) {
-					if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-					}
+					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+							"Operation impossible when simulator is working."
+							, "Warning") == true)
+						return;
 					
-					getSelectionManager().deleteArc(a);
-					GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
-					GUIManager.getDefaultGUIManager().markNetChange();
+					Object[] options = {"Delete", "Cancel",};
+					int n = JOptionPane.showOptionDialog(null,
+							"Do you want to delete selected elements?",
+							"Deletion warning?", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+					if (n == 0) {
+						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						}
+						
+						getSelectionManager().deleteArc(a);
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						GUIManager.getDefaultGUIManager().markNetChange();
+					}	
 				} else {
 					if (e.isShiftDown())
 						a.setSelected(true);

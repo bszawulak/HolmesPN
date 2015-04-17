@@ -47,6 +47,7 @@ import abyss.utilities.Tools;
  * getActiveTransitions - zwraca wektor pokrytych przez inwarianty tranzycji<br>
  * getExtendedInvariantsInfo - informacje o inwariantach 'zawierających' niestandardowe łuki<br>
  * getInOutTransInfo - zwraca informacje o tym, ile tranzycji IN/OUT ma każdy inwariant<br>
+ * isDoubleArc - zwraca informację, czy łuk jest podwójny
  * 
  * @author MR
  */
@@ -1308,5 +1309,22 @@ public final class InvariantsTools {
 			}
 		}
 		return -1;
+	}
+	
+	/**
+	 * Metoda wykrywająca łuk podwójny.
+	 * @param arc Arc - łuk
+	 * @return boolean - true jeśli istnieje łuk podwójny
+	 */
+	public static boolean isDoubleArc(Arc arc) {
+		Node startN = arc.getStartNode();
+		Node endN = arc.getEndNode();
+		
+		for(Arc a : endN.getOutArcs()) {
+			if(a.getEndNode() == startN) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

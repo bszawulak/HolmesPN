@@ -508,7 +508,7 @@ public class InvariantsCalculatorFeasible {
 					if(a.getArcType() != TypesOfArcs.READARC) {
 						
 						if(a.getArcType() == TypesOfArcs.NORMAL) {
-							if(isDoubleArc(a) == false)
+							if(InvariantsTools.isDoubleArc(a) == false)
 								continue;
 						} else {	
 							continue;
@@ -568,7 +568,7 @@ public class InvariantsCalculatorFeasible {
 						raTrans.add(position);
 				}
 			} else if(a.getArcType() == TypesOfArcs.NORMAL){
-				if(isDoubleArc(a) == true) {
+				if(InvariantsTools.isDoubleArc(a) == true) {
 					Node n = a.getEndNode();
 					if(n instanceof Place) {
 						if(((Place) n).getTokensNumber() > 0)
@@ -592,23 +592,6 @@ public class InvariantsCalculatorFeasible {
 			}
 		}
 		return raTrans;
-	}
-
-	/**
-	 * Metoda wykrywająca łuk podwójny.
-	 * @param arc Arc - łuk
-	 * @return boolean - true jeśli istnieje łuk podwójny
-	 */
-	public static boolean isDoubleArc(Arc arc) {
-		Node startN = arc.getStartNode();
-		Node endN = arc.getEndNode();
-		
-		for(Arc a : endN.getOutArcs()) {
-			if(a.getEndNode() == startN) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	/**
