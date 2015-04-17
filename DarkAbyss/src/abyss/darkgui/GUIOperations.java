@@ -238,25 +238,11 @@ public class GUIOperations {
 			return false;
 		}
 		
+		
+		if(Tools.overwriteDecision(selectedFile) == false)
+			return false;
+		
 		File file = new File(selectedFile);
-		if(file.exists() == true) {
-			String name = selectedFile;
-			int ind = name.lastIndexOf("\\");
-			if(ind > 1) {
-				name = name.substring(ind+1);
-				Object[] options = {"Yes", "No",};
-				int n = JOptionPane.showOptionDialog(null,
-								"File "+name+" already exists.\nDo you want to overwrite it?",
-								"File exists", JOptionPane.YES_NO_OPTION,
-								JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-				if (n == 1) {
-					return false;
-				}
-			}
-		}
-		
-		
-
 		String fileExtension = ".abyss";
 		if(selectedFile.toLowerCase().contains(".abyss"))
 			fileExtension = "";
@@ -282,22 +268,8 @@ public class GUIOperations {
 			return false;
 		}
 		
-		File overwriteTest = new File(selectedFile);
-		if(overwriteTest.exists() == true) {
-			String name = selectedFile;
-			int ind = name.lastIndexOf("\\");
-			if(ind > 1) {
-				name = name.substring(ind+1);
-				Object[] options = {"Yes", "No",};
-				int n = JOptionPane.showOptionDialog(null,
-								"File "+name+" already exists.\nDo you want to overwrite it?",
-								"File exists", JOptionPane.YES_NO_OPTION,
-								JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-				if (n == 1) {
-					return false;
-				}
-			}
-		}
+		if(Tools.overwriteDecision(selectedFile) == false)
+			return false;
 		
 		
 		String extension = Tools.lastExtension;
@@ -402,7 +374,7 @@ public class GUIOperations {
 		if(inaExe.exists() && commandFile.exists()) {
 			try {
 				JOptionPane.showMessageDialog(null, "INAwin32.exe will now start. This may take a while. Click OK and please wait.\n"
-						+ "When console shows in, please type Y, then N after invariants are computed.", "Patience is a virtue", JOptionPane.INFORMATION_MESSAGE);
+						+ "When console shows in, please type Y, then N after invariants are computed.", "Please wait", JOptionPane.INFORMATION_MESSAGE);
 				overlord.log(stars, "text", false);
 				overlord.log("Activating INAwin32.exe. Please wait, this may take a few seconds due to OS delays.", "text", true);
 				//kopiowanie plików:

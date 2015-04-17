@@ -358,4 +358,31 @@ public final class Tools {
 		else
 			return i;
 	}
+	
+	/**
+	 * Metoda sprawdza, czy można kontynuowac jeśli plik istnieje.
+	 * @param selectedFilePath String - ścieżka do pliku
+	 * @return boolean - true, jeśli można kontynuować
+	 */
+	public static boolean overwriteDecision(String selectedFilePath) {
+		File file = new File(selectedFilePath);
+		if(file.exists() == true) {
+			String name = selectedFilePath;
+			int ind = name.lastIndexOf("\\");
+			if(ind > 1) {
+				name = name.substring(ind+1);
+				Object[] options = {"Yes", "No",};
+				int n = JOptionPane.showOptionDialog(null,
+								"File "+name+" already exists.\nDo you want to overwrite it?",
+								"File exists", JOptionPane.YES_NO_OPTION,
+								JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+				if (n == 1) // NO
+					return false;
+				else //YES, overwrite
+					return true;
+			}
+		} 
+		
+		return true; //no file, continue
+	}
 }
