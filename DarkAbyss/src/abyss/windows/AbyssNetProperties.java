@@ -389,7 +389,7 @@ public class AbyssNetProperties extends JFrame {
 		FileFilter[] filters = new FileFilter[1];
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		filters[0] = new ExtensionFileFilter("Normal text file (.txt)",  new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
 		
 		if(!selectedFile.equals("")) { //jeśli wskazano plik
 			String fileName = selectedFile.substring(selectedFile.lastIndexOf(File.separator)+1);

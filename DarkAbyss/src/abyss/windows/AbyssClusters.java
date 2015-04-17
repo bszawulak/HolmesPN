@@ -643,7 +643,7 @@ public class AbyssClusters extends JFrame {
 			if(test.exists()) {
 				FileFilter filter[] = new FileFilter[1];
 				filter[0] = new ExtensionFileFilter(".xls - Excel 2003",  new String[] { "XLS" });
-				String newLocation = Tools.selectFileDialog(dirPath, filter, "Save", "");
+				String newLocation = Tools.selectFileDialog(dirPath, filter, "Save", "", "");
 				if(newLocation.equals("")) { //czy chcemy przenieść plik w inne miejsce
 					//leave it in cluster folder
 					GUIManager.getDefaultGUIManager().log("Exporting table succeed. Created file: "
@@ -744,7 +744,7 @@ public class AbyssClusters extends JFrame {
 			
 			FileFilter filter[] = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Abyss CLustering file (.acl)",  new String[] { "acl" });
-			String newLocation = Tools.selectFileDialog(lastPath, filter, "Save table", "");
+			String newLocation = Tools.selectFileDialog(lastPath, filter, "Save table", "", "");
 			if(newLocation.equals(""))
 				return;
 			
@@ -774,7 +774,7 @@ public class AbyssClusters extends JFrame {
 		{
 			FileFilter filter[] = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Abyss CLustering file (.acl)",  new String[] { "acl" });
-			newLocation = Tools.selectFileDialog(lastPath, filter, "Load table", "");
+			newLocation = Tools.selectFileDialog(lastPath, filter, "Load table", "", "");
 			if(newLocation.equals("")) 
 				return;
 			

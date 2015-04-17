@@ -451,7 +451,7 @@ public class AbyssInvariants extends JFrame {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("INA Invariants file (.inv)", new String[] { "INV" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file", "");
 		if(selectedFile.equals(""))
 			return;
 		

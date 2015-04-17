@@ -98,7 +98,7 @@ public final class Tools {
 	 * @return String - ścieżka do pliku
 	 */
 	public static String selectFileDialog(String lastPath, FileFilter[] filter, 
-			String buttonText, String buttonToolTip) {
+			String buttonText, String buttonToolTip, String suggestedFileName) {
 		String resultPath = "";
 		JFileChooser fc;
 		if(lastPath == null)
@@ -115,6 +115,10 @@ public final class Tools {
 			fc.setApproveButtonText(buttonText);
 		if(!buttonToolTip.equals(""))
 			fc.setApproveButtonToolTipText(buttonToolTip);
+		//TODO:
+		if(suggestedFileName.length() > 0) { //sugerowana nazwa pliku
+			fc.setSelectedFile(new File(suggestedFileName));
+		}
 		
 		fc.setAcceptAllFileFilterUsed(false);
 		int returnVal = fc.showDialog(fc, fc.getApproveButtonText());

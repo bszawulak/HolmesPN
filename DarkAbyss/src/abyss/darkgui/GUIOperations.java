@@ -58,7 +58,7 @@ public class GUIOperations {
 		filters[1] = new ExtensionFileFilter("Snoopy Extended PN file (.spept)", new String[] { "SPEPT" });
 		filters[2] = new ExtensionFileFilter("Snoopy Time PN file (.sptpt)", new String[] { "SPTPT" });
 		filters[3] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters,  "Select PN", "Select petri net file");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters,  "Select PN", "Select petri net file", "");
 		if(selectedFile.equals(""))
 			return;
 		
@@ -80,7 +80,7 @@ public class GUIOperations {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Abyss Petri Net file (.abyss)", new String[] { "ABYSS" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load",  "Select petri net file in program native format");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load",  "Select petri net file in program native format", "");
 		if(selectedFile.equals(""))
 			return;
 		
@@ -102,7 +102,7 @@ public class GUIOperations {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("INA PNT file (.pnt)", new String[] { "PNT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", overlord.getWorkspace().getProject().getFileName());
 		if(selectedFile.equals(""))
 			return;
 		
@@ -233,11 +233,29 @@ public class GUIOperations {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
-		if(selectedFile.equals(""))
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", overlord.getWorkspace().getProject().getFileName());
+		if(selectedFile.equals("")) {
 			return false;
+		}
 		
 		File file = new File(selectedFile);
+		if(file.exists() == true) {
+			String name = selectedFile;
+			int ind = name.lastIndexOf("\\");
+			if(ind > 1) {
+				name = name.substring(ind+1);
+				Object[] options = {"Yes", "No",};
+				int n = JOptionPane.showOptionDialog(null,
+								"File "+name+" already exists.\nDo you want to overwrite it?",
+								"File exists", JOptionPane.YES_NO_OPTION,
+								JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+				if (n == 1) {
+					return false;
+				}
+			}
+		}
+		
+		
 
 		String fileExtension = ".abyss";
 		if(selectedFile.toLowerCase().contains(".abyss"))
@@ -259,10 +277,28 @@ public class GUIOperations {
 		filters[1] = new ExtensionFileFilter("Snoopy Extended Petri Net (.spept)", new String[] { "SPEPT" });
 		filters[2] = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
 		filters[3] = new ExtensionFileFilter("INA PNT format (.pnt)", new String[] { "PNT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", overlord.getWorkspace().getProject().getFileName());
 		if(selectedFile.equals("")) {
 			return false;
 		}
+		
+		File overwriteTest = new File(selectedFile);
+		if(overwriteTest.exists() == true) {
+			String name = selectedFile;
+			int ind = name.lastIndexOf("\\");
+			if(ind > 1) {
+				name = name.substring(ind+1);
+				Object[] options = {"Yes", "No",};
+				int n = JOptionPane.showOptionDialog(null,
+								"File "+name+" already exists.\nDo you want to overwrite it?",
+								"File exists", JOptionPane.YES_NO_OPTION,
+								JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+				if (n == 1) {
+					return false;
+				}
+			}
+		}
+		
 		
 		String extension = Tools.lastExtension;
 		if(extension == null || extension.equals("")) {
@@ -316,7 +352,7 @@ public class GUIOperations {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Invariants file (.inv)", new String[] { "INV" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file", "");
 		if(selectedFile.equals(""))
 			return;
 		
@@ -445,7 +481,7 @@ public class GUIOperations {
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter("INA Invariants file (.inv)",  new String[] { "INV" });
 				String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", 
-						"Select invariants target path");
+						"Select invariants target path", "");
 				
 				if(!selectedFile.equals("")) { //jeśli wskazano plik
 					File file = new File(selectedFile);
@@ -508,7 +544,7 @@ public class GUIOperations {
 			
 			FileFilter[] filters = new FileFilter[1];
 			filters[0] = new ExtensionFileFilter("MCT sets file (.mct)",  new String[] { "MCT" });
-			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select MCT target path");
+			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select MCT target path", "");
 			
 			if(selectedFile.equals("")) { //jeśli nie wybrano lokalizacji, zostaje w tmp
 				File csvFile = new File(filePath);
@@ -717,7 +753,7 @@ public class GUIOperations {
 		if(overlord.getWorkspace().getProject().getInvariantsMatrix() == null) { //brak inwariantów
 			FileFilter[] filters = new FileFilter[1];
 			filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
-			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file");
+			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file", "");
 			
 			if(selectedFile.equals(""))
 				return null;
@@ -734,7 +770,7 @@ public class GUIOperations {
 			if (n == 0) {
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
-				String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file");
+				String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file", "");
 				
 				if(selectedFile.equals(""))
 					return null;
@@ -779,8 +815,7 @@ public class GUIOperations {
 			if (n == 0) {
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter(".csv - Comma Separated Values", new String[] { "CSV" });
-				filePath = Tools.selectFileDialog(clustersPath, filters, "Select", 
-						"Select CSV invariants file");
+				filePath = Tools.selectFileDialog(clustersPath, filters, "Select", "Select CSV invariants file", "");
 				if(filePath.equals(""))
 					return null;
 				

@@ -523,7 +523,7 @@ public class AbyssClusterSubWindow extends JFrame {
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Microsoft Excel 97/2000/XP/2003 (.xls)", new String[] { "XLS" });
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Save clusters as Excel document");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Save clusters as Excel document", "");
 		if(selectedFile.equals(""))
 			return null;
 		
@@ -601,7 +601,7 @@ public class AbyssClusterSubWindow extends JFrame {
 			FileFilter[] filters = new FileFilter[1];
 			filters[0] = new ExtensionFileFilter("Invariants csv file (.csv)", new String[] { "CSV" });
 			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select", "");
+			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select", "", "");
 			if(selectedFile.equals(""))
 				return null;
 			

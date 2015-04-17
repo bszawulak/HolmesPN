@@ -47,6 +47,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
 	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
 	
+	private String lastFileName = "";
+	
 	private ArrayList<GraphPanel> graphPanels;
 	private MCSDataMatrix mcsData;
 	
@@ -181,6 +183,22 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void setName(String name) {
 		getDataCore().netName = name;
+	}
+	
+	/**
+	 * Metoda pozwala uzyskać dostęp do nazwy pliku sieci.
+	 * @return String - nazwa pliku
+	 */
+	public String getFileName() {
+		return lastFileName;
+	}
+	
+	/**
+	 * Metoda ustawia nową nazwę pliku sieci.
+	 * @param newName String - nowa nazwa pliku sieci
+	 */
+	public void setFileName(String newName) {
+		lastFileName = newName;
 	}
 	
 	/**
@@ -649,9 +667,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param path String - ścieżka do pliku odczytu
 	 */
 	public boolean loadFromFile(String path) {
-		//if(checkIfEmpty() == false)
-		//	return false;
-		
 		boolean status = GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
 		if(status == false) {
 			return false;
@@ -665,6 +680,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				ABYSSReader.read(path);
 				addArcsAndNodes(ABYSSReader.getArcArray(), ABYSSReader.getNodeArray());
 				setName(ABYSSReader.getPNname());
+				
+				String name = path;
+				int ind = name.lastIndexOf("\\");
+				if(ind > 1)
+					name = name.substring(ind+1);
+				
+				setFileName(name);
 			}
 			// Formaty Snoopiego
 			if (path.endsWith(".spped") || path.endsWith(".spept") || path.endsWith(".colpn")
@@ -693,6 +715,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				if(ind > 1)
 					name = name.substring(ind+1);
 				
+				setFileName(name);
 				name = name.replace(".spped", "");
 				name = name.replace(".spept", "");
 				name = name.replace(".colpn", "");

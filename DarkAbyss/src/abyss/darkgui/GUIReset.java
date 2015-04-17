@@ -79,6 +79,7 @@ public class GUIReset {
 		pNet.setAnalyzer(new MCTCalculator(pNet));
 		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
 		pNet.setSimulationActive(false);
+		pNet.setFileName("");
 		
 		pNet.repaintAllGraphPanels();
 		

@@ -52,7 +52,7 @@ public class TexExporter {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
 		if(selectedFile.equals(""))
 			return;
 		
@@ -233,7 +233,7 @@ public class TexExporter {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
 		if(selectedFile.equals(""))
 			return;
 		if(!selectedFile.contains(".txt"))
@@ -365,7 +365,7 @@ public class TexExporter {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
 		if(selectedFile.equals(""))
 			return;
 		if(!selectedFile.contains(".txt"))
@@ -428,7 +428,7 @@ public class TexExporter {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
 		if(selectedFile.equals(""))
 			return;
 		
@@ -559,7 +559,7 @@ public class TexExporter {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
 		if(selectedFile.equals(""))
 			return;
 		

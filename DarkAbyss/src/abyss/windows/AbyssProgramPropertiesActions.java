@@ -31,7 +31,7 @@ public class AbyssProgramPropertiesActions {
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Rscript.exe (.exe)",  new String[] { "EXE" });
 		String selectedFile = Tools.selectFileDialog("", filters, "Select Rscript.exe", 
-				"Please select Rscript exe, usually located in R/Rx.x.x/bin directory.");
+				"Please select Rscript exe, usually located in R/Rx.x.x/bin directory.", "");
 		if(selectedFile.equals("")) {
 			return;
 		} else {

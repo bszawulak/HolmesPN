@@ -1078,7 +1078,7 @@ public class AbyssStateSimulator extends JFrame {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Portable Network Graphics (.png)", new String[] { "PNG" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
 		if(selectedFile.equals(""))
 			return;
 		
