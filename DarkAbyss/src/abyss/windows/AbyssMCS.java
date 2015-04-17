@@ -37,7 +37,7 @@ import abyss.math.Transition;
 import abyss.utilities.Tools;
 
 /**
- * Klasa tworząca okno narzedzi generowania i analizy zbiorów MCS.
+ * Klasa tworząca okno narzędzi generowania i analizy zbiorów MCS.
  * @author MR
  *
  */
@@ -432,12 +432,7 @@ public class AbyssMCS extends JFrame {
 		}
 		transitionsResultsCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(listenerAllowed == false) 
-					return;
-				int selected = transitionsResultsCombo.getSelectedIndex();
-				if(selected > 0) {
-					showMCSData(selected-1);
-				}
+				
 			}
 			
 		});
@@ -476,9 +471,25 @@ public class AbyssMCS extends JFrame {
 		saveButton.setFocusPainted(false);
 		panel.add(saveButton);
 		
+		JButton showMCSButton = new JButton();
+		showMCSButton.setText("Show MCS");
+		showMCSButton.setBounds(posX+120, posY+25, 110, 32);
+		showMCSButton.setMargin(new Insets(0, 0, 0, 0));
+		showMCSButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/showData.png"));
+		showMCSButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = transitionsResultsCombo.getSelectedIndex();
+				if(selected > 0) {
+					showMCSData(selected-1);
+				}
+			}
+		});
+		showMCSButton.setFocusPainted(false);
+		panel.add(showMCSButton);
+		
 		JButton calculateFragilityButton = new JButton();
 		calculateFragilityButton.setText("Fragility");
-		calculateFragilityButton.setBounds(posX+120, posY+25, 110, 32);
+		calculateFragilityButton.setBounds(posX+240, posY+25, 110, 32);
 		calculateFragilityButton.setMargin(new Insets(0, 0, 0, 0));
 		calculateFragilityButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/fragility.png"));
 		calculateFragilityButton.addActionListener(new ActionListener() {
@@ -491,6 +502,8 @@ public class AbyssMCS extends JFrame {
 		});
 		calculateFragilityButton.setFocusPainted(false);
 		panel.add(calculateFragilityButton);
+		
+		
 		
 		return panel;
 	}
@@ -793,11 +806,17 @@ public class AbyssMCS extends JFrame {
 		}
 		
 		listenerAllowed = false; //aby nie wywoływać wyświetlania
+		int oldSize = transitionsResultsCombo.getItemCount();
+		int oldSelected = transitionsResultsCombo.getSelectedIndex();
+		
 		transitionsResultsCombo.removeAllItems();
 		transitionsResultsCombo.addItem("---");
 		for(int t=0; t < transitions.size(); t++) {
 			transitionsResultsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
 		}
+		if(oldSize == transitionsResultsCombo.getItemCount())
+			transitionsResultsCombo.setSelectedIndex(oldSelected);
+		
 		listenerAllowed = true;
 		
 		if(selection < transitions.size()+1)

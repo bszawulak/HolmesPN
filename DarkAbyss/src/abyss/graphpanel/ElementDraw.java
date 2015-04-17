@@ -297,20 +297,10 @@ public final class ElementDraw {
 				g.setColor(Color.BLACK);
 				g.setStroke(new BasicStroke(1.5F));
 				if (place.isPortal()) {
-					//g.drawOval(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
 					g.drawOval(nodeBounds.x + 8, nodeBounds.y + 8, nodeBounds.width - 16, nodeBounds.height - 16);
 				}
 				
-				/*
-				if (el.isPortalSelected()) {
-					try {
-						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/selectedSignPortal.png"));
-						g.drawImage(img, null, 
-								nodeBounds.x-(place.getRadius()-4), 
-								nodeBounds.y-(place.getRadius()-4));
-					} catch (Exception e) { }
-				}
-				*/
+				
 			}
 		}
 		

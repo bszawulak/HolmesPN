@@ -33,7 +33,7 @@ public class DarkMenu extends JMenuBar {
 	private JMenu fileMenu;
 	private JMenu windowMenu;
 	private JMenu netMenu;
-	private JMenu invariantsOperationsMenu;
+	private JMenu analysisMenu;
 	private JMenu mctOperationsMenu;
 	//private JMenu clustersOperationsMenu;
 	private JMenu sheetsMenu;
@@ -257,7 +257,7 @@ public class DarkMenu extends JMenuBar {
 		this.add(netMenu);
 		
 		// Net properties
-		JMenuItem propItem = new JMenuItem("Net properties", KeyEvent.VK_1);
+		JMenuItem propItem = new JMenuItem("Net properties...", KeyEvent.VK_1);
 		propItem.setIcon(Tools.getResIcon32("/icons/menu/menu_NetProp.png"));
 		propItem.setAccelerator(KeyStroke.getKeyStroke('P', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		propItem.getAccessibleContext().setAccessibleDescription("Show net properties");
@@ -279,7 +279,7 @@ public class DarkMenu extends JMenuBar {
 		});
 		netMenu.add(searchItem);
 		
-		JMenuItem netTablesItem = new JMenuItem("Net data tables", KeyEvent.VK_4);
+		JMenuItem netTablesItem = new JMenuItem("Net data tables...", KeyEvent.VK_4);
 		netTablesItem.setIcon(Tools.getResIcon32("/icons/menu/menu_netTables.png"));
 		netTablesItem.setAccelerator(KeyStroke.getKeyStroke('X', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		netTablesItem.getAccessibleContext().setAccessibleDescription("Show net data tables window");
@@ -334,10 +334,10 @@ public class DarkMenu extends JMenuBar {
 			
 		
 		//INVARIANTS MENU
-		invariantsOperationsMenu = new JMenu("Analysis");
-		invariantsOperationsMenu.setMnemonic(KeyEvent.VK_I);
-		invariantsOperationsMenu.getAccessibleContext().setAccessibleDescription("Invariants - Menu");
-		this.add(invariantsOperationsMenu);
+		analysisMenu = new JMenu("Analysis");
+		analysisMenu.setMnemonic(KeyEvent.VK_I);
+		analysisMenu.getAccessibleContext().setAccessibleDescription("Net analysis");
+		this.add(analysisMenu);
 		
 		// Invariants window
 		JMenuItem invWindowItem = new JMenuItem("Invariants generator...", KeyEvent.VK_1);
@@ -349,7 +349,7 @@ public class DarkMenu extends JMenuBar {
 				GUIManager.getDefaultGUIManager().showInvariantsWindow();
 			}
 		});
-		invariantsOperationsMenu.add(invWindowItem);
+		analysisMenu.add(invWindowItem);
 		
 		// MCS window
 		JMenuItem mcsWindowItem = new JMenuItem("Minimal Cutting Sets...", KeyEvent.VK_2);
@@ -361,7 +361,7 @@ public class DarkMenu extends JMenuBar {
 				GUIManager.getDefaultGUIManager().showMCSWindow();
 			}
 		});
-		invariantsOperationsMenu.add(mcsWindowItem);
+		analysisMenu.add(mcsWindowItem);
 		
 		// Knockout window
 		JMenuItem knockoutWindowItem = new JMenuItem("Knockout analysis...", KeyEvent.VK_3);
@@ -374,7 +374,7 @@ public class DarkMenu extends JMenuBar {
 				GUIManager.getDefaultGUIManager().showKnockoutWindow();
 			}
 		});
-		invariantsOperationsMenu.add(knockoutWindowItem);
+		analysisMenu.add(knockoutWindowItem);
 		
 		JMenuItem showClustersItem = new JMenuItem("Cluster analysis...", KeyEvent.VK_4);
 		showClustersItem.setIcon(Tools.getResIcon32("/icons/menu/menu_ClustersAnalysis.png"));
@@ -385,7 +385,7 @@ public class DarkMenu extends JMenuBar {
 				GUIManager.getDefaultGUIManager().showClusterWindow(); 
 			}
 		});
-		invariantsOperationsMenu.add(showClustersItem);
+		analysisMenu.add(showClustersItem);
 		
 		JMenuItem netSimItem = new JMenuItem("State Simulator...", KeyEvent.VK_5);
 		netSimItem.setIcon(Tools.getResIcon32("/icons/menu/menu_stateSim.png"));
@@ -396,7 +396,16 @@ public class DarkMenu extends JMenuBar {
 				GUIManager.getDefaultGUIManager().showStateSimulatorWindow();
 			}
 		});
-		invariantsOperationsMenu.add(netSimItem);
+		analysisMenu.add(netSimItem);
+		
+		
+		mctOperationsMenu = new JMenu("MCT");
+		mctOperationsMenu.setMnemonic(KeyEvent.VK_M);
+		mctOperationsMenu.getAccessibleContext().setAccessibleDescription("MCT Operations menu");
+		mctOperationsMenu.setPreferredSize(new Dimension(WIDTH, 38));
+		mctOperationsMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_genMCT.png"));
+		analysisMenu.add(mctOperationsMenu);
+		
 		
 		// The JMenuItem for invariants simulation
 		JMenuItem invSimul = new JMenuItem("Invariants Simulation", KeyEvent.VK_6);
@@ -420,22 +429,12 @@ public class DarkMenu extends JMenuBar {
 				}
 			}
 		});
-		invariantsOperationsMenu.add(invSimul);
+		analysisMenu.add(invSimul);
 
 		//*********************************************************************************************
-		//***********************************                 *****************************************
 		//***********************************    MCT MENU     *****************************************
-		//***********************************                 *****************************************
 		//*********************************************************************************************
-		
-		//MCT MENU
-				
-		mctOperationsMenu = new JMenu("MCT");
-		mctOperationsMenu.setMnemonic(KeyEvent.VK_M);
-		mctOperationsMenu.getAccessibleContext().setAccessibleDescription("MCT Operations menu");
-		this.add(mctOperationsMenu);
-		
-		// The JMenuItem for external analysis
+
 		JMenuItem genMCTGroups = new JMenuItem("Generate MCT Groups", KeyEvent.VK_1);
 		genMCTGroups.setIcon(Tools.getResIcon32("/icons/menu/menu_genMCT.png"));
 		genMCTGroups.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,ActionEvent.CTRL_MASK));

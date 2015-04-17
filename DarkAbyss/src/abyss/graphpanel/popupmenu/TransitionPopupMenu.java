@@ -43,7 +43,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 		});
 		
 		
-		this.addMenuItem("Change selected Transitions into T-Portals", "portal.png", new ActionListener() {
+		this.addMenuItem("Change selected Transitions into same Portals", "portal.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
 					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
@@ -51,8 +51,8 @@ public class TransitionPopupMenu extends NodePopupMenu {
 							, "Warning") == true)
 						return;
 					
-					getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
-					GUIManager.getDefaultGUIManager().markNetChange();
+					//getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
+					//GUIManager.getDefaultGUIManager().markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, "Option possible if more than one transition is selected.", "Too few selections", 
 							JOptionPane.INFORMATION_MESSAGE);
@@ -60,7 +60,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 			}
 		});
 		
-		this.addMenuItem("Clone one Transition into Portal", "portal.png", new ActionListener() {
+		this.addMenuItem("Clone this Transition into Portal", "portal.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
 					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(

@@ -26,7 +26,7 @@ public class PlacePopupMenu extends NodePopupMenu {
 		
 		
 		
-		this.addMenuItem("Change selected Places into P-Portals", "portal.png", new ActionListener() {
+		this.addMenuItem("Change selected Places into same Portals", "portal.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
 					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
@@ -34,8 +34,8 @@ public class PlacePopupMenu extends NodePopupMenu {
 							, "Warning") == true)
 						return;
 					
-					getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
-					GUIManager.getDefaultGUIManager().markNetChange();
+					//getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
+					//GUIManager.getDefaultGUIManager().markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, "Option possible if more than one place is selected.", "Too few selections", 
 							JOptionPane.INFORMATION_MESSAGE);
@@ -44,7 +44,7 @@ public class PlacePopupMenu extends NodePopupMenu {
 		});
 		
 		
-		this.addMenuItem("Clone one Place into Portal", "portal.png", new ActionListener() {
+		this.addMenuItem("Clone this Place into Portal", "portal.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
 					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
