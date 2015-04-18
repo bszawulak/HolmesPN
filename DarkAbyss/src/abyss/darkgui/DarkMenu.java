@@ -165,6 +165,41 @@ public class DarkMenu extends JMenuBar {
 		});
 		fileMenu.add(expImgMenuItem);
 		
+		JMenu texSubMenu = new JMenu("Tex Export");
+		texSubMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
+		texSubMenu.getAccessibleContext().setAccessibleDescription("MCT Generator");
+		fileMenu.add(texSubMenu);
+		
+		JMenuItem exportTexPTItem = new JMenuItem("Places and transitions table...", KeyEvent.VK_1);
+		exportTexPTItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
+		exportTexPTItem.getAccessibleContext().setAccessibleDescription("Export places and transitions tables");
+		exportTexPTItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().tex.writePlacesTransitions();
+			}
+		});
+		texSubMenu.add(exportTexPTItem);	
+		
+		JMenuItem exportTexInvItem = new JMenuItem("Invariants table...", KeyEvent.VK_2);
+		exportTexInvItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
+		exportTexInvItem.getAccessibleContext().setAccessibleDescription("Export invariants into table");
+		exportTexInvItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().tex.writeInvariants();
+			}
+		});
+		texSubMenu.add(exportTexInvItem);	
+		
+		JMenuItem exportTexMCTItem = new JMenuItem("MCT table...", KeyEvent.VK_3);
+		exportTexMCTItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
+		exportTexMCTItem.getAccessibleContext().setAccessibleDescription("Export MCT table");
+		exportTexMCTItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().tex.writeMCT();
+			}
+		});
+		texSubMenu.add(exportTexMCTItem);	
+		
 		fileMenu.addSeparator();
 
 		// Exit program Item
@@ -289,41 +324,6 @@ public class DarkMenu extends JMenuBar {
 			}
 		});
 		netMenu.add(netTablesItem);
-		
-		JMenu texSubMenu = new JMenu("Tex Export");
-		texSubMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
-		texSubMenu.getAccessibleContext().setAccessibleDescription("MCT Generator");
-		netMenu.add(texSubMenu);
-		
-		JMenuItem exportTexPTItem = new JMenuItem("Places and transitions table...", KeyEvent.VK_1);
-		exportTexPTItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
-		exportTexPTItem.getAccessibleContext().setAccessibleDescription("Export places and transitions tables");
-		exportTexPTItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().tex.writePlacesTransitions();
-			}
-		});
-		texSubMenu.add(exportTexPTItem);	
-		
-		JMenuItem exportTexInvItem = new JMenuItem("Invariants table...", KeyEvent.VK_2);
-		exportTexInvItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
-		exportTexInvItem.getAccessibleContext().setAccessibleDescription("Export invariants into table");
-		exportTexInvItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().tex.writeInvariants();
-			}
-		});
-		texSubMenu.add(exportTexInvItem);	
-		
-		JMenuItem exportTexMCTItem = new JMenuItem("MCT table...", KeyEvent.VK_3);
-		exportTexMCTItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
-		exportTexMCTItem.getAccessibleContext().setAccessibleDescription("Export MCT table");
-		exportTexMCTItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().tex.writeMCT();
-			}
-		});
-		texSubMenu.add(exportTexMCTItem);	
 		
 		
 		//*********************************************************************************************

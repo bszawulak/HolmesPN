@@ -12,6 +12,7 @@ import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
+import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.MCSDataMatrix;
 import abyss.math.PetriNet;
 import abyss.math.Transition;
@@ -47,6 +48,11 @@ public class GUIReset {
 	 * Metoda odpowiedzialna za czyszczenie danych i przywracanie programu do stanu początkowego.
 	 */
 	public boolean newProjectInitiated() {
+		if(isSimulatorActiveWarning("Please stop simulation completely before contynuing.", "Warning") == true) {
+			return false;
+		}
+		
+		
 		boolean status = GUIManager.getDefaultGUIManager().getNetChangeStatus();
 		if(status == true) {
 			Object[] options = {"Continue", "Save and continue", "Cancel",};

@@ -495,6 +495,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void saveMarkingZero() {
 		ArrayList<Place> places = getPlaces();
+		backupMarkingZero.clear();
 		for(int i=0; i<places.size(); i++) {
 			backupMarkingZero.add(places.get(i).getTokensNumber());
 		}
@@ -528,7 +529,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		
 		setSimulator(new NetSimulator(NetType.BASIC, this));
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
+		//GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
 		GUIManager.getDefaultGUIManager().io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
 		repaintAllGraphPanels();
 		getSimulator().getSimLogger().logSimReset();

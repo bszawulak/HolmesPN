@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -307,7 +308,9 @@ public class AbyssNetProperties extends JFrame {
 		yPosA += 25;
 		
 		JButton saveButton = new JButton("Save to file");
-		saveButton.setBounds(xPos, yPosA, 120, 30);
+		saveButton.setMargin(new Insets(0, 0, 0, 0));
+		saveButton.setIcon(Tools.getResIcon22("/icons/quickSave.png"));
+		saveButton.setBounds(xPos, yPosA, 130, 30);
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				saveToFile();

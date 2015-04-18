@@ -50,7 +50,9 @@ public class AbyssNetTablesActions {
 			if(name.equals("PlacesTable")) {
 	  	    	int row = table.getSelectedRow();
 	  	    	antWindow.currentClickedRow = row;
-	  	    	int index = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+	  	    	//int index = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
+	  	    	
 	  	    	AbyssNodeInfo window = new AbyssNodeInfo(
 	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(index), 
 	  	    			antWindow);
@@ -60,7 +62,8 @@ public class AbyssNetTablesActions {
 			} else if(name.equals("TransitionTable")) {
 				int row = table.getSelectedRow();
 	  	    	antWindow.currentClickedRow = row;
-	  	    	int index = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+	  	    	//int index = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 	  	    	AbyssNodeInfo window = new AbyssNodeInfo(
 	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(index), 
 	  	    			antWindow);

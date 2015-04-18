@@ -379,10 +379,11 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(maximumMode);
 		
 		//PANEL SYMULATORA INWARIANTÓW
-		JPanel staticPropertiesPanel = new JPanel();
-		staticPropertiesPanel.setLayout(null);
-		staticPropertiesPanel.setBorder(BorderFactory.createTitledBorder("Invariants simulator"));
-		staticPropertiesPanel.setBounds(columnA_posX-5, columnA_Y += 20, 160, 160);
+		JPanel invariantsSimulatorPanel = new JPanel();
+		
+		invariantsSimulatorPanel.setLayout(null);
+		invariantsSimulatorPanel.setBorder(BorderFactory.createTitledBorder("Invariants simulator"));
+		invariantsSimulatorPanel.setBounds(columnA_posX-5, columnA_Y += 20, 160, 160);
 		
 		int internalXA = 10;
 		int internalXB = 60;
@@ -390,7 +391,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		JLabel simTypeLabel = new JLabel("Mode:");
 		simTypeLabel.setBounds(internalXA, internalY, 50, 20);
-		staticPropertiesPanel.add(simTypeLabel);
+		invariantsSimulatorPanel.add(simTypeLabel);
 		
 		JRadioButton TimeMode = new JRadioButton("Time Mode");
 		TimeMode.setBounds(internalXB, internalY, 90, 20);
@@ -398,7 +399,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		internalY+=20;
 		TimeMode.setSize(90, 20);
 		TimeMode.setActionCommand("0");
-		staticPropertiesPanel.add(TimeMode);
+		invariantsSimulatorPanel.add(TimeMode);
 		group.add(TimeMode);
 		
 		columnA_Y += 20;
@@ -408,7 +409,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		internalY+=20;
 		StepMode.setSize(90, 20);
 		StepMode.setActionCommand("1");
-		staticPropertiesPanel.add(StepMode);
+		invariantsSimulatorPanel.add(StepMode);
 		group.add(StepMode);
 		
 		columnA_Y += 20;
@@ -418,20 +419,21 @@ public class AbyssDockWindowsTable extends JPanel {
 		internalY+=20;
 		CycleMode.setSize(90, 20);
 		CycleMode.setActionCommand("2");
-		staticPropertiesPanel.add(CycleMode);
+		invariantsSimulatorPanel.add(CycleMode);
 		group.add(CycleMode);
 		group.setSelected(TimeMode.getModel(), true);
 		
+
 		JLabel timeLabel = new JLabel("Time (min):");
 		timeLabel.setBounds(internalXA, internalY, 70, 20);
-		staticPropertiesPanel.add(timeLabel);
+		invariantsSimulatorPanel.add(timeLabel);
 		
 		SpinnerModel timeCycle = new SpinnerNumberModel(1,1,9999,1);
 		spiner = new JSpinner(timeCycle);
 		spiner.setLocation(internalXB+20, internalY+3);
 		spiner.setSize(70, 20);
 		internalY+=25;
-		staticPropertiesPanel.add(spiner);
+		invariantsSimulatorPanel.add(spiner);
 		
 		// INVARIANTS SIMULATION START BUTTON
 		//JButton startButton = new JButton("Start");
@@ -472,8 +474,16 @@ public class AbyssDockWindowsTable extends JPanel {
 			}
 		});
 		
-		staticPropertiesPanel.add(startButton);
-		components.add(staticPropertiesPanel);
+		TimeMode.setEnabled(false);
+		StepMode.setEnabled(false);
+		CycleMode.setEnabled(false);
+		spiner.setEnabled(false);
+		startButton.setEnabled(false);
+		
+		invariantsSimulatorPanel.add(startButton);
+
+		
+		components.add(invariantsSimulatorPanel);
 		
 		panel.setLayout(null); 
 		for (int i = 0; i < components.size(); i++) {

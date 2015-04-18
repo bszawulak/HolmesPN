@@ -72,7 +72,7 @@ public class AbyssSearch extends JFrame {
 		}
 		
 		setLayout(new BorderLayout());
-		setSize(new Dimension(506, 260));
+		setSize(new Dimension(506, 248));
 		setLocation(50, 50);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setResizable(false);
@@ -130,6 +130,8 @@ public class AbyssSearch extends JFrame {
 					transitionsCombo.setSelectedIndex(0);
 					listenerAllowed = true;
 					centerOnElement("place", selected -1, null);
+				} else {
+					clearSubPanel();
 				}
 			}
 			
@@ -158,6 +160,8 @@ public class AbyssSearch extends JFrame {
 					placesCombo.setSelectedIndex(0);
 					listenerAllowed = true;
 					centerOnElement("transition", selected -1, null);
+				} else {
+					clearSubPanel();
 				}
 			}
 			
@@ -342,6 +346,14 @@ public class AbyssSearch extends JFrame {
 		panel.add(infoPanel);
 		panel.repaint();
 		return panel;
+	}
+
+	protected void clearSubPanel() {
+		nodeName.setText("---");
+		nodeType.setText("---");
+		nodeInArcs.setText("---");
+		nodeOutArcs.setText("---");
+		nodeIsPortal.setText("---");
 	}
 
 	/**
