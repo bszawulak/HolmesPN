@@ -43,7 +43,8 @@ public final class Check {
     /**
      * Metoda zwraca wektor z informacjami o liczności 5 klas łuków, odpowiednio: NORMAL, READARC, INHIBITOR,
      * RESET i EQUAL.
-     * @return ArrayList[Integer] - wektor liczności klas łuków
+     * @return ArrayList[Integer] - wektor liczności klas łuków, w kolejności: get(0): NORMAL, następnie READARC,
+     *  INHIBITOR, RESET, EQUAL
      */
     public static ArrayList<Integer> getArcClassCount() {
 		ArrayList<Integer> result = new ArrayList<Integer>();

@@ -2206,7 +2206,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		//SPOSÓB WYŚWIETLANIA - TRANZYCJE CZY ODPALENIA
 		JCheckBox transFiringMode = new JCheckBox("Show transition average firing");
-		transFiringMode.setBounds(colA_posX-3, positionY, 180, 20);
+		transFiringMode.setBounds(colA_posX-3, positionY, 220, 20);
 		transFiringMode.setSelected(false);;
 		transFiringMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -2225,7 +2225,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		positionY += 20;
 		JCheckBox scaleMode = new JCheckBox("Show scaled colors");
-		scaleMode.setBounds(colA_posX-3, positionY, 150, 20);
+		scaleMode.setBounds(colA_posX-3, positionY, 160, 20);
 		scaleMode.setSelected(false);;
 		scaleMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {

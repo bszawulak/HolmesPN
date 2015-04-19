@@ -545,9 +545,12 @@ public class AbyssClusterSubWindow extends JFrame {
 	 */
 	protected void exportDataToExcel() {
 		//generowanie klastrowania:
-		String targetDir = getCSVLocation();
-		if(targetDir == null)
+		String targetDir = getInvariantsCSVLocation();
+		if(targetDir == null) {
+			JOptionPane.showMessageDialog(null, "Operation failed. Unable to obtain invariants CSV file.", 
+					"Error",JOptionPane.ERROR_MESSAGE);
 			return;
+		}
 		
 		String alg = clusteringMetaData.algorithmName;
 		if(alg.equals("UPGMA"))
@@ -589,23 +592,19 @@ public class AbyssClusterSubWindow extends JFrame {
 	}
 
 	/**
-	 * Metoda ta zwraca ścieżki do katalogu, w którym znajduje się cluster.csv.
+	 * Metoda ta zwraca ścieżki do katalogu, w którym znajduje się plik invariantów o nazwie cluster.csv.
 	 * @return String - ścieżka do katalogu
 	 */
-	protected String getCSVLocation() {
+	protected String getInvariantsCSVLocation() {
 		String targetDir = "";
-		if(clusterPath == null || clusterPath.equals("")) {
-			JOptionPane.showMessageDialog(null, "Please select csv file containing invariants.", 
-					"Selection",JOptionPane.INFORMATION_MESSAGE);
-			
-			FileFilter[] filters = new FileFilter[1];
-			filters[0] = new ExtensionFileFilter("Invariants csv file (.csv)", new String[] { "CSV" });
-			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select", "", "");
-			if(selectedFile.equals(""))
-				return null;
-			
-			File x = new File(selectedFile);
+		Object[] options = {"Use computed invariants", "Load CSV invariant file",};
+		int n = JOptionPane.showOptionDialog(null,
+						"Select CSV invariants manually or export from net computed invariants?",
+						"Choose output file", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		if (n == 0) {
+			targetDir = selectionOfSource();
+			File x = new File(targetDir);
 			String name = x.getName();
 			String path = Tools.getFilePath(x);
 			if(!name.equals("cluster.csv")) {
@@ -618,9 +617,66 @@ public class AbyssClusterSubWindow extends JFrame {
 			}
 			targetDir = path;
 		} else {
-			targetDir = clusterPath;
+			if(clusterPath == null || clusterPath.equals("")) {
+				JOptionPane.showMessageDialog(null, "Please select csv file containing invariants.", 
+						"Selection",JOptionPane.INFORMATION_MESSAGE);
+				
+				FileFilter[] filters = new FileFilter[1];
+				filters[0] = new ExtensionFileFilter("Invariants csv file (.csv)", new String[] { "CSV" });
+				String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+				String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select", "", "");
+				if(selectedFile.equals(""))
+					return null;
+				
+				File x = new File(selectedFile);
+				String name = x.getName();
+				String path = Tools.getFilePath(x);
+				if(!name.equals("cluster.csv")) {
+					try {
+						Tools.copyFileByPath(x.getAbsolutePath(), path+"cluster.csv");
+						
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				targetDir = path;
+			} else {
+				targetDir = clusterPath;
+			}
 		}
+		
 		return targetDir;
+	}
+	
+	private String selectionOfSource() {
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix() == null) { //brak inwariantów
+			JOptionPane.showMessageDialog(null, "No invariants computed! Please select CSV invariants file!", 
+					"Warning",JOptionPane.WARNING_MESSAGE);
+			
+			FileFilter[] filters = new FileFilter[1];
+			filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
+			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file", "");
+			
+			if(selectedFile.equals(""))
+				return null;
+			else
+				return selectedFile;
+		} else {
+			{
+				//generowanie CSV, uda się, jeśli inwarianty istnieją
+				String CSVfilePath = GUIManager.getDefaultGUIManager().getTmpPath() + "cluster.csv";
+				int result = GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true);
+				if(result == -1) {
+					String msg = "Exporting invariants into CSV file failed. \nCluster procedure cannot begin without invariants.";
+					JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);
+					GUIManager.getDefaultGUIManager().log(msg, "error", true);
+					return null;
+				}
+				
+				return CSVfilePath;
+			} 
+		}
 	}
 	
 	/**
@@ -662,9 +718,12 @@ public class AbyssClusterSubWindow extends JFrame {
 		if(!proceed)
 			return;
 		
-		String targetDir = getCSVLocation();
-		if(targetDir == null)
+		String targetDir = getInvariantsCSVLocation();
+		if(targetDir == null) {
+			JOptionPane.showMessageDialog(null, "Operation failed. Unable to obtain invariants CSV file.", 
+					"Error",JOptionPane.ERROR_MESSAGE);
 			return;
+		}
 		
 		String alg = clusteringMetaData.algorithmName;
 		if(alg.equals("UPGMA"))
@@ -745,9 +804,12 @@ public class AbyssClusterSubWindow extends JFrame {
 		if(proceed == false)
 			return;
 		
-		String targetDir = getCSVLocation();
-		if(targetDir == null)
+		String targetDir = getInvariantsCSVLocation();
+		if(targetDir == null) {
+			JOptionPane.showMessageDialog(null, "Operation failed. Unable to obtain invariants CSV file.", 
+					"Error",JOptionPane.ERROR_MESSAGE);
 			return;
+		}
 		
 		String alg = clusteringMetaData.algorithmName;
 		if(alg.equals("UPGMA"))

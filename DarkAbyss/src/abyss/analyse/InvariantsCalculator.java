@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 
+import javax.swing.JTextArea;
+
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
 import abyss.math.Arc.TypesOfArcs;
@@ -13,6 +15,7 @@ import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.PetriNet;
 import abyss.math.Place;
 import abyss.math.Transition;
+import abyss.varia.Check;
 import abyss.windows.AbyssInvariants;
 
 /**
@@ -87,6 +90,13 @@ public class InvariantsCalculator implements Runnable {
 				GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
 				GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetInvData();
 				logInternal("Operation successfull, invariants found: "+getInvariants().size()+"\n", true);
+				
+				ArrayList<Integer> arcClasses =  Check.getArcClassCount();
+				if(arcClasses.get(1) > 0) {
+					logInternal("\n", false);
+					logInternal("Read-arcs detected. There are "+(arcClasses.get(1) / 2)+" read-arcs in net.\n", false);
+					logInternal("Feasible invariants computation/check is recommended. \n", false);
+				}
 				
 				if(doubleArcs.size() > 0) {
 					logInternal("\n", false);
@@ -973,10 +983,18 @@ public class InvariantsCalculator implements Runnable {
 		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		if(masterWindow != null) {
 			if(date == false) {
-				masterWindow.accessLogField().append(msg);
+				JTextArea jta = masterWindow.accessLogField();
+				jta.append(msg);
+				jta.setCaretPosition(jta.getDocument().getLength());
+				//masterWindow.accessLogField().append(msg);
+				
 			} else {
-				masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
+				JTextArea jta = masterWindow.accessLogField();
+				jta.append("["+timeStamp+"] "+msg);
+				jta.setCaretPosition(jta.getDocument().getLength());
+				//masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
 			}
 		}
+		
 	}
 }

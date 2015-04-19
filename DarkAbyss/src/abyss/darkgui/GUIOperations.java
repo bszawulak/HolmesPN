@@ -753,7 +753,7 @@ public class GUIOperations {
 				String CSVfilePath = overlord.getTmpPath() + "cluster.csv";
 				int result = overlord.getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true);
 				if(result == -1) {
-					String msg = "Exporting net into CSV file failed. \nCluster procedure cannot begin without invariants.";
+					String msg = "Exporting invariants into CSV file failed. \nCluster procedure cannot begin.";
 					JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);
 					overlord.log(msg, "error", true);
 					return null;

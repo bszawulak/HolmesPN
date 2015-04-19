@@ -833,14 +833,15 @@ public class AbyssStateSimulator extends JFrame {
 			String tName = "p"+p+"_"+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(p).getName();
 			double value = placesAvgData.get(p);
 			
-			dataset.addValue(value, "Firing", tName);
+			//dataset.addValue(value, "Firing", tName);
+			dataset.addValue(value, "Tokens", tName);
 			
 			if(value > 0) {
-				dataset.addValue(max-value, "NotFiring", tName);
-				dataset.addValue(0, "zero", tName);
+				dataset.addValue(max-value, "toMax", tName);
+				dataset.addValue(0, "ZeroTokens", tName);
 			} else {
-				dataset.addValue(0, "NotFiring", tName);
-				dataset.addValue(max, "zero", tName);
+				dataset.addValue(0, "toMax", tName);
+				dataset.addValue(max, "ZeroTokens", tName);
 			}
 		}
 	    

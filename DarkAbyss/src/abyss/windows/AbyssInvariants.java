@@ -48,7 +48,7 @@ public class AbyssInvariants extends JFrame {
 	public boolean isGeneratorWorking = false;
 	public boolean noAction = false;
 	private boolean details = true;
-	private int feasibleCalcMode = 0; 
+	private int feasibleCalcMode = 1; 
 
 	/**
 	 * Główny konstruktor okna generatora inwariantów.
@@ -272,7 +272,7 @@ public class AbyssInvariants extends JFrame {
 				}
 			}
 		});
-		feasModeCheckBox.setSelected(false);
+		feasModeCheckBox.setSelected(true);
 		panel.add(feasModeCheckBox);
 
 		return panel;
