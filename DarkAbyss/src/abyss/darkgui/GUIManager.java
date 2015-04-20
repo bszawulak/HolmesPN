@@ -181,6 +181,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().getContentPane().add(this);
 		getFrame().addComponentListener(this);
 		
+		
+		
 		createHiddenConsole(); // okno konsoli logowania zdarzeń
 		createClusterWindow(); // okno tabeli klastrów
 		createNetPropertiesWindow(); // okno właściwości sieci
@@ -188,7 +190,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createNetTablesWindow(); // okno tabel sieci
 		createSimLogWindow(); // okno logów symulatora
 		createInvariantsWindow(); // okno generatora inwariantów
-		createMCSWindow(); // okno generatora MCS
+		
 		
 		settingsManager = new SettingsManager();
 		settingsManager.loadSettings();
@@ -353,6 +355,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//na samym końcu, gdy już wszystko 'działa'
 		//createPropertiesWindow();
 		createStateSimulatorWindow();
+		createMCSWindow(); // okno generatora MCS
 		
 		String path = settingsManager.getValue("lastOpenedPath");
 		File f = new File(path);

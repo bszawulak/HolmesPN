@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JTextArea;
+
 import abyss.darkgui.GUIManager;
 import abyss.math.MCSDataMatrix;
 import abyss.math.Node;
@@ -484,6 +486,8 @@ public class MCSCalculator implements Runnable {
      */
 	private void showMCS() {
 		int mcsSize = mcs.size();
+		logInternal("Computed sets: "+mcsSize, false);
+		
 		for(int s=0; s<mcsSize; s++) {
 			String msg = "Set "+s+ ": [";
 			Set<Integer> mcsSet = mcs.get(s);
@@ -492,7 +496,7 @@ public class MCSCalculator implements Runnable {
 			}
 			msg += "]\n";
 			msg = msg.replace(", ]", "]");
-			logInternal(msg, false);
+			//logInternal(msg, false);
 		}
 	}
 
@@ -505,9 +509,18 @@ public class MCSCalculator implements Runnable {
 		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		if(masterWindow != null) {
 			if(date == false) {
-				masterWindow.accessLogField().append(msg);
+				JTextArea jta = masterWindow.accessLogField();
+				jta.append(msg);
+				jta.setCaretPosition(jta.getDocument().getLength());
+				
+				//masterWindow.accessLogField().append(msg);
+				
 			} else {
-				masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
+				JTextArea jta = masterWindow.accessLogField();
+				jta.append("["+timeStamp+"] "+msg);
+				jta.setCaretPosition(jta.getDocument().getLength());
+				
+				//masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
 			}
 		}
 	}

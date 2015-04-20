@@ -84,7 +84,7 @@ public class AbyssMCS extends JFrame {
 		}
 		
 		setLayout(new BorderLayout());
-		setSize(new Dimension(850, 750));
+		setSize(new Dimension(850, 743));
 		setLocation(50, 50);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setResizable(false);
@@ -195,6 +195,11 @@ public class AbyssMCS extends JFrame {
 				}
 			}
 		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1"))
+			cleanMCSusingStructureCheckBox.setSelected(true);
+		else
+			cleanMCSusingStructureCheckBox.setSelected(false);
+		
 		panel.add(cleanMCSusingStructureCheckBox);
 
 		//Generowanie zbiorów
