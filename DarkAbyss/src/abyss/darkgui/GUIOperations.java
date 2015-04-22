@@ -271,7 +271,6 @@ public class GUIOperations {
 		if(Tools.overwriteDecision(selectedFile) == false)
 			return false;
 		
-		
 		String extension = Tools.lastExtension;
 		if(extension == null || extension.equals("")) {
 			JOptionPane.showMessageDialog(null, "File choosing error. Cannot proceed.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -329,8 +328,9 @@ public class GUIOperations {
 			return;
 		
 		File file = new File(selectedFile);
-		if(!file.exists())
+		if(!file.exists()) {
 			return;
+		}
 
 		PetriNet project = overlord.getWorkspace().getProject();
 		boolean status = project.loadInvariantsFromFile(file.getPath());
