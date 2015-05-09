@@ -53,8 +53,8 @@ public class AbyssKnockout extends JFrame {
 	private JScrollPane scroller;
 	private MauritiusMapBT mmCurrentObject;
 	
-	private ArrayList<Integer> knockOutDataFailed = null;
-	private ArrayList<Integer> knockOutDataObjR = null;
+	private ArrayList<Integer> disabledSetByObjR = null;
+	private ArrayList<Integer> commonSetToObjR = null;
 	
 	/**
 	 * Konstruktor obiektu klasy AbyssKnockout
@@ -198,6 +198,21 @@ public class AbyssKnockout extends JFrame {
 		toNetKnockoutButton.setFocusPainted(false);
 		panel.add(toNetKnockoutButton);
 		
+		JButton fullDataKnockoutButton = new JButton("Net stats");
+		fullDataKnockoutButton.setBounds(posX+360, posY+30, 110, 30);
+		fullDataKnockoutButton.setMargin(new Insets(0, 0, 0, 0));
+		fullDataKnockoutButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/sendToNet.png"));
+		fullDataKnockoutButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+
+				AbyssNotepad notePad = new AbyssNotepad(900,600);
+				notePad.setVisible(true);
+				getKnockoutFullInfo(notePad);
+			}
+		});
+		fullDataKnockoutButton.setFocusPainted(false);
+		panel.add(fullDataKnockoutButton);
+		
 		JCheckBox shortTextCheckBox = new JCheckBox("Show full names");
 		shortTextCheckBox.setBounds(posX+490, posY, 130, 20);
 		shortTextCheckBox.addActionListener(new ActionListener() {
@@ -259,20 +274,54 @@ public class AbyssKnockout extends JFrame {
 		
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		
-		notePad.addTextLineNL("Reaction knocked out: "+infoMap.getRoot().transName, "text");
+		notePad.addTextLineNL("Objective reaction (knock-out reaction): "+infoMap.getRoot().transName, "text");
 		notePad.addTextLineNL("", "text");
-		notePad.addTextLineNL("Reaction common maximum set: ", "text");
+		notePad.addTextLineNL("Reactions knocked out: ", "text");
 		Collections.sort(dataMatrix.get(0));
 		for(int element : dataMatrix.get(0)) {
-			notePad.addTextLineNL("["+element+"] : "+transitions.get(element).getName(), "text");
+			notePad.addTextLineNL("[t_"+element+"] : "+transitions.get(element).getName(), "text");
 		}
 		notePad.addTextLineNL("", "text");
-		notePad.addTextLineNL("Chain reaction fail cascade: ", "text");
+		notePad.addTextLineNL("Common-frequency reactions: ", "text");
 		
 		Collections.sort(dataMatrix.get(1));
 		for(int element : dataMatrix.get(1)) {
-			notePad.addTextLineNL("["+element+"] : "+transitions.get(element).getName(), "text");
+			notePad.addTextLineNL("[t_"+element+"] : "+transitions.get(element).getName(), "text");
 		}
+		//knockOutData
+	}
+	
+	//TODO:
+	protected void getKnockoutFullInfo(AbyssNotepad notePad) {
+		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+		if(invariants == null || invariants.size() < 1) {
+			JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
+					"Warning", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		int transNumber = transitions.size();
+		ArrayList<Integer> transFailDependency = new ArrayList<Integer>();
+		ArrayList<Integer> transCommonSetSize = new ArrayList<Integer>();
+		
+		//oblicz wszystkie:
+		for(int t=0; t<transNumber; t++) {
+			MauritiusMapBT mm = new MauritiusMapBT(invariants, t);
+			ArrayList<ArrayList<Integer>> dataMatrix = collectMapData(mm);
+			transFailDependency.add(dataMatrix.get(0).size());
+			transCommonSetSize.add(dataMatrix.get(1).size());
+		}
+
+
+		notePad.addTextLineNL("Data collected for "+transNumber+ "transitions.", "text");
+		notePad.addTextLineNL("", "text");
+		
+		for(int t=0; t<transNumber; t++) {
+			notePad.addTextLine("[t_"+t+ "]|"+transitions.get(t).getName()+":", "text");
+			notePad.addTextLineNL("| Knocked-out: "+transFailDependency.get(t)+ 
+					"| Common: "+transCommonSetSize.get(t), "text");
+		}
+		
 		//knockOutData
 	}
 	
@@ -286,11 +335,11 @@ public class AbyssKnockout extends JFrame {
 
 			Transition trans_TMP;// = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(0);
 			
-			for(int id : dataMatrix.get(0)) {
+			for(int id : dataMatrix.get(0)) { //wyłączane przez objR
 				trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(id);
 				trans_TMP.setColorWithNumber(true, Color.black, false, -1, false, "");
 			}
-			for(int id : dataMatrix.get(1)) {
+			for(int id : dataMatrix.get(1)) { //równorzędne do objR
 				trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(id);
 				trans_TMP.setColorWithNumber(true, Color.blue, false, -1, false, "");
 			}
@@ -308,27 +357,27 @@ public class AbyssKnockout extends JFrame {
 	/**
 	 * Metoda uruchamia przeglądanie mapy a następnie agreguje wynik do obiektu wyjściowego.
 	 * @param infoMap MauritiusMapBT - obiekt mapu
-	 * @return ArrayList[ArrayList[Integer]] - pierszy zbiór .get(0) to reakcje zależne od objR, drugi zbiór .get(1)
-	 * 		to reakcje o tej samej frekwencji co objR
+	 * @return ArrayList[ArrayList[Integer]] - pierszy zbiór (.get(0) = disabledSetByObjR) to reakcje wyłączane
+	 *  przez objR, drugi zbiór (.get(1) = commonSetToObjR) to reakcje o tej samej frekwencji co objR.
 	 */
 	private ArrayList<ArrayList<Integer>> collectMapData(MauritiusMapBT infoMap) {
 		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
 		
 		int noteValue = infoMap.getRoot().transFrequency;
-		knockOutDataFailed = new ArrayList<Integer>();
-		knockOutDataObjR = new ArrayList<Integer>();
+		disabledSetByObjR = new ArrayList<Integer>();
+		commonSetToObjR = new ArrayList<Integer>();
 		collectInfo(infoMap.getRoot(), noteValue);
 		
-		ArrayList<Integer> set1 = new ArrayList<Integer>(knockOutDataFailed);
-		ArrayList<Integer> set2 = new ArrayList<Integer>(knockOutDataObjR);
-		result.add(set1);
-		result.add(set2);
+		result.add(new ArrayList<Integer>(disabledSetByObjR));
+		result.add(new ArrayList<Integer>(commonSetToObjR));
 		return result;
 	}
 
 	/**
 	 * Rekurencyjna metoda przeszukująca mapę i tworząca zbiory reakcji zależnych i niezależnych od
-	 * objR (korzeń drzewa)
+	 * objR (korzeń drzewa). Zwraca wynik w formie wektorów globalnych commonSetToObjR (tranzycje o
+	 * identycznej liczności co objR) oraz disabledSetByObjR - tranzycje wyłączane przez te ze zbioru
+	 * commonSetToObjR.
 	 * @param node BTNode - węzeł drzewa
 	 * @param startSetValue int - frequency dla objR
 	 */
@@ -336,12 +385,12 @@ public class AbyssKnockout extends JFrame {
 		int freq = node.transFrequency;
 		int transID = node.transLocation;
 		if(freq == startSetValue) {
-			if(knockOutDataObjR.contains(transID) == false) {
-				knockOutDataObjR.add(transID);
+			if(commonSetToObjR.contains(transID) == false) {
+				commonSetToObjR.add(transID);
 			}
 		} else {
-			if(knockOutDataFailed.contains(transID) == false) {
-				knockOutDataFailed.add(transID);
+			if(disabledSetByObjR.contains(transID) == false) {
+				disabledSetByObjR.add(transID);
 			}
 		}
 		
