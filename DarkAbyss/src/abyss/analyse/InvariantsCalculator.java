@@ -76,6 +76,7 @@ public class InvariantsCalculator implements Runnable {
 	/**
 	 * Metoda wirtualna - nadpisana, odpowiada za działanie w niezależnym wątku
 	 */
+	@SuppressWarnings("unused")
 	public void run() {
 		try {
 			logInternal("Invariant calculations started.\n", true);
@@ -112,6 +113,9 @@ public class InvariantsCalculator implements Runnable {
 				this.createPTIncidenceAndIdentityMatrix(false);
 				this.calculateInvariants();
 				
+				ArrayList<ArrayList<Integer>> pInv = getInvariants();
+				
+				int x =1;
 				//TODO:
 				
 				
@@ -132,6 +136,7 @@ public class InvariantsCalculator implements Runnable {
 		this.createTPIncidenceAndIdentityMatrix(true);
 		return CMatrix;
 	}
+	
 
 	/**
 	 * Metoda tworząca macierze: incydencji i jednostkową dla modelu szukania T-inwariantów
@@ -256,72 +261,16 @@ public class InvariantsCalculator implements Runnable {
 	 * @param silence boolean - true, jeśli nie ma wypisywać komunikatów
 	 */
 	public void createPTIncidenceAndIdentityMatrix(boolean silence) {
-		globalIncidenceMatrix = new ArrayList<ArrayList<Integer>>();
-		globalIdentityMatrix = new ArrayList<ArrayList<Integer>>();
-		CMatrix = new ArrayList<ArrayList<Integer>>();
+		createTPIncidenceAndIdentityMatrix(false);
+		
+		globalIncidenceMatrix = InvariantsTools.transposeMatrix(globalIdentityMatrix);
+		globalIdentityMatrix = InvariantsTools.transposeMatrix(globalIdentityMatrix);
+		CMatrix = InvariantsTools.transposeMatrix(CMatrix);
+		
 		removalList = new ArrayList<Integer>();
 		doubleArcs = new ArrayList<ArrayList<Integer>>();
 
-		//tworzenie macierzy PT - precyzyjnie do obliczeń P-inwariantów
-		for (int place = 0; place < places.size(); place++) {
-			ArrayList<Integer> placesRow = new ArrayList<Integer>();
-			ArrayList<Integer> placesRow2 = new ArrayList<Integer>();
-			for (int trans = 0; trans < transitions.size(); trans++) {
-				placesRow.add(0);
-				placesRow2.add(0);
-			}
-			globalIncidenceMatrix.add(placesRow);
-			CMatrix.add(placesRow2);
-		}
 		
-		//wypełnianie macierzy incydencji
-		for (Arc oneArc : arcs) {
-			int tPosition = 0;
-			int pPosition = 0;
-			int incidenceValue = 0;
-			
-			if(oneArc.getArcType() != TypesOfArcs.NORMAL) {
-				continue;
-			}
-
-			if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION
-					|| oneArc.getStartNode().getType() == PetriNetElementType.TIMETRANSITION) {
-				tPosition = transitions.indexOf(oneArc.getStartNode());
-				pPosition = places.indexOf(oneArc.getEndNode());
-				incidenceValue = 1 * oneArc.getWeight();			
-			} else { //miejsca
-				tPosition = transitions.indexOf(oneArc.getEndNode());
-				pPosition = places.indexOf(oneArc.getStartNode());
-				incidenceValue = -1 * oneArc.getWeight();
-			}
-			int oldValue = globalIncidenceMatrix.get(tPosition).get(pPosition);
-			if(oldValue != 0) {
-				@SuppressWarnings("unused")
-				int x=1;
-				ArrayList<Integer> hiddenReadArc = new ArrayList<Integer>();
-				hiddenReadArc.add(pPosition);
-				hiddenReadArc.add(tPosition);
-				doubleArcs.add(hiddenReadArc);
-			}
-			
-			globalIncidenceMatrix.get(pPosition).set(tPosition, oldValue+incidenceValue);
-			CMatrix.get(pPosition).set(tPosition, oldValue+incidenceValue);
-		}
-		
-		if(!silence)
-			logInternal("\nPT-class incidence matrix created for "+transitions.size()+" transitions and "+places.size()+" places.\n", false);
-		
-		//macierz jednostkowa
-		for (int place = 0; place < places.size(); place++) {
-			ArrayList<Integer> identRow = new ArrayList<Integer>();
-			for (int place2 = 0; place2 < places.size(); place2++) {
-				if (place == place2) 
-					identRow.add(1);
-				else
-					identRow.add(0);
-			}
-			globalIdentityMatrix.add(identRow);
-		}
 		
 		INC_MATRIX_ROW_SIZE = globalIncidenceMatrix.get(0).size();
 		IDENT_MATRIX_ROW_SIZE = places.size();

@@ -128,7 +128,16 @@ public class AbyssInvariants extends JFrame {
 						myThread.start();
 					}
 				} else {
-					JOptionPane.showMessageDialog(ego, "Not implementet yet! Sorry!", "Warning", JOptionPane.INFORMATION_MESSAGE);
+					//JOptionPane.showMessageDialog(ego, "Not implementet yet! Sorry!", "Warning", JOptionPane.INFORMATION_MESSAGE);
+					if(isGeneratorWorking == true) {
+						JOptionPane.showMessageDialog(null, "Invariants generation already in progress.", 
+								"Generator working",JOptionPane.WARNING_MESSAGE);
+					} else {
+						setGeneratorStatus(true);
+						invGenerator = new InvariantsCalculator(false);
+						Thread myThread = new Thread(invGenerator);
+						myThread.start();
+					}
 				}
 			}
 		});
