@@ -89,6 +89,8 @@ public class MauritiusMapPanel extends JPanel {
     		int loc = node.transLocation;
     		name = "t_"+loc;
     	}
+    	//TODO:
+    	
     	//rysowanie okręgu i tekstów:
     	drawCenteredCircle(g2d, x, y, 40, Color.darkGray);
     	drawRotatedText(g2d, x+15, y-15, -8, name);

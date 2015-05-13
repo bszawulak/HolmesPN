@@ -2,8 +2,10 @@ package abyss.math;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import abyss.analyse.InvariantsTools;
+import abyss.analyse.MCTCalculator;
 import abyss.darkgui.GUIManager;
 
 /**
@@ -20,6 +22,7 @@ import abyss.darkgui.GUIManager;
 public class MauritiusMapBT {
 	BTNode root = null;
 	ArrayList<Transition> transitions = null;
+	ArrayList<String> transMCTNames = null;
 	boolean testMode = false;
 	
 	ArrayList<String> transitionsS = null;
@@ -33,6 +36,8 @@ public class MauritiusMapBT {
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		ArrayList<ArrayList<Integer>> subInvariants = InvariantsTools.returnInvWithTransition(invariants, rootTransition);
 		
+		transMCTNames = getMCTNamesVector();
+		
 		createMTree(subInvariants, rootTransition, root);
 	}
 	
@@ -41,7 +46,87 @@ public class MauritiusMapBT {
 		root.type = NodeType.ROOT;
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		
+		//tu wstaw MCT
+		transMCTNames = getMCTNamesVector();
+		
 		createMTree(invariants, -1, root);
+	}
+	
+	/**
+	 * Metoda tworzy znormalizowane nazwy tranzycji z uwzględnieniem ich obecności w zbiorach MCT
+	 * @return ArrayList[String] - wektor nazw tranzycji
+	 */
+	private ArrayList<String> getMCTNamesVector() {
+		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
+		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
+		ArrayList<String> resultNames = new ArrayList<String>();
+		
+		for(Transition t : transitions) {
+			resultNames.add(t.getName());
+		}
+		
+		if(mct.size() == 0) {
+			return resultNames;
+		} else {
+			mct = getSortedMCT(mct);
+			int mctNo = 0;
+			for(ArrayList<Transition> arr : mct) {
+				mctNo++;
+				for(Transition t : arr) {
+					int id = transitions.indexOf(t);
+					String name = t.getName() + "_MCT"+mctNo;
+					resultNames.set(id, name);
+				}
+			}
+			return resultNames;
+		}
+	}
+	
+	/**
+	 * Metoda usuwa trywialne MCT oraz ustawia ich macierz w kolejności malejacej liczności zbiorów
+	 * @param mctGroups ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
+	 * @return ArrayList[ArrayList[Transition]] - posortowana, przycięta macierz MCT (bez trywialnych)
+	 */
+	@SuppressWarnings("unchecked")
+	private ArrayList<ArrayList<Transition>> getSortedMCT(ArrayList<ArrayList<Transition>> mctGroups) {
+		//ogranicz MCT do nietrywialnych
+		ArrayList<Transition> unused = new ArrayList<Transition>();
+		for(int i=0; i<mctGroups.size(); i++) {
+			ArrayList<Transition> mctRow = mctGroups.get(i);
+			if(mctRow.size()==1) {
+				unused.add(mctRow.get(0));
+				mctGroups.set(i, null);
+			}
+		}
+		for(int i=0; i<mctGroups.size(); i++) {
+			ArrayList<Transition> mctRow = mctGroups.get(i);
+			if(mctRow == null) {
+				mctGroups.remove(i);
+				i--;
+			}
+		}
+		Object [] temp = mctGroups.toArray();
+		Arrays.sort(temp, new Comparator<Object>() {
+			public int compare(Object o1, Object o2) {
+		        ArrayList<Transition> temp1 = (ArrayList<Transition>)o1;
+		        ArrayList<Transition> temp2 = (ArrayList<Transition>)o2;
+
+		        if(temp1.size() > temp2.size())
+		        	return -1;
+		        else if(temp1.size() == temp2.size()) {
+		        	return 0;
+		        } else
+		        	return 1;
+		    }
+		});
+		
+		mctGroups.clear();
+		for(Object o: temp) {
+			mctGroups.add((ArrayList<Transition>)o);
+		}
+		//mctGroups.add(unused); //dodaj wszystkie pojedzyncze tranzycje w jeden 'mct'
+		
+		return mctGroups;
 	}
 	
 	/**
@@ -112,13 +197,19 @@ public class MauritiusMapBT {
 			// brak inwariantów bez tranzycji maxTransition: węzeł typu Data
 			// czyli: brak lewego podrzewa
 			
-			if(testMode == false)
-				currentNode.transName = transitions.get(maxTransition).getName();
-			else
+			if(testMode == false) {
+				//currentNode.transName = transitions.get(maxTransition).getName();
+				currentNode.transName = transMCTNames.get(maxTransition);
+			} else
 				currentNode.transName = transitionsS.get(maxTransition);
 			
 			currentNode.transLocation = maxTransition;
 			currentNode.transFrequency = rightInvariants.size();
+			
+			if(currentNode.transFrequency == 0) {
+				int x = 1;
+			}
+			
 			currentNode.othersFrequency = leftInvariants.size();
 			currentNode.leftChild = null;
 			if(howManyLeft > 1) {
@@ -143,9 +234,10 @@ public class MauritiusMapBT {
 			if(currentNode.type != NodeType.ROOT) //ale nie root
 				currentNode.type = NodeType.BRANCH;
 			
-			if(testMode == false)
-				currentNode.transName = transitions.get(maxTransition).getName();
-			else
+			if(testMode == false) {
+				//currentNode.transName = transitions.get(maxTransition).getName();
+				currentNode.transName = transMCTNames.get(maxTransition);
+			} else
 				currentNode.transName = transitionsS.get(maxTransition);
 			
 			currentNode.transLocation = maxTransition;
