@@ -33,7 +33,8 @@ public class InvariantsCalculator implements Runnable {
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
 	private ArrayList<Place> places = new ArrayList<Place>();
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
-	private ArrayList<ArrayList<Integer>> invariantsList = new ArrayList<ArrayList<Integer>>();
+	private ArrayList<ArrayList<Integer>> t_invariantsList = new ArrayList<ArrayList<Integer>>();
+	private ArrayList<ArrayList<Integer>> p_invariantsList = new ArrayList<ArrayList<Integer>>();
 
 	private ArrayList<ArrayList<Integer>> globalIncidenceMatrix; //aktualna macierz przekształceń liniowych
 	private ArrayList<Integer> GLOBAL_INC_VECTOR;
@@ -86,11 +87,11 @@ public class InvariantsCalculator implements Runnable {
 				this.calculateInvariants();
 				
 				PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-				GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants());
-				project.setInvariantsMatrix(getInvariants());
+				GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants(true));
+				project.setInvariantsMatrix(getInvariants(true));
 				GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
 				GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetInvData();
-				logInternal("Operation successfull, invariants found: "+getInvariants().size()+"\n", true);
+				logInternal("Operation successfull, invariants found: "+getInvariants(true).size()+"\n", true);
 				
 				ArrayList<Integer> arcClasses =  Check.getArcClassCount();
 				if(arcClasses.get(1) > 0) {
@@ -113,7 +114,7 @@ public class InvariantsCalculator implements Runnable {
 				this.createPTIncidenceAndIdentityMatrix(false);
 				this.calculateInvariants();
 				
-				ArrayList<ArrayList<Integer>> pInv = getInvariants();
+				ArrayList<ArrayList<Integer>> pInv = getInvariants(false);
 				
 				int x =1;
 				//TODO:
@@ -216,9 +217,7 @@ public class InvariantsCalculator implements Runnable {
 				}
 			}
 			int oldValue = globalIncidenceMatrix.get(tPosition).get(pPosition);
-			if(oldValue != 0) {
-				@SuppressWarnings("unused")
-				int x=1;
+			if(oldValue != 0) { //detekcja łuków podwójnych
 				ArrayList<Integer> hiddenReadArc = new ArrayList<Integer>();
 				hiddenReadArc.add(pPosition);
 				hiddenReadArc.add(tPosition);
@@ -261,18 +260,89 @@ public class InvariantsCalculator implements Runnable {
 	 * @param silence boolean - true, jeśli nie ma wypisywać komunikatów
 	 */
 	public void createPTIncidenceAndIdentityMatrix(boolean silence) {
-		createTPIncidenceAndIdentityMatrix(false);
+		//hashmapy do ustalania lokalizacji miejsca/tranzycji. Równie dobrze 
+		//działałoby (niżej, gdy są używane): np. places.indexOf(...)
+		HashMap<Place, Integer> placesMap = new HashMap<Place, Integer>();
+		HashMap<Transition, Integer> transitionsMap = new HashMap<Transition, Integer>();
+		for (int i = 0; i < places.size(); i++) {
+			placesMap.put(places.get(i), i);
+		}
+		for (int i = 0; i < transitions.size(); i++) {
+			transitionsMap.put(transitions.get(i), i);
+		}
 		
-		globalIncidenceMatrix = InvariantsTools.transposeMatrix(globalIdentityMatrix);
-		globalIdentityMatrix = InvariantsTools.transposeMatrix(globalIdentityMatrix);
-		CMatrix = InvariantsTools.transposeMatrix(CMatrix);
-		
+		globalIncidenceMatrix = new ArrayList<ArrayList<Integer>>();
+		CMatrix = new ArrayList<ArrayList<Integer>>();
 		removalList = new ArrayList<Integer>();
 		doubleArcs = new ArrayList<ArrayList<Integer>>();
+		
+		//tworzenie macierzy TP - precyzyjnie do obliczeń T-inwariantów
+		for (int trans = 0; trans < transitions.size(); trans++) {
+			ArrayList<Integer> transRow = new ArrayList<Integer>();
+			ArrayList<Integer> transRow2 = new ArrayList<Integer>();
+			for (int place = 0; place < places.size(); place++) {
+				transRow.add(0);
+				transRow2.add(0);
+			}
+			globalIncidenceMatrix.add(transRow);
+			CMatrix.add(transRow2);
+		}
+		//wypełnianie macierzy incydencji
+		for (Arc oneArc : arcs) {
+			int tPosition = 0;
+			int pPosition = 0;
+			int incidenceValue = 0;
+			
+			if(oneArc.getArcType() != TypesOfArcs.NORMAL) {
+				continue;
+			}
 
+			if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION
+					|| oneArc.getStartNode().getType() == PetriNetElementType.TIMETRANSITION) {
+				tPosition = transitionsMap.get(oneArc.getStartNode());
+				pPosition = placesMap.get(oneArc.getEndNode());
+				incidenceValue = 1 * oneArc.getWeight();
+			} else { //miejsca
+				tPosition = transitionsMap.get(oneArc.getEndNode());
+				pPosition = placesMap.get(oneArc.getStartNode());
+				incidenceValue = -1 * oneArc.getWeight();
+			}
+			int oldValue = globalIncidenceMatrix.get(tPosition).get(pPosition);
+			if(oldValue != 0) { //detekcja łuków podwójnych
+				ArrayList<Integer> hiddenReadArc = new ArrayList<Integer>();
+				hiddenReadArc.add(pPosition);
+				hiddenReadArc.add(tPosition);
+				doubleArcs.add(hiddenReadArc);
+			}
+			
+			globalIncidenceMatrix.get(tPosition).set(pPosition, oldValue+incidenceValue);
+			CMatrix.get(tPosition).set(pPosition, oldValue+incidenceValue);
+		}
 		
+		globalIncidenceMatrix = InvariantsTools.transposeMatrix(globalIncidenceMatrix);
+		CMatrix = InvariantsTools.transposeMatrix(CMatrix);
 		
-		INC_MATRIX_ROW_SIZE = globalIncidenceMatrix.get(0).size();
+		if(!silence)
+			logInternal("\nPT-class incidence matrix created for "+transitions.size()+" transitions and "+places.size()+" places.\n", false);
+		
+		//globalIdentityMatrix = InvariantsTools.transposeMatrix(globalIdentityMatrix);
+		//macierz jednostkowa
+		
+		globalIdentityMatrix = new ArrayList<ArrayList<Integer>>();
+
+		for (int p = 0; p < places.size(); p++) {
+			ArrayList<Integer> identRow = new ArrayList<Integer>();
+			for (int p2 = 0; p2 < places.size(); p2++) {
+				if (p == p2) 
+					identRow.add(1);
+				else
+					identRow.add(0);
+			}
+			globalIdentityMatrix.add(identRow);
+		}
+
+		INC_MATRIX_ROW_SIZE = globalIncidenceMatrix.get(0).size(); //liczba miejsc dla liczenia t-inv, lub
+		//liczba tranzycji dla liczenia p-inv
 		IDENT_MATRIX_ROW_SIZE = places.size();
 		GLOBAL_INC_VECTOR = new ArrayList<Integer>();
 		for (int i = 0; i < INC_MATRIX_ROW_SIZE; i++)
@@ -296,13 +366,13 @@ public class InvariantsCalculator implements Runnable {
 			nonZeroColumnVector.add(p);
 		}
 		
-		for (int p = 0; p < columnsNumber; p++) {
-			if (isSimplePlace(globalIncidenceMatrix, p) == true) { // wystepuje tylko jedno wejście i wyjście
-				logInternal("Processing simple-class column: "+p+"\n", false);
-				generatedRows = findNewRows(p); // na bazie globalIncidenceMatrix i Identity
-				rewriteIncidenceIntegrityMatrices(generatedRows, p);
-				zeroColumnVector.add(p);
-				int vIndex = nonZeroColumnVector.indexOf(p);
+		for (int col = 0; col < columnsNumber; col++) { //col = miejsce dla T-inv, tranz. dla P-inv
+			if (isSimpleColumn(globalIncidenceMatrix, col) == true) { // wystepuje tylko jedno wejście i wyjście
+				logInternal("Processing simple-class column: "+col+"\n", false);
+				generatedRows = findNewRows(col); // na bazie globalIncidenceMatrix i Identity
+				rewriteIncidenceIntegrityMatrices(generatedRows, col);
+				zeroColumnVector.add(col);
+				int vIndex = nonZeroColumnVector.indexOf(col);
 				nonZeroColumnVector.remove(vIndex);
 			}
 		}
@@ -311,7 +381,6 @@ public class InvariantsCalculator implements Runnable {
 		while(nonZeroColumnVector.size() != 0) {
 			//generatedRows.clear(); //wyczyść macierz przekształceń
 			int stepsToFinish = nonZeroColumnVector.size();
-			
 			int[] res = chooseNextColumn();
 			int cand = res[0];
 			int rowsChange = res[1];
@@ -334,19 +403,22 @@ public class InvariantsCalculator implements Runnable {
 	}
 
 	/**
-	 * Metoda pomocnicza I fazy obliczeń: sprawdza, czy dane miejsce ma tylko 1 tranzycję wejściową
-	 * i tylko 1 wyjściową. Albo czy w ogóle ma.
+	 * Metoda pomocnicza I fazy obliczeń: sprawdza, czy dana miejsce ma tylko 1 tranzycję wejściową
+	 * i tylko 1 wyjściową w danej kolumnie (albo czy w ogóle ma) - dla obliczenia t-inv.<br>
+	 * Z kolei dla obliczeń p-inv, kolumny to tranzycje, tak więc sprawdza kombinacje po miejsach (wierszach)
 	 * @param incidenceMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
-	 * @param place int - indeks miejsca
-	 * @return boolean - true, jeśli dane miejsce ma tylko 1 tranzycję IN i 1 OUT
+	 * @param column int - indeks kolumny
+	 * @return boolean - true, jeśli dana kolumna ma tylko 1 wiersz '+' i 1 wiersz '-' - tj. nawzajem się znoszą
 	 */
-	private boolean isSimplePlace(ArrayList<ArrayList<Integer>> incidenceMatrix, int place) {
+	private boolean isSimpleColumn(ArrayList<ArrayList<Integer>> incidenceMatrix, int column) {
 		int input = 0;
 		int output = 0;
-		for (int t = 0; t < incidenceMatrix.size(); t++) {
-			if (incidenceMatrix.get(t).get(place) > 0)
+		for (int row = 0; row < incidenceMatrix.size(); row++) {
+			//dla t-inv row to tranzycje, dla p-inv row to odpowiednie miejsce
+			if (incidenceMatrix.get(row).get(column) > 0)
 				input++;
-			if (incidenceMatrix.get(t).get(place) < 0)
+			
+			if (incidenceMatrix.get(row).get(column) < 0)
 				output++;
 			
 			if(input == 2 || output == 2)
@@ -355,14 +427,14 @@ public class InvariantsCalculator implements Runnable {
 		
 		if(input == 0 && output == 0) { 
 			//cykl T1->P1->T2->P2->T1 (zamiast łuku odczytu) powoduje takie cuda w tej fazie - następuje zerowanie 2 kolumn
-			//za pomocą jednego przekształcenia liniowego
+			//za pomocą jednego przekształcenia liniowego (opis dla t-inv)
 			return true;
 		}
 		
 		if (input == 1 && output == 1)
-			return true;
+			return true; //prosta kolumna
 		else
-			return false;
+			return false; //więcej niż 1 wiersz + i -
 	}
 
 	/**
@@ -384,21 +456,21 @@ public class InvariantsCalculator implements Runnable {
 		int nonZeroColSize = nonZeroColumnVector.size();
 		
 		for(int i=0; i<nonZeroColSize; i++) {
-			int p = nonZeroColumnVector.get(i);
+			int col = nonZeroColumnVector.get(i);
 			posCounter = 0;
 			negCounter = 0;
-			for(int t=0; t<rowSize; t++) {
-				if(globalIncidenceMatrix.get(t).get(p) > 0) {
+			for(int row=0; row<rowSize; row++) {//t-inv: tranzycje, p-inv: miejsca
+				if(globalIncidenceMatrix.get(row).get(col) > 0) {
 					posCounter++;
 				}
-				if(globalIncidenceMatrix.get(t).get(p) < 0) {
+				if(globalIncidenceMatrix.get(row).get(col) < 0) {
 					negCounter++;
 				}
 			}
 			int growthFactor = (posCounter*negCounter)-(posCounter+negCounter);
 			if(growthFactor < 0) {
 				int[] res = new int[4];
-				res[0] = p;
+				res[0] = col;
 				res[1] = growthFactor;
 				res[2] = posCounter;
 				res[3] = negCounter;
@@ -433,43 +505,44 @@ public class InvariantsCalculator implements Runnable {
 
 	/**
 	 * Metoda ta zwraca macierz z informacjami o przekształceniach par wektorów miejsc.
-	 * @param placeIndex int - numer miejsca do przetworzenia dla wszystkich tranzycji
+	 * @param columnIndex int - dla t-inv jest to numer miejsca do przetworzenia dla wszystkich tranzycji, dla
+	 *  p-inv jest to numer tranzycji (kolumny) do przetworzenia po wszystkich miejsach (wierszach)
 	 * @return ArrayList[ArrayList[Integer]] - macierz przekształceń liniowych par wektorów
 	 */
-	private ArrayList<ArrayList<Integer>> findNewRows(int placeIndex) {
+	private ArrayList<ArrayList<Integer>> findNewRows(int columnIndex) {
 		int sizeM = globalIncidenceMatrix.size();
 		ArrayList<ArrayList<Integer>> newRows = new ArrayList<ArrayList<Integer>>();
-		for (int t1 = 0; t1 < sizeM; t1++) {
-			int val1 = globalIncidenceMatrix.get(t1).get(placeIndex);
+		for (int row1 = 0; row1 < sizeM; row1++) {
+			int val1 = globalIncidenceMatrix.get(row1).get(columnIndex);
 			if (val1 == 0) 
 				continue;
 			
 			int l1 = bezwzgledna(val1);
 			
-			for (int t2 = t1; t2 < sizeM; t2++) {
-				int val2 = globalIncidenceMatrix.get(t2).get(placeIndex);
+			for (int row2 = row1; row2 < sizeM; row2++) {
+				int val2 = globalIncidenceMatrix.get(row2).get(columnIndex);
 				if (val2 == 0) 
 					continue;
 				
-				if (t2 != t1) { //hmmm, to po co na górze t2=t1???
+				if (row2 != row1) { //hmmm, to po co na górze t2=t1???
 					if ((val1 > 0 && val2 < 0) || (val1 < 0 && val2 > 0)) {
 						
 						int l2 = bezwzgledna(val2);
 						
 						int nww = (l1 * l2) / nwd(l1, l2); //najmniejsza wspólna wielokrotność
 						ArrayList<Integer> rowsTransformation = new ArrayList<Integer>();
-						rowsTransformation.add(t1);
-						rowsTransformation.add(t2);
+						rowsTransformation.add(row1);
+						rowsTransformation.add(row2);
 						rowsTransformation.add(nww / l1);
 						rowsTransformation.add(nww / l2);
-						rowsTransformation.add(placeIndex);
+						rowsTransformation.add(columnIndex);
 						newRows.add(rowsTransformation);
 						
 						//niczego jeszcze nie usuwaj, dodaj indeksy składowych do zbioru usunięć
-						if(removalList.contains(t1) == false)
-							removalList.add(t1);
-						if(removalList.contains(t2) == false)
-							removalList.add(t2);
+						if(removalList.contains(row1) == false)
+							removalList.add(row1);
+						if(removalList.contains(row2) == false)
+							removalList.add(row2);
 					}
 				}
 			}
@@ -484,24 +557,24 @@ public class InvariantsCalculator implements Runnable {
 	 */
 	private void addNewRowsToMatrix(ArrayList<Integer> newRowData) {
 		ArrayList<Integer> incMatrixNewRow = new ArrayList<Integer>(GLOBAL_INC_VECTOR);
-		int t1 = newRowData.get(0);
-		int t2 = newRowData.get(1);
+		int row1 = newRowData.get(0);
+		int row2 = newRowData.get(1);
 		int multFactorT1 = newRowData.get(2);
 		int multFactorT2 = newRowData.get(3);
 		
 		for(int validIndex : nonZeroColumnVector) {
-			int value = (globalIncidenceMatrix.get(t1).get(validIndex) * multFactorT1) + 
-					(globalIncidenceMatrix.get(t2).get(validIndex) * multFactorT2);
+			int value = (globalIncidenceMatrix.get(row1).get(validIndex) * multFactorT1) + 
+					(globalIncidenceMatrix.get(row2).get(validIndex) * multFactorT2);
 			incMatrixNewRow.set(validIndex, value);
 		}
 
 		ArrayList<Integer> invCandidate = new ArrayList<Integer>();
 		for (int b = 0; b < IDENT_MATRIX_ROW_SIZE; b++) {	
-			invCandidate.add((globalIdentityMatrix.get(t1).get(b) * multFactorT1) + 
-					(globalIdentityMatrix.get(t2).get(b) * multFactorT2));
+			invCandidate.add((globalIdentityMatrix.get(row1).get(b) * multFactorT1) + 
+					(globalIdentityMatrix.get(row2).get(b) * multFactorT2));
 		}
 		
-		addOrNot(incMatrixNewRow, invCandidate, t1, t2);
+		addOrNot(incMatrixNewRow, invCandidate, row1, row2);
 	}
 	
 	/**
@@ -542,9 +615,7 @@ public class InvariantsCalculator implements Runnable {
 		boolean fmtResult = fastMinimalityTest(invCandidate, candidateSupport);
 		
 		//boolean fmtResult = true; //nadmiarowy
-		
-		//if(candidateSupport.size() > zeroColumnVectorP.size()+2)
-		//	fmtResult = false;
+		//if(candidateSupport.size() > zeroColumnVector.size()+2) fmtResult = false;
 		
 		//if(candidateSupport.size() > aac+2)
 		//	fmtResult = false;
@@ -631,7 +702,7 @@ public class InvariantsCalculator implements Runnable {
 					//JAKIM CUDEM? zupełnie nie pasuje, ale jest mniejszy od znalezionego w macierzy?!
 				}
 
-				return removeList; //TODO: a co gdyby kontynuować szukanie dalej? A: nic ciekawego, tylko dłużej
+				return removeList; //Q:a co gdyby kontynuować szukanie dalej? A: nic ciekawego, tylko dłużej
 			} else if(result == 2) { //jest lepszy od testowanego referencyjnego - referencyjny do wywalenia
 				successCounter++;
 				oldReplaced ++;		//mamy kandydata do usunięcia z macierzy i zastąpienia aktualnym! zapamiętać vector
@@ -742,9 +813,9 @@ public class InvariantsCalculator implements Runnable {
 	 * Metoda odpowiedzialna za dodawanie i usuwanie wierszy w wyniku wykonywania wygenerowanych przekształceń
 	 * liniowych wektorów zawartych w newRowsMatrix.
 	 * @param newRowsMatrix ArrayList[ArrayList[Integer]] - macierz informacji o przekształceniach
-	 * @param placeIndex int - nr kolumny zerowanej
+	 * @param columnIndex int - nr kolumny zerowanej, jest to miejsce dla t-inv lub tranzycja dla p-inv
 	 */
-	private void rewriteIncidenceIntegrityMatrices(ArrayList<ArrayList<Integer>> newRowsMatrix, int placeIndex) {
+	private void rewriteIncidenceIntegrityMatrices(ArrayList<ArrayList<Integer>> newRowsMatrix, int columnIndex) {
 		if (newRowsMatrix.size() == 0) {
 			naac++;
 			return; //nothing to add;
@@ -789,7 +860,7 @@ public class InvariantsCalculator implements Runnable {
 		//usuwanie wierszy z niezerowym elementem w zerowanej kolumnie
 		int mSize = globalIncidenceMatrix.size();
 		for(int row=0; row < mSize; row++) {
-			if(globalIncidenceMatrix.get(row).get(placeIndex) != 0) {
+			if(globalIncidenceMatrix.get(row).get(columnIndex) != 0) {
 				globalIncidenceMatrix.remove(row);
 				globalIdentityMatrix.remove(row);
 				row--;
@@ -800,15 +871,20 @@ public class InvariantsCalculator implements Runnable {
 		aac++; //actively annuled columns
 	}
 	
+	/**
+	 * Szybki test minimalności.
+	 * @param invCandidate ArrayList[Integer] - wektor-inwariant
+	 * @param supports ArrayList[Integer] - wektor wsparcia
+	 * @return boolean - true, jeśli przeszedł test
+	 */
 	private boolean fastMinimalityTest(ArrayList<Integer> invCandidate, ArrayList<Integer> supports) {
 		int supportSize = supports.size();
 		int nonZeroColumn = 0;
 		int CMrowSize = CMatrix.get(0).size();
 		
-		for(int pl=0; pl<CMrowSize; pl++) {
-			for(int s : supports) { //inwarianty
-				int el = CMatrix.get(s).get(pl);
-				if(el != 0) {
+		for(int column=0; column<CMrowSize; column++) {//t-inv: miejsca, p-inv: tranzycje
+			for(int s : supports) { //inwarianty, dla t-inv są to tranzycje, dla p-inv: miejsca
+				if(CMatrix.get(s).get(column) != 0) {
 					nonZeroColumn++;
 					break;
 				}
@@ -894,10 +970,15 @@ public class InvariantsCalculator implements Runnable {
 
 	/**
 	 * Metoda zwraca macierz inwariantów.
+	 * @param tinv boolean - true jeśli zwracać ma t-inwarianty
 	 * @return ArrayList[ArrayList[Integer]] - macierz inwariantów (wiersze)
+	 * 
 	 */
-	public ArrayList<ArrayList<Integer>> getInvariants() {
-		return invariantsList;
+	public ArrayList<ArrayList<Integer>> getInvariants(boolean tinv) {
+		if(tinv)
+			return t_invariantsList;
+		else
+			return p_invariantsList;
 	}
 
 	/**
@@ -906,7 +987,9 @@ public class InvariantsCalculator implements Runnable {
 	 */
 	public void setInvariants(ArrayList<ArrayList<Integer>> invMatrix) {
 		if(transCalculation == true)
-			this.invariantsList = invMatrix;
+			this.t_invariantsList = invMatrix;
+		else
+			this.p_invariantsList = invMatrix;
 	}
 	
 	/**

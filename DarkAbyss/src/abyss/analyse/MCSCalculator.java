@@ -170,15 +170,19 @@ public class MCSCalculator implements Runnable {
     		//System.out.print("Step: "+currentStep);
     		logInternal("Calculating for set size: "+k+": ", false);
     		
+    		long currTime = System.currentTimeMillis();
+    		int oldPrecutSetsSize = precutsets.size();
+    		
             for (int j : transitions) {
-            	
-            	
+
             	if(j==27) {
             		@SuppressWarnings("unused")
             		String tName = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(j).getName();
             		@SuppressWarnings("unused")
 					int breakPoint = 1;	
             	}
+            	
+            	
             	
             	//System.out.print("*");
             	logInternal("*", false);
@@ -199,10 +203,17 @@ public class MCSCalculator implements Runnable {
             }
             logInternal("\n", false);
             
+            
             int sizePre = newPrecutsets.size();
             int sizeMCS = mcs.size();
-
+            
+            float incFactor = (float)((float)sizePre/(float)oldPrecutSetsSize);
+            long currTimeNow = System.currentTimeMillis();
+            long diffTime = currTimeNow - currTime;
+            diffTime /= 1000; //sekundy
+            
             logInternal("MCS found: "+sizeMCS+" Precutsets list size:"+sizePre+" \n", false);
+            logInternal("Precutsets increase factor: "+String.format("%.2f", incFactor)+" Last interval time: "+diffTime+" seconds.\n", false);
             
             if (newPrecutsets.isEmpty() == true || maxSetsNumber < mcs.size())
                 break;
