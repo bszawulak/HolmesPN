@@ -8,6 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -21,13 +25,17 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.filechooser.FileFilter;
 
+import abyss.analyse.MCTCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.MauritiusMapPanel;
+import abyss.math.MCSDataMatrix;
 import abyss.math.MauritiusMapBT;
 import abyss.math.MauritiusMapBT.BTNode;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
+import abyss.workspace.ExtensionFileFilter;
 
 /**
  * Klasa implementująca okno analizy poprzez mechanizm knockout oraz ścieżki Mauritiusa.:
@@ -213,6 +221,20 @@ public class AbyssKnockout extends JFrame {
 		fullDataKnockoutButton.setFocusPainted(false);
 		panel.add(fullDataKnockoutButton);
 		
+		JButton monaLisaButton = new JButton("Load MonaLisa");
+		monaLisaButton.setBounds(posX+480, posY+30, 110, 30);
+		monaLisaButton.setMargin(new Insets(0, 0, 0, 0));
+		monaLisaButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/sendToNet.png"));
+		monaLisaButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbyssNotepad notePad = new AbyssNotepad(900,600);
+				notePad.setVisible(true);
+				showMonaLisaResults(notePad);
+			}
+		});
+		monaLisaButton.setFocusPainted(false);
+		panel.add(monaLisaButton);
+		
 		JCheckBox shortTextCheckBox = new JCheckBox("Show full names");
 		shortTextCheckBox.setBounds(posX+490, posY, 130, 20);
 		shortTextCheckBox.addActionListener(new ActionListener() {
@@ -291,6 +313,10 @@ public class AbyssKnockout extends JFrame {
 		//knockOutData
 	}
 	
+	/**
+	 * Metoda pokazuje wyliczone wszystkie tranzycje.
+	 * @param notePad AbyssNotepad - obiekt notatnika
+	 */
 	//TODO:
 	protected void getKnockoutFullInfo(AbyssNotepad notePad) {
 		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
@@ -321,6 +347,113 @@ public class AbyssKnockout extends JFrame {
 			notePad.addTextLineNL("| Knocked-out: "+transFailDependency.get(t)+ 
 					"| Common: "+transCommonSetSize.get(t), "text");
 		}
+		
+		//knockOutData
+	}
+	
+	protected void showMonaLisaResults(AbyssNotepad notePad) {
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter("MonaLisa Knockout transitions (.txt)",  new String[] { "TXT" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "", "");
+		
+		if(selectedFile.equals("")) {
+			JOptionPane.showMessageDialog(null, "Incorrect file location.", "Operation failed.", 
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		} else {
+			//MCT:
+			MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
+			ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
+			mct = MCTCalculator.getSortedMCT(mct);
+			//TRANZYCJE:
+			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			int transSize = transitions.size();
+			//WYNIKOWE LINIE:
+			ArrayList<String> resultLines = new ArrayList<String>();
+			ArrayList<String> mctOrNot = new ArrayList<String>();
+			ArrayList<Integer> mctSize = new ArrayList<Integer>();
+			for(int i=0; i<transSize; i++) {
+				resultLines.add("");
+				mctOrNot.add("");
+				mctSize.add(0);
+			}
+			
+			//WEKTOR DANYCH O MCT DLA KAŻDEJ TRANZYCJI
+			int mctNo= -1;
+			for(ArrayList<Transition> arr : mct) {
+				mctNo++;
+				for(Transition t : arr) {
+					int id = transitions.indexOf(t);
+					mctOrNot.set(id, "MCT_"+mctNo);
+					mctSize.set(id, arr.size());
+				}
+			}
+			
+			
+			try {
+				DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
+				BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+				
+				String line = "";
+				line = buffer.readLine(); //first line
+				line = buffer.readLine();
+				while(line != null && line.length() > 4) {
+					int tmp = line.indexOf(" ");
+					String name = line.substring(0, tmp);
+					
+					for(int t=0; t<transSize; t++) {
+						if(transitions.get(t).getName().equals(name)) {
+							String next = line.substring(line.indexOf("->")+2);
+							if(next.length() == 0) {
+								String newLine = "t"+t+"_"+name+" | Knockout: 0% (0 / "+transSize+")  ";
+								
+								if(mctOrNot.get(t).length()>0) {
+									newLine += mctOrNot.get(t);
+									float knockoutPercent = (float)((float)(mctSize.get(t)-1)/(float)transSize);
+									knockoutPercent *= 100;
+									
+									newLine += " (with MCT: "+knockoutPercent+"% ("+(mctSize.get(t)-1)+"/"+transSize+") )";
+								}
+								resultLines.set(t, newLine);
+								break;
+							}
+								
+							
+							String[] elements = next.split(";");
+							float knockoutPercent = (float)((float)elements.length/(float)transSize);
+							knockoutPercent *= 100;
+							String newLine = "t"+t+"_"+name+" | Knockout: "+String.format("%.2f", knockoutPercent)+ "% ("+elements.length+"/"+transSize+")  ";
+							
+							if(mctOrNot.get(t).length()>0) {
+								newLine += mctOrNot.get(t);
+								
+								float mctPercent = (float)((float)(mctSize.get(t)-1)/(float)transSize);
+								mctPercent *= 100;
+								float total = knockoutPercent + mctPercent;
+								
+								newLine += " (with MCT: "+String.format("%.2f", total)+"% ("+(elements.length+mctSize.get(t)-1)+"/"+transSize+"))";
+							}
+							resultLines.set(t, newLine);
+							break;
+						}
+					}
+					
+					line = buffer.readLine();
+				}
+			} catch (Exception e) {
+				
+			}
+			
+			notePad.addTextLineNL("", "text");
+			
+			for(int t=0; t<transSize; t++) {
+				notePad.addTextLineNL(resultLines.get(t), "text");
+			}
+		}
+		
+	
+		
 		
 		//knockOutData
 	}

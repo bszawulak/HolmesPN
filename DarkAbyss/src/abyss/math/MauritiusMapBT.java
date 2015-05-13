@@ -68,7 +68,8 @@ public class MauritiusMapBT {
 		if(mct.size() == 0) {
 			return resultNames;
 		} else {
-			mct = getSortedMCT(mct);
+			//mct = getSortedMCT(mct);
+			mct = MCTCalculator.getSortedMCT(mct);
 			int mctNo = 0;
 			for(ArrayList<Transition> arr : mct) {
 				mctNo++;
@@ -82,52 +83,6 @@ public class MauritiusMapBT {
 		}
 	}
 	
-	/**
-	 * Metoda usuwa trywialne MCT oraz ustawia ich macierz w kolejności malejacej liczności zbiorów
-	 * @param mctGroups ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
-	 * @return ArrayList[ArrayList[Transition]] - posortowana, przycięta macierz MCT (bez trywialnych)
-	 */
-	@SuppressWarnings("unchecked")
-	private ArrayList<ArrayList<Transition>> getSortedMCT(ArrayList<ArrayList<Transition>> mctGroups) {
-		//ogranicz MCT do nietrywialnych
-		ArrayList<Transition> unused = new ArrayList<Transition>();
-		for(int i=0; i<mctGroups.size(); i++) {
-			ArrayList<Transition> mctRow = mctGroups.get(i);
-			if(mctRow.size()==1) {
-				unused.add(mctRow.get(0));
-				mctGroups.set(i, null);
-			}
-		}
-		for(int i=0; i<mctGroups.size(); i++) {
-			ArrayList<Transition> mctRow = mctGroups.get(i);
-			if(mctRow == null) {
-				mctGroups.remove(i);
-				i--;
-			}
-		}
-		Object [] temp = mctGroups.toArray();
-		Arrays.sort(temp, new Comparator<Object>() {
-			public int compare(Object o1, Object o2) {
-		        ArrayList<Transition> temp1 = (ArrayList<Transition>)o1;
-		        ArrayList<Transition> temp2 = (ArrayList<Transition>)o2;
-
-		        if(temp1.size() > temp2.size())
-		        	return -1;
-		        else if(temp1.size() == temp2.size()) {
-		        	return 0;
-		        } else
-		        	return 1;
-		    }
-		});
-		
-		mctGroups.clear();
-		for(Object o: temp) {
-			mctGroups.add((ArrayList<Transition>)o);
-		}
-		//mctGroups.add(unused); //dodaj wszystkie pojedzyncze tranzycje w jeden 'mct'
-		
-		return mctGroups;
-	}
 	
 	/**
 	 * Metoda zwraca wierzchołek główny drzewa.

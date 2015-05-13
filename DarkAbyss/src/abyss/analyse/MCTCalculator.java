@@ -1,6 +1,8 @@
 package abyss.analyse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import abyss.analyzer.matrix.IncidenceMatrix;
 import abyss.analyzer.matrix.InputMatrix;
@@ -86,6 +88,48 @@ public class MCTCalculator {
 				mctGroups.add(currentMCT);
 		}
 		GUIManager.getDefaultGUIManager().reset.setMCTStatus(true); //status zbiorów MCT: wczytane
+		return mctGroups;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static ArrayList<ArrayList<Transition>> getSortedMCT(ArrayList<ArrayList<Transition>> mctGroups) {
+		ArrayList<Transition> unused = new ArrayList<Transition>();
+		for(int i=0; i<mctGroups.size(); i++) {
+			ArrayList<Transition> mctRow = mctGroups.get(i);
+			if(mctRow.size()==1) {
+				unused.add(mctRow.get(0));
+				mctGroups.set(i, null);
+			}
+		}
+		for(int i=0; i<mctGroups.size(); i++) {
+			ArrayList<Transition> mctRow = mctGroups.get(i);
+			if(mctRow == null) {
+				mctGroups.remove(i);
+				i--;
+			}
+		}
+		Object [] temp = mctGroups.toArray();
+		Arrays.sort(temp, new Comparator<Object>() {
+			public int compare(Object o1, Object o2) {
+		        
+				ArrayList<Transition> temp1 = (ArrayList<Transition>)o1;
+		        ArrayList<Transition> temp2 = (ArrayList<Transition>)o2;
+
+		        if(temp1.size() > temp2.size())
+		        	return -1;
+		        else if(temp1.size() == temp2.size()) {
+		        	return 0;
+		        } else
+		        	return 1;
+		    }
+		});
+		
+		mctGroups.clear();
+		for(Object o: temp) {
+			mctGroups.add((ArrayList<Transition>)o);
+		}
+		//mctGroups.add(unused); //dodaj wszystkie pojedzyncze tranzycje w jeden 'mct'
+		
 		return mctGroups;
 	}
 }
