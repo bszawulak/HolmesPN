@@ -129,19 +129,26 @@ public class MauritiusMapBT {
 	 * @param chosenTrans int - id wierzchołka początkowego
 	 * @param currentNode BTNode - aktualnie przetwarzany węzeł drzewa
 	 */
+	@SuppressWarnings("unused")
 	private void createMTree(ArrayList<ArrayList<Integer>> subInvariants, int chosenTrans, BTNode currentNode) {
 		int maxTransition = -1; //pierwsza tranzycja z największą # wystąpień w inwariantach
 		int howManyLeft = 0; 
 		ArrayList<Integer> transFrequency;
 		if(chosenTrans == -1) { //sam wybierz tranzycję z max(inv)
 			transFrequency = InvariantsTools.getFrequency(subInvariants);
-			maxTransition = getMaximumPosition(transFrequency);
+			maxTransition = getPositionOfMostImportantTransition(transFrequency);
+			
 			howManyLeft = getSupportSize(transFrequency);
 		} else { // wybrana tranzycja
 			maxTransition = chosenTrans;
 			
 			transFrequency = InvariantsTools.getFrequency(subInvariants);
 			howManyLeft = getSupportSize(transFrequency);
+		}
+		
+		if(maxTransition == -1) {
+			int x = 666;
+			return;
 		}
 			
 		//dla danej tranzycji wyznacz: jej inwarianty i całą resztę
@@ -208,8 +215,14 @@ public class MauritiusMapBT {
 			cleanTransDataInInv(rightInvariants, maxTransition);
 			createMTree(rightInvariants, -1, rightNode); //rekurencja
 			
+			if(rightNode.transLocation == -1) //emergency
+				currentNode.rightChild = null;
+			
 			//cleanTransDataInInv(leftInvariants, maxTransition); // niemożliwe z definicji ?
 			createMTree(leftInvariants, -1, leftNode); //rekurencja
+			
+			if(leftNode.transLocation == -1) //emergency
+				currentNode.leftChild = null;
 		}
 		
 	}
@@ -246,13 +259,13 @@ public class MauritiusMapBT {
 	}
 	
 	/**
-	 * Metoda zwraca pozycję w wektorze z największą wartością.
+	 * Metoda zwraca tranzycję (jej pozycję) w wektorze z największą wartością uruchomień.
 	 * @param vector ArrayList[Integer] - wektor liczb
 	 * @return int - pozycja z największą wartością
 	 */
-	private int getMaximumPosition(ArrayList<Integer> vector) {
+	private int getPositionOfMostImportantTransition(ArrayList<Integer> vector) {
 		int res = 0;
-		int pos = 0;
+		int pos = -1;
 		int size = vector.size();
 		for(int i=0; i<size; i++) {
 			if(vector.get(i) > res) {
@@ -299,7 +312,7 @@ public class MauritiusMapBT {
 	public class BTNode {
 		public NodeType type = NodeType.VERTEX;
 		public String transName;
-		public int transLocation;
+		public int transLocation = -1;
 		public int transFrequency;
 		public int othersFrequency;
 		

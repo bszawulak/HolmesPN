@@ -351,6 +351,11 @@ public class AbyssKnockout extends JFrame {
 		//knockOutData
 	}
 	
+	/**
+	 * Metoda wczytuje plik z wynikami Knockout dla wszystkich tranzycji sieci wygenerowane w programie
+	 * MonaLisa, a następnie wyświetla je w zunifikowanej formie w oknie.
+	 * @param notePad AbyssNotepad - okno wyświetlania wyników
+	 */
 	protected void showMonaLisaResults(AbyssNotepad notePad) {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
@@ -380,7 +385,7 @@ public class AbyssKnockout extends JFrame {
 			}
 			
 			//WEKTOR DANYCH O MCT DLA KAŻDEJ TRANZYCJI
-			int mctNo= -1;
+			int mctNo= 0;
 			for(ArrayList<Transition> arr : mct) {
 				mctNo++;
 				for(Transition t : arr) {
