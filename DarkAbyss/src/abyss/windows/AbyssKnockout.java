@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
 
+import abyss.analyse.InvariantsTools;
 import abyss.analyse.MCTCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.MauritiusMapPanel;
@@ -235,6 +236,18 @@ public class AbyssKnockout extends JFrame {
 		monaLisaButton.setFocusPainted(false);
 		panel.add(monaLisaButton);
 		
+		JButton monaLisaToNetButton = new JButton("MonaL.->Net");
+		monaLisaToNetButton.setBounds(posX+600, posY+30, 110, 30);
+		monaLisaToNetButton.setMargin(new Insets(0, 0, 0, 0));
+		monaLisaToNetButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/sendToNet.png"));
+		monaLisaToNetButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				exportMonaLisaToNet();
+			}
+		});
+		monaLisaToNetButton.setFocusPainted(false);
+		panel.add(monaLisaToNetButton);
+		
 		JCheckBox shortTextCheckBox = new JCheckBox("Show full names");
 		shortTextCheckBox.setBounds(posX+490, posY, 130, 20);
 		shortTextCheckBox.addActionListener(new ActionListener() {
@@ -352,11 +365,9 @@ public class AbyssKnockout extends JFrame {
 	}
 	
 	/**
-	 * Metoda wczytuje plik z wynikami Knockout dla wszystkich tranzycji sieci wygenerowane w programie
-	 * MonaLisa, a następnie wyświetla je w zunifikowanej formie w oknie.
-	 * @param notePad AbyssNotepad - okno wyświetlania wyników
+	 * Metoda wczytuje wyniki z MonyLisy i posyła na strukturę sieci
 	 */
-	protected void showMonaLisaResults(AbyssNotepad notePad) {
+	private void exportMonaLisaToNet() {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("MonaLisa Knockout transitions (.txt)",  new String[] { "TXT" });
@@ -366,103 +377,232 @@ public class AbyssKnockout extends JFrame {
 			JOptionPane.showMessageDialog(null, "Incorrect file location.", "Operation failed.", 
 					JOptionPane.ERROR_MESSAGE);
 			return;
-		} else {
-			//MCT:
-			MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
-			ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
-			mct = MCTCalculator.getSortedMCT(mct);
-			//TRANZYCJE:
-			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-			int transSize = transitions.size();
-			//WYNIKOWE LINIE:
-			ArrayList<String> resultLines = new ArrayList<String>();
-			ArrayList<String> mctOrNot = new ArrayList<String>();
-			ArrayList<Integer> mctSize = new ArrayList<Integer>();
-			for(int i=0; i<transSize; i++) {
-				resultLines.add("");
-				mctOrNot.add("");
-				mctSize.add(0);
-			}
+		} 
+		//TRANZYCJE:
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		int transSize = transitions.size();
+		
+		
+		ArrayList<ArrayList<Integer>> knockoutMatrix = new ArrayList<ArrayList<Integer>>();
+		for(int i=0; i<transSize; i++) {
+			knockoutMatrix.add(new ArrayList<Integer>());
+		}
+		
+		
+		try {
+			DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
 			
-			//WEKTOR DANYCH O MCT DLA KAŻDEJ TRANZYCJI
-			int mctNo= 0;
-			for(ArrayList<Transition> arr : mct) {
-				mctNo++;
-				for(Transition t : arr) {
-					int id = transitions.indexOf(t);
-					mctOrNot.set(id, "MCT_"+mctNo);
-					mctSize.set(id, arr.size());
-				}
-			}
-			
-			
-			try {
-				DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
-				BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+			String line = "";
+			line = buffer.readLine(); //first line
+			line = buffer.readLine();
+			while(line != null && line.length() > 4) {
+				int tmp = line.indexOf(" ");
+				String name = line.substring(0, tmp);
 				
-				String line = "";
-				line = buffer.readLine(); //first line
-				line = buffer.readLine();
-				while(line != null && line.length() > 4) {
-					int tmp = line.indexOf(" ");
-					String name = line.substring(0, tmp);
-					
-					for(int t=0; t<transSize; t++) {
-						if(transitions.get(t).getName().equals(name)) {
-							String next = line.substring(line.indexOf("->")+2);
-							if(next.length() == 0) {
-								String newLine = "t"+t+"_"+name+" | Knockout: 0% (0 / "+transSize+")  ";
-								
-								if(mctOrNot.get(t).length()>0) {
-									newLine += mctOrNot.get(t);
-									float knockoutPercent = (float)((float)(mctSize.get(t)-1)/(float)transSize);
-									knockoutPercent *= 100;
-									
-									newLine += " (with MCT: "+knockoutPercent+"% ("+(mctSize.get(t)-1)+"/"+transSize+") )";
-								}
-								resultLines.set(t, newLine);
-								break;
-							}
-								
+				for(int t=0; t<transSize; t++) {
+					if(transitions.get(t).getName().equals(name)) {
+						String next = line.substring(line.indexOf("->")+2);
+						if(next.length() == 0) {
+							break;
+						} else { //z MCT
+							next = next.trim();
+							String[] elements = next.split(";");
+							ArrayList<Integer> knockoutVector = new ArrayList<Integer>();
 							
+							for(String tr : elements) {
+								for(int t2=0; t2<transSize; t2++) {
+									if(transitions.get(t2).getName().equals(tr)) {
+										knockoutVector.add(t2);
+										break;
+									}
+								}
+							}
+							knockoutMatrix.set(t,knockoutVector);
+							break;
+						}
+					}
+				}
+				
+				line = buffer.readLine();
+			}
+		} catch (Exception e) {
+			
+		}
+
+		GUIManager.getDefaultGUIManager().showKnockout(knockoutMatrix);
+	}
+	
+	/**
+	 * Metoda wczytuje plik z wynikami Knockout dla wszystkich tranzycji sieci wygenerowane w programie
+	 * MonaLisa, a następnie wyświetla je w zunifikowanej formie w oknie.
+	 * @param notePad AbyssNotepad - okno wyświetlania wyników
+	 */
+	private void showMonaLisaResults(AbyssNotepad notePad) {
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter("MonaLisa Knockout transitions (.txt)",  new String[] { "TXT" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "", "");
+		
+		if(selectedFile.equals("")) {
+			JOptionPane.showMessageDialog(null, "Incorrect file location.", "Operation failed.", 
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		
+		//MCT:
+		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
+		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
+		mct = MCTCalculator.getSortedMCT(mct);
+		//TRANZYCJE:
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		int transSize = transitions.size();
+		//WYNIKOWE LINIE:
+		ArrayList<String> resultLines = new ArrayList<String>();
+		ArrayList<String> mctOrNot = new ArrayList<String>();
+		ArrayList<Integer> mctSize = new ArrayList<Integer>();
+		for(int i=0; i<transSize; i++) {
+			resultLines.add("");
+			mctOrNot.add("");
+			mctSize.add(0);
+		}
+		
+		//WEKTOR DANYCH O MCT DLA KAŻDEJ TRANZYCJI
+		int mctNo= 0;
+		for(ArrayList<Transition> arr : mct) {
+			mctNo++;
+			for(Transition t : arr) {
+				int id = transitions.indexOf(t);
+				mctOrNot.set(id, "MCT_"+mctNo);
+				mctSize.set(id, arr.size());
+			}
+		}
+		
+		
+		//czytanie pliku z MonyLisy
+		
+		try {
+			DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+			
+			String line = "";
+			line = buffer.readLine(); //first line
+			line = buffer.readLine();
+			while(line != null && line.length() > 4) {
+				int tmp = line.indexOf(" ");
+				String name = line.substring(0, tmp);
+				
+				for(int t=0; t<transSize; t++) {
+					if(transitions.get(t).getName().equals(name)) {
+						String next = line.substring(line.indexOf("->")+2);
+						if(next.length() == 0) {
+							String newLine = "t"+t+"_"+name+" | Knockout: 0% (0 / "+transSize+")  ";
+							newLine += mctOrNot.get(t);
+							
+							resultLines.set(t, newLine);
+							break;
+						} else { //z MCT
 							String[] elements = next.split(";");
 							float knockoutPercent = (float)((float)elements.length/(float)transSize);
 							knockoutPercent *= 100;
 							String newLine = "t"+t+"_"+name+" | Knockout: "+String.format("%.2f", knockoutPercent)+ "% ("+elements.length+"/"+transSize+")  ";
+							newLine += mctOrNot.get(t);
 							
-							if(mctOrNot.get(t).length()>0) {
-								newLine += mctOrNot.get(t);
-								
-								float mctPercent = (float)((float)(mctSize.get(t)-1)/(float)transSize);
-								mctPercent *= 100;
-								float total = knockoutPercent + mctPercent;
-								
-								newLine += " (with MCT: "+String.format("%.2f", total)+"% ("+(elements.length+mctSize.get(t)-1)+"/"+transSize+"))";
-							}
 							resultLines.set(t, newLine);
 							break;
 						}
 					}
-					
-					line = buffer.readLine();
 				}
-			} catch (Exception e) {
 				
+				line = buffer.readLine();
 			}
+		} catch (Exception e) {
 			
-			notePad.addTextLineNL("", "text");
-			
-			for(int t=0; t<transSize; t++) {
-				notePad.addTextLineNL(resultLines.get(t), "text");
+		}
+		
+		notePad.addTextLineNL("", "text");
+		
+		//wyświetlanie I bloku wyników:
+		for(int t=0; t<transSize; t++) {
+			notePad.addTextLineNL(resultLines.get(t), "text");
+		}
+		
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("", "text");
+		
+		//przygotowanie II bloku wyników:
+		ArrayList<String> mctTmpVector = new ArrayList<String>();
+		for(int m=0; m < mct.size(); m++) {
+			mctTmpVector.add("MCT_"+(m+1));
+		}
+		
+		ArrayList<Integer> transInInvVector = InvariantsTools.transInInvariants();
+		int invNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix().size();
+		
+		ArrayList<String> secondResultLines = new ArrayList<String>();
+		for(int t=0; t<transSize; t++) {
+			if(resultLines.get(t).contains(" MCT_")) {
+				String line = resultLines.get(t);
+				String mctName = line.substring(line.indexOf( "MCT_"));
+				if(mctTmpVector.contains(mctName)) {
+					mctTmpVector.remove(mctName);
+					
+					line = line.substring(1); // - wycinamy literkę t
+					float invPercent = -1;
+					String id = line.substring(0, line.indexOf("_"));
+					try {
+						int ident = Integer.parseInt(id);
+						invPercent = (float)((float)transInInvVector.get(ident)/(float)invNumber);
+						invPercent *= 100;
+					} catch (Exception e) { }
+					
+					line = line.substring(line.indexOf("_")+1);
+					//String name = line.substring(0, line.indexOf("|")-1); //nazwa tranzycji
+					
+					line = line.substring(line.indexOf(":")+2);
+					String transPercent = line.substring(0, line.indexOf("%")+1);
+					
+					secondResultLines.add(mctName+"   "+transPercent+"  "+String.format("%.2f", invPercent)+"%");
+				}
+				
+			} else {
+				String line = resultLines.get(t);
+				line = line.substring(1); // - wycinamy literkę t
+				float invPercent = -1;
+				String id = line.substring(0, line.indexOf("_"));
+				
+				try {
+					int ident = Integer.parseInt(id);
+					invPercent = (float)((float)transInInvVector.get(ident)/(float)invNumber);
+					invPercent *= 100;
+				} catch (Exception e) { }
+						
+				line = line.substring(line.indexOf("_")+1);
+				String name = line.substring(0, line.indexOf("|")-1); //nazwa tranzycji
+				
+				line = line.substring(line.indexOf(":")+2);
+				String transPercent = line.substring(0, line.indexOf("%")+1);
+				
+				secondResultLines.add("t"+id+"_"+name+"   "+transPercent+"  "+String.format("%.2f", invPercent)+"%");
 			}
 		}
 		
-	
 		
-		
+		//wyświetlanie II bloku wyników:
+		for(int i=0; i<secondResultLines.size(); i++) {
+			notePad.addTextLineNL(secondResultLines.get(i), "text");
+		}
+
 		//knockOutData
 	}
 	
+	
+	
+	/**
+	 * Metoda przesyła dane o knockout na obraz sieci.
+	 * @param infoMap
+	 */
 	protected void getKnockoutInfoToNet(MauritiusMapBT infoMap) {
 		ArrayList<ArrayList<Integer>> dataMatrix = collectMapData(infoMap);
 		
@@ -471,19 +611,20 @@ public class AbyssKnockout extends JFrame {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 
-			Transition trans_TMP;// = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(0);
+			Transition trans_TMP;
+			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 			
 			for(int id : dataMatrix.get(0)) { //wyłączane przez objR
-				trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(id);
+				trans_TMP= transitions.get(id);
 				trans_TMP.setColorWithNumber(true, Color.black, false, -1, false, "");
 			}
 			for(int id : dataMatrix.get(1)) { //równorzędne do objR
-				trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(id);
+				trans_TMP= transitions.get(id);
 				trans_TMP.setColorWithNumber(true, Color.blue, false, -1, false, "");
 			}
 			
 			int rootID = infoMap.getRoot().transLocation;
-			trans_TMP= GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(rootID);
+			trans_TMP= transitions.get(rootID);
 			trans_TMP.setColorWithNumber(true, Color.red, false, -1, false, "");
 			
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();

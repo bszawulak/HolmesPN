@@ -47,6 +47,7 @@ import abyss.utilities.Tools;
  * getActiveTransitions - zwraca wektor pokrytych przez inwarianty tranzycji<br>
  * getExtendedInvariantsInfo - informacje o inwariantach 'zawierających' niestandardowe łuki<br>
  * getInOutTransInfo - zwraca informacje o tym, ile tranzycji IN/OUT ma każdy inwariant<br>
+ * transInInvariants - zwraca wektor z informacją w ilu inwariantach działa tranzycja<br>
  * isDoubleArc - zwraca informację, czy łuk jest podwójny
  * 
  * @author MR
@@ -1309,6 +1310,34 @@ public final class InvariantsTools {
 			}
 		}
 		return -1;
+	}
+	
+	/**
+	 * Metoda zwraca wektor o liczności tranzycji z informacją, w ilu inwariantach dana tranzycja występuje.
+	 * @return ArrayList[Integer] - wektor tranzycji
+	 */
+	public static ArrayList<Integer> transInInvariants() {
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		
+		for(int t=0; t<transitions.size(); t++)
+			results.add(0);
+		
+		ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+		if(invariantsMatrix == null || invariantsMatrix.size() == 0)
+			return results;
+		
+		for(int inv=0; inv < invariantsMatrix.size(); inv++) { // po wszystkich inwariantach
+			for(int t=0; t < invariantsMatrix.get(0).size(); t++) { //po wszystkich tranzycjach
+				if(invariantsMatrix.get(inv).get(t) > 0) {
+					int oldVal = results.get(t);
+					oldVal++;
+					results.set(t, oldVal);
+				}
+			}
+		}
+		
+		return results;
 	}
 	
 	/**

@@ -44,7 +44,7 @@ public class AbyssDockWindow extends SingleDock {
 	 * EDITOR, SIMULATOR, SELECTOR, InvANALYZER, PropANALYZER, MctANALYZER,InvSIMULATOR
 	 */
 	public enum DockWindowType {
-		EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR, MCSselector
+		EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR, MCSselector, Knockout
 	}
 
 	/**
@@ -80,6 +80,9 @@ public class AbyssDockWindow extends SingleDock {
 		else if (type == DockWindowType.MCSselector)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("MCS_selector", scrollPane,
 					"MCS"), GUIManager.getDefaultGUIManager().getDockingListener()));
+		else if (type == DockWindowType.Knockout)
+			setDockable(GUIManager.externalWithListener(new DefaultDockable("Knockout_selector", scrollPane,
+					"Knockout"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		
 		else if (type == DockWindowType.InvSIMULATOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_simulator", scrollPane,
@@ -183,6 +186,16 @@ public class AbyssDockWindow extends SingleDock {
 			setCurrentDockWindow(new AbyssDockWindowsTable(mcsData));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 
+		}
+	}
+	
+	/**
+	 * Metoda odpowiedzialna za pokazanie podokna ze zbiorami MCS sieci.
+	 */
+	public void showKnockout(ArrayList<ArrayList<Integer>> knockoutData) {
+		if (type == DockWindowType.Knockout) {
+			setCurrentDockWindow(new AbyssDockWindowsTable(knockoutData, true, 55, true));
+			scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}
 

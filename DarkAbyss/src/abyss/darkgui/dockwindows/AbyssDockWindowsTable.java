@@ -44,6 +44,7 @@ import javax.swing.text.DefaultFormatter;
 
 import abyss.analyse.InvariantsSimulator;
 import abyss.analyse.InvariantsTools;
+import abyss.analyse.MCTCalculator;
 import abyss.clusters.ClusterDataPackage;
 import abyss.clusters.ClusterTransition;
 import abyss.darkgui.GUIManager;
@@ -107,6 +108,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	public ButtonGroup group = new ButtonGroup();
 	public JSpinner spiner = new JSpinner();
 	private JTextArea mctTextArea; // tutaj są wyświetlane szczegóły podświetlonego MCT
+	private JTextArea knockoutTextArea;
 	private JTextArea invTextArea;
 	private JTextArea clTextArea;
 	private JComboBox<String> chooseCluster;
@@ -127,6 +129,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	private ArrayList<ArrayList<Integer>> invariantsMatrix; //używane w podoknie inwariantów
 	private ArrayList<Transition> transitions; // j.w.
 	private ArrayList<ArrayList<Transition>> mctGroups; //używane tylko w przypadku, gdy obiekt jest typu DockWindowType.MctANALYZER
+	private ArrayList<ArrayList<Integer>> knockoutData;
 	private ClusterDataPackage clusterColorsData;
 	// modes
 	private static final int PLACE = 0;
@@ -140,6 +143,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	@SuppressWarnings("unused")
 	private static final int INVARIANTSSIMULATOR = 8;
 	private static final int CLUSTERS = 9;
+	private static final int KNOCKOUT = 10;
 	
 	public SpinnerModel nameLocationXSpinnerModel = null;
 	public SpinnerModel nameLocationYSpinnerModel = null;
@@ -2521,6 +2525,154 @@ public class AbyssDockWindowsTable extends JPanel {
 		} catch (Exception e) {
 			
 		}
+	}
+	
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************                  ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+
+	/**
+	 * 
+	 * @param knockoutData ArrayList[ArrayList[Integer]] - macierz danych o knockout
+	 * @param type1 - nie ważne co, ważne że wyróżnia konstruktor
+	 * @param type2 - nie ważne co, ważne że wyróżnia konstruktor
+	 * @param type3 - nie ważne co, ważne że wyróżnia konstruktor
+	 */
+	public AbyssDockWindowsTable(ArrayList<ArrayList<Integer>> knockoutData, boolean type1, int type2, boolean type3)
+	{
+		//TODO:
+		if(knockoutData == null || knockoutData.size() == 0) {
+			knockoutData = null;
+			return;
+		} else {
+			mode = KNOCKOUT;
+			this.knockoutData = knockoutData;
+			//GUIManager.getDefaultGUIManager().reset.setMCTStatus(true);
+		}
+		
+		int colA_posX = 10;
+		int colB_posX = 100;
+		int positionY = 10;
+		
+		initiateContainers();
+		
+		//MCT - obliczenia:
+		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
+		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
+		mct = MCTCalculator.getSortedMCT(mct);
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		int transSize = transitions.size();
+		
+		ArrayList<String> mctOrNot = new ArrayList<String>();
+		ArrayList<Integer> mctSize = new ArrayList<Integer>();
+		for(int i=0; i<transSize; i++) {
+			mctOrNot.add("");
+			mctSize.add(0);
+		}
+		int mctNo= 0;
+		for(ArrayList<Transition> arr : mct) {
+			mctNo++;
+			for(Transition t : arr) {
+				int id = transitions.indexOf(t);
+				mctOrNot.set(id, "MCT_"+mctNo);
+				mctSize.set(id, arr.size());
+			}
+		}
+		
+		// nazwy tranzycji
+		String[] headers = new String[transSize + 1];
+		headers[0] = "---";
+		for (int i = 0; i < transSize; i++) {
+			String newLine = "t" + i + "   " + mctOrNot.get(i);
+			headers[i + 1] = newLine;
+		}
+				
+		// getting the data
+		JLabel chooseMctLabel = new JLabel("Knockout: ");
+		chooseMctLabel.setBounds(colA_posX, positionY, 60, 20);
+		components.add(chooseMctLabel);
+
+		JComboBox<String> chooseMctBox = new JComboBox<String>(headers);
+		chooseMctBox.setBounds(colB_posX, positionY, 150, 20);
+		chooseMctBox.addActionListener(new ActionListener() {
+			@SuppressWarnings("unchecked")
+			public void actionPerformed(ActionEvent actionEvent) {
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				int selected = comboBox.getSelectedIndex();
+				if (selected == 0) {
+					showKnockout(-1, false);
+				} else  {
+					selected--;
+					showKnockout(selected, true);
+				} 
+			}
+		});
+		components.add(chooseMctBox);
+		positionY += 30;
+		
+		knockoutTextArea = new JTextArea();
+		knockoutTextArea.setEditable(false);
+		knockoutTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		//mctTextArea.setLineWrap(true);
+		//mctTextArea.setWrapStyleWord(true);
+		JPanel textAreaPanel = new JPanel();
+		textAreaPanel.setLayout(new BorderLayout());
+		textAreaPanel.add(new JScrollPane(
+				knockoutTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+        		BorderLayout.CENTER);
+		
+		int w = GUIManager.getDefaultGUIManager().getMctBox().getWidth();
+		int h = GUIManager.getDefaultGUIManager().getMctBox().getHeight();
+		textAreaPanel.setBounds(colA_posX, positionY, w-30, h-60);
+		components.add(textAreaPanel);
+		
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			 panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		panel.setVisible(true);
+		add(panel);
+	}	
+
+	/**
+	 * Metoda odpowiedzialna za pokazanie szczegółów wybranego zbioru MCT.
+	 * @param knockIndex Integer - numer wybranego zbioru
+	 * @param showOrClear boolean - true, jeśli wybrano zbiór mct, false jeśli "---"
+	 */
+	private void showKnockout(Integer knockIndex, boolean showOrClear) {
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
+		
+		if(showOrClear == true)
+		{
+			ArrayList<Integer> idToShow = knockoutData.get(knockIndex);
+			Transition trans_TMP;
+			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			
+			for(int id : idToShow) { //wyłączane przez objR
+				trans_TMP= transitions.get(id);
+				trans_TMP.setColorWithNumber(true, Color.black, false, -1, false, "");
+			}
+			
+			trans_TMP= transitions.get(knockIndex);
+			trans_TMP.setColorWithNumber(true, Color.red, false, -1, false, "");
+			
+			knockoutTextArea.setText("");
+			knockoutTextArea.append("Knocked out:" + knockIndex + ":\n");
+			knockoutTextArea.append("\n");
+			knockoutTextArea.append(" * * * Also knocked out: \n");
+			
+			for (int t_id : idToShow) {
+				String t1 = Tools.setToSize("t"+t_id, 5, false);
+				knockoutTextArea.append(t1 + " ; "+transitions.get(t_id).getName()+"\n");
+			}
+			knockoutTextArea.setCaretPosition(0);
+		}
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
 	//**************************************************************************************

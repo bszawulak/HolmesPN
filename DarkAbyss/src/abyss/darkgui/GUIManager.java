@@ -120,6 +120,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssDockWindow selElementBox;  //podokno klikniętego elementu sieci
 	private AbyssDockWindow clustersBox;	//podokno podświetlania klastrów
 	private AbyssDockWindow mcsBox;
+	private AbyssDockWindow knockoutBox;
 	
 	//UNUSED
 	private AbyssDockWindow invSimBox;
@@ -181,8 +182,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().getContentPane().add(this);
 		getFrame().addComponentListener(this);
 		
-		
-		
 		createHiddenConsole(); // okno konsoli logowania zdarzeń
 		createClusterWindow(); // okno tabeli klastrów
 		createNetPropertiesWindow(); // okno właściwości sieci
@@ -190,7 +189,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createNetTablesWindow(); // okno tabel sieci
 		createSimLogWindow(); // okno logów symulatora
 		createInvariantsWindow(); // okno generatora inwariantów
-		
 		
 		settingsManager = new SettingsManager();
 		settingsManager.loadSettings();
@@ -241,6 +239,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setMctBox(new AbyssDockWindow(DockWindowType.MctANALYZER)); //aktywuj obiekt podokna wyświetlania zbiorów MCT
 		setInvSim(new AbyssDockWindow(DockWindowType.InvSIMULATOR));
 		setMCSBox(new AbyssDockWindow(DockWindowType.MCSselector));
+		setKnockoutBox(new AbyssDockWindow(DockWindowType.Knockout));
 		
 		// create menu
 		setMenu(new DarkMenu());
@@ -265,6 +264,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		bottomRightTabDock.addChildDock(getMCSBox(), new Position(3));
 		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(4));
 		bottomRightTabDock.addChildDock(getInvSimBox(), new Position(5));
+		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
 
 		// create the split docks
 		leftSplitDock = new SplitDock();
@@ -608,13 +608,29 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public AbyssDockWindow getMCSBox() {
 		return mcsBox;
 	}
-	
 	/**
 	 * Metoda ustawia nowe podokno dedykowane do wyświetlania zbiorów MCS.
 	 * @param mcsBox AbyssDockWindow - nowe okno wyboru MCS
 	 */
 	public void setMCSBox(AbyssDockWindow mcsBox) {
 		this.mcsBox = mcsBox;
+	}
+	
+	/**
+	 * Metoda ustawia nowe podokno dedykowane do wyświetlania zbiorów knockout.
+	 * @param knockoutBox AbyssDockWindow - nowe okno wyboru knockoutBox
+	 */
+	public void setKnockoutBox(AbyssDockWindow knockoutBox) {
+		this.knockoutBox = knockoutBox;
+	}
+	
+	
+	/**
+	 * Metoda zwraca obiekt podokna wyświetlania zbiorów knockout.
+	 * @return AbyssDockWindow - okno wyboru knockoutBox
+	 */
+	public AbyssDockWindow getKnockoutBox() {
+		return knockoutBox;
 	}
 	
 	/**
@@ -1019,6 +1035,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
+	 * Metoda pokazuje podokienko zbiorów Knockout.
+	 */
+	//TODO
+	public void showKnockout(ArrayList<ArrayList<Integer>> knockoutData) {
+		getKnockoutBox().showKnockout(knockoutData);
+	}
+	
+	/**
 	 * Metoda zleca wyświetlenie podokna podświetlania klastrowania
 	 */
 	public void showClusterSelectionBox(ClusterDataPackage data){
@@ -1122,7 +1146,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void showPropertiesWindow() {
 		
 		if(windowProperties != null) {
-			//TODO: ??????????????????????????????:
 			windowProperties.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			//((JFrame)windowProperties).dispose();
 			createPropertiesWindow();
