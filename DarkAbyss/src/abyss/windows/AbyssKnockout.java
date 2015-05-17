@@ -528,10 +528,9 @@ public class AbyssKnockout extends JFrame {
 			notePad.addTextLineNL(resultLines.get(t), "text");
 		}
 		
-		notePad.addTextLineNL("", "text");
-		notePad.addTextLineNL("", "text");
-		
 		//przygotowanie II bloku wyników:
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("", "text");
 		ArrayList<String> mctTmpVector = new ArrayList<String>();
 		for(int m=0; m < mct.size(); m++) {
 			mctTmpVector.add("MCT_"+(m+1));
@@ -594,7 +593,55 @@ public class AbyssKnockout extends JFrame {
 			notePad.addTextLineNL(secondResultLines.get(i), "text");
 		}
 
-		//knockOutData
+		///III BLOK: sortowanie po inwariantach:
+		
+		int linesNumber = secondResultLines.size();
+		for(int i=0; i<linesNumber; i++) {
+			if(i >= linesNumber-1)
+				break;
+			//extract last column:
+			String line = secondResultLines.get(i);
+			line = line.substring(line.indexOf(" "));
+			line = line.trim();
+			line = line.substring(line.indexOf(" "));
+			line = line.trim();
+			line = line.substring(0, line.length()-1);
+			line = line.replace(",", ".");
+			int nextMax = -1;
+			try {
+				float value = Float.parseFloat(line);
+				for(int j=i+1; j<linesNumber; j++) {
+					String line2 = secondResultLines.get(j);
+					line2 = line2.substring(line2.indexOf(" "));
+					line2 = line2.trim();
+					line2 = line2.substring(line2.indexOf(" "));
+					line2 = line2.trim();
+					line2 = line2.substring(0, line2.length()-1);
+					line2 = line2.replace(",", ".");
+					float value2 = Float.parseFloat(line2);
+					
+					if(value2 > value) {
+						nextMax = j;
+						value = value2;
+					}
+				}
+				
+				if(nextMax != -1) {
+					String tmpLine = secondResultLines.get(i);
+					String maxLine = secondResultLines.get(nextMax);
+					secondResultLines.set(i, maxLine);
+					secondResultLines.set(nextMax, tmpLine);
+				}
+				
+			} catch (Exception e) {}	
+		}
+		
+		//wyświetlanie III bloku wyników:
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("", "text");
+		for(int i=0; i<secondResultLines.size(); i++) {
+			notePad.addTextLineNL(secondResultLines.get(i), "text");
+		}
 	}
 	
 	

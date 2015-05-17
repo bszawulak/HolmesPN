@@ -16,6 +16,7 @@ import abyss.adam.mct.Runner;
 import abyss.analyse.InvariantsCalculator;
 import abyss.files.clusters.Rprotocols;
 import abyss.math.PetriNet;
+import abyss.utilities.AbyssFileView;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 
@@ -126,6 +127,7 @@ public class GUIOperations {
 		else
 			fc = new JFileChooser(lastPath);
 		
+		fc.setFileView(new AbyssFileView());
 		FileFilter inaFilter = new ExtensionFileFilter("INA Invariants File (.inv)", new String[] { "INV" });
 		FileFilter charlieFilter = new ExtensionFileFilter("Charlie Invariants File (.inv)", new String[] { "INV" });
 		FileFilter csvFilter = new ExtensionFileFilter("Comma Separated Values (.csv)", new String[] { "CSV" });
@@ -176,6 +178,7 @@ public class GUIOperations {
 		else
 			fc = new JFileChooser(lastPath);
 		
+		fc.setFileView(new AbyssFileView());
 		FileFilter pngFilter = new ExtensionFileFilter("Portable Network Graphics (.png)", new String[] { "png" });
 		FileFilter bmpFilter = new ExtensionFileFilter("Bitmap Image File (.bmp)", new String[] { "bmp" });
 		FileFilter jpegFilter = new ExtensionFileFilter("JPEG Image File (.jpeg)", new String[] { "jpeg" });

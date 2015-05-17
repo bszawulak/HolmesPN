@@ -124,8 +124,10 @@ public class GUIReset {
 			mastah.getWorkspace().getProject().setInvariantsMatrix(null);
 			mastah.getWorkspace().getProject().getMCSdataCore().resetMSC();
 			
-			mastah.getInvariantsBox().getCurrentDockWindow().resetInvariants();
-			mastah.getInvariantsBox().getCurrentDockWindow().removeAll();
+			if(mastah.getInvariantsBox().getCurrentDockWindow() != null) {
+				mastah.getInvariantsBox().getCurrentDockWindow().resetInvariants();
+				mastah.getInvariantsBox().getCurrentDockWindow().removeAll();
+			}
 			mastah.getInvariantsBox().setCurrentDockWindow(new AbyssDockWindowsTable(
 					mastah.getWorkspace().getProject().getInvariantsMatrix()));	
 			mastah.getInvariantsBox().validate();
@@ -139,9 +141,10 @@ public class GUIReset {
 			//for (Transition transition : mastah.getWorkspace().getProject().getTransitions()) {
 			//	transition.setContainingInvariants(new ArrayList<ArrayList<Transition>>()); //czyszczenie
 			//}
-			
-			mastah.getMctBox().getCurrentDockWindow().removeAll();
-			mastah.getMctBox().getCurrentDockWindow().resetMCT();
+			if(mastah.getMctBox().getCurrentDockWindow() != null) {
+				mastah.getMctBox().getCurrentDockWindow().removeAll();
+				mastah.getMctBox().getCurrentDockWindow().resetMCT();
+			}
 			mastah.getMctBox().setCurrentDockWindow(new AbyssDockWindowsTable(
 					new ArrayList<ArrayList<Transition>>(), DockWindowType.MctANALYZER));
 			mastah.getMctBox().validate();
@@ -152,8 +155,10 @@ public class GUIReset {
 		}
 		
 		if(clustersGenerated == true) {
-			mastah.getClusterSelectionBox().getCurrentDockWindow().removeAll();
-			mastah.getClusterSelectionBox().getCurrentDockWindow().resetClusters();
+			if(mastah.getClusterSelectionBox().getCurrentDockWindow() != null) {
+				mastah.getClusterSelectionBox().getCurrentDockWindow().removeAll();
+				mastah.getClusterSelectionBox().getCurrentDockWindow().resetClusters();
+			}
 			mastah.getClusterSelectionBox().setCurrentDockWindow(new AbyssDockWindowsTable(new ClusterDataPackage(), false));
 			mastah.getClusterSelectionBox().validate();
 			mastah.getClusterSelectionBox().repaint();

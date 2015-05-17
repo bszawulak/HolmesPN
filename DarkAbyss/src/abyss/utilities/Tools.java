@@ -105,6 +105,8 @@ public final class Tools {
 			fc = new JFileChooser();
 		else
 			fc = new JFileChooser(lastPath);
+		
+		fc.setFileView(new AbyssFileView());
 
 		for(int i=0; i<filter.length; i++) {
 			fc.addChoosableFileFilter(filter[i]);
@@ -151,6 +153,7 @@ public final class Tools {
 		else
 			fc = new JFileChooser(lastPath);
 		
+		fc.setFileView(new AbyssFileView());
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fc.setAcceptAllFileFilterUsed(false);
 		

@@ -28,6 +28,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import abyss.utilities.AbyssFileView;
 import abyss.utilities.Tools;
 
 /**
@@ -239,6 +240,7 @@ public class AbyssConsole extends JFrame {
 	private void saveDialog()
 	{
 	    JFileChooser chooserSaveAs = new JFileChooser();
+	    chooserSaveAs.setFileView(new AbyssFileView());
 	    chooserSaveAs.setDialogTitle("Save as...");
 	    if(chooserSaveAs.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 	    {

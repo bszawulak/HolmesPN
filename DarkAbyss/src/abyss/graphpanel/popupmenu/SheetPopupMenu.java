@@ -15,6 +15,7 @@ import javax.swing.filechooser.FileFilter;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
+import abyss.utilities.AbyssFileView;
 import abyss.workspace.ExtensionFileFilter;
 
 /**
@@ -77,6 +78,8 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 							fc = new JFileChooser();
 						else
 							fc = new JFileChooser(lastPath);
+						
+						fc.setFileView(new AbyssFileView());
 						FileFilter pngFilter = new ExtensionFileFilter(".png - Portable Network Graphics", new String[] { "png" });
 						FileFilter bmpFilter = new ExtensionFileFilter(".bmp -  Bitmap Image File", new String[] { "bmp" });
 						FileFilter jpegFilter = new ExtensionFileFilter(".jpeg - JPEG Image File", new String[] { "jpeg" });
