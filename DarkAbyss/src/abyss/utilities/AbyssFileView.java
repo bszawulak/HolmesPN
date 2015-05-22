@@ -9,7 +9,7 @@ import javax.swing.filechooser.FileView;
 public class AbyssFileView extends FileView {
 	public Icon getIcon(File f)
 	{
-		FileSystemView view=FileSystemView.getFileSystemView();
+		FileSystemView view = FileSystemView.getFileSystemView();
 		return view.getSystemIcon(f);
 	}
 }

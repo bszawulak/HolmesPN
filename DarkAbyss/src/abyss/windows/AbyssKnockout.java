@@ -450,7 +450,6 @@ public class AbyssKnockout extends JFrame {
 			return;
 		}
 		
-		
 		//MCT:
 		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
@@ -583,7 +582,7 @@ public class AbyssKnockout extends JFrame {
 				line = line.substring(line.indexOf(":")+2);
 				String transPercent = line.substring(0, line.indexOf("%")+1);
 				
-				secondResultLines.add("t"+id+"_"+name+"   "+transPercent+"  "+String.format("%.2f", invPercent)+"%");
+				secondResultLines.add("t"+id+"&_"+name+"   "+transPercent+"  "+String.format("%.2f", invPercent)+"%");
 			}
 		}
 		
@@ -639,9 +638,31 @@ public class AbyssKnockout extends JFrame {
 		//wyświetlanie III bloku wyników:
 		notePad.addTextLineNL("", "text");
 		notePad.addTextLineNL("", "text");
+		
+		notePad.addTextLineNL("{\\footnotesize", "text");
+		notePad.addTextLineNL("\\begin{longtable}{| p{2.1cm} | p{8.2cm} | p{1.9cm} | p{1.9cm} |}", "text");
+		notePad.addTextLineNL("\\caption{The impact of knockout of net elements depending on affected transitions} ", "text");
+		notePad.addTextLineNL("\\label{tab:knockout} \\\\", "text");
+		notePad.addTextLineNL("\\hline ", "text");
+		notePad.addTextLineNL("\\bf MCT-set & \\bf \\centering{Biological function}  & \\bf Affected & \\bf Affected	\\\\", "text");
+		notePad.addTextLineNL("\\bf / transition & \\bf  & \\bf transition & \\bf invariants \\\\  \\hline ", "text");
 		for(int i=0; i<secondResultLines.size(); i++) {
-			notePad.addTextLineNL(secondResultLines.get(i), "text");
+			String line2 = secondResultLines.get(i);
+			
+			if(line2.contains("MCT")) {
+				line2 = line2.replace("   ", " & & ");
+			} else {
+				line2 = line2.replace("   ", " & ");
+	
+			}
+			line2 = line2.replace("%  ", "% & ");
+			line2 = line2+"  \\\\ \\hline  ";
+			line2 = line2.replace("%", "\\%");
+			line2 = line2.replace("_", " ");
+			notePad.addTextLineNL(line2, "text");
 		}
+		notePad.addTextLineNL("\\end{longtable}", "text");
+		notePad.addTextLineNL("}", "text");
 	}
 	
 	
