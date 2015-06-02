@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractButton;
@@ -17,8 +19,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import abyss.darkgui.GUIManager;
 import abyss.darkgui.settings.SettingsManager;
@@ -343,6 +350,8 @@ public class AbyssProgramProperties extends JFrame {
 	 * @return JPanel - panel
 	 */
 	private JPanel createMainOptionsPanel(int x, int y, int w, int h) {
+		
+		
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Graphical settings"));
 		panel.setBounds(x, y, w, h);
@@ -418,8 +427,42 @@ public class AbyssProgramProperties extends JFrame {
 			useShortNamesCheckBox.setSelected(false);
 		panel.add(useShortNamesCheckBox);
 		
-		
-		
+		//FONT SIZE:
+		JLabel labelFontSize = new JLabel("Font size:");
+		labelFontSize.setBounds(io_x+150, io_y, 200, 20);
+		panel.add(labelFontSize);
+		SpinnerModel fontSizeSpinnerModel = new SpinnerNumberModel(
+				Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphFontSize")), 8, 15, 1);
+		JSpinner fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
+		fontSizeSpinner.setBounds(io_x+150, io_y+20, 80, 20);
+		fontSizeSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int val = (int) spinner.getValue();
+				
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphFontSize", ""+val, true);
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			}
+		});
+		panel.add(fontSizeSpinner);
+		//BOLD:
+		boolean bold = true;
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphFontBold").equals("0"))
+			bold = false;
+			
+		JCheckBox boldCheckBox = new JCheckBox("Bold", bold);
+		boldCheckBox.setBounds(io_x+210, io_y, 60, 20);
+		boldCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected())
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphFontBold", "1", true);
+				else
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphFontBold", "0", true);
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			}
+		});
+		panel.add(boldCheckBox);
 		
 		noAction = false;
 		return panel;

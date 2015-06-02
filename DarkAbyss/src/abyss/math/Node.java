@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
+import abyss.darkgui.settings.SettingsManager;
 
 /**
  * Klasa implementująca wierzchołek sieci Petriego. Dziedziczą po niej klasy
@@ -169,20 +170,27 @@ public abstract class Node extends PetriNetElement {
 	 * @param g Graphics2D - obiekt rysujący
 	 * @param sheetId int - identyfikator arkusza
 	 */
-	public void drawName(Graphics2D g, int sheetId) {
+	public void drawName(Graphics2D g, int sheetId, ArrayList<Place> places_tmp, ArrayList<Transition> transitions_tmp) {
+		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
 		String name = getName();
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("showShortNames").equals("1")) {
+		if(sm.getValue("showShortNames").equals("1")) {
 			if(this instanceof Place) {
-				int x = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(this);
+				int x = places_tmp.indexOf(this);
 				name = "p"+x;
 			} else {
-				int x = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(this);
+				int x = transitions_tmp.indexOf(this);
 				name = "t"+x;
 			}
 		}
 		
 		g.setColor(Color.black);
-		g.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		//g.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		if(sm.getValue("graphFontBold").equals("0")) {
+			g.setFont(new Font("Tahoma", Font.PLAIN, Integer.parseInt(sm.getValue("graphFontSize"))));
+		} else {
+			g.setFont(new Font("Tahoma", Font.BOLD, Integer.parseInt(sm.getValue("graphFontSize"))));
+		}
+		
 		int name_width = g.getFontMetrics().stringWidth(name);
 		
 		ArrayList<Point> namesPoints = getNodeNamePositions(sheetId);

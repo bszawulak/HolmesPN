@@ -293,8 +293,11 @@ public class GraphPanel extends JComponent {
 		for (Node n : getNodes()) {
 			n.draw(g2d, this.sheetId);	
 		}
+		
+		ArrayList<Place> places_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		ArrayList<Transition> transitions_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		for (Node n : getNodes()) {
-			n.drawName(g2d, this.sheetId);
+			n.drawName(g2d, this.sheetId, places_tmp, transitions_tmp);
 		}
 		
 		if (getSelectingRect() != null) {

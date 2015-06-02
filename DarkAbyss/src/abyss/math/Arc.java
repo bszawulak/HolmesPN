@@ -8,9 +8,10 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.font.TextLayout;
 import java.awt.geom.Line2D;
-
 import java.util.ArrayList;
 
+import abyss.darkgui.GUIManager;
+import abyss.darkgui.settings.SettingsManager;
 import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.IdGenerator;
 import abyss.math.simulator.NetSimulator;
@@ -384,7 +385,22 @@ public class Arc extends PetriNetElement {
 		
 		int k = (p2.x + p1.x) / 2;
 		int j = (p2.y + p1.y) / 2;
+		
+		//double atang = Math.atan2(p2.y-p1.y,p2.x-p1.x)*180.0/Math.PI;
+		double atang = Math.toDegrees(Math.atan2(p2.y-p1.y,p2.x-p1.x));
+		if(atang < 0){
+			atang += 360;
+	    }
+		atang = atang % 90;
+		if(atang < 45.0) {
+			j = j + 5;
+			k = k - 5;
+		} else {
+			j = j - 15;
+		}
+		
 		if (this.getWeight() > 1) {
+			g.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			g.drawString(Integer.toString(this.getWeight()), k, j + 10);
 		}
 	}
