@@ -12,7 +12,6 @@ import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
-import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.MCSDataMatrix;
 import abyss.math.PetriNet;
 import abyss.math.Transition;

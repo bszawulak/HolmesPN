@@ -31,7 +31,6 @@ import abyss.analyse.InvariantsTools;
 import abyss.analyse.MCTCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.MauritiusMapPanel;
-import abyss.math.MCSDataMatrix;
 import abyss.math.MauritiusMap;
 import abyss.math.MauritiusMap.BTNode;
 import abyss.math.Transition;
@@ -371,6 +370,7 @@ public class AbyssKnockout extends JFrame {
 	/**
 	 * Metoda wczytuje wyniki z MonyLisy i posyła na strukturę sieci
 	 */
+	@SuppressWarnings("resource")
 	private void exportMonaLisaToNet() {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
@@ -396,7 +396,6 @@ public class AbyssKnockout extends JFrame {
 		try {
 			DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
-			
 			String line = "";
 			line = buffer.readLine(); //first line
 			line = buffer.readLine();
@@ -442,6 +441,7 @@ public class AbyssKnockout extends JFrame {
 	 * MonaLisa, a następnie wyświetla je w zunifikowanej formie w oknie.
 	 * @param notePad AbyssNotepad - okno wyświetlania wyników
 	 */
+	@SuppressWarnings("resource")
 	private void showMonaLisaResults(AbyssNotepad notePad) {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];

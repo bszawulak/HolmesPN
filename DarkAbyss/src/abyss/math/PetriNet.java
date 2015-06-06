@@ -970,8 +970,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda sprawdza czy istnieje już rysowana wcześniej sieć.
 	 * @return boolean - false, jeśli nie należy kontynuować
+	 * 
+	 *
 	 */
+	@SuppressWarnings("unused")
 	private boolean checkIfEmpty() {
+		//TODO: UNUSED
 		if(getNodes().size() == 0) {
 			return true;
 		} else {

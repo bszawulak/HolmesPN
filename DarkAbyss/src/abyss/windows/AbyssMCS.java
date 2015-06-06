@@ -54,6 +54,7 @@ public class AbyssMCS extends JFrame {
 	private boolean generateAll = true; 
 	private boolean isMCSGeneratorWorking = false;
 	private boolean showFullInfo = true;
+	@SuppressWarnings("unused")
 	private boolean listenerAllowed = true; //używane dla transitionsResultsCombo w odświeżaniu pól okna
 	
 	private JComboBox<String> transitionsCombo;

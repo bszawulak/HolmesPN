@@ -42,7 +42,7 @@ import abyss.workspace.ExtensionFileFilter;
 public class AbyssInvariants extends JFrame {
 	private static final long serialVersionUID = 5805567123988000425L;
 	private boolean tInvCalculation = true;
-	private AbyssInvariants ego;
+	//private AbyssInvariants ego;
 	private JTextArea logField;
 	private InvariantsCalculator invGenerator = null;
 	public boolean isGeneratorWorking = false;
@@ -61,7 +61,7 @@ public class AbyssInvariants extends JFrame {
 		}
 		setVisible(false);
 		this.setTitle("Invariants generator and tools");
-		ego = this;
+		//ego = this;
 		
 		setLayout(new BorderLayout());
 		setSize(new Dimension(666, 520));

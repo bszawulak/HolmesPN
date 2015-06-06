@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -530,12 +529,8 @@ public class AbyssProgramProperties extends JFrame {
 		panel.setBorder(BorderFactory.createTitledBorder("Invariants generator"));
 		panel.setBounds(x, y, w, h);
 		
-		int io_x = 10;
-		int io_y = 15;
 		noAction = true;
-		
-		
-		
+
 		noAction = false;
 		return panel;
 	}

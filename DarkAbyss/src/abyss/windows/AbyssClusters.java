@@ -80,7 +80,7 @@ public class AbyssClusters extends JFrame {
     private ClusteringInfoMatrix dataTableCase56 = null;
     private String pathCSVfile = "";
     private String pathClustersDir = "";
-    private String pathCHmetricsDir = "";
+    //private String pathCHmetricsDir = "";
     
     /**
      * Konstruktor domyślny obiektu okna klasy AbyssClusters. Tworzy wszystkie elementy okna
@@ -674,9 +674,8 @@ public class AbyssClusters extends JFrame {
      */
     private void buttonComputeCHmetrics() {
 		if(clustersToGenerate > 1) {
+			@SuppressWarnings("unused")
 			String newCHpath = GUIManager.getDefaultGUIManager().io.generateAllCHindexes(clustersToGenerate);
-			if(newCHpath != null) //jeśli coś się stało się... :)
-				pathCHmetricsDir = newCHpath;
 			//uwaga! w powyższym katalogu miary dopiero powstają!
 		}
 	}

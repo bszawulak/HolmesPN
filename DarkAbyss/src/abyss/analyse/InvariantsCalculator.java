@@ -49,7 +49,9 @@ public class InvariantsCalculator implements Runnable {
 	private ArrayList<ArrayList<Integer>> doubleArcs;
 	
 	private boolean transCalculation = true;
+	@SuppressWarnings("unused")
 	private int aac = 0;
+	@SuppressWarnings("unused")
 	private int naac = 0;
 	
 	private int newRejected = 0;

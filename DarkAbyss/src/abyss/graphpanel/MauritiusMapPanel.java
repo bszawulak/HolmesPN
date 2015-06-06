@@ -12,7 +12,6 @@ import java.awt.Stroke;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -28,7 +27,7 @@ public class MauritiusMapPanel extends JPanel {
 	private static final long serialVersionUID = 1028800481995974984L;
 	
 	private MauritiusMap mmbt;
-	private ArrayList<MapNodeInfo> locationVector = new ArrayList<MapNodeInfo>();
+	//private ArrayList<MapNodeInfo> locationVector = new ArrayList<MapNodeInfo>();
 	private int currentVerticalLevel = 0; //AKTUALNY popziom
 	private int verticalMulti = 0; //ile poddrzew
 	private int offsetVertical = 100;

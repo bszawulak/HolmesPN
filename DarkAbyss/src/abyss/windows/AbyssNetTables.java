@@ -616,18 +616,6 @@ public class AbyssNetTables extends JFrame {
 	//public void componentMoved(ComponentEvent e) {} //unused
 	//public void componentShown(ComponentEvent e) {} //unused
 	
-	/**
-	 * Metoda odpowiedzialna za ustalenie nowych rozmiarów paneli okna.
-	 */
-	private void resizeComponents() {
-		tablesSubPanel.setLocation(0, 0);
-		tablesSubPanel.setSize(mainPanel.getWidth()-130, mainPanel.getHeight());
-		tablesSubPanel.revalidate();
-		tablesSubPanel.repaint();
-		
-		buttonsPanel.setLocation(tablesSubPanel.getWidth(), 0);
-		buttonsPanel.setSize(130, mainPanel.getHeight());
-	}
 	
 	/**
 	 * Klasa wewnętrzna, służy do wyświetlania komentarz gdy kursor znajduje się nad nazwą kolumny

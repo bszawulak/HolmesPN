@@ -1,8 +1,6 @@
 package abyss.math;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 
 import abyss.analyse.InvariantsTools;
 import abyss.analyse.MCTCalculator;
@@ -23,9 +21,6 @@ public class MauritiusMap {
 	BTNode root = null;
 	ArrayList<Transition> transitions = null;
 	ArrayList<String> transMCTNames = null;
-	boolean testMode = false;
-	
-	ArrayList<String> transitionsS = null;
 	public enum NodeType {
 		ROOT, BRANCH, LEAF, VERTEX
 	}
@@ -104,37 +99,6 @@ public class MauritiusMap {
 	}
 	
 	/**
-	 * TEST ONLY
-	 */
-	public MauritiusMap() {
-		Integer[] t1 = { 1, 0, 1, 1, 1, 0, 1, 0, 1 };
-		Integer[] t2 = { 0, 0, 1, 1, 1, 1, 1, 1, 0 };
-		Integer[] t3 = { 1, 0, 0, 1, 1, 0, 1, 0, 1 };
-		Integer[] t4 = { 0, 0, 1, 1, 1, 0, 0, 1, 0 };
-		Integer[] t5 = { 1, 0, 1, 1, 0, 1, 0, 1, 1 };
-		
-		ArrayList<Integer> x1 = new ArrayList<Integer>(Arrays.asList(t1));
-		ArrayList<Integer> x2 = new ArrayList<Integer>(Arrays.asList(t2));
-		ArrayList<Integer> x3 = new ArrayList<Integer>(Arrays.asList(t3));
-		ArrayList<Integer> x4 = new ArrayList<Integer>(Arrays.asList(t4));
-		ArrayList<Integer> x5 = new ArrayList<Integer>(Arrays.asList(t5));
-		
-		ArrayList<ArrayList<Integer>> invariants = new ArrayList<ArrayList<Integer>>();
-		invariants.add(x1);
-		invariants.add(x2);
-		invariants.add(x3);
-		invariants.add(x4);
-		invariants.add(x5);
-		String[] s = {"t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"};
-		
-		transitionsS = new ArrayList<String>(Arrays.asList(s));
-		root = new BTNode();
-		root.type = NodeType.ROOT;
-		testMode = true;
-		createMTree(invariants, -1, root, null);
-	}
-	
-	/**
 	 * Główna metoda rekurencyjnie tworząca drzewo przechowujące mapę Mauritiusa dla wybranej tranzycji sieci.
 	 * @param subInvariants ArrayList[ArrayList[Integer]] - podmacierz inwariantów
 	 * @param chosenTrans int - id wierzchołka początkowego
@@ -178,7 +142,6 @@ public class MauritiusMap {
 			currentNode.transFrequency = -1;
 			return;
 		}
-		
 			
 		//dla danej tranzycji wyznacz: jej inwarianty i całą resztę
 		ArrayList<ArrayList<Integer>> rightInvariants = InvariantsTools.returnInvWithTransition(subInvariants, maxTransition);
@@ -188,12 +151,7 @@ public class MauritiusMap {
 			// brak inwariantów bez tranzycji maxTransition: węzeł typu Data
 			// czyli: brak lewego podrzewa
 			
-			if(testMode == false) {
-				//currentNode.transName = transitions.get(maxTransition).getName();
-				currentNode.transName = transMCTNames.get(maxTransition);
-			} else
-				currentNode.transName = transitionsS.get(maxTransition);
-			
+			currentNode.transName = transMCTNames.get(maxTransition);
 			currentNode.transLocation = maxTransition;
 			currentNode.transFrequency = rightInvariants.size();
 			
@@ -228,18 +186,13 @@ public class MauritiusMap {
 			if(currentNode.type != NodeType.ROOT) //ale nie root
 				currentNode.type = NodeType.BRANCH;
 			
-			if(testMode == false) {
-				currentNode.transName = transMCTNames.get(maxTransition);
-			} else
-				currentNode.transName = transitionsS.get(maxTransition);
-			
+			currentNode.transName = transMCTNames.get(maxTransition);
 			currentNode.transLocation = maxTransition;
 			currentNode.transFrequency = rightInvariants.size();
 			currentNode.othersFrequency = leftInvariants.size();
 			
 			BTNode rightNode = new BTNode();
 			currentNode.rightChild = rightNode;
-			
 			BTNode leftNode = new BTNode();
 			currentNode.leftChild = leftNode;
 			

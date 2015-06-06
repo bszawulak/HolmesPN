@@ -299,16 +299,16 @@ public class MCSCalculator implements Runnable {
      */
     private List<Set<Integer>> calculatePreliminaryCutsets(List<Set<Integer>> precutsets, int trans) {
         List<Set<Integer>> newPrecutsets = new ArrayList<>();
-        int invNumber = -1;
-        int invID = 0;
+        //int invNumber = -1;
+        //int invID = 0;
         for (Set<Integer> precutset : precutsets) {
 	        if(terminate) return newPrecutsets;
 	        
         	boolean correct = false;
-        	invNumber = -1;
+        	//invNumber = -1;
         	for (ArrayList<Integer> invariant : em_obR) { //dla każdego inwariantu z tablicy:
-        		invNumber++;
-        		invID = em_obRinvID.get(invNumber);
+        		//invNumber++;
+        		//invID = em_obRinvID.get(invNumber);
         		
         		if (transInInvariant(invariant, trans) == true) {
         			if(commonSubset(invariant, precutset).isEmpty() == true) {

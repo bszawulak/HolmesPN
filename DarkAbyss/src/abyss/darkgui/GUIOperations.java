@@ -11,7 +11,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
-import sun.security.action.GetLongAction;
 import abyss.adam.mct.Runner;
 import abyss.analyse.InvariantsCalculator;
 import abyss.files.clusters.Rprotocols;
