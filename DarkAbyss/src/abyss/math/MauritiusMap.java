@@ -9,7 +9,7 @@ import abyss.analyse.MCTCalculator;
 import abyss.darkgui.GUIManager;
 
 /**
- * Klasa tworząca mapę Mauritiusa dla wybranej tranzycji. Publikacja:
+ * Klasa tworząca Mapę Mauritiusa dla wybranej tranzycji. Publikacja:
  * 
  * "Petri net modelling of gene regulation of the Duchenne muscular dystrophy"
  * Stefanie Grunwald, Astrid Speer, Jorg Ackermann, Ina Koch
@@ -19,7 +19,7 @@ import abyss.darkgui.GUIManager;
  * @author MR
  *
  */
-public class MauritiusMapBT {
+public class MauritiusMap {
 	BTNode root = null;
 	ArrayList<Transition> transitions = null;
 	ArrayList<String> transMCTNames = null;
@@ -30,18 +30,29 @@ public class MauritiusMapBT {
 		ROOT, BRANCH, LEAF, VERTEX
 	}
 
-	public MauritiusMapBT(ArrayList<ArrayList<Integer>> invariants, int rootTransition) {
+	/**
+	 * Konstruktor używany do tworzenia mapy
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @param rootTransition int - indeks tranzycji bazowej
+	 */
+	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants, int rootTransition) {
 		root = new BTNode();
 		root.type = NodeType.ROOT;
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		ArrayList<ArrayList<Integer>> subInvariants = InvariantsTools.returnInvWithTransition(invariants, rootTransition);
 		
+		ArrayList<ArrayList<Integer>> antiInvariants = InvariantsTools.returnInvWithoutTransition(invariants, rootTransition);
+		ArrayList<Integer> antiVector = InvariantsTools.getFrequency(antiInvariants);
+		
 		transMCTNames = getMCTNamesVector();
 		
-		createMTree(subInvariants, rootTransition, root);
+		//antiVector.set(rootTransition, 99); //TODO?
+		
+		createMTree(subInvariants, rootTransition, root, antiVector);
 	}
 	
-	public MauritiusMapBT(ArrayList<ArrayList<Integer>> invariants) {
+	//UNUSED
+	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants) {
 		root = new BTNode();
 		root.type = NodeType.ROOT;
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -49,7 +60,7 @@ public class MauritiusMapBT {
 		//tu wstaw MCT
 		transMCTNames = getMCTNamesVector();
 		
-		createMTree(invariants, -1, root);
+		createMTree(invariants, -1, root, null);
 	}
 	
 	/**
@@ -95,7 +106,7 @@ public class MauritiusMapBT {
 	/**
 	 * TEST ONLY
 	 */
-	public MauritiusMapBT() {
+	public MauritiusMap() {
 		Integer[] t1 = { 1, 0, 1, 1, 1, 0, 1, 0, 1 };
 		Integer[] t2 = { 0, 0, 1, 1, 1, 1, 1, 1, 0 };
 		Integer[] t3 = { 1, 0, 0, 1, 1, 0, 1, 0, 1 };
@@ -120,7 +131,7 @@ public class MauritiusMapBT {
 		root = new BTNode();
 		root.type = NodeType.ROOT;
 		testMode = true;
-		createMTree(invariants, -1, root);
+		createMTree(invariants, -1, root, null);
 	}
 	
 	/**
@@ -128,28 +139,46 @@ public class MauritiusMapBT {
 	 * @param subInvariants ArrayList[ArrayList[Integer]] - podmacierz inwariantów
 	 * @param chosenTrans int - id wierzchołka początkowego
 	 * @param currentNode BTNode - aktualnie przetwarzany węzeł drzewa
+	 * @param antiInvariants ArrayList[ArrayList[Integer]] - podmacierz inwariantów w których nie występuje RootTransition
 	 */
 	@SuppressWarnings("unused")
-	private void createMTree(ArrayList<ArrayList<Integer>> subInvariants, int chosenTrans, BTNode currentNode) {
+	private void createMTree(ArrayList<ArrayList<Integer>> subInvariants, int chosenTrans, BTNode currentNode, 
+			ArrayList<Integer> antiVector) {
 		int maxTransition = -1; //pierwsza tranzycja z największą # wystąpień w inwariantach
 		int howManyLeft = 0; 
 		ArrayList<Integer> transFrequency;
 		if(chosenTrans == -1) { //sam wybierz tranzycję z max(inv)
 			transFrequency = InvariantsTools.getFrequency(subInvariants);
-			maxTransition = getPositionOfMostImportantTransition(transFrequency);
 			
-			howManyLeft = getSupportSize(transFrequency);
+			//minus anti-inv:
+			ArrayList<Integer> tmpFreq = new ArrayList<Integer>(transFrequency);
+			for(int i=0; i<tmpFreq.size(); i++) {
+				if(antiVector.get(i) > 0)
+					tmpFreq.set(i, 0);
+			}
+			//tylko te, które w antiVector mają zera:
+			maxTransition = getPositionOfMostImportantTransition(tmpFreq);
+			howManyLeft = antiVector.size() - getSupportSize(antiVector); //liczba zer
+			if(maxTransition != -1)
+				antiVector.set(maxTransition, 99);
+			
+			//maxTransition = getPositionOfMostImportantTransition(transFrequency);
+			//howManyLeft = getSupportSize(transFrequency);
 		} else { // wybrana tranzycja
 			maxTransition = chosenTrans;
+			howManyLeft = antiVector.size() - getSupportSize(antiVector); //liczba zer
 			
-			transFrequency = InvariantsTools.getFrequency(subInvariants);
-			howManyLeft = getSupportSize(transFrequency);
+			if(maxTransition != -1)
+				antiVector.set(maxTransition, 99);
+			//transFrequency = InvariantsTools.getFrequency(subInvariants);
+			//howManyLeft = getSupportSize(transFrequency);
 		}
 		
 		if(maxTransition == -1) {
-			int x = 666;
+			currentNode.transFrequency = -1;
 			return;
 		}
+		
 			
 		//dla danej tranzycji wyznacz: jej inwarianty i całą resztę
 		ArrayList<ArrayList<Integer>> rightInvariants = InvariantsTools.returnInvWithTransition(subInvariants, maxTransition);
@@ -182,7 +211,10 @@ public class MauritiusMapBT {
 				currentNode.rightChild = rightNode;
 				
 				cleanTransDataInInv(rightInvariants, maxTransition);
-				createMTree(rightInvariants, -1, rightNode); //rekurencja
+				createMTree(rightInvariants, -1, rightNode, antiVector); //rekurencja
+				
+				if(rightNode.transLocation == -1) //emergency
+					currentNode.rightChild = null;
 				
 			} else { //dodano ostanią tranzycję
 				if(currentNode.type != NodeType.ROOT)  //ale nie root
@@ -197,7 +229,6 @@ public class MauritiusMapBT {
 				currentNode.type = NodeType.BRANCH;
 			
 			if(testMode == false) {
-				//currentNode.transName = transitions.get(maxTransition).getName();
 				currentNode.transName = transMCTNames.get(maxTransition);
 			} else
 				currentNode.transName = transitionsS.get(maxTransition);
@@ -213,13 +244,13 @@ public class MauritiusMapBT {
 			currentNode.leftChild = leftNode;
 			
 			cleanTransDataInInv(rightInvariants, maxTransition);
-			createMTree(rightInvariants, -1, rightNode); //rekurencja
+			createMTree(rightInvariants, -1, rightNode, antiVector); //rekurencja
 			
 			if(rightNode.transLocation == -1) //emergency
 				currentNode.rightChild = null;
 			
 			//cleanTransDataInInv(leftInvariants, maxTransition); // niemożliwe z definicji ?
-			createMTree(leftInvariants, -1, leftNode); //rekurencja
+			createMTree(leftInvariants, -1, leftNode, antiVector); //rekurencja
 			
 			if(leftNode.transLocation == -1) //emergency
 				currentNode.leftChild = null;

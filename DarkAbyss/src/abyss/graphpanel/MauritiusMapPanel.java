@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import abyss.math.MauritiusMapBT;
-import abyss.math.MauritiusMapBT.BTNode;
+import abyss.math.MauritiusMap;
+import abyss.math.MauritiusMap.BTNode;
 
 /**
  * Metoda odpowiedzialna za rysowanie map Mauritiusa.
@@ -27,7 +27,7 @@ import abyss.math.MauritiusMapBT.BTNode;
 public class MauritiusMapPanel extends JPanel {
 	private static final long serialVersionUID = 1028800481995974984L;
 	
-	private MauritiusMapBT mmbt;
+	private MauritiusMap mmbt;
 	private ArrayList<MapNodeInfo> locationVector = new ArrayList<MapNodeInfo>();
 	private int currentVerticalLevel = 0; //AKTUALNY popziom
 	private int verticalMulti = 0; //ile poddrzew
@@ -58,7 +58,7 @@ public class MauritiusMapPanel extends JPanel {
      * Metoda dodająca obiekt mapy. Po tym wystarczy odświeżyć panel aby mapa została narysowana.
      * @param mmbt MauritiusMapBT - Mauritius Map Binary Tree
      */
-    public void addNewMap(MauritiusMapBT mmbt) {
+    public void addNewMap(MauritiusMap mmbt) {
     	this.mmbt = mmbt;
     	this.originalSizeKnown = false;
     }
@@ -82,6 +82,8 @@ public class MauritiusMapPanel extends JPanel {
     private void readAndPaintTree(BTNode node, Graphics2D g2d, int x, int y, boolean fullName) {
     	updateWidth(x);
     	String name = node.transName;
+    	if(name == null)
+    		name = "N/A";
     	int freq = node.transFrequency;
     	int currentMulti = verticalMulti;
     	

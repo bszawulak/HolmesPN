@@ -2124,7 +2124,10 @@ public class AbyssDockWindowsTable extends JPanel {
 			Color currentColor = cp.getColor();
 			ArrayList<Transition> mct = mctGroups.get(m);
 			for (Transition transition : mct) {
-				transition.setColorWithNumber(true, currentColor, false, m, true, "MCT #"+m+" ("+mct.size()+")");
+				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("mctNameShow").equals("1"))
+					transition.setColorWithNumber(true, currentColor, false, m, true, "MCT #"+m+" ("+mct.size()+")");
+				else
+					transition.setColorWithNumber(true, currentColor, false, m, true, "");
 			}
 		}
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();

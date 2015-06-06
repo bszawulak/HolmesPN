@@ -463,6 +463,28 @@ public class AbyssProgramProperties extends JFrame {
 			}
 		});
 		panel.add(boldCheckBox);
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphFontBold").equals("1")) 
+			boldCheckBox.setSelected(true);
+		else
+			boldCheckBox.setSelected(true);
+		
+		JCheckBox mctNameCheckBox = new JCheckBox("MCT names", bold);
+		mctNameCheckBox.setBounds(io_x+270, io_y, 110, 20);
+		mctNameCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected())
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("mctNameShow", "1", true);
+				else
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("mctNameShow", "0", true);
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			}
+		});
+		panel.add(mctNameCheckBox);
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("mctNameShow").equals("1")) 
+			mctNameCheckBox.setSelected(true);
+		else
+			mctNameCheckBox.setSelected(true);
 		
 		noAction = false;
 		return panel;

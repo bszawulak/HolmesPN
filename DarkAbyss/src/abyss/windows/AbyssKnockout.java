@@ -32,8 +32,8 @@ import abyss.analyse.MCTCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.MauritiusMapPanel;
 import abyss.math.MCSDataMatrix;
-import abyss.math.MauritiusMapBT;
-import abyss.math.MauritiusMapBT.BTNode;
+import abyss.math.MauritiusMap;
+import abyss.math.MauritiusMap.BTNode;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
@@ -60,7 +60,7 @@ public class AbyssKnockout extends JFrame {
 	private JPanel buttonPanel;
 	private JPanel logMainPanel;
 	private JScrollPane scroller;
-	private MauritiusMapBT mmCurrentObject;
+	private MauritiusMap mmCurrentObject;
 	
 	private ArrayList<Integer> disabledSetByObjR = null;
 	private ArrayList<Integer> commonSetToObjR = null;
@@ -180,7 +180,7 @@ public class AbyssKnockout extends JFrame {
 		showKnockoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				
-				MauritiusMapBT infoMap = generateMap();
+				MauritiusMap infoMap = generateMap();
 				if(infoMap != null) {
 					AbyssNotepad notePad = new AbyssNotepad(900,600);
 					notePad.setVisible(true);
@@ -198,7 +198,7 @@ public class AbyssKnockout extends JFrame {
 		toNetKnockoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				
-				MauritiusMapBT infoMap = generateMap();
+				MauritiusMap infoMap = generateMap();
 				if(infoMap != null) {
 					getKnockoutInfoToNet(infoMap);
 				}
@@ -299,9 +299,13 @@ public class AbyssKnockout extends JFrame {
 	 * @param infoMap MauritiusMapBT - obiekt danych mapy
 	 * @param notePad AbyssNotepad - obiekt notatnika dla wyników
 	 */
-	protected void getKnockoutInfo(MauritiusMapBT infoMap, AbyssNotepad notePad) {
+	protected void getKnockoutInfo(MauritiusMap infoMap, AbyssNotepad notePad) {
 		ArrayList<ArrayList<Integer>> dataMatrix = collectMapData(infoMap);
 		
+		if(dataMatrix.get(0).contains(-1))
+			dataMatrix.get(0).remove(dataMatrix.get(0).indexOf(-1));
+		if(dataMatrix.get(1).contains(-1))
+			dataMatrix.get(1).remove(dataMatrix.get(1).indexOf(-1));
 		//int noteValue = infoMap.getRoot().transFrequency;
 		//knockOutDataFailed = new ArrayList<Integer>();
 		//knockOutDataObjR = new ArrayList<Integer>();
@@ -345,7 +349,7 @@ public class AbyssKnockout extends JFrame {
 		
 		//oblicz wszystkie:
 		for(int t=0; t<transNumber; t++) {
-			MauritiusMapBT mm = new MauritiusMapBT(invariants, t);
+			MauritiusMap mm = new MauritiusMap(invariants, t);
 			ArrayList<ArrayList<Integer>> dataMatrix = collectMapData(mm);
 			transFailDependency.add(dataMatrix.get(0).size());
 			transCommonSetSize.add(dataMatrix.get(1).size());
@@ -671,7 +675,7 @@ public class AbyssKnockout extends JFrame {
 	 * Metoda przesyła dane o knockout na obraz sieci.
 	 * @param infoMap
 	 */
-	protected void getKnockoutInfoToNet(MauritiusMapBT infoMap) {
+	protected void getKnockoutInfoToNet(MauritiusMap infoMap) {
 		ArrayList<ArrayList<Integer>> dataMatrix = collectMapData(infoMap);
 		
 		try {
@@ -707,7 +711,7 @@ public class AbyssKnockout extends JFrame {
 	 * @return ArrayList[ArrayList[Integer]] - pierszy zbiór (.get(0) = disabledSetByObjR) to reakcje wyłączane
 	 *  przez objR, drugi zbiór (.get(1) = commonSetToObjR) to reakcje o tej samej frekwencji co objR.
 	 */
-	private ArrayList<ArrayList<Integer>> collectMapData(MauritiusMapBT infoMap) {
+	private ArrayList<ArrayList<Integer>> collectMapData(MauritiusMap infoMap) {
 		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
 		
 		int noteValue = infoMap.getRoot().transFrequency;
@@ -754,7 +758,7 @@ public class AbyssKnockout extends JFrame {
 	 * Metoda odpowiedzialna za wygenerowanie mapy.
 	 * @return MauritiusMapBT - obiekt mapy
 	 */
-	private MauritiusMapBT generateMap() {
+	private MauritiusMap generateMap() {
 		int selection = transitionsCombo.getSelectedIndex();
 		if(selection == 0) {
 			JOptionPane.showMessageDialog(null, "Please choose main reaction for Mauritius Map.", 
@@ -771,7 +775,7 @@ public class AbyssKnockout extends JFrame {
 			return null;
 		}
 
-		MauritiusMapBT mm = new MauritiusMapBT(invariants, selection);
+		MauritiusMap mm = new MauritiusMap(invariants, selection);
 		return mm;
 	}
 	

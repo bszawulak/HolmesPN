@@ -134,6 +134,7 @@ public class SettingsManager {
 			checkAndFix(settingsNew, "graphFontSize", "11");
 		} catch (Exception e) { settingsNew.add(new Setting("graphFontSize", "11")); }
 		checkAndFix(settingsNew, "graphFontBold", "0");
+		checkAndFix(settingsNew, "mctNameShow", "1");
 		
 		settings = new ArrayList<Setting>(settingsNew);
 		writeSettingsFile();
