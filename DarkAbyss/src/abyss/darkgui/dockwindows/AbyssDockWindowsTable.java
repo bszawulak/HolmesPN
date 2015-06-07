@@ -1815,13 +1815,14 @@ public class AbyssDockWindowsTable extends JPanel {
 		chooseInvLabel.setBounds(colA_posX, positionY, 80, 20);
 		components.add(chooseInvLabel);
 		
-		String[] invariantHeaders = new String[invariantsMatrix.size() + 2];
+		String[] invariantHeaders = new String[invariantsMatrix.size() + 3];
 		invariantHeaders[0] = "---";
 		for (int i = 0; i < invariantsMatrix.size(); i++) {
 			int invSize = InvariantsTools.getSupport(invariantsMatrix.get(i)).size();
 			invariantHeaders[i + 1] = "Inv. #" + Integer.toString(i) +" (size: "+invSize+")";
 		}
-		invariantHeaders[invariantHeaders.length-1] = "null transitions";
+		invariantHeaders[invariantHeaders.length-2] = "null transitions";
+		invariantHeaders[invariantHeaders.length-1] = "inv/trans frequency";
 		
 		JComboBox<String> chooseInvBox = new JComboBox<String>(invariantHeaders);
 		chooseInvBox.setBounds(colB_posX, positionY, 150, 20);
@@ -1831,9 +1832,11 @@ public class AbyssDockWindowsTable extends JPanel {
 				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
 				int items = comboBox.getItemCount();
 				if (comboBox.getSelectedIndex() == 0) {
-					showInvariant(0, false);
+					showInvariant(0, false); //clean
+				} else if(comboBox.getSelectedIndex() == items-2) { 
+					showDeadInv(); //show transition without invariants
 				} else if(comboBox.getSelectedIndex() == items-1) { 
-					showDeadInv();
+					showInvTransFrequency(); //show transition frequency (in invariants)
 				} else {
 					showInvariant(comboBox.getSelectedIndex() - 1, true);
 				}
@@ -1926,6 +1929,29 @@ public class AbyssDockWindowsTable extends JPanel {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
+	
+	private void showInvTransFrequency() {
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
+		
+		invTextArea.setText("");
+		ArrayList<Integer> freqVector = InvariantsTools.getFrequency(invariantsMatrix);
+		ArrayList<Transition> transitions_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		
+		if(freqVector == null) {
+			JOptionPane.showMessageDialog(null, "No invariants data available.", "No invariants", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			for(int i=0; i<freqVector.size(); i++) {
+				Transition realT = transitions_tmp.get(i);
+				realT.setGlowedINV(true, freqVector.get(i));
+			}
+		}
+		invTextArea.setCaretPosition(0);
+		
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+	}
+	
 	/**
 	 * Metoda pomicnicza do zaznaczania tranzycji nie pokrytych inwariantami.
 	 */
@@ -1938,6 +1964,8 @@ public class AbyssDockWindowsTable extends JPanel {
 		invTextArea.append("Transitions not covered by invariants:\n");
 		//ArrayList<Integer> deadTrans = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getUncoveredInvariants();
 		ArrayList<Integer> deadTrans = InvariantsTools.detectUncovered(invariantsMatrix);
+		ArrayList<Transition> transitions_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		
 		if(deadTrans == null) {
 			JOptionPane.showMessageDialog(null, "No invariants data available.", "No invariants", JOptionPane.INFORMATION_MESSAGE);
 		} else {
@@ -1946,7 +1974,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				if(active == 1)
 					continue;
 				
-				Transition realT = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i);
+				Transition realT = transitions_tmp.get(i);
 				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
 						.getTransitions().lastIndexOf(realT);
 				

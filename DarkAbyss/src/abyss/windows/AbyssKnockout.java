@@ -3,23 +3,29 @@ package abyss.windows;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -34,6 +40,7 @@ import abyss.graphpanel.MauritiusMapPanel;
 import abyss.math.MauritiusMap;
 import abyss.math.MauritiusMap.BTNode;
 import abyss.math.Transition;
+import abyss.utilities.AbyssFileView;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 
@@ -246,6 +253,18 @@ public class AbyssKnockout extends JFrame {
 		});
 		monaLisaToNetButton.setFocusPainted(false);
 		panel.add(monaLisaToNetButton);
+		
+		JButton saveImgButton = new JButton("Save IMG");
+		saveImgButton.setBounds(posX+720, posY+30, 110, 30);
+		saveImgButton.setMargin(new Insets(0, 0, 0, 0));
+		saveImgButton.setIcon(Tools.getResIcon32(""));
+		saveImgButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				exportToPicture();
+			}
+		});
+		saveImgButton.setFocusPainted(false);
+		panel.add(saveImgButton);
 		
 		JCheckBox shortTextCheckBox = new JCheckBox("Show full names");
 		shortTextCheckBox.setBounds(posX+490, posY, 130, 20);
@@ -785,6 +804,81 @@ public class AbyssKnockout extends JFrame {
 	private void paintMap() {
 		mmp.addNewMap(mmCurrentObject);
 		mmp.repaint();
+	}
+	
+	public BufferedImage getImageFromPanel() {
+		MauritiusMap mm = generateMap();
+		mmp.addNewMap(mm);
+		mmp.repaint();
+		
+		int w = mmp.getWidth();
+	    int h = mmp.getHeight();
+	    BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+	    Graphics2D g = bi.createGraphics();
+	    g.setColor(Color.white);
+	    mmp.paint(g);
+	    return bi;
+		
+		//Rectangle r = getBounds();
+		//BufferedImage image = new BufferedImage(r.width, r.height, BufferedImage.TYPE_INT_RGB);
+		//Graphics g = image.getGraphics();
+		//g.setColor(Color.white);
+		//g.fillRect(0, 0, getWidth(), getHeight());
+		//drawPetriNet((Graphics2D) g.create());
+		//return image;
+	}
+	
+	private void exportToPicture() {
+		//String lastPath = getGraphPanel().getPetriNet().getWorkspace().getGUI().getLastPath();
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		JFileChooser fc;
+		if(lastPath == null)
+			fc = new JFileChooser();
+		else
+			fc = new JFileChooser(lastPath);
+		
+		fc.setFileView(new AbyssFileView());
+		FileFilter pngFilter = new ExtensionFileFilter(".png - Portable Network Graphics", new String[] { "png" });
+		FileFilter bmpFilter = new ExtensionFileFilter(".bmp -  Bitmap Image File", new String[] { "bmp" });
+		FileFilter jpegFilter = new ExtensionFileFilter(".jpeg - JPEG Image File", new String[] { "jpeg" });
+		FileFilter jpgFilter = new ExtensionFileFilter(".jpg - JPEG Image File", new String[] { "jpg" });
+		fc.setFileFilter(pngFilter);
+		fc.addChoosableFileFilter(pngFilter);
+		fc.addChoosableFileFilter(bmpFilter);
+		fc.addChoosableFileFilter(jpegFilter);
+		fc.addChoosableFileFilter(jpgFilter);
+		fc.setAcceptAllFileFilterUsed(false);
+		if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			String ext = "";
+			String extension = fc.getFileFilter().getDescription();
+			if (extension.contains(".png")) ext = ".png";
+			if (extension.contains(".bmp")) ext = ".bmp";
+			if (extension.contains(".jpeg") || extension.contains(".jpg")) ext = ".jpeg";
+			
+			BufferedImage image = getImageFromPanel();
+			try {
+				String ext2 = "";
+				String path = file.getPath();
+				if(ext.equals(".png") && !(path.contains(".png"))) ext2 = ".png";
+				if(ext.equals(".bmp") && !file.getPath().contains(".bmp")) ext2 = ".bmp";
+				if(ext.equals(".jpeg") && !file.getPath().contains(".jpeg")) ext2 = ".jpeg";
+				if(ext.equals(".jpeg") && !file.getPath().contains(".jpg")) ext2 = ".jpg";
+				
+				ImageIO.write(image, ext.substring(1), new File(file.getPath() + ext2));
+				
+				GUIManager.getDefaultGUIManager().setLastPath(file.getParentFile().getPath());
+				
+				//getGraphPanel().getPetriNet().getWorkspace().getGUI().setLastPath(
+				//		file.getParentFile().getPath()); //  ╯°□°）╯ ︵  ┻━━━┻
+			} catch (IOException ex) {
+				ex.printStackTrace();
+				JOptionPane.showMessageDialog(null,
+						"Saving net sheet into picture failed.",
+						"Export Picture Error",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
 	}
 	
 	/**

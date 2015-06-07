@@ -81,8 +81,8 @@ public class MauritiusMapPanel extends JPanel {
     private void readAndPaintTree(BTNode node, Graphics2D g2d, int x, int y, boolean fullName) {
     	updateWidth(x);
     	String name = node.transName;
-    	if(name == null)
-    		name = "N/A";
+    	if(name == null) name = "N/A";
+    	
     	int freq = node.transFrequency;
     	int currentMulti = verticalMulti;
     	
@@ -90,11 +90,23 @@ public class MauritiusMapPanel extends JPanel {
     		int loc = node.transLocation;
     		name = "t_"+loc;
     	}
-    	//TODO:
     	
-    	//rysowanie okręgu i tekstów:
+    	//MCT:
+    	if(name.contains("_MCT")) {
+    		int ind = name.indexOf("_MCT");
+    		String mctName = name.substring(ind+1);
+    		drawRotatedText(g2d, x+8, y+35, 0, "("+mctName+")", false);
+    		
+    		name = name.substring(0, ind);
+    	}
+    	
+    	//rysowanie okręgu i nazwy:
     	drawCenteredCircle(g2d, x, y, 40, Color.darkGray);
-    	drawRotatedText(g2d, x+15, y-15, -8, name);
+    	drawRotatedText(g2d, x+15, y-15, -8, name, false);
+    	//ID:
+    	String t_id = "t"+node.transLocation;
+    	drawRotatedText(g2d, x-27, y+35, 0, t_id, true);
+    	
     	
     	if(freq < 10)
     		drawText(g2d, x-4, y+5, freq+"", Color.red); //częstość wystąpień w inwariantach DANEJ(rysowanej poziomo) ścieżki
@@ -283,9 +295,10 @@ public class MauritiusMapPanel extends JPanel {
 	 * @param x int - współrzędna x pierwszej litery
 	 * @param y int - współrzędna y pierwszej litery
 	 * @param angle int - kąt (zamiana na radiany)
-	 * @param text String - teks do wpisania
+	 * @param text String - tekst do wpisania
+	 * @param bold boolean - true, jeśli pogrubiona
 	 */
-	public void drawRotatedText(Graphics2D g2d, double x, double y, int angle, String text) 
+	public void drawRotatedText(Graphics2D g2d, double x, double y, int angle, String text, boolean bold) 
 	{    
 		int baseSize = 14;
 		float zoom = getZoom();
@@ -298,7 +311,11 @@ public class MauritiusMapPanel extends JPanel {
 		
 		Font oldFont = g2d.getFont();
 		Color oldColor = g2d.getColor();
-		g2d.setFont(new Font("Tahoma", Font.PLAIN, baseSize));
+		if(bold)
+			g2d.setFont(new Font("Tahoma", Font.BOLD, baseSize));
+		else
+			g2d.setFont(new Font("Tahoma", Font.PLAIN, baseSize));
+		
 		g2d.setColor(Color.black);
 		
 	    g2d.translate((float)x,(float)y);
