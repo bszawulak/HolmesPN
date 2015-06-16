@@ -2057,7 +2057,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		mctHeaders[0] = "---";
 		for (int i = 0; i < mctGroups.size(); i++) {
 			if(i < mctGroups.size()-1)
-				mctHeaders[i + 1] = "MCT #" + Integer.toString(i) +" (size: "+mctGroups.get(i).size()+")";
+				mctHeaders[i + 1] = "MCT #" + Integer.toString(i+1) +" (size: "+mctGroups.get(i).size()+")";
 			else {
 				mctHeaders[i + 1] = "No-MCT transitions";
 				mctHeaders[i + 2] = "Show all";
