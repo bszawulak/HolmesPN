@@ -31,6 +31,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
 import abyss.analyse.InvariantsTools;
@@ -70,6 +75,8 @@ public class AbyssKnockout extends JFrame {
 	
 	private ArrayList<Integer> disabledSetByObjR = null;
 	private ArrayList<Integer> commonSetToObjR = null;
+	
+	private int currentTreshold = 20;
 	
 	/**
 	 * Konstruktor obiektu klasy AbyssKnockout
@@ -165,6 +172,17 @@ public class AbyssKnockout extends JFrame {
 			}
 		} 
 		panel.add(transitionsCombo);
+		
+		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(currentTreshold, 0, 100, 1);
+		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
+		tokenSpinner.setBounds(posX+620, posY, 70, 20);
+		tokenSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				currentTreshold = (int) spinner.getValue();
+			}
+		});
+		panel.add(tokenSpinner);
 		
 		JButton generateButton = new JButton("Generate");
 		generateButton.setBounds(posX, posY+30, 110, 30);
@@ -367,7 +385,7 @@ public class AbyssKnockout extends JFrame {
 		
 		//oblicz wszystkie:
 		for(int t=0; t<transNumber; t++) {
-			MauritiusMap mm = new MauritiusMap(invariants, t);
+			MauritiusMap mm = new MauritiusMap(invariants, t, currentTreshold);
 			ArrayList<ArrayList<Integer>> dataMatrix = collectMapData(mm);
 			transFailDependency.add(dataMatrix.get(0).size());
 			transCommonSetSize.add(dataMatrix.get(1).size());
@@ -379,8 +397,9 @@ public class AbyssKnockout extends JFrame {
 		
 		for(int t=0; t<transNumber; t++) {
 			notePad.addTextLine("[t_"+t+ "]|"+transitions.get(t).getName()+":", "text");
-			notePad.addTextLineNL("| Knocked-out: "+transFailDependency.get(t)+ 
-					"| Common: "+transCommonSetSize.get(t), "text");
+			int kn = transFailDependency.get(t) + transCommonSetSize.get(t) - 1;
+			//notePad.addTextLineNL("| Knocked-out: "+transFailDependency.get(t)+ "| Common: "+transCommonSetSize.get(t), "text");
+			notePad.addTextLineNL("| Knocked-out: "+kn+ "| Common: "+transCommonSetSize.get(t), "text");
 		}
 		
 		//knockOutData
@@ -794,7 +813,7 @@ public class AbyssKnockout extends JFrame {
 			return null;
 		}
 
-		MauritiusMap mm = new MauritiusMap(invariants, selection);
+		MauritiusMap mm = new MauritiusMap(invariants, selection, currentTreshold);
 		return mm;
 	}
 	
@@ -806,6 +825,10 @@ public class AbyssKnockout extends JFrame {
 		mmp.repaint();
 	}
 	
+	/**
+	 * Metoda konwertująca obraz na panelu MM do obrazka
+	 * @return BufferedImage - obrazek
+	 */
 	public BufferedImage getImageFromPanel() {
 		MauritiusMap mm = generateMap();
 		mmp.addNewMap(mm);

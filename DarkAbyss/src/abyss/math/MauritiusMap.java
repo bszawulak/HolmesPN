@@ -29,8 +29,10 @@ public class MauritiusMap {
 	 * Konstruktor używany do tworzenia mapy
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @param rootTransition int - indeks tranzycji bazowej
+	 * @param coverageVal int - od 0 do 100. Np. 20 oznacza, że tranzycja musi być obecna w 20% inwariantów zbioru 
+	 * 		bazowego lub więcej
 	 */
-	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants, int rootTransition) {
+	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants, int rootTransition, int coverageVal) {
 		root = new BTNode();
 		root.type = NodeType.ROOT;
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -38,12 +40,48 @@ public class MauritiusMap {
 		
 		ArrayList<ArrayList<Integer>> antiInvariants = InvariantsTools.returnInvWithoutTransition(invariants, rootTransition);
 		ArrayList<Integer> antiVector = InvariantsTools.getFrequency(antiInvariants);
-		
 		transMCTNames = getMCTNamesVector();
 		
+		//createMTree(subInvariants, rootTransition, root, antiVector);
 		//antiVector.set(rootTransition, 99); //TODO?
 		
-		createMTree(subInvariants, rootTransition, root, antiVector);
+		//usuń tranzycje z anty-listy:
+		for(ArrayList<Integer> inv : subInvariants) {
+			for(int i=0; i<inv.size(); i++) {
+				if(antiVector.get(i) > 0) {
+					inv.set(i, 0);
+				}
+			}
+		}
+		//usuń tranzycje poniżej procentu pokrycia:
+		ArrayList<Integer> freqVector = InvariantsTools.getFrequency(subInvariants);
+		float treshold = (float)coverageVal / (float)100;
+		float maxCoverage = freqVector.get(rootTransition);
+		ArrayList<Integer> transToKeepVector = new ArrayList<Integer>();
+		for(int i=0; i<freqVector.size(); i++) {
+			int currentValue = freqVector.get(i);
+			if(currentValue == 0) {
+				transToKeepVector.add(0);
+			} else {
+				float coverage = (float)currentValue / maxCoverage;
+				if(coverage >= treshold) {
+					transToKeepVector.add(1);
+				} else {
+					transToKeepVector.add(0); //usun tranzycje ze zbioru
+				}
+			}
+		}
+		
+		for(ArrayList<Integer> inv : subInvariants) {
+			for(int i=0; i<inv.size(); i++) {
+				if(transToKeepVector.get(i) == 0) {
+					inv.set(i, 0);
+				}
+			}
+		}
+		
+		
+		createMTreeV2(subInvariants, rootTransition, root);
 	}
 	
 	//UNUSED
@@ -204,6 +242,96 @@ public class MauritiusMap {
 			
 			//cleanTransDataInInv(leftInvariants, maxTransition); // niemożliwe z definicji ?
 			createMTree(leftInvariants, -1, leftNode, antiVector); //rekurencja
+			
+			if(leftNode.transLocation == -1) //emergency
+				currentNode.leftChild = null;
+		}
+	}
+	
+	private void createMTreeV2(ArrayList<ArrayList<Integer>> subInvariants, int chosenTrans, BTNode currentNode) {
+		int maxTransition = -1; //pierwsza tranzycja z największą # wystąpień w inwariantach
+		int howManyLeft = 0; 
+		ArrayList<Integer> transFrequency;
+		if(chosenTrans == -1) { //sam wybierz tranzycję z max(inv)
+			transFrequency = InvariantsTools.getFrequency(subInvariants);
+			maxTransition = getPositionOfMostImportantTransition(transFrequency);
+			howManyLeft = getSupportSize(transFrequency); //liczba zer
+			
+			
+		} else { // wybrana tranzycja
+			maxTransition = chosenTrans;			
+			transFrequency = InvariantsTools.getFrequency(subInvariants);
+			howManyLeft = getSupportSize(transFrequency);
+			
+			
+		}
+		
+		if(maxTransition == -1) {
+			currentNode.transFrequency = -1;
+			return;
+		}
+			
+		//dla danej tranzycji wyznacz: jej inwarianty i całą resztę
+		ArrayList<ArrayList<Integer>> rightInvariants = InvariantsTools.returnInvWithTransition(subInvariants, maxTransition);
+		ArrayList<ArrayList<Integer>> leftInvariants = InvariantsTools.returnInvWithoutTransition(subInvariants, maxTransition);
+		
+		if(leftInvariants.size() == 0 || howManyLeft == 0) {
+			// brak inwariantów bez tranzycji maxTransition: węzeł typu Data
+			// czyli: brak lewego podrzewa
+			
+			currentNode.transName = transMCTNames.get(maxTransition);
+			currentNode.transLocation = maxTransition;
+			currentNode.transFrequency = rightInvariants.size();
+			
+			if(currentNode.transFrequency == 0) {
+				int x = 1;
+			}
+			
+			currentNode.othersFrequency = leftInvariants.size();
+			currentNode.leftChild = null;
+			if(howManyLeft > 1) {
+				if(currentNode.type != NodeType.ROOT)  //ale nie root
+					currentNode.type = NodeType.BRANCH;
+				
+				BTNode rightNode = new BTNode();
+				currentNode.rightChild = rightNode;
+				
+				cleanTransDataInInv(rightInvariants, maxTransition);
+				createMTreeV2(rightInvariants, -1, rightNode); //rekurencja
+				
+				if(rightNode.transLocation == -1) //emergency
+					currentNode.rightChild = null;
+				
+			} else { //dodano ostanią tranzycję
+				if(currentNode.type != NodeType.ROOT)  //ale nie root
+					currentNode.type = NodeType.LEAF;
+				
+				currentNode.rightChild = null;
+				//wracamy wyżej
+			} 
+		} else { //jeśli jest lewe podrzewo, howManyLeft MUSI być większe od zera
+			// oba poddrzewa
+			if(currentNode.type != NodeType.ROOT) //ale nie root
+				currentNode.type = NodeType.BRANCH;
+			
+			currentNode.transName = transMCTNames.get(maxTransition);
+			currentNode.transLocation = maxTransition;
+			currentNode.transFrequency = rightInvariants.size();
+			currentNode.othersFrequency = leftInvariants.size();
+			
+			BTNode rightNode = new BTNode();
+			currentNode.rightChild = rightNode;
+			BTNode leftNode = new BTNode();
+			currentNode.leftChild = leftNode;
+			
+			cleanTransDataInInv(rightInvariants, maxTransition);
+			createMTreeV2(rightInvariants, -1, rightNode); //rekurencja
+			
+			if(rightNode.transLocation == -1) //emergency
+				currentNode.rightChild = null;
+			
+			//cleanTransDataInInv(leftInvariants, maxTransition); // niemożliwe z definicji ?
+			createMTreeV2(leftInvariants, -1, leftNode); //rekurencja
 			
 			if(leftNode.transLocation == -1) //emergency
 				currentNode.leftChild = null;
