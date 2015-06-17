@@ -42,6 +42,7 @@ public class MauritiusMapPanel extends JPanel {
 	
 	public boolean originalSizeKnown = false;
 	
+	private boolean contractedMode = false;
 	/**
 	 * Główny konstruktor obiektu klasy MauritiusMapPanel.
 	 */
@@ -57,9 +58,10 @@ public class MauritiusMapPanel extends JPanel {
      * Metoda dodająca obiekt mapy. Po tym wystarczy odświeżyć panel aby mapa została narysowana.
      * @param mmbt MauritiusMapBT - Mauritius Map Binary Tree
      */
-    public void addNewMap(MauritiusMap mmbt) {
+    public void addNewMap(MauritiusMap mmbt, boolean contractedMode) {
     	this.mmbt = mmbt;
     	this.originalSizeKnown = false;
+    	this.contractedMode = contractedMode;
     }
   
     /**
@@ -92,17 +94,29 @@ public class MauritiusMapPanel extends JPanel {
     	}
     	
     	//MCT:
+    	boolean mctDetected = false;
     	if(name.contains("_MCT")) {
     		int ind = name.indexOf("_MCT");
     		String mctName = name.substring(ind+1);
     		drawRotatedText(g2d, x+8, y+35, 0, "("+mctName+")", false);
     		
     		name = name.substring(0, ind);
+    		mctDetected = true;
     	}
     	
     	//rysowanie okręgu i nazwy:
-    	drawCenteredCircle(g2d, x, y, 40, Color.darkGray);
-    	drawRotatedText(g2d, x+15, y-15, -8, name, false);
+    	if(mctDetected==true && contractedMode)
+    		drawCenteredSquare(g2d, x, y, 40, Color.lightGray);
+    	else
+    		drawCenteredCircle(g2d, x, y, 40, Color.darkGray);
+    	
+    	//drawCenteredSquare
+    	
+    	if(mctDetected==true && contractedMode) 
+    		;
+    	else
+    		drawRotatedText(g2d, x+15, y-15, -8, name, false);
+
     	//ID:
     	String t_id = "t"+node.transLocation;
     	drawRotatedText(g2d, x-27, y+35, 0, t_id, true);
@@ -117,8 +131,19 @@ public class MauritiusMapPanel extends JPanel {
     	
     	
     	if(node.rightChild != null) {
-    		drawArrow(g2d, x+20, y, x+100, y, 3, Color.gray);
-    		readAndPaintTree(node.rightChild, g2d, x+126, y, fullName); //120+6 (6=offest strzałki)
+    		if(contractedMode) {
+    			int currentVal = node.transFrequency;
+    			
+    			while(node.rightChild != null && currentVal == node.rightChild.transFrequency) {
+    				node.rightChild = node.rightChild.rightChild;
+    			}
+    			
+    		}
+    		
+    		if(node.rightChild != null) {
+    			drawArrow(g2d, x+20, y, x+100, y, 3, Color.gray);
+    			readAndPaintTree(node.rightChild, g2d, x+126, y, fullName); //120+6 (6=offest strzałki)
+    		}
     	}
     	
     	if(node.leftChild != null) {
@@ -368,6 +393,37 @@ public class MauritiusMapPanel extends JPanel {
     	yPos = y-(r/2) +5;
     	
     	g2d.drawOval(xPos, yPos, r-10, r-10);
+    	//g.fillOval(x,y,r,r);
+    	
+    	g2d.setStroke(oldStroke);
+    	g2d.setPaint(old);
+    }
+    
+    /**
+     * Metoda rysuje kwadrat.
+     * @param g2d Graphics2D - obiekt grafiki
+     * @param x int - współrzędna x środka
+     * @param y int - współrzędna y środka
+     * @param r int - promień
+     * @param color Color - kolor
+     */
+    private void drawCenteredSquare(Graphics2D g2d, int x, int y, int r, Color color) {
+    	int xPos = x-(r/2);
+    	int yPos = y-(r/2);
+    	
+    	Color old = g2d.getColor();
+    	Stroke oldStroke = g2d.getStroke();
+    	
+        g2d.setPaint(color);
+        
+        g2d.setStroke(new BasicStroke(3));
+        g2d.drawRect(xPos, yPos, r, r);
+        //g2d.drawOval(xPos, yPos, r, r);
+        
+        xPos = x-(r/2) +5;
+    	yPos = y-(r/2) +5;
+    	
+    	g2d.drawOval(xPos-2, yPos-2, r-6, r-6);
     	//g.fillOval(x,y,r,r);
     	
     	g2d.setStroke(oldStroke);

@@ -56,13 +56,11 @@ import abyss.workspace.ExtensionFileFilter;
  * Stefanie Grunwald, Astrid Speer, Jorg Ackermann, Ina Koch
  * BioSystems, 2008, 92, pp.189-205
  * 
- * 
  * @author MR
  *
  */
 public class AbyssKnockout extends JFrame {
 	private static final long serialVersionUID = -9038958824842964847L;
-
 	private JComboBox<String> transitionsCombo;
 	private MauritiusMapPanel mmp;
 	private int intX=0;
@@ -77,6 +75,7 @@ public class AbyssKnockout extends JFrame {
 	private ArrayList<Integer> commonSetToObjR = null;
 	
 	private int currentTreshold = 20;
+	private boolean contractedMode = false;
 	
 	/**
 	 * Konstruktor obiektu klasy AbyssKnockout
@@ -102,21 +101,7 @@ public class AbyssKnockout extends JFrame {
   	  	    	fillComboBoxData();
   	  	    }  
     	});
-		
-		/*
-		addComponentListener(this);
-		addWindowStateListener(new WindowAdapter() {
-			public void windowStateChanged(WindowEvent e) {
-				if(e.getNewState() == JFrame.MAXIMIZED_BOTH) {
-					//ego.setExtendedState(JFrame.NORMAL);
-					//resizeComponents();
-				}
-			}
-		});
-		*/
 	}
-
-
 
 	/**
 	 * Metoda tworząca główny panel okna.
@@ -184,6 +169,20 @@ public class AbyssKnockout extends JFrame {
 		});
 		panel.add(tokenSpinner);
 		
+		JCheckBox contractedModeBox = new JCheckBox("Contracted");
+		contractedModeBox.setBounds(posX+690, posY, 90, 20);
+		contractedModeBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					contractedMode = true;
+				} else {
+					contractedMode = false;
+				}
+			}
+		});
+		panel.add(contractedModeBox);
+		
 		JButton generateButton = new JButton("Generate");
 		generateButton.setBounds(posX, posY+30, 110, 30);
 		generateButton.setMargin(new Insets(0, 0, 0, 0));
@@ -203,7 +202,6 @@ public class AbyssKnockout extends JFrame {
 		showKnockoutButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/showNotepad.png"));
 		showKnockoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				
 				MauritiusMap infoMap = generateMap();
 				if(infoMap != null) {
 					AbyssNotepad notePad = new AbyssNotepad(900,600);
@@ -364,6 +362,17 @@ public class AbyssKnockout extends JFrame {
 			notePad.addTextLineNL("[t_"+element+"] : "+transitions.get(element).getName(), "text");
 		}
 		//knockOutData
+		
+		//TODO:
+		int rootTransition = transitionsCombo.getSelectedIndex();
+		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+		ArrayList<Integer> invIndices = InvariantsTools.returnInvIndicesWithTransition(invariants, rootTransition);
+		
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("Invariants: ", "text");
+		for(int element : invIndices) {
+			notePad.addTextLine("i_"+element+" , ", "text");
+		}
 	}
 	
 	/**
@@ -821,7 +830,7 @@ public class AbyssKnockout extends JFrame {
 	 * Metoda uruchamiania przerysowanie wyliczonej mapy.
 	 */
 	private void paintMap() {
-		mmp.addNewMap(mmCurrentObject);
+		mmp.addNewMap(mmCurrentObject, contractedMode);
 		mmp.repaint();
 	}
 	
@@ -831,7 +840,7 @@ public class AbyssKnockout extends JFrame {
 	 */
 	public BufferedImage getImageFromPanel() {
 		MauritiusMap mm = generateMap();
-		mmp.addNewMap(mm);
+		mmp.addNewMap(mm, contractedMode);
 		mmp.repaint();
 		
 		int w = mmp.getWidth();

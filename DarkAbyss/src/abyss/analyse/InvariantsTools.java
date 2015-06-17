@@ -942,6 +942,23 @@ public final class InvariantsTools {
 	}
 	
 	/**
+	 * Metoda zwraca indeksy inwariantów w których występuje dana reakcja.
+	 * @param globalInv ArrayList[ArrayList[Integer]] - macierz inwariantów 
+	 * @param transLoc id - nr reakcji
+	 * @return ArrayList[Integer] - indeksy inwariantów z reakcją
+	 */
+	public static ArrayList<Integer> returnInvIndicesWithTransition(ArrayList<ArrayList<Integer>> globalInv, int transLoc) {
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		for(int i=0; i<globalInv.size(); i++) {
+			if(globalInv.get(i).get(transLoc) != 0) {
+				result.add(i);
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
 	 * Metoda zwraca podzbiór inwariantów w których NIE występuje dana reakcja.
 	 * @param globalInv ArrayList[ArrayList[Integer]] - macierz inwariantów 
 	 * @param transLoc id - nr reakcji
