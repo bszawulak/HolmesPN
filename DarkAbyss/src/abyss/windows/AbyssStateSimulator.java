@@ -894,6 +894,23 @@ public class AbyssStateSimulator extends JFrame {
 		placesJPanel.add(sPane, BorderLayout.CENTER);
 		placesJPanel.revalidate();
 		placesJPanel.repaint();
+		
+		
+		AbyssNotepad notePad = new AbyssNotepad(900,600);
+		notePad.setVisible(true);
+		ArrayList<Place> places_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("Places: ", "text");
+		notePad.addTextLineNL("", "text");
+		for(int p=0; p<placesAvgData.size(); p++) {
+			String p_name = places_tmp.get(p).getName();
+			double val = placesAvgData.get(p);
+			if(val > 0)
+				notePad.addTextLineNL("  p_"+p+" "+p_name+" : "+val, "text");
+			else
+				notePad.addTextLineNL("NO_TOKENS: p_"+p+" "+p_name+" : "+val, "text");
+		}
+
 	}
 	
 
@@ -1064,6 +1081,21 @@ public class AbyssStateSimulator extends JFrame {
 	    transitionsJPanel.add(sPane, BorderLayout.CENTER);
 	    transitionsJPanel.revalidate();
 	    transitionsJPanel.repaint();
+	    
+	    AbyssNotepad notePad = new AbyssNotepad(900,600);
+		notePad.setVisible(true);
+		ArrayList<Transition> trans_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("Transitions: ", "text");
+		notePad.addTextLineNL("", "text");
+		for(int t=0; t<transitionsCompactData.size(); t++) {
+			String t_name = trans_tmp.get(t).getName();
+			double val = transitionsCompactData.get(t);
+			if(val > 0)
+				notePad.addTextLineNL("  t_"+t+" "+t_name+" : "+val, "text");
+			else
+				notePad.addTextLineNL("OFFLINE: t_"+t+" "+t_name+" : "+val, "text");
+		}
 	}
 	
 	//**************************************************************************************
