@@ -1093,8 +1093,13 @@ public class AbyssStateSimulator extends JFrame {
 			double val = transitionsCompactData.get(t);
 			if(val > 0)
 				notePad.addTextLineNL("  t_"+t+" "+t_name+" : "+val, "text");
-			else
-				notePad.addTextLineNL("OFFLINE: t_"+t+" "+t_name+" : "+val, "text");
+			else {
+				if(trans_tmp.get(t).isOffline() == true) {
+					notePad.addTextLineNL("MANUALLY DISABLED: t_"+t+" "+t_name+" : "+val, "text");
+				} else {
+					notePad.addTextLineNL("OFFLINE: t_"+t+" "+t_name+" : "+val, "text");
+				}
+			}
 		}
 	}
 	
