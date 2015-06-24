@@ -364,7 +364,7 @@ public class AbyssKnockout extends JFrame {
 		//knockOutData
 		
 		//TODO:
-		int rootTransition = transitionsCombo.getSelectedIndex();
+		int rootTransition = transitionsCombo.getSelectedIndex()+1;
 		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
 		ArrayList<Integer> invIndices = InvariantsTools.returnInvIndicesWithTransition(invariants, rootTransition);
 		
