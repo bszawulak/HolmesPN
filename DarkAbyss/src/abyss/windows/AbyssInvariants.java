@@ -616,21 +616,21 @@ public class AbyssInvariants extends JFrame {
 						JOptionPane.QUESTION_MESSAGE, null, options, options[3]);
 		if (n == 0) {
 			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-			project.setInvariantsMatrix(invariants);
+			project.setInvariantsMatrix(invariants, false);
 			GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
 			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getInvariantsMatrix());
 		} else if(n == 1) {
 			ArrayList<ArrayList<Integer>> invBackup = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
 			try {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setInvariantsMatrix(invariants);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setInvariantsMatrix(invariants, false);
 				GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
 			} catch (Exception e) {}
 			finally {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setInvariantsMatrix(invBackup);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setInvariantsMatrix(invBackup, false);
 			}
 		} else if(n == 2) {
 			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-			project.setInvariantsMatrix(invariants);
+			project.setInvariantsMatrix(invariants, false);
 			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getInvariantsMatrix());
 		} //else: nic
 	}

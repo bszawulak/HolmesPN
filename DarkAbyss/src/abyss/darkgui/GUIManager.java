@@ -1024,7 +1024,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void generateMCT() {
 		MCTCalculator analyzer = getWorkspace().getProject().getAnalyzer();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
-		getMctBox().showMCT(mct);
+		getWorkspace().getProject().setMCTMatrix(mct);
+		getMctBox().showMCT(mct); //sortowanie
 	}
 	
 	/**

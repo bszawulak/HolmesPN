@@ -91,8 +91,14 @@ public class MCTCalculator {
 		return mctGroups;
 	}
 	
+	/**
+	 * Metoda sortuje zbiory MCT
+	 * @param mctGroups ArrayList[ArrayList[Transition]] - nieposortowane MCT
+	 * @param addTrivial boolean - true, jeżeli w wyniku mają się na końcu listy znaleźć trywialne zbiory MCT
+	 * @return ArrayList[ArrayList[Transition]] - posortowane zbiory MCT
+	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<ArrayList<Transition>> getSortedMCT(ArrayList<ArrayList<Transition>> mctGroups) {
+	public static ArrayList<ArrayList<Transition>> getSortedMCT(ArrayList<ArrayList<Transition>> mctGroups, boolean addTrivial) {
 		ArrayList<Transition> unused = new ArrayList<Transition>();
 		for(int i=0; i<mctGroups.size(); i++) {
 			ArrayList<Transition> mctRow = mctGroups.get(i);
@@ -128,56 +134,10 @@ public class MCTCalculator {
 		for(Object o: temp) {
 			mctGroups.add((ArrayList<Transition>)o);
 		}
-		//mctGroups.add(unused); //dodaj wszystkie pojedzyncze tranzycje w jeden 'mct'
+		
+		if(addTrivial)
+			mctGroups.add(unused); //dodaj wszystkie pojedyncze tranzycje w jeden 'mct'
 		
 		return mctGroups;
 	}
 }
-
-/*
-	public ArrayList<ArrayList<Transition>> generateMCT() {
-		//ArrayList<ArrayList<InvariantTransition>> tInvariantsList;
-		// konwersja z InvariantTransitions na Transitions
-		ArrayList<ArrayList<Transition>> invariants = new ArrayList<ArrayList<Transition>>();	
-		ArrayList<ArrayList<InvariantTransition>> invTr2nd; // = analyzer.gettInvariants();
-		
-		invTr2nd = InvariantsTools.compute2ndFormInv(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix());
-		if(invTr2nd == null) {
-			GUIManager.getDefaultGUIManager().log("Unable to calculate 2nd order invariant matrix in generateMCT()", "error", true);
-			return null;
-		}
-		
-		for (ArrayList<InvariantTransition> invariant : invTr2nd) {
-			ArrayList<Transition> currentInvariant = new ArrayList<Transition>();
-			for (InvariantTransition invariantTransition : invariant) {
-				currentInvariant.add(invariantTransition.getTransition());
-			}
-			invariants.add(currentInvariant);
-		}
-		// dodaje do każdej tranzycji liste inwariantow, ktore ja zawieraja...
-		ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		
-		for (Transition transition : allTransitions) {
-			for (ArrayList<Transition> currentInvariant : invariants) {
-				if (currentInvariant.contains(transition))
-					transition.getContainingInvariants().add(currentInvariant);
-			}
-		}
-	
-		// tworzenie mct
-		ArrayList<ArrayList<Transition>> mctGroups = new ArrayList<ArrayList<Transition>>();
-		for (Transition transition : allTransitions) {
-			ArrayList<Transition> currentMCT = new ArrayList<Transition>();
-			for (Transition anotherTransition : allTransitions) {
-				if (transition.getContainingInvariants().equals(anotherTransition.getContainingInvariants())
-						&& transition.getContainingInvariants().size() > 0)
-					currentMCT.add(anotherTransition);
-			}
-			if ((currentMCT.size() > 0) && !mctGroups.contains(currentMCT))
-				mctGroups.add(currentMCT);
-		}
-		GUIManager.getDefaultGUIManager().reset.setMCTStatus(true); //status zbiorów MCT: wczytane
-		return mctGroups;
-	}
-}
-*/

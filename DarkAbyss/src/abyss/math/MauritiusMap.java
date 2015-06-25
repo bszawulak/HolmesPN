@@ -113,7 +113,7 @@ public class MauritiusMap {
 			return resultNames;
 		} else {
 			//mct = getSortedMCT(mct);
-			mct = MCTCalculator.getSortedMCT(mct);
+			mct = MCTCalculator.getSortedMCT(mct, false);
 			int mctNo = 0;
 			for(ArrayList<Transition> arr : mct) {
 				mctNo++;
@@ -284,7 +284,7 @@ public class MauritiusMap {
 			currentNode.transFrequency = rightInvariants.size();
 			
 			if(currentNode.transFrequency == 0) {
-				int x = 1;
+				//int x = 1;
 			}
 			
 			currentNode.othersFrequency = leftInvariants.size();

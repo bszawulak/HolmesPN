@@ -17,8 +17,6 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -2003,7 +2001,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	public AbyssDockWindowsTable(ArrayList<ArrayList<Transition>> mct, AbyssDockWindow.DockWindowType type) {
 		if(!(type == DockWindowType.MctANALYZER) || mct == null || mct.size() == 0) {
 			return;
-			//błędna wywołanie
+			//błędne wywołanie
 		} else {
 			mode = MCT;
 			GUIManager.getDefaultGUIManager().reset.setMCTStatus(true);
@@ -2015,6 +2013,9 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		initiateContainers();
 		this.mctGroups = mct;
+		
+		mctGroups = MCTCalculator.getSortedMCT(mctGroups, true);
+		/*
 		//ogranicz MCT do nietrywialnych
 		ArrayList<Transition> unused = new ArrayList<Transition>();
 		for(int i=0; i<mctGroups.size(); i++) {
@@ -2051,6 +2052,7 @@ public class AbyssDockWindowsTable extends JPanel {
 			mctGroups.add((ArrayList<Transition>)o);
 		}
 		mctGroups.add(unused); //dodaj wszystkie pojedzyncze tranzycje w jeden 'mct'
+		*/
 		
 		String[] mctHeaders = new String[mctGroups.size() + 2];
 		mctHeaders[0] = "---";
@@ -2124,7 +2126,11 @@ public class AbyssDockWindowsTable extends JPanel {
 		if(isThereMCT)
 		{
 			mctTextArea.setText("");
-			mctTextArea.append("Transitions of MCT #" + mctIndex + ":\n");
+			if(mctIndex == mctGroups.size()-1) {
+				mctTextArea.append("Trivial MCT-transitions:\n");
+			} else {
+				mctTextArea.append("Transitions of MCT #" + (mctIndex+1) + ":\n");
+			}
 			ArrayList<Transition> mct = mctGroups.get(mctIndex);
 			for (Transition transition : mct) {
 				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
@@ -2559,7 +2565,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	
 	//**************************************************************************************
 	//*********************************                  ***********************************
-	//*********************************                  ***********************************
+	//*********************************     KNOCKOUT     ***********************************
 	//*********************************                  ***********************************
 	//**************************************************************************************
 
@@ -2572,7 +2578,6 @@ public class AbyssDockWindowsTable extends JPanel {
 	 */
 	public AbyssDockWindowsTable(ArrayList<ArrayList<Integer>> knockoutData, boolean type1, int type2, boolean type3)
 	{
-		//TODO:
 		if(knockoutData == null || knockoutData.size() == 0) {
 			knockoutData = null;
 			return;
@@ -2591,7 +2596,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		//MCT - obliczenia:
 		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
-		mct = MCTCalculator.getSortedMCT(mct);
+		mct = MCTCalculator.getSortedMCT(mct, false);
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		int transSize = transitions.size();
 		

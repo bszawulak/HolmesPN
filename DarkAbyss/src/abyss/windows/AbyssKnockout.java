@@ -504,7 +504,7 @@ public class AbyssKnockout extends JFrame {
 		//MCT:
 		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
-		mct = MCTCalculator.getSortedMCT(mct);
+		mct = MCTCalculator.getSortedMCT(mct, false);
 		//TRANZYCJE:
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		int transSize = transitions.size();

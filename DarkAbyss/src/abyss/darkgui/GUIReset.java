@@ -78,7 +78,10 @@ public class GUIReset {
 		
 		//CLEAR PETRI NET DATA:
 		pNet.resetData(); // tylko w ten sposób!!!! 
-		pNet.setInvariantsMatrix(null);
+		pNet.setInvariantsMatrix(null, false);
+		pNet.setMCTMatrix(null);
+		pNet.accessInvNames().clear();
+		pNet.accessMCTNames().clear();
 		pNet.setMCSdataCore(new MCSDataMatrix());
 		pNet.resetComm();
 		pNet.setAnalyzer(new MCTCalculator(pNet));
@@ -120,7 +123,7 @@ public class GUIReset {
 			mastah.accessNetTablesWindow().resetInvData();
 			
 			resetCommunicationProtocol();
-			mastah.getWorkspace().getProject().setInvariantsMatrix(null);
+			mastah.getWorkspace().getProject().setInvariantsMatrix(null, false);
 			mastah.getWorkspace().getProject().getMCSdataCore().resetMSC();
 			
 			if(mastah.getInvariantsBox().getCurrentDockWindow() != null) {

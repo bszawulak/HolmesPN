@@ -47,6 +47,9 @@ import org.simpleframework.xml.Root;
 public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
 	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
+	private ArrayList<String> invariantsNames;
+	private ArrayList<ArrayList<Transition>> mctData;
+	private ArrayList<String> mctNames;
 	
 	private String lastFileName = "";
 	
@@ -400,9 +403,25 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda ustawia nową macierz inwariantów sieci.
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @param generateMCT boolean - true, jeśli mają być wygenerowane zbiory MCT 
 	 */
-	public void setInvariantsMatrix(ArrayList<ArrayList<Integer>> invariants) {
+	public void setInvariantsMatrix(ArrayList<ArrayList<Integer>> invariants, boolean generateMCT) {
 		this.invariantsMatrix = invariants;
+		this.invariantsNames = new ArrayList<String>();
+		
+		if(invariants == null)
+			return;
+		
+		for(int i=0; i<invariantsMatrix.size(); i++) {
+			invariantsNames.add("Inv_"+i);
+		}
+		
+		if(generateMCT) {
+			MCTCalculator analyzer = getWorkspace().getProject().getAnalyzer();
+			ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
+			getWorkspace().getProject().setMCTMatrix(mct);
+			GUIManager.getDefaultGUIManager().getMctBox().showMCT(mct);
+		}
 	}
 
 	/**
@@ -412,6 +431,47 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public ArrayList<ArrayList<Integer>> getInvariantsMatrix() {
 		return invariantsMatrix;
 	}
+	
+	/**
+	 * Metoda pozwala na dostęp do wektora nazw inwariantów.
+	 * @return ArrayList[String] - nazwy inwariantów
+	 */
+	public ArrayList<String> accessInvNames() {
+		return invariantsNames;
+	}
+	
+	/**
+	 * Metoda ustawia nową macierz zbiorów MCT.
+	 * @param mct ArrayList[ArrayList[Transition]] - macierz MCT
+	 */
+	public void setMCTMatrix(ArrayList<ArrayList<Transition>> mct) {
+		this.mctData = mct;
+		this.mctNames = new ArrayList<String>();
+		if(mct == null)
+			return;
+		
+		for(int m=0; m<mct.size(); m++) {
+			mctNames.add("MCT_"+(m+1));
+		}
+	}
+	
+	/**
+	 * Metoda zwraca macierz zbioró MCT.
+	 * @return ArrayList[ArrayList[Transition]] - zbiory MCT
+	 */
+	public ArrayList<ArrayList<Transition>> getMCTMatrix() {
+		return mctData;
+	}
+	
+	/**
+	 * Metoda zwraca obiekt wektora nazw zbiorów MCT.
+	 * @return
+	 */
+	public ArrayList<String> accessMCTNames() {
+		return mctNames;
+	}
+	
+	
 
 	/**
 	 * Metoda pozwala na dodanie do projektu nowego podanego w parametrze
@@ -845,7 +905,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if(status == false)
 				return false;
 			
-			setInvariantsMatrix(communicationProtocol.getInvariantsList());
+			setInvariantsMatrix(communicationProtocol.getInvariantsList(), true);
 			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true); //status inwariantów: wczytane
 			return true;
 		} catch (Exception e) {
