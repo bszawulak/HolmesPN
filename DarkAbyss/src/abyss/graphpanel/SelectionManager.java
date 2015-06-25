@@ -14,8 +14,8 @@ import abyss.math.Arc;
 import abyss.math.ElementLocation;
 import abyss.math.Node;
 import abyss.math.PetriNetElement.PetriNetElementType;
+import abyss.math.Transition.TransitionType;
 import abyss.math.Place;
-import abyss.math.TimeTransition;
 import abyss.math.Transition;
 
 /**
@@ -540,10 +540,12 @@ public class SelectionManager {
 			if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TIMETRANSITION) {
 				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
-				double oldEFT = ((TimeTransition)getSelectedElementLocations().get(0).getParentNode()).getMinFireTime();
-				double oldLFT = ((TimeTransition)getSelectedElementLocations().get(0).getParentNode()).getMaxFireTime();
-				TimeTransition portal = new TimeTransition(IdGenerator.getNextId(),
+				double oldEFT = ((Transition)getSelectedElementLocations().get(0).getParentNode()).getMinFireTime();
+				double oldLFT = ((Transition)getSelectedElementLocations().get(0).getParentNode()).getMaxFireTime();
+				Transition portal = new Transition(IdGenerator.getNextId(),
 						(ArrayList<ElementLocation>)getSelectedElementLocations().clone());
+				portal.setType(PetriNetElementType.TIMETRANSITION);
+				portal.setTransType(TransitionType.TPN);
 				
 				//TODO: poprawić, bo teraz tylko zeruje przesunięcie napisów
 				ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
@@ -662,8 +664,8 @@ public class SelectionManager {
 			if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TIMETRANSITION) {
 				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
-				double oldEFT = ((TimeTransition)getSelectedElementLocations().get(0).getParentNode()).getMinFireTime();
-				double oldLFT = ((TimeTransition)getSelectedElementLocations().get(0).getParentNode()).getMaxFireTime();
+				double oldEFT = ((Transition)getSelectedElementLocations().get(0).getParentNode()).getMinFireTime();
+				double oldLFT = ((Transition)getSelectedElementLocations().get(0).getParentNode()).getMaxFireTime();
 				
 				ElementLocation clonedNode = getSelectedElementLocations().get(0);
 				Point newPosition = new Point();
@@ -676,8 +678,10 @@ public class SelectionManager {
 				clone.setPortalSelected(clonedNode.isPortalSelected());
 				selectedElementLocations.add(clone);
 				
-				TimeTransition portal = new TimeTransition(IdGenerator.getNextId(),
+				Transition portal = new Transition(IdGenerator.getNextId(),
 						(ArrayList<ElementLocation>)getSelectedElementLocations().clone());
+				portal.setType(PetriNetElementType.TIMETRANSITION);
+				portal.setTransType(TransitionType.TPN);
 				
 				//klonowanie lokalizacji nazw + dodatkowy wpis:
 				//ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
@@ -1009,7 +1013,7 @@ public class SelectionManager {
 		for (Node n : getGraphPanelNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION )
 				((Transition) n).setGlowedINV(false, 0);
-			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
-				((TimeTransition) n).setGlowedINV(false, 0);
+			else if (n.getType() == PetriNetElementType.TIMETRANSITION) //really?
+				((Transition) n).setGlowedINV(false, 0);
 	}
 }

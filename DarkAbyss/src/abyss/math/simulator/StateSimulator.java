@@ -10,9 +10,9 @@ import javax.swing.JProgressBar;
 import abyss.darkgui.GUIManager;
 import abyss.math.Arc;
 import abyss.math.Place;
-import abyss.math.TimeTransition;
 import abyss.math.Transition;
 import abyss.math.Arc.TypesOfArcs;
+import abyss.math.Transition.TransitionType;
 import abyss.math.simulator.NetSimulator.NetType;
 
 /**
@@ -23,7 +23,7 @@ import abyss.math.simulator.NetSimulator.NetType;
  */
 public class StateSimulator {
 	private ArrayList<Transition> transitions;
-	private ArrayList<TimeTransition> ttransitions;
+	private ArrayList<Transition> ttransitions;
 	private ArrayList<Place> places;
 	private boolean ready = false;
 	private NetType simulationType;
@@ -191,7 +191,7 @@ public class StateSimulator {
 			boolean ttPriority = false;
 			
 			for (int i = 0; i < ttransitions.size(); i++) {
-				TimeTransition ttransition = ttransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
+				Transition ttransition = ttransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
 				if(ttransition.isActive()) { //jeśli aktywna
 					if(ttransition.isForcedToFired() == true) {
 						//musi zostać uruchomiona
@@ -247,15 +247,15 @@ public class StateSimulator {
 					//TODO: czy działa to w ogóle?
 					//usuwanie ze zbioru kandydatów tych t-tranzycji, które już są w kolejce do odpalenia
 				}
-				if(transition instanceof TimeTransition) { //jeśli czasowa
+				if(transition.getTransType() == TransitionType.TPN) { //jeśli czasowa
 					if(transition.isActive()) { //i aktywna
-						if(((TimeTransition)transition).isForcedToFired() == true) { //i musi się uruchomić
+						if(transition.isForcedToFired() == true) { //i musi się uruchomić
 							launchableTransitions.add(transition);
 							transition.bookRequiredTokens();
 						}
 					} else { //reset
-						((TimeTransition)transition).setInternalFireTime(-1);
-						((TimeTransition)transition).setInternalTimer(-1);
+						transition.setInternalFireTime(-1);
+						transition.setInternalTimer(-1);
 					}
 				} else if (transition.isActive() ) {
 					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
@@ -268,7 +268,7 @@ public class StateSimulator {
 			Collections.shuffle(indexTTList); //wymieszanie T tranzycji
 			
 			for (int i = 0; i < ttransitions.size(); i++) {
-				TimeTransition ttransition = ttransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
+				Transition ttransition = ttransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
 				if(ttransition.isActive()) { //jeśli aktywna
 					if(ttransition.isForcedToFired() == true) {
 						launchableTransitions.add(ttransition);
@@ -424,7 +424,6 @@ public class StateSimulator {
 					double sumOfTokens = placesAvgData.get(p);
 					placesAvgData.set(p, sumOfTokens+tokens);
 				}
-			
 		}
 		
 		for(int t=0; t<transitions.size(); t++) {
@@ -654,9 +653,9 @@ public class StateSimulator {
 		
 		for(int i=0; i<transitions.size(); i++) {
 			transitions.get(i).setLaunching(false);
-			if(transitions.get(i) instanceof TimeTransition) {
-				((TimeTransition)transitions.get(i)).setInternalFireTime(-1);
-				((TimeTransition)transitions.get(i)).setInternalTimer(-1);
+			if(transitions.get(i).getTransType() == TransitionType.TPN) {
+				transitions.get(i).setInternalFireTime(-1);
+				transitions.get(i).setInternalTimer(-1);
 			}
 		}
 	}

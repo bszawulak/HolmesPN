@@ -13,8 +13,8 @@ import javax.imageio.ImageIO;
 import abyss.math.ElementLocation;
 import abyss.math.Node;
 import abyss.math.Place;
-import abyss.math.TimeTransition;
 import abyss.math.Transition;
+import abyss.math.Transition.TransitionType;
 
 /**
  * Klasa pomocnicza, odpowiedzialna za operacje rysowania grafiki w panelach dla sieci.
@@ -30,7 +30,9 @@ public final class ElementDraw {
 	}
 	
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId) {
-		if(node instanceof Transition || node instanceof TimeTransition) {
+		//if(node instanceof Transition || node instanceof TimeTransition) {
+		//TODO:
+		if(node instanceof Transition) {
 			Transition trans = (Transition)node;
 			for (ElementLocation el : trans.getNodeLocations(sheetId)) {
 				int radius = trans.getRadius();
@@ -129,7 +131,8 @@ public final class ElementDraw {
 				}
 				else {
 					g.setColor(new Color(224,224,224));
-					if(node instanceof TimeTransition) {
+					//if(node instanceof TimeTransition) {
+					if( ((Transition)node).getTransType() == TransitionType.TPN) {
 						g.setColor(Color.gray);
 					}
 				}
@@ -141,7 +144,7 @@ public final class ElementDraw {
 				
 				
 				if (trans.isPortal()) {
-					if(node instanceof TimeTransition ) {
+					if( ((Transition)node).getTransType() == TransitionType.TPN) {
 						g.drawRect(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
 					} else {
 						g.drawRect(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
@@ -150,17 +153,17 @@ public final class ElementDraw {
 				// -------- do tego miejsca wspólne dla Transition i TimeTransition --------
 				
 				//TIME TRANSITION
-				if(node instanceof TimeTransition) {
+				if( ((Transition)node).getTransType() == TransitionType.TPN) {
 					g.setColor(Color.black);
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 10));
-					String eft = String.valueOf( ((TimeTransition)node).getMinFireTime() );
+					String eft = String.valueOf( ((Transition)node).getMinFireTime() );
 					g.drawString(eft, nodeBounds.x+35, nodeBounds.y + 8);
 
-					String lft = String.valueOf( ((TimeTransition)node).getMaxFireTime() );
+					String lft = String.valueOf( ((Transition)node).getMaxFireTime() );
 					g.drawString(lft, nodeBounds.x +35, nodeBounds.y + 28);
 					
-					int intTimer = (int) ((TimeTransition)node).getInternalTimer();
-					int intFireTime = (int) ((TimeTransition)node).getInternalFireTime();
+					int intTimer = (int) ((Transition)node).getInternalTimer();
+					int intFireTime = (int) ((Transition)node).getInternalFireTime();
 					String timeInfo = ""+intTimer+"  /  "+intFireTime;
 					int offset = -9;
 					if(timeInfo.length() < 9)

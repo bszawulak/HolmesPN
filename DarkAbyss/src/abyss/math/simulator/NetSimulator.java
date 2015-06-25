@@ -16,8 +16,8 @@ import abyss.math.Arc.TypesOfArcs;
 import abyss.math.Node;
 import abyss.math.PetriNet;
 import abyss.math.Place;
-import abyss.math.TimeTransition;
 import abyss.math.Transition;
+import abyss.math.Transition.TransitionType;
 
 /**
  * Klasa zajmująca się zarządzaniem całym procesem symulacji.
@@ -191,13 +191,17 @@ public class NetSimulator {
 					continue;
 				}
 				
-				if(!(n instanceof TimeTransition)) {
-					JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
-							"Invalid mode", JOptionPane.ERROR_MESSAGE);
-					GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
-					simulationType = NetType.HYBRID;
-					return;
+				if(n instanceof Transition) {
+					if(!(((Transition)n).getTransType() == TransitionType.TPN)) {
+						JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
+								"Invalid mode", JOptionPane.ERROR_MESSAGE);
+						GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
+						simulationType = NetType.HYBRID;
+						return;
+					}
 				}
+				
+				
 			}
 			
 			simulationType = NetType.TIME;
@@ -221,13 +225,16 @@ public class NetSimulator {
 					continue;
 				}
 				
-				if(!(n instanceof TimeTransition)) {
-					JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
-							"Invalid mode", JOptionPane.ERROR_MESSAGE);
-					GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
-					simulationType = NetType.HYBRID;
-					return;
+				if(n instanceof Transition) {
+					if(!(((Transition)n).getTransType() == TransitionType.TPN)) {
+						JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
+								"Invalid mode", JOptionPane.ERROR_MESSAGE);
+						GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
+						simulationType = NetType.HYBRID;
+						return;
+					}
 				}
+
 			}
 		} else if (simulationType == NetType.HYBRID) {
 			//simulationType = NetType.HYBRID;
@@ -298,7 +305,7 @@ public class NetSimulator {
 			 * 22.02.2015 : PN + TPN
 			 */
 			//podzbiór tranzycji TT które MUSZĄ być już uruchomione
-			ArrayList<TimeTransition> timeTransitions = petriNet.getTimeTransitions();
+			ArrayList<Transition> timeTransitions = petriNet.getTimeTransitions();
 			
 			ArrayList<Integer> indexTTList = new ArrayList<Integer>();
 			for(int i=0; i<timeTransitions.size(); i++)
@@ -308,7 +315,7 @@ public class NetSimulator {
 			boolean ttPriority = false;
 			
 			for (int i = 0; i < timeTransitions.size(); i++) {
-				TimeTransition ttransition = timeTransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
+				Transition ttransition = timeTransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
 				if(ttransition.isActive()) { //jeśli aktywna
 					if(ttransition.isForcedToFired() == true) {
 						//musi zostać uruchomiona
@@ -371,15 +378,15 @@ public class NetSimulator {
 			for (int i = 0; i < allTransitions.size(); i++) {
 				Transition transition = allTransitions.get(indexList.get(i));
 				
-				if(transition instanceof TimeTransition) { //jeśli czasowa
+				if(transition.getTransType() == TransitionType.TPN) { //jeśli czasowa
 					if(transition.isActive()) { //i aktywna
-						if(((TimeTransition)transition).isForcedToFired() == true) { //i musi się uruchomić
+						if(transition.isForcedToFired() == true) { //i musi się uruchomić
 							launchableTransitions.add(transition);
 							transition.bookRequiredTokens();
 						}
 					} else { //reset
-						((TimeTransition)transition).setInternalFireTime(-1);
-						((TimeTransition)transition).setInternalTimer(-1);
+						transition.setInternalFireTime(-1);
+						transition.setInternalTimer(-1);
 					}
 				} else if (transition.isActive() ) {
 					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
@@ -389,14 +396,14 @@ public class NetSimulator {
 				}
 			} 
 		} else if (simulationType == NetType.TIME) { 
-			ArrayList<TimeTransition> timeTransitions = petriNet.getTimeTransitions(); //nie ma innych
+			ArrayList<Transition> timeTransitions = petriNet.getTimeTransitions(); //nie ma innych
 			ArrayList<Integer> indexTTList = new ArrayList<Integer>();
 			for(int i=0; i<timeTransitions.size(); i++)
 				indexTTList.add(i);
 			Collections.shuffle(indexTTList); //wymieszanie T tranzycji
 			
 			for (int i = 0; i < timeTransitions.size(); i++) {
-				TimeTransition ttransition = timeTransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
+				Transition ttransition = timeTransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
 				if(ttransition.isActive()) { //jeśli aktywna
 					if(ttransition.isForcedToFired() == true) {
 						launchableTransitions.add(ttransition);
@@ -670,9 +677,9 @@ public class NetSimulator {
 				place.modifyTokensNumber(arc.getWeight());
 			}
 			
-			if(transition instanceof TimeTransition) {
-				((TimeTransition)transition).setInternalFireTime(-1);
-				((TimeTransition)transition).setInternalTimer(-1);
+			if(transition.getTransType() == TransitionType.TPN) {
+				transition.setInternalFireTime(-1);
+				transition.setInternalTimer(-1);
 			}
 		}
 		

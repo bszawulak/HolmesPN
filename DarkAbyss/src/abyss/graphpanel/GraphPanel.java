@@ -19,8 +19,8 @@ import abyss.math.PetriNet;
 import abyss.math.Arc.TypesOfArcs;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
-import abyss.math.TimeTransition;
 import abyss.math.Transition;
+import abyss.math.Transition.TransitionType;
 import abyss.utilities.Tools;
 import abyss.workspace.WorkspaceSheet;
 
@@ -466,7 +466,10 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewTimeTransition(Point p) {
 		if (isLegalLocation(p)) {
-			TimeTransition n = new TimeTransition(IdGenerator.getNextId(),this.sheetId, p);
+			//TODO:
+			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, p);
+			n.setType(PetriNetElementType.TIMETRANSITION);
+			n.setTransType(TransitionType.TPN);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
 		}

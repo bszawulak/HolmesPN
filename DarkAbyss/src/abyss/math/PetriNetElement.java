@@ -18,7 +18,7 @@ public class PetriNetElement implements Serializable {
 
 	/*
 	 * UWAGA!!! NIE WOLNO ZMIENIAĆ NAZW, DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
-	 * (przestanie być możliwe wczytywanie zapisĆnych proejktów .abyss)
+	 * (przestanie być możliwe wczytywanie zapisanych projektów .abyss)
 	 */
 	public enum PetriNetElementType { ARC, PLACE, TRANSITION, UNKNOWN, TIMETRANSITION }
 	@Element

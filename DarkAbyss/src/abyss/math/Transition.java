@@ -22,11 +22,17 @@ public class Transition extends Node {
 	//BACKUP:  2673581001465115432L  ((NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = 2673581001465115432L;
 	
+	/** NORMAL, TPN, DPN, TDPN */
+	public enum TransitionType { PN, TPN, DPN, TDPN }
+	private TransitionType transType;
+	
+	//podstawowe właściwości:
 	protected boolean isLaunching;
 	protected boolean isGlowedINV = false;
 	protected boolean isGlowedMTC = false;
 	protected boolean offline = false;		// czy wyłączona (MCS, inne)
 	
+	//wyświetlanie dodatkowych tekstów nad ikoną:
 	protected boolean isColorChanged = false;		//zmiana koloru - status
 	protected double transNumericalValue = 0.0;		//dodatkowa liczba do wyświetlenia
 	protected String transAdditionalText = "";
@@ -35,6 +41,13 @@ public class Transition extends Node {
 	protected boolean showIntOnly = false; //TODO
 	protected boolean valueVisibilityStatus = false;
 	
+	//opcje czasowe:
+	protected double minFireTime = 0; //TPN
+	protected double maxFireTime = 999;	//TPN
+	protected double internalFireTime = -1; //zmienna związana z modelem sieci TPN
+	protected double internalTimer = -1;
+	
+	//inne:
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 
 	/**
@@ -45,6 +58,7 @@ public class Transition extends Node {
 	 */
 	public Transition(int transitionId, ArrayList<ElementLocation> elementLocations, int pn) {
 		super(transitionId, elementLocations, pn);
+		transType = TransitionType.PN;
 	}
 
 	/**
@@ -56,6 +70,7 @@ public class Transition extends Node {
 	 */
 	public Transition(int sheetId, int transitionId, Point transitionPosition, int pn) {
 		super(sheetId, transitionId, transitionPosition, pn);
+		transType = TransitionType.PN;
 	}
 
 	/**
@@ -66,6 +81,7 @@ public class Transition extends Node {
 	 */
 	public Transition(int transitionId, ElementLocation elementLocation, int pn) {
 		super(transitionId, elementLocation, pn);
+		transType = TransitionType.PN;
 	}
 
 	/**
@@ -81,6 +97,7 @@ public class Transition extends Node {
 		this.setName(name);
 		this.setComment(comment);
 		this.setType(PetriNetElementType.TRANSITION);
+		transType = TransitionType.PN;
 	}
 
 	/**
@@ -95,6 +112,7 @@ public class Transition extends Node {
 		this.setName(name);
 		this.setComment(comment);
 		this.setType(PetriNetElementType.TRANSITION);
+		transType = TransitionType.PN;
 	}
 
 	/**
@@ -109,6 +127,7 @@ public class Transition extends Node {
 		this.setName(name);
 		this.setComment(comment);
 		this.setType(PetriNetElementType.TRANSITION);
+		transType = TransitionType.PN;
 	}
 
 	/**
@@ -120,6 +139,7 @@ public class Transition extends Node {
 		super(transitionId, elementLocations, 15);
 		this.setName("Transition" + Integer.toString(IdGenerator.getNextTransitionId()));
 		this.setType(PetriNetElementType.TRANSITION);
+		transType = TransitionType.PN;
 	}
 
 	/**
@@ -132,6 +152,7 @@ public class Transition extends Node {
 		super(sheetId, transitionId, transitionPosition, 15);
 		this.setName("Transition" + Integer.toString(IdGenerator.getNextTransitionId()));
 		this.setType(PetriNetElementType.TRANSITION);
+		transType = TransitionType.PN;
 	}
 
 	/**
@@ -416,7 +437,13 @@ public class Transition extends Node {
 	 * @return PetriNetElementType - tranzycja klasyczna
 	 */
 	public PetriNetElementType getType() {
-		return PetriNetElementType.TRANSITION;
+		if(transType == TransitionType.PN) {
+			return PetriNetElementType.TRANSITION;
+		} else if(transType == TransitionType.TPN) {
+			return PetriNetElementType.TIMETRANSITION;
+		} else {
+			return PetriNetElementType.TRANSITION;
+		}
 	}
 
 	/**
@@ -446,22 +473,6 @@ public class Transition extends Node {
 		}
 		return weight;
 	}
-
-	/**
-	 * Metoda zwraca listę inwariantów z daną tranzycją.
-	 * @return ArrayList[ArrayList[Transition]] - macierz inwariantów
-	 */
-	//public ArrayList<ArrayList<Transition>> getContainingInvariants() {
-	//	return containingInvariants;
-	//}
-
-	/**
-	 * Metoda pozwala wpisać inwarianty w której jest dana tranzycja.
-	 * @param containingInvariants ArrayList[ArrayList[Transition]] - macierz niezmienników
-	 */
-	//public void setContainingInvariants(ArrayList<ArrayList<Transition>> containingInvariants) {
-	//	this.containingInvariants = containingInvariants;
-	//}
 	
 	/**
 	 * Metoda zamieniająca dane o krawędzi sieci na łańcuch znaków.
@@ -473,6 +484,110 @@ public class Transition extends Node {
 			return "(T)null";
 		} else {
 			return "(T)" + getName();
+		}
+	}
+	
+	public void setTransType(TransitionType tt) {
+		this.transType = tt;
+	}
+	
+	public TransitionType getTransType() {
+		return this.transType;
+	}
+	
+	//**************************************************************************************
+	//*********************************      TIME        ***********************************
+	//**************************************************************************************
+	
+	/**
+	 * Metoda ustala dolny limit niezerowego czasu gotowości - EFT.
+	 * @param minFireTime double - czas EFT
+	 */
+	public void setMinFireTime(double minFireTime) {
+		if(minFireTime < 0) {
+			this.minFireTime = 0;
+			return;
+		}
+		if(minFireTime > maxFireTime) {
+			this.minFireTime = maxFireTime;
+			return;
+		}
+		this.minFireTime = minFireTime;
+	}
+	
+	/**
+	 * Metoda pozwala odczytać przypisany czas EFT tranzycji.
+	 * @return double - czas EFT
+	 */
+	public double getMinFireTime() {
+		return this.minFireTime;
+	}
+
+	/**
+	 * Metoda ustala górny limit nieujemnego czasu krytycznego - LFT.
+	 * @param maxFireTime double - czas LFT (deadline na uruchomienie)
+	 */
+	public void setMaxFireTime(double maxFireTime) {
+		if(maxFireTime < minFireTime) {
+			this.maxFireTime = minFireTime;
+			return;
+		}
+		
+		this.maxFireTime = maxFireTime;
+	}
+
+	/**
+	 * Metoda pozwala odczytać przypisany czas LFT tranzycji.
+	 * @return double - czas LFT
+	 */
+	public double getMaxFireTime() {
+		return this.maxFireTime;
+	}
+
+	/**
+	 * Metoda zwraca aktualny czas uruchomienia.
+	 * @return double - czas uruchomienia - pole FireTime
+	 */
+	public double getInternalFireTime() {
+		return internalFireTime;
+	}
+
+	/**
+	 * Metoda pozwala ustawic czas uruchomienia tranzycji.
+	 * @param fireTime double - czas uruchomienia tranzycji
+	 */
+	public void setInternalFireTime(double fireTime) {
+		internalFireTime = fireTime;
+	}
+	
+	/**
+	 * Metoda zwraca aktualny zegar uruchomienia dla tranzycji.
+	 * @return double - czas uruchomienia - pole FireTime
+	 */
+	public double getInternalTimer() {
+		return internalTimer;
+	}
+
+	/**
+	 * Metoda pozwala ustawic zegar uruchomienia tranzycji.
+	 * @param fireTime double - czas uruchomienia tranzycji
+	 */
+	public void setInternalTimer(double fireTime) {
+		internalTimer = fireTime;
+	}
+	
+	/**
+	 * Metoda informująca czy tramzycja czasowa MUSI zostać uruchomiona.
+	 * @return boolean - true, jeśli wewnętrzny zegar (!= -1) jest równy deadlinowi
+	 */
+	public boolean isForcedToFired() {
+		if(internalFireTime != -1) {
+			if(internalFireTime == internalTimer)
+				return true;
+			else
+				return false;
+		} else {
+			return false; //nieaktywna
 		}
 	}
 }

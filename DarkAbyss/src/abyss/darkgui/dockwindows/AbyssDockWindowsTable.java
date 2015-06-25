@@ -57,7 +57,6 @@ import abyss.math.MCSDataMatrix;
 import abyss.math.Node;
 import abyss.math.PetriNetElement;
 import abyss.math.Place;
-import abyss.math.TimeTransition;
 import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
@@ -1114,7 +1113,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	 * @param transition TimeTransition - obiekt tranzycji czasowej
 	 * @param location ElementLocation - lokalizacja tranzycji
 	 */
-	public AbyssDockWindowsTable(final TimeTransition transition, ElementLocation location) {
+	public AbyssDockWindowsTable(final Transition transition, ElementLocation location, int x11, double y17) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
 		int columnA_Y = 0;
@@ -1343,7 +1342,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
 		nameLocationXSpinner.setBounds(columnA_posX+125, columnA_Y, 60, 20);
 		nameLocationXSpinner.addChangeListener(new ChangeListener() {
-			private TimeTransition trans_tmp;
+			private Transition trans_tmp;
 			private ElementLocation el_tmp;
 			public void stateChanged(ChangeEvent e) {
 				if(doNotUpdate==true)
@@ -1355,7 +1354,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				nameLocationXSpinnerModel.setValue(res.x);
 				doNotUpdate = false;
 			}
-			private ChangeListener yesWeCan(TimeTransition transition, ElementLocation inLoc){
+			private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc){
 				trans_tmp = transition;
 				el_tmp = inLoc;
 		        return this;
@@ -1371,7 +1370,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
 		nameLocationYSpinner.setBounds(columnA_posX+230, columnA_Y, 60, 20);
 		nameLocationYSpinner.addChangeListener(new ChangeListener() {
-			private TimeTransition trans_tmp;
+			private Transition trans_tmp;
 			private ElementLocation el_tmp;
 			public void stateChanged(ChangeEvent e) {
 				if(doNotUpdate==true)
@@ -1383,7 +1382,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				nameLocationYSpinnerModel.setValue(res.y);
 				doNotUpdate = false;	
 			}
-			private ChangeListener yesWeCan(TimeTransition transition, ElementLocation inLoc){
+			private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc){
 				trans_tmp = transition;
 				el_tmp = inLoc;
 		        return this;
@@ -1398,7 +1397,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		nameLocChangeButton.setBounds(columnA_posX+90, columnA_Y += 25, 150, 40);
 		nameLocChangeButton.addActionListener(new ActionListener() {
 			// anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
-			private TimeTransition trans_tmp;
+			private Transition trans_tmp;
 			private ElementLocation el_tmp;
 			public void actionPerformed(ActionEvent actionEvent) {
 				JButton button_tmp = (JButton) actionEvent.getSource();
@@ -1413,7 +1412,7 @@ public class AbyssDockWindowsTable extends JPanel {
 					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
 				}
 			} 
-			private ActionListener yesWeCan(TimeTransition transition, ElementLocation inLoc){
+			private ActionListener yesWeCan(Transition transition, ElementLocation inLoc){
 				trans_tmp = transition;
 				el_tmp = inLoc;
 		        return this;
@@ -2830,7 +2829,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	 */
 	private void setMinFireTime(double x) {
 		if (mode == TIMETRANSITION) {
-			TimeTransition transition = (TimeTransition) element;
+			Transition transition = (Transition) element;
 			transition.setMinFireTime(x);
 			repaintGraphPanel();
 		}
@@ -2842,7 +2841,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	 */
 	private void setMaxFireTime(double x) {
 		if (mode == TIMETRANSITION) {
-			TimeTransition transition = (TimeTransition) element;
+			Transition transition = (Transition) element;
 			transition.setMaxFireTime(x);
 			repaintGraphPanel();
 		}

@@ -16,6 +16,7 @@ import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.Node;
 import abyss.math.PetriNetElement.PetriNetElementType;
+import abyss.math.Transition.TransitionType;
 import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
 
@@ -146,7 +147,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public ArrayList<Transition> getTransitions() {
 		ArrayList<Transition> returnTransitions = new ArrayList<Transition>();
 		for (Node n : this.getDataCore().nodes) {
-			if (n instanceof Transition || n instanceof TimeTransition)
+			if (n instanceof Transition)
 				returnTransitions.add((Transition) n);
 		}
 		return returnTransitions;
@@ -156,11 +157,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda pozwala pobrać wszystkie obiekty tranzycji czasowych w danej sieci.
 	 * @return ArrayList[TimeTransition] - lista tranzycji czasowych projektu sieci
 	 */
-	public ArrayList<TimeTransition> getTimeTransitions() {
-		ArrayList<TimeTransition> returnTransitions = new ArrayList<TimeTransition>();
+	public ArrayList<Transition> getTimeTransitions() {
+		ArrayList<Transition> returnTransitions = new ArrayList<Transition>();
 		for (Node n : this.getDataCore().nodes) {
-			if (n instanceof TimeTransition)
-				returnTransitions.add((TimeTransition) n);
+			if (n instanceof Transition) {
+				if (((Transition)n).getTransType() == TransitionType.TPN)
+					returnTransitions.add((Transition) n);
+			}
+			
 		}
 		return returnTransitions;
 	}
@@ -520,9 +524,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		for(int i=0; i<transitions.size(); i++) {
 			transitions.get(i).setLaunching(false);
 			
-			if(transitions.get(i) instanceof TimeTransition) {
-				((TimeTransition)transitions.get(i)).setInternalFireTime(-1);
-				((TimeTransition)transitions.get(i)).setInternalTimer(-1);	
+			if(transitions.get(i).getTransType() == TransitionType.TPN) {
+				transitions.get(i).setInternalFireTime(-1);
+				transitions.get(i).setInternalTimer(-1);	
 			}
 		}
 		isBackup = false;
@@ -949,22 +953,24 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param isGlowedMTC boolean - true jeśli MCT ma być podświetlony
 	 */
 	public void setTransitionGlowedMTC(boolean isGlowedMTC) {
+		//TODO: poprawić, drugie jest chyba bez sensu
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION)
 				((Transition) n).setGlowed_MTC(isGlowedMTC);
 			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
-				((TimeTransition) n).setGlowed_MTC(isGlowedMTC);
+				((Transition) n).setGlowed_MTC(isGlowedMTC);
 	}
 	
 	/**
 	 * Metoda wygasza kolorowanie tranzycji, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
 	public void resetTransitionGraphics() {
+		//TODO: poprawić, drugie jest chyba bez sensu
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION)
 				((Transition) n).setColorWithNumber(false, Color.white, false, -1, false, "");
 			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
-				((TimeTransition) n).setColorWithNumber(false, Color.white, false, -1, false, "");
+				((Transition) n).setColorWithNumber(false, Color.white, false, -1, false, "");
 	}
 	
 	/**

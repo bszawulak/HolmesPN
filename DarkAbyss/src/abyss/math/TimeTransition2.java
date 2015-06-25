@@ -15,7 +15,7 @@ import abyss.graphpanel.IdGenerator;
  * @author Bartłomiej Szawulak
  *
  */
-public class TimeTransition extends Transition {
+public class TimeTransition2 extends Transition {
 	//BACKUP: -7512230002147987244L   (NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = -7512230002147987244L;
 	
@@ -38,7 +38,7 @@ public class TimeTransition extends Transition {
 	 * @param name String - nazwa tranzycji
 	 * @param comment String - komentarz tranzycji
 	 */
-	public TimeTransition(int transitionId, int sheetId, Point transitionPosition, String name, String comment) {
+	public TimeTransition2(int transitionId, int sheetId, Point transitionPosition, String name, String comment) {
 		super(sheetId, transitionId, transitionPosition, 15);
 		this.setName(name);
 		this.setComment(comment);
@@ -52,7 +52,7 @@ public class TimeTransition extends Transition {
 	 * @param name String - nazwa tranzycji
 	 * @param comment String - komentarz tranzycji
 	 */
-	public TimeTransition(int transitionId, ElementLocation elementLocation, String name, String comment) {
+	public TimeTransition2(int transitionId, ElementLocation elementLocation, String name, String comment) {
 		super(transitionId, elementLocation, 15);
 		this.setName(name);
 		this.setComment(comment);
@@ -66,7 +66,7 @@ public class TimeTransition extends Transition {
 	 * @param name String - nazwa tranzycji
 	 * @param comment String - komentarz tranzycji
 	 */
-	public TimeTransition(int transitionId, ArrayList<ElementLocation> elementLocations, String name, String comment) {
+	public TimeTransition2(int transitionId, ArrayList<ElementLocation> elementLocations, String name, String comment) {
 		super(transitionId, elementLocations, 15);
 		this.setName(name);
 		this.setComment(comment);
@@ -78,7 +78,7 @@ public class TimeTransition extends Transition {
 	 * @param transitionId int - identyfikator tranzycji
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
 	 */
-	public TimeTransition(int transitionId, ArrayList<ElementLocation> elementLocations) {
+	public TimeTransition2(int transitionId, ArrayList<ElementLocation> elementLocations) {
 		super(transitionId, elementLocations, 15);
 		this.setName("Transition" + Integer.toString(IdGenerator.getNextTransitionId()));
 		this.setType(PetriNetElementType.TIMETRANSITION);
@@ -90,7 +90,7 @@ public class TimeTransition extends Transition {
 	 * @param sheetId int - identyfikator arkusza
 	 * @param transitionPosition Point - punkt lokalizacji tranzycji
 	 */
-	public TimeTransition(int transitionId, int sheetId, Point transitionPosition) {
+	public TimeTransition2(int transitionId, int sheetId, Point transitionPosition) {
 		super(sheetId, transitionId, transitionPosition, 15);
 		this.setName("Transition" + Integer.toString(IdGenerator.getNextTransitionId()));
 		this.setType(PetriNetElementType.TIMETRANSITION);

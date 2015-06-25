@@ -14,10 +14,11 @@ import abyss.graphpanel.IdGenerator;
 import abyss.math.Arc;
 import abyss.math.ElementLocation;
 import abyss.math.Node;
+import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
-import abyss.math.TimeTransition;
 import abyss.math.Transition;
 import abyss.math.Arc.TypesOfArcs;
+import abyss.math.Transition.TransitionType;
 
 /**
  * Klasa zajmująca się wczytaniem czasowej sieci Petriego z formatu .sptpt
@@ -398,10 +399,16 @@ public class NetHandler_Time extends NetHandler {
 			} else {	
 				if(timeTrans) {			
 					timeTrans = false;
-					TimeTransition tmpTTran = new TimeTransition(nodeID, tmpElementLocationList, nodeName, nodeComment);
+					//TimeTransition tmpTTran = new TimeTransition(nodeID, tmpElementLocationList, nodeName, nodeComment);
+					Transition tmpTTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
 					tmpTTran.setMinFireTime(nodeEFT);
 					tmpTTran.setMaxFireTime(nodeLFT);
 					tmpTTran.setNamesLocations(namesElLocations);
+					
+					//TODO:
+					tmpTTran.setType(PetriNetElementType.TIMETRANSITION);
+					tmpTTran.setTransType(TransitionType.TPN);
+					
 					tmpTransitionList.add(tmpTTran);
 					
 					IdGenerator.getNextTransitionId();

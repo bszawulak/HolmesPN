@@ -14,7 +14,6 @@ import abyss.math.MCSDataMatrix;
 import abyss.math.Node;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
-import abyss.math.TimeTransition;
 import abyss.math.Transition;
 import abyss.math.simulator.NetSimulator;
 
@@ -226,7 +225,7 @@ public class AbyssDockWindow extends SingleDock {
 					PetriNetElementType test =  n.getType();
 					
 					if (n.getType().equals(PetriNetElementType.TIMETRANSITION))
-						setCurrentDockWindow(new AbyssDockWindowsTable((TimeTransition) n,e.getElementLocation()));
+						setCurrentDockWindow(new AbyssDockWindowsTable((Transition) n,e.getElementLocation(), 17, 17.3));
 					else
 						setCurrentDockWindow(new AbyssDockWindowsTable((Transition) n,e.getElementLocation()));
 				}
