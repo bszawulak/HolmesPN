@@ -35,15 +35,6 @@ public class AbyssWriter {
 			PetriNetData dataModule = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getDataCore();
 			String xml = xstream.toXML(dataModule);
 			
-			/*
-			if(path.contains(".abyss")) {
-				if(path.indexOf(".abyss") == path.length()-6) {
-					path = path.replace(".abyss", "");
-				}
-			}
-			PrintWriter zapis = new PrintWriter(path + ".abyss");
-			 */
-			
 			PrintWriter zapis = new PrintWriter(path);
 			zapis.println(xml);
 			zapis.close();

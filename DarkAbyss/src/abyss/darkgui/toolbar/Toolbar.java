@@ -298,7 +298,7 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {	
 				ProjectWriter pWrt = new ProjectWriter();
-				pWrt.writeProject();
+				pWrt.writeProject("test.apf");
 			}
 		};
 		testButton.setEnabled(false);

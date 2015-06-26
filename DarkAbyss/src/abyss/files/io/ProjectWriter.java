@@ -36,20 +36,24 @@ public class ProjectWriter {
 	String newline = "\n";
 	
 	public ProjectWriter() {
-		
+		projectCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		places = projectCore.getPlaces();
+		transitions = projectCore.getTransitions();
+		arcs = projectCore.getArcs();
+		invariantsMatrix = projectCore.getInvariantsMatrix();
+		invariantsNames = projectCore.accessInvNames();
+		mctData = projectCore.getMCTMatrix();
+		mctNames = projectCore.accessMCTNames();
 	}
 	
 	/**
 	 * Główna metoda odpowiedzialna za zapis pliku projektu.
 	 * @return int - kod błędu, 0 - wszystko ok
 	 */
-	public int writeProject() {
-		//String filePath = getProjectFilePath();
-		initalizeEngine();
-		
-		
+	public boolean writeProject(String filepath) {	
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter("tmp//test.apf"));
+			//BufferedWriter bw = new BufferedWriter(new FileWriter("tmp//test.apf"));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
 			String projName = projectCore.getName();
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			Date date = new Date();
@@ -57,18 +61,18 @@ public class ProjectWriter {
 			bw.write("Date: "+dateFormat.format(date)+newline);
 			bw.write("<Net data>"+newline);
 			bw.write("<ID generator state:>"+IdGenerator.getCurrentValues()+">"+newline);
-			int code = saveNetwork(bw);
+			boolean status = saveNetwork(bw);
 			bw.write("<Net data end>"+newline);
 			
 			bw.close();
-			return 0;
+			return true;
 		} catch (Exception e) {
 			
-			return -1;
+			return false;
 		}
 	}
 
-	private int saveNetwork(BufferedWriter bw) {
+	private boolean saveNetwork(BufferedWriter bw) {
 		try {
 			//ZAPIS MIEJSCA:
 			int sp = 2;
@@ -223,29 +227,29 @@ public class ProjectWriter {
 				GUIManager.getDefaultGUIManager().log("Error: saved "+savedArcs+" out of total "+totalArcs+" arcs.", "error", true);
 			}
 
-			return 0;
+			return true;
 			// bw.write(spaces(sp)+""+">"+newline);
 		} catch (Exception e) {
-			return -1;
+			return false;
 		}
 		
 	}
 	
-	private int saveInvariants(BufferedWriter bw) {
+	private boolean saveInvariants(BufferedWriter bw) {
 		try {
 			
-			return 0;
+			return true;
 		} catch (Exception e) {
-			return -1;
+			return false;
 		}
 	}
 	
-	private int saveMCT(BufferedWriter bw) {
+	private boolean saveMCT(BufferedWriter bw) {
 		try {
 			
-			return 0;
+			return true;
 		} catch (Exception e) {
-			return -1;
+			return false;
 		}
 	}
 	
@@ -255,38 +259,5 @@ public class ProjectWriter {
 			result += " ";
 		}
 		return result;
-	}
-
-	private void initalizeEngine() {
-		projectCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		places = projectCore.getPlaces();
-		transitions = projectCore.getTransitions();
-		arcs = projectCore.getArcs();
-		invariantsMatrix = projectCore.getInvariantsMatrix();
-		invariantsNames = projectCore.accessInvNames();
-		mctData = projectCore.getMCTMatrix();
-		mctNames = projectCore.accessMCTNames();
-	}
-
-	/**
-	 * Metoda służąca do ustalania nazwy i ścieżki dla zapisywanego pliku projektu.
-	 * @return String - ścieżka + nazwa pliku
-	 */
-	private String getProjectFilePath() {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-		FileFilter[] filters = new FileFilter[1];
-		filters[0] = new ExtensionFileFilter("Abyss Project (.apf)", new String[] { "APF" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", projectCore.getFileName());
-		if(selectedFile.equals(""))
-			return null;
-		
-		File file = new File(selectedFile);
-		String fileExtension = ".apf";
-		if(selectedFile.toLowerCase().contains(".apf"))
-			fileExtension = "";
-		
-		//projectCore.saveAsPNT(file.getPath() + fileExtension);
-		GUIManager.getDefaultGUIManager().setLastPath(file.getParentFile().getPath());
-		return file.getPath() + fileExtension;
 	}
 }

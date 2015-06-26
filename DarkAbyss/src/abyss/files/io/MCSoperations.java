@@ -159,8 +159,8 @@ public class MCSoperations {
 			MCSDataMatrix dataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
 	
 			try {
-				DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
-				BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+				DataInputStream dis = new DataInputStream(new FileInputStream(selectedFile));
+				BufferedReader buffer = new BufferedReader(new InputStreamReader(dis));
 				
 				String line = "";
 				line = buffer.readLine();
@@ -273,8 +273,8 @@ public class MCSoperations {
 			MCSDataMatrix dataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
 		
 			try {
-				DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
-				BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+				DataInputStream dis = new DataInputStream(new FileInputStream(selectedFile));
+				BufferedReader buffer = new BufferedReader(new InputStreamReader(dis));
 				
 				String line = "";
 				line = buffer.readLine();
