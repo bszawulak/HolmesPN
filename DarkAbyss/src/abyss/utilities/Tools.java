@@ -363,7 +363,7 @@ public final class Tools {
 	}
 	
 	/**
-	 * Metoda sprawdza, czy można kontynuowac jeśli plik istnieje.
+	 * Metoda sprawdza, czy można kontynuować operację jeśli plik istnieje.
 	 * @param selectedFilePath String - ścieżka do pliku
 	 * @return boolean - true, jeśli można kontynuować
 	 */
@@ -387,5 +387,17 @@ public final class Tools {
 		} 
 		
 		return true; //no file, continue
+	}
+	
+	public static String convertToCode(String line) {
+		line = line.replace("\n", "#5475");
+		
+		return line;
+	}
+	
+	public static String decodeString(String line) {
+		line = line.replace("#5475", "\n");
+		
+		return line;
 	}
 }

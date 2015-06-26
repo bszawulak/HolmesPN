@@ -76,7 +76,7 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za otwieranie pliku z zapisaną siecią w formacie .abyss.
+	 * Metoda odpowiedzialna za otwieranie pliku z zapisaną siecią w formacie .abyss lub pliku projektu
 	 */
 	public void openAbyssProject() {
 		String lastPath = overlord.getLastPath();
@@ -94,7 +94,7 @@ public class GUIOperations {
 		fc.addChoosableFileFilter(projFilter);
 		fc.addChoosableFileFilter(abyssFilter);
 		fc.setAcceptAllFileFilterUsed(false);
-		if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+		if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			String extension = fc.getFileFilter().getDescription();
 			if(fc.getSelectedFile().equals(""))
@@ -102,7 +102,7 @@ public class GUIOperations {
 			if(!file.exists()) 
 				return;
 			
-			if (extension.toLowerCase().contains(".apf")) {
+			if (extension.toLowerCase().contains(".apf")) { //ABYSS project reader
 				ProjectReader pRdr = new ProjectReader();
 				boolean status = pRdr.readProject(file.getPath());
 				
@@ -112,7 +112,7 @@ public class GUIOperations {
 				}
 				overlord.setLastPath(file.getParentFile().getPath());
 				
-			} else if (extension.toLowerCase().contains(".abyss")) {
+			} else if (extension.toLowerCase().contains(".abyss")) { //ABYSS parser
 				boolean status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
 				if(status == true) {
 					overlord.setLastPath(file.getParentFile().getPath());

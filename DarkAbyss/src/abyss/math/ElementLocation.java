@@ -75,6 +75,14 @@ public class ElementLocation implements Serializable {
 			this.position = position;
 		}
 	}
+	
+	/**
+	 * Ustawia nową lokalizację bez sprawdzania czy leży w zakresie widoczności.
+	 * @param position Point - x,y
+	 */
+	public void forceSetPosition(Point position) {
+		this.position = position;
+	}
 
 	/**
 	 * Metoda pozwala pobrać wierzchołek, do którego należy lokalizacja.
@@ -103,6 +111,14 @@ public class ElementLocation implements Serializable {
 		if (workspace.getSheets().get(sheetIndex).getGraphPanel().isLegalLocation(tempPosition)) {
 			position = tempPosition;
 		}
+	}
+	
+	/**
+	 * Metoda na potrzeby ProjectReader
+	 * @param p Point - x, y
+	 */
+	public void setNotSnappedPosition(Point p) {
+		notSnappedPosition = p;
 	}
 
 	/**

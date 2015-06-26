@@ -60,7 +60,7 @@ public class ProjectWriter {
 			bw.write("Project name: "+projName+newline);
 			bw.write("Date: "+dateFormat.format(date)+newline);
 			bw.write("<Net data>"+newline);
-			bw.write("<ID generator state:>"+IdGenerator.getCurrentValues()+">"+newline);
+			bw.write("<ID generator state:"+IdGenerator.getCurrentValues()+">"+newline);
 			boolean status = saveNetwork(bw);
 			bw.write("<Net data end>"+newline);
 			
@@ -85,7 +85,8 @@ public class ProjectWriter {
 				sp = 6;
 				bw.write(spaces(sp)+"<Place gID:"+place.getID()+">"+newline); //gID
 				bw.write(spaces(sp)+"<Place name:"+place.getName()+">"+newline);  //nazwa
-				bw.write(spaces(sp)+"<Place comment:"+place.getComment()+">"+newline); //komentarz
+			
+				bw.write(spaces(sp)+"<Place comment:"+Tools.convertToCode(place.getComment())+">"+newline); //komentarz
 				bw.write(spaces(sp)+"<Place tokens:"+place.getTokensNumber()+">"+newline); //tokeny
 				
 				bw.write(spaces(sp)+"<Location data"+">"+newline);
@@ -99,7 +100,13 @@ public class ProjectWriter {
 					int sheetId = eLoc.getSheetID();
 					int pointX = eLoc.getPosition().x;
 					int pointY = eLoc.getPosition().y;
-					bw.write(spaces(sp)+"<Place location data sheet/x/y:"+sheetId+";"+pointX+";"+pointY+">"+newline); //sheetID/x/y
+					bw.write(spaces(sp)+"<Place location data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+					
+					ElementLocation nameLoc = place.getNamesLocations().get(e);
+					sheetId = nameLoc.getSheetID();
+					pointX = nameLoc.getPosition().x;
+					pointY = nameLoc.getPosition().y;
+					bw.write(spaces(sp)+"<Place name offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 				}
 
 				sp = 6;
@@ -122,7 +129,7 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition gID:"+trans.getID()+">"+newline); //gID
 				bw.write(spaces(sp)+"<Transition type:"+trans.getTransType()+">"+newline); //typ
 				bw.write(spaces(sp)+"<Transition name:"+trans.getName()+">"+newline);  //nazwa
-				bw.write(spaces(sp)+"<Transition comment:"+trans.getComment()+">"+newline); //komentarz
+				bw.write(spaces(sp)+"<Transition comment:"+Tools.convertToCode(trans.getComment())+">"+newline); //komentarz
 				bw.write(spaces(sp)+"<Transition eft:"+trans.getMinFireTime()+">"+newline); //TPN eft
 				bw.write(spaces(sp)+"<Transition lft:"+trans.getMaxFireTime()+">"+newline); //TPN lft
 				
@@ -137,7 +144,13 @@ public class ProjectWriter {
 					int sheetId = eLoc.getSheetID();
 					int pointX = eLoc.getPosition().x;
 					int pointY = eLoc.getPosition().y;
-					bw.write(spaces(sp)+"<Transition location data sheet/x/y:"+sheetId+";"+pointX+";"+pointY+">"+newline); //sheetID/x/y
+					bw.write(spaces(sp)+"<Transition location data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+					
+					ElementLocation nameLoc = trans.getNamesLocations().get(e);
+					sheetId = nameLoc.getSheetID();
+					pointX = nameLoc.getPosition().x;
+					pointY = nameLoc.getPosition().y;
+					bw.write(spaces(sp)+"<Transition name offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 				}
 
 				sp = 6;
@@ -219,6 +232,9 @@ public class ProjectWriter {
 					
 				}
 			}
+			sp = 2;
+			bw.write(spaces(sp)+"<Arcs data block end"+">"+newline);
+			
 			ArrayList<Integer> arcClasses = Check.getArcClassCount();
 			int readArcs = arcClasses.get(1) / 2;
 			readArcs = 0;
