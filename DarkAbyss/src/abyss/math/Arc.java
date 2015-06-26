@@ -141,6 +141,7 @@ public class Arc extends PetriNetElement {
 				this.setPairedArc(a);
 			}
 		}
+		//TODO: flaga readarc?
 	}
 
 	/**

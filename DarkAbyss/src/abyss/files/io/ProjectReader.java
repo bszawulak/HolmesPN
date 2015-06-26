@@ -1,5 +1,6 @@
 package abyss.files.io;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,6 +18,7 @@ import abyss.math.Node;
 import abyss.math.PetriNet;
 import abyss.math.Place;
 import abyss.math.Transition;
+import abyss.math.Arc.TypesOfArcs;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Transition.TransitionType;
 import abyss.utilities.Tools;
@@ -169,6 +171,20 @@ public class ProjectReader {
 				//przeczytano tranzycje
 			}
 			
+			ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			
+			while(!((line = buffer.readLine()).contains("<Arcs data block>"))) //przewiń do łuków
+				;
+			
+			//ARCS:
+			while(!(line = buffer.readLine()).contains("Arcs data block end")) {
+				Arc newArc = parseArcLine(line, places, transitions);
+				arcs.add(newArc);
+			}
+			
+			
+			
 			
 			status = true;
 		} catch (Exception e) {
@@ -256,7 +272,7 @@ public class ProjectReader {
 				
 				place.getElementLocations().get(eLocIndex).setSheetID(sheetID);
 				Point newP = new Point(pointX, pointY);
-				place.getElementLocations().get(eLocIndex).setPosition(newP);
+				place.getElementLocations().get(eLocIndex).forceSetPosition(newP);
 				place.getElementLocations().get(eLocIndex).setNotSnappedPosition(newP);
 
 				setGlobalXY(pointX, pointY); //update graph panel
@@ -284,7 +300,12 @@ public class ProjectReader {
 		}
 	}
 	
-	
+	/**
+	 * Metoda analizująca przeczytaną linię pliku opisującą tranzycję sieci i wprowadzające odpowiednie zmiany
+	 * do tworzonego obiektu tranzycji.
+	 * @param line String - przeczytana linia
+	 * @param transition Transition - modyfikowany obiekt tranzycji
+	 */
 	private void parseTransitionLine(String line, Transition transition) {
 		String backup = line;
 		try {
@@ -382,7 +403,7 @@ public class ProjectReader {
 				
 				transition.getElementLocations().get(eLocIndex).setSheetID(sheetID);
 				Point newP = new Point(pointX, pointY);
-				transition.getElementLocations().get(eLocIndex).setPosition(newP);
+				transition.getElementLocations().get(eLocIndex).forceSetPosition(newP);
 				transition.getElementLocations().get(eLocIndex).setNotSnappedPosition(newP);
 
 				setGlobalXY(pointX, pointY); //update graph panel
@@ -408,6 +429,76 @@ public class ProjectReader {
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Reading file error in line: "+backup+" for Transition "+transitionsProcessed, "error", true);
 		}
+	}
+	
+	private Arc parseArcLine(String line, ArrayList<Place> places, ArrayList<Transition> transitions) {
+		// <Arc: NORMAL; P0(0) -> T3(0); 1>
+		String backup = line;
+		try {
+			line = line.replace(" ", "");
+			String[] tab = line.split(";");
+			
+			String typeLine = tab[0];
+			TypesOfArcs arcType = TypesOfArcs.NORMAL;
+			if(typeLine.contains("READARC"))
+				arcType = TypesOfArcs.READARC;
+			else if(typeLine.contains("INHIBITOR"))
+				arcType = TypesOfArcs.INHIBITOR;
+			else if(typeLine.contains("RESET"))
+				arcType = TypesOfArcs.RESET;
+			else if(typeLine.contains("EQUAL"))
+				arcType = TypesOfArcs.EQUAL;
+			
+			tab[2] = tab[2].replace(">", "");
+			int weight = Integer.parseInt(tab[2]);
+			
+			String arcData = tab[1];
+			boolean placeFirst = true;
+			if(arcData.indexOf("T")==0)
+				placeFirst = false;
+			
+			arcData = arcData.replace("P", "");
+			arcData = arcData.replace("T", "");
+			arcData = arcData.replace(")->", " ");
+			arcData = arcData.replace(")", "");
+			arcData = arcData.replace("(", " ");
+			String[] arcDataTable = arcData.split(" ");
+			
+			int placeIndex = -1;
+			int transIndex = -1;
+			int placeElLoc = -1;
+			int transElLoc = -1;
+			if(placeFirst) {
+				placeIndex = Integer.parseInt(arcDataTable[0]);
+				placeElLoc = Integer.parseInt(arcDataTable[1]);
+				transIndex = Integer.parseInt(arcDataTable[2]);
+				transElLoc = Integer.parseInt(arcDataTable[3]);
+				
+				ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
+				ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
+				Arc newArc = new Arc(pEL, tEL, "", weight, arcType);
+				places.get(placeIndex).getElementLocations().get(placeElLoc).addOutArc(newArc);
+				transitions.get(transIndex).getElementLocations().get(transElLoc).addInArc(newArc);
+				
+				return newArc;
+			} else {
+				placeIndex = Integer.parseInt(arcDataTable[2]);
+				placeElLoc = Integer.parseInt(arcDataTable[3]);
+				transIndex = Integer.parseInt(arcDataTable[0]);
+				transElLoc = Integer.parseInt(arcDataTable[1]);
+				
+				ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
+				ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
+				Arc newArc = new Arc(tEL, pEL, "", weight, arcType);
+				transitions.get(transIndex).getElementLocations().get(transElLoc).addOutArc(newArc);
+				places.get(placeIndex).getElementLocations().get(placeElLoc).addInArc(newArc);
+				
+				return newArc;
+			}
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Reading file error in line: "+backup, "error", true);
+		}
+		return null;
 	}
 	
 	private void setGlobalXY(int x, int y) {
@@ -439,6 +530,7 @@ public class ProjectReader {
 		int nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size() - 1;
 		int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
 		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(SIN).getGraphPanel();
+		graphPanel.setSize(new Dimension(globalMaxWidth, globalMaxHeight));
 		graphPanel.setOriginSize(graphPanel.getSize());
 		graphPanel.repaint();
 	}
