@@ -1,7 +1,7 @@
 package abyss.graphpanel;
 
 /**
- * Generator identyfikatorów dla wierzchołków.
+ * Generator identyfikatorów dla elementów sieci.
  * 
  * @author students
  * @author MR
@@ -18,6 +18,16 @@ public class IdGenerator {
 		lastId = 0;
 		lastPlaceId = 0;
 		lastTransitionId = 0;
+	}
+	
+	public static String getCurrentValues() {
+		String result = "";
+		result += lastId;
+		result += ";";
+		result += lastPlaceId;
+		result += ";";
+		result += lastTransitionId;
+		return result;
 	}
 	
 	/**

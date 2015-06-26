@@ -799,7 +799,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				addArcsAndNodes(communicationProtocol.getArcArray(), communicationProtocol.getNodeArray());
 			}
 			
-			GUIManager.getDefaultGUIManager().log("Snoopy Petri net successfully imported from file "+path, "text", true);
+			GUIManager.getDefaultGUIManager().log("Petri net successfully imported from file "+path, "text", true);
 			return true;
 		} catch (Throwable err) {
 			err.printStackTrace();

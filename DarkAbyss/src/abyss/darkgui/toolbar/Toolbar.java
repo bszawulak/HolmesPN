@@ -13,6 +13,7 @@ import javax.swing.JTree;
 
 import abyss.analyse.MDTSCalculator;
 import abyss.darkgui.GUIManager;
+import abyss.files.io.ProjectWriter;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
@@ -296,26 +297,8 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", 
 				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {	
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().loadFromFile(
-						"C:/Users/Rince/Desktop/Sieci/BER/BERv3.7.2.spped");
-				GUIManager.getDefaultGUIManager().getSimulatorBox().createSimulatorProperties();
-				
-				GUIManager.getDefaultGUIManager().setLastPath("C:/Users/Rince/Desktop/Sieci/BER/");
-				
-				/*
-				ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
-				try
-				{
-					FileInputStream fis = new FileInputStream(
-							"C:/Users/Rince/Desktop/Sieci/BER371/BER371table.acl");
-					ObjectInputStream ois = new ObjectInputStream(fis);
-					clusterMatrix = (ClusteringInfoMatrix) ois.readObject();
-					ois.close();
-					fis.close();
-					GUIManager.getDefaultGUIManager().windowClusters.registerDataCase56(clusterMatrix);
-				} catch (Exception ee) {}
-				*/
-				
+				ProjectWriter pWrt = new ProjectWriter();
+				pWrt.writeProject();
 			}
 		};
 		testButton.setEnabled(false);
