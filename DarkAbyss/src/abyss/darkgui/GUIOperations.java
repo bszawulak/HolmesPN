@@ -232,9 +232,52 @@ public class GUIOperations {
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean saveAsAbyssFile() {
+		boolean status = false;
+		String lastPath = overlord.getLastPath();
+		JFileChooser fc;
+		if(lastPath==null)
+			fc = new JFileChooser();
+		else
+			fc = new JFileChooser(lastPath);
+		
+		fc.setFileView(new AbyssFileView());
+		FileFilter projFilter = new ExtensionFileFilter("Project file (.apf)", new String[] { "APF" });
+		FileFilter abyssFilter = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
+
+		fc.setFileFilter(projFilter);
+		fc.addChoosableFileFilter(projFilter);
+		fc.addChoosableFileFilter(abyssFilter);
+		fc.setAcceptAllFileFilterUsed(false);
+		if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			String ext = "";
+			String extension = fc.getFileFilter().getDescription();
+			if (extension.toLowerCase().contains(".apf")) {
+				ext = ".apf";
+				status = true;
+				
+				return status;
+			}
+			if (extension.toLowerCase().contains(".abyss")) {
+				ext = ".abyss";
+				
+				if(Tools.overwriteDecision(file.getPath()) == false)
+					return false;
+
+				String fileExtension = ".abyss";
+				if(file.getPath().toLowerCase().contains(".abyss"))
+					fileExtension = "";
+				status = overlord.getWorkspace().getProject().saveAsAbyss(file.getPath() + fileExtension);
+				overlord.setLastPath(file.getParentFile().getPath());
+				return status;
+			}
+		}
+		return status;
+		
+		/*
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
-		filters[0] = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
+		filters[0] = new 
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", overlord.getWorkspace().getProject().getFileName());
 		if(selectedFile.equals("")) {
 			return false;
@@ -252,6 +295,7 @@ public class GUIOperations {
 		boolean status = overlord.getWorkspace().getProject().saveAsAbyss(file.getPath() + fileExtension);
 		overlord.setLastPath(file.getParentFile().getPath());
 		return status;
+		*/
 	}
 	
 	/**
