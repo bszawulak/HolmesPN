@@ -2014,7 +2014,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		initiateContainers();
 		this.mctGroups = mct;
 		
-		mctGroups = MCTCalculator.getSortedMCT(mctGroups, true);
+		//mctGroups = MCTCalculator.getSortedMCT(mctGroups, true);
 		/*
 		//ogranicz MCT do nietrywialnych
 		ArrayList<Transition> unused = new ArrayList<Transition>();
@@ -2597,6 +2597,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
 		mct = MCTCalculator.getSortedMCT(mct, false);
+		
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		int transSize = transitions.size();
 		

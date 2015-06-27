@@ -407,10 +407,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void setInvariantsMatrix(ArrayList<ArrayList<Integer>> invariants, boolean generateMCT) {
 		this.invariantsMatrix = invariants;
-		this.invariantsNames = new ArrayList<String>();
+		this.invariantsNames = null;
 		
 		if(invariants == null)
 			return;
+		else 
+			this.invariantsNames = new ArrayList<String>();
 		
 		for(int i=0; i<invariantsMatrix.size(); i++) {
 			invariantsNames.add("Inv_"+i);
@@ -419,9 +421,20 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		if(generateMCT) {
 			MCTCalculator analyzer = getWorkspace().getProject().getAnalyzer();
 			ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
-			getWorkspace().getProject().setMCTMatrix(mct);
+			getWorkspace().getProject().setMCTMatrix(mct, true);
 			GUIManager.getDefaultGUIManager().getMctBox().showMCT(mct);
 		}
+	}
+	
+	/**
+	 * Metoda ustawia nowy wektor nazw dla inwariantów.
+	 * @param namesVector ArrayList[String] - nazwy inwariantów
+	 */
+	public void setInvariantsNames(ArrayList<String> namesVector) {
+		if(invariantsMatrix == null)
+			return;
+		if(namesVector.size() == invariantsMatrix.size())
+			this.invariantsNames = namesVector;
 	}
 
 	/**
@@ -443,12 +456,16 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda ustawia nową macierz zbiorów MCT.
 	 * @param mct ArrayList[ArrayList[Transition]] - macierz MCT
+	 * @param sort boolean - true, jeśli mają być posortowane
 	 */
-	public void setMCTMatrix(ArrayList<ArrayList<Transition>> mct) {
+	public void setMCTMatrix(ArrayList<ArrayList<Transition>> mct, boolean sort) {
 		this.mctData = mct;
 		this.mctNames = new ArrayList<String>();
 		if(mct == null)
 			return;
+		
+		if(sort)
+			mct = MCTCalculator.getSortedMCT(mct, true);
 		
 		for(int m=0; m<mct.size(); m++) {
 			mctNames.add("MCT_"+(m+1));
@@ -471,7 +488,16 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		return mctNames;
 	}
 	
-	
+	/**
+	 * Metoda ustawia nowy wektor nazw dla zbiorów MCT.
+	 * @param namesVector ArrayList[String] - nazwy MCT
+	 */
+	public void setMCTNames(ArrayList<String> namesVector) {
+		if(mctData == null)
+			return;
+		if(namesVector.size() == mctData.size())
+			this.mctNames = namesVector;
+	}
 
 	/**
 	 * Metoda pozwala na dodanie do projektu nowego podanego w parametrze

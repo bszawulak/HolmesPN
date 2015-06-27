@@ -120,7 +120,6 @@ public class AbyssDockWindow extends SingleDock {
 	public void createSimulatorProperties() {
 		if (type == DockWindowType.SIMULATOR) {
 			NetSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
-			//InvariantsSimulator invSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvSimulator();
 			setCurrentDockWindow(new AbyssDockWindowsTable(netSim, null));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 		}

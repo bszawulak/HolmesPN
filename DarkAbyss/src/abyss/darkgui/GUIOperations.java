@@ -106,19 +106,15 @@ public class GUIOperations {
 				ProjectReader pRdr = new ProjectReader();
 				boolean status = pRdr.readProject(file.getPath());
 				
-				if(status == true) {
-					overlord.setLastPath(file.getParentFile().getPath());
-					overlord.getSimulatorBox().createSimulatorProperties();
-				}
 				overlord.setLastPath(file.getParentFile().getPath());
+				//overlord.getSimulatorBox().createSimulatorProperties();
 				
 			} else if (extension.toLowerCase().contains(".abyss")) { //ABYSS parser
 				boolean status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
-				if(status == true) {
-					overlord.setLastPath(file.getParentFile().getPath());
-					overlord.getSimulatorBox().createSimulatorProperties();
-				}
+				
 				overlord.setLastPath(file.getParentFile().getPath());
+				//overlord.getSimulatorBox().createSimulatorProperties();
+
 			}
 		}
 

@@ -79,8 +79,7 @@ public class GUIReset {
 		//CLEAR PETRI NET DATA:
 		pNet.resetData(); // tylko w ten sposób!!!! 
 		pNet.setInvariantsMatrix(null, false);
-		pNet.setMCTMatrix(null);
-		pNet.accessInvNames().clear();
+		pNet.setMCTMatrix(null, false);
 		pNet.accessMCTNames().clear();
 		pNet.setMCSdataCore(new MCSDataMatrix());
 		pNet.resetComm();
@@ -88,6 +87,8 @@ public class GUIReset {
 		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
 		pNet.setSimulationActive(false);
 		pNet.setFileName("");
+		
+		mastah.getSimulatorBox().createSimulatorProperties();
 		
 		pNet.repaintAllGraphPanels();
 		

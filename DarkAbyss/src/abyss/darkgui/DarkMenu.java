@@ -94,7 +94,7 @@ public class DarkMenu extends JMenuBar {
 		fileMenu.addSeparator();
 		
 		// open file
-		JMenuItem openMenuItem = new JMenuItem("Open...", KeyEvent.VK_O);
+		JMenuItem openMenuItem = new JMenuItem("Open project...", KeyEvent.VK_O);
 		openMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_open.png"));
 		openMenuItem.getAccessibleContext().setAccessibleDescription("Open project");
 		openMenuItem.addActionListener(new ActionListener() {
@@ -119,7 +119,7 @@ public class DarkMenu extends JMenuBar {
 		fileMenu.addSeparator();
 		
 		// save file
-		JMenuItem saveMenuItem = new JMenuItem("Save...", KeyEvent.VK_S);
+		JMenuItem saveMenuItem = new JMenuItem("Save project...", KeyEvent.VK_S);
 		saveMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_save.png"));
 		//saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
 		saveMenuItem.getAccessibleContext().setAccessibleDescription("Save project");
@@ -131,7 +131,7 @@ public class DarkMenu extends JMenuBar {
 		fileMenu.add(saveMenuItem);
 		
 		// saveAs file
-		JMenuItem saveAsMenuItem = new JMenuItem("Save As...", KeyEvent.VK_S);
+		JMenuItem saveAsMenuItem = new JMenuItem("Export network...", KeyEvent.VK_S);
 		saveAsMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_saveAs.png"));
 		saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
 		saveAsMenuItem.getAccessibleContext().setAccessibleDescription("Save project");

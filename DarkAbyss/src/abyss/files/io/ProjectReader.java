@@ -3,7 +3,6 @@ package abyss.files.io;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -46,6 +45,9 @@ public class ProjectReader {
 	private int placesProcessed = 0;
 	private int transitionsProcessed = 0;
 	private int arcsProcessed = 0;
+	private int invariantsProcessed = 0;
+	private int mctProcessed = 0;
+	
 	private int globalMaxHeight = 0;
 	private int globalMaxWidth = 0;
 	
@@ -85,13 +87,26 @@ public class ProjectReader {
 			
 			status = readNetwork(buffer);
 			if(status == false) {
-				GUIManager.getDefaultGUIManager().log("Reading network data failure. Terminating operation.", "error", true);
+				GUIManager.getDefaultGUIManager().log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
 				buffer.close();
 				return false;
 			}
 			
-			setGraphPanelSize();
+			status = readInvariants(buffer);
+			if(!status) {
+				projectCore.setInvariantsMatrix(null, false);
+			} else {
+				GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(projectCore.getInvariantsMatrix());
+			}
 			
+			status = readMCT(buffer);
+			if(!status) {
+				projectCore.setMCTMatrix(null, false);
+			} else {
+				GUIManager.getDefaultGUIManager().getMctBox().showMCT(projectCore.getMCTMatrix());
+			}
+			
+			setGraphPanelSize();
 			buffer.close();
 			return true;
 		} catch (Exception e) {
@@ -118,11 +133,11 @@ public class ProjectReader {
 				;
 			line = line.substring(line.indexOf("state:")+6);
 			line = line.replace(">", "");
-			String[] tab = line.split(";");
-			int totalIDs = Integer.parseInt(tab[0]);
-			int placesIDs = Integer.parseInt(tab[1]);
-			int transIDs = Integer.parseInt(tab[2]);
-			
+			//dane generatora, ale właściwo to po co??
+			//String[] tab = line.split(";");
+			//int totalIDs = Integer.parseInt(tab[0]);
+			//int placesIDs = Integer.parseInt(tab[1]);
+			//int transIDs = Integer.parseInt(tab[2]);
 			
 			//PLACES:
 			line = buffer.readLine();
@@ -150,7 +165,7 @@ public class ProjectReader {
 				;
 			
 			//TRANSITIONS:
-			line = buffer.readLine();
+			//line = buffer.readLine();
 			if(!line.contains("<Transitions: 0>")) { //są tranzycje
 				line = buffer.readLine(); // -> Transition: 0
 				boolean go = true;
@@ -180,15 +195,20 @@ public class ProjectReader {
 			//ARCS:
 			while(!(line = buffer.readLine()).contains("Arcs data block end")) {
 				Arc newArc = parseArcLine(line, places, transitions);
+				arcsProcessed++;
 				arcs.add(newArc);
 			}
 			
 			
-			
+			GUIManager.getDefaultGUIManager().log("Read "+placesProcessed+" places, "+transitionsProcessed+ 
+					" transitions, "+arcsProcessed+" arcs.", "text", true);
 			
 			status = true;
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Project error reading failed in network section.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Read so far: "+placesProcessed+" places, "+transitionsProcessed+ 
+					" transitions, "+arcsProcessed+" arcs.", "error", true);
+			status = false;
 		}
 		return status;
 	}
@@ -477,8 +497,8 @@ public class ProjectReader {
 				ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 				ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 				Arc newArc = new Arc(pEL, tEL, "", weight, arcType);
-				places.get(placeIndex).getElementLocations().get(placeElLoc).addOutArc(newArc);
-				transitions.get(transIndex).getElementLocations().get(transElLoc).addInArc(newArc);
+				//places.get(placeIndex).getElementLocations().get(placeElLoc).addOutArc(newArc);
+				//transitions.get(transIndex).getElementLocations().get(transElLoc).addInArc(newArc);
 				
 				return newArc;
 			} else {
@@ -490,8 +510,8 @@ public class ProjectReader {
 				ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 				ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 				Arc newArc = new Arc(tEL, pEL, "", weight, arcType);
-				transitions.get(transIndex).getElementLocations().get(transElLoc).addOutArc(newArc);
-				places.get(placeIndex).getElementLocations().get(placeElLoc).addInArc(newArc);
+				//transitions.get(transIndex).getElementLocations().get(transElLoc).addOutArc(newArc);
+				//places.get(placeIndex).getElementLocations().get(placeElLoc).addInArc(newArc);
 				
 				return newArc;
 			}
@@ -500,37 +520,202 @@ public class ProjectReader {
 		}
 		return null;
 	}
+
+	/**
+	 * Metoda pomocnicza czytająca z pliku projektu blok danych o inwariantach.
+	 * @param buffer BufferedReader - obiekt czytający
+	 * @return boolean - true, jeśli wszystko się udało
+	 */
+	private boolean readInvariants(BufferedReader buffer) {
+		try {
+			String line = "";
+			while(!((line = buffer.readLine()).contains("<Invariants data>"))) //przewiń do inwariantów
+				;
+			
+			line = buffer.readLine();
+			int transNumber = projectCore.getTransitions().size();
+			String problemWithInv = "";
+			int problems = 0;
+			int readedLine = -1;
+			
+			if(!line.contains("<Invariants: 0>")) { //są miejsca
+				boolean go = true;
+				invariantsMatrix = new ArrayList<ArrayList<Integer>>();
+				
+				line = buffer.readLine();
+				while(go) {
+					readedLine++;
+					ArrayList<Integer> invariant = new ArrayList<Integer>();
+					line = line.replace(" ", "");
+					String[] tab = line.split(";");
+					
+					for(int i=1; i<tab.length; i++) {
+						invariant.add(Integer.parseInt(tab[i]));
+					}
+
+					line = buffer.readLine();
+					if(line.contains("<EOI>")) {
+						go = false;
+					}
+					
+					if(invariant.size() == transNumber) {
+						invariantsMatrix.add(invariant);
+						invariantsProcessed++;
+					} else {
+						problems++;
+						problemWithInv += readedLine+",";
+					}
+				}
+				
+				projectCore.setInvariantsMatrix(invariantsMatrix, false);
+			}
+			
+			if(problems==0) {
+				while(!((line = buffer.readLine()).contains("<Invariants names>"))) //przewiń do nazw inwariantów
+					;
+				
+				invariantsNames = new ArrayList<String>();
+				line = buffer.readLine();
+				int readLines = 1;
+				boolean go = true;
+				while(go) {
+					line = line.replace(" ", "");
+					invariantsNames.add(line);
+					
+					line = buffer.readLine();
+					if(line.contains("<EOIN>")) {
+						go = false;
+					} else {
+						readLines++;
+					}
+				}
+				projectCore.setInvariantsNames(invariantsNames);
+				
+				
+				if(readLines != invariantsMatrix.size()) {
+					GUIManager.getDefaultGUIManager().log("Error: different numbers of invariants ("+invariantsMatrix.size()+
+							") and their names ("+readLines+"). Operation failed.", "error", true);
+					return false;
+				}
+				
+			} else {
+				GUIManager.getDefaultGUIManager().log("Invariants with wrong number of elements in file:"+problemWithInv, "error", true);
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Reading invariants failed for invariant number: \n"+invariantsProcessed, "error", true);
+			return false;
+		}
+	}
 	
+	private boolean readMCT(BufferedReader buffer) {
+		try {
+			String line = "";
+			while(!((line = buffer.readLine()).contains("<MCT data>"))) //przewiń do zbiorów MCT
+				;
+			
+			line = buffer.readLine();
+			ArrayList<Transition> transitions = projectCore.getTransitions();
+			int transNumber = transitions.size();
+			String problemWithMCTLines = "";
+			int problems = 0;
+			int readedLine = -1;
+			
+			if(!line.contains("<MCT: 0>")) { //są miejsca
+				boolean go = true;
+				mctData = new ArrayList<ArrayList<Transition>>();
+				
+				line = buffer.readLine();
+				while(go) {
+					readedLine++;
+					ArrayList<Transition> mct = new ArrayList<Transition>();
+					line = line.replace(" ", "");
+					String[] tab = line.split(";");
+					
+					for(int i=0; i<tab.length; i++) {
+						int mctNumber = Integer.parseInt(tab[i]);
+						if(mctNumber < transNumber) {
+							mct.add(transitions.get(mctNumber));
+						} else {
+							problems++;
+							problemWithMCTLines += readedLine+",";
+						}
+					}
+
+					line = buffer.readLine();
+					if(line.contains("<EOM>")) {
+						go = false;
+					}
+					mctData.add(mct);
+					mctProcessed++;
+				}
+				projectCore.setMCTMatrix(mctData, false);
+			}
+			
+			if(problems==0) {
+				while(!((line = buffer.readLine()).contains("<MCT names>"))) //przewiń do nazw inwariantów
+					;
+				
+				mctNames = new ArrayList<String>();
+				line = buffer.readLine();
+				int readLines = 1;
+				boolean go = true;
+				while(go) {
+					line = line.replace(" ", "");
+					mctNames.add(line);
+					
+					line = buffer.readLine();
+					if(line.contains("<EOIMn>")) {
+						go = false;
+					} else {
+						readLines++;
+					}
+				}
+				projectCore.setMCTNames(mctNames);
+				
+				
+				if(readLines != mctData.size()) {
+					GUIManager.getDefaultGUIManager().log("Error: different numbers of MCT sets ("+mctData.size()+
+							") and their names ("+readLines+"). Operation failed.", "error", true);
+					return false;
+				}
+				
+			} else {
+				GUIManager.getDefaultGUIManager().log("MCT with wrong number ID numbers for their transitions in file:"+problemWithMCTLines, "error", true);
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Reading MCT sets failed for MCT number: \n"+mctProcessed, "error", true);
+			return false;
+		}
+	}
+	
+	/**
+	 * Metoda pomocnicza, służąca do aktualizacji współrzędnych x i y elementów sieci - zapamiętuje 
+	 * największe wartości do tej pory przeczytane.
+	 * @param x int - współrzędna x
+	 * @param y int - współrzędna y
+	 */
 	private void setGlobalXY(int x, int y) {
 		if(x > globalMaxWidth)
 			globalMaxWidth = x;
 		if(y > globalMaxHeight)
 			globalMaxHeight = y;
 	}
-
-	private boolean loadInvariants(BufferedWriter bw) {
-		try {
-			
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
 	
-	private boolean loadMCT(BufferedWriter bw) {
-		try {
-			
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-	
+	/**
+	 * Metoda ustalająca wymiary panelu graficznego sieci, w oparciu o aktualne wartości x i y (związana
+	 * z metodą setGlobalXY(...).
+	 */
 	private void setGraphPanelSize() {
 		int nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size() - 1;
 		int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
 		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(SIN).getGraphPanel();
-		graphPanel.setSize(new Dimension(globalMaxWidth, globalMaxHeight));
+		graphPanel.setSize(new Dimension(globalMaxWidth+300, globalMaxHeight+200));
 		graphPanel.setOriginSize(graphPanel.getSize());
 		graphPanel.repaint();
 	}

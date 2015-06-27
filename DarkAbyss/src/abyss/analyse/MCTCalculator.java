@@ -12,7 +12,8 @@ import abyss.math.PetriNet;
 import abyss.math.Transition;
 
 /**
- * Klasa analizatora, aktualnie odpowiedzialna za generowanie zbiorów MCT.
+ * Klasa odpowiedzialna za generowanie zbiorów MCT.
+ * 
  * @author students
  * @author MR
  *

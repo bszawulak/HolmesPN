@@ -1,14 +1,11 @@
 package abyss.files.io;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import javax.swing.filechooser.FileFilter;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.IdGenerator;
@@ -20,8 +17,14 @@ import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.utilities.Tools;
 import abyss.varia.Check;
-import abyss.workspace.ExtensionFileFilter;
 
+/**
+ * Klasa odpowiedzialna za zapis projektu do pliku. Zapisuje między innymi: dane sieci (miejsca, tranzycje
+ * oraz łuki), inwarianty oraz zbiory MCT.
+ * 
+ * @author MR
+ *
+ */
 public class ProjectWriter {
 	private PetriNet projectCore = null;
 	private ArrayList<Place> places = null;
@@ -32,9 +35,11 @@ public class ProjectWriter {
 	private ArrayList<ArrayList<Transition>> mctData = null;
 	private ArrayList<String> mctNames = null;
 	
+	private String newline = "\n";
 	
-	String newline = "\n";
-	
+	/**
+	 * Konstruktor obiektu klasy ProjectWriter.
+	 */
 	public ProjectWriter() {
 		projectCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		places = projectCore.getPlaces();
@@ -61,17 +66,30 @@ public class ProjectWriter {
 			bw.write("Date: "+dateFormat.format(date)+newline);
 			bw.write("<Net data>"+newline);
 			bw.write("<ID generator state:"+IdGenerator.getCurrentValues()+">"+newline);
-			boolean status = saveNetwork(bw);
+			boolean statusNet = saveNetwork(bw);
 			bw.write("<Net data end>"+newline);
+			
+			bw.write("<Invariants data>"+newline);
+			boolean statusInv = saveInvariants(bw);
+			bw.write("<Invariants data end>"+newline);
+			
+			bw.write("<MCT data>"+newline);
+			boolean statusMCT = saveMCT(bw);
+			bw.write("<MCT data end>"+newline);
 			
 			bw.close();
 			return true;
 		} catch (Exception e) {
-			
+			GUIManager.getDefaultGUIManager().log("Project data saved to: "+filepath, "text", true);
 			return false;
 		}
 	}
 
+	/**
+	 * Metoda realizująca zapis danych o strukturze sieci do pliku projektu.
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @return boolean - true, jeśli wszystko się udało
+	 */
 	private boolean saveNetwork(BufferedWriter bw) {
 		try {
 			//ZAPIS MIEJSCA:
@@ -244,31 +262,124 @@ public class ProjectWriter {
 			}
 
 			return true;
-			// bw.write(spaces(sp)+""+">"+newline);
 		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Error while saving net data.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
 			return false;
 		}
 		
 	}
 	
+	/**
+	 * Metoda służąca do zapisania w pliku projektu inwariantów (CSV) oraz ich nazw.
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @return boolean - true, jeśli wszystko dobrze poszło
+	 */
 	private boolean saveInvariants(BufferedWriter bw) {
 		try {
+			if(invariantsMatrix == null) {
+				bw.write(spaces(2)+"<Invariants: 0>"+newline);
+				bw.write(spaces(2)+"<EOI>"+newline);
+				return false;	
+			}
+			
+			int sp = 2;
+			int invNumber = invariantsMatrix.size();
+			
+			if(invNumber == 0) {
+				bw.write(spaces(2)+"<Invariants: 0>"+newline);
+				bw.write(spaces(2)+"<EOI>"+newline);
+				return false;	
+			}
+	
+			bw.write(spaces(sp)+"<Invariants: "+invNumber+">"+newline);
+			int invSize = invariantsMatrix.get(0).size();
+			for(int i=0; i<invNumber; i++) {
+				sp = 4;
+				ArrayList<Integer> invariant = invariantsMatrix.get(i);
+				String line = ""+i+";";
+				
+				for(int it=0; it<invSize; it++) {
+					line += invariant.get(it)+";";
+				}
+				line = line.substring(0, line.length()-1); //usun ostatni ';'
+				bw.write(spaces(sp)+line+newline);
+			}
+			sp = 2;
+			bw.write(spaces(sp)+"<EOI>"+newline);
+			
+			bw.write(spaces(sp)+"<Invariants names>"+newline);
+			for(int i=0; i<invNumber; i++) {
+				sp = 4;
+				bw.write(spaces(sp)+invariantsNames.get(i)+newline);
+			}
+			
+			bw.write(spaces(2)+"<EOIN>"+newline);
 			
 			return true;
 		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Error while saving invariants data.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
 	
+	/**
+	 * Metoda służąca do zapisania w pliku projektu zbiorów MCT oraz ich nazw.
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @return boolean - true, jeśli wszystko dobrze poszło
+	 */
 	private boolean saveMCT(BufferedWriter bw) {
 		try {
+			if(mctData == null) {
+				bw.write(spaces(2)+"<MCT: 0>"+newline);
+				bw.write(spaces(2)+"<EOM>"+newline);
+				return false;	
+			}
+			
+			int sp = 2;
+			int mctNumber = mctData.size();
+			
+			if(mctNumber == 0) {
+				bw.write(spaces(2)+"<MCT: 0>"+newline);
+				bw.write(spaces(2)+"<EOM>"+newline);
+				return false;	
+			}
+	
+			bw.write(spaces(sp)+"<MCT: "+mctNumber+">"+newline);
+			for(int m=0; m<mctNumber; m++) {
+				sp = 4;
+				ArrayList<Transition> mct =  mctData.get(m);
+				String mctLine = "";
+				for(Transition trans : mct) {
+					mctLine += transitions.indexOf(trans) + ";";
+				}
+				mctLine = mctLine.substring(0, mctLine.length()-1); //usun ostatni ';'
+				bw.write(spaces(sp)+mctLine+newline);
+			}
+			sp = 2;
+			bw.write(spaces(sp)+"<EOM>"+newline);
+			bw.write(spaces(sp)+"<MCT names>"+newline);
+			for(int i=0; i<mctNumber; i++) {
+				sp = 4;
+				bw.write(spaces(sp)+mctNames.get(i)+newline);
+			}
+			sp = 2;
+			bw.write(spaces(sp)+"<EOIMn>"+newline);
 			
 			return true;
 		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Error while saving MCT data.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
 	
+	/**
+	 * Metoda zwraca łańcuch znaków o zadanej liczbie spacji.
+	 * @param howMany int - ile spacji
+	 * @return String - łańcuch spacji
+	 */
 	private String spaces(int howMany) {
 		String result = "";
 		for(int i=0; i<howMany; i++) {
