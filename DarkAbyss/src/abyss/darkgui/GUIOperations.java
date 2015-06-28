@@ -101,20 +101,20 @@ public class GUIOperations {
 				return;
 			if(!file.exists()) 
 				return;
-			
+			boolean status = false;
 			if (extension.toLowerCase().contains(".apf")) { //ABYSS project reader
 				ProjectReader pRdr = new ProjectReader();
-				boolean status = pRdr.readProject(file.getPath());
+				status = pRdr.readProject(file.getPath());
 				
-				overlord.setLastPath(file.getParentFile().getPath());
-				//overlord.getSimulatorBox().createSimulatorProperties();
-				
+				overlord.setLastPath(file.getParentFile().getPath());			
 			} else if (extension.toLowerCase().contains(".abyss")) { //ABYSS parser
-				boolean status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
+				status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
 				
 				overlord.setLastPath(file.getParentFile().getPath());
-				//overlord.getSimulatorBox().createSimulatorProperties();
-
+			}
+			
+			if(status) {
+				GUIManager.getDefaultGUIManager().log("Reading ABYSS project succcessful.", "text", true);
 			}
 		}
 
