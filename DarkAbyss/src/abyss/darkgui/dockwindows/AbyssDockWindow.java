@@ -7,6 +7,7 @@ import javax.swing.JScrollPane;
 
 import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.GUIManager;
+import abyss.darkgui.dockwindows.AbyssDockWindowsTable.SubWindow;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import abyss.math.Arc;
@@ -82,12 +83,9 @@ public class AbyssDockWindow extends SingleDock {
 		else if (type == DockWindowType.Knockout)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Knockout_selector", scrollPane,
 					"Knockout"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		
 		else if (type == DockWindowType.InvSIMULATOR)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_simulator", scrollPane,
 					"InvSim"), GUIManager.getDefaultGUIManager().getDockingListener()));
-
-		
 
 		position = new Point(0, 0);
 		this.addDockable(getDockable(), position, position);
@@ -120,7 +118,8 @@ public class AbyssDockWindow extends SingleDock {
 	public void createSimulatorProperties() {
 		if (type == DockWindowType.SIMULATOR) {
 			NetSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
-			setCurrentDockWindow(new AbyssDockWindowsTable(netSim, null));
+			//setCurrentDockWindow(new AbyssDockWindowsTable(netSim, null));
+			setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.SIMULATOR, netSim, null));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}
@@ -146,7 +145,7 @@ public class AbyssDockWindow extends SingleDock {
 	 */
 	public void showInvariants(ArrayList<ArrayList<Integer>> invariants) {
 		if (type == DockWindowType.InvANALYZER) {
-			setCurrentDockWindow(new AbyssDockWindowsTable(invariants));
+			setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.INVARIANTS, invariants));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 			//GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer().settInvariants(invariants); 
 		}
@@ -159,7 +158,7 @@ public class AbyssDockWindow extends SingleDock {
 	 */
 	public void showClusterSelector(ClusterDataPackage data) {
 		if (type == DockWindowType.ClusterSELECTOR) {
-			setCurrentDockWindow(new AbyssDockWindowsTable(data, true));
+			setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.CLUSTERS, data));
 			scrollPane.getViewport().add(getCurrentDockWindow());			
 		}
 	}
@@ -170,7 +169,7 @@ public class AbyssDockWindow extends SingleDock {
 	 */
 	public void showMCT(ArrayList<ArrayList<Transition>> mctGroups) {
 		if (type == DockWindowType.MctANALYZER) {
-			setCurrentDockWindow(new AbyssDockWindowsTable(mctGroups, DockWindowType.MctANALYZER));
+			setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.MCT, mctGroups));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}
@@ -181,7 +180,7 @@ public class AbyssDockWindow extends SingleDock {
 	public void showMCS() {
 		if (type == DockWindowType.MCSselector) {
 			MCSDataMatrix mcsData = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-			setCurrentDockWindow(new AbyssDockWindowsTable(mcsData));
+			setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.MCS, mcsData));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 
 		}
@@ -217,24 +216,24 @@ public class AbyssDockWindow extends SingleDock {
 			if (e.getElementLocationGroup().size() > 0) {
 				Node n = e.getElementLocation().getParentNode();
 				if (n.getType() == PetriNetElementType.PLACE)
-					setCurrentDockWindow(new AbyssDockWindowsTable((Place) n, e.getElementLocation()));
+					setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.PLACE, (Place) n, e.getElementLocation()));
 				else
 				{
 					@SuppressWarnings("unused")
 					PetriNetElementType test =  n.getType();
 					
 					if (n.getType().equals(PetriNetElementType.TIMETRANSITION))
-						setCurrentDockWindow(new AbyssDockWindowsTable((Transition) n,e.getElementLocation(), 17, 17.3));
+						setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.TIMETRANSITION, (Transition) n,e.getElementLocation(), 17, 17.3));
 					else
-						setCurrentDockWindow(new AbyssDockWindowsTable((Transition) n,e.getElementLocation()));
+						setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.TRANSITION, (Transition) n,e.getElementLocation()));
 				}
 				scrollPane.getViewport().add(getCurrentDockWindow());
 			} else if (e.getArcGroup().size() > 0) {
-				setCurrentDockWindow(new AbyssDockWindowsTable((Arc) e.getArc()));
+				setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.ARC, (Arc) e.getArc()));
 				scrollPane.getViewport().add(getCurrentDockWindow());
 			}
 		} else if (e.getActionType() == SelectionActionType.SELECTED_SHEET) {
-			setCurrentDockWindow(new AbyssDockWindowsTable(
+			setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.SHEET,
 				guiManager.getWorkspace().getSheets().get(guiManager.getWorkspace().getIndexOfId(e.getSheetId()))));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 		}

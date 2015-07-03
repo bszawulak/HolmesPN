@@ -46,7 +46,6 @@ import abyss.analyse.MCTCalculator;
 import abyss.clusters.ClusterDataPackage;
 import abyss.clusters.ClusterTransition;
 import abyss.darkgui.GUIManager;
-import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.Arc;
@@ -86,7 +85,7 @@ import abyss.workspace.WorkspaceSheet;
  * (repaint) - bo tak. Z layoutami jakoś pamięta, żeby się narysować. Bez nich już nie.
  * 
  * Konkluzja. Ktoś mógłby powiedzieć, że przecież skoro chce się ręcznie wszystko rozmieścić,
- * to nie należy narzekać, że jest dużo roboty. ZOBACZCIE SOBIE DURNIE .NET MICROSOFTU!!!
+ * to nie należy narzekać, że jest dużo roboty. ZOBACZCIE SOBIE DURNIE VISUAL STUDIO.NET MICROSOFTU!!!
  * Są panele, layouty i inne. Ale nie zmuszą się nikogo młotem do ich korzystania jak w Javie.
  * I okazuje się, że nagle jest mniej tam roboty z rozmieszczaniem, niż nawet z layoutami w Javie.
  * Ten język powinien pozostać na etapie konsoli. Jego próby udawania, że służy do
@@ -146,6 +145,39 @@ public class AbyssDockWindowsTable extends JPanel {
 	public SpinnerModel nameLocationYSpinnerModel = null;
 	public boolean doNotUpdate = false;
 	
+	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, ARC, SHEET, INVARIANTS, MCT, CLUSTERS, KNOCKOUT, MCS }
+	
+	/**
+	 * Konstruktor główny, wybierający odpowiednią metodę do tworzenia podokna wybranego typu
+	 * @param subType SubWindow - typ podokna do utworzenia
+	 * @param blackBox Object[...] - bliżej nieokreślona lista nieokreślonych parametrów :)
+	 */
+	@SuppressWarnings("unchecked")
+	public AbyssDockWindowsTable(SubWindow subType, Object... blackBox) {
+		if(subType == SubWindow.SIMULATOR) {
+			createSimulatorSubWindow((NetSimulator) blackBox[0], (InvariantsSimulator) blackBox[1]);
+		} else if (subType == SubWindow.PLACE) {
+			createPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
+		} else if (subType == SubWindow.TRANSITION) {
+			createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+		} else if (subType == SubWindow.TIMETRANSITION) {
+			createTimeTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+		} else if (subType == SubWindow.ARC) {
+			createArcSubWindow((Arc) blackBox[0]);
+		} else if (subType == SubWindow.SHEET) {
+			createSheetSubWindow((WorkspaceSheet) blackBox[0]);
+		} else if (subType == SubWindow.INVARIANTS) {
+			createInvariantsSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
+		} else if (subType == SubWindow.MCT) {
+			createMCTSubWindow((ArrayList<ArrayList<Transition>>) blackBox[0]);
+		} else if (subType == SubWindow.CLUSTERS) {
+			createClustersSubWindow((ClusterDataPackage) blackBox[0]);
+		} else if (subType == SubWindow.MCS) {
+			createMCSSubWindow((MCSDataMatrix) blackBox[0]);
+		} 
+		//createTimeTransitionSubWindow(final Transition transition, ElementLocation location)
+	}
+	
 	//**************************************************************************************
 	//*********************************                  ***********************************
 	//*********************************    SYMULATOR     ***********************************
@@ -153,11 +185,10 @@ public class AbyssDockWindowsTable extends JPanel {
 	//**************************************************************************************
 	
 	/**
-	 * Konstruktor odpowiedzialny za tworzenie elementów podokna dla symulatora sieci.
+	 * Metoda pomocnicza konstruktora odpowiedzialna za tworzenie podokna dla symulatora sieci.
 	 * @param sim NetSimulator - obiekt symulatora sieci
 	 */
-	//@SuppressWarnings({ "unchecked", "rawtypes" })
-	public AbyssDockWindowsTable(NetSimulator sim, InvariantsSimulator is) {
+	private void createSimulatorSubWindow(NetSimulator sim, InvariantsSimulator is) {
 		int columnA_posX = 10;
 		int columnB_posX = 80;
 		int columnA_Y = 0;
@@ -480,10 +511,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		CycleMode.setEnabled(false);
 		spiner.setEnabled(false);
 		startButton.setEnabled(false);
-		
 		invariantsSimulatorPanel.add(startButton);
-
-		
 		components.add(invariantsSimulatorPanel);
 		
 		panel.setLayout(null); 
@@ -503,11 +531,11 @@ public class AbyssDockWindowsTable extends JPanel {
 	//**************************************************************************************
 	
 	/**
-	 * Konstruktor podokna wyświetlającego właściwości klikniętego miejsca sieci.
+	 * Metoda pomocnicza konstruktora podokna wyświetlającego właściwości klikniętego miejsca sieci.
 	 * @param place Place - obiekt miejsca
 	 * @param location ElementLocation - lokalizacja miejsca
 	 */
-	public AbyssDockWindowsTable(Place place, ElementLocation location) {
+	public void createPlaceSubWindow(Place place, ElementLocation location) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
 		int columnA_Y = 0;
@@ -819,11 +847,11 @@ public class AbyssDockWindowsTable extends JPanel {
 	//**************************************************************************************
 
 	/**
-	 * Metoda odpowiedzialna za wyświetlenie właściwości klikniętej tranzycji.
+	 * Metoda odpowiedzialna za tworzenie podokna właściwości klikniętej tranzycji.
 	 * @param transition Transition - obiekt tranzycji sieci
 	 * @param location ElementLocation - lokalizacja tranzycji
 	 */
-	public AbyssDockWindowsTable(Transition transition, ElementLocation location) {
+	public void createTransitionSubWindow(Transition transition, ElementLocation location) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
 		int columnA_Y = 0;
@@ -1107,11 +1135,11 @@ public class AbyssDockWindowsTable extends JPanel {
 	//**************************************************************************************
 
 	/**
-	 * Metoda odpowiedzialna za wyświetlenie właściwości klikniętej tranzycji czasowej.
+	 * Metoda odpowiedzialna za utworzenie podokna właściwości tranzycji czasowej.
 	 * @param transition TimeTransition - obiekt tranzycji czasowej
 	 * @param location ElementLocation - lokalizacja tranzycji
 	 */
-	public AbyssDockWindowsTable(final Transition transition, ElementLocation location, int x11, double y17) {
+	public void createTimeTransitionSubWindow(final Transition transition, ElementLocation location) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
 		int columnA_Y = 0;
@@ -1232,6 +1260,26 @@ public class AbyssDockWindowsTable extends JPanel {
 		minTimeSpinnerPanel.add(maxTimeField);
 		minTimeSpinnerPanel.setBounds(columnA_posX+90, columnB_Y += 20, 200, 20);
 		components.add(minTimeSpinnerPanel);
+		
+		//DURATION:
+		JLabel durationLabel = new JLabel("Duration:", JLabel.LEFT);
+		durationLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(durationLabel);
+		JFormattedTextField durationField = new JFormattedTextField();
+		durationField.setValue(transition.getDurationTime());
+		durationField.setBounds(columnA_posX+90, columnB_Y += 20, 90, 20);
+		durationField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				//JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					//field.commitEdit();
+				} catch (Exception ex) {
+				}						
+				//double min = (double) field.getValue();
+				//setMinFireTime(min);
+			}
+		});
+		components.add(durationField);
 
 		// T-TRANSITION SHEET ID
 		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
@@ -1432,13 +1480,11 @@ public class AbyssDockWindowsTable extends JPanel {
 	//*********************************       ŁUK        ***********************************
 	//*********************************                  ***********************************
 	//**************************************************************************************
-
 	/**
-	 * Konstruktor odpowiedzialny za utworzenie elementów podokna właściwości klikniętego
-	 * łuku sieci.
+	 * Metoda pomocnicza konstruktora odpowiedzialna za utworzenie podokna właściwości łuku sieci.
 	 * @param arc Arc - obiekt łuku
 	 */
-	public AbyssDockWindowsTable(Arc arc) {
+	public void createArcSubWindow(Arc arc) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
 		int columnA_Y = 0;
@@ -1629,10 +1675,10 @@ public class AbyssDockWindowsTable extends JPanel {
 	//**************************************************************************************
 	
 	/**
-	 * Konstruktor odpowiedzialny za wypełnienie podokna właściwości dla wybranego arkusza sieci. 
+	 * Metoda pomocnicza konstruktora odpowiedzialna za utworzenia podokna właściwości arkusza sieci. 
 	 * @param sheet WorkspaceSheet - obiekt arkusza
 	 */
-	public AbyssDockWindowsTable(WorkspaceSheet sheet) {
+	public void createSheetSubWindow(WorkspaceSheet sheet) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
 		int columnA_Y = 0;
@@ -1787,13 +1833,10 @@ public class AbyssDockWindowsTable extends JPanel {
 	//**************************************************************************************
 	
 	/**
-	 * Konstruktor odpowiedzialny za wypełnienie podokna umożliwiającego wybór poszczególnych
-	 * inwariantów sieci.
+	 * Metoda pomocnicza konstruktora odpowiedzialna za wypełnienie podokna informacji o inwariantach sieci.
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 */
-	public AbyssDockWindowsTable(ArrayList<ArrayList<Integer>> invariantsData) {
-	//public AbyssDockWindowsTable(ArrayList<ArrayList<InvariantTransition>> invariants) {
-		
+	public void createInvariantsSubWindow(ArrayList<ArrayList<Integer>> invariantsData) {
 		if(invariantsData == null || invariantsData.size() == 0) {
 			return;
 		} else {
@@ -1993,13 +2036,13 @@ public class AbyssDockWindowsTable extends JPanel {
 	//**************************************************************************************
 
 	/**
-	 * Konstruktor odpowiedzialny za utworzenie podokna wyboru zbiorów MCT.
+	 * Metoda pomocnicza konstruktora odpowiedzialna za utworzenie podokna wyboru zbiorów MCT.
 	 * @param mct ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
 	 * @param type Properties.PropertiesType - nic nie znaczący tutaj element...
 	 */
 	@SuppressWarnings("unchecked")
-	public AbyssDockWindowsTable(ArrayList<ArrayList<Transition>> mct, AbyssDockWindow.DockWindowType type) {
-		if(!(type == DockWindowType.MctANALYZER) || mct == null || mct.size() == 0) {
+	public void createMCTSubWindow(ArrayList<ArrayList<Transition>> mct) {
+		if(mct == null || mct.size() == 0) {
 			return;
 			//błędne wywołanie
 		} else {
@@ -2013,46 +2056,6 @@ public class AbyssDockWindowsTable extends JPanel {
 		
 		initiateContainers();
 		this.mctGroups = mct;
-		
-		//mctGroups = MCTCalculator.getSortedMCT(mctGroups, true);
-		/*
-		//ogranicz MCT do nietrywialnych
-		ArrayList<Transition> unused = new ArrayList<Transition>();
-		for(int i=0; i<mctGroups.size(); i++) {
-			ArrayList<Transition> mctRow = mctGroups.get(i);
-			if(mctRow.size()==1) {
-				unused.add(mctRow.get(0));
-				mctGroups.set(i, null);
-			}
-		}
-		for(int i=0; i<mctGroups.size(); i++) {
-			ArrayList<Transition> mctRow = mctGroups.get(i);
-			if(mctRow == null) {
-				mctGroups.remove(i);
-				i--;
-			}
-		}
-		Object [] temp = mctGroups.toArray();
-		Arrays.sort(temp, new Comparator<Object>() {
-			public int compare(Object o1, Object o2) {
-		        ArrayList<Transition> temp1 = (ArrayList<Transition>)o1;
-		        ArrayList<Transition> temp2 = (ArrayList<Transition>)o2;
-
-		        if(temp1.size() > temp2.size())
-		        	return -1;
-		        else if(temp1.size() == temp2.size()) {
-		        	return 0;
-		        } else
-		        	return 1;
-		    }
-		});
-		
-		mctGroups.clear();
-		for(Object o: temp) {
-			mctGroups.add((ArrayList<Transition>)o);
-		}
-		mctGroups.add(unused); //dodaj wszystkie pojedzyncze tranzycje w jeden 'mct'
-		*/
 		
 		String[] mctHeaders = new String[mctGroups.size() + 2];
 		mctHeaders[0] = "---";
@@ -2158,7 +2161,7 @@ public class AbyssDockWindowsTable extends JPanel {
 			ArrayList<Transition> mct = mctGroups.get(m);
 			for (Transition transition : mct) {
 				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("mctNameShow").equals("1"))
-					transition.setColorWithNumber(true, currentColor, false, m, true, "MCT #"+m+" ("+mct.size()+")");
+					transition.setColorWithNumber(true, currentColor, false, m, true, "MCT #"+(m+1)+" ("+mct.size()+")");
 				else
 					transition.setColorWithNumber(true, currentColor, false, m, true, "");
 			}
@@ -2173,10 +2176,10 @@ public class AbyssDockWindowsTable extends JPanel {
 	//**************************************************************************************
 
 	/**
-	 * 
+	 * Metoda pomocnicza konstruktora tworząca podokno danych o klastrach.
 	 * @param windowType int - w zależności od tego, tworzy dane okno
 	 */
-	public AbyssDockWindowsTable(ClusterDataPackage clusteringData, boolean ImNotHere) {
+	public void createClustersSubWindow(ClusterDataPackage clusteringData) {
 		initiateContainers();
 			
 		if(clusteringData == null || clusteringData.dataMatrix.size() == 0) {
@@ -2383,10 +2386,10 @@ public class AbyssDockWindowsTable extends JPanel {
 	//**************************************************************************************
 	//TODO:
 	/**
-	 * Konstruktor podokna zbiorów MCS.
+	 * Metoda pomocnicza konstruktora podokna dla zbiorów MCS.
 	 * @param mcsData MCSDataMatrix - obiekt danych zbiorów MCS
 	 */
-	public AbyssDockWindowsTable(MCSDataMatrix mcsData)
+	public void createMCSSubWindow(MCSDataMatrix mcsData)
 	{
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		if(mcsData == null || transitions.size() == 0) {

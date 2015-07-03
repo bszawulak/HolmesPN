@@ -860,7 +860,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * narzedzia do rysowania).
 	 * @param dockable Dockable
 	 * @param listener DockingListener
-	 * @return Dockable
+	 * @return Dockable - obiekt podokna zaboxowany w obiekcie dokowalnym
 	 */
 	public static Dockable externalWithListener(Dockable dockable, DockingListener listener) {
 		Dockable wrapper = guiManager.decorateDockableWithActions(dockable, false);

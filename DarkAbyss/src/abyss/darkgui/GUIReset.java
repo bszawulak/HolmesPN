@@ -9,7 +9,7 @@ import com.javadocking.dockable.Dockable;
 import abyss.analyse.MCTCalculator;
 import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
-import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
+import abyss.darkgui.dockwindows.AbyssDockWindowsTable.SubWindow;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
 import abyss.math.MCSDataMatrix;
@@ -131,7 +131,7 @@ public class GUIReset {
 				mastah.getInvariantsBox().getCurrentDockWindow().resetInvariants();
 				mastah.getInvariantsBox().getCurrentDockWindow().removeAll();
 			}
-			mastah.getInvariantsBox().setCurrentDockWindow(new AbyssDockWindowsTable(
+			mastah.getInvariantsBox().setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.INVARIANTS,
 					mastah.getWorkspace().getProject().getInvariantsMatrix()));	
 			mastah.getInvariantsBox().validate();
 			mastah.getInvariantsBox().repaint();
@@ -148,8 +148,8 @@ public class GUIReset {
 				mastah.getMctBox().getCurrentDockWindow().removeAll();
 				mastah.getMctBox().getCurrentDockWindow().resetMCT();
 			}
-			mastah.getMctBox().setCurrentDockWindow(new AbyssDockWindowsTable(
-					new ArrayList<ArrayList<Transition>>(), DockWindowType.MctANALYZER));
+			mastah.getMctBox().setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.MCT,
+					new ArrayList<ArrayList<Transition>>()));
 			mastah.getMctBox().validate();
 			mastah.getMctBox().repaint();
 			
@@ -162,7 +162,7 @@ public class GUIReset {
 				mastah.getClusterSelectionBox().getCurrentDockWindow().removeAll();
 				mastah.getClusterSelectionBox().getCurrentDockWindow().resetClusters();
 			}
-			mastah.getClusterSelectionBox().setCurrentDockWindow(new AbyssDockWindowsTable(new ClusterDataPackage(), false));
+			mastah.getClusterSelectionBox().setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.CLUSTERS, new ClusterDataPackage()));
 			mastah.getClusterSelectionBox().validate();
 			mastah.getClusterSelectionBox().repaint();
 			

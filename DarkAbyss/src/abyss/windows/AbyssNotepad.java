@@ -11,7 +11,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -134,7 +133,7 @@ public class AbyssNotepad extends JFrame {
 				doc.insertString(doc.getLength(), "["+timeStamp+"]   ", doc.getStyle("time"));
 			}
 	        doc.insertString(doc.getLength(), text+nL, doc.getStyle(initStyles[style]));
-	    } catch (BadLocationException ble) {
+	    } catch (Exception ble) {
 	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
 	    }
 		
@@ -146,7 +145,7 @@ public class AbyssNotepad extends JFrame {
 		int style = setWritingStyle(mode);
 		try {
 	        doc.insertString(doc.getLength(), text, doc.getStyle(initStyles[style]));
-	    } catch (BadLocationException ble) {
+	    } catch (Exception ble) {
 	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
 	    }
 		int len = textPane.getDocument().getLength();
@@ -157,7 +156,7 @@ public class AbyssNotepad extends JFrame {
 		int style = setWritingStyle(mode);
 		try {
 	        doc.insertString(doc.getLength(), text+newline, doc.getStyle(initStyles[style]));
-	    } catch (BadLocationException ble) {
+	    } catch (Exception ble) {
 	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
 	    }
 		int len = textPane.getDocument().getLength();
@@ -174,12 +173,19 @@ public class AbyssNotepad extends JFrame {
 		
 		try {
 	        doc.insertString(doc.getLength(), text, doc.getStyle(initStyles[style]));
-	    } catch (BadLocationException ble) {
-	        System.err.println("Couldn't insert initial text into text pane.");
+	    } catch (Exception ble) {
+	    	GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
 	    }
 		
 		int len = textPane.getDocument().getLength();
 		textPane.setCaretPosition(len);
+	}
+	
+	/**
+	 * Metoda ustawia kursor na pierszą linię.
+	 */
+	public void setCaretFirstLine() {
+		textPane.setCaretPosition(0);
 	}
 	
 	/**

@@ -202,11 +202,19 @@ public class AbyssKnockout extends JFrame {
 		showKnockoutButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/showNotepad.png"));
 		showKnockoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				MauritiusMap infoMap = generateMap();
-				if(infoMap != null) {
-					AbyssNotepad notePad = new AbyssNotepad(900,600);
-					notePad.setVisible(true);
-					getKnockoutInfo(infoMap, notePad);
+				try {
+					MauritiusMap infoMap = generateMap();
+					if(infoMap != null) {
+						AbyssNotepad notePad = new AbyssNotepad(900,600);
+						notePad.setVisible(true);
+						getKnockoutInfo(infoMap, notePad);
+					}
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "Exception in invariants section.\n"+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					GUIManager.getDefaultGUIManager().log("Error"+e.getMessage(), "error", true);
+				} catch (Error e2) {
+					JOptionPane.showMessageDialog(null, "Error in invariants section.\n"+e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					GUIManager.getDefaultGUIManager().log("Error"+e2.getMessage(), "error", true);
 				}
 			}
 		});
@@ -347,32 +355,45 @@ public class AbyssKnockout extends JFrame {
 		
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		
-		notePad.addTextLineNL("Objective reaction (knock-out reaction): "+infoMap.getRoot().transName, "text");
-		notePad.addTextLineNL("", "text");
-		notePad.addTextLineNL("Reactions knocked out: ", "text");
-		Collections.sort(dataMatrix.get(0));
-		for(int element : dataMatrix.get(0)) {
-			notePad.addTextLineNL("[t_"+element+"] : "+transitions.get(element).getName(), "text");
+		try {
+			notePad.addTextLineNL("Objective reaction (knock-out reaction): "+infoMap.getRoot().transName, "text");
+			notePad.addTextLineNL("", "text");
+			notePad.addTextLineNL("Reactions knocked out: ", "text");
+			Collections.sort(dataMatrix.get(0));
+			for(int element : dataMatrix.get(0)) {
+				notePad.addTextLineNL("[t_"+element+"] : "+transitions.get(element).getName(), "text");
+			}
+			notePad.addTextLineNL("", "text");
+			notePad.addTextLineNL("Common-frequency reactions: ", "text");
+			
+			Collections.sort(dataMatrix.get(1));
+			for(int element : dataMatrix.get(1)) {
+				notePad.addTextLineNL("[t_"+element+"] : "+transitions.get(element).getName(), "text");
+			}
+			//knockOutData
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Error in transition section.\n"+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error"+e.getMessage(), "error", true);
 		}
-		notePad.addTextLineNL("", "text");
-		notePad.addTextLineNL("Common-frequency reactions: ", "text");
-		
-		Collections.sort(dataMatrix.get(1));
-		for(int element : dataMatrix.get(1)) {
-			notePad.addTextLineNL("[t_"+element+"] : "+transitions.get(element).getName(), "text");
-		}
-		//knockOutData
 		
 		//TODO:
-		int rootTransition = transitionsCombo.getSelectedIndex()+1;
-		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
-		ArrayList<Integer> invIndices = InvariantsTools.returnInvIndicesWithTransition(invariants, rootTransition);
-		
-		notePad.addTextLineNL("", "text");
-		notePad.addTextLineNL("Invariants: ", "text");
-		for(int element : invIndices) {
-			notePad.addTextLine("i_"+element+" , ", "text");
+		try {
+			int rootTransition = transitionsCombo.getSelectedIndex()-1;
+			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+			ArrayList<Integer> invIndices = InvariantsTools.returnInvIndicesWithTransition(invariants, rootTransition);
+			
+			notePad.addTextLineNL("", "text");
+			
+			String name = transitions.get(rootTransition).getName();
+			notePad.addTextLineNL("Invariants with transition t"+rootTransition+"_"+name, "text");
+			for(int element : invIndices) {
+				notePad.addTextLineNL("i_"+element+" , ", "text");
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Error in invariants section.\n"+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log("Error"+e.getMessage(), "error", true);
 		}
+		notePad.setCaretFirstLine();
 	}
 	
 	/**
@@ -399,7 +420,6 @@ public class AbyssKnockout extends JFrame {
 			transFailDependency.add(dataMatrix.get(0).size());
 			transCommonSetSize.add(dataMatrix.get(1).size());
 		}
-
 
 		notePad.addTextLineNL("Data collected for "+transNumber+ "transitions.", "text");
 		notePad.addTextLineNL("", "text");

@@ -40,9 +40,11 @@ public class NetHandler_Time extends NetHandler {
 	public boolean endAtribute = false;
 	
 	//TPN:
-	public boolean colTime = false;
+	public boolean colTPN = false;
+	public boolean colDPN = false;
 	public boolean readEFT = false;
 	public boolean readLFT = false;
+	public boolean readDPN = false;
 	public boolean timeTrans = false;
 
 	private ArrayList<ElementLocation> tmpElementLocationList = new ArrayList<ElementLocation>();
@@ -61,7 +63,9 @@ public class NetHandler_Time extends NetHandler {
 	public boolean variableMarking = false;
 	public boolean variableLogic = false;
 	public boolean variableComent = false;
-	public boolean variableInterval = false;
+	public boolean variableInterval = false; //odczyt TPN
+	public boolean variableDuration = false; //odczyt DPN
+	// Data
 	public Node tmpNode;
 	public String nodeType;
 	public String nodeName;
@@ -70,13 +74,13 @@ public class NetHandler_Time extends NetHandler {
 	public int nodeMarking;
 	public int nodeLogic;
 	public String nodeComment;
-	//TPN
+	// TPN/DPN
 	public double nodeEFT;
 	public double nodeLFT;
+	public double duration;
 	
 	public String readString = "";
 	public ArrayList<Transition> tmpTransitionList = new ArrayList<Transition>();
-	
 	public ArrayList<Point> graphicNamesPointsList = new ArrayList<Point>();
 	public int xoff_name;
 	public int yoff_name;
@@ -128,30 +132,49 @@ public class NetHandler_Time extends NetHandler {
 			if (attributes.getValue(0).equals("Interval")) {
 				variableInterval = true; //sekcja Interval TPN, sklada sie z dalszych podwezlow (inaczej, niz powyzsze if'y)
 			}
+			if (attributes.getValue(0).equals("Duration")) {
+				variableDuration = true; //sekcja Interval TPN, sklada sie z dalszych podwezlow (inaczej, niz powyzsze if'y)
+			}
 		}
 		
-		if (qName.equalsIgnoreCase("colList_body") && variableInterval == true)
-			colTime = true; //jestesmy w sekcji gdzie beda zmienne czasowe
+		if (qName.equalsIgnoreCase("colList_body") && variableDuration == true) {
+			colDPN = true; //jestesmy w sekcji gdzie bedą czasy udpalenia
+		}
 		
+		if(readDPN) {
+			duration = Double.parseDouble(readString);
+			readDPN = false;
+			timeTrans = true;
+			colDPN = false;
+			variableDuration = false;
+		}
+		
+		
+		if(colDPN == true && readString.equals("Main")) {
+			readDPN = true;
+		}
+		
+		
+		if (qName.equalsIgnoreCase("colList_body") && variableInterval == true) {
+			colTPN = true; //jestesmy w sekcji gdzie beda zmienne czasowe EFT i LFT
+		}
 		if(readLFT) {
 			nodeLFT = Double.parseDouble(readString);
 			readLFT = false;
 			readEFT = false;
-			colTime = false;
+			colTPN = false;
 			variableInterval = false;
 			timeTrans = true;
 		}
-		
 		if(readEFT) {
 			nodeEFT = Double.parseDouble(readString);
 			readLFT = true;
 			readEFT = false;
 		}
 		
-		if(colTime == true && readString.equals("Main")) {
+		if(colTPN == true && readString.equals("Main")) {
 			readEFT = true;
 		}
-
 		
 		if (qName.equalsIgnoreCase("graphics")) graphics = true;
 		if (qName.equalsIgnoreCase("graphic")) graphic = true;
@@ -268,8 +291,6 @@ public class NetHandler_Time extends NetHandler {
 		if (qName.equalsIgnoreCase("graphics")) graphics = false;
 		if (qName.equalsIgnoreCase("graphic")) graphic = false;
 		
-
-
 		// Zapis atrybutow noda i arca
 
 		if (qName.equalsIgnoreCase("attribute")) {
@@ -302,11 +323,11 @@ public class NetHandler_Time extends NetHandler {
 					variableComent = false;
 					readString = "";
 				}
-				if (variableInterval == true && colTime == true) {
+				if (variableInterval == true && colTPN == true) {
 					if(!readString.equals("Main"))
 						nodeLFT = Integer.parseInt(readString);
 					
-					colTime = false;
+					colTPN = false;
 					readString = "";
 				}
 			}
@@ -403,6 +424,7 @@ public class NetHandler_Time extends NetHandler {
 					Transition tmpTTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
 					tmpTTran.setMinFireTime(nodeEFT);
 					tmpTTran.setMaxFireTime(nodeLFT);
+					tmpTTran.setDurationTime(duration);
 					tmpTTran.setNamesLocations(namesElLocations);
 					
 					//TODO:

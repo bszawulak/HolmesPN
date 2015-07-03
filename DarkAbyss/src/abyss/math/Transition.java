@@ -46,6 +46,8 @@ public class Transition extends Node {
 	protected double maxFireTime = 999;	//TPN
 	protected double internalFireTime = -1; //zmienna związana z modelem sieci TPN
 	protected double internalTimer = -1;
+	protected double duration = 0;
+	protected double durationTimer = -1;
 	
 	//inne:
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
@@ -543,6 +545,14 @@ public class Transition extends Node {
 	public double getMaxFireTime() {
 		return this.maxFireTime;
 	}
+	
+	/**
+	 * Metoda pozwala ustawic czas uruchomienia tranzycji.
+	 * @param fireTime double - czas uruchomienia tranzycji
+	 */
+	public void setInternalFireTime(double fireTime) {
+		internalFireTime = fireTime;
+	}
 
 	/**
 	 * Metoda zwraca aktualny czas uruchomienia.
@@ -550,14 +560,6 @@ public class Transition extends Node {
 	 */
 	public double getInternalFireTime() {
 		return internalFireTime;
-	}
-
-	/**
-	 * Metoda pozwala ustawic czas uruchomienia tranzycji.
-	 * @param fireTime double - czas uruchomienia tranzycji
-	 */
-	public void setInternalFireTime(double fireTime) {
-		internalFireTime = fireTime;
 	}
 	
 	/**
@@ -574,6 +576,49 @@ public class Transition extends Node {
 	 */
 	public void setInternalTimer(double fireTime) {
 		internalTimer = fireTime;
+	}
+	
+	/**
+	 * Metoda ustawia nowy czas trwania odpalenia dla tranzycji DPN.
+	 * @param val double - nowy czas
+	 */
+	public void setDurationTime(double val) {
+		duration = val;
+	}
+	
+	/**
+	 * Metoda zwraca ustawioną dla tranzycji DPN wartość duration.
+	 * @return double - czas trwania odpalenia tranzycji
+	 */
+	public double getDurationTime() {
+		return duration;
+	}
+	
+	/**
+	 * Metoda ustawia nowy wewnętrzny timer dla czasu odpalenia dla tranzycji DPN.
+	 * @param val double - nowa wartość zegara dla DPN
+	 */
+	public void setDurationInternTimer(double val) {
+		durationTimer = val;
+	}
+	
+	/**
+	 * Metoda zwraca aktualną wartość zegara odliczającego czas do odpalenia tranzycji DPN (produkcji tokenów)
+	 * @return
+	 */
+	public double getDurationInternTimer() {
+		return durationTimer;
+	}
+	
+	/**
+	 * Metoda pozwalająca stwierdzić, czy tranzycja DPN jest gotowa do produkcji tokenów.
+	 * @return boolean - true, jeśli zegar DPN ma wartość równą ustalonemu czasowi DPN dla tranzycji
+	 */
+	public boolean isDPNreadyToFire() {
+		if(duration == durationTimer)
+			return true;
+		else
+			return false;
 	}
 	
 	/**
