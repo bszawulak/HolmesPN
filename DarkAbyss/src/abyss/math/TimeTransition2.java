@@ -42,7 +42,7 @@ public class TimeTransition2 extends Transition {
 		super(sheetId, transitionId, transitionPosition, 15);
 		this.setName(name);
 		this.setComment(comment);
-		this.setType(PetriNetElementType.TIMETRANSITION);
+		//this.setType(PetriNetElementType.TIMETRANSITION);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class TimeTransition2 extends Transition {
 		super(transitionId, elementLocation, 15);
 		this.setName(name);
 		this.setComment(comment);
-		this.setType(PetriNetElementType.TIMETRANSITION);
+		//this.setType(PetriNetElementType.TIMETRANSITION);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class TimeTransition2 extends Transition {
 		super(transitionId, elementLocations, 15);
 		this.setName(name);
 		this.setComment(comment);
-		this.setType(PetriNetElementType.TIMETRANSITION);
+		//this.setType(PetriNetElementType.TIMETRANSITION);
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class TimeTransition2 extends Transition {
 	public TimeTransition2(int transitionId, ArrayList<ElementLocation> elementLocations) {
 		super(transitionId, elementLocations, 15);
 		this.setName("Transition" + Integer.toString(IdGenerator.getNextTransitionId()));
-		this.setType(PetriNetElementType.TIMETRANSITION);
+		//this.setType(PetriNetElementType.TIMETRANSITION);
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class TimeTransition2 extends Transition {
 	public TimeTransition2(int transitionId, int sheetId, Point transitionPosition) {
 		super(sheetId, transitionId, transitionPosition, 15);
 		this.setName("Transition" + Integer.toString(IdGenerator.getNextTransitionId()));
-		this.setType(PetriNetElementType.TIMETRANSITION);
+		//this.setType(PetriNetElementType.TIMETRANSITION);
 	}
 	
 	/**
@@ -101,7 +101,9 @@ public class TimeTransition2 extends Transition {
 	 * @return PetriNetElementType - element sieci
 	 */
 	public PetriNetElementType getType() {
-		return PetriNetElementType.TIMETRANSITION;
+		//TODO!!!
+		return PetriNetElementType.UNKNOWN;
+		//return PetriNetElementType.TIMETRANSITION;
 	}
 
 	/**

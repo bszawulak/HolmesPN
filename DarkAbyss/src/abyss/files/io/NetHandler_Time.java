@@ -14,7 +14,6 @@ import abyss.graphpanel.IdGenerator;
 import abyss.math.Arc;
 import abyss.math.ElementLocation;
 import abyss.math.Node;
-import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.math.Arc.TypesOfArcs;
@@ -426,9 +425,6 @@ public class NetHandler_Time extends NetHandler {
 					tmpTTran.setMaxFireTime(nodeLFT);
 					tmpTTran.setDurationTime(duration);
 					tmpTTran.setNamesLocations(namesElLocations);
-					
-					//TODO:
-					tmpTTran.setType(PetriNetElementType.TIMETRANSITION);
 					tmpTTran.setTransType(TransitionType.TPN);
 					
 					tmpTransitionList.add(tmpTTran);

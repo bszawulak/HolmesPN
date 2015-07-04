@@ -468,7 +468,7 @@ public class GraphPanel extends JComponent {
 		if (isLegalLocation(p)) {
 			//TODO:
 			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, p);
-			n.setType(PetriNetElementType.TIMETRANSITION);
+			//n.setType(PetriNetElementType.TIMETRANSITION);
 			n.setTransType(TransitionType.TPN);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
@@ -966,7 +966,7 @@ public class GraphPanel extends JComponent {
 					drawnArc = new Arc(clickedLocation, TypesOfArcs.EQUAL);
 			} else {
 				if (drawnArc.checkIsCorect(clickedLocation)) {
-					//TODO
+					//TODO: ??
 					if(isArcDuplicated(drawnArc.getStartLocation(), clickedLocation)) {
 						JOptionPane.showMessageDialog(null,  "Arc going in this direction already exists.", 
 								"Problem", JOptionPane.WARNING_MESSAGE);

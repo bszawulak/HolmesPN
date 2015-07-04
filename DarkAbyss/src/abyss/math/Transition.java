@@ -439,10 +439,17 @@ public class Transition extends Node {
 	 * @return PetriNetElementType - tranzycja klasyczna
 	 */
 	public PetriNetElementType getType() {
+		/*
 		if(transType == TransitionType.PN) {
 			return PetriNetElementType.TRANSITION;
 		} else if(transType == TransitionType.TPN) {
 			return PetriNetElementType.TIMETRANSITION;
+		} else {
+			return PetriNetElementType.TRANSITION;
+		}
+		*/
+		if(transType == TransitionType.PN) {
+			return PetriNetElementType.TRANSITION;
 		} else {
 			return PetriNetElementType.TRANSITION;
 		}

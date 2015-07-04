@@ -16,6 +16,7 @@ import abyss.math.Node;
 import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Place;
 import abyss.math.Transition;
+import abyss.math.Transition.TransitionType;
 import abyss.math.simulator.NetSimulator;
 
 import com.javadocking.dock.SingleDock;
@@ -219,13 +220,20 @@ public class AbyssDockWindow extends SingleDock {
 					setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.PLACE, (Place) n, e.getElementLocation()));
 				else
 				{
-					@SuppressWarnings("unused")
-					PetriNetElementType test =  n.getType();
+					if(n.getType().equals(PetriNetElementType.TRANSITION)) {
+						if(((Transition)n).getTransType() == TransitionType.PN) {
+							setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.TRANSITION, (Transition) n, e.getElementLocation()));
+						} else if(((Transition)n).getTransType() == TransitionType.TPN) {
+							setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.TIMETRANSITION, (Transition) n,e.getElementLocation()));
+						}
+					}
 					
+					/*
 					if (n.getType().equals(PetriNetElementType.TIMETRANSITION))
 						setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.TIMETRANSITION, (Transition) n,e.getElementLocation(), 17, 17.3));
 					else
 						setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.TRANSITION, (Transition) n,e.getElementLocation()));
+						*/
 				}
 				scrollPane.getViewport().add(getCurrentDockWindow());
 			} else if (e.getArcGroup().size() > 0) {

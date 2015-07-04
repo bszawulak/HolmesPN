@@ -1039,24 +1039,20 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param isGlowedMTC boolean - true jeśli MCT ma być podświetlony
 	 */
 	public void setTransitionGlowedMTC(boolean isGlowedMTC) {
-		//TODO: poprawić, drugie jest chyba bez sensu
 		for (Node n : getNodes())
-			if (n.getType() == PetriNetElementType.TRANSITION)
+			if (n.getType() == PetriNetElementType.TRANSITION) {
 				((Transition) n).setGlowed_MTC(isGlowedMTC);
-			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
-				((Transition) n).setGlowed_MTC(isGlowedMTC);
+			}
 	}
 	
 	/**
 	 * Metoda wygasza kolorowanie tranzycji, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
 	public void resetTransitionGraphics() {
-		//TODO: poprawić, drugie jest chyba bez sensu
 		for (Node n : getNodes())
-			if (n.getType() == PetriNetElementType.TRANSITION)
+			if (n.getType() == PetriNetElementType.TRANSITION) {
 				((Transition) n).setColorWithNumber(false, Color.white, false, -1, false, "");
-			else if (n.getType() == PetriNetElementType.TIMETRANSITION)
-				((Transition) n).setColorWithNumber(false, Color.white, false, -1, false, "");
+			}
 	}
 	
 	/**

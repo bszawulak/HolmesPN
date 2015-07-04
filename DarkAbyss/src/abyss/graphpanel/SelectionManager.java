@@ -476,10 +476,8 @@ public class SelectionManager {
 	}
 
 	/**
-	 * Metoda zmienia aktualnie zaznaczone elementy w portal, przenosząc je do
-	 * jednego obiektu Node.
-	 * Dodano komunikaty ostrzegające oraz zachowywanie starych danych pierwszego
-	 * zaznaczonego obiektu węzła sieci.
+	 * Metoda zmienia aktualnie zaznaczone elementy w portal, przenosząc je do jednego obiektu Node.
+	 * Dodano komunikaty ostrzegające oraz zachowywanie starych danych pierwszego zaznaczonego obiektu węzła sieci.
 	 * @author students
 	 * @author MR
 	 */
@@ -534,52 +532,33 @@ public class SelectionManager {
 			portal.reserveTokens(oldTokensTaken);
 			//getGraphPanelNodes().add(portal);
 			getGraphPanelNodes().add(selectedNodeIndex, portal);
-		} else {
-			//@SuppressWarnings("unused")
-			//String test = getSelectedElementLocations().get(0).getParentNode().getType().toString();
-			if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TIMETRANSITION) {
-				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
-				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
-				double oldEFT = ((Transition)getSelectedElementLocations().get(0).getParentNode()).getMinFireTime();
-				double oldLFT = ((Transition)getSelectedElementLocations().get(0).getParentNode()).getMaxFireTime();
-				Transition portal = new Transition(IdGenerator.getNextId(),
-						(ArrayList<ElementLocation>)getSelectedElementLocations().clone());
-				portal.setType(PetriNetElementType.TIMETRANSITION);
-				portal.setTransType(TransitionType.TPN);
-				
-				//TODO: poprawić, bo teraz tylko zeruje przesunięcie napisów
-				ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
-				int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
-				for(int i=0; i<getSelectedElementLocations().size(); i++) {	
-					namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
-				}
-				portal.setNamesLocations(namesLocations);
-				
-				portal.setName(oldName);
-				portal.setComment(oldComment);
-				portal.setMinFireTime(oldEFT);
-				portal.setMaxFireTime(oldLFT);
-				//getGraphPanelNodes().add(portal);
-				getGraphPanelNodes().add(selectedNodeIndex, portal);
-			} else if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TRANSITION){
-				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
-				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
-				Transition portal = new Transition(IdGenerator.getNextId(),
-						((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
-				
-				//TODO: poprawić, bo teraz tylko zeruje przesunięcie napisów
-				ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
-				int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
-				for(int i=0; i<getSelectedElementLocations().size(); i++) {	
-					namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
-				}
-				portal.setNamesLocations(namesLocations);
-				
-				portal.setName(oldName);
-				portal.setComment(oldComment);
-				//getGraphPanelNodes().add(portal);
-				getGraphPanelNodes().add(selectedNodeIndex, portal);
+		} else if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TRANSITION){
+			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
+			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
+			Transition selTransition = (Transition)getSelectedElementLocations().get(0).getParentNode();
+			double oldEFT = selTransition.getMinFireTime();
+			double oldLFT = selTransition.getMaxFireTime();
+			double oldDuration = selTransition.getDurationTime();
+			TransitionType tt = selTransition.getTransType();
+			
+			Transition portal = new Transition(IdGenerator.getNextId(), ((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
+			portal.setTransType(tt);
+			
+			//TODO: poprawić, bo teraz tylko zeruje przesunięcie napisów
+			ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
+			int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
+			for(int i=0; i<getSelectedElementLocations().size(); i++) {	
+				namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
 			}
+			portal.setNamesLocations(namesLocations);
+			
+			portal.setName(oldName);
+			portal.setComment(oldComment);
+			portal.setMinFireTime(oldEFT);
+			portal.setMaxFireTime(oldLFT);
+			portal.setDurationTime(oldDuration);
+			//getGraphPanelNodes().add(portal);
+			getGraphPanelNodes().add(selectedNodeIndex, portal);
 		}
 		getGraphPanel().repaint();
 	}
@@ -638,8 +617,6 @@ public class SelectionManager {
 			Point newPosition = new Point();
 			newPosition.setLocation(clonedNode.getPosition().getX()+30, clonedNode.getPosition().getY()+30);
 			ElementLocation clone = new ElementLocation(clonedNode.getSheetID(), newPosition, clonedNode.getParentNode());
-			//clone.setInArcs((ArrayList<Arc>)clonedNode.getInArcs().clone());
-			//clone.setOutArcs((ArrayList<Arc>)clonedNode.getOutArcs().clone());
 			clone.setSelected(clonedNode.isSelected());
 			clone.setPortalSelected(clonedNode.isPortalSelected());
 			selectedElementLocations.add(clone);
@@ -650,81 +627,46 @@ public class SelectionManager {
 			int sid = namesLocations.get(0).getSheetID();
 			namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
 			portal.setNamesLocations(namesLocations);
-			//portal.getNamesLocations().add(e)
 			
 			portal.setName(oldName);
 			portal.setComment(oldComment);
 			portal.setTokensNumber(oldTokensNumber);
 			portal.reserveTokens(oldTokensTaken);
+			getGraphPanelNodes().add(selectedNodeIndex, portal);
+		} else if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TRANSITION) {
+			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
+			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
+			Transition selTransition = (Transition)getSelectedElementLocations().get(0).getParentNode();
+			double oldEFT = selTransition.getMinFireTime();
+			double oldLFT =selTransition.getMaxFireTime();
+			double oldDuration = selTransition.getDurationTime();
+			TransitionType tt = selTransition.getTransType();
+			
+			ElementLocation clonedNode = getSelectedElementLocations().get(0);
+			Point newPosition = new Point();
+			newPosition.setLocation(clonedNode.getPosition().getX()+30, clonedNode.getPosition().getY()+30);
+			
+			ElementLocation clone = new ElementLocation(clonedNode.getSheetID(), newPosition, clonedNode.getParentNode());
+			clone.setSelected(clonedNode.isSelected());
+			clone.setPortalSelected(clonedNode.isPortalSelected());
+			selectedElementLocations.add(clone);
+			
+			Transition portal = new Transition(IdGenerator.getNextId(), ((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
+			portal.setTransType(tt);
+
+			//klonowanie lokalizacji nazw + dodatkowy wpis:
+			//ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
+			int sid = namesLocations.get(0).getSheetID();
+			namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
+			portal.setNamesLocations(namesLocations);
+			
+			portal.setName(oldName);
+			portal.setComment(oldComment);
+			portal.setMinFireTime(oldEFT);
+			portal.setMaxFireTime(oldLFT);
+			portal.setDurationTime(oldDuration);
 			//getGraphPanelNodes().add(portal);
 			getGraphPanelNodes().add(selectedNodeIndex, portal);
-		} else {
-			@SuppressWarnings("unused")
-			String test = getSelectedElementLocations().get(0).getParentNode().getType().toString();
-			if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TIMETRANSITION) {
-				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
-				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
-				double oldEFT = ((Transition)getSelectedElementLocations().get(0).getParentNode()).getMinFireTime();
-				double oldLFT = ((Transition)getSelectedElementLocations().get(0).getParentNode()).getMaxFireTime();
-				
-				ElementLocation clonedNode = getSelectedElementLocations().get(0);
-				Point newPosition = new Point();
-				newPosition.setLocation(clonedNode.getPosition().getX()+30, clonedNode.getPosition().getY()+30);
-				ElementLocation clone = new ElementLocation(clonedNode.getSheetID(), 
-						newPosition, clonedNode.getParentNode());
-				//clone.setInArcs((ArrayList<Arc>)clonedNode.getInArcs().clone());
-				//clone.setOutArcs((ArrayList<Arc>)clonedNode.getOutArcs().clone());
-				clone.setSelected(clonedNode.isSelected());
-				clone.setPortalSelected(clonedNode.isPortalSelected());
-				selectedElementLocations.add(clone);
-				
-				Transition portal = new Transition(IdGenerator.getNextId(),
-						(ArrayList<ElementLocation>)getSelectedElementLocations().clone());
-				portal.setType(PetriNetElementType.TIMETRANSITION);
-				portal.setTransType(TransitionType.TPN);
-				
-				//klonowanie lokalizacji nazw + dodatkowy wpis:
-				//ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
-				int sid = namesLocations.get(0).getSheetID();
-				namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
-				portal.setNamesLocations(namesLocations);
-				
-				portal.setName(oldName);
-				portal.setComment(oldComment);
-				portal.setMinFireTime(oldEFT);
-				portal.setMaxFireTime(oldLFT);
-				
-				//getGraphPanelNodes().add(portal);
-				getGraphPanelNodes().add(selectedNodeIndex, portal);
-			} else if (getSelectedElementLocations().get(0).getParentNode().getType() == PetriNetElementType.TRANSITION){
-				String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
-				String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
-				ElementLocation clonedNode = getSelectedElementLocations().get(0);
-				Point newPosition = new Point();
-				newPosition.setLocation(clonedNode.getPosition().getX()+30, clonedNode.getPosition().getY()+30);
-				
-				ElementLocation clone = new ElementLocation(clonedNode.getSheetID(), 
-						newPosition, clonedNode.getParentNode());
-				//clone.setInArcs((ArrayList<Arc>)clonedNode.getInArcs().clone());
-				//clone.setOutArcs((ArrayList<Arc>)clonedNode.getOutArcs().clone());
-				clone.setSelected(clonedNode.isSelected());
-				clone.setPortalSelected(clonedNode.isPortalSelected());
-				selectedElementLocations.add(clone);
-				
-				Transition portal = new Transition(IdGenerator.getNextId(),
-						((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
-				
-				//klonowanie lokalizacji nazw + dodatkowy wpis:
-				//ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
-				int sid = namesLocations.get(0).getSheetID();
-				namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
-				portal.setNamesLocations(namesLocations);
-				
-				portal.setName(oldName);
-				portal.setComment(oldComment);
-				//getGraphPanelNodes().add(portal);
-				getGraphPanelNodes().add(selectedNodeIndex, portal);
-			}
 		}
 		getGraphPanel().repaint();
 	}
@@ -1011,9 +953,8 @@ public class SelectionManager {
 	 */
 	public void removeTransitionsGlowing() {
 		for (Node n : getGraphPanelNodes())
-			if (n.getType() == PetriNetElementType.TRANSITION )
+			if (n.getType() == PetriNetElementType.TRANSITION ) {
 				((Transition) n).setGlowedINV(false, 0);
-			else if (n.getType() == PetriNetElementType.TIMETRANSITION) //really?
-				((Transition) n).setGlowedINV(false, 0);
+			}
 	}
 }

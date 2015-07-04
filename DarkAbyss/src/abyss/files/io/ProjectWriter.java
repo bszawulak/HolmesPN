@@ -55,6 +55,7 @@ public class ProjectWriter {
 	 * Główna metoda odpowiedzialna za zapis pliku projektu.
 	 * @return int - kod błędu, 0 - wszystko ok
 	 */
+	@SuppressWarnings("unused")
 	public boolean writeProject(String filepath) {	
 		try {
 			//BufferedWriter bw = new BufferedWriter(new FileWriter("tmp//test.apf"));
@@ -150,6 +151,7 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition comment:"+Tools.convertToCode(trans.getComment())+">"+newline); //komentarz
 				bw.write(spaces(sp)+"<Transition eft:"+trans.getMinFireTime()+">"+newline); //TPN eft
 				bw.write(spaces(sp)+"<Transition lft:"+trans.getMaxFireTime()+">"+newline); //TPN lft
+				bw.write(spaces(sp)+"<Transition duration:"+trans.getDurationTime()+">"+newline); //DPN duration
 				
 				bw.write(spaces(sp)+"<Location data"+">"+newline);
 				sp = 8;

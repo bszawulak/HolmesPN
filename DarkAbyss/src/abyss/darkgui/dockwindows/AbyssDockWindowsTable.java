@@ -175,7 +175,6 @@ public class AbyssDockWindowsTable extends JPanel {
 		} else if (subType == SubWindow.MCS) {
 			createMCSSubWindow((MCSDataMatrix) blackBox[0]);
 		} 
-		//createTimeTransitionSubWindow(final Transition transition, ElementLocation location)
 	}
 	
 	//**************************************************************************************
@@ -183,7 +182,6 @@ public class AbyssDockWindowsTable extends JPanel {
 	//*********************************    SYMULATOR     ***********************************
 	//*********************************                  ***********************************
 	//**************************************************************************************
-	
 	/**
 	 * Metoda pomocnicza konstruktora odpowiedzialna za tworzenie podokna dla symulatora sieci.
 	 * @param sim NetSimulator - obiekt symulatora sieci

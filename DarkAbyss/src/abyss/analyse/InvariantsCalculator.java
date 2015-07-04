@@ -183,8 +183,7 @@ public class InvariantsCalculator implements Runnable {
 				continue;
 			}
 
-			if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION
-					|| oneArc.getStartNode().getType() == PetriNetElementType.TIMETRANSITION) {
+			if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION) {
 				tPosition = transitionsMap.get(oneArc.getStartNode());
 				pPosition = placesMap.get(oneArc.getEndNode());
 				incidenceValue = 1 * oneArc.getWeight();
@@ -297,8 +296,7 @@ public class InvariantsCalculator implements Runnable {
 				continue;
 			}
 
-			if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION
-					|| oneArc.getStartNode().getType() == PetriNetElementType.TIMETRANSITION) {
+			if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION) {
 				tPosition = transitionsMap.get(oneArc.getStartNode());
 				pPosition = placesMap.get(oneArc.getEndNode());
 				incidenceValue = 1 * oneArc.getWeight();

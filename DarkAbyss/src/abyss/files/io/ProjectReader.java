@@ -18,7 +18,6 @@ import abyss.math.PetriNet;
 import abyss.math.Place;
 import abyss.math.Transition;
 import abyss.math.Arc.TypesOfArcs;
-import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.math.Transition.TransitionType;
 import abyss.utilities.Tools;
 
@@ -346,7 +345,6 @@ public class ProjectReader {
 					transition.setTransType(TransitionType.PN);
 				} else if(line.equals("TPN")) {
 					transition.setTransType(TransitionType.TPN);
-					transition.setType(PetriNetElementType.TIMETRANSITION);
 				}
 
 				return;
@@ -384,6 +382,15 @@ public class ProjectReader {
 				line = line.replace(">","");
 				double lft = Double.parseDouble(line);
 				transition.setMaxFireTime(lft);
+				return;
+			}
+			
+			query = "Transition duration:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				double duration = Double.parseDouble(line);
+				transition.setDurationTime(duration);
 				return;
 			}
 			
@@ -568,39 +575,39 @@ public class ProjectReader {
 				}
 				
 				projectCore.setInvariantsMatrix(invariantsMatrix, false);
-			}
-			
-			if(problems==0) {
-				while(!((line = buffer.readLine()).contains("<Invariants names>"))) //przewiń do nazw inwariantów
-					;
 				
-				invariantsNames = new ArrayList<String>();
-				line = buffer.readLine();
-				int readLines = 1;
-				boolean go = true;
-				while(go) {
-					line = line.replace(" ", "");
-					invariantsNames.add(line);
+				if(problems==0) {
+					while(!((line = buffer.readLine()).contains("<Invariants names>"))) //przewiń do nazw inwariantów
+						;
 					
+					invariantsNames = new ArrayList<String>();
 					line = buffer.readLine();
-					if(line.contains("<EOIN>")) {
-						go = false;
-					} else {
-						readLines++;
+					int readLines = 1;
+					go = true;
+					while(go) {
+						line = line.replace(" ", "");
+						invariantsNames.add(line);
+						
+						line = buffer.readLine();
+						if(line.contains("<EOIN>")) {
+							go = false;
+						} else {
+							readLines++;
+						}
 					}
-				}
-				projectCore.setInvariantsNames(invariantsNames);
-				
-				
-				if(readLines != invariantsMatrix.size()) {
-					GUIManager.getDefaultGUIManager().log("Error: different numbers of invariants ("+invariantsMatrix.size()+
-							") and their names ("+readLines+"). Operation failed.", "error", true);
+					projectCore.setInvariantsNames(invariantsNames);
+					
+					
+					if(readLines != invariantsMatrix.size()) {
+						GUIManager.getDefaultGUIManager().log("Error: different numbers of invariants ("+invariantsMatrix.size()+
+								") and their names ("+readLines+"). Operation failed.", "error", true);
+						return false;
+					}
+					
+				} else {
+					GUIManager.getDefaultGUIManager().log("Invariants with wrong number of elements in file:"+problemWithInv, "error", true);
 					return false;
 				}
-				
-			} else {
-				GUIManager.getDefaultGUIManager().log("Invariants with wrong number of elements in file:"+problemWithInv, "error", true);
-				return false;
 			}
 			
 			return true;
@@ -652,40 +659,42 @@ public class ProjectReader {
 					mctProcessed++;
 				}
 				projectCore.setMCTMatrix(mctData, false);
-			}
-			
-			if(problems==0) {
-				while(!((line = buffer.readLine()).contains("<MCT names>"))) //przewiń do nazw inwariantów
-					;
 				
-				mctNames = new ArrayList<String>();
-				line = buffer.readLine();
-				int readLines = 1;
-				boolean go = true;
-				while(go) {
-					line = line.replace(" ", "");
-					mctNames.add(line);
+				if(problems==0) {
+					while(!((line = buffer.readLine()).contains("<MCT names>"))) //przewiń do nazw inwariantów
+						;
 					
+					mctNames = new ArrayList<String>();
 					line = buffer.readLine();
-					if(line.contains("<EOIMn>")) {
-						go = false;
-					} else {
-						readLines++;
+					int readLines = 1;
+					go = true;
+					while(go) {
+						line = line.replace(" ", "");
+						mctNames.add(line);
+						
+						line = buffer.readLine();
+						if(line.contains("<EOIMn>")) {
+							go = false;
+						} else {
+							readLines++;
+						}
 					}
-				}
-				projectCore.setMCTNames(mctNames);
-				
-				
-				if(readLines != mctData.size()) {
-					GUIManager.getDefaultGUIManager().log("Error: different numbers of MCT sets ("+mctData.size()+
-							") and their names ("+readLines+"). Operation failed.", "error", true);
+					projectCore.setMCTNames(mctNames);
+					
+					
+					if(readLines != mctData.size()) {
+						GUIManager.getDefaultGUIManager().log("Error: different numbers of MCT sets ("+mctData.size()+
+								") and their names ("+readLines+"). Operation failed.", "error", true);
+						return false;
+					}
+					
+				} else {
+					GUIManager.getDefaultGUIManager().log("MCT with wrong number ID numbers for their transitions in file:"+problemWithMCTLines, "error", true);
 					return false;
 				}
-				
-			} else {
-				GUIManager.getDefaultGUIManager().log("MCT with wrong number ID numbers for their transitions in file:"+problemWithMCTLines, "error", true);
-				return false;
 			}
+			
+			
 			
 			return true;
 		} catch (Exception e) {
