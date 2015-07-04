@@ -126,7 +126,7 @@ public class SettingsManager {
 		checkAndFix(settingsNew, "showShortNames", "0");
 		checkAndFix(settingsNew, "analysisFeasibleSelfPropAccepted", "1");
 		checkAndFix(settingsNew, "analysisMCSReduction", "1");
-		
+
 		try { 
 			String tmp = getValue("graphFontSize");
 			int test = Integer.parseInt(tmp);
@@ -136,6 +136,9 @@ public class SettingsManager {
 		} catch (Exception e) { settingsNew.add(new Setting("graphFontSize", "11")); }
 		checkAndFix(settingsNew, "graphFontBold", "0");
 		checkAndFix(settingsNew, "mctNameShow", "1");
+		
+		//symulator:
+		checkAndFix(settingsNew, "simTransReadArcTokenReserv", "1"); //jeśli 1, tranzycje rezerwują tokeny poprzez readarc
 		
 		settings = new ArrayList<Setting>(settingsNew);
 		writeSettingsFile();

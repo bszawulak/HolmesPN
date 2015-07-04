@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import abyss.darkgui.GUIManager;
 import abyss.graphpanel.ElementDraw;
 import abyss.graphpanel.IdGenerator;
 import abyss.math.Arc.TypesOfArcs;
@@ -46,8 +47,9 @@ public class Transition extends Node {
 	protected double maxFireTime = 999;	//TPN
 	protected double internalFireTime = -1; //zmienna związana z modelem sieci TPN
 	protected double internalTimer = -1;
-	protected double duration = 0;
 	protected double durationTimer = -1;
+	protected double duration = 0;
+	
 	
 	//inne:
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
@@ -360,45 +362,33 @@ public class Transition extends Node {
 		if(offline == true)
 			return false;
 		
-		boolean inhibitorOnly = true;
-		//String name = getName();
+		/*
 		for (Arc arc : getInArcs()) { //CASE: INHIBITORS ONLY
-			if(arc.getArcType() != TypesOfArcs.INHIBITOR) {
-				inhibitorOnly = false;
-				break;
-			} else { 
-				Place origin = (Place) arc.getStartNode();
-				if(origin.getNonReservedTokensNumber() > 0)	 {
-					inhibitorOnly = false;
-					break;
+			if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+				if(((Place)arc.getStartNode()).getNonReservedTokensNumber() > 0) {
+					return false;
 				}
 			}
+		}*/
+	
+		for (Arc arc : getInArcs()) {
+			Place arcStartPlace = (Place) arc.getStartNode();
+			TypesOfArcs arcType = arc.getArcType();
+			int startPlaceTokens = arcStartPlace.getNonReservedTokensNumber();
+			
+			if(arcType == TypesOfArcs.INHIBITOR) { 
+				if(startPlaceTokens > 0)
+					return false; //nieaktywna
+				else
+					continue; //aktywna (nie jest w danej chwili blokowana)
+			} else if(arcType == TypesOfArcs.EQUAL && startPlaceTokens != 2) {
+				return false;
+			} else {
+				if (startPlaceTokens < arc.getWeight())
+					return false;
+			}	
 		}
-		
-		if(inhibitorOnly == true) {
-			return true;
-		} else {
-			for (Arc arc : getInArcs()) {
-				Place origin = (Place) arc.getStartNode();
-				TypesOfArcs arcType = arc.getArcType();
-				int tokensLeft = origin.getNonReservedTokensNumber();
-				
-				if(arcType == TypesOfArcs.INHIBITOR && tokensLeft > 0)
-					return false;
-				else if(arcType == TypesOfArcs.INHIBITOR && tokensLeft == 0)
-					continue;
-				else if(arcType == TypesOfArcs.EQUAL && tokensLeft != 2)
-					return false;
-				else if(arcType == TypesOfArcs.RESET && tokensLeft == 0) // ??? wystarczy to poniżej?
-					return false;
-				else {
-					if (tokensLeft < arc.getWeight())
-						return false;
-				}
-					
-			}
-			return true;
-		}
+		return true;
 	}
 	
 	/**
@@ -417,8 +407,13 @@ public class Transition extends Node {
 			} else if(arc.getArcType() == TypesOfArcs.RESET) {
 				int freeToken = origin.getNonReservedTokensNumber();
 				origin.reserveTokens(freeToken); //all left
-			} else { //read arc / normal			
-				origin.reserveTokens(arc.getWeight());
+			} else { //read arc / normal
+				if(arc.getArcType() == TypesOfArcs.READARC) {
+					if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simTransReadArcTokenReserv").equals("0")) {
+						continue; //nie rezerwuj przez read-arc
+					}
+				} else
+					origin.reserveTokens(arc.getWeight());
 			}
 		}
 	}
@@ -629,7 +624,7 @@ public class Transition extends Node {
 	}
 	
 	/**
-	 * Metoda informująca czy tramzycja czasowa MUSI zostać uruchomiona.
+	 * Metoda informująca czy tranzycja czasowa MUSI zostać uruchomiona.
 	 * @return boolean - true, jeśli wewnętrzny zegar (!= -1) jest równy deadlinowi
 	 */
 	public boolean isForcedToFired() {
@@ -641,5 +636,15 @@ public class Transition extends Node {
 		} else {
 			return false; //nieaktywna
 		}
+	}
+	
+	/**
+	 * Metoda resetuje zegary tranzycji, powinna być używana przez symulatory po tym, jak wyprodukowano
+	 * tokeny (faza II: AddTokens symulacji)
+	 */
+	public void resetAfterFiring() {
+		internalFireTime = -1;
+		internalTimer = -1;
+		durationTimer = -1;
 	}
 }

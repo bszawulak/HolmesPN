@@ -32,6 +32,7 @@ import abyss.utilities.Tools;
 
 /**
  * Klasa okna ustawień programu.
+ * 
  * @author MR
  *
  */
@@ -81,8 +82,6 @@ public class AbyssProgramProperties extends JFrame {
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, 0, 600, 500);
-		
-	
 
 		//zakładka głównych opcji programu:
 		tabbedPane.addTab("System", Tools.getResIcon32("/icons/propertiesWindow/systemIcon.png"), makeSysPanel(), "Abyss main options.");
@@ -90,9 +89,8 @@ public class AbyssProgramProperties extends JFrame {
 
 		tabbedPane.addTab("Editor", Tools.getResIcon32("/icons/propertiesWindow/editorIcon.png"), makeEditorPanel(), "Editor options");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-		
-		JComponent panel3 = makeTextPanel("Simulation options will go here.");
-		tabbedPane.addTab("Simulator", Tools.getResIcon32("/icons/propertiesWindow/simulationIcon.png"), panel3, "Does nothing");
+
+		tabbedPane.addTab("Simulator", Tools.getResIcon32("/icons/propertiesWindow/simulationIcon.png"), makeSimulatorPanel(), "Simulator options");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_3);
 
 		tabbedPane.addTab("Analyzer", Tools.getResIcon32("/icons/propertiesWindow/analysisIcon.png"), makeAnalysisPanel(), "Does twice as much nothing");
@@ -493,7 +491,58 @@ public class AbyssProgramProperties extends JFrame {
 	//*********************************************    SIMULATOR TAB   *****************************************************
 	//**********************************************************************************************************************
 
+	/**
+	 * Metoda tworzy główny panel opcji symulatora
+	 * @return JPanel - panel
+	 */
+	public JPanel makeSimulatorPanel() {
+		JPanel panel = new JPanel(null);
+		panel.setBounds(0, 0, 600, 500);
+		
+		panel.add(createSimPanel1(0, 0, 590, 190));
+		
+		panel.repaint();
+		return panel;
+	}
 	
+	/**
+	 * Metoda tworząca podpanel opcji inwariantów.
+	 * @param x int - współrzędna X
+	 * @param y int - współrzedna Y
+	 * @param w int - szerokość
+	 * @param h int - wysokość
+	 * @return JPanel - panel
+	 */
+	private JPanel createSimPanel1(int x, int y, int w, int h) {
+		JPanel panel = new JPanel(null);
+		panel.setBorder(BorderFactory.createTitledBorder("Petri net general options"));
+		panel.setBounds(x, y, w, h);
+		int io_x = 10;
+		int io_y = 15;
+		noAction = true;
+
+		JCheckBox readArcReservCheckBox = new JCheckBox("Transitions reserve tokens in place via read-arcs", true);
+		readArcReservCheckBox.setBounds(io_x, io_y, 360, 20);
+		readArcReservCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction) return;
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("simTransReadArcTokenReserv", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("simTransReadArcTokenReserv", "0", true);
+				}
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simTransReadArcTokenReserv").equals("1")) 
+			readArcReservCheckBox.setSelected(true);
+		else
+			readArcReservCheckBox.setSelected(false);
+		panel.add(readArcReservCheckBox);
+		
+		noAction = false;
+		return panel;
+	}
 	
 	
 	//**********************************************************************************************************************
@@ -517,7 +566,7 @@ public class AbyssProgramProperties extends JFrame {
 	}
 	
 	/**
-	 * Metoda tworząca podpanel opcji Snoopiego.
+	 * Metoda tworząca podpanel opcji inwariantów.
 	 * @param x int - współrzędna X
 	 * @param y int - współrzedna Y
 	 * @param w int - szerokość
@@ -536,7 +585,7 @@ public class AbyssProgramProperties extends JFrame {
 	}
 	
 	/**
-	 * Metoda tworząca podpanel opcji Snoopiego.
+	 * Metoda tworząca podpanel opcji wykonalnych inwariantów.
 	 * @param x int - współrzędna X
 	 * @param y int - współrzedna Y
 	 * @param w int - szerokość
@@ -577,7 +626,7 @@ public class AbyssProgramProperties extends JFrame {
 	}
 	
 	/**
-	 * Metoda tworząca podpanel opcji Snoopiego.
+	 * Metoda tworząca podpanel opcji MCS.
 	 * @param x int - współrzędna X
 	 * @param y int - współrzedna Y
 	 * @param w int - szerokość

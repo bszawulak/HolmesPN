@@ -598,31 +598,35 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * flaga oznaczające istnienie backupu ustawiana jest na false.
 	 */
 	public void restoreMarkingZero() {
-		ArrayList<Place> places = getPlaces();
-		ArrayList<Transition> transitions = getTransitions();
-		
-		for(int i=0; i<places.size(); i++) {
-			places.get(i).setTokensNumber(backupMarkingZero.get(i));
-			places.get(i).freeReservedTokens();
-			//backupMarkingZero.add(places.get(i).getTokensNumber());
-		}
-		
-		for(int i=0; i<transitions.size(); i++) {
-			transitions.get(i).setLaunching(false);
+		try {
+			ArrayList<Place> places = getPlaces();
+			ArrayList<Transition> transitions = getTransitions();
 			
-			if(transitions.get(i).getTransType() == TransitionType.TPN) {
-				transitions.get(i).setInternalFireTime(-1);
-				transitions.get(i).setInternalTimer(-1);	
+			for(int i=0; i<places.size(); i++) {
+				places.get(i).setTokensNumber(backupMarkingZero.get(i));
+				places.get(i).freeReservedTokens();
+				//backupMarkingZero.add(places.get(i).getTokensNumber());
 			}
+			
+			for(int i=0; i<transitions.size(); i++) {
+				transitions.get(i).setLaunching(false);
+				
+				if(transitions.get(i).getTransType() == TransitionType.TPN) {
+					transitions.get(i).setInternalFireTime(-1);
+					transitions.get(i).setInternalTimer(-1);	
+				}
+			}
+			isBackup = false;
+			
+			setSimulator(new NetSimulator(NetType.BASIC, this));
+			GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
+			//GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
+			GUIManager.getDefaultGUIManager().io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
+			repaintAllGraphPanels();
+			getSimulator().getSimLogger().logSimReset();
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Unknown error: unable to restore state m0 on request.", "error", true);
 		}
-		isBackup = false;
-		
-		setSimulator(new NetSimulator(NetType.BASIC, this));
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
-		//GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
-		GUIManager.getDefaultGUIManager().io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
-		repaintAllGraphPanels();
-		getSimulator().getSimLogger().logSimReset();
 	}
 	
 	/**

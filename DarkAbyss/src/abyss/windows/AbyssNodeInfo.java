@@ -71,6 +71,8 @@ public class AbyssNodeInfo extends JFrame {
 	private boolean maximumMode = false;
 	private int transInterval = 10;
 	
+	private NetType choosenNetType = NetType.BASIC;
+	
 	/**
 	 * Konstruktor do tworzenia okna właściwości miejsca.
 	 * @param place Place - obiekt miejsca
@@ -370,6 +372,30 @@ public class AbyssNodeInfo extends JFrame {
 			}
 		});
 		chartButtonPanel.add(simMode);
+		
+		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
+		final JComboBox<String> simNetMode = new JComboBox<String>(simModeName);
+		simNetMode.setBounds(chartX+400, chartY_2nd, 120, 25);
+		simNetMode.setSelectedIndex(0);
+		simNetMode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selectedModeIndex = simNetMode.getSelectedIndex();
+				switch(selectedModeIndex) {
+					case 0:
+						choosenNetType = NetType.BASIC;
+						break;
+					case 1:
+						choosenNetType = NetType.TIME;
+						break;
+					case 2:
+						choosenNetType = NetType.HYBRID;
+						break;
+				}
+			}
+		});
+		chartButtonPanel.add(simNetMode);
+		
 		return chartButtonPanel;
 	}
 	
@@ -586,14 +612,31 @@ public class AbyssNodeInfo extends JFrame {
 			}
 		});
 		chartButtonPanel.add(simStepsSpinner);
+
+		JLabel labelInterval = new JLabel("Interval:");
+		labelInterval.setBounds(chartX+210, chartY_1st, 80, 15);
+		chartButtonPanel.add(labelInterval);
+		
+		int maxVal = simSteps / 10;
+		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(10, 1, maxVal, 1);
+		transIntervalSpinner = new JSpinner(intervSpinnerModel);
+		transIntervalSpinner.setBounds(chartX+210, chartY_2nd, 60, 25);
+		transIntervalSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				transInterval = (int) spinner.getValue();
+				//clearTransitionsChart();
+			}
+		});
+		chartButtonPanel.add(transIntervalSpinner);
 		
 		JLabel labelMode = new JLabel("Simulation mode:");
-		labelMode.setBounds(chartX+210, chartY_1st, 110, 15);
+		labelMode.setBounds(chartX+280, chartY_1st, 110, 15);
 		chartButtonPanel.add(labelMode);
 		
 		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
 		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
-		simMode.setBounds(chartX+210, chartY_2nd, 120, 25);
+		simMode.setBounds(chartX+280, chartY_2nd, 120, 25);
 		simMode.setSelectedIndex(1);
 		simMode.setMaximumRowCount(6);
 		simMode.addActionListener(new ActionListener() {
@@ -607,22 +650,29 @@ public class AbyssNodeInfo extends JFrame {
 		});
 		chartButtonPanel.add(simMode);
 		
-		JLabel labelInterval = new JLabel("Interval:");
-		labelInterval.setBounds(chartX+340, chartY_1st, 80, 15);
-		chartButtonPanel.add(labelInterval);
-		
-		int maxVal = simSteps / 10;
-		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(10, 1, maxVal, 1);
-		transIntervalSpinner = new JSpinner(intervSpinnerModel);
-		transIntervalSpinner.setBounds(chartX +340, chartY_2nd, 60, 25);
-		transIntervalSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				transInterval = (int) spinner.getValue();
-				//clearTransitionsChart();
+		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
+		final JComboBox<String> simNetMode = new JComboBox<String>(simModeName);
+		simNetMode.setBounds(chartX+400, chartY_2nd, 120, 25);
+		simNetMode.setSelectedIndex(0);
+		simNetMode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selectedModeIndex = simNetMode.getSelectedIndex();
+				switch(selectedModeIndex) {
+					case 0:
+						choosenNetType = NetType.BASIC;
+						break;
+					case 1:
+						choosenNetType = NetType.TIME;
+						break;
+					case 2:
+						choosenNetType = NetType.HYBRID;
+						break;
+				}
 			}
 		});
-		chartButtonPanel.add(transIntervalSpinner);
+		chartButtonPanel.add(simNetMode);
+		
 		return chartButtonPanel;
 	}
 
@@ -687,7 +737,8 @@ public class AbyssNodeInfo extends JFrame {
 	 */
 	private void acquireNewPlaceData() {
 		StateSimulator ss = new StateSimulator();
-		ss.initiateSim(NetType.BASIC, false);
+		//ss.initiateSim(NetType.BASIC, false);
+		ss.initiateSim(choosenNetType, maximumMode);
 		
 		ArrayList<Integer> dataVector = ss.simulateNetSinglePlace(simSteps, place);
 		ArrayList<ArrayList<Integer>> dataMatrix = new ArrayList<ArrayList<Integer>>();
@@ -757,7 +808,8 @@ public class AbyssNodeInfo extends JFrame {
 	 */
 	private ArrayList<Integer> acquireNewTransitionData() {
 		StateSimulator ss = new StateSimulator();
-		ss.initiateSim(NetType.BASIC, maximumMode);
+		//ss.initiateSim(NetType.BASIC, maximumMode);
+		ss.initiateSim(choosenNetType, maximumMode);
 		ArrayList<Integer> dataVector = ss.simulateNetSingleTransition(simSteps, transition);
 		
 		dynamicsSeriesDataSet.removeAllSeries();

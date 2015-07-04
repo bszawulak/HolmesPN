@@ -23,7 +23,7 @@ import abyss.math.simulator.NetSimulator.NetType;
  */
 public class StateSimulator {
 	private ArrayList<Transition> transitions;
-	private ArrayList<Transition> ttransitions;
+	private ArrayList<Transition> time_transitions;
 	private ArrayList<Place> places;
 	private boolean ready = false;
 	private NetType simulationType;
@@ -36,8 +36,8 @@ public class StateSimulator {
 	private ArrayList<ArrayList<Integer>> transitionsData = null;
 	private ArrayList<Integer> transitionsTotalFiring = null; //wektor sumy odpaleń tranzycji
 	private ArrayList<Double> transitionsAvgData = null;
-	private ArrayList<Integer> indexList = null;
-	private ArrayList<Integer> indexTTList = null;
+	private ArrayList<Integer> allTransitionsIndicesList = null;
+	private ArrayList<Integer> timeTransIndicesList = null;
 	
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
 	private boolean mainSimMaximumMode = false;
@@ -62,7 +62,7 @@ public class StateSimulator {
 	 */
 	public boolean initiateSim(NetType netT, boolean mode) {
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		ttransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTimeTransitions();
+		time_transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTimeTransitions();
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		if(transitions == null || places == null) {
 			ready = false;
@@ -78,18 +78,18 @@ public class StateSimulator {
 		transitionsData = new ArrayList<ArrayList<Integer>>();
 		transitionsTotalFiring = new ArrayList<Integer>();
 		transitionsAvgData = new ArrayList<Double>();
-		indexList = new ArrayList<Integer>();
-		indexTTList = new ArrayList<Integer>();
+		allTransitionsIndicesList = new ArrayList<Integer>();
+		timeTransIndicesList = new ArrayList<Integer>();
 		
 		for(int t=0; t<transitions.size(); t++) {
 			transitionsTotalFiring.add(0);
-			indexList.add(t);
+			allTransitionsIndicesList.add(t);
 		}
 		for(int p=0; p<places.size(); p++) {
 			placesAvgData.add(0.0);
 		}
-		for(int i=0; i<ttransitions.size(); i++) {
-			indexTTList.add(i);
+		for(int i=0; i<time_transitions.size(); i++) {
+			timeTransIndicesList.add(i);
 		}
 		
 		simulationType = netT;
@@ -109,17 +109,17 @@ public class StateSimulator {
 		transitionsData = new ArrayList<ArrayList<Integer>>();
 		transitionsTotalFiring = new ArrayList<Integer>();
 		transitionsAvgData = new ArrayList<Double>();
-		indexList = new ArrayList<Integer>();
-		indexTTList = new ArrayList<Integer>();
+		allTransitionsIndicesList = new ArrayList<Integer>();
+		timeTransIndicesList = new ArrayList<Integer>();
 		for(int t=0; t<transitions.size(); t++) {
 			transitionsTotalFiring.add(0);
-			indexList.add(t);
+			allTransitionsIndicesList.add(t);
 		}
 		for(int p=0; p<places.size(); p++) {
 			placesAvgData.add(0.0);
 		}
-		for(int i=0; i<ttransitions.size(); i++) {
-			indexTTList.add(i);
+		for(int i=0; i<time_transitions.size(); i++) {
+			timeTransIndicesList.add(i);
 		}
 		generator = new Random(System.currentTimeMillis());
 		ready = true;
@@ -175,10 +175,10 @@ public class StateSimulator {
 	private void generateLaunchingTransitions() {
 		launchableTransitions.clear();
 		if (simulationType == NetType.BASIC) {
-			Collections.shuffle(indexList);
+			Collections.shuffle(allTransitionsIndicesList);
 
 			for (int i = 0; i < transitions.size(); i++) {
-				Transition transition = transitions.get(indexList.get(i));
+				Transition transition = transitions.get(allTransitionsIndicesList.get(i));
 				if (transition.isActive() )
 					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
@@ -187,61 +187,61 @@ public class StateSimulator {
 			}
 		} else if (simulationType == NetType.HYBRID) { 
 			/** 22.02.2015 : PN + TPN */
-			Collections.shuffle(indexTTList); //wymieszanie T-tranzycji
+			Collections.shuffle(timeTransIndicesList); //wymieszanie T-tranzycji
 			boolean ttPriority = false;
 			
-			for (int i = 0; i < ttransitions.size(); i++) {
-				Transition ttransition = ttransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
-				if(ttransition.isActive()) { //jeśli aktywna
-					if(ttransition.isForcedToFired() == true) {
+			for (int i = 0; i < time_transitions.size(); i++) {
+				Transition timeTransition = time_transitions.get(timeTransIndicesList.get(i)); //losowo wybrana czasowa
+				if(timeTransition.isActive()) { //jeśli aktywna
+					if(timeTransition.isForcedToFired() == true) {
 						//musi zostać uruchomiona
 						if(ttPriority) {
-							launchableTransitions.add(ttransition);
-							ttransition.bookRequiredTokens();
+							launchableTransitions.add(timeTransition);
+							timeTransition.bookRequiredTokens();
 						}
 						
 					} else { //jest tylko aktywna
-						if(ttransition.getInternalFireTime() == -1) { //czyli poprzednio nie była aktywna
-							int eft = (int) ttransition.getMinFireTime();
-							int lft = (int) ttransition.getMaxFireTime();
+						if(timeTransition.getInternalFireTime() == -1) { //czyli poprzednio nie była aktywna
+							int eft = (int) timeTransition.getMinFireTime();
+							int lft = (int) timeTransition.getMaxFireTime();
 							int randomTime = GUIManager.getDefaultGUIManager().getRandomInt(eft, lft);
-							ttransition.setInternalFireTime(randomTime);
-							ttransition.setInternalTimer(0);
+							timeTransition.setInternalFireTime(randomTime);
+							timeTransition.setInternalTimer(0);
 							
 							if(ttPriority) { 
 								if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
-									launchableTransitions.add(ttransition);
-									ttransition.bookRequiredTokens();
+									launchableTransitions.add(timeTransition);
+									timeTransition.bookRequiredTokens();
 									//TAK, na pewno tu, a nie w kolejne iteracji, wtedy czas wzrośnie, więc
 									//byłoby wbrew idei natychmiastowości
 								}
 							}
 						} else { //update time
-							int oldTimer = (int) ttransition.getInternalTimer();
+							int oldTimer = (int) timeTransition.getInternalTimer();
 							oldTimer++;
-							ttransition.setInternalTimer(oldTimer);
+							timeTransition.setInternalTimer(oldTimer);
 							
 							//jeśli to tu zostanie, to oznacza, że TT mają pierwszeństwo nad zwykłymi
 							// alternatywnie (opcje programu) można ustawić, że będzie to razem ze zwykłymi robione
 							
 							if(ttPriority) { 
-								if(ttransition.isForcedToFired() == true) {
-									launchableTransitions.add(ttransition);
-									ttransition.bookRequiredTokens();
+								if(timeTransition.isForcedToFired() == true) {
+									launchableTransitions.add(timeTransition);
+									timeTransition.bookRequiredTokens();
 								}
 							}
 						}
 					}
 				} else { //reset zegara
-					ttransition.setInternalFireTime(-1);
-					ttransition.setInternalTimer(-1);
+					timeTransition.setInternalFireTime(-1);
+					timeTransition.setInternalTimer(-1);
 				}
 			} 
 			
-			Collections.shuffle(indexList);
+			Collections.shuffle(allTransitionsIndicesList);
 			//teraz wybieranie tranzycji do odpalenia:
 			for (int i = 0; i < transitions.size(); i++) {
-				Transition transition = transitions.get(indexList.get(i));
+				Transition transition = transitions.get(allTransitionsIndicesList.get(i));
 				if(launchableTransitions.contains(transition)) {
 					continue;
 					//TODO: czy działa to w ogóle?
@@ -265,10 +265,10 @@ public class StateSimulator {
 				}
 			} 
 		} else if (simulationType == NetType.TIME) { 
-			Collections.shuffle(indexTTList); //wymieszanie T tranzycji
+			Collections.shuffle(timeTransIndicesList); //wymieszanie T tranzycji
 			
-			for (int i = 0; i < ttransitions.size(); i++) {
-				Transition ttransition = ttransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
+			for (int i = 0; i < time_transitions.size(); i++) {
+				Transition ttransition = time_transitions.get(timeTransIndicesList.get(i)); //losowo wybrana czasowa, cf. indexTTList
 				if(ttransition.isActive()) { //jeśli aktywna
 					if(ttransition.isForcedToFired() == true) {
 						launchableTransitions.add(ttransition);
@@ -568,6 +568,7 @@ public class StateSimulator {
 				
 				place.modifyTokensNumber(arc.getWeight());
 			}
+			transition.resetAfterFiring();
 		}
 		transitions.clear(); //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
 	}
@@ -618,15 +619,20 @@ public class StateSimulator {
 	//****************************************    BACKUP    ************************************************
 	//******************************************************************************************************
 	
+	/**
+	 * Metoda przygotowuje backup stanu sieci
+	 */
 	public void prepareNetM0() {
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+		}
+		
 		//zapis aktualnego stanu jako m0
 		saveInternalMarkingZero();
 		//jeżeli istnieje backup, przywróć sieć do stanu m0:
 		mainSimMaximumMode = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().isMaximumMode();
 		
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-		}
+		
 	}
 	
 	/**
@@ -656,6 +662,7 @@ public class StateSimulator {
 			if(transitions.get(i).getTransType() == TransitionType.TPN) {
 				transitions.get(i).setInternalFireTime(-1);
 				transitions.get(i).setInternalTimer(-1);
+				transitions.get(i).setDurationInternTimer(-1);
 			}
 		}
 	}

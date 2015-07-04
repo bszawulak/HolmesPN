@@ -35,7 +35,7 @@ public class NetSimulator {
 	private ArrayList<Transition> launchingTransitions;
 	private Stack<SimulationStep> actionStack;
 	private boolean maximumMode = false;
-	public static int DEFAULT_COUNTER = 50;			// wartość ta ma wpływ na szybkość poruszania się tokenów
+	public static int DEFAULT_COUNTER = 40;			// wartość ta ma wpływ na szybkość poruszania się tokenów
 	//public JFrame timeFrame = new JFrame("Zegar");
 	//public double timeNetStepCounter = 0;
 	//public double timeNetPartStepCounter = 0;
@@ -180,8 +180,7 @@ public class NetSimulator {
 	 * Metoda ustawiająca tryb sieci do symulacji.
 	 * @param type int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
 	 */
-	public void setSimulatorNetType(int type)
-	{
+	public void setSimulatorNetType(int type) {
 		//sprawdzenie poprawności trybu, zakładamy że Basic działa zawsze
 		if(type == 0) {
 			simulationType = NetType.BASIC;
@@ -200,17 +199,12 @@ public class NetSimulator {
 						return;
 					}
 				}
-				
-				
 			}
-			
 			simulationType = NetType.TIME;
 		} else if (type == 2) {
 			simulationType = NetType.HYBRID;
 		}		
 	}
-	
-	
 	
 	/**
 	 * Metoda podobna do setSimulatorNetType(...), sprawdza, czy aktualna sieć jest poprawna
@@ -677,13 +671,15 @@ public class NetSimulator {
 				place.modifyTokensNumber(arc.getWeight());
 			}
 			
+			transition.resetAfterFiring();
+			/*
 			if(transition.getTransType() == TransitionType.TPN) {
 				transition.setInternalFireTime(-1);
 				transition.setInternalTimer(-1);
 			}
+			*/
 		}
-		
-		
+
 		transitions.clear();  //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
 	}
 
