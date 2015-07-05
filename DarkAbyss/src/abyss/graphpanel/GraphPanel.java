@@ -466,10 +466,9 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewTimeTransition(Point p) {
 		if (isLegalLocation(p)) {
-			//TODO:
 			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, p);
-			//n.setType(PetriNetElementType.TIMETRANSITION);
 			n.setTransType(TransitionType.TPN);
+			n.setTPNstatus(true);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
 		}

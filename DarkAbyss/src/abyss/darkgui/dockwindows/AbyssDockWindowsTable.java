@@ -214,9 +214,7 @@ public class AbyssDockWindowsTable extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selectedModeIndex = simMode.getSelectedIndex();
-				
 				simulator.setSimulatorNetType(selectedModeIndex);
-				
 				if(invSimulator != null)
 					invSimulator.setSimulatorNetType(selectedModeIndex);
 			}
@@ -1240,8 +1238,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		maxTimeField.setValue(transition.getMaxFireTime());
 		maxTimeField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
-				JFormattedTextField field = (JFormattedTextField) e
-						.getSource();
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
 				try {
 					field.commitEdit();
 				} catch (ParseException ex) {
@@ -1268,16 +1265,50 @@ public class AbyssDockWindowsTable extends JPanel {
 		durationField.setBounds(columnA_posX+90, columnB_Y += 20, 90, 20);
 		durationField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
-				//JFormattedTextField field = (JFormattedTextField) e.getSource();
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
 				try {
-					//field.commitEdit();
+					field.commitEdit();
+					double time = (double) field.getValue();
+					setDurationTime(time);
 				} catch (Exception ex) {
-				}						
-				//double min = (double) field.getValue();
-				//setMinFireTime(min);
+				}
+				
+				
 			}
 		});
 		components.add(durationField);
+		
+		//columnA_Y+=40;
+		JCheckBox tpnBox = new JCheckBox("TPN active", transition.getTPNstatus());
+		tpnBox.setBounds(columnB_posX-5, columnB_Y += 20, 100, 20);
+		tpnBox.setEnabled(true);
+		tpnBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected())
+					setTPNstatus(true);
+				else
+					setTPNstatus(false);
+			}
+		});
+		components.add(tpnBox);
+		
+		columnA_Y+=20;
+		JCheckBox dpnBox = new JCheckBox("DPN active", transition.getDPNstatus());
+		dpnBox.setBounds(columnB_posX+100, columnB_Y, 100, 20);
+		dpnBox.setEnabled(true);
+		dpnBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected())
+					setDPNstatus(true);
+				else
+					setDPNstatus(false);
+			}
+		});
+		components.add(dpnBox);
 
 		// T-TRANSITION SHEET ID
 		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
@@ -2534,8 +2565,7 @@ public class AbyssDockWindowsTable extends JPanel {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
-			
-			
+
 			sets = sets.replace("[", "");
 			sets = sets.replace("]", "");
 			sets = sets.replace(" ", "");
@@ -2832,7 +2862,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	
 	/**
 	 * Metoda ustawia nową wartość czasu EFT dla tranzycji czasowej.
-	 * @param x int - nowe EFT
+	 * @param x double - nowe EFT
 	 */
 	private void setMinFireTime(double x) {
 		if (mode == TIMETRANSITION) {
@@ -2844,12 +2874,48 @@ public class AbyssDockWindowsTable extends JPanel {
 	
 	/**
 	 * Metoda ustawia nową wartość czasu LFT dla tranzycji czasowej.
-	 * @param x int - nowe LFT
+	 * @param x double - nowe LFT
 	 */
 	private void setMaxFireTime(double x) {
 		if (mode == TIMETRANSITION) {
 			Transition transition = (Transition) element;
 			transition.setMaxFireTime(x);
+			repaintGraphPanel();
+		}
+	}
+	
+	/**
+	 * Metoda ustawia nową wartość opóźnienia dla produkcji tokenów.
+	 * @param x double - nowa wartość duration
+	 */
+	private void setDurationTime(double x) {
+		if (mode == TIMETRANSITION) {
+			Transition transition = (Transition) element;
+			transition.setDurationTime(x);
+			repaintGraphPanel();
+		}
+	}
+	
+	/**
+	 * Metoda ustawia status trybu TPN dla tranzycji.
+	 * @param status boolean - nowy status
+	 */
+	private void setTPNstatus(boolean status) {
+		if (mode == TIMETRANSITION) {
+			Transition transition = (Transition) element;
+			transition.setTPNstatus(status);
+			repaintGraphPanel();
+		}
+	}
+	
+	/**
+	 * Metoda ustawia status trybu DPN dla tranzycji.
+	 * @param status boolean - nowy status
+	 */
+	private void setDPNstatus(boolean status) {
+		if (mode == TIMETRANSITION) {
+			Transition transition = (Transition) element;
+			transition.setDPNstatus(status);
 			repaintGraphPanel();
 		}
 	}

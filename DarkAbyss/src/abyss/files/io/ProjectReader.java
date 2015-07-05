@@ -394,6 +394,28 @@ public class ProjectReader {
 				return;
 			}
 			
+			query = "Transition TPN status:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true"))
+					transition.setTPNstatus(true);
+				else
+					transition.setTPNstatus(false);
+				return;
+			}
+			
+			query = "Transition DPN status:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true"))
+					transition.setDPNstatus(true);
+				else
+					transition.setDPNstatus(false);
+				return;
+			}
+			
 			query = "Transition portal status:";
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());

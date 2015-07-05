@@ -152,6 +152,8 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition eft:"+trans.getMinFireTime()+">"+newline); //TPN eft
 				bw.write(spaces(sp)+"<Transition lft:"+trans.getMaxFireTime()+">"+newline); //TPN lft
 				bw.write(spaces(sp)+"<Transition duration:"+trans.getDurationTime()+">"+newline); //DPN duration
+				bw.write(spaces(sp)+"<Transition TPN status:"+trans.getTPNstatus()+">"+newline); //is TPN active?
+				bw.write(spaces(sp)+"<Transition DPN status:"+trans.getDPNstatus()+">"+newline); //is DPN active?
 				
 				bw.write(spaces(sp)+"<Location data"+">"+newline);
 				sp = 8;

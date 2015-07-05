@@ -193,7 +193,7 @@ public class StateSimulator {
 			for (int i = 0; i < time_transitions.size(); i++) {
 				Transition timeTransition = time_transitions.get(timeTransIndicesList.get(i)); //losowo wybrana czasowa
 				if(timeTransition.isActive()) { //jeśli aktywna
-					if(timeTransition.isForcedToFired() == true) {
+					if(timeTransition.isTPNforcedToFired() == true) {
 						//musi zostać uruchomiona
 						if(ttPriority) {
 							launchableTransitions.add(timeTransition);
@@ -206,7 +206,7 @@ public class StateSimulator {
 							int lft = (int) timeTransition.getMaxFireTime();
 							int randomTime = GUIManager.getDefaultGUIManager().getRandomInt(eft, lft);
 							timeTransition.setInternalFireTime(randomTime);
-							timeTransition.setInternalTimer(0);
+							timeTransition.setInternalTPN_Timer(0);
 							
 							if(ttPriority) { 
 								if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
@@ -217,15 +217,15 @@ public class StateSimulator {
 								}
 							}
 						} else { //update time
-							int oldTimer = (int) timeTransition.getInternalTimer();
+							int oldTimer = (int) timeTransition.getInternalTPN_Timer();
 							oldTimer++;
-							timeTransition.setInternalTimer(oldTimer);
+							timeTransition.setInternalTPN_Timer(oldTimer);
 							
 							//jeśli to tu zostanie, to oznacza, że TT mają pierwszeństwo nad zwykłymi
 							// alternatywnie (opcje programu) można ustawić, że będzie to razem ze zwykłymi robione
 							
 							if(ttPriority) { 
-								if(timeTransition.isForcedToFired() == true) {
+								if(timeTransition.isTPNforcedToFired() == true) {
 									launchableTransitions.add(timeTransition);
 									timeTransition.bookRequiredTokens();
 								}
@@ -234,7 +234,7 @@ public class StateSimulator {
 					}
 				} else { //reset zegara
 					timeTransition.setInternalFireTime(-1);
-					timeTransition.setInternalTimer(-1);
+					timeTransition.setInternalTPN_Timer(-1);
 				}
 			} 
 			
@@ -249,13 +249,13 @@ public class StateSimulator {
 				}
 				if(transition.getTransType() == TransitionType.TPN) { //jeśli czasowa
 					if(transition.isActive()) { //i aktywna
-						if(transition.isForcedToFired() == true) { //i musi się uruchomić
+						if(transition.isTPNforcedToFired() == true) { //i musi się uruchomić
 							launchableTransitions.add(transition);
 							transition.bookRequiredTokens();
 						}
 					} else { //reset
 						transition.setInternalFireTime(-1);
-						transition.setInternalTimer(-1);
+						transition.setInternalTPN_Timer(-1);
 					}
 				} else if (transition.isActive() ) {
 					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
@@ -270,7 +270,7 @@ public class StateSimulator {
 			for (int i = 0; i < time_transitions.size(); i++) {
 				Transition ttransition = time_transitions.get(timeTransIndicesList.get(i)); //losowo wybrana czasowa, cf. indexTTList
 				if(ttransition.isActive()) { //jeśli aktywna
-					if(ttransition.isForcedToFired() == true) {
+					if(ttransition.isTPNforcedToFired() == true) {
 						launchableTransitions.add(ttransition);
 						ttransition.bookRequiredTokens();
 					} else { //jest tylko aktywna
@@ -279,7 +279,7 @@ public class StateSimulator {
 							int lft = (int) ttransition.getMaxFireTime();
 							int randomTime = GUIManager.getDefaultGUIManager().getRandomInt(eft, lft);
 							ttransition.setInternalFireTime(randomTime);
-							ttransition.setInternalTimer(0);
+							ttransition.setInternalTPN_Timer(0);
 							
 							if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
 								launchableTransitions.add(ttransition);
@@ -288,11 +288,11 @@ public class StateSimulator {
 								//byłoby wbrew idei natychmiastowości
 							}
 						} else { //update time
-							int oldTimer = (int) ttransition.getInternalTimer();
+							int oldTimer = (int) ttransition.getInternalTPN_Timer();
 							oldTimer++;
-							ttransition.setInternalTimer(oldTimer);
+							ttransition.setInternalTPN_Timer(oldTimer);
 							
-							if(ttransition.isForcedToFired() == true) {
+							if(ttransition.isTPNforcedToFired() == true) {
 								launchableTransitions.add(ttransition);
 								ttransition.bookRequiredTokens();
 							}
@@ -300,7 +300,7 @@ public class StateSimulator {
 					}
 				} else { //reset zegara
 					ttransition.setInternalFireTime(-1);
-					ttransition.setInternalTimer(-1);
+					ttransition.setInternalTPN_Timer(-1);
 				}
 			}
 		}
@@ -568,7 +568,7 @@ public class StateSimulator {
 				
 				place.modifyTokensNumber(arc.getWeight());
 			}
-			transition.resetAfterFiring();
+			transition.resetTimeVariables();
 		}
 		transitions.clear(); //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
 	}
@@ -661,8 +661,8 @@ public class StateSimulator {
 			transitions.get(i).setLaunching(false);
 			if(transitions.get(i).getTransType() == TransitionType.TPN) {
 				transitions.get(i).setInternalFireTime(-1);
-				transitions.get(i).setInternalTimer(-1);
-				transitions.get(i).setDurationInternTimer(-1);
+				transitions.get(i).setInternalTPN_Timer(-1);
+				transitions.get(i).setInternalDPN_Timer(-1);
 			}
 		}
 	}

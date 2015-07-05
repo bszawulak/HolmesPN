@@ -196,7 +196,7 @@ public class TimeTransition2 extends Transition {
 	 * Metoda zwraca aktualny zegar uruchomienia dla tranzycji.
 	 * @return double - czas uruchomienia - pole FireTime
 	 */
-	public double getInternalTimer() {
+	public double getInternalTPN_Timer() {
 		return internalTimer;
 	}
 
@@ -204,7 +204,7 @@ public class TimeTransition2 extends Transition {
 	 * Metoda pozwala ustawic zegar uruchomienia tranzycji.
 	 * @param fireTime double - czas uruchomienia tranzycji
 	 */
-	public void setInternalTimer(double fireTime) {
+	public void setInternalTPN_Timer(double fireTime) {
 		internalTimer = fireTime;
 	}
 	
@@ -212,7 +212,7 @@ public class TimeTransition2 extends Transition {
 	 * Metoda informująca czy tramzycja czasowa MUSI zostać uruchomiona.
 	 * @return boolean - true, jeśli wewnętrzny zegar (!= -1) jest równy deadlinowi
 	 */
-	public boolean isForcedToFired() {
+	public boolean isTPNforcedToFired() {
 		if(internalFireTime != -1) {
 			if(internalFireTime == internalTimer)
 				return true;

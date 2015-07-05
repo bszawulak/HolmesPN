@@ -1368,6 +1368,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public int getRandomInt(int min, int max) {
 		if(min == 0 && max == 0)
 			return 0;
+		if(min == max)
+			return min;
+		
 		return generator.nextInt((max - min) + 1) + min;
 	}
 	

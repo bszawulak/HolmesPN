@@ -609,16 +609,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 			
 			for(int i=0; i<transitions.size(); i++) {
-				transitions.get(i).setLaunching(false);
+				Transition trans = transitions.get(i);
+				trans.setLaunching(false);
 				
-				if(transitions.get(i).getTransType() == TransitionType.TPN) {
-					transitions.get(i).setInternalFireTime(-1);
-					transitions.get(i).setInternalTimer(-1);	
+				if(trans.getTransType() == TransitionType.TPN) {
+					trans.resetTimeVariables();
 				}
 			}
 			isBackup = false;
 			
-			setSimulator(new NetSimulator(NetType.BASIC, this));
+			NetType nt = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorNetMode();
+			setSimulator(new NetSimulator(nt, this));
+			//setSimulator(new NetSimulator(NetType.BASIC, this));
 			GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
 			//GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
 			GUIManager.getDefaultGUIManager().io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());

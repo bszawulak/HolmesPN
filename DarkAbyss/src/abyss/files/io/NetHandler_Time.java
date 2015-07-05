@@ -83,6 +83,8 @@ public class NetHandler_Time extends NetHandler {
 	public ArrayList<Point> graphicNamesPointsList = new ArrayList<Point>();
 	public int xoff_name;
 	public int yoff_name;
+	
+	private boolean anyProblems = false;
 
 	/**
 	 * Metoda wykrywająca rozpoczęcie nowego elementu.
@@ -102,6 +104,13 @@ public class NetHandler_Time extends NetHandler {
 				nodeType = "Place";
 			} else {
 				nodeType = "Transition";
+			}
+		}
+		
+		if (qName.equalsIgnoreCase("metadataclass")) {
+			if(anyProblems) {
+				anyProblems = false;
+				GUIManager.getDefaultGUIManager().log("Problems encountered during loading file.", "error", true);
 			}
 		}
 		
@@ -141,7 +150,14 @@ public class NetHandler_Time extends NetHandler {
 		}
 		
 		if(readDPN) {
-			duration = Double.parseDouble(readString);
+			try {
+				duration = Double.parseDouble(readString);
+			} catch (Exception e) {
+				duration = 0.0;
+				anyProblems = true;
+				GUIManager.getDefaultGUIManager().log("Warning. Node "+nodeName+" had unassigned duration value. Duration set to zero.", "warning", true);
+			}
+			
 			readDPN = false;
 			timeTrans = true;
 			colDPN = false;
@@ -158,7 +174,13 @@ public class NetHandler_Time extends NetHandler {
 			colTPN = true; //jestesmy w sekcji gdzie beda zmienne czasowe EFT i LFT
 		}
 		if(readLFT) {
-			nodeLFT = Double.parseDouble(readString);
+			try {
+				nodeLFT = Double.parseDouble(readString);
+			} catch (Exception e) {
+				nodeLFT = 0.0;
+				anyProblems = true;
+				GUIManager.getDefaultGUIManager().log("Warning. Node "+nodeName+" had unassigned lft value. Lft set to zero.", "warning", true);
+			}
 			readLFT = false;
 			readEFT = false;
 			colTPN = false;
@@ -166,7 +188,14 @@ public class NetHandler_Time extends NetHandler {
 			timeTrans = true;
 		}
 		if(readEFT) {
-			nodeEFT = Double.parseDouble(readString);
+			try {
+				nodeEFT = Double.parseDouble(readString);
+			} catch (Exception e) {
+				nodeEFT = 0.0;
+				anyProblems = true;
+				GUIManager.getDefaultGUIManager().log("Warning. Node "+nodeName+" had unassigned eft value. Eft set to zero.", "warning", true);
+			}
+			
 			readLFT = true;
 			readEFT = false;
 		}
@@ -323,9 +352,9 @@ public class NetHandler_Time extends NetHandler {
 					readString = "";
 				}
 				if (variableInterval == true && colTPN == true) {
-					if(!readString.equals("Main"))
-						nodeLFT = Integer.parseInt(readString);
-					
+					if(!readString.equals("Main")) {
+						nodeLFT = Double.parseDouble(readString);
+					}
 					colTPN = false;
 					readString = "";
 				}
@@ -352,7 +381,6 @@ public class NetHandler_Time extends NetHandler {
 		}
 
 		if (qName.equalsIgnoreCase("Snoopy")) {
-
 			int wid = Toolkit.getDefaultToolkit().getScreenSize().width - 20;
 			int hei = Toolkit.getDefaultToolkit().getScreenSize().height - 20;
 			int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
@@ -374,12 +402,10 @@ public class NetHandler_Time extends NetHandler {
 				}
 			}
 			if (xFound == true && yFound == false) {
-				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX)
-					.getPosition().x + 90, graphPanel.getSize().height));
+				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX).getPosition().x + 90, graphPanel.getSize().height));
 			}
 			if (yFound == true && xFound == false) {
-				graphPanel.setSize(new Dimension(graphPanel.getSize().width,
-					elementLocationList.get(tmpY).getPosition().y + 90));
+				graphPanel.setSize(new Dimension(graphPanel.getSize().width,elementLocationList.get(tmpY).getPosition().y + 90));
 			}
 			if (xFound == true && yFound == true) {
 				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX)
@@ -426,7 +452,13 @@ public class NetHandler_Time extends NetHandler {
 					tmpTTran.setDurationTime(duration);
 					tmpTTran.setNamesLocations(namesElLocations);
 					tmpTTran.setTransType(TransitionType.TPN);
+					if(duration > 0)
+						tmpTTran.setDPNstatus(true);
 					
+					if(nodeEFT == nodeLFT && nodeEFT == 0) 
+						tmpTTran.setTPNstatus(false);
+					
+					tmpTTran.setTPNstatus(true);
 					tmpTransitionList.add(tmpTTran);
 					
 					IdGenerator.getNextTransitionId();
@@ -451,8 +483,7 @@ public class NetHandler_Time extends NetHandler {
 			graphicNamesPointsList.clear();
 		}
 
-		// Tworzenie arca
-
+		// Tworzenie łuku
 		if (qName.equalsIgnoreCase("edge")) {
 			int tmpSource = 0;
 			int tmpTarget = 0;

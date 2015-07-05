@@ -1,10 +1,12 @@
 package abyss.darkgui;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -17,6 +19,7 @@ import abyss.files.clusters.Rprotocols;
 import abyss.files.io.ProjectReader;
 import abyss.files.io.ProjectWriter;
 import abyss.math.PetriNet;
+import abyss.math.Transition;
 import abyss.utilities.AbyssFileView;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
@@ -950,5 +953,36 @@ public class GUIOperations {
 	 */
 	public void updateTimeStep(String value) {
 		overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText(value);
+	}
+	
+	public void markTransitions(int mode) {
+		overlord.getWorkspace().getProject().turnTransitionGlowingOff();
+		overlord.getWorkspace().getProject().setTransitionGlowedMTC(false);
+		overlord.getWorkspace().getProject().resetTransitionGraphics();
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
+		if(mode == 0) { //TPN only
+			for(Transition t : transitions) {
+				if(t.getTPNstatus()) {
+					t.setColorWithNumber(true, Color.green, false, -1, true, "TPN");
+				}
+			}
+		} else if(mode == 1) { //DPN
+			for(Transition t : transitions) {
+				if(t.getDPNstatus()) {
+					t.setColorWithNumber(true, Color.green, false, -1, true, "DPN");
+				}
+			}
+		} else if(mode == 2) { //TPN i TPN
+			for(Transition t : transitions) {
+				if(t.getTPNstatus() && !t.getDPNstatus()) {
+					t.setColorWithNumber(true, new Color(51,255,51), false, -1, true, "TPN");
+				} else if(!t.getTPNstatus() && t.getDPNstatus()) {
+					t.setColorWithNumber(true, new Color(0,153,76), false, -1, true, "DPN");
+				} else if(t.getTPNstatus() && t.getDPNstatus()) {
+					t.setColorWithNumber(true, new Color(0,102,0), false, -1, true, "TPN / DPN");
+				}
+			}
+		}
+		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 }

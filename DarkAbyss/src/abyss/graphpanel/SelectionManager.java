@@ -539,6 +539,8 @@ public class SelectionManager {
 			double oldEFT = selTransition.getMinFireTime();
 			double oldLFT = selTransition.getMaxFireTime();
 			double oldDuration = selTransition.getDurationTime();
+			boolean oldTPNstatus = selTransition.getTPNstatus();
+			boolean oldDPNstatus = selTransition.getDPNstatus();
 			TransitionType tt = selTransition.getTransType();
 			
 			Transition portal = new Transition(IdGenerator.getNextId(), ((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
@@ -557,7 +559,8 @@ public class SelectionManager {
 			portal.setMinFireTime(oldEFT);
 			portal.setMaxFireTime(oldLFT);
 			portal.setDurationTime(oldDuration);
-			//getGraphPanelNodes().add(portal);
+			portal.setTPNstatus(oldTPNstatus);
+			portal.setDPNstatus(oldDPNstatus);
 			getGraphPanelNodes().add(selectedNodeIndex, portal);
 		}
 		getGraphPanel().repaint();
@@ -640,6 +643,8 @@ public class SelectionManager {
 			double oldEFT = selTransition.getMinFireTime();
 			double oldLFT =selTransition.getMaxFireTime();
 			double oldDuration = selTransition.getDurationTime();
+			boolean oldTPNstatus = selTransition.getTPNstatus();
+			boolean oldDPNstatus = selTransition.getDPNstatus();
 			TransitionType tt = selTransition.getTransType();
 			
 			ElementLocation clonedNode = getSelectedElementLocations().get(0);
@@ -665,7 +670,8 @@ public class SelectionManager {
 			portal.setMinFireTime(oldEFT);
 			portal.setMaxFireTime(oldLFT);
 			portal.setDurationTime(oldDuration);
-			//getGraphPanelNodes().add(portal);
+			portal.setTPNstatus(oldTPNstatus);
+			portal.setDPNstatus(oldDPNstatus);
 			getGraphPanelNodes().add(selectedNodeIndex, portal);
 		}
 		getGraphPanel().repaint();

@@ -44,12 +44,13 @@ public class Transition extends Node {
 	
 	//opcje czasowe:
 	protected double minFireTime = 0; //TPN
-	protected double maxFireTime = 999;	//TPN
+	protected double maxFireTime = 0;	//TPN
 	protected double internalFireTime = -1; //zmienna związana z modelem sieci TPN
 	protected double internalTimer = -1;
 	protected double durationTimer = -1;
 	protected double duration = 0;
-	
+	protected boolean TPNactive = false;
+	protected boolean DPNactive = false;
 	
 	//inne:
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
@@ -362,14 +363,11 @@ public class Transition extends Node {
 		if(offline == true)
 			return false;
 		
-		/*
-		for (Arc arc : getInArcs()) { //CASE: INHIBITORS ONLY
-			if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
-				if(((Place)arc.getStartNode()).getNonReservedTokensNumber() > 0) {
-					return false;
-				}
+		if(DPNactive) {
+			if(durationTimer == duration) { //duration zawsze >= 0, dTimer(pre-start) = -1, więc ok
+				return true; //nie ważne co mówią pre-places, ta tranzycja musi odpalić!
 			}
-		}*/
+		}
 	
 		for (Arc arc : getInArcs()) {
 			Place arcStartPlace = (Place) arc.getStartNode();
@@ -491,10 +489,18 @@ public class Transition extends Node {
 		}
 	}
 	
+	/**
+	 * Metoda ustawia podtyp tranzycji.
+	 * @param tt TransitionType - podtyp
+	 */
 	public void setTransType(TransitionType tt) {
 		this.transType = tt;
 	}
 	
+	/**
+	 * Metoda zwraca podtyp tranzycji.
+	 * @return TransitionType - podtyp
+	 */
 	public TransitionType getTransType() {
 		return this.transType;
 	}
@@ -568,7 +574,7 @@ public class Transition extends Node {
 	 * Metoda zwraca aktualny zegar uruchomienia dla tranzycji.
 	 * @return double - czas uruchomienia - pole FireTime
 	 */
-	public double getInternalTimer() {
+	public double getInternalTPN_Timer() {
 		return internalTimer;
 	}
 
@@ -576,7 +582,7 @@ public class Transition extends Node {
 	 * Metoda pozwala ustawic zegar uruchomienia tranzycji.
 	 * @param fireTime double - czas uruchomienia tranzycji
 	 */
-	public void setInternalTimer(double fireTime) {
+	public void setInternalTPN_Timer(double fireTime) {
 		internalTimer = fireTime;
 	}
 	
@@ -585,7 +591,13 @@ public class Transition extends Node {
 	 * @param val double - nowy czas
 	 */
 	public void setDurationTime(double val) {
-		duration = val;
+		if(val < 0)
+			duration = 0;
+		else
+			duration = val;
+		
+		//if(duration > 0)
+		//	setDPNstatus(true);
 	}
 	
 	/**
@@ -600,7 +612,7 @@ public class Transition extends Node {
 	 * Metoda ustawia nowy wewnętrzny timer dla czasu odpalenia dla tranzycji DPN.
 	 * @param val double - nowa wartość zegara dla DPN
 	 */
-	public void setDurationInternTimer(double val) {
+	public void setInternalDPN_Timer(double val) {
 		durationTimer = val;
 	}
 	
@@ -608,7 +620,7 @@ public class Transition extends Node {
 	 * Metoda zwraca aktualną wartość zegara odliczającego czas do odpalenia tranzycji DPN (produkcji tokenów)
 	 * @return
 	 */
-	public double getDurationInternTimer() {
+	public double getInternalDPN_Timer() {
 		return durationTimer;
 	}
 	
@@ -616,7 +628,7 @@ public class Transition extends Node {
 	 * Metoda pozwalająca stwierdzić, czy tranzycja DPN jest gotowa do produkcji tokenów.
 	 * @return boolean - true, jeśli zegar DPN ma wartość równą ustalonemu czasowi DPN dla tranzycji
 	 */
-	public boolean isDPNreadyToFire() {
+	public boolean isDPNforcedToFire() {
 		if(duration == durationTimer)
 			return true;
 		else
@@ -624,10 +636,10 @@ public class Transition extends Node {
 	}
 	
 	/**
-	 * Metoda informująca czy tranzycja czasowa MUSI zostać uruchomiona.
-	 * @return boolean - true, jeśli wewnętrzny zegar (!= -1) jest równy deadlinowi
+	 * Metoda informująca czy tranzycja TPN musi zostać uruchomiona.
+	 * @return boolean - true, jeśli wewnętrzny zegar (!= -1) jest równy deadlinowi dla TPN
 	 */
-	public boolean isForcedToFired() {
+	public boolean isTPNforcedToFired() {
 		if(internalFireTime != -1) {
 			if(internalFireTime == internalTimer)
 				return true;
@@ -642,9 +654,25 @@ public class Transition extends Node {
 	 * Metoda resetuje zegary tranzycji, powinna być używana przez symulatory po tym, jak wyprodukowano
 	 * tokeny (faza II: AddTokens symulacji)
 	 */
-	public void resetAfterFiring() {
+	public void resetTimeVariables() {
 		internalFireTime = -1;
 		internalTimer = -1;
 		durationTimer = -1;
+	}
+	
+	public void setTPNstatus(boolean status) {
+		TPNactive = status;
+	}
+	
+	public boolean getTPNstatus() {
+		return TPNactive;
+	}
+	
+	public void setDPNstatus(boolean status) {
+		DPNactive = status;
+	}
+	
+	public boolean getDPNstatus() {
+		return DPNactive;
 	}
 }

@@ -22,6 +22,9 @@ import abyss.math.Transition.TransitionType;
  *
  */
 public final class ElementDraw {
+	private static Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);
+	private static Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
+	
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
 	 */
@@ -39,9 +42,7 @@ public final class ElementDraw {
 				//radius = 30;
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, 
 						radius * 2, radius * 2);
-				
-				
-				
+
 				if (!trans.isLaunching()) { //jeśli nieaktywna
 					if (trans.isGlowed_MTC()) { //jeśli ma się świecić jako MCT
 						g.setColor(EditorResources.glowMTCTransitonColorLevel1);
@@ -144,7 +145,7 @@ public final class ElementDraw {
 				
 				
 				if (trans.isPortal()) {
-					if( ((Transition)node).getTransType() == TransitionType.TPN) {
+					if( trans.getTransType() == TransitionType.TPN) {
 						g.drawRect(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
 					} else {
 						g.drawRect(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
@@ -153,20 +154,26 @@ public final class ElementDraw {
 				// -------- do tego miejsca wspólne dla Transition i TimeTransition --------
 				
 				//TIME TRANSITION
-				if( ((Transition)node).getTransType() == TransitionType.TPN) {
+				if( trans.getTransType() == TransitionType.TPN) {
 					g.setColor(Color.black);
-					g.setFont(new Font("TimesRoman", Font.PLAIN, 10));
-					String eft = String.valueOf( ((Transition)node).getMinFireTime() );
+					g.setFont(f_plain);
+					String eft = String.valueOf( trans.getMinFireTime() );
 					g.drawString(eft, nodeBounds.x+35, nodeBounds.y + 8);
 
-					String lft = String.valueOf( ((Transition)node).getMaxFireTime() );
+					String lft = String.valueOf( trans.getMaxFireTime() );
 					g.drawString(lft, nodeBounds.x +35, nodeBounds.y + 28);
-					
-					int intTimer = (int) ((Transition)node).getInternalTimer();
-					int intFireTime = (int) ((Transition)node).getInternalFireTime();
+
+					int intTimer = (int) trans.getInternalTPN_Timer();
+					int intFireTime = (int) trans.getInternalFireTime();
 					String timeInfo = ""+intTimer+"  /  "+intFireTime;
+					
+					if(!trans.isActive())
+						timeInfo = "# / #";
+					
 					int offset = -9;
-					if(timeInfo.length() < 9)
+					if(timeInfo.length() < 7)
+						offset = 4;
+					else if(timeInfo.length() < 9)
 						offset = 1;
 					else if(timeInfo.length() < 10)
 						offset = -3;
@@ -176,6 +183,35 @@ public final class ElementDraw {
 						offset = -7;
 					
 					g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y + -4);
+					
+					if(trans.getDPNstatus()) {
+						String dur = String.valueOf( trans.getDurationTime() );
+						if(trans.getInternalDPN_Timer() >= 0) {
+							dur = String.valueOf( trans.getInternalDPN_Timer() ) + " / "+dur;
+						} else {
+							dur = " # / "+dur;
+						}
+						dur = "("+dur+")";
+						offset = -9;
+						if(dur.length() < 7)
+							offset = 2;
+						else if(dur.length() < 9)
+							offset = -1;
+						else if(dur.length() < 10)
+							offset = -3;
+						else if(dur.length() < 11)
+							offset = -7;
+						else if(dur.length() < 12)
+							offset = -10;
+						else
+							offset = -13;
+						
+						g.setFont(f_bold);
+						g.setColor(Color.red);
+						g.drawString(dur, nodeBounds.x +offset, nodeBounds.y + -15);
+						g.setColor(Color.black);
+						g.setFont(f_plain);
+					}
 
 					g.setColor(Color.LIGHT_GRAY);
 					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 20, nodeBounds.y + 9);

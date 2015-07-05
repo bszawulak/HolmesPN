@@ -206,6 +206,10 @@ public class NetSimulator {
 		}		
 	}
 	
+	public NetType getSimulatorNetMode() {
+		return simulationType;
+	}
+	
 	/**
 	 * Metoda podobna do setSimulatorNetType(...), sprawdza, czy aktualna sieć jest poprawna
 	 * z punktu widzenia ustawionego trybu symulacji
@@ -311,7 +315,7 @@ public class NetSimulator {
 			for (int i = 0; i < timeTransitions.size(); i++) {
 				Transition ttransition = timeTransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
 				if(ttransition.isActive()) { //jeśli aktywna
-					if(ttransition.isForcedToFired() == true) {
+					if(ttransition.isTPNforcedToFired() == true) {
 						//musi zostać uruchomiona
 						
 						if(ttPriority) {
@@ -325,7 +329,7 @@ public class NetSimulator {
 							int lft = (int) ttransition.getMaxFireTime();
 							int randomTime = GUIManager.getDefaultGUIManager().getRandomInt(eft, lft);
 							ttransition.setInternalFireTime(randomTime);
-							ttransition.setInternalTimer(0);
+							ttransition.setInternalTPN_Timer(0);
 							
 							if(ttPriority) { 
 								if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
@@ -336,15 +340,15 @@ public class NetSimulator {
 								}
 							}
 						} else { //update time
-							int oldTimer = (int) ttransition.getInternalTimer();
+							int oldTimer = (int) ttransition.getInternalTPN_Timer();
 							oldTimer++;
-							ttransition.setInternalTimer(oldTimer);
+							ttransition.setInternalTPN_Timer(oldTimer);
 							
 							//jeśli to tu zostanie, to oznacza, że TT mają pierwszeństwo nad zwykłymi
 							// alternatywnie (opcje programu) można ustawić, że będzie to razem ze zwykłymi robione
 							
 							if(ttPriority) { 
-								if(ttransition.isForcedToFired() == true) {
+								if(ttransition.isTPNforcedToFired() == true) {
 									launchableTransitions.add(ttransition);
 									ttransition.bookRequiredTokens();
 								}
@@ -353,7 +357,7 @@ public class NetSimulator {
 					}
 				} else { //reset zegara
 					ttransition.setInternalFireTime(-1);
-					ttransition.setInternalTimer(-1);
+					ttransition.setInternalTPN_Timer(-1);
 				}
 			}
 			//teraz wybieranie tranzycji do odpalenia:
@@ -374,13 +378,13 @@ public class NetSimulator {
 				
 				if(transition.getTransType() == TransitionType.TPN) { //jeśli czasowa
 					if(transition.isActive()) { //i aktywna
-						if(transition.isForcedToFired() == true) { //i musi się uruchomić
+						if(transition.isTPNforcedToFired() == true) { //i musi się uruchomić
 							launchableTransitions.add(transition);
 							transition.bookRequiredTokens();
 						}
 					} else { //reset
 						transition.setInternalFireTime(-1);
-						transition.setInternalTimer(-1);
+						transition.setInternalTPN_Timer(-1);
 					}
 				} else if (transition.isActive() ) {
 					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
@@ -389,17 +393,177 @@ public class NetSimulator {
 					}
 				}
 			} 
+			
+			
+			
 		} else if (simulationType == NetType.TIME) { 
+			
 			ArrayList<Transition> timeTransitions = petriNet.getTimeTransitions(); //nie ma innych
 			ArrayList<Integer> indexTTList = new ArrayList<Integer>();
-			for(int i=0; i<timeTransitions.size(); i++)
+			ArrayList<Integer> indexDPNList = new ArrayList<Integer>();
+			for(int i=0; i<timeTransitions.size(); i++) {
 				indexTTList.add(i);
+				if(timeTransitions.get(i).getDPNstatus()) {
+					if(timeTransitions.get(i).isDPNforcedToFire()) {
+						launchableTransitions.add(timeTransitions.get(i));
+						indexTTList.remove((Integer)i); // ten problem z głowy
+					} else {
+						indexDPNList.add(i); 
+					}
+				}
+			}
 			Collections.shuffle(indexTTList); //wymieszanie T tranzycji
+			Collections.shuffle(indexDPNList);
 			
-			for (int i = 0; i < timeTransitions.size(); i++) {
-				Transition ttransition = timeTransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
+			//najpierw spradzamy wszystkie które muszą się uruchomić
+
+			for(int i=0; i < indexDPNList.size(); i++) { //mają DPN status skoro trafiły na tę listę
+				int index = indexDPNList.get(i);
+				Transition dpn_transition = timeTransitions.get(index);
+				if(dpn_transition.getTPNstatus()) {
+					if(dpn_transition.isTPNforcedToFired()) { //TPN zakończyło liczenie
+						//SEKCJA I-1
+						double timer = dpn_transition.getInternalDPN_Timer();
+						if(timer == -1 && dpn_transition.isActive()) { //może wystartować
+							dpn_transition.setInternalDPN_Timer(0);
+							launchableTransitions.add(dpn_transition); //immediate fire bo 0=0
+							dpn_transition.bookRequiredTokens(); //odpala czy nie, rezerwuje tokeny teraz
+							indexDPNList.remove((Integer)index);
+							i--;
+							indexTTList.remove((Integer)index);
+							continue;
+						}
+						if(timer > -1) { //nie musi być aktywna na pewno nie będzie to ta powyżej, bo 'continue'
+							timer++;
+							dpn_transition.setInternalDPN_Timer(timer);
+							indexDPNList.remove((Integer)index);
+							if(dpn_transition.isDPNforcedToFire())
+								launchableTransitions.add(dpn_transition);
+							i--;
+							indexTTList.remove((Integer)index);
+							continue;
+						}
+						if(dpn_transition.isActive() == false) {
+							indexTTList.remove((Integer)index);
+							continue;
+						}
+						//SEKCJA I-1 END
+					} else { //dpn_transition.isTPNforcedToFired() == false
+						if(dpn_transition.isActive()) {
+							if(dpn_transition.getInternalFireTime() == -1) { //czyli poprzednio nie była aktywna
+								int eft = (int) dpn_transition.getMinFireTime();
+								int lft = (int) dpn_transition.getMaxFireTime();
+								int randomTime = GUIManager.getDefaultGUIManager().getRandomInt(eft, lft);
+								dpn_transition.setInternalFireTime(randomTime);
+								dpn_transition.setInternalTPN_Timer(0);
+								
+								if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
+									//SEKCJA I-1
+									double timer = dpn_transition.getInternalDPN_Timer();
+									if(timer == -1 && dpn_transition.isActive()) { //może wystartować
+										dpn_transition.setInternalDPN_Timer(0);
+										launchableTransitions.add(dpn_transition); //immediate fire bo 0=0
+										dpn_transition.bookRequiredTokens(); //odpala czy nie, rezerwuje tokeny teraz
+										indexDPNList.remove((Integer)index);
+										i--;
+										indexTTList.remove((Integer)index);
+										continue;
+									}
+									if(timer > -1) { //nie musi być aktywna na pewno nie będzie to ta powyżej, bo 'continue'
+										timer++;
+										dpn_transition.setInternalDPN_Timer(timer);
+										indexDPNList.remove((Integer)index);
+										if(dpn_transition.isDPNforcedToFire())
+											launchableTransitions.add(dpn_transition);
+										i--;
+										indexTTList.remove((Integer)index);
+										continue;
+									}
+									if(dpn_transition.isActive() == false) {
+										indexTTList.remove((Integer)index);
+										continue;
+									}
+									//SEKCJA I-1 END
+								} else {
+									indexTTList.remove((Integer)index);
+								}
+							} else { //update time
+								int oldTimer = (int) dpn_transition.getInternalTPN_Timer();
+								oldTimer++;
+								dpn_transition.setInternalTPN_Timer(oldTimer);
+								
+								if(dpn_transition.isTPNforcedToFired() == true) {
+									//SEKCJA I-1
+									double timer = dpn_transition.getInternalDPN_Timer();
+									if(timer == -1 && dpn_transition.isActive()) { //może wystartować
+										dpn_transition.setInternalDPN_Timer(0);
+										launchableTransitions.add(dpn_transition); //immediate fire bo 0=0
+										dpn_transition.bookRequiredTokens(); //odpala czy nie, rezerwuje tokeny teraz
+										indexDPNList.remove((Integer)index);
+										i--;
+										indexTTList.remove((Integer)index);
+										continue;
+									}
+									if(timer > -1) { //nie musi być aktywna na pewno nie będzie to ta powyżej, bo 'continue'
+										timer++;
+										dpn_transition.setInternalDPN_Timer(timer);
+										indexDPNList.remove((Integer)index);
+										if(dpn_transition.isDPNforcedToFire())
+											launchableTransitions.add(dpn_transition);
+										i--;
+										indexTTList.remove((Integer)index);
+										continue;
+									}
+									if(dpn_transition.isActive() == false) {
+										indexTTList.remove((Integer)index);
+										continue;
+									}
+									//SEKCJA I-1 END
+								} else {
+									indexTTList.remove((Integer)index);
+								}
+							}
+						} else { //not active
+							indexTTList.remove((Integer)index);
+							dpn_transition.resetTimeVariables();
+							continue;
+						}
+					}
+				} else { //pure DPN
+					//SEKCJA I-1
+					double timer = dpn_transition.getInternalDPN_Timer();
+					if(timer == -1 && dpn_transition.isActive()) { //może wystartować
+						dpn_transition.setInternalDPN_Timer(0);
+						launchableTransitions.add(dpn_transition); //immediate fire bo 0=0
+						dpn_transition.bookRequiredTokens(); //odpala czy nie, rezerwuje tokeny teraz
+						indexDPNList.remove((Integer)index);
+						i--;
+						indexTTList.remove((Integer)index);
+						continue;
+					}
+					if(timer > -1) { //nie musi być aktywna na pewno nie będzie to ta powyżej, bo 'continue'
+						timer++;
+						dpn_transition.setInternalDPN_Timer(timer);
+						indexDPNList.remove((Integer)index);
+						if(dpn_transition.isDPNforcedToFire())
+							launchableTransitions.add(dpn_transition);
+						i--;
+						indexTTList.remove((Integer)index);
+						continue;
+					}
+					if(dpn_transition.isActive() == false) {
+						indexTTList.remove((Integer)index);
+						continue;
+					}
+					
+				}
+			}
+			
+			for(int i=0; i < indexTTList.size(); i++) {
+				int index = indexTTList.get(i);
+				Transition ttransition = timeTransitions.get(index);
 				if(ttransition.isActive()) { //jeśli aktywna
-					if(ttransition.isForcedToFired() == true) {
+					if(ttransition.isTPNforcedToFired() == true) { //pure DPN: eft=lft=0, dur > 0
 						launchableTransitions.add(ttransition);
 						ttransition.bookRequiredTokens();
 					} else { //jest tylko aktywna
@@ -408,7 +572,7 @@ public class NetSimulator {
 							int lft = (int) ttransition.getMaxFireTime();
 							int randomTime = GUIManager.getDefaultGUIManager().getRandomInt(eft, lft);
 							ttransition.setInternalFireTime(randomTime);
-							ttransition.setInternalTimer(0);
+							ttransition.setInternalTPN_Timer(0);
 							
 							if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
 								launchableTransitions.add(ttransition);
@@ -417,11 +581,11 @@ public class NetSimulator {
 								//byłoby wbrew idei natychmiastowości
 							}
 						} else { //update time
-							int oldTimer = (int) ttransition.getInternalTimer();
+							int oldTimer = (int) ttransition.getInternalTPN_Timer();
 							oldTimer++;
-							ttransition.setInternalTimer(oldTimer);
+							ttransition.setInternalTPN_Timer(oldTimer);
 							
-							if(ttransition.isForcedToFired() == true) {
+							if(ttransition.isTPNforcedToFired() == true) {
 								launchableTransitions.add(ttransition);
 								ttransition.bookRequiredTokens();
 							}
@@ -429,9 +593,49 @@ public class NetSimulator {
 					}
 				} else { //reset zegara
 					ttransition.setInternalFireTime(-1);
-					ttransition.setInternalTimer(-1);
+					ttransition.setInternalTPN_Timer(-1);
 				}
 			}
+
+			/*
+			for (int i = 0; i < timeTransitions.size(); i++) {
+				Transition ttransition = timeTransitions.get(indexTTList.get(i)); //losowo wybrana czasowa, cf. indexTTList
+				if(ttransition.isActive()) { //jeśli aktywna
+					if(ttransition.isTPNforcedToFired() == true) { //pure DPN: eft=lft=0, dur > 0
+						launchableTransitions.add(ttransition);
+						ttransition.bookRequiredTokens();
+					} else { //jest tylko aktywna
+						if(ttransition.getInternalFireTime() == -1) { //czyli poprzednio nie była aktywna
+							int eft = (int) ttransition.getMinFireTime();
+							int lft = (int) ttransition.getMaxFireTime();
+							int randomTime = GUIManager.getDefaultGUIManager().getRandomInt(eft, lft);
+							ttransition.setInternalFireTime(randomTime);
+							ttransition.setInternalTPN_Timer(0);
+							
+							if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
+								launchableTransitions.add(ttransition);
+								ttransition.bookRequiredTokens();
+								//TAK, na pewno tu, a nie w kolejne iteracji, wtedy czas wzrośnie, więc
+								//byłoby wbrew idei natychmiastowości
+							}
+						} else { //update time
+							int oldTimer = (int) ttransition.getInternalTPN_Timer();
+							oldTimer++;
+							ttransition.setInternalTPN_Timer(oldTimer);
+							
+							if(ttransition.isTPNforcedToFired() == true) {
+								launchableTransitions.add(ttransition);
+								ttransition.bookRequiredTokens();
+							}
+						}
+					}
+				} else { //reset zegara
+					ttransition.setInternalFireTime(-1);
+					ttransition.setInternalTPN_Timer(-1);
+				}
+			}
+			
+			*/
 		}
 		for (Transition transition : launchableTransitions) {
 			transition.returnBookedTokens();
@@ -464,6 +668,9 @@ public class NetSimulator {
 				arcs = transition.getInArcs();
 			else
 				arcs = transition.getOutArcs();
+			
+			if(transition.getInternalDPN_Timer() > 0) //yeah, trust me, I'm an engineer
+				continue;
 			
 			// odejmij odpowiednią liczbę tokenów:
 			for (Arc arc : arcs) {
@@ -504,8 +711,9 @@ public class NetSimulator {
 						place.modifyTokensNumber(-arc.getWeight());
 					}
 				} // if (backtracking == false)
-			} //for (Arc arc : arcs) {
-		}
+				
+			} //for (Arc arc : arcs)
+		} //for (Transition transition : transitions)
 	}
 
 	/**
@@ -571,6 +779,9 @@ public class NetSimulator {
 					}
 				} // if (backtracking == false)
 			}
+			
+			
+			
 			return true;
 		}
 	}
@@ -671,7 +882,7 @@ public class NetSimulator {
 				place.modifyTokensNumber(arc.getWeight());
 			}
 			
-			transition.resetAfterFiring();
+			transition.resetTimeVariables();
 			/*
 			if(transition.getTransType() == TransitionType.TPN) {
 				transition.setInternalFireTime(-1);
@@ -1074,6 +1285,18 @@ public class NetSimulator {
 					}
 				
 					launchSubtractPhase(launchingTransitions, false); //zabierz tokeny poprzez aktywne tranzycje
+					//TODO: usuń te tranzycje, które są w I fazie DPN
+					for(int t=0; t<launchingTransitions.size(); t++) {
+						Transition test_t = launchingTransitions.get(t);
+						if(test_t.getDPNstatus()) {
+							if(test_t.getInternalDPN_Timer() == 0 && test_t.getDurationTime() != 0) {
+								launchingTransitions.remove(test_t);
+								t--;
+							}
+						}
+					}
+					
+					
 					subtractPhase = false;
 				} else {
 					// simulation ends, no possible steps remaining
@@ -1155,6 +1378,16 @@ public class NetSimulator {
 							cloneTransitionArray(launchingTransitions)));
 					}
 					launchSingleSubtractPhase(launchingTransitions, false, null);
+					
+					for(int t=0; t<launchingTransitions.size(); t++) {
+						Transition test_t = launchingTransitions.get(t);
+						if(test_t.getDPNstatus()) {
+							if(test_t.getInternalDPN_Timer() == 0 && test_t.getDurationTime() != 0) {
+								launchingTransitions.remove(test_t);
+								t--;
+							}
+						}
+					}
 					
 					subtractPhase = false;
 				} else {

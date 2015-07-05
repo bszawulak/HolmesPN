@@ -210,6 +210,24 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 		});
 		mct3.setEnabled(false);
 		mctSubMenu.add(mct3);
+		
+		JMenu netMenu = new JMenu("Network Tools");
+		this.add(netMenu);
+		netMenu.add(createMenuItem("Show TPN transitions", "", null, new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().io.markTransitions(0);
+			}
+		}));
+		netMenu.add(createMenuItem("Show DPN transitions", "", null, new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().io.markTransitions(1);
+			}
+		}));
+		netMenu.add(createMenuItem("Show TPN/DPN transitions", "", null, new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().io.markTransitions(2);
+			}
+		}));
 	}
 	
 	@SuppressWarnings("unused")
