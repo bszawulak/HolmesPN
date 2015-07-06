@@ -629,7 +629,7 @@ public class Transition extends Node {
 	 * @return boolean - true, jeśli zegar DPN ma wartość równą ustalonemu czasowi DPN dla tranzycji
 	 */
 	public boolean isDPNforcedToFire() {
-		if(duration == durationTimer)
+		if(duration <= durationTimer)
 			return true;
 		else
 			return false;

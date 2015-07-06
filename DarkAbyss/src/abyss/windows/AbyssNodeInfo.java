@@ -66,10 +66,10 @@ public class AbyssNodeInfo extends JFrame {
 	private XYSeriesCollection dynamicsSeriesDataSet = null;
 	private JFreeChart dynamicsChart;
 	private int simSteps = 1000;
-	private int repeated = 10;
+	private int repeated = 1;
 	private JSpinner transIntervalSpinner;
 	private boolean maximumMode = false;
-	private int transInterval = 10;
+	private int transInterval = 1;
 	
 	private NetType choosenNetType = NetType.BASIC;
 	
@@ -96,6 +96,9 @@ public class AbyssNodeInfo extends JFrame {
 		parentFrame = papa;
 		this.transition = transition;
 		setTitle("Node: "+transition.getName());
+		
+		if(transition.getDPNstatus() || transition.getTPNstatus())
+			choosenNetType = NetType.TIME;
 		
 		initializeCommon();
 		initializeTransitionInfo();
@@ -399,8 +402,6 @@ public class AbyssNodeInfo extends JFrame {
 		return chartButtonPanel;
 	}
 	
-	
-	
 	/**
 	 * Metoda odpowiedzialna za elementy interfejsu właściwości dla tranzycji sieci.
 	 */
@@ -618,7 +619,7 @@ public class AbyssNodeInfo extends JFrame {
 		chartButtonPanel.add(labelInterval);
 		
 		int maxVal = simSteps / 10;
-		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(10, 1, maxVal, 1);
+		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(transInterval, 1, maxVal, 1);
 		transIntervalSpinner = new JSpinner(intervSpinnerModel);
 		transIntervalSpinner.setBounds(chartX+210, chartY_2nd, 60, 25);
 		transIntervalSpinner.addChangeListener(new ChangeListener() {
@@ -653,7 +654,12 @@ public class AbyssNodeInfo extends JFrame {
 		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
 		final JComboBox<String> simNetMode = new JComboBox<String>(simModeName);
 		simNetMode.setBounds(chartX+400, chartY_2nd, 120, 25);
-		simNetMode.setSelectedIndex(0);
+		
+		if(choosenNetType == NetType.TIME)
+			simNetMode.setSelectedIndex(1);
+		else
+			simNetMode.setSelectedIndex(0);
+		
 		simNetMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -832,7 +838,7 @@ public class AbyssNodeInfo extends JFrame {
 				}
 			}
 			series.add(step, value);
-			step += interval;
+			step += (interval-1);
 		}
 		dynamicsSeriesDataSet.addSeries(series);
 		return dataVector;

@@ -177,8 +177,13 @@ public class StateSimulator {
 		if (simulationType == NetType.BASIC) {
 			Collections.shuffle(allTransitionsIndicesList);
 
-			for (int i = 0; i < transitions.size(); i++) {
+			for (int i = 0; i < allTransitionsIndicesList.size(); i++) {
 				Transition transition = transitions.get(allTransitionsIndicesList.get(i));
+				//if(transitions.indexOf(transition)==14 && transition.isActive() == false) {
+					//@SuppressWarnings("unused")
+					//int x=1;
+				//}
+				
 				if (transition.isActive() )
 					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();

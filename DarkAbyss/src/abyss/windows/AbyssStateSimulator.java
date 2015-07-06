@@ -93,6 +93,7 @@ public class AbyssStateSimulator extends JFrame {
 	private ArrayList<String> placesInChartStr;
 	private boolean sortedP = false;
 	private boolean sortedT = false;
+	private NetType choosenNetType = NetType.BASIC;
 	
 	private XYSeriesCollection placesSeriesDataSet = null;
 	private XYSeriesCollection transitionsSeriesDataSet = null;
@@ -177,7 +178,7 @@ public class AbyssStateSimulator extends JFrame {
 		
 		JPanel dataAcquisitionPanel = new JPanel(null);
 		dataAcquisitionPanel.setBorder(BorderFactory.createTitledBorder("Data acquisition"));
-		dataAcquisitionPanel.setBounds(0, 0, 600, 100);
+		dataAcquisitionPanel.setBounds(0, 0, 650, 100);
 		int posXda = 10;
 		int posYda = 20;
 		
@@ -242,8 +243,31 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		dataAcquisitionPanel.add(simMode);
 		
+		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
+		final JComboBox<String> simNetMode = new JComboBox<String>(simModeName);
+		simNetMode.setBounds(posXda+380, posYda, 120, 30);
+		simNetMode.setSelectedIndex(0);
+		simNetMode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selectedModeIndex = simNetMode.getSelectedIndex();
+				switch(selectedModeIndex) {
+					case 0:
+						choosenNetType = NetType.BASIC;
+						break;
+					case 1:
+						choosenNetType = NetType.TIME;
+						break;
+					case 2:
+						choosenNetType = NetType.HYBRID;
+						break;
+				}
+			}
+		});
+		dataAcquisitionPanel.add(simNetMode);
+		
 		JButton clearDataButton = new JButton("Clear");
-		clearDataButton.setBounds(posXda+380, posYda, 110, 30);
+		clearDataButton.setBounds(posXda+510, posYda, 110, 30);
 		clearDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/clearData.png"));
 		clearDataButton.setToolTipText("Clear all charts and data vectors. Reset simulator.");
 		clearDataButton.addActionListener(new ActionListener() {
@@ -1267,7 +1291,9 @@ public class AbyssStateSimulator extends JFrame {
 		clearAllData();
 		
 		progressBar.setMaximum(simSteps);
-		boolean success = ssim.initiateSim(NetType.BASIC, maximumMode);
+		//choosenNetType
+		//boolean success = ssim.initiateSim(NetType.BASIC, maximumMode);
+		boolean success = ssim.initiateSim(choosenNetType, maximumMode);
 		ssim.simulateNet(simSteps, progressBar);
 		
 		if(success == false) {

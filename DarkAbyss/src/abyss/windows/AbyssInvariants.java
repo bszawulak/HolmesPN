@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -28,8 +29,12 @@ import abyss.analyse.InvariantsCalculatorFeasible;
 import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
 import abyss.files.io.IOprotocols;
+import abyss.math.Arc;
 import abyss.math.PetriNet;
 import abyss.math.Place;
+import abyss.math.Transition;
+import abyss.math.Arc.TypesOfArcs;
+import abyss.math.PetriNetElement.PetriNetElementType;
 import abyss.utilities.Tools;
 import abyss.varia.Check;
 import abyss.workspace.ExtensionFileFilter;
@@ -430,6 +435,20 @@ public class AbyssInvariants extends JFrame {
 		loadRefButton.setFocusPainted(false);
 		panel.add(loadRefButton);
 		
+		
+		JButton testRefButton = new JButton();
+		testRefButton.setText("<html>&nbsp;&nbsp;Incidence<br />&nbsp;&nbsp;&nbsp;matrix</html>");
+		testRefButton.setBounds(posX, posY+180, 110, 32);
+		testRefButton.setMargin(new Insets(0, 0, 0, 0));
+		testRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
+		testRefButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				getIncMatrix();
+			}
+		});
+		testRefButton.setFocusPainted(false);
+		panel.add(testRefButton);
+		
 		JCheckBox detailsCheckBox = new JCheckBox("Details");
 		detailsCheckBox.setBounds(posX, posY+144, 110, 20);
 		detailsCheckBox.addActionListener(new ActionListener() {
@@ -448,6 +467,87 @@ public class AbyssInvariants extends JFrame {
 		return panel;
 	}
 	
+	protected void getIncMatrix() {
+		HashMap<Place, Integer> placesMap = new HashMap<Place, Integer>();
+		HashMap<Transition, Integer> transitionsMap = new HashMap<Transition, Integer>();
+		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Arc> arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
+		
+		for (int i = 0; i < places.size(); i++) {
+			placesMap.put(places.get(i), i);
+		}
+		for (int i = 0; i < transitions.size(); i++) {
+			transitionsMap.put(transitions.get(i), i);
+		}
+		
+		ArrayList<ArrayList<Integer>> globalIncidenceMatrix = new ArrayList<ArrayList<Integer>>();
+
+		//tworzenie macierzy TP - precyzyjnie do obliczeń T-inwariantów
+		for (int trans = 0; trans < transitions.size(); trans++) {
+			ArrayList<Integer> transRow = new ArrayList<Integer>();
+			for (int place = 0; place < places.size(); place++) {
+				transRow.add(0);
+			}
+			globalIncidenceMatrix.add(transRow);
+		}
+		//wypełnianie macierzy incydencji
+		for (Arc oneArc : arcs) {
+			int tPosition = 0;
+			int pPosition = 0;
+			int incidenceValue = 0;
+			
+			if(oneArc.getArcType() != TypesOfArcs.NORMAL) {
+				continue;
+			}
+
+			if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION) {
+				tPosition = transitionsMap.get(oneArc.getStartNode());
+				pPosition = placesMap.get(oneArc.getEndNode());
+				incidenceValue = 1 * oneArc.getWeight();
+				
+				Transition tr = (Transition) oneArc.getStartNode();
+				Place pl = (Place) oneArc.getEndNode();
+				int tr_pos = transitions.indexOf(tr);
+				int pl_pos = places.indexOf(pl);
+			} else { //miejsca
+				tPosition = transitionsMap.get(oneArc.getEndNode());
+				pPosition = placesMap.get(oneArc.getStartNode());
+				incidenceValue = -1 * oneArc.getWeight();
+				
+				Transition tr = (Transition) oneArc.getEndNode();
+				Place pl = (Place) oneArc.getStartNode();
+				int tr_pos = transitions.indexOf(tr);
+				int pl_pos = places.indexOf(pl);
+			}
+			int oldValue = globalIncidenceMatrix.get(tPosition).get(pPosition);
+			if(oldValue != 0) { //detekcja łuków podwójnych
+				ArrayList<Integer> hiddenReadArc = new ArrayList<Integer>();
+				hiddenReadArc.add(pPosition);
+				hiddenReadArc.add(tPosition);
+			}
+			
+			globalIncidenceMatrix.get(tPosition).set(pPosition, oldValue+incidenceValue);
+		}
+		
+		AbyssNotepad notePad = new AbyssNotepad(900,600);
+		notePad.setVisible(true);
+		
+		notePad.addTextLineNL("", "text");
+		for(int t=0; t<globalIncidenceMatrix.size(); t++) {
+			ArrayList<Integer> transRow = globalIncidenceMatrix.get(t);
+			String text = "t"+t+" ";
+			
+			for(int p=0; p<transRow.size(); p++) {
+				text += " "+transRow.get(p);
+			}
+			notePad.addTextLineNL(text, "text");
+		}
+		
+		
+		
+	}
+
 	/**
 	 * Metoda wczytująca nowy plik inwariantów (o ile już jakieś są w systemie - celem bycia zbiorem referencyjnym w
 	 * stosunku do wczytanego tutaj) oraz porównująca go ze zbiorem referencyjnym.
