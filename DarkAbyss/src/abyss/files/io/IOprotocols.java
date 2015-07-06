@@ -926,13 +926,27 @@ public class IOprotocols {
 			}
 			pw.print("\r\n");
 
-			for (int i = 0; i < invariants.size(); i++) { //po wszystkich inwariantach
-				pw.print(i+1);
-				for (int t = 0; t < invariants.get(i).size(); t++) { //po wszystkich tranzycjach
-					int value = invariants.get(i).get(t);
-					pw.print(";"+value);
+			boolean crazyMode = GUIManager.getDefaultGUIManager().accessClusterWindow().crazyMode;
+			if(crazyMode) {
+				for (int i = 0; i < invariants.size(); i++) { //po wszystkich inwariantach
+					pw.print(i+1);
+					for (int t = 0; t < invariants.get(i).size(); t++) { //po wszystkich tranzycjach
+						int value = invariants.get(i).get(t);
+						if(value>0)
+							value = 1;
+						pw.print(";"+value);
+					}
+					pw.print("\r\n");
 				}
-				pw.print("\r\n");
+			} else {
+				for (int i = 0; i < invariants.size(); i++) { //po wszystkich inwariantach
+					pw.print(i+1);
+					for (int t = 0; t < invariants.get(i).size(); t++) { //po wszystkich tranzycjach
+						int value = invariants.get(i).get(t);
+						pw.print(";"+value);
+					}
+					pw.print("\r\n");
+				}
 			}
 			pw.close();
 			GUIManager.getDefaultGUIManager().log("Invariants saved as CSV file "+path, "text", true);

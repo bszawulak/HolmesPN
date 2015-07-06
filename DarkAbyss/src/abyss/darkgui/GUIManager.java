@@ -1077,6 +1077,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}
 	}
 	
+	public AbyssClusters accessClusterWindow() {
+		return windowClusters;
+	}
+	
 	/**
 	 * Metoda pomocnicza konstruktora, tworzy okno właściwości sieci.
 	 */
