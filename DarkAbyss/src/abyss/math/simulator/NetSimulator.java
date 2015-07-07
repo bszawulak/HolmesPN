@@ -35,7 +35,7 @@ public class NetSimulator {
 	private ArrayList<Transition> launchingTransitions;
 	private Stack<SimulationStep> actionStack;
 	private boolean maximumMode = false;
-	public static int DEFAULT_COUNTER = 40;			// wartość ta ma wpływ na szybkość poruszania się tokenów
+	public static int DEFAULT_COUNTER = 45;			// wartość ta ma wpływ na szybkość poruszania się tokenów
 	//public JFrame timeFrame = new JFrame("Zegar");
 	//public double timeNetStepCounter = 0;
 	//public double timeNetPartStepCounter = 0;

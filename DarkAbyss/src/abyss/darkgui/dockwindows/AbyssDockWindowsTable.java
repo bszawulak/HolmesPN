@@ -2013,7 +2013,11 @@ public class AbyssDockWindowsTable extends JPanel {
 		} else {
 			for(int i=0; i<freqVector.size(); i++) {
 				Transition realT = transitions_tmp.get(i);
-				realT.setGlowedINV(true, freqVector.get(i));
+				
+				if(freqVector.get(i)!=0)
+					realT.setGlowedINV(true, freqVector.get(i));
+				else
+					realT.setColorWithNumber(true, Color.red, true, 0, false, "");
 			}
 		}
 		invTextArea.setCaretPosition(0);
