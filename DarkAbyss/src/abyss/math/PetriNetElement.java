@@ -13,13 +13,7 @@ import org.simpleframework.xml.Element;
  *
  */
 public class PetriNetElement implements Serializable {
-	//BACKUP: 3428968829261305581L; (nie zmieniać poniższej zmiennej)
 	private static final long serialVersionUID = 3428968829261305581L;
-
-	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAĆ NAZW, DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
-	 * (przestanie być możliwe wczytywanie zapisanych projektów .abyss)
-	 */
 	public enum PetriNetElementType { ARC, PLACE, TRANSITION, UNKNOWN }
 	@Element
 	protected int ID = -1;
@@ -28,6 +22,7 @@ public class PetriNetElement implements Serializable {
 	@Element
 	protected String comment = "";
 	protected PetriNetElementType petriNetElementType;
+	protected int subNet = 0;
 
 	/**
 	 * Metoda pozwala pobrać typ elementu sieci Petriego.
@@ -108,5 +103,13 @@ public class PetriNetElement implements Serializable {
 			name = "_"+name;
 		
 		return name;
+	}
+	
+	public void setSubNet(int value) {
+		this.subNet = value;
+	}
+	
+	public int getSubNet() {
+		return subNet;
 	}
 }

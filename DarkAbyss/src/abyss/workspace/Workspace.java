@@ -133,7 +133,7 @@ public class Workspace implements SelectionActionListener {
 	/**
 	 * Metoda odpowiedzialna za usuwanie arkusza rysowania sieci z przestrzeni roboczej.
 	 * @param dockable Dockable - obiekt do usunięcia
-	 * @param boolean fastMode - true - szybkie usuwanie
+	 * @param fastMode boolean - true - szybkie usuwanie
 	 */
 	public void deleteTab(Dockable dockable, boolean fastMode) {
 		if(fastMode) {
