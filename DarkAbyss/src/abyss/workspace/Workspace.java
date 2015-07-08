@@ -53,8 +53,6 @@ public class Workspace implements SelectionActionListener {
 	private PetriNet project;
 	private GUIManager guiManager;
 	private CompositeTabDock workspaceDock;
-	
-	private Container parentTabs = null;
 
 	/**
 	 * Konstruktor obiektu klasy Workspace.
@@ -76,11 +74,9 @@ public class Workspace implements SelectionActionListener {
 		getFillerDock().addDockable(getFillerDockable(), position, position);
 
 		setProject(new PetriNet(this, "default"));
+
 		this.getProject().addActionListener(this);
-		newTab();
-		
-		parentTabs = ((Component)docks.get(0)).getParent();
-		
+		newTab();	
 	}
 	
 	@SuppressWarnings("unused")
@@ -91,15 +87,9 @@ public class Workspace implements SelectionActionListener {
 		CompositeTabDock ctd = getWorkspaceDock();
 		int ile = ctd.getChildDockCount();
 		
-		
-		
 		for(Dock dock: docks) {
 			CompositeTabDock parent = (CompositeTabDock)dock.getParentDock();
 			Container cont = ((Component)dock).getParent();
-			
-			if(!parentTabs.equals(cont)) {
-				 //parentTabs.add((Component) dock);
-			}
 			int x=1;
 		}
 		
@@ -139,6 +129,8 @@ public class Workspace implements SelectionActionListener {
 		getWorkspaceDock().addChildDock(docks.get(index), new Position(index));
 		// add menu item to the menu
 		guiManager.getMenu().addSheetItem(dockables.get(index));
+		
+		guiManager.globalSheetsList.add(tempDockable);
 		return id;
 	}
 
@@ -183,6 +175,11 @@ public class Workspace implements SelectionActionListener {
 		}
 		
 		int index = dockables.indexOf(dockable);
+		if(index == -1) {
+			GUIManager.getDefaultGUIManager().cleanLostOne(dockable);
+			return;
+		}
+		
 		if(index == 0) {
 			JOptionPane.showMessageDialog(null, "First sheet cannot be deleted. Please use clear project instead.",
 					"Cannot proceed", JOptionPane.INFORMATION_MESSAGE);

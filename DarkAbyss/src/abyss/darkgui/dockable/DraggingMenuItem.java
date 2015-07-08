@@ -15,7 +15,7 @@ import com.javadocking.drag.painter.DockableDragPainter;
 public class DraggingMenuItem extends JRadioButtonMenuItem {
 	private static final long serialVersionUID = 1L;
 
-	public DraggingMenuItem(String title,DockableDragPainter basicDockableDragPainter,
+	public DraggingMenuItem(String title, DockableDragPainter basicDockableDragPainter,
 			DockableDragPainter additionalDockableDragPainter, boolean selected) {
 		super(title);
 		// Create the dockable drag painter and dragger factory.

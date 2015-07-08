@@ -50,7 +50,9 @@ import javax.swing.filechooser.FileFilter;
 
 import com.javadocking.DockingManager;
 import com.javadocking.component.DefaultSwComponentFactory;
+import com.javadocking.dock.CompositeDock;
 import com.javadocking.dock.CompositeTabDock;
+import com.javadocking.dock.Dock;
 import com.javadocking.dock.FloatDock;
 import com.javadocking.dock.Position;
 import com.javadocking.dock.SplitDock;
@@ -161,6 +163,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private Node nameSelectedNode = null;
 	private ElementLocation nameNodeEL = null;
 	
+	public ArrayList<Dockable> globalSheetsList = new ArrayList<Dockable>();
+	
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
 	 * @param frejm JFrame - główna ramka kontener programu
@@ -253,12 +257,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		leftTabDock.addChildDock(getToolBox(), new Position(0));
 		leftTabDock.addChildDock(getSimulatorBox(), new Position(1));
 		leftTabDock.setSelectedDock(getToolBox());
-		
+
 		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
 		topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
 		topRightTabDock.setSelectedDock(getPropertiesBox());
 		
-		//bottomRightTabDock.addChildDock(getSimulatorBox(), new Position(0));
 		bottomRightTabDock.addChildDock(getInvariantsBox(), new Position(1));
 		bottomRightTabDock.addChildDock(getMctBox(), new Position(2));
 		bottomRightTabDock.addChildDock(getMCSBox(), new Position(3));
@@ -270,7 +273,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		leftSplitDock = new SplitDock();
 		leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
 		leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
-		//leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 10);
 		leftSplitDock.setDividerLocation(180);
 
 		rightSplitDock = new SplitDock();
@@ -598,8 +600,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * @return Dockable - nowe okno po dodaniu elementów
 	 */
 	public Dockable decorateDockableWithActions(Dockable dockable, boolean deletable) {
-		Dockable wrapper = new StateActionDockable(dockable,
-				new DefaultDockableStateActionFactory(), new int[0]);
+		Dockable wrapper = new StateActionDockable(dockable, new DefaultDockableStateActionFactory(), new int[0]);
 		int[] states = { DockableState.NORMAL, DockableState.MINIMIZED,
 				DockableState.MAXIMIZED, DockableState.EXTERNALIZED, DockableState.CLOSED };
 		wrapper = new StateActionDockable(wrapper, new DefaultDockableStateActionFactory(), states);
@@ -1445,5 +1446,21 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public boolean getNetChangeStatus() {
 		return getWorkspace().getProject().anythingChanged;
+	}
+	
+
+	public void cleanLostOne(Dockable x) {
+		Dock xxx = x.getDock();
+		CompositeDock yyy = xxx.getParentDock();
+		yyy.emptyChild(xxx);
+	}
+	
+	public void cleanDockables() {
+		ArrayList<Dockable> activeSheets = getWorkspace().getDockables();
+		
+		for(Dockable d : globalSheetsList){
+			if(!activeSheets.contains(d))
+				cleanLostOne(d);
+		}
 	}
 }

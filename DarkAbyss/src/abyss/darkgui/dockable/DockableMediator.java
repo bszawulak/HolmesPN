@@ -35,12 +35,10 @@ public class DockableMediator implements ItemListener, DockingListener {
 		dockable.removeDockingListener(this);
 		if (itemEvent.getStateChange() == ItemEvent.DESELECTED) {
 			// Close the dockable.
-			closeAction.actionPerformed(new ActionEvent(this,
-					ActionEvent.ACTION_PERFORMED, "Close"));
+			closeAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Close"));
 		} else {
 			// Restore the dockable.
-			restoreAction.actionPerformed(new ActionEvent(this,
-					ActionEvent.ACTION_PERFORMED, "Restore"));
+			restoreAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Restore"));
 		}
 		dockable.addDockingListener(this);
 

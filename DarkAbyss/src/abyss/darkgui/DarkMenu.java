@@ -539,6 +539,9 @@ public class DarkMenu extends JMenuBar {
 	 */
 	public void deleteSheetItem(Dockable dockableItem) {
 		int index = dockables.indexOf(dockableItem);
+		if(index == -1)
+			return;
+		
 		dockables.remove(index);
 		sheetItems.remove(index);
 		if (index > 0)

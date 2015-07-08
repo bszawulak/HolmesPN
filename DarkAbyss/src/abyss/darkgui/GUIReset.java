@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import com.javadocking.dock.CompositeDock;
+import com.javadocking.dock.Position;
 import com.javadocking.dockable.Dockable;
 
 import abyss.analyse.MCTCalculator;
@@ -89,27 +91,38 @@ public class GUIReset {
 		pNet.setFileName("");
 		
 		mastah.getSimulatorBox().createSimulatorProperties();
-		
 		pNet.repaintAllGraphPanels();
+		
+		//mastah.leftSplitDock.emptyChild(mastah.getWorkspace().getWorkspaceDock());
+		//Workspace nw = new Workspace(mastah);
+		//mastah.setWorkspace(nw); // default workspace dock
+		//mastah.getDockingListener().setWorkspace(nw);
+		//mastah.leftSplitDock.addChildDock(nw.getWorkspaceDock(), new Position(Position.CENTER));
 		
 		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
 		int dockableSize = workspace.getDockables().size();
+		
+		CompositeDock parentOfFirst = workspace.getDockables().get(0).getDock().getParentDock();
+		
 		for(int d=0; d<dockableSize; d++) {
 			Dockable dockable = workspace.getDockables().get(d);
 			String x = dockable.getID();
 			if(x.equals("Sheet 0")) {
 				continue;
 			}
-			
 			workspace.deleteTab(dockable, true);
 			d--;
 			dockableSize--;
+			
+			if(dockable.getDock().getParentDock().equals(parentOfFirst))
+				mastah.globalSheetsList.remove(dockable);
 		}
+		//			guiManager.globalSheetsList.remove(dockable);
 		
 		reset2ndOrderData();
 		IdGenerator.resetIDgenerator();
 		
-		//GUIManager.getDefaultGUIManager().setWorkspace(new Workspace(GUIManager.getDefaultGUIManager()));
+		mastah.cleanDockables();
 		
 		return true;
 	}

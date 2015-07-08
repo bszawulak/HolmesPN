@@ -381,7 +381,13 @@ public class NetHandler_Classic extends NetHandler {
 			
 			if(coarseCatcher == false) {
 				if(graphicPointsList.size() != graphicNamesPointsList.size()) {
-					GUIManager.getDefaultGUIManager().log("Critical error reading Snoopy file. Wrong number of names locations and nodes locations.", "error", true);
+					GUIManager.getDefaultGUIManager().log("Warning: wrong number of names / nodes locations for "+nodeName+
+							". Resetting names locations.", "warning", true);
+					
+					graphicNamesPointsList.clear();
+					for(int g=0; g<graphicPointsList.size(); g++) {
+						graphicNamesPointsList.add(new Point(0, 0));
+					}
 				}
 				
 				for (int i = 0; i < graphicPointsList.size(); i++) {
@@ -432,8 +438,12 @@ public class NetHandler_Classic extends NetHandler {
 					tmpTarget = j;
 				}
 			}
-			Arc nArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
-			arcList.add(nArc);
+			try {
+				Arc nArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
+				arcList.add(nArc);
+			} catch (Exception e) {
+				GUIManager.getDefaultGUIManager().log("Error: unable to add arc.", "error", true);
+			}
 			edge = false;
 		}
 	}
