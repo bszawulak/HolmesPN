@@ -1,5 +1,7 @@
 package abyss.workspace;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -26,28 +28,24 @@ import com.javadocking.dockable.DockingMode;
  * które należy aktualizować przy każdej zmianie liczby zakładek. Rozum nie jest w stanie tego ogarnąć, jak
  * powiedział król Desmond zaglądając po skończonej potrzebie do nocnika.
  * 
- * @author students - byliście panowie wtedy trzeźwi? (MR)
- * @author MR - zrozumiał jak to działa, czuje się przez to na równi z autorami tego kodu
+ * @author students
+ * @author MR
  *
  */
 public class Workspace implements SelectionActionListener {
 	private DockFactory dockFactory;
-	/**
-	 * Zawiera obiekty Dockable, czyli opakowanie w którym jest WorkspaceSheet. W tym miejscu kończy się ludzka logika.
-	 */
+	
+	/** Zawiera obiekty Dockable, czyli opakowanie w którym jest WorkspaceSheet. W tym miejscu kończy się ludzka logika.  */
 	private ArrayList<Dockable> dockables;
-	/**
-	 * Zawiera elementy typu Dock, zawierające obiekty typu Dockable. One z kolei zawierają WorkspaceSheet, które zawiera SheetPanel, który
-	 * zawiera GraphPanel. Ku chwale ojczyzny.
-	 */
+	
+	/**  Zawiera elementy typu Dock, zawierające obiekty typu Dockable. One z kolei zawierają WorkspaceSheet, które zawiera SheetPanel, który
+	 * zawiera GraphPanel. Ku chwale ojczyzny. */
+	
 	private ArrayList<Dock> docks;
-	/**
-	 * Tablica zawierająca obiekty WorkspaceSheet, które z kolei zawierają SheetPanel (JPanel) który zawiera GraphPanel. By żyło się lepiej.
-	 */
+	/** Tablica zawierająca obiekty WorkspaceSheet, które z kolei zawierają SheetPanel (JPanel) który zawiera GraphPanel. By żyło się lepiej. */
+	
 	private ArrayList<WorkspaceSheet> sheets;
-	/**
-	 * Tablica identyfikatorów obiektów WorkspaceSheet przechowywanych w tablicy sheets
-	 */
+	/** Tablica identyfikatorów obiektów WorkspaceSheet przechowywanych w tablicy sheets */
 	private ArrayList<Integer> sheetsIDtable;
 
 	private Dock fillerDock;
@@ -55,6 +53,8 @@ public class Workspace implements SelectionActionListener {
 	private PetriNet project;
 	private GUIManager guiManager;
 	private CompositeTabDock workspaceDock;
+	
+	private Container parentTabs = null;
 
 	/**
 	 * Konstruktor obiektu klasy Workspace.
@@ -78,6 +78,44 @@ public class Workspace implements SelectionActionListener {
 		setProject(new PetriNet(this, "default"));
 		this.getProject().addActionListener(this);
 		newTab();
+		
+		parentTabs = ((Component)docks.get(0)).getParent();
+		
+	}
+	
+	@SuppressWarnings("unused")
+	public void redockSheets() {
+		int i = 0;
+		Point position = new Point(0, 0);
+		
+		CompositeTabDock ctd = getWorkspaceDock();
+		int ile = ctd.getChildDockCount();
+		
+		
+		
+		for(Dock dock: docks) {
+			CompositeTabDock parent = (CompositeTabDock)dock.getParentDock();
+			Container cont = ((Component)dock).getParent();
+			
+			if(!parentTabs.equals(cont)) {
+				 //parentTabs.add((Component) dock);
+			}
+			int x=1;
+		}
+		
+		//getWorkspaceDock().addChildDock(docks.get(index), new Position(index));
+		/*
+		setWorkspaceDock(new CompositeTabDock());
+		setDockFactory(getWorkspaceDock().getChildDockFactory());
+		for (WorkspaceSheet sheet : getSheets()) {
+			Dock dock = docks.get(sheet.getId());
+			Dockable dockable = dockables.get(sheet.getId());
+			dockable.setDock(null);
+			dock.addDockable(dockable, position, position);
+			getWorkspaceDock().addChildDock(dock, new Position(i));
+			i++;
+		}
+		*/
 	}
 
 	/**
@@ -229,27 +267,12 @@ public class Workspace implements SelectionActionListener {
 
 	/**
 	 * Metoda zwracająca ostatni indeks arkusza w programie.
-	 * @param id int - nr arkusza
-	 * @return int - nr arkusza. Nie, teź nie ogarniam o co tu chodzi (MR).
+	 * @param id int - id arkusza
+	 * @return int - pozycja arkusza na liście sheetsIDtable
 	 */
 	public int getIndexOfId(int id) {
 		Integer ajDi = new Integer(id);
-		return sheetsIDtable.lastIndexOf(ajDi);
-	}
-
-	public void redockSheets() {
-		int i = 0;
-		Point position = new Point(0, 0);
-		setWorkspaceDock(new CompositeTabDock());
-		setDockFactory(getWorkspaceDock().getChildDockFactory());
-		for (WorkspaceSheet sheet : getSheets()) {
-			Dock dock = docks.get(sheet.getId());
-			Dockable dockable = dockables.get(sheet.getId());
-			dockable.setDock(null);
-			dock.addDockable(dockable, position, position);
-			getWorkspaceDock().addChildDock(dock, new Position(i));
-			i++;
-		}
+		return sheetsIDtable.lastIndexOf(ajDi); //wymuszenie odpowiedniej metody przez boxing inta w Integer
 	}
 
 	/**

@@ -13,12 +13,11 @@ import abyss.graphpanel.GraphPanel;
 
 /**
  * Klasa konkretnego obszaru roboczego. Jej obiekty są trzymane w tablicy, znajdującej
- * się w klasie WorkSpace.
+ * się w klasie Workspace.
  * @author students
  *
  */
 public class WorkspaceSheet extends JScrollPane {
-	//BACKUP:  -3216362854094205041L  (ŁAPY PRECZ OD PONIŻSZEJ ZMIENNEJ)
 	private static final long serialVersionUID = -3216362854094205041L;
 	private final int id; // aktualne id sheeta w workspace
 	private GraphPanel graphPanel;

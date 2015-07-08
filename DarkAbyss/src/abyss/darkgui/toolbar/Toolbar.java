@@ -297,8 +297,9 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", 
 				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {	
-				ProjectWriter pWrt = new ProjectWriter();
-				pWrt.writeProject("test.apf");
+				//ProjectWriter pWrt = new ProjectWriter();
+				//pWrt.writeProject("test.apf");
+				GUIManager.getDefaultGUIManager().restoreDefaultVisuals();
 			}
 		};
 		testButton.setEnabled(false);

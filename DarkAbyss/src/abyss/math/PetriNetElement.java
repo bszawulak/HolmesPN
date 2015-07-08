@@ -22,7 +22,6 @@ public class PetriNetElement implements Serializable {
 	@Element
 	protected String comment = "";
 	protected PetriNetElementType petriNetElementType;
-	protected int subNet = 0;
 
 	/**
 	 * Metoda pozwala pobrać typ elementu sieci Petriego.
@@ -103,13 +102,5 @@ public class PetriNetElement implements Serializable {
 			name = "_"+name;
 		
 		return name;
-	}
-	
-	public void setSubNet(int value) {
-		this.subNet = value;
-	}
-	
-	public int getSubNet() {
-		return subNet;
 	}
 }

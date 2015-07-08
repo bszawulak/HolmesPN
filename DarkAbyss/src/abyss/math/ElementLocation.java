@@ -10,13 +10,11 @@ import abyss.darkgui.GUIManager;
 import abyss.workspace.Workspace;
 
 /**
- * Klasa służąca do przechowywania lokalizacji wierzchołka oraz przyłączonych
- * do niej łuków.
+ * Klasa służąca do przechowywania lokalizacji wierzchołka oraz przyłączonych do niej łuków.
+ * 
  * @author students
- *
  */
 public class ElementLocation implements Serializable {
-	//BACKUP: 2775375770782696276L;  (NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = 2775375770782696276L;
 	private int sheetId;
 	private Point position;

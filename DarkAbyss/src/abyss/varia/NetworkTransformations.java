@@ -43,7 +43,13 @@ public class NetworkTransformations {
 					y /= 1.1;
 				}
 				
-				int sheetID = el.getSheetID();
+				int sheetID = GUIManager.getDefaultGUIManager().IDtoIndex(el.getSheetID());
+				
+				if(sheetID >= sheetsToChange.size()) {
+					@SuppressWarnings("unused")
+					int xx=1;
+				}
+				
 				if(sheetsToChange.get(sheetID).get(1) < x) {
 					sheetsToChange.get(sheetID).set(0, sheetID);
 					sheetsToChange.get(sheetID).set(1, (int)x);

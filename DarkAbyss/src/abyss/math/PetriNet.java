@@ -1003,16 +1003,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int returnCleanSheetID() {
 		int SID = 0;
 
-		if (getDataCore().nodes.isEmpty()) {
+		if (getDataCore().nodes.isEmpty()) { //zakładamy, że zawsze istnieje arkusz zerowy
 			SID = 0;
 		} else {
-			int tSID;// nodes.get(0).getNodeLocations()
+			int tSID;
 			ArrayList<Integer> sheetList = new ArrayList<Integer>();
 			int k = 0;
 			for (k = 0; k < GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size(); k++)
 				sheetList.add(GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(k).getId());
-			//System.out.println(sheetList.size());
-			//System.out.println(GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(k - 1).getId());
+
 			int[] tabSID = new int[GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(k - 1).getId() + 1];
 
 			for (int j = 0; j < getDataCore().nodes.size(); j++) {

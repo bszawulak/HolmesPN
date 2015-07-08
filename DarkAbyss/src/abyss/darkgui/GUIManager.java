@@ -362,6 +362,76 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if(f.exists())
 			lastPath = path;	
 	}
+	
+	/**
+	 * Metoda odpowiedzialna za przywrócenie widoku domyślnego.
+	 */
+	//TODO: prawdopodobnie w tej formie spowoduje katastrofę...
+	public void restoreDefaultVisuals() {
+		for (WorkspaceSheet sheet : workspace.getSheets()) {
+			// repaint all sheets in workspace
+			sheet.getGraphPanel().repaint();
+		}
+		// redock all sheets
+		workspace.redockSheets();
+		// recreate dock structure
+		//getDockModel().RootDock(totalSplitDock);
+		//
+		if(true)
+			return;
+		
+		leftTabDock.emptyChild(getToolBox());
+		topRightTabDock.emptyChild(getPropertiesBox());
+
+		leftTabDock = new CompositeTabDock(); // default Toolbox dock
+		topRightTabDock = new CompositeTabDock(); // default Properties dock
+		bottomRightTabDock = new CompositeTabDock(); // default Simulator dock
+		
+		//leftTabDock.setHeaderPosition(Position.BOTTOM);
+		leftTabDock.addChildDock(getToolBox(), new Position(0));
+		leftTabDock.addChildDock(getSimulatorBox(), new Position(1));
+		leftTabDock.setSelectedDock(getToolBox());
+		
+		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
+		topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
+		topRightTabDock.setSelectedDock(getPropertiesBox());
+		
+		//bottomRightTabDock.addChildDock(getSimulatorBox(), new Position(0));
+		bottomRightTabDock.addChildDock(getInvariantsBox(), new Position(1));
+		bottomRightTabDock.addChildDock(getMctBox(), new Position(2));
+		bottomRightTabDock.addChildDock(getMCSBox(), new Position(3));
+		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(4));
+		bottomRightTabDock.addChildDock(getInvSimBox(), new Position(5));
+		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
+
+		// create the split docks
+		leftSplitDock = new SplitDock();
+		leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
+		leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
+		//leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 10);
+		leftSplitDock.setDividerLocation(180);
+
+		rightSplitDock = new SplitDock();
+		rightSplitDock.addChildDock(topRightTabDock, new Position(Position.TOP));
+		rightSplitDock.addChildDock(bottomRightTabDock, new Position(Position.BOTTOM));
+		rightSplitDock.setDividerLocation((int) (screenSize.getHeight() * 2 / 5));
+
+		totalSplitDock = new SplitDock();
+		totalSplitDock.addChildDock(leftSplitDock, new Position(Position.LEFT));
+		totalSplitDock.addChildDock(rightSplitDock,new Position(Position.RIGHT));
+		totalSplitDock.setDividerLocation((int) screenSize.getWidth() - (int) screenSize.getWidth() / 6);
+		
+		// Add root dock
+		getDockModel().addRootDock("totalSplitDock", totalSplitDock, frame);
+		add(totalSplitDock, BorderLayout.CENTER);
+		
+		// save docking paths
+		DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getToolBox().getDockable()));
+		DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getPropertiesBox().getDockable()));
+		
+		this.repaint();
+	}
+	
 	/**
 	 * Metoda pomocnicza konstruktora. Ustawia główne zmienne programu, wczytuje plik
 	 * właściwości, itd.
@@ -955,68 +1025,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 // ************************************************************************************************
 // ************************************************************************************************
 
-
-	/**
-	 * Metoda odpowiedzialna za przywrócenie widoku domyślnego.
-	 */
-	//TODO: prawdopodobnie w tej formie spowoduje katastrofę...
-	public void restoreDefaultVisuals() {
-		getSimulatorBox().createSimulatorProperties();
-
-		// repaint all sheets in workspace
-		for (WorkspaceSheet sheet : workspace.getSheets()) {
-			sheet.getGraphPanel().repaint();
-		}
-		// redock all sheets
-		workspace.redockSheets();
-		// recreate dock structure
-		//getDockModel().RootDock(totalSplitDock);
-		//
-		leftTabDock.emptyChild(getToolBox());
-		topRightTabDock.emptyChild(getPropertiesBox());
-
-		setToolBox(new PetriNetTools());
-		setPropertiesBox(new AbyssDockWindow(DockWindowType.EDITOR));
-		setSimulatorBox(new AbyssDockWindow(DockWindowType.SIMULATOR));
-		setSelectionBox(new AbyssDockWindow(DockWindowType.SELECTOR));
-		setInvariantsBox(new AbyssDockWindow(DockWindowType.InvANALYZER));
-		setClusterSelectionBox(new AbyssDockWindow(DockWindowType.ClusterSELECTOR));
-		setMctBox(new AbyssDockWindow(DockWindowType.MctANALYZER)); //aktywuj obiekt podokna wyświetlania zbiorów MCT
-		setInvSim(new AbyssDockWindow(DockWindowType.InvSIMULATOR));
-		setMCSBox(new AbyssDockWindow(DockWindowType.MCSselector));
-		
-		//
-		leftTabDock = new CompositeTabDock(); // default Toolbox dock
-		topRightTabDock = new CompositeTabDock(); // default propertiesdock
-		leftTabDock.addChildDock(getToolBox(), new Position(0));
-		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
-		
-		// create the split docks
-		leftSplitDock = new SplitDock();
-		leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
-		leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(),
-		new Position(Position.CENTER));
-		leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 8);
-		
-		rightSplitDock = new SplitDock();
-		rightSplitDock.addChildDock(topRightTabDock, new Position(Position.RIGHT));
-		
-		totalSplitDock = new SplitDock();
-		totalSplitDock.addChildDock(leftSplitDock, new Position(Position.LEFT));
-		totalSplitDock.addChildDock(rightSplitDock, new Position(Position.RIGHT));
-		totalSplitDock.setDividerLocation((int) screenSize.getWidth()- (int) screenSize.getWidth() / 6);
-		
-		// Add root dock
-		getDockModel().addRootDock("totalSplitDock", totalSplitDock, frame);
-		add(totalSplitDock, BorderLayout.CENTER);
-		
-		// save docking paths
-		DockingManager.getDockingPathModel().add(
-		DefaultDockingPath.createDockingPath(getToolBox().getDockable()));
-		DockingManager.getDockingPathModel().add(
-		DefaultDockingPath.createDockingPath(getPropertiesBox().getDockable()));
-		this.repaint();
-	}
 
 	/**
 	 * Główna metoda odpowiedzialna za generowanie zbiorów MCT.

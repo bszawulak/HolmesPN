@@ -108,6 +108,9 @@ public class GUIReset {
 		
 		reset2ndOrderData();
 		IdGenerator.resetIDgenerator();
+		
+		//GUIManager.getDefaultGUIManager().setWorkspace(new Workspace(GUIManager.getDefaultGUIManager()));
+		
 		return true;
 	}
 	

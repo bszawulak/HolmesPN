@@ -322,29 +322,6 @@ public class GUIOperations {
 			}
 		}
 		return status;
-		
-		/*
-		String lastPath = overlord.getLastPath();
-		FileFilter[] filters = new FileFilter[1];
-		filters[0] = new 
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", overlord.getWorkspace().getProject().getFileName());
-		if(selectedFile.equals("")) {
-			return false;
-		}
-		
-		
-		if(Tools.overwriteDecision(selectedFile) == false)
-			return false;
-		
-		File file = new File(selectedFile);
-		String fileExtension = ".abyss";
-		if(selectedFile.toLowerCase().contains(".abyss"))
-			fileExtension = "";
-		
-		boolean status = overlord.getWorkspace().getProject().saveAsAbyss(file.getPath() + fileExtension);
-		overlord.setLastPath(file.getParentFile().getPath());
-		return status;
-		*/
 	}
 	
 	/**

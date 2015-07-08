@@ -23,7 +23,6 @@ import abyss.math.Arc.TypesOfArcs;
  *
  */
 public class NetHandler_Classic extends NetHandler {
-	// Zmienne boolowskie parsera
 	public boolean Snoopy = false;
 	public boolean node = false;
 	public boolean atribute = false;
@@ -36,11 +35,14 @@ public class NetHandler_Classic extends NetHandler {
 	public boolean metadata = false;
 	public boolean endAtribute = false;
 
-	private ArrayList<ElementLocation> tmpElementLocationList = new ArrayList<ElementLocation>();
-	private ArrayList<Integer> graphicPointsIdList = new ArrayList<Integer>();
+	//private ArrayList<ElementLocation> elementLocationsList = new ArrayList<ElementLocation>();
+	public ArrayList<Integer> graphicPointsIdList = new ArrayList<Integer>();
+	public ArrayList<Integer> graphicPointsNetNumbers = new ArrayList<Integer>();
 	public ArrayList<Point> graphicPointsList = new ArrayList<Point>();
-	private ArrayList<ElementLocation> elementLocationList = new ArrayList<ElementLocation>();
+	public ArrayList<ElementLocation> globalElementLocationList = new ArrayList<ElementLocation>();
 	public ArrayList<Point> graphicNamesPointsList = new ArrayList<Point>();
+	public int globalNetsCounted = 0;
+	public boolean coarseCatcher = false;
 
 	// Edge
 	public int arcMultiplicity;
@@ -53,11 +55,11 @@ public class NetHandler_Classic extends NetHandler {
 	public boolean variableMarking = false;
 	public boolean variableLogic = false;
 	public boolean variableComent = false;
-	//public Node tmpNode;
+	// public Node tmpNode;
 	public String nodeType;
 	public String nodeName;
 	public int nodeID;
-	public int nodeSID;
+	// public int nodeSID;
 	public int nodeMarking;
 	public int nodeLogic;
 	public String nodeComment;
@@ -77,14 +79,22 @@ public class NetHandler_Classic extends NetHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {		
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
-			nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
+			//nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 		}
 
 		// Ustawianie typu wierzchołka
 		if (qName.equalsIgnoreCase("nodeclass")) {
 			if (attributes.getValue(1).equals("Place")) {
+				coarseCatcher = false;
 				nodeType = "Place";
-			} else {
+			} else if (attributes.getValue(1).equals("Coarse Place")) {
+				coarseCatcher = true;
+				nodeType = "Place";
+			} else if (attributes.getValue(1).equals("Transition")) {
+				coarseCatcher = false;
+				nodeType = "Transition";
+			} else if (attributes.getValue(1).equals("Coarse Transition")){
+				coarseCatcher = true;
 				nodeType = "Transition";
 			}
 		}
@@ -169,9 +179,13 @@ public class NetHandler_Classic extends NetHandler {
 				&& (edgeclass == false) && (point == false)
 				&& (points == false) && (node == true)) {
 			if (attributes.getQName(0).equals("x")) {
-				double o1 = Double.parseDouble(attributes.getValue(0));
-				double o2 = Double.parseDouble(attributes.getValue(1));
-				int o3 = Integer.parseInt(attributes.getValue(2));
+				double xPos = Double.parseDouble(attributes.getValue(0));
+				double yPos = Double.parseDouble(attributes.getValue(1));
+				int snoopyID = Integer.parseInt(attributes.getValue(2));
+				int netNumber = Integer.parseInt(attributes.getValue(3));
+				
+				if(netNumber > globalNetsCounted)
+					globalNetsCounted = netNumber;
 				
 				//TODO:
 				double resizeFactor = 1;
@@ -183,13 +197,14 @@ public class NetHandler_Classic extends NetHandler {
 						resizeFactor=1;
 				} catch (Exception e) { }
 				
-				o1 *= resizeFactor;
-				o2 *= resizeFactor;
+				xPos *= resizeFactor;
+				yPos *= resizeFactor;
 				
-				int p1 = (int) o1;
-				int p2 = (int) o2;
+				int p1 = (int) xPos;
+				int p2 = (int) yPos;
 				graphicPointsList.add(new Point(p1, p2));
-				graphicPointsIdList.add(o3);
+				graphicPointsIdList.add(snoopyID);
+				graphicPointsNetNumbers.add(netNumber);
 			}
 		}
 		
@@ -311,34 +326,48 @@ public class NetHandler_Classic extends NetHandler {
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			int wid = Toolkit.getDefaultToolkit().getScreenSize().width - 20;
 			int hei = Toolkit.getDefaultToolkit().getScreenSize().height - 20;
-			int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
-			int tmpX = 0;
-			int tmpY = 0;
-			boolean xFound = false;
-			boolean yFound = false;
-			GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(SIN).getGraphPanel();
-			for (int l = 0; l < elementLocationList.size(); l++) {
-				if (elementLocationList.get(l).getPosition().x > wid) {
-					tmpX = l;
-					xFound = true;
-					wid = elementLocationList.get(l).getPosition().x;
+			//int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
+			
+			int sheetsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size();
+			for(int s = sheetsNumber; s<globalNetsCounted; s++) {
+				GUIManager.getDefaultGUIManager().getWorkspace().newTab();
+			}
+			
+			for(int net=0; net<sheetsNumber; net++) {
+				int tmpX = 0;
+				int tmpY = 0;
+				boolean xFound = false;
+				boolean yFound = false;
+				
+				GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(net).getGraphPanel();
+				
+				for (int l = 0; l < globalElementLocationList.size(); l++) {
+					if(globalElementLocationList.get(l).getSheetID() != net)
+						continue;
+					
+					if (globalElementLocationList.get(l).getPosition().x > wid) {
+						tmpX = l;
+						xFound = true;
+						wid = globalElementLocationList.get(l).getPosition().x;
+					}
+					if (globalElementLocationList.get(l).getPosition().y > hei) {
+						tmpY = l;
+						yFound = true;
+						hei = globalElementLocationList.get(l).getPosition().y;
+					}
 				}
-				if (elementLocationList.get(l).getPosition().y > hei) {
-					tmpY = l;
-					yFound = true;
-					hei = elementLocationList.get(l).getPosition().y;
+				if (xFound == true && yFound == false) {
+					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, graphPanel.getSize().height));
+				}
+				if (yFound == true && xFound == false) {
+					graphPanel.setSize(new Dimension(graphPanel.getSize().width, globalElementLocationList.get(tmpY).getPosition().y + 150));
+				}
+				if (xFound == true && yFound == true) { //z każdym nowym punktem dostosowujemy rozmiar sieci
+					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, 
+							globalElementLocationList.get(tmpY).getPosition().y + 150));
 				}
 			}
-			if (xFound == true && yFound == false) {
-				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX).getPosition().x + 90, graphPanel.getSize().height));
-			}
-			if (yFound == true && xFound == false) {
-				graphPanel.setSize(new Dimension(graphPanel.getSize().width, elementLocationList.get(tmpY).getPosition().y + 90));
-			}
-			if (xFound == true && yFound == true) { //z każdym nowym punktem dostosowujemy rozmiar sieci
-				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX).getPosition().x + 90, 
-						elementLocationList.get(tmpY).getPosition().y + 90));
-			}
+			
 
 			// Tablice łuków dla ElementLocation
 			nodesList.addAll(tmpTransitionList);
@@ -347,34 +376,36 @@ public class NetHandler_Classic extends NetHandler {
 		// Tworzenie wierzchołka i wszystkich jego ElementLocation
 
 		if (qName.equalsIgnoreCase("node")) {
-			tmpElementLocationList = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> elementLocationsList = new ArrayList<ElementLocation>();
 			ArrayList<ElementLocation> namesElLocations = new ArrayList<ElementLocation>();
 			
-			if(graphicPointsList.size() != graphicNamesPointsList.size()) {
-				GUIManager.getDefaultGUIManager().log("Critical error reading Snoopy file. Wrong number of names locations and nodes locations.", "error", true);
+			if(coarseCatcher == false) {
+				if(graphicPointsList.size() != graphicNamesPointsList.size()) {
+					GUIManager.getDefaultGUIManager().log("Critical error reading Snoopy file. Wrong number of names locations and nodes locations.", "error", true);
+				}
+				
+				for (int i = 0; i < graphicPointsList.size(); i++) {
+					int nodeSID = graphicPointsNetNumbers.get(i)-1;
+					elementLocationsList.add(new ElementLocation(nodeSID, graphicPointsList.get(i), null));
+					namesElLocations.add(new ElementLocation(nodeSID, graphicNamesPointsList.get(i), null));
+				}
+				
+				for (int j = 0; j < elementLocationsList.size(); j++) {
+					globalElementLocationList.add(elementLocationsList.get(j));
+				}
+				
+				if (nodeType == "Place") {
+					Place tmpPlace = new Place(nodeID, elementLocationsList, nodeName, nodeComment, nodeMarking);
+					tmpPlace.setNamesLocations(namesElLocations);
+					nodesList.add(tmpPlace);
+					IdGenerator.getNextPlaceId();
+				} else {	
+					Transition tmpTran = new Transition(nodeID, elementLocationsList, nodeName, nodeComment);
+					tmpTran.setNamesLocations(namesElLocations);
+					tmpTransitionList.add(tmpTran);
+					IdGenerator.getNextTransitionId();
+				}
 			}
-			
-			for (int i = 0; i < graphicPointsList.size(); i++) {
-				tmpElementLocationList.add(new ElementLocation(nodeSID, graphicPointsList.get(i), null));
-				namesElLocations.add(new ElementLocation(nodeSID, graphicNamesPointsList.get(i), null));
-			}
-			
-			for (int j = 0; j < tmpElementLocationList.size(); j++) {
-				elementLocationList.add(tmpElementLocationList.get(j));
-			}
-			
-			if (nodeType == "Place") {
-				Place tmpPlace = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
-				tmpPlace.setNamesLocations(namesElLocations);
-				nodesList.add(tmpPlace);
-				IdGenerator.getNextPlaceId();
-			} else {	
-				Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
-				tmpTran.setNamesLocations(namesElLocations);
-				tmpTransitionList.add(tmpTran);
-				IdGenerator.getNextTransitionId();
-			}
-
 			// zerowanie zmiennych
 			nodeName = "";
 			nodeID = 0;
@@ -384,6 +415,8 @@ public class NetHandler_Classic extends NetHandler {
 			node = false;
 			graphicPointsList.clear();
 			graphicNamesPointsList.clear();
+			graphicPointsNetNumbers.clear();
+			coarseCatcher = false;
 		}
 
 		// tworzenie łuku
@@ -399,7 +432,7 @@ public class NetHandler_Classic extends NetHandler {
 					tmpTarget = j;
 				}
 			}
-			Arc nArc = new Arc(elementLocationList.get(tmpSource), elementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
+			Arc nArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
 			arcList.add(nArc);
 			edge = false;
 		}

@@ -240,8 +240,8 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * 
-	 * @param g2d Graphics2D
+	 * Metoda rysująca siatkę na panelu.
+	 * @param g2d Graphics2D - obiekt rysujący
 	 */
 	private void drawMesh(Graphics2D g2d) {
 		g2d.setColor(EditorResources.graphPanelMeshColor);

@@ -20,8 +20,9 @@ import abyss.math.Arc.TypesOfArcs;
 import abyss.math.Transition.TransitionType;
 
 /**
- * Klasa zajmująca się wczytaniem czasowej sieci Petriego z formatu .sptpt
- * @author MR
+ * Parser sieci czasowych (Snoopy)
+ * 
+ * @author MR (na bazie NetHandler_Classic)
  *
  */
 public class NetHandler_Time extends NetHandler {
@@ -46,11 +47,14 @@ public class NetHandler_Time extends NetHandler {
 	public boolean readDPN = false;
 	public boolean timeTrans = false;
 
-	private ArrayList<ElementLocation> tmpElementLocationList = new ArrayList<ElementLocation>();
-	private ArrayList<Integer> graphicPointsIdList = new ArrayList<Integer>();
+	public ArrayList<ElementLocation> elementLocationsList = new ArrayList<ElementLocation>();
+	public ArrayList<Integer> graphicPointsIdList = new ArrayList<Integer>();
+	public ArrayList<Integer> graphicPointsNetNumbers = new ArrayList<Integer>();
 	public ArrayList<Point> graphicPointsList = new ArrayList<Point>();
-	private ArrayList<ElementLocation> elementLocationList = new ArrayList<ElementLocation>();
-
+	public ArrayList<ElementLocation> globalElementLocationList = new ArrayList<ElementLocation>();
+	public int globalNetsCounted = 0;
+	public boolean coarseCatcher = false;
+	
 	// Edge
 	public int arcMultiplicity;
 	public String arcComment = "";
@@ -101,8 +105,16 @@ public class NetHandler_Time extends NetHandler {
 		// Ustawianie typu noda
 		if (qName.equalsIgnoreCase("nodeclass")) {
 			if (attributes.getValue(1).equals("Place")) {
+				coarseCatcher = false;
 				nodeType = "Place";
-			} else {
+			} else if (attributes.getValue(1).equals("Coarse Place")) {
+				coarseCatcher = true;
+				nodeType = "Place";
+			} else if (attributes.getValue(1).equals("Transition")) {
+				coarseCatcher = false;
+				nodeType = "Transition";
+			} else if (attributes.getValue(1).equals("Coarse Transition")){
+				coarseCatcher = true;
 				nodeType = "Transition";
 			}
 		}
@@ -214,9 +226,10 @@ public class NetHandler_Time extends NetHandler {
 				&& (edgeclass == false) && (point == false)
 				&& (points == false) && (node == true)) {
 			if (attributes.getQName(0).equals("x")) {
-				double o1 = Double.parseDouble(attributes.getValue(0));
-				double o2 = Double.parseDouble(attributes.getValue(1));
-				int o3 = Integer.parseInt(attributes.getValue(2));
+				double xPos = Double.parseDouble(attributes.getValue(0));
+				double yPos = Double.parseDouble(attributes.getValue(1));
+				int snoopyID = Integer.parseInt(attributes.getValue(2));
+				int netNumber = Integer.parseInt(attributes.getValue(3));
 				
 				//TODO:
 				double resizeFactor = 1;
@@ -225,14 +238,15 @@ public class NetHandler_Time extends NetHandler {
 					resizeFactor += ((double)addF/(double)100);
 				} catch (Exception e) { }
 				
-				o1 *= resizeFactor;
-				o2 *= resizeFactor;
+				xPos *= resizeFactor;
+				yPos *= resizeFactor;
 				
-				int p1 = (int) o1;
-				int p2 = (int) o2;
+				int p1 = (int) xPos;
+				int p2 = (int) yPos;
 				
 				graphicPointsList.add(new Point(p1, p2));
-				graphicPointsIdList.add(o3);
+				graphicPointsIdList.add(snoopyID);
+				graphicPointsNetNumbers.add(netNumber);
 			}
 		}
 		if (qName.equalsIgnoreCase("points")) {
@@ -389,27 +403,27 @@ public class NetHandler_Time extends NetHandler {
 			boolean xFound = false;
 			boolean yFound = false;
 			GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(SIN).getGraphPanel();
-			for (int l = 0; l < elementLocationList.size(); l++) {
-				if (elementLocationList.get(l).getPosition().x > wid) {
+			for (int l = 0; l < globalElementLocationList.size(); l++) {
+				if (globalElementLocationList.get(l).getPosition().x > wid) {
 					tmpX = l;
 					xFound = true;
-					wid = elementLocationList.get(l).getPosition().x;
+					wid = globalElementLocationList.get(l).getPosition().x;
 				}
-				if (elementLocationList.get(l).getPosition().y > hei) {
+				if (globalElementLocationList.get(l).getPosition().y > hei) {
 					tmpY = l;
 					yFound = true;
-					hei = elementLocationList.get(l).getPosition().y;
+					hei = globalElementLocationList.get(l).getPosition().y;
 				}
 			}
 			if (xFound == true && yFound == false) {
-				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX).getPosition().x + 90, graphPanel.getSize().height));
+				graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 90, graphPanel.getSize().height));
 			}
 			if (yFound == true && xFound == false) {
-				graphPanel.setSize(new Dimension(graphPanel.getSize().width,elementLocationList.get(tmpY).getPosition().y + 90));
+				graphPanel.setSize(new Dimension(graphPanel.getSize().width,globalElementLocationList.get(tmpY).getPosition().y + 90));
 			}
 			if (xFound == true && yFound == true) {
-				graphPanel.setSize(new Dimension(elementLocationList.get(tmpX)
-					.getPosition().x + 90, elementLocationList.get(tmpY).getPosition().y + 90));
+				graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX)
+					.getPosition().x + 90, globalElementLocationList.get(tmpY).getPosition().y + 90));
 			}
 
 			// Tablice lukow dla element location
@@ -418,7 +432,7 @@ public class NetHandler_Time extends NetHandler {
 
 		// Tworzenie noda i wszystkich jego element location
 		if (qName.equalsIgnoreCase("node")) {
-			tmpElementLocationList = new ArrayList<ElementLocation>();
+			elementLocationsList = new ArrayList<ElementLocation>();
 			ArrayList<ElementLocation> namesElLocations = new ArrayList<ElementLocation>();
 			
 			if(graphicPointsList.size() != graphicNamesPointsList.size()) {
@@ -426,16 +440,16 @@ public class NetHandler_Time extends NetHandler {
 			}
 			
 			for (int k = 0; k < graphicPointsList.size(); k++) {
-				tmpElementLocationList.add(new ElementLocation(nodeSID, graphicPointsList.get(k), null));
+				elementLocationsList.add(new ElementLocation(nodeSID, graphicPointsList.get(k), null));
 				namesElLocations.add(new ElementLocation(nodeSID, graphicNamesPointsList.get(k), null));
 			}
 
-			for (int u = 0; u < tmpElementLocationList.size(); u++) {
-				elementLocationList.add(tmpElementLocationList.get(u));
+			for (int u = 0; u < elementLocationsList.size(); u++) {
+				globalElementLocationList.add(elementLocationsList.get(u));
 			}
 			
 			if (nodeType == "Place") {
-				Place tmpPlace = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
+				Place tmpPlace = new Place(nodeID, elementLocationsList, nodeName, nodeComment, nodeMarking);
 				tmpPlace.setNamesLocations(namesElLocations);
 				nodesList.add(tmpPlace);
 				IdGenerator.getNextPlaceId();
@@ -446,7 +460,7 @@ public class NetHandler_Time extends NetHandler {
 				if(timeTrans) {			
 					timeTrans = false;
 					//TimeTransition tmpTTran = new TimeTransition(nodeID, tmpElementLocationList, nodeName, nodeComment);
-					Transition tmpTTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
+					Transition tmpTTran = new Transition(nodeID, elementLocationsList, nodeName, nodeComment);
 					tmpTTran.setMinFireTime(nodeEFT);
 					tmpTTran.setMaxFireTime(nodeLFT);
 					tmpTTran.setDurationTime(duration);
@@ -463,7 +477,7 @@ public class NetHandler_Time extends NetHandler {
 					
 					IdGenerator.getNextTransitionId();
 				} else {
-					Transition tmpTran = new Transition(nodeID, tmpElementLocationList, nodeName, nodeComment);
+					Transition tmpTran = new Transition(nodeID, elementLocationsList, nodeName, nodeComment);
 					tmpTran.setNamesLocations(namesElLocations);
 					tmpTransitionList.add(tmpTran);
 					IdGenerator.getNextTransitionId();
@@ -495,8 +509,8 @@ public class NetHandler_Time extends NetHandler {
 					tmpTarget = j;
 				}
 			}
-			Arc nArc = new Arc(elementLocationList.get(tmpSource),
-					elementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
+			Arc nArc = new Arc(globalElementLocationList.get(tmpSource),
+					globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
 			arcList.add(nArc);
 			edge = false;
 		}
