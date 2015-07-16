@@ -7,9 +7,9 @@ import javax.swing.JOptionPane;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
-import abyss.math.Node;
-import abyss.math.Place;
-import abyss.math.Transition;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
 import abyss.windows.AbyssNodeInfo;
 
 /**

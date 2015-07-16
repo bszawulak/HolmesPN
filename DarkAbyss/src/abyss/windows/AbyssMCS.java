@@ -32,8 +32,8 @@ import javax.swing.text.DefaultCaret;
 import abyss.analyse.MCSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.files.io.MCSoperations;
-import abyss.math.MCSDataMatrix;
-import abyss.math.Transition;
+import abyss.math.pnElements.MCSDataMatrix;
+import abyss.math.pnElements.Transition;
 import abyss.utilities.Tools;
 
 /**

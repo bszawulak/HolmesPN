@@ -1,4 +1,4 @@
-package abyss.math;
+package abyss.math.pnElements;
 
 import java.awt.Point;
 import java.io.Serializable;

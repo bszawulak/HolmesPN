@@ -1,8 +1,7 @@
-package abyss.math;
+package abyss.math.pnElements;
 
 import abyss.analyse.MCTCalculator;
 import abyss.darkgui.GUIManager;
-import abyss.files.Snoopy.SnoopyWriter;
 import abyss.files.io.AbyssReader;
 import abyss.files.io.AbyssWriter;
 import abyss.files.io.IOprotocols;
@@ -11,12 +10,13 @@ import abyss.files.io.NetHandler_Classic;
 import abyss.files.io.NetHandler_Colored;
 import abyss.files.io.NetHandler_Extended;
 import abyss.files.io.NetHandler_Time;
+import abyss.files.io.Snoopy.SnoopyWriter;
 import abyss.graphpanel.SelectionActionListener;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.GraphPanel.DrawModes;
-import abyss.math.Node;
-import abyss.math.PetriNetElement.PetriNetElementType;
-import abyss.math.Transition.TransitionType;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.PetriNetElement.PetriNetElementType;
+import abyss.math.pnElements.Transition.TransitionType;
 import abyss.math.simulator.NetSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
 

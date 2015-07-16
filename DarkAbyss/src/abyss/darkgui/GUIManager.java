@@ -9,9 +9,9 @@ import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.darkgui.settings.SettingsManager;
 import abyss.darkgui.toolbar.Toolbar;
 import abyss.files.io.TexExporter;
-import abyss.math.ElementLocation;
-import abyss.math.Node;
-import abyss.math.Transition;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.Transition;
 import abyss.utilities.Tools;
 import abyss.windows.AbyssAbout;
 import abyss.windows.AbyssConsole;
@@ -1449,13 +1449,20 @@ public class GUIManager extends JPanel implements ComponentListener {
 		return getWorkspace().getProject().anythingChanged;
 	}
 	
-
+	/**
+	 * Metoda sprawdza do jakiego komponentu nadrzędnego należy przesłany w parametrze i go
+	 * stamtąd usuwa.
+	 * @param x Dockable - komponent
+	 */
 	public void cleanLostOne(Dockable x) {
 		Dock xxx = x.getDock();
 		CompositeDock yyy = xxx.getParentDock();
 		yyy.emptyChild(xxx);
 	}
 	
+	/**
+	 * Metoda usuwa wszystkie panele podsieci nie będące zadokowanymi w oknie worksheet.
+	 */
 	public void cleanDockables() {
 		ArrayList<Dockable> activeSheets = getWorkspace().getDockables();
 		

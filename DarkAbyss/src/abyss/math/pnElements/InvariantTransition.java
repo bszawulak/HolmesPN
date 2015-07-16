@@ -1,4 +1,4 @@
-package abyss.math;
+package abyss.math.pnElements;
 
 /**
  * Klasa rozszerzenie dla Transition. Definiuj dla każdej tranzycji jej liczbę uruchomień.

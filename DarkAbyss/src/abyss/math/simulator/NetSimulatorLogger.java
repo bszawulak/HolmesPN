@@ -3,9 +3,9 @@ package abyss.math.simulator;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.Arc;
-import abyss.math.Node;
-import abyss.math.Transition;
+import abyss.math.pnElements.Arc;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.Transition;
 import abyss.math.simulator.NetSimulator.NetType;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;

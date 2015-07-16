@@ -9,12 +9,12 @@ import java.util.HashMap;
 import javax.swing.JTextArea;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.Arc;
-import abyss.math.Arc.TypesOfArcs;
-import abyss.math.PetriNetElement.PetriNetElementType;
-import abyss.math.PetriNet;
-import abyss.math.Place;
-import abyss.math.Transition;
+import abyss.math.pnElements.Arc;
+import abyss.math.pnElements.PetriNet;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
+import abyss.math.pnElements.Arc.TypesOfArcs;
+import abyss.math.pnElements.PetriNetElement.PetriNetElementType;
 import abyss.varia.Check;
 import abyss.windows.AbyssInvariants;
 

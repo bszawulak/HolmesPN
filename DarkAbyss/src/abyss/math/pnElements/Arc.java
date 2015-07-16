@@ -1,4 +1,4 @@
-package abyss.math;
+package abyss.math.pnElements;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

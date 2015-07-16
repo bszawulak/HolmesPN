@@ -10,11 +10,11 @@ import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 
-import abyss.math.ElementLocation;
-import abyss.math.Node;
-import abyss.math.Place;
-import abyss.math.Transition;
-import abyss.math.Transition.TransitionType;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
+import abyss.math.pnElements.Transition.TransitionType;
 
 /**
  * Klasa pomocnicza, odpowiedzialna za operacje rysowania grafiki w panelach dla sieci.

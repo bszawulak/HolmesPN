@@ -1,16 +1,16 @@
-package abyss.files.Snoopy;
+package abyss.files.io.Snoopy;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.Arc;
-import abyss.math.Arc.TypesOfArcs;
-import abyss.math.ElementLocation;
-import abyss.math.Node;
-import abyss.math.Place;
-import abyss.math.Transition;
+import abyss.math.pnElements.Arc;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
+import abyss.math.pnElements.Arc.TypesOfArcs;
 import abyss.varia.Check;
 
 /**
@@ -29,9 +29,9 @@ public class SnoopyWriter {
 	private ArrayList<Place> places = new ArrayList<Place>();
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
 	
-	private ArrayList<SnoopyPlace> snoopyPlaces = new ArrayList<SnoopyPlace>();
+	private ArrayList<SnoopyWriterPlace> snoopyPlaces = new ArrayList<SnoopyWriterPlace>();
 	private ArrayList<Integer> snoopyPlacesID = new ArrayList<Integer>();
-	private ArrayList<SnoopyTransition> snoopyTransitions = new ArrayList<SnoopyTransition>();
+	private ArrayList<SnoopyWriterTransition> snoopyTransitions = new ArrayList<SnoopyWriterTransition>();
 	private ArrayList<Integer> snoopyTransitionsID = new ArrayList<Integer>();
 	
 	private String dateAndTime = "2015-01-02 10:44:56";
@@ -43,8 +43,8 @@ public class SnoopyWriter {
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		
-		snoopyPlaces = new ArrayList<SnoopyPlace>();
-		snoopyTransitions = new ArrayList<SnoopyTransition>();
+		snoopyPlaces = new ArrayList<SnoopyWriterPlace>();
+		snoopyTransitions = new ArrayList<SnoopyWriterTransition>();
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class SnoopyWriter {
 			write(bw, "    <nodeclass count=\""+placesNumber+"\" name=\"Place\">");
 			int globalPlaceId = 0;
 			for(Place p : places) {
-				SnoopyPlace sPlace = new SnoopyPlace(p);
+				SnoopyWriterPlace sPlace = new SnoopyWriterPlace(p);
 				snoopyPlaces.add(sPlace);
 				snoopyPlacesID.add(p.getID());
 				
@@ -99,7 +99,7 @@ public class SnoopyWriter {
 			write(bw, "    <nodeclass count=\""+transNumber+"\" name=\"Transition\">");
 			int globalTransId = 0;
 			for(Transition t : transitions) {
-				SnoopyTransition sTransition = new SnoopyTransition(t);
+				SnoopyWriterTransition sTransition = new SnoopyWriterTransition(t);
 				snoopyTransitions.add(sTransition);
 				snoopyTransitionsID.add(t.getID());
 				
@@ -165,7 +165,7 @@ public class SnoopyWriter {
 			write(bw, "    <nodeclass count=\""+placesNumber+"\" name=\"Place\">");
 			int globalPlaceId = 0;
 			for(Place p : places) {
-				SnoopyPlace sPlace = new SnoopyPlace(p);
+				SnoopyWriterPlace sPlace = new SnoopyWriterPlace(p);
 				snoopyPlaces.add(sPlace);
 				snoopyPlacesID.add(p.getID());
 				
@@ -190,7 +190,7 @@ public class SnoopyWriter {
 			write(bw, "    <nodeclass count=\""+transNumber+"\" name=\"Transition\">");
 			int globalTransId = 0;
 			for(Transition t : transitions) {
-				SnoopyTransition sTransition = new SnoopyTransition(t);
+				SnoopyWriterTransition sTransition = new SnoopyWriterTransition(t);
 				snoopyTransitions.add(sTransition);
 				snoopyTransitionsID.add(t.getID());
 				
@@ -312,7 +312,7 @@ public class SnoopyWriter {
 							int WTF= 1; //!!! IMPOSSIBRU!!!!
 							return;
 						}
-						SnoopyPlace source = snoopyPlaces.get(addToSPPEDAsSource);
+						SnoopyWriterPlace source = snoopyPlaces.get(addToSPPEDAsSource);
 						int nodeSourceID = source.nodeID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
@@ -321,7 +321,7 @@ public class SnoopyWriter {
 						
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
 						int addToSPPEDAsTarget = snoopyTransitionsID.lastIndexOf(targetAbyss.getID());
-						SnoopyTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
+						SnoopyWriterTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
 						//teraz należy określi do której lokalizacji portalu trafia łuk
 						
 						ElementLocation destinationLoc = a.getEndLocation();
@@ -428,7 +428,7 @@ public class SnoopyWriter {
 							int WTF= 1; //!!! IMPOSSIBRU!!!!
 							return;
 						}
-						SnoopyTransition source = snoopyTransitions.get(addToSPPEDAsSource);
+						SnoopyWriterTransition source = snoopyTransitions.get(addToSPPEDAsSource);
 						int nodeSourceID = source.nodeID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
@@ -437,7 +437,7 @@ public class SnoopyWriter {
 						
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
 						int addToSPPEDAsTarget = snoopyPlacesID.lastIndexOf(targetAbyss.getID());
-						SnoopyPlace target = snoopyPlaces.get(addToSPPEDAsTarget);
+						SnoopyWriterPlace target = snoopyPlaces.get(addToSPPEDAsTarget);
 						//teraz należy określi do której lokalizacji portalu trafia łuk
 						
 						ElementLocation destinationLoc = a.getEndLocation();
@@ -568,7 +568,7 @@ public class SnoopyWriter {
 							int WTF= 1; //!!! IMPOSSIBRU!!!!
 							return nextID+10;
 						}
-						SnoopyPlace source = snoopyPlaces.get(addToSPPEDAsSource);
+						SnoopyWriterPlace source = snoopyPlaces.get(addToSPPEDAsSource);
 						int nodeSourceID = source.nodeID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
@@ -577,7 +577,7 @@ public class SnoopyWriter {
 						
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
 						int addToSPPEDAsTarget = snoopyTransitionsID.lastIndexOf(targetAbyss.getID());
-						SnoopyTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
+						SnoopyWriterTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
 						//teraz należy określi do której lokalizacji portalu trafia łuk
 						
 						ElementLocation destinationLoc = a.getEndLocation();
@@ -691,7 +691,7 @@ public class SnoopyWriter {
 							int WTF= 1; //!!! IMPOSSIBRU!!!!
 							return nextID + 10;
 						}
-						SnoopyTransition source = snoopyTransitions.get(addToSPPEDAsSource);
+						SnoopyWriterTransition source = snoopyTransitions.get(addToSPPEDAsSource);
 						int nodeSourceID = source.nodeID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
@@ -700,7 +700,7 @@ public class SnoopyWriter {
 						
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
 						int addToSPPEDAsTarget = snoopyPlacesID.lastIndexOf(targetAbyss.getID());
-						SnoopyPlace target = snoopyPlaces.get(addToSPPEDAsTarget);
+						SnoopyWriterPlace target = snoopyPlaces.get(addToSPPEDAsTarget);
 						//teraz należy określi do której lokalizacji portalu trafia łuk
 						
 						ElementLocation destinationLoc = a.getEndLocation();

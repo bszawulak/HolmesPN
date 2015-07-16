@@ -17,9 +17,9 @@ import abyss.adam.mct.Runner;
 import abyss.analyse.MCTCalculator;
 import abyss.clusters.ClusteringExtended;
 import abyss.darkgui.GUIManager;
-import abyss.files.Snoopy.SnoopyWriter;
-import abyss.math.Place;
-import abyss.math.Transition;
+import abyss.files.io.Snoopy.SnoopyWriter;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 

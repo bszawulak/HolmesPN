@@ -10,11 +10,11 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
-import abyss.math.Arc;
-import abyss.math.ElementLocation;
-import abyss.math.Node;
-import abyss.math.PetriNetData;
-import abyss.math.PetriNetElement.PetriNetElementType;
+import abyss.math.pnElements.Arc;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.PetriNetData;
+import abyss.math.pnElements.PetriNetElement.PetriNetElementType;
 
 /**
  * Klasa odpowiedzialna za odczyt plików projektu.<br><br>

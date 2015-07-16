@@ -1,12 +1,12 @@
-package abyss.files.Snoopy;
+package abyss.files.io.Snoopy;
 
 import java.awt.Point;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.ElementLocation;
-import abyss.math.Transition;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.Transition;
 import abyss.varia.NetworkTransformations;
 
 
@@ -16,7 +16,7 @@ import abyss.varia.NetworkTransformations;
  * @author MR
  *
  */
-public class SnoopyTransition {
+public class SnoopyWriterTransition {
 	private Transition abyssTransition;
 	public int nodeID; // identyfikator podstawowy tranzycji
 	public int transID; // identyfikator główny tranzycji (od zera do liczby tranzycji)
@@ -28,7 +28,7 @@ public class SnoopyTransition {
 	/**
 	 * Konstruktor domyślny obiektu klasy SnoopyTransition.
 	 */
-	public SnoopyTransition() {
+	public SnoopyWriterTransition() {
 		grParents = new ArrayList<Integer>();
 		grParentsLocation = new ArrayList<Point>();
 		portal = false;
@@ -38,7 +38,7 @@ public class SnoopyTransition {
 	 * Konstruktor główny, otrzymuje jako parametr obiekt tranzycji Abyss.
 	 * @param t Transition - obiekt tranzycji w programie głównym
 	 */
-	public SnoopyTransition(Transition t) {
+	public SnoopyWriterTransition(Transition t) {
 		this();
 		abyssTransition = t;
 	}

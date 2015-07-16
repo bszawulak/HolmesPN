@@ -39,10 +39,10 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.ElementLocation;
-import abyss.math.Node;
-import abyss.math.Place;
-import abyss.math.Transition;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
 import abyss.math.simulator.StateSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
 import abyss.math.simulator.NetSimulator.SimulatorMode;

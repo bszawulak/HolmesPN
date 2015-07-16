@@ -4,8 +4,8 @@ import javax.swing.JFrame;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
-import abyss.math.Node;
-import abyss.math.Place;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.Place;
 
 /**
  * Klasa użytkowa dla AbyssNodeInfo, zawiera metody wywoływane interfejsem opisanym w ramach

@@ -9,12 +9,12 @@ import java.util.Date;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.IdGenerator;
-import abyss.math.Arc;
-import abyss.math.ElementLocation;
-import abyss.math.Node;
-import abyss.math.PetriNet;
-import abyss.math.Place;
-import abyss.math.Transition;
+import abyss.math.pnElements.Arc;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.PetriNet;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
 import abyss.utilities.Tools;
 import abyss.varia.Check;
 

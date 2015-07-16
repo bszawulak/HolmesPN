@@ -8,8 +8,8 @@ import abyss.analyzer.matrix.IncidenceMatrix;
 import abyss.analyzer.matrix.InputMatrix;
 import abyss.analyzer.matrix.OutputMatrix;
 import abyss.darkgui.GUIManager;
-import abyss.math.PetriNet;
-import abyss.math.Transition;
+import abyss.math.pnElements.PetriNet;
+import abyss.math.pnElements.Transition;
 
 /**
  * Klasa odpowiedzialna za generowanie zbiorów MCT.

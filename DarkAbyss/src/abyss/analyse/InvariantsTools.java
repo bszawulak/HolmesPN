@@ -6,13 +6,13 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.Arc;
-import abyss.math.Arc.TypesOfArcs;
-import abyss.math.ElementLocation;
-import abyss.math.InvariantTransition;
-import abyss.math.Node;
-import abyss.math.Place;
-import abyss.math.Transition;
+import abyss.math.pnElements.Arc;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.InvariantTransition;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
+import abyss.math.pnElements.Arc.TypesOfArcs;
 import abyss.utilities.Tools;
 
 /**

@@ -2,7 +2,7 @@ package abyss.math.simulator;
 
 import java.util.ArrayList;
 
-import abyss.math.Transition;
+import abyss.math.pnElements.Transition;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
 
 /**

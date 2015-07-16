@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
-import abyss.math.ElementLocation;
-import abyss.math.Node;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.Node;
 import abyss.workspace.WorkspaceSheet;
 
 /**

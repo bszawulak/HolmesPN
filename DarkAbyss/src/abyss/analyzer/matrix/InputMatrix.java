@@ -2,8 +2,8 @@ package abyss.analyzer.matrix;
 
 import java.util.ArrayList;
 
-import abyss.math.Place;
-import abyss.math.Transition;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
 
 /**
  * Klasa tworząca macierz wejściową do obliczeń, dziedzicząca z Matrix.

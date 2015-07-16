@@ -8,11 +8,11 @@ import javax.swing.JTable;
 
 import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
-import abyss.math.Arc;
-import abyss.math.ElementLocation;
-import abyss.math.PetriNet;
-import abyss.math.Place;
-import abyss.math.Transition;
+import abyss.math.pnElements.Arc;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.PetriNet;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
 import abyss.math.simulator.StateSimulator;
 import abyss.math.simulator.NetSimulator.NetType;
 import abyss.tables.InvariantContainer;

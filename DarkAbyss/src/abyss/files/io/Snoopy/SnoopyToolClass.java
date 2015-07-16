@@ -1,4 +1,4 @@
-package abyss.files.Snoopy;
+package abyss.files.io.Snoopy;
 
 public class SnoopyToolClass {
 	

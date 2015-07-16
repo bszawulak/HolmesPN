@@ -1,12 +1,12 @@
-package abyss.files.Snoopy;
+package abyss.files.io.Snoopy;
 
 import java.awt.Point;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.ElementLocation;
-import abyss.math.Place;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.Place;
 import abyss.varia.NetworkTransformations;
 
 /**
@@ -14,7 +14,7 @@ import abyss.varia.NetworkTransformations;
  * @author MR
  *
  */
-public class SnoopyPlace {
+public class SnoopyWriterPlace {
 	private Place abyssPlace;
 	public int nodeID; // identyfikator podstawowy miejsca (pierwsze miejsce w sieci ma nr 226, kolejne to już zależy)
 	public int placeID; // identyfikator główny miejsca (od zera do liczby miejsc)
@@ -26,7 +26,7 @@ public class SnoopyPlace {
 	/**
 	 * Konstruktor domyślny obiektu klasy SnoopyPlace.
 	 */
-	public SnoopyPlace() {
+	public SnoopyWriterPlace() {
 		grParents = new ArrayList<Integer>();
 		grParentsLocation = new ArrayList<Point>();
 		portal = false;
@@ -36,7 +36,7 @@ public class SnoopyPlace {
 	 * Konstruktor główny obiektu klasy SnoopyPlace. Dostaje obiekt miejsca z Abyss.
 	 * @param p Place - obiekt miejsca w programie
 	 */
-	public SnoopyPlace(Place p) {
+	public SnoopyWriterPlace(Place p) {
 		this();
 		abyssPlace = p;
 	}

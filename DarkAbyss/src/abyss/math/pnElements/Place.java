@@ -1,4 +1,4 @@
-package abyss.math;
+package abyss.math.pnElements;
 
 import java.awt.Graphics2D;
 import java.awt.Point;

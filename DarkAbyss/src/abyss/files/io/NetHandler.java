@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.xml.sax.helpers.DefaultHandler;
 
-import abyss.math.Arc;
-import abyss.math.Node;
+import abyss.math.pnElements.Arc;
+import abyss.math.pnElements.Node;
 
 /**
  * Klasa dziedzicząca po org.xml.sax.helpers.DefaultHandler.

@@ -3,7 +3,7 @@ package abyss.files.io;
 import java.io.PrintWriter;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.PetriNetData;
+import abyss.math.pnElements.PetriNetData;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;

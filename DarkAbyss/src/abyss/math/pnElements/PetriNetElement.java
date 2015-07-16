@@ -1,4 +1,4 @@
-package abyss.math;
+package abyss.math.pnElements;
 
 import java.io.Serializable;
 

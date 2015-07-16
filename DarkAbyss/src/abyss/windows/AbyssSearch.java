@@ -24,9 +24,9 @@ import javax.swing.JRadioButton;
 import javax.swing.text.DefaultFormatter;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.ElementLocation;
-import abyss.math.Place;
-import abyss.math.Transition;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
 import abyss.utilities.Tools;
 import abyss.workspace.WorkspaceSheet;
 

@@ -19,11 +19,11 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.Arc;
-import abyss.math.InvariantTransition;
-import abyss.math.PetriNet;
-import abyss.math.Place;
-import abyss.math.Transition;
+import abyss.math.pnElements.Arc;
+import abyss.math.pnElements.InvariantTransition;
+import abyss.math.pnElements.PetriNet;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
 import abyss.math.simulator.SimulationStep;
 
 /**

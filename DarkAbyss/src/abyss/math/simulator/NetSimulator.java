@@ -11,13 +11,13 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.Arc;
-import abyss.math.Arc.TypesOfArcs;
-import abyss.math.Node;
-import abyss.math.PetriNet;
-import abyss.math.Place;
-import abyss.math.Transition;
-import abyss.math.Transition.TransitionType;
+import abyss.math.pnElements.Arc;
+import abyss.math.pnElements.Node;
+import abyss.math.pnElements.PetriNet;
+import abyss.math.pnElements.Place;
+import abyss.math.pnElements.Transition;
+import abyss.math.pnElements.Arc.TypesOfArcs;
+import abyss.math.pnElements.Transition.TransitionType;
 
 /**
  * Klasa zajmująca się zarządzaniem całym procesem symulacji.

@@ -8,10 +8,10 @@ import java.util.ArrayList;
 
 import abyss.graphpanel.ElementDraw;
 import abyss.graphpanel.IdGenerator;
-import abyss.math.ElementLocation;
-import abyss.math.PetriNetElement;
-import abyss.math.Transition;
-import abyss.math.PetriNetElement.PetriNetElementType;
+import abyss.math.pnElements.ElementLocation;
+import abyss.math.pnElements.PetriNetElement;
+import abyss.math.pnElements.Transition;
+import abyss.math.pnElements.PetriNetElement.PetriNetElementType;
 
 /**
  * Klasa implementująca tranzycje czasowe w modelu TPN (Time Petri Net)
