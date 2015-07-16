@@ -1,4 +1,4 @@
-package abyss.unused;
+package abyss.obsolete;
 
 import java.lang.instrument.Instrumentation;
 

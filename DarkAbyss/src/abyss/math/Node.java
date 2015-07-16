@@ -17,18 +17,11 @@ import abyss.darkgui.settings.SettingsManager;
  * implementację wspólnych dla nich funkcjonalności, jak rysowanie ich na
  * odpowiednim arkuszu czy umożliwienie tworzenia portali (wielu odnośników
  * graficznych do jednego wierzchołka sieci).
- * @author students
- *
+ * @author students - główna forma
+ * @author MR - drobne poprawki
  */
 public abstract class Node extends PetriNetElement {
-	// BACKUP: -8569201372990876149L;  (NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = -8569201372990876149L;
-
-	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAĆ NAZW, DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
-	 * (przestanie być możliwe wczytywanie zapisanych projektów w formacie .abyss)
-	 */
-	
 	private ArrayList<ElementLocation> elementLocations = new ArrayList<ElementLocation>();
 	private ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
 	protected boolean isPortal = false;
@@ -40,14 +33,13 @@ public abstract class Node extends PetriNetElement {
 	 * Konstruktor obiektu klasy Node. Ustawia też początkowe wartości przesunięcia nazwy wierzchołka.
 	 * @param sheetId int - identyfikator arkusza
 	 * @param nodeId int - identyfikator elementu sieci Petriego
-	 * @param nodePosition Point - punkt, w którym znajduje się lokalizacja 
-	 * 		tego wierzchołka na odpowiednim arkuszu
-	 * @param radius int - promień okręgu, na którym opisana jest figura 
-	 * 		geometryczna reprezentująca obiekt w edytorze graficznym
+	 * @param nodePosition Point - punkt, w którym znajduje się lokalizacja tego wierzchołka na odpowiednim arkuszu
+	 * @param radius int - promień okręgu, na którym opisana jest figura geometryczna reprezentująca obiekt w edytorze graficznym
 	 */
 	public Node(int sheetId, int nodeId, Point nodePosition, int radius) {
 		this.setRadius(radius);
 		this.setID(nodeId);
+		//lokalizacje graficzne:
 		this.getNodeLocations().add(new ElementLocation(sheetId, nodePosition, this));
 		//napis - przesunięcie startowe:
 		this.getNamesLocations().add(new ElementLocation(sheetId, new Point(0,0), this));
@@ -58,8 +50,7 @@ public abstract class Node extends PetriNetElement {
 	 * tj. wtedy, kiedy jeden węzeł sieci ma 2 lub więcej lokalizacji
 	 * @param nodeId int - identyfikator elementu sieci Petriego
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji elementu sieci Petriego
-	 * @param radius int - promień okręgu, na którym opisana jest figura 
-	 * 				geometryczna reprezentująca obiekt w edytorze graficznym
+	 * @param radius int - promień okręgu, na którym opisana jest figura geometryczna reprezentująca obiekt w edytorze graficznym
 	 */
 	public Node(int nodeId, ArrayList<ElementLocation> elementLocations, int radius) {
 		this.setRadius(radius);
@@ -88,8 +79,7 @@ public abstract class Node extends PetriNetElement {
 	 * Konstruktor obiektu klasy Node. Ustawia też początkowe wartości przesunięcia nazwy wierzchołka.
 	 * @param nodeId int - identyfikator elementu sieci Petriego
 	 * @param elementLocation ElementLocation - lokalizacja elementu sieci Petriego
-	 * @param radius int - promień okręgu, na którym opisana jest figura 
-	 * 		geometryczna reprezentująca obiekt w edytorze graficznym
+	 * @param radius int - promień okręgu, na którym opisana jest figura geometryczna reprezentująca obiekt w edytorze graficznym
 	 */
 	public Node(int nodeId, ElementLocation elementLocation, int radius) {
 		this.setRadius(radius);
@@ -101,8 +91,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobrać listę wszystkich punktów lokalizacji 
-	 * wierzchołka na arkuszu o określonym identyfikatorze.
+	 * Metoda pozwala pobrać listę wszystkich punktów lokalizacji wierzchołka na arkuszu o określonym identyfikatorze.
 	 * @param sheetId int - identyfikator arkusza
 	 * @return ArrayList[Point] - lista punktów lokalizacji wierzchołka na wybranym arkuszu
 	 */
@@ -115,8 +104,7 @@ public abstract class Node extends PetriNetElement {
 	}
 	
 	/**
-	 * Metoda pozwala pobrać listę wszystkich punktów lokalizacji 
-	 * nazwy wierzchołka na arkuszu o określonym identyfikatorze.
+	 * Metoda pozwala pobrać listę wszystkich punktów lokalizacji nazwy wierzchołka na arkuszu o określonym identyfikatorze.
 	 * @param sheetId int - identyfikator arkusza
 	 * @return ArrayList[Point] - lista punktów lokalizacji nazwy wierzchołka na wybranym arkuszu
 	 */
@@ -129,8 +117,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala pobrać listę wszystkich lokacji wierzchołka na arkuszu 
-	 * o określonym identyfikatorze
+	 * Metoda pozwala pobrać listę wszystkich lokacji wierzchołka na arkuszu o określonym identyfikatorze
 	 * @param sheetId int - identyfikator arkusza
 	 * @return ArrayList[ElementLocation] - lista lokalizacji wierzchołka na wybranym arkuszu
 	 */
@@ -223,14 +210,13 @@ public abstract class Node extends PetriNetElement {
 	public boolean contains(Point point, int sheetId) {
 		for (Point p : this.getNodePositions(sheetId))
 			if (p.x - getRadius() < point.x && p.y - getRadius() < point.y
-					&& p.x + getRadius() > point.x
-					&& p.y + getRadius() > point.y)
+					&& p.x + getRadius() > point.x && p.y + getRadius() > point.y)
 				return true;
 		return false;
 	}
 
 	/**
-	 * Metoda pozwala pobrać lokację wierzchołka sieci Petriego, której 
+	 * Metoda pozwala pobrać lokalizację wierzchołka sieci Petriego, której 
 	 * obszar rysowania zawiera dany punkt na danym arkuszu.
 	 * @param point Point - sprawdzany punkt
 	 * @param sheetId int - identyfikator arkusza
@@ -353,7 +339,6 @@ public abstract class Node extends PetriNetElement {
 	public boolean removeElementLocation(ElementLocation el) {
 		int nodeElLocIndex = this.getNodeLocations().indexOf(el);
 		this.getNamesLocations().remove(nodeElLocIndex);
-		
 		this.getNodeLocations().remove(el);
 		
 		if (this.getNodeLocations().size() > 0)

@@ -13,6 +13,7 @@ import javax.swing.JTree;
 
 import abyss.analyse.MDTSCalculator;
 import abyss.darkgui.GUIManager;
+import abyss.files.Snoopy.SnoopyReader;
 import abyss.files.io.ProjectWriter;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.math.simulator.NetSimulator.SimulatorMode;
@@ -299,7 +300,8 @@ public class Toolbar extends BorderDock {
 			public void actionPerformed(ActionEvent actionEvent) {	
 				//ProjectWriter pWrt = new ProjectWriter();
 				//pWrt.writeProject("test.apf");
-				GUIManager.getDefaultGUIManager().restoreDefaultVisuals();
+				//GUIManager.getDefaultGUIManager().restoreDefaultVisuals();
+				SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\normal.spped");
 			}
 		};
 		testButton.setEnabled(false);

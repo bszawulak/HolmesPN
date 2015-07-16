@@ -24,6 +24,9 @@ public class ElementLocation implements Serializable {
 	private boolean isPortalSelected = false;
 	private ArrayList<Arc> inArcs = new ArrayList<Arc>();
 	private ArrayList<Arc> outArcs = new ArrayList<Arc>();
+	
+	private ArrayList<Arc> metaInArcs = new ArrayList<Arc>();
+	private ArrayList<Arc> metaOutArcs = new ArrayList<Arc>();
 
 	/**
 	 * Konstruktor obiektów ElementLocation.
@@ -112,7 +115,7 @@ public class ElementLocation implements Serializable {
 	}
 	
 	/**
-	 * Metoda na potrzeby ProjectReader
+	 * Metoda na potrzeby klasy ProjectReader.
 	 * @param p Point - x, y
 	 */
 	public void setNotSnappedPosition(Point p) {
@@ -173,7 +176,7 @@ public class ElementLocation implements Serializable {
 	 * @param a Arc - łuk wejściowy do dodania
 	 */
 	public void addInArc(Arc a) {
-		this.getInArcs().add(a);
+		this.inArcs.add(a);
 	}
 
 	/**
@@ -181,7 +184,7 @@ public class ElementLocation implements Serializable {
 	 * @param a Arc - łuk wejściowy do usunięcia
 	 */
 	public void removeInArc(Arc a) {
-		this.getInArcs().remove(a);
+		this.inArcs.remove(a);
 	}
 
 	/**
@@ -189,7 +192,7 @@ public class ElementLocation implements Serializable {
 	 * @param a Arc - łuk wyjściowy
 	 */
 	public void addOutArc(Arc a) {
-		this.getOutArcs().add(a);
+		this.outArcs.add(a);
 	}
 
 	/**
@@ -197,7 +200,15 @@ public class ElementLocation implements Serializable {
 	 * @param a Arc - łuk wyjściowy do usunięcia
 	 */
 	public void removeOutArc(Arc a) {
-		this.getOutArcs().remove(a);
+		this.outArcs.remove(a);
+	}
+	
+	public ArrayList<Arc> accessMetaInArcs() {
+		return this.metaInArcs;
+	}
+	
+	public ArrayList<Arc> accessMetaOutArcs() {
+		return this.metaOutArcs;
 	}
 
 	/**

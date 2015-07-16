@@ -35,12 +35,12 @@ public class NetHandler_Classic extends NetHandler {
 	public boolean metadata = false;
 	public boolean endAtribute = false;
 
-	//private ArrayList<ElementLocation> elementLocationsList = new ArrayList<ElementLocation>();
-	public ArrayList<Integer> graphicPointsIdList = new ArrayList<Integer>();
+	public ArrayList<Integer> graphicPointsSnoopyIDList = new ArrayList<Integer>();
 	public ArrayList<Integer> graphicPointsNetNumbers = new ArrayList<Integer>();
-	public ArrayList<Point> graphicPointsList = new ArrayList<Point>();
+	public ArrayList<Point> graphicPointsXYLocationsList = new ArrayList<Point>();
 	public ArrayList<ElementLocation> globalElementLocationList = new ArrayList<ElementLocation>();
-	public ArrayList<Point> graphicNamesPointsList = new ArrayList<Point>();
+	public ArrayList<Point> graphicNamesXYLocationsList = new ArrayList<Point>();
+	public ArrayList<Integer> coarseProhibitedIDList = new ArrayList<Integer>();
 	public int globalNetsCounted = 0;
 	public boolean coarseCatcher = false;
 
@@ -76,7 +76,24 @@ public class NetHandler_Classic extends NetHandler {
 	 * @param qName - nazwa elementu
 	 * @param attributes - atrybut elementu
 	 */
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {		
+	@SuppressWarnings("unused")
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {	
+		boolean _Snoopy = Snoopy;
+		boolean _node = node;
+		boolean _atribute = atribute;
+		boolean _graphics = graphics;
+		boolean _graphic = graphic;
+		boolean _points = points;
+		boolean _point = point;
+		boolean _edgeclass = edgeclass;
+		boolean _edge = edge;
+		boolean _metadata = metadata;
+		boolean _endAtribute = endAtribute;
+		boolean _variableName = variableName;
+		boolean _variableMarking = variableMarking;
+		boolean _variableLogic = variableLogic;
+		boolean _variableComent = variableComent;
+		
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
 			//nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
@@ -97,6 +114,11 @@ public class NetHandler_Classic extends NetHandler {
 				coarseCatcher = true;
 				nodeType = "Transition";
 			}
+		}
+		
+		if(coarseCatcher) {
+			int xx=1;
+			
 		}
 		
 		if (qName.equalsIgnoreCase("node")) {
@@ -169,7 +191,7 @@ public class NetHandler_Classic extends NetHandler {
 				} catch (Exception e) {} 
 			}
 
-			graphicNamesPointsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
+			graphicNamesXYLocationsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
 		}
 
 		// Wczytywanie informacji odnosnie ID i pozycji noda
@@ -202,9 +224,14 @@ public class NetHandler_Classic extends NetHandler {
 				
 				int p1 = (int) xPos;
 				int p2 = (int) yPos;
-				graphicPointsList.add(new Point(p1, p2));
-				graphicPointsIdList.add(snoopyID);
+				graphicPointsXYLocationsList.add(new Point(p1, p2));
 				graphicPointsNetNumbers.add(netNumber);
+				
+				if(coarseCatcher) {
+					coarseProhibitedIDList.add(snoopyID);
+				} else {
+					graphicPointsSnoopyIDList.add(snoopyID);
+				}
 			}
 		}
 		
@@ -340,6 +367,7 @@ public class NetHandler_Classic extends NetHandler {
 				boolean yFound = false;
 				
 				GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(net).getGraphPanel();
+				graphPanel.setSize(new Dimension(200,200));
 				
 				for (int l = 0; l < globalElementLocationList.size(); l++) {
 					if(globalElementLocationList.get(l).getSheetID() != net)
@@ -357,10 +385,11 @@ public class NetHandler_Classic extends NetHandler {
 					}
 				}
 				if (xFound == true && yFound == false) {
-					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, graphPanel.getSize().height));
+					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, hei));
 				}
-				if (yFound == true && xFound == false) {
-					graphPanel.setSize(new Dimension(graphPanel.getSize().width, globalElementLocationList.get(tmpY).getPosition().y + 150));
+				if (xFound == false && yFound == true) {
+					//graphPanel.setSize(new Dimension(graphPanel.getSize().width, globalElementLocationList.get(tmpY).getPosition().y + 150));
+					graphPanel.setSize(new Dimension(wid, globalElementLocationList.get(tmpY).getPosition().y + 150));
 				}
 				if (xFound == true && yFound == true) { //z każdym nowym punktem dostosowujemy rozmiar sieci
 					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, 
@@ -380,20 +409,20 @@ public class NetHandler_Classic extends NetHandler {
 			ArrayList<ElementLocation> namesElLocations = new ArrayList<ElementLocation>();
 			
 			if(coarseCatcher == false) {
-				if(graphicPointsList.size() != graphicNamesPointsList.size()) {
+				if(graphicPointsXYLocationsList.size() != graphicNamesXYLocationsList.size()) {
 					GUIManager.getDefaultGUIManager().log("Warning: wrong number of names / nodes locations for "+nodeName+
 							". Resetting names locations.", "warning", true);
 					
-					graphicNamesPointsList.clear();
-					for(int g=0; g<graphicPointsList.size(); g++) {
-						graphicNamesPointsList.add(new Point(0, 0));
+					graphicNamesXYLocationsList.clear();
+					for(int g=0; g<graphicPointsXYLocationsList.size(); g++) {
+						graphicNamesXYLocationsList.add(new Point(0, 0));
 					}
 				}
 				
-				for (int i = 0; i < graphicPointsList.size(); i++) {
+				for (int i = 0; i < graphicPointsXYLocationsList.size(); i++) {
 					int nodeSID = graphicPointsNetNumbers.get(i)-1;
-					elementLocationsList.add(new ElementLocation(nodeSID, graphicPointsList.get(i), null));
-					namesElLocations.add(new ElementLocation(nodeSID, graphicNamesPointsList.get(i), null));
+					elementLocationsList.add(new ElementLocation(nodeSID, graphicPointsXYLocationsList.get(i), null));
+					namesElLocations.add(new ElementLocation(nodeSID, graphicNamesXYLocationsList.get(i), null));
 				}
 				
 				for (int j = 0; j < elementLocationsList.size(); j++) {
@@ -411,6 +440,9 @@ public class NetHandler_Classic extends NetHandler {
 					tmpTransitionList.add(tmpTran);
 					IdGenerator.getNextTransitionId();
 				}
+			} else {
+				@SuppressWarnings("unused")
+				int x=1;
 			}
 			// zerowanie zmiennych
 			nodeName = "";
@@ -419,8 +451,8 @@ public class NetHandler_Classic extends NetHandler {
 			nodeLogic = 0;
 			nodeComment = "";
 			node = false;
-			graphicPointsList.clear();
-			graphicNamesPointsList.clear();
+			graphicPointsXYLocationsList.clear();
+			graphicNamesXYLocationsList.clear();
 			graphicPointsNetNumbers.clear();
 			coarseCatcher = false;
 		}
@@ -430,21 +462,31 @@ public class NetHandler_Classic extends NetHandler {
 		if (qName.equalsIgnoreCase("edge")) {
 			int tmpSource = 0;
 			int tmpTarget = 0;
-			for (int j = 0; j < graphicPointsIdList.size(); j++) {
-				if (graphicPointsIdList.get(j) == arcSource) {
-					tmpSource = j;
-				}
-				if (graphicPointsIdList.get(j) == arcTarget) {
-					tmpTarget = j;
-				}
+			
+			boolean cancel = false;
+			if(coarseProhibitedIDList.contains(arcSource) || coarseProhibitedIDList.contains(arcTarget)) {
+				cancel = true;
 			}
-			try {
-				Arc nArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
-				arcList.add(nArc);
-			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Error: unable to add arc.", "error", true);
+			if(cancel == false) {
+				for (int j = 0; j < graphicPointsSnoopyIDList.size(); j++) {
+					if (graphicPointsSnoopyIDList.get(j) == arcSource) {
+						tmpSource = j;
+					}
+					if (graphicPointsSnoopyIDList.get(j) == arcTarget) {
+						tmpTarget = j;
+					}
+				}
+				try {
+					Arc nArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
+					arcList.add(nArc);
+				} catch (Exception e) {
+					GUIManager.getDefaultGUIManager().log("Error: unable to add arc.", "error", true);
+				}
 			}
 			edge = false;
+			arcComment = "";
+			arcMultiplicity = 0;
+			
 		}
 	}
 

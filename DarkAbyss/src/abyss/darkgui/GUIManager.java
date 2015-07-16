@@ -370,6 +370,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	//TODO: prawdopodobnie w tej formie spowoduje katastrofę...
 	public void restoreDefaultVisuals() {
+		if(true)
+			return;
+		
 		for (WorkspaceSheet sheet : workspace.getSheets()) {
 			// repaint all sheets in workspace
 			sheet.getGraphPanel().repaint();
@@ -379,8 +382,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// recreate dock structure
 		//getDockModel().RootDock(totalSplitDock);
 		//
-		if(true)
-			return;
 		
 		leftTabDock.emptyChild(getToolBox());
 		topRightTabDock.emptyChild(getPropertiesBox());

@@ -1,4 +1,4 @@
-package abyss.math;
+package abyss.obsolete;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -8,6 +8,10 @@ import java.util.ArrayList;
 
 import abyss.graphpanel.ElementDraw;
 import abyss.graphpanel.IdGenerator;
+import abyss.math.ElementLocation;
+import abyss.math.PetriNetElement;
+import abyss.math.Transition;
+import abyss.math.PetriNetElement.PetriNetElementType;
 
 /**
  * Klasa implementująca tranzycje czasowe w modelu TPN (Time Petri Net)
@@ -16,7 +20,6 @@ import abyss.graphpanel.IdGenerator;
  *
  */
 public class TimeTransition2 extends Transition {
-	//BACKUP: -7512230002147987244L   (NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = -7512230002147987244L;
 	
 	protected double minFireTime = 0; //TPN
@@ -25,11 +28,6 @@ public class TimeTransition2 extends Transition {
 	protected double internalFireTime = -1; //zmienna związana z modelem sieci TPN
 	protected double internalTimer = -1;
 	
-	/*
-	 * UWAGA!!! NIE WOLNO ZMIENIAĆ NAZW, DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
-	 * (przestanie być możliwe wczytywanie zapisĆnych proejktów .abyss)
-	 */
-
 	/**
 	 * Konstruktor obiektu tranzycji czasowej.
 	 * @param transitionId int - identyfikator tranzycji

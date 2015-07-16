@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 
 
 
+
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
@@ -42,12 +43,12 @@ public class NetHandler_Extended extends NetHandler {
 	public boolean metadata = false;
 	public boolean endAtribute = false;
 
-	//public ArrayList<ElementLocation> elementLocationsList = new ArrayList<ElementLocation>();
-	public ArrayList<Integer> graphicPointsIdList = new ArrayList<Integer>();
+	public ArrayList<Integer> graphicPointsSnoopyIDList = new ArrayList<Integer>();
 	public ArrayList<Integer> graphicPointsNetNumbers = new ArrayList<Integer>();
-	public ArrayList<Point> graphicPointsList = new ArrayList<Point>();
+	public ArrayList<Point> graphicPointsXYLocationsList = new ArrayList<Point>();
 	public ArrayList<ElementLocation> globalElementLocationList = new ArrayList<ElementLocation>();
-	public ArrayList<Point> graphicNamesPointsList = new ArrayList<Point>();
+	public ArrayList<Point> graphicNamesXYLocationsList = new ArrayList<Point>();
+	public ArrayList<Integer> coarseProhibitedIDList = new ArrayList<Integer>();
 	public int globalNetsCounted = 0;
 	public boolean coarseCatcher = false;
 
@@ -176,7 +177,7 @@ public class NetHandler_Extended extends NetHandler {
 				} catch (Exception e) {} 
 			}
 
-			graphicNamesPointsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
+			graphicNamesXYLocationsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
 		}
 
 		// Wczytywanie informacji odnosnie ID i pozycji noda
@@ -209,11 +210,15 @@ public class NetHandler_Extended extends NetHandler {
 				
 				int p1 = (int) xPos;
 				int p2 = (int) yPos;
-				graphicPointsList.add(new Point(p1, p2));
-				graphicPointsIdList.add(snoopyID);
+				graphicPointsXYLocationsList.add(new Point(p1, p2));
+				//graphicPointsSnoopyIDList.add(snoopyID);
 				graphicPointsNetNumbers.add(netNumber);
 				
-				
+				if(coarseCatcher) {
+					coarseProhibitedIDList.add(snoopyID);
+				} else {
+					graphicPointsSnoopyIDList.add(snoopyID);
+				}
 			}
 		}
 		
@@ -384,20 +389,20 @@ public class NetHandler_Extended extends NetHandler {
 			ArrayList<ElementLocation> namesElLocations = new ArrayList<ElementLocation>();
 			
 			if(coarseCatcher == false) {
-				if(graphicPointsList.size() != graphicNamesPointsList.size()) {
+				if(graphicPointsXYLocationsList.size() != graphicNamesXYLocationsList.size()) {
 					GUIManager.getDefaultGUIManager().log("Warning: wrong number of names / nodes locations for "+nodeName+
 							". Resetting names locations.", "warning", true);
 					
-					graphicNamesPointsList.clear();
-					for(int g=0; g<graphicPointsList.size(); g++) {
-						graphicNamesPointsList.add(new Point(0, 0));
+					graphicNamesXYLocationsList.clear();
+					for(int g=0; g<graphicPointsXYLocationsList.size(); g++) {
+						graphicNamesXYLocationsList.add(new Point(0, 0));
 					}
 				}
 				
-				for (int i = 0; i < graphicPointsList.size(); i++) {
+				for (int i = 0; i < graphicPointsXYLocationsList.size(); i++) {
 					int nodeSID = graphicPointsNetNumbers.get(i)-1;
-					elementLocationsList.add(new ElementLocation(nodeSID, graphicPointsList.get(i), null));
-					namesElLocations.add(new ElementLocation(nodeSID, graphicNamesPointsList.get(i), null));
+					elementLocationsList.add(new ElementLocation(nodeSID, graphicPointsXYLocationsList.get(i), null));
+					namesElLocations.add(new ElementLocation(nodeSID, graphicNamesXYLocationsList.get(i), null));
 				}
 				
 				for (int j = 0; j < elementLocationsList.size(); j++) {
@@ -423,8 +428,8 @@ public class NetHandler_Extended extends NetHandler {
 			nodeLogic = 0;
 			nodeComment = "";
 			node = false;
-			graphicPointsList.clear();
-			graphicNamesPointsList.clear();
+			graphicPointsXYLocationsList.clear();
+			graphicNamesXYLocationsList.clear();
 			graphicPointsNetNumbers.clear();
 			coarseCatcher = false;
 		}
@@ -434,32 +439,38 @@ public class NetHandler_Extended extends NetHandler {
 		if (qName.equalsIgnoreCase("edge")) {
 			int tmpSource = 0;
 			int tmpTarget = 0;
-			for (int j = 0; j < graphicPointsIdList.size(); j++) {
-				if (graphicPointsIdList.get(j) == arcSource) {
-					tmpSource = j;
-				}
-				if (graphicPointsIdList.get(j) == arcTarget) {
-					tmpTarget = j;
-				}
-			}
-			//arcComment += arcType;
-			Arc newArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
-			arcList.add(newArc);
 			
-			if(arcType.equals("Read Edge")) {
-				Arc nArc2 = new Arc(globalElementLocationList.get(tmpTarget), globalElementLocationList.get(tmpSource), arcComment, arcMultiplicity, TypesOfArcs.READARC);
-				arcList.add(nArc2);
-			} else if(arcType.equals("Inhibitor Edge")) {
-				newArc.setArcType(TypesOfArcs.INHIBITOR);
-			} else if(arcType.equals("Reset Edge")) {
-				newArc.setArcType(TypesOfArcs.RESET);
-			} else if(arcType.equals("Equal Edge")) {
-				newArc.setArcType(TypesOfArcs.EQUAL);
+			boolean cancel = false;
+			if(coarseProhibitedIDList.contains(arcSource) || coarseProhibitedIDList.contains(arcTarget)) {
+				cancel = true;
 			}
 			
+			if(cancel == false) {
+				for (int j = 0; j < graphicPointsSnoopyIDList.size(); j++) {
+					if (graphicPointsSnoopyIDList.get(j) == arcSource) {
+						tmpSource = j;
+					}
+					if (graphicPointsSnoopyIDList.get(j) == arcTarget) {
+						tmpTarget = j;
+					}
+				}
+				//arcComment += arcType;
+				Arc newArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
+				arcList.add(newArc);
+				
+				if(arcType.equals("Read Edge")) {
+					Arc nArc2 = new Arc(globalElementLocationList.get(tmpTarget), globalElementLocationList.get(tmpSource), arcComment, arcMultiplicity, TypesOfArcs.READARC);
+					arcList.add(nArc2);
+				} else if(arcType.equals("Inhibitor Edge")) {
+					newArc.setArcType(TypesOfArcs.INHIBITOR);
+				} else if(arcType.equals("Reset Edge")) {
+					newArc.setArcType(TypesOfArcs.RESET);
+				} else if(arcType.equals("Equal Edge")) {
+					newArc.setArcType(TypesOfArcs.EQUAL);
+				}
+			}
+
 			edge = false;
-			
-			//arcType = "";
 			arcComment = "";
 			arcMultiplicity = 0;
 		}

@@ -21,17 +21,13 @@ import abyss.utilities.Tools;
  * wierzchołków). Poprzez owe lokacje można uzyskać dostęp do wierzchołków, 
  * do których należy.
  * @author students
+ * @author MR - poprawki (klasy łuków)
  *
  */
 public class Arc extends PetriNetElement {
-	//BACKUP: 5365625190238686098L; (NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = 5365625190238686098L;
 	private final int STEP_COUNT = NetSimulator.DEFAULT_COUNTER - 5;
-
-	/*
-	 * UWAGA!!! NIE ZMIENIAĆ NAZW, NIE DODAWAĆ LUB USUWAĆ PÓL TEJ KLASY
-	 * (przestanie być możliwe wczytywanie zapisanych projektów .abyss)
-	 */
+	
 	private ElementLocation locationStart;
 	private ElementLocation locationEnd = null;
 	private Point tempEndPoint = null;
@@ -47,8 +43,8 @@ public class Arc extends PetriNetElement {
 	private boolean isMainArcOfPair = false;
 	private TypesOfArcs arcType;
 
-	/** NORMAL, READARC, INHIBITOR, RESET, EQUAL */
-	public enum TypesOfArcs { NORMAL, READARC, INHIBITOR, RESET, EQUAL }
+	/** NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC */
+	public enum TypesOfArcs { NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC }
 	
 	/**
 	 * Konstruktor obiektu klasy Arc - chwilowo nieużywany.

@@ -15,14 +15,14 @@ import abyss.math.Arc.TypesOfArcs;
  * szeregu funkcjonalności powiązanych z aktywacją i odpalaniem tranzycji
  * na potrzeby symulacji dynamiki sieci Petriego, jak rezerwowanie tokenów
  * i wykrywanie aktywacji.
- * @author students
- * @author MR - poprawki, obsługa klastrów, inne
+ * @author students - pierwsza wersja
+ * @author MR - tak tu namieszałem, że autorzy swojej roboty by już nie poznali :)
+ * 	Behold: uber-tranzycja, wszystkie do tej pory zaimplementowane rodzaje tranzycji w jednej klasie
  *
  */
 public class Transition extends Node {
-	//BACKUP:  2673581001465115432L  ((NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
-	private static final long serialVersionUID = 2673581001465115432L;
-	
+	private static final long serialVersionUID = -4981812911464514746L;
+
 	/** NORMAL, TPN, DPN, TDPN */
 	public enum TransitionType { PN, TPN, DPN, TDPN }
 	private TransitionType transType;
@@ -47,8 +47,8 @@ public class Transition extends Node {
 	protected double maxFireTime = 0;	//TPN
 	protected double internalFireTime = -1; //zmienna związana z modelem sieci TPN
 	protected double internalTimer = -1;
+	protected double duration = 0; //DPN
 	protected double durationTimer = -1;
-	protected double duration = 0;
 	protected boolean TPNactive = false;
 	protected boolean DPNactive = false;
 	
@@ -660,18 +660,34 @@ public class Transition extends Node {
 		durationTimer = -1;
 	}
 	
+	/**
+	 * Metoda włącza lub wyłącza tryb TPN
+	 * @param status boolean - true, jeśli tryb TPN ma być aktywny
+	 */
 	public void setTPNstatus(boolean status) {
 		TPNactive = status;
 	}
 	
+	/**
+	 * Metoda zwraca stan aktywności trybu TPN
+	 * @return boolean - true, jeśli TPN aktywny
+	 */
 	public boolean getTPNstatus() {
 		return TPNactive;
 	}
 	
+	/**
+	 * Metoda włącza lub wyłącza tryb DPN
+	 * @param status boolean - true, jeśli tryb DPN ma być aktywny
+	 */
 	public void setDPNstatus(boolean status) {
 		DPNactive = status;
 	}
 	
+	/**
+	 * Metoda zwraca stan aktywności trybu DPN
+	 * @return boolean - true, jeśli DPN aktywny
+	 */
 	public boolean getDPNstatus() {
 		return DPNactive;
 	}

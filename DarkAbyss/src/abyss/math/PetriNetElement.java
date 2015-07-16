@@ -10,11 +10,11 @@ import org.simpleframework.xml.Element;
  * generowanie unikalnych (w obrębie wszystkich elementów, a nie jednej klasy) 
  * numery identyfikacyjne, przechowywanie nazw i komentarzy.
  * @author students
- *
+ * @author MR - drobne poprawki
  */
 public class PetriNetElement implements Serializable {
 	private static final long serialVersionUID = 3428968829261305581L;
-	public enum PetriNetElementType { ARC, PLACE, TRANSITION, UNKNOWN }
+	public enum PetriNetElementType { ARC, PLACE, TRANSITION, META, UNKNOWN }
 	@Element
 	protected int ID = -1;
 	@Element

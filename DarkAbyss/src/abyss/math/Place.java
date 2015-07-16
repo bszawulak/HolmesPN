@@ -16,12 +16,9 @@ import abyss.graphpanel.IdGenerator;
  *
  */
 public class Place extends Node {
-	// BACKUP: 2346995422046987174L  (NIE DOTYKAĆ PONIŻSZEJ ZMIENNEJ!)
 	private static final long serialVersionUID = 2346995422046987174L;
-	
 	private int tokensNumber = 0;
 	private int reservedTokens = 0;
-	//public Place()
 	
 	/**
 	 * Konstruktor obiektu miejsca sieci.
