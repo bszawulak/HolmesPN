@@ -15,6 +15,7 @@ import abyss.math.pnElements.ElementLocation;
 import abyss.math.pnElements.Node;
 import abyss.math.pnElements.Place;
 import abyss.math.pnElements.Transition;
+import abyss.math.pnElements.Arc.TypesOfArcs;
 
 /**
  * Klasa odpowiedzialna za wczytywanie tego całego syfu, jaki w pliki ładuje niemiecki geszeft 
@@ -32,6 +33,7 @@ public class SnoopyReader {
 	private ArrayList<Arc> arcList = new ArrayList<Arc>();
 	private ArrayList<Node> nodesList = new ArrayList<Node>();
 	private ArrayList<Integer> snoopyNodesIdList = new ArrayList<Integer>();
+	private ArrayList<ArrayList<Integer>> snoopyNodesElLocIDList = new ArrayList<ArrayList<Integer>>();
 	
 	private boolean warnings = false;
 	/**
@@ -51,8 +53,6 @@ public class SnoopyReader {
 		}
 		
 		coreReader(path);
-		
-		
 	}
 	
 	/**
@@ -276,23 +276,28 @@ public class SnoopyReader {
 					
 					// XY Locations
 					if(line.contains("<graphics count=\"")) {
+						ArrayList<Integer> subIDs = new ArrayList<Integer>();
 						while(!(line = buffer.readLine()).contains("</graphics>")) {
 							if(line.contains("<graphic ")) {
 								logicalELNumber_graphics++;
 								int x = (int) getAttributeValue(line, " x=\"", 100);
 								int y = (int) getAttributeValue(line, " y=\"", 100);
 								int sub = (int) getAttributeValue(line, " net=\"", 0);
+								int elLocID = (int) getAttributeValue(line, " id=\"", 0);
 								if(sub != 0)
 									sub--;
 								
 								if(logicalELNumber_graphics == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation
 									place.getElementLocations().set(0, new ElementLocation(sub, new Point(x, y), place));
+									subIDs.add(elLocID);
 								} else {
 									place.getElementLocations().add(new ElementLocation(sub, new Point(x, y), place));
+									subIDs.add(elLocID);
 								}
 							}
 						}
+						snoopyNodesElLocIDList.add(subIDs);
 					}
 				} //czytanie właściwości węzła
 				
@@ -312,7 +317,8 @@ public class SnoopyReader {
 		
 		if(placesCounter != placesLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log("Warning: places read: "+placesCounter+", places number set in file: "+placesLimit, "warning", true);
+			GUIManager.getDefaultGUIManager().log("Warning: places read: "+(placesCounter+1)+
+					", places number set in file: "+(placesLimit+1), "warning", true);
 		}
 	}
 
@@ -450,23 +456,28 @@ public class SnoopyReader {
 					
 					// XY Locations
 					if(line.contains("<graphics count=\"")) {
+						ArrayList<Integer> subIDs = new ArrayList<Integer>();
 						while(!(line = buffer.readLine()).contains("</graphics>")) {
 							if(line.contains("<graphic ")) {
 								logicalELNumber_graphics++;
 								int x = (int) getAttributeValue(line, " x=\"", 100);
 								int y = (int) getAttributeValue(line, " y=\"", 100);
 								int sub = (int) getAttributeValue(line, " net=\"", 0);
+								int elLocID = (int) getAttributeValue(line, " id=\"", 0);
 								if(sub != 0)
 									sub--;
 								
 								if(logicalELNumber_graphics == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation
 									transition.getElementLocations().set(0, new ElementLocation(sub, new Point(x, y), transition));
+									subIDs.add(elLocID);
 								} else {
 									transition.getElementLocations().add(new ElementLocation(sub, new Point(x, y), transition));
+									subIDs.add(elLocID);
 								}
 							}
 						}
+						snoopyNodesElLocIDList.add(subIDs);
 					}
 				} //czytanie właściwości węzła
 				
@@ -486,7 +497,8 @@ public class SnoopyReader {
 		
 		if(transitionsCounter != transitionsLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log("Warning: places read: "+transitionsCounter+", places number set in file: "+transitionsLimit, "warning", true);
+			GUIManager.getDefaultGUIManager().log("Warning: places read: "+(transitionsCounter+1)+
+					", places number set in file: "+(transitionsLimit+1), "warning", true);
 		}
 	}
 	
@@ -534,7 +546,7 @@ public class SnoopyReader {
 			line = buffer.readLine();
 		}
 		if(!line.contains("<edgeclass count=\"0\"") && line.contains("name=\"Edge\"")) { //są jakieś łuki?
-			readEdges(buffer, line);
+			readEdges(buffer, line, TypesOfArcs.NORMAL);
 		}
 		
 		// Read Edge
@@ -544,7 +556,7 @@ public class SnoopyReader {
 			line = buffer.readLine();
 		}
 		if(!line.contains("<edgeclass count=\"0\"") && line.contains("name=\"Read Edge\"")) { //są jakieś łuki?
-			readReadEdges(buffer, line);
+			readEdges(buffer, line, TypesOfArcs.READARC);
 		}
 		
 		// Inhibitor Edge
@@ -554,7 +566,7 @@ public class SnoopyReader {
 			line = buffer.readLine();
 		}
 		if(!line.contains("<edgeclass count=\"0\"") && line.contains("name=\"Inhibitor Edge\"")) { //są jakieś łuki?
-			readInhibiorEdges(buffer, line);
+			readEdges(buffer, line, TypesOfArcs.INHIBITOR);
 		}
 		
 		// Reset Edge
@@ -564,7 +576,7 @@ public class SnoopyReader {
 			line = buffer.readLine();
 		}
 		if(!line.contains("<edgeclass count=\"0\"") && line.contains("name=\"Reset Edge\"")) { //są jakieś łuki?
-			readResetEdges(buffer, line);
+			readEdges(buffer, line, TypesOfArcs.RESET);
 		}
 		
 		// Equal Edge
@@ -574,68 +586,130 @@ public class SnoopyReader {
 			line = buffer.readLine();
 		}
 		if(!line.contains("<edgeclass count=\"0\"") && line.contains("name=\"Equal Edge\"")) { //są jakieś łuki?
-			readEqualEdges(buffer, line);
+			readEdges(buffer, line, TypesOfArcs.EQUAL);
 		}
 		
 	}
 	
-	private void readEdges(BufferedReader buffer, String line) {
-		String buffLine = line;
+	private void readEdges(BufferedReader buffer, String line, TypesOfArcs arcType) {
+		String backFirstLine = line;
+		int edgesCounter = -1;
+		int edgesLimit = 0;
 		try {
+			//policz teoretyczną liczbę tranzycji
+			line = line.substring(line.indexOf("count=")+7); // <edgeclass count="4" name="Edge">
+			line = line.substring(0, line.indexOf("\""));
+			edgesLimit = Integer.parseInt(line) - 1;
+			
+			boolean readForward = true;
+			boolean goBoldly = true;
+			
+			while(true) {
+				while(!line.contains("<edge source=\"")) { //na początku:  <node id="270" net="1">
+					line = buffer.readLine();
+					
+					if(line.contains("</edgeclass>")) {
+						readForward = false;
+						break;
+					}
+				}
+				if(!readForward)
+					break;
 
+				if(line.contains("</edgeclass>")) {
+					break;
+				}
+				
+				
+				int nodeSourceID = (int) getAttributeValue(line, " source=\"", -1);
+				int nodeTargetID = (int) getAttributeValue(line, " target=\"", -1);
+				if(nodeSourceID == -1 || nodeTargetID == -1) {
+					GUIManager.getDefaultGUIManager().log("Catastrophic error: could not read Snoopy source/target ID for arc from line: "+backFirstLine, "error", true);
+					break;
+				}
+				
+				int subNet = (int) getAttributeValue(line, " net=\"", 0);
+				if(subNet > 0)
+					subNet--;
+
+				int sourceLocationInNodes = snoopyNodesIdList.indexOf(nodeSourceID);
+				int targetLocationInNodes = snoopyNodesIdList.indexOf(nodeTargetID);
+					
+				goBoldly = true;
+				int multiplicity = 0;
+				String comment = ""; 
+				
+				while(goBoldly) { //czytanie właściwości miejsca	
+					if(line.contains("</edge>")) {
+						goBoldly = false;
+						continue;
+					} //1st
+					
+					line = buffer.readLine();
+					
+					if(line.contains("</edge>")) {
+						goBoldly = false;
+						continue;
+					} //2nd
+					
+					// Waga łuku
+					if(line.contains("<attribute name=\"Multiplicity\"")) {
+						while(!(line = buffer.readLine()).contains("</attribute>")) {
+							if(line.contains("<![CDATA[")) {
+								multiplicity = (int) readDoubleCDATA(buffer, line, 0);
+							} 
+						}
+						line = buffer.readLine();
+					}
+
+					// Komentarz łuku
+					if(line.contains("<attribute name=\"Comment\"")) {
+						while(!(line = buffer.readLine()).contains("</attribute>")) {
+							if(line.contains("<![CDATA[")) {
+								comment = readStrCDATA(buffer, line, "");
+							}
+						}
+						line = buffer.readLine();
+					}
+					
+					// XY Locations
+					if(line.contains("<graphics count=\"")) {
+						while(!(line = buffer.readLine()).contains("</graphics>")) {
+							if(line.contains("<graphic ")) {
+								int sourceID = (int) getAttributeValue(line, " source=\"", -1);
+								int targetID = (int) getAttributeValue(line, " target=\"", -1);
+								int sub = (int) getAttributeValue(line, " net=\"", 0);
+								if(sub != 0)
+									sub--;
+								
+								int eLsourceLocation = snoopyNodesElLocIDList.get(sourceLocationInNodes).indexOf(sourceID);
+								int eLtargetLocation = snoopyNodesElLocIDList.get(targetLocationInNodes).indexOf(targetID);
+								
+								
+								ElementLocation sourceEL = nodesList.get(sourceLocationInNodes).getElementLocations().get(eLsourceLocation);
+								ElementLocation targetEL = nodesList.get(targetLocationInNodes).getElementLocations().get(eLtargetLocation);
+								
+								Arc nArc = new Arc(sourceEL, targetEL, comment, multiplicity, arcType);
+								arcList.add(nArc);
+								edgesCounter++;
+							}
+						}
+					}
+				} //czytanie właściwości węzła
+			}
 			
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Reading Snoopy edges failed in line: ", "error", true);
 			GUIManager.getDefaultGUIManager().log(line, "error", true);
 		}
-	}
-	
-	private void readReadEdges(BufferedReader buffer, String line) {
-		String buffLine = line;
-		try {
-
-			
-		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy read edges failed in line: ", "error", true);
-			GUIManager.getDefaultGUIManager().log(line, "error", true);
+		
+		if(edgesCounter != edgesLimit) {
+			warnings = true;
+			GUIManager.getDefaultGUIManager().log("Warning: edges ("+arcType+") read: "+(edgesCounter+1)+
+					", number set in file: "+(edgesLimit+1), "warning", true);
 		}
 	}
 
-	private void readInhibiorEdges(BufferedReader buffer, String line) {
-		String buffLine = line;
-		try {
-
-			
-		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy inhibitor edges failed in line: ", "error", true);
-			GUIManager.getDefaultGUIManager().log(line, "error", true);
-		}
-	}
-
-	private void readResetEdges(BufferedReader buffer, String line) {
-		String buffLine = line;
-		try {
-
-			
-		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy reset edges failed in line: ", "error", true);
-			GUIManager.getDefaultGUIManager().log(line, "error", true);
-		}
-	}
-
-	private void readEqualEdges(BufferedReader buffer, String line) {
-		String buffLine = line;
-		try {
-
-			
-		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy equal edges failed in line: ", "error", true);
-			GUIManager.getDefaultGUIManager().log(line, "error", true);
-		}
-	}
-
-	
-	
 	/**
 	 * Metoda wycina wartość liczbową zadanego parametru z linii.
 	 * @param line String - linia z pliku

@@ -301,8 +301,11 @@ public class Toolbar extends BorderDock {
 				//ProjectWriter pWrt = new ProjectWriter();
 				//pWrt.writeProject("test.apf");
 				//GUIManager.getDefaultGUIManager().restoreDefaultVisuals();
-				SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\normal.spped");
+				
+				
+				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\normal.spped");
 				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\extClean.spept");
+				SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\arcTest.spped");
 			}
 		};
 		testButton.setEnabled(false);
