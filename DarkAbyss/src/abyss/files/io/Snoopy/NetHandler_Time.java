@@ -1,4 +1,4 @@
-package abyss.files.io;
+package abyss.files.io.Snoopy;
 
 import java.awt.Dimension;
 import java.awt.Point;

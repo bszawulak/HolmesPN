@@ -32,7 +32,7 @@ import javax.swing.text.DefaultCaret;
 import abyss.analyse.MCSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.files.io.MCSoperations;
-import abyss.petrinet.elements.MCSDataMatrix;
+import abyss.petrinet.data.MCSDataMatrix;
 import abyss.petrinet.elements.Transition;
 import abyss.utilities.Tools;
 

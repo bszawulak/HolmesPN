@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.SelectionActionListener;
 import abyss.graphpanel.GraphPanel.DrawModes;
-import abyss.petrinet.elements.PetriNet;
+import abyss.petrinet.data.PetriNet;
 
 import com.javadocking.dock.CompositeTabDock;
 import com.javadocking.dock.Dock;

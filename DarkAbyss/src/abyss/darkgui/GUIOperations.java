@@ -18,7 +18,7 @@ import abyss.analyse.InvariantsCalculator;
 import abyss.files.clusters.Rprotocols;
 import abyss.files.io.ProjectReader;
 import abyss.files.io.ProjectWriter;
-import abyss.petrinet.elements.PetriNet;
+import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Transition;
 import abyss.utilities.AbyssFileView;
 import abyss.utilities.Tools;

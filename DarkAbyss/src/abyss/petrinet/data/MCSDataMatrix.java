@@ -1,4 +1,4 @@
-package abyss.petrinet.elements;
+package abyss.petrinet.data;
 
 import java.util.ArrayList;
 
@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 
 import abyss.darkgui.GUIManager;
 import abyss.files.io.MCSoperations;
+import abyss.petrinet.elements.Transition;
 
 /**
  * Klasa odpowiedzialna za zarządzanie informacjami o przechowywanych zbiorach MCS.

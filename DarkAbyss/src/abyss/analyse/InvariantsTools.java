@@ -6,9 +6,9 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 
 import abyss.darkgui.GUIManager;
+import abyss.petrinet.data.InvariantTransition;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
-import abyss.petrinet.elements.InvariantTransition;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;

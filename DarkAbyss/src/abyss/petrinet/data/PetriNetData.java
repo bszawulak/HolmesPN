@@ -1,6 +1,9 @@
-package abyss.petrinet.elements;
+package abyss.petrinet.data;
 
 import java.util.ArrayList;
+
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.Node;
 
 /**
  * Klasa kontener dla danych definiujących sieć Petriego - wierzchołków i łuków.

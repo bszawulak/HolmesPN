@@ -19,9 +19,9 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import abyss.darkgui.GUIManager;
+import abyss.petrinet.data.InvariantTransition;
+import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Arc;
-import abyss.petrinet.elements.InvariantTransition;
-import abyss.petrinet.elements.PetriNet;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.simulators.SimulationStep;

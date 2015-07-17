@@ -1,4 +1,4 @@
-package abyss.files.io;
+package abyss.files.io.Snoopy;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

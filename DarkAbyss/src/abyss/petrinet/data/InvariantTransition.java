@@ -1,4 +1,6 @@
-package abyss.petrinet.elements;
+package abyss.petrinet.data;
+
+import abyss.petrinet.elements.Transition;
 
 /**
  * Klasa rozszerzenie dla Transition. Definiuj dla każdej tranzycji jej liczbę uruchomień.

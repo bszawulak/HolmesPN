@@ -10,10 +10,10 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
+import abyss.petrinet.data.PetriNetData;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.Node;
-import abyss.petrinet.elements.PetriNetData;
 import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
 
 /**

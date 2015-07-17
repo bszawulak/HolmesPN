@@ -1,0 +1,535 @@
+
+2015-07-17
+SnoopyReader v0.6, old reader option
+SnoopyReader v0.5
+
+2015-07-16
+SnoopyReader v0.3
+MetaNode, SnoopyReader v0.1
+
+2015-07-08
+Poprawione usuwanie arkuszy
+Coarse loader
+
+2015-07-07
+PNElement subnet
+Drobne poprawki
+
+2015-07-06
+Binary mode invariants (opcja)
+Drobne poprawki
+
+2015-07-05
+DPN/TPN w StateSimulator - jedna WIELKA prowizorka...
+NetSimulator - Time DPN/TPN mode, poprawki backup/restore m0
+
+2015-07-04
+Poprawiono algorytm stwierdzania aktywacji tranzycji; przywracanie stanu tranzycji TPN to stanu przed odpaleniem, dodanie wyboru typu sieci w podoknie NodeInfo
+Poprawki
+
+2015-07-03
+Wczytywanie danych DPN, poprawiony sposób konstrukcji podokien programu
+
+2015-06-28
+poprawki
+
+2015-06-27
+Project I/O v1.0
+
+2015-06-26
+Project I/O v0.9
+Project I/O v0.8
+	
+2015-06-26
+Project I/O v0.7
+Reader v0.1
+Zapis projektu v0.6
+
+2015-06-25
+Poprawiono generowanie MCT - sprzężone z inwariantami
+TPN integration v0.5
+
+2015-06-24
+poprawka
+
+2015-06-23
+StateSim minor add
+StateSim: notepad z wynikami dla wszystkich P/T
+
+2015-06-17
+knockout poprawki w wyswietlaniu MCT w widoku okrojonym
+
+2015-06-16
+Treshold dla knockout
+poprawka MCT
+
+2015-06-07
+Knockout, inwarianty (tranzycje)
+
+2015-06-06
+poprawki ostrzeżeń
+Knockout - działa.
+
+2015-06-02
+Poprawki rysowania wag łuków oraz podpisów węzłów (opcje czcionki).
+
+2015-05-22
+
+Knockout load ML tabela
+
+2015-05-17
+AbyssFileChooser, sortowanie Knockout po inwariantach
+
+2015-05-16
+Knockout - wczytywanie z MonyLisy i wyświetlanie na sieci
+Drobne zmiany
+
+2015-05-13
+Knockout read from MonaLisa
+
+2015-05-13
+Błąd w Knockout, jeszcze nie poprawiony
+P-inv still offline
+
+2015-05-12
+P-inv v.0.01
+
+2015-05-09
+Knockout - all
+
+2015-04-22
+Inne drobne zmiany.
+
+2015-04-20
+Zmiany pod podręcznik v4
+
+2015-04-19
+Kolejny pakiet poprawek funkcjonalności - podręcznik
+
+2015-04-18
+Mnóstwo poprawek dla usterek ujawnionych w czasie pisania podręcznika.
+Poprawki v3
+
+2015-04-17
+Pamiętanie nazwy pliku wczytanego, ostrzeżenie przed zastąpieniem istniejącego pliku
+Drobne poprawki związane z pisaniem podręcznika - v2
+Drobne kosmetyczne
+
+2015-04-16
+Drobna zmiana skrótu w Menu File
+Poprawka komunikatów błędów zapisu w pliki Snoopiego
+Critical error: usuwanie zbioru elementów (RBM->Remove) - naprawiono
+
+2015-04-15
+Icons
+Ikonki opcji, pierwszy przymiarka do P-inwariantów
+Transition offline status
+
+MCS info vector
+
+2015-04-14
+Poprawiony algorytm MCS, nowa opcja: usuwanie nierealnych MCS (v0.1).
+Poprawione wykrywanie Strong Connection.
+
+2015-04-13
+Kolumna kanonicznych inwariantów, opcja generowania lub nie f-inv. z self-propelled property.
+Self-propelled readarc invariants handle - v0.8. Wykrywanie łuków podwójnych. Zmiany w generowaniu feasible inv.
+Dalsze przygody z inwariantami - łuki podwójne
+
+2015-04-12
+Poprawki, wczytywanie, katalogi, inne.
+
+2015-04-11
+Rozbudowa podokna tabel - moduł analizy inwariantów v0.2
+
+2015-04-10
+Poprawiony algorytm szukania wykonalnych inwariantów, poprawka właściwości sieci, zmiany w oknie tabel sieci.
+drobne
+
+2015-04-09
+Poprawki. Wyświetlanie skróconej nazwy wierzchołka. Poprawka ikon. 
+Nieprzenoszalność ikon poza panel dokujący. Pierwsza wersja zaawansowanego szukania inwariantów wykonalnych.
+drobne
+
+2015-04-08
+Podgląd informacji o sub i sur inwariantach. Ostrzeżenie przed zamykaniem / wczytywaniem przy zmianie czegoś w sieci. Poprawka updatu ID generatora. Inne drobne.
+Poprawki
+
+2015-04-07
+Optymalizacja algorytmu inwariantów
+Inne
+Naprawa generowania MCT (bez użycia TransitionInvariants), wczytywanie inwariantów MonyLisy, inne drobne.
+
+2015-04-06
+NetSimulator (i StateSim) poprawnie (?) działające - v0.5
+
+2015-04-05
+Dużo zmian: osobne tworzenie łuków odczytu, zabezpieczenia na nakładanie się łuków, obliczanie wykonalnych inwariantów, podmiana zbiorów inwariantów, inne poprawki.
+
+2015-04-04
+
+Zapis / odczyt sieci extended, nowe łuki ExtPN
+
+2015-04-03
+Poprawki, zabezpieczenia, wygląda podokien nodes/arcs, typ łuku (normal, wyświetlanie MDTs (debug) readarc, inhibitor, reset, equal)
+Poprawki łuku odczytu, wczytywane EPN
+
+2015-04-02
+Poprawnie działające czyszczenie projektu.
+
+2015-04-02
+Nowy projekt - działa
+
+2015-04-01
+Opcje wczytywania ze snoopiego - Settings
+Zmiana rozmiarów sieci i lokalizacji, siatka, dopasowanie do siatki.
+Settings, toolbar, network transformation (v.01)
+
+2015-03-31
+Poprawki w sprawdzaniu inwariantów względem zbioru referencyjnego,
+— More
+
+2015-03-30
+Zmiana informacji o wersji, usunięcie komunikatu o krytyczności INAwin32, poprawka wyświetlania info o MCS w podoknie
+Wczytywanie inwariantów Charlie, analiza zbioru referencyjnego i wczytanego z pliku (inv.)
+Charlie read v0.1
+
+2015-03-29
+komentarz do naprawy knockout zoom
+
+Poprawiony (naprawiony) zoom w knockout window.
+Poprawki, status offline dla tranzycji
+
+2015-03-28
+Knockout Menu Icon added
+Ikonki, poprawka w liczeniu rozmiarów inwariantów, ikona przesuwania nazwy wierzchołka
+Wyświetlanie knockout na sieci
+
+2015-03-27
+Wyświetlanie MCS w kolorach, zmiany w obsłudze wyświetlania kolorów klasy Transition
+MCS interface
+
+2015-03-26
+Knockout - obliczanie wyłączeń (nadmiar w stos. do ML). MCS - zabezpieczenia przed brakiem pamięci.
+Small changes
+Poprawki do MM i Knockout
+
+2015-03-25
+Drobna poprawka błędu dla okna MCS
+
+2015-03-25
+Poprawne wyświetlanie ścieżki Mauritiusa, ale sama ściezka wygląda dziwnie...
+
+Mauritius grafika v.0001
+
+2015-03-24
+Knockout analiza wersja 0.1
+Kolejne dodatki do MCS, interfejs okna funkcjonalny.
+
+2015-03-23
+MCS - dalsza budowa okna, działa zapis, wyświetlanie oraz zakodowane podstawowe operacje na zbiorze danych MCS w obiekcie sieci programu
+Okna inwariantów i MCS (v1) działają. MCS działa (generowanie) podstawowe operacje na zbiorze danych MCS w obiekcie sieci programu
+
+2015-03-22
+Działający (prawie całkowicie) podokno inwariantów, ikony okna MCS, poprawki.
+Mnóstwo zmian: działające algorytmy INV, MCT, MCS, ADT, okna do INV i MCT (szkic), usunięto gdzie się dało schemat InvariantTransition, inne poprawki.
+
+2015-03-18
+Minimum Cut Set - algorytm zaimplementowany, ale nie jestem pewien, czy działa poprawnie. Na pewno będzie pamięciożerny przy większych zbiorach...
+
+InvModule 11: pełne zwycięstwo. Liczy dokładnie tyle ile powinien, a (bonus) autor nawet wie dlaczego. Teraz tylko mała optymalizacja i gotowe.
+
+2015-03-17
+InvModule 9 or 10: Stalingrad zdobyty! :D Co prawda zbiór nie jest minimalny, ale jest 100% zgodny z INA dla wszystkich sieci które testowałem. Teraz należy wyczyść do minimalnego.
+
+2015-03-15
+InvModule 8: walka trwa
+
+2015-03-14
+InvModule 6 lub 7: swoisty sukces, zamiast eksplozji stanów mamy o circa 10% mniej inwariantów niż generuje INA dla IL18 i Athero. Szybkość też niczego sobie.
+
+2015-03-13
+InvModule 6: nadal wybucha. 1Mt zamiast 10Mton...
+InvModule v5 - działająca wersja 0.1 - tj. teoretycznie działa, ale w ostatnich kilku krokach eksploduje (State Explosion) - teraz nalezy dodać warunki które uniemożliwią dodawanie jak leci każdego kandydata na inwariant.
+InvModule v4 (jest pomysł na poprawki)
+
+2015-03-12
+InvModule v3
+InvModule v2
+
+2015-03-11
+Mission impossibru v1: algorytm inwariantów
+
+2015-03-01
+Sprawna wersja logów symulatora
+
+2015-02-28
+Pierwsza wersja logera symulacji
+
+2015-02-27
+Notepad v0.1
+
+2015-02-26
+Drobne poprawki.
+Poprawki w StateSim, dodano opcje (dla miejsc) obliczania sredniej dynamiki
+
+2015-02-25
+Poprawnie działające (módlmy się) niezależne lokalizacje nazw
+wierzchołków oraz możliwość ich ustawiania wałkiem myszy.
+
+Pierwsza sprawna wersja zmiany lokalizacji napisu pod konkretną lokalizacją konkretnego miejsca.
+
+2015-02-24
+Dodanie wizualizacji tokenów od 1 do 4 w wierzchołkach. Poprawiono
+rysowanie. Dodanie wektora EL do przechowywania nazw w Node. Usuwanie
+pliku siec.pnt z tools przy generowaniu inwariantów.
+
+2015-02-23
+Poprawka offset w zapisie
+
+2015-02-22
+Symulator sieci: tryby PN, TPN i hybrid, pierwsza wersja - chyba działa.
+
+2015-02-20
+Całe mnóstwo zmian: poprawiono tworzenie portali (nie zmienia ID o ile
+to możliwe); zabezpieczenie przy usuwaniu elementów; niemożliwa
+modyfikacja sieci gdy trwa symulacja; poprawiono backup główny m0;
+wprowadzono backup wewnętrzny StateSimulator (czyli nie namiesza ani nie
+zresetuje to, co aktualnie ustawił symulator główny, jeśli cokolwiek).
+Inne drobne.
+
+2015-02-19
+Wykryty błąd w usuwaniu wierzchołka. I tyle. Trzeba jeszcze naprawić.
+
+2015-02-18
+Poprawiono błąd zapisu, nowa biblioteka XStream147
+Przyciski do generowania inwariantów. WYkryto problem z zapisem Abyss i
+oddzielnie - Snoopy przy masowym usuwaniu elementów. W zasadzie to
+problem jest chyba w tym usuwaniu.
+
+2015-02-17
+W podoknie wyboru tranzycji można wybrać zaznaczenie wszystkich
+tranzycji, które nie należą do żadnego inwariantu. W związku z powyższym
+w klasie PetriNet przechowywany jest wektor z informacją które tranzycje
+sa aktywne. Dodatkowo poprawiono układ metod wczytywania inwariantów
+(obliczenia dla 2ej formy).
+
+2015-02-16
+Poprawiona tablica inwariantów - kolory kolumn zagłodzonych i
+niepokrytych inwariantami tranzycji oraz komentarz z nazwą tranzycji po
+najechaniu kursorem na nagłówek kolumny.
+
+2015-02-15
+Drobne zmiany
+
+2015-02-14
+Pełne pierwsze wersje tabel miejsc, tranzycji i inwariantów. Osobne
+modele danych dla każdej tabeli, porządek w klasach - modele i renderer
+w osobnym pakiecie dla tabel.
+
+2015-02-13
+Okno tabel - tabela inwariantów
+
+2015-02-12
+W pełni sprawne podokno właściwości miejsc i tranzycji. Chyba.
+
+2015-02-12
+Już jako tako wyglądająca wersja okna właściwości miejsc i tranzycji
+
+2015-02-11
+Dalsze prace...
+Kolejne zmiany
+
+2015-02-10
+Dalsza praca nad oknem tabel.
+Kolejna pierwsza wersja tablic sieci
+
+2015-02-09
+Pierwsza wersja podokna tabel danych sieci.
+
+2015-02-08
+Poprawiony zoom, centrowanie na punkt w ramach zoomu, czyszczenie informacji o inwariantach i ich pochodnych w przypadku zmiany struktury sieci.
+
+2015-02-07
+Przesuwanie i zaznaczanie elementów przy aktywnym zoomie (okazuje się, że było, należało tylko poprawić). Pierwsze szlify w kodzie centrowania przy zoomie.
+
+
+
+2015-02-07
+Przesuwanie i zaznaczanie elementów przy aktywnym zoomie (okazuje się, że było, należało tylko poprawić). Pierwsze szlify w kodzie centrowania przy zoomie.
+
+2015-02-06
+Poprawiono wykresy paskowe.
+Stała długość wykresów v0.1
+Usunięto błąd (critical) generowania inwariantów (wielokrotnego). Dodano
+sortowanie miejsc/tranzycji dla analizatora stanów po
+tokenach/frekwencji. Dodano szybkie usuwanie kolorów z sieci i szybki
+zoom do 100%. Przesuwanie sieci wałkiem myszy działa... szybko :)
+
+2015-01-27
+Tabelka klastrów w tex, przycisk w podpoknie klastrowania
+
+2015-01-23
+Poprawiony drobny błąd wyświetlania pasków miejsc/tranzycji w symulatorze.
+
+2015-01-17
+Poprawiono sumę odpaleń na średnią w ramach zapisu pliku Excel
+Poprawiono dane o klastrowaniu szczegółowym - zastąpiono sumę uruchomień średnią uruchomień.
+Porządny wygląd okna symulatora stanów sieci - ikony.
+Wersja 1.0 symulatora stanów. W końcu.
+
+2015-01-16
+Nowa lepsza wersja symulatora stanów, doszły tranzycje
+
+2015-01-15
+Dodano komponent zakładek do okna symulatora stanów.
+W miarę sprawna wersja okna symulatora stanów sieci.
+Kolejna wersja sumulatora stanów
+
+2015-01-14
+Symulator stanów wersja 0.1, wykresy (biblioteka), okno symulatora stanów 0.1
+
+2015-01-11
+Pierwsza wersja okna właściwości programu, poprawiono błąd trybu maksimum i uruchamiania tranzycji.
+
+2015-01-10
+Unifikacja rysowania tranzycji i miejsc w jedną metodę statyczną klasy 'statycznej'. Poprawione zaznaczanie innych lokalizacji klikniętego
+portalu (wyraźniejsze)
+
+2015-01-09
+Dodane i oprogramowane przyciski (w dockWindows i Toolbar) Reset dla symulatora.
+
+2015-01-08
+Wait animation
+Zapis tabelek miejsc, tranzycji, inwariantów i mct w formacie Tex do plików.
+
+2015-01-07
+Poprawki, eksport do texa, I wersja
+
+2015-01-06
+UTF-8 dla wszystkich komentarzy we wszystkich (używanych) w programie klasach.
+Nowy przycisk resetu symulacji (nie działa) oraz pierwsze wersja UTF8
+
+2015-01-05
+Teraz dodatkowo działa konwersja do Jara
+Semi-release version 1.22. W pełni sprawne pokazywanie klastrów, drobne poprawki w innych sekcjach.
+Wyświetlanie elementów klastra - wersja 2
+
+2015-01-04
+Pierwsza wersja podświetlania klastrów, poprawki w nazewnictwie metod.
+
+2015-01-03
+Wydzielenie operacji IO z GUIManager, w pełni sprawny zapis do SPPED, poprawne pokazywanie MCT i inwariantów, inne poprawki
+
+2015-01-02
+Łuki wychodzące z miejsc już się zapisują. Teraz tranzycje.
+Zapis SPPED programu Snoopy. Działa już dla mniejsc i tranzycji. Jeszcze tylko... łuki.
+
+2015-01-01
+Okno szukania elementów, okno o programie, ikonka programu, inne drobne poprawki i dodatki.
+
+2014-12-31
+Poprawiono ikony, menu, integracja symulatorów w jeden panel
+
+2014-12-30
+Kolejna zmiana, testing testing 1 2 3...
+Obrazki jako resource source directory. Plug and pray...
+Ignore config
+Dodano okno właściwości sieci, ogólne poprawki.
+Zmiana nazw klas odpowiedzialnych za podokna, poprawiona i uzupełniona klasa analizy właściwości statycznych sieci.
+Drobne poprawki, w pełni funkcjonalne miary CH i MSS oraz zbiorcza tabela
+
+2014-12-29
+Poprawne generowanie oraz wczytywanie danych metryki C-H do tabeli danych. Dodatkowo poprawki dla samego okna AbyssClusters i jego przycisków.
+
+2014-12-28
+Zmiany w ustawieniach głównego menu, dodano obsługę generacji metryk Calińskiego-Harabasza, obsługa Rscript.exe 64bit - zmiany w pliku konfiguracyjnym programu, przygotowanie do wczytywania metryk CH z katalogu.
+
+2014-12-28
+W pełni działające klastrowanie szczegółowe dla danej sieci.
+
+2014-12-27
+Dodano strukturę danych do przechowywania wczytanego klastrowania szczegółowego, rozpoczęto budowę klasy eksportującej dane do arkusza xls. Z tym związane: metody pomocnicze w klase ClusteringExtended, niech lepiej działają bez błędów, Ciebie prosimy...
+
+2014-12-26
+Dodano generowanie jednego klastrowania (przycisk okienka informacji o klastrowaniu)
+Mała zmiana testowa dla gita
+Merge branch 'master' of https://git.assembla.com/ipne.git
+
+2014-12-25
+Wyświetlanie szczegółów klastrowania
+Możliwość ustawienie liczby klastrów do przeliczenia dla sieci (spinner)
+Zmiana większości metod dialogowych - używają klasy statycznej Tools
+Obsługa nazwy sieci, zapis, odczyt, import
+Przyciski generowania klastrów i wczytywania katalogu klastrów
+
+2014-12-24
+Dodano w pełni funkcjonalne okno tabeli klastrów dla przypadku '56', dodatkowo podokno wyświetlające szczegółowe dane o klastrowaniu wybranym kliknięciem w komórkę tabeli głównej.
+
+2014-12-22
+Wczytywanie wszystkich plików z klastrowaniem
+Wczytywanie plików klastrów, pierwsza wersja struktury wewnętrznej tabeli klastrowań
+
+2014-12-21
+Dodano generowanie klastrowań dla sieci. Poprawiono wyświetlanie konsoli logów.
+
+2014-12-20
+Dodano obsługę zamykania głównego programu, ikonkę popupMenu importu inwariantów oraz poprawiono zapis logu (tylko przy wychodzeniu)
+Generowanie pliku ze zbiorami MCT w wersji podstawowej
+Dodano obsługę pliku konfiguracyjnego.
+
+2014-12-19
+Dokończono logowanie zdarzeń programu do okna konsoli wewnętrznej.
+Pierwsza wersja okna tabelek oraz konsoli programu
+
+2014-12-18
+Dodano klasę nowego okna z tabelą - wersja alfa 0.0.0.1
+Poprawa zapisu pliku w formacie Charlie (inwarianty)
+Integracja klas Adam (MCT) z kodem
+Dodanie biblioteki komunikacyjnej z jezykiem R
+Pierwsza wersja metody zapisu plików dla MCT
+
+2014-12-17
+Dużo poprawek i dodatków
+
+2014-12-14
+Kolejne drobne zmiany
+
+2014-12-12
+Poprawa błędu skalowania (zoom)
+Porządek w katalogu ikon programu
+Korekta panelu właściwości arkusza
+Dodatkowe komentarze
+
+2014-12-11
+Poprawka błędu z wyświetlaniem lokalizacji elementów dla wartości zoom zakładki innej niż 100%
+Zmiana sposobu wyświetlania właściwości sieci
+
+2014-12-10
+Generowanie inwariantów programem INA
+Wczytywanie inwariantów z .inv
+Zapis do pliku .inv
+Inne poprawki związane z powyższymi
+
+2014-12-08
+Dodano klonowanie miejsc i tranzycji w portale
+Poprawiono oryginalną metodę tworzenia portali przez zaznaczanie
+nowa pozycja w menu kontekstowych dla miejsc i tranzycji (portale)
+
+2014-12-07
+Zakomentowanie 3/4 kodu
+Uaktualnianie generatora ID po wczytaniu projektu z pliku
+Dodanie ComboBox dla wyboru rodzaju symulacji inwariantow w panelu
+Inne drobne poprawki
+
+2014-12-05
+Dalsze zmiany
+Przycinanie kodu
+
+2014-12-04
+Zmiany w nazewnictwie klas
+
+2014-12-03
+Test systemu Assembla, wgranie projektu studentów
+
+ 

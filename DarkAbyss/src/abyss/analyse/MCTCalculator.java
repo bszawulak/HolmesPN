@@ -8,7 +8,7 @@ import abyss.analyzer.matrix.IncidenceMatrix;
 import abyss.analyzer.matrix.InputMatrix;
 import abyss.analyzer.matrix.OutputMatrix;
 import abyss.darkgui.GUIManager;
-import abyss.petrinet.elements.PetriNet;
+import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Transition;
 
 /**

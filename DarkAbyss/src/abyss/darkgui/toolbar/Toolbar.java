@@ -13,7 +13,6 @@ import javax.swing.JTree;
 
 import abyss.analyse.MDTSCalculator;
 import abyss.darkgui.GUIManager;
-import abyss.files.io.ProjectWriter;
 import abyss.files.io.Snoopy.SnoopyReader;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
@@ -297,6 +296,7 @@ public class Toolbar extends BorderDock {
 		
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", 
 				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
+			@SuppressWarnings("unused")
 			public void actionPerformed(ActionEvent actionEvent) {	
 				//ProjectWriter pWrt = new ProjectWriter();
 				//pWrt.writeProject("test.apf");

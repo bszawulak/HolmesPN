@@ -9,8 +9,8 @@ import java.util.HashMap;
 import javax.swing.JTextArea;
 
 import abyss.darkgui.GUIManager;
+import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Arc;
-import abyss.petrinet.elements.PetriNet;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Arc.TypesOfArcs;

@@ -1,4 +1,4 @@
-package abyss.files.io;
+package abyss.files.io.Snoopy;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -7,15 +7,6 @@ import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-//import org.xml.sax.helpers.DefaultHandler;
-
-
-
-
-
-
-
-
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
@@ -27,12 +18,11 @@ import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
 
 /**
- * Parser sieci rozszerzonych (Snoopy)
- * 
- * @author MR (na bazie NetHandler_Classic)
+ * Klasa zajmująca się wczytaniem standardowej sieci Petriego z formatu .spped.
+ * @author students
  *
  */
-public class NetHandler_Extended extends NetHandler {
+public class NetHandler_Classic extends NetHandler {
 	public boolean Snoopy = false;
 	public boolean node = false;
 	public boolean atribute = false;
@@ -60,17 +50,16 @@ public class NetHandler_Extended extends NetHandler {
 	public int arcSource;
 	public int arcTarget;
 	public boolean variableMultiplicity = false;
-	public String arcType = "";
 	// Node
 	public boolean variableName = false;
 	public boolean variableMarking = false;
 	public boolean variableLogic = false;
 	public boolean variableComent = false;
-	//public Node tmpNode;
+	// public Node tmpNode;
 	public String nodeType;
 	public String nodeName;
 	public int nodeID;
-	//public int nodeSID;
+	// public int nodeSID;
 	public int nodeMarking;
 	public int nodeLogic;
 	public String nodeComment;
@@ -87,9 +76,27 @@ public class NetHandler_Extended extends NetHandler {
 	 * @param qName - nazwa elementu
 	 * @param attributes - atrybut elementu
 	 */
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {		
+	@SuppressWarnings("unused")
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {	
+		boolean _Snoopy = Snoopy;
+		boolean _node = node;
+		boolean _atribute = atribute;
+		boolean _graphics = graphics;
+		boolean _graphic = graphic;
+		boolean _points = points;
+		boolean _point = point;
+		boolean _edgeclass = edgeclass;
+		boolean _edge = edge;
+		boolean _metadata = metadata;
+		boolean _endAtribute = endAtribute;
+		boolean _variableName = variableName;
+		boolean _variableMarking = variableMarking;
+		boolean _variableLogic = variableLogic;
+		boolean _variableComent = variableComent;
+		
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
+			//nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 		}
 
 		// Ustawianie typu wierzchołka
@@ -107,6 +114,11 @@ public class NetHandler_Extended extends NetHandler {
 				coarseCatcher = true;
 				nodeType = "Transition";
 			}
+		}
+		
+		if(coarseCatcher) {
+			int xx=1;
+			
 		}
 		
 		if (qName.equalsIgnoreCase("node")) {
@@ -213,7 +225,6 @@ public class NetHandler_Extended extends NetHandler {
 				int p1 = (int) xPos;
 				int p2 = (int) yPos;
 				graphicPointsXYLocationsList.add(new Point(p1, p2));
-				//graphicPointsSnoopyIDList.add(snoopyID);
 				graphicPointsNetNumbers.add(netNumber);
 				
 				if(coarseCatcher) {
@@ -233,13 +244,13 @@ public class NetHandler_Extended extends NetHandler {
 
 		if (qName.equalsIgnoreCase("edgeclass")) {
 			edgeclass = true;
-			arcType= attributes.getValue(1);
 		}
 		if (qName.equalsIgnoreCase("edge")) {
 			edge = true;
 		}
 
 		// Zapis do zmiennej globalnej ID sorce i target Arca
+
 		if ((endAtribute == true) && (atribute == false) && (graphics == true)
 				&& (graphic == true) && (metadata == false)
 				&& (edgeclass == true) && (point == false) && (points == false)
@@ -319,6 +330,7 @@ public class NetHandler_Extended extends NetHandler {
 				}
 			}
 			if (edge == true && atribute == true) {
+
 				if (variableMultiplicity == true) {
 					if (readString.equals("")) {
 						arcMultiplicity = 0;
@@ -341,17 +353,22 @@ public class NetHandler_Extended extends NetHandler {
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			int wid = Toolkit.getDefaultToolkit().getScreenSize().width - 20;
 			int hei = Toolkit.getDefaultToolkit().getScreenSize().height - 20;
-
+			//int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
+			
 			int sheetsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size();
 			for(int s = sheetsNumber; s<globalNetsCounted; s++) {
 				GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 			}
+			
 			for(int net=0; net<sheetsNumber; net++) {
 				int tmpX = 0;
 				int tmpY = 0;
 				boolean xFound = false;
 				boolean yFound = false;
+				
 				GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(net).getGraphPanel();
+				graphPanel.setSize(new Dimension(200,200));
+				
 				for (int l = 0; l < globalElementLocationList.size(); l++) {
 					if(globalElementLocationList.get(l).getSheetID() != net)
 						continue;
@@ -368,18 +385,19 @@ public class NetHandler_Extended extends NetHandler {
 					}
 				}
 				if (xFound == true && yFound == false) {
-					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 90, graphPanel.getSize().height));
+					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, hei));
 				}
-				if (yFound == true && xFound == false) {
-					graphPanel.setSize(new Dimension(graphPanel.getSize().width, globalElementLocationList.get(tmpY).getPosition().y + 90));
+				if (xFound == false && yFound == true) {
+					//graphPanel.setSize(new Dimension(graphPanel.getSize().width, globalElementLocationList.get(tmpY).getPosition().y + 150));
+					graphPanel.setSize(new Dimension(wid, globalElementLocationList.get(tmpY).getPosition().y + 150));
 				}
 				if (xFound == true && yFound == true) { //z każdym nowym punktem dostosowujemy rozmiar sieci
-					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 90, 
-							globalElementLocationList.get(tmpY).getPosition().y + 90));
+					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, 
+							globalElementLocationList.get(tmpY).getPosition().y + 150));
 				}
-
 			}
 			
+
 			// Tablice łuków dla ElementLocation
 			nodesList.addAll(tmpTransitionList);
 		}
@@ -422,6 +440,9 @@ public class NetHandler_Extended extends NetHandler {
 					tmpTransitionList.add(tmpTran);
 					IdGenerator.getNextTransitionId();
 				}
+			} else {
+				@SuppressWarnings("unused")
+				int x=1;
 			}
 			// zerowanie zmiennych
 			nodeName = "";
@@ -446,7 +467,6 @@ public class NetHandler_Extended extends NetHandler {
 			if(coarseProhibitedIDList.contains(arcSource) || coarseProhibitedIDList.contains(arcTarget)) {
 				cancel = true;
 			}
-			
 			if(cancel == false) {
 				for (int j = 0; j < graphicPointsSnoopyIDList.size(); j++) {
 					if (graphicPointsSnoopyIDList.get(j) == arcSource) {
@@ -456,25 +476,17 @@ public class NetHandler_Extended extends NetHandler {
 						tmpTarget = j;
 					}
 				}
-				//arcComment += arcType;
-				Arc newArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
-				arcList.add(newArc);
-				
-				if(arcType.equals("Read Edge")) {
-					Arc nArc2 = new Arc(globalElementLocationList.get(tmpTarget), globalElementLocationList.get(tmpSource), arcComment, arcMultiplicity, TypesOfArcs.READARC);
-					arcList.add(nArc2);
-				} else if(arcType.equals("Inhibitor Edge")) {
-					newArc.setArcType(TypesOfArcs.INHIBITOR);
-				} else if(arcType.equals("Reset Edge")) {
-					newArc.setArcType(TypesOfArcs.RESET);
-				} else if(arcType.equals("Equal Edge")) {
-					newArc.setArcType(TypesOfArcs.EQUAL);
+				try {
+					Arc nArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
+					arcList.add(nArc);
+				} catch (Exception e) {
+					GUIManager.getDefaultGUIManager().log("Error: unable to add arc.", "error", true);
 				}
 			}
-
 			edge = false;
 			arcComment = "";
 			arcMultiplicity = 0;
+			
 		}
 	}
 

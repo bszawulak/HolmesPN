@@ -169,7 +169,7 @@ public class Place extends Node {
 	}
 	
 	/**
-	 * Metoda zamieniająca dane o krawędzi sieci na łańcuch znaków.
+	 * Metoda zamieniająca dane o miejscu sieci na łańcuch znaków.
 	 * @return String - łańcuch znaków
 	 */
 	public String toString() {

@@ -1,19 +1,17 @@
 package abyss.petrinet.elements;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Stroke;
 import java.awt.font.TextLayout;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 import abyss.graphpanel.EditorResources;
+import abyss.graphpanel.ElementDraw;
 import abyss.graphpanel.IdGenerator;
 import abyss.petrinet.simulators.NetSimulator;
-import abyss.utilities.Tools;
 
 /**
  * Klasa implementująca łuk w sieci Petriego. Przechowuje referencje
@@ -259,7 +257,8 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda przechodzi do kolejnego kroku rysowania symulacji na łuku.
+	 * Metoda przechodzi do kolejnego kroku rysowania symulacji na łuku. W zasadzie to
+	 * głównie zwiększa simulationStep, który odpowiada za liczbę 'klatek' przepływu tokenu.
 	 */
 	public void incrementSimulationStep() {
 		if (!this.isTransportingTokens)
@@ -278,6 +277,9 @@ public class Arc extends PetriNetElement {
 	 * @param zoom int - zoom, unused
 	 */
 	public void draw(Graphics2D g, int sheetId, int zoom) {
+		g = ElementDraw.drawArc(this, g, sheetId, zoom);
+		
+		/*
 		if (this.getLocationSheetId() != sheetId)
 			return;
 		
@@ -401,6 +403,7 @@ public class Arc extends PetriNetElement {
 			g.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			g.drawString(Integer.toString(this.getWeight()), x_weight, y_weight + 10);
 		}
+		*/
 	}
 
 	/**
@@ -430,6 +433,10 @@ public class Arc extends PetriNetElement {
 	 */
 	public void setEndPoint(Point p) {
 		this.tempEndPoint = p;
+	}
+	
+	public Point getTempEndPoint() {
+		return this.tempEndPoint;
 	}
 
 	/**

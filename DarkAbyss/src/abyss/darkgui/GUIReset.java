@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import com.javadocking.dock.CompositeDock;
-import com.javadocking.dock.Position;
 import com.javadocking.dockable.Dockable;
 
 import abyss.analyse.MCTCalculator;
@@ -14,8 +13,8 @@ import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.darkgui.dockwindows.AbyssDockWindowsTable.SubWindow;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
-import abyss.petrinet.elements.MCSDataMatrix;
-import abyss.petrinet.elements.PetriNet;
+import abyss.petrinet.data.MCSDataMatrix;
+import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.simulators.NetSimulator;
 import abyss.petrinet.simulators.NetSimulator.NetType;

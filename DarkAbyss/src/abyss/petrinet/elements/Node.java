@@ -148,8 +148,9 @@ public abstract class Node extends PetriNetElement {
 		g.setColor(Color.black);
 		g.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		int width = g.getFontMetrics().stringWidth(getName());
-		for (Point p : this.getNodePositions(sheetId))
+		for (Point p : this.getNodePositions(sheetId)) {
 			g.drawString(getName(), p.x - width / 2, p.y + getRadius() + 15);
+		}
 	}
 	
 	/**
@@ -171,7 +172,6 @@ public abstract class Node extends PetriNetElement {
 		}
 		
 		g.setColor(Color.black);
-		//g.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		if(sm.getValue("graphFontBold").equals("0")) {
 			g.setFont(new Font("Tahoma", Font.PLAIN, Integer.parseInt(sm.getValue("graphFontSize"))));
 		} else {

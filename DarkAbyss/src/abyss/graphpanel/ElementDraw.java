@@ -4,17 +4,23 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Transition.TransitionType;
+import abyss.utilities.Tools;
 
 /**
  * Klasa pomocnicza, odpowiedzialna za operacje rysowania grafiki w panelach dla sieci.
@@ -32,6 +38,13 @@ public final class ElementDraw {
 
 	}
 	
+	/**
+	 * Główna metoda statyczna odpowiedzialna za rysowanie węzłów sieci.
+	 * @param node Node - obiekt węzła
+	 * @param g Graphics2D - obiekt rysujący
+	 * @param sheetId int - numer arkusza
+	 * @return Graphics2D - obiekt rysujący
+	 */
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId) {
 		//if(node instanceof Transition || node instanceof TimeTransition) {
 		//TODO:
@@ -337,15 +350,176 @@ public final class ElementDraw {
 				g.setStroke(new BasicStroke(1.5F));
 				if (place.isPortal()) {
 					g.drawOval(nodeBounds.x + 8, nodeBounds.y + 8, nodeBounds.width - 16, nodeBounds.height - 16);
-				}
+				}	
+			}
+		} else if(node instanceof MetaNode) {
+			MetaNode metanode = (MetaNode)node;
+			for (ElementLocation el : metanode.getNodeLocations(sheetId)) {
+				int radius = metanode.getRadius();
+				//radius = 30;
+				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, radius * 2, radius * 2);
 				
+				g.setColor(new Color(224,224,224));
+				g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				g.setColor(Color.DARK_GRAY);
+				g.setStroke(new BasicStroke(1.5F));
+				
+				g.setColor(Color.RED);
+				g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 20, nodeBounds.y + 9);
+				g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 20, nodeBounds.y + 21);
+				g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 10, nodeBounds.y + 21);
+				g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 10, nodeBounds.y + 9);
+				
+				g.setColor(Color.black);
+				g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
+				g.setColor(EditorResources.glowTransitonTextColor);
 				
 			}
 		}
+		return g;
+	}
+	
+	/**
+	 * Główna metoda statyczna odpowiedzialna za rysowanie łuku sieci.
+	 * @param arc Arc - obiekt łuku
+	 * @param g Graphics2D - obiekt rysujący
+	 * @param sheetId int - numer arkusza
+	 * @param zoom int - zoom
+	 * @return Graphics2D - obiekt rysujący
+	 */
+	public static Graphics2D drawArc(Arc arc, Graphics2D g, int sheetId, int zoom) {
+		if (arc.getLocationSheetId() != sheetId)
+			return g;
 		
+		Stroke sizeStroke = g.getStroke();
+		
+		Point p1 = new Point((Point)arc.getStartLocation().getPosition());
+		Point p2 = new Point();
+		int endRadius = 0;
+		if (arc.getEndLocation() == null) {
+			p2 = (Point)arc.getTempEndPoint();
+		} else {
+			p2 = (Point)arc.getEndLocation().getPosition().clone();
+			endRadius = arc.getEndLocation().getParentNode().getRadius();// * zoom / 100;
+		}
+		
+		int distX = Tools.absolute(p1.x - p2.x);
+		int distY = Tools.absolute(p1.y - p2.y);
+		
+		if(distX == distY) {
+			p1.setLocation(p1.x+1, p1.y);
+		}
+		
+		double alfa = p2.x - p1.x + p2.y - p1.y == 0 ? 0 : Math.atan(((double) p2.y - (double) p1.y) / ((double) p2.x - (double) p1.x));
+		double alfaCos = Math.cos(alfa);
+		double alfaSin = Math.sin(alfa);
+		double sign = p2.x < arc.getStartLocation().getPosition().x ? 1 : -1;
+		double M = 4;
+		double xp = p2.x + endRadius * alfaCos * sign;
+		double yp = p2.y + endRadius * alfaSin * sign;
+		// double xs = p1.x + startRadius * alfaCos * sign * -1;
+		// double ys = p1.y + startRadius * alfaSin * sign * -1;
+		double xl = p2.x + (endRadius + 10) * alfaCos * sign + M * alfaSin;
+		double yl = p2.y + (endRadius + 10) * alfaSin * sign - M * alfaCos;
+		double xk = p2.x + (endRadius + 10) * alfaCos * sign - M * alfaSin;
+		double yk = p2.y + (endRadius + 10) * alfaSin * sign + M * alfaCos;
+		if (arc.getSelected()) {
+			g.setColor(EditorResources.selectionColorLevel3);
+			g.setStroke(EditorResources.glowStrokeArc);
+			g.drawLine(p1.x, p1.y, p2.x, p2.y);
+			g.drawPolygon(new int[] { (int) xp, (int) xl, (int) xk },
+					new int[] { (int) yp, (int) yl, (int) yk }, 3);
+		}
+		// this.starNodeEdgeIntersection = new Point((int) xs, (int) ys);
+		// this.endNodeEdgeIntersection = new Point((int) xp, (int) yp);
+		g.setStroke(new BasicStroke(1.0f));
+		if (arc.getIsCorect())
+			g.setColor(Color.darkGray);
+		else
+			g.setColor(new Color(176, 23, 31));
+
+		int leftRight = 0; //im wieksze, tym bardziej w prawo
+		int upDown = 0; //im większa, tym mocniej w dół
+
+		
+		g.setStroke(sizeStroke);
+		if(arc.getArcType() == TypesOfArcs.NORMAL || arc.getArcType() == TypesOfArcs.READARC) {
+			g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
+					new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
+		} else if (arc.getArcType() == TypesOfArcs.INHIBITOR) {
+			//g.fillOval((int)xp-4, (int)yp, 8, 8);
+			int xPos = (int) ((xl + xk)/2);
+	    	int yPos = (int) ((yl + yk)/2);
+	    	int xT = (int) ((xPos - xp)/3.14);
+	    	int yT = (int) ((yPos - yp)/3.14);
+	    	
+	    	g.drawOval((int)(xPos-5-xT), (int)(yPos-5-yT), 10, 10);
+		} else if (arc.getArcType() == TypesOfArcs.RESET) {
+			g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
+					new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
+			
+			//int xPos = (int) ((xl + xk)/2);
+	    	//int yPos = (int) ((yl + yk)/2);
+			xl = p2.x + (endRadius + 30) * alfaCos * sign + M * alfaSin;
+			yl = p2.y + (endRadius + 30) * alfaSin * sign - M * alfaCos;
+			xk = p2.x + (endRadius + 30) * alfaCos * sign - M * alfaSin;
+			yk = p2.y + (endRadius + 30) * alfaSin * sign + M * alfaCos;
+			double newxp = p2.x - (endRadius-45) * alfaCos * sign;
+			double newyp = p2.y - (endRadius-45) * alfaSin * sign;
+			
+			g.fillPolygon(new int[] { (int) newxp, (int) xl+leftRight, (int) xk+leftRight }, 
+					new int[] { (int) newyp, (int) yl+upDown, (int) yk+upDown }, 3);
+		} else if (arc.getArcType() == TypesOfArcs.EQUAL) {
+			int xPos = (int) ((xl + xk)/2);
+	    	int yPos = (int) ((yl + yk)/2);
+	    	int xT = (int) ((xPos - xp)/3.14);
+	    	int yT = (int) ((yPos - yp)/3.14);
+	    	
+	    	g.fillOval((int)(xPos-4-xT), (int)(yPos-4-yT), 8, 8);
+	    	
+	    	xT = (int) ((xPos - xp));
+	    	yT = (int) ((yPos - yp));
+	    	
+	    	g.fillOval((int)(xPos-4+xT), (int)(yPos-4+yT), 8, 8);
+		}
+			
+		if (arc.getPairedArc() == null || arc.isMainArcOfPair()) { 
+			//czyli nie rysuje kreski tylko wtedy, jeśli to podrzędny łuk w ramach read-arc - żeby nie dublować
+			g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
+		}
+		
+		int x_weight = (p2.x + p1.x) / 2;
+		int y_weight = (p2.y + p1.y) / 2;
+		
+		//double atang = Math.atan2(p2.y-p1.y,p2.x-p1.x)*180.0/Math.PI;
+		double atang = Math.toDegrees(Math.atan2(p2.y-p1.y,p2.x-p1.x));
+		if(atang < 0){
+			atang += 360;
+	    }
+		if(atang == 90 || atang == 270) { //pionowo
+			x_weight = x_weight + 10;
+		}
+		atang = atang % 90;
+		if(atang < 45.0) {
+			y_weight = y_weight + 5;
+			x_weight = x_weight - 5;
+		} else {
+			y_weight = y_weight - 15;
+		}
+		
+		if (arc.getWeight() > 1) {
+			g.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			g.drawString(Integer.toString(arc.getWeight()), x_weight, y_weight + 10);
+		}
 		return g;
 	}
 
+	/**
+	 * Metoda rysująca tokeny w miejscu.
+	 * @param g Graphics2D - obiekt rysujący
+	 * @param place Place - obiekt miejsca
+	 * @param nodeBounds Rectangle - zakres rysowania
+	 */
 	private static void drawTokens(Graphics2D g, Place place, Rectangle nodeBounds) {
 		g.setColor(Color.black);
 		g.setFont(new Font("TimesRoman", Font.BOLD, 14));

@@ -1,10 +1,11 @@
-package abyss.petrinet.elements;
+package abyss.petrinet.data;
 
 import java.util.ArrayList;
 
 import abyss.analyse.InvariantsTools;
 import abyss.analyse.MCTCalculator;
 import abyss.darkgui.GUIManager;
+import abyss.petrinet.elements.Transition;
 
 /**
  * Klasa tworząca Mapę Mauritiusa dla wybranej tranzycji. Publikacja:
