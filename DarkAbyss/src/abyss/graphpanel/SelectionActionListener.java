@@ -2,8 +2,8 @@ package abyss.graphpanel;
 
 import java.util.ArrayList;
 
-import abyss.math.pnElements.Arc;
-import abyss.math.pnElements.ElementLocation;
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.ElementLocation;
 
 /**
  * Klasa przekazująca informacje związane ze zdarzeniem zaznaczania, wywoływanym przez SelectionManager.

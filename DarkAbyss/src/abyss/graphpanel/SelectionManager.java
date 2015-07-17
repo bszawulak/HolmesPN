@@ -10,13 +10,13 @@ import javax.swing.JOptionPane;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
-import abyss.math.pnElements.Arc;
-import abyss.math.pnElements.ElementLocation;
-import abyss.math.pnElements.Node;
-import abyss.math.pnElements.Place;
-import abyss.math.pnElements.Transition;
-import abyss.math.pnElements.PetriNetElement.PetriNetElementType;
-import abyss.math.pnElements.Transition.TransitionType;
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
+import abyss.petrinet.elements.Transition.TransitionType;
 
 /**
  * Zadaniem klasy SelectionManager jest zarządzanie zaznaczeniem oraz obiektami które są aktualnie

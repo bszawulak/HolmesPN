@@ -19,12 +19,12 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.Arc;
-import abyss.math.pnElements.InvariantTransition;
-import abyss.math.pnElements.PetriNet;
-import abyss.math.pnElements.Place;
-import abyss.math.pnElements.Transition;
-import abyss.math.simulator.SimulationStep;
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.InvariantTransition;
+import abyss.petrinet.elements.PetriNet;
+import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.simulators.SimulationStep;
 
 /**
  * Klasa odpowiadzialna za symulację wykonywania inwariantów w sieci.
@@ -639,10 +639,10 @@ public class InvariantsSimulator {
 				} else if (!actionStack.empty()) { // if steps remaining
 					currentStep = actionStack.pop();
 
-					if (currentStep.getType() == abyss.math.simulator.NetSimulator.SimulatorMode.STEP) {
+					if (currentStep.getType() == abyss.petrinet.simulators.NetSimulator.SimulatorMode.STEP) {
 						launchSubtractPhase(
 								currentStep.getPendingTransitions(), true);
-					} else if (currentStep.getType() == abyss.math.simulator.NetSimulator.SimulatorMode.SINGLE_TRANSITION) {
+					} else if (currentStep.getType() == abyss.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION) {
 						launchSingleSubtractPhase(
 								currentStep.getPendingTransitions(), true,
 								currentStep.getLaunchedTransition());
@@ -659,10 +659,10 @@ public class InvariantsSimulator {
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
 				// subtract phase ended, commencing add phase
-				if (currentStep.getType() == abyss.math.simulator.NetSimulator.SimulatorMode.STEP)
+				if (currentStep.getType() == abyss.petrinet.simulators.NetSimulator.SimulatorMode.STEP)
 					launchAddPhaseGraphics(currentStep.getPendingTransitions(),
 							true);
-				else if (currentStep.getType() == abyss.math.simulator.NetSimulator.SimulatorMode.SINGLE_TRANSITION)
+				else if (currentStep.getType() == abyss.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION)
 					launchSingleAddPhaseGraphics(
 							currentStep.getPendingTransitions(), true,
 							currentStep.getLaunchedTransition());
@@ -670,9 +670,9 @@ public class InvariantsSimulator {
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
 				// ending add phase
-				if (currentStep.getType() == abyss.math.simulator.NetSimulator.SimulatorMode.STEP)
+				if (currentStep.getType() == abyss.petrinet.simulators.NetSimulator.SimulatorMode.STEP)
 					launchAddPhase(currentStep.getPendingTransitions(), true);
-				else if (currentStep.getType() == abyss.math.simulator.NetSimulator.SimulatorMode.SINGLE_TRANSITION)
+				else if (currentStep.getType() == abyss.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION)
 					launchSingleAddPhase(currentStep.getPendingTransitions(),
 							true, currentStep.getLaunchedTransition());
 				finishedAddPhase = true;
@@ -808,7 +808,7 @@ public class InvariantsSimulator {
 					}
 
 					//
-					actionStack.push(new SimulationStep(abyss.math.simulator.NetSimulator.SimulatorMode.STEP,
+					actionStack.push(new SimulationStep(abyss.petrinet.simulators.NetSimulator.SimulatorMode.STEP,
 							cloneTransitionArray(launchingTransitions)));
 					if (actionStack.peek().getPendingTransitions() == null) {
 						//SettingsManager.log("Yay");
@@ -889,7 +889,7 @@ public class InvariantsSimulator {
 								.size();
 					}
 					actionStack.push(new SimulationStep(
-							abyss.math.simulator.NetSimulator.SimulatorMode.SINGLE_TRANSITION,
+							abyss.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION,
 							launchingTransitions.get(0), cloneTransitionArray(launchingTransitions)));
 					launchSingleSubtractPhase(launchingTransitions, false, null);
 					subtractPhase = false;

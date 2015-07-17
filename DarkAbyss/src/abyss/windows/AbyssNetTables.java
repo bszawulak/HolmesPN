@@ -37,7 +37,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.Transition;
+import abyss.petrinet.elements.Transition;
 import abyss.tables.InvariantsSimTableModel;
 import abyss.tables.InvariantsTableModel;
 import abyss.tables.PTITableRenderer;

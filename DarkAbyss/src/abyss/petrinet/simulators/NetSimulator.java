@@ -1,4 +1,4 @@
-package abyss.math.simulator;
+package abyss.petrinet.simulators;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,13 +11,13 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.Arc;
-import abyss.math.pnElements.Node;
-import abyss.math.pnElements.PetriNet;
-import abyss.math.pnElements.Place;
-import abyss.math.pnElements.Transition;
-import abyss.math.pnElements.Arc.TypesOfArcs;
-import abyss.math.pnElements.Transition.TransitionType;
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.PetriNet;
+import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.elements.Arc.TypesOfArcs;
+import abyss.petrinet.elements.Transition.TransitionType;
 
 /**
  * Klasa zajmująca się zarządzaniem całym procesem symulacji.

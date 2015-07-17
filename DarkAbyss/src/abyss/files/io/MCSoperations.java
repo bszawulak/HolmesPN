@@ -11,7 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.MCSDataMatrix;
+import abyss.petrinet.elements.MCSDataMatrix;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 

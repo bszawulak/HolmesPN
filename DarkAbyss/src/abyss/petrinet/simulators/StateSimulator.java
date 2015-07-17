@@ -1,4 +1,4 @@
-package abyss.math.simulator;
+package abyss.petrinet.simulators;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,12 +8,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.Arc;
-import abyss.math.pnElements.Place;
-import abyss.math.pnElements.Transition;
-import abyss.math.pnElements.Arc.TypesOfArcs;
-import abyss.math.pnElements.Transition.TransitionType;
-import abyss.math.simulator.NetSimulator.NetType;
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.elements.Arc.TypesOfArcs;
+import abyss.petrinet.elements.Transition.TransitionType;
+import abyss.petrinet.simulators.NetSimulator.NetType;
 
 /**
  * Klasa symulująca główny symulator programu :) Różnica jest taka, że poniższe metody potrafią wygenerować

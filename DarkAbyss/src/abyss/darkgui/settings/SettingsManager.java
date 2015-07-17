@@ -115,6 +115,7 @@ public class SettingsManager {
 		checkAndFix(settingsNew, "gridLines", "1");
 		checkAndFix(settingsNew, "gridAlignWhenSaved", "1");
 		checkAndFix(settingsNew, "usesSnoopyOffsets", "1");
+		checkAndFix(settingsNew, "usesOldSnoopyLoaders", "0");
 		try { 
 			String tmp = getValue("graphArcLineSize");
 			int test = Integer.parseInt(tmp);

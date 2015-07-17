@@ -11,9 +11,9 @@ import java.util.Set;
 import javax.swing.JTextArea;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.MCSDataMatrix;
-import abyss.math.pnElements.Node;
-import abyss.math.pnElements.Transition;
+import abyss.petrinet.elements.MCSDataMatrix;
+import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.Transition;
 import abyss.windows.AbyssMCS;
 
 /**

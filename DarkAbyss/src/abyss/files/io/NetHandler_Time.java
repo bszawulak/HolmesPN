@@ -11,13 +11,13 @@ import org.xml.sax.SAXException;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
-import abyss.math.pnElements.Arc;
-import abyss.math.pnElements.ElementLocation;
-import abyss.math.pnElements.Node;
-import abyss.math.pnElements.Place;
-import abyss.math.pnElements.Transition;
-import abyss.math.pnElements.Arc.TypesOfArcs;
-import abyss.math.pnElements.Transition.TransitionType;
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.elements.Arc.TypesOfArcs;
+import abyss.petrinet.elements.Transition.TransitionType;
 
 /**
  * Parser sieci czasowych (Snoopy)

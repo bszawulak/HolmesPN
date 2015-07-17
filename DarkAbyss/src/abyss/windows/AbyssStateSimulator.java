@@ -61,11 +61,11 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.Place;
-import abyss.math.pnElements.Transition;
-import abyss.math.simulator.NetSimulator.NetType;
-import abyss.math.simulator.NetSimulator.SimulatorMode;
-import abyss.math.simulator.StateSimulator;
+import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.simulators.StateSimulator;
+import abyss.petrinet.simulators.NetSimulator.NetType;
+import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 

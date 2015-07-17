@@ -1,4 +1,4 @@
-package abyss.math.pnElements;
+package abyss.petrinet.elements;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

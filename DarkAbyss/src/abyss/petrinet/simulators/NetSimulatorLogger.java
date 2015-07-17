@@ -1,13 +1,13 @@
-package abyss.math.simulator;
+package abyss.petrinet.simulators;
 
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.Arc;
-import abyss.math.pnElements.Node;
-import abyss.math.pnElements.Transition;
-import abyss.math.simulator.NetSimulator.NetType;
-import abyss.math.simulator.NetSimulator.SimulatorMode;
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.simulators.NetSimulator.NetType;
+import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
 import abyss.windows.AbyssNotepad;
 

@@ -5,12 +5,12 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.Arc;
-import abyss.math.pnElements.ElementLocation;
-import abyss.math.pnElements.Node;
-import abyss.math.pnElements.Place;
-import abyss.math.pnElements.Transition;
-import abyss.math.pnElements.Arc.TypesOfArcs;
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.varia.Check;
 
 /**

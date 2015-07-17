@@ -3,8 +3,8 @@ package abyss.analyse;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.Place;
-import abyss.math.pnElements.Transition;
+import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.Transition;
 
 /**
  * Klasa służąca do obliczania niedziałających elementów w przypadku, gdy wskazany wcześniej element sieci (lub zbiór)

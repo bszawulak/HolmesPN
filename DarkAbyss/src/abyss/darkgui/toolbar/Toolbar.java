@@ -16,7 +16,7 @@ import abyss.darkgui.GUIManager;
 import abyss.files.io.ProjectWriter;
 import abyss.files.io.Snoopy.SnoopyReader;
 import abyss.graphpanel.GraphPanel.DrawModes;
-import abyss.math.simulator.NetSimulator.SimulatorMode;
+import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
 import abyss.varia.NetworkTransformations;
 import abyss.windows.AbyssNotepad;

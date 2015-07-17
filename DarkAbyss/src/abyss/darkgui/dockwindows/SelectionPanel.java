@@ -7,8 +7,8 @@ import javax.swing.JPanel;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
-import abyss.math.pnElements.Arc;
-import abyss.math.pnElements.ElementLocation;
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.ElementLocation;
 
 /**
  * Klasa implementująca panel pokazujący informacje o zaznaczonych myszą elementach sieci.

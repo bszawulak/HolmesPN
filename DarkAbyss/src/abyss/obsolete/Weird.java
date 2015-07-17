@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.Timer;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.simulator.NetSimulator;
-import abyss.math.simulator.NetSimulator.SimulatorMode;
+import abyss.petrinet.simulators.NetSimulator;
+import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
 
 public class Weird {
 	public boolean forceSimulatorStop() {

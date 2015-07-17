@@ -14,12 +14,12 @@ import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.darkgui.dockwindows.AbyssDockWindowsTable.SubWindow;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.IdGenerator;
-import abyss.math.pnElements.MCSDataMatrix;
-import abyss.math.pnElements.PetriNet;
-import abyss.math.pnElements.Transition;
-import abyss.math.simulator.NetSimulator;
-import abyss.math.simulator.NetSimulator.NetType;
-import abyss.math.simulator.NetSimulator.SimulatorMode;
+import abyss.petrinet.elements.MCSDataMatrix;
+import abyss.petrinet.elements.PetriNet;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.simulators.NetSimulator;
+import abyss.petrinet.simulators.NetSimulator.NetType;
+import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
 import abyss.workspace.Workspace;
 
 /**

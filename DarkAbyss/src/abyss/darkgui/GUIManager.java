@@ -9,9 +9,10 @@ import abyss.darkgui.dockwindows.AbyssDockWindow.DockWindowType;
 import abyss.darkgui.settings.SettingsManager;
 import abyss.darkgui.toolbar.Toolbar;
 import abyss.files.io.TexExporter;
-import abyss.math.pnElements.ElementLocation;
-import abyss.math.pnElements.Node;
-import abyss.math.pnElements.Transition;
+import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.hierarchy.HierarchicalGraphics;
 import abyss.utilities.Tools;
 import abyss.windows.AbyssAbout;
 import abyss.windows.AbyssConsole;
@@ -87,6 +88,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public GUIOperations io;
 	public TexExporter tex;
 	public GUIReset reset;
+	public HierarchicalGraphics hGraphics;
 	
 	private Dimension screenSize; 		// praca w maksymalizacji
 	@SuppressWarnings("unused")
@@ -175,7 +177,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		io = new GUIOperations(this); //obiekt klasy operacji głównych
 		tex = new TexExporter(); //obiekt zarządzający eksportem tabel do formatu latex
 		reset = new GUIReset(); //obiekt odpowiadający za resetowanie danych / kasowanie / czyszczenie
-		
+		hGraphics = new HierarchicalGraphics(); //obiekt z metodami dla sieci hierarchicznych
 		setFrame(frejm);
 		try {	
 			frame.setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));

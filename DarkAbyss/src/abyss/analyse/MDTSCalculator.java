@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.Transition;
+import abyss.petrinet.elements.Transition;
 
 /**
  * Maximal Dependend Transition sets (MDT sets): 

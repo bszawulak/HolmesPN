@@ -10,12 +10,12 @@ import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.IdGenerator;
-import abyss.math.pnElements.Arc;
-import abyss.math.pnElements.ElementLocation;
-import abyss.math.pnElements.Node;
-import abyss.math.pnElements.Place;
-import abyss.math.pnElements.Transition;
-import abyss.math.pnElements.Arc.TypesOfArcs;
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.elements.Arc.TypesOfArcs;
 
 /**
  * Klasa odpowiedzialna za wczytywanie tego całego syfu, jaki w pliki ładuje niemiecki geszeft 
@@ -145,7 +145,6 @@ public class SnoopyReader {
 			
 			boolean readForward = true;
 			boolean goBoldly = true;
-			
 			while(true) {
 				while(!line.contains("<node id=\"")) { //na początku: <node id="226" net="1">
 					line = buffer.readLine();
@@ -183,22 +182,36 @@ public class SnoopyReader {
 				goBoldly = true;
 				int logicalELNumber_names = -1;
 				int logicalELNumber_graphics = -1;
-				
+				boolean firstPass = true;
+				boolean readAnything = false;
 				while(goBoldly) { //czytanie właściwości miejsca	
 					if(line.contains("</node>")) {
 						goBoldly = false;
 						continue;
 					} //1st
 					
-					line = buffer.readLine();
+					if(!line.contains("<attribute name=\""))
+						line = buffer.readLine();
 					
 					if(line.contains("</node>")) {
 						goBoldly = false;
 						continue;
 					} //2nd
 					
+					if(!firstPass) {
+						if(readAnything != true) {
+							while(!(line = buffer.readLine()).contains("</attribute>") ) {
+								;
+							}
+							line = buffer.readLine();
+						}
+					}
+					firstPass = false;
+					readAnything = false;
+					
 					// Nazwa miejsca
 					if(line.contains("<attribute name=\"Name\"")) {
+						readAnything = true;
 						String name = "Locus"+placesCounter;
 						while(!(line = buffer.readLine()).contains("</attribute>")) {
 							if(line.contains("<![CDATA[")) {
@@ -236,6 +249,7 @@ public class SnoopyReader {
 					
 					// ID
 					if(line.contains("<attribute name=\"ID\"")) {
+						readAnything = true;
 						while(!(line = buffer.readLine()).contains("</attribute>")) { //ignore
 							;
 						}
@@ -244,6 +258,7 @@ public class SnoopyReader {
 					
 					// Tokeny
 					if(line.contains("<attribute name=\"Marking\"")) {
+						readAnything = true;
 						int tokens = 0;
 						while(!(line = buffer.readLine()).contains("</attribute>")) {
 							if(line.contains("<![CDATA[")) {
@@ -256,6 +271,7 @@ public class SnoopyReader {
 					
 					// Logic
 					if(line.contains("<attribute name=\"Logic\"")) {
+						readAnything = true;
 						while(!(line = buffer.readLine()).contains("</attribute>")) { //ignore
 							;
 						}
@@ -264,6 +280,7 @@ public class SnoopyReader {
 
 					// Komentarz do miejsca
 					if(line.contains("<attribute name=\"Comment\"")) {
+						readAnything = true;
 						String wittyComment = "";
 						while(!(line = buffer.readLine()).contains("</attribute>")) {
 							if(line.contains("<![CDATA[")) {
@@ -276,6 +293,7 @@ public class SnoopyReader {
 					
 					// XY Locations
 					if(line.contains("<graphics count=\"")) {
+						readAnything = true;
 						ArrayList<Integer> subIDs = new ArrayList<Integer>();
 						while(!(line = buffer.readLine()).contains("</graphics>")) {
 							if(line.contains("<graphic ")) {
@@ -375,22 +393,35 @@ public class SnoopyReader {
 				goBoldly = true;
 				int logicalELNumber_names = -1;
 				int logicalELNumber_graphics = -1;
-				
-				while(goBoldly) { //czytanie właściwości miejsca	
+				boolean firstPass = true;
+				boolean readAnything = false;
+				while(goBoldly) { //czytanie właściwości miejsca
 					if(line.contains("</node>")) {
 						goBoldly = false;
 						continue;
 					} //1st
-					
-					line = buffer.readLine();
+
+					if(!line.contains("<attribute name=\""))
+						line = buffer.readLine();
 					
 					if(line.contains("</node>")) {
 						goBoldly = false;
 						continue;
 					} //2nd
 					
+					if(!firstPass) {
+						if(readAnything != true) {
+							while(!(line = buffer.readLine()).contains("</attribute>") ) {
+								;
+							}
+							line = buffer.readLine();
+						}
+					}
+					firstPass = false;
+					readAnything = false;
 					// Nazwa tranzycji
 					if(line.contains("<attribute name=\"Name\"")) {
+						readAnything = true;
 						String name = "Locus"+transitionsCounter;
 						while(!(line = buffer.readLine()).contains("</attribute>")) {
 							if(line.contains("<![CDATA[")) {
@@ -428,6 +459,7 @@ public class SnoopyReader {
 					
 					// ID
 					if(line.contains("<attribute name=\"ID\"")) {
+						readAnything = true;
 						while(!(line = buffer.readLine()).contains("</attribute>")) { //ignore
 							;
 						}
@@ -436,6 +468,7 @@ public class SnoopyReader {
 					
 					// Logic
 					if(line.contains("<attribute name=\"Logic\"")) {
+						readAnything = true;
 						while(!(line = buffer.readLine()).contains("</attribute>")) { //ignore
 							;
 						}
@@ -444,6 +477,7 @@ public class SnoopyReader {
 
 					// Komentarz do tranzycji
 					if(line.contains("<attribute name=\"Comment\"")) {
+						readAnything = true;
 						String wittyComment = "";
 						while(!(line = buffer.readLine()).contains("</attribute>")) {
 							if(line.contains("<![CDATA[")) {
@@ -456,6 +490,7 @@ public class SnoopyReader {
 					
 					// XY Locations
 					if(line.contains("<graphics count=\"")) {
+						readAnything = true;
 						ArrayList<Integer> subIDs = new ArrayList<Integer>();
 						while(!(line = buffer.readLine()).contains("</graphics>")) {
 							if(line.contains("<graphic ")) {
@@ -619,8 +654,7 @@ public class SnoopyReader {
 				if(line.contains("</edgeclass>")) {
 					break;
 				}
-				
-				
+
 				int nodeSourceID = (int) getAttributeValue(line, " source=\"", -1);
 				int nodeTargetID = (int) getAttributeValue(line, " target=\"", -1);
 				if(nodeSourceID == -1 || nodeTargetID == -1) {
@@ -638,22 +672,36 @@ public class SnoopyReader {
 				goBoldly = true;
 				int multiplicity = 0;
 				String comment = ""; 
-				
+				boolean firstPass = true;
+				boolean readAnything = false;
 				while(goBoldly) { //czytanie właściwości miejsca	
 					if(line.contains("</edge>")) {
 						goBoldly = false;
 						continue;
 					} //1st
 					
-					line = buffer.readLine();
+					if(!line.contains("<attribute name=\""))
+						line = buffer.readLine();
 					
 					if(line.contains("</edge>")) {
 						goBoldly = false;
 						continue;
 					} //2nd
 					
+					if(!firstPass) {
+						if(readAnything != true) {
+							while(!(line = buffer.readLine()).contains("</attribute>") ) {
+								;
+							}
+							line = buffer.readLine();
+						}
+					}
+					firstPass = false;
+					readAnything = false;
+					
 					// Waga łuku
 					if(line.contains("<attribute name=\"Multiplicity\"")) {
+						readAnything = true;
 						while(!(line = buffer.readLine()).contains("</attribute>")) {
 							if(line.contains("<![CDATA[")) {
 								multiplicity = (int) readDoubleCDATA(buffer, line, 0);
@@ -664,6 +712,7 @@ public class SnoopyReader {
 
 					// Komentarz łuku
 					if(line.contains("<attribute name=\"Comment\"")) {
+						readAnything = true;
 						while(!(line = buffer.readLine()).contains("</attribute>")) {
 							if(line.contains("<![CDATA[")) {
 								comment = readStrCDATA(buffer, line, "");
@@ -674,6 +723,7 @@ public class SnoopyReader {
 					
 					// XY Locations
 					if(line.contains("<graphics count=\"")) {
+						readAnything = true;
 						while(!(line = buffer.readLine()).contains("</graphics>")) {
 							if(line.contains("<graphic ")) {
 								int sourceID = (int) getAttributeValue(line, " source=\"", -1);

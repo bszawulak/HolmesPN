@@ -15,8 +15,8 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.JPanel;
 
-import abyss.math.pnElements.MauritiusMap;
-import abyss.math.pnElements.MauritiusMap.BTNode;
+import abyss.petrinet.elements.MauritiusMap;
+import abyss.petrinet.elements.MauritiusMap.BTNode;
 
 /**
  * Metoda odpowiedzialna za rysowanie map Mauritiusa.

@@ -265,6 +265,25 @@ public class AbyssProgramProperties extends JFrame {
 			useOffsetsCheckBox.setSelected(false);
 		ioPanel.add(useOffsetsCheckBox);
 		
+		JCheckBox useOldLoaderCheckBox = new JCheckBox("(UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)", true);
+		useOldLoaderCheckBox.setBounds(io_x, io_y+60, 400, 20);
+		useOldLoaderCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction) return;
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesOldSnoopyLoaders", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesOldSnoopyLoaders", "0", true);
+				}
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesOldSnoopyLoaders").equals("1")) 
+			useOldLoaderCheckBox.setSelected(true);
+		else
+			useOldLoaderCheckBox.setSelected(false);
+		ioPanel.add(useOldLoaderCheckBox);
+		
 		noAction = false;
 		return ioPanel;
 	}

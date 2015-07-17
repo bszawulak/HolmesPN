@@ -1,9 +1,9 @@
-package abyss.math.simulator;
+package abyss.petrinet.simulators;
 
 import java.util.ArrayList;
 
-import abyss.math.pnElements.Transition;
-import abyss.math.simulator.NetSimulator.SimulatorMode;
+import abyss.petrinet.elements.Transition;
+import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
 
 /**
  * Klasa przechowująca krok symulacji. Za każdym razem, gdy wykonywany jest krok symulacji

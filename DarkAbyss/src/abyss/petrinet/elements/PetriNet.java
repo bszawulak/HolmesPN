@@ -1,4 +1,4 @@
-package abyss.math.pnElements;
+package abyss.petrinet.elements;
 
 import abyss.analyse.MCTCalculator;
 import abyss.darkgui.GUIManager;
@@ -10,15 +10,16 @@ import abyss.files.io.NetHandler_Classic;
 import abyss.files.io.NetHandler_Colored;
 import abyss.files.io.NetHandler_Extended;
 import abyss.files.io.NetHandler_Time;
+import abyss.files.io.Snoopy.SnoopyReader;
 import abyss.files.io.Snoopy.SnoopyWriter;
 import abyss.graphpanel.SelectionActionListener;
 import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.GraphPanel.DrawModes;
-import abyss.math.pnElements.Node;
-import abyss.math.pnElements.PetriNetElement.PetriNetElementType;
-import abyss.math.pnElements.Transition.TransitionType;
-import abyss.math.simulator.NetSimulator;
-import abyss.math.simulator.NetSimulator.NetType;
+import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
+import abyss.petrinet.elements.Transition.TransitionType;
+import abyss.petrinet.simulators.NetSimulator;
+import abyss.petrinet.simulators.NetSimulator.NetType;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -786,38 +787,44 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				setFileName(name);
 			}
 			// Formaty Snoopiego
-			if (path.endsWith(".spped") || path.endsWith(".spept") || path.endsWith(".colpn")
-					|| path.endsWith(".sptpt")) {
-				InputStream xmlInput = new FileInputStream(path);
-
-				SAXParser saxParser = readerSNOOPY.newSAXParser();
-				// Wybor parsera
-				if (path.endsWith(".spped")) {
-					handler = new NetHandler_Classic();
+			if (path.endsWith(".spped") || path.endsWith(".spept") || path.endsWith(".colpn") || path.endsWith(".sptpt")) {
+				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesOldSnoopyLoaders").equals("1")) {
+					GUIManager.getDefaultGUIManager().log("Activating old Snoopy loader. Will fail for hierarchical networks.", "text", true);
+					InputStream xmlInput = new FileInputStream(path);
+					SAXParser saxParser = readerSNOOPY.newSAXParser();
+					if (path.endsWith(".spped")) {
+						handler = new NetHandler_Classic();
+					}
+					if (path.endsWith(".spept")) {
+						handler = new NetHandler_Extended();
+					}
+					if (path.endsWith(".colpn")) {
+						handler = new NetHandler_Colored();
+					}
+					if (path.endsWith(".sptpt")) {
+						handler = new NetHandler_Time();
+					}
+					saxParser.parse(xmlInput, handler);
+					addArcsAndNodes(handler.getArcList(), handler.getNodesList());
+					
+					
+					String name = path;
+					int ind = name.lastIndexOf("\\");
+					if(ind > 1)
+						name = name.substring(ind+1);
+					
+					setFileName(name);
+					name = name.replace(".spped", "");
+					name = name.replace(".spept", "");
+					name = name.replace(".colpn", "");
+					name = name.replace(".sptpt", "");
+					setName(name);
+					
+				} else {
+					SnoopyReader reader = new SnoopyReader(0, path);
+					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
+					GUIManager.getDefaultGUIManager().hGraphics.resizePanels();
 				}
-				if (path.endsWith(".spept")) {
-					handler = new NetHandler_Extended();
-				}
-				if (path.endsWith(".colpn")) {
-					handler = new NetHandler_Colored();
-				}
-				if (path.endsWith(".sptpt")) {
-					handler = new NetHandler_Time();
-				}
-				saxParser.parse(xmlInput, handler);
-				addArcsAndNodes(handler.getArcList(), handler.getNodesList());
-				
-				String name = path;
-				int ind = name.lastIndexOf("\\");
-				if(ind > 1)
-					name = name.substring(ind+1);
-				
-				setFileName(name);
-				name = name.replace(".spped", "");
-				name = name.replace(".spept", "");
-				name = name.replace(".colpn", "");
-				name = name.replace(".sptpt", "");
-				setName(name);
 				
 				int nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size() - 1;
 				int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);

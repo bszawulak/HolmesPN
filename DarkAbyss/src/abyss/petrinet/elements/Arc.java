@@ -1,4 +1,4 @@
-package abyss.math.pnElements;
+package abyss.petrinet.elements;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.IdGenerator;
-import abyss.math.simulator.NetSimulator;
+import abyss.petrinet.simulators.NetSimulator;
 import abyss.utilities.Tools;
 
 /**

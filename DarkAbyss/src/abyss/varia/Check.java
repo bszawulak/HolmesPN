@@ -6,8 +6,8 @@ import javax.swing.JOptionPane;
 
 import abyss.analyse.InvariantsTools;
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.Arc;
-import abyss.math.pnElements.Arc.TypesOfArcs;
+import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.Arc.TypesOfArcs;
 
 public final class Check {
 	private Check() {}

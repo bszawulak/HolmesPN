@@ -18,8 +18,8 @@ import abyss.analyse.MCTCalculator;
 import abyss.clusters.ClusteringExtended;
 import abyss.darkgui.GUIManager;
 import abyss.files.io.Snoopy.SnoopyWriter;
-import abyss.math.pnElements.Place;
-import abyss.math.pnElements.Transition;
+import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.Transition;
 import abyss.utilities.Tools;
 import abyss.workspace.ExtensionFileFilter;
 

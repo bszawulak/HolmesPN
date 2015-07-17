@@ -2,8 +2,8 @@ package abyss.analyzer.matrix;
 
 import java.util.ArrayList;
 
-import abyss.math.pnElements.Place;
-import abyss.math.pnElements.Transition;
+import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.Transition;
 
 /**
  * Klasa tworząca macierz incydencji, dziedziczy z Matrix.

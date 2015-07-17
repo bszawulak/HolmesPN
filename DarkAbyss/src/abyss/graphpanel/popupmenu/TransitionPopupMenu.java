@@ -7,8 +7,8 @@ import javax.swing.JOptionPane;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
-import abyss.math.pnElements.Node;
-import abyss.math.pnElements.Transition;
+import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.Transition;
 
 /**
  * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji związanych z tranzycjami.

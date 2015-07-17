@@ -5,8 +5,8 @@ import java.io.BufferedWriter;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.math.pnElements.ElementLocation;
-import abyss.math.pnElements.Place;
+import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.Place;
 import abyss.varia.NetworkTransformations;
 
 /**

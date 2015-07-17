@@ -1,4 +1,4 @@
-package abyss.math.pnElements;
+package abyss.petrinet.elements;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.ElementDraw;
 import abyss.graphpanel.IdGenerator;
-import abyss.math.pnElements.Arc.TypesOfArcs;
+import abyss.petrinet.elements.Arc.TypesOfArcs;
 
 /**
  * Klasa implementująca tranzycję w sieci Petriego. Zapewnia implementację
