@@ -440,19 +440,6 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala ustawić lokację wierzchołka wyjściowego łuku.
-	 * @param elementLocation ElementLocation - lokalizacja wierzchołka wyjściowego
-	 */
-	public void setEndLocation(ElementLocation elementLocation) {
-		if (elementLocation == null)
-			return;
-		this.locationEnd = elementLocation;
-		this.locationEnd.addInArc(this);
-		this.tempEndPoint = null;
-		this.isCorrect = true;
-	}
-
-	/**
 	 * Metoda pozwala pobrać stan zaznaczenia łuku.
 	 * @return boolean - true, jeśli łuk jest zaznaczony; false w przeciwnym wypadku
 	 */
@@ -467,8 +454,7 @@ public class Arc extends PetriNetElement {
 	public boolean checkSelection() {
 		if (this.locationEnd == null || this.locationStart == null)
 			return false;
-		setSelected(this.locationEnd.isSelected()
-				&& this.locationStart.isSelected());
+		setSelected(this.locationEnd.isSelected() && this.locationStart.isSelected());
 		return this.getSelected();
 	}
 
@@ -508,9 +494,33 @@ public class Arc extends PetriNetElement {
 	 */
 	public void setStartLocation(ElementLocation startLocation) {
 		this.locationStart = startLocation;
-		this.locationStart.addOutArc(this);
+		
+		if(this.arcType == TypesOfArcs.META_ARC) {
+			this.locationStart.accessMetaOutArcs().add(this);
+		} else {
+			this.locationStart.addOutArc(this);
+		}
 	}
 
+	/**
+	 * Metoda pozwala ustawić lokację wierzchołka wyjściowego łuku.
+	 * @param elementLocation ElementLocation - lokalizacja wierzchołka wyjściowego
+	 */
+	public void setEndLocation(ElementLocation elementLocation) {
+		if (elementLocation == null)
+			return;
+		this.locationEnd = elementLocation;
+		
+		if(this.arcType == TypesOfArcs.META_ARC) {
+			this.locationEnd.accessMetaInArcs().add(this);
+		} else {
+			this.locationEnd.addInArc(this);
+		}
+
+		this.tempEndPoint = null;
+		this.isCorrect = true;
+	}
+	
 	/**
 	 * Metoda pozwala pobrać lokalizację wierzchołka wyjściowego łuku.
 	 * @return ElementLocation - lokalizacja wierzchołka wyjściowego łuku

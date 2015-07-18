@@ -20,8 +20,8 @@ import com.javadocking.dockable.Dockable;
 
 /**
  * Klasa implementująca metody tworzenia i obsługi głównego menu programu.
- * @author students
- * @author MR (2015: mostly)
+ * @author students - już by tej klasy nie poznali...
+ * @author MR (2015: totalna rearanżacja)
  *
  */
 public class DarkMenu extends JMenuBar {
@@ -33,6 +33,7 @@ public class DarkMenu extends JMenuBar {
 	private JMenu fileMenu;
 	private JMenu windowMenu;
 	private JMenu netMenu;
+	private JMenu hierachyMenu;
 	private JMenu analysisMenu;
 	private JMenu mctOperationsMenu;
 	//private JMenu clustersOperationsMenu;
@@ -86,7 +87,7 @@ public class DarkMenu extends JMenuBar {
 		sheetMenuItem.getAccessibleContext().setAccessibleDescription("Create a new sheet (tab) in workspace");
 		sheetMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				guiManager.getWorkspace().newTab();
+				guiManager.getWorkspace().newTab(false);
 			}
 		});
 		fileMenu.add(sheetMenuItem);
@@ -325,6 +326,52 @@ public class DarkMenu extends JMenuBar {
 		});
 		netMenu.add(netTablesItem);
 		
+		//*********************************************************************************************
+		//***********************************                 *****************************************
+		//***********************************  HIERACHY MENU  *****************************************
+		//***********************************                 *****************************************
+		//*********************************************************************************************
+		
+		// Build the File menu.
+		hierachyMenu = new JMenu("Subnets");
+		hierachyMenu.setMnemonic(KeyEvent.VK_F);
+		hierachyMenu.getAccessibleContext().setAccessibleDescription("Subnets tools");
+		this.add(hierachyMenu);
+		
+		// Invariants window
+		JMenuItem collapseNetItem = new JMenuItem("Compress subnets", KeyEvent.VK_1);
+		collapseNetItem.setIcon(Tools.getResIcon32("/icons/menu/aaaaaaaaaaaaaaaaaaa.png"));
+		//collapseNetItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
+		collapseNetItem.getAccessibleContext().setAccessibleDescription("Compress subnets (remove all empty sheets)");
+		collapseNetItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().hGraphics.collapseSubnets();
+				GUIManager.getDefaultGUIManager().hGraphics.resizePanels();
+			}
+		});
+		hierachyMenu.add(collapseNetItem);
+		
+		JMenuItem alignElementsItem = new JMenuItem("Align to upper left", KeyEvent.VK_1);
+		alignElementsItem.setIcon(Tools.getResIcon32("/icons/menu/aaaaaaaaaaaaaaaaaaa.png"));
+		//alignElementsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
+		alignElementsItem.getAccessibleContext().setAccessibleDescription("All net elements will be aligned to left upper corner");
+		alignElementsItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().hGraphics.realignElements();
+			}
+		});
+		hierachyMenu.add(alignElementsItem);
+		
+		JMenuItem resizePanelsItem = new JMenuItem("Resize panels", KeyEvent.VK_1);
+		resizePanelsItem.setIcon(Tools.getResIcon32("/icons/menu/aaaaaaaaaaaaaaaaaaa.png"));
+		//alignElementsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
+		resizePanelsItem.getAccessibleContext().setAccessibleDescription("Resize all panels to better fit the contained subnet");
+		resizePanelsItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().hGraphics.resizePanels();
+			}
+		});
+		hierachyMenu.add(resizePanelsItem);
 		
 		//*********************************************************************************************
 		//***********************************                 *****************************************

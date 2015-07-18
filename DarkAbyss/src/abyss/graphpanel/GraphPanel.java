@@ -563,7 +563,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala ustawić obiekt klasy SelectionManager zarzśdzajścy zaznaczeniem
+	 * Metoda pozwala ustawić obiekt klasy SelectionManager zarządzający zaznaczeniem
 	 * na danym arkuszu.
 	 * @param selectionManager SelectionManager - nowy manager zaznaczenia
 	 */
@@ -572,7 +572,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala pobrać obiekt klasy SelectionManager zarzśdzajścy zaznaczeniem na
+	 * Metoda pozwala pobrać obiekt klasy SelectionManager zarządzający zaznaczeniem na
 	 * danym arkuszu.
 	 * @return SelectionManager - manager selekcji
 	 */

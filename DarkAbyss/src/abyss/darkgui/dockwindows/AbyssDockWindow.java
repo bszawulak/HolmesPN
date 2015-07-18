@@ -12,6 +12,7 @@ import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import abyss.petrinet.data.MCSDataMatrix;
 import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
@@ -216,10 +217,11 @@ public class AbyssDockWindow extends SingleDock {
 		if (e.getActionType() == SelectionActionType.SELECTED_ONE) {
 			if (e.getElementLocationGroup().size() > 0) {
 				Node n = e.getElementLocation().getParentNode();
-				if (n.getType() == PetriNetElementType.PLACE)
+				if (n.getType() == PetriNetElementType.PLACE) {
 					setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.PLACE, (Place) n, e.getElementLocation()));
-				else
-				{
+				} else if (n.getType() == PetriNetElementType.META) {
+					setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.META, (MetaNode) n, e.getElementLocation()));
+				} else {
 					if(n.getType().equals(PetriNetElementType.TRANSITION)) {
 						if(((Transition)n).getTransType() == TransitionType.PN) {
 							setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.TRANSITION, (Transition) n, e.getElementLocation()));

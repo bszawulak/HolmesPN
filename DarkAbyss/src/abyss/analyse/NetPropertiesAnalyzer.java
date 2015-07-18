@@ -3,8 +3,10 @@ package abyss.analyse;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
+import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
@@ -22,6 +24,7 @@ public class NetPropertiesAnalyzer {
 	private ArrayList<Place> places = new ArrayList<Place>();
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
 	private ArrayList<Node> nodes = new ArrayList<Node>();
+	private ArrayList<MetaNode> metaNodes = new ArrayList<MetaNode>();
 
 	ArrayList<Node> checked = new ArrayList<Node>();
 
@@ -29,10 +32,12 @@ public class NetPropertiesAnalyzer {
 	 * Konstruktor domyślny obiektu klasy NetPropAnalyzer.
 	 */
 	public NetPropertiesAnalyzer() {
-		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
-		nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		places = pn.getPlaces();
+		transitions = pn.getTransitions();
+		arcs = pn.getArcs();
+		nodes = pn.getNodes();
+		metaNodes = pn.getMetaNodes();
 	}
 
 	/**
@@ -299,12 +304,12 @@ public class NetPropertiesAnalyzer {
 		Node start = nodes.get(0);
 		int tNo = transitions.size();
 		int pNo = places.size();
+		int mnNo = metaNodes.size();
 		int numberOfNodes = nodes.size();
-		if(tNo + pNo != numberOfNodes) {
-			GUIManager.getDefaultGUIManager().log("Network analyzer detected critical problem within the net. "
-				+ "Number of places: "+pNo+ " transitions: "+tNo+ " do not sum to the total stored "
-				+ "number of nodes: "+numberOfNodes+" Please save the net in separate file, close program, open it and "
-				+ "the net again. If the problem remains, please notice authors of program.", "error", true);
+		if(tNo + pNo != numberOfNodes - mnNo) {
+			GUIManager.getDefaultGUIManager().log("Network analyzer detected a problem within the net. "
+				+ "Number of places: "+pNo+ " and number transitions: "+tNo+ " do not sum to the total stored "
+				+ "number of nodes: "+numberOfNodes+" minus number of meta-nodes: "+mnNo+".", "warning", true);
 		}
 		
 		int visitedNodes = checkNetConnectivity(start, new ArrayList<Node>());

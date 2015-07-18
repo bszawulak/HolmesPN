@@ -178,7 +178,7 @@ public class Toolbar extends BorderDock {
 					private static final long serialVersionUID = -3039335266465055547L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().newTab();
+				GUIManager.getDefaultGUIManager().getWorkspace().newTab(false);
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableAdd", addButton));
@@ -294,6 +294,7 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("CleanColor", cleanButton));
 		
+		//TODO:
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", 
 				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
 			@SuppressWarnings("unused")
@@ -302,15 +303,15 @@ public class Toolbar extends BorderDock {
 				//pWrt.writeProject("test.apf");
 				//GUIManager.getDefaultGUIManager().restoreDefaultVisuals();
 				
-				
 				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\normal.spped");
 				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\extClean.spept");
-				SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\arcTest.spped");
+				SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\coarseSimple.spped");
 			}
 		};
 		testButton.setEnabled(false);
 		analysisDockables.add(createButtonDockable("Testing", testButton));
 		
+		//TODO:
 		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", Tools.getResIcon48("/icons/toolbar/a.png")) {
 			@SuppressWarnings("unused")
 			public void actionPerformed(ActionEvent actionEvent) 

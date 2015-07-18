@@ -17,6 +17,7 @@ import abyss.graphpanel.GraphPanel;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
@@ -139,7 +140,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<Place> getPlaces() {
 		ArrayList<Place> returnPlaces = new ArrayList<Place>();
-		for (Node n : this.getDataCore().nodes) {
+		for (Node n : this.dataCore.nodes) {
 			if (n instanceof Place)
 				returnPlaces.add((Place) n);
 		}
@@ -154,7 +155,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<Transition> getTransitions() {
 		ArrayList<Transition> returnTransitions = new ArrayList<Transition>();
-		for (Node n : this.getDataCore().nodes) {
+		for (Node n : this.dataCore.nodes) {
 			if (n instanceof Transition)
 				returnTransitions.add((Transition) n);
 		}
@@ -167,7 +168,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<Transition> getTimeTransitions() {
 		ArrayList<Transition> returnTransitions = new ArrayList<Transition>();
-		for (Node n : this.getDataCore().nodes) {
+		for (Node n : this.dataCore.nodes) {
 			if (n instanceof Transition) {
 				if (((Transition)n).getTransType() == TransitionType.TPN)
 					returnTransitions.add((Transition) n);
@@ -175,6 +176,16 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			
 		}
 		return returnTransitions;
+	}
+	
+	public ArrayList<MetaNode> getMetaNodes() {
+		ArrayList<MetaNode> returnNodes = new ArrayList<MetaNode>();
+		for (Node n : this.dataCore.nodes) {
+			if (n instanceof MetaNode) {
+				returnNodes.add((MetaNode) n);
+			}
+		}
+		return returnNodes;
 	}
 
 	/**
@@ -827,6 +838,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				} else {
 					SnoopyReader reader = new SnoopyReader(0, path);
 					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
+					GUIManager.getDefaultGUIManager().hGraphics.addRequiredSheets();
 					GUIManager.getDefaultGUIManager().hGraphics.resizePanels();
 				}
 				
@@ -1044,7 +1056,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if (emptySheet == true) {
 				SID = emptySheetIndex;
 			} else {
-				SID = GUIManager.getDefaultGUIManager().getWorkspace().newTab();
+				SID = GUIManager.getDefaultGUIManager().getWorkspace().newTab(false);
 			}
 		}
 		return SID;

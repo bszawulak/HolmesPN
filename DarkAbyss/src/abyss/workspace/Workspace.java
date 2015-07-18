@@ -76,7 +76,7 @@ public class Workspace implements SelectionActionListener {
 		setProject(new PetriNet(this, "default"));
 
 		this.getProject().addActionListener(this);
-		newTab();	
+		newTab(false);	
 	}
 	
 	@SuppressWarnings("unused")
@@ -110,9 +110,10 @@ public class Workspace implements SelectionActionListener {
 
 	/**
 	 * Metoda odpowiedzialna za utworzenie nowej zakładki sieci w projekcie.
+	 * @param addMetaNode boolean - true, jeśli do sieci I ma być dodany meta-węzeł
 	 * @return int - numer będący identyfikatorem nowej zakładki
 	 */
-	public int newTab() {
+	public int newTab(boolean addMetaNode) {
 		int index = sheetsIDtable.size();
 		int id = index;
 		if (sheetsIDtable.indexOf(id) != -1)

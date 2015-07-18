@@ -18,18 +18,20 @@ public class MetaNode extends Node {
 	public enum MetaType { CoarsePlace, CoarseTrans, SubNet, MCT }
 	private MetaType metaType;
 	
+	private int metaSheetID;
+	
 	/**
-	 * Główny konstruktor weta węzła sieci.
+	 * Główny konstruktor meta węzła sieci.
 	 * @param sheetId int - nr okna podsieci
 	 * @param nodeId int - wewnętrzny identyfikator w systemie
 	 * @param nodePosition Point - współrzędne XY
 	 * @param radius int - promień rysowania figury
 	 * @param mt MetaType - typ meta-węzła
 	 */
-	public MetaNode(int sheetId, int nodeId, Point nodePosition, int radius, MetaType mt) {
-		super(sheetId, nodeId, nodePosition, radius);
+	public MetaNode(int sheetId, int nodeId, Point nodePosition, MetaType mt) {
+		super(sheetId, nodeId, nodePosition, 15);
 		setType(PetriNetElementType.META);
-		setMetaType(mt);
+		setMetaType(mt);	
 	}
 	
 	/**
@@ -46,6 +48,22 @@ public class MetaNode extends Node {
 	 */
 	public MetaType getMetaType() {
 		return this.metaType;
+	}
+	
+	/**
+	 * Ustawia numer arkusza który reprezentuje ten meta-węzeł.
+	 * @param sheetID int - nr arkusza
+	 */
+	public void setRepresentedSheetID(int sheetID) {
+		this.metaSheetID = sheetID;
+	}
+	
+	/**
+	 * Metoda numer arkusza który reprezentuje ten meta-węzeł.
+	 * @return int - nr arkusza
+	 */
+	public int getRepresentedSheetID() {
+		return this.metaSheetID;
 	}
 	
 	/**

@@ -183,7 +183,6 @@ public abstract class Node extends PetriNetElement {
 		ArrayList<Point> namesPoints = getNodeNamePositions(sheetId);
 		ArrayList<Point> nodePoints = this.getNodePositions(sheetId);
 		
-		//for (Point p : nodePoints) {
 		for (int i=0; i<nodePoints.size(); i++) {
 			Point nodePoint = nodePoints.get(i);
 			Point namePoint = namesPoints.get(i);

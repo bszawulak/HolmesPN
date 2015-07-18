@@ -12,11 +12,13 @@ import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 
+import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Transition.TransitionType;
@@ -30,7 +32,7 @@ import abyss.utilities.Tools;
 public final class ElementDraw {
 	private static Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);
 	private static Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
-	
+	private static boolean view3d = false;
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
 	 */
@@ -46,8 +48,12 @@ public final class ElementDraw {
 	 * @return Graphics2D - obiekt rysujący
 	 */
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId) {
-		//if(node instanceof Transition || node instanceof TimeTransition) {
-		//TODO:
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editor3Dview").equals("1")) {
+			view3d = true;
+		} else {
+			view3d = false;
+		}
+		
 		if(node instanceof Transition) {
 			Transition trans = (Transition)node;
 			for (ElementLocation el : trans.getNodeLocations(sheetId)) {
@@ -149,6 +155,19 @@ public final class ElementDraw {
 					if( ((Transition)node).getTransType() == TransitionType.TPN) {
 						g.setColor(Color.gray);
 					}
+				}
+				
+				//g.setColor(Color.BLACK);
+				if(view3d) {
+					g.setColor(Color.BLACK);
+					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width, nodeBounds.height);
+					g.fillRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width, nodeBounds.height);
+				}
+				
+				if( ((Transition)node).getTransType() == TransitionType.TPN) {
+					g.setColor(Color.gray);
+				} else {
+					g.setColor(new Color(224,224,224));
 				}
 				g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				
@@ -331,12 +350,26 @@ public final class ElementDraw {
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					*/
 				}
+				
+				
+				if(view3d) { 
+					if(el.isPortalSelected()) {
+						g.setColor(EditorResources.selectionColorLevel3);
+					} else {
+						g.setColor(Color.BLACK);
+					}
+					
+					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
+					g.fillOval(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width+1, nodeBounds.height+1);
+				}
+				
 				//wypełnianie kolorem:
 				if(el.isPortalSelected()) { //dla wszystkich innych ElLocations portalu właśnie klikniętego
 					g.setColor(EditorResources.selectionColorLevel3);
 				} else {
 					g.setColor(Color.white);
 				}
+
 				g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				
 				g.setColor(Color.DARK_GRAY);
@@ -360,15 +393,32 @@ public final class ElementDraw {
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, radius * 2, radius * 2);
 				
 				g.setColor(new Color(224,224,224));
-				g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				g.setColor(Color.DARK_GRAY);
 				g.setStroke(new BasicStroke(1.5F));
 				
+				//TODO
+				if(view3d) {
+					
+					
+					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					g.drawRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width, nodeBounds.height);
+					g.drawRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width, nodeBounds.height);
+					g.setColor(Color.LIGHT_GRAY);
+					g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				} else {
+					g.setColor(Color.LIGHT_GRAY);
+					g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					g.setColor(Color.DARK_GRAY);
+					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				}
+				
+				
+				g.setStroke(new BasicStroke(1.5F));
 				g.setColor(Color.RED);
 				g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 20, nodeBounds.y + 9);
 				g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 20, nodeBounds.y + 21);
 				g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 10, nodeBounds.y + 21);
-				g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 10, nodeBounds.y + 9);
+				g.drawLine(nodeBounds.x + 20, nodeBounds.y + 10, nodeBounds.x + 20, nodeBounds.y + 21);
 				
 				g.setColor(Color.black);
 				g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
@@ -392,6 +442,12 @@ public final class ElementDraw {
 			return g;
 		
 		Stroke sizeStroke = g.getStroke();
+		
+		if(arc.getStartLocation().getParentNode().getType() == PetriNetElementType.META || 
+				arc.getEndLocation().getParentNode().getType() == PetriNetElementType.META ) {
+			@SuppressWarnings("unused")
+			int x=1;
+		}
 		
 		Point p1 = new Point((Point)arc.getStartLocation().getPosition());
 		Point p2 = new Point();
@@ -443,7 +499,8 @@ public final class ElementDraw {
 
 		
 		g.setStroke(sizeStroke);
-		if(arc.getArcType() == TypesOfArcs.NORMAL || arc.getArcType() == TypesOfArcs.READARC) {
+		if(arc.getArcType() == TypesOfArcs.NORMAL || arc.getArcType() == TypesOfArcs.READARC || 
+				arc.getArcType() == TypesOfArcs.META_ARC) {
 			g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
 					new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
 		} else if (arc.getArcType() == TypesOfArcs.INHIBITOR) {

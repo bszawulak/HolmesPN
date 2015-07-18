@@ -12,6 +12,8 @@ import abyss.darkgui.GUIManager;
 import abyss.graphpanel.IdGenerator;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
@@ -33,7 +35,10 @@ public class SnoopyReader {
 	private ArrayList<Arc> arcList = new ArrayList<Arc>();
 	private ArrayList<Node> nodesList = new ArrayList<Node>();
 	private ArrayList<Integer> snoopyNodesIdList = new ArrayList<Integer>();
+	/** Chwilowo do niczego nie potrzebny wektor, łuki idą do snoopyCoarseNodesElLocIDList */
+	private ArrayList<Integer> snoopyCoarseNodesIdList = new ArrayList<Integer>();
 	private ArrayList<ArrayList<Integer>> snoopyNodesElLocIDList = new ArrayList<ArrayList<Integer>>();
+	private ArrayList<ArrayList<Integer>> snoopyCoarseNodesElLocIDList = new ArrayList<ArrayList<Integer>>();
 	
 	private boolean warnings = false;
 	/**
@@ -179,6 +184,11 @@ public class SnoopyReader {
 				nodesList.add(place);
 				placesCounter++;
 				
+				if(nodeSnoopyID == 951675) {
+					@SuppressWarnings("unused")
+					int x=1;
+				}
+				
 				goBoldly = true;
 				int logicalELNumber_names = -1;
 				int logicalELNumber_graphics = -1;
@@ -319,12 +329,20 @@ public class SnoopyReader {
 					}
 				} //czytanie właściwości węzła
 				
-				if(logicalELNumber_graphics > 1)
+				if(logicalELNumber_graphics > 0)
 					place.setPortal(true);
 				
 				if(logicalELNumber_graphics != logicalELNumber_names) {
-					GUIManager.getDefaultGUIManager().log("Critical error: names locations number and portals locations number vary for place "
-							+place.getName(), "error", true);
+					warnings = true;
+					GUIManager.getDefaultGUIManager().log("Warning: names locations number and graphics locations number vary for place "
+							+place.getName(), "warning", true);
+					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
+					
+					place.getNamesLocations().clear();
+					for(int i=0; i<place.getElementLocations().size(); i++) {
+						int sub = place.getElementLocations().get(i).getSheetID();
+						place.getNamesLocations().add(new ElementLocation(sub, new Point(0, 0), place));
+					}
 				}
 			}
 			
@@ -520,8 +538,16 @@ public class SnoopyReader {
 					transition.setPortal(true);
 				
 				if(logicalELNumber_graphics != logicalELNumber_names) {
-					GUIManager.getDefaultGUIManager().log("Critical error: names locations number and portals locations number vary for transition "
-							+transition.getName(), "error", true);
+					warnings = true;
+					GUIManager.getDefaultGUIManager().log("Warning: names locations number and graphics locations number vary for transition "
+							+transition.getName(), "warning", true);
+					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
+					
+					transition.getNamesLocations().clear();
+					for(int i=0; i<transition.getElementLocations().size(); i++) {
+						int sub = transition.getElementLocations().get(i).getSheetID();
+						transition.getNamesLocations().add(new ElementLocation(sub, new Point(0, 0), transition));
+					}
 				}
 			}
 			
@@ -537,24 +563,381 @@ public class SnoopyReader {
 		}
 	}
 	
+	/**
+	 * Metoda czytająca blok coarse-places w pliku Snoopiego.
+	 * @param buffer BufferedReader - obiekt odczytujący
+	 * @param line String - ostatnio przeczytana linia
+	 */
 	private void readSnoopyCoarsePlaces(BufferedReader buffer, String line) {
-		String buffLine = line;
+		String backFirstLine = line;
+		int coarsePlacesCounter = -1;
+		int coarsePlacesLimit = 0;
 		try {
+			//policz teoretyczną liczbę c-miejsc
+			line = line.substring(line.indexOf("count=")+7); // <nodeclass count="1" name="Coarse Place">
+			line = line.substring(0, line.indexOf("\""));
+			coarsePlacesLimit = Integer.parseInt(line) - 1;
+			
+			boolean readForward = true;
+			boolean goBoldly = true;
+			while(true) {
+				while(!line.contains("<node id=\"")) { //na początku: <node id="226" net="1">
+					line = buffer.readLine();
+					
+					if(line.contains("</nodeclass>")) {
+						readForward = false;
+						break;
+					}
+				}
+				if(!readForward)
+					break;
+				
+				//buffLine = buffer.readLine(); 
+				
+				if(line.contains("</nodeclass>")) {
+					break;
+				}
+				
+				
+				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
+				int nodeCoarseNumber = (int) getAttributeValue(line, " coarse=\"", -1);
+				if(nodeSnoopyID == -1) {
+					GUIManager.getDefaultGUIManager().log("Catastrophic error: could not read Snoopy Coarse Place ID from line: "+backFirstLine, "error", true);
+					break;
+				} else {
+					snoopyNodesIdList.add(nodeSnoopyID);
+					snoopyCoarseNodesIdList.add(nodeSnoopyID);
+				}
+				int subNet = (int) getAttributeValue(line, " net=\"", 0);
+				if(subNet > 0)
+					subNet--;
+				
+				MetaNode metaNode = new MetaNode(subNet, IdGenerator.getNextId(), new Point(100,100), MetaType.CoarsePlace);
+				metaNode.setRepresentedSheetID(nodeCoarseNumber-1);
+				nodesList.add(metaNode);
+				coarsePlacesCounter++;
+				
+				goBoldly = true;
+				int logicalELNumber_names = -1;
+				int logicalELNumber_graphics = -1;
+				boolean firstPass = true;
+				boolean readAnything = false;
+				while(goBoldly) { //czytanie właściwości c-miejsca	
+					if(line.contains("</node>")) {
+						goBoldly = false;
+						continue;
+					} //1st
+					
+					if(!line.contains("<attribute name=\""))
+						line = buffer.readLine();
+					
+					if(line.contains("</node>")) {
+						goBoldly = false;
+						continue;
+					} //2nd
+					
+					if(!firstPass) {
+						if(readAnything != true) {
+							while(!(line = buffer.readLine()).contains("</attribute>") ) {
+								;
+							}
+							line = buffer.readLine();
+						}
+					}
+					firstPass = false;
+					readAnything = false;
+					
+					// Nazwa c-miejsca
+					if(line.contains("<attribute name=\"Name\"")) {
+						readAnything = true;
+						String name = "cPlace"+coarsePlacesCounter;
+						while(!(line = buffer.readLine()).contains("</attribute>")) {
+							if(line.contains("<![CDATA[")) {
+								name = readStrCDATA(buffer, line, name);
+								metaNode.setName(name);
+							} 
+							
+							if(line.contains("<graphic ")) { //lokalizacje nazwy (offsets)
+								logicalELNumber_names++;
+								int xOff = (int) getAttributeValue(line, " xoff=\"", 0);
+								int yOff = (int) getAttributeValue(line, " yoff=\"", 0);
+								int sub = (int) getAttributeValue(line, " net=\"", 0);
+								if(sub != 0)
+									sub--;
+								
+								yOff -= 20; //20 default, czyli 0 w oY w Abyss
+								if(yOff < -8)
+									yOff = -55; //nad node, uwzględnia różnicę
+								
+								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesSnoopyOffsets").equals("1")) {
+									xOff = 0;
+									yOff = 0;
+								}
+								
+								if(logicalELNumber_names == 0) { 
+									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation (names_off)
+									metaNode.getNamesLocations().set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+								} else {
+									metaNode.getNamesLocations().add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+								}
+							}
+						}
+						line = buffer.readLine();
+					}
+
+					// Komentarz do c-miejsca
+					if(line.contains("<attribute name=\"Comment\"")) {
+						readAnything = true;
+						String wittyComment = "";
+						while(!(line = buffer.readLine()).contains("</attribute>")) {
+							if(line.contains("<![CDATA[")) {
+								wittyComment = readStrCDATA(buffer, line, "");
+							}
+						}
+						metaNode.setComment(wittyComment);
+						line = buffer.readLine();
+					}
+					
+					// XY Locations
+					if(line.contains("<graphics count=\"")) {
+						readAnything = true;
+						ArrayList<Integer> subIDs = new ArrayList<Integer>();
+						while(!(line = buffer.readLine()).contains("</graphics>")) {
+							if(line.contains("<graphic ")) {
+								logicalELNumber_graphics++;
+								int x = (int) getAttributeValue(line, " x=\"", 100);
+								int y = (int) getAttributeValue(line, " y=\"", 100);
+								int sub = (int) getAttributeValue(line, " net=\"", 0);
+								int elLocID = (int) getAttributeValue(line, " id=\"", 0);
+								if(sub != 0)
+									sub--;
+								
+								if(logicalELNumber_graphics == 0) { 
+									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation
+									metaNode.getElementLocations().set(0, new ElementLocation(sub, new Point(x, y), metaNode));
+									subIDs.add(elLocID);
+								} else {
+									metaNode.getElementLocations().add(new ElementLocation(sub, new Point(x, y), metaNode));
+									subIDs.add(elLocID);
+								}
+							}
+						}
+						snoopyNodesElLocIDList.add(subIDs);
+						snoopyCoarseNodesElLocIDList.add(subIDs);
+					}
+				} //czytanie właściwości węzła
+				
+				if(logicalELNumber_graphics != logicalELNumber_names) {
+					warnings = true;
+					GUIManager.getDefaultGUIManager().log("Warning: names locations number and graphics locations number vary for c-place "
+							+metaNode.getName(), "warning", true);
+					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
+					
+					metaNode.getNamesLocations().clear();
+					for(int i=0; i<metaNode.getElementLocations().size(); i++) {
+						int sub = metaNode.getElementLocations().get(i).getSheetID();
+						metaNode.getNamesLocations().add(new ElementLocation(sub, new Point(0, 0), metaNode));
+					}
+				}
+			}
 			
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Reading Snoopy coarse places failed in line:", "error", true);
-			GUIManager.getDefaultGUIManager().log(buffLine, "error", true);
+			GUIManager.getDefaultGUIManager().log(line, "error", true);
+		}
+		
+		if(coarsePlacesCounter != coarsePlacesLimit) {
+			warnings = true;
+			GUIManager.getDefaultGUIManager().log("Warning: c-places read: "+(coarsePlacesCounter+1)+
+					", c-places number set in file: "+(coarsePlacesLimit+1), "warning", true);
 		}
 	}
 	
+	/**
+	 * Metoda czytająca blok danych c-tranzycji.
+	 * @param buffer BufferedReader - obiekt czytający
+	 * @param line String - ostatnio przeczytana linia
+	 */
 	private void readSnoopyCoarseTransitions(BufferedReader buffer, String line) {
-		String buffLine = line;
+		String backFirstLine = line;
+		int coarseTransitionsCounter = -1;
+		int coarseTransitionsLimit = 0;
 		try {
+			//policz teoretyczną liczbę c-tranzycji
+			line = line.substring(line.indexOf("count=")+7); //<nodeclass count="44" name="Place">
+			line = line.substring(0, line.indexOf("\""));
+			coarseTransitionsLimit = Integer.parseInt(line) - 1;
+			
+			boolean readForward = true;
+			boolean goBoldly = true;
+			
+			while(true) {
+				while(!line.contains("<node id=\"")) { //na początku:  <node id="270" net="1">
+					line = buffer.readLine();
+					
+					if(line.contains("</nodeclass>")) {
+						readForward = false;
+						break;
+					}
+				}
+				if(!readForward)
+					break;
 
+				if(line.contains("</nodeclass>")) {
+					break;
+				}
+				
+				
+				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
+				int nodeCoarseNumber = (int) getAttributeValue(line, " coarse=\"", -1);
+				if(nodeSnoopyID == -1) {
+					GUIManager.getDefaultGUIManager().log("Catastrophic error: could not read Snoopy Coarse Transition ID from line: "+backFirstLine, "error", true);
+					break;
+				} else {
+					snoopyNodesIdList.add(nodeSnoopyID);
+					snoopyCoarseNodesIdList.add(nodeSnoopyID);
+				}
+				int subNet = (int) getAttributeValue(line, " net=\"", 0);
+				if(subNet > 0)
+					subNet--;
+				
+				MetaNode metaNode = new MetaNode(subNet, IdGenerator.getNextId(), new Point(100,100), MetaType.CoarseTrans);
+				metaNode.setRepresentedSheetID(nodeCoarseNumber-1);
+				nodesList.add(metaNode);
+				coarseTransitionsCounter++;
+				
+				goBoldly = true;
+				int logicalELNumber_names = -1;
+				int logicalELNumber_graphics = -1;
+				boolean firstPass = true;
+				boolean readAnything = false;
+				while(goBoldly) { //czytanie właściwości c-tranzycji
+					if(line.contains("</node>")) {
+						goBoldly = false;
+						continue;
+					} //1st
+
+					if(!line.contains("<attribute name=\""))
+						line = buffer.readLine();
+					
+					if(line.contains("</node>")) {
+						goBoldly = false;
+						continue;
+					} //2nd
+					
+					if(!firstPass) {
+						if(readAnything != true) {
+							while(!(line = buffer.readLine()).contains("</attribute>") ) {
+								;
+							}
+							line = buffer.readLine();
+						}
+					}
+					firstPass = false;
+					readAnything = false;
+					// Nazwa c-tranzycji
+					if(line.contains("<attribute name=\"Name\"")) {
+						readAnything = true;
+						String name = "cTransition"+coarseTransitionsCounter;
+						while(!(line = buffer.readLine()).contains("</attribute>")) {
+							if(line.contains("<![CDATA[")) {
+								name = readStrCDATA(buffer, line, name);
+								metaNode.setName(name);
+							} 
+							
+							if(line.contains("<graphic ")) { //lokalizacje nazwy (offsets)
+								logicalELNumber_names++;
+								int xOff = (int) getAttributeValue(line, " xoff=\"", 0);
+								int yOff = (int) getAttributeValue(line, " yoff=\"", 0);
+								int sub = (int) getAttributeValue(line, " net=\"", 0);
+								if(sub != 0)
+									sub--;
+								
+								yOff -= 20; //20 default, czyli 0 w oY w Abyss
+								if(yOff < -8)
+									yOff = -55; //nad node, uwzględnia różnicę
+								
+								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesSnoopyOffsets").equals("1")) {
+									xOff = 0;
+									yOff = 0;
+								}
+								
+								if(logicalELNumber_names == 0) { 
+									//użyty konstruktor dla transition w super-klasie Node utworzył już pierwszy ElementLocation (names_off)
+									metaNode.getNamesLocations().set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+								} else {
+									metaNode.getNamesLocations().add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+								}
+							}
+						}
+						line = buffer.readLine();
+					}
+
+					// Komentarz do c-tranzycji
+					if(line.contains("<attribute name=\"Comment\"")) {
+						readAnything = true;
+						String wittyComment = "";
+						while(!(line = buffer.readLine()).contains("</attribute>")) {
+							if(line.contains("<![CDATA[")) {
+								wittyComment = readStrCDATA(buffer, line, "");
+							}
+						}
+						metaNode.setComment(wittyComment);
+						line = buffer.readLine();
+					}
+					
+					// XY Locations
+					if(line.contains("<graphics count=\"")) {
+						readAnything = true;
+						ArrayList<Integer> subIDs = new ArrayList<Integer>();
+						while(!(line = buffer.readLine()).contains("</graphics>")) {
+							if(line.contains("<graphic ")) {
+								logicalELNumber_graphics++;
+								int x = (int) getAttributeValue(line, " x=\"", 100);
+								int y = (int) getAttributeValue(line, " y=\"", 100);
+								int sub = (int) getAttributeValue(line, " net=\"", 0);
+								int elLocID = (int) getAttributeValue(line, " id=\"", 0);
+								if(sub != 0)
+									sub--;
+								
+								if(logicalELNumber_graphics == 0) { 
+									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation
+									metaNode.getElementLocations().set(0, new ElementLocation(sub, new Point(x, y), metaNode));
+									subIDs.add(elLocID);
+								} else {
+									metaNode.getElementLocations().add(new ElementLocation(sub, new Point(x, y), metaNode));
+									subIDs.add(elLocID);
+								}
+							}
+						}
+						snoopyNodesElLocIDList.add(subIDs);
+						snoopyCoarseNodesElLocIDList.add(subIDs);
+					}
+				} //czytanie właściwości węzła
+				
+				if(logicalELNumber_graphics != logicalELNumber_names) {
+					warnings = true;
+					GUIManager.getDefaultGUIManager().log("Warning: names locations number and graphics locations number vary for c-transition "
+							+metaNode.getName(), "warning", true);
+					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
+					
+					metaNode.getNamesLocations().clear();
+					for(int i=0; i<metaNode.getElementLocations().size(); i++) {
+						int sub = metaNode.getElementLocations().get(i).getSheetID();
+						metaNode.getNamesLocations().add(new ElementLocation(sub, new Point(0, 0), metaNode));
+					}
+				}
+			}
 			
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Reading Snoopy coarse transitions failed in line: ", "error", true);
-			GUIManager.getDefaultGUIManager().log(buffLine, "error", true);
+			GUIManager.getDefaultGUIManager().log(line, "error", true);
+		}
+		
+		if(coarseTransitionsCounter != coarseTransitionsLimit) {
+			warnings = true;
+			GUIManager.getDefaultGUIManager().log("Warning: c-transitions read: "+(coarseTransitionsCounter+1)+
+					", c-transitions number set in file: "+(coarseTransitionsLimit+1), "warning", true);
 		}
 	}
 	
@@ -573,6 +956,7 @@ public class SnoopyReader {
 		String txtNumber = line.substring(loc + 7);
 		loc = txtNumber.indexOf("\"");
 		txtNumber = txtNumber.substring(0, loc);
+		@SuppressWarnings("unused")
 		int arcClasses = Integer.parseInt(txtNumber);
 	
 		// Edges
@@ -626,6 +1010,12 @@ public class SnoopyReader {
 		
 	}
 	
+	/**
+	 * Metoda czyta dane łuków sieci.
+	 * @param buffer BufferedReader - obiekt czytający
+	 * @param line String - ostatnio przeczytana linia
+	 * @param arcType TypesOfArcs - typ łuku wykryty w metodzie nadrzędnej
+	 */
 	private void readEdges(BufferedReader buffer, String line, TypesOfArcs arcType) {
 		String backFirstLine = line;
 		int edgesCounter = -1;
@@ -732,16 +1122,137 @@ public class SnoopyReader {
 								if(sub != 0)
 									sub--;
 								
-								int eLsourceLocation = snoopyNodesElLocIDList.get(sourceLocationInNodes).indexOf(sourceID);
-								int eLtargetLocation = snoopyNodesElLocIDList.get(targetLocationInNodes).indexOf(targetID);
-								
-								
-								ElementLocation sourceEL = nodesList.get(sourceLocationInNodes).getElementLocations().get(eLsourceLocation);
-								ElementLocation targetEL = nodesList.get(targetLocationInNodes).getElementLocations().get(eLtargetLocation);
-								
-								Arc nArc = new Arc(sourceEL, targetEL, comment, multiplicity, arcType);
-								arcList.add(nArc);
-								edgesCounter++;
+								// Arc source ID analysis:
+								boolean createArc = true;
+								try {
+									ElementLocation sourceEL = null;
+									ElementLocation targetEL = null;
+									TypesOfArcs currentType = arcType; 
+									int eLsourceLocation = snoopyNodesElLocIDList.get(sourceLocationInNodes).indexOf(sourceID);
+									if(eLsourceLocation == -1) { //szukaj wśród elementów wektora coarse-nodes
+										int coarseIndex = -1;
+										int coarseSubLocation = -1;
+										boolean found = false;
+										for(ArrayList<Integer> vector : snoopyCoarseNodesElLocIDList) {
+											coarseIndex++;
+											if(vector.contains(sourceID)) {
+												coarseSubLocation = vector.indexOf(sourceID);
+												found = true;
+												break;
+											}
+										}
+
+										boolean snoopyErrorFixed = false;
+										if(!found) { //jeśli nie ma w wektorze coarse-nodes, zrob dokladne przeszukanie wektora
+											//zwyklych węzłów (czasochłonne)
+											int counter = -1;
+											int location = -1;
+											for(ArrayList<Integer> vector2 : snoopyNodesElLocIDList) {
+												counter++;
+												if(vector2.contains(sourceID)) {
+													location = vector2.indexOf(sourceID);
+													snoopyErrorFixed = true;
+													break;
+												}
+											}
+											if(snoopyErrorFixed) {
+												sourceEL = nodesList.get(counter).getElementLocations().get(location);
+												currentType = TypesOfArcs.META_ARC;
+												snoopyErrorFixed = false; //aby nie weszło poniżej
+												GUIManager.getDefaultGUIManager().log(" Fixed: wrong data for arc from (SnoopySourceID: "+sourceID+
+														") to (SnoopyTargetID: "+targetID+"). Arc fixed.", "error", true);
+											} else {
+												GUIManager.getDefaultGUIManager().log("Error: cannot create arc from (SnoopySourceID: "+sourceID+
+														") to (SnoopyTargetID: "+targetID+")", "error", true);
+											}
+										}
+										
+										if(found || snoopyErrorFixed) {
+											int coarseID = snoopyNodesIdList.size() - snoopyCoarseNodesIdList.size() + coarseIndex;
+											sourceEL = nodesList.get(coarseID).getElementLocations().get(coarseSubLocation);
+											currentType = TypesOfArcs.META_ARC;
+											if(snoopyErrorFixed == false) //tylko dla coarse-nodes
+												edgesCounter--;
+										}
+									} else {
+										sourceEL = nodesList.get(sourceLocationInNodes).getElementLocations().get(eLsourceLocation);
+									}
+									
+									// Arc target ID analysis:
+									int eLtargetLocation = snoopyNodesElLocIDList.get(targetLocationInNodes).indexOf(targetID);
+									if(eLtargetLocation == -1) {
+										int coarseIndex = -1;
+										int coarseSubLocation = -1;
+										boolean found = false;
+										for(ArrayList<Integer> vector : snoopyCoarseNodesElLocIDList) {
+											coarseIndex++;
+											if(vector.contains(targetID)) {
+												coarseSubLocation = vector.indexOf(targetID);
+												found = true;
+												break;
+											}
+										}
+										
+										boolean snoopyErrorFixed = false;
+										if(!found) { //jeśli nie ma w wektorze coarse-nodes, zrob dokladne przeszukanie wektora
+											//zwyklych węzłów (czasochłonne)
+											int counter = -1;
+											int location = -1;
+											for(ArrayList<Integer> vector2 : snoopyNodesElLocIDList) {
+												counter++;
+												if(vector2.contains(targetID)) {
+													location = vector2.indexOf(targetID);
+													snoopyErrorFixed = true;
+													break;
+												}
+											}
+											if(snoopyErrorFixed) {
+												sourceEL = nodesList.get(counter).getElementLocations().get(location);
+												currentType = TypesOfArcs.META_ARC;
+												snoopyErrorFixed = false; //aby nie weszło poniżej
+												GUIManager.getDefaultGUIManager().log(" Fixed: wrong data for arc from (SnoopySourceID: "+sourceID+
+														") to (SnoopyTargetID: "+targetID+"). Arc fixed.", "error", true);
+											} else {
+												GUIManager.getDefaultGUIManager().log("Error: cannot create arc from (SnoopySourceID: "+sourceID+
+														") to (SnoopyTargetID: "+targetID+")", "error", true);
+											}
+										}
+										if(found || snoopyErrorFixed) {
+											int coarseID = snoopyNodesIdList.size() - snoopyCoarseNodesIdList.size() + coarseIndex;
+											targetEL = nodesList.get(coarseID).getElementLocations().get(coarseSubLocation);
+											currentType = TypesOfArcs.META_ARC;
+											if(snoopyErrorFixed == false) //tylko dla coarse-nodes
+												edgesCounter--;
+										}
+									} else {
+										targetEL = nodesList.get(targetLocationInNodes).getElementLocations().get(eLtargetLocation);
+									}
+									
+									if(createArc) {
+										Arc nArc = new Arc(sourceEL, targetEL, comment, multiplicity, currentType);
+										arcList.add(nArc);
+										edgesCounter++;
+									} else {
+										GUIManager.getDefaultGUIManager().log("Error: could not create arc from (SnoopySourceID: "+sourceID+
+												") to (SnoopyTargetID: "+targetID+").", "error", true);
+									}
+								} catch (Exception e) {
+									boolean foundCoarse = false;
+									for(ArrayList<Integer> vector : snoopyCoarseNodesElLocIDList) {
+										if(vector.contains(sourceID) || vector.contains(targetID)) {
+											foundCoarse = true;
+											break;
+										}
+									}
+									if(foundCoarse==false)
+										GUIManager.getDefaultGUIManager().log("Error: unable to load arc data (SnoopySourceID:"+sourceID+
+												", SnoopyTargetID:"+targetID+")", "error", true);
+									else {
+										GUIManager.getDefaultGUIManager().log("Warning: meta-node to/from coarse graphic elements could not "
+												+ "be created. This should not influence invariants-based analysis.", "warning", true);
+										warnings = true;
+									}
+								}
 							}
 						}
 					}
@@ -749,14 +1260,14 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy edges failed in line: ", "error", true);
+			GUIManager.getDefaultGUIManager().log("Reading Snoopy arcs failed in line: ", "error", true);
 			GUIManager.getDefaultGUIManager().log(line, "error", true);
 		}
 		
 		if(edgesCounter != edgesLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log("Warning: edges ("+arcType+") read: "+(edgesCounter+1)+
-					", number set in file: "+(edgesLimit+1), "warning", true);
+			GUIManager.getDefaultGUIManager().log("Warning: arcs ("+arcType+") read: "+(edgesCounter+1)+
+					", arcs number set in file: "+(edgesLimit+1), "warning", true);
 		}
 	}
 

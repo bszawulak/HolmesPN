@@ -371,6 +371,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda odpowiedzialna za przywrócenie widoku domyślnego.
 	 */
 	//TODO: prawdopodobnie w tej formie spowoduje katastrofę...
+	@SuppressWarnings("unused")
 	public void restoreDefaultVisuals() {
 		if(true)
 			return;
@@ -382,7 +383,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// redock all sheets
 		workspace.redockSheets();
 		// recreate dock structure
-		//getDockModel().RootDock(totalSplitDock);
+		// getDockModel().RootDock(totalSplitDock);
 		//
 		
 		leftTabDock.emptyChild(getToolBox());

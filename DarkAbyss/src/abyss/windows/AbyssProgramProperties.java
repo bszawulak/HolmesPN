@@ -348,7 +348,7 @@ public class AbyssProgramProperties extends JFrame {
 		panel.setBounds(0, 0, 600, 500);
 		
 		//Panel opcji środowiska R
-		panel.add(createMainOptionsPanel(0, 0, 590, 90)); //dodaj podpanel ustawień R
+		panel.add(createMainOptionsPanel(0, 0, 590, 120));
 
 		//Panel wczytywania sieci
 		//panel.add(createSnoopyReadPanel(0, 90, 590, 150));
@@ -366,8 +366,6 @@ public class AbyssProgramProperties extends JFrame {
 	 * @return JPanel - panel
 	 */
 	private JPanel createMainOptionsPanel(int x, int y, int w, int h) {
-		
-		
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Graphical settings"));
 		panel.setBounds(x, y, w, h);
@@ -423,26 +421,6 @@ public class AbyssProgramProperties extends JFrame {
 		else if(thickValue.equals("2")) group.setSelected(size2Button.getModel(), true);
 		else if(thickValue.equals("3")) group.setSelected(size3Button.getModel(), true);
 
-		JCheckBox useShortNamesCheckBox = new JCheckBox("(Abyss) Show short default names only", true);
-		useShortNamesCheckBox.setBounds(io_x, io_y+40, 260, 20);
-		useShortNamesCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction == true) return;
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("showShortNames", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("showShortNames", "0", true);
-				}
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-			}
-		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("showShortNames").equals("1")) 
-			useShortNamesCheckBox.setSelected(true);
-		else
-			useShortNamesCheckBox.setSelected(false);
-		panel.add(useShortNamesCheckBox);
-		
 		//FONT SIZE:
 		JLabel labelFontSize = new JLabel("Font size:");
 		labelFontSize.setBounds(io_x+150, io_y, 200, 20);
@@ -501,6 +479,47 @@ public class AbyssProgramProperties extends JFrame {
 			mctNameCheckBox.setSelected(true);
 		else
 			mctNameCheckBox.setSelected(true);
+		
+		JCheckBox useShortNamesCheckBox = new JCheckBox("(Abyss) Show short default names only", true);
+		useShortNamesCheckBox.setBounds(io_x, io_y+40, 260, 20);
+		useShortNamesCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction == true) return;
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("showShortNames", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("showShortNames", "0", true);
+				}
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("showShortNames").equals("1")) 
+			useShortNamesCheckBox.setSelected(true);
+		else
+			useShortNamesCheckBox.setSelected(false);
+		panel.add(useShortNamesCheckBox);
+		
+		JCheckBox view3dCheckBox = new JCheckBox("(Abyss) Petri net elements 3d view", true);
+		view3dCheckBox.setBounds(io_x, io_y+60, 260, 20);
+		view3dCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction == true) return;
+				
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editor3Dview", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editor3Dview", "0", true);
+				}
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editor3Dview").equals("1")) 
+			view3dCheckBox.setSelected(true);
+		else
+			view3dCheckBox.setSelected(false);
+		panel.add(view3dCheckBox);
 		
 		noAction = false;
 		return panel;

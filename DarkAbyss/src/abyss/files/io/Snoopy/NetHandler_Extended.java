@@ -344,7 +344,7 @@ public class NetHandler_Extended extends NetHandler {
 
 			int sheetsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size();
 			for(int s = sheetsNumber; s<globalNetsCounted; s++) {
-				GUIManager.getDefaultGUIManager().getWorkspace().newTab();
+				GUIManager.getDefaultGUIManager().getWorkspace().newTab(false);
 			}
 			for(int net=0; net<sheetsNumber; net++) {
 				int tmpX = 0;

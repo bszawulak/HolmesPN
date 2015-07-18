@@ -111,11 +111,11 @@ public class SettingsManager {
 			int test = Integer.parseInt(tmp); 
 			checkAndFix(settingsNew, "netExtFactor", "100");
 		} catch (Exception e) { settingsNew.add(new Setting("netExtFactor", "100")); }
-		
 		checkAndFix(settingsNew, "gridLines", "1");
 		checkAndFix(settingsNew, "gridAlignWhenSaved", "1");
 		checkAndFix(settingsNew, "usesSnoopyOffsets", "1");
 		checkAndFix(settingsNew, "usesOldSnoopyLoaders", "0");
+		
 		try { 
 			String tmp = getValue("graphArcLineSize");
 			int test = Integer.parseInt(tmp);
@@ -124,10 +124,10 @@ public class SettingsManager {
 			checkAndFix(settingsNew, "graphArcLineSize", "1");
 		} catch (Exception e) { settingsNew.add(new Setting("graphArcLineSize", "1")); }
 		
+		checkAndFix(settingsNew, "editor3Dview", "0");
 		checkAndFix(settingsNew, "showShortNames", "0");
 		checkAndFix(settingsNew, "analysisFeasibleSelfPropAccepted", "1");
 		checkAndFix(settingsNew, "analysisMCSReduction", "1");
-
 		try { 
 			String tmp = getValue("graphFontSize");
 			int test = Integer.parseInt(tmp);
@@ -135,6 +135,7 @@ public class SettingsManager {
 				throw new Exception();
 			checkAndFix(settingsNew, "graphFontSize", "11");
 		} catch (Exception e) { settingsNew.add(new Setting("graphFontSize", "11")); }
+		
 		checkAndFix(settingsNew, "graphFontBold", "0");
 		checkAndFix(settingsNew, "mctNameShow", "1");
 		

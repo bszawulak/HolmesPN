@@ -51,6 +51,7 @@ import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.petrinet.data.MCSDataMatrix;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.PetriNetElement;
 import abyss.petrinet.elements.Place;
@@ -140,12 +141,13 @@ public class AbyssDockWindowsTable extends JPanel {
 	private static final int INVARIANTSSIMULATOR = 8;
 	private static final int CLUSTERS = 9;
 	private static final int KNOCKOUT = 10;
+	private static final int META = 11;
 	
 	public SpinnerModel nameLocationXSpinnerModel = null;
 	public SpinnerModel nameLocationYSpinnerModel = null;
 	public boolean doNotUpdate = false;
 	
-	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, ARC, SHEET, INVARIANTS, MCT, CLUSTERS, KNOCKOUT, MCS }
+	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, META, ARC, SHEET, INVARIANTS, MCT, CLUSTERS, KNOCKOUT, MCS }
 	
 	/**
 	 * Konstruktor główny, wybierający odpowiednią metodę do tworzenia podokna wybranego typu
@@ -162,6 +164,8 @@ public class AbyssDockWindowsTable extends JPanel {
 			createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
 		} else if (subType == SubWindow.TIMETRANSITION) {
 			createTimeTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+		} else if (subType == SubWindow.META) {
+			createMetaNodeSubWindow((MetaNode) blackBox[0], (ElementLocation) blackBox[1]);
 		} else if (subType == SubWindow.ARC) {
 			createArcSubWindow((Arc) blackBox[0]);
 		} else if (subType == SubWindow.SHEET) {
@@ -1493,6 +1497,279 @@ public class AbyssDockWindowsTable extends JPanel {
 		        return this;
 		    }
 		}.yesWeCan(transition, location) ); 
+		components.add(nameLocChangeButton);
+
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			panel.add(components.get(i));
+		
+		panel.setOpaque(true);
+		panel.repaint();
+		add(panel);
+	}
+	
+	//**************************************************************************************
+	//*********************************       META       ***********************************
+	//*********************************      WĘZEŁ       ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+
+	/**
+	 * Metoda odpowiedzialna za utworzenie podokna właściwości tranzycji czasowej.
+	 * @param transition TimeTransition - obiekt tranzycji czasowej
+	 * @param location ElementLocation - lokalizacja tranzycji
+	 */
+	public void createMetaNodeSubWindow(final MetaNode metaNode, ElementLocation location) {
+		int columnA_posX = 10;
+		int columnB_posX = 100;
+		int columnA_Y = 0;
+		int columnB_Y = 0;
+		int colACompLength = 70;
+		int colBCompLength = 200;
+		
+		mode = META;
+		elementLocation = location;
+		initiateContainers(); //!!!
+		element = metaNode;
+		Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
+		
+		// ID
+		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
+		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+		components.add(idLabel);
+		
+		int gID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes().lastIndexOf(metaNode);
+		JLabel idLabel2 = new JLabel(Integer.toString(gID));
+		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+		idLabel2.setFont(normalFont);
+		components.add(idLabel2);
+		
+		JLabel idLabel3 = new JLabel("gID:");
+		idLabel3.setBounds(columnB_posX+35, columnA_Y, 50, 20);
+		components.add(idLabel3);
+		JLabel idLabel4 = new JLabel(metaNode.getID()+"");
+		idLabel4.setBounds(columnB_posX+60, columnB_Y, 50, 20);
+		idLabel4.setFont(normalFont);
+		components.add(idLabel4);
+		
+		JLabel sheetRepresentedLabel = new JLabel("gID:");
+		sheetRepresentedLabel.setBounds(columnA_posX, columnA_Y+= 20, 50, 20);
+		components.add(sheetRepresentedLabel);
+		JLabel sheetRepresentedLabelValue = new JLabel(metaNode.getRepresentedSheetID()+"");
+		sheetRepresentedLabelValue.setBounds(columnB_posX, columnB_Y+= 20, 50, 20);
+		sheetRepresentedLabelValue.setFont(normalFont);
+		components.add(sheetRepresentedLabelValue);
+
+		// META-NODE NAME
+		JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
+		nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(nameLabel);
+		
+		DefaultFormatter format = new DefaultFormatter();
+	    format.setOverwriteMode(false);
+		JFormattedTextField nameField = new JFormattedTextField(format);
+		nameField.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		nameField.setValue(metaNode.getName());
+		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newName = (String) field.getText();
+				changeName(newName);
+			}
+		});
+		components.add(nameField);
+		
+		// T-TRANSITION COMMENT
+		JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
+		comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		columnA_Y += 20;
+		components.add(comLabel);
+		
+		JTextArea commentField = new JTextArea(metaNode.getComment());
+		commentField.setLineWrap(true);
+		commentField.addFocusListener(new FocusAdapter() {
+	            public void focusLost(FocusEvent e) {
+	            	JTextArea field = (JTextArea) e.getSource();
+	            	String newComment = "";
+	            	if(field != null)
+	            		newComment = field.getText();
+					changeComment(newComment);
+	            }
+	        });
+		
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
+        CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
+        columnB_Y += 20;
+        components.add(CreationPanel);
+
+		// T-TRANSITION SHEET ID
+		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());
+		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		int xPos = location.getPosition().x;
+		int width =  graphPanel.getSize().width;
+		int zoom = graphPanel.getZoom();
+		int yPos = location.getPosition().y;
+		int height =  graphPanel.getSize().height;
+		width = (int) (((double)100/(double)zoom) * width);
+		height = (int) (((double)100/(double)zoom) * height);
+
+		JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
+		sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(sheetLabel);
+		JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
+		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, 100, 20);
+		sheetIdLabel.setFont(normalFont);
+		components.add(sheetIdLabel);
+		
+		JLabel zoomLabel = new JLabel("Zoom:");
+		zoomLabel.setBounds(columnB_posX+30, columnB_Y, 50, 20);
+		components.add(zoomLabel);
+		JLabel zoomLabel2 = new JLabel(""+zoom);
+		zoomLabel2.setBounds(columnB_posX+70, columnB_Y, colBCompLength, 20);
+		zoomLabel2.setFont(normalFont);
+		if(zoom != 100)
+			zoomLabel2.setForeground(Color.red);
+		components.add(zoomLabel2);
+		
+		// T-TRANSITION LOCATION:
+		JLabel comLabel2 = new JLabel("Location:", JLabel.LEFT);
+		comLabel2.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(comLabel2);
+
+		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
+		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
+		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
+		locationXSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int x = (int) spinner.getValue();
+				setX(x);
+			}
+		});
+		JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
+		locationYSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				int y = (int) spinner.getValue();
+				setY(y);
+			}
+		});
+		if(zoom != 100) {
+			locationXSpinner.setEnabled(false);
+			locationYSpinner.setEnabled(false);
+		}
+		JPanel locationSpinnerPanel = new JPanel();
+		locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel,BoxLayout.X_AXIS));
+		locationSpinnerPanel.add(locationXSpinner);
+		locationSpinnerPanel.add(new JLabel(" , "));
+		locationSpinnerPanel.add(locationYSpinner);
+		locationSpinnerPanel.setBounds(columnA_posX+90, columnB_Y += 20, 200, 20);
+		components.add(locationSpinnerPanel);
+		
+		// WSPÓŁRZĘDNE NAPISU:
+		columnA_Y += 20;
+		columnB_Y += 20;
+		
+		JLabel locNameLabel = new JLabel("Name offset:", JLabel.LEFT);
+		locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength+10, 20);
+		components.add(locNameLabel);
+
+		int locationIndex = metaNode.getElementLocations().indexOf(location);
+		int xNameOffset = metaNode.getNamesLocations().get(locationIndex).getPosition().x;
+		int yNameOffset = metaNode.getNamesLocations().get(locationIndex).getPosition().y;
+		
+		nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
+		nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
+		
+		JLabel locNameLabelX = new JLabel("xOff: ", JLabel.LEFT);
+		locNameLabelX.setBounds(columnA_posX+90, columnA_Y, 40, 20);
+		components.add(locNameLabelX);
+		
+		JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
+		nameLocationXSpinner.setBounds(columnA_posX+125, columnA_Y, 60, 20);
+		nameLocationXSpinner.addChangeListener(new ChangeListener() {
+			private MetaNode meta_tmp;
+			private ElementLocation el_tmp;
+			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate==true)
+					return;
+				JSpinner spinner = (JSpinner) e.getSource();
+				int x = (int) spinner.getValue();
+				Point res = setNameOffsetX(x, meta_tmp, el_tmp);
+				doNotUpdate = true;
+				nameLocationXSpinnerModel.setValue(res.x);
+				doNotUpdate = false;
+			}
+			private ChangeListener yesWeCan(MetaNode metaN, ElementLocation inLoc){
+				meta_tmp = metaN;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(metaNode, location) ); 
+		
+		components.add(nameLocationXSpinner);
+		
+		JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
+		locNameLabelY.setBounds(columnA_posX+195, columnB_Y, 40, 20);
+		components.add(locNameLabelY);
+		
+		JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
+		nameLocationYSpinner.setBounds(columnA_posX+230, columnA_Y, 60, 20);
+		nameLocationYSpinner.addChangeListener(new ChangeListener() {
+			private MetaNode meta_tmp;
+			private ElementLocation el_tmp;
+			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate==true)
+					return;
+				JSpinner spinner = (JSpinner) e.getSource();
+				int y = (int) spinner.getValue();
+				Point res = setNameOffsetY(y, meta_tmp, el_tmp);
+				doNotUpdate = true;
+				nameLocationYSpinnerModel.setValue(res.y);
+				doNotUpdate = false;	
+			}
+			private ChangeListener yesWeCan(MetaNode metaN, ElementLocation inLoc){
+				meta_tmp = metaN;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(metaNode, location) ); 
+		components.add(nameLocationYSpinner);
+		
+		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
+		nameLocChangeButton.setName("LocNameChanger");
+		nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
+		nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+		nameLocChangeButton.setBounds(columnA_posX+90, columnA_Y += 25, 150, 40);
+		nameLocChangeButton.addActionListener(new ActionListener() {
+			// anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+			private MetaNode meta_tmp;
+			private ElementLocation el_tmp;
+			public void actionPerformed(ActionEvent actionEvent) {
+				JButton button_tmp = (JButton) actionEvent.getSource();
+				
+				if(nameLocChangeMode == false) {
+					button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
+					nameLocChangeMode = true;
+					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(meta_tmp, el_tmp, true);
+				} else {
+					button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
+					nameLocChangeMode = false;
+					GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
+				}
+			} 
+			private ActionListener yesWeCan(MetaNode metaN, ElementLocation inLoc){
+				meta_tmp = metaN;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(metaNode, location) ); 
 		components.add(nameLocChangeButton);
 
 		panel.setLayout(null);
@@ -3003,7 +3280,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	 * @param newName String - nowa nazwa
 	 */
 	private void changeName(String newName) {
-		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
+		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION || mode == META) {
 			Node node = (Node) element;
 			node.setName(newName);
 			repaintGraphPanel();
