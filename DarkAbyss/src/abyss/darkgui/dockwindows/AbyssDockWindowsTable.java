@@ -2022,8 +2022,11 @@ public class AbyssDockWindowsTable extends JPanel {
 		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
 		idLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(idLabel);
-		JLabel idLabel2 = new JLabel(Integer.toString(sheet.getId()));
-		idLabel2.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
+		String text = ""+Integer.toString(sheet.getId());
+		int shPos = GUIManager.getDefaultGUIManager().getWorkspace().getIndexOfId(sheet.getId());
+		text += " (sheet position: "+shPos+")";
+		JLabel idLabel2 = new JLabel(text);
+		idLabel2.setBounds(columnB_posX, columnB_Y += 20, colACompLength+150, 20);
 		components.add(idLabel2);
 		
 		// SHEET ZOOM

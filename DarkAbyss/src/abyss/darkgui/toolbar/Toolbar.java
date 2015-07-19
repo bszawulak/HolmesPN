@@ -13,7 +13,6 @@ import javax.swing.JTree;
 
 import abyss.analyse.MDTSCalculator;
 import abyss.darkgui.GUIManager;
-import abyss.files.io.Snoopy.SnoopyReader;
 import abyss.graphpanel.GraphPanel.DrawModes;
 import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
@@ -178,7 +177,7 @@ public class Toolbar extends BorderDock {
 					private static final long serialVersionUID = -3039335266465055547L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().newTab(false);
+				GUIManager.getDefaultGUIManager().getWorkspace().newTab(true);
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableAdd", addButton));
@@ -295,9 +294,7 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("CleanColor", cleanButton));
 		
 		//TODO:
-		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", 
-				Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
-			@SuppressWarnings("unused")
+		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {	
 				//ProjectWriter pWrt = new ProjectWriter();
 				//pWrt.writeProject("test.apf");
@@ -305,7 +302,9 @@ public class Toolbar extends BorderDock {
 				
 				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\normal.spped");
 				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\extClean.spept");
-				SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\coarseSimple.spped");
+				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\coarseSimple.spped");
+				
+				GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
 			}
 		};
 		testButton.setEnabled(false);

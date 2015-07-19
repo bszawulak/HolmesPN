@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
+import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.Node;
@@ -288,11 +289,24 @@ public class SelectionManager {
 			//dostań się do lokacji startowej łuku i usuń go tam z listy wyjściowych:
 			arc.getStartLocation().removeOutArc(arc);
 		}
-		
+
 		for(Arc arc : el.getOutArcs()) {
 			this.getGraphPanelArcs().remove(arc);
 			//dostań się do lokacji docelowej łuku i usuń go tam z listy wejściowych:
 			arc.getEndLocation().removeInArc(arc);
+		}
+		
+		
+		for(Arc arc : el.accessMetaInArcs()) {
+			this.getGraphPanelArcs().remove(arc);
+			//dostań się do lokacji startowej łuku i usuń go tam z listy wyjściowych:
+			arc.getStartLocation().accessMetaOutArcs().remove(arc);
+		}
+		
+		for(Arc arc : el.accessMetaOutArcs()) {
+			this.getGraphPanelArcs().remove(arc);
+			//dostań się do lokacji startowej łuku i usuń go tam z listy wyjściowych:
+			arc.getStartLocation().accessMetaInArcs().remove(arc);
 		}
 		
 		this.getGraphPanel().repaint();
@@ -503,10 +517,13 @@ public class SelectionManager {
 				selectedNodeIndex = getGraphPanelNodes().indexOf(el.getParentNode());
 			
 			if (el.getParentNode().isPortal()) //usuwanie statusu portal
-				for (ElementLocation e : el.getParentNode().getNodeLocations())
+				for (ElementLocation e : el.getParentNode().getNodeLocations()) {
 					e.setPortalSelected(false);
-			if (!el.getParentNode().removeElementLocation(el))
+				}
+			
+			if (!el.getParentNode().removeElementLocation(el)) {
 				this.getGraphPanelNodes().remove(el.getParentNode()); //usuwanie węzła sieci z danych sieci
+			}
 		}
 		
 		//tutaj jednak obiekt(y) wciąż istnieje i można np. sprawdzić jego typ
@@ -515,8 +532,7 @@ public class SelectionManager {
 			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
 			int oldTokensNumber = ((Place)getSelectedElementLocations().get(0).getParentNode()).getTokensNumber();
 			int oldTokensTaken = ((Place)getSelectedElementLocations().get(0).getParentNode()).getReservedTokens();
-			Place portal = new Place(IdGenerator.getNextId(),
-					(ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
+			Place portal = new Place(IdGenerator.getNextId(), (ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
 			
 			//TODO: poprawić, bo teraz tylko zeruje przesunięcie napisów
 			ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
@@ -566,6 +582,36 @@ public class SelectionManager {
 		getGraphPanel().repaint();
 	}
 
+	public void cloneNodeIntoPortalV2() {
+		// sprawdzenie czy wszystkie elementy sa tego samego typu (Place lub Transition)
+		if(this.getSelectedElementLocations().size() > 1) {
+			//String type = this.getSelectedElementLocations().get(0).getParentNode().getType().toString();
+			JOptionPane.showMessageDialog(null,"Cloning into Portals possible only for one selected node!",
+					"Multiple selection warning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+		}
+		
+		ElementLocation selectedEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
+		Node parent = selectedEL.getParentNode();
+		
+		int selectedX = selectedEL.getPosition().x + 30;
+		int selectedY = selectedEL.getPosition().y + 30;
+		int selectedSheedID = selectedEL.getSheetID();
+		
+		ElementLocation newGraphicsEL = new ElementLocation(selectedSheedID, new Point(selectedX, selectedY), parent);
+		ElementLocation newNameEL = new ElementLocation(selectedSheedID, new Point(0, 0), parent);
+		
+		parent.getElementLocations().add(newGraphicsEL);
+		parent.getNamesLocations().add(newNameEL);
+		parent.setPortal(true);
+		
+		getGraphPanel().repaint();
+	}
+	
 	/**
 	 * Metoda zmienia aktualnie kliknięty element w portal, tworząc jego klona.
 	 * @author MR
@@ -586,7 +632,6 @@ public class SelectionManager {
 		//dodawanie innych miejsc dla samego portalu do selectedElementLocations
 		ElementLocation nodeSelectedEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
 		Node nodeSelected = nodeSelectedEL.getParentNode(); //wybrany wierzchołek
-		//ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>(nodeSelected.getNamesLocations());
 		ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
 		int selectedNodeIndex = getGraphPanelNodes().indexOf(nodeSelected);
 		

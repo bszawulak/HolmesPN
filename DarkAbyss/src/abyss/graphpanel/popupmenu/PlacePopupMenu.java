@@ -25,6 +25,7 @@ public class PlacePopupMenu extends NodePopupMenu {
 	public PlacePopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
 		super(graphPanel, pne);
 
+		/*
 		if(pne == PetriNetElementType.TRANSITION || pne == PetriNetElementType.PLACE) {
 			this.addMenuItem("Change selected Places into same Portals", "portal.png", new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -43,6 +44,7 @@ public class PlacePopupMenu extends NodePopupMenu {
 				}
 			});
 		}
+		*/
 		
 		if(pne == PetriNetElementType.TRANSITION || pne == PetriNetElementType.PLACE) {
 			this.addMenuItem("Clone this Place into Portal", "portal.png", new ActionListener() {
@@ -53,7 +55,8 @@ public class PlacePopupMenu extends NodePopupMenu {
 								, "Warning") == true)
 							return;
 						
-						getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
+						//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
+						getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
 						GUIManager.getDefaultGUIManager().markNetChange();
 					} else {
 						JOptionPane.showMessageDialog(null, "Option possible for one place only.", "Too many selections", 

@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
-import abyss.graphpanel.IdGenerator;
+import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.MetaNode;

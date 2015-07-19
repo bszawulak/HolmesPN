@@ -18,7 +18,6 @@ import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
-import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Transition.TransitionType;
@@ -169,10 +168,14 @@ public final class ElementDraw {
 				
 				
 				if (trans.isPortal()) {
-					if( trans.getTransType() == TransitionType.TPN) {
-						g.drawRect(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
+					if( trans.getTransType() == TransitionType.TPN || trans.getTransType() == TransitionType.DPN ) {
+						//g.drawRect(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
+						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
+						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
 					} else {
-						g.drawRect(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
+						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
+						g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
+						//g.drawRect(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 20, nodeBounds.height - 20);
 					}
 				}
 				// -------- do tego miejsca wspólne dla Transition i TimeTransition --------
@@ -361,7 +364,8 @@ public final class ElementDraw {
 				g.setColor(Color.BLACK);
 				g.setStroke(new BasicStroke(1.5F));
 				if (place.isPortal()) {
-					g.drawOval(nodeBounds.x + 8, nodeBounds.y + 8, nodeBounds.width - 16, nodeBounds.height - 16);
+					g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
+					g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
 				}	
 			}
 		} else if(node instanceof MetaNode) {
@@ -384,12 +388,13 @@ public final class ElementDraw {
 					g.drawRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width, nodeBounds.height);
 					g.setColor(Color.LIGHT_GRAY);
 					g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				} else {
-					g.setColor(Color.LIGHT_GRAY);
-					g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					g.setColor(Color.DARK_GRAY);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				}
+				} 
+				//else {
+					//g.setColor(Color.LIGHT_GRAY);
+					//g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					//g.setColor(Color.DARK_GRAY);
+					//g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				//}
 				
 				
 				g.setStroke(new BasicStroke(1.5F));
@@ -421,12 +426,7 @@ public final class ElementDraw {
 			return g;
 		
 		Stroke sizeStroke = g.getStroke();
-		
-		if(arc.getStartLocation().getParentNode().getType() == PetriNetElementType.META || 
-				arc.getEndLocation().getParentNode().getType() == PetriNetElementType.META ) {
-			@SuppressWarnings("unused")
-			int x=1;
-		}
+
 		
 		Point p1 = new Point((Point)arc.getStartLocation().getPosition());
 		Point p2 = new Point();

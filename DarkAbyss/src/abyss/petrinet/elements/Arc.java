@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.ElementDraw;
-import abyss.graphpanel.IdGenerator;
+import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.simulators.NetSimulator;
 
 /**
@@ -421,10 +421,19 @@ public class Arc extends PetriNetElement {
 	 */
 	public boolean checkIsCorect(ElementLocation e) {
 		this.isCorrect = true;
-		if (e == null || e.getParentNode().getType() == this.getStartLocation().getParentNode().getType()
-				|| e == this.getStartLocation())
+		if (e == null 
+			|| e.getParentNode().getType() == this.getStartLocation().getParentNode().getType()
+			|| e == this.getStartLocation()) {
 			this.isCorrect = false;
+		}
 		return this.isCorrect;
+	}
+	
+	//TODO:
+	public boolean checkIsCorectMeta(ElementLocation e) {
+		
+		
+		return true;
 	}
 
 	/**
@@ -534,10 +543,17 @@ public class Arc extends PetriNetElement {
 	 * wyjściowego) łuku (odłącza łuk od wierzchołków).
 	 */
 	public void unlinkElementLocations() {
-		if (this.locationStart != null)
-			this.locationStart.removeOutArc(this);
-		if (this.locationEnd != null)
-			this.locationEnd.removeInArc(this);
+		if(arcType == TypesOfArcs.META_ARC) {
+			if (this.locationStart != null)
+				this.locationStart.accessMetaOutArcs().remove(this);
+			if (this.locationEnd != null)
+				this.locationEnd.accessMetaInArcs().remove(this);
+		} else {
+			if (this.locationStart != null)
+				this.locationStart.removeOutArc(this);
+			if (this.locationEnd != null)
+				this.locationEnd.removeInArc(this);
+		}
 	}
 
 	/**

@@ -45,7 +45,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 			}
 		});
 		
-		
+		/*
 		this.addMenuItem("Change selected Transitions into same Portals", "portal.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
@@ -62,7 +62,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 				}
 			}
 		});
-		
+		*/
 		this.addMenuItem("Clone this Transition into Portal", "portal.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
@@ -71,7 +71,8 @@ public class TransitionPopupMenu extends NodePopupMenu {
 							, "Warning") == true)
 						return;
 					
-					getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
+					//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
+					getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
 					GUIManager.getDefaultGUIManager().markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, "Option possible for one transition only.", "Too many selections", 

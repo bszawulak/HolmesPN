@@ -10,6 +10,11 @@ import abyss.darkgui.GUIManager;
 
 import com.javadocking.dockable.Dockable;
 
+/**
+ * Klasa odpowiedzialna za operacje na arkuszach 
+ * 
+ * @author students
+ */
 public class DeleteAction extends AbstractAction {
 	private static final long serialVersionUID = 1577108502403600290L;
 	private GUIManager guiManager;

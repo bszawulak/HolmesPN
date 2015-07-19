@@ -87,7 +87,7 @@ public class DarkMenu extends JMenuBar {
 		sheetMenuItem.getAccessibleContext().setAccessibleDescription("Create a new sheet (tab) in workspace");
 		sheetMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				guiManager.getWorkspace().newTab(false);
+				guiManager.getWorkspace().newTab(true);
 			}
 		});
 		fileMenu.add(sheetMenuItem);

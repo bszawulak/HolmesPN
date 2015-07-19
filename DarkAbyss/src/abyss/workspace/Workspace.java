@@ -10,7 +10,10 @@ import javax.swing.JOptionPane;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.SelectionActionListener;
 import abyss.graphpanel.GraphPanel.DrawModes;
+import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.data.PetriNet;
+import abyss.petrinet.elements.MetaNode;
+import abyss.petrinet.elements.MetaNode.MetaType;
 
 import com.javadocking.dock.CompositeTabDock;
 import com.javadocking.dock.Dock;
@@ -19,6 +22,7 @@ import com.javadocking.dock.factory.DockFactory;
 import com.javadocking.dockable.DefaultDockable;
 import com.javadocking.dockable.Dockable;
 import com.javadocking.dockable.DockingMode;
+import com.sun.org.apache.xpath.internal.axes.NodeSequence;
 
 /**
  * Głowna klasa odpowiedzialna za zarządzanie przestrzenią programu, w której rysowana jest sieć Petriego. 
@@ -130,8 +134,23 @@ public class Workspace implements SelectionActionListener {
 		getWorkspaceDock().addChildDock(docks.get(index), new Position(index));
 		// add menu item to the menu
 		guiManager.getMenu().addSheetItem(dockables.get(index));
-		
 		guiManager.globalSheetsList.add(tempDockable);
+		
+		if(addMetaNode) {
+			MetaNode metanode = null;
+			if(index <= 14) {
+				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(40,40+(index-1)*40), MetaType.CoarseTrans);
+			} else if(index > 14 && index <= 29) {
+				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(80,40+(index-15)*40), MetaType.CoarseTrans);
+			} else if(index > 29) {
+				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(120,40+(index-30)*40), MetaType.CoarseTrans);
+			}
+			
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().add(metanode);
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+		}
+		
+		
 		return id;
 	}
 
@@ -154,7 +173,6 @@ public class Workspace implements SelectionActionListener {
 		getProject().removeGraphPanel(sheetID);
 		
 		int id = sheets.indexOf(sheet);// + 1 - 1;
-		//getProject().removeGraphPanel(id);
 		getWorkspaceDock().emptyChild(docks.get(id));
 		docks.remove(id);
 		sheets.remove(id);
@@ -187,16 +205,20 @@ public class Workspace implements SelectionActionListener {
 			return;
 		}
 		
+		int indexSheet = dockables.indexOf(dockable);
+		int elementsNumber = GUIManager.getDefaultGUIManager().netsHQ.getSubnetsVector().get(indexSheet);
+		if(elementsNumber > 0) {
+			JOptionPane.showMessageDialog(null, "Sheet contains "+elementsNumber+" net elements that must be\n removed manually (or moved to another subnet).",
+					"Cannot proceed", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+
 		int n = JOptionPane.showOptionDialog(null,
-						"Are you sure you want to delete this sheet? You will not be able to retrieve it later.",
-						"Are you sure?", JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE, null, null, null);
+				"Are you sure you want to delete this sheet? You will not be able to retrieve it later.",
+				"Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 		if ((n == 0) && (sheets.size() > 1)) {
-			
 			deleteSheetFromArrays(sheets.get(index));
-			//JOptionPane.showMessageDialog(null, "Sheet deleted.");
 			guiManager.getMenu().deleteSheetItem(dockables.get(index));
-			
 			dockables.remove(dockable);
 		} else {
 			if (sheets.size() == 1 && n == 0)
@@ -294,6 +316,16 @@ public class Workspace implements SelectionActionListener {
 			return sheets.get(index);
 		} catch (Exception e) {
 			return null;
+		}
+	}
+	
+	/**
+	 * Metoda powoduje wyświetlenie arkusza o podanym numerze.
+	 * @param i int - nr arkusza
+	 */
+	public void setSelectedDock(int i) {
+		if(i < docks.size()) {
+			workspaceDock.setSelectedDock(docks.get(i));
 		}
 	}
 

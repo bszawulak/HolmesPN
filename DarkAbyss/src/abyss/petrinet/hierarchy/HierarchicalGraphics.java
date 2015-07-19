@@ -233,7 +233,7 @@ public class HierarchicalGraphics {
 	 * @param howMany int - o ile powiększyć wektor
 	 * @param initValue int - jaka wartość początkowa
 	 */
-	private void updateVector(ArrayList<Integer> vector, int howMany, int initValue) {
+	public static void updateVector(ArrayList<Integer> vector, int howMany, int initValue) {
 		for(int i=0; i<howMany; i++) {
 			vector.add(initValue);
 		};

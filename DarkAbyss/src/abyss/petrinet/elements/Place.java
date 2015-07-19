@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.ElementDraw;
-import abyss.graphpanel.IdGenerator;
+import abyss.petrinet.data.IdGenerator;
 
 /**
  * Klasa implementująca miejsce sieci Petriego. Zapewnia implementację 
@@ -25,43 +25,10 @@ public class Place extends Node {
 	 * @param nodeId int - identyfikator wierzchołka
 	 * @param sheetId int - identyfikator arkusza
 	 * @param placePosition Point - punkt lokalizacji
-	 * @param name String - nazwa miejsca
-	 * @param comment String - komentarz miejsca
-	 * @param tokensNumber int - liczba tokenów
-	 */
-	public Place(int nodeId, int sheetId, Point placePosition, String name, String comment, int tokensNumber) {
-		super(sheetId, nodeId, placePosition, 18);
-		this.setName(name);
-		this.setComment(comment);
-		this.setTokensNumber(tokensNumber);
-		this.setType(PetriNetElementType.PLACE);
-	}
-	
-	/**
-	 * Konstruktor obiektu miejsca sieci.
-	 * @param nodeId int - identyfikator wierzchołka
-	 * @param sheetId int - identyfikator arkusza
-	 * @param placePosition Point - punkt lokalizacji
 	 */
 	public Place(int nodeId, int sheetId, Point placePosition) {
 		super(sheetId, nodeId, placePosition, 18);
 		this.setName("Place" + Integer.toString(IdGenerator.getNextPlaceId()));
-		this.setType(PetriNetElementType.PLACE);
-	}
-
-	/**
-	 * Konstruktor obiektu miejsca sieci.
-	 * @param nodeId int - identyfikator wierzchołka
-	 * @param elementLocation ElementLocation - lokalizacja miejsca
-	 * @param name String - nazwa miejsca
-	 * @param comment String - komentarz miejsca
-	 * @param tokensNumber int - liczba tokenów
-	 */
-	public Place(int nodeId, ElementLocation elementLocation, String name, String comment, int tokensNumber) {
-		super(nodeId, elementLocation, 18);
-		this.setName(name);
-		this.setComment(comment);
-		this.setTokensNumber(tokensNumber);
 		this.setType(PetriNetElementType.PLACE);
 	}
 
@@ -181,3 +148,36 @@ public class Place extends Node {
 		}
 	}
 }
+
+/**
+ * Konstruktor obiektu miejsca sieci.
+ * @param nodeId int - identyfikator wierzchołka
+ * @param sheetId int - identyfikator arkusza
+ * @param placePosition Point - punkt lokalizacji
+ * @param name String - nazwa miejsca
+ * @param comment String - komentarz miejsca
+ * @param tokensNumber int - liczba tokenów
+ */
+//public Place(int nodeId, int sheetId, Point placePosition, String name, String comment, int tokensNumber) {
+//	super(sheetId, nodeId, placePosition, 18);
+//	this.setName(name);
+//	this.setComment(comment);
+//	this.setTokensNumber(tokensNumber);
+//	this.setType(PetriNetElementType.PLACE);
+//}
+
+/**
+ * Konstruktor obiektu miejsca sieci.
+ * @param nodeId int - identyfikator wierzchołka
+ * @param elementLocation ElementLocation - lokalizacja miejsca
+ * @param name String - nazwa miejsca
+ * @param comment String - komentarz miejsca
+ * @param tokensNumber int - liczba tokenów
+ */
+//public Place(int nodeId, ElementLocation elementLocation, String name, String comment, int tokensNumber) {
+//	super(nodeId, elementLocation, 18);
+//	this.setName(name);
+//	this.setComment(comment);
+//	this.setTokensNumber(tokensNumber);
+//	this.setType(PetriNetElementType.PLACE);
+//}

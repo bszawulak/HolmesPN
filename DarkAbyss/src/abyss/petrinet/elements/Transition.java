@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.ElementDraw;
-import abyss.graphpanel.IdGenerator;
+import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
 
 /**
@@ -55,70 +55,8 @@ public class Transition extends Node {
 	//inne:
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 
-	/**
-	 * Konstruktor obiektu tranzycji sieci.
-	 * @param transitionId int - identyfikator tranzycji
-	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji
-	 * @param pn int - promien okręgu na którym opisana jest figura geometryczna
-	 */
-	public Transition(int transitionId, ArrayList<ElementLocation> elementLocations, int pn) {
-		super(transitionId, elementLocations, pn);
-		transType = TransitionType.PN;
-	}
-
-	/**
-	 * Konstruktor obiektu tranzycji sieci.
-	 * @param sheetId int - identyfikator arkusza
-	 * @param transitionId int - identyfikator tranzycji
-	 * @param transitionPosition Point - punkt, w którym znajduje się lokalizacja wierzchołka
-	 * @param pn int - promien okręgu na którym opisana jest figura geometryczna
-	 */
-	public Transition(int sheetId, int transitionId, Point transitionPosition, int pn) {
-		super(sheetId, transitionId, transitionPosition, pn);
-		transType = TransitionType.PN;
-	}
-
-	/**
-	 * Konstruktor obiektu tranzycji sieci.
-	 * @param transitionId int - identyfikator tranzycji
-	 * @param elementLocation ElementLocation - lokalizacja elementu sieci
-	 * @param pn int - promień okręgu na którym opisana jest figura geometryczna
-	 */
-	public Transition(int transitionId, ElementLocation elementLocation, int pn) {
-		super(transitionId, elementLocation, pn);
-		transType = TransitionType.PN;
-	}
-
-	/**
-	 * Konstruktor obiektu tranzycji sieci.
-	 * @param transitionId int - identyfikator tranzycji
-	 * @param sheetId int - identyfikator arkusza
-	 * @param transitionPosition Point - punkt lokalizacji
-	 * @param name String - nazwa tranzycji
-	 * @param comment String - komentarz tranzycji
-	 */
-	public Transition(int transitionId, int sheetId, Point transitionPosition, String name, String comment) {
-		super(sheetId, transitionId, transitionPosition, 15);
-		this.setName(name);
-		this.setComment(comment);
-		this.setType(PetriNetElementType.TRANSITION);
-		transType = TransitionType.PN;
-	}
-
-	/**
-	 * Konstruktor obiektu tranzycji sieci.
-	 * @param transitionId int - identyfikator tranzycji
-	 * @param elementLocation ElementLocation - lokalizacja tranzycji
-	 * @param name String - nazwa tranzycji
-	 * @param comment String - komentarz tranzycji
-	 */
-	public Transition(int transitionId, ElementLocation elementLocation, String name, String comment) {
-		super(transitionId, elementLocation, 15);
-		this.setName(name);
-		this.setComment(comment);
-		this.setType(PetriNetElementType.TRANSITION);
-		transType = TransitionType.PN;
-	}
+	//tu było mnóstwo zbędnych konstruktorów potrzebnych równie zbędnej klasie TimeTransition
+	//zostały przeniesione jako dolny komentarz do niej, czyli do pakietu abyss.obsolete
 
 	/**
 	 * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy

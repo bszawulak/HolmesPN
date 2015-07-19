@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
-import abyss.graphpanel.IdGenerator;
+import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
@@ -111,7 +111,7 @@ public class ProjectReader {
 			}
 			
 			GUIManager.getDefaultGUIManager().hGraphics.addRequiredSheets();
-			
+			GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
 			//setGraphPanelSize();
 			buffer.close();
 			return true;
@@ -982,6 +982,7 @@ public class ProjectReader {
 	 * Metoda ustalająca wymiary panelu graficznego sieci, w oparciu o aktualne wartości x i y (związana
 	 * z metodą setGlobalXY(...).
 	 */
+	@SuppressWarnings("unused")
 	private void setGraphPanelSize() {
 		int nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size() - 1;
 		int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);

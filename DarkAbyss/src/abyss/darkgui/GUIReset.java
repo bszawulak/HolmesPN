@@ -12,7 +12,7 @@ import abyss.clusters.ClusterDataPackage;
 import abyss.darkgui.dockwindows.AbyssDockWindowsTable;
 import abyss.darkgui.dockwindows.AbyssDockWindowsTable.SubWindow;
 import abyss.graphpanel.GraphPanel;
-import abyss.graphpanel.IdGenerator;
+import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.data.MCSDataMatrix;
 import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Transition;

@@ -13,6 +13,7 @@ import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.hierarchy.HierarchicalGraphics;
+import abyss.petrinet.hierarchy.SubnetsControl;
 import abyss.utilities.Tools;
 import abyss.windows.AbyssAbout;
 import abyss.windows.AbyssConsole;
@@ -89,6 +90,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public TexExporter tex;
 	public GUIReset reset;
 	public HierarchicalGraphics hGraphics;
+	public SubnetsControl netsHQ;
 	
 	private Dimension screenSize; 		// praca w maksymalizacji
 	@SuppressWarnings("unused")
@@ -178,6 +180,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		tex = new TexExporter(); //obiekt zarządzający eksportem tabel do formatu latex
 		reset = new GUIReset(); //obiekt odpowiadający za resetowanie danych / kasowanie / czyszczenie
 		hGraphics = new HierarchicalGraphics(); //obiekt z metodami dla sieci hierarchicznych
+		netsHQ = new SubnetsControl(this);
 		setFrame(frejm);
 		try {	
 			frame.setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
@@ -597,16 +600,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za dodawanie nowych ikonek w prawy górnym roku każdego podokna
-	 * programu.
+	 * Metoda odpowiedzialna za dodawanie nowych ikonek w prawy górnym roku każdego podokna programu.
 	 * @param dockable - okno do przystrojenia dodatkowymi okienkami
 	 * @param deletable - true, jeśli dodajemy ikonę usuwania (główne podokno arkuszy sieci)
 	 * @return Dockable - nowe okno po dodaniu elementów
 	 */
 	public Dockable decorateDockableWithActions(Dockable dockable, boolean deletable) {
 		Dockable wrapper = new StateActionDockable(dockable, new DefaultDockableStateActionFactory(), new int[0]);
-		int[] states = { DockableState.NORMAL, DockableState.MINIMIZED,
-				DockableState.MAXIMIZED, DockableState.EXTERNALIZED, DockableState.CLOSED };
+		int[] states = { DockableState.NORMAL, DockableState.MINIMIZED, DockableState.MAXIMIZED, DockableState.EXTERNALIZED, DockableState.CLOSED };
 		wrapper = new StateActionDockable(wrapper, new DefaultDockableStateActionFactory(), states);
 
 		if (deletable) {

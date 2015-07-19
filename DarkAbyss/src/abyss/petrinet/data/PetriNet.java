@@ -844,6 +844,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
 					GUIManager.getDefaultGUIManager().hGraphics.addRequiredSheets();
 					GUIManager.getDefaultGUIManager().hGraphics.resizePanels();
+					GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
 				}
 				
 				int nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size() - 1;

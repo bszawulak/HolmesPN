@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import abyss.darkgui.GUIManager;
-import abyss.graphpanel.IdGenerator;
+import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;

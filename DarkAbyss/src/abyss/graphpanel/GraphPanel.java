@@ -13,9 +13,12 @@ import abyss.graphpanel.popupmenu.MetaNodePopupMenu;
 import abyss.graphpanel.popupmenu.PlacePopupMenu;
 import abyss.graphpanel.popupmenu.SheetPopupMenu;
 import abyss.graphpanel.popupmenu.TransitionPopupMenu;
+import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
@@ -882,14 +885,16 @@ public class GraphPanel extends JComponent {
 			} else if (el != null) {
 				// kliknięto w Node, możliwe ze też w łuk, ale nie zostanie on
 				// zaznaczony, ponieważ to Node jest na wierzchu
-				if (getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.READARC ||getDrawMode() == DrawModes.ARC_INHIBITOR 
-						|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL) {
+				if (getDrawMode() == DrawModes.ARC 
+						|| getDrawMode() == DrawModes.READARC 
+						|| getDrawMode() == DrawModes.ARC_INHIBITOR 
+						|| getDrawMode() == DrawModes.ARC_RESET 
+						|| getDrawMode() == DrawModes.ARC_EQUAL) {
 					handleArcsDrawing(el, getDrawMode());
 					
 				} else if (getDrawMode() == DrawModes.ERASER) { //kasowanie czegoś
 					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-							"Operation impossible when simulator is working."
-							, "Warning") == true)
+							"Operation impossible when simulator is working.", "Warning") == true)
 						return;
 					
 					Object[] options = {"Delete", "Cancel",};
@@ -974,18 +979,75 @@ public class GraphPanel extends JComponent {
 		 */
 		private void handleArcsDrawing(ElementLocation clickedLocation, DrawModes arcType) {
 			getSelectionManager().deselectAllElements();
+			
+			Node node = clickedLocation.getParentNode();
+			if(drawnArc == null && node instanceof MetaNode) {
+				if(arcType == DrawModes.ARC) {
+					drawnArc = new Arc(clickedLocation, TypesOfArcs.NORMAL);
+					return;
+				} else {
+					JOptionPane.showMessageDialog(null, "Only normal arc allowed from meta-node!", 
+							"Problem", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+			}
+			
 			if (drawnArc == null) {
 				if(arcType == DrawModes.ARC)
 					drawnArc = new Arc(clickedLocation, TypesOfArcs.NORMAL);
 				else if(arcType == DrawModes.READARC)
-					drawnArc = new Arc(clickedLocation, TypesOfArcs.NORMAL);
+					drawnArc = new Arc(clickedLocation, TypesOfArcs.READARC);
 				else if(arcType == DrawModes.ARC_INHIBITOR)
 					drawnArc = new Arc(clickedLocation, TypesOfArcs.INHIBITOR);
 				else if(arcType == DrawModes.ARC_RESET)
 					drawnArc = new Arc(clickedLocation, TypesOfArcs.RESET);
 				else if(arcType == DrawModes.ARC_EQUAL)
 					drawnArc = new Arc(clickedLocation, TypesOfArcs.EQUAL);
-			} else {
+			} else { 
+				
+				
+				if(clickedLocation.getParentNode() instanceof MetaNode) {
+					if(drawnArc.getStartLocation().getParentNode() instanceof MetaNode) {
+						JOptionPane.showMessageDialog(null, "Direct connection between two meta-nodes not possible.", 
+								"Problem", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					if(drawnArc.getArcType() != TypesOfArcs.NORMAL) {
+						JOptionPane.showMessageDialog(null, "Only normal arc can be connected with meta-node.", 
+								"Problem", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					MetaNode n = (MetaNode) clickedLocation.getParentNode();
+					
+					if(drawnArc.getStartLocation().getParentNode() instanceof Place && n.getMetaType() == MetaType.CoarsePlace ) {
+						JOptionPane.showMessageDialog(null, "Meta-node type CoarsePlace can get connection only from transitions!", 
+								"Problem", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					if(drawnArc.getStartLocation().getParentNode() instanceof Transition && n.getMetaType() == MetaType.CoarseTrans ) {
+						JOptionPane.showMessageDialog(null, "Meta-node type CoarseTrans can get connection only from places!", 
+								"Problem", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					
+					//TODO:
+					//dodaj połączenie z T lub P
+					
+					return;
+				}
+				
+				if(drawnArc.getStartLocation().getParentNode() instanceof MetaNode) {
+					//skoro tu jesteśmy, to znaczy że kliknięto w miejsce lub tranzycję, ale nie meta-node
+					//bo poprzedni if by to wyłowił
+					if (drawnArc.checkIsCorectMeta(clickedLocation)) { //klasa Arc
+						
+					}
+					
+					return;
+				}
+				
+				
+				
 				if (drawnArc.checkIsCorect(clickedLocation)) {
 					//TODO: ??
 					if(isArcDuplicated(drawnArc.getStartLocation(), clickedLocation)) {

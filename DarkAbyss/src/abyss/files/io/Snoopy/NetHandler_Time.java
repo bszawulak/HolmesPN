@@ -10,7 +10,7 @@ import org.xml.sax.SAXException;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
-import abyss.graphpanel.IdGenerator;
+import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.Node;

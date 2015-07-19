@@ -1,4 +1,4 @@
-package abyss.graphpanel;
+package abyss.petrinet.data;
 
 /**
  * Generator identyfikatorów dla elementów sieci.
