@@ -12,6 +12,7 @@ import abyss.graphpanel.IdGenerator;
 import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
@@ -29,6 +30,7 @@ public class ProjectWriter {
 	private PetriNet projectCore = null;
 	private ArrayList<Place> places = null;
 	private ArrayList<Transition> transitions = null;
+	private ArrayList<MetaNode> metaNodes = null;
 	private ArrayList<Arc> arcs = null;
 	private ArrayList<ArrayList<Integer>> invariantsMatrix = null;
 	private ArrayList<String> invariantsNames = null;
@@ -44,7 +46,9 @@ public class ProjectWriter {
 		projectCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		places = projectCore.getPlaces();
 		transitions = projectCore.getTransitions();
+		metaNodes = projectCore.getMetaNodes();
 		arcs = projectCore.getArcs();
+		
 		invariantsMatrix = projectCore.getInvariantsMatrix();
 		invariantsNames = projectCore.accessInvNames();
 		mctData = projectCore.getMCTMatrix();
@@ -183,6 +187,47 @@ public class ProjectWriter {
 			sp = 2;
 			bw.write(spaces(sp)+"<Transitions data block end"+">"+newline);
 			
+			//ZAPIS META-WĘZŁÓW:
+			
+			int metaNumber = metaNodes.size();
+			bw.write(spaces(sp)+"<MetaNodes: "+metaNumber+">"+newline);
+			for(int t=0; t<metaNumber; t++) {
+				sp = 4;
+				MetaNode metanode = metaNodes.get(t);
+				bw.write(spaces(sp)+"<MetaNode: "+t+">"+newline);
+				sp = 6;
+				bw.write(spaces(sp)+"<MetaNode gID:"+metanode.getID()+">"+newline); //gID
+				bw.write(spaces(sp)+"<MetaNode type:"+metanode.getMetaType()+">"+newline); //typ
+				bw.write(spaces(sp)+"<MetaNode name:"+metanode.getName()+">"+newline);  //nazwa
+				bw.write(spaces(sp)+"<MetaNode comment:"+Tools.convertToCode(metanode.getComment())+">"+newline); //komentarz
+				bw.write(spaces(sp)+"<MetaNode representedSheet:"+metanode.getRepresentedSheetID()+">"+newline); //sheet którego dotyczy
+				bw.write(spaces(sp)+"<Location data>"+newline);
+				sp = 8;
+				int elLocations = metanode.getElementLocations().size();
+				bw.write(spaces(sp)+"<MetaNode locations:"+elLocations+">"+newline);
+				for(int e=0; e<elLocations; e++) {
+					sp = 10;
+					ElementLocation eLoc = metanode.getElementLocations().get(e);
+					int sheetId = eLoc.getSheetID();
+					int pointX = eLoc.getPosition().x;
+					int pointY = eLoc.getPosition().y;
+					bw.write(spaces(sp)+"<MetaNode location data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+					
+					ElementLocation nameLoc = metanode.getNamesLocations().get(e);
+					sheetId = nameLoc.getSheetID();
+					pointX = nameLoc.getPosition().x;
+					pointY = nameLoc.getPosition().y;
+					bw.write(spaces(sp)+"<MetaNode name offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+				}
+
+				sp = 6;
+				bw.write(spaces(sp)+"<Location data block end"+">"+newline);
+				sp = 4;
+				bw.write(spaces(sp)+"<EOT"+">"+newline);
+			}
+			sp = 2;
+			bw.write(spaces(sp)+"<MetaNodes data block end"+">"+newline);
+			
 			//ŁUKI
 			int savedArcs = 0;
 			bw.write(spaces(sp)+"<Arcs data block"+">"+newline);
@@ -192,64 +237,165 @@ public class ProjectWriter {
 				int elLocations = place.getElementLocations().size();
 				for(int e=0; e<elLocations; e++) { //wszystkie lokalizacje miejsca
 					ElementLocation eLoc = place.getElementLocations().get(e);
-					ArrayList<Arc> outgoingArcs = eLoc.getOutArcs();
-					int arcsNumber = outgoingArcs.size();
+					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<Arc>(eLoc.getOutArcs());
+					ArrayList<Arc> metaOutArcs = eLoc.accessMetaOutArcs();
+					tmp_outgoingArcs.addAll(metaOutArcs);
+					int arcsNumber = tmp_outgoingArcs.size();
 					for(int a=0; a<arcsNumber; a++) { //wszystkie łuki wyjściowe
-						Arc arc = outgoingArcs.get(a);
+						Arc arc = tmp_outgoingArcs.get(a);
 						String arcType = ""+arc.getArcType();
-						String startLoc = "P"+p+"("+e+")";
-						
 						Node endNode = arc.getEndNode();
-						Transition endTransition = (Transition)endNode;
-						int endNodeIndex = transitions.indexOf(endTransition);
-						ElementLocation endNodeLocation = arc.getEndLocation();
-						int endNodeLocationIndex = -1;
-						for(int e2=0; e2<endTransition.getElementLocations().size(); e2++) {
-							if(endNodeLocation == endTransition.getElementLocations().get(e2)) {
-								endNodeLocationIndex = e2;
-								break;
+						
+						if(endNode instanceof Transition) {
+							String startLoc = "P"+p+"("+e+")";
+							Transition endTransition = (Transition)endNode;
+							int endNodeIndex = transitions.indexOf(endTransition);
+							ElementLocation endNodeLocation = arc.getEndLocation();
+							int endNodeLocationIndex = -1;
+							for(int e2=0; e2<endTransition.getElementLocations().size(); e2++) {
+								if(endNodeLocation == endTransition.getElementLocations().get(e2)) {
+									endNodeLocationIndex = e2;
+									break;
+								}
 							}
-						}
-						
-						String endLoc = "T"+endNodeIndex+"("+endNodeLocationIndex+")";
-						int weight = arc.getWeight();
-						
-						bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
-						savedArcs++;
+							
+							String endLoc = "T"+endNodeIndex+"("+endNodeLocationIndex+")";
+							int weight = arc.getWeight();
+							
+							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
+							savedArcs++;
+						} else if(endNode instanceof MetaNode) {
+							String startLoc = "P"+p+"("+e+")";
+							MetaNode endMetanode = (MetaNode)endNode;
+							int endNodeIndex = metaNodes.indexOf(endMetanode);
+							ElementLocation endNodeLocation = arc.getEndLocation();
+							int endNodeLocationIndex = -1;
+							for(int e2=0; e2<endMetanode.getElementLocations().size(); e2++) {
+								if(endNodeLocation == endMetanode.getElementLocations().get(e2)) {
+									endNodeLocationIndex = e2;
+									break;
+								}
+							}
+							
+							String endLoc = "M"+endNodeIndex+"("+endNodeLocationIndex+")";
+							int weight = arc.getWeight();
+							
+							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
+							savedArcs++;
+						} 
 					}
 					
 				}
 					
 			}
+			@SuppressWarnings("unused")
+			int x = 1;
 			for(int t=0; t<transNumber; t++) {
 				Transition trans = transitions.get(t);
 				int elLocations = trans.getElementLocations().size();
 				for(int e=0; e<elLocations; e++) { //wszystkie lokalizacje tranzycji
 					ElementLocation eLoc = trans.getElementLocations().get(e);
-					ArrayList<Arc> outgoingArcs = eLoc.getOutArcs();
-					int arcsNumber = outgoingArcs.size();
+					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<Arc>(eLoc.getOutArcs());
+					ArrayList<Arc> metaOutArcs = eLoc.accessMetaOutArcs();
+					tmp_outgoingArcs.addAll(metaOutArcs);
+					int arcsNumber = tmp_outgoingArcs.size();
 					for(int a=0; a<arcsNumber; a++) { //wszystkie łuki wyjściowe
-						Arc arc = outgoingArcs.get(a);
+						Arc arc = tmp_outgoingArcs.get(a);
 						String arcType = ""+arc.getArcType();
-						String startLoc = "T"+t+"("+e+")";
-						
 						Node endNode = arc.getEndNode();
-						Place endPlace = (Place)endNode;
-						int endNodeIndex = places.indexOf(endPlace);
-						ElementLocation endNodeLocation = arc.getEndLocation();
-						int endNodeLocationIndex = -1;
-						for(int e2=0; e2<endPlace.getElementLocations().size(); e2++) {
-							if(endNodeLocation == endPlace.getElementLocations().get(e2)) {
-								endNodeLocationIndex = e2;
-								break;
+						if(endNode instanceof Place) {
+							String startLoc = "T"+t+"("+e+")";
+							Place endPlace = (Place)endNode;
+							int endNodeIndex = places.indexOf(endPlace);
+							ElementLocation endNodeLocation = arc.getEndLocation();
+							int endNodeLocationIndex = -1;
+							for(int e2=0; e2<endPlace.getElementLocations().size(); e2++) {
+								if(endNodeLocation == endPlace.getElementLocations().get(e2)) {
+									endNodeLocationIndex = e2;
+									break;
+								}
 							}
+							
+							String endLoc = "P"+endNodeIndex+"("+endNodeLocationIndex+")";
+							int weight = arc.getWeight();
+							
+							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
+							savedArcs++;
+						} else if(endNode instanceof MetaNode) {
+							String startLoc = "T"+t+"("+e+")";
+							MetaNode endMetanode = (MetaNode)endNode;
+							int endNodeIndex = metaNodes.indexOf(endMetanode);
+							ElementLocation endNodeLocation = arc.getEndLocation();
+							int endNodeLocationIndex = -1;
+							for(int e2=0; e2<endMetanode.getElementLocations().size(); e2++) {
+								if(endNodeLocation == endMetanode.getElementLocations().get(e2)) {
+									endNodeLocationIndex = e2;
+									break;
+								}
+							}
+							
+							String endLoc = "M"+endNodeIndex+"("+endNodeLocationIndex+")";
+							int weight = arc.getWeight();
+							
+							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
+							savedArcs++;
 						}
-						
-						String endLoc = "P"+endNodeIndex+"("+endNodeLocationIndex+")";
-						int weight = arc.getWeight();
-						
-						bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
-						savedArcs++;
+					}
+					
+				}
+			}
+			@SuppressWarnings("unused")
+			int y = 1;
+			for(int m=0; m<metaNumber; m++) {
+				MetaNode metaNode = metaNodes.get(m);
+				int elLocations = metaNode.getElementLocations().size();
+				for(int e=0; e<elLocations; e++) { //wszystkie lokalizacje meta-węzła
+					ElementLocation eLoc = metaNode.getElementLocations().get(e);
+					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<Arc>(eLoc.getOutArcs());
+					ArrayList<Arc> metaOutArcs = eLoc.accessMetaOutArcs();
+					tmp_outgoingArcs.addAll(metaOutArcs);
+					int arcsNumber = tmp_outgoingArcs.size();
+					for(int a=0; a<arcsNumber; a++) { //wszystkie łuki wyjściowe
+						Arc arc = tmp_outgoingArcs.get(a);
+						String arcType = ""+arc.getArcType();
+						Node endNode = arc.getEndNode();
+						if(endNode instanceof Place) {
+							String startLoc = "M"+m+"("+e+")";
+							Place endPlace = (Place)endNode;
+							int endNodeIndex = places.indexOf(endPlace);
+							ElementLocation endNodeLocation = arc.getEndLocation();
+							int endNodeLocationIndex = -1;
+							for(int e2=0; e2<endPlace.getElementLocations().size(); e2++) {
+								if(endNodeLocation == endPlace.getElementLocations().get(e2)) {
+									endNodeLocationIndex = e2;
+									break;
+								}
+							}
+							
+							String endLoc = "P"+endNodeIndex+"("+endNodeLocationIndex+")";
+							int weight = arc.getWeight();
+							
+							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
+							savedArcs++;
+						} else if(endNode instanceof Transition) {
+							String startLoc = "M"+m+"("+e+")";
+							Transition endTransition = (Transition)endNode;
+							int endNodeIndex = transitions.indexOf(endTransition);
+							ElementLocation endNodeLocation = arc.getEndLocation();
+							int endNodeLocationIndex = -1;
+							for(int e2=0; e2<endTransition.getElementLocations().size(); e2++) {
+								if(endNodeLocation == endTransition.getElementLocations().get(e2)) {
+									endNodeLocationIndex = e2;
+									break;
+								}
+							}
+							
+							String endLoc = "T"+endNodeIndex+"("+endNodeLocationIndex+")";
+							int weight = arc.getWeight();
+							
+							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
+							savedArcs++;
+						} 
 					}
 					
 				}

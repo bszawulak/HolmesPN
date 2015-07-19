@@ -14,10 +14,12 @@ import abyss.graphpanel.IdGenerator;
 import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.elements.Transition.TransitionType;
 import abyss.utilities.Tools;
 
@@ -35,6 +37,7 @@ import abyss.utilities.Tools;
 public class ProjectReader {
 	private PetriNet projectCore = null;
 	private ArrayList<Node> nodes = null;
+	private ArrayList<MetaNode> metanodes = null;
 	private ArrayList<Arc> arcs = null;
 	private ArrayList<ArrayList<Integer>> invariantsMatrix = null;
 	private ArrayList<String> invariantsNames = null;
@@ -43,6 +46,7 @@ public class ProjectReader {
 
 	private int placesProcessed = 0;
 	private int transitionsProcessed = 0;
+	private int metanodesProcessed = 0;
 	private int arcsProcessed = 0;
 	private int invariantsProcessed = 0;
 	private int mctProcessed = 0;
@@ -56,6 +60,7 @@ public class ProjectReader {
 	public ProjectReader() {
 		projectCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		nodes = projectCore.getNodes();
+		metanodes = projectCore.getMetaNodes();
 		arcs = projectCore.getArcs();
 		invariantsMatrix = projectCore.getInvariantsMatrix();
 		invariantsNames = projectCore.accessInvNames();
@@ -105,7 +110,9 @@ public class ProjectReader {
 				GUIManager.getDefaultGUIManager().getMctBox().showMCT(projectCore.getMCTMatrix());
 			}
 			
-			setGraphPanelSize();
+			GUIManager.getDefaultGUIManager().hGraphics.addRequiredSheets();
+			
+			//setGraphPanelSize();
 			buffer.close();
 			return true;
 		} catch (Exception e) {
@@ -185,6 +192,32 @@ public class ProjectReader {
 				//przeczytano tranzycje
 			}
 			
+			while(!((line = buffer.readLine()).contains("<MetaNodes: "))) //przewiń do tranzycji
+				;
+			
+			//METANODES:
+			//line = buffer.readLine();
+			if(!line.contains("<MetaNodes: 0>")) { //są tranzycje
+				line = buffer.readLine(); // -> Transition: 0
+				boolean go = true;
+				
+				while(go) {
+					MetaNode metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(20,20), MetaType.SubNet);
+					
+					while(!((line = buffer.readLine()).contains("<EOT>"))) {
+						parseMetaNodesLine(line, metanode);
+					}
+					line = buffer.readLine();
+					if(line.contains("<MetaNodes data block end>")) {
+						go = false;
+					}
+					metanodesProcessed++;
+					metanodes.add(metanode);
+					nodes.add(metanode);
+				}
+				//przeczytano tranzycje
+			}
+			
 			ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 			
@@ -193,7 +226,7 @@ public class ProjectReader {
 			
 			//ARCS:
 			while(!(line = buffer.readLine()).contains("Arcs data block end")) {
-				Arc newArc = parseArcLine(line, places, transitions);
+				Arc newArc = parseArcLine(line, places, transitions, metanodes);
 				arcsProcessed++;
 				arcs.add(newArc);
 			}
@@ -480,7 +513,129 @@ public class ProjectReader {
 		}
 	}
 	
-	private Arc parseArcLine(String line, ArrayList<Place> places, ArrayList<Transition> transitions) {
+	/**
+	 * Metoda analizująca przeczytaną linię pliku opisującą meta-węzeł sieci i wprowadzająca odpowiednie zmiany
+	 * do tworzonego obiektu.
+	 * @param line String - przeczytana linia
+	 * @param metanode MetaNode - modyfikowany obiekt tranzycji
+	 */
+	private void parseMetaNodesLine(String line, MetaNode metanode) {
+		String backup = line;
+		try {
+			String query = "";
+			query = "MetaNode gID:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				return;
+			}
+			
+			query = "MetaNode type:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				
+				if(line.equals("CoarseTrans")) {
+					metanode.setMetaType(MetaType.CoarseTrans);
+				} else if(line.equals("CoarsePlace")) {
+					metanode.setMetaType(MetaType.CoarsePlace);
+				} else if(line.equals("MCT")) {
+					metanode.setMetaType(MetaType.MCT);
+				} else if(line.equals("SubNet")) {
+					metanode.setMetaType(MetaType.SubNet);
+				} 
+
+				return;
+			}
+			
+			query = "MetaNode name:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				metanode.setName(line);
+				return;
+			}
+			
+			query = "MetaNode comment:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				line = Tools.decodeString(line);
+				metanode.setComment(line);
+				return;
+			}
+			
+			query = "MetaNode representedSheet:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				int sheetR = Integer.parseInt(line);
+				metanode.setRepresentedSheetID(sheetR);
+				return;
+			}
+			
+			query = "MetaNode locations:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				int elLocSize = Integer.parseInt(line);
+				for(int e=0; e<elLocSize-1; e++) {
+					metanode.getElementLocations().add(new ElementLocation(0, new Point(20,20), metanode));
+					metanode.getNamesLocations().add(new ElementLocation(0, new Point(0,0), metanode));
+				}
+				
+				return;
+			}
+			//poniższa część MUSI się wywołać PO tej wyżej, inaczej nie będzie odpowiednio dużo pól ElementLocation!
+			
+			query = "MetaNode location data sheet/x/y/elIndex:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				String[] tab = line.split(";");
+				int sheetID = Integer.parseInt(tab[0]);
+				int pointX = Integer.parseInt(tab[1]);
+				int pointY = Integer.parseInt(tab[2]);
+				int eLocIndex = Integer.parseInt(tab[3]);
+				
+				metanode.getElementLocations().get(eLocIndex).setSheetID(sheetID);
+				Point newP = new Point(pointX, pointY);
+				metanode.getElementLocations().get(eLocIndex).forceSetPosition(newP);
+				metanode.getElementLocations().get(eLocIndex).setNotSnappedPosition(newP);
+
+				setGlobalXY(pointX, pointY); //update graph panel
+				
+				return;
+			}
+			query = "MetaNode name offset data sheet/x/y/elIndex:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				String[] tab = line.split(";");
+				int sheetID = Integer.parseInt(tab[0]);
+				int pointX = Integer.parseInt(tab[1]);
+				int pointY = Integer.parseInt(tab[2]);
+				int eLocIndex = Integer.parseInt(tab[3]);
+				
+				metanode.getNamesLocations().get(eLocIndex).setSheetID(sheetID);
+				Point newP = new Point(pointX, pointY);
+				metanode.getNamesLocations().get(eLocIndex).forceSetPosition(newP);
+				metanode.getNamesLocations().get(eLocIndex).setNotSnappedPosition(newP);
+				return;
+			}
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Reading file error in line: "+backup+" for MetaNode "+metanodesProcessed, "error", true);
+		}
+	}
+	
+	/**
+	 * Metoda czytające dane o łukach w pliku projektu.
+	 * @param line String - ostatnio przeczytana linia
+	 * @param places ArrayList[Place] - wektor miejsc
+	 * @param transitions ArrayList[Transition] - wektor tranzycji
+	 * @param metanodes ArrayList[MetaNode] - wektor meta-węzłów
+	 * @return Arc - obiekt łuku
+	 */
+	private Arc parseArcLine(String line, ArrayList<Place> places, ArrayList<Transition> transitions, ArrayList<MetaNode> metanodes) {
 		// <Arc: NORMAL; P0(0) -> T3(0); 1>
 		String backup = line;
 		try {
@@ -497,17 +652,35 @@ public class ProjectReader {
 				arcType = TypesOfArcs.RESET;
 			else if(typeLine.contains("EQUAL"))
 				arcType = TypesOfArcs.EQUAL;
+			else if(typeLine.contains("META_ARC"))
+				arcType = TypesOfArcs.META_ARC;
 			
 			tab[2] = tab[2].replace(">", "");
 			int weight = Integer.parseInt(tab[2]);
 			
 			String arcData = tab[1];
-			boolean placeFirst = true;
-			if(arcData.indexOf("T")==0)
-				placeFirst = false;
+			boolean placeFirst = false;
+			boolean metaFirst = false;
+			boolean metaSecond = false;
+			boolean isThereTransition = false;
+			if(arcData.indexOf("P")==0)
+				placeFirst = true;
+			
+			if(arcData.indexOf("M") > 0) {
+				metaSecond = true;
+				metaFirst = false;
+			}
+			if(arcData.indexOf("M") == 0) {
+				metaFirst = true;
+				metaSecond = false;
+			}
+			
+			if(arcData.indexOf("T") != -1)
+				isThereTransition = true;
 			
 			arcData = arcData.replace("P", "");
 			arcData = arcData.replace("T", "");
+			arcData = arcData.replace("M", "");
 			arcData = arcData.replace(")->", " ");
 			arcData = arcData.replace(")", "");
 			arcData = arcData.replace("(", " ");
@@ -515,34 +688,96 @@ public class ProjectReader {
 			
 			int placeIndex = -1;
 			int transIndex = -1;
+			int metaIndex = -1;
 			int placeElLoc = -1;
 			int transElLoc = -1;
-			if(placeFirst) {
-				placeIndex = Integer.parseInt(arcDataTable[0]);
-				placeElLoc = Integer.parseInt(arcDataTable[1]);
-				transIndex = Integer.parseInt(arcDataTable[2]);
-				transElLoc = Integer.parseInt(arcDataTable[3]);
-				
-				ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
-				ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
-				Arc newArc = new Arc(pEL, tEL, "", weight, arcType);
-				//places.get(placeIndex).getElementLocations().get(placeElLoc).addOutArc(newArc);
-				//transitions.get(transIndex).getElementLocations().get(transElLoc).addInArc(newArc);
-				
-				return newArc;
-			} else {
-				placeIndex = Integer.parseInt(arcDataTable[2]);
-				placeElLoc = Integer.parseInt(arcDataTable[3]);
-				transIndex = Integer.parseInt(arcDataTable[0]);
-				transElLoc = Integer.parseInt(arcDataTable[1]);
-				
-				ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
-				ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
-				Arc newArc = new Arc(tEL, pEL, "", weight, arcType);
-				//transitions.get(transIndex).getElementLocations().get(transElLoc).addOutArc(newArc);
-				//places.get(placeIndex).getElementLocations().get(placeElLoc).addInArc(newArc);
-				
-				return newArc;
+			int metaElLoc = -1;
+			
+			if(backup.contains("<Arc: NORMAL; T21(0) -> P34(0); 1>")) {
+				@SuppressWarnings("unused")
+				boolean error = true;
+			}
+			
+			if(placeFirst) { //pierwsze jest miejsce
+				if(metaSecond == false) {
+					placeIndex = Integer.parseInt(arcDataTable[0]);
+					placeElLoc = Integer.parseInt(arcDataTable[1]);
+					transIndex = Integer.parseInt(arcDataTable[2]);
+					transElLoc = Integer.parseInt(arcDataTable[3]);
+					
+					ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
+					ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
+					Arc newArc = new Arc(pEL, tEL, "", weight, arcType);
+					
+					if(arcType == TypesOfArcs.META_ARC) {
+						@SuppressWarnings("unused")
+						int error = 1;
+					}
+					
+					return newArc;
+				} else { //metaSecond == true
+					placeIndex = Integer.parseInt(arcDataTable[0]);
+					placeElLoc = Integer.parseInt(arcDataTable[1]);
+					metaIndex = Integer.parseInt(arcDataTable[2]);
+					metaElLoc = Integer.parseInt(arcDataTable[3]);
+					
+					ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
+					ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
+					Arc newArc = new Arc(pEL, mEL, "", weight, arcType);
+					
+					if(arcType != TypesOfArcs.META_ARC) {
+						@SuppressWarnings("unused")
+						int error = 1;
+					}
+					
+					return newArc;
+				}
+			} else { //placeFirst = false
+				if(metaFirst == true) { 
+					if(isThereTransition == true) { //druga jest tranzycja
+						metaIndex = Integer.parseInt(arcDataTable[0]);
+						metaElLoc = Integer.parseInt(arcDataTable[1]);
+						transIndex = Integer.parseInt(arcDataTable[2]);
+						transElLoc = Integer.parseInt(arcDataTable[3]);
+						
+						ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
+						ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
+						Arc newArc = new Arc(mEL, tEL, "", weight, arcType);
+						return newArc;
+					} else { //drugie jest miejsce
+						metaIndex = Integer.parseInt(arcDataTable[0]);
+						metaElLoc = Integer.parseInt(arcDataTable[1]);
+						placeIndex = Integer.parseInt(arcDataTable[2]);
+						placeElLoc = Integer.parseInt(arcDataTable[3]);
+						
+						ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
+						ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
+						Arc newArc = new Arc(mEL, pEL, "", weight, arcType);
+						return newArc;
+					}
+				} else { //placesFirst = false, metaFirst = false -> pierwsza jest tranzycja
+					if(metaSecond == true) { //drugi jest meta węzeł
+						transIndex = Integer.parseInt(arcDataTable[0]);
+						transElLoc = Integer.parseInt(arcDataTable[1]);
+						metaIndex = Integer.parseInt(arcDataTable[2]);
+						metaElLoc = Integer.parseInt(arcDataTable[3]);
+						
+						ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
+						ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
+						Arc newArc = new Arc(tEL, mEL, "", weight, arcType);
+						return newArc;
+					} else { //drugie jest miejsce
+						transIndex = Integer.parseInt(arcDataTable[0]);
+						transElLoc = Integer.parseInt(arcDataTable[1]);
+						placeIndex = Integer.parseInt(arcDataTable[2]);
+						placeElLoc = Integer.parseInt(arcDataTable[3]);
+						
+						ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
+						ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
+						Arc newArc = new Arc(tEL, pEL, "", weight, arcType);
+						return newArc;
+					}
+				}
 			}
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Reading file error in line: "+backup, "error", true);
@@ -639,6 +874,11 @@ public class ProjectReader {
 		}
 	}
 	
+	/**
+	 * Metoda czyta blok danych o zbiorach MCT.
+	 * @param buffer BufferedReader - obiekt czytający
+	 * @return boolean - true, jeśli wszystko dobrze poszło
+	 */
 	private boolean readMCT(BufferedReader buffer) {
 		try {
 			String line = "";

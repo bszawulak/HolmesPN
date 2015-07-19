@@ -62,6 +62,17 @@ public final class ElementDraw {
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, 
 						radius * 2, radius * 2);
 
+				if(view3d) {
+					Color backup = g.getColor();
+					g.setColor(Color.BLACK);
+					g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width, nodeBounds.height);
+					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width, nodeBounds.height);
+					g.fillRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width, nodeBounds.height);
+					g.setColor(Color.WHITE);
+					g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					g.setColor(backup);
+				}
+				
 				if (!trans.isLaunching()) { //jeśli nieaktywna
 					if (trans.isGlowed_MTC()) { //jeśli ma się świecić jako MCT
 						g.setColor(EditorResources.glowMTCTransitonColorLevel1);
@@ -107,19 +118,7 @@ public final class ElementDraw {
 									nodeBounds.y-(trans.getRadius()+2));
 						} catch (Exception e) { }
 					} else if (el.isPortalSelected()) {
-						/*
-						g.setColor(EditorResources.glowPortalColorLevel1);
-						g.setStroke(EditorResources.glowStrokeLevel1);
-						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-						g.setColor(EditorResources.glowPortalColorLevel2);
-						g.setStroke(EditorResources.glowStrokeLevel2);
-						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-						g.setColor(EditorResources.glowPortalColorLevel3);
-						g.setStroke(EditorResources.glowStrokeLevel3);
-						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);	
-						*/
+						
 					}
 				}
 
@@ -156,21 +155,14 @@ public final class ElementDraw {
 						g.setColor(Color.gray);
 					}
 				}
-				
-				//g.setColor(Color.BLACK);
-				if(view3d) {
-					g.setColor(Color.BLACK);
-					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width, nodeBounds.height);
-					g.fillRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width, nodeBounds.height);
-				}
-				
+
 				if( ((Transition)node).getTransType() == TransitionType.TPN) {
 					g.setColor(Color.gray);
 				} else {
-					g.setColor(new Color(224,224,224));
+					//g.setColor(new Color(224,224,224));
 				}
-				g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				
+				g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				g.setColor(Color.DARK_GRAY);
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -311,9 +303,19 @@ public final class ElementDraw {
 		} else if(node instanceof Place) { // MIEJSCA
 			Place place = (Place)node;
 			for (ElementLocation el : node.getNodeLocations(sheetId)) {
-				Rectangle nodeBounds = new Rectangle(
-						el.getPosition().x - place.getRadius(), el.getPosition().y - place.getRadius(), 
+				Rectangle nodeBounds = new Rectangle(el.getPosition().x - place.getRadius(), el.getPosition().y - place.getRadius(), 
 						place.getRadius() * 2, place.getRadius() * 2);
+		
+				if(view3d) {
+					Color backup = g.getColor();	
+					g.setColor(Color.BLACK);
+					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
+					g.fillOval(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width+1, nodeBounds.height+1);
+					g.setColor(Color.WHITE);
+					g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					g.setColor(backup);
+				}
+				
 				if (el.isSelected() && !el.isPortalSelected()) {
 					g.setColor(EditorResources.selectionColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
@@ -329,47 +331,24 @@ public final class ElementDraw {
 					
 					try {
 						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/selectedSign.png"));
-						g.drawImage(img, null, 
-								nodeBounds.x-(place.getRadius()-4), 
-								nodeBounds.y-(place.getRadius()-4));
+						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), nodeBounds.y-(place.getRadius()-4));
 					} catch (Exception e) {
 						
 					}
 				} else if (el.isPortalSelected()) {
-					/*
-					g.setColor(EditorResources.glowPortalColorLevel1);
-					g.setStroke(EditorResources.glowStrokeLevel1);
-					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
-					g.setColor(EditorResources.glowPortalColorLevel2);
-					g.setStroke(EditorResources.glowStrokeLevel2);
-					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				}
 
-					g.setColor(EditorResources.glowPortalColorLevel3);
-					g.setStroke(EditorResources.glowStrokeLevel3);
-					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					*/
-				}
-				
-				
-				if(view3d) { 
-					if(el.isPortalSelected()) {
-						g.setColor(EditorResources.selectionColorLevel3);
-					} else {
-						g.setColor(Color.BLACK);
-					}
-					
-					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
-					g.fillOval(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width+1, nodeBounds.height+1);
-				}
-				
 				//wypełnianie kolorem:
 				if(el.isPortalSelected()) { //dla wszystkich innych ElLocations portalu właśnie klikniętego
 					g.setColor(EditorResources.selectionColorLevel3);
 				} else {
+					//g.setColor(EditorResources.selectionColorLevel3);
 					g.setColor(Color.white);
 				}
 
+				g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				
 				g.setColor(Color.DARK_GRAY);
@@ -397,9 +376,9 @@ public final class ElementDraw {
 				g.setStroke(new BasicStroke(1.5F));
 				
 				//TODO
-				if(view3d) {
+				//if(view3d) {
 					
-					
+				if(true) {
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					g.drawRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width, nodeBounds.height);
 					g.drawRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width, nodeBounds.height);

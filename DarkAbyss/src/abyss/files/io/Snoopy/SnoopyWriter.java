@@ -222,7 +222,7 @@ public class SnoopyWriter {
 				write(bw, "    </edgeclass>");
 			}
 		
-			if(arcClasses.get(0) == 0) {
+			if(arcClasses.get(1) == 0) {
 				write(bw, "    <edgeclass count=\"0\" name=\"Read Edge\">");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(1) + "\" name=\"Read Edge\">");
@@ -230,7 +230,7 @@ public class SnoopyWriter {
 				write(bw, "    </edgeclass>");
 			}
 			
-			if(arcClasses.get(0) == 0) {
+			if(arcClasses.get(2) == 0) {
 				write(bw, "    <edgeclass count=\"0\" name=\"Inhibitor Edge\">");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(2) + "\" name=\"Inhibitor Edge\">");
@@ -238,7 +238,7 @@ public class SnoopyWriter {
 				write(bw, "    </edgeclass>");
 			}
 			
-			if(arcClasses.get(0) == 0) {
+			if(arcClasses.get(3) == 0) {
 				write(bw, "    <edgeclass count=\"0\" name=\"Reset Edge\">");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(3) + "\" name=\"Reset Edge\">");
@@ -246,7 +246,7 @@ public class SnoopyWriter {
 				write(bw, "    </edgeclass>");
 			}
 			
-			if(arcClasses.get(0) == 0) {
+			if(arcClasses.get(4) == 0) {
 				write(bw, "    <edgeclass count=\"0\" name=\"Equal Edge\">");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(4) + "\" name=\"Equal Edge\">");

@@ -140,7 +140,7 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala pobrać listę łuków wyjściowych.
+	 * Metoda pozwala pobrać ORYGINALNY obiekt listy łuków wyjściowych.
 	 * @return ArrayList[Arc] - lista łuków wyjściowych
 	 */
 	public ArrayList<Arc> getOutArcs() {
@@ -156,7 +156,7 @@ public class ElementLocation implements Serializable {
 	}
 
 	/**
-	 * Metoda pozwala pobrać listę łuków wejściowych.
+	 * Metoda pozwala pobrać ORYGINALNY obiekt listy łuków wejściowych.
 	 * @return ArrayList[Arc] - lista łuków wejściowych
 	 */
 	public ArrayList<Arc> getInArcs() {
@@ -204,6 +204,7 @@ public class ElementLocation implements Serializable {
 	}
 	
 	public ArrayList<Arc> accessMetaInArcs() {
+		//TODO:
 		return this.metaInArcs;
 	}
 	

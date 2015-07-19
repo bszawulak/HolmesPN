@@ -42,9 +42,9 @@ public final class Check {
     
     /**
      * Metoda zwraca wektor z informacjami o liczności 5 klas łuków, odpowiednio: NORMAL, READARC, INHIBITOR,
-     * RESET i EQUAL.
+     * RESET, EQUAL i META_ARC
      * @return ArrayList[Integer] - wektor liczności klas łuków, w kolejności: get(0): NORMAL, następnie READARC,
-     *  INHIBITOR, RESET, EQUAL
+     *  INHIBITOR, RESET, EQUAL, META_ARC
      */
     public static ArrayList<Integer> getArcClassCount() {
 		ArrayList<Integer> result = new ArrayList<Integer>();
@@ -53,6 +53,7 @@ public final class Check {
 		int inhibitor = 0;
 		int reset = 0;
 		int equal = 0;
+		int meta = 0;
 		int doubleArc = 0;
 		ArrayList<Arc> arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
 		for(Arc a : arcs) {
@@ -69,6 +70,8 @@ public final class Check {
 				reset++;
 			else if(a.getArcType() == TypesOfArcs.EQUAL)
 				equal++;
+			else if(a.getArcType() == TypesOfArcs.META_ARC)
+				meta++;
 		}
 		result.add(normal);
 		result.add(readArc);
@@ -76,6 +79,7 @@ public final class Check {
 		result.add(reset);
 		result.add(equal);
 		result.add(doubleArc);
+		result.add(meta);
 		return result;
 	}
 }

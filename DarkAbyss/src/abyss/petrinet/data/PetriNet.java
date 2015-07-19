@@ -178,6 +178,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		return returnTransitions;
 	}
 	
+	/**
+	 * Metoda zwraca nowy wektor wypełniony istniejącymi meta-węzłami
+	 * @return ArrayList[MetaNoda] - lista meta-węzłów
+	 */
 	public ArrayList<MetaNode> getMetaNodes() {
 		ArrayList<MetaNode> returnNodes = new ArrayList<MetaNode>();
 		for (Node n : this.dataCore.nodes) {

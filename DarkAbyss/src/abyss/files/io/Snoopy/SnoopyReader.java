@@ -1132,18 +1132,18 @@ public class SnoopyReader {
 									if(eLsourceLocation == -1) { //szukaj wśród elementów wektora coarse-nodes
 										int coarseIndex = -1;
 										int coarseSubLocation = -1;
-										boolean found = false;
+										boolean foundInCoarses = false;
 										for(ArrayList<Integer> vector : snoopyCoarseNodesElLocIDList) {
 											coarseIndex++;
 											if(vector.contains(sourceID)) {
 												coarseSubLocation = vector.indexOf(sourceID);
-												found = true;
+												foundInCoarses = true;
 												break;
 											}
 										}
 
 										boolean snoopyErrorFixed = false;
-										if(!found) { //jeśli nie ma w wektorze coarse-nodes, zrob dokladne przeszukanie wektora
+										if(!foundInCoarses) { //jeśli nie ma w wektorze coarse-nodes, zrob dokladne przeszukanie wektora
 											//zwyklych węzłów (czasochłonne)
 											int counter = -1;
 											int location = -1;
@@ -1157,7 +1157,7 @@ public class SnoopyReader {
 											}
 											if(snoopyErrorFixed) {
 												sourceEL = nodesList.get(counter).getElementLocations().get(location);
-												currentType = TypesOfArcs.META_ARC;
+												//currentType = TypesOfArcs.META_ARC;
 												snoopyErrorFixed = false; //aby nie weszło poniżej
 												GUIManager.getDefaultGUIManager().log(" Fixed: wrong data for arc from (SnoopySourceID: "+sourceID+
 														") to (SnoopyTargetID: "+targetID+"). Arc fixed.", "error", true);
@@ -1167,7 +1167,7 @@ public class SnoopyReader {
 											}
 										}
 										
-										if(found || snoopyErrorFixed) {
+										if(foundInCoarses || snoopyErrorFixed) {
 											int coarseID = snoopyNodesIdList.size() - snoopyCoarseNodesIdList.size() + coarseIndex;
 											sourceEL = nodesList.get(coarseID).getElementLocations().get(coarseSubLocation);
 											currentType = TypesOfArcs.META_ARC;
@@ -1208,7 +1208,7 @@ public class SnoopyReader {
 											}
 											if(snoopyErrorFixed) {
 												sourceEL = nodesList.get(counter).getElementLocations().get(location);
-												currentType = TypesOfArcs.META_ARC;
+												//currentType = TypesOfArcs.META_ARC;
 												snoopyErrorFixed = false; //aby nie weszło poniżej
 												GUIManager.getDefaultGUIManager().log(" Fixed: wrong data for arc from (SnoopySourceID: "+sourceID+
 														") to (SnoopyTargetID: "+targetID+"). Arc fixed.", "error", true);

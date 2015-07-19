@@ -82,6 +82,11 @@ public class GUIOperations {
 	 * Metoda odpowiedzialna za otwieranie pliku z zapisaną siecią w formacie .abyss lub pliku projektu
 	 */
 	public void openAbyssProject() {
+		boolean proceed = GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
+		if(proceed == false) {
+			return;
+		}
+		
 		String lastPath = overlord.getLastPath();
 		JFileChooser fc;
 		if(lastPath==null)
