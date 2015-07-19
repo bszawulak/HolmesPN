@@ -9,6 +9,7 @@ import javax.swing.*;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.popupmenu.ArcPopupMenu;
+import abyss.graphpanel.popupmenu.MetaNodePopupMenu;
 import abyss.graphpanel.popupmenu.PlacePopupMenu;
 import abyss.graphpanel.popupmenu.SheetPopupMenu;
 import abyss.graphpanel.popupmenu.TransitionPopupMenu;
@@ -32,7 +33,6 @@ import abyss.workspace.WorkspaceSheet;
  *
  */
 public class GraphPanel extends JComponent {
-	//BACKUP: -5746225670483573975L; nie ruszać poniższej zmiennej
 	private static final long serialVersionUID = -5746225670483573975L;
 	private static final int meshSize = 20;
 	private PetriNet petriNet;
@@ -80,10 +80,10 @@ public class GraphPanel extends JComponent {
 	public void Initialize() {
 		this.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 		this.setOpaque(true);
-		this.setSheetPopupMenu(new SheetPopupMenu(this));
-		this.setPlacePopupMenu(new PlacePopupMenu(this));
-		this.setTransitionPopupMenu(new TransitionPopupMenu(this));
-		this.setArcPopupMenu(new ArcPopupMenu(this));
+		//this.setSheetPopupMenu(new SheetPopupMenu(this));
+		//this.setPlacePopupMenu(new PlacePopupMenu(this));
+		//this.setTransitionPopupMenu(new TransitionPopupMenu(this));
+		//this.setArcPopupMenu(new ArcPopupMenu(this));
 		this.addMouseListener(new MouseHandler());
 		this.addMouseMotionListener(new MouseMotionHandler());
 		this.addKeyListener(new KeyboardHandler());
@@ -581,12 +581,54 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala pobrać obiekt będący menu kontekstowym dla danego arkusza.
+	 * Metoda pozwala pobrać nowy obiekt będący menu kontekstowym dla danego arkusza.
 	 * @return SheetPopupMenu - obiekt menu kontekstowego
 	 */
-	public SheetPopupMenu getSheetPopupMenu() {
-		return sheetPopupMenu;
+	public SheetPopupMenu getSheetPopupMenu(PetriNetElementType pne) {
+		return new SheetPopupMenu(this, pne);
 	}
+
+	/**
+	 * Metoda pozwala pobrać nowy obiekt będący menu kontekstowym dla każdego miejsca.
+	 * @param el ElementLocation - kliknięty element
+	 * @param pne PetriNetElementType - typ klikniętego elementu
+	 * @return PlacePopupMenu - obiekt menu kontekstowego
+	 */
+	public PlacePopupMenu getPlacePopupMenu(ElementLocation el, PetriNetElementType pne) {
+		return new PlacePopupMenu(this, el, pne);
+	}
+
+	/**
+	 * Metoda pozwala pobrać nowy obiekt będący menu kontekstowym dla każdej tranzycji.
+	 * @param el ElementLocation - kliknięty element
+	 * @param pne PetriNetElementType - typ klikniętego elementu
+	 * @return TransitionPopupMenu - obiekt menu kontekstowego tranzycji
+	 */
+	public TransitionPopupMenu getTransitionPopupMenu(ElementLocation el, PetriNetElementType pne) {
+		return new TransitionPopupMenu(this, el, pne);
+	}
+	
+	/**
+	 * Metoda pozwala pobrać nowy obiekt będący menu kontekstowym dla meta-węzła.
+	 * @param el ElementLocation - kliknięty element
+	 * @param pne PetriNetElementType - typ klikniętego elementu
+	 * @return MetaNodePopupMenu - obiekt menu kontekstowego dla meta-węzła
+	 */
+	public MetaNodePopupMenu getMetaNodePopupMenu(ElementLocation el, PetriNetElementType pne) {
+		return new MetaNodePopupMenu(this, el, pne);
+	}
+
+	/**
+	 * Metoda pozwala pobrać nowy obiekt będący menu kontekstowym dla każdego łuku.
+	 * @param arc Arc - obiekt klikniętego łuku
+	 * @param pne PetriNetElementType - typ klikniętego elementu
+	 * @return ArcPopupMenu - obiekt menu kontekstowego
+	 */
+	public ArcPopupMenu getArcPopupMenu(Arc arc, PetriNetElementType pne) {
+		return new ArcPopupMenu(this, arc, pne);
+	}
+	
+	//**************************************************************************************************************
 
 	/**
 	 * Pozwala ustawić obiekt będący menu kontekstowym danego arkusza.
@@ -594,14 +636,6 @@ public class GraphPanel extends JComponent {
 	 */
 	public void setSheetPopupMenu(SheetPopupMenu sheetPopupMenu) {
 		this.sheetPopupMenu = sheetPopupMenu;
-	}
-
-	/**
-	 * Metoda pozwala pobrać obiekt będący menu kontekstowym dla każdego miejsca.
-	 * @return PlacePopupMenu - obiekt menu kontekstowego
-	 */
-	public PlacePopupMenu getPlacePopupMenu() {
-		return placePopupMenu;
 	}
 
 	/**
@@ -613,29 +647,13 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda pozwala pobrać obiekt będący menu kontekstowym dla każdej tranzycji.
-	 * @return TransitionPopupMenu - obiekt menu kontekstowego tranzycji
-	 */
-	public TransitionPopupMenu getTransitionPopupMenu() {
-		return transitionPopupMenu;
-	}
-
-	/**
 	 * Metoda pozwala ustawić obiekt będący menu kontekstowym dla każdej tranzycji.
 	 * @param transitionPopupMenu TransitionPopupMenu - nowe menu kontekstowe
 	 */
 	public void setTransitionPopupMenu(TransitionPopupMenu transitionPopupMenu) {
 		this.transitionPopupMenu = transitionPopupMenu;
 	}
-
-	/**
-	 * Metoda pozwala pobrać obiekt będący menu kontekstowym dla każdego łuku.
-	 * @return ArcPopupMenu - obiekt menu kontekstowego
-	 */
-	public ArcPopupMenu getArcPopupMenu() {
-		return arcPopupMenu;
-	}
-
+	
 	/**
 	 * Metoda pozwala ustawić obiekt będący menu kontekstowym dla każdego łuku.
 	 * @param arcPopupMenu ArcPopupMenu - nowe menu kontekstowe
@@ -644,6 +662,8 @@ public class GraphPanel extends JComponent {
 		this.arcPopupMenu = arcPopupMenu;
 	}
 
+	//**************************************************************************************************************
+	
 	/**
 	 * 
 	 * @return
@@ -804,7 +824,7 @@ public class GraphPanel extends JComponent {
 			if (el == null && a == null) {
 				if (e.getButton() == MouseEvent.BUTTON3) { //menu kontekstowe
 					if (getDrawMode() == DrawModes.POINTER)
-						getSheetPopupMenu().show(e);
+						getSheetPopupMenu(PetriNetElementType.UNKNOWN).show(e);
 					
 					setDrawMode(DrawModes.POINTER);
 					GUIManager.getDefaultGUIManager().getToolBox().selectPointer(); //przywraca tryb wybierania z JTree po lewej
@@ -873,8 +893,7 @@ public class GraphPanel extends JComponent {
 						return;
 					
 					Object[] options = {"Delete", "Cancel",};
-					int n = JOptionPane.showOptionDialog(null,
-							"Do you want to delete selected elements?",
+					int n = JOptionPane.showOptionDialog(null, "Do you want to delete selected elements?",
 							"Deletion warning?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (n == 0) {
@@ -899,18 +918,21 @@ public class GraphPanel extends JComponent {
 					clearDrawnArc();
 				}
 				if (e.getButton() == MouseEvent.BUTTON3) { //menu kontekstowe węzła
-					if (el.getParentNode().getType() == PetriNetElementType.PLACE)
-						getPlacePopupMenu().show(e);
-					else
-						getTransitionPopupMenu().show(e);
+					//TODO:
+					if (el.getParentNode().getType() == PetriNetElementType.PLACE) {
+						getPlacePopupMenu(el, PetriNetElementType.PLACE).show(e);
+					} else if (el.getParentNode().getType() == PetriNetElementType.TRANSITION) {
+						getTransitionPopupMenu(el, PetriNetElementType.TRANSITION).show(e);
+					} else if (el.getParentNode().getType() == PetriNetElementType.META) {
+						getMetaNodePopupMenu(el, PetriNetElementType.META).show(e);
+					}
 				}
 			}
 			
 			else if (a != null) { // kliknięto w łuk, więc zostanie on zaznaczony
 				if (getDrawMode() == DrawModes.ERASER) {
 					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-							"Operation impossible when simulator is working."
-							, "Warning") == true)
+							"Operation impossible when simulator is working.", "Warning") == true)
 						return;
 					
 					Object[] options = {"Delete", "Cancel",};
@@ -928,18 +950,18 @@ public class GraphPanel extends JComponent {
 						GUIManager.getDefaultGUIManager().markNetChange();
 					}	
 				} else {
-					if (e.isShiftDown())
+					if (e.isShiftDown()) {
 						a.setSelected(true);
-					else if (e.isControlDown())
+					} else if (e.isControlDown()) {
 						a.setSelected(!a.getSelected());
-					else if (!getSelectionManager().isArcSelected(a)) {
+					} else if (!getSelectionManager().isArcSelected(a)) {
 						getSelectionManager().deselectAllElementLocations();
 						getSelectionManager().selectOneArc(a);
 					}
 				}
 				clearDrawnArc();
 				if (e.getButton() == MouseEvent.BUTTON3) { // menu konteksowe łuku
-					getArcPopupMenu().show(e);
+					getArcPopupMenu(a, PetriNetElementType.ARC).show(e);
 				}
 			}
 			e.getComponent().repaint();
@@ -1003,7 +1025,6 @@ public class GraphPanel extends JComponent {
 								getArcs().add(arc);
 								Arc arc2 = new Arc(IdGenerator.getNextId(), clickedLocation, drawnArc.getStartLocation(), TypesOfArcs.NORMAL);
 								getArcs().add(arc2);
-								
 								arc.setArcType(TypesOfArcs.READARC);
 								arc2.setArcType(TypesOfArcs.READARC);
 							} else if(arcType == DrawModes.ARC_INHIBITOR) {

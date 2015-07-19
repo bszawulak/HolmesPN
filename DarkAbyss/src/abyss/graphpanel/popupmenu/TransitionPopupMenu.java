@@ -7,24 +7,27 @@ import javax.swing.JOptionPane;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
+import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
 import abyss.petrinet.elements.Transition;
 
 /**
  * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji związanych z tranzycjami.
+ * 
  * @author students
+ * @author MR - zmiana na obiekt dynamiczny
  *
  */
 public class TransitionPopupMenu extends NodePopupMenu {
-	// BACKUP:  1268637178521514216L   (ŁAPY PRECZ OD PONIŻSZEJ ZMIENNEJ)
 	private static final long serialVersionUID = 1268637178521514216L;
 
 	/**
 	 * Konstruktor obiektu klasy TransitionPopupMenu.
 	 * @param graphPanel GraphPanel - arkusz dla którego powstaje menu
 	 */
-	public TransitionPopupMenu(GraphPanel graphPanel) {
-		super(graphPanel);
+	public TransitionPopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
+		super(graphPanel, pne);
 		
 		this.addMenuItem("Transition ON/OFF", "offlineSmall.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

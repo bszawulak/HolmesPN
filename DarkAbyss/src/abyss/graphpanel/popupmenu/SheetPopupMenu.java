@@ -15,6 +15,7 @@ import javax.swing.filechooser.FileFilter;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
+import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
 import abyss.utilities.AbyssFileView;
 import abyss.workspace.ExtensionFileFilter;
 
@@ -31,8 +32,8 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 	 * Konstruktor obiektu klasy SheetPopupMenu.
 	 * @param graphPanel GraphPanel - panel dla którego powstaje menu
 	 */
-	public SheetPopupMenu(GraphPanel graphPanel) {
-		super(graphPanel);
+	public SheetPopupMenu(GraphPanel graphPanel, PetriNetElementType pne) {
+		super(graphPanel, pne);
 
 		this.addMenuItem("Select All", "", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

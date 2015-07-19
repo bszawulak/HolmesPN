@@ -40,6 +40,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
@@ -58,6 +59,7 @@ public class AbyssNodeInfo extends JFrame {
 	private static final long serialVersionUID = 1476738825515760744L;
 	private Place place;
 	private Transition transition;
+	private MetaNode metanode;
 	private JPanel mainPanel;
 	private JFrame parentFrame;
 	private AbyssNodeInfoActions action = new AbyssNodeInfoActions(this);
@@ -102,6 +104,16 @@ public class AbyssNodeInfo extends JFrame {
 		
 		initializeCommon();
 		initializeTransitionInfo();
+	}
+	
+	public AbyssNodeInfo(MetaNode metanode, JFrame papa) {
+		parentFrame = papa;
+		this.metanode = metanode;
+		setTitle("MetaNode: "+metanode.getName());
+		
+		
+		initializeCommon();
+		//initializeTransitionInfo();
 	}
 	
 	/**

@@ -14,6 +14,7 @@ import javax.swing.KeyStroke;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
+import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
 import abyss.utilities.Tools;
 
 /**
@@ -22,7 +23,6 @@ import abyss.utilities.Tools;
  *
  */
 public class GraphPanelPopupMenu extends JPopupMenu {
-	// BACKUP:  2192129184059718857L  (ŁAPY PRECZ OD PONIŻSZEJ ZMIENNEJ)
 	private static final long serialVersionUID = 2192129184059718857L;
 	
 	@SuppressWarnings("unused")
@@ -37,10 +37,12 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	 * Konstruktor obiektu klasy GraphPanelPopupMenu.
 	 * @param graphPanel GraphPanel - obiekt dla którego powstaje menu kontekstowe
 	 */
-	public GraphPanelPopupMenu(GraphPanel graphPanel) {
+	public GraphPanelPopupMenu(GraphPanel graphPanel, PetriNetElementType pne) {
 		this.guiManager = GUIManager.getDefaultGUIManager();
 		this.setGraphPanel(graphPanel);
-		this.createPredefineMenuItems();
+		
+		if(pne != PetriNetElementType.META)
+			this.createPredefineMenuItems();
 	}
 
 	/**
@@ -138,8 +140,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	 * @param actionListener ActionListener - obiekt nasłuchujący
 	 * @return JMenuItem - gotowy obiekt menu
 	 */
-	protected JMenuItem createMenuItem(String text, String iconName,
-			KeyStroke accelerator, ActionListener actionListener) {
+	protected JMenuItem createMenuItem(String text, String iconName, KeyStroke accelerator, ActionListener actionListener) {
 		try {
 			JMenuItem menuItem;
 			if(!iconName.equals(""))
