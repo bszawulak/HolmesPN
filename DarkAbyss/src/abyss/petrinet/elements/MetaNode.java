@@ -6,7 +6,7 @@ import java.awt.Point;
 import abyss.graphpanel.ElementDraw;
 
 /**
- * Meta węzeł - coarse, MCT, etc.
+ * Meta węzeł - typ T, typ P, typ TP
  * 
  * @author MR
  *
@@ -14,8 +14,8 @@ import abyss.graphpanel.ElementDraw;
 public class MetaNode extends Node {
 	private static final long serialVersionUID = -1463839771476569949L;
 
-	/** CoarsePlace, CoarseTrans, SubNet, MCT */
-	public enum MetaType { CoarsePlace, CoarseTrans, SubNet, MCT }
+	/** SUBNETTRANS, SUBNETPLACE, SUBNET, UNKNOWN */
+	public enum MetaType { SUBNETTRANS, SUBNETPLACE, SUBNET, UNKNOWN }
 	private MetaType metaType;
 	
 	private int metaSheetID;
@@ -82,10 +82,14 @@ public class MetaNode extends Node {
 	 */
 	public String toString() {
 		String name =  getName();
+		String text = "";
 		if(name == null) {
-			return "(Meta)null";
+			text = "(Meta) -- ";
 		} else {
-			return "(Meta)" + getName();
+			text = "(Meta)" + getName();
 		}
+		
+		text += " [Subnet: "+getRepresentedSheetID()+"]";
+		return text;
 	}
 }

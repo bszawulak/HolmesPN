@@ -798,7 +798,7 @@ public class GraphPanel extends JComponent {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
 				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown() == false)
-					getSelectionManager().increaseTokensNumber();
+					getSelectionManager().doubleClickReactionHandler();
 				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown() == true)
 					getSelectionManager().decreaseTokensNumber();
 			}
@@ -833,7 +833,9 @@ public class GraphPanel extends JComponent {
 					GUIManager.getDefaultGUIManager().getToolBox().selectPointer(); //przywraca tryb wybierania z JTree po lewej
 				}
 				if (!e.isShiftDown() && !e.isControlDown()) {
+					GUIManager.getDefaultGUIManager().getWorkspace().globalDeselection();
 					getSelectionManager().deselectAllElements();
+					clearSelectionColors();
 				}
 
 				if(e.isAltDown()) //wycentruj ekran
@@ -1019,13 +1021,13 @@ public class GraphPanel extends JComponent {
 					}
 					MetaNode n = (MetaNode) clickedLocation.getParentNode();
 					
-					if(drawnArc.getStartLocation().getParentNode() instanceof Place && n.getMetaType() == MetaType.CoarsePlace ) {
-						JOptionPane.showMessageDialog(null, "Meta-node type CoarsePlace can get connection only from transitions!", 
+					if(drawnArc.getStartLocation().getParentNode() instanceof Place && n.getMetaType() == MetaType.SUBNETPLACE ) {
+						JOptionPane.showMessageDialog(null, "Meta-node type P (transitions-interfaced) can get connection only from transitions!", 
 								"Problem", JOptionPane.WARNING_MESSAGE);
 						return;
 					}
-					if(drawnArc.getStartLocation().getParentNode() instanceof Transition && n.getMetaType() == MetaType.CoarseTrans ) {
-						JOptionPane.showMessageDialog(null, "Meta-node type CoarseTrans can get connection only from places!", 
+					if(drawnArc.getStartLocation().getParentNode() instanceof Transition && n.getMetaType() == MetaType.SUBNETTRANS ) {
+						JOptionPane.showMessageDialog(null, "Meta-node type T (places-interfaced) can get connection only from places!", 
 								"Problem", JOptionPane.WARNING_MESSAGE);
 						return;
 					}
@@ -1039,7 +1041,7 @@ public class GraphPanel extends JComponent {
 				if(drawnArc.getStartLocation().getParentNode() instanceof MetaNode) {
 					//skoro tu jesteśmy, to znaczy że kliknięto w miejsce lub tranzycję, ale nie meta-node
 					//bo poprzedni if by to wyłowił
-					if (drawnArc.checkIsCorectMeta(clickedLocation)) { //klasa Arc
+					if (drawnArc.checkIsCorrectMeta(clickedLocation)) { //klasa Arc
 						
 					}
 					
@@ -1304,6 +1306,20 @@ public class GraphPanel extends JComponent {
 			scrollSheetHorizontal(-(centerX - clickedX)); // w lewo
 			scrollSheetVertical(clickedY - centerY); //w dół
 		} 
+	}
+
+	/**
+	 * Metoda usuwa status selected dla wszystkich portali.
+	 */
+	public void clearSelectionColors() {
+		ArrayList<Node> nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
+		for(Node n : nodes) {
+			if(n.isPortal())
+				for(ElementLocation el : n.getElementLocations()) {
+					el.setSelected(false);
+					el.setPortalSelected(false);
+				}
+		}
 	}
 
 	/**

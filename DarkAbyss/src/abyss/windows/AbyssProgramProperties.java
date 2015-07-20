@@ -121,10 +121,10 @@ public class AbyssProgramProperties extends JFrame {
 		panel.setBounds(0, 0, 600, 500);
 		
 		//Panel opcji środowiska R
-		panel.add(createRoptionsPanel(0, 0, 590, 90)); //dodaj podpanel ustawień R
+		panel.add(createRoptionsSystemPanel(0, 0, 590, 90)); //dodaj podpanel ustawień R
 
 		//Panel wczytywania sieci
-		panel.add(createSnoopyReadPanel(0, 90, 590, 150));
+		panel.add(createSnoopyReadSystemPanel(0, 90, 590, 150));
 		
 		panel.repaint();
 		return panel;
@@ -138,26 +138,27 @@ public class AbyssProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
-	private JPanel createSnoopyReadPanel(int x, int y, int w, int h) {
+	private JPanel createSnoopyReadSystemPanel(int x, int y, int w, int h) {
 		JPanel ioPanel = new JPanel(null);
 		ioPanel.setBorder(BorderFactory.createTitledBorder("I/O operations"));
 		ioPanel.setBounds(x, y, w, h);
 		
 		int io_x = 10;
-		int io_y = 15;
+		int io_y = -5;
 		noAction = true;
 		
 		JLabel labelIO1 = new JLabel("(Snoopy) Resize net when loaded:");
-		labelIO1.setBounds(io_x, io_y, 200, 20);
+		labelIO1.setBounds(io_x, io_y+=20, 200, 20);
 		ioPanel.add(labelIO1);
 
 		ButtonGroup group = new ButtonGroup();
 		JRadioButton resize80Button = new JRadioButton("80%");
-		resize80Button.setBounds(io_x, io_y+20, 60, 20);
+		resize80Button.setBounds(io_x, io_y+=20, 60, 20);
 		resize80Button.setActionCommand("0");
 		resize80Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "80", true);
+				if(noAction) return;
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "80", false);
 			}
 		});
 		group.add(resize80Button);
@@ -165,55 +166,60 @@ public class AbyssProgramProperties extends JFrame {
 		
 		
 		JRadioButton resize100Button = new JRadioButton("100%");
-		resize100Button.setBounds(io_x+60, io_y+20, 60, 20);
+		resize100Button.setBounds(io_x+60, io_y, 60, 20);
 		resize100Button.setActionCommand("1");
 		resize100Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "100", true);
+				if(noAction) return;
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "100", false);
 			}
 		});
 		group.add(resize100Button);
 		ioPanel.add(resize100Button);
 		
 		JRadioButton resize120Button = new JRadioButton("120%");
-		resize120Button.setBounds(io_x+120, io_y+20, 60, 20);
+		resize120Button.setBounds(io_x+120, io_y, 60, 20);
 		resize120Button.setActionCommand("2");
 		resize120Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "120", true);
+				if(noAction) return;
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "120", false);
 			}
 		});
 		group.add(resize120Button);
 		ioPanel.add(resize120Button);
 		
 		JRadioButton resize140Button = new JRadioButton("140%");
-		resize140Button.setBounds(io_x, io_y+40, 60, 20);
+		resize140Button.setBounds(io_x, io_y+=20, 60, 20);
 		resize140Button.setActionCommand("3");
 		resize140Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "140", true);
+				if(noAction) return;
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "140", false);
 			}
 		});
 		group.add(resize140Button);
 		ioPanel.add(resize140Button);
 		
 		JRadioButton resize160Button = new JRadioButton("160%");
-		resize160Button.setBounds(io_x+60, io_y+40, 60, 20);
+		resize160Button.setBounds(io_x+60, io_y, 60, 20);
 		resize160Button.setActionCommand("4");
 		resize160Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "160", true);
+				if(noAction) return;
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "160", false);
 			}
 		});
 		group.add(resize160Button);
 		ioPanel.add(resize160Button);
 		
 		JRadioButton resize180Button = new JRadioButton("180%");
-		resize180Button.setBounds(io_x+120, io_y+40, 60, 20);
+		resize180Button.setBounds(io_x+120, io_y, 60, 20);
 		resize180Button.setActionCommand("5");
 		resize180Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "180", true);
+				if(noAction) return;
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "180", false);
 			}
 		});
 		group.add(resize180Button);
@@ -228,7 +234,7 @@ public class AbyssProgramProperties extends JFrame {
 		else group.setSelected(resize100Button.getModel(), true);
 		
 		JCheckBox alignGridWhenSavedCheckBox = new JCheckBox("(Snoopy) Align to grid when saved", true);
-		alignGridWhenSavedCheckBox.setBounds(io_x+200, io_y+20, 240, 20);
+		alignGridWhenSavedCheckBox.setBounds(io_x+200, io_y-20, 240, 20);
 		alignGridWhenSavedCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
@@ -247,7 +253,7 @@ public class AbyssProgramProperties extends JFrame {
 		ioPanel.add(alignGridWhenSavedCheckBox);
 		
 		JCheckBox useOffsetsCheckBox = new JCheckBox("(Snoopy) Use Snoopy offsets for names", true);
-		useOffsetsCheckBox.setBounds(io_x+200, io_y+40, 260, 20);
+		useOffsetsCheckBox.setBounds(io_x+200, io_y, 260, 20);
 		useOffsetsCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
@@ -266,7 +272,7 @@ public class AbyssProgramProperties extends JFrame {
 		ioPanel.add(useOffsetsCheckBox);
 		
 		JCheckBox useOldLoaderCheckBox = new JCheckBox("(UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)", true);
-		useOldLoaderCheckBox.setBounds(io_x, io_y+60, 400, 20);
+		useOldLoaderCheckBox.setBounds(io_x, io_y+=20, 400, 20);
 		useOldLoaderCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
@@ -296,7 +302,7 @@ public class AbyssProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
-	private JPanel createRoptionsPanel(int x, int y, int w, int h) {
+	private JPanel createRoptionsSystemPanel(int x, int y, int w, int h) {
 		JPanel rOptionsPanel = new JPanel(null);
 		rOptionsPanel.setBorder(BorderFactory.createTitledBorder("R settings"));
 		rOptionsPanel.setBounds(x, y, w, h);
@@ -347,11 +353,11 @@ public class AbyssProgramProperties extends JFrame {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(0, 0, 600, 500);
 		
-		//Panel opcji środowiska R
-		panel.add(createMainOptionsPanel(0, 0, 590, 120));
+		//Panel opcji graficznych edytora
+		panel.add(createGraphicalEditorPanel(0, 0, 590, 120));
 
-		//Panel wczytywania sieci
-		//panel.add(createSnoopyReadPanel(0, 90, 590, 150));
+		//Panel opcji ogólnych edytora
+		panel.add(createGeneralEditorPanel(0, 120, 590, 150));
 		
 		panel.repaint();
 		return panel;
@@ -365,26 +371,27 @@ public class AbyssProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
-	private JPanel createMainOptionsPanel(int x, int y, int w, int h) {
+	private JPanel createGraphicalEditorPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Graphical settings"));
 		panel.setBounds(x, y, w, h);
 		
 		int io_x = 10;
-		int io_y = 15;
+		int io_y = -5;
 		noAction = true;
 		
 		// ARC SIZE:
 		JLabel labelIO1 = new JLabel("Default arc thickness:");
-		labelIO1.setBounds(io_x, io_y, 200, 20);
+		labelIO1.setBounds(io_x, io_y+=20, 200, 20);
 		panel.add(labelIO1);
 
 		ButtonGroup group = new ButtonGroup();
 		JRadioButton size1Button = new JRadioButton("1");
-		size1Button.setBounds(io_x, io_y+20, 40, 20);
+		size1Button.setBounds(io_x, io_y+=20, 40, 20);
 		size1Button.setActionCommand("0");
 		size1Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction) return;
 				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "1", true);
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
@@ -393,10 +400,11 @@ public class AbyssProgramProperties extends JFrame {
 		panel.add(size1Button);
 
 		JRadioButton size2Button = new JRadioButton("2");
-		size2Button.setBounds(io_x+40, io_y+20, 40, 20);
+		size2Button.setBounds(io_x+40, io_y, 40, 20);
 		size2Button.setActionCommand("1");
 		size2Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction) return;
 				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "2", true);
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
@@ -405,10 +413,11 @@ public class AbyssProgramProperties extends JFrame {
 		panel.add(size2Button);
 
 		JRadioButton size3Button = new JRadioButton("3");
-		size3Button.setBounds(io_x+80, io_y+20, 40, 20);
+		size3Button.setBounds(io_x+80, io_y, 40, 20);
 		size3Button.setActionCommand("2");
 		size3Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction) return;
 				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "3", true);
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
@@ -423,14 +432,15 @@ public class AbyssProgramProperties extends JFrame {
 
 		//FONT SIZE:
 		JLabel labelFontSize = new JLabel("Font size:");
-		labelFontSize.setBounds(io_x+150, io_y, 200, 20);
+		labelFontSize.setBounds(io_x+150, io_y-20, 200, 20);
 		panel.add(labelFontSize);
 		SpinnerModel fontSizeSpinnerModel = new SpinnerNumberModel(
 				Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphFontSize")), 8, 15, 1);
 		JSpinner fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
-		fontSizeSpinner.setBounds(io_x+150, io_y+20, 80, 20);
+		fontSizeSpinner.setBounds(io_x+150, io_y, 80, 20);
 		fontSizeSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
+				if(noAction) return;
 				JSpinner spinner = (JSpinner) e.getSource();
 				int val = (int) spinner.getValue();
 				
@@ -445,9 +455,10 @@ public class AbyssProgramProperties extends JFrame {
 			bold = false;
 			
 		JCheckBox boldCheckBox = new JCheckBox("Bold", bold);
-		boldCheckBox.setBounds(io_x+210, io_y, 60, 20);
+		boldCheckBox.setBounds(io_x+210, io_y-20, 60, 20);
 		boldCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
+				if(noAction) return;
 				JCheckBox box = (JCheckBox) e.getSource();
 				if (box.isSelected())
 					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphFontBold", "1", true);
@@ -457,15 +468,18 @@ public class AbyssProgramProperties extends JFrame {
 			}
 		});
 		panel.add(boldCheckBox);
+		
 		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphFontBold").equals("1")) 
 			boldCheckBox.setSelected(true);
 		else
-			boldCheckBox.setSelected(true);
+			boldCheckBox.setSelected(false);
+		
 		
 		JCheckBox mctNameCheckBox = new JCheckBox("MCT names", bold);
-		mctNameCheckBox.setBounds(io_x+270, io_y, 110, 20);
+		mctNameCheckBox.setBounds(io_x+270, io_y-20, 110, 20);
 		mctNameCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
+				if(noAction) return;
 				JCheckBox box = (JCheckBox) e.getSource();
 				if (box.isSelected())
 					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("mctNameShow", "1", true);
@@ -478,10 +492,10 @@ public class AbyssProgramProperties extends JFrame {
 		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("mctNameShow").equals("1")) 
 			mctNameCheckBox.setSelected(true);
 		else
-			mctNameCheckBox.setSelected(true);
+			mctNameCheckBox.setSelected(false);
 		
 		JCheckBox useShortNamesCheckBox = new JCheckBox("(Abyss) Show short default names only", true);
-		useShortNamesCheckBox.setBounds(io_x, io_y+40, 260, 20);
+		useShortNamesCheckBox.setBounds(io_x, io_y+=20, 260, 20);
 		useShortNamesCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction == true) return;
@@ -501,7 +515,7 @@ public class AbyssProgramProperties extends JFrame {
 		panel.add(useShortNamesCheckBox);
 		
 		JCheckBox view3dCheckBox = new JCheckBox("(Abyss) Petri net elements 3d view", true);
-		view3dCheckBox.setBounds(io_x, io_y+60, 260, 20);
+		view3dCheckBox.setBounds(io_x, io_y+=20, 260, 20);
 		view3dCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction == true) return;
@@ -520,6 +534,48 @@ public class AbyssProgramProperties extends JFrame {
 		else
 			view3dCheckBox.setSelected(false);
 		panel.add(view3dCheckBox);
+		
+		noAction = false;
+		return panel;
+	}
+	
+	/**
+	 * Metoda tworząca podpanel opcji graficznych.
+	 * @param x int - współrzędna X
+	 * @param y int - współrzedna Y
+	 * @param w int - szerokość
+	 * @param h int - wysokość
+	 * @return JPanel - panel
+	 */
+	private JPanel createGeneralEditorPanel(int x, int y, int w, int h) {
+		JPanel panel = new JPanel(null);
+		panel.setBorder(BorderFactory.createTitledBorder("General settings"));
+		panel.setBounds(x, y, w, h);
+		
+		int io_x = 10;
+		int io_y = -5;
+		noAction = true;
+		
+		JCheckBox snoopyCompatibilityCheckBox = new JCheckBox("(Snoopy/Abyss) Allow only Snoopy-compatible options", true);
+		snoopyCompatibilityCheckBox.setBounds(io_x, io_y+=20, 350, 20);
+		snoopyCompatibilityCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction == true) return;
+				
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("snoopyCompatibleMode", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("snoopyCompatibleMode", "0", true);
+				}
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("snoopyCompatibleMode").equals("1")) 
+			snoopyCompatibilityCheckBox.setSelected(true);
+		else
+			snoopyCompatibilityCheckBox.setSelected(false);
+		panel.add(snoopyCompatibilityCheckBox);
 		
 		noAction = false;
 		return panel;
@@ -556,11 +612,11 @@ public class AbyssProgramProperties extends JFrame {
 		panel.setBorder(BorderFactory.createTitledBorder("Petri net general options"));
 		panel.setBounds(x, y, w, h);
 		int io_x = 10;
-		int io_y = 15;
+		int io_y = -5;
 		noAction = true;
 
 		JCheckBox readArcReservCheckBox = new JCheckBox("Transitions reserve tokens in place via read-arcs", true);
-		readArcReservCheckBox.setBounds(io_x, io_y, 360, 20);
+		readArcReservCheckBox.setBounds(io_x, io_y+=20, 360, 20);
 		readArcReservCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;

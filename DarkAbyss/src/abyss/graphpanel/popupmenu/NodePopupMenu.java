@@ -71,6 +71,7 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 						}
 						getGraphPanel().getSelectionManager().deleteAllSelectedElements();
+						getGraphPanel().getSelectionManager().deselectAllElementLocations();
 						GUIManager.getDefaultGUIManager().markNetChange();
 					}
 				}

@@ -125,6 +125,8 @@ public class SettingsManager {
 		} catch (Exception e) { settingsNew.add(new Setting("graphArcLineSize", "1")); }
 		
 		checkAndFix(settingsNew, "editor3Dview", "0");
+		checkAndFix(settingsNew, "snoopyCompatibleMode", "1");
+		
 		checkAndFix(settingsNew, "showShortNames", "0");
 		checkAndFix(settingsNew, "analysisFeasibleSelfPropAccepted", "1");
 		checkAndFix(settingsNew, "analysisMCSReduction", "1");

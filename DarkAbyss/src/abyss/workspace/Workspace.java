@@ -44,11 +44,11 @@ public class Workspace implements SelectionActionListener {
 	
 	/**  Zawiera elementy typu Dock, zawierające obiekty typu Dockable. One z kolei zawierają WorkspaceSheet, które zawiera SheetPanel, który
 	 * zawiera GraphPanel. Ku chwale ojczyzny. */
-	
 	private ArrayList<Dock> docks;
-	/** Tablica zawierająca obiekty WorkspaceSheet, które z kolei zawierają SheetPanel (JPanel) który zawiera GraphPanel. By żyło się lepiej. */
 	
+	/** Tablica zawierająca obiekty WorkspaceSheet, które z kolei zawierają SheetPanel (JPanel) który zawiera GraphPanel. By żyło się lepiej. */
 	private ArrayList<WorkspaceSheet> sheets;
+	
 	/** Tablica identyfikatorów obiektów WorkspaceSheet przechowywanych w tablicy sheets */
 	private ArrayList<Integer> sheetsIDtable;
 
@@ -139,13 +139,13 @@ public class Workspace implements SelectionActionListener {
 		if(addMetaNode) {
 			MetaNode metanode = null;
 			if(index <= 14) {
-				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(40,40+(index-1)*40), MetaType.CoarseTrans);
+				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(40,40+(index-1)*40), MetaType.SUBNETTRANS);
 			} else if(index > 14 && index <= 29) {
-				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(80,40+(index-15)*40), MetaType.CoarseTrans);
+				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(80,40+(index-15)*40), MetaType.SUBNETTRANS);
 			} else if(index > 29) {
-				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(120,40+(index-30)*40), MetaType.CoarseTrans);
+				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(120,40+(index-30)*40), MetaType.SUBNETTRANS);
 			}
-			
+			metanode.setRepresentedSheetID(index);
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().add(metanode);
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 		}
@@ -185,15 +185,16 @@ public class Workspace implements SelectionActionListener {
 	 * @param fastMode boolean - true - szybkie usuwanie
 	 */
 	public void deleteTab(Dockable dockable, boolean fastMode) {
-		if(fastMode) {
-			int index = dockables.indexOf(dockable);
+		int index = dockables.indexOf(dockable);
+		if(fastMode) {	
+			int indexSh = sheets.get(index).getId();
+			GUIManager.getDefaultGUIManager().netsHQ.removeMetaNode(indexSh);
 			deleteSheetFromArrays(sheets.get(index));
 			guiManager.getMenu().deleteSheetItem(dockables.get(index));
 			dockables.remove(dockable);
 			return;
 		}
 		
-		int index = dockables.indexOf(dockable);
 		if(index == -1) {
 			GUIManager.getDefaultGUIManager().cleanLostOne(dockable);
 			return;
@@ -217,6 +218,10 @@ public class Workspace implements SelectionActionListener {
 				"Are you sure you want to delete this sheet? You will not be able to retrieve it later.",
 				"Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 		if ((n == 0) && (sheets.size() > 1)) {
+			//meta:
+			int indexSh = sheets.get(index).getId();
+			GUIManager.getDefaultGUIManager().netsHQ.removeMetaNode(indexSh);
+			//normal:
 			deleteSheetFromArrays(sheets.get(index));
 			guiManager.getMenu().deleteSheetItem(dockables.get(index));
 			dockables.remove(dockable);
@@ -237,6 +242,12 @@ public class Workspace implements SelectionActionListener {
 		Dockable wrapper = guiManager.decorateDockableWithActions(dockable, true);
 		wrapper.addDockingListener(GUIManager.getDefaultGUIManager().getDockingListener());
 		return wrapper;
+	}
+	
+	public void globalDeselection() {
+		for(WorkspaceSheet ws : sheets) {
+			ws.getGraphPanel().getSelectionManager().deselectAllElements();
+		}
 	}
 
 	/**

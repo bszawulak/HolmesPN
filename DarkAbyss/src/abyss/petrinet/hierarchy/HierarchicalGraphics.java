@@ -44,6 +44,17 @@ public class HierarchicalGraphics {
 		}
 		subNets++;
 		
+		int metaNodesNumber = 0;
+		ArrayList<MetaNode> metanodes = workspace.getProject().getMetaNodes();
+		for(MetaNode metanode : metanodes) {
+			if(metanode.getRepresentedSheetID() > metaNodesNumber)
+				metaNodesNumber = metanode.getRepresentedSheetID();
+		}
+		metaNodesNumber += 1; //zero się nie liczy
+		
+		if(metaNodesNumber > subNets)
+			subNets = metaNodesNumber;
+		
 		for(int s = sheetsNumber; s<subNets; s++) {
 			GUIManager.getDefaultGUIManager().getWorkspace().newTab(false);
 		}
@@ -68,6 +79,13 @@ public class HierarchicalGraphics {
 				subnetsVector.set(shId, oldVal);
 			}
 		}
+		
+		int sheetsNumber = workspace.getSheets().size();
+		int shNumber = subnetsVector.size();
+		if(sheetsNumber > shNumber) {
+			HierarchicalGraphics.updateVector(subnetsVector, sheetsNumber - shNumber, 0);
+		}
+		
 		//teraz w subnetsVector jest tyle wartości ile podsieci, każda wartość to liczba elementów podsieci
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		int emptyNetToRemove = 0;
@@ -103,13 +121,17 @@ public class HierarchicalGraphics {
 		}
 		//teraz mamy macierz pomocniczą - indices - jej wartości to numery sieci w ElementLocation's, które
 		//należy podmienić na indeksy wartości z indices (na lokalizację tychże wartości).
-		
+		boolean criticalError = false;
 		for(Node n : nodes) {
 			for(ElementLocation el: n.getElementLocations()) {
 				int sheetID = el.getSheetID();
 				int val = indices.get(indices.indexOf(sheetID));
 				if(val == indices.indexOf(sheetID)) //nie ma co podmnieniać
 					continue;
+				if(val == -1) {
+					criticalError = true;
+					continue;
+				}
 				
 				el.setSheetID(indices.indexOf(sheetID));
 			}
@@ -118,16 +140,27 @@ public class HierarchicalGraphics {
 				int val = indices.get(indices.indexOf(sheetID));
 				if(val == indices.indexOf(sheetID)) //nie ma co podmnieniać
 					continue;
+				if(val == -1) {
+					criticalError = true;
+					continue;
+				}
 				
 				el.setSheetID(indices.indexOf(sheetID));
 			}
 			
 			if(n instanceof MetaNode) {
 				int oldRepresentedSheet = ((MetaNode)n).getRepresentedSheetID();
+				int val = indices.indexOf(oldRepresentedSheet);
+				if(val == -1) {
+					//criticalError = true;
+					continue;
+				}
 				//int val = indices.get(indices.indexOf(oldRepresentedSheet));
-				((MetaNode)n).setRepresentedSheetID(indices.indexOf(oldRepresentedSheet));
+				((MetaNode)n).setRepresentedSheetID(val);
 			}
 		}
+		
+		
 		
 		int leaveAlone = originalSize - emptyNetToRemove;
 		//pray...
@@ -136,14 +169,15 @@ public class HierarchicalGraphics {
 		int dockableSize = workspace.getDockables().size();
 		CompositeDock parentOfFirst = workspace.getDockables().get(0).getDock().getParentDock();
 		for(int d=dockableSize-1; d>=leaveAlone; d--) {
-			Dockable dockable = workspace.getDockables().get(d);
+			ArrayList<Dockable> dockables = workspace.getDockables();
+			Dockable dockable = dockables.get(d);
 			String x = dockable.getID();
 			if(x.equals("Sheet 0")) {
 				continue;
 			}
 			workspace.deleteTab(dockable, true);
-			d--;
-			dockableSize--;
+			//d++;
+			//dockableSize++;
 			
 			if(dockable.getDock().getParentDock().equals(parentOfFirst))
 				GUIManager.getDefaultGUIManager().globalSheetsList.remove(dockable);
@@ -197,7 +231,8 @@ public class HierarchicalGraphics {
 		ArrayList<Node> nodes = workspace.getProject().getNodes();
 		
 		ArrayList<Dimension> hidden = new ArrayList<Dimension>();
-		for(int net=0; net<sheetsNumber; net++) {
+		hidden.add(new Dimension(1650, 1200));
+		for(int net=1; net<sheetsNumber; net++) {
 			hidden.add(new Dimension(200,200));
 		}
 		

@@ -612,7 +612,7 @@ public class SnoopyReader {
 				if(subNet > 0)
 					subNet--;
 				
-				MetaNode metaNode = new MetaNode(subNet, IdGenerator.getNextId(), new Point(100,100), MetaType.CoarsePlace);
+				MetaNode metaNode = new MetaNode(subNet, IdGenerator.getNextId(), new Point(100,100), MetaType.SUBNETPLACE);
 				metaNode.setRepresentedSheetID(nodeCoarseNumber-1);
 				nodesList.add(metaNode);
 				coarsePlacesCounter++;
@@ -801,7 +801,7 @@ public class SnoopyReader {
 				if(subNet > 0)
 					subNet--;
 				
-				MetaNode metaNode = new MetaNode(subNet, IdGenerator.getNextId(), new Point(100,100), MetaType.CoarseTrans);
+				MetaNode metaNode = new MetaNode(subNet, IdGenerator.getNextId(), new Point(100,100), MetaType.SUBNETTRANS);
 				metaNode.setRepresentedSheetID(nodeCoarseNumber-1);
 				nodesList.add(metaNode);
 				coarseTransitionsCounter++;

@@ -269,6 +269,15 @@ public abstract class Node extends PetriNetElement {
 		for (ElementLocation el : this.getNodeLocations())
 			el.setPortalSelected(false);
 	}
+	
+	public void forceDeselection() {
+		if (!isPortal())
+			return;
+		for (ElementLocation el : this.getNodeLocations()) {
+			el.setPortalSelected(false);
+			el.setSelected(false);
+		}
+	}
 
 	/**
 	 * Metoda pozwala sprawdzić, czy wszystkie lokacje tego wierzchołka 

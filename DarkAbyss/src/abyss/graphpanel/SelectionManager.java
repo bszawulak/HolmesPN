@@ -13,6 +13,7 @@ import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionAc
 import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
@@ -726,12 +727,26 @@ public class SelectionManager {
 	 * Metoda związana w mouseClicked(MouseEvent), odpowiedzialna za zwiększenie tokenów
 	 * w miejscu, po wykryciu podwójnego kliknięcia.
 	 */
-	public void increaseTokensNumber() {
+	public void doubleClickReactionHandler() {
 		ArrayList<Node> safetyNodesList = new ArrayList<Node>();
 		for (ElementLocation el : getSelectedElementLocations()) {
 			if (el.getParentNode().getType() == PetriNetElementType.PLACE && !safetyNodesList.contains(el.getParentNode())) {
 				safetyNodesList.add(el.getParentNode());
 				((Place) el.getParentNode()).modifyTokensNumber(1);
+			}
+			if(el.getParentNode().getType() == PetriNetElementType.META && !safetyNodesList.contains(el.getParentNode())) {
+				try {
+					MetaNode node = (MetaNode)el.getParentNode();
+					safetyNodesList.add(node);
+					int sheetID = node.getRepresentedSheetID();
+					int sheetIndex = GUIManager.getDefaultGUIManager().getWorkspace().getIndexOfId(sheetID);
+					GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(sheetIndex);
+					break;
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "Wrong sheet number linked to this meta-node.", 
+							"Serious problem", JOptionPane.WARNING_MESSAGE);
+					break;
+				}
 			}
 		}
 		invokeActionListener();
@@ -903,8 +918,10 @@ public class SelectionManager {
 	public void deselectAllElements() {
 		for (Arc a : this.getSelectedArcs())
 			a.setSelected(false);
-		for (ElementLocation el : this.getSelectedElementLocations())
+		for (ElementLocation el : this.getSelectedElementLocations()) {
 			el.setSelected(false);
+			//el.getParentNode().forceDeselection();
+		}
 		this.getSelectedArcs().clear();
 		this.getSelectedElementLocations().clear();
 		this.invokeActionListener();

@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -52,6 +53,7 @@ import abyss.petrinet.data.MCSDataMatrix;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.MetaNode;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.PetriNetElement;
 import abyss.petrinet.elements.Place;
@@ -103,6 +105,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	// Containers
 	private JPanel panel; // główny panel okna
 	public ButtonGroup group = new ButtonGroup();
+	public ButtonGroup groupRadioMetaType = new ButtonGroup();
 	public JSpinner spiner = new JSpinner();
 	private JTextArea mctTextArea; // tutaj są wyświetlane szczegóły podświetlonego MCT
 	private JTextArea knockoutTextArea;
@@ -1526,7 +1529,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		int columnB_Y = 0;
 		int colACompLength = 70;
 		int colBCompLength = 200;
-		
+
 		mode = META;
 		elementLocation = location;
 		initiateContainers(); //!!!
@@ -1552,10 +1555,13 @@ public class AbyssDockWindowsTable extends JPanel {
 		idLabel4.setFont(normalFont);
 		components.add(idLabel4);
 		
-		JLabel sheetRepresentedLabel = new JLabel("gID:");
-		sheetRepresentedLabel.setBounds(columnA_posX, columnA_Y+= 20, 50, 20);
+		JLabel sheetRepresentedLabel = new JLabel("Subnet(sheet):");
+		sheetRepresentedLabel.setBounds(columnA_posX, columnA_Y+= 20, 95, 20);
 		components.add(sheetRepresentedLabel);
-		JLabel sheetRepresentedLabelValue = new JLabel(metaNode.getRepresentedSheetID()+"");
+		int shID = metaNode.getRepresentedSheetID();
+		String text = ""+shID+"";
+		text += " ("+GUIManager.getDefaultGUIManager().getWorkspace().getIndexOfId(metaNode.getRepresentedSheetID())+")";
+		JLabel sheetRepresentedLabelValue = new JLabel(text);
 		sheetRepresentedLabelValue.setBounds(columnB_posX, columnB_Y+= 20, 50, 20);
 		sheetRepresentedLabelValue.setFont(normalFont);
 		components.add(sheetRepresentedLabelValue);
@@ -1607,6 +1613,123 @@ public class AbyssDockWindowsTable extends JPanel {
         CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
         columnB_Y += 20;
         components.add(CreationPanel);
+        
+        //TODO:
+        
+        
+        // ZMIANA TYPU META-WĘZŁA
+        // ВНИМАНИЕ!!! Hic sunt leones...
+		JRadioButton subnetTButton = new JRadioButton("Subnet T-type");
+		subnetTButton.setBounds(columnA_posX-5, columnA_Y += 20, 105, 20);
+		subnetTButton.setActionCommand("0");
+		subnetTButton.addActionListener(new ActionListener() {
+			private MetaNode myMeta = null;
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate) return;
+				boolean status = false;
+				if(myMeta.getMetaType() != MetaType.SUBNETTRANS) {
+					status = GUIManager.getDefaultGUIManager().netsHQ.changeSubnetType(myMeta, MetaType.SUBNETTRANS);
+				}
+				if(status == false) {
+					doNotUpdate = true;
+					Enumeration<AbstractButton> wtf = groupRadioMetaType.getElements();
+					JRadioButton radioB = (JRadioButton) wtf.nextElement(); //first: t-type
+					if(myMeta.getMetaType() == MetaType.SUBNETPLACE)
+						radioB = (JRadioButton) wtf.nextElement(); //second p-type
+					if(myMeta.getMetaType() == MetaType.SUBNET) {
+						radioB = (JRadioButton) wtf.nextElement(); //second
+						radioB = (JRadioButton) wtf.nextElement(); //third pt-type
+					}
+					groupRadioMetaType.setSelected(radioB.getModel(), true);
+					doNotUpdate = false;
+				}
+			}
+			private ActionListener yesWeCan(MetaNode metaN){
+				myMeta = metaN;
+		        return this;
+		    }
+		}.yesWeCan(metaNode) ); 
+
+		groupRadioMetaType.add(subnetTButton);
+		components.add(subnetTButton);
+		
+		
+		JRadioButton subnetPButton = new JRadioButton("Subnet P-type");
+		subnetPButton.setBounds(columnA_posX+100, columnA_Y, 120, 20);
+		subnetPButton.setActionCommand("1");
+		subnetPButton.addActionListener(new ActionListener() {
+			private MetaNode myMeta = null;
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate) return;
+				boolean status = false;
+				if(myMeta.getMetaType() != MetaType.SUBNETPLACE) {
+					status = GUIManager.getDefaultGUIManager().netsHQ.changeSubnetType(myMeta, MetaType.SUBNETPLACE);
+				}
+				if(status == false) {
+					doNotUpdate = true;
+					Enumeration<AbstractButton> wtf = groupRadioMetaType.getElements();
+					JRadioButton radioB = (JRadioButton) wtf.nextElement(); //first: t-type
+					if(myMeta.getMetaType() == MetaType.SUBNETPLACE)
+						radioB = (JRadioButton) wtf.nextElement(); //second p-type
+					if(myMeta.getMetaType() == MetaType.SUBNET) {
+						radioB = (JRadioButton) wtf.nextElement(); //second
+						radioB = (JRadioButton) wtf.nextElement(); //third pt-type
+					}
+					groupRadioMetaType.setSelected(radioB.getModel(), true);
+					doNotUpdate = false;
+				}
+			}
+			private ActionListener yesWeCan(MetaNode metaN){
+				myMeta = metaN;
+		        return this;
+		    }
+		}.yesWeCan(metaNode) ); 
+		groupRadioMetaType.add(subnetPButton);
+		components.add(subnetPButton);
+		
+		JRadioButton subnetPTButton = new JRadioButton("P & T");
+		subnetPTButton.setBounds(columnA_posX+230, columnA_Y, 80, 20);
+		subnetPTButton.setActionCommand("2");
+		subnetPTButton.addActionListener(new ActionListener() {
+			private MetaNode myMeta = null;
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate) return;
+				boolean status = false;
+				if(myMeta.getMetaType() != MetaType.SUBNET) {
+					GUIManager.getDefaultGUIManager().netsHQ.changeSubnetType(myMeta, MetaType.SUBNET);
+				}
+				if(status == false) {
+					doNotUpdate = true;
+					Enumeration<AbstractButton> wtf = groupRadioMetaType.getElements();
+					JRadioButton radioB = (JRadioButton) wtf.nextElement(); //first: t-type
+					if(myMeta.getMetaType() == MetaType.SUBNETPLACE)
+						radioB = (JRadioButton) wtf.nextElement(); //second p-type
+					if(myMeta.getMetaType() == MetaType.SUBNET) {
+						radioB = (JRadioButton) wtf.nextElement(); //second
+						radioB = (JRadioButton) wtf.nextElement(); //third pt-type
+					}
+					groupRadioMetaType.setSelected(radioB.getModel(), true);
+					doNotUpdate = false;
+				}
+			}
+			private ActionListener yesWeCan(MetaNode metaN){
+				myMeta = metaN;
+		        return this;
+		    }
+		}.yesWeCan(metaNode) ); 
+		groupRadioMetaType.add(subnetPTButton);
+		components.add(subnetPTButton);
+		
+		doNotUpdate = true;
+		if(metaNode.getMetaType() == MetaType.SUBNETTRANS)
+			groupRadioMetaType.setSelected(subnetTButton.getModel(), true);
+		else if(metaNode.getMetaType() == MetaType.SUBNETPLACE)
+			groupRadioMetaType.setSelected(subnetPButton.getModel(), true);
+		else if(metaNode.getMetaType() == MetaType.SUBNET)
+			groupRadioMetaType.setSelected(subnetPTButton.getModel(), true);
+        
+		doNotUpdate = false;
+        columnB_Y += 20;
 
 		// T-TRANSITION SHEET ID
 		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(location.getSheetID());

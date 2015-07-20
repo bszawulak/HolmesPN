@@ -430,7 +430,7 @@ public class Arc extends PetriNetElement {
 	}
 	
 	//TODO:
-	public boolean checkIsCorectMeta(ElementLocation e) {
+	public boolean checkIsCorrectMeta(ElementLocation e) {
 		
 		
 		return true;

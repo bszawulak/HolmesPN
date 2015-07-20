@@ -202,7 +202,7 @@ public class ProjectReader {
 				boolean go = true;
 				
 				while(go) {
-					MetaNode metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(20,20), MetaType.SubNet);
+					MetaNode metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(20,20), MetaType.SUBNET);
 					
 					while(!((line = buffer.readLine()).contains("<EOT>"))) {
 						parseMetaNodesLine(line, metanode);
@@ -534,14 +534,14 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				
-				if(line.equals("CoarseTrans")) {
-					metanode.setMetaType(MetaType.CoarseTrans);
-				} else if(line.equals("CoarsePlace")) {
-					metanode.setMetaType(MetaType.CoarsePlace);
-				} else if(line.equals("MCT")) {
-					metanode.setMetaType(MetaType.MCT);
-				} else if(line.equals("SubNet")) {
-					metanode.setMetaType(MetaType.SubNet);
+				if(line.equals("SUBNETTRANS")) {
+					metanode.setMetaType(MetaType.SUBNETTRANS);
+				} else if(line.equals("SUBNETPLACE")) {
+					metanode.setMetaType(MetaType.SUBNETPLACE);
+				} else if(line.equals("SUBNET")) {
+					metanode.setMetaType(MetaType.SUBNET);
+				} else {
+					metanode.setMetaType(MetaType.UNKNOWN);
 				} 
 
 				return;
