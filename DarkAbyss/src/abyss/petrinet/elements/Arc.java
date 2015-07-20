@@ -127,6 +127,9 @@ public class Arc extends PetriNetElement {
 	 * Jeśli tak, ustala wartość obiektu łuku 
 	 */
 	public void lookForArcPair() {
+		if(this.getArcType() == TypesOfArcs.META_ARC)
+			return;
+		
 		ArrayList<Arc> candidates = this.getEndLocation().getOutArcs();
 		for (Arc a : candidates) {
 			if (a.getEndLocation() == this.getStartLocation()) {
@@ -629,6 +632,9 @@ public class Arc extends PetriNetElement {
 	 * @param pairedArc Arc - łuk odczytu
 	 */
 	public void setPairedArc(Arc pairedArc) {
+		if(this.getArcType() == TypesOfArcs.META_ARC)
+			return;
+		
 		this.pairedArc = pairedArc;
 		this.arcType = TypesOfArcs.READARC;
 	}

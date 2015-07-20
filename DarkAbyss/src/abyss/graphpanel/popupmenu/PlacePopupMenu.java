@@ -12,8 +12,8 @@ import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
 
 /**
  * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji związanych z miejscami.
- * @author students
- *
+ * @author students - statyczna wersja
+ * @author MR - dynamiczna wersja
  */
 public class PlacePopupMenu extends NodePopupMenu {
 	private static final long serialVersionUID = -5062389148117837851L;
@@ -23,7 +23,7 @@ public class PlacePopupMenu extends NodePopupMenu {
 	 * @param graphPanel GraphPanel - panel dla którego powstaje menu
 	 */
 	public PlacePopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
-		super(graphPanel, pne);
+		super(graphPanel, pne, el.getParentNode());
 
 		/*
 		if(pne == PetriNetElementType.TRANSITION || pne == PetriNetElementType.PLACE) {

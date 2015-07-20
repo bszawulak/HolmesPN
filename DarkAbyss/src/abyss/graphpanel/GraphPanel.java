@@ -49,10 +49,10 @@ public class GraphPanel extends JComponent {
 	private int sheetId;
 	private boolean autoDragScroll = false;
 	private boolean isSimulationActive = false;
-	private SheetPopupMenu sheetPopupMenu;
-	private PlacePopupMenu placePopupMenu;
-	private TransitionPopupMenu transitionPopupMenu;
-	private ArcPopupMenu arcPopupMenu;
+	//private SheetPopupMenu sheetPopupMenu;
+	//private PlacePopupMenu placePopupMenu;
+	//private TransitionPopupMenu transitionPopupMenu;
+	//private ArcPopupMenu arcPopupMenu;
 	private int zoom = 100;
 	private Dimension originSize;
 	private boolean drawMesh = false;
@@ -637,33 +637,33 @@ public class GraphPanel extends JComponent {
 	 * Pozwala ustawić obiekt będący menu kontekstowym danego arkusza.
 	 * @param sheetPopupMenu SheetPopupMenu - obiekt menu kontekstowego
 	 */
-	public void setSheetPopupMenu(SheetPopupMenu sheetPopupMenu) {
-		this.sheetPopupMenu = sheetPopupMenu;
-	}
+	//public void setSheetPopupMenu(SheetPopupMenu sheetPopupMenu) {
+	//	this.sheetPopupMenu = sheetPopupMenu;
+	//}
 
 	/**
 	 * Metoda pozwala ustawić obiekt będący menu kontekstowym dla każdego miejsca.
 	 * @param placePopupMenu PlacePopupMenu - nowe menu kontekstowe
 	 */
-	public void setPlacePopupMenu(PlacePopupMenu placePopupMenu) {
-		this.placePopupMenu = placePopupMenu;
-	}
+	//public void setPlacePopupMenu(PlacePopupMenu placePopupMenu) {
+	//	this.placePopupMenu = placePopupMenu;
+	//}
 
 	/**
 	 * Metoda pozwala ustawić obiekt będący menu kontekstowym dla każdej tranzycji.
 	 * @param transitionPopupMenu TransitionPopupMenu - nowe menu kontekstowe
 	 */
-	public void setTransitionPopupMenu(TransitionPopupMenu transitionPopupMenu) {
-		this.transitionPopupMenu = transitionPopupMenu;
-	}
+	//public void setTransitionPopupMenu(TransitionPopupMenu transitionPopupMenu) {
+	//	this.transitionPopupMenu = transitionPopupMenu;
+	//}
 	
 	/**
 	 * Metoda pozwala ustawić obiekt będący menu kontekstowym dla każdego łuku.
 	 * @param arcPopupMenu ArcPopupMenu - nowe menu kontekstowe
 	 */
-	public void setArcPopupMenu(ArcPopupMenu arcPopupMenu) {
-		this.arcPopupMenu = arcPopupMenu;
-	}
+	//public void setArcPopupMenu(ArcPopupMenu arcPopupMenu) {
+	//	this.arcPopupMenu = arcPopupMenu;
+	//}
 
 	//**************************************************************************************************************
 	
@@ -892,7 +892,7 @@ public class GraphPanel extends JComponent {
 						|| getDrawMode() == DrawModes.ARC_INHIBITOR 
 						|| getDrawMode() == DrawModes.ARC_RESET 
 						|| getDrawMode() == DrawModes.ARC_EQUAL) {
-					handleArcsDrawing(el, getDrawMode());
+					handleArcsDrawing(el, getDrawMode()); //TODO
 					
 				} else if (getDrawMode() == DrawModes.ERASER) { //kasowanie czegoś
 					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
@@ -925,7 +925,6 @@ public class GraphPanel extends JComponent {
 					clearDrawnArc();
 				}
 				if (e.getButton() == MouseEvent.BUTTON3) { //menu kontekstowe węzła
-					//TODO:
 					if (el.getParentNode().getType() == PetriNetElementType.PLACE) {
 						getPlacePopupMenu(el, PetriNetElementType.PLACE).show(e);
 					} else if (el.getParentNode().getType() == PetriNetElementType.TRANSITION) {
@@ -984,6 +983,11 @@ public class GraphPanel extends JComponent {
 			
 			Node node = clickedLocation.getParentNode();
 			if(drawnArc == null && node instanceof MetaNode) {
+				//JOptionPane.showMessageDialog(null, "In order to create output node from subnet, plase click subnet's sheet\n"
+				//		+ "with RMB and choose Create Output Node option", 
+				//		"Information", JOptionPane.INFORMATION_MESSAGE);
+				//return;
+				
 				if(arcType == DrawModes.ARC) {
 					drawnArc = new Arc(clickedLocation, TypesOfArcs.NORMAL);
 					return;
@@ -992,6 +996,7 @@ public class GraphPanel extends JComponent {
 							"Problem", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
+				
 			}
 			
 			if (drawnArc == null) {
@@ -1008,7 +1013,7 @@ public class GraphPanel extends JComponent {
 			} else { 
 				
 				
-				if(clickedLocation.getParentNode() instanceof MetaNode) {
+				if(clickedLocation.getParentNode() instanceof MetaNode) { //kończymy w meta-node
 					if(drawnArc.getStartLocation().getParentNode() instanceof MetaNode) {
 						JOptionPane.showMessageDialog(null, "Direct connection between two meta-nodes not possible.", 
 								"Problem", JOptionPane.WARNING_MESSAGE);
@@ -1031,9 +1036,11 @@ public class GraphPanel extends JComponent {
 								"Problem", JOptionPane.WARNING_MESSAGE);
 						return;
 					}
-					
-					//TODO:
+
 					//dodaj połączenie z T lub P
+					//MetaNode metanode = (MetaNode)clickedLocation.getParentNode();
+					GUIManager.getDefaultGUIManager().netsHQ.addArcToMetanode(drawnArc.getStartLocation(), clickedLocation, drawnArc);
+					clearDrawnArc();
 					
 					return;
 				}
@@ -1041,9 +1048,8 @@ public class GraphPanel extends JComponent {
 				if(drawnArc.getStartLocation().getParentNode() instanceof MetaNode) {
 					//skoro tu jesteśmy, to znaczy że kliknięto w miejsce lub tranzycję, ale nie meta-node
 					//bo poprzedni if by to wyłowił
-					if (drawnArc.checkIsCorrectMeta(clickedLocation)) { //klasa Arc
-						
-					}
+					GUIManager.getDefaultGUIManager().netsHQ.addArcFromMetanode(clickedLocation, drawnArc.getStartLocation(), drawnArc);
+					clearDrawnArc();
 					
 					return;
 				}
@@ -1051,24 +1057,29 @@ public class GraphPanel extends JComponent {
 				
 				
 				if (drawnArc.checkIsCorect(clickedLocation)) {
-					//TODO: ??
+					boolean proceed = true;
+					
 					if(isArcDuplicated(drawnArc.getStartLocation(), clickedLocation)) {
 						JOptionPane.showMessageDialog(null,  "Arc going in this direction already exists.", 
 								"Problem", JOptionPane.WARNING_MESSAGE);
+						proceed = false;
 					} else if(isReverseArcPresent(drawnArc.getStartLocation(), clickedLocation) == true) {
 						if(arcType == DrawModes.ARC) {
-							JOptionPane.showMessageDialog(null, "Please use Read Arc drawing mode to draw a read-arc!", "Problem", 
-									JOptionPane.WARNING_MESSAGE);
+							//TODO: option in properties?
+							//JOptionPane.showMessageDialog(null, "Please use Read Arc drawing mode to draw a read-arc!", "Problem", JOptionPane.WARNING_MESSAGE);
+							proceed = true;
 						} else if(arcType == DrawModes.READARC) {
 							JOptionPane.showMessageDialog(null, "Please remove arc between these two nodes in order to create a read-arc.", "Problem", 
 									JOptionPane.WARNING_MESSAGE);
+							proceed = false;
 						} else {
 							JOptionPane.showMessageDialog(null, "Non-standard arc leading in reverse direction!", "Problem", 
 								JOptionPane.WARNING_MESSAGE);
+							proceed = false;
 						}
-					} else { //dokończ rysowanie łuku, dodaj do listy
-						
-						
+					}  
+					
+					if(proceed) { //dokończ rysowanie łuku, dodaj do listy
 						if ((arcType == DrawModes.ARC_INHIBITOR || arcType == DrawModes.ARC_RESET || arcType == DrawModes.ARC_EQUAL) 
 								&& clickedLocation.getParentNode() instanceof Place) {
 							JOptionPane.showMessageDialog(null,  "This type of arc can only go FROM place TO transition!", "Problem", 
@@ -1082,7 +1093,8 @@ public class GraphPanel extends JComponent {
 							Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), clickedLocation, TypesOfArcs.NORMAL);
 							
 							if(arcType == DrawModes.ARC) {
-								arc.setArcType(TypesOfArcs.NORMAL);
+								if(arc.getArcType() != TypesOfArcs.READARC)
+									arc.setArcType(TypesOfArcs.NORMAL);
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.READARC) {
 								//arc.setArcType(TypesOfArcs.INHIBITOR);
@@ -1107,7 +1119,7 @@ public class GraphPanel extends JComponent {
 							GUIManager.getDefaultGUIManager().markNetChange();
 						}
 					}
-				}
+				} //if (drawnArc.checkIsCorect(clickedLocation)) {
 				clearDrawnArc();
 			}
 		}

@@ -22,7 +22,6 @@ import com.javadocking.dock.factory.DockFactory;
 import com.javadocking.dockable.DefaultDockable;
 import com.javadocking.dockable.Dockable;
 import com.javadocking.dockable.DockingMode;
-import com.sun.org.apache.xpath.internal.axes.NodeSequence;
 
 /**
  * Głowna klasa odpowiedzialna za zarządzanie przestrzenią programu, w której rysowana jest sieć Petriego. 

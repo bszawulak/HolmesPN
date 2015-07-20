@@ -809,9 +809,11 @@ public class AbyssNodeInfo extends JFrame {
 				series.add(step, value);
 			}
 		} else {
-			for(int step=0; step<dataVector.size(); step++) {
-				int value = dataVector.get(step);
-				series.add(step, value);
+			if(dataVector != null) {
+				for(int step=0; step<dataVector.size(); step++) {
+					int value = dataVector.get(step);
+					series.add(step, value);
+				}
 			}
 		}
 		dynamicsSeriesDataSet.addSeries(series);

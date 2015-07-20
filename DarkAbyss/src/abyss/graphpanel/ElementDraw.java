@@ -427,7 +427,6 @@ public final class ElementDraw {
 		
 		Stroke sizeStroke = g.getStroke();
 
-		
 		Point p1 = new Point((Point)arc.getStartLocation().getPosition());
 		Point p2 = new Point();
 		int endRadius = 0;
@@ -452,12 +451,11 @@ public final class ElementDraw {
 		double M = 4;
 		double xp = p2.x + endRadius * alfaCos * sign;
 		double yp = p2.y + endRadius * alfaSin * sign;
-		// double xs = p1.x + startRadius * alfaCos * sign * -1;
-		// double ys = p1.y + startRadius * alfaSin * sign * -1;
 		double xl = p2.x + (endRadius + 10) * alfaCos * sign + M * alfaSin;
 		double yl = p2.y + (endRadius + 10) * alfaSin * sign - M * alfaCos;
 		double xk = p2.x + (endRadius + 10) * alfaCos * sign - M * alfaSin;
 		double yk = p2.y + (endRadius + 10) * alfaSin * sign + M * alfaCos;
+
 		if (arc.getSelected()) {
 			g.setColor(EditorResources.selectionColorLevel3);
 			g.setStroke(EditorResources.glowStrokeArc);
@@ -476,10 +474,26 @@ public final class ElementDraw {
 		int leftRight = 0; //im wieksze, tym bardziej w prawo
 		int upDown = 0; //im większa, tym mocniej w dół
 
+		//NIE-KLIKNIĘTY ŁUK
+		if (arc.getPairedArc() == null || arc.isMainArcOfPair()) { 
+			//czyli nie rysuje kreski tylko wtedy, jeśli to podrzędny łuk w ramach read-arc - żeby nie dublować
+			if(arc.getArcType() == TypesOfArcs.META_ARC) {
+				g.setColor( new Color(30, 144, 255, 150));
+				Stroke backup = g.getStroke();
+				g.setStroke(new BasicStroke(4));
+				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
+				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
+				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
+				g.setStroke(backup);
+			} else {
+				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
+			}
+		}
+				
+		//STRZAŁKI
 		
 		g.setStroke(sizeStroke);
-		if(arc.getArcType() == TypesOfArcs.NORMAL || arc.getArcType() == TypesOfArcs.READARC || 
-				arc.getArcType() == TypesOfArcs.META_ARC) {
+		if(arc.getArcType() == TypesOfArcs.NORMAL || arc.getArcType() == TypesOfArcs.READARC) {
 			g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
 					new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
 		} else if (arc.getArcType() == TypesOfArcs.INHIBITOR) {
@@ -517,13 +531,25 @@ public final class ElementDraw {
 	    	yT = (int) ((yPos - yp));
 	    	
 	    	g.fillOval((int)(xPos-4+xT), (int)(yPos-4+yT), 8, 8);
-		}
+		} else if (arc.getArcType() == TypesOfArcs.META_ARC) {
+			double Mmeta = 6;
+			double xpmeta = p2.x + (endRadius-10) * alfaCos * sign;
+			double ypmeta = p2.y + (endRadius-10) * alfaSin * sign;
+			double xlmeta = p2.x + (endRadius + 13) * alfaCos * sign + Mmeta * alfaSin;
+			double ylmeta = p2.y + (endRadius + 13) * alfaSin * sign - Mmeta * alfaCos;
+			double xkmeta = p2.x + (endRadius + 13) * alfaCos * sign - Mmeta * alfaSin;
+			double ykmeta = p2.y + (endRadius + 13) * alfaSin * sign + Mmeta * alfaCos;
 			
-		if (arc.getPairedArc() == null || arc.isMainArcOfPair()) { 
-			//czyli nie rysuje kreski tylko wtedy, jeśli to podrzędny łuk w ramach read-arc - żeby nie dublować
-			g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
+			g.setColor( new Color(30, 144, 255, 250));
+			g.fillPolygon(new int[] { (int) xpmeta+leftRight, (int) xlmeta+leftRight, (int) xkmeta+leftRight }, 
+					new int[] { (int) ypmeta+upDown, (int) ylmeta+upDown, (int) ykmeta+upDown }, 3);
+
 		}
 		
+		
+		//**********************************************
+		//***********    LOKALIZACJA WAGI    ***********
+		//**********************************************
 		int x_weight = (p2.x + p1.x) / 2;
 		int y_weight = (p2.y + p1.y) / 2;
 		

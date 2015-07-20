@@ -297,6 +297,8 @@ public class SelectionManager {
 			arc.getEndLocation().removeInArc(arc);
 		}
 		
+		//TODO:
+		//usunięcie metaArc kaskadowo usuwa wszystkie portale danego node'a z podsieci
 		
 		for(Arc arc : el.accessMetaInArcs()) {
 			this.getGraphPanelArcs().remove(arc);
@@ -321,7 +323,8 @@ public class SelectionManager {
 	 * jednak nie są one tutaj wywoływane.
 	 */
 	public void deleteAllSelectedElements() {
-		// code below looks similar to other function but not use them to reduce the number of requests repaint
+		// code below looks similar to other function but not use them to reduce the number of requests repaint	
+		
 		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
 			ElementLocation el = i.next();
 			Node n = el.getParentNode();
@@ -348,7 +351,11 @@ public class SelectionManager {
 			i.remove();
 		}
 		// kasuje wszystkie zaznaczone łuki:
+		
 		for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
+			//TODO:
+			//usunięcie metaArc kaskadowo usuwa wszystkie portale danego node'a z podsieci
+			
 			Arc a = i.next();
 			this.getGraphPanelArcs().remove(a);
 			a.unlinkElementLocations();
@@ -359,60 +366,6 @@ public class SelectionManager {
 			}
 			i.remove();
 		}
-		
-		/*
-		ArrayList<ElementLocation> elArray = this.getSelectedElementLocations();
-		if(elArray.size() == 0) {
-			//usuń łuki iteratorem:
-			for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
-				Arc a = i.next();
-				this.getGraphPanelArcs().remove(a);
-				a.unlinkElementLocations();
-				if (a.getPairedArc() != null) {
-					Arc arc = a.getPairedArc();
-					arc.unlinkElementLocations();
-					getGraphPanelArcs().remove(arc);
-				}
-				i.remove();
-			}
-		} else {
-			for(ElementLocation elItem : elArray) {
-				this.deselectElementLocation(elItem);
-				Node n = elItem.getParentNode();
-				if (n.removeElementLocation(elItem) == false) {
-					this.getGraphPanelNodes().remove(n);
-				}
-				
-				for(Arc arc : elItem.getInArcs()) {
-					this.getGraphPanelArcs().remove(arc);
-					//dostań się do lokacji startowej łuku i usuń go tam z listy wyjściowych:
-					arc.getStartLocation().removeOutArc(arc);
-				}
-				
-				for(Arc arc : elItem.getOutArcs()) {
-					this.getGraphPanelArcs().remove(arc);
-					//dostań się do lokacji docelowej łuku i usuń go tam z listy wejściowych:
-					arc.getEndLocation().removeInArc(arc);
-				}
-			}
-		}
-		
-		ArrayList<Arc> aArray = this.getSelectedArcs();
-		if(aArray.size() > 0) {
-			//usuń łuki iteratorem:
-			for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
-				Arc a = i.next();
-				this.getGraphPanelArcs().remove(a);
-				a.unlinkElementLocations();
-				if (a.getPairedArc() != null) {
-					Arc arc = a.getPairedArc();
-					arc.unlinkElementLocations();
-					getGraphPanelArcs().remove(arc);
-				}
-				i.remove();
-			}
-		} 
-		*/
 		
 		// Kasuj wszystko. I wszystkich. Wszędzie. Kill'em all:
 		this.getSelectedArcs().clear();

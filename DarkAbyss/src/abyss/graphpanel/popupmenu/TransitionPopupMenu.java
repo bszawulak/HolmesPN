@@ -15,8 +15,8 @@ import abyss.petrinet.elements.Transition;
 /**
  * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji związanych z tranzycjami.
  * 
- * @author students
- * @author MR - zmiana na obiekt dynamiczny
+ * @author students - statyczna wersja
+ * @author MR - dynamiczna wersja
  *
  */
 public class TransitionPopupMenu extends NodePopupMenu {
@@ -27,7 +27,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 	 * @param graphPanel GraphPanel - arkusz dla którego powstaje menu
 	 */
 	public TransitionPopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
-		super(graphPanel, pne);
+		super(graphPanel, pne, el.getParentNode());
 		
 		this.addMenuItem("Transition ON/OFF", "offlineSmall.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
