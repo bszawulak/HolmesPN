@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
@@ -28,11 +30,19 @@ import abyss.varia.Check;
 public class SnoopyWriter {
 	private ArrayList<Place> places = new ArrayList<Place>();
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
+	private ArrayList<MetaNode> metanodes = new ArrayList<MetaNode>();
+	private ArrayList<MetaNode> coarsePlaces = new ArrayList<MetaNode>();
+	private ArrayList<MetaNode> coarseTransitions = new ArrayList<MetaNode>();
 	
 	private ArrayList<SnoopyWriterPlace> snoopyPlaces = new ArrayList<SnoopyWriterPlace>();
 	private ArrayList<Integer> snoopyPlacesID = new ArrayList<Integer>();
 	private ArrayList<SnoopyWriterTransition> snoopyTransitions = new ArrayList<SnoopyWriterTransition>();
 	private ArrayList<Integer> snoopyTransitionsID = new ArrayList<Integer>();
+	private ArrayList<SnoopyWriterCoarse> snoopyCoarsePlaces = new ArrayList<SnoopyWriterCoarse>();
+	private ArrayList<Integer> snoopyCoarsePlacesID = new ArrayList<Integer>();
+	private ArrayList<SnoopyWriterCoarse> snoopyCoarseTransitions = new ArrayList<SnoopyWriterCoarse>();
+	private ArrayList<Integer> snoopyCoarseTransitionsID = new ArrayList<Integer>();
+	
 	
 	private String dateAndTime = "2015-01-02 10:44:56";
 
@@ -42,9 +52,18 @@ public class SnoopyWriter {
 	public SnoopyWriter() {
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		
+		metanodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes();
+		for(MetaNode meta : metanodes) {
+			if(meta.getMetaType() == MetaType.SUBNETPLACE)
+				coarsePlaces.add(meta);
+			if(meta.getMetaType() == MetaType.SUBNETTRANS)
+				coarseTransitions.add(meta);
+		}
+
 		snoopyPlaces = new ArrayList<SnoopyWriterPlace>();
 		snoopyTransitions = new ArrayList<SnoopyWriterTransition>();
+		snoopyCoarsePlaces = new ArrayList<SnoopyWriterCoarse>();
+		snoopyCoarseTransitions = new ArrayList<SnoopyWriterCoarse>();
 	}
 	
 	/**
@@ -53,6 +72,11 @@ public class SnoopyWriter {
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean writeSPPED(String filePath) {
+		boolean status = GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility();
+		if(!status) {
+			return false;
+		}
+		
 		int startNodeId = 226; // bo tak
 		int currentActiveID = startNodeId;
 		int arcsNumber = 0;
@@ -85,7 +109,7 @@ public class SnoopyWriter {
 				currentActiveID = sPlace.writePlaceInfoToFile(bw, currentActiveID, globalPlaceId);
 				
 				if(sPlace.portal == true) { //jeśli właśnie dodane było portalem
-					currentActiveID += 13; //bo tak, pytajcie w Brandenburgu 'a a a czymuuu?'
+					currentActiveID += 13; //bo tak, pytajcie w Brandenburgu 'a czymuuu?'
 				} else {
 					currentActiveID ++;
 				}
@@ -103,12 +127,10 @@ public class SnoopyWriter {
 				snoopyTransitions.add(sTransition);
 				snoopyTransitionsID.add(t.getID());
 				
-				
 				ArrayList<ElementLocation> clones = t.getElementLocations();
 				for(ElementLocation el : clones) {
 					arcsNumber += el.getOutArcs().size(); //pobież wszystkie wychodzące
 				}
-				
 				
 				currentActiveID = sTransition.writeTransitionInfoToFile(bw, currentActiveID, globalTransId);
 				currentActiveID ++;
@@ -117,8 +139,19 @@ public class SnoopyWriter {
 			write(bw, "    </nodeclass>");
 			
 			//TEGO NA RAZIE NIE RUSZAMY (DA BÓG: NIGDY)
-			write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
-			write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
+			//21-07-2015 you wish...
+			if(coarsePlaces.size() == 0) {
+				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
+			} else {
+				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
+			}
+			
+			if(coarseTransitions.size() == 0) {
+				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
+			} else {
+				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
+			}
+			
 			write(bw, "  </nodeclasses>");
 			
 			//ŁUKI:
@@ -313,7 +346,7 @@ public class SnoopyWriter {
 							return;
 						}
 						SnoopyWriterPlace source = snoopyPlaces.get(addToSPPEDAsSource);
-						int nodeSourceID = source.nodeID;
+						int nodeSourceID = source.snoopyStartingID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
 						int realSourceY = source.grParentsLocation.get(location).y;
@@ -322,7 +355,7 @@ public class SnoopyWriter {
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
 						int addToSPPEDAsTarget = snoopyTransitionsID.lastIndexOf(targetAbyss.getID());
 						SnoopyWriterTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
-						//teraz należy określi do której lokalizacji portalu trafia łuk
+						//teraz należy określić do której lokalizacji portalu trafia łuk
 						
 						ElementLocation destinationLoc = a.getEndLocation();
 						int counter = -1;
@@ -334,7 +367,7 @@ public class SnoopyWriter {
 								break; //w counter mamy wtedy nr
 							}
 						}
-						int nodeTargetID = target.nodeID;
+						int nodeTargetID = target.snoopyStartingID;
 						int realTargetID = target.grParents.get(counter); 
 						int realTargetX = target.grParentsLocation.get(counter).x;
 						int realTargetY = target.grParentsLocation.get(counter).y;
@@ -429,7 +462,7 @@ public class SnoopyWriter {
 							return;
 						}
 						SnoopyWriterTransition source = snoopyTransitions.get(addToSPPEDAsSource);
-						int nodeSourceID = source.nodeID;
+						int nodeSourceID = source.snoopyStartingID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
 						int realSourceY = source.grParentsLocation.get(location).y;
@@ -450,7 +483,7 @@ public class SnoopyWriter {
 								break; //w counter mamy wtedy nr
 							}
 						}
-						int nodeTargetID = target.nodeID;
+						int nodeTargetID = target.snoopyStartingID;
 						int realTargetID = target.grParents.get(counter); 
 						int realTargetX = target.grParentsLocation.get(counter).x;
 						int realTargetY = target.grParentsLocation.get(counter).y;
@@ -569,7 +602,7 @@ public class SnoopyWriter {
 							return nextID+10;
 						}
 						SnoopyWriterPlace source = snoopyPlaces.get(addToSPPEDAsSource);
-						int nodeSourceID = source.nodeID;
+						int nodeSourceID = source.snoopyStartingID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
 						int realSourceY = source.grParentsLocation.get(location).y;
@@ -590,7 +623,7 @@ public class SnoopyWriter {
 								break; //w counter mamy wtedy nr
 							}
 						}
-						int nodeTargetID = target.nodeID;
+						int nodeTargetID = target.snoopyStartingID;
 						int realTargetID = target.grParents.get(counter); 
 						int realTargetX = target.grParentsLocation.get(counter).x;
 						int realTargetY = target.grParentsLocation.get(counter).y;
@@ -692,7 +725,7 @@ public class SnoopyWriter {
 							return nextID + 10;
 						}
 						SnoopyWriterTransition source = snoopyTransitions.get(addToSPPEDAsSource);
-						int nodeSourceID = source.nodeID;
+						int nodeSourceID = source.snoopyStartingID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
 						int realSourceY = source.grParentsLocation.get(location).y;
@@ -713,7 +746,7 @@ public class SnoopyWriter {
 								break; //w counter mamy wtedy nr
 							}
 						}
-						int nodeTargetID = target.nodeID;
+						int nodeTargetID = target.snoopyStartingID;
 						int realTargetID = target.grParents.get(counter); 
 						int realTargetX = target.grParentsLocation.get(counter).x;
 						int realTargetY = target.grParentsLocation.get(counter).y;

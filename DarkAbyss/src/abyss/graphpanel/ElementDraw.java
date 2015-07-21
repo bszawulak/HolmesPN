@@ -17,6 +17,7 @@ import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.MetaNode;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
@@ -378,9 +379,6 @@ public final class ElementDraw {
 				g.setColor(new Color(224,224,224));
 				g.setColor(Color.DARK_GRAY);
 				g.setStroke(new BasicStroke(1.5F));
-				
-				//TODO
-				//if(view3d) {
 					
 				if(true) {
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -397,12 +395,31 @@ public final class ElementDraw {
 				//}
 				
 				
-				g.setStroke(new BasicStroke(1.5F));
-				g.setColor(Color.RED);
-				g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 20, nodeBounds.y + 9);
-				g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 20, nodeBounds.y + 21);
-				g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 10, nodeBounds.y + 21);
-				g.drawLine(nodeBounds.x + 20, nodeBounds.y + 10, nodeBounds.x + 20, nodeBounds.y + 21);
+				
+				if(((MetaNode)node).getMetaType() == MetaType.SUBNETTRANS) {
+					g.setStroke(new BasicStroke(2F));
+					g.setColor(Color.RED);
+					g.drawLine(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.x + 23, nodeBounds.y + 7);
+					g.drawLine(nodeBounds.x + 7, nodeBounds.y + 23, nodeBounds.x + 23, nodeBounds.y + 23);
+					g.drawLine(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.x + 7, nodeBounds.y + 23);
+					g.drawLine(nodeBounds.x + 23, nodeBounds.y + 7, nodeBounds.x + 23, nodeBounds.y + 23);
+				} else if(((MetaNode)node).getMetaType() == MetaType.SUBNETPLACE) {
+					g.setStroke(new BasicStroke(2F));
+					g.setColor(Color.RED);
+					g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, 18, 18);
+				} else if(((MetaNode)node).getMetaType() == MetaType.SUBNET) {
+					g.setStroke(new BasicStroke(2F));
+					g.setColor(Color.RED);
+					
+					g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, 18, 18);
+					
+					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.x + 20, nodeBounds.y + 10);
+					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 20, nodeBounds.x + 20, nodeBounds.y + 20);
+					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.x + 10, nodeBounds.y + 20);
+					g.drawLine(nodeBounds.x + 20, nodeBounds.y + 10, nodeBounds.x + 20, nodeBounds.y + 20);
+					
+					//g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, 16, 16);
+				}
 				
 				g.setColor(Color.black);
 				g.setFont(new Font("TimesRoman", Font.PLAIN, 7));

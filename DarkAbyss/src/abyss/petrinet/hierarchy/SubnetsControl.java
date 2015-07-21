@@ -608,24 +608,9 @@ public class SubnetsControl {
 			arcs.add(arc);
 		}
 	}
+
+	public boolean checkSnoopyCompatibility() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

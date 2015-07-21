@@ -6,45 +6,48 @@ import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.MetaNode;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.elements.Transition;
 import abyss.varia.NetworkTransformations;
 
-
 /**
- * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie Sparta,
- * tylko o wiele gorzej...
+ * Klasa symuluje PRAWDZIWE szaleństwo zapisu podsieci (coarse T/P shit) w programie Snoopy. 
+ * Niemiec płakał, jak projektował...
+ * 
  * @author MR
  *
  */
-public class SnoopyWriterTransition {
-	private Transition abyssTransition;
-	/** Identyfikator podstawowy tranzycji  */
+public class SnoopyWriterCoarse {
+	private MetaNode coarseNode;
+	/** Identyfikator podstawowy coarseNode  */
 	public int snoopyStartingID;
 	/** Identyfikator główny tranzycji (od zera do liczby tranzycji) */
-	public int globalTransID;
+	public int globalCoarseID;
 	/** Główny ID każdego ElementLocation (SnoopyID) */
 	public ArrayList<Integer> grParents; // identyfikatory I typu dla jednej tranzycji, na ich bazie
 	 	// obliczane są identyfikatory II typu dla... wszystkiego
 	/** Małe ID, lokalizacje artybutów, wskazują na odpowiednie duże ID z  grParents */
 	public ArrayList<Point> grParentsLocation; // lokalizacje powyższych, więcej niż 1 dla portali
-	public boolean portal;
+	
+	private MetaType coarseType;
 	
 	/**
-	 * Konstruktor domyślny obiektu klasy SnoopyTransition.
+	 * Konstruktor domyślny obiektu klasy SnoopyWriterCoarse.
 	 */
-	public SnoopyWriterTransition() {
+	public SnoopyWriterCoarse() {
 		grParents = new ArrayList<Integer>();
 		grParentsLocation = new ArrayList<Point>();
-		portal = false;
 	}
 	
 	/**
 	 * Konstruktor główny, otrzymuje jako parametr obiekt tranzycji Abyss.
-	 * @param t Transition - obiekt tranzycji w programie głównym
+	 * @param m MetaNode - obiekt MetaNode w programie głównym
 	 */
-	public SnoopyWriterTransition(Transition t) {
+	public SnoopyWriterCoarse(MetaNode m) {
 		this();
-		abyssTransition = t;
+		coarseNode = m;
+		coarseType = coarseNode.getMetaType();
 	}
 	
 	/**
@@ -53,39 +56,26 @@ public class SnoopyWriterTransition {
 	 * 
 	 * @param bw BufferedWriter - obiekt zapisujący
 	 * @param newFreeId int - aktualne wolne ID snoopiego dla węzła
-	 * @param globalID int - globalny nr tranzycji, od zera of course
+	 * @param globalID int - globalny nr obiektu, od zera of course
 	 * @return int - ostatni użyty ID snoopiego w tym kodzie
 	 */
-	public int writeTransitionInfoToFile(BufferedWriter bw, int newFreeId, int globalID) {
+	public int writeMetaNodeInfoToFile(BufferedWriter bw, int newFreeId, int globalID) {
 		snoopyStartingID = newFreeId;
-		globalTransID = globalID;
+		globalCoarseID = globalID;
 		int currID = snoopyStartingID;
-		int locations = 1;
+		//int locations = 1;
 		int xOff = 25;
 		int yOff = 25;
 		
-		//sprawdź, ile jest lokalizacji (portal check)
-		for(ElementLocation el : abyssTransition.getElementLocations()) {
-			if(locations == 1) { //główny węzeł
-				currID += 8;
-			} else if (locations == 2){ //pierwsze miejsce logiczne
-				currID += 31;
-				portal = true;
-			} else { //wszystkie kolejne miejsca logiczne
-				currID += 9;
-				portal = true;
-			}
-			grParents.add(currID);
-			Point pxy = el.getPosition();
-			
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlignWhenSaved").equals("1"))
-				pxy = NetworkTransformations.alignToGrid(pxy);
-			
-			grParentsLocation.add(pxy);
-			locations++;
-		}
-		//powyższa pętla jest ściśle związana z szukaniem danych łuków w SnoopyWriter
-		//łapy precz od niej! I od właściwie czegokolwiek w tej metodzie/klasie!
+		//tylko 1 dozwolona lokalizacja
+		
+		ElementLocation alphaAndOmega = coarseNode.getElementLocations().get(0);
+		
+		grParents.add(currID+5);
+		Point pxy = alphaAndOmega.getPosition();
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlignWhenSaved").equals("1"))
+			pxy = NetworkTransformations.alignToGrid(pxy);
+		grParentsLocation.add(pxy);
 		
 		locations--; //odjąć ostatnie dodawanie
 		currID = snoopyStartingID; //reset, i zaczynamy dodawać (np 357)
@@ -99,14 +89,14 @@ public class SnoopyWriterTransition {
 		// SEKCJA NAZW TRANZYCJI - ID, lokalizacje, inne
 		write(bw, "        <attribute name=\"Name\" id=\""+currID+"\" net=\"1\">"); //358
 		currID++; //teraz: 359
-		write(bw, "          <![CDATA[" + abyssTransition.getName() + "]]>");
+		write(bw, "          <![CDATA[" + coarseNode.getName() + "]]>");
 		write(bw, "          <graphics count=\"" + locations + "\">"); //ile logicznych
 		xOff = 5; //TODO: + abyssPlace.getNameOffX();
 		yOff = 20; //TODO: + abyssPlace.getNameOffY();
 		for(int i=0; i<locations; i++) { 
 			//TODO: decyzja, czy środkować czy brać offset z Abyss
-			xOff = abyssTransition.getXNameLoc(i);
-			yOff = abyssTransition.getYNameLoc(i);
+			xOff = coarseNode.getXNameLoc(i);
+			yOff = coarseNode.getYNameLoc(i);
 			yOff = SnoopyToolClass.getNormalizedY(yOff);
 			
 			if(i==0) {//tylko główne miejsce
@@ -132,7 +122,7 @@ public class SnoopyWriterTransition {
 		//TWÓRCÓW SNOOPIEGO
 		write(bw, "        <attribute name=\"ID\" id=\"" + currID + "\" net=\"1\">");
 		currID++; //teraz: 361
-		write(bw, "          <![CDATA[" + globalTransID + "]]>"); //ID OD ZERA W GÓRĘ
+		write(bw, "          <![CDATA[" + globalCoarseID + "]]>"); //ID OD ZERA W GÓRĘ
 		write(bw, "          <graphics count=\"" + locations + "\">");
 		xOff = 25;
 		yOff = 20;
@@ -168,7 +158,7 @@ public class SnoopyWriterTransition {
 		//SEKCJA KOMENTARZA. KOMENTARZY... TO ZNACZY JEDNEGO, ALE DLA KAŻDEGO PORTALU... NEVERMIND...
 		write(bw, "        <attribute name=\"Comment\" id=\"" + currID + "\" net=\"1\">");
 		currID++; //teraz: 364
-		write(bw, "          <![CDATA[" + abyssTransition.getComment() + "]]>"); //achtung enters!
+		write(bw, "          <![CDATA[" + coarseNode.getComment() + "]]>"); //achtung enters!
 		write(bw, "          <graphics count=\"" + locations + "\">"); //do liczby portali liczyć będziesz,
 		 //a liczbą, do której będziesz liczyć, będzie liczba portali. Mniej jest wykluczone.
 		xOff = 40;

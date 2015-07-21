@@ -18,6 +18,7 @@ import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
+import abyss.petrinet.elements.Transition.TransitionType;
 
 /**
  * Klasa odpowiedzialna za wczytywanie tego całego syfu, jaki w pliki ładuje niemiecki geszeft 
@@ -27,10 +28,10 @@ import abyss.petrinet.elements.Arc.TypesOfArcs;
  *
  */
 public class SnoopyReader {
-	private boolean classPN = false;
-	private boolean TPN = false;
-	private boolean extPN = false;
-	private boolean otherPN = false;
+	//private boolean classPN = false;
+	//private boolean TPN = false;
+	//private boolean extPN = false;
+	//private boolean otherPN = false;
 	
 	private ArrayList<Arc> arcList = new ArrayList<Arc>();
 	private ArrayList<Node> nodesList = new ArrayList<Node>();
@@ -47,17 +48,12 @@ public class SnoopyReader {
 	 * @param path String - ścieżka do pliku
 	 */
 	public SnoopyReader(int type, String path) {
-		if(type == 1) { //extended
-			extPN = true;
-		} else if(type == 2) { //TPN
-			TPN = true;
-		} else if(type == 3) { //other
-			otherPN = true;
-		} else { // classic
-			classPN = true;
-		}
+		
 		
 		coreReader(path);
+		
+		if(warnings)
+			GUIManager.getDefaultGUIManager().log("Warnings while reading file.", "error", true);
 	}
 	
 	/**
@@ -162,12 +158,9 @@ public class SnoopyReader {
 				if(!readForward)
 					break;
 				
-				//buffLine = buffer.readLine(); 
-				
 				if(line.contains("</nodeclass>")) {
 					break;
 				}
-				
 				
 				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
 				if(nodeSnoopyID == -1) {
@@ -506,6 +499,32 @@ public class SnoopyReader {
 						line = buffer.readLine();
 					}
 					
+					// Duration part
+					if(line.contains("<attribute name=\"Duration\"")) {
+						readAnything = true;
+						ArrayList<Object> tableVector = new ArrayList<Object>();
+						while(!(line = buffer.readLine()).contains("</attribute>")) {
+							if(line.contains("<![CDATA[")) {
+								tableVector.add(readStrCDATA(buffer, line, ""));
+							}
+						}
+						parseDuration(transition, tableVector);
+						line = buffer.readLine();
+					}
+					
+					// Duration part
+					if(line.contains("<attribute name=\"Interval\"")) {
+						readAnything = true;
+						ArrayList<Object> tableVector = new ArrayList<Object>();
+						while(!(line = buffer.readLine()).contains("</attribute>")) {
+							if(line.contains("<![CDATA[")) {
+								tableVector.add(readStrCDATA(buffer, line, ""));
+							}
+						}
+						parseIntervals(transition, tableVector);
+						line = buffer.readLine();
+					}
+					
 					// XY Locations
 					if(line.contains("<graphics count=\"")) {
 						readAnything = true;
@@ -531,6 +550,9 @@ public class SnoopyReader {
 							}
 						}
 						snoopyNodesElLocIDList.add(subIDs);
+						
+						if(transition.getDPNstatus() == true || transition.getTPNstatus() == true)
+							transition.setTransType(TransitionType.TPN);
 					}
 				} //czytanie właściwości węzła
 				
@@ -563,6 +585,39 @@ public class SnoopyReader {
 		}
 	}
 	
+	private void parseDuration(Transition transition, ArrayList<Object> tableVector) {
+		// 0, 1 pierwszy wiersz (nazwy), 2 - tytuł wiersza, 3 wartość I wiersz, 4 jak 2, 5 jak 3
+		try {
+			transition.setDurationTime(Double.parseDouble((String) tableVector.get(3)));
+			if(transition.getDurationTime() != 0)
+				transition.setDPNstatus(true);
+			else
+				transition.setDPNstatus(false);
+		} catch (Exception e) {
+			transition.setDurationTime(0);
+			transition.setDPNstatus(false);
+		}
+	}
+	
+	private void parseIntervals(Transition transition, ArrayList<Object> tableVector) {
+		// 0,1,2 - tytuł, eft, lft, 3,4,5 - I wiersz (4,5 - wartości), 6,7,8 - tak jak 3,4,5
+		//uwaga, mogą być znaki '?'
+		try {
+			double eft = Double.parseDouble((String) tableVector.get(4));
+			double lft = Double.parseDouble((String) tableVector.get(5));
+			transition.setMinFireTime(eft);
+			transition.setMaxFireTime(lft);
+			transition.setTPNstatus(true);
+		} catch (Exception e) {
+			transition.setMinFireTime(0);
+			transition.setMaxFireTime(0);
+			transition.setTPNstatus(true);
+		}
+		
+	}
+
+	
+
 	/**
 	 * Metoda czytająca blok coarse-places w pliku Snoopiego.
 	 * @param buffer BufferedReader - obiekt odczytujący

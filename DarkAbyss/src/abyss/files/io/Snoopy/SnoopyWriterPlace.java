@@ -16,10 +16,14 @@ import abyss.varia.NetworkTransformations;
  */
 public class SnoopyWriterPlace {
 	private Place abyssPlace;
-	public int nodeID; // identyfikator podstawowy miejsca (pierwsze miejsce w sieci ma nr 226, kolejne to już zależy)
-	public int placeID; // identyfikator główny miejsca (od zera do liczby miejsc)
+	/** Identyfikator podstawowy miejsca (pierwsze miejsce w sieci ma nr 226, kolejne to już zależy)  */
+	public int snoopyStartingID;
+	/** Identyfikator główny miejsca (od zera do liczby miejsc) */
+	public int globalPlaceID;
+	/** Główny ID każdego ElementLocation (SnoopyID) */
 	public ArrayList<Integer> grParents; // identyfikatory I typu dla jednego miejsca, na ich bazie
 	 	// obliczane są identyfikatory II typu dla... wszystkiego
+	/** Małe ID, lokalizacje artybutów, wskazują na odpowiednie duże ID z  grParents */
 	public ArrayList<Point> grParentsLocation; // lokalizacje powyższych, więcej niż 1 dla portali
 	public boolean portal;
 	
@@ -27,7 +31,7 @@ public class SnoopyWriterPlace {
 	 * Konstruktor domyślny obiektu klasy SnoopyPlace.
 	 */
 	public SnoopyWriterPlace() {
-		grParents = new ArrayList<Integer>();
+		grParents = new ArrayList<Integer>(); //główny ID miejsca (graphics), najwyższa liczba z ID, inne mówią mu 'grparent'
 		grParentsLocation = new ArrayList<Point>();
 		portal = false;
 	}
@@ -51,9 +55,9 @@ public class SnoopyWriterPlace {
 	 * @return int - ostatni użyty ID snoopiego w tym kodzie
 	 */
 	public int writePlaceInfoToFile(BufferedWriter bw, int newFreeId, int globalID) {
-		nodeID = newFreeId;
-		placeID = globalID;
-		int currID = nodeID;
+		snoopyStartingID = newFreeId;
+		globalPlaceID = globalID;
+		int currID = snoopyStartingID;
 		int locations = 1;
 		int xOff = 25;
 		int yOff = 25;
@@ -82,7 +86,7 @@ public class SnoopyWriterPlace {
 		//łapy precz od niej! I od właściwie czegokolwiek w tej metodzie/klasie!
 		
 		locations--; //odjąć ostatnie dodawanie
-		currID = nodeID; //226
+		currID = snoopyStartingID; //226
 		if(locations == 1) 
 			write(bw, "      <node id=\"" + currID + "\" net=\"1\">");
 		else
@@ -125,7 +129,7 @@ public class SnoopyWriterPlace {
 		//TWÓRCÓW SNOOPIEGO
 		write(bw, "        <attribute name=\"ID\" id=\"" + currID + "\" net=\"1\">");
 		currID++; //teraz: 230
-		write(bw, "          <![CDATA[" + placeID + "]]>"); //ID OD ZERA W GÓRĘ
+		write(bw, "          <![CDATA[" + globalPlaceID + "]]>"); //ID OD ZERA W GÓRĘ
 		write(bw, "          <graphics count=\"" + locations + "\">");
 		xOff = 25;
 		yOff = 20;
