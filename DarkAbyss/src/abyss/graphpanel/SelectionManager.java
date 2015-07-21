@@ -279,6 +279,9 @@ public class SelectionManager {
 	 * @param el ElementLocation - lokalizacja wierzchołka który ma został usunięty
 	 */
 	public void deleteElementLocation(ElementLocation el) {
+		ArrayList<Integer> sheetModified = new ArrayList<Integer>();
+		sheetModified.add(el.getSheetID());
+		
 		this.deselectElementLocation(el);
 		Node n = el.getParentNode();
 		if (n.removeElementLocation(el) == false) {
@@ -312,6 +315,8 @@ public class SelectionManager {
 			arc.getStartLocation().accessMetaInArcs().remove(arc);
 		}
 		
+		GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(sheetModified);
+		
 		this.getGraphPanel().repaint();
 		this.invokeActionListener();
 	}
@@ -323,10 +328,15 @@ public class SelectionManager {
 	 * jednak nie są one tutaj wywoływane.
 	 */
 	public void deleteAllSelectedElements() {
-		// code below looks similar to other function but not use them to reduce the number of requests repaint	
+		ArrayList<Integer> sheetsModified = new ArrayList<Integer>();
 		
 		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
 			ElementLocation el = i.next();
+			
+			int sheetID = el.getSheetID();
+			if(!sheetsModified.contains(sheetID))
+				sheetsModified.add(sheetID);
+			
 			Node n = el.getParentNode();
 			// jeżeli ElementLocation to jedyna lokalizacja dla Node, tutaj jest kasowana:
 			if (n.removeElementLocation(el) == false) {
@@ -337,7 +347,6 @@ public class SelectionManager {
 				Arc begone = j.next();
 				this.getGraphPanelArcs().remove(begone);
 				begone.getStartLocation().removeOutArc(begone);
-				//this.getGraphPanelArcs().remove(j.next());
 				j.remove();
 			}
 			// kasowanie wszystkich out-arcs danej ElementLocation
@@ -345,7 +354,6 @@ public class SelectionManager {
 				Arc begone = j.next();
 				this.getGraphPanelArcs().remove(begone);
 				begone.getEndLocation().removeInArc(begone);
-				//this.getGraphPanelArcs().remove(j.next());
 				j.remove();
 			}
 			i.remove();
@@ -353,9 +361,6 @@ public class SelectionManager {
 		// kasuje wszystkie zaznaczone łuki:
 		
 		for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
-			//TODO:
-			//usunięcie metaArc kaskadowo usuwa wszystkie portale danego node'a z podsieci
-			
 			Arc a = i.next();
 			this.getGraphPanelArcs().remove(a);
 			a.unlinkElementLocations();
@@ -366,6 +371,8 @@ public class SelectionManager {
 			}
 			i.remove();
 		}
+		
+		GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(sheetsModified);
 		
 		// Kasuj wszystko. I wszystkich. Wszędzie. Kill'em all:
 		this.getSelectedArcs().clear();

@@ -1017,11 +1017,13 @@ public class GraphPanel extends JComponent {
 					if(drawnArc.getStartLocation().getParentNode() instanceof MetaNode) {
 						JOptionPane.showMessageDialog(null, "Direct connection between two meta-nodes not possible.", 
 								"Problem", JOptionPane.WARNING_MESSAGE);
+						clearDrawnArc();
 						return;
 					}
 					if(drawnArc.getArcType() != TypesOfArcs.NORMAL) {
 						JOptionPane.showMessageDialog(null, "Only normal arc can be connected with meta-node.", 
 								"Problem", JOptionPane.WARNING_MESSAGE);
+						clearDrawnArc();
 						return;
 					}
 					MetaNode n = (MetaNode) clickedLocation.getParentNode();
@@ -1029,11 +1031,13 @@ public class GraphPanel extends JComponent {
 					if(drawnArc.getStartLocation().getParentNode() instanceof Place && n.getMetaType() == MetaType.SUBNETPLACE ) {
 						JOptionPane.showMessageDialog(null, "Meta-node type P (transitions-interfaced) can get connection only from transitions!", 
 								"Problem", JOptionPane.WARNING_MESSAGE);
+						clearDrawnArc();
 						return;
 					}
 					if(drawnArc.getStartLocation().getParentNode() instanceof Transition && n.getMetaType() == MetaType.SUBNETTRANS ) {
 						JOptionPane.showMessageDialog(null, "Meta-node type T (places-interfaced) can get connection only from places!", 
 								"Problem", JOptionPane.WARNING_MESSAGE);
+						clearDrawnArc();
 						return;
 					}
 
@@ -1093,8 +1097,8 @@ public class GraphPanel extends JComponent {
 							Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), clickedLocation, TypesOfArcs.NORMAL);
 							
 							if(arcType == DrawModes.ARC) {
-								if(arc.getArcType() != TypesOfArcs.READARC)
-									arc.setArcType(TypesOfArcs.NORMAL);
+								if(arc.getArcType() != TypesOfArcs.READARC) //ważne dla tworzenia read-arc poprzez nałożenie ręczne 2 łuków!
+									arc.setArcType(TypesOfArcs.NORMAL); 
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.READARC) {
 								//arc.setArcType(TypesOfArcs.INHIBITOR);

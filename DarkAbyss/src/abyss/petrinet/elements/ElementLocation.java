@@ -260,16 +260,18 @@ public class ElementLocation implements Serializable {
 		String s = "";
 		if(this.getParentNode() == null) {
 			s = "ParentNode: null"
-					+ "SheetID: " + this.getSheetID() + "; Position: "
+					+ "SheetID:" + this.getSheetID() + "; Pos:"
 					+ pointPos(this.getPosition()) 
 					+ "; inArcs: "+ Integer.toString(this.getInArcs().size())
 					+ "; outArcs: " + Integer.toString(this.getOutArcs().size());
 		} else {
-			s = "Node: " + this.getParentNode() +" [gID:"+this.getParentNode().getID()+" ];\n "
-					+ "SheetID: " + this.getSheetID() + "; Position: "
+			s = "Node: " + this.getParentNode() +" [gID:"+this.getParentNode().getID()+"];\n "
+					+ "SheetID:" + this.getSheetID() + "; Pos:"
 					+ pointPos(this.getPosition()) 
 					+ "; inArcs: "+ Integer.toString(this.getInArcs().size())
-					+ "; outArcs: " + Integer.toString(this.getOutArcs().size());
+					+ "; outArcs: " + Integer.toString(this.getOutArcs().size())
+					+ "; mInArcs: "+ Integer.toString(this.accessMetaInArcs().size())
+					+ "; mOutArcs: " + Integer.toString(this.accessMetaOutArcs().size());
 		}
 		return s;
 	}

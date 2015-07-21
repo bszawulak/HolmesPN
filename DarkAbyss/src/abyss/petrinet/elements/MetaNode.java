@@ -3,6 +3,7 @@ package abyss.petrinet.elements;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
+import abyss.darkgui.GUIManager;
 import abyss.graphpanel.ElementDraw;
 
 /**
@@ -84,9 +85,10 @@ public class MetaNode extends Node {
 		String name =  getName();
 		String text = "";
 		if(name == null) {
-			text = "(Meta) -- ";
+			return "(Meta) -- ";
 		} else {
-			text = "(Meta)" + getName();
+			//text = "(Meta)" + getName();
+			text = "(M" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes().indexOf(this)+")";
 		}
 		
 		text += " [Subnet: "+getRepresentedSheetID()+"]";

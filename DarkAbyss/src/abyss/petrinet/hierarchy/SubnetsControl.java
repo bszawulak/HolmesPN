@@ -3,6 +3,7 @@ package abyss.petrinet.hierarchy;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import javax.swing.JOptionPane;
 
@@ -44,7 +45,7 @@ public class SubnetsControl {
 	 * @return boolean - true, jeśli udało się dodać nowy portal
 	 */
 	public boolean addArcToMetanode(ElementLocation startPTLocation, ElementLocation endMetanodeLocation, Arc semiArc) {
-		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		Workspace workspace = overlord.getWorkspace();
 		ArrayList<Arc> arcs = workspace.getProject().getArcs();
 		MetaNode metanode = (MetaNode) endMetanodeLocation.getParentNode();
 		//int startingSheet =  startPTLocation.getSheetID(); 
@@ -95,12 +96,12 @@ public class SubnetsControl {
 			startNode.setPortal(true);
 			
 			
-			if(!hasMetaArc) { //utwórz meta łuk, bo go jeszcze nie ma z tego węzła (od startLocation)
+			//if(!hasMetaArc) { //utwórz meta łuk, bo go jeszcze nie ma z tego węzła (od startLocation)
 				Arc arc = new Arc(IdGenerator.getNextId(), semiArc.getStartLocation(), endMetanodeLocation, TypesOfArcs.META_ARC);
-				endMetanodeLocation.accessMetaInArcs().add(arc);
-				startPTLocation.accessMetaOutArcs().add(arc);
+				//endMetanodeLocation.accessMetaInArcs().add(arc);
+				//startPTLocation.accessMetaOutArcs().add(arc);
 				arcs.add(arc);
-			}
+			//}
 			
 			int index = workspace.getIndexOfId(subnetID);
 			workspace.getSheets().get(index).getGraphPanel().repaint();
@@ -118,7 +119,7 @@ public class SubnetsControl {
 	 * @return boolean - true, jeśli udało się dodać nowy portal
 	 */
 	public boolean addArcFromMetanode(ElementLocation endPTNode, ElementLocation startMetanode, Arc semiArc) {
-		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		Workspace workspace = overlord.getWorkspace();
 		ArrayList<Arc> arcs = workspace.getProject().getArcs();
 		MetaNode metanode = (MetaNode) startMetanode.getParentNode();
 		int startingSheet =  endPTNode.getSheetID(); 
@@ -169,12 +170,12 @@ public class SubnetsControl {
 			endNode.getNamesLocations().add(newNameEL);
 			endNode.setPortal(true);
 			
-			if(!hasMetaArc) { //utwórz meta łuk, bo go jeszcze nie ma do tego węzła (od startLocation)
+			//if(!hasMetaArc) { //utwórz meta łuk, bo go jeszcze nie ma do tego węzła (od startLocation)
 				Arc arc = new Arc(IdGenerator.getNextId(), startMetanode, endPTNode, TypesOfArcs.META_ARC);
-				startMetanode.accessMetaOutArcs().add(arc);
-				endPTNode.accessMetaInArcs().add(arc);
+				//startMetanode.accessMetaOutArcs().add(arc);
+				//endPTNode.accessMetaInArcs().add(arc);
 				arcs.add(arc);
-			}
+			//}
 			
 			//
 			
@@ -230,7 +231,7 @@ public class SubnetsControl {
 	}
 	
 	public boolean changeSubnetType(MetaNode metanode, MetaType desiredType) {
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("snoopyCompatibleMode").equals("1")) {
+		if(overlord.getSettingsManager().getValue("snoopyCompatibleMode").equals("1")) {
 			if(desiredType == MetaType.SUBNET) {
 				JOptionPane.showMessageDialog(null, "Snoopy compatibility mode is activated in program options.\n"
 						+ "Dual interface (PT) subnetworks are not allowed.", 
@@ -342,7 +343,7 @@ public class SubnetsControl {
 	 * @param sheetID int - nr arkusza
 	 */
 	public void removeMetaNode(int sheetID) {
-		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
 		ArrayList<MetaNode> metanodes = pn.getMetaNodes();
 		ArrayList<Arc> arcs = pn.getArcs();
 		ArrayList<Node> nodes = pn.getNodes();
@@ -407,9 +408,224 @@ public class SubnetsControl {
 			}
 		}
 		if(!found) {
-			GUIManager.getDefaultGUIManager().log("Metanode for sheet "+sheetID+" does not exist.", "warning", true);
+			overlord.log("Metanode for sheet "+sheetID+" does not exist.", "warning", true);
 		} else if(!removed) {
-			GUIManager.getDefaultGUIManager().log("Failed to remove metanode for sheet "+sheetID, "error", true);
+			overlord.log("Failed to remove metanode for sheet "+sheetID, "error", true);
+		}
+	}
+
+	/**
+	 * Dla każdej posieci w wektorze wejściowym metoda weryfikuje i poprawia liczbę metałuków przyporządkowanych
+	 * odpowiednim meta-węzłom
+	 * @param sheetModified ArrayList[Integer] - wektor ID podsieci
+	 */
+	public void validateMetaArcs(ArrayList<Integer> sheetModified) {
+		ArrayList<MetaNode> metanodes = overlord.getWorkspace().getProject().getMetaNodes();
+		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
+		for(int sheetID : sheetModified) {
+			if(sheetID == 0)
+				continue;
+			
+			ArrayList<ElementLocation> subnetElements = getSubnetElementLocations(sheetID);
+			
+			//określ metodanode:
+			MetaNode metanode = null;
+			for(MetaNode meta : metanodes) {
+				if(meta.getRepresentedSheetID() == sheetID) {
+					metanode = meta;
+					break;
+				}
+			}
+			if(metanode == null) {
+				overlord.log("Unexpected error: metanode graphical symbol not found for existing subnet ID: "+sheetID, "error", true);
+				break;
+			}
+	
+			//dla każdego Node (poprzez ElementLocation) sprawdź & napraw
+			ArrayList<Node> alreadyChecked = new ArrayList<Node>();
+			for(ElementLocation el : subnetElements) {
+				Node parent = el.getParentNode();
+				if(!parent.isPortal()) // tylko portale mogą być interfejsem podsieci
+					continue;
+	
+				if(alreadyChecked.contains(parent)) //każdy Node sprawdzany/poprawiany tylko raz
+					continue;
+				else
+					alreadyChecked.add(parent);
+				
+				int inInterfaceLinks = 0;
+				int outInterfaceLinks = 0;
+				
+				for(ElementLocation element : parent.getElementLocations()) {
+					if(element.getSheetID() == sheetID) {
+						if(element.getInArcs().size() > 0) {
+							outInterfaceLinks++;
+						}
+						if(element.getOutArcs().size() > 0) {
+							inInterfaceLinks++;
+						}
+					}
+				}
+	
+				ArrayList<Integer> processedInSheets = new ArrayList<Integer>();
+				ArrayList<Integer> processedOutSheets = new ArrayList<Integer>();
+				for(ElementLocation metaEL : metanode.getElementLocations()) { //TEORETYCZNIE tylko 1 istnieje
+					int metaSheet = metaEL.getSheetID();
+					
+					boolean proceedWithIn = true;
+					boolean proceedWithOut = true;
+					if(processedInSheets.contains(metaSheet))
+						proceedWithIn = false;
+					else
+						processedInSheets.add(metaSheet);
+					
+					if(processedOutSheets.contains(metaSheet))
+						proceedWithOut = false;
+					else
+						processedOutSheets.add(metaSheet);
+					
+					ArrayList<Arc> inMetaArcs = metaEL.accessMetaInArcs();
+					ArrayList<Arc> outMetaArcs = metaEL.accessMetaOutArcs();
+					
+					if(proceedWithIn) { //dodaj / usuń brakujące meta-łuki
+						//najpierw łuki prowadzące DO metanode
+						if(inInterfaceLinks > inMetaArcs.size()) {
+							//szukaj choć jednego EL z sieci gdzie jest metanode:
+							ElementLocation pattern = null;
+							for(ElementLocation cand : parent.getElementLocations()) {
+								if(cand.getSheetID() == metaSheet) {
+									pattern = cand;
+									break;
+								}
+							}
+							
+							if(pattern != null) {  //czyli w ogóle ma sens dodawanie czegokolwiek...
+								addMissingInMetaArcs(metaEL, pattern, inInterfaceLinks-inMetaArcs.size(), arcs);
+							}
+						} else if(inInterfaceLinks < inMetaArcs.size()) { // == nas nie interesuje
+							ArrayList<Arc> removeList = new ArrayList<Arc>();
+							for(int r=inMetaArcs.size()-1; r>=inInterfaceLinks; r--) {
+								removeList.add(inMetaArcs.get(r));
+							}
+							
+							for(Arc arc : removeList) {
+								arc.unlinkElementLocations();
+								arcs.remove(arc);
+							}
+							
+						}
+					}
+					
+					if(proceedWithOut) { //dodaj / usuń brakujące meta-łuki
+						//łuki prowadzące Z metanode
+						if(outInterfaceLinks > outMetaArcs.size()) {
+							//szukaj choć jednego EL z sieci gdzie jest metanode:
+							ElementLocation pattern = null;
+							for(ElementLocation cand : parent.getElementLocations()) {
+								if(cand.getSheetID() == metaSheet) {
+									pattern = cand;
+									break;
+								}
+							}
+							
+							if(pattern != null) {  //czyli w ogóle ma sens dodawanie czegokolwiek...
+								addMissingOutMetaArcs(metaEL, pattern, outInterfaceLinks-outMetaArcs.size(), arcs);
+							}
+						} else if(outInterfaceLinks < outMetaArcs.size()) { // == nas nie interesuje
+							ArrayList<Arc> removeList = new ArrayList<Arc>();
+							for(int r=outMetaArcs.size()-1; r>=outInterfaceLinks; r--) {
+								removeList.add(outMetaArcs.get(r));
+							}
+							
+							for(Arc arc : removeList) {
+								arc.unlinkElementLocations();
+								arcs.remove(arc);
+							}
+							
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Metoda dodaje nowe meta-łuki DO metanode, wraz z nowymi portalami węzła okreslonego przez pattern (EL).
+	 * @param metanodeEL ElementLocation - metanode, końcowy
+	 * @param pattern ElementLocation - node, startowy
+	 * @param howMany int - ile nowych portali dodać wraz z łukami
+	 * @param arcs ArrayList[Arc] - lista łuków sieci
+	 */
+	private void addMissingInMetaArcs(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
+		Random gen = new Random(12345);
+		Node parent = pattern.getParentNode();
+		int sheetID = pattern.getSheetID();
+		Point refMetaPoint = metanodeEL.getPosition();
+		
+		for(int i=0; i<howMany; i++) {
+			ElementLocation nameEL = new ElementLocation(sheetID, new Point(0, 0), parent);
+			int newX = gen.nextInt(80) - 40; //dodajemy (lewo-prawo)
+			int newY = gen.nextInt(50); //odejmujemy (w górę)
+			Point point = new Point(refMetaPoint.x + newX, refMetaPoint.y - newY);
+			ElementLocation newPortalEL = new ElementLocation(sheetID, point, parent);
+			parent.setPortal(true);
+			parent.getElementLocations().add(newPortalEL);
+			parent.getNamesLocations().add(nameEL);
+			
+			Arc arc = new Arc(IdGenerator.getNextId(), newPortalEL, metanodeEL, TypesOfArcs.META_ARC);
+			//metanodeEL.accessMetaInArcs().add(arc);
+			//newPortalEL.accessMetaOutArcs().add(arc);
+			arcs.add(arc);
+		}
+	}
+	
+	/**
+	 * Metoda dodaje nowe meta-łuki Z metanode do nowych portalami węzła okreslonego przez pattern (EL).
+	 * @param metanodeEL ElementLocation - metanode, startowy
+	 * @param pattern ElementLocation - node, końcowy
+	 * @param howMany int - ile nowych portali dodać wraz z łukami
+	 * @param arcs ArrayList[Arc] - lista łuków sieci
+	 */
+	private void addMissingOutMetaArcs(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
+		Random gen = new Random(12345);
+		Node parent = pattern.getParentNode();
+		int sheetID = pattern.getSheetID();
+		Point refMetaPoint = metanodeEL.getPosition();
+		
+		for(int i=0; i<howMany; i++) {
+			ElementLocation nameEL = new ElementLocation(sheetID, new Point(0, 0), parent);
+			int newX = gen.nextInt(80) - 40; //dodajemy (lewo-prawo)
+			int newY = gen.nextInt(50); //dodajemy (w dół)
+			Point point = new Point(refMetaPoint.x + newX, refMetaPoint.y + newY);
+			ElementLocation newPortalEL = new ElementLocation(sheetID, point, parent);
+			parent.setPortal(true);
+			parent.getElementLocations().add(newPortalEL);
+			parent.getNamesLocations().add(nameEL);
+			
+			Arc arc = new Arc(IdGenerator.getNextId(), metanodeEL, newPortalEL, TypesOfArcs.META_ARC);
+			//newPortalEL.accessMetaInArcs().add(arc);
+			//metanodeEL.accessMetaOutArcs().add(arc);
+			arcs.add(arc);
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -144,7 +144,8 @@ public class Place extends Node {
 		if(name == null) {
 			return "(P)null";
 		} else {
-			return "(P)" + getName();
+			//return "(P)" + getName();
+			return "(P" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(this)+")";
 		}
 	}
 }

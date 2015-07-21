@@ -262,6 +262,10 @@ public class Workspace implements SelectionActionListener {
 		}
 		return index;
 	}
+	
+	public ArrayList<Integer> accessSheetsIDtable() {
+		return sheetsIDtable;
+	}
 
 	/**
 	 * Metoda zwraca tablicę zadokowanych elementów w Workspace.

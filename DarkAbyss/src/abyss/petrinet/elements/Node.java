@@ -24,7 +24,7 @@ public abstract class Node extends PetriNetElement {
 	private static final long serialVersionUID = -8569201372990876149L;
 	private ArrayList<ElementLocation> elementLocations = new ArrayList<ElementLocation>();
 	private ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
-	protected boolean isPortal = false;
+	private boolean isPortal = false;
 	private int radius = 20;
 	final static float dash1[] = { 2.0f };
 	final static BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
@@ -408,7 +408,17 @@ public abstract class Node extends PetriNetElement {
 	 * @return String - łańcuch znaków ID
 	 */
 	public String toString() {
-		String s = "ID: " + Integer.toString(this.getID());
+		String type = "";
+		if(this instanceof Place)
+			type = "(P)";
+		else if(this instanceof Transition)
+			type = "(T)";
+		else if(this instanceof MetaNode)
+			type = "(M)";
+		else
+			type = "(?)";
+		
+		String s = "ID: " + Integer.toString(this.getID())+type;
 		return s;
 	}
 

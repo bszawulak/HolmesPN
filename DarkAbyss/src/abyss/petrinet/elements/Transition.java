@@ -415,19 +415,6 @@ public class Transition extends Node {
 	}
 	
 	/**
-	 * Metoda zamieniająca dane o krawędzi sieci na łańcuch znaków.
-	 * @return String - łańcuch znaków
-	 */
-	public String toString() {
-		String name =  getName();
-		if(name == null) {
-			return "(T)null";
-		} else {
-			return "(T)" + getName();
-		}
-	}
-	
-	/**
 	 * Metoda ustawia podtyp tranzycji.
 	 * @param tt TransitionType - podtyp
 	 */
@@ -628,5 +615,19 @@ public class Transition extends Node {
 	 */
 	public boolean getDPNstatus() {
 		return DPNactive;
+	}
+	
+	/**
+	 * Metoda zamieniająca dane o krawędzi sieci na łańcuch znaków.
+	 * @return String - łańcuch znaków
+	 */
+	public String toString() {
+		String name =  getName();
+		if(name == null) {
+			return "(T)null";
+		} else {
+			//return "(T)" + getName();
+			return "(T" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(this)+")";
+		}
 	}
 }
