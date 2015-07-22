@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.MetaNode;
-import abyss.petrinet.elements.MetaNode.MetaType;
-import abyss.petrinet.elements.Transition;
 import abyss.varia.NetworkTransformations;
 
 /**
@@ -29,9 +27,7 @@ public class SnoopyWriterCoarse {
 	 	// obliczane są identyfikatory II typu dla... wszystkiego
 	/** Małe ID, lokalizacje artybutów, wskazują na odpowiednie duże ID z  grParents */
 	public ArrayList<Point> grParentsLocation; // lokalizacje powyższych, więcej niż 1 dla portali
-	
-	private MetaType coarseType;
-	
+
 	/**
 	 * Konstruktor domyślny obiektu klasy SnoopyWriterCoarse.
 	 */
@@ -47,7 +43,7 @@ public class SnoopyWriterCoarse {
 	public SnoopyWriterCoarse(MetaNode m) {
 		this();
 		coarseNode = m;
-		coarseType = coarseNode.getMetaType();
+		//coarseType = coarseNode.getMetaType();
 	}
 	
 	/**
