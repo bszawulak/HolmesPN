@@ -62,8 +62,12 @@ public class SnoopyWriterPlace {
 		int xOff = 25;
 		int yOff = 25;
 		
+		ArrayList<Integer> locationsSheetID = new ArrayList<Integer>();
+		int netMainID = 0;
 		//sprawdź, ile jest lokalizacji (portal check)
 		for(ElementLocation el : abyssPlace.getElementLocations()) {
+			locationsSheetID.add(el.getSheetID() + 1);
+			
 			if(locations == 1) { //główny węzeł
 				currID += 10;
 			} else if (locations == 2){ //pierwsze miejsce logiczne
@@ -82,19 +86,28 @@ public class SnoopyWriterPlace {
 			grParentsLocation.add(pxy);
 			locations++;
 		}
+		//!!!!!!!!!!:
+		for(int x : locationsSheetID) {
+			if(x==1) {//jest gdzieś w głównej sieci
+				netMainID = 1;
+			}
+		}
+		if(netMainID == 0)
+			netMainID = locationsSheetID.get(0);
+				
 		//powyższa pętla jest ściśle związana z szukaniem danych łuków w SnoopyWriter
 		//łapy precz od niej! I od właściwie czegokolwiek w tej metodzie/klasie!
 		
 		locations--; //odjąć ostatnie dodawanie
 		currID = snoopyStartingID; //226
 		if(locations == 1) 
-			write(bw, "      <node id=\"" + currID + "\" net=\"1\">");
+			write(bw, "      <node id=\"" + currID + "\" net=\""+netMainID+"\">");
 		else
-			write(bw, "      <node id=\"" + currID + "\" net=\"1\" logic=\"1\">");
+			write(bw, "      <node id=\"" + currID + "\" net=\""+netMainID+"\" logic=\"1\">");
 		currID++; //teraz: 227
 		
 		// SEKCJA NAZW MIEJSC - ID, lokalizacje, inne
-		write(bw, "        <attribute name=\"Name\" id=\""+currID+"\" net=\"1\">"); //226
+		write(bw, "        <attribute name=\"Name\" id=\""+currID+"\" net=\""+netMainID+"\">"); //226
 		currID++; //teraz: 228
 		write(bw, "          <![CDATA[" + abyssPlace.getName() + "]]>");
 		write(bw,"          <graphics count=\"" + locations + "\">"); //ile logicznych
@@ -110,13 +123,15 @@ public class SnoopyWriterPlace {
 				write(bw,"            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
 						+ " x=\""+(grParentsLocation.get(i).x+xOff)+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+currID+"\""
-						+ " net=\"1\" show=\"1\" grparent=\""+grParents.get(i)+"\" state=\"1\""
+						+ " net=\""+locationsSheetID.get(i)+"\" show=\"1\" grparent=\""
+						+ grParents.get(i)+"\" state=\"1\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 			} else { // dla logicznych
 				write(bw,"            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
 						+ " x=\""+(grParentsLocation.get(i).x+xOff)+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+(grParents.get(i)-4)+"\""
-						+ " net=\"1\" show=\"1\" grparent=\""+grParents.get(i)+"\" state=\"1\""
+						+ " net=\""+locationsSheetID.get(i)+"\" show=\"1\" grparent=\""
+						+ grParents.get(i)+"\" state=\"1\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 			}
 		}
@@ -127,7 +142,7 @@ public class SnoopyWriterPlace {
 		//SEKCJA WYŚWIETLANYCH IDENTYFIKATORÓW, ODDZIELNIE DLA KAŻDEGO PORTALU
 		//I NAPRAWDĘ NIEWAŻNE, ŻE TE ID SĄ DLA NICH IDENTYCZNE. JESTEŚMY W ŚWIECIE
 		//TWÓRCÓW SNOOPIEGO
-		write(bw, "        <attribute name=\"ID\" id=\"" + currID + "\" net=\"1\">");
+		write(bw, "        <attribute name=\"ID\" id=\"" + currID + "\" net=\""+netMainID+"\">");
 		currID++; //teraz: 230
 		write(bw, "          <![CDATA[" + globalPlaceID + "]]>"); //ID OD ZERA W GÓRĘ
 		write(bw, "          <graphics count=\"" + locations + "\">");
@@ -138,13 +153,15 @@ public class SnoopyWriterPlace {
 				write(bw,"            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
 						+ " x=\""+(grParentsLocation.get(i).x+xOff)+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+currID+"\""
-						+ " net=\"1\" show=\"0\" grparent=\""+grParents.get(i)+"\" state=\"1\""
+						+ " net=\""+locationsSheetID.get(i)+"\" show=\"0\" grparent=\""
+						+ grParents.get(i)+"\" state=\"1\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 			} else { // dla logicznych
 				write(bw,"            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
 						+ " x=\""+(grParentsLocation.get(i).x+xOff)+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+(grParents.get(i)-3)+"\""
-						+ " net=\"1\" show=\"0\" grparent=\""+grParents.get(i)+"\" state=\"1\""
+						+ " net=\""+locationsSheetID.get(i)+"\" show=\"0\" grparent=\""
+						+ grParents.get(i)+"\" state=\"1\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 			}
 		}
@@ -153,7 +170,7 @@ public class SnoopyWriterPlace {
 		write(bw, "        </attribute>");
 		
 		//SEKCJA TOKENÓW W MIEJSCU/MIEJSACH LOGICZNYCH. KOMENTARZ JAK WYŻEJ, TYLKO BARDZIEJ ABSURDALNIE.
-		write(bw, "        <attribute name=\"Marking\" id=\"" + currID + "\" net=\"1\">");
+		write(bw, "        <attribute name=\"Marking\" id=\"" + currID + "\" net=\""+netMainID+"\">");
 		currID++; //teraz: 232
 		int tokens = abyssPlace.getTokensNumber();
 		write(bw, "          <![CDATA["+tokens+"]]>");
@@ -162,13 +179,14 @@ public class SnoopyWriterPlace {
 			if(i==0) {//tylko główne miejsce
 				write(bw,"            <graphic x=\""+grParentsLocation.get(i).x+".00\""
 					+ " y=\""+grParentsLocation.get(i).y+".00\""
-					+ " id=\""+currID+"\" net=\"1\" show=\"1\" grparent=\""+grParents.get(i)+"\""
+					+ " id=\""+currID+"\" net=\""+locationsSheetID.get(i)+"\" show=\"1\" grparent=\""+grParents.get(i)+"\""
 					+ " state=\"1\" pen=\"0,0,0\" brush=\"255,255,255\"/>");
 				//currID = grParent(i) - 4
 			} else { // dla logicznych
 				write(bw,"            <graphic x=\""+grParentsLocation.get(i).x+".00\""
 						+ " y=\""+grParentsLocation.get(i).y+".00\""
-						+ " id=\""+(grParents.get(i)-2)+"\" net=\"1\" show=\"1\" grparent=\""+grParents.get(i)+"\""
+						+ " id=\""+(grParents.get(i)-2)+"\" net=\""+locationsSheetID.get(i)+"\" show=\"1\" grparent=\""
+						+ grParents.get(i)+"\""
 						+ " state=\"1\" pen=\"0,0,0\" brush=\"255,255,255\"/>");
 			}
 		}
@@ -177,8 +195,8 @@ public class SnoopyWriterPlace {
 		write(bw, "        </attribute>");
 		
 		//CZY MIEJSCE JEST PORTALEM:
-		write(bw, "        <attribute name=\"Logic\" id=\""+currID+"\" net=\"1\">");
-		currID++; //teraz: 234
+		write(bw, "        <attribute name=\"Logic\" id=\""+currID+"\" net=\""+netMainID+"\">");
+		
 		if(locations == 1)
 			write(bw, "          <![CDATA[0]]>"); //zwykłe, plebejskie miejsce
 		else
@@ -187,7 +205,8 @@ public class SnoopyWriterPlace {
 		write(bw, "        </attribute>");
 		
 		//SEKCJA KOMENTARZA. KOMENTARZY... TO ZNACZY JEDNEGO, ALE DLA KAŻDEGO PORTALU... OH, FUCK IT...
-		write(bw, "        <attribute name=\"Comment\" id=\"" + currID + "\" net=\"1\">");
+		currID++; //teraz: 234
+		write(bw, "        <attribute name=\"Comment\" id=\"" + currID + "\" net=\""+netMainID+"\">");
 		currID++; //teraz: 235
 		write(bw, "          <![CDATA[" + abyssPlace.getComment() + "]]>"); //achtung enters!
 		write(bw, "          <graphics count=\"" + locations + "\">"); //do liczby portali liczyć będziesz,
@@ -199,7 +218,7 @@ public class SnoopyWriterPlace {
 				write(bw, "            <graphic yoff=\""+yOff+".00\""
 						+ " x=\""+grParentsLocation.get(i).x+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\""
-						+ " id=\"" + currID + "\" net=\"1\" show=\"0\"" //!!!!
+						+ " id=\"" + currID + "\" net=\""+locationsSheetID.get(i)+"\" show=\"0\"" //!!!!
 						+ " grparent=\"" + grParents.get(i) + "\" state=\"1\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 				//currID = grParent(i) - 1
@@ -207,31 +226,31 @@ public class SnoopyWriterPlace {
 				write(bw, "            <graphic yoff=\""+yOff+".00\""
 						+ " x=\""+grParentsLocation.get(i).x+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\""
-						+ " id=\"" + (grParents.get(i)-1) + "\" net=\"1\" show=\"0\"" //!!!!
+						+ " id=\"" + (grParents.get(i)-1) + "\" net=\""+locationsSheetID.get(i)+"\" show=\"0\"" //!!!!
 						+ " grparent=\"" + grParents.get(i) + "\" state=\"1\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 			}
 		}
-		currID++; //236 == grParent(0)
+		
 		write(bw, "          </graphics>");
 		write(bw, "        </attribute>");
+		currID++; //236 == grParent(0)
 		
 		//SEKCJA WYŚWIETLANIA MIEJSCA I JEGO KOPII. TAK JAKBYŚMY JUŻ REDUNDATNIE NIE WYŚWIETLILI
 		//JEGO ELEMENTÓW NIE WIADOMO ILE RAZY...
 		write(bw, "        <graphics count=\""+locations+"\">");
 		
 		if(currID != grParents.get(0)) {
-			GUIManager.getDefaultGUIManager().log("CATASTROPHIC ERROR WRITING SPPED FILE. RUN.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Critical error while writing Snoopy file. ID's don't match.", "error", true);
 		}
 		
 		for(int i=0; i<locations; i++) { 
 			write(bw, "          <graphic x=\""+grParentsLocation.get(i).x+".00\""
 						+ " y=\""+grParentsLocation.get(i).y+".00\""
-						+ " id=\""+grParents.get(i)+"\" net=\"1\""
+						+ " id=\""+grParents.get(i)+"\" net=\""+locationsSheetID.get(i)+"\""
 						+ " show=\"1\" w=\"20.00\" h=\"20.00\" state=\"1\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 		}
-		
 		write(bw,"        </graphics>");
 		write(bw, "      </node>");
 		

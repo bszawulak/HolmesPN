@@ -31,17 +31,19 @@ public class SnoopyWriter {
 	private ArrayList<Place> places = new ArrayList<Place>();
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
 	private ArrayList<MetaNode> metanodes = new ArrayList<MetaNode>();
+	private ArrayList<Arc> arcs;
 	private ArrayList<MetaNode> coarsePlaces = new ArrayList<MetaNode>();
 	private ArrayList<MetaNode> coarseTransitions = new ArrayList<MetaNode>();
 	
-	private ArrayList<SnoopyWriterPlace> snoopyPlaces = new ArrayList<SnoopyWriterPlace>();
-	private ArrayList<Integer> snoopyPlacesID = new ArrayList<Integer>();
-	private ArrayList<SnoopyWriterTransition> snoopyTransitions = new ArrayList<SnoopyWriterTransition>();
-	private ArrayList<Integer> snoopyTransitionsID = new ArrayList<Integer>();
-	private ArrayList<SnoopyWriterCoarse> snoopyCoarsePlaces = new ArrayList<SnoopyWriterCoarse>();
-	private ArrayList<Integer> snoopyCoarsePlacesID = new ArrayList<Integer>();
-	private ArrayList<SnoopyWriterCoarse> snoopyCoarseTransitions = new ArrayList<SnoopyWriterCoarse>();
-	private ArrayList<Integer> snoopyCoarseTransitionsID = new ArrayList<Integer>();
+	private ArrayList<SnoopyWriterPlace> snoopyWriterPlaces = new ArrayList<SnoopyWriterPlace>();
+	
+	private ArrayList<Integer> abyssPlacesID = new ArrayList<Integer>();
+	private ArrayList<SnoopyWriterTransition> snoopyWriterTransitions = new ArrayList<SnoopyWriterTransition>();
+	private ArrayList<Integer> abyssTransitionsID = new ArrayList<Integer>();
+	private ArrayList<SnoopyWriterCoarse> snoopyWriterCoarsePlaces = new ArrayList<SnoopyWriterCoarse>();
+	private ArrayList<Integer> abyssCoarsePlacesID = new ArrayList<Integer>();
+	private ArrayList<SnoopyWriterCoarse> snoopyWriterCoarseTransitions = new ArrayList<SnoopyWriterCoarse>();
+	private ArrayList<Integer> abyssCoarseTransitionsID = new ArrayList<Integer>();
 	
 	
 	private String dateAndTime = "2015-01-02 10:44:56";
@@ -59,11 +61,13 @@ public class SnoopyWriter {
 			if(meta.getMetaType() == MetaType.SUBNETTRANS)
 				coarseTransitions.add(meta);
 		}
+		
+		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs(); 
 
-		snoopyPlaces = new ArrayList<SnoopyWriterPlace>();
-		snoopyTransitions = new ArrayList<SnoopyWriterTransition>();
-		snoopyCoarsePlaces = new ArrayList<SnoopyWriterCoarse>();
-		snoopyCoarseTransitions = new ArrayList<SnoopyWriterCoarse>();
+		snoopyWriterPlaces = new ArrayList<SnoopyWriterPlace>();
+		snoopyWriterTransitions = new ArrayList<SnoopyWriterTransition>();
+		snoopyWriterCoarsePlaces = new ArrayList<SnoopyWriterCoarse>();
+		snoopyWriterCoarseTransitions = new ArrayList<SnoopyWriterCoarse>();
 	}
 	
 	/**
@@ -74,7 +78,7 @@ public class SnoopyWriter {
 	public boolean writeSPPED(String filePath) {
 		boolean status = GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility();
 		if(!status) {
-			return false;
+			//return false;
 		}
 		
 		int startNodeId = 226; // bo tak
@@ -98,8 +102,8 @@ public class SnoopyWriter {
 			int globalPlaceId = 0;
 			for(Place p : places) {
 				SnoopyWriterPlace sPlace = new SnoopyWriterPlace(p);
-				snoopyPlaces.add(sPlace);
-				snoopyPlacesID.add(p.getID());
+				snoopyWriterPlaces.add(sPlace);
+				abyssPlacesID.add(p.getID());
 				
 				ArrayList<ElementLocation> clones = p.getElementLocations();
 				for(ElementLocation el : clones) {
@@ -124,8 +128,8 @@ public class SnoopyWriter {
 			int globalTransId = 0;
 			for(Transition t : transitions) {
 				SnoopyWriterTransition sTransition = new SnoopyWriterTransition(t);
-				snoopyTransitions.add(sTransition);
-				snoopyTransitionsID.add(t.getID());
+				snoopyWriterTransitions.add(sTransition);
+				abyssTransitionsID.add(t.getID());
 				
 				ArrayList<ElementLocation> clones = t.getElementLocations();
 				for(ElementLocation el : clones) {
@@ -140,16 +144,55 @@ public class SnoopyWriter {
 			
 			//TEGO NA RAZIE NIE RUSZAMY (DA BÓG: NIGDY)
 			//21-07-2015 you wish...
+			boolean weAreInDeepShit = false;
 			if(coarsePlaces.size() == 0) {
 				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
 			} else {
-				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
+				int coarsePnumber = coarsePlaces.size();
+				write(bw, "    <nodeclass count=\""+coarsePnumber+"\" name=\"Coarse Place\">");
+				int globalCoarsePlaceId = 0;
+				weAreInDeepShit = true;
+				for(MetaNode m : coarsePlaces) {
+					SnoopyWriterCoarse sCoarseP = new SnoopyWriterCoarse(m);
+					snoopyWriterCoarsePlaces.add(sCoarseP);
+					abyssCoarsePlacesID.add(m.getID());
+					
+					ArrayList<ElementLocation> clones = m.getElementLocations();
+					for(ElementLocation el : clones) {
+						arcsNumber += el.accessMetaInArcs().size();
+						arcsNumber += el.accessMetaOutArcs().size();
+					}
+					
+					currentActiveID = sCoarseP.writeMetaNodeInfoToFile(bw, currentActiveID, globalCoarsePlaceId);
+					currentActiveID ++;
+					globalCoarsePlaceId++;
+				}
+				write(bw, "    </nodeclass>");
 			}
 			
 			if(coarseTransitions.size() == 0) {
 				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
 			} else {
-				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
+				int coarsePnumber = coarsePlaces.size();
+				write(bw, "    <nodeclass count=\""+coarsePnumber+"\" name=\"Coarse Place\">");
+				int globalCoarsePlaceId = 0;
+				weAreInDeepShit = true;
+				for(MetaNode m : coarsePlaces) {
+					SnoopyWriterCoarse sCoarseP = new SnoopyWriterCoarse(m);
+					snoopyWriterCoarseTransitions.add(sCoarseP);
+					abyssCoarsePlacesID.add(m.getID());
+					
+					ArrayList<ElementLocation> clones = m.getElementLocations();
+					for(ElementLocation el : clones) {
+						arcsNumber += el.accessMetaInArcs().size();
+						arcsNumber += el.accessMetaOutArcs().size();
+					}
+					
+					currentActiveID = sCoarseP.writeMetaNodeInfoToFile(bw, currentActiveID, globalCoarsePlaceId);
+					currentActiveID ++;
+					globalCoarsePlaceId++;
+				}
+				write(bw, "    </nodeclass>");
 			}
 			
 			write(bw, "  </nodeclasses>");
@@ -157,7 +200,10 @@ public class SnoopyWriter {
 			//ŁUKI:
 			write(bw, "  <edgeclasses count=\"1\">");
 			write(bw, "    <edgeclass count=\"" + arcsNumber + "\" name=\"Edge\">");
-			addArcInfo(bw, currentActiveID);
+			if(weAreInDeepShit)
+				addArcsAndCoarseToFile(bw, currentActiveID);
+			else
+				addArcsToFile(bw, currentActiveID);
 			write(bw, "    </edgeclass>");
 			write(bw, "  </edgeclasses>");
 			
@@ -199,17 +245,11 @@ public class SnoopyWriter {
 			int globalPlaceId = 0;
 			for(Place p : places) {
 				SnoopyWriterPlace sPlace = new SnoopyWriterPlace(p);
-				snoopyPlaces.add(sPlace);
-				snoopyPlacesID.add(p.getID());
-				
-				//ArrayList<ElementLocation> clones = p.getElementLocations();
-				//for(ElementLocation el : clones) {
-				//	arcsNumber += el.getOutArcs().size(); //pobież wszystkie wychodzące
-				//}
-				
+				snoopyWriterPlaces.add(sPlace);
+				abyssPlacesID.add(p.getID());
 				currentActiveID = sPlace.writePlaceInfoToFile(bw, currentActiveID, globalPlaceId);
 				if(sPlace.portal == true) { //jeśli właśnie dodane było portalem
-					currentActiveID += 13; //bo tak, 13, pytajcie w Brandenburgu 'a a a czymuuu?' Nie ja pisałem Snoopiego.
+					currentActiveID += 13; //bo tak, 13, pytajcie w Brandenburgu 'a czymuuu?' Nie ja pisałem Snoopiego.
 				} else {
 					currentActiveID ++;
 				}
@@ -224,14 +264,8 @@ public class SnoopyWriter {
 			int globalTransId = 0;
 			for(Transition t : transitions) {
 				SnoopyWriterTransition sTransition = new SnoopyWriterTransition(t);
-				snoopyTransitions.add(sTransition);
-				snoopyTransitionsID.add(t.getID());
-				
-				//ArrayList<ElementLocation> clones = t.getElementLocations();
-				//for(ElementLocation el : clones) {
-				//	arcsNumber += el.getOutArcs().size(); //pobież wszystkie wychodzące
-				//}
-
+				snoopyWriterTransitions.add(sTransition);
+				abyssTransitionsID.add(t.getID());
 				currentActiveID = sTransition.writeTransitionInfoToFile(bw, currentActiveID, globalTransId);
 				currentActiveID ++;
 				globalTransId++;
@@ -239,8 +273,43 @@ public class SnoopyWriter {
 			write(bw, "    </nodeclass>");
 			
 			//TEGO NA RAZIE NIE RUSZAMY (DA BÓG: NIGDY)
-			write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
-			write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
+			boolean weAreInDeepShit = false;
+			if(coarsePlaces.size() == 0) {
+				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
+			} else {
+				int coarsePnumber = coarsePlaces.size();
+				write(bw, "    <nodeclass count=\""+coarsePnumber+"\" name=\"Coarse Place\">");
+				int globalCoarsePlaceId = 0;
+				weAreInDeepShit = true;
+				for(MetaNode m : coarsePlaces) {
+					SnoopyWriterCoarse sCoarseP = new SnoopyWriterCoarse(m);
+					snoopyWriterCoarsePlaces.add(sCoarseP);
+					abyssCoarsePlacesID.add(m.getID());		
+					currentActiveID = sCoarseP.writeMetaNodeInfoToFile(bw, currentActiveID, globalCoarsePlaceId);
+					currentActiveID ++;
+					globalCoarsePlaceId++;
+				}
+				write(bw, "    </nodeclass>");
+			}
+			
+			if(coarseTransitions.size() == 0) {
+				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
+			} else {
+				int coarseTnumber = coarseTransitions.size();
+				write(bw, "    <nodeclass count=\""+coarseTnumber+"\" name=\"Coarse Transition\">");
+				int globalCoarseTransitionId = 0;
+				weAreInDeepShit = true;
+				for(MetaNode m : coarseTransitions) {
+					SnoopyWriterCoarse sCoarseT = new SnoopyWriterCoarse(m);
+					snoopyWriterCoarseTransitions.add(sCoarseT);
+					abyssCoarseTransitionsID.add(m.getID());
+					currentActiveID = sCoarseT.writeMetaNodeInfoToFile(bw, currentActiveID, globalCoarseTransitionId);
+					currentActiveID ++;
+					globalCoarseTransitionId++;
+				}
+				write(bw, "    </nodeclass>");
+			}
+			
 			write(bw, "  </nodeclasses>");
 			
 			//ŁUKI:
@@ -251,7 +320,10 @@ public class SnoopyWriter {
 				write(bw, "    <edgeclass count=\"0\" name=\"Edge\">");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(0) + "\" name=\"Edge\">");
-				currentActiveID = addArcInfoExtended(bw, currentActiveID, TypesOfArcs.NORMAL, arcClasses.get(0));
+				if(weAreInDeepShit)
+					currentActiveID = addArcsAndCoarsesInfoExtended(bw, currentActiveID, TypesOfArcs.NORMAL, arcClasses.get(0));
+				else
+					currentActiveID = addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.NORMAL, arcClasses.get(0));
 				write(bw, "    </edgeclass>");
 			}
 		
@@ -259,7 +331,10 @@ public class SnoopyWriter {
 				write(bw, "    <edgeclass count=\"0\" name=\"Read Edge\">");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(1) + "\" name=\"Read Edge\">");
-				currentActiveID = addArcInfoExtended(bw, currentActiveID, TypesOfArcs.READARC, arcClasses.get(1));
+				if(weAreInDeepShit)
+					currentActiveID = addArcsAndCoarsesInfoExtended(bw, currentActiveID, TypesOfArcs.READARC, arcClasses.get(0));
+				else
+					currentActiveID = addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.READARC, arcClasses.get(1));
 				write(bw, "    </edgeclass>");
 			}
 			
@@ -267,7 +342,10 @@ public class SnoopyWriter {
 				write(bw, "    <edgeclass count=\"0\" name=\"Inhibitor Edge\">");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(2) + "\" name=\"Inhibitor Edge\">");
-				currentActiveID = addArcInfoExtended(bw, currentActiveID, TypesOfArcs.INHIBITOR, arcClasses.get(2));
+				if(weAreInDeepShit)
+					currentActiveID = addArcsAndCoarsesInfoExtended(bw, currentActiveID, TypesOfArcs.INHIBITOR, arcClasses.get(0));
+				else
+					currentActiveID = addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.INHIBITOR, arcClasses.get(2));
 				write(bw, "    </edgeclass>");
 			}
 			
@@ -275,7 +353,10 @@ public class SnoopyWriter {
 				write(bw, "    <edgeclass count=\"0\" name=\"Reset Edge\">");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(3) + "\" name=\"Reset Edge\">");
-				currentActiveID = addArcInfoExtended(bw, currentActiveID, TypesOfArcs.RESET, arcClasses.get(3));
+				if(weAreInDeepShit)
+					currentActiveID = addArcsAndCoarsesInfoExtended(bw, currentActiveID, TypesOfArcs.RESET, arcClasses.get(0));
+				else
+					currentActiveID = addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.RESET, arcClasses.get(3));
 				write(bw, "    </edgeclass>");
 			}
 			
@@ -283,7 +364,10 @@ public class SnoopyWriter {
 				write(bw, "    <edgeclass count=\"0\" name=\"Equal Edge\">");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(4) + "\" name=\"Equal Edge\">");
-				currentActiveID = addArcInfoExtended(bw, currentActiveID, TypesOfArcs.EQUAL, arcClasses.get(4));
+				if(weAreInDeepShit)
+					currentActiveID = addArcsAndCoarsesInfoExtended(bw, currentActiveID, TypesOfArcs.EQUAL, arcClasses.get(0));
+				else
+					currentActiveID = addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.EQUAL, arcClasses.get(4));
 				write(bw, "    </edgeclass>");
 			}
 			
@@ -312,7 +396,7 @@ public class SnoopyWriter {
 	 * @param bw BufferedWriter - obiekt zapisujący
 	 * @param currentActiveID int - od tego ID zaczynamy dodawać łuki
 	 */
-	private void addArcInfo(BufferedWriter bw, int currentActiveID) {
+	private void addArcsToFile(BufferedWriter bw, int currentActiveID) {
 		int howMany = 0;
 		int nextID = currentActiveID;
 		//int iteracja = 0;
@@ -339,13 +423,13 @@ public class SnoopyWriter {
 						
 						//sourceAbyss == p
 						
-						int addToSPPEDAsSource = snoopyPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
+						int addToSPPEDAsSource = abyssPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
 						if(addToSPPEDAsSource == -1) {
 							@SuppressWarnings("unused")
 							int WTF= 1; //!!! IMPOSSIBRU!!!!
 							return;
 						}
-						SnoopyWriterPlace source = snoopyPlaces.get(addToSPPEDAsSource);
+						SnoopyWriterPlace source = snoopyWriterPlaces.get(addToSPPEDAsSource);
 						int nodeSourceID = source.snoopyStartingID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
@@ -353,8 +437,8 @@ public class SnoopyWriter {
 						
 						
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
-						int addToSPPEDAsTarget = snoopyTransitionsID.lastIndexOf(targetAbyss.getID());
-						SnoopyWriterTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
+						int addToSPPEDAsTarget = abyssTransitionsID.lastIndexOf(targetAbyss.getID());
+						SnoopyWriterTransition target = snoopyWriterTransitions.get(addToSPPEDAsTarget);
 						//teraz należy określić do której lokalizacji portalu trafia łuk
 						
 						ElementLocation destinationLoc = a.getEndLocation();
@@ -455,13 +539,13 @@ public class SnoopyWriter {
 						
 						//sourceAbyss == t
 						
-						int addToSPPEDAsSource = snoopyTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
+						int addToSPPEDAsSource = abyssTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
 						if(addToSPPEDAsSource == -1) {
 							@SuppressWarnings("unused")
 							int WTF= 1; //!!! IMPOSSIBRU!!!!
 							return;
 						}
-						SnoopyWriterTransition source = snoopyTransitions.get(addToSPPEDAsSource);
+						SnoopyWriterTransition source = snoopyWriterTransitions.get(addToSPPEDAsSource);
 						int nodeSourceID = source.snoopyStartingID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
@@ -469,8 +553,8 @@ public class SnoopyWriter {
 						
 						
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
-						int addToSPPEDAsTarget = snoopyPlacesID.lastIndexOf(targetAbyss.getID());
-						SnoopyWriterPlace target = snoopyPlaces.get(addToSPPEDAsTarget);
+						int addToSPPEDAsTarget = abyssPlacesID.lastIndexOf(targetAbyss.getID());
+						SnoopyWriterPlace target = snoopyWriterPlaces.get(addToSPPEDAsTarget);
 						//teraz należy określi do której lokalizacji portalu trafia łuk
 						
 						ElementLocation destinationLoc = a.getEndLocation();
@@ -564,8 +648,296 @@ public class SnoopyWriter {
 						+ "authors of the program.", "error", true);
 		}
 	}
+	
+	//TODO:
+	private void addArcsAndCoarseToFile(BufferedWriter bw, int currentActiveID) {
+		int howMany = 0;
+		int nextID = currentActiveID;
+		int xOff = 0;
+		
+		ArrayList<Arc> normalArcs = new ArrayList<Arc>();
+		ArrayList<Arc> metaArcs = new ArrayList<Arc>();
+		
+		for(Arc arc : arcs) {
+			if(arc.getArcType() == TypesOfArcs.META_ARC)
+				metaArcs.add(arc);
+			else
+				normalArcs.add(arc);
+		}
+		
+		for(Arc arc : normalArcs) {
+			Node startN = arc.getStartNode();
+			Node endN = arc.getEndNode();
+			
+			
+			
+			
+		}
+		
+		
+		for(Place p : places) { //najpierw wyjściowe z miejsc
+			
+			boolean isPortal = p.isPortal();
+			boolean isInterface = false;
+			ArrayList<Integer> inWhatSubnets = new ArrayList<Integer>();
+			if(isPortal) {
+				for(ElementLocation el : p.getElementLocations()) {
+					int sh = el.getSheetID();
+					if(!inWhatSubnets.contains(sh))
+						inWhatSubnets.add(sh);
+				}
+				if(inWhatSubnets.size() > 1)
+					isInterface = true;
+				
+				
+				
+				
+			}
+			
+			
+			
+			
+			int location = -1;
+			for(ElementLocation el : p.getElementLocations()) { // dla wszystkich jego lokalizacji
+				location++; // która faktycznie to jest, jeśli przetwarzamy portal
+				
+				ArrayList<Arc> outArcs = el.getOutArcs(); //pobież listę łuków wyjściowych (portalu)
+				
+				//kolekcjonowanie danych:
+				for(Arc a : outArcs) { //dla każdego łuku
+					try {
+						int weight = a.getWeight(); //waga łuku
+						String comment = a.getComment();
+						int grParent = currentActiveID + 5;
+						
+						Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss
+						Node sourceAbyss = a.getStartNode(); //stąd wychodzi, przy czym należy okreslić, do której lokalizacji
+						
+						int addToSPPEDAsSource = abyssPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
+						SnoopyWriterPlace source = snoopyWriterPlaces.get(addToSPPEDAsSource);
+						int nodeSourceID = source.snoopyStartingID;
+						int realSourceID = source.grParents.get(location); //k
+						int realSourceX = source.grParentsLocation.get(location).x;
+						int realSourceY = source.grParentsLocation.get(location).y;
+						
+						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
+						int addToSPPEDAsTarget = abyssTransitionsID.lastIndexOf(targetAbyss.getID());
+						SnoopyWriterTransition target = snoopyWriterTransitions.get(addToSPPEDAsTarget);
+						//teraz należy określić do której lokalizacji portalu trafia łuk
+						
+						ElementLocation destinationLoc = a.getEndLocation();
+						int counter = -1;
+						for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
+							counter++;
+							//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+							//jeśli to: to i tak skończy się na 1 iteracji
+							if(whichOne.equals(destinationLoc)) {
+								break; //w counter mamy wtedy nr
+							}
+						}
+						int nodeTargetID = target.snoopyStartingID;
+						int realTargetID = target.grParents.get(counter); 
+						int realTargetX = target.grParentsLocation.get(counter).x;
+						int realTargetY = target.grParentsLocation.get(counter).y;
+						
+						int halfX = (realTargetX + realSourceX) / 2;
+						int halfY = (realTargetY + realSourceY) / 2;
+						
+						//tutaj wchodzą główne numery główne:
+						write(bw, "      <edge source=\""+nodeSourceID+"\""
+								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //444
+						write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //445
+						write(bw, "          <![CDATA["+weight+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 20;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //446
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //447
+						write(bw, "          <![CDATA["+comment+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 40;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //448 == grParent
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <graphics count=\"1\">");
+						
+						//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
+						write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
+								+ " source=\""+realSourceID+"\""
+								+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
+								+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
+						
+						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+						write(bw, "            <points count=\"2\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						write(bw, "            </points>");
+						write(bw, "          </graphic>");
+						write(bw, "        </graphics>");
+						write(bw, "      </edge>");
+						
+						howMany++;
+					} catch (Exception e) {
+						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+								+ a.getEndNode().getName(), "error", true);
+					}
+				}
+				
+			} //dla wszystkich lokalizacji
+			//iteracja++;
+		} //dla wszystkich miejsc
+		
+		//teraz wszystkie wychodzące z tranzycji:
+		for(Transition t : transitions) { //najpierw wyjściowe z tranzycji
+			int location = -1;
+			for(ElementLocation el : t.getElementLocations()) { // dla wszystkich jego lokalizacji
+				location++; // która faktycznie to jest, jeśli trafiliśmy w portal
+				ArrayList<Arc> outArcs = el.getOutArcs(); //pobież listę łuków wyjściowych (portalu)
+				
+				//kolekcjonowanie danych:
+				for(Arc a : outArcs) { //dla każdego łuku
+					try {
+						int weight = a.getWeight(); //waga łuku
+						String comment = a.getComment();
+						int grParent = currentActiveID + 5;
+						
+						Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss (w miejsce)
+						Node sourceAbyss = a.getStartNode(); //stąd wychodzi (tranzycja)
+						//przy czym należy okreslić, do której lokalizacji
+						
+						//sourceAbyss == t
+						
+						int addToSPPEDAsSource = abyssTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
+						if(addToSPPEDAsSource == -1) {
+							@SuppressWarnings("unused")
+							int WTF= 1; //!!! IMPOSSIBRU!!!!
+							return;
+						}
+						SnoopyWriterTransition source = snoopyWriterTransitions.get(addToSPPEDAsSource);
+						int nodeSourceID = source.snoopyStartingID;
+						int realSourceID = source.grParents.get(location); //k
+						int realSourceX = source.grParentsLocation.get(location).x;
+						int realSourceY = source.grParentsLocation.get(location).y;
+						
+						
+						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
+						int addToSPPEDAsTarget = abyssPlacesID.lastIndexOf(targetAbyss.getID());
+						SnoopyWriterPlace target = snoopyWriterPlaces.get(addToSPPEDAsTarget);
+						//teraz należy określi do której lokalizacji portalu trafia łuk
+						
+						ElementLocation destinationLoc = a.getEndLocation();
+						int counter = -1;
+						for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
+							counter++;
+							//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+							//jeśli to: to i tak skończy się na 1 iteracji
+							if(whichOne.equals(destinationLoc)) {
+								break; //w counter mamy wtedy nr
+							}
+						}
+						int nodeTargetID = target.snoopyStartingID;
+						int realTargetID = target.grParents.get(counter); 
+						int realTargetX = target.grParentsLocation.get(counter).x;
+						int realTargetY = target.grParentsLocation.get(counter).y;
+						
+						int halfX = (realTargetX + realSourceX) / 2;
+						int halfY = (realTargetY + realSourceY) / 2;
+						
+						//tutaj wchodzą główne numery:
+						write(bw, "      <edge source=\""+nodeSourceID+"\""
+								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //444
+						write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //445
+						write(bw, "          <![CDATA["+weight+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 20;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //446
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //447
+						write(bw, "          <![CDATA["+comment+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 40;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //448 == grParent
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <graphics count=\"1\">");
+						
+						//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
+						write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
+								+ " source=\""+realSourceID+"\""
+								+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
+								+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
+						
+						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+						write(bw, "            <points count=\"2\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						write(bw, "            </points>");
+						write(bw, "          </graphic>");
+						write(bw, "        </graphics>");
+						write(bw, "      </edge>");
 
-	private int addArcInfoExtended(BufferedWriter bw, int currentActiveID, TypesOfArcs arcClass, int howManyToSave) {
+						howMany++;
+					} catch (Exception e) {
+						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+								+ a.getEndNode().getName(), "error", true);
+					}
+				}
+				
+			} //dla wszystkich lokalizacji
+			//iteracja++;
+		} //dla wszystkich tranzycji
+		int arcNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().size();
+		if(howMany != arcNumber) {
+			GUIManager.getDefaultGUIManager().log("Arcs saved do not match size of Arcs internal set."
+					+ " Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.",
+					 "error", true);
+			
+			if(howMany > arcNumber) 
+				GUIManager.getDefaultGUIManager().log("More arcs saved than should be present in the model. Please advise "
+						+ "authors of the program as this may be element-removal algorithmic error.", "error", true);
+			else
+				GUIManager.getDefaultGUIManager().log("Less arcs saved than should be present in the model. Please advise "
+						+ "authors of the program.", "error", true);
+		}
+	}
+	
+	
+	
+	
+
+	private int addArcsInfoExtended(BufferedWriter bw, int currentActiveID, TypesOfArcs arcClass, int howManyToSave) {
 		int howManySaved = 0;
 		int nextID = currentActiveID;
 		//int iteracja = 0;
@@ -595,13 +967,13 @@ public class SnoopyWriter {
 						
 						//sourceAbyss == p
 						
-						int addToSPPEDAsSource = snoopyPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
+						int addToSPPEDAsSource = abyssPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
 						if(addToSPPEDAsSource == -1) {
 							@SuppressWarnings("unused")
 							int WTF= 1; //!!! IMPOSSIBRU!!!!
 							return nextID+10;
 						}
-						SnoopyWriterPlace source = snoopyPlaces.get(addToSPPEDAsSource);
+						SnoopyWriterPlace source = snoopyWriterPlaces.get(addToSPPEDAsSource);
 						int nodeSourceID = source.snoopyStartingID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
@@ -609,8 +981,8 @@ public class SnoopyWriter {
 						
 						
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
-						int addToSPPEDAsTarget = snoopyTransitionsID.lastIndexOf(targetAbyss.getID());
-						SnoopyWriterTransition target = snoopyTransitions.get(addToSPPEDAsTarget);
+						int addToSPPEDAsTarget = abyssTransitionsID.lastIndexOf(targetAbyss.getID());
+						SnoopyWriterTransition target = snoopyWriterTransitions.get(addToSPPEDAsTarget);
 						//teraz należy określi do której lokalizacji portalu trafia łuk
 						
 						ElementLocation destinationLoc = a.getEndLocation();
@@ -718,13 +1090,13 @@ public class SnoopyWriter {
 						
 						//sourceAbyss == t
 						
-						int addToSPPEDAsSource = snoopyTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
+						int addToSPPEDAsSource = abyssTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
 						if(addToSPPEDAsSource == -1) {
 							@SuppressWarnings("unused")
 							int WTF= 1; //!!! IMPOSSIBRU!!!!
 							return nextID + 10;
 						}
-						SnoopyWriterTransition source = snoopyTransitions.get(addToSPPEDAsSource);
+						SnoopyWriterTransition source = snoopyWriterTransitions.get(addToSPPEDAsSource);
 						int nodeSourceID = source.snoopyStartingID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
@@ -732,8 +1104,8 @@ public class SnoopyWriter {
 						
 						
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
-						int addToSPPEDAsTarget = snoopyPlacesID.lastIndexOf(targetAbyss.getID());
-						SnoopyWriterPlace target = snoopyPlaces.get(addToSPPEDAsTarget);
+						int addToSPPEDAsTarget = abyssPlacesID.lastIndexOf(targetAbyss.getID());
+						SnoopyWriterPlace target = snoopyWriterPlaces.get(addToSPPEDAsTarget);
 						//teraz należy określi do której lokalizacji portalu trafia łuk
 						
 						ElementLocation destinationLoc = a.getEndLocation();
@@ -832,6 +1204,279 @@ public class SnoopyWriter {
 		
 		return nextID;
 	}
+	
+	//TODO:
+	private int addArcsAndCoarsesInfoExtended(BufferedWriter bw, int currentActiveID, TypesOfArcs arcClass, int howManyToSave) {
+		int howManySaved = 0;
+		int nextID = currentActiveID;
+		//int iteracja = 0;
+		int xOff = 0;
+		//int yOff = 0;
+		for(Place p : places) { //najpierw wyjściowe z miejsc
+			//ArrayList<ElementLocation> clones = p.getElementLocations();
+			int location = -1;
+			for(ElementLocation el : p.getElementLocations()) { // dla wszystkich jego lokalizacji
+				location++; // która faktycznie to jest, jeśli przetwarzamy portal
+				
+				ArrayList<Arc> outArcs = el.getOutArcs(); //pobież listę łuków wyjściowych (portalu)
+				
+				//kolekcjonowanie danych:
+				for(Arc a : outArcs) { //dla każdego łuku
+					try {
+						if(a.getArcType() != arcClass)
+							continue;
+						
+						int weight = a.getWeight(); //waga łuku
+						String comment = a.getComment();
+						int grParent = currentActiveID + 5;
+						
+						Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss
+						Node sourceAbyss = a.getStartNode(); //stąd wychodzi
+						//przy czym należy określić, do której lokalizacji
+						
+						//sourceAbyss == p
+						
+						int addToSPPEDAsSource = abyssPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
+						if(addToSPPEDAsSource == -1) {
+							@SuppressWarnings("unused")
+							int WTF= 1; //!!! IMPOSSIBRU!!!!
+							return nextID+10;
+						}
+						SnoopyWriterPlace source = snoopyWriterPlaces.get(addToSPPEDAsSource);
+						int nodeSourceID = source.snoopyStartingID;
+						int realSourceID = source.grParents.get(location); //k
+						int realSourceX = source.grParentsLocation.get(location).x;
+						int realSourceY = source.grParentsLocation.get(location).y;
+						
+						
+						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
+						int addToSPPEDAsTarget = abyssTransitionsID.lastIndexOf(targetAbyss.getID());
+						SnoopyWriterTransition target = snoopyWriterTransitions.get(addToSPPEDAsTarget);
+						//teraz należy określi do której lokalizacji portalu trafia łuk
+						
+						ElementLocation destinationLoc = a.getEndLocation();
+						int counter = -1;
+						for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
+							counter++;
+							//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+							//jeśli to: to i tak skończy się na 1 iteracji
+							if(whichOne.equals(destinationLoc)) {
+								break; //w counter mamy wtedy nr
+							}
+						}
+						int nodeTargetID = target.snoopyStartingID;
+						int realTargetID = target.grParents.get(counter); 
+						int realTargetX = target.grParentsLocation.get(counter).x;
+						int realTargetY = target.grParentsLocation.get(counter).y;
+						
+						int halfX = (realTargetX + realSourceX) / 2;
+						int halfY = (realTargetY + realSourceY) / 2;
+						
+						//tutaj wchodzą główne numery główne:
+						write(bw, "      <edge source=\""+nodeSourceID+"\""
+								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //444
+						
+						if(arcClass != TypesOfArcs.RESET) {
+							write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
+							nextID++; //445
+							write(bw, "          <![CDATA["+weight+"]]>");
+							write(bw, "          <graphics count=\"1\">");
+							xOff = 20;
+							write(bw, "            <graphic xoff=\""+xOff+".00\""
+									+ " x=\""+(halfX+xOff)+".00\""
+									+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+									+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+									+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+							nextID++; //446
+							write(bw, "          </graphics>");
+							write(bw, "        </attribute>");
+						}
+						
+						write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //447
+						write(bw, "          <![CDATA["+comment+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 40;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //448 == grParent
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <graphics count=\"1\">");
+						
+						//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
+						write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
+								+ " source=\""+realSourceID+"\""
+								+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
+								+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
+						
+						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+						write(bw, "            <points count=\"2\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						write(bw, "            </points>");
+						write(bw, "          </graphic>");
+						write(bw, "        </graphics>");
+						write(bw, "      </edge>");
+						
+						howManySaved++;
+					} catch (Exception e) {
+						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+								+ a.getEndNode().getName(), "error", true);
+					}
+				}
+				
+			} //dla wszystkich lokalizacji
+			//iteracja++;
+		} //dla wszystkich miejsc
+		
+		//teraz wszystkie wychodzące z tranzycji:
+		for(Transition t : transitions) { // wyjściowe z tranzycji
+			int location = -1;
+			for(ElementLocation el : t.getElementLocations()) { // dla wszystkich jego lokalizacji
+				location++; // która faktycznie to jest, jeśli trafiliśmy w portal
+				ArrayList<Arc> outArcs = el.getOutArcs(); //pobież listę łuków wyjściowych (portalu)
+				
+				//kolekcjonowanie danych:
+				for(Arc a : outArcs) { //dla każdego łuku
+					try {
+						if(a.getArcType() != arcClass || a.getArcType() == TypesOfArcs.READARC)
+							continue;
+						
+						int weight = a.getWeight(); //waga łuku
+						String comment = a.getComment();
+						int grParent = currentActiveID + 5;
+						
+						Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss (w miejsce)
+						Node sourceAbyss = a.getStartNode(); //stąd wychodzi (tranzycja)
+						//przy czym należy okreslić, do której lokalizacji
+						
+						//sourceAbyss == t
+						
+						int addToSPPEDAsSource = abyssTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
+						if(addToSPPEDAsSource == -1) {
+							@SuppressWarnings("unused")
+							int WTF= 1; //!!! IMPOSSIBRU!!!!
+							return nextID + 10;
+						}
+						SnoopyWriterTransition source = snoopyWriterTransitions.get(addToSPPEDAsSource);
+						int nodeSourceID = source.snoopyStartingID;
+						int realSourceID = source.grParents.get(location); //k
+						int realSourceX = source.grParentsLocation.get(location).x;
+						int realSourceY = source.grParentsLocation.get(location).y;
+						
+						
+						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
+						int addToSPPEDAsTarget = abyssPlacesID.lastIndexOf(targetAbyss.getID());
+						SnoopyWriterPlace target = snoopyWriterPlaces.get(addToSPPEDAsTarget);
+						//teraz należy określi do której lokalizacji portalu trafia łuk
+						
+						ElementLocation destinationLoc = a.getEndLocation();
+						int counter = -1;
+						for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
+							counter++;
+							//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+							//jeśli to: to i tak skończy się na 1 iteracji
+							if(whichOne.equals(destinationLoc)) {
+								break; //w counter mamy wtedy nr
+							}
+						}
+						int nodeTargetID = target.snoopyStartingID;
+						int realTargetID = target.grParents.get(counter); 
+						int realTargetX = target.grParentsLocation.get(counter).x;
+						int realTargetY = target.grParentsLocation.get(counter).y;
+						
+						int halfX = (realTargetX + realSourceX) / 2;
+						int halfY = (realTargetY + realSourceY) / 2;
+						
+						//tutaj wchodzą główne numery:
+						write(bw, "      <edge source=\""+nodeSourceID+"\""
+								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //444
+						
+						if(arcClass != TypesOfArcs.RESET) {
+							write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
+							nextID++; //445
+							write(bw, "          <![CDATA["+weight+"]]>");
+							write(bw, "          <graphics count=\"1\">");
+							xOff = 20;
+							write(bw, "            <graphic xoff=\""+xOff+".00\""
+									+ " x=\""+(halfX+xOff)+".00\""
+									+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+									+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+									+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+							nextID++; //446
+							write(bw, "          </graphics>");
+							write(bw, "        </attribute>");
+						}
+						
+						write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //447
+						write(bw, "          <![CDATA["+comment+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 40;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //448 == grParent
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <graphics count=\"1\">");
+						
+						//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
+						write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
+								+ " source=\""+realSourceID+"\""
+								+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
+								+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
+						
+						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+						write(bw, "            <points count=\"2\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						write(bw, "            </points>");
+						write(bw, "          </graphic>");
+						write(bw, "        </graphics>");
+						write(bw, "      </edge>");
+
+						howManySaved++;
+					} catch (Exception e) {
+						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+								+ a.getEndNode().getName(), "error", true);
+					}
+				}
+				
+			} //dla wszystkich lokalizacji
+			//iteracja++;
+		} //dla wszystkich tranzycji
+		
+		if(howManySaved != howManyToSave && arcClass != TypesOfArcs.READARC) {
+			GUIManager.getDefaultGUIManager().log("Arcs saved do not match size of Arcs internal set."
+					+ " Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.",
+					 "error", true);
+			if(howManySaved > howManyToSave) 
+				GUIManager.getDefaultGUIManager().log("More arcs saved than should be present in the model. Please advise "
+						+ "authors of the program as this may be element-removal algorithmic error.", "error", true);
+			else
+				GUIManager.getDefaultGUIManager().log("Less arcs saved than should be present in the model. Please advise "
+						+ "authors of the program.", "error", true);
+		}
+		
+		return nextID;
+	}
+	
+	
+	
+	
 	
 	/**
 	 * Metoda realizuje zapis pojedyńczej linii do pliku - zakończonej enterem.
