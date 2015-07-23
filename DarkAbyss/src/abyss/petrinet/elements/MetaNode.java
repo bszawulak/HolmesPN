@@ -92,6 +92,7 @@ public class MetaNode extends Node {
 		}
 		
 		text += " [Subnet: "+getRepresentedSheetID()+"]";
+		text += " ["+getMetaType()+"]";
 		return text;
 	}
 }

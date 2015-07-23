@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.Place;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.varia.NetworkTransformations;
 
 /**
@@ -17,9 +18,9 @@ import abyss.varia.NetworkTransformations;
 public class SnoopyWriterPlace {
 	private Place abyssPlace;
 	/** Identyfikator podstawowy miejsca (pierwsze miejsce w sieci ma nr 226, kolejne to już zależy)  */
-	public int snoopyStartingID;
+	public int snoopyStartingID = -1;
 	/** Identyfikator główny miejsca (od zera do liczby miejsc) */
-	public int globalPlaceID;
+	public int globalPlaceID = -1;
 	/** Główny ID każdego ElementLocation (SnoopyID) */
 	public ArrayList<Integer> grParents; // identyfikatory I typu dla jednego miejsca, na ich bazie
 	 	// obliczane są identyfikatory II typu dla... wszystkiego
@@ -65,8 +66,29 @@ public class SnoopyWriterPlace {
 		ArrayList<Integer> locationsSheetID = new ArrayList<Integer>();
 		int netMainID = 0;
 		//sprawdź, ile jest lokalizacji (portal check)
+		boolean isInterface = false;
+		for(ElementLocation el : abyssPlace.getElementLocations()) {
+			if(el.accessMetaInArcs().size()>0 || el.accessMetaOutArcs().size()>0) {
+				isInterface = true;
+				break;
+			}
+		}
+		
+		ArrayList<Integer> stateForEL = new ArrayList<Integer>();
 		for(ElementLocation el : abyssPlace.getElementLocations()) {
 			locationsSheetID.add(el.getSheetID() + 1);
+			
+			if(isInterface) {
+				if(el.getSheetID() != 0) //wszystkie podsieci
+					stateForEL.add(8);
+				else if(el.accessMetaInArcs().size()>0 || el.accessMetaOutArcs().size()>0) { //sieć główna
+					stateForEL.add(4);
+				} else { // zwykły portal
+					stateForEL.add(1);
+				}
+			} else {
+				stateForEL.add(1);
+			}
 			
 			if(locations == 1) { //główny węzeł
 				currID += 10;
@@ -92,9 +114,10 @@ public class SnoopyWriterPlace {
 				netMainID = 1;
 			}
 		}
-		if(netMainID == 0)
+		if(netMainID == 0) {
 			netMainID = locationsSheetID.get(0);
-				
+		}
+		
 		//powyższa pętla jest ściśle związana z szukaniem danych łuków w SnoopyWriter
 		//łapy precz od niej! I od właściwie czegokolwiek w tej metodzie/klasie!
 		
@@ -219,7 +242,7 @@ public class SnoopyWriterPlace {
 						+ " x=\""+grParentsLocation.get(i).x+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\""
 						+ " id=\"" + currID + "\" net=\""+locationsSheetID.get(i)+"\" show=\"0\"" //!!!!
-						+ " grparent=\"" + grParents.get(i) + "\" state=\"1\""
+						+ " grparent=\"" + grParents.get(i) + "\" state=\""+stateForEL.get(i)+"\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 				//currID = grParent(i) - 1
 			} else { // dla logicznych
@@ -227,7 +250,7 @@ public class SnoopyWriterPlace {
 						+ " x=\""+grParentsLocation.get(i).x+".00\""
 						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\""
 						+ " id=\"" + (grParents.get(i)-1) + "\" net=\""+locationsSheetID.get(i)+"\" show=\"0\"" //!!!!
-						+ " grparent=\"" + grParents.get(i) + "\" state=\"1\""
+						+ " grparent=\"" + grParents.get(i) + "\" state=\""+stateForEL.get(i)+"\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 			}
 		}
@@ -269,5 +292,20 @@ public class SnoopyWriterPlace {
 		} catch (Exception e) {
 			
 		}
+	}
+	
+	public String toString() {
+		String txt = "";
+		int pPos = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(abyssPlace);
+		txt += "P"+pPos + " [gPlaceID:"+globalPlaceID+"]";
+		txt += " [SnoopyStartID: "+snoopyStartingID+"]";
+		if(grParents.size()>0) {
+			txt += " [gParentID:";
+			for(int x : grParents) {
+				txt += " "+x;
+			}
+			txt += "]";
+		}
+		return txt;
 	}
 }

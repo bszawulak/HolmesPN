@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.MetaNode;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.varia.NetworkTransformations;
 
 /**
@@ -19,9 +20,9 @@ import abyss.varia.NetworkTransformations;
 public class SnoopyWriterCoarse {
 	private MetaNode coarseNode;
 	/** Identyfikator podstawowy coarseNode  */
-	public int snoopyStartingID;
+	public int snoopyStartingID = -1;
 	/** Identyfikator główny tranzycji (od zera do liczby tranzycji) */
-	public int globalCoarseID;
+	public int globalCoarseID = -1;
 	/** Główny ID każdego ElementLocation (SnoopyID) */
 	public ArrayList<Integer> grParents; // identyfikatory I typu dla jednej tranzycji, na ich bazie
 	 	// obliczane są identyfikatory II typu dla... wszystkiego
@@ -146,5 +147,23 @@ public class SnoopyWriterCoarse {
 		} catch (Exception e) {
 			
 		}
+	}
+	
+	public String toString() {
+		String txt = "";
+		String type = "";
+		if(coarseNode.getMetaType() == MetaType.SUBNETPLACE)
+			type = "[cPlace]";
+		else
+			type = "[cTrans]";
+		
+		int mPos = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes().indexOf(coarseNode);
+		txt += "M"+mPos + " [gcID:"+globalCoarseID+"]";
+		txt += " [SnoopyStartID: "+snoopyStartingID+"]";
+		txt += " "+type;
+		if(grParents.size()>0)
+			txt += " [gParentID:"+grParents.get(0)+"]";
+		
+		return txt;
 	}
 }

@@ -68,8 +68,29 @@ public class SnoopyWriterTransition {
 		ArrayList<Integer> locationsSheetID = new ArrayList<Integer>();
 		int netMainID = 0;
 		//sprawdź, ile jest lokalizacji (portal check)
+		boolean isInterface = false;
+		for(ElementLocation el : abyssTransition.getElementLocations()) {
+			if(el.accessMetaInArcs().size()>0 || el.accessMetaOutArcs().size()>0) {
+				isInterface = true;
+				break;
+			}
+		}
+		
+		ArrayList<Integer> stateForEL = new ArrayList<Integer>();
 		for(ElementLocation el : abyssTransition.getElementLocations()) {
 			locationsSheetID.add(el.getSheetID() + 1);
+			
+			if(isInterface) {
+				if(el.getSheetID() != 0) //wszystkie podsieci
+					stateForEL.add(8);
+				else if(el.accessMetaInArcs().size()>0 || el.accessMetaOutArcs().size()>0) { //sieć główna
+					stateForEL.add(4);
+				} else { // zwykły portal
+					stateForEL.add(1);
+				}
+			} else {
+				stateForEL.add(1);
+			}
 			
 			if(locations == 1) { //główny węzeł
 				currID += 8;
@@ -198,7 +219,7 @@ public class SnoopyWriterTransition {
 						+ " x=\"" + (grParentsLocation.get(i).x+xOff) + ".00\""
 						+ " y=\""+grParentsLocation.get(i).y+".00\""
 						+ " id=\"" + currID + "\" net=\""+locationsSheetID.get(i)+"\" show=\"0\""
-						+ " grparent=\"" + grParents.get(i) + "\" state=\"1\""
+						+ " grparent=\"" + grParents.get(i) + "\" state=\""+stateForEL.get(i)+"\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 				//currID == grParent(i) - 1 !
 			} else { // dla logicznych
@@ -206,7 +227,7 @@ public class SnoopyWriterTransition {
 						+ " x=\"" + (grParentsLocation.get(i).x+xOff) + ".00\""
 						+ " y=\"" + grParentsLocation.get(i).y + ".00\""
 						+ " id=\"" + (grParents.get(i)-1) + "\" net=\""+locationsSheetID.get(i)+"\" show=\"0\""
-						+ " grparent=\"" + grParents.get(i) + "\" state=\"1\""
+						+ " grparent=\"" + grParents.get(i) + "\" state=\""+stateForEL.get(i)+"\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 			}
 		}
@@ -217,6 +238,10 @@ public class SnoopyWriterTransition {
 		//SEKCJA WYŚWIETLANIA MIEJSCA I JEGO KOPII. TAK JAKBYŚMY JUŻ REDUNDATNIE NIE WYŚWIETLILI
 		//JEGO ELEMENTÓW NIE WIADOMO ILE RAZY...
 		currID++; //365 == grParent(0)
+		if(currID != grParents.get(0)) {
+			GUIManager.getDefaultGUIManager().log("Critical error: Snoopy ID's do not match while writing", "errer", true);
+		}
+		
 		write(bw, "        <graphics count=\""+locations+"\">");
 		
 		if(currID != grParents.get(0)) {
@@ -249,5 +274,20 @@ public class SnoopyWriterTransition {
 		} catch (Exception e) {
 			
 		}
+	}
+	
+	public String toString() {
+		String txt = "";
+		int tPos = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(abyssTransition);
+		txt += "T"+tPos + " [gTransID:"+globalTransID+"]";
+		txt += " [SnoopyStartID: "+snoopyStartingID+"]";
+		if(grParents.size()>0) {
+			txt += " [gParentID:";
+			for(int x : grParents) {
+				txt += " "+x;
+			}
+			txt += "]";
+		}
+		return txt;
 	}
 }
