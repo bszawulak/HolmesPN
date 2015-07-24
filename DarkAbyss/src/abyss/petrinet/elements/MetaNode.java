@@ -84,15 +84,25 @@ public class MetaNode extends Node {
 	public String toString() {
 		String name =  getName();
 		String text = "";
+		String type = "";
+		if(getMetaType() == MetaType.SUBNETPLACE)
+			type = "P-type";
+		else if(getMetaType() == MetaType.SUBNETTRANS)
+			type = "T-type";
+		else if(getMetaType() == MetaType.SUBNET)
+			type = "P/T-type";
+		
+		text += "MetaN [sub:"+getRepresentedSheetID()+", ";
+		text += type+"]  ";
+		
 		if(name == null) {
 			return "(Meta) -- ";
 		} else {
 			//text = "(Meta)" + getName();
-			text = "(M" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes().indexOf(this)+")";
+			text += "(M" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes().indexOf(this)+")";
 		}
 		
-		text += " [Subnet: "+getRepresentedSheetID()+"]";
-		text += " ["+getMetaType()+"]";
+		
 		return text;
 	}
 }

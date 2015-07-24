@@ -104,7 +104,7 @@ public class SnoopyWriterTransition {
 			grParents.add(currID);
 			Point pxy = el.getPosition();
 			
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlignWhenSaved").equals("1"))
+			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1"))
 				pxy = NetworkTransformations.alignToGrid(pxy);
 			
 			grParentsLocation.add(pxy);

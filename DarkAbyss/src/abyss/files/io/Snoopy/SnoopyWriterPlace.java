@@ -102,7 +102,7 @@ public class SnoopyWriterPlace {
 			grParents.add(currID);
 			Point pxy = el.getPosition(); //Bogom dzięki, to to samo w Abyss i Snoopy...
 			
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlignWhenSaved").equals("1"))
+			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1"))
 				pxy = NetworkTransformations.alignToGrid(pxy);
 			
 			grParentsLocation.add(pxy);

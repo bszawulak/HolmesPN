@@ -303,19 +303,23 @@ public class SelectionManager {
 		//TODO:
 		//usunięcie metaArc kaskadowo usuwa wszystkie portale danego node'a z podsieci
 		
-		for(Arc arc : el.accessMetaInArcs()) {
-			this.getGraphPanelArcs().remove(arc);
-			//dostań się do lokacji startowej łuku i usuń go tam z listy wyjściowych:
-			arc.getStartLocation().accessMetaOutArcs().remove(arc);
+		for (Iterator<Arc> i = el.accessMetaInArcs().iterator(); i.hasNext();) {
+			Arc a = i.next();
+			this.getGraphPanelArcs().remove(a);
+			a.getStartLocation().accessMetaOutArcs().remove(a);
+			//a.unlinkElementLocations();
+			i.remove();
 		}
 		
-		for(Arc arc : el.accessMetaOutArcs()) {
-			this.getGraphPanelArcs().remove(arc);
-			//dostań się do lokacji startowej łuku i usuń go tam z listy wyjściowych:
-			arc.getStartLocation().accessMetaInArcs().remove(arc);
+		for (Iterator<Arc> i = el.accessMetaOutArcs().iterator(); i.hasNext();) {
+			Arc a = i.next();
+			this.getGraphPanelArcs().remove(a);
+			a.getEndLocation().accessMetaInArcs().remove(a);
+			//a.unlinkElementLocations();
+			i.remove();
 		}
 		
-		GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(sheetModified);
+		GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(sheetModified, false, false);
 		
 		this.getGraphPanel().repaint();
 		this.invokeActionListener();
@@ -372,7 +376,7 @@ public class SelectionManager {
 			i.remove();
 		}
 		
-		GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(sheetsModified);
+		GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(sheetsModified, false, false);
 		
 		// Kasuj wszystko. I wszystkich. Wszędzie. Kill'em all:
 		this.getSelectedArcs().clear();

@@ -98,8 +98,6 @@ public class SubnetsControl {
 			
 			//if(!hasMetaArc) { //utwórz meta łuk, bo go jeszcze nie ma z tego węzła (od startLocation)
 				Arc arc = new Arc(IdGenerator.getNextId(), semiArc.getStartLocation(), endMetanodeLocation, TypesOfArcs.META_ARC);
-				//endMetanodeLocation.accessMetaInArcs().add(arc);
-				//startPTLocation.accessMetaOutArcs().add(arc);
 				arcs.add(arc);
 			//}
 			
@@ -172,19 +170,123 @@ public class SubnetsControl {
 			
 			//if(!hasMetaArc) { //utwórz meta łuk, bo go jeszcze nie ma do tego węzła (od startLocation)
 				Arc arc = new Arc(IdGenerator.getNextId(), startMetanode, endPTNode, TypesOfArcs.META_ARC);
-				//startMetanode.accessMetaOutArcs().add(arc);
-				//endPTNode.accessMetaInArcs().add(arc);
 				arcs.add(arc);
 			//}
-			
-			//
-			
+
 			int index = workspace.getIndexOfId(subnetID);
 			workspace.getSheets().get(index).getGraphPanel().repaint();
 			return true;
 		} else {
 			return false;
 		}
+	}
+	
+	public void addMetaArc(Arc arc) {
+		ArrayList<MetaNode> metanodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes();
+		ElementLocation startEL = arc.getStartLocation();
+		ElementLocation endEL = arc.getEndLocation();
+		
+		//określ czy jest interfejsem (któryś z EL łuku) i jakim:
+		ElementLocation ourPatient = null;
+		boolean isInterfIN = false;
+		if(isInterface(startEL, metanodes)) {
+			ourPatient = startEL; //interface IN
+			isInterfIN = true;
+		} else if(isInterface(endEL, metanodes)) {
+			ourPatient = endEL; //interface OUT
+		} else {
+			return; //nic tu po nas
+		}
+		
+		//zidentyfikuj metaNode
+		int subSheetID = ourPatient.getSheetID();
+		MetaNode metanode = null;
+		for(MetaNode meta : metanodes) {
+			if(meta.getRepresentedSheetID() == subSheetID) {
+				metanode = meta;
+				break;
+			}
+		}
+		if(metanode == null) {
+			GUIManager.getDefaultGUIManager().log("Error: no metanode found.", "error", true);
+		}
+		
+		//TODO: sprawdzić, czy nie przekraczamy liczby meta-łuków!!!!
+		
+		
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSubnetCompressMode").equals("1"))  { //kompresja
+			//szukaj elementu z multi-arcami
+			//dodaj nowy element
+			//TODO: TEMPORARY
+			ElementLocation metaEL = metanode.getElementLocations().get(0);
+			int sheetID = metaEL.getSheetID();
+			Point point = metaEL.getPosition();
+			Node parent = ourPatient.getParentNode();
+			
+			ElementLocation newEL = new ElementLocation(sheetID, new Point(point.x+50, point.y+50), parent);
+			ElementLocation newNameEL = new ElementLocation(sheetID, new Point(0, 0), parent);
+			parent.getElementLocations().add(newEL);
+			parent.getNamesLocations().add(newNameEL);
+			parent.setPortal(true);
+			
+			Arc newArc = null;
+			if(isInterfIN) {
+				newArc = new Arc(IdGenerator.getNextId(), newEL, metaEL, TypesOfArcs.META_ARC);
+			} else {
+				newArc = new Arc(IdGenerator.getNextId(), metaEL, newEL, TypesOfArcs.META_ARC);
+			}
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().add(newArc);
+			
+		} else {
+			//dodaj nowy element
+			ElementLocation metaEL = metanode.getElementLocations().get(0);
+			int sheetID = metaEL.getSheetID();
+			Point point = metaEL.getPosition();
+			Node parent = ourPatient.getParentNode();
+			
+			ElementLocation newEL = new ElementLocation(sheetID, new Point(point.x+50, point.y+50), parent);
+			ElementLocation newNameEL = new ElementLocation(sheetID, new Point(0, 0), parent);
+			parent.getElementLocations().add(newEL);
+			parent.getNamesLocations().add(newNameEL);
+			parent.setPortal(true);
+			
+			Arc newArc = null;
+			if(isInterfIN) {
+				newArc = new Arc(IdGenerator.getNextId(), newEL, metaEL, TypesOfArcs.META_ARC);
+			} else {
+				newArc = new Arc(IdGenerator.getNextId(), metaEL, newEL, TypesOfArcs.META_ARC);
+			}
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().add(newArc);
+				
+		}
+		
+	}
+	
+	/**
+	 * Metoda sprawdza, czy wierzchołek o podanym EL jest interfejsem podsieci w której się znajduje.
+	 * @param element ElementLocation - sprawdzany element
+	 * @param metanodes ArrayList[MetaNode] - wektor meta-węzłów
+	 * @return boolean - true, jeśli element jest interfejsem
+	 */
+	public boolean isInterface(ElementLocation element, ArrayList<MetaNode> metanodes) {
+		Node node = element.getParentNode();
+		int subSheet = element.getSheetID();
+		int metaSheet = -1;
+		for(MetaNode meta : metanodes) {
+			if(meta.getRepresentedSheetID() == subSheet) {
+				metaSheet = meta.getElementLocations().get(0).getSheetID();
+				break;
+			}
+		}
+		if(metaSheet == -1)
+			return false;
+
+		for(ElementLocation el : node.getElementLocations()) {
+			if(el.getSheetID() == metaSheet) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -231,7 +333,7 @@ public class SubnetsControl {
 	}
 	
 	public boolean changeSubnetType(MetaNode metanode, MetaType desiredType) {
-		if(overlord.getSettingsManager().getValue("snoopyCompatibleMode").equals("1")) {
+		if(overlord.getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1")) {
 			if(desiredType == MetaType.SUBNET) {
 				JOptionPane.showMessageDialog(null, "Snoopy compatibility mode is activated in program options.\n"
 						+ "Dual interface (PT) subnetworks are not allowed.", 
@@ -418,25 +520,31 @@ public class SubnetsControl {
 	 * Dla każdej posieci w wektorze wejściowym metoda weryfikuje i poprawia liczbę metałuków przyporządkowanych
 	 * odpowiednim meta-węzłom
 	 * @param sheetModified ArrayList[Integer] - wektor ID podsieci
+	 * @param forceFix boolean - jeśli true, będzie działać także na sheet0
+	 * @param doNotRemove boolean - jeśli true, działa tylko w trybie dodawania łuków
 	 */
-	public void validateMetaArcs(ArrayList<Integer> sheetModified) {
+	public void validateMetaArcs(ArrayList<Integer> sheetModified, boolean forceFix, boolean doNotRemove) {
+		boolean compressMetaArcs = false;
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSubnetCompressMode").equals("1")) 
+			compressMetaArcs = true;
+		
 		ArrayList<MetaNode> metanodes = overlord.getWorkspace().getProject().getMetaNodes();
 		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
 		for(int sheetID : sheetModified) {
-			if(sheetID == 0)
+			if(sheetID == 0 && !forceFix)
 				continue;
 			
 			ArrayList<ElementLocation> subnetElements = getSubnetElementLocations(sheetID);
 			
 			//określ metodanode:
-			MetaNode metanode = null;
+			MetaNode metanodeRepresSubnet = null;
 			for(MetaNode meta : metanodes) {
 				if(meta.getRepresentedSheetID() == sheetID) {
-					metanode = meta;
+					metanodeRepresSubnet = meta;
 					break;
 				}
 			}
-			if(metanode == null) {
+			if(metanodeRepresSubnet == null) {
 				overlord.log("Unexpected error: metanode graphical symbol not found for existing subnet ID: "+sheetID, "error", true);
 				break;
 			}
@@ -444,128 +552,203 @@ public class SubnetsControl {
 			//dla każdego Node (poprzez ElementLocation) sprawdź & napraw
 			ArrayList<Node> alreadyChecked = new ArrayList<Node>();
 			for(ElementLocation el : subnetElements) {
-				Node parent = el.getParentNode();
-				if(!parent.isPortal()) // tylko portale mogą być interfejsem podsieci
+				Node nodeToFix = el.getParentNode();
+				if(!nodeToFix.isPortal()) // tylko portale mogą być interfejsem podsieci
+					continue;
+				
+				if(el.getParentNode() instanceof MetaNode)
 					continue;
 	
-				if(alreadyChecked.contains(parent)) //każdy Node sprawdzany/poprawiany tylko raz
+				if(alreadyChecked.contains(nodeToFix)) //każdy Node sprawdzany/poprawiany tylko raz
 					continue;
 				else
-					alreadyChecked.add(parent);
+					alreadyChecked.add(nodeToFix);
 				
 				int inInterfaceLinks = 0;
 				int outInterfaceLinks = 0;
 				
-				for(ElementLocation element : parent.getElementLocations()) {
+				//policz wejścia i wyjścia węzła podsieci:
+				for(ElementLocation element : nodeToFix.getElementLocations()) {
 					if(element.getSheetID() == sheetID) {
 						if(element.getInArcs().size() > 0) {
-							outInterfaceLinks++;
+							outInterfaceLinks += element.getInArcs().size();
 						}
 						if(element.getOutArcs().size() > 0) {
-							inInterfaceLinks++;
+							inInterfaceLinks += element.getOutArcs().size();
 						}
 					}
 				}
-	
-				ArrayList<Integer> processedInSheets = new ArrayList<Integer>();
-				ArrayList<Integer> processedOutSheets = new ArrayList<Integer>();
-				for(ElementLocation metaEL : metanode.getElementLocations()) { //TEORETYCZNIE tylko 1 istnieje
-					int metaSheet = metaEL.getSheetID();
-					
-					boolean proceedWithIn = true;
-					boolean proceedWithOut = true;
-					if(processedInSheets.contains(metaSheet))
-						proceedWithIn = false;
-					else
-						processedInSheets.add(metaSheet);
-					
-					if(processedOutSheets.contains(metaSheet))
-						proceedWithOut = false;
-					else
-						processedOutSheets.add(metaSheet);
-					
-					ArrayList<Arc> inMetaArcs = metaEL.accessMetaInArcs();
-					ArrayList<Arc> outMetaArcs = metaEL.accessMetaOutArcs();
-					
-					if(proceedWithIn) { //dodaj / usuń brakujące meta-łuki
-						//najpierw łuki prowadzące DO metanode
-						if(inInterfaceLinks > inMetaArcs.size()) {
-							//szukaj choć jednego EL z sieci gdzie jest metanode:
-							ElementLocation pattern = null;
-							for(ElementLocation cand : parent.getElementLocations()) {
-								if(cand.getSheetID() == metaSheet) {
-									pattern = cand;
-									break;
-								}
-							}
-							
-							if(pattern != null) {  //czyli w ogóle ma sens dodawanie czegokolwiek...
-								addMissingInMetaArcs(metaEL, pattern, inInterfaceLinks-inMetaArcs.size(), arcs);
-							}
-						} else if(inInterfaceLinks < inMetaArcs.size()) { // == nas nie interesuje
-							ArrayList<Arc> removeList = new ArrayList<Arc>();
-							for(int r=inMetaArcs.size()-1; r>=inInterfaceLinks; r--) {
-								removeList.add(inMetaArcs.get(r));
-							}
-							
-							for(Arc arc : removeList) {
-								arc.unlinkElementLocations();
-								arcs.remove(arc);
-							}
-							
-						}
-					}
-					
-					if(proceedWithOut) { //dodaj / usuń brakujące meta-łuki
-						//łuki prowadzące Z metanode
-						if(outInterfaceLinks > outMetaArcs.size()) {
-							//szukaj choć jednego EL z sieci gdzie jest metanode:
-							ElementLocation pattern = null;
-							for(ElementLocation cand : parent.getElementLocations()) {
-								if(cand.getSheetID() == metaSheet) {
-									pattern = cand;
-									break;
-								}
-							}
-							
-							if(pattern != null) {  //czyli w ogóle ma sens dodawanie czegokolwiek...
-								addMissingOutMetaArcs(metaEL, pattern, outInterfaceLinks-outMetaArcs.size(), arcs);
-							}
-						} else if(outInterfaceLinks < outMetaArcs.size()) { // == nas nie interesuje
-							ArrayList<Arc> removeList = new ArrayList<Arc>();
-							for(int r=outMetaArcs.size()-1; r>=outInterfaceLinks; r--) {
-								removeList.add(outMetaArcs.get(r));
-							}
-							
-							for(Arc arc : removeList) {
-								arc.unlinkElementLocations();
-								arcs.remove(arc);
-							}
-							
-						}
-					}
+				
+				
+				ElementLocation metaEL = metanodeRepresSubnet.getElementLocations().get(0);
+				int metaSheet = metaEL.getSheetID();
+				
+				ArrayList<Arc> inMetaArcs = new ArrayList<Arc>();
+				ArrayList<Arc> outMetaArcs = new ArrayList<Arc>();
+				for(Arc arc : metaEL.accessMetaInArcs()) { //wchodzące metałuki w metanode
+					if(arc.getStartNode().equals(nodeToFix))
+						inMetaArcs.add(arc);
 				}
-			}
-		}
+				for(Arc arc : metaEL.accessMetaOutArcs()) { //wchodzące metałuki w metanode
+					if(arc.getEndNode().equals(nodeToFix))
+						outMetaArcs.add(arc);
+				}
+				
+				//inMetaArcs = metaEL.accessMetaInArcs();
+				//outMetaArcs = metaEL.accessMetaOutArcs();
+				
+				//dodaj / usuń brakujące meta-łuki - najpierw łuki prowadzące DO metanode
+				if(inInterfaceLinks > inMetaArcs.size()) {
+					//szukaj choć jednego EL z sieci gdzie jest metanode:
+					ElementLocation pattern = null;
+					for(ElementLocation cand : nodeToFix.getElementLocations()) {
+						if(cand.getSheetID() == metaSheet) {
+							pattern = cand;
+							break;
+						}
+					}
+					//jeśli nie będzie chociaż jednego, to znaczy, że tracimy czas, bo ten nodeToFix nie ma w ogóle
+					//połączenia z siecią gdzie znajduje się aktualny EL metanode'a
+					if(pattern != null) {  //czyli w ogóle ma sens dodawanie czegokolwiek...
+						if(compressMetaArcs) {
+							addAllMissingInMetaArcsCompression(metaEL, pattern, inInterfaceLinks-inMetaArcs.size(), arcs);
+						} else {
+							addAllMissingInMetaArcs(metaEL, pattern, inInterfaceLinks-inMetaArcs.size(), arcs);
+						}
+					}
+					
+				} else if(inInterfaceLinks < inMetaArcs.size() && !doNotRemove) { // == nas nie interesuje
+					int toRemove = inMetaArcs.size() - inInterfaceLinks;
+					//zidentyfikuj EL z tylko jednym połączeniem (tym, którego właśnie chcemy się i tak pozbyć)
+					ArrayList<Arc> removeList = new ArrayList<Arc>();
+					
+					for(int r=inMetaArcs.size()-1; r>=inInterfaceLinks; r--) {
+						ElementLocation cand = inMetaArcs.get(r).getStartLocation();
+						if(cand.accessMetaOutArcs().size() == 1 && cand.accessMetaInArcs().size()==0 &
+								cand.getInArcs().size() == 0 && cand.getOutArcs().size() == 0) {
+							removeList.add(inMetaArcs.get(r));
+						}
+						if(removeList.size() == toRemove)
+							break;
+					}
+					
+					int elNumber = 0; //ile EL właściwie w ogóle jest w sieci z metanode
+					for(Arc arc : outMetaArcs) {
+						if(arc.getEndNode().equals(nodeToFix))
+							elNumber++;
+					}
+					
+					for(Arc arc : removeList) {
+						arc.unlinkElementLocations();
+						arcs.remove(arc);
+						toRemove--;
+						if(elNumber > 1) {
+							ElementLocation lonely = arc.getStartLocation();
+							Node parent = lonely.getParentNode();
+							parent.getElementLocations().remove(lonely);
+							elNumber--;
+						}
+					}
+
+					removeList.clear();
+					for(int r=inMetaArcs.size()-1; r>=0; r--) {
+						if(toRemove > 0)
+							removeList.add(inMetaArcs.get(r));
+						
+						toRemove--;
+					}
+					
+					for(Arc arc : removeList) {
+						arc.unlinkElementLocations();
+						arcs.remove(arc);
+					}
+				} // koniec sekcji inInterfaces
+				
+				//dodaj / usuń brakujące meta-łuki - łuki prowadzące Z metanode
+				if(outInterfaceLinks > outMetaArcs.size()) {
+					//szukaj choć jednego EL z sieci gdzie jest metanode:
+					ElementLocation pattern = null;
+					for(ElementLocation cand : nodeToFix.getElementLocations()) {
+						if(cand.getSheetID() == metaSheet) {
+							pattern = cand;
+							break;
+						}
+					}
+					
+					if(pattern != null) {  //czyli w ogóle ma sens dodawanie czegokolwiek...
+						if(compressMetaArcs) {
+							addAllMissingOutMetaArcsCompression(metaEL, pattern, outInterfaceLinks-outMetaArcs.size(), arcs);
+						} else {
+							addAllMissingOutMetaArcs(metaEL, pattern, outInterfaceLinks-outMetaArcs.size(), arcs);
+						}
+					}
+
+				} else if(outInterfaceLinks < outMetaArcs.size() && !doNotRemove) { // == nas nie interesuje
+					int toRemove = outMetaArcs.size() - outInterfaceLinks;
+					//najpierw pojedyncze
+					ArrayList<Arc> removeList = new ArrayList<Arc>();
+					//zidentyfikuj EL z tylko jednym połączeniem (tym, którego właśnie chcemy się i tak pozbyć)
+					for(int r=outMetaArcs.size()-1; r>=outInterfaceLinks; r--) {
+						ElementLocation cand = outMetaArcs.get(r).getEndLocation();
+						if(cand.accessMetaInArcs().size() == 1 && cand.accessMetaOutArcs().size()==0 &
+								cand.getInArcs().size() == 0 && cand.getOutArcs().size() == 0) {
+							removeList.add(outMetaArcs.get(r));
+						}
+						if(removeList.size() == toRemove)
+							break;
+					}
+					
+					int elNumber = 0; //ile EL właściwie w ogóle jest w sieci z metanode
+					for(Arc arc : outMetaArcs) {
+						if(arc.getEndNode().equals(nodeToFix))
+							elNumber++;
+					}
+					
+					for(Arc arc : removeList) {
+						arc.unlinkElementLocations();
+						arcs.remove(arc);
+						toRemove--;
+						if(elNumber > 1) {
+							ElementLocation lonely = arc.getEndLocation();
+							Node parent = lonely.getParentNode();
+							parent.getElementLocations().remove(lonely);
+							elNumber--;
+						}
+					}
+
+					removeList.clear();
+					for(int r=outMetaArcs.size()-1; r>=0; r--) {
+						if(toRemove > 0)
+							removeList.add(outMetaArcs.get(r));
+						toRemove--;
+					}
+					
+					for(Arc arc : removeList) {
+						arc.unlinkElementLocations();
+						arcs.remove(arc);
+					}
+				} // koniec sekcji outInterfaces
+			} //pętla dla każdego unikalnego Node (poprzez jeden z jego EL)
+		} //ile podsieci do naprawy
 	}
 	
 	/**
 	 * Metoda dodaje nowe meta-łuki DO metanode, wraz z nowymi portalami węzła okreslonego przez pattern (EL).
 	 * @param metanodeEL ElementLocation - metanode, końcowy
-	 * @param pattern ElementLocation - node, startowy
+	 * @param pattern ElementLocation - node w tej samej sieci co metanode
 	 * @param howMany int - ile nowych portali dodać wraz z łukami
 	 * @param arcs ArrayList[Arc] - lista łuków sieci
 	 */
-	private void addMissingInMetaArcs(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
-		Random gen = new Random(12345);
+	private void addAllMissingInMetaArcs(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
+		Random gen = new Random();
 		Node parent = pattern.getParentNode();
 		int sheetID = pattern.getSheetID();
 		Point refMetaPoint = metanodeEL.getPosition();
 		
 		for(int i=0; i<howMany; i++) {
 			ElementLocation nameEL = new ElementLocation(sheetID, new Point(0, 0), parent);
-			int newX = gen.nextInt(80) - 40; //dodajemy (lewo-prawo)
-			int newY = gen.nextInt(50); //odejmujemy (w górę)
+			int newX = gen.nextInt(160) - 80; //dodajemy (lewo-prawo)
+			int newY = gen.nextInt(100)+15; //odejmujemy (w górę)
 			Point point = new Point(refMetaPoint.x + newX, refMetaPoint.y - newY);
 			ElementLocation newPortalEL = new ElementLocation(sheetID, point, parent);
 			parent.setPortal(true);
@@ -573,8 +756,79 @@ public class SubnetsControl {
 			parent.getNamesLocations().add(nameEL);
 			
 			Arc arc = new Arc(IdGenerator.getNextId(), newPortalEL, metanodeEL, TypesOfArcs.META_ARC);
-			//metanodeEL.accessMetaInArcs().add(arc);
-			//newPortalEL.accessMetaOutArcs().add(arc);
+			arcs.add(arc);
+		}
+	}
+	
+	/**
+	 * Metoda dodaje nowe meta-łuki DO metanode (kompresja, 1 EL)
+	 * @param metanodeEL ElementLocation - metanode, końcowy
+	 * @param pattern ElementLocation - node w tej samej sieci co metanode
+	 * @param howMany int - ile nowych portali dodać wraz z łukami
+	 * @param arcs ArrayList[Arc] - lista łuków sieci
+	 */
+	private void addAllMissingInMetaArcsCompression(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
+		//zidentyfikuj ElementLocation z max liczbą wejść do Meta
+		//skoro tu jesteśmy, tzn. że jakieś są (pattern)
+		Node nodeTP = pattern.getParentNode();
+		ElementLocation nexus = null;
+		int currentMax = 0;
+		ArrayList<Arc> inMetaArcsFromNodeTP = new ArrayList<Arc>();
+		int howManyElements = 0;
+		for(Arc arc : metanodeEL.accessMetaInArcs()) {
+			if(arc.getStartNode().equals(nodeTP)) {
+				howManyElements++;
+				inMetaArcsFromNodeTP.add(arc);
+				int outArcs = arc.getStartLocation().accessMetaOutArcs().size();
+				if(outArcs > currentMax) {
+					currentMax = outArcs;
+					nexus = arc.getStartLocation();
+				}
+			}
+		}
+		//znajdź NAJBLIŻSZY EL do metanode
+		Point p1 = metanodeEL.getPosition();
+		double distance = 99999999;
+		if(nexus == null) {
+			for(ElementLocation anyone : nodeTP.getElementLocations()) {
+				if(anyone.getSheetID() == metanodeEL.getSheetID()) {
+					if(nexus == null) { //we love you unconditionally!
+						nexus = anyone;
+					} else { //seek better chick
+						Point p2 = nexus.getPosition();
+						double currDist = Math.sqrt(Math.pow((p2.getX() - p1.getX()), 2) + Math.pow((p2.getY() - p1.getY()), 2));
+						if(currDist < distance) {
+							distance = currDist;
+							nexus = anyone;
+						}
+					}
+				}
+			}
+		}
+		
+		//teraz w nexus jest EL z największą liczbą OutArcs (wiemy, że istnieje choć 1 taki - vide: pattern)
+		for(Arc arc : inMetaArcsFromNodeTP) {
+			ElementLocation other = arc.getStartLocation();
+			if(other.equals(nexus))
+				continue;
+			
+			//przekieruj łuki z other do nexus:
+			for(Arc arcSwitch : other.accessMetaOutArcs()) {
+				arcSwitch.modifyStartLocation(nexus); //zmień startowe EL łuku na naxus
+				nexus.accessMetaOutArcs().add(arcSwitch); //poinformuj nexus, że ma nowy łuk
+			}
+			other.accessMetaOutArcs().clear(); //wyczyść wszystkie
+			//sprawdź, czy other się do czegokolwiek nadaje:
+			if(howManyElements > 1)
+				if(other.accessMetaInArcs().size() == 0 && other.getInArcs().size() == 0 && other.getOutArcs().size() == 0) {
+					nodeTP.getElementLocations().remove(other);
+					howManyElements--;
+				}
+		}
+		
+		//teraz w końcu dodaj do nexus brakujące łuki (a raczej Z niego do META)
+		for(int i=0; i<howMany; i++) {
+			Arc arc = new Arc(IdGenerator.getNextId(), nexus, metanodeEL, TypesOfArcs.META_ARC);
 			arcs.add(arc);
 		}
 	}
@@ -586,16 +840,16 @@ public class SubnetsControl {
 	 * @param howMany int - ile nowych portali dodać wraz z łukami
 	 * @param arcs ArrayList[Arc] - lista łuków sieci
 	 */
-	private void addMissingOutMetaArcs(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
-		Random gen = new Random(12345);
+	private void addAllMissingOutMetaArcs(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
+		Random gen = new Random();
 		Node parent = pattern.getParentNode();
 		int sheetID = pattern.getSheetID();
 		Point refMetaPoint = metanodeEL.getPosition();
 		
 		for(int i=0; i<howMany; i++) {
 			ElementLocation nameEL = new ElementLocation(sheetID, new Point(0, 0), parent);
-			int newX = gen.nextInt(80) - 40; //dodajemy (lewo-prawo)
-			int newY = gen.nextInt(50); //dodajemy (w dół)
+			int newX = gen.nextInt(160) - 80; //dodajemy (lewo-prawo)
+			int newY = gen.nextInt(100)+15; //dodajemy (w dół)
 			Point point = new Point(refMetaPoint.x + newX, refMetaPoint.y + newY);
 			ElementLocation newPortalEL = new ElementLocation(sheetID, point, parent);
 			parent.setPortal(true);
@@ -603,11 +857,85 @@ public class SubnetsControl {
 			parent.getNamesLocations().add(nameEL);
 			
 			Arc arc = new Arc(IdGenerator.getNextId(), metanodeEL, newPortalEL, TypesOfArcs.META_ARC);
-			//newPortalEL.accessMetaInArcs().add(arc);
-			//metanodeEL.accessMetaOutArcs().add(arc);
 			arcs.add(arc);
 		}
 	}
+	
+	/**
+	 * Metoda dodaje nowe meta-łuki Z metanode DO portalu
+	 * @param metanodeEL ElementLocation - metanode, startowy
+	 * @param pattern ElementLocation - node, końcowy
+	 * @param howMany int - ile nowych portali dodać wraz z łukami
+	 * @param arcs ArrayList[Arc] - lista łuków sieci
+	 */
+	private void addAllMissingOutMetaArcsCompression(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
+		//zidentyfikuj ElementLocation z max liczbą wejść Z Meta
+		//skoro tu jesteśmy, tzn. że jakieś są (pattern)
+		Node nodeTP = pattern.getParentNode();
+		ElementLocation nexus = null;
+		int currentMax = 0;
+		ArrayList<Arc> outMetaArcsToNodeTP = new ArrayList<Arc>();
+		int howManyElements = 0;
+		for(Arc arc : metanodeEL.accessMetaOutArcs()) {
+			if(arc.getEndNode().equals(nodeTP)) {
+				howManyElements++;
+				outMetaArcsToNodeTP.add(arc);
+				int inArcs = arc.getEndLocation().accessMetaInArcs().size();
+				if(inArcs > currentMax) {
+					currentMax = inArcs;
+					nexus = arc.getEndLocation();
+				}
+			}
+		}
+		//znajdź NAJBLIŻSZY EL do metanode
+		Point p1 = metanodeEL.getPosition();
+		double distance = 99999999;
+		if(nexus == null) {
+			for(ElementLocation anyone : nodeTP.getElementLocations()) {
+				if(anyone.getSheetID() == metanodeEL.getSheetID()) {
+					if(nexus == null) { //we love you unconditionally!
+						nexus = anyone;
+					} else { //seek better chick
+						Point p2 = nexus.getPosition();
+						double currDist = Math.sqrt(Math.pow((p2.getX() - p1.getX()), 2) + Math.pow((p2.getY() - p1.getY()), 2));
+						if(currDist < distance) {
+							distance = currDist;
+							nexus = anyone;
+						}
+					}
+				}
+			}
+		}
+		
+		//teraz w nexus jest EL z największą liczbą inArcs (wiemy, że istnieje choć 1 taki - vide: pattern)
+		for(Arc arc : outMetaArcsToNodeTP) {
+			ElementLocation other = arc.getEndLocation();
+			if(other.equals(nexus))
+				continue;
+			
+			//przekieruj łuki z other do nexus:
+			for(Arc arcSwitch : other.accessMetaInArcs()) {
+				arcSwitch.modifyEndLocation(nexus); //zmień startowe EL łuku na naxus
+				nexus.accessMetaInArcs().add(arcSwitch); //poinformuj nexus, że ma nowy łuk
+			}
+			other.accessMetaInArcs().clear(); //wyczyść wszystkie
+			//sprawdź, czy other się do czegokolwiek nadaje:
+			if(howManyElements > 1) {
+				if(other.accessMetaOutArcs().size() == 0 && other.getInArcs().size() == 0 && other.getOutArcs().size() == 0) {
+					nodeTP.getElementLocations().remove(other);
+					howManyElements--;
+				}
+			}
+		}
+		
+		//teraz w końcu dodaj do nexus brakujące łuki (a raczej Z niego do META)
+		for(int i=0; i<howMany; i++) {
+			Arc arc = new Arc(IdGenerator.getNextId(), metanodeEL, nexus, TypesOfArcs.META_ARC);
+			arcs.add(arc);
+		}
+	}
+	
+	
 
 	public boolean checkSnoopyCompatibility() {
 		// TODO Auto-generated method stub

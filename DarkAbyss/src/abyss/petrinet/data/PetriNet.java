@@ -807,7 +807,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 			// Formaty Snoopiego
 			if (path.endsWith(".spped") || path.endsWith(".spept") || path.endsWith(".colpn") || path.endsWith(".sptpt")) {
-				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesOldSnoopyLoaders").equals("1")) {
+				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programUseOldSnoopyLoaders").equals("1")) {
 					GUIManager.getDefaultGUIManager().log("Activating old Snoopy loader. Will fail for hierarchical networks.", "text", true);
 					InputStream xmlInput = new FileInputStream(path);
 					SAXParser saxParser = readerSNOOPY.newSAXParser();

@@ -49,19 +49,12 @@ public class GraphPanel extends JComponent {
 	private int sheetId;
 	private boolean autoDragScroll = false;
 	private boolean isSimulationActive = false;
-	//private SheetPopupMenu sheetPopupMenu;
-	//private PlacePopupMenu placePopupMenu;
-	//private TransitionPopupMenu transitionPopupMenu;
-	//private ArcPopupMenu arcPopupMenu;
 	private int zoom = 100;
 	private Dimension originSize;
 	private boolean drawMesh = false;
 	private boolean snapToMesh = false;
-	//public enum DrawModes { POINTER, PLACE, TRANSITION, ARC, ERASER, TIMETRANSITION; }
 	/** POINTER, ERASER, PLACE, TRANSITION, TIMETRANSITION, ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC */
 	public enum DrawModes { POINTER, ERASER, PLACE, TRANSITION, TIMETRANSITION, ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC }
-	
-	//private Graphics2D oldState = null;
 
 	/**
 	 * Konstruktor obiektu klasy GraphPanel
@@ -83,10 +76,6 @@ public class GraphPanel extends JComponent {
 	public void Initialize() {
 		this.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 		this.setOpaque(true);
-		//this.setSheetPopupMenu(new SheetPopupMenu(this));
-		//this.setPlacePopupMenu(new PlacePopupMenu(this));
-		//this.setTransitionPopupMenu(new TransitionPopupMenu(this));
-		//this.setArcPopupMenu(new ArcPopupMenu(this));
 		this.addMouseListener(new MouseHandler());
 		this.addMouseMotionListener(new MouseMotionHandler());
 		this.addKeyListener(new KeyboardHandler());
@@ -263,7 +252,7 @@ public class GraphPanel extends JComponent {
 		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridLines").equals("1")) {
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridLines").equals("1")) {
 			g2d.setColor(Color.lightGray);
 			
 			int maxWidth = (getWidth() * 100)/getZoom();
@@ -283,8 +272,6 @@ public class GraphPanel extends JComponent {
 		
 		
 		for (Arc a : getArcs()) {
-			int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphArcLineSize"));
-			g2d.setStroke(new BasicStroke(sizeS));
 			a.draw(g2d, this.sheetId, getZoom());
 		}
 		if (this.isSimulationActive()) {
@@ -630,43 +617,7 @@ public class GraphPanel extends JComponent {
 	public ArcPopupMenu getArcPopupMenu(Arc arc, PetriNetElementType pne) {
 		return new ArcPopupMenu(this, arc, pne);
 	}
-	
-	//**************************************************************************************************************
-
-	/**
-	 * Pozwala ustawić obiekt będący menu kontekstowym danego arkusza.
-	 * @param sheetPopupMenu SheetPopupMenu - obiekt menu kontekstowego
-	 */
-	//public void setSheetPopupMenu(SheetPopupMenu sheetPopupMenu) {
-	//	this.sheetPopupMenu = sheetPopupMenu;
-	//}
-
-	/**
-	 * Metoda pozwala ustawić obiekt będący menu kontekstowym dla każdego miejsca.
-	 * @param placePopupMenu PlacePopupMenu - nowe menu kontekstowe
-	 */
-	//public void setPlacePopupMenu(PlacePopupMenu placePopupMenu) {
-	//	this.placePopupMenu = placePopupMenu;
-	//}
-
-	/**
-	 * Metoda pozwala ustawić obiekt będący menu kontekstowym dla każdej tranzycji.
-	 * @param transitionPopupMenu TransitionPopupMenu - nowe menu kontekstowe
-	 */
-	//public void setTransitionPopupMenu(TransitionPopupMenu transitionPopupMenu) {
-	//	this.transitionPopupMenu = transitionPopupMenu;
-	//}
-	
-	/**
-	 * Metoda pozwala ustawić obiekt będący menu kontekstowym dla każdego łuku.
-	 * @param arcPopupMenu ArcPopupMenu - nowe menu kontekstowe
-	 */
-	//public void setArcPopupMenu(ArcPopupMenu arcPopupMenu) {
-	//	this.arcPopupMenu = arcPopupMenu;
-	//}
-
-	//**************************************************************************************************************
-	
+		
 	/**
 	 * 
 	 * @return
@@ -1012,7 +963,6 @@ public class GraphPanel extends JComponent {
 					drawnArc = new Arc(clickedLocation, TypesOfArcs.EQUAL);
 			} else { 
 				
-				
 				if(clickedLocation.getParentNode() instanceof MetaNode) { //kończymy w meta-node
 					if(drawnArc.getStartLocation().getParentNode() instanceof MetaNode) {
 						JOptionPane.showMessageDialog(null, "Direct connection between two meta-nodes not possible.", 
@@ -1026,6 +976,7 @@ public class GraphPanel extends JComponent {
 						clearDrawnArc();
 						return;
 					}
+					
 					MetaNode n = (MetaNode) clickedLocation.getParentNode();
 					
 					if(drawnArc.getStartLocation().getParentNode() instanceof Place && n.getMetaType() == MetaType.SUBNETPLACE ) {
@@ -1041,25 +992,38 @@ public class GraphPanel extends JComponent {
 						return;
 					}
 
-					//dodaj połączenie z T lub P
+					//dodaj połączenie z T lub P do Meta
 					//MetaNode metanode = (MetaNode)clickedLocation.getParentNode();
 					GUIManager.getDefaultGUIManager().netsHQ.addArcToMetanode(drawnArc.getStartLocation(), clickedLocation, drawnArc);
 					clearDrawnArc();
-					
 					return;
 				}
 				
-				if(drawnArc.getStartLocation().getParentNode() instanceof MetaNode) {
-					//skoro tu jesteśmy, to znaczy że kliknięto w miejsce lub tranzycję, ale nie meta-node
-					//bo poprzedni if by to wyłowił
+				if(drawnArc.getStartLocation().getParentNode() instanceof MetaNode) { // połączenie z METANODE
+					// skoro tu jesteśmy, to znaczy że kliknięto w miejsce lub tranzycję, 
+					// ale nie meta-node bo poprzedni if by to wyłowił
+					MetaNode n = (MetaNode) drawnArc.getStartLocation().getParentNode();
+					
+					if(clickedLocation.getParentNode() instanceof Place && n.getMetaType() == MetaType.SUBNETPLACE ) {
+						JOptionPane.showMessageDialog(null, "Meta-node type P (transitions-interfaced) can get connection only from transitions!", 
+								"Problem", JOptionPane.WARNING_MESSAGE);
+						clearDrawnArc();
+						return;
+					}
+					if(clickedLocation.getParentNode() instanceof Transition && n.getMetaType() == MetaType.SUBNETTRANS ) {
+						JOptionPane.showMessageDialog(null, "Meta-node type T (places-interfaced) can get connection only from places!", 
+								"Problem", JOptionPane.WARNING_MESSAGE);
+						clearDrawnArc();
+						return;
+					}
+					
+					
 					GUIManager.getDefaultGUIManager().netsHQ.addArcFromMetanode(clickedLocation, drawnArc.getStartLocation(), drawnArc);
 					clearDrawnArc();
-					
 					return;
 				}
 				
-				
-				
+				//zwykły łuk poza meta-nodeami:
 				if (drawnArc.checkIsCorect(clickedLocation)) {
 					boolean proceed = true;
 					
@@ -1081,14 +1045,28 @@ public class GraphPanel extends JComponent {
 								JOptionPane.WARNING_MESSAGE);
 							proceed = false;
 						}
-					}  
+					}
+					
+					GUIManager gui = GUIManager.getDefaultGUIManager();
+					
+					if(clickedLocation.getSheetID() > 0) {
+						ArrayList<MetaNode> metas = gui.getWorkspace().getProject().getMetaNodes();
+						boolean first = gui.netsHQ.isInterface(drawnArc.getStartLocation(), metas);
+						boolean second = gui.netsHQ.isInterface(clickedLocation, metas);
+						
+						if(first && second) {
+							JOptionPane.showMessageDialog(null, "Two interfaces cannot be linked directly within single subnet.", 
+									"Don't cross the streams!",  JOptionPane.WARNING_MESSAGE);
+								proceed = false;
+						}
+					}
 					
 					if(proceed) { //dokończ rysowanie łuku, dodaj do listy
 						if ((arcType == DrawModes.ARC_INHIBITOR || arcType == DrawModes.ARC_RESET || arcType == DrawModes.ARC_EQUAL) 
 								&& clickedLocation.getParentNode() instanceof Place) {
 							JOptionPane.showMessageDialog(null,  "This type of arc can only go FROM place TO transition!", "Problem", 
 									JOptionPane.WARNING_MESSAGE);
-							
+							clearDrawnArc();
 						} else {
 							if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
 								GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
@@ -1117,14 +1095,26 @@ public class GraphPanel extends JComponent {
 								arc.setArcType(TypesOfArcs.EQUAL);
 								getArcs().add(arc);
 							}
-
+							clearDrawnArc();
+							
+							//TODO: dodanie nowego łuku (zwykły)
+							int arcSheet = arc.getStartLocation().getSheetID();
+							if(arcSheet > 0) {
+								GUIManager.getDefaultGUIManager().netsHQ.addMetaArc(arc);
+								
+								//ArrayList<Integer> thisIsStupid = new ArrayList<Integer>();
+								//thisIsStupid.add(arcSheet);
+								//GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(thisIsStupid, false, false);
+							}
 							
 							GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
 							GUIManager.getDefaultGUIManager().markNetChange();
 						}
 					}
+					else {
+						clearDrawnArc();
+					}
 				} //if (drawnArc.checkIsCorect(clickedLocation)) {
-				clearDrawnArc();
 			}
 		}
 		

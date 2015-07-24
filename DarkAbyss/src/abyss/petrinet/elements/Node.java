@@ -161,7 +161,7 @@ public abstract class Node extends PetriNetElement {
 	public void drawName(Graphics2D g, int sheetId, ArrayList<Place> places_tmp, ArrayList<Transition> transitions_tmp) {
 		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
 		String name = getName();
-		if(sm.getValue("showShortNames").equals("1")) {
+		if(sm.getValue("editorShowShortNames").equals("1")) {
 			if(this instanceof Place) {
 				int x = places_tmp.indexOf(this);
 				name = "p"+x;
@@ -172,10 +172,10 @@ public abstract class Node extends PetriNetElement {
 		}
 		
 		g.setColor(Color.black);
-		if(sm.getValue("graphFontBold").equals("0")) {
-			g.setFont(new Font("Tahoma", Font.PLAIN, Integer.parseInt(sm.getValue("graphFontSize"))));
+		if(sm.getValue("editorGraphFontBold").equals("0")) {
+			g.setFont(new Font("Tahoma", Font.PLAIN, Integer.parseInt(sm.getValue("editorGraphFontSize"))));
 		} else {
-			g.setFont(new Font("Tahoma", Font.BOLD, Integer.parseInt(sm.getValue("graphFontSize"))));
+			g.setFont(new Font("Tahoma", Font.BOLD, Integer.parseInt(sm.getValue("editorGraphFontSize"))));
 		}
 		
 		int name_width = g.getFontMetrics().stringWidth(name);

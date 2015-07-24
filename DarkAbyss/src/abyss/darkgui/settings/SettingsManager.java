@@ -106,39 +106,44 @@ public class SettingsManager {
 		checkAndFix(settingsNew, "ina_COMMAND2","nnsyp");
 		checkAndFix(settingsNew, "ina_COMMAND3", "nnnfnn");
 		checkAndFix(settingsNew, "ina_COMMAND4", "eqqy");
-		try { 
-			String tmp = getValue("netExtFactor");
-			int test = Integer.parseInt(tmp); 
-			checkAndFix(settingsNew, "netExtFactor", "100");
-		} catch (Exception e) { settingsNew.add(new Setting("netExtFactor", "100")); }
-		checkAndFix(settingsNew, "gridLines", "1");
-		checkAndFix(settingsNew, "gridAlignWhenSaved", "1");
-		checkAndFix(settingsNew, "usesSnoopyOffsets", "1");
-		checkAndFix(settingsNew, "usesOldSnoopyLoaders", "0");
 		
+		//program - ogólne
+		checkAndFix(settingsNew, "programUseOldSnoopyLoaders", "0");
 		try { 
-			String tmp = getValue("graphArcLineSize");
+			String tmp = getValue("programSnoopyLoaderNetExtFactor");
+			int test = Integer.parseInt(tmp); 
+			checkAndFix(settingsNew, "programSnoopyLoaderNetExtFactor", "100");
+		} catch (Exception e) { settingsNew.add(new Setting("programSnoopyLoaderNetExtFactor", "100")); }
+		
+		//edytor:
+		checkAndFix(settingsNew, "editorGridLines", "1");
+		checkAndFix(settingsNew, "editorGridAlignWhenSaved", "1");
+		checkAndFix(settingsNew, "editorUseSnoopyOffsets", "1");
+		try { 
+			String tmp = getValue("editorGraphArcLineSize");
 			int test = Integer.parseInt(tmp);
 			if(test < 1 || test > 3)
 				throw new Exception();
-			checkAndFix(settingsNew, "graphArcLineSize", "1");
-		} catch (Exception e) { settingsNew.add(new Setting("graphArcLineSize", "1")); }
+			checkAndFix(settingsNew, "editorGraphArcLineSize", "1");
+		} catch (Exception e) { settingsNew.add(new Setting("editorGraphArcLineSize", "1")); }
 		
 		checkAndFix(settingsNew, "editor3Dview", "0");
-		checkAndFix(settingsNew, "snoopyCompatibleMode", "1");
-		
-		checkAndFix(settingsNew, "showShortNames", "0");
+		checkAndFix(settingsNew, "editorSnoopyCompatibleMode", "1");
+		checkAndFix(settingsNew, "editorShowShortNames", "0");
 		checkAndFix(settingsNew, "analysisFeasibleSelfPropAccepted", "1");
 		checkAndFix(settingsNew, "analysisMCSReduction", "1");
 		try { 
-			String tmp = getValue("graphFontSize");
+			String tmp = getValue("editorGraphFontSize");
 			int test = Integer.parseInt(tmp);
 			if(test < 8 || test > 15)
 				throw new Exception();
-			checkAndFix(settingsNew, "graphFontSize", "11");
-		} catch (Exception e) { settingsNew.add(new Setting("graphFontSize", "11")); }
+			checkAndFix(settingsNew, "editorGraphFontSize", "11");
+		} catch (Exception e) { settingsNew.add(new Setting("editorGraphFontSize", "11")); }
 		
-		checkAndFix(settingsNew, "graphFontBold", "0");
+		checkAndFix(settingsNew, "editorGraphFontBold", "0");
+		checkAndFix(settingsNew, "editorSubnetCompressMode", "0");
+		
+		//knockout:
 		checkAndFix(settingsNew, "mctNameShow", "1");
 		
 		//symulator:

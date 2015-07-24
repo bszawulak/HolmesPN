@@ -264,7 +264,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		leftTabDock.setSelectedDock(getToolBox());
 
 		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
-		topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
+		//topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
 		topRightTabDock.setSelectedDock(getPropertiesBox());
 		
 		bottomRightTabDock.addChildDock(getInvariantsBox(), new Position(1));
@@ -275,11 +275,20 @@ public class GUIManager extends JPanel implements ComponentListener {
 		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
 
 		// create the split docks
+		//leftSplitDock = new SplitDock();
+		//leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
+		//leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
+				
 		leftSplitDock = new SplitDock();
 		leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
-		leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
+		
+		SplitDock workspaceSplit = new SplitDock();
+		workspaceSplit.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
+		workspaceSplit.addChildDock(getSelectionBox(), new Position(Position.BOTTOM));
+		workspaceSplit.setDividerLocation((int) (screenSize.getHeight() * 7 / 10));
+		leftSplitDock.addChildDock(workspaceSplit, new Position(Position.CENTER));
 		leftSplitDock.setDividerLocation(180);
-
+		
 		rightSplitDock = new SplitDock();
 		rightSplitDock.addChildDock(topRightTabDock, new Position(Position.TOP));
 		rightSplitDock.addChildDock(bottomRightTabDock, new Position(Position.BOTTOM));

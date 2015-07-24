@@ -179,7 +179,7 @@ public class NetHandler_Classic extends NetHandler {
 			xoff_name = 0;
 			yoff_name = 0;
 			
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesSnoopyOffsets").equals("1")) {
+			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
 				try {
 					xoff_name = (int)Float.parseFloat(xoff);
 					yoff_name = (int)Float.parseFloat(yoff);
@@ -212,7 +212,7 @@ public class NetHandler_Classic extends NetHandler {
 				//TODO:
 				double resizeFactor = 1;
 				try {
-					int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("netExtFactor"));
+					int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
 					resizeFactor = ((double)addF/(double)100);
 					
 					if(resizeFactor==0)

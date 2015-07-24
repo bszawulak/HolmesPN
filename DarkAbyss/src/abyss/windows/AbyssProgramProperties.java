@@ -158,7 +158,7 @@ public class AbyssProgramProperties extends JFrame {
 		resize80Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "80", false);
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "80", false);
 			}
 		});
 		group.add(resize80Button);
@@ -171,7 +171,7 @@ public class AbyssProgramProperties extends JFrame {
 		resize100Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "100", false);
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "100", true);
 			}
 		});
 		group.add(resize100Button);
@@ -183,7 +183,7 @@ public class AbyssProgramProperties extends JFrame {
 		resize120Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "120", false);
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "120", false);
 			}
 		});
 		group.add(resize120Button);
@@ -195,7 +195,7 @@ public class AbyssProgramProperties extends JFrame {
 		resize140Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "140", false);
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "140", false);
 			}
 		});
 		group.add(resize140Button);
@@ -207,7 +207,7 @@ public class AbyssProgramProperties extends JFrame {
 		resize160Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "160", false);
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "160", false);
 			}
 		});
 		group.add(resize160Button);
@@ -219,13 +219,13 @@ public class AbyssProgramProperties extends JFrame {
 		resize180Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("netExtFactor", "180", false);
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "180", false);
 			}
 		});
 		group.add(resize180Button);
 		ioPanel.add(resize180Button);
 		
-		String netExtFactorValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("netExtFactor");	
+		String netExtFactorValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor");	
 		if(netExtFactorValue.equals("80")) group.setSelected(resize80Button.getModel(), true);
 		else if(netExtFactorValue.equals("120")) group.setSelected(resize120Button.getModel(), true);
 		else if(netExtFactorValue.equals("140")) group.setSelected(resize140Button.getModel(), true);
@@ -240,13 +240,13 @@ public class AbyssProgramProperties extends JFrame {
 				if(noAction) return;
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlignWhenSaved", "1", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGridAlignWhenSaved", "1", true);
 				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridAlignWhenSaved", "0", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGridAlignWhenSaved", "0", true);
 				}
 			}
 		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridAlignWhenSaved").equals("1")) 
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1")) 
 			alignGridWhenSavedCheckBox.setSelected(true);
 		else
 			alignGridWhenSavedCheckBox.setSelected(false);
@@ -259,13 +259,13 @@ public class AbyssProgramProperties extends JFrame {
 				if(noAction) return;
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesSnoopyOffsets", "1", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorUseSnoopyOffsets", "1", true);
 				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesSnoopyOffsets", "0", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorUseSnoopyOffsets", "0", true);
 				}
 			}
 		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesSnoopyOffsets").equals("1")) 
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) 
 			useOffsetsCheckBox.setSelected(true);
 		else
 			useOffsetsCheckBox.setSelected(false);
@@ -278,13 +278,13 @@ public class AbyssProgramProperties extends JFrame {
 				if(noAction) return;
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesOldSnoopyLoaders", "1", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programUseOldSnoopyLoaders", "1", true);
 				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("usesOldSnoopyLoaders", "0", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programUseOldSnoopyLoaders", "0", true);
 				}
 			}
 		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesOldSnoopyLoaders").equals("1")) 
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programUseOldSnoopyLoaders").equals("1")) 
 			useOldLoaderCheckBox.setSelected(true);
 		else
 			useOldLoaderCheckBox.setSelected(false);
@@ -392,7 +392,7 @@ public class AbyssProgramProperties extends JFrame {
 		size1Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "1", true);
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "1", true);
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
@@ -405,7 +405,7 @@ public class AbyssProgramProperties extends JFrame {
 		size2Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "2", true);
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "2", true);
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
@@ -418,14 +418,14 @@ public class AbyssProgramProperties extends JFrame {
 		size3Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphArcLineSize", "3", true);
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "3", true);
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
 		group.add(size3Button);
 		panel.add(size3Button);
 		
-		String thickValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphArcLineSize");	
+		String thickValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize");	
 		if(thickValue.equals("1")) group.setSelected(size1Button.getModel(), true);
 		else if(thickValue.equals("2")) group.setSelected(size2Button.getModel(), true);
 		else if(thickValue.equals("3")) group.setSelected(size3Button.getModel(), true);
@@ -435,7 +435,7 @@ public class AbyssProgramProperties extends JFrame {
 		labelFontSize.setBounds(io_x+150, io_y-20, 200, 20);
 		panel.add(labelFontSize);
 		SpinnerModel fontSizeSpinnerModel = new SpinnerNumberModel(
-				Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphFontSize")), 8, 15, 1);
+				Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontSize")), 8, 15, 1);
 		JSpinner fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
 		fontSizeSpinner.setBounds(io_x+150, io_y, 80, 20);
 		fontSizeSpinner.addChangeListener(new ChangeListener() {
@@ -444,14 +444,14 @@ public class AbyssProgramProperties extends JFrame {
 				JSpinner spinner = (JSpinner) e.getSource();
 				int val = (int) spinner.getValue();
 				
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphFontSize", ""+val, true);
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphFontSize", ""+val, true);
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
 		panel.add(fontSizeSpinner);
 		//BOLD:
 		boolean bold = true;
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphFontBold").equals("0"))
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontBold").equals("0"))
 			bold = false;
 			
 		JCheckBox boldCheckBox = new JCheckBox("Bold", bold);
@@ -461,15 +461,15 @@ public class AbyssProgramProperties extends JFrame {
 				if(noAction) return;
 				JCheckBox box = (JCheckBox) e.getSource();
 				if (box.isSelected())
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphFontBold", "1", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphFontBold", "1", true);
 				else
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("graphFontBold", "0", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphFontBold", "0", true);
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
 		panel.add(boldCheckBox);
 		
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("graphFontBold").equals("1")) 
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontBold").equals("1")) 
 			boldCheckBox.setSelected(true);
 		else
 			boldCheckBox.setSelected(false);
@@ -501,14 +501,14 @@ public class AbyssProgramProperties extends JFrame {
 				if(noAction == true) return;
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("showShortNames", "1", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorShowShortNames", "1", true);
 				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("showShortNames", "0", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorShowShortNames", "0", true);
 				}
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("showShortNames").equals("1")) 
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorShowShortNames").equals("1")) 
 			useShortNamesCheckBox.setSelected(true);
 		else
 			useShortNamesCheckBox.setSelected(false);
@@ -564,18 +564,39 @@ public class AbyssProgramProperties extends JFrame {
 				
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("snoopyCompatibleMode", "1", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSnoopyCompatibleMode", "1", true);
 				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("snoopyCompatibleMode", "0", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSnoopyCompatibleMode", "0", true);
 				}
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("snoopyCompatibleMode").equals("1")) 
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1")) 
 			snoopyCompatibilityCheckBox.setSelected(true);
 		else
 			snoopyCompatibilityCheckBox.setSelected(false);
 		panel.add(snoopyCompatibilityCheckBox);
+		
+		JCheckBox subnetCompressionCheckBox = new JCheckBox("Use meta-arcs compression for metanodes", true);
+		subnetCompressionCheckBox.setBounds(io_x, io_y+=20, 350, 20);
+		subnetCompressionCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction == true) return;
+				
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSubnetCompressMode", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSubnetCompressMode", "0", true);
+				}
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSubnetCompressMode").equals("1")) 
+			subnetCompressionCheckBox.setSelected(true);
+		else
+			subnetCompressionCheckBox.setSelected(false);
+		panel.add(subnetCompressionCheckBox);
 		
 		noAction = false;
 		return panel;

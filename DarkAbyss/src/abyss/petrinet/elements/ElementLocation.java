@@ -10,9 +10,12 @@ import abyss.darkgui.GUIManager;
 import abyss.workspace.Workspace;
 
 /**
- * Klasa służąca do przechowywania lokalizacji wierzchołka oraz przyłączonych do niej łuków.
+ * Klasa służąca do przechowywania lokalizacji wierzchołka oraz przyłączonych do niej łuków. Jej
+ * obiekty latają w programie z lewa na prawo, każdy obiekt T/P/M ma przynajmniej kilka. Każy łuk
+ * ma dwa - start i end EL.
  * 
  * @author students
+ * @MR - meta łuki, poprawki, poprawki, poprawki
  */
 public class ElementLocation implements Serializable {
 	private static final long serialVersionUID = 2775375770782696276L;
@@ -203,11 +206,18 @@ public class ElementLocation implements Serializable {
 		this.outArcs.remove(a);
 	}
 	
+	/**
+	 * Dostęp do wektora wejściowych meta-łuków.
+	 * @return ArrayList[Arc] - wektor meta łuków (IN)
+	 */
 	public ArrayList<Arc> accessMetaInArcs() {
-		//TODO:
 		return this.metaInArcs;
 	}
 	
+	/**
+	 * Dostęp do wektora wyjściowych meta-łuków.
+	 * @return ArrayList[Arc] - wektor meta łuków (OUT)
+	 */
 	public ArrayList<Arc> accessMetaOutArcs() {
 		return this.metaOutArcs;
 	}
@@ -265,8 +275,10 @@ public class ElementLocation implements Serializable {
 					+ "; inArcs: "+ Integer.toString(this.getInArcs().size())
 					+ "; outArcs: " + Integer.toString(this.getOutArcs().size());
 		} else {
-			s = "Node: " + this.getParentNode() +" [gID:"+this.getParentNode().getID()+"];\n "
-					+ "SheetID:" + this.getSheetID() + "; Pos:"
+			int index = getParentNode().getElementLocations().indexOf(this);
+			
+			s = "Node: " + this.getParentNode() +"("+index+") [gID:"+this.getParentNode().getID()+"];\n "
+					+ "SheetID: " + this.getSheetID() + "; Pos:"
 					+ pointPos(this.getPosition()) 
 					+ "; inArcs: "+ Integer.toString(this.getInArcs().size())
 					+ "; outArcs: " + Integer.toString(this.getOutArcs().size())

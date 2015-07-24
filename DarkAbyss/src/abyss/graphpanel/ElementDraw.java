@@ -441,7 +441,7 @@ public final class ElementDraw {
 	public static Graphics2D drawArc(Arc arc, Graphics2D g, int sheetId, int zoom) {
 		if (arc.getLocationSheetId() != sheetId)
 			return g;
-		
+
 		Stroke sizeStroke = g.getStroke();
 
 		Point p1 = new Point((Point)arc.getStartLocation().getPosition());
@@ -503,6 +503,9 @@ public final class ElementDraw {
 				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
 				g.setStroke(backup);
 			} else {
+				int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
+				g.setStroke(new BasicStroke(sizeS));
+				
 				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
 			}
 		}

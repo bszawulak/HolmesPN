@@ -8,9 +8,11 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
+import abyss.darkgui.GUIManager;
 import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.ElementDraw;
 import abyss.petrinet.data.IdGenerator;
+import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.simulators.NetSimulator;
 
 /**
@@ -305,13 +307,6 @@ public class Arc extends PetriNetElement {
 		}
 		return this.isCorrect;
 	}
-	
-	//TODO:
-	public boolean checkIsCorrectMeta(ElementLocation e) {
-		
-		
-		return true;
-	}
 
 	/**
 	 * Metoda pozwala ustawić punkt lokacji wierzchołka wyjściowego łuku.
@@ -389,6 +384,14 @@ public class Arc extends PetriNetElement {
 	}
 
 	/**
+	 * Jak setStartLocation, z tym, że nie dodaje łuku do listy łuków obiektu locationStart.
+	 * @param startLocation ElementLocation - nowy element location. Okrętu się pan spodziewałeś?
+	 */
+	public void modifyStartLocation(ElementLocation startLocation) {
+		this.locationStart = startLocation;
+	}
+
+	/**
 	 * Metoda pozwala ustawić lokację wierzchołka wyjściowego łuku.
 	 * @param elementLocation ElementLocation - lokalizacja wierzchołka wyjściowego
 	 */
@@ -405,6 +408,14 @@ public class Arc extends PetriNetElement {
 
 		this.tempEndPoint = null;
 		this.isCorrect = true;
+	}
+	
+	/**
+	 * Działa jak setEndLocation, ale nie dodaje łuku do listy łuków obiektu locationEnd.
+	 * @param elementLocation ElementLocation - nowy element location. Okrętu się pan spodziewałeś?
+	 */
+	public void modifyEndLocation(ElementLocation elementLocation) {
+		this.locationEnd = elementLocation;
 	}
 	
 	/**
@@ -448,7 +459,7 @@ public class Arc extends PetriNetElement {
 	public void setTransportingTokens(boolean isTransportingTokens) {
 		this.isTransportingTokens = isTransportingTokens;
 		this.setSimulationStep(0);
-		if (!isTransportingTokens)
+		if (!isTransportingTokens) {
 			if (isSimulationForwardDirection()) {
 				if (getStartNode().getType() == PetriNetElementType.TRANSITION)
 					((Transition) getStartNode()).setLaunching(false);
@@ -456,6 +467,7 @@ public class Arc extends PetriNetElement {
 				if (getEndNode().getType() == PetriNetElementType.TRANSITION)
 					((Transition) getEndNode()).setLaunching(false);
 			}
+		}
 	}
 
 	/**
@@ -550,20 +562,53 @@ public class Arc extends PetriNetElement {
 	 * @return String - łańcuch znaków informacji o łuku sieci
 	 */
 	public String toString() {
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		String startNode = "";
+		int startNodeLoc = -1;
+		int startELLoc = -1;
 		int startNodeID = -1;
-		if(this.getStartLocation() != null)
-			if(this.getStartLocation().getParentNode() != null)
-				startNodeID = this.getStartLocation().getParentNode().getID();
-		
+		if(this.getStartLocation() != null) {
+			Node node = this.getStartLocation().getParentNode();
+			if(node != null) {
+				if(node instanceof Place) {
+					startNode = "P";
+					startNodeLoc = pn.getPlaces().indexOf(node);
+				} else if(node instanceof Transition) { 
+					startNode = "T";
+					startNodeLoc = pn.getTransitions().indexOf(node);
+				} else if(node instanceof MetaNode) {
+					startNode = "M"; 
+					startNodeLoc = pn.getMetaNodes().indexOf(node);
+				}
+				startELLoc = node.getElementLocations().indexOf(this.getStartLocation());
+				startNodeID = node.getID();
+			}
+		}
+		String endNode = "";
+		int endNodeLoc = -1;
+		int endELLoc = -1;
 		int endNodeID = -1;
-		if(this.getEndLocation() != null)
-			if(this.getEndLocation().getParentNode() != null)
-				endNodeID = this.getEndLocation().getParentNode().getID();
-
-		String s = "StartNodeID: " + startNodeID
-				+ "; EndNodeID: " + endNodeID
-				+ "; Type: " + arcType.toString();
-				//+ "; TYPE: "+ Boolean.toString(getPairedArc() != null);
+		if(this.getEndLocation() != null) {
+			Node node = this.getEndLocation().getParentNode();
+			if(node != null) {
+				if(node instanceof Place) {
+					endNode = "P";
+					endNodeLoc = pn.getPlaces().indexOf(node);
+				} else if(node instanceof Transition) {
+					endNode = "T";
+					endNodeLoc = pn.getTransitions().indexOf(node);
+				} else if(node instanceof MetaNode) {
+					endNode = "M";
+					endNodeLoc = pn.getMetaNodes().indexOf(node);
+				}
+				endELLoc = node.getElementLocations().indexOf(this.getEndLocation());
+				endNodeID = node.getID();
+			}
+		}
+		
+		String s = " ArcType: "+arcType.toString()
+				+" StartNode: " + startNode + startNodeLoc + "("+startELLoc+") [gID:"+startNodeID+"]  ==>  "
+				+ " EndNode: " + endNode + endNodeLoc + "("+endELLoc+") [gID:"+endNodeID+"]";
 		return s;
 	}
 }

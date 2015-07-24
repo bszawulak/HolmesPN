@@ -122,7 +122,7 @@ public class GUIReset {
 		IdGenerator.resetIDgenerator();
 		
 		mastah.cleanDockables();
-		
+		mastah.markNetSaved();
 		return true;
 	}
 	

@@ -374,10 +374,10 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction gridButton = new ToolbarButtonAction(this, "ShowGrid", "Show grid line", 
 				Tools.getResIcon32("/icons/toolbar/grid.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("gridLines").equals("1"))
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridLines", "0", true);
+				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridLines").equals("1"))
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGridLines", "0", true);
 				else
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("gridLines", "1", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGridLines", "1", true);
 				
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 			}

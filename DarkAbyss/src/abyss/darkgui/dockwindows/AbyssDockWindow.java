@@ -277,7 +277,7 @@ public class AbyssDockWindow extends SingleDock {
 	}
 
 	/**
-	 * Metoda ustawiająca nowy obiekt panelu wyąwietlającego zaznaczone elementy sieci.
+	 * Metoda ustawiająca nowy obiekt panelu wyświetlającego zaznaczone elementy sieci.
 	 * @return SelectionPanel - obiekt panelu
 	 */
 	private void setSelectionPanel(SelectionPanel selectionPanel) {

@@ -234,7 +234,7 @@ public class SnoopyReader {
 								if(yOff < -8)
 									yOff = -55; //nad node, uwzględnia różnicę
 								
-								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesSnoopyOffsets").equals("1")) {
+								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
 									xOff = 0;
 									yOff = 0;
 								}
@@ -307,6 +307,18 @@ public class SnoopyReader {
 								int elLocID = (int) getAttributeValue(line, " id=\"", 0);
 								if(sub != 0)
 									sub--;
+								
+								double resizeFactor = 1;
+								try {
+									int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
+									resizeFactor = ((double)addF/(double)100);
+									
+									if(resizeFactor==0)
+										resizeFactor=1;
+								} catch (Exception e) { }
+								
+								x *= resizeFactor;
+								y *= resizeFactor;
 								
 								if(logicalELNumber_graphics == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation
@@ -452,7 +464,7 @@ public class SnoopyReader {
 								if(yOff < -8)
 									yOff = -55; //nad node, uwzględnia różnicę
 								
-								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesSnoopyOffsets").equals("1")) {
+								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
 									xOff = 0;
 									yOff = 0;
 								}
@@ -538,6 +550,18 @@ public class SnoopyReader {
 								int elLocID = (int) getAttributeValue(line, " id=\"", 0);
 								if(sub != 0)
 									sub--;
+								
+								double resizeFactor = 1;
+								try {
+									int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
+									resizeFactor = ((double)addF/(double)100);
+									
+									if(resizeFactor==0)
+										resizeFactor=1;
+								} catch (Exception e) { }
+								
+								x *= resizeFactor;
+								y *= resizeFactor;
 								
 								if(logicalELNumber_graphics == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation
@@ -724,7 +748,7 @@ public class SnoopyReader {
 								if(yOff < -8)
 									yOff = -55; //nad node, uwzględnia różnicę
 								
-								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesSnoopyOffsets").equals("1")) {
+								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
 									xOff = 0;
 									yOff = 0;
 								}
@@ -766,6 +790,18 @@ public class SnoopyReader {
 								int elLocID = (int) getAttributeValue(line, " id=\"", 0);
 								if(sub != 0)
 									sub--;
+								
+								double resizeFactor = 1;
+								try {
+									int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
+									resizeFactor = ((double)addF/(double)100);
+									
+									if(resizeFactor==0)
+										resizeFactor=1;
+								} catch (Exception e) { }
+								
+								x *= resizeFactor;
+								y *= resizeFactor;
 								
 								if(logicalELNumber_graphics == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation
@@ -912,7 +948,7 @@ public class SnoopyReader {
 								if(yOff < -8)
 									yOff = -55; //nad node, uwzględnia różnicę
 								
-								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("usesSnoopyOffsets").equals("1")) {
+								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
 									xOff = 0;
 									yOff = 0;
 								}
@@ -954,6 +990,18 @@ public class SnoopyReader {
 								int elLocID = (int) getAttributeValue(line, " id=\"", 0);
 								if(sub != 0)
 									sub--;
+								
+								double resizeFactor = 1;
+								try {
+									int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
+									resizeFactor = ((double)addF/(double)100);
+									
+									if(resizeFactor==0)
+										resizeFactor=1;
+								} catch (Exception e) { }
+								
+								x *= resizeFactor;
+								y *= resizeFactor;
 								
 								if(logicalELNumber_graphics == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation
