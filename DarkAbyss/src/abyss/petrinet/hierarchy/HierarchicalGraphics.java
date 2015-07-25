@@ -121,7 +121,7 @@ public class HierarchicalGraphics {
 		}
 		//teraz mamy macierz pomocniczą - indices - jej wartości to numery sieci w ElementLocation's, które
 		//należy podmienić na indeksy wartości z indices (na lokalizację tychże wartości).
-		boolean criticalError = false;
+		//boolean criticalError = false;
 		for(Node n : nodes) {
 			for(ElementLocation el: n.getElementLocations()) {
 				int sheetID = el.getSheetID();
@@ -129,7 +129,7 @@ public class HierarchicalGraphics {
 				if(val == indices.indexOf(sheetID)) //nie ma co podmnieniać
 					continue;
 				if(val == -1) {
-					criticalError = true;
+					//criticalError = true;
 					continue;
 				}
 				
@@ -141,7 +141,7 @@ public class HierarchicalGraphics {
 				if(val == indices.indexOf(sheetID)) //nie ma co podmnieniać
 					continue;
 				if(val == -1) {
-					criticalError = true;
+					//criticalError = true;
 					continue;
 				}
 				

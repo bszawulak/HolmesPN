@@ -725,13 +725,14 @@ public class AbyssNodeInfo extends JFrame {
 			JPanel chartButtonPanel) {
 		if(mainSimulatorActive == false) {
 			ArrayList<Integer> dataVector = acquireNewTransitionData();
-			
-    		int sum = dataVector.get(dataVector.size()-2);
-    		int steps = dataVector.get(dataVector.size()-1);
-    		double avgFired = sum;
-    		avgFired /= steps;
-    		avgFired *= 100; // * 100%
-    		avgFiredTextBox.setText(Tools.cutValue(avgFired)+"%");  
+			if(dataVector != null) {
+				int sum = dataVector.get(dataVector.size()-2);
+	    		int steps = dataVector.get(dataVector.size()-1);
+	    		double avgFired = sum;
+	    		avgFired /= steps;
+	    		avgFired *= 100; // * 100%
+	    		avgFiredTextBox.setText(Tools.cutValue(avgFired)+"%");
+			}
 		} else {
 			avgFiredTextBox.setEnabled(false);
         	avgFiredTextBox.setText("n/a");
@@ -833,26 +834,27 @@ public class AbyssNodeInfo extends JFrame {
 		ArrayList<Integer> dataVector = ss.simulateNetSingleTransition(simSteps, transition);
 		
 		dynamicsSeriesDataSet.removeAllSeries();
-		
 		XYSeries series = new XYSeries("Average firing");
-		for(int step=0; step<dataVector.size()-2; step++) {
-			//if(transInterval > (transitionsRawData.size()/10)) {
-			//	transInterval = transitionsRawData.size()/10;
-			//}
-			int value = 0; //suma odpaleń w przedziale czasu
-			int interval = transInterval;
-			if(step+interval >= dataVector.size()-2)
-				interval = dataVector.size() - 2 - step;
-			
-			for(int i=0; i<interval; i++) {
-				try {
-					value += dataVector.get(step+i);
-				} catch (Exception e) {
-					
+		if(dataVector != null) {
+			for(int step=0; step<dataVector.size()-2; step++) {
+				//if(transInterval > (transitionsRawData.size()/10)) {
+				//	transInterval = transitionsRawData.size()/10;
+				//}
+				int value = 0; //suma odpaleń w przedziale czasu
+				int interval = transInterval;
+				if(step+interval >= dataVector.size()-2)
+					interval = dataVector.size() - 2 - step;
+				
+				for(int i=0; i<interval; i++) {
+					try {
+						value += dataVector.get(step+i);
+					} catch (Exception e) {
+						
+					}
 				}
+				series.add(step, value);
+				step += (interval-1);
 			}
-			series.add(step, value);
-			step += (interval-1);
 		}
 		dynamicsSeriesDataSet.addSeries(series);
 		return dataVector;

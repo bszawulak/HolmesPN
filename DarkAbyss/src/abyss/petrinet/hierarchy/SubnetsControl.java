@@ -22,7 +22,7 @@ import abyss.workspace.Workspace;
 
 /**
  * Klasa odpowiedzialna za metody pomagające w kontrolowaniu sieci hierarchicznych. Albo przynajmniej
- * udawaniu że taka kontrola istnieje.
+ * sprytnym udawaniu że taka kontrola w ogóle istnieje.
  * 
  * @author MR
  */
@@ -181,18 +181,23 @@ public class SubnetsControl {
 		}
 	}
 	
+	/**
+	 * Dodaj brakujące łuki meta dla właśnie dodanego normalnego łuku w podsieci
+	 * @param arc Arc - nowy łuk podsieci
+	 */
 	public void addMetaArc(Arc arc) {
-		ArrayList<MetaNode> metanodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes();
+		Random gen = new Random();
+		ArrayList<MetaNode> metanodes = overlord.getWorkspace().getProject().getMetaNodes();
 		ElementLocation startEL = arc.getStartLocation();
 		ElementLocation endEL = arc.getEndLocation();
 		
 		//określ czy jest interfejsem (któryś z EL łuku) i jakim:
 		ElementLocation ourPatient = null;
 		boolean isInterfIN = false;
-		if(isInterface(startEL, metanodes)) {
+		if(SubnetsTools.isInterface(startEL, metanodes) > 0) {
 			ourPatient = startEL; //interface IN
 			isInterfIN = true;
-		} else if(isInterface(endEL, metanodes)) {
+		} else if(SubnetsTools.isInterface(endEL, metanodes) > 0) {
 			ourPatient = endEL; //interface OUT
 		} else {
 			return; //nic tu po nas
@@ -208,43 +213,53 @@ public class SubnetsControl {
 			}
 		}
 		if(metanode == null) {
-			GUIManager.getDefaultGUIManager().log("Error: no metanode found.", "error", true);
+			overlord.log("Error: no metanode found.", "error", true);
 		}
 		
-		//TODO: sprawdzić, czy nie przekraczamy liczby meta-łuków!!!!
+		ElementLocation metaEL = metanode.getElementLocations().get(0);
+		int sheetID = metaEL.getSheetID();
+		Point point = metaEL.getPosition();
+		Node parent = ourPatient.getParentNode();
 		
-		
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSubnetCompressMode").equals("1"))  { //kompresja
-			//szukaj elementu z multi-arcami
-			//dodaj nowy element
-			//TODO: TEMPORARY
-			ElementLocation metaEL = metanode.getElementLocations().get(0);
-			int sheetID = metaEL.getSheetID();
-			Point point = metaEL.getPosition();
-			Node parent = ourPatient.getParentNode();
-			
-			ElementLocation newEL = new ElementLocation(sheetID, new Point(point.x+50, point.y+50), parent);
-			ElementLocation newNameEL = new ElementLocation(sheetID, new Point(0, 0), parent);
-			parent.getElementLocations().add(newEL);
-			parent.getNamesLocations().add(newNameEL);
-			parent.setPortal(true);
-			
-			Arc newArc = null;
-			if(isInterfIN) {
-				newArc = new Arc(IdGenerator.getNextId(), newEL, metaEL, TypesOfArcs.META_ARC);
-			} else {
-				newArc = new Arc(IdGenerator.getNextId(), metaEL, newEL, TypesOfArcs.META_ARC);
-			}
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().add(newArc);
-			
+		//sprawdź ile jest metałuków związanych z nodem
+		int metaArcs = 0;
+		int interfArc = 0;
+		if(isInterfIN) { //sprawdź metałuki wchodzące w metanode
+			metaArcs = SubnetsTools.countInMetaArcs(parent, metanode);
+			interfArc = SubnetsTools.countInterfaceInArcs(parent, ourPatient.getSheetID(), false);
 		} else {
-			//dodaj nowy element
-			ElementLocation metaEL = metanode.getElementLocations().get(0);
-			int sheetID = metaEL.getSheetID();
-			Point point = metaEL.getPosition();
-			Node parent = ourPatient.getParentNode();
+			metaArcs = SubnetsTools.countOutMetaArcs(parent, metanode);
+			interfArc = SubnetsTools.countInterfaceOutArcs(parent, ourPatient.getSheetID(), false);
+		}
+		
+		if(interfArc <= metaArcs) {
+			return;
+		}
+		
+		boolean uncompressed = overlord.getSettingsManager().getValue("editorSubnetCompressMode").equals("1");
+		if(uncompressed == true)  { //kompresja
+			ElementLocation nexus = SubnetsTools.getNexusEL(parent, metanode);
+			if(nexus == null) {
+				uncompressed = false;
+			} else {
+				Arc newArc = null;
+				if(isInterfIN) {
+					newArc = new Arc(IdGenerator.getNextId(), nexus, metaEL, TypesOfArcs.META_ARC);
+				} else {
+					newArc = new Arc(IdGenerator.getNextId(), metaEL, nexus, TypesOfArcs.META_ARC);
+				}
+				overlord.getWorkspace().getProject().getArcs().add(newArc);
+			}
+		}
+		
+		if(uncompressed = false) {
+			//dodaj nowy element	
+			int newX = gen.nextInt(160) - 80; //dodajemy (lewo-prawo)
+			int newY = gen.nextInt(100)+15; //odejmujemy (w górę)
+			if(!isInterfIN)
+				newY *= -1;
 			
-			ElementLocation newEL = new ElementLocation(sheetID, new Point(point.x+50, point.y+50), parent);
+			ElementLocation newEL = new ElementLocation(sheetID, new Point(point.x+newX, point.y-newY), parent);
 			ElementLocation newNameEL = new ElementLocation(sheetID, new Point(0, 0), parent);
 			parent.getElementLocations().add(newEL);
 			parent.getNamesLocations().add(newNameEL);
@@ -256,38 +271,11 @@ public class SubnetsControl {
 			} else {
 				newArc = new Arc(IdGenerator.getNextId(), metaEL, newEL, TypesOfArcs.META_ARC);
 			}
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().add(newArc);
-				
+			overlord.getWorkspace().getProject().getArcs().add(newArc);
 		}
-		
 	}
 	
-	/**
-	 * Metoda sprawdza, czy wierzchołek o podanym EL jest interfejsem podsieci w której się znajduje.
-	 * @param element ElementLocation - sprawdzany element
-	 * @param metanodes ArrayList[MetaNode] - wektor meta-węzłów
-	 * @return boolean - true, jeśli element jest interfejsem
-	 */
-	public boolean isInterface(ElementLocation element, ArrayList<MetaNode> metanodes) {
-		Node node = element.getParentNode();
-		int subSheet = element.getSheetID();
-		int metaSheet = -1;
-		for(MetaNode meta : metanodes) {
-			if(meta.getRepresentedSheetID() == subSheet) {
-				metaSheet = meta.getElementLocations().get(0).getSheetID();
-				break;
-			}
-		}
-		if(metaSheet == -1)
-			return false;
 
-		for(ElementLocation el : node.getElementLocations()) {
-			if(el.getSheetID() == metaSheet) {
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	/**
 	 * Metoda sprawdza, czy z danego węzła (P/T) już wychodzi meta-łuk do podanego meta-węzła.
@@ -453,7 +441,7 @@ public class SubnetsControl {
 		boolean found = false;
 		
 		if(metanodes.size() == 0) {
-			//GUIManager.getDefaultGUIManager().log("Metanodes vector already empty. Nothing to remove.", "text", true);
+			//overlord.log("Metanodes vector already empty. Nothing to remove.", "text", true);
 			return;
 		}
 		
@@ -461,7 +449,7 @@ public class SubnetsControl {
 			if(node.getRepresentedSheetID() == sheetID) {
 				found = true;
 				if(node.getInArcs().size() > 0 || node.getOutArcs().size() > 0) {
-					GUIManager.getDefaultGUIManager().log("Serious internal problem encountered. MetaNode should NEVER have normal arcs."
+					overlord.log("Serious internal problem encountered. MetaNode should NEVER have normal arcs."
 							+ " Please contact authors. Also, net analysis may be wrong.", "error", true);
 					
 					for(ElementLocation el : node.getElementLocations()) {
@@ -525,7 +513,7 @@ public class SubnetsControl {
 	 */
 	public void validateMetaArcs(ArrayList<Integer> sheetModified, boolean forceFix, boolean doNotRemove) {
 		boolean compressMetaArcs = false;
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSubnetCompressMode").equals("1")) 
+		if(overlord.getSettingsManager().getValue("editorSubnetCompressMode").equals("1")) 
 			compressMetaArcs = true;
 		
 		ArrayList<MetaNode> metanodes = overlord.getWorkspace().getProject().getMetaNodes();

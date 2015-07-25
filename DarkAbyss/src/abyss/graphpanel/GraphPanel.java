@@ -25,6 +25,7 @@ import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
 import abyss.petrinet.elements.Transition.TransitionType;
+import abyss.petrinet.hierarchy.SubnetsTools;
 import abyss.utilities.Tools;
 import abyss.workspace.WorkspaceSheet;
 
@@ -53,8 +54,12 @@ public class GraphPanel extends JComponent {
 	private Dimension originSize;
 	private boolean drawMesh = false;
 	private boolean snapToMesh = false;
-	/** POINTER, ERASER, PLACE, TRANSITION, TIMETRANSITION, ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC */
-	public enum DrawModes { POINTER, ERASER, PLACE, TRANSITION, TIMETRANSITION, ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC }
+	/** POINTER, ERASER, PLACE, TRANSITION, TIMETRANSITION, ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC,
+	   SUBNET_T, SUBNET_P, SUBNET_PT */
+	public enum DrawModes { POINTER, ERASER, PLACE, 
+		TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
+		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
+		SUBNET_T, SUBNET_P, SUBNET_PT }
 
 	/**
 	 * Konstruktor obiektu klasy GraphPanel
@@ -1051,10 +1056,10 @@ public class GraphPanel extends JComponent {
 					
 					if(clickedLocation.getSheetID() > 0) {
 						ArrayList<MetaNode> metas = gui.getWorkspace().getProject().getMetaNodes();
-						boolean first = gui.netsHQ.isInterface(drawnArc.getStartLocation(), metas);
-						boolean second = gui.netsHQ.isInterface(clickedLocation, metas);
+						int first = SubnetsTools.isInterface(drawnArc.getStartLocation(), metas);
+						int second = SubnetsTools.isInterface(clickedLocation, metas);
 						
-						if(first && second) {
+						if(first > 0 && second > 0) {
 							JOptionPane.showMessageDialog(null, "Two interfaces cannot be linked directly within single subnet.", 
 									"Don't cross the streams!",  JOptionPane.WARNING_MESSAGE);
 								proceed = false;

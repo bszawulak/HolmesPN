@@ -207,7 +207,7 @@ public class ElementLocation implements Serializable {
 	}
 	
 	/**
-	 * Dostęp do wektora wejściowych meta-łuków.
+	 * Dostęp do wektora wejściowych (wchodzących) meta-łuków.
 	 * @return ArrayList[Arc] - wektor meta łuków (IN)
 	 */
 	public ArrayList<Arc> accessMetaInArcs() {
@@ -215,7 +215,7 @@ public class ElementLocation implements Serializable {
 	}
 	
 	/**
-	 * Dostęp do wektora wyjściowych meta-łuków.
+	 * Dostęp do wektora wyjściowych (wychodzących) meta-łuków.
 	 * @return ArrayList[Arc] - wektor meta łuków (OUT)
 	 */
 	public ArrayList<Arc> accessMetaOutArcs() {

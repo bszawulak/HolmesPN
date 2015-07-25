@@ -68,15 +68,26 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Inhibitor Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Reset Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Equal Arc"));
+		basicPetriNetsNode.add(new DefaultMutableTreeNode("Modifier Arc"));
 
-		DefaultMutableTreeNode timePetriNetsNode = new DefaultMutableTreeNode("Time Petri Nets");
-		timePetriNetsNode.add(new DefaultMutableTreeNode("TimeTransition"));		
+		DefaultMutableTreeNode otherPetriNetsNode = new DefaultMutableTreeNode("Other transitions");
+		otherPetriNetsNode.add(new DefaultMutableTreeNode("(TPN) Time"));
+		otherPetriNetsNode.add(new DefaultMutableTreeNode("(FPN) Functional"));
+		otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Immediate"));
+		otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Deterministic"));
+		otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Scheduled"));
+		
+		DefaultMutableTreeNode hierachicalNode = new DefaultMutableTreeNode("Subsets");
+		hierachicalNode.add(new DefaultMutableTreeNode("Subnet T-type"));
+		hierachicalNode.add(new DefaultMutableTreeNode("Subnet P-type"));
+		hierachicalNode.add(new DefaultMutableTreeNode("General Subnet"));
 		
 		// Create the root and add the country nodes.
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Tools");
 		rootNode.add(miscNode);
 		rootNode.add(basicPetriNetsNode);
-		rootNode.add(timePetriNetsNode);
+		rootNode.add(otherPetriNetsNode);
+		rootNode.add(hierachicalNode);
 		
 		// Create the tree model.
 		TreeModel treeModel = new DefaultTreeModel(rootNode);
@@ -171,8 +182,20 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			case "Transition":
 				guiManager.getWorkspace().setGraphMode(DrawModes.TRANSITION);
 				break;
-			case "TimeTransition":
+			case "(TPN) Time":
 				guiManager.getWorkspace().setGraphMode(DrawModes.TIMETRANSITION);
+				break;
+			case "(FPN) Functional":
+				guiManager.getWorkspace().setGraphMode(DrawModes.FUNCTIONALTRANS);
+				break;
+			case "(SPN) Immediate":
+				guiManager.getWorkspace().setGraphMode(DrawModes.IMMEDIATETRANS);
+				break;
+			case "(SPN) Deterministic":
+				guiManager.getWorkspace().setGraphMode(DrawModes.DETERMINISTICTRANS);
+				break;
+			case "(SPN) Scheduled":
+				guiManager.getWorkspace().setGraphMode(DrawModes.SCHEDULEDTRANS);
 				break;
 			case "Arc":
 				guiManager.getWorkspace().setGraphMode(DrawModes.ARC);
@@ -189,8 +212,20 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			case "Equal Arc":
 				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_EQUAL);
 				break;
+			case "Modifier Arc":
+				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_MODIFIER);
+				break;
+			case "Subnet T-type":
+				guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_T);
+				break;
+			case "Subnet P-type":
+				guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_P);
+				break;
+			case "General Subnet":
+				guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_PT);
+				break;
 			}
-			
+
 		}
 	}
 
@@ -202,9 +237,12 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	private class LeafRenderer extends DefaultTreeCellRenderer {
 		private static final long serialVersionUID = 3169140404884453079L;
 		private ImageIcon placeIcon, transitionIcon, pointerIcon,
-				eraserIcon, timeTransitionIcon;
+				eraserIcon, timeTransitionIcon, functionalTransIcon,
+				immediateTransIcon, deterministicTransIcon, scheduledTransIcon;
 
-		private ImageIcon arcIcon, arcIconRead, arcIconInh, arcIconRst, arcIconEql;
+		private ImageIcon arcIcon, arcIconRead, arcIconInh, arcIconRst, arcIconEql, arcIconModifier;
+		
+		private ImageIcon subnetT, subnetP, subnetPT;
 		/**
 		 * Konstruktor domyślny obiektu klasy wewnętrznej LeafRenderer. Tworzy ikony
 		 * narzędzi rysowania sieci Petriego.
@@ -213,6 +251,11 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			placeIcon = Tools.getResIcon16("/icons/place.gif");
 			transitionIcon = Tools.getResIcon16("/icons/transition.gif");
 			timeTransitionIcon = Tools.getResIcon16("/icons/timeTransition.gif");
+			functionalTransIcon = Tools.getResIcon16("/icons/funcTransition.gif");
+			immediateTransIcon = Tools.getResIcon16("/icons/immediateTransition.gif");
+			deterministicTransIcon = Tools.getResIcon16("/icons/deterministicTransition.gif");
+			scheduledTransIcon = Tools.getResIcon16("/icons/scheduledTransition.gif");
+			
 			pointerIcon = Tools.getResIcon16("/icons/pointer.gif");
 			eraserIcon = Tools.getResIcon16("/icons/eraser.gif");
 			
@@ -221,6 +264,11 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			arcIconInh = Tools.getResIcon16("/icons/arcInh.gif");
 			arcIconRst = Tools.getResIcon16("/icons/arcReset.gif");
 			arcIconEql = Tools.getResIcon16("/icons/arcEqual.gif");
+			arcIconModifier = Tools.getResIcon16("/icons/arcModifier.gif");
+			
+			subnetT = Tools.getResIcon16("/icons/subnetT.gif");
+			subnetP = Tools.getResIcon16("/icons/subnetP.gif");
+			subnetPT = Tools.getResIcon16("/icons/subnetPT.gif");
 		}
 
 		/**
@@ -258,9 +306,25 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 					setIcon(transitionIcon);
 					setToolTipText("Allows you to place a Transition on the sheet.");
 					break;
-				case "TimeTransition":
+				case "(TPN) Time":
 					setIcon(timeTransitionIcon);
 					setToolTipText("Allows you to place a Time Transition on the sheet.");
+					break;
+				case "(FPN) Functional":
+					setIcon(functionalTransIcon);
+					setToolTipText("Allows you to place a Functional Transition on the sheet.");
+					break;
+				case "(SPN) Immediate":
+					setIcon(immediateTransIcon);
+					setToolTipText("Allows you to place a Immediate Transition on the sheet.");
+					break;
+				case "(SPN) Deterministic":
+					setIcon(deterministicTransIcon);
+					setToolTipText("Allows you to place a Deterministic Transition on the sheet.");
+					break;
+				case "(SPN) Scheduled":
+					setIcon(scheduledTransIcon);
+					setToolTipText("Allows you to place a Scheduled Transition on the sheet.");
 					break;
 				case "Arc":
 					setIcon(arcIcon);
@@ -281,6 +345,22 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				case "Equal Arc":
 					setIcon(arcIconEql);
 					setToolTipText("Allows you to place an Equal Arc on the sheet.");
+					break;
+				case "Modifier Arc":
+					setIcon(arcIconModifier);
+					setToolTipText("Allows you to place an Modifier Arc on the sheet.");
+					break;
+				case "Subnet T-type":
+					setIcon(subnetT);
+					setToolTipText("Allows you to create subnet with place-interfaces.");
+					break;
+				case "Subnet P-type":
+					setIcon(subnetP);
+					setToolTipText("Allows you to create subnet with transition-interfaces.");
+					break;
+				case "General Subnet":
+					setIcon(subnetPT);
+					setToolTipText("Allows you to create subnet with P/T interfaces.");
 					break;
 				}
 			} else {
