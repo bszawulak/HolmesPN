@@ -18,6 +18,7 @@ import org.xml.sax.SAXException;
 
 
 
+
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel;
 import abyss.petrinet.data.IdGenerator;
@@ -26,6 +27,7 @@ import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
+import abyss.petrinet.elements.MetaNode.MetaType;
 
 /**
  * Parser sieci rozszerzonych (Snoopy)
@@ -345,7 +347,7 @@ public class NetHandler_Extended extends NetHandler {
 
 			int sheetsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size();
 			for(int s = sheetsNumber; s<globalNetsCounted; s++) {
-				GUIManager.getDefaultGUIManager().getWorkspace().newTab(false);
+				GUIManager.getDefaultGUIManager().getWorkspace().newTab(false, new Point(0,0), 1, MetaType.SUBNET);
 			}
 			for(int net=0; net<sheetsNumber; net++) {
 				int tmpX = 0;

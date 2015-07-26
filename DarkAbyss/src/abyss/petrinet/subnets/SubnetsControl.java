@@ -1,4 +1,4 @@
-package abyss.petrinet.hierarchy;
+package abyss.petrinet.subnets;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -252,7 +252,7 @@ public class SubnetsControl {
 			}
 		}
 		
-		if(uncompressed = false) {
+		if(uncompressed == false) {
 			//dodaj nowy element	
 			int newX = gen.nextInt(160) - 80; //dodajemy (lewo-prawo)
 			int newY = gen.nextInt(100)+15; //odejmujemy (w górę)
@@ -274,9 +274,7 @@ public class SubnetsControl {
 			overlord.getWorkspace().getProject().getArcs().add(newArc);
 		}
 	}
-	
 
-	
 	/**
 	 * Metoda sprawdza, czy z danego węzła (P/T) już wychodzi meta-łuk do podanego meta-węzła.
 	 * @param startLocation ElementLocation - EL P/T startowego węzła
@@ -313,13 +311,13 @@ public class SubnetsControl {
 		}
 		return false;
 	}
-
-	public boolean addPortalFromMetanode(ElementLocation startNode, MetaNode node) {
-		
-		
-		return true;
-	}
 	
+	/**
+	 * Metoda służąca do zmiany rodzaju podsieci.
+	 * @param metanode Metanode - meta-węzeł podsieci
+	 * @param desiredType MetaType - typ do zmiany
+	 * @return boolean - true, jeśli zmiana była możliwa
+	 */
 	public boolean changeSubnetType(MetaNode metanode, MetaType desiredType) {
 		if(overlord.getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1")) {
 			if(desiredType == MetaType.SUBNET) {
@@ -412,7 +410,7 @@ public class SubnetsControl {
 				int sheetID = el.getSheetID();
 				int shNumber = result.size();
 				if(sheetID > shNumber-1) {
-					HierarchicalGraphics.updateVector(result, sheetID - shNumber + 1, 0);
+					SubnetsGraphics.updateVector(result, sheetID - shNumber + 1, 0);
 				}
 				
 				int value = result.get(sheetID) + 1;
@@ -422,7 +420,7 @@ public class SubnetsControl {
 		int sheetsNumber = overlord.getWorkspace().getSheets().size();
 		int shNumber = result.size();
 		if(sheetsNumber > shNumber) {
-			HierarchicalGraphics.updateVector(result, sheetsNumber - shNumber, 0);
+			SubnetsGraphics.updateVector(result, sheetsNumber - shNumber, 0);
 		}
 		
 		return result;
@@ -558,12 +556,12 @@ public class SubnetsControl {
 				//policz wejścia i wyjścia węzła podsieci:
 				for(ElementLocation element : nodeToFix.getElementLocations()) {
 					if(element.getSheetID() == sheetID) {
-						if(element.getInArcs().size() > 0) {
-							outInterfaceLinks += element.getInArcs().size();
-						}
-						if(element.getOutArcs().size() > 0) {
-							inInterfaceLinks += element.getOutArcs().size();
-						}
+						
+						outInterfaceLinks += element.getInArcs().size();
+						inInterfaceLinks += element.getOutArcs().size();
+						//dodaj meta-łuki (dla wielopoziomowych)
+						outInterfaceLinks += element.accessMetaInArcs().size();
+						inInterfaceLinks += element.accessMetaOutArcs().size();
 					}
 				}
 				
@@ -923,10 +921,128 @@ public class SubnetsControl {
 		}
 	}
 	
-	
+	/**
+	 * Metoda służy do usuwania wszystkich połączeń matałukami węzła node z meta-węzłem sieci subnet.
+	 * @param node Node - węzeł którego połączenia z podsiecią usuwamy
+	 * @param subnet int - ID podsieci
+	 */
+	public void clearAllMetaArcs(Node node, int subnet) {
+		ArrayList<MetaNode> metanodes = overlord.getWorkspace().getProject().getMetaNodes();
+		MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, subnet);
+		
+		meta.removeAllInConnectionsWith(node);
+		meta.removeAllOutConnectionsWith(node);
+	}
 
-	public boolean checkSnoopyCompatibility() {
-		// TODO Auto-generated method stub
-		return false;
+	/**
+	 * Metoda zwraca status sieci.
+	 * @param fix boolean - czy naprawiać, jeśli coś nie działa
+	 * @return boolean - true, jeśli kompatybilna ze Snoopiem
+	 */
+	public boolean checkSnoopyCompatibility(boolean fix) {
+		SubnetsSnoopyCompatibility sc = new SubnetsSnoopyCompatibility();
+		boolean status = sc.checkAndFix(true, fix);
+		return status;
+	}
+
+	/** 
+	 * Sprawdzanie, czy EL posiada meta-łuki. Jeśli tak, to w odppowiednich podsieciach nie może już być
+	 * innych EL tego node'a, aby jego EL tu posłany był zdatny do usunięcia.
+	 * @param el ElementLocation - el
+	 * @return boolean - true, jeśli można usunąć
+	 * 
+	 * MULTI-ELEMENTS META READY
+	 */
+	public boolean checkIfExpendable(ElementLocation el) {
+		Node parent = el.getParentNode();
+		if(el.accessMetaInArcs().size() > 0) {
+			//sprawdź, czy są inne w tej podsieci z meta-łukiem
+			ArrayList<MetaNode> metanodesInSubnet = new ArrayList<MetaNode>();
+			//do jakich meta-węzłów prowadzą łuki MetaIN
+			for(Arc arc : el.accessMetaInArcs()) {
+				MetaNode meta = (MetaNode) arc.getStartNode();
+				if(!metanodesInSubnet.contains(meta))
+					metanodesInSubnet.add(meta);
+			}
+			//czy są inne EL prowadzące do tych meta-węzłów?
+			int size = metanodesInSubnet.size();
+			for(int m=0; m<size; m++) {
+				MetaNode meta = metanodesInSubnet.get(m);
+				for(ElementLocation metaEL : meta.getElementLocations()) {
+					boolean found = false;
+					for(Arc arc : metaEL.accessMetaOutArcs()) {
+						if(arc.getEndNode().equals(parent) && !arc.getEndLocation().equals(el)) {
+							found = true;
+							break;
+							//znaleziono inne połączenie z danym metanode (z daną podsiecią)
+						}
+					}
+					if(found) {
+						metanodesInSubnet.remove(meta);
+						m--;
+						size--;
+						break;
+					}
+				}
+			}
+			
+			if(metanodesInSubnet.size() > 0) {
+				//dla tych podsieci sprawdzić, czy jest tam w ogóle jakiś EL od parent
+				for(MetaNode meta : metanodesInSubnet) {
+					int repID = meta.getRepresentedSheetID();
+					
+					for(ElementLocation element : parent.getElementLocations()) {
+						if(element.getSheetID() == repID)
+							return false; //nie można usunąć, nie ważne co by było dalej
+					}
+				}
+			} 
+		}
+		
+		if(el.accessMetaOutArcs().size() > 0) {
+			//sprawdź, czy są inne w tej podsieci z meta-łukiem
+			ArrayList<MetaNode> metanodesOutSubnet = new ArrayList<MetaNode>();
+			//do jakich meta-węzłów prowadzą łuki MetaIN
+			for(Arc arc : el.accessMetaOutArcs()) {
+				MetaNode meta = (MetaNode) arc.getEndNode();
+				if(!metanodesOutSubnet.contains(meta))
+					metanodesOutSubnet.add(meta);
+			}
+			//czy są inne EL prowadzące Z tych meta-węzłów?
+			int size = metanodesOutSubnet.size();
+			for(int m=0; m<size; m++) {
+				MetaNode meta = metanodesOutSubnet.get(m);
+				for(ElementLocation metaEL : meta.getElementLocations()) {
+					boolean found = false;
+					for(Arc arc : metaEL.accessMetaInArcs()) {
+						if(arc.getStartNode().equals(parent) && !arc.getStartLocation().equals(el)) {
+							found = true;
+							break;
+							//znaleziono inne połączenie z danym metanode (z daną podsiecią)
+						}
+					}
+					if(found) {
+						metanodesOutSubnet.remove(meta);
+						m--;
+						size--;
+						break;
+					}
+				}
+			}
+			
+			if(metanodesOutSubnet.size() > 0) {
+				//dla tych podsieci sprawdzić, czy jest tam w ogóle jakiś EL od parent
+				for(MetaNode meta : metanodesOutSubnet) {
+					int repID = meta.getRepresentedSheetID();
+					
+					for(ElementLocation element : parent.getElementLocations()) {
+						if(element.getSheetID() == repID)
+							return false; //nie można usunąć, nie ważne co by było dalej
+					}
+				}
+			}
+		}
+		
+		return true;
 	}
 }

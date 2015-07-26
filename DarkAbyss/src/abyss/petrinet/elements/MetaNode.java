@@ -2,6 +2,7 @@ package abyss.petrinet.elements;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.util.ArrayList;
 
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.ElementDraw;
@@ -60,11 +61,27 @@ public class MetaNode extends Node {
 	}
 	
 	/**
+	 * Zwraca pierwszy Element Location meta-węzła. Czyli JEDYNY.
+	 * @return ElementLocation - jw
+	 */
+	public ElementLocation getFirstELoc() {
+		return getElementLocations().get(0);
+	}
+	
+	/**
 	 * Metoda numer arkusza który reprezentuje ten meta-węzeł.
 	 * @return int - nr arkusza
 	 */
 	public int getRepresentedSheetID() {
 		return this.metaSheetID;
+	}
+	
+	/**
+	 * Metoda zwraca ID podsieci, w którym leży ten meta-węzeł.
+	 * @return int - ID podsieci z grafiką metanode'a
+	 */
+	public int getMySheetID() {
+		return getElementLocations().get(0).getSheetID();
 	}
 	
 	/**
@@ -75,6 +92,46 @@ public class MetaNode extends Node {
 	public void draw(Graphics2D g, int sheetId)
 	{
 		g = ElementDraw.drawElement(this, g, sheetId);
+	}
+	
+	/**
+	 * Usuwa wszystkie meta-łuki skierowane z węzła node (do metanode).
+	 * @param node Node - węzeł
+	 */
+	public void removeAllInConnectionsWith(Node node) {
+		ArrayList<Arc> metaIns = getFirstELoc().accessMetaInArcs();
+		int size = metaIns.size();
+		for(int i=0; i<size; i++) {
+			if(metaIns.get(i).getStartNode().equals(node)) {
+				Arc arc = metaIns.get(i);
+				metaIns.remove(arc);
+				arc.getStartLocation().accessMetaOutArcs().remove(arc);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().remove(arc);
+				
+				i--;
+				size--;
+			}
+		}
+	}
+	
+	/**
+	 * Usuwa wszystkie meta-łuki skierowane do węzła node (z metanode).
+	 * @param node Node - węzeł
+	 */
+	public void removeAllOutConnectionsWith(Node node) {
+		ArrayList<Arc> metaOuts = getFirstELoc().accessMetaOutArcs();
+		int size = metaOuts.size();
+		for(int i=0; i<size; i++) {
+			if(metaOuts.get(i).getEndNode().equals(node)) {
+				Arc arc = metaOuts.get(i);
+				metaOuts.remove(arc);
+				arc.getEndLocation().accessMetaInArcs().remove(arc);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().remove(arc);
+				
+				i--;
+				size--;
+			}
+		}
 	}
 	
 	/**

@@ -12,6 +12,7 @@ import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.elements.Arc;
+import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
@@ -279,50 +280,58 @@ public class SelectionManager {
 	 * @param el ElementLocation - lokalizacja wierzchołka który ma został usunięty
 	 */
 	public void deleteElementLocation(ElementLocation el) {
-		ArrayList<Integer> sheetModified = new ArrayList<Integer>();
-		sheetModified.add(el.getSheetID());
 		
-		this.deselectElementLocation(el);
-		Node n = el.getParentNode();
-		if (n.removeElementLocation(el) == false) {
-			this.getGraphPanelNodes().remove(n);
-		}
-		
-		for(Arc arc : el.getInArcs()) {
-			this.getGraphPanelArcs().remove(arc);
-			//dostań się do lokacji startowej łuku i usuń go tam z listy wyjściowych:
-			arc.getStartLocation().removeOutArc(arc);
-		}
+		boolean canDo = GUIManager.getDefaultGUIManager().netsHQ.checkIfExpendable(el);
+		if(canDo == false) {
+			JOptionPane.showMessageDialog(null, 
+					"This element is the only one that leads to subnet\n"
+					+ "with other portals of same node. Please remove all\n"
+					+ "portals in correct subnets before removing THIS portal.", 
+					"Cannot be removed", JOptionPane.WARNING_MESSAGE);
+			this.invokeActionListener();
+			
+		} else {
+			ArrayList<Integer> sheetModified = new ArrayList<Integer>();
+			sheetModified.add(el.getSheetID());
+			
+			this.deselectElementLocation(el);
+			Node n = el.getParentNode();
+			if (n.removeElementLocation(el) == false) {
+				this.getGraphPanelNodes().remove(n);
+			}
+			
+			for(Arc arc : el.getInArcs()) {
+				this.getGraphPanelArcs().remove(arc);
+				//dostań się do lokacji startowej łuku i usuń go tam z listy wyjściowych:
+				arc.getStartLocation().removeOutArc(arc);
+			}
 
-		for(Arc arc : el.getOutArcs()) {
-			this.getGraphPanelArcs().remove(arc);
-			//dostań się do lokacji docelowej łuku i usuń go tam z listy wejściowych:
-			arc.getEndLocation().removeInArc(arc);
+			for(Arc arc : el.getOutArcs()) {
+				this.getGraphPanelArcs().remove(arc);
+				//dostań się do lokacji docelowej łuku i usuń go tam z listy wejściowych:
+				arc.getEndLocation().removeInArc(arc);
+			}
+	
+			for (Iterator<Arc> i = el.accessMetaInArcs().iterator(); i.hasNext();) {
+				Arc a = i.next();
+				this.getGraphPanelArcs().remove(a);
+				a.getStartLocation().accessMetaOutArcs().remove(a);
+				//a.unlinkElementLocations();
+				i.remove();
+			}
+			
+			for (Iterator<Arc> i = el.accessMetaOutArcs().iterator(); i.hasNext();) {
+				Arc a = i.next();
+				this.getGraphPanelArcs().remove(a);
+				a.getEndLocation().accessMetaInArcs().remove(a);
+				//a.unlinkElementLocations();
+				i.remove();
+			}
+			
+			GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(sheetModified, false, false);
+			this.getGraphPanel().repaint();
+			this.invokeActionListener();
 		}
-		
-		//TODO:
-		//usunięcie metaArc kaskadowo usuwa wszystkie portale danego node'a z podsieci
-		
-		for (Iterator<Arc> i = el.accessMetaInArcs().iterator(); i.hasNext();) {
-			Arc a = i.next();
-			this.getGraphPanelArcs().remove(a);
-			a.getStartLocation().accessMetaOutArcs().remove(a);
-			//a.unlinkElementLocations();
-			i.remove();
-		}
-		
-		for (Iterator<Arc> i = el.accessMetaOutArcs().iterator(); i.hasNext();) {
-			Arc a = i.next();
-			this.getGraphPanelArcs().remove(a);
-			a.getEndLocation().accessMetaInArcs().remove(a);
-			//a.unlinkElementLocations();
-			i.remove();
-		}
-		
-		GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(sheetModified, false, false);
-		
-		this.getGraphPanel().repaint();
-		this.invokeActionListener();
 	}
 	
 	/**
@@ -334,8 +343,16 @@ public class SelectionManager {
 	public void deleteAllSelectedElements() {
 		ArrayList<Integer> sheetsModified = new ArrayList<Integer>();
 		
+		ArrayList<ElementLocation> protectedList = new ArrayList<ElementLocation>();
 		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
 			ElementLocation el = i.next();
+			
+			boolean canDo = GUIManager.getDefaultGUIManager().netsHQ.checkIfExpendable(el);
+			if(canDo == false) {
+				protectedList.add(el);
+				continue;
+			}
+			
 			
 			int sheetID = el.getSheetID();
 			if(!sheetsModified.contains(sheetID))
@@ -360,12 +377,36 @@ public class SelectionManager {
 				begone.getEndLocation().removeInArc(begone);
 				j.remove();
 			}
+			// kasowanie wszystkich in-meta-arcs danej ElementLocation
+			for (Iterator<Arc> j = el.accessMetaInArcs().iterator(); j.hasNext();) {
+				Arc a = j.next();
+				this.getGraphPanelArcs().remove(a);
+				a.getStartLocation().accessMetaOutArcs().remove(a);
+				j.remove();
+			}
+			// kasowanie wszystkich out-meta-arcs danej ElementLocation
+			for (Iterator<Arc> j = el.accessMetaOutArcs().iterator(); j.hasNext();) {
+				Arc a = j.next();
+				this.getGraphPanelArcs().remove(a);
+				a.getEndLocation().accessMetaInArcs().remove(a);
+				j.remove();
+			}
 			i.remove();
 		}
 		// kasuje wszystkie zaznaczone łuki:
+		boolean securedDelete = false;
+		if(protectedList.size() > 0)
+			securedDelete = true;
 		
 		for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
 			Arc a = i.next();
+			
+			if(securedDelete) { //nie kasuj łuków EL, który nie został skasowany
+				if(protectedList.contains(a.getStartLocation()) || protectedList.contains(a.getEndLocation())) {
+					continue;
+				}
+			}
+			
 			this.getGraphPanelArcs().remove(a);
 			a.unlinkElementLocations();
 			if (a.getPairedArc() != null) {
@@ -383,6 +424,13 @@ public class SelectionManager {
 		this.getSelectedElementLocations().clear();
 		this.getGraphPanel().repaint();
 		this.invokeActionListener();
+		
+		if(securedDelete) {
+			JOptionPane.showMessageDialog(null, 
+					"Some element connected with subnets could not be deleted. Their corresponding\n"
+					+ "portal within these subnets must be deleted first.", 
+					"Cannot be removed", JOptionPane.WARNING_MESSAGE);
+		}
 	}
 
 	// ================================================================================

@@ -21,12 +21,14 @@ import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
 import abyss.petrinet.elements.Transition.TransitionType;
 import abyss.petrinet.simulators.NetSimulator;
 import abyss.petrinet.simulators.NetSimulator.NetType;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -1061,7 +1063,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if (emptySheet == true) {
 				SID = emptySheetIndex;
 			} else {
-				SID = GUIManager.getDefaultGUIManager().getWorkspace().newTab(false);
+				SID = GUIManager.getDefaultGUIManager().getWorkspace().newTab(false, new Point(0,0), 1, MetaType.SUBNET);
 			}
 		}
 		return SID;

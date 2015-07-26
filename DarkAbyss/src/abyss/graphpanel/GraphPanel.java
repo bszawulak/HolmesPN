@@ -25,7 +25,7 @@ import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.PetriNetElement.PetriNetElementType;
 import abyss.petrinet.elements.Transition.TransitionType;
-import abyss.petrinet.hierarchy.SubnetsTools;
+import abyss.petrinet.subnets.SubnetsTools;
 import abyss.utilities.Tools;
 import abyss.workspace.WorkspaceSheet;
 
@@ -291,8 +291,9 @@ public class GraphPanel extends JComponent {
 		
 		ArrayList<Place> places_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		ArrayList<Transition> transitions_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<MetaNode> metanodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes();
 		for (Node n : getNodes()) {
-			n.drawName(g2d, this.sheetId, places_tmp, transitions_tmp);
+			n.drawName(g2d, this.sheetId, places_tmp, transitions_tmp, metanodes);
 		}
 		
 		if (getSelectingRect() != null) {
@@ -469,6 +470,35 @@ public class GraphPanel extends JComponent {
 		}
 	}
 
+	/**
+	 * Metoda dodaje nowy meta-węzeł (i podsieć typu P) we wskazane miejsce.
+	 * @param p Point - lokalizacja
+	 */
+	private void addNewSubnetP(Point p) {
+		if (isLegalLocation(p)) {
+			GUIManager.getDefaultGUIManager().getWorkspace().newTab(true, p, this.sheetId, MetaType.SUBNETPLACE);
+		}
+	}
+	
+	/**
+	 * Metoda dodaje nowy meta-węzeł (i podsieć typu T) we wskazane miejsce.
+	 * @param p Point - lokalizacja
+	 */
+	private void addNewSubnetT(Point p) {
+		if (isLegalLocation(p)) {
+			GUIManager.getDefaultGUIManager().getWorkspace().newTab(true, p, this.sheetId, MetaType.SUBNETTRANS);
+		}
+	}
+
+	/**
+	 * Metoda dodaje nowy meta-węzeł (i podsieć typu PT) we wskazane miejsce.
+	 * @param p Point - lokalizacja
+	 */
+	private void addNewSubnetPT(Point p) {
+		if (isLegalLocation(p)) {
+			GUIManager.getDefaultGUIManager().getWorkspace().newTab(true, p, this.sheetId, MetaType.SUBNET);
+		}
+	}
 	/**
 	 * Metoda sprawdza czy podany punkt jest akceptowalny z punktu widzenia rozmiarów arkusza.
 	 * Wykorzystywana jest ta metoda podczas przeciągania elementów po arkuszu.
@@ -837,6 +867,15 @@ public class GraphPanel extends JComponent {
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
 						GUIManager.getDefaultGUIManager().markNetChange();
 						break;
+					case SUBNET_P:
+						addNewSubnetP(mousePt);
+						break;
+					case SUBNET_T:
+						addNewSubnetT(mousePt);
+						break;
+					case SUBNET_PT:
+						addNewSubnetPT(mousePt);
+						break;
 					default:
 						break;
 				}
@@ -939,11 +978,6 @@ public class GraphPanel extends JComponent {
 			
 			Node node = clickedLocation.getParentNode();
 			if(drawnArc == null && node instanceof MetaNode) {
-				//JOptionPane.showMessageDialog(null, "In order to create output node from subnet, plase click subnet's sheet\n"
-				//		+ "with RMB and choose Create Output Node option", 
-				//		"Information", JOptionPane.INFORMATION_MESSAGE);
-				//return;
-				
 				if(arcType == DrawModes.ARC) {
 					drawnArc = new Arc(clickedLocation, TypesOfArcs.NORMAL);
 					return;
@@ -952,7 +986,6 @@ public class GraphPanel extends JComponent {
 							"Problem", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
 			}
 			
 			if (drawnArc == null) {

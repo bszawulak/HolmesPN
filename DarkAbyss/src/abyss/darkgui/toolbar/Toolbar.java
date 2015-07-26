@@ -2,6 +2,7 @@ package abyss.darkgui.toolbar;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import javax.swing.JTree;
 import abyss.analyse.MDTSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel.DrawModes;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
 import abyss.varia.NetworkTransformations;
@@ -177,7 +179,7 @@ public class Toolbar extends BorderDock {
 					private static final long serialVersionUID = -3039335266465055547L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().newTab(true);
+				//GUIManager.getDefaultGUIManager().getWorkspace().newTab(true, new Point(0,0), 1, MetaType.SUBNET);
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableAdd", addButton));

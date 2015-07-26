@@ -3,7 +3,6 @@ package abyss.files.io.Snoopy;
 import java.awt.Point;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.Arc;
@@ -59,7 +58,11 @@ public class SnoopyWriterArc {
 		this.abyssCoarseTransitionsID = abyssCoarseTransitionsID;
 	}
 	
-	//TODO:
+	/**
+	 * Metoda zapisująca łuki dla sieci wielopoziomowych.
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @param currentActiveID int - aktualnie wolne ID
+	 */
 	public void addArcsAndCoarseToFile(BufferedWriter bw, int currentActiveID) {
 		boolean debug = false;
 		
@@ -1004,7 +1007,7 @@ public class SnoopyWriterArc {
 	 * @return boolean - true, jeśli wielopoziomowe połączenie
 	 */
 	private boolean weNeedToGoDeeper(MetaNode metanode, Node startN, boolean isInInterface) {
-		ElementLocation metaEL = metanode.getElementLocations().get(0);
+		//ElementLocation metaEL = metanode.getElementLocations().get(0);
 		int metaSheet = metanode.getElementLocations().get(0).getSheetID();
 		if(metaSheet == 0)
 			return false;

@@ -25,7 +25,6 @@ import abyss.workspace.ExtensionFileFilter;
  *
  */
 public class SheetPopupMenu extends GraphPanelPopupMenu {
-	// BACKUP:  3206422633820189233L   (ŁAPY PRECZ OD PONIŻSZEJ ZMIENNEJ)
 	private static final long serialVersionUID = 3206422633820189233L;
 
 	/**
@@ -70,7 +69,6 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 					public void actionPerformed(ActionEvent e) {
 						exportToPicture();
 					}
-
 					private void exportToPicture() {
 						//String lastPath = getGraphPanel().getPetriNet().getWorkspace().getGUI().getLastPath();
 						String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
@@ -229,6 +227,13 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 				GUIManager.getDefaultGUIManager().io.markTransitions(2);
 			}
 		}));
+		
+		netMenu.add(createMenuItem("Fix Snoopy compatibility", "", null, new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility(true);
+			}
+		}));
+		
 	}
 	
 	@SuppressWarnings("unused")

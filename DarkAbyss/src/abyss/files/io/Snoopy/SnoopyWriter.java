@@ -74,7 +74,7 @@ public class SnoopyWriter {
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean writeSPPED(String filePath) {
-		boolean status = GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility();
+		boolean status = GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility(true);
 		if(!status) {
 			//return false;
 		}

@@ -80,6 +80,7 @@ public class DarkMenu extends JMenuBar {
 		});
 		fileMenu.add(projectMenuItem);
 
+		/*
 		// The New Tab for File
 		JMenuItem sheetMenuItem = new JMenuItem("New Sheet", KeyEvent.VK_T);
 		sheetMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_newTab.png"));
@@ -91,7 +92,8 @@ public class DarkMenu extends JMenuBar {
 			}
 		});
 		fileMenu.add(sheetMenuItem);
-
+		 */
+		
 		fileMenu.addSeparator();
 		
 		// open file

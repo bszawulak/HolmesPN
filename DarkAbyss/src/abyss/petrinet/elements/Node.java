@@ -158,16 +158,20 @@ public abstract class Node extends PetriNetElement {
 	 * @param g Graphics2D - obiekt rysujący
 	 * @param sheetId int - identyfikator arkusza
 	 */
-	public void drawName(Graphics2D g, int sheetId, ArrayList<Place> places_tmp, ArrayList<Transition> transitions_tmp) {
+	public void drawName(Graphics2D g, int sheetId, ArrayList<Place> places_tmp, ArrayList<Transition> transitions_tmp,
+			 ArrayList<MetaNode> metanodes) {
 		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
 		String name = getName();
 		if(sm.getValue("editorShowShortNames").equals("1")) {
 			if(this instanceof Place) {
 				int x = places_tmp.indexOf(this);
 				name = "p"+x;
-			} else {
+			} else if (this instanceof Transition) {
 				int x = transitions_tmp.indexOf(this);
 				name = "t"+x;
+			} else {
+				int x = metanodes.indexOf(this);
+				name = "M"+x;
 			}
 		}
 		
@@ -348,6 +352,22 @@ public abstract class Node extends PetriNetElement {
 		int nodeElLocIndex = this.getNodeLocations().indexOf(el);
 		this.getNamesLocations().remove(nodeElLocIndex);
 		this.getNodeLocations().remove(el);
+		
+		int subNet = el.getSheetID();
+		if(subNet > 0) {
+			boolean found = false;
+			for(ElementLocation element : getElementLocations()) {
+				if(element.getSheetID() == subNet) {
+					found = true;
+					break;
+				}
+			}
+			
+			if(!found) {
+				GUIManager.getDefaultGUIManager().netsHQ.clearAllMetaArcs(this, subNet);
+			}
+		}
+		
 		
 		if (this.getNodeLocations().size() > 0)
 			return true;

@@ -79,7 +79,7 @@ public class Workspace implements SelectionActionListener {
 		setProject(new PetriNet(this, "default"));
 
 		this.getProject().addActionListener(this);
-		newTab(false);	
+		newTab(false, new Point(0,0), 1, MetaType.SUBNET);	
 	}
 	
 	@SuppressWarnings("unused")
@@ -116,7 +116,7 @@ public class Workspace implements SelectionActionListener {
 	 * @param addMetaNode boolean - true, jeśli do sieci I ma być dodany meta-węzeł
 	 * @return int - numer będący identyfikatorem nowej zakładki
 	 */
-	public int newTab(boolean addMetaNode) {
+	public int newTab(boolean addMetaNode, Point pos, int whichSubnet, MetaType type) {
 		int index = sheetsIDtable.size();
 		int id = index;
 		if (sheetsIDtable.indexOf(id) != -1)
@@ -136,21 +136,24 @@ public class Workspace implements SelectionActionListener {
 		guiManager.globalSheetsList.add(tempDockable);
 		
 		if(addMetaNode) {
-			MetaNode metanode = null;
-			if(index <= 14) {
-				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(40,40+(index-1)*40), MetaType.SUBNETTRANS);
-			} else if(index > 14 && index <= 29) {
-				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(80,40+(index-15)*40), MetaType.SUBNETTRANS);
-			} else if(index > 29) {
-				metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(120,40+(index-30)*40), MetaType.SUBNETTRANS);
-			}
-			metanode.setRepresentedSheetID(index);
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().add(metanode);
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+			addMetaNode(pos, whichSubnet, id, type);
+			setSelectedDock(getIndexOfId(whichSubnet));
 		}
-		
-		
 		return id;
+	}
+
+	/**
+	 * Metoda dodaje nowy graficzny token metanode.
+	 * @param pos Point - pozycja XY
+	 * @param whichSubnet - do której sieci należy metanode
+	 * @param representedSubnet - jaką podsieć reprezentuje
+	 * @param type MetaType - jaki typ podsieci
+	 */
+	private void addMetaNode(Point pos, int whichSubnet, int representedSubnet, MetaType type) {
+		MetaNode metanode = new MetaNode(whichSubnet, IdGenerator.getNextId(), pos, type);
+		metanode.setRepresentedSheetID(representedSubnet);
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().add(metanode);
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
 
 	/**

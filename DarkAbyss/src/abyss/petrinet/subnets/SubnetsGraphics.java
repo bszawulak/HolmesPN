@@ -1,4 +1,4 @@
-package abyss.petrinet.hierarchy;
+package abyss.petrinet.subnets;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -12,6 +12,7 @@ import abyss.graphpanel.GraphPanel;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
+import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.workspace.Workspace;
 
 /**
@@ -19,11 +20,11 @@ import abyss.workspace.Workspace;
  *  
  * @author MR
  */
-public class HierarchicalGraphics {
+public class SubnetsGraphics {
 	/**
 	 * Konstruktor klasy HierarchicalGraphics;
 	 */
-	public HierarchicalGraphics() {
+	public SubnetsGraphics() {
 		
 	}
 	
@@ -56,7 +57,7 @@ public class HierarchicalGraphics {
 			subNets = metaNodesNumber;
 		
 		for(int s = sheetsNumber; s<subNets; s++) {
-			GUIManager.getDefaultGUIManager().getWorkspace().newTab(false);
+			GUIManager.getDefaultGUIManager().getWorkspace().newTab(false, new Point(0,0), 1, MetaType.SUBNET);
 		}
 	}
 	
@@ -83,7 +84,7 @@ public class HierarchicalGraphics {
 		int sheetsNumber = workspace.getSheets().size();
 		int shNumber = subnetsVector.size();
 		if(sheetsNumber > shNumber) {
-			HierarchicalGraphics.updateVector(subnetsVector, sheetsNumber - shNumber, 0);
+			SubnetsGraphics.updateVector(subnetsVector, sheetsNumber - shNumber, 0);
 		}
 		
 		//teraz w subnetsVector jest tyle wartości ile podsieci, każda wartość to liczba elementów podsieci
@@ -233,7 +234,7 @@ public class HierarchicalGraphics {
 		ArrayList<Dimension> hidden = new ArrayList<Dimension>();
 		hidden.add(new Dimension(1650, 1200));
 		for(int net=1; net<sheetsNumber; net++) {
-			hidden.add(new Dimension(200,200));
+			hidden.add(new Dimension(1650, 1200));
 		}
 		
 		for(Node n : nodes) {
