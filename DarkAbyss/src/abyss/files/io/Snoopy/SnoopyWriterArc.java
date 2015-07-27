@@ -13,14 +13,15 @@ import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.MetaNode.MetaType;
+import abyss.petrinet.subnets.SubnetsTools;
 
 public class SnoopyWriterArc {
 	private ArrayList<Place> places = null;
 	private ArrayList<Transition> transitions = null;
 	private ArrayList<MetaNode> metanodes = null;
 	private ArrayList<Arc> arcs = null;
-	private ArrayList<MetaNode> coarsePlaces = null;
-	private ArrayList<MetaNode> coarseTransitions = null;
+	//private ArrayList<MetaNode> coarsePlaces = null;
+	//private ArrayList<MetaNode> coarseTransitions = null;
 	
 	private ArrayList<SnoopyWriterPlace> snoopyWriterPlaces = null;
 	private ArrayList<Integer> abyssPlacesID = null;
@@ -42,8 +43,8 @@ public class SnoopyWriterArc {
 		this.transitions = transitions;
 		this.metanodes = metanodes;
 		this.arcs = arcs;
-		this.coarsePlaces = coarsePlaces;
-		this.coarseTransitions = coarseTransitions;
+		//this.coarsePlaces = coarsePlaces;
+		//this.coarseTransitions = coarseTransitions;
 		
 		this.snoopyWriterPlaces = snoopyWriterPlaces;
 		this.abyssPlacesID = abyssPlacesID;
@@ -62,9 +63,18 @@ public class SnoopyWriterArc {
 	 * Metoda zapisująca łuki dla sieci wielopoziomowych.
 	 * @param bw BufferedWriter - obiekt zapisujący
 	 * @param currentActiveID int - aktualnie wolne ID
+	 * @return int - następne wolne ID
 	 */
-	public void addArcsAndCoarseToFile(BufferedWriter bw, int currentActiveID) {
-		boolean debug = false;
+	public int addArcsAndCoarseToFile(BufferedWriter bw, int currentActiveID, boolean extended, Object... blackBox) {
+		TypesOfArcs arcType = TypesOfArcs.NORMAL;
+		//int toSave = -1;
+		if(extended) {
+			arcType = (TypesOfArcs)blackBox[0];
+			//toSave = (int)blackBox[1];
+		} else {
+			arcType = TypesOfArcs.NORMAL;
+			
+		}
 		
 		int howMany = 0;
 		int xOff = 0;
@@ -75,10 +85,11 @@ public class SnoopyWriterArc {
 		
 		//podziel łuki na dwa zbiory:
 		for(Arc arc : arcs) {
-			if(arc.getArcType() == TypesOfArcs.META_ARC)
+			if(arc.getArcType() == TypesOfArcs.META_ARC) {
 				metaArcs.add(arc);
-			else
+			} else if (arc.getArcType() == arcType) {
 				normalArcs.add(arc);
+			}
 		}
 		int metaArcsTotal = metaArcs.size();
 
@@ -121,39 +132,34 @@ public class SnoopyWriterArc {
 				int halfX = 0;
 				int halfY = 0;
 				
-				//int NET1nodeSourceID = 0;
 				int NET1realSourceID = 0;
 				int NET1realSourceX = 0;
 				int NET1realSourceY = 0;
-				//int NET1nodeTargetID = 0;
 				int NET1realTargetID = 0;
 				int NET1realTargetX = 0;
 				int NET1realTargetY = 0;
 				int NET1halfX = 0;
 				int NET1halfY = 0;
 				
-				if(debug) {
-					@SuppressWarnings("unused")
-					int breakX = 1;
-				}
 				if(interfacesIN.contains(startN) && !interfacesOUT.contains(endN) && !(arcStartElLocation.getSheetID() == 0)) {
 					//interesuje nas startN (wejście do podsieci)
 					int subnet = arcStartElLocation.getSheetID();
-					MetaNode metanode = null;
-					for(MetaNode metaN : metanodes) {
-						if(metaN.getRepresentedSheetID() == subnet) {
-							metanode = metaN;
-							break;
-						}
-					}
+					MetaNode metanode = SubnetsTools.getMetaForSubnet(metanodes, subnet);
 					
 					if(startN instanceof Place) {
 						if(metanode.getMetaType() != MetaType.SUBNETTRANS) {
 							GUIManager.getDefaultGUIManager().log("Critical error: wrong subnet type for interface node.", "error", true);
 						}
+						
+						boolean abyss = weNeedToGoDeeper(metanode, startN, true);
+						if(abyss) {
+							baseIDforNode = omgThisIsCrazy(arcStartElLocation, arcEndElLocation, arc, metaArcs, baseIDforNode, true, bw, arcType);
+							howMany++;
+							continue;
+						}
+						
 						//znajdź pasujący łuk do metanode
 						Arc metaInArc = null;
-			
 						for(Arc cand_arc : metaArcs) {
 							if(cand_arc.getEndNode().equals(metanode)) {
 								if(cand_arc.getStartNode().equals(startN)) {
@@ -166,14 +172,7 @@ public class SnoopyWriterArc {
 						if(!ok) {
 							GUIManager.getDefaultGUIManager().log("Error: no meta-arc for existing arc of the interface node.", "error", true);
 						}
-						
-						boolean abyss = weNeedToGoDeeper(metanode, startN, true);
-						if(abyss) {
-							baseIDforNode = omgThisIsCrazy(arcStartElLocation, arcEndElLocation, arc, metaArcs, baseIDforNode, true, bw);
-							howMany++;
-							continue;
-						}
-						
+
 						//metaInArc to łuk wejściowy, z niego wyciągamy ElementLocation startNode'a
 						//   SUBNET section:
 						int addToSPPEDAsSource = abyssPlacesID.lastIndexOf(startN.getID()); //który to był
@@ -200,14 +199,12 @@ public class SnoopyWriterArc {
 						int NET1startLocIndex = startN.getElementLocations().indexOf(NET1el);
 						int NET1addToSPPEDAsSource = abyssPlacesID.lastIndexOf(startN.getID());
 						SnoopyWriterPlace NET1source = snoopyWriterPlaces.get(NET1addToSPPEDAsSource);
-						//NET1nodeSourceID = NET1source.snoopyStartingID;
 						NET1realSourceID = NET1source.grParents.get(NET1startLocIndex);
 						NET1realSourceX = NET1source.grParentsLocation.get(NET1startLocIndex).x;
 						NET1realSourceY = NET1source.grParentsLocation.get(NET1startLocIndex).y;
 						
 						int NET1addToSPPEDAsTarget = abyssCoarseTransitionsID.lastIndexOf(metanode.getID());
 						SnoopyWriterCoarse NET1target = snoopyWriterCoarseTransitions.get(NET1addToSPPEDAsTarget);
-						//NET1nodeTargetID = NET1target.snoopyStartingID;
 						NET1realTargetID = NET1target.grParents.get(0);
 						NET1realTargetX = NET1target.grParentsLocation.get(0).x;
 						NET1realTargetY = NET1target.grParentsLocation.get(0).y;
@@ -215,15 +212,22 @@ public class SnoopyWriterArc {
 						NET1halfX = (NET1realTargetX + NET1realSourceX) / 2;
 						NET1halfY = (NET1realTargetY + NET1realSourceY) / 2;
 						
-						//WHAT IF: z ta podsieć ma jeszcze inne wyjścia
+						//WHAT IF: z ta podsieć ma jeszcze inne wyjścia?
 						
 					} else { //(startN instanceof Transition)
 						if(metanode.getMetaType() != MetaType.SUBNETPLACE) {
 							GUIManager.getDefaultGUIManager().log("Critical error: wrong subnet type for interface node.", "error", true);
 						}
+						
+						boolean deepSh = weNeedToGoDeeper(metanode, startN, true);
+						if(deepSh) {
+							baseIDforNode = omgThisIsCrazy(arcStartElLocation, arcEndElLocation, arc, metaArcs, baseIDforNode, true, bw, arcType);
+							howMany++;
+							continue;
+						}
+						
 						//znajdź pasujący łuk do metanode
 						Arc metaInArc = null;
-			
 						for(Arc cand_arc : metaArcs) {
 							if(cand_arc.getEndNode().equals(metanode)) {
 								if(cand_arc.getStartNode().equals(startN)) {
@@ -235,14 +239,7 @@ public class SnoopyWriterArc {
 						boolean ok = metaArcs.remove(metaInArc);
 						if(!ok) {
 							GUIManager.getDefaultGUIManager().log("Error: no meta-arc for existing arc of the interface node.", "error", true);
-						}
-						
-						boolean deepSh = weNeedToGoDeeper(metanode, startN, true);
-						if(deepSh) {
-							baseIDforNode = omgThisIsCrazy(arcStartElLocation, arcEndElLocation, arc, metaArcs, baseIDforNode, true, bw);
-							howMany++;
-							continue;
-						}
+						}	
 						
 						//metaInArc to łuk wejściowy, z niego wyciągamy ElementLocation startNode'a
 						//   SUBNET section:
@@ -295,24 +292,27 @@ public class SnoopyWriterArc {
 					int subNetID = metanode.getRepresentedSheetID() + 1;
 					
 					write(bw, "      <edge source=\""+nodeSourceID+"\" target=\""+nodeTargetID+"\" id=\""+(baseIDforNode)+"\" net=\""+sheetMainID+"\">");
-					write(bw, "        <attribute name=\"Multiplicity\" id=\""+(baseIDforNode+1)+"\" net=\""+sheetMainID+"\">");
-					write(bw, "          <![CDATA["+weight+"]]>");
-					write(bw, "          <graphics count=\"2\">");
-					xOff = 20;
-					//P/T -> metanode
-					write(bw, "            <graphic xoff=\""+xOff+".00\""
-							+ " x=\""+(NET1halfX+xOff)+".00\""
-							+ " y=\""+NET1halfY+".00\" id=\""+(baseIDforNode+2)+"\" net=\""+sheetMainID+"\""
-							+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
-							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-					//P/T - T/P in subnet
-					write(bw, "            <graphic xoff=\""+xOff+".00\""
-							+ " x=\""+(halfX+xOff)+".00\""
-							+ " y=\""+halfY+".00\" id=\""+(baseIDforNode+21)+"\" net=\""+subNetID+"\""
-							+ " show=\"1\" grparent=\""+grParent2+"\" state=\"1\""
-							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-					write(bw, "          </graphics>");
-					write(bw, "        </attribute>");
+					if(arc.getArcType() != TypesOfArcs.RESET) {
+						write(bw, "        <attribute name=\"Multiplicity\" id=\""+(baseIDforNode+1)+"\" net=\""+sheetMainID+"\">");
+						write(bw, "          <![CDATA["+weight+"]]>");
+						write(bw, "          <graphics count=\"2\">");
+						xOff = 20;
+						//P/T -> metanode
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(NET1halfX+xOff)+".00\""
+								+ " y=\""+NET1halfY+".00\" id=\""+(baseIDforNode+2)+"\" net=\""+sheetMainID+"\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						//P/T - T/P in subnet
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+(baseIDforNode+21)+"\" net=\""+subNetID+"\""
+								+ " show=\"1\" grparent=\""+grParent2+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+					}
+					
 					write(bw, "        <attribute name=\"Comment\" id=\""+(baseIDforNode+3)+"\" net=\""+sheetMainID+"\">");
 					write(bw, "          <![CDATA["+comment+"]]>");
 					write(bw, "          <graphics count=\"2\">");
@@ -362,24 +362,23 @@ public class SnoopyWriterArc {
 					baseIDforNode += 23;
 					
 				} else if(!interfacesIN.contains(startN) && interfacesOUT.contains(endN) && !(arcStartElLocation.getSheetID() == 0)) {
-					//interesuje nas endN (wyjście z podsieci)
-					//interesuje nas startN (wejście do podsieci)
 					int subnet = arcEndElLocation.getSheetID();
-					MetaNode metanode = null;
-					for(MetaNode metaN : metanodes) {
-						if(metaN.getRepresentedSheetID() == subnet) {
-							metanode = metaN;
-							break;
-						}
-					}
-					
+					MetaNode metanode = SubnetsTools.getMetaForSubnet(metanodes, subnet);
+				
 					if(endN instanceof Place) {
 						if(metanode.getMetaType() != MetaType.SUBNETTRANS) {
 							GUIManager.getDefaultGUIManager().log("Critical error: wrong subnet type for interface node.", "error", true);
 						}
+						
+						boolean deepSh = weNeedToGoDeeper(metanode, startN, false);
+						if(deepSh) {
+							baseIDforNode = omgThisIsCrazy(arcEndElLocation, arcStartElLocation, arc, metaArcs, baseIDforNode, false, bw, arcType);
+							howMany++;
+							continue;
+						}
+						
 						//znajdź pasujący łuk do metanode
 						Arc metaOutArc = null;
-			
 						for(Arc cand_arc : metaArcs) {
 							if(cand_arc.getStartNode().equals(metanode)) {
 								if(cand_arc.getEndNode().equals(endN)) {
@@ -391,13 +390,6 @@ public class SnoopyWriterArc {
 						boolean ok = metaArcs.remove(metaOutArc);
 						if(!ok) {
 							GUIManager.getDefaultGUIManager().log("Error: no meta-arc for existing arc of the interface node.", "error", true);
-						}
-						
-						boolean deepSh = weNeedToGoDeeper(metanode, startN, false);
-						if(deepSh) {
-							baseIDforNode = omgThisIsCrazy(arcEndElLocation, arcStartElLocation, arc, metaArcs, baseIDforNode, false, bw);
-							howMany++;
-							continue;
 						}
 						
 						//metaOutArc to łuk wyjściowy, z niego wyciągamy ElementLocation startNode'a
@@ -445,9 +437,16 @@ public class SnoopyWriterArc {
 						if(metanode.getMetaType() != MetaType.SUBNETPLACE) {
 							GUIManager.getDefaultGUIManager().log("Critical error: wrong subnet type for interface node.", "error", true);
 						}
+						
+						boolean deepSh = weNeedToGoDeeper(metanode, startN, false);
+						if(deepSh) {
+							baseIDforNode = omgThisIsCrazy(arcEndElLocation, arcStartElLocation, arc, metaArcs, baseIDforNode, false, bw, arcType);
+							howMany++;
+							continue;
+						}
+						
 						//znajdź pasujący łuk do metanode
 						Arc metaOutArc = null;
-			
 						for(Arc cand_arc : metaArcs) {
 							if(cand_arc.getStartNode().equals(metanode)) {
 								if(cand_arc.getEndNode().equals(endN)) {
@@ -460,14 +459,7 @@ public class SnoopyWriterArc {
 						if(!ok) {
 							GUIManager.getDefaultGUIManager().log("Error: no meta-arc for existing arc of the interface node.", "error", true);
 						}
-						
-						boolean deepSh = weNeedToGoDeeper(metanode, startN, false);
-						if(deepSh) {
-							baseIDforNode = omgThisIsCrazy(arcEndElLocation, arcStartElLocation, arc, metaArcs, baseIDforNode, false, bw);
-							howMany++;
-							continue;
-						}
-						
+
 						//metaInArc to łuk wejściowy, z niego wyciągamy ElementLocation startNode'a
 						//   SUBNET section:
 						int addToSPPEDAsSource = abyssPlacesID.lastIndexOf(startN.getID()); //który to był
@@ -519,24 +511,27 @@ public class SnoopyWriterArc {
 					int subNetID = metanode.getRepresentedSheetID() + 1;
 					
 					write(bw, "      <edge source=\""+nodeSourceID+"\" target=\""+nodeTargetID+"\" id=\""+(baseIDforNode)+"\" net=\""+sheetMainID+"\">");
-					write(bw, "        <attribute name=\"Multiplicity\" id=\""+(baseIDforNode+1)+"\" net=\""+sheetMainID+"\">");
-					write(bw, "          <![CDATA["+weight+"]]>");
-					write(bw, "          <graphics count=\"2\">");
-					xOff = 20;
-					//P/T -> metanode
-					write(bw, "            <graphic xoff=\""+xOff+".00\""
-							+ " x=\""+(NET1halfX+xOff)+".00\""
-							+ " y=\""+NET1halfY+".00\" id=\""+(baseIDforNode+2)+"\" net=\""+sheetMainID+"\""
-							+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
-							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-					//P/T - T/P in subnet
-					write(bw, "            <graphic xoff=\""+xOff+".00\""
-							+ " x=\""+(halfX+xOff)+".00\""
-							+ " y=\""+halfY+".00\" id=\""+(baseIDforNode+21)+"\" net=\""+subNetID+"\""
-							+ " show=\"1\" grparent=\""+grParent2+"\" state=\"1\""
-							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-					write(bw, "          </graphics>");
-					write(bw, "        </attribute>");
+					
+					if(arc.getArcType() != TypesOfArcs.RESET) {
+						write(bw, "        <attribute name=\"Multiplicity\" id=\""+(baseIDforNode+1)+"\" net=\""+sheetMainID+"\">");
+						write(bw, "          <![CDATA["+weight+"]]>");
+						write(bw, "          <graphics count=\"2\">");
+						xOff = 20;
+						//P/T -> metanode
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(NET1halfX+xOff)+".00\""
+								+ " y=\""+NET1halfY+".00\" id=\""+(baseIDforNode+2)+"\" net=\""+sheetMainID+"\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						//P/T - T/P in subnet
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+(baseIDforNode+21)+"\" net=\""+subNetID+"\""
+								+ " show=\"1\" grparent=\""+grParent2+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+					}
 					write(bw, "        <attribute name=\"Comment\" id=\""+(baseIDforNode+3)+"\" net=\""+sheetMainID+"\">");
 					write(bw, "          <![CDATA["+comment+"]]>");
 					write(bw, "          <graphics count=\"2\">");
@@ -631,21 +626,22 @@ public class SnoopyWriterArc {
 					}
 					
 					int grParent = baseIDforNode + 5;
-					int sheetMainID = arcStartElLocation.getSheetID() + 1;
-					
+					int sheetMainID = arcStartElLocation.getSheetID() + 1;	
 					
 					write(bw, "      <edge source=\""+nodeSourceID+"\" target=\""+nodeTargetID+"\" id=\""+(baseIDforNode)+"\" net=\""+sheetMainID+"\">");
-					write(bw, "        <attribute name=\"Multiplicity\" id=\""+(baseIDforNode+1)+"\" net=\""+sheetMainID+"\">");
-					write(bw, "          <![CDATA["+weight+"]]>");
-					write(bw, "          <graphics count=\"1\">");
-					xOff = 20;
-					write(bw, "            <graphic xoff=\""+xOff+".00\""
-							+ " x=\""+(halfX+xOff)+".00\""
-							+ " y=\""+halfY+".00\" id=\""+(baseIDforNode+2)+"\" net=\""+sheetMainID+"\""
-							+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
-							+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
-					write(bw, "          </graphics>");
-					write(bw, "        </attribute>");
+					if(arc.getArcType() != TypesOfArcs.RESET) {
+						write(bw, "        <attribute name=\"Multiplicity\" id=\""+(baseIDforNode+1)+"\" net=\""+sheetMainID+"\">");
+						write(bw, "          <![CDATA["+weight+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 20;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+(baseIDforNode+2)+"\" net=\""+sheetMainID+"\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+					}
 					write(bw, "        <attribute name=\"Comment\" id=\""+(baseIDforNode+3)+"\" net=\""+sheetMainID+"\">");
 					write(bw, "          <![CDATA["+comment+"]]>");
 					write(bw, "          <graphics count=\"1\">");
@@ -681,13 +677,15 @@ public class SnoopyWriterArc {
 					baseIDforNode += 6; //normal node
 				}	
 			} catch (Exception e) {
-				
+				baseIDforNode += 100; //TODO: ?
 				GUIManager.getDefaultGUIManager().log("Unable to create arc: "+arc.toString(), "error", true);
 			}
 		}
 
 		//metaArcsTotal;		
-		int arcNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().size() - metaArcsTotal;
+		//int arcNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().size() - metaArcsTotal;
+		int arcNumber = normalArcs.size() - metaArcsTotal;
+		
 		if(howMany != arcNumber) {
 			GUIManager.getDefaultGUIManager().log("Arcs saved do not match size of Arcs internal set."
 					+ " Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.",
@@ -700,6 +698,8 @@ public class SnoopyWriterArc {
 				GUIManager.getDefaultGUIManager().log("Less arcs saved than should be present in the model. Please notice "
 						+ "authors of the program.", "error", true);
 		}
+		
+		return baseIDforNode + 1;
 	}
 	
 	//********************************************************************************************************************
@@ -714,16 +714,15 @@ public class SnoopyWriterArc {
 	 * @param isInInterface boolean - true, jeśli interfaceNodeElLocation jest intefejsem wejściowym (IN)
 	 * @return int - nr następnego wolnego ID
 	 */
-	@SuppressWarnings("unused")
 	private int omgThisIsCrazy(ElementLocation interfaceNodeElLocation, ElementLocation arcEndElLocation, Arc arcus, 
-			ArrayList<Arc> metaArcs, int baseIDforNode, boolean isInInterface, BufferedWriter bw) {
+			ArrayList<Arc> metaArcs, int baseIDforNode, boolean isInInterface, BufferedWriter bw, TypesOfArcs arcType) {
 
 		int IDbackup = baseIDforNode;
-		int finalID = -1;
+		int spaceBetweenIDs = 0;
 		Node startNode = interfaceNodeElLocation.getParentNode();
 		Node endNode = arcEndElLocation.getParentNode();
 		
-		ArrayList<PathPackage> subnetsPath = recreateSubnetsPath(interfaceNodeElLocation, arcEndElLocation, arcus, isInInterface);
+		ArrayList<PathPackage> subnetsPath = recreateSubnetsPath(interfaceNodeElLocation, arcEndElLocation, arcus, isInInterface, metaArcs);
 		//Collections.reverse(subnetsPath);
 		int pathSize = subnetsPath.size();
 		//teraz wiemy, od przez ile i jakie sieci należy przejść, poza pierwszą, pozostałe
@@ -789,7 +788,7 @@ public class SnoopyWriterArc {
 					if(sMetaNode.getMetaType() != MetaType.SUBNETTRANS) {
 						GUIManager.getDefaultGUIManager().log("Critical error while saving arc: "+arcus.toString()
 								+" Wrong metanode:"+sMetaNode.getMetaType(), "error", true);
-						return IDbackup+1;
+						return IDbackup+1+spaceBetweenIDs;
 					}
 					int index = abyssCoarseTransitionsID.lastIndexOf(sourceNode.getID()); //który to był
 					SnoopyWriterCoarse source = snoopyWriterCoarseTransitions.get(index);
@@ -798,7 +797,7 @@ public class SnoopyWriterArc {
 				}
 			} else {
 				GUIManager.getDefaultGUIManager().log("Critical error while saving arc: "+arcus.toString()+" Unrecognized node:"+sourceNode, "error", true);
-				return IDbackup+1;
+				return IDbackup+1+spaceBetweenIDs;
 			}
 			
 			if(targetNode instanceof Place) {
@@ -824,7 +823,7 @@ public class SnoopyWriterArc {
 					if(sMetaNode.getMetaType() != MetaType.SUBNETTRANS) {
 						GUIManager.getDefaultGUIManager().log("Critical error while saving arc: "+arcus.toString()
 								+" Wrong metanode:"+sMetaNode.getMetaType(), "error", true);
-						return IDbackup+1;
+						return IDbackup+1+spaceBetweenIDs;
 					}
 					int index = abyssCoarseTransitionsID.lastIndexOf(targetNode.getID()); //który to był
 					SnoopyWriterCoarse source = snoopyWriterCoarseTransitions.get(index);
@@ -833,7 +832,7 @@ public class SnoopyWriterArc {
 				}
 			} else {
 				GUIManager.getDefaultGUIManager().log("Critical error while saving arc: "+arcus.toString()+" Unrecognized node:"+sourceNode, "error", true);
-				return IDbackup+1;
+				return IDbackup+1+spaceBetweenIDs;
 			}
 			Point sPoint = subSourcePoint.get(subSourcePoint.size()-1);
 			Point tPoint = subTargetPoint.get(subTargetPoint.size()-1);
@@ -845,27 +844,29 @@ public class SnoopyWriterArc {
 		
 		write(bw, "      <edge source=\""+mainSourceID+"\" target=\""+mainTargetID+"\" id=\""+(grParents.get(0)-5)+
 				"\" net=\""+(subnetsPath.get(0).subnet)+"\">");
-		write(bw, "        <attribute name=\"Multiplicity\" id=\""+(grParents.get(0)-4)+"\" net=\""+(subnetsPath.get(0).subnet+1)+"\">");
-		write(bw, "          <![CDATA["+arcus.getWeight()+"]]>");
-		write(bw, "          <graphics count=\""+pathSize+"\">");
 		int xOff = 20;
-		//P/T -> metanode
-		for(int i=0; i<pathSize; i++) {
-			int id = -1;
-			if(i==0)
-				id = grParents.get(i)-3;
-			else
-				id = grParents.get(i)+1;
+		if(arcType != TypesOfArcs.RESET) {
+			write(bw, "        <attribute name=\"Multiplicity\" id=\""+(grParents.get(0)-4)+"\" net=\""+(subnetsPath.get(0).subnet+1)+"\">");
+			write(bw, "          <![CDATA["+arcus.getWeight()+"]]>");
+			write(bw, "          <graphics count=\""+pathSize+"\">");
+			//P/T -> metanode
+			for(int i=0; i<pathSize; i++) {
+				int id = -1;
+				if(i==0)
+					id = grParents.get(i)-3;
+				else
+					id = grParents.get(i)+1;
+				
+				write(bw, "            <graphic xoff=\""+xOff+".00\""
+						+ " x=\""+(halfPoint.get(i).x+xOff)+".00\""
+						+ " y=\""+(halfPoint.get(i).y)+".00\" id=\""+id+"\" net=\""+(subnetsPath.get(i).subnet+1)+"\""
+						+ " show=\"1\" grparent=\""+grParents.get(i)+"\" state=\"1\""
+						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+			}
 			
-			write(bw, "            <graphic xoff=\""+xOff+".00\""
-					+ " x=\""+(halfPoint.get(i).x+xOff)+".00\""
-					+ " y=\""+(halfPoint.get(i).y)+".00\" id=\""+id+"\" net=\""+(subnetsPath.get(i).subnet+1)+"\""
-					+ " show=\"1\" grparent=\""+grParents.get(i)+"\" state=\"1\""
-					+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+			write(bw, "          </graphics>");
+			write(bw, "        </attribute>");
 		}
-		
-		write(bw, "          </graphics>");
-		write(bw, "        </attribute>");
 		write(bw, "        <attribute name=\"Comment\" id=\""+(grParents.get(0)-2)+"\" net=\""+(subnetsPath.get(0).subnet+1)+"\">");
 		write(bw, "          <![CDATA["+removeEnters(arcus.getComment())+"]]>");
 		write(bw, "          <graphics count=\""+pathSize+"\">");
@@ -912,7 +913,7 @@ public class SnoopyWriterArc {
 			metaArcs.remove(subnetsPath.get(i).arc);
 		}
 		
-		return IDbackup+1;
+		return IDbackup+1+spaceBetweenIDs;
 	}
 	
 	/**
@@ -921,10 +922,11 @@ public class SnoopyWriterArc {
 	 * @param arcEndElLocation ElementLocation - element do pary
 	 * @param arcus Arc - łukiem wiekuiście związani...
 	 * @param isInInterface boolean - true, jeśli arcStartElLocation jest interfejsem wejściowym ( łuki z niego wychodzą )
+	 * @param metaArcs ArrayList[Arc] - tablica wciąż dostępnych meta-łuków
 	 * @return ArrayList[PathPackage] - odwtworzona ścieżka, I obiekt to arcStartElLocation, arcEndElLocation oraz nr ich podsieci
 	 */
 	private ArrayList<PathPackage> recreateSubnetsPath(ElementLocation arcStartElLocation, ElementLocation arcEndElLocation, 
-			Arc arcus, boolean isInInterface) {
+			Arc arcus, boolean isInInterface, ArrayList<Arc> metaArcs) {
 		
 		ArrayList<PathPackage> result = new ArrayList<PathPackage>();
 		PathPackage first = new PathPackage();
@@ -956,6 +958,9 @@ public class SnoopyWriterArc {
 				if(meta.getRepresentedSheetID() == metaSheetToFind) {
 					if(isInInterface) {
 						for(Arc arc : meta.getElementLocations().get(0).accessMetaInArcs() ) {
+							if(!metaArcs.contains(arc))
+								continue;
+							
 							if(arc.getStartNode().equals(startNode)) {
 								if(!path.contains(arc.getStartLocation().getSheetID())) {
 									PathPackage dp = new PathPackage();
@@ -972,8 +977,11 @@ public class SnoopyWriterArc {
 							}
 								
 						}
-					} else {
+					} else { //czyli OutInterface:
 						for(Arc arc : meta.getElementLocations().get(0).accessMetaOutArcs() ) {
+							if(!metaArcs.contains(arc))
+								continue;
+							
 							if(arc.getEndNode().equals(startNode)) {
 								if(!path.contains(arc.getEndLocation().getSheetID())) {
 									PathPackage dp = new PathPackage();
@@ -1033,7 +1041,10 @@ public class SnoopyWriterArc {
 	//********************************************************************************************************************
 	//********************************************************************************************************************
 	//********************************************************************************************************************
-
+	//********************************************************************************************************************
+	//********************************************************************************************************************
+	//********************************************************************************************************************
+	//********************************************************************************************************************
 
 	/**
 	 * Stopień odjechania poniższej metody przewyższa normy niczym Czarnobyl w kwestii promieniowania.
@@ -1044,6 +1055,7 @@ public class SnoopyWriterArc {
 	 * @param bw BufferedWriter - obiekt zapisujący
 	 * @param currentActiveID int - od tego ID zaczynamy dodawać łuki
 	 */
+	//TODO: Petri Net (single-level)
 	public void addArcsToFile(BufferedWriter bw, int currentActiveID) {
 		int howMany = 0;
 		int nextID = currentActiveID;
@@ -1055,7 +1067,6 @@ public class SnoopyWriterArc {
 			int location = -1;
 			for(ElementLocation el : p.getElementLocations()) { // dla wszystkich jego lokalizacji
 				location++; // która faktycznie to jest, jeśli przetwarzamy portal
-				
 				ArrayList<Arc> outArcs = el.getOutArcs(); //pobież listę łuków wyjściowych (portalu)
 				
 				//kolekcjonowanie danych:
@@ -1296,6 +1307,286 @@ public class SnoopyWriterArc {
 						+ "authors of the program.", "error", true);
 		}
 	}
+	
+	
+	/**
+	 * Zapis łuków sieci rozszerzone - dla sieci jednowymiarowej.
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @param currentActiveID int - aktualny wolny ID
+	 * @param arcClass TypesOfArcs - typ łuku
+	 * @param howManyToSave int - ile zapisać (do sprawdzenia)
+	 * @return int - następny wolny ID
+	 */
+	//TODO: Extended Petri Net (single-level)
+	public int addArcsInfoExtended(BufferedWriter bw, int currentActiveID, TypesOfArcs arcClass, int howManyToSave) {
+		int howManySaved = 0;
+		int nextID = currentActiveID;
+		int xOff = 0;
+		for(Place p : places) { //najpierw wyjściowe z miejsc
+			//ArrayList<ElementLocation> clones = p.getElementLocations();
+			int location = -1;
+			for(ElementLocation el : p.getElementLocations()) { // dla wszystkich jego lokalizacji
+				location++; // która faktycznie to jest, jeśli przetwarzamy portal
+				
+				ArrayList<Arc> outArcs = el.getOutArcs(); //pobież listę łuków wyjściowych (portalu)
+				
+				//kolekcjonowanie danych:
+				for(Arc a : outArcs) { //dla każdego łuku
+					try {
+						if(a.getArcType() != arcClass)
+							continue;
+						
+						int weight = a.getWeight(); //waga łuku
+						String comment = a.getComment();
+						int grParent = currentActiveID + 5;
+						
+						Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss
+						Node sourceAbyss = a.getStartNode(); //stąd wychodzi
+						//przy czym należy określić, do której lokalizacji
+						
+						//sourceAbyss == p
+						
+						int addToSPPEDAsSource = abyssPlacesID.lastIndexOf(sourceAbyss.getID()); //który to był
+						if(addToSPPEDAsSource == -1) {
+							@SuppressWarnings("unused")
+							int WTF= 1; //!!! IMPOSSIBRU!!!!
+							return nextID+10;
+						}
+						SnoopyWriterPlace source = snoopyWriterPlaces.get(addToSPPEDAsSource);
+						int nodeSourceID = source.snoopyStartingID;
+						int realSourceID = source.grParents.get(location); //k
+						int realSourceX = source.grParentsLocation.get(location).x;
+						int realSourceY = source.grParentsLocation.get(location).y;
+						
+						
+						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
+						int addToSPPEDAsTarget = abyssTransitionsID.lastIndexOf(targetAbyss.getID());
+						SnoopyWriterTransition target = snoopyWriterTransitions.get(addToSPPEDAsTarget);
+						//teraz należy określi do której lokalizacji portalu trafia łuk
+						
+						ElementLocation destinationLoc = a.getEndLocation();
+						int counter = -1;
+						for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
+							counter++;
+							//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+							//jeśli to: to i tak skończy się na 1 iteracji
+							if(whichOne.equals(destinationLoc)) {
+								break; //w counter mamy wtedy nr
+							}
+						}
+						int nodeTargetID = target.snoopyStartingID;
+						int realTargetID = target.grParents.get(counter); 
+						int realTargetX = target.grParentsLocation.get(counter).x;
+						int realTargetY = target.grParentsLocation.get(counter).y;
+						
+						int halfX = (realTargetX + realSourceX) / 2;
+						int halfY = (realTargetY + realSourceY) / 2;
+						
+						//tutaj wchodzą główne numery główne:
+						write(bw, "      <edge source=\""+nodeSourceID+"\""
+								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //444
+						
+						if(arcClass != TypesOfArcs.RESET) {
+							write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
+							nextID++; //445
+							write(bw, "          <![CDATA["+weight+"]]>");
+							write(bw, "          <graphics count=\"1\">");
+							xOff = 20;
+							write(bw, "            <graphic xoff=\""+xOff+".00\""
+									+ " x=\""+(halfX+xOff)+".00\""
+									+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+									+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+									+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+							nextID++; //446
+							write(bw, "          </graphics>");
+							write(bw, "        </attribute>");
+						}
+						
+						write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //447
+						write(bw, "          <![CDATA["+comment+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 40;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //448 == grParent
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <graphics count=\"1\">");
+						
+						//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
+						write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
+								+ " source=\""+realSourceID+"\""
+								+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
+								+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
+						
+						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+						write(bw, "            <points count=\"2\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						write(bw, "            </points>");
+						write(bw, "          </graphic>");
+						write(bw, "        </graphics>");
+						write(bw, "      </edge>");
+						
+						howManySaved++;
+					} catch (Exception e) {
+						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+								+ a.getEndNode().getName(), "error", true);
+					}
+				}
+				
+			} //dla wszystkich lokalizacji
+			//iteracja++;
+		} //dla wszystkich miejsc
+		
+		//teraz wszystkie wychodzące z tranzycji:
+		for(Transition t : transitions) { // wyjściowe z tranzycji
+			int location = -1;
+			for(ElementLocation el : t.getElementLocations()) { // dla wszystkich jego lokalizacji
+				location++; // która faktycznie to jest, jeśli trafiliśmy w portal
+				ArrayList<Arc> outArcs = el.getOutArcs(); //pobież listę łuków wyjściowych (portalu)
+				
+				//kolekcjonowanie danych:
+				for(Arc a : outArcs) { //dla każdego łuku
+					try {
+						if(a.getArcType() != arcClass || a.getArcType() == TypesOfArcs.READARC)
+							continue;
+						
+						int weight = a.getWeight(); //waga łuku
+						String comment = a.getComment();
+						int grParent = currentActiveID + 5;
+						
+						Node targetAbyss = a.getEndNode(); //tutaj trafia łuk w Abyss (w miejsce)
+						Node sourceAbyss = a.getStartNode(); //stąd wychodzi (tranzycja)
+						//przy czym należy okreslić, do której lokalizacji
+						
+						//sourceAbyss == t
+						
+						int addToSPPEDAsSource = abyssTransitionsID.lastIndexOf(sourceAbyss.getID()); //który to był
+						if(addToSPPEDAsSource == -1) {
+							@SuppressWarnings("unused")
+							int WTF= 1; //!!! IMPOSSIBRU!!!!
+							return nextID + 10;
+						}
+						SnoopyWriterTransition source = snoopyWriterTransitions.get(addToSPPEDAsSource);
+						int nodeSourceID = source.snoopyStartingID;
+						int realSourceID = source.grParents.get(location); //k
+						int realSourceX = source.grParentsLocation.get(location).x;
+						int realSourceY = source.grParentsLocation.get(location).y;
+						
+						
+						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
+						int addToSPPEDAsTarget = abyssPlacesID.lastIndexOf(targetAbyss.getID());
+						SnoopyWriterPlace target = snoopyWriterPlaces.get(addToSPPEDAsTarget);
+						//teraz należy określi do której lokalizacji portalu trafia łuk
+						
+						ElementLocation destinationLoc = a.getEndLocation();
+						int counter = -1;
+						for(ElementLocation whichOne : targetAbyss.getElementLocations()) {
+							counter++;
+							//szukamy w węźlie docelowym, która to w kolejności lokalizacja jeśli to portal
+							//jeśli to: to i tak skończy się na 1 iteracji
+							if(whichOne.equals(destinationLoc)) {
+								break; //w counter mamy wtedy nr
+							}
+						}
+						int nodeTargetID = target.snoopyStartingID;
+						int realTargetID = target.grParents.get(counter); 
+						int realTargetX = target.grParentsLocation.get(counter).x;
+						int realTargetY = target.grParentsLocation.get(counter).y;
+						
+						int halfX = (realTargetX + realSourceX) / 2;
+						int halfY = (realTargetY + realSourceY) / 2;
+						
+						//tutaj wchodzą główne numery:
+						write(bw, "      <edge source=\""+nodeSourceID+"\""
+								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //444
+						
+						if(arcClass != TypesOfArcs.RESET) {
+							write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
+							nextID++; //445
+							write(bw, "          <![CDATA["+weight+"]]>");
+							write(bw, "          <graphics count=\"1\">");
+							xOff = 20;
+							write(bw, "            <graphic xoff=\""+xOff+".00\""
+									+ " x=\""+(halfX+xOff)+".00\""
+									+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+									+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+									+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+							nextID++; //446
+							write(bw, "          </graphics>");
+							write(bw, "        </attribute>");
+						}
+						
+						write(bw, "        <attribute name=\"Comment\" id=\""+nextID+"\" net=\"1\">");
+						nextID++; //447
+						write(bw, "          <![CDATA["+comment+"]]>");
+						write(bw, "          <graphics count=\"1\">");
+						xOff = 40;
+						write(bw, "            <graphic xoff=\""+xOff+".00\""
+								+ " x=\""+(halfX+xOff)+".00\""
+								+ " y=\""+halfY+".00\" id=\""+nextID+"\" net=\"1\""
+								+ " show=\"1\" grparent=\""+grParent+"\" state=\"1\""
+								+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						nextID++; //448 == grParent
+						write(bw, "          </graphics>");
+						write(bw, "        </attribute>");
+						write(bw, "        <graphics count=\"1\">");
+						
+						//TUTAJ WCHODZĄ REALNE X,Y I ID PORTALI:
+						write(bw, "          <graphic id=\""+grParent+"\" net=\"1\""
+								+ " source=\""+realSourceID+"\""
+								+ " target=\""+realTargetID+"\" state=\"1\" show=\"1\""
+								+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
+						
+						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
+						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
+						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
+						write(bw, "            <points count=\"2\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						write(bw, "            </points>");
+						write(bw, "          </graphic>");
+						write(bw, "        </graphics>");
+						write(bw, "      </edge>");
+
+						howManySaved++;
+					} catch (Exception e) {
+						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+								+ a.getEndNode().getName(), "error", true);
+					}
+				}
+				
+			} //dla wszystkich lokalizacji
+			//iteracja++;
+		} //dla wszystkich tranzycji
+		
+		if(howManySaved != howManyToSave && arcClass != TypesOfArcs.READARC) {
+			GUIManager.getDefaultGUIManager().log("Arcs saved do not match size of Arcs internal set."
+					+ " Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.",
+					 "error", true);
+			if(howManySaved > howManyToSave) 
+				GUIManager.getDefaultGUIManager().log("More arcs saved than should be present in the model. Please advise "
+						+ "authors of the program as this may be element-removal algorithmic error.", "error", true);
+			else
+				GUIManager.getDefaultGUIManager().log("Less arcs saved than should be present in the model. Please advise "
+						+ "authors of the program.", "error", true);
+		}
+		
+		return nextID;
+	}
+	
+	//****************************************************************************************************************
+	//****************************************************************************************************************
+	//****************************************************************************************************************
 	
 	/**
 	 * Metoda realizuje zapis pojedyńczej linii do pliku - zakończonej enterem.

@@ -542,8 +542,8 @@ public class Transition extends Node {
 	}
 	
 	/**
-	 * Metoda zwraca aktualną wartość zegara odliczającego czas do odpalenia tranzycji DPN (produkcji tokenów)
-	 * @return
+	 * Metoda zwraca aktualną wartość zegara odliczającego czas do odpalenia tranzycji DPN (produkcji tokenów).
+	 * @return double durationTimer - 
 	 */
 	public double getInternalDPN_Timer() {
 		return durationTimer;
@@ -554,7 +554,7 @@ public class Transition extends Node {
 	 * @return boolean - true, jeśli zegar DPN ma wartość równą ustalonemu czasowi DPN dla tranzycji
 	 */
 	public boolean isDPNforcedToFire() {
-		if(duration <= durationTimer)
+		if(durationTimer >= duration)
 			return true;
 		else
 			return false;

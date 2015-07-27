@@ -120,7 +120,7 @@ public class Workspace implements SelectionActionListener {
 		int index = sheetsIDtable.size();
 		int id = index;
 		if (sheetsIDtable.indexOf(id) != -1)
-			id = getMaximumTabIndex() + 1;
+			id = getMaximumSubnetID() + 1;
 		Point position = new Point(0, 0);
 		sheetsIDtable.add(id);
 		
@@ -257,7 +257,7 @@ public class Workspace implements SelectionActionListener {
 	 * id ostatniej dodanej)
 	 * @return int - id ostatniej zakładki
 	 */
-	private int getMaximumTabIndex() {
+	public int getMaximumSubnetID() {
 		int index = 0;
 		for (int x : sheetsIDtable) {
 			if (x > index)

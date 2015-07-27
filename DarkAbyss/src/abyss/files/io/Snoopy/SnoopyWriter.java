@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
@@ -74,9 +76,12 @@ public class SnoopyWriter {
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean writeSPPED(String filePath) {
-		boolean status = GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility(true);
+		boolean status = GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility();
 		if(!status) {
-			//return false;
+			JOptionPane.showMessageDialog(null, "Problems that cannot be automatically fixed detected.\n"
+					+ "Plaese save as Project.", 
+					"Problem", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
 		
 		int startNodeId = 226; // bo tak
@@ -188,7 +193,7 @@ public class SnoopyWriter {
 			write(bw, "  <edgeclasses count=\"1\">");
 			write(bw, "    <edgeclass count=\"" + arcsNumber + "\" name=\"Edge\">");
 			if(weAreInDeepShit)
-				arcWriter.addArcsAndCoarseToFile(bw, currentActiveID);
+				arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, false);
 			else
 				arcWriter.addArcsToFile(bw, currentActiveID);
 			write(bw, "    </edgeclass>");
@@ -198,7 +203,7 @@ public class SnoopyWriter {
 			bw.write("</Snoopy>\n");
 			bw.close();
 			
-			GUIManager.getDefaultGUIManager().log("Net has been exported as SPPED file: "+filePath, "text", true);
+			GUIManager.getDefaultGUIManager().log("Petri Net has been exported as SPPED file: "+filePath, "text", true);
 			GUIManager.getDefaultGUIManager().markNetSaved();
 			return true;
 		} catch (Exception e) {
@@ -208,7 +213,7 @@ public class SnoopyWriter {
 	}
 	
 	/**
-	 * Metoda realizująca zapis do pliku SPPED. Działa - 08.04.2015. I na tym zakończmy jej opis.
+	 * Metoda realizująca zapis do pliku SPEPT - sieci rozszerzone.
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean writeSPEPT(String filePath) {
@@ -259,7 +264,6 @@ public class SnoopyWriter {
 			}
 			write(bw, "    </nodeclass>");
 			
-			//TEGO NA RAZIE NIE RUSZAMY (DA BÓG: NIGDY)
 			boolean weAreInDeepShit = false;
 			if(coarsePlaces.size() == 0) {
 				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
@@ -300,7 +304,7 @@ public class SnoopyWriter {
 			write(bw, "  </nodeclasses>");
 			
 			//ŁUKI:
-			SnoopyWriterArcExt arcWriter = new SnoopyWriterArcExt(places, transitions, metanodes, arcs, coarsePlaces, coarseTransitions
+			SnoopyWriterArc arcWriter = new SnoopyWriterArc(places, transitions, metanodes, arcs, coarsePlaces, coarseTransitions
 					, snoopyWriterPlaces, abyssPlacesID, snoopyWriterTransitions, abyssTransitionsID
 					, snoopyWriterCoarsePlaces, abyssCoarsePlacesID, snoopyWriterCoarseTransitions, abyssCoarseTransitionsID);
 			
@@ -308,55 +312,55 @@ public class SnoopyWriter {
 			
 			ArrayList<Integer> arcClasses = Check.getArcClassCount();
 			if(arcClasses.get(0) == 0) {
-				write(bw, "    <edgeclass count=\"0\" name=\"Edge\">");
+				write(bw, "    <edgeclass count=\"0\" name=\"Edge\"/>");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(0) + "\" name=\"Edge\">");
 				if(weAreInDeepShit)
-					currentActiveID = arcWriter.addArcsAndCoarsesInfoExtended(bw, currentActiveID, TypesOfArcs.NORMAL, arcClasses.get(0));
+					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypesOfArcs.NORMAL, arcClasses.get(0));
 				else
 					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.NORMAL, arcClasses.get(0));
 				write(bw, "    </edgeclass>");
 			}
 		
 			if(arcClasses.get(1) == 0) {
-				write(bw, "    <edgeclass count=\"0\" name=\"Read Edge\">");
+				write(bw, "    <edgeclass count=\"0\" name=\"Read Edge\"/>");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(1) + "\" name=\"Read Edge\">");
 				if(weAreInDeepShit)
-					currentActiveID = arcWriter.addArcsAndCoarsesInfoExtended(bw, currentActiveID, TypesOfArcs.READARC, arcClasses.get(0));
+					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypesOfArcs.READARC, arcClasses.get(1));
 				else
 					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.READARC, arcClasses.get(1));
 				write(bw, "    </edgeclass>");
 			}
 			
 			if(arcClasses.get(2) == 0) {
-				write(bw, "    <edgeclass count=\"0\" name=\"Inhibitor Edge\">");
+				write(bw, "    <edgeclass count=\"0\" name=\"Inhibitor Edge\"/>");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(2) + "\" name=\"Inhibitor Edge\">");
 				if(weAreInDeepShit)
-					currentActiveID = arcWriter.addArcsAndCoarsesInfoExtended(bw, currentActiveID, TypesOfArcs.INHIBITOR, arcClasses.get(0));
+					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypesOfArcs.INHIBITOR, arcClasses.get(2));
 				else
 					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.INHIBITOR, arcClasses.get(2));
 				write(bw, "    </edgeclass>");
 			}
 			
 			if(arcClasses.get(3) == 0) {
-				write(bw, "    <edgeclass count=\"0\" name=\"Reset Edge\">");
+				write(bw, "    <edgeclass count=\"0\" name=\"Reset Edge\"/>");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(3) + "\" name=\"Reset Edge\">");
 				if(weAreInDeepShit)
-					currentActiveID = arcWriter.addArcsAndCoarsesInfoExtended(bw, currentActiveID, TypesOfArcs.RESET, arcClasses.get(0));
+					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypesOfArcs.RESET, arcClasses.get(3));
 				else
 					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.RESET, arcClasses.get(3));
 				write(bw, "    </edgeclass>");
 			}
 			
 			if(arcClasses.get(4) == 0) {
-				write(bw, "    <edgeclass count=\"0\" name=\"Equal Edge\">");
+				write(bw, "    <edgeclass count=\"0\" name=\"Equal Edge\"/>");
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(4) + "\" name=\"Equal Edge\">");
 				if(weAreInDeepShit)
-					currentActiveID = arcWriter.addArcsAndCoarsesInfoExtended(bw, currentActiveID, TypesOfArcs.EQUAL, arcClasses.get(0));
+					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypesOfArcs.EQUAL, arcClasses.get(4));
 				else
 					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.EQUAL, arcClasses.get(4));
 				write(bw, "    </edgeclass>");
@@ -367,11 +371,149 @@ public class SnoopyWriter {
 			bw.write("</Snoopy>\n");
 			bw.close();
 			
-			GUIManager.getDefaultGUIManager().log("Net has been exported as SPPED file: "+filePath, "text", true);
+			GUIManager.getDefaultGUIManager().log("Extened Petri Net has been exported as SPPED file: "+filePath, "text", true);
 			GUIManager.getDefaultGUIManager().markNetSaved();
 			return true;
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Critical error while exporting net to the SPPED file: "+filePath, "error", true);
+			return false;
+		}
+	}
+	
+	/**
+	 * Metoda realizująca zapis do pliku SPTPT - sieci czasowe. 
+	 * @return boolean - status operacji: true jeśli nie było problemów
+	 */
+	public boolean writeSPTPT(String filePath) {
+		boolean status = GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility();
+		if(!status) {
+			JOptionPane.showMessageDialog(null, "Problems that cannot be automatically fixed detected.\n"
+					+ "Plaese save as Project.", 
+					"Problem", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		int startNodeId = 226; // bo tak
+		int currentActiveID = startNodeId;
+		int arcsNumber = 0;
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+			
+			//NAGŁÓWEK:
+			write(bw, "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+			write(bw, "<?xml-stylesheet type=\"text/xsl\" href=\"/xsl/spped2svg.xsl\"?>");
+			write(bw, "<Snoopy version=\"2\" revision=\"1.13\">");
+			
+			write(bw, "  <netclass name=\"Time Petri Net\"/>");
+			write(bw, "  <nodeclasses count=\"4\">"); //zawsze 4
+			
+			//MIEJSCA:
+			int placesNumber = places.size();
+			write(bw, "    <nodeclass count=\""+placesNumber+"\" name=\"Place\">");
+			int globalPlaceId = 0;
+			for(Place p : places) {
+				SnoopyWriterPlace sPlace = new SnoopyWriterPlace(p);
+				snoopyWriterPlaces.add(sPlace);
+				abyssPlacesID.add(p.getID());
+				
+				ArrayList<ElementLocation> clones = p.getElementLocations();
+				for(ElementLocation el : clones) {
+					arcsNumber += el.getOutArcs().size(); //pobież wszystkie wychodzące
+				}
+				
+				currentActiveID = sPlace.writePlaceInfoToFile(bw, currentActiveID, globalPlaceId);
+				
+				if(sPlace.portal == true) { //jeśli właśnie dodane było portalem
+					currentActiveID += 13; //bo tak, pytajcie w Brandenburgu 'a czymuuu?'
+				} else {
+					currentActiveID ++;
+				}
+				globalPlaceId++;
+				
+			}
+			write(bw, "    </nodeclass>");
+			
+			// TRANZYCJE:
+			int transNumber = transitions.size();
+			write(bw, "    <nodeclass count=\""+transNumber+"\" name=\"Transition\">");
+			int globalTransId = 0;
+			for(Transition t : transitions) {
+				SnoopyWriterTransition sTransition = new SnoopyWriterTransition(t);
+				snoopyWriterTransitions.add(sTransition);
+				abyssTransitionsID.add(t.getID());
+				
+				ArrayList<ElementLocation> clones = t.getElementLocations();
+				for(ElementLocation el : clones) {
+					arcsNumber += el.getOutArcs().size(); //pobież wszystkie wychodzące
+				}
+				
+				currentActiveID = sTransition.writeTransitionInfoToFile(bw, currentActiveID, globalTransId);
+				currentActiveID ++;
+				globalTransId++;
+			}
+			write(bw, "    </nodeclass>");
+			
+			boolean weAreInDeepShit = false;
+			if(coarsePlaces.size() == 0) {
+				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
+			} else {
+				int coarsePnumber = coarsePlaces.size();
+				write(bw, "    <nodeclass count=\""+coarsePnumber+"\" name=\"Coarse Place\">");
+				int globalCoarsePlaceId = 0;
+				weAreInDeepShit = true;
+				for(MetaNode m : coarsePlaces) {
+					SnoopyWriterCoarse sCoarseP = new SnoopyWriterCoarse(m);
+					snoopyWriterCoarsePlaces.add(sCoarseP);
+					abyssCoarsePlacesID.add(m.getID());
+					currentActiveID = sCoarseP.writeMetaNodeInfoToFile(bw, currentActiveID, globalCoarsePlaceId);
+					currentActiveID ++;
+					globalCoarsePlaceId++;
+				}
+				write(bw, "    </nodeclass>");
+			}
+			
+			if(coarseTransitions.size() == 0) {
+				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
+			} else {
+				int coarseTnumber = coarseTransitions.size();
+				write(bw, "    <nodeclass count=\""+coarseTnumber+"\" name=\"Coarse Transition\">");
+				int globalCoarseTransitionId = 0;
+				weAreInDeepShit = true;
+				for(MetaNode m : coarseTransitions) {
+					SnoopyWriterCoarse sCoarseT = new SnoopyWriterCoarse(m);
+					snoopyWriterCoarseTransitions.add(sCoarseT);
+					abyssCoarseTransitionsID.add(m.getID());
+					currentActiveID = sCoarseT.writeMetaNodeInfoToFile(bw, currentActiveID, globalCoarseTransitionId);
+					currentActiveID ++;
+					globalCoarseTransitionId++;
+				}
+				write(bw, "    </nodeclass>");
+			}
+			write(bw, "  </nodeclasses>");
+			
+			//ŁUKI:
+			SnoopyWriterArc arcWriter = new SnoopyWriterArc(places, transitions, metanodes, arcs, coarsePlaces, coarseTransitions
+					, snoopyWriterPlaces, abyssPlacesID, snoopyWriterTransitions, abyssTransitionsID
+					, snoopyWriterCoarsePlaces, abyssCoarsePlacesID, snoopyWriterCoarseTransitions, abyssCoarseTransitionsID);
+			
+			write(bw, "  <edgeclasses count=\"1\">");
+			write(bw, "    <edgeclass count=\"" + arcsNumber + "\" name=\"Edge\">");
+			if(weAreInDeepShit)
+				arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, false);
+			else
+				arcWriter.addArcsToFile(bw, currentActiveID);
+			write(bw, "    </edgeclass>");
+			write(bw, "  </edgeclasses>");
+			
+			writeEnding(bw);
+			bw.write("</Snoopy>\n");
+			bw.close();
+			
+			GUIManager.getDefaultGUIManager().log("Time Petri Net has been exported as SPTPT file: "+filePath, "text", true);
+			GUIManager.getDefaultGUIManager().markNetSaved();
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Critical error while exporting net to the SPTPT file: "+filePath, "error", true);
 			return false;
 		}
 	}

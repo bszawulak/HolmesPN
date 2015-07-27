@@ -7,11 +7,9 @@ import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.MetaNode;
-import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.elements.Node;
-import abyss.petrinet.elements.Place;
-import abyss.petrinet.elements.Transition;
+import abyss.windows.AbyssNotepad;
 
 /**
  * Odjechana klasa posiadająca narzędzia do weryfikacji czy sieć jest kompatybilna z hierachicznością
@@ -31,84 +29,202 @@ public class SubnetsSnoopyCompatibility {
 		pn = gui.getWorkspace().getProject();
 	}
 	
-	//TODO:
-	public boolean macroCheck() {
-		//czy podsieci są kanoniczne
-		//czy każdy metawęzeł ma tylko 1 ElementLocation, takie tam
+	/**
+	 * Metoda sprawdza czy każdy metanode ma tylko 1 lokalizację oraz czy ich typu to T lub P (tylko).
+	 * @return ArrayList[ArrayList[Integer]] - 2 wektory wskazujące na problamatyczne podsieci lub null gdy wszystko ok
+	 */
+	public ArrayList<ArrayList<Integer>> macroCheck() {
+		//czy podsieci są kanoniczne, czy każdy metawęzeł ma tylko 1 ElementLocation, takie tam
+		ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
+		boolean problems = false;
+		ArrayList<MetaNode> metanodes = pn.getMetaNodes();
+		int size = metanodes.size();
+		ArrayList<Integer> problemMultiEL = new ArrayList<Integer>();
+		ArrayList<Integer> problemWrongType = new ArrayList<Integer>();
+		for(int i=0; i<size; i++) {
+			problemMultiEL.add(0);
+			problemWrongType.add(0);
+		}
 		
-		return false;
+		
+		for(int i=0; i<size; i++) {
+			MetaNode meta = metanodes.get(i);
+			if(meta.getElementLocations().size() > 1) {
+				problems = true;
+				problemMultiEL.set(i, 1);
+			}
+			
+			if(meta.getMetaType() == MetaType.UNKNOWN || meta.getMetaType() == MetaType.SUBNET) {
+				problems = true;
+				problemWrongType.set(i, 1);
+			}
+		}
+		
+		if(problems) {
+			results.add(problemMultiEL);
+			results.add(problemWrongType);
+			return results;
+		} else {
+			return null;
+		}
 	}
 	
 	/**
 	 * Metoda wyszukująca problemy z liczbą meta-łuków i (opcja) naprawiająca je
 	 * @param showResults boolean - true jeśli pokazać okno raportu
-	 * @param fix boolean - true, jeśli problemy mają być naprawione
 	 * @return boolean - true, jeśli naprawiono
 	 */
-	public boolean checkAndFix(boolean showResults, boolean fix) {
-		fix = true; //TODO: zawsze, inaczej ciężko będzie napisać dla rozgałęzionych wielopoziomowych
-		
+	public boolean checkAndFix(boolean showResults) {
+		boolean fixedAll = true;
 		ArrayList<Node> nodes = pn.getNodes();
 		ArrayList<MetaNode> metanodes = pn.getMetaNodes();
+		ArrayList<Arc> arcs = pn.getArcs();
 		//int subnet = gui.getWorkspace().accessSheetsIDtable().size();
-
+		AbyssNotepad notePad = new AbyssNotepad(900,600);
+		
+		
 		for(Node node : nodes) {
-			if(!node.isPortal() && !(node instanceof MetaNode))
-				continue;
-			
-			ArrayList<Integer> subnets = SubnetsTools.getSubnets(node);
-			if(subnets.size() == 1) { //nie jest interfejsem
-				continue;
-			}
-			
-			//!!!!!!!!!!!!!!!!!!!!
-			
-			//IN / OUT W STOSUNKU DO METANODE!!! CZYLI ILE NP. IN-METAARCS TRZEBA DODAĆ DO METANODE DANEJ SIECI
-			ArrayList<Integer> requiredINmArcs = new ArrayList<Integer>();
-			ArrayList<Integer> requiredOUTmArcs = new ArrayList<Integer>();
-			
-			
-			for(int i=0; i<metanodes.size()+1; i++) {
-				requiredINmArcs.add(0);
-				requiredOUTmArcs.add(0);
-			}
-			//policz wartości początkowe metałuków IN i OUT we wszystkich podsieciach node
-			countINandOUTmArcs(node, subnets, requiredINmArcs, requiredOUTmArcs);
-			
-			//teraz dla każdej podsieci okresl zapotrzebowanie na meta-łuki:
-			for(int subnetID : subnets) {
-				ArrayList<Integer> pathway = getPathway(node, subnetID, metanodes, subnets);
-				//od pierwszego do ostatniego elementy pathway licz m-ArcsIN i m-ArcsOUT
-				for(int pathNet : pathway) {
-					int inInterfaces = SubnetsTools.countInterfaceInArcs(node, pathNet, false); //tyle potrzeba metaArcsIN
-					int outInterfaces = SubnetsTools.countInterfaceOutArcs(node, pathNet, false);
+			try {
+				if(!node.isPortal() && !(node instanceof MetaNode))
+					continue;
+				
+				ArrayList<Integer> subnets = SubnetsTools.getSubnets(node);
+				if(subnets.size() == 1) { //nie jest interfejsem
+					continue;
+				}
+				
+				//!!!!!!!!!!!!!!!!!!!!
+				//IN / OUT W STOSUNKU DO METANODE!!! CZYLI ILE NP. IN-METAARCS TRZEBA DODAĆ DO METANODE DANEJ SIECI
+				ArrayList<Integer> requiredINmArcs = new ArrayList<Integer>();
+				ArrayList<Integer> requiredOUTmArcs = new ArrayList<Integer>();
+				int maxID = GUIManager.getDefaultGUIManager().getWorkspace().getMaximumSubnetID();
+				for(int i=0; i<maxID+1; i++) {
+					requiredINmArcs.add(0);
+					requiredOUTmArcs.add(0);
+				}
+				//policz wartości początkowe metałuków IN i OUT skierowanych w metanode'y podsieci w których jest node
+				countINandOUTmArcs(node, subnets, requiredINmArcs, requiredOUTmArcs, metanodes);
+
+				//teraz dla każdej podsieci okresl zapotrzebowanie na meta-łuki:
+				for(int subnetID : subnets) {
+					//ArrayList<Integer> pathway = getPathway(node, subnetID, metanodes, subnets);
+					
+					ArrayList<Integer> pathway = getPathway(node, subnetID, metanodes, subnets);
+					int pathNetID = pathway.get(0); //ścieżka służy do określenia które (poza pierwszą) podsieci zostaną
+					//zaktualizowane o (minus) liczbę łuków interfejsów w pierwszej na liście pathway (nevermind: działa)
+					
+					int inInterfaces = SubnetsTools.countInterfaceInArcs(node, pathNetID, false); //tyle potrzeba metaArcsIN
+					int outInterfaces = SubnetsTools.countInterfaceOutArcs(node, pathNetID, false);
 					//tyle będzie potrzebne metaIN i metaOUT we wszystkich dalszych sieciach w pathway
 					
 					if(inInterfaces == 0 && outInterfaces == 0) {
 						continue;
 					}
 					
-					int indexStart = pathway.indexOf(pathNet) + 1;
-					for(int sub=indexStart; sub<pathway.size(); sub++) {
+					int indexStart = pathway.indexOf(pathNetID); //poza ostatnią, która nie potrzebuje metanode'ów (nawet jeśli ma)
+					for(int sub=indexStart; sub<pathway.size()-1; sub++) {
 						int subID = pathway.get(sub);
-						int valIN = requiredINmArcs.get(subID);
-						valIN -= inInterfaces;
-						requiredINmArcs.set(subID, valIN);
 						
-						int valOUT = requiredOUTmArcs.get(subID);
+						MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, subID);
+						int repNetID = meta.getRepresentedSheetID();
+						
+						
+						int valIN = requiredINmArcs.get(repNetID);
+						valIN -= inInterfaces;
+						requiredINmArcs.set(repNetID, valIN);
+						
+						int valOUT = requiredOUTmArcs.get(repNetID);
 						valOUT -= outInterfaces;
-						requiredINmArcs.set(subID, valOUT);
+						requiredOUTmArcs.set(repNetID, valOUT);
 					}
 				}
-			}
-			
-			if(fix) {
-				int x = 1;
-				x = 2;
+
+				//FIXING:
+				boolean inFix = false;
+				boolean outFix = false;
+				int totalINadded = 0;
+				int totalOUTadded = 0;
+				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSubnetCompressMode").equals("1")) {
+					for(int net=0; net<requiredINmArcs.size(); net++) {
+						int howMany = requiredINmArcs.get(net);
+						if(howMany < 0) { //tyle brakuje
+							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
+							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
+							
+							gui.netsHQ.addAllMissingInMetaArcsCompression(meta.getFirstELoc(), pattern, -howMany, arcs);
+							inFix = true;
+							totalINadded += (-howMany);
+						}
+					}
+					for(int net=0; net<requiredOUTmArcs.size(); net++) {
+						int howMany = requiredOUTmArcs.get(net);
+						if(howMany < 0) { //tyle brakuje
+							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
+							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
+							
+							gui.netsHQ.addAllMissingOutMetaArcs(meta.getFirstELoc(), pattern, -howMany, arcs);
+							outFix = true;
+							totalOUTadded += (-howMany);
+						}
+					}
+				} else {
+					for(int net=0; net<requiredINmArcs.size(); net++) {
+						int howMany = requiredINmArcs.get(net);
+						if(howMany < 0) { //tyle brakuje
+							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
+							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
+							
+							gui.netsHQ.addAllMissingInMetaArcs(meta.getFirstELoc(), pattern, -howMany, arcs);
+							inFix = true;
+							totalINadded += (-howMany);
+						}
+					}
+					for(int net=0; net<requiredOUTmArcs.size(); net++) {
+						int howMany = requiredOUTmArcs.get(net);
+						if(howMany < 0) { //tyle brakuje
+							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
+							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
+							
+							gui.netsHQ.addAllMissingOutMetaArcsCompression(meta.getFirstELoc(), pattern, -howMany, arcs);
+							outFix = true;
+							totalOUTadded += (-howMany);
+						}
+					}
+				}
+				
+				if(inFix || outFix) {
+					
+					notePad.addTextLineNL("Fixed node: "+node.getName(), "text");
+					notePad.addTextLineNL("  +=  Added: "+totalINadded+ " in-metaArcs and "+totalOUTadded+" out-metaArcs.", "text");
+				}
+			} catch (Exception e) {
+				GUIManager.getDefaultGUIManager().log("Unable to fix node: "+node.getName(), "error", true);
+				fixedAll = false;
 			}
 		}
+		
+		if(showResults) {
+			notePad.setVisible(true);
+		} else {
+			notePad.dispose();
+		}
 
-		return false;
+		
+		return fixedAll; //I did what I could sir...
+	}
+
+	/**
+	 * Metoda zwraca pierwszy znaleziony EL węzła w danej podsieci.
+	 * @param node Node - węzeł sieci
+	 * @param subnet int - ID podsieci
+	 * @return ElementLocation - znaleziony EL węzła
+	 */
+	private ElementLocation getAnyELfromSubnet(Node node, int subnet) {
+		for(ElementLocation el : node.getElementLocations()) {
+			if(el.getSheetID() == subnet)
+				return el;
+		}
+		return null;
 	}
 	
 	/**
@@ -144,37 +260,41 @@ public class SubnetsSnoopyCompatibility {
 	}
 	
 	/**
-	 * Metoda określa dla każdej podsieci węzła node, ile jest meta-łuków IN i OUT w każdej.
+	 * Metoda określa dla każdej podsieci węzła node, ile jest meta-łuków IN i OUT skierowanych w metanode
+	 * reprezentujący daną podsieć
 	 * @param node Node - węzeł
 	 * @param subnets ArrayList[Integer] - ID podsieci w których są portale node
 	 * @param requiredINmArcs ArrayList[Integer] - wektor liczby meta-łuków IN dla każdej podsieci z node
 	 * @param requiredOUTmArcs ArrayList[Integer] - wektor liczby meta-łuków OUT dla każdej podsieci z node
 	 */
 	private void countINandOUTmArcs(Node node, ArrayList<Integer> subnets,
-			ArrayList<Integer> requiredINmArcs, ArrayList<Integer> requiredOUTmArcs) {
+			ArrayList<Integer> requiredINmArcs, ArrayList<Integer> requiredOUTmArcs, ArrayList<MetaNode> metanodes) {
 		
 		for(int netID : subnets) { //dla każdej podsieci w której jest node
+			//sprawdzamy ile meta-arcs IN i OUT posiada z/od danego węzła METANODE reprezentujący podsieć
+			//dzięki temu potem będziemy wiedzieć, ile brakuje (potencjalnie)
 			int totalInMetaArcs = 0;
 			int totalOutMetaArcs = 0;
-			for(ElementLocation el : node.getElementLocations()) {
-				if(el.getSheetID() != netID)
-					continue;
-				
-				for(Arc arc : el.accessMetaInArcs()) {
-					int repSubNet = ((MetaNode)arc.getStartNode()).getRepresentedSheetID();
-					if(subnets.contains(repSubNet)) { //łuk prowadzi Z którejś podsieci w której są portale node'a
-						totalInMetaArcs++;
-					}
-				}
-				for(Arc arc : el.accessMetaOutArcs()) {
-					int repSubNet = ((MetaNode)arc.getEndNode()).getRepresentedSheetID();
-					if(subnets.contains(repSubNet)) { //łuk prowadzi DO którejś podsieci w której są portale node'a
-						totalOutMetaArcs++;
-					}
+			
+			MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, netID);
+			if(meta == null) //sieć 0
+				continue;
+			
+			ElementLocation metaEL = meta.getFirstELoc();
+			int repNet = meta.getRepresentedSheetID();
+			for(Arc arc : metaEL.accessMetaInArcs()) {
+				if(arc.getStartNode().equals(node)) {
+					totalInMetaArcs++;
 				}
 			}
-			requiredINmArcs.set(netID, totalOutMetaArcs); //ok, switched
-			requiredOUTmArcs.set(netID, totalInMetaArcs);
+			for(Arc arc : metaEL.accessMetaOutArcs()) {
+				if(arc.getEndNode().equals(node)) {
+					totalOutMetaArcs++;
+				}
+			}
+			
+			requiredINmArcs.set(repNet, totalInMetaArcs);
+			requiredOUTmArcs.set(repNet, totalOutMetaArcs);
 		}
 	}
 

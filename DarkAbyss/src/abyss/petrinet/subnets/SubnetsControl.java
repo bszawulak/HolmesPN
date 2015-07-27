@@ -18,6 +18,7 @@ import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
+import abyss.windows.AbyssNotepad;
 import abyss.workspace.Workspace;
 
 /**
@@ -61,11 +62,18 @@ public class SubnetsControl {
 			}
 		}
 		
+		//TODO:
+		boolean askStupidQuestions = true;
+		if(overlord.getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1")) {
+			askStupidQuestions = false;
+		}
+			
+			
 		boolean hasMetaArc = checkIfInMetaArcExists(startPTLocation, metanode);
 		boolean addIdAlready = false;
 		if(hasMetaArc == false) { //jeśli nie ma meta-łuku, dodaj bez zbędnych pytań
 			addIdAlready = true;
-		} else if(howManyExists > 0) { //jeśli jest, pytaj
+		} else if(howManyExists > 0 && askStupidQuestions) { //jeśli jest, pytaj
 			Object[] options = {"Add another portal", "Don't add new arc/portal",};
 			int n = JOptionPane.showOptionDialog(null,
 							"Subnet "+subnetID+" already contains "+howManyExists+" portal(s) of\n"
@@ -120,7 +128,7 @@ public class SubnetsControl {
 		Workspace workspace = overlord.getWorkspace();
 		ArrayList<Arc> arcs = workspace.getProject().getArcs();
 		MetaNode metanode = (MetaNode) startMetanode.getParentNode();
-		int startingSheet =  endPTNode.getSheetID(); 
+		//int startingSheet =  endPTNode.getSheetID(); 
 		int subnetID = metanode.getRepresentedSheetID();
 		
 		Node endNode = endPTNode.getParentNode();
@@ -226,10 +234,10 @@ public class SubnetsControl {
 		int interfArc = 0;
 		if(isInterfIN) { //sprawdź metałuki wchodzące w metanode
 			metaArcs = SubnetsTools.countInMetaArcs(parent, metanode);
-			interfArc = SubnetsTools.countInterfaceInArcs(parent, ourPatient.getSheetID(), false);
+			interfArc = SubnetsTools.countInterfaceInArcs(parent, ourPatient.getSheetID(), true);
 		} else {
 			metaArcs = SubnetsTools.countOutMetaArcs(parent, metanode);
-			interfArc = SubnetsTools.countInterfaceOutArcs(parent, ourPatient.getSheetID(), false);
+			interfArc = SubnetsTools.countInterfaceOutArcs(parent, ourPatient.getSheetID(), true);
 		}
 		
 		if(interfArc <= metaArcs) {
@@ -725,7 +733,7 @@ public class SubnetsControl {
 	 * @param howMany int - ile nowych portali dodać wraz z łukami
 	 * @param arcs ArrayList[Arc] - lista łuków sieci
 	 */
-	private void addAllMissingInMetaArcs(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
+	public void addAllMissingInMetaArcs(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
 		Random gen = new Random();
 		Node parent = pattern.getParentNode();
 		int sheetID = pattern.getSheetID();
@@ -753,7 +761,7 @@ public class SubnetsControl {
 	 * @param howMany int - ile nowych portali dodać wraz z łukami
 	 * @param arcs ArrayList[Arc] - lista łuków sieci
 	 */
-	private void addAllMissingInMetaArcsCompression(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
+	public void addAllMissingInMetaArcsCompression(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
 		//zidentyfikuj ElementLocation z max liczbą wejść do Meta
 		//skoro tu jesteśmy, tzn. że jakieś są (pattern)
 		Node nodeTP = pattern.getParentNode();
@@ -826,7 +834,7 @@ public class SubnetsControl {
 	 * @param howMany int - ile nowych portali dodać wraz z łukami
 	 * @param arcs ArrayList[Arc] - lista łuków sieci
 	 */
-	private void addAllMissingOutMetaArcs(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
+	public void addAllMissingOutMetaArcs(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
 		Random gen = new Random();
 		Node parent = pattern.getParentNode();
 		int sheetID = pattern.getSheetID();
@@ -854,7 +862,7 @@ public class SubnetsControl {
 	 * @param howMany int - ile nowych portali dodać wraz z łukami
 	 * @param arcs ArrayList[Arc] - lista łuków sieci
 	 */
-	private void addAllMissingOutMetaArcsCompression(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
+	public void addAllMissingOutMetaArcsCompression(ElementLocation metanodeEL, ElementLocation pattern, int howMany, ArrayList<Arc> arcs) {
 		//zidentyfikuj ElementLocation z max liczbą wejść Z Meta
 		//skoro tu jesteśmy, tzn. że jakieś są (pattern)
 		Node nodeTP = pattern.getParentNode();
@@ -936,12 +944,41 @@ public class SubnetsControl {
 
 	/**
 	 * Metoda zwraca status sieci.
-	 * @param fix boolean - czy naprawiać, jeśli coś nie działa
 	 * @return boolean - true, jeśli kompatybilna ze Snoopiem
 	 */
-	public boolean checkSnoopyCompatibility(boolean fix) {
+	public boolean checkSnoopyCompatibility() {
+		boolean status = false;
 		SubnetsSnoopyCompatibility sc = new SubnetsSnoopyCompatibility();
-		boolean status = sc.checkAndFix(true, fix);
+		ArrayList<ArrayList<Integer>> results = sc.macroCheck();
+		if(results == null) {
+			status = sc.checkAndFix(true);
+		} else {
+			AbyssNotepad notePad = new AbyssNotepad(900,600);
+			
+			ArrayList<Integer> problemMultiEL = results.get(0);
+			ArrayList<Integer> problemWrongType = results.get(1);
+			ArrayList<MetaNode> metanodes = overlord.getWorkspace().getProject().getMetaNodes();
+			int size = problemWrongType.size();
+			notePad.addTextLineNL("Multiple locations of metanodes: ", "text");
+			for(int i=0; i<size; i++) {
+				if(problemMultiEL.get(i) != 0) {
+					notePad.addTextLineNL("   Metanode: "+metanodes.get(i).getName()+ 
+							" [SUBNET: "+metanodes.get(i).getRepresentedSheetID()+"]", "text");
+				}
+			}
+			notePad.addTextLineNL(" ------ ", "text");
+			notePad.addTextLineNL("Wrong types of subnets: ", "text");
+			for(int i=0; i<size; i++) {
+				if(problemWrongType.get(i) != 0) {
+					notePad.addTextLineNL("   Metanode: "+metanodes.get(i).getName()+ 
+							" [SUBNET: "+metanodes.get(i).getRepresentedSheetID()+"]"+ 
+							" [TYPE: "+metanodes.get(i).getMetaType()+"]", "text");
+				}
+			}
+			notePad.addTextLineNL(" ------ ", "text");
+			notePad.setVisible(true);
+			return false;
+		}
 		return status;
 	}
 

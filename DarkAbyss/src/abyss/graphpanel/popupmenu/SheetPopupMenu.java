@@ -230,7 +230,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 		
 		netMenu.add(createMenuItem("Fix Snoopy compatibility", "", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility(true);
+				GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility();
 			}
 		}));
 		

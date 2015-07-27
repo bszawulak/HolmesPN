@@ -45,7 +45,14 @@ public class AbyssAbout extends JFrame {
 		
 		//textArea = new JTextArea();
 		textArea = new MyTextArea();
-		((MyTextArea)textArea).setBackgroundImage(Tools.getImageFromIcon("/abyssHolmes2.png"));
+		
+		try {
+			BufferedImage wPic = ImageIO.read(this.getClass().getResource("/abyssHolmes2.png"));
+			((MyTextArea)textArea).setBackgroundImage(wPic);
+		} catch (Exception e) {
+			
+		}
+		
 		
 		textArea.setEditable(false);
 		textArea.setLineWrap(true);

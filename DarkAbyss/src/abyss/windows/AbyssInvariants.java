@@ -506,19 +506,19 @@ public class AbyssInvariants extends JFrame {
 				pPosition = placesMap.get(oneArc.getEndNode());
 				incidenceValue = 1 * oneArc.getWeight();
 				
-				Transition tr = (Transition) oneArc.getStartNode();
-				Place pl = (Place) oneArc.getEndNode();
-				int tr_pos = transitions.indexOf(tr);
-				int pl_pos = places.indexOf(pl);
+				//Transition tr = (Transition) oneArc.getStartNode();
+				//Place pl = (Place) oneArc.getEndNode();
+				//int tr_pos = transitions.indexOf(tr);
+				//int pl_pos = places.indexOf(pl);
 			} else { //miejsca
 				tPosition = transitionsMap.get(oneArc.getEndNode());
 				pPosition = placesMap.get(oneArc.getStartNode());
 				incidenceValue = -1 * oneArc.getWeight();
 				
-				Transition tr = (Transition) oneArc.getEndNode();
-				Place pl = (Place) oneArc.getStartNode();
-				int tr_pos = transitions.indexOf(tr);
-				int pl_pos = places.indexOf(pl);
+				//Transition tr = (Transition) oneArc.getEndNode();
+				//Place pl = (Place) oneArc.getStartNode();
+				//int tr_pos = transitions.indexOf(tr);
+				//int pl_pos = places.indexOf(pl);
 			}
 			int oldValue = globalIncidenceMatrix.get(tPosition).get(pPosition);
 			if(oldValue != 0) { //detekcja łuków podwójnych
@@ -543,9 +543,6 @@ public class AbyssInvariants extends JFrame {
 			}
 			notePad.addTextLineNL(text, "text");
 		}
-		
-		
-		
 	}
 
 	/**

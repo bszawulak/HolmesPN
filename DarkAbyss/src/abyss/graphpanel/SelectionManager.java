@@ -12,7 +12,6 @@ import abyss.graphpanel.SelectionActionListener.SelectionActionEvent;
 import abyss.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.elements.Arc;
-import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.MetaNode;
 import abyss.petrinet.elements.Node;
