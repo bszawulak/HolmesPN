@@ -69,6 +69,13 @@ public class ProjectWriter {
 			Date date = new Date();
 			bw.write("Project name: "+projName+newline);
 			bw.write("Date: "+dateFormat.format(date)+newline);
+			
+			bw.write("<Project blocks>"+newline);
+			bw.write("  <Subnets>"+newline);
+			bw.write("  <Invariants data>"+newline);
+			bw.write("  <MCT data>"+newline);
+			bw.write("</Project blocks>"+newline);
+			
 			bw.write("<Net data>"+newline);
 			bw.write("<ID generator state:"+IdGenerator.getCurrentValues()+">"+newline);
 			boolean statusNet = saveNetwork(bw);
@@ -153,9 +160,9 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition type:"+trans.getTransType()+">"+newline); //typ
 				bw.write(spaces(sp)+"<Transition name:"+trans.getName()+">"+newline);  //nazwa
 				bw.write(spaces(sp)+"<Transition comment:"+Tools.convertToCode(trans.getComment())+">"+newline); //komentarz
-				bw.write(spaces(sp)+"<Transition eft:"+trans.getMinFireTime()+">"+newline); //TPN eft
-				bw.write(spaces(sp)+"<Transition lft:"+trans.getMaxFireTime()+">"+newline); //TPN lft
-				bw.write(spaces(sp)+"<Transition duration:"+trans.getDurationTime()+">"+newline); //DPN duration
+				bw.write(spaces(sp)+"<Transition eft:"+trans.getEFT()+">"+newline); //TPN eft
+				bw.write(spaces(sp)+"<Transition lft:"+trans.getLFT()+">"+newline); //TPN lft
+				bw.write(spaces(sp)+"<Transition duration:"+trans.getDPNduration()+">"+newline); //DPN duration
 				bw.write(spaces(sp)+"<Transition TPN status:"+trans.getTPNstatus()+">"+newline); //is TPN active?
 				bw.write(spaces(sp)+"<Transition DPN status:"+trans.getDPNstatus()+">"+newline); //is DPN active?
 				

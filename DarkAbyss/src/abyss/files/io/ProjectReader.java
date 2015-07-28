@@ -54,6 +54,11 @@ public class ProjectReader {
 	private int globalMaxHeight = 0;
 	private int globalMaxWidth = 0;
 	
+	//które bloki w ogóle próbowac czytać (zależne od tagów w sekcji [Project blocks]
+	private boolean subnets = false; //bloki coarse
+	private boolean invariants = true;
+	private boolean mct = true;
+	
 	/**
 	 * Konstruktor obiektu klasy odczytywania projektu.
 	 */
@@ -89,6 +94,13 @@ public class ProjectReader {
 			
 			GUIManager.getDefaultGUIManager().log("Reading project file: "+filepath, "text", true);
 			
+			status = readProjectHeader(buffer);
+			if(status == false) {
+				GUIManager.getDefaultGUIManager().log("Reading project data block failure.", "error", true);
+				buffer.close();
+				return false;
+			}
+			
 			status = readNetwork(buffer);
 			if(status == false) {
 				GUIManager.getDefaultGUIManager().log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
@@ -122,6 +134,75 @@ public class ProjectReader {
 	}
 
 	/**
+	 * Metoda służąca do czytania bloku składowych pliku projektu.
+	 * @param buffer BufferedReader - obiekt czytający
+	 * @return boolean - true, jeśli się udało
+	 */
+	private boolean readProjectHeader(BufferedReader buffer) {
+		try {
+			String line = buffer.readLine();
+			if(line.contains("Project name")) {
+				line = line.substring(line.indexOf("name:")+6);
+				projectCore.setName(line);
+			} else {
+				GUIManager.getDefaultGUIManager().log("No project name tag in file.", "error", true);
+				return false;
+			}
+			
+			line = buffer.readLine();
+			if(line.contains("Date:")) {
+				//line = line.substring(line.indexOf("name:")+6);
+				//projectCore.setName(line);
+			} else {
+				GUIManager.getDefaultGUIManager().log("No project date tag in file.", "error", true);
+				return false;
+			}
+			
+			line = buffer.readLine();
+			if(line.contains("<Project blocks>")) {
+				while(!((line = buffer.readLine()).contains("</Project blocks>"))) {
+					parseNetblocksLine(line);
+				}
+			} 
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Uknown error while reading project header.", "error", true);
+			return false;
+		}
+	}
+
+	/**
+	 * Metoda czyta blok informujący jakie podbloki są w ogóle w pliku projektu.
+	 * @param line String - linia do czytania
+	 */
+	private void parseNetblocksLine(String line) {
+		String backup = line;
+		try {
+			String query = "";
+			query = "subnets";
+			if(line.toLowerCase().contains(query)) {
+				subnets = true;
+				return;
+			}
+			
+			query = "invariants data";
+			if(line.contains(query)) {
+				invariants = true;
+				return;
+			}
+			
+			query = "mct data";
+			if(line.contains(query)) {
+				mct = true;
+				return;
+			}
+		
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Reading file error in line: "+backup, "error", true);
+		}
+	}
+
+	/**
 	 * Metoda odczytująca dane sieci z pliku projektu i tworząca sieć na bazie miejsc, tranzycji i łuków.
 	 * @param buffer BufferedReader - obiekt odczytujący
 	 * @return boolean - true, jeśli nie było problemów przy odczycie
@@ -129,11 +210,7 @@ public class ProjectReader {
 	private boolean readNetwork(BufferedReader buffer) {
 		boolean status = false;
 		try {
-			String line = buffer.readLine();
-			if(line.contains("Project name")) {
-				line = line.substring(line.indexOf("name:")+6);
-				projectCore.setName(line);
-			}
+			String line; // = buffer.readLine();
 			//ID GENERATOR:
 			while(!((line = buffer.readLine()).contains("ID generator"))) //przewiń do ID generator
 				;
@@ -166,12 +243,10 @@ public class ProjectReader {
 				}
 				//przeczytano miejsca
 			}
-			
+
+			//TRANSITIONS:
 			while(!((line = buffer.readLine()).contains("<Transitions: "))) //przewiń do tranzycji
 				;
-			
-			//TRANSITIONS:
-			//line = buffer.readLine();
 			if(!line.contains("<Transitions: 0>")) { //są tranzycje
 				line = buffer.readLine(); // -> Transition: 0
 				boolean go = true;
@@ -192,39 +267,37 @@ public class ProjectReader {
 				//przeczytano tranzycje
 			}
 			
-			while(!((line = buffer.readLine()).contains("<MetaNodes: "))) //przewiń do tranzycji
-				;
-			
-			//METANODES:
-			//line = buffer.readLine();
-			if(!line.contains("<MetaNodes: 0>")) { //są tranzycje
-				line = buffer.readLine(); // -> Transition: 0
-				boolean go = true;
-				
-				while(go) {
-					MetaNode metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(20,20), MetaType.SUBNET);
+			if(subnets) {
+				//METANODES:
+				while(!((line = buffer.readLine()).contains("<MetaNodes: "))) //przewiń do tranzycji
+					;
+				if(!line.contains("<MetaNodes: 0>")) { //są tranzycje
+					line = buffer.readLine(); // -> Transition: 0
+					boolean go = true;
 					
-					while(!((line = buffer.readLine()).contains("<EOT>"))) {
-						parseMetaNodesLine(line, metanode);
+					while(go) {
+						MetaNode metanode = new MetaNode(0, IdGenerator.getNextId(), new Point(20,20), MetaType.SUBNET);
+						
+						while(!((line = buffer.readLine()).contains("<EOT>"))) {
+							parseMetaNodesLine(line, metanode);
+						}
+						line = buffer.readLine();
+						if(line.contains("<MetaNodes data block end>")) {
+							go = false;
+						}
+						metanodesProcessed++;
+						metanodes.add(metanode);
+						nodes.add(metanode);
 					}
-					line = buffer.readLine();
-					if(line.contains("<MetaNodes data block end>")) {
-						go = false;
-					}
-					metanodesProcessed++;
-					metanodes.add(metanode);
-					nodes.add(metanode);
+					//przeczytano tranzycje
 				}
-				//przeczytano tranzycje
 			}
-			
 			ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 			
+			//ARCS:
 			while(!((line = buffer.readLine()).contains("<Arcs data block>"))) //przewiń do łuków
 				;
-			
-			//ARCS:
 			while(!(line = buffer.readLine()).contains("Arcs data block end")) {
 				Arc newArc = parseArcLine(line, places, transitions, metanodes);
 				arcsProcessed++;
@@ -405,7 +478,7 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				double eft = Double.parseDouble(line);
-				transition.setMinFireTime(eft);
+				transition.setEFT(eft);
 				return;
 			}
 			
@@ -414,7 +487,7 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				double lft = Double.parseDouble(line);
-				transition.setMaxFireTime(lft);
+				transition.setLFT(lft);
 				return;
 			}
 			
@@ -423,7 +496,7 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				double duration = Double.parseDouble(line);
-				transition.setDurationTime(duration);
+				transition.setDPNduration(duration);
 				return;
 			}
 			

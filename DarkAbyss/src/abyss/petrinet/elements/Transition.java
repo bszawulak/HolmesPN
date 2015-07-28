@@ -43,12 +43,12 @@ public class Transition extends Node {
 	protected boolean valueVisibilityStatus = false;
 	
 	//opcje czasowe:
-	protected double minFireTime = 0; //TPN
-	protected double maxFireTime = 0;	//TPN
-	protected double internalFireTime = -1; //zmienna związana z modelem sieci TPN
-	protected double internalTimer = -1;
-	protected double duration = 0; //DPN
-	protected double durationTimer = -1;
+	protected double TPN_eft = 0; //TPN
+	protected double TPN_lft = 0; //TPN
+	protected double TPNtimerLimit = -1; //TPN
+	protected double TPNtimer = -1; //TPN
+	protected double DPNduration = 0; //DPN
+	protected double DPNtimer = -1; //DPN
 	protected boolean TPNactive = false;
 	protected boolean DPNactive = false;
 	
@@ -302,7 +302,7 @@ public class Transition extends Node {
 			return false;
 		
 		if(DPNactive) {
-			if(durationTimer == duration) { //duration zawsze >= 0, dTimer(pre-start) = -1, więc ok
+			if(DPNtimer == DPNduration) { //duration zawsze >= 0, dTimer(pre-start) = -1, więc ok
 				return true; //nie ważne co mówią pre-places, ta tranzycja musi odpalić!
 			}
 		}
@@ -370,20 +370,7 @@ public class Transition extends Node {
 	 * @return PetriNetElementType - tranzycja klasyczna
 	 */
 	public PetriNetElementType getType() {
-		/*
-		if(transType == TransitionType.PN) {
-			return PetriNetElementType.TRANSITION;
-		} else if(transType == TransitionType.TPN) {
-			return PetriNetElementType.TIMETRANSITION;
-		} else {
-			return PetriNetElementType.TRANSITION;
-		}
-		*/
-		if(transType == TransitionType.PN) {
-			return PetriNetElementType.TRANSITION;
-		} else {
-			return PetriNetElementType.TRANSITION;
-		}
+		return PetriNetElementType.TRANSITION;
 	}
 
 	/**
@@ -416,10 +403,10 @@ public class Transition extends Node {
 	
 	/**
 	 * Metoda ustawia podtyp tranzycji.
-	 * @param tt TransitionType - podtyp
+	 * @param value TransitionType - podtyp
 	 */
-	public void setTransType(TransitionType tt) {
-		this.transType = tt;
+	public void setTransType(TransitionType value) {
+		this.transType = value;
 	}
 	
 	/**
@@ -436,117 +423,114 @@ public class Transition extends Node {
 	
 	/**
 	 * Metoda ustala dolny limit niezerowego czasu gotowości - EFT.
-	 * @param minFireTime double - czas EFT
+	 * @param value double - czas EFT
 	 */
-	public void setMinFireTime(double minFireTime) {
-		if(minFireTime < 0) {
-			this.minFireTime = 0;
+	public void setEFT(double value) {
+		if(value < 0) {
+			this.TPN_eft = 0;
 			return;
 		}
-		if(minFireTime > maxFireTime) {
-			this.minFireTime = maxFireTime;
+		if(value > TPN_lft) {
+			this.TPN_eft = TPN_lft;
 			return;
 		}
-		this.minFireTime = minFireTime;
+		this.TPN_eft = value;
 	}
 	
 	/**
 	 * Metoda pozwala odczytać przypisany czas EFT tranzycji.
 	 * @return double - czas EFT
 	 */
-	public double getMinFireTime() {
-		return this.minFireTime;
+	public double getEFT() {
+		return this.TPN_eft;
 	}
 
 	/**
 	 * Metoda ustala górny limit nieujemnego czasu krytycznego - LFT.
-	 * @param maxFireTime double - czas LFT (deadline na uruchomienie)
+	 * @param value double - czas LFT (deadline na uruchomienie)
 	 */
-	public void setMaxFireTime(double maxFireTime) {
-		if(maxFireTime < minFireTime) {
-			this.maxFireTime = minFireTime;
+	public void setLFT(double value) {
+		if(value < TPN_eft) {
+			this.TPN_lft = TPN_eft;
 			return;
 		}
 		
-		this.maxFireTime = maxFireTime;
+		this.TPN_lft = value;
 	}
 
 	/**
 	 * Metoda pozwala odczytać przypisany czas LFT tranzycji.
 	 * @return double - czas LFT
 	 */
-	public double getMaxFireTime() {
-		return this.maxFireTime;
+	public double getLFT() {
+		return this.TPN_lft;
 	}
 	
 	/**
 	 * Metoda pozwala ustawic czas uruchomienia tranzycji.
-	 * @param fireTime double - czas uruchomienia tranzycji
+	 * @param value double - czas uruchomienia tranzycji
 	 */
-	public void setInternalFireTime(double fireTime) {
-		internalFireTime = fireTime;
+	public void setTPNtimerLimit(double value) {
+		TPNtimerLimit = value;
 	}
 
 	/**
 	 * Metoda zwraca aktualny czas uruchomienia.
 	 * @return double - czas uruchomienia - pole FireTime
 	 */
-	public double getInternalFireTime() {
-		return internalFireTime;
+	public double getTPNtimerLimit() {
+		return TPNtimerLimit;
 	}
 	
 	/**
 	 * Metoda zwraca aktualny zegar uruchomienia dla tranzycji.
 	 * @return double - czas uruchomienia - pole FireTime
 	 */
-	public double getInternalTPN_Timer() {
-		return internalTimer;
+	public double getTPNtimer() {
+		return TPNtimer;
 	}
 
 	/**
 	 * Metoda pozwala ustawic zegar uruchomienia tranzycji.
-	 * @param fireTime double - czas uruchomienia tranzycji
+	 * @param value double - czas uruchomienia tranzycji
 	 */
-	public void setInternalTPN_Timer(double fireTime) {
-		internalTimer = fireTime;
+	public void setTPNtimer(double value) {
+		TPNtimer = value;
 	}
 	
 	/**
 	 * Metoda ustawia nowy czas trwania odpalenia dla tranzycji DPN.
 	 * @param val double - nowy czas
 	 */
-	public void setDurationTime(double val) {
-		if(val < 0)
-			duration = 0;
+	public void setDPNduration(double value) {
+		if(value < 0)
+			DPNduration = 0;
 		else
-			duration = val;
-		
-		//if(duration > 0)
-		//	setDPNstatus(true);
+			DPNduration = value;
 	}
 	
 	/**
 	 * Metoda zwraca ustawioną dla tranzycji DPN wartość duration.
 	 * @return double - czas trwania odpalenia tranzycji
 	 */
-	public double getDurationTime() {
-		return duration;
+	public double getDPNduration() {
+		return DPNduration;
 	}
 	
 	/**
 	 * Metoda ustawia nowy wewnętrzny timer dla czasu odpalenia dla tranzycji DPN.
 	 * @param val double - nowa wartość zegara dla DPN
 	 */
-	public void setInternalDPN_Timer(double val) {
-		durationTimer = val;
+	public void setDPNtimer(double value) {
+		DPNtimer = value;
 	}
 	
 	/**
 	 * Metoda zwraca aktualną wartość zegara odliczającego czas do odpalenia tranzycji DPN (produkcji tokenów).
 	 * @return double durationTimer - 
 	 */
-	public double getInternalDPN_Timer() {
-		return durationTimer;
+	public double getDPNtimer() {
+		return DPNtimer;
 	}
 	
 	/**
@@ -554,7 +538,7 @@ public class Transition extends Node {
 	 * @return boolean - true, jeśli zegar DPN ma wartość równą ustalonemu czasowi DPN dla tranzycji
 	 */
 	public boolean isDPNforcedToFire() {
-		if(durationTimer >= duration)
+		if(DPNtimer >= DPNduration)
 			return true;
 		else
 			return false;
@@ -565,8 +549,8 @@ public class Transition extends Node {
 	 * @return boolean - true, jeśli wewnętrzny zegar (!= -1) jest równy deadlinowi dla TPN
 	 */
 	public boolean isTPNforcedToFired() {
-		if(internalFireTime != -1) {
-			if(internalFireTime == internalTimer)
+		if(TPNtimerLimit != -1) {
+			if(TPNtimerLimit == TPNtimer)
 				return true;
 			else
 				return false;
@@ -580,9 +564,9 @@ public class Transition extends Node {
 	 * tokeny (faza II: AddTokens symulacji)
 	 */
 	public void resetTimeVariables() {
-		internalFireTime = -1;
-		internalTimer = -1;
-		durationTimer = -1;
+		TPNtimerLimit = -1;
+		TPNtimer = -1;
+		DPNtimer = -1;
 	}
 	
 	/**

@@ -564,9 +564,9 @@ public class SelectionManager {
 			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
 			Transition selTransition = (Transition)getSelectedElementLocations().get(0).getParentNode();
-			double oldEFT = selTransition.getMinFireTime();
-			double oldLFT = selTransition.getMaxFireTime();
-			double oldDuration = selTransition.getDurationTime();
+			double oldEFT = selTransition.getEFT();
+			double oldLFT = selTransition.getLFT();
+			double oldDuration = selTransition.getDPNduration();
 			boolean oldTPNstatus = selTransition.getTPNstatus();
 			boolean oldDPNstatus = selTransition.getDPNstatus();
 			TransitionType tt = selTransition.getTransType();
@@ -584,9 +584,9 @@ public class SelectionManager {
 			
 			portal.setName(oldName);
 			portal.setComment(oldComment);
-			portal.setMinFireTime(oldEFT);
-			portal.setMaxFireTime(oldLFT);
-			portal.setDurationTime(oldDuration);
+			portal.setEFT(oldEFT);
+			portal.setLFT(oldLFT);
+			portal.setDPNduration(oldDuration);
 			portal.setTPNstatus(oldTPNstatus);
 			portal.setDPNstatus(oldDPNstatus);
 			getGraphPanelNodes().add(selectedNodeIndex, portal);
@@ -697,9 +697,9 @@ public class SelectionManager {
 			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
 			Transition selTransition = (Transition)getSelectedElementLocations().get(0).getParentNode();
-			double oldEFT = selTransition.getMinFireTime();
-			double oldLFT =selTransition.getMaxFireTime();
-			double oldDuration = selTransition.getDurationTime();
+			double oldEFT = selTransition.getEFT();
+			double oldLFT =selTransition.getLFT();
+			double oldDuration = selTransition.getDPNduration();
 			boolean oldTPNstatus = selTransition.getTPNstatus();
 			boolean oldDPNstatus = selTransition.getDPNstatus();
 			TransitionType tt = selTransition.getTransType();
@@ -724,9 +724,9 @@ public class SelectionManager {
 			
 			portal.setName(oldName);
 			portal.setComment(oldComment);
-			portal.setMinFireTime(oldEFT);
-			portal.setMaxFireTime(oldLFT);
-			portal.setDurationTime(oldDuration);
+			portal.setEFT(oldEFT);
+			portal.setLFT(oldLFT);
+			portal.setDPNduration(oldDuration);
 			portal.setTPNstatus(oldTPNstatus);
 			portal.setDPNstatus(oldDPNstatus);
 			getGraphPanelNodes().add(selectedNodeIndex, portal);

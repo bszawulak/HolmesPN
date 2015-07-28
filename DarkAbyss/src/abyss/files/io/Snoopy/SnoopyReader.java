@@ -612,13 +612,13 @@ public class SnoopyReader {
 	private void parseDuration(Transition transition, ArrayList<Object> tableVector) {
 		// 0, 1 pierwszy wiersz (nazwy), 2 - tytuł wiersza, 3 wartość I wiersz, 4 jak 2, 5 jak 3
 		try {
-			transition.setDurationTime(Double.parseDouble((String) tableVector.get(3)));
-			if(transition.getDurationTime() != 0)
+			transition.setDPNduration(Double.parseDouble((String) tableVector.get(3)));
+			if(transition.getDPNduration() != 0)
 				transition.setDPNstatus(true);
 			else
 				transition.setDPNstatus(false);
 		} catch (Exception e) {
-			transition.setDurationTime(0);
+			transition.setDPNduration(0);
 			transition.setDPNstatus(false);
 		}
 	}
@@ -629,12 +629,12 @@ public class SnoopyReader {
 		try {
 			double eft = Double.parseDouble((String) tableVector.get(4));
 			double lft = Double.parseDouble((String) tableVector.get(5));
-			transition.setMinFireTime(eft);
-			transition.setMaxFireTime(lft);
+			transition.setEFT(eft);
+			transition.setLFT(lft);
 			transition.setTPNstatus(true);
 		} catch (Exception e) {
-			transition.setMinFireTime(0);
-			transition.setMaxFireTime(0);
+			transition.setEFT(0);
+			transition.setLFT(0);
 			transition.setTPNstatus(true);
 		}
 		

@@ -3,7 +3,6 @@ package abyss.petrinet.simulators;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Stack;
 
 import javax.swing.JOptionPane;
@@ -44,10 +43,11 @@ public class NetSimulator {
 	private NetSimulatorLogger nsl = new NetSimulatorLogger();
 	
 	private boolean detailedLogging = true;
-	private Random generator;
+	//private Random generator;
 	
 	private SimulatorEngine engine = null;
 
+	private int modeSteps = 0; 
 	/**
 	 * Enumeracja przechowująca tryb pracy symulatora. Dostępne wartości:<br><br>
 	 * ACTION_BACK - tryb cofnięcia pojedynczej akcji<br>
@@ -82,7 +82,7 @@ public class NetSimulator {
 		simulationType = type;
 		petriNet = net;
 		launchingTransitions = new ArrayList<Transition>();
-		generator = new Random(System.currentTimeMillis());
+		//generator = new Random(System.currentTimeMillis());
 		actionStack = new Stack<SimulationStep>(); //historia kroków
 		
 		engine = new SimulatorEngine();
@@ -98,7 +98,7 @@ public class NetSimulator {
 		//timeNetPartStepCounter = 0;
 		writeHistory = true;
 		timeCounter = -1;
-		generator = new Random(System.currentTimeMillis());
+		//generator = new Random(System.currentTimeMillis());
 		actionStack.removeAllElements();
 		
 		engine = new SimulatorEngine();
@@ -260,7 +260,7 @@ public class NetSimulator {
 			else
 				arcs = transition.getOutArcs();
 			
-			if(transition.getInternalDPN_Timer() > 0) //yeah, trust me, I'm an engineer
+			if(transition.getDPNtimer() > 0) //yeah, trust me, I'm an engineer
 				continue;
 			
 			// odejmij odpowiednią liczbę tokenów:
@@ -849,7 +849,7 @@ public class NetSimulator {
 						timeCounter++;
 						GUIManager.getDefaultGUIManager().io.updateTimeStep(""+timeCounter);
 						
-						launchingTransitions = engine.generateValidLaunchingTransitions();
+						launchingTransitions = engine.getTransLaunchList(modeSteps);
 						remainingTransitionsAmount = launchingTransitions.size();
 					}
 					
@@ -866,7 +866,7 @@ public class NetSimulator {
 					for(int t=0; t<launchingTransitions.size(); t++) {
 						Transition test_t = launchingTransitions.get(t);
 						if(test_t.getDPNstatus()) {
-							if(test_t.getInternalDPN_Timer() == 0 && test_t.getDurationTime() != 0) {
+							if(test_t.getDPNtimer() == 0 && test_t.getDPNduration() != 0) {
 								launchingTransitions.remove(test_t);
 								t--;
 							}
@@ -945,7 +945,7 @@ public class NetSimulator {
 					if (remainingTransitionsAmount == 0) {
 						timeCounter++;
 						GUIManager.getDefaultGUIManager().io.updateTimeStep(""+timeCounter);
-						launchingTransitions = engine.generateValidLaunchingTransitions();
+						launchingTransitions = engine.getTransLaunchList(modeSteps);
 						remainingTransitionsAmount = launchingTransitions.size();
 					}
 					
@@ -959,7 +959,7 @@ public class NetSimulator {
 					for(int t=0; t<launchingTransitions.size(); t++) {
 						Transition test_t = launchingTransitions.get(t);
 						if(test_t.getDPNstatus()) {
-							if(test_t.getInternalDPN_Timer() == 0 && test_t.getDurationTime() != 0) {
+							if(test_t.getDPNtimer() == 0 && test_t.getDPNduration() != 0) {
 								launchingTransitions.remove(test_t);
 								t--;
 							}

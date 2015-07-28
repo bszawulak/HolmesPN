@@ -461,9 +461,9 @@ public class NetHandler_Time extends NetHandler {
 					timeTrans = false;
 					//TimeTransition tmpTTran = new TimeTransition(nodeID, tmpElementLocationList, nodeName, nodeComment);
 					Transition tmpTTran = new Transition(nodeID, elementLocationsList, nodeName, nodeComment);
-					tmpTTran.setMinFireTime(nodeEFT);
-					tmpTTran.setMaxFireTime(nodeLFT);
-					tmpTTran.setDurationTime(duration);
+					tmpTTran.setEFT(nodeEFT);
+					tmpTTran.setLFT(nodeLFT);
+					tmpTTran.setDPNduration(duration);
 					tmpTTran.setNamesLocations(namesElLocations);
 					tmpTTran.setTransType(TransitionType.TPN);
 					if(duration > 0)

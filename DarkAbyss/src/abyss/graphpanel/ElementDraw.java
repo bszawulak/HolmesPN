@@ -185,14 +185,14 @@ public final class ElementDraw {
 				if( trans.getTransType() == TransitionType.TPN) {
 					g.setColor(Color.black);
 					g.setFont(f_plain);
-					String eft = String.valueOf( trans.getMinFireTime() );
+					String eft = String.valueOf( trans.getEFT() );
 					g.drawString(eft, nodeBounds.x+35, nodeBounds.y + 8);
 
-					String lft = String.valueOf( trans.getMaxFireTime() );
+					String lft = String.valueOf( trans.getLFT() );
 					g.drawString(lft, nodeBounds.x +35, nodeBounds.y + 28);
 
-					int intTimer = (int) trans.getInternalTPN_Timer();
-					int intFireTime = (int) trans.getInternalFireTime();
+					int intTimer = (int) trans.getTPNtimer();
+					int intFireTime = (int) trans.getTPNtimerLimit();
 					String timeInfo = ""+intTimer+"  /  "+intFireTime;
 					
 					if(!trans.isActive())
@@ -213,9 +213,9 @@ public final class ElementDraw {
 					g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y + -4);
 					
 					if(trans.getDPNstatus()) {
-						String dur = String.valueOf( trans.getDurationTime() );
-						if(trans.getInternalDPN_Timer() >= 0) {
-							dur = String.valueOf( trans.getInternalDPN_Timer() ) + " / "+dur;
+						String dur = String.valueOf( trans.getDPNduration() );
+						if(trans.getDPNtimer() >= 0) {
+							dur = String.valueOf( trans.getDPNtimer() ) + " / "+dur;
 						} else {
 							dur = " # / "+dur;
 						}

@@ -41,7 +41,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.swing.Action;
 import javax.swing.JFrame;
@@ -82,10 +81,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private static final long serialVersionUID = -817072868916096442L;
 	// Static fields.
 	private static GUIManager guiManager;
-	private Random generator = new Random(System.currentTimeMillis());
-	/**
-	 * Obiekt klasy GUIOperations, minion od czarnej roboty.
-	 */
+	//private Random generator = new Random(System.currentTimeMillis());
 	public GUIOperations io;
 	public TexExporter tex;
 	public GUIReset reset;
@@ -1384,21 +1380,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public SettingsManager getSettingsManager() {
 		return settingsManager;
-	}
-	
-	/**
-	 * Metoda zwraca liczbę losową typu int z podanego zakresu.
-	 * @param min int - dolna granica
-	 * @param max int - górna granica
-	 * @return int - liczba z zakresu [min, max]
-	 */
-	public int getRandomInt(int min, int max) {
-		if(min == 0 && max == 0)
-			return 0;
-		if(min == max)
-			return min;
-		
-		return generator.nextInt((max - min) + 1) + min;
 	}
 	
 	/**

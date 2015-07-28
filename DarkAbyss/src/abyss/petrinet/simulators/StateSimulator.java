@@ -1,7 +1,6 @@
 package abyss.petrinet.simulators;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 import javax.swing.JOptionPane;
@@ -46,6 +45,8 @@ public class StateSimulator {
 	private Random generator; // = new Random(System.currentTimeMillis());
 	
 	private SimulatorEngine engine = null;
+	
+	private int modeSteps = 0; // 0 - bez pustych kroków, 1 - z pustymi krokami
 	
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
@@ -171,7 +172,7 @@ public class StateSimulator {
 				pBar.update(pBar.getGraphics()); // (╯°□°）╯︵ ┻━┻)  
 			
 			if (isPossibleStep()){ 
-				launchingTransitions = engine.generateValidLaunchingTransitions();
+				launchingTransitions = engine.getTransLaunchList(modeSteps);
 				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
 				removeDPNtransition(launchingTransitions);
 				
@@ -228,7 +229,7 @@ public class StateSimulator {
 		for(int t=0; t<launchingTransitions.size(); t++) {
 			Transition test_t = launchingTransitions.get(t);
 			if(test_t.getDPNstatus()) {
-				if(test_t.getInternalDPN_Timer() == 0 && test_t.getDurationTime() != 0) {
+				if(test_t.getDPNtimer() == 0 && test_t.getDPNduration() != 0) {
 					launchingTransitions.remove(test_t);
 					t--;
 				}
@@ -256,7 +257,7 @@ public class StateSimulator {
 		for(int i=0; i<steps; i++) {
 			internalSteps++;
 			if (isPossibleStep()){ 
-				launchableTransitions = engine.generateValidLaunchingTransitions();
+				launchableTransitions = engine.getTransLaunchList(modeSteps);
 				launchSubtractPhase(launchableTransitions);
 				removeDPNtransition(launchableTransitions);
 				
@@ -313,7 +314,7 @@ public class StateSimulator {
 		for(int i=0; i<steps; i++) {
 			//internalSteps++;
 			if (isPossibleStep()){ 
-				launchableTransitions = engine.generateValidLaunchingTransitions(); //wypełnia launchableTransitions
+				launchableTransitions = engine.getTransLaunchList(modeSteps); //wypełnia launchableTransitions
 				launchSubtractPhase(launchableTransitions);
 				removeDPNtransition(launchableTransitions);
 			} else {
@@ -347,7 +348,7 @@ public class StateSimulator {
 		for(int i=0; i<steps; i++) {
 			internalSteps++;
 			if (isPossibleStep()){ 
-				launchableTransitions = engine.generateValidLaunchingTransitions();
+				launchableTransitions = engine.getTransLaunchList(modeSteps);
 				launchSubtractPhase(launchableTransitions); //zabierz tokeny poprzez aktywne tranzycje
 				removeDPNtransition(launchableTransitions);
 			} else {
@@ -376,7 +377,7 @@ public class StateSimulator {
 	private void launchSubtractPhase(ArrayList<Transition> transitions) {
 		ArrayList<Arc> arcs;
 		for (Transition transition : transitions) {
-			if(transition.getInternalDPN_Timer() > 0) //yeah, trust me, I'm an engineer
+			if(transition.getDPNtimer() > 0) //yeah, trust me, I'm an engineer
 				continue;
 			//innymi słowy: nie odejmuj tokenów, jeśli timer DPN to 1, 2 lub więcej. Odejmuj gdy = 0, a gdy jest
 			//równy -1, to w ogóle nie będzie takiej tranzycji na liście transitions tutaj.
@@ -515,9 +516,9 @@ public class StateSimulator {
 		for(int i=0; i<transitions.size(); i++) {
 			transitions.get(i).setLaunching(false);
 			if(transitions.get(i).getTransType() == TransitionType.TPN) {
-				transitions.get(i).setInternalFireTime(-1);
-				transitions.get(i).setInternalTPN_Timer(-1);
-				transitions.get(i).setInternalDPN_Timer(-1);
+				transitions.get(i).setTPNtimerLimit(-1);
+				transitions.get(i).setTPNtimer(-1);
+				transitions.get(i).setDPNtimer(-1);
 			}
 		}
 	}

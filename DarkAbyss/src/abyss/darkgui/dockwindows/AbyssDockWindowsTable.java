@@ -1228,7 +1228,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		minMaxLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(minMaxLabel);
 		JFormattedTextField minTimeField = new JFormattedTextField();
-		minTimeField.setValue(transition.getMinFireTime());
+		minTimeField.setValue(transition.getEFT());
 		minTimeField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
 				JFormattedTextField field = (JFormattedTextField) e.getSource();
@@ -1242,7 +1242,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 
 		JFormattedTextField maxTimeField = new JFormattedTextField();
-		maxTimeField.setValue(transition.getMaxFireTime());
+		maxTimeField.setValue(transition.getLFT());
 		maxTimeField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
 				JFormattedTextField field = (JFormattedTextField) e.getSource();
@@ -1268,7 +1268,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		durationLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(durationLabel);
 		JFormattedTextField durationField = new JFormattedTextField();
-		durationField.setValue(transition.getDurationTime());
+		durationField.setValue(transition.getDPNduration());
 		durationField.setBounds(columnA_posX+90, columnB_Y += 20, 90, 20);
 		durationField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
@@ -3274,7 +3274,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	private void setMinFireTime(double x) {
 		if (mode == TIMETRANSITION) {
 			Transition transition = (Transition) element;
-			transition.setMinFireTime(x);
+			transition.setEFT(x);
 			repaintGraphPanel();
 		}
 	}
@@ -3286,7 +3286,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	private void setMaxFireTime(double x) {
 		if (mode == TIMETRANSITION) {
 			Transition transition = (Transition) element;
-			transition.setMaxFireTime(x);
+			transition.setLFT(x);
 			repaintGraphPanel();
 		}
 	}
@@ -3298,7 +3298,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	private void setDurationTime(double x) {
 		if (mode == TIMETRANSITION) {
 			Transition transition = (Transition) element;
-			transition.setDurationTime(x);
+			transition.setDPNduration(x);
 			repaintGraphPanel();
 		}
 	}
