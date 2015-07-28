@@ -36,14 +36,15 @@ public class SimulatorEngine {
 		//generator = new HighQualityRandom(System.currentTimeMillis());
 	}
 	
-	public void setEngine(NetType simulationType, boolean mode) {
+	public void setEngine(NetType simulationType, boolean mode, ArrayList<Transition> transitions,
+			ArrayList<Transition> time_transitions) {
 		this.simulationType = simulationType;
 		this.generator = new Random(System.currentTimeMillis());
 		//this.generator = new HighQualityRandom(System.currentTimeMillis());
 		
 		//INIT:
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		time_transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTimeTransitions();
+		this.transitions = transitions;
+		this.time_transitions = time_transitions;
 		transitionsIndexList = new ArrayList<Integer>();
 		timeTransitionsIndexList = new ArrayList<Integer>();
 		launchableTransitions =  new ArrayList<Transition>();
@@ -63,6 +64,10 @@ public class SimulatorEngine {
 	 */
 	public void setSimulationType(NetType simulationType) {
 		this.simulationType = simulationType;
+	}
+	
+	public void setMaximumMode(boolean value) {
+		this.maximumMode = value;
 	}
 	
 	/**

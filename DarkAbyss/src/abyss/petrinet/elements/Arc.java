@@ -13,7 +13,6 @@ import abyss.graphpanel.EditorResources;
 import abyss.graphpanel.ElementDraw;
 import abyss.petrinet.data.IdGenerator;
 import abyss.petrinet.data.PetriNet;
-import abyss.petrinet.simulators.NetSimulator;
 
 /**
  * Klasa implementująca łuk w sieci Petriego. Przechowuje referencje
@@ -26,8 +25,6 @@ import abyss.petrinet.simulators.NetSimulator;
  */
 public class Arc extends PetriNetElement {
 	private static final long serialVersionUID = 5365625190238686098L;
-	private final int STEP_COUNT = NetSimulator.DEFAULT_COUNTER - 5;
-	
 	private ElementLocation locationStart;
 	private ElementLocation locationEnd = null;
 	private Point tempEndPoint = null;
@@ -221,6 +218,8 @@ public class Arc extends PetriNetElement {
 	 * @param sheetId int - identyfikator arkusza
 	 */
 	public void drawSimulationToken(Graphics2D g, int sheetId) {
+		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
+		
 		if (!this.isTransportingTokens || this.getLocationSheetId() != sheetId
 				|| this.weight == 0 || this.getSimulationStep() > STEP_COUNT)
 			return;
@@ -268,7 +267,10 @@ public class Arc extends PetriNetElement {
 	public void incrementSimulationStep() {
 		if (!this.isTransportingTokens)
 			return;
+		
+		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
 		this.simulationStep++;
+		
 		if (this.getSimulationStep() > STEP_COUNT) {
 			this.setSimulationStep(0);
 			this.setTransportingTokens(false);

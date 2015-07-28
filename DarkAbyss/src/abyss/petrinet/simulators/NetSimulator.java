@@ -33,20 +33,14 @@ public class NetSimulator {
 	private ArrayList<Transition> launchingTransitions;
 	private Stack<SimulationStep> actionStack;
 	private boolean maximumMode = false;
-	public static int DEFAULT_COUNTER = 45;			// wartość ta ma wpływ na szybkość poruszania się tokenów
-	//public JFrame timeFrame = new JFrame("Zegar");
-	//public double timeNetStepCounter = 0;
-	//public double timeNetPartStepCounter = 0;
-	
+	//public static int DEFAULT_COUNTER = 25;	 //org: 45		// wartość ta ma wpływ na szybkość poruszania się tokenów
 	private boolean writeHistory = true;
 	private long timeCounter = -1;
 	private NetSimulatorLogger nsl = new NetSimulatorLogger();
-	
 	private boolean detailedLogging = true;
 	//private Random generator;
 	
 	private SimulatorEngine engine = null;
-
 	private int modeSteps = 0; 
 	/**
 	 * Enumeracja przechowująca tryb pracy symulatora. Dostępne wartości:<br><br>
@@ -63,15 +57,10 @@ public class NetSimulator {
 		LOOP, SINGLE_TRANSITION_LOOP, SINGLE_TRANSITION, STEP, STOPPED, PAUSED, ACTION_BACK, LOOP_BACK
 	}
 
-	/**
-	 * BASIC<br>
-	 * TIME<br>
-	 * HYBRID<br>
-	 */
+	/** BASIC, TIME, HYBRID */
 	public enum NetType {
 		BASIC, TIME, HYBRID
 	}
-	
 
 	/**
 	 * Konstruktor obiektu symulatora sieci.
@@ -93,14 +82,10 @@ public class NetSimulator {
 		previousSimStatus = SimulatorMode.STOPPED;
 		simulationActive = false;
 		maximumMode = false;
-		DEFAULT_COUNTER = 50;
-		//timeNetStepCounter = 0;
-		//timeNetPartStepCounter = 0;
+		//DEFAULT_COUNTER = 50;
 		writeHistory = true;
 		timeCounter = -1;
-		//generator = new Random(System.currentTimeMillis());
 		actionStack.removeAllElements();
-		
 		engine = new SimulatorEngine();
 	}
 
@@ -111,9 +96,11 @@ public class NetSimulator {
 	 * po StepPerformer.
 	 * @param simulatorMode SimulatorMode - wybrany tryb symulacji
 	 */
-	public void startSimulation(SimulatorMode simulatorMode) {	
+	public void startSimulation(SimulatorMode simulatorMode) {
+		ArrayList<Transition> transitions = petriNet.getTransitions();
+		ArrayList<Transition> time_transitions = petriNet.getTransitions();
 		nsl.logStart(simulationType, writeHistory, simulatorMode, maximumMode);
-		engine.setEngine(simulationType, maximumMode);
+		engine.setEngine(simulationType, maximumMode, transitions, time_transitions);
 		
 		//zapisz stan tokenów w miejscach przed rozpoczęciem:
 		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == false) {
@@ -281,7 +268,7 @@ public class NetSimulator {
 						int tokens = place.getTokensNumber();
 						place.modifyTokensNumber(-tokens);
 					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
-						place.modifyTokensNumber(-2);
+						place.modifyTokensNumber(-arc.getWeight());
 					} else {
 						place.modifyTokensNumber(-arc.getWeight());
 					}
@@ -297,7 +284,7 @@ public class NetSimulator {
 						place.modifyTokensNumber(-1); 
 						// TODO: PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
 					}  else if(arc.getArcType() == TypesOfArcs.EQUAL) {
-						place.modifyTokensNumber(-2);
+						place.modifyTokensNumber(-arc.getWeight());
 					} else {
 						place.modifyTokensNumber(-arc.getWeight());
 					}
@@ -348,7 +335,7 @@ public class NetSimulator {
 						int tokens = place.getTokensNumber();
 						place.modifyTokensNumber(-tokens);
 					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
-						place.modifyTokensNumber(-2);
+						place.modifyTokensNumber(-arc.getWeight());
 					} else {
 						place.modifyTokensNumber(-arc.getWeight());
 					}
@@ -364,7 +351,7 @@ public class NetSimulator {
 						place.modifyTokensNumber(-1); 
 						// TODO: PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
 					}  else if(arc.getArcType() == TypesOfArcs.EQUAL) {
-						place.modifyTokensNumber(-2);
+						place.modifyTokensNumber(-arc.getWeight());
 					} else {
 						place.modifyTokensNumber(-arc.getWeight());
 					}
@@ -751,8 +738,9 @@ public class NetSimulator {
 	 * @return boolean - true, jeśli włączany jest tryb maksymalnego uruchamiania; 
 	 * 		false w przeciwnym wypadku
 	 */
-	public void setMaximumMode(boolean maximumMode) {
-		this.maximumMode = maximumMode;
+	public void setMaximumMode(boolean value) {
+		this.maximumMode = value;
+		this.engine.setMaximumMode(value);
 	}
 
 	/**
@@ -763,7 +751,7 @@ public class NetSimulator {
 	 *
 	 */
 	private class SimulationPerformer implements ActionListener {
-		protected int counter = DEFAULT_COUNTER;		// licznik kroków graficznych
+		protected int counter = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();		// licznik kroków graficznych
 		protected boolean subtractPhase = true; // true - subtract, false - add
 		protected boolean finishedAddPhase = true;
 		protected boolean scheduledStop = false;
@@ -839,8 +827,9 @@ public class NetSimulator {
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
+			int DEFAULT_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
 			updateStep(); // rusz tokeny
-			if (counter == DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
+			if (counter >= DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
 				//z miejsc wejściowych i oddawania ich tranzycjom
 				if (scheduledStop) { // jeśli symulacja ma się zatrzymać
 					executeScheduledStop();
@@ -883,12 +872,12 @@ public class NetSimulator {
 							"Simulation ended", JOptionPane.INFORMATION_MESSAGE);
 				}
 				counter = 0;
-			} else if (counter == DEFAULT_COUNTER && !subtractPhase) { 
+			} else if (counter >= DEFAULT_COUNTER && !subtractPhase) { 
 				// koniec fazy zabierania tokenów, tutaj realizowany jest graficzny przepływ tokenów
 				launchAddPhaseGraphics(launchingTransitions, false);
 				finishedAddPhase = false;
 				counter = 0;
-			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
+			} else if (counter >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
 				nsl.logSimStepFinished(launchingTransitions, detailedLogging);
 				
 				// koniec fazy przepływu tokenów, tutaj uaktualniane są wartości tokenów dla miejsc wyjściowych
@@ -937,8 +926,9 @@ public class NetSimulator {
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
+			int DEFAULT_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
 			updateStep(); // update graphics
-			if (counter == DEFAULT_COUNTER && subtractPhase) { // subtract phase
+			if (counter >= DEFAULT_COUNTER && subtractPhase) { // subtract phase
 				if (scheduledStop) { // executing scheduled stop
 					executeScheduledStop();
 				} else if (isPossibleStep()) { // if steps remaining
@@ -975,12 +965,12 @@ public class NetSimulator {
 					GUIManager.getDefaultGUIManager().log("Simulation ended - no more available steps.", "text", true);
 				}
 				counter = 0;
-			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
+			} else if (counter >= DEFAULT_COUNTER && !subtractPhase) {
 				// subtract phase ended, commencing add phase
 				launchSingleAddPhaseGraphics(launchingTransitions, false, null);
 				finishedAddPhase = false;
 				counter = 0;
-			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
+			} else if (counter >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
 				//nsl.logSimStepFinished(launchingTransitions, detailedLogging);
 				
 				// ending add phase
@@ -1034,8 +1024,9 @@ public class NetSimulator {
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
+			int DEFAULT_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
 			updateStep(); // update graphics
-			if (counter == DEFAULT_COUNTER && subtractPhase) { // subtract phase
+			if (counter >= DEFAULT_COUNTER && subtractPhase) { // subtract phase
 				if (scheduledStop) { // executing scheduled stop
 					executeScheduledStop();
 				} else if (!actionStack.empty()) { // if steps remaining
@@ -1056,7 +1047,7 @@ public class NetSimulator {
 						"No more available actions to backtrack!", JOptionPane.INFORMATION_MESSAGE);
 				}
 				counter = 0;
-			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
+			} else if (counter >= DEFAULT_COUNTER && !subtractPhase) {
 				// subtract phase ended, commencing add phase
 				if (currentStep.getType() == SimulatorMode.STEP) {
 					launchAddPhaseGraphics(currentStep.getPendingTransitions(), true);
@@ -1065,7 +1056,7 @@ public class NetSimulator {
 				}
 				finishedAddPhase = false;
 				counter = 0;
-			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
+			} else if (counter >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
 				// ending add phase
 				if (currentStep.getType() == SimulatorMode.STEP) {
 					launchAddPhase(currentStep.getPendingTransitions(), true);

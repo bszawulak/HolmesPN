@@ -25,8 +25,6 @@ public class StateSimulator {
 	private ArrayList<Transition> time_transitions;
 	private ArrayList<Place> places;
 	private boolean ready = false;
-	private NetType simulationType;
-	private boolean maximumMode = false;
 	public double timeNetStepCounter = 0;
 	public double timeNetPartStepCounter = 0;
 	
@@ -35,14 +33,11 @@ public class StateSimulator {
 	private ArrayList<ArrayList<Integer>> transitionsData = null;
 	private ArrayList<Integer> transitionsTotalFiring = null; //wektor sumy odpaleń tranzycji
 	private ArrayList<Double> transitionsAvgData = null;
-	//private ArrayList<Integer> allTransitionsIndicesList = null;
-	//private ArrayList<Integer> timeTransIndicesList = null;
-	
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
-	private boolean mainSimMaximumMode = false;
 	
-	//ArrayList<Transition> launchableTransitions = new ArrayList<Transition>();
-	private Random generator; // = new Random(System.currentTimeMillis());
+	private boolean maximumMode = false;
+	private boolean mainSimMaximumMode = false;
+	//private Random generator; // = new Random(System.currentTimeMillis());
 	
 	private SimulatorEngine engine = null;
 	
@@ -52,7 +47,7 @@ public class StateSimulator {
 	 * Główny konstruktor obiektu klasy StateSimulator.
 	 */
 	public StateSimulator() {
-		generator = new Random(System.currentTimeMillis());
+		//generator = new Random(System.currentTimeMillis());
 		engine = new SimulatorEngine();
 	}
 	
@@ -81,26 +76,17 @@ public class StateSimulator {
 		transitionsData = new ArrayList<ArrayList<Integer>>();
 		transitionsTotalFiring = new ArrayList<Integer>();
 		transitionsAvgData = new ArrayList<Double>();
-		//allTransitionsIndicesList = new ArrayList<Integer>();
-		//timeTransIndicesList = new ArrayList<Integer>();
 		
 		for(int t=0; t<transitions.size(); t++) {
 			transitionsTotalFiring.add(0);
-			//allTransitionsIndicesList.add(t);
 		}
 		for(int p=0; p<places.size(); p++) {
 			placesAvgData.add(0.0);
 		}
-		//for(int i=0; i<time_transitions.size(); i++) {
-		//	timeTransIndicesList.add(i);
-		//}
 		
-		simulationType = netT;
 		maximumMode = mode;
-		
-		generator = new Random(System.currentTimeMillis());
-		
-		engine.setEngine(netT, mode);
+		//generator = new Random(System.currentTimeMillis());
+		engine.setEngine(netT, mode, transitions, time_transitions);
 		
 		ready = true;
 		return ready;
@@ -127,7 +113,7 @@ public class StateSimulator {
 		//for(int i=0; i<time_transitions.size(); i++) {
 		//	timeTransIndicesList.add(i);
 		//}
-		generator = new Random(System.currentTimeMillis());
+		//generator = new Random(System.currentTimeMillis());
 		ready = true;
 	}
 	
@@ -395,7 +381,7 @@ public class StateSimulator {
 					int tokens = place.getTokensNumber();
 					place.modifyTokensNumber(-tokens);
 				} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
-					place.modifyTokensNumber(-2);
+					place.modifyTokensNumber(-arc.getWeight());
 				} else {
 					place.modifyTokensNumber(-arc.getWeight());
 				}
@@ -484,11 +470,9 @@ public class StateSimulator {
 		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 		}
+		saveInternalMarkingZero(); //zapis aktualnego stanu jako m0
 		
-		//zapis aktualnego stanu jako m0
-		saveInternalMarkingZero();
-		//jeżeli istnieje backup, przywróć sieć do stanu m0:
-		mainSimMaximumMode = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().isMaximumMode();
+		//mainSimMaximumMode = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().isMaximumMode();
 	}
 	
 	/**
@@ -506,7 +490,7 @@ public class StateSimulator {
 	 * z wektora danych pamiętających ostatni backup, tranzycje są resetowane wewnętrznie. 
 	 */
 	public void restoreInternalMarkingZero() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().setMaximumMode(mainSimMaximumMode);
+		//GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().setMaximumMode(mainSimMaximumMode);
 		
 		for(int i=0; i<places.size(); i++) {
 			places.get(i).setTokensNumber(internalBackupMarkingZero.get(i));
@@ -516,9 +500,7 @@ public class StateSimulator {
 		for(int i=0; i<transitions.size(); i++) {
 			transitions.get(i).setLaunching(false);
 			if(transitions.get(i).getTransType() == TransitionType.TPN) {
-				transitions.get(i).setTPNtimerLimit(-1);
-				transitions.get(i).setTPNtimer(-1);
-				transitions.get(i).setDPNtimer(-1);
+				transitions.get(i).resetTimeVariables();
 			}
 		}
 	}

@@ -231,8 +231,13 @@ public class GraphPanel extends JComponent {
 		Graphics2D g2d = (Graphics2D) g.create();
 		if (isDrawMesh())
 			drawMesh(g2d);
-		drawPetriNet(g2d);
-		
+		try {
+			drawPetriNet(g2d);
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("CRITICAL unknown and urecoverable error while drawing net. "
+					+ "Loaded file probably corrupted. Restarting program.", "error", true);
+			GUIManager.getDefaultGUIManager().reset.emergencyRestart();
+		}
 		//oldState = g2d;
 	}
 

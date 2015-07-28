@@ -317,7 +317,7 @@ public class Transition extends Node {
 					return false; //nieaktywna
 				else
 					continue; //aktywna (nie jest w danej chwili blokowana)
-			} else if(arcType == TypesOfArcs.EQUAL && startPlaceTokens != 2) {
+			} else if(arcType == TypesOfArcs.EQUAL && startPlaceTokens != arc.getWeight()) { //DOKŁADNIE TYLE CO WAGA
 				return false;
 			} else {
 				if (startPlaceTokens < arc.getWeight())
@@ -339,7 +339,7 @@ public class Transition extends Node {
 				//tylko gdy inhibitor jest jedynym łukiem IN dla tranzycji 'wejściowej' (w standardowym sensie)
 				origin.reserveTokens(0); //więcej nie ma, bo inaczej w ogóle by nas tu nie było
 			} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
-				origin.reserveTokens(2); //więcej nie ma, bo inaczej w ogóle by nas tu nie było
+				origin.reserveTokens(arc.getWeight()); //więcej nie ma, bo inaczej w ogóle by nas tu nie było
 			} else if(arc.getArcType() == TypesOfArcs.RESET) {
 				int freeToken = origin.getNonReservedTokensNumber();
 				origin.reserveTokens(freeToken); //all left
@@ -347,6 +347,8 @@ public class Transition extends Node {
 				if(arc.getArcType() == TypesOfArcs.READARC) {
 					if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simTransReadArcTokenReserv").equals("0")) {
 						continue; //nie rezerwuj przez read-arc
+					} else {
+						origin.reserveTokens(arc.getWeight());
 					}
 				} else
 					origin.reserveTokens(arc.getWeight());
@@ -610,7 +612,6 @@ public class Transition extends Node {
 		if(name == null) {
 			return "(T)null";
 		} else {
-			//return "(T)" + getName();
 			return "(T" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(this)+")";
 		}
 	}

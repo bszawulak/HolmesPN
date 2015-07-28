@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -28,6 +29,8 @@ import javax.swing.event.ChangeListener;
 
 import abyss.darkgui.GUIManager;
 import abyss.darkgui.settings.SettingsManager;
+import abyss.petrinet.elements.ElementLocation;
+import abyss.petrinet.elements.Place;
 import abyss.utilities.Tools;
 
 /**
@@ -46,7 +49,7 @@ public class AbyssProgramProperties extends JFrame {
 	
 	/**
 	 * Główny konstruktor klasy AbyssProgramProperties.
-	 * @param parent
+	 * @param parent JFrame - GUIManager
 	 */
 	public AbyssProgramProperties(JFrame parent) {
 		parentFrame = parent;
@@ -616,6 +619,8 @@ public class AbyssProgramProperties extends JFrame {
 		
 		panel.add(createSimPanel1(0, 0, 590, 190));
 		
+		panel.add(createSimGraphic(0, 190, 590, 150));
+		
 		panel.repaint();
 		return panel;
 	}
@@ -630,7 +635,7 @@ public class AbyssProgramProperties extends JFrame {
 	 */
 	private JPanel createSimPanel1(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Petri net general options"));
+		panel.setBorder(BorderFactory.createTitledBorder("Simulator engine options"));
 		panel.setBounds(x, y, w, h);
 		int io_x = 10;
 		int io_y = -5;
@@ -655,10 +660,88 @@ public class AbyssProgramProperties extends JFrame {
 			readArcReservCheckBox.setSelected(false);
 		panel.add(readArcReservCheckBox);
 		
+		
+		
 		noAction = false;
 		return panel;
 	}
 	
+	/**
+	 * Metoda tworząca podpanel opcji inwariantów.
+	 * @param x int - współrzędna X
+	 * @param y int - współrzedna Y
+	 * @param w int - szerokość
+	 * @param h int - wysokość
+	 * @return JPanel - panel
+	 */
+	private JPanel createSimGraphic(int x, int y, int w, int h) {
+		JPanel panel = new JPanel(null);
+		panel.setBorder(BorderFactory.createTitledBorder("Simulator graphical options"));
+		panel.setBounds(x, y, w, h);
+		int io_x = 10;
+		int io_y = 15;
+		noAction = true;
+
+		JLabel transDelayLabel = new JLabel("Transition firing delay:");
+		transDelayLabel.setBounds(io_x, io_y, 200, 20);
+		panel.add(transDelayLabel);
+		
+		JLabel arcDelayLabel = new JLabel("Arc token delay:");
+		arcDelayLabel.setBounds(io_x+230, io_y, 200, 20);
+		panel.add(arcDelayLabel);
+		
+		final JSlider arcDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 55, 25);
+		arcDelaySlider.setBounds(io_x+230, io_y+=20, 200, 50);
+		arcDelaySlider.setMinorTickSpacing(2);
+		arcDelaySlider.setMajorTickSpacing(10);
+		arcDelaySlider.setPaintTicks(true);
+		arcDelaySlider.setPaintLabels(true);
+		arcDelaySlider.setLabelTable(arcDelaySlider.createStandardLabels(10));
+		arcDelaySlider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+            	JSlider s = (JSlider) e.getSource();
+            	int val = (Integer) s.getValue();
+            	int reference = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
+            	if(val <= reference) {
+            		arcDelaySlider.setValue(val);
+            		GUIManager.getDefaultGUIManager().simSettings.setArcDelay(val);
+            	} else {
+            		s.setValue(reference);
+            	}
+            }
+        });
+	    panel.add(arcDelaySlider);
+	    
+		final JSlider transDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 55, 25);
+		transDelaySlider.setBounds(io_x, io_y, 200, 50);
+	    transDelaySlider.setMinorTickSpacing(2);
+	    transDelaySlider.setMajorTickSpacing(10);
+	    transDelaySlider.setPaintTicks(true);
+	    transDelaySlider.setPaintLabels(true);
+	    transDelaySlider.setLabelTable(transDelaySlider.createStandardLabels(10));
+	    transDelaySlider.addChangeListener(new ChangeListener() {
+	    	private JSlider anotherSlider = null;
+            public void stateChanged(ChangeEvent e) {
+            	JSlider s = (JSlider) e.getSource();
+            	int value = (Integer) s.getValue();
+                transDelaySlider.setValue(value);
+                GUIManager.getDefaultGUIManager().simSettings.setTransDelay(value);
+                if(value <  GUIManager.getDefaultGUIManager().simSettings.getArcDelay()) {
+                	anotherSlider.setValue(value);
+                }
+            }
+            private ChangeListener yesWeCan(JSlider slider){
+            	anotherSlider = slider;
+		        return this;
+		    }
+		}.yesWeCan(arcDelaySlider) ); 
+	    panel.add(transDelaySlider);
+
+		
+		
+		noAction = false;
+		return panel;
+	}
 	
 	//**********************************************************************************************************************
 	//*********************************************     ANALYSIS TAB   *****************************************************

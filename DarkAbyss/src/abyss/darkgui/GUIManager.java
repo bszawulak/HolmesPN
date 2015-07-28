@@ -12,6 +12,7 @@ import abyss.files.io.TexExporter;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.Node;
 import abyss.petrinet.elements.Transition;
+import abyss.petrinet.simulators.SimulatorGlobals;
 import abyss.petrinet.subnets.SubnetsControl;
 import abyss.petrinet.subnets.SubnetsGraphics;
 import abyss.utilities.Tools;
@@ -87,6 +88,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public GUIReset reset;
 	public SubnetsGraphics hGraphics;
 	public SubnetsControl netsHQ;
+	public SimulatorGlobals simSettings;
 	
 	private Dimension screenSize; 		// praca w maksymalizacji
 	@SuppressWarnings("unused")
@@ -175,8 +177,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		io = new GUIOperations(this); //obiekt klasy operacji głównych
 		tex = new TexExporter(); //obiekt zarządzający eksportem tabel do formatu latex
 		reset = new GUIReset(); //obiekt odpowiadający za resetowanie danych / kasowanie / czyszczenie
-		hGraphics = new SubnetsGraphics(); //obiekt z metodami dla sieci hierarchicznych
-		netsHQ = new SubnetsControl(this);
+		hGraphics = new SubnetsGraphics(); //obiekt z metodami graficznymi dla sieci hierarchicznych
+		netsHQ = new SubnetsControl(this); //obiekt z metodami zarządzania sieciami hierarchicznymi
+		simSettings = new SimulatorGlobals(); //opcje symulatora
+		
 		setFrame(frejm);
 		try {	
 			frame.setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));

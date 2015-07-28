@@ -300,8 +300,10 @@ public class ProjectReader {
 				;
 			while(!(line = buffer.readLine()).contains("Arcs data block end")) {
 				Arc newArc = parseArcLine(line, places, transitions, metanodes);
-				arcsProcessed++;
-				arcs.add(newArc);
+				if(newArc != null) {
+					arcsProcessed++;
+					arcs.add(newArc);
+				}
 			}
 			
 			

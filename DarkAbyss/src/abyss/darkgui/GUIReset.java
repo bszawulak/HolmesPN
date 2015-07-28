@@ -125,6 +125,59 @@ public class GUIReset {
 		mastah.markNetSaved();
 		return true;
 	}
+	public boolean emergencyRestart() {
+		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
+		
+		//CLEAR PETRI NET DATA:
+		pNet.resetData(); // tylko w ten sposób!!!! 
+		pNet.setInvariantsMatrix(null, false);
+		pNet.setMCTMatrix(null, false);
+		pNet.accessMCTNames().clear();
+		pNet.setMCSdataCore(new MCSDataMatrix());
+		pNet.resetComm();
+		pNet.setAnalyzer(new MCTCalculator(pNet));
+		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
+		pNet.setSimulationActive(false);
+		pNet.setFileName("");
+		
+		mastah.getSimulatorBox().createSimulatorProperties();
+		pNet.repaintAllGraphPanels();
+		
+		//mastah.leftSplitDock.emptyChild(mastah.getWorkspace().getWorkspaceDock());
+		//Workspace nw = new Workspace(mastah);
+		//mastah.setWorkspace(nw); // default workspace dock
+		//mastah.getDockingListener().setWorkspace(nw);
+		//mastah.leftSplitDock.addChildDock(nw.getWorkspaceDock(), new Position(Position.CENTER));
+		
+		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		int dockableSize = workspace.getDockables().size();
+		
+		CompositeDock parentOfFirst = workspace.getDockables().get(0).getDock().getParentDock();
+		
+		for(int d=0; d<dockableSize; d++) {
+			Dockable dockable = workspace.getDockables().get(d);
+			String x = dockable.getID();
+			if(x.equals("Sheet 0")) {
+				continue;
+			}
+			workspace.deleteTab(dockable, true);
+			d--;
+			dockableSize--;
+			
+			if(dockable.getDock().getParentDock().equals(parentOfFirst))
+				mastah.globalSheetsList.remove(dockable);
+		}
+		//			guiManager.globalSheetsList.remove(dockable);
+		
+		reset2ndOrderData();
+		IdGenerator.resetIDgenerator();
+		
+		mastah.cleanDockables();
+		mastah.markNetSaved();
+		return true;
+	}
+	
 	
 	/**
 	 * Kasowanie informacji o: inwariantanch, MCT, klastrach, przede wszystkich w kontekście
