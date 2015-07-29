@@ -2417,9 +2417,9 @@ public class AbyssDockWindowsTable extends JPanel {
 			for(int i=0; i<freqVector.size(); i++) {
 				Transition realT = transitions_tmp.get(i);
 				
-				if(freqVector.get(i)!=0)
-					realT.setGlowedINV(true, freqVector.get(i));
-				else
+				if(freqVector.get(i)!=0) {
+					realT.setGlowedINV(false, freqVector.get(i));
+				} else
 					realT.setColorWithNumber(true, Color.red, true, 0, false, "");
 			}
 		}
@@ -2572,8 +2572,7 @@ public class AbyssDockWindowsTable extends JPanel {
 			}
 			ArrayList<Transition> mct = mctGroups.get(mctIndex);
 			for (Transition transition : mct) {
-				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getTransitions().lastIndexOf(transition);
+				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().lastIndexOf(transition);
 				String t1 = Tools.setToSize("t"+globalIndex, 5, false);
 				mctTextArea.append(t1 + " ; "+transition.getName()+"\n");
 				transition.setGlowed_MTC(true);

@@ -77,16 +77,26 @@ public class NetSimulator {
 		engine = new SimulatorEngine();
 	}
 	
+	/**
+	 * Reset do ustawień domyślnych.
+	 */
 	public void resetSimulator() {
 		simulatorStatus = SimulatorMode.STOPPED;
 		previousSimStatus = SimulatorMode.STOPPED;
 		simulationActive = false;
 		maximumMode = false;
-		//DEFAULT_COUNTER = 50;
 		writeHistory = true;
 		timeCounter = -1;
 		actionStack.removeAllElements();
 		engine = new SimulatorEngine();
+	}
+	
+	/**
+	 * Dostęp do obiektu silnika symulacji.
+	 * @return SimulatorEngine - silnik symulatora
+	 */
+	public SimulatorEngine accessEngine() {
+		return engine;
 	}
 
 	//@SuppressWarnings("incomplete-switch")

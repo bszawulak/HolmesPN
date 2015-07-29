@@ -33,8 +33,9 @@ import abyss.workspace.WorkspaceSheet;
  * Klasa, której zadaniem jest reprezentacja graficzna używanej w programie
  * sieci Petriego oraz oferowanie interfejsu umożliwiającego interakcję ze
  * strony użytkownika.
+ * 
  * @author students
- *
+ * @author MR - zmiany, zmiany, zmiany
  */
 public class GraphPanel extends JComponent {
 	private static final long serialVersionUID = -5746225670483573975L;
@@ -238,7 +239,6 @@ public class GraphPanel extends JComponent {
 					+ "Loaded file probably corrupted. Restarting program.", "error", true);
 			GUIManager.getDefaultGUIManager().reset.emergencyRestart();
 		}
-		//oldState = g2d;
 	}
 
 	/**
@@ -249,6 +249,7 @@ public class GraphPanel extends JComponent {
 		g2d.setColor(EditorResources.graphPanelMeshColor);
 		for (int i = meshSize; i < this.getWidth(); i += meshSize)
 			g2d.drawLine(i, 0, i, this.getHeight());
+		
 		for (int i = meshSize; i < this.getHeight(); i += meshSize)
 			g2d.drawLine(0, i, this.getWidth(), i);
 	}
@@ -280,7 +281,6 @@ public class GraphPanel extends JComponent {
 			}
 		}
 		
-		
 		for (Arc a : getArcs()) {
 			a.draw(g2d, this.sheetId, getZoom());
 		}
@@ -308,8 +308,42 @@ public class GraphPanel extends JComponent {
 			g2d.setColor(EditorResources.selectionRectFill);
 			g2d.fillRoundRect(getSelectingRect().x, getSelectingRect().y, getSelectingRect().width, getSelectingRect().height, 3, 3);
 		}
-		if (drawnArc != null)
+		if (drawnArc != null) {
 			drawnArc.draw(g2d, this.sheetId, getZoom());
+		}
+		
+		debugInfo(g2d);
+	}
+
+	private void debugInfo(Graphics2D g2d) {
+		g2d.setColor(Color.BLACK);
+		g2d.setFont(new Font("TimesRoman", Font.BOLD, 15));
+		
+		String status = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus().toString();
+		if(status.equals("LOOP"))
+			status = "Status: ACTIVE";
+		else
+			status = "Status: "+status;
+		g2d.drawString(status, 20, 20);
+		
+		status = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().accessEngine().getSimulationMode().toString();
+		status = "Status: "+status;
+		g2d.drawString(status, 20, 40);
+		
+		boolean max = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().accessEngine().getMaximumMode();
+		if(max)
+			status = "Maximum mode ON";
+		else
+			status = "Maximum mode OFF";
+		g2d.drawString(status, 20, 60);
+		
+		int arcDelay = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
+		status = "Arc delay: "+arcDelay;
+		g2d.drawString(status, 20, 80);
+		
+		int transDelay = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
+		status = "Trans. firing delay: "+transDelay;
+		g2d.drawString(status, 20, 100);
 	}
 
 	/**

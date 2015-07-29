@@ -201,7 +201,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		settingsManager = new SettingsManager();
 		settingsManager.loadSettings();
-		frame.setTitle("Abyss "+settingsManager.getValue("abyss_version"));
+		frame.setTitle("Holmes "+settingsManager.getValue("abyss_version"));
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnętrzne zmienne programu
 		
 		// Set the frame properties and show it.

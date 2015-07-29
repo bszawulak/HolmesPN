@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractButton;
@@ -29,8 +27,6 @@ import javax.swing.event.ChangeListener;
 
 import abyss.darkgui.GUIManager;
 import abyss.darkgui.settings.SettingsManager;
-import abyss.petrinet.elements.ElementLocation;
-import abyss.petrinet.elements.Place;
 import abyss.utilities.Tools;
 
 /**
@@ -438,7 +434,7 @@ public class AbyssProgramProperties extends JFrame {
 		labelFontSize.setBounds(io_x+150, io_y-20, 200, 20);
 		panel.add(labelFontSize);
 		SpinnerModel fontSizeSpinnerModel = new SpinnerNumberModel(
-				Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontSize")), 8, 15, 1);
+				Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontSize")), 7, 16, 1);
 		JSpinner fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
 		fontSizeSpinner.setBounds(io_x+150, io_y, 80, 20);
 		fontSizeSpinner.addChangeListener(new ChangeListener() {
@@ -452,95 +448,30 @@ public class AbyssProgramProperties extends JFrame {
 			}
 		});
 		panel.add(fontSizeSpinner);
-		//BOLD:
-		boolean bold = true;
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontBold").equals("0"))
-			bold = false;
-			
-		JCheckBox boldCheckBox = new JCheckBox("Bold", bold);
-		boldCheckBox.setBounds(io_x+210, io_y-20, 60, 20);
-		boldCheckBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if(noAction) return;
-				JCheckBox box = (JCheckBox) e.getSource();
-				if (box.isSelected())
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphFontBold", "1", true);
-				else
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphFontBold", "0", true);
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-			}
-		});
+		
+		
+		JCheckBox boldCheckBox = checkboxWizard("Bold", io_x+210, io_y-20, 60, 20, "editorGraphFontBold");
 		panel.add(boldCheckBox);
 		
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontBold").equals("1")) 
-			boldCheckBox.setSelected(true);
-		else
-			boldCheckBox.setSelected(false);
-		
-		
-		JCheckBox mctNameCheckBox = new JCheckBox("MCT names", bold);
-		mctNameCheckBox.setBounds(io_x+270, io_y-20, 110, 20);
-		mctNameCheckBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if(noAction) return;
-				JCheckBox box = (JCheckBox) e.getSource();
-				if (box.isSelected())
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("mctNameShow", "1", true);
-				else
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("mctNameShow", "0", true);
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-			}
-		});
+		JCheckBox mctNameCheckBox = checkboxWizard("MCT names", io_x+270, io_y-20, 110, 20, "mctNameShow");
 		panel.add(mctNameCheckBox);
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("mctNameShow").equals("1")) 
-			mctNameCheckBox.setSelected(true);
-		else
-			mctNameCheckBox.setSelected(false);
 		
-		JCheckBox useShortNamesCheckBox = new JCheckBox("(Abyss) Show short default names only", true);
-		useShortNamesCheckBox.setBounds(io_x, io_y+=20, 260, 20);
-		useShortNamesCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction == true) return;
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorShowShortNames", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorShowShortNames", "0", true);
-				}
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-			}
-		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorShowShortNames").equals("1")) 
-			useShortNamesCheckBox.setSelected(true);
-		else
-			useShortNamesCheckBox.setSelected(false);
+		JCheckBox useShortNamesCheckBox = checkboxWizard("(Editor) Show short default names only", io_x, io_y+=20, 260, 20, "editorShowShortNames");
 		panel.add(useShortNamesCheckBox);
-		
-		JCheckBox view3dCheckBox = new JCheckBox("(Abyss) Petri net elements 3d view", true);
-		view3dCheckBox.setBounds(io_x, io_y+=20, 260, 20);
-		view3dCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction == true) return;
-				
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editor3Dview", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editor3Dview", "0", true);
-				}
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-			}
-		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editor3Dview").equals("1")) 
-			view3dCheckBox.setSelected(true);
-		else
-			view3dCheckBox.setSelected(false);
+	
+		JCheckBox view3dCheckBox = checkboxWizard("(Editor) Petri net elements 3d view", io_x, io_y+=20, 260, 20, "editor3Dview");
 		panel.add(view3dCheckBox);
+		
+		JCheckBox snoopyStyleCheckBox = checkboxWizard("(Editor) Show Snoopy-styled graphics", io_x, io_y+=20, 260, 20, "editorSnoopyStyleGraphic");
+		panel.add(snoopyStyleCheckBox);
+		
+		//checkAndFix(settingsNew, "editorSnoopyStyleGraphic", "0");
 		
 		noAction = false;
 		return panel;
 	}
+
+
 	
 	/**
 	 * Metoda tworząca podpanel opcji graficznych.
@@ -883,4 +814,38 @@ public class AbyssProgramProperties extends JFrame {
         panel.setBounds(0, 0, 640, 480);
         return panel;
     }
+	
+	//**********************************************************************************************************************
+	//**********************************************************************************************************************
+	//**********************************************************************************************************************
+	
+	
+	private JCheckBox checkboxWizard(String checkBName, int xPos, int yPos, int width, int height, String propName) {
+		JCheckBox view3dCheckBox = new JCheckBox(checkBName, true);
+		view3dCheckBox.setBounds(xPos, yPos, width, height);
+		view3dCheckBox.addActionListener(new ActionListener() {
+			private String propName = "";
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(noAction == true) return;
+				
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue(propName, "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue(propName, "0", true);
+				}
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			}
+			private ActionListener yesWeCan(String name) {
+				propName = name;
+		        return this;
+		    }
+		}.yesWeCan(propName)); 
+		
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue(propName).equals("1")) 
+			view3dCheckBox.setSelected(true);
+		else
+			view3dCheckBox.setSelected(false);
+		return view3dCheckBox;
+	}
 }

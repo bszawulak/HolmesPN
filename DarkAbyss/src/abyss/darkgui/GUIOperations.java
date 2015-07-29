@@ -95,10 +95,12 @@ public class GUIOperations {
 			fc = new JFileChooser(lastPath);
 		
 		fc.setFileView(new AbyssFileView());
-		FileFilter projFilter = new ExtensionFileFilter("Project file (.apf)", new String[] { "APF" });
+		FileFilter holmesProjFilter = new ExtensionFileFilter("Holmes Project file (.project)", new String[] { "PROJECT" });
+		FileFilter projFilter = new ExtensionFileFilter("Old project file (.apf)", new String[] { "APF" });
 		FileFilter abyssFilter = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
 
 		fc.setFileFilter(projFilter);
+		fc.addChoosableFileFilter(holmesProjFilter);
 		fc.addChoosableFileFilter(projFilter);
 		fc.addChoosableFileFilter(abyssFilter);
 		fc.setAcceptAllFileFilterUsed(false);
@@ -110,7 +112,7 @@ public class GUIOperations {
 			if(!file.exists()) 
 				return;
 			boolean status = false;
-			if (extension.toLowerCase().contains(".apf")) { //ABYSS project reader
+			if (extension.toLowerCase().contains(".apf") || extension.toLowerCase().contains(".project")) { //ABYSS project reader
 				ProjectReader pRdr = new ProjectReader();
 				status = pRdr.readProject(file.getPath());
 				
@@ -125,25 +127,6 @@ public class GUIOperations {
 				GUIManager.getDefaultGUIManager().log("Reading ABYSS project succcessful.", "text", true);
 			}
 		}
-
-		
-		/*
-		String lastPath = overlord.getLastPath();
-		FileFilter[] filters = new FileFilter[1];
-		filters[0] = new ExtensionFileFilter("Abyss Petri Net file (.abyss)", new String[] { "ABYSS" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load",  "Select petri net file in program native format", "");
-		if(selectedFile.equals(""))
-			return;
-		
-		File file = new File(selectedFile);
-		if(!file.exists()) 
-			return;
-		boolean status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
-		if(status == true) {
-			overlord.setLastPath(file.getParentFile().getPath());
-			overlord.getSimulatorBox().createSimulatorProperties();
-		}
-		*/
 	}
 	
 	/**
@@ -279,7 +262,7 @@ public class GUIOperations {
 	}
 
 	/**
-	 * Metoda odpowiedzialna za zapis projektu sieci do pliku natywnego aplikacji.
+	 * Metoda odpowiedzialna za zapis projektu sieci do pliku natywnego aplikacji..
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean saveAsAbyssFile() {
@@ -292,16 +275,30 @@ public class GUIOperations {
 			fc = new JFileChooser(lastPath);
 		
 		fc.setFileView(new AbyssFileView());
-		FileFilter projFilter = new ExtensionFileFilter("Project file (.apf)", new String[] { "APF" });
+		FileFilter holmesProjFilter = new ExtensionFileFilter("Holmes Project file (.project)", new String[] { "PROJECT" });
+		FileFilter projFilter = new ExtensionFileFilter("Old Project file (.apf)", new String[] { "APF" });
 		FileFilter abyssFilter = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
 
-		fc.setFileFilter(projFilter);
+		fc.setFileFilter(holmesProjFilter);
+		fc.addChoosableFileFilter(holmesProjFilter);
 		fc.addChoosableFileFilter(projFilter);
 		fc.addChoosableFileFilter(abyssFilter);
 		fc.setAcceptAllFileFilterUsed(false);
 		if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			String extension = fc.getFileFilter().getDescription();
+			if (extension.toLowerCase().contains(".project")) {
+				if(Tools.overwriteDecision(file.getPath()) == false)
+					return false;
+				String fileExtension = ".project";
+				if(file.getPath().toLowerCase().contains(".project"))
+					fileExtension = "";
+				
+				ProjectWriter pWrt = new ProjectWriter();
+				status = pWrt.writeProject(file.getPath() + fileExtension);
+				overlord.setLastPath(file.getParentFile().getPath());
+				return status;
+			}
 			if (extension.toLowerCase().contains(".apf")) {
 				if(Tools.overwriteDecision(file.getPath()) == false)
 					return false;
@@ -338,7 +335,7 @@ public class GUIOperations {
 		FileFilter[] filters = new FileFilter[4];
 		filters[0] = new ExtensionFileFilter("Snoopy Petri Net (.spped)", new String[] { "SPPED" });
 		filters[1] = new ExtensionFileFilter("Snoopy Extended Petri Net (.spept)", new String[] { "SPEPT" });
-		filters[2] = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
+		filters[2] = new ExtensionFileFilter("Holmes Project File (.project)", new String[] { "PROJECT" });
 		filters[3] = new ExtensionFileFilter("INA PNT format (.pnt)", new String[] { "PNT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", overlord.getWorkspace().getProject().getFileName());
 		if(selectedFile.equals("")) {
@@ -371,13 +368,16 @@ public class GUIOperations {
 			boolean status = overlord.getWorkspace().getProject().saveAsSPEPT(file.getPath() + fileExtension);
 			overlord.setLastPath(file.getParentFile().getPath());
 			return status;
-		} else if (extension.contains(".abyss")) {
+		} else if (extension.contains(".project")) {
 			File file = new File(selectedFile);
-			String fileExtension = ".abyss";
-			if(selectedFile.toLowerCase().contains(".abyss"))
+			if(Tools.overwriteDecision(file.getPath()) == false)
+				return false;
+			String fileExtension = ".project";
+			if(file.getPath().toLowerCase().contains(".project"))
 				fileExtension = "";
 			
-			boolean status = overlord.getWorkspace().getProject().saveAsAbyss(file.getPath() + fileExtension);
+			ProjectWriter pWrt = new ProjectWriter();
+			boolean status = pWrt.writeProject(file.getPath() + fileExtension);
 			overlord.setLastPath(file.getParentFile().getPath());
 			return status;
 		} else if (extension.contains(".pnt") ) {

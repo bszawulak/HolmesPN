@@ -66,8 +66,28 @@ public class SimulatorEngine {
 		this.simulationType = simulationType;
 	}
 	
+	/**
+	 * Zwraca aktualnie ustawiony tryb symulacji.
+	 * @return NetType
+	 */
+	public NetType getSimulationMode() {
+		return this.simulationType;
+	}
+	
+	/**
+	 * Metoda ustawia status trybu maximum.
+	 * @param value boolean - true, jeśli tryb włączony
+	 */
 	public void setMaximumMode(boolean value) {
 		this.maximumMode = value;
+	}
+	
+	/**
+	 * Metoda zwraca status trybu maximum.
+	 * @return boolean - true, jeśli włączony
+	 */
+	public boolean getMaximumMode() {
+		return this.maximumMode;
 	}
 	
 	/**

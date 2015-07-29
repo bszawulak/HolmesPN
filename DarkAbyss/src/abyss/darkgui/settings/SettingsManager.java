@@ -96,7 +96,7 @@ public class SettingsManager {
 		//checkAndFix(settingsNew, "abyss_version", "1.30 release 30-3-2015");
 		//settingsNew.add(new Setting("abyss_version", "1.31 release 7-4-2015")); 
 		//settingsNew.add(new Setting("abyss_version", "1.37 release 19-4-2015")); //always add new
-		settingsNew.add(new Setting("abyss_version", "1.40 release 7-6-2015"));
+		settingsNew.add(new Setting("abyss_version", "2.0 (internal: 1.50 release)"));
 		
 		checkAndFix(settingsNew, "r_path", "c://Program Files//R//R-3.1.2//bin//Rscript.exe");
 		checkAndFix(settingsNew, "r_path64","c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
@@ -128,10 +128,10 @@ public class SettingsManager {
 		} catch (Exception e) { settingsNew.add(new Setting("editorGraphArcLineSize", "1")); }
 		
 		checkAndFix(settingsNew, "editor3Dview", "0");
+		checkAndFix(settingsNew, "editorSnoopyStyleGraphic", "0");
 		checkAndFix(settingsNew, "editorSnoopyCompatibleMode", "1");
 		checkAndFix(settingsNew, "editorShowShortNames", "0");
-		checkAndFix(settingsNew, "analysisFeasibleSelfPropAccepted", "1");
-		checkAndFix(settingsNew, "analysisMCSReduction", "1");
+		
 		try { 
 			String tmp = getValue("editorGraphFontSize");
 			int test = Integer.parseInt(tmp);
@@ -139,9 +139,11 @@ public class SettingsManager {
 				throw new Exception();
 			checkAndFix(settingsNew, "editorGraphFontSize", "11");
 		} catch (Exception e) { settingsNew.add(new Setting("editorGraphFontSize", "11")); }
-		
 		checkAndFix(settingsNew, "editorGraphFontBold", "0");
 		checkAndFix(settingsNew, "editorSubnetCompressMode", "0");
+		
+		checkAndFix(settingsNew, "analysisFeasibleSelfPropAccepted", "1");
+		checkAndFix(settingsNew, "analysisMCSReduction", "1");
 		
 		//knockout:
 		checkAndFix(settingsNew, "mctNameShow", "1");

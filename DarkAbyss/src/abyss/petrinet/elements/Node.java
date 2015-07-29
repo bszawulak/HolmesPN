@@ -157,17 +157,20 @@ public abstract class Node extends PetriNetElement {
 	 * Metoda odpowiedzialna za rysowanie nazwy wierzchołka na obrazie sieci.
 	 * @param g Graphics2D - obiekt rysujący
 	 * @param sheetId int - identyfikator arkusza
+	 * @param places ArrayList[Place] - wektor miejsc
+	 * @param transitions ArrayList[Transition] - wektor tranzycji
+	 * @param metanodes ArrayList[MetaNode] - wektor metawęzłów
 	 */
-	public void drawName(Graphics2D g, int sheetId, ArrayList<Place> places_tmp, ArrayList<Transition> transitions_tmp,
+	public void drawName(Graphics2D g, int sheetId, ArrayList<Place> places, ArrayList<Transition> transitions,
 			 ArrayList<MetaNode> metanodes) {
 		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
 		String name = getName();
 		if(sm.getValue("editorShowShortNames").equals("1")) {
 			if(this instanceof Place) {
-				int x = places_tmp.indexOf(this);
+				int x = places.indexOf(this);
 				name = "p"+x;
 			} else if (this instanceof Transition) {
-				int x = transitions_tmp.indexOf(this);
+				int x = transitions.indexOf(this);
 				name = "t"+x;
 			} else {
 				int x = metanodes.indexOf(this);
