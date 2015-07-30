@@ -151,7 +151,7 @@ public class SubnetsSnoopyCompatibility {
 							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
 							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
 							
-							gui.netsHQ.addAllMissingInMetaArcsCompression(meta.getFirstELoc(), pattern, -howMany, arcs);
+							gui.subnetsHQ.addAllMissingInMetaArcsCompression(meta.getFirstELoc(), pattern, -howMany, arcs);
 							inFix = true;
 							totalINadded += (-howMany);
 						}
@@ -162,7 +162,7 @@ public class SubnetsSnoopyCompatibility {
 							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
 							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
 							
-							gui.netsHQ.addAllMissingOutMetaArcs(meta.getFirstELoc(), pattern, -howMany, arcs);
+							gui.subnetsHQ.addAllMissingOutMetaArcs(meta.getFirstELoc(), pattern, -howMany, arcs);
 							outFix = true;
 							totalOUTadded += (-howMany);
 						}
@@ -174,7 +174,7 @@ public class SubnetsSnoopyCompatibility {
 							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
 							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
 							
-							gui.netsHQ.addAllMissingInMetaArcs(meta.getFirstELoc(), pattern, -howMany, arcs);
+							gui.subnetsHQ.addAllMissingInMetaArcs(meta.getFirstELoc(), pattern, -howMany, arcs);
 							inFix = true;
 							totalINadded += (-howMany);
 						}
@@ -185,7 +185,7 @@ public class SubnetsSnoopyCompatibility {
 							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
 							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
 							
-							gui.netsHQ.addAllMissingOutMetaArcsCompression(meta.getFirstELoc(), pattern, -howMany, arcs);
+							gui.subnetsHQ.addAllMissingOutMetaArcsCompression(meta.getFirstELoc(), pattern, -howMany, arcs);
 							outFix = true;
 							totalOUTadded += (-howMany);
 						}

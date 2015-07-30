@@ -2,7 +2,6 @@ package abyss.darkgui.toolbar;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import javax.swing.JTree;
 import abyss.analyse.MDTSCalculator;
 import abyss.darkgui.GUIManager;
 import abyss.graphpanel.GraphPanel.DrawModes;
-import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
 import abyss.varia.NetworkTransformations;
@@ -306,7 +304,12 @@ public class Toolbar extends BorderDock {
 				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\extClean.spept");
 				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\coarseSimple.spped");
 				
-				GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
+				//GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
+				
+				AbyssNotepad aa = new AbyssNotepad(600, 480);
+				aa.setVisible(true);
+				for(int i=0; i<30; i++)
+					aa.addTextLineNL("Example line number "+i, "text");
 			}
 		};
 		testButton.setEnabled(false);

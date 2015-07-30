@@ -102,7 +102,7 @@ public class MauritiusMap {
 	 * @return ArrayList[String] - wektor nazw tranzycji
 	 */
 	private ArrayList<String> getMCTNamesVector() {
-		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
+		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTanalyzer();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
 		ArrayList<String> resultNames = new ArrayList<String>();
 		

@@ -145,7 +145,12 @@ public final class ElementDraw {
 				}
 				
 				if (trans.isGlowed()) { //inwarianty
+					//g.setColor(Color.WHITE);
+					//g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					g.setColor(EditorResources.glowTransitonColorLevel3);
+					int row = 4;
+					g.fillRect(nodeBounds.x-row, nodeBounds.y-row, nodeBounds.width+(2*row), nodeBounds.height+(2*row));
+					//g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
 				else if(trans.isGlowed_MTC()) { //mct
 					g.setColor(EditorResources.glowMTCTransitonColorLevel3);
@@ -189,7 +194,7 @@ public final class ElementDraw {
 				// -------- do tego miejsca wspólne dla Transition i TimeTransition --------
 				
 				//TIME TRANSITION
-				if( trans.getTransType() == TransitionType.TPN) {
+				if(trans.getTransType() == TransitionType.TPN) {
 					g.setColor(Color.black);
 					g.setFont(f_plain);
 					String eft = String.valueOf( trans.getEFT() );
@@ -258,18 +263,17 @@ public final class ElementDraw {
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 				}
 				
-				g.setColor(EditorResources.glowTransitonTextColor);
+				//g.setColor(EditorResources.glowTransitonTextColor);
 				
 				//WYŚWIETLANIE DANYCH O ODPALENIACH
-				//if (trans.isGlowed() && trans.getFiring_INV() > 0) {
 				if (trans.getFiring_INV() > 0) {
 					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth(Integer.toString(trans.getFiring_INV())) / 2;
 					int posY = nodeBounds.y + nodeBounds.height / 2 + 5;
+					g.setColor(Color.BLACK);
 					g.drawString(Integer.toString(trans.getFiring_INV()), posX, posY);
 				}
 				
 				//WYŚWIETLANIE DANYCH ODNOŚNIE WYSTĘPOWANIA TRANZYCJI W KLASTRZE:
-				//if(trans.isColorChanged() && trans.getNumericalValueDOUBLE() > 0) {
 				if(trans.isColorChanged() && trans.getNumericalValueVisibility()) {
 					String clNumber = formatD(trans.getNumericalValueDOUBLE());
 
@@ -280,7 +284,7 @@ public final class ElementDraw {
 					
 					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
 					g.setColor(Color.black);
-					g.drawString(clNumber, posX, posY);
+					g.drawString(clNumber, posX-5+trans.valueXoff, posY+trans.valueYoff);
 					
 					g.setFont(old);
 					g.setColor(oldC);
@@ -289,12 +293,12 @@ public final class ElementDraw {
 				if(trans.isOffline() == true) {
 					try {
 						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/offlineTransition2.png"));
-						g.drawImage(img, null, 
-								nodeBounds.x-(trans.getRadius()+2), 
+						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
 								nodeBounds.y-(trans.getRadius()+2));
 					} catch (Exception e) { }
 				}
 				
+				//dodatkowy tekst nad tranzycją
 				if(trans.showAddText() == true) {
 					String txt = trans.returnAddText();
 					
@@ -304,8 +308,8 @@ public final class ElementDraw {
 					Color oldC = g.getColor();
 					
 					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
-					g.setColor(Color.black);
-					g.drawString(txt, posX, posY);
+					g.setColor(Color.BLACK);
+					g.drawString(txt, posX+trans.txtXoff, posY+trans.txtYoff);
 					
 					g.setFont(old);
 					g.setColor(oldC);

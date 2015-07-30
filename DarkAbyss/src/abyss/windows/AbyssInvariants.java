@@ -221,7 +221,7 @@ public class AbyssInvariants extends JFrame {
 				GUIManager.getDefaultGUIManager().io.loadExternalAnalysis();
 				logField.append("\n");
 				logField.append("=====================================================================\n");
-				logField.append("Loaded invariants: "+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix().size()+"\n");
+				logField.append("Loaded invariants: "+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix().size()+"\n");
 				logField.append("=====================================================================\n");
 			}
 		});
@@ -238,7 +238,7 @@ public class AbyssInvariants extends JFrame {
 				GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
 				logField.append("\n");
 				logField.append("=====================================================================\n");
-				logField.append("Saved invariants: "+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix().size()+"\n");
+				logField.append("Saved invariants: "+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix().size()+"\n");
 				logField.append("=====================================================================\n");
 			}
 		});
@@ -345,7 +345,7 @@ public class AbyssInvariants extends JFrame {
 		cardinalityButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_canon.png"));
 		cardinalityButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
 				if(invariants == null || invariants.size() == 0) {
 					JOptionPane.showMessageDialog(null, "No invarians to analyze.", 
 							"No invariants",JOptionPane.INFORMATION_MESSAGE);
@@ -371,7 +371,7 @@ public class AbyssInvariants extends JFrame {
 		minSuppButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_minsup.png"));
 		minSuppButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
 				if(invariants == null || invariants.size() == 0) {
 					JOptionPane.showMessageDialog(null, "No invarians to analyze.", 
 							"No invariants",JOptionPane.INFORMATION_MESSAGE);
@@ -395,7 +395,7 @@ public class AbyssInvariants extends JFrame {
 		checkMatrixZeroButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_invC.png"));
 		checkMatrixZeroButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
 				if(invariants == null || invariants.size() == 0) {
 					JOptionPane.showMessageDialog(null, "No invarians to analyze.", 
 							"No invariants",JOptionPane.INFORMATION_MESSAGE);
@@ -713,22 +713,22 @@ public class AbyssInvariants extends JFrame {
 						JOptionPane.QUESTION_MESSAGE, null, options, options[3]);
 		if (n == 0) {
 			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-			project.setInvariantsMatrix(invariants, false);
+			project.setINVmatrix(invariants, false);
 			GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
-			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getInvariantsMatrix());
+			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getINVmatrix());
 		} else if(n == 1) {
-			ArrayList<ArrayList<Integer>> invBackup = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+			ArrayList<ArrayList<Integer>> invBackup = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
 			try {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setInvariantsMatrix(invariants, false);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setINVmatrix(invariants, false);
 				GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
 			} catch (Exception e) {}
 			finally {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setInvariantsMatrix(invBackup, false);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setINVmatrix(invBackup, false);
 			}
 		} else if(n == 2) {
 			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-			project.setInvariantsMatrix(invariants, false);
-			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getInvariantsMatrix());
+			project.setINVmatrix(invariants, false);
+			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getINVmatrix());
 		} //else: nic
 	}
 	

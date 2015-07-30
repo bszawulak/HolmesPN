@@ -280,7 +280,7 @@ public class SelectionManager {
 	 */
 	public void deleteElementLocation(ElementLocation el) {
 		
-		boolean canDo = GUIManager.getDefaultGUIManager().netsHQ.checkIfExpendable(el);
+		boolean canDo = GUIManager.getDefaultGUIManager().subnetsHQ.checkIfExpendable(el);
 		if(canDo == false) {
 			JOptionPane.showMessageDialog(null, 
 					"This element is the only one that leads to subnet\n"
@@ -327,7 +327,7 @@ public class SelectionManager {
 				i.remove();
 			}
 			
-			GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(sheetModified, false, false);
+			GUIManager.getDefaultGUIManager().subnetsHQ.validateMetaArcs(sheetModified, false, false);
 			this.getGraphPanel().repaint();
 			this.invokeActionListener();
 		}
@@ -346,7 +346,7 @@ public class SelectionManager {
 		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
 			ElementLocation el = i.next();
 			
-			boolean canDo = GUIManager.getDefaultGUIManager().netsHQ.checkIfExpendable(el);
+			boolean canDo = GUIManager.getDefaultGUIManager().subnetsHQ.checkIfExpendable(el);
 			if(canDo == false) {
 				protectedList.add(el);
 				continue;
@@ -416,7 +416,7 @@ public class SelectionManager {
 			i.remove();
 		}
 		
-		GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(sheetsModified, false, false);
+		GUIManager.getDefaultGUIManager().subnetsHQ.validateMetaArcs(sheetsModified, false, false);
 		
 		// Kasuj wszystko. I wszystkich. Wszędzie. Kill'em all:
 		this.getSelectedArcs().clear();

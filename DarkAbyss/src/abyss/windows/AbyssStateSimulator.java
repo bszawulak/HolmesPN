@@ -1275,7 +1275,6 @@ public class AbyssStateSimulator extends JFrame {
      */
 	private void acquireDataFromSimulation() {
 		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
-			//TODO:
 			JOptionPane.showMessageDialog(null,
 					"Main simulator active. Please turn if off before starting state simulator process", 
 					"Main simulator active", JOptionPane.ERROR_MESSAGE);

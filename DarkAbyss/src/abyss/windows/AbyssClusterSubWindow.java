@@ -650,7 +650,7 @@ public class AbyssClusterSubWindow extends JFrame {
 	
 	private String selectionOfSource() {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix() == null) { //brak inwariantów
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix() == null) { //brak inwariantów
 			JOptionPane.showMessageDialog(null, "No invariants computed! Please select CSV invariants file!", 
 					"Warning",JOptionPane.WARNING_MESSAGE);
 			

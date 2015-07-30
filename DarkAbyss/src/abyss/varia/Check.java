@@ -17,7 +17,7 @@ public final class Check {
      * @return ArrayList[ArrayList[Integer]] - macierz inwariantów; null - jeśli pusta lub jej nie ma
      */
     public static ArrayList<ArrayList<Integer>> invExists() {
-    	ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+    	ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
 		if(invariants == null || invariants.size() < 1)
     		return null;
     	else

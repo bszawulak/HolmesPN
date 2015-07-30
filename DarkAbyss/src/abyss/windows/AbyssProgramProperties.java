@@ -72,7 +72,6 @@ public class AbyssProgramProperties extends JFrame {
 	 * użyciu odpowiednich metod pomocniczych.
 	 */
 	private void initialize_components() {
-		//setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setLocation(20, 20);
 		setTitle("Settings");
 		setLayout(new BorderLayout());
@@ -288,6 +287,10 @@ public class AbyssProgramProperties extends JFrame {
 		else
 			useOldLoaderCheckBox.setSelected(false);
 		ioPanel.add(useOldLoaderCheckBox);
+		
+		//TODO:
+		JCheckBox simpleEditorCheckBox = checkboxWizard("Simple editor", io_x, io_y+=20, 300, 20, "programUseSimpleEditor");
+		ioPanel.add(simpleEditorCheckBox);
 		
 		noAction = false;
 		return ioPanel;

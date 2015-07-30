@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
@@ -62,6 +63,7 @@ import abyss.petrinet.simulators.NetSimulator;
 import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
 import abyss.utilities.ColorPalette;
 import abyss.utilities.Tools;
+import abyss.windows.AbyssNotepad;
 import abyss.workspace.WorkspaceSheet;
 
 /**
@@ -102,35 +104,51 @@ public class AbyssDockWindowsTable extends JPanel {
 	private static final long serialVersionUID = 4510802239873443705L;
 	private ArrayList<JComponent> components;
 	private int mode;
-	// Containers
-	private JPanel panel; // główny panel okna
-	public ButtonGroup group = new ButtonGroup();
-	public ButtonGroup groupRadioMetaType = new ButtonGroup();
-	public JSpinner spiner = new JSpinner();
-	private JTextArea mctTextArea; // tutaj są wyświetlane szczegóły podświetlonego MCT
-	private JTextArea knockoutTextArea;
-	private JTextArea invTextArea;
-	private JTextArea clTextArea;
-	private JComboBox<String> chooseCluster;
-	public JComboBox<String> simMode;
-	public JComboBox<String> mcsObjRCombo;
-	public JComboBox<String> mcsMCSforObjRCombo;
-	public boolean stopAction = false;
-	public JLabel timeStepLabelValue;
-	
-	private boolean nameLocChangeMode = false;
-	
-	private WorkspaceSheet currentSheet;
-	private PetriNetElement element;
-	private ElementLocation elementLocation;
-	private NetSimulator simulator;  // obiekt symulatora
-	private InvariantsSimulator invSimulator;
-
-	private ArrayList<ArrayList<Integer>> invariantsMatrix; //używane w podoknie inwariantów
 	private ArrayList<Transition> transitions; // j.w.
 	private ArrayList<ArrayList<Transition>> mctGroups; //używane tylko w przypadku, gdy obiekt jest typu DockWindowType.MctANALYZER
 	private ArrayList<ArrayList<Integer>> knockoutData;
+	// Containers & general use
+	private JPanel panel; // główny panel okna
+	public boolean stopAction = false;
+	public boolean doNotUpdate = false;
+	//simulator:
+	public ButtonGroup group = new ButtonGroup();
+	public JSpinner spiner = new JSpinner();
+	public JComboBox<String> simMode;
+	public JLabel timeStepLabelValue;
+	private NetSimulator simulator;  // obiekt symulatora
+	private InvariantsSimulator invSimulator;
+	// P/T/M/A
+	public ButtonGroup groupRadioMetaType = new ButtonGroup();  //metanode
+	private boolean nameLocChangeMode = false;
+	private PetriNetElement element;
+	private ElementLocation elementLocation;
+	public SpinnerModel nameLocationXSpinnerModel = null;
+	public SpinnerModel nameLocationYSpinnerModel = null;
+	//MCT:
+	private int selectedMCTindex = -1;
+	private boolean colorMCT = false;
+	private boolean allMCTselected = false;
+	//knockout:
+	private JTextArea knockoutTextArea;
+	//invariants:
+	private ArrayList<ArrayList<Integer>> invariantsMatrix; //używane w podoknie inwariantów
+	private int selectedInvIndex = -1;
+	private boolean markMCT = false;
+	private boolean glowInv = true;
+	private JFormattedTextField invNameField;
+	//clusters:
+	private JComboBox<String> chooseCluster;
 	private ClusterDataPackage clusterColorsData;
+	private JFormattedTextField MCTnameField;
+	private int selectedClusterIndex = -1;
+	private boolean clustersMCT = false;
+	//MCS
+	public JComboBox<String> mcsObjRCombo;
+	public JComboBox<String> mcsMCSforObjRCombo;
+	//sheets:
+	private WorkspaceSheet currentSheet;
+
 	// modes
 	private static final int PLACE = 0;
 	private static final int TRANSITION = 1;
@@ -145,11 +163,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	private static final int CLUSTERS = 9;
 	private static final int KNOCKOUT = 10;
 	private static final int META = 11;
-	
-	public SpinnerModel nameLocationXSpinnerModel = null;
-	public SpinnerModel nameLocationYSpinnerModel = null;
-	public boolean doNotUpdate = false;
-	
+
 	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, META, ARC, SHEET, INVARIANTS, MCT, CLUSTERS, KNOCKOUT, MCS }
 	
 	/**
@@ -580,10 +594,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(nameLabel);
 
 		JFormattedTextField nameField = new JFormattedTextField();
-		nameField.setLocation(columnB_posX, columnB_Y += 20);
-		nameField.setSize(colBCompLength, 20);
-		nameField.setMaximumSize(new Dimension(colBCompLength,20));
-		nameField.setMinimumSize(new Dimension(colBCompLength,20));
+		nameField.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
 		nameField.setText(place.getName());
 		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
@@ -1512,9 +1523,9 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 	
 	//**************************************************************************************
-	//*********************************       META       ***********************************
-	//*********************************      WĘZEŁ       ***********************************
+	//*********************************        META      ***********************************
 	//*********************************                  ***********************************
+	//*********************************       WĘZEŁ      ***********************************
 	//**************************************************************************************
 
 	/**
@@ -1614,9 +1625,6 @@ public class AbyssDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
         
-        //TODO:
-        
-        
         // ZMIANA TYPU META-WĘZŁA
         // ВНИМАНИЕ!!! Hic sunt leones...
 		JRadioButton subnetTButton = new JRadioButton("Subnet T-type");
@@ -1628,7 +1636,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				if(doNotUpdate) return;
 				boolean status = false;
 				if(myMeta.getMetaType() != MetaType.SUBNETTRANS) {
-					status = GUIManager.getDefaultGUIManager().netsHQ.changeSubnetType(myMeta, MetaType.SUBNETTRANS);
+					status = GUIManager.getDefaultGUIManager().subnetsHQ.changeSubnetType(myMeta, MetaType.SUBNETTRANS);
 				}
 				if(status == false) {
 					doNotUpdate = true;
@@ -1663,7 +1671,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				if(doNotUpdate) return;
 				boolean status = false;
 				if(myMeta.getMetaType() != MetaType.SUBNETPLACE) {
-					status = GUIManager.getDefaultGUIManager().netsHQ.changeSubnetType(myMeta, MetaType.SUBNETPLACE);
+					status = GUIManager.getDefaultGUIManager().subnetsHQ.changeSubnetType(myMeta, MetaType.SUBNETPLACE);
 				}
 				if(status == false) {
 					doNotUpdate = true;
@@ -1696,7 +1704,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				if(doNotUpdate) return;
 				boolean status = false;
 				if(myMeta.getMetaType() != MetaType.SUBNET) {
-					GUIManager.getDefaultGUIManager().netsHQ.changeSubnetType(myMeta, MetaType.SUBNET);
+					GUIManager.getDefaultGUIManager().subnetsHQ.changeSubnetType(myMeta, MetaType.SUBNET);
 				}
 				if(status == false) {
 					doNotUpdate = true;
@@ -2269,6 +2277,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 */
 	public void createInvariantsSubWindow(ArrayList<ArrayList<Integer>> invariantsData) {
+		doNotUpdate = true;
 		if(invariantsData == null || invariantsData.size() == 0) {
 			return;
 		} else {
@@ -2304,33 +2313,86 @@ public class AbyssDockWindowsTable extends JPanel {
 				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
 				int items = comboBox.getItemCount();
 				if (comboBox.getSelectedIndex() == 0) {
-					showInvariant(0, false); //clean
+					selectedInvIndex = -1;
+					showInvariant(); //clean
 				} else if(comboBox.getSelectedIndex() == items-2) { 
+					selectedInvIndex = -1;
 					showDeadInv(); //show transition without invariants
 				} else if(comboBox.getSelectedIndex() == items-1) { 
+					selectedInvIndex = -1;
 					showInvTransFrequency(); //show transition frequency (in invariants)
 				} else {
-					showInvariant(comboBox.getSelectedIndex() - 1, true);
+					selectedInvIndex = comboBox.getSelectedIndex() - 1;
+					showInvariant();
 				}
 			}
 		});
 		components.add(chooseInvBox);
-		positionY += 30;
 		
-		invTextArea = new JTextArea();
-		invTextArea.setEditable(false);
-		invTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		JPanel textAreaPanel = new JPanel();
-		textAreaPanel.setLayout(new BorderLayout());
-		textAreaPanel.add(new JScrollPane(
-				invTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-        		BorderLayout.CENTER);
+		JButton showDetailsButton = new JButton();
+		showDetailsButton.setText("Show details");
+		showDetailsButton.setBounds(colA_posX, positionY+=30, 120, 30);
+		showDetailsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				showInvariantNotepad();
+			}
+		});
+		components.add(showDetailsButton);
+
+		JCheckBox markMCTcheckBox = new JCheckBox("Color MCT");
+		markMCTcheckBox.setBounds(colA_posX+130, positionY-5, 120, 20);
+		markMCTcheckBox.setSelected(false);;
+		markMCTcheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					markMCT = true;
+				} else {
+					markMCT = false;
+				}
+				showInvariant();
+			}
+		});
+		components.add(markMCTcheckBox);
 		
-		int w = GUIManager.getDefaultGUIManager().getMctBox().getWidth();
-		int h = GUIManager.getDefaultGUIManager().getMctBox().getHeight();
-		textAreaPanel.setBounds(colA_posX, positionY, w-30, h-60);
-		components.add(textAreaPanel);
+		JCheckBox glowINVcheckBox = new JCheckBox("Transitions glow");
+		glowINVcheckBox.setBounds(colA_posX+130, positionY+15, 120, 20);
+		glowINVcheckBox.setSelected(true);;
+		glowINVcheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					glowInv = true;
+				} else {
+					glowInv = false;
+				}
+				showInvariant();
+			}
+		});
+		components.add(glowINVcheckBox);
 		
+		DefaultFormatter format = new DefaultFormatter();
+	    format.setOverwriteMode(false);
+		invNameField = new JFormattedTextField(format);
+		invNameField.setBounds(colA_posX, positionY += 40, 250, 20);
+		invNameField.setValue("");
+		invNameField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				if(doNotUpdate)
+					return;
+				
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newName = (String) field.getText();
+				changeInvName(newName);
+			}
+		});
+		components.add(invNameField);
+		
+		doNotUpdate = false;
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
 			 panel.add(components.get(i));
@@ -2341,20 +2403,104 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za podświetlanie inwariantów na rysunku sieci.
-	 * @param invariantIndex Integer - numer wybranego inwariantu
-	 * @param inv isThereInv - false, jeśli wybrano opcję '---'
+	 * Zmiana nazwy inwariantu.
+	 * @param newName String - nowa nazwa
 	 */
-	private void showInvariant(Integer invariantIndex, boolean isThereInv) {
+	protected void changeInvName(String newName) {
+		if(selectedInvIndex == -1)
+			return;
+
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessINVnames().set(selectedInvIndex, newName);
+	}
+
+	/**
+	 * Metoda wywołuje okno notatnika z danymi o inwariancie.
+	 * @param selectedInvIndex2 int - indeks wybranego z listy
+	 */
+	protected void showInvariantNotepad() {
+		if(selectedInvIndex == -1)
+			return;
+		
+		AbyssNotepad note = new AbyssNotepad(640, 480);
+		ArrayList<Integer> invariant = invariantsMatrix.get(selectedInvIndex);
+		
+		//MCT:
+		ArrayList<Integer> mcts = new ArrayList<Integer>();
+		ArrayList<String> singleT = new ArrayList<String>();
+		ArrayList<Integer> transMCTvector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTtransIndicesVector();
+		int transNumber = 0;
+		for(int t=0; t<invariant.size(); t++) {
+			int fireValue = invariant.get(t);
+			if(fireValue == 0)
+				continue;
+			
+			transNumber++;
+			int mctNo = transMCTvector.get(t);
+			if(mctNo == -1) { 
+				singleT.add("T"+t+"_"+transitions.get(t).getName());
+			} else {
+				if(!mcts.contains(mctNo)) {
+					mcts.add(mctNo);
+				}
+			}
+		}
+		Collections.sort(mcts);
+		String name = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessINVnames().get(selectedInvIndex);
+		note.addTextLineNL("Invariant "+selectedInvIndex+": "+name, "text");
+		note.addTextLineNL("Total number of transitions: "+transNumber, "text");
+		note.addTextLineNL("Support structure:", "text");
+		for(int mct : mcts) {
+			String MCTname = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTname(mct);
+			note.addTextLineNL("  [MCT: "+(mct+1)+"]: "+MCTname, "text");
+		}
+		for(String transName : singleT)
+			note.addTextLineNL(transName, "text");
+		//END OF STRUCTURE BLOCK
+		
+		note.addTextLineNL("", "text");
+		note.addTextLineNL("All transitions of INV #" + selectedInvIndex+":", "text");
+		
+		if(transitions.size() != invariant.size()) {
+			transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			if(transitions == null || transitions.size() != invariant.size()) {
+				GUIManager.getDefaultGUIManager().log("Critical error in invariants subwindow. "
+						+ "Invariants support size refers to non-existing transitions.", "error", true);
+				return;
+			}
+		}
+		
+		String vector = "";
+		for(int t=0; t<invariant.size(); t++) {
+			int fireValue = invariant.get(t);
+			vector += fireValue+";";
+			if(fireValue == 0)
+				continue;
+			
+			Transition realT = transitions.get(t);
+			String t1 = Tools.setToSize("t"+t, 5, false);
+			String t2 = Tools.setToSize("Fired: "+fireValue, 12, false);
+			note.addTextLineNL(t1 + t2 + " ; "+realT.getName(), "text");
+		}
+		vector = vector.substring(0, vector.length()-1);
+		note.addTextLineNL("", "text");
+		note.addTextLineNL("Invariant vector:", "text");
+		note.addTextLineNL(vector, "text");
+
+		note.setCaretFirstLine();
+		note.setVisible(true);
+	}
+
+	/**
+	 * Metoda odpowiedzialna za podświetlanie inwariantów na rysunku sieci.
+	 */
+	private void showInvariant() {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 		
-		if(isThereInv)
+		if(selectedInvIndex != -1)
 		{
-			invTextArea.setText("");
-			invTextArea.append("Transitions of INV #" + invariantIndex + ":\n");
-			ArrayList<Integer> invariant = invariantsMatrix.get(invariantIndex);
+			ArrayList<Integer> invariant = invariantsMatrix.get(selectedInvIndex);
 			if(transitions.size() != invariant.size()) {
 				transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 				if(transitions == null || transitions.size() != invariant.size()) {
@@ -2364,50 +2510,41 @@ public class AbyssDockWindowsTable extends JPanel {
 				}
 			}
 			
-			//long mintime = 0;
-			//long maxtime = 0;
-			//for (InvariantTransition transition : invariant) {
-				//mintime+=transition.getTransition().getMinFireTime();
-				//maxtime+=transition.getTransition().getMaxFireTime();
-			//}
-			
+			ArrayList<Integer> transMCTvector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTtransIndicesVector();
+			ColorPalette cp = new ColorPalette();
 			for(int t=0; t<invariant.size(); t++) {
 				int fireValue = invariant.get(t);
 				if(fireValue == 0)
 					continue;
-				
-				Transition realT = transitions.get(t);
-				String t1 = Tools.setToSize("t"+t, 5, false);
-				String t2 = Tools.setToSize("Fired: "+fireValue, 12, false);
-				invTextArea.append(t1 + t2 + " ; "+realT.getName()+"\n");
-				
-				realT.setGlowedINV(true, fireValue);
+
+				if(markMCT) {
+					int mctNo = transMCTvector.get(t);
+					if(mctNo == -1) {
+						transitions.get(t).setGlowedINV(glowInv, fireValue);
+					} else {
+						transitions.get(t).setColorWithNumber(true, cp.getColor(mctNo), false, fireValue, true, "[MCT"+(mctNo+1)+"]");
+						transitions.get(t).setGlowedINV(false, fireValue);
+					}	
+				} else {
+					transitions.get(t).setGlowedINV(glowInv, fireValue);
+				}
 			}
-			/*
-			for (InvariantTransition invTrans : invariant) {
-				Transition realT = invTrans.getTransition(); //prawdziwy obiekt tranzycji
-				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getTransitions().lastIndexOf(realT);
-				String t1 = Tools.setToSize("t"+globalIndex, 5, false);
-				String t2 = Tools.setToSize("Fired: "+invTrans.getAmountOfFirings(), 12, false);
-				invTextArea.append(t1 + t2 + " ; "+invTrans.getTransition().getName()+"\n");
-				
-				invTrans.getTransition().setGlowed_INV(true, invTrans.getAmountOfFirings());
-			}
-			*/
+			//name field:
+			String name = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessINVnames().get(selectedInvIndex);
+			invNameField.setValue(name);
 			
-			invTextArea.setCaretPosition(0);
 		}
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
-	
+	/**
+	 * Metoda pokazująca w ilu inwariantach występuje każda tranzycja
+	 */
 	private void showInvTransFrequency() {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 		
-		invTextArea.setText("");
 		ArrayList<Integer> freqVector = InvariantsTools.getFrequency(invariantsMatrix);
 		ArrayList<Transition> transitions_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		
@@ -2418,49 +2555,47 @@ public class AbyssDockWindowsTable extends JPanel {
 				Transition realT = transitions_tmp.get(i);
 				
 				if(freqVector.get(i)!=0) {
-					realT.setGlowedINV(false, freqVector.get(i));
+					realT.setGlowedINV(glowInv, freqVector.get(i));
 				} else
 					realT.setColorWithNumber(true, Color.red, true, 0, false, "");
 			}
 		}
-		invTextArea.setCaretPosition(0);
-		
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
 	/**
-	 * Metoda pomicnicza do zaznaczania tranzycji nie pokrytych inwariantami.
+	 * Metoda pomocnicza do zaznaczania tranzycji nie pokrytych inwariantami.
 	 */
 	private void showDeadInv() {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 		
-		invTextArea.setText("");
-		invTextArea.append("Transitions not covered by invariants:\n");
-		//ArrayList<Integer> deadTrans = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getUncoveredInvariants();
+		AbyssNotepad note = new AbyssNotepad(640, 480);
+		note.addTextLineNL("Transitions not covered by invariants:", "text");
+
 		ArrayList<Integer> deadTrans = InvariantsTools.detectUncovered(invariantsMatrix);
 		ArrayList<Transition> transitions_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		
+		int counter = 0;
 		if(deadTrans == null) {
 			JOptionPane.showMessageDialog(null, "No invariants data available.", "No invariants", JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			for(int i=0; i<deadTrans.size(); i++) {
-				int active = deadTrans.get(i);
-				if(active == 1)
-					continue;
-				
-				Transition realT = transitions_tmp.get(i);
-				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-						.getTransitions().lastIndexOf(realT);
-				
-				String t1 = Tools.setToSize("t"+globalIndex, 5, false);
-				invTextArea.append(t1 + " | "+realT.getName()+"\n");
-				
+				int deadOne = deadTrans.get(i);
+				Transition realT = transitions_tmp.get(deadOne);
+				String t1 = Tools.setToSize("t"+deadOne, 5, false);
+				note.addTextLineNL(t1 + " | "+realT.getName(), "text");
 				realT.setGlowedINV(true, 0);
+				counter++;
 			}
 		}
-		invTextArea.setCaretPosition(0);
+		if(counter > 0) {
+			note.setCaretFirstLine();
+			note.setVisible(true);
+		} else {
+			note.dispose();
+			note = null;
+		}
 		
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
@@ -2485,6 +2620,7 @@ public class AbyssDockWindowsTable extends JPanel {
 			mode = MCT;
 			GUIManager.getDefaultGUIManager().reset.setMCTStatus(true);
 		}
+		doNotUpdate = true;
 		
 		int colA_posX = 10;
 		int colB_posX = 100;
@@ -2506,7 +2642,7 @@ public class AbyssDockWindowsTable extends JPanel {
 				
 		// getting the data
 		JLabel chooseMctLabel = new JLabel("Choose MCT: ");
-		chooseMctLabel.setBounds(colA_posX, positionY, 60, 20);
+		chooseMctLabel.setBounds(colA_posX, positionY, 80, 20);
 		components.add(chooseMctLabel);
 
 		JComboBox<String> chooseMctBox = new JComboBox<String>(mctHeaders);
@@ -2516,32 +2652,71 @@ public class AbyssDockWindowsTable extends JPanel {
 				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
 				int selected = comboBox.getSelectedIndex();
 				if (selected == 0) {
-					showMct(0, false);
+					selectedMCTindex = -1;
+					allMCTselected = false;
+					showMct();
 				} else if(selected == comboBox.getItemCount()-1) {
+					allMCTselected = true;
 					showAllColors();
 				} else {
-					showMct(selected - 1, true);
+					selectedMCTindex = selected - 1;
+					allMCTselected = false;
+					showMct();
 				}
 			}
 		});
 		components.add(chooseMctBox);
-		positionY += 30;
+
+		JButton showDetailsButton = new JButton();
+		showDetailsButton.setText("Show details");
+		showDetailsButton.setBounds(colA_posX, positionY+=30, 120, 30);
+		showDetailsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				showMCTNotepad();
+			}
+		});
+		components.add(showDetailsButton);
+
+		JCheckBox glowCheckBox = new JCheckBox("Different colors");
+		glowCheckBox.setBounds(colA_posX+130, positionY-5, 120, 20);
+		glowCheckBox.setSelected(false);
+		glowCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					colorMCT = true;
+				} else {
+					colorMCT = false;
+				}
+				if(allMCTselected)
+					showAllColors();
+				else
+					showMct();
+			}
+		});
+		components.add(glowCheckBox);
 		
-		mctTextArea = new JTextArea();
-		mctTextArea.setEditable(false);
-		mctTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		//mctTextArea.setLineWrap(true);
-		//mctTextArea.setWrapStyleWord(true);
-		JPanel textAreaPanel = new JPanel();
-		textAreaPanel.setLayout(new BorderLayout());
-		textAreaPanel.add(new JScrollPane(
-				mctTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-        		BorderLayout.CENTER);
-		
-		int w = GUIManager.getDefaultGUIManager().getMctBox().getWidth();
-		int h = GUIManager.getDefaultGUIManager().getMctBox().getHeight();
-		textAreaPanel.setBounds(colA_posX, positionY, w-30, h-60);
-		components.add(textAreaPanel);
+		DefaultFormatter format = new DefaultFormatter();
+	    format.setOverwriteMode(false);
+	    MCTnameField = new JFormattedTextField(format);
+	    MCTnameField.setBounds(colA_posX, positionY += 40, 250, 20);
+	    MCTnameField.setValue("");
+	    MCTnameField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				if(doNotUpdate)
+					return;
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newName = (String) field.getText();
+				changeMCTname(newName);
+			}
+		});
+		components.add(MCTnameField);
+
+		doNotUpdate = false;
 		
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
@@ -2552,34 +2727,69 @@ public class AbyssDockWindowsTable extends JPanel {
 		add(panel);
 	}
 	
+	protected void changeMCTname(String newName) {
+		if(selectedMCTindex == -1)
+			return;
+
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessMCTnames().set(selectedMCTindex, newName);
+	}
+
+	protected void showMCTNotepad() {
+		if(selectedMCTindex == -1)
+			return;
+		
+		AbyssNotepad note = new AbyssNotepad(640, 480);
+
+		ArrayList<Transition> mct = mctGroups.get(selectedMCTindex);
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		int size = mct.size();
+		if(selectedMCTindex == mctGroups.size()-1) {
+			note.addTextLineNL("Trivial MCT-transitions ("+size+"):", "text");
+		} else {
+			note.addTextLineNL("Transitions ("+size+") of MCT #"+(selectedMCTindex+1), "text");
+		}
+		
+		for(Transition transition : mct) {
+			int globalIndex = transitions.lastIndexOf(transition);
+			String t1 = Tools.setToSize("t"+globalIndex, 5, false);
+			note.addTextLineNL("T"+t1 + "_"+transition.getName(), "text");
+		}
+		
+		note.setCaretFirstLine();
+		note.setVisible(true);
+	}
+
 	/**
 	 * Metoda odpowiedzialna za pokazanie szczegółów wybranego zbioru MCT.
 	 * @param mctIndex Integer - numer wybranego zbioru
 	 * @param isThereMCT boolean - true, jeśli wybrano zbiór mct, false jeśli "---"
 	 */
-	private void showMct(Integer mctIndex, boolean isThereMCT) {
+	private void showMct() {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 		
-		if(isThereMCT)
-		{
-			mctTextArea.setText("");
-			if(mctIndex == mctGroups.size()-1) {
-				mctTextArea.append("Trivial MCT-transitions:\n");
-			} else {
-				mctTextArea.append("Transitions of MCT #" + (mctIndex+1) + ":\n");
-			}
-			ArrayList<Transition> mct = mctGroups.get(mctIndex);
-			for (Transition transition : mct) {
-				int globalIndex = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().lastIndexOf(transition);
-				String t1 = Tools.setToSize("t"+globalIndex, 5, false);
-				mctTextArea.append(t1 + " ; "+transition.getName()+"\n");
+		if(selectedMCTindex == -1)
+			return;
+		
+		ArrayList<Transition> mct = mctGroups.get(selectedMCTindex);
+		int size = mctGroups.size();
+		ColorPalette cp = new ColorPalette();
+		for (Transition transition : mct) {
+			if(!colorMCT) {
 				transition.setGlowed_MTC(true);
+			} else {
+				if(selectedMCTindex == size - 1) 
+					transition.setColorWithNumber(true, cp.getColor(selectedMCTindex), false, 0, true, "[trivial]");
+				else
+					transition.setColorWithNumber(true, cp.getColor(selectedMCTindex), false, 0, true, "[MCT"+(selectedMCTindex+1)+"]");
 			}
-			mctTextArea.setCaretPosition(0);
 		}
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+
+		//name field:
+		String name = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessMCTnames().get(selectedMCTindex);
+		MCTnameField.setValue(name);
 	}
 	
 	/**
@@ -2650,12 +2860,9 @@ public class AbyssDockWindowsTable extends JPanel {
 		JLabel label6 = new JLabel(clusterColorsData.clNumber+"");
 		label6.setBounds(colB_posX, positionY, 80, 20);
 		components.add(label6);
-		
-		
-		
-		positionY += 20;
+
 		JLabel chooseInvLabel = new JLabel("Selected: ");
-		chooseInvLabel.setBounds(colA_posX, positionY, 80, 20);
+		chooseInvLabel.setBounds(colA_posX, positionY += 20, 80, 20);
 		components.add(chooseInvLabel);
 		
 		// PRZEWIJALNA LISTA KLASTRÓW:
@@ -2673,18 +2880,19 @@ public class AbyssDockWindowsTable extends JPanel {
 				@SuppressWarnings("unchecked")
 				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
 				if (comboBox.getSelectedIndex() == 0) {
-					showClusters(0, false);
+					selectedClusterIndex = -1;
+					showClusters();
 				} else {
-					showClusters(comboBox.getSelectedIndex() - 1, true);
+					selectedClusterIndex = comboBox.getSelectedIndex() - 1;
+					showClusters();
 				}
 			}
 		});
 		components.add(chooseCluster);
-		positionY += 20;
 		
 		//SPOSÓB WYŚWIETLANIA - TRANZYCJE CZY ODPALENIA
 		JCheckBox transFiringMode = new JCheckBox("Show transition average firing");
-		transFiringMode.setBounds(colA_posX-3, positionY, 220, 20);
+		transFiringMode.setBounds(colA_posX-3, positionY+=20, 220, 20);
 		transFiringMode.setSelected(false);;
 		transFiringMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -2700,10 +2908,9 @@ public class AbyssDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(transFiringMode);
-		
-		positionY += 20;
+
 		JCheckBox scaleMode = new JCheckBox("Show scaled colors");
-		scaleMode.setBounds(colA_posX-3, positionY, 160, 20);
+		scaleMode.setBounds(colA_posX-3, positionY+=20, 160, 20);
 		scaleMode.setSelected(false);;
 		scaleMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -2719,21 +2926,33 @@ public class AbyssDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(scaleMode);
-		positionY += 20;
 		
-		clTextArea = new JTextArea();
-		clTextArea.setEditable(false);
-		clTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		JPanel textAreaPanel = new JPanel();
-		textAreaPanel.setLayout(new BorderLayout());
-		textAreaPanel.add(new JScrollPane(
-				clTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-        		BorderLayout.CENTER);
-		
-		int w = GUIManager.getDefaultGUIManager().getMctBox().getWidth();
-		int h = GUIManager.getDefaultGUIManager().getMctBox().getHeight();
-		textAreaPanel.setBounds(colA_posX, positionY, w-20, h-(positionY+20));
-		components.add(textAreaPanel);
+		JCheckBox mctMode = new JCheckBox("Show MCT sets");
+		mctMode.setBounds(colA_posX-3, positionY+=20, 160, 20);
+		mctMode.setSelected(false);
+		mctMode.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					clustersMCT = true;
+				} else {
+					clustersMCT = false;
+				}
+				int selected = chooseCluster.getSelectedIndex();
+				chooseCluster.setSelectedIndex(selected);
+			}
+		});
+		components.add(mctMode);
+
+		JButton showDetailsButton = new JButton();
+		showDetailsButton.setText("Show details");
+		showDetailsButton.setBounds(colA_posX, positionY+=30, 120, 30);
+		showDetailsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				showClustersNotepad();
+			}
+		});
+		components.add(showDetailsButton);
 		
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
@@ -2745,59 +2964,108 @@ public class AbyssDockWindowsTable extends JPanel {
 	}
 	
 	/**
-	 * Metoda pokazująca dane o klastrze na ekranie sieci oraz w podoknie programu.
-	 * @param clusterNo int - nr klastra
-	 * @param isThereCluser boolean - false, jeśli wskazano "---";
+	 * Metoda pokazująca dane o klastrach w notatniku.
 	 */
-	protected void showClusters(int clusterNo, boolean isThereCluser) {
+	protected void showClustersNotepad() {
+		if(selectedClusterIndex == -1)
+			return;
+		
+		AbyssNotepad note = new AbyssNotepad(640, 480);
+		
+		note.addTextLineNL("", "text");
+		note.addTextLineNL("Cluster: "+selectedClusterIndex + " ("+clusterColorsData.clSize.get(selectedClusterIndex)+" inv.) alg.: "+clusterColorsData.algorithm
+				+" metric: "+clusterColorsData.metric, "text");
+		note.addTextLineNL("", "text");
+		
+		ArrayList<ClusterTransition> transColors = clusterColorsData.dataMatrix.get(selectedClusterIndex);
+		
+		ArrayList<Transition> holyVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		for(int i=0; i<transColors.size(); i++) { //ustaw kolory dla tranzycji
+			int trInCluster = transColors.get(i).transInCluster;
+			double firedInCluster = transColors.get(i).firedInCluster; // ????
+			if(trInCluster>0) {
+				String t1 = Tools.setToSize("t"+(i), 5, false);
+				String t2 = Tools.setToSize("Freq.: "+trInCluster, 12, false);
+				String t3 = Tools.setToSize("Fired: "+formatD(firedInCluster), 15, false);
+				String txt = t1 + t2 + t3 + " ; "+holyVector.get(i).getName();
+				note.addTextLineNL(txt, "text");
+			}
+		}
+		note.setCaretFirstLine();
+		note.setVisible(true);
+	}
+
+	/**
+	 * Metoda pokazująca dane o klastrze na ekranie sieci oraz w podoknie programu.
+	 */
+	protected void showClusters() {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 		
-		if(isThereCluser)
-		{
-			clTextArea.setText("");
-			clTextArea.append("Cluster: "+clusterNo + " ("+clusterColorsData.clSize.get(clusterNo)+" inv.) alg.: "+clusterColorsData.algorithm
-					+" metric: "+clusterColorsData.metric+"\n\n");
-			ArrayList<ClusterTransition> transColors = clusterColorsData.dataMatrix.get(clusterNo);
-			ArrayList<Transition> holyVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-			for(int i=0; i<transColors.size(); i++) { //ustaw kolory dla tranzycji
-				if(transColors.get(i).equals(Color.white)) {
-					holyVector.get(i).setColorWithNumber(false, Color.white, false, -1, false, "");
+		if(selectedClusterIndex == -1)
+			return;
+		
+		ArrayList<ClusterTransition> transColors = clusterColorsData.dataMatrix.get(selectedClusterIndex);
+		ArrayList<Transition> holyVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		
+		//TODO:
+		ColorPalette cp = new ColorPalette();
+		ArrayList<Integer> transMCTvector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTtransIndicesVector();
+		
+		for(int i=0; i<transColors.size(); i++) { //ustaw kolory dla tranzycji
+			if(transColors.get(i).transInCluster == 0) {   //equals(Color.white)) {
+				holyVector.get(i).setColorWithNumber(false, Color.white, false, -1, false, "");
+			} else {
+				if(clustersMCT) {
+					int mctNo = transMCTvector.get(i);
+					if(mctNo == -1) {
+						if(clusterColorsData.showFirings == true) { //pokazuj średnią liczbę odpaleń
+							if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
+								holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).firedInCluster, false, "", 0, 20, 5, -3);
+							} else { //pokazuj kolory z krokiem 10%
+								holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).firedInCluster, false, "", 0, 20, 5, -3);
+							}
+						} else { //pokazuj tylko liczbę wystąpień jako część inwariantów
+							if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
+								holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
+							} else { //pokazuj kolory z krokiem 10%
+								holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).transInCluster , false, "", 0, 20, 5, -3);
+							}
+						}
+					} else {
+						double value = 0;
+						if(clusterColorsData.showFirings == true) {
+							value = transColors.get(i).firedInCluster;
+						} else {
+							value = transColors.get(i).transInCluster;
+						}
+						holyVector.get(i).setColorWithNumber(true, cp.getColor(mctNo), true, value, true, "[MCT"+(mctNo+1)+"]", -10, 15, 5, -3);
+					}	
 				} else {
 					if(clusterColorsData.showFirings == true) { //pokazuj średnią liczbę odpaleń
 						if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
 							double tranNumber = transColors.get(i).firedInCluster;
 							Color tranColor = transColors.get(i).colorFiredScale;
-							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "");
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
 						} else { //pokazuj kolory z krokiem 10%
 							double tranNumber = transColors.get(i).firedInCluster;
 							Color tranColor = transColors.get(i).colorFiredGrade;
-							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "");
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
 						}
 					} else { //pokazuj tylko liczbę wystąpień jako część inwariantów
 						if(clusterColorsData.showScale == true) { //pokazuj kolory skalowalne
 							int tranNumber = transColors.get(i).transInCluster;
 							Color tranColor = transColors.get(i).colorTransScale;
-							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "");
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
 						} else { //pokazuj kolory z krokiem 10%
 							int tranNumber = transColors.get(i).transInCluster;
 							Color tranColor = transColors.get(i).colorTransGrade;
-							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "");
+							holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
 						}
 					}
 				}
-				int trInCluster = transColors.get(i).transInCluster;
-				double firedInCluster = transColors.get(i).firedInCluster; // ????
-				if(trInCluster>0) {
-					String t1 = Tools.setToSize("t"+(i), 5, false);
-					String t2 = Tools.setToSize("Freq.: "+trInCluster, 12, false);
-					String t3 = Tools.setToSize("Fired: "+formatD(firedInCluster), 15, false);
-					String txt = t1 + t2 + t3 + " ; "+holyVector.get(i).getName();
-					clTextArea.append(txt+"\n");
-				}
 			}
-			clTextArea.setCaretPosition(0);
 		}
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
@@ -2819,7 +3087,6 @@ public class AbyssDockWindowsTable extends JPanel {
 	//*********************************        MCS       ***********************************
 	//*********************************                  ***********************************
 	//**************************************************************************************
-	//TODO:
 	/**
 	 * Metoda pomocnicza konstruktora podokna dla zbiorów MCS.
 	 * @param mcsData MCSDataMatrix - obiekt danych zbiorów MCS
@@ -2918,8 +3185,6 @@ public class AbyssDockWindowsTable extends JPanel {
 		JButton refreshButton = new JButton();
 		refreshButton.setText("Refresh");
 		refreshButton.setBounds(posX+225, posY, 70, 20);
-		//generateButton.setMargin(new Insets(0, 0, 0, 0));
-		//generateButton.setIcon(Tools.getResIcon32("/icons/mcsWindow/computeData.png"));
 		refreshButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -2932,26 +3197,18 @@ public class AbyssDockWindowsTable extends JPanel {
 					objRset[i + 1] = "t"+i+"_"+transitions.get(i).getName();
 				}
 				stopAction = true;
-				
-				//GUIManager.getDefaultGUIManager().getMCSBox().getCurrentDockWindow().mcsObjRCombo.removeAllItems();
-				//GUIManager.getDefaultGUIManager().getMCSBox().getCurrentDockWindow().mcsObjRCombo = new JComboBox<String>(objRset);
+
 				mcsObjRCombo.removeAllItems();
 				for(String str : objRset) {
 					mcsObjRCombo.addItem(str);
 				}
-				//mcsObjRCombo.removeAllItems();
-				//mcsObjRCombo = new JComboBox<String>(objRset);
 				stopAction = false;
 			}
 		});
 		refreshButton.setFocusPainted(false);
 		panel.add(refreshButton);
-		
-		
 		posY += 20;
-		
-		
-		
+
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
 			 panel.add(components.get(i));
@@ -3031,7 +3288,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		initiateContainers();
 		
 		//MCT - obliczenia:
-		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
+		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTanalyzer();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
 		mct = MCTCalculator.getSortedMCT(mct, false);
 		

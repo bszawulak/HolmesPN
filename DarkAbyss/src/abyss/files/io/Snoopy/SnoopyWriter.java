@@ -76,7 +76,7 @@ public class SnoopyWriter {
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean writeSPPED(String filePath) {
-		boolean status = GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility();
+		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
 		if(!status) {
 			JOptionPane.showMessageDialog(null, "Problems that cannot be automatically fixed detected.\n"
 					+ "Plaese save as Project.", 
@@ -385,7 +385,7 @@ public class SnoopyWriter {
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean writeSPTPT(String filePath) {
-		boolean status = GUIManager.getDefaultGUIManager().netsHQ.checkSnoopyCompatibility();
+		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
 		if(!status) {
 			JOptionPane.showMessageDialog(null, "Problems that cannot be automatically fixed detected.\n"
 					+ "Plaese save as Project.", 

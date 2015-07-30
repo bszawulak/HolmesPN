@@ -86,8 +86,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public GUIOperations io;
 	public TexExporter tex;
 	public GUIReset reset;
-	public SubnetsGraphics hGraphics;
-	public SubnetsControl netsHQ;
+	public SubnetsGraphics subnetsGraphics;
+	public SubnetsControl subnetsHQ;
 	public SimulatorGlobals simSettings;
 	
 	private Dimension screenSize; 		// praca w maksymalizacji
@@ -177,8 +177,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		io = new GUIOperations(this); //obiekt klasy operacji głównych
 		tex = new TexExporter(); //obiekt zarządzający eksportem tabel do formatu latex
 		reset = new GUIReset(); //obiekt odpowiadający za resetowanie danych / kasowanie / czyszczenie
-		hGraphics = new SubnetsGraphics(); //obiekt z metodami graficznymi dla sieci hierarchicznych
-		netsHQ = new SubnetsControl(this); //obiekt z metodami zarządzania sieciami hierarchicznymi
+		subnetsGraphics = new SubnetsGraphics(); //obiekt z metodami graficznymi dla sieci hierarchicznych
+		subnetsHQ = new SubnetsControl(this); //obiekt z metodami zarządzania sieciami hierarchicznymi
 		simSettings = new SimulatorGlobals(); //opcje symulatora
 		
 		setFrame(frejm);
@@ -196,7 +196,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createNetPropertiesWindow(); // okno właściwości sieci
 		createSearchWindow(); // okno wyszukiwania elementów sieci
 		createNetTablesWindow(); // okno tabel sieci
-		createSimLogWindow(); // okno logów symulatora
+		
 		createInvariantsWindow(); // okno generatora inwariantów
 		
 		settingsManager = new SettingsManager();
@@ -372,6 +372,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//createPropertiesWindow();
 		createStateSimulatorWindow();
 		createMCSWindow(); // okno generatora MCS
+		createSimLogWindow(); // okno logów symulatora
 		
 		String path = settingsManager.getValue("lastOpenedPath");
 		File f = new File(path);
@@ -1045,7 +1046,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Główna metoda odpowiedzialna za generowanie zbiorów MCT.
 	 */
 	public void generateMCT() {
-		MCTCalculator analyzer = getWorkspace().getProject().getAnalyzer();
+		MCTCalculator analyzer = getWorkspace().getProject().getMCTanalyzer();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
 		getWorkspace().getProject().setMCTMatrix(mct, true);
 		getMctBox().showMCT(mct); //sortowanie

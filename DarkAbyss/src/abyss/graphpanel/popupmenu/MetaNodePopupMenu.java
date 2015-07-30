@@ -28,7 +28,7 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 				getGraphPanel().getSelectionManager().deselectAllElementLocations();
 				ArrayList<Integer> sheetModified = new ArrayList<Integer>();
 				sheetModified.add(((MetaNode)elMeta.getParentNode()).getRepresentedSheetID());
-				gui.netsHQ.validateMetaArcs(sheetModified, true, false);
+				gui.subnetsHQ.validateMetaArcs(sheetModified, true, false);
 				getGraphPanel().repaint();
 			}
 			private ActionListener yesWeCan(ElementLocation inLoc){

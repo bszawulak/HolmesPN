@@ -57,6 +57,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
 	private ArrayList<String> invariantsNames;
 	private ArrayList<ArrayList<Transition>> mctData;
+	private ArrayList<Integer> transitionMCTnumber;
 	private ArrayList<String> mctNames;
 	
 	private String lastFileName = "";
@@ -77,6 +78,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private boolean isSimulationActive = false;
 	private NetSimulator simulator;
 	private MCTCalculator analyzer;
+	private PetriNetMethods methods;
 
 	/** wektor tokenów dla miejsc: */
 	private ArrayList<Integer> backupMarkingZero = new ArrayList<Integer>();
@@ -96,6 +98,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		communicationProtocol = new IOprotocols();
 		dataCore.netName = "default";
 		mcsData = new MCSDataMatrix();
+		methods = new PetriNetMethods(this);
 	}
 
 	/**
@@ -106,10 +109,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.setGraphPanels(new ArrayList<GraphPanel>());
 		this.workspace = workspace;
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
-		this.setAnalyzer(new MCTCalculator(this));
+		this.setMCTanalyzer(new MCTCalculator(this));
 		resetComm();
 		dataCore.netName = name;
 		mcsData = new MCSDataMatrix();
+		methods = new PetriNetMethods(this);
 	}
 	
 	/**
@@ -371,7 +375,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda zwracająca obiekt analizatora, np. na potrzeby generacji MCT.
 	 * @return DarkAnalyzer - obiekt analizatora
 	 */
-	public MCTCalculator getAnalyzer() {
+	public MCTCalculator getMCTanalyzer() {
 		return analyzer;
 	}
 
@@ -379,7 +383,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda ustawiająca aktualny analizator dla obiektu sieci.
 	 * @param analyzer DarkAnalyzer - analizator dla sieci
 	 */
-	public void setAnalyzer(MCTCalculator analyzer) {
+	public void setMCTanalyzer(MCTCalculator analyzer) {
 		this.analyzer = analyzer;
 	}
 	
@@ -427,7 +431,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @param generateMCT boolean - true, jeśli mają być wygenerowane zbiory MCT 
 	 */
-	public void setInvariantsMatrix(ArrayList<ArrayList<Integer>> invariants, boolean generateMCT) {
+	public void setINVmatrix(ArrayList<ArrayList<Integer>> invariants, boolean generateMCT) {
 		this.invariantsMatrix = invariants;
 		this.invariantsNames = null;
 		
@@ -441,7 +445,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		}
 		
 		if(generateMCT) {
-			MCTCalculator analyzer = getWorkspace().getProject().getAnalyzer();
+			MCTCalculator analyzer = getWorkspace().getProject().getMCTanalyzer();
 			ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
 			getWorkspace().getProject().setMCTMatrix(mct, true);
 			GUIManager.getDefaultGUIManager().getMctBox().showMCT(mct);
@@ -452,18 +456,33 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda ustawia nowy wektor nazw dla inwariantów.
 	 * @param namesVector ArrayList[String] - nazwy inwariantów
 	 */
-	public void setInvariantsNames(ArrayList<String> namesVector) {
+	public void setINVnames(ArrayList<String> namesVector) {
 		if(invariantsMatrix == null)
 			return;
 		if(namesVector.size() == invariantsMatrix.size())
 			this.invariantsNames = namesVector;
+	}
+	
+	/**
+	 * Zwraca nazwę inwariantu o podanym numerze.
+	 * @param index int - nr inwariantu, od zera
+	 * @return String - nazwa inwariantu
+	 */
+	public String getINVname(int index) {
+		if(invariantsMatrix == null)
+			return "";
+		
+		if(index < invariantsNames.size() && index >= 0)
+			return this.invariantsNames.get(index);
+		else
+			return "";
 	}
 
 	/**
 	 * Metoda zwraca macierz inwariantów sieci.
 	 * @return ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 */
-	public ArrayList<ArrayList<Integer>> getInvariantsMatrix() {
+	public ArrayList<ArrayList<Integer>> getINVmatrix() {
 		return invariantsMatrix;
 	}
 	
@@ -471,7 +490,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda pozwala na dostęp do wektora nazw inwariantów.
 	 * @return ArrayList[String] - nazwy inwariantów
 	 */
-	public ArrayList<String> accessInvNames() {
+	public ArrayList<String> accessINVnames() {
 		return invariantsNames;
 	}
 	
@@ -492,10 +511,20 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		for(int m=0; m<mct.size(); m++) {
 			mctNames.add("MCT_"+(m+1));
 		}
+		
+		transitionMCTnumber = methods.getTransMCTindicesVector();
 	}
 	
 	/**
-	 * Metoda zwraca macierz zbioró MCT.
+	 * Metoda zwraca wektor okreslający w którym MCT znajduje się dana tranzycja. -1 oznacza trywialne.
+	 * @return ArrayList[Integer] - wektor
+	 */
+	public ArrayList<Integer> getMCTtransIndicesVector() {
+		return this.transitionMCTnumber;
+	}
+	
+	/**
+	 * Metoda zwraca macierz zbiorów MCT.
 	 * @return ArrayList[ArrayList[Transition]] - zbiory MCT
 	 */
 	public ArrayList<ArrayList<Transition>> getMCTMatrix() {
@@ -506,7 +535,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda zwraca obiekt wektora nazw zbiorów MCT.
 	 * @return
 	 */
-	public ArrayList<String> accessMCTNames() {
+	public ArrayList<String> accessMCTnames() {
 		return mctNames;
 	}
 	
@@ -519,6 +548,21 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			return;
 		if(namesVector.size() == mctData.size())
 			this.mctNames = namesVector;
+	}
+	
+	/**
+	 * Zwraca nazwę zbioru MCT wg podanego indeksu.
+	 * @param index int - nr zbioru MCT (od zera)
+	 * @return String - nazwa
+	 */
+	public String getMCTname(int index) {
+		if(mctData == null)
+			return "";
+		
+		if(index < mctNames.size() && index >= 0)
+			return this.mctNames.get(index);
+		else
+			return "";
 	}
 
 	/**
@@ -844,8 +888,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				} else {
 					SnoopyReader reader = new SnoopyReader(0, path);
 					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
-					GUIManager.getDefaultGUIManager().hGraphics.addRequiredSheets();
-					GUIManager.getDefaultGUIManager().hGraphics.resizePanels();
+					GUIManager.getDefaultGUIManager().subnetsGraphics.addRequiredSheets();
+					GUIManager.getDefaultGUIManager().subnetsGraphics.resizePanels();
 					GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
 				}
 				
@@ -878,8 +922,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToCSV(String path, boolean silence) {
 		int result = -1;
 		try {
-			if (getInvariantsMatrix() != null) {
-				communicationProtocol.writeInvToCSV(path, getInvariantsMatrix(), getTransitions());
+			if (getINVmatrix() != null) {
+				communicationProtocol.writeInvToCSV(path, getINVmatrix(), getTransitions());
 				//GUIManager.getDefaultGUIManager().log("Invariants saved as CSV file.","text", true);
 				if(!silence)
 					JOptionPane.showMessageDialog(null,  "Invariants saved to file:\n"+path,
@@ -908,8 +952,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToInaFormat(String path) {
 		int result = -1;
 		try {
-			if (getInvariantsMatrix() != null) {
-				communicationProtocol.writeINV(path, getInvariantsMatrix(), getTransitions());
+			if (getINVmatrix() != null) {
+				communicationProtocol.writeINV(path, getINVmatrix(), getTransitions());
 				JOptionPane.showMessageDialog(null,
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
@@ -937,8 +981,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToCharlie(String path) {
 		int result = -1;
 		try {
-			if (getInvariantsMatrix() != null) {
-				communicationProtocol.writeCharlieInv(path, getInvariantsMatrix(), getTransitions());
+			if (getINVmatrix() != null) {
+				communicationProtocol.writeCharlieInv(path, getINVmatrix(), getTransitions());
 				JOptionPane.showMessageDialog(null, "Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
 				GUIManager.getDefaultGUIManager().log("Invariants saved in Charlie file format.","text", true);
@@ -967,7 +1011,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if(status == false)
 				return false;
 			
-			setInvariantsMatrix(communicationProtocol.getInvariantsList(), true);
+			setINVmatrix(communicationProtocol.getInvariantsList(), true);
 			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true); //status inwariantów: wczytane
 			return true;
 		} catch (Exception e) {
@@ -985,7 +1029,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			g.repaint();
 		}
 	}
-
 
 	/**
 	 * Metoda pozwala na pobranie stanu symulacji. W sytuacji gdy jest ona aktywna
@@ -1086,7 +1129,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void resetTransitionGraphics() {
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION) {
-				((Transition) n).setColorWithNumber(false, Color.white, false, -1, false, "");
+				Transition trans = ((Transition) n);
+				trans.setColorWithNumber(false, Color.white, false, -1, false, "");
+				trans.resetOffs();
 			}
 	}
 	

@@ -347,8 +347,8 @@ public class DarkMenu extends JMenuBar {
 		collapseNetItem.getAccessibleContext().setAccessibleDescription("Compress subnets (remove all empty sheets)");
 		collapseNetItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().hGraphics.collapseSubnets();
-				GUIManager.getDefaultGUIManager().hGraphics.resizePanels();
+				GUIManager.getDefaultGUIManager().subnetsGraphics.collapseSubnets();
+				GUIManager.getDefaultGUIManager().subnetsGraphics.resizePanels();
 			}
 		});
 		hierachyMenu.add(collapseNetItem);
@@ -359,7 +359,7 @@ public class DarkMenu extends JMenuBar {
 		alignElementsItem.getAccessibleContext().setAccessibleDescription("All net elements will be aligned to left upper corner");
 		alignElementsItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().hGraphics.realignElements();
+				GUIManager.getDefaultGUIManager().subnetsGraphics.realignElements();
 			}
 		});
 		hierachyMenu.add(alignElementsItem);
@@ -370,7 +370,7 @@ public class DarkMenu extends JMenuBar {
 		resizePanelsItem.getAccessibleContext().setAccessibleDescription("Resize all panels to better fit the contained subnet");
 		resizePanelsItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().hGraphics.resizePanels();
+				GUIManager.getDefaultGUIManager().subnetsGraphics.resizePanels();
 			}
 		});
 		hierachyMenu.add(resizePanelsItem);

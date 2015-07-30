@@ -114,6 +114,7 @@ public class SettingsManager {
 			int test = Integer.parseInt(tmp); 
 			checkAndFix(settingsNew, "programSnoopyLoaderNetExtFactor", "100");
 		} catch (Exception e) { settingsNew.add(new Setting("programSnoopyLoaderNetExtFactor", "100")); }
+		checkAndFix(settingsNew, "programUseSimpleEditor", "0");
 		
 		//edytor:
 		checkAndFix(settingsNew, "editorGridLines", "1");

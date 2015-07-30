@@ -1340,7 +1340,7 @@ public final class InvariantsTools {
 		for(int t=0; t<transitions.size(); t++)
 			results.add(0);
 		
-		ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+		ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
 		if(invariantsMatrix == null || invariantsMatrix.size() == 0)
 			return results;
 		

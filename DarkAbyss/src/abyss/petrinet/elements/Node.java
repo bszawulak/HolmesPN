@@ -367,7 +367,7 @@ public abstract class Node extends PetriNetElement {
 			}
 			
 			if(!found) {
-				GUIManager.getDefaultGUIManager().netsHQ.clearAllMetaArcs(this, subNet);
+				GUIManager.getDefaultGUIManager().subnetsHQ.clearAllMetaArcs(this, subNet);
 			}
 		}
 		

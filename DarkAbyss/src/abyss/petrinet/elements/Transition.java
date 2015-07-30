@@ -41,6 +41,10 @@ public class Transition extends Node {
 	protected Color transColorValue = new Color(255,255,255);
 	protected boolean showIntOnly = false; //TODO
 	protected boolean valueVisibilityStatus = false;
+	public int txtXoff = 0;
+	public int txtYoff = 0;
+	public int valueXoff = 0;
+	public int valueYoff = 0;
 	
 	//opcje czasowe:
 	protected double TPN_eft = 0; //TPN
@@ -214,18 +218,49 @@ public class Transition extends Node {
 			boolean showNumber, double transNumericalValue, boolean showText, String text) {
 		this.isColorChanged = isColorChanged;
 		this.transColorValue = transColorValue;
-		setNumericalValueVisibility(showNumber);
+		this.valueVisibilityStatus = showNumber;
 		this.transNumericalValue = transNumericalValue;
 		this.showTransitionAddText = showText;
 		this.transAdditionalText = text;
 	}
 	
 	/**
-	 * Metoda ustawia, czy liczba ma się wyświetlać obok tranzycji.
-	 * @param status boolean - true, jeśli ma się wyświetlać pewna dodatkowa wartość obok rysunku tranzycji
+	 * Metoda ustawia stan zmiany koloru oraz liczbę do wyświetlenia.
+	 * @param isColorChanged boolean - true, jeśli ma rysować się w kolorze
+	 * @param transColorValue Color - na jaki kolor
+	 * @param showNumber boolean - true, jeśli liczba ma się wyświetlać
+	 * @param transNumericalValue double - liczba do wyświetlenia
+	 * @param showText boolean - czy pokazać dodatkowy tekst
+	 * @param text String - dodatkowy tekst do wyświetlenia
+	 * @param txtXoff int - przesunięcie X tekstu
+	 * @param txtYoff int - przesunięcie Y tekstu
+	 * @param valueXoff int - przesunięcie X liczby
+	 * @param valueYoff int - przesunięcie Y liczby
 	 */
-	public void setNumericalValueVisibility(boolean status) {
-		valueVisibilityStatus = status;
+	public void setColorWithNumber(boolean isColorChanged, Color transColorValue, 
+			boolean showNumber, double transNumericalValue, boolean showText, String text,
+			int txtXoff, int txtYoff, int valueXoff, int valueYoff) {
+		this.isColorChanged = isColorChanged;
+		this.transColorValue = transColorValue;
+		this.valueVisibilityStatus = showNumber;
+		this.transNumericalValue = transNumericalValue;
+		this.showTransitionAddText = showText;
+		this.transAdditionalText = text;
+		
+		this.txtXoff = txtXoff;
+		this.txtYoff = txtYoff;
+		this.valueXoff = valueXoff;
+		this.valueYoff = valueYoff;
+	}
+	
+	/**
+	 * Reset przesunięć.
+	 */
+	public void resetOffs() {
+		this.txtXoff = 0;
+		this.txtYoff = 0;
+		this.valueXoff = 0;
+		this.valueYoff = 0;
 	}
 	
 	/**

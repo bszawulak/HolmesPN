@@ -35,6 +35,19 @@ public class ColorPalette {
 	}
 	
 	/**
+	 * Metoda zwraca kolor o podanym numerze.
+	 * @param value int - indeks
+	 * @return Color - kolor
+	 */
+	public Color getColor(int value) {
+		int size = colors.size();
+		if(value >= size-1)
+			return Color.BLACK;
+		else
+			return colors.get(value);
+	}
+	
+	/**
 	 * Metoda zwraca numer poprzednio zwróconego koloru.
 	 * @return int - nr koloru z tablicy
 	 */

@@ -49,10 +49,10 @@ public class ProjectWriter {
 		metaNodes = projectCore.getMetaNodes();
 		arcs = projectCore.getArcs();
 		
-		invariantsMatrix = projectCore.getInvariantsMatrix();
-		invariantsNames = projectCore.accessInvNames();
+		invariantsMatrix = projectCore.getINVmatrix();
+		invariantsNames = projectCore.accessINVnames();
 		mctData = projectCore.getMCTMatrix();
-		mctNames = projectCore.accessMCTNames();
+		mctNames = projectCore.accessMCTnames();
 	}
 	
 	/**
@@ -507,6 +507,11 @@ public class ProjectWriter {
 			for(int m=0; m<mctNumber; m++) {
 				sp = 4;
 				ArrayList<Transition> mct =  mctData.get(m);
+				if(mct.size() == 0) {
+					bw.write(";"+newline);
+					continue;
+				}
+				
 				String mctLine = "";
 				for(Transition trans : mct) {
 					mctLine += transitions.indexOf(trans) + ";";

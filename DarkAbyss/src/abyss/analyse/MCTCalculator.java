@@ -23,7 +23,6 @@ public class MCTCalculator {
 	private OutputMatrix outMatrix;
 	private IncidenceMatrix matrix;
 	private PetriNet petriNet;
-	//private ArrayList<ArrayList<InvariantTransition>> tInvariants = new ArrayList<ArrayList<InvariantTransition>>();
 
 	/**
 	 * Konstruktor obiektu analizatora
@@ -66,7 +65,7 @@ public class MCTCalculator {
 	public ArrayList<ArrayList<Transition>> generateMCT() {
 		ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		ArrayList<ArrayList<Integer>> invariantsTranspose =	InvariantsTools.transposeMatrix(
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix() );
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix() );
 		
 		invariantsTranspose = InvariantsTools.returnBinaryMatrix(invariantsTranspose);
 		

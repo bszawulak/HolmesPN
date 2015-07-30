@@ -90,7 +90,7 @@ public class InvariantsCalculator implements Runnable {
 				
 				PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 				GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants(true));
-				project.setInvariantsMatrix(getInvariants(true), true);
+				project.setINVmatrix(getInvariants(true), true);
 				GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
 				GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetInvData();
 				logInternal("Operation successfull, invariants found: "+getInvariants(true).size()+"\n", true);

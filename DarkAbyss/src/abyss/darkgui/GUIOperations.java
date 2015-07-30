@@ -99,7 +99,7 @@ public class GUIOperations {
 		FileFilter projFilter = new ExtensionFileFilter("Old project file (.apf)", new String[] { "APF" });
 		FileFilter abyssFilter = new ExtensionFileFilter("Abyss Petri Net (.abyss)", new String[] { "ABYSS" });
 
-		fc.setFileFilter(projFilter);
+		fc.setFileFilter(holmesProjFilter);
 		fc.addChoosableFileFilter(holmesProjFilter);
 		fc.addChoosableFileFilter(projFilter);
 		fc.addChoosableFileFilter(abyssFilter);
@@ -116,7 +116,8 @@ public class GUIOperations {
 				ProjectReader pRdr = new ProjectReader();
 				status = pRdr.readProject(file.getPath());
 				
-				overlord.setLastPath(file.getParentFile().getPath());			
+				overlord.setLastPath(file.getParentFile().getPath());	
+				overlord.subnetsGraphics.resizePanels();
 			} else if (extension.toLowerCase().contains(".abyss")) { //ABYSS parser
 				status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
 				
@@ -414,7 +415,7 @@ public class GUIOperations {
 		if(status == false) {
 			return;
 		}
-		overlord.getInvariantsBox().showInvariants(project.getInvariantsMatrix());
+		overlord.getInvariantsBox().showInvariants(project.getINVmatrix());
 		//overlord.setLastPath(file.getParentFile().getPath());
 		overlord.getSimulatorBox().createSimulatorProperties();
 	}
@@ -516,7 +517,7 @@ public class GUIOperations {
 			}
 			
 			//project.getInaInvariants();
-			overlord.getInvariantsBox().showInvariants(project.getInvariantsMatrix());
+			overlord.getInvariantsBox().showInvariants(project.getINVmatrix());
 			overlord.getSimulatorBox().createSimulatorProperties();
 		
 			//co dalej z plikiem?
@@ -648,11 +649,11 @@ public class GUIOperations {
 		int c_number = howMany;
 		try{
 			int invNumber = 0;
-			if(overlord.getWorkspace().getProject().getInvariantsMatrix() == null) {
+			if(overlord.getWorkspace().getProject().getINVmatrix() == null) {
 				overlord.log("Warning: unable to check if given clusters number ("+howMany+") exceeds invariants "
 						+ "number. If so, the procedure may fail.", "warning", true);
 			} else {
-				invNumber = overlord.getWorkspace().getProject().getInvariantsMatrix().size();
+				invNumber = overlord.getWorkspace().getProject().getINVmatrix().size();
 				if(invNumber < howMany)
 					howMany = invNumber;
 			}
@@ -732,11 +733,11 @@ public class GUIOperations {
 		int c_number = howMany;
 		try{
 			int invNumber = 0;
-			if(overlord.getWorkspace().getProject().getInvariantsMatrix() == null) {
+			if(overlord.getWorkspace().getProject().getINVmatrix() == null) {
 				overlord.log("Warning: unable to check if given clusters number ("+howMany+") exceeds invariants "
 						+ "number. If so, the procedure may fail.", "warning", true);
 			} else {
-				invNumber = overlord.getWorkspace().getProject().getInvariantsMatrix().size();
+				invNumber = overlord.getWorkspace().getProject().getINVmatrix().size();
 				if(invNumber < howMany)
 					howMany = invNumber;
 			}
@@ -799,7 +800,7 @@ public class GUIOperations {
 	 */
 	private String selectionOfSource() {
 		String lastPath = overlord.getLastPath();
-		if(overlord.getWorkspace().getProject().getInvariantsMatrix() == null) { //brak inwariantów
+		if(overlord.getWorkspace().getProject().getINVmatrix() == null) { //brak inwariantów
 			FileFilter[] filters = new FileFilter[1];
 			filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
 			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file", "");

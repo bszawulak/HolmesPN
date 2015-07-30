@@ -190,7 +190,7 @@ public class Workspace implements SelectionActionListener {
 		int index = dockables.indexOf(dockable);
 		if(fastMode) {	
 			int indexSh = sheets.get(index).getId();
-			GUIManager.getDefaultGUIManager().netsHQ.removeMetaNode(indexSh);
+			GUIManager.getDefaultGUIManager().subnetsHQ.removeMetaNode(indexSh);
 			deleteSheetFromArrays(sheets.get(index));
 			guiManager.getMenu().deleteSheetItem(dockables.get(index));
 			dockables.remove(dockable);
@@ -209,7 +209,7 @@ public class Workspace implements SelectionActionListener {
 		}
 		
 		int indexSheet = dockables.indexOf(dockable);
-		int elementsNumber = GUIManager.getDefaultGUIManager().netsHQ.getSubnetsVector().get(indexSheet);
+		int elementsNumber = GUIManager.getDefaultGUIManager().subnetsHQ.getSubnetsVector().get(indexSheet);
 		if(elementsNumber > 0) {
 			JOptionPane.showMessageDialog(null, "Sheet contains "+elementsNumber+" net elements that must be\n removed manually (or moved to another subnet).",
 					"Cannot proceed", JOptionPane.INFORMATION_MESSAGE);
@@ -222,7 +222,7 @@ public class Workspace implements SelectionActionListener {
 		if ((n == 0) && (sheets.size() > 1)) {
 			//meta:
 			int indexSh = sheets.get(index).getId();
-			GUIManager.getDefaultGUIManager().netsHQ.removeMetaNode(indexSh);
+			GUIManager.getDefaultGUIManager().subnetsHQ.removeMetaNode(indexSh);
 			//normal:
 			deleteSheetFromArrays(sheets.get(index));
 			guiManager.getMenu().deleteSheetItem(dockables.get(index));

@@ -79,12 +79,12 @@ public class GUIReset {
 		
 		//CLEAR PETRI NET DATA:
 		pNet.resetData(); // tylko w ten sposób!!!! 
-		pNet.setInvariantsMatrix(null, false);
+		pNet.setINVmatrix(null, false);
 		pNet.setMCTMatrix(null, false);
-		pNet.accessMCTNames().clear();
+		pNet.accessMCTnames().clear();
 		pNet.setMCSdataCore(new MCSDataMatrix());
 		pNet.resetComm();
-		pNet.setAnalyzer(new MCTCalculator(pNet));
+		pNet.setMCTanalyzer(new MCTCalculator(pNet));
 		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
 		pNet.setSimulationActive(false);
 		pNet.setFileName("");
@@ -131,12 +131,12 @@ public class GUIReset {
 		
 		//CLEAR PETRI NET DATA:
 		pNet.resetData(); // tylko w ten sposób!!!! 
-		pNet.setInvariantsMatrix(null, false);
+		pNet.setINVmatrix(null, false);
 		pNet.setMCTMatrix(null, false);
-		pNet.accessMCTNames().clear();
+		pNet.accessMCTnames().clear();
 		pNet.setMCSdataCore(new MCSDataMatrix());
 		pNet.resetComm();
-		pNet.setAnalyzer(new MCTCalculator(pNet));
+		pNet.setMCTanalyzer(new MCTCalculator(pNet));
 		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
 		pNet.setSimulationActive(false);
 		pNet.setFileName("");
@@ -192,7 +192,7 @@ public class GUIReset {
 			mastah.accessNetTablesWindow().resetInvData();
 			
 			resetCommunicationProtocol();
-			mastah.getWorkspace().getProject().setInvariantsMatrix(null, false);
+			mastah.getWorkspace().getProject().setINVmatrix(null, false);
 			mastah.getWorkspace().getProject().getMCSdataCore().resetMSC();
 			
 			if(mastah.getInvariantsBox().getCurrentDockWindow() != null) {
@@ -200,7 +200,7 @@ public class GUIReset {
 				mastah.getInvariantsBox().getCurrentDockWindow().removeAll();
 			}
 			mastah.getInvariantsBox().setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.INVARIANTS,
-					mastah.getWorkspace().getProject().getInvariantsMatrix()));	
+					mastah.getWorkspace().getProject().getINVmatrix()));	
 			mastah.getInvariantsBox().validate();
 			mastah.getInvariantsBox().repaint();
 

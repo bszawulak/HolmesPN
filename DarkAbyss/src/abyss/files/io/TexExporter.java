@@ -312,7 +312,7 @@ public class TexExporter {
 	 */
 	@SuppressWarnings("unchecked") //różne badziewne ostrzeżenia Eclipse
 	public void writeMCT() {
-		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer();
+		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTanalyzer();
 		ArrayList<ArrayList<Transition>> mctSet = analyzer.generateMCT();
 		if(mctSet == null) {
 			GUIManager.getDefaultGUIManager().log("No MCT sets returned to writeMCT(). Writing operation terminated.", "error", true);

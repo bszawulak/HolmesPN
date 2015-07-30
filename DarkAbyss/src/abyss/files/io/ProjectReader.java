@@ -56,8 +56,8 @@ public class ProjectReader {
 	
 	//które bloki w ogóle próbowac czytać (zależne od tagów w sekcji [Project blocks]
 	private boolean subnets = false; //bloki coarse
-	private boolean invariants = true;
-	private boolean mct = true;
+	//private boolean invariants = true;
+	//private boolean mct = true;
 	
 	/**
 	 * Konstruktor obiektu klasy odczytywania projektu.
@@ -67,10 +67,10 @@ public class ProjectReader {
 		nodes = projectCore.getNodes();
 		metanodes = projectCore.getMetaNodes();
 		arcs = projectCore.getArcs();
-		invariantsMatrix = projectCore.getInvariantsMatrix();
-		invariantsNames = projectCore.accessInvNames();
+		invariantsMatrix = projectCore.getINVmatrix();
+		invariantsNames = projectCore.accessINVnames();
 		mctData = projectCore.getMCTMatrix();
-		mctNames = projectCore.accessMCTNames();
+		mctNames = projectCore.accessMCTnames();
 		
 		placesProcessed = 0;
 		transitionsProcessed = 0;
@@ -110,9 +110,9 @@ public class ProjectReader {
 			
 			status = readInvariants(buffer);
 			if(!status) {
-				projectCore.setInvariantsMatrix(null, false);
+				projectCore.setINVmatrix(null, false);
 			} else {
-				GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(projectCore.getInvariantsMatrix());
+				GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(projectCore.getINVmatrix());
 			}
 			
 			status = readMCT(buffer);
@@ -122,9 +122,8 @@ public class ProjectReader {
 				GUIManager.getDefaultGUIManager().getMctBox().showMCT(projectCore.getMCTMatrix());
 			}
 			
-			GUIManager.getDefaultGUIManager().hGraphics.addRequiredSheets();
+			GUIManager.getDefaultGUIManager().subnetsGraphics.addRequiredSheets();
 			GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
-			//setGraphPanelSize();
 			buffer.close();
 			return true;
 		} catch (Exception e) {
@@ -187,13 +186,13 @@ public class ProjectReader {
 			
 			query = "invariants data";
 			if(line.contains(query)) {
-				invariants = true;
+				//invariants = true;
 				return;
 			}
 			
 			query = "mct data";
 			if(line.contains(query)) {
-				mct = true;
+				//mct = true;
 				return;
 			}
 		
@@ -906,7 +905,7 @@ public class ProjectReader {
 					}
 				}
 				
-				projectCore.setInvariantsMatrix(invariantsMatrix, false);
+				projectCore.setINVmatrix(invariantsMatrix, false);
 				
 				if(problems==0) {
 					while(!((line = buffer.readLine()).contains("<Invariants names>"))) //przewiń do nazw inwariantów
@@ -927,7 +926,7 @@ public class ProjectReader {
 							readLines++;
 						}
 					}
-					projectCore.setInvariantsNames(invariantsNames);
+					projectCore.setINVnames(invariantsNames);
 					
 					
 					if(readLines != invariantsMatrix.size()) {

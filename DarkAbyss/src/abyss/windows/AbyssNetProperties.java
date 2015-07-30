@@ -111,7 +111,7 @@ public class AbyssNetProperties extends JFrame {
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
 		nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
-		invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+		invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
 		
 		ArrayList<Integer> arcClasses = Check.getArcClassCount();
 		

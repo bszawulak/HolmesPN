@@ -503,7 +503,7 @@ public class AbyssNetTables extends JFrame {
      * Metoda tworząca tablicę inwariantów.
      */
 	private void createInvariantsTable() {
-    	ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
+    	ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
     	if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
     		JOptionPane.showMessageDialog(this, "Please generate T-invariants (Elementary Modes)", "No invariants", JOptionPane.INFORMATION_MESSAGE);
     			return;

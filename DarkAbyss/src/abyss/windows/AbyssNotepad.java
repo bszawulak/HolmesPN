@@ -2,6 +2,7 @@ package abyss.windows;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -10,6 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -21,8 +23,8 @@ import abyss.utilities.Tools;
 
 /**
  * Okno wewnętrznego notatnika programu.
+ * 
  * @author MR
- *
  */
 public class AbyssNotepad extends JFrame {
 	private static final long serialVersionUID = 1694133455242675169L;
@@ -32,9 +34,10 @@ public class AbyssNotepad extends JFrame {
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
 	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
 	
-	/**
-	 * regular, italic, bold, small, large, warning, error
-	 */
+	private JTextArea textArea;
+	
+	private boolean simpleMode = false;
+	/** regular, italic, bold, small, large, warning, error */
 	private String[] initStyles = { "regular", "italic", "bold", "small", "large", "warning", "error", "time", "node" };
 	
 	/**
@@ -47,7 +50,6 @@ public class AbyssNotepad extends JFrame {
 		} catch (Exception e ) {
 			
 		}
-
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	}
 	
@@ -58,6 +60,13 @@ public class AbyssNotepad extends JFrame {
 	 */
 	public AbyssNotepad(int width, int height) {
 		this();
+		
+		try {
+			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programUseSimpleEditor").equals("1"))
+				simpleMode = true;
+		} catch (Exception e) {
+			
+		}
 		setPreferredSize(new Dimension(width, height));
 		setLocation(50,50);
 		
@@ -84,13 +93,17 @@ public class AbyssNotepad extends JFrame {
 		buttonPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		main.add(buttonPanel);
 		
-		textPane = createTextPane();
-        //textPane.setEditable(false);
-        paneScrollPane = new JScrollPane(textPane);
-        paneScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		if(simpleMode) {
+			textArea = new JTextArea();
+			textArea.setFont(new Font("monospaced", Font.PLAIN, 12));
+			paneScrollPane = new JScrollPane(textArea);
+			paneScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		} else {
+			textPane = createTextPane();
+	        paneScrollPane = new JScrollPane(textPane);
+	        paneScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		}
 		
-		//JPanel editorPanel = new JPanel(null);
-		//editorPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		main.add(paneScrollPane);
 		
 		return main;
@@ -101,7 +114,6 @@ public class AbyssNotepad extends JFrame {
 	 * @return JTextPane - panel edytora
 	 */
 	private JTextPane createTextPane() {
-		//String initString = "Console initiated"+newline;
 	    JTextPane txtPane = new JTextPane();
 	    doc = txtPane.getStyledDocument();
 	    addStylesToDocument(doc);
@@ -121,46 +133,74 @@ public class AbyssNotepad extends JFrame {
 	 * @param enter boolean - trye jeśli kończymy enterem
 	 */
 	public void addText(String text, String mode, boolean time, boolean enter) {
-		int style = setWritingStyle(mode);
-		
-		String nL = "";
-		if(enter)
-			nL = newline;
-		
-		try {
+		if(simpleMode) {
+			String nL = "";
+			if(enter)
+				nL = newline;
+			
 			if(time) {
 				String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-				doc.insertString(doc.getLength(), "["+timeStamp+"]   ", doc.getStyle("time"));
+				textArea.append("["+timeStamp+"]   ");
 			}
-	        doc.insertString(doc.getLength(), text+nL, doc.getStyle(initStyles[style]));
-	    } catch (Exception ble) {
-	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
-	    }
-		
-		int len = textPane.getDocument().getLength();
-		textPane.setCaretPosition(len);
+			textArea.append(text+nL);
+		} else {
+			int style = setWritingStyle(mode);
+			String nL = "";
+			if(enter)
+				nL = newline;
+			try {
+				if(time) {
+					String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+					doc.insertString(doc.getLength(), "["+timeStamp+"]   ", doc.getStyle("time"));
+				}
+		        doc.insertString(doc.getLength(), text+nL, doc.getStyle(initStyles[style]));
+		    } catch (Exception ble) {
+		        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
+		    }
+			
+			int len = textPane.getDocument().getLength();
+			textPane.setCaretPosition(len);
+		}
 	}
 	
+	/**
+	 * Dodaj nową linię do notatnika (bez entera).
+	 * @param text String - tekst
+	 * @param mode mode - tryb wstawiania
+	 */
 	public void addTextLine(String text, String mode) {
-		int style = setWritingStyle(mode);
-		try {
-	        doc.insertString(doc.getLength(), text, doc.getStyle(initStyles[style]));
-	    } catch (Exception ble) {
-	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
-	    }
-		int len = textPane.getDocument().getLength();
-		textPane.setCaretPosition(len);
+		if(simpleMode) {
+			textArea.append(text);
+		} else {
+			int style = setWritingStyle(mode);
+			try {
+		        doc.insertString(doc.getLength(), text, doc.getStyle(initStyles[style]));
+		    } catch (Exception ble) {
+		        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
+		    }
+			int len = textPane.getDocument().getLength();
+			textPane.setCaretPosition(len);
+		}
 	}
 	
+	/**
+	 * Dodaj nową linię do notatnika (z enterem).
+	 * @param text String - tekst
+	 * @param mode mode - tryb wstawiania
+	 */
 	public void addTextLineNL(String text, String mode) {
-		int style = setWritingStyle(mode);
-		try {
-	        doc.insertString(doc.getLength(), text+newline, doc.getStyle(initStyles[style]));
-	    } catch (Exception ble) {
-	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
-	    }
-		int len = textPane.getDocument().getLength();
-		textPane.setCaretPosition(len);
+		if(simpleMode) {
+			textArea.append(text+newline);
+		} else {
+			int style = setWritingStyle(mode);
+			try {
+		        doc.insertString(doc.getLength(), text+newline, doc.getStyle(initStyles[style]));
+		    } catch (Exception ble) {
+		        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
+		    }
+			int len = textPane.getDocument().getLength();
+			textPane.setCaretPosition(len);
+		}
 	}
 	
 	/**
@@ -169,23 +209,28 @@ public class AbyssNotepad extends JFrame {
 	 * @param mode String - tryb pisania
 	 */
 	public void addLine(String text, String mode) {
-		int style = setWritingStyle(mode);
-		
-		try {
-	        doc.insertString(doc.getLength(), text, doc.getStyle(initStyles[style]));
-	    } catch (Exception ble) {
-	    	GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
-	    }
-		
-		int len = textPane.getDocument().getLength();
-		textPane.setCaretPosition(len);
+		if(simpleMode) {
+			textArea.append(text);
+		} else {
+			int style = setWritingStyle(mode);
+			try {
+		        doc.insertString(doc.getLength(), text, doc.getStyle(initStyles[style]));
+		    } catch (Exception ble) {
+		    	GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
+		    }
+			int len = textPane.getDocument().getLength();
+			textPane.setCaretPosition(len);
+		}
 	}
 	
 	/**
 	 * Metoda ustawia kursor na pierszą linię.
 	 */
 	public void setCaretFirstLine() {
-		textPane.setCaretPosition(0);
+		if(simpleMode)
+			textArea.setCaretPosition(0);
+		else
+			textPane.setCaretPosition(0);
 	}
 	
 	/**
@@ -194,12 +239,7 @@ public class AbyssNotepad extends JFrame {
 	 * @return int - numer stylu
 	 */
 	private int setWritingStyle(String mode) {
-		//Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-		//StyleConstants.setFontFamily(def, "monospaced");
-		//StyleConstants.setFontSize(def, 10);
-
 		int style = 0;
-		
 		if(mode.equals("text") || mode.equals("t")) {
 			style = 0;
 		} else if(mode.equals("italic") || mode.equals("i")) {

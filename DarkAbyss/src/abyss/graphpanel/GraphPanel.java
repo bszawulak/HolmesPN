@@ -1071,7 +1071,7 @@ public class GraphPanel extends JComponent {
 
 					//dodaj połączenie z T lub P do Meta
 					//MetaNode metanode = (MetaNode)clickedLocation.getParentNode();
-					GUIManager.getDefaultGUIManager().netsHQ.addArcToMetanode(drawnArc.getStartLocation(), clickedLocation, drawnArc);
+					GUIManager.getDefaultGUIManager().subnetsHQ.addArcToMetanode(drawnArc.getStartLocation(), clickedLocation, drawnArc);
 					clearDrawnArc();
 					return;
 				}
@@ -1095,7 +1095,7 @@ public class GraphPanel extends JComponent {
 					}
 					
 					
-					GUIManager.getDefaultGUIManager().netsHQ.addArcFromMetanode(clickedLocation, drawnArc.getStartLocation(), drawnArc);
+					GUIManager.getDefaultGUIManager().subnetsHQ.addArcFromMetanode(clickedLocation, drawnArc.getStartLocation(), drawnArc);
 					clearDrawnArc();
 					return;
 				}
@@ -1177,7 +1177,7 @@ public class GraphPanel extends JComponent {
 							//TODO: dodanie nowego łuku (zwykły)
 							int arcSheet = arc.getStartLocation().getSheetID();
 							if(arcSheet > 0) {
-								GUIManager.getDefaultGUIManager().netsHQ.addMetaArc(arc);
+								GUIManager.getDefaultGUIManager().subnetsHQ.addMetaArc(arc);
 								
 								//ArrayList<Integer> thisIsStupid = new ArrayList<Integer>();
 								//thisIsStupid.add(arcSheet);

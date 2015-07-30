@@ -174,7 +174,7 @@ public class AbyssNetTablesActions {
 		ArrayList<Arc> arcs = pn.getArcs();
 		if(arcs.size() == 0) return;
 		
-		ArrayList<ArrayList<Integer>> invMatrix = pn.getInvariantsMatrix();
+		ArrayList<ArrayList<Integer>> invMatrix = pn.getINVmatrix();
 		if(invMatrix == null || invMatrix.size() == 0) return;
 		int invMatrixSize = invMatrix.size();
 
@@ -194,7 +194,7 @@ public class AbyssNetTablesActions {
     			
     			InvariantContainer ic = new InvariantContainer();
     			ic.ID = i;
-    			ic.name = pn.accessInvNames().get(i);
+    			ic.name = pn.accessINVnames().get(i);
     			ic.transNumber = support.size();
     			
     			if(nonMinimalInvariants.get(i).size() == 0)
