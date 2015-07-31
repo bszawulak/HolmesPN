@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.ElementLocation;
 import abyss.petrinet.elements.Place;
-import abyss.petrinet.elements.MetaNode.MetaType;
 import abyss.varia.NetworkTransformations;
 
 /**

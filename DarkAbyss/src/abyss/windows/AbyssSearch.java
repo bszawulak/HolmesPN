@@ -98,7 +98,7 @@ public class AbyssSearch extends JFrame {
 	 */
 	private JPanel createMainPanel() {	
 		JPanel panel = new JPanel();
-		panel.setLayout(null);  /** (ノಠ益ಠ)ノ彡┻━━━┻ |   */
+		panel.setLayout(null); 
 		
 		//Panel wyboru opcji szukania
 		JPanel choicePanel = new JPanel();

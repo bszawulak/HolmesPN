@@ -12,18 +12,22 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -32,12 +36,14 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
@@ -139,10 +145,14 @@ public class AbyssDockWindowsTable extends JPanel {
 	private JFormattedTextField invNameField;
 	//clusters:
 	private JComboBox<String> chooseCluster;
+	private JComboBox<String> chooseClusterInv;
 	private ClusterDataPackage clusterColorsData;
 	private JFormattedTextField MCTnameField;
 	private int selectedClusterIndex = -1;
+	private int selectedClusterInvIndex = -1;
 	private boolean clustersMCT = false;
+	private JProgressBar progressBar = null;
+	private JLabel mssValueLabel;
 	//MCS
 	public JComboBox<String> mcsObjRCombo;
 	public JComboBox<String> mcsMCSforObjRCombo;
@@ -2300,7 +2310,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		invariantHeaders[0] = "---";
 		for (int i = 0; i < invariantsMatrix.size(); i++) {
 			int invSize = InvariantsTools.getSupport(invariantsMatrix.get(i)).size();
-			invariantHeaders[i + 1] = "Inv. #" + Integer.toString(i) +" (size: "+invSize+")";
+			invariantHeaders[i + 1] = "Inv. #" + (i+1) +" (size: "+invSize+")";
 		}
 		invariantHeaders[invariantHeaders.length-2] = "null transitions";
 		invariantHeaders[invariantHeaders.length-1] = "inv/trans frequency";
@@ -2446,7 +2456,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		}
 		Collections.sort(mcts);
 		String name = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessINVnames().get(selectedInvIndex);
-		note.addTextLineNL("Invariant "+selectedInvIndex+": "+name, "text");
+		note.addTextLineNL("Invariant "+(selectedInvIndex+1)+": "+name, "text");
 		note.addTextLineNL("Total number of transitions: "+transNumber, "text");
 		note.addTextLineNL("Support structure:", "text");
 		for(int mct : mcts) {
@@ -2458,7 +2468,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		//END OF STRUCTURE BLOCK
 		
 		note.addTextLineNL("", "text");
-		note.addTextLineNL("All transitions of INV #" + selectedInvIndex+":", "text");
+		note.addTextLineNL("All transitions of INV #" + (selectedInvIndex+1)+":", "text");
 		
 		if(transitions.size() != invariant.size()) {
 			transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -2727,6 +2737,10 @@ public class AbyssDockWindowsTable extends JPanel {
 		add(panel);
 	}
 	
+	/**
+	 * Metoda zmiany nazwy zbioru MCT.
+	 * @param newName String - nowa nazwa
+	 */
 	protected void changeMCTname(String newName) {
 		if(selectedMCTindex == -1)
 			return;
@@ -2734,6 +2748,9 @@ public class AbyssDockWindowsTable extends JPanel {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessMCTnames().set(selectedMCTindex, newName);
 	}
 
+	/**
+	 * Metoda pokazująca za pomocą notatnika dane o zbiorze MCT.
+	 */
 	protected void showMCTNotepad() {
 		if(selectedMCTindex == -1)
 			return;
@@ -2826,7 +2843,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	 */
 	public void createClustersSubWindow(ClusterDataPackage clusteringData) {
 		initiateContainers();
-			
+		doNotUpdate = true;
 		if(clusteringData == null || clusteringData.dataMatrix.size() == 0) {
 			return;
 		} else {
@@ -2874,7 +2891,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		}
 		
 		chooseCluster = new JComboBox<String>(clustersHeaders);
-		chooseCluster.setBounds(colB_posX, positionY, 150, 20);
+		chooseCluster.setBounds(colB_posX, positionY, 180, 20);
 		chooseCluster.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				@SuppressWarnings("unchecked")
@@ -2882,13 +2899,23 @@ public class AbyssDockWindowsTable extends JPanel {
 				if (comboBox.getSelectedIndex() == 0) {
 					selectedClusterIndex = -1;
 					showClusters();
+					fillClustInvCombo();
 				} else {
 					selectedClusterIndex = comboBox.getSelectedIndex() - 1;
 					showClusters();
+					fillClustInvCombo();
 				}
 			}
 		});
 		components.add(chooseCluster);
+		
+		JLabel mssLabel1 = new JLabel("MSS value:");
+		mssLabel1.setBounds(colA_posX, positionY += 20, 80, 20);
+		components.add(mssLabel1);
+
+		mssValueLabel = new JLabel("n/a");
+		mssValueLabel.setBounds(colB_posX, positionY, 80, 20);
+		components.add(mssValueLabel);
 		
 		//SPOSÓB WYŚWIETLANIA - TRANZYCJE CZY ODPALENIA
 		JCheckBox transFiringMode = new JCheckBox("Show transition average firing");
@@ -2910,7 +2937,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(transFiringMode);
 
 		JCheckBox scaleMode = new JCheckBox("Show scaled colors");
-		scaleMode.setBounds(colA_posX-3, positionY+=20, 160, 20);
+		scaleMode.setBounds(colA_posX-3, positionY+=20, 170, 20);
 		scaleMode.setSelected(false);;
 		scaleMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -2928,7 +2955,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(scaleMode);
 		
 		JCheckBox mctMode = new JCheckBox("Show MCT sets");
-		mctMode.setBounds(colA_posX-3, positionY+=20, 160, 20);
+		mctMode.setBounds(colA_posX-3, positionY+=20, 120, 20);
 		mctMode.setSelected(false);
 		mctMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -2946,7 +2973,7 @@ public class AbyssDockWindowsTable extends JPanel {
 
 		JButton showDetailsButton = new JButton();
 		showDetailsButton.setText("Show details");
-		showDetailsButton.setBounds(colA_posX, positionY+=30, 120, 30);
+		showDetailsButton.setBounds(colA_posX, positionY+=30, 130, 30);
 		showDetailsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				showClustersNotepad();
@@ -2954,15 +2981,175 @@ public class AbyssDockWindowsTable extends JPanel {
 		});
 		components.add(showDetailsButton);
 		
+		JButton screenshotsButton = new JButton();
+		screenshotsButton.setText("Export pictures");
+		screenshotsButton.setBounds(colA_posX+135, positionY, 130, 30);
+		screenshotsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				dropClustersToFiles();
+			}
+		});
+		components.add(screenshotsButton);
+		
+		progressBar = new JProgressBar();
+		progressBar.setBounds(colA_posX+135, positionY-5, 130, 35);
+		progressBar.setMaximum(100);
+		progressBar.setMinimum(0);
+	    progressBar.setValue(0);
+	    progressBar.setStringPainted(true);
+	    Border border = BorderFactory.createTitledBorder("Completed");
+	    progressBar.setBorder(border);
+	    progressBar.setVisible(false);
+	    progressBar.setForeground(Color.RED);
+	    components.add(progressBar);
+	    
+	    //inwarianty w ramach klastra:
+	    JLabel chooseClustInvLabel = new JLabel("Cluster inv.:");
+	    chooseClustInvLabel.setBounds(colA_posX, positionY += 40, 80, 20);
+		components.add(chooseClustInvLabel);
+		
+		String[] clustersInvHeaders = new String[1];
+		clustersInvHeaders[0] = "---";
+	    chooseClusterInv = new JComboBox<String>(clustersInvHeaders);
+	    chooseClusterInv.setBounds(colB_posX, positionY, 180, 20);
+	    chooseClusterInv.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+				@SuppressWarnings("unchecked")
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				if (comboBox.getSelectedIndex() == 0) {
+					selectedClusterInvIndex = -1;
+					showClusters();
+				} else {
+					selectedClusterInvIndex = comboBox.getSelectedIndex() - 1;
+					showClusterInv();
+				}
+			}
+		});
+		components.add(chooseClusterInv);
+		
+		
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
 			 panel.add(components.get(i));
 		panel.setOpaque(true);
 		panel.repaint();
 		panel.setVisible(true);
+		doNotUpdate = true;
 		add(panel);
 	}
 	
+	/**
+	 * Metoda wypełniająca drugi combox - lista inwariantów wybranego klastra.
+	 */
+	protected void fillClustInvCombo() {
+		try {
+			if(selectedClusterIndex == -1) {
+				chooseClusterInv.removeAllItems();
+				chooseClusterInv.addItem("---");
+				return;
+			}
+			doNotUpdate = true;
+			
+			ArrayList<Integer> clInvariants = clusterColorsData.clustersInvariants.get(selectedClusterIndex);
+			chooseClusterInv.removeAllItems();
+			
+			String[] clustersInvHeaders = new String[clInvariants.size()+1];
+			clustersInvHeaders[0] = "---";
+			for (int i = 0; i < clInvariants.size(); i++) {
+				int invIndex = clInvariants.get(i);
+				clustersInvHeaders[i+1] = "Cluster: "+(selectedClusterIndex+1)+"  |#"+(i+1)+"  Inv: "+(invIndex+1);
+			}
+			chooseClusterInv.setModel(new DefaultComboBoxModel<String>(clustersInvHeaders));
+		} catch (Exception e) {
+			
+		}
+		doNotUpdate = false;
+	}
+	
+	/**
+	 * Metoda podświetlająca wybrany inwariant w ramach klastra.
+	 */
+	protected void showClusterInv() {
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
+		
+		if(selectedClusterIndex == -1)
+			return;
+		
+		ArrayList<ClusterTransition> transColors = clusterColorsData.dataMatrix.get(selectedClusterIndex);
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Integer> clInvariants = clusterColorsData.clustersInvariants.get(selectedClusterIndex);
+		int invIndex = clInvariants.get(selectedClusterInvIndex);
+		ArrayList<Integer> invariant = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix().get(invIndex);
+		
+		for(int i=0; i<transColors.size(); i++) {
+			if(transColors.get(i).transInCluster != 0) {   //equals(Color.white)) {
+				transitions.get(i).setColorWithNumber(true, Color.DARK_GRAY, false, -1, false, "");
+			}
+		}
+		
+		for(int i=0; i<invariant.size(); i++) {
+			if(invariant.get(i) != 0) {
+				
+				transitions.get(i).setColorWithNumber(true, Color.GREEN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
+			}
+		}
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+	}
+
+	/**
+	 * Metoda odpowiedzialna za zapisanie na dysky obrazów klastrów.
+	 */
+	protected void dropClustersToFiles() {
+		//chose folder
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String dirPath = Tools.selectDirectoryDialog(lastPath, "Select dir",
+				"Select directory for clusters screenshots.");
+		if(dirPath.equals("")) { // czy wskazano cokolwiek
+			return;
+		}
+		
+		int clusters = clusterColorsData.dataMatrix.size();
+		int oldSelected = selectedClusterIndex;
+		
+		
+		GraphPanel main = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0).getGraphPanel();
+		main.setZoom(120, main.getZoom());
+		try {
+			JOptionPane.showMessageDialog(null, 
+					  "Please click OK button and wait until another information window shows up.\n"
+					+ "Depending on the number of clusters this should take from 10 sec. to 1 min.\n"
+					+ "Please do not use the program until operation is finished.", "Please wait", JOptionPane.INFORMATION_MESSAGE);
+			
+			progressBar.setMaximum(clusters-1);
+			progressBar.setValue(0);
+			progressBar.setVisible(true);
+			
+			for(int c=0; c<clusters; c++) {
+				progressBar.setValue(c);
+				progressBar.update(progressBar.getGraphics());
+				String clusterName = "cluster"+c+"("+clusterColorsData.clSize.get(c)+")";
+				selectedClusterIndex = c;
+				showClusters();
+				String fileName = ""+dirPath + "//"+clusterName+".png";
+				BufferedImage image = main.createImageFromSheet();
+				ImageIO.write(image, "png", new File(fileName));
+			}
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Saving clusters screenshots failed.", "error", true);
+			progressBar.setVisible(false);
+		} finally {
+			selectedClusterIndex = oldSelected;
+			main.setZoom(100, main.getZoom());
+		}
+		progressBar.setVisible(false);
+		JOptionPane.showMessageDialog(null, "Saving "+clusters+" clusters to graphic files completed.", "Success", JOptionPane.INFORMATION_MESSAGE);
+		
+	}
+
 	/**
 	 * Metoda pokazująca dane o klastrach w notatniku.
 	 */
@@ -2973,7 +3160,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		AbyssNotepad note = new AbyssNotepad(640, 480);
 		
 		note.addTextLineNL("", "text");
-		note.addTextLineNL("Cluster: "+selectedClusterIndex + " ("+clusterColorsData.clSize.get(selectedClusterIndex)+" inv.) alg.: "+clusterColorsData.algorithm
+		note.addTextLineNL("Cluster: "+(selectedClusterIndex+1)+" ("+clusterColorsData.clSize.get(selectedClusterIndex)+" inv.) alg.: "+clusterColorsData.algorithm
 				+" metric: "+clusterColorsData.metric, "text");
 		note.addTextLineNL("", "text");
 		
@@ -3003,15 +3190,18 @@ public class AbyssDockWindowsTable extends JPanel {
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
 		
-		if(selectedClusterIndex == -1)
+		if(selectedClusterIndex == -1) {
+			mssValueLabel.setText("n/a");
 			return;
+		}
 		
 		ArrayList<ClusterTransition> transColors = clusterColorsData.dataMatrix.get(selectedClusterIndex);
 		ArrayList<Transition> holyVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		
-		//TODO:
 		ColorPalette cp = new ColorPalette();
 		ArrayList<Integer> transMCTvector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTtransIndicesVector();
+
+		float mss = clusterColorsData.clMSS.get(selectedClusterIndex);
+		mssValueLabel.setText(""+mss);
 		
 		for(int i=0; i<transColors.size(); i++) { //ustaw kolory dla tranzycji
 			if(transColors.get(i).transInCluster == 0) {   //equals(Color.white)) {

@@ -714,7 +714,7 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za generowanie klastrowań na podstawie sieci.
+	 * Metoda odpowiedzialna za generowanie klastrowań na bazie inwariantów sieci.
 	 * @return String - ścieżka do pliku cluster.csv na bazie którego powstały inne pliki
 	 */
 	public String generateClustersCase56(int howMany) {

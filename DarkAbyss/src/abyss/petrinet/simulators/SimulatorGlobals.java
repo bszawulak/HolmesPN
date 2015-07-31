@@ -9,6 +9,7 @@ package abyss.petrinet.simulators;
 public class SimulatorGlobals {
 	private int ARC_STEP_DELAY = 25;
 	private int TRANS_FIRING_DELAY = 25;
+	public long currentStep = 0;
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.

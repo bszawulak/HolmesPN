@@ -1,7 +1,6 @@
 package abyss.petrinet.simulators;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -36,7 +35,7 @@ public class StateSimulator {
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
 	
 	private boolean maximumMode = false;
-	private boolean mainSimMaximumMode = false;
+	//private boolean mainSimMaximumMode = false;
 	//private Random generator; // = new Random(System.currentTimeMillis());
 	
 	private SimulatorEngine engine = null;

@@ -151,6 +151,7 @@ public class SettingsManager {
 		
 		//symulator:
 		checkAndFix(settingsNew, "simTransReadArcTokenReserv", "1"); //jeśli 1, tranzycje rezerwują tokeny poprzez readarc
+		checkAndFix(settingsNew, "simPlacesColors", "1");
 		
 		settings = new ArrayList<Setting>(settingsNew);
 		writeSettingsFile();

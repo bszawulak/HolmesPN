@@ -10,9 +10,7 @@ import java.util.ArrayList;
  */
 public class Clustering implements Serializable {
 	/**
-	 * Poniższy numer jest święty. Jeśli nawet wprowadzimy zmiany, NIE WOLNO go ruszać, gdyż
-	 * przestanie być możliwe wczytywanie tabel w formacie .acl programu!!!
-	 * Numer: -5381441187018735328L;
+	 * BACKUP: -5381441187018735328L;
 	 */
 	private static final long serialVersionUID = -5381441187018735328L;
 	public String algorithmName;

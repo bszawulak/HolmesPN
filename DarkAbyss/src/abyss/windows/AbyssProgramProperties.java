@@ -231,65 +231,20 @@ public class AbyssProgramProperties extends JFrame {
 		else if(netExtFactorValue.equals("180")) group.setSelected(resize180Button.getModel(), true);
 		else group.setSelected(resize100Button.getModel(), true);
 		
-		JCheckBox alignGridWhenSavedCheckBox = new JCheckBox("(Snoopy) Align to grid when saved", true);
-		alignGridWhenSavedCheckBox.setBounds(io_x+200, io_y-20, 240, 20);
-		alignGridWhenSavedCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGridAlignWhenSaved", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGridAlignWhenSaved", "0", true);
-				}
-			}
-		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1")) 
-			alignGridWhenSavedCheckBox.setSelected(true);
-		else
-			alignGridWhenSavedCheckBox.setSelected(false);
+		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard("(Snoopy) Align to grid when saved", io_x+200, io_y-20, 240, 20, 
+				"editorGridAlignWhenSaved");
 		ioPanel.add(alignGridWhenSavedCheckBox);
 		
-		JCheckBox useOffsetsCheckBox = new JCheckBox("(Snoopy) Use Snoopy offsets for names", true);
-		useOffsetsCheckBox.setBounds(io_x+200, io_y, 260, 20);
-		useOffsetsCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorUseSnoopyOffsets", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorUseSnoopyOffsets", "0", true);
-				}
-			}
-		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) 
-			useOffsetsCheckBox.setSelected(true);
-		else
-			useOffsetsCheckBox.setSelected(false);
+		JCheckBox useOffsetsCheckBox = checkboxWizard("(Snoopy) Use Snoopy offsets for names", io_x+200, io_y, 260, 20, 
+				"editorUseSnoopyOffsets");
 		ioPanel.add(useOffsetsCheckBox);
 		
-		JCheckBox useOldLoaderCheckBox = new JCheckBox("(UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)", true);
-		useOldLoaderCheckBox.setBounds(io_x, io_y+=20, 400, 20);
-		useOldLoaderCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programUseOldSnoopyLoaders", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programUseOldSnoopyLoaders", "0", true);
-				}
-			}
-		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programUseOldSnoopyLoaders").equals("1")) 
-			useOldLoaderCheckBox.setSelected(true);
-		else
-			useOldLoaderCheckBox.setSelected(false);
+		JCheckBox useOldLoaderCheckBox = checkboxWizard("(UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)", io_x, io_y+=20, 400, 20, 
+				"programUseOldSnoopyLoaders");
 		ioPanel.add(useOldLoaderCheckBox);
-		
-		//TODO:
-		JCheckBox simpleEditorCheckBox = checkboxWizard("Simple editor", io_x, io_y+=20, 300, 20, "programUseSimpleEditor");
+
+		JCheckBox simpleEditorCheckBox = checkboxWizard("Simple editor", io_x, io_y+=20, 300, 20, 
+				"programUseSimpleEditor");
 		ioPanel.add(simpleEditorCheckBox);
 		
 		noAction = false;
@@ -514,25 +469,8 @@ public class AbyssProgramProperties extends JFrame {
 			snoopyCompatibilityCheckBox.setSelected(false);
 		panel.add(snoopyCompatibilityCheckBox);
 		
-		JCheckBox subnetCompressionCheckBox = new JCheckBox("Use meta-arcs compression for metanodes", true);
-		subnetCompressionCheckBox.setBounds(io_x, io_y+=20, 350, 20);
-		subnetCompressionCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction == true) return;
-				
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSubnetCompressMode", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSubnetCompressMode", "0", true);
-				}
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-			}
-		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSubnetCompressMode").equals("1")) 
-			subnetCompressionCheckBox.setSelected(true);
-		else
-			subnetCompressionCheckBox.setSelected(false);
+		JCheckBox subnetCompressionCheckBox = checkboxWizard("Use meta-arcs compression for metanodes", io_x, io_y+=20, 350, 20, 
+				"editorSubnetCompressMode");
 		panel.add(subnetCompressionCheckBox);
 		
 		noAction = false;
@@ -575,26 +513,11 @@ public class AbyssProgramProperties extends JFrame {
 		int io_y = -5;
 		noAction = true;
 
-		JCheckBox readArcReservCheckBox = new JCheckBox("Transitions reserve tokens in place via read-arcs", true);
-		readArcReservCheckBox.setBounds(io_x, io_y+=20, 360, 20);
-		readArcReservCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("simTransReadArcTokenReserv", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("simTransReadArcTokenReserv", "0", true);
-				}
-			}
-		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simTransReadArcTokenReserv").equals("1")) 
-			readArcReservCheckBox.setSelected(true);
-		else
-			readArcReservCheckBox.setSelected(false);
+		JCheckBox readArcReservCheckBox = checkboxWizard("Transitions reserve tokens in place via read-arcs", io_x, io_y+=20, 360, 20, "simTransReadArcTokenReserv");
 		panel.add(readArcReservCheckBox);
 		
-		
+		JCheckBox placesColorsCheckBox = checkboxWizard("Places change colors during simulation", io_x, io_y+=20, 360, 20, "simPlacesColors");
+		panel.add(placesColorsCheckBox);
 		
 		noAction = false;
 		return panel;
@@ -734,23 +657,8 @@ public class AbyssProgramProperties extends JFrame {
 		noAction = true;
 		
 		// Self-propelled read-arc regions ignored or not in feasible invariants algorith
-		JCheckBox feasInvSelfPropCheckBox = new JCheckBox("Allow presence of self-propelled readarc regions", true);
-		feasInvSelfPropCheckBox.setBounds(io_x, io_y, 360, 20);
-		feasInvSelfPropCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisFeasibleSelfPropAccepted", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisFeasibleSelfPropAccepted", "0", true);
-				}
-			}
-		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisFeasibleSelfPropAccepted").equals("1")) 
-			feasInvSelfPropCheckBox.setSelected(true);
-		else
-			feasInvSelfPropCheckBox.setSelected(false);
+		JCheckBox feasInvSelfPropCheckBox = checkboxWizard("Allow presence of self-propelled readarc regions", io_x, io_y, 360, 20, 
+				"analysisFeasibleSelfPropAccepted");
 		panel.add(feasInvSelfPropCheckBox);
 		
 		noAction = false;
@@ -774,23 +682,8 @@ public class AbyssProgramProperties extends JFrame {
 		int io_y = 15;
 		noAction = true;
 		
-		JCheckBox cleanMCSusingStructureCheckBox = new JCheckBox("Eliminate MCS sets non directly connected with objR transition.", true);
-		cleanMCSusingStructureCheckBox.setBounds(io_x, io_y, 400, 20);
-		cleanMCSusingStructureCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "0", true);
-				}
-			}
-		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1")) 
-			cleanMCSusingStructureCheckBox.setSelected(true);
-		else
-			cleanMCSusingStructureCheckBox.setSelected(false);
+		JCheckBox cleanMCSusingStructureCheckBox = checkboxWizard("Eliminate MCS sets non directly connected with objR transition.", 
+				io_x, io_y, 400, 20, "analysisMCSReduction");
 		panel.add(cleanMCSusingStructureCheckBox);
 		
 		
@@ -822,7 +715,16 @@ public class AbyssProgramProperties extends JFrame {
 	//**********************************************************************************************************************
 	//**********************************************************************************************************************
 	
-	
+	/**
+	 * Tworzenie predefiniowanego obiektu JCheckBox.
+	 * @param checkBName String - nazwa wyświetlana w oknie
+	 * @param xPos int - pozycja X
+	 * @param yPos int - pozycja Y
+	 * @param width int - szerokość
+	 * @param height int - wysokość
+	 * @param propName String - nazwa właściwości
+	 * @return JCheckBox - obiekt
+	 */
 	private JCheckBox checkboxWizard(String checkBName, int xPos, int yPos, int width, int height, String propName) {
 		JCheckBox view3dCheckBox = new JCheckBox(checkBName, true);
 		view3dCheckBox.setBounds(xPos, yPos, width, height);

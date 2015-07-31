@@ -19,6 +19,7 @@ import abyss.petrinet.elements.Transition.TransitionType;
 
 /**
  * Klasa zajmująca się zarządzaniem całym procesem symulacji.
+ * 
  * @author students - pierwsza wersja, klasyczne PN oraz TPN
  * @author MR - poprawki, zmiany, kolejne rodzaje trubów symulacji
  */
@@ -33,7 +34,6 @@ public class NetSimulator {
 	private ArrayList<Transition> launchingTransitions;
 	private Stack<SimulationStep> actionStack;
 	private boolean maximumMode = false;
-	//public static int DEFAULT_COUNTER = 25;	 //org: 45		// wartość ta ma wpływ na szybkość poruszania się tokenów
 	private boolean writeHistory = true;
 	private long timeCounter = -1;
 	private NetSimulatorLogger nsl = new NetSimulatorLogger();
@@ -761,7 +761,7 @@ public class NetSimulator {
 	 *
 	 */
 	private class SimulationPerformer implements ActionListener {
-		protected int counter = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();		// licznik kroków graficznych
+		protected int transitionDelay = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();		// licznik kroków graficznych
 		protected boolean subtractPhase = true; // true - subtract, false - add
 		protected boolean finishedAddPhase = true;
 		protected boolean scheduledStop = false;
@@ -832,6 +832,7 @@ public class NetSimulator {
 			loop = looping;
 		}
 
+		//TODO 
 		/**
 		 * Metoda wykonywana jako kolejny krok przez symulator.
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
@@ -839,14 +840,15 @@ public class NetSimulator {
 		public void actionPerformed(ActionEvent event) {
 			int DEFAULT_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
 			updateStep(); // rusz tokeny
-			if (counter >= DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
+			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
 				//z miejsc wejściowych i oddawania ich tranzycjom
 				if (scheduledStop) { // jeśli symulacja ma się zatrzymać
 					executeScheduledStop();
 				} else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
 					if (remainingTransitionsAmount == 0) {
 						timeCounter++;
-						GUIManager.getDefaultGUIManager().io.updateTimeStep(""+timeCounter);
+						GUIManager.getDefaultGUIManager().io.updateTimeStep(""+timeCounter); // TODO UPDATE
+						GUIManager.getDefaultGUIManager().simSettings.currentStep = timeCounter;
 						
 						launchingTransitions = engine.getTransLaunchList(modeSteps);
 						remainingTransitionsAmount = launchingTransitions.size();
@@ -861,7 +863,7 @@ public class NetSimulator {
 					}
 				
 					launchSubtractPhase(launchingTransitions, false); //zabierz tokeny poprzez aktywne tranzycje
-					//TODO: usuń te tranzycje, które są w I fazie DPN
+					//usuń te tranzycje, które są w I fazie DPN
 					for(int t=0; t<launchingTransitions.size(); t++) {
 						Transition test_t = launchingTransitions.get(t);
 						if(test_t.getDPNstatus()) {
@@ -871,8 +873,6 @@ public class NetSimulator {
 							}
 						}
 					}
-					
-					
 					subtractPhase = false;
 				} else {
 					// simulation ends, no possible steps remaining
@@ -881,13 +881,13 @@ public class NetSimulator {
 					JOptionPane.showMessageDialog(null, "Simulation ended, no active transitions.",
 							"Simulation ended", JOptionPane.INFORMATION_MESSAGE);
 				}
-				counter = 0;
-			} else if (counter >= DEFAULT_COUNTER && !subtractPhase) { 
+				transitionDelay = 0;
+			} else if (transitionDelay >= DEFAULT_COUNTER && !subtractPhase) { 
 				// koniec fazy zabierania tokenów, tutaj realizowany jest graficzny przepływ tokenów
 				launchAddPhaseGraphics(launchingTransitions, false);
 				finishedAddPhase = false;
-				counter = 0;
-			} else if (counter >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
+				transitionDelay = 0;
+			} else if (transitionDelay >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
 				nsl.logSimStepFinished(launchingTransitions, detailedLogging);
 				
 				// koniec fazy przepływu tokenów, tutaj uaktualniane są wartości tokenów dla miejsc wyjściowych
@@ -898,9 +898,9 @@ public class NetSimulator {
 				// jeśli to nie tryb LOOP, zatrzymaj symulację
 				if (!loop)
 					scheduleStop();
-				counter++;
+				transitionDelay++;
 			} else
-				counter++; // empty steps
+				transitionDelay++; // empty steps
 		}
 	}
 
@@ -938,13 +938,15 @@ public class NetSimulator {
 		public void actionPerformed(ActionEvent event) {
 			int DEFAULT_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
 			updateStep(); // update graphics
-			if (counter >= DEFAULT_COUNTER && subtractPhase) { // subtract phase
+			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // subtract phase
 				if (scheduledStop) { // executing scheduled stop
 					executeScheduledStop();
 				} else if (isPossibleStep()) { // if steps remaining
 					if (remainingTransitionsAmount == 0) {
 						timeCounter++;
 						GUIManager.getDefaultGUIManager().io.updateTimeStep(""+timeCounter);
+						GUIManager.getDefaultGUIManager().simSettings.currentStep = timeCounter;
+						
 						launchingTransitions = engine.getTransLaunchList(modeSteps);
 						remainingTransitionsAmount = launchingTransitions.size();
 					}
@@ -974,13 +976,13 @@ public class NetSimulator {
 					JOptionPane.showMessageDialog(null, "Simulation ended","No more available steps!",JOptionPane.INFORMATION_MESSAGE);
 					GUIManager.getDefaultGUIManager().log("Simulation ended - no more available steps.", "text", true);
 				}
-				counter = 0;
-			} else if (counter >= DEFAULT_COUNTER && !subtractPhase) {
+				transitionDelay = 0;
+			} else if (transitionDelay >= DEFAULT_COUNTER && !subtractPhase) {
 				// subtract phase ended, commencing add phase
 				launchSingleAddPhaseGraphics(launchingTransitions, false, null);
 				finishedAddPhase = false;
-				counter = 0;
-			} else if (counter >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
+				transitionDelay = 0;
+			} else if (transitionDelay >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
 				//nsl.logSimStepFinished(launchingTransitions, detailedLogging);
 				
 				// ending add phase
@@ -990,9 +992,9 @@ public class NetSimulator {
 				subtractPhase = true;
 				if (!loop) // if not in loop mode, a stop will be scheduled
 					scheduleStop();
-				counter++;
+				transitionDelay++;
 			} else
-				counter++; // empty steps
+				transitionDelay++; // empty steps
 		}
 	}
 	
@@ -1036,7 +1038,7 @@ public class NetSimulator {
 		public void actionPerformed(ActionEvent event) {
 			int DEFAULT_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
 			updateStep(); // update graphics
-			if (counter >= DEFAULT_COUNTER && subtractPhase) { // subtract phase
+			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // subtract phase
 				if (scheduledStop) { // executing scheduled stop
 					executeScheduledStop();
 				} else if (!actionStack.empty()) { // if steps remaining
@@ -1056,8 +1058,8 @@ public class NetSimulator {
 					JOptionPane.showMessageDialog(null, "Backtracking ended",
 						"No more available actions to backtrack!", JOptionPane.INFORMATION_MESSAGE);
 				}
-				counter = 0;
-			} else if (counter >= DEFAULT_COUNTER && !subtractPhase) {
+				transitionDelay = 0;
+			} else if (transitionDelay >= DEFAULT_COUNTER && !subtractPhase) {
 				// subtract phase ended, commencing add phase
 				if (currentStep.getType() == SimulatorMode.STEP) {
 					launchAddPhaseGraphics(currentStep.getPendingTransitions(), true);
@@ -1065,8 +1067,8 @@ public class NetSimulator {
 					launchSingleAddPhaseGraphics(currentStep.getPendingTransitions(), true, currentStep.getLaunchedTransition());
 				}
 				finishedAddPhase = false;
-				counter = 0;
-			} else if (counter >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
+				transitionDelay = 0;
+			} else if (transitionDelay >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
 				// ending add phase
 				if (currentStep.getType() == SimulatorMode.STEP) {
 					launchAddPhase(currentStep.getPendingTransitions(), true);
@@ -1080,9 +1082,9 @@ public class NetSimulator {
 				// scheduled
 				if (!loop)
 					scheduleStop();
-				counter++;
+				transitionDelay++;
 			} else
-				counter++; // empty steps
+				transitionDelay++; // empty steps
 		}
 	}
 }

@@ -114,15 +114,6 @@ public class AbyssNetTables extends JFrame {
 		this.setLocation(20, 20);
 		
 		setSize(new Dimension(900, 700));
-		//addComponentListener(this); //konieczne, aby listenery (przede wszystkim resize) działały
-		//addWindowStateListener(new WindowAdapter() {
-		//	public void windowStateChanged(WindowEvent e) {
-		//		if(e.getNewState() == JFrame.MAXIMIZED_BOTH) {
-		//			ego.setExtendedState(JFrame.NORMAL);
-		//			resizeComponents();
-		//		}
-		//	}
-		//});
 		
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());

@@ -485,9 +485,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 				checkFileINA0.mkdirs();
 				logNoEnter("Tools directory does not exist. ", "error",true);
 				log("Fixed", "italic", false);
-				
-				//JOptionPane.showMessageDialog(null, "Warning! Tools directory does not exists. INAwin32.exe required \n"
-				//		+ "there in order to work properly!", "Tool directory empty.", JOptionPane.WARNING_MESSAGE);
 			}
 			
 			if(!checkFileINA2.exists() || !(checkFileINA2.length() == 80)) { //COMMAND.ina

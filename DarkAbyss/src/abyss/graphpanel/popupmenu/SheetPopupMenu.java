@@ -167,14 +167,9 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 				GUIManager.getDefaultGUIManager().io.loadExternalAnalysis();
 			}
 		}));
-		analMenu.add(createMenuItem("Generate invariants (Abyss)", "generateINA.png", null, new ActionListener() {
+		analMenu.add(createMenuItem("Generate invariants", "generateINA.png", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().io.fastGenerateTinvariants();
-			}
-		}));
-		analMenu.add(createMenuItem("Generate invariants (INA)", "generateINA.png", null, new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().io.generateINAinvariants();
 			}
 		}));
 		

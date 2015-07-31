@@ -10,8 +10,6 @@ import java.awt.Insets;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -26,7 +24,6 @@ import java.util.Map;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -71,8 +68,8 @@ import abyss.workspace.ExtensionFileFilter;
 
 /**
  * Klasa okna modułu symulatora stanów sieci.
+ * 
  * @author MR
- *
  */
 public class AbyssStateSimulator extends JFrame {
 	private static final long serialVersionUID = 5287992734385359453L;
@@ -102,14 +99,8 @@ public class AbyssStateSimulator extends JFrame {
 	private int transChartType = 0; //suma odpaleń, 1=konkretne tranzycje
 	private int placesChartType = 0; //j.w. dla miejsc
 	
-	private boolean listenerStart = false;
 	private JPanel placesJPanel;
-	private JPanel placesChartOptionsPanel;
 	private JPanel transitionsJPanel;
-	private JPanel transChartOptionsPanel;
-	private JPanel dataToolsPanel;
-	private JTabbedPane tabbedPane; //zakładki
-	private JFrame ego;
 	private JSpinner transIntervalSpinner;
 	private JComboBox<String> placesCombo = null;
 	private JComboBox<String> transitionsCombo = null;
@@ -120,7 +111,6 @@ public class AbyssStateSimulator extends JFrame {
 	 * Konstruktor domyślny obiektu klasy StateSimulator (podokna Abyss)
 	 */
 	public AbyssStateSimulator() {
-		ego = this;
 		ssim = new StateSimulator();
 		chartDetails = new ChartProperties();
 		placesRawData = new ArrayList<ArrayList<Integer>>();
@@ -132,6 +122,7 @@ public class AbyssStateSimulator extends JFrame {
 		placesAvgData = new ArrayList<Double>();
 		
 		initializeComponents();
+		initiateListeners();
 	}
 
 	/**
@@ -145,26 +136,27 @@ public class AbyssStateSimulator extends JFrame {
     		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {}
 		setSize(new Dimension(1000, 800));
-		//setResizable(false);
 		
-		JPanel main = new JPanel(null); //główny panel okna
+		JPanel main = new JPanel(new BorderLayout()); //główny panel okna
 		add(main);
 		
-		dataToolsPanel = crateToolsPanel(); //panel opcji i przycisków
-		main.add(dataToolsPanel);
-
-		tabbedPane = new JTabbedPane();
-		tabbedPane.setBounds(0, dataToolsPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-dataToolsPanel.getHeight()-40);
-		ImageIcon icon = Tools.getResIcon16("/icons/stateSim/placesDyn.png");
-		tabbedPane.addTab("Places dynamics", icon, createPlacesTabPanel(), "Places dynamics");
-		
-		ImageIcon icon2 = Tools.getResIcon16("/icons/stateSim/transDyn.png");
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.addTab("Places dynamics", Tools.getResIcon16("/icons/stateSim/placesDyn.png"), createPlacesTabPanel(), "Places dynamics");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Transitions dynamics", icon2, createTransitionsTabPanel(), "Transistions dynamics");
+		tabbedPane.addTab("Transitions dynamics", Tools.getResIcon16("/icons/stateSim/transDyn.png"), createTransitionsTabPanel(), "Transistions dynamics");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-		main.add(tabbedPane);
-		initiateListeners(); // hail Sithis
+		JTabbedPane iownyou = new JTabbedPane();
+		JPanel firstTab = new JPanel(new BorderLayout());
+		firstTab.add(craeteDataAcquisitionPanel(), BorderLayout.NORTH);
+		firstTab.add(tabbedPane, BorderLayout.CENTER);
+		JPanel secondTab = new JPanel();
+		
+		iownyou.addTab("Places dynamics", Tools.getResIcon16("/icons/stateSim/placesDyn.png"), firstTab, "Places dynamics");
+		iownyou.addTab("Transitions dynamics", Tools.getResIcon16("/icons/stateSim/transDyn.png"), secondTab, "Transistions dynamics");
+		
+		main.add(iownyou, BorderLayout.CENTER);
+		
 		repaint();
 	}
 	
@@ -172,10 +164,10 @@ public class AbyssStateSimulator extends JFrame {
 	 * Metoda tworzy panel opcji okna symulatora stanów sieci.
 	 * @return JPanel - panel opcji pobrania danych
 	 */
-	private JPanel crateToolsPanel() {
-		JPanel result = new JPanel(null);
-		result.setBounds(0, 0, this.getWidth()-20, 100);
-		
+	private JPanel craeteDataAcquisitionPanel() {
+		JPanel result = new JPanel(new BorderLayout());
+		result.setPreferredSize(new Dimension(670, 100));
+
 		JPanel dataAcquisitionPanel = new JPanel(null);
 		dataAcquisitionPanel.setBorder(BorderFactory.createTitledBorder("Data acquisition"));
 		dataAcquisitionPanel.setBounds(0, 0, 650, 100);
@@ -299,12 +291,15 @@ public class AbyssStateSimulator extends JFrame {
 	 * @return JPanel - panel
 	 */
 	private JPanel createPlacesTabPanel() {
-		JPanel result = new JPanel(null);
-		result.setBounds(0, 0, this.getWidth()-20, 180);
+		JPanel result = new JPanel(new BorderLayout());
+
+		JPanel topPanel = new JPanel(new BorderLayout());
+		result.add(topPanel, BorderLayout.PAGE_START);
 		
-		placesChartOptionsPanel = new JPanel(null);
+		JPanel placesChartOptionsPanel = new JPanel(null);
 		placesChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Places chart options"));
-		placesChartOptionsPanel.setBounds(0, 0, 610, 120);
+		placesChartOptionsPanel.setPreferredSize(new Dimension(500, 120));
+		
 		int posXchart = 10;
 		int posYchart = 20;
 		
@@ -450,18 +445,17 @@ public class AbyssStateSimulator extends JFrame {
 			}
 		});
 		placesChartOptionsPanel.add(showPlaceButton);
-		result.add(placesChartOptionsPanel);
+		topPanel.add(placesChartOptionsPanel, BorderLayout.CENTER);
 		
 		//************************************************************************************************************
 		//************************************************************************************************************
 		
 		JPanel placesChartGraphicPanel = new JPanel(null);
 		placesChartGraphicPanel.setBorder(BorderFactory.createTitledBorder("Chart graphic"));
-		placesChartGraphicPanel.setBounds(placesChartOptionsPanel.getWidth(), 
-				0, 200, placesChartOptionsPanel.getHeight());
+		placesChartGraphicPanel.setPreferredSize(new Dimension(200, 100));
+		
 		int posXGchart = 10;
 		int posYGchart = 20;
-		result.add(placesChartGraphicPanel);
 		
 		ButtonGroup groupWidth = new ButtonGroup();
 		JRadioButton width1 = new JRadioButton("Width 1");
@@ -501,18 +495,14 @@ public class AbyssStateSimulator extends JFrame {
 		placesChartGraphicPanel.add(width3);
 		groupWidth.add(width3);
 				
+		topPanel.add(placesChartGraphicPanel, BorderLayout.EAST);
 		//************************************************************************************************************
 		//************************************************************************************************************
 
-		placesJPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
-		 	//my zmieniać wymiary jeśli całe okno ma zmieniane w dowolnej chwili
+		placesJPanel = new JPanel(new BorderLayout());
 		placesJPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
-
-		placesJPanel.setBounds(0, placesChartOptionsPanel.getHeight(), this.getWidth()-30, 
-			tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
-		
 		placesJPanel.add(createPlacesChartPanel(), BorderLayout.CENTER);
-		result.add(placesJPanel);
+		result.add(placesJPanel, BorderLayout.CENTER);
 
 		return result;
 	}
@@ -522,12 +512,14 @@ public class AbyssStateSimulator extends JFrame {
 	 * @return JPanel - panel
 	 */
 	private JPanel createTransitionsTabPanel() {
-		JPanel result = new JPanel(null);
-		result.setBounds(0, 0, this.getWidth()-20, 180);
+		JPanel result = new JPanel(new BorderLayout());
+		JPanel topPanel = new JPanel(new BorderLayout());
+		result.add(topPanel, BorderLayout.PAGE_START);
 		
-		transChartOptionsPanel = new JPanel(null);
+		JPanel transChartOptionsPanel = new JPanel(null);
 		transChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Transitions chart options"));
-		transChartOptionsPanel.setBounds(0, 0, 610, 120);
+		transChartOptionsPanel.setPreferredSize(new Dimension(500, 120));
+		
 		int posXchart = 10;
 		int posYchart = 20;
 		
@@ -586,13 +578,6 @@ public class AbyssStateSimulator extends JFrame {
 		transitionsCombo.setSize(500, 20);
 		transitionsCombo.setSelectedIndex(0);
 		transitionsCombo.setMaximumRowCount(12);
-		/*
-		transitionsCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				//int selected = placesCombo.getSelectedIndex();
-			}
-		});
-		*/
 		transChartOptionsPanel.add(transitionsCombo);
 		
 		posYchart += 30;
@@ -685,18 +670,17 @@ public class AbyssStateSimulator extends JFrame {
 			}
 		});
 		transChartOptionsPanel.add(showTransButton);
-		result.add(transChartOptionsPanel);
+		topPanel.add(transChartOptionsPanel, BorderLayout.CENTER);
 		
 		//************************************************************************************************************
 		//************************************************************************************************************
 				
 		JPanel transChartGraphicPanel = new JPanel(null);
 		transChartGraphicPanel.setBorder(BorderFactory.createTitledBorder("Chart graphic"));
-		transChartGraphicPanel.setBounds(transChartOptionsPanel.getWidth(), 
-				0, 200, transChartOptionsPanel.getHeight());
+		transChartGraphicPanel.setPreferredSize(new Dimension(200, 100));
+		
 		int posXGchart = 10;
 		int posYGchart = 20;
-		result.add(transChartGraphicPanel);
 		
 		ButtonGroup groupWidth = new ButtonGroup();
 		JRadioButton width1 = new JRadioButton("Width 1");
@@ -735,17 +719,16 @@ public class AbyssStateSimulator extends JFrame {
 		}});
 		transChartGraphicPanel.add(width3);
 		groupWidth.add(width3);
+		
+		topPanel.add(transChartGraphicPanel, BorderLayout.EAST);
 						
 		//************************************************************************************************************
 		//************************************************************************************************************
 		
 		transitionsJPanel = new JPanel(new BorderLayout());
 		transitionsJPanel.setBorder(BorderFactory.createTitledBorder("Transitions chart"));
-		transitionsJPanel.setBounds(0, transChartOptionsPanel.getHeight(), this.getWidth()-20, 
-				tabbedPane.getHeight() - transChartOptionsPanel.getHeight()-40);
-		
 		transitionsJPanel.add(createTransChartPanel(), BorderLayout.CENTER);
-		result.add(transitionsJPanel);
+		result.add(transitionsJPanel, BorderLayout.CENTER);
 
 		return result;
 	}
@@ -1232,6 +1215,7 @@ public class AbyssStateSimulator extends JFrame {
 	 * Inicjalizacja agentów nasłuchujących różnych zdarzeń dla okna poszukiwania. Przedw wszystkim
 	 * chodzi o reakcję na powiększanie / pomniejszanie okna głównego.
 	 */
+	
     private void initiateListeners() {
     	addWindowListener(new WindowAdapter() {
   	  	    public void windowActivated(WindowEvent e) {
@@ -1239,33 +1223,8 @@ public class AbyssStateSimulator extends JFrame {
   	  	    }  
     	});
     	
-    	listenerStart = true; //na wszelki wypadek
+    	//listenerStart = true; //na wszelki wypadek
     	
-    	//poniżej dynamiczne :) ustalanie wielkości i ustawienia głównych paneli w ramach zakładek
-		addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
-            	if(!listenerStart)
-            		return;
-            	tabbedPane.setBounds(0, dataToolsPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-dataToolsPanel.getHeight()-40);
-            	placesJPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
-            			tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
-            	
-            	transitionsJPanel.setBounds(0, transChartOptionsPanel.getHeight(), ego.getWidth()-30, 
-            			tabbedPane.getHeight() - transChartOptionsPanel.getHeight()-40);
-            }
-            public void componentMoved(ComponentEvent e) {
-            	if(!listenerStart)
-            		return;
-            	tabbedPane.setBounds(0, dataToolsPanel.getHeight(), ego.getWidth()-20, ego.getHeight()-dataToolsPanel.getHeight()-40);
-            	placesJPanel.setBounds(0, placesChartOptionsPanel.getHeight(), ego.getWidth()-30, 
-            		tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
-            	
-            	//placesChartPanel.setBounds(0, placesChartOptionsPanel.getHeight(),2000,  tabbedPane.getHeight() - placesChartOptionsPanel.getHeight()-40);
-            	
-            	transitionsJPanel.setBounds(0, transChartOptionsPanel.getHeight(), ego.getWidth()-30, 
-            			tabbedPane.getHeight() - transChartOptionsPanel.getHeight()-40);
-            }
-        });
     }
 
     /**

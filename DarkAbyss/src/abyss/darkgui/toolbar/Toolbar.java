@@ -243,6 +243,7 @@ public class Toolbar extends BorderDock {
 	 */
 	private ArrayList<ButtonDockable> createAnalysisBar() {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
+		/*
 		ToolbarButtonAction generateINAinvariants = new ToolbarButtonAction(this, "GenerateINA", "Generate invariants using INA", 
 				Tools.getResIcon48("/icons/toolbar/terminal.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -250,6 +251,7 @@ public class Toolbar extends BorderDock {
 			}
 		};
 		analysisDockables.add(createButtonDockable("GenerateINAinv",generateINAinvariants));
+		*/
 		
 		ToolbarButtonAction clusterButton = new ToolbarButtonAction(this, "ClusterAnalysis", "Cluster creation and analysis", 
 				Tools.getResIcon48("/icons/toolbar/clusters.png")) {

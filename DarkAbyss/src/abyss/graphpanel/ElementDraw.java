@@ -34,6 +34,7 @@ public final class ElementDraw {
 	private static Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
 	private static boolean view3d = false;
 	private static boolean snoopy = false;
+	private static boolean crazyColors = false;
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
 	 */
@@ -52,6 +53,12 @@ public final class ElementDraw {
 			snoopy = true;
 		} else {
 			snoopy = false;
+		}
+		
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simPlacesColors").equals("1")) {
+			crazyColors = true;
+		} else {
+			crazyColors = false;
 		}
 	}
 	
@@ -358,7 +365,12 @@ public final class ElementDraw {
 				if(el.isPortalSelected()) { //dla wszystkich innych ElLocations portalu właśnie klikniętego
 					g.setColor(EditorResources.selectionColorLevel3);
 				} else {
-					g.setColor(Color.white);
+					//TODO:
+					if(crazyColors) {
+						g.setColor(getColor(place.getTokensNumber()));
+					} else {
+						g.setColor(Color.white);
+					}
 				}
 
 				g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -698,4 +710,28 @@ public final class ElementDraw {
         txt = txt.replace(",", ".");
 		return txt;
 	}
+	
+	private static Color getColor(int tokens) {
+		long steps = GUIManager.getDefaultGUIManager().simSettings.currentStep;
+		
+		if(steps>10) {
+			if(tokens < 10)
+				return Color.white;
+
+			if(tokens > steps * 0.5) {
+				return new Color(255, 0, 0);
+			} else if(tokens > steps * 0.4) {
+				return new Color(255, 128, 0);
+			} else if(tokens > steps * 0.25) {
+				return new Color(255, 255, 0);
+			} else if(tokens > steps * 0.1) {
+				return new Color(0, 128, 0);
+			} else {
+				return new Color(0, 255, 0);
+			}
+		}
+		
+		return Color.white;
+	}
+
 }

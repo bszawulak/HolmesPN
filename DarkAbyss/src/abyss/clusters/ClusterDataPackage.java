@@ -10,10 +10,12 @@ import java.util.ArrayList;
  */
 public class ClusterDataPackage {
 	public ArrayList<ArrayList<ClusterTransition>> dataMatrix;
+	public ArrayList<ArrayList<Integer>> clustersInvariants;
 	public String algorithm;
 	public String metric;
 	public int clNumber;
 	public ArrayList<Integer> clSize;
+	public ArrayList<Float> clMSS;
 	
 	public boolean showFirings = false;
 	public boolean showScale = false;

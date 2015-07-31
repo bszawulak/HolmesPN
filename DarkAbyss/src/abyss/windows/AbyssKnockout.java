@@ -508,7 +508,6 @@ public class AbyssKnockout extends JFrame {
 	 * MonaLisa, a następnie wyświetla je w zunifikowanej formie w oknie.
 	 * @param notePad AbyssNotepad - okno wyświetlania wyników
 	 */
-	@SuppressWarnings("resource")
 	private void showMonaLisaResults(AbyssNotepad notePad) {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];

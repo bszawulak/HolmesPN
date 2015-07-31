@@ -42,7 +42,6 @@ import abyss.workspace.ExtensionFileFilter;
  */
 public class AbyssClusterSubWindow extends JFrame {
 	private static final long serialVersionUID = 6818230680946396781L;
-	//private static final long serialVersionUID = -5663572683374020754L;
 	private JFrame parentFrame;
 	private Clustering clusteringMetaData;
 	private String nL = "\n";
@@ -701,9 +700,11 @@ public class AbyssClusterSubWindow extends JFrame {
 							+"\nExporting cannon proceed.", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
+				//TODO:
 				ClusterDataPackage dataCore = new ClusterDataPackage();
 				dataCore.dataMatrix = fullData.getClusteringColored(); //najbardziej czasochłonne
+				dataCore.clustersInvariants = fullData.clustersInv;
+				dataCore.clMSS = fullData.metaData.clusterMSS;
 				dataCore.algorithm = fullData.metaData.algorithmName;
 				dataCore.metric = fullData.metaData.metricName;
 				dataCore.clNumber = fullData.metaData.clusterNumber;
@@ -752,6 +753,8 @@ public class AbyssClusterSubWindow extends JFrame {
 			
 			ClusterDataPackage dataCore = new ClusterDataPackage();
 			dataCore.dataMatrix = fullData.getClusteringColored(); //najbardziej czasochłonne
+			dataCore.clustersInvariants = fullData.clustersInv;
+			dataCore.clMSS = fullData.metaData.clusterMSS;
 			dataCore.algorithm = fullData.metaData.algorithmName;
 			dataCore.metric = fullData.metaData.metricName;
 			dataCore.clNumber = fullData.metaData.clusterNumber;
@@ -765,7 +768,7 @@ public class AbyssClusterSubWindow extends JFrame {
 		} else {
 			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
 					+ "contacting authors about the problem please attach *all* three files mentioned in"
-					+ "this log above this message.", "error", true);
+					+ "log above this message.", "error", true);
 		}
 	}
 

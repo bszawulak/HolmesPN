@@ -688,8 +688,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			setSimulator(new NetSimulator(nt, this));
 			//setSimulator(new NetSimulator(NetType.BASIC, this));
 			GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
-			//GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
 			GUIManager.getDefaultGUIManager().io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
+			GUIManager.getDefaultGUIManager().simSettings.currentStep = getSimulator().getSimulatorTimeStep();
+			
 			repaintAllGraphPanels();
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {

@@ -77,6 +77,8 @@ public class GUIReset {
 			gp.getSelectionManager().forceDeselectAllElements();
 		}
 		
+		clearAll();
+		/*
 		//CLEAR PETRI NET DATA:
 		pNet.resetData(); // tylko w ten sposób!!!! 
 		pNet.setINVmatrix(null, false);
@@ -88,15 +90,10 @@ public class GUIReset {
 		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
 		pNet.setSimulationActive(false);
 		pNet.setFileName("");
+		GUIManager.getDefaultGUIManager().simSettings.currentStep = 0;
 		
 		mastah.getSimulatorBox().createSimulatorProperties();
 		pNet.repaintAllGraphPanels();
-		
-		//mastah.leftSplitDock.emptyChild(mastah.getWorkspace().getWorkspaceDock());
-		//Workspace nw = new Workspace(mastah);
-		//mastah.setWorkspace(nw); // default workspace dock
-		//mastah.getDockingListener().setWorkspace(nw);
-		//mastah.leftSplitDock.addChildDock(nw.getWorkspaceDock(), new Position(Position.CENTER));
 		
 		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
 		int dockableSize = workspace.getDockables().size();
@@ -123,9 +120,16 @@ public class GUIReset {
 		
 		mastah.cleanDockables();
 		mastah.markNetSaved();
+		*/
 		return true;
 	}
 	public boolean emergencyRestart() {
+		clearAll();
+		
+		return true;
+	}
+	
+	private void clearAll() {
 		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
 		
@@ -140,16 +144,11 @@ public class GUIReset {
 		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
 		pNet.setSimulationActive(false);
 		pNet.setFileName("");
+		GUIManager.getDefaultGUIManager().simSettings.currentStep = 0;
 		
 		mastah.getSimulatorBox().createSimulatorProperties();
 		pNet.repaintAllGraphPanels();
-		
-		//mastah.leftSplitDock.emptyChild(mastah.getWorkspace().getWorkspaceDock());
-		//Workspace nw = new Workspace(mastah);
-		//mastah.setWorkspace(nw); // default workspace dock
-		//mastah.getDockingListener().setWorkspace(nw);
-		//mastah.leftSplitDock.addChildDock(nw.getWorkspaceDock(), new Position(Position.CENTER));
-		
+
 		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
 		int dockableSize = workspace.getDockables().size();
 		
@@ -168,14 +167,12 @@ public class GUIReset {
 			if(dockable.getDock().getParentDock().equals(parentOfFirst))
 				mastah.globalSheetsList.remove(dockable);
 		}
-		//			guiManager.globalSheetsList.remove(dockable);
 		
 		reset2ndOrderData();
 		IdGenerator.resetIDgenerator();
 		
 		mastah.cleanDockables();
 		mastah.markNetSaved();
-		return true;
 	}
 	
 	

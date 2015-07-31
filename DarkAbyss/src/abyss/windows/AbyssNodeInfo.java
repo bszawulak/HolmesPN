@@ -59,7 +59,7 @@ public class AbyssNodeInfo extends JFrame {
 	private static final long serialVersionUID = 1476738825515760744L;
 	private Place place;
 	private Transition transition;
-	private MetaNode metanode;
+	//private MetaNode metanode;
 	private JPanel mainPanel;
 	private JFrame parentFrame;
 	private AbyssNodeInfoActions action = new AbyssNodeInfoActions(this);
@@ -108,7 +108,7 @@ public class AbyssNodeInfo extends JFrame {
 	
 	public AbyssNodeInfo(MetaNode metanode, JFrame papa) {
 		parentFrame = papa;
-		this.metanode = metanode;
+		//this.metanode = metanode;
 		setTitle("MetaNode: "+metanode.getName());
 		
 		
