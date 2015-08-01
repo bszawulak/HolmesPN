@@ -179,7 +179,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		reset = new GUIReset(); //obiekt odpowiadający za resetowanie danych / kasowanie / czyszczenie
 		subnetsGraphics = new SubnetsGraphics(); //obiekt z metodami graficznymi dla sieci hierarchicznych
 		subnetsHQ = new SubnetsControl(this); //obiekt z metodami zarządzania sieciami hierarchicznymi
-		simSettings = new SimulatorGlobals(); //opcje symulatora
+		simSettings = new SimulatorGlobals(this); //opcje symulatora
 		
 		setFrame(frejm);
 		try {	
@@ -1098,6 +1098,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}
 	}
 	
+	/**
+	 * Dostęp do okna tabel klastrów.
+	 * @return AbyssClusters - obiekt okna
+	 */
 	public AbyssClusters accessClusterWindow() {
 		return windowClusters;
 	}
@@ -1185,7 +1189,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda tworzy nowe okno symulatora stanów programu.
 	 */
 	private void createStateSimulatorWindow() {
-		windowStateSim = new AbyssStateSimulator();
+		windowStateSim = new AbyssStateSimulator(this);
+	}
+	
+	/**
+	 * Metoda zwraca obiekt okna symulatora.
+	 * @return AbyssStateSimulator - obiekt
+	 */
+	public AbyssStateSimulator accessStateSimulatorWindow() {
+		return windowStateSim;
 	}
 	
 	/**
@@ -1194,6 +1206,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void showStateSimulatorWindow() {
 		if(windowStateSim != null) {
 			windowStateSim.setVisible(true);
+			//this.getFrame().setEnabled(false);
 		}
 	}
 	

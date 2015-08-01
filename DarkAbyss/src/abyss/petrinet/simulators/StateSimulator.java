@@ -12,14 +12,15 @@ import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.Transition.TransitionType;
 import abyss.petrinet.simulators.NetSimulator.NetType;
+import abyss.windows.AbyssStateSimulator;
 
 /**
- * Klasa symulująca główny symulator programu :) Różnica jest taka, że poniższe metody potrafią wygenerować
- * tysiące stanów na sekundę (raczej dziesiątki tysięcy).
+ * Klasa symulatora. Różnica między nią a symulatorem graficznym jest taka, że poniższe metody potrafią wygenerować
+ * dziesiątki tysiący stanów na sekundę (co sprawia, że oszczędzanie pamięci staje się sine qua non w jej wypadku).
+ * 
  * @author MR
- *
  */
-public class StateSimulator {
+public class StateSimulator implements Runnable {
 	private ArrayList<Transition> transitions;
 	private ArrayList<Transition> time_transitions;
 	private ArrayList<Place> places;
@@ -35,12 +36,19 @@ public class StateSimulator {
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
 	
 	private boolean maximumMode = false;
-	//private boolean mainSimMaximumMode = false;
-	//private Random generator; // = new Random(System.currentTimeMillis());
-	
 	private SimulatorEngine engine = null;
-	
 	private int modeSteps = 0; // 0 - bez pustych kroków, 1 - z pustymi krokami
+	
+	//runtime:
+	public boolean terminate = false;
+	public int stepsLimit;
+	public JProgressBar progressBar;	//standardowy tryb symulacji
+	private AbyssStateSimulator boss;	//standardowy tryb symulacji
+	private int simulationType;			//standardowy tryb symulacji
+	private int refReps;				//powtórki dla trybu zbierania danych referencyjnych
+	
+	private ArrayList<Double> refPlaceTokensAvg = null;
+	private ArrayList<Double> refTransitionsFiringsAvg = null;
 	
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
@@ -48,6 +56,39 @@ public class StateSimulator {
 	public StateSimulator() {
 		//generator = new Random(System.currentTimeMillis());
 		engine = new SimulatorEngine();
+	}
+
+	/**
+	 * Metoda ustawiająca obiekty dla symulacji w osobnym wątku.
+	 * @param simulationType int - typ symulacji: 1 - standard; 2 - ref. zbieranie danych
+	 * @param blackBox Object... - zależy od trybu powyżej
+	 */
+	public void setThreadDetails(int simulationType, Object... blackBox) {
+		this.simulationType = simulationType;
+		
+		if(simulationType == 1) { //standardowy tryb symulacji
+			this.stepsLimit = (int)blackBox[0];
+			this.progressBar = (JProgressBar)blackBox[1];
+			this.boss = (AbyssStateSimulator)blackBox[2];
+		} else if(simulationType == 2) { //obliczenie zbioru referencyjnego
+			this.stepsLimit = (int)blackBox[0];
+			this.progressBar = (JProgressBar)blackBox[1];
+			this.boss = (AbyssStateSimulator)blackBox[2];
+			this.refReps = (int)blackBox[3];
+			
+			refPlaceTokensAvg = new ArrayList<Double>();
+			refTransitionsFiringsAvg = new ArrayList<Double>();
+		}
+	}
+
+	public void run() {
+		if(simulationType == 1) {
+			simulateNetAll();
+			boss.allDone();
+		} else if(simulationType == 2) {
+			simulateNetRefKnockout();
+			// ?
+		}
 	}
 	
 	/**
@@ -84,9 +125,7 @@ public class StateSimulator {
 		}
 		
 		maximumMode = mode;
-		//generator = new Random(System.currentTimeMillis());
 		engine.setEngine(netT, mode, transitions, time_transitions);
-		
 		ready = true;
 		return ready;
 	}
@@ -100,41 +139,20 @@ public class StateSimulator {
 		transitionsData = new ArrayList<ArrayList<Integer>>();
 		transitionsTotalFiring = new ArrayList<Integer>();
 		transitionsAvgData = new ArrayList<Double>();
-		//allTransitionsIndicesList = new ArrayList<Integer>();
-		//timeTransIndicesList = new ArrayList<Integer>();
 		for(int t=0; t<transitions.size(); t++) {
 			transitionsTotalFiring.add(0);
-			//allTransitionsIndicesList.add(t);
 		}
 		for(int p=0; p<places.size(); p++) {
 			placesAvgData.add(0.0);
 		}
-		//for(int i=0; i<time_transitions.size(); i++) {
-		//	timeTransIndicesList.add(i);
-		//}
-		//generator = new Random(System.currentTimeMillis());
 		ready = true;
 	}
-	
+
 	/**
-	 * Metoda sprawdzająca, czy krok jest możliwy - czy istnieje choć jedna aktywna tranzycja.
-	 * @return boolean - true jeśli jest choć jedna aktywna tranzycja; false w przeciwnym wypadku
-	 */
-	private boolean isPossibleStep() {
-		for (Transition transition : transitions) {
-			if (transition.isActive())
-				return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * Metoda symuluje podaną liczbę kroków sieci Petriego dla wybranego wcześniej trybu, tj.
+	 * Metoda pracująca w wątku. Metoda symuluje podaną liczbę kroków sieci Petriego dla wybranego wcześniej trybu, tj.
 	 * jeśli maximumMode = true, wtedy każda aktywna tranzycja musi się uruchomić.
-	 * @param steps int - liczba kroków do symulacji
-	 * @param pBar JProgressBar - pasek postępu
 	 */
-	public void simulateNet(int steps, JProgressBar pBar) {
+	public void simulateNetAll() {
 		if(ready == false) {
 			JOptionPane.showMessageDialog(null,"Simulation cannot start, no network found.", 
 					"State Simulation problem",JOptionPane.ERROR_MESSAGE);
@@ -144,18 +162,25 @@ public class StateSimulator {
 		prepareNetM0();
 		
 		ArrayList<Transition> launchingTransitions = null;
-		int updateTime = steps / 100;
+		int updateTime = stepsLimit / 50;
 		
 		String max = "50% firing chance";
 		if(maximumMode)
 			max = "maximum";
-		GUIManager.getDefaultGUIManager().log("Starting states simulation for "+steps+" steps in "+max+" mode.", "text", true);
-		for(int i=0; i<steps; i++) {
-			pBar.setValue(i+1);
+		
+		GUIManager.getDefaultGUIManager().log("Starting states simulation for "+stepsLimit+" steps in "+max+" mode.", "text", true);
+		
+		int trueSteps = 0;
+		for(int i=0; i<stepsLimit; i++) {
+			if(terminate)
+				break;
+			
+			progressBar.setValue(i+1);
+			trueSteps++;
 			
 			if(i % updateTime == 0)
-				pBar.update(pBar.getGraphics()); // (╯°□°）╯︵ ┻━┻)  
-			
+				progressBar.update(progressBar.getGraphics());
+
 			if (isPossibleStep()){ 
 				launchingTransitions = engine.getTransLaunchList(modeSteps);
 				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
@@ -191,37 +216,93 @@ public class StateSimulator {
 		}
 		
 		for(int t=0; t<transitions.size(); t++) {
-			transitionsAvgData.add((double) ((double)transitionsTotalFiring.get(t)/(double)steps));
+			transitionsAvgData.add((double) ((double)transitionsTotalFiring.get(t)/(double)trueSteps));
 		}
 		for(int p=0; p<places.size(); p++) {
 			double sumOfTokens = placesAvgData.get(p);
-			placesAvgData.set(p, sumOfTokens/(double)steps);
+			placesAvgData.set(p, sumOfTokens/(double)trueSteps);
 		}
 		GUIManager.getDefaultGUIManager().log("Simulation ended. Restoring zero marking.", "text", true);
 		ready = false;
+		restoreInternalMarkingZero();
+	}
+	
+	
+	public void simulateNetRefKnockout() {
+		if(ready == false) {
+			JOptionPane.showMessageDialog(null,"Simulation cannot start, no network found.", 
+					"State Simulation problem",JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		
+		prepareNetM0();
+		
+		ArrayList<Transition> launchingTransitions = null;
+		int updateTime = stepsLimit / 50;
+		
+		String max = "50% firing chance";
+		if(maximumMode)
+			max = "maximum";
+		
+		GUIManager.getDefaultGUIManager().log("Starting states simulation for "+stepsLimit+" steps in "+max+" mode.", "text", true);
+		
+		int trueSteps = 0;
+		for(int i=0; i<stepsLimit; i++) {
+			if(terminate)
+				break;
+			
+			progressBar.setValue(i+1);
+			trueSteps++;
+			
+			if(i % updateTime == 0)
+				progressBar.update(progressBar.getGraphics());
+
+			if (isPossibleStep()){ 
+				launchingTransitions = engine.getTransLaunchList(modeSteps);
+				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
+				removeDPNtransition(launchingTransitions);
+				
+				ArrayList<Integer> transRow = new ArrayList<Integer>();
+				for(int t=0; t<transitions.size(); t++)
+					transRow.add(0);
+				
+				for(Transition trans : launchingTransitions) {
+					int index = transitions.lastIndexOf(trans);
+					transRow.set(index, 1); //dodaj tylko tranzycjom, które odpaliły
+					
+					int fired = transitionsTotalFiring.get(index);
+					transitionsTotalFiring.set(index, fired+1); //wektor sumy odpaleń
+				}
+				transitionsData.add(transRow);
+			} else {
+				break;
+			}
+			launchAddPhase(launchingTransitions, false);
+			
+			//zbierz informacje o tokenach w miejsach:
+			ArrayList<Integer> marking = new ArrayList<Integer>();
+			for(int p=0; p<places.size(); p++) {
+				int tokens = places.get(p).getTokensNumber();
+				marking.add(tokens);
+				
+				double sumOfTokens = placesAvgData.get(p);
+				placesAvgData.set(p, sumOfTokens+tokens);
+			}
+			placesData.add(marking);
+		}
+		
+		for(int t=0; t<transitions.size(); t++) {
+			transitionsAvgData.add((double) ((double)transitionsTotalFiring.get(t)/(double)trueSteps));
+		}
+		for(int p=0; p<places.size(); p++) {
+			double sumOfTokens = placesAvgData.get(p);
+			placesAvgData.set(p, sumOfTokens/(double)trueSteps);
+		}
+		GUIManager.getDefaultGUIManager().log("Simulation ended. Restoring zero marking.", "text", true);
+		ready = false;
 		restoreInternalMarkingZero();
 	}
 
-	/**
-	 * Metoda sprawdza, czy tranzycja DPN jest w fazie liczenia wewnętrznego zegara aż do punktu
-	 * określonego zmienną duration. Czyli jeśli timer to 0, to tranzycja liczy. Jeśli w takim wypadku
-	 * duration > 0, wtedy ją usuwamy z listy launchingTransitions (tokeny już odjęto z miejsc, dodanie
-	 * nastąpi kilka kroków później). Jeśli timer = duration = 0, tranzycja zostaje na liście.
-	 * @param launchingTransitions ArrayList[Integer] - lista tranzycji odpalających
-	 */
-	private void removeDPNtransition(ArrayList<Transition> launchingTransitions) {
-		for(int t=0; t<launchingTransitions.size(); t++) {
-			Transition test_t = launchingTransitions.get(t);
-			if(test_t.getDPNstatus()) {
-				if(test_t.getDPNtimer() == 0 && test_t.getDPNduration() != 0) {
-					launchingTransitions.remove(test_t);
-					t--;
-				}
-			}
-		}
-	}
-	
 	/**
 	 * Metoda symuluje podaną liczbę kroków sieci Petriego dla wybranego wcześniej trybu, tj.
 	 * jeśli maximumMode = true, wtedy każda aktywna tranzycja musi się uruchomić.
@@ -355,6 +436,31 @@ public class StateSimulator {
 		return transDataVector;
 	}
 	
+	//********************************************************************************************************************************
+	//****************************************              **************************************************************************
+	//****************************************   INTERNALS  **************************************************************************
+	//****************************************              **************************************************************************
+	//********************************************************************************************************************************
+	
+	/**
+	 * Metoda sprawdza, czy tranzycja DPN jest w fazie liczenia wewnętrznego zegara aż do punktu
+	 * określonego zmienną duration. Czyli jeśli timer to 0, to tranzycja liczy. Jeśli w takim wypadku
+	 * duration > 0, wtedy ją usuwamy z listy launchingTransitions (tokeny już odjęto z miejsc, dodanie
+	 * nastąpi kilka kroków później). Jeśli timer = duration = 0, tranzycja zostaje na liście.
+	 * @param launchingTransitions ArrayList[Integer] - lista tranzycji odpalających
+	 */
+	private void removeDPNtransition(ArrayList<Transition> launchingTransitions) {
+		for(int t=0; t<launchingTransitions.size(); t++) {
+			Transition test_t = launchingTransitions.get(t);
+			if(test_t.getDPNstatus()) {
+				if(test_t.getDPNtimer() == 0 && test_t.getDPNduration() != 0) {
+					launchingTransitions.remove(test_t);
+					t--;
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Metoda uruchamia fazę odejmowania tokenów z miejsc wejściowych do odpalonych tranzycji
 	 * @param transitions ArrayList[Transition] - lista uruchamianych tranzycji
@@ -389,8 +495,19 @@ public class StateSimulator {
 	}
 	
 	/**
-	 * Metoda uruchamia fazę faktycznego dodawania tokenów do miejsc wyjściowych z odpalonych
-	 * tranzycji. 
+	 * Metoda sprawdzająca, czy krok jest możliwy - czy istnieje choć jedna aktywna tranzycja.
+	 * @return boolean - true jeśli jest choć jedna aktywna tranzycja; false w przeciwnym wypadku
+	 */
+	private boolean isPossibleStep() {
+		for (Transition transition : transitions) {
+			if (transition.isActive())
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Metoda uruchamia fazę faktycznego dodawania tokenów do miejsc wyjściowych z odpalonych tranzycji. 
 	 * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
 	 */
 	private void launchAddPhase(ArrayList<Transition> transitions, boolean backtracking) {
@@ -456,11 +573,11 @@ public class StateSimulator {
 		return placesAvgData;
 	}
 	
-	//******************************************************************************************************
-	//****************************************   INTERNAL   ************************************************
-	//****************************************              ************************************************
-	//****************************************    BACKUP    ************************************************
-	//******************************************************************************************************
+	//********************************************************************************************************************************
+	//****************************************   INTERNAL   **************************************************************************
+	//****************************************              **************************************************************************
+	//****************************************    BACKUP    **************************************************************************
+	//********************************************************************************************************************************
 	
 	/**
 	 * Metoda przygotowuje backup stanu sieci
@@ -470,6 +587,7 @@ public class StateSimulator {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 		}
 		saveInternalMarkingZero(); //zapis aktualnego stanu jako m0
+		clearTransitionsTimes();
 		
 		//mainSimMaximumMode = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().isMaximumMode();
 	}
@@ -477,10 +595,22 @@ public class StateSimulator {
 	/**
 	 * Metoda ta zapisuje liczbę tokenów każdego miejsca tworząc kopię zapasową stanu m0.
 	 */
-	public void saveInternalMarkingZero() {
+	private void saveInternalMarkingZero() {
 		internalBackupMarkingZero.clear();
 		for(int i=0; i<places.size(); i++) {
 			internalBackupMarkingZero.add(places.get(i).getTokensNumber());
+		}
+	}
+	
+	/**
+	 * Czyści dane czasowe tranzycji
+	 */
+	private void clearTransitionsTimes() {
+		for(int i=0; i<transitions.size(); i++) {
+			transitions.get(i).setLaunching(false);
+			if(transitions.get(i).getTransType() == TransitionType.TPN) {
+				transitions.get(i).resetTimeVariables();
+			}
 		}
 	}
 	
@@ -490,17 +620,10 @@ public class StateSimulator {
 	 */
 	public void restoreInternalMarkingZero() {
 		//GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().setMaximumMode(mainSimMaximumMode);
-		
 		for(int i=0; i<places.size(); i++) {
 			places.get(i).setTokensNumber(internalBackupMarkingZero.get(i));
 			places.get(i).freeReservedTokens();
 		}
-		
-		for(int i=0; i<transitions.size(); i++) {
-			transitions.get(i).setLaunching(false);
-			if(transitions.get(i).getTransType() == TransitionType.TPN) {
-				transitions.get(i).resetTimeVariables();
-			}
-		}
+		clearTransitionsTimes();
 	}
 }

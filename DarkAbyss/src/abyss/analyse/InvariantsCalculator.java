@@ -20,7 +20,7 @@ import abyss.windows.AbyssInvariants;
 
 /**
  * 10.06.2014: Metoda stara się liczyć inwarianty. Coś nie wyszło i to ostro...<br>
- * 11.03.2015: Czas ją naprawić. MR <br>
+ * 11.03.2015: Czas naprawy. MR <br>
  * 13.03.2015: Naprawianie w toku. Tu się takie cuda działy, że głowa mała. Poprzednia wersja miała wymagania
  * pamięciowe serwerowni PCSS. Aż cud, że była w stanie cokolwiek liczyć. O błędach lepiej nie pisać. <br>
  * 14.03.2015: Pierwszy sukces, coś działa. Poprawienie macierzy incydencji (1 na -1) w każdym polu PEWNIE TEŻ POMOGŁO!!! 

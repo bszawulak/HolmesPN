@@ -123,7 +123,6 @@ public class AbyssDockWindowsTable extends JPanel {
 	public JComboBox<String> simMode;
 	public JLabel timeStepLabelValue;
 	private NetSimulator simulator;  // obiekt symulatora
-	private InvariantsSimulator invSimulator;
 	// P/T/M/A
 	public ButtonGroup groupRadioMetaType = new ButtonGroup();  //metanode
 	private boolean nameLocChangeMode = false;
@@ -184,7 +183,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	@SuppressWarnings("unchecked")
 	public AbyssDockWindowsTable(SubWindow subType, Object... blackBox) {
 		if(subType == SubWindow.SIMULATOR) {
-			createSimulatorSubWindow((NetSimulator) blackBox[0], (InvariantsSimulator) blackBox[1]);
+			createSimulatorSubWindow((NetSimulator) blackBox[0]);
 		} else if (subType == SubWindow.PLACE) {
 			createPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
 		} else if (subType == SubWindow.TRANSITION) {
@@ -217,7 +216,7 @@ public class AbyssDockWindowsTable extends JPanel {
 	 * Metoda pomocnicza konstruktora odpowiedzialna za tworzenie podokna dla symulatora sieci.
 	 * @param sim NetSimulator - obiekt symulatora sieci
 	 */
-	private void createSimulatorSubWindow(NetSimulator sim, InvariantsSimulator is) {
+	private void createSimulatorSubWindow(NetSimulator sim) {
 		int columnA_posX = 10;
 		int columnB_posX = 80;
 		int columnA_Y = 0;
@@ -230,7 +229,6 @@ public class AbyssDockWindowsTable extends JPanel {
 		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
 		mode = SIMULATOR;
 		setSimulator(sim);
-		invSimulator = is;
 		
 		// SIMULATION MODE
 		JLabel netTypeLabel = new JLabel("Mode:");
@@ -244,10 +242,22 @@ public class AbyssDockWindowsTable extends JPanel {
 		simMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+				
 				int selectedModeIndex = simMode.getSelectedIndex();
-				simulator.setSimulatorNetType(selectedModeIndex);
-				if(invSimulator != null)
-					invSimulator.setSimulatorNetType(selectedModeIndex);
+				int change = simulator.setSimulatorNetType(selectedModeIndex);
+				doNotUpdate = true;
+				if(change == 0) {
+					simMode.setSelectedIndex(0);
+				} else if(change == 1) {
+					simMode.setSelectedIndex(1);
+				} else if(change == 2) {
+					simMode.setSelectedIndex(2);
+				} else {
+					GUIManager.getDefaultGUIManager().log("Error while changing graphical simulator mode.", "error", true);
+				}
+				doNotUpdate = false;
 			}
 		});
 		components.add(simMode);

@@ -74,23 +74,25 @@ import abyss.workspace.ExtensionFileFilter;
 public class AbyssStateSimulator extends JFrame {
 	private static final long serialVersionUID = 5287992734385359453L;
 	
+	private GUIManager overlord;
 	private AbyssStateSimulatorActions action = new AbyssStateSimulatorActions();
 	private StateSimulator ssim;
 	private boolean maximumMode = false;
 	
 	private JProgressBar progressBar;
 	private int simSteps = 1000; // ile kroków symulacji
+	private int transInterval = 10;
+	private boolean sortedP = false;
+	private boolean sortedT = false;
+	private NetType choosenNetType = NetType.BASIC;
+	
 	private ArrayList<ArrayList<Integer>> placesRawData; //dane o historii miejsc z symulatora
 	private ArrayList<ArrayList<Integer>> transitionsRawData; //j.w. : dla tranzycji
 	private ArrayList<Integer> transitionsCompactData; // suma odpaleń tranzycji
 	private ArrayList<Double> transAvgData;
 	private ArrayList<Double> placesAvgData;
-	private int transInterval = 10;
 	private ArrayList<Integer> placesInChart;
 	private ArrayList<String> placesInChartStr;
-	private boolean sortedP = false;
-	private boolean sortedT = false;
-	private NetType choosenNetType = NetType.BASIC;
 	
 	private XYSeriesCollection placesSeriesDataSet = null;
 	private XYSeriesCollection transitionsSeriesDataSet = null;
@@ -102,15 +104,25 @@ public class AbyssStateSimulator extends JFrame {
 	private JPanel placesJPanel;
 	private JPanel transitionsJPanel;
 	private JSpinner transIntervalSpinner;
+	private JSpinner simStepsSpinner;
 	private JComboBox<String> placesCombo = null;
 	private JComboBox<String> transitionsCombo = null;
-	
 	private ChartProperties chartDetails;
+	private JComboBox<String> simNetMode;
+	private JComboBox<String> simMode;
+	
+	private JButton acqDataButton;
+	//reset:
+	private JPanel knockoutTab;
+	private JButton cancelButton;
+	private boolean workInProgress;
+	private boolean doNotUpdate = false;
 	
 	/**
 	 * Konstruktor domyślny obiektu klasy StateSimulator (podokna Abyss)
 	 */
-	public AbyssStateSimulator() {
+	public AbyssStateSimulator(GUIManager overlord) {
+		this.overlord = overlord;
 		ssim = new StateSimulator();
 		chartDetails = new ChartProperties();
 		placesRawData = new ArrayList<ArrayList<Integer>>();
@@ -150,10 +162,11 @@ public class AbyssStateSimulator extends JFrame {
 		JPanel firstTab = new JPanel(new BorderLayout());
 		firstTab.add(craeteDataAcquisitionPanel(), BorderLayout.NORTH);
 		firstTab.add(tabbedPane, BorderLayout.CENTER);
-		JPanel secondTab = new JPanel();
+
+		iownyou.addTab("Simple mode", Tools.getResIcon16("/icons/stateSim/simpleSimTab.png"), firstTab, "Places dynamics");
 		
-		iownyou.addTab("Places dynamics", Tools.getResIcon16("/icons/stateSim/placesDyn.png"), firstTab, "Places dynamics");
-		iownyou.addTab("Transitions dynamics", Tools.getResIcon16("/icons/stateSim/transDyn.png"), secondTab, "Transistions dynamics");
+		knockoutTab = new AbyssStateSimulatorKnockout();
+		iownyou.addTab("KnockoutSim", Tools.getResIcon16("/icons/stateSim/KnockSimTab.png"), knockoutTab, "Transistions dynamics");
 		
 		main.add(iownyou, BorderLayout.CENTER);
 		
@@ -165,16 +178,14 @@ public class AbyssStateSimulator extends JFrame {
 	 * @return JPanel - panel opcji pobrania danych
 	 */
 	private JPanel craeteDataAcquisitionPanel() {
-		JPanel result = new JPanel(new BorderLayout());
-		result.setPreferredSize(new Dimension(670, 100));
-
 		JPanel dataAcquisitionPanel = new JPanel(null);
 		dataAcquisitionPanel.setBorder(BorderFactory.createTitledBorder("Data acquisition"));
-		dataAcquisitionPanel.setBounds(0, 0, 650, 100);
+		dataAcquisitionPanel.setPreferredSize(new Dimension(670, 120));
+
 		int posXda = 10;
-		int posYda = 20;
+		int posYda = 30;
 		
-		JButton acqDataButton = new JButton("SimStart");
+		acqDataButton = new JButton("SimStart");
 		acqDataButton.setBounds(posXda, posYda, 110, 30);
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
@@ -186,11 +197,18 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		dataAcquisitionPanel.add(acqDataButton);
 		
-		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 1000000, 100);
-		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
+		JLabel simStepsLabel = new JLabel("Steps:");
+		simStepsLabel.setBounds(posXda+120, posYda-20, 80, 20);
+		dataAcquisitionPanel.add(simStepsLabel);
+		
+		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 100, 1000000, 100);
+		simStepsSpinner = new JSpinner(simStepsSpinnerModel);
 		simStepsSpinner.setBounds(posXda +120, posYda, 80, 30);
 		simStepsSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate)
+					return;
+				
 				JSpinner spinner = (JSpinner) e.getSource();
 				int val = (int) spinner.getValue();
 				simSteps = val;
@@ -215,14 +233,57 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		dataAcquisitionPanel.add(simStepsSpinner);
 		
-		JLabel label1 = new JLabel("Mode:");
-		label1.setBounds(posXda+210, posYda+5, 50, 20);
+		//Main mode:
+		JLabel simMainModeLabel = new JLabel("Main mode:");
+		simMainModeLabel.setBounds(posXda+210, posYda-20, 80, 20);
+		dataAcquisitionPanel.add(simMainModeLabel);
+		
+		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
+		simNetMode = new JComboBox<String>(simModeName);
+		simNetMode.setBounds(posXda+210, posYda, 120, 30);
+		simNetMode.setSelectedIndex(0);
+		simNetMode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+				
+				int selectedModeIndex = simNetMode.getSelectedIndex();
+				selectedModeIndex = GUIManager.getDefaultGUIManager().simSettings.checkSimulatorNetType(selectedModeIndex);
+				doNotUpdate = true;
+				switch(selectedModeIndex) {
+					case 0:
+						choosenNetType = NetType.BASIC;
+						simNetMode.setSelectedIndex(0);
+						break;
+					case 1:
+						choosenNetType = NetType.TIME;
+						simNetMode.setSelectedIndex(1);
+						break;
+					case 2:
+						choosenNetType = NetType.HYBRID;
+						simNetMode.setSelectedIndex(2);
+						break;
+					case -1:
+						choosenNetType = NetType.BASIC;
+						simNetMode.setSelectedIndex(1);
+						GUIManager.getDefaultGUIManager().log("Error while changing simulator mode. Set for BASIC.", "error", true);
+						break;
+				}
+				doNotUpdate = false;
+			}
+		});
+		dataAcquisitionPanel.add(simNetMode);
+		
+		//Sub-mode:
+		JLabel label1 = new JLabel("Sub-mode:");
+		label1.setBounds(posXda+340, posYda-20, 90, 20);
 		dataAcquisitionPanel.add(label1);
 		
-		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
+		simMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode"});
 		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
-		simMode.setBounds(posXda+250, posYda, 120, 30);
-		simMode.setSelectedIndex(1);
+		simMode.setBounds(posXda+340, posYda, 120, 30);
+		simMode.setSelectedIndex(0);
 		simMode.setMaximumRowCount(6);
 		simMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -235,31 +296,8 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		dataAcquisitionPanel.add(simMode);
 		
-		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
-		final JComboBox<String> simNetMode = new JComboBox<String>(simModeName);
-		simNetMode.setBounds(posXda+380, posYda, 120, 30);
-		simNetMode.setSelectedIndex(0);
-		simNetMode.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selectedModeIndex = simNetMode.getSelectedIndex();
-				switch(selectedModeIndex) {
-					case 0:
-						choosenNetType = NetType.BASIC;
-						break;
-					case 1:
-						choosenNetType = NetType.TIME;
-						break;
-					case 2:
-						choosenNetType = NetType.HYBRID;
-						break;
-				}
-			}
-		});
-		dataAcquisitionPanel.add(simNetMode);
-		
 		JButton clearDataButton = new JButton("Clear");
-		clearDataButton.setBounds(posXda+510, posYda, 110, 30);
+		clearDataButton.setBounds(posXda+470, posYda, 110, 30);
 		clearDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/clearData.png"));
 		clearDataButton.setToolTipText("Clear all charts and data vectors. Reset simulator.");
 		clearDataButton.addActionListener(new ActionListener() {
@@ -271,6 +309,18 @@ public class AbyssStateSimulator extends JFrame {
 		});
 		dataAcquisitionPanel.add(clearDataButton);
 		
+		cancelButton = new JButton();
+		cancelButton.setText("STOP");
+		cancelButton.setBounds(posXda+590, posYda, 110, 30);
+		cancelButton.setMargin(new Insets(0, 0, 0, 0));
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				ssim.terminate = true;
+			}
+		});
+		cancelButton.setFocusPainted(false);
+		dataAcquisitionPanel.add(cancelButton);
+		
 		posYda += 40;
 		progressBar = new JProgressBar();
 		progressBar.setBounds(posXda, posYda-7, 550, 40);
@@ -281,9 +331,8 @@ public class AbyssStateSimulator extends JFrame {
 	    Border border = BorderFactory.createTitledBorder("Progress");
 	    progressBar.setBorder(border);
 	    dataAcquisitionPanel.add(progressBar);
-		result.add(dataAcquisitionPanel);
 		
-		return result;
+		return dataAcquisitionPanel;
 	}
 
 	/**
@@ -743,7 +792,7 @@ public class AbyssStateSimulator extends JFrame {
 	 * Metoda ta tworzy wykres liniowy dla miejsc.
 	 * @return JPanel - panel z wykresem
 	 */
-	JPanel createPlacesChartPanel() {
+	private JPanel createPlacesChartPanel() {
 		String chartTitle = "Places dynamics";
 	    String xAxisLabel = "Step";
 	    String yAxisLabel = "Tokens";
@@ -1014,8 +1063,10 @@ public class AbyssStateSimulator extends JFrame {
 	 * Metoda czyszcząca dane okna.
 	 */
 	private void clearTransitionsChart() {
-		if(transitionsSeriesDataSet.getSeriesCount() > 0)
-			transitionsSeriesDataSet.removeAllSeries();	
+		transitionsSeriesDataSet.removeAllSeries();
+
+		//if(transitionsSeriesDataSet.getSeriesCount() > 0)
+		//	transitionsSeriesDataSet.removeAllSeries();	
 	}
 	
 	/**
@@ -1150,8 +1201,14 @@ public class AbyssStateSimulator extends JFrame {
 	 */
 	private void fillPlacesAndTransitionsData() {
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		if(places== null || places.size() == 0)
+		if(places== null || places.size() == 0) {
+			placesCombo.removeAllItems();
+			placesCombo.addItem("---");
+			transitionsCombo.removeAllItems();
+			transitionsCombo.addItem("---");
+			
 			return;
+		}
 		
 		placesCombo.removeAllItems();
 		placesCombo.addItem("---");
@@ -1210,25 +1267,9 @@ public class AbyssStateSimulator extends JFrame {
 			}
 		}
 	}
-	
-	/**
-	 * Inicjalizacja agentów nasłuchujących różnych zdarzeń dla okna poszukiwania. Przedw wszystkim
-	 * chodzi o reakcję na powiększanie / pomniejszanie okna głównego.
-	 */
-	
-    private void initiateListeners() {
-    	addWindowListener(new WindowAdapter() {
-  	  	    public void windowActivated(WindowEvent e) {
-  	  	    	fillPlacesAndTransitionsData();
-  	  	    }  
-    	});
-    	
-    	//listenerStart = true; //na wszelki wypadek
-    	
-    }
 
     /**
-     * Metoda wywoływana przyciskiem, symuluje daną liczbę kroków sieci, a następnie
+     * Metoda wywoływana w wątku, symuluje daną liczbę kroków sieci, a następnie
      * pobiera tablice i wektory danych z obiektu symulatora do struktur wewnętrznych
      * obiektu klasy AbyssStateSimulator - czyli podokna programu głównego.
      */
@@ -1249,15 +1290,52 @@ public class AbyssStateSimulator extends JFrame {
 		clearAllData();
 		
 		progressBar.setMaximum(simSteps);
-		//choosenNetType
-		//boolean success = ssim.initiateSim(NetType.BASIC, maximumMode);
+
 		boolean success = ssim.initiateSim(choosenNetType, maximumMode);
-		ssim.simulateNet(simSteps, progressBar);
-		
-		if(success == false) {
+		if(success == false)
 			return;
-		}
 		
+		//zablokuj kilka elementów okna symulatora
+		blockSimWindowComponents();
+		workInProgress = true;
+		
+		ssim.setThreadDetails(1, simSteps, progressBar, this);
+		Thread myThread = new Thread(ssim);
+		myThread.start();
+	}
+	
+	/**
+	 * Blokuje komponenty na czas symulacji.
+	 */
+	private void blockSimWindowComponents() {
+		acqDataButton.setEnabled(false);
+		simStepsSpinner.setEnabled(false);
+		simNetMode.setEnabled(false);
+		simMode.setEnabled(false);
+		overlord.getFrame().setEnabled(false);
+		//TODO: dodawać kolejne tutaj:
+		
+		
+	}
+	
+	/**
+	 * Odblokowuje komponenty po zakończonej / przerwanej symulacji.
+	 */
+	private void unblockSimWindowComponents() {
+		acqDataButton.setEnabled(true);
+		simStepsSpinner.setEnabled(true);
+		simNetMode.setEnabled(true);
+		simMode.setEnabled(true);
+		overlord.getFrame().setEnabled(true);
+		//TODO: dodawać kolejne tutaj:
+		
+		
+	}
+	
+	/**
+	 * Metoda wywoływana zdalnie, kiedy wątek symulacji głównej (Simple) zakończy obliczenia
+	 */
+	public void allDone() {
 		//pobieranie wektorów danych zebranych w symulacji:
 		placesRawData = ssim.getPlacesData();
 		placesAvgData = ssim.getPlacesAvgData();
@@ -1273,6 +1351,8 @@ public class AbyssStateSimulator extends JFrame {
 		}
 		
 		fillPlacesAndTransitionsData();
+		unblockSimWindowComponents();
+		workInProgress = false;
 	}
 	
 	/**
@@ -1281,10 +1361,14 @@ public class AbyssStateSimulator extends JFrame {
 	private void clearAllData() {
 		ssim = new StateSimulator();
 		placesRawData.clear();
-		placesAvgData.clear();
 		transitionsRawData.clear();
 		transitionsCompactData.clear();
+		placesAvgData.clear();
 		transAvgData.clear();
+		
+		placesInChart.clear();
+		placesInChartStr.clear();
+		
 	}
 	
 	/**
@@ -1317,18 +1401,6 @@ public class AbyssStateSimulator extends JFrame {
 		}
 	}
 
-	/*
-	protected JComponent makeTextPanel(String text) {
-        JPanel panel = new JPanel(false);
-        JLabel filler = new JLabel(text);
-        filler.setHorizontalAlignment(JLabel.CENTER);
-        //panel.setLayout(new GridLayout(1, 1));
-        panel.add(filler);
-        panel.setBounds(0, 0, 640, 480);
-        return panel;
-    }
-    */
-	
 	/**
 	 * Metoda uaktualniania stylu wyświetlania
 	 */
@@ -1368,8 +1440,60 @@ public class AbyssStateSimulator extends JFrame {
 		public float p_StrokeWidth = 1.0f;
 		public float t_StrokeWidth = 1.0f;
 		
-		public ChartProperties() {
-			
-		}
+		public ChartProperties() {}
+	}
+	
+	/**
+	 * Inicjalizacja agentów nasłuchujących różnych zdarzeń dla okna poszukiwania. Przedw wszystkim
+	 * chodzi o reakcję na powiększanie / pomniejszanie okna głównego.
+	 */
+    private void initiateListeners() { //HAIL SITHIS
+    	addWindowListener(new WindowAdapter() {
+  	  	    public void windowActivated(WindowEvent e) {
+  	  	    	fillPlacesAndTransitionsData();
+  	  	    }  
+    	});
+    	
+    	addWindowListener(new java.awt.event.WindowAdapter() {
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		    	if(workInProgress) {
+		    		JOptionPane.showMessageDialog(null, "Simulator working. Window closing operation cancelled.", 
+							"Simulator working",JOptionPane.INFORMATION_MESSAGE);
+		    		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		    	} else {
+		    		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		    		overlord.getFrame().setEnabled(true);
+		    	}
+		    	
+		    }
+		});
+
+    }
+	
+	/**
+	 * Reset okna symulatora.
+	 */
+	public void resetSimWindow() {
+		doNotUpdate = true;
+		clearTransitionsChart();
+		clearPlacesChart();
+		clearAllData();
+		fillPlacesAndTransitionsData();
+		
+		simSteps = 1000; // ile kroków symulacji
+		transInterval = 10;
+		transChartType = 0;
+		placesChartType = 0;
+		simNetMode.setSelectedIndex(0);
+		simMode.setSelectedIndex(0);
+		
+		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 100, 1000000, 100);
+		simStepsSpinner.setModel(simStepsSpinnerModel);
+		int mValue = simSteps/10;
+		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(100, 0, mValue, 10);
+		transIntervalSpinner.setModel(intervSpinnerModel);
+		
+		((AbyssStateSimulatorKnockout)knockoutTab).resetWindow();
+		doNotUpdate = false;
 	}
 }

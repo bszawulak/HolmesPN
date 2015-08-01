@@ -92,7 +92,7 @@ public class SimulatorEngine {
 	
 	/**
 	 * Metoda generuje zbiór tranzycji do uruchomienia w ramach symulatora.
-	 * @param int mode - tryb: 0 - bez pustych kroków, 1 - puste kroki dozwolone
+	 * @param mode int - tryb: 0 - bez pustych kroków, 1 - puste kroki dozwolone
 	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia
 	 */
 	public ArrayList<Transition> getTransLaunchList(int mode) {

@@ -176,35 +176,26 @@ public class NetSimulator {
 	/**
 	 * Metoda ustawiająca tryb sieci do symulacji.
 	 * @param type int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
+	 * @return int - faktyczny ustawiony tryb: 0 - PN, 1 - TPN, 2 - Hybrid, -1 : crash mode
 	 */
-	public void setSimulatorNetType(int type) {
+	public int setSimulatorNetType(int type) {
 		//sprawdzenie poprawności trybu, zakładamy że Basic działa zawsze
-		if(type == 0) {
+		int check = GUIManager.getDefaultGUIManager().simSettings.checkSimulatorNetType(type);
+		
+		if(check == 0) {
 			simulationType = NetType.BASIC;
 			engine.setSimulationType(simulationType);
-		} else if(type == 1) {
-			for(Node n : petriNet.getNodes()) {
-				if(n instanceof Place) { //miejsca ignorujemy
-					continue;
-				}
-				
-				if(n instanceof Transition) {
-					if(!(((Transition)n).getTransType() == TransitionType.TPN)) {
-						JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
-								"Invalid mode", JOptionPane.ERROR_MESSAGE);
-						GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
-						simulationType = NetType.HYBRID;
-						engine.setSimulationType(simulationType);
-						return;
-					}
-				}
-			}
+			return 0;
+		} else if(check == 1) {
 			simulationType = NetType.TIME;
 			engine.setSimulationType(simulationType);
-		} else if (type == 2) {
+			return 1;
+		} else if (check == 2) {
 			simulationType = NetType.HYBRID;
 			engine.setSimulationType(simulationType);
-		}		
+			return 2;
+		}
+		return -1;
 	}
 	
 	public NetType getSimulatorNetMode() {
@@ -292,7 +283,7 @@ public class NetSimulator {
 						// nic nie oddawaj
 					} else if(arc.getArcType() == TypesOfArcs.RESET) {
 						place.modifyTokensNumber(-1); 
-						// TODO: PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
+						// PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
 					}  else if(arc.getArcType() == TypesOfArcs.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else {
@@ -359,7 +350,7 @@ public class NetSimulator {
 						// nic nie oddawaj
 					} else if(arc.getArcType() == TypesOfArcs.RESET) {
 						place.modifyTokensNumber(-1); 
-						// TODO: PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
+						// PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
 					}  else if(arc.getArcType() == TypesOfArcs.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else {
@@ -832,7 +823,6 @@ public class NetSimulator {
 			loop = looping;
 		}
 
-		//TODO 
 		/**
 		 * Metoda wykonywana jako kolejny krok przez symulator.
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 

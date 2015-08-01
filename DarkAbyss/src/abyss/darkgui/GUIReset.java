@@ -53,7 +53,7 @@ public class GUIReset {
 		}
 		
 		
-		boolean status = GUIManager.getDefaultGUIManager().getNetChangeStatus();
+		boolean status = mastah.getNetChangeStatus();
 		if(status == true) {
 			Object[] options = {"Continue", "Save and continue", "Cancel",};
 			int n = JOptionPane.showOptionDialog(null,
@@ -70,68 +70,32 @@ public class GUIReset {
 		}
 		
 		
-		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
+		PetriNet pNet = mastah.getWorkspace().getProject();
+		mastah.log("Net data deletion initiated.", "text", true);
 
 		for (GraphPanel gp : pNet.getGraphPanels()) {
 			gp.getSelectionManager().forceDeselectAllElements();
 		}
 		
 		clearAll();
-		/*
-		//CLEAR PETRI NET DATA:
-		pNet.resetData(); // tylko w ten sposób!!!! 
-		pNet.setINVmatrix(null, false);
-		pNet.setMCTMatrix(null, false);
-		pNet.accessMCTnames().clear();
-		pNet.setMCSdataCore(new MCSDataMatrix());
-		pNet.resetComm();
-		pNet.setMCTanalyzer(new MCTCalculator(pNet));
-		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
-		pNet.setSimulationActive(false);
-		pNet.setFileName("");
-		GUIManager.getDefaultGUIManager().simSettings.currentStep = 0;
-		
-		mastah.getSimulatorBox().createSimulatorProperties();
-		pNet.repaintAllGraphPanels();
-		
-		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
-		int dockableSize = workspace.getDockables().size();
-		
-		CompositeDock parentOfFirst = workspace.getDockables().get(0).getDock().getParentDock();
-		
-		for(int d=0; d<dockableSize; d++) {
-			Dockable dockable = workspace.getDockables().get(d);
-			String x = dockable.getID();
-			if(x.equals("Sheet 0")) {
-				continue;
-			}
-			workspace.deleteTab(dockable, true);
-			d--;
-			dockableSize--;
-			
-			if(dockable.getDock().getParentDock().equals(parentOfFirst))
-				mastah.globalSheetsList.remove(dockable);
-		}
-		//			guiManager.globalSheetsList.remove(dockable);
-		
-		reset2ndOrderData();
-		IdGenerator.resetIDgenerator();
-		
-		mastah.cleanDockables();
-		mastah.markNetSaved();
-		*/
-		return true;
-	}
-	public boolean emergencyRestart() {
-		clearAll();
-		
 		return true;
 	}
 	
+	/**
+	 * Używana w przypadku krytycznego błędu rysowania sieci.
+	 * @return boolean - true zawsze
+	 */
+	public boolean emergencyRestart() {
+		clearAll();
+		return true;
+	}
+	
+	/**
+	 * Wewnętrzna metoda czyszcząca dane programu.
+	 */
 	private void clearAll() {
 		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
+		mastah.log("Net data deletion initiated.", "text", true);
 		
 		//CLEAR PETRI NET DATA:
 		pNet.resetData(); // tylko w ten sposób!!!! 
@@ -144,7 +108,10 @@ public class GUIReset {
 		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
 		pNet.setSimulationActive(false);
 		pNet.setFileName("");
-		GUIManager.getDefaultGUIManager().simSettings.currentStep = 0;
+		mastah.simSettings.currentStep = 0;
+		
+		mastah.accessStateSimulatorWindow().resetSimWindow();
+		mastah.accessClusterWindow().resetWindow();
 		
 		mastah.getSimulatorBox().createSimulatorProperties();
 		pNet.repaintAllGraphPanels();
@@ -202,7 +169,7 @@ public class GUIReset {
 			mastah.getInvariantsBox().repaint();
 
 			invGenerated = false;
-			GUIManager.getDefaultGUIManager().log("Invariants data removed from memory.", "text", true);
+			mastah.log("Invariants data removed from memory.", "text", true);
 		}
 		
 		if(mctGenerated == true) {
@@ -219,7 +186,7 @@ public class GUIReset {
 			mastah.getMctBox().repaint();
 			
 			mctGenerated = false;
-			GUIManager.getDefaultGUIManager().log("MCT data removed from memory.", "text", true);
+			mastah.log("MCT data removed from memory.", "text", true);
 		}
 		
 		if(clustersGenerated == true) {
@@ -232,7 +199,7 @@ public class GUIReset {
 			mastah.getClusterSelectionBox().repaint();
 			
 			clustersGenerated = false;
-			GUIManager.getDefaultGUIManager().log("Clustering data removed from memory.", "text", true);
+			mastah.log("Clustering data removed from memory.", "text", true);
 		}
 	}
 	
@@ -277,7 +244,7 @@ public class GUIReset {
 	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActive() {
-		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		NetSimulator ns = mastah.getSimulatorBox().getCurrentDockWindow().getSimulator();
 		if(ns.getSimulatorStatus() == SimulatorMode.STOPPED) {
 			return false;
 		} else {
@@ -290,7 +257,7 @@ public class GUIReset {
 	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
-		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		NetSimulator ns = mastah.getSimulatorBox().getCurrentDockWindow().getSimulator();
 		if(ns.getSimulatorStatus() == SimulatorMode.STOPPED) {
 			return false;
 		} else {

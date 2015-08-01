@@ -172,27 +172,12 @@ public class AbyssClusterSubWindow extends JFrame {
 		setMinimumSize(new Dimension(600, 600));
 		setMaximumSize(new Dimension(600, 600));
 		setResizable(false);
-
-		//JPanel mainPanel = new JPanel();
-		//mainPanel.setLayout(new BorderLayout());
-		
 		
 		JPanel tablePanel = createEditor();
 		tablePanel.setOpaque(true); 
 	    JLayer<JPanel> jlayer = new JLayer<JPanel>(tablePanel, layerUI);
 	    
-	    /* 
-	    final Timer stopper = new Timer(4000, new ActionListener() {
-	    	public void actionPerformed(ActionEvent ae) {
-		    		layerUI.stop();
-	    	}
-	    });
-	    stopper.setRepeats(false);
-	     */
-	 
 	    add(jlayer);
-		//add(tablePanel);
-
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override

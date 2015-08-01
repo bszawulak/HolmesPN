@@ -82,7 +82,8 @@ public class AbyssClusters extends JFrame {
     private ClusteringInfoMatrix dataTableCase56 = null;
     private String pathCSVfile = "";
     private String pathClustersDir = "";
-    //private String pathCHmetricsDir = "";
+
+    private JPanel tablePanel;
     
     /**
      * Jeśli true - zapis inwariantów do pliku csv w postaci binarnej
@@ -126,7 +127,6 @@ public class AbyssClusters extends JFrame {
         gbc.weightx = 0.1;
         gbc.weighty = 1.0;
         
-        JPanel tablePanel; // = new JPanel();
         if(mode==0)
         	tablePanel = createTablePanelCase56(); // !!!
         else
@@ -868,6 +868,10 @@ public class AbyssClusters extends JFrame {
   	  	    	*/
   	  	    }  
     	});
+    }
+    
+    public void resetWindow() {
+    	tablePanel = createTablePanelCase56();
     }
     
     //**************************************************************************************************

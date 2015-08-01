@@ -71,7 +71,7 @@ public class AbyssNodeInfo extends JFrame {
 	private int repeated = 1;
 	private JSpinner transIntervalSpinner;
 	private boolean maximumMode = false;
-	private int transInterval = 1;
+	private int transInterval = 10;
 	
 	private NetType choosenNetType = NetType.BASIC;
 	
@@ -740,9 +740,8 @@ public class AbyssNodeInfo extends JFrame {
 			chartMainPanel.setEnabled(false);
 			chartButtonPanel.setEnabled(false);
 			//*********************************************
-			TextTitle title = dynamicsChart.getTitle();   
-			title.setBorder(2, 2, 2, 2);   
-			//title.setBackgroundPaint(Color.white); 
+			TextTitle title = dynamicsChart.getTitle();
+			title.setBorder(2, 2, 2, 2);
 			title.setFont(new Font("Dialog", Font.PLAIN, 20));
 			title.setExpandToFitSpace(true);
 			title.setPaint(Color.red);
@@ -829,7 +828,6 @@ public class AbyssNodeInfo extends JFrame {
 	 */
 	private ArrayList<Integer> acquireNewTransitionData() {
 		StateSimulator ss = new StateSimulator();
-		//ss.initiateSim(NetType.BASIC, maximumMode);
 		ss.initiateSim(choosenNetType, maximumMode);
 		ArrayList<Integer> dataVector = ss.simulateNetSingleTransition(simSteps, transition);
 		
@@ -837,10 +835,7 @@ public class AbyssNodeInfo extends JFrame {
 		XYSeries series = new XYSeries("Average firing");
 		if(dataVector != null) {
 			for(int step=0; step<dataVector.size()-2; step++) {
-				//if(transInterval > (transitionsRawData.size()/10)) {
-				//	transInterval = transitionsRawData.size()/10;
-				//}
-				int value = 0; //suma odpaleń w przedziale czasu
+				double value = 0; //suma odpaleń w przedziale czasu
 				int interval = transInterval;
 				if(step+interval >= dataVector.size()-2)
 					interval = dataVector.size() - 2 - step;
@@ -852,6 +847,8 @@ public class AbyssNodeInfo extends JFrame {
 						
 					}
 				}
+				value /= interval;
+				value *= 100;
 				series.add(step, value);
 				step += (interval-1);
 			}
@@ -870,7 +867,7 @@ public class AbyssNodeInfo extends JFrame {
 	    String xAxisLabel = "Simulation steps";
 	    String yAxisLabel = "Tokens";
 	    if(node instanceof Transition)
-	    	yAxisLabel = "Firings";
+	    	yAxisLabel = "Firings chance %";
 	    
 	    boolean showLegend = false;
 	    boolean createTooltip = true;

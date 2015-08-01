@@ -52,7 +52,6 @@ public class MCSCalculator implements Runnable {
      */
     public MCSCalculator(int objR, ArrayList<ArrayList<Integer>> invariants, 
     		ArrayList<Transition> transitionsList, int MAX_CUTSETSIZE, int maxNumber, AbyssMCS mstWindow, boolean safe) {
-    	//ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix(); 
     	if(invariants == null || invariants.size() == 0) { //STEP 1: EM obliczono
     		return;
     	} else {
