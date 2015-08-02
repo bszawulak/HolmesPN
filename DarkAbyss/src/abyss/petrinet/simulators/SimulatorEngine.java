@@ -16,7 +16,7 @@ import abyss.petrinet.simulators.NetSimulator.NetType;
  * @author MR
  */
 public class SimulatorEngine {
-	private NetType simulationType = NetType.BASIC;
+	private NetType netSimType = NetType.BASIC;
 	private ArrayList<Transition> transitions = null;
 	private ArrayList<Transition> time_transitions = null;
 	private ArrayList<Integer> transitionsIndexList = null;
@@ -24,7 +24,7 @@ public class SimulatorEngine {
 	private ArrayList<Transition> launchableTransitions = null;
 	private Random generator = null;
 	//HighQualityRandom generator = null;
-	private boolean maximumMode = false;
+	private boolean maxMode = false;
 	
 	public double planckDistance = 1.0;
 	
@@ -36,9 +36,17 @@ public class SimulatorEngine {
 		//generator = new HighQualityRandom(System.currentTimeMillis());
 	}
 	
+	/**
+	 * Ustawianie podstawocyh parametrów silnika symulacji.
+	 * @param simulationType NetType - rodzaj symulowanej sieci
+	 * @param mode boolean - tryb maximum
+	 * @param transitions ArrayList[Transition] - wektor wszystkich tranzycji
+	 * @param time_transitions ArrayList[Transition] - wektor tranzycji czasowych
+	 */
 	public void setEngine(NetType simulationType, boolean mode, ArrayList<Transition> transitions,
 			ArrayList<Transition> time_transitions) {
-		this.simulationType = simulationType;
+		this.netSimType = simulationType;
+		this.maxMode = mode;
 		this.generator = new Random(System.currentTimeMillis());
 		//this.generator = new HighQualityRandom(System.currentTimeMillis());
 		
@@ -62,32 +70,32 @@ public class SimulatorEngine {
 	 * Metoda do zmiany trybu symulacji.
 	 * @param simulationType NetType - nowy typ symulacji
 	 */
-	public void setSimulationType(NetType simulationType) {
-		this.simulationType = simulationType;
+	public void setNetSimType(NetType simulationType) {
+		this.netSimType = simulationType;
 	}
 	
 	/**
 	 * Zwraca aktualnie ustawiony tryb symulacji.
 	 * @return NetType
 	 */
-	public NetType getSimulationMode() {
-		return this.simulationType;
+	public NetType getNetSimMode() {
+		return this.netSimType;
 	}
 	
 	/**
 	 * Metoda ustawia status trybu maximum.
 	 * @param value boolean - true, jeśli tryb włączony
 	 */
-	public void setMaximumMode(boolean value) {
-		this.maximumMode = value;
+	public void setMaxMode(boolean value) {
+		this.maxMode = value;
 	}
 	
 	/**
 	 * Metoda zwraca status trybu maximum.
 	 * @return boolean - true, jeśli włączony
 	 */
-	public boolean getMaximumMode() {
-		return this.maximumMode;
+	public boolean getMaxMode() {
+		return this.maxMode;
 	}
 	
 	/**
@@ -115,11 +123,11 @@ public class SimulatorEngine {
 		boolean generated = false;
 		int safetyCounter = 0;
 		while (!generated) {
-			generateLaunchingTransitions(simulationType);
+			generateLaunchingTransitions(netSimType);
 			if (launchableTransitions.size() > 0) {
 				generated = true; 
 			} else {
-				if (simulationType == NetType.TIME || simulationType == NetType.HYBRID) {
+				if (netSimType == NetType.TIME || netSimType == NetType.HYBRID) {
 					return launchableTransitions; 
 				}
 				
@@ -141,7 +149,7 @@ public class SimulatorEngine {
 	 * @return ArrayList[Transition] - wektor tranzycji do odpalenia
 	 */
 	public ArrayList<Transition> generateNormal() {
-		generateLaunchingTransitions(simulationType);	
+		generateLaunchingTransitions(netSimType);	
 		return launchableTransitions; 
 	}
 	
@@ -159,7 +167,7 @@ public class SimulatorEngine {
 			for (int i = 0; i < transitionsIndexList.size(); i++) {
 				Transition transition = transitions.get(transitionsIndexList.get(i));
 				if (transition.isActive() )
-					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
+					if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -179,7 +187,7 @@ public class SimulatorEngine {
 				}
 				
 				if (transition.isActive() ) {
-					if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
+					if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -474,7 +482,7 @@ public class SimulatorEngine {
 					transition.setTPNtimer(-1);
 				}
 			} else if (transition.isActive() ) {
-				if ((generator.nextInt(10) < 5) || maximumMode) { // 50% 0-4 / 5-9
+				if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
 					transition.bookRequiredTokens();
 					launchableTransitions.add(transition);
 				}

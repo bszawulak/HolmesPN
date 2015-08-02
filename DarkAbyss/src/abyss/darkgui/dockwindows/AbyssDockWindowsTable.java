@@ -246,7 +246,7 @@ public class AbyssDockWindowsTable extends JPanel {
 					return;
 				
 				int selectedModeIndex = simMode.getSelectedIndex();
-				int change = simulator.setSimulatorNetType(selectedModeIndex);
+				int change = simulator.setSimNetType(selectedModeIndex);
 				doNotUpdate = true;
 				if(change == 0) {
 					simMode.setSelectedIndex(0);
@@ -439,9 +439,9 @@ public class AbyssDockWindowsTable extends JPanel {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
-					simulator.setMaximumMode(true);
+					simulator.setMaxMode(true);
 				} else {
-					simulator.setMaximumMode(false);
+					simulator.setMaxMode(false);
 				}
 			}
 		});

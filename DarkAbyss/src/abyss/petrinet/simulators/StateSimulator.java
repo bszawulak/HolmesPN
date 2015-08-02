@@ -13,6 +13,7 @@ import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.Transition.TransitionType;
 import abyss.petrinet.simulators.NetSimulator.NetType;
 import abyss.windows.AbyssStateSimulator;
+import abyss.windows.AbyssStateSimulatorKnockout;
 
 /**
  * Klasa symulatora. Różnica między nią a symulatorem graficznym jest taka, że poniższe metody potrafią wygenerować
@@ -35,9 +36,9 @@ public class StateSimulator implements Runnable {
 	private ArrayList<Double> transitionsAvgData = null;
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
 	
-	private boolean maximumMode = false;
+	private boolean maxMode = false;
 	private SimulatorEngine engine = null;
-	private int modeSteps = 0; // 0 - bez pustych kroków, 1 - z pustymi krokami
+	private int emptySteps = 0; // 0 - bez pustych kroków, 1 - z pustymi krokami
 	
 	//runtime:
 	public boolean terminate = false;
@@ -47,8 +48,7 @@ public class StateSimulator implements Runnable {
 	private int simulationType;			//standardowy tryb symulacji
 	private int refReps;				//powtórki dla trybu zbierania danych referencyjnych
 	
-	private ArrayList<Double> refPlaceTokensAvg = null;
-	private ArrayList<Double> refTransitionsFiringsAvg = null;
+
 	
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
@@ -67,38 +67,38 @@ public class StateSimulator implements Runnable {
 		this.simulationType = simulationType;
 		
 		if(simulationType == 1) { //standardowy tryb symulacji
-			this.stepsLimit = (int)blackBox[0];
+			this.boss = (AbyssStateSimulator)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
-			this.boss = (AbyssStateSimulator)blackBox[2];
+			this.stepsLimit = (int)blackBox[2];
 		} else if(simulationType == 2) { //obliczenie zbioru referencyjnego
-			this.stepsLimit = (int)blackBox[0];
+			this.boss = (AbyssStateSimulator)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
-			this.boss = (AbyssStateSimulator)blackBox[2];
+			this.stepsLimit = (int)blackBox[2];
 			this.refReps = (int)blackBox[3];
-			
-			refPlaceTokensAvg = new ArrayList<Double>();
-			refTransitionsFiringsAvg = new ArrayList<Double>();
 		}
 	}
 
+	/**
+	 * Uruchamiania zdalnie, zakłada, że wszystko co potrzebne zostało już ustawione za pomocą setThreadDetails(...)
+	 */
 	public void run() {
 		if(simulationType == 1) {
 			simulateNetAll();
-			boss.allDone();
+			boss.completeSimulationProcedures();
 		} else if(simulationType == 2) {
-			simulateNetRefKnockout();
-			// ?
+			NetSimulationData data = simulateNetRefKnockout();
+			boss.accessKnockoutTab().completeRefSimulationResults(data);
 		}
 	}
 	
 	/**
 	 * Metoda ta musi być wywołana przed każdym startem symulatora. Inicjalizuje początkowe struktury
 	 * danych dla symulatora.
-	 * @param netT NetType - typ sieci
-	 * @param mode boolean - maximum (true), lub nie
+	 * @param simNetType NetType - typ sieci
+	 * @param maxMode boolean - maximum (true), lub nie
 	 * @return boolean - true, jeśli wszystko się udało
 	 */
-	public boolean initiateSim(NetType netT, boolean mode) {
+	public boolean initiateSim(NetType simNetType, boolean maxMode) {
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		time_transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTimeTransitions();
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
@@ -124,8 +124,8 @@ public class StateSimulator implements Runnable {
 			placesAvgData.add(0.0);
 		}
 		
-		maximumMode = mode;
-		engine.setEngine(netT, mode, transitions, time_transitions);
+		this.maxMode = maxMode;
+		engine.setEngine(simNetType, maxMode, transitions, time_transitions);
 		ready = true;
 		return ready;
 	}
@@ -165,7 +165,7 @@ public class StateSimulator implements Runnable {
 		int updateTime = stepsLimit / 50;
 		
 		String max = "50% firing chance";
-		if(maximumMode)
+		if(maxMode)
 			max = "maximum";
 		
 		GUIManager.getDefaultGUIManager().log("Starting states simulation for "+stepsLimit+" steps in "+max+" mode.", "text", true);
@@ -182,7 +182,7 @@ public class StateSimulator implements Runnable {
 				progressBar.update(progressBar.getGraphics());
 
 			if (isPossibleStep()){ 
-				launchingTransitions = engine.getTransLaunchList(modeSteps);
+				launchingTransitions = engine.getTransLaunchList(emptySteps);
 				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
 				removeDPNtransition(launchingTransitions);
 				
@@ -201,7 +201,7 @@ public class StateSimulator implements Runnable {
 			} else {
 				break;
 			}
-			launchAddPhase(launchingTransitions, false);
+			launchAddPhase(launchingTransitions);
 			
 			//zbierz informacje o tokenach w miejsach:
 			ArrayList<Integer> marking = new ArrayList<Integer>();
@@ -227,80 +227,161 @@ public class StateSimulator implements Runnable {
 		restoreInternalMarkingZero();
 	}
 	
-	
-	public void simulateNetRefKnockout() {
+	//TODO:
+	/**
+	 * Uniwersalna metoda pracująca w osobnym wątku, zbierająca dane o symulacji sieci przez zadaną liczbe kroków
+	 * oraz przez ustaloną liczbę powtórek symulacji. Zwraca obiekt klasy kontenerowej NetSimulationData. Może być
+	 * to zarówno pakiet danych referencyjnych, jak i pakiet danych dla wyłączonych odpowiednich tranzycji. Oczywiście
+	 * musi być to wszystko ustawione przed jej uruchomieniem.
+	 * @return NetSimulationData - pakiet danych z powtórzonych symulacji.
+	 */
+	public NetSimulationData simulateNetRefKnockout() {
 		if(ready == false) {
-			JOptionPane.showMessageDialog(null,"Simulation cannot start, no network found.", 
-					"State Simulation problem",JOptionPane.ERROR_MESSAGE);
-			return;
+			JOptionPane.showMessageDialog(null,"Simulation cannot start, no network found.", "State Simulation problem",JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
-		
 		prepareNetM0();
+		int pBarTotal = 0;
+		ArrayList<Transition> launchingTransitions = null; //odpalone tranzycje
 		
-		ArrayList<Transition> launchingTransitions = null;
-		int updateTime = stepsLimit / 50;
+		//	INIT MAIN VECTORS:
+		ArrayList<Long> totalPlacesTokensInTurn = new ArrayList<Long>();
+		ArrayList<Integer> totalTransFiringInTurn = new ArrayList<Integer>();
+		NetSimulationData netData = new NetSimulationData();
+		int placeNumber = places.size();
+		int transNumber = transitions.size();
+		netData.maxMode = engine.getMaxMode();
+		netData.netSimType = engine.getNetSimMode();
+		netData.steps = stepsLimit;
+		netData.reps = refReps;
+		netData.placesNumber = placeNumber;
+		netData.transNumber = transNumber;
+		for(int p=0; p<placeNumber; p++) {
+			totalPlacesTokensInTurn.add((long) 0);
+			netData.refPlaceTokensAvg.add(0.0);
+			netData.refPlaceTokensMin.add(Double.MAX_VALUE);
+			netData.refPlaceTokensMax.add(0.0);
+			netData.simsWithZeroTokens.add(0);
+		}
+		for(int t=0; t<transNumber; t++) {
+			totalTransFiringInTurn.add(0);
+			netData.refTransFiringsAvg.add(0.0);
+			netData.refTransFiringsMin.add(Double.MAX_VALUE);
+			netData.refTransFiringsMax.add(0.0);
+			netData.simsWithZeroFiring.add(0);
+		}
+		//	INIT VECTORS COMPLETED
 		
-		String max = "50% firing chance";
-		if(maximumMode)
-			max = "maximum";
+		int pBarInterval = (refReps*stepsLimit) / 100;
+		int pBarStep = 0;
+		progressBar.setMaximum(refReps*stepsLimit);
+		progressBar.setMinimum(0);
+		progressBar.setValue(0);
 		
-		GUIManager.getDefaultGUIManager().log("Starting states simulation for "+stepsLimit+" steps in "+max+" mode.", "text", true);
-		
-		int trueSteps = 0;
-		for(int i=0; i<stepsLimit; i++) {
-			if(terminate)
-				break;
+		for(int turn=0; turn<refReps; turn++) {
+			int realStepCounter = 0;
+			for(int p=0; p<placeNumber; p++)
+				totalPlacesTokensInTurn.set(p, (long) 0);
+			for(int t=0; t<transNumber; t++)
+				totalTransFiringInTurn.set(t, 0);
 			
-			progressBar.setValue(i+1);
-			trueSteps++;
-			
-			if(i % updateTime == 0)
-				progressBar.update(progressBar.getGraphics());
-
-			if (isPossibleStep()){ 
-				launchingTransitions = engine.getTransLaunchList(modeSteps);
-				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
-				removeDPNtransition(launchingTransitions);
+			for(int i=0; i<stepsLimit; i++) {
+				if(terminate)
+					break;
 				
-				ArrayList<Integer> transRow = new ArrayList<Integer>();
-				for(int t=0; t<transitions.size(); t++)
-					transRow.add(0);
-				
-				for(Transition trans : launchingTransitions) {
-					int index = transitions.lastIndexOf(trans);
-					transRow.set(index, 1); //dodaj tylko tranzycjom, które odpaliły
-					
-					int fired = transitionsTotalFiring.get(index);
-					transitionsTotalFiring.set(index, fired+1); //wektor sumy odpaleń
+				realStepCounter++; //dzielnik statystyk
+				pBarTotal++; //aktualna wartość paska przewijania
+				pBarStep++; //potrzeby aby wiedzieć kiedy update paska postępu
+				if(pBarStep == pBarInterval) {
+					pBarStep = 0;
+					progressBar.setValue(pBarTotal);
+					progressBar.update(progressBar.getGraphics());
 				}
-				transitionsData.add(transRow);
-			} else {
-				break;
-			}
-			launchAddPhase(launchingTransitions, false);
-			
-			//zbierz informacje o tokenach w miejsach:
-			ArrayList<Integer> marking = new ArrayList<Integer>();
-			for(int p=0; p<places.size(); p++) {
-				int tokens = places.get(p).getTokensNumber();
-				marking.add(tokens);
+
+				if (isPossibleStep()){ 
+					launchingTransitions = engine.getTransLaunchList(emptySteps);
+					
+					for(Transition trans : launchingTransitions) {
+						int index = transitions.lastIndexOf(trans);
+						int val = totalTransFiringInTurn.get(index) + 1;
+						totalTransFiringInTurn.set(index, val);
+					}
+					
+					launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
+					removeDPNtransition(launchingTransitions);
+				} else {
+					pBarTotal--;
+					break;
+				}
+				launchAddPhase(launchingTransitions);
 				
-				double sumOfTokens = placesAvgData.get(p);
-				placesAvgData.set(p, sumOfTokens+tokens);
+				for(int p=0; p<placeNumber; p++) {
+					long val = totalPlacesTokensInTurn.get(p) + places.get(p).getTokensNumber();
+					totalPlacesTokensInTurn.set(p, val);
+				}
 			}
-			placesData.add(marking);
-		}
+			
+			//uśrednianie dla skończonej (jednej) symulacji:
+			for(int p=0; p<placeNumber; p++) {
+				double simTokenValue = totalPlacesTokensInTurn.get(p);
+				simTokenValue /= (double)realStepCounter;
+				
+				double oldVal = netData.refPlaceTokensAvg.get(p) + simTokenValue;
+				netData.refPlaceTokensAvg.set(p, oldVal);
+				
+				double oldMin = netData.refPlaceTokensMin.get(p);
+				if(simTokenValue < oldMin)
+					netData.refPlaceTokensMin.set(p, (double) simTokenValue);
+				
+				double oldMax = netData.refPlaceTokensMax.get(p);
+				if(simTokenValue > oldMax) {
+					netData.refPlaceTokensMax.set(p, (double) simTokenValue);
+				}
+				
+				if(simTokenValue == 0) {
+					int val = netData.simsWithZeroTokens.get(p) + 1;
+					netData.simsWithZeroTokens.set(p, val);
+				}
+			}
+			for(int t=0; t<transNumber; t++) {
+				double simFiringValue = totalTransFiringInTurn.get(t);
+				simFiringValue /= (double)realStepCounter;
+				
+				double oldVal = netData.refTransFiringsAvg.get(t) + simFiringValue;
+				netData.refTransFiringsAvg.set(t, oldVal);
+				
+				double oldMin = netData.refTransFiringsMin.get(t);
+				if(simFiringValue < oldMin)
+					netData.refTransFiringsMin.set(t, (double) simFiringValue);
+				
+				double oldMax = netData.refTransFiringsMax.get(t);
+				if(simFiringValue > oldMax)
+					netData.refTransFiringsMax.set(t, (double) simFiringValue);
+
+				if(simFiringValue == 0) {
+					int val = netData.simsWithZeroFiring.get(t) + 1;
+					netData.simsWithZeroFiring.set(t, val);
+				}
+			}
+			
+			restoreInternalMarkingZero();
+		} //kolejna powtórka
 		
-		for(int t=0; t<transitions.size(); t++) {
-			transitionsAvgData.add((double) ((double)transitionsTotalFiring.get(t)/(double)trueSteps));
+		//uśrednianie po zakończeniu powtórek:
+		for(int p=0; p<placeNumber; p++) {
+			double oldVal = netData.refPlaceTokensAvg.get(p) / (double)refReps;
+			netData.refPlaceTokensAvg.set(p, oldVal);
+			
 		}
-		for(int p=0; p<places.size(); p++) {
-			double sumOfTokens = placesAvgData.get(p);
-			placesAvgData.set(p, sumOfTokens/(double)trueSteps);
+		for(int t=0; t<transNumber; t++) {
+			double oldVal = netData.refTransFiringsAvg.get(t) / (double)refReps;
+			netData.refTransFiringsAvg.set(t, oldVal);
 		}
-		GUIManager.getDefaultGUIManager().log("Simulation ended. Restoring zero marking.", "text", true);
+
 		ready = false;
 		restoreInternalMarkingZero();
+		
+		return netData;
 	}
 
 	/**
@@ -323,7 +404,7 @@ public class StateSimulator implements Runnable {
 		for(int i=0; i<steps; i++) {
 			internalSteps++;
 			if (isPossibleStep()){ 
-				launchableTransitions = engine.getTransLaunchList(modeSteps);
+				launchableTransitions = engine.getTransLaunchList(emptySteps);
 				launchSubtractPhase(launchableTransitions);
 				removeDPNtransition(launchableTransitions);
 				
@@ -335,7 +416,7 @@ public class StateSimulator implements Runnable {
 			} else {
 				break;
 			}
-			launchAddPhase(launchableTransitions, false);
+			launchAddPhase(launchableTransitions);
 			
 			if(placesToo == true)
 				for(int p=0; p<places.size(); p++) {
@@ -380,13 +461,13 @@ public class StateSimulator implements Runnable {
 		for(int i=0; i<steps; i++) {
 			//internalSteps++;
 			if (isPossibleStep()){ 
-				launchableTransitions = engine.getTransLaunchList(modeSteps); //wypełnia launchableTransitions
+				launchableTransitions = engine.getTransLaunchList(emptySteps); //wypełnia launchableTransitions
 				launchSubtractPhase(launchableTransitions);
 				removeDPNtransition(launchableTransitions);
 			} else {
 				break;
 			}
-			launchAddPhase(launchableTransitions, false);
+			launchAddPhase(launchableTransitions);
 			placeDataVector.add(place.getTokensNumber());
 		}
 		ready = false;
@@ -414,7 +495,7 @@ public class StateSimulator implements Runnable {
 		for(int i=0; i<steps; i++) {
 			internalSteps++;
 			if (isPossibleStep()){ 
-				launchableTransitions = engine.getTransLaunchList(modeSteps);
+				launchableTransitions = engine.getTransLaunchList(emptySteps);
 				launchSubtractPhase(launchableTransitions); //zabierz tokeny poprzez aktywne tranzycje
 				removeDPNtransition(launchableTransitions);
 			} else {
@@ -427,7 +508,7 @@ public class StateSimulator implements Runnable {
 			} else {
 				transDataVector.add(0);
 			}
-			launchAddPhase(launchableTransitions, false);
+			launchAddPhase(launchableTransitions);
 		}
 		ready = false;
 		transDataVector.add(sum);
@@ -510,7 +591,7 @@ public class StateSimulator implements Runnable {
 	 * Metoda uruchamia fazę faktycznego dodawania tokenów do miejsc wyjściowych z odpalonych tranzycji. 
 	 * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
 	 */
-	private void launchAddPhase(ArrayList<Transition> transitions, boolean backtracking) {
+	private void launchAddPhase(ArrayList<Transition> transitions) {
 		ArrayList<Arc> arcs;
 		for (Transition transition : transitions) {
 			transition.setLaunching(false);  // skoro tutaj dotarliśmy, to znaczy że tranzycja już
@@ -587,7 +668,7 @@ public class StateSimulator implements Runnable {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 		}
 		saveInternalMarkingZero(); //zapis aktualnego stanu jako m0
-		clearTransitionsTimes();
+		clearTransitionsValues();
 		
 		//mainSimMaximumMode = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().isMaximumMode();
 	}
@@ -603,9 +684,9 @@ public class StateSimulator implements Runnable {
 	}
 	
 	/**
-	 * Czyści dane czasowe tranzycji
+	 * Czyści dane czasowe tranzycji i ustawia każdą na nie-odpalającą.
 	 */
-	private void clearTransitionsTimes() {
+	private void clearTransitionsValues() {
 		for(int i=0; i<transitions.size(); i++) {
 			transitions.get(i).setLaunching(false);
 			if(transitions.get(i).getTransType() == TransitionType.TPN) {
@@ -624,6 +705,6 @@ public class StateSimulator implements Runnable {
 			places.get(i).setTokensNumber(internalBackupMarkingZero.get(i));
 			places.get(i).freeReservedTokens();
 		}
-		clearTransitionsTimes();
+		clearTransitionsValues();
 	}
 }

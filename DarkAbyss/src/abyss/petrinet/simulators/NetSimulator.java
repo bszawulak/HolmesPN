@@ -24,7 +24,7 @@ import abyss.petrinet.elements.Transition.TransitionType;
  * @author MR - poprawki, zmiany, kolejne rodzaje trubów symulacji
  */
 public class NetSimulator {
-	private NetType simulationType;
+	private NetType netSimType;
 	private SimulatorMode simulatorStatus = SimulatorMode.STOPPED;
 	private SimulatorMode previousSimStatus = SimulatorMode.STOPPED;
 	private PetriNet petriNet;
@@ -33,7 +33,7 @@ public class NetSimulator {
 	private Timer timer;
 	private ArrayList<Transition> launchingTransitions;
 	private Stack<SimulationStep> actionStack;
-	private boolean maximumMode = false;
+	private boolean maxMode = false;
 	private boolean writeHistory = true;
 	private long timeCounter = -1;
 	private NetSimulatorLogger nsl = new NetSimulatorLogger();
@@ -68,7 +68,7 @@ public class NetSimulator {
 	 * @param net PetriNet - sieć do symulacji 
 	 */
 	public NetSimulator(NetType type, PetriNet net) {
-		simulationType = type;
+		netSimType = type;
 		petriNet = net;
 		launchingTransitions = new ArrayList<Transition>();
 		//generator = new Random(System.currentTimeMillis());
@@ -84,7 +84,7 @@ public class NetSimulator {
 		simulatorStatus = SimulatorMode.STOPPED;
 		previousSimStatus = SimulatorMode.STOPPED;
 		simulationActive = false;
-		maximumMode = false;
+		maxMode = false;
 		writeHistory = true;
 		timeCounter = -1;
 		actionStack.removeAllElements();
@@ -109,8 +109,8 @@ public class NetSimulator {
 	public void startSimulation(SimulatorMode simulatorMode) {
 		ArrayList<Transition> transitions = petriNet.getTransitions();
 		ArrayList<Transition> time_transitions = petriNet.getTransitions();
-		nsl.logStart(simulationType, writeHistory, simulatorMode, maximumMode);
-		engine.setEngine(simulationType, maximumMode, transitions, time_transitions);
+		nsl.logStart(netSimType, writeHistory, simulatorMode, maxMode);
+		engine.setEngine(netSimType, maxMode, transitions, time_transitions);
 		
 		//zapisz stan tokenów w miejscach przed rozpoczęciem:
 		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == false) {
@@ -178,28 +178,28 @@ public class NetSimulator {
 	 * @param type int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
 	 * @return int - faktyczny ustawiony tryb: 0 - PN, 1 - TPN, 2 - Hybrid, -1 : crash mode
 	 */
-	public int setSimulatorNetType(int type) {
+	public int setSimNetType(int type) {
 		//sprawdzenie poprawności trybu, zakładamy że Basic działa zawsze
 		int check = GUIManager.getDefaultGUIManager().simSettings.checkSimulatorNetType(type);
 		
 		if(check == 0) {
-			simulationType = NetType.BASIC;
-			engine.setSimulationType(simulationType);
+			this.netSimType = NetType.BASIC;
+			engine.setNetSimType(netSimType);
 			return 0;
 		} else if(check == 1) {
-			simulationType = NetType.TIME;
-			engine.setSimulationType(simulationType);
+			this.netSimType = NetType.TIME;
+			engine.setNetSimType(netSimType);
 			return 1;
 		} else if (check == 2) {
-			simulationType = NetType.HYBRID;
-			engine.setSimulationType(simulationType);
+			this.netSimType = NetType.HYBRID;
+			engine.setNetSimType(netSimType);
 			return 2;
 		}
 		return -1;
 	}
 	
-	public NetType getSimulatorNetMode() {
-		return simulationType;
+	public NetType getSimNetType() {
+		return netSimType;
 	}
 	
 	/**
@@ -207,9 +207,9 @@ public class NetSimulator {
 	 * z punktu widzenia ustawionego trybu symulacji
 	 */
 	private void checkSimulatorNetType() {
-		if(simulationType == NetType.BASIC) {
+		if(netSimType == NetType.BASIC) {
 			return;
-		} else if(simulationType == NetType.TIME) {
+		} else if(netSimType == NetType.TIME) {
 			for(Node n : petriNet.getNodes()) {
 				if(n instanceof Place) { //miejsca ignorujemy
 					continue;
@@ -220,14 +220,14 @@ public class NetSimulator {
 						JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
 								"Invalid mode", JOptionPane.ERROR_MESSAGE);
 						GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
-						simulationType = NetType.HYBRID;
-						engine.setSimulationType(simulationType);
+						netSimType = NetType.HYBRID;
+						engine.setNetSimType(netSimType);
 						return;
 					}
 				}
 
 			}
-		} else if (simulationType == NetType.HYBRID) {
+		} else if (netSimType == NetType.HYBRID) {
 			//simulationType = NetType.HYBRID;
 		}		
 	}
@@ -730,8 +730,8 @@ public class NetSimulator {
 	 * @return boolean - true, jeśli włączony tryb maksymalnego uruchamiania; 
 	 * 		false w przeciwnym wypadku
 	 */
-	public boolean isMaximumMode() {
-		return maximumMode;
+	public boolean isMaxMode() {
+		return maxMode;
 	}
 
 	/**
@@ -739,9 +739,9 @@ public class NetSimulator {
 	 * @return boolean - true, jeśli włączany jest tryb maksymalnego uruchamiania; 
 	 * 		false w przeciwnym wypadku
 	 */
-	public void setMaximumMode(boolean value) {
-		this.maximumMode = value;
-		this.engine.setMaximumMode(value);
+	public void setMaxMode(boolean value) {
+		this.maxMode = value;
+		this.engine.setMaxMode(value);
 	}
 
 	/**

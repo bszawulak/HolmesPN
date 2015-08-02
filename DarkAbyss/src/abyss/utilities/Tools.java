@@ -348,10 +348,26 @@ public final class Tools {
 		return df.format(value);
 	}
 	
-	public static String cutValueExt(double value) {
+	/**
+	 * Metoda formatuje liczbę typu double do wyznaczonej liczby miejsc po przecinku, a następnie
+	 * zwraca ją jako String.
+	 * @param value double - liczba
+	 * @param howMany int - ile miejsc po przecinku (0 - 8)
+	 * @return String - liczba
+	 */
+	public static String cutValueExt(double value, int howMany) {
+		String format = "#.";
+		for(int i=0; i<howMany; i++)
+			format += "#";
+		
+		if(howMany < 1)
+			format = "#";
+		if(howMany > 8)
+			format = "#.########";
+		
     	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(GUIManager.getDefaultGUIManager().getLocale());
     	otherSymbols.setDecimalSeparator('.');
-    	DecimalFormat df = new DecimalFormat("#.###", otherSymbols);
+    	DecimalFormat df = new DecimalFormat(format, otherSymbols);
 		return df.format(value);
 	}
 	

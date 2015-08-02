@@ -165,7 +165,7 @@ public class AbyssStateSimulator extends JFrame {
 
 		iownyou.addTab("Simple mode", Tools.getResIcon16("/icons/stateSim/simpleSimTab.png"), firstTab, "Places dynamics");
 		
-		knockoutTab = new AbyssStateSimulatorKnockout();
+		knockoutTab = new AbyssStateSimulatorKnockout(this);
 		iownyou.addTab("KnockoutSim", Tools.getResIcon16("/icons/stateSim/KnockSimTab.png"), knockoutTab, "Transistions dynamics");
 		
 		main.add(iownyou, BorderLayout.CENTER);
@@ -289,9 +289,9 @@ public class AbyssStateSimulator extends JFrame {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = simMode.getSelectedIndex();
 				if(selected == 0)
-					maximumMode = true;
-				else
 					maximumMode = false;
+				else
+					maximumMode = true;
 			}
 		});
 		dataAcquisitionPanel.add(simMode);
@@ -1297,9 +1297,9 @@ public class AbyssStateSimulator extends JFrame {
 		
 		//zablokuj kilka elementów okna symulatora
 		blockSimWindowComponents();
-		workInProgress = true;
+		setWorkInProgress(true);
 		
-		ssim.setThreadDetails(1, simSteps, progressBar, this);
+		ssim.setThreadDetails(1, this, progressBar, simSteps);
 		Thread myThread = new Thread(ssim);
 		myThread.start();
 	}
@@ -1335,7 +1335,7 @@ public class AbyssStateSimulator extends JFrame {
 	/**
 	 * Metoda wywoływana zdalnie, kiedy wątek symulacji głównej (Simple) zakończy obliczenia
 	 */
-	public void allDone() {
+	public void completeSimulationProcedures() {
 		//pobieranie wektorów danych zebranych w symulacji:
 		placesRawData = ssim.getPlacesData();
 		placesAvgData = ssim.getPlacesAvgData();
@@ -1352,7 +1352,7 @@ public class AbyssStateSimulator extends JFrame {
 		
 		fillPlacesAndTransitionsData();
 		unblockSimWindowComponents();
-		workInProgress = false;
+		setWorkInProgress(false);
 	}
 	
 	/**
@@ -1436,6 +1436,14 @@ public class AbyssStateSimulator extends JFrame {
 		//plot.setRenderer(renderer);
 	}
 	
+	/**
+	 * Umożliwia dostęp do symulatora.
+	 * @return StateSimulator - obiekt symulatora
+	 */
+	public StateSimulator accessSim() {
+		return ssim;
+	}
+	
 	private class ChartProperties {
 		public float p_StrokeWidth = 1.0f;
 		public float t_StrokeWidth = 1.0f;
@@ -1456,7 +1464,7 @@ public class AbyssStateSimulator extends JFrame {
     	
     	addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		    	if(workInProgress) {
+		    	if(isWorkInProgress()) {
 		    		JOptionPane.showMessageDialog(null, "Simulator working. Window closing operation cancelled.", 
 							"Simulator working",JOptionPane.INFORMATION_MESSAGE);
 		    		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -1468,6 +1476,30 @@ public class AbyssStateSimulator extends JFrame {
 		    }
 		});
 
+    }
+    
+    /**
+     * Ustawia status pracy w toku - kiedy symulator pracuje.
+     * @param value boolean - true, jeśli trwa symulacja
+     */
+    public void setWorkInProgress(boolean value) {
+    	this.workInProgress = value;
+    }
+    
+    /**
+     * Zwraca status pracy w toku, jeśli true - działa symulator.
+     * @return boolean -  true/false j.w.
+     */
+    public boolean isWorkInProgress() {
+    	return this.workInProgress;
+    }
+    
+    /**
+     * Umożliwia dostęp do obiektu odpowiedzialnego za zakładkę Knockout symulatora.
+     * @return AbyssStateSimulatorKnockout - obiekt
+     */
+    public AbyssStateSimulatorKnockout accessKnockoutTab() {
+    	return (AbyssStateSimulatorKnockout)knockoutTab;
     }
 	
 	/**
