@@ -9,8 +9,17 @@ import java.util.Map;
 
 import abyss.darkgui.GUIManager;
 
+/**
+ * Metoda pomocnicze klasy AbyssStateSimulator.
+ * 
+ * @author MR
+ *
+ */
 public class AbyssStateSimulatorActions {
 	
+	/**
+	 * Konstruktor klasy AbyssStateSimulatorActions.
+	 */
 	public AbyssStateSimulatorActions() {
 		
 	}

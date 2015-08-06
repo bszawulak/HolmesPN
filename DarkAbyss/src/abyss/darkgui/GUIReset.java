@@ -103,6 +103,7 @@ public class GUIReset {
 		pNet.setMCTMatrix(null, false);
 		pNet.accessMCTnames().clear();
 		pNet.setMCSdataCore(new MCSDataMatrix());
+		pNet.clearSimKnockoutData();
 		pNet.resetComm();
 		pNet.setMCTanalyzer(new MCTCalculator(pNet));
 		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));

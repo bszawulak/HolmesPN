@@ -65,7 +65,6 @@ import abyss.darkgui.GUIManager;
  *
  */
 public class AbyssClusters extends JFrame {
-	//BACKUP: serialVersionUID = -8420712475473581772L;  nie ruszać poniższej zmiennej
 	private static final long serialVersionUID = -8420712475473581772L;
 
 	private JTable table;

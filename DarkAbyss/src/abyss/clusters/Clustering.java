@@ -9,9 +9,6 @@ import java.util.ArrayList;
  *
  */
 public class Clustering implements Serializable {
-	/**
-	 * BACKUP: -5381441187018735328L;
-	 */
 	private static final long serialVersionUID = -5381441187018735328L;
 	public String algorithmName;
 	public String metricName;

@@ -74,8 +74,9 @@ import com.javadocking.visualizer.SingleMaximizer;
 
 /**
  * Główna klasa programu odpowiedzialna za właściwie wszystko. Zaczyna od utworzenia elementów
- * graficznych programu, a dalej jakoś tak się samo już wszystko toczy. Albo wywala.
- * @author students - ktoś musiał zacząć :)
+ * graficznych programu, a dalej jakoś tak samo już się wszystko toczy. Albo wywala.
+ * 
+ * @author students - ktoś musiał zacząć.
  * @author MR - Metody, Metody. Nowe Metody. Podpisano: Cyryl
  */
 public class GUIManager extends JPanel implements ComponentListener {

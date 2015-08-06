@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import abyss.darkgui.GUIManager;
+import abyss.petrinet.data.NetSimulationData;
 import abyss.petrinet.elements.Arc;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
@@ -87,7 +88,7 @@ public class StateSimulator implements Runnable {
 			boss.completeSimulationProcedures();
 		} else if(simulationType == 2) {
 			NetSimulationData data = simulateNetRefKnockout();
-			boss.accessKnockoutTab().completeRefSimulationResults(data);
+			boss.accessKnockoutTab().action.completeRefSimulationResults(data);
 		}
 	}
 	
@@ -262,6 +263,8 @@ public class StateSimulator implements Runnable {
 			netData.refPlaceTokensMin.add(Double.MAX_VALUE);
 			netData.refPlaceTokensMax.add(0.0);
 			netData.simsWithZeroTokens.add(0);
+			
+			netData.startingState.add(places.get(p).getTokensNumber());
 		}
 		for(int t=0; t<transNumber; t++) {
 			totalTransFiringInTurn.add(0);
@@ -269,6 +272,9 @@ public class StateSimulator implements Runnable {
 			netData.refTransFiringsMin.add(Double.MAX_VALUE);
 			netData.refTransFiringsMax.add(0.0);
 			netData.simsWithZeroFiring.add(0);
+			
+			if(transitions.get(t).isOffline())
+				netData.disabledTransitionsIDs.add(t);
 		}
 		//	INIT VECTORS COMPLETED
 		

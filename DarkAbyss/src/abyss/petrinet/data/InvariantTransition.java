@@ -4,7 +4,7 @@ import abyss.petrinet.elements.Transition;
 
 /**
  * Klasa rozszerzenie dla Transition. Definiuj dla każdej tranzycji jej liczbę uruchomień.
- * Jest ona używana jako pojedzyńczy obiekt dla macierzy inwariantów II typu. 
+ * Jest ona używana jako pojedyńczy obiekt dla macierzy inwariantów II typu. 
  * @author students
  *
  */

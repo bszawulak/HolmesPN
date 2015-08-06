@@ -1459,6 +1459,7 @@ public class AbyssStateSimulator extends JFrame {
     	addWindowListener(new WindowAdapter() {
   	  	    public void windowActivated(WindowEvent e) {
   	  	    	fillPlacesAndTransitionsData();
+  	  	    	((AbyssStateSimulatorKnockout) knockoutTab).updateFreshKnockoutTab();
   	  	    }  
     	});
     	

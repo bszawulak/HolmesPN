@@ -59,13 +59,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<ArrayList<Transition>> mctData;
 	private ArrayList<Integer> transitionMCTnumber;
 	private ArrayList<String> mctNames;
-	
-	private String lastFileName = "";
-	
-	private ArrayList<GraphPanel> graphPanels;
+	private NetSimulationDataCore simData;
 	private MCSDataMatrix mcsData;
 	
+	private String lastFileName = "";
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
+	
+	private ArrayList<GraphPanel> graphPanels;
 	
 	private AbyssWriter ABYSSwriter;
 	private AbyssReader ABYSSReader;
@@ -74,12 +74,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private SAXParserFactory readerSNOOPY;
 	private Workspace workspace;
 	private DrawModes drawMode = DrawModes.POINTER;
-	
-	private boolean isSimulationActive = false;
 	private NetSimulator simulator;
 	private MCTCalculator analyzer;
 	private PetriNetMethods methods;
-
+	private boolean isSimulationActive = false;
+	
 	/** wektor tokenów dla miejsc: */
 	private ArrayList<Integer> backupMarkingZero = new ArrayList<Integer>();
 	/** Wartość flagi == true jeżeli został już utworzony backup PRZEZ symulator */
@@ -99,6 +98,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		dataCore.netName = "default";
 		mcsData = new MCSDataMatrix();
 		methods = new PetriNetMethods(this);
+		simData = new NetSimulationDataCore();
 	}
 
 	/**
@@ -114,6 +114,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		dataCore.netName = name;
 		mcsData = new MCSDataMatrix();
 		methods = new PetriNetMethods(this);
+		simData = new NetSimulationDataCore();
 	}
 	
 	/**
@@ -644,6 +645,29 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		mcsData = newMCS;
 	}
 	
+	/**
+	 * Dostęp do obiektu danych symulacji knockout.
+	 * @return NetSimulationDataCore - obiekt
+	 */
+	public NetSimulationDataCore accessSimKnockoutData() {
+		return this.simData;
+	}
+	
+	/**
+	 * Ustawia nowy obiekt danych symulacji.
+	 * @param data NetSimulationDataCore - dane
+	 */
+	public void setNewKnockoutData(NetSimulationDataCore data) {
+		this.simData = data;
+	}
+	
+	/**
+	 * Pozwala wyczyścić obiekt danych symulacji knockout.
+	 */
+	public void clearSimKnockoutData() {
+		this.simData = null;
+		this.simData = new NetSimulationDataCore();
+	}
 	//*********************************************************************************
 
 	/**
