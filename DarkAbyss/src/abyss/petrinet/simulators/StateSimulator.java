@@ -14,7 +14,6 @@ import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.Transition.TransitionType;
 import abyss.petrinet.simulators.NetSimulator.NetType;
 import abyss.windows.AbyssStateSimulator;
-import abyss.windows.AbyssStateSimulatorKnockout;
 
 /**
  * Klasa symulatora. Różnica między nią a symulatorem graficznym jest taka, że poniższe metody potrafią wygenerować
@@ -48,9 +47,7 @@ public class StateSimulator implements Runnable {
 	private AbyssStateSimulator boss;	//standardowy tryb symulacji
 	private int simulationType;			//standardowy tryb symulacji
 	private int refReps;				//powtórki dla trybu zbierania danych referencyjnych
-	
 
-	
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
 	 */
@@ -61,7 +58,7 @@ public class StateSimulator implements Runnable {
 
 	/**
 	 * Metoda ustawiająca obiekty dla symulacji w osobnym wątku.
-	 * @param simulationType int - typ symulacji: 1 - standard; 2 - ref. zbieranie danych
+	 * @param simulationType int - typ symulacji: 1 - standard; 2 - ref. zbieranie danych, 3 - knockout (jak ref)
 	 * @param blackBox Object... - zależy od trybu powyżej
 	 */
 	public void setThreadDetails(int simulationType, Object... blackBox) {
@@ -72,6 +69,11 @@ public class StateSimulator implements Runnable {
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
 		} else if(simulationType == 2) { //obliczenie zbioru referencyjnego
+			this.boss = (AbyssStateSimulator)blackBox[0];
+			this.progressBar = (JProgressBar)blackBox[1];
+			this.stepsLimit = (int)blackBox[2];
+			this.refReps = (int)blackBox[3];
+		} else if(simulationType == 3) { //obliczenie danych przy knockoutcie elementów
 			this.boss = (AbyssStateSimulator)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
@@ -87,7 +89,10 @@ public class StateSimulator implements Runnable {
 			simulateNetAll();
 			boss.completeSimulationProcedures();
 		} else if(simulationType == 2) {
-			NetSimulationData data = simulateNetRefKnockout();
+			NetSimulationData data = simulateNetReferenceAndKnockout();
+			boss.accessKnockoutTab().action.completeRefSimulationResults(data);
+		} else if(simulationType == 3) {
+			NetSimulationData data = simulateNetReferenceAndKnockout();
 			boss.accessKnockoutTab().action.completeRefSimulationResults(data);
 		}
 	}
@@ -236,7 +241,7 @@ public class StateSimulator implements Runnable {
 	 * musi być to wszystko ustawione przed jej uruchomieniem.
 	 * @return NetSimulationData - pakiet danych z powtórzonych symulacji.
 	 */
-	public NetSimulationData simulateNetRefKnockout() {
+	public NetSimulationData simulateNetReferenceAndKnockout() {
 		if(ready == false) {
 			JOptionPane.showMessageDialog(null,"Simulation cannot start, no network found.", "State Simulation problem",JOptionPane.ERROR_MESSAGE);
 			return null;

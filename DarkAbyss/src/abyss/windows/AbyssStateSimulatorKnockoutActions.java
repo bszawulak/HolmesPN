@@ -12,12 +12,14 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 
 import abyss.clusters.ClusteringInfoMatrix;
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.data.NetSimulationData;
 import abyss.petrinet.data.NetSimulationDataCore;
+import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
@@ -47,15 +49,15 @@ public class AbyssStateSimulatorKnockoutActions {
 			return;
 		}
 		
-		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		if(places == null || places.size() == 0)
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		if(transitions == null || transitions.size() == 0)
 			return;
 		
 		boolean success =  boss.ssimKnock.initiateSim(boss.refNetType, boss.refMaximumMode);
 		if(success == false)
 			return;
 		
-		boss.blockSimWindowComponents();
+		boss.setSimWindowComponentsStatus(false);
 		boss.mainSimWindow.setWorkInProgress(true);
 		
 		boss.ssimKnock.setThreadDetails(2, boss.mainSimWindow, boss.refProgressBarKnockout, boss.refSimSteps, boss.refRepetitions);
@@ -109,7 +111,47 @@ public class AbyssStateSimulatorKnockoutActions {
 		}
 		
 		boss.mainSimWindow.setWorkInProgress(false);
-		boss.unblockSimWindowComponents();
+		boss.setSimWindowComponentsStatus(true);
+	}
+	
+	public void acquireDataForKnockoutSet(JTextArea dataSelectedTransTextArea) {
+		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+			JOptionPane.showMessageDialog(null,
+					"Main simulator active. Please turn if off before starting state simulator process", 
+					"Main simulator active", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		if(transitions == null || transitions.size() == 0)
+			return;
+		
+		boolean success =  boss.ssimKnock.initiateSim(boss.dataNetType, boss.dataMaximumMode);
+		if(success == false)
+			return;
+		//TODO:
+		boss.setSimWindowComponentsStatus(false);
+		boss.mainSimWindow.setWorkInProgress(true);
+		
+		updateNetOfflineStatus(dataSelectedTransTextArea, transitions, true);
+		
+		boss.ssimKnock.setThreadDetails(3, boss.mainSimWindow, boss.refProgressBarKnockout, boss.refSimSteps, boss.refRepetitions);
+		Thread myThread = new Thread(boss.ssimKnock);
+		myThread.start();
+	}
+
+	/**
+	 * 
+	 * @param dataSelectedTransTextArea
+	 * @param transitions
+	 * @param status boolean - true blokuje tranzycję, false odblokowuje
+	 */
+	private void updateNetOfflineStatus(JTextArea dataSelectedTransTextArea, ArrayList<Transition> transitions, boolean status) {
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		ArrayList<ArrayList<Transition>> mcts = pn.getMCTMatrix();
+		//TODO:
+		String dataTxt = dataSelectedTransTextArea.getText();
+		
 	}
 
 	/**
@@ -174,4 +216,53 @@ public class AbyssStateSimulatorKnockoutActions {
 			return;
 		} 
 	}
+
+	/**
+	 * Dodaje do textArea element do wyłączenia w symulacji: tranzycja lub cały MCT
+	 * @param i int - 1 = tranzycja, 2 = mct
+	 * @param selected int - index elementu
+	 * @param dataSelectedTransTextArea JTextArea - obiekt modyfikowany
+	 */
+	public void addOfflineElement(int i, int selected, JTextArea dataSelectedTransTextArea) {
+		if(i == 1) { //tranzycje
+			String txt = dataSelectedTransTextArea.getText();
+			String trans = "tr#"+selected+";";
+			if(!txt.contains(trans)) {
+				txt += trans;
+			}
+			dataSelectedTransTextArea.setText(txt);
+		} else if(i == 2) { //mct
+			String txt = dataSelectedTransTextArea.getText();
+			String MCT = "MCT#"+selected+";";
+			if(!txt.contains(MCT)) {
+				txt += MCT;
+			}
+			dataSelectedTransTextArea.setText(txt);
+		}
+	}
+
+	/**
+	 * Odejmuje od textArea element do wyłączenia w symulacji: tranzycja lub cały MCT
+	 * @param i int - 1 = tranzycja, 2 = mct
+	 * @param selected int - index elementu
+	 * @param dataSelectedTransTextArea JTextArea - obiekt modyfikowany
+	 */
+	public void removeOfflineElement(int i, int selected, JTextArea dataSelectedTransTextArea) {
+		if(i == 1) { //tranzycje
+			String txt = dataSelectedTransTextArea.getText();
+			String trans = "tr#"+selected+";";
+			if(txt.contains(trans)) {
+				txt = txt.replace(trans, "");
+			}
+			dataSelectedTransTextArea.setText(txt);
+		} else if(i == 2) { //mct
+			String txt = dataSelectedTransTextArea.getText();
+			String MCT = "MCT#"+selected+";";
+			if(txt.contains(MCT)) {
+				txt = txt.replace(MCT, "");
+			}
+			dataSelectedTransTextArea.setText(txt);
+		}
+	}
+
 }

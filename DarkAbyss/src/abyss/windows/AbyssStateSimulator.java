@@ -1259,6 +1259,8 @@ public class AbyssStateSimulator extends JFrame {
 				sortedByValues = AbyssStateSimulatorActions.crunchifySortMap(map); // dark magic happens here
 				for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
 					transitionsCombo.addItem("t"+(entry.getKey())+"."+transitions.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
+					
+					
 				}
 			}
 		} else {
@@ -1327,7 +1329,7 @@ public class AbyssStateSimulator extends JFrame {
 		simNetMode.setEnabled(true);
 		simMode.setEnabled(true);
 		overlord.getFrame().setEnabled(true);
-		//TODO: dodawać kolejne tutaj:
+		//dodawać kolejne tutaj:
 		
 		
 	}

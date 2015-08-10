@@ -327,7 +327,7 @@ public class AbyssNetTablesActions {
 				return false;
 			}
 			
-			GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+			GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
 			
 			if(name.equals("PlacesTable")) {
 				ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();

@@ -74,7 +74,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	public NetType dataNetType = NetType.BASIC;		//rodzaj sieci: BASIC, TIMED, HYBRID, itd.
 	public boolean dataMaximumMode = false;
 	public JProgressBar dataProgressBarKnockout;
-	public JTextArea dataSelectedTrans;
+	public JTextArea dataSelectedTransTextArea;
 	public boolean dataSimUseEditorOffline = false;
 	public boolean dataSimComputeAll = false;
 	
@@ -364,7 +364,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		int posYda = 15;
 		
 		JButton saveAllButton = new JButton("Save all");
-		saveAllButton.setBounds(posXda, 20, 110, 35);
+		saveAllButton.setBounds(posXda, posYda+5, 110, 35);
 		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
 		saveAllButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeDa.png"));
 		saveAllButton.setToolTipText("Saves all simulation data to single file.");
@@ -376,7 +376,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		result.add(saveAllButton);
 		
 		JButton loadAllButton = new JButton("Load all");
-		loadAllButton.setBounds(posXda, 60, 110, 35);
+		loadAllButton.setBounds(posXda, posYda+45, 110, 35);
 		loadAllButton.setMargin(new Insets(0, 0, 0, 0));
 		loadAllButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeDa.png"));
 		loadAllButton.setToolTipText("Saves all simulation data to single file.");
@@ -407,14 +407,13 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		transitionsLabel.setBounds(posXda, posYda, 70, 20);
 		result.add(transitionsLabel);
 		
-		//TODO:
 		String[] data = { " ----- " };
 		dataTransitionsCombo = new JComboBox<String>(data);
 		dataTransitionsCombo.setBounds(posXda+80, posYda, 400, 20);
 		dataTransitionsCombo.setMaximumRowCount(12);
 		dataTransitionsCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = dataTransitionsCombo.getSelectedIndex();
+				//int selected = dataTransitionsCombo.getSelectedIndex();
 			}
 			
 		});
@@ -427,7 +426,9 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		addTransButton.setToolTipText("Sets transition for offline in the incoming simulation sesssion.");
 		addTransButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//action.saveDataSets();
+				int selected = dataTransitionsCombo.getSelectedIndex();
+				if(selected > 0)
+					action.addOfflineElement(1, selected-1, dataSelectedTransTextArea);
 			}
 		});
 		result.add(addTransButton);
@@ -439,7 +440,9 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		removeTransButton.setToolTipText("Remove transitions from offline set.");
 		removeTransButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//action.saveDataSets();
+				int selected = dataTransitionsCombo.getSelectedIndex();
+				if(selected > 0)
+					action.removeOfflineElement(1, selected-1, dataSelectedTransTextArea);
 			}
 		});
 		result.add(removeTransButton);
@@ -454,7 +457,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		dataMctCombo.setMaximumRowCount(12);
 		dataMctCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = dataMctCombo.getSelectedIndex();
+				//int selected = dataMctCombo.getSelectedIndex();
 			}
 			
 		});
@@ -467,7 +470,9 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		addMCTButton.setToolTipText("Sets whole MCT for offline in the incoming simulation sesssion.");
 		addMCTButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//action.saveDataSets();
+				int selected = dataMctCombo.getSelectedIndex();
+				if(selected > 0)
+					action.addOfflineElement(2, selected, dataSelectedTransTextArea);
 			}
 		});
 		result.add(addMCTButton);
@@ -479,17 +484,19 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		removeMCTButton.setToolTipText("Remove MCT set from offline set.");
 		removeMCTButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//action.saveDataSets();
+				int selected = dataMctCombo.getSelectedIndex();
+				if(selected > 0)
+					action.removeOfflineElement(2, selected, dataSelectedTransTextArea);
 			}
 		});
 		result.add(removeMCTButton);
 		
-		dataSelectedTrans = new JTextArea();
-		dataSelectedTrans.setLineWrap(true);
-		dataSelectedTrans.setEditable(true);
+		dataSelectedTransTextArea = new JTextArea();
+		dataSelectedTransTextArea.setLineWrap(true);
+		dataSelectedTransTextArea.setEditable(true);
         JPanel dataFieldPanel = new JPanel();
         dataFieldPanel.setLayout(new BorderLayout());
-        dataFieldPanel.add(new JScrollPane(dataSelectedTrans),BorderLayout.CENTER);
+        dataFieldPanel.add(new JScrollPane(dataSelectedTransTextArea),BorderLayout.CENTER);
         dataFieldPanel.setBounds(posXda+640, posYda, 230, 45);
         result.add(dataFieldPanel);
         
@@ -500,7 +507,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
         clearButton.setToolTipText("Clear offline set.");
         clearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				dataSelectedTrans.setText("");
+				dataSelectedTransTextArea.setText("");
 			}
 		});
 		result.add(clearButton);
@@ -516,7 +523,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		acqDataSimButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
 		acqDataSimButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//action.acquireDataForRefSet();
+				action.acquireDataForKnockoutSet(dataSelectedTransTextArea);
 			}
 		});
 		result.add(acqDataSimButton);
@@ -602,19 +609,19 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		result.add(simStepsLabel);
 		
 		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(dataSimSteps, 100, 1000000, 100);
-		refSimStepsSpinner = new JSpinner(simStepsSpinnerModel);
-		refSimStepsSpinner.setBounds(posXda+250, posYda+20, 80, 20);
-		refSimStepsSpinner.addChangeListener(new ChangeListener() {
+		dataSimStepsSpinner = new JSpinner(simStepsSpinnerModel);
+		dataSimStepsSpinner.setBounds(posXda+250, posYda+20, 80, 20);
+		dataSimStepsSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if(doNotUpdate)
 					return;
 				
 				JSpinner spinner = (JSpinner) e.getSource();
 				int val = (int) spinner.getValue();
-				refSimSteps = val;
+				dataSimSteps = val;
 			}
 		});
-		result.add(refSimStepsSpinner);
+		result.add(dataSimStepsSpinner);
 
 		JLabel repetLabel = new JLabel("Repetitions:");
 		repetLabel.setBounds(posXda+250, posYda+40, 80, 20);
@@ -705,33 +712,24 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	//*******************************************************************************************************************************
 	
 	/**
-	 * Blokuje komponenty na czas symulacji.
+	 * Ustawia status komponentów na czas symulacji.
+	 * @param state boolean - false, jeśli mają być zablokowane, true jeśli mają być odblokowane
 	 */
-	public void blockSimWindowComponents() {
-		acqRefDataButton.setEnabled(false);
-		refSimNetMode.setEnabled(false);
-		refSimMaxMode.setEnabled(false);
-		refSimStepsSpinner.setEnabled(false);
-		refSimRepsSpinner.setEnabled(false);
+	//TODO: dodawać kolejne tutaj:
+	public void setSimWindowComponentsStatus(boolean state) {
+		acqRefDataButton.setEnabled(state);
+		refSimNetMode.setEnabled(state);
+		refSimMaxMode.setEnabled(state);
+		refSimStepsSpinner.setEnabled(state);
+		refSimRepsSpinner.setEnabled(state);
 		
-		GUIManager.getDefaultGUIManager().getFrame().setEnabled(false);
-		//TODO: dodawać kolejne tutaj:
+		acqDataSimButton.setEnabled(state);
+		dataSimNetMode.setEnabled(state);
+		dataSimMaxMode.setEnabled(state);
+		dataSimStepsSpinner.setEnabled(state);
+		dataSimRepsSpinner.setEnabled(state);
 		
-		
-	}
-	
-	/**
-	 * Odblokowuje komponenty po zakończonej / przerwanej symulacji.
-	 */
-	public void unblockSimWindowComponents() {
-		acqRefDataButton.setEnabled(true);
-		refSimNetMode.setEnabled(true);
-		refSimMaxMode.setEnabled(true);
-		refSimStepsSpinner.setEnabled(true);
-		refSimRepsSpinner.setEnabled(true);
-		
-		GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
-		//TODO: dodawać kolejne tutaj:
+		GUIManager.getDefaultGUIManager().getFrame().setEnabled(state);
 	}
 	
 	/**
@@ -756,7 +754,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	}
 	
 	/**
-	 * Aktualizuje komponenty panelu.
+	 * Aktualizuje komponenty panelu symulacji knockout - combo box zbioru referencyjnego, combobox tranzycji i mct.
 	 */
 	public void updateFreshKnockoutTab() {
 		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
@@ -785,9 +783,46 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 			refLabelSteps.setText("---");
 			refLabelReps.setText("---");
 		}
+		
+		ArrayList<Transition> transitions = pn.getTransitions();
+		int oldTsel = dataTransitionsCombo.getSelectedIndex();
+		int oldTsize = dataTransitionsCombo.getItemCount() - 1;
+		dataTransitionsCombo.removeAllItems();
+		dataTransitionsCombo.addItem("---");
+		
+		if(transitions.size() > 0) {
+			for(int t=0; t < transitions.size(); t++) {
+				dataTransitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
+			}
+			if(dataTransitionsCombo.getItemCount() > oldTsel && oldTsize == transitions.size())
+				dataTransitionsCombo.setSelectedIndex(oldTsel);
+			
+			//MCT:
+			int oldMsel = dataMctCombo.getSelectedIndex();
+			dataMctCombo.removeAllItems();
+			dataMctCombo.addItem("---");
+			ArrayList<ArrayList<Transition>> mcts = pn.getMCTMatrix();
+			ArrayList<String> mctNames = pn.accessMCTnames();
+			int size = mcts.size();
+			if(mcts != null && size > 0) {
+				for(int m=0; m < size; m++) {
+					dataMctCombo.addItem("MCT"+(m+1)+": "+mctNames.get(m));
+				}
+			}
+
+			if(dataMctCombo.getItemCount() > oldMsel)
+				dataMctCombo.setSelectedIndex(oldMsel);
+		} 
+		
+		//dataMctCombo
+		
 		doNotUpdate = false;
 	}
 
+	/**
+	 * Update danych o wybranym właśnie zbiorze referencyjnym.
+	 * @param selected int - index zbioru ref w combobox (który wywołuję tę metodę)
+	 */
 	public void updateRefDetails(int selected) {
 		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		ArrayList<NetSimulationData> references = pn.accessSimKnockoutData().getReferenceSets();

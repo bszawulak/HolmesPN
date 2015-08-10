@@ -347,7 +347,7 @@ public class AbyssInvariants extends JFrame {
 			public void actionPerformed(ActionEvent actionEvent) {
 				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
 				if(invariants == null || invariants.size() == 0) {
-					JOptionPane.showMessageDialog(null, "No invarians to analyze.", 
+					JOptionPane.showMessageDialog(null, "No invariants to analyze.", 
 							"No invariants",JOptionPane.INFORMATION_MESSAGE);
 				} else {
 					logField.append("\n");
@@ -373,7 +373,7 @@ public class AbyssInvariants extends JFrame {
 			public void actionPerformed(ActionEvent actionEvent) {
 				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
 				if(invariants == null || invariants.size() == 0) {
-					JOptionPane.showMessageDialog(null, "No invarians to analyze.", 
+					JOptionPane.showMessageDialog(null, "No invariants to analyze.", 
 							"No invariants",JOptionPane.INFORMATION_MESSAGE);
 				} else {
 					logField.append("\n");
@@ -397,7 +397,7 @@ public class AbyssInvariants extends JFrame {
 			public void actionPerformed(ActionEvent actionEvent) {
 				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
 				if(invariants == null || invariants.size() == 0) {
-					JOptionPane.showMessageDialog(null, "No invarians to analyze.", 
+					JOptionPane.showMessageDialog(null, "No invariants to analyze.", 
 							"No invariants",JOptionPane.INFORMATION_MESSAGE);
 				} else {
 					logField.append("\n");

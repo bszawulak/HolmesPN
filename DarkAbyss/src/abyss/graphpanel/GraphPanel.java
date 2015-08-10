@@ -878,7 +878,7 @@ public class GraphPanel extends JComponent {
 						}
 						
 						addNewPlace(mousePt);
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
 						GUIManager.getDefaultGUIManager().markNetChange();
 						break;
 					case TRANSITION:
@@ -887,7 +887,7 @@ public class GraphPanel extends JComponent {
 						}
 						
 						addNewTransition(mousePt);
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
 						GUIManager.getDefaultGUIManager().markNetChange();
 						break;
 					case ARC:
@@ -903,7 +903,7 @@ public class GraphPanel extends JComponent {
 						}
 						
 						addNewTimeTransition(mousePt);
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
 						GUIManager.getDefaultGUIManager().markNetChange();
 						break;
 					case SUBNET_P:
@@ -943,7 +943,7 @@ public class GraphPanel extends JComponent {
 						}
 						
 						getSelectionManager().deleteElementLocation(el);
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
 						GUIManager.getDefaultGUIManager().markNetChange();
 					}
 					
@@ -986,7 +986,7 @@ public class GraphPanel extends JComponent {
 						}
 						
 						getSelectionManager().deleteArc(a);
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
 						GUIManager.getDefaultGUIManager().markNetChange();
 					}	
 				} else {
@@ -1184,7 +1184,7 @@ public class GraphPanel extends JComponent {
 								//GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(thisIsStupid, false, false);
 							}
 							
-							GUIManager.getDefaultGUIManager().reset.reset2ndOrderData();
+							GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
 							GUIManager.getDefaultGUIManager().markNetChange();
 						}
 					}

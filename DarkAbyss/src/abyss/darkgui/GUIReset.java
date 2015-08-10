@@ -110,18 +110,15 @@ public class GUIReset {
 		pNet.setSimulationActive(false);
 		pNet.setFileName("");
 		mastah.simSettings.currentStep = 0;
-		
 		mastah.accessStateSimulatorWindow().resetSimWindow();
 		mastah.accessClusterWindow().resetWindow();
-		
 		mastah.getSimulatorBox().createSimulatorProperties();
 		pNet.repaintAllGraphPanels();
 
-		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		
+		Workspace workspace = mastah.getWorkspace();
 		int dockableSize = workspace.getDockables().size();
-		
 		CompositeDock parentOfFirst = workspace.getDockables().get(0).getDock().getParentDock();
-		
 		for(int d=0; d<dockableSize; d++) {
 			Dockable dockable = workspace.getDockables().get(d);
 			String x = dockable.getID();
@@ -136,7 +133,7 @@ public class GUIReset {
 				mastah.globalSheetsList.remove(dockable);
 		}
 		
-		reset2ndOrderData();
+		reset2ndOrderData(false);
 		IdGenerator.resetIDgenerator();
 		
 		mastah.cleanDockables();
@@ -147,25 +144,33 @@ public class GUIReset {
 	/**
 	 * Kasowanie informacji o: inwariantanch, MCT, klastrach, przede wszystkich w kontekście
 	 * podokien programu. Przy okazji reset protokołu I/O.
+	 * @param clearWindows boolean - jeśli true, wtedy nakazuje czystkę dużych podokien programu, np. klastry
 	 */
-	public void reset2ndOrderData() {
-		//clearGraphColors();
-		
+	public void reset2ndOrderData(boolean clearWindows) {
 		//"I nie będzie niczego."
 		// Księga Kononowicza
+		PetriNet pNet = mastah.getWorkspace().getProject();
+		//clearGraphColors();
+		
+		if(clearWindows) {
+			mastah.simSettings.currentStep = 0;
+			mastah.accessStateSimulatorWindow().resetSimWindow();
+			mastah.accessClusterWindow().resetWindow();
+		}
+	
 		if(invGenerated == true) {
 			mastah.accessNetTablesWindow().resetInvData();
 			
 			resetCommunicationProtocol();
-			mastah.getWorkspace().getProject().setINVmatrix(null, false);
-			mastah.getWorkspace().getProject().getMCSdataCore().resetMSC();
+			pNet.setINVmatrix(null, false);
+			pNet.getMCSdataCore().resetMSC();
 			
 			if(mastah.getInvariantsBox().getCurrentDockWindow() != null) {
 				mastah.getInvariantsBox().getCurrentDockWindow().resetInvariants();
 				mastah.getInvariantsBox().getCurrentDockWindow().removeAll();
 			}
-			mastah.getInvariantsBox().setCurrentDockWindow(new AbyssDockWindowsTable(SubWindow.INVARIANTS,
-					mastah.getWorkspace().getProject().getINVmatrix()));	
+			mastah.getInvariantsBox().setCurrentDockWindow(
+					new AbyssDockWindowsTable(SubWindow.INVARIANTS, pNet.getINVmatrix()));	
 			mastah.getInvariantsBox().validate();
 			mastah.getInvariantsBox().repaint();
 
@@ -185,6 +190,9 @@ public class GUIReset {
 					new ArrayList<ArrayList<Transition>>()));
 			mastah.getMctBox().validate();
 			mastah.getMctBox().repaint();
+			
+			pNet.setMCTMatrix(null, false);
+			pNet.accessMCTnames().clear();
 			
 			mctGenerated = false;
 			mastah.log("MCT data removed from memory.", "text", true);

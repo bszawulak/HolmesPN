@@ -510,7 +510,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			mct = MCTCalculator.getSortedMCT(mct, true);
 		
 		for(int m=0; m<mct.size(); m++) {
-			mctNames.add("MCT_"+(m+1));
+			mctNames.add("default name for mct"+(m+1));
 		}
 		
 		transitionMCTnumber = methods.getTransMCTindicesVector();
