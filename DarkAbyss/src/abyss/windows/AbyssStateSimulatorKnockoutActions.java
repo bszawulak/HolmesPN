@@ -1,11 +1,5 @@
 package abyss.windows;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,27 +7,27 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import javax.swing.filechooser.FileFilter;
 
-import abyss.clusters.ClusteringInfoMatrix;
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.data.NetSimulationData;
-import abyss.petrinet.data.NetSimulationDataCore;
 import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.simulators.NetSimulator.SimulatorMode;
 import abyss.utilities.Tools;
-import abyss.workspace.ExtensionFileFilter;
 
 /**
- * Metoda pomocnicze klasy AbyssStateSimulatorKnockout.
+ * Klasa metod pomocniczych klasy AbyssStateSimulatorKnockout.
  * 
  * @author MR
  */
 public class AbyssStateSimulatorKnockoutActions {
 	AbyssStateSimulatorKnockout boss;
 	
+	/**
+	 * Konstruktor obiektu klasy AbyssStateSimulatorKnockoutActions.
+	 * @param window AbyssStateSimulatorKnockout - okno nadrzędne
+	 */
 	public AbyssStateSimulatorKnockoutActions(AbyssStateSimulatorKnockout window) {
 		this.boss = window;
 	}
@@ -53,14 +47,19 @@ public class AbyssStateSimulatorKnockoutActions {
 		if(transitions == null || transitions.size() == 0)
 			return;
 		
-		boolean success =  boss.ssimKnock.initiateSim(boss.refNetType, boss.refMaximumMode);
+		boolean success =  boss.ssimKnock.initiateSim(boss.refNetType, boss.refMaximumMode, boss.refSingleMode);
 		if(success == false)
 			return;
 		
 		boss.setSimWindowComponentsStatus(false);
 		boss.mainSimWindow.setWorkInProgress(true);
+		NetSimulationData currentDataPackage = new NetSimulationData();
 		
-		boss.ssimKnock.setThreadDetails(2, boss.mainSimWindow, boss.refProgressBarKnockout, boss.refSimSteps, boss.refRepetitions);
+		for(Transition trans : transitions)
+			trans.setOffline(false); //REFERENCE
+		
+		boss.ssimKnock.setThreadDetails(2, boss.mainSimWindow, boss.refProgressBarKnockout, 
+				boss.refSimSteps, boss.refRepetitions, currentDataPackage);
 		Thread myThread = new Thread(boss.ssimKnock);
 		myThread.start();
 	}
@@ -68,52 +67,54 @@ public class AbyssStateSimulatorKnockoutActions {
 	/**
 	 * Wywoływana po zakończeniu symulacji do zbierania danych referencyjnych.
 	 * @param data NetSimulationData - zebrane dane
+	 * @param places ArrayList[Place] - wektor miejsc
+	 * @param transitions ArrayList[Transition] - wektor tranzycji
 	 */
-	public void completeRefSimulationResults(NetSimulationData data) {
+	public void completeRefSimulationResults(NetSimulationData data, ArrayList<Transition> transitions, ArrayList<Place> places) {
 		NetSimulationData netSimData = data;
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		netSimData.date = dateFormat.format(date);
 		netSimData.refSet = true;
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessSimKnockoutData().addNewReferenceSet(netSimData);
-		
 
 		AbyssNotepad notePad = new AbyssNotepad(900,600);
 		notePad.setVisible(true);
-		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+
 		notePad.addTextLineNL("", "text");
 		notePad.addTextLineNL("Transitions: ", "text");
 		notePad.addTextLineNL("", "text");
-		for(int t=0; t<netSimData.refTransFiringsAvg.size(); t++) {
+		for(int t=0; t<netSimData.transFiringsAvg.size(); t++) {
 			String t_name = transitions.get(t).getName();
-			double valAvg = netSimData.refTransFiringsAvg.get(t);
-			double valMin = netSimData.refTransFiringsMin.get(t);
-			double valMax = netSimData.refTransFiringsMax.get(t);
+			double valAvg = netSimData.transFiringsAvg.get(t);
+			double valMin = netSimData.transFiringsMin.get(t);
+			double valMax = netSimData.transFiringsMax.get(t);
 
 			notePad.addTextLineNL("  t"+t+"_"+t_name+" : "+Tools.cutValueExt(valAvg,4)+" min: "+Tools.cutValueExt(valMin,4)+
 					" max: "+Tools.cutValueExt(valMax,4), "text");
 
 		}
 		
-		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		notePad.addTextLineNL("", "text");
 		notePad.addTextLineNL("Places: ", "text");
 		notePad.addTextLineNL("", "text");
-		for(int t=0; t<netSimData.refPlaceTokensAvg.size(); t++) {
+		for(int t=0; t<netSimData.placeTokensAvg.size(); t++) {
 			String t_name = places.get(t).getName();
-			double valAvg = netSimData.refPlaceTokensAvg.get(t);
-			double valMin = netSimData.refPlaceTokensMin.get(t);
-			double valMax = netSimData.refPlaceTokensMax.get(t);
+			double valAvg = netSimData.placeTokensAvg.get(t);
+			double valMin = netSimData.placeTokensMin.get(t);
+			double valMax = netSimData.placeTokensMax.get(t);
 
 			notePad.addTextLineNL("  p"+t+"_"+t_name+" : "+Tools.cutValueExt(valAvg,4)+" min: "+Tools.cutValueExt(valMin,4)+
 					" max: "+Tools.cutValueExt(valMax,4), "text");
-
 		}
 		
 		boss.mainSimWindow.setWorkInProgress(false);
 		boss.setSimWindowComponentsStatus(true);
 	}
 	
+	/**
+	 * Metoda wywoływana przyciskiem aktywującym zbieranie danych symulacji typu knockout.
+	 */
 	public void acquireDataForKnockoutSet(JTextArea dataSelectedTransTextArea) {
 		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 			JOptionPane.showMessageDialog(null,
@@ -126,95 +127,148 @@ public class AbyssStateSimulatorKnockoutActions {
 		if(transitions == null || transitions.size() == 0)
 			return;
 		
-		boolean success =  boss.ssimKnock.initiateSim(boss.dataNetType, boss.dataMaximumMode);
+		boolean success =  boss.ssimKnock.initiateSim(boss.dataNetType, boss.dataMaximumMode, boss.dataSingleMode);
 		if(success == false)
 			return;
-		//TODO:
+
 		boss.setSimWindowComponentsStatus(false);
 		boss.mainSimWindow.setWorkInProgress(true);
 		
-		updateNetOfflineStatus(dataSelectedTransTextArea, transitions, true);
 		
-		boss.ssimKnock.setThreadDetails(3, boss.mainSimWindow, boss.refProgressBarKnockout, boss.refSimSteps, boss.refRepetitions);
+		NetSimulationData currentDataPackage = new NetSimulationData();
+		updateNetOfflineStatus(dataSelectedTransTextArea, transitions, true, currentDataPackage);
+		
+		boss.ssimKnock.setThreadDetails(3, boss.mainSimWindow, boss.dataProgressBarKnockout, 
+				boss.dataSimSteps, boss.dataRepetitions, currentDataPackage);
 		Thread myThread = new Thread(boss.ssimKnock);
 		myThread.start();
 	}
-
+	
 	/**
-	 * 
-	 * @param dataSelectedTransTextArea
-	 * @param transitions
-	 * @param status boolean - true blokuje tranzycję, false odblokowuje
+	 * Wywoływana po zakończeniu symulacji zbierania danych knockout.
+	 * @param data NetSimulationData - zebrane dane
+	 * @param places2 
+	 * @param transitions2 
 	 */
-	private void updateNetOfflineStatus(JTextArea dataSelectedTransTextArea, ArrayList<Transition> transitions, boolean status) {
-		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		ArrayList<ArrayList<Transition>> mcts = pn.getMCTMatrix();
-		//TODO:
-		String dataTxt = dataSelectedTransTextArea.getText();
+	public void completeKnockoutSimulationResults(NetSimulationData data, ArrayList<Transition> transitions, ArrayList<Place> places) {
+		NetSimulationData netSimData = data;
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+		netSimData.date = dateFormat.format(date);
+		netSimData.refSet = false;
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessSimKnockoutData().addNewDataSet(netSimData);
+
+		AbyssNotepad notePad = new AbyssNotepad(900,600);
+		notePad.setVisible(true);
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("Transitions: ", "text");
+		notePad.addTextLineNL("", "text");
+		for(int t=0; t<netSimData.transFiringsAvg.size(); t++) {
+			String t_name = transitions.get(t).getName();
+			double valAvg = netSimData.transFiringsAvg.get(t);
+			double valMin = netSimData.transFiringsMin.get(t);
+			double valMax = netSimData.transFiringsMax.get(t);
+
+			notePad.addTextLineNL("  t"+t+"_"+t_name+" : "+Tools.cutValueExt(valAvg,4)+" min: "+Tools.cutValueExt(valMin,4)+
+					" max: "+Tools.cutValueExt(valMax,4), "text");
+
+		}
+
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("Places: ", "text");
+		notePad.addTextLineNL("", "text");
+		for(int t=0; t<netSimData.placeTokensAvg.size(); t++) {
+			String t_name = places.get(t).getName();
+			double valAvg = netSimData.placeTokensAvg.get(t);
+			double valMin = netSimData.placeTokensMin.get(t);
+			double valMax = netSimData.placeTokensMax.get(t);
+
+			notePad.addTextLineNL("  p"+t+"_"+t_name+" : "+Tools.cutValueExt(valAvg,4)+" min: "+Tools.cutValueExt(valMin,4)+
+					" max: "+Tools.cutValueExt(valMax,4), "text");
+		}
 		
+		boss.mainSimWindow.setWorkInProgress(false);
+		boss.setSimWindowComponentsStatus(true);
 	}
 
 	/**
 	 * Zapis danych symulacji do pliku.
 	 */
 	public void saveDataSets() {
-		try{
-			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-			
-			FileFilter filter[] = new FileFilter[1];
-			filter[0] = new ExtensionFileFilter("Simulation Data (.sim)",  new String[] { "sim" });
-			String newLocation = Tools.selectFileDialog(lastPath, filter, "Save data", "", "");
-			if(newLocation.equals(""))
-				return;
-			
-			if(!newLocation.contains(".sim"))
-				newLocation += ".sim";
-
-			FileOutputStream fos= new FileOutputStream(newLocation);
-			ObjectOutputStream oos= new ObjectOutputStream(fos);
-			NetSimulationDataCore core = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessSimKnockoutData();
-			oos.writeObject(core);
-			oos.close();
-			fos.close();
-		} catch(IOException ioe){
-			GUIManager.getDefaultGUIManager().log("Saving simulation data failed.", "error", false);
+		boolean status = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessSimKnockoutData().saveDataSets();
+		if(status) {
+			//anything?
 		}
 	}
 	
 	/**
-	 * Odczyt danych z pliku.
+	 * Odczyt danych symulacji knockout z pliku.
 	 */
 	public void loadDataSets() {
-		NetSimulationDataCore core = new NetSimulationDataCore();
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-		
-		String newLocation = "";
-		try
-		{
-			FileFilter filter[] = new FileFilter[1];
-			filter[0] = new ExtensionFileFilter("Simulation Data (.sim)",  new String[] { "sim" });
-			newLocation = Tools.selectFileDialog(lastPath, filter, "Load data", "", "");
-			if(newLocation.equals("")) 
-				return;
-			
-			File test = new File(newLocation);
-			if(!test.exists()) 
-				return;
-			
-			FileInputStream fis = new FileInputStream(newLocation);
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			core = (NetSimulationDataCore) ois.readObject();
-			ois.close();
-			fis.close();
-			
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setNewKnockoutData(core);
+		boolean status = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessSimKnockoutData().loadDataSets();
+		if(status) {
 			boss.resetWindow();
 			boss.updateFreshKnockoutTab();
-		} catch(Exception ioe){
-			String msg = "Simulation data loading failed for file "+newLocation;
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
-			return;
 		} 
+	}
+	
+	/**
+	 * Metoda ustawiająca status offline dla odpowiednich tranzycji.
+	 * @param dataSelectedTransTextArea JTextArea - pole tekstowe z T i MCT do wyłączenia
+	 * @param transitions ArrayList[Transition] - wektor tranzycji
+	 * @param status boolean - true blokuje tranzycję, false odblokowuje
+	 * @param currentDataPackage NetSimulationData - obiekt danych symulacji
+	 */
+	private void updateNetOfflineStatus(JTextArea dataSelectedTransTextArea, ArrayList<Transition> transitions, 
+			boolean status, NetSimulationData currentDataPackage) {
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		ArrayList<ArrayList<Transition>> mcts = pn.getMCTMatrix();
+		//TODO:
+		ArrayList<Transition> disableList = new ArrayList<Transition>();
+		String dataTxt = dataSelectedTransTextArea.getText();
+		while(dataTxt.contains("tr#")) {
+			int index = dataTxt.indexOf("tr#");
+			String tmp = dataTxt.substring(index);
+			int semiIndex = tmp.indexOf(";");
+			int hashIndex = tmp.indexOf("#");
+			
+			String value = tmp.substring(hashIndex+1, semiIndex);
+			int transIndex = Integer.parseInt(value);
+			if(!disableList.contains(transitions.get(transIndex))) {
+				disableList.add(transitions.get(transIndex));
+				currentDataPackage.disabledTransitionsIDs.add(transIndex);
+			}
+			
+			tmp = tmp.substring(0, semiIndex+1);
+			dataTxt = dataTxt.replace(tmp, "");
+		}
+		
+		//deaktywuj wszystkie tranzycje ze zbioru MCT:
+		while(dataTxt.contains("MCT#")) {
+			int index = dataTxt.indexOf("MCT#");
+			String tmp = dataTxt.substring(index);
+			int semiIndex = tmp.indexOf(";");
+			int hashIndex = tmp.indexOf("#");
+			String value = tmp.substring(hashIndex+1, semiIndex);
+			int mctIndex = Integer.parseInt(value);
+			
+			ArrayList<Transition> mct = mcts.get(mctIndex-1);
+			currentDataPackage.disabledMCTids.add(mctIndex-1);
+			for(Transition trans : mct) {
+				if(!disableList.contains(trans))
+					disableList.add(trans);
+			}
+			
+			tmp = tmp.substring(0, semiIndex+1);
+			dataTxt = dataTxt.replace(tmp, "");
+		}
+		
+		for(Transition trans : transitions) {
+			if(disableList.contains(trans))
+				trans.setOffline(true);
+			else
+				trans.setOffline(false);
+		}
 	}
 
 	/**

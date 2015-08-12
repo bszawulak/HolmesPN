@@ -36,17 +36,19 @@ public class StateSimulator implements Runnable {
 	private ArrayList<Double> transitionsAvgData = null;
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
 	
-	private boolean maxMode = false;
 	private SimulatorEngine engine = null;
+	private boolean maxMode = false;
+	private boolean singleMode = false;
 	private int emptySteps = 0; // 0 - bez pustych kroków, 1 - z pustymi krokami
 	
 	//runtime:
 	public boolean terminate = false;
 	public int stepsLimit;
-	public JProgressBar progressBar;	//standardowy tryb symulacji
-	private AbyssStateSimulator boss;	//standardowy tryb symulacji
-	private int simulationType;			//standardowy tryb symulacji
+	public JProgressBar progressBar;	//pasek postępu symulacji
+	private AbyssStateSimulator boss;	//okno nadrzędne symulatora
+	private int simulationType;			//aktywny tryb symulacji
 	private int refReps;				//powtórki dla trybu zbierania danych referencyjnych
+	private NetSimulationData currentDataPackage;
 
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
@@ -73,11 +75,13 @@ public class StateSimulator implements Runnable {
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
 			this.refReps = (int)blackBox[3];
+			this.currentDataPackage = (NetSimulationData)blackBox[4];
 		} else if(simulationType == 3) { //obliczenie danych przy knockoutcie elementów
 			this.boss = (AbyssStateSimulator)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
 			this.refReps = (int)blackBox[3];
+			this.currentDataPackage = (NetSimulationData)blackBox[4];
 		}
 	}
 
@@ -90,10 +94,10 @@ public class StateSimulator implements Runnable {
 			boss.completeSimulationProcedures();
 		} else if(simulationType == 2) {
 			NetSimulationData data = simulateNetReferenceAndKnockout();
-			boss.accessKnockoutTab().action.completeRefSimulationResults(data);
+			boss.accessKnockoutTab().action.completeRefSimulationResults(data, transitions, places);
 		} else if(simulationType == 3) {
 			NetSimulationData data = simulateNetReferenceAndKnockout();
-			boss.accessKnockoutTab().action.completeRefSimulationResults(data);
+			boss.accessKnockoutTab().action.completeKnockoutSimulationResults(data, transitions, places);
 		}
 	}
 	
@@ -102,9 +106,10 @@ public class StateSimulator implements Runnable {
 	 * danych dla symulatora.
 	 * @param simNetType NetType - typ sieci
 	 * @param maxMode boolean - maximum (true), lub nie
+	 * @param singleMode boolean - tryb pojedynczego odpalania
 	 * @return boolean - true, jeśli wszystko się udało
 	 */
-	public boolean initiateSim(NetType simNetType, boolean maxMode) {
+	public boolean initiateSim(NetType simNetType, boolean maxMode, boolean singleMode) {
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		time_transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTimeTransitions();
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
@@ -131,7 +136,14 @@ public class StateSimulator implements Runnable {
 		}
 		
 		this.maxMode = maxMode;
-		engine.setEngine(simNetType, maxMode, transitions, time_transitions);
+		this.singleMode = singleMode;
+		if(singleMode && GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+			maxMode = true;
+		} else {
+			maxMode = false;
+		}
+		
+		engine.setEngine(simNetType, maxMode, singleMode, transitions, time_transitions);
 		ready = true;
 		return ready;
 	}
@@ -253,33 +265,34 @@ public class StateSimulator implements Runnable {
 		//	INIT MAIN VECTORS:
 		ArrayList<Long> totalPlacesTokensInTurn = new ArrayList<Long>();
 		ArrayList<Integer> totalTransFiringInTurn = new ArrayList<Integer>();
-		NetSimulationData netData = new NetSimulationData();
+		//NetSimulationData netData = new NetSimulationData();
 		int placeNumber = places.size();
 		int transNumber = transitions.size();
-		netData.maxMode = engine.getMaxMode();
-		netData.netSimType = engine.getNetSimMode();
-		netData.steps = stepsLimit;
-		netData.reps = refReps;
-		netData.placesNumber = placeNumber;
-		netData.transNumber = transNumber;
+		currentDataPackage.maxMode = engine.getMaxMode();
+		currentDataPackage.netSimType = engine.getNetSimMode();
+		currentDataPackage.steps = stepsLimit;
+		currentDataPackage.reps = refReps;
+		currentDataPackage.placesNumber = placeNumber;
+		currentDataPackage.transNumber = transNumber;
 		for(int p=0; p<placeNumber; p++) {
 			totalPlacesTokensInTurn.add((long) 0);
-			netData.refPlaceTokensAvg.add(0.0);
-			netData.refPlaceTokensMin.add(Double.MAX_VALUE);
-			netData.refPlaceTokensMax.add(0.0);
-			netData.simsWithZeroTokens.add(0);
+			currentDataPackage.placeTokensAvg.add(0.0);
+			currentDataPackage.placeTokensMin.add(Double.MAX_VALUE);
+			currentDataPackage.placeTokensMax.add(0.0);
+			currentDataPackage.placeZeroTokens.add(0);
 			
-			netData.startingState.add(places.get(p).getTokensNumber());
+			currentDataPackage.startingState.add(places.get(p).getTokensNumber());
 		}
 		for(int t=0; t<transNumber; t++) {
 			totalTransFiringInTurn.add(0);
-			netData.refTransFiringsAvg.add(0.0);
-			netData.refTransFiringsMin.add(Double.MAX_VALUE);
-			netData.refTransFiringsMax.add(0.0);
-			netData.simsWithZeroFiring.add(0);
+			currentDataPackage.transFiringsAvg.add(0.0);
+			currentDataPackage.transFiringsMin.add(Double.MAX_VALUE);
+			currentDataPackage.transFiringsMax.add(0.0);
+			currentDataPackage.transZeroFiring.add(0);
 			
-			if(transitions.get(t).isOffline())
-				netData.disabledTransitionsIDs.add(t);
+			//poniższe dzieje się przed uruchomieniem symulatora:
+			//if(transitions.get(t).isOffline())
+			//	currentDataPackage.disabledTransitionsIDs.add(t);
 		}
 		//	INIT VECTORS COMPLETED
 		
@@ -337,41 +350,41 @@ public class StateSimulator implements Runnable {
 				double simTokenValue = totalPlacesTokensInTurn.get(p);
 				simTokenValue /= (double)realStepCounter;
 				
-				double oldVal = netData.refPlaceTokensAvg.get(p) + simTokenValue;
-				netData.refPlaceTokensAvg.set(p, oldVal);
+				double oldVal = currentDataPackage.placeTokensAvg.get(p) + simTokenValue;
+				currentDataPackage.placeTokensAvg.set(p, oldVal);
 				
-				double oldMin = netData.refPlaceTokensMin.get(p);
+				double oldMin = currentDataPackage.placeTokensMin.get(p);
 				if(simTokenValue < oldMin)
-					netData.refPlaceTokensMin.set(p, (double) simTokenValue);
+					currentDataPackage.placeTokensMin.set(p, (double) simTokenValue);
 				
-				double oldMax = netData.refPlaceTokensMax.get(p);
+				double oldMax = currentDataPackage.placeTokensMax.get(p);
 				if(simTokenValue > oldMax) {
-					netData.refPlaceTokensMax.set(p, (double) simTokenValue);
+					currentDataPackage.placeTokensMax.set(p, (double) simTokenValue);
 				}
 				
 				if(simTokenValue == 0) {
-					int val = netData.simsWithZeroTokens.get(p) + 1;
-					netData.simsWithZeroTokens.set(p, val);
+					int val = currentDataPackage.placeZeroTokens.get(p) + 1;
+					currentDataPackage.placeZeroTokens.set(p, val);
 				}
 			}
 			for(int t=0; t<transNumber; t++) {
 				double simFiringValue = totalTransFiringInTurn.get(t);
 				simFiringValue /= (double)realStepCounter;
 				
-				double oldVal = netData.refTransFiringsAvg.get(t) + simFiringValue;
-				netData.refTransFiringsAvg.set(t, oldVal);
+				double oldVal = currentDataPackage.transFiringsAvg.get(t) + simFiringValue;
+				currentDataPackage.transFiringsAvg.set(t, oldVal);
 				
-				double oldMin = netData.refTransFiringsMin.get(t);
+				double oldMin = currentDataPackage.transFiringsMin.get(t);
 				if(simFiringValue < oldMin)
-					netData.refTransFiringsMin.set(t, (double) simFiringValue);
+					currentDataPackage.transFiringsMin.set(t, (double) simFiringValue);
 				
-				double oldMax = netData.refTransFiringsMax.get(t);
+				double oldMax = currentDataPackage.transFiringsMax.get(t);
 				if(simFiringValue > oldMax)
-					netData.refTransFiringsMax.set(t, (double) simFiringValue);
+					currentDataPackage.transFiringsMax.set(t, (double) simFiringValue);
 
 				if(simFiringValue == 0) {
-					int val = netData.simsWithZeroFiring.get(t) + 1;
-					netData.simsWithZeroFiring.set(t, val);
+					int val = currentDataPackage.transZeroFiring.get(t) + 1;
+					currentDataPackage.transZeroFiring.set(t, val);
 				}
 			}
 			
@@ -380,19 +393,19 @@ public class StateSimulator implements Runnable {
 		
 		//uśrednianie po zakończeniu powtórek:
 		for(int p=0; p<placeNumber; p++) {
-			double oldVal = netData.refPlaceTokensAvg.get(p) / (double)refReps;
-			netData.refPlaceTokensAvg.set(p, oldVal);
+			double oldVal = currentDataPackage.placeTokensAvg.get(p) / (double)refReps;
+			currentDataPackage.placeTokensAvg.set(p, oldVal);
 			
 		}
 		for(int t=0; t<transNumber; t++) {
-			double oldVal = netData.refTransFiringsAvg.get(t) / (double)refReps;
-			netData.refTransFiringsAvg.set(t, oldVal);
+			double oldVal = currentDataPackage.transFiringsAvg.get(t) / (double)refReps;
+			currentDataPackage.transFiringsAvg.set(t, oldVal);
 		}
 
 		ready = false;
 		restoreInternalMarkingZero();
 		
-		return netData;
+		return currentDataPackage;
 	}
 
 	/**

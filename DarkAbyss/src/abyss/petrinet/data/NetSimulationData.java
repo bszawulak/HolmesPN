@@ -27,25 +27,25 @@ public class NetSimulationData implements Serializable {
 	public ArrayList<Integer> startingState;
 	
 	//wyniki symulacji:
-	public ArrayList<Double> refPlaceTokensAvg;
-	public ArrayList<Double> refPlaceTokensMin;
-	public ArrayList<Double> refPlaceTokensMax;
-	public ArrayList<Double> refTransFiringsAvg;
-	public ArrayList<Double> refTransFiringsMin;
-	public ArrayList<Double> refTransFiringsMax;
-	public ArrayList<Integer> simsWithZeroFiring;
-	public ArrayList<Integer> simsWithZeroTokens;
+	public ArrayList<Double> placeTokensAvg;
+	public ArrayList<Double> placeTokensMin;
+	public ArrayList<Double> placeTokensMax;
+	public ArrayList<Double> transFiringsAvg;
+	public ArrayList<Double> transFiringsMin;
+	public ArrayList<Double> transFiringsMax;
+	public ArrayList<Integer> transZeroFiring;
+	public ArrayList<Integer> placeZeroTokens;
 	
 	public NetSimulationData() {
-		refPlaceTokensAvg = new ArrayList<Double>();
-		refPlaceTokensMin = new ArrayList<Double>();
-		refPlaceTokensMax = new ArrayList<Double>();
-		refTransFiringsAvg = new ArrayList<Double>();
-		refTransFiringsMin = new ArrayList<Double>();
-		refTransFiringsMax = new ArrayList<Double>();
-		simsWithZeroFiring = new ArrayList<Integer>();
-		simsWithZeroTokens = new ArrayList<Integer>();
-		
+		placeTokensAvg = new ArrayList<Double>();
+		placeTokensMin = new ArrayList<Double>();
+		placeTokensMax = new ArrayList<Double>();
+		placeZeroTokens = new ArrayList<Integer>();
+		transFiringsAvg = new ArrayList<Double>();
+		transFiringsMin = new ArrayList<Double>();
+		transFiringsMax = new ArrayList<Double>();
+		transZeroFiring = new ArrayList<Integer>();
+
 		disabledTransitionsIDs = new ArrayList<Integer>();
 		disabledMCTids = new ArrayList<Integer>();
 		startingState = new ArrayList<Integer>();

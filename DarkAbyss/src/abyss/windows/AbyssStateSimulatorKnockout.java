@@ -56,15 +56,25 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	public int refRepetitions = 100;
 	public NetType refNetType = NetType.BASIC;		//rodzaj sieci: BASIC, TIMED, HYBRID, itd.
 	public boolean refMaximumMode = false;
+	public boolean refSingleMode = false;
 	public JProgressBar refProgressBarKnockout;
-	private JComboBox<String> referencesCombo = null;
+	
 	
 	//reference details panel:
+	private JComboBox<String> referencesCombo = null;
 	private JLabel refLabelDate;
 	private JLabel refLabelSimNetMode;
 	private JLabel refLabelMaxMode;
 	private JLabel refLabelSteps;
 	private JLabel refLabelReps;
+	
+	//knockout details panel:
+	private JComboBox<String> dataCombo = null;
+	private JLabel dataLabelDate;
+	private JLabel dataLabelSimNetMode;
+	private JLabel dataLabelMaxMode;
+	private JLabel dataLabelSteps;
+	private JLabel dataLabelReps;
 	
 	//data sets acquisition panel:
 	private JComboBox<String> dataTransitionsCombo = null;
@@ -73,6 +83,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	public int dataRepetitions = 100;
 	public NetType dataNetType = NetType.BASIC;		//rodzaj sieci: BASIC, TIMED, HYBRID, itd.
 	public boolean dataMaximumMode = false;
+	public boolean dataSingleMode = false;
 	public JProgressBar dataProgressBarKnockout;
 	public JTextArea dataSelectedTransTextArea;
 	public boolean dataSimUseEditorOffline = false;
@@ -206,18 +217,22 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		label1.setBounds(posXda+120, posYda+40, 90, 20);
 		result.add(label1);
 		
-		refSimMaxMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode",});
-		refSimMaxMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+		refSimMaxMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
+		refSimMaxMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing, \n"
+				+ "only 1 transition will fire in single mode.");
 		refSimMaxMode.setBounds(posXda+120, posYda+60, 120, 20);
 		refSimMaxMode.setSelectedIndex(0);
 		refSimMaxMode.setMaximumRowCount(6);
 		refSimMaxMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = refSimMaxMode.getSelectedIndex();
-				if(selected == 0)
+				if(selected == 0) {
 					refMaximumMode = false;
-				else
+				} else if(selected == 1) {
 					refMaximumMode = true;
+				} else {
+					refSingleMode = true;
+				}
 			}
 		});
 		result.add(refSimMaxMode);
@@ -588,18 +603,22 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		label1.setBounds(posXda+120, posYda+40, 90, 20);
 		result.add(label1);
 		
-		dataSimMaxMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode",});
-		dataSimMaxMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+		dataSimMaxMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
+		dataSimMaxMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing, \n"
+				+ "only 1 transition will fire in single mode.");
 		dataSimMaxMode.setBounds(posXda+120, posYda+60, 120, 20);
 		dataSimMaxMode.setSelectedIndex(0);
 		dataSimMaxMode.setMaximumRowCount(6);
 		dataSimMaxMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = refSimMaxMode.getSelectedIndex();
-				if(selected == 0)
+				if(selected == 0) {
 					dataMaximumMode = false;
-				else
+				} else if(selected == 1) {
 					dataMaximumMode = true;
+				} else {
+					dataSingleMode = true;
+				}
 			}
 		});
 		result.add(dataSimMaxMode);
@@ -696,12 +715,68 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	
 	public JPanel getChartsPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Knockout data acquisition setup"));
+		result.setBorder(BorderFactory.createTitledBorder("Knockout data details panel"));
 		result.setPreferredSize(new Dimension(670, 50));
 		doNotUpdate = true;
 		int posXda = 10;
 		int posYda = 30;
 		
+		JLabel label1 = new JLabel("Data sets:");
+		label1.setBounds(posXda, posYda, 70, 20);
+		result.add(label1);
+		
+		String[] data = { " ----- " };
+		dataCombo = new JComboBox<String>(data); //final, aby listener przycisku odczytał wartość
+		dataCombo.setBounds(posXda+80, posYda, 400, 20);
+		dataCombo.setMaximumRowCount(12);
+		dataCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate) 
+					return;
+				
+				int selected = dataCombo.getSelectedIndex();
+				if(selected > 0) {
+					updateDataDetails(selected-1);
+				} 
+			}
+			
+		});
+		result.add(dataCombo);
+
+		JLabel dateTxtLabel = new JLabel("Date:");
+		dateTxtLabel.setBounds(posXda, posYda+20, 70, 20);
+		result.add(dateTxtLabel);
+		dataLabelDate = new JLabel("---");
+		dataLabelDate.setBounds(posXda+80, posYda+20, 120, 20);
+		result.add(dataLabelDate);
+		
+		JLabel modeTxtLabel = new JLabel("Net mode:");
+		modeTxtLabel.setBounds(posXda+210, posYda+20, 70, 20);
+		result.add(modeTxtLabel);
+		dataLabelSimNetMode = new JLabel("---");
+		dataLabelSimNetMode.setBounds(posXda+290, posYda+20, 70, 20);
+		result.add(dataLabelSimNetMode);
+		
+		JLabel maxModeTxtLabel = new JLabel("Max mode:");
+		maxModeTxtLabel.setBounds(posXda+360, posYda+20, 70, 20);
+		result.add(maxModeTxtLabel);
+		dataLabelMaxMode = new JLabel("---");
+		dataLabelMaxMode.setBounds(posXda+430, posYda+20, 90, 20);
+		result.add(dataLabelMaxMode);
+		
+		JLabel stepsTxtLabel = new JLabel("Sim. steps:");
+		stepsTxtLabel.setBounds(posXda, posYda+40, 70, 20);
+		result.add(stepsTxtLabel);
+		dataLabelSteps = new JLabel("---");
+		dataLabelSteps.setBounds(posXda+80, posYda+40, 80, 20);
+		result.add(dataLabelSteps);
+		
+		JLabel repsTxtLabel = new JLabel("Repetitions:");
+		repsTxtLabel.setBounds(posXda+210, posYda+40, 70, 20);
+		result.add(repsTxtLabel);
+		dataLabelReps = new JLabel("---");
+		dataLabelReps.setBounds(posXda+290, posYda+40, 90, 20);
+		result.add(dataLabelReps);
 		
 		doNotUpdate = false;
 	    return result;
@@ -758,32 +833,63 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	 */
 	public void updateFreshKnockoutTab() {
 		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		
+		//reference data:
 		ArrayList<NetSimulationData> references = pn.accessSimKnockoutData().getReferenceSets();
 		int refSize = references.size();
 		doNotUpdate = true;
 		int oldSelected = 0;
+		oldSelected = referencesCombo.getSelectedIndex();
+		referencesCombo.removeAllItems();
+		referencesCombo.addItem(" ----- ");
 		if(refSize > 0) {
-			oldSelected = referencesCombo.getSelectedIndex();
-			referencesCombo.removeAllItems();
-			referencesCombo.addItem(" ----- ");
 			for(int r=0; r<refSize; r++) {
 				String name = "Ref:"+r+" Date: "+references.get(r).date+" NetMode:"+references.get(r).netSimType+
 						" MaxMode:"+references.get(r).maxMode;
 				referencesCombo.addItem(name);
 			}
 			
-			if(oldSelected < referencesCombo.getItemCount())
-				referencesCombo.setSelectedIndex(oldSelected);
-			else
-				referencesCombo.setSelectedIndex(0);
-
 			refLabelDate.setText("---");
 			refLabelSimNetMode.setText("---");
 			refLabelMaxMode.setText("---");
 			refLabelSteps.setText("---");
 			refLabelReps.setText("---");
+			
+			if(oldSelected < referencesCombo.getItemCount())
+				referencesCombo.setSelectedIndex(oldSelected);
+			else
+				referencesCombo.setSelectedIndex(0);
 		}
 		
+		
+		//knockout data:
+		ArrayList<NetSimulationData> knockout = pn.accessSimKnockoutData().getDataSets();
+		int knockSize = knockout.size();
+		doNotUpdate = true;
+		int oldKnockSelected = 0;
+		oldKnockSelected = dataCombo.getSelectedIndex();
+		dataCombo.removeAllItems();
+		dataCombo.addItem(" ----- ");
+		if(knockSize > 0) {
+			for(int r=0; r<knockSize; r++) {
+				String name = "Data set:"+r+" Date: "+knockout.get(r).date+" NetMode:"+knockout.get(r).netSimType+
+						" MaxMode:"+knockout.get(r).maxMode;
+				dataCombo.addItem(name);
+			}
+			
+			dataLabelDate.setText("---");
+			dataLabelSimNetMode.setText("---");
+			dataLabelMaxMode.setText("---");
+			dataLabelSteps.setText("---");
+			dataLabelReps.setText("---");
+			
+			if(oldKnockSelected < dataCombo.getItemCount())
+				dataCombo.setSelectedIndex(oldKnockSelected);
+			else
+				dataCombo.setSelectedIndex(0);
+		}
+		
+		//inne:
 		ArrayList<Transition> transitions = pn.getTransitions();
 		int oldTsel = dataTransitionsCombo.getSelectedIndex();
 		int oldTsize = dataTransitionsCombo.getItemCount() - 1;
@@ -812,10 +918,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 
 			if(dataMctCombo.getItemCount() > oldMsel)
 				dataMctCombo.setSelectedIndex(oldMsel);
-		} 
-		
-		//dataMctCombo
-		
+		}
 		doNotUpdate = false;
 	}
 
@@ -836,5 +939,24 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 			refLabelMaxMode.setText("FALSE");
 		refLabelSteps.setText(""+selectedRef.steps);
 		refLabelReps.setText(""+selectedRef.reps);
+	}
+	
+	/**
+	 * Update danych o wybranym właśnie zbiorze danych knockout.
+	 * @param selected int - index zbioru danych w combobox (który wywołuję tę metodę)
+	 */
+	public void updateDataDetails(int selected) {
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		ArrayList<NetSimulationData> data = pn.accessSimKnockoutData().getDataSets();
+		NetSimulationData selectedData = data.get(selected);
+		
+		dataLabelDate.setText(selectedData.date);
+		dataLabelSimNetMode.setText(selectedData.netSimType.toString());
+		if(selectedData.maxMode)
+			dataLabelMaxMode.setText("TRUE");
+		else
+			dataLabelMaxMode.setText("FALSE");
+		dataLabelSteps.setText(""+selectedData.steps);
+		dataLabelReps.setText(""+selectedData.reps);
 	}
 }

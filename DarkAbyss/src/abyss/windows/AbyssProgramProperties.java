@@ -62,7 +62,7 @@ public class AbyssProgramProperties extends JFrame {
 			initialize_components();
 		} catch (Exception e) {
 			String msg = e.getMessage();
-			GUIManager.getDefaultGUIManager().log("Critical error, cannot create Abyss properties Window:", "error", true);
+			GUIManager.getDefaultGUIManager().log("Critical error, cannot create Abyss properties window:" , "error", true);
 			GUIManager.getDefaultGUIManager().log(msg, "error", false);
 		}
 	}
@@ -428,8 +428,6 @@ public class AbyssProgramProperties extends JFrame {
 		noAction = false;
 		return panel;
 	}
-
-
 	
 	/**
 	 * Metoda tworząca podpanel opcji graficznych.
@@ -489,7 +487,7 @@ public class AbyssProgramProperties extends JFrame {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(0, 0, 600, 500);
 		
-		panel.add(createSimPanel1(0, 0, 590, 190));
+		panel.add(createSimPanel(0, 0, 590, 190));
 		
 		panel.add(createSimGraphic(0, 190, 590, 150));
 		
@@ -505,7 +503,7 @@ public class AbyssProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
-	private JPanel createSimPanel1(int x, int y, int w, int h) {
+	private JPanel createSimPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Simulator engine options"));
 		panel.setBounds(x, y, w, h);
@@ -513,10 +511,16 @@ public class AbyssProgramProperties extends JFrame {
 		int io_y = -5;
 		noAction = true;
 
-		JCheckBox readArcReservCheckBox = checkboxWizard("Transitions reserve tokens in place via read-arcs", io_x, io_y+=20, 360, 20, "simTransReadArcTokenReserv");
+		JCheckBox readArcReservCheckBox = checkboxWizard("Transitions reserve tokens in place via read-arcs", 
+				io_x, io_y+=20, 360, 20, "simTransReadArcTokenReserv");
 		panel.add(readArcReservCheckBox);
 		
-		JCheckBox placesColorsCheckBox = checkboxWizard("Places change colors during simulation", io_x, io_y+=20, 360, 20, "simPlacesColors");
+		JCheckBox singleMaxModeCheckBox = checkboxWizard("Single-maximum mode (single-50/50 when unchecked)", 
+				io_x, io_y+=20, 360, 20, "simSingleMode");
+		panel.add(singleMaxModeCheckBox);
+		
+		JCheckBox placesColorsCheckBox = checkboxWizard("Places change colors during simulation", 
+				io_x, io_y+=20, 360, 20, "simPlacesColors");
 		panel.add(placesColorsCheckBox);
 		
 		noAction = false;

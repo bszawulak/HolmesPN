@@ -25,6 +25,7 @@ public class SimulatorEngine {
 	private Random generator = null;
 	//HighQualityRandom generator = null;
 	private boolean maxMode = false;
+	private boolean singleMode = false;
 	
 	public double planckDistance = 1.0;
 	
@@ -39,14 +40,16 @@ public class SimulatorEngine {
 	/**
 	 * Ustawianie podstawocyh parametrów silnika symulacji.
 	 * @param simulationType NetType - rodzaj symulowanej sieci
-	 * @param mode boolean - tryb maximum
+	 * @param maxMode boolean - tryb maximum
+	 * @param singleMode boolean - true, jeśli tylko 1 tranzycja ma odpalić
 	 * @param transitions ArrayList[Transition] - wektor wszystkich tranzycji
 	 * @param time_transitions ArrayList[Transition] - wektor tranzycji czasowych
 	 */
-	public void setEngine(NetType simulationType, boolean mode, ArrayList<Transition> transitions,
-			ArrayList<Transition> time_transitions) {
+	public void setEngine(NetType simulationType, boolean maxMode, boolean singleMode, 
+			ArrayList<Transition> transitions, ArrayList<Transition> time_transitions) {
 		this.netSimType = simulationType;
-		this.maxMode = mode;
+		this.maxMode = maxMode;
+		this.singleMode = singleMode;
 		this.generator = new Random(System.currentTimeMillis());
 		//this.generator = new HighQualityRandom(System.currentTimeMillis());
 		
@@ -91,11 +94,31 @@ public class SimulatorEngine {
 	}
 	
 	/**
+	 * Ustawia tryb pojedynczego odpalania.
+	 * @param value boolean - true, jeśli tylko 1 tranzycja ma odpalić na turę.
+	 */
+	public void setSingleMode(boolean value) {
+		this.singleMode = value;
+		
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+			maxMode = true;
+		}
+	}
+	
+	/**
 	 * Metoda zwraca status trybu maximum.
 	 * @return boolean - true, jeśli włączony
 	 */
 	public boolean getMaxMode() {
 		return this.maxMode;
+	}
+	
+	/**
+	 * Zwraca status trybu pojedynczego odpalania.
+	 * @return boolean - true, jeśli tylko 1 tranzycja odpala na turę
+	 */
+	public boolean getSingleMode() {
+		return this.singleMode;
 	}
 	
 	/**

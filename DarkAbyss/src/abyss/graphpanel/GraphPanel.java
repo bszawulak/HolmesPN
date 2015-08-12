@@ -337,13 +337,20 @@ public class GraphPanel extends JComponent {
 			status = "Maximum mode OFF";
 		g2d.drawString(status, 20, 60);
 		
+		boolean single = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().accessEngine().getSingleMode();
+		if(single)
+			status = "Single mode ON";
+		else
+			status = "Single mode OFF";
+		g2d.drawString(status, 20, 80);
+		
 		int arcDelay = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
 		status = "Arc delay: "+arcDelay;
-		g2d.drawString(status, 20, 80);
+		g2d.drawString(status, 20, 100);
 		
 		int transDelay = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
 		status = "Trans. firing delay: "+transDelay;
-		g2d.drawString(status, 20, 100);
+		g2d.drawString(status, 20, 120);
 	}
 
 	/**

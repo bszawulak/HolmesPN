@@ -71,6 +71,7 @@ public class AbyssNodeInfo extends JFrame {
 	private int repeated = 1;
 	private JSpinner transIntervalSpinner;
 	private boolean maximumMode = false;
+	private boolean singleMode = false;
 	private int transInterval = 10;
 	
 	private NetType choosenNetType = NetType.BASIC;
@@ -372,18 +373,21 @@ public class AbyssNodeInfo extends JFrame {
 		label1.setBounds(chartX+280, chartY_1st, 50, 15);
 		chartButtonPanel.add(label1);
 		
-		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
+		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
 		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
 		simMode.setBounds(chartX+280, chartY_2nd, 120, 25);
-		simMode.setSelectedIndex(1);
+		simMode.setSelectedIndex(0);
 		simMode.setMaximumRowCount(6);
 		simMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = simMode.getSelectedIndex();
-				if(selected == 0)
-					maximumMode = true;
-				else
+				if(selected == 0) {
 					maximumMode = false;
+				} else if(selected == 1) {
+					maximumMode = true;
+				} else {
+					singleMode = true;
+				}
 			}
 		});
 		chartButtonPanel.add(simMode);
@@ -647,18 +651,21 @@ public class AbyssNodeInfo extends JFrame {
 		labelMode.setBounds(chartX+280, chartY_1st, 110, 15);
 		chartButtonPanel.add(labelMode);
 		
-		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
+		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
 		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
 		simMode.setBounds(chartX+280, chartY_2nd, 120, 25);
-		simMode.setSelectedIndex(1);
+		simMode.setSelectedIndex(0);
 		simMode.setMaximumRowCount(6);
 		simMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = simMode.getSelectedIndex();
-				if(selected == 0)
-					maximumMode = true;
-				else
+				if(selected == 0) {
 					maximumMode = false;
+				} else if(selected == 1) {
+					maximumMode = true;
+				} else {
+					singleMode = true;
+				}
 			}
 		});
 		chartButtonPanel.add(simMode);
@@ -756,7 +763,7 @@ public class AbyssNodeInfo extends JFrame {
 	private void acquireNewPlaceData() {
 		StateSimulator ss = new StateSimulator();
 		//ss.initiateSim(NetType.BASIC, false);
-		ss.initiateSim(choosenNetType, maximumMode);
+		ss.initiateSim(choosenNetType, maximumMode, singleMode);
 		
 		ArrayList<Integer> dataVector = ss.simulateNetSinglePlace(simSteps, place);
 		ArrayList<ArrayList<Integer>> dataMatrix = new ArrayList<ArrayList<Integer>>();
@@ -828,7 +835,7 @@ public class AbyssNodeInfo extends JFrame {
 	 */
 	private ArrayList<Integer> acquireNewTransitionData() {
 		StateSimulator ss = new StateSimulator();
-		ss.initiateSim(choosenNetType, maximumMode);
+		ss.initiateSim(choosenNetType, maximumMode, singleMode);
 		ArrayList<Integer> dataVector = ss.simulateNetSingleTransition(simSteps, transition);
 		
 		dynamicsSeriesDataSet.removeAllSeries();

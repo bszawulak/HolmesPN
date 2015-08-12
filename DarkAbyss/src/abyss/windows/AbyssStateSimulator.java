@@ -78,6 +78,7 @@ public class AbyssStateSimulator extends JFrame {
 	private AbyssStateSimulatorActions action = new AbyssStateSimulatorActions();
 	private StateSimulator ssim;
 	private boolean maximumMode = false;
+	private boolean singleMode = false;
 	
 	private JProgressBar progressBar;
 	private int simSteps = 1000; // ile kroków symulacji
@@ -280,18 +281,22 @@ public class AbyssStateSimulator extends JFrame {
 		label1.setBounds(posXda+340, posYda-20, 90, 20);
 		dataAcquisitionPanel.add(label1);
 		
-		simMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode"});
-		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+		simMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
+		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing,\n"
+				+ "only 1 transition will fire in single mode.");
 		simMode.setBounds(posXda+340, posYda, 120, 30);
 		simMode.setSelectedIndex(0);
 		simMode.setMaximumRowCount(6);
 		simMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = simMode.getSelectedIndex();
-				if(selected == 0)
+				if(selected == 0) {
 					maximumMode = false;
-				else
+				} else if(selected == 1) {
 					maximumMode = true;
+				} else {
+					singleMode = true;
+				}
 			}
 		});
 		dataAcquisitionPanel.add(simMode);
@@ -1293,7 +1298,7 @@ public class AbyssStateSimulator extends JFrame {
 		
 		progressBar.setMaximum(simSteps);
 
-		boolean success = ssim.initiateSim(choosenNetType, maximumMode);
+		boolean success = ssim.initiateSim(choosenNetType, maximumMode, singleMode);
 		if(success == false)
 			return;
 		

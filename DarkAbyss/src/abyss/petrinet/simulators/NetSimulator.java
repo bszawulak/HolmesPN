@@ -34,6 +34,7 @@ public class NetSimulator {
 	private ArrayList<Transition> launchingTransitions;
 	private Stack<SimulationStep> actionStack;
 	private boolean maxMode = false;
+	private boolean singleMode = false;
 	private boolean writeHistory = true;
 	private long timeCounter = -1;
 	private NetSimulatorLogger nsl = new NetSimulatorLogger();
@@ -85,6 +86,7 @@ public class NetSimulator {
 		previousSimStatus = SimulatorMode.STOPPED;
 		simulationActive = false;
 		maxMode = false;
+		singleMode = false;
 		writeHistory = true;
 		timeCounter = -1;
 		actionStack.removeAllElements();
@@ -108,9 +110,16 @@ public class NetSimulator {
 	 */
 	public void startSimulation(SimulatorMode simulatorMode) {
 		ArrayList<Transition> transitions = petriNet.getTransitions();
-		ArrayList<Transition> time_transitions = petriNet.getTransitions();
+		ArrayList<Transition> time_transitions = petriNet.getTimeTransitions();
 		nsl.logStart(netSimType, writeHistory, simulatorMode, maxMode);
-		engine.setEngine(netSimType, maxMode, transitions, time_transitions);
+		
+		if(singleMode && GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+			maxMode = true; //override
+		} else {
+			maxMode = false;
+		}
+		
+		engine.setEngine(netSimType, maxMode, singleMode, transitions, time_transitions);
 		
 		//zapisz stan tokenów w miejscach przed rozpoczęciem:
 		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == false) {
@@ -198,6 +207,10 @@ public class NetSimulator {
 		return -1;
 	}
 	
+	/**
+	 * Zwraca rodzaj ustawionej sieci do symulacji (BASIC, TIMED, HYBRID).
+	 * @return NetType - j.w.
+	 */
 	public NetType getSimNetType() {
 		return netSimType;
 	}
@@ -733,15 +746,32 @@ public class NetSimulator {
 	public boolean isMaxMode() {
 		return maxMode;
 	}
+	
+	/**
+	 * Tryb odpalenia tylko 1 tranzycji - status.
+	 * @return boolean - true, jeśli tylko 1 ma odpalać
+	 */
+	public boolean isSingleMode() {
+		return singleMode;
+	}
 
 	/**
-	 * Metoda ustwaiająca trybie maksymalnego uruchamiania tranzycji.
+	 * Metoda ustawiająca tryb maksymalnego uruchamiania tranzycji.
 	 * @return boolean - true, jeśli włączany jest tryb maksymalnego uruchamiania; 
 	 * 		false w przeciwnym wypadku
 	 */
 	public void setMaxMode(boolean value) {
 		this.maxMode = value;
 		this.engine.setMaxMode(value);
+	}
+	
+	/**
+	 * Metoda ustawia tryb pojedynczego odpalania tranzycji.
+	 * @param value boolean - true, jeśli tylko 1 tranzycja ma odpalać na turę
+	 */
+	public void setSingleMode(boolean value) {
+		this.singleMode = value;
+		this.engine.setSingleMode(value);
 	}
 
 	/**
@@ -1032,6 +1062,9 @@ public class NetSimulator {
 				if (scheduledStop) { // executing scheduled stop
 					executeScheduledStop();
 				} else if (!actionStack.empty()) { // if steps remaining
+					timeCounter--;
+					GUIManager.getDefaultGUIManager().io.updateTimeStep(""+timeCounter);
+					GUIManager.getDefaultGUIManager().simSettings.currentStep = timeCounter;
 					
 					//tutaj zdejmowany jest ostatni wykonany krok w symulacji:
 					currentStep = actionStack.pop();

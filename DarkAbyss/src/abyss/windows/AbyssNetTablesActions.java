@@ -86,7 +86,7 @@ public class AbyssNetTablesActions {
 		
 		ArrayList<Double> resVector = null;
 		StateSimulator ss = new StateSimulator();
-		ss.initiateSim(NetType.BASIC, false);
+		ss.initiateSim(NetType.BASIC, false, false);
 		ss.simulateNetSimple(10000, true);
 		resVector = ss.getPlacesAvgData();
 		
@@ -129,7 +129,7 @@ public class AbyssNetTablesActions {
 		}
 		
 		StateSimulator ss = new StateSimulator();
-		ss.initiateSim(NetType.BASIC, false);
+		ss.initiateSim(NetType.BASIC, false, false);
 		ss.simulateNetSimple(10000, false);
 		ArrayList<Double> resVector = ss.getTransitionsAvgData();
 		
@@ -255,11 +255,15 @@ public class AbyssNetTablesActions {
 	 * @param modelInvariants InvariantsTableModel - model tablicy inwariantów
 	 * @param invariantsMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @param invSize ArrayList[Integer] invSize - wektor wielkości inwariantów
+	 * @param simSteps int - ile kroków symulacji
+	 * @param maximumMode boolean - true: tryb maximum
+	 * @param singleMode boolean - true: 1 odpalenie tranzycji na turę(krok)
+	 * @param invSimNetType NetType - rodzaj symulacji sieci
 	 */
 	public void addInvariantsToModel(InvariantsSimTableModel modelInvariants, ArrayList<ArrayList<Integer>> invariantsMatrix,
-			int simSteps, boolean maximumMode) {
+			int simSteps, boolean maximumMode, boolean singleMode, NetType invSimNetType) {
 		StateSimulator ss = new StateSimulator();
-		ss.initiateSim(NetType.BASIC, maximumMode);
+		ss.initiateSim(invSimNetType, maximumMode, singleMode);
 		ss.simulateNetSimple(simSteps, false);
 		ArrayList<Double> resVector = ss.getTransitionsAvgData();
 		

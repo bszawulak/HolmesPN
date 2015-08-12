@@ -38,6 +38,7 @@ import javax.swing.table.TableRowSorter;
 
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.Transition;
+import abyss.petrinet.simulators.NetSimulator.NetType;
 import abyss.tables.InvariantsSimTableModel;
 import abyss.tables.InvariantsTableModel;
 import abyss.tables.PTITableRenderer;
@@ -54,13 +55,15 @@ public class AbyssNetTables extends JFrame {
 	private static final long serialVersionUID = 8429744762731301629L;
 	
 	//interface components:
-	//private final JFrame ego;
 	@SuppressWarnings("unused")
 	private JFrame parentFrame;
 	private JPanel mainPanel;
 	private JPanel tablesSubPanel;
 	private JPanel buttonsPanel;
 	private JScrollPane tableScrollPane;
+	private JComboBox<String> invSimNetModeCombo;
+	private NetType invSimNetType = NetType.BASIC;
+	private boolean doNotUpdate = false;
 	//data components:
 	private JTable table;
 	
@@ -73,6 +76,7 @@ public class AbyssNetTables extends JFrame {
 	public int currentClickedRow;
 	private int simStepsForInv = 10000;
 	private boolean maxModeForSSInv = false;
+	private boolean singleModeForSSInv = false;
 	
 	private final AbyssNetTablesActions action;
 	
@@ -259,15 +263,13 @@ public class AbyssNetTables extends JFrame {
 		});
 		invariantsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		buttonsInvariantsPanel.add(invariantsButton);
-		yPos += 30;
 		
 		JLabel ssLabel = new JLabel("StateSim:");
-		ssLabel.setBounds(xPos, yPos, 80, 20);
+		ssLabel.setBounds(xPos, yPos+=30, 80, 20);
 		buttonsInvariantsPanel.add(ssLabel);
-		yPos += 20;
 		
 		JButton acqDataButton = new JButton("SimStart");
-		acqDataButton.setBounds(xPos, yPos, 110, 25);
+		acqDataButton.setBounds(xPos, yPos+=20, 110, 25);
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
 		acqDataButton.setToolTipText("Compute new transitions firing statistics.");
@@ -282,11 +284,10 @@ public class AbyssNetTables extends JFrame {
 			}
 		});
 		buttonsInvariantsPanel.add(acqDataButton);
-		yPos += 30;
 		
 		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simStepsForInv, 0, 1000000, 10000);
 		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
-		simStepsSpinner.setBounds(xPos, yPos, 110, 25);
+		simStepsSpinner.setBounds(xPos, yPos+=30, 110, 25);
 		simStepsSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSpinner spinner = (JSpinner) e.getSource();
@@ -295,28 +296,72 @@ public class AbyssNetTables extends JFrame {
 			}
 		});
 		buttonsInvariantsPanel.add(simStepsSpinner);
-		yPos += 25;
 		
-		JLabel label1 = new JLabel("Mode:");
-		label1.setBounds(xPos, yPos, 80, 15);
+		JLabel label0 = new JLabel("Net type:");
+		label0.setBounds(xPos, yPos+=25, 80, 15);
+		buttonsInvariantsPanel.add(label0);
+		
+		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
+		invSimNetModeCombo = new JComboBox<String>(simModeName);
+		invSimNetModeCombo.setBounds(xPos, yPos+=15, 110, 25);
+		invSimNetModeCombo.setSelectedIndex(0);
+		invSimNetModeCombo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+				
+				int selectedModeIndex = invSimNetModeCombo.getSelectedIndex();
+				selectedModeIndex = GUIManager.getDefaultGUIManager().simSettings.checkSimulatorNetType(selectedModeIndex);
+				doNotUpdate = true;
+				switch(selectedModeIndex) {
+					case 0:
+						invSimNetType = NetType.BASIC;
+						invSimNetModeCombo.setSelectedIndex(0);
+						break;
+					case 1:
+						invSimNetType = NetType.TIME;
+						invSimNetModeCombo.setSelectedIndex(1);
+						break;
+					case 2:
+						invSimNetType = NetType.HYBRID;
+						invSimNetModeCombo.setSelectedIndex(2);
+						break;
+					case -1:
+						invSimNetType = NetType.BASIC;
+						invSimNetModeCombo.setSelectedIndex(1);
+						GUIManager.getDefaultGUIManager().log("Error while changing simulator mode. Set for BASIC.", "error", true);
+						break;
+				}
+				doNotUpdate = false;
+			}
+		});
+		buttonsInvariantsPanel.add(invSimNetModeCombo);
+		
+		JLabel label1 = new JLabel("Submode:");
+		label1.setBounds(xPos, yPos+=25, 80, 15);
 		buttonsInvariantsPanel.add(label1);
-		yPos += 15;
 		
-		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Maximum mode", "50/50 mode"});
-		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
-		simMode.setBounds(xPos, yPos, 110, 25);
-		simMode.setSelectedIndex(1);
+		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
+		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing,\n"
+				+ "in single mode only one transition will fire.");
+		simMode.setBounds(xPos, yPos+=15, 110, 25);
+		simMode.setSelectedIndex(0);
 		simMode.setMaximumRowCount(6);
 		simMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = simMode.getSelectedIndex();
 				if(selected == 0)
+					maxModeForSSInv = false;
+				else if(selected == 0)
 					maxModeForSSInv = true;
 				else
-					maxModeForSSInv = false;
+					singleModeForSSInv = true;
 			}
 		});
 		buttonsInvariantsPanel.add(simMode);
+		
+		//TODO:
 
 		//****
 		buttonsPanel.add(buttonsInvariantsPanel);
@@ -533,7 +578,7 @@ public class AbyssNetTables extends JFrame {
 		table.setRowSorter(null);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		action.addInvariantsToModel(modelInvariantsSimData, invariantsMatrix, simStepsForInv, maxModeForSSInv);
+		action.addInvariantsToModel(modelInvariantsSimData, invariantsMatrix, simStepsForInv, maxModeForSSInv, singleModeForSSInv, invSimNetType);
 		
 		//ustawianie komentarzy dla kolumn:
 		ColumnHeaderToolTips tips = new ColumnHeaderToolTips();

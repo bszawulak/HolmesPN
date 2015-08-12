@@ -77,34 +77,9 @@ import abyss.workspace.WorkspaceSheet;
  * @author students
  * @author MR<br>
  * <br>
- * <b>Absolute positioning. Of almost absolute everything here. <br>
- * Nie obchodzi mnie, co o tym myślisz. Idź w layout i nie wracaj. ┌∩┐(◣_◢)┌∩┐ 
- * </b><br>
- * Właściwie, to wyleje tu swoje żale na Jave, opensourcowe podejścia w tym języku i takie
- * tam. Nie ma to NIC wspólnego ze studentami, którzy się serio postarali i zrobili okna ok.
- * Przerobiłem metody na pozycjonowanie absolutne, wywaliłem w cholerę wszystkie layouty.
- * Bo tak. Bo ludzie padający przed ich ideą na kolana i bijący pokłony "Oh, layout, jak
- * cudownie, wszystko się nam teraz automatycznie rozmieści" nie zauważają, albo nie chcą
- * zauważać, że to 'automatycznie' jest tak do dupy, tak bardzo zj... że już bardziej się
- * chyba nie da. PO CO MI LATAJĄCE WE WSZYSTKIE STRONY ELEMENTY OKNA, SKORO CHCIAŁBYM
- * MIEĆ JE NA STAŁE W JEDNYM MIEJSCU?! Ok, ale o co tu chodzi? No więc albo się używa w
- * Javie layoutów, 2 polecenia na krzyż i wszystko się rozmieszcza gdzie chce i jak chce,
- * albo robi ręcznie i okazuje się, że Java w najmniejszym stopniu nie wspiera takiego podejścia.
- * Nagle miliard rzeczy należy ręcznie ustawiać, niepotrzebych na zdrowy rozsądek (PO CO MI 
- * BORDERSIZE JAK MOGŁ USTAWIĆ START LOCATION I SIZE? PO NIC. ALE BEZ NIEGO JPANEL SIE NIE
- * WYŚWIETLI. BO NIE!). Nagle okazuje się, że JPanel ręcznie należy zmusić do przerysowania się
- * (repaint) - bo tak. Z layoutami jakoś pamięta, żeby się narysować. Bez nich już nie.
- * 
- * Konkluzja. Ktoś mógłby powiedzieć, że przecież skoro chce się ręcznie wszystko rozmieścić,
- * to nie należy narzekać, że jest dużo roboty. ZOBACZCIE SOBIE DURNIE VISUAL STUDIO.NET MICROSOFTU!!!
- * Są panele, layouty i inne. Ale nie zmuszą się nikogo młotem do ich korzystania jak w Javie.
- * I okazuje się, że nagle jest mniej tam roboty z rozmieszczaniem, niż nawet z layoutami w Javie.
- * Ten język powinien pozostać na etapie konsoli. Jego próby udawania, że służy do
- * tworzenia także aplikacji w oknach kosztują więcej nerwów niż jest to tego warte.
- * 
- * Ostatnia rzecz, jeśli cię to nie przekonuje. Otwórz google. Wpisz dowolną frazę ze słowami
- * "java layout", "problem" względnie "does not". Pół internetu wyleci z pytaniami i (rzadziej) 
- * odpowiedziami. Takie to wspaniałe layouty. (╯゜Д゜）╯︵ ┻━┻)   
+ * <b>Absolute positioning. Of almost absolute everything here.</b><br>
+ * Nie obchodzi mnie, co o tym myślisz (╯゜Д゜）╯︵ ┻━┻) . Idź w layout i nie wracaj. ┌∩┐(◣_◢)┌∩┐ 
+ *   
  */
 public class AbyssDockWindowsTable extends JPanel {
 	private static final long serialVersionUID = 4510802239873443705L;
@@ -121,6 +96,8 @@ public class AbyssDockWindowsTable extends JPanel {
 	public ButtonGroup group = new ButtonGroup();
 	public JSpinner spiner = new JSpinner();
 	public JComboBox<String> simMode;
+	public JCheckBox maximumModeCheckBox;
+	public JCheckBox singleModeCheckBox;
 	public JLabel timeStepLabelValue;
 	private NetSimulator simulator;  // obiekt symulatora
 	// P/T/M/A
@@ -432,11 +409,26 @@ public class AbyssDockWindowsTable extends JPanel {
 		components.add(saveButton);
 		
 		columnB_Y += 30;
-		JCheckBox maximumMode = new JCheckBox("Maximum mode");
-		maximumMode.setBounds(columnA_posX, columnA_Y += 30, 200, 20);
-		//maximumMode.setLocation(columnA_posX-4, columnA_Y);
-		maximumMode.addActionListener(new ActionListener() {
+		//doNotUpdate = false;
+		maximumModeCheckBox = new JCheckBox("Maximum mode");
+		maximumModeCheckBox.setBounds(columnA_posX, columnA_Y += 30, 200, 20);
+		maximumModeCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+				
+				if(singleModeCheckBox.isSelected()) {
+					JOptionPane.showMessageDialog(null, "Mode overrided by an active single mode.",
+						    "Cannot change now", JOptionPane.WARNING_MESSAGE);
+					doNotUpdate = true;
+					if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+						maximumModeCheckBox.setSelected(true);
+					} else {
+						maximumModeCheckBox.setSelected(false);
+					}
+					doNotUpdate = false;
+				}
+
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
 					simulator.setMaxMode(true);
@@ -445,7 +437,34 @@ public class AbyssDockWindowsTable extends JPanel {
 				}
 			}
 		});
-		components.add(maximumMode);
+		components.add(maximumModeCheckBox);
+		
+		columnB_Y += 20;
+		singleModeCheckBox = new JCheckBox("Single mode");
+		singleModeCheckBox.setBounds(columnA_posX, columnA_Y += 20, 200, 20);
+		singleModeCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					simulator.setSingleMode(true);
+					doNotUpdate = true;
+					if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+						maximumModeCheckBox.setSelected(true);
+					} else {
+						maximumModeCheckBox.setSelected(false);
+					}
+					doNotUpdate = false;
+				} else {
+					simulator.setSingleMode(false);
+					
+					doNotUpdate = true;
+					maximumModeCheckBox.setSelected(false);
+					simulator.setMaxMode(false);
+					doNotUpdate = false;				
+				}
+			}
+		});
+		components.add(singleModeCheckBox);
 		
 		//PANEL SYMULATORA INWARIANTÓW
 		JPanel invariantsSimulatorPanel = new JPanel();
