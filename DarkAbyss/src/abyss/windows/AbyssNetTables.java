@@ -398,8 +398,8 @@ public class AbyssNetTables extends JFrame {
     	table.getColumnModel().getColumn(4).setMaxWidth(40);
         table.getColumnModel().getColumn(5).setHeaderValue("Avg.Tk");
         table.getColumnModel().getColumn(5).setPreferredWidth(50);
-    	table.getColumnModel().getColumn(5).setMinWidth(50);
-    	table.getColumnModel().getColumn(5).setMaxWidth(50);
+    	table.getColumnModel().getColumn(5).setMinWidth(70);
+    	table.getColumnModel().getColumn(5).setMaxWidth(70);
     	
     	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(table.getModel());
 		table.setRowSorter(sorter);

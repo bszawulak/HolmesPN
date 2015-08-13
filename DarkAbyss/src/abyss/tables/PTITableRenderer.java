@@ -25,8 +25,6 @@ public class PTITableRenderer implements TableCellRenderer {
 		this.table = table;
 	}
 	
-	
-	
 	/**
 	 * Konstruktor obiektów klasy MyRenderer przyjmujący numer trybu rysowania.
 	 * @param mode int - tryb rysowania

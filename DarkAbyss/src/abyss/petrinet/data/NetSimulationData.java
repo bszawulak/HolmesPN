@@ -30,22 +30,31 @@ public class NetSimulationData implements Serializable {
 	public ArrayList<Double> placeTokensAvg;
 	public ArrayList<Double> placeTokensMin;
 	public ArrayList<Double> placeTokensMax;
+	public ArrayList<Integer> placeZeroTokens;
+	public ArrayList<Double> placeStdDev;
+	public ArrayList<ArrayList<Integer>> placeWithinStdDev;
 	public ArrayList<Double> transFiringsAvg;
 	public ArrayList<Double> transFiringsMin;
 	public ArrayList<Double> transFiringsMax;
 	public ArrayList<Integer> transZeroFiring;
-	public ArrayList<Integer> placeZeroTokens;
+	public ArrayList<Double> transStdDev;
+	public ArrayList<ArrayList<Integer>> transWithinStdDev;
 	
 	public NetSimulationData() {
 		placeTokensAvg = new ArrayList<Double>();
 		placeTokensMin = new ArrayList<Double>();
 		placeTokensMax = new ArrayList<Double>();
 		placeZeroTokens = new ArrayList<Integer>();
+		placeStdDev = new ArrayList<Double>();
+		placeWithinStdDev = new ArrayList<ArrayList<Integer>>();
+		
 		transFiringsAvg = new ArrayList<Double>();
 		transFiringsMin = new ArrayList<Double>();
 		transFiringsMax = new ArrayList<Double>();
 		transZeroFiring = new ArrayList<Integer>();
-
+		transStdDev = new ArrayList<Double>();
+		transWithinStdDev = new ArrayList<ArrayList<Integer>>();
+		
 		disabledTransitionsIDs = new ArrayList<Integer>();
 		disabledMCTids = new ArrayList<Integer>();
 		startingState = new ArrayList<Integer>();

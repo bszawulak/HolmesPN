@@ -21,14 +21,14 @@ import abyss.utilities.Tools;
  * 
  * @author MR
  */
-public class AbyssStateSimulatorKnockoutActions {
-	AbyssStateSimulatorKnockout boss;
+public class AbyssStateSimKnockActions {
+	AbyssStateSimKnock boss;
 	
 	/**
 	 * Konstruktor obiektu klasy AbyssStateSimulatorKnockoutActions.
 	 * @param window AbyssStateSimulatorKnockout - okno nadrzędne
 	 */
-	public AbyssStateSimulatorKnockoutActions(AbyssStateSimulatorKnockout window) {
+	public AbyssStateSimKnockActions(AbyssStateSimKnock window) {
 		this.boss = window;
 	}
 	

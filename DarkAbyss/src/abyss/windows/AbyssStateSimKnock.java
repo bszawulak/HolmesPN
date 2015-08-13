@@ -1,28 +1,25 @@
 package abyss.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
@@ -33,7 +30,6 @@ import javax.swing.event.ChangeListener;
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.data.NetSimulationData;
 import abyss.petrinet.data.PetriNet;
-import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
 import abyss.petrinet.simulators.StateSimulator;
 import abyss.petrinet.simulators.NetSimulator.NetType;
@@ -44,12 +40,12 @@ import abyss.utilities.Tools;
  * 
  * @author MR
  */
-public class AbyssStateSimulatorKnockout extends JPanel {
+public class AbyssStateSimKnock extends JPanel {
 	private static final long serialVersionUID = 4257940971120618716L;
-	public AbyssStateSimulatorKnockoutActions action;
+	public AbyssStateSimKnockActions action;
 	private boolean doNotUpdate = false;
 	public StateSimulator ssimKnock;
-	public AbyssStateSimulator mainSimWindow;
+	public AbyssStateSim mainSimWindow;
 	
 	//reference simulation panel:
 	public int refSimSteps = 1000;			//liczba kroków dla zbioru referencyjnego
@@ -58,7 +54,6 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	public boolean refMaximumMode = false;
 	public boolean refSingleMode = false;
 	public JProgressBar refProgressBarKnockout;
-	
 	
 	//reference details panel:
 	private JComboBox<String> referencesCombo = null;
@@ -108,39 +103,43 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	 * Konstruktor obiektu klasy AbyssStateSimulatorKnockout.
 	 * @param abyssStateSimulator 
 	 */
-	public AbyssStateSimulatorKnockout(AbyssStateSimulator abyssStateSimulator) {
+	public AbyssStateSimKnock(AbyssStateSim abyssStateSimulator) {
 		this.mainSimWindow = abyssStateSimulator;
 		ssimKnock = new StateSimulator();
-		action = new AbyssStateSimulatorKnockoutActions(this);
+		action = new AbyssStateSimKnockActions(this);
 		
 		setLayout(new BorderLayout());
 		
-		add(getTopPanel(), BorderLayout.NORTH);
+		add(getRefAcqPanel(), BorderLayout.NORTH);
 		
 		JPanel refAndDataPanel = new JPanel(new BorderLayout());
 		
 		JPanel refAndButtonsPanel = new JPanel(new BorderLayout());
 		refAndButtonsPanel.setPreferredSize(new Dimension(600, 100));
-		refAndButtonsPanel.add(getReferencesPanel(), BorderLayout.CENTER);
+		refAndButtonsPanel.add(getRefDetailsPanel(), BorderLayout.CENTER);
 		refAndButtonsPanel.add(getButtonsPanel(), BorderLayout.EAST);
 		
 		refAndDataPanel.add(refAndButtonsPanel, BorderLayout.NORTH);
 		
 		JPanel dataAndChartsPanel = new JPanel(new BorderLayout());
 		dataAndChartsPanel.add(getSimDataAcqPanel(), BorderLayout.NORTH);
-		dataAndChartsPanel.add(getChartsPanel(), BorderLayout.CENTER);
+		dataAndChartsPanel.add(getSimDataDetailsPanel(), BorderLayout.CENTER);
 		refAndDataPanel.add(dataAndChartsPanel, BorderLayout.CENTER);
 		
-		add(refAndDataPanel, BorderLayout.CENTER);
+		JPanel bottomChartPanel = new JPanel(new BorderLayout());
+		bottomChartPanel.add(refAndDataPanel, BorderLayout.NORTH);
+		bottomChartPanel.add(getChartPanel(), BorderLayout.CENTER);
+		
+		add(bottomChartPanel, BorderLayout.CENTER);
 	}
-	
+
 	/**
 	 * Metoda tworząca panel tworzenia zbioru referencyjnego.
 	 * @return JPanel - obiekt panelu
 	 */
-	public JPanel getTopPanel() {
+	public JPanel getRefAcqPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("New reference set simulation setup"));
+		result.setBorder(BorderFactory.createTitledBorder("Reference data acquisition panel"));
 		result.setPreferredSize(new Dimension(670, 100));
 	
 		int posXda = 10;
@@ -297,9 +296,9 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	 * Metoda tworząca panel wyświetlania danych o zbiorach referencyjnych
 	 * @return JPanel - obiekt panelu
 	 */
-	public JPanel getReferencesPanel() {
+	public JPanel getRefDetailsPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Reference set selection and details"));
+		result.setBorder(BorderFactory.createTitledBorder("Reference data details panel"));
 		result.setPreferredSize(new Dimension(500, 150));
 		doNotUpdate = true;
 		int posXda = 10;
@@ -372,7 +371,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	 */
 	public JPanel getButtonsPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Knockout simulation data setup"));
+		result.setBorder(BorderFactory.createTitledBorder("Dataset options"));
 		result.setPreferredSize(new Dimension(300, 150));
 		doNotUpdate = true;
 		int posXda = 10;
@@ -703,6 +702,8 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	    Border border = BorderFactory.createTitledBorder("Progress");
 	    dataProgressBarKnockout.setBorder(border);
 	    result.add(dataProgressBarKnockout);
+	    
+
 		
 		doNotUpdate = false;
 	    return result;
@@ -713,13 +714,17 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	//*******************************************************************************************************************************
 	//*******************************************************************************************************************************
 	
-	public JPanel getChartsPanel() {
+	/**
+	 * Zwraca panel informacji o danych knockout.
+	 * @return JPanel - panel
+	 */
+	public JPanel getSimDataDetailsPanel() {
 		JPanel result = new JPanel(null);
 		result.setBorder(BorderFactory.createTitledBorder("Knockout data details panel"));
-		result.setPreferredSize(new Dimension(670, 50));
+		result.setPreferredSize(new Dimension(670, 100));
 		doNotUpdate = true;
 		int posXda = 10;
-		int posYda = 30;
+		int posYda = 20;
 		
 		JLabel label1 = new JLabel("Data sets:");
 		label1.setBounds(posXda, posYda, 70, 20);
@@ -782,6 +787,28 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	    return result;
 	}
 	
+	private Component getChartPanel() {
+		JPanel result = new JPanel(null);
+		result.setBorder(BorderFactory.createTitledBorder("Charts panel"));
+		result.setPreferredSize(new Dimension(670, 50));
+		doNotUpdate = true;
+		int posXda = 10;
+		int posYda = 20;
+		
+		JButton acqRefDataButton = new JButton("Data window");
+		acqRefDataButton.setBounds(posXda, posYda, 110, 40);
+		acqRefDataButton.setMargin(new Insets(0, 0, 0, 0));
+		acqRefDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/d.png"));
+		acqRefDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbyssStateSimKnockVis visualizer = new AbyssStateSimKnockVis(mainSimWindow.returnFrame());
+			}
+		});
+		result.add(acqRefDataButton);
+		
+		return result;
+	}
+	
 	//*******************************************************************************************************************************
 	//*******************************************************************************************************************************
 	//*******************************************************************************************************************************
@@ -835,7 +862,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		
 		//reference data:
-		ArrayList<NetSimulationData> references = pn.accessSimKnockoutData().getReferenceSets();
+		ArrayList<NetSimulationData> references = pn.accessSimKnockoutData().accessReferenceSets();
 		int refSize = references.size();
 		doNotUpdate = true;
 		int oldSelected = 0;
@@ -863,7 +890,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 		
 		
 		//knockout data:
-		ArrayList<NetSimulationData> knockout = pn.accessSimKnockoutData().getDataSets();
+		ArrayList<NetSimulationData> knockout = pn.accessSimKnockoutData().accessKnockoutDataSets();
 		int knockSize = knockout.size();
 		doNotUpdate = true;
 		int oldKnockSelected = 0;
@@ -928,7 +955,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	 */
 	public void updateRefDetails(int selected) {
 		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		ArrayList<NetSimulationData> references = pn.accessSimKnockoutData().getReferenceSets();
+		ArrayList<NetSimulationData> references = pn.accessSimKnockoutData().accessReferenceSets();
 		NetSimulationData selectedRef = references.get(selected);
 		
 		refLabelDate.setText(selectedRef.date);
@@ -947,7 +974,7 @@ public class AbyssStateSimulatorKnockout extends JPanel {
 	 */
 	public void updateDataDetails(int selected) {
 		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		ArrayList<NetSimulationData> data = pn.accessSimKnockoutData().getDataSets();
+		ArrayList<NetSimulationData> data = pn.accessSimKnockoutData().accessKnockoutDataSets();
 		NetSimulationData selectedData = data.get(selected);
 		
 		dataLabelDate.setText(selectedData.date);

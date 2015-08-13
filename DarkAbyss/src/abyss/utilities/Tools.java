@@ -297,7 +297,7 @@ public final class Tools {
 				//przy eksporcie do Jar, okazuje się że nic nie działa a wyjątek który
 				//wyskakuje jest NIEMOŻLIWE DO OBSŁUŻENIA przez nawet catch (Exception e )
 				//po prostu k... super, kochamy Jave
-				//linijki, zastąpione dalej podobą formą:
+				//linijki, zastąpione dalej podobną formą:
 				//ImageIcon x = Tools.getResIcon16("/icons/blackhole.png"); 
 				//Image y = x.getImage();
 				//frame.setIconImage(y);

@@ -9,10 +9,11 @@ import abyss.graphpanel.ElementDraw;
 import abyss.petrinet.data.IdGenerator;
 
 /**
- * Klasa implementująca miejsce sieci Petriego. Zapewnia implementację 
- * stanu (przechowywania tokenów) oraz powiązane z tym funkcjonalności
- * (funkcjonalność wierzchołka dziedzyczy po Node).
+ * Klasa implementująca miejsce sieci Petriego. Zapewnia implementację stanu (przechowywania tokenów) oraz 
+ * powiązane z tym funkcjonalności (funkcjonalność wierzchołka dziedziczy po klasie Node).
+ * 
  * @author students
+ * @author MR - poprawki
  *
  */
 public class Place extends Node {

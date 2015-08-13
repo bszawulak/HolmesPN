@@ -31,24 +31,66 @@ public class NetSimulationDataCore implements Serializable {
 		
 	}
 	
+	/**
+	 * Metoda dodaje nowy pakiet danych referencyjnych.
+	 * @param refSet NetSimulationData - obiekt danych
+	 * @return boolean - true, jeśli się udało.
+	 */
 	public boolean addNewReferenceSet(NetSimulationData refSet) {
 		referenceSets.add(refSet);
 		saved = false;
 		return true;
 	}
 	
-	public ArrayList<NetSimulationData> getReferenceSets() {
+	/**
+	 * Metoda zwraca wektor danych referencyjnych.
+	 * @return ArrayList[NetSimulationData] - wektor danych
+	 */
+	public ArrayList<NetSimulationData> accessReferenceSets() {
 		return this.referenceSets;
 	}
 	
+	/**
+	 * Metoda zwraca jeden, wybrany pakiet danych referencyjnych.
+	 * @param index int - index pakietu
+	 * @return NetSimulationData - pakiet danych
+	 */
+	public NetSimulationData getReferenceSet(int index) {
+		if(index < referenceSets.size())
+			return referenceSets.get(index);
+		else
+			return null;
+	}
+	
+	/**
+	 * Metoda dodaje nowy pakiet danych knockout.
+	 * @param refSet NetSimulationData - obiekt danych
+	 * @return boolean - true, jeśli się udało.
+	 */
 	public boolean addNewDataSet(NetSimulationData refSet) {
 		knockoutSets.add(refSet);
 		saved = false;
 		return true;
 	}
 	
-	public ArrayList<NetSimulationData> getDataSets() {
+	/**
+	 * Metoda zwraca wektor danych knockout.
+	 * @return ArrayList[NetSimulationData] - wektor danych
+	 */
+	public ArrayList<NetSimulationData> accessKnockoutDataSets() {
 		return this.knockoutSets;
+	}
+	
+	/**
+	 * Metoda zwraca jeden, wybrany pakiet danych knockout.
+	 * @param index int - index pakietu
+	 * @return NetSimulationData - pakiet danych
+	 */
+	public NetSimulationData getKnockoutSet(int index) {
+		if(index < knockoutSets.size())
+			return knockoutSets.get(index);
+		else
+			return null;
 	}
 	
 	/**

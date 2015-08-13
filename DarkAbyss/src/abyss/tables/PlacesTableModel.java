@@ -135,4 +135,3 @@ public class PlacesTableModel extends AbstractTableModel {
         return returnValue;
 	}
 }
-

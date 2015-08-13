@@ -667,7 +667,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
-        CreationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
+        CreationPanel.add(new JScrollPane(commentField), BorderLayout.CENTER);
         CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
         columnB_Y += 20;
         components.add(CreationPanel);
@@ -980,7 +980,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
-        CreationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
+        CreationPanel.add(new JScrollPane(commentField), BorderLayout.CENTER);
         CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
         columnB_Y += 20;
         components.add(CreationPanel);
@@ -1268,7 +1268,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
-        CreationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
+        CreationPanel.add(new JScrollPane(commentField), BorderLayout.CENTER);
         CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
         columnB_Y += 20;
         components.add(CreationPanel);
@@ -1659,7 +1659,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
-        CreationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
+        CreationPanel.add(new JScrollPane(commentField), BorderLayout.CENTER);
         CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
         columnB_Y += 20;
         components.add(CreationPanel);
@@ -2004,7 +2004,7 @@ public class AbyssDockWindowsTable extends JPanel {
 		
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
-        CreationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
+        CreationPanel.add(new JScrollPane(commentField), BorderLayout.CENTER);
         CreationPanel.setBounds(columnB_posX-10, columnB_Y += 20, colBCompLength, 40);
         columnB_Y += 20;
         components.add(CreationPanel);

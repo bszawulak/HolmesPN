@@ -27,7 +27,7 @@ import abyss.windows.AbyssNetTables;
 import abyss.windows.AbyssNotepad;
 import abyss.windows.AbyssProgramProperties;
 import abyss.windows.AbyssSearch;
-import abyss.windows.AbyssStateSimulator;
+import abyss.windows.AbyssStateSim;
 import abyss.workspace.ExtensionFileFilter;
 import abyss.workspace.Workspace;
 import abyss.workspace.WorkspaceSheet;
@@ -153,7 +153,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private AbyssAbout windowAbout; //okno About...
 	private AbyssSearch windowSearch; //okno wyszukiwania elementów sieci
 	private AbyssProgramProperties windowProperties; //okno właściwości sieci
-	private AbyssStateSimulator windowStateSim; //okno symulatora stanów
+	private AbyssStateSim windowStateSim; //okno symulatora stanów
 	private AbyssNetTables windowNetTables; //okno tabel sieci
 	private AbyssNotepad windowSimulationLog; //okno logów symulatora
 	private AbyssInvariants windowInvariants; //okno generatora inwariantów
@@ -1190,14 +1190,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda tworzy nowe okno symulatora stanów programu.
 	 */
 	private void createStateSimulatorWindow() {
-		windowStateSim = new AbyssStateSimulator(this);
+		windowStateSim = new AbyssStateSim(this);
 	}
 	
 	/**
 	 * Metoda zwraca obiekt okna symulatora.
 	 * @return AbyssStateSimulator - obiekt
 	 */
-	public AbyssStateSimulator accessStateSimulatorWindow() {
+	public AbyssStateSim accessStateSimulatorWindow() {
 		return windowStateSim;
 	}
 	

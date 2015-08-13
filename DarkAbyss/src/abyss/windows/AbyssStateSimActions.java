@@ -15,12 +15,12 @@ import abyss.darkgui.GUIManager;
  * @author MR
  *
  */
-public class AbyssStateSimulatorActions {
+public class AbyssStateSimActions {
 	
 	/**
 	 * Konstruktor klasy AbyssStateSimulatorActions.
 	 */
-	public AbyssStateSimulatorActions() {
+	public AbyssStateSimActions() {
 		
 	}
 	

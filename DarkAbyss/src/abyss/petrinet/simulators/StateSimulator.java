@@ -13,7 +13,7 @@ import abyss.petrinet.elements.Transition;
 import abyss.petrinet.elements.Arc.TypesOfArcs;
 import abyss.petrinet.elements.Transition.TransitionType;
 import abyss.petrinet.simulators.NetSimulator.NetType;
-import abyss.windows.AbyssStateSimulator;
+import abyss.windows.AbyssStateSim;
 
 /**
  * Klasa symulatora. Różnica między nią a symulatorem graficznym jest taka, że poniższe metody potrafią wygenerować
@@ -45,7 +45,7 @@ public class StateSimulator implements Runnable {
 	public boolean terminate = false;
 	public int stepsLimit;
 	public JProgressBar progressBar;	//pasek postępu symulacji
-	private AbyssStateSimulator boss;	//okno nadrzędne symulatora
+	private AbyssStateSim boss;	//okno nadrzędne symulatora
 	private int simulationType;			//aktywny tryb symulacji
 	private int refReps;				//powtórki dla trybu zbierania danych referencyjnych
 	private NetSimulationData currentDataPackage;
@@ -67,17 +67,17 @@ public class StateSimulator implements Runnable {
 		this.simulationType = simulationType;
 		
 		if(simulationType == 1) { //standardowy tryb symulacji
-			this.boss = (AbyssStateSimulator)blackBox[0];
+			this.boss = (AbyssStateSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
 		} else if(simulationType == 2) { //obliczenie zbioru referencyjnego
-			this.boss = (AbyssStateSimulator)blackBox[0];
+			this.boss = (AbyssStateSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
 			this.refReps = (int)blackBox[3];
 			this.currentDataPackage = (NetSimulationData)blackBox[4];
 		} else if(simulationType == 3) { //obliczenie danych przy knockoutcie elementów
-			this.boss = (AbyssStateSimulator)blackBox[0];
+			this.boss = (AbyssStateSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
 			this.refReps = (int)blackBox[3];
@@ -138,12 +138,12 @@ public class StateSimulator implements Runnable {
 		this.maxMode = maxMode;
 		this.singleMode = singleMode;
 		if(singleMode && GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
-			maxMode = true;
+			this.maxMode = true;
 		} else {
-			maxMode = false;
+			this.maxMode = false;
 		}
 		
-		engine.setEngine(simNetType, maxMode, singleMode, transitions, time_transitions);
+		engine.setEngine(simNetType, this.maxMode, this.singleMode, transitions, time_transitions);
 		ready = true;
 		return ready;
 	}
@@ -263,8 +263,12 @@ public class StateSimulator implements Runnable {
 		ArrayList<Transition> launchingTransitions = null; //odpalone tranzycje
 		
 		//	INIT MAIN VECTORS:
-		ArrayList<Long> totalPlacesTokensInTurn = new ArrayList<Long>();
+		ArrayList<Long> totalPlaceTokensInTurn = new ArrayList<Long>();
 		ArrayList<Integer> totalTransFiringInTurn = new ArrayList<Integer>();
+		
+		ArrayList<ArrayList<Double>> placesAll = new ArrayList<>();
+		ArrayList<ArrayList<Double>> transAll = new ArrayList<>();
+		
 		//NetSimulationData netData = new NetSimulationData();
 		int placeNumber = places.size();
 		int transNumber = transitions.size();
@@ -275,7 +279,7 @@ public class StateSimulator implements Runnable {
 		currentDataPackage.placesNumber = placeNumber;
 		currentDataPackage.transNumber = transNumber;
 		for(int p=0; p<placeNumber; p++) {
-			totalPlacesTokensInTurn.add((long) 0);
+			totalPlaceTokensInTurn.add((long) 0);
 			currentDataPackage.placeTokensAvg.add(0.0);
 			currentDataPackage.placeTokensMin.add(Double.MAX_VALUE);
 			currentDataPackage.placeTokensMax.add(0.0);
@@ -302,10 +306,11 @@ public class StateSimulator implements Runnable {
 		progressBar.setMinimum(0);
 		progressBar.setValue(0);
 		
+		
 		for(int turn=0; turn<refReps; turn++) {
 			int realStepCounter = 0;
 			for(int p=0; p<placeNumber; p++)
-				totalPlacesTokensInTurn.set(p, (long) 0);
+				totalPlaceTokensInTurn.set(p, (long) 0);
 			for(int t=0; t<transNumber; t++)
 				totalTransFiringInTurn.set(t, 0);
 			
@@ -340,15 +345,16 @@ public class StateSimulator implements Runnable {
 				launchAddPhase(launchingTransitions);
 				
 				for(int p=0; p<placeNumber; p++) {
-					long val = totalPlacesTokensInTurn.get(p) + places.get(p).getTokensNumber();
-					totalPlacesTokensInTurn.set(p, val);
+					long val = totalPlaceTokensInTurn.get(p) + places.get(p).getTokensNumber();
+					totalPlaceTokensInTurn.set(p, val);
 				}
 			}
 			
-			//uśrednianie dla skończonej (jednej) symulacji:
+			ArrayList<Double> histVector = new ArrayList<Double>();
 			for(int p=0; p<placeNumber; p++) {
-				double simTokenValue = totalPlacesTokensInTurn.get(p);
+				double simTokenValue = totalPlaceTokensInTurn.get(p);
 				simTokenValue /= (double)realStepCounter;
+				histVector.add(simTokenValue);
 				
 				double oldVal = currentDataPackage.placeTokensAvg.get(p) + simTokenValue;
 				currentDataPackage.placeTokensAvg.set(p, oldVal);
@@ -367,9 +373,13 @@ public class StateSimulator implements Runnable {
 					currentDataPackage.placeZeroTokens.set(p, val);
 				}
 			}
+			placesAll.add(histVector);
+			
+			histVector = new ArrayList<Double>();
 			for(int t=0; t<transNumber; t++) {
 				double simFiringValue = totalTransFiringInTurn.get(t);
 				simFiringValue /= (double)realStepCounter;
+				histVector.add(simFiringValue);
 				
 				double oldVal = currentDataPackage.transFiringsAvg.get(t) + simFiringValue;
 				currentDataPackage.transFiringsAvg.set(t, oldVal);
@@ -387,6 +397,7 @@ public class StateSimulator implements Runnable {
 					currentDataPackage.transZeroFiring.set(t, val);
 				}
 			}
+			transAll.add(histVector);
 			
 			restoreInternalMarkingZero();
 		} //kolejna powtórka
@@ -401,6 +412,110 @@ public class StateSimulator implements Runnable {
 			double oldVal = currentDataPackage.transFiringsAvg.get(t) / (double)refReps;
 			currentDataPackage.transFiringsAvg.set(t, oldVal);
 		}
+		
+		//stats data:
+		double variance = 0;
+		for(int p=0; p<placeNumber; p++) {
+			variance = 0;
+			double avg = currentDataPackage.placeTokensAvg.get(p);
+			for(int r=0; r<refReps;  r++) {
+				double val = placesAll.get(r).get(p);
+				val = avg - val;
+				variance += val * val;
+			}
+			variance /= refReps;
+			currentDataPackage.placeStdDev.add(Math.sqrt(variance)); //standard deviation for place
+		}
+		for(int t=0; t<transNumber; t++) {
+			variance = 0;
+			double avg = currentDataPackage.transFiringsAvg.get(t);
+			for(int r=0; r<refReps;  r++) {
+				double val = transAll.get(r).get(t);
+				val = avg - val;
+				variance += val * val;
+			}
+			variance /= refReps;
+			currentDataPackage.transStdDev.add(Math.sqrt(variance)); //standard deviation for transition
+		}
+		
+		//within stdDev range:
+		for(int p=0; p<placeNumber; p++) {
+			double stdDev = currentDataPackage.placeStdDev.get(p);
+			double avg = currentDataPackage.placeTokensAvg.get(p);
+
+			int support = 0;
+			int support2 = 0;
+			int support3 = 0;
+			int support4 = 0;
+			int support5 = 0;
+			for(int r=0; r<refReps;  r++) {
+				double val = placesAll.get(r).get(p);
+				if((avg-5*stdDev) < val && val < (avg+5*stdDev)) {
+					support5++;
+					
+					if((avg-4*stdDev) < val && val < (avg+4*stdDev)) {
+						support4++;
+						
+						if((avg-3*stdDev) < val && val < (avg+3*stdDev)) {
+							support3++;
+							
+							if((avg-2*stdDev) < val && val < (avg+2*stdDev)) {
+								support2++;
+								
+								if((avg-stdDev) < val && val < (avg+stdDev))
+									support++;
+							}
+						}
+					}
+				}
+			}
+			ArrayList<Integer> res = new ArrayList<>();
+			res.add(support);
+			res.add(support2);
+			res.add(support3);
+			res.add(support4);
+			res.add(support5);
+			currentDataPackage.placeWithinStdDev.add(res);
+		}
+		for(int t=0; t<transNumber; t++) {
+			double stdDev = currentDataPackage.transStdDev.get(t);
+			double avg = currentDataPackage.transFiringsAvg.get(t);
+
+			int support = 0;
+			int support2 = 0;
+			int support3 = 0;
+			int support4 = 0;
+			int support5 = 0;
+			for(int r=0; r<refReps;  r++) {
+				double val = transAll.get(r).get(t);
+				if((avg-5*stdDev) < val && val < (avg+5*stdDev)) {
+					support5++;
+					
+					if((avg-4*stdDev) < val && val < (avg+4*stdDev)) {
+						support4++;
+						
+						if((avg-3*stdDev) < val && val < (avg+3*stdDev)) {
+							support3++;
+							
+							if((avg-2*stdDev) < val && val < (avg+2*stdDev)) {
+								support2++;
+								
+								if((avg-stdDev) < val && val < (avg+stdDev))
+									support++;
+							}
+						}
+					}
+				}
+			}
+			ArrayList<Integer> res = new ArrayList<>();
+			res.add(support);
+			res.add(support2);
+			res.add(support3);
+			res.add(support4);
+			res.add(support5);
+			currentDataPackage.transWithinStdDev.add(res);
+		}
+		
 
 		ready = false;
 		restoreInternalMarkingZero();
@@ -429,14 +544,15 @@ public class StateSimulator implements Runnable {
 			internalSteps++;
 			if (isPossibleStep()){ 
 				launchableTransitions = engine.getTransLaunchList(emptySteps);
-				launchSubtractPhase(launchableTransitions);
-				removeDPNtransition(launchableTransitions);
 				
 				for(Transition trans : launchableTransitions) {
 					int index = transitions.lastIndexOf(trans);
 					int fired = transitionsTotalFiring.get(index);
 					transitionsTotalFiring.set(index, fired+1); //wektor sumy odpaleń
 				}
+				
+				launchSubtractPhase(launchableTransitions);
+				removeDPNtransition(launchableTransitions);
 			} else {
 				break;
 			}
@@ -457,7 +573,7 @@ public class StateSimulator implements Runnable {
 		if(placesToo == true)
 			for(int p=0; p<places.size(); p++) {
 				double sumOfTokens = placesAvgData.get(p);
-				placesAvgData.set(p, sumOfTokens/(double)internalSteps);
+				placesAvgData.set(p, (double)(sumOfTokens/(double)internalSteps));
 			}
 	
 		ready = false;
@@ -520,18 +636,21 @@ public class StateSimulator implements Runnable {
 			internalSteps++;
 			if (isPossibleStep()){ 
 				launchableTransitions = engine.getTransLaunchList(emptySteps);
+				
+				if(launchableTransitions.contains(trans)) {
+					transDataVector.add(1);
+					sum++;
+				} else {
+					transDataVector.add(0);
+				}
+				
 				launchSubtractPhase(launchableTransitions); //zabierz tokeny poprzez aktywne tranzycje
 				removeDPNtransition(launchableTransitions);
 			} else {
 				break;
 			}
 			
-			if(launchableTransitions.contains(trans)) {
-				transDataVector.add(1);
-				sum++;
-			} else {
-				transDataVector.add(0);
-			}
+			
 			launchAddPhase(launchableTransitions);
 		}
 		ready = false;

@@ -50,12 +50,14 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.VerticalAlignment;
 
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.Place;
@@ -71,11 +73,11 @@ import abyss.workspace.ExtensionFileFilter;
  * 
  * @author MR
  */
-public class AbyssStateSimulator extends JFrame {
+public class AbyssStateSim extends JFrame {
 	private static final long serialVersionUID = 5287992734385359453L;
 	
 	private GUIManager overlord;
-	private AbyssStateSimulatorActions action = new AbyssStateSimulatorActions();
+	private AbyssStateSimActions action = new AbyssStateSimActions();
 	private StateSimulator ssim;
 	private boolean maximumMode = false;
 	private boolean singleMode = false;
@@ -122,7 +124,7 @@ public class AbyssStateSimulator extends JFrame {
 	/**
 	 * Konstruktor domyślny obiektu klasy StateSimulator (podokna Abyss)
 	 */
-	public AbyssStateSimulator(GUIManager overlord) {
+	public AbyssStateSim(GUIManager overlord) {
 		this.overlord = overlord;
 		ssim = new StateSimulator();
 		chartDetails = new ChartProperties();
@@ -137,6 +139,10 @@ public class AbyssStateSimulator extends JFrame {
 		initializeComponents();
 		initiateListeners();
 	}
+	
+	public AbyssStateSim returnFrame() {
+		return this;
+	}
 
 	/**
 	 * Metoda pomocnica konstuktora, odpowiada za utworzenie elementów graficznych okna.
@@ -148,7 +154,7 @@ public class AbyssStateSimulator extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {}
-		setSize(new Dimension(1000, 800));
+		setSize(new Dimension(1000, 750));
 		
 		JPanel main = new JPanel(new BorderLayout()); //główny panel okna
 		add(main);
@@ -166,7 +172,7 @@ public class AbyssStateSimulator extends JFrame {
 
 		iownyou.addTab("Simple mode", Tools.getResIcon16("/icons/stateSim/simpleSimTab.png"), firstTab, "Places dynamics");
 		
-		knockoutTab = new AbyssStateSimulatorKnockout(this);
+		knockoutTab = new AbyssStateSimKnock(this);
 		iownyou.addTab("KnockoutSim", Tools.getResIcon16("/icons/stateSim/KnockSimTab.png"), knockoutTab, "Transistions dynamics");
 		
 		main.add(iownyou, BorderLayout.CENTER);
@@ -555,6 +561,9 @@ public class AbyssStateSimulator extends JFrame {
 
 		placesJPanel = new JPanel(new BorderLayout());
 		placesJPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
+		
+		//JScrollPane sP = new JScrollPane(createPlacesChartPanel(), JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		//placesJPanel.add(sP, BorderLayout.CENTER);
 		placesJPanel.add(createPlacesChartPanel(), BorderLayout.CENTER);
 		result.add(placesJPanel, BorderLayout.CENTER);
 
@@ -891,7 +900,7 @@ public class AbyssStateSimulator extends JFrame {
 		
 	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 	    for(int p=0; p<placesAvgData.size(); p++) {
-			String tName = "p"+p+"_"+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(p).getName();
+			String tName = "p"+p;//+"_"+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(p).getName();
 			double value = placesAvgData.get(p);
 			
 			//dataset.addValue(value, "Firing", tName);
@@ -917,6 +926,8 @@ public class AbyssStateSimulator extends JFrame {
 
 		CategoryPlot plot = (CategoryPlot) placesChart.getPlot();
 
+		
+		
 		//LogAxis yAxis = new LogAxis("Tokens");
 		//yAxis.setLowerBound(0.9);
 		//yAxis.setUpperBound(max+10);
@@ -925,7 +936,6 @@ public class AbyssStateSimulator extends JFrame {
 		//plot.setRangeAxis(yAxis);
 		
 	    StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
-	    //CategoryItemRenderer renderer = plot.getRenderer();
 	    renderer.setBase(1);
 		
 		//CategoryItemRenderer renderer = plot.getRenderer();
@@ -937,18 +947,22 @@ public class AbyssStateSimulator extends JFrame {
         renderer.setSeriesPaint(2, p3);
         plot.setRenderer(renderer);
         
-        Font font3 = new Font("Dialog", Font.PLAIN, 12); 
+        Font font3 = new Font("Dialog", Font.PLAIN, 10); 
       	plot.getDomainAxis().setLabelFont(font3);
       	plot.getRangeAxis().setLabelFont(font3);
       	
       	LegendTitle legend = placesChart.getLegend();
       	Font labelFont = new Font("Arial", Font.BOLD, 12);
       	legend.setItemFont(labelFont);
+      	//legend.setVerticalAlignment(VerticalAlignment.BOTTOM);
+      	
+      	BarRenderer br = (BarRenderer) plot.getRenderer();
+		br.setMaximumBarWidth(20);
 
 		placesJPanel.removeAll();
 		ChartPanel placesChartPanel = new ChartPanel(placesChart);
 		int places = placesAvgData.size();
-		placesChartPanel.setPreferredSize(new Dimension(places*30, 270)); 
+		placesChartPanel.setPreferredSize(new Dimension(places*60, 270)); 
 		placesChartPanel.setMaximumDrawWidth(places*30);
 		
 	    JScrollPane sPane = new JScrollPane(placesChartPanel); 
@@ -1230,7 +1244,7 @@ public class AbyssStateSimulator extends JFrame {
 				}
 				//sortuj po value (frequency)
 				Map<Integer, Double> sortedByValues = new HashMap<Integer, Double>(); 
-				sortedByValues = AbyssStateSimulatorActions.crunchifySortMap(map); // dark magic happens here
+				sortedByValues = AbyssStateSimActions.crunchifySortMap(map); // dark magic happens here
 				for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
 					placesCombo.addItem("p"+(entry.getKey())+"."+places.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
 				}
@@ -1261,7 +1275,7 @@ public class AbyssStateSimulator extends JFrame {
 				}
 				//sortuj po value (frequency)
 				Map<Integer, Double> sortedByValues = new HashMap<Integer, Double>(); 
-				sortedByValues = AbyssStateSimulatorActions.crunchifySortMap(map); // dark magic happens here
+				sortedByValues = AbyssStateSimActions.crunchifySortMap(map); // dark magic happens here
 				for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
 					transitionsCombo.addItem("t"+(entry.getKey())+"."+transitions.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
 					
@@ -1450,23 +1464,15 @@ public class AbyssStateSimulator extends JFrame {
 	public StateSimulator accessSim() {
 		return ssim;
 	}
-	
-	private class ChartProperties {
-		public float p_StrokeWidth = 1.0f;
-		public float t_StrokeWidth = 1.0f;
-		
-		public ChartProperties() {}
-	}
-	
+
 	/**
-	 * Inicjalizacja agentów nasłuchujących różnych zdarzeń dla okna poszukiwania. Przedw wszystkim
-	 * chodzi o reakcję na powiększanie / pomniejszanie okna głównego.
+	 * Inicjalizacja agentów nasłuchujących różnych zdarzeń dla okna poszukiwania.
 	 */
     private void initiateListeners() { //HAIL SITHIS
     	addWindowListener(new WindowAdapter() {
   	  	    public void windowActivated(WindowEvent e) {
   	  	    	fillPlacesAndTransitionsData();
-  	  	    	((AbyssStateSimulatorKnockout) knockoutTab).updateFreshKnockoutTab();
+  	  	    	((AbyssStateSimKnock) knockoutTab).updateFreshKnockoutTab();
   	  	    }  
     	});
     	
@@ -1506,8 +1512,8 @@ public class AbyssStateSimulator extends JFrame {
      * Umożliwia dostęp do obiektu odpowiedzialnego za zakładkę Knockout symulatora.
      * @return AbyssStateSimulatorKnockout - obiekt
      */
-    public AbyssStateSimulatorKnockout accessKnockoutTab() {
-    	return (AbyssStateSimulatorKnockout)knockoutTab;
+    public AbyssStateSimKnock accessKnockoutTab() {
+    	return (AbyssStateSimKnock)knockoutTab;
     }
 	
 	/**
@@ -1533,7 +1539,16 @@ public class AbyssStateSimulator extends JFrame {
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(100, 0, mValue, 10);
 		transIntervalSpinner.setModel(intervSpinnerModel);
 		
-		((AbyssStateSimulatorKnockout)knockoutTab).resetWindow();
+		((AbyssStateSimKnock)knockoutTab).resetWindow();
 		doNotUpdate = false;
+	}
+	
+	
+	
+	private class ChartProperties {
+		public float p_StrokeWidth = 1.0f;
+		public float t_StrokeWidth = 1.0f;
+		
+		public ChartProperties() {}
 	}
 }
