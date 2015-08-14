@@ -57,7 +57,6 @@ import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.VerticalAlignment;
 
 import abyss.darkgui.GUIManager;
 import abyss.petrinet.elements.Place;
@@ -326,7 +325,7 @@ public class AbyssStateSim extends JFrame {
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				ssim.terminate = true;
+				ssim.setCancelStatus(true);
 			}
 		});
 		cancelButton.setFocusPainted(false);
@@ -1317,7 +1316,7 @@ public class AbyssStateSim extends JFrame {
 			return;
 		
 		//zablokuj kilka elementów okna symulatora
-		blockSimWindowComponents();
+		setSimWindowComponentsStatus(false);
 		setWorkInProgress(true);
 		
 		ssim.setThreadDetails(1, this, progressBar, simSteps);
@@ -1328,29 +1327,12 @@ public class AbyssStateSim extends JFrame {
 	/**
 	 * Blokuje komponenty na czas symulacji.
 	 */
-	private void blockSimWindowComponents() {
-		acqDataButton.setEnabled(false);
-		simStepsSpinner.setEnabled(false);
-		simNetMode.setEnabled(false);
-		simMode.setEnabled(false);
-		overlord.getFrame().setEnabled(false);
-		//TODO: dodawać kolejne tutaj:
-		
-		
-	}
-	
-	/**
-	 * Odblokowuje komponenty po zakończonej / przerwanej symulacji.
-	 */
-	private void unblockSimWindowComponents() {
-		acqDataButton.setEnabled(true);
-		simStepsSpinner.setEnabled(true);
-		simNetMode.setEnabled(true);
-		simMode.setEnabled(true);
-		overlord.getFrame().setEnabled(true);
-		//dodawać kolejne tutaj:
-		
-		
+	private void setSimWindowComponentsStatus(boolean value) {
+		acqDataButton.setEnabled(value);
+		simStepsSpinner.setEnabled(value);
+		simNetMode.setEnabled(value);
+		simMode.setEnabled(value);
+		overlord.getFrame().setEnabled(value);
 	}
 	
 	/**
@@ -1372,7 +1354,7 @@ public class AbyssStateSim extends JFrame {
 		}
 		
 		fillPlacesAndTransitionsData();
-		unblockSimWindowComponents();
+		setSimWindowComponentsStatus(true);
 		setWorkInProgress(false);
 	}
 	

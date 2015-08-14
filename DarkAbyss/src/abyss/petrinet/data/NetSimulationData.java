@@ -24,6 +24,7 @@ public class NetSimulationData implements Serializable {
 	public String date;
 	public ArrayList<Integer> disabledTransitionsIDs;
 	public ArrayList<Integer> disabledMCTids;
+	public ArrayList<Integer> disabledTotals;
 	public ArrayList<Integer> startingState;
 	
 	//wyniki symulacji:
@@ -57,6 +58,7 @@ public class NetSimulationData implements Serializable {
 		
 		disabledTransitionsIDs = new ArrayList<Integer>();
 		disabledMCTids = new ArrayList<Integer>();
+		disabledTotals = new ArrayList<Integer>();
 		startingState = new ArrayList<Integer>();
 	}
 }

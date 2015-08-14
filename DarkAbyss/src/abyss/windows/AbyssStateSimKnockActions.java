@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
@@ -23,6 +24,8 @@ import abyss.utilities.Tools;
  */
 public class AbyssStateSimKnockActions {
 	AbyssStateSimKnock boss;
+	private int pingPongSimTransLimit;
+	private int pingPongSimCurrentTrans;
 	
 	/**
 	 * Konstruktor obiektu klasy AbyssStateSimulatorKnockoutActions.
@@ -31,6 +34,10 @@ public class AbyssStateSimKnockActions {
 	public AbyssStateSimKnockActions(AbyssStateSimKnock window) {
 		this.boss = window;
 	}
+	
+	//*****************************************************************************************************************
+	//*****************************************************************************************************************
+	//*****************************************************************************************************************
 	
 	/**
 	 * Metoda wywoływana przyciskiem aktywującym zbieranie danych referencyjnych.
@@ -112,6 +119,10 @@ public class AbyssStateSimKnockActions {
 		boss.setSimWindowComponentsStatus(true);
 	}
 	
+	//*****************************************************************************************************************
+	//*****************************************************************************************************************
+	//*****************************************************************************************************************
+	
 	/**
 	 * Metoda wywoływana przyciskiem aktywującym zbieranie danych symulacji typu knockout.
 	 */
@@ -190,6 +201,100 @@ public class AbyssStateSimKnockActions {
 		boss.mainSimWindow.setWorkInProgress(false);
 		boss.setSimWindowComponentsStatus(true);
 	}
+	
+	//*****************************************************************************************************************
+	//*****************************************************************************************************************
+	//*****************************************************************************************************************
+	
+	/**
+	 * Metoda przygotowuje symulator do obliczenia knockout dla każdej tranzycji oddzielnie.
+	 */
+	public void acquireAll() {
+		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+			JOptionPane.showMessageDialog(null,
+					"Main simulator active. Please turn if off before starting state simulator process", 
+					"Main simulator active", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		if(transitions == null || transitions.size() == 0)
+			return;
+		
+		boolean success =  boss.ssimKnock.initiateSim(boss.dataNetType, boss.dataMaximumMode, boss.dataSingleMode);
+		if(success == false)
+			return;
+
+		boss.setSimWindowComponentsStatus(false);
+		boss.mainSimWindow.setWorkInProgress(true);
+		
+		for(Transition trans : transitions) {
+			trans.setOffline(false);
+		}
+		
+		pingPongSimTransLimit = transitions.size();
+		pingPongSimCurrentTrans = -1;
+		
+		pingPongSimulation(null, null, null);
+
+	}
+	
+	//TODO:
+	
+
+	public void pingPongSimulation(NetSimulationData returningData, ArrayList<Transition> transitions, ArrayList<Place> places) {
+		if(returningData == null) { //piersze uruchomienie
+			
+			pingPongSimCurrentTrans++;
+			boss.dataProgressBarKnockout.setBorder(
+					BorderFactory.createTitledBorder("Progress: "+(pingPongSimCurrentTrans+1)+"/"+pingPongSimTransLimit));
+			
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(pingPongSimCurrentTrans).setOffline(true);
+		    
+			NetSimulationData currentDataPackage = new NetSimulationData();
+			boss.ssimKnock.setThreadDetails(4, boss.mainSimWindow, boss.dataProgressBarKnockout, 
+					boss.dataSimSteps, boss.dataRepetitions, currentDataPackage);
+			Thread myThread = new Thread(boss.ssimKnock);
+			myThread.start();
+		} else {
+			
+			
+			//dodaj nowe dane do bazy
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			Date date = new Date();
+			returningData.date = dateFormat.format(date);
+			returningData.refSet = false;
+			returningData.disabledTransitionsIDs.add(pingPongSimCurrentTrans);
+			returningData.disabledTotals.add(pingPongSimCurrentTrans);
+			
+			if(!boss.ssimKnock.getCancelStatus()) //dodaj tylko wtedy, gdy symulator nie został siłowo zatrzymany
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessSimKnockoutData().addNewDataSet(returningData);
+			
+			//decyzja co dalej:
+			transitions.get(pingPongSimCurrentTrans).setOffline(false); //odznacz offline status poprzednio symulowanej tranzycji
+			pingPongSimCurrentTrans++;
+			if(pingPongSimCurrentTrans == pingPongSimTransLimit || boss.ssimKnock.getCancelStatus() == true) {
+				boss.mainSimWindow.setWorkInProgress(false);
+				boss.setSimWindowComponentsStatus(true);
+				boss.ssimKnock.clearData();
+				return; //wszystko policzono
+			}
+			transitions.get(pingPongSimCurrentTrans).setOffline(true); //następna do analizy
+			
+			boss.dataProgressBarKnockout.setBorder(
+					BorderFactory.createTitledBorder("Progress: "+(pingPongSimCurrentTrans+1)+"/"+pingPongSimTransLimit));
+
+			NetSimulationData currentDataPackage = new NetSimulationData();
+			boss.ssimKnock.setThreadDetails(4, boss.mainSimWindow, boss.dataProgressBarKnockout, 
+					boss.dataSimSteps, boss.dataRepetitions, currentDataPackage);
+			Thread myThread = new Thread(boss.ssimKnock);
+			myThread.start();
+		}
+	}
+	
+	//*****************************************************************************************************************
+	//*****************************************************************************************************************
+	//*****************************************************************************************************************
 
 	/**
 	 * Zapis danych symulacji do pliku.
@@ -223,7 +328,7 @@ public class AbyssStateSimKnockActions {
 			boolean status, NetSimulationData currentDataPackage) {
 		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		ArrayList<ArrayList<Transition>> mcts = pn.getMCTMatrix();
-		//TODO:
+
 		ArrayList<Transition> disableList = new ArrayList<Transition>();
 		String dataTxt = dataSelectedTransTextArea.getText();
 		while(dataTxt.contains("tr#")) {
@@ -237,6 +342,9 @@ public class AbyssStateSimKnockActions {
 			if(!disableList.contains(transitions.get(transIndex))) {
 				disableList.add(transitions.get(transIndex));
 				currentDataPackage.disabledTransitionsIDs.add(transIndex);
+				
+				if(!currentDataPackage.disabledTotals.contains(transIndex))
+					currentDataPackage.disabledTotals.add(transIndex);
 			}
 			
 			tmp = tmp.substring(0, semiIndex+1);
@@ -257,6 +365,9 @@ public class AbyssStateSimKnockActions {
 			for(Transition trans : mct) {
 				if(!disableList.contains(trans))
 					disableList.add(trans);
+				
+				if(!currentDataPackage.disabledTotals.contains(transitions.indexOf(trans)))
+					currentDataPackage.disabledTotals.add(transitions.indexOf(trans));
 			}
 			
 			tmp = tmp.substring(0, semiIndex+1);
@@ -318,5 +429,6 @@ public class AbyssStateSimKnockActions {
 			dataSelectedTransTextArea.setText(txt);
 		}
 	}
+
 
 }

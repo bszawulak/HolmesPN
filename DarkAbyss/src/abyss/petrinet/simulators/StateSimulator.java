@@ -25,7 +25,7 @@ public class StateSimulator implements Runnable {
 	private ArrayList<Transition> transitions;
 	private ArrayList<Transition> time_transitions;
 	private ArrayList<Place> places;
-	private boolean ready = false;
+	private boolean readyToSimulate = false;
 	public double timeNetStepCounter = 0;
 	public double timeNetPartStepCounter = 0;
 	
@@ -42,12 +42,12 @@ public class StateSimulator implements Runnable {
 	private int emptySteps = 0; // 0 - bez pustych kroków, 1 - z pustymi krokami
 	
 	//runtime:
-	public boolean terminate = false;
+	private boolean terminate = false;
 	public int stepsLimit;
 	public JProgressBar progressBar;	//pasek postępu symulacji
 	private AbyssStateSim boss;	//okno nadrzędne symulatora
 	private int simulationType;			//aktywny tryb symulacji
-	private int refReps;				//powtórki dla trybu zbierania danych referencyjnych
+	private int repetitions;				//powtórki dla trybu zbierania danych referencyjnych
 	private NetSimulationData currentDataPackage;
 
 	/**
@@ -74,13 +74,19 @@ public class StateSimulator implements Runnable {
 			this.boss = (AbyssStateSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
-			this.refReps = (int)blackBox[3];
+			this.repetitions = (int)blackBox[3];
 			this.currentDataPackage = (NetSimulationData)blackBox[4];
 		} else if(simulationType == 3) { //obliczenie danych przy knockoutcie elementów
 			this.boss = (AbyssStateSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
-			this.refReps = (int)blackBox[3];
+			this.repetitions = (int)blackBox[3];
+			this.currentDataPackage = (NetSimulationData)blackBox[4];
+		} else if(simulationType == 4) { //obliczenie danych przy knockoutcie elementów
+			this.boss = (AbyssStateSim)blackBox[0];
+			this.progressBar = (JProgressBar)blackBox[1];
+			this.stepsLimit = (int)blackBox[2];
+			this.repetitions = (int)blackBox[3];
 			this.currentDataPackage = (NetSimulationData)blackBox[4];
 		}
 	}
@@ -98,6 +104,9 @@ public class StateSimulator implements Runnable {
 		} else if(simulationType == 3) {
 			NetSimulationData data = simulateNetReferenceAndKnockout();
 			boss.accessKnockoutTab().action.completeKnockoutSimulationResults(data, transitions, places);
+		} else if(simulationType == 4) {
+			NetSimulationData data = simulateNetReferenceAndKnockout();
+			boss.accessKnockoutTab().action.pingPongSimulation(data, transitions, places);
 		}
 	}
 	
@@ -114,12 +123,12 @@ public class StateSimulator implements Runnable {
 		time_transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTimeTransitions();
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		if(transitions == null || places == null) {
-			ready = false;
-			return ready;
+			readyToSimulate = false;
+			return readyToSimulate;
 		}
 		if(!(transitions.size() > 0 && places.size() > 0)) {
-			ready = false;
-			return ready;
+			readyToSimulate = false;
+			return readyToSimulate;
 		}
 		
 		placesData = new ArrayList<ArrayList<Integer>>();
@@ -144,8 +153,8 @@ public class StateSimulator implements Runnable {
 		}
 		
 		engine.setEngine(simNetType, this.maxMode, this.singleMode, transitions, time_transitions);
-		ready = true;
-		return ready;
+		readyToSimulate = true;
+		return readyToSimulate;
 	}
 	
 	/**
@@ -163,7 +172,8 @@ public class StateSimulator implements Runnable {
 		for(int p=0; p<places.size(); p++) {
 			placesAvgData.add(0.0);
 		}
-		ready = true;
+		terminate = false;
+		readyToSimulate = true;
 	}
 
 	/**
@@ -171,7 +181,7 @@ public class StateSimulator implements Runnable {
 	 * jeśli maximumMode = true, wtedy każda aktywna tranzycja musi się uruchomić.
 	 */
 	public void simulateNetAll() {
-		if(ready == false) {
+		if(readyToSimulate == false) {
 			JOptionPane.showMessageDialog(null,"Simulation cannot start, no network found.", 
 					"State Simulation problem",JOptionPane.ERROR_MESSAGE);
 			return;
@@ -241,7 +251,7 @@ public class StateSimulator implements Runnable {
 			placesAvgData.set(p, sumOfTokens/(double)trueSteps);
 		}
 		GUIManager.getDefaultGUIManager().log("Simulation ended. Restoring zero marking.", "text", true);
-		ready = false;
+		readyToSimulate = false;
 		restoreInternalMarkingZero();
 	}
 	
@@ -254,7 +264,7 @@ public class StateSimulator implements Runnable {
 	 * @return NetSimulationData - pakiet danych z powtórzonych symulacji.
 	 */
 	public NetSimulationData simulateNetReferenceAndKnockout() {
-		if(ready == false) {
+		if(readyToSimulate == false) {
 			JOptionPane.showMessageDialog(null,"Simulation cannot start, no network found.", "State Simulation problem",JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
@@ -275,7 +285,7 @@ public class StateSimulator implements Runnable {
 		currentDataPackage.maxMode = engine.getMaxMode();
 		currentDataPackage.netSimType = engine.getNetSimMode();
 		currentDataPackage.steps = stepsLimit;
-		currentDataPackage.reps = refReps;
+		currentDataPackage.reps = repetitions;
 		currentDataPackage.placesNumber = placeNumber;
 		currentDataPackage.transNumber = transNumber;
 		for(int p=0; p<placeNumber; p++) {
@@ -300,14 +310,14 @@ public class StateSimulator implements Runnable {
 		}
 		//	INIT VECTORS COMPLETED
 		
-		int pBarInterval = (refReps*stepsLimit) / 100;
+		int pBarInterval = (repetitions*stepsLimit) / 100;
 		int pBarStep = 0;
-		progressBar.setMaximum(refReps*stepsLimit);
+		progressBar.setMaximum(repetitions*stepsLimit);
 		progressBar.setMinimum(0);
 		progressBar.setValue(0);
 		
 		
-		for(int turn=0; turn<refReps; turn++) {
+		for(int turn=0; turn<repetitions; turn++) {
 			int realStepCounter = 0;
 			for(int p=0; p<placeNumber; p++)
 				totalPlaceTokensInTurn.set(p, (long) 0);
@@ -404,12 +414,12 @@ public class StateSimulator implements Runnable {
 		
 		//uśrednianie po zakończeniu powtórek:
 		for(int p=0; p<placeNumber; p++) {
-			double oldVal = currentDataPackage.placeTokensAvg.get(p) / (double)refReps;
+			double oldVal = currentDataPackage.placeTokensAvg.get(p) / (double)repetitions;
 			currentDataPackage.placeTokensAvg.set(p, oldVal);
 			
 		}
 		for(int t=0; t<transNumber; t++) {
-			double oldVal = currentDataPackage.transFiringsAvg.get(t) / (double)refReps;
+			double oldVal = currentDataPackage.transFiringsAvg.get(t) / (double)repetitions;
 			currentDataPackage.transFiringsAvg.set(t, oldVal);
 		}
 		
@@ -418,23 +428,23 @@ public class StateSimulator implements Runnable {
 		for(int p=0; p<placeNumber; p++) {
 			variance = 0;
 			double avg = currentDataPackage.placeTokensAvg.get(p);
-			for(int r=0; r<refReps;  r++) {
+			for(int r=0; r<repetitions;  r++) {
 				double val = placesAll.get(r).get(p);
 				val = avg - val;
 				variance += val * val;
 			}
-			variance /= refReps;
+			variance /= repetitions;
 			currentDataPackage.placeStdDev.add(Math.sqrt(variance)); //standard deviation for place
 		}
 		for(int t=0; t<transNumber; t++) {
 			variance = 0;
 			double avg = currentDataPackage.transFiringsAvg.get(t);
-			for(int r=0; r<refReps;  r++) {
+			for(int r=0; r<repetitions;  r++) {
 				double val = transAll.get(r).get(t);
 				val = avg - val;
 				variance += val * val;
 			}
-			variance /= refReps;
+			variance /= repetitions;
 			currentDataPackage.transStdDev.add(Math.sqrt(variance)); //standard deviation for transition
 		}
 		
@@ -448,7 +458,7 @@ public class StateSimulator implements Runnable {
 			int support3 = 0;
 			int support4 = 0;
 			int support5 = 0;
-			for(int r=0; r<refReps;  r++) {
+			for(int r=0; r<repetitions;  r++) {
 				double val = placesAll.get(r).get(p);
 				if((avg-5*stdDev) < val && val < (avg+5*stdDev)) {
 					support5++;
@@ -486,7 +496,7 @@ public class StateSimulator implements Runnable {
 			int support3 = 0;
 			int support4 = 0;
 			int support5 = 0;
-			for(int r=0; r<refReps;  r++) {
+			for(int r=0; r<repetitions;  r++) {
 				double val = transAll.get(r).get(t);
 				if((avg-5*stdDev) < val && val < (avg+5*stdDev)) {
 					support5++;
@@ -515,11 +525,9 @@ public class StateSimulator implements Runnable {
 			res.add(support5);
 			currentDataPackage.transWithinStdDev.add(res);
 		}
-		
 
-		ready = false;
+		//readyToSimulate = false;
 		restoreInternalMarkingZero();
-		
 		return currentDataPackage;
 	}
 
@@ -533,7 +541,7 @@ public class StateSimulator implements Runnable {
 	 * @return int - liczba rzeczywiście wykonanych kroków
 	 */
 	public int simulateNetSimple(int steps, boolean placesToo) {
-		if(ready == false) {
+		if(readyToSimulate == false) {
 			GUIManager.getDefaultGUIManager().log("Simulation simple mode cannot start.", "warning", true);
 			return 0;
 		}
@@ -576,7 +584,7 @@ public class StateSimulator implements Runnable {
 				placesAvgData.set(p, (double)(sumOfTokens/(double)internalSteps));
 			}
 	
-		ready = false;
+		readyToSimulate = false;
 		restoreInternalMarkingZero();
 		return internalSteps;
 	}
@@ -589,7 +597,7 @@ public class StateSimulator implements Runnable {
 	 * @return ArrayList[Integer] - wektor danych o tokenach w miejscu
 	 */
 	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place place) {
-		if(ready == false) {
+		if(readyToSimulate == false) {
 			GUIManager.getDefaultGUIManager().log("Simulation for place "+place.getName()+" cannot start.", "warning", true);
 			return null;
 		}
@@ -610,7 +618,7 @@ public class StateSimulator implements Runnable {
 			launchAddPhase(launchableTransitions);
 			placeDataVector.add(place.getTokensNumber());
 		}
-		ready = false;
+		readyToSimulate = false;
 		restoreInternalMarkingZero();
 		return placeDataVector;
 	}
@@ -623,7 +631,7 @@ public class StateSimulator implements Runnable {
 	 * @return ArrayList[Integer] - wektor danych o odpalaniu tranzycji
 	 */
 	public ArrayList<Integer> simulateNetSingleTransition(int steps, Transition trans) {
-		if(ready == false) {
+		if(readyToSimulate == false) {
 			GUIManager.getDefaultGUIManager().log("Simulation for transition "+trans.getName()+" cannot start.", "warning", true);
 			return null;
 		}
@@ -653,7 +661,7 @@ public class StateSimulator implements Runnable {
 			
 			launchAddPhase(launchableTransitions);
 		}
-		ready = false;
+		readyToSimulate = false;
 		transDataVector.add(sum);
 		transDataVector.add(internalSteps);
 		restoreInternalMarkingZero();
@@ -665,6 +673,24 @@ public class StateSimulator implements Runnable {
 	//****************************************   INTERNALS  **************************************************************************
 	//****************************************              **************************************************************************
 	//********************************************************************************************************************************
+	
+	/**
+	 * Ustawia status wymuszonego kończenia symulacji. 
+	 * @param val boolean - true, jeśli symulator ma zakończyć działanie
+	 */
+	public void setCancelStatus(boolean val) {
+		this.terminate = val;
+		if(val)
+			readyToSimulate = false;
+	}
+	
+	/**
+	 * Zwraca flagę wymuszonego kończenia symulacji.
+	 * @return boolean - true, jeśli symulator został awaryjnie wyłączony
+	 */
+	public boolean getCancelStatus() {
+		return this.terminate;
+	}
 	
 	/**
 	 * Metoda sprawdza, czy tranzycja DPN jest w fazie liczenia wewnętrznego zegara aż do punktu
@@ -812,20 +838,8 @@ public class StateSimulator implements Runnable {
 		}
 		saveInternalMarkingZero(); //zapis aktualnego stanu jako m0
 		clearTransitionsValues();
-		
-		//mainSimMaximumMode = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().isMaximumMode();
 	}
-	
-	/**
-	 * Metoda ta zapisuje liczbę tokenów każdego miejsca tworząc kopię zapasową stanu m0.
-	 */
-	private void saveInternalMarkingZero() {
-		internalBackupMarkingZero.clear();
-		for(int i=0; i<places.size(); i++) {
-			internalBackupMarkingZero.add(places.get(i).getTokensNumber());
-		}
-	}
-	
+
 	/**
 	 * Czyści dane czasowe tranzycji i ustawia każdą na nie-odpalającą.
 	 */
@@ -839,11 +853,20 @@ public class StateSimulator implements Runnable {
 	}
 	
 	/**
+	 * Metoda ta zapisuje liczbę tokenów każdego miejsca tworząc kopię zapasową stanu m0.
+	 */
+	private void saveInternalMarkingZero() {
+		internalBackupMarkingZero.clear();
+		for(int i=0; i<places.size(); i++) {
+			internalBackupMarkingZero.add(places.get(i).getTokensNumber());
+		}
+	}
+	
+	/**
 	 * Metoda ta przywraca stan sieci przed rozpoczęciem symulacji. Liczba tokenów jest przywracana
 	 * z wektora danych pamiętających ostatni backup, tranzycje są resetowane wewnętrznie. 
 	 */
 	public void restoreInternalMarkingZero() {
-		//GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().setMaximumMode(mainSimMaximumMode);
 		for(int i=0; i<places.size(); i++) {
 			places.get(i).setTokensNumber(internalBackupMarkingZero.get(i));
 			places.get(i).freeReservedTokens();

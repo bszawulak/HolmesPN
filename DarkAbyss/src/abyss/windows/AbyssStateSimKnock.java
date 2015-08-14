@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -70,6 +71,7 @@ public class AbyssStateSimKnock extends JPanel {
 	private JLabel dataLabelMaxMode;
 	private JLabel dataLabelSteps;
 	private JLabel dataLabelReps;
+	private JLabel dataLabelDisabled;
 	
 	//data sets acquisition panel:
 	private JComboBox<String> dataTransitionsCombo = null;
@@ -163,7 +165,7 @@ public class AbyssStateSimKnock extends JPanel {
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				ssimKnock.terminate = true;
+				ssimKnock.setCancelStatus(true);
 			}
 		});
 		cancelButton.setFocusPainted(false);
@@ -377,29 +379,7 @@ public class AbyssStateSimKnock extends JPanel {
 		int posXda = 10;
 		int posYda = 15;
 		
-		JButton saveAllButton = new JButton("Save all");
-		saveAllButton.setBounds(posXda, posYda+5, 110, 35);
-		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
-		saveAllButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeDa.png"));
-		saveAllButton.setToolTipText("Saves all simulation data to single file.");
-		saveAllButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				action.saveDataSets();
-			}
-		});
-		result.add(saveAllButton);
 		
-		JButton loadAllButton = new JButton("Load all");
-		loadAllButton.setBounds(posXda, posYda+45, 110, 35);
-		loadAllButton.setMargin(new Insets(0, 0, 0, 0));
-		loadAllButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeDa.png"));
-		loadAllButton.setToolTipText("Saves all simulation data to single file.");
-		loadAllButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				action.loadDataSets();
-			}
-		});
-		result.add(loadAllButton);
 		
 		doNotUpdate = false;
 	    return result;
@@ -537,7 +517,11 @@ public class AbyssStateSimKnock extends JPanel {
 		acqDataSimButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
 		acqDataSimButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				action.acquireDataForKnockoutSet(dataSelectedTransTextArea);
+				if(dataSimComputeAll) {
+					action.acquireAll();
+				} else {
+					action.acquireDataForKnockoutSet(dataSelectedTransTextArea);
+				}
 			}
 		});
 		result.add(acqDataSimButton);
@@ -548,7 +532,11 @@ public class AbyssStateSimKnock extends JPanel {
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//ssimKnock.terminate = true;
+				ssimKnock.setCancelStatus(true);
+				if(dataSimComputeAll) {
+					JOptionPane.showMessageDialog(null,"Simulation terminated. Currently processed transition data rejected.", 
+							"Forced stop",JOptionPane.WARNING_MESSAGE);
+				}
 			}
 		});
 		cancelButton.setFocusPainted(false);
@@ -721,7 +709,7 @@ public class AbyssStateSimKnock extends JPanel {
 	public JPanel getSimDataDetailsPanel() {
 		JPanel result = new JPanel(null);
 		result.setBorder(BorderFactory.createTitledBorder("Knockout data details panel"));
-		result.setPreferredSize(new Dimension(670, 100));
+		result.setPreferredSize(new Dimension(670, 110));
 		doNotUpdate = true;
 		int posXda = 10;
 		int posYda = 20;
@@ -732,7 +720,7 @@ public class AbyssStateSimKnock extends JPanel {
 		
 		String[] data = { " ----- " };
 		dataCombo = new JComboBox<String>(data); //final, aby listener przycisku odczytał wartość
-		dataCombo.setBounds(posXda+80, posYda, 400, 20);
+		dataCombo.setBounds(posXda+80, posYda, 600, 20);
 		dataCombo.setMaximumRowCount(12);
 		dataCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -783,6 +771,13 @@ public class AbyssStateSimKnock extends JPanel {
 		dataLabelReps.setBounds(posXda+290, posYda+40, 90, 20);
 		result.add(dataLabelReps);
 		
+		JLabel disabledTxtLabel = new JLabel("Disabled:");
+		disabledTxtLabel.setBounds(posXda, posYda+60, 70, 20);
+		result.add(disabledTxtLabel);
+		dataLabelDisabled = new JLabel("----- ----- -----");
+		dataLabelDisabled.setBounds(posXda+80, posYda+60, 350, 20);
+		result.add(dataLabelDisabled);
+		
 		doNotUpdate = false;
 	    return result;
 	}
@@ -795,16 +790,40 @@ public class AbyssStateSimKnock extends JPanel {
 		int posXda = 10;
 		int posYda = 20;
 		
-		JButton acqRefDataButton = new JButton("Data window");
-		acqRefDataButton.setBounds(posXda, posYda, 110, 40);
-		acqRefDataButton.setMargin(new Insets(0, 0, 0, 0));
-		acqRefDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/d.png"));
-		acqRefDataButton.addActionListener(new ActionListener() {
+		JButton loadAllButton = new JButton("Load all");
+		loadAllButton.setBounds(posXda, posYda, 110, 40);
+		loadAllButton.setMargin(new Insets(0, 0, 0, 0));
+		loadAllButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeDa.png"));
+		loadAllButton.setToolTipText("Saves all simulation data to single file.");
+		loadAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				AbyssStateSimKnockVis visualizer = new AbyssStateSimKnockVis(mainSimWindow.returnFrame());
+				action.loadDataSets();
 			}
 		});
-		result.add(acqRefDataButton);
+		result.add(loadAllButton);
+		
+		JButton saveAllButton = new JButton("Save all");
+		saveAllButton.setBounds(posXda+120, posYda, 110, 40);
+		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
+		saveAllButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeDa.png"));
+		saveAllButton.setToolTipText("Saves all simulation data to single file.");
+		saveAllButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				action.saveDataSets();
+			}
+		});
+		result.add(saveAllButton);
+
+		JButton showVisualsButton = new JButton("Data window");
+		showVisualsButton.setBounds(posXda+240, posYda, 110, 40);
+		showVisualsButton.setMargin(new Insets(0, 0, 0, 0));
+		showVisualsButton.setIcon(Tools.getResIcon32("/icons/stateSim/d.png"));
+		showVisualsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				new AbyssStateSimKnockVis(mainSimWindow.returnFrame());
+			}
+		});
+		result.add(showVisualsButton);
 		
 		return result;
 	}
@@ -899,8 +918,18 @@ public class AbyssStateSimKnock extends JPanel {
 		dataCombo.addItem(" ----- ");
 		if(knockSize > 0) {
 			for(int r=0; r<knockSize; r++) {
-				String name = "Data set:"+r+" Date: "+knockout.get(r).date+" NetMode:"+knockout.get(r).netSimType+
-						" MaxMode:"+knockout.get(r).maxMode;
+				
+				String disTxt = "Disabled: ";
+				for(int t : knockout.get(r).disabledTransitionsIDs) {
+					disTxt += "t"+t+", ";
+				}
+				for(int t : knockout.get(r).disabledMCTids) {
+					disTxt += "MCT"+(t+1)+", ";
+				}
+				disTxt = disTxt.replace(", ", " ");
+				
+				String name = "Data set:"+r+":    "+disTxt+"     NetMode:"+knockout.get(r).netSimType+
+						"   MaxMode:"+knockout.get(r).maxMode;
 				dataCombo.addItem(name);
 			}
 			
@@ -985,5 +1014,15 @@ public class AbyssStateSimKnock extends JPanel {
 			dataLabelMaxMode.setText("FALSE");
 		dataLabelSteps.setText(""+selectedData.steps);
 		dataLabelReps.setText(""+selectedData.reps);
+		
+		String disTxt = "";
+		for(int t : selectedData.disabledTransitionsIDs) {
+			disTxt += "t"+t+", ";
+		}
+		for(int t : selectedData.disabledMCTids) {
+			disTxt += "MCT"+(t+1)+", ";
+		}
+		disTxt = disTxt.replace(", ", " ");
+		dataLabelDisabled.setText(disTxt);
 	}
 }
