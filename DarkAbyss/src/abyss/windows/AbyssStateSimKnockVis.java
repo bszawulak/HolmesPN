@@ -25,6 +25,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import javax.tools.SimpleJavaFileObject;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -48,6 +53,11 @@ import abyss.petrinet.data.NetSimulationData;
 import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
+import abyss.tables.PTITableRenderer;
+import abyss.tables.PlacesTableModel;
+import abyss.tables.SimKnockPlacesTableModel;
+import abyss.tables.SimKnockTableRenderer;
+import abyss.tables.SimKnockTransTableModel;
 import abyss.utilities.Tools;
 
 /**
@@ -75,6 +85,14 @@ public class AbyssStateSimKnockVis extends JFrame {
 	private boolean singleMode = true; //tylko jeden pakiet z combobox; false = porównywanie
 	private ArrayList<Place> places;
 	private ArrayList<Transition> transitions;
+	
+	//tablice:
+	private DefaultTableModel model;
+	private SimKnockPlacesTableModel modelPlaces;
+	private SimKnockTransTableModel modelTrans;
+	private SimKnockTableRenderer tableRenderer;
+	private JTable placesTable;
+	private JTable transTable;
 	/**
 	 * Konstruktor obiektu klast AbyssStateSimKnockVis.
 	 * @param boss AbyssStateSim - główne okno symulatora
@@ -111,12 +129,12 @@ public class AbyssStateSimKnockVis extends JFrame {
 		
 		JPanel mainTabbedPanel = new JPanel(new BorderLayout());
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Charts I", Tools.getResIcon16("/icons/stateSim/placesDyn.png"), createPlacesChartsPanel(), "Places");
+		tabbedPane.addTab("Charts", Tools.getResIcon16("/icons/stateSim/placesDyn.png"), createPlacesChartsPanel(), "Charts");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Tables", Tools.getResIcon16("/icons/stateSim/transDyn.png"), createTablesTabPanel(), "Tables");
+		tabbedPane.addTab("Place Table", Tools.getResIcon16("/icons/stateSim/transDyn.png"), createPlacesTablePanel(), "Place Table");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-		//tabbedPane.addTab("Charts II", Tools.getResIcon16("/icons/stateSim/placesDyn.png"), new JPanel(), "Transition");
-		//tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+		tabbedPane.addTab("Transition Table", Tools.getResIcon16("/icons/stateSim/placesDyn.png"), createTransTablePanel(), "Transition Table");
+		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 		
 		mainTabbedPanel.add(tabbedPane);
 		
@@ -151,6 +169,8 @@ public class AbyssStateSimKnockVis extends JFrame {
 					return;
 				
 				showSingleKnockoutCharts(true);
+				createPlacesTable(true);
+				createTransTable(true);
 			}
 			
 		});
@@ -170,6 +190,8 @@ public class AbyssStateSimKnockVis extends JFrame {
 					return;
 				
 				showSingleKnockoutCharts(false);
+				createPlacesTable(false);
+				createTransTable(false);
 				//int selected = dataCombo.getSelectedIndex();
 			}
 			
@@ -265,22 +287,7 @@ public class AbyssStateSimKnockVis extends JFrame {
 	 */
 	protected void showSingleKnockoutCharts(boolean showRef) {
 		singleMode = true;
-		NetSimulationData data = null;
-		if(showRef) {
-			int selectedRef = referencesCombo.getSelectedIndex() - 1;
-			if(selectedRef == -1)
-				return;
-			data = pn.accessSimKnockoutData().getReferenceSet(selectedRef);
-		} else {
-			int selectedKnockout = dataCombo.getSelectedIndex() - 1;
-			if(selectedKnockout == -1)
-				return;
-			data = pn.accessSimKnockoutData().getKnockoutSet(selectedKnockout);
-		}
-		if(data == null) {
-			overlord.log("Error accessing dataset.", "error", true);
-			return;
-		}
+		NetSimulationData data = getCorrectSet(showRef);
 		
 		StatisticalCategoryDataset datasetPlaces = createPlacesDataset(data, null);
 
@@ -327,6 +334,31 @@ public class AbyssStateSimKnockVis extends JFrame {
 	    transitionsChartPanel.add(sPaneTrans, BorderLayout.CENTER);
 	    transitionsChartPanel.revalidate();
 	    transitionsChartPanel.repaint();
+	}
+
+	/**
+	 * Zwraca odpowiedni zbiór danych: referencyjne lub knockout.
+	 * @param showRef boolean - true, jeśli wybrano dane referencyjne
+	 * @return NetSimulationData - pakiet danych symulacji
+	 */
+	private NetSimulationData getCorrectSet(boolean showRef) {
+		NetSimulationData data = null;
+		if(showRef) {
+			int selectedRef = referencesCombo.getSelectedIndex() - 1;
+			if(selectedRef == -1)
+				return null;
+			data = pn.accessSimKnockoutData().getReferenceSet(selectedRef);
+		} else {
+			int selectedKnockout = dataCombo.getSelectedIndex() - 1;
+			if(selectedKnockout == -1)
+				return null;
+			data = pn.accessSimKnockoutData().getKnockoutSet(selectedKnockout);
+		}
+		if(data == null) {
+			overlord.log("Error accessing dataset.", "error", true);
+			return null;
+		}
+		return data;
 	}
 	
 	/**
@@ -535,7 +567,224 @@ public class AbyssStateSimKnockVis extends JFrame {
         }
         return result;
     }
+	
+	//***********************************************************************************************************************
+	//***********************************************************************************************************************
+	//***********************************************************************************************************************
+	//***********************************************************************************************************************
+	//***********************************************************************************************************************
+	
+	
+	private JPanel createPlacesTablePanel() {
+		JPanel tablesSubPanel = new JPanel(new BorderLayout());
+		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
+		tablesSubPanel.setLocation(0, 0);
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
+		
+		model = new DefaultTableModel();
+		placesTable = new JTable(model);
+		tableRenderer = new SimKnockTableRenderer(placesTable);
 
+		placesTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		JScrollPane tableScrollPane = new JScrollPane(placesTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
+		
+		return tablesSubPanel;
+	}
+
+	/**
+	 * Metoda tworząca tabelę miejsc
+	 * @param ref  boolean - true, jeśli wywołane przez zbiór referencyjny
+	 */
+    private void createPlacesTable(boolean ref) {
+    	modelPlaces = new SimKnockPlacesTableModel();
+    	placesTable.setModel(modelPlaces);
+        
+    	int cellSize = 50;
+    	int largeCell = 65;
+    	
+    	placesTable.getColumnModel().getColumn(0).setHeaderValue("ID");
+    	placesTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(0).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(0).setMaxWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(1).setHeaderValue("Place name:");
+    	placesTable.getColumnModel().getColumn(1).setPreferredWidth(300);
+    	placesTable.getColumnModel().getColumn(1).setMinWidth(100);
+    	placesTable.getColumnModel().getColumn(2).setHeaderValue("AvgT:");
+    	placesTable.getColumnModel().getColumn(2).setPreferredWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(2).setMinWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(2).setMaxWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(3).setHeaderValue("MinT:");
+    	placesTable.getColumnModel().getColumn(3).setPreferredWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(3).setMinWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(3).setMaxWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(4).setHeaderValue("MaxT:");
+    	placesTable.getColumnModel().getColumn(4).setPreferredWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(4).setMinWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(4).setMaxWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(5).setHeaderValue("notT:");
+    	placesTable.getColumnModel().getColumn(5).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(5).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(5).setMaxWidth(cellSize);
+    	
+    	placesTable.getColumnModel().getColumn(6).setHeaderValue("stdDev:");
+    	placesTable.getColumnModel().getColumn(6).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(6).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(6).setMaxWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(7).setHeaderValue("S1 %");
+    	placesTable.getColumnModel().getColumn(7).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(7).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(7).setMaxWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(8).setHeaderValue("S2 %");
+    	placesTable.getColumnModel().getColumn(8).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(8).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(8).setMaxWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(9).setHeaderValue("S3 %");
+    	placesTable.getColumnModel().getColumn(9).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(9).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(9).setMaxWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(10).setHeaderValue("S4 %");
+    	placesTable.getColumnModel().getColumn(10).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(10).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(10).setMaxWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(11).setHeaderValue("S5 %");
+    	placesTable.getColumnModel().getColumn(11).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(11).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(11).setMaxWidth(cellSize);
+    	
+    	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(placesTable.getModel());
+    	placesTable.setRowSorter(sorter);
+        
+    	placesTable.setName("PlacesTable");
+        //tableRenderer.setMode(0); //mode: places
+    	placesTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+    	placesTable.setDefaultRenderer(Object.class, tableRenderer);
+
+    	NetSimulationData data = getCorrectSet(ref);
+    	int index = -1;
+    	try {
+    		if(places.size() == 0) {
+        		for(int p=0; p<data.placesNumber; p++) 
+        			modelPlaces.addNew(data, p, null);
+        	} else {
+        		for(Place place : places) {
+            		index++;
+            		modelPlaces.addNew(data, index, place);
+            	}
+        	}
+    	} catch (Exception e) {}
+    	
+        //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
+    	
+        placesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        placesTable.validate();
+    }
+    
+    private JPanel createTransTablePanel() {
+		JPanel tablesSubPanel = new JPanel(new BorderLayout());
+		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
+		tablesSubPanel.setLocation(0, 0);
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
+		
+		model = new DefaultTableModel();
+		transTable = new JTable(model);
+		tableRenderer = new SimKnockTableRenderer(transTable);
+
+		transTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		JScrollPane tableScrollPane = new JScrollPane(transTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
+		
+		return tablesSubPanel;
+	}
+    
+    /**
+	 * Metoda tworząca tabelę tranzycji
+	 * @param ref  boolean - true, jeśli wywołane przez zbiór referencyjny
+	 */
+    private void createTransTable(boolean ref) {
+    	modelTrans = new SimKnockTransTableModel();
+    	transTable.setModel(modelTrans);
+        
+    	int cellSize = 50;
+    	int largeCell = 65;
+    	
+    	transTable.getColumnModel().getColumn(0).setHeaderValue("ID");
+    	transTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(0).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(0).setMaxWidth(cellSize);
+    	transTable.getColumnModel().getColumn(1).setHeaderValue("Place name:");
+    	transTable.getColumnModel().getColumn(1).setPreferredWidth(300);
+    	transTable.getColumnModel().getColumn(1).setMinWidth(100);
+    	transTable.getColumnModel().getColumn(2).setHeaderValue("AvgF:");
+    	transTable.getColumnModel().getColumn(2).setPreferredWidth(largeCell);
+    	transTable.getColumnModel().getColumn(2).setMinWidth(largeCell);
+    	transTable.getColumnModel().getColumn(2).setMaxWidth(largeCell);
+    	transTable.getColumnModel().getColumn(3).setHeaderValue("MinF:");
+    	transTable.getColumnModel().getColumn(3).setPreferredWidth(largeCell);
+    	transTable.getColumnModel().getColumn(3).setMinWidth(largeCell);
+    	transTable.getColumnModel().getColumn(3).setMaxWidth(largeCell);
+    	transTable.getColumnModel().getColumn(4).setHeaderValue("MaxF:");
+    	transTable.getColumnModel().getColumn(4).setPreferredWidth(largeCell);
+    	transTable.getColumnModel().getColumn(4).setMinWidth(largeCell);
+    	transTable.getColumnModel().getColumn(4).setMaxWidth(largeCell);
+    	transTable.getColumnModel().getColumn(5).setHeaderValue("notF:");
+    	transTable.getColumnModel().getColumn(5).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(5).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(5).setMaxWidth(cellSize);
+    	
+    	transTable.getColumnModel().getColumn(6).setHeaderValue("stdDev:");
+    	transTable.getColumnModel().getColumn(6).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(6).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(6).setMaxWidth(cellSize);
+    	transTable.getColumnModel().getColumn(7).setHeaderValue("S1 %");
+    	transTable.getColumnModel().getColumn(7).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(7).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(7).setMaxWidth(cellSize);
+    	transTable.getColumnModel().getColumn(8).setHeaderValue("S2 %");
+    	transTable.getColumnModel().getColumn(8).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(8).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(8).setMaxWidth(cellSize);
+    	transTable.getColumnModel().getColumn(9).setHeaderValue("S3 %");
+    	transTable.getColumnModel().getColumn(9).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(9).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(9).setMaxWidth(cellSize);
+    	transTable.getColumnModel().getColumn(10).setHeaderValue("S4 %");
+    	transTable.getColumnModel().getColumn(10).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(10).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(10).setMaxWidth(cellSize);
+    	transTable.getColumnModel().getColumn(11).setHeaderValue("S5 %");
+    	transTable.getColumnModel().getColumn(11).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(11).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(11).setMaxWidth(cellSize);
+    	
+    	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(transTable.getModel());
+    	transTable.setRowSorter(sorter);
+        
+    	transTable.setName("TransitionsTable");
+        //tableRenderer.setMode(0); //mode: places
+    	transTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+    	transTable.setDefaultRenderer(Object.class, tableRenderer);
+
+    	NetSimulationData data = getCorrectSet(ref);
+    	int index = -1;
+    	try {
+    		if(transitions.size() == 0) {
+        		for(int p=0; p<data.transNumber; p++) 
+        			modelTrans.addNew(data, p, null);
+        	} else {
+        		for(Transition trans : transitions) {
+            		index++;
+            		modelTrans.addNew(data, index, trans);
+            	}
+        	}
+    	} catch (Exception e) {}
+    	
+        //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
+    	
+    	transTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        transTable.validate();
+    }
+    
 	/**
 	 * Inicjalizacja agentów nasłuchujących.
 	 */
@@ -689,64 +938,88 @@ public class AbyssStateSimKnockVis extends JFrame {
 		 */
 		@Override
 	    public String generateToolTip(CategoryDataset dataset, int bar, int nodeIndex)   {
-	    	String text = "<html>";
-	    	if(compareMode) {//bar + ": " + nodeIndex;
+	    	String text = "<html><font size=\"5\">";
+	    	text += "Simulate steps: <b>"+refData.steps+"</b> Repetitions: <b>"+refData.reps+"</b><br>";
+	    	if(compareMode) { //compare ref and knockout:
 	    		if(isPlaces) {
 	    			if(simpleMode) {
-	    				text += "p"+nodeIndex;
+	    				text += "Place: p"+nodeIndex;
 	    			} else {
-	    				text += "p"+nodeIndex+"_"+places.get(nodeIndex).getName();
+	    				text += "Place: p"+nodeIndex+"_"+places.get(nodeIndex).getName();
 	    			}
 	    			double tokensRef = refData.placeTokensAvg.get(nodeIndex);
-	    			text += "<br>Reference tokens: "+formatter.format(tokensRef);
-	    			text += " StdDev: "+formatter.format(refData.placeStdDev.get(nodeIndex));
+	    			text += "<br>Reference tokens: <b>"+formatter.format(tokensRef);
+	    			text += "</b> StdDev: <b>"+formatter.format(refData.placeStdDev.get(nodeIndex))+"</b>";
 	    			
 	    			double tokensKnock = knockData.placeTokensAvg.get(nodeIndex);
-	    			text += "<br>Knockout tokens: "+formatter.format(tokensKnock);
-	    			text += " StdDev: "+formatter.format(knockData.placeStdDev.get(nodeIndex));
+	    			text += "<br>Knockout tokens: <b>"+formatter.format(tokensKnock);
+	    			text += "</b> StdDev: <b>"+formatter.format(knockData.placeStdDev.get(nodeIndex))+"</b>";
 	    			
 	    			
-	    			
-	    			if(tokensKnock == 0)
-	    				text += "<br><font color=\"red\"> Transition disabled </font> ";
 		    	} else {
 		    		if(simpleMode) {
-		    			text += "t"+nodeIndex;
+		    			text += "Transition: t"+nodeIndex;
 	    			} else {
-	    				text += "t"+nodeIndex+"_"+transitions.get(nodeIndex).getName();
+	    				text += "Transition: t"+nodeIndex+"_"+transitions.get(nodeIndex).getName();
 	    			}
 		    		double firingRef = refData.transFiringsAvg.get(nodeIndex);
-	    			text += "<br>Reference firing: "+formatter.format(firingRef);
-	    			text += " StdDev: "+formatter.format(refData.transStdDev.get(nodeIndex));
+	    			text += "<br>Reference firing: <b>"+formatter.format(firingRef);
+	    			text += "</b> StdDev: <b>"+formatter.format(refData.transStdDev.get(nodeIndex))+"</b>";
 	    			
 	    			double firingKnock = knockData.transFiringsAvg.get(nodeIndex);
-	    			text += "<br>Knockout firing: "+formatter.format(firingKnock);
-	    			text += " StdDev: "+formatter.format(knockData.transStdDev.get(nodeIndex));
+	    			text += "<br>Knockout firing: <b>"+formatter.format(firingKnock);
+	    			text += "</b> StdDev: <b>"+formatter.format(knockData.transStdDev.get(nodeIndex))+"</b>";
 	    			
-	    			
+	    			//dodatkowe info o wyłączonej tranzycji:
+	    			if(bar != 0) {
+	    				if(knockData.disabledTotals.contains(nodeIndex)) {
+		    				text += "<br><font color=\"green\">Transition disabled manually in simulation</font> ";
+		    			} else {
+		    				if(firingKnock == 0) {
+		    					text += "<br><font color=\"red\">Transition starved because of other disabled transition(s)</font><br><b>";
+		    					for(int t : knockData.disabledTotals)
+		    						text += "t"+t+" ";
+		    					text += "</b>";
+		    				}
+		    			}
+	    			}
 		    	}
-	    	} else {
+	    	} else { //single data mode:
 	    		if(isPlaces) {
 	    			if(simpleMode) {
-	    				text += "p"+nodeIndex;
+	    				text += "Place: p"+nodeIndex;
 	    			} else {
-	    				text += "p"+nodeIndex+"_"+places.get(nodeIndex).getName();
+	    				text += "Place: p"+nodeIndex+"_"+places.get(nodeIndex).getName();
 	    			}
 	    			double tokensRef = refData.placeTokensAvg.get(nodeIndex);
-	    			text += "<br>Tokens: "+formatter.format(tokensRef);
-	    			text += " StdDev: "+formatter.format(refData.placeStdDev.get(nodeIndex));
+	    			text += "<br>Tokens: <b>"+formatter.format(tokensRef);
+	    			text += "</b> StdDev: <b>"+formatter.format(refData.placeStdDev.get(nodeIndex))+"</b>";
 		    	} else {
 		    		if(simpleMode) {
-		    			text += "t"+nodeIndex;
+		    			text += "Transition: t"+nodeIndex;
 	    			} else {
-	    				text += "t"+nodeIndex+"_"+transitions.get(nodeIndex).getName();
+	    				text += "Transition: t"+nodeIndex+"_"+transitions.get(nodeIndex).getName();
 	    			}
 		    		double firingRef = refData.transFiringsAvg.get(nodeIndex);
-	    			text += "<br>Reference firing: "+formatter.format(firingRef);
-	    			text += " StdDev: "+formatter.format(refData.transStdDev.get(nodeIndex));
+	    			text += "<br>Reference firing: <b>"+formatter.format(firingRef);
+	    			text += "</b> StdDev: <b>"+formatter.format(refData.transStdDev.get(nodeIndex))+"</b>";
+	    			
+	    			//dodatkowe info o wyłączonej tranzycji:
+	    			if(bar != 0) {
+	    				if(refData.disabledTotals.contains(nodeIndex)) {
+		    				text += "<br><font color=\"green\">Transition disabled manually in simulation</font> ";
+		    			} else {
+		    				if(firingRef == 0) {
+		    					text += "<br><font color=\"red\">Transition starved because of other disabled transition(s):</font><br><b>";
+		    					for(int t : refData.disabledTotals)
+		    						text += "t"+t+" ";
+		    					text += "</b>";
+		    				}
+		    			}
+	    			}
 		    	}
 	    	}
-	    	text += "</html>";
+	    	text += "</font></html>";
 	    	return text;
 	    }
 	}

@@ -241,7 +241,13 @@ public class AbyssStateSimKnockActions {
 	
 	//TODO:
 	
-
+	/**
+	 * Metoda odpowiedzialna za cykliczne wywoływanie symulatora celem wykonania kompletu symulacji knockout,
+	 * w każdym przypadku z inną tranzycją ustawioną jako offline.
+	 * @param returningData NetSimulationData - zbiór danych odesłanych przez symulator
+	 * @param transitions ArrayList[Transition] - wektor tranzycji
+	 * @param places ArrayList[Place] - wektor miejsc
+	 */
 	public void pingPongSimulation(NetSimulationData returningData, ArrayList<Transition> transitions, ArrayList<Place> places) {
 		if(returningData == null) { //piersze uruchomienie
 			

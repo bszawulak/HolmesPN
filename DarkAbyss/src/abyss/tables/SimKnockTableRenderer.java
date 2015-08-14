@@ -1,6 +1,7 @@
 package abyss.tables;
 
 import java.awt.Component;
+import java.text.DecimalFormat;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -9,12 +10,14 @@ import javax.swing.table.TableCellRenderer;
 public class SimKnockTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
 	private JTable table;
+	private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
 	
 	/**
 	 * Konstruktor domyślny obiektów klasy MyRenderer.
 	 */
 	public SimKnockTableRenderer(JTable table) {
 		this.table = table;
+		formatter.setMinimumFractionDigits(2);
 	}
 
 	/**
@@ -45,6 +48,8 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 		Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		//renderer.setFont(new Font("Arial", Font.BOLD, 9));
     	//renderer.setBackground(Color.white);
+		
+
 	    return renderer;
 	}
 }

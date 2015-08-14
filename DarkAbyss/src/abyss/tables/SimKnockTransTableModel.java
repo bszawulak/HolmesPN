@@ -53,18 +53,23 @@ public class SimKnockTransTableModel extends AbstractTableModel {
 	public void addNew(NetSimulationData data, int index, Transition t) {
 		TransContainer tc = new TransContainer();
 		tc.ID = index;
-		tc.name = t.getName();
+		
+		if(t != null)
+			tc.name = t.getName();
+		else
+			tc.name = "Transition "+index;
+
 		tc.firingAvg = data.transFiringsAvg.get(index);
 		tc.firingMin = data.transFiringsMin.get(index);
 		tc.firingMax = data.transFiringsMax.get(index);
 		tc.noFiring = "" + data.transZeroFiring.get(index) +"/"+data.reps;
 		
-		tc.stdDev = data.placeStdDev.get(index);
-		tc.s1 = (data.transWithinStdDev.get(index).get(0) / data.reps)*100;
-		tc.s2 = (data.transWithinStdDev.get(index).get(1) / data.reps)*100;
-		tc.s3 = (data.transWithinStdDev.get(index).get(2) / data.reps)*100;
-		tc.s4 = (data.transWithinStdDev.get(index).get(3) / data.reps)*100;
-		tc.s5 = (data.transWithinStdDev.get(index).get(4) / data.reps)*100;
+		tc.stdDev = data.transStdDev.get(index);
+		tc.s1 = data.transWithinStdDev.get(index).get(0) * 100 / data.reps;
+		tc.s2 = data.transWithinStdDev.get(index).get(1) * 100 / data.reps;
+		tc.s3 = data.transWithinStdDev.get(index).get(2) * 100 / data.reps;
+		tc.s4 = data.transWithinStdDev.get(index).get(3) * 100 / data.reps;
+		tc.s5 = data.transWithinStdDev.get(index).get(4) * 100 / data.reps;
 		
 		dataMatrix.add(tc);
 		dataSize++;

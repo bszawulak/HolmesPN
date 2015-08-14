@@ -123,10 +123,6 @@ public class PlacesTableModel extends AbstractTableModel {
             break;
         case 5:
         	returnValue = dataMatrix.get(rowIndex).avgTokens;
-        	try{
-        		Float value = Float.parseFloat(returnValue.toString());
-        		returnValue = value;
-        	} catch (Exception e) { }
             break;
         default:
             throw new IllegalArgumentException("Invalid column index");

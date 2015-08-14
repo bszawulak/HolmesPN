@@ -445,7 +445,8 @@ public class StateSimulator implements Runnable {
 				variance += val * val;
 			}
 			variance /= repetitions;
-			currentDataPackage.transStdDev.add(Math.sqrt(variance)); //standard deviation for transition
+			double sigma = Math.sqrt(variance);
+			currentDataPackage.transStdDev.add(sigma); //standard deviation for transition
 		}
 		
 		//within stdDev range:

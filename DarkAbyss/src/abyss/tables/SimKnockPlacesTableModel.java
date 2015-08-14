@@ -1,11 +1,13 @@
 package abyss.tables;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
 import abyss.petrinet.data.NetSimulationData;
 import abyss.petrinet.elements.Place;
+import abyss.utilities.Tools;
 
 /**
  * Model tabeli danych statystycznych dla miejsca (symulacja knockout).
@@ -15,7 +17,8 @@ import abyss.petrinet.elements.Place;
  */
 public class SimKnockPlacesTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 7417629500439797992L;
-
+	private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
+	
 	public class PlaceContainer {
     	public int ID;
     	public String name;
@@ -53,18 +56,23 @@ public class SimKnockPlacesTableModel extends AbstractTableModel {
 	public void addNew(NetSimulationData data, int index, Place p) {
 		PlaceContainer pc = new PlaceContainer();
 		pc.ID = index;
-		pc.name = p.getName();
+		
+		if(p != null)
+			pc.name = p.getName();
+		else
+			pc.name = "Place "+index;
+		
 		pc.tokenAvg = data.placeTokensAvg.get(index);
 		pc.tokenMin = data.placeTokensMin.get(index);
 		pc.tokenMax = data.placeTokensMax.get(index);
 		pc.noTokens = "" + data.placeZeroTokens.get(index) +"/"+data.reps;
 		
 		pc.stdDev = data.placeStdDev.get(index);
-		pc.s1 = (data.placeWithinStdDev.get(index).get(0) / data.reps)*100;
-		pc.s2 = (data.placeWithinStdDev.get(index).get(1) / data.reps)*100;
-		pc.s3 = (data.placeWithinStdDev.get(index).get(2) / data.reps)*100;
-		pc.s4 = (data.placeWithinStdDev.get(index).get(3) / data.reps)*100;
-		pc.s5 = (data.placeWithinStdDev.get(index).get(4) / data.reps)*100;
+		pc.s1 = data.placeWithinStdDev.get(index).get(0) * 100 / data.reps;
+		pc.s2 = data.placeWithinStdDev.get(index).get(1) * 100 / data.reps;
+		pc.s3 = data.placeWithinStdDev.get(index).get(2) * 100 / data.reps;
+		pc.s4 = data.placeWithinStdDev.get(index).get(3) * 100 / data.reps;
+		pc.s5 = data.placeWithinStdDev.get(index).get(4) * 100 / data.reps;
 		
 		dataMatrix.add(pc);
 		dataSize++;
@@ -128,6 +136,10 @@ public class SimKnockPlacesTableModel extends AbstractTableModel {
             break;
         case 2:
         	returnValue = dataMatrix.get(rowIndex).tokenAvg;
+        	try{
+        		//Double value = Double.parseDouble(returnValue.toString());
+        		//returnValue = value;
+        	} catch (Exception e) { }
             break;
         case 3:
         	returnValue = dataMatrix.get(rowIndex).tokenMin;
