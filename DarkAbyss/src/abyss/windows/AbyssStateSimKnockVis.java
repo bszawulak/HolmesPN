@@ -1,22 +1,20 @@
 package abyss.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -29,7 +27,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import javax.tools.SimpleJavaFileObject;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -53,10 +50,10 @@ import abyss.petrinet.data.NetSimulationData;
 import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
-import abyss.tables.PTITableRenderer;
-import abyss.tables.PlacesTableModel;
+import abyss.tables.SimKnockPlacesCompTableModel;
 import abyss.tables.SimKnockPlacesTableModel;
 import abyss.tables.SimKnockTableRenderer;
+import abyss.tables.SimKnockTransCompTableModel;
 import abyss.tables.SimKnockTransTableModel;
 import abyss.utilities.Tools;
 
@@ -89,7 +86,9 @@ public class AbyssStateSimKnockVis extends JFrame {
 	//tablice:
 	private DefaultTableModel model;
 	private SimKnockPlacesTableModel modelPlaces;
+	private SimKnockPlacesCompTableModel modelPlacesComp;
 	private SimKnockTransTableModel modelTrans;
+	private SimKnockTransCompTableModel modelTransComp;
 	private SimKnockTableRenderer tableRenderer;
 	private JTable placesTable;
 	private JTable transTable;
@@ -177,7 +176,7 @@ public class AbyssStateSimKnockVis extends JFrame {
 		result.add(referencesCombo);
 		
 		JLabel label2 = new JLabel("Data sets:");
-		label2.setBounds(posXda, posYda+=20, 70, 20);
+		label2.setBounds(posXda, posYda+=25, 70, 20);
 		result.add(label2);
 		
 		String[] data2 = { " ----- " };
@@ -199,12 +198,14 @@ public class AbyssStateSimKnockVis extends JFrame {
 		result.add(dataCombo);
 		
 		JButton showChartKnockButton = new JButton("Compare");
-		showChartKnockButton.setBounds(posXda+600, posYda-20, 120, 40);
+		showChartKnockButton.setBounds(posXda+600, 20, 120, 40);
 		showChartKnockButton.setMargin(new Insets(0, 0, 0, 0));
 		showChartKnockButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
 		showChartKnockButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				showCompareCharts();
+				createPlacesCompTable();
+				createTransCompTable();
 			}
 		});
 		result.add(showChartKnockButton);
@@ -260,20 +261,6 @@ public class AbyssStateSimKnockVis extends JFrame {
 		return result;
 	}
 
-	/**
-	 * Tworzy panel tablic
-	 * @return JPanel - okrętu się pan spodziewałeś?
-	 */
-	private Component createTablesTabPanel() {
-		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Tables"));
-		result.setPreferredSize(new Dimension(670, 500));
-	
-		//int posXda = 10;
-		//int posYda = 10;
-
-		return result;
-	}
 	
 	//***********************************************************************************************************************
 	//***********************************************************************************************************************
@@ -283,12 +270,16 @@ public class AbyssStateSimKnockVis extends JFrame {
 	
 	/**
 	 * Metoda wypełnia wykresy danymi.
-	 * @param showRef
+	 * @param showRef boolean - true, jeśli chodzi o zbiór referencyjny
 	 */
+	@SuppressWarnings("deprecation")
 	protected void showSingleKnockoutCharts(boolean showRef) {
 		singleMode = true;
 		NetSimulationData data = getCorrectSet(showRef);
+		if(data == null)
+			return;
 		
+		//PLACES:
 		StatisticalCategoryDataset datasetPlaces = createPlacesDataset(data, null);
 
         CategoryAxis xAxisPlaces = new CategoryAxis("Type");
@@ -310,7 +301,6 @@ public class AbyssStateSimKnockVis extends JFrame {
 	    placesChartPanel.add(sPanePlaces, BorderLayout.CENTER);
 	    placesChartPanel.revalidate();
 	    placesChartPanel.repaint();
-
 
 	    //TRANSITIONS:
 		StatisticalCategoryDataset datasetTrans = createTransitionsDataset(data, null);
@@ -364,6 +354,7 @@ public class AbyssStateSimKnockVis extends JFrame {
 	/**
 	 * Metoda pokazująca na wykresach porównanie zbioru referencyjnego i knockout
 	 */
+	@SuppressWarnings("deprecation")
 	protected void showCompareCharts() {
 		NetSimulationData refData = null;
 		NetSimulationData knockData = null;
@@ -574,21 +565,60 @@ public class AbyssStateSimKnockVis extends JFrame {
 	//***********************************************************************************************************************
 	//***********************************************************************************************************************
 	
-	
+	/**
+     * Tworzy podstawową wersję tabeli miejsc.
+     * @return JPanel - panel
+     */
 	private JPanel createPlacesTablePanel() {
 		JPanel tablesSubPanel = new JPanel(new BorderLayout());
 		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
 		tablesSubPanel.setLocation(0, 0);
 		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
-		
 		model = new DefaultTableModel();
 		placesTable = new JTable(model);
+		
+		placesTable.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+          	    if (e.getClickCount() == 1) {
+          	    	if(e.isControlDown() == false)
+          	    		cellClickAction(placesTable);
+          	    }
+          	 }
+      	});
+		
+		
 		tableRenderer = new SimKnockTableRenderer(placesTable);
-
 		placesTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane tableScrollPane = new JScrollPane(placesTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
+		return tablesSubPanel;
+	}
+
+	/**
+     * Tworzy podstawową wersję tabeli tranzycji.
+     * @return JPanel - panel
+     */
+    private JPanel createTransTablePanel() {
+		JPanel tablesSubPanel = new JPanel(new BorderLayout());
+		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
+		tablesSubPanel.setLocation(0, 0);
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
+		model = new DefaultTableModel();
+		transTable = new JTable(model);
 		
+		transTable.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+          	    if (e.getClickCount() == 1) {
+          	    	if(e.isControlDown() == false)
+          	    		cellClickAction(transTable);
+          	    }
+          	 }
+      	});
+		
+		tableRenderer = new SimKnockTableRenderer(transTable);
+		transTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		JScrollPane tableScrollPane = new JScrollPane(transTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
 		return tablesSubPanel;
 	}
 
@@ -597,11 +627,16 @@ public class AbyssStateSimKnockVis extends JFrame {
 	 * @param ref  boolean - true, jeśli wywołane przez zbiór referencyjny
 	 */
     private void createPlacesTable(boolean ref) {
+    	NetSimulationData data = getCorrectSet(ref);
+    	if(data == null)
+    		return;
+    	
     	modelPlaces = new SimKnockPlacesTableModel();
     	placesTable.setModel(modelPlaces);
         
     	int cellSize = 50;
     	int largeCell = 65;
+    	int svaluesCell = 35;
     	
     	placesTable.getColumnModel().getColumn(0).setHeaderValue("ID");
     	placesTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
@@ -631,26 +666,26 @@ public class AbyssStateSimKnockVis extends JFrame {
     	placesTable.getColumnModel().getColumn(6).setPreferredWidth(cellSize);
     	placesTable.getColumnModel().getColumn(6).setMinWidth(cellSize);
     	placesTable.getColumnModel().getColumn(6).setMaxWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(7).setHeaderValue("S1 %");
-    	placesTable.getColumnModel().getColumn(7).setPreferredWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(7).setMinWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(7).setMaxWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(8).setHeaderValue("S2 %");
-    	placesTable.getColumnModel().getColumn(8).setPreferredWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(8).setMinWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(8).setMaxWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(9).setHeaderValue("S3 %");
-    	placesTable.getColumnModel().getColumn(9).setPreferredWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(9).setMinWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(9).setMaxWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(10).setHeaderValue("S4 %");
-    	placesTable.getColumnModel().getColumn(10).setPreferredWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(10).setMinWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(10).setMaxWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(11).setHeaderValue("S5 %");
-    	placesTable.getColumnModel().getColumn(11).setPreferredWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(11).setMinWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(11).setMaxWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(7).setHeaderValue("S1%");
+    	placesTable.getColumnModel().getColumn(7).setPreferredWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(7).setMinWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(7).setMaxWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(8).setHeaderValue("S2%");
+    	placesTable.getColumnModel().getColumn(8).setPreferredWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(8).setMinWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(8).setMaxWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(9).setHeaderValue("S3%");
+    	placesTable.getColumnModel().getColumn(9).setPreferredWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(9).setMinWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(9).setMaxWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(10).setHeaderValue("S4%");
+    	placesTable.getColumnModel().getColumn(10).setPreferredWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(10).setMinWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(10).setMaxWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(11).setHeaderValue("S5%");
+    	placesTable.getColumnModel().getColumn(11).setPreferredWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(11).setMinWidth(svaluesCell);
+    	placesTable.getColumnModel().getColumn(11).setMaxWidth(svaluesCell);
     	
     	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(placesTable.getModel());
     	placesTable.setRowSorter(sorter);
@@ -658,15 +693,15 @@ public class AbyssStateSimKnockVis extends JFrame {
     	placesTable.setName("PlacesTable");
         //tableRenderer.setMode(0); //mode: places
     	placesTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+    	tableRenderer.setMode(0);
     	placesTable.setDefaultRenderer(Object.class, tableRenderer);
 
-    	NetSimulationData data = getCorrectSet(ref);
-    	int index = -1;
     	try {
     		if(places.size() == 0) {
         		for(int p=0; p<data.placesNumber; p++) 
         			modelPlaces.addNew(data, p, null);
         	} else {
+        		int index = -1;
         		for(Place place : places) {
             		index++;
             		modelPlaces.addNew(data, index, place);
@@ -680,33 +715,108 @@ public class AbyssStateSimKnockVis extends JFrame {
         placesTable.validate();
     }
     
-    private JPanel createTransTablePanel() {
-		JPanel tablesSubPanel = new JPanel(new BorderLayout());
-		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
-		tablesSubPanel.setLocation(0, 0);
-		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
-		
-		model = new DefaultTableModel();
-		transTable = new JTable(model);
-		tableRenderer = new SimKnockTableRenderer(transTable);
+    /**
+     * Tworzenie tabeli porównawczej dla miejsc.
+     */
+    private void createPlacesCompTable() {
+    	NetSimulationData dataRef = getCorrectSet(true);
+    	NetSimulationData dataComp = getCorrectSet(false);
+    	if(dataRef == null || dataComp == null)
+    		return;
+    	
+    	modelPlacesComp = new SimKnockPlacesCompTableModel();
+    	placesTable.setModel(modelPlacesComp);
 
-		transTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		JScrollPane tableScrollPane = new JScrollPane(transTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
-		
-		return tablesSubPanel;
-	}
-    
+    	int cellSize = 50;
+    	int largeCell = 65;
+    	//int svaluesCell = 25;
+    	
+    	placesTable.getColumnModel().getColumn(0).setHeaderValue("ID");
+    	placesTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(0).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(0).setMaxWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(1).setHeaderValue("Place name");
+    	placesTable.getColumnModel().getColumn(1).setPreferredWidth(300);
+    	placesTable.getColumnModel().getColumn(1).setMinWidth(100);
+    	placesTable.getColumnModel().getColumn(2).setHeaderValue("AvgTRef");
+    	placesTable.getColumnModel().getColumn(2).setPreferredWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(2).setMinWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(2).setMaxWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(3).setHeaderValue("stdDevRef");
+    	placesTable.getColumnModel().getColumn(3).setPreferredWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(3).setMinWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(3).setMaxWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(4).setHeaderValue("AvgTKnock");
+    	placesTable.getColumnModel().getColumn(4).setPreferredWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(4).setMinWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(4).setMaxWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(5).setHeaderValue("stdDevKnock");
+    	placesTable.getColumnModel().getColumn(5).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(5).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(5).setMaxWidth(cellSize);
+    	
+    	placesTable.getColumnModel().getColumn(6).setHeaderValue("diff:");
+    	placesTable.getColumnModel().getColumn(6).setPreferredWidth(largeCell+10);
+    	placesTable.getColumnModel().getColumn(6).setMinWidth(largeCell+10);
+    	placesTable.getColumnModel().getColumn(6).setMaxWidth(largeCell+10);
+    	placesTable.getColumnModel().getColumn(7).setHeaderValue("noTok");
+    	placesTable.getColumnModel().getColumn(7).setPreferredWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(7).setMinWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(7).setMaxWidth(largeCell);
+    	placesTable.getColumnModel().getColumn(8).setHeaderValue("Sign1");
+    	placesTable.getColumnModel().getColumn(8).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(8).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(8).setMaxWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(9).setHeaderValue("Sign2");
+    	placesTable.getColumnModel().getColumn(9).setPreferredWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(9).setMinWidth(cellSize);
+    	placesTable.getColumnModel().getColumn(9).setMaxWidth(cellSize);
+    	
+    	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(placesTable.getModel());
+    	placesTable.setRowSorter(sorter);
+        
+    	placesTable.setName("PlacesCompTable");
+        //tableRenderer.setMode(0); //mode: places
+    	placesTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+    	tableRenderer.setMode(1);
+    	//placesTable.setDefaultRenderer(Object.class, tableRenderer);
+    	placesTable.setDefaultRenderer(String.class, tableRenderer);
+    	placesTable.setDefaultRenderer(Double.class, tableRenderer);
+
+    	try {
+    		if(places.size() == 0) {
+        		for(int index=0; index<dataRef.placesNumber; index++) 
+        			modelPlacesComp.addNew(dataRef, dataComp, index, null);
+        	} else {
+        		int index = -1;
+        		for(Place place : places) {
+            		index++;
+            		modelPlacesComp.addNew(dataRef, dataComp, index, place);
+            	}
+        	}
+    	} catch (Exception e) {}
+    	
+        //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
+    	
+        placesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        placesTable.validate();
+    }
+
     /**
 	 * Metoda tworząca tabelę tranzycji
 	 * @param ref  boolean - true, jeśli wywołane przez zbiór referencyjny
 	 */
     private void createTransTable(boolean ref) {
+    	NetSimulationData data = getCorrectSet(ref);
+    	if(data == null)
+    		return;
+    	
     	modelTrans = new SimKnockTransTableModel();
     	transTable.setModel(modelTrans);
         
     	int cellSize = 50;
     	int largeCell = 65;
+    	int svaluesCell = 35;
     	
     	transTable.getColumnModel().getColumn(0).setHeaderValue("ID");
     	transTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
@@ -736,26 +846,26 @@ public class AbyssStateSimKnockVis extends JFrame {
     	transTable.getColumnModel().getColumn(6).setPreferredWidth(cellSize);
     	transTable.getColumnModel().getColumn(6).setMinWidth(cellSize);
     	transTable.getColumnModel().getColumn(6).setMaxWidth(cellSize);
-    	transTable.getColumnModel().getColumn(7).setHeaderValue("S1 %");
-    	transTable.getColumnModel().getColumn(7).setPreferredWidth(cellSize);
-    	transTable.getColumnModel().getColumn(7).setMinWidth(cellSize);
-    	transTable.getColumnModel().getColumn(7).setMaxWidth(cellSize);
-    	transTable.getColumnModel().getColumn(8).setHeaderValue("S2 %");
-    	transTable.getColumnModel().getColumn(8).setPreferredWidth(cellSize);
-    	transTable.getColumnModel().getColumn(8).setMinWidth(cellSize);
-    	transTable.getColumnModel().getColumn(8).setMaxWidth(cellSize);
-    	transTable.getColumnModel().getColumn(9).setHeaderValue("S3 %");
-    	transTable.getColumnModel().getColumn(9).setPreferredWidth(cellSize);
-    	transTable.getColumnModel().getColumn(9).setMinWidth(cellSize);
-    	transTable.getColumnModel().getColumn(9).setMaxWidth(cellSize);
-    	transTable.getColumnModel().getColumn(10).setHeaderValue("S4 %");
-    	transTable.getColumnModel().getColumn(10).setPreferredWidth(cellSize);
-    	transTable.getColumnModel().getColumn(10).setMinWidth(cellSize);
-    	transTable.getColumnModel().getColumn(10).setMaxWidth(cellSize);
-    	transTable.getColumnModel().getColumn(11).setHeaderValue("S5 %");
-    	transTable.getColumnModel().getColumn(11).setPreferredWidth(cellSize);
-    	transTable.getColumnModel().getColumn(11).setMinWidth(cellSize);
-    	transTable.getColumnModel().getColumn(11).setMaxWidth(cellSize);
+    	transTable.getColumnModel().getColumn(7).setHeaderValue("S1%");
+    	transTable.getColumnModel().getColumn(7).setPreferredWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(7).setMinWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(7).setMaxWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(8).setHeaderValue("S2%");
+    	transTable.getColumnModel().getColumn(8).setPreferredWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(8).setMinWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(8).setMaxWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(9).setHeaderValue("S3%");
+    	transTable.getColumnModel().getColumn(9).setPreferredWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(9).setMinWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(9).setMaxWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(10).setHeaderValue("S4%");
+    	transTable.getColumnModel().getColumn(10).setPreferredWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(10).setMinWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(10).setMaxWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(11).setHeaderValue("S5%");
+    	transTable.getColumnModel().getColumn(11).setPreferredWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(11).setMinWidth(svaluesCell);
+    	transTable.getColumnModel().getColumn(11).setMaxWidth(svaluesCell);
     	
     	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(transTable.getModel());
     	transTable.setRowSorter(sorter);
@@ -763,15 +873,15 @@ public class AbyssStateSimKnockVis extends JFrame {
     	transTable.setName("TransitionsTable");
         //tableRenderer.setMode(0); //mode: places
     	transTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+    	tableRenderer.setMode(0);
     	transTable.setDefaultRenderer(Object.class, tableRenderer);
 
-    	NetSimulationData data = getCorrectSet(ref);
-    	int index = -1;
     	try {
     		if(transitions.size() == 0) {
         		for(int p=0; p<data.transNumber; p++) 
         			modelTrans.addNew(data, p, null);
         	} else {
+        		int index = -1;
         		for(Transition trans : transitions) {
             		index++;
             		modelTrans.addNew(data, index, trans);
@@ -784,6 +894,98 @@ public class AbyssStateSimKnockVis extends JFrame {
     	transTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         transTable.validate();
     }
+    
+    /**
+	 * Metoda tworząca tabelę tranzycji w ramach porównania danych.
+	 */
+    private void createTransCompTable() {
+    	NetSimulationData dataRef = getCorrectSet(true);
+    	NetSimulationData dataComp = getCorrectSet(false);
+    	if(dataRef == null || dataComp == null)
+    		return;
+    	
+    	modelTransComp = new SimKnockTransCompTableModel();
+    	transTable.setModel(modelTransComp);
+        
+    	int cellSize = 50;
+    	int largeCell = 65;
+    	//int svaluesCell = 25;
+    	
+    	transTable.getColumnModel().getColumn(0).setHeaderValue("ID");
+    	transTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(0).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(0).setMaxWidth(cellSize);
+    	transTable.getColumnModel().getColumn(1).setHeaderValue("Place name");
+    	transTable.getColumnModel().getColumn(1).setPreferredWidth(300);
+    	transTable.getColumnModel().getColumn(1).setMinWidth(100);
+    	transTable.getColumnModel().getColumn(2).setHeaderValue("AvgFRef");
+    	transTable.getColumnModel().getColumn(2).setPreferredWidth(largeCell);
+    	transTable.getColumnModel().getColumn(2).setMinWidth(largeCell);
+    	transTable.getColumnModel().getColumn(2).setMaxWidth(largeCell);
+    	transTable.getColumnModel().getColumn(3).setHeaderValue("stdDevRef");
+    	transTable.getColumnModel().getColumn(3).setPreferredWidth(largeCell);
+    	transTable.getColumnModel().getColumn(3).setMinWidth(largeCell);
+    	transTable.getColumnModel().getColumn(3).setMaxWidth(largeCell);
+    	transTable.getColumnModel().getColumn(4).setHeaderValue("AvgFKnock");
+    	transTable.getColumnModel().getColumn(4).setPreferredWidth(largeCell);
+    	transTable.getColumnModel().getColumn(4).setMinWidth(largeCell);
+    	transTable.getColumnModel().getColumn(4).setMaxWidth(largeCell);
+    	transTable.getColumnModel().getColumn(5).setHeaderValue("stdDevKnock");
+    	transTable.getColumnModel().getColumn(5).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(5).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(5).setMaxWidth(cellSize);
+    	
+    	transTable.getColumnModel().getColumn(6).setHeaderValue("diff:");
+    	transTable.getColumnModel().getColumn(6).setPreferredWidth(largeCell+10);
+    	transTable.getColumnModel().getColumn(6).setMinWidth(largeCell+10);
+    	transTable.getColumnModel().getColumn(6).setMaxWidth(largeCell+10);
+    	transTable.getColumnModel().getColumn(7).setHeaderValue("noFire");
+    	transTable.getColumnModel().getColumn(7).setPreferredWidth(largeCell);
+    	transTable.getColumnModel().getColumn(7).setMinWidth(largeCell);
+    	transTable.getColumnModel().getColumn(7).setMaxWidth(largeCell);
+    	transTable.getColumnModel().getColumn(8).setHeaderValue("Sign1");
+    	transTable.getColumnModel().getColumn(8).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(8).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(8).setMaxWidth(cellSize);
+    	transTable.getColumnModel().getColumn(9).setHeaderValue("Sign2");
+    	transTable.getColumnModel().getColumn(9).setPreferredWidth(cellSize);
+    	transTable.getColumnModel().getColumn(9).setMinWidth(cellSize);
+    	transTable.getColumnModel().getColumn(9).setMaxWidth(cellSize);
+    	
+    	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(transTable.getModel());
+    	transTable.setRowSorter(sorter);
+        
+    	transTable.setName("TransitionsCompTable");
+        //tableRenderer.setMode(0); //mode: places
+    	transTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+    	tableRenderer.setMode(1);
+    	//transTable.setDefaultRenderer(Object.class, tableRenderer);
+    	transTable.setDefaultRenderer(String.class, tableRenderer);
+    	transTable.setDefaultRenderer(Double.class, tableRenderer);
+    	
+
+    	try {
+    		if(transitions.size() == 0) {
+        		for(int index=0; index<dataRef.transNumber; index++) 
+        			modelTransComp.addNew(dataRef, dataComp, index, null);
+        	} else {
+        		int index = -1;
+        		for(Transition trans : transitions) {
+            		index++;
+            		modelTransComp.addNew(dataRef, dataComp, index, trans);
+            	}
+        	}
+    	} catch (Exception e) {}
+    	
+        //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
+    	
+    	transTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        transTable.validate();
+    }
+    
+  //******************************************************************************************************
+  //******************************************************************************************************
+  //******************************************************************************************************
     
 	/**
 	 * Inicjalizacja agentów nasłuchujących.
@@ -877,20 +1079,37 @@ public class AbyssStateSimKnockVis extends JFrame {
 		
 		doNotUpdate = false;
 	}
+
+
+	//***********************************************************************************************************************
+	//***********************************************************************************************************************
+	//***********************************************************************************************************************
+	//***********************************************************************************************************************
+	//***********************************************************************************************************************
 	
-	class CustomBarRenderer extends BarRenderer {
-		private static final long serialVersionUID = 8580637960798892821L;
-		ArrayList<Integer> deadColumns;
-		public CustomBarRenderer(ArrayList<Integer> deadColumns) {
-			this.deadColumns = deadColumns;
-		}
-		public Paint getItemPaint(final int row, final int column) {
-			if(deadColumns.get(column) == 0)
-				return Color.green;
-			else
-				return Color.darkGray;
+    protected void cellClickAction(JTable table) {
+		try {
+			String name = table.getName();
+			if(name.contains("Places")) {
+	  	    	int row = table.getSelectedRow();
+	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
+	  	    	
+	  	    	AbyssNodeInfo window = new AbyssNodeInfo(
+	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(index), this);
+	  	    	window.setVisible(true);
+			} else if(name.contains("Transitions")){
+				int row = table.getSelectedRow();
+	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
+	  	    	
+	  	    	AbyssNodeInfo window = new AbyssNodeInfo(
+	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(index), this);
+	  	    	window.setVisible(true);
+			}
+		} catch (Exception e) {
+			
 		}
 	}
+	
 	
 	/**
 	 * Klasa odpowiedzialna za informacje o wskazanym pasku wykresu

@@ -58,11 +58,17 @@ public class SimKnockTransTableModel extends AbstractTableModel {
 			tc.name = t.getName();
 		else
 			tc.name = "Transition "+index;
+		
+		if(data.disabledTotals.contains(index)) {
+			tc.name = " <OFFLINE> " + tc.name;
+		} else if(data.transFiringsAvg.get(index) == 0) {
+			tc.name = " <KNOCKOUT> " + tc.name;
+		}
 
 		tc.firingAvg = data.transFiringsAvg.get(index);
 		tc.firingMin = data.transFiringsMin.get(index);
 		tc.firingMax = data.transFiringsMax.get(index);
-		tc.noFiring = "" + data.transZeroFiring.get(index) +"/"+data.reps;
+		tc.noFiring = "" + data.transZeroFiring.get(index); // +"/"+data.reps;
 		
 		tc.stdDev = data.transStdDev.get(index);
 		tc.s1 = data.transWithinStdDev.get(index).get(0) * 100 / data.reps;

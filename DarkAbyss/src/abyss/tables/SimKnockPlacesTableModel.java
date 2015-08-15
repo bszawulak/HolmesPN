@@ -62,10 +62,14 @@ public class SimKnockPlacesTableModel extends AbstractTableModel {
 		else
 			pc.name = "Place "+index;
 		
+		if(data.placeTokensAvg.get(index) == 0)
+			pc.name = "<KNOCKOUT>" + pc.name;
+				
+		
 		pc.tokenAvg = data.placeTokensAvg.get(index);
 		pc.tokenMin = data.placeTokensMin.get(index);
 		pc.tokenMax = data.placeTokensMax.get(index);
-		pc.noTokens = "" + data.placeZeroTokens.get(index) +"/"+data.reps;
+		pc.noTokens = "" + data.placeZeroTokens.get(index); // +"/"+data.reps;
 		
 		pc.stdDev = data.placeStdDev.get(index);
 		pc.s1 = data.placeWithinStdDev.get(index).get(0) * 100 / data.reps;
