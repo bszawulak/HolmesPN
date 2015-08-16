@@ -19,12 +19,14 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -50,9 +52,14 @@ import abyss.petrinet.data.NetSimulationData;
 import abyss.petrinet.data.PetriNet;
 import abyss.petrinet.elements.Place;
 import abyss.petrinet.elements.Transition;
+import abyss.tables.InvariantsSimTableModel;
+import abyss.tables.SimKnockPlacesCompAllTableModel;
+import abyss.tables.SimKnockPlacesCompAllTableModel.DetailsPlace;
 import abyss.tables.SimKnockPlacesCompTableModel;
 import abyss.tables.SimKnockPlacesTableModel;
 import abyss.tables.SimKnockTableRenderer;
+import abyss.tables.SimKnockTransCompAllTableModel;
+import abyss.tables.SimKnockTransCompAllTableModel.DetailsTrans;
 import abyss.tables.SimKnockTransCompTableModel;
 import abyss.tables.SimKnockTransTableModel;
 import abyss.utilities.Tools;
@@ -67,6 +74,7 @@ public class AbyssStateSimKnockVis extends JFrame {
 	private static final long serialVersionUID = 3020186160500907678L;
 	private GUIManager overlord;
 	private PetriNet pn;
+	private static final DecimalFormat formatter2 = new DecimalFormat( "#.##" );
 	private boolean doNotUpdate = false;
 	private AbyssStateSim boss;
 	private XYSeriesCollection placesSeriesDataSet = null;
@@ -78,20 +86,26 @@ public class AbyssStateSimKnockVis extends JFrame {
 	
 	private JComboBox<String> referencesCombo = null;
 	private JComboBox<String> dataCombo = null;
+	private JComboBox<String> seriesCombo = null;
 	
-	private boolean singleMode = true; //tylko jeden pakiet z combobox; false = porównywanie
 	private ArrayList<Place> places;
 	private ArrayList<Transition> transitions;
 	
 	//tablice:
 	private DefaultTableModel model;
+	private SimKnockTableRenderer tableRenderer;
 	private SimKnockPlacesTableModel modelPlaces;
 	private SimKnockPlacesCompTableModel modelPlacesComp;
+	private SimKnockPlacesCompAllTableModel modelPlacesCompAll;
 	private SimKnockTransTableModel modelTrans;
 	private SimKnockTransCompTableModel modelTransComp;
-	private SimKnockTableRenderer tableRenderer;
+	private SimKnockTransCompAllTableModel modelTransCompAll;
 	private JTable placesTable;
 	private JTable transTable;
+	private JTable placesCompAllTable;
+	private JTable transCompAllTable;
+	
+	
 	/**
 	 * Konstruktor obiektu klast AbyssStateSimKnockVis.
 	 * @param boss AbyssStateSim - główne okno symulatora
@@ -128,18 +142,23 @@ public class AbyssStateSimKnockVis extends JFrame {
 		
 		JPanel mainTabbedPanel = new JPanel(new BorderLayout());
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Charts", Tools.getResIcon16("/icons/stateSim/placesDyn.png"), createPlacesChartsPanel(), "Charts");
+		tabbedPane.addTab("Charts", Tools.getResIcon16("/icons/stateSim/aa.png"), createPlacesChartsPanel(), "Charts");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Place Table", Tools.getResIcon16("/icons/stateSim/transDyn.png"), createPlacesTablePanel(), "Place Table");
+		tabbedPane.addTab("Place Table", Tools.getResIcon16("/icons/stateSim/aa.png"), createPlacesTablePanel(), "Place Table");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-		tabbedPane.addTab("Transition Table", Tools.getResIcon16("/icons/stateSim/placesDyn.png"), createTransTablePanel(), "Transition Table");
+		tabbedPane.addTab("Transition Table", Tools.getResIcon16("/icons/stateSim/aa.png"), createTransTablePanel(), "Transition Table");
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+		tabbedPane.addTab("Places Compare Table", Tools.getResIcon16("/icons/stateSim/aa.png"), createPlacesCompAllTablePanel(), "Places Compare Table");
+		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+		tabbedPane.addTab("Transitions Compare Table", Tools.getResIcon16("/icons/stateSim/aa.png"), createTransCompAllTablePanel(), "Transitions Compare Table");
+		tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 		
 		mainTabbedPanel.add(tabbedPane);
 		
 		main.add(mainTabbedPanel, BorderLayout.CENTER);
 		
 		this.boss.setEnabled(false);
+		GUIManager.getDefaultGUIManager().getFrame().setEnabled(false);
 	}
 	
 	/**
@@ -203,12 +222,38 @@ public class AbyssStateSimKnockVis extends JFrame {
 		showChartKnockButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
 		showChartKnockButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				showCompareCharts();
-				createPlacesCompTable();
-				createTransCompTable();
+				int selRef = referencesCombo.getSelectedIndex();
+				int dataRef = dataCombo.getSelectedIndex();
+				if(selRef < 1 || dataRef < 1) {
+					JOptionPane.showMessageDialog(null,
+						"Please select reference and knockout set!", 
+						"Selection needed", JOptionPane.WARNING_MESSAGE);
+				} else {
+					showCompareCharts();
+					createPlacesCompTable();
+					createTransCompTable();
+				}
 			}
 		});
 		result.add(showChartKnockButton);
+		
+		String[] dataSeries = { " ----- " };
+		seriesCombo = new JComboBox<String>(dataSeries); //final, aby listener przycisku odczytał wartość
+		seriesCombo.setBounds(posXda+730, 20, 250, 20);
+		seriesCombo.setMaximumRowCount(12);
+		seriesCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate) 
+					return;
+
+				int selected = seriesCombo.getSelectedIndex() - 1;
+				if(selected > -1) {
+					createCompareAllTables(selected);
+				}
+			}
+			
+		});
+		result.add(seriesCombo);
 		
 		return result;
 	}
@@ -274,7 +319,6 @@ public class AbyssStateSimKnockVis extends JFrame {
 	 */
 	@SuppressWarnings("deprecation")
 	protected void showSingleKnockoutCharts(boolean showRef) {
-		singleMode = true;
 		NetSimulationData data = getCorrectSet(showRef);
 		if(data == null)
 			return;
@@ -372,7 +416,6 @@ public class AbyssStateSimKnockVis extends JFrame {
 			overlord.log("Error accessing dataset.", "error", true);
 			return;
 		}
-		singleMode = true;
 		
 		StatisticalCategoryDataset datasetPlaces = createPlacesDataset(refData, knockData);
 
@@ -573,7 +616,7 @@ public class AbyssStateSimKnockVis extends JFrame {
 		JPanel tablesSubPanel = new JPanel(new BorderLayout());
 		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
 		tablesSubPanel.setLocation(0, 0);
-		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Place single knockout data table:"));
 		model = new DefaultTableModel();
 		placesTable = new JTable(model);
 		
@@ -593,6 +636,35 @@ public class AbyssStateSimKnockVis extends JFrame {
 		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
 		return tablesSubPanel;
 	}
+	
+	/**
+     * Tworzy podstawową wersję tabeli miejsc (porównawcza).
+     * @return JPanel - panel
+     */
+	private JPanel createPlacesCompAllTablePanel() {
+		JPanel tablesSubPanel = new JPanel(new BorderLayout());
+		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
+		tablesSubPanel.setLocation(0, 0);
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Places comparison single knockout data table:"));
+		model = new DefaultTableModel();
+		placesCompAllTable = new JTable(model);
+		
+		placesCompAllTable.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+          	    if (e.getClickCount() == 1) {
+          	    	if(e.isControlDown() == false)
+          	    		cellClickAction(placesCompAllTable);
+          	    }
+          	 }
+      	});
+		
+		
+		tableRenderer = new SimKnockTableRenderer(placesCompAllTable);
+		placesCompAllTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		JScrollPane tableScrollPane = new JScrollPane(placesCompAllTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
+		return tablesSubPanel;
+	}
 
 	/**
      * Tworzy podstawową wersję tabeli tranzycji.
@@ -602,7 +674,7 @@ public class AbyssStateSimKnockVis extends JFrame {
 		JPanel tablesSubPanel = new JPanel(new BorderLayout());
 		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
 		tablesSubPanel.setLocation(0, 0);
-		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Transition single knockout data table:"));
 		model = new DefaultTableModel();
 		transTable = new JTable(model);
 		
@@ -618,6 +690,34 @@ public class AbyssStateSimKnockVis extends JFrame {
 		tableRenderer = new SimKnockTableRenderer(transTable);
 		transTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane tableScrollPane = new JScrollPane(transTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
+		return tablesSubPanel;
+	}
+    
+    /**
+     * Tworzy podstawową wersję tabeli tranzycji (porównawcza).
+     * @return JPanel - panel
+     */
+    private JPanel createTransCompAllTablePanel() {
+		JPanel tablesSubPanel = new JPanel(new BorderLayout());
+		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
+		tablesSubPanel.setLocation(0, 0);
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Transition comparison single knockout data table:"));
+		model = new DefaultTableModel();
+		transCompAllTable = new JTable(model);
+		
+		transCompAllTable.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+          	    if (e.getClickCount() == 1) {
+          	    	if(e.isControlDown() == false)
+          	    		cellClickAction(transCompAllTable);
+          	    }
+          	 }
+      	});
+		
+		tableRenderer = new SimKnockTableRenderer(transCompAllTable);
+		transCompAllTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		JScrollPane tableScrollPane = new JScrollPane(transCompAllTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
 		return tablesSubPanel;
 	}
@@ -691,7 +791,6 @@ public class AbyssStateSimKnockVis extends JFrame {
     	placesTable.setRowSorter(sorter);
         
     	placesTable.setName("PlacesTable");
-        //tableRenderer.setMode(0); //mode: places
     	placesTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
     	tableRenderer.setMode(0);
     	placesTable.setDefaultRenderer(Object.class, tableRenderer);
@@ -776,10 +875,8 @@ public class AbyssStateSimKnockVis extends JFrame {
     	placesTable.setRowSorter(sorter);
         
     	placesTable.setName("PlacesCompTable");
-        //tableRenderer.setMode(0); //mode: places
     	placesTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
     	tableRenderer.setMode(1);
-    	//placesTable.setDefaultRenderer(Object.class, tableRenderer);
     	placesTable.setDefaultRenderer(String.class, tableRenderer);
     	placesTable.setDefaultRenderer(Double.class, tableRenderer);
 
@@ -871,7 +968,6 @@ public class AbyssStateSimKnockVis extends JFrame {
     	transTable.setRowSorter(sorter);
         
     	transTable.setName("TransitionsTable");
-        //tableRenderer.setMode(0); //mode: places
     	transTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
     	tableRenderer.setMode(0);
     	transTable.setDefaultRenderer(Object.class, tableRenderer);
@@ -956,10 +1052,8 @@ public class AbyssStateSimKnockVis extends JFrame {
     	transTable.setRowSorter(sorter);
         
     	transTable.setName("TransitionsCompTable");
-        //tableRenderer.setMode(0); //mode: places
     	transTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
     	tableRenderer.setMode(1);
-    	//transTable.setDefaultRenderer(Object.class, tableRenderer);
     	transTable.setDefaultRenderer(String.class, tableRenderer);
     	transTable.setDefaultRenderer(Double.class, tableRenderer);
     	
@@ -983,6 +1077,283 @@ public class AbyssStateSimKnockVis extends JFrame {
         transTable.validate();
     }
     
+    private void createCompareAllTables(int selected) {
+    	long IDseries = pn.accessSimKnockoutData().accessSeries().get(selected);
+    	ArrayList<NetSimulationData> dataPackage = pn.accessSimKnockoutData().getSeriesDatasets(IDseries);
+    	int selRef = referencesCombo.getSelectedIndex() - 1;
+    	if(selRef == -1) {
+    		JOptionPane.showMessageDialog(null,
+					"Please select reference set!", 
+					"Reference selection", JOptionPane.WARNING_MESSAGE);
+    		seriesCombo.setSelectedIndex(0);
+    		return;
+    	}
+    	NetSimulationData refSet = pn.accessSimKnockoutData().getReferenceSet(selRef);
+    	if(dataPackage == null) {
+    		return;
+    	}
+    	
+    	int transNumber = dataPackage.get(0).transNumber;
+    	modelTransCompAll = new SimKnockTransCompAllTableModel(transNumber);
+    	transCompAllTable.setModel(modelTransCompAll);
+    	transCompAllTable.getColumnModel().getColumn(0).setHeaderValue("ID");
+    	transCompAllTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+    	transCompAllTable.getColumnModel().getColumn(0).setMinWidth(40);
+    	transCompAllTable.getColumnModel().getColumn(0).setMaxWidth(40);
+    	transCompAllTable.getColumnModel().getColumn(1).setHeaderValue("Transition name");
+    	transCompAllTable.getColumnModel().getColumn(1).setPreferredWidth(300);
+    	transCompAllTable.getColumnModel().getColumn(1).setMinWidth(100);
+    	transCompAllTable.getColumnModel().getColumn(2).setHeaderValue("Knocked");
+    	transCompAllTable.getColumnModel().getColumn(2).setPreferredWidth(50);
+    	transCompAllTable.getColumnModel().getColumn(2).setMinWidth(50);
+    	transCompAllTable.getColumnModel().getColumn(2).setMaxWidth(50);
+    	for(int i=0; i<transNumber; i++) {
+    		transCompAllTable.getColumnModel().getColumn(i+3).setHeaderValue("t"+i);
+        }
+    	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(transCompAllTable.getModel());
+    	transCompAllTable.setRowSorter(sorter);
+        
+    	transCompAllTable.setName("TransitionsCompAllTable");
+    	transCompAllTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+    	SimKnockTableRenderer tableRendererTransitions = new SimKnockTableRenderer(transCompAllTable);
+    	tableRendererTransitions.setMode(2);
+    	transCompAllTable.setDefaultRenderer(String.class, tableRendererTransitions);
+    	transCompAllTable.setDefaultRenderer(Double.class, tableRendererTransitions);
+    	transCompAllTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    	transCompAllTable.validate();
+    	resizeColumnWidth(transCompAllTable);
+
+    	
+    	int placesNumber = dataPackage.get(0).placesNumber;
+    	modelPlacesCompAll = new SimKnockPlacesCompAllTableModel(placesNumber);
+    	placesCompAllTable.setModel(modelPlacesCompAll);
+    	
+    	placesCompAllTable.getColumnModel().getColumn(0).setHeaderValue("ID");
+    	placesCompAllTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+    	placesCompAllTable.getColumnModel().getColumn(0).setMinWidth(40);
+    	placesCompAllTable.getColumnModel().getColumn(0).setMaxWidth(40);
+    	placesCompAllTable.getColumnModel().getColumn(1).setHeaderValue("Transition name");
+    	placesCompAllTable.getColumnModel().getColumn(1).setPreferredWidth(300);
+    	placesCompAllTable.getColumnModel().getColumn(1).setMinWidth(100);
+    	placesCompAllTable.getColumnModel().getColumn(2).setHeaderValue("Disabled");
+    	placesCompAllTable.getColumnModel().getColumn(2).setPreferredWidth(50);
+    	placesCompAllTable.getColumnModel().getColumn(2).setMinWidth(50);
+    	placesCompAllTable.getColumnModel().getColumn(2).setMaxWidth(50);
+    	for(int i=0; i<placesNumber; i++) {
+    		placesCompAllTable.getColumnModel().getColumn(i+3).setHeaderValue("p"+i);
+        }
+    	TableRowSorter<TableModel> sorterPlaces  = new TableRowSorter<TableModel>(placesCompAllTable.getModel());
+    	placesCompAllTable.setRowSorter(sorterPlaces);
+        
+    	placesCompAllTable.setName("PlacesCompAllTable");
+    	placesCompAllTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+    	SimKnockTableRenderer tableRendererPlaces = new SimKnockTableRenderer(placesCompAllTable);
+    	tableRendererPlaces.setMode(2);
+    	placesCompAllTable.setDefaultRenderer(String.class, tableRendererPlaces);
+    	placesCompAllTable.setDefaultRenderer(Double.class, tableRendererPlaces);
+    	placesCompAllTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    	placesCompAllTable.validate();
+    	resizeColumnWidth(placesCompAllTable);
+    	
+    	
+    	//TODO:
+    	modelTransCompAll.tTableData = new ArrayList<>();
+    	modelPlacesCompAll.pTableData = new ArrayList<>();
+    	for(int t=0; t<transNumber; t++) {
+    		ArrayList<String> pVector = new ArrayList<>();
+    		ArrayList<String> tVector = new ArrayList<>();
+    		ArrayList<DetailsPlace> pTableVector = new ArrayList<DetailsPlace>();
+    		ArrayList<DetailsTrans> tTableVector = new ArrayList<DetailsTrans>();
+    		NetSimulationData dataSet = dataPackage.get(t);
+    		
+    		//ID:
+    		pVector.add(""+t);
+    		tVector.add(""+t);
+    		pTableVector.add(null);
+    		tTableVector.add(null);
+    		
+    		//NAZWY:
+    		String name = "";
+    		if(transitions.size() == 0) {
+    			name = "t"+t;
+    		} else {
+    			name = "t"+transitions.get(t).getName();
+    		}
+    		pVector.add(name);
+			tVector.add(name);
+    		pTableVector.add(null);
+    		tTableVector.add(null);
+    		
+    		//KNOCKED: (liczone później)
+    		pVector.add("0");
+    		tVector.add("0");
+    		pTableVector.add(null);
+    		tTableVector.add(null);
+    		
+    		//DANE:
+    		for(int t1=0; t1<transNumber; t1++) {
+    			DetailsTrans details = modelTransCompAll.newDetailsInstance();
+    			details.knockAvgFiring = dataSet.transFiringsAvg.get(t1);
+    			details.refAvgFiring = refSet.transFiringsAvg.get(t1);
+    			details.knockDisabled = dataSet.transZeroFiring.get(t1);
+    			details.significance1 = getTransSign1(refSet, dataSet, t1);
+    			details.significance2 = getTransSign2(refSet, dataSet, t1);
+    			details.diff = 0;
+    			
+    			if(refSet.transFiringsAvg.get(t1) == 0 && dataSet.transFiringsAvg.get(t1) == 0) {
+    				tVector.add("999990.0");
+    				tTableVector.add(details);
+    				continue;
+    			}
+    			if(refSet.transFiringsAvg.get(t1) == 0 && dataSet.transFiringsAvg.get(t1) > 0) {
+    				tVector.add("+999999.0");
+    				tTableVector.add(details);
+    				continue;
+    			}
+    			if(refSet.transFiringsAvg.get(t1) > 0 && dataSet.transFiringsAvg.get(t1) == 0) {
+    				tVector.add("-999999.0");
+    				tTableVector.add(details);
+    				continue;
+    			}
+    			
+    			double diff = details.refAvgFiring - details.knockAvgFiring;
+    			diff = (diff / details.refAvgFiring)*100;
+    			if(diff < 0) { //wzrosło w stos. do ref
+    				diff *= -1;
+    				details.diff = diff;
+    				tVector.add(formatter2.format(diff));
+    				tTableVector.add(details);
+    			} else {
+    				diff *= -1;
+    				details.diff = diff;
+    				tVector.add(formatter2.format(diff));
+    				tTableVector.add(details);
+    			}
+    		}
+    		
+    		for(int p=0; p<placesNumber; p++) {
+    			DetailsPlace details = modelPlacesCompAll.newDetailsInstance();
+    			details.knockAvgTokens = dataSet.placeTokensAvg.get(p);
+    			details.refAvgTokens = refSet.placeTokensAvg.get(p);
+    			details.knockDisabled = dataSet.transZeroFiring.get(p);
+    			details.significance1 = getPlaceSign1(refSet, dataSet, p);
+    			details.significance2 = getPlaceSign2(refSet, dataSet, p);
+    			
+    			if(refSet.transFiringsAvg.get(p) == 0 && dataSet.transFiringsAvg.get(p) == 0) {
+    				pVector.add("999990.0");
+    				pTableVector.add(details);
+    				continue;
+    			}
+    			if(refSet.transFiringsAvg.get(p) == 0 && dataSet.transFiringsAvg.get(p) > 0) {
+    				pVector.add("999999.0");
+    				pTableVector.add(details);
+    				continue;
+    			}
+    			if(refSet.transFiringsAvg.get(p) > 0 && dataSet.transFiringsAvg.get(p) == 0) {
+    				pVector.add("-999999.0");
+    				pTableVector.add(details);
+    				continue;
+    			}
+    			
+    			double diff = details.refAvgTokens - details.knockAvgTokens;
+    			diff = (diff / details.refAvgTokens)*100;
+    			if(diff < 0) { //wzrosło w stos. do ref
+    				diff *= -1;
+    				details.diff = diff;
+    				pVector.add(formatter2.format(diff));
+    				pTableVector.add(details);
+    			} else {
+    				diff *= -1;
+    				details.diff = diff;
+    				pVector.add(formatter2.format(diff));
+    				pTableVector.add(details);
+    			}
+    		}
+    		if(tVector.size() != tTableVector.size() || pVector.size() != pTableVector.size()) {
+    			@SuppressWarnings("unused")
+				int x=1;
+    		}
+    		
+    		modelTransCompAll.addNew(tVector);
+    		modelTransCompAll.tTableData.add(tTableVector);
+    		modelPlacesCompAll.addNew(pVector);
+    		modelPlacesCompAll.pTableData.add(pTableVector);
+    	}
+    }
+    
+    private boolean getTransSign1(NetSimulationData refSet, NetSimulationData dataSet, int index) {
+    	if(refSet.transFiringsAvg.get(index) > dataSet.transFiringsAvg.get(index)) {
+    		if(refSet.transFiringsMin.get(index) > dataSet.transFiringsMax.get(index)) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	} else {
+    		if(refSet.transFiringsMax.get(index) < dataSet.transFiringsMin.get(index)) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	}
+    }
+    
+    private boolean getTransSign2(NetSimulationData refSet, NetSimulationData dataSet, int index) {
+    	if(refSet.transFiringsAvg.get(index) > dataSet.transFiringsAvg.get(index)) {
+    		if(refSet.transFiringsAvg.get(index) - refSet.transStdDev.get(index) > dataSet.transFiringsAvg.get(index) + dataSet.transStdDev.get(index)) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	} else { //ref mniejsze niż knock
+    		if(refSet.transFiringsAvg.get(index) + refSet.transStdDev.get(index) < dataSet.transFiringsAvg.get(index) - dataSet.transStdDev.get(index)) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	}
+    }
+    
+    private boolean getPlaceSign1(NetSimulationData refSet, NetSimulationData dataSet, int index) {
+    	if(refSet.placeTokensAvg.get(index) > dataSet.placeTokensAvg.get(index)) {
+    		if(refSet.placeTokensMin.get(index) > dataSet.placeTokensMax.get(index)) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	} else {
+    		if(refSet.placeTokensMax.get(index) < dataSet.placeTokensMin.get(index)) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	}
+    }
+    
+    private boolean getPlaceSign2(NetSimulationData refSet, NetSimulationData dataSet, int index) {
+    	if(refSet.placeTokensAvg.get(index) > dataSet.placeTokensAvg.get(index)) {
+    		if(refSet.placeTokensAvg.get(index) - refSet.placeStdDev.get(index) > dataSet.placeTokensAvg.get(index) + dataSet.placeStdDev.get(index)) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	} else {
+    		if(refSet.placeTokensAvg.get(index) + refSet.placeStdDev.get(index) < dataSet.placeTokensAvg.get(index) - dataSet.placeStdDev.get(index)) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	}
+    }
+    
+    public void resizeColumnWidth(JTable table) {
+	    TableColumnModel columnModel = table.getColumnModel();
+	    for (int column = 3; column < table.getColumnCount(); column++) {
+	        columnModel.getColumn(column).setPreferredWidth(65);
+	        columnModel.getColumn(column).setMinWidth(65);
+	        columnModel.getColumn(column).setMaxWidth(65);
+	    }
+	}
+    
   //******************************************************************************************************
   //******************************************************************************************************
   //******************************************************************************************************
@@ -999,7 +1370,8 @@ public class AbyssStateSimKnockVis extends JFrame {
     	
     	addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		    	boss.setEnabled(true);	
+		    	boss.setEnabled(true);
+		    	GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
 		    }
 		});
     }
@@ -1077,6 +1449,28 @@ public class AbyssStateSimKnockVis extends JFrame {
 				dataCombo.setSelectedIndex(0);
 		}
 		
+		
+		//Seires daya
+		ArrayList<Long> series = pn.accessSimKnockoutData().accessSeries();
+		int seriesSize = series.size();
+		int oldSeriesSelected = 0;
+		oldSeriesSelected = seriesCombo.getSelectedIndex();
+		seriesCombo.removeAllItems();
+		seriesCombo.addItem(" ----- ");
+		if(seriesSize > 0) {
+			for(int s=0; s<seriesSize; s++) {
+				long IDseries = series.get(s);
+				NetSimulationData representant = pn.accessSimKnockoutData().returnSeriesFirst(IDseries);	
+				String disTxt = "Package: "+s+" Steps: "+representant.steps+" Reps: "+representant.reps;
+				seriesCombo.addItem(disTxt);
+			}
+	
+			if(oldSeriesSelected < seriesCombo.getItemCount())
+				seriesCombo.setSelectedIndex(oldSeriesSelected);
+			else
+				seriesCombo.setSelectedIndex(0);
+		}
+		
 		doNotUpdate = false;
 	}
 
@@ -1091,6 +1485,7 @@ public class AbyssStateSimKnockVis extends JFrame {
 		try {
 			String name = table.getName();
 			if(name.contains("Places")) {
+				
 	  	    	int row = table.getSelectedRow();
 	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 	  	    	
@@ -1109,7 +1504,6 @@ public class AbyssStateSimKnockVis extends JFrame {
 			
 		}
 	}
-	
 	
 	/**
 	 * Klasa odpowiedzialna za informacje o wskazanym pasku wykresu

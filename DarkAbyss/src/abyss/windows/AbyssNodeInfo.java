@@ -55,11 +55,9 @@ import abyss.utilities.Tools;
  *
  */
 public class AbyssNodeInfo extends JFrame {
-	//BACKUP: serialVersionUID = 1476738825515760744L; nie ruszać poniższej zmiennej
 	private static final long serialVersionUID = 1476738825515760744L;
 	private Place place;
 	private Transition transition;
-	//private MetaNode metanode;
 	private JPanel mainPanel;
 	private JFrame parentFrame;
 	private AbyssNodeInfoActions action = new AbyssNodeInfoActions(this);

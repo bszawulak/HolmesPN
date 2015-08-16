@@ -65,7 +65,6 @@ public class StateSimulator implements Runnable {
 	 */
 	public void setThreadDetails(int simulationType, Object... blackBox) {
 		this.simulationType = simulationType;
-		
 		if(simulationType == 1) { //standardowy tryb symulacji
 			this.boss = (AbyssStateSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
@@ -95,6 +94,7 @@ public class StateSimulator implements Runnable {
 	 * Uruchamiania zdalnie, zakłada, że wszystko co potrzebne zostało już ustawione za pomocą setThreadDetails(...)
 	 */
 	public void run() {
+		this.terminate = false;
 		if(simulationType == 1) {
 			simulateNetAll();
 			boss.completeSimulationProcedures();
@@ -106,8 +106,9 @@ public class StateSimulator implements Runnable {
 			boss.accessKnockoutTab().action.completeKnockoutSimulationResults(data, transitions, places);
 		} else if(simulationType == 4) {
 			NetSimulationData data = simulateNetReferenceAndKnockout();
-			boss.accessKnockoutTab().action.pingPongSimulation(data, transitions, places);
+			boss.accessKnockoutTab().action.pingPongSimulation(data, transitions, places, terminate);
 		}
+		this.terminate = false;
 	}
 	
 	/**
@@ -315,7 +316,6 @@ public class StateSimulator implements Runnable {
 		progressBar.setMaximum(repetitions*stepsLimit);
 		progressBar.setMinimum(0);
 		progressBar.setValue(0);
-		
 		
 		for(int turn=0; turn<repetitions; turn++) {
 			int realStepCounter = 0;
@@ -681,7 +681,7 @@ public class StateSimulator implements Runnable {
 	 */
 	public void setCancelStatus(boolean val) {
 		this.terminate = val;
-		if(val)
+		if(val == true)
 			readyToSimulate = false;
 	}
 	

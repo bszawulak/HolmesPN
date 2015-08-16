@@ -42,6 +42,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.Action;
 import javax.swing.JFrame;
@@ -83,7 +84,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private static final long serialVersionUID = -817072868916096442L;
 	// Static fields.
 	private static GUIManager guiManager;
-	//private Random generator = new Random(System.currentTimeMillis());
+	public Random randGen = new Random(System.currentTimeMillis());
 	public GUIOperations io;
 	public TexExporter tex;
 	public GUIReset reset;

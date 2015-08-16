@@ -24,6 +24,7 @@ public class NetSimulationDataCore implements Serializable {
 	private static final long serialVersionUID = -2180386709205258057L;
 	private ArrayList<NetSimulationData> referenceSets = new ArrayList<NetSimulationData>();
 	private ArrayList<NetSimulationData> knockoutSets = new ArrayList<NetSimulationData>();
+	private ArrayList<Long> seriesData = new ArrayList<Long>();
 	
 	public boolean saved = false;
 	
@@ -94,6 +95,78 @@ public class NetSimulationDataCore implements Serializable {
 	}
 	
 	/**
+	 * Dodawanie nowego ID serii danych.
+	 * @param value long - ID serii
+	 */
+	public void addNewSeries(long value) {
+		if(!seriesData.contains(value))
+			seriesData.add(value);
+	}
+	
+	/**
+	 * Dostęp do wektora obliczonych serii danych.
+	 */
+	public ArrayList<Long> accessSeries() {
+		return this.seriesData;
+	}
+	
+	/**
+	 * Usuwanie całej serii danych knockout.
+	 * @param IDseries long - ID serii
+	 */
+	public void removeSeries(long IDseries) {
+		int knockSize = knockoutSets.size();
+		for(int s=0; s<knockSize; s++) {
+			if(knockoutSets.get(s).getIDseries() == IDseries) {
+				knockoutSets.remove(s);
+				s--;
+				knockSize--;
+			}
+		}
+		seriesData.remove((Long)IDseries);
+	}
+	
+	/**
+	 * Zwraca pierwszy obiekt danych z danej serii.
+	 * @param IDseries long - ID serii
+	 * @return NetSimulationData - pakiet danych z serii
+	 */
+	public NetSimulationData returnSeriesFirst(long IDseries) {
+		for(NetSimulationData nsd : knockoutSets) {
+			if(nsd.getIDseries() == IDseries)
+				return nsd;
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Zwraca wszystkie pakiety danych serii.
+	 * @param IDseries long - ID serii
+	 * @return ArrayList[NetSimulationData] - pakiet serii
+	 */
+	public ArrayList<NetSimulationData> getSeriesDatasets(long IDseries) {
+		ArrayList<NetSimulationData> result = new ArrayList<NetSimulationData>();
+		int transSize = 0;
+		NetSimulationData tmp = returnSeriesFirst(IDseries);
+		transSize = tmp.transNumber;
+		for(NetSimulationData data : knockoutSets) {
+			if(data.getIDseries() == IDseries) {
+				result.add(data);
+			}
+		}
+		if(result.size() != transSize) {
+			GUIManager.getDefaultGUIManager().log("Error: data package incomplete!", "error", true);
+			return null;
+		}
+		return result;
+	}
+	
+	//*************************************************************************************************************
+	//*************************************************************************************************************
+	//*************************************************************************************************************
+	
+	/**
 	 * Odczyt danych symulacji knockout z pliku.
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
@@ -159,4 +232,6 @@ public class NetSimulationDataCore implements Serializable {
 			return false;
 		}
 	}
+
+
 }

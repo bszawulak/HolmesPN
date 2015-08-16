@@ -1,6 +1,5 @@
 package abyss.tables;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
@@ -16,7 +15,6 @@ import abyss.petrinet.elements.Place;
  */
 public class SimKnockPlacesCompTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 5141687750658780227L;
-	private static final DecimalFormat formatter = new DecimalFormat( "#.#" );
 	
 	public class PlaceCompContainer {
     	public int ID;

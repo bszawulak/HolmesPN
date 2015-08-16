@@ -41,6 +41,8 @@ public class NetSimulationData implements Serializable {
 	public ArrayList<Double> transStdDev;
 	public ArrayList<ArrayList<Integer>> transWithinStdDev;
 	
+	private long idSeries = -1;
+	
 	public NetSimulationData() {
 		placeTokensAvg = new ArrayList<Double>();
 		placeTokensMin = new ArrayList<Double>();
@@ -60,5 +62,13 @@ public class NetSimulationData implements Serializable {
 		disabledMCTids = new ArrayList<Integer>();
 		disabledTotals = new ArrayList<Integer>();
 		startingState = new ArrayList<Integer>();
+	}
+	
+	public void setIDseries(long value) {
+		this.idSeries = value;
+	}
+	
+	public long getIDseries() {
+		return this.idSeries;
 	}
 }

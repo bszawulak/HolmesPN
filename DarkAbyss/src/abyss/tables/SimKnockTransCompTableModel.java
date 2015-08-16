@@ -1,6 +1,5 @@
 package abyss.tables;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
@@ -16,7 +15,6 @@ import abyss.petrinet.elements.Transition;
  */
 public class SimKnockTransCompTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -2454782753413053173L;
-	private static final DecimalFormat formatter = new DecimalFormat( "#.#" );
 	
 	public class TransCompContainer {
     	public int ID;

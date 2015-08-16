@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
@@ -20,7 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
@@ -55,6 +53,7 @@ public class AbyssStateSimKnock extends JPanel {
 	public boolean refMaximumMode = false;
 	public boolean refSingleMode = false;
 	public JProgressBar refProgressBarKnockout;
+	public boolean refShowNotepad = false;
 	
 	//reference details panel:
 	private JComboBox<String> referencesCombo = null;
@@ -85,6 +84,7 @@ public class AbyssStateSimKnock extends JPanel {
 	public JTextArea dataSelectedTransTextArea;
 	public boolean dataSimUseEditorOffline = false;
 	public boolean dataSimComputeAll = false;
+	public boolean dataShowNotepad = false;
 	
 	//blokowane elementy:
 	private JButton acqRefDataButton;
@@ -100,6 +100,9 @@ public class AbyssStateSimKnock extends JPanel {
 	private JSpinner dataSimRepsSpinner;
 	private JCheckBox dataSimUseEditorOfflineCheckBox;
 	private JCheckBox dataSimComputeForAllTransitions;
+	
+	public boolean refSimInProgress = false;
+	public boolean dataSimInProgress = false;
 	
 	/**
 	 * Konstruktor obiektu klasy AbyssStateSimulatorKnockout.
@@ -159,13 +162,15 @@ public class AbyssStateSimKnock extends JPanel {
 		});
 		result.add(acqRefDataButton);
 		
+		//TODO:
 		JButton cancelButton = new JButton();
 		cancelButton.setText("STOP");
 		cancelButton.setBounds(posXda, posYda+55, 110, 25);
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				ssimKnock.setCancelStatus(true);
+				if(refSimInProgress)
+					ssimKnock.setCancelStatus(true);
 			}
 		});
 		cancelButton.setFocusPainted(false);
@@ -277,7 +282,7 @@ public class AbyssStateSimKnock extends JPanel {
 		result.add(refSimRepsSpinner);
 		
 		refProgressBarKnockout = new JProgressBar();
-		refProgressBarKnockout.setBounds(posXda+340, posYda+3, 550, 40);
+		refProgressBarKnockout.setBounds(posXda+340, posYda+3, 620, 40);
 		refProgressBarKnockout.setMaximum(100);
 		refProgressBarKnockout.setMinimum(0);
 	    refProgressBarKnockout.setValue(0);
@@ -285,6 +290,20 @@ public class AbyssStateSimKnock extends JPanel {
 	    Border border = BorderFactory.createTitledBorder("Progress");
 	    refProgressBarKnockout.setBorder(border);
 	    result.add(refProgressBarKnockout);
+	    
+	    JCheckBox showdataCheckBox = new JCheckBox("Show results in notepad");
+	    showdataCheckBox.setBounds(posXda+340, posYda+50, 170, 20);
+	    showdataCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					refShowNotepad = true;
+				} else {
+					refShowNotepad = false;
+				}
+			}
+		});
+		result.add(showdataCheckBox);
 		
 		posYda += 40;
 		return result;
@@ -327,6 +346,22 @@ public class AbyssStateSimKnock extends JPanel {
 			
 		});
 		result.add(referencesCombo);
+		
+		JButton removeRefButton = new JButton("Del");
+		removeRefButton.setBounds(posXda+500, posYda, 70, 20);
+		removeRefButton.setMargin(new Insets(0, 0, 0, 0));
+		removeRefButton.setIcon(Tools.getResIcon16("/icons/stateSim/ss.png"));
+		removeRefButton.setToolTipText("Remove selected reference data set.");
+		removeRefButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = referencesCombo.getSelectedIndex();
+				if(selected > 0) {
+					if(action.removeRedDataSet(selected-1))
+						updateFreshKnockoutTab();
+				}
+			}
+		});
+		result.add(removeRefButton);
 
 		JLabel dateTxtLabel = new JLabel("Date:");
 		dateTxtLabel.setBounds(posXda, posYda+20, 70, 20);
@@ -376,8 +411,8 @@ public class AbyssStateSimKnock extends JPanel {
 		result.setBorder(BorderFactory.createTitledBorder("Dataset options"));
 		result.setPreferredSize(new Dimension(300, 150));
 		doNotUpdate = true;
-		int posXda = 10;
-		int posYda = 15;
+		//int posXda = 10;
+		//int posYda = 15;
 		
 		
 		
@@ -532,10 +567,18 @@ public class AbyssStateSimKnock extends JPanel {
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				ssimKnock.setCancelStatus(true);
-				if(dataSimComputeAll) {
-					JOptionPane.showMessageDialog(null,"Simulation terminated. Currently processed transition data rejected.", 
-							"Forced stop",JOptionPane.WARNING_MESSAGE);
+				if(dataSimComputeAll && dataSimInProgress) {
+					Object[] options = {"Stop and remove", "Proceed with simulation",};
+					int n = JOptionPane.showOptionDialog(null,
+							"WARNING. This will cancel the whole-net knockout simulation and DELETE\n"
+							+ "all previously computed datased in this simulation session. Proceed?",
+							"Please confirm", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+					if (n == 0) {
+						ssimKnock.setCancelStatus(true);
+						JOptionPane.showMessageDialog(null,"Simulation terminated. Currently processed transitions data rejected.", 
+								"Forced stop",JOptionPane.WARNING_MESSAGE);
+					}
 				}
 			}
 		});
@@ -681,6 +724,20 @@ public class AbyssStateSimKnock extends JPanel {
 		});
 		special.add(dataSimComputeForAllTransitions);
 		
+		JCheckBox showdataCheckBox = new JCheckBox("Show results in notepad");
+	    showdataCheckBox.setBounds(posXda+360, 15, 170, 20);
+	    showdataCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					dataShowNotepad = true;
+				} else {
+					dataShowNotepad = false;
+				}
+			}
+		});
+	    special.add(showdataCheckBox);
+		
 		dataProgressBarKnockout = new JProgressBar();
 		dataProgressBarKnockout.setBounds(posXda+340, posYda+45, 550, 40);
 		dataProgressBarKnockout.setMaximum(100);
@@ -735,6 +792,22 @@ public class AbyssStateSimKnock extends JPanel {
 			
 		});
 		result.add(dataCombo);
+		
+		JButton removeDataButton = new JButton("Del");
+		removeDataButton.setBounds(posXda+700, posYda, 70, 20);
+		removeDataButton.setMargin(new Insets(0, 0, 0, 0));
+		removeDataButton.setIcon(Tools.getResIcon16("/icons/stateSim/ss.png"));
+		removeDataButton.setToolTipText("Remove selected knockout simulation dataset.");
+		removeDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = dataCombo.getSelectedIndex();
+				if(selected > 0) {
+					if(action.removeKnockDataSet(selected-1))
+						updateFreshKnockoutTab();
+				}
+			}
+		});
+		result.add(removeDataButton);
 
 		JLabel dateTxtLabel = new JLabel("Date:");
 		dateTxtLabel.setBounds(posXda, posYda+20, 70, 20);

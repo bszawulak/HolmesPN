@@ -10,6 +10,9 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
+import abyss.tables.SimKnockPlacesCompAllTableModel.DetailsPlace;
+import abyss.tables.SimKnockTransCompAllTableModel.DetailsTrans;
+
 public class SimKnockTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
 	private JTable table;
@@ -18,6 +21,9 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 	private static final DecimalFormat formatter1 = new DecimalFormat( "#.#" );
 	private static final Font fontNormal =  new Font("Verdana", Font.PLAIN, 12);
 	private static final Font fontBold =  new Font("Verdana", Font.BOLD, 12);
+	
+	private static final Font fontNormal2 =  new Font("Verdana", Font.PLAIN, 10);
+	private static final Font fontBold2 =  new Font("Verdana", Font.BOLD, 10);
 	private int mode = 0;
 	
 	/**
@@ -44,14 +50,26 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 	 * @param hasFocus boolean - czy aktywna komórka
 	 * @param row int - numer wiersza
 	 * @param columnt int - numer kolumny
+	 * @return Component - zależy od kolumny
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     	if(mode == 1)
     		return paintCellsComp(value, isSelected, hasFocus, row, column);
+    	else if(mode == 2)
+    		return paintCellsCompAll(value, isSelected, hasFocus, row, column);
     	else
     		return paintCellsDefault(value, isSelected, hasFocus, row, column);
     }
     
+    /**
+     * Metoda trybu rysowania dla komórek tabeli porównawczej dwóch zbiorów knockout.
+     * @param value Object - wartość do wpisania
+     * @param isSelected boolean - czy komórka jest wybrana
+     * @param hasFocus boolean - czy jest aktywna
+     * @param row int - nr wiersza
+     * @param column int - nr kolumny
+     * @return Component - zależy od kolumny
+     */
     private Component paintCellsComp(Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     	
     	if(column == 1) {
@@ -159,13 +177,13 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 	}
     
     /**
-     * Metoda trybu rysowania dla komórek tabeli inwariantów.
+     * Metoda trybu rysowania dla komórek tabeli jednego zbioru knockout.
      * @param value Object - wartość do wpisania
      * @param isSelected boolean - czy komórka jest wybrana
      * @param hasFocus boolean - czy jest aktywna
      * @param row int - nr wiersza
      * @param column int - nr kolumny
-     * @return Component - konkretnie: JTextField jako komórka tabeli
+     * @return Component - zależy od kolumny
      */
 	private Component paintCellsDefault(Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		if(column == 1) {
@@ -201,6 +219,129 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 		renderer.setForeground(Color.black);
 		renderer.setBackground(Color.white);
 		renderer.setFont(fontNormal);
+	    return renderer;
+	}
+	
+	 /**
+     * Metoda trybu rysowania dla komórek tabeli porównawczej (wszystkie).
+     * @param value Object - wartość do wpisania
+     * @param isSelected boolean - czy komórka jest wybrana
+     * @param hasFocus boolean - czy jest aktywna
+     * @param row int - nr wiersza
+     * @param column int - nr kolumny
+     * @return Component - zależy od kolumny
+     */
+	private Component paintCellsCompAll(Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		if(column > 2) {
+			String name = value.toString();
+    		if(name.contains("-999999.0")) {
+    			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    			oLabel.setForeground(Color.black);
+    			oLabel.setBackground(Color.green);
+    			oLabel.setFont(fontNormal2);
+    			oLabel.setText("-inf");
+    			return oLabel;
+    		} else if(name.contains("999999.0")) {
+    			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    			oLabel.setForeground(Color.black);
+    			oLabel.setBackground(Color.green);
+    			oLabel.setFont(fontNormal2);
+    			oLabel.setText("+inf");
+    			return oLabel;
+    		} else if(name.contains("999990.0")) {
+    			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    			oLabel.setForeground(Color.black);
+    			oLabel.setBackground(Color.lightGray);
+    			oLabel.setFont(fontNormal2);
+    			oLabel.setText("0 / 0");
+    			return oLabel;
+    		}  else {
+    			String tName = table.getName();
+    			
+    			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    			oLabel.setForeground(Color.black);
+    			oLabel.setBackground(Color.white);
+    			oLabel.setFont(fontNormal2);
+    			
+    			
+    			if(tName.contains("Places")) {
+    				SimKnockPlacesCompAllTableModel model = (SimKnockPlacesCompAllTableModel) table.getModel();
+    				
+    				Object firstCell = table.getValueAt(row, 0);
+    				int realRow = Integer.parseInt(firstCell.toString());
+    				
+    				DetailsPlace det = model.pTableData.get(realRow).get(column);
+    				double difference = det.diff;
+    				if(difference >= 100 || difference <= -100) {
+    					oLabel.setForeground(Color.black);
+    	    			oLabel.setBackground(Color.red);
+    	    			oLabel.setFont(fontBold2);
+    	    			
+    	    			if(det.diff >= 1000) {
+    	    				oLabel.setText(">+1000%");
+    	    				return oLabel;
+    	    			} else if(det.diff <= -1000) {
+    	    				oLabel.setText("<-1000%");
+    	    				return oLabel;
+    	    			}
+    				} else if(difference > 75 || difference < -75) {
+    					oLabel.setForeground(Color.black);
+    	    			oLabel.setBackground(Color.orange);
+    	    			oLabel.setFont(fontBold2);
+    				} else if(difference > 45 || difference < -45) {
+    					oLabel.setForeground(Color.black);
+    	    			oLabel.setBackground(Color.yellow);
+    	    			oLabel.setFont(fontBold2);
+    				}
+    				
+    				if(difference < 0)
+    					name = name+"%";
+    				else
+    					name = "+"+name+"%";
+    			} else {
+    				SimKnockTransCompAllTableModel model = (SimKnockTransCompAllTableModel) table.getModel();
+
+    				Object firstCell = table.getValueAt(row, 0);
+    				int realRow = Integer.parseInt(firstCell.toString());
+    				
+    				DetailsTrans det = model.tTableData.get(realRow).get(column);
+    				double difference = det.diff;
+    				if(difference >= 100 || difference <= -100) {
+    					oLabel.setForeground(Color.black);
+    	    			oLabel.setBackground(Color.red);
+    	    			oLabel.setFont(fontBold2);
+    	    			if(det.diff >= 1000) {
+    	    				oLabel.setText(">+1000%");
+    	    				return oLabel;
+    	    			} else if(det.diff <= -1000) {
+    	    				oLabel.setText("<-1000%");
+    	    				return oLabel;
+    	    			}
+    				} else if(difference > 75 || difference < -75) {
+    					oLabel.setForeground(Color.black);
+    	    			oLabel.setBackground(Color.orange);
+    	    			oLabel.setFont(fontBold2);
+    				} else if(difference > 45 || difference < -45) {
+    					oLabel.setForeground(Color.black);
+    	    			oLabel.setBackground(Color.yellow);
+    	    			oLabel.setFont(fontBold2);
+    				}
+    				if(difference < 0)
+    					name = name+"%";
+    				else
+    					name = "+"+name+"%";
+    			}
+    			
+    			oLabel.setText(name);
+    			return oLabel;
+    		}
+		}
+		
+		
+		Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		renderer.setForeground(Color.black);
+		renderer.setBackground(Color.white);
+		renderer.setFont(fontNormal2);
 	    return renderer;
 	}
 }
