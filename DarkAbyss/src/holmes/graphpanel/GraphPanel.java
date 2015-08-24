@@ -487,6 +487,7 @@ public class GraphPanel extends JComponent {
 			Place n = new Place(IdGenerator.getNextId(), this.sheetId, p);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().addPlace();
 		}
 	}
 

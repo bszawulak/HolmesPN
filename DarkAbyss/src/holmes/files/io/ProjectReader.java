@@ -12,6 +12,8 @@ import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.data.PlacesStateVector;
+import holmes.petrinet.data.StatesManager;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -56,6 +58,7 @@ public class ProjectReader {
 	
 	//które bloki w ogóle próbowac czytać (zależne od tagów w sekcji [Project blocks]
 	private boolean subnets = false; //bloki coarse
+	private boolean states = false;
 	//private boolean invariants = true;
 	//private boolean mct = true;
 	
@@ -122,6 +125,15 @@ public class ProjectReader {
 				GUIManager.getDefaultGUIManager().getMctBox().showMCT(projectCore.getMCTMatrix());
 			}
 			
+			if(states) {
+				status = readStates(buffer);
+				if(!status) {
+					projectCore.accessStatesManager().createCleanState();
+					//projectCore.setMCTMatrix(null, false);
+				}
+			} else {
+				projectCore.accessStatesManager().createCleanState();
+			}
 			GUIManager.getDefaultGUIManager().subnetsGraphics.addRequiredSheets();
 			GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
 			buffer.close();
@@ -181,6 +193,12 @@ public class ProjectReader {
 			query = "subnets";
 			if(line.toLowerCase().contains(query)) {
 				subnets = true;
+				return;
+			}
+			
+			query = "statesmatrix";
+			if(line.toLowerCase().contains(query)) {
+				states = true;
 				return;
 			}
 			
@@ -291,6 +309,7 @@ public class ProjectReader {
 					//przeczytano tranzycje
 				}
 			}
+
 			ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 			
@@ -1009,7 +1028,7 @@ public class ProjectReader {
 						mctNames.add(line);
 						
 						line = buffer.readLine();
-						if(line.contains("<EOIMn>")) {
+						if(line.contains("<EOIMn>") || line.contains("<EOMn>")) {
 							go = false;
 						} else {
 							readLines++;
@@ -1035,6 +1054,77 @@ public class ProjectReader {
 			return true;
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Reading MCT sets failed for MCT number: \n"+mctProcessed, "error", true);
+			return false;
+		}
+	}
+	
+	/**
+	 * Metoda czyta blok danych o stanach sieci.
+	 * @param buffer BufferedReader - obiekt czytający
+	 * @return boolean - true, jeśli wszystko dobrze poszło
+	 */
+	private boolean readStates(BufferedReader buffer) {
+		try {
+			String line = "";
+			while(!((line = buffer.readLine()).contains("<States data>"))) //przewiń do zbiorów MCT
+				;
+			
+			line = buffer.readLine();
+			int problems = 0;
+			int readedLine = -1;
+			
+			boolean go = true;
+			StatesManager statesMngr = projectCore.accessStatesManager();
+			statesMngr.reset(true);
+
+			line = buffer.readLine();
+			while(go) {
+				readedLine++;
+				PlacesStateVector pVector = new PlacesStateVector();
+				line = line.replace(" ", "");
+				String[] tab = line.split(";");
+				
+				for(int i=0; i<tab.length; i++) {
+					pVector.accessVector().add(Double.parseDouble(tab[i]));
+				}
+
+				line = buffer.readLine();
+				if(line.contains("<EOSt>")) {
+					go = false;
+				}
+				
+				statesMngr.accessStateMatrix().add(pVector);
+			}
+
+			if(problems==0) {
+				while(!((line = buffer.readLine()).contains("<States names>"))) //przewiń do nazw stanów
+					;
+				
+				ArrayList<String> statesNames = new ArrayList<String>();
+				line = buffer.readLine();
+				int readLines = 1;
+				go = true;
+				while(go) {
+					line = line.replace(" ", "");
+					statesNames.add(line);
+					
+					line = buffer.readLine();
+					if(line.contains("<EOStn>")) {
+						go = false;
+					} else {
+						readLines++;
+					}
+				}
+				statesMngr.accessStateNames().addAll(statesNames);
+		
+			} else {
+				GUIManager.getDefaultGUIManager().log("Problems reading state vectors", "error", true);
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Reading state vectors failed.", "error", true);
 			return false;
 		}
 	}

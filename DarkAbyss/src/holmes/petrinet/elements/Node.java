@@ -348,8 +348,8 @@ public abstract class Node extends PetriNetElement {
 	/**
 	 * Metoda pozwala usunąć lokalizację z listy wszystkich lokalizacji wierzchołka.
 	 * @param el ElementLocation - lokalizacja do usunięcia 
-	 * @return boolean - true, jeśli usunięto jedyną (czyli ostatnią) lokalizację wierzchołka, 
-	 * 		false jeżeli wierzchołek ma jeszcze inne lokalizacje
+	 * @return boolean - false, jeśli usunięto jedyną (czyli ostatnią) lokalizację wierzchołka, 
+	 * 		true, jeżeli wierzchołek ma jeszcze inne lokalizacje
 	 */
 	public boolean removeElementLocation(ElementLocation el) {
 		int nodeElLocIndex = this.getNodeLocations().indexOf(el);

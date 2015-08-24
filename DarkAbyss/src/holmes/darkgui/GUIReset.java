@@ -102,6 +102,7 @@ public class GUIReset {
 		pNet.setINVmatrix(null, false);
 		pNet.setMCTMatrix(null, false);
 		pNet.accessMCTnames().clear();
+		pNet.accessStatesManager().reset(false);
 		pNet.setMCSdataCore(new MCSDataMatrix());
 		pNet.clearSimKnockoutData();
 		pNet.resetComm();

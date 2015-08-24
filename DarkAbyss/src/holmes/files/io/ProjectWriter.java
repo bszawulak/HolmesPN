@@ -10,6 +10,7 @@ import java.util.Date;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.data.PlacesStateVector;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -36,6 +37,8 @@ public class ProjectWriter {
 	private ArrayList<String> invariantsNames = null;
 	private ArrayList<ArrayList<Transition>> mctData = null;
 	private ArrayList<String> mctNames = null;
+	private ArrayList<PlacesStateVector> statesMatrix = null;
+	private ArrayList<String> statesNames = null;
 	
 	private String newline = "\n";
 	
@@ -53,6 +56,8 @@ public class ProjectWriter {
 		invariantsNames = projectCore.accessINVnames();
 		mctData = projectCore.getMCTMatrix();
 		mctNames = projectCore.accessMCTnames();
+		statesMatrix = projectCore.accessStatesManager().accessStateMatrix();
+		statesNames = projectCore.accessStatesManager().accessStateNames();
 	}
 	
 	/**
@@ -74,6 +79,7 @@ public class ProjectWriter {
 			bw.write("  <Subnets>"+newline);
 			bw.write("  <Invariants data>"+newline);
 			bw.write("  <MCT data>"+newline);
+			bw.write("  <StatesMatrix>"+newline);
 			bw.write("</Project blocks>"+newline);
 			
 			bw.write("<Net data>"+newline);
@@ -88,6 +94,10 @@ public class ProjectWriter {
 			bw.write("<MCT data>"+newline);
 			boolean statusMCT = saveMCT(bw);
 			bw.write("<MCT data end>"+newline);
+			
+			bw.write("<States data>"+newline);
+			boolean statusStates = saveStates(bw);
+			bw.write("<States data end>"+newline);
 			
 			bw.close();
 			return true;
@@ -527,11 +537,46 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+mctNames.get(i)+newline);
 			}
 			sp = 2;
-			bw.write(spaces(sp)+"<EOIMn>"+newline);
+			bw.write(spaces(sp)+"<EOMn>"+newline);
 			
 			return true;
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Error while saving MCT data.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			return false;
+		}
+	}
+	
+	
+	private boolean saveStates(BufferedWriter bw) {
+		try {
+			int sp = 2;
+			int statesNumber = statesMatrix.size();
+	
+			bw.write(spaces(sp)+"<States: "+statesNumber+">"+newline);
+			for(int s=0; s<statesNumber; s++) {
+				sp = 4;
+				PlacesStateVector sVector = statesMatrix.get(s);
+				String stateLine = "";
+				for(Double value : sVector.accessVector()) {
+					stateLine += value + ";";
+				}
+				stateLine = stateLine.substring(0, stateLine.length()-1); //usun ostatni ';'
+				bw.write(spaces(sp)+stateLine+newline);
+			}
+			sp = 2;
+			bw.write(spaces(sp)+"<EOSt>"+newline);
+			bw.write(spaces(sp)+"<States names>"+newline);
+			for(int i=0; i<statesNumber; i++) {
+				sp = 4;
+				bw.write(spaces(sp)+statesNames.get(i)+newline);
+			}
+			sp = 2;
+			bw.write(spaces(sp)+"<EOStn>"+newline);
+			
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Error while saving states data.", "error", true);
 			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
 			return false;
 		}

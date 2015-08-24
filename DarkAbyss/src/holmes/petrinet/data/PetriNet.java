@@ -678,6 +678,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		return this.statesManager;
 	}
 	
+	public void replaceStatesManager(StatesManager newStatesMngr) {
+		statesManager = newStatesMngr;
+	}
+	
 	//*********************************************************************************
 
 	/**
@@ -906,7 +910,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					}
 					saxParser.parse(xmlInput, handler);
 					addArcsAndNodes(handler.getArcList(), handler.getNodesList());
-					
+					accessStatesManager().createCleanState();
 					
 					String name = path;
 					int ind = name.lastIndexOf("\\");
@@ -920,9 +924,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					name = name.replace(".sptpt", "");
 					setName(name);
 					
-				} else {
+				} else { //Holmes project
 					SnoopyReader reader = new SnoopyReader(0, path);
 					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
+					accessStatesManager().createCleanState();
 					GUIManager.getDefaultGUIManager().subnetsGraphics.addRequiredSheets();
 					GUIManager.getDefaultGUIManager().subnetsGraphics.resizePanels();
 					GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
@@ -938,6 +943,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if (path.endsWith(".pnt")) {
 				communicationProtocol.readPNT(path);
 				addArcsAndNodes(communicationProtocol.getArcArray(), communicationProtocol.getNodeArray());
+				accessStatesManager().createCleanState();
 			}
 			
 			GUIManager.getDefaultGUIManager().log("Petri net successfully imported from file "+path, "text", true);

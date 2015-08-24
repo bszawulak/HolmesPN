@@ -78,6 +78,8 @@ public class AbyssReader {
 			IdGenerator.setPlaceId(maxPlaceId+1);
 			IdGenerator.setStartId(maxGlobalId+1);
 			
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().createCleanState();
+			
 			xstream.fromXML(source);
 			GUIManager.getDefaultGUIManager().log("Petri net (.abyss) successfully read from file "+path, "text", true);
 		} catch (Exception e) {

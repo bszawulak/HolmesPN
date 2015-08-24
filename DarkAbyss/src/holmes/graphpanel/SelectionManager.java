@@ -11,6 +11,7 @@ import holmes.darkgui.GUIManager;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import holmes.petrinet.data.IdGenerator;
+import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -279,6 +280,8 @@ public class SelectionManager {
 	 * @param el ElementLocation - lokalizacja wierzchołka który ma został usunięty
 	 */
 	public void deleteElementLocation(ElementLocation el) {
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		ArrayList<Place> places = pn.getPlaces();
 		
 		boolean canDo = GUIManager.getDefaultGUIManager().subnetsHQ.checkIfExpendable(el);
 		if(canDo == false) {
@@ -296,6 +299,10 @@ public class SelectionManager {
 			this.deselectElementLocation(el);
 			Node n = el.getParentNode();
 			if (n.removeElementLocation(el) == false) {
+				if(n instanceof Place) {
+					int index = places.indexOf((Place)n);
+					pn.accessStatesManager().removePlace(index);
+				}
 				this.getGraphPanelNodes().remove(n);
 			}
 			
@@ -340,9 +347,11 @@ public class SelectionManager {
 	 * jednak nie są one tutaj wywoływane.
 	 */
 	public void deleteAllSelectedElements() {
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		ArrayList<Place> places = pn.getPlaces();
 		ArrayList<Integer> sheetsModified = new ArrayList<Integer>();
-		
 		ArrayList<ElementLocation> protectedList = new ArrayList<ElementLocation>();
+		
 		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
 			ElementLocation el = i.next();
 			
@@ -360,7 +369,12 @@ public class SelectionManager {
 			Node n = el.getParentNode();
 			// jeżeli ElementLocation to jedyna lokalizacja dla Node, tutaj jest kasowana:
 			if (n.removeElementLocation(el) == false) {
+				if(n instanceof Place) {
+					int index = places.indexOf((Place)n);
+					pn.accessStatesManager().removePlace(index);
+				}
 				this.getGraphPanelNodes().remove(n);
+				
 			}
 			// kasowanie wszystkich in-arcs danej ElementLocation
 			for (Iterator<Arc> j = el.getInArcs().iterator(); j.hasNext();) {
