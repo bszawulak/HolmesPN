@@ -543,11 +543,6 @@ public class HolmesNetTables extends JFrame {
     	if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
     		JOptionPane.showMessageDialog(this, "Please generate T-invariants (Elementary Modes)", "No invariants", JOptionPane.INFORMATION_MESSAGE);
     			return;
-    		
-    		//if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size() == 0) return;
-    		//if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size() == 0) return;
-    		//GUIManager.getDefaultGUIManager().io.generateINAinvariants();
-    		//invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix();
     	}
     	if(invariantsMatrix == null || invariantsMatrix.size() == 0) return; //final check
     	

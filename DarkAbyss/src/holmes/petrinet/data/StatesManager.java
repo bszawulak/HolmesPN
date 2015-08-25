@@ -17,7 +17,7 @@ public class StatesManager {
 	
 	private ArrayList<PlacesStateVector> statesMatrix;
 	private ArrayList<String> statesNames;
-	public int currentState = 0;
+	public int selectedState = 0;
 	
 	/**
 	 * Konstruktor obiektu klasy StatesManager
@@ -128,5 +128,6 @@ public class StatesManager {
 			statesNames = new ArrayList<String>();
 			statesNames.add("Default name for state 1.");
 		}
+		selectedState = 0;
 	}
 }

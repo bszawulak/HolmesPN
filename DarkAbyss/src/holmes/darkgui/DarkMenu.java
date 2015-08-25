@@ -15,6 +15,7 @@ import javax.swing.KeyStroke;
 
 import holmes.darkgui.dockable.DockableMenuItem;
 import holmes.utilities.Tools;
+import holmes.windows.HolmesStatesManager;
 
 import com.javadocking.dockable.Dockable;
 
@@ -328,9 +329,20 @@ public class DarkMenu extends JMenuBar {
 		});
 		netMenu.add(netTablesItem);
 		
+		JMenuItem netStatessItem = new JMenuItem("Net m0 states", KeyEvent.VK_5);
+		netStatessItem.setIcon(Tools.getResIcon32("/icons/menu/aaaa.png"));
+		netStatessItem.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		netStatessItem.getAccessibleContext().setAccessibleDescription("Show net data states tables window");
+		netStatessItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				HolmesStatesManager hsm = new HolmesStatesManager();
+			}
+		});
+		netMenu.add(netStatessItem);
+		
 		//*********************************************************************************************
 		//***********************************                 *****************************************
-		//***********************************  HIERACHY MENU  *****************************************
+		//***********************************  HIERARCHY MENU *****************************************
 		//***********************************                 *****************************************
 		//*********************************************************************************************
 		

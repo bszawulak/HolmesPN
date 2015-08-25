@@ -39,12 +39,12 @@ import holmes.utilities.Tools;
  * 
  * @author MR
  */
-public class HolmesStateSimKnock extends JPanel {
+public class HolmesStSimKnock extends JPanel {
 	private static final long serialVersionUID = 4257940971120618716L;
-	public HolmesStateSimKnockActions action;
+	public HolmesStSimKnockActions action;
 	private boolean doNotUpdate = false;
 	public StateSimulator ssimKnock;
-	public HolmesStateSim mainSimWindow;
+	public HolmesStSim mainSimWindow;
 	
 	//reference simulation panel:
 	public int refSimSteps = 1000;			//liczba kroków dla zbioru referencyjnego
@@ -108,10 +108,10 @@ public class HolmesStateSimKnock extends JPanel {
 	 * Konstruktor obiektu klasy HolmesStateSimulatorKnockout.
 	 * @param holmesStateSimulator 
 	 */
-	public HolmesStateSimKnock(HolmesStateSim holmesStateSimulator) {
+	public HolmesStSimKnock(HolmesStSim holmesStateSimulator) {
 		this.mainSimWindow = holmesStateSimulator;
 		ssimKnock = new StateSimulator();
-		action = new HolmesStateSimKnockActions(this);
+		action = new HolmesStSimKnockActions(this);
 		
 		setLayout(new BorderLayout());
 		
@@ -893,7 +893,7 @@ public class HolmesStateSimKnock extends JPanel {
 		showVisualsButton.setIcon(Tools.getResIcon32("/icons/stateSim/d.png"));
 		showVisualsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesStateSimKnockVis(mainSimWindow.returnFrame());
+				new HolmesStSimKnockVis(mainSimWindow.returnFrame());
 			}
 		});
 		result.add(showVisualsButton);

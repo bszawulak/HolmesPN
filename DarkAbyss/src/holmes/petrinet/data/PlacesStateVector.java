@@ -11,15 +11,26 @@ import java.util.ArrayList;
 public class PlacesStateVector {
 	private ArrayList<Double> stateVector;
 	
+	/**
+	 * Konstruktor obiektu klasy PlacesStateVector.
+	 */
 	public PlacesStateVector() {
 		stateVector = new ArrayList<>();
 	}
 	
+	/**
+	 * Dodaje nowe miejsce z zadaną liczba tokenów do wektora.
+	 * @param value double - liczba tokenów
+	 */
 	public void addPlace(double value) {
 		stateVector.add(value);
 	}
 	
-	
+	/**
+	 * Usuwa lokalizację właśnie kasowanego miejsca z wektora tokenów.
+	 * @param index int - nr miejsca
+	 * @return boolean - true, jeśli operacja się udała
+	 */
 	public boolean removePlace(int index) {
 		if(index >= stateVector.size())
 			return false;
@@ -29,10 +40,30 @@ public class PlacesStateVector {
 		return true;
 	}
 	
+	/**
+	 * Zwraca liczbę miejsc.
+	 * @return int
+	 */
 	public int getSize() {
 		return stateVector.size();
 	}
 	
+	/**
+	 * Zwraca liczbę tokenów w stanie dla zadanego miejsca.
+	 * @param index int - nr miejsca
+	 * @return double - liczba tokenów
+	 */
+	public double getTokens(int index) {
+		if(index >= stateVector.size())
+			return -1;
+		else
+			return stateVector.get(index);
+	}
+	
+	/**
+	 * Umożliwia dostęp do wektora danych.
+	 * @return ArrayList[Double] - wektor stanu sieci klasycznej
+	 */
 	public ArrayList<Double> accessVector() {
 		return this.stateVector;
 	}

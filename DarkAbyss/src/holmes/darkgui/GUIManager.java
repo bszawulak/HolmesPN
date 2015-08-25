@@ -27,7 +27,7 @@ import holmes.windows.HolmesNetTables;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.HolmesProgramProperties;
 import holmes.windows.HolmesSearch;
-import holmes.windows.ssim.HolmesStateSim;
+import holmes.windows.ssim.HolmesStSim;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
 import holmes.workspace.WorkspaceSheet;
@@ -154,7 +154,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesAbout windowAbout; //okno About...
 	private HolmesSearch windowSearch; //okno wyszukiwania elementów sieci
 	private HolmesProgramProperties windowProperties; //okno właściwości sieci
-	private HolmesStateSim windowStateSim; //okno symulatora stanów
+	private HolmesStSim windowStateSim; //okno symulatora stanów
 	private HolmesNetTables windowNetTables; //okno tabel sieci
 	private HolmesNotepad windowSimulationLog; //okno logów symulatora
 	private HolmesInvariants windowInvariants; //okno generatora inwariantów
@@ -1191,14 +1191,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda tworzy nowe okno symulatora stanów programu.
 	 */
 	private void createStateSimulatorWindow() {
-		windowStateSim = new HolmesStateSim(this);
+		windowStateSim = new HolmesStSim(this);
 	}
 	
 	/**
 	 * Metoda zwraca obiekt okna symulatora.
 	 * @return HolmesStateSimulator - obiekt
 	 */
-	public HolmesStateSim accessStateSimulatorWindow() {
+	public HolmesStSim accessStateSimulatorWindow() {
 		return windowStateSim;
 	}
 	

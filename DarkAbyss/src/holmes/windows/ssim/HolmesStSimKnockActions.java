@@ -23,8 +23,8 @@ import holmes.windows.HolmesNotepad;
  * 
  * @author MR
  */
-public class HolmesStateSimKnockActions {
-	HolmesStateSimKnock boss;
+public class HolmesStSimKnockActions {
+	HolmesStSimKnock boss;
 	private int pingPongSimTransLimit;
 	private int pingPongSimCurrentTrans;
 	private long pingPongSimSeries;
@@ -35,7 +35,7 @@ public class HolmesStateSimKnockActions {
 	 * Konstruktor obiektu klasy HolmesStateSimulatorKnockoutActions.
 	 * @param window HolmesStateSimulatorKnockout - okno nadrzędne
 	 */
-	public HolmesStateSimKnockActions(HolmesStateSimKnock window) {
+	public HolmesStSimKnockActions(HolmesStSimKnock window) {
 		this.boss = window;
 		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();

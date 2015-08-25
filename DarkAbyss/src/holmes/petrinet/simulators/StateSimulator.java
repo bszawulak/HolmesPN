@@ -13,7 +13,7 @@ import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.simulators.NetSimulator.NetType;
-import holmes.windows.ssim.HolmesStateSim;
+import holmes.windows.ssim.HolmesStSim;
 
 /**
  * Klasa symulatora. Różnica między nią a symulatorem graficznym jest taka, że poniższe metody potrafią wygenerować
@@ -45,7 +45,7 @@ public class StateSimulator implements Runnable {
 	private boolean terminate = false;
 	public int stepsLimit;
 	public JProgressBar progressBar;	//pasek postępu symulacji
-	private HolmesStateSim boss;	//okno nadrzędne symulatora
+	private HolmesStSim boss;	//okno nadrzędne symulatora
 	private int simulationType;			//aktywny tryb symulacji
 	private int repetitions;				//powtórki dla trybu zbierania danych referencyjnych
 	private NetSimulationData currentDataPackage;
@@ -66,23 +66,23 @@ public class StateSimulator implements Runnable {
 	public void setThreadDetails(int simulationType, Object... blackBox) {
 		this.simulationType = simulationType;
 		if(simulationType == 1) { //standardowy tryb symulacji
-			this.boss = (HolmesStateSim)blackBox[0];
+			this.boss = (HolmesStSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
 		} else if(simulationType == 2) { //obliczenie zbioru referencyjnego
-			this.boss = (HolmesStateSim)blackBox[0];
+			this.boss = (HolmesStSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
 			this.repetitions = (int)blackBox[3];
 			this.currentDataPackage = (NetSimulationData)blackBox[4];
 		} else if(simulationType == 3) { //obliczenie danych przy knockoutcie elementów
-			this.boss = (HolmesStateSim)blackBox[0];
+			this.boss = (HolmesStSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
 			this.repetitions = (int)blackBox[3];
 			this.currentDataPackage = (NetSimulationData)blackBox[4];
 		} else if(simulationType == 4) { //obliczenie danych przy knockoutcie elementów
-			this.boss = (HolmesStateSim)blackBox[0];
+			this.boss = (HolmesStSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.stepsLimit = (int)blackBox[2];
 			this.repetitions = (int)blackBox[3];

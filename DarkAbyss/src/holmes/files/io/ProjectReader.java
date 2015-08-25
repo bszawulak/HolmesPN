@@ -1071,29 +1071,39 @@ public class ProjectReader {
 			
 			line = buffer.readLine();
 			int problems = 0;
-			int readedLine = -1;
+			int readedLine = 0;
 			
 			boolean go = true;
 			StatesManager statesMngr = projectCore.accessStatesManager();
 			statesMngr.reset(true);
 
 			line = buffer.readLine();
-			while(go) {
-				readedLine++;
-				PlacesStateVector pVector = new PlacesStateVector();
-				line = line.replace(" ", "");
-				String[] tab = line.split(";");
-				
-				for(int i=0; i<tab.length; i++) {
-					pVector.accessVector().add(Double.parseDouble(tab[i]));
-				}
+			try {
+				while(go) {
+					readedLine++;
+					PlacesStateVector pVector = new PlacesStateVector();
+					line = line.replace(" ", "");
+					String[] tab = line.split(";");
+					
+					for(int i=0; i<tab.length; i++) {
+						pVector.accessVector().add(Double.parseDouble(tab[i]));
+					}
 
-				line = buffer.readLine();
-				if(line.contains("<EOSt>")) {
-					go = false;
+					line = buffer.readLine();
+					if(line.contains("<EOSt>")) {
+						go = false;
+					}
+					
+					statesMngr.accessStateMatrix().add(pVector);
 				}
-				
-				statesMngr.accessStateMatrix().add(pVector);
+			} catch (Exception e) {}
+			
+			if(readedLine > statesMngr.accessStateMatrix().size()) {
+				GUIManager.getDefaultGUIManager().log("Error reading state vector number "+(readedLine), "error", true);
+				if(statesMngr.accessStateMatrix().size() == 0) {
+					statesMngr.createCleanState();
+					problems = 1;
+				}
 			}
 
 			if(problems==0) {
@@ -1102,17 +1112,17 @@ public class ProjectReader {
 				
 				ArrayList<String> statesNames = new ArrayList<String>();
 				line = buffer.readLine();
-				int readLines = 1;
 				go = true;
 				while(go) {
-					line = line.replace(" ", "");
-					statesNames.add(line);
+					//line = line.replace(" ", "");
+					line = line.trim();
+					
+					if(statesNames.size() < statesMngr.accessStateMatrix().size())
+						statesNames.add(line);
 					
 					line = buffer.readLine();
 					if(line.contains("<EOStn>")) {
 						go = false;
-					} else {
-						readLines++;
 					}
 				}
 				statesMngr.accessStateNames().addAll(statesNames);

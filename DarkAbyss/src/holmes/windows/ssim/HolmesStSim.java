@@ -73,11 +73,11 @@ import holmes.workspace.ExtensionFileFilter;
  * 
  * @author MR
  */
-public class HolmesStateSim extends JFrame {
+public class HolmesStSim extends JFrame {
 	private static final long serialVersionUID = 5287992734385359453L;
 	
 	private GUIManager overlord;
-	private HolmesStateSimActions action = new HolmesStateSimActions();
+	private HolmesStSimActions action = new HolmesStSimActions();
 	private StateSimulator ssim;
 	private boolean maximumMode = false;
 	private boolean singleMode = false;
@@ -124,7 +124,7 @@ public class HolmesStateSim extends JFrame {
 	/**
 	 * Konstruktor domyślny obiektu klasy StateSimulator (podokna Holmes)
 	 */
-	public HolmesStateSim(GUIManager overlord) {
+	public HolmesStSim(GUIManager overlord) {
 		this.overlord = overlord;
 		ssim = new StateSimulator();
 		chartDetails = new ChartProperties();
@@ -140,7 +140,7 @@ public class HolmesStateSim extends JFrame {
 		initiateListeners();
 	}
 	
-	public HolmesStateSim returnFrame() {
+	public HolmesStSim returnFrame() {
 		return this;
 	}
 
@@ -172,7 +172,7 @@ public class HolmesStateSim extends JFrame {
 
 		iownyou.addTab("Simple mode", Tools.getResIcon16("/icons/stateSim/simpleSimTab.png"), firstTab, "Places dynamics");
 		
-		knockoutTab = new HolmesStateSimKnock(this);
+		knockoutTab = new HolmesStSimKnock(this);
 		iownyou.addTab("KnockoutSim", Tools.getResIcon16("/icons/stateSim/KnockSimTab.png"), knockoutTab, "Transistions dynamics");
 		
 		main.add(iownyou, BorderLayout.CENTER);
@@ -1244,7 +1244,7 @@ public class HolmesStateSim extends JFrame {
 				}
 				//sortuj po value (frequency)
 				Map<Integer, Double> sortedByValues = new HashMap<Integer, Double>(); 
-				sortedByValues = HolmesStateSimActions.crunchifySortMap(map); // dark magic happens here
+				sortedByValues = HolmesStSimActions.crunchifySortMap(map); // dark magic happens here
 				for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
 					placesCombo.addItem("p"+(entry.getKey())+"."+places.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
 				}
@@ -1275,7 +1275,7 @@ public class HolmesStateSim extends JFrame {
 				}
 				//sortuj po value (frequency)
 				Map<Integer, Double> sortedByValues = new HashMap<Integer, Double>(); 
-				sortedByValues = HolmesStateSimActions.crunchifySortMap(map); // dark magic happens here
+				sortedByValues = HolmesStSimActions.crunchifySortMap(map); // dark magic happens here
 				for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
 					transitionsCombo.addItem("t"+(entry.getKey())+"."+transitions.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
 					
@@ -1455,7 +1455,7 @@ public class HolmesStateSim extends JFrame {
     	addWindowListener(new WindowAdapter() {
   	  	    public void windowActivated(WindowEvent e) {
   	  	    	fillPlacesAndTransitionsData();
-  	  	    	((HolmesStateSimKnock) knockoutTab).updateFreshKnockoutTab();
+  	  	    	((HolmesStSimKnock) knockoutTab).updateFreshKnockoutTab();
   	  	    }  
     	});
     	
@@ -1495,8 +1495,8 @@ public class HolmesStateSim extends JFrame {
      * Umożliwia dostęp do obiektu odpowiedzialnego za zakładkę Knockout symulatora.
      * @return HolmesStateSimulatorKnockout - obiekt
      */
-    public HolmesStateSimKnock accessKnockoutTab() {
-    	return (HolmesStateSimKnock)knockoutTab;
+    public HolmesStSimKnock accessKnockoutTab() {
+    	return (HolmesStSimKnock)knockoutTab;
     }
 	
 	/**
@@ -1522,7 +1522,7 @@ public class HolmesStateSim extends JFrame {
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(100, 0, mValue, 10);
 		transIntervalSpinner.setModel(intervSpinnerModel);
 		
-		((HolmesStateSimKnock)knockoutTab).resetWindow();
+		((HolmesStSimKnock)knockoutTab).resetWindow();
 		doNotUpdate = false;
 	}
 	
