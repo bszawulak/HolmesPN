@@ -25,7 +25,7 @@ public class NetSimulationData implements Serializable {
 	public ArrayList<Integer> disabledTransitionsIDs;
 	public ArrayList<Integer> disabledMCTids;
 	public ArrayList<Integer> disabledTotals;
-	public ArrayList<Integer> startingState;
+	public PlacesStateVector startingState;
 	
 	//wyniki symulacji:
 	public ArrayList<Double> placeTokensAvg;
@@ -61,7 +61,7 @@ public class NetSimulationData implements Serializable {
 		disabledTransitionsIDs = new ArrayList<Integer>();
 		disabledMCTids = new ArrayList<Integer>();
 		disabledTotals = new ArrayList<Integer>();
-		startingState = new ArrayList<Integer>();
+		//startingState = new ArrayList<Integer>();
 	}
 	
 	public void setIDseries(long value) {

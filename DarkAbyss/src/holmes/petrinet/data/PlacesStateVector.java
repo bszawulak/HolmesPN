@@ -1,5 +1,6 @@
 package holmes.petrinet.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -8,9 +9,10 @@ import java.util.ArrayList;
  * @author MR
  *
  */
-public class PlacesStateVector {
+public class PlacesStateVector implements Serializable {
+	private static final long serialVersionUID = 6652562026923360610L;
 	private ArrayList<Double> stateVector;
-	public String stateType;
+	public String stateType = "";
 	
 	/**
 	 * Konstruktor obiektu klasy PlacesStateVector.

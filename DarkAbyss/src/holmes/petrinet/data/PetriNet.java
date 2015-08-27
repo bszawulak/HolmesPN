@@ -713,6 +713,23 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		}
 	}
 	
+	public void restoreMarkingZeroFast(ArrayList<Transition> transitions) {
+		try {
+			accessStatesManager().restoreSelectedState();
+	
+			for(int i=0; i<transitions.size(); i++) {
+				Transition trans = transitions.get(i);
+				trans.setLaunching(false);
+				if(trans.getTransType() == TransitionType.TPN) {
+					trans.resetTimeVariables();
+				}
+			}
+			getSimulator().getSimLogger().logSimReset();
+		} catch (Exception e) {
+			overlord.log("Unknown error: unable to restore state m0 on request.", "error", true);
+		}
+	}
+	
 	/**
 	 * Metoda wyłączająca świecenie tranzycji np. w ramach aktywacji niezmiennika.
 	 */

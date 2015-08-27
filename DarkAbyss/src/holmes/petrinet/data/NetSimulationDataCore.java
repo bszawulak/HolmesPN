@@ -28,6 +28,9 @@ public class NetSimulationDataCore implements Serializable {
 	
 	public boolean saved = false;
 	
+	/**
+	 * Nieciekawy konstruktor obiektu klasy NetSimulationDataCore.
+	 */
 	public NetSimulationDataCore() {
 		
 	}

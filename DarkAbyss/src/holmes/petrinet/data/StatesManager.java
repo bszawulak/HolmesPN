@@ -75,6 +75,10 @@ public class StatesManager {
 			return statesMatrix.get(index);
 	}
 	
+	public PlacesStateVector getCurrentState() {
+		return statesMatrix.get(selectedState);
+	}
+	
 	/**
 	 * Metoda dodaje nowy stan sieci na bazie istniejącego w danej chwili w edytorze.
 	 */

@@ -298,7 +298,7 @@ public class StateSimulator implements Runnable {
 			currentDataPackage.placeTokensMax.add(0.0);
 			currentDataPackage.placeZeroTokens.add(0);
 			
-			currentDataPackage.startingState.add(places.get(p).getTokensNumber());
+			currentDataPackage.startingState = overlord.getWorkspace().getProject().accessStatesManager().getCurrentState();
 		}
 		for(int t=0; t<transNumber; t++) {
 			totalTransFiringInTurn.add(0);
@@ -836,7 +836,7 @@ public class StateSimulator implements Runnable {
 	 * Metoda przygotowuje backup stanu sieci
 	 */
 	public void prepareNetM0() {
-		overlord.getWorkspace().getProject().restoreMarkingZero();
+		overlord.getWorkspace().getProject().restoreMarkingZeroFast(transitions);
 		saveInternalMarkingZero(); //zapis aktualnego stanu jako m0
 		clearTransitionsValues();
 	}

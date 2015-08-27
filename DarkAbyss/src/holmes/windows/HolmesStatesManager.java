@@ -1,7 +1,6 @@
 package holmes.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -13,7 +12,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,14 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
@@ -384,7 +374,7 @@ public class HolmesStatesManager extends JFrame {
 			}
 			
 			
-			int selectedColumn = statesTable.getSelectedColumn();
+			//int selectedColumn = statesTable.getSelectedColumn();
 
 		} catch (Exception e) {
 			
