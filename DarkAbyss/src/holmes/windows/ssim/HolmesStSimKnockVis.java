@@ -52,7 +52,6 @@ import holmes.petrinet.data.NetSimulationData;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.tables.InvariantsSimTableModel;
 import holmes.tables.SimKnockPlacesCompAllTableModel;
 import holmes.tables.SimKnockPlacesCompTableModel;
 import holmes.tables.SimKnockPlacesTableModel;
@@ -187,9 +186,7 @@ public class HolmesStSimKnockVis extends JFrame {
 				if(doNotUpdate) 
 					return;
 				
-				showSingleKnockoutCharts(true);
-				createPlacesTable(true);
-				createTransTable(true);
+				
 			}
 			
 		});
@@ -207,18 +204,64 @@ public class HolmesStSimKnockVis extends JFrame {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(doNotUpdate) 
 					return;
-				
-				showSingleKnockoutCharts(false);
-				createPlacesTable(false);
-				createTransTable(false);
+
 				//int selected = dataCombo.getSelectedIndex();
 			}
 			
 		});
 		result.add(dataCombo);
+
+		JLabel label3 = new JLabel("Sim. series:");
+		label3.setBounds(posXda, posYda+=25, 80, 20);
+		result.add(label3);
 		
-		JButton showChartKnockButton = new JButton("Compare");
-		showChartKnockButton.setBounds(posXda+600, 20, 120, 40);
+		String[] dataSeries = { " ----- " };
+		seriesCombo = new JComboBox<String>(dataSeries); //final, aby listener przycisku odczytał wartość
+		seriesCombo.setBounds(posXda+80, posYda, 250, 20);
+		seriesCombo.setMaximumRowCount(12);
+		seriesCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate) 
+					return;
+			}
+			
+		});
+		result.add(seriesCombo);
+		
+		JButton showRefDataButton = new JButton("<html>Show reference<br/>&nbsp; &nbsp; &nbsp; &nbsp; dataset</html>");
+		showRefDataButton.setBounds(posXda+600, 20, 150, 30);
+		showRefDataButton.setMargin(new Insets(0, 0, 0, 0));
+		showRefDataButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		showRefDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selRef = referencesCombo.getSelectedIndex();
+				if(selRef > 0) {
+					showSingleKnockoutCharts(true);
+					createPlacesTable(true);
+					createTransTable(true);
+				}
+			}
+		});
+		result.add(showRefDataButton);
+		
+		JButton showKnockDataButton = new JButton("<html>Show transition<br/>&nbsp; &nbsp; &nbsp; knockout</html>");
+		showKnockDataButton.setBounds(posXda+760, 20, 150, 30);
+		showKnockDataButton.setMargin(new Insets(0, 0, 0, 0));
+		showKnockDataButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		showKnockDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = dataCombo.getSelectedIndex();
+				if(selected > 0) {
+					showSingleKnockoutCharts(false);
+					createPlacesTable(false);
+					createTransTable(false);
+				}
+			}
+		});
+		result.add(showKnockDataButton);
+		
+		JButton showChartKnockButton = new JButton("<html>Compare reference<br/>&nbsp; &nbsp; and knockout</html>");
+		showChartKnockButton.setBounds(posXda+920, 20, 150, 30);
 		showChartKnockButton.setMargin(new Insets(0, 0, 0, 0));
 		showChartKnockButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
 		showChartKnockButton.addActionListener(new ActionListener() {
@@ -238,23 +281,33 @@ public class HolmesStSimKnockVis extends JFrame {
 		});
 		result.add(showChartKnockButton);
 		
-		String[] dataSeries = { " ----- " };
-		seriesCombo = new JComboBox<String>(dataSeries); //final, aby listener przycisku odczytał wartość
-		seriesCombo.setBounds(posXda+730, 20, 250, 20);
-		seriesCombo.setMaximumRowCount(12);
-		seriesCombo.addActionListener(new ActionListener() {
+		JButton showSeriesButton = new JButton("<html>Full series<br/>datatables</html>");
+		showSeriesButton.setBounds(posXda+600, 60, 150, 30);
+		showSeriesButton.setMargin(new Insets(0, 0, 0, 0));
+		showSeriesButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		showSeriesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate) 
-					return;
-
 				int selected = seriesCombo.getSelectedIndex() - 1;
 				if(selected > -1) {
 					createCompareAllTables(selected);
 				}
 			}
-			
 		});
-		result.add(seriesCombo);
+		result.add(showSeriesButton);
+		
+		JButton showNotepadButton = new JButton("<html>show notepad<br/>summary</html>");
+		showNotepadButton.setBounds(posXda+760, 60, 150, 30);
+		showNotepadButton.setMargin(new Insets(0, 0, 0, 0));
+		showNotepadButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		showNotepadButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = seriesCombo.getSelectedIndex() - 1;
+				if(selected > -1) {
+					//createCompareAllTables(selected);
+				}
+			}
+		});
+		result.add(showNotepadButton);
 		
 		return result;
 	}
@@ -1078,6 +1131,10 @@ public class HolmesStSimKnockVis extends JFrame {
         transTable.validate();
     }
     
+    /**
+     * Metoda tworzy tabele efektu knockout dla T i P dla całej serii tranzycji sieci.
+     * @param selected int - ID serii
+     */
     private void createCompareAllTables(int selected) {
     	long IDseries = pn.accessSimKnockoutData().accessSeries().get(selected);
     	ArrayList<NetSimulationData> dataPackage = pn.accessSimKnockoutData().getSeriesDatasets(IDseries);
@@ -1236,21 +1293,21 @@ public class HolmesStSimKnockVis extends JFrame {
     			DetailsPlace details = modelPlacesCompAll.newDetailsInstance();
     			details.knockAvgTokens = dataSet.placeTokensAvg.get(p);
     			details.refAvgTokens = refSet.placeTokensAvg.get(p);
-    			details.knockDisabled = dataSet.transZeroFiring.get(p);
+    			details.knockDisabled = dataSet.placeZeroTokens.get(p);
     			details.significance1 = getPlaceSign1(refSet, dataSet, p);
     			details.significance2 = getPlaceSign2(refSet, dataSet, p);
     			
-    			if(refSet.transFiringsAvg.get(p) == 0 && dataSet.transFiringsAvg.get(p) == 0) {
+    			if(refSet.placeTokensAvg.get(p) == 0 && dataSet.placeTokensAvg.get(p) == 0) {
     				pVector.add("999990.0");
     				pTableVector.add(details);
     				continue;
     			}
-    			if(refSet.transFiringsAvg.get(p) == 0 && dataSet.transFiringsAvg.get(p) > 0) {
+    			if(refSet.placeTokensAvg.get(p) == 0 && dataSet.placeTokensAvg.get(p) > 0) {
     				pVector.add("999999.0");
     				pTableVector.add(details);
     				continue;
     			}
-    			if(refSet.transFiringsAvg.get(p) > 0 && dataSet.transFiringsAvg.get(p) == 0) {
+    			if(refSet.placeTokensAvg.get(p) > 0 && dataSet.placeTokensAvg.get(p) == 0) {
     				pVector.add("-999999.0");
     				pTableVector.add(details);
     				continue;
@@ -1282,6 +1339,151 @@ public class HolmesStSimKnockVis extends JFrame {
     	}
     }
     
+    private void createCompareAllTablesNotepad(int selected) {
+    	long IDseries = pn.accessSimKnockoutData().accessSeries().get(selected);
+    	ArrayList<NetSimulationData> dataPackage = pn.accessSimKnockoutData().getSeriesDatasets(IDseries);
+    	int selRef = referencesCombo.getSelectedIndex() - 1;
+    	if(selRef == -1) {
+    		JOptionPane.showMessageDialog(null,
+					"Please select reference set!", 
+					"Reference selection", JOptionPane.WARNING_MESSAGE);
+    		seriesCombo.setSelectedIndex(0);
+    		return;
+    	}
+    	NetSimulationData refSet = pn.accessSimKnockoutData().getReferenceSet(selRef);
+    	if(dataPackage == null) {
+    		return;
+    	}
+    	
+    	int transNumber = dataPackage.get(0).transNumber;
+    	int placesNumber = dataPackage.get(0).placesNumber;
+
+    	//TODO:
+    	for(int t=0; t<transNumber; t++) {
+    		ArrayList<String> pVector = new ArrayList<>();
+    		ArrayList<String> tVector = new ArrayList<>();
+    		ArrayList<DetailsPlace> pTableVector = new ArrayList<DetailsPlace>();
+    		ArrayList<DetailsTrans> tTableVector = new ArrayList<DetailsTrans>();
+    		NetSimulationData dataSet = dataPackage.get(t);
+    		
+    		//ID:
+    		pVector.add(""+t);
+    		tVector.add(""+t);
+    		pTableVector.add(null);
+    		tTableVector.add(null);
+    		
+    		//NAZWY:
+    		String name = "";
+    		if(transitions.size() == 0) {
+    			name = "t"+t;
+    		} else {
+    			name = "t"+transitions.get(t).getName();
+    		}
+    		pVector.add(name);
+			tVector.add(name);
+    		pTableVector.add(null);
+    		tTableVector.add(null);
+    		
+    		//KNOCKED: (liczone później)
+    		pVector.add("0");
+    		tVector.add("0");
+    		pTableVector.add(null);
+    		tTableVector.add(null);
+    		
+    		//DANE:
+    		for(int t1=0; t1<transNumber; t1++) {
+    			DetailsTrans details = modelTransCompAll.newDetailsInstance();
+    			details.knockAvgFiring = dataSet.transFiringsAvg.get(t1);
+    			details.refAvgFiring = refSet.transFiringsAvg.get(t1);
+    			details.knockDisabled = dataSet.transZeroFiring.get(t1);
+    			details.significance1 = getTransSign1(refSet, dataSet, t1);
+    			details.significance2 = getTransSign2(refSet, dataSet, t1);
+    			details.diff = 0;
+    			
+    			if(refSet.transFiringsAvg.get(t1) == 0 && dataSet.transFiringsAvg.get(t1) == 0) {
+    				tVector.add("999990.0");
+    				tTableVector.add(details);
+    				continue;
+    			}
+    			if(refSet.transFiringsAvg.get(t1) == 0 && dataSet.transFiringsAvg.get(t1) > 0) {
+    				tVector.add("+999999.0");
+    				tTableVector.add(details);
+    				continue;
+    			}
+    			if(refSet.transFiringsAvg.get(t1) > 0 && dataSet.transFiringsAvg.get(t1) == 0) {
+    				tVector.add("-999999.0");
+    				tTableVector.add(details);
+    				continue;
+    			}
+    			
+    			double diff = details.refAvgFiring - details.knockAvgFiring;
+    			diff = (diff / details.refAvgFiring)*100;
+    			if(diff < 0) { //wzrosło w stos. do ref
+    				diff *= -1;
+    				details.diff = diff;
+    				tVector.add(formatter2.format(diff));
+    				tTableVector.add(details);
+    			} else {
+    				diff *= -1;
+    				details.diff = diff;
+    				tVector.add(formatter2.format(diff));
+    				tTableVector.add(details);
+    			}
+    		}
+    		
+    		for(int p=0; p<placesNumber; p++) {
+    			DetailsPlace details = modelPlacesCompAll.newDetailsInstance();
+    			details.knockAvgTokens = dataSet.placeTokensAvg.get(p);
+    			details.refAvgTokens = refSet.placeTokensAvg.get(p);
+    			details.knockDisabled = dataSet.placeZeroTokens.get(p);
+    			details.significance1 = getPlaceSign1(refSet, dataSet, p);
+    			details.significance2 = getPlaceSign2(refSet, dataSet, p);
+    			
+    			if(refSet.placeTokensAvg.get(p) == 0 && dataSet.placeTokensAvg.get(p) == 0) {
+    				pVector.add("999990.0");
+    				pTableVector.add(details);
+    				continue;
+    			}
+    			if(refSet.placeTokensAvg.get(p) == 0 && dataSet.placeTokensAvg.get(p) > 0) {
+    				pVector.add("999999.0");
+    				pTableVector.add(details);
+    				continue;
+    			}
+    			if(refSet.placeTokensAvg.get(p) > 0 && dataSet.placeTokensAvg.get(p) == 0) {
+    				pVector.add("-999999.0");
+    				pTableVector.add(details);
+    				continue;
+    			}
+    			
+    			double diff = details.refAvgTokens - details.knockAvgTokens;
+    			diff = (diff / details.refAvgTokens)*100;
+    			if(diff < 0) { //wzrosło w stos. do ref
+    				diff *= -1;
+    				details.diff = diff;
+    				pVector.add(formatter2.format(diff));
+    				pTableVector.add(details);
+    			} else {
+    				diff *= -1;
+    				details.diff = diff;
+    				pVector.add(formatter2.format(diff));
+    				pTableVector.add(details);
+    			}
+    		}
+    		if(tVector.size() != tTableVector.size() || pVector.size() != pTableVector.size()) {
+    			@SuppressWarnings("unused")
+				int x=1;
+    		}
+    		
+    	}
+    }
+    
+    /**
+     * Obliczanie I stopnia znaczenia danych - min. największego paska > max. niższego dla tranzycji
+     * @param refSet NetSimulationData - zbiór referencyjny
+     * @param dataSet NetSimulationData - zbiór knockout
+     * @param index int - indeks tranzycji
+     * @return boolean - true, jeśli min > max
+     */
     private boolean getTransSign1(NetSimulationData refSet, NetSimulationData dataSet, int index) {
     	if(refSet.transFiringsAvg.get(index) > dataSet.transFiringsAvg.get(index)) {
     		if(refSet.transFiringsMin.get(index) > dataSet.transFiringsMax.get(index)) {
@@ -1298,6 +1500,13 @@ public class HolmesStSimKnockVis extends JFrame {
     	}
     }
     
+    /**
+     * Obliczanie II stopnia znaczenia danych - stdDev - dla tranzycji
+     * @param refSet NetSimulationData - zbiór referencyjny
+     * @param dataSet NetSimulationData - zbiór knockout
+     * @param index int - indeks tranzycji
+     * @return boolean - true, jeśli stdDev się nie nakładają
+     */
     private boolean getTransSign2(NetSimulationData refSet, NetSimulationData dataSet, int index) {
     	if(refSet.transFiringsAvg.get(index) > dataSet.transFiringsAvg.get(index)) {
     		if(refSet.transFiringsAvg.get(index) - refSet.transStdDev.get(index) > dataSet.transFiringsAvg.get(index) + dataSet.transStdDev.get(index)) {
@@ -1314,6 +1523,13 @@ public class HolmesStSimKnockVis extends JFrame {
     	}
     }
     
+    /**
+     * Obliczanie I stopnia znaczenia danych - min. największego paska > max. niższego dla miejsc
+     * @param refSet NetSimulationData - zbiór referencyjny
+     * @param dataSet NetSimulationData - zbiór knockout
+     * @param index int - indeks miejsca
+     * @return boolean - true, jeśli min > max
+     */
     private boolean getPlaceSign1(NetSimulationData refSet, NetSimulationData dataSet, int index) {
     	if(refSet.placeTokensAvg.get(index) > dataSet.placeTokensAvg.get(index)) {
     		if(refSet.placeTokensMin.get(index) > dataSet.placeTokensMax.get(index)) {
@@ -1330,6 +1546,13 @@ public class HolmesStSimKnockVis extends JFrame {
     	}
     }
     
+    /**
+     * Obliczanie II stopnia znaczenia danych - stdDev - dla miejsc
+     * @param refSet NetSimulationData - zbiór referencyjny
+     * @param dataSet NetSimulationData - zbiór knockout
+     * @param index int - indeks miejsca
+     * @return boolean - true, jeśli stdDev się nie nakładają
+     */
     private boolean getPlaceSign2(NetSimulationData refSet, NetSimulationData dataSet, int index) {
     	if(refSet.placeTokensAvg.get(index) > dataSet.placeTokensAvg.get(index)) {
     		if(refSet.placeTokensAvg.get(index) - refSet.placeStdDev.get(index) > dataSet.placeTokensAvg.get(index) + dataSet.placeStdDev.get(index)) {
@@ -1346,6 +1569,10 @@ public class HolmesStSimKnockVis extends JFrame {
     	}
     }
     
+    /**
+     * Metoda ustawia domyslną szerokość kolumn tabeli.
+     * @param table JTable - tablica danych
+     */
     public void resizeColumnWidth(JTable table) {
 	    TableColumnModel columnModel = table.getColumnModel();
 	    for (int column = 3; column < table.getColumnCount(); column++) {
