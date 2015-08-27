@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import holmes.darkgui.dockable.DockableMenuItem;
+import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesStatesManager;
 
@@ -331,11 +332,16 @@ public class DarkMenu extends JMenuBar {
 		
 		JMenuItem netStatessItem = new JMenuItem("Net m0 states", KeyEvent.VK_5);
 		netStatessItem.setIcon(Tools.getResIcon32("/icons/menu/aaaa.png"));
-		netStatessItem.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		netStatessItem.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		netStatessItem.getAccessibleContext().setAccessibleDescription("Show net data states tables window");
 		netStatessItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				HolmesStatesManager hsm = new HolmesStatesManager();
+				if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+					JOptionPane.showMessageDialog(null, "Net simulator must be stopped in order to access state manager.", 
+							"Simulator working", JOptionPane.WARNING_MESSAGE);
+				} else {
+					new HolmesStatesManager();
+				}
 			}
 		});
 		netMenu.add(netStatessItem);

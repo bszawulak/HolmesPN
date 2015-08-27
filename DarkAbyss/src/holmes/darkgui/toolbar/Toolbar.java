@@ -584,8 +584,7 @@ public class Toolbar extends BorderDock {
 		resetSimButton = new ToolbarButtonAction(this, "Reset", "Reset simulator",
 				Tools.getResIcon48("/icons/toolbar/sim_reset.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true)
-					GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableResetSim", resetSimButton));

@@ -881,34 +881,26 @@ public class GraphPanel extends JComponent {
 						clearDrawnArc();
 						break;
 					case PLACE:
-						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-						}
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 						
 						addNewPlace(mousePt);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
 						GUIManager.getDefaultGUIManager().markNetChange();
 						break;
 					case TRANSITION:
-						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-						}
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 						
 						addNewTransition(mousePt);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
 						GUIManager.getDefaultGUIManager().markNetChange();
 						break;
 					case ARC:
-						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-						}
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 						
 						clearDrawnArc();
 						break;
 					case TIMETRANSITION:
-						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-						}
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 						
 						addNewTimeTransition(mousePt);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
@@ -946,9 +938,7 @@ public class GraphPanel extends JComponent {
 							"Deletion warning?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (n == 0) {
-						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-						}
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 						
 						getSelectionManager().deleteElementLocation(el);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
@@ -989,9 +979,7 @@ public class GraphPanel extends JComponent {
 							"Deletion warning?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (n == 0) {
-						if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-						}
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 						
 						getSelectionManager().deleteArc(a);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
@@ -1153,9 +1141,7 @@ public class GraphPanel extends JComponent {
 									JOptionPane.WARNING_MESSAGE);
 							clearDrawnArc();
 						} else {
-							if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-								GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-							}
+							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 							
 							Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), clickedLocation, TypesOfArcs.NORMAL);
 							

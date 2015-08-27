@@ -43,6 +43,8 @@ public class NetSimulator {
 	
 	private SimulatorEngine engine = null;
 	private int modeSteps = 0; 
+	
+	private GUIManager overlord;
 	/**
 	 * Enumeracja przechowująca tryb pracy symulatora. Dostępne wartości:<br><br>
 	 * ACTION_BACK - tryb cofnięcia pojedynczej akcji<br>
@@ -76,6 +78,7 @@ public class NetSimulator {
 		actionStack = new Stack<SimulationStep>(); //historia kroków
 		
 		engine = new SimulatorEngine();
+		overlord = GUIManager.getDefaultGUIManager();
 	}
 	
 	/**
@@ -113,26 +116,22 @@ public class NetSimulator {
 		ArrayList<Transition> time_transitions = petriNet.getTimeTransitions();
 		nsl.logStart(netSimType, writeHistory, simulatorMode, maxMode);
 		
-		if(singleMode && GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+		if(singleMode && overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
 			maxMode = true; //override
 		} else {
 			maxMode = false;
 		}
 		
 		engine.setEngine(netSimType, maxMode, singleMode, transitions, time_transitions);
-		
-		//zapisz stan tokenów w miejscach przed rozpoczęciem:
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == false) {
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
-			nsl.logBackupCreated();
-		}
+
+		nsl.logBackupCreated();
 		
 		previousSimStatus = getSimulatorStatus();
 		setSimulatorStatus(simulatorMode);
 		setSimulationActive(true);
 		ActionListener taskPerformer = new SimulationPerformer();
 		//ustawiania stanu przycisków symulacji:
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
 		
 		checkSimulatorNetType(); //trust no one
 		
@@ -189,7 +188,7 @@ public class NetSimulator {
 	 */
 	public int setSimNetType(int type) {
 		//sprawdzenie poprawności trybu, zakładamy że Basic działa zawsze
-		int check = GUIManager.getDefaultGUIManager().simSettings.checkSimulatorNetType(type);
+		int check = overlord.simSettings.checkSimulatorNetType(type);
 		
 		if(check == 0) {
 			this.netSimType = NetType.BASIC;
@@ -232,7 +231,7 @@ public class NetSimulator {
 					if(!(((Transition)n).getTransType() == TransitionType.TPN)) {
 						JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
 								"Invalid mode", JOptionPane.ERROR_MESSAGE);
-						GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
+						overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
 						netSimType = NetType.HYBRID;
 						engine.setNetSimType(netSimType);
 						return;
@@ -464,7 +463,7 @@ public class NetSimulator {
 					place = (Place) arc.getStartNode();
 				
 				if(arc.getArcType() != TypesOfArcs.NORMAL)
-					GUIManager.getDefaultGUIManager().log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
+					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
 							" arc: "+arc.toString(), "error", true);
 				
 				//tylko zwykły łuk
@@ -507,7 +506,7 @@ public class NetSimulator {
 					place = (Place) arc.getStartNode();
 				
 				if(arc.getArcType() != TypesOfArcs.NORMAL)
-					GUIManager.getDefaultGUIManager().log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
+					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
 							" arc: "+arc.toString(), "error", true);
 				
 				//tylko zwykły łuk
@@ -548,7 +547,7 @@ public class NetSimulator {
 	 * za zatrzymanie symulacji.
 	 */
 	private void stopSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtons();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtons();
 		timer.stop();
 		previousSimStatus = simulatorStatus;
 		setSimulatorStatus(SimulatorMode.STOPPED);
@@ -561,7 +560,7 @@ public class NetSimulator {
 	 * za pauzowanie symulacji.
 	 */
 	private void pauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButton();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButton();
 		timer.stop();
 		previousSimStatus = simulatorStatus;
 		setSimulatorStatus(SimulatorMode.PAUSED);
@@ -574,7 +573,7 @@ public class NetSimulator {
 	 * za ponowne uruchomienie (po pauzie) symulacji.
 	 */
 	private void unpauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
 		if (previousSimStatus != SimulatorMode.STOPPED) {
 			timer.start();
 			setSimulatorStatus(previousSimStatus);
@@ -597,7 +596,7 @@ public class NetSimulator {
 	 */
 	public void setSimulationActive(boolean simulationActive) {
 		this.simulationActive = simulationActive;
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setSimulationActive(isSimulationActive());
+		overlord.getWorkspace().getProject().setSimulationActive(isSimulationActive());
 	}
 
 	/**
@@ -782,7 +781,7 @@ public class NetSimulator {
 	 *
 	 */
 	private class SimulationPerformer implements ActionListener {
-		protected int transitionDelay = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();		// licznik kroków graficznych
+		protected int transitionDelay = overlord.simSettings.getTransDelay();		// licznik kroków graficznych
 		protected boolean subtractPhase = true; // true - subtract, false - add
 		protected boolean finishedAddPhase = true;
 		protected boolean scheduledStop = false;
@@ -792,9 +791,9 @@ public class NetSimulator {
 		 * Metoda aktualizuje wyświetlanie graficznej części symulacji po wykonaniu każdego kroku.
 		 */
 		protected void updateStep() {
-			GUIManager.getDefaultGUIManager().getWorkspace().incrementSimulationStep();
+			overlord.getWorkspace().incrementSimulationStep();
 			//tutaj nic się nie dzieje: a chyba chodziło o update podokna właściwości z liczbą tokenów
-			GUIManager.getDefaultGUIManager().getSimulatorBox().updateSimulatorProperties();
+			overlord.getSimulatorBox().updateSimulatorProperties();
 		}
 
 		/**
@@ -858,7 +857,7 @@ public class NetSimulator {
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
-			int DEFAULT_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
+			int DEFAULT_COUNTER = overlord.simSettings.getTransDelay();
 			updateStep(); // rusz tokeny
 			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
 				//z miejsc wejściowych i oddawania ich tranzycjom
@@ -867,8 +866,8 @@ public class NetSimulator {
 				} else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
 					if (remainingTransitionsAmount == 0) {
 						timeCounter++;
-						GUIManager.getDefaultGUIManager().io.updateTimeStep(""+timeCounter); // TODO UPDATE
-						GUIManager.getDefaultGUIManager().simSettings.currentStep = timeCounter;
+						overlord.io.updateTimeStep(""+timeCounter); // TODO UPDATE
+						overlord.simSettings.currentStep = timeCounter;
 						
 						launchingTransitions = engine.getTransLaunchList(modeSteps);
 						remainingTransitionsAmount = launchingTransitions.size();
@@ -878,7 +877,7 @@ public class NetSimulator {
 					if(getHistoryMode() == true) {
 						actionStack.push(new SimulationStep(SimulatorMode.STEP, cloneTransitionArray(launchingTransitions)));
 						if (actionStack.peek().getPendingTransitions() == null) {
-							GUIManager.getDefaultGUIManager().log("Unknown problem in actionPerformed(ActionEvent event) in NetSimulator class.", "error", true);
+							overlord.log("Unknown problem in actionPerformed(ActionEvent event) in NetSimulator class.", "error", true);
 						}
 					}
 				
@@ -956,7 +955,7 @@ public class NetSimulator {
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
-			int DEFAULT_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
+			int DEFAULT_COUNTER = overlord.simSettings.getTransDelay();
 			updateStep(); // update graphics
 			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // subtract phase
 				if (scheduledStop) { // executing scheduled stop
@@ -964,8 +963,8 @@ public class NetSimulator {
 				} else if (isPossibleStep()) { // if steps remaining
 					if (remainingTransitionsAmount == 0) {
 						timeCounter++;
-						GUIManager.getDefaultGUIManager().io.updateTimeStep(""+timeCounter);
-						GUIManager.getDefaultGUIManager().simSettings.currentStep = timeCounter;
+						overlord.io.updateTimeStep(""+timeCounter);
+						overlord.simSettings.currentStep = timeCounter;
 						
 						launchingTransitions = engine.getTransLaunchList(modeSteps);
 						remainingTransitionsAmount = launchingTransitions.size();
@@ -994,7 +993,7 @@ public class NetSimulator {
 					setSimulationActive(false);
 					stopSimulation();
 					JOptionPane.showMessageDialog(null, "Simulation ended","No more available steps!",JOptionPane.INFORMATION_MESSAGE);
-					GUIManager.getDefaultGUIManager().log("Simulation ended - no more available steps.", "text", true);
+					overlord.log("Simulation ended - no more available steps.", "text", true);
 				}
 				transitionDelay = 0;
 			} else if (transitionDelay >= DEFAULT_COUNTER && !subtractPhase) {
@@ -1056,15 +1055,15 @@ public class NetSimulator {
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
-			int DEFAULT_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
+			int DEFAULT_COUNTER = overlord.simSettings.getTransDelay();
 			updateStep(); // update graphics
 			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // subtract phase
 				if (scheduledStop) { // executing scheduled stop
 					executeScheduledStop();
 				} else if (!actionStack.empty()) { // if steps remaining
 					timeCounter--;
-					GUIManager.getDefaultGUIManager().io.updateTimeStep(""+timeCounter);
-					GUIManager.getDefaultGUIManager().simSettings.currentStep = timeCounter;
+					overlord.io.updateTimeStep(""+timeCounter);
+					overlord.simSettings.currentStep = timeCounter;
 					
 					//tutaj zdejmowany jest ostatni wykonany krok w symulacji:
 					currentStep = actionStack.pop();

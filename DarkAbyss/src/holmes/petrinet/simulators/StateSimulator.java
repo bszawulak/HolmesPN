@@ -22,6 +22,7 @@ import holmes.windows.ssim.HolmesStSim;
  * @author MR
  */
 public class StateSimulator implements Runnable {
+	private GUIManager overlord;
 	private ArrayList<Transition> transitions;
 	private ArrayList<Transition> time_transitions;
 	private ArrayList<Place> places;
@@ -56,6 +57,7 @@ public class StateSimulator implements Runnable {
 	public StateSimulator() {
 		//generator = new Random(System.currentTimeMillis());
 		engine = new SimulatorEngine();
+		overlord = GUIManager.getDefaultGUIManager();
 	}
 
 	/**
@@ -120,9 +122,9 @@ public class StateSimulator implements Runnable {
 	 * @return boolean - true, jeśli wszystko się udało
 	 */
 	public boolean initiateSim(NetType simNetType, boolean maxMode, boolean singleMode) {
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		time_transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTimeTransitions();
-		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		transitions = overlord.getWorkspace().getProject().getTransitions();
+		time_transitions = overlord.getWorkspace().getProject().getTimeTransitions();
+		places = overlord.getWorkspace().getProject().getPlaces();
 		if(transitions == null || places == null) {
 			readyToSimulate = false;
 			return readyToSimulate;
@@ -147,7 +149,7 @@ public class StateSimulator implements Runnable {
 		
 		this.maxMode = maxMode;
 		this.singleMode = singleMode;
-		if(singleMode && GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+		if(singleMode && overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
 			this.maxMode = true;
 		} else {
 			this.maxMode = false;
@@ -197,7 +199,7 @@ public class StateSimulator implements Runnable {
 		if(maxMode)
 			max = "maximum";
 		
-		GUIManager.getDefaultGUIManager().log("Starting states simulation for "+stepsLimit+" steps in "+max+" mode.", "text", true);
+		overlord.log("Starting states simulation for "+stepsLimit+" steps in "+max+" mode.", "text", true);
 		
 		int trueSteps = 0;
 		for(int i=0; i<stepsLimit; i++) {
@@ -251,7 +253,7 @@ public class StateSimulator implements Runnable {
 			double sumOfTokens = placesAvgData.get(p);
 			placesAvgData.set(p, sumOfTokens/(double)trueSteps);
 		}
-		GUIManager.getDefaultGUIManager().log("Simulation ended. Restoring zero marking.", "text", true);
+		overlord.log("Simulation ended. Restoring zero marking.", "text", true);
 		readyToSimulate = false;
 		restoreInternalMarkingZero();
 	}
@@ -543,7 +545,7 @@ public class StateSimulator implements Runnable {
 	 */
 	public int simulateNetSimple(int steps, boolean placesToo) {
 		if(readyToSimulate == false) {
-			GUIManager.getDefaultGUIManager().log("Simulation simple mode cannot start.", "warning", true);
+			overlord.log("Simulation simple mode cannot start.", "warning", true);
 			return 0;
 		}
 		prepareNetM0(); //backup, m0, etc.
@@ -599,7 +601,7 @@ public class StateSimulator implements Runnable {
 	 */
 	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place place) {
 		if(readyToSimulate == false) {
-			GUIManager.getDefaultGUIManager().log("Simulation for place "+place.getName()+" cannot start.", "warning", true);
+			overlord.log("Simulation for place "+place.getName()+" cannot start.", "warning", true);
 			return null;
 		}
 		prepareNetM0();
@@ -633,7 +635,7 @@ public class StateSimulator implements Runnable {
 	 */
 	public ArrayList<Integer> simulateNetSingleTransition(int steps, Transition trans) {
 		if(readyToSimulate == false) {
-			GUIManager.getDefaultGUIManager().log("Simulation for transition "+trans.getName()+" cannot start.", "warning", true);
+			overlord.log("Simulation for transition "+trans.getName()+" cannot start.", "warning", true);
 			return null;
 		}
 		prepareNetM0();
@@ -774,7 +776,7 @@ public class StateSimulator implements Runnable {
 					continue;
 				
 				if(arc.getArcType() != TypesOfArcs.NORMAL) {
-					GUIManager.getDefaultGUIManager().log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
+					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
 							" arc: "+arc.toString(), "error", true);
 				}
 				place.modifyTokensNumber(arc.getWeight());
@@ -834,9 +836,7 @@ public class StateSimulator implements Runnable {
 	 * Metoda przygotowuje backup stanu sieci
 	 */
 	public void prepareNetM0() {
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-		}
+		overlord.getWorkspace().getProject().restoreMarkingZero();
 		saveInternalMarkingZero(); //zapis aktualnego stanu jako m0
 		clearTransitionsValues();
 	}

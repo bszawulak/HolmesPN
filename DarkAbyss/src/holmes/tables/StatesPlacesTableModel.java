@@ -4,8 +4,9 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EventObject;
 
-import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
+
+import holmes.windows.HolmesStatesManager;
 
 /**
  * Model tabeli stanów początkowych sieci.
@@ -18,11 +19,15 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
+	private HolmesStatesManager boss;
+	
+	public boolean changes = false;
 
 	/**
 	 * Konstruktor klasy modelującej tablicę stanów początkowych.
 	 */
-	public StatesPlacesTableModel(int placesNumber) {
+	public StatesPlacesTableModel(int placesNumber, HolmesStatesManager boss) {
+		this.boss = boss;
 		columnNames = new String[placesNumber+2];
 		columnNames[0] = "Selected";
 		columnNames[1] = "mID";
@@ -35,12 +40,42 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 	}
 	
 	/**
+	 * Czyści model tablicy.
+	 * @param placesNumber int - liczba miejsc sieci
+	 */
+	public void clearModel(int placesNumber) {
+		columnNames = new String[placesNumber+2];
+		columnNames[0] = "Selected";
+		columnNames[1] = "mID";
+		for(int i=0; i<placesNumber; i++) {
+			columnNames[i+2] = "t"+i;
+		}
+		
+		dataMatrix = new ArrayList<ArrayList<String>>();
+		dataSize = 0;
+		
+	}
+	
+	/**
 	 * Metoda służaca do dodawania nowego wiersza (danych tranzycji) do tabeli danych.
 	 * @param dataRow ArrayList[String] - wiersz danych
 	 */
 	public void addNew(ArrayList<String> dataRow) {
 		dataMatrix.add(dataRow);
 		dataSize++;
+	}
+	
+	/**
+	 * Metada ustawia flagę wyboru odpowiedniego stanu.
+	 * @param row int - nr wiersza
+	 */
+	public void setSelected(int row) {
+		for(int i=0; i<dataSize; i++) {
+			if(i == row)
+				dataMatrix.get(i).set(0, "X");
+			else
+				dataMatrix.get(i).set(0, "");
+		}
 	}
 	
 	/**
@@ -84,6 +119,9 @@ public class StatesPlacesTableModel extends AbstractTableModel {
         return getValueAt(0, columnIndex).getClass();
     }
     
+    /**
+     * Zwraca status edytowalności komórek.
+     */
     public boolean isCellEditable(int row, int column) {
     	if(column > 1) {
     		return true;
@@ -92,6 +130,11 @@ public class StatesPlacesTableModel extends AbstractTableModel {
     	}
     }
     
+    /**
+     * Określa po ilu kliknięciach następuje edycja komórki
+     * @param evt EventObject
+     * @return boolean
+     */
     public boolean isCellEditable(EventObject evt) {
         if (evt instanceof MouseEvent) {
             int clickCount = 1;
@@ -130,8 +173,17 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 		}
 	}
 	
+	
 	public void setValueAt(Object value, int row, int col) {
-		ArrayList<String> rowVector = dataMatrix.get(row);
-		rowVector.set(col, ""+value);
+		double newValue = 0;
+		try {
+			newValue = Double.parseDouble(value.toString());
+			ArrayList<String> rowVector = dataMatrix.get(row);
+			rowVector.set(col, ""+(int)newValue);
+			//change state vector:
+			boss.changeState(row, col, newValue);
+		} catch (Exception e) {
+			
+		}
 	}
 }

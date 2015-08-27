@@ -33,6 +33,7 @@ import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.StateSimulator;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.utilities.Tools;
+import holmes.windows.HolmesStatesManager;
 
 /**
  * Klasa odpowiedzialna za tworzenie podstrony knockoutSim.
@@ -104,6 +105,10 @@ public class HolmesStSimKnock extends JPanel {
 	public boolean refSimInProgress = false;
 	public boolean dataSimInProgress = false;
 	
+	
+	private JLabel selStateLabel;
+	private JButton stateManagerButton;
+	
 	/**
 	 * Konstruktor obiektu klasy HolmesStateSimulatorKnockout.
 	 * @param holmesStateSimulator 
@@ -162,7 +167,6 @@ public class HolmesStSimKnock extends JPanel {
 		});
 		result.add(acqRefDataButton);
 		
-		//TODO:
 		JButton cancelButton = new JButton();
 		cancelButton.setText("STOP");
 		cancelButton.setBounds(posXda, posYda+55, 110, 25);
@@ -408,13 +412,31 @@ public class HolmesStSimKnock extends JPanel {
 	 */
 	public JPanel getButtonsPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Dataset options"));
+		result.setBorder(BorderFactory.createTitledBorder("Starting state options"));
 		result.setPreferredSize(new Dimension(300, 150));
 		doNotUpdate = true;
-		//int posXda = 10;
-		//int posYda = 15;
+		int posXda = 10;
+		int posYda = 15;
 		
-		
+		JLabel stateLabel0 = new JLabel("Selected m0 state ID: ");
+		stateLabel0.setBounds(posXda, posYda, 130, 20);
+		result.add(stateLabel0);
+		    
+		selStateLabel = new JLabel(""+GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().selectedState);
+	    selStateLabel.setBounds(posXda+140, posYda, 60, 20);
+	    result.add(selStateLabel);
+	    
+	    stateManagerButton = new JButton();
+	    stateManagerButton.setText("States manager");
+	    stateManagerButton.setBounds(posXda, posYda+20, 130, 30);
+	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
+	    stateManagerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				new HolmesStatesManager();
+			}
+		});
+	    stateManagerButton.setFocusPainted(false);
+	    result.add(stateManagerButton);
 		
 		doNotUpdate = false;
 	    return result;
@@ -525,7 +547,7 @@ public class HolmesStSimKnock extends JPanel {
 		dataSelectedTransTextArea.setEditable(true);
         JPanel dataFieldPanel = new JPanel();
         dataFieldPanel.setLayout(new BorderLayout());
-        dataFieldPanel.add(new JScrollPane(dataSelectedTransTextArea),BorderLayout.CENTER);
+        dataFieldPanel.add(new JScrollPane(dataSelectedTransTextArea), BorderLayout.CENTER);
         dataFieldPanel.setBounds(posXda+640, posYda, 230, 45);
         result.add(dataFieldPanel);
         
@@ -923,6 +945,8 @@ public class HolmesStSimKnock extends JPanel {
 		dataSimStepsSpinner.setEnabled(state);
 		dataSimRepsSpinner.setEnabled(state);
 		
+		stateManagerButton.setEnabled(state);
+		
 		GUIManager.getDefaultGUIManager().getFrame().setEnabled(state);
 	}
 	
@@ -952,6 +976,9 @@ public class HolmesStSimKnock extends JPanel {
 	 */
 	public void updateFreshKnockoutTab() {
 		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		
+		int sel = pn.accessStatesManager().selectedState;
+		selStateLabel.setText(""+sel);
 		
 		//reference data:
 		ArrayList<NetSimulationData> references = pn.accessSimKnockoutData().accessReferenceSets();
@@ -1038,9 +1065,8 @@ public class HolmesStSimKnock extends JPanel {
 			dataMctCombo.addItem("---");
 			ArrayList<ArrayList<Transition>> mcts = pn.getMCTMatrix();
 			ArrayList<String> mctNames = pn.accessMCTnames();
-			int size = mcts.size();
-			if(mcts != null && size > 0) {
-				for(int m=0; m < size; m++) {
+			if(mcts != null && mcts.size() > 0) {
+				for(int m=0; m < mcts.size(); m++) {
 					dataMctCombo.addItem("MCT"+(m+1)+": "+mctNames.get(m));
 				}
 			}

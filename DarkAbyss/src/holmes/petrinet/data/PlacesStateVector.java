@@ -10,12 +10,14 @@ import java.util.ArrayList;
  */
 public class PlacesStateVector {
 	private ArrayList<Double> stateVector;
+	public String stateType;
 	
 	/**
 	 * Konstruktor obiektu klasy PlacesStateVector.
 	 */
 	public PlacesStateVector() {
 		stateVector = new ArrayList<>();
+		stateType = "NORMAL";
 	}
 	
 	/**

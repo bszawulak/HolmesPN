@@ -70,6 +70,7 @@ import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
+import holmes.windows.HolmesStatesManager;
 import holmes.workspace.WorkspaceSheet;
 
 /**
@@ -377,11 +378,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		resetButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-					GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-					GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup = false;
-				}
-				//mode = SIMULATOR;
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 			}
 		});
 		components.add(resetButton);
@@ -393,22 +390,42 @@ public class HolmesDockWindowsTable extends JPanel {
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning("Operation impossible when simulator is working."
-						, "Warning") == true)
+				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+						"Operation impossible while simulator is working.", "Warning") == true)
 					return;
 				
 				Object[] options = {"Save new m0 state", "Cancel",};
 				int n = JOptionPane.showOptionDialog(null,
-								"Do you want to replace saved m0 state with the current one?",
+								"Add new net state to states table?",
 								"Saving m0 state", JOptionPane.YES_NO_OPTION,
 								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-				if (n == 0)
-					GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveMarkingZero();
+				if (n == 0) {
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().addCurrentState();
+				}
 			}
 		});
 		components.add(saveButton);
 		
-		columnB_Y += 30;
+		JButton statesButton = new JButton("State manager");
+		statesButton.setName("State manager");
+		statesButton.setBounds(columnA_posX, columnB_Y += 35, colACompLength*2, 30);
+		statesButton.setToolTipText("Open states manager window.");
+		statesButton.setEnabled(true);
+		statesButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+					JOptionPane.showMessageDialog(null, "Net simulator must be stopped in order to access state manager.", 
+							"Simulator working", JOptionPane.WARNING_MESSAGE);
+				} else {
+					new HolmesStatesManager();
+				}
+			}
+		});
+		components.add(statesButton);
+		
+		columnB_Y += 35;
+		columnA_Y += 35;
 		//doNotUpdate = false;
 		maximumModeCheckBox = new JCheckBox("Maximum mode");
 		maximumModeCheckBox.setBounds(columnA_posX, columnA_Y += 30, 200, 20);

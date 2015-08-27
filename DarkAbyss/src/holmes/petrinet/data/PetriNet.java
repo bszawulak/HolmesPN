@@ -79,12 +79,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private PetriNetMethods methods;
 	private boolean isSimulationActive = false;
 	
-	/** wektor tokenów dla miejsc: */
-	private ArrayList<Integer> backupMarkingZero = new ArrayList<Integer>();
-	/** Wartość flagi == true jeżeli został już utworzony backup PRZEZ symulator */
-	public boolean isBackup = false;
-	
 	public boolean anythingChanged = false;
+	public GUIManager overlord;
 	
 	/**
 	 * Konstruktor obiektu klasy PetriNet - działa dla symulatora inwariantów.
@@ -99,6 +95,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		mcsData = new MCSDataMatrix();
 		methods = new PetriNetMethods(this);
 		simData = new NetSimulationDataCore();
+		overlord = GUIManager.getDefaultGUIManager();
 	}
 
 	/**
@@ -116,6 +113,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		mcsData = new MCSDataMatrix();
 		methods = new PetriNetMethods(this);
 		simData = new NetSimulationDataCore();
+		overlord = GUIManager.getDefaultGUIManager();
 	}
 	
 	/**
@@ -134,7 +132,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * w wielu obiektach programu.
 	 */
 	public void resetData() {
-		GUIManager.getDefaultGUIManager().log("Removing all nodes (places and transition) and all arcs.", "text", true);
+		overlord.log("Removing all nodes (places and transition) and all arcs.", "text", true);
 		getDataCore().nodes.clear();
 		getDataCore().arcs.clear();
 		getDataCore().netName = "default";
@@ -450,7 +448,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			MCTCalculator analyzer = getWorkspace().getProject().getMCTanalyzer();
 			ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
 			getWorkspace().getProject().setMCTMatrix(mct, true);
-			GUIManager.getDefaultGUIManager().getMctBox().showMCT(mct);
+			overlord.getMctBox().showMCT(mct);
 		}
 	}
 	
@@ -683,35 +681,16 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	//*********************************************************************************
-
-	/**
-	 * Metoda ta zapisuje liczbę tokenów każdego miejsca tworząc kopię zapasową stanu m0.
-	 */
-	public void saveMarkingZero() {
-		ArrayList<Place> places = getPlaces();
-		backupMarkingZero.clear();
-		for(int i=0; i<places.size(); i++) {
-			backupMarkingZero.add(places.get(i).getTokensNumber());
-		}
-		isBackup = true;
-	}
 	
 	/**
 	 * Metoda ta przywraca stan sieci przed rozpoczęciem symulacji. Liczba tokenów jest przywracana
-	 * z wektora danych pamiętających ostatni backup, tranzycje są resetowane wewnętrznie. Następnie
-	 * flaga oznaczające istnienie backupu ustawiana jest na false.
+	 * z aktualnie wskazanego stanu w managerze stanów, tranzycje są resetowane wewnętrznie.
 	 */
 	public void restoreMarkingZero() {
 		try {
-			ArrayList<Place> places = getPlaces();
 			ArrayList<Transition> transitions = getTransitions();
-			
-			for(int i=0; i<places.size(); i++) {
-				places.get(i).setTokensNumber(backupMarkingZero.get(i));
-				places.get(i).freeReservedTokens();
-				//backupMarkingZero.add(places.get(i).getTokensNumber());
-			}
-			
+			accessStatesManager().restoreSelectedState();
+	
 			for(int i=0; i<transitions.size(); i++) {
 				Transition trans = transitions.get(i);
 				trans.setLaunching(false);
@@ -720,19 +699,17 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					trans.resetTimeVariables();
 				}
 			}
-			isBackup = false;
 			
-			NetType nt = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
+			NetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
 			setSimulator(new NetSimulator(nt, this));
-			//setSimulator(new NetSimulator(NetType.BASIC, this));
-			GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
-			GUIManager.getDefaultGUIManager().io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
-			GUIManager.getDefaultGUIManager().simSettings.currentStep = getSimulator().getSimulatorTimeStep();
+			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
+			overlord.io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
+			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep();
 			
 			repaintAllGraphPanels();
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Unknown error: unable to restore state m0 on request.", "error", true);
+			overlord.log("Unknown error: unable to restore state m0 on request.", "error", true);
 		}
 	}
 	
@@ -869,7 +846,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param path String - ścieżka do pliku odczytu
 	 */
 	public boolean loadFromFile(String path) {
-		boolean status = GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
+		boolean status = overlord.reset.newProjectInitiated();
 		if(status == false) {
 			return false;
 		}
@@ -892,8 +869,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 			// Formaty Snoopiego
 			if (path.endsWith(".spped") || path.endsWith(".spept") || path.endsWith(".colpn") || path.endsWith(".sptpt")) {
-				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programUseOldSnoopyLoaders").equals("1")) {
-					GUIManager.getDefaultGUIManager().log("Activating old Snoopy loader. Will fail for hierarchical networks.", "text", true);
+				if(overlord.getSettingsManager().getValue("programUseOldSnoopyLoaders").equals("1")) {
+					overlord.log("Activating old Snoopy loader. Will fail for hierarchical networks.", "text", true);
 					InputStream xmlInput = new FileInputStream(path);
 					SAXParser saxParser = readerSNOOPY.newSAXParser();
 					if (path.endsWith(".spped")) {
@@ -928,14 +905,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					SnoopyReader reader = new SnoopyReader(0, path);
 					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
 					accessStatesManager().createCleanState();
-					GUIManager.getDefaultGUIManager().subnetsGraphics.addRequiredSheets();
-					GUIManager.getDefaultGUIManager().subnetsGraphics.resizePanels();
-					GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
+					overlord.subnetsGraphics.addRequiredSheets();
+					overlord.subnetsGraphics.resizePanels();
+					overlord.getWorkspace().setSelectedDock(0);
 				}
 				
-				int nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size() - 1;
-				int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
-				GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(SIN).getGraphPanel();
+				int nodeSID = overlord.getWorkspace().getSheets().size() - 1;
+				int SIN = overlord.IDtoIndex(nodeSID);
+				GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(SIN).getGraphPanel();
 				graphPanel.setOriginSize(graphPanel.getSize());
 				graphPanel.repaint();
 			}
@@ -946,11 +923,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				accessStatesManager().createCleanState();
 			}
 			
-			GUIManager.getDefaultGUIManager().log("Petri net successfully imported from file "+path, "text", true);
+			overlord.log("Petri net successfully imported from file "+path, "text", true);
 			return true;
 		} catch (Throwable err) {
 			err.printStackTrace();
-			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
+			overlord.log("Error: " + err.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -975,12 +952,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				if(!silence)
 					JOptionPane.showMessageDialog(null, "There are no invariants to export.",
 						"Warning",JOptionPane.WARNING_MESSAGE);
-				GUIManager.getDefaultGUIManager().log("No invariants, saving into CSV file failed.","error", true);
+				overlord.log("No invariants, saving into CSV file failed.","error", true);
 				result = -1;
 			}
 		} catch (Throwable err) {
 			err.printStackTrace();
-			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
+			overlord.log("Error: " + err.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -998,18 +975,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				JOptionPane.showMessageDialog(null,
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
-				GUIManager.getDefaultGUIManager().log("Invariants saved into .inv INA file.","text", true);
+				overlord.log("Invariants saved into .inv INA file.","text", true);
 				result = 0;
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"There are no invariants to export",
 						"Warning",JOptionPane.WARNING_MESSAGE);
-				GUIManager.getDefaultGUIManager().log("No invariants, saving into CSV file failed.","error", true);
+				overlord.log("No invariants, saving into CSV file failed.","error", true);
 				result = -1;
 			}
 		} catch (Throwable err) {
 			err.printStackTrace();
-			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
+			overlord.log("Error: " + err.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1026,17 +1003,17 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				communicationProtocol.writeCharlieInv(path, getINVmatrix(), getTransitions());
 				JOptionPane.showMessageDialog(null, "Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
-				GUIManager.getDefaultGUIManager().log("Invariants saved in Charlie file format.","text", true);
+				overlord.log("Invariants saved in Charlie file format.","text", true);
 				result = 0;
 			} else {
 				JOptionPane.showMessageDialog(null, "There are no invariants to export.",
 						"Warning",JOptionPane.WARNING_MESSAGE);
-				GUIManager.getDefaultGUIManager().log("No invariants, saving into CSV file failed.","error", true);
+				overlord.log("No invariants, saving into CSV file failed.","error", true);
 				result = -1;
 			}
 		} catch (Throwable err) {
 			err.printStackTrace();
-			GUIManager.getDefaultGUIManager().log("Error: " + err.getMessage(), "error", true);
+			overlord.log("Error: " + err.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1053,10 +1030,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				return false;
 			
 			setINVmatrix(communicationProtocol.getInvariantsList(), true);
-			GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true); //status inwariantów: wczytane
+			overlord.reset.setInvariantsStatus(true); //status inwariantów: wczytane
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Invariants reading and/or adding to program failed.", "error", true);
+			overlord.log("Invariants reading and/or adding to program failed.", "error", true);
 			return false;
 		}
 	}
@@ -1123,10 +1100,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			int tSID;
 			ArrayList<Integer> sheetList = new ArrayList<Integer>();
 			int k = 0;
-			for (k = 0; k < GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size(); k++)
-				sheetList.add(GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(k).getId());
+			for (k = 0; k < overlord.getWorkspace().getSheets().size(); k++)
+				sheetList.add(overlord.getWorkspace().getSheets().get(k).getId());
 
-			int[] tabSID = new int[GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(k - 1).getId() + 1];
+			int[] tabSID = new int[overlord.getWorkspace().getSheets().get(k - 1).getId() + 1];
 
 			for (int j = 0; j < getDataCore().nodes.size(); j++) {
 				for (int i = 0; i < getDataCore().nodes.get(j).getNodeLocations().size(); i++) {
@@ -1147,7 +1124,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if (emptySheet == true) {
 				SID = emptySheetIndex;
 			} else {
-				SID = GUIManager.getDefaultGUIManager().getWorkspace().newTab(false, new Point(0,0), 1, MetaType.SUBNET);
+				SID = overlord.getWorkspace().newTab(false, new Point(0,0), 1, MetaType.SUBNET);
 			}
 		}
 		return SID;
@@ -1223,7 +1200,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * FOR EDUCATIONAL (EXAMPLE TYPE: "DON'T DO IT") PURPOSES
 	 */
 	public void deleteProjectData() {
-		GUIManager.getDefaultGUIManager().log("Net data deletion initiated.", "text", true);
+		overlord.log("Net data deletion initiated.", "text", true);
 		for (GraphPanel gp : getGraphPanels()) {
 			gp.getSelectionManager().forceDeselectAllElements();
 		}

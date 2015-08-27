@@ -29,6 +29,7 @@ import holmes.petrinet.elements.Transition.TransitionType;
  * 
  */
 public class SelectionManager {
+	private GUIManager overlord;
 	private GraphPanel graphPanel;
 	private ArrayList<Node> graphPanelNodes;
 	private ArrayList<Arc> graphPanelArcs;
@@ -44,6 +45,7 @@ public class SelectionManager {
 		this.setGraphPanel(parentGraphPanel);
 		this.graphPanelNodes = parentGraphPanel.getNodes();
 		this.graphPanelArcs = parentGraphPanel.getArcs();
+		this.overlord = GUIManager.getDefaultGUIManager();
 	}
 
 	/**
@@ -280,10 +282,10 @@ public class SelectionManager {
 	 * @param el ElementLocation - lokalizacja wierzchołka który ma został usunięty
 	 */
 	public void deleteElementLocation(ElementLocation el) {
-		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
 		ArrayList<Place> places = pn.getPlaces();
 		
-		boolean canDo = GUIManager.getDefaultGUIManager().subnetsHQ.checkIfExpendable(el);
+		boolean canDo = overlord.subnetsHQ.checkIfExpendable(el);
 		if(canDo == false) {
 			JOptionPane.showMessageDialog(null, 
 					"This element is the only one that leads to subnet\n"
@@ -334,7 +336,7 @@ public class SelectionManager {
 				i.remove();
 			}
 			
-			GUIManager.getDefaultGUIManager().subnetsHQ.validateMetaArcs(sheetModified, false, false);
+			overlord.subnetsHQ.validateMetaArcs(sheetModified, false, false);
 			this.getGraphPanel().repaint();
 			this.invokeActionListener();
 		}
@@ -347,7 +349,7 @@ public class SelectionManager {
 	 * jednak nie są one tutaj wywoływane.
 	 */
 	public void deleteAllSelectedElements() {
-		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
 		ArrayList<Place> places = pn.getPlaces();
 		ArrayList<Integer> sheetsModified = new ArrayList<Integer>();
 		ArrayList<ElementLocation> protectedList = new ArrayList<ElementLocation>();
@@ -355,7 +357,7 @@ public class SelectionManager {
 		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
 			ElementLocation el = i.next();
 			
-			boolean canDo = GUIManager.getDefaultGUIManager().subnetsHQ.checkIfExpendable(el);
+			boolean canDo = overlord.subnetsHQ.checkIfExpendable(el);
 			if(canDo == false) {
 				protectedList.add(el);
 				continue;
@@ -430,7 +432,7 @@ public class SelectionManager {
 			i.remove();
 		}
 		
-		GUIManager.getDefaultGUIManager().subnetsHQ.validateMetaArcs(sheetsModified, false, false);
+		overlord.subnetsHQ.validateMetaArcs(sheetsModified, false, false);
 		
 		// Kasuj wszystko. I wszystkich. Wszędzie. Kill'em all:
 		this.getSelectedArcs().clear();
@@ -533,9 +535,7 @@ public class SelectionManager {
 			}
 		}
 		
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-		}
+		overlord.getWorkspace().getProject().restoreMarkingZero();
 		int selectedNodeIndex = getGraphPanelNodes().indexOf(getSelectedElementLocations().get(0).getParentNode());
 		
 		for (ElementLocation el : this.getSelectedElementLocations()) {
@@ -617,9 +617,7 @@ public class SelectionManager {
 			return;
 		}
 		
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-		}
+		overlord.getWorkspace().getProject().restoreMarkingZero();
 		
 		ElementLocation selectedEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
 		Node parent = selectedEL.getParentNode();
@@ -652,9 +650,7 @@ public class SelectionManager {
 			return;
 		}
 		
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().isBackup == true) {
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-		}
+		overlord.getWorkspace().getProject().restoreMarkingZero();
 		//dodawanie innych miejsc dla samego portalu do selectedElementLocations
 		ElementLocation nodeSelectedEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
 		Node nodeSelected = nodeSelectedEL.getParentNode(); //wybrany wierzchołek
@@ -764,8 +760,8 @@ public class SelectionManager {
 					MetaNode node = (MetaNode)el.getParentNode();
 					safetyNodesList.add(node);
 					int sheetID = node.getRepresentedSheetID();
-					int sheetIndex = GUIManager.getDefaultGUIManager().getWorkspace().getIndexOfId(sheetID);
-					GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(sheetIndex);
+					int sheetIndex = overlord.getWorkspace().getIndexOfId(sheetID);
+					overlord.getWorkspace().setSelectedDock(sheetIndex);
 					break;
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null, "Wrong sheet number linked to this meta-node.", 
@@ -888,7 +884,7 @@ public class SelectionManager {
 	 * @param arc Arc - łuk który ma zostać usunięty
 	 */
 	public void deleteArc(Arc arc) {
-		GUIManager.getDefaultGUIManager().markNetChange();
+		overlord.markNetChange();
 		arc.unlinkElementLocations();
 		this.deselectArc(arc);
 		this.getGraphPanelArcs().remove(arc);

@@ -66,6 +66,7 @@ import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
+import holmes.windows.HolmesStatesManager;
 import holmes.workspace.ExtensionFileFilter;
 
 /**
@@ -113,6 +114,8 @@ public class HolmesStSim extends JFrame {
 	private ChartProperties chartDetails;
 	private JComboBox<String> simNetMode;
 	private JComboBox<String> simMode;
+	private JLabel selStateLabel;
+	private JButton stateManagerButton;
 	
 	private JButton acqDataButton;
 	//reset:
@@ -342,7 +345,27 @@ public class HolmesStSim extends JFrame {
 	    Border border = BorderFactory.createTitledBorder("Progress");
 	    progressBar.setBorder(border);
 	    dataAcquisitionPanel.add(progressBar);
-		
+	    
+	    JLabel stateLabel0 = new JLabel("Selected m0 state ID: ");
+	    stateLabel0.setBounds(posXda+570, posYda-5, 130, 20);
+	    dataAcquisitionPanel.add(stateLabel0);
+	    
+	    selStateLabel = new JLabel(""+overlord.getWorkspace().getProject().accessStatesManager().selectedState);
+	    selStateLabel.setBounds(posXda+700, posYda-5, 60, 20);
+	    dataAcquisitionPanel.add(selStateLabel);
+	    
+	    stateManagerButton = new JButton();
+	    stateManagerButton.setText("States manager");
+	    stateManagerButton.setBounds(posXda+570, posYda+15, 130, 30);
+	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
+	    stateManagerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				new HolmesStatesManager();
+			}
+		});
+	    stateManagerButton.setFocusPainted(false);
+		dataAcquisitionPanel.add(stateManagerButton);
+	    
 		return dataAcquisitionPanel;
 	}
 
@@ -1219,6 +1242,8 @@ public class HolmesStSim extends JFrame {
 	 * Metoda wypełnia komponenty rozwijalne danymi o miejscach i tranzycjach.
 	 */
 	private void fillPlacesAndTransitionsData() {
+		selStateLabel.setText(""+overlord.getWorkspace().getProject().accessStatesManager().selectedState);
+		
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		if(places== null || places.size() == 0) {
 			placesCombo.removeAllItems();
@@ -1333,6 +1358,7 @@ public class HolmesStSim extends JFrame {
 		simStepsSpinner.setEnabled(value);
 		simNetMode.setEnabled(value);
 		simMode.setEnabled(value);
+		stateManagerButton.setEnabled(value);
 		overlord.getFrame().setEnabled(value);
 	}
 	

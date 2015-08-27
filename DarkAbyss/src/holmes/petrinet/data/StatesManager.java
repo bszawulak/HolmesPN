@@ -78,13 +78,13 @@ public class StatesManager {
 	/**
 	 * Metoda dodaje nowy stan sieci na bazie istniejącego w danej chwili w edytorze.
 	 */
-	public void addNewState() {
+	public void addCurrentState() {
 		PlacesStateVector pVector = new PlacesStateVector();
 		for(Place place : pn.getPlaces()) {
 			pVector.addPlace(place.getTokensNumber());
 		}
 		statesMatrix.add(pVector);
-		statesNames.add("Default name for state "+statesMatrix.size());
+		statesNames.add("Default name");
 	}
 	
 	/**
@@ -92,10 +92,66 @@ public class StatesManager {
 	 */
 	public void createCleanState() {
 		reset(false);
-		for(Place place : pn.getPlaces()) {
+		ArrayList<Place> places = pn.getPlaces();
+		for(Place place : places) {
 			statesMatrix.get(0).addPlace(place.getTokensNumber());
 		}
-		statesNames.set(0, "Default name for state "+statesMatrix.size());
+		statesNames.set(0, "Default name");
+	}
+	
+	/**
+	 * Metoda ustawia nowy stan miejsc sieci.
+	 * @param stateID int - nr stanu z tablicy
+	 */
+	public void setNetworkState(int stateID) {
+		ArrayList<Place> places = pn.getPlaces();
+		PlacesStateVector psVector = statesMatrix.get(stateID);
+		for(int p=0; p<places.size(); p++) {
+			Place place = places.get(p);
+			place.setTokensNumber((int)psVector.getTokens(p));
+			place.freeReservedTokens();
+		}
+		selectedState = stateID;
+	}
+	
+	/**
+	 * Przywraca aktualnie wskazywany stan m0.
+	 */
+	public void restoreSelectedState() {
+		ArrayList<Place> places = pn.getPlaces();
+		PlacesStateVector psVector = statesMatrix.get(selectedState);
+		for(int p=0; p<places.size(); p++) {
+			Place place = places.get(p);
+			place.setTokensNumber((int)psVector.getTokens(p));
+			place.freeReservedTokens();
+		}
+	}
+	
+	/**
+	 * Metoda służąca do usuwania stanów sieci.
+	 * @param stateID int - indeks stanu
+	 */
+	public void removeState(int stateID) {
+		statesMatrix.remove(stateID);
+		selectedState = 0;
+	}
+	
+	/**
+	 * Zwraca opis stanu.
+	 * @param selected int - nr stanu sieci
+	 * @return String - opis
+	 */
+	public String getStateDescription(int selected) {
+		return statesNames.get(selected);
+	}
+	
+	/**
+	 * Ustawia opis stanu sieci.
+	 * @param selected int - nr stanu sieci
+	 * @return String - opis
+	 */
+	public void setStateDescription(int selected, String newText) {
+		statesNames.set(selected, newText);
 	}
 	
 	/**

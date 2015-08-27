@@ -21,19 +21,16 @@ public class RXTable extends JTable {
 
     /**
      * Constructs a default <code>RXTable</code> that is initialized with a default
-     * data model, a default column model, and a default selection
-     * model.
+     * data model, a default column model, and a default selection model.
      */
     public RXTable() {
         this(null, null, null);
     }
 
     /**
-     * Constructs a <code>RXTable</code> that is initialized with
-     * <code>dm</code> as the data model, a default column model,
+     * Constructs a <code>RXTable</code> that is initialized with <code>dm</code> as the data model, a default column model,
      * and a default selection model.
-     *
-     * @param dm        the data model for the table
+     * @param dm the data model for the table
      */
     public RXTable(TableModel dm) {
         this(dm, null, null);
@@ -67,8 +64,7 @@ public class RXTable extends JTable {
      * @param numRows           the number of rows the table holds
      * @param numColumns        the number of columns the table holds
      */
-    public RXTable(int numRows, int numColumns)
-    {
+    public RXTable(int numRows, int numColumns) {
         this(new DefaultTableModel(numRows, numColumns));
     }
 
@@ -129,8 +125,7 @@ public class RXTable extends JTable {
 	/*
 	 *  Sets the Select All property for for all event types
 	 */
-	public void setSelectAllForEdit(boolean isSelectAllForEdit)
-	{
+	public void setSelectAllForEdit(boolean isSelectAllForEdit) {
 		setSelectAllForMouseEvent( isSelectAllForEdit );
 		setSelectAllForActionEvent( isSelectAllForEdit );
 		setSelectAllForKeyEvent( isSelectAllForEdit );
@@ -139,16 +134,14 @@ public class RXTable extends JTable {
 	/*
 	 *  Set the Select All property when editing is invoked by the mouse
 	 */
-	public void setSelectAllForMouseEvent(boolean isSelectAllForMouseEvent)
-	{
+	public void setSelectAllForMouseEvent(boolean isSelectAllForMouseEvent) {
 		this.isSelectAllForMouseEvent = isSelectAllForMouseEvent;
 	}
 
 	/*
 	 *  Set the Select All property when editing is invoked by the "F2" key
 	 */
-	public void setSelectAllForActionEvent(boolean isSelectAllForActionEvent)
-	{
+	public void setSelectAllForActionEvent(boolean isSelectAllForActionEvent) {
 		this.isSelectAllForActionEvent = isSelectAllForActionEvent;
 	}
 
@@ -156,8 +149,7 @@ public class RXTable extends JTable {
 	 *  Set the Select All property when editing is invoked by
 	 *  typing directly into the cell
 	 */
-	public void setSelectAllForKeyEvent(boolean isSelectAllForKeyEvent)
-	{
+	public void setSelectAllForKeyEvent(boolean isSelectAllForKeyEvent) {
 		this.isSelectAllForKeyEvent = isSelectAllForKeyEvent;
 	}
 }  // End of Class RXTable

@@ -3,10 +3,10 @@ package holmes.tables;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.text.DecimalFormat;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
@@ -17,7 +17,10 @@ import javax.swing.table.TableCellRenderer;
  */
 public class StatesPlacesTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
+	private static final DecimalFormat formatter = new DecimalFormat( "#" );
 	private JTable table;
+	private static final Font fontNormal =  new Font("Verdana", Font.PLAIN, 9);
+	private static final Font fontBold =  new Font("Verdana", Font.BOLD, 9);
 	
 	/**
 	 * Konstruktor domyślny obiektów klasy StatesPlacesTableRenderer.
@@ -52,12 +55,29 @@ public class StatesPlacesTableRenderer implements TableCellRenderer {
      * @return Component - konkretnie: JTextField jako komórka tabeli
      */
 	private Component paintCellsInvariants(Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		
-		renderer.setBackground(Color.white);
-    	renderer.setFont(new Font("Arial", Font.BOLD, 9));
+		//Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		//renderer.setBackground(Color.white);
+    	//renderer.setFont(new Font("Arial", Font.BOLD, 9));
+		//renderer.setFont(fontNormal);
     	
-    	JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		oLabel.setBackground(Color.white);
+		oLabel.setFont(fontNormal);
+		int selectedRow = table.getSelectedRow();
+		Object firstCell = table.getValueAt(row, 0);
+
+    	if(firstCell.toString().equals("X")) {
+    		oLabel.setFont(fontBold);
+    	}
+    	if(selectedRow == row)
+    		oLabel.setBackground(Color.lightGray);
+    	
+    	
+    	if(value instanceof Double) {
+            value = formatter.format((Number)value);
+        }
+    	
+    	
     	oLabel.setText(value.toString());
         return oLabel;
 
