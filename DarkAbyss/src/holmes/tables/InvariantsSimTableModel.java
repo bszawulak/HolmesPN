@@ -7,7 +7,7 @@ import javax.swing.table.AbstractTableModel;
 import holmes.darkgui.GUIManager;
 
 /**
- * Klasa model dla tabeli inwariantów.
+ * Klasa model dla tabeli inwariantów okna HolmesNetTables.
  * @author MR
  */
 public class InvariantsSimTableModel extends AbstractTableModel {

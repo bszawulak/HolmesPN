@@ -68,7 +68,7 @@ public class HolmesClusters extends JFrame {
 	private static final long serialVersionUID = -8420712475473581772L;
 
 	private JTable table;
-	private DefaultTableModel  model;
+	private DefaultTableModel model;
 	private int subRowsSize = 0;
     private final HolmesClusters myself;
     private int clustersToGenerate = 0;
@@ -83,6 +83,8 @@ public class HolmesClusters extends JFrame {
     private String pathClustersDir = "";
 
     private JPanel tablePanel;
+    
+    private JScrollPane scrollTablePane;
     
     /**
      * Jeśli true - zapis inwariantów do pliku csv w postaci binarnej
@@ -376,10 +378,8 @@ public class HolmesClusters extends JFrame {
         model.addColumn("Column22");
 
         table = new JTable(model);
-        //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
         table.setDefaultRenderer(Object.class, tabRenderer); // 0 - case 56
-        
         table.addMouseListener(new MouseAdapter() { //listener kliknięć
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
@@ -429,9 +429,15 @@ public class HolmesClusters extends JFrame {
         		//table.getColumnModel().getColumn(index).setPreferredWidth(20);
         	}
         }
+        
 
-        JScrollPane scrollPane = new JScrollPane(table);
-        main.add(scrollPane);
+    	//for(int metric=0; metric <8; metric++) { //dla każdej z ośmiu metryk:
+    	//	String[] data = { "AAAA","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H"};
+		//	model.addRow(data);
+    	//}
+
+        scrollTablePane = new JScrollPane(table);
+        main.add(scrollTablePane);
         return main;
     }
     
@@ -443,7 +449,7 @@ public class HolmesClusters extends JFrame {
      */
     private void cellClickedEvent(int row, int column) {
 		int sub = subRowsSize;
-		if(column != 0 && row % (sub+1) != 0) { // NIE dla I kolumny i wierszy nagłó	wkowych
+		if(column != 0 && row % (sub+1) != 0) { // NIE dla I kolumny i wierszy nagłówkowych
 			try {
 				//tutaj dzieje się magia na liczbach - jednakoż dzieje się prawidłowo, dlatego
 				//lepiej tutaj niczego nie zmieniać we wzorach
@@ -480,12 +486,13 @@ public class HolmesClusters extends JFrame {
     	} 
     	
     	GUIManager.getDefaultGUIManager().log("Clearing old clusterings data table", "text", true);
-    	
+
     	tabRenderer.setMode(mode);  // !!!
     	tabRenderer.setSubRows(subRowsSize); // !!! zła wartość i tabela idzie w ....
     	//CLEAR OLD TABLE ROWS:
-    	model.setNumRows(0);
-    	table.revalidate();
+    	model.setRowCount(0);
+    	//model.setNumRows(0);
+    	
     	
     	String[] metricName = { "Correlation", "Pearson", "Binary", "Canberra", "Euclidean", "Manhattan", "Maximum", "Minkowski" };
     	
@@ -514,6 +521,10 @@ public class HolmesClusters extends JFrame {
 			}
     	}
     	GUIManager.getDefaultGUIManager().log("New clustering data table has been successfully read.", "text", true);
+    	model.fireTableDataChanged();
+    	table.revalidate();
+    	
+    	scrollTablePane.repaint();
     }
     
 	/**
@@ -934,8 +945,7 @@ public class HolmesClusters extends JFrame {
          * @return Component - konkretnie: JTextField jako komórka tabeli
          */
 		private Component paintCellsCase56(Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(
-					table, value, isSelected, hasFocus, row, column);
+			Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
 		    if(column==0) {
 		    	((DefaultTableCellRenderer)renderer).setHorizontalAlignment(DefaultTableCellRenderer.LEFT);

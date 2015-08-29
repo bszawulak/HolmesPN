@@ -66,7 +66,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 	}
 	
 	/**
-	 * Metada ustawia flagę wyboru odpowiedniego stanu.
+	 * Metoda ustawia flagę wyboru odpowiedniego stanu.
 	 * @param row int - nr wiersza
 	 */
 	public void setSelected(int row) {

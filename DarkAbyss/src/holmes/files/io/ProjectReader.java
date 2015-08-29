@@ -935,7 +935,8 @@ public class ProjectReader {
 					int readLines = 1;
 					go = true;
 					while(go) {
-						line = line.replace(" ", "");
+						line = line.trim();
+						line = line.replace("_", " ");
 						invariantsNames.add(line);
 						
 						line = buffer.readLine();
@@ -1024,7 +1025,8 @@ public class ProjectReader {
 					int readLines = 1;
 					go = true;
 					while(go) {
-						line = line.replace(" ", "");
+						line = line.trim();
+						line = line.replace("_", " ");
 						mctNames.add(line);
 						
 						line = buffer.readLine();

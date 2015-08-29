@@ -44,7 +44,7 @@ import holmes.workspace.ExtensionFileFilter;
  * @author MR
  *
  */
-public class HolmesInvariants extends JFrame {
+public class HolmesInvariantsGenerator extends JFrame {
 	private static final long serialVersionUID = 5805567123988000425L;
 	private boolean tInvCalculation = true;
 	private JTextArea logField;
@@ -57,7 +57,7 @@ public class HolmesInvariants extends JFrame {
 	/**
 	 * Główny konstruktor okna generatora inwariantów.
 	 */
-	public HolmesInvariants() {
+	public HolmesInvariantsGenerator() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {

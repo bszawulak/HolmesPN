@@ -16,6 +16,7 @@ import javax.swing.KeyStroke;
 import holmes.darkgui.dockable.DockableMenuItem;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
+import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesStatesManager;
 
 import com.javadocking.dockable.Dockable;
@@ -330,7 +331,18 @@ public class DarkMenu extends JMenuBar {
 		});
 		netMenu.add(netTablesItem);
 		
-		JMenuItem netStatessItem = new JMenuItem("Net m0 states", KeyEvent.VK_5);
+		JMenuItem invViewItem = new JMenuItem("Invariants Viewer", KeyEvent.VK_5);
+		invViewItem.setIcon(Tools.getResIcon32("/icons/menu/aaaa.png"));
+		//invViewItem.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		invViewItem.getAccessibleContext().setAccessibleDescription("Show invariants information window");
+		invViewItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new HolmesInvariantsViewer();
+			}
+		});
+		netMenu.add(invViewItem);
+		
+		JMenuItem netStatessItem = new JMenuItem("Net m0 states", KeyEvent.VK_6);
 		netStatessItem.setIcon(Tools.getResIcon32("/icons/menu/aaaa.png"));
 		netStatessItem.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		netStatessItem.getAccessibleContext().setAccessibleDescription("Show net data states tables window");

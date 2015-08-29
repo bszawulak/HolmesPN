@@ -478,7 +478,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<Invariants names>"+newline);
 			for(int i=0; i<invNumber; i++) {
 				sp = 4;
-				bw.write(spaces(sp)+invariantsNames.get(i)+newline);
+				bw.write(spaces(sp)+invariantsNames.get(i).replace(" ", "_")+newline);
 			}
 			
 			bw.write(spaces(2)+"<EOIN>"+newline);
@@ -534,7 +534,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<MCT names>"+newline);
 			for(int i=0; i<mctNumber; i++) {
 				sp = 4;
-				bw.write(spaces(sp)+mctNames.get(i)+newline);
+				bw.write(spaces(sp)+mctNames.get(i).replace(" ", "_")+newline);
 			}
 			sp = 2;
 			bw.write(spaces(sp)+"<EOMn>"+newline);
@@ -547,7 +547,11 @@ public class ProjectWriter {
 		}
 	}
 	
-	
+	/**
+	 * Sekcja odpowiedzialna za zapis tablicy stanów sieci.
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @return boolean - true, jeśli operacja się powiodła a pacjent nie zmarł.
+	 */
 	private boolean saveStates(BufferedWriter bw) {
 		try {
 			int sp = 2;

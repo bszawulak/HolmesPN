@@ -247,6 +247,9 @@ public class HolmesStatesManager extends JFrame {
 	    return result;
 	}
 	
+	/**
+	 * Obsługa usuwania stanu sieci.
+	 */
 	private void removeStateAction() {
 		int selected = statesTable.getSelectedRow();
 		

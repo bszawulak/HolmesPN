@@ -16,7 +16,7 @@ import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.varia.Check;
-import holmes.windows.HolmesInvariants;
+import holmes.windows.HolmesInvariantsGenerator;
 
 /**
  * 10.06.2014: Metoda stara się liczyć inwarianty. Coś nie wyszło i to ostro...<br>
@@ -58,7 +58,7 @@ public class InvariantsCalculator implements Runnable {
 	private int oldReplaced = 0;
 	private int notCanonical = 0;
 	
-	private HolmesInvariants masterWindow = null;
+	private HolmesInvariantsGenerator masterWindow = null;
 	
 	/**
 	 * Konstruktor obiektu klasy InvariantsCalculator. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.

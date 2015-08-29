@@ -19,7 +19,7 @@ import holmes.utilities.Tools;
 import holmes.windows.HolmesAbout;
 import holmes.windows.HolmesClusters;
 import holmes.windows.HolmesConsole;
-import holmes.windows.HolmesInvariants;
+import holmes.windows.HolmesInvariantsGenerator;
 import holmes.windows.HolmesKnockout;
 import holmes.windows.HolmesMCS;
 import holmes.windows.HolmesNetProperties;
@@ -157,7 +157,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesStSim windowStateSim; //okno symulatora stanów
 	private HolmesNetTables windowNetTables; //okno tabel sieci
 	private HolmesNotepad windowSimulationLog; //okno logów symulatora
-	private HolmesInvariants windowInvariants; //okno generatora inwariantów
+	private HolmesInvariantsGenerator windowInvariants; //okno generatora inwariantów
 	private HolmesMCS windowMCS; //okno generatora MCS
 	private HolmesKnockout windowsKnockout;
 	
@@ -1285,7 +1285,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda tworząca okno generatora inwariantów.
 	 */
 	public void createInvariantsWindow() {
-		windowInvariants = new HolmesInvariants();
+		windowInvariants = new HolmesInvariantsGenerator();
 		windowInvariants.setVisible(false);
 	}
 	
@@ -1300,7 +1300,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda umożliwa dostęp do okna generatora.
 	 */
-	public HolmesInvariants accessInvariantsWindow() {
+	public HolmesInvariantsGenerator accessInvariantsWindow() {
 		if(windowInvariants != null)
 			return windowInvariants;
 		else

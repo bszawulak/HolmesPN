@@ -14,7 +14,7 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.varia.Check;
-import holmes.windows.HolmesInvariants;
+import holmes.windows.HolmesInvariantsGenerator;
 
 /**
  * Klasa odpowiedzialna za szukanie inwariantów wykonalnych (feasible invariants). Literatura: <br>
@@ -25,7 +25,7 @@ import holmes.windows.HolmesInvariants;
  *
  */
 public class InvariantsCalculatorFeasible {
-	private HolmesInvariants masterWindow = null;
+	private HolmesInvariantsGenerator masterWindow = null;
 	
 	private String status = "";
 	private boolean success = false;

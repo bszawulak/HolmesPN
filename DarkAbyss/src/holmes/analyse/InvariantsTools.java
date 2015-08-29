@@ -289,6 +289,7 @@ public final class InvariantsTools {
 	 * @param inv ArrayList[Integer] - inwariant (?)
 	 * @param tInv boolean - true: T-inwariant
 	 * @return ArrayList[Integer] - pierwsza wartość ([0]) to wynik, kolejne miejsca do wektor wynikowy testu (miejsca dla T-inw)
+	 * 0: normalny, -1: sub-inv., 1: sur-inv.
 	 */
 	public static ArrayList<Integer> checkInvariantV2(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> inv, boolean tInv) {
 		ArrayList<Integer> results = new ArrayList<Integer>();
@@ -1174,9 +1175,9 @@ public final class InvariantsTools {
 			ArrayList<Integer> support = InvariantsTools.getSupport(invariant);
 			
 			if(isNonFeasibleStatic(support, readArcTransLocations, transitions) == true)
-				results.add(-1);
+				results.add(-1); //non-feasible
 			else
-				results.add(1);
+				results.add(1); //feasible
 		}
 		
 		return results;
@@ -1243,7 +1244,7 @@ public final class InvariantsTools {
 	 * (STATIC) Metoda zwraca pozycje wszystkich tranzycji, do których prowadzą łuki odczytu.
 	 * @return ArrayList[Integer] - pozycje tranzycji z readarc
 	 */
-	private static ArrayList<Integer> getReadArcTransitionsStatic() {
+	public static ArrayList<Integer> getReadArcTransitionsStatic() {
 		ArrayList<Integer> raTrans = new ArrayList<Integer>();
 		ArrayList<Arc> arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -1372,5 +1373,148 @@ public final class InvariantsTools {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Metoda sprawdza dokładnie strukturę inwariantu o zadanym indeksie. Na potrzeby okna HolmesInvariantsViewer.
+	 * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @param invIndex int - indeks t-inwariantu
+	 * @param transitions ArrayList[Transition] - wektor tranzycji sieci
+	 * @param readArcTransLocations ArrayList[Integer] - wektor ID tranzycji do których prowadzą łuki odczytu
+	 * @param incidenceMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
+	 * @param supportMatrix ArrayList[ArrayList[Integer]] - macierz wsparć inwariantów
+	 * @return ArrayList[Integer] - wektor wynikowy:<br>
+	 * 		[0] = 0 : minimalny, 1+ : nieminimalny<br>
+	 * 		[1] = -1 : non-feasible, 1 : feasible<br>
+	 * 		[2] =  0 : normalny, -1 : sub-inv., 1 : sur-inv., -99 : non-inv.<br>
+	 * 		[3] = 1 : kanoniczny, -1 : niekanoniczny<br>
+	 * 		[4] = liczba tranzycji wejściowych<br>
+	 * 		[5] = czyste tranzycje wejściowe (bez readarc/inhibitor)<br>
+	 * 		[6] = liczba tranzycji wyjściowych<br>
+	 * 		[7] = zawarte łuki odczytu<br>
+	 * 		[8] = zawarte łuki blokujące<br>
+	 * 		[9] = zawarte łuki resetujące<br>
+	 * 		[10] = zawarte łuki równościowe<br>
+	 */
+	public static ArrayList<Integer> singleInvAnalysis(ArrayList<ArrayList<Integer>> invMatrix, int invIndex, ArrayList<Transition> transitions,
+			ArrayList<Integer> readArcTransLocations, ArrayList<ArrayList<Integer>> incidenceMatrix, ArrayList<ArrayList<Integer>> supportMatrix) {
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		int containedSupportCounter = 0; // I wynik
+		int feasibleInv = 0;
+		int invClass = 0;
+		int canonical = 0;
+		int inTrans = 0;
+		int pureInTrans = 0;
+		int outTrans = 0;
+		int readArcs = 0;
+		int inhibitors = 0;
+		int resets = 0;
+		int equals = 0;
+		
+		int invariantsNumber = invMatrix.size();
+
+		//TODO: support matrix poza metodą, np. w HolmesInvariantsViewer, tak samo transitions i readArcTransLocations
+		//obliczenia:
+		
+		ArrayList<Integer> invariant = invMatrix.get(invIndex);
+		int invSize = invariant.size();
+		ArrayList<Integer> supportVector = getSupport(invMatrix.get(invIndex));
+		for(int i=0; i<invariantsNumber; i++) {
+			for(int j=0; j<invariantsNumber; j++) {
+				if(j == i)
+					continue;
+				
+				if(InvariantsTools.supportInclusionCheck(supportMatrix.get(i), supportMatrix.get(j)) == true) {
+					containedSupportCounter++;
+				}
+				if(containedSupportCounter > 0)
+					break;
+			}
+			if(containedSupportCounter > 0)
+				break;
+		}
+
+		if(isNonFeasibleStatic(supportVector, readArcTransLocations, transitions) == true)
+			feasibleInv = -1; //non-feasible
+		else
+			feasibleInv = 1; //feasible
+		
+		ArrayList<Integer> vector = checkInvariantV2(incidenceMatrix, invariant, true);
+		if(vector.get(0) == 0) {
+			invClass = 0;
+		} else if(vector.get(0) == -1) {
+			invClass = -1;
+		} else if(vector.get(0) == 1) {
+			invClass = 1;
+		} else {
+			invClass = -99;
+		}
+		
+			
+		if(checkCanonitySingle(invariant) == true)
+			canonical = 1;
+		else
+			canonical = -1;
+		
+		//informacje o połączeniach:
+		
+		for(int e=0; e<invSize; e++) {
+			int supp = invariant.get(e);
+			if(supp == 0) continue;
+		
+			Transition transition = transitions.get(e);
+			int inArcs = 0;
+			int extInArcs = 0;
+			int outArcs = 0;
+			for(ElementLocation el : transition.getElementLocations()) {
+				for(Arc arc : el.getInArcs()) {
+					if(arc.getArcType() == TypesOfArcs.INHIBITOR || arc.getArcType() == TypesOfArcs.READARC) {
+						extInArcs++;
+					} else {
+						inArcs++;
+					}
+					
+					if(arc.getArcType() == TypesOfArcs.NORMAL)
+						continue;
+					
+					if(arc.getArcType() == TypesOfArcs.READARC) {
+						readArcs++;
+					} else if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+						inhibitors++;
+					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+						resets++;
+					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+						equals++;
+					}
+				}
+				for(Arc a : el.getOutArcs()) {
+					if(a.getArcType() != TypesOfArcs.READARC) //nie liczy się: to jest in-arc w myśl dziwnych definicji!
+						outArcs++;
+				}
+			}
+			
+			if(inArcs == 0 && extInArcs == 0)
+				pureInTrans++;
+			
+			if(inArcs == 0 && extInArcs > 0)
+				inTrans++;
+			
+			if(outArcs == 0)
+				outTrans++;
+		}
+
+		results.add(containedSupportCounter);
+		results.add(feasibleInv);
+		results.add(invClass);
+		results.add(canonical);
+		results.add(inTrans);
+		results.add(pureInTrans);
+		results.add(outTrans);
+		results.add(readArcs);
+		results.add(inhibitors);
+		results.add(resets);
+		results.add(equals);
+		
+		return results;
 	}
 }

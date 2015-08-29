@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Klasa model dla tabeli podstawowych informacji o inwariantach.
+ * Klasa model dla tabeli podstawowych informacji o inwariantach dla okna HolmesNetTables.
  * @author MR
  */
 public class InvariantsTableModel extends AbstractTableModel {
