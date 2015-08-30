@@ -7,9 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
@@ -24,18 +23,20 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import holmes.analyse.InvariantsCalculator;
 import holmes.analyse.InvariantsTools;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
+import holmes.petrinet.simulators.NetSimulator.NetType;
+import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.StateSimulator;
+import holmes.tables.InvariantsTableRenderer;
 import holmes.tables.InvariantsViewerTableModel;
-import holmes.tables.RXTable;
-import holmes.tables.StatesPlacesTableModel;
-import holmes.tables.StatesPlacesTableRenderer;
 import holmes.utilities.Tools;
 
 /**
@@ -48,6 +49,7 @@ public class HolmesInvariantsViewer extends JFrame {
 	private static final long serialVersionUID = 7735367902562553555L;
 	private GUIManager overlord;
 	private PetriNet pn;
+	private static final DecimalFormat formatter = new DecimalFormat( "#.##" );
 	
 	private JComboBox<String> invCombo = null;
 	private JLabel labelMinimal;
@@ -63,8 +65,12 @@ public class HolmesInvariantsViewer extends JFrame {
 	private JTextArea descriptionTextArea;
 	private JLabel labelProblem;
 	private JTextArea descriptionProblemTextArea;
-	private InvariantsViewerTableModel tableModel;
+	
 	private JTable table;
+	private DefaultTableModel tableModel;
+	private InvariantsViewerTableModel modelTransition;
+	private InvariantsViewerTableModel modelMCTandTrans;
+	private InvariantsTableRenderer tableRenderer;
 	private JScrollPane tableScrollPane;
 	private int currentSelected = 0;
 	
@@ -73,6 +79,10 @@ public class HolmesInvariantsViewer extends JFrame {
 	private ArrayList<Integer> readArcTransLocations;
 	private ArrayList<ArrayList<Integer>> incidenceMatrix;
 	private ArrayList<ArrayList<Integer>> supportMatrix;
+	
+	private ArrayList<ArrayList<Double>> transStats;
+	private boolean problem = false;
+	private boolean showTransTable = true;
 
 	/**
 	 * Konstruktor okna podglądu inwariantów sieci.
@@ -82,19 +92,23 @@ public class HolmesInvariantsViewer extends JFrame {
 		this.pn = overlord.getWorkspace().getProject();
 		this.invariantsMatrix = pn.getINVmatrix();
 		
+		boolean problem = false;
 		if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
 			JOptionPane.showMessageDialog(null,
 					"No invariants found, window cannot initiate itself.", 
 					"Error: no ivnariants", JOptionPane.ERROR_MESSAGE);
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+			problem = true;
 		}
 		
-		this.currentSelected = 0;
-		initiateVariables();
-		initalizeComponents();
-    	initiateListeners();
-    	showTransitionTable(0);
-    	setVisible(true);
+		if(!problem) {
+			this.currentSelected = 0;
+			initiateVariables();
+			initalizeComponents();
+	    	initiateListeners();
+	    	fillData(currentSelected);
+	    	setVisible(true);
+		}
 	}
 	
 	/**
@@ -107,18 +121,23 @@ public class HolmesInvariantsViewer extends JFrame {
 		this.invariantsMatrix = pn.getINVmatrix();
 		this.currentSelected = invNumber+1;
 		
+		boolean problem = false;
 		if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
 			JOptionPane.showMessageDialog(null,
 					"No invariants found, window cannot initiate itself.", 
 					"Error: no ivnariants", JOptionPane.ERROR_MESSAGE);
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+			problem = true;
 		}
 		
-		initiateVariables();
-		initalizeComponents();
-    	initiateListeners();
-    	showTransitionTable(currentSelected);
-    	setVisible(true);
+		if(!problem) {
+			initiateVariables();
+			initalizeComponents();
+	    	initiateListeners();
+	    	//showTransitionTable(currentSelected);
+	    	fillData(currentSelected);
+	    	setVisible(true);
+		}
 	}
 
 	/**
@@ -137,8 +156,23 @@ public class HolmesInvariantsViewer extends JFrame {
 			for(int i=0; i<invariantsNumber; i++) {
 				supportMatrix.add(InvariantsTools.getSupport(invariantsMatrix.get(i))); // minimality
 			}
-		} catch (Exception e) {
 			
+			//simulator part:
+			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+				JOptionPane.showMessageDialog(null, "Net simulator working. Unable to retrieve transitions statistics..", 
+						"Simulator working", JOptionPane.ERROR_MESSAGE);
+				transStats = null;
+				problem = true;
+			} else {
+				StateSimulator ss = new StateSimulator();
+				ss.initiateSim(NetType.BASIC, false, false);
+				transStats = ss.simulateForInvariantTrans(1000, 20);
+				problem = false;
+				if(transStats==null)
+					problem = true;
+			}
+		} catch (Exception e) {
+			overlord.log("Problems encountered while initializing variables for invariant viewer window.", "error", true);
 		}
 	}
 
@@ -172,9 +206,7 @@ public class HolmesInvariantsViewer extends JFrame {
 
 		int posXda = 10;
 		int posYda = 25;
-		
-		String[] dataP = { "---" };
-		
+
 		JLabel label0 = new JLabel("Invariant: ");
 		label0.setBounds(posXda, posYda, 70, 20);
 		result.add(label0);
@@ -190,10 +222,11 @@ public class HolmesInvariantsViewer extends JFrame {
 		invCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				currentSelected = invCombo.getSelectedIndex();
-				if(currentSelected > 0)
+				if(currentSelected > 0) {
 					fillData(currentSelected);
-				else
+				} else {
 					clearSelection();
+				}
 			}
 			
 		});
@@ -230,16 +263,21 @@ public class HolmesInvariantsViewer extends JFrame {
 			}
 		});
 		result.add(prevButton);
-		
-		JCheckBox maximumModeCheckBox = new JCheckBox("MCT table");
-		maximumModeCheckBox.setBounds(posXda+390, posYda, 100, 20);
+
+		JCheckBox maximumModeCheckBox = new JCheckBox("MCT/transitions table");
+		maximumModeCheckBox.setBounds(posXda+390, posYda, 140, 20);
 		maximumModeCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					showMCTTransTable(currentSelected);
+				if (abstractButton.getModel().isSelected())
+					showTransTable = false;
+				else
+					showTransTable = true;
+				
+				if(currentSelected > 0) {
+					fillData(currentSelected);
 				} else {
-					showTransitionTable(currentSelected);
+					clearSelection();
 				}
 			}
 		});
@@ -351,72 +389,180 @@ public class HolmesInvariantsViewer extends JFrame {
         //TODO:
         labelProblem = new JLabel("Sub/sur info:");
         labelProblem.setBounds(570, 20, 120, 20);
-        labelProblem.setVisible(false);
+        labelProblem.setVisible(true);
 		result.add(labelProblem);
 		
         descriptionProblemTextArea = new JTextArea();
         descriptionProblemTextArea.setLineWrap(true);
-        descriptionProblemTextArea.setEditable(false);
+        descriptionProblemTextArea.setEditable(true);
 	
         JPanel descProblemPanel = new JPanel();
         descProblemPanel.setLayout(new BorderLayout());
         descProblemPanel.add(new JScrollPane(descriptionProblemTextArea), BorderLayout.CENTER);
-        descProblemPanel.setBounds(570, 40, 200, 115);
-        descProblemPanel.setVisible(false);
+        descProblemPanel.setBounds(570, 40, 200, 95);
+        descProblemPanel.setVisible(true);
         result.add(descProblemPanel);
+        
+        JButton calcButton = new JButton("Recalculate statistics");
+		calcButton.setBounds(570, 135, 200, 20);
+		calcButton.setMargin(new Insets(0, 0, 0, 0));
+		calcButton.setIcon(Tools.getResIcon16("/icons/stateSim/aaa.png"));
+		calcButton.setToolTipText("Show previous invariant data.");
+		calcButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+					JOptionPane.showMessageDialog(null, "Net simulator working. Unable to retrieve transitions statistics..", 
+							"Simulator working", JOptionPane.ERROR_MESSAGE);
+					transStats = null;
+					problem = true;
+				} else {
+					StateSimulator ss = new StateSimulator();
+					ss.initiateSim(NetType.BASIC, false, false);
+					transStats = ss.simulateForInvariantTrans(1000, 20);
+					problem = false;
+					if(transStats==null)
+						problem = true;
+				}
+			}
+		});
+		result.add(calcButton);
 		
 	    return result;
 	}
 	
+	/**
+	 * Metoda wypełnia tabelę informacji o inwariance tranzycjami tego inwariantu.
+	 * @param invNo int - indeks inwairantu
+	 */
 	protected void showTransitionTable(int invNo) {
-		if(invNo == 0)
+		invNo--;
+		if(invNo == -1)
 			return;
 		
-		invNo--;
-		
-		tableModel = new InvariantsViewerTableModel(false);
-		table.setModel(tableModel);
-		table.setName("TransitionInvTable");
-		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		
-		table.addMouseListener(new MouseAdapter() {
-        	public void mouseClicked(MouseEvent e) {
-          	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
-          	    		;
-          	    		//cellClickAction();
-          	    }
-          	 }
-      	});
-		
+		modelTransition = new InvariantsViewerTableModel(false);
+		table.setModel(modelTransition);
+
 		table.getColumnModel().getColumn(0).setHeaderValue("ID");
 		table.getColumnModel().getColumn(0).setPreferredWidth(30);
 		table.getColumnModel().getColumn(0).setMinWidth(30);
 		table.getColumnModel().getColumn(0).setMaxWidth(30);
 		table.getColumnModel().getColumn(1).setHeaderValue("Transition");
-		table.getColumnModel().getColumn(1).setPreferredWidth(300);
+		table.getColumnModel().getColumn(1).setPreferredWidth(800);
 		table.getColumnModel().getColumn(1).setMinWidth(100);
+		
+		table.getColumnModel().getColumn(2).setHeaderValue("Supp.");
+		table.getColumnModel().getColumn(2).setPreferredWidth(50);
+		table.getColumnModel().getColumn(2).setMinWidth(50);
+		table.getColumnModel().getColumn(2).setMaxWidth(50);
 
-		table.getColumnModel().getColumn(2).setHeaderValue("Firing%");
-		table.getColumnModel().getColumn(2).setPreferredWidth(80);
-		table.getColumnModel().getColumn(2).setMinWidth(80);
-		table.getColumnModel().getColumn(2).setMaxWidth(80);
-
-		table.getColumnModel().getColumn(3).setHeaderValue("stdDev");
+		table.getColumnModel().getColumn(3).setHeaderValue("Firing%");
 		table.getColumnModel().getColumn(3).setPreferredWidth(80);
 		table.getColumnModel().getColumn(3).setMinWidth(80);
-		table.getColumnModel().getColumn(3).setMaxWidth(80);
+		table.getColumnModel().getColumn(4).setMaxWidth(80);
 
-		table.setFillsViewportHeight(true);
-		table.setRowSelectionAllowed(false);
+		table.getColumnModel().getColumn(4).setHeaderValue("stdDev");
+		table.getColumnModel().getColumn(4).setPreferredWidth(80);
+		table.getColumnModel().getColumn(4).setMinWidth(80);
+		table.getColumnModel().getColumn(4).setMaxWidth(80);
+		
+		TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(table.getModel());
+		table.setRowSorter(sorter);
+		table.setName("InvTransTable");
+		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+		table.setDefaultRenderer(Object.class, tableRenderer);
+		//table.setRowSelectionAllowed(false);
+
+		ArrayList<Integer> invariant = invariantsMatrix.get(invNo);
+		
+		for(int t=0; t<transitions.size(); t++) {
+			if(invariant.get(t) != 0) { //wsparcie
+				ArrayList<String> row = new ArrayList<String>();
+				row.add(""+t);
+				row.add(transitions.get(t).getName());
+				row.add(""+invariant.get(t));
+				
+				if(problem) {
+					row.add("n/a");
+					row.add("n/a");
+				} else {
+					String value = formatter.format((Number)(transStats.get(0).get(t)*100));
+					int index = value.indexOf(",");
+					if(index == 1)
+						value = "0"+value;
+					
+					row.add(value+"%");
+					value = formatter.format((Number)(transStats.get(1).get(t)*100));
+					row.add(value+"%");
+				}
+				((InvariantsViewerTableModel)modelTransition).addNew(row);
+			}
+		}
 		
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		table.validate();
 	}
 
+	/**
+	 * Metoda wyświetla tablicę struktury inwariantu z uwzględnieniem zbiorów MCT
+	 * @param invNo int - indeks inwariantu
+	 */
 	protected void showMCTTransTable(int invNo) {
-		// TODO Auto-generated method stub
+		invNo--;
+		if(invNo == -1)
+			return;
+
+		modelMCTandTrans = new InvariantsViewerTableModel(true);
+		table.setModel(modelMCTandTrans);
+
+		table.getColumnModel().getColumn(0).setHeaderValue("ID");
+		table.getColumnModel().getColumn(0).setPreferredWidth(60);
+		table.getColumnModel().getColumn(0).setMinWidth(60);
+		table.getColumnModel().getColumn(0).setMaxWidth(60);
+		table.getColumnModel().getColumn(1).setHeaderValue("Element");
+		table.getColumnModel().getColumn(1).setPreferredWidth(800);
+		table.getColumnModel().getColumn(1).setMinWidth(100);
+
+		TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(table.getModel());
+		table.setRowSorter(sorter);
+		table.setName("TransitionMCTInvTable");
+		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+		table.setDefaultRenderer(Object.class, tableRenderer);
+		//table.setRowSelectionAllowed(false);
+
+		ArrayList<ArrayList<Transition>> mcts = pn.getMCTMatrix();
+		ArrayList<Integer> invariant = new ArrayList<Integer>(invariantsMatrix.get(invNo));
 		
+		for(int mctIndex=0; mctIndex<mcts.size()-1; mctIndex++) {
+			ArrayList<Transition> mctSet = mcts.get(mctIndex);
+			int firstTindex = transitions.indexOf(mctSet.get(0));
+			if(invariant.get(firstTindex) != 0) { //zawiera ten MCT
+				ArrayList<String> row = new ArrayList<String>();
+				row.add("MCT"+(mctIndex+1));
+				row.add(pn.getMCTname(mctIndex));
+				((InvariantsViewerTableModel)modelMCTandTrans).addNew(row);
+				
+				//czyszczenie inwariantu:
+				for(Transition trans : mctSet) {
+					int tIndex = transitions.indexOf(trans);
+					invariant.set(tIndex, 0);
+				}
+			}
+		}
+		
+		for(int t=0; t<transitions.size(); t++) {
+			if(invariant.get(t) != 0) { //wsparcie
+				ArrayList<String> row = new ArrayList<String>();
+				row.add(""+t);
+				row.add(transitions.get(t).getName());
+				((InvariantsViewerTableModel)modelMCTandTrans).addNew(row);
+			}
+		}
+		
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		table.validate();
+
+		//tableScrollPane.setViewportView(table);
+		//tableScrollPane.repaint();
 	}
 
 	/**
@@ -434,7 +580,10 @@ public class HolmesInvariantsViewer extends JFrame {
 	 * @param invNo int - nr inwariantu
 	 */
 	private void fillData(int invNo) {
+		if(invNo == 0)
+			return;
 		invNo--;
+		
 		ArrayList<Integer> data = InvariantsTools.singleInvAnalysis(invariantsMatrix, invNo, transitions, readArcTransLocations
 				, incidenceMatrix, supportMatrix);
 		
@@ -473,7 +622,13 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelReadArcs.setText(data.get(7)+"");
 		labelInhibitors.setText(data.get(8)+"");
 		
-		showTransitionTable(currentSelected);
+		if(showTransTable)
+			showTransitionTable(currentSelected);
+		else
+			showMCTTransTable(currentSelected);
+		
+		tableScrollPane.setViewportView(table);
+		tableScrollPane.repaint();
 	}
 	
 	/**
@@ -491,7 +646,8 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelReadArcs.setText("---");
 		labelInhibitors.setText("---");
 		
-		tableModel.clear();
+		table.setModel(new DefaultTableModel());
+		//tableModel.clear();
 	}
 	
 	/**
@@ -502,11 +658,11 @@ public class HolmesInvariantsViewer extends JFrame {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setBorder(BorderFactory.createTitledBorder("Tables"));
 		result.setPreferredSize(new Dimension(150, 500));
-		tableModel = new InvariantsViewerTableModel(false);
+		
+		tableModel = new DefaultTableModel();
 		table = new JTable(tableModel);
-		table.setName("StatesTable");
-		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar	
-		table.setRowSelectionAllowed(false);
+		tableRenderer = new InvariantsTableRenderer(table);
+		
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tableScrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		result.add(tableScrollPane, BorderLayout.CENTER);

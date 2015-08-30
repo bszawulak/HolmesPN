@@ -1,13 +1,11 @@
 package holmes.tables;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
 import holmes.petrinet.data.NetSimulationData;
 import holmes.petrinet.elements.Place;
-import holmes.utilities.Tools;
 
 /**
  * Model tabeli danych statystycznych dla miejsca (symulacja knockout).
@@ -17,7 +15,7 @@ import holmes.utilities.Tools;
  */
 public class SimKnockPlacesTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 7417629500439797992L;
-	private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
+	//private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
 	
 	public class PlaceContainer {
     	public int ID;

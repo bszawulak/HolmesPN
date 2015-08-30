@@ -151,20 +151,30 @@ public class SimulatorEngine {
 				generated = true; 
 			} else {
 				if (netSimType == NetType.TIME || netSimType == NetType.HYBRID) {
-					return launchableTransitions; 
-				}
-				
-				safetyCounter++;
-				if(safetyCounter == 9) { // safety measure
-					if(isPossibleStep(transitions) == false) {
-						GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
-								+ "has been activated. Please advise authors.", "error", true);
-						return launchableTransitions; 
+					//return launchableTransitions;
+				} else {
+					safetyCounter++;
+					if(safetyCounter == 9) { // safety measure
+						if(isPossibleStep(transitions) == false) {
+							GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
+									+ "has been activated. Please advise authors if this error show up frequently.", "error", true);
+							generated = true; 
+							//return launchableTransitions; 
+						}
 					}
 				}
 			}
 		}
-		return launchableTransitions; 
+		//TODO: check
+		if(singleMode) {
+			int happyWinner = generator.nextInt(launchableTransitions.size());
+			Transition winner = launchableTransitions.get(happyWinner);
+			launchableTransitions.clear();
+			launchableTransitions.add(winner);
+		} else {
+			return launchableTransitions; 
+		}	
+		return launchableTransitions; //bez tej linii będzie błąd, tak, wiem, że to vs. powyższe jest bez sensu.
 	}
 	
 	/**

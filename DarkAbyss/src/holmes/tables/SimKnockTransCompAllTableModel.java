@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-import holmes.darkgui.GUIManager;
-
 /**
  * Model tabeli danych statystycznych dla tranzycji (wszystkich)
  * 

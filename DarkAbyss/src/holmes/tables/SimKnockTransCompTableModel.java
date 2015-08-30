@@ -61,7 +61,7 @@ public class SimKnockTransCompTableModel extends AbstractTableModel {
 		
 		tc.firingAvgRef = dataRef.transFiringsAvg.get(index);
 		tc.stdDevRef = dataRef.transStdDev.get(index);
-		tc.firingAvgKnock = dataKnock.transFiringsMax.get(index);
+		tc.firingAvgKnock = dataKnock.transFiringsAvg.get(index);
 		tc.stdDevKnock = dataKnock.transStdDev.get(index);
 		
 		if(dataKnock.disabledTotals.contains(index)) {
@@ -69,8 +69,13 @@ public class SimKnockTransCompTableModel extends AbstractTableModel {
 		} else if(dataKnock.transFiringsAvg.get(index) == 0) {
 			tc.name = " <KNOCKOUT> " + tc.name;
 		}
-		
+		//TODO: check diff
 		//difference %:
+		if(index == 0) {
+			@SuppressWarnings("unused")
+			int x=1;
+		}
+		
 		tc.firingAvgPercDiff = 0.0;
 		double diff = tc.firingAvgRef - tc.firingAvgKnock;
 		if(tc.firingAvgRef != 0) {

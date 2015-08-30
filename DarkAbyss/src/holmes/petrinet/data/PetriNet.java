@@ -713,6 +713,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		}
 	}
 	
+	/**
+	 * Szybsza wersja przywracania stanu sieci, bez zawracania głowy okna SimulatorBox j.w.
+	 * @param transitions ArrayList[Transition] - wektor tranzycji
+	 */
 	public void restoreMarkingZeroFast(ArrayList<Transition> transitions) {
 		try {
 			accessStatesManager().restoreSelectedState();

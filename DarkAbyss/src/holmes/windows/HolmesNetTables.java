@@ -150,7 +150,6 @@ public class HolmesNetTables extends JFrame {
 	 */
 	private JPanel createTablePanel() {
 		tablesSubPanel = new JPanel(new BorderLayout());
-		//tablesSubPanel.setBounds(0, 0, 670, 560);
 		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
 		tablesSubPanel.setLocation(0, 0);
 		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
@@ -561,9 +560,6 @@ public class HolmesNetTables extends JFrame {
     	table.getColumnModel().getColumn(1).setMaxWidth(50);
     	for(int i=0; i<transNumber; i++) {
         	table.getColumnModel().getColumn(i+2).setHeaderValue("t"+i);
-            //table.getColumnModel().getColumn(i+2).setPreferredWidth(55);
-        	//table.getColumnModel().getColumn(i+2).setMinWidth(55);
-        	//table.getColumnModel().getColumn(i+2).setMaxWidth(55);
         }
         
         table.setName("InvariantsTable");

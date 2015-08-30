@@ -671,6 +671,100 @@ public class StateSimulator implements Runnable {
 		return transDataVector;
 	}
 	
+	/**
+	 * Symulacja na potrzeby okna podglądu inwariantów - dane o odpaleniach tranzycji w inwariancie.
+	 * @param steps int - ile kroków symulacji
+	 * @param reps int - ile powtórek
+	 * @return ArrayList[ArrayList[Double]] - dwa wektory danych, pierwszy to średnie, drugi - odchylenie standardowe
+	 */
+	public ArrayList<ArrayList<Double>> simulateForInvariantTrans(int steps, int reps) {
+		ArrayList<ArrayList<Double>> result = new ArrayList<>();
+		if(readyToSimulate == false) {
+			overlord.log("Simulation simple mode cannot start.", "warning", true);
+			return null;
+		}
+		prepareNetM0(); //backup, m0, etc.
+		ArrayList<Transition> launchableTransitions = null;
+		
+		ArrayList<ArrayList<Double>> firingHistory = new ArrayList<>();
+		
+		for(int r=0; r<reps; r++) {
+			
+			ArrayList<Double> transFiring = new ArrayList<Double>();
+			
+			for(int t=0; t<transitions.size(); t++) {
+				transFiring.add(0.0);
+			}
+			
+			int internalSteps = 0;
+			for(int i=0; i<steps; i++) {
+				
+				if (isPossibleStep()){ 
+					launchableTransitions = engine.getTransLaunchList(emptySteps);
+					
+					for(Transition trans : launchableTransitions) {
+						int index = transitions.lastIndexOf(trans);
+						double fired = transFiring.get(index);
+						transFiring.set(index, fired+1); //wektor sumy odpaleń
+					}
+					
+					launchSubtractPhase(launchableTransitions);
+					removeDPNtransition(launchableTransitions);
+					internalSteps++;
+				} else {
+					break;
+				}
+				launchAddPhase(launchableTransitions);
+			}
+
+			//srednia liczba odpaleń:
+			for(int t=0; t<transFiring.size(); t++) {
+				double fired = transFiring.get(t);
+				fired /= (double)internalSteps;
+				transFiring.set(t, fired);
+			}
+			firingHistory.add(transFiring);
+			restoreInternalMarkingZero();
+		}
+		
+		//przygotowanie wektorów wynikowych:
+		ArrayList<Double> avgFiring = new ArrayList<>();
+		ArrayList<Double> stdDev = new ArrayList<>();
+		for(int t=0; t<transitions.size(); t++) {
+			avgFiring.add(0.0);
+		}
+		
+		//liczenie średnich:
+		for(int t=0; t<transitions.size(); t++) {
+			for(int r=0; r<reps; r++) {
+				double value = firingHistory.get(r).get(t);
+				double oldRes = avgFiring.get(t);
+				avgFiring.set(t, oldRes+value);
+			}
+			double oldRes = avgFiring.get(t);
+			oldRes /= (double)reps;
+			avgFiring.set(t, oldRes);
+		}
+		//stdDev
+		for(int t=0; t<transitions.size(); t++) {
+			double variance = 0.0;
+			for(int r=0; r<reps; r++) {
+				double value = avgFiring.get(t); //średnia obliczona krok wcześniej
+				double diff = value - firingHistory.get(r).get(t); 
+				variance += (diff*diff);
+			}
+			variance /= (double)reps;
+			stdDev.add(Math.sqrt(variance));
+		}
+		
+		
+		readyToSimulate = false;
+		restoreInternalMarkingZero();
+		result.add(avgFiring);
+		result.add(stdDev);
+		return result;
+	}
+	
 	//********************************************************************************************************************************
 	//****************************************              **************************************************************************
 	//****************************************   INTERNALS  **************************************************************************

@@ -2,7 +2,7 @@ package holmes.tables;
 
 import java.util.ArrayList;
 
-import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * Model tablicy danych o inwariancie na potrzeby okna podglądu inwariantów.
@@ -10,7 +10,7 @@ import javax.swing.table.AbstractTableModel;
  * @author MR
  *
  */
-public class InvariantsViewerTableModel extends AbstractTableModel {
+public class InvariantsViewerTableModel extends DefaultTableModel  {
 	private static final long serialVersionUID = -6625961285405380868L;
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
@@ -24,16 +24,18 @@ public class InvariantsViewerTableModel extends AbstractTableModel {
 	 */
 	public InvariantsViewerTableModel(boolean mctMode) {
 		this.mctMode = mctMode;
+		
 		if(mctMode == true) {
 			columnNames = new String[2];
 			columnNames[0] = "ID";
-			columnNames[1] = "Description";
+			columnNames[1] = "Element";
 		} else {
-			columnNames = new String[4];
+			columnNames = new String[5];
 			columnNames[0] = "ID";
 			columnNames[1] = "Transition name";
-			columnNames[2] = "Fire%";
-			columnNames[3] = "stdDev";
+			columnNames[2] = "Support";
+			columnNames[3] = "Fire%";
+			columnNames[4] = "stdDev";
 		}
 		
 		dataMatrix = new ArrayList<ArrayList<String>>();
@@ -52,6 +54,13 @@ public class InvariantsViewerTableModel extends AbstractTableModel {
 	public void clear() {
 		dataMatrix.clear();
 		dataSize=0;
+	}
+	
+	/**
+	 * Zwraca wartość edytowalności pola.
+	 */
+	public boolean isCellEditable(int row, int column) {
+		return false;
 	}
 	
 	/**
@@ -103,16 +112,23 @@ public class InvariantsViewerTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Object returnValue = null;
-		if(columnIndex < 2) {
-			return dataMatrix.get(rowIndex).get(columnIndex).toString();
-		} else {
-			try {
-				returnValue = dataMatrix.get(rowIndex).get(columnIndex);
-				String strVal = returnValue.toString();
-				double val = Double.parseDouble(strVal);
-				return val;
-			} catch (Exception e) {
+		if(mctMode) {
+			if(columnIndex > 1)
+				return null;
+			else
 				return dataMatrix.get(rowIndex).get(columnIndex).toString();
+		} else {
+			if(columnIndex < 3) {
+				return dataMatrix.get(rowIndex).get(columnIndex).toString();
+			} else {
+				try {
+					returnValue = dataMatrix.get(rowIndex).get(columnIndex);
+					String strVal = returnValue.toString();
+					double val = Double.parseDouble(strVal);
+					return val;
+				} catch (Exception e) {
+					return dataMatrix.get(rowIndex).get(columnIndex).toString();
+				}
 			}
 		}
 	}

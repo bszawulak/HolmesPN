@@ -13,6 +13,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -63,6 +64,7 @@ import holmes.tables.SimKnockPlacesCompAllTableModel.DetailsPlace;
 import holmes.tables.SimKnockTransCompAllTableModel.DetailsTrans;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNodeInfo;
+import holmes.windows.HolmesNotepad;
 
 /**
  * Klasa okna przeglądania danych symulacji knockout.
@@ -74,7 +76,9 @@ public class HolmesStSimKnockVis extends JFrame {
 	private static final long serialVersionUID = 3020186160500907678L;
 	private GUIManager overlord;
 	private PetriNet pn;
+	private static final DecimalFormat formatter1 = new DecimalFormat( "#.#" );
 	private static final DecimalFormat formatter2 = new DecimalFormat( "#.##" );
+	
 	private boolean doNotUpdate = false;
 	private HolmesStSim boss;
 	private XYSeriesCollection placesSeriesDataSet = null;
@@ -303,7 +307,7 @@ public class HolmesStSimKnockVis extends JFrame {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = seriesCombo.getSelectedIndex() - 1;
 				if(selected > -1) {
-					//createCompareAllTables(selected);
+					createCompareAllTablesNotepad(selected);
 				}
 			}
 		});
@@ -1339,6 +1343,10 @@ public class HolmesStSimKnockVis extends JFrame {
     	}
     }
     
+    /**
+     * Tworzy tabele porównania serii danych ze zbiorem referencyjnym - w formie tekstowej
+     * @param selected int - ID serii
+     */
     private void createCompareAllTablesNotepad(int selected) {
     	long IDseries = pn.accessSimKnockoutData().accessSeries().get(selected);
     	ArrayList<NetSimulationData> dataPackage = pn.accessSimKnockoutData().getSeriesDatasets(IDseries);
@@ -1357,79 +1365,97 @@ public class HolmesStSimKnockVis extends JFrame {
     	
     	int transNumber = dataPackage.get(0).transNumber;
     	int placesNumber = dataPackage.get(0).placesNumber;
-
+    	
+    	
+    	HolmesNotepad notePad = new HolmesNotepad(900,600);
+		notePad.setVisible(true);
+		notePad.addTextLineNL("Data series "+selected+" analysis:", "text");
+		notePad.addTextLineNL(" +/-20% treshold for increased/decreased firing of transitions ", "text");
+		notePad.addTextLineNL("===============================================================================", "text");
+		notePad.addTextLineNL("", "text");
     	//TODO:
     	for(int t=0; t<transNumber; t++) {
-    		ArrayList<String> pVector = new ArrayList<>();
-    		ArrayList<String> tVector = new ArrayList<>();
-    		ArrayList<DetailsPlace> pTableVector = new ArrayList<DetailsPlace>();
-    		ArrayList<DetailsTrans> tTableVector = new ArrayList<DetailsTrans>();
     		NetSimulationData dataSet = dataPackage.get(t);
     		
-    		//ID:
-    		pVector.add(""+t);
-    		tVector.add(""+t);
-    		pTableVector.add(null);
-    		tTableVector.add(null);
     		
-    		//NAZWY:
-    		String name = "";
-    		if(transitions.size() == 0) {
-    			name = "t"+t;
-    		} else {
-    			name = "t"+transitions.get(t).getName();
-    		}
-    		pVector.add(name);
-			tVector.add(name);
-    		pTableVector.add(null);
-    		tTableVector.add(null);
+    		notePad.addTextLineNL("*** t"+t+"_"+transitions.get(t).getName()+"    disabled manually. Impact on the net:", "text");
     		
-    		//KNOCKED: (liczone później)
-    		pVector.add("0");
-    		tVector.add("0");
-    		pTableVector.add(null);
-    		tTableVector.add(null);
-    		
-    		//DANE:
+    		ArrayList<Integer> transVector = new ArrayList<>();
     		for(int t1=0; t1<transNumber; t1++) {
-    			DetailsTrans details = modelTransCompAll.newDetailsInstance();
-    			details.knockAvgFiring = dataSet.transFiringsAvg.get(t1);
-    			details.refAvgFiring = refSet.transFiringsAvg.get(t1);
-    			details.knockDisabled = dataSet.transZeroFiring.get(t1);
-    			details.significance1 = getTransSign1(refSet, dataSet, t1);
-    			details.significance2 = getTransSign2(refSet, dataSet, t1);
-    			details.diff = 0;
-    			
+    			if(t == t1)
+    				transVector.add(0);
+    			else
+    				transVector.add(1);
+    		}
+    		
+    		for(int t1=0; t1<transNumber; t1++) {
+    			if(transVector.get(t1) == 0)
+    				continue;
+
     			if(refSet.transFiringsAvg.get(t1) == 0 && dataSet.transFiringsAvg.get(t1) == 0) {
-    				tVector.add("999990.0");
-    				tTableVector.add(details);
+    				notePad.addTextLineNL("      (DEAD IN REF & SERIES SETS!) t"+t1+"_"+transitions.get(t1).getName()+"", "text");
+    				transVector.set(t1, 0);
     				continue;
     			}
+    			
     			if(refSet.transFiringsAvg.get(t1) == 0 && dataSet.transFiringsAvg.get(t1) > 0) {
-    				tVector.add("+999999.0");
-    				tTableVector.add(details);
+    				double value = dataSet.transFiringsAvg.get(t1) * 100;
+    				notePad.addTextLineNL("      (DEAD IN REF, ALIVE IN SERIES) [avg fire chance: "
+    						+formatter2.format(value)+"%]  t"+t1+"_"+transitions.get(t1).getName(), "text");
+    				transVector.set(t1, 0);
     				continue;
     			}
     			if(refSet.transFiringsAvg.get(t1) > 0 && dataSet.transFiringsAvg.get(t1) == 0) {
-    				tVector.add("-999999.0");
-    				tTableVector.add(details);
+    				double value = refSet.transFiringsAvg.get(t1) * 100;
+    				notePad.addTextLineNL("      (KNOCKED OUT IN SERIES SET) [avg fired chance in reference: "
+    						+formatter2.format(value)+"%]  t"+t1+"_"+transitions.get(t1).getName(), "text");
+    				transVector.set(t1, 0);
     				continue;
     			}
-    			
-    			double diff = details.refAvgFiring - details.knockAvgFiring;
-    			diff = (diff / details.refAvgFiring)*100;
+    		}
+    		
+    		if(t==73) {
+    			@SuppressWarnings("unused")
+				int x=1;
+    		}
+    		
+    		TreeMap<Double, String> data = new TreeMap<Double, String>();
+    		for(int t1=0; t1<transNumber; t1++) {
+    			if(transVector.get(t1) == 0)
+    				continue;
+    		
+    			double diff = refSet.transFiringsAvg.get(t1) - dataSet.transFiringsAvg.get(t1);
+    			diff = (diff / refSet.transFiringsAvg.get(t1));
     			if(diff < 0) { //wzrosło w stos. do ref
     				diff *= -1;
-    				details.diff = diff;
-    				tVector.add(formatter2.format(diff));
-    				tTableVector.add(details);
+    				double value = diff * 100;
+					data.put(value, "t"+t1+"_"+transitions.get(t1).getName());
+    				transVector.set(t1, 0);
+    				continue;
     			} else {
     				diff *= -1;
-    				details.diff = diff;
-    				tVector.add(formatter2.format(diff));
-    				tTableVector.add(details);
+    				double value = diff * 100;
+					data.put(value, "t"+t1+"_"+transitions.get(t1).getName());
+    				transVector.set(t1, 0);
+    				continue;
     			}
     		}
+
+    		for(Double key: data.keySet()){
+    			if(key < -20) {
+    				notePad.addTextLineNL("      (DECREASED) [avg fired chance: "+formatter1.format(key)+"%] "
+    						+data.get(key), "text");
+    			} 
+    			
+    			if(key > 20) {
+    				notePad.addTextLineNL("      (INCREASED) [avg fired chance: +"+formatter1.format(key)+"%] "
+    						+data.get(key), "text");
+    			}
+
+            }
+    			
+    			
+    		/*
     		
     		for(int p=0; p<placesNumber; p++) {
     			DetailsPlace details = modelPlacesCompAll.newDetailsInstance();
@@ -1473,7 +1499,7 @@ public class HolmesStSimKnockVis extends JFrame {
     			@SuppressWarnings("unused")
 				int x=1;
     		}
-    		
+    		*/
     	}
     }
     
