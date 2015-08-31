@@ -41,8 +41,8 @@ import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Okno generatora inwariantów i związanych z nimi narzędzi.
+ * 
  * @author MR
- *
  */
 public class HolmesInvariantsGenerator extends JFrame {
 	private static final long serialVersionUID = 5805567123988000425L;
@@ -403,14 +403,11 @@ public class HolmesInvariantsGenerator extends JFrame {
 					logField.append("=====================================================================\n");
 					logField.append("Checking invariants correctness for "+invariants.size()+" invariants.\n");
 					InvariantsCalculator ic = new InvariantsCalculator(true);
-					
-					//int value =  InvariantsTools.countNonInvariants(ic.getCMatrix(), invariants);
 					ArrayList<ArrayList<Integer>> results = InvariantsTools.countNonT_InvariantsV2(ic.getCMatrix(), invariants);
 					logField.append("Proper invariants (Cx = 0): "+results.get(0).get(0)+"\n");
 					logField.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
 					logField.append("Sub-invariants (Cx < 0): "+results.get(0).get(2)+"\n");
 					logField.append("Non-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n");
-					//logField.append("Non-invariants: "+value+"\n");
 					logField.append("=====================================================================\n");
 					
 					if(details)
@@ -624,6 +621,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		int size = 0;
 		ArrayList<Integer> surInvVector = results.get(1);
 		ArrayList<Integer> subInvVector = results.get(2);
+		ArrayList<Integer> noInvVector = results.get(3);
 		
 		HolmesNotepad notePad = new HolmesNotepad(900,600);
 		notePad.setVisible(true);
@@ -678,6 +676,20 @@ public class HolmesInvariantsGenerator extends JFrame {
 			size = places.size();
 			for(int p=0; p<size; p++) {
 				int value = subInvVector.get(p);
+				if(value != 0) {
+					String line = "p_"+p+Tools.setToSize(places.get(p).getName(), subPlaceMaxName+2, false) +": "+value;
+					notePad.addTextLineNL(line, "text");
+				}
+			}
+		}
+		
+		if(results.get(0).get(3) > 0) {
+			notePad.addTextLineNL("Places for which non-invariants did not zeroed C-matrix:", "text");
+			notePad.addTextLineNL("(in parenthesis number of non-invariants for each place):", "text");
+			
+			size = places.size();
+			for(int p=0; p<size; p++) {
+				int value = noInvVector.get(p);
 				if(value != 0) {
 					String line = "p_"+p+Tools.setToSize(places.get(p).getName(), subPlaceMaxName+2, false) +": "+value;
 					notePad.addTextLineNL(line, "text");

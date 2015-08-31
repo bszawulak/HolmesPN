@@ -112,6 +112,17 @@ public class InvariantsCalculator implements Runnable {
 					logInternal("Feasible invariants computation/check is recommended - "
 							+ "depending on the set it may or may not change during this procedure.\n", false);
 				}
+				
+				logInternal("\n", false);
+				logInternal("=====================================================================\n", false);
+				logInternal("Checking invariants correctness for "+t_invariantsList.size()+" invariants.\n", false);
+				InvariantsCalculator ic = new InvariantsCalculator(true);
+				ArrayList<ArrayList<Integer>> results = InvariantsTools.countNonT_InvariantsV2(ic.getCMatrix(), t_invariantsList);
+				logInternal("Proper invariants (Cx = 0): "+results.get(0).get(0)+"\n", false);
+				logInternal("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n", false);
+				logInternal("Sub-invariants (Cx < 0): "+results.get(0).get(2)+"\n", false);
+				logInternal("Non-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n", false);
+				logInternal("=====================================================================\n", false);
 			} else { //P-invariants
 				this.createPTIncidenceAndIdentityMatrix(false);
 				this.calculateInvariants();

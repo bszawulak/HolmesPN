@@ -146,8 +146,8 @@ public final class InvariantsTools {
 	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
 	 * @param invSet ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @return ArrayList[ArrayList[Integer]] - macierz wynikowa, pierwszy wektor to 4 elementowa informacja zbiorcza o:
-	 * 	inwariantach, sub, sur-inwariantach oraz nie-inwariantach. Kolejne dwa wektory to informacja o miejscach w ramach
-	 *  odpowiednio sur i sub-inwariantów.
+	 * 	inwariantach, sub, sur-inwariantach oraz nie-inwariantach. Kolejne wektory to informacja o miejscach w ramach
+	 *  odpowiednio sur-, sub- i nie-inwariantów.
 	 */
 	public static ArrayList<ArrayList<Integer>> countNonT_InvariantsV2(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {
 		ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
@@ -159,10 +159,12 @@ public final class InvariantsTools {
 		
 		ArrayList<Integer> surPlacesVector = new ArrayList<Integer>();
 		ArrayList<Integer> subPlacesVector = new ArrayList<Integer>();
+		ArrayList<Integer> nonInvPlacesVector = new ArrayList<Integer>();
 		int placesSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size();
 		for(int p=0; p<placesSize; p++) {
 			surPlacesVector.add(0);
 			subPlacesVector.add(0);
+			nonInvPlacesVector.add(0);
 		}
 		
 		for(ArrayList<Integer> inv : invSet) {
@@ -175,8 +177,9 @@ public final class InvariantsTools {
 			} else if(vector.get(0) == 1) {
 				surInv++;
 				surPlacesVector = quickSumT_inv(surPlacesVector, vector);
-			} else {
+			} else { // non-inv
 				nonInv++;
+				nonInvPlacesVector = quickSumT_inv(nonInvPlacesVector, vector);
 			}
 		}
 		ArrayList<Integer> summaryVector = new ArrayList<Integer>();
@@ -188,7 +191,7 @@ public final class InvariantsTools {
 		results.add(summaryVector);
 		results.add(surPlacesVector);
 		results.add(subPlacesVector);
-		
+		results.add(nonInvPlacesVector);
 		return results;
 	}
 	
@@ -222,7 +225,7 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Metoda pomocnicza dla countNonT_InvariantsV2 - dla każdego wystąpienia liczby różne od zera w wektorze 
+	 * Metoda pomocnicza dla countNonT_InvariantsV2 - dla każdego wystąpienia liczby różnej od zera w wektorze 
 	 * resultVector, powiększa o 1 wartość odpowiedniego elementu wektora base. Wektor resultVector od pozycji [1] do
 	 * ostatniej zawiera informacje wektora wynikowego dla próby zerowania macierzy incydencji. Jakakolwiek wartość 
 	 * różna od zera oznacza, że dla danego miejsca nie udało się wyzerować macierzy (dla T-inwariantów)
@@ -240,8 +243,7 @@ public final class InvariantsTools {
 		for(int i=0; i<baseSize; i++) {
 			if(resultVector.get(i+1) != 0) {
 				int oldV = base.get(i);
-				oldV++;
-				base.set(i, oldV);
+				base.set(i, oldV+1);
 			}
 		}
 		
@@ -289,7 +291,7 @@ public final class InvariantsTools {
 	 * @param inv ArrayList[Integer] - inwariant (?)
 	 * @param tInv boolean - true: T-inwariant
 	 * @return ArrayList[Integer] - pierwsza wartość ([0]) to wynik, kolejne miejsca do wektor wynikowy testu (miejsca dla T-inw)
-	 * 0: normalny, -1: sub-inv., 1: sur-inv.
+	 * 0: normalny, -1: sub-inv., 1: sur-inv., -50: non-inv
 	 */
 	public static ArrayList<Integer> checkInvariantV2(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> inv, boolean tInv) {
 		ArrayList<Integer> results = new ArrayList<Integer>();
@@ -339,17 +341,18 @@ public final class InvariantsTools {
 			results.set(0, -50);
 			return results; //coś wybitnie nie tak z tym inwariantem
 		} 
+		
 		if(zeroes == placesNumber) {
-			results.set(0, 0);
+			results.set(0, 0); //normalny inwariant
 			return results;
 		}
 		
 		if(positives>0) {
-			results.set(0, 1);
+			results.set(0, 1); //sur-inwariant
 			return results;
 		}
 		if(negatives>0) {
-			results.set(0, -1);
+			results.set(0, -1); //sub-inwariant
 			return results;
 		}
 		

@@ -126,6 +126,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesDockWindow selElementBox;  //podokno klikniętego elementu sieci
 	private HolmesDockWindow clustersBox;	//podokno podświetlania klastrów
 	private HolmesDockWindow mcsBox;
+	private HolmesDockWindow fixBox;
 	private HolmesDockWindow knockoutBox;
 	
 	//UNUSED
@@ -250,7 +251,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setMctBox(new HolmesDockWindow(DockWindowType.MctANALYZER)); //aktywuj obiekt podokna wyświetlania zbiorów MCT
 		setInvSim(new HolmesDockWindow(DockWindowType.InvSIMULATOR));
 		setMCSBox(new HolmesDockWindow(DockWindowType.MCSselector));
-		setKnockoutBox(new HolmesDockWindow(DockWindowType.Knockout));
+		setKnockoutBox(new HolmesDockWindow(DockWindowType.FIXNET));
+		setFixBox(new HolmesDockWindow(DockWindowType.Knockout));
 		
 		// create menu
 		setMenu(new DarkMenu());
@@ -275,6 +277,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(4));
 		bottomRightTabDock.addChildDock(getInvSimBox(), new Position(5));
 		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
+		bottomRightTabDock.addChildDock(getFixBox(), new Position(7));
 
 		// create the split docks
 		//leftSplitDock = new SplitDock();
@@ -685,7 +688,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		this.mctBox = mctBox;
 	}
 	
-	
 	/**
 	 * Metoda zwraca obiekt podokna wyświetlania zbiorów MCS.
 	 * @return HolmesDockWindow - okno wyboru MCS
@@ -699,6 +701,21 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void setMCSBox(HolmesDockWindow mcsBox) {
 		this.mcsBox = mcsBox;
+	}
+	
+	/**
+	 * Metoda zwraca obiekt podokna naprawy sieci.
+	 * @return HolmesDockWindow - okno naprawcze
+	 */
+	public HolmesDockWindow getFixBox() {
+		return this.fixBox;
+	}
+	/**
+	 * Metoda ustawia nowe podokno naprawcze sieci.
+	 * @param mcsBox HolmesDockWindow - nowe okno naprawy
+	 */
+	public void setFixBox(HolmesDockWindow fixBox) {
+		this.fixBox = fixBox;
 	}
 	
 	/**

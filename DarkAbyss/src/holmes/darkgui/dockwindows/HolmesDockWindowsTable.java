@@ -48,12 +48,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
-import holmes.analyse.InvariantsSimulator;
 import holmes.analyse.InvariantsTools;
 import holmes.analyse.MCTCalculator;
 import holmes.clusters.ClusterDataPackage;
 import holmes.clusters.ClusterTransition;
 import holmes.darkgui.GUIManager;
+import holmes.files.io.MCSoperations;
 import holmes.graphpanel.GraphPanel;
 import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.data.MCSDataMatrix;
@@ -135,6 +135,12 @@ public class HolmesDockWindowsTable extends JPanel {
 	public JComboBox<String> mcsMCSforObjRCombo;
 	//sheets:
 	private WorkspaceSheet currentSheet;
+	//fixer:
+	private JLabel fixInvariants;
+	private JLabel fixIOPlaces;
+	private JLabel fixIOTransitions;
+	private JLabel fixlinearTrans;
+	private JLabel fixlinearPlaces;
 
 	// modes
 	private static final int PLACE = 0;
@@ -151,7 +157,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	private static final int KNOCKOUT = 10;
 	private static final int META = 11;
 
-	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, META, ARC, SHEET, INVARIANTS, MCT, CLUSTERS, KNOCKOUT, MCS }
+	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, META, ARC, SHEET, INVARIANTS, MCT, CLUSTERS, KNOCKOUT, MCS, FIXER }
 	
 	/**
 	 * Konstruktor główny, wybierający odpowiednią metodę do tworzenia podokna wybranego typu
@@ -182,6 +188,8 @@ public class HolmesDockWindowsTable extends JPanel {
 			createClustersSubWindow((ClusterDataPackage) blackBox[0]);
 		} else if (subType == SubWindow.MCS) {
 			createMCSSubWindow((MCSDataMatrix) blackBox[0]);
+		} else if (subType == SubWindow.FIXER) {
+			createFixerSubWindow();
 		} 
 	}
 	
@@ -3647,16 +3655,121 @@ public class HolmesDockWindowsTable extends JPanel {
 	//*********************************                  ***********************************
 	//**************************************************************************************
 
-	
-
-	/**
-	 * Konstruktor 
-	 * @param is
-	 */
-	public HolmesDockWindowsTable(InvariantsSimulator is)
-	{
-
+	public void createFixerSubWindow() {
+		int posX = 10;
+		int posY = 10;
+		
+		initiateContainers();
+		//TODO
+		
+		JButton scanButton = new JButton();
+		scanButton.setText("<html>Scan net</html>");
+		scanButton.setBounds(posX, posY, 110, 32);
+		scanButton.setMargin(new Insets(0, 0, 0, 0));
+		scanButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
+		scanButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				;
+			}
+		});
+		scanButton.setFocusPainted(false);
+		components.add(scanButton);
+		
+		JLabel label0 = new JLabel("Invariants:");
+		label0.setBounds(posX, posY+=40, 100, 20);
+		components.add(label0);
+		
+		fixInvariants = new JLabel("Normal: 0 / Sub: 0 / Sur: 0 / Non: 0");
+		fixInvariants.setBounds(posX, posY+=20, 190, 20);
+		components.add(fixInvariants);
+		
+		JButton markInvButton = new JButton();
+		markInvButton.setText("<html>Show<br>inv.</html>");
+		markInvButton.setBounds(posX+195, posY-18, 90, 32);
+		markInvButton.setMargin(new Insets(0, 0, 0, 0));
+		markInvButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
+		markInvButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				;
+			}
+		});
+		markInvButton.setFocusPainted(false);
+		components.add(markInvButton);
+		
+		JLabel label1 = new JLabel("Input and output places:");
+		label1.setBounds(posX, posY+=25, 200, 20);
+		components.add(label1);
+		
+		fixIOPlaces = new JLabel("Input: 0 / Output: 0");
+		fixIOPlaces.setBounds(posX, posY+=20, 190, 20);
+		components.add(fixIOPlaces);
+		
+		JButton markIOPlacesButton = new JButton();
+		markIOPlacesButton.setText("<html>Show<br>places</html>");
+		markIOPlacesButton.setBounds(posX+195, posY-16, 90, 32);
+		markIOPlacesButton.setMargin(new Insets(0, 0, 0, 0));
+		markIOPlacesButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
+		markIOPlacesButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				;
+			}
+		});
+		markIOPlacesButton.setFocusPainted(false);
+		components.add(markIOPlacesButton);
+		
+		JLabel label2 = new JLabel("Input and output transitions:");
+		label2.setBounds(posX, posY+=25, 200, 20);
+		components.add(label2);
+		
+		fixIOTransitions = new JLabel("Input: 0 / Output: 0");
+		fixIOTransitions.setBounds(posX, posY+=20, 190, 20);
+		components.add(fixIOTransitions);
+		
+		JButton markIOTransButton = new JButton();
+		markIOTransButton.setText("<html>Show<br>trans.</html>");
+		markIOTransButton.setBounds(posX+195, posY-14, 90, 32);
+		markIOTransButton.setMargin(new Insets(0, 0, 0, 0));
+		markIOTransButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
+		markIOTransButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				;
+			}
+		});
+		markIOTransButton.setFocusPainted(false);
+		components.add(markIOTransButton);
+		
+		JLabel label3 = new JLabel("Linear transitions and places");
+		label3.setBounds(posX, posY+=25, 200, 20);
+		components.add(label3);
+		
+		fixIOTransitions = new JLabel("Transitions: 0 / Places: 0");
+		fixIOTransitions.setBounds(posX, posY+=20, 190, 20);
+		components.add(fixIOTransitions);
+		
+		JButton markLinearTPButton = new JButton();
+		markLinearTPButton.setText("<html>Show<br>T & P</html>");
+		markLinearTPButton.setBounds(posX+195, posY-12, 90, 32);
+		markLinearTPButton.setMargin(new Insets(0, 0, 0, 0));
+		markLinearTPButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
+		markLinearTPButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				;
+			}
+		});
+		markLinearTPButton.setFocusPainted(false);
+		components.add(markLinearTPButton);
+		
+		//TODO:
+		
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			 panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		panel.setVisible(true);
+		add(panel);
 	}
+
 	
 	//**************************************************************************************
 	//**************************************************************************************

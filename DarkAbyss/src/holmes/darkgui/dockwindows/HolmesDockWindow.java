@@ -43,10 +43,10 @@ public class HolmesDockWindow extends SingleDock {
 	private DockWindowType type;
 
 	/**
-	 * EDITOR, SIMULATOR, SELECTOR, InvANALYZER, PropANALYZER, MctANALYZER,InvSIMULATOR
+	 * EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR, MCSselector, Knockout, FIXNET
 	 */
 	public enum DockWindowType {
-		EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR, MCSselector, Knockout
+		EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR, MCSselector, Knockout, FIXNET
 	}
 
 	/**
@@ -61,40 +61,48 @@ public class HolmesDockWindow extends SingleDock {
 		scrollPane = new JScrollPane();
 		guiManager = GUIManager.getDefaultGUIManager();
 
-		if (type == DockWindowType.EDITOR)
+		if (type == DockWindowType.EDITOR) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("NetElement", scrollPane,
 					"Net Element"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		else if (type == DockWindowType.SIMULATOR)
+		} else if (type == DockWindowType.SIMULATOR) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Simulator", scrollPane,
 					"Simulator"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		else if (type == DockWindowType.SELECTOR)
+		} else if (type == DockWindowType.SELECTOR) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Selection", scrollPane,
 					"Selection"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		else if (type == DockWindowType.InvANALYZER)
+		} else if (type == DockWindowType.InvANALYZER) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_analysis", scrollPane,
 					"T-inv"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		else if (type == DockWindowType.MctANALYZER)
+		} else if (type == DockWindowType.MctANALYZER) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("MCT_Groups", scrollPane,
 					"MCT"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		else if (type == DockWindowType.ClusterSELECTOR)
+		} else if (type == DockWindowType.ClusterSELECTOR) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Clusters_Selection", scrollPane,
 					"Clusters"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		else if (type == DockWindowType.MCSselector)
+		} else if (type == DockWindowType.MCSselector) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("MCS_selector", scrollPane,
 					"MCS"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		else if (type == DockWindowType.Knockout)
+		} else if (type == DockWindowType.FIXNET) {
+			setDockable(GUIManager.externalWithListener(new DefaultDockable("Fix_selector", scrollPane,
+					"Fix"), GUIManager.getDefaultGUIManager().getDockingListener()));
+		} else if (type == DockWindowType.Knockout)
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Knockout_selector", scrollPane,
 					"Knockout"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		else if (type == DockWindowType.InvSIMULATOR)
+		else if (type == DockWindowType.InvSIMULATOR) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_simulator", scrollPane,
 					"InvSim"), GUIManager.getDefaultGUIManager().getDockingListener()));
+		}
 
 		position = new Point(0, 0);
 		this.addDockable(getDockable(), position, position);
 
+		//immediate creation:
 		if (type == DockWindowType.SELECTOR) {
 			setSelectionPanel(new SelectionPanel());
 			scrollPane.getViewport().add(getSelectionPanel());
+		} else if (type == DockWindowType.FIXNET) {
+			setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.FIXER));
+			scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}
 

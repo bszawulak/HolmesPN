@@ -68,16 +68,17 @@ public class HolmesClusters extends JFrame {
 	private static final long serialVersionUID = -8420712475473581772L;
 
 	private JTable table;
-	private DefaultTableModel model;
+	private DefaultTableModel tableModel;
+	private int mode = 0; // 0 - tryb 56 klastrowań
+	private ClusterTableRenderer tableRenderer = new ClusterTableRenderer(mode, 18);
+	 
 	private int subRowsSize = 0;
     private final HolmesClusters myself;
     private int clustersToGenerate = 0;
     private SpinnerModel spinnerClustersModel;
     private JSpinner spinnerClusters;
     
-    private int mode = 0; // 0 - tryb 56 klastrowań
-    private ClusterTableRenderer tabRenderer = new ClusterTableRenderer(mode, 18);
-    
+   
     private ClusteringInfoMatrix dataTableCase56 = null;
     private String pathCSVfile = "";
     private String pathClustersDir = "";
@@ -353,33 +354,12 @@ public class HolmesClusters extends JFrame {
     	JPanel main = new JPanel();
     	main.setLayout(new BorderLayout());
 
-    	model = new DefaultTableModel();
-        model.addColumn("Column1"); //miara odległości
-        model.addColumn("Column2"); //zerowe klastry dla algorytmu klastrowania
-        model.addColumn("Column3"); //MSS algorytmu
-        model.addColumn("Column4"); //CH algorytmu
-        model.addColumn("Column5"); //kolejna trójka jak dla 2-4, itd,
-        model.addColumn("Column6");
-        model.addColumn("Column7");
-        model.addColumn("Column8"); //kolejna trójka jak dla 2-4, itd,
-        model.addColumn("Column9");
-        model.addColumn("Column10");
-        model.addColumn("Column11");
-        model.addColumn("Column12");
-        model.addColumn("Column13");
-        model.addColumn("Column14");
-        model.addColumn("Column15");
-        model.addColumn("Column16");
-        model.addColumn("Column17");
-        model.addColumn("Column18");
-        model.addColumn("Column19");
-        model.addColumn("Column20");
-        model.addColumn("Column21");
-        model.addColumn("Column22");
-
-        table = new JTable(model);
+    	table = new JTable(new DefaultTableModel());
+    	setTableModel56();
+        //table = new JTable(tableModel);
+    	
         table.setFillsViewportHeight(true);
-        table.setDefaultRenderer(Object.class, tabRenderer); // 0 - case 56
+        table.setDefaultRenderer(Object.class, tableRenderer); // 0 - case 56
         table.addMouseListener(new MouseAdapter() { //listener kliknięć
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
@@ -393,28 +373,7 @@ public class HolmesClusters extends JFrame {
       	});
         
        
-        table.getColumnModel().getColumn(0).setHeaderValue("Metric:");
-        table.getColumnModel().getColumn(1).setHeaderValue("");
-        table.getColumnModel().getColumn(2).setHeaderValue("UPGMA");
-        table.getColumnModel().getColumn(3).setHeaderValue("");
-        table.getColumnModel().getColumn(4).setHeaderValue("");
-        table.getColumnModel().getColumn(5).setHeaderValue("Centroid");
-        table.getColumnModel().getColumn(6).setHeaderValue("");
-        table.getColumnModel().getColumn(7).setHeaderValue("");
-        table.getColumnModel().getColumn(8).setHeaderValue("Complete");
-        table.getColumnModel().getColumn(9).setHeaderValue("");
-        table.getColumnModel().getColumn(10).setHeaderValue("");
-        table.getColumnModel().getColumn(11).setHeaderValue("McQuitty");
-        table.getColumnModel().getColumn(12).setHeaderValue("");
-        table.getColumnModel().getColumn(13).setHeaderValue("");
-        table.getColumnModel().getColumn(14).setHeaderValue("Median");
-        table.getColumnModel().getColumn(15).setHeaderValue("");
-        table.getColumnModel().getColumn(16).setHeaderValue("");
-        table.getColumnModel().getColumn(17).setHeaderValue("Single");
-        table.getColumnModel().getColumn(18).setHeaderValue("");
-        table.getColumnModel().getColumn(19).setHeaderValue("");
-        table.getColumnModel().getColumn(20).setHeaderValue("Ward");
-        table.getColumnModel().getColumn(21).setHeaderValue("");
+        
         
         //rozmiary kolumn:
         table.getColumnModel().getColumn(0).setPreferredWidth(80);
@@ -439,6 +398,58 @@ public class HolmesClusters extends JFrame {
         scrollTablePane = new JScrollPane(table);
         main.add(scrollTablePane);
         return main;
+    }
+    
+    private void setTableModel56() {
+    	tableModel = new DefaultTableModel();
+    	
+        tableModel.addColumn("Column1"); //miara odległości
+        tableModel.addColumn("Column2"); //zerowe klastry dla algorytmu klastrowania
+        tableModel.addColumn("Column3"); //MSS algorytmu
+        tableModel.addColumn("Column4"); //CH algorytmu
+        tableModel.addColumn("Column5"); //kolejna trójka jak dla 2-4, itd,
+        tableModel.addColumn("Column6");
+        tableModel.addColumn("Column7");
+        tableModel.addColumn("Column8"); //kolejna trójka jak dla 2-4, itd,
+        tableModel.addColumn("Column9");
+        tableModel.addColumn("Column10");
+        tableModel.addColumn("Column11");
+        tableModel.addColumn("Column12");
+        tableModel.addColumn("Column13");
+        tableModel.addColumn("Column14");
+        tableModel.addColumn("Column15");
+        tableModel.addColumn("Column16");
+        tableModel.addColumn("Column17");
+        tableModel.addColumn("Column18");
+        tableModel.addColumn("Column19");
+        tableModel.addColumn("Column20");
+        tableModel.addColumn("Column21");
+        tableModel.addColumn("Column22");
+        
+        table.setModel(tableModel);
+        
+        table.getColumnModel().getColumn(0).setHeaderValue("Metric:");
+        table.getColumnModel().getColumn(1).setHeaderValue("");
+        table.getColumnModel().getColumn(2).setHeaderValue("UPGMA");
+        table.getColumnModel().getColumn(3).setHeaderValue("");
+        table.getColumnModel().getColumn(4).setHeaderValue("");
+        table.getColumnModel().getColumn(5).setHeaderValue("Centroid");
+        table.getColumnModel().getColumn(6).setHeaderValue("");
+        table.getColumnModel().getColumn(7).setHeaderValue("");
+        table.getColumnModel().getColumn(8).setHeaderValue("Complete");
+        table.getColumnModel().getColumn(9).setHeaderValue("");
+        table.getColumnModel().getColumn(10).setHeaderValue("");
+        table.getColumnModel().getColumn(11).setHeaderValue("McQuitty");
+        table.getColumnModel().getColumn(12).setHeaderValue("");
+        table.getColumnModel().getColumn(13).setHeaderValue("");
+        table.getColumnModel().getColumn(14).setHeaderValue("Median");
+        table.getColumnModel().getColumn(15).setHeaderValue("");
+        table.getColumnModel().getColumn(16).setHeaderValue("");
+        table.getColumnModel().getColumn(17).setHeaderValue("Single");
+        table.getColumnModel().getColumn(18).setHeaderValue("");
+        table.getColumnModel().getColumn(19).setHeaderValue("");
+        table.getColumnModel().getColumn(20).setHeaderValue("Ward");
+        table.getColumnModel().getColumn(21).setHeaderValue("");
     }
     
     /**
@@ -487,18 +498,19 @@ public class HolmesClusters extends JFrame {
     	
     	GUIManager.getDefaultGUIManager().log("Clearing old clusterings data table", "text", true);
 
-    	tabRenderer.setMode(mode);  // !!!
-    	tabRenderer.setSubRows(subRowsSize); // !!! zła wartość i tabela idzie w ....
+    	tableRenderer.setMode(mode);  // !!!
+    	tableRenderer.setSubRows(subRowsSize); // !!! zła wartość i tabela idzie w ....
+    	
+    	//setTableModel56();
     	//CLEAR OLD TABLE ROWS:
-    	model.setRowCount(0);
-    	//model.setNumRows(0);
+    	tableModel.setRowCount(0);
     	
     	
     	String[] metricName = { "Correlation", "Pearson", "Binary", "Canberra", "Euclidean", "Manhattan", "Maximum", "Minkowski" };
     	
     	for(int metric=0; metric <8; metric++) { //dla każdej z ośmiu metryk:
     		String[] data = { metricName[metric],"0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H"};
-			model.addRow(data);
+			tableModel.addRow(data);
 			
     		for(int rows=0; rows < subRowsSize; rows++) { //dla odpowiedniej liczby wierszy:
     			String[] dataRow = { "","","","","","","","","","","","","","","","","","","","","",""}; //22 elementów
@@ -517,11 +529,11 @@ public class HolmesClusters extends JFrame {
         			String cuttedValue2 = cutValueCH(val2);
         			dataRow[1+alg*3+2] = ""+cuttedValue2;
             	}
-    			model.addRow(dataRow);
+    			tableModel.addRow(dataRow);
 			}
     	}
     	GUIManager.getDefaultGUIManager().log("New clustering data table has been successfully read.", "text", true);
-    	model.fireTableDataChanged();
+    	tableModel.fireTableDataChanged();
     	table.revalidate();
     	
     	scrollTablePane.repaint();
