@@ -151,10 +151,11 @@ public class SnoopyWriter {
 			if(coarsePlaces.size() == 0) {
 				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
 			} else {
+				weAreInDeepShit = true;
 				int coarsePnumber = coarsePlaces.size();
 				write(bw, "    <nodeclass count=\""+coarsePnumber+"\" name=\"Coarse Place\">");
 				int globalCoarsePlaceId = 0;
-				weAreInDeepShit = true;
+				
 				for(MetaNode m : coarsePlaces) {
 					SnoopyWriterCoarse sCoarseP = new SnoopyWriterCoarse(m);
 					snoopyWriterCoarsePlaces.add(sCoarseP);
@@ -169,10 +170,11 @@ public class SnoopyWriter {
 			if(coarseTransitions.size() == 0) {
 				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
 			} else {
+				weAreInDeepShit = true;
 				int coarseTnumber = coarseTransitions.size();
 				write(bw, "    <nodeclass count=\""+coarseTnumber+"\" name=\"Coarse Transition\">");
 				int globalCoarseTransitionId = 0;
-				weAreInDeepShit = true;
+				
 				for(MetaNode m : coarseTransitions) {
 					SnoopyWriterCoarse sCoarseT = new SnoopyWriterCoarse(m);
 					snoopyWriterCoarseTransitions.add(sCoarseT);
