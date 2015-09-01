@@ -251,8 +251,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setMctBox(new HolmesDockWindow(DockWindowType.MctANALYZER)); //aktywuj obiekt podokna wyświetlania zbiorów MCT
 		setInvSim(new HolmesDockWindow(DockWindowType.InvSIMULATOR));
 		setMCSBox(new HolmesDockWindow(DockWindowType.MCSselector));
-		setKnockoutBox(new HolmesDockWindow(DockWindowType.FIXNET));
-		setFixBox(new HolmesDockWindow(DockWindowType.Knockout));
+		setKnockoutBox(new HolmesDockWindow(DockWindowType.Knockout));
+		
 		
 		// create menu
 		setMenu(new DarkMenu());
@@ -261,6 +261,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// create workspace
 		setWorkspace(new Workspace(this)); // default workspace dock
 		getDockingListener().setWorkspace(workspace);
+		
+		setFixBox(new HolmesDockWindow(DockWindowType.FIXNET));
 
 		//leftTabDock.setHeaderPosition(Position.BOTTOM);
 		leftTabDock.addChildDock(getToolBox(), new Position(0));

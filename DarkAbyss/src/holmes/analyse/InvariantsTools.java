@@ -146,7 +146,7 @@ public final class InvariantsTools {
 	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
 	 * @param invSet ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @return ArrayList[ArrayList[Integer]] - macierz wynikowa, pierwszy wektor to 4 elementowa informacja zbiorcza o:
-	 * 	inwariantach, sub, sur-inwariantach oraz nie-inwariantach. Kolejne wektory to informacja o miejscach w ramach
+	 * 	inwariantach, sur, sub-inwariantach oraz nie-inwariantach. Kolejne wektory to informacja o miejscach w ramach
 	 *  odpowiednio sur-, sub- i nie-inwariantów.
 	 */
 	public static ArrayList<ArrayList<Integer>> countNonT_InvariantsV2(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {

@@ -1163,6 +1163,16 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
+	 * Metoda czyści kolory sieci do domyślnych.
+	 */
+	public void resetNetColors() {
+		turnTransitionGlowingOff();
+		setTransitionGlowedMTC(false);
+		resetTransitionGraphics();
+		resetPlaceGraphics();
+	}
+	
+	/**
 	 * Metoda wygasza kolorowanie tranzycji, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
 	public void resetTransitionGraphics() {
@@ -1175,10 +1185,20 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
+	 * Metoda wygasza kolorowanie miejsca, zeruje dodatkowe wyświetlanie liczb czy tekstów.
+	 */
+	public void resetPlaceGraphics() {
+		for (Node n : getNodes())
+			if (n.getType() == PetriNetElementType.PLACE) {
+				Place place = ((Place) n);
+				place.setColorWithNumber(false, Color.white, false, -1, false, "");
+				place.resetOffs();
+			}
+	}
+	
+	/**
 	 * Metoda sprawdza czy istnieje już rysowana wcześniej sieć.
 	 * @return boolean - false, jeśli nie należy kontynuować
-	 * 
-	 *
 	 */
 	@SuppressWarnings("unused")
 	private boolean checkIfEmpty() {

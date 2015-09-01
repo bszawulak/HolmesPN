@@ -193,6 +193,7 @@ public final class ElementDraw {
 							g.setColor(Color.LIGHT_GRAY);
 							g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 						} else {
+							g.setColor(Color.BLACK);
 							g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
 							g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
 						}
@@ -321,6 +322,30 @@ public final class ElementDraw {
 					g.setFont(old);
 					g.setColor(oldC);
 				}
+				
+				if (el.isPortalSelected() && !el.isSelected()) {
+					g.setColor(Color.BLACK);
+					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+	
+					g.setColor(EditorResources.selectionColorLevel1);
+					g.setStroke(EditorResources.glowStrokeLevel1);
+					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
+					g.setColor(EditorResources.selectionColorLevel2);
+					g.setStroke(EditorResources.glowStrokeLevel2);
+					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					
+					if(snoopy) {
+						g.setColor(Color.LIGHT_GRAY);
+						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
+					} else {
+						g.setColor(Color.BLACK);
+						g.setStroke(new BasicStroke(1.5F));
+						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
+						g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
+					}
+				}
+				
 			}
 			
 		} else if(node instanceof Place) { // MIEJSCA
@@ -358,7 +383,13 @@ public final class ElementDraw {
 						
 					}
 				} else if (el.isPortalSelected()) {
+					g.setColor(EditorResources.selectionColorLevel1);
+					g.setStroke(EditorResources.glowStrokeLevel1);
+					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
+					g.setColor(EditorResources.selectionColorLevel2);
+					g.setStroke(EditorResources.glowStrokeLevel2);
+					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
 
 				//wypełnianie kolorem:
@@ -393,6 +424,74 @@ public final class ElementDraw {
 						g.setStroke(new BasicStroke(1.5F));
 						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
 						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
+					}
+				}
+				
+				// KOLOROWANKI
+				if(place.isColorChanged() ) {
+					Color oldColor = g.getColor();
+
+					g.setColor(place.getPlaceNewColor());
+					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-1, nodeBounds.height-1);
+					
+					g.setColor(oldColor);
+				}
+				
+				if(place.getNumericalValueVisibility()) {
+					String clNumber = formatD(place.getNumericalValueDOUBLE());
+
+					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(clNumber) / 2);
+					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
+					Font old = g.getFont();
+					Color oldC = g.getColor();
+					
+					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
+					g.setColor(Color.black);
+					g.drawString(clNumber, posX-5+place.valueXoff, posY+place.valueYoff);
+					
+					g.setFont(old);
+					g.setColor(oldC);
+				}
+
+				//dodatkowy tekst nad miejscem
+				if(place.showAddText() == true) {
+					String txt = place.returnAddText();
+					
+					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2);
+					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
+					Font old = g.getFont();
+					Color oldC = g.getColor();
+					
+					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
+					g.setColor(Color.BLACK);
+					g.drawString(txt, posX+place.txtXoff, posY+place.txtYoff);
+					
+					g.setFont(old);
+					g.setColor(oldC);
+				}
+				
+				
+				if (el.isPortalSelected() && !el.isSelected()) {
+					g.setColor(Color.white);
+					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-1, nodeBounds.height-1);
+					
+					g.setColor(EditorResources.selectionColorLevel1);
+					g.setStroke(EditorResources.glowStrokeLevel1);
+					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
+					g.setColor(EditorResources.selectionColorLevel2);
+					g.setStroke(EditorResources.glowStrokeLevel2);
+					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					
+					if(snoopy) {
+						g.setColor(Color.LIGHT_GRAY);
+						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
+					} else {
+						g.setColor(Color.blue);
+						g.setStroke(new BasicStroke(1.5F));
+						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
+						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
+						
 					}
 				}
 			}

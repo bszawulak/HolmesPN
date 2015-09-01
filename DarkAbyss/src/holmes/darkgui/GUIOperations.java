@@ -939,9 +939,8 @@ public class GUIOperations {
 	}
 	
 	public void markTransitions(int mode) {
-		overlord.getWorkspace().getProject().turnTransitionGlowingOff();
-		overlord.getWorkspace().getProject().setTransitionGlowedMTC(false);
-		overlord.getWorkspace().getProject().resetTransitionGraphics();
+		overlord.getWorkspace().getProject().resetNetColors();
+
 		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 		if(mode == 0) { //TPN only
 			for(Transition t : transitions) {

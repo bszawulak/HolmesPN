@@ -44,6 +44,7 @@ import holmes.darkgui.GUIManager;
 import holmes.graphpanel.MauritiusMapPanel;
 import holmes.petrinet.data.MauritiusMap;
 import holmes.petrinet.data.MauritiusMap.BTNode;
+import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
 import holmes.utilities.HolmesFileView;
 import holmes.utilities.Tools;
@@ -743,11 +744,10 @@ public class HolmesKnockout extends JFrame {
 	 */
 	protected void getKnockoutInfoToNet(MauritiusMap infoMap) {
 		ArrayList<ArrayList<Integer>> dataMatrix = collectMapData(infoMap);
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		
 		try {
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().turnTransitionGlowingOff();
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setTransitionGlowedMTC(false);
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().resetTransitionGraphics();
+			pn.resetNetColors();
 
 			Transition trans_TMP;
 			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();

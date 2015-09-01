@@ -38,9 +38,7 @@ public class GUIReset {
 	 * w wyniku zaznaczania np. inwariantów, mct, etc.
 	 */
 	public void clearGraphColors() {
-		mastah.getWorkspace().getProject().turnTransitionGlowingOff();
-		mastah.getWorkspace().getProject().setTransitionGlowedMTC(false);
-		mastah.getWorkspace().getProject().resetTransitionGraphics();
+		mastah.getWorkspace().getProject().resetNetColors();
 		mastah.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
