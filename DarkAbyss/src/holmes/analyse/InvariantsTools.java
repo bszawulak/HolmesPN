@@ -1421,21 +1421,16 @@ public final class InvariantsTools {
 		
 		ArrayList<Integer> invariant = invMatrix.get(invIndex);
 		int invSize = invariant.size();
-		ArrayList<Integer> supportVector = getSupport(invMatrix.get(invIndex));
-		for(int i=0; i<invariantsNumber; i++) {
-			for(int j=0; j<invariantsNumber; j++) {
-				if(j == i)
-					continue;
-				
-				if(InvariantsTools.supportInclusionCheck(supportMatrix.get(i), supportMatrix.get(j)) == true) {
-					containedSupportCounter++;
-				}
-				if(containedSupportCounter > 0)
-					break;
+		ArrayList<Integer> supportVector = getSupport(invariant);
+
+		for(int j=0; j<invariantsNumber; j++) {
+			if(InvariantsTools.supportInclusionCheck(supportVector, supportMatrix.get(j)) == true) {
+				containedSupportCounter++;
 			}
 			if(containedSupportCounter > 0)
 				break;
 		}
+
 
 		if(isNonFeasibleStatic(supportVector, readArcTransLocations, transitions) == true)
 			feasibleInv = -1; //non-feasible
