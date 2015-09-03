@@ -55,8 +55,9 @@ public class GraphPanel extends JComponent {
 	private Dimension originSize;
 	private boolean drawMesh = false;
 	private boolean snapToMesh = false;
-	/** POINTER, ERASER, PLACE, TRANSITION, TIMETRANSITION, ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC,
-	   SUBNET_T, SUBNET_P, SUBNET_PT */
+	/** TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
+		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
+		SUBNET_T, SUBNET_P, SUBNET_PT */
 	public enum DrawModes { POINTER, ERASER, PLACE, 
 		TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
 		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
@@ -516,6 +517,19 @@ public class GraphPanel extends JComponent {
 			getNodes().add(n);
 		}
 	}
+	
+	/**
+	 * Metoda związana z mousePressed(MouseEvent).
+	 * @param p Point - punkt dodawania tranzycji funkcyjnej
+	 */
+	private void addNewFunctionalTransition(Point p) {
+		if (isLegalLocation(p)) {
+			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, p);
+			n.setFunctional(true);
+			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
+			getNodes().add(n);
+		}
+	}
 
 	/**
 	 * Metoda dodaje nowy meta-węzeł (i podsieć typu P) we wskazane miejsce.
@@ -597,7 +611,9 @@ public class GraphPanel extends JComponent {
 	/**
 	 * Metoda pozwala na pobranie aktualnie używanego trybu rysowania. Dostępne tryby definiowane
 	 * są przez typ DrawModes.
-	 * @return DrawModes - aktualny tryb rysowania, z pola this.drawMode
+	 * @return DrawModes - aktualny tryb rysowania, z pola this.drawMode:  TRANSITION, TIMETRANSITION, 
+	 * FUNCTIONALTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS, ARC, ARC_INHIBITOR, ARC_RESET, 
+	 * ARC_EQUAL, READARC, ARC_MODIFIER, SUBNET_T, SUBNET_P, SUBNET_PT
 	 */
 	public DrawModes getDrawMode() {
 		return this.drawMode;
@@ -607,7 +623,9 @@ public class GraphPanel extends JComponent {
 	 * Metoda pozwala na ustawienie aktualnego trybu rysowania na bieżącym arkuszu. Tryby
 	 * definiowane są przez typ DrawModes. Ustawienie trybu rysowania powoduje zmianę
 	 * kursora na arkuszu.
-	 * @param newMode DrawModes - nowy tryb rysowania
+	 * @param newMode DrawModes - nowy tryb rysowania : TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, IMMEDIATETRANS, 
+	 * DETERMINISTICTRANS, CHEDULEDTRANS, ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER, SUBNET_T, 
+	 * SUBNET_P, SUBNET_PT
 	 */
 	public void setDrawMode(DrawModes newMode) {
 		this.drawMode = newMode;
@@ -891,6 +909,13 @@ public class GraphPanel extends JComponent {
 						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 						
 						addNewTransition(mousePt);
+						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
+						GUIManager.getDefaultGUIManager().markNetChange();
+						break;
+					case FUNCTIONALTRANS:
+						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						
+						addNewFunctionalTransition(mousePt);
 						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
 						GUIManager.getDefaultGUIManager().markNetChange();
 						break;

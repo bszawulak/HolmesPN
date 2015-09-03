@@ -1,14 +1,13 @@
 package holmes.utilities;
 
+import holmes.darkgui.GUIManager;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.ValidationResult;
 
-public class FunctionSolver {
-
-	public FunctionSolver() {
-		
-	}
+public final class FunctionSolver {
+	GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private FunctionSolver() {}
 	
 	public void test() {
 		Expression e = new ExpressionBuilder("3 * sin(y) - 2 / (x - 2)")
@@ -22,4 +21,6 @@ public class FunctionSolver {
 		
 		
 	}
+	
+	
 }

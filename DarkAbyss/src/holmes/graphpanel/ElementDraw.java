@@ -262,13 +262,35 @@ public final class ElementDraw {
 					}
 
 					g.setColor(Color.LIGHT_GRAY);
-					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 20, nodeBounds.y + 9);
-					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 20, nodeBounds.y + 21);
-					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 9, nodeBounds.x + 20, nodeBounds.y + 21);
-					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 21, nodeBounds.x + 20, nodeBounds.y + 9);
+					//g.drawLine(nodeBounds.x + 9, nodeBounds.y + 8, nodeBounds.x + 21, nodeBounds.y + 8);
+					//g.drawLine(nodeBounds.x + 9, nodeBounds.y + 22, nodeBounds.x + 21, nodeBounds.y + 22);
+					//g.drawLine(nodeBounds.x + 9, nodeBounds.y + 8, nodeBounds.x + 21, nodeBounds.y + 22);
+					//g.drawLine(nodeBounds.x + 9, nodeBounds.y + 22, nodeBounds.x + 21, nodeBounds.y + 8);
+					
+					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 7, nodeBounds.x + 22, nodeBounds.y + 7);
+					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 23, nodeBounds.x + 22, nodeBounds.y + 23);
+					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 8, nodeBounds.x + 21, nodeBounds.y + 22);
+					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 22, nodeBounds.x + 21, nodeBounds.y + 8);
 					
 					g.setColor(Color.black);
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
+				}
+				//TODO:
+				if(trans.isFunctional()) {
+					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth("f") / 2 - 3;
+					int posY = nodeBounds.y + nodeBounds.height / 2 + 5;
+					Font old = g.getFont();
+					Color oldC = g.getColor();
+					
+					g.setFont(new Font("Garamond", Font.BOLD + Font.ITALIC, 22));
+					g.setColor(Color.RED);
+					g.drawString("f", posX, posY);
+					
+					//g.setFont(new Font("TimesRoman", Font.ITALIC, 12));
+					//g.drawString("(x)", posX+4, posY);
+					
+					g.setFont(old);
+					g.setColor(oldC);
 				}
 				
 				//g.setColor(EditorResources.glowTransitonTextColor);
@@ -290,7 +312,7 @@ public final class ElementDraw {
 					Font old = g.getFont();
 					Color oldC = g.getColor();
 					
-					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
+					g.setFont(new Font("TimesRoman", Font.BOLD, 14));
 					g.setColor(Color.black);
 					g.drawString(clNumber, posX-5+trans.valueXoff, posY+trans.valueYoff);
 					
@@ -396,7 +418,6 @@ public final class ElementDraw {
 				if(el.isPortalSelected()) { //dla wszystkich innych ElLocations portalu właśnie klikniętego
 					g.setColor(EditorResources.selectionColorLevel3);
 				} else {
-					//TODO:
 					if(crazyColors) {
 						g.setColor(getColor(place.getTokensNumber()));
 					} else {

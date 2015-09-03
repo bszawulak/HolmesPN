@@ -17,6 +17,7 @@ import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
+import holmes.petrinet.functions.FunctionContainer;
 import holmes.utilities.Tools;
 import holmes.varia.Check;
 
@@ -65,7 +66,10 @@ public class ProjectWriter {
 	 * @return int - kod błędu, 0 - wszystko ok
 	 */
 	@SuppressWarnings("unused")
-	public boolean writeProject(String filepath) {	
+	public boolean writeProject(String filepath) {
+		for(Transition trans : transitions) 
+			trans.checkFunctions(arcs, places);
+		
 		try {
 			//BufferedWriter bw = new BufferedWriter(new FileWriter("tmp//test.apf"));
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
@@ -80,6 +84,7 @@ public class ProjectWriter {
 			bw.write("  <Invariants data>"+newline);
 			bw.write("  <MCT data>"+newline);
 			bw.write("  <StatesMatrix>"+newline);
+			bw.write("  <FunctionsData>"+newline);
 			bw.write("</Project blocks>"+newline);
 			
 			bw.write("<Net data>"+newline);
@@ -301,12 +306,11 @@ public class ProjectWriter {
 							savedArcs++;
 						} 
 					}
-					
-				}
-					
+				}	
 			}
 			@SuppressWarnings("unused")
 			int x = 1;
+			
 			for(int t=0; t<transNumber; t++) {
 				Transition trans = transitions.get(t);
 				int elLocations = trans.getElementLocations().size();
@@ -418,6 +422,7 @@ public class ProjectWriter {
 				}
 			}
 			sp = 2;
+			
 			bw.write(spaces(sp)+"<Arcs data block end"+">"+newline);
 			
 			ArrayList<Integer> arcClasses = Check.getArcClassCount();
@@ -427,6 +432,23 @@ public class ProjectWriter {
 			if(savedArcs != totalArcs) {
 				GUIManager.getDefaultGUIManager().log("Error: saved "+savedArcs+" out of total "+totalArcs+" arcs.", "error", true);
 			}
+			
+			//TODO:
+			bw.write(spaces(sp)+"<Functions data block"+">"+newline);
+			sp = 4;
+			for(int t=0; t<transitions.size(); t++) {
+				Transition transition = transitions.get(t);
+				ArrayList<FunctionContainer> fVector = transition.accessFunctionsList();
+				for(FunctionContainer fc : fVector) {
+					if(fc.function.length() == 0)
+						continue;
+					
+					bw.write(spaces(sp)+"<T"+t+";"+fc.fID+";"+fc.function+";"+fc.correct+";"+fc.enabled+">"+newline);
+				}
+			}
+			
+			sp = 2;
+			bw.write(spaces(sp)+"<Functions data block end"+">"+newline);
 
 			return true;
 		} catch (Exception e) {

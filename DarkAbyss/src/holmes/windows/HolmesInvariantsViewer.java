@@ -96,7 +96,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
 			JOptionPane.showMessageDialog(null,
 					"No invariants found, window cannot initiate itself.", 
-					"Error: no ivnariants", JOptionPane.ERROR_MESSAGE);
+					"Error: no invariants", JOptionPane.ERROR_MESSAGE);
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 			problem = true;
 		}

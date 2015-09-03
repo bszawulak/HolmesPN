@@ -20,13 +20,14 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.functions.FunctionsTools;
 
 /**
  * Zadaniem klasy SelectionManager jest zarządzanie zaznaczeniem oraz obiektami które są aktualnie
  * zaznaczone na danym arkuszu. SelectionManager zawsze ma przypisanego arkusza-rodzica
  * GraphPanel, którego obiektami zarządza nie wpływając nigdy na obiekty pozostałych arkuszy.
  * @author Antrov
- * 
+ * @author MR - mnóstwo dodatków i poprawek
  */
 public class SelectionManager {
 	private GUIManager overlord;
@@ -284,14 +285,14 @@ public class SelectionManager {
 	public void deleteElementLocation(ElementLocation el) {
 		PetriNet pn = overlord.getWorkspace().getProject();
 		ArrayList<Place> places = pn.getPlaces();
-		
+		boolean functionWarning = false;
 		boolean canDo = overlord.subnetsHQ.checkIfExpendable(el);
 		if(canDo == false) {
 			JOptionPane.showMessageDialog(null, 
 					"This element is the only one that leads to subnet\n"
 					+ "with other portals of same node. Please remove all\n"
 					+ "portals in correct subnets before removing THIS portal.", 
-					"Cannot be removed", JOptionPane.WARNING_MESSAGE);
+					"Cannot be removed now", JOptionPane.WARNING_MESSAGE);
 			this.invokeActionListener();
 			
 		} else {
@@ -304,6 +305,8 @@ public class SelectionManager {
 				if(n instanceof Place) {
 					int index = places.indexOf((Place)n);
 					pn.accessStatesManager().removePlace(index);
+					if(FunctionsTools.revalidateFunctions((Place)n, index))
+						functionWarning = true;
 				}
 				this.getGraphPanelNodes().remove(n);
 			}
@@ -339,9 +342,13 @@ public class SelectionManager {
 			overlord.subnetsHQ.validateMetaArcs(sheetModified, false, false);
 			this.getGraphPanel().repaint();
 			this.invokeActionListener();
+			
+			if(functionWarning) {
+				overlord.log("Some functions have been affected by the removal operation. Please read reports above this message.", "error", true);
+			}
 		}
 	}
-	
+
 	/**
 	 * Metoda powoduje usunięcie wszystkich lokalizacji wierzchołków (ElementLocation) oraz łuków
 	 * (Arc) znajdujących się na listach zaznaczenia. Zasady stosowane podczas usuwanie są
@@ -353,6 +360,7 @@ public class SelectionManager {
 		ArrayList<Place> places = pn.getPlaces();
 		ArrayList<Integer> sheetsModified = new ArrayList<Integer>();
 		ArrayList<ElementLocation> protectedList = new ArrayList<ElementLocation>();
+		boolean functionWarning = false;
 		
 		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
 			ElementLocation el = i.next();
@@ -374,6 +382,8 @@ public class SelectionManager {
 				if(n instanceof Place) {
 					int index = places.indexOf((Place)n);
 					pn.accessStatesManager().removePlace(index);
+					if(FunctionsTools.revalidateFunctions((Place)n, index))
+						functionWarning = true;
 				}
 				this.getGraphPanelNodes().remove(n);
 				
@@ -445,6 +455,10 @@ public class SelectionManager {
 					"Some element connected with subnets could not be deleted. Their corresponding\n"
 					+ "portal within these subnets must be deleted first.", 
 					"Cannot be removed", JOptionPane.WARNING_MESSAGE);
+		}
+		
+		if(functionWarning) {
+			overlord.log("Some functions have been affected by the removal operation. Please read reports above this message.", "error", true);
 		}
 	}
 
@@ -560,7 +574,7 @@ public class SelectionManager {
 			int oldTokensTaken = ((Place)getSelectedElementLocations().get(0).getParentNode()).getReservedTokens();
 			Place portal = new Place(IdGenerator.getNextId(), (ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
 			
-			//TODO: poprawić, bo teraz tylko zeruje przesunięcie napisów
+			// poprawić, bo teraz tylko zeruje przesunięcie napisów
 			ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
 			int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
 			for(int i=0; i<getSelectedElementLocations().size(); i++) {	
@@ -588,7 +602,7 @@ public class SelectionManager {
 			Transition portal = new Transition(IdGenerator.getNextId(), ((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
 			portal.setTransType(tt);
 			
-			//TODO: poprawić, bo teraz tylko zeruje przesunięcie napisów
+			// poprawić, bo teraz tylko zeruje przesunięcie napisów
 			ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
 			int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
 			for(int i=0; i<getSelectedElementLocations().size(); i++) {	
@@ -608,6 +622,9 @@ public class SelectionManager {
 		getGraphPanel().repaint();
 	}
 
+	/**
+	 * Tworzenie portalu, czyli dodawanie nowego ElementLocation
+	 */
 	public void cloneNodeIntoPortalV2() {
 		// sprawdzenie czy wszystkie elementy sa tego samego typu (Place lub Transition)
 		if(this.getSelectedElementLocations().size() > 1) {

@@ -82,7 +82,6 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 	 * Metoda zwracająca liczbę kolumn.
 	 * @return int - liczba kolumn
 	 */
-	@Override
 	public int getColumnCount() {
 		return columnNames.length;
 	}
@@ -91,7 +90,6 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 	 * Metoda zwracająca aktualną liczbę wierszy danych.
 	 * @return int - liczba wierszy
 	 */
-	@Override
 	public int getRowCount() {
 		return dataSize;
 	}
@@ -101,7 +99,6 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 	 * @param columnIndex int - numer kolumny
 	 * @return String - nazwa kolumny
 	 */
-	@Override
 	public String getColumnName(int columnIndex) {
         return columnNames[columnIndex];
     }
@@ -111,7 +108,6 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 	 * @param columnIndex int - numer kolumny
 	 * @return Class - typ danych w kolumnie
 	 */
-    @Override
     public Class<?> getColumnClass(int columnIndex) {
         if (dataMatrix.isEmpty()) {
             return Object.class;
@@ -172,7 +168,6 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 			}
 		}
 	}
-	
 	
 	public void setValueAt(Object value, int row, int col) {
 		double newValue = 0;

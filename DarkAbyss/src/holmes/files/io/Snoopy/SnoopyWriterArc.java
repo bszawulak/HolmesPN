@@ -917,7 +917,7 @@ public class SnoopyWriterArc {
 	}
 	
 	/**
-	 * Metoda odtawarza całą ściężkę zagnieżdżeń podsieci zaczynając od elementu w dajgłębszej sieci.
+	 * Metoda odtwarza całą ściężkę zagnieżdżeń podsieci zaczynając od elementu w najgłębszej sieci.
 	 * @param arcStartElLocation ElementLocation - element interfejsu
 	 * @param arcEndElLocation ElementLocation - element do pary
 	 * @param arcus Arc - łukiem wiekuiście związani...

@@ -10,6 +10,7 @@ import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Transition;
+import holmes.windows.HolmesFunctionalTrans;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 
 /**
@@ -44,6 +45,23 @@ public class TransitionPopupMenu extends NodePopupMenu {
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
 		});
+		
+		
+		this.addMenuItem("Functions builder...", "aaa.png", new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+					return;
+				
+				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
+				if(n instanceof Transition) {
+					new HolmesFunctionalTrans((Transition)n);  
+				}
+			}
+		});
+		
+		
+		
+		
 		
 		/*
 		this.addMenuItem("Change selected Transitions into same Portals", "portal.png", new ActionListener() {

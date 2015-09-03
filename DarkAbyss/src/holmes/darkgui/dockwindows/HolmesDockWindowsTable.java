@@ -800,19 +800,27 @@ public class HolmesDockWindowsTable extends JPanel {
 		components.add(portalLabel);
 		JCheckBox portalBox = new JCheckBox("", place.isPortal());
 		portalBox.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
-		portalBox.setEnabled(false);
+		if(((Place)element).isPortal()) 
+			portalBox.setSelected(true);
+		else
+			portalBox.setSelected(false);
 		portalBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				JCheckBox box = (JCheckBox) e.getSource();
-				if (box.isSelected())
-					unPortal();
-				else
+				if (box.isSelected()) {
 					makePortal();
+				} else {
+					if(((Place)element).getElementLocations().size() > 1)
+						JOptionPane.showMessageDialog(null, "Place contains more than one location!", "Cannot proceed", 
+								JOptionPane.INFORMATION_MESSAGE);
+					else
+						unPortal();
+				}
 			}
 		});
 		components.add(portalBox);
-		
+
 		// WSPÓŁRZĘDNE NAPISU:
 		columnA_Y += 20;
 		columnB_Y += 20;
@@ -1088,18 +1096,49 @@ public class HolmesDockWindowsTable extends JPanel {
 		components.add(portalLabel);
 		JCheckBox portalBox = new JCheckBox("", transition.isPortal());
 		portalBox.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
-		portalBox.setEnabled(false);
+		if(((Transition)element).isPortal()) 
+			portalBox.setSelected(true);
+		else
+			portalBox.setSelected(false);
 		portalBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				JCheckBox box = (JCheckBox) e.getSource();
-				if (box.isSelected())
-					unPortal();
-				else
+				if (box.isSelected()) {
 					makePortal();
+				} else {
+					if(((Transition)element).getElementLocations().size() > 1)
+						JOptionPane.showMessageDialog(null, "Transition contains more than one location!", "Cannot proceed", 
+								JOptionPane.INFORMATION_MESSAGE);
+					else
+						unPortal();
+				}
 			}
 		});
 		components.add(portalBox);
+		
+		//FUNKCYJNOŚĆ
+		JLabel functionLabel = new JLabel("Functional:", JLabel.LEFT);
+		functionLabel.setBounds(columnA_posX, columnA_Y+=20, 80, 20);
+		components.add(functionLabel);
+		
+		JCheckBox functionalCheckBox = new JCheckBox("", transition.isPortal());
+		functionalCheckBox.setBounds(columnB_posX, columnB_Y+=20, 150, 20);
+		if(((Transition)element).isFunctional())
+			functionalCheckBox.setSelected(true);
+		else
+			functionalCheckBox.setSelected(false);
+		
+		functionalCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected())
+					((Transition)element).setFunctional(true);
+				else
+					((Transition)element).setFunctional(false);
+			}
+		});
+		components.add(functionalCheckBox);
 
 		// WSPÓŁRZĘDNE NAPISU:
 		columnA_Y += 20;
@@ -1469,18 +1508,48 @@ public class HolmesDockWindowsTable extends JPanel {
 
 		JCheckBox portalBox = new JCheckBox("", transition.isPortal());
 		portalBox.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
-		portalBox.setEnabled(false);
+		if(((Transition)element).isPortal()) 
+			portalBox.setSelected(true);
+		else
+			portalBox.setSelected(false);
 		portalBox.addItemListener(new ItemListener() {
-			@Override
 			public void itemStateChanged(ItemEvent e) {
 				JCheckBox box = (JCheckBox) e.getSource();
-				if (box.isSelected())
-					unPortal();
-				else
+				if (box.isSelected()) {
 					makePortal();
+				} else {
+					if(((Transition)element).getElementLocations().size() > 1)
+						JOptionPane.showMessageDialog(null, "Transition contains more than one location!", "Cannot proceed", 
+								JOptionPane.INFORMATION_MESSAGE);
+					else
+						unPortal();
+				}
 			}
 		});
 		components.add(portalBox);
+		
+		//FUNKCYJNOŚĆ
+		JLabel functionLabel = new JLabel("Functional:", JLabel.LEFT);
+		functionLabel.setBounds(columnA_posX, columnA_Y+=20, 80, 20);
+		components.add(functionLabel);
+		
+		JCheckBox functionalCheckBox = new JCheckBox("", transition.isPortal());
+		functionalCheckBox.setBounds(columnB_posX, columnB_Y+=20, 150, 20);
+		if(((Transition)element).isFunctional())
+			functionalCheckBox.setSelected(true);
+		else
+			functionalCheckBox.setSelected(false);
+		
+		functionalCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected())
+					((Transition)element).setFunctional(true);
+				else
+					((Transition)element).setFunctional(false);
+			}
+		});
+		components.add(functionalCheckBox);
 		
 		// WSPÓŁRZĘDNE NAPISU:
 		columnA_Y += 20;
@@ -4018,15 +4087,16 @@ public class HolmesDockWindowsTable extends JPanel {
 
 	private void makePortal() {
 		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
-			@SuppressWarnings("unused")
 			Node node = (Node) element;
+			node.setPortal(true);
 		}
 	}
 
 	private void unPortal() {
 		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
-			@SuppressWarnings("unused")
 			Node node = (Node) element;
+			if(node.getElementLocations().size() == 1)
+				node.setPortal(false);
 		}
 	}
 

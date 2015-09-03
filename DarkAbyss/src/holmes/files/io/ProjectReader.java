@@ -59,6 +59,7 @@ public class ProjectReader {
 	//które bloki w ogóle próbowac czytać (zależne od tagów w sekcji [Project blocks]
 	private boolean subnets = false; //bloki coarse
 	private boolean states = false;
+	private boolean functions = false;
 	//private boolean invariants = true;
 	//private boolean mct = true;
 	
@@ -202,6 +203,12 @@ public class ProjectReader {
 				return;
 			}
 			
+			query = "functions";
+			if(line.toLowerCase().contains(query)) {
+				functions = true;
+				return;
+			}
+			
 			query = "invariants data";
 			if(line.contains(query)) {
 				//invariants = true;
@@ -312,7 +319,7 @@ public class ProjectReader {
 
 			ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-			
+
 			//ARCS:
 			while(!((line = buffer.readLine()).contains("<Arcs data block>"))) //przewiń do łuków
 				;
@@ -324,9 +331,31 @@ public class ProjectReader {
 				}
 			}
 			
+			for(Transition transition : transitions) { //aktywacja wektorów funkcji
+				transition.checkFunctions(arcs, places);
+			}
+			
+			int functionsRead = 0;
+			int functionsFailed = 0;
+			if(functions) {
+				while(!((line = buffer.readLine()).contains("<Functions data block>"))) //przewiń do funkcji
+					;
+				
+				while(!((line = buffer.readLine()).contains("<Functions data block end>"))) {
+					boolean fReadStatus = parseFunction(line, transitions, places);
+					if(fReadStatus)
+						functionsRead++;
+					else
+						functionsFailed++;
+				}
+			}
+			
+			
 			
 			GUIManager.getDefaultGUIManager().log("Read "+placesProcessed+" places, "+transitionsProcessed+ 
-					" transitions, "+arcsProcessed+" arcs.", "text", true);
+					" transitions, "+arcsProcessed+" arcs, "+functionsRead+" functions.", "text", true);
+			if(functionsFailed > 0)
+				GUIManager.getDefaultGUIManager().log("Failed to correctly parse "+functionsFailed+" functions.", "error", true);
 			
 			status = true;
 		} catch (Exception e) {
@@ -336,6 +365,31 @@ public class ProjectReader {
 			status = false;
 		}
 		return status;
+	}
+	
+	private boolean parseFunction(String functionLine, ArrayList<Transition> transitions, ArrayList<Place> places) {
+		try {
+			//TODO:
+			String[] table = functionLine.split(";");
+			String transNumber = table[0].replace("<T", "");
+			
+			int transIndex = Integer.parseInt(transNumber.trim());
+			Transition transition = transitions.get(transIndex);
+			
+			boolean correct = false;
+			boolean enabled = false;
+			if(table[3].contains("true"))
+				correct = true;
+			if(table[4].contains("true"))
+				enabled = true;
+			
+			boolean status = transition.updateFunctionString(table[1], table[2], correct, enabled);
+	
+			return status;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Failed to correctly parse line: "+functionLine, "warning", true);
+			return false;
+		}
 	}
 
 	/**

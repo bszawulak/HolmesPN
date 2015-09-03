@@ -140,7 +140,7 @@ public class ProblemDetector {
 		ArrayList<Place> places = pn.getPlaces();
 		boolean regions = true;
 		if(regions) {
-			int counter = -1;
+			//int counter = -1;
 			for(Place place : places) {
 				if(!place.isColorChanged())
 					continue;
