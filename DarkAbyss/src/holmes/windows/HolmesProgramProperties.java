@@ -295,6 +295,10 @@ public class HolmesProgramProperties extends JFrame {
 			}
 		});
 		rOptionsPanel.add(rSetPath);
+		
+		JCheckBox forceRcheckBox = checkboxWizard("Force R localization on startup", 140, 60, 210, 20, "programAskForRonStartup");
+		rOptionsPanel.add(forceRcheckBox);
+		
 		return rOptionsPanel;
 	}
 	

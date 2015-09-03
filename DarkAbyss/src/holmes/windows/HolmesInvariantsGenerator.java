@@ -46,13 +46,14 @@ import holmes.workspace.ExtensionFileFilter;
  */
 public class HolmesInvariantsGenerator extends JFrame {
 	private static final long serialVersionUID = 5805567123988000425L;
+	private GUIManager overlord;
 	private boolean tInvCalculation = true;
 	private JTextArea logField;
 	private InvariantsCalculator invGenerator = null;
 	public boolean isGeneratorWorking = false;
 	public boolean noAction = false;
 	private boolean details = true;
-	private int feasibleCalcMode = 1; 
+	private int feasibleCalcMode = 1;
 
 	/**
 	 * Główny konstruktor okna generatora inwariantów.
@@ -65,6 +66,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		setVisible(false);
 		this.setTitle("Invariants generator and tools");
+		this.overlord = GUIManager.getDefaultGUIManager();
 		//ego = this;
 		
 		setLayout(new BorderLayout());
@@ -200,10 +202,15 @@ public class HolmesInvariantsGenerator extends JFrame {
 		INAgenerateButton.setIcon(Tools.getResIcon22("/icons/invWindow/inaGenerator.png"));
 		INAgenerateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				setGeneratorStatus(true);
-				GUIManager.getDefaultGUIManager().io.generateINAinvariants();
-				GUIManager.getDefaultGUIManager().reset.setInvariantsStatus(true);
-				GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetInvData();
+				if(overlord.getINAStatus()) {
+					setGeneratorStatus(true);
+					overlord.io.generateINAinvariants();
+					overlord.reset.setInvariantsStatus(true);
+					overlord.accessNetTablesWindow().resetInvData();
+				} else {
+					JOptionPane.showMessageDialog(null, "INAwin32.exe status set to non ready. Please read initial warnings\n"
+							+ "in the Holmes log windows for more information.", "INAwin32 problem",JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		INAgenerateButton.setFocusPainted(false);
@@ -216,11 +223,11 @@ public class HolmesInvariantsGenerator extends JFrame {
 		loadInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/loadInvariants.png"));
 		loadInvariantsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetInvData();
-				GUIManager.getDefaultGUIManager().io.loadExternalAnalysis();
+				overlord.accessNetTablesWindow().resetInvData();
+				overlord.io.loadExternalAnalysis();
 				logField.append("\n");
 				logField.append("=====================================================================\n");
-				logField.append("Loaded invariants: "+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix().size()+"\n");
+				logField.append("Loaded invariants: "+overlord.getWorkspace().getProject().getINVmatrix().size()+"\n");
 				logField.append("=====================================================================\n");
 			}
 		});
@@ -234,10 +241,10 @@ public class HolmesInvariantsGenerator extends JFrame {
 		saveInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/saveInvariants.png"));
 		saveInvariantsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
+				overlord.io.exportGeneratedInvariants();
 				logField.append("\n");
 				logField.append("=====================================================================\n");
-				logField.append("Saved invariants: "+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix().size()+"\n");
+				logField.append("Saved invariants: "+overlord.getWorkspace().getProject().getINVmatrix().size()+"\n");
 				logField.append("=====================================================================\n");
 			}
 		});
@@ -344,7 +351,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		cardinalityButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_canon.png"));
 		cardinalityButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+				ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getINVmatrix();
 				if(invariants == null || invariants.size() == 0) {
 					JOptionPane.showMessageDialog(null, "No invariants to analyze.", 
 							"No invariants",JOptionPane.INFORMATION_MESSAGE);
@@ -370,7 +377,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		minSuppButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_minsup.png"));
 		minSuppButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+				ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getINVmatrix();
 				if(invariants == null || invariants.size() == 0) {
 					JOptionPane.showMessageDialog(null, "No invariants to analyze.", 
 							"No invariants",JOptionPane.INFORMATION_MESSAGE);
@@ -394,7 +401,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		checkMatrixZeroButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_invC.png"));
 		checkMatrixZeroButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+				ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getINVmatrix();
 				if(invariants == null || invariants.size() == 0) {
 					JOptionPane.showMessageDialog(null, "No invariants to analyze.", 
 							"No invariants",JOptionPane.INFORMATION_MESSAGE);
@@ -466,9 +473,9 @@ public class HolmesInvariantsGenerator extends JFrame {
 	protected void getIncMatrix() {
 		HashMap<Place, Integer> placesMap = new HashMap<Place, Integer>();
 		HashMap<Transition, Integer> transitionsMap = new HashMap<Transition, Integer>();
-		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		ArrayList<Arc> arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
+		ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
+		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
 		
 		for (int i = 0; i < places.size(); i++) {
 			placesMap.put(places.get(i), i);
@@ -550,7 +557,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		if(invariants == null)
 			return;
 		
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("INA Invariants file (.inv)", new String[] { "INV" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file", "");
@@ -561,7 +568,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		if(!file.exists()) return;
 		
 		IOprotocols io = new IOprotocols();
-		//GUIManager.getDefaultGUIManager().getWorkspace().getProject().getCommunicator();
+		//overlord.getWorkspace().getProject().getCommunicator();
 		boolean status = io.readINV(file.getPath());
 		if(status == false) {
 			return;
@@ -635,7 +642,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		notePad.addTextLineNL("", "text");
 		
 		if(results.get(0).get(1) > 0 || results.get(0).get(2) > 0) {
-			places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+			places = overlord.getWorkspace().getProject().getPlaces();
 			size = places.size();
 			
 			// ustal maksymalną długość nazwy miejsca dla obu zbiorów:
@@ -707,7 +714,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 			return;
 		
 		
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+		overlord.getWorkspace().getProject().restoreMarkingZero();
 		
 		InvariantsCalculatorFeasible invF = new InvariantsCalculatorFeasible(invariants, true);
 		invariants = invF.getMinFeasible(feasibleCalcMode);
@@ -722,23 +729,23 @@ public class HolmesInvariantsGenerator extends JFrame {
 						"What to do?", JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[3]);
 		if (n == 0) {
-			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+			PetriNet project = overlord.getWorkspace().getProject();
 			project.setINVmatrix(invariants, false);
-			GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
-			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getINVmatrix());
+			overlord.io.exportGeneratedInvariants();
+			overlord.getInvariantsBox().showInvariants(project.getINVmatrix());
 		} else if(n == 1) {
-			ArrayList<ArrayList<Integer>> invBackup = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+			ArrayList<ArrayList<Integer>> invBackup = overlord.getWorkspace().getProject().getINVmatrix();
 			try {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setINVmatrix(invariants, false);
-				GUIManager.getDefaultGUIManager().io.exportGeneratedInvariants();
+				overlord.getWorkspace().getProject().setINVmatrix(invariants, false);
+				overlord.io.exportGeneratedInvariants();
 			} catch (Exception e) {}
 			finally {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().setINVmatrix(invBackup, false);
+				overlord.getWorkspace().getProject().setINVmatrix(invBackup, false);
 			}
 		} else if(n == 2) {
-			PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+			PetriNet project = overlord.getWorkspace().getProject();
 			project.setINVmatrix(invariants, false);
-			GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(project.getINVmatrix());
+			overlord.getInvariantsBox().showInvariants(project.getINVmatrix());
 		} //else: nic
 	}
 	

@@ -634,7 +634,7 @@ public class GUIOperations {
 	 */
 	public String generateAllCHindexes(int howMany) {
 		if(!overlord.getRStatus()) { //sprawda, czy Rscript.exe jest na miejscu
-			overlord.r_env_missing(); // zapytanie gdzie się podziewa Rscript.exe
+			overlord.checkRlangStatus(true); // zapytanie gdzie się podziewa Rscript.exe
 			if(!overlord.getRStatus()) { //jeśli wciąż...
 				return null;
 			}
@@ -719,7 +719,7 @@ public class GUIOperations {
 	 */
 	public String generateClustersCase56(int howMany) {
 		if(!overlord.getRStatus()) { //sprawdź, czy Rscript.exe jest na miejscu
-			overlord.r_env_missing(); // zapytanie gdzie się podziewa Rscript.exe
+			overlord.checkRlangStatus(true); // zapytanie gdzie się podziewa Rscript.exe
 			if(!overlord.getRStatus()) { //jeśli wciąż...
 				return null;
 			}

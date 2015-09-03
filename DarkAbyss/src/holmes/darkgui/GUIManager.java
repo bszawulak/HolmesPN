@@ -163,6 +163,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesKnockout windowsKnockout;
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
+	private boolean inaReady = true;
 	
 	private boolean nameLocChangeMode = false; //jeśli true, zmieniamy offset napisu
 	private Node nameSelectedNode = null;
@@ -469,10 +470,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		tmpPath = holmesPath+"\\tmp\\";
 		toolPath = holmesPath+"\\tools\\";
 		logPath = holmesPath+"\\log\\";
-		
-		
-		//settingsManager.restoreDefaultSetting();
-		
+
 		File checkFile = new File(tmpPath);
 		if (!checkFile.exists()) checkFile.mkdirs();
 		checkFile = new File(logPath);
@@ -487,11 +485,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 				|| !checkFileINA2.exists() || !(checkFileINA2.length() == 80)
 				|| !checkFileINA3.exists() || !(checkFileINA3.length() == 30) ) {
 			
-			log("Something wrong with the INA tools directory.", "warning",true);
+			log("Something wrong with the INA tools directory.", "warning", true);
 			if(!checkFileINA0.exists()) {
 				checkFileINA0.mkdirs();
-				logNoEnter("Tools directory does not exist. ", "error",true);
-				log("Fixed", "italic", false);
+				logNoEnter("Tools directory does not exist: ", "warning", true);
+				log("fixed", "italic", false);
 			}
 			
 			if(!checkFileINA2.exists() || !(checkFileINA2.length() == 80)) { //COMMAND.ina
@@ -502,12 +500,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 					pw.print(settingsManager.getValue("ina_COMMAND3")+"\r");
 					pw.print(settingsManager.getValue("ina_COMMAND4"));
 					pw.close();
-					logNoEnter("File COMMAND.ina does not exist or is corrupted. ", "error",true);
+					logNoEnter("File COMMAND.ina does not exist or is corrupted. ", "warning", true);
 					log("Fixed", "italic", false);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Unable to recreate COMMAND.ina. Invariants generator will work"
-							+ "in manual mode only.","Error - COMMAND.ina", JOptionPane.ERROR_MESSAGE);
-					log("Unable to recreate COMMAND.ina. Invariants generator will work in manual mode only.", "error", true);
+					JOptionPane.showMessageDialog(null, "Unable to recreate COMMAND.ina.","Error - COMMAND.ina", JOptionPane.ERROR_MESSAGE);
+					inaReady = false;
+					log("Unable to recreate COMMAND.ina. Invariants generator will work in manual mode only.", "warning", true);
 				}
 			} 
 			
@@ -516,40 +514,47 @@ public class GUIManager extends JPanel implements ComponentListener {
 					PrintWriter pw = new PrintWriter(checkFileINA3.getPath());
 					pw.print(settingsManager.getValue("ina_bat"));
 					pw.close();
-					logNoEnter("File ina.bat does not exist or is corrupted. ", "error",true);
-					log("Fixed", "italic", false);
+					logNoEnter("File ina.bat did not exist or was corrupted: ", "warning", true);
+					log("fixed", "italic", false);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null, "Unable to recreate ina.bat. This is a critical error, possible write"
 							+ " protection issues in program directory. All in all, invariants generation using INAwin32 will"
 							+ " most likely fail.","Critical error - writing", JOptionPane.ERROR_MESSAGE);
-					log("Critical error, unable to recreate ina.bat file. Invariants generator will not work.", "error", true);
+					inaReady = false;
+					log("Critical error, unable to recreate ina.bat file. Invariants generator will not work.", "warning", true);
 				}
 			} 
 			
 			if(!checkFileINA1.exists()) { //no INAwin32.exe
-				String msg = "INAwin32.exe missing in\n "+checkFileINA0.getPath()+"directory.\n Please download manually from and put in the right directory.";
-				JOptionPane.showMessageDialog(null, msg, "Error - no INAwin32.exe", JOptionPane.ERROR_MESSAGE);
+				//String msg = "INAwin32.exe missing in\n "+checkFileINA0.getPath()+"directory.\n"
+				//		+ "Please download manually from and put in the right directory.";
+				//JOptionPane.showMessageDialog(null, msg, "Error - no INAwin32.exe", JOptionPane.ERROR_MESSAGE);
 				log("INAwin32.exe missing in "+checkFileINA0+"directory. Please download "
-						+ "manually from www2.informatik.hu-berlin.de/~starke/ina.html and put in the right directory.", "error", true);
+						+ "manually from www2.informatik.hu-berlin.de/~starke/ina.html and put into the \\Tools directory.", "warning", true);
+				inaReady = false;
 			}
 		}
 		
 		//check status of Rscript.exe location:
-		r_env_missing();
+		checkRlangStatus(false);
 	}
 
 	/**
 	 * Metoda uruchamiana na starcie programu oraz wtedy, gdy chcemy uzyskać dostęp do lokalizacji
 	 * pliku Rscript.exe.
 	 */
-	public void r_env_missing() {
+	public void checkRlangStatus(boolean forceCheck) {
 		rReady = true;
 		String Rpath = settingsManager.getValue("r_path");
 		File rF = new File(Rpath);
 		if(!rF.exists()) {
 			rReady = false;
-			log("Invalid path ("+Rpath+") to Rscript executable file.", "error", true);
-			
+			log("Invalid path ("+Rpath+") to Rscript executable file.", "warning", true);
+			if(!forceCheck) { //jeśli nie jest wymuszone sprawdzanie, sprawdź status settings
+				if(getSettingsManager().getValue("programAskForRonStartup").equals("0"))
+					return;
+			}
+
 			Object[] options = {"Manually locate Rscript.exe", "R not installed",};
 			int n = JOptionPane.showOptionDialog(null,
 					"Rscript.exe missing in path "+Rpath,
@@ -561,7 +566,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 				String selectedFile = Tools.selectFileDialog("", filters, "Select Rscript.exe", 
 						"Please select Rscript exe, usually located in R/Rx.x.x/bin directory.", "");
 				if(selectedFile.equals("")) {
-					log("Rscript executable file inaccessible. Some features will be disabled.", "error", true);
+					log("Rscript executable file inaccessible. Some features (clusters operations) will be disabled.", "error", true);
 				} else {
 					if(!selectedFile.contains("x64")) { //jeśli wskazano 64b
 						String dest = selectedFile.substring(0,selectedFile.lastIndexOf(File.separator));
@@ -1386,7 +1391,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Jak wyżej, tylko bez entera.
+	 * Metoda zapisująca nowe zdarzenie w oknie logów - bez Enter na końcu.
+	 * @param text String - tekst zdarzenia
+	 * @param mode String - tryb zapisu w oknie
+	 * @param time boolean - true, jeśli ma być podany czas zdarzenia
 	 */
 	public void logNoEnter(String text, String mode, boolean time) {
 		windowConsole.addText(text, mode, time, false);
@@ -1400,6 +1408,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public boolean getRStatus() {
 		return rReady;
+	}
+	
+	/**
+	 * Zwraca status gotowości programu INAwin32.exe
+	 * @return boolean - true, jeśli wszystko ok (było, na starcie programu Holmes).
+	 */
+	public boolean getINAStatus() {
+		return inaReady;
 	}
 	
 	/**

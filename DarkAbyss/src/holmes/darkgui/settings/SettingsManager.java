@@ -109,6 +109,7 @@ public class SettingsManager {
 		
 		//program - ogólne
 		checkAndFix(settingsNew, "programUseOldSnoopyLoaders", "0");
+		checkAndFix(settingsNew, "programAskForRonStartup", "0");
 		try { 
 			String tmp = getValue("programSnoopyLoaderNetExtFactor");
 			int test = Integer.parseInt(tmp); 
