@@ -10,6 +10,7 @@ import holmes.graphpanel.ElementDraw;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.functions.FunctionContainer;
+import holmes.petrinet.functions.FunctionsTools;
 
 /**
  * Klasa implementująca tranzycję w sieci Petriego. Zapewnia implementację
@@ -363,13 +364,19 @@ public class Transition extends Node {
 			} else if(arcType == TypesOfArcs.EQUAL && startPlaceTokens != arc.getWeight()) { //DOKŁADNIE TYLE CO WAGA
 				return false;
 			} else {
-				if (startPlaceTokens < arc.getWeight())
-					return false;
+				if(isFunctional) { //fast, no method
+					boolean status = FunctionsTools.getFunctionDecision(startPlaceTokens, arc, arc.getWeight(), this);
+					if(status == false)
+						return false; //zwróc tylko jesli false 
+				} else {
+					if (startPlaceTokens < arc.getWeight())
+						return false;
+				}
 			}	
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Metoda pozwala zarezerwować we wszystkich miejscach wejściowych
 	 * niezbędne do uruchomienia tokeny. Inne tranzycje nie mogą ich odebrać.
@@ -393,8 +400,18 @@ public class Transition extends Node {
 					} else {
 						origin.reserveTokens(arc.getWeight());
 					}
-				} else
-					origin.reserveTokens(arc.getWeight());
+				} else { //normalny łuk
+					if(isFunctional) { //fast, no method!
+						//TODO:
+						FunctionContainer fc = getFunctionContainer(arc);
+						if(fc != null) //TODO: czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
+							origin.reserveTokens((int) fc.currentValue); //nie ważne, aktywna czy nie, jeśli nie, to tu jest i tak oryginalna waga
+						else
+							origin.reserveTokens(arc.getWeight());
+					} else {
+						origin.reserveTokens(arc.getWeight());
+					}
+				}
 			}
 		}
 	}
@@ -715,7 +732,7 @@ public class Transition extends Node {
 			if(fArcs.contains(arc))
 				continue;
 			
-			FunctionContainer fc = new FunctionContainer();
+			FunctionContainer fc = new FunctionContainer(this);
 			int placeIndex = places.indexOf(arc.getStartNode());
 			fc.fID = "p"+placeIndex+"-->T";
 			fc.arc = arc;
@@ -727,7 +744,7 @@ public class Transition extends Node {
 			if(fArcs.contains(arc))
 				continue;
 			
-			FunctionContainer fc = new FunctionContainer();
+			FunctionContainer fc = new FunctionContainer(this);
 			int placeIndex = places.indexOf(arc.getEndNode());
 			fc.fID = "T-->p"+placeIndex;
 			fc.arc = arc;
@@ -756,9 +773,29 @@ public class Transition extends Node {
 		return false;
 	}
 	
-	public FunctionContainer getFunction(String fID) {
+	/**
+	 * Metoda zwraca kontener z funkcją.
+	 * @param fID String - identyfikator w ramach tranzycji
+	 * @return FunctionContainer - obiekt kontenera
+	 */
+	public FunctionContainer getFunctionContainer(String fID) {
 		for(FunctionContainer fc : accessFunctionsList()) {
 			if(fc.fID.equals(fID)) {
+				return fc;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	/**
+	 * Metoda zwraca kontener z funkcją - szukanie po obiekcie łuku.
+	 * @param arc Arc - łuk tranzycji
+	 * @return FunctionContainer - obiekt kontenera
+	 */
+	public FunctionContainer getFunctionContainer(Arc arc) {
+		for(FunctionContainer fc : accessFunctionsList()) {
+			if(fc.arc.equals(arc)) {
 				return fc;
 			}
 		}

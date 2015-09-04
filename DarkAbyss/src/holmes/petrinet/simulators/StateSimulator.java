@@ -12,6 +12,7 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.functions.FunctionsTools;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.windows.ssim.HolmesStSim;
 
@@ -285,7 +286,7 @@ public class StateSimulator implements Runnable {
 		//NetSimulationData netData = new NetSimulationData();
 		int placeNumber = places.size();
 		int transNumber = transitions.size();
-		currentDataPackage.maxMode = engine.getMaxMode();
+		currentDataPackage.maxMode = engine.isMaxMode();
 		currentDataPackage.netSimType = engine.getNetSimMode();
 		currentDataPackage.steps = stepsLimit;
 		currentDataPackage.reps = repetitions;
@@ -835,7 +836,8 @@ public class StateSimulator implements Runnable {
 				} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
 					place.modifyTokensNumber(-arc.getWeight());
 				} else {
-					place.modifyTokensNumber(-arc.getWeight());
+					FunctionsTools.functionalExtraction(transition, arc, place);
+					//place.modifyTokensNumber(-arc.getWeight());
 				}
 			}
 		}
@@ -873,7 +875,9 @@ public class StateSimulator implements Runnable {
 					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
 							" arc: "+arc.toString(), "error", true);
 				}
-				place.modifyTokensNumber(arc.getWeight());
+				
+				FunctionsTools.functionalAddition(transition, arc, place);
+				//place.modifyTokensNumber(arc.getWeight());
 			}
 			transition.resetTimeVariables();
 		}

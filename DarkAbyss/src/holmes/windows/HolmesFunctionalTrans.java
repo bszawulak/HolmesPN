@@ -1,39 +1,32 @@
 package holmes.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.ParseException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.text.DefaultFormatter;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.ElementLocation;
+import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.functions.FunctionContainer;
@@ -42,11 +35,17 @@ import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.tables.FunctionalTransAuxTableModel;
 import holmes.tables.FunctionalTransTableModel;
 import holmes.tables.FunctionalTransTableRenderer;
-import holmes.tables.PTITableRenderer;
 import holmes.utilities.Tools;
+import net.objecthunter.exp4j.Expression;
 
+/**
+ * Okno zarządzania funkcjami wskazanej tranzycji.
+ * 
+ * @author MR
+ */
 public class HolmesFunctionalTrans extends JFrame {
 	private static final long serialVersionUID = 1235426932930026597L;
+	private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
 	private Transition transition;
 	private ArrayList<Place> places;
 	private ArrayList<Arc> arcs;
@@ -63,7 +62,14 @@ public class HolmesFunctionalTrans extends JFrame {
 	private JTextField idField;
 	private JTextField functionField;
 	private JCheckBox enabledCheckBox;
+	private JButton validateButton;
+	private JTextField currentResult;
+	private JTextArea commentField;
 	
+	/**
+	 * Konstruktor okna zarządzania funkcjami tranzycji.
+	 * @param trans Transition - wskazana tranzycja
+	 */
 	public HolmesFunctionalTrans(Transition trans) {
 		overlord = GUIManager.getDefaultGUIManager();
 		pn = overlord.getWorkspace().getProject();
@@ -103,24 +109,23 @@ public class HolmesFunctionalTrans extends JFrame {
 		}
 	}
 	
+	/**
+	 * Metoda tworząca główne sekcje okna.
+	 */
 	private void initializeComponents() {
 		this.setLocation(20, 20);
-		setSize(new Dimension(900, 600));
-
+		setSize(new Dimension(900, 650));
 		mainPanel = new JPanel(new BorderLayout());
-		//mainPanel.setBounds(0, 0, 600, 450);
-		
 		tablePanel = createTablePanel();
 		mainPanel.add(tablePanel, BorderLayout.NORTH);
-		
 		mainPanel.add(createAuxPanel(), BorderLayout.CENTER);
-		
-		int mPanelX = 0;
-		int mPanelY = 0;
-		
 		add(mainPanel);
 	}
 	
+	/**
+	 * Metoda tworzenia panelu z sekcjami: edytora funkcji oraz tablicy miejsc.
+	 * @return JPanel - panel
+	 */
 	private JPanel createAuxPanel() {
 		JPanel resultPanel = new JPanel(new BorderLayout());
 		resultPanel.setPreferredSize(new Dimension(900, 400));
@@ -132,9 +137,13 @@ public class HolmesFunctionalTrans extends JFrame {
 		return resultPanel;
 	}
 
+	/**
+	 * Metoda tworząca panel edycji funkcji.
+	 * @return JPanel - panel
+	 */
 	private JPanel createBuilderPanel() {
 		JPanel resultPanel = new JPanel(null);
-		resultPanel.setPreferredSize(new Dimension(900, 100));
+		resultPanel.setPreferredSize(new Dimension(900, 160));
 		resultPanel.setBorder(BorderFactory.createTitledBorder("Function builder"));
 		
 		int posX = 15;
@@ -157,50 +166,111 @@ public class HolmesFunctionalTrans extends JFrame {
 		
 		functionField = new JTextField();
 		functionField.setBounds(posX+65, posY+20, 350, 20);
-		functionField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				//JFormattedTextField field = (JFormattedTextField) e.getSource();
-				//try {
-				//	field.commitEdit();
-				//} catch (ParseException ex) {
-				//}
-				//String newName = (String) field.getText();
-				//changeName(newName);
-			}
-		});
 		resultPanel.add(functionField);
 		
-		JButton validateButton = new JButton(Tools.getResIcon16("/icons/aaa.png"));
+		JLabel labelEnable = new JLabel("Enabled?");
+		labelEnable.setBounds(posX+420, posY, 60, 20);
+		resultPanel.add(labelEnable);
+		
+		enabledCheckBox = new JCheckBox("");
+		enabledCheckBox.setBounds(posX+435, posY+20, 40, 20);
+		resultPanel.add(enabledCheckBox);
+		
+		JLabel resultLabel = new JLabel("Result:");
+		resultLabel.setBounds(posX+490, posY, 80, 20);
+		resultPanel.add(resultLabel);
+		
+		currentResult = new JTextField();
+		currentResult.setBounds(posX+490, posY+20, 110, 20);
+		resultPanel.add(currentResult);
+		
+		validateButton = new JButton(Tools.getResIcon16("/icons/aaa.png"));
 		validateButton.setText("Check and add");
-		validateButton.setToolTipText("Validate correctness of function");
+		validateButton.setToolTipText("Validate the equation and add it to transition functions list");
 		validateButton.setMargin(new Insets(0, 0, 0, 0));
-		validateButton.setBounds(posX+420, posY+20, 120, 20);
+		validateButton.setBounds(posX+650, posY+20, 120, 20);
 		validateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				int row = tableFunc.getSelectedRow();
-				if(row == -1)
-					return; 
-				tableFunc.getModel().setValueAt(functionField.getText(), row, 2);
-				tableFuncModel.fireTableDataChanged();
-				
-				String fID = (String) tableFunc.getValueAt(row, 0);
-				boolean enabled = enabledCheckBox.isSelected();
-				boolean correct = FunctionsTools.validateFunction(transition.getFunction(fID));
-				
-				transition.updateFunctionString(fID, functionField.getText(), correct, enabled);
+				addFunctionAction();
 			}
 		});
 		resultPanel.add(validateButton);
 		
-		JLabel labelEnable = new JLabel("Enabled?");
-		labelEnable.setBounds(posX+550, posY, 80, 20);
-		resultPanel.add(labelEnable);
+		JButton clearButton = new JButton(Tools.getResIcon16("/icons/aaa.png"));
+		clearButton.setText("Clear function");
+		clearButton.setToolTipText("Clear the equation from the list");
+		clearButton.setMargin(new Insets(0, 0, 0, 0));
+		clearButton.setBounds(posX+650, posY+50, 120, 20);
+		clearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int row = tableFunc.getSelectedRow();
+				if(row == -1)
+					return;
+
+				
+				String fID = (String) tableFunc.getValueAt(row, 0);
+				FunctionContainer container = transition.getFunctionContainer(fID);
+				container.function = "";
+				container.equation = null;
+				container.correct = false;
+				container.enabled = false;
+
+				tableFunc.getModel().setValueAt("", row, 2);
+				tableFunc.getModel().setValueAt(false, row, 3);
+				tableFunc.getModel().setValueAt(false, row, 6);
+				tableFuncModel.fireTableDataChanged();
+				
+				commentField.setText("");
+			}
+		});
+		resultPanel.add(clearButton);
 		
-		enabledCheckBox = new JCheckBox("");
-		enabledCheckBox.setBounds(posX+550, posY+20, 50, 20);
-		resultPanel.add(enabledCheckBox);
+		JLabel errLabel = new JLabel("Error log:", JLabel.LEFT);
+		errLabel.setBounds(posX, posY+=40, 140, 20);
+		resultPanel.add(errLabel);	
+		
+		commentField = new JTextArea();
+		commentField.setLineWrap(true);
+		commentField.setEditable(false);
+        JPanel errorSubPanel = new JPanel();
+        errorSubPanel.setLayout(new BorderLayout());
+        errorSubPanel.add(new JScrollPane(commentField), BorderLayout.CENTER);
+        errorSubPanel.setBounds(posX, posY+=20, 600, 70);
+        resultPanel.add(errorSubPanel);
 		
 		return resultPanel;
+	}
+	
+	/**
+	 * Obsługa przycisku dodawania nowej funkcji
+	 */
+	private void addFunctionAction() {
+		int row = tableFunc.getSelectedRow();
+		if(row == -1)
+			return;
+
+		commentField.setText("");
+		String fID = (String) tableFunc.getValueAt(row, 0);
+		boolean enabled = enabledCheckBox.isSelected();
+		FunctionContainer container = transition.getFunctionContainer(fID);
+		boolean correct = FunctionsTools.validateFunction(container, functionField.getText(), false, commentField, places);
+		
+		if(!correct)
+			enabled = false;
+		
+		transition.updateFunctionString(fID, container.function, correct, enabled);
+		tableFunc.getModel().setValueAt(container.function, row, 2);
+		tableFunc.getModel().setValueAt(correct, row, 3);
+		tableFunc.getModel().setValueAt(enabled, row, 6);
+		tableFuncModel.fireTableDataChanged();
+		
+		Expression exp = transition.getFunctionContainer(fID).equation;
+		if(exp != null) {
+			double result = exp.evaluate();
+			currentResult.setText(formatter.format(result));
+		}
+		
+		tableFunc.setRowSelectionInterval(row, row);
 	}
 
 	/**
@@ -286,13 +356,29 @@ public class HolmesFunctionalTrans extends JFrame {
 	protected void cellClickedFuncTable() {
 		int row = tableFunc.getSelectedRow();
 		if(row > -1) {
-			String ID = (String) tableFunc.getValueAt(row, 0);
-			String function = (String) tableFunc.getValueAt(row, 2);
-			boolean enabled = (boolean) tableFunc.getValueAt(row, 6);
-			
-			idField.setText(ID);
-			functionField.setText(function);
-			enabledCheckBox.setEnabled(enabled);
+			TypesOfArcs type = (TypesOfArcs) tableFunc.getValueAt(row, 4);
+			if(type == TypesOfArcs.NORMAL) {
+				functionField.setEnabled(true);
+				enabledCheckBox.setEnabled(true);
+				validateButton.setEnabled(true);
+				currentResult.setEnabled(true);
+				
+				String ID = (String) tableFunc.getValueAt(row, 0);
+				String function = (String) tableFunc.getValueAt(row, 2);
+				boolean enabled = (boolean) tableFunc.getValueAt(row, 6);
+				
+				idField.setText(ID);
+				functionField.setText(function);
+				enabledCheckBox.setSelected(enabled);
+			} else {
+				functionField.setEnabled(false);
+				enabledCheckBox.setEnabled(false);
+				validateButton.setEnabled(false);
+				currentResult.setEnabled(false);
+				
+				functionField.setText("Function possible only for a normal arc");
+				enabledCheckBox.setSelected(false);
+			}
 		}
 	}
 
@@ -308,9 +394,12 @@ public class HolmesFunctionalTrans extends JFrame {
 		auxTable.getColumnModel().getColumn(0).setPreferredWidth(40);
 		auxTable.getColumnModel().getColumn(0).setMinWidth(40);
 		auxTable.getColumnModel().getColumn(0).setMaxWidth(40);
-		auxTable.getColumnModel().getColumn(1).setHeaderValue("Place name:");
-		//auxTable.getColumnModel().getColumn(1).setPreferredWidth(300);
-		auxTable.getColumnModel().getColumn(1).setMinWidth(100);
+		auxTable.getColumnModel().getColumn(1).setHeaderValue("Tokens");
+		auxTable.getColumnModel().getColumn(1).setPreferredWidth(60);
+		auxTable.getColumnModel().getColumn(1).setMinWidth(60);
+		auxTable.getColumnModel().getColumn(1).setMaxWidth(60);
+		auxTable.getColumnModel().getColumn(2).setHeaderValue("Place name:");
+		auxTable.getColumnModel().getColumn(2).setMinWidth(100);
 		
 		auxTable.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
@@ -323,7 +412,7 @@ public class HolmesFunctionalTrans extends JFrame {
 		
 		int index = 0;
 		for(Place place : places) {
-			auxTableModel.addNew("p"+index, place.getName().replace("_", " "));
+			auxTableModel.addNew("p"+index, ""+place.getTokensNumber(), place.getName().replace("_", " "));
 			index++;
 		}
 

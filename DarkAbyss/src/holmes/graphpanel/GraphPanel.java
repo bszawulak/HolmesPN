@@ -331,14 +331,14 @@ public class GraphPanel extends JComponent {
 		status = "Status: "+status;
 		g2d.drawString(status, 20, 40);
 		
-		boolean max = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().accessEngine().getMaxMode();
+		boolean max = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().accessEngine().isMaxMode();
 		if(max)
 			status = "Maximum mode ON";
 		else
 			status = "Maximum mode OFF";
 		g2d.drawString(status, 20, 60);
 		
-		boolean single = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().accessEngine().getSingleMode();
+		boolean single = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().accessEngine().isSingleMode();
 		if(single)
 			status = "Single mode ON";
 		else

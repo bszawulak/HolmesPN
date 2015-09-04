@@ -180,6 +180,7 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition duration:"+trans.getDPNduration()+">"+newline); //DPN duration
 				bw.write(spaces(sp)+"<Transition TPN status:"+trans.getTPNstatus()+">"+newline); //is TPN active?
 				bw.write(spaces(sp)+"<Transition DPN status:"+trans.getDPNstatus()+">"+newline); //is DPN active?
+				bw.write(spaces(sp)+"<Transition function flag:"+trans.isFunctional()+">"+newline); //is DPN active?
 				
 				bw.write(spaces(sp)+"<Location data"+">"+newline);
 				sp = 8;

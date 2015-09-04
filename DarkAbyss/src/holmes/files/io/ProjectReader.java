@@ -23,7 +23,9 @@ import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.functions.FunctionsTools;
 import holmes.utilities.Tools;
+import holmes.windows.HolmesNotepad;
 
 /**
  * Metoda czytająca plik danych projektu: sieć, inwarianty, MCT.
@@ -349,8 +351,13 @@ public class ProjectReader {
 						functionsFailed++;
 				}
 			}
-			
-			
+			HolmesNotepad notepad = new HolmesNotepad(640, 480);
+			notepad.setVisible(true);
+			boolean errStatus = FunctionsTools.validateFunctionNet(notepad, places);
+			if(errStatus)
+				notepad.setVisible(true);
+			else
+				notepad.dispose();
 			
 			GUIManager.getDefaultGUIManager().log("Read "+placesProcessed+" places, "+transitionsProcessed+ 
 					" transitions, "+arcsProcessed+" arcs, "+functionsRead+" functions.", "text", true);
@@ -367,6 +374,13 @@ public class ProjectReader {
 		return status;
 	}
 	
+	/**
+	 * Metoda odpowiedzialna za odczyt linii funkcji.
+	 * @param functionLine String - przeczytana linia
+	 * @param transitions ArrayList[Transition] - wektor tranzycji
+	 * @param places ArrayList[Place] - wektor miejsc
+	 * @return boolean - true, jeśli się udało
+	 */
 	private boolean parseFunction(String functionLine, ArrayList<Transition> transitions, ArrayList<Place> places) {
 		try {
 			//TODO:
@@ -593,6 +607,17 @@ public class ProjectReader {
 					transition.setDPNstatus(true);
 				else
 					transition.setDPNstatus(false);
+				return;
+			}
+			
+			query = "Transition function flag:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true"))
+					transition.setFunctional(true);
+				else
+					transition.setFunctional(false);
 				return;
 			}
 			

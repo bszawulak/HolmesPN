@@ -42,6 +42,7 @@ public class FunctionalTransTableRenderer  implements TableCellRenderer {
     	
     	boolean correct = (boolean) table.getModel().getValueAt(row, 3);
 		boolean enabled = (boolean) table.getModel().getValueAt(row, 6);
+		
     	if(column != 3 && column != 6) {
     		JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     		oLabel.setBackground(Color.white);

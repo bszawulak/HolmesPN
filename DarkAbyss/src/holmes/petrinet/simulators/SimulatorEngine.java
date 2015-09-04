@@ -5,8 +5,11 @@ import java.util.Collections;
 import java.util.Random;
 
 import holmes.darkgui.GUIManager;
+import holmes.petrinet.elements.Arc;
+import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.functions.FunctionContainer;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 
 /**
@@ -24,6 +27,7 @@ public class SimulatorEngine {
 	private ArrayList<Transition> launchableTransitions = null;
 	private Random generator = null;
 	//HighQualityRandom generator = null;
+	
 	private boolean maxMode = false;
 	private boolean singleMode = false;
 	
@@ -48,8 +52,8 @@ public class SimulatorEngine {
 	public void setEngine(NetType simulationType, boolean maxMode, boolean singleMode, 
 			ArrayList<Transition> transitions, ArrayList<Transition> time_transitions) {
 		this.netSimType = simulationType;
-		this.maxMode = maxMode;
-		this.singleMode = singleMode;
+		setMaxMode(maxMode);
+		setSingleMode(singleMode);
 		this.generator = new Random(System.currentTimeMillis());
 		//this.generator = new HighQualityRandom(System.currentTimeMillis());
 		
@@ -94,33 +98,34 @@ public class SimulatorEngine {
 	}
 	
 	/**
+	 * Metoda zwraca status trybu maximum.
+	 * @return boolean - true, jeśli włączony
+	 */
+	public boolean isMaxMode() {
+		return this.maxMode;
+	}
+	
+	/**
 	 * Ustawia tryb pojedynczego odpalania.
 	 * @param value boolean - true, jeśli tylko 1 tranzycja ma odpalić na turę.
 	 */
 	public void setSingleMode(boolean value) {
 		this.singleMode = value;
 		
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
-			maxMode = true;
-		}
+		if(singleMode != false)
+			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+				setMaxMode(true);
+			}
 	}
-	
-	/**
-	 * Metoda zwraca status trybu maximum.
-	 * @return boolean - true, jeśli włączony
-	 */
-	public boolean getMaxMode() {
-		return this.maxMode;
-	}
-	
+
 	/**
 	 * Zwraca status trybu pojedynczego odpalania.
 	 * @return boolean - true, jeśli tylko 1 tranzycja odpala na turę
 	 */
-	public boolean getSingleMode() {
+	public boolean isSingleMode() {
 		return this.singleMode;
 	}
-	
+
 	/**
 	 * Metoda generuje zbiór tranzycji do uruchomienia w ramach symulatora.
 	 * @param mode int - tryb: 0 - bez pustych kroków, 1 - puste kroki dozwolone
@@ -166,7 +171,7 @@ public class SimulatorEngine {
 			}
 		}
 		//TODO: check
-		if(singleMode) {
+		if(isSingleMode()) {
 			int happyWinner = generator.nextInt(launchableTransitions.size());
 			Transition winner = launchableTransitions.get(happyWinner);
 			launchableTransitions.clear();
@@ -199,11 +204,12 @@ public class SimulatorEngine {
 
 			for (int i = 0; i < transitionsIndexList.size(); i++) {
 				Transition transition = transitions.get(transitionsIndexList.get(i));
-				if (transition.isActive() )
-					if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
+				if (transition.isActive() ) {
+					if ((generator.nextInt(10) < 5) || isMaxMode()) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
+				}
 			}
 		} else if (simulationType == NetType.HYBRID) { 
 			timeTransDecisions();
@@ -220,7 +226,7 @@ public class SimulatorEngine {
 				}
 				
 				if (transition.isActive() ) {
-					if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
+					if ((generator.nextInt(10) < 5) || isMaxMode()) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -432,15 +438,6 @@ public class SimulatorEngine {
 		return generator.nextInt((max - min) + 1) + min;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	@SuppressWarnings("unused")
 	private void oldHybrid() {
 		/** 22.02.2015 : PN + TPN */
@@ -515,7 +512,7 @@ public class SimulatorEngine {
 					transition.setTPNtimer(-1);
 				}
 			} else if (transition.isActive() ) {
-				if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
+				if ((generator.nextInt(10) < 5) || isMaxMode()) { // 50% 0-4 / 5-9
 					transition.bookRequiredTokens();
 					launchableTransitions.add(transition);
 				}

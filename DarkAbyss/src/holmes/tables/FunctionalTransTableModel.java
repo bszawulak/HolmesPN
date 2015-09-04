@@ -21,10 +21,10 @@ public class FunctionalTransTableModel extends DefaultTableModel {
     	public String pID;
     	public String name;
     	public String function;
-    	public boolean isOK;
+    	public boolean correct;
     	public TypesOfArcs arcType;
     	public int weight;
-    	public boolean enable;
+    	public boolean enabled;
     }
 	
 	private String[] columnNames = {"Place", "Place name", "Function", "OK", "Arc type", "Weight", "Enabled"};
@@ -54,10 +54,10 @@ public class FunctionalTransTableModel extends DefaultTableModel {
 		fC.pID = pID;
 		fC.name = name;
 		fC.function = function;
-		fC.isOK = isOK;
+		fC.correct = isOK;
 		fC.arcType = arcType;
 		fC.weight = weight;
-		fC.enable = enable;
+		fC.enabled = enable;
 		dataMatrix.add(fC);
 		dataSize++;
 	}
@@ -129,7 +129,7 @@ public class FunctionalTransTableModel extends DefaultTableModel {
         	returnValue = dataMatrix.get(rowIndex).function;
             break;
         case 3:
-        	returnValue = dataMatrix.get(rowIndex).isOK;
+        	returnValue = dataMatrix.get(rowIndex).correct;
             break;
         case 4:
         	returnValue = dataMatrix.get(rowIndex).arcType;
@@ -138,7 +138,7 @@ public class FunctionalTransTableModel extends DefaultTableModel {
         	returnValue = dataMatrix.get(rowIndex).weight;
             break;
         case 6:
-        	returnValue = dataMatrix.get(rowIndex).enable;
+        	returnValue = dataMatrix.get(rowIndex).enabled;
             break;
         default:
             throw new IllegalArgumentException("Invalid column index");
@@ -160,18 +160,22 @@ public class FunctionalTransTableModel extends DefaultTableModel {
 					String f = value.toString();
 					dataMatrix.get(row).function = f;
 					break;
-			case 4:
-				TypesOfArcs toa = (TypesOfArcs)value;
-				dataMatrix.get(row).arcType = toa;
-				break;
-			case 5:
-				int weight = (int)value;
-				dataMatrix.get(row).weight = weight;
-				break;
-			case 6:
-				boolean enable = (boolean)value;
-				dataMatrix.get(row).enable = enable;
-				break;
+				case 3:
+					boolean correct = (boolean)value;
+					dataMatrix.get(row).correct = correct;
+					break;
+				case 4:
+					TypesOfArcs toa = (TypesOfArcs)value;
+					dataMatrix.get(row).arcType = toa;
+					break;
+				case 5:
+					int weight = (int)value;
+					dataMatrix.get(row).weight = weight;
+					break;
+				case 6:
+					boolean enable = (boolean)value;
+					dataMatrix.get(row).enabled = enable;
+					break;
 			}
 		} catch (Exception e) {
 			@SuppressWarnings("unused")

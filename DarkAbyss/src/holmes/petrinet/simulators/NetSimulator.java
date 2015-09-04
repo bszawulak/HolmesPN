@@ -16,6 +16,8 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.functions.FunctionsTools;
+import holmes.windows.HolmesNotepad;
 
 /**
  * Klasa zajmująca się zarządzaniem całym procesem symulacji.
@@ -33,8 +35,10 @@ public class NetSimulator {
 	private Timer timer;
 	private ArrayList<Transition> launchingTransitions;
 	private Stack<SimulationStep> actionStack;
+	
 	private boolean maxMode = false;
 	private boolean singleMode = false;
+	
 	private boolean writeHistory = true;
 	private long timeCounter = -1;
 	private NetSimulatorLogger nsl = new NetSimulatorLogger();
@@ -88,8 +92,8 @@ public class NetSimulator {
 		simulatorStatus = SimulatorMode.STOPPED;
 		previousSimStatus = SimulatorMode.STOPPED;
 		simulationActive = false;
-		maxMode = false;
-		singleMode = false;
+		setMaxMode(false);
+		setSingleMode(false);
 		writeHistory = true;
 		timeCounter = -1;
 		actionStack.removeAllElements();
@@ -114,15 +118,23 @@ public class NetSimulator {
 	public void startSimulation(SimulatorMode simulatorMode) {
 		ArrayList<Transition> transitions = petriNet.getTransitions();
 		ArrayList<Transition> time_transitions = petriNet.getTimeTransitions();
-		nsl.logStart(netSimType, writeHistory, simulatorMode, maxMode);
+		ArrayList<Place> places = petriNet.getPlaces();
+		nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode());
 		
-		if(singleMode && overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
-			maxMode = true; //override
+		if(isSingleMode() && overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
+			setMaxMode(true); //override
 		} else {
-			maxMode = false;
+			setMaxMode(false);
 		}
 		
-		engine.setEngine(netSimType, maxMode, singleMode, transitions, time_transitions);
+		HolmesNotepad notepad = new HolmesNotepad(640, 480);
+		boolean status = FunctionsTools.validateFunctionNet(notepad, places);
+		if(status)
+			notepad.setVisible(true);
+		else
+			notepad.dispose();
+		
+		engine.setEngine(netSimType, isMaxMode(), isSingleMode(), transitions, time_transitions);
 
 		nsl.logBackupCreated();
 		
@@ -283,7 +295,7 @@ public class NetSimulator {
 					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else {
-						place.modifyTokensNumber(-arc.getWeight());
+						FunctionsTools.functionalExtraction(transition, arc, place);
 					}
 				} else { //outArcs
 					place = (Place) arc.getEndNode();
@@ -299,7 +311,7 @@ public class NetSimulator {
 					}  else if(arc.getArcType() == TypesOfArcs.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else {
-						place.modifyTokensNumber(-arc.getWeight());
+						FunctionsTools.functionalExtraction(transition, arc, place);
 					}
 				} // if (backtracking == false)
 				
@@ -320,16 +332,16 @@ public class NetSimulator {
 		if (transitions.size() < 1)
 			return false;
 		else {
-			Transition tran;
+			Transition transition;
 			ArrayList<Arc> arcs;
 			if (!backtracking) {
-				tran = transitions.get(0);
-				arcs = tran.getInArcs();
+				transition = transitions.get(0);
+				arcs = transition.getInArcs();
 			} else {
-				tran = chosenTransition;
-				arcs = tran.getOutArcs();
+				transition = chosenTransition;
+				arcs = transition.getOutArcs();
 			}
-			tran.setLaunching(true);
+			transition.setLaunching(true);
 			for (Arc arc : arcs) {
 				arc.setSimulationForwardDirection(!backtracking);
 				arc.setTransportingTokens(true);
@@ -350,7 +362,8 @@ public class NetSimulator {
 					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else {
-						place.modifyTokensNumber(-arc.getWeight());
+						FunctionsTools.functionalExtraction(transition, arc, place);
+						//place.modifyTokensNumber(-arc.getWeight());
 					}
 				} else { //outArcs
 					place = (Place) arc.getEndNode();
@@ -366,7 +379,8 @@ public class NetSimulator {
 					}  else if(arc.getArcType() == TypesOfArcs.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else {
-						place.modifyTokensNumber(-arc.getWeight());
+						FunctionsTools.functionalExtraction(transition, arc, place);
+						//place.modifyTokensNumber(-arc.getWeight());
 					}
 				} // if (backtracking == false)
 			}
@@ -467,7 +481,8 @@ public class NetSimulator {
 							" arc: "+arc.toString(), "error", true);
 				
 				//tylko zwykły łuk
-				place.modifyTokensNumber(arc.getWeight());
+				FunctionsTools.functionalAddition(transition, arc, place);
+				//place.modifyTokensNumber(arc.getWeight());
 			}
 			transition.resetTimeVariables();
 		}
@@ -486,14 +501,14 @@ public class NetSimulator {
 		if (transitions.size() < 1)
 			return false;
 		else {
-			Transition tran;
+			Transition transition;
 			ArrayList<Arc> arcs;
 			if (!backtracking) {
-				tran = transitions.get(0);
-				arcs = tran.getOutArcs();
+				transition = transitions.get(0);
+				arcs = transition.getOutArcs();
 			} else {
-				tran = chosenTransition;
-				arcs = tran.getInArcs();
+				transition = chosenTransition;
+				arcs = transition.getInArcs();
 			}
 			for (Arc arc : arcs) {
 				if(arc.getArcType() == TypesOfArcs.READARC)
@@ -510,12 +525,15 @@ public class NetSimulator {
 							" arc: "+arc.toString(), "error", true);
 				
 				//tylko zwykły łuk
-				place.modifyTokensNumber(arc.getWeight());
+				FunctionsTools.functionalAddition(transition, arc, place);
+				//place.modifyTokensNumber(arc.getWeight());
 			}
-			transitions.remove(tran);
+			transitions.remove(transition);
 			return true;
 		}
 	}
+	
+	
 
 	/**
 	 * Metoda zatrzymuje symulację po zakończeniu aktualnego kroku (gdy zostaną odpalone
@@ -745,14 +763,6 @@ public class NetSimulator {
 	public boolean isMaxMode() {
 		return maxMode;
 	}
-	
-	/**
-	 * Tryb odpalenia tylko 1 tranzycji - status.
-	 * @return boolean - true, jeśli tylko 1 ma odpalać
-	 */
-	public boolean isSingleMode() {
-		return singleMode;
-	}
 
 	/**
 	 * Metoda ustawiająca tryb maksymalnego uruchamiania tranzycji.
@@ -762,6 +772,14 @@ public class NetSimulator {
 	public void setMaxMode(boolean value) {
 		this.maxMode = value;
 		this.engine.setMaxMode(value);
+	}
+	
+	/**
+	 * Tryb odpalenia tylko 1 tranzycji - status.
+	 * @return boolean - true, jeśli tylko 1 ma odpalać
+	 */
+	public boolean isSingleMode() {
+		return singleMode;
 	}
 	
 	/**

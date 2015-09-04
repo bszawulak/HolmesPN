@@ -101,6 +101,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	public JComboBox<String> simMode;
 	public JCheckBox maximumModeCheckBox;
 	public JCheckBox singleModeCheckBox;
+	public JCheckBox functionalModeCheckBox;
 	public JLabel timeStepLabelValue;
 	private NetSimulator simulator;  // obiekt symulatora
 	// P/T/M/A
@@ -495,7 +496,7 @@ public class HolmesDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(singleModeCheckBox);
-		
+
 		//PANEL SYMULATORA INWARIANTÓW
 		JPanel invariantsSimulatorPanel = new JPanel();
 		

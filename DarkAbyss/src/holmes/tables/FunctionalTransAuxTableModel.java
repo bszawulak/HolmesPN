@@ -11,7 +11,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class FunctionalTransAuxTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = -304515182472851604L;
-	private String[] columnNames = {"ID", "Place name"};
+	private String[] columnNames = {"ID", "Tokens", "Place name"};
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
 	
@@ -26,11 +26,13 @@ public class FunctionalTransAuxTableModel extends DefaultTableModel {
 	/**
 	 * Metoda dodająca nowy wiersz do modelu tablicy funkcji.
 	 * @param pID String - ID miejsca
+	 * @param tokens String - liczba tokenów w miejscu
 	 * @param name String - nazwa miejsca
 	 */
-	public void addNew(String pID, String name) {
+	public void addNew(String pID, String tokens, String name) {
 		ArrayList<String> newRow = new ArrayList<String>();
 		newRow.add(pID);
+		newRow.add(tokens);
 		newRow.add(name);
 		dataMatrix.add(newRow);
 		dataSize++;
@@ -80,11 +82,7 @@ public class FunctionalTransAuxTableModel extends DefaultTableModel {
      * Zwraca status edytowalności komórek.
      */
     public boolean isCellEditable(int row, int column) {
-    	if(column == 2 || column > 3) {
-    		return true;
-    	} else { 
-    		return false;
-    	}
+    	return false;
     }
 
     /**

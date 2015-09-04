@@ -108,7 +108,7 @@ public class Place extends Node {
 	 * @param delta int - wartość o którą zmieni się liczba tokenów
 	 */
 	public void modifyTokensNumber(int delta) {
-		this.tokensNumber = this.tokensNumber + delta;
+		this.tokensNumber += delta;
 		
 		if(tokensNumber < 0) {
 			GUIManager.getDefaultGUIManager().log("Simulation error: number of tokens in place: "
