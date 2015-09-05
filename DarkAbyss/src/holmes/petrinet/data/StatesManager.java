@@ -141,6 +141,18 @@ public class StatesManager {
 	}
 	
 	/**
+	 * Zastępuje wskazany stan aktualnym stanem sieci.
+	 * @param stateID int - wskazany stan z tabeli
+	 */
+	public void replaceStateWithNetState(int stateID) {
+		ArrayList<Place> places = pn.getPlaces();
+		PlacesStateVector psVector = statesMatrix.get(stateID);
+		for(int p=0; p<places.size(); p++) {
+			psVector.accessVector().set(p, (double) places.get(p).getTokensNumber());
+		}
+	}
+	
+	/**
 	 * Zwraca opis stanu.
 	 * @param selected int - nr stanu sieci
 	 * @return String - opis

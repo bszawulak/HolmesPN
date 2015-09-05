@@ -1,18 +1,30 @@
 package holmes.windows;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -20,6 +32,7 @@ import javax.swing.text.StyledDocument;
 
 import holmes.darkgui.GUIManager;
 import holmes.utilities.Tools;
+import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Okno wewnętrznego notatnika programu.
@@ -72,7 +85,7 @@ public class HolmesNotepad extends JFrame {
 		
 		JPanel mainPanel = createEditor(width, height);
         setContentPane(mainPanel);
-        pack();
+        this.pack();
         setVisible(false); 
 	}
 
@@ -85,13 +98,8 @@ public class HolmesNotepad extends JFrame {
 	private JPanel createEditor(int width, int height) {
 		JPanel main = new JPanel();
 		main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
-		
-		JPanel buttonPanel = new JPanel(null);
-		buttonPanel.setMinimumSize(new Dimension(width, 40));
-		buttonPanel.setPreferredSize(new Dimension(width,40));
-		buttonPanel.setMaximumSize(new Dimension(3000, 40));
-		buttonPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		main.add(buttonPanel);
+
+		main.add(createButtonsPanel(width, height));
 		
 		if(simpleMode) {
 			textArea = new JTextArea();
@@ -109,6 +117,138 @@ public class HolmesNotepad extends JFrame {
 		return main;
 	}
 	
+	/**
+	 * Tworzy panel przycisków notatnika.
+	 * @param width int - szerokość
+	 * @param height int - wysokość
+	 * @return JPanel - panel, okrętu się pan spodziewałeś?
+	 */
+	private Component createButtonsPanel(int width, int height) {
+		JPanel buttonPanel = new JPanel(null);
+		buttonPanel.setMinimumSize(new Dimension(width, 50));
+		buttonPanel.setPreferredSize(new Dimension(width,50));
+		buttonPanel.setMaximumSize(new Dimension(3000, 50));
+		buttonPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		//TODO:
+		JButton savedButton = new JButton();
+		savedButton.setBounds(10, 7, 35, 35);
+		savedButton.setMargin(new Insets(0, 0, 0, 0));
+		savedButton.setIcon(Tools.getResIcon16("/icons/notepad/saveFile.png"));
+		savedButton.setToolTipText("Saves the content of notepad.");
+		savedButton.setFocusPainted(false);
+		savedButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				saveContent();
+			}
+		});
+		buttonPanel.add(savedButton);
+		
+		JButton loadButton = new JButton();
+		loadButton.setBounds(50, 7, 35, 35);
+		loadButton.setMargin(new Insets(0, 0, 0, 0));
+		loadButton.setIcon(Tools.getResIcon16("/icons/notepad/loadFile.png"));
+		loadButton.setToolTipText("Load txt files.");
+		loadButton.setFocusPainted(false);
+		loadButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				loadContent();
+			}
+		});
+		buttonPanel.add(loadButton);
+		
+		JButton clearButton = new JButton();
+		clearButton.setBounds(90, 7, 35, 35);
+		clearButton.setMargin(new Insets(0, 0, 0, 0));
+		clearButton.setIcon(Tools.getResIcon16("/icons/notepad/eraserIcon.png"));
+		clearButton.setToolTipText("Clear content");
+		clearButton.setFocusPainted(false);
+		clearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				clearContent();
+			}
+		});
+		buttonPanel.add(clearButton);
+		
+		return buttonPanel;
+	}
+
+	protected void clearContent() {
+		if(simpleMode) {
+			textArea.setText("");
+		} else {
+			
+			int len = textPane.getDocument().getLength();
+			try {
+				doc.remove(0, len);
+			} catch (BadLocationException e) {
+				;
+			}
+		}
+	}
+
+	/**
+	 * Obsługa wczytywania pliku tekstowego
+	 */
+	protected void loadContent() {
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter("Holmes notepad text file (.txt)",  new String[] { "TXT" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "Select text file", "");
+		
+		if(selectedFile.equals("")) {
+			return;
+			//JOptionPane.showMessageDialog(null, "Incorrect filename or location.", "Operation failed.", JOptionPane.ERROR_MESSAGE);
+		} else {
+			try {
+				clearContent();
+				DataInputStream dis = new DataInputStream(new FileInputStream(selectedFile));
+				BufferedReader buffer = new BufferedReader(new InputStreamReader(dis));
+				
+				String line = "";
+				//addTextLineNL(line,  "text");
+				while((line = buffer.readLine()) != null) {
+					addTextLineNL(line,  "text");
+				}
+				buffer.close();
+				setCaretFirstLine();
+			} catch (Exception e) {
+				GUIManager.getDefaultGUIManager().log("Reading text file into the notepad failed.", "error", true);
+			}
+		}
+	}
+
+	/**
+	 * Zapisuje zawartość notatnika do pliku.
+	 */
+	protected void saveContent() {
+		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		FileFilter[] filters = new FileFilter[1];
+		filters[0] = new ExtensionFileFilter("Holmes notepad text file (.txt)",  new String[] { "TXT" });
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select new filename", "");
+		
+		if(selectedFile.equals("")) {
+			return;
+		} else {
+			String extension = ".txt";
+			if(selectedFile.contains(extension) == false)
+				selectedFile += extension;
+			
+			try {
+				PrintWriter pw = new PrintWriter(selectedFile);
+				if(simpleMode) {
+					pw.write(textArea.getText());
+				} else {
+					int len = textPane.getDocument().getLength();
+					pw.write(doc.getText(0, len));
+				}
+				pw.close();
+			} catch (Exception e) {
+				GUIManager.getDefaultGUIManager().log("Notepad saving operation for file "+selectedFile.toString()+" failed.", "error", true);
+			}
+		}
+	}
+
 	/**
 	 * Metoda pomocnicza konstruktora, tworzy obiekt edytora.
 	 * @return JTextPane - panel edytora

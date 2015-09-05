@@ -19,7 +19,6 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 
 import javax.imageio.ImageIO;
@@ -70,6 +69,7 @@ import holmes.petrinet.simulators.NetSimulator;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
+import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.HolmesStatesManager;
 import holmes.workspace.WorkspaceSheet;
@@ -115,6 +115,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	private int selectedMCTindex = -1;
 	private boolean colorMCT = false;
 	private boolean allMCTselected = false;
+	private JTextArea MCTnameField;
 	//knockout:
 	private JTextArea knockoutTextArea;
 	//invariants:
@@ -122,12 +123,11 @@ public class HolmesDockWindowsTable extends JPanel {
 	private int selectedInvIndex = -1;
 	private boolean markMCT = false;
 	private boolean glowInv = true;
-	private JFormattedTextField invNameField;
+	private JTextArea invNameField;
 	//clusters:
 	private JComboBox<String> chooseCluster;
 	private JComboBox<String> chooseClusterInv;
 	private ClusterDataPackage clusterColorsData;
-	private JFormattedTextField MCTnameField;
 	private int selectedClusterIndex = -1;
 	private int selectedClusterInvIndex = -1;
 	private boolean clustersMCT = false;
@@ -2469,11 +2469,14 @@ public class HolmesDockWindowsTable extends JPanel {
 		components.add(chooseInvBox);
 		
 		JButton showDetailsButton = new JButton();
-		showDetailsButton.setText("Show details");
-		showDetailsButton.setBounds(colA_posX, positionY+=30, 120, 30);
+		showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
+		showDetailsButton.setIcon(Tools.getResIcon32("/icons/menu/menu_invViewer.png"));
+		showDetailsButton.setBounds(colA_posX, positionY+=30, 120, 32);
 		showDetailsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				showInvariantNotepad();
+				if(selectedInvIndex == -1)
+					return;
+				new HolmesInvariantsViewer(selectedInvIndex);
 			}
 		});
 		components.add(showDetailsButton);
@@ -2510,26 +2513,21 @@ public class HolmesDockWindowsTable extends JPanel {
 		});
 		components.add(glowINVcheckBox);
 		
-		DefaultFormatter format = new DefaultFormatter();
-	    format.setOverwriteMode(false);
-		invNameField = new JFormattedTextField(format);
-		invNameField.setBounds(colA_posX, positionY += 40, 250, 20);
-		invNameField.setValue("");
-		invNameField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					field.commitEdit();
-				} catch (ParseException ex) {
-				}
-				String newName = (String) field.getText();
-				changeInvName(newName);
-			}
-		});
-		components.add(invNameField);
+		invNameField = new JTextArea();
+		invNameField.setLineWrap(true);
+		invNameField.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+            	JTextArea field = (JTextArea) e.getSource();
+            	if(field != null)
+            		changeInvName(field.getText());
+            }
+        });
+			
+        JPanel descPanel = new JPanel();
+        descPanel.setLayout(new BorderLayout());
+        descPanel.add(new JScrollPane(invNameField), BorderLayout.CENTER);
+        descPanel.setBounds(colA_posX, positionY += 40, 250, 80);
+        components.add(descPanel);
 		
 		doNotUpdate = false;
 		panel.setLayout(null);
@@ -2549,84 +2547,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		if(selectedInvIndex == -1)
 			return;
 
-		overlord.getWorkspace().getProject().accessINVnames().set(selectedInvIndex, newName);
-	}
-
-	/**
-	 * Metoda wywołuje okno notatnika z danymi o inwariancie.
-	 * @param selectedInvIndex2 int - indeks wybranego z listy
-	 */
-	protected void showInvariantNotepad() {
-		if(selectedInvIndex == -1)
-			return;
-		
-		HolmesNotepad note = new HolmesNotepad(640, 480);
-		ArrayList<Integer> invariant = invariantsMatrix.get(selectedInvIndex);
-		
-		//MCT:
-		ArrayList<Integer> mcts = new ArrayList<Integer>();
-		ArrayList<String> singleT = new ArrayList<String>();
-		ArrayList<Integer> transMCTvector = overlord.getWorkspace().getProject().getMCTtransIndicesVector();
-		int transNumber = 0;
-		for(int t=0; t<invariant.size(); t++) {
-			int fireValue = invariant.get(t);
-			if(fireValue == 0)
-				continue;
-			
-			transNumber++;
-			int mctNo = transMCTvector.get(t);
-			if(mctNo == -1) { 
-				singleT.add("T"+t+"_"+transitions.get(t).getName());
-			} else {
-				if(!mcts.contains(mctNo)) {
-					mcts.add(mctNo);
-				}
-			}
-		}
-		Collections.sort(mcts);
-		String name = overlord.getWorkspace().getProject().accessINVnames().get(selectedInvIndex);
-		note.addTextLineNL("Invariant "+(selectedInvIndex+1)+": "+name, "text");
-		note.addTextLineNL("Total number of transitions: "+transNumber, "text");
-		note.addTextLineNL("Support structure:", "text");
-		for(int mct : mcts) {
-			String MCTname = overlord.getWorkspace().getProject().getMCTname(mct);
-			note.addTextLineNL("  [MCT: "+(mct+1)+"]: "+MCTname, "text");
-		}
-		for(String transName : singleT)
-			note.addTextLineNL(transName, "text");
-		//END OF STRUCTURE BLOCK
-		
-		note.addTextLineNL("", "text");
-		note.addTextLineNL("All transitions of INV #" + (selectedInvIndex+1)+":", "text");
-		
-		if(transitions.size() != invariant.size()) {
-			transitions = overlord.getWorkspace().getProject().getTransitions();
-			if(transitions == null || transitions.size() != invariant.size()) {
-				overlord.log("Critical error in invariants subwindow. "
-						+ "Invariants support size refers to non-existing transitions.", "error", true);
-				return;
-			}
-		}
-		
-		String vector = "";
-		for(int t=0; t<invariant.size(); t++) {
-			int fireValue = invariant.get(t);
-			vector += fireValue+";";
-			if(fireValue == 0)
-				continue;
-			
-			Transition realT = transitions.get(t);
-			String t1 = Tools.setToSize("t"+t, 5, false);
-			String t2 = Tools.setToSize("Fired: "+fireValue, 12, false);
-			note.addTextLineNL(t1 + t2 + " ; "+realT.getName(), "text");
-		}
-		vector = vector.substring(0, vector.length()-1);
-		note.addTextLineNL("", "text");
-		note.addTextLineNL("Invariant vector:", "text");
-		note.addTextLineNL(vector, "text");
-
-		note.setCaretFirstLine();
-		note.setVisible(true);
+		overlord.getWorkspace().getProject().accessINVdescriptions().set(selectedInvIndex, newName);
 	}
 
 	/**
@@ -2668,8 +2589,8 @@ public class HolmesDockWindowsTable extends JPanel {
 				}
 			}
 			//name field:
-			String name = overlord.getWorkspace().getProject().accessINVnames().get(selectedInvIndex);
-			invNameField.setValue(name);
+			String name = overlord.getWorkspace().getProject().accessINVdescriptions().get(selectedInvIndex);
+			invNameField.setText(name);
 			
 		}
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -2791,6 +2712,7 @@ public class HolmesDockWindowsTable extends JPanel {
 					selectedMCTindex = -1;
 					allMCTselected = false;
 					showMct();
+					MCTnameField.setText("");
 				} else if(selected == comboBox.getItemCount()-1) {
 					allMCTselected = true;
 					showAllColors();
@@ -2804,8 +2726,9 @@ public class HolmesDockWindowsTable extends JPanel {
 		components.add(chooseMctBox);
 
 		JButton showDetailsButton = new JButton();
-		showDetailsButton.setText("Show details");
-		showDetailsButton.setBounds(colA_posX, positionY+=30, 120, 30);
+		showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
+		showDetailsButton.setIcon(Tools.getResIcon32("/icons/invViewer/showInNotepad.png"));
+		showDetailsButton.setBounds(colA_posX, positionY+=30, 120, 32);
 		showDetailsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				showMCTNotepad();
@@ -2832,6 +2755,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		});
 		components.add(glowCheckBox);
 		
+		/*
 		DefaultFormatter format = new DefaultFormatter();
 	    format.setOverwriteMode(false);
 	    MCTnameField = new JFormattedTextField(format);
@@ -2851,6 +2775,24 @@ public class HolmesDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(MCTnameField);
+		*/
+		
+		MCTnameField = new JTextArea();
+		MCTnameField.setLineWrap(true);
+		MCTnameField.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+            	JTextArea field = (JTextArea) e.getSource();
+            	if(field != null)
+            		changeMCTname(field.getText());
+            }
+        });
+			
+        JPanel descPanel = new JPanel();
+        descPanel.setLayout(new BorderLayout());
+        descPanel.add(new JScrollPane(MCTnameField), BorderLayout.CENTER);
+        descPanel.setBounds(colA_posX, positionY += 40, 250, 80);
+        components.add(descPanel);
+		
 
 		doNotUpdate = false;
 		
@@ -2881,7 +2823,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		if(selectedMCTindex == -1)
 			return;
 		
-		HolmesNotepad note = new HolmesNotepad(640, 480);
+		HolmesNotepad note = new HolmesNotepad(800, 600);
 
 		ArrayList<Transition> mct = mctGroups.get(selectedMCTindex);
 		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
@@ -2931,7 +2873,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
 		//name field:
 		String name = overlord.getWorkspace().getProject().accessMCTnames().get(selectedMCTindex);
-		MCTnameField.setValue(name);
+		MCTnameField.setText(name);
 	}
 	
 	/**
@@ -3745,10 +3687,10 @@ public class HolmesDockWindowsTable extends JPanel {
 		components.add(fixInvariants2);
 		
 		JButton markInvButton = new JButton();
-		markInvButton.setText("<html>Show<br>inv.</html>");
-		markInvButton.setBounds(posX+195, posY-18, 90, 32);
+		markInvButton.setText("<html>Show<br>&nbsp;&nbsp;&nbsp;inv.</html>");
+		markInvButton.setBounds(posX+185, posY-18, 100, 32);
 		markInvButton.setMargin(new Insets(0, 0, 0, 0));
-		markInvButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
+		markInvButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
 		markInvButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				detector.markSubSurNonInvariantsPlaces();
@@ -3767,9 +3709,9 @@ public class HolmesDockWindowsTable extends JPanel {
 		
 		JButton markIOPlacesButton = new JButton();
 		markIOPlacesButton.setText("<html>Show<br>places</html>");
-		markIOPlacesButton.setBounds(posX+195, posY-16, 90, 32);
+		markIOPlacesButton.setBounds(posX+185, posY-16, 100, 32);
 		markIOPlacesButton.setMargin(new Insets(0, 0, 0, 0));
-		markIOPlacesButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
+		markIOPlacesButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
 		markIOPlacesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				detector.markIOPlaces();
@@ -3788,9 +3730,9 @@ public class HolmesDockWindowsTable extends JPanel {
 		
 		JButton markIOTransButton = new JButton();
 		markIOTransButton.setText("<html>Show<br>trans.</html>");
-		markIOTransButton.setBounds(posX+195, posY-14, 90, 32);
+		markIOTransButton.setBounds(posX+185, posY-14, 100, 32);
 		markIOTransButton.setMargin(new Insets(0, 0, 0, 0));
-		markIOTransButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
+		markIOTransButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
 		markIOTransButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				detector.markIOTransitions();
@@ -3809,9 +3751,9 @@ public class HolmesDockWindowsTable extends JPanel {
 		
 		JButton markLinearTPButton = new JButton();
 		markLinearTPButton.setText("<html>Show<br>T & P</html>");
-		markLinearTPButton.setBounds(posX+195, posY-12, 90, 32);
+		markLinearTPButton.setBounds(posX+185, posY-12, 100, 32);
 		markLinearTPButton.setMargin(new Insets(0, 0, 0, 0));
-		markLinearTPButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/aa.png"));
+		markLinearTPButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
 		markLinearTPButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				detector.markLinearRegions();

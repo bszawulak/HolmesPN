@@ -168,7 +168,9 @@ public class HolmesStSimKnock extends JPanel {
 		result.add(acqRefDataButton);
 		
 		JButton cancelButton = new JButton();
-		cancelButton.setText("STOP");
+		cancelButton.setText("<html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>");
+		cancelButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/stopIcon.png"));
+		cancelButton.setToolTipText("Stop the currently working simulation process.");
 		cancelButton.setBounds(posXda, posYda+55, 110, 25);
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.addActionListener(new ActionListener() {
@@ -351,10 +353,10 @@ public class HolmesStSimKnock extends JPanel {
 		});
 		result.add(referencesCombo);
 		
-		JButton removeRefButton = new JButton("Del");
+		JButton removeRefButton = new JButton("Rem.");
 		removeRefButton.setBounds(posXda+500, posYda, 70, 20);
 		removeRefButton.setMargin(new Insets(0, 0, 0, 0));
-		removeRefButton.setIcon(Tools.getResIcon16("/icons/stateSim/ss.png"));
+		removeRefButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeRefButton.setToolTipText("Remove selected reference data set.");
 		removeRefButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -473,7 +475,7 @@ public class HolmesStSimKnock extends JPanel {
 		JButton addTransButton = new JButton("Add");
 		addTransButton.setBounds(posXda+485, posYda, 70, 20);
 		addTransButton.setMargin(new Insets(0, 0, 0, 0));
-		addTransButton.setIcon(Tools.getResIcon16("/icons/stateSim/ss.png"));
+		addTransButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/addIcon.png"));
 		addTransButton.setToolTipText("Sets transition for offline in the incoming simulation sesssion.");
 		addTransButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -484,10 +486,10 @@ public class HolmesStSimKnock extends JPanel {
 		});
 		result.add(addTransButton);
 		
-		JButton removeTransButton = new JButton("Del");
+		JButton removeTransButton = new JButton("Rem.");
 		removeTransButton.setBounds(posXda+560, posYda, 70, 20);
 		removeTransButton.setMargin(new Insets(0, 0, 0, 0));
-		removeTransButton.setIcon(Tools.getResIcon16("/icons/stateSim/ss.png"));
+		removeTransButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeTransButton.setToolTipText("Remove transitions from offline set.");
 		removeTransButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -517,7 +519,7 @@ public class HolmesStSimKnock extends JPanel {
 		JButton addMCTButton = new JButton("Add");
 		addMCTButton.setBounds(posXda+485, posYda+25, 70, 20);
 		addMCTButton.setMargin(new Insets(0, 0, 0, 0));
-		addMCTButton.setIcon(Tools.getResIcon16("/icons/stateSim/ss.png"));
+		addMCTButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/addIcon.png"));
 		addMCTButton.setToolTipText("Sets whole MCT for offline in the incoming simulation sesssion.");
 		addMCTButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -528,10 +530,10 @@ public class HolmesStSimKnock extends JPanel {
 		});
 		result.add(addMCTButton);
 		
-		JButton removeMCTButton = new JButton("Del");
+		JButton removeMCTButton = new JButton("Rem.");
 		removeMCTButton.setBounds(posXda+560, posYda+25, 70, 20);
 		removeMCTButton.setMargin(new Insets(0, 0, 0, 0));
-		removeMCTButton.setIcon(Tools.getResIcon16("/icons/stateSim/ss.png"));
+		removeMCTButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeMCTButton.setToolTipText("Remove MCT set from offline set.");
 		removeMCTButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -552,9 +554,9 @@ public class HolmesStSimKnock extends JPanel {
         result.add(dataFieldPanel);
         
         JButton clearButton = new JButton("Clear");
-        clearButton.setBounds(posXda+870, posYda, 70, 45);
+        clearButton.setBounds(posXda+870, posYda, 90, 45);
         clearButton.setMargin(new Insets(0, 0, 0, 0));
-        clearButton.setIcon(Tools.getResIcon16("/icons/stateSim/ss.png"));
+        clearButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/clearIcon.png"));
         clearButton.setToolTipText("Clear offline set.");
         clearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -584,7 +586,8 @@ public class HolmesStSimKnock extends JPanel {
 		result.add(acqDataSimButton);
 		
 		JButton cancelButton = new JButton();
-		cancelButton.setText("STOP");
+		cancelButton.setText("<html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>");
+		cancelButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/stopIcon.png"));
 		cancelButton.setBounds(posXda, posYda+55, 110, 25);
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.addActionListener(new ActionListener() {
@@ -818,7 +821,7 @@ public class HolmesStSimKnock extends JPanel {
 		JButton removeDataButton = new JButton("Del");
 		removeDataButton.setBounds(posXda+700, posYda, 70, 20);
 		removeDataButton.setMargin(new Insets(0, 0, 0, 0));
-		removeDataButton.setIcon(Tools.getResIcon16("/icons/stateSim/ss.png"));
+		removeDataButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeDataButton.setToolTipText("Remove selected knockout simulation dataset.");
 		removeDataButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -888,7 +891,7 @@ public class HolmesStSimKnock extends JPanel {
 		JButton loadAllButton = new JButton("Load all");
 		loadAllButton.setBounds(posXda, posYda, 110, 40);
 		loadAllButton.setMargin(new Insets(0, 0, 0, 0));
-		loadAllButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeDa.png"));
+		loadAllButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/loadIcon.png"));
 		loadAllButton.setToolTipText("Saves all simulation data to single file.");
 		loadAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -900,7 +903,7 @@ public class HolmesStSimKnock extends JPanel {
 		JButton saveAllButton = new JButton("Save all");
 		saveAllButton.setBounds(posXda+120, posYda, 110, 40);
 		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
-		saveAllButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeDa.png"));
+		saveAllButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/saveIcon.png"));
 		saveAllButton.setToolTipText("Saves all simulation data to single file.");
 		saveAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -909,10 +912,10 @@ public class HolmesStSimKnock extends JPanel {
 		});
 		result.add(saveAllButton);
 
-		JButton showVisualsButton = new JButton("Data window");
+		JButton showVisualsButton = new JButton("Analyse");
 		showVisualsButton.setBounds(posXda+240, posYda, 110, 40);
 		showVisualsButton.setMargin(new Insets(0, 0, 0, 0));
-		showVisualsButton.setIcon(Tools.getResIcon32("/icons/stateSim/d.png"));
+		showVisualsButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/showIcon.png"));
 		showVisualsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				new HolmesStSimKnockVis(mainSimWindow.returnFrame());

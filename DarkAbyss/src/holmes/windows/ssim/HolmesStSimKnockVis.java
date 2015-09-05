@@ -1414,11 +1414,6 @@ public class HolmesStSimKnockVis extends JFrame {
     			}
     		}
     		
-    		if(t==73) {
-    			@SuppressWarnings("unused")
-				int x=1;
-    		}
-    		
     		TreeMap<Double, String> data = new TreeMap<Double, String>();
     		for(int t1=0; t1<transNumber; t1++) {
     			if(transVector.get(t1) == 0)

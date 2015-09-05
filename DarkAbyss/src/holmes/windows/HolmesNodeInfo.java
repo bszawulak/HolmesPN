@@ -71,6 +71,7 @@ public class HolmesNodeInfo extends JFrame {
 	private boolean maximumMode = false;
 	private boolean singleMode = false;
 	private int transInterval = 10;
+	private JFormattedTextField avgFiredTextBox;
 	
 	private NetType choosenNetType = NetType.BASIC;
 	
@@ -107,10 +108,8 @@ public class HolmesNodeInfo extends JFrame {
 	
 	public HolmesNodeInfo(MetaNode metanode, JFrame papa) {
 		parentFrame = papa;
-		//this.metanode = metanode;
 		setTitle("MetaNode: "+metanode.getName());
-		
-		
+
 		initializeCommon();
 		//initializeTransitionInfo();
 	}
@@ -381,8 +380,10 @@ public class HolmesNodeInfo extends JFrame {
 				int selected = simMode.getSelectedIndex();
 				if(selected == 0) {
 					maximumMode = false;
+					singleMode = false;
 				} else if(selected == 1) {
 					maximumMode = true;
+					singleMode = false;
 				} else {
 					singleMode = true;
 				}
@@ -465,7 +466,7 @@ public class HolmesNodeInfo extends JFrame {
 		avgFiredLabel.setBounds(infPanelX+130, infPanelY, 50, 20);
         infoPanel.add(avgFiredLabel);
         
-        JFormattedTextField avgFiredTextBox = new JFormattedTextField(id);
+        avgFiredTextBox = new JFormattedTextField(id);
         //wypełnianie niżej
         avgFiredTextBox.setBounds(infPanelX+180, infPanelY, 50, 20);
         avgFiredTextBox.setEditable(false);
@@ -659,8 +660,10 @@ public class HolmesNodeInfo extends JFrame {
 				int selected = simMode.getSelectedIndex();
 				if(selected == 0) {
 					maximumMode = false;
+					singleMode = false;
 				} else if(selected == 1) {
 					maximumMode = true;
+					singleMode = false;
 				} else {
 					singleMode = true;
 				}
@@ -822,7 +825,6 @@ public class HolmesNodeInfo extends JFrame {
 			}
 		}
 		dynamicsSeriesDataSet.addSeries(series);
-		
 		dataMatrix.clear();
 	}
 	
@@ -859,6 +861,14 @@ public class HolmesNodeInfo extends JFrame {
 			}
 		}
 		dynamicsSeriesDataSet.addSeries(series);
+		
+		int sum = dataVector.get(dataVector.size()-2);
+		int steps = dataVector.get(dataVector.size()-1);
+		double avgFired = sum;
+		avgFired /= steps;
+		avgFired *= 100; // * 100%
+		avgFiredTextBox.setText(Tools.cutValue(avgFired)+"%");
+		
 		return dataVector;
 	}
 	

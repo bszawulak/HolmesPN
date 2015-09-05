@@ -238,8 +238,6 @@ public class MCSoperations {
 						infoSet.add(t);
 					}
 					infoMatrix.add(infoSet);
-					
-					
 					line = buffer.readLine();
 				}
 				dataCore.insertMCS(dataMatrix, infoMatrix, insertPos, true);

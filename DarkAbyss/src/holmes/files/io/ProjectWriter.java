@@ -54,7 +54,7 @@ public class ProjectWriter {
 		arcs = projectCore.getArcs();
 		
 		invariantsMatrix = projectCore.getINVmatrix();
-		invariantsNames = projectCore.accessINVnames();
+		invariantsNames = projectCore.accessINVdescriptions();
 		mctData = projectCore.getMCTMatrix();
 		mctNames = projectCore.accessMCTnames();
 		statesMatrix = projectCore.accessStatesManager().accessStateMatrix();

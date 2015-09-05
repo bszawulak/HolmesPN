@@ -184,7 +184,7 @@ public class HolmesFunctionalTrans extends JFrame {
 		currentResult.setBounds(posX+490, posY+20, 110, 20);
 		resultPanel.add(currentResult);
 		
-		validateButton = new JButton(Tools.getResIcon16("/icons/aaa.png"));
+		validateButton = new JButton(Tools.getResIcon16("/icons/functionsWindow/addFIcon.png"));
 		validateButton.setText("Check and add");
 		validateButton.setToolTipText("Validate the equation and add it to transition functions list");
 		validateButton.setMargin(new Insets(0, 0, 0, 0));
@@ -196,7 +196,7 @@ public class HolmesFunctionalTrans extends JFrame {
 		});
 		resultPanel.add(validateButton);
 		
-		JButton clearButton = new JButton(Tools.getResIcon16("/icons/aaa.png"));
+		JButton clearButton = new JButton(Tools.getResIcon16("/icons/functionsWindow/removeFIcon.png"));
 		clearButton.setText("Clear function");
 		clearButton.setToolTipText("Clear the equation from the list");
 		clearButton.setMargin(new Insets(0, 0, 0, 0));
@@ -220,6 +220,10 @@ public class HolmesFunctionalTrans extends JFrame {
 				tableFunc.getModel().setValueAt(false, row, 6);
 				tableFuncModel.fireTableDataChanged();
 				
+				idField.setText("");
+				functionField.setText("");
+				enabledCheckBox.setSelected(false);
+				currentResult.setText("");
 				commentField.setText("");
 			}
 		});

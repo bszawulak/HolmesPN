@@ -54,7 +54,7 @@ import org.simpleframework.xml.Root;
 public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
 	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
-	private ArrayList<String> invariantsNames;
+	private ArrayList<String> invariantsDescriptions;
 	private ArrayList<ArrayList<Transition>> mctData;
 	private ArrayList<Integer> transitionMCTnumber;
 	private ArrayList<String> mctNames;
@@ -433,15 +433,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void setINVmatrix(ArrayList<ArrayList<Integer>> invariants, boolean generateMCT) {
 		this.invariantsMatrix = invariants;
-		this.invariantsNames = null;
+		this.invariantsDescriptions = null;
 		
 		if(invariants == null)
 			return;
 		else 
-			this.invariantsNames = new ArrayList<String>();
+			this.invariantsDescriptions = new ArrayList<String>();
 		
 		for(int i=0; i<invariantsMatrix.size(); i++) {
-			invariantsNames.add("Inv_"+i);
+			invariantsDescriptions.add("Default description of invariant #"+(i+1));
 		}
 		
 		if(generateMCT) {
@@ -453,27 +453,27 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda ustawia nowy wektor nazw dla inwariantów.
+	 * Metoda ustawia nowy wektor opisów dla inwariantów.
 	 * @param namesVector ArrayList[String] - nazwy inwariantów
 	 */
-	public void setINVnames(ArrayList<String> namesVector) {
+	public void setINVdescriptions(ArrayList<String> namesVector) {
 		if(invariantsMatrix == null)
 			return;
 		if(namesVector.size() == invariantsMatrix.size())
-			this.invariantsNames = namesVector;
+			this.invariantsDescriptions = namesVector;
 	}
 	
 	/**
-	 * Zwraca nazwę inwariantu o podanym numerze.
+	 * Zwraca opis inwariantu o podanym numerze.
 	 * @param index int - nr inwariantu, od zera
 	 * @return String - nazwa inwariantu
 	 */
-	public String getINVname(int index) {
+	public String getINVdescription(int index) {
 		if(invariantsMatrix == null)
 			return "";
 		
-		if(index < invariantsNames.size() && index >= 0)
-			return this.invariantsNames.get(index);
+		if(index < invariantsDescriptions.size() && index >= 0)
+			return this.invariantsDescriptions.get(index);
 		else
 			return "";
 	}
@@ -490,8 +490,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda pozwala na dostęp do wektora nazw inwariantów.
 	 * @return ArrayList[String] - nazwy inwariantów
 	 */
-	public ArrayList<String> accessINVnames() {
-		return invariantsNames;
+	public ArrayList<String> accessINVdescriptions() {
+		return invariantsDescriptions;
 	}
 	
 	/**

@@ -10,6 +10,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -40,7 +41,7 @@ import holmes.tables.InvariantsViewerTableModel;
 import holmes.utilities.Tools;
 
 /**
- * Klasa okna podglądu struktury t-inwariantu sieci.
+ * Klasa okna podglądu struktury t-inwariantów sieci.
  * 
  * @author MR
  *
@@ -63,8 +64,6 @@ public class HolmesInvariantsViewer extends JFrame {
 	private JLabel labelReadArcs;
 	private JLabel labelInhibitors;
 	private JTextArea descriptionTextArea;
-	private JLabel labelProblem;
-	private JTextArea descriptionProblemTextArea;
 	
 	private JTable table;
 	private DefaultTableModel tableModel;
@@ -95,12 +94,12 @@ public class HolmesInvariantsViewer extends JFrame {
 		boolean problem = false;
 		if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
 			JOptionPane.showMessageDialog(null,
-					"No invariants found, window cannot initiate itself.", 
+					"No invariants found, window cannot be initialized.", 
 					"Error: no invariants", JOptionPane.ERROR_MESSAGE);
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 			problem = true;
 		}
-		
+
 		if(!problem) {
 			this.currentSelected = 0;
 			initiateVariables();
@@ -180,18 +179,18 @@ public class HolmesInvariantsViewer extends JFrame {
 	 * Główna metoda tworząca panele okna.
 	 */
 	private void initalizeComponents() {
+		try {
+			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+		} catch (Exception e ) { }
 		setLayout(new BorderLayout());
 		setSize(new Dimension(800, 650));
 		setLocation(50, 50);
 		setResizable(true);
-		
+		setTitle("Holmes Invariants Viewer");
 		setLayout(new BorderLayout());
 		JPanel main = new JPanel(new BorderLayout());
-
 		main.add(getUpperPanel(), BorderLayout.NORTH);
 		main.add(getBottomPanel(), BorderLayout.CENTER);
-
-		
 		add(main, BorderLayout.CENTER);
 	}
 	
@@ -214,7 +213,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		invCombo = new JComboBox<String>();
 		invCombo.addItem(" ---------- ");
 		for(int i=0; i < invariantsMatrix.size(); i++) {
-			invCombo.addItem("Invariant "+(i));
+			invCombo.addItem("Invariant "+(i+1));
 		}
 		invCombo.setBounds(posXda+75, posYda, 140, 20);
 		invCombo.setSelectedIndex(currentSelected);
@@ -232,10 +231,10 @@ public class HolmesInvariantsViewer extends JFrame {
 		});
 		result.add(invCombo);
 		
-		JButton nextButton = new JButton("Next");
+		JButton nextButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>");
 		nextButton.setBounds(posXda+220, posYda, 80, 20);
 		nextButton.setMargin(new Insets(0, 0, 0, 0));
-		nextButton.setIcon(Tools.getResIcon16("/icons/stateSim/aaa.png"));
+		nextButton.setIcon(Tools.getResIcon16("/icons/invViewer/nextIcon.png"));
 		nextButton.setToolTipText("Show next invariant data.");
 		nextButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -251,12 +250,12 @@ public class HolmesInvariantsViewer extends JFrame {
 		JButton prevButton = new JButton("Previous");
 		prevButton.setBounds(posXda+310, posYda, 80, 20);
 		prevButton.setMargin(new Insets(0, 0, 0, 0));
-		prevButton.setIcon(Tools.getResIcon16("/icons/stateSim/aaa.png"));
+		prevButton.setIcon(Tools.getResIcon16("/icons/invViewer/prevIcon.png"));
 		prevButton.setToolTipText("Show previous invariant data.");
 		prevButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				currentSelected--;
-				if(currentSelected == 0)
+				if(currentSelected <= 0)
 					currentSelected = invariantsMatrix.size();
 				
 				invCombo.setSelectedIndex(currentSelected);
@@ -264,25 +263,6 @@ public class HolmesInvariantsViewer extends JFrame {
 		});
 		result.add(prevButton);
 
-		JCheckBox maximumModeCheckBox = new JCheckBox("MCT/transitions table");
-		maximumModeCheckBox.setBounds(posXda+390, posYda, 140, 20);
-		maximumModeCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected())
-					showTransTable = false;
-				else
-					showTransTable = true;
-				
-				if(currentSelected > 0) {
-					fillData(currentSelected);
-				} else {
-					clearSelection();
-				}
-			}
-		});
-		result.add(maximumModeCheckBox);
-		
 		JLabel label1 = new JLabel("Minimal:");
 		label1.setBounds(posXda, posYda+=20, 70, 20);
 		result.add(label1);
@@ -375,6 +355,7 @@ public class HolmesInvariantsViewer extends JFrame {
             	String newComment = "";
             	if(field != null)
             		newComment = field.getText();
+
 				changeInvDescr(newComment);
             }
         });
@@ -384,29 +365,27 @@ public class HolmesInvariantsViewer extends JFrame {
         descPanel.add(new JScrollPane(descriptionTextArea), BorderLayout.CENTER);
         descPanel.setBounds(posXda, posYda+=20, 550, 50);
         result.add(descPanel);
-        
-        
-        //TODO:
+
+		/*
         labelProblem = new JLabel("Sub/sur info:");
         labelProblem.setBounds(570, 20, 120, 20);
         labelProblem.setVisible(true);
 		result.add(labelProblem);
-		
         descriptionProblemTextArea = new JTextArea();
         descriptionProblemTextArea.setLineWrap(true);
         descriptionProblemTextArea.setEditable(true);
-	
         JPanel descProblemPanel = new JPanel();
         descProblemPanel.setLayout(new BorderLayout());
         descProblemPanel.add(new JScrollPane(descriptionProblemTextArea), BorderLayout.CENTER);
         descProblemPanel.setBounds(570, 40, 200, 95);
         descProblemPanel.setVisible(true);
         result.add(descProblemPanel);
+        */
         
-        JButton calcButton = new JButton("Recalculate statistics");
-		calcButton.setBounds(570, 135, 200, 20);
+        JButton calcButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Recalculate statistics</html>");
+		calcButton.setBounds(570, 20, 200, 35);
 		calcButton.setMargin(new Insets(0, 0, 0, 0));
-		calcButton.setIcon(Tools.getResIcon16("/icons/stateSim/aaa.png"));
+		calcButton.setIcon(Tools.getResIcon16("/icons/invViewer/recalculateInvStats.png"));
 		calcButton.setToolTipText("Show previous invariant data.");
 		calcButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -426,6 +405,38 @@ public class HolmesInvariantsViewer extends JFrame {
 			}
 		});
 		result.add(calcButton);
+		
+		JButton showNotepadButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Show data in notepad</html>");
+		showNotepadButton.setBounds(570, 60, 200, 35);
+		showNotepadButton.setMargin(new Insets(0, 0, 0, 0));
+		showNotepadButton.setIcon(Tools.getResIcon32("/icons/invViewer/showInNotepad.png"));
+		showNotepadButton.setToolTipText("Show invariants data in internal notepad.");
+		showNotepadButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(currentSelected > 0)
+					showInvariantNotepad(currentSelected);
+			}
+		});
+		result.add(showNotepadButton);
+		
+		JCheckBox maximumModeCheckBox = new JCheckBox("MCT/transitions table");
+		maximumModeCheckBox.setBounds(570, 130, 150, 20);
+		maximumModeCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected())
+					showTransTable = false;
+				else
+					showTransTable = true;
+				
+				if(currentSelected > 0) {
+					fillData(currentSelected);
+				} else {
+					clearSelection();
+				}
+			}
+		});
+		result.add(maximumModeCheckBox);
 		
 	    return result;
 	}
@@ -552,7 +563,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		for(int t=0; t<transitions.size(); t++) {
 			if(invariant.get(t) != 0) { //wsparcie
 				ArrayList<String> row = new ArrayList<String>();
-				row.add(""+t);
+				row.add("t"+t);
 				row.add(transitions.get(t).getName());
 				((InvariantsViewerTableModel)modelMCTandTrans).addNew(row);
 			}
@@ -567,11 +578,11 @@ public class HolmesInvariantsViewer extends JFrame {
 
 	/**
 	 * Metoda ustawia nowy opis inwariantu.
-	 * @param newComment
+	 * @param newComment String - nazwa
 	 */
 	private void changeInvDescr(String newComment) {
 		if(currentSelected > 0) {
-			pn.accessINVnames().set(currentSelected-1, newComment);
+			pn.accessINVdescriptions().set(currentSelected-1, newComment);
 		}
 	}
 
@@ -629,6 +640,87 @@ public class HolmesInvariantsViewer extends JFrame {
 		
 		tableScrollPane.setViewportView(table);
 		tableScrollPane.repaint();
+
+		descriptionTextArea.setText(overlord.getWorkspace().getProject().getINVdescription(invNo));
+	}
+	
+	/**
+	 * Metoda wywołuje okno notatnika z danymi o inwariancie.
+	 * @param selectedInvIndex2 int - indeks wybranego z listy
+	 */
+	protected void showInvariantNotepad(int invNo) {
+		if(invNo == 0)
+			return;
+		invNo--;
+		
+		HolmesNotepad note = new HolmesNotepad(800, 600);
+		ArrayList<Integer> invariant = invariantsMatrix.get(invNo);
+		
+		//MCT:
+		ArrayList<Integer> mcts = new ArrayList<Integer>();
+		ArrayList<String> singleT = new ArrayList<String>();
+		ArrayList<Integer> transMCTvector = overlord.getWorkspace().getProject().getMCTtransIndicesVector();
+		int transNumber = 0;
+		for(int t=0; t<invariant.size(); t++) {
+			int fireValue = invariant.get(t);
+			if(fireValue == 0)
+				continue;
+			
+			transNumber++;
+			int mctNo = transMCTvector.get(t);
+			if(mctNo == -1) { 
+				singleT.add("T"+t+"_"+transitions.get(t).getName());
+			} else {
+				if(!mcts.contains(mctNo)) {
+					mcts.add(mctNo);
+				}
+			}
+		}
+		Collections.sort(mcts);
+		String description = overlord.getWorkspace().getProject().accessINVdescriptions().get(invNo);
+		note.addTextLineNL("Invariant "+(invNo+1), "text");
+		note.addTextLineNL("Descrption: "+description, "text");
+		note.addTextLineNL("Total number of transitions: "+transNumber, "text");
+		note.addTextLineNL("Support structure:", "text");
+		for(int mct : mcts) {
+			String MCTname = overlord.getWorkspace().getProject().getMCTname(mct);
+			note.addTextLineNL("  [MCT: "+(mct+1)+"]: "+MCTname, "text");
+		}
+		for(String transName : singleT)
+			note.addTextLineNL(transName, "text");
+		//END OF STRUCTURE BLOCK
+		
+		note.addTextLineNL("", "text");
+		note.addTextLineNL("All transitions of INV #" + (invNo+1)+":", "text");
+		
+		if(transitions.size() != invariant.size()) {
+			transitions = overlord.getWorkspace().getProject().getTransitions();
+			if(transitions == null || transitions.size() != invariant.size()) {
+				overlord.log("Critical error in invariants subwindow. "
+						+ "Invariants support size refers to non-existing transitions.", "error", true);
+				return;
+			}
+		}
+		
+		String vector = "";
+		for(int t=0; t<invariant.size(); t++) {
+			int fireValue = invariant.get(t);
+			vector += fireValue+";";
+			if(fireValue == 0)
+				continue;
+			
+			Transition realT = transitions.get(t);
+			String t1 = Tools.setToSize("t"+t, 5, false);
+			String t2 = Tools.setToSize("Fired: "+fireValue, 12, false);
+			note.addTextLineNL(t1 + t2 + " ; "+realT.getName(), "text");
+		}
+		vector = vector.substring(0, vector.length()-1);
+		note.addTextLineNL("", "text");
+		note.addTextLineNL("Invariant vector:", "text");
+		note.addTextLineNL(vector, "text");
+
+		note.setCaretFirstLine();
+		note.setVisible(true);
 	}
 	
 	/**
@@ -675,7 +767,7 @@ public class HolmesInvariantsViewer extends JFrame {
     private void initiateListeners() { //HAIL SITHIS
     	addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		    	GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
+		    	//parentWindow.setEnabled(true);
 		    }
 		});
     }

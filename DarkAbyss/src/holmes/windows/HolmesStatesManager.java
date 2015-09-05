@@ -179,24 +179,25 @@ public class HolmesStatesManager extends JFrame {
 		int posXda = 10;
 		int posYda = 25;
 		
-		JButton selectStateButton = new JButton("Select state");
+		JButton selectStateButton = new JButton("Set net state");
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
-		selectStateButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		selectStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/selectStateIcon.png"));
 		selectStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(places.size() == 0)
 					return;
 				
+				int selected = statesTable.getSelectedRow();
 				Object[] options = {"Set new state", "Keep old state",};
 				int n = JOptionPane.showOptionDialog(null,
-								"Set all places of the net according to the selected state?",
+								"Set all places of the net according to the selected (table row: "+selected+") state?",
 								"Set new state?", JOptionPane.YES_NO_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 				if (n == 0) {
-					int sel = statesTable.getSelectedRow();
-					tableModel.setSelected(sel);
-					statesManager.setNetworkState(sel);
+					
+					tableModel.setSelected(selected);
+					statesManager.setNetworkState(selected);
 					pn.repaintAllGraphPanels();
 					
 					tableModel.fireTableDataChanged();
@@ -206,10 +207,10 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(selectStateButton);
 		
-		JButton addNewStateButton = new JButton("<html>Add current<br/>net state</html>");
+		JButton addNewStateButton = new JButton("<html>Add current<br/>&nbsp;&nbsp;net state</html>");
 		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
-		addNewStateButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		addNewStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/addStateIcon.png"));
 		addNewStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(places.size() == 0)
@@ -230,10 +231,24 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewStateButton);
 		
-		JButton removeStateButton = new JButton("<html>Remove selected<br/>state</html>");
+		JButton replaceStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;</html>");
+		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
+		replaceStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/replaceStateIcon.png"));
+		replaceStateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(places.size() == 0)
+					return;
+				
+				replaceStateAction();
+			}
+		});
+		result.add(replaceStateButton);
+		
+		JButton removeStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;</html>");
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
-		removeStateButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		removeStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/removeStateIcon.png"));
 		removeStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(places.size() == 0)
@@ -252,7 +267,6 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void removeStateAction() {
 		int selected = statesTable.getSelectedRow();
-		
 		int states = statesManager.accessStateMatrix().size();
 		if(states == 1) {
 			JOptionPane.showMessageDialog(null, "At least one net state must remain!", 
@@ -262,7 +276,7 @@ public class HolmesStatesManager extends JFrame {
 		
 		Object[] options = {"Remove state", "Cancel",};
 		int n = JOptionPane.showOptionDialog(null,
-						"Remove selected state from the states table?",
+						"Remove selected state (table row: "+selected+") from the states table?",
 						"Remove state?", JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 		if (n == 1) {
@@ -270,6 +284,24 @@ public class HolmesStatesManager extends JFrame {
 		}
 		
 		statesManager.removeState(selected);
+		fillTable();
+	}
+	
+	/**
+	 * Zastępowanie stanu z tabeli, aktualnym stanem sieci.
+	 */
+	private void replaceStateAction() {
+		int selected = statesTable.getSelectedRow();
+		Object[] options = {"Replace state", "Cancel",};
+		int n = JOptionPane.showOptionDialog(null,
+						"Replace selected state (table row: "+selected+") with the current net state?",
+						"Replace state?", JOptionPane.YES_NO_OPTION,
+						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+		if (n == 1) {
+			return;
+		}
+		
+		statesManager.replaceStateWithNetState(selected);
 		fillTable();
 	}
 	
@@ -350,7 +382,7 @@ public class HolmesStatesManager extends JFrame {
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
         CreationPanel.add(new JScrollPane(stateDescrTextArea), BorderLayout.CENTER);
-        CreationPanel.setBounds(posXda, posYda+=25, 400, 60);
+        CreationPanel.setBounds(posXda, posYda+=25, 600, 100);
         result.add(CreationPanel);
 
 		

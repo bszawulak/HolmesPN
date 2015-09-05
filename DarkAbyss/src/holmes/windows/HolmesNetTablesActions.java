@@ -194,7 +194,7 @@ public class HolmesNetTablesActions {
     			
     			InvariantContainer ic = new InvariantContainer();
     			ic.ID = i;
-    			ic.name = pn.accessINVnames().get(i);
+    			ic.name = pn.accessINVdescriptions().get(i);
     			ic.transNumber = support.size();
     			
     			if(nonMinimalInvariants.get(i).size() == 0)

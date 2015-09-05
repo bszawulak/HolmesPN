@@ -184,31 +184,43 @@ public class HolmesNetTables extends JFrame {
 		int bWidth = 110;
 		int bHeight = 30;
 		
-		JButton transitionsButton = createStandardButton("Places", Tools.getResIcon32(""));
-		transitionsButton.setToolTipText("Shows places table");
-		transitionsButton.setBounds(xPos, yPos, bWidth, bHeight);
-		transitionsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				createPlacesTable();
-			}
-		});
-		transitionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		upperButtonsPanel.add(transitionsButton);
-		yPos = yPos + bHeight + 5;
-		
-		JButton placesButton = createStandardButton("Transitions", Tools.getResIcon32(""));
-		placesButton.setToolTipText("Shows transitions table");
+		//JButton placesButton = createStandardButton("Places", Tools.getResIcon32(""));
+		JButton placesButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;Places&nbsp;&nbsp;&nbsp;&nbsp;</html>");
+		placesButton.setFocusPainted(false);
+		placesButton.setMargin(new Insets(0, 0, 0, 0));
+		placesButton.setIcon(Tools.getResIcon16("/icons/netTables/placeIcon.png"));
+		placesButton.setToolTipText("Shows places table");
 		placesButton.setBounds(xPos, yPos, bWidth, bHeight);
 		placesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				createTransitionTable();
+				createPlacesTable();
 			}
 		});
 		placesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		upperButtonsPanel.add(placesButton);
 		yPos = yPos + bHeight + 5;
 		
-		JButton switchButton = createStandardButton("Switch P or T", Tools.getResIcon32(""));
+		//JButton transitionsButton = createStandardButton("Transitions", Tools.getResIcon32(""));
+		JButton transitionsButton = new JButton("Transitions");
+		transitionsButton.setFocusPainted(false);
+		transitionsButton.setMargin(new Insets(0, 0, 0, 0));
+		transitionsButton.setIcon(Tools.getResIcon16("/icons/netTables/transIcon.png"));
+		transitionsButton.setToolTipText("Shows transitions table");
+		transitionsButton.setBounds(xPos, yPos, bWidth, bHeight);
+		transitionsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				createTransitionTable();
+			}
+		});
+		transitionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		upperButtonsPanel.add(transitionsButton);
+		yPos = yPos + bHeight + 5;
+		
+		//JButton switchButton = createStandardButton("Switch P/T", Tools.getResIcon32(""));
+		JButton switchButton = new JButton("Switch P / T");
+		switchButton.setFocusPainted(false);
+		switchButton.setMargin(new Insets(0, 0, 0, 0));
+		switchButton.setIcon(Tools.getResIcon16("/icons/netTables/switchIcon.png"));
 		switchButton.setToolTipText("Switch internal localization of two places or two transitions.");
 		switchButton.setBounds(xPos, yPos, bWidth, 20);
 		switchButton.addActionListener(new ActionListener() {
@@ -228,7 +240,11 @@ public class HolmesNetTables extends JFrame {
 		
 		yPos = yPos + bHeight - 5;
 		
-		JButton invButton = createStandardButton("Invariants", Tools.getResIcon32(""));
+		//JButton invButton = createStandardButton("Invariants", Tools.getResIcon32(""));
+		JButton invButton = new JButton("Invariants");
+		invButton.setFocusPainted(false);
+		invButton.setMargin(new Insets(0, 0, 0, 0));
+		invButton.setIcon(Tools.getResIcon16("/icons/netTables/invIcon.png"));
 		invButton.setToolTipText("Shows invariants information table");
 		invButton.setBounds(xPos, yPos, bWidth, bHeight);
 		invButton.addActionListener(new ActionListener() {
@@ -252,8 +268,12 @@ public class HolmesNetTables extends JFrame {
 		yPos = 20;
 		xPos = 10;
 		
-		JButton invariantsButton = createStandardButton("Show data", Tools.getResIcon32(""));
-		invariantsButton.setToolTipText("    ");
+		//JButton invariantsButton = createStandardButton("Show data", Tools.getResIcon32(""));
+		JButton invariantsButton = new JButton("Show data");
+		invariantsButton.setFocusPainted(false);
+		invariantsButton.setMargin(new Insets(0, 0, 0, 0));
+		invariantsButton.setIcon(Tools.getResIcon16("/icons/netTables/invIcon.png"));
+		invariantsButton.setToolTipText("Show invariants table with transition firing rates.");
 		invariantsButton.setBounds(xPos, yPos, bWidth, bHeight);
 		invariantsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -263,11 +283,12 @@ public class HolmesNetTables extends JFrame {
 		invariantsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		buttonsInvariantsPanel.add(invariantsButton);
 		
-		JLabel ssLabel = new JLabel("StateSim:");
-		ssLabel.setBounds(xPos, yPos+=30, 80, 20);
+		JLabel ssLabel = new JLabel("State simulator");
+		ssLabel.setBounds(xPos, yPos+=30, 110, 20);
 		buttonsInvariantsPanel.add(ssLabel);
 		
 		JButton acqDataButton = new JButton("SimStart");
+		acqDataButton.setFocusPainted(false);
 		acqDataButton.setBounds(xPos, yPos+=20, 110, 25);
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
@@ -616,6 +637,7 @@ public class HolmesNetTables extends JFrame {
 	 * @param icon Icon - ikona
 	 * @return JButton - nowy przycisk
 	 */
+	@SuppressWarnings("unused")
 	private JButton createStandardButton(String text, Icon icon) {
 		JButton resultButton = new JButton(); 
 		resultButton.setLayout(new BorderLayout());

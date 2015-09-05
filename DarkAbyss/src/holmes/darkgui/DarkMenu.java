@@ -331,9 +331,9 @@ public class DarkMenu extends JMenuBar {
 		});
 		netMenu.add(netTablesItem);
 		
-		JMenuItem invViewItem = new JMenuItem("Invariants Viewer", KeyEvent.VK_5);
-		invViewItem.setIcon(Tools.getResIcon32("/icons/menu/aaaa.png"));
-		//invViewItem.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		JMenuItem invViewItem = new JMenuItem("Invariants Viewer...", KeyEvent.VK_5);
+		invViewItem.setIcon(Tools.getResIcon32("/icons/menu/menu_invViewer.png"));
+		invViewItem.setAccelerator(KeyStroke.getKeyStroke('J', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		invViewItem.getAccessibleContext().setAccessibleDescription("Show invariants information window");
 		invViewItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -342,8 +342,8 @@ public class DarkMenu extends JMenuBar {
 		});
 		netMenu.add(invViewItem);
 		
-		JMenuItem netStatessItem = new JMenuItem("Net m0 states", KeyEvent.VK_6);
-		netStatessItem.setIcon(Tools.getResIcon32("/icons/menu/aaaa.png"));
+		JMenuItem netStatessItem = new JMenuItem("Net m0 states...", KeyEvent.VK_6);
+		netStatessItem.setIcon(Tools.getResIcon32("/icons/menu/menu_statesViewer.png"));
 		netStatessItem.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		netStatessItem.getAccessibleContext().setAccessibleDescription("Show net data states tables window");
 		netStatessItem.addActionListener(new ActionListener() {
@@ -372,7 +372,7 @@ public class DarkMenu extends JMenuBar {
 		
 		// Invariants window
 		JMenuItem collapseNetItem = new JMenuItem("Compress subnets", KeyEvent.VK_1);
-		collapseNetItem.setIcon(Tools.getResIcon32("/icons/menu/aaaaaaaaaaaaaaaaaaa.png"));
+		collapseNetItem.setIcon(Tools.getResIcon32("/icons/menu/menu_subnetCompress.png"));
 		//collapseNetItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
 		collapseNetItem.getAccessibleContext().setAccessibleDescription("Compress subnets (remove all empty sheets)");
 		collapseNetItem.addActionListener(new ActionListener() {
@@ -384,7 +384,7 @@ public class DarkMenu extends JMenuBar {
 		hierachyMenu.add(collapseNetItem);
 		
 		JMenuItem alignElementsItem = new JMenuItem("Align to upper left", KeyEvent.VK_1);
-		alignElementsItem.setIcon(Tools.getResIcon32("/icons/menu/aaaaaaaaaaaaaaaaaaa.png"));
+		alignElementsItem.setIcon(Tools.getResIcon32("/icons/menu/menu_subnetAlignUpLeft.png"));
 		//alignElementsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
 		alignElementsItem.getAccessibleContext().setAccessibleDescription("All net elements will be aligned to left upper corner");
 		alignElementsItem.addActionListener(new ActionListener() {
@@ -395,7 +395,7 @@ public class DarkMenu extends JMenuBar {
 		hierachyMenu.add(alignElementsItem);
 		
 		JMenuItem resizePanelsItem = new JMenuItem("Resize panels", KeyEvent.VK_1);
-		resizePanelsItem.setIcon(Tools.getResIcon32("/icons/menu/aaaaaaaaaaaaaaaaaaa.png"));
+		resizePanelsItem.setIcon(Tools.getResIcon32("/icons/menu/menu_subnetResize.png"));
 		//alignElementsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
 		resizePanelsItem.getAccessibleContext().setAccessibleDescription("Resize all panels to better fit the contained subnet");
 		resizePanelsItem.addActionListener(new ActionListener() {

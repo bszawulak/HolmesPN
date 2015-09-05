@@ -157,6 +157,7 @@ public class HolmesAbout extends JFrame {
 		textArea.append(" XStream (BSD License http://xstream.codehaus.org/license.html )\n");
 		textArea.append(" Simple-xml (Apache Licence, http://simple.sourceforge.net/home.php)\n");
 		textArea.append(" RCaller (GNU LGPL, https://code.google.com/p/rcaller/)\n");
+		textArea.append(" exp4J (Apache Licence, http://www.objecthunter.net/exp4j/license.html)\n");
 		textArea.append("\n");
 		//textArea.append("In addition, R environment with appropriate libraries (cluster, fpc, amap) "
 		//		+ "and INAwin32.exe are used in some of the program functions. The user must acquire "

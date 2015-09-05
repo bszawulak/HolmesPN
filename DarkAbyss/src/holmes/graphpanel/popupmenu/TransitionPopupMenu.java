@@ -47,7 +47,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 		});
 		
 		
-		this.addMenuItem("Functions builder...", "aaa.png", new ActionListener() {
+		this.addMenuItem("Functions builder...", "functionalWindowIcon.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
 					return;

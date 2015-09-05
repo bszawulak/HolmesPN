@@ -9,12 +9,15 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 
 import javax.swing.JPanel;
 
+import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.MauritiusMap;
 import holmes.petrinet.data.MauritiusMap.BTNode;
 
@@ -41,8 +44,10 @@ public class MauritiusMapPanel extends JPanel {
 	private Dimension originSize; //oryginalny rozmiar
 	
 	public boolean originalSizeKnown = false;
-	
 	private boolean contractedMode = false;
+	
+	private Point mousePt;
+	
 	/**
 	 * Główny konstruktor obiektu klasy MauritiusMapPanel.
 	 */
@@ -51,7 +56,8 @@ public class MauritiusMapPanel extends JPanel {
     	panelHeigth = 600;
         setPreferredSize(new Dimension(panelWidth, panelHeigth));
         
-        this.addMouseWheelListener(new MouseWheelHandler());
+        this.addMouseWheelListener(new MouseMapWheelHandler());
+        this.addMouseListener(new MouseMapHandler());
     }
     
     /**
@@ -501,7 +507,7 @@ public class MauritiusMapPanel extends JPanel {
 	 * @author MR
 	 *
 	 */
-	public class MouseWheelHandler implements MouseWheelListener {
+	public class MouseMapWheelHandler implements MouseWheelListener {
 		/**
 		 * Metoda odpowiedzialna za działanie rozpoczęte przez przesuwanie rolki
 		 * myszy nad arkusze. W zależności czy wciśniętych jest klawisz CTRL czy
@@ -514,4 +520,42 @@ public class MauritiusMapPanel extends JPanel {
 			} 
 		}
 	}
+	
+	private class MouseMapHandler extends MouseAdapter {
+		/**
+		 * Metoda aktywowana w momencie puszczenia przycisku myszy.
+		 */
+		public void mouseReleased(MouseEvent e) {
+			//setSelectingRect(null);
+			e.getComponent().repaint();
+		}
+
+		/**
+		 * Metoda aktywowana przez podwójne kliknięcie przycisku myszy.
+		 * @param e MouseEvent - obiekt przekazywany w efekcie podwójnego kliknięcia
+		 */
+		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() == 2) {
+				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown() == false)
+					; //getSelectionManager().doubleClickReactionHandler();
+				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown() == true)
+					; //getSelectionManager().decreaseTokensNumber();
+			}
+		}
+
+		public void mousePressed(MouseEvent e) {
+			//reset trybu przesuwania napisu:
+			GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
+			
+			Point mousePt = e.getPoint();
+			mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);
+			
+			
+			//ElementLocation el = getSelectionManager().getPossiblySelectedElementLocation(mousePt);
+			//Arc a = getSelectionManager().getPossiblySelectedArc(mousePt);
+			// nie kliknięto ani w Node ani w Arc
+			
+			e.getComponent().repaint();
+		}	
+	} //end class MouseHandler
 }

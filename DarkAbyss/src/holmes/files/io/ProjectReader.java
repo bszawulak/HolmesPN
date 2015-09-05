@@ -74,7 +74,7 @@ public class ProjectReader {
 		metanodes = projectCore.getMetaNodes();
 		arcs = projectCore.getArcs();
 		invariantsMatrix = projectCore.getINVmatrix();
-		invariantsNames = projectCore.accessINVnames();
+		invariantsNames = projectCore.accessINVdescriptions();
 		mctData = projectCore.getMCTMatrix();
 		mctNames = projectCore.accessMCTnames();
 		
@@ -1025,7 +1025,7 @@ public class ProjectReader {
 							readLines++;
 						}
 					}
-					projectCore.setINVnames(invariantsNames);
+					projectCore.setINVdescriptions(invariantsNames);
 					
 					
 					if(readLines != invariantsMatrix.size()) {
