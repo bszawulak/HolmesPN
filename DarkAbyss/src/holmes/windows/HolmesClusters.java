@@ -71,7 +71,9 @@ public class HolmesClusters extends JFrame {
 	private DefaultTableModel tableModel;
 	private int mode = 0; // 0 - tryb 56 klastrowań
 	private ClusterTableRenderer tableRenderer = new ClusterTableRenderer(mode, 18);
-	 
+	private JPanel tablePanel;
+	private JScrollPane scrollTablePane;
+	    
 	private int subRowsSize = 0;
     private final HolmesClusters myself;
     private int clustersToGenerate = 0;
@@ -83,9 +85,7 @@ public class HolmesClusters extends JFrame {
     private String pathCSVfile = "";
     private String pathClustersDir = "";
 
-    private JPanel tablePanel;
-    
-    private JScrollPane scrollTablePane;
+  
     
     /**
      * Jeśli true - zapis inwariantów do pliku csv w postaci binarnej
@@ -357,8 +357,7 @@ public class HolmesClusters extends JFrame {
     	table = new JTable(new DefaultTableModel());
     	setTableModel56();
         //table = new JTable(tableModel);
-    	
-        table.setFillsViewportHeight(true);
+
         table.setDefaultRenderer(Object.class, tableRenderer); // 0 - case 56
         table.addMouseListener(new MouseAdapter() { //listener kliknięć
         	public void mouseClicked(MouseEvent e) {
@@ -371,23 +370,8 @@ public class HolmesClusters extends JFrame {
           	    }
           	 }
       	});
+
         
-       
-        
-        
-        //rozmiary kolumn:
-        table.getColumnModel().getColumn(0).setPreferredWidth(80);
-        for(int index=1; index<table.getColumnCount(); index++) {
-        	if((index+2) % 3 == 0) { //trójka
-        		table.getColumnModel().getColumn(index).setPreferredWidth(20);
-        		table.getColumnModel().getColumn(index+1).setPreferredWidth(50);
-        		table.getColumnModel().getColumn(index+2).setPreferredWidth(50);
-        		index++;
-        		index++;
-        	} else {
-        		//table.getColumnModel().getColumn(index).setPreferredWidth(20);
-        	}
-        }
         
 
     	//for(int metric=0; metric <8; metric++) { //dla każdej z ośmiu metryk:
@@ -450,6 +434,22 @@ public class HolmesClusters extends JFrame {
         table.getColumnModel().getColumn(19).setHeaderValue("");
         table.getColumnModel().getColumn(20).setHeaderValue("Ward");
         table.getColumnModel().getColumn(21).setHeaderValue("");
+        
+        table.setFillsViewportHeight(true);
+
+        //rozmiary kolumn:
+        table.getColumnModel().getColumn(0).setPreferredWidth(80);
+        for(int index=1; index<table.getColumnCount(); index++) {
+        	if((index+2) % 3 == 0) { //trójka
+        		table.getColumnModel().getColumn(index).setPreferredWidth(20);
+        		table.getColumnModel().getColumn(index+1).setPreferredWidth(50);
+        		table.getColumnModel().getColumn(index+2).setPreferredWidth(50);
+        		index++;
+        		index++;
+        	} else {
+        		//table.getColumnModel().getColumn(index).setPreferredWidth(20);
+        	}
+        }
     }
     
     /**
@@ -501,9 +501,9 @@ public class HolmesClusters extends JFrame {
     	tableRenderer.setMode(mode);  // !!!
     	tableRenderer.setSubRows(subRowsSize); // !!! zła wartość i tabela idzie w ....
     	
-    	//setTableModel56();
+    	setTableModel56();
     	//CLEAR OLD TABLE ROWS:
-    	tableModel.setRowCount(0);
+    	//tableModel.setRowCount(0);
     	
     	
     	String[] metricName = { "Correlation", "Pearson", "Binary", "Canberra", "Euclidean", "Manhattan", "Maximum", "Minkowski" };
@@ -529,7 +529,7 @@ public class HolmesClusters extends JFrame {
         			String cuttedValue2 = cutValueCH(val2);
         			dataRow[1+alg*3+2] = ""+cuttedValue2;
             	}
-    			tableModel.addRow(dataRow);
+    			tableModel.addRow((String[])dataRow);
 			}
     	}
     	GUIManager.getDefaultGUIManager().log("New clustering data table has been successfully read.", "text", true);
