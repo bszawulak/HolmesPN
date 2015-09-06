@@ -324,7 +324,8 @@ public class HolmesStSim extends JFrame {
 		dataAcquisitionPanel.add(clearDataButton);
 		
 		cancelButton = new JButton();
-		cancelButton.setText("STOP");
+		cancelButton.setText("<html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>");
+		cancelButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/stopIcon.png"));
 		cancelButton.setBounds(posXda+590, posYda, 110, 30);
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.addActionListener(new ActionListener() {
@@ -347,16 +348,17 @@ public class HolmesStSim extends JFrame {
 	    dataAcquisitionPanel.add(progressBar);
 	    
 	    JLabel stateLabel0 = new JLabel("Selected m0 state ID: ");
-	    stateLabel0.setBounds(posXda+570, posYda-5, 130, 20);
+	    stateLabel0.setBounds(posXda+730, posYda-60, 130, 20);
 	    dataAcquisitionPanel.add(stateLabel0);
 	    
 	    selStateLabel = new JLabel(""+overlord.getWorkspace().getProject().accessStatesManager().selectedState);
-	    selStateLabel.setBounds(posXda+700, posYda-5, 60, 20);
+	    selStateLabel.setBounds(posXda+860, posYda-60, 60, 20);
 	    dataAcquisitionPanel.add(selStateLabel);
 	    
 	    stateManagerButton = new JButton();
-	    stateManagerButton.setText("States manager");
-	    stateManagerButton.setBounds(posXda+570, posYda+15, 130, 30);
+	    stateManagerButton.setText("StatesManager");
+	    stateManagerButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
+	    stateManagerButton.setBounds(posXda+730, posYda-40, 150, 40);
 	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
 	    stateManagerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {

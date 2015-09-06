@@ -353,8 +353,8 @@ public class HolmesStSimKnock extends JPanel {
 		});
 		result.add(referencesCombo);
 		
-		JButton removeRefButton = new JButton("Rem.");
-		removeRefButton.setBounds(posXda+500, posYda, 70, 20);
+		JButton removeRefButton = new JButton("Remove");
+		removeRefButton.setBounds(posXda+485, posYda, 85, 20);
 		removeRefButton.setMargin(new Insets(0, 0, 0, 0));
 		removeRefButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeRefButton.setToolTipText("Remove selected reference data set.");
@@ -429,8 +429,9 @@ public class HolmesStSimKnock extends JPanel {
 	    result.add(selStateLabel);
 	    
 	    stateManagerButton = new JButton();
-	    stateManagerButton.setText("States manager");
-	    stateManagerButton.setBounds(posXda, posYda+20, 130, 30);
+	    stateManagerButton.setText("StatesManager");
+	    stateManagerButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
+	    stateManagerButton.setBounds(posXda, posYda+20, 150, 40);
 	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
 	    stateManagerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -486,8 +487,8 @@ public class HolmesStSimKnock extends JPanel {
 		});
 		result.add(addTransButton);
 		
-		JButton removeTransButton = new JButton("Rem.");
-		removeTransButton.setBounds(posXda+560, posYda, 70, 20);
+		JButton removeTransButton = new JButton("Remove");
+		removeTransButton.setBounds(posXda+560, posYda, 85, 20);
 		removeTransButton.setMargin(new Insets(0, 0, 0, 0));
 		removeTransButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeTransButton.setToolTipText("Remove transitions from offline set.");
@@ -530,8 +531,8 @@ public class HolmesStSimKnock extends JPanel {
 		});
 		result.add(addMCTButton);
 		
-		JButton removeMCTButton = new JButton("Rem.");
-		removeMCTButton.setBounds(posXda+560, posYda+25, 70, 20);
+		JButton removeMCTButton = new JButton("Remove");
+		removeMCTButton.setBounds(posXda+560, posYda+25, 85, 20);
 		removeMCTButton.setMargin(new Insets(0, 0, 0, 0));
 		removeMCTButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeMCTButton.setToolTipText("Remove MCT set from offline set.");
@@ -550,7 +551,7 @@ public class HolmesStSimKnock extends JPanel {
         JPanel dataFieldPanel = new JPanel();
         dataFieldPanel.setLayout(new BorderLayout());
         dataFieldPanel.add(new JScrollPane(dataSelectedTransTextArea), BorderLayout.CENTER);
-        dataFieldPanel.setBounds(posXda+640, posYda, 230, 45);
+        dataFieldPanel.setBounds(posXda+650, posYda, 230, 45);
         result.add(dataFieldPanel);
         
         JButton clearButton = new JButton("Clear");
@@ -818,8 +819,8 @@ public class HolmesStSimKnock extends JPanel {
 		});
 		result.add(dataCombo);
 		
-		JButton removeDataButton = new JButton("Rem.");
-		removeDataButton.setBounds(posXda+700, posYda, 70, 20);
+		JButton removeDataButton = new JButton("Remove");
+		removeDataButton.setBounds(posXda+685, posYda, 85, 20);
 		removeDataButton.setMargin(new Insets(0, 0, 0, 0));
 		removeDataButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeDataButton.setToolTipText("Remove selected knockout simulation dataset.");
