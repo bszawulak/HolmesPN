@@ -17,16 +17,18 @@ import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.ValidationResult;
 
 /**
- * Klasa metod pomocniczych dla zarządzania tranzycjami funkcyjnymi.
+ * Klasa metod zarządzania tranzycjami funkcyjnymi.
  * 
  * @author MR
  *
  */
 public class FunctionsTools {
-	private static GUIManager overlord;
+	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
 	
+	/**
+	 * Konstruktor obiektów klasy FunctionsTools.
+	 */
 	public FunctionsTools() {
-		overlord = GUIManager.getDefaultGUIManager();
 	}
 	
 	/**
@@ -46,13 +48,15 @@ public class FunctionsTools {
 				//if(fc.involvedPlaces.contains(place)) {
 				if(fc.involvedPlaces.containsKey("p"+placeIndex)) {
 					int transIndex = transitions.indexOf(transition);
-					overlord.log("Function: "+fc.function+" of transition t"+transIndex+" has been disabled due to removal of "
+					overlord.log("Function: \'"+fc.function+"\' (fID: "+fc.fID+") of transition t"+transIndex+" has been disabled due to removal of "
 							+ "place p"+placeIndex, "warning", false);
 					
 					fc.enabled = false;
 					fc.correct = false;
-					fc.function.replaceAll("p"+placeIndex, " ??? ");
+					fc.function = fc.function.replaceAll("p"+placeIndex, " ??? ");
 					fc.involvedPlaces.remove("p"+placeIndex);
+					fc.equation = null;
+					fc.currentValue = -1;
 					removedAnything = true;
 				}
 			}
@@ -61,8 +65,8 @@ public class FunctionsTools {
 	}
 	
 	/**
-	 * Metoda synchronizuje równania oraz wektor miejsc używanych przez równanie. Nieistniejące w sieci miejsca
-	 * nie są brane pod uwagę w wektorze miejsc, są też usuwane w razie detekcji z równania.
+	 * Metoda synchronizuje równanie z wektorem miejsc używanych przez równanie. Nieistniejące w sieci miejsca
+	 * nie są brane pod uwagę w wektorze miejsc, są też usuwane z równania w razie detekcji.
 	 * @param fc FunctionContainer - obiekt równania
 	 * @param commentField JTextArea - log podokna funkcji, do wyświetlania komunikatów, null jeśli nie ma być żadnych
 	 * @param places ArrayList[Place] - wektor miejsc sieci
@@ -292,6 +296,12 @@ public class FunctionsTools {
 		}
 	}
 	
+	/**
+	 * Metoda odpowiedzialna za pobieranie tokenów z miejsca z uwzględnieniem funkcji łuków.
+	 * @param transition Transition - tranzycja funkcyjna
+	 * @param arc Arc - łuk z funkcją
+	 * @param place Place - miejsce
+	 */
 	public static void functionalExtraction(Transition transition, Arc arc, Place place) {
 		if(transition.isFunctional()) {
 			FunctionContainer fc = transition.getFunctionContainer(arc);
@@ -305,6 +315,12 @@ public class FunctionsTools {
 		}
 	}
 	
+	/**
+	 * Metoda odpowiedzialna za dodawanie tokenów do miejsca z uwzględnieniem funkcji łuków.
+	 * @param transition Transition - tranzycja funkcyjna
+	 * @param arc Arc - łuk z funkcją
+	 * @param place Place - miejsce
+	 */
 	public static void functionalAddition(Transition transition, Arc arc, Place place) {
 		if(transition.isFunctional()) {
 			FunctionContainer fc = transition.getFunctionContainer(arc);

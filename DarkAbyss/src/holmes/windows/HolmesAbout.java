@@ -104,7 +104,7 @@ public class HolmesAbout extends JFrame {
 		nameLabel.setBounds(170, 40, 300, 40);
 		panel.add(nameLabel);
 		
-		JLabel nameLabel2 = new JLabel("Integrated Petri Net Environment");
+		JLabel nameLabel2 = new JLabel("Petri Net IDE");
 		nameLabel2.setFont(new Font("Consolas", Font.PLAIN, 18));
 		nameLabel2.setBounds(170, 70, 330, 40);
 		panel.add(nameLabel2);
@@ -134,15 +134,18 @@ public class HolmesAbout extends JFrame {
 		
 		textArea.setFont(new Font("Consolas", Font.PLAIN, 15));
 		textArea.append("Versions and authors:\n");
-		textArea.append("Version 1.2+, 2014-2015, 30k+ lines of code total \n");
+		textArea.append("Holmes version 2.0, 2015, 47k+ lines of code total \n");
+		textArea.append("  Radom Marcin, Ph.D.\n");
+		textArea.append("\n");
+		textArea.append("Abyss Version 1.2+, 2014-2015, 30k+ lines of code total \n");
 		textArea.append("  Radom Marcin, Ph.D.\n");
 		textArea.append("  Rybarczyk Agnieszka, Ph.D.\n");
 		textArea.append("\n");
-		textArea.append("Version 1.1, 2013-2014, 10k lines of code total\n");
+		textArea.append("Abyss Version 1.1, 2013-2014, 10k lines of code total\n");
 		textArea.append("  Bartłomiej Szawulak, M.Sc. thesis\n");
 		textArea.append("  (supervisor: Radom Marcin, Ph.D.)\n");
 		textArea.append("\n");
-		textArea.append("Version 1.0, 2012-2013, 7k lines od code total\n");
+		textArea.append("Abyss Version 1.0, 2012-2013, 7k lines od code total\n");
 		textArea.append("  Andrzejewski Hubert, B.Sc. thesis\n");
 		textArea.append("  Chabelski Piotr, B.Sc. thesis\n");
 		textArea.append("  Szawulak Bartłomiej, B.Sc. thesis\n");

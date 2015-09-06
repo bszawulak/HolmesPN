@@ -945,10 +945,17 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 			
 			overlord.log("Petri net successfully imported from file "+path, "text", true);
+
+			ArrayList<Place> places = getPlaces();
+			ArrayList<Arc> arcs = getArcs();
+			ArrayList<Transition> transitions = getTransitions();
+			for(Transition transition : transitions) { //aktywacja wektorów funkcji
+				transition.checkFunctions(arcs, places);
+			}
+			
 			return true;
-		} catch (Throwable err) {
-			err.printStackTrace();
-			overlord.log("Error: " + err.getMessage(), "error", true);
+		} catch (Exception e) {
+			overlord.log("Critical error while loading network: " + e.getMessage(), "error", true);
 			return false;
 		}
 	}

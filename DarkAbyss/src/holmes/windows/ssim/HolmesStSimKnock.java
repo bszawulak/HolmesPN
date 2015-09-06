@@ -818,7 +818,7 @@ public class HolmesStSimKnock extends JPanel {
 		});
 		result.add(dataCombo);
 		
-		JButton removeDataButton = new JButton("Del");
+		JButton removeDataButton = new JButton("Rem.");
 		removeDataButton.setBounds(posXda+700, posYda, 70, 20);
 		removeDataButton.setMargin(new Insets(0, 0, 0, 0));
 		removeDataButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));

@@ -70,7 +70,6 @@ import holmes.windows.HolmesNotepad;
  * Klasa okna przeglądania danych symulacji knockout.
  * 
  * @author MR
- *
  */
 public class HolmesStSimKnockVis extends JFrame {
 	private static final long serialVersionUID = 3020186160500907678L;
@@ -78,6 +77,7 @@ public class HolmesStSimKnockVis extends JFrame {
 	private PetriNet pn;
 	private static final DecimalFormat formatter1 = new DecimalFormat( "#.#" );
 	private static final DecimalFormat formatter2 = new DecimalFormat( "#.##" );
+	private static final DecimalFormat formatter3 = new DecimalFormat( "#.###" );
 	
 	private boolean doNotUpdate = false;
 	private HolmesStSim boss;
@@ -140,21 +140,25 @@ public class HolmesStSimKnockVis extends JFrame {
 		
 		JPanel main = new JPanel(new BorderLayout()); //główny panel okna
 		add(main);
-		
-		
+
 		main.add(getActionsPanel(), BorderLayout.NORTH);
 		
 		JPanel mainTabbedPanel = new JPanel(new BorderLayout());
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Charts", Tools.getResIcon16("/icons/stateSim/aa.png"), createPlacesChartsPanel(), "Charts");
+		tabbedPane.addTab("Charts", Tools.getResIcon32("/icons/simulationKnockout/visChartsIcon.png"), createPlacesChartsPanel(), 
+				"<html>Show charts comparing difference in places na transitions<br>behaviour between reference and data sets</html>");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Place Table", Tools.getResIcon16("/icons/stateSim/aa.png"), createPlacesTablePanel(), "Place Table");
+		tabbedPane.addTab("Places", Tools.getResIcon16("/icons/simulationKnockout/visPlaces.png"), createPlacesTablePanel(), 
+				"<html>Show places behaviour for selected dataset OR<br>comparison between reference and data sets</html>");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-		tabbedPane.addTab("Transition Table", Tools.getResIcon16("/icons/stateSim/aa.png"), createTransTablePanel(), "Transition Table");
+		tabbedPane.addTab("Transitions", Tools.getResIcon16("/icons/simulationKnockout/visTrans.png"), createTransTablePanel(), 
+				"<html>Show transitions behaviour for selected dataset OR<br>comparison between reference and data sets</html>");
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
-		tabbedPane.addTab("Places Compare Table", Tools.getResIcon16("/icons/stateSim/aa.png"), createPlacesCompAllTablePanel(), "Places Compare Table");
+		tabbedPane.addTab("Places (series)", Tools.getResIcon16("/icons/simulationKnockout/visPlacesSeries.png"), createPlacesCompAllTablePanel(), 
+				"<html>Show places table for knockout series.</html>");
 		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
-		tabbedPane.addTab("Transitions Compare Table", Tools.getResIcon16("/icons/stateSim/aa.png"), createTransCompAllTablePanel(), "Transitions Compare Table");
+		tabbedPane.addTab("Transitions (series)", Tools.getResIcon16("/icons/simulationKnockout/visTransSeries.png"), createTransCompAllTablePanel(), 
+				"<html>Show transitions table for knockout series.</html>");
 		tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 		
 		mainTabbedPanel.add(tabbedPane);
@@ -183,6 +187,7 @@ public class HolmesStSimKnockVis extends JFrame {
 		
 		String[] data = { " ----- " };
 		referencesCombo = new JComboBox<String>(data); //final, aby listener przycisku odczytał wartość
+		referencesCombo.setToolTipText("Select reference data (presumably dataset without any transition knockout)");
 		referencesCombo.setBounds(posXda+80, posYda, 500, 20);
 		referencesCombo.setMaximumRowCount(12);
 		referencesCombo.addActionListener(new ActionListener() {
@@ -202,6 +207,7 @@ public class HolmesStSimKnockVis extends JFrame {
 		
 		String[] data2 = { " ----- " };
 		dataCombo = new JComboBox<String>(data2); //final, aby listener przycisku odczytał wartość
+		dataCombo.setToolTipText("Select dataset (presumably with some transition(s) knocked out)");
 		dataCombo.setBounds(posXda+80, posYda, 500, 20);
 		dataCombo.setMaximumRowCount(12);
 		dataCombo.addActionListener(new ActionListener() {
@@ -221,6 +227,7 @@ public class HolmesStSimKnockVis extends JFrame {
 		
 		String[] dataSeries = { " ----- " };
 		seriesCombo = new JComboBox<String>(dataSeries); //final, aby listener przycisku odczytał wartość
+		seriesCombo.setToolTipText("Select dataset series (presumably with every transition disable one per dataset)");
 		seriesCombo.setBounds(posXda+80, posYda, 250, 20);
 		seriesCombo.setMaximumRowCount(12);
 		seriesCombo.addActionListener(new ActionListener() {
@@ -233,9 +240,9 @@ public class HolmesStSimKnockVis extends JFrame {
 		result.add(seriesCombo);
 		
 		JButton showRefDataButton = new JButton("<html>Show reference<br/>&nbsp; &nbsp; &nbsp; &nbsp; dataset</html>");
-		showRefDataButton.setBounds(posXda+600, 20, 150, 30);
+		showRefDataButton.setBounds(posXda+590, 20, 175, 36);
 		showRefDataButton.setMargin(new Insets(0, 0, 0, 0));
-		showRefDataButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		showRefDataButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/visShowRefButton.png"));
 		showRefDataButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selRef = referencesCombo.getSelectedIndex();
@@ -248,10 +255,10 @@ public class HolmesStSimKnockVis extends JFrame {
 		});
 		result.add(showRefDataButton);
 		
-		JButton showKnockDataButton = new JButton("<html>Show transition<br/>&nbsp; &nbsp; &nbsp; knockout</html>");
-		showKnockDataButton.setBounds(posXda+760, 20, 150, 30);
+		JButton showKnockDataButton = new JButton("<html>Show knockout<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataset</html>");
+		showKnockDataButton.setBounds(posXda+770, 20, 175, 36);
 		showKnockDataButton.setMargin(new Insets(0, 0, 0, 0));
-		showKnockDataButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		showKnockDataButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visShowDataSetButton.png"));
 		showKnockDataButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = dataCombo.getSelectedIndex();
@@ -264,10 +271,10 @@ public class HolmesStSimKnockVis extends JFrame {
 		});
 		result.add(showKnockDataButton);
 		
-		JButton showChartKnockButton = new JButton("<html>Compare reference<br/>&nbsp; &nbsp; and knockout</html>");
-		showChartKnockButton.setBounds(posXda+920, 20, 150, 30);
+		JButton showChartKnockButton = new JButton("<html>Compare reference<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and knockout</html>");
+		showChartKnockButton.setBounds(posXda+950, 20, 175, 36);
 		showChartKnockButton.setMargin(new Insets(0, 0, 0, 0));
-		showChartKnockButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		showChartKnockButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visCompRefDataButton.png"));
 		showChartKnockButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selRef = referencesCombo.getSelectedIndex();
@@ -285,10 +292,10 @@ public class HolmesStSimKnockVis extends JFrame {
 		});
 		result.add(showChartKnockButton);
 		
-		JButton showSeriesButton = new JButton("<html>Full series<br/>datatables</html>");
-		showSeriesButton.setBounds(posXda+600, 60, 150, 30);
+		JButton showSeriesButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;Full series&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;datatables</html>");
+		showSeriesButton.setBounds(posXda+590, 60, 175, 36);
 		showSeriesButton.setMargin(new Insets(0, 0, 0, 0));
-		showSeriesButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		showSeriesButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visRefDataSeriesButton.png"));
 		showSeriesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = seriesCombo.getSelectedIndex() - 1;
@@ -299,10 +306,10 @@ public class HolmesStSimKnockVis extends JFrame {
 		});
 		result.add(showSeriesButton);
 		
-		JButton showNotepadButton = new JButton("<html>show notepad<br/>summary</html>");
-		showNotepadButton.setBounds(posXda+760, 60, 150, 30);
+		JButton showNotepadButton = new JButton("<html>&nbsp; &nbsp;Show notepad<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary</html>");
+		showNotepadButton.setBounds(posXda+770, 60, 175, 36);
 		showNotepadButton.setMargin(new Insets(0, 0, 0, 0));
-		showNotepadButton.setIcon(Tools.getResIcon16("/icons/stateSim/g.png"));
+		showNotepadButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visRefDataSeriesNotepadButton.png"));
 		showNotepadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int selected = seriesCombo.getSelectedIndex() - 1;
@@ -1344,7 +1351,7 @@ public class HolmesStSimKnockVis extends JFrame {
     }
     
     /**
-     * Tworzy tabele porównania serii danych ze zbiorem referencyjnym - w formie tekstowej
+     * Tworzy tabele porównania serii danych ze zbiorem referencyjnym - w formie tekstowej.
      * @param selected int - ID serii
      */
     private void createCompareAllTablesNotepad(int selected) {
@@ -1365,7 +1372,8 @@ public class HolmesStSimKnockVis extends JFrame {
     	
     	int transNumber = dataPackage.get(0).transNumber;
     	int placesNumber = dataPackage.get(0).placesNumber;
-    	
+    	if(transNumber == 0 || placesNumber == 0)
+    		return;
     	
     	HolmesNotepad notePad = new HolmesNotepad(900,600);
 		notePad.setVisible(true);
@@ -1376,10 +1384,8 @@ public class HolmesStSimKnockVis extends JFrame {
     	//TODO:
     	for(int t=0; t<transNumber; t++) {
     		NetSimulationData dataSet = dataPackage.get(t);
-    		
-    		
+
     		notePad.addTextLineNL("*** t"+t+"_"+transitions.get(t).getName()+"    disabled manually. Impact on the net:", "text");
-    		
     		ArrayList<Integer> transVector = new ArrayList<>();
     		for(int t1=0; t1<transNumber; t1++) {
     			if(t == t1)
@@ -1495,6 +1501,81 @@ public class HolmesStSimKnockVis extends JFrame {
 				int x=1;
     		}
     		*/
+    	}
+    	notePad.addTextLineNL("", "text");
+    	notePad.addTextLineNL("", "text");
+    	notePad.addTextLineNL("", "text");
+    	notePad.addTextLineNL("===============================================================================", "text");
+		notePad.addTextLineNL(" +/-20% treshold for increased/decreased tokens in places ", "text");
+		notePad.addTextLineNL("===============================================================================", "text");
+		notePad.addTextLineNL("", "text");
+    	//TODO:
+    	for(int t=0; t<transNumber; t++) {
+    		NetSimulationData dataSet = dataPackage.get(t);
+
+    		notePad.addTextLineNL("*** t"+t+"_"+transitions.get(t).getName()+"    disabled manually. Impact on the net:", "text");
+    		ArrayList<Integer> placesVector = new ArrayList<>();
+    		for(int p=0; p<placesNumber; p++) {
+    			placesVector.add(1);
+    		}
+    		
+    		for(int p=0; p<placesNumber; p++) {
+    			if(refSet.placeTokensAvg.get(p) == 0 && dataSet.placeTokensAvg.get(p) == 0) {
+    				notePad.addTextLineNL("      (DEAD IN REF & SERIES SETS!) p"+p+"_"+places.get(p).getName()+"", "text");
+    				placesVector.set(p, 0);
+    				continue;
+    			}
+    			
+    			if(refSet.placeTokensAvg.get(p) == 0 && dataSet.placeTokensAvg.get(p) > 0) {
+    				double value = dataSet.placeTokensAvg.get(p);
+    				notePad.addTextLineNL("      (DEAD IN REF, ALIVE IN SERIES) [avg tokens: "
+    						+formatter3.format(value)+"]  p"+p+"_"+places.get(p).getName(), "text");
+    				placesVector.set(p, 0);
+    				continue;
+    			}
+    			if(refSet.placeTokensAvg.get(p) > 0 && dataSet.placeTokensAvg.get(p) == 0) {
+    				double value = refSet.placeTokensAvg.get(p);
+    				notePad.addTextLineNL("      (KNOCKED OUT IN SERIES SET) [avg tokens reference: "
+    						+formatter3.format(value)+"]  p"+p+"_"+places.get(p).getName(), "text");
+    				placesVector.set(p, 0);
+    				continue;
+    			}
+    		}
+    		
+    		TreeMap<Double, String> data = new TreeMap<Double, String>();
+    		for(int p=0; p<placesNumber; p++) {
+    			if(placesVector.get(p) == 0)
+    				continue;
+    		
+    			double diff = refSet.placeTokensAvg.get(p) - dataSet.placeTokensAvg.get(p);
+    			diff = (diff / refSet.placeTokensAvg.get(p));
+    			if(diff < 0) { //wzrosło w stos. do ref
+    				diff *= -1;
+    				double value = diff * 100;
+					data.put(value, "p"+p+"_"+places.get(p).getName());
+					placesVector.set(p, 0);
+    				continue;
+    			} else {
+    				diff *= -1;
+    				double value = diff * 100;
+					data.put(value, "p"+p+"_"+places.get(p).getName());
+					placesVector.set(p, 0);
+    				continue;
+    			}
+    		}
+
+    		for(Double key: data.keySet()){
+    			if(key < -20) {
+    				notePad.addTextLineNL("      (DECREASED) [tokens change: "+formatter2.format(key)+"%] "
+    						+data.get(key), "text");
+    			} 
+    			
+    			if(key > 20) {
+    				notePad.addTextLineNL("      (INCREASED) [tokens change: +"+formatter2.format(key)+"%] "
+    						+data.get(key), "text");
+    			}
+
+            }
     	}
     }
     
