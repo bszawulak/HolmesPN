@@ -67,7 +67,7 @@ import holmes.workspace.ExtensionFileFilter;
 public class HolmesClusters extends JFrame {
 	private static final long serialVersionUID = -8420712475473581772L;
 
-	private JTable table;
+	private JTable table = new JTable();
 	private DefaultTableModel tableModel;
 	private int mode = 0; // 0 - tryb 56 klastrowań
 	private ClusterTableRenderer tableRenderer = new ClusterTableRenderer(mode, 18);
@@ -354,7 +354,7 @@ public class HolmesClusters extends JFrame {
     	JPanel main = new JPanel();
     	main.setLayout(new BorderLayout());
 
-    	table = new JTable(new DefaultTableModel());
+    	//table = new JTable(new DefaultTableModel());
     	setTableModel56();
         //table = new JTable(tableModel);
 
