@@ -19,6 +19,10 @@ import holmes.petrinet.elements.Transition.TransitionType;
 public class SimulatorGlobals {
 	private int ARC_STEP_DELAY = 25;
 	private int TRANS_FIRING_DELAY = 25;
+	
+	private boolean maxMode = false;
+	private boolean singleMode = false;
+	private int emptySteps = 0; // 0 - bez pustych kroków, 1 - z pustymi krokami
 	public long currentStep = 0;
 	private GUIManager overlord;
 	
@@ -27,6 +31,45 @@ public class SimulatorGlobals {
 	 */
 	public SimulatorGlobals(GUIManager mastah) {
 		this.overlord = mastah;
+	}
+	
+	/**
+	 * Metoda ustawia status trybu maximum.
+	 * @param value boolean - true, jeśli tryb włączony
+	 */
+	public void setMaxMode(boolean value) {
+		this.maxMode = value;
+	}
+	
+	/**
+	 * Metoda zwraca status trybu maximum.
+	 * @return boolean - true, jeśli włączony
+	 */
+	public boolean isMaxMode() {
+		return this.maxMode;
+	}
+	
+	/**
+	 * Ustawia tryb pojedynczego odpalania.
+	 * @param value boolean - true, jeśli tylko 1 tranzycja ma odpalić na turę.
+	 */
+	public void setSingleMode(boolean value) {
+		this.singleMode = value;
+		if(value == false)
+			this.maxMode = false;
+		
+		if(singleMode != false)
+			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+				setMaxMode(true);
+			}
+	}
+
+	/**
+	 * Zwraca status trybu pojedynczego odpalania.
+	 * @return boolean - true, jeśli tylko 1 tranzycja odpala na turę
+	 */
+	public boolean isSingleMode() {
+		return this.singleMode;
 	}
 	
 	/**

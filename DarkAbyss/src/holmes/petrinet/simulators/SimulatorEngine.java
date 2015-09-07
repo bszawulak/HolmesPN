@@ -5,11 +5,8 @@ import java.util.Collections;
 import java.util.Random;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
-import holmes.petrinet.functions.FunctionContainer;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 
 /**
