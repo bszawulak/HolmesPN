@@ -27,7 +27,7 @@ import holmes.windows.HolmesNetTables;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.HolmesProgramProperties;
 import holmes.windows.HolmesSearch;
-import holmes.windows.ssim.HolmesStSim;
+import holmes.windows.ssim.HolmesSim;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
 import holmes.workspace.WorkspaceSheet;
@@ -155,7 +155,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesAbout windowAbout; //okno About...
 	private HolmesSearch windowSearch; //okno wyszukiwania elementów sieci
 	private HolmesProgramProperties windowProperties; //okno właściwości sieci
-	private HolmesStSim windowStateSim; //okno symulatora stanów
+	private HolmesSim windowStateSim; //okno symulatora stanów
 	private HolmesNetTables windowNetTables; //okno tabel sieci
 	private HolmesNotepad windowSimulationLog; //okno logów symulatora
 	private HolmesInvariantsGenerator windowInvariants; //okno generatora inwariantów
@@ -183,7 +183,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		reset = new GUIReset(); //obiekt odpowiadający za resetowanie danych / kasowanie / czyszczenie
 		subnetsGraphics = new SubnetsGraphics(); //obiekt z metodami graficznymi dla sieci hierarchicznych
 		subnetsHQ = new SubnetsControl(this); //obiekt z metodami zarządzania sieciami hierarchicznymi
-		simSettings = new SimulatorGlobals(this); //opcje symulatora
+		simSettings = new SimulatorGlobals(); //opcje symulatora
 		
 		setFrame(frejm);
 		try {	
@@ -1215,14 +1215,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda tworzy nowe okno symulatora stanów programu.
 	 */
 	private void createStateSimulatorWindow() {
-		windowStateSim = new HolmesStSim(this);
+		windowStateSim = new HolmesSim(this);
 	}
 	
 	/**
 	 * Metoda zwraca obiekt okna symulatora.
 	 * @return HolmesStateSimulator - obiekt
 	 */
-	public HolmesStSim accessStateSimulatorWindow() {
+	public HolmesSim accessStateSimulatorWindow() {
 		return windowStateSim;
 	}
 	

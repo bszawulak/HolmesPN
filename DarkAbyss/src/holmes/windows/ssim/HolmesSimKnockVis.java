@@ -71,7 +71,7 @@ import holmes.windows.HolmesNotepad;
  * 
  * @author MR
  */
-public class HolmesStSimKnockVis extends JFrame {
+public class HolmesSimKnockVis extends JFrame {
 	private static final long serialVersionUID = 3020186160500907678L;
 	private GUIManager overlord;
 	private PetriNet pn;
@@ -80,7 +80,7 @@ public class HolmesStSimKnockVis extends JFrame {
 	private static final DecimalFormat formatter3 = new DecimalFormat( "#.###" );
 	
 	private boolean doNotUpdate = false;
-	private HolmesStSim boss;
+	private HolmesSim boss;
 	private XYSeriesCollection placesSeriesDataSet = null;
 	private XYSeriesCollection transitionsSeriesDataSet = null;
 	private JFreeChart placesChart;
@@ -114,7 +114,7 @@ public class HolmesStSimKnockVis extends JFrame {
 	 * Konstruktor obiektu klast HolmesStateSimKnockVis.
 	 * @param boss HolmesStateSim - główne okno symulatora
 	 */
-	public HolmesStSimKnockVis(HolmesStSim boss) {
+	public HolmesSimKnockVis(HolmesSim boss) {
 		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
 		this.boss = boss;

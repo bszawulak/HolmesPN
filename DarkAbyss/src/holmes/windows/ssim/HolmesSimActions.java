@@ -15,12 +15,12 @@ import holmes.darkgui.GUIManager;
  * @author MR
  *
  */
-public class HolmesStSimActions {
+public class HolmesSimActions {
 	
 	/**
 	 * Konstruktor klasy HolmesStateSimulatorActions.
 	 */
-	public HolmesStSimActions() {
+	public HolmesSimActions() {
 		
 	}
 	

@@ -102,6 +102,7 @@ public class GUIReset {
 		pNet.accessMCTnames().clear();
 		pNet.accessStatesManager().reset(false);
 		pNet.setMCSdataCore(new MCSDataMatrix());
+		mastah.simSettings.reset();
 		pNet.clearSimKnockoutData();
 		pNet.resetComm();
 		pNet.setMCTanalyzer(new MCTCalculator(pNet));

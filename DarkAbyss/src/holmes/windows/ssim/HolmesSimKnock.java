@@ -40,19 +40,15 @@ import holmes.windows.HolmesStatesManager;
  * 
  * @author MR
  */
-public class HolmesStSimKnock extends JPanel {
+public class HolmesSimKnock extends JPanel {
 	private static final long serialVersionUID = 4257940971120618716L;
-	public HolmesStSimKnockActions action;
+	public HolmesSimKnockActions action;
+	private GUIManager overlord;
 	private boolean doNotUpdate = false;
 	public StateSimulator ssimKnock;
-	public HolmesStSim mainSimWindow;
+	public HolmesSim mainSimWindow;
 	
 	//reference simulation panel:
-	public int refSimSteps = 1000;			//liczba kroków dla zbioru referencyjnego
-	public int refRepetitions = 100;
-	public NetType refNetType = NetType.BASIC;		//rodzaj sieci: BASIC, TIMED, HYBRID, itd.
-	public boolean refMaximumMode = false;
-	public boolean refSingleMode = false;
 	public JProgressBar refProgressBarKnockout;
 	public boolean refShowNotepad = false;
 	
@@ -76,31 +72,20 @@ public class HolmesStSimKnock extends JPanel {
 	//data sets acquisition panel:
 	private JComboBox<String> dataTransitionsCombo = null;
 	private JComboBox<String> dataMctCombo = null;
-	public int dataSimSteps = 1000;			//liczba kroków dla zbioru referencyjnego
-	public int dataRepetitions = 100;
-	public NetType dataNetType = NetType.BASIC;		//rodzaj sieci: BASIC, TIMED, HYBRID, itd.
-	public boolean dataMaximumMode = false;
-	public boolean dataSingleMode = false;
 	public JProgressBar dataProgressBarKnockout;
 	public JTextArea dataSelectedTransTextArea;
 	public boolean dataSimUseEditorOffline = false;
 	public boolean dataSimComputeAll = false;
 	public boolean dataShowNotepad = false;
 	
+	public JCheckBox dataSimUseEditorOfflineCheckBox;
+	public JCheckBox dataSimComputeForAllTransitions;
+	
 	//blokowane elementy:
 	private JButton acqRefDataButton;
-	private JComboBox<String> refSimNetMode;
-	private JComboBox<String> refSimMaxMode;
-	private JSpinner refSimStepsSpinner;
-	private JSpinner refSimRepsSpinner;
-	
 	private JButton acqDataSimButton;
-	private JComboBox<String> dataSimNetMode;
-	private JComboBox<String> dataSimMaxMode;
-	private JSpinner dataSimStepsSpinner;
-	private JSpinner dataSimRepsSpinner;
-	private JCheckBox dataSimUseEditorOfflineCheckBox;
-	private JCheckBox dataSimComputeForAllTransitions;
+	private JButton simSettingsButton; 
+	private JComboBox<String> simulatorType;
 	
 	public boolean refSimInProgress = false;
 	public boolean dataSimInProgress = false;
@@ -113,34 +98,30 @@ public class HolmesStSimKnock extends JPanel {
 	 * Konstruktor obiektu klasy HolmesStateSimulatorKnockout.
 	 * @param holmesStateSimulator 
 	 */
-	public HolmesStSimKnock(HolmesStSim holmesStateSimulator) {
+	public HolmesSimKnock(HolmesSim holmesStateSimulator) {
 		this.mainSimWindow = holmesStateSimulator;
+		this.overlord = GUIManager.getDefaultGUIManager();
 		ssimKnock = new StateSimulator();
-		action = new HolmesStSimKnockActions(this);
+		action = new HolmesSimKnockActions(this);
 		
 		setLayout(new BorderLayout());
 		
-		add(getRefAcqPanel(), BorderLayout.NORTH);
+		add(getMainOptionsPanel(), BorderLayout.NORTH); //górny panel przycisków
+		JPanel allTheRest = new JPanel(new BorderLayout()); //panel pod przyciskami
+		add(allTheRest);
+
+		allTheRest.add(getRefAcqPanel(), BorderLayout.NORTH); //dodaj panel uzyskania zbioru ref.
+		JPanel refAndDataPanel = new JPanel(new BorderLayout()); //panel grupujący dane ref. i datasets
+		refAndDataPanel.add(getRefDetailsPanel(), BorderLayout.NORTH);
 		
-		JPanel refAndDataPanel = new JPanel(new BorderLayout());
-		
-		JPanel refAndButtonsPanel = new JPanel(new BorderLayout());
-		refAndButtonsPanel.setPreferredSize(new Dimension(600, 100));
-		refAndButtonsPanel.add(getRefDetailsPanel(), BorderLayout.CENTER);
-		refAndButtonsPanel.add(getButtonsPanel(), BorderLayout.EAST);
-		
-		refAndDataPanel.add(refAndButtonsPanel, BorderLayout.NORTH);
-		
+
 		JPanel dataAndChartsPanel = new JPanel(new BorderLayout());
 		dataAndChartsPanel.add(getSimDataAcqPanel(), BorderLayout.NORTH);
 		dataAndChartsPanel.add(getSimDataDetailsPanel(), BorderLayout.CENTER);
+		
 		refAndDataPanel.add(dataAndChartsPanel, BorderLayout.CENTER);
-		
-		JPanel bottomChartPanel = new JPanel(new BorderLayout());
-		bottomChartPanel.add(refAndDataPanel, BorderLayout.NORTH);
-		bottomChartPanel.add(getChartPanel(), BorderLayout.CENTER);
-		
-		add(bottomChartPanel, BorderLayout.CENTER);
+
+		allTheRest.add(refAndDataPanel, BorderLayout.CENTER);
 	}
 
 	/**
@@ -181,114 +162,9 @@ public class HolmesStSimKnock extends JPanel {
 		});
 		cancelButton.setFocusPainted(false);
 		result.add(cancelButton);
-		
-		//Main mode:
-		JLabel simMainModeLabel = new JLabel("Main mode:");
-		simMainModeLabel.setBounds(posXda+120, posYda, 80, 20);
-		result.add(simMainModeLabel);
 
-		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
-		refSimNetMode = new JComboBox<String>(simModeName);
-		refSimNetMode.setBounds(posXda+120, posYda+20, 120, 20);
-		refSimNetMode.setSelectedIndex(0);
-		refSimNetMode.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
-				
-				int selectedModeIndex = refSimNetMode.getSelectedIndex();
-				selectedModeIndex = GUIManager.getDefaultGUIManager().simSettings.checkSimulatorNetType(selectedModeIndex);
-				doNotUpdate = true;
-				switch(selectedModeIndex) {
-					case 0:
-						refNetType = NetType.BASIC;
-						refSimNetMode.setSelectedIndex(0);
-						break;
-					case 1:
-						refNetType = NetType.TIME;
-						refSimNetMode.setSelectedIndex(1);
-						break;
-					case 2:
-						refNetType = NetType.HYBRID;
-						refSimNetMode.setSelectedIndex(2);
-						break;
-					case -1:
-						refNetType = NetType.BASIC;
-						refSimNetMode.setSelectedIndex(1);
-						GUIManager.getDefaultGUIManager().log("Error while changing simulator mode for reference set. Set for BASIC.", "error", true);
-						break;
-				}
-				doNotUpdate = false;
-			}
-		});
-		result.add(refSimNetMode);
-		
-		//Sub-mode:
-		JLabel label1 = new JLabel("Sub-mode:");
-		label1.setBounds(posXda+120, posYda+40, 90, 20);
-		result.add(label1);
-		
-		refSimMaxMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
-		refSimMaxMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing, \n"
-				+ "only 1 transition will fire in single mode.");
-		refSimMaxMode.setBounds(posXda+120, posYda+60, 120, 20);
-		refSimMaxMode.setSelectedIndex(0);
-		refSimMaxMode.setMaximumRowCount(6);
-		refSimMaxMode.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = refSimMaxMode.getSelectedIndex();
-				if(selected == 0) {
-					refMaximumMode = false;
-				} else if(selected == 1) {
-					refMaximumMode = true;
-				} else {
-					refSingleMode = true;
-				}
-			}
-		});
-		result.add(refSimMaxMode);
-
-		JLabel simStepsLabel = new JLabel("Steps:");
-		simStepsLabel.setBounds(posXda+250, posYda, 80, 20);
-		result.add(simStepsLabel);
-		
-		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(refSimSteps, 100, 1000000, 100);
-		refSimStepsSpinner = new JSpinner(simStepsSpinnerModel);
-		refSimStepsSpinner.setBounds(posXda+250, posYda+20, 80, 20);
-		refSimStepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				refSimSteps = val;
-			}
-		});
-		result.add(refSimStepsSpinner);
-
-		JLabel repetLabel = new JLabel("Repetitions:");
-		repetLabel.setBounds(posXda+250, posYda+40, 80, 20);
-		result.add(repetLabel);
-		
-		SpinnerModel simRepetsSpinnerModel = new SpinnerNumberModel(refRepetitions, 1, 100000, 10);
-		refSimRepsSpinner = new JSpinner(simRepetsSpinnerModel);
-		refSimRepsSpinner.setBounds(posXda+250, posYda+60, 80, 20);
-		refSimRepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				refRepetitions = val;
-			}
-		});
-		result.add(refSimRepsSpinner);
-		
 		refProgressBarKnockout = new JProgressBar();
-		refProgressBarKnockout.setBounds(posXda+340, posYda+3, 620, 40);
+		refProgressBarKnockout.setBounds(posXda+120, posYda+3, 820, 40);
 		refProgressBarKnockout.setMaximum(100);
 		refProgressBarKnockout.setMinimum(0);
 	    refProgressBarKnockout.setValue(0);
@@ -298,7 +174,7 @@ public class HolmesStSimKnock extends JPanel {
 	    result.add(refProgressBarKnockout);
 	    
 	    JCheckBox showdataCheckBox = new JCheckBox("Show results in notepad");
-	    showdataCheckBox.setBounds(posXda+340, posYda+50, 170, 20);
+	    showdataCheckBox.setBounds(posXda+120, posYda+50, 170, 20);
 	    showdataCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -326,7 +202,7 @@ public class HolmesStSimKnock extends JPanel {
 	public JPanel getRefDetailsPanel() {
 		JPanel result = new JPanel(null);
 		result.setBorder(BorderFactory.createTitledBorder("Reference data details panel"));
-		result.setPreferredSize(new Dimension(500, 150));
+		result.setPreferredSize(new Dimension(500, 100));
 		doNotUpdate = true;
 		int posXda = 10;
 		int posYda = 20;
@@ -403,43 +279,6 @@ public class HolmesStSimKnock extends JPanel {
 		refLabelReps = new JLabel("---");
 		refLabelReps.setBounds(posXda+290, posYda+40, 90, 20);
 		result.add(refLabelReps);
-		
-		doNotUpdate = false;
-	    return result;
-	}
-	
-	/**
-	 * Metoda zwraca panel przycisków bocznych - zapis/odczyt.
-	 * @return JPanel - panel. Okrętu się pan spodziewałeś?
-	 */
-	public JPanel getButtonsPanel() {
-		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Starting state options"));
-		result.setPreferredSize(new Dimension(300, 150));
-		doNotUpdate = true;
-		int posXda = 10;
-		int posYda = 15;
-		
-		JLabel stateLabel0 = new JLabel("Selected m0 state ID: ");
-		stateLabel0.setBounds(posXda, posYda, 130, 20);
-		result.add(stateLabel0);
-		    
-		selStateLabel = new JLabel(""+GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().selectedState);
-	    selStateLabel.setBounds(posXda+140, posYda, 60, 20);
-	    result.add(selStateLabel);
-	    
-	    stateManagerButton = new JButton();
-	    stateManagerButton.setText("StatesManager");
-	    stateManagerButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
-	    stateManagerButton.setBounds(posXda, posYda+20, 150, 40);
-	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
-	    stateManagerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesStatesManager();
-			}
-		});
-	    stateManagerButton.setFocusPainted(false);
-	    result.add(stateManagerButton);
 		
 		doNotUpdate = false;
 	    return result;
@@ -611,115 +450,9 @@ public class HolmesStSimKnock extends JPanel {
 		cancelButton.setFocusPainted(false);
 		result.add(cancelButton);
 		
-		//Main mode:
-		JLabel simMainModeLabel = new JLabel("Main mode:");
-		simMainModeLabel.setBounds(posXda+120, posYda, 80, 20);
-		result.add(simMainModeLabel);
-
-		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
-		dataSimNetMode = new JComboBox<String>(simModeName);
-		dataSimNetMode.setBounds(posXda+120, posYda+20, 120, 20);
-		dataSimNetMode.setSelectedIndex(0);
-		dataSimNetMode.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
-				
-				int selectedModeIndex = dataSimNetMode.getSelectedIndex();
-				selectedModeIndex = GUIManager.getDefaultGUIManager().simSettings.checkSimulatorNetType(selectedModeIndex);
-				doNotUpdate = true;
-				switch(selectedModeIndex) {
-					case 0:
-						dataNetType = NetType.BASIC;
-						dataSimNetMode.setSelectedIndex(0);
-						break;
-					case 1:
-						dataNetType = NetType.TIME;
-						dataSimNetMode.setSelectedIndex(1);
-						break;
-					case 2:
-						dataNetType = NetType.HYBRID;
-						dataSimNetMode.setSelectedIndex(2);
-						break;
-					case -1:
-						dataNetType = NetType.BASIC;
-						dataSimNetMode.setSelectedIndex(1);
-						GUIManager.getDefaultGUIManager().log("Error while changing simulator mode for knockout simulation set. "
-								+ "Set for BASIC.", "error", true);
-						break;
-				}
-				doNotUpdate = false;
-			}
-		});
-		result.add(dataSimNetMode);
-		
-		//Sub-mode:
-		JLabel label1 = new JLabel("Sub-mode:");
-		label1.setBounds(posXda+120, posYda+40, 90, 20);
-		result.add(label1);
-		
-		dataSimMaxMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
-		dataSimMaxMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing, \n"
-				+ "only 1 transition will fire in single mode.");
-		dataSimMaxMode.setBounds(posXda+120, posYda+60, 120, 20);
-		dataSimMaxMode.setSelectedIndex(0);
-		dataSimMaxMode.setMaximumRowCount(6);
-		dataSimMaxMode.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = refSimMaxMode.getSelectedIndex();
-				if(selected == 0) {
-					dataMaximumMode = false;
-				} else if(selected == 1) {
-					dataMaximumMode = true;
-				} else {
-					dataSingleMode = true;
-				}
-			}
-		});
-		result.add(dataSimMaxMode);
-
-		JLabel simStepsLabel = new JLabel("Steps:");
-		simStepsLabel.setBounds(posXda+250, posYda, 80, 20);
-		result.add(simStepsLabel);
-		
-		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(dataSimSteps, 100, 1000000, 100);
-		dataSimStepsSpinner = new JSpinner(simStepsSpinnerModel);
-		dataSimStepsSpinner.setBounds(posXda+250, posYda+20, 80, 20);
-		dataSimStepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				dataSimSteps = val;
-			}
-		});
-		result.add(dataSimStepsSpinner);
-
-		JLabel repetLabel = new JLabel("Repetitions:");
-		repetLabel.setBounds(posXda+250, posYda+40, 80, 20);
-		result.add(repetLabel);
-		
-		SpinnerModel simRepetsSpinnerModel = new SpinnerNumberModel(dataRepetitions, 1, 100000, 10);
-		dataSimRepsSpinner = new JSpinner(simRepetsSpinnerModel);
-		dataSimRepsSpinner.setBounds(posXda+250, posYda+60, 80, 20);
-		dataSimRepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				dataRepetitions = val;
-			}
-		});
-		result.add(dataSimRepsSpinner);
-		
 		JPanel special = new JPanel(null);
 		special.setBorder(BorderFactory.createTitledBorder("Special options"));
-		special.setBounds(posXda+340, posYda, 550, 40);
+		special.setBounds(posXda+120, posYda, 650, 40);
 		result.add(special);
 		
 		dataSimUseEditorOfflineCheckBox = new JCheckBox("Use editor offline marks");
@@ -765,7 +498,7 @@ public class HolmesStSimKnock extends JPanel {
 	    special.add(showdataCheckBox);
 		
 		dataProgressBarKnockout = new JProgressBar();
-		dataProgressBarKnockout.setBounds(posXda+340, posYda+45, 550, 40);
+		dataProgressBarKnockout.setBounds(posXda+120, posYda+45, 750, 40);
 		dataProgressBarKnockout.setMaximum(100);
 		dataProgressBarKnockout.setMinimum(0);
 		dataProgressBarKnockout.setValue(0);
@@ -881,16 +614,20 @@ public class HolmesStSimKnock extends JPanel {
 	    return result;
 	}
 	
-	private Component getChartPanel() {
+	/**
+	 * Zwraca panel górnych przecisków symulatora.
+	 * @return JPanel - panel
+	 */
+	private JPanel getMainOptionsPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Charts panel"));
-		result.setPreferredSize(new Dimension(670, 50));
+		result.setBorder(BorderFactory.createTitledBorder("General options panel"));
+		result.setPreferredSize(new Dimension(670, 120));
 		doNotUpdate = true;
 		int posXda = 10;
 		int posYda = 20;
 		
 		JButton loadAllButton = new JButton("Load all");
-		loadAllButton.setBounds(posXda, posYda, 110, 40);
+		loadAllButton.setBounds(posXda, posYda, 130, 40);
 		loadAllButton.setMargin(new Insets(0, 0, 0, 0));
 		loadAllButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/loadIcon.png"));
 		loadAllButton.setToolTipText("Saves all simulation data to single file.");
@@ -902,7 +639,7 @@ public class HolmesStSimKnock extends JPanel {
 		result.add(loadAllButton);
 		
 		JButton saveAllButton = new JButton("Save all");
-		saveAllButton.setBounds(posXda+120, posYda, 110, 40);
+		saveAllButton.setBounds(posXda+140, posYda, 130, 40);
 		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
 		saveAllButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/saveIcon.png"));
 		saveAllButton.setToolTipText("Saves all simulation data to single file.");
@@ -914,15 +651,72 @@ public class HolmesStSimKnock extends JPanel {
 		result.add(saveAllButton);
 
 		JButton showVisualsButton = new JButton("Analyse");
-		showVisualsButton.setBounds(posXda+240, posYda, 110, 40);
+		showVisualsButton.setBounds(posXda+280, posYda, 130, 40);
 		showVisualsButton.setMargin(new Insets(0, 0, 0, 0));
 		showVisualsButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/showIcon.png"));
 		showVisualsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesStSimKnockVis(mainSimWindow.returnFrame());
+				new HolmesSimKnockVis(mainSimWindow.returnFrame());
 			}
 		});
 		result.add(showVisualsButton);
+		
+		simSettingsButton = new JButton("SimSettings");
+		simSettingsButton.setBounds(posXda+420, posYda, 130, 40);
+		simSettingsButton.setMargin(new Insets(0, 0, 0, 0));
+		simSettingsButton.setIcon(Tools.getResIcon32("/icons/simSettings/setupIcon.png"));
+		simSettingsButton.setToolTipText("Set simulator options.");
+		simSettingsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				new HolmesSimSetup(mainSimWindow.getFrame());
+			}
+		});
+		result.add(simSettingsButton);
+		
+		stateManagerButton = new JButton();
+	    stateManagerButton.setText("<html>States<br>Manager</html>");
+	    stateManagerButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
+	    stateManagerButton.setBounds(posXda+560, posYda, 130, 40);
+	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
+	    stateManagerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				new HolmesStatesManager();
+			}
+		});
+	    stateManagerButton.setFocusPainted(false);
+	    result.add(stateManagerButton);
+		
+		JLabel stateLabel0 = new JLabel("Selected m0 state ID: ");
+		stateLabel0.setBounds(posXda+700, posYda, 130, 20);
+		result.add(stateLabel0);
+		    
+		selStateLabel = new JLabel(""+GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().selectedState);
+	    selStateLabel.setBounds(posXda+700, posYda+20, 60, 20);
+	    result.add(selStateLabel);
+
+		JLabel simMainModeLabel = new JLabel("Simulator type:");
+		simMainModeLabel.setBounds(posXda, posYda+45, 140, 20);
+		result.add(simMainModeLabel);
+		
+		String[] simulator = {"Standard token simulator", "SSA (Stochastics)"};
+		simulatorType = new JComboBox<String>(simulator);
+		simulatorType.setBounds(posXda, posYda+65, 180, 20);
+		simulatorType.setSelectedIndex(0);
+		simulatorType.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+				
+				int selected = simulatorType.getSelectedIndex();
+				if(selected>=0) {
+					overlord.simSettings.setSimSteps(0); //TODO:
+				}
+				
+				doNotUpdate = false;
+			}
+		});
+		result.add(simulatorType);
 		
 		return result;
 	}
@@ -938,17 +732,8 @@ public class HolmesStSimKnock extends JPanel {
 	//TODO: dodawać kolejne tutaj:
 	public void setSimWindowComponentsStatus(boolean state) {
 		acqRefDataButton.setEnabled(state);
-		refSimNetMode.setEnabled(state);
-		refSimMaxMode.setEnabled(state);
-		refSimStepsSpinner.setEnabled(state);
-		refSimRepsSpinner.setEnabled(state);
-		
 		acqDataSimButton.setEnabled(state);
-		dataSimNetMode.setEnabled(state);
-		dataSimMaxMode.setEnabled(state);
-		dataSimStepsSpinner.setEnabled(state);
-		dataSimRepsSpinner.setEnabled(state);
-		
+		simSettingsButton.setEnabled(state);
 		stateManagerButton.setEnabled(state);
 		
 		GUIManager.getDefaultGUIManager().getFrame().setEnabled(state);
@@ -960,18 +745,8 @@ public class HolmesStSimKnock extends JPanel {
 	public void resetWindow() {
 		doNotUpdate = true;
 		
-		//reference set simulation panel:
-		refNetType = NetType.BASIC;
-		refSimNetMode.setSelectedIndex(0);
-		refMaximumMode = false;
-		refSimMaxMode.setSelectedIndex(0);
-		refSimSteps = 1000;
-		SpinnerNumberModel spinnerClustersModel = new SpinnerNumberModel(refSimSteps, 100, 1000000, 100);
-		refSimStepsSpinner.setModel(spinnerClustersModel);
 		refProgressBarKnockout.setValue(0);
-		
-		//ref details panel:
-		
+
 		doNotUpdate = false;
 	}
 	

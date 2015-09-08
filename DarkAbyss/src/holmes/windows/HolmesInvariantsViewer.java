@@ -35,6 +35,7 @@ import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.StateSimulator;
 import holmes.tables.InvariantsTableRenderer;
 import holmes.tables.InvariantsViewerTableModel;
@@ -164,8 +165,13 @@ public class HolmesInvariantsViewer extends JFrame {
 				problem = true;
 			} else {
 				StateSimulator ss = new StateSimulator();
-				ss.initiateSim(NetType.BASIC, false, false);
-				transStats = ss.simulateForInvariantTrans(1000, 20);
+				SimulatorGlobals ownSettings = new SimulatorGlobals();
+				ownSettings.setNetType(NetType.BASIC);
+				ownSettings.setMaxMode(false);
+				ownSettings.setSingleMode(false);
+				ss.initiateSim(false, ownSettings);
+
+				transStats = ss.simulateForInvariantTrans(1000, 20, false);
 				problem = false;
 				if(transStats==null)
 					problem = true;
@@ -396,8 +402,14 @@ public class HolmesInvariantsViewer extends JFrame {
 					problem = true;
 				} else {
 					StateSimulator ss = new StateSimulator();
-					ss.initiateSim(NetType.BASIC, false, false);
-					transStats = ss.simulateForInvariantTrans(1000, 20);
+					
+					SimulatorGlobals ownSettings = new SimulatorGlobals();
+					ownSettings.setNetType(NetType.BASIC);
+					ownSettings.setMaxMode(false);
+					ownSettings.setSingleMode(false);
+					ss.initiateSim(false, ownSettings);
+
+					transStats = ss.simulateForInvariantTrans(1000, 20, false);
 					problem = false;
 					if(transStats==null)
 						problem = true;

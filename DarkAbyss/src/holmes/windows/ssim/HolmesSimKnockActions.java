@@ -23,8 +23,8 @@ import holmes.windows.HolmesNotepad;
  * 
  * @author MR
  */
-public class HolmesStSimKnockActions {
-	HolmesStSimKnock boss;
+public class HolmesSimKnockActions {
+	HolmesSimKnock boss;
 	private int pingPongSimTransLimit;
 	private int pingPongSimCurrentTrans;
 	private long pingPongSimSeries;
@@ -35,7 +35,7 @@ public class HolmesStSimKnockActions {
 	 * Konstruktor obiektu klasy HolmesStateSimulatorKnockoutActions.
 	 * @param window HolmesStateSimulatorKnockout - okno nadrzędne
 	 */
-	public HolmesStSimKnockActions(HolmesStSimKnock window) {
+	public HolmesSimKnockActions(HolmesSimKnock window) {
 		this.boss = window;
 		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
@@ -64,7 +64,7 @@ public class HolmesStSimKnockActions {
 			return;
 		}
 		
-		boolean success =  boss.ssimKnock.initiateSim(boss.refNetType, boss.refMaximumMode, boss.refSingleMode);
+		boolean success =  boss.ssimKnock.initiateSim(true, null);
 		if(success == false) {
 			GUIManager.getDefaultGUIManager().log("State simulator initialization failed.", "error", true);
 			return;
@@ -78,7 +78,7 @@ public class HolmesStSimKnockActions {
 			trans.setOffline(false); //REFERENCE
 		
 		boss.ssimKnock.setThreadDetails(2, boss.mainSimWindow, boss.refProgressBarKnockout, 
-				boss.refSimSteps, boss.refRepetitions, currentDataPackage);
+				currentDataPackage);
 		Thread myThread = new Thread(boss.ssimKnock);
 		boss.refSimInProgress = true;
 		myThread.start();
@@ -158,7 +158,7 @@ public class HolmesStSimKnockActions {
 			return;
 		}
 		
-		boolean success =  boss.ssimKnock.initiateSim(boss.dataNetType, boss.dataMaximumMode, boss.dataSingleMode);
+		boolean success =  boss.ssimKnock.initiateSim(true, null);
 		if(success == false) {
 			GUIManager.getDefaultGUIManager().log("State simulator initialization failed.", "error", true);
 			return;
@@ -172,7 +172,7 @@ public class HolmesStSimKnockActions {
 		updateNetOfflineStatus(dataSelectedTransTextArea, transitions, true, currentDataPackage);
 		
 		boss.ssimKnock.setThreadDetails(3, boss.mainSimWindow, boss.dataProgressBarKnockout, 
-				boss.dataSimSteps, boss.dataRepetitions, currentDataPackage);
+				currentDataPackage);
 		Thread myThread = new Thread(boss.ssimKnock);
 		boss.dataSimInProgress = true;
 		myThread.start();
@@ -251,7 +251,7 @@ public class HolmesStSimKnockActions {
 			return;
 		}
 		
-		boolean success =  boss.ssimKnock.initiateSim(boss.dataNetType, boss.dataMaximumMode, boss.dataSingleMode);
+		boolean success =  boss.ssimKnock.initiateSim(true, null);
 		if(success == false) {
 			GUIManager.getDefaultGUIManager().log("State simulator initialization failed.", "error", true);
 			return;
@@ -290,7 +290,7 @@ public class HolmesStSimKnockActions {
 		    
 			NetSimulationData currentDataPackage = new NetSimulationData();
 			boss.ssimKnock.setThreadDetails(4, boss.mainSimWindow, boss.dataProgressBarKnockout, 
-					boss.dataSimSteps, boss.dataRepetitions, currentDataPackage);
+					currentDataPackage);
 			Thread myThread = new Thread(boss.ssimKnock);
 			boss.dataSimInProgress = true;
 			myThread.start();
@@ -328,7 +328,7 @@ public class HolmesStSimKnockActions {
 
 			NetSimulationData currentDataPackage = new NetSimulationData();
 			boss.ssimKnock.setThreadDetails(4, boss.mainSimWindow, boss.dataProgressBarKnockout, 
-					boss.dataSimSteps, boss.dataRepetitions, currentDataPackage);
+					currentDataPackage);
 			Thread myThread = new Thread(boss.ssimKnock);
 			myThread.start();
 		}

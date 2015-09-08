@@ -13,6 +13,7 @@ import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.StateSimulator;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.tables.InvariantContainer;
@@ -86,8 +87,13 @@ public class HolmesNetTablesActions {
 		
 		ArrayList<Double> resVector = null;
 		StateSimulator ss = new StateSimulator();
-		ss.initiateSim(NetType.BASIC, false, false);
-		ss.simulateNetSimple(10000, true);
+		
+		SimulatorGlobals ownSettings = new SimulatorGlobals();
+		ownSettings.setNetType(NetType.BASIC);
+		ownSettings.setMaxMode(false);
+		ownSettings.setSingleMode(false);
+		ss.initiateSim(false, ownSettings);
+		ss.simulateNetSimple(10000, true, false);
 		resVector = ss.getPlacesAvgData();
 		
 		int iterIndex = -1;
@@ -129,8 +135,12 @@ public class HolmesNetTablesActions {
 		}
 		
 		StateSimulator ss = new StateSimulator();
-		ss.initiateSim(NetType.BASIC, false, false);
-		ss.simulateNetSimple(10000, false);
+		SimulatorGlobals ownSettings = new SimulatorGlobals();
+		ownSettings.setNetType(NetType.BASIC);
+		ownSettings.setMaxMode(false);
+		ownSettings.setSingleMode(false);
+		ss.initiateSim(false, ownSettings);
+		ss.simulateNetSimple(10000, false, false);
 		ArrayList<Double> resVector = ss.getTransitionsAvgData();
 		
 		int iterIndex = -1;
@@ -263,8 +273,13 @@ public class HolmesNetTablesActions {
 	public void addInvariantsToModel(InvariantsSimTableModel modelInvariants, ArrayList<ArrayList<Integer>> invariantsMatrix,
 			int simSteps, boolean maximumMode, boolean singleMode, NetType invSimNetType) {
 		StateSimulator ss = new StateSimulator();
-		ss.initiateSim(invSimNetType, maximumMode, singleMode);
-		ss.simulateNetSimple(simSteps, false);
+		
+		SimulatorGlobals ownSettings = new SimulatorGlobals();
+		ownSettings.setNetType(invSimNetType);
+		ownSettings.setMaxMode(maximumMode);
+		ownSettings.setSingleMode(singleMode);
+		ss.initiateSim(false, ownSettings);
+		ss.simulateNetSimple(simSteps, false, false);
 		ArrayList<Double> resVector = ss.getTransitionsAvgData();
 		
 		ArrayList<Integer> rowsWithZero = new ArrayList<Integer>();

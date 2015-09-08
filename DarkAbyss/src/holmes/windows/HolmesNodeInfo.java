@@ -47,6 +47,7 @@ import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.StateSimulator;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.utilities.Tools;
 
 /**
@@ -763,10 +764,14 @@ public class HolmesNodeInfo extends JFrame {
 	 */
 	private void acquireNewPlaceData() {
 		StateSimulator ss = new StateSimulator();
-		//ss.initiateSim(NetType.BASIC, false);
-		ss.initiateSim(choosenNetType, maximumMode, singleMode);
+
+		SimulatorGlobals ownSettings = new SimulatorGlobals();
+		ownSettings.setNetType(choosenNetType);
+		ownSettings.setMaxMode(maximumMode);
+		ownSettings.setSingleMode(singleMode);
+		ss.initiateSim(false, ownSettings);
 		
-		ArrayList<Integer> dataVector = ss.simulateNetSinglePlace(simSteps, place);
+		ArrayList<Integer> dataVector = ss.simulateNetSinglePlace(simSteps, place, false);
 		ArrayList<ArrayList<Integer>> dataMatrix = new ArrayList<ArrayList<Integer>>();
 		dataMatrix.add(dataVector);
 		
@@ -774,7 +779,7 @@ public class HolmesNodeInfo extends JFrame {
 		int rep_succeed = 1;
 		for(int i=1; i<repeated; i++) {
 			ss.clearData();
-			ArrayList<Integer> newData = ss.simulateNetSinglePlace(simSteps, place);
+			ArrayList<Integer> newData = ss.simulateNetSinglePlace(simSteps, place, false);
 			if(newData.size() < dataVector.size()) { //powtórz test, zły rozmiar danych
 				problemCounter++;
 				i--;
@@ -835,8 +840,14 @@ public class HolmesNodeInfo extends JFrame {
 	 */
 	private ArrayList<Integer> acquireNewTransitionData() {
 		StateSimulator ss = new StateSimulator();
-		ss.initiateSim(choosenNetType, maximumMode, singleMode);
-		ArrayList<Integer> dataVector = ss.simulateNetSingleTransition(simSteps, transition);
+		
+		SimulatorGlobals ownSettings = new SimulatorGlobals();
+		ownSettings.setNetType(choosenNetType);
+		ownSettings.setMaxMode(maximumMode);
+		ownSettings.setSingleMode(singleMode);
+		ss.initiateSim(false, ownSettings);
+
+		ArrayList<Integer> dataVector = ss.simulateNetSingleTransition(simSteps, transition, false);
 		
 		dynamicsSeriesDataSet.removeAllSeries();
 		XYSeries series = new XYSeries("Average firing");

@@ -125,16 +125,14 @@ public class SimulatorEngine {
 
 	/**
 	 * Metoda generuje zbiór tranzycji do uruchomienia w ramach symulatora.
-	 * @param mode int - tryb: 0 - bez pustych kroków, 1 - puste kroki dozwolone
+	 * @param emptySteps boolean - true, jeśli może być wygenerowany krok bez odpalania tranzycji
 	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia
 	 */
-	public ArrayList<Transition> getTransLaunchList(int mode) {
-		if(mode == 0) {
-			generateWithoutEmptySteps();
-		} else if(mode == 1){
+	public ArrayList<Transition> getTransLaunchList(boolean emptySteps) {
+		if(emptySteps == true) {
 			generateNormal();
 		} else {
-			generateNormal();
+			generateWithoutEmptySteps();
 		}
 		return launchableTransitions; 
 	}

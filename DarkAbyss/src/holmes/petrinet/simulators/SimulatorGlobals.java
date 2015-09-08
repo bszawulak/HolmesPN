@@ -9,6 +9,7 @@ import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.simulators.NetSimulator.NetType;
 
 /**
  * Globalne ustawienia symulatora.
@@ -17,20 +18,27 @@ import holmes.petrinet.elements.Transition.TransitionType;
  *
  */
 public class SimulatorGlobals {
+	private GUIManager overlord;
+	
 	private int ARC_STEP_DELAY = 25;
 	private int TRANS_FIRING_DELAY = 25;
 	
 	private boolean maxMode = false;
 	private boolean singleMode = false;
-	private int emptySteps = 0; // 0 - bez pustych kroków, 1 - z pustymi krokami
+	private NetType refNetType = NetType.BASIC;	
+	private boolean emptySteps = false; // 0 - bez pustych kroków, 1 - z pustymi krokami
+	private int simSteps = 1000;			//liczba kroków dla zbioru referencyjnego
+	private int simReps = 100;
+
 	public long currentStep = 0;
-	private GUIManager overlord;
+	
+	private int simulatorType = 0;
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.
 	 */
-	public SimulatorGlobals(GUIManager mastah) {
-		this.overlord = mastah;
+	public SimulatorGlobals() {
+		this.overlord = GUIManager.getDefaultGUIManager();
 	}
 	
 	/**
@@ -50,15 +58,33 @@ public class SimulatorGlobals {
 	}
 	
 	/**
+	 * Metoda ustawia status trybu pustych kroków symulacji.
+	 * @param value boolean - true, jeśli tryb włączony
+	 */
+	public void setEmptySteps(boolean value) {
+		this.emptySteps = value;
+	}
+	
+	/**
+	 * Metoda zwraca status trybu pustych kroków symulacji.
+	 * @return boolean - true, jeśli włączony - tj. krok bez odpalania tranzycji jest dozwolony
+	 */
+	public boolean isEmptySteps() {
+		return this.emptySteps;
+	}
+	
+	/**
 	 * Ustawia tryb pojedynczego odpalania.
-	 * @param value boolean - true, jeśli tylko 1 tranzycja ma odpalić na turę.
+	 * @param value boolean - true, jeśli tylko 1 tranzycja ma odpalić na turę. Czy maxMode włączony, to
+	 * zależy od wybranej konfiguracji programu. Jeśli wyłączany jest singleMode, zawsze wyłączany jest także
+	 * maxMode (ustawiany na false, nie ważne czy wcześniej był włączony czy nie)
 	 */
 	public void setSingleMode(boolean value) {
 		this.singleMode = value;
 		if(value == false)
 			this.maxMode = false;
 		
-		if(singleMode != false)
+		if(singleMode == true)
 			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
 				setMaxMode(true);
 			}
@@ -73,9 +99,65 @@ public class SimulatorGlobals {
 	}
 	
 	/**
+	 * Zwraca aktualnie ustawiony typ sieci.
+	 * @return
+	 */
+	public NetType getNetType() {
+		return this.refNetType;
+	}
+	
+	/**
 	 * Metoda ustawiająca tryb sieci do symulacji.
 	 * @param type int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
 	 * @return int - faktyczny ustawiony tryb: 0 - PN, 1 - TPN, 2 - Hybrid, -1 : crash mode
+	 */
+	public int setNetType(int typeID) {
+		int res = checkSimulatorNetType(typeID);
+		
+		switch(res) {
+			case 0:
+				refNetType = NetType.BASIC;
+				break;
+			case 1:
+				refNetType = NetType.TIME;
+				break;
+			case 2:
+				refNetType = NetType.HYBRID;
+				break;
+		}
+		return res;
+	}
+	
+	public int setNetType(NetType netType) {
+		int typeID = 0;
+		if(netType == NetType.BASIC)
+			typeID = 0;
+		else if(netType == NetType.TIME)
+			typeID = 1;
+		else if(netType == NetType.HYBRID)
+			typeID = 2;
+				
+		int res = checkSimulatorNetType(typeID);
+		
+		switch(res) {
+			case 0:
+				refNetType = NetType.BASIC;
+				break;
+			case 1:
+				refNetType = NetType.TIME;
+				break;
+			case 2:
+				refNetType = NetType.HYBRID;
+				break;
+		}
+		
+		return res;
+	}
+	
+	/**
+	 * Metoda sprawdzająca poprawność trybu sieci do symulacji.
+	 * @param type int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
+	 * @return int - faktyczny ustawiony tryb: 0 - PN, 1 - TPN, 2 - Hybrid
 	 */
 	public int checkSimulatorNetType(int type) {
 		if(type == 0) { //sprawdzenie poprawności trybu, zakładamy że Basic działa zawsze
@@ -100,9 +182,67 @@ public class SimulatorGlobals {
 		} else if (type == 2) {
 			return 2;
 		}
-		return -1;
+		return 1;
 	}
 	
+	/**
+	 * Metoda ustawia liczbę kroków symulacji.
+	 * @param value int - nowa wartość
+	 */
+	public void setSimSteps(int value) {
+		this.simSteps = value;
+	}
+	
+	/**
+	 * Zwraca liczbę kroków symulacji.
+	 * @return int - liczba kroków
+	 */
+	public int getSimSteps() {
+		return this.simSteps;
+	}
+	
+	/**
+	 * Metoda ustawia liczbę powtórzeń symulacji.
+	 * @param value int - nowa wartość
+	 */
+	public void setRepetitions(int value) {
+		this.simReps = value;
+	}
+	
+	/**
+	 * Zwraca liczbę powtórzeń symulacji.
+	 * @return int - liczba powtórzeń
+	 */
+	public int getRepetitions() {
+		return this.simReps;
+	}
+	
+	/**
+	 * Metoda ustawia typ używanego symulatora.
+	 * @param type int:<br>
+	 * 		0 - standardowy symulator przepływu tokenów<br>
+	 * 		1 - SSA (stochastic simulation algorithm)<br>
+	 * 		2 - Gillespie SSA
+	 */
+	public void setSimulatorType(int type) {
+		this.simulatorType = type;
+	}
+	
+	/**
+	 * Zwraca typ ustawionego symulatora.
+	 * @return int - typ symulatora:<br>
+	 * 		0 - standardowy symulator przepływu tokenów<br>
+	 * 		1 - SSA (stochastic simulation algorithm)<br>
+	 * 		2 - Gillespie SSA
+	 */
+	public int getSimulatorType() {
+		return this.simulatorType;
+	}
+	
+	/**
+	 * Metoda ustawia liczbę przystanków na drodze tokenu (grafika)
+	 * @param value int - nowa wartość, im mniej (min=5), tym szybciej
+	 */
 	public void setArcDelay(int value) {
 		if(value < 5)
 			this.ARC_STEP_DELAY = 5;
@@ -110,10 +250,18 @@ public class SimulatorGlobals {
 		this.ARC_STEP_DELAY = value;
 	}
 	
+	/**
+	 * Zwraca liczbę przystanków na drodze rysowania tokenu
+	 * @return int
+	 */
 	public int getArcDelay() {
 		return ARC_STEP_DELAY;
 	}
 	
+	/**
+	 * Metoda ustawia opóźnienie odpalenia tranzycji (grafika)
+	 * @param value int - nowa wartość, im mniej (min=10), tym szybciej
+	 */
 	public void setTransDelay(int value) {
 		if(value < 10)
 			this.TRANS_FIRING_DELAY = 10;
@@ -121,7 +269,28 @@ public class SimulatorGlobals {
 		this.TRANS_FIRING_DELAY = value;
 	}
 	
+	/**
+	 * Zwraca wartość opóźnienia tranzycji
+	 * @return int
+	 */
 	public int getTransDelay() {
 		return TRANS_FIRING_DELAY;
+	}
+	
+	/**
+	 * Reset do ustawień początkowych.
+	 */
+	public void reset() {
+		ARC_STEP_DELAY = 25;
+		TRANS_FIRING_DELAY = 25;
+		
+		maxMode = false;
+		singleMode = false;
+		refNetType = NetType.BASIC;	
+		emptySteps = false;
+		simSteps = 1000;
+		simReps = 100;
+
+		currentStep = 0;
 	}
 }

@@ -46,7 +46,7 @@ public class NetSimulator {
 	//private Random generator;
 	
 	private SimulatorEngine engine = null;
-	private int modeSteps = 0; 
+	private boolean emptySteps = false; 
 	
 	private GUIManager overlord;
 	/**
@@ -887,7 +887,7 @@ public class NetSimulator {
 						overlord.io.updateTimeStep(""+timeCounter); // TODO UPDATE
 						overlord.simSettings.currentStep = timeCounter;
 						
-						launchingTransitions = engine.getTransLaunchList(modeSteps);
+						launchingTransitions = engine.getTransLaunchList(emptySteps);
 						remainingTransitionsAmount = launchingTransitions.size();
 					}
 					
@@ -984,7 +984,7 @@ public class NetSimulator {
 						overlord.io.updateTimeStep(""+timeCounter);
 						overlord.simSettings.currentStep = timeCounter;
 						
-						launchingTransitions = engine.getTransLaunchList(modeSteps);
+						launchingTransitions = engine.getTransLaunchList(emptySteps);
 						remainingTransitionsAmount = launchingTransitions.size();
 					}
 					

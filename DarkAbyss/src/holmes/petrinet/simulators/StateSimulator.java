@@ -14,7 +14,7 @@ import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
 import holmes.petrinet.simulators.NetSimulator.NetType;
-import holmes.windows.ssim.HolmesStSim;
+import holmes.windows.ssim.HolmesSim;
 
 /**
  * Klasa symulatora. Różnica między nią a symulatorem graficznym jest taka, że poniższe metody potrafią wygenerować
@@ -39,17 +39,14 @@ public class StateSimulator implements Runnable {
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
 	
 	private SimulatorEngine engine = null;
-	private boolean maxMode = false;
-	private boolean singleMode = false;
-	private int emptySteps = 0; // 0 - bez pustych kroków, 1 - z pustymi krokami
 	
 	//runtime:
 	private boolean terminate = false;
-	public int stepsLimit;
-	public JProgressBar progressBar;	//pasek postępu symulacji
-	private HolmesStSim boss;	//okno nadrzędne symulatora
-	private int simulationType;			//aktywny tryb symulacji
-	private int repetitions;				//powtórki dla trybu zbierania danych referencyjnych
+	
+	public JProgressBar progressBar;//pasek postępu symulacji
+	private HolmesSim boss;	//okno nadrzędne symulatora
+	private int simulationType;	//aktywny tryb symulacji
+
 	private NetSimulationData currentDataPackage;
 
 	/**
@@ -69,27 +66,20 @@ public class StateSimulator implements Runnable {
 	public void setThreadDetails(int simulationType, Object... blackBox) {
 		this.simulationType = simulationType;
 		if(simulationType == 1) { //standardowy tryb symulacji
-			this.boss = (HolmesStSim)blackBox[0];
+			this.boss = (HolmesSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
-			this.stepsLimit = (int)blackBox[2];
 		} else if(simulationType == 2) { //obliczenie zbioru referencyjnego
-			this.boss = (HolmesStSim)blackBox[0];
+			this.boss = (HolmesSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
-			this.stepsLimit = (int)blackBox[2];
-			this.repetitions = (int)blackBox[3];
-			this.currentDataPackage = (NetSimulationData)blackBox[4];
+			this.currentDataPackage = (NetSimulationData)blackBox[2];
 		} else if(simulationType == 3) { //obliczenie danych przy knockoutcie elementów
-			this.boss = (HolmesStSim)blackBox[0];
+			this.boss = (HolmesSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
-			this.stepsLimit = (int)blackBox[2];
-			this.repetitions = (int)blackBox[3];
-			this.currentDataPackage = (NetSimulationData)blackBox[4];
+			this.currentDataPackage = (NetSimulationData)blackBox[2];
 		} else if(simulationType == 4) { //obliczenie danych przy knockoutcie elementów
-			this.boss = (HolmesStSim)blackBox[0];
+			this.boss = (HolmesSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
-			this.stepsLimit = (int)blackBox[2];
-			this.repetitions = (int)blackBox[3];
-			this.currentDataPackage = (NetSimulationData)blackBox[4];
+			this.currentDataPackage = (NetSimulationData)blackBox[2];
 		}
 	}
 
@@ -117,12 +107,11 @@ public class StateSimulator implements Runnable {
 	/**
 	 * Metoda ta musi być wywołana przed każdym startem symulatora. Inicjalizuje początkowe struktury
 	 * danych dla symulatora.
-	 * @param simNetType NetType - typ sieci
-	 * @param maxMode boolean - maximum (true), lub nie
-	 * @param singleMode boolean - tryb pojedynczego odpalania
+	 * @param useGlobals boolean - jeśli true, parametry sąSimulatorGlobals brane z globalSettings
+	 * @param ownSettings SimulatorGlobals - jeśli powyższej jest = false, to stąd są brane parametry
 	 * @return boolean - true, jeśli wszystko się udało
 	 */
-	public boolean initiateSim(NetType simNetType, boolean maxMode, boolean singleMode) {
+	public boolean initiateSim(boolean useGlobals, SimulatorGlobals ownSettings) {
 		transitions = overlord.getWorkspace().getProject().getTransitions();
 		time_transitions = overlord.getWorkspace().getProject().getTimeTransitions();
 		places = overlord.getWorkspace().getProject().getPlaces();
@@ -148,15 +137,20 @@ public class StateSimulator implements Runnable {
 			placesAvgData.add(0.0);
 		}
 		
-		this.maxMode = maxMode;
-		this.singleMode = singleMode;
-		if(singleMode && overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
-			this.maxMode = true;
+		if(useGlobals || ownSettings==null) {
+			engine.setEngine(
+					overlord.simSettings.getNetType(), 
+					overlord.simSettings.isMaxMode(),
+					overlord.simSettings.isSingleMode(), 
+					transitions, time_transitions);
 		} else {
-			this.maxMode = false;
+			engine.setEngine(
+					ownSettings.getNetType(), 
+					ownSettings.isMaxMode(),
+					ownSettings.isSingleMode(), 
+					transitions, time_transitions);
 		}
 		
-		engine.setEngine(simNetType, this.maxMode, this.singleMode, transitions, time_transitions);
 		readyToSimulate = true;
 		return readyToSimulate;
 	}
@@ -194,10 +188,11 @@ public class StateSimulator implements Runnable {
 		prepareNetM0();
 		
 		ArrayList<Transition> launchingTransitions = null;
+		int stepsLimit = overlord.simSettings.getSimSteps();
 		int updateTime = stepsLimit / 50;
 		
 		String max = "50% firing chance";
-		if(maxMode)
+		if(overlord.simSettings.isMaxMode())
 			max = "maximum";
 		
 		overlord.log("Starting states simulation for "+stepsLimit+" steps in "+max+" mode.", "text", true);
@@ -214,7 +209,7 @@ public class StateSimulator implements Runnable {
 				progressBar.update(progressBar.getGraphics());
 
 			if (isPossibleStep()){ 
-				launchingTransitions = engine.getTransLaunchList(emptySteps);
+				launchingTransitions = engine.getTransLaunchList(overlord.simSettings.isEmptySteps());
 				launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
 				removeDPNtransition(launchingTransitions);
 				
@@ -282,6 +277,10 @@ public class StateSimulator implements Runnable {
 		
 		ArrayList<ArrayList<Double>> placesAll = new ArrayList<>();
 		ArrayList<ArrayList<Double>> transAll = new ArrayList<>();
+		
+		int stepsLimit = overlord.simSettings.getSimSteps();
+		int repetitions = overlord.simSettings.getRepetitions();
+		boolean emptySteps = overlord.simSettings.isEmptySteps();
 		
 		//NetSimulationData netData = new NetSimulationData();
 		int placeNumber = places.size();
@@ -542,9 +541,10 @@ public class StateSimulator implements Runnable {
 	 * średnie wartości. Dzięki temu działa szybciej i nie zabiera tyle miejsca w pamięci.
 	 * @param steps int - liczba kroków do symulacji
 	 * @param placesToo boolean - true, jeśli ma gromadzić też dane dla miejsc
+	 * @param emptySteps boolean - true, jeśli dozwolone puste przebiegi
 	 * @return int - liczba rzeczywiście wykonanych kroków
 	 */
-	public int simulateNetSimple(int steps, boolean placesToo) {
+	public int simulateNetSimple(int steps, boolean placesToo, boolean emptySteps) {
 		if(readyToSimulate == false) {
 			overlord.log("Simulation simple mode cannot start.", "warning", true);
 			return 0;
@@ -552,6 +552,7 @@ public class StateSimulator implements Runnable {
 		prepareNetM0(); //backup, m0, etc.
 		ArrayList<Transition> launchableTransitions = null;
 		int internalSteps = 0;
+		//boolean emptySteps = overlord.simSettings.isEmptySteps();
 		for(int i=0; i<steps; i++) {
 			internalSteps++;
 			if (isPossibleStep()){ 
@@ -597,10 +598,11 @@ public class StateSimulator implements Runnable {
 	 * Metoda symuluje podaną liczbę kroków sieci Petriego dla wybranego wcześniej trybu, dla konkretnego
 	 * miejsca. Dane dla wybranego miejsca funkcja zwraca jako ArrayList[Integer].
 	 * @param steps int - liczba kroków do symulacji
-	 * @param plc Place - wybrane miejsce do testowania
+	 * @param place Place - wybrane miejsce do testowania
+	 * @param emptySteps boolean - true, jeśli dozwolone puste przebiegi
 	 * @return ArrayList[Integer] - wektor danych o tokenach w miejscu
 	 */
-	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place place) {
+	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place place, boolean emptySteps) {
 		if(readyToSimulate == false) {
 			overlord.log("Simulation for place "+place.getName()+" cannot start.", "warning", true);
 			return null;
@@ -632,9 +634,10 @@ public class StateSimulator implements Runnable {
 	 * tranzycji. Dane dla wybranej tranzycji funkcja zwraca jako ArrayList[Integer].
 	 * @param steps int - liczba kroków do symulacji
 	 * @param trans Transition - wybrana tranzycja do testowania
+	 * @param emptySteps boolean - true, jeśli dozwolone kroki bez odpalonych tranzycji
 	 * @return ArrayList[Integer] - wektor danych o odpalaniu tranzycji
 	 */
-	public ArrayList<Integer> simulateNetSingleTransition(int steps, Transition trans) {
+	public ArrayList<Integer> simulateNetSingleTransition(int steps, Transition trans, boolean emptySteps) {
 		if(readyToSimulate == false) {
 			overlord.log("Simulation for transition "+trans.getName()+" cannot start.", "warning", true);
 			return null;
@@ -676,9 +679,10 @@ public class StateSimulator implements Runnable {
 	 * Symulacja na potrzeby okna podglądu inwariantów - dane o odpaleniach tranzycji w inwariancie.
 	 * @param steps int - ile kroków symulacji
 	 * @param reps int - ile powtórek
+	 * @param emptySteps boolean - true, jeśli dozwolone kroki bez odpalania tranzycji
 	 * @return ArrayList[ArrayList[Double]] - dwa wektory danych, pierwszy to średnie, drugi - odchylenie standardowe
 	 */
-	public ArrayList<ArrayList<Double>> simulateForInvariantTrans(int steps, int reps) {
+	public ArrayList<ArrayList<Double>> simulateForInvariantTrans(int steps, int reps, boolean emptySteps) {
 		ArrayList<ArrayList<Double>> result = new ArrayList<>();
 		if(readyToSimulate == false) {
 			overlord.log("Simulation simple mode cannot start.", "warning", true);

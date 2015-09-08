@@ -62,7 +62,6 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.StateSimulator;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
@@ -74,21 +73,17 @@ import holmes.workspace.ExtensionFileFilter;
  * 
  * @author MR
  */
-public class HolmesStSim extends JFrame {
+public class HolmesSim extends JFrame {
 	private static final long serialVersionUID = 5287992734385359453L;
-	
+	private JFrame ego;
 	private GUIManager overlord;
-	private HolmesStSimActions action = new HolmesStSimActions();
+	private HolmesSimActions action = new HolmesSimActions();
 	private StateSimulator ssim;
-	private boolean maximumMode = false;
-	private boolean singleMode = false;
 	
 	private JProgressBar progressBar;
-	private int simSteps = 1000; // ile kroków symulacji
 	private int transInterval = 10;
 	private boolean sortedP = false;
 	private boolean sortedT = false;
-	private NetType choosenNetType = NetType.BASIC;
 	
 	private ArrayList<ArrayList<Integer>> placesRawData; //dane o historii miejsc z symulatora
 	private ArrayList<ArrayList<Integer>> transitionsRawData; //j.w. : dla tranzycji
@@ -108,12 +103,10 @@ public class HolmesStSim extends JFrame {
 	private JPanel placesJPanel;
 	private JPanel transitionsJPanel;
 	private JSpinner transIntervalSpinner;
-	private JSpinner simStepsSpinner;
 	private JComboBox<String> placesCombo = null;
 	private JComboBox<String> transitionsCombo = null;
 	private ChartProperties chartDetails;
-	private JComboBox<String> simNetMode;
-	private JComboBox<String> simMode;
+	private JComboBox<String> simulatorType;
 	private JLabel selStateLabel;
 	private JButton stateManagerButton;
 	
@@ -121,14 +114,16 @@ public class HolmesStSim extends JFrame {
 	//reset:
 	private JPanel knockoutTab;
 	private JButton cancelButton;
+	private JButton simSettingsButton;
 	private boolean workInProgress;
 	private boolean doNotUpdate = false;
 	
 	/**
 	 * Konstruktor domyślny obiektu klasy StateSimulator (podokna Holmes)
 	 */
-	public HolmesStSim(GUIManager overlord) {
+	public HolmesSim(GUIManager overlord) {
 		this.overlord = overlord;
+		ego = this;
 		ssim = new StateSimulator();
 		chartDetails = new ChartProperties();
 		placesRawData = new ArrayList<ArrayList<Integer>>();
@@ -143,7 +138,7 @@ public class HolmesStSim extends JFrame {
 		initiateListeners();
 	}
 	
-	public HolmesStSim returnFrame() {
+	public HolmesSim returnFrame() {
 		return this;
 	}
 
@@ -175,7 +170,7 @@ public class HolmesStSim extends JFrame {
 
 		iownyou.addTab("Simple mode", Tools.getResIcon16("/icons/stateSim/simpleSimTab.png"), firstTab, "Places dynamics");
 		
-		knockoutTab = new HolmesStSimKnock(this);
+		knockoutTab = new HolmesSimKnock(this);
 		iownyou.addTab("KnockoutSim", Tools.getResIcon16("/icons/stateSim/knockSimTab.png"), knockoutTab, "Transistions dynamics");
 		
 		main.add(iownyou, BorderLayout.CENTER);
@@ -190,13 +185,13 @@ public class HolmesStSim extends JFrame {
 	private JPanel craeteDataAcquisitionPanel() {
 		JPanel dataAcquisitionPanel = new JPanel(null);
 		dataAcquisitionPanel.setBorder(BorderFactory.createTitledBorder("Data acquisition"));
-		dataAcquisitionPanel.setPreferredSize(new Dimension(670, 120));
+		dataAcquisitionPanel.setPreferredSize(new Dimension(670, 110));
 
 		int posXda = 10;
-		int posYda = 30;
+		int posYda = 20;
 		
 		acqDataButton = new JButton("SimStart");
-		acqDataButton.setBounds(posXda, posYda, 110, 30);
+		acqDataButton.setBounds(posXda, posYda, 110, 40);
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
 		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
@@ -207,111 +202,79 @@ public class HolmesStSim extends JFrame {
 		});
 		dataAcquisitionPanel.add(acqDataButton);
 		
-		JLabel simStepsLabel = new JLabel("Steps:");
-		simStepsLabel.setBounds(posXda+120, posYda-20, 80, 20);
-		dataAcquisitionPanel.add(simStepsLabel);
-		
-		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 100, 1000000, 100);
-		simStepsSpinner = new JSpinner(simStepsSpinnerModel);
-		simStepsSpinner.setBounds(posXda +120, posYda, 80, 30);
-		simStepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				simSteps = val;
-				
-				//update spinner przerw/srednich dla tranzycji:
-				int cVal = simSteps / 100;
-				int mVal = simSteps / 5;
-				if(cVal < 1)
-					cVal = 1;
-				if(cVal > mVal) {
-					cVal = 1;
-					mVal = 20;
-				}
-				try {
-					SpinnerNumberModel spinnerClustersModel = new SpinnerNumberModel(cVal, 1, mVal, 1);
-					transIntervalSpinner.setModel(spinnerClustersModel);
-					transInterval = cVal;
-				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Cannot update transition interval for simulator.", "warning", true);
-				}
+		cancelButton = new JButton();
+		cancelButton.setText("<html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>");
+		cancelButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/stopIcon.png"));
+		cancelButton.setBounds(posXda, posYda+45, 110, 30);
+		cancelButton.setMargin(new Insets(0, 0, 0, 0));
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				ssim.setCancelStatus(true);
 			}
 		});
-		dataAcquisitionPanel.add(simStepsSpinner);
+		cancelButton.setFocusPainted(false);
+		dataAcquisitionPanel.add(cancelButton);
+		
+		simSettingsButton = new JButton("SimSettings");
+		simSettingsButton.setBounds(posXda+120, posYda, 130, 40);
+		simSettingsButton.setMargin(new Insets(0, 0, 0, 0));
+		simSettingsButton.setIcon(Tools.getResIcon32("/icons/simSettings/setupIcon.png"));
+		simSettingsButton.setToolTipText("Set simulator options.");
+		simSettingsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				new HolmesSimSetup(ego);
+			}
+		});
+		dataAcquisitionPanel.add(simSettingsButton);
+		
+		stateManagerButton = new JButton();
+	    stateManagerButton.setText("StatesManager");
+	    stateManagerButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
+	    stateManagerButton.setBounds(posXda+260, posYda, 130, 40);
+	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
+	    stateManagerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				new HolmesStatesManager();
+			}
+		});
+	    stateManagerButton.setFocusPainted(false);
+		dataAcquisitionPanel.add(stateManagerButton);
+		
+		JLabel stateLabel0 = new JLabel("Selected m0 state ID: ");
+	    stateLabel0.setBounds(posXda+400, posYda, 130, 20);
+	    dataAcquisitionPanel.add(stateLabel0);
+	    
+	    selStateLabel = new JLabel(""+overlord.getWorkspace().getProject().accessStatesManager().selectedState);
+	    selStateLabel.setBounds(posXda+400, posYda+20, 60, 20);
+	    dataAcquisitionPanel.add(selStateLabel);
 		
 		//Main mode:
-		JLabel simMainModeLabel = new JLabel("Main mode:");
-		simMainModeLabel.setBounds(posXda+210, posYda-20, 80, 20);
+		JLabel simMainModeLabel = new JLabel("Simulator type:");
+		simMainModeLabel.setBounds(posXda+120, posYda+37, 140, 20);
 		dataAcquisitionPanel.add(simMainModeLabel);
 		
-		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
-		simNetMode = new JComboBox<String>(simModeName);
-		simNetMode.setBounds(posXda+210, posYda, 120, 30);
-		simNetMode.setSelectedIndex(0);
-		simNetMode.addActionListener(new ActionListener() {
+		String[] simulator = {"Standard token simulator", "SSA (Stochastics)"};
+		simulatorType = new JComboBox<String>(simulator);
+		simulatorType.setBounds(posXda+120, posYda+57, 180, 20);
+		simulatorType.setSelectedIndex(0);
+		simulatorType.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(doNotUpdate)
 					return;
 				
-				int selectedModeIndex = simNetMode.getSelectedIndex();
-				selectedModeIndex = GUIManager.getDefaultGUIManager().simSettings.checkSimulatorNetType(selectedModeIndex);
-				doNotUpdate = true;
-				switch(selectedModeIndex) {
-					case 0:
-						choosenNetType = NetType.BASIC;
-						simNetMode.setSelectedIndex(0);
-						break;
-					case 1:
-						choosenNetType = NetType.TIME;
-						simNetMode.setSelectedIndex(1);
-						break;
-					case 2:
-						choosenNetType = NetType.HYBRID;
-						simNetMode.setSelectedIndex(2);
-						break;
-					case -1:
-						choosenNetType = NetType.BASIC;
-						simNetMode.setSelectedIndex(1);
-						GUIManager.getDefaultGUIManager().log("Error while changing simulator mode. Set for BASIC.", "error", true);
-						break;
+				int selected = simulatorType.getSelectedIndex();
+				if(selected>=0) {
+					overlord.simSettings.setSimSteps(0); //TODO:
 				}
+				
 				doNotUpdate = false;
 			}
 		});
-		dataAcquisitionPanel.add(simNetMode);
-		
-		//Sub-mode:
-		JLabel label1 = new JLabel("Sub-mode:");
-		label1.setBounds(posXda+340, posYda-20, 90, 20);
-		dataAcquisitionPanel.add(label1);
-		
-		simMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
-		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing,\n"
-				+ "only 1 transition will fire in single mode.");
-		simMode.setBounds(posXda+340, posYda, 120, 30);
-		simMode.setSelectedIndex(0);
-		simMode.setMaximumRowCount(6);
-		simMode.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = simMode.getSelectedIndex();
-				if(selected == 0) {
-					maximumMode = false;
-				} else if(selected == 1) {
-					maximumMode = true;
-				} else {
-					singleMode = true;
-				}
-			}
-		});
-		dataAcquisitionPanel.add(simMode);
+		dataAcquisitionPanel.add(simulatorType);
 		
 		JButton clearDataButton = new JButton("Clear");
-		clearDataButton.setBounds(posXda+470, posYda, 110, 30);
+		clearDataButton.setBounds(posXda+840, posYda, 110, 40);
 		clearDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/clearData.png"));
 		clearDataButton.setToolTipText("Clear all charts and data vectors. Reset simulator.");
 		clearDataButton.addActionListener(new ActionListener() {
@@ -323,22 +286,9 @@ public class HolmesStSim extends JFrame {
 		});
 		dataAcquisitionPanel.add(clearDataButton);
 		
-		cancelButton = new JButton();
-		cancelButton.setText("<html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>");
-		cancelButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/stopIcon.png"));
-		cancelButton.setBounds(posXda+590, posYda, 110, 30);
-		cancelButton.setMargin(new Insets(0, 0, 0, 0));
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				ssim.setCancelStatus(true);
-			}
-		});
-		cancelButton.setFocusPainted(false);
-		dataAcquisitionPanel.add(cancelButton);
-		
-		posYda += 40;
+
 		progressBar = new JProgressBar();
-		progressBar.setBounds(posXda, posYda-7, 550, 40);
+		progressBar.setBounds(posXda+305, posYda+40, 650, 40);
 		progressBar.setMaximum(100);
 		progressBar.setMinimum(0);
 	    progressBar.setValue(0);
@@ -346,28 +296,7 @@ public class HolmesStSim extends JFrame {
 	    Border border = BorderFactory.createTitledBorder("Progress");
 	    progressBar.setBorder(border);
 	    dataAcquisitionPanel.add(progressBar);
-	    
-	    JLabel stateLabel0 = new JLabel("Selected m0 state ID: ");
-	    stateLabel0.setBounds(posXda+730, posYda-60, 130, 20);
-	    dataAcquisitionPanel.add(stateLabel0);
-	    
-	    selStateLabel = new JLabel(""+overlord.getWorkspace().getProject().accessStatesManager().selectedState);
-	    selStateLabel.setBounds(posXda+860, posYda-60, 60, 20);
-	    dataAcquisitionPanel.add(selStateLabel);
-	    
-	    stateManagerButton = new JButton();
-	    stateManagerButton.setText("StatesManager");
-	    stateManagerButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
-	    stateManagerButton.setBounds(posXda+730, posYda-40, 150, 40);
-	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
-	    stateManagerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesStatesManager();
-			}
-		});
-	    stateManagerButton.setFocusPainted(false);
-		dataAcquisitionPanel.add(stateManagerButton);
-	    
+
 		return dataAcquisitionPanel;
 	}
 
@@ -627,7 +556,7 @@ public class HolmesStSim extends JFrame {
 		label1.setBounds(posXchart+110, posYchart, 80, 20);
 		transChartOptionsPanel.add(label1);
 		
-		int mValue = simSteps/10;
+		int mValue = overlord.simSettings.getSimSteps()/10;
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(100, 0, mValue, 10);
 		transIntervalSpinner = new JSpinner(intervSpinnerModel);
 		transIntervalSpinner.setBounds(posXchart +170, posYchart, 60, 20);
@@ -1271,7 +1200,7 @@ public class HolmesStSim extends JFrame {
 				}
 				//sortuj po value (frequency)
 				Map<Integer, Double> sortedByValues = new HashMap<Integer, Double>(); 
-				sortedByValues = HolmesStSimActions.crunchifySortMap(map); // dark magic happens here
+				sortedByValues = HolmesSimActions.crunchifySortMap(map); // dark magic happens here
 				for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
 					placesCombo.addItem("p"+(entry.getKey())+"."+places.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
 				}
@@ -1302,7 +1231,7 @@ public class HolmesStSim extends JFrame {
 				}
 				//sortuj po value (frequency)
 				Map<Integer, Double> sortedByValues = new HashMap<Integer, Double>(); 
-				sortedByValues = HolmesStSimActions.crunchifySortMap(map); // dark magic happens here
+				sortedByValues = HolmesSimActions.crunchifySortMap(map); // dark magic happens here
 				for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
 					transitionsCombo.addItem("t"+(entry.getKey())+"."+transitions.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
 					
@@ -1337,9 +1266,9 @@ public class HolmesStSim extends JFrame {
 		clearPlacesChart();
 		clearAllData();
 		
-		progressBar.setMaximum(simSteps);
+		progressBar.setMaximum(overlord.simSettings.getSimSteps());
 
-		boolean success = ssim.initiateSim(choosenNetType, maximumMode, singleMode);
+		boolean success = ssim.initiateSim(true, null);
 		if(success == false)
 			return;
 		
@@ -1347,7 +1276,7 @@ public class HolmesStSim extends JFrame {
 		setSimWindowComponentsStatus(false);
 		setWorkInProgress(true);
 		
-		ssim.setThreadDetails(1, this, progressBar, simSteps);
+		ssim.setThreadDetails(1, this, progressBar);
 		Thread myThread = new Thread(ssim);
 		myThread.start();
 	}
@@ -1357,9 +1286,6 @@ public class HolmesStSim extends JFrame {
 	 */
 	private void setSimWindowComponentsStatus(boolean value) {
 		acqDataButton.setEnabled(value);
-		simStepsSpinner.setEnabled(value);
-		simNetMode.setEnabled(value);
-		simMode.setEnabled(value);
 		stateManagerButton.setEnabled(value);
 		overlord.getFrame().setEnabled(value);
 	}
@@ -1483,7 +1409,7 @@ public class HolmesStSim extends JFrame {
     	addWindowListener(new WindowAdapter() {
   	  	    public void windowActivated(WindowEvent e) {
   	  	    	fillPlacesAndTransitionsData();
-  	  	    	((HolmesStSimKnock) knockoutTab).updateFreshKnockoutTab();
+  	  	    	((HolmesSimKnock) knockoutTab).updateFreshKnockoutTab();
   	  	    }  
     	});
     	
@@ -1523,8 +1449,8 @@ public class HolmesStSim extends JFrame {
      * Umożliwia dostęp do obiektu odpowiedzialnego za zakładkę Knockout symulatora.
      * @return HolmesStateSimulatorKnockout - obiekt
      */
-    public HolmesStSimKnock accessKnockoutTab() {
-    	return (HolmesStSimKnock)knockoutTab;
+    public HolmesSimKnock accessKnockoutTab() {
+    	return (HolmesSimKnock)knockoutTab;
     }
 	
 	/**
@@ -1537,24 +1463,21 @@ public class HolmesStSim extends JFrame {
 		clearAllData();
 		fillPlacesAndTransitionsData();
 		
-		simSteps = 1000; // ile kroków symulacji
 		transInterval = 10;
 		transChartType = 0;
 		placesChartType = 0;
-		simNetMode.setSelectedIndex(0);
-		simMode.setSelectedIndex(0);
 		
-		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 100, 1000000, 100);
-		simStepsSpinner.setModel(simStepsSpinnerModel);
-		int mValue = simSteps/10;
+		int mValue = overlord.simSettings.getSimSteps()/10;
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(100, 0, mValue, 10);
 		transIntervalSpinner.setModel(intervSpinnerModel);
 		
-		((HolmesStSimKnock)knockoutTab).resetWindow();
+		((HolmesSimKnock)knockoutTab).resetWindow();
 		doNotUpdate = false;
 	}
 	
-	
+	public JFrame getFrame() {
+		return ego;
+	}
 	
 	private class ChartProperties {
 		public float p_StrokeWidth = 1.0f;
