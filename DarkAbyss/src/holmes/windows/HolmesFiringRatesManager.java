@@ -63,16 +63,17 @@ public class HolmesFiringRatesManager extends JFrame {
 		} catch (Exception e ) {
 			
 		}
-    	overlord = GUIManager.getDefaultGUIManager();
-    	pn = overlord.getWorkspace().getProject();
-    	transitions = pn.getTransitions();
-    	firingRatesManager = pn.accessFiringRatesManager();
-    	selectedRow = 0;
-    	cellWidth = 30;
+    	this.overlord = GUIManager.getDefaultGUIManager();
+    	this.pn = overlord.getWorkspace().getProject();
+    	this.parentWindow = parent;
+    	this.transitions = pn.getTransitions();
+    	this.firingRatesManager = pn.accessFiringRatesManager();
+    	this.selectedRow = 0;
+    	this.cellWidth = 30;
     	
     	initalizeComponents();
     	initiateListeners();
-    	GUIManager.getDefaultGUIManager().getFrame().setEnabled(false);
+    	//GUIManager.getDefaultGUIManager().getFrame().setEnabled(false);
     	fillTable();
     	setVisible(true);
     	parentWindow.setEnabled(false);
@@ -118,7 +119,7 @@ public class HolmesFiringRatesManager extends JFrame {
     	
 		table.setRowSelectionAllowed(false);
     	
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		JScrollPane tableScrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		result.add(tableScrollPane, BorderLayout.CENTER);
 			
