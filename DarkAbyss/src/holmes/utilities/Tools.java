@@ -405,15 +405,25 @@ public final class Tools {
 		return true; //no file, continue
 	}
 	
+	/**
+	 * Metoda koduje znaki specjalne (np. spacja, enter)
+	 * @param line String - oryginalna linia
+	 * @return String - zakodowana linia
+	 */
 	public static String convertToCode(String line) {
 		line = line.replace("\n", "#5475");
-		
+		line = line.replace(" ", "&nbsp;");
 		return line;
 	}
 	
+	/**
+	 * Metoda dekoduje znaki specjalne (np. spacja, enter)
+	 * @param line String - przeczytana linia
+	 * @return String - odkodowana linia
+	 */
 	public static String decodeString(String line) {
 		line = line.replace("#5475", "\n");
-		
+		line = line.replace("&nbsp;", " ");
 		return line;
 	}
 }

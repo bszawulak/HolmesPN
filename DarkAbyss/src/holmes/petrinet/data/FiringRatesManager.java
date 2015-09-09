@@ -3,7 +3,6 @@ package holmes.petrinet.data;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.StochaticsType;
 
@@ -76,7 +75,7 @@ public class FiringRatesManager {
 	}
 	
 	/**
-	 * Metoda dodaje nowy stan sieci na bazie istniejącego w danej chwili w edytorze.
+	 * Metoda dodaje nowy stan firing rates na bazie istniejącego w danej chwili w edytorze.
 	 */
 	public void addCurrentStateAsFRVector() {
 		TransFiringRateVector frVector = new TransFiringRateVector();

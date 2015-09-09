@@ -185,9 +185,10 @@ public class HolmesStatesManager extends JFrame {
 		selectStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/selectStateIcon.png"));
 		selectStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0)
+				if(places.size() == 0) {
+					noNetInfo();
 					return;
-				
+				}
 				int selected = statesTable.getSelectedRow();
 				Object[] options = {"Set new state", "Keep old state",};
 				int n = JOptionPane.showOptionDialog(null,
@@ -201,7 +202,6 @@ public class HolmesStatesManager extends JFrame {
 					pn.repaintAllGraphPanels();
 					
 					tableModel.fireTableDataChanged();
-					//fillTable();
 				}
 			}
 		});
@@ -213,9 +213,10 @@ public class HolmesStatesManager extends JFrame {
 		addNewStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/addStateIcon.png"));
 		addNewStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0)
+				if(places.size() == 0) {
+					noNetInfo();
 					return;
-				
+				}
 				Object[] options = {"Add new state", "Cancel",};
 				int n = JOptionPane.showOptionDialog(null,
 								"Add current net state to states table?",
@@ -237,9 +238,10 @@ public class HolmesStatesManager extends JFrame {
 		replaceStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/replaceStateIcon.png"));
 		replaceStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0)
+				if(places.size() == 0) {
+					noNetInfo();
 					return;
-				
+				}
 				replaceStateAction();
 			}
 		});
@@ -251,15 +253,24 @@ public class HolmesStatesManager extends JFrame {
 		removeStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/removeStateIcon.png"));
 		removeStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0)
+				if(places.size() == 0) {
+					noNetInfo();
 					return;
-				
+				}
 				removeStateAction();
 			}
 		});
 		result.add(removeStateButton);
 		
 	    return result;
+	}
+	
+	/**
+	 * Krótki komunikat, że nie ma sieci.
+	 */
+	private void noNetInfo() {
+		JOptionPane.showMessageDialog(this, "There are no places in the net!", 
+				"No net", JOptionPane.WARNING_MESSAGE);
 	}
 	
 	/**
@@ -402,15 +413,8 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	protected void cellClickAction() {
 		try {
-			int newSelection = statesTable.getSelectedRow();
-			if(newSelection != selectedRow) {
-				selectedRow = newSelection;
-				fillDescriptionField();
-			}
-			
-			
-			//int selectedColumn = statesTable.getSelectedColumn();
-
+			selectedRow = statesTable.getSelectedRow();
+			fillDescriptionField();
 		} catch (Exception e) {
 			
 		}

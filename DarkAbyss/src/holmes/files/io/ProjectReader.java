@@ -1021,7 +1021,7 @@ public class ProjectReader {
 					go = true;
 					while(go) {
 						line = line.trim();
-						line = line.replace("_", " ");
+						line = Tools.decodeString(line);
 						invariantsNames.add(line);
 						
 						line = buffer.readLine();
@@ -1111,7 +1111,7 @@ public class ProjectReader {
 					go = true;
 					while(go) {
 						line = line.trim();
-						line = line.replace("_", " ");
+						line = Tools.decodeString(line);
 						mctNames.add(line);
 						
 						line = buffer.readLine();
@@ -1203,6 +1203,7 @@ public class ProjectReader {
 				while(go) {
 					//line = line.replace(" ", "");
 					line = line.trim();
+					line = Tools.decodeString(line);
 					
 					if(statesNames.size() < statesMngr.accessStateMatrix().size())
 						statesNames.add(line);
@@ -1309,7 +1310,7 @@ public class ProjectReader {
 				go = true;
 				while(go) {
 					line = line.trim();
-					
+					line = Tools.decodeString(line);
 					if(frNames.size() < frateMngr.accessFRMatrix().size())
 						frNames.add(line);
 					

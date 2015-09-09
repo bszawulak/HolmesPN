@@ -7,20 +7,21 @@ import java.util.EventObject;
 import javax.swing.table.DefaultTableModel;
 
 import holmes.petrinet.elements.Transition.StochaticsType;
-import holmes.windows.HolmesFiringRatesManager;
+import holmes.windows.HolmesFiringRatesEditor;
 
 /**
  * Model tabeli firing rates tranzycji sieci.
  * 
  * @author MR
- *
  */
 public class FiringRatesOneTransTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = -6898959322396110431L;
 	private String[] columnNames;
 	private ArrayList<FRDataClass> dataMatrix;
 	private int dataSize;
-	
+	private HolmesFiringRatesEditor boss;
+	private int frVectorIndex;
+	public boolean changes = false;
 	
 	public class FRDataClass {
 		public int ID;
@@ -28,13 +29,13 @@ public class FiringRatesOneTransTableModel extends DefaultTableModel {
 		public Double firingRate;
 		public StochaticsType subType;
 	}
-	
-	public boolean changes = false;
 
 	/**
 	 * Konstruktor klasy modelującej tablicę wektora firing rate.
 	 */
-	public FiringRatesOneTransTableModel() {
+	public FiringRatesOneTransTableModel(HolmesFiringRatesEditor boss, int frVectorIndex) {
+		this.boss = boss;
+		this.frVectorIndex = frVectorIndex;
 		clearModel();
 	}
 	
@@ -143,12 +144,19 @@ public class FiringRatesOneTransTableModel extends DefaultTableModel {
 		return null;
 	}
 	
+	/**
+	 * Metoda pozwala zmienić edytowalne komórki tabeli.
+	 * @param value Object - nowa wartość
+	 * @param row int - nr wiersza (tranzycja)
+	 * @param col int - nr kolumny
+	 */
 	public void setValueAt(Object value, int row, int col) {
 		double newValue = 0;
 		try {
 			if(col == 2) {
 				newValue = Double.parseDouble(value.toString());
 				dataMatrix.get(row).firingRate = newValue;
+				boss.changeRealValue(frVectorIndex, row, newValue);
 			}
 		} catch (Exception e) {
 			//dataMatrix.get(row).firingRate = 1.0;

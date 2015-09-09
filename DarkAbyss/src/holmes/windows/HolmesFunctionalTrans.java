@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -228,6 +229,27 @@ public class HolmesFunctionalTrans extends JFrame {
 			}
 		});
 		resultPanel.add(clearButton);
+		
+		JCheckBox functionalActiveButton = new JCheckBox("Functional transition");
+		functionalActiveButton.setBounds(posX+650, posY+80, 150, 20);
+		if(transition.isFunctional())
+			functionalActiveButton.setSelected(true);
+		else
+			functionalActiveButton.setSelected(false);
+
+		functionalActiveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					transition.setFunctional(true);
+				} else {
+					transition.setFunctional(false);
+				}
+				pn.repaintAllGraphPanels();
+			}
+		});
+		resultPanel.add(functionalActiveButton);
 		
 		JLabel errLabel = new JLabel("Error log:", JLabel.LEFT);
 		errLabel.setBounds(posX, posY+=40, 140, 20);

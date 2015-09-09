@@ -70,7 +70,7 @@ public class TransFiringRateVector {
 	
 	/**
 	 * Zwraca liczbę tranzycji.
-	 * @return int - liczba miejsc w wektorze firingVector
+	 * @return int - liczba tranzycji w wektorze firingVector
 	 */
 	public int getSize() {
 		return firingVector.size();

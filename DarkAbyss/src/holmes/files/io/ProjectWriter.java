@@ -508,7 +508,9 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<Invariants names>"+newline);
 			for(int i=0; i<invNumber; i++) {
 				sp = 4;
-				bw.write(spaces(sp)+invariantsNames.get(i).replace(" ", "_")+newline);
+				
+				
+				bw.write(spaces(sp)+Tools.convertToCode(invariantsNames.get(i))+newline);
 			}
 			
 			bw.write(spaces(2)+"<EOIN>"+newline);
@@ -564,7 +566,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<MCT names>"+newline);
 			for(int i=0; i<mctNumber; i++) {
 				sp = 4;
-				bw.write(spaces(sp)+mctNames.get(i).replace(" ", "_")+newline);
+				bw.write(spaces(sp)+Tools.convertToCode(mctNames.get(i))+newline);
 			}
 			sp = 2;
 			bw.write(spaces(sp)+"<EOMn>"+newline);
@@ -603,7 +605,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<States names>"+newline);
 			for(int i=0; i<statesNumber; i++) {
 				sp = 4;
-				bw.write(spaces(sp)+statesNames.get(i)+newline);
+				bw.write(spaces(sp)+Tools.convertToCode(statesNames.get(i))+newline);
 			}
 			sp = 2;
 			bw.write(spaces(sp)+"<EOStn>"+newline);
@@ -647,7 +649,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<Firing rates vector names>"+newline);
 			for(int i=0; i<frNumber; i++) {
 				sp = 4;
-				bw.write(spaces(sp)+frNames.get(i)+newline);
+				bw.write(spaces(sp)+Tools.convertToCode(frNames.get(i))+newline);
 			}
 			sp = 2;
 			bw.write(spaces(sp)+"<EOFRVn>"+newline);

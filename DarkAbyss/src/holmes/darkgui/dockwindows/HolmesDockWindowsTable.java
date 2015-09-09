@@ -76,7 +76,7 @@ import holmes.workspace.WorkspaceSheet;
 
 /**
  * Klasa zawierająca szczegóły interfejsu podokien dokowalnych programu.
- * @author students
+ * @author students<br>
  * @author MR<br>
  * <br>
  * <b>Absolute positioning. Of almost absolute everything here.</b><br>
