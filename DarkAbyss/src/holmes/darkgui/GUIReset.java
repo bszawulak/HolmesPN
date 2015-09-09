@@ -28,7 +28,7 @@ import holmes.workspace.Workspace;
  *
  */
 public class GUIReset {
-	private GUIManager mastah = GUIManager.getDefaultGUIManager();
+	private GUIManager overlord = GUIManager.getDefaultGUIManager();
 	private boolean invGenerated = false;
 	private boolean mctGenerated = false;
 	private boolean clustersGenerated = false;
@@ -38,8 +38,8 @@ public class GUIReset {
 	 * w wyniku zaznaczania np. inwariantów, mct, etc.
 	 */
 	public void clearGraphColors() {
-		mastah.getWorkspace().getProject().resetNetColors();
-		mastah.getWorkspace().getProject().repaintAllGraphPanels();
+		overlord.getWorkspace().getProject().resetNetColors();
+		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
 	/**
@@ -49,9 +49,8 @@ public class GUIReset {
 		if(isSimulatorActiveWarning("Please stop simulation completely before contynuing.", "Warning") == true) {
 			return false;
 		}
-		
-		
-		boolean status = mastah.getNetChangeStatus();
+
+		boolean status = overlord.getNetChangeStatus();
 		if(status == true) {
 			Object[] options = {"Continue", "Save and continue", "Cancel",};
 			int n = JOptionPane.showOptionDialog(null,
@@ -61,15 +60,14 @@ public class GUIReset {
 			if (n == 2) { //save the file
 				return false;
 			} else if (n == 1) {
-				boolean savingStatus = mastah.io.saveAsGlobal();
+				boolean savingStatus = overlord.io.saveAsGlobal();
 				if(savingStatus == false)
 					return false;
 			}
 		}
-		
-		
-		PetriNet pNet = mastah.getWorkspace().getProject();
-		mastah.log("Net data deletion initiated.", "text", true);
+
+		PetriNet pNet = overlord.getWorkspace().getProject();
+		overlord.log("Net data deletion initiated.", "text", true);
 
 		for (GraphPanel gp : pNet.getGraphPanels()) {
 			gp.getSelectionManager().forceDeselectAllElements();
@@ -89,34 +87,35 @@ public class GUIReset {
 	}
 	
 	/**
-	 * Wewnętrzna metoda czyszcząca dane programu.
+	 * Wewnętrzna metoda czyszcząca dane programu. Aż nie będzie niczego, Duch będzie unosić
+	 * się nad wodami a Kukiz zostanie premierem.
 	 */
 	private void clearAll() {
 		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		mastah.log("Net data deletion initiated.", "text", true);
+		overlord.log("Net data deletion initiated.", "text", true);
 		
-		//CLEAR PETRI NET DATA:
+		//CLEAR PETRI NET DATA, kolejność MA ZNACZENIE JAK CHOLERA. Nie zmieniać!
 		pNet.resetData(); // tylko w ten sposób!!!! 
 		pNet.setINVmatrix(null, false);
 		pNet.setMCTMatrix(null, false);
 		pNet.accessMCTnames().clear();
 		pNet.accessStatesManager().reset(false);
+		pNet.accessFiringRatesManager().reset(false);
 		pNet.setMCSdataCore(new MCSDataMatrix());
-		mastah.simSettings.reset();
+		overlord.simSettings.reset();
 		pNet.clearSimKnockoutData();
 		pNet.resetComm();
 		pNet.setMCTanalyzer(new MCTCalculator(pNet));
 		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
 		pNet.setSimulationActive(false);
 		pNet.setFileName("");
-		mastah.simSettings.currentStep = 0;
-		mastah.accessStateSimulatorWindow().resetSimWindow();
-		mastah.accessClusterWindow().resetWindow();
-		mastah.getSimulatorBox().createSimulatorProperties();
+		overlord.simSettings.currentStep = 0;
+		overlord.accessStateSimulatorWindow().resetSimWindow();
+		overlord.accessClusterWindow().resetWindow();
+		overlord.getSimulatorBox().createSimulatorProperties();
 		pNet.repaintAllGraphPanels();
-
 		
-		Workspace workspace = mastah.getWorkspace();
+		Workspace workspace = overlord.getWorkspace();
 		int dockableSize = workspace.getDockables().size();
 		CompositeDock parentOfFirst = workspace.getDockables().get(0).getDock().getParentDock();
 		for(int d=0; d<dockableSize; d++) {
@@ -130,16 +129,15 @@ public class GUIReset {
 			dockableSize--;
 			
 			if(dockable.getDock().getParentDock().equals(parentOfFirst))
-				mastah.globalSheetsList.remove(dockable);
+				overlord.globalSheetsList.remove(dockable);
 		}
 		
 		reset2ndOrderData(false);
 		IdGenerator.resetIDgenerator();
 		
-		mastah.cleanDockables();
-		mastah.markNetSaved();
+		overlord.cleanDockables();
+		overlord.markNetSaved();
 	}
-	
 	
 	/**
 	 * Kasowanie informacji o: inwariantanch, MCT, klastrach, przede wszystkich w kontekście
@@ -149,66 +147,66 @@ public class GUIReset {
 	public void reset2ndOrderData(boolean clearWindows) {
 		//"I nie będzie niczego."
 		// Księga Kononowicza
-		PetriNet pNet = mastah.getWorkspace().getProject();
+		PetriNet pNet = overlord.getWorkspace().getProject();
 		//clearGraphColors();
 		
 		if(clearWindows) {
-			mastah.simSettings.currentStep = 0;
-			mastah.accessStateSimulatorWindow().resetSimWindow();
-			mastah.accessClusterWindow().resetWindow();
+			overlord.simSettings.currentStep = 0;
+			overlord.accessStateSimulatorWindow().resetSimWindow();
+			overlord.accessClusterWindow().resetWindow();
 		}
 	
 		if(invGenerated == true) {
-			mastah.accessNetTablesWindow().resetInvData();
+			overlord.accessNetTablesWindow().resetInvData();
 			
 			resetCommunicationProtocol();
 			pNet.setINVmatrix(null, false);
 			pNet.getMCSdataCore().resetMSC();
 			
-			if(mastah.getInvariantsBox().getCurrentDockWindow() != null) {
-				mastah.getInvariantsBox().getCurrentDockWindow().resetInvariants();
-				mastah.getInvariantsBox().getCurrentDockWindow().removeAll();
+			if(overlord.getInvariantsBox().getCurrentDockWindow() != null) {
+				overlord.getInvariantsBox().getCurrentDockWindow().resetInvariants();
+				overlord.getInvariantsBox().getCurrentDockWindow().removeAll();
 			}
-			mastah.getInvariantsBox().setCurrentDockWindow(
+			overlord.getInvariantsBox().setCurrentDockWindow(
 					new HolmesDockWindowsTable(SubWindow.INVARIANTS, pNet.getINVmatrix()));	
-			mastah.getInvariantsBox().validate();
-			mastah.getInvariantsBox().repaint();
+			overlord.getInvariantsBox().validate();
+			overlord.getInvariantsBox().repaint();
 
 			invGenerated = false;
-			mastah.log("Invariants data removed from memory.", "text", true);
+			overlord.log("Invariants data removed from memory.", "text", true);
 		}
 		
 		if(mctGenerated == true) {
 			//for (Transition transition : mastah.getWorkspace().getProject().getTransitions()) {
 			//	transition.setContainingInvariants(new ArrayList<ArrayList<Transition>>()); //czyszczenie
 			//}
-			if(mastah.getMctBox().getCurrentDockWindow() != null) {
-				mastah.getMctBox().getCurrentDockWindow().removeAll();
-				mastah.getMctBox().getCurrentDockWindow().resetMCT();
+			if(overlord.getMctBox().getCurrentDockWindow() != null) {
+				overlord.getMctBox().getCurrentDockWindow().removeAll();
+				overlord.getMctBox().getCurrentDockWindow().resetMCT();
 			}
-			mastah.getMctBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCT,
+			overlord.getMctBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCT,
 					new ArrayList<ArrayList<Transition>>()));
-			mastah.getMctBox().validate();
-			mastah.getMctBox().repaint();
+			overlord.getMctBox().validate();
+			overlord.getMctBox().repaint();
 			
 			pNet.setMCTMatrix(null, false);
 			pNet.accessMCTnames().clear();
 			
 			mctGenerated = false;
-			mastah.log("MCT data removed from memory.", "text", true);
+			overlord.log("MCT data removed from memory.", "text", true);
 		}
 		
 		if(clustersGenerated == true) {
-			if(mastah.getClusterSelectionBox().getCurrentDockWindow() != null) {
-				mastah.getClusterSelectionBox().getCurrentDockWindow().removeAll();
-				mastah.getClusterSelectionBox().getCurrentDockWindow().resetClusters();
+			if(overlord.getClusterSelectionBox().getCurrentDockWindow() != null) {
+				overlord.getClusterSelectionBox().getCurrentDockWindow().removeAll();
+				overlord.getClusterSelectionBox().getCurrentDockWindow().resetClusters();
 			}
-			mastah.getClusterSelectionBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CLUSTERS, new ClusterDataPackage()));
-			mastah.getClusterSelectionBox().validate();
-			mastah.getClusterSelectionBox().repaint();
+			overlord.getClusterSelectionBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CLUSTERS, new ClusterDataPackage()));
+			overlord.getClusterSelectionBox().validate();
+			overlord.getClusterSelectionBox().repaint();
 			
 			clustersGenerated = false;
-			mastah.log("Clustering data removed from memory.", "text", true);
+			overlord.log("Clustering data removed from memory.", "text", true);
 		}
 	}
 	
@@ -216,7 +214,7 @@ public class GUIReset {
 	 * Podmienianie protokołu I/O na nowy obiekt.
 	 */
 	public void resetCommunicationProtocol() {
-		mastah.getWorkspace().getProject().resetComm();
+		overlord.getWorkspace().getProject().resetComm();
 	}
 	
 	
@@ -253,7 +251,7 @@ public class GUIReset {
 	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActive() {
-		NetSimulator ns = mastah.getSimulatorBox().getCurrentDockWindow().getSimulator();
+		NetSimulator ns = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator();
 		if(ns.getSimulatorStatus() == SimulatorMode.STOPPED) {
 			return false;
 		} else {
@@ -266,7 +264,7 @@ public class GUIReset {
 	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
-		NetSimulator ns = mastah.getSimulatorBox().getCurrentDockWindow().getSimulator();
+		NetSimulator ns = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator();
 		if(ns.getSimulatorStatus() == SimulatorMode.STOPPED) {
 			return false;
 		} else {

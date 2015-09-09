@@ -191,15 +191,14 @@ public class StatesManager {
 	 * @param isLoading boolean - jeśli true, nie tworzy pierwszych elementów (na potrzeby ProjectReader)
 	 */
 	public void reset(boolean isLoading) {
-		if(isLoading) {
-			statesMatrix = new ArrayList<PlacesStateVector>();
-			statesNames = new ArrayList<String>();
-		} else {
-			statesMatrix = new ArrayList<PlacesStateVector>();
+		statesMatrix = new ArrayList<PlacesStateVector>();
+		statesNames = new ArrayList<String>();
+		
+		if(isLoading == false) {
 			statesMatrix.add(new PlacesStateVector());
-			statesNames = new ArrayList<String>();
 			statesNames.add("Default name for state 1.");
 		}
+		
 		selectedState = 0;
 	}
 }

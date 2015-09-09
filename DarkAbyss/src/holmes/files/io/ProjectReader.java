@@ -10,10 +10,13 @@ import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
+import holmes.petrinet.data.FiringRatesManager;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.PlacesStateVector;
 import holmes.petrinet.data.StatesManager;
+import holmes.petrinet.data.TransFiringRateVector;
+import holmes.petrinet.data.TransFiringRateVector.FRContainer;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -22,6 +25,7 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.elements.MetaNode.MetaType;
+import holmes.petrinet.elements.Transition.StochaticsType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
 import holmes.utilities.Tools;
@@ -62,8 +66,8 @@ public class ProjectReader {
 	private boolean subnets = false; //bloki coarse
 	private boolean states = false;
 	private boolean functions = false;
-	//private boolean invariants = true;
-	//private boolean mct = true;
+	private boolean firingRates = false;
+
 	
 	/**
 	 * Konstruktor obiektu klasy odczytywania projektu.
@@ -132,11 +136,20 @@ public class ProjectReader {
 				status = readStates(buffer);
 				if(!status) {
 					projectCore.accessStatesManager().createCleanState();
-					//projectCore.setMCTMatrix(null, false);
 				}
 			} else {
 				projectCore.accessStatesManager().createCleanState();
 			}
+			
+			if(firingRates) {
+				status = readFiringRates(buffer);
+				if(!status) {
+					projectCore.accessFiringRatesManager().createCleanFRVector();
+				}
+			} else {
+				projectCore.accessFiringRatesManager().createCleanFRVector();
+			}
+			
 			GUIManager.getDefaultGUIManager().subnetsGraphics.addRequiredSheets();
 			GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
 			buffer.close();
@@ -211,18 +224,11 @@ public class ProjectReader {
 				return;
 			}
 			
-			query = "invariants data";
-			if(line.contains(query)) {
-				//invariants = true;
+			query = "firingratesdata";
+			if(line.toLowerCase().contains(query)) {
+				firingRates = true;
 				return;
 			}
-			
-			query = "mct data";
-			if(line.contains(query)) {
-				//mct = true;
-				return;
-			}
-		
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Reading file error in line: "+backup, "error", true);
 		}
@@ -1216,6 +1222,112 @@ public class ProjectReader {
 			return true;
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Reading state vectors failed.", "error", true);
+			return false;
+		}
+	}
+	
+	/**
+	 * Czyta dane wektorów odpaleń tranzycji w modelu SPN.
+	 * @param buffer BufferedReader - obiekt czytający
+	 * @return boolean - true, jeśli wszystko poszło ok.
+	 */
+	private boolean readFiringRates(BufferedReader buffer) {
+		try {
+			String line = "";
+			while(!((line = buffer.readLine()).contains("<Firing rates data>"))) //przewiń do zbiorów MCT
+				;
+			
+			line = buffer.readLine();
+			int problems = 0;
+			int readedLine = 0;
+			
+			boolean go = true;
+			FiringRatesManager frateMngr = projectCore.accessFiringRatesManager();
+			frateMngr.reset(true);
+
+			line = buffer.readLine();
+			try {
+				while(go) {
+					readedLine++;
+					TransFiringRateVector frVector = new TransFiringRateVector();
+					line = line.replace(" ", "");
+					String[] tabFR = line.split(";");
+					
+					line = buffer.readLine();//typ tranzycji
+					line = line.replace(" ", "");
+					String[] tabType = line.split(";");
+					
+					ArrayList<FRContainer> dataVector = new ArrayList<FRContainer>();
+					for(int i=0; i<tabFR.length; i++) {
+						StochaticsType subType = StochaticsType.ST;
+						if(tabType[i].equals("DT"))
+							subType = StochaticsType.DT;
+						else if(tabType[i].equals("IM"))
+							subType = StochaticsType.IM;
+						else if(tabType[i].equals("SchT"))
+							subType = StochaticsType.SchT;
+						
+						FRContainer frc = frVector.newContainer(Double.parseDouble(tabFR[i]), subType);
+
+						dataVector.add(frc);
+					}
+					frVector.accessVector().addAll(dataVector); //boxing
+
+					line = buffer.readLine();
+					if(line.contains("<EOFRv>")) {
+						go = false;
+					}
+					
+					frateMngr.accessFRMatrix().add(frVector); //boxing in manager
+				}
+			} catch (Exception e) {
+				GUIManager.getDefaultGUIManager().log("Operation failed, wrong firing rates data "+(readedLine), "error", true);
+				if(frateMngr.accessFRMatrix().size() == 0) {
+					frateMngr.createCleanFRVector();
+					problems = 1;
+				}
+			}
+			
+			if((readedLine/2) > frateMngr.accessFRMatrix().size()) {
+				GUIManager.getDefaultGUIManager().log("Operation failed, wrong firing rates data "+(readedLine), "error", true);
+				if(frateMngr.accessFRMatrix().size() == 0) {
+					frateMngr.createCleanFRVector();
+					problems = 1;
+				} else {
+					frateMngr.reset(false); //false!!!
+					frateMngr.createCleanFRVector();
+					problems = 1;
+				}
+			}
+
+			if(problems==0) {
+				while(!((line = buffer.readLine()).contains("<Firing rates vector names>"))) //przewiń do nazw fr
+					;
+				
+				ArrayList<String> frNames = new ArrayList<String>();
+				line = buffer.readLine();
+				go = true;
+				while(go) {
+					line = line.trim();
+					
+					if(frNames.size() < frateMngr.accessFRMatrix().size())
+						frNames.add(line);
+					
+					line = buffer.readLine();
+					if(line.contains("<EOFRVn>")) {
+						go = false;
+					}
+				}
+				frateMngr.accessFRVectorsNames().addAll(frNames);
+		
+			} else {
+				GUIManager.getDefaultGUIManager().log("Problems reading firing rates vector names.", "error", true);
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Reading firing rates vectors failed.", "error", true);
 			return false;
 		}
 	}

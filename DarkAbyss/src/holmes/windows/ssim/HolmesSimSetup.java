@@ -9,6 +9,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,9 +22,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import holmes.darkgui.GUIManager;
+import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.NetSimulator.NetType;
+import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
+import holmes.windows.HolmesFiringRatesManager;
 
 /**
  * Okno ustawień symulatorów programu. Pozwala ustawić parametry symulacji w globalnym obiekcie
@@ -35,6 +39,7 @@ public class HolmesSimSetup extends JFrame {
 	private static final long serialVersionUID = -240275069200534886L;
 	private GUIManager overlord;
 	private JFrame parentWindow;
+	private JFrame ego;
 	private boolean doNotUpdate = false;
 	private SimulatorGlobals settings;
 	
@@ -57,6 +62,7 @@ public class HolmesSimSetup extends JFrame {
 	 */
 	public HolmesSimSetup(JFrame parent) {
 		this.overlord = GUIManager.getDefaultGUIManager();
+		this.ego = this;
 		this.parentWindow = parent;
 		this.settings = overlord.simSettings;
 		
@@ -75,7 +81,7 @@ public class HolmesSimSetup extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {}
-		setSize(new Dimension(600, 480));
+		setSize(new Dimension(620, 270));
 		
 		JPanel main = new JPanel(null); //główny panel okna
 		add(main);
@@ -281,12 +287,22 @@ public class HolmesSimSetup extends JFrame {
 	 */
 	private JPanel createStochasticSimSettingsPanel() {
 		JPanel panel = new JPanel(null);
-		panel.setBounds(0, 150, 600, 300);
+		panel.setBounds(0, 110, 600, 110);
 		panel.setBorder(BorderFactory.createTitledBorder("Stochastic simulator settings"));
 		
 		int posX = 10;
-		int posY = 10;
+		int posY = 20;
 		
+		JButton createFRWindowButton = new JButton("<html>Firing rates<br>manager</html>");
+		createFRWindowButton.setIcon(Tools.getResIcon16("/icons/simulation/aaa.png"));
+		createFRWindowButton.setBounds(posX, posY, 120, 40);
+		createFRWindowButton.setToolTipText("Loop single transition simulation");
+		createFRWindowButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				new HolmesFiringRatesManager(ego);
+			}
+		});
+		panel.add(createFRWindowButton);
 		
 		return panel;
 	}

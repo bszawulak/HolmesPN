@@ -28,15 +28,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 	 */
 	public StatesPlacesTableModel(int placesNumber, HolmesStatesManager boss) {
 		this.boss = boss;
-		columnNames = new String[placesNumber+2];
-		columnNames[0] = "Selected";
-		columnNames[1] = "mID";
-		for(int i=0; i<placesNumber; i++) {
-			columnNames[i+2] = "t"+i;
-		}
-		
-		dataMatrix = new ArrayList<ArrayList<String>>();
-		dataSize = 0;
+		clearModel(placesNumber);
 	}
 	
 	/**

@@ -285,6 +285,7 @@ public class SelectionManager {
 	public void deleteElementLocation(ElementLocation el) {
 		PetriNet pn = overlord.getWorkspace().getProject();
 		ArrayList<Place> places = pn.getPlaces();
+		ArrayList<Transition> transitions = pn.getTransitions();
 		boolean functionWarning = false;
 		boolean canDo = overlord.subnetsHQ.checkIfExpendable(el);
 		if(canDo == false) {
@@ -307,6 +308,10 @@ public class SelectionManager {
 					pn.accessStatesManager().removePlace(index);
 					if(FunctionsTools.revalidateFunctions((Place)n, index))
 						functionWarning = true;
+				}
+				if(n instanceof Transition) {
+					int index = transitions.indexOf((Transition)n);
+					pn.accessFiringRatesManager().removeTrans(index);
 				}
 				this.getGraphPanelNodes().remove(n);
 			}
@@ -358,6 +363,7 @@ public class SelectionManager {
 	public void deleteAllSelectedElements() {
 		PetriNet pn = overlord.getWorkspace().getProject();
 		ArrayList<Place> places = pn.getPlaces();
+		ArrayList<Transition> transitions = pn.getTransitions();
 		ArrayList<Integer> sheetsModified = new ArrayList<Integer>();
 		ArrayList<ElementLocation> protectedList = new ArrayList<ElementLocation>();
 		boolean functionWarning = false;
@@ -384,6 +390,10 @@ public class SelectionManager {
 					pn.accessStatesManager().removePlace(index);
 					if(FunctionsTools.revalidateFunctions((Place)n, index))
 						functionWarning = true;
+				}
+				if(n instanceof Transition) {
+					int index = transitions.indexOf((Transition)n);
+					pn.accessFiringRatesManager().removeTrans(index);
 				}
 				this.getGraphPanelNodes().remove(n);
 				

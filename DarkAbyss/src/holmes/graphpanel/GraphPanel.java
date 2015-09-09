@@ -501,6 +501,7 @@ public class GraphPanel extends JComponent {
 			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, p);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager().addTrans();
 		}
 	}
 	

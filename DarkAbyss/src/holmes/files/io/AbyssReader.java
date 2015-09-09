@@ -79,6 +79,7 @@ public class AbyssReader {
 			IdGenerator.setStartId(maxGlobalId+1);
 			
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().createCleanState();
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager().createCleanFRVector();
 			
 			xstream.fromXML(source);
 			GUIManager.getDefaultGUIManager().log("Petri net (.abyss) successfully read from file "+path, "text", true);

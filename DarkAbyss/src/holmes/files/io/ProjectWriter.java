@@ -11,6 +11,8 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.PlacesStateVector;
+import holmes.petrinet.data.TransFiringRateVector;
+import holmes.petrinet.data.TransFiringRateVector.FRContainer;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -23,7 +25,7 @@ import holmes.varia.Check;
 
 /**
  * Klasa odpowiedzialna za zapis projektu do pliku. Zapisuje między innymi: dane sieci (miejsca, tranzycje
- * oraz łuki), inwarianty oraz zbiory MCT.
+ * oraz łuki), inwarianty, zbiory MCT i inne.
  * 
  * @author MR
  *
@@ -40,6 +42,8 @@ public class ProjectWriter {
 	private ArrayList<String> mctNames = null;
 	private ArrayList<PlacesStateVector> statesMatrix = null;
 	private ArrayList<String> statesNames = null;
+	private ArrayList<TransFiringRateVector> firingRatesMatrix = null;
+	private ArrayList<String> frNames = null;
 	
 	private String newline = "\n";
 	
@@ -59,6 +63,8 @@ public class ProjectWriter {
 		mctNames = projectCore.accessMCTnames();
 		statesMatrix = projectCore.accessStatesManager().accessStateMatrix();
 		statesNames = projectCore.accessStatesManager().accessStateNames();
+		firingRatesMatrix = projectCore.accessFiringRatesManager().accessFRMatrix();
+		frNames = projectCore.accessFiringRatesManager().accessFRVectorsNames();
 	}
 	
 	/**
@@ -85,6 +91,7 @@ public class ProjectWriter {
 			bw.write("  <MCT data>"+newline);
 			bw.write("  <StatesMatrix>"+newline);
 			bw.write("  <FunctionsData>"+newline);
+			bw.write("  <FiringRatesData>"+newline);
 			bw.write("</Project blocks>"+newline);
 			
 			bw.write("<Net data>"+newline);
@@ -103,6 +110,10 @@ public class ProjectWriter {
 			bw.write("<States data>"+newline);
 			boolean statusStates = saveStates(bw);
 			bw.write("<States data end>"+newline);
+			
+			bw.write("<Firing rates data>"+newline);
+			boolean statusFR = saveFiringRates(bw);
+			bw.write("<Firing rates data end>"+newline);
 			
 			bw.close();
 			return true;
@@ -177,10 +188,10 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition comment:"+Tools.convertToCode(trans.getComment())+">"+newline); //komentarz
 				bw.write(spaces(sp)+"<Transition eft:"+trans.getEFT()+">"+newline); //TPN eft
 				bw.write(spaces(sp)+"<Transition lft:"+trans.getLFT()+">"+newline); //TPN lft
-				bw.write(spaces(sp)+"<Transition duration:"+trans.getDPNduration()+">"+newline); //DPN duration
+				bw.write(spaces(sp)+"<Transition duration:"+trans.getDPNduration()+">"+newline); //DPN duration value
 				bw.write(spaces(sp)+"<Transition TPN status:"+trans.getTPNstatus()+">"+newline); //is TPN active?
 				bw.write(spaces(sp)+"<Transition DPN status:"+trans.getDPNstatus()+">"+newline); //is DPN active?
-				bw.write(spaces(sp)+"<Transition function flag:"+trans.isFunctional()+">"+newline); //is DPN active?
+				bw.write(spaces(sp)+"<Transition function flag:"+trans.isFunctional()+">"+newline); //is functional?
 				
 				bw.write(spaces(sp)+"<Location data"+">"+newline);
 				sp = 8;
@@ -309,9 +320,7 @@ public class ProjectWriter {
 					}
 				}	
 			}
-			@SuppressWarnings("unused")
-			int x = 1;
-			
+
 			for(int t=0; t<transNumber; t++) {
 				Transition trans = transitions.get(t);
 				int elLocations = trans.getElementLocations().size();
@@ -366,8 +375,7 @@ public class ProjectWriter {
 					
 				}
 			}
-			@SuppressWarnings("unused")
-			int y = 1;
+
 			for(int m=0; m<metaNumber; m++) {
 				MetaNode metaNode = metaNodes.get(m);
 				int elLocations = metaNode.getElementLocations().size();
@@ -419,7 +427,6 @@ public class ProjectWriter {
 							savedArcs++;
 						} 
 					}
-					
 				}
 			}
 			sp = 2;
@@ -604,6 +611,50 @@ public class ProjectWriter {
 			return true;
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Error while saving states data.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			return false;
+		}
+	}
+	
+	/**
+	 * Metoda zapisuje tablicę wektorów firing rates tranzycji.
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @return boolean - true, jeśli wszystko się udało
+	 */
+	private boolean saveFiringRates(BufferedWriter bw) {
+		try {
+			int sp = 2;
+			int frNumber = firingRatesMatrix.size();
+	
+			bw.write(spaces(sp)+"<FRvectors: "+frNumber+">"+newline);
+			for(int fr=0; fr<frNumber; fr++) {
+				sp = 4;
+				TransFiringRateVector frVector = firingRatesMatrix.get(fr);
+				String frLine = "";
+				String stochTypeLine = "";
+				for(FRContainer frc : frVector.accessVector()) {
+					frLine += frc.fr + ";";
+					stochTypeLine += frc.sType + ";";
+				}
+				frLine = frLine.substring(0, frLine.length()-1); //usun ostatni ';'
+				bw.write(spaces(sp)+frLine+newline);
+				
+				stochTypeLine = stochTypeLine.substring(0, stochTypeLine.length()-1); //usun ostatni ';'
+				bw.write(spaces(sp)+stochTypeLine+newline);
+			}
+			sp = 2;
+			bw.write(spaces(sp)+"<EOFRv>"+newline);
+			bw.write(spaces(sp)+"<Firing rates vector names>"+newline);
+			for(int i=0; i<frNumber; i++) {
+				sp = 4;
+				bw.write(spaces(sp)+frNames.get(i)+newline);
+			}
+			sp = 2;
+			bw.write(spaces(sp)+"<EOFRVn>"+newline);
+			
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Error while saving firing rates data.", "error", true);
 			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
 			return false;
 		}

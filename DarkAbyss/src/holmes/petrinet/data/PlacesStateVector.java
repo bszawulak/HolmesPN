@@ -18,7 +18,7 @@ public class PlacesStateVector implements Serializable {
 	 * Konstruktor obiektu klasy PlacesStateVector.
 	 */
 	public PlacesStateVector() {
-		stateVector = new ArrayList<>();
+		stateVector = new ArrayList<Double>();
 		stateType = "NORMAL";
 	}
 	

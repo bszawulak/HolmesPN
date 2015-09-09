@@ -61,6 +61,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private NetSimulationDataCore simData;
 	private MCSDataMatrix mcsData;
 	private StatesManager statesManager;
+	private FiringRatesManager firingRatesManager;
 	
 	private String lastFileName = "";
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
@@ -88,14 +89,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param ar ArrayList[Arc] - lista łuków sieci
 	 */
 	public PetriNet(ArrayList<Node> nod, ArrayList<Arc> ar) {
+		overlord = GUIManager.getDefaultGUIManager();
 		getDataCore().nodes = nod;
 		getDataCore().arcs = ar;
-		communicationProtocol = new IOprotocols();
-		dataCore.netName = "default";
-		mcsData = new MCSDataMatrix();
-		methods = new PetriNetMethods(this);
-		simData = new NetSimulationDataCore();
-		overlord = GUIManager.getDefaultGUIManager();
+		this.communicationProtocol = new IOprotocols();
+		this.dataCore.netName = "default";
+		this.mcsData = new MCSDataMatrix();
+		this.methods = new PetriNetMethods(this);
+		this.simData = new NetSimulationDataCore();
+		this.statesManager = new StatesManager(this);
 	}
 
 	/**
@@ -103,17 +105,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param workspace Workspace - obiekt obszaru roboczego dla sieci
 	 */
 	public PetriNet(Workspace workspace, String name) {
+		this.overlord = GUIManager.getDefaultGUIManager();
 		this.setGraphPanels(new ArrayList<GraphPanel>());
 		this.workspace = workspace;
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
 		this.setMCTanalyzer(new MCTCalculator(this));
 		this.statesManager = new StatesManager(this);
+		this.firingRatesManager = new FiringRatesManager(this);
 		resetComm();
-		dataCore.netName = name;
-		mcsData = new MCSDataMatrix();
-		methods = new PetriNetMethods(this);
-		simData = new NetSimulationDataCore();
-		overlord = GUIManager.getDefaultGUIManager();
+		this.dataCore.netName = name;
+		this.mcsData = new MCSDataMatrix();
+		this.methods = new PetriNetMethods(this);
+		this.simData = new NetSimulationDataCore();
 	}
 	
 	/**
@@ -680,6 +683,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		statesManager = newStatesMngr;
 	}
 	
+	/**
+	 * Umożliwia dostęp do managera odpaleń tranzycji SPN sieci.
+	 * @return FiringRatesManager - obiekt managera fr
+	 */
+	public FiringRatesManager accessFiringRatesManager() {
+		return this.firingRatesManager;
+	}
+	
+	public void replaceStatesManager(FiringRatesManager newStatesMngr) {
+		this.firingRatesManager = newStatesMngr;
+	}
+	
 	//*********************************************************************************
 	
 	/**
@@ -909,6 +924,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					saxParser.parse(xmlInput, handler);
 					addArcsAndNodes(handler.getArcList(), handler.getNodesList());
 					accessStatesManager().createCleanState();
+					accessFiringRatesManager().createCleanFRVector();
 					
 					String name = path;
 					int ind = name.lastIndexOf("\\");
@@ -926,6 +942,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					SnoopyReader reader = new SnoopyReader(0, path);
 					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
 					accessStatesManager().createCleanState();
+					accessFiringRatesManager().createCleanFRVector();
 					overlord.subnetsGraphics.addRequiredSheets();
 					overlord.subnetsGraphics.resizePanels();
 					overlord.getWorkspace().setSelectedDock(0);
@@ -942,6 +959,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				communicationProtocol.readPNT(path);
 				addArcsAndNodes(communicationProtocol.getArcArray(), communicationProtocol.getNodeArray());
 				accessStatesManager().createCleanState();
+				accessFiringRatesManager().createCleanFRVector();
 			}
 			
 			overlord.log("Petri net successfully imported from file "+path, "text", true);

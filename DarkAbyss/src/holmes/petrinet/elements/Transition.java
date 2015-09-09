@@ -62,6 +62,12 @@ public class Transition extends Node {
 	protected boolean isFunctional = false;
 	protected ArrayList<FunctionContainer> fList;
 	
+	//tranzycja stochastyczna:
+	/** ST, DT, IM, SchT - Stochastic Transition, Deterministic T., Immediate T., Scheduled T. */
+	public enum StochaticsType { ST, DT, IM, SchT }
+	protected StochaticsType stochasticType;
+	protected double firingRate = 1.0;
+	
 	//inne:
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 
@@ -95,6 +101,7 @@ public class Transition extends Node {
 		this.fList = new ArrayList<FunctionContainer>();
 		this.setType(PetriNetElementType.TRANSITION);
 		transType = TransitionType.PN;
+		stochasticType = StochaticsType.ST;
 	}
 
 	/**
@@ -109,6 +116,7 @@ public class Transition extends Node {
 		this.fList = new ArrayList<FunctionContainer>();
 		this.setType(PetriNetElementType.TRANSITION);
 		transType = TransitionType.PN;
+		stochasticType = StochaticsType.ST;
 	}
 
 	/**
@@ -464,14 +472,6 @@ public class Transition extends Node {
 	}
 	
 	/**
-	 * Metoda ustawia podtyp tranzycji.
-	 * @param value TransitionType - podtyp
-	 */
-	public void setTransType(TransitionType value) {
-		this.transType = value;
-	}
-	
-	/**
 	 * Metoda zwraca podtyp tranzycji.
 	 * @return TransitionType - podtyp
 	 */
@@ -479,6 +479,14 @@ public class Transition extends Node {
 		return this.transType;
 	}
 	
+	/**
+	 * Metoda ustawia podtyp tranzycji.
+	 * @param value TransitionType - podtyp
+	 */
+	public void setTransType(TransitionType value) {
+		this.transType = value;
+	}
+
 	//**************************************************************************************
 	//*********************************      TIME        ***********************************
 	//**************************************************************************************
@@ -800,5 +808,41 @@ public class Transition extends Node {
 			}
 		}
 		return null;
+	}
+	
+	//**************************************************************************************
+	//*********************************    STOCHASTIC    ***********************************
+	//**************************************************************************************
+		
+	/**
+	 * Metoda zwraca podtyp SPN tranzycji.
+	 * @return StochaticsType - podtyp tranzycji stochastycznej
+	 */
+	public StochaticsType getStochasticType() {
+		return this.stochasticType;
+	}
+	
+	/**
+	 * Metoda ustawia podtyp SPN tranzycji.
+	 * @param value TransitionType -  podtyp tranzycji stochastycznej
+	 */
+	public void setStochasticType(StochaticsType value) {
+		this.stochasticType = value;
+	}
+	
+	/**
+	 * Metoda zwraca wartość firing rate na potrzeby symulacji SPN.
+	 * @return double - wartość firing rate
+	 */
+	public double getFiringRate() {
+		return this.firingRate;
+	}
+	
+	/**
+	 * Metoda ustawia nową wartość firing rate dla tranzycji w modelu SPN.
+	 * @param firingRate double - nowa wartość
+	 */
+	public void setFiringRate(double firingRate) {
+		this.firingRate = firingRate;
 	}
 }
