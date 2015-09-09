@@ -371,14 +371,6 @@ public class HolmesClusters extends JFrame {
           	 }
       	});
 
-        
-        
-
-    	//for(int metric=0; metric <8; metric++) { //dla każdej z ośmiu metryk:
-    	//	String[] data = { "AAAA","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H","0:","MSS","C-H"};
-		//	model.addRow(data);
-    	//}
-
         scrollTablePane = new JScrollPane(table);
         main.add(scrollTablePane);
         return main;
@@ -893,7 +885,8 @@ public class HolmesClusters extends JFrame {
     }
     
     public void resetWindow() {
-    	tablePanel = createTablePanelCase56();
+    	//tablePanel = createTablePanelCase56();
+    	tableModel.setRowCount(0);
     }
     
     //**************************************************************************************************
