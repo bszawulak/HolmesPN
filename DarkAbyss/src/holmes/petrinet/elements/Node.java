@@ -159,10 +159,10 @@ public abstract class Node extends PetriNetElement {
 	 * @param sheetId int - identyfikator arkusza
 	 * @param places ArrayList[Place] - wektor miejsc
 	 * @param transitions ArrayList[Transition] - wektor tranzycji
-	 * @param metanodes ArrayList[MetaNode] - wektor metawęzłów
+	 * @param arrayList3 ArrayList[MetaNode] - wektor metawęzłów
 	 */
-	public void drawName(Graphics2D g, int sheetId, ArrayList<Place> places, ArrayList<Transition> transitions,
-			 ArrayList<MetaNode> metanodes) {
+	public void drawName(Graphics2D g, int sheetId, ArrayList<Node> places, ArrayList<Node> transitions,
+			 ArrayList<Node> arrayList3) {
 		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
 		String name = getName();
 		if(sm.getValue("editorShowShortNames").equals("1")) {
@@ -173,7 +173,7 @@ public abstract class Node extends PetriNetElement {
 				int x = transitions.indexOf(this);
 				name = "t"+x;
 			} else {
-				int x = metanodes.indexOf(this);
+				int x = arrayList3.indexOf(this);
 				name = "M"+x;
 			}
 		}

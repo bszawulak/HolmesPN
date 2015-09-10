@@ -134,7 +134,7 @@ public class NetSimulator {
 		else
 			notepad.dispose();
 		
-		engine.setEngine(netSimType, isMaxMode(), isSingleMode(), transitions, time_transitions);
+		engine.setEngine(netSimType, isMaxMode(), isSingleMode(), transitions, time_transitions, places);
 
 		nsl.logBackupCreated();
 		

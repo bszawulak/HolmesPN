@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Random;
 
 import holmes.darkgui.GUIManager;
+import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.simulators.NetSimulator.NetType;
@@ -15,27 +16,26 @@ import holmes.petrinet.simulators.NetSimulator.NetType;
  * 
  * @author MR
  */
-public class SimulatorEngine {
+public class SimulatorEngine implements IEngine {
 	private NetType netSimType = NetType.BASIC;
 	private ArrayList<Transition> transitions = null;
 	private ArrayList<Transition> time_transitions = null;
 	private ArrayList<Integer> transitionsIndexList = null;
 	private ArrayList<Integer> timeTransitionsIndexList = null;
 	private ArrayList<Transition> launchableTransitions = null;
-	private Random generator = null;
-	//HighQualityRandom generator = null;
-	
+	private IRandomGenerator generator = null;
 	private boolean maxMode = false;
 	private boolean singleMode = false;
+	private double planckDistance = 1.0;
 	
-	public double planckDistance = 1.0;
-	
+	//HighQualityRandom generator = null;
+
 	/**
 	 * Konstruktor obiektu klasy SimulatorEngine.
 	 */
 	public SimulatorEngine() {
-		generator = new Random(System.currentTimeMillis());
-		//generator = new HighQualityRandom(System.currentTimeMillis());
+		//generator = new StandardRandom(System.currentTimeMillis());
+		generator = new HighQualityRandom(System.currentTimeMillis());
 	}
 	
 	/**
@@ -45,14 +45,17 @@ public class SimulatorEngine {
 	 * @param singleMode boolean - true, jeśli tylko 1 tranzycja ma odpalić
 	 * @param transitions ArrayList[Transition] - wektor wszystkich tranzycji
 	 * @param time_transitions ArrayList[Transition] - wektor tranzycji czasowych
+	 * @param places ArrayList[Place] - wektor miejsc
 	 */
 	public void setEngine(NetType simulationType, boolean maxMode, boolean singleMode, 
-			ArrayList<Transition> transitions, ArrayList<Transition> time_transitions) {
+			ArrayList<Transition> transitions, ArrayList<Transition> time_transitions,
+			ArrayList<Place> places) {
 		this.netSimType = simulationType;
-		setMaxMode(maxMode);
-		setSingleMode(singleMode);
-		this.generator = new Random(System.currentTimeMillis());
-		//this.generator = new HighQualityRandom(System.currentTimeMillis());
+		this.maxMode = maxMode;
+		this.singleMode = singleMode;
+		
+		//this.generator = new StandardRandom(System.currentTimeMillis());
+		this.generator = new HighQualityRandom(System.currentTimeMillis());
 		
 		//INIT:
 		this.transitions = transitions;
@@ -79,27 +82,11 @@ public class SimulatorEngine {
 	}
 	
 	/**
-	 * Zwraca aktualnie ustawiony tryb symulacji.
-	 * @return NetType
-	 */
-	public NetType getNetSimMode() {
-		return this.netSimType;
-	}
-	
-	/**
 	 * Metoda ustawia status trybu maximum.
 	 * @param value boolean - true, jeśli tryb włączony
 	 */
 	public void setMaxMode(boolean value) {
 		this.maxMode = value;
-	}
-	
-	/**
-	 * Metoda zwraca status trybu maximum.
-	 * @return boolean - true, jeśli włączony
-	 */
-	public boolean isMaxMode() {
-		return this.maxMode;
 	}
 	
 	/**
@@ -111,16 +98,8 @@ public class SimulatorEngine {
 		
 		if(singleMode != false)
 			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
-				setMaxMode(true);
+				maxMode = true;
 			}
-	}
-
-	/**
-	 * Zwraca status trybu pojedynczego odpalania.
-	 * @return boolean - true, jeśli tylko 1 tranzycja odpala na turę
-	 */
-	public boolean isSingleMode() {
-		return this.singleMode;
 	}
 
 	/**
@@ -142,7 +121,7 @@ public class SimulatorEngine {
 	 * do odpalenia możliwy tylko w przypadku sieci czasowych).
 	 * @return ArrayList[Transition] - wektor tranzycji do odpalenia
 	 */
-	public ArrayList<Transition> generateWithoutEmptySteps() {
+	private ArrayList<Transition> generateWithoutEmptySteps() {
 		boolean generated = false;
 		int safetyCounter = 0;
 		while (!generated) {
@@ -166,7 +145,7 @@ public class SimulatorEngine {
 			}
 		}
 		//TODO: check
-		if(isSingleMode()) {
+		if(singleMode) {
 			int happyWinner = generator.nextInt(launchableTransitions.size());
 			Transition winner = launchableTransitions.get(happyWinner);
 			launchableTransitions.clear();
@@ -181,7 +160,7 @@ public class SimulatorEngine {
 	 * Metoda generowania nowych tranzycji do odpalenia dopuszczający puste kroki.
 	 * @return ArrayList[Transition] - wektor tranzycji do odpalenia
 	 */
-	public ArrayList<Transition> generateNormal() {
+	private ArrayList<Transition> generateNormal() {
 		generateLaunchingTransitions(netSimType);	
 		return launchableTransitions; 
 	}
@@ -200,7 +179,7 @@ public class SimulatorEngine {
 			for (int i = 0; i < transitionsIndexList.size(); i++) {
 				Transition transition = transitions.get(transitionsIndexList.get(i));
 				if (transition.isActive() ) {
-					if ((generator.nextInt(10) < 5) || isMaxMode()) { // 50% 0-4 / 5-9
+					if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -221,7 +200,7 @@ public class SimulatorEngine {
 				}
 				
 				if (transition.isActive() ) {
-					if ((generator.nextInt(10) < 5) || isMaxMode()) { // 50% 0-4 / 5-9
+					if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -424,13 +403,13 @@ public class SimulatorEngine {
 	 * @param max int - górna granica
 	 * @return int - liczba z zakresu [min, max]
 	 */
-	public int getRandomInt(int min, int max) {
+	private int getRandomInt(int min, int max) {
 		if(min == 0 && max == 0)
 			return 0;
 		if(min == max)
 			return min;
 		
-		return generator.nextInt((max - min) + 1) + min;
+		return generator.nextInt((max - min) + 1) + min; //OK, zakres np. 3do6 daje: 3,4,5,6 (graniczne obie też!)
 	}
 	
 	@SuppressWarnings("unused")
@@ -507,11 +486,16 @@ public class SimulatorEngine {
 					transition.setTPNtimer(-1);
 				}
 			} else if (transition.isActive() ) {
-				if ((generator.nextInt(10) < 5) || isMaxMode()) { // 50% 0-4 / 5-9
+				if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
 					transition.bookRequiredTokens();
 					launchableTransitions.add(transition);
 				}
 			}
 		}
+	}
+
+	@Override
+	public void setGenerator(IRandomGenerator generator) {
+		this.generator = generator;
 	}
 }

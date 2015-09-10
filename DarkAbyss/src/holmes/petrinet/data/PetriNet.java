@@ -188,6 +188,36 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
+	 * Zwraca macierz z wektorami elementów sieci: kolejne miejsc, tranzycji, tranzycji czasowych i metawęzłów
+	 * @return ArrayList[ArrayList[Node]] - macierz z elementami sieci
+	 */
+	public ArrayList<ArrayList<Node>> getPNelements() {
+		ArrayList<ArrayList<Node>> result = new ArrayList<>();
+		ArrayList<Node> places = new ArrayList<Node>();
+		ArrayList<Node> transitions = new ArrayList<Node>();
+		ArrayList<Node> timeTransitions = new ArrayList<Node>();
+		ArrayList<Node> metaNodes = new ArrayList<Node>();
+		
+		for(Node n : this.dataCore.nodes) {
+			if (n instanceof Place) {
+				places.add(n);
+			} else if(n instanceof Transition) {
+				if (((Transition)n).getTransType() == TransitionType.TPN)
+					timeTransitions.add(n);
+				else
+					transitions.add(n);
+			} else if(n instanceof MetaNode) {
+				metaNodes.add(n);
+			}
+		}
+		result.add(places);
+		result.add(transitions);
+		result.add(timeTransitions);
+		result.add(metaNodes);
+		return result;
+	}
+	
+	/**
 	 * Metoda zwraca nowy wektor wypełniony istniejącymi meta-węzłami
 	 * @return ArrayList[MetaNoda] - lista meta-węzłów
 	 */

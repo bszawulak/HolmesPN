@@ -5,15 +5,14 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JTree;
 
-import holmes.analyse.MDTSCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel.DrawModes;
+import holmes.petrinet.simulators.HighQualityRandom;
+import holmes.petrinet.simulators.IRandomGenerator;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
@@ -296,28 +295,23 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("CleanColor", cleanButton));
 		
 		//TODO:
-		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/clusterWindow.png")) {
+		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/aaa.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {	
-				//ProjectWriter pWrt = new ProjectWriter();
-				//pWrt.writeProject("test.apf");
-				//GUIManager.getDefaultGUIManager().restoreDefaultVisuals();
-				
-				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\normal.spped");
-				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\extClean.spept");
-				//SnoopyReader sReader = new SnoopyReader(0, "D:\\testy\\coarseSimple.spped");
-				
-				//GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
-				
 				HolmesNotepad aa = new HolmesNotepad(600, 480);
 				aa.setVisible(true);
-				for(int i=0; i<30; i++)
-					aa.addTextLineNL("Example line number "+i, "text");
+				
+				IRandomGenerator generator = new HighQualityRandom();
+				
+				for(int i=0; i<30; i++) {
+					aa.addTextLineNL(""+generator.nextInt(6), "text");
+				}
 			}
 		};
 		testButton.setEnabled(false);
 		analysisDockables.add(createButtonDockable("Testing", testButton));
 		
 		//TODO:
+		/*
 		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", Tools.getResIcon48("/icons/toolbar/a.png")) {
 			@SuppressWarnings("unused")
 			public void actionPerformed(ActionEvent actionEvent) 
@@ -353,6 +347,7 @@ public class Toolbar extends BorderDock {
 			}
 		};
 		analysisDockables.add(createButtonDockable("Testing2", testButton2));
+		*/
 		
 		return analysisDockables;
 	}

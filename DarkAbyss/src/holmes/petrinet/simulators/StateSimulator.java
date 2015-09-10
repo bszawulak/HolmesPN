@@ -13,7 +13,6 @@ import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.windows.ssim.HolmesSim;
 
 /**
@@ -38,7 +37,8 @@ public class StateSimulator implements Runnable {
 	private ArrayList<Double> transitionsAvgData = null;
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
 	
-	private SimulatorEngine engine = null;
+	//private SimulatorEngine engine = null;
+	private IEngine engine;
 	
 	//runtime:
 	private boolean terminate = false;
@@ -142,13 +142,13 @@ public class StateSimulator implements Runnable {
 					overlord.simSettings.getNetType(), 
 					overlord.simSettings.isMaxMode(),
 					overlord.simSettings.isSingleMode(), 
-					transitions, time_transitions);
+					transitions, time_transitions, places);
 		} else {
 			engine.setEngine(
 					ownSettings.getNetType(), 
 					ownSettings.isMaxMode(),
 					ownSettings.isSingleMode(), 
-					transitions, time_transitions);
+					transitions, time_transitions, places);
 		}
 		
 		readyToSimulate = true;
@@ -285,8 +285,8 @@ public class StateSimulator implements Runnable {
 		//NetSimulationData netData = new NetSimulationData();
 		int placeNumber = places.size();
 		int transNumber = transitions.size();
-		currentDataPackage.maxMode = engine.isMaxMode();
-		currentDataPackage.netSimType = engine.getNetSimMode();
+		currentDataPackage.maxMode = overlord.simSettings.isMaxMode();
+		currentDataPackage.netSimType = overlord.simSettings.getNetType();
 		currentDataPackage.steps = stepsLimit;
 		currentDataPackage.reps = repetitions;
 		currentDataPackage.placesNumber = placeNumber;

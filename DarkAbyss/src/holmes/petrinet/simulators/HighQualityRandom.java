@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * 
  *	http://www.javamex.com/tutorials/random_numbers/numerical_recipes.shtml
  */
-public class HighQualityRandom {
+public class HighQualityRandom implements IRandomGenerator {
 	private Lock l = new ReentrantLock();
 	private long u;
 	private long v = 4101842887655102017L;
@@ -48,7 +48,30 @@ public class HighQualityRandom {
 		}
 	}
 	
-	protected int next(int bits) {
-		return (int) (nextLong() >>> (64-bits));
+	public long nextLong(long limit) {
+		long v = nextLong();
+		long ref = Long.MAX_VALUE;
+		
+		double tmp = (double)v/(double)ref;
+		long result = (long) (tmp * limit);
+		
+		if(result == limit) //TODO:?
+			result--;
+			
+		return result;
+	}
+	
+	public long nextLong(long min, long max) 
+	{
+		long res = nextLong(max - min) + min;
+		return res;
+	}
+	
+	public int nextInt(int bits) {
+		//return (int) (nextLong() >>> (64-bits));
+		
+		int result = (int) nextLong(bits);
+		result = result < 0 ? -result : result;
+		return result;
 	}
 }

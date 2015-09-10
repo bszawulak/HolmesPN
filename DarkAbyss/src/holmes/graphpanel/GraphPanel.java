@@ -40,6 +40,7 @@ import holmes.workspace.WorkspaceSheet;
 public class GraphPanel extends JComponent {
 	private static final long serialVersionUID = -5746225670483573975L;
 	private static final int meshSize = 20;
+	private GUIManager overlord;
 	private PetriNet petriNet;
 	private ArrayList<Node> nodes = new ArrayList<Node>();
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
@@ -71,6 +72,7 @@ public class GraphPanel extends JComponent {
 	 * @param arcsList ArrayList[Arc]- lista łuków
 	 */
 	public GraphPanel(int sheetId, PetriNet petriNet, ArrayList<Node> nodesList, ArrayList<Arc> arcsList) {
+		this.overlord = GUIManager.getDefaultGUIManager();
 		this.petriNet = petriNet;
 		this.sheetId = sheetId;
 		this.setNodesAndArcs(nodesList, arcsList);
@@ -138,7 +140,7 @@ public class GraphPanel extends JComponent {
 				modeName = this.getDrawMode().toString();
 				image = Tools.getImageFromIcon("/cursors/"+ modeName + ".gif");
 			} catch (Exception e ) {
-				GUIManager.getDefaultGUIManager().log("Critical error, no "+modeName+".gif in jar file. Thank java un-catchable exceptions...", "error", true);
+				overlord.log("Critical error, no "+modeName+".gif in jar file. Thank java un-catchable exceptions...", "error", true);
 				//i tak nic nie pomoże, jak powyższe się wywali. Taka nasza Java piękna i wesoła.
 			}
 			Point hotSpot = new Point(0, 0);
@@ -236,9 +238,9 @@ public class GraphPanel extends JComponent {
 		try {
 			drawPetriNet(g2d);
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("CRITICAL unknown and urecoverable error while drawing net. "
+			overlord.log("CRITICAL unknown and urecoverable error while drawing net. "
 					+ "Loaded file probably corrupted. Restarting program.", "error", true);
-			GUIManager.getDefaultGUIManager().reset.emergencyRestart();
+			overlord.reset.emergencyRestart();
 		}
 	}
 
@@ -264,7 +266,7 @@ public class GraphPanel extends JComponent {
 		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridLines").equals("1")) {
+		if(overlord.getSettingsManager().getValue("editorGridLines").equals("1")) {
 			g2d.setColor(Color.lightGray);
 			
 			int maxWidth = (getWidth() * 100)/getZoom();
@@ -295,11 +297,15 @@ public class GraphPanel extends JComponent {
 			n.draw(g2d, this.sheetId);	
 		}
 		
-		ArrayList<Place> places_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		ArrayList<Transition> transitions_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		ArrayList<MetaNode> metanodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes();
+		//ArrayList<Place> places_tmp = petriNet.getPlaces();
+		//ArrayList<Transition> transitions_tmp = petriNet.getTransitions();
+		//ArrayList<MetaNode> metanodes = petriNet.getMetaNodes();
+		
+		ArrayList<ArrayList<Node>> elements = petriNet.getPNelements();
+		
 		for (Node n : getNodes()) {
-			n.drawName(g2d, this.sheetId, places_tmp, transitions_tmp, metanodes);
+			//n.drawName(g2d, this.sheetId,places_tmp, transitions_tmp, metanodes);
+			n.drawName(g2d, this.sheetId, elements.get(0), elements.get(1), elements.get(3));
 		}
 		
 		if (getSelectingRect() != null) {
@@ -320,36 +326,36 @@ public class GraphPanel extends JComponent {
 		g2d.setColor(Color.BLACK);
 		g2d.setFont(new Font("TimesRoman", Font.BOLD, 15));
 		
-		String status = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus().toString();
+		String status = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus().toString();
 		if(status.equals("LOOP"))
 			status = "Status: ACTIVE";
 		else
 			status = "Status: "+status;
 		g2d.drawString(status, 20, 20);
 		
-		status = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().accessEngine().getNetSimMode().toString();
+		status = overlord.simSettings.getNetType().toString();
 		status = "Status: "+status;
 		g2d.drawString(status, 20, 40);
 		
-		boolean max = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().accessEngine().isMaxMode();
+		boolean max = overlord.simSettings.isMaxMode();
 		if(max)
 			status = "Maximum mode ON";
 		else
 			status = "Maximum mode OFF";
 		g2d.drawString(status, 20, 60);
 		
-		boolean single = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().accessEngine().isSingleMode();
+		boolean single = overlord.simSettings.isSingleMode();
 		if(single)
 			status = "Single mode ON";
 		else
 			status = "Single mode OFF";
 		g2d.drawString(status, 20, 80);
 		
-		int arcDelay = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
+		int arcDelay = overlord.simSettings.getArcDelay();
 		status = "Arc delay: "+arcDelay;
 		g2d.drawString(status, 20, 100);
 		
-		int transDelay = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
+		int transDelay = overlord.simSettings.getTransDelay();
 		status = "Trans. firing delay: "+transDelay;
 		g2d.drawString(status, 20, 120);
 	}
@@ -377,8 +383,7 @@ public class GraphPanel extends JComponent {
 		int w = orgWidth;
 		w = (int) (w * (double)zoom / (double)100);
 		this.setSize(w, h);
-		GUIManager gui = GUIManager.getDefaultGUIManager();
-		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
+		WorkspaceSheet sheet = overlord.getWorkspace().getSheets().get(overlord.IDtoIndex(sheetId));
 		sheet.revalidate();
 		this.invalidate();
 		this.repaint();
@@ -389,8 +394,7 @@ public class GraphPanel extends JComponent {
 	 * @param delta int - wielkość przewinięcia
 	 */
 	public void scrollSheetHorizontal(int delta) {
-		GUIManager gui = GUIManager.getDefaultGUIManager();
-		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
+		WorkspaceSheet sheet = overlord.getWorkspace().getSheets().get(overlord.IDtoIndex(sheetId));
 		sheet.scrollHorizontal(delta);
 	}
 	
@@ -400,8 +404,8 @@ public class GraphPanel extends JComponent {
 	 * @return Point - współrzędne po zmianie
 	 */
 	public Point nameLocationChangeHorizontal(int delta) {
-		Node n = GUIManager.getDefaultGUIManager().getNameLocChangeNode();
-		ElementLocation el = GUIManager.getDefaultGUIManager().getNameLocChangeEL();
+		Node n = overlord.getNameLocChangeNode();
+		ElementLocation el = overlord.getNameLocChangeEL();
 		
 		int nameLocIndex = n.getElementLocations().indexOf(el);
 		
@@ -423,8 +427,7 @@ public class GraphPanel extends JComponent {
 	 * @param delta int - wielkość przewinięcia
 	 */
 	public void scrollSheetVertical(int delta) {
-		GUIManager gui = GUIManager.getDefaultGUIManager();
-		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
+		WorkspaceSheet sheet = overlord.getWorkspace().getSheets().get(overlord.IDtoIndex(sheetId));
 		sheet.scrollVertical(delta);
 	}
 	
@@ -434,8 +437,8 @@ public class GraphPanel extends JComponent {
 	 * @return Point - współrzędne po zmianie
 	 */
 	public Point nameLocationChangeVertical(int delta) {
-		Node n = GUIManager.getDefaultGUIManager().getNameLocChangeNode();
-		ElementLocation el = GUIManager.getDefaultGUIManager().getNameLocChangeEL();
+		Node n = overlord.getNameLocChangeNode();
+		ElementLocation el = overlord.getNameLocChangeEL();
 		
 		int nameLocIndex = n.getElementLocations().indexOf(el);
 		
@@ -464,8 +467,7 @@ public class GraphPanel extends JComponent {
 	public void adjustScroll(Point currentPoint, Point previousPoint) {
 		if (!isAutoDragScroll())
 			return;
-		GUIManager gui = GUIManager.getDefaultGUIManager();
-		WorkspaceSheet sheet = gui.getWorkspace().getSheets().get(gui.IDtoIndex(sheetId));
+		WorkspaceSheet sheet = overlord.getWorkspace().getSheets().get(overlord.IDtoIndex(sheetId));
 		Dimension viewSize = sheet.getViewport().getSize();
 		Point delta = new Point();
 		delta.setLocation(currentPoint.x - previousPoint.x, currentPoint.y - previousPoint.y);
@@ -488,7 +490,7 @@ public class GraphPanel extends JComponent {
 			Place n = new Place(IdGenerator.getNextId(), this.sheetId, p);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().addPlace();
+			overlord.getWorkspace().getProject().accessStatesManager().addPlace();
 		}
 	}
 
@@ -501,7 +503,7 @@ public class GraphPanel extends JComponent {
 			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, p);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager().addTrans();
+			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
 		}
 	}
 	
@@ -538,7 +540,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewSubnetP(Point p) {
 		if (isLegalLocation(p)) {
-			GUIManager.getDefaultGUIManager().getWorkspace().newTab(true, p, this.sheetId, MetaType.SUBNETPLACE);
+			overlord.getWorkspace().newTab(true, p, this.sheetId, MetaType.SUBNETPLACE);
 		}
 	}
 	
@@ -548,7 +550,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewSubnetT(Point p) {
 		if (isLegalLocation(p)) {
-			GUIManager.getDefaultGUIManager().getWorkspace().newTab(true, p, this.sheetId, MetaType.SUBNETTRANS);
+			overlord.getWorkspace().newTab(true, p, this.sheetId, MetaType.SUBNETTRANS);
 		}
 	}
 
@@ -558,7 +560,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewSubnetPT(Point p) {
 		if (isLegalLocation(p)) {
-			GUIManager.getDefaultGUIManager().getWorkspace().newTab(true, p, this.sheetId, MetaType.SUBNET);
+			overlord.getWorkspace().newTab(true, p, this.sheetId, MetaType.SUBNET);
 		}
 	}
 	/**
@@ -869,7 +871,7 @@ public class GraphPanel extends JComponent {
 		 */
 		public void mousePressed(MouseEvent e) {
 			//reset trybu przesuwania napisu:
-			GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
+			overlord.setNameLocationChangeMode(null, null, false);
 			
 			mousePt = e.getPoint();
 			mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);
@@ -882,10 +884,10 @@ public class GraphPanel extends JComponent {
 						getSheetPopupMenu(PetriNetElementType.UNKNOWN).show(e);
 					
 					setDrawMode(DrawModes.POINTER);
-					GUIManager.getDefaultGUIManager().getToolBox().selectPointer(); //przywraca tryb wybierania z JTree po lewej
+					overlord.getToolBox().selectPointer(); //przywraca tryb wybierania z JTree po lewej
 				}
 				if (!e.isShiftDown() && !e.isControlDown()) {
-					GUIManager.getDefaultGUIManager().getWorkspace().globalDeselection();
+					overlord.getWorkspace().globalDeselection();
 					getSelectionManager().deselectAllElements();
 					clearSelectionColors();
 				}
@@ -900,37 +902,37 @@ public class GraphPanel extends JComponent {
 						clearDrawnArc();
 						break;
 					case PLACE:
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						addNewPlace(mousePt);
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
-						GUIManager.getDefaultGUIManager().markNetChange();
+						overlord.reset.reset2ndOrderData(true);
+						overlord.markNetChange();
 						break;
 					case TRANSITION:
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						addNewTransition(mousePt);
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
-						GUIManager.getDefaultGUIManager().markNetChange();
+						overlord.reset.reset2ndOrderData(true);
+						overlord.markNetChange();
 						break;
 					case FUNCTIONALTRANS:
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						addNewFunctionalTransition(mousePt);
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
-						GUIManager.getDefaultGUIManager().markNetChange();
+						overlord.reset.reset2ndOrderData(true);
+						overlord.markNetChange();
 						break;
 					case ARC:
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						clearDrawnArc();
 						break;
 					case TIMETRANSITION:
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						addNewTimeTransition(mousePt);
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
-						GUIManager.getDefaultGUIManager().markNetChange();
+						overlord.reset.reset2ndOrderData(true);
+						overlord.markNetChange();
 						break;
 					case SUBNET_P:
 						addNewSubnetP(mousePt);
@@ -952,10 +954,10 @@ public class GraphPanel extends JComponent {
 						|| getDrawMode() == DrawModes.ARC_INHIBITOR 
 						|| getDrawMode() == DrawModes.ARC_RESET 
 						|| getDrawMode() == DrawModes.ARC_EQUAL) {
-					handleArcsDrawing(el, getDrawMode()); //TODO
+					handleArcsDrawing(el, getDrawMode());
 					
 				} else if (getDrawMode() == DrawModes.ERASER) { //kasowanie czegoś
-					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+					if(overlord.reset.isSimulatorActiveWarning(
 							"Operation impossible when simulator is working.", "Warning") == true)
 						return;
 					
@@ -964,11 +966,11 @@ public class GraphPanel extends JComponent {
 							"Deletion warning?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (n == 0) {
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						getSelectionManager().deleteElementLocation(el);
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
-						GUIManager.getDefaultGUIManager().markNetChange();
+						overlord.reset.reset2ndOrderData(true);
+						overlord.markNetChange();
 					}
 					
 				} else {
@@ -995,7 +997,7 @@ public class GraphPanel extends JComponent {
 			
 			else if (a != null) { // kliknięto w łuk, więc zostanie on zaznaczony
 				if (getDrawMode() == DrawModes.ERASER) {
-					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+					if(overlord.reset.isSimulatorActiveWarning(
 							"Operation impossible when simulator is working.", "Warning") == true)
 						return;
 					
@@ -1005,11 +1007,11 @@ public class GraphPanel extends JComponent {
 							"Deletion warning?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (n == 0) {
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						getSelectionManager().deleteArc(a);
-						GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
-						GUIManager.getDefaultGUIManager().markNetChange();
+						overlord.reset.reset2ndOrderData(true);
+						overlord.markNetChange();
 					}	
 				} else {
 					if (e.isShiftDown()) {
@@ -1093,7 +1095,7 @@ public class GraphPanel extends JComponent {
 
 					//dodaj połączenie z T lub P do Meta
 					//MetaNode metanode = (MetaNode)clickedLocation.getParentNode();
-					GUIManager.getDefaultGUIManager().subnetsHQ.addArcToMetanode(drawnArc.getStartLocation(), clickedLocation, drawnArc);
+					overlord.subnetsHQ.addArcToMetanode(drawnArc.getStartLocation(), clickedLocation, drawnArc);
 					clearDrawnArc();
 					return;
 				}
@@ -1117,7 +1119,7 @@ public class GraphPanel extends JComponent {
 					}
 					
 					
-					GUIManager.getDefaultGUIManager().subnetsHQ.addArcFromMetanode(clickedLocation, drawnArc.getStartLocation(), drawnArc);
+					overlord.subnetsHQ.addArcFromMetanode(clickedLocation, drawnArc.getStartLocation(), drawnArc);
 					clearDrawnArc();
 					return;
 				}
@@ -1132,7 +1134,6 @@ public class GraphPanel extends JComponent {
 						proceed = false;
 					} else if(isReverseArcPresent(drawnArc.getStartLocation(), clickedLocation) == true) {
 						if(arcType == DrawModes.ARC) {
-							//TODO: option in properties?
 							//JOptionPane.showMessageDialog(null, "Please use Read Arc drawing mode to draw a read-arc!", "Problem", JOptionPane.WARNING_MESSAGE);
 							proceed = true;
 						} else if(arcType == DrawModes.READARC) {
@@ -1145,11 +1146,9 @@ public class GraphPanel extends JComponent {
 							proceed = false;
 						}
 					}
-					
-					GUIManager gui = GUIManager.getDefaultGUIManager();
-					
+
 					if(clickedLocation.getSheetID() > 0) {
-						ArrayList<MetaNode> metas = gui.getWorkspace().getProject().getMetaNodes();
+						ArrayList<MetaNode> metas = overlord.getWorkspace().getProject().getMetaNodes();
 						int first = SubnetsTools.isInterface(drawnArc.getStartLocation(), metas);
 						int second = SubnetsTools.isInterface(clickedLocation, metas);
 						
@@ -1167,7 +1166,7 @@ public class GraphPanel extends JComponent {
 									JOptionPane.WARNING_MESSAGE);
 							clearDrawnArc();
 						} else {
-							GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+							overlord.getWorkspace().getProject().restoreMarkingZero();
 							
 							Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), clickedLocation, TypesOfArcs.NORMAL);
 							
@@ -1193,19 +1192,14 @@ public class GraphPanel extends JComponent {
 								getArcs().add(arc);
 							}
 							clearDrawnArc();
-							
-							//TODO: dodanie nowego łuku (zwykły)
+
 							int arcSheet = arc.getStartLocation().getSheetID();
 							if(arcSheet > 0) {
-								GUIManager.getDefaultGUIManager().subnetsHQ.addMetaArc(arc);
-								
-								//ArrayList<Integer> thisIsStupid = new ArrayList<Integer>();
-								//thisIsStupid.add(arcSheet);
-								//GUIManager.getDefaultGUIManager().netsHQ.validateMetaArcs(thisIsStupid, false, false);
+								overlord.subnetsHQ.addMetaArc(arc);
 							}
 							
-							GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
-							GUIManager.getDefaultGUIManager().markNetChange();
+							overlord.reset.reset2ndOrderData(true);
+							overlord.markNetChange();
 						}
 					}
 					else {
@@ -1330,31 +1324,29 @@ public class GraphPanel extends JComponent {
 					//e1.printStackTrace();
 				}
 			} else if (e.isShiftDown()) {  // przewijanie lewo/prawo
-				if(GUIManager.getDefaultGUIManager().getNameLocChangeMode() == true) {
-					GUIManager gui = GUIManager.getDefaultGUIManager();
+				if(overlord.getNameLocChangeMode() == true) {
 					Point newP = nameLocationChangeHorizontal(e.getWheelRotation() * e.getScrollAmount());
 					e.getComponent().repaint(); // bo samo się nie wywoła (P.S. NIE. Nie kombinuj. NIE!)
 					
-					if(gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
-						gui.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
-						gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
-						gui.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
-						gui.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
+					if(overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
+						overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
+						overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
+						overlord.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
+						overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
 					}
 				} else {
 					scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 30);
 				}
 			} else { // przewijanie góra/dół
-				if(GUIManager.getDefaultGUIManager().getNameLocChangeMode() == true) {
-					GUIManager gui = GUIManager.getDefaultGUIManager();
+				if(overlord.getNameLocChangeMode() == true) {
 					Point newP =  nameLocationChangeVertical(e.getWheelRotation() * e.getScrollAmount());
 					e.getComponent().repaint(); // bo samo się nie wywoła (P.S. NIE. Nie kombinuj. NIE!)
 					
-					if(gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
-						gui.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
-						gui.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
-						gui.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
-						gui.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
+					if(overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
+						overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
+						overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
+						overlord.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
+						overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
 					}
 				} else {
 					scrollSheetVertical(e.getWheelRotation() * e.getScrollAmount() * 30);
@@ -1368,10 +1360,10 @@ public class GraphPanel extends JComponent {
 	 * @param mousePt Point - współrzędne centrowania
 	 */
 	public void centerOnPoint(Point mousePt) {
-		//CompositeTabDock xxx = GUIManager.getDefaultGUIManager().getWorkspace().getWorkspaceDock();
-		WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet();
+		//CompositeTabDock xxx = overlord.getWorkspace().getWorkspaceDock();
+		WorkspaceSheet ws = overlord.getWorkspace().getSelectedSheet();
 		if(ws == null) {
-			GUIManager.getDefaultGUIManager().log("Unable to obtaint WorkspaceSheet object. Net sheet panel probably externized outside "
+			overlord.log("Unable to obtaint WorkspaceSheet object. Net sheet panel probably externized outside "
 					+ "program bounds.", "warning", true);
 			return;
 		}
@@ -1415,7 +1407,7 @@ public class GraphPanel extends JComponent {
 	 * Metoda usuwa status selected dla wszystkich portali.
 	 */
 	public void clearSelectionColors() {
-		ArrayList<Node> nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
+		ArrayList<Node> nodes = overlord.getWorkspace().getProject().getNodes();
 		for(Node n : nodes) {
 			if(n.isPortal())
 				for(ElementLocation el : n.getElementLocations()) {
