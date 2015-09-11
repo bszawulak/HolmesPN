@@ -22,10 +22,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import holmes.darkgui.GUIManager;
-import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.NetSimulator.NetType;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesFiringRatesManager;
 
@@ -55,6 +53,7 @@ public class HolmesSimSetup extends JFrame {
 	private JRadioButton singleModeRadioButton;
 	
 	private JCheckBox allowEmptySteps;
+	private JCheckBox useMassActionKinetics;
 
 	/**
 	 * Konstruktor okna ustawień symulatorów.
@@ -288,7 +287,7 @@ public class HolmesSimSetup extends JFrame {
 	private JPanel createStochasticSimSettingsPanel() {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(0, 110, 600, 110);
-		panel.setBorder(BorderFactory.createTitledBorder("Stochastic simulator settings"));
+		panel.setBorder(BorderFactory.createTitledBorder("Stochastic Simulation Algorithm (SSA) settings"));
 		
 		int posX = 10;
 		int posY = 20;
@@ -303,6 +302,23 @@ public class HolmesSimSetup extends JFrame {
 			}
 		});
 		panel.add(createFRWindowButton);
+		
+		useMassActionKinetics = new JCheckBox("Mass action kinetics enabled");
+		useMassActionKinetics.setBounds(posX+130, posY, 200, 20);
+		useMassActionKinetics.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					settings.setSSAmassAction(true);
+				} else {
+					settings.setSSAmassAction(false);
+				}
+			}
+		});
+		panel.add(useMassActionKinetics);
 		
 		return panel;
 	}
@@ -328,6 +344,16 @@ public class HolmesSimSetup extends JFrame {
 			groupSimMode.setSelected(maxModeRadioButton.getModel(), true);
 		else //50/50:
 			groupSimMode.setSelected(fiftyModeRadioButton.getModel(), true);
+		
+		if(settings.isEmptySteps())
+			allowEmptySteps.setSelected(true);
+		else
+			allowEmptySteps.setSelected(false);
+		
+		if(settings.isSSAMassAction())
+			useMassActionKinetics.setSelected(true);
+		else
+			useMassActionKinetics.setSelected(false);
 		
 		doNotUpdate = false;
 	}

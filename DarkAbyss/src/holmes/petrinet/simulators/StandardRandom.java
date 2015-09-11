@@ -2,7 +2,13 @@ package holmes.petrinet.simulators;
 
 import java.util.Random;
 
-public class StandardRandom implements IRandomGenerator {
+/**
+ * Klasa opakowująca standardowy generator liczb pseudo-losowych w Javie w interface IRandomGenerator.
+ * 
+ * @author MR
+ *
+ */
+public class StandardRandom implements IRandomGenerator  {
 	private Random generator;
 
 	public StandardRandom() {
@@ -12,10 +18,12 @@ public class StandardRandom implements IRandomGenerator {
 		generator = new Random(seed);
 	}
 	
+	@Override
 	public long nextLong() {
 		return generator.nextLong();
 	}
 	
+	@Override
 	public long nextLong(long max) {
 		long v = generator.nextLong();
 		long ref = Long.MAX_VALUE;
@@ -29,12 +37,19 @@ public class StandardRandom implements IRandomGenerator {
 		return result;
 	}
 	
+	@Override
 	public long nextLong(long min, long max) {
 		long res = nextLong(max - min) + min;
 		return res;
 	}
 	
+	@Override
 	public int nextInt(int max) {
 		return generator.nextInt(max);
+	}
+	
+	@Override
+	public double nextDouble() {
+		return generator.nextDouble();
 	}
 }

@@ -31,8 +31,9 @@ public class SimulatorGlobals {
 	private int simReps = 100;
 
 	public long currentStep = 0;
+	private int simulatorType = 0; // 0 -standard, 1 - SSA, 2 - Gillespie SSA
 	
-	private int simulatorType = 0;
+	private boolean ssaMassActionKineticsEnabled = false;
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.
@@ -292,5 +293,13 @@ public class SimulatorGlobals {
 		simReps = 100;
 
 		currentStep = 0;
+	}
+	
+	public void setSSAmassAction(boolean value) {
+		this.ssaMassActionKineticsEnabled = value;
+	}
+	
+	public boolean isSSAMassAction() {
+		return this.ssaMassActionKineticsEnabled;
 	}
 }

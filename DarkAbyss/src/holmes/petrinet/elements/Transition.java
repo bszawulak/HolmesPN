@@ -67,6 +67,7 @@ public class Transition extends Node {
 	public enum StochaticsType { ST, DT, IM, SchT }
 	protected StochaticsType stochasticType;
 	protected double firingRate = 1.0;
+	protected double ssaProbTime = 0.0;
 	
 	//inne:
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
@@ -844,5 +845,13 @@ public class Transition extends Node {
 	 */
 	public void setFiringRate(double firingRate) {
 		this.firingRate = firingRate;
+	}
+	
+	public void setSSAprobTime(double value) {
+		this.ssaProbTime = value;
+	}
+	
+	public double getSSAprobTime() {
+		return this.ssaProbTime;
 	}
 }

@@ -1,5 +1,6 @@
 package holmes.petrinet.simulators;
 
+import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -14,9 +15,11 @@ public class HighQualityRandom implements IRandomGenerator {
 	private long u;
 	private long v = 4101842887655102017L;
 	private long w = 1;
+	private Random generator;
 	
 	public HighQualityRandom() {
 		this(System.nanoTime());
+		generator = new Random(System.nanoTime());
 	}
 	
 	public HighQualityRandom(long seed) {
@@ -28,6 +31,8 @@ public class HighQualityRandom implements IRandomGenerator {
 		w = v;
 		nextLong();
 		l.unlock();
+		
+		generator = new Random(System.nanoTime());
 	}
 	
 	public long nextLong() {
@@ -73,5 +78,10 @@ public class HighQualityRandom implements IRandomGenerator {
 		int result = (int) nextLong(bits);
 		result = result < 0 ? -result : result;
 		return result;
+	}
+
+	@Override
+	public double nextDouble() {
+		return generator.nextDouble();
 	}
 }

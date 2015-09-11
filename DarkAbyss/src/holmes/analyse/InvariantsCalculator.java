@@ -141,18 +141,17 @@ public class InvariantsCalculator implements Runnable {
 	}
 	
 	/**
-	 * Metoda zwracająca macierz incydencji sieci.
+	 * Metoda zwracająca macierz incydencji sieci, tranzycje to wiersze, kolumny to miejsca
 	 * @return ArrayList[ArrayList[Integer]] - macierz incydencji
 	 */
 	public ArrayList<ArrayList<Integer>> getCMatrix() {
 		this.createTPIncidenceAndIdentityMatrix(true);
 		return CMatrix;
 	}
-	
 
 	/**
 	 * Metoda tworząca macierze: incydencji i jednostkową dla modelu szukania T-inwariantów
-	 * (TP-macierz z literatury).
+	 * (TP-macierz z literatury) - tranzycje to wiersze, kolumny do miejsca
 	 * @param silence boolean - true, jeśli nie ma wypisywać komunikatów
 	 */
 	public void createTPIncidenceAndIdentityMatrix(boolean silence) {

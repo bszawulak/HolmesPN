@@ -13,6 +13,7 @@ import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.simulators.HighQualityRandom;
 import holmes.petrinet.simulators.IRandomGenerator;
+import holmes.petrinet.simulators.StandardRandom;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
@@ -301,9 +302,9 @@ public class Toolbar extends BorderDock {
 				aa.setVisible(true);
 				
 				IRandomGenerator generator = new HighQualityRandom();
-				
+				IRandomGenerator generator2 = new StandardRandom();
 				for(int i=0; i<30; i++) {
-					aa.addTextLineNL(""+generator.nextInt(6), "text");
+					aa.addTextLineNL(""+generator.nextDouble()+" vs. "+generator2.nextDouble(), "text");
 				}
 			}
 		};

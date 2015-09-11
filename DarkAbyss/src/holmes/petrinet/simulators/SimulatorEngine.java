@@ -34,8 +34,8 @@ public class SimulatorEngine implements IEngine {
 	 * Konstruktor obiektu klasy SimulatorEngine.
 	 */
 	public SimulatorEngine() {
-		//generator = new StandardRandom(System.currentTimeMillis());
-		generator = new HighQualityRandom(System.currentTimeMillis());
+		generator = new StandardRandom(System.currentTimeMillis());
+		//generator = new HighQualityRandom(System.currentTimeMillis());
 	}
 	
 	/**
@@ -54,8 +54,8 @@ public class SimulatorEngine implements IEngine {
 		this.maxMode = maxMode;
 		this.singleMode = singleMode;
 		
-		//this.generator = new StandardRandom(System.currentTimeMillis());
-		this.generator = new HighQualityRandom(System.currentTimeMillis());
+		this.generator = new StandardRandom(System.currentTimeMillis());
+		//this.generator = new HighQualityRandom(System.currentTimeMillis());
 		
 		//INIT:
 		this.transitions = transitions;
