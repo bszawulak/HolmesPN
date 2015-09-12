@@ -306,6 +306,7 @@ public class SubnetsSnoopyCompatibility {
 	 * @param subnets ArrayList[Integer] - ID wszystkich podsieci gdzie są elementy węzła
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private ArrayList<Integer> getDeepestSubnet(Node node, ArrayList<MetaNode> metanodes, ArrayList<Integer> subnets) {
 		//znajdź taki element, w którym NIE MA metanodes reprezentujących podsieci w których Node jest
 		ArrayList<Integer> result = new ArrayList<Integer>();

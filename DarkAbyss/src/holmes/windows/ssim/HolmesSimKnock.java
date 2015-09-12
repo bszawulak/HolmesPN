@@ -1,7 +1,6 @@
 package holmes.windows.ssim;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -18,20 +17,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JTextArea;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.NetSimulationData;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.StateSimulator;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesStatesManager;
 

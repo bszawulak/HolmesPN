@@ -2,7 +2,6 @@ package holmes.petrinet.simulators;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;

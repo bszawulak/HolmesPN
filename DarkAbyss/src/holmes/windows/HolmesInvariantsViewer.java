@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -767,12 +769,38 @@ public class HolmesInvariantsViewer extends JFrame {
 		table = new JTable(tableModel);
 		tableRenderer = new InvariantsTableRenderer(table);
 		
+		table.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+          	    if (e.getClickCount() == 1) {
+          	    	if(e.isControlDown() == false)
+          	    		cellClickAction();
+          	    }
+          	 }
+      	});
+		
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tableScrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		result.add(tableScrollPane, BorderLayout.CENTER);
 	    return result;
 	}
 	
+	/**
+	 * Metoda odpowiedzialna za obsługę kliknięcia elementu tabeli inwariantów.
+	 */
+	protected void cellClickAction() {
+		try {
+			int row = table.getSelectedRow();
+			if(table.getName().equals("InvTransTable")) {
+				String id = table.getValueAt(row, 0).toString();
+				int transId = Integer.parseInt(id);
+				new HolmesNodeInfo(transitions.get(transId), this);
+			}
+
+		} catch (Exception e) {
+			
+		}
+	}
+
 	/**
 	 * Inicjalizacja agentów nasłuchujących różnych zdarzeń dla okna poszukiwania.
 	 */

@@ -19,7 +19,7 @@ import holmes.utilities.Tools;
  * Klasa narzędziowa, zawierająca metody (głównie statyczne) do testów związanych z inwariantami.
  * <br>Metody:
  * <br>
- * transposeMatrix - macierz transpozowana<br>
+ * transposeMatrix - macierz transponowana<br>
  * returnBinaryMatrix - zamiana macierzy na postać binarną<br>
  * isTInvariantSet - sprawdza, czy zbiór inwariantów zeruje macierz incydencji<br>
  * countNonInvariants - zwraca liczbę nie-inwariantó<br>
@@ -48,8 +48,9 @@ import holmes.utilities.Tools;
  * getExtendedInvariantsInfo - informacje o inwariantach 'zawierających' niestandardowe łuki<br>
  * getInOutTransInfo - zwraca informacje o tym, ile tranzycji IN/OUT ma każdy inwariant<br>
  * transInInvariants - zwraca wektor z informacją w ilu inwariantach działa tranzycja<br>
- * isDoubleArc - zwraca informację, czy łuk jest podwójny
+ * isDoubleArc - zwraca informację, czy łuk jest podwójny<br>
  * 
+ * <br>
  * @author MR
  */
 public final class InvariantsTools {
@@ -929,13 +930,16 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Metoda zwraca podzbiór inwariantów w których występuje dana reakcja.
-	 * @param globalInv ArrayList[ArrayList[Integer]] - macierz inwariantów 
-	 * @param transLoc id - nr reakcji
+	 * Metoda zwraca podzbiór inwariantów w których występuje dana reakcja. Używana przez algorytm obliczania
+	 * Mauritius Map, każdy inwariant pod koniec ma (ignorowany tutaj) numer porządkowy. Nie ma jednak znaczenia
+	 * biorąc pod uwagę konstrukcję metody.
+	 * @param globalInv ArrayList[ArrayList[Integer]] - zmodyfikowana macierz inwariantów 
+	 * @param transLoc int - nr reakcji, wg której budowany jest podzbiór wynikowy
 	 * @return ArrayList[ArrayList[Integer]] - podzbiór inwariantów z reakcją
 	 */
 	public static ArrayList<ArrayList<Integer>> returnInvWithTransition(ArrayList<ArrayList<Integer>> globalInv, int transLoc) {
 		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
+
 		for(ArrayList<Integer> vector : globalInv) {
 			if(vector.get(transLoc) != 0) {
 				result.add(new ArrayList<Integer>(vector));
@@ -946,7 +950,7 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Metoda zwraca indeksy inwariantów w których występuje dana reakcja.
+	 * Metoda zwraca indeksy inwariantów w których występuje dana reakcja. 
 	 * @param globalInv ArrayList[ArrayList[Integer]] - macierz inwariantów 
 	 * @param transLoc id - nr reakcji
 	 * @return ArrayList[Integer] - indeksy inwariantów z reakcją
@@ -963,9 +967,11 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Metoda zwraca podzbiór inwariantów w których NIE występuje dana reakcja.
-	 * @param globalInv ArrayList[ArrayList[Integer]] - macierz inwariantów 
-	 * @param transLoc id - nr reakcji
+	 * Metoda zwraca podzbiór inwariantów w których NIE występuje dana reakcja. Używana przez algorytm obliczania
+	 * Mauritius Map, każdy inwariant pod koniec ma (ignorowany tutaj) numer porządkowy. Nie ma jednak znaczenia
+	 * biorąc pod uwagę konstrukcję metody.
+	 * @param globalInv ArrayList[ArrayList[Integer]] - zmodyfikowana macierz inwariantów 
+	 * @param transLoc int - nr reakcji, wg której budowany jest podzbiór wynikowy
 	 * @return ArrayList[ArrayList[Integer]] - podzbiór inwariantów BEZ reakcji
 	 */
 	public static ArrayList<ArrayList<Integer>> returnInvWithoutTransition(ArrayList<ArrayList<Integer>> globalInv, int transLoc) {
@@ -982,15 +988,20 @@ public final class InvariantsTools {
 	/**
 	 * Metoda zwraca wektor mówiący o liczbie wystąpień danej tranzycji w inwariantach.
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @param mmMode - Mauritius Map mode - w tym trybie ostatnia kolumna jest ignorowana, jako, że zawiera
+	 * indeks inwariantu w macierzy ogyrinalnej programu.
 	 * @return ArrayList[Integer] - wektor frekwencji wystąpień tranzycji
 	 */
-	public static ArrayList<Integer> getFrequency(ArrayList<ArrayList<Integer>> invariants) {
+	public static ArrayList<Integer> getFrequency(ArrayList<ArrayList<Integer>> invariants, boolean mmMode) {
 		ArrayList<Integer> frequency = new ArrayList<Integer>();
 		if(invariants == null || invariants.size() ==0)
 			return frequency;
 		
 		int invNumber = invariants.size();
 		int invSize = invariants.get(0).size();
+		
+		if(mmMode)
+			invSize--;
 		
 		int freq = 0;
 		for(int column=0; column<invSize; column++) {

@@ -125,7 +125,7 @@ public class HolmesNodeInfo extends JFrame {
 		
 		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
 			mainSimulatorActive = true;
-		
+
 		parentFrame.setEnabled(false);
 		setResizable(false);
 		
@@ -134,6 +134,8 @@ public class HolmesNodeInfo extends JFrame {
 		    	parentFrame.setEnabled(true);
 		    }
 		});
+		
+		this.setVisible(true);
 	}
 
 	/**

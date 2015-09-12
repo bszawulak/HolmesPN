@@ -14,24 +14,30 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JPanel;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.MauritiusMap;
 import holmes.petrinet.data.MauritiusMap.BTNode;
+import holmes.windows.HolmesKnockout;
+import holmes.windows.HolmesKnockoutViewer;
 
 /**
  * Metoda odpowiedzialna za rysowanie map Mauritiusa.
+ * 
  * @author MR
- *
  */
 public class MauritiusMapPanel extends JPanel {
 	private static final long serialVersionUID = 1028800481995974984L;
 	
+	private HolmesKnockout holmesKnockout;
 	private MauritiusMap mmbt;
-	//private ArrayList<MapNodeInfo> locationVector = new ArrayList<MapNodeInfo>();
-	private int currentVerticalLevel = 0; //AKTUALNY popziom
+	private Map<Point, MapElement> mapLocations;
+	private int currentVerticalLevel = 0; //AKTUALNY poziom
 	private int verticalMulti = 0; //ile poddrzew
 	private int offsetVertical = 100;
 	private int maxUsedWidth = 0;
@@ -46,14 +52,24 @@ public class MauritiusMapPanel extends JPanel {
 	public boolean originalSizeKnown = false;
 	private boolean contractedMode = false;
 	
-	private Point mousePt;
+	public class MapElement {
+		public BTNode node;
+		public ArrayList<Integer> disabledHistory;
+		public MapElement(BTNode node, ArrayList<Integer> history) {
+			this.node = node;
+			disabledHistory = new ArrayList<Integer>(history);
+		}
+	}
 	
 	/**
 	 * Główny konstruktor obiektu klasy MauritiusMapPanel.
+	 * @param holmesKnockout HolmesKnockout - okno główne panelu
 	 */
-    public MauritiusMapPanel() {
+    public MauritiusMapPanel(HolmesKnockout holmesKnockout) {
+    	this.holmesKnockout = holmesKnockout;
     	panelWidth = 800;
     	panelHeigth = 600;
+    	mapLocations = new HashMap<Point, MapElement>();
         setPreferredSize(new Dimension(panelWidth, panelHeigth));
         
         this.addMouseWheelListener(new MouseMapWheelHandler());
@@ -61,32 +77,68 @@ public class MauritiusMapPanel extends JPanel {
     }
     
     /**
+	 * Metoda główna odpowiedzialna za rysowanie mapy w ramach odświeżania ekranu.
+	 */
+    @Override
+    public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+    	if(mmbt != null) {
+    		baseThickness = mmbt.getRoot().transFrequency;
+    		mapLocations = new HashMap<Point, MapElement>();
+    		//normalizeBaseThickness();
+
+    		Graphics2D g2d = (Graphics2D) g.create();
+    		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
+    		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    		
+    		
+    		
+			readAndPaintTree(mmbt.getRoot(), g2d, 100, 200, fullName, null);
+			normalizeSize();
+			verticalMulti = 0;
+			
+			if(originalSizeKnown == false) {
+				setOriginSize(new Dimension(panelWidth, panelHeigth));
+				originalSizeKnown = true;
+			}
+    	}
+    }
+    
+    /**
      * Metoda dodająca obiekt mapy. Po tym wystarczy odświeżyć panel aby mapa została narysowana.
      * @param mmbt MauritiusMapBT - Mauritius Map Binary Tree
      */
-    public void addNewMap(MauritiusMap mmbt, boolean contractedMode) {
+    public void registerNewMap(MauritiusMap mmbt, boolean contractedMode) {
     	this.mmbt = mmbt;
     	this.originalSizeKnown = false;
     	this.contractedMode = contractedMode;
     }
-  
-    /**
-     * Metoda ustawia opcję wyświetlania pełnej nazwy tranzycji.
-     * @param full boolean - jeśli true - pełna nazwa; false - format "t_"+lokalizacja w wektorze
-     */
-    public void setFullName(boolean full) {
-    	fullName = full;
-    }
+ 
 
     /**
-     * Główna metoda rysująca mapę Mauritiusa poprzez rekurencyjne przeglądanie drzewa binarnego danych o mapie.
+     * Główna metoda rysująca Mapę Mauritiusa poprzez rekurencyjne przeglądanie drzewa binarnego danych o mapie.
      * @param node BTNode - aktualny węzeł drzewa
      * @param g Graphics - obiekt rysujący
      * @param x int - pozycja startowa X korzenia
      * @param y int - pozycja startowa Y korzenia
      * @param fullName boolean - jeśli true, wyświetla pełne nazwy reakcji
      */
-    private void readAndPaintTree(BTNode node, Graphics2D g2d, int x, int y, boolean fullName) {
+    private void readAndPaintTree(BTNode node, Graphics2D g2d, int x, int y, boolean fullName, ArrayList<Integer> disabledHistory) {
+    	ArrayList<Integer> disabledPath = null;
+    	if(disabledHistory == null) {
+    		disabledPath = new ArrayList<Integer>();
+    		//disabledPath.add(node.transLocation);
+    	} else {
+    		disabledPath = new ArrayList<Integer>(disabledHistory);
+    		//disabledPath.add(node.transLocation);
+    	}
+    	
+    	if(node.transLocation == 64) {
+    		@SuppressWarnings("unused")
+			int xx=1;
+    	}
+
     	updateWidth(x);
     	String name = node.transName;
     	if(name == null) name = "N/A";
@@ -98,7 +150,6 @@ public class MauritiusMapPanel extends JPanel {
     		int loc = node.transLocation;
     		name = "t_"+loc;
     	}
-    	
     	//MCT:
     	boolean mctDetected = false;
     	if(name.contains("_MCT")) {
@@ -111,44 +162,46 @@ public class MauritiusMapPanel extends JPanel {
     	}
     	
     	//rysowanie okręgu i nazwy:
-    	if(mctDetected==true && contractedMode)
-    		drawCenteredSquare(g2d, x, y, 40, Color.lightGray);
-    	else
-    		drawCenteredCircle(g2d, x, y, 40, Color.darkGray);
+    	if(mctDetected==true && contractedMode) {
+    		drawCenteredSquare(g2d, x, y, 40, Color.lightGray); //symbol MCT
+    		disabledPath.add(node.transLocation);
+    		mapLocations.put(new Point(x, y), new MapElement(node, disabledPath));
+    	} else {
+    		drawCenteredCircle(g2d, x, y, 40, Color.darkGray); //symbol tranzycji
+    		drawRotatedText(g2d, x+15, y-15, -8, name, false);
+    		disabledPath.add(node.transLocation);
+    		mapLocations.put(new Point(x, y), new MapElement(node, disabledPath));
+    	}
     	
     	//drawCenteredSquare
-    	
-    	if(mctDetected==true && contractedMode) 
-    		;
-    	else
-    		drawRotatedText(g2d, x+15, y-15, -8, name, false);
+    	//if(mctDetected==true && contractedMode) 
+    	//	;
+    	//else
+    	//	; //drawRotatedText(g2d, x+15, y-15, -8, name, false);
 
     	//ID:
     	String t_id = "t"+node.transLocation;
     	drawRotatedText(g2d, x-27, y+35, 0, t_id, true);
     	
-    	
     	if(freq < 10)
-    		drawText(g2d, x-4, y+5, freq+"", Color.red); //częstość wystąpień w inwariantach DANEJ(rysowanej poziomo) ścieżki
+    		drawText(g2d, x-4, y+5, freq+"", Color.red); //częstość wystąpień w inwariantach DANEJ (rysowanej poziomo) ścieżki
     	else if(freq < 100)
     		drawText(g2d, x-8, y+5, freq+"", Color.red); 
     	else
     		drawText(g2d, x-14, y+5, freq+"", Color.red);
-    	
     	
     	if(node.rightChild != null) {
     		if(contractedMode) {
     			int currentVal = node.transFrequency;
     			
     			while(node.rightChild != null && currentVal == node.rightChild.transFrequency) {
-    				node.rightChild = node.rightChild.rightChild;
+    				node.rightChild = node.rightChild.rightChild; //przewiń elementy z MCT
     			}
-    			
     		}
     		
     		if(node.rightChild != null) {
     			drawArrow(g2d, x+20, y, x+100, y, 3, Color.gray);
-    			readAndPaintTree(node.rightChild, g2d, x+126, y, fullName); //120+6 (6=offest strzałki)
+    			readAndPaintTree(node.rightChild, g2d, x+126, y, fullName, disabledPath); //120+6 (6=offest strzałki)
     		}
     	}
     	
@@ -168,7 +221,9 @@ public class MauritiusMapPanel extends JPanel {
     		
     		drawL_shapeArrow(g2d, x-45, currentAltitude, x-45, lowerAltitude, 3, Color.gray);
 
-    		readAndPaintTree(node.leftChild, g2d, x, lowerAltitude, fullName);
+    		//int disabledPathSize = disabledPath
+    		
+    		readAndPaintTree(node.leftChild, g2d, x, lowerAltitude, fullName, disabledHistory);
     		verticalMulti++; //powrót z podwęzła, następny +1 odległość
     		currentVerticalLevel--; //powrót na starą wysokość
     	}
@@ -191,33 +246,7 @@ public class MauritiusMapPanel extends JPanel {
 		setPreferredSize(new Dimension((int)(panelWidth*zoomMod), (int)(panelHeigth*zoomMod)));
 		setSize(new Dimension((int)(panelWidth*zoomMod), (int)(panelHeigth*zoomMod)));
 	}
-    
-	/**
-	 * Metoda główna odpowiedzialna za rysowanie mapy w ramach odświeżania ekranu.
-	 */
-    @Override
-    public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		
-    	if(mmbt != null) {
-    		baseThickness = mmbt.getRoot().transFrequency;
-    		//normalizeBaseThickness();
 
-    		Graphics2D g2d = (Graphics2D) g.create();
-    		g2d.scale((float) getZoom() / 100, (float) getZoom() / 100);
-    		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    		
-			readAndPaintTree(mmbt.getRoot(), g2d, 100, 200, fullName);
-			normalizeSize();
-			verticalMulti = 0;
-			
-			if(originalSizeKnown == false) {
-				setOriginSize(new Dimension(panelWidth, panelHeigth));
-				originalSizeKnown = true;
-			}
-    	}
-    }
-    
     //TODO ?
     @SuppressWarnings("unused")
 	private int normalizeThickness(int transFrequency) {
@@ -226,6 +255,14 @@ public class MauritiusMapPanel extends JPanel {
     	double result = (tFr/base)*10;
     	return (int)result;
 	}
+    
+    /**
+     * Metoda ustawia opcję wyświetlania pełnej nazwy tranzycji.
+     * @param full boolean - jeśli true - pełna nazwa; false - format "t_"+lokalizacja w wektorze
+     */
+    public void setFullName(boolean full) {
+    	fullName = full;
+    }
 
 	/**
      * Metoda rysuje linię skierowaną w dowolną stronę.
@@ -492,14 +529,21 @@ public class MauritiusMapPanel extends JPanel {
 		*/
 	}
     
-    
-    
-    public class MapNodeInfo {
-    	public Point locationXY;
-    	public int transLoc;
-    	public int frequency1;
+    /**
+     * Przeszukuje listę zapamiętanych punktów i zwraca najbliższy do klikniętego obszaru.
+     * @param mousePt Point - kliknięty punkt
+     * @return Point - klucz mapy mapLocations
+     */
+    private Point getClickedKey(Point mousePt) {
+    	double rangeLength = 20;
+    	rangeLength = rangeLength * ((double)zoom/(double)100);
     	
-    	MapNodeInfo() {}
+    	for(Point point : mapLocations.keySet()) {
+    		if(Math.abs(point.x - mousePt.x) < rangeLength && Math.abs(point.y - mousePt.y) < rangeLength) {
+    			return point;
+    		}
+    	}
+    	return null;
     }
     
     /**
@@ -521,6 +565,11 @@ public class MauritiusMapPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * Klasa wewnętrzna MauritiusMapPanel zarządzająca kliknięciami myszy.
+	 * 
+	 * @author MR
+	 */
 	private class MouseMapHandler extends MouseAdapter {
 		/**
 		 * Metoda aktywowana w momencie puszczenia przycisku myszy.
@@ -550,10 +599,12 @@ public class MauritiusMapPanel extends JPanel {
 			Point mousePt = e.getPoint();
 			mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);
 			
+			Point key = getClickedKey(mousePt);
 			
-			//ElementLocation el = getSelectionManager().getPossiblySelectedElementLocation(mousePt);
-			//Arc a = getSelectionManager().getPossiblySelectedArc(mousePt);
-			// nie kliknięto ani w Node ani w Arc
+			MapElement data = mapLocations.get(key);
+			if(data != null)
+				new HolmesKnockoutViewer(data, holmesKnockout);
+			
 			
 			e.getComponent().repaint();
 		}	

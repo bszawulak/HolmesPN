@@ -2603,7 +2603,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		PetriNet pn = overlord.getWorkspace().getProject();
 		pn.resetNetColors();
 		
-		ArrayList<Integer> freqVector = InvariantsTools.getFrequency(invariantsMatrix);
+		ArrayList<Integer> freqVector = InvariantsTools.getFrequency(invariantsMatrix, false);
 		ArrayList<Transition> transitions_tmp = overlord.getWorkspace().getProject().getTransitions();
 		
 		if(freqVector == null) {
