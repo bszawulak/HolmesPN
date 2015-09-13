@@ -32,12 +32,12 @@ public class StateSimulator implements Runnable {
 	
 	private ArrayList<ArrayList<Integer>> placesData = null;
 	private ArrayList<Double> placesAvgData = null; //średnia liczba tokenów w miejscu
+	private ArrayList<Long> placesTotalData = null; //średnia liczba tokenów w miejscu
 	private ArrayList<ArrayList<Integer>> transitionsData = null;
 	private ArrayList<Integer> transitionsTotalFiring = null; //wektor sumy odpaleń tranzycji
 	private ArrayList<Double> transitionsAvgData = null;
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
 	
-	//private SimulatorEngine engine = null;
 	private IEngine engine;
 	
 	//runtime:
@@ -53,8 +53,7 @@ public class StateSimulator implements Runnable {
 	 * Główny konstruktor obiektu klasy StateSimulator.
 	 */
 	public StateSimulator() {
-		//generator = new Random(System.currentTimeMillis());
-		engine = new SimulatorEngine();
+		engine = new StandardTokenSimulator();
 		overlord = GUIManager.getDefaultGUIManager();
 	}
 
@@ -107,11 +106,13 @@ public class StateSimulator implements Runnable {
 	/**
 	 * Metoda ta musi być wywołana przed każdym startem symulatora. Inicjalizuje początkowe struktury
 	 * danych dla symulatora.
-	 * @param useGlobals boolean - jeśli true, parametry sąSimulatorGlobals brane z globalSettings
+	 * @param useGlobals boolean - jeśli true, parametry SimulatorGlobals brane z obiektu globalSettings
 	 * @param ownSettings SimulatorGlobals - jeśli powyższej jest = false, to stąd są brane parametry
 	 * @return boolean - true, jeśli wszystko się udało
 	 */
 	public boolean initiateSim(boolean useGlobals, SimulatorGlobals ownSettings) {
+		checkEngine(useGlobals);
+		
 		transitions = overlord.getWorkspace().getProject().getTransitions();
 		time_transitions = overlord.getWorkspace().getProject().getTimeTransitions();
 		places = overlord.getWorkspace().getProject().getPlaces();
@@ -126,6 +127,7 @@ public class StateSimulator implements Runnable {
 		
 		placesData = new ArrayList<ArrayList<Integer>>();
 		placesAvgData = new ArrayList<Double>();
+		placesTotalData = new ArrayList<Long>();
 		transitionsData = new ArrayList<ArrayList<Integer>>();
 		transitionsTotalFiring = new ArrayList<Integer>();
 		transitionsAvgData = new ArrayList<Double>();
@@ -135,6 +137,7 @@ public class StateSimulator implements Runnable {
 		}
 		for(int p=0; p<places.size(); p++) {
 			placesAvgData.add(0.0);
+			placesTotalData.add(0L);
 		}
 		
 		if(useGlobals || ownSettings==null) {
@@ -156,11 +159,42 @@ public class StateSimulator implements Runnable {
 	}
 	
 	/**
+	 * Metoda sprawdza, czy obiekt silnika zgadza się z aktualnie ustawionym w opcjach symulacji. Jeśli nie,
+	 * tworzy odpowiedni obiekt. Jeśli useGlobals == false, wtedy domyślnie sprawdza czy działa normalny symulator, jeśl
+	 * nie, to go przywraca.
+	 * @param useGlobals boolean - true, jeśli mają być respektowane główne ustawienia symulacji
+	 */
+	private void checkEngine(boolean useGlobals) {
+		if(useGlobals) {
+			int engineType = overlord.simSettings.getSimulatorType();
+			if(engineType == 0) {
+				if(!(engine instanceof StandardTokenSimulator)) {
+					engine = new StandardTokenSimulator();
+				}
+			} else if (engineType == 1) {
+				if(!(engine instanceof SSAengine)) {
+					engine = new SSAengine();
+				}
+			} else { //domyślnie standardowy silnik
+				if(!(engine instanceof StandardTokenSimulator)) {
+					engine = new StandardTokenSimulator();
+				}
+			}
+			
+		} else { //domyślny, prosty tryb
+			if(!(engine instanceof StandardTokenSimulator)) {
+				engine = new StandardTokenSimulator();
+			}
+		}
+	}
+
+	/**
 	 * Szybsza wersja initiateSim(...), metoda zeruje wektory danych.
 	 */
 	public void clearData() {
 		placesData = new ArrayList<ArrayList<Integer>>();
 		placesAvgData = new ArrayList<Double>();
+		placesTotalData = new ArrayList<Long>();
 		transitionsData = new ArrayList<ArrayList<Integer>>();
 		transitionsTotalFiring = new ArrayList<Integer>();
 		transitionsAvgData = new ArrayList<Double>();
@@ -169,6 +203,7 @@ public class StateSimulator implements Runnable {
 		}
 		for(int p=0; p<places.size(); p++) {
 			placesAvgData.add(0.0);
+			placesTotalData.add(0L);
 		}
 		terminate = false;
 		readyToSimulate = true;
@@ -180,8 +215,8 @@ public class StateSimulator implements Runnable {
 	 */
 	public void simulateNetAll() {
 		if(readyToSimulate == false) {
-			JOptionPane.showMessageDialog(null,"Simulation cannot start, no network found.", 
-					"State Simulation problem",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,"Simulation cannot start, engine initialization failed.", 
+					"Simulation problem",JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -242,6 +277,11 @@ public class StateSimulator implements Runnable {
 			placesData.add(marking);
 		}
 		
+		for(int p=0; p<places.size(); p++) {
+			double sumOfTokens = placesAvgData.get(p);
+			placesTotalData.set(p, (long) sumOfTokens);
+		}
+		
 		for(int t=0; t<transitions.size(); t++) {
 			transitionsAvgData.add((double) ((double)transitionsTotalFiring.get(t)/(double)trueSteps));
 		}
@@ -264,7 +304,8 @@ public class StateSimulator implements Runnable {
 	 */
 	public NetSimulationData simulateNetReferenceAndKnockout() {
 		if(readyToSimulate == false) {
-			JOptionPane.showMessageDialog(null,"Simulation cannot start, no network found.", "State Simulation problem",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,"Simulation cannot start, engine initialization failed.", 
+					"Simulation problem",JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		prepareNetM0();
@@ -577,6 +618,11 @@ public class StateSimulator implements Runnable {
 					double sumOfTokens = placesAvgData.get(p);
 					placesAvgData.set(p, sumOfTokens+tokens);
 				}
+		}
+		
+		for(int p=0; p<places.size(); p++) {
+			double sumOfTokens = placesAvgData.get(p);
+			placesTotalData.set(p, (long) sumOfTokens);
 		}
 		
 		for(int t=0; t<transitions.size(); t++) {
@@ -928,6 +974,14 @@ public class StateSimulator implements Runnable {
 		return placesAvgData;
 	}
 	
+	/**
+	 * Zwraca wektor zawierający sumę wszystkich tokenów w miejsach po wszystkich krokach symulacji.
+	 * @return ArrayList[Long] - wektor sumy tokenów
+	 */
+	public ArrayList<Long> getPlacesTotalData() {
+		return placesTotalData;
+	}
+	
 	//********************************************************************************************************************************
 	//****************************************   INTERNAL   **************************************************************************
 	//****************************************              **************************************************************************
@@ -975,5 +1029,31 @@ public class StateSimulator implements Runnable {
 			places.get(i).freeReservedTokens();
 		}
 		clearTransitionsValues();
+	}
+	
+	/**
+	 * Metoda tworzy nowy obiekt silnika symulacji.
+	 * @param type int - typ:<br>
+	 * 		1 - SSA<br>
+	 * 		2 - Gillespie SSA<br>
+	 * 		0 lub każdy inny niz powyższy - standardowy symulator tokenów
+	 */
+	public void setEngine(int type) {
+		readyToSimulate = false;
+		if(type == 1) {
+			engine = new SSAengine();
+			overlord.simSettings.setSimulatorType(1);
+		} else {
+			engine = new StandardTokenSimulator();
+			overlord.simSettings.setSimulatorType(0);
+		}
+	}
+	
+	/**
+	 * Zwraca obiekt/interface aktualnie ustawionego silnika symulacji.
+	 * @return IEngine - interface silnika
+	 */
+	public IEngine getEngine() {
+		return this.engine;
 	}
 }

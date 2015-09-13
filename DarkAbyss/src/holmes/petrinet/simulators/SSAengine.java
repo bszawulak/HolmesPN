@@ -46,7 +46,12 @@ public class SSAengine implements IEngine {
 		this.affectedTransitions = new ArrayList<Transition>();
 		
 		this.transitions = transitions;
-		setGenerator(new StandardRandom(System.currentTimeMillis()));
+		
+		if(overlord.simSettings.getGeneratorType() == 1) {
+			this.generator = new HighQualityRandom(System.currentTimeMillis());
+		} else {
+			this.generator = new StandardRandom(System.currentTimeMillis());
+		}
 		
 		for(Transition trans : transitions)
 			transitionToUpdate.add(trans); //na początku: wszystkie
@@ -145,6 +150,8 @@ public class SSAengine implements IEngine {
 
 		//lastFired = launchableTransitions.get(0);
 		updateUpdateList(lastFired);
+		launchableTransitions.clear();
+		launchableTransitions.add(lastFired);
 		return launchableTransitions; 
 	}
 
@@ -154,6 +161,9 @@ public class SSAengine implements IEngine {
 	 * @param lastFiredTransition Transition - ostatnio (aktualnie) odpalona tranzycja, która spowodowała zmiany
 	 */
 	private void updateUpdateList(Transition lastFiredTransition) {
+		transitionToUpdate.add(lastFiredTransition); //ważne dla wejściowych, gdyż one nie zostałyby tutaj
+		//dodane przez kod poniżej, więc dodajemy ręcznie tym poleceniem
+		
 		ArrayList<Place> changedPlaces = involvedPlacesMap.get(lastFiredTransition);
 		for(Place place : changedPlaces) {
 			for(Transition trans : involvedTransitionsMap.get(place)) {
@@ -213,11 +223,19 @@ public class SSAengine implements IEngine {
 
 	/**
 	 * Ustawia generator liczb pseudo-losowych.
-	 * @param IRandomGenerator - generator implementujący interface
+	 * @param IRandomGenerator - generator implementujący interface IRandomGenerator
+	 */
+	//@Override
+	//public void setGenerator(IRandomGenerator generator) {
+	//	this.generator = generator;
+	//}
+
+	/**
+	 * Zwraca aktualnie ustawiony generator liczb pseudo-losowych.
+	 * @return IRandomGenerator
 	 */
 	@Override
-	public void setGenerator(IRandomGenerator generator) {
-		this.generator = generator;
+	public IRandomGenerator getGenerator() {
+		return this.generator;
 	}
-
 }

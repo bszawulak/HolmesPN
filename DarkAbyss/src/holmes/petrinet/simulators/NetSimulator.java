@@ -45,7 +45,7 @@ public class NetSimulator {
 	private boolean detailedLogging = true;
 	//private Random generator;
 	
-	private SimulatorEngine engine = null;
+	private StandardTokenSimulator engine = null;
 	private boolean emptySteps = false; 
 	
 	private GUIManager overlord;
@@ -81,7 +81,7 @@ public class NetSimulator {
 		//generator = new Random(System.currentTimeMillis());
 		actionStack = new Stack<SimulationStep>(); //historia kroków
 		
-		engine = new SimulatorEngine();
+		engine = new StandardTokenSimulator();
 		overlord = GUIManager.getDefaultGUIManager();
 	}
 	
@@ -97,14 +97,14 @@ public class NetSimulator {
 		writeHistory = true;
 		timeCounter = -1;
 		actionStack.removeAllElements();
-		engine = new SimulatorEngine();
+		engine = new StandardTokenSimulator();
 	}
 	
 	/**
 	 * Dostęp do obiektu silnika symulacji.
 	 * @return SimulatorEngine - silnik symulatora
 	 */
-	public SimulatorEngine accessEngine() {
+	public StandardTokenSimulator accessEngine() {
 		return engine;
 	}
 

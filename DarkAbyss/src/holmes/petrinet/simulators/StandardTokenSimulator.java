@@ -15,7 +15,8 @@ import holmes.petrinet.simulators.NetSimulator.NetType;
  * 
  * @author MR
  */
-public class SimulatorEngine implements IEngine {
+public class StandardTokenSimulator implements IEngine {
+	private GUIManager overlord;
 	private NetType netSimType = NetType.BASIC;
 	private ArrayList<Transition> transitions = null;
 	private ArrayList<Transition> time_transitions = null;
@@ -26,15 +27,13 @@ public class SimulatorEngine implements IEngine {
 	private boolean maxMode = false;
 	private boolean singleMode = false;
 	private double planckDistance = 1.0;
-	
-	//HighQualityRandom generator = null;
 
 	/**
 	 * Konstruktor obiektu klasy SimulatorEngine.
 	 */
-	public SimulatorEngine() {
+	public StandardTokenSimulator() {
+		this.overlord = GUIManager.getDefaultGUIManager();
 		generator = new StandardRandom(System.currentTimeMillis());
-		//generator = new HighQualityRandom(System.currentTimeMillis());
 	}
 	
 	/**
@@ -53,8 +52,11 @@ public class SimulatorEngine implements IEngine {
 		this.maxMode = maxMode;
 		this.singleMode = singleMode;
 		
-		this.generator = new StandardRandom(System.currentTimeMillis());
-		//this.generator = new HighQualityRandom(System.currentTimeMillis());
+		if(overlord.simSettings.getGeneratorType() == 1) {
+			this.generator = new HighQualityRandom(System.currentTimeMillis());
+		} else {
+			this.generator = new StandardRandom(System.currentTimeMillis());
+		}
 		
 		//INIT:
 		this.transitions = transitions;
@@ -493,8 +495,20 @@ public class SimulatorEngine implements IEngine {
 		}
 	}
 
-	@Override
-	public void setGenerator(IRandomGenerator generator) {
-		this.generator = generator;
+	/**
+	 * Ustawia nowy obiekt generator liczb pseudo-losowych.
+	 * @param generator IRandomGenerator - nowy obiekt
+	 */
+	//@Override
+	//public void setGenerator(IRandomGenerator generator) {
+	//	this.generator = generator;
+	//}
+	
+	/**
+	 * Zwraca aktualnie ustawiony generator liczb pseudo-losowych.
+	 * @return IRandomGenerator
+	 */
+	public IRandomGenerator getGenerator() {
+		return this.generator;
 	}
 }

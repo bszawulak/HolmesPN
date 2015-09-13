@@ -1,6 +1,7 @@
 package holmes.windows.ssim;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -11,8 +12,10 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
@@ -54,6 +57,8 @@ public class HolmesSimSetup extends JFrame {
 	
 	private JCheckBox allowEmptySteps;
 	private JCheckBox useMassActionKinetics;
+	private JComboBox<String> generatorType;
+	private JComboBox<String> simulatorType;
 
 	/**
 	 * Konstruktor okna ustawień symulatorów.
@@ -80,24 +85,143 @@ public class HolmesSimSetup extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {}
-		setSize(new Dimension(620, 270));
+		setSize(new Dimension(620, 400));
 		
 		JPanel main = new JPanel(null); //główny panel okna
 		add(main);
 		
-		main.add(createStdSimulatorSettingsPanel());
-		main.add(createStochasticSimSettingsPanel());
+		main.add(createGlobalOptionsPanel(0, 0, 600, 110));
+		main.add(createStdSimulatorSettingsPanel(0, 110, 600, 110));
+		main.add(createStochasticSimSettingsPanel(0, 220, 600, 70));
+		main.add(createGillespieSSASimSettingsPanel(0, 290, 600, 70));
 
 		setVisible(true);
 	}
 	
 	/**
+	 * Tworzy panel opcji ogólnych symulatorów.
+	 * @param x int - pozycja x panelu
+	 * @param y int - pozycja y panelu
+	 * @param width int - szerokość preferowana
+	 * @param height int - wysokość preferowana
+	 * @return JPanel - panel, okrętu się pan spodziewałeś?
+	 */
+	private JPanel createGlobalOptionsPanel(int x, int y, int width, int height) {
+		JPanel panel = new JPanel(null);
+		panel.setBounds(x, y, width, height);
+		panel.setBorder(BorderFactory.createTitledBorder("Global settings"));
+		
+		int posX = 10;
+		int posY = 15;
+		
+		JLabel simStepsLabel = new JLabel("Steps:");
+		simStepsLabel.setBounds(posX, posY, 80, 20);
+		panel.add(simStepsLabel);
+		
+		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(settings.getSimSteps(), 100, 10000000, 100);
+		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
+		simStepsSpinner.setBounds(posX, posY+20, 80, 20);
+		simStepsSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate)
+					return;
+				
+				JSpinner spinner = (JSpinner) e.getSource();
+				int value = (int) spinner.getValue();
+				settings.setSimSteps(value);
+			}
+		});
+		panel.add(simStepsSpinner);
+
+		JLabel repetLabel = new JLabel("Repetitions:");
+		repetLabel.setBounds(posX+85, posY, 80, 20);
+		panel.add(repetLabel);
+		
+		SpinnerModel simRepetsSpinnerModel = new SpinnerNumberModel(settings.getRepetitions(), 1, 100000, 10);
+		JSpinner simRepsSpinner = new JSpinner(simRepetsSpinnerModel);
+		simRepsSpinner.setBounds(posX+85, posY+20, 80, 20);
+		simRepsSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate)
+					return;
+				
+				JSpinner spinner = (JSpinner) e.getSource();
+				int value = (int) spinner.getValue();
+				settings.setRepetitions(value);
+			}
+		});
+		panel.add(simRepsSpinner);
+
+		JLabel generatorLabel = new JLabel("Random number generator:");
+		generatorLabel.setBounds(posX+170, posY, 180, 20);
+		panel.add(generatorLabel);
+		
+		String[] simulator = {"Random (Java default)", "HighQualityRandom (slower)"};
+		generatorType = new JComboBox<String>(simulator);
+		generatorType.setBounds(posX+170, posY+20, 200, 20);
+		generatorType.setSelectedIndex(0);
+		generatorType.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+
+				int selected = generatorType.getSelectedIndex();
+				if(selected == 1) {
+					overlord.simSettings.setGeneratorType(1);
+				} else {
+					overlord.simSettings.setGeneratorType(0);
+				}
+				
+				doNotUpdate = false;
+			}
+		});
+		panel.add(generatorType);
+		
+		JLabel simulatorLabel = new JLabel("Simulator selection:");
+		simulatorLabel.setBounds(posX, posY+40, 180, 20);
+		panel.add(simulatorLabel);
+		
+		String[] simulatorName = {"Standard token simulator", "Stochastics Simulation Algorithm (SSA)", 
+				"Gillespie SSA (exact version)", "Gillespie SSA (fast version)"};
+		simulatorType = new JComboBox<String>(simulatorName);
+		simulatorType.setBounds(posX, posY+60, 250, 20);
+		simulatorType.setSelectedIndex(0);
+		simulatorType.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+				
+				int selected = simulatorType.getSelectedIndex();
+				if(selected == 0) {
+					overlord.simSettings.setSimulatorType(0);
+				} else if(selected == 1) {
+					overlord.simSettings.setSimulatorType(1);
+				} else {
+					JOptionPane.showMessageDialog(ego, "This feature is not yet implemented.", 
+							"Simulator unavailable", JOptionPane.INFORMATION_MESSAGE);
+				}
+				
+				doNotUpdate = false;
+			}
+		});
+		panel.add(simulatorType);
+		
+		return panel;
+	}
+	
+	/**
 	 * Tworzy panel opcji symulatora standardowego.
+	 * @param x int - pozycja x panelu
+	 * @param y int - pozycja y panelu
+	 * @param width int - szerokość preferowana
+	 * @param height int - wysokość preferowana
 	 * @return JPanel - panel
 	 */
-	private JPanel createStdSimulatorSettingsPanel() {
+	private JPanel createStdSimulatorSettingsPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel(null);
-		panel.setBounds(0, 0, 600, 110);
+		panel.setBounds(x, y, width, height);
 		panel.setBorder(BorderFactory.createTitledBorder("Standard simulator settings"));
 		
 		int posX = 10;
@@ -179,10 +303,12 @@ public class HolmesSimSetup extends JFrame {
 		fiftyModeRadioButton.setActionCommand("0");
 		fiftyModeRadioButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+				
 				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
 				if(aButton.isSelected() == true) {
-					if(doNotUpdate)
-						return;
+					settings.setSingleMode(false);
 					settings.setMaxMode(false);
 				}
 			}
@@ -195,10 +321,12 @@ public class HolmesSimSetup extends JFrame {
 		maxModeRadioButton.setActionCommand("1");
 		maxModeRadioButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+				
 				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
 				if(aButton.isSelected() == true) {
-					if(doNotUpdate)
-						return;
+					settings.setSingleMode(false);
 					settings.setMaxMode(true);
 				}
 			}
@@ -211,10 +339,11 @@ public class HolmesSimSetup extends JFrame {
 		singleModeRadioButton.setActionCommand("2");
 		singleModeRadioButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+				
 				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
 				if(aButton.isSelected() == true) {
-					if(doNotUpdate)
-						return;
 					settings.setSingleMode(true);
 				}
 			}
@@ -222,46 +351,9 @@ public class HolmesSimSetup extends JFrame {
 		subModeModePanel.add(singleModeRadioButton);
 		groupSimMode.add(singleModeRadioButton);
 
-		JLabel simStepsLabel = new JLabel("Steps:");
-		simStepsLabel.setBounds(posX+325, posY, 80, 20);
-		panel.add(simStepsLabel);
-		
-		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(settings.getSimSteps(), 100, 10000000, 100);
-		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
-		simStepsSpinner.setBounds(posX+325, posY+20, 80, 20);
-		simStepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JSpinner spinner = (JSpinner) e.getSource();
-				int value = (int) spinner.getValue();
-				settings.setSimSteps(value);
-			}
-		});
-		panel.add(simStepsSpinner);
-
-		JLabel repetLabel = new JLabel("Repetitions:");
-		repetLabel.setBounds(posX+410, posY, 80, 20);
-		panel.add(repetLabel);
-		
-		SpinnerModel simRepetsSpinnerModel = new SpinnerNumberModel(settings.getRepetitions(), 1, 100000, 10);
-		JSpinner simRepsSpinner = new JSpinner(simRepetsSpinnerModel);
-		simRepsSpinner.setBounds(posX+410, posY+20, 80, 20);
-		simRepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JSpinner spinner = (JSpinner) e.getSource();
-				int value = (int) spinner.getValue();
-				settings.setRepetitions(value);
-			}
-		});
-		panel.add(simRepsSpinner);
 		
 		allowEmptySteps = new JCheckBox("Allow empty steps");
-		allowEmptySteps.setBounds(posX+325, posY+40, 150, 20);
+		allowEmptySteps.setBounds(posX+325, posY, 150, 20);
 		allowEmptySteps.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(doNotUpdate)
@@ -281,20 +373,25 @@ public class HolmesSimSetup extends JFrame {
 	}
 
 	/**
-	 * Tworzy panel opcji symulatora stochastycznego.
+	 * Tworzy panel opcji symulatora Gillespie SSA.
+	 * @param x int - pozycja x panelu
+	 * @param y int - pozycja y panelu
+	 * @param width int - szerokość preferowana
+	 * @param height int - wysokość preferowana
 	 * @return JPanel - panel
 	 */
-	private JPanel createStochasticSimSettingsPanel() {
+	private JPanel createStochasticSimSettingsPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel(null);
-		panel.setBounds(0, 110, 600, 110);
+		panel.setBounds(x, y, width, height);
 		panel.setBorder(BorderFactory.createTitledBorder("Stochastic Simulation Algorithm (SSA) settings"));
 		
 		int posX = 10;
 		int posY = 20;
 		
-		JButton createFRWindowButton = new JButton("<html>Firing rates<br>manager</html>");
-		createFRWindowButton.setIcon(Tools.getResIcon16("/icons/simulation/aaa.png"));
+		JButton createFRWindowButton = new JButton("<html>Fire rate<br>Manager</html>");
+		createFRWindowButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/fireRateIcon.png"));
 		createFRWindowButton.setBounds(posX, posY, 120, 40);
+		createFRWindowButton.setFocusPainted(false);
 		createFRWindowButton.setToolTipText("Loop single transition simulation");
 		createFRWindowButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -319,6 +416,54 @@ public class HolmesSimSetup extends JFrame {
 			}
 		});
 		panel.add(useMassActionKinetics);
+		
+		return panel;
+	}
+	/**
+	 * Tworzy panel opcji symulatora stochastycznego.
+	 * @param x int - pozycja x panelu
+	 * @param y int - pozycja y panelu
+	 * @param width int - szerokość preferowana
+	 * @param height int - wysokość preferowana
+	 * @return JPanel - panel
+	 */
+	private JPanel createGillespieSSASimSettingsPanel(int x, int y, int width, int height) {
+		JPanel panel = new JPanel(null);
+		panel.setBounds(x, y, width, height);
+		panel.setBorder(BorderFactory.createTitledBorder("Gillespie SSA settings"));
+		
+		int posX = 10;
+		int posY = 20;
+		
+		JButton createFRWindowButton = new JButton("<html>Fire rate<br>Manager</html>");
+		createFRWindowButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/fireRateIcon.png"));
+		createFRWindowButton.setBounds(posX, posY, 120, 40);
+		createFRWindowButton.setFocusPainted(false);
+		createFRWindowButton.setToolTipText("Loop single transition simulation");
+		createFRWindowButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				//new HolmesFiringRatesManager(ego);
+				JOptionPane.showMessageDialog(ego, "This feature is not yet implemented.", 
+						"Simulator unavailable", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		panel.add(createFRWindowButton);
+		
+		JButton createCompoundsEditorWindowButton = new JButton("<html>Components<br>&nbsp;&nbsp;Manager&nbsp;</html>");
+		createCompoundsEditorWindowButton.setIcon(Tools.getResIcon16("/icons/componentsManager/compIcon.png"));
+		createCompoundsEditorWindowButton.setMargin(new Insets(0, 0, 0, 0));
+		createCompoundsEditorWindowButton.setFocusPainted(false);
+		createCompoundsEditorWindowButton.setBounds(posX+130, posY, 120, 40);
+		createCompoundsEditorWindowButton.setToolTipText("Loop single transition simulation");
+		createCompoundsEditorWindowButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				//new HolmesComponentsManager(ego);
+				JOptionPane.showMessageDialog(ego, "This feature is not yet implemented.", 
+						"Simulator unavailable", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		panel.add(createCompoundsEditorWindowButton);
+		
 		
 		return panel;
 	}
@@ -354,6 +499,16 @@ public class HolmesSimSetup extends JFrame {
 			useMassActionKinetics.setSelected(true);
 		else
 			useMassActionKinetics.setSelected(false);
+		
+		if(settings.getGeneratorType() == 0)
+			generatorType.setSelectedIndex(0);
+		else
+			generatorType.setSelectedIndex(1);
+		
+		if(settings.getSimulatorType() == 0)
+			simulatorType.setSelectedIndex(0);
+		else
+			simulatorType.setSelectedIndex(1);
 		
 		doNotUpdate = false;
 	}

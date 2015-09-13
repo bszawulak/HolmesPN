@@ -21,5 +21,6 @@ public interface IEngine {
 	public void setMaxMode(boolean value);
 	public void setSingleMode(boolean value);
 	public ArrayList<Transition> getTransLaunchList(boolean emptySteps);
-	public void setGenerator(IRandomGenerator generator);
+	//public void setGenerator(IRandomGenerator generator);
+	public IRandomGenerator getGenerator();
 }

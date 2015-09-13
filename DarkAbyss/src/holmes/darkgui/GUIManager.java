@@ -84,6 +84,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private static final long serialVersionUID = -817072868916096442L;
 	// Static fields.
 	private static GUIManager guiManager;
+	public boolean debug = false;
 	public Random randGen = new Random(System.currentTimeMillis());
 	public GUIOperations io;
 	public TexExporter tex;
@@ -200,12 +201,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createNetPropertiesWindow(); // okno właściwości sieci
 		createSearchWindow(); // okno wyszukiwania elementów sieci
 		createNetTablesWindow(); // okno tabel sieci
-		
 		createInvariantsWindow(); // okno generatora inwariantów
 		
 		settingsManager = new SettingsManager();
 		settingsManager.loadSettings();
-		frame.setTitle("Holmes "+settingsManager.getValue("abyss_version"));
+		frame.setTitle("Holmes "+settingsManager.getValue("holmes_version"));
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnętrzne zmienne programu
 		
 		// Set the frame properties and show it.
@@ -271,7 +271,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		leftTabDock.setSelectedDock(getToolBox());
 
 		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
-		//topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
 		topRightTabDock.setSelectedDock(getPropertiesBox());
 		
 		bottomRightTabDock.addChildDock(getInvariantsBox(), new Position(1));
@@ -292,7 +291,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		SplitDock workspaceSplit = new SplitDock();
 		workspaceSplit.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
-		workspaceSplit.addChildDock(getSelectionBox(), new Position(Position.BOTTOM));
+		if(debug) {
+			workspaceSplit.addChildDock(getSelectionBox(), new Position(Position.BOTTOM));
+		} else {
+			topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
+			topRightTabDock.setSelectedDock(getPropertiesBox());
+		}
 		workspaceSplit.setDividerLocation((int) (screenSize.getHeight() * 7 / 10));
 		leftSplitDock.addChildDock(workspaceSplit, new Position(Position.CENTER));
 		leftSplitDock.setDividerLocation(180);
@@ -537,6 +541,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		//check status of Rscript.exe location:
 		checkRlangStatus(false);
+		
+		if(settingsManager.getValue("programDebugMode").equals("1"))
+			debug = true;
 	}
 
 	/**

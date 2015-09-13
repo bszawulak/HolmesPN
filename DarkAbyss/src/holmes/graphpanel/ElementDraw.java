@@ -42,6 +42,9 @@ public final class ElementDraw {
 
 	}
 	
+	/**
+	 * Matoda ustawia odpowiednie flagi w zależności od ustawień programu.
+	 */
 	private static void checkSettings() {
 		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editor3Dview").equals("1")) {
 			view3d = true;

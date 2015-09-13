@@ -398,7 +398,6 @@ public class HolmesSimKnockVis extends JFrame {
         ValueAxis yAxisPlaces = new NumberAxis("Value");
         CategoryItemRenderer rendererPlaces = new StatisticalBarRenderer();
         CategoryPlot plotPlaces = new CategoryPlot(datasetPlaces, xAxisPlaces, yAxisPlaces, rendererPlaces);
-        
         rendererPlaces.setToolTipGenerator(new CustomToolTipGenerator(true, false, places, transitions, data, null));
         
         placesChartPanel.removeAll();
@@ -1836,9 +1835,9 @@ public class HolmesSimKnockVis extends JFrame {
 	}
 	
 	/**
-	 * Klasa odpowiedzialna za informacje o wskazanym pasku wykresu
+	 * Klasa odpowiedzialna za informacje o wskazanym pasku wykresu.
+	 * 
 	 * @author MR
-	 *
 	 */
 	public class CustomToolTipGenerator implements CategoryToolTipGenerator  {
 		boolean isPlaces = false;

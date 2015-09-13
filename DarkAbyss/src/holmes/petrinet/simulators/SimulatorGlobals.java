@@ -32,6 +32,7 @@ public class SimulatorGlobals {
 
 	public long currentStep = 0;
 	private int simulatorType = 0; // 0 -standard, 1 - SSA, 2 - Gillespie SSA
+	private int generatorType = 0; // 0 - Random (Java), 1 - HighQualityRandomGenerator
 	
 	private boolean ssaMassActionKineticsEnabled = false;
 	
@@ -82,8 +83,8 @@ public class SimulatorGlobals {
 	 */
 	public void setSingleMode(boolean value) {
 		this.singleMode = value;
-		if(value == false)
-			this.maxMode = false;
+		//if(value == false)
+		//	this.maxMode = false;
 		
 		if(singleMode == true)
 			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
@@ -241,6 +242,26 @@ public class SimulatorGlobals {
 	}
 	
 	/**
+	 * Metoda ustawia typ używanego generatora liczb psudolosowych.
+	 * @param type int:<br>
+	 * 		0 - Random (Java)<br>
+	 * 		1 - HiqhQualityRandomGenerator class<br>
+	 */
+	public void setGeneratorType(int type) {
+		this.generatorType = type;
+	}
+	
+	/**
+	 * Zwraca typ używanego generatora liczb psudolosowych.
+	 * @return int - typ symulatora:<br>
+	 * 		0 - Random (Java)<br>
+	 * 		1 - HiqhQualityRandomGenerator class<br>
+	 */
+	public int getGeneratorType() {
+		return this.generatorType;
+	}
+	
+	/**
 	 * Metoda ustawia liczbę przystanków na drodze tokenu (grafika)
 	 * @param value int - nowa wartość, im mniej (min=5), tym szybciej
 	 */
@@ -295,10 +316,18 @@ public class SimulatorGlobals {
 		currentStep = 0;
 	}
 	
+	/**
+	 * Ustawia status flagi mass action kinetics.
+	 * @param value boolean - true, jeśli włączone (symulator SSA)
+	 */
 	public void setSSAmassAction(boolean value) {
 		this.ssaMassActionKineticsEnabled = value;
 	}
 	
+	/**
+	 * Zwraca status flagi mass action kinetics.
+	 *@ return boolean - true, jeśli włączone (symulator SSA)
+	 */
 	public boolean isSSAMassAction() {
 		return this.ssaMassActionKineticsEnabled;
 	}

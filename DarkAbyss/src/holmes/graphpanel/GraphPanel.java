@@ -297,14 +297,9 @@ public class GraphPanel extends JComponent {
 			n.draw(g2d, this.sheetId);	
 		}
 		
-		//ArrayList<Place> places_tmp = petriNet.getPlaces();
-		//ArrayList<Transition> transitions_tmp = petriNet.getTransitions();
-		//ArrayList<MetaNode> metanodes = petriNet.getMetaNodes();
-		
 		ArrayList<ArrayList<Node>> elements = petriNet.getPNelements();
 		
 		for (Node n : getNodes()) {
-			//n.drawName(g2d, this.sheetId,places_tmp, transitions_tmp, metanodes);
 			n.drawName(g2d, this.sheetId, elements.get(0), elements.get(1), elements.get(3));
 		}
 		
@@ -319,9 +314,14 @@ public class GraphPanel extends JComponent {
 			drawnArc.draw(g2d, this.sheetId, getZoom());
 		}
 		
-		debugInfo(g2d);
+		if(overlord.debug)
+			debugInfo(g2d);
 	}
 
+	/**
+	 * W prawym górnym rogu wyświetla informacje o ustawieniach symulatora.
+	 * @param g2d Graphics2D - obiekt rysujący
+	 */
 	private void debugInfo(Graphics2D g2d) {
 		g2d.setColor(Color.BLACK);
 		g2d.setFont(new Font("TimesRoman", Font.BOLD, 15));

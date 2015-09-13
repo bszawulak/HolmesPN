@@ -124,6 +124,11 @@ public class HolmesProgramProperties extends JFrame {
 		//Panel wczytywania sieci
 		panel.add(createSnoopyReadSystemPanel(0, 90, 590, 150));
 		
+		
+		//Panel wczytywania sieci
+		panel.add(createOtherOptionsPanel(0, 240, 590, 200));
+		
+		
 		panel.repaint();
 		return panel;
 	}
@@ -141,17 +146,17 @@ public class HolmesProgramProperties extends JFrame {
 		ioPanel.setBorder(BorderFactory.createTitledBorder("I/O operations"));
 		ioPanel.setBounds(x, y, w, h);
 		
-		int io_x = 10;
-		int io_y = -5;
+		int posX = 10;
+		int posY = 15;
 		noAction = true;
 		
 		JLabel labelIO1 = new JLabel("(Snoopy) Resize net when loaded:");
-		labelIO1.setBounds(io_x, io_y+=20, 200, 20);
+		labelIO1.setBounds(posX, posY, 200, 20);
 		ioPanel.add(labelIO1);
 
 		ButtonGroup group = new ButtonGroup();
 		JRadioButton resize80Button = new JRadioButton("80%");
-		resize80Button.setBounds(io_x, io_y+=20, 60, 20);
+		resize80Button.setBounds(posX, posY+=20, 60, 20);
 		resize80Button.setActionCommand("0");
 		resize80Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -164,7 +169,7 @@ public class HolmesProgramProperties extends JFrame {
 		
 		
 		JRadioButton resize100Button = new JRadioButton("100%");
-		resize100Button.setBounds(io_x+60, io_y, 60, 20);
+		resize100Button.setBounds(posX+60, posY, 60, 20);
 		resize100Button.setActionCommand("1");
 		resize100Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -176,7 +181,7 @@ public class HolmesProgramProperties extends JFrame {
 		ioPanel.add(resize100Button);
 		
 		JRadioButton resize120Button = new JRadioButton("120%");
-		resize120Button.setBounds(io_x+120, io_y, 60, 20);
+		resize120Button.setBounds(posX+120, posY, 60, 20);
 		resize120Button.setActionCommand("2");
 		resize120Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -188,7 +193,7 @@ public class HolmesProgramProperties extends JFrame {
 		ioPanel.add(resize120Button);
 		
 		JRadioButton resize140Button = new JRadioButton("140%");
-		resize140Button.setBounds(io_x, io_y+=20, 60, 20);
+		resize140Button.setBounds(posX, posY+=20, 60, 20);
 		resize140Button.setActionCommand("3");
 		resize140Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -200,7 +205,7 @@ public class HolmesProgramProperties extends JFrame {
 		ioPanel.add(resize140Button);
 		
 		JRadioButton resize160Button = new JRadioButton("160%");
-		resize160Button.setBounds(io_x+60, io_y, 60, 20);
+		resize160Button.setBounds(posX+60, posY, 60, 20);
 		resize160Button.setActionCommand("4");
 		resize160Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -212,7 +217,7 @@ public class HolmesProgramProperties extends JFrame {
 		ioPanel.add(resize160Button);
 		
 		JRadioButton resize180Button = new JRadioButton("180%");
-		resize180Button.setBounds(io_x+120, io_y, 60, 20);
+		resize180Button.setBounds(posX+120, posY, 60, 20);
 		resize180Button.setActionCommand("5");
 		resize180Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -231,26 +236,54 @@ public class HolmesProgramProperties extends JFrame {
 		else if(netExtFactorValue.equals("180")) group.setSelected(resize180Button.getModel(), true);
 		else group.setSelected(resize100Button.getModel(), true);
 		
-		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard("(Snoopy) Align to grid when saved", io_x+200, io_y-20, 240, 20, 
+		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard("(Snoopy) Align to grid when saved", posX+200, posY-20, 240, 20, 
 				"editorGridAlignWhenSaved");
 		ioPanel.add(alignGridWhenSavedCheckBox);
 		
-		JCheckBox useOffsetsCheckBox = checkboxWizard("(Snoopy) Use Snoopy offsets for names", io_x+200, io_y, 260, 20, 
+		JCheckBox useOffsetsCheckBox = checkboxWizard("(Snoopy) Use Snoopy offsets for names", posX+200, posY, 260, 20, 
 				"editorUseSnoopyOffsets");
 		ioPanel.add(useOffsetsCheckBox);
 		
-		JCheckBox useOldLoaderCheckBox = checkboxWizard("(UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)", io_x, io_y+=20, 400, 20, 
+		JCheckBox useOldLoaderCheckBox = checkboxWizard("(UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)", posX, posY+=20, 400, 20, 
 				"programUseOldSnoopyLoaders");
 		ioPanel.add(useOldLoaderCheckBox);
 
-		JCheckBox simpleEditorCheckBox = checkboxWizard("Simple editor", io_x, io_y+=20, 300, 20, 
+		JCheckBox simpleEditorCheckBox = checkboxWizard("Simple editor", posX, posY+=20, 300, 20, 
 				"programUseSimpleEditor");
 		ioPanel.add(simpleEditorCheckBox);
 		
 		noAction = false;
 		return ioPanel;
 	}
-
+	
+	//
+	/**
+	 * Metoda tworząca podpanel innych opcji.
+	 * @param x int - współrzędna X
+	 * @param y int - współrzedna Y
+	 * @param w int - szerokość
+	 * @param h int - wysokość
+	 * @return JPanel - panel
+	 */
+	private JPanel createOtherOptionsPanel(int x, int y, int w, int h) {
+		JPanel ioPanel = new JPanel(null);
+		ioPanel.setBorder(BorderFactory.createTitledBorder("Other options"));
+		ioPanel.setBounds(x, y, w, h);
+		
+		int posX = 10;
+		int posY = 20;
+		noAction = true;
+		
+		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard("Debug mode", posX, posY, 240, 20, 
+				"programDebugMode");
+		ioPanel.add(alignGridWhenSavedCheckBox);
+		
+		
+		
+		noAction = false;
+		return ioPanel;
+	}
+	
 	/**
 	 * Metoda tworząca podpanel opcji środowiska R.
 	 * @param x int - współrzędna X
@@ -337,18 +370,18 @@ public class HolmesProgramProperties extends JFrame {
 		panel.setBorder(BorderFactory.createTitledBorder("Graphical settings"));
 		panel.setBounds(x, y, w, h);
 		
-		int io_x = 10;
-		int io_y = -5;
+		int posX = 10;
+		int posY = 15;
 		noAction = true;
 		
 		// ARC SIZE:
 		JLabel labelIO1 = new JLabel("Default arc thickness:");
-		labelIO1.setBounds(io_x, io_y+=20, 200, 20);
+		labelIO1.setBounds(posX, posY, 200, 20);
 		panel.add(labelIO1);
 
 		ButtonGroup group = new ButtonGroup();
 		JRadioButton size1Button = new JRadioButton("1");
-		size1Button.setBounds(io_x, io_y+=20, 40, 20);
+		size1Button.setBounds(posX, posY+20, 40, 20);
 		size1Button.setActionCommand("0");
 		size1Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -361,7 +394,7 @@ public class HolmesProgramProperties extends JFrame {
 		panel.add(size1Button);
 
 		JRadioButton size2Button = new JRadioButton("2");
-		size2Button.setBounds(io_x+40, io_y, 40, 20);
+		size2Button.setBounds(posX+40, posY+20, 40, 20);
 		size2Button.setActionCommand("1");
 		size2Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -374,7 +407,7 @@ public class HolmesProgramProperties extends JFrame {
 		panel.add(size2Button);
 
 		JRadioButton size3Button = new JRadioButton("3");
-		size3Button.setBounds(io_x+80, io_y, 40, 20);
+		size3Button.setBounds(posX+80, posY+20, 40, 20);
 		size3Button.setActionCommand("2");
 		size3Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -393,12 +426,20 @@ public class HolmesProgramProperties extends JFrame {
 
 		//FONT SIZE:
 		JLabel labelFontSize = new JLabel("Font size:");
-		labelFontSize.setBounds(io_x+150, io_y-20, 200, 20);
+		labelFontSize.setBounds(posX+150, posY, 200, 20);
 		panel.add(labelFontSize);
+		
+		JCheckBox boldCheckBox = checkboxWizard("Bold", posX+210, posY, 60, 20, "editorGraphFontBold");
+		panel.add(boldCheckBox);
+		
+		JCheckBox mctNameCheckBox = checkboxWizard("MCT names", posX+270, posY, 110, 20, "mctNameShow");
+		panel.add(mctNameCheckBox);
+		
+		
 		SpinnerModel fontSizeSpinnerModel = new SpinnerNumberModel(
 				Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontSize")), 7, 16, 1);
 		JSpinner fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
-		fontSizeSpinner.setBounds(io_x+150, io_y, 80, 20);
+		fontSizeSpinner.setBounds(posX+150, posY+=20, 80, 20);
 		fontSizeSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if(noAction) return;
@@ -412,19 +453,15 @@ public class HolmesProgramProperties extends JFrame {
 		panel.add(fontSizeSpinner);
 		
 		
-		JCheckBox boldCheckBox = checkboxWizard("Bold", io_x+210, io_y-20, 60, 20, "editorGraphFontBold");
-		panel.add(boldCheckBox);
 		
-		JCheckBox mctNameCheckBox = checkboxWizard("MCT names", io_x+270, io_y-20, 110, 20, "mctNameShow");
-		panel.add(mctNameCheckBox);
 		
-		JCheckBox useShortNamesCheckBox = checkboxWizard("(Editor) Show short default names only", io_x, io_y+=20, 260, 20, "editorShowShortNames");
+		JCheckBox useShortNamesCheckBox = checkboxWizard("(Editor) Show short default names only", posX, posY+=20, 260, 20, "editorShowShortNames");
 		panel.add(useShortNamesCheckBox);
 	
-		JCheckBox view3dCheckBox = checkboxWizard("(Editor) Petri net elements 3d view", io_x, io_y+=20, 260, 20, "editor3Dview");
+		JCheckBox view3dCheckBox = checkboxWizard("(Editor) Petri net elements 3d view", posX, posY+=20, 260, 20, "editor3Dview");
 		panel.add(view3dCheckBox);
 		
-		JCheckBox snoopyStyleCheckBox = checkboxWizard("(Editor) Show Snoopy-styled graphics", io_x, io_y+=20, 260, 20, "editorSnoopyStyleGraphic");
+		JCheckBox snoopyStyleCheckBox = checkboxWizard("(Editor) Show Snoopy-styled graphics", posX, posY+=20, 260, 20, "editorSnoopyStyleGraphic");
 		panel.add(snoopyStyleCheckBox);
 		
 		//checkAndFix(settingsNew, "editorSnoopyStyleGraphic", "0");
@@ -446,12 +483,12 @@ public class HolmesProgramProperties extends JFrame {
 		panel.setBorder(BorderFactory.createTitledBorder("General settings"));
 		panel.setBounds(x, y, w, h);
 		
-		int io_x = 10;
-		int io_y = -5;
+		int posX = 10;
+		int posY = 15;
 		noAction = true;
 		
 		JCheckBox snoopyCompatibilityCheckBox = new JCheckBox("(Snoopy/Holmes) Allow only Snoopy-compatible options", true);
-		snoopyCompatibilityCheckBox.setBounds(io_x, io_y+=20, 350, 20);
+		snoopyCompatibilityCheckBox.setBounds(posX, posY, 350, 20);
 		snoopyCompatibilityCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction == true) return;
@@ -471,7 +508,7 @@ public class HolmesProgramProperties extends JFrame {
 			snoopyCompatibilityCheckBox.setSelected(false);
 		panel.add(snoopyCompatibilityCheckBox);
 		
-		JCheckBox subnetCompressionCheckBox = checkboxWizard("Use meta-arcs compression for metanodes", io_x, io_y+=20, 350, 20, 
+		JCheckBox subnetCompressionCheckBox = checkboxWizard("Use meta-arcs compression for metanodes", posX, posY, 350, 20, 
 				"editorSubnetCompressMode");
 		panel.add(subnetCompressionCheckBox);
 		
@@ -511,20 +548,20 @@ public class HolmesProgramProperties extends JFrame {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Simulator engine options"));
 		panel.setBounds(x, y, w, h);
-		int io_x = 10;
-		int io_y = -5;
+		int posX = 10;
+		int posY = 15;
 		noAction = true;
 
 		JCheckBox readArcReservCheckBox = checkboxWizard("Transitions reserve tokens in place via read-arcs", 
-				io_x, io_y+=20, 360, 20, "simTransReadArcTokenReserv");
+				posX, posY, 360, 20, "simTransReadArcTokenReserv");
 		panel.add(readArcReservCheckBox);
 		
 		JCheckBox singleMaxModeCheckBox = checkboxWizard("Single-maximum mode (single-50/50 when unchecked)", 
-				io_x, io_y+=20, 360, 20, "simSingleMode");
+				posX, posY+=20, 360, 20, "simSingleMode");
 		panel.add(singleMaxModeCheckBox);
 		
 		JCheckBox placesColorsCheckBox = checkboxWizard("Places change colors during simulation", 
-				io_x, io_y+=20, 360, 20, "simPlacesColors");
+				posX, posY+=20, 360, 20, "simPlacesColors");
 		panel.add(placesColorsCheckBox);
 		
 		noAction = false;

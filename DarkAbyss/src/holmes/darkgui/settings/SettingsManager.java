@@ -96,7 +96,7 @@ public class SettingsManager {
 		//checkAndFix(settingsNew, "abyss_version", "1.30 release 30-3-2015");
 		//settingsNew.add(new Setting("abyss_version", "1.31 release 7-4-2015")); 
 		//settingsNew.add(new Setting("abyss_version", "1.37 release 19-4-2015")); //always add new
-		settingsNew.add(new Setting("abyss_version", "2.0 (internal: 1.80 release)"));
+		settingsNew.add(new Setting("holmes_version", "2.0"));
 		
 		checkAndFix(settingsNew, "r_path", "c://Program Files//R//R-3.1.2//bin//Rscript.exe");
 		checkAndFix(settingsNew, "r_path64","c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
@@ -116,6 +116,7 @@ public class SettingsManager {
 			checkAndFix(settingsNew, "programSnoopyLoaderNetExtFactor", "100");
 		} catch (Exception e) { settingsNew.add(new Setting("programSnoopyLoaderNetExtFactor", "100")); }
 		checkAndFix(settingsNew, "programUseSimpleEditor", "0");
+		checkAndFix(settingsNew, "programDebugMode", "0");
 		
 		//edytor:
 		checkAndFix(settingsNew, "editorGridLines", "1");
@@ -205,6 +206,9 @@ public class SettingsManager {
 				currentLine = scanner.nextLine();
 				settings.add(convertLineToSetting(currentLine));
 			}
+			
+			checkAndRestoreSetting();
+			
 			GUIManager.getDefaultGUIManager().log("Settings file read:","text", true);
 			for(Setting s : settings) {
 				GUIManager.getDefaultGUIManager().logNoEnter("ID: " , "bold", false);
@@ -212,13 +216,6 @@ public class SettingsManager {
 				GUIManager.getDefaultGUIManager().logNoEnter(" VALUE: " , "bold", false);
 				GUIManager.getDefaultGUIManager().log(s.getValue(), "italic", false);
 			}
-			
-			checkAndRestoreSetting();
-			
-			//boolean status = checkCriticalSetting();
-			//if(!status) {
-			//	throw new IOException();
-			//}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
 				"The file \"abyss\".cfg, which normally contains the settings for this application,\n"
@@ -233,7 +230,6 @@ public class SettingsManager {
 			
 			checkAndRestoreSetting();
 			writeSettingsFile();
-			//readSettingsFile(true);
 		}
 	}
 
