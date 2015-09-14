@@ -237,19 +237,19 @@ public class HolmesProgramProperties extends JFrame {
 		else group.setSelected(resize100Button.getModel(), true);
 		
 		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard("(Snoopy) Align to grid when saved", posX+200, posY-20, 240, 20, 
-				"editorGridAlignWhenSaved");
+				"editorGridAlignWhenSaved", true);
 		ioPanel.add(alignGridWhenSavedCheckBox);
 		
 		JCheckBox useOffsetsCheckBox = checkboxWizard("(Snoopy) Use Snoopy offsets for names", posX+200, posY, 260, 20, 
-				"editorUseSnoopyOffsets");
+				"editorUseSnoopyOffsets", true);
 		ioPanel.add(useOffsetsCheckBox);
 		
 		JCheckBox useOldLoaderCheckBox = checkboxWizard("(UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)", posX, posY+=20, 400, 20, 
-				"programUseOldSnoopyLoaders");
+				"programUseOldSnoopyLoaders", true);
 		ioPanel.add(useOldLoaderCheckBox);
 
 		JCheckBox simpleEditorCheckBox = checkboxWizard("Simple editor", posX, posY+=20, 300, 20, 
-				"programUseSimpleEditor");
+				"programUseSimpleEditor", true);
 		ioPanel.add(simpleEditorCheckBox);
 		
 		noAction = false;
@@ -275,7 +275,7 @@ public class HolmesProgramProperties extends JFrame {
 		noAction = true;
 		
 		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard("Debug mode", posX, posY, 240, 20, 
-				"programDebugMode");
+				"programDebugMode", true);
 		ioPanel.add(alignGridWhenSavedCheckBox);
 		
 		
@@ -329,7 +329,7 @@ public class HolmesProgramProperties extends JFrame {
 		});
 		rOptionsPanel.add(rSetPath);
 		
-		JCheckBox forceRcheckBox = checkboxWizard("Force R localization on startup", 140, 60, 210, 20, "programAskForRonStartup");
+		JCheckBox forceRcheckBox = checkboxWizard("Force R localization on startup", 140, 60, 210, 20, "programAskForRonStartup", true);
 		rOptionsPanel.add(forceRcheckBox);
 		
 		return rOptionsPanel;
@@ -429,10 +429,10 @@ public class HolmesProgramProperties extends JFrame {
 		labelFontSize.setBounds(posX+150, posY, 200, 20);
 		panel.add(labelFontSize);
 		
-		JCheckBox boldCheckBox = checkboxWizard("Bold", posX+210, posY, 60, 20, "editorGraphFontBold");
+		JCheckBox boldCheckBox = checkboxWizard("Bold", posX+210, posY, 60, 20, "editorGraphFontBold", true);
 		panel.add(boldCheckBox);
 		
-		JCheckBox mctNameCheckBox = checkboxWizard("MCT names", posX+270, posY, 110, 20, "mctNameShow");
+		JCheckBox mctNameCheckBox = checkboxWizard("MCT names", posX+270, posY, 110, 20, "mctNameShow", true);
 		panel.add(mctNameCheckBox);
 		
 		
@@ -455,13 +455,13 @@ public class HolmesProgramProperties extends JFrame {
 		
 		
 		
-		JCheckBox useShortNamesCheckBox = checkboxWizard("(Editor) Show short default names only", posX, posY+=20, 260, 20, "editorShowShortNames");
+		JCheckBox useShortNamesCheckBox = checkboxWizard("(Editor) Show short default names only", posX, posY+=20, 260, 20, "editorShowShortNames", true);
 		panel.add(useShortNamesCheckBox);
 	
-		JCheckBox view3dCheckBox = checkboxWizard("(Editor) Petri net elements 3d view", posX, posY+=20, 260, 20, "editor3Dview");
+		JCheckBox view3dCheckBox = checkboxWizard("(Editor) Petri net elements 3d view", posX, posY+=20, 260, 20, "editor3Dview", true);
 		panel.add(view3dCheckBox);
 		
-		JCheckBox snoopyStyleCheckBox = checkboxWizard("(Editor) Show Snoopy-styled graphics", posX, posY+=20, 260, 20, "editorSnoopyStyleGraphic");
+		JCheckBox snoopyStyleCheckBox = checkboxWizard("(Editor) Show Snoopy-styled graphics", posX, posY+=20, 260, 20, "editorSnoopyStyleGraphic", true);
 		panel.add(snoopyStyleCheckBox);
 		
 		//checkAndFix(settingsNew, "editorSnoopyStyleGraphic", "0");
@@ -509,7 +509,7 @@ public class HolmesProgramProperties extends JFrame {
 		panel.add(snoopyCompatibilityCheckBox);
 		
 		JCheckBox subnetCompressionCheckBox = checkboxWizard("Use meta-arcs compression for metanodes", posX, posY, 350, 20, 
-				"editorSubnetCompressMode");
+				"editorSubnetCompressMode", true);
 		panel.add(subnetCompressionCheckBox);
 		
 		noAction = false;
@@ -553,15 +553,15 @@ public class HolmesProgramProperties extends JFrame {
 		noAction = true;
 
 		JCheckBox readArcReservCheckBox = checkboxWizard("Transitions reserve tokens in place via read-arcs", 
-				posX, posY, 360, 20, "simTransReadArcTokenReserv");
+				posX, posY, 360, 20, "simTransReadArcTokenReserv", true);
 		panel.add(readArcReservCheckBox);
 		
 		JCheckBox singleMaxModeCheckBox = checkboxWizard("Single-maximum mode (single-50/50 when unchecked)", 
-				posX, posY+=20, 360, 20, "simSingleMode");
+				posX, posY+=20, 360, 20, "simSingleMode", true);
 		panel.add(singleMaxModeCheckBox);
 		
 		JCheckBox placesColorsCheckBox = checkboxWizard("Places change colors during simulation", 
-				posX, posY+=20, 360, 20, "simPlacesColors");
+				posX, posY+=20, 360, 20, "simPlacesColors", true);
 		panel.add(placesColorsCheckBox);
 		
 		noAction = false;
@@ -683,12 +683,12 @@ public class HolmesProgramProperties extends JFrame {
 		noAction = true;
 
 		JCheckBox binaryTinvCheckBox = checkboxWizard("Save t-invariants in CSV as binary vectors.", io_x, io_y, 360, 20, 
-				"analysisBinaryCSVInvariants");
+				"analysisBinaryCSVInvariants", false);
 		panel.add(binaryTinvCheckBox);
 		
 		// Self-propelled read-arc regions ignored or not in feasible invariants algorith
 		JCheckBox feasInvSelfPropCheckBox = checkboxWizard("Allow presence of self-propelled readarc regions", io_x, io_y+=20, 360, 20, 
-				"analysisFeasibleSelfPropAccepted");
+				"analysisFeasibleSelfPropAccepted", true);
 		panel.add(feasInvSelfPropCheckBox);
 		
 		noAction = false;
@@ -736,7 +736,7 @@ public class HolmesProgramProperties extends JFrame {
 		noAction = true;
 		
 		JCheckBox cleanMCSusingStructureCheckBox = checkboxWizard("Eliminate MCS sets non directly connected with objR transition.", 
-				io_x, io_y, 400, 20, "analysisMCSReduction");
+				io_x, io_y, 400, 20, "analysisMCSReduction", true);
 		panel.add(cleanMCSusingStructureCheckBox);
 		
 		
@@ -776,29 +776,32 @@ public class HolmesProgramProperties extends JFrame {
 	 * @param width int - szerokość
 	 * @param height int - wysokość
 	 * @param propName String - nazwa właściwości
+	 * @param autosave boolean - true, jeśli zmiana ma być zapisywana do pliku config
 	 * @return JCheckBox - obiekt
 	 */
-	private JCheckBox checkboxWizard(String checkBName, int xPos, int yPos, int width, int height, String propName) {
+	private JCheckBox checkboxWizard(String checkBName, int xPos, int yPos, int width, int height, String propName, boolean autosave) {
 		JCheckBox view3dCheckBox = new JCheckBox(checkBName, true);
 		view3dCheckBox.setBounds(xPos, yPos, width, height);
 		view3dCheckBox.addActionListener(new ActionListener() {
 			private String propName = "";
+			private boolean autoSave;
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(noAction == true) return;
 				
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue(propName, "1", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue(propName, "1", autoSave);
 				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue(propName, "0", true);
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue(propName, "0", autoSave);
 				}
 				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 			}
-			private ActionListener yesWeCan(String name) {
-				propName = name;
+			private ActionListener yesWeCan(String name, boolean autosave) {
+				this.propName = name;
+				this.autoSave = autosave;
 		        return this;
 		    }
-		}.yesWeCan(propName)); 
+		}.yesWeCan(propName, autosave)); 
 		
 		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue(propName).equals("1")) 
 			view3dCheckBox.setSelected(true);

@@ -1302,7 +1302,12 @@ public class IOprotocols {
 			pw.print("\r\n");
 
 			//TODO:
-			boolean crazyMode = overlord.accessClusterWindow().crazyMode;
+			
+			boolean crazyMode = false;
+			if(overlord.getSettingsManager().getValue("analysisBinaryCSVInvariants").equals("1")) {
+				crazyMode = true;
+			}
+
 			if(crazyMode) {
 				for (int i = 0; i < invariants.size(); i++) { //po wszystkich inwariantach
 					pw.print(i+1);

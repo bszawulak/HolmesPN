@@ -24,13 +24,11 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -84,13 +82,6 @@ public class HolmesClusters extends JFrame {
     private ClusteringInfoMatrix dataTableCase56 = null;
     private String pathCSVfile = "";
     private String pathClustersDir = "";
-
-  
-    
-    /**
-     * Jeśli true - zapis inwariantów do pliku csv w postaci binarnej
-     */
-    public boolean crazyMode = false;
     
     /**
      * Konstruktor domyślny obiektu okna klasy HolmesClusters. Tworzy wszystkie elementy okna
@@ -271,21 +262,7 @@ public class HolmesClusters extends JFrame {
         excelExport.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(excelExport);
         textPanel.add(Box.createVerticalStrut(7));
-        
-        JCheckBox maximumMode = new JCheckBox("Binary inv.");
-		maximumMode.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					crazyMode = true;
-				} else {
-					crazyMode = false;
-				}
-			}
-		});
-		maximumMode.setAlignmentX(Component.CENTER_ALIGNMENT);
-		textPanel.add(maximumMode);
-        
+
 		return textPanel;
 	}
 	
