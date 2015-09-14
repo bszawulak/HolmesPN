@@ -383,7 +383,7 @@ public class HolmesSimSetup extends JFrame {
 	private JPanel createStochasticSimSettingsPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(x, y, width, height);
-		panel.setBorder(BorderFactory.createTitledBorder("Stochastic Simulation Algorithm (SSA) settings"));
+		panel.setBorder(BorderFactory.createTitledBorder("Stochastic simulation settings for SPN"));
 		
 		int posX = 10;
 		int posY = 20;

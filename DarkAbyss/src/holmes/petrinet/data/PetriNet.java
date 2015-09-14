@@ -53,8 +53,11 @@ import org.simpleframework.xml.Root;
  */
 public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
-	private ArrayList<ArrayList<Integer>> invariantsMatrix; //macierz inwariantów
-	private ArrayList<String> invariantsDescriptions;
+	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //macierz inwariantów
+	private ArrayList<String> t_invariantsDescriptions;
+	private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //macierz inwariantów
+	private ArrayList<String> p_invariantsDescriptions;
+	
 	private ArrayList<ArrayList<Transition>> mctData;
 	private ArrayList<Integer> transitionMCTnumber;
 	private ArrayList<String> mctNames;
@@ -460,21 +463,21 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda ustawia nową macierz inwariantów sieci.
-	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * Metoda ustawia nową macierz t-inwariantów sieci.
+	 * @param t_invariants ArrayList[ArrayList[Integer]] - macierz t-inwariantów
 	 * @param generateMCT boolean - true, jeśli mają być wygenerowane zbiory MCT 
 	 */
-	public void setINVmatrix(ArrayList<ArrayList<Integer>> invariants, boolean generateMCT) {
-		this.invariantsMatrix = invariants;
-		this.invariantsDescriptions = null;
+	public void setT_InvMatrix(ArrayList<ArrayList<Integer>> t_invariants, boolean generateMCT) {
+		this.t_invariantsMatrix = t_invariants;
+		this.t_invariantsDescriptions = null;
 		
-		if(invariants == null)
+		if(t_invariants == null)
 			return;
 		else 
-			this.invariantsDescriptions = new ArrayList<String>();
+			this.t_invariantsDescriptions = new ArrayList<String>();
 		
-		for(int i=0; i<invariantsMatrix.size(); i++) {
-			invariantsDescriptions.add("Default description of invariant #"+(i+1));
+		for(int i=0; i<t_invariantsMatrix.size(); i++) {
+			t_invariantsDescriptions.add("Default description of t-invariant #"+(i+1));
 		}
 		
 		if(generateMCT) {
@@ -486,45 +489,105 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda ustawia nowy wektor opisów dla inwariantów.
-	 * @param namesVector ArrayList[String] - nazwy inwariantów
+	 * Metoda ustawia nową macierz p-inwariantów sieci.
+	 * @param p_invariants ArrayList[ArrayList[Integer]] - macierz p-inwariantów
 	 */
-	public void setINVdescriptions(ArrayList<String> namesVector) {
-		if(invariantsMatrix == null)
+	public void setP_InvMatrix(ArrayList<ArrayList<Integer>> p_invariants) {
+		this.p_invariantsMatrix = p_invariants;
+		this.p_invariantsDescriptions = null;
+		
+		if(p_invariants == null)
 			return;
-		if(namesVector.size() == invariantsMatrix.size())
-			this.invariantsDescriptions = namesVector;
+		else 
+			this.p_invariantsDescriptions = new ArrayList<String>();
+		
+		for(int i=0; i<p_invariantsMatrix.size(); i++) {
+			p_invariantsDescriptions.add("Default description of p-invariant #"+(i+1));
+		}
 	}
 	
 	/**
-	 * Zwraca opis inwariantu o podanym numerze.
-	 * @param index int - nr inwariantu, od zera
-	 * @return String - nazwa inwariantu
+	 * Metoda ustawia nowy wektor opisów dla t-inwariantów.
+	 * @param namesVector ArrayList[String] - nazwy inwariantów
 	 */
-	public String getINVdescription(int index) {
-		if(invariantsMatrix == null)
+	public void setT_InvDescriptions(ArrayList<String> namesVector) {
+		if(t_invariantsMatrix == null)
+			return;
+		if(namesVector.size() == t_invariantsMatrix.size())
+			this.t_invariantsDescriptions = namesVector;
+	}
+	
+	/**
+	 * Metoda ustawia nowy wektor opisów dla p-inwariantów.
+	 * @param namesVector ArrayList[String] - nazwy p-inwariantów
+	 */
+	public void setP_InvDescriptions(ArrayList<String> namesVector) {
+		if(p_invariantsMatrix == null)
+			return;
+		if(namesVector.size() == p_invariantsMatrix.size())
+			this.p_invariantsDescriptions = namesVector;
+	}
+	
+	/**
+	 * Zwraca opis t-inwariantu o podanym numerze.
+	 * @param index int - nr t-inwariantu, od zera
+	 * @return String - nazwa t-inwariantu
+	 */
+	public String getT_InvDescription(int index) {
+		if(t_invariantsMatrix == null)
 			return "";
 		
-		if(index < invariantsDescriptions.size() && index >= 0)
-			return this.invariantsDescriptions.get(index);
+		if(index < t_invariantsDescriptions.size() && index >= 0)
+			return this.t_invariantsDescriptions.get(index);
+		else
+			return "";
+	}
+	
+	/**
+	 * Zwraca opis p-inwariantu o podanym numerze.
+	 * @param index int - nr p-inwariantu, od zera
+	 * @return String - nazwa p-inwariantu
+	 */
+	public String getP_InvDescription(int index) {
+		if(p_invariantsMatrix == null)
+			return "";
+		
+		if(index < p_invariantsDescriptions.size() && index >= 0)
+			return this.p_invariantsDescriptions.get(index);
 		else
 			return "";
 	}
 
 	/**
-	 * Metoda zwraca macierz inwariantów sieci.
-	 * @return ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * Metoda zwraca macierz t-inwariantów sieci.
+	 * @return ArrayList[ArrayList[Integer]] - macierz t-inwariantów
 	 */
-	public ArrayList<ArrayList<Integer>> getINVmatrix() {
-		return invariantsMatrix;
+	public ArrayList<ArrayList<Integer>> getT_InvMatrix() {
+		return t_invariantsMatrix;
 	}
 	
 	/**
-	 * Metoda pozwala na dostęp do wektora nazw inwariantów.
-	 * @return ArrayList[String] - nazwy inwariantów
+	 * Metoda zwraca macierz p-inwariantów sieci.
+	 * @return ArrayList[ArrayList[Integer]] - macierz p-inwariantów
 	 */
-	public ArrayList<String> accessINVdescriptions() {
-		return invariantsDescriptions;
+	public ArrayList<ArrayList<Integer>> getP_InvMatrix() {
+		return p_invariantsMatrix;
+	}
+	
+	/**
+	 * Metoda pozwala na dostęp do wektora nazw t-inwariantów.
+	 * @return ArrayList[String] - nazwy t-inwariantów
+	 */
+	public ArrayList<String> accessT_InvDescriptions() {
+		return t_invariantsDescriptions;
+	}
+	
+	/**
+	 * Metoda pozwala na dostęp do wektora nazw p-inwariantów.
+	 * @return ArrayList[String] - nazwy p-inwariantów
+	 */
+	public ArrayList<String> accessP_InvDescriptions() {
+		return p_invariantsDescriptions;
 	}
 	
 	/**
@@ -1016,8 +1079,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToCSV(String path, boolean silence) {
 		int result = -1;
 		try {
-			if (getINVmatrix() != null) {
-				communicationProtocol.writeInvToCSV(path, getINVmatrix(), getTransitions());
+			if (getT_InvMatrix() != null) {
+				communicationProtocol.writeInvToCSV(path, getT_InvMatrix(), getTransitions());
 				//GUIManager.getDefaultGUIManager().log("Invariants saved as CSV file.","text", true);
 				if(!silence)
 					JOptionPane.showMessageDialog(null,  "Invariants saved to file:\n"+path,
@@ -1046,8 +1109,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToInaFormat(String path) {
 		int result = -1;
 		try {
-			if (getINVmatrix() != null) {
-				communicationProtocol.writeINV(path, getINVmatrix(), getTransitions());
+			if (getT_InvMatrix() != null) {
+				communicationProtocol.writeINV(path, getT_InvMatrix(), getTransitions());
 				JOptionPane.showMessageDialog(null,
 						"Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
@@ -1075,8 +1138,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int saveInvariantsToCharlie(String path) {
 		int result = -1;
 		try {
-			if (getINVmatrix() != null) {
-				communicationProtocol.writeCharlieInv(path, getINVmatrix(), getTransitions());
+			if (getT_InvMatrix() != null) {
+				communicationProtocol.writeCharlieInv(path, getT_InvMatrix(), getTransitions());
 				JOptionPane.showMessageDialog(null, "Invariants saved to file:\n"+path,
 						"Success",JOptionPane.INFORMATION_MESSAGE);
 				overlord.log("Invariants saved in Charlie file format.","text", true);
@@ -1095,18 +1158,28 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda wczytująca plik inwariantów z pliku .inv (format INA)
-	 * @param sciezka String - ścieżka do pliku INA
+	 * Metoda wczytująca plik inwariantów z pliku .inv (format INA) i zastępująca aktualnie
+	 * wynegerowane w programie inwarianty jego zawartością (o ile został poprawnie wczytany).
+	 * @param path String - ścieżka do pliku INA
+	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
-	public boolean loadInvariantsFromFile(String sciezka) {
+	public boolean loadTPinvariantsFromFile(String path, boolean t_inv) {
 		try {
-			boolean status = communicationProtocol.readINV(sciezka);
-			if(status == false)
-				return false;
+			if(t_inv) {
+				boolean status = communicationProtocol.readT_invariants(path);
+				if(status == false)
+					return false;
+				setT_InvMatrix(communicationProtocol.getInvariantsList(), true);
+				overlord.reset.setT_invariantsStatus(true); //status t-inwariantów: wczytane
+			} else {
+				boolean status = communicationProtocol.readP_invariants(path);
+				if(status == false)
+					return false;
+				setP_InvMatrix(communicationProtocol.getInvariantsList());
+				overlord.reset.setP_invariantsStatus(true); //status p-inwariantów: wczytane
+			}
 			
-			setINVmatrix(communicationProtocol.getInvariantsList(), true);
-			overlord.reset.setInvariantsStatus(true); //status inwariantów: wczytane
 			return true;
 		} catch (Exception e) {
 			overlord.log("Invariants reading and/or adding to program failed.", "error", true);

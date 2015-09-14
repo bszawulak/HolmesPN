@@ -484,6 +484,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		File checkFileINA0 = new File(toolPath);
 		File checkFileINA1 = new File(toolPath+"//INAwin32.exe");
 		File checkFileINA2 = new File(toolPath+"//COMMAND.ina");
+		File checkFileINA2p = new File(toolPath+"//COMMANDp.ina");
 		File checkFileINA3 = new File(toolPath+"//ina.bat");
 		if (!checkFileINA0.exists() || !checkFileINA1.exists() 
 				|| !checkFileINA2.exists() || !(checkFileINA2.length() == 80)
@@ -509,7 +510,23 @@ public class GUIManager extends JPanel implements ComponentListener {
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null, "Unable to recreate COMMAND.ina.","Error - COMMAND.ina", JOptionPane.ERROR_MESSAGE);
 					inaReady = false;
-					log("Unable to recreate COMMAND.ina. Invariants generator will work in manual mode only.", "warning", true);
+					log("Unable to recreate COMMAND.ina. Invariants generator will work in Holmes mode only.", "warning", true);
+				}
+			} 
+			
+			if(!checkFileINA2p.exists() || !(checkFileINA2p.length() == 77)) { //COMMANDp.ina  //p-inv
+				try {
+					PrintWriter pw = new PrintWriter(checkFileINA2.getPath());
+					pw.print(settingsManager.getValue("ina_COMMAND1")+"\r");
+					pw.print(settingsManager.getValue("ina_COMMAND2p")+"\r");
+					pw.print(settingsManager.getValue("ina_COMMAND4"));
+					pw.close();
+					logNoEnter("File COMMANDp.ina does not exist or is corrupted. ", "warning", true);
+					log("Fixed", "italic", false);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "Unable to recreate COMMANDp.ina.","Error - COMMANDp.ina", JOptionPane.ERROR_MESSAGE);
+					inaReady = false;
+					log("Unable to recreate COMMANDp.ina. Invariants generator will work in Holmes mode only.", "warning", true);
 				}
 			} 
 			

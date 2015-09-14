@@ -557,7 +557,7 @@ public final class InvariantsTools {
 				if(value == 0) {
 					continue;
 				} else {
-					result =  bezwzgledna(value);
+					result = bezwzgledna(value);
 					nextT = t;
 					break;
 				}
@@ -652,20 +652,16 @@ public final class InvariantsTools {
 		}
 		
 		for(int i=0; i<invSize; i++) {
-			//ArrayList<Integer> invSupport = getSupport(invMatrix.get(i));
-			
 			for(int j=0; j<invSize; j++) {
 				if(j == i)
 					continue;
-				//ArrayList<Integer> refSupport = getSupport(invMatrix.get(j));
-				
+
 				if(InvariantsTools.supportInclusionCheck(supportMatrix.get(i), supportMatrix.get(j)) == true) {
 					nonMinimal++;
 					break;
 				}
 			}
 		}
-
 		return nonMinimal;
 	}
 	
@@ -1355,7 +1351,7 @@ public final class InvariantsTools {
 		for(int t=0; t<transitions.size(); t++)
 			results.add(0);
 		
-		ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+		ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
 		if(invariantsMatrix == null || invariantsMatrix.size() == 0)
 			return results;
 		

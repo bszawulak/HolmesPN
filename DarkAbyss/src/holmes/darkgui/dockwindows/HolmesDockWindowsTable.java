@@ -2423,7 +2423,7 @@ public class HolmesDockWindowsTable extends JPanel {
 			mode = INVARIANTS;
 			invariantsMatrix = invariantsData;
 			transitions = overlord.getWorkspace().getProject().getTransitions();
-			overlord.reset.setInvariantsStatus(true);
+			overlord.reset.setT_invariantsStatus(true);
 		}
 		
 		int colA_posX = 10;
@@ -2547,7 +2547,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		if(selectedInvIndex == -1)
 			return;
 
-		overlord.getWorkspace().getProject().accessINVdescriptions().set(selectedInvIndex, newName);
+		overlord.getWorkspace().getProject().accessT_InvDescriptions().set(selectedInvIndex, newName);
 	}
 
 	/**
@@ -2589,7 +2589,7 @@ public class HolmesDockWindowsTable extends JPanel {
 				}
 			}
 			//name field:
-			String name = overlord.getWorkspace().getProject().accessINVdescriptions().get(selectedInvIndex);
+			String name = overlord.getWorkspace().getProject().accessT_InvDescriptions().get(selectedInvIndex);
 			invNameField.setText(name);
 			
 		}
@@ -3148,7 +3148,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 		ArrayList<Integer> clInvariants = clusterColorsData.clustersInvariants.get(selectedClusterIndex);
 		int invIndex = clInvariants.get(selectedClusterInvIndex);
-		ArrayList<Integer> invariant = overlord.getWorkspace().getProject().getINVmatrix().get(invIndex);
+		ArrayList<Integer> invariant = overlord.getWorkspace().getProject().getT_InvMatrix().get(invIndex);
 		
 		for(int i=0; i<transColors.size(); i++) {
 			if(transColors.get(i).transInCluster != 0) {   //equals(Color.white)) {

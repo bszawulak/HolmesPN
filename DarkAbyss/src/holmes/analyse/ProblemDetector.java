@@ -375,7 +375,7 @@ public class ProblemDetector {
 	 * @return ArrayList[ArrayList[Object]] - dwa wektory, pierwszy to wektor miejsc, drugi - opisów do wyświetlenia
 	 */
 	public ArrayList<ArrayList<Object>> detectInvProblemPlaces() {
-		ArrayList<ArrayList<Integer>> invariants = pn.getINVmatrix();
+		ArrayList<ArrayList<Integer>> invariants = pn.getT_InvMatrix();
 		if(invariants==null || invariants.size() == 0) {
 			JOptionPane.showMessageDialog(null, "T-invariants matrix has not been found.", 
 					"No t-invariants", JOptionPane.WARNING_MESSAGE);

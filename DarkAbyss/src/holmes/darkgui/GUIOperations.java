@@ -39,7 +39,7 @@ public class GUIOperations {
 	 * Konstruktor domyślny obiektu klasy GUIOperations. A nóż do czegoś się przyda...
 	 */
 	public GUIOperations() {
-		
+		overlord = GUIManager.getDefaultGUIManager();
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class GUIOperations {
 	 * Metoda odpowiedzialna za otwieranie pliku z zapisaną siecią w formacie .abyss lub pliku projektu
 	 */
 	public void openAbyssProject() {
-		boolean proceed = GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
+		boolean proceed = overlord.reset.newProjectInitiated();
 		if(proceed == false) {
 			return;
 		}
@@ -125,7 +125,7 @@ public class GUIOperations {
 			}
 			
 			if(status) {
-				GUIManager.getDefaultGUIManager().log("Reading ABYSS project succcessful.", "text", true);
+				overlord.log("Reading project file succcessful.", "text", true);
 			}
 		}
 	}
@@ -396,11 +396,16 @@ public class GUIOperations {
 	
 	/**
 	 * Metoda odpowiedzialna za wczytywanie inwariantów z pliku.
+	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
 	 */
-	public void loadExternalAnalysis() {
+	public void loadExternalAnalysis(boolean t_inv) {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
-		filters[0] = new ExtensionFileFilter("Invariants file (.inv)", new String[] { "INV" });
+		if(t_inv)
+			filters[0] = new ExtensionFileFilter("T-invariants file (.inv)", new String[] { "INV" });
+		else
+			filters[0] = new ExtensionFileFilter("P-invariants file (.inv)", new String[] { "INV" });
+		
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file", "");
 		if(selectedFile.equals(""))
 			return;
@@ -411,13 +416,15 @@ public class GUIOperations {
 		}
 
 		PetriNet project = overlord.getWorkspace().getProject();
-		boolean status = project.loadInvariantsFromFile(file.getPath());
+		boolean status = project.loadTPinvariantsFromFile(file.getPath(), t_inv);
 		if(status == false) {
 			return;
 		}
-		overlord.getInvariantsBox().showInvariants(project.getINVmatrix());
-		//overlord.setLastPath(file.getParentFile().getPath());
-		overlord.getSimulatorBox().createSimulatorProperties();
+		
+		if(t_inv) {
+			overlord.getInvariantsBox().showInvariants(project.getT_InvMatrix());
+			overlord.getSimulatorBox().createSimulatorProperties();
+		}
 	}
 	
 	/**
@@ -426,28 +433,30 @@ public class GUIOperations {
 	 * nie zaglądanie jak i co ona robi (metoda, nie INA), gdyż może to doprawadziź
 	 * do słabszych duchem programistów do rozstroju nerwowego, szczególnie w kontekscie
 	 * operacji na plikach.
+	 * @param t_inv boolean - true, jeśli mają być liczone t-inwarianty, false: p-inwarianty
 	 */
-	public void generateINAinvariants() {
+	public void generateINAinvariants(boolean t_inv) {
 		String stars = "************************************************************************************************";
-		//showConsole(true);
 		String toolPath = overlord.getToolPath();
 		File tmpPNTfile = new File(toolPath+"siec.pnt");
 		String x = tmpPNTfile.getPath();
-		overlord.getWorkspace().getProject().saveAsPNT(x);
-		//zakończono zapis do pliku .pnt
+		overlord.getWorkspace().getProject().saveAsPNT(x); //zakończono zapis do pliku .pnt
 		long size = tmpPNTfile.length(); //124 dla nieistniejącej (pustej) sieci
 		if(size <154) {
 			String msg = "Net saving as .pnt file failed. There may be problems with file: "+x + 
 					" or there is no network yet.";
 			JOptionPane.showMessageDialog(null, msg, "Missing net or file", JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);
-			GUIManager.getDefaultGUIManager().accessInvariantsWindow().setGeneratorStatus(false);
+			overlord.accessInvariantsWindow().setGeneratorStatus(false);
 			return;
 		}
 		
 		File inaExe = new File(toolPath+"INAwin32.exe");
 		File batFile = new File(toolPath+"ina.bat");
 		File commandFile = new File(toolPath+"COMMAND.ina");
+		if(t_inv == false)
+			commandFile = new File(toolPath+"COMMANDp.ina");
+		
 		String holmesPath = overlord.getHolmesPath();
 		if(inaExe.exists() && commandFile.exists()) {
 			try {
@@ -490,35 +499,35 @@ public class GUIOperations {
 					t3.delete();
 				overlord.log("INAwin32.exe process terminated. Reading results into network now.", "text",true);
 			} catch (Exception e) {
-				String msg = "I/O operation: activating INA process failed.";
+				String msg = "I/O operation: activating INAwin32.exe failed.";
 				JOptionPane.showMessageDialog(null, msg, "Critical error", JOptionPane.ERROR_MESSAGE);
 				overlord.log(msg, "error", true);
 				overlord.log(stars, "text", false);
-				GUIManager.getDefaultGUIManager().accessInvariantsWindow().setGeneratorStatus(false);
+				overlord.accessInvariantsWindow().setGeneratorStatus(false);
 				return;
 			}
 			
 			// check whether the file with T-invariants has been generated
 			File invariantsFile = new File("siec.inv");
-			if (!invariantsFile.exists())  
-			{
-				String msg = "No invariants file - creating using INAwin32.exe unsuccessful.";
+			if (!invariantsFile.exists()) {
+				String msg = "No invariants file - using INAwin32.exe unsuccessful.";
 				JOptionPane.showMessageDialog(null,msg,	"Critical error",JOptionPane.ERROR_MESSAGE);
 				overlord.log(msg, "error", true);
-				GUIManager.getDefaultGUIManager().accessInvariantsWindow().setGeneratorStatus(false);
+				overlord.accessInvariantsWindow().setGeneratorStatus(false);
 				return;
 			}
 			
 			//wczytywanie inwariantów do systemu:
 			PetriNet project = overlord.getWorkspace().getProject();
-			boolean status = project.loadInvariantsFromFile(invariantsFile.getPath());
+			boolean status = project.loadTPinvariantsFromFile(invariantsFile.getPath(), t_inv);
 			if(status == false) {
 				return;
 			}
 			
-			//project.getInaInvariants();
-			overlord.getInvariantsBox().showInvariants(project.getINVmatrix());
-			overlord.getSimulatorBox().createSimulatorProperties();
+			if(t_inv) {
+				overlord.getInvariantsBox().showInvariants(project.getT_InvMatrix());
+				overlord.getSimulatorBox().createSimulatorProperties();
+			}
 		
 			//co dalej z plikiem?
 			String lastPath = overlord.getLastPath();
@@ -540,17 +549,14 @@ public class GUIOperations {
 						ext = ".inv";
 					File properName = new File(file.getPath() + ext);
 					Tools.copyFileDirectly(invariantsFile, properName);
-					//overlord.setLastPath(file.getParentFile().getPath());
 				}
 			}
 			overlord.log("Invariants generation successful.", "text", true);
 			overlord.log(stars, "text", false);
 			invariantsFile.delete();
-			//showConsole(false);
-			
-			GUIManager.getDefaultGUIManager().accessInvariantsWindow().setGeneratorStatus(false);
+			overlord.accessInvariantsWindow().setGeneratorStatus(false);
 		} else { //brak plikow
-			GUIManager.getDefaultGUIManager().accessInvariantsWindow().setGeneratorStatus(false);
+			overlord.accessInvariantsWindow().setGeneratorStatus(false);
 			String msg = "Missing executables in the tools directory. Required: INAwin32.exe, ina.bat and COMMAND.ina";
 			JOptionPane.showMessageDialog(null,msg,	"Missing files",JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);
@@ -649,11 +655,11 @@ public class GUIOperations {
 		int c_number = howMany;
 		try{
 			int invNumber = 0;
-			if(overlord.getWorkspace().getProject().getINVmatrix() == null) {
+			if(overlord.getWorkspace().getProject().getT_InvMatrix() == null) {
 				overlord.log("Warning: unable to check if given clusters number ("+howMany+") exceeds invariants "
 						+ "number. If so, the procedure may fail.", "warning", true);
 			} else {
-				invNumber = overlord.getWorkspace().getProject().getINVmatrix().size();
+				invNumber = overlord.getWorkspace().getProject().getT_InvMatrix().size();
 				if(invNumber < howMany)
 					howMany = invNumber;
 			}
@@ -733,11 +739,11 @@ public class GUIOperations {
 		int c_number = howMany;
 		try{
 			int invNumber = 0;
-			if(overlord.getWorkspace().getProject().getINVmatrix() == null) {
+			if(overlord.getWorkspace().getProject().getT_InvMatrix() == null) {
 				overlord.log("Warning: unable to check if given clusters number ("+howMany+") exceeds invariants "
 						+ "number. If so, the procedure may fail.", "warning", true);
 			} else {
-				invNumber = overlord.getWorkspace().getProject().getINVmatrix().size();
+				invNumber = overlord.getWorkspace().getProject().getT_InvMatrix().size();
 				if(invNumber < howMany)
 					howMany = invNumber;
 			}
@@ -800,7 +806,7 @@ public class GUIOperations {
 	 */
 	private String selectionOfSource() {
 		String lastPath = overlord.getLastPath();
-		if(overlord.getWorkspace().getProject().getINVmatrix() == null) { //brak inwariantów
+		if(overlord.getWorkspace().getProject().getT_InvMatrix() == null) { //brak inwariantów
 			FileFilter[] filters = new FileFilter[1];
 			filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
 			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file", "");

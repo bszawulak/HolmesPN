@@ -111,7 +111,7 @@ public class HolmesNetProperties extends JFrame {
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
 		nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
-		invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+		invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
 		
 		ArrayList<Integer> arcClasses = Check.getArcClassCount();
 		

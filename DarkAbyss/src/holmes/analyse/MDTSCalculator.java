@@ -25,7 +25,7 @@ public class MDTSCalculator {
 	 * Konstruktor klasy MDTSCalculator przygotowujący podstawowe struktury danych.
 	 */
 	public MDTSCalculator() {
-		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix(); 
+		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix(); 
     	if(invariants == null || invariants.size() == 0) { //STEP 1: EM obliczono
     		GUIManager.getDefaultGUIManager().log("No invariants found!", "errer", true);
     		return;

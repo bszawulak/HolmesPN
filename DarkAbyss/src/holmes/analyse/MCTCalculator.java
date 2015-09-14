@@ -65,7 +65,7 @@ public class MCTCalculator {
 	public ArrayList<ArrayList<Transition>> generateMCT() {
 		ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		ArrayList<ArrayList<Integer>> invariantsTranspose =	InvariantsTools.transposeMatrix(
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix() );
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() );
 		
 		invariantsTranspose = InvariantsTools.returnBinaryMatrix(invariantsTranspose);
 		

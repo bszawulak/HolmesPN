@@ -102,8 +102,9 @@ public class SettingsManager {
 		checkAndFix(settingsNew, "r_path64","c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
 		checkAndFix(settingsNew, "lastOpenedPath", "");
 		checkAndFix(settingsNew, "ina_bat","START INAwin32.exe COMMAND.ina");
-		checkAndFix(settingsNew, "ina_COMMAND1"," 80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec");
+		checkAndFix(settingsNew, "ina_COMMAND1", " 80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec");
 		checkAndFix(settingsNew, "ina_COMMAND2","nnsyp");
+		checkAndFix(settingsNew, "ina_COMMAND2p", "nnsnnnfnn");
 		checkAndFix(settingsNew, "ina_COMMAND3", "nnnfnn");
 		checkAndFix(settingsNew, "ina_COMMAND4", "eqqy");
 		

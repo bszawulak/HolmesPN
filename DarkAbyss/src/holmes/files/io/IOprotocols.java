@@ -90,26 +90,25 @@ public class IOprotocols {
 	/**
 	 * Wczytywanie pliki t-inwariantów INA, wcześniej: INAinvariants.read
 	 * Dodano poprawki oraz drugą ściękę odczytu - jako plik inwariantów Charliego.
-	 * @param sciezka String - scieżka do pliku
+	 * @param path String - scieżka do pliku
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
-	public boolean readINV(String sciezka) {
+	public boolean readT_invariants(String path) {
 		try {
 			resetComponents();
-			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
+			DataInputStream in = new DataInputStream(new FileInputStream(path));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
 			String readLine = buffer.readLine();
 			String backup = readLine;
-			
 			
 			if (readLine.contains("transition sub/sur/invariants for net")) {
 				//to znaczy, że wczytujemy plik INA, po prostu
 			} else if (readLine.contains("List of all elementary modes")) {
 				buffer.close();
-				return readMonaLisaINV(sciezka);
+				return readMonaLisaINV(path);
 			}else if (readLine.contains("minimal semipositive transition")) {
 				buffer.close();
-				return readCharlieINV(sciezka);
+				return readCharlieINV(path);
 			} else {
 				Object[] options = {"Read as INA file", "Read as MonaLisa file", "Read as Charlie file", "Terminate reading",};
 				int decision = JOptionPane.showOptionDialog(null,
@@ -118,10 +117,10 @@ public class IOprotocols {
 								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 				if (decision == 1) {
 					buffer.close();
-					return readCharlieINV(sciezka);
+					return readCharlieINV(path);
 				} else if (decision == 2) { //Charlie
 					buffer.close();
-					return readCharlieINV(sciezka);
+					return readCharlieINV(path);
 				} else if (decision == 3) {
 					buffer.close();
 					return false;
@@ -150,7 +149,9 @@ public class IOprotocols {
 					if (!(formattedLine[j].isEmpty() || formattedLine[j].contains("Nr."))) {
 						try {
 							nodesList.add(Integer.parseInt(formattedLine[j]));
-						} catch (NumberFormatException e) {}
+						} catch (NumberFormatException e) {
+							GUIManager.getDefaultGUIManager().log("Reading file failed in header section.", "text", true);
+						}
 					}
 				}
 			}
@@ -161,29 +162,123 @@ public class IOprotocols {
 				if(readLine.contains("@")||readLine.isEmpty()){break;}
 				String[] formattedLine = readLine.split("\\|");
 				formattedLine = formattedLine[1].split(" ");
-				for(int i = 0; i<formattedLine.length;i++)
-				{
-					if(formattedLine[i].isEmpty()){}else
-					{
+				for(int i = 0; i<formattedLine.length;i++) {
+					if(!formattedLine[i].isEmpty()){
 						tmpInvariant.add(Integer.parseInt(formattedLine[i]));
 					}
 				}
-				if(tmpInvariant.size() == nodesList.size())
-				{
+				if(tmpInvariant.size() == nodesList.size()) {
 					invariantsList.add(tmpInvariant);
 					tmpInvariant = new ArrayList<Integer>();
 				}
 			}
 			buffer.close();
-			GUIManager.getDefaultGUIManager().log("Invariants from INA file have been read.", "text", true);
+			GUIManager.getDefaultGUIManager().log("T-invariants from INA file have been read.", "text", true);
 			return true;
 		} catch (Exception e) {
-			//JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR:readINV",JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Invariants reading operation failed.", "error", true);
+			GUIManager.getDefaultGUIManager().log("T-invariants reading operation failed.", "error", true);
 			return false;
 		} 
 	}
 	
+	/**
+	 * Metoda odpowiedzialna za wczytywanie p-inwariantów z pliku wygenerowanego programem INAwin32.exe
+	 * @param path String - ścieżka do pliku
+	 * @return boolean - true, jeśli operacja się powiodła.
+	 */
+	public boolean readP_invariants(String path) {
+		try {
+			resetComponents();
+			DataInputStream in = new DataInputStream(new FileInputStream(path));
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+			String readLine = buffer.readLine();
+			String backup = readLine;
+			
+			if (readLine.contains("place sub/sur/invariants for net")) {
+				//to znaczy, że wczytujemy plik INA, po prostu
+			} else if (readLine.contains("List of all elementary modes")) {
+				buffer.close();
+				return false;
+				//return readMonaLisaINV(sciezka); //TODO!
+			}else if (readLine.contains("minimal semipositive transition")) {
+				buffer.close();
+				return false;
+				//return readCharlieINV(sciezka); //TODO!
+			} else {
+				Object[] options = {"Read as INA file", "Read as MonaLisa file", "Read as Charlie file", "Terminate reading",};
+				int decision = JOptionPane.showOptionDialog(null,
+								"Unknown or corrupted invariants file format. Please choose format for this invariants file?",
+								"Error reading file header", JOptionPane.YES_NO_OPTION,
+								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+				if (decision == 1) {
+					buffer.close();
+					return false;
+					//return readCharlieINV(sciezka);
+				} else if (decision == 2) { //Charlie
+					buffer.close();
+					return false;
+					//return readCharlieINV(sciezka);
+				} else if (decision == 3) {
+					buffer.close();
+					return false;
+				}
+				//jeśli nie 1, 2 lub 3 to znaczy, że 0, czyli na sieć czytamy dalej jako INA inv.
+			}
+			
+			if(backup.contains("transition invariants basis")) {
+				JOptionPane.showMessageDialog(null, "Wrong invariants. Only semipositives are acceptable.",
+						"ERROR:readINV",JOptionPane.ERROR_MESSAGE);
+				buffer.close();
+				return false;
+			}
+			
+			buffer.readLine();
+			while (!readLine.contains("semipositive place invariants =")) {
+				readLine = buffer.readLine();
+			}
+			buffer.readLine();
+			nodesList.clear();
+			// Etap I - Liczba tranzycji/miejsc
+			while (!(readLine = buffer.readLine()).endsWith("~~~~~~~~~~~")) {
+				if(readLine.endsWith("~~~~~~~~~~~"))
+					break;
+				
+				String[] formattedLine = readLine.split(" ");
+				for (int j = 0; j < formattedLine.length; j++) {
+					if (!(formattedLine[j].isEmpty() || formattedLine[j].contains("Nr."))) {
+						try {
+							nodesList.add(Integer.parseInt(formattedLine[j]));
+						} catch (NumberFormatException e) {
+							GUIManager.getDefaultGUIManager().log("Reading file failed in header section.", "text", true);
+						}
+					}
+				}
+			}
+			// Etap II - lista P-inwariantow
+			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+			invariantsList.clear();
+			while ((readLine = buffer.readLine()) != null) {
+				if(readLine.contains("@")||readLine.isEmpty()){break;}
+				String[] formattedLine = readLine.split("\\|");
+				formattedLine = formattedLine[1].split(" ");
+				for(int i = 0; i<formattedLine.length;i++) {
+					if(!formattedLine[i].isEmpty()) {
+						tmpInvariant.add(Integer.parseInt(formattedLine[i]));
+					}
+				}
+				if(tmpInvariant.size() == nodesList.size()) {
+					invariantsList.add(tmpInvariant);
+					tmpInvariant = new ArrayList<Integer>();
+				}
+			}
+			buffer.close();
+			GUIManager.getDefaultGUIManager().log("P-invariants from INA file have been read.", "text", true);
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("P-invariants reading operation failed.", "error", true);
+			return false;
+		} 
+	}
 
 	/**
 	 * Metoda wczytująca plik inwariantów wygenerowany programem Charlie.

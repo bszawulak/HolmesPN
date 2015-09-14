@@ -179,7 +179,7 @@ public class HolmesKnockoutViewer extends JFrame {
 
 		ArrayList<Integer> invariants = data.node.myInvariantsIDs;
 		for(Integer invIndex : invariants) {
-			tableModel.addNew(invIndex, pn.getINVdescription(invIndex));
+			tableModel.addNew(invIndex, pn.getT_InvDescription(invIndex));
 		}
 		
 	    return result;

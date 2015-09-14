@@ -529,7 +529,7 @@ public class HolmesMCS extends JFrame {
 				return;
 			}
 			
-			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
 			if(invariants == null || invariants.size() < 1) {
 				JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
 						"Warning", JOptionPane.INFORMATION_MESSAGE);
@@ -633,7 +633,7 @@ public class HolmesMCS extends JFrame {
 				return;
 			}
 			
-			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
 			if(invariants == null || invariants.size() < 1) {
 				JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
 						"Warning", JOptionPane.INFORMATION_MESSAGE);

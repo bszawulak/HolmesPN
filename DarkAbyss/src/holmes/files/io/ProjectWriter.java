@@ -36,8 +36,10 @@ public class ProjectWriter {
 	private ArrayList<Transition> transitions = null;
 	private ArrayList<MetaNode> metaNodes = null;
 	private ArrayList<Arc> arcs = null;
-	private ArrayList<ArrayList<Integer>> invariantsMatrix = null;
-	private ArrayList<String> invariantsNames = null;
+	private ArrayList<ArrayList<Integer>> t_invariantsMatrix = null;
+	private ArrayList<String> t_invariantsNames = null;
+	private ArrayList<ArrayList<Integer>> p_invariantsMatrix = null;
+	private ArrayList<String> p_invariantsNames = null;
 	private ArrayList<ArrayList<Transition>> mctData = null;
 	private ArrayList<String> mctNames = null;
 	private ArrayList<PlacesStateVector> statesMatrix = null;
@@ -57,8 +59,10 @@ public class ProjectWriter {
 		metaNodes = projectCore.getMetaNodes();
 		arcs = projectCore.getArcs();
 		
-		invariantsMatrix = projectCore.getINVmatrix();
-		invariantsNames = projectCore.accessINVdescriptions();
+		t_invariantsMatrix = projectCore.getT_InvMatrix();
+		t_invariantsNames = projectCore.accessT_InvDescriptions();
+		p_invariantsMatrix = projectCore.getP_InvMatrix();
+		p_invariantsNames = projectCore.accessP_InvDescriptions();
 		mctData = projectCore.getMCTMatrix();
 		mctNames = projectCore.accessMCTnames();
 		statesMatrix = projectCore.accessStatesManager().accessStateMatrix();
@@ -87,7 +91,8 @@ public class ProjectWriter {
 			
 			bw.write("<Project blocks>"+newline);
 			bw.write("  <Subnets>"+newline);
-			bw.write("  <Invariants data>"+newline);
+			bw.write("  <InvariantsData>"+newline);
+			bw.write("  <PlaceInvData>"+newline);
 			bw.write("  <MCT data>"+newline);
 			bw.write("  <StatesMatrix>"+newline);
 			bw.write("  <FunctionsData>"+newline);
@@ -100,8 +105,12 @@ public class ProjectWriter {
 			bw.write("<Net data end>"+newline);
 			
 			bw.write("<Invariants data>"+newline);
-			boolean statusInv = saveInvariants(bw);
+			boolean statusInv = saveT_Invariants(bw);
 			bw.write("<Invariants data end>"+newline);
+			
+			bw.write("<PlaceInv data>"+newline);
+			boolean statusPInv = saveP_Invariants(bw);
+			bw.write("<PlaceInv data end>"+newline);
 			
 			bw.write("<MCT data>"+newline);
 			boolean statusMCT = saveMCT(bw);
@@ -468,20 +477,20 @@ public class ProjectWriter {
 	}
 	
 	/**
-	 * Metoda służąca do zapisania w pliku projektu inwariantów (CSV) oraz ich nazw.
+	 * Metoda służąca do zapisania w pliku projektu t-inwariantów (CSV) oraz ich nazw.
 	 * @param bw BufferedWriter - obiekt zapisujący
 	 * @return boolean - true, jeśli wszystko dobrze poszło
 	 */
-	private boolean saveInvariants(BufferedWriter bw) {
+	private boolean saveT_Invariants(BufferedWriter bw) {
 		try {
-			if(invariantsMatrix == null) {
+			if(t_invariantsMatrix == null) {
 				bw.write(spaces(2)+"<Invariants: 0>"+newline);
 				bw.write(spaces(2)+"<EOI>"+newline);
 				return false;	
 			}
 			
 			int sp = 2;
-			int invNumber = invariantsMatrix.size();
+			int invNumber = t_invariantsMatrix.size();
 			
 			if(invNumber == 0) {
 				bw.write(spaces(2)+"<Invariants: 0>"+newline);
@@ -490,10 +499,10 @@ public class ProjectWriter {
 			}
 	
 			bw.write(spaces(sp)+"<Invariants: "+invNumber+">"+newline);
-			int invSize = invariantsMatrix.get(0).size();
+			int invSize = t_invariantsMatrix.get(0).size();
 			for(int i=0; i<invNumber; i++) {
 				sp = 4;
-				ArrayList<Integer> invariant = invariantsMatrix.get(i);
+				ArrayList<Integer> invariant = t_invariantsMatrix.get(i);
 				String line = ""+i+";";
 				
 				for(int it=0; it<invSize; it++) {
@@ -508,16 +517,65 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<Invariants names>"+newline);
 			for(int i=0; i<invNumber; i++) {
 				sp = 4;
-				
-				
-				bw.write(spaces(sp)+Tools.convertToCode(invariantsNames.get(i))+newline);
+				bw.write(spaces(sp)+Tools.convertToCode(t_invariantsNames.get(i))+newline);
+			}
+			bw.write(spaces(2)+"<EOIN>"+newline);
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Error while saving t-invariants data.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			return false;
+		}
+	}
+	
+	/**
+	 * Metoda służąca do zapisania w pliku projektu p-inwariantów (CSV) oraz ich nazw.
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @return boolean - true, jeśli wszystko dobrze poszło
+	 */
+	private boolean saveP_Invariants(BufferedWriter bw) {
+		try {
+			if(p_invariantsMatrix == null) {
+				bw.write(spaces(2)+"<PInvariants: 0>"+newline);
+				bw.write(spaces(2)+"<EOPI>"+newline);
+				return false;	
 			}
 			
-			bw.write(spaces(2)+"<EOIN>"+newline);
+			int sp = 2;
+			int invNumber = p_invariantsMatrix.size();
+			
+			if(invNumber == 0) {
+				bw.write(spaces(2)+"<PInvariants: 0>"+newline);
+				bw.write(spaces(2)+"<EOPI>"+newline);
+				return false;	
+			}
+	
+			bw.write(spaces(sp)+"<PInvariants: "+invNumber+">"+newline);
+			int invSize = p_invariantsMatrix.get(0).size();
+			for(int i=0; i<invNumber; i++) {
+				sp = 4;
+				ArrayList<Integer> invariant = p_invariantsMatrix.get(i);
+				String line = ""+i+";";
+				
+				for(int it=0; it<invSize; it++) {
+					line += invariant.get(it)+";";
+				}
+				line = line.substring(0, line.length()-1); //usun ostatni ';'
+				bw.write(spaces(sp)+line+newline);
+			}
+			sp = 2;
+			bw.write(spaces(sp)+"<EOPI>"+newline);
+			
+			bw.write(spaces(sp)+"<PInvariants names>"+newline);
+			for(int i=0; i<invNumber; i++) {
+				sp = 4;
+				bw.write(spaces(sp)+Tools.convertToCode(p_invariantsNames.get(i))+newline);
+			}
+			bw.write(spaces(2)+"<EOPIN>"+newline);
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error while saving invariants data.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Error while saving p-invariants data.", "error", true);
 			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
 			return false;
 		}

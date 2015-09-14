@@ -386,7 +386,7 @@ public class HolmesKnockout extends JFrame {
 		//TODO:
 		try {
 			int rootTransition = transitionsCombo.getSelectedIndex()-1;
-			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
 			ArrayList<Integer> invIndices = InvariantsTools.returnInvIndicesWithTransition(invariants, rootTransition);
 			
 			notePad.addTextLineNL("", "text");
@@ -409,7 +409,7 @@ public class HolmesKnockout extends JFrame {
 	 */
 	//TODO:
 	protected void getKnockoutFullInfo(HolmesNotepad notePad) {
-		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
 		if(invariants == null || invariants.size() < 1) {
 			JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
 					"Warning", JOptionPane.INFORMATION_MESSAGE);
@@ -613,7 +613,7 @@ public class HolmesKnockout extends JFrame {
 		}
 		
 		ArrayList<Integer> transInInvVector = InvariantsTools.transInInvariants();
-		int invNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix().size();
+		int invNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix().size();
 		
 		ArrayList<String> secondResultLines = new ArrayList<String>();
 		for(int t=0; t<transSize; t++) {
@@ -840,7 +840,7 @@ public class HolmesKnockout extends JFrame {
 		
 		selection--;
 		
-		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
 		if(invariants == null || invariants.size() < 1) {
 			JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
 					"Warning", JOptionPane.INFORMATION_MESSAGE);

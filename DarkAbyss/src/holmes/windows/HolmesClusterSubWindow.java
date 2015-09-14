@@ -634,7 +634,7 @@ public class HolmesClusterSubWindow extends JFrame {
 	
 	private String selectionOfSource() {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix() == null) { //brak inwariantów
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() == null) { //brak inwariantów
 			JOptionPane.showMessageDialog(null, "No invariants computed! Please select CSV invariants file!", 
 					"Warning",JOptionPane.WARNING_MESSAGE);
 			

@@ -92,7 +92,7 @@ public class HolmesInvariantsViewer extends JFrame {
 	public HolmesInvariantsViewer() {
 		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
-		this.invariantsMatrix = pn.getINVmatrix();
+		this.invariantsMatrix = pn.getT_InvMatrix();
 		
 		boolean problem = false;
 		if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
@@ -120,7 +120,7 @@ public class HolmesInvariantsViewer extends JFrame {
 	public HolmesInvariantsViewer(int invNumber) {
 		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
-		this.invariantsMatrix = pn.getINVmatrix();
+		this.invariantsMatrix = pn.getT_InvMatrix();
 		this.currentSelected = invNumber+1;
 		
 		boolean problem = false;
@@ -596,7 +596,7 @@ public class HolmesInvariantsViewer extends JFrame {
 	 */
 	private void changeInvDescr(String newComment) {
 		if(currentSelected > 0) {
-			pn.accessINVdescriptions().set(currentSelected-1, newComment);
+			pn.accessT_InvDescriptions().set(currentSelected-1, newComment);
 		}
 	}
 
@@ -655,7 +655,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		tableScrollPane.setViewportView(table);
 		tableScrollPane.repaint();
 
-		descriptionTextArea.setText(overlord.getWorkspace().getProject().getINVdescription(invNo));
+		descriptionTextArea.setText(overlord.getWorkspace().getProject().getT_InvDescription(invNo));
 	}
 	
 	/**
@@ -691,7 +691,7 @@ public class HolmesInvariantsViewer extends JFrame {
 			}
 		}
 		Collections.sort(mcts);
-		String description = overlord.getWorkspace().getProject().accessINVdescriptions().get(invNo);
+		String description = overlord.getWorkspace().getProject().accessT_InvDescriptions().get(invNo);
 		note.addTextLineNL("Invariant "+(invNo+1), "text");
 		note.addTextLineNL("Descrption: "+description, "text");
 		note.addTextLineNL("Total number of transitions: "+transNumber, "text");

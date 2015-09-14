@@ -47,8 +47,10 @@ public class ProjectReader {
 	private ArrayList<Node> nodes = null;
 	private ArrayList<MetaNode> metanodes = null;
 	private ArrayList<Arc> arcs = null;
-	private ArrayList<ArrayList<Integer>> invariantsMatrix = null;
-	private ArrayList<String> invariantsNames = null;
+	private ArrayList<ArrayList<Integer>> t_invariantsMatrix = null;
+	private ArrayList<String> t_invariantsNames = null;
+	private ArrayList<ArrayList<Integer>> p_invariantsMatrix = null;
+	private ArrayList<String> p_invariantsNames = null;
 	private ArrayList<ArrayList<Transition>> mctData = null;
 	private ArrayList<String> mctNames = null;
 
@@ -56,7 +58,8 @@ public class ProjectReader {
 	private int transitionsProcessed = 0;
 	private int metanodesProcessed = 0;
 	private int arcsProcessed = 0;
-	private int invariantsProcessed = 0;
+	private int t_invariantsProcessed = 0;
+	private int p_invariantsProcessed = 0;
 	private int mctProcessed = 0;
 	
 	private int globalMaxHeight = 0;
@@ -67,6 +70,7 @@ public class ProjectReader {
 	private boolean states = false;
 	private boolean functions = false;
 	private boolean firingRates = false;
+	private boolean pInvariants = false;
 
 	
 	/**
@@ -77,8 +81,10 @@ public class ProjectReader {
 		nodes = projectCore.getNodes();
 		metanodes = projectCore.getMetaNodes();
 		arcs = projectCore.getArcs();
-		invariantsMatrix = projectCore.getINVmatrix();
-		invariantsNames = projectCore.accessINVdescriptions();
+		t_invariantsMatrix = projectCore.getT_InvMatrix();
+		t_invariantsNames = projectCore.accessT_InvDescriptions();
+		p_invariantsMatrix = projectCore.getP_InvMatrix();
+		p_invariantsNames = projectCore.accessP_InvDescriptions();
 		mctData = projectCore.getMCTMatrix();
 		mctNames = projectCore.accessMCTnames();
 		
@@ -118,11 +124,20 @@ public class ProjectReader {
 				return false;
 			}
 			
-			status = readInvariants(buffer);
+			status = readTInvariants(buffer);
 			if(!status) {
-				projectCore.setINVmatrix(null, false);
+				projectCore.setT_InvMatrix(null, false);
 			} else {
-				GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(projectCore.getINVmatrix());
+				GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(projectCore.getT_InvMatrix());
+			}
+			
+			if(pInvariants) {
+				status = readPInvariants(buffer);
+				if(!status) {
+					projectCore.setP_InvMatrix(null);
+				} else {
+					//GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(projectCore.getP_InvMatrix());
+				}
 			}
 			
 			status = readMCT(buffer);
@@ -204,33 +219,35 @@ public class ProjectReader {
 	 */
 	private void parseNetblocksLine(String line) {
 		String backup = line;
+		String query = "";
 		try {
-			String query = "";
 			query = "subnets";
 			if(line.toLowerCase().contains(query)) {
 				subnets = true;
 				return;
 			}
-			
 			query = "statesmatrix";
 			if(line.toLowerCase().contains(query)) {
 				states = true;
 				return;
 			}
-			
 			query = "functions";
 			if(line.toLowerCase().contains(query)) {
 				functions = true;
 				return;
 			}
-			
 			query = "firingratesdata";
 			if(line.toLowerCase().contains(query)) {
 				firingRates = true;
 				return;
 			}
+			query = "placeinvdata";
+			if(line.toLowerCase().contains(query)) {
+				pInvariants = true;
+				return;
+			}
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading file error in line: "+backup, "error", true);
+			GUIManager.getDefaultGUIManager().log("Reading error in line: "+backup, "error", true);
 		}
 	}
 
@@ -964,11 +981,11 @@ public class ProjectReader {
 	}
 
 	/**
-	 * Metoda pomocnicza czytająca z pliku projektu blok danych o inwariantach.
+	 * Metoda pomocnicza czytająca z pliku projektu blok danych o t-inwariantach.
 	 * @param buffer BufferedReader - obiekt czytający
 	 * @return boolean - true, jeśli wszystko się udało
 	 */
-	private boolean readInvariants(BufferedReader buffer) {
+	private boolean readTInvariants(BufferedReader buffer) {
 		try {
 			String line = "";
 			while(!((line = buffer.readLine()).contains("<Invariants data>"))) //przewiń do inwariantów
@@ -982,7 +999,7 @@ public class ProjectReader {
 			
 			if(!line.contains("<Invariants: 0>")) { //są miejsca
 				boolean go = true;
-				invariantsMatrix = new ArrayList<ArrayList<Integer>>();
+				t_invariantsMatrix = new ArrayList<ArrayList<Integer>>();
 				
 				line = buffer.readLine();
 				while(go) {
@@ -1001,28 +1018,28 @@ public class ProjectReader {
 					}
 					
 					if(invariant.size() == transNumber) {
-						invariantsMatrix.add(invariant);
-						invariantsProcessed++;
+						t_invariantsMatrix.add(invariant);
+						t_invariantsProcessed++;
 					} else {
 						problems++;
 						problemWithInv += readedLine+",";
 					}
 				}
 				
-				projectCore.setINVmatrix(invariantsMatrix, false);
+				projectCore.setT_InvMatrix(t_invariantsMatrix, false);
 				
 				if(problems==0) {
 					while(!((line = buffer.readLine()).contains("<Invariants names>"))) //przewiń do nazw inwariantów
 						;
 					
-					invariantsNames = new ArrayList<String>();
+					t_invariantsNames = new ArrayList<String>();
 					line = buffer.readLine();
 					int readLines = 1;
 					go = true;
 					while(go) {
 						line = line.trim();
 						line = Tools.decodeString(line);
-						invariantsNames.add(line);
+						t_invariantsNames.add(line);
 						
 						line = buffer.readLine();
 						if(line.contains("<EOIN>")) {
@@ -1031,24 +1048,114 @@ public class ProjectReader {
 							readLines++;
 						}
 					}
-					projectCore.setINVdescriptions(invariantsNames);
+					projectCore.setT_InvDescriptions(t_invariantsNames);
 					
 					
-					if(readLines != invariantsMatrix.size()) {
-						GUIManager.getDefaultGUIManager().log("Error: different numbers of invariants ("+invariantsMatrix.size()+
+					if(readLines != t_invariantsMatrix.size()) {
+						GUIManager.getDefaultGUIManager().log("Error: different numbers of t-invariants ("+t_invariantsMatrix.size()+
 								") and their names ("+readLines+"). Operation failed.", "error", true);
 						return false;
 					}
 					
 				} else {
-					GUIManager.getDefaultGUIManager().log("Invariants with wrong number of elements in file:"+problemWithInv, "error", true);
+					GUIManager.getDefaultGUIManager().log("T-invariants with wrong number of elements in file:"+problemWithInv, "error", true);
 					return false;
 				}
 			}
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading invariants failed for invariant number: \n"+invariantsProcessed, "error", true);
+			GUIManager.getDefaultGUIManager().log("Reading invariants failed for t-invariant number: \n"+t_invariantsProcessed, "error", true);
+			return false;
+		}
+	}
+	
+	/**
+	 * Metoda pomocnicza czytająca z pliku projektu blok danych o p-inwariantach.
+	 * @param buffer BufferedReader - obiekt czytający
+	 * @return boolean - true, jeśli wszystko się udało
+	 */
+	private boolean readPInvariants(BufferedReader buffer) {
+		try {
+			String line = "";
+			while(!((line = buffer.readLine()).contains("<PlaceInv data>"))) //przewiń do inwariantów
+				;
+			
+			line = buffer.readLine();
+			int placeNumber = projectCore.getPlaces().size();
+			String problemWithInv = "";
+			int problems = 0;
+			int readedLine = -1;
+			
+			if(!line.contains("<PInvariants: 0>")) { //są miejsca
+				boolean go = true;
+				p_invariantsMatrix = new ArrayList<ArrayList<Integer>>();
+				
+				line = buffer.readLine();
+				while(go) {
+					readedLine++;
+					ArrayList<Integer> invariant = new ArrayList<Integer>();
+					line = line.replace(" ", "");
+					String[] tab = line.split(";");
+					
+					for(int i=1; i<tab.length; i++) {
+						invariant.add(Integer.parseInt(tab[i]));
+					}
+
+					line = buffer.readLine();
+					if(line.contains("<EOPI>")) {
+						go = false;
+					}
+					
+					if(invariant.size() == placeNumber) {
+						p_invariantsMatrix.add(invariant);
+						p_invariantsProcessed++;
+					} else {
+						problems++;
+						problemWithInv += readedLine+",";
+					}
+				}
+				
+				projectCore.setP_InvMatrix(p_invariantsMatrix);
+				
+				if(problems==0) {
+					while(!((line = buffer.readLine()).contains("<PInvariants names>"))) //przewiń do nazw inwariantów
+						;
+					
+					p_invariantsNames = new ArrayList<String>();
+					line = buffer.readLine();
+					int readLines = 1;
+					go = true;
+					while(go) {
+						line = line.trim();
+						line = Tools.decodeString(line);
+						p_invariantsNames.add(line);
+						
+						line = buffer.readLine();
+						if(line.contains("<EOPIN>")) {
+							go = false;
+						} else {
+							readLines++;
+						}
+					}
+					projectCore.setP_InvDescriptions(p_invariantsNames);
+					
+					
+					if(readLines != p_invariantsMatrix.size()) {
+						GUIManager.getDefaultGUIManager().log("Error: different numbers of p-invariants ("+p_invariantsMatrix.size()+
+								") and their names ("+readLines+"). Operation failed.", "error", true);
+						return false;
+					}
+					
+				} else {
+					GUIManager.getDefaultGUIManager().log("P-invariants with wrong number of elements in file:"+problemWithInv, "error", true);
+					return false;
+				}
+			}
+			
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Reading p-invariants failed for invariant number: \n"+p_invariantsProcessed, "error", true);
 			return false;
 		}
 	}

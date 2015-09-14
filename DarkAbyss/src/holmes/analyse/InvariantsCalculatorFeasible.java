@@ -648,9 +648,9 @@ public class InvariantsCalculatorFeasible {
 		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		if(masterWindow != null) {
 			if(date == false) {
-				masterWindow.accessLogField().append(msg);
+				masterWindow.accessLogFieldTinv().append(msg);
 			} else {
-				masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
+				masterWindow.accessLogFieldTinv().append("["+timeStamp+"] "+msg);
 			}
 		}
 	}

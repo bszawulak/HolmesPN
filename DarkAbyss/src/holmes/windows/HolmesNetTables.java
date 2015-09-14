@@ -102,7 +102,7 @@ public class HolmesNetTables extends JFrame {
 	/**
 	 * Metoda resetuje macierz danych o inwariantach.
 	 */
-	public void resetInvData() {
+	public void resetT_invData() {
 		action.dataMatrix = null;
 	}
 	
@@ -559,7 +559,7 @@ public class HolmesNetTables extends JFrame {
      * Metoda tworząca tablicę inwariantów.
      */
 	private void createInvariantsTable() {
-    	ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getINVmatrix();
+    	ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
     	if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
     		JOptionPane.showMessageDialog(this, "Please generate T-invariants (Elementary Modes)", "No invariants", JOptionPane.INFORMATION_MESSAGE);
     			return;

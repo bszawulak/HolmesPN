@@ -29,7 +29,8 @@ import holmes.workspace.Workspace;
  */
 public class GUIReset {
 	private GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private boolean invGenerated = false;
+	private boolean t_invGenerated = false;
+	private boolean p_invGenerated = false;
 	private boolean mctGenerated = false;
 	private boolean clustersGenerated = false;
 
@@ -96,7 +97,8 @@ public class GUIReset {
 		
 		//CLEAR PETRI NET DATA, kolejność MA ZNACZENIE JAK CHOLERA. Nie zmieniać!
 		pNet.resetData(); // tylko w ten sposób!!!! 
-		pNet.setINVmatrix(null, false);
+		pNet.setT_InvMatrix(null, false);
+		pNet.setP_InvMatrix(null);
 		pNet.setMCTMatrix(null, false);
 		pNet.accessMCTnames().clear();
 		pNet.accessStatesManager().reset(false);
@@ -156,11 +158,11 @@ public class GUIReset {
 			overlord.accessClusterWindow().resetWindow();
 		}
 	
-		if(invGenerated == true) {
-			overlord.accessNetTablesWindow().resetInvData();
+		if(t_invGenerated == true) {
+			overlord.accessNetTablesWindow().resetT_invData();
 			
 			resetCommunicationProtocol();
-			pNet.setINVmatrix(null, false);
+			pNet.setT_InvMatrix(null, false);
 			pNet.getMCSdataCore().resetMSC();
 			
 			if(overlord.getInvariantsBox().getCurrentDockWindow() != null) {
@@ -168,12 +170,20 @@ public class GUIReset {
 				overlord.getInvariantsBox().getCurrentDockWindow().removeAll();
 			}
 			overlord.getInvariantsBox().setCurrentDockWindow(
-					new HolmesDockWindowsTable(SubWindow.INVARIANTS, pNet.getINVmatrix()));	
+					new HolmesDockWindowsTable(SubWindow.INVARIANTS, pNet.getT_InvMatrix()));	
 			overlord.getInvariantsBox().validate();
 			overlord.getInvariantsBox().repaint();
 
-			invGenerated = false;
-			overlord.log("Invariants data removed from memory.", "text", true);
+			t_invGenerated = false;
+			overlord.log("T-invariants data removed from memory.", "text", true);
+		}
+		
+		if(p_invGenerated == true) {
+			resetCommunicationProtocol();
+			pNet.setP_InvMatrix(null);
+			
+			p_invGenerated = false;
+			overlord.log("P-invariants data removed from memory.", "text", true);
 		}
 		
 		if(mctGenerated == true) {
@@ -223,11 +233,19 @@ public class GUIReset {
 	//*****************************************************************************************************
 	
 	/**
-	 * Metoda ta ustawia status inwariantów w programie.
+	 * Metoda ta ustawia status t-inwariantów w programie.
 	 * @param status boolean - true, jeśli są dostepne
 	 */
-	public void setInvariantsStatus(boolean status) {
-		invGenerated = status;
+	public void setT_invariantsStatus(boolean status) {
+		t_invGenerated = status;
+	}
+	
+	/**
+	 * Metoda ta ustawia status p-inwariantów w programie.
+	 * @param status boolean - true, jeśli są dostepne
+	 */
+	public void setP_invariantsStatus(boolean status) {
+		p_invGenerated = status;
 	}
 	
 	/**
