@@ -1074,29 +1074,46 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda zapisująca inwarianty do pliku w formacie CSV.
 	 * @param path String - ścieżka do pliku zapisu
+	 * @param silence boolean - true, jeśli mają być komunikaty
+	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
 	 * @return int - 0 jeśli operacja się udała, -1 w przeciwnym wypadku
 	 */
-	public int saveInvariantsToCSV(String path, boolean silence) {
+	public int saveInvariantsToCSV(String path, boolean silence, boolean t_inv) {
 		int result = -1;
 		try {
-			if (getT_InvMatrix() != null) {
-				communicationProtocol.writeInvToCSV(path, getT_InvMatrix(), getTransitions());
-				//GUIManager.getDefaultGUIManager().log("Invariants saved as CSV file.","text", true);
-				if(!silence)
-					JOptionPane.showMessageDialog(null,  "Invariants saved to file:\n"+path,
-						"Success",JOptionPane.INFORMATION_MESSAGE);
-				
-				result = 0;
+			if(t_inv) {
+				if (getT_InvMatrix() != null) {
+					communicationProtocol.writeT_invCSV(path, getT_InvMatrix(), getTransitions());
+					if(!silence)
+						JOptionPane.showMessageDialog(null,  "T-invariants saved to file:\n"+path,
+							"Success",JOptionPane.INFORMATION_MESSAGE);
+					result = 0;
+				} else {
+					if(!silence)
+						JOptionPane.showMessageDialog(null, "There are no t-invariants to export.",
+							"Warning",JOptionPane.WARNING_MESSAGE);
+					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
+					result = -1;
+				}
 			} else {
-				if(!silence)
-					JOptionPane.showMessageDialog(null, "There are no invariants to export.",
-						"Warning",JOptionPane.WARNING_MESSAGE);
-				overlord.log("No invariants, saving into CSV file failed.","error", true);
-				result = -1;
+				if (getP_InvMatrix() != null) {
+					communicationProtocol.writeP_invCSV(path, getP_InvMatrix(), getPlaces());
+					if(!silence)
+						JOptionPane.showMessageDialog(null,  "P-invariants saved to file:\n"+path,
+							"Success",JOptionPane.INFORMATION_MESSAGE);
+					
+					result = 0;
+				} else {
+					if(!silence)
+						JOptionPane.showMessageDialog(null, "There are no p-invariants to export.",
+							"Warning",JOptionPane.WARNING_MESSAGE);
+					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
+					result = -1;
+				}
 			}
-		} catch (Throwable err) {
-			err.printStackTrace();
-			overlord.log("Error: " + err.getMessage(), "error", true);
+		} catch (Exception e) {
+			//e.printStackTrace();
+			overlord.log("Error: " + e.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1104,28 +1121,43 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda zapisująca inwarianty do pliku w formacie INA.
 	 * @param path String - ścieżka do pliku zapisu
+	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
 	 * @return int - 0 jeśli operacja się udała, -1 w przeciwnym wypadku
 	 */
-	public int saveInvariantsToInaFormat(String path) {
+	public int saveInvariantsToInaFormat(String path, boolean t_inv) {
 		int result = -1;
 		try {
-			if (getT_InvMatrix() != null) {
-				communicationProtocol.writeINV(path, getT_InvMatrix(), getTransitions());
-				JOptionPane.showMessageDialog(null,
-						"Invariants saved to file:\n"+path,
-						"Success",JOptionPane.INFORMATION_MESSAGE);
-				overlord.log("Invariants saved into .inv INA file.","text", true);
-				result = 0;
+			if(t_inv) {
+				if (getT_InvMatrix() != null) {
+					communicationProtocol.writeT_invINA(path, getT_InvMatrix(), getTransitions());
+					JOptionPane.showMessageDialog(null, "T-invariants saved to file:\n"+path,
+							"Success", JOptionPane.INFORMATION_MESSAGE);
+					overlord.log("T-invariants saved into .inv INA file.","text", true);
+					result = 0;
+				} else {
+					JOptionPane.showMessageDialog(null, "There are no t-invariants to export",
+							"Warning",JOptionPane.WARNING_MESSAGE);
+					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
+					result = -1;
+				}
 			} else {
-				JOptionPane.showMessageDialog(null,
-						"There are no invariants to export",
-						"Warning",JOptionPane.WARNING_MESSAGE);
-				overlord.log("No invariants, saving into CSV file failed.","error", true);
-				result = -1;
+				if (getP_InvMatrix() != null) {
+					communicationProtocol.writeP_invINA(path, getP_InvMatrix(), getPlaces());
+					JOptionPane.showMessageDialog(null, "P-invariants saved to file:\n"+path,
+							"Success", JOptionPane.INFORMATION_MESSAGE);
+					overlord.log("P-invariants saved into .inv INA file.","text", true);
+					result = 0;
+				} else {
+					JOptionPane.showMessageDialog(null, "There are no p-invariants to export",
+							"Warning",JOptionPane.WARNING_MESSAGE);
+					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
+					result = -1;
+				}
 			}
-		} catch (Throwable err) {
-			err.printStackTrace();
-			overlord.log("Error: " + err.getMessage(), "error", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			overlord.log("Error: " + e.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1133,26 +1165,43 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda zapisująca inwarianty do pliku w formacie CSV.
 	 * @param path String - ścieżka do pliku zapisu
+	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
 	 * @return int - 0 jeśli operacja się udała, -1 w przeciwnym wypadku
 	 */
-	public int saveInvariantsToCharlie(String path) {
+	public int saveInvariantsToCharlie(String path, boolean t_inv) {
 		int result = -1;
 		try {
-			if (getT_InvMatrix() != null) {
-				communicationProtocol.writeCharlieInv(path, getT_InvMatrix(), getTransitions());
-				JOptionPane.showMessageDialog(null, "Invariants saved to file:\n"+path,
-						"Success",JOptionPane.INFORMATION_MESSAGE);
-				overlord.log("Invariants saved in Charlie file format.","text", true);
-				result = 0;
+			if(t_inv) {
+				if (getT_InvMatrix() != null) {
+					communicationProtocol.writeT_invCharlie(path, getT_InvMatrix(), getTransitions());
+					JOptionPane.showMessageDialog(null, "T-invariants saved to file:\n"+path,
+							"Success",JOptionPane.INFORMATION_MESSAGE);
+					overlord.log("T-invariants saved in Charlie file format.","text", true);
+					result = 0;
+				} else {
+					JOptionPane.showMessageDialog(null, "There are no t-invariants to export.",
+							"Warning",JOptionPane.WARNING_MESSAGE);
+					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
+					result = -1;
+				}
 			} else {
-				JOptionPane.showMessageDialog(null, "There are no invariants to export.",
-						"Warning",JOptionPane.WARNING_MESSAGE);
-				overlord.log("No invariants, saving into CSV file failed.","error", true);
-				result = -1;
+				if (getP_InvMatrix() != null) {
+					communicationProtocol.writeP_invCharlie(path, getP_InvMatrix(), getPlaces());
+					JOptionPane.showMessageDialog(null, "P-invariants saved to file:\n"+path,
+							"Success",JOptionPane.INFORMATION_MESSAGE);
+					overlord.log("P-invariants saved in Charlie file format.","text", true);
+					result = 0;
+				} else {
+					JOptionPane.showMessageDialog(null, "There are no p-invariants to export.",
+							"Warning",JOptionPane.WARNING_MESSAGE);
+					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
+					result = -1;
+				}
 			}
-		} catch (Throwable err) {
-			err.printStackTrace();
-			overlord.log("Error: " + err.getMessage(), "error", true);
+			
+		} catch (Exception e) {
+			//e.printStackTrace();
+			overlord.log("Error: " + e.getMessage(), "error", true);
 		}
 		return result;
 	}

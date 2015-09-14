@@ -152,9 +152,12 @@ public class GUIOperations {
 	
 	/**
 	 * Metoda odpowiedzialna za zapis wygenerowanych inwariantów do pliku programu INA.
+	 * @param t_inv boolean - true, jeśli zapisujemy t-inwarianty
+	 * @return boolean - true, jeśli operacja przebiegła bez problemów
 	 */
-	public void exportGeneratedInvariants() {
+	public boolean exportGeneratedInvariants(boolean t_inv) {
 		String lastPath = overlord.getLastPath();
+		int result = 0;
 		JFileChooser fc;
 		if(lastPath==null)
 			fc = new JFileChooser();
@@ -181,24 +184,28 @@ public class GUIOperations {
 				else
 					fileExtension = ".inv";
 				
-				overlord.getWorkspace().getProject().saveInvariantsToInaFormat(file.getPath() + fileExtension);
-				//overlord.setLastPath(file.getParentFile().getPath());
+				result = overlord.getWorkspace().getProject().saveInvariantsToInaFormat(file.getPath() + fileExtension, t_inv);
 			} else if (description.contains("Comma")) {
 				if(file.getPath().toLowerCase().contains(".csv"))
 					fileExtension = "";
 				else
 					fileExtension = ".csv";
-				overlord.getWorkspace().getProject().saveInvariantsToCSV(file.getPath() + fileExtension, false);
-				//overlord.setLastPath(file.getParentFile().getPath());
+				
+				result = overlord.getWorkspace().getProject().saveInvariantsToCSV(file.getPath() + fileExtension, false, t_inv);
 			} else if (description.contains("Charlie")) {
 				if(file.getPath().toLowerCase().contains(".inv"))
 					fileExtension = "";
 				else
 					fileExtension = ".inv";
-				overlord.getWorkspace().getProject().saveInvariantsToCharlie(file.getPath() + fileExtension);
-				//overlord.setLastPath(file.getParentFile().getPath());
+				
+				result = overlord.getWorkspace().getProject().saveInvariantsToCharlie(file.getPath() + fileExtension, t_inv);
 			}
 		}
+		
+		if(result == 0)
+			return true;
+		else
+			return false;
 	}
 	
 	/**
@@ -397,8 +404,9 @@ public class GUIOperations {
 	/**
 	 * Metoda odpowiedzialna za wczytywanie inwariantów z pliku.
 	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
+	 * @return boolean - true, jeśli operacja się powiodła
 	 */
-	public void loadExternalAnalysis(boolean t_inv) {
+	public boolean loadExternalAnalysis(boolean t_inv) {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		if(t_inv)
@@ -408,23 +416,24 @@ public class GUIOperations {
 		
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file", "");
 		if(selectedFile.equals(""))
-			return;
+			return false;
 		
 		File file = new File(selectedFile);
 		if(!file.exists()) {
-			return;
+			return false;
 		}
 
 		PetriNet project = overlord.getWorkspace().getProject();
 		boolean status = project.loadTPinvariantsFromFile(file.getPath(), t_inv);
 		if(status == false) {
-			return;
+			return false;
 		}
 		
 		if(t_inv) {
 			overlord.getInvariantsBox().showInvariants(project.getT_InvMatrix());
 			overlord.getSimulatorBox().createSimulatorProperties();
 		}
+		return true;
 	}
 	
 	/**
@@ -582,7 +591,7 @@ public class GUIOperations {
 	 */
 	public void generateSimpleMCTFile() {
 		String filePath = overlord.getTmpPath() + "input.csv";
-		int result = overlord.getWorkspace().getProject().saveInvariantsToCSV(filePath, true);
+		int result = overlord.getWorkspace().getProject().saveInvariantsToCSV(filePath, true, true);
 		if(result == -1) {
 			String msg = "Exporting net into CSV file failed.";
 			JOptionPane.showMessageDialog(null,msg,	"Write error",JOptionPane.ERROR_MESSAGE);
@@ -835,7 +844,7 @@ public class GUIOperations {
 			} else if(n == 1) {
 				//generowanie CSV, uda się, jeśli inwarianty istnieją
 				String CSVfilePath = overlord.getTmpPath() + "cluster.csv";
-				int result = overlord.getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true);
+				int result = overlord.getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true, true);
 				if(result == -1) {
 					String msg = "Exporting invariants into CSV file failed. \nCluster procedure cannot begin.";
 					JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);

@@ -34,6 +34,7 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
  *
  */
 public class IOprotocols {
+	private GUIManager overlord;
 	private ArrayList<ArrayList<Integer>> invariantsList; // = new ArrayList<ArrayList<Integer>>();
 	private ArrayList<Integer> nodesList; // = new ArrayList<Integer>();
 	private ArrayList<Node> nodeArray; // = new ArrayList<Node>();
@@ -55,6 +56,7 @@ public class IOprotocols {
 	 * Konstruktor obiektu klasy IOprotocols.
 	 */
 	public IOprotocols() {
+		overlord = GUIManager.getDefaultGUIManager();
 		resetComponents();
 	}
 	
@@ -105,22 +107,22 @@ public class IOprotocols {
 				//to znaczy, że wczytujemy plik INA, po prostu
 			} else if (readLine.contains("List of all elementary modes")) {
 				buffer.close();
-				return readMonaLisaINV(path);
+				return readMonaLisaT_inv(path);
 			}else if (readLine.contains("minimal semipositive transition")) {
 				buffer.close();
-				return readCharlieINV(path);
+				return readCharlieT_inv(path);
 			} else {
 				Object[] options = {"Read as INA file", "Read as MonaLisa file", "Read as Charlie file", "Terminate reading",};
 				int decision = JOptionPane.showOptionDialog(null,
-								"Unknown or corrupted invariants file format. Please choose format for this invariants file?",
+								"Unknown or corrupted t-invariants file format.\nPlease choose format for this t-invariants file.",
 								"Error reading file header", JOptionPane.YES_NO_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 				if (decision == 1) {
 					buffer.close();
-					return readCharlieINV(path);
+					return readMonaLisaT_inv(path);
 				} else if (decision == 2) { //Charlie
 					buffer.close();
-					return readCharlieINV(path);
+					return readCharlieT_inv(path);
 				} else if (decision == 3) {
 					buffer.close();
 					return false;
@@ -150,7 +152,7 @@ public class IOprotocols {
 						try {
 							nodesList.add(Integer.parseInt(formattedLine[j]));
 						} catch (NumberFormatException e) {
-							GUIManager.getDefaultGUIManager().log("Reading file failed in header section.", "text", true);
+							overlord.log("Reading file failed in header section.", "text", true);
 						}
 					}
 				}
@@ -173,10 +175,10 @@ public class IOprotocols {
 				}
 			}
 			buffer.close();
-			GUIManager.getDefaultGUIManager().log("T-invariants from INA file have been read.", "text", true);
+			overlord.log("T-invariants from INA file have been read.", "text", true);
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("T-invariants reading operation failed.", "error", true);
+			overlord.log("T-invariants reading operation failed.", "error", true);
 			return false;
 		} 
 	}
@@ -195,29 +197,25 @@ public class IOprotocols {
 			String backup = readLine;
 			
 			if (readLine.contains("place sub/sur/invariants for net")) {
-				//to znaczy, że wczytujemy plik INA, po prostu
-			} else if (readLine.contains("List of all elementary modes")) {
+				//to znaczy, że wczytujemy plik INA
+			} else if (readLine.contains("List of all place invariants")) {
 				buffer.close();
-				return false;
-				//return readMonaLisaINV(sciezka); //TODO!
-			}else if (readLine.contains("minimal semipositive transition")) {
+				return readMonaLisaP_inv(path);
+			} else if (readLine.contains("minimal semipositive place")) {
 				buffer.close();
-				return false;
-				//return readCharlieINV(sciezka); //TODO!
+				return readCharlieP_inv(path);
 			} else {
 				Object[] options = {"Read as INA file", "Read as MonaLisa file", "Read as Charlie file", "Terminate reading",};
 				int decision = JOptionPane.showOptionDialog(null,
-								"Unknown or corrupted invariants file format. Please choose format for this invariants file?",
+								"Unknown or corrupted p-invariants file format.\nPlease choose format for this p-invariants file.",
 								"Error reading file header", JOptionPane.YES_NO_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 				if (decision == 1) {
 					buffer.close();
-					return false;
-					//return readCharlieINV(sciezka);
+					return readMonaLisaP_inv(path);
 				} else if (decision == 2) { //Charlie
 					buffer.close();
-					return false;
-					//return readCharlieINV(sciezka);
+					return readCharlieP_inv(path);
 				} else if (decision == 3) {
 					buffer.close();
 					return false;
@@ -249,7 +247,7 @@ public class IOprotocols {
 						try {
 							nodesList.add(Integer.parseInt(formattedLine[j]));
 						} catch (NumberFormatException e) {
-							GUIManager.getDefaultGUIManager().log("Reading file failed in header section.", "text", true);
+							overlord.log("Reading file failed in header section.", "text", true);
 						}
 					}
 				}
@@ -272,29 +270,29 @@ public class IOprotocols {
 				}
 			}
 			buffer.close();
-			GUIManager.getDefaultGUIManager().log("P-invariants from INA file have been read.", "text", true);
+			overlord.log("P-invariants from INA file have been read.", "text", true);
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("P-invariants reading operation failed.", "error", true);
+			overlord.log("P-invariants reading operation failed.", "error", true);
 			return false;
 		} 
 	}
 
 	/**
-	 * Metoda wczytująca plik inwariantów wygenerowany programem Charlie.
-	 * @param sciezka String - ściezka do pliku
+	 * Metoda wczytująca plik t-inwariantów wygenerowany programem Charlie.
+	 * @param path String - ścieżka do pliku
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
-	private boolean readCharlieINV(String sciezka) {
+	private boolean readCharlieT_inv(String path) {
 		try {
-			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
+			DataInputStream in = new DataInputStream(new FileInputStream(path));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
 			String readLine = buffer.readLine();
 
 			if (!readLine.contains("minimal semipositive transition")) {
 				Object[] options = {"Force read as Charlie file", "Terminate reading",};
 				int n = JOptionPane.showOptionDialog(null,
-								"Unknown or corrupted invariants file format! Read anyway as Charlie invariants?",
+								"Unknown or corrupted t-invariants file format!\nRead anyway as Charlie invariants?",
 								"Error reading file header", JOptionPane.YES_NO_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
@@ -309,7 +307,7 @@ public class IOprotocols {
 			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
 			boolean firstPass = true;
 			
-			ArrayList<Transition> namesCheck = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			ArrayList<Transition> namesCheck = overlord.getWorkspace().getProject().getTransitions();
 			
 			int transSetSize = namesCheck.size();
 			for(int t=0; t<transSetSize; t++) //init
@@ -336,14 +334,14 @@ public class IOprotocols {
 				readLine = readLine.replace("\t", "");
 				
 				String tmp =  readLine.substring(0, readLine.indexOf("."));
-				int transNumber = Integer.parseInt(tmp); //numer tramzycji w zbiorze
+				int transNumber = Integer.parseInt(tmp); //numer tranzycji w zbiorze
 				
 				readLine = readLine.substring(readLine.indexOf(".")+1);
 				String transName = readLine.substring(0, readLine.indexOf(":"));
 				
 				String orgName = namesCheck.get(transNumber).getName();
 				if(!transName.equals(orgName)) {
-					GUIManager.getDefaultGUIManager().log("Transition name and location does not match!"
+					overlord.log("Transition name and location do not match!"
 							+ " Read transition: "+transName+" (loc:"+transNumber+"), while in net: "+orgName, "text", true);
 				}
 				
@@ -352,7 +350,7 @@ public class IOprotocols {
 				int transValue = Integer.parseInt(readLine);
 				
 				if(transNumber >= transSetSize) {
-					GUIManager.getDefaultGUIManager().log("Charlie invariants file has reference to non existing transitions in the current net."
+					overlord.log("Charlie t-invariants file has reference to non existing transitions in the current net."
 							+ " Operation cancelled.", "text", true);
 					buffer.close();
 					return false;
@@ -366,22 +364,115 @@ public class IOprotocols {
 			invariantsList.add(tmpInvariant);
 
 			buffer.close();
-			GUIManager.getDefaultGUIManager().log("Invariants from Charlie file have been read.", "text", true);
+			overlord.log("T-invariants from Charlie file have been read.", "text", true);
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Charlie invariants reading operation failed.", "text", true);
+			overlord.log("Charlie t-invariants reading operation failed.", "text", true);
 			return false;
 		} 
 	}
 	
 	/**
-	 * Metoda wczytująca plik inwariantów wygenerowany programem Charlie.
-	 * @param sciezka String - ściezka do pliku
+	 * Metoda wczytująca plik p-inwariantów wygenerowany programem Charlie.
+	 * @param path String - ścieżka do pliku
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
-	private boolean readMonaLisaINV(String sciezka) {
+	private boolean readCharlieP_inv(String path) {
 		try {
-			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
+			DataInputStream in = new DataInputStream(new FileInputStream(path));
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+			String readLine = buffer.readLine();
+
+			if (!readLine.contains("minimal semipositive place invariants")) {
+				Object[] options = {"Force read as Charlie file", "Terminate reading",};
+				int n = JOptionPane.showOptionDialog(null,
+								"Unknown or corrupted p-invariants file format!\nRead anyway as Charlie invariants?",
+								"Error reading file header", JOptionPane.YES_NO_OPTION,
+								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+
+				if (n == 1) {
+					buffer.close();
+					return false;
+				}
+				
+			}
+			nodesList.clear();
+			
+			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+			boolean firstPass = true;
+			
+			//ArrayList<Transition> namesCheck = overlord.getWorkspace().getProject().getTransitions();
+			ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+			
+			int placesSetSize = places.size();
+			for(int p=0; p<placesSetSize; p++) //init
+				tmpInvariant.add(0);
+			
+			readLine = buffer.readLine();
+			while (readLine != null && readLine.length() > 0) {
+				String lineStart = readLine.substring(0, readLine.indexOf("|"));
+				lineStart = lineStart.replace(" ", "");
+				lineStart = lineStart.replace("\t", "");
+				
+				if(lineStart.length() > 0 && firstPass == false) { //początek inwariantu
+					invariantsList.add(tmpInvariant);
+
+					tmpInvariant = new ArrayList<Integer>();
+					for(int p=0; p<placesSetSize; p++) // init
+						tmpInvariant.add(0);
+
+				} 
+				firstPass = false;
+				
+				readLine = readLine.substring(readLine.indexOf("|")+1);
+				readLine = readLine.replace(" ", "");
+				readLine = readLine.replace("\t", "");
+				
+				String tmp =  readLine.substring(0, readLine.indexOf("."));
+				int placeNumber = Integer.parseInt(tmp); //numer miejsca w zbiorze
+				
+				readLine = readLine.substring(readLine.indexOf(".")+1);
+				String placeName = readLine.substring(0, readLine.indexOf(":"));
+				
+				String orgName = places.get(placeNumber).getName();
+				if(!placeName.equals(orgName)) {
+					overlord.log("Place name and location do not match!"
+							+ " Read place: "+placeName+" (loc:"+placeNumber+"), while in net: "+orgName, "text", true);
+				}
+				
+				readLine = readLine.substring(readLine.indexOf(":")+1);
+				readLine = readLine.replace(",", "");
+				int transValue = Integer.parseInt(readLine);
+				
+				if(placeNumber >= placesSetSize) {
+					overlord.log("Charlie p-invariants file has reference to non existing places in the current net."
+							+ " Operation cancelled.", "text", true);
+					buffer.close();
+					return false;
+				}
+				tmpInvariant.set(placeNumber, transValue);
+				
+				readLine = buffer.readLine();
+			}
+			invariantsList.add(tmpInvariant);
+
+			buffer.close();
+			overlord.log("P-invariants from Charlie file have been read.", "text", true);
+			return true;
+		} catch (Exception e) {
+			overlord.log("Charlie p-invariants reading operation failed.", "text", true);
+			return false;
+		} 
+	}
+	
+	/**
+	 * Metoda wczytująca plik t-inwariantów wygenerowany programem MonaLisa.
+	 * @param path String - ścieżka do pliku
+	 * @return boolean - true, jeśli operacja się powiodła
+	 */
+	private boolean readMonaLisaT_inv(String path) {
+		try {
+			DataInputStream in = new DataInputStream(new FileInputStream(path));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
 			String line = buffer.readLine();
 
@@ -399,11 +490,8 @@ public class IOprotocols {
 				
 			}
 			nodesList.clear();
-			
-			
-			//boolean firstPass = true;
-			
-			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+
+			ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 			int transSetSize = transitions.size();
 			
 			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
@@ -427,37 +515,110 @@ public class IOprotocols {
 							
 							el = el.substring(el.indexOf("*")+1);
 							int trans = Integer.parseInt(el);
-							trans--; //MonaLisa liczy od 1 tranzycje
+							trans--; //MonaLisa liczy od 1, nie od 0
 							tmpInvariant.set(trans, value);
 						} else {
 							int trans = Integer.parseInt(el);
-							trans--; //MonaLisa liczy od 1 tranzycje
+							trans--; //MonaLisa liczy od 1, nie od 0
 							tmpInvariant.set(trans, 1);
 						}
 					}
 					invariantsList.add(tmpInvariant);
 					line = buffer.readLine();
 				} catch (Exception e) {
-					GUIManager.getDefaultGUIManager().log("Error reading invariant #"+lineNumber, "error", true);
+					overlord.log("Error reading t-invariant #"+lineNumber, "error", true);
 					line = buffer.readLine();
 				}
 			}
 			buffer.close();
-			GUIManager.getDefaultGUIManager().log("Invariants from MonaLisa file have been read.", "text", true);
+			overlord.log("T-invariants from MonaLisa file have been read.", "text", true);
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("MonaLisa invariants reading operation failed.", "text", true);
+			overlord.log("MonaLisa t-invariants reading operation failed.", "text", true);
+			return false;
+		} 
+	}
+	
+	/**
+	 * Metoda wczytująca plik p-inwariantów wygenerowany programem MonaLisa.
+	 * @param path String - ścieżka do pliku
+	 * @return boolean - true, jeśli operacja się powiodła
+	 */
+	private boolean readMonaLisaP_inv(String path) {
+		try {
+			DataInputStream in = new DataInputStream(new FileInputStream(path));
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+			String line = buffer.readLine();
+
+			if (!line.contains("# List of all place invariants")) {
+				Object[] options = {"Force read as Mona Lisa file", "Terminate reading",};
+				int n = JOptionPane.showOptionDialog(null,
+								"Unknown or corrupted invariants file format!\nRead anyway as Mona Lisa p-invariants?",
+								"Error reading file header", JOptionPane.YES_NO_OPTION,
+								JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+
+				if (n == 1) {
+					buffer.close();
+					return false;
+				}
+				
+			}
+			nodesList.clear();
+
+			ArrayList<Place> places =  overlord.getWorkspace().getProject().getPlaces();
+			int placesSetSize = places.size();			
+			ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+
+			line = buffer.readLine();
+			while (line != null && line.length() > 0 && line.contains("Place")) {
+				tmpInvariant = new ArrayList<Integer>();
+				for(int t=0; t<placesSetSize; t++) //init
+					tmpInvariant.add(0);
+				
+				String lineNumber = line.substring(0, line.indexOf("."));
+				
+				try {
+					line = line.substring(line.indexOf(":")+1);
+					line = line.trim();
+					String[] tablica = line.split(" ");
+					for(String el : tablica) {
+						if(el.contains("*")) {
+							String valueS = el.substring(0, el.indexOf("*"));
+							int value = Integer.parseInt(valueS);
+							
+							el = el.substring(el.indexOf("*")+1);
+							int place = Integer.parseInt(el);
+							place--; //MonaLisa liczy od 1, nie od 0
+							tmpInvariant.set(place, value);
+						} else {
+							int trans = Integer.parseInt(el);
+							trans--; //MonaLisa liczy od 1, nie od 0
+							tmpInvariant.set(trans, 1);
+						}
+					}
+					invariantsList.add(tmpInvariant);
+					line = buffer.readLine();
+				} catch (Exception e) {
+					overlord.log("Error reading p-invariant #"+lineNumber, "error", true);
+					line = buffer.readLine();
+				}
+			}
+			buffer.close();
+			overlord.log("P-invariants from MonaLisa file have been read.", "text", true);
+			return true;
+		} catch (Exception e) {
+			overlord.log("MonaLisa p-invariants reading operation failed.", "text", true);
 			return false;
 		} 
 	}
 
 	/**
-	 * Zapis inwariantow w formacie INA.
-	 * @param path - scieżka do pliku
-	 * @param invariants ArrayList[ArrayList[Integer]] - lista niezmienników
+	 * Zapis t-inwariantow do pliku w formacie INA.
+	 * @param path String - scieżka do pliku
+	 * @param invariants ArrayList[ArrayList[Integer]] - lista t-inwariantów
 	 * @param transitions ArrayList[Transition] - lista tranzycji
 	 */
-	public void writeINV(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
+	public void writeT_invINA(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
 		try {
 			String extension = "";
 			if(!path.contains(".inv"))
@@ -521,18 +682,95 @@ public class IOprotocols {
 			pw.print("\r\n");
 			pw.print("@");
 			pw.close();
-			GUIManager.getDefaultGUIManager().log("Invariants in INA file format saved to "+path, "text", true);
+			overlord.log("T-invariants in INA file format saved to "+path, "text", true);
 		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
-			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writeINV",JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
+			//System.err.println("Error: " + e.getMessage());
+			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writeT_invINA",JOptionPane.ERROR_MESSAGE);
+			overlord.log("Error: " + e.getMessage(), "error", true);
+		}
+	}
+	
+	/**
+	 * Zapis p-inwariantow do pliku w formacie INA.
+	 * @param path String - scieżka do pliku
+	 * @param invariants ArrayList[ArrayList[Integer]] - lista p-inwariantów
+	 * @param places ArrayList[Place] - lista miejsc
+	 */
+	public void writeP_invINA(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Place> places) {
+		try {
+			String extension = "";
+			if(!path.contains(".inv"))
+				extension = ".inv";
+			PrintWriter pw = new PrintWriter(path + extension);
+
+			pw.print("place sub/sur/invariants for net 0.net.pnt        :\r\n");
+			pw.print("\r\n");
+			pw.print("semipositive place invariants =\r\n");
+			pw.print("\r\n");
+			pw.print("Nr.      ");
+
+			int delimiter = 13;
+			if(places.size() < 100)
+				delimiter = 17;
+			int multipl = 1;
+			int placesNo = invariants.get(0).size();
+			
+			for (int i = 0; i < places.size(); i++) {
+				if(placesNo >= 100)
+					pw.print(convertIntToStr(true,i));
+				else
+					pw.print(convertIntToStr(false,i));
+				
+				if (i == (multipl*delimiter) - 1) {
+					pw.print("\r\n");
+					pw.print("        ");
+					multipl++;
+				}
+			}
+			pw.print("\r\n");
+			pw.print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			pw.print("\r\n");
+
+			for (int i = 0; i < invariants.size(); i++) { //po wszystkich p-inwariantach
+				if(placesNo >= 100) {
+					pw.print(convertIntToStr(true,i) + " |   ");
+				} else
+					pw.print(convertIntToStr(false,i) + " |   ");
+				
+				multipl = 1;
+				for (int t = 0; t < invariants.get(i).size(); t++) { //po wszystkich miejscach inwariantu
+					int tr = invariants.get(i).get(t); // nr tranzycji
+					if (placesNo >= 100)
+						pw.print(convertIntToStr(true, tr)); //tutaj wstawiamy wartość dla miejsca. w inw.
+					else
+						pw.print(convertIntToStr(false, tr)); //tutaj wstawiamy wartość dla miejsca. w inw.
+					
+					if (t == (multipl*delimiter)-1 ) { //rozdzielnik wierszy
+						pw.print("\r\n");
+						if(placesNo>=100)
+							pw.print("      |   ");
+						else
+							pw.print("     |   ");
+						multipl++;
+					}
+				}
+				pw.print("\r\n");
+			}
+			pw.print("\r\n");
+			pw.print("@");
+			pw.close();
+			overlord.log("P-invariants in INA file format saved to "+path, "text", true);
+		} catch (Exception e) {
+			//System.err.println("Error: " + e.getMessage());
+			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writeP_invINA",JOptionPane.ERROR_MESSAGE);
+			overlord.log("Error: " + e.getMessage(), "error", true);
 		}
 	}
 	
 	/**
 	 * Metoda pomocnicza zwracająca liczbę w formie String z odpowiednią liczbą spacji.
-	 * Metoda ta jest niezbędna do zapisu pliku inwariantów w formacie programu INA
-	 * @param large boolean - true, jeśli dla dużej sieci.
+	 * Metoda ta jest niezbędna do zapisu pliku inwariantów w formacie programu INA.
+	 * @param large boolean - true, jeśli dla dużej sieci
 	 * @param tr int - liczba do konwersji
 	 * @return String - liczba po konwersji
 	 */
@@ -591,7 +829,7 @@ public class IOprotocols {
 	public void readPNT(String sciezka) {
 		try {
 			resetComponents();
-			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();	
+			int SID = overlord.getWorkspace().getProject().returnCleanSheetID();	
 			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
 			String wczytanaLinia = buffer.readLine();
@@ -780,12 +1018,12 @@ public class IOprotocols {
 
 					int wid = Toolkit.getDefaultToolkit().getScreenSize().width - 20;
 					int hei = Toolkit.getDefaultToolkit().getScreenSize().height - 20;
-					int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(SID);
+					int SIN = overlord.IDtoIndex(SID);
 					int tmpX = 0;
 					int tmpY = 0;
 					boolean xFound = false;
 					boolean yFound = false;
-					GraphPanel graphPanel = GUIManager.getDefaultGUIManager()
+					GraphPanel graphPanel = overlord
 							.getWorkspace().getSheets().get(SIN).getGraphPanel();
 					for (int l = 0; l < elemArray.size(); l++) {
 						if (elemArray.get(l).getPosition().x > wid) {
@@ -817,11 +1055,11 @@ public class IOprotocols {
 			}
 			
 			in.close();
-			GUIManager.getDefaultGUIManager().log("Petri net from INA .pnt file successfully read.", "text", true);
+			overlord.log("Petri net from INA .pnt file successfully read.", "text", true);
 		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
+			//System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: readPNT",JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
+			overlord.log("Error: " + e.getMessage(), "error", true);
 		}
 
 	}
@@ -949,24 +1187,24 @@ public class IOprotocols {
 			fileBuffer += "@";
 			writerObject.println(fileBuffer);
 			writerObject.close();
-			GUIManager.getDefaultGUIManager().log("Petri net exported as .pnt INA format. File: "+path, "text", true);
-			GUIManager.getDefaultGUIManager().markNetSaved();
+			overlord.log("Petri net exported as .pnt INA format. File: "+path, "text", true);
+			overlord.markNetSaved();
 			return true;
 		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
+			//System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writePNT", JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
+			overlord.log("Error: " + e.getMessage(), "error", true);
 			return false;
 		}
 	}
 	
 	/**
-	 * Metoda zapisująca inwarianty w pliku w formacie programu Charlie.
+	 * Metoda zapisująca t-inwarianty do pliku w formacie programu Charlie.
 	 * @param path String - ścieżka do pliku
-	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz t-inwariantów
 	 * @param transitions ArrayList[Transition] - wektor tranzycji
 	 */
-	public void writeCharlieInv(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
+	public void writeT_invCharlie(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
 		try {
 			String extension = "";
 			if(!path.contains(".inv"))
@@ -995,21 +1233,63 @@ public class IOprotocols {
 				}
 			}
 			pw.close();
-			GUIManager.getDefaultGUIManager().log("Invariants in Charlie file format saved to "+path, "text", true);
+			overlord.log("Invariants in Charlie file format saved to "+path, "text", true);
 		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
-			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR:writeCharlieInv",JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
+			//System.err.println("Error: " + e.getMessage());
+			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writeP_invCharlie",JOptionPane.ERROR_MESSAGE);
+			overlord.log("Error: " + e.getMessage(), "error", true);
 		}
 	}
 	
 	/**
-	 * Metoda zapisująca inwarianty w formacie Comma Separated Value.
+	 * Metoda zapisująca p-inwarianty do pliku w formacie programu Charlie.
+	 * @param path String - ścieżka do pliku
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz p-inwariantów
+	 * @param places ArrayList[Place] - wektor miejsc
+	 */
+	public void writeP_invCharlie(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Place> places) {
+		try {
+			String extension = "";
+			if(!path.contains(".inv"))
+				extension = ".inv";
+			PrintWriter pw = new PrintWriter(path + extension);
+			pw.print("minimal semipositive place invariants=");
+
+			for (int i = 0; i < invariants.size(); i++) { //po wszystkich p-inwariantach
+				boolean nrPlaced = false;
+				for (int p = 0; p < invariants.get(i).size(); p++) { //po wszystkich miejscach
+					int value = invariants.get(i).get(p);
+					if(value == 0) {
+						continue;
+					}
+					
+					if(nrPlaced == false) {
+						pw.print("\r\n"+(i+1)+"\t|\t");
+						nrPlaced = true;
+					} else {
+						pw.print(",\r\n");
+						pw.print("\t|\t");
+					}
+					String name = places.get(p).getName();
+					pw.print(p+"."+name+"\t\t:"+value);
+				}
+			}
+			pw.print("\r\n");
+			pw.close();
+			overlord.log("P-invariants in Charlie file format saved to "+path, "text", true);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writeP_invCharlie",JOptionPane.ERROR_MESSAGE);
+			overlord.log("Error: " + e.getMessage(), "error", true);
+		}
+	}
+	
+	/**
+	 * Metoda zapisująca t-inwarianty w formacie CSV (Comma Separated Value).
 	 * @param path String - ścieżka do pliku zapisu
-	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz t-inwariantów
 	 * @param transitions ArrayList[Transition] - wektor tranzycji
 	 */
-	public void writeInvToCSV(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
+	public void writeT_invCSV(String path, ArrayList<ArrayList<Integer>> invariants, ArrayList<Transition> transitions) {
 		try {
 			String extension = "";
 			if(!path.contains(".csv"))
@@ -1021,7 +1301,8 @@ public class IOprotocols {
 			}
 			pw.print("\r\n");
 
-			boolean crazyMode = GUIManager.getDefaultGUIManager().accessClusterWindow().crazyMode;
+			//TODO:
+			boolean crazyMode = overlord.accessClusterWindow().crazyMode;
 			if(crazyMode) {
 				for (int i = 0; i < invariants.size(); i++) { //po wszystkich inwariantach
 					pw.print(i+1);
@@ -1044,11 +1325,46 @@ public class IOprotocols {
 				}
 			}
 			pw.close();
-			GUIManager.getDefaultGUIManager().log("Invariants saved as CSV file "+path, "text", true);
+			overlord.log("Invariants saved as CSV file "+path, "text", true);
 		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
-			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR:writeInvToCSV",JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
+			//System.err.println("Error: " + e.getMessage());
+			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writeT_invCSV",JOptionPane.ERROR_MESSAGE);
+			overlord.log("Error: " + e.getMessage(), "error", true);
+		}
+	}
+	
+	/**
+	 * Metoda zapisująca p-inwarianty w formacie CSV (Comma Separated Value).
+	 * @param path String - ścieżka do pliku zapisu
+	 * @param p_invariants ArrayList[ArrayList[Integer]] - macierz t-inwariantów
+	 * @param transitions ArrayList[Place] - wektor miejsc
+	 */
+	public void writeP_invCSV(String path, ArrayList<ArrayList<Integer>> p_invariants, ArrayList<Place> places) {
+		try {
+			String extension = "";
+			if(!path.contains(".csv"))
+				extension = ".csv";
+			PrintWriter pw = new PrintWriter(path + extension);
+			for (int i = 0; i < places.size(); i++) {
+				pw.print(";"+i+"."+places.get(i).getName());
+			}
+			pw.print("\r\n");
+
+			for (int i = 0; i < p_invariants.size(); i++) { //po wszystkich p-inwariantach
+				pw.print(i+1);
+				for (int p = 0; p < p_invariants.get(i).size(); p++) { //po wszystkich miejscach
+					int value = p_invariants.get(i).get(p);
+					pw.print(";"+value);
+				}
+				pw.print("\r\n");
+			}
+				
+			pw.close();
+			overlord.log("P-invariants saved as CSV file "+path, "text", true);
+		} catch (Exception e) {
+			//System.err.println("Error: " + e.getMessage());
+			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writeP_invCSV",JOptionPane.ERROR_MESSAGE);
+			overlord.log("Error: " + e.getMessage(), "error", true);
 		}
 	}
 }

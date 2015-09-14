@@ -650,7 +650,7 @@ public class HolmesClusterSubWindow extends JFrame {
 			{
 				//generowanie CSV, uda się, jeśli inwarianty istnieją
 				String CSVfilePath = GUIManager.getDefaultGUIManager().getTmpPath() + "cluster.csv";
-				int result = GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true);
+				int result = GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true, true);
 				if(result == -1) {
 					String msg = "Exporting invariants into CSV file failed. \nCluster procedure cannot begin without invariants.";
 					JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);

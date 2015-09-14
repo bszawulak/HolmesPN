@@ -658,7 +658,7 @@ public class HolmesProgramProperties extends JFrame {
 		panel.setBounds(0, 0, 600, 500);
 		
 		panel.add(createInvariantsPanel(0, 0, 590, 90));
-		panel.add(createFeasibleInvPanel(0, 90, 590, 90));
+		panel.add(createClusteringPanel(0, 90, 590, 90));
 		panel.add(createMCSPanel(0, 180, 590, 90));
 		panel.repaint();
 		return panel;
@@ -675,36 +675,44 @@ public class HolmesProgramProperties extends JFrame {
 	 */
 	private JPanel createInvariantsPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Invariants generator"));
+		panel.setBorder(BorderFactory.createTitledBorder("Clusters options"));
 		panel.setBounds(x, y, w, h);
 		
+		int io_x = 10;
+		int io_y = 15;
 		noAction = true;
 
+		JCheckBox binaryTinvCheckBox = checkboxWizard("Save t-invariants in CSV as binary vectors.", io_x, io_y, 360, 20, 
+				"analysisBinaryCSVInvariants");
+		panel.add(binaryTinvCheckBox);
+		
+		// Self-propelled read-arc regions ignored or not in feasible invariants algorith
+		JCheckBox feasInvSelfPropCheckBox = checkboxWizard("Allow presence of self-propelled readarc regions", io_x, io_y+=20, 360, 20, 
+				"analysisFeasibleSelfPropAccepted");
+		panel.add(feasInvSelfPropCheckBox);
+		
 		noAction = false;
 		return panel;
 	}
 	
 	/**
-	 * Metoda tworząca podpanel opcji wykonalnych inwariantów.
+	 * Metoda tworząca podpanel opcji dla klastrów.
 	 * @param x int - współrzędna X
 	 * @param y int - współrzedna Y
 	 * @param w int - szerokość
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
-	private JPanel createFeasibleInvPanel(int x, int y, int w, int h) {
+	private JPanel createClusteringPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Feasible invariants options"));
+		panel.setBorder(BorderFactory.createTitledBorder("Cluster algorithms options"));
 		panel.setBounds(x, y, w, h);
 		
-		int io_x = 10;
-		int io_y = 15;
+		//int io_x = 10;
+		//int io_y = 15;
 		noAction = true;
 		
-		// Self-propelled read-arc regions ignored or not in feasible invariants algorith
-		JCheckBox feasInvSelfPropCheckBox = checkboxWizard("Allow presence of self-propelled readarc regions", io_x, io_y, 360, 20, 
-				"analysisFeasibleSelfPropAccepted");
-		panel.add(feasInvSelfPropCheckBox);
+		
 		
 		noAction = false;
 		return panel;

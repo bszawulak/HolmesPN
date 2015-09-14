@@ -10,13 +10,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -42,6 +46,7 @@ import holmes.workspace.ExtensionFileFilter;
  */
 public class HolmesNetProperties extends JFrame {
 	private static final long serialVersionUID = -4382182770445745847L;
+	private GUIManager overlord;
 	private JFrame ego;
 	
 	//Wiemy wszystko o wszystkim:
@@ -53,7 +58,7 @@ public class HolmesNetProperties extends JFrame {
 	private ArrayList<ArrayList<Object>> properties = new ArrayList<ArrayList<Object>>();
 	
 	//komponenty do ustawienia:
-	private JLabel label_netName;
+	private JFormattedTextField nameField;
 	private JLabel label_nodesNumber;
 	private JLabel label_transitionsNumber;
 	private JLabel label_placesNumber;
@@ -80,7 +85,8 @@ public class HolmesNetProperties extends JFrame {
 			
 		}
 		this.setTitle("Petri net general information and properties");
-		
+		this.overlord = GUIManager.getDefaultGUIManager();
+
 		setLayout(new BorderLayout());
 		setSize(new Dimension(650, 550));
 		setLocation(50, 50);
@@ -106,16 +112,16 @@ public class HolmesNetProperties extends JFrame {
 	 * Metoda ta odświeża okno o najnowsze informacje na temat załadowanej sieci.
 	 */
 	private void fillData() {
-		//PetriNetData data = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getData();
-		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
-		nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
-		invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+		//PetriNetData data = petriNet.getData();
+		places = overlord.getWorkspace().getProject().getPlaces();
+		transitions = overlord.getWorkspace().getProject().getTransitions();
+		arcs = overlord.getWorkspace().getProject().getArcs();
+		nodes = overlord.getWorkspace().getProject().getNodes();
+		invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
 		
 		ArrayList<Integer> arcClasses = Check.getArcClassCount();
 		
-		label_netName.setText(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getName()+"");
+		nameField.setText(overlord.getWorkspace().getProject().getName()+"");
 		label_nodesNumber.setText(nodes.size()+"");
 		label_transitionsNumber.setText(transitions.size()+"");
 		label_placesNumber.setText(places.size()+"");
@@ -207,7 +213,8 @@ public class HolmesNetProperties extends JFrame {
 	 * Absolute positioning. Of absolute everything here. 
 	 * Nie obchodzi mnie, co o tym myślisz. Idź w layout i nie wracaj. ┌∩┐(◣_◢)┌∩┐
 	 * @return JPanel - panel z danymi
-	 * @author MR - tak się kiedyś, dzieci, programowało. Tak powstał Unix. I Linux. Więc mordy w kubeł.
+	 * @author MR - tak się kiedyś, dzieci, programowało. Tak powstał Unix. I Linux. Więc mordki w kubeł. <br>
+	 * 			P.S. No i co z tego, że mamy XXI wiek?! :D
 	 */
 	private JPanel createMainPanel() {
 		JPanel panel = new JPanel();
@@ -224,9 +231,22 @@ public class HolmesNetProperties extends JFrame {
 		JLabel label1 = new JLabel("Project name:");
 		label1.setBounds(xPos, yPosA, 100, 20);
 		panel.add(label1);
-		label_netName = new JLabel("N/A");
-		label_netName.setBounds(xPos+label1.getWidth()+10, label1.getLocation().y, 400, 20);
-		panel.add(label_netName);
+		
+		nameField = new JFormattedTextField();
+		nameField.setBounds(xPos+110, yPosA+2, 500, 20);
+		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newName = (String) field.getText();
+				overlord.getWorkspace().getProject().setName(newName);
+			}
+		});
+		panel.add(nameField);
+		
 		//NET NODES:
 		JLabel label2 = new JLabel("Nodes:");
 		label2.setBounds(xPos, yPosA+=spacing, 100, 20);
@@ -390,7 +410,7 @@ public class HolmesNetProperties extends JFrame {
 	 */
 	private void saveToFile() {
 		FileFilter[] filters = new FileFilter[1];
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		filters[0] = new ExtensionFileFilter("Normal text file (.txt)",  new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
 		
@@ -402,7 +422,7 @@ public class HolmesNetProperties extends JFrame {
 			try {
 				BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
 				
-				bw.write("Petri net name: "+label_netName.getText()+"\n");
+				bw.write("Petri net name: "+nameField.getText()+"\n");
 				bw.write("Number of nodes: "+label_nodesNumber.getText()+"\n");
 				bw.write("Number of transitions: "+label_transitionsNumber.getText()+"\n");
 				bw.write("Number of places: "+label_placesNumber.getText()+"\n");

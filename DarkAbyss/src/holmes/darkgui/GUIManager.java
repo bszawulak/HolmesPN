@@ -516,7 +516,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 			
 			if(!checkFileINA2p.exists() || !(checkFileINA2p.length() == 77)) { //COMMANDp.ina  //p-inv
 				try {
-					PrintWriter pw = new PrintWriter(checkFileINA2.getPath());
+					PrintWriter pw = new PrintWriter(checkFileINA2p.getPath());
 					pw.print(settingsManager.getValue("ina_COMMAND1")+"\r");
 					pw.print(settingsManager.getValue("ina_COMMAND2p")+"\r");
 					pw.print(settingsManager.getValue("ina_COMMAND4"));

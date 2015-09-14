@@ -146,7 +146,10 @@ public class SettingsManager {
 		checkAndFix(settingsNew, "editorGraphFontBold", "0");
 		checkAndFix(settingsNew, "editorSubnetCompressMode", "0");
 		
+		//invariants:
+		checkAndFix(settingsNew, "analysisBinaryCSVInvariants", "0");
 		checkAndFix(settingsNew, "analysisFeasibleSelfPropAccepted", "1");
+		
 		checkAndFix(settingsNew, "analysisMCSReduction", "1");
 		
 		//knockout:

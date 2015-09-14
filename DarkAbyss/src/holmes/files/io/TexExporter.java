@@ -278,7 +278,7 @@ public class TexExporter {
 	 */
 	private String invMCTSubroutines() {
 		String filePath = GUIManager.getDefaultGUIManager().getTmpPath() + "input.csv";
-		int result = GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveInvariantsToCSV(filePath, true);
+		int result = GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveInvariantsToCSV(filePath, true, true);
 		if(result == -1) {
 			String msg = "Exporting net into CSV file failed.";
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
