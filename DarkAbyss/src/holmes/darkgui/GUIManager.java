@@ -488,7 +488,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		File checkFileINA3 = new File(toolPath+"//ina.bat");
 		if (!checkFileINA0.exists() || !checkFileINA1.exists() 
 				|| !checkFileINA2.exists() || !(checkFileINA2.length() == 80)
-				|| !checkFileINA3.exists() || !(checkFileINA3.length() == 30) ) {
+				|| !checkFileINA3.exists() || !(checkFileINA3.length() == 30)
+				|| !checkFileINA2p.exists() || !(checkFileINA2p.length() == 77)) {
 			
 			log("Something wrong with the INA tools directory.", "warning", true);
 			if(!checkFileINA0.exists()) {
