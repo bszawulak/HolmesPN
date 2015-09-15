@@ -283,102 +283,6 @@ public class InvariantsCalculator implements Runnable {
 	}
 	
 	/**
-	 * Metoda tworząca macierze: incydencji i jednostkową dla modelu szukania P-inwariantów
-	 * (PT-macierz z literatury).
-	 * @param silence boolean - true, jeśli nie ma wypisywać komunikatów
-	 */
-	public void aaaaa_createPTIncidenceAndIdentityMatrix(boolean silence) {
-		//hashmapy do ustalania lokalizacji miejsca/tranzycji. Równie dobrze 
-		//działałoby (niżej, gdy są używane): np. places.indexOf(...)
-		HashMap<Place, Integer> placesMap = new HashMap<Place, Integer>();
-		HashMap<Transition, Integer> transitionsMap = new HashMap<Transition, Integer>();
-		for (int i = 0; i < places.size(); i++) {
-			placesMap.put(places.get(i), i);
-		}
-		for (int i = 0; i < transitions.size(); i++) {
-			transitionsMap.put(transitions.get(i), i);
-		}
-		
-		globalIncidenceMatrix = new ArrayList<ArrayList<Integer>>();
-		CMatrix = new ArrayList<ArrayList<Integer>>();
-		removalList = new ArrayList<Integer>();
-		doubleArcs = new ArrayList<ArrayList<Integer>>();
-		
-		//tworzenie macierzy TP - precyzyjnie do obliczeń T-inwariantów
-		for (int trans = 0; trans < transitions.size(); trans++) {
-			ArrayList<Integer> transRow = new ArrayList<Integer>();
-			ArrayList<Integer> transRow2 = new ArrayList<Integer>();
-			for (int place = 0; place < places.size(); place++) {
-				transRow.add(0);
-				transRow2.add(0);
-			}
-			globalIncidenceMatrix.add(transRow);
-			CMatrix.add(transRow2);
-		}
-		//wypełnianie macierzy incydencji
-		for (Arc oneArc : arcs) {
-			int tPosition = 0;
-			int pPosition = 0;
-			int incidenceValue = 0;
-			
-			if(oneArc.getArcType() != TypesOfArcs.NORMAL) {
-				continue;
-			}
-
-			if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION) {
-				tPosition = transitionsMap.get(oneArc.getStartNode());
-				pPosition = placesMap.get(oneArc.getEndNode());
-				incidenceValue = 1 * oneArc.getWeight();
-			} else { //miejsca
-				tPosition = transitionsMap.get(oneArc.getEndNode());
-				pPosition = placesMap.get(oneArc.getStartNode());
-				incidenceValue = -1 * oneArc.getWeight();
-			}
-			int oldValue = globalIncidenceMatrix.get(tPosition).get(pPosition);
-			if(oldValue != 0) { //detekcja łuków podwójnych
-				ArrayList<Integer> hiddenReadArc = new ArrayList<Integer>();
-				hiddenReadArc.add(pPosition);
-				hiddenReadArc.add(tPosition);
-				doubleArcs.add(hiddenReadArc);
-			}
-			
-			globalIncidenceMatrix.get(tPosition).set(pPosition, oldValue+incidenceValue);
-			CMatrix.get(tPosition).set(pPosition, oldValue+incidenceValue);
-		}
-		
-		globalIncidenceMatrix = InvariantsTools.transposeMatrix(globalIncidenceMatrix);
-		CMatrix = InvariantsTools.transposeMatrix(CMatrix);
-		
-		if(!silence)
-			logInternal("\nPT-class incidence matrix created for "+transitions.size()+" transitions and "+places.size()+" places.\n", false);
-		
-		//globalIdentityMatrix = InvariantsTools.transposeMatrix(globalIdentityMatrix);
-		//macierz jednostkowa
-		
-		globalIdentityMatrix = new ArrayList<ArrayList<Integer>>();
-		for (int p = 0; p < places.size(); p++) {
-			ArrayList<Integer> identRow = new ArrayList<Integer>();
-			for (int p2 = 0; p2 < places.size(); p2++) {
-				if (p == p2) 
-					identRow.add(1);
-				else
-					identRow.add(0);
-			}
-			globalIdentityMatrix.add(identRow);
-		}
-
-		INC_MATRIX_ROW_SIZE = globalIncidenceMatrix.get(0).size(); //liczba miejsc dla liczenia t-inv, lub
-		//liczba tranzycji dla liczenia p-inv
-		IDENT_MATRIX_ROW_SIZE = places.size();
-		GLOBAL_INC_VECTOR = new ArrayList<Integer>();
-		for (int i = 0; i < INC_MATRIX_ROW_SIZE; i++)
-			GLOBAL_INC_VECTOR.add(0);
-
-		if(!silence)
-			logInternal("Identity matrix created for "+places.size()+" places.\n", false);
-	}
-	
-	/**
 	 * Główna metoda klasy odpowiedzialna za wyszukiwanie inwariantów.
 	 */
 	public void calculateInvariants() {
@@ -831,7 +735,7 @@ public class InvariantsCalculator implements Runnable {
 			 * na jakimś elemencie jest mniejszy, a nie tylko mniejszy/równy (CanInRefStrong > 0).
 			 */
 		} else {
-			System.out.println("checkCoverability: Niemożliwy stan został osiągnięty. Konkluzja: znajdź sobie inny zbiór inwariantów niż ten.");
+			GUIManager.getDefaultGUIManager().log("CheckCoverability function: catastrophic error, impossible state detected.", "error", true);
 			return 3; //teoretycznie NIGDY nie powinniśmy się tu pojawić
 		}
 	}
@@ -853,16 +757,24 @@ public class InvariantsCalculator implements Runnable {
 		int steps = 0;
 		
 		if(size > 1000) {
-			if(masterWindow != null) 
-				masterWindow.accessLogFieldTinv().append("\n");
+			if(masterWindow != null) {
+				if(t_InvMode)
+					masterWindow.accessLogFieldTinv().append("\n");
+				else
+					masterWindow.accessLogFieldPinv().append("\n");
+			}
 
 			for(ArrayList<Integer> newRow : newRowsMatrix) { //dodawanie nowych wierszy
 				addNewRowsToMatrix(newRow);
 				
 				if(steps == (int)interval) {
 					steps = 0;
-					if(masterWindow != null) 
-						masterWindow.accessLogFieldTinv().append("*");
+					if(masterWindow != null) {
+						if(t_InvMode)
+							masterWindow.accessLogFieldTinv().append("*");
+						else
+							masterWindow.accessLogFieldPinv().append("*");
+					}
 				} else
 					steps++;
 			}
