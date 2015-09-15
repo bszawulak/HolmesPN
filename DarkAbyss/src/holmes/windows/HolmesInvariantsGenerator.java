@@ -393,7 +393,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 					logFieldTinv.append("=====================================================================\n");
 					
 					if(detailsTinv)
-						showSubSurInvInfo(results, invariants.size());
+						showSubSurT_invInfo(results, invariants.size());
 				}
 			}
 		});
@@ -677,7 +677,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 					logFieldPinv.append("=====================================================================\n");
 					logFieldPinv.append("Checking invariants correctness for "+p_invariants.size()+" invariants.\n");
 					InvariantsCalculator ic = new InvariantsCalculator(true);
-					ArrayList<ArrayList<Integer>> results = InvariantsTools.countNonT_InvariantsV2(ic.getCMatrix(), p_invariants);
+					ArrayList<ArrayList<Integer>> results = InvariantsTools.countNonP_Invariants(ic.getCMatrix(), p_invariants);
 					logFieldPinv.append("Proper invariants (Cx = 0): "+results.get(0).get(0)+"\n");
 					logFieldPinv.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
 					logFieldPinv.append("Sub-invariants (Cx < 0): "+results.get(0).get(2)+"\n");
@@ -685,7 +685,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 					logFieldPinv.append("=====================================================================\n");
 					
 					if(detailsPinv)
-						showSubSurInvInfo(results, p_invariants.size());
+						showSubSurP_invInfo(results, p_invariants.size());
 				}
 			}
 		});
@@ -871,7 +871,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 	private void refTest(ArrayList<ArrayList<Integer>> invRefMatrix, ArrayList<ArrayList<Integer>> invLoadedMatrix) {
 		if(invRefMatrix != null) {
 			
-			ArrayList<ArrayList<Integer>> res =  InvariantsTools.compareInv(invRefMatrix, invLoadedMatrix);
+			ArrayList<ArrayList<Integer>> res =  InvariantsTools.compareT_invariants(invRefMatrix, invLoadedMatrix);
 			logFieldTinv.append("\n");
 			logFieldTinv.append("=====================================================================\n");
 			logFieldTinv.append("Prev. computed set size:   "+invRefMatrix.size()+"\n");
@@ -899,16 +899,16 @@ public class HolmesInvariantsGenerator extends JFrame {
 			logFieldTinv.append("\n");
 			
 			if(detailsPinv)
-				showSubSurInvInfo(results, invLoadedMatrix.size());
+				showSubSurT_invInfo(results, invLoadedMatrix.size());
 		}
 	}
 	
 	/**
-	 * Metoda obsługuje pokazywanie informacji o sub i sur-inwariantach.
-	 * @param results ArrayList[ArrayList[Integer]] - macierz danych o sub i sur-inwariantach
-	 * @param invMatrixSize int - rozmiar macierzy inwariantów
+	 * Metoda obsługuje pokazywanie informacji o sub- i sur- t-inwariantach.
+	 * @param results ArrayList[ArrayList[Integer]] - macierz danych o sub- i sur- t-inwariantach
+	 * @param invMatrixSize int - rozmiar macierzy t-inwariantów
 	 */
-	private void showSubSurInvInfo(ArrayList<ArrayList<Integer>> results, int invMatrixSize) {
+	private void showSubSurT_invInfo(ArrayList<ArrayList<Integer>> results, int invMatrixSize) {
 		int surPlaceMaxName = 0;
 		int subPlaceMaxName = 0;
 		ArrayList<Place> places = null;
@@ -922,16 +922,15 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		notePad.addTextLineNL("", "text");
 		notePad.addTextLineNL("Vectors analysed: "+invMatrixSize, "text");
-		notePad.addTextLineNL("Canonical invariants: "+results.get(0).get(0), "text");
-		notePad.addTextLineNL("Sur-invariants: "+results.get(0).get(1), "text");
-		notePad.addTextLineNL("Sub-invariants: "+results.get(0).get(2), "text");
-		notePad.addTextLineNL("Non invariants vectors: "+results.get(0).get(3), "text");
+		notePad.addTextLineNL("Canonical t-invariants: "+results.get(0).get(0), "text");
+		notePad.addTextLineNL("Sur-t-invariants: "+results.get(0).get(1), "text");
+		notePad.addTextLineNL("Sub-t-invariants: "+results.get(0).get(2), "text");
+		notePad.addTextLineNL("Non t-invariants vectors: "+results.get(0).get(3), "text");
 		notePad.addTextLineNL("", "text");
 		
+		places = overlord.getWorkspace().getProject().getPlaces();
+		size = places.size();
 		if(results.get(0).get(1) > 0 || results.get(0).get(2) > 0) {
-			places = overlord.getWorkspace().getProject().getPlaces();
-			size = places.size();
-			
 			// ustal maksymalną długość nazwy miejsca dla obu zbiorów:
 			for(int p=0; p<size; p++) {
 				int value = surInvVector.get(p);
@@ -950,10 +949,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		
 		if(results.get(0).get(1) > 0) {
-			notePad.addTextLineNL("Places for which sur-invariants did not zeroed C-matrix:", "text");
-			notePad.addTextLineNL("(in parenthesis number of sur-invariants for each place):", "text");
-			
-			
+			notePad.addTextLineNL("Places for which sur-t-invariants leaves tokens (tokens>0) :", "text");
+			notePad.addTextLineNL("(in parenthesis number of sur-t-invariants for each place):", "text");
 			for(int p=0; p<size; p++) {
 				int value = surInvVector.get(p);
 				if(value != 0) {
@@ -964,10 +961,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		notePad.addTextLineNL("", "text");
 		if(results.get(0).get(2) > 0) {
-			notePad.addTextLineNL("Places for which sub-invariants did not zeroed C-matrix:", "text");
-			notePad.addTextLineNL("(in parenthesis number of sub-invariants for each place):", "text");
-			
-			size = places.size();
+			notePad.addTextLineNL("Places for which sub-t-invariants takes tokens (tokens<0):", "text");
+			notePad.addTextLineNL("(in parenthesis number of sub-t-invariants for each place):", "text");
 			for(int p=0; p<size; p++) {
 				int value = subInvVector.get(p);
 				if(value != 0) {
@@ -978,14 +973,94 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		
 		if(results.get(0).get(3) > 0) {
-			notePad.addTextLineNL("Places for which non-invariants did not zeroed C-matrix:", "text");
-			notePad.addTextLineNL("(in parenthesis number of non-invariants for each place):", "text");
-			
-			size = places.size();
+			notePad.addTextLineNL("Places for which non-invariants takes or produces tokens:", "text");
+			notePad.addTextLineNL("(in parenthesis number of non-t-invariants for each place):", "text");
 			for(int p=0; p<size; p++) {
 				int value = noInvVector.get(p);
 				if(value != 0) {
 					String line = "p_"+p+Tools.setToSize(places.get(p).getName(), subPlaceMaxName+2, false) +": "+value;
+					notePad.addTextLineNL(line, "text");
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Metoda obsługuje pokazywanie informacji o sub- i sur- p-inwariantach.
+	 * @param results ArrayList[ArrayList[Integer]] - macierz danych o sub- i sur- p-inwariantach
+	 * @param invMatrixSize int - rozmiar macierzy p-inwariantów
+	 */
+	private void showSubSurP_invInfo(ArrayList<ArrayList<Integer>> results, int invMatrixSize) {
+		int surTransMaxName = 0;
+		int subTransMaxName = 0;
+		ArrayList<Transition> transitions = null;
+		int size = 0;
+		ArrayList<Integer> surInvVector = results.get(1);
+		ArrayList<Integer> subInvVector = results.get(2);
+		ArrayList<Integer> noInvVector = results.get(3);
+		
+		HolmesNotepad notePad = new HolmesNotepad(900,600);
+		notePad.setVisible(true);
+		
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("Vectors analysed: "+invMatrixSize, "text");
+		notePad.addTextLineNL("Canonical p-invariants: "+results.get(0).get(0), "text");
+		notePad.addTextLineNL("Sur-p-invariants: "+results.get(0).get(1), "text");
+		notePad.addTextLineNL("Sub-p-invariants: "+results.get(0).get(2), "text");
+		notePad.addTextLineNL("Non p-invariants vectors: "+results.get(0).get(3), "text");
+		notePad.addTextLineNL("", "text");
+		
+		transitions = overlord.getWorkspace().getProject().getTransitions();
+		size = transitions.size();
+		if(results.get(0).get(1) > 0 || results.get(0).get(2) > 0) {
+			// ustal maksymalną długość nazwy miejsca dla obu zbiorów:
+			for(int t=0; t<size; t++) {
+				int value = surInvVector.get(t);
+				if(value != 0) {
+					int nameSize = transitions.get(t).getName().length();
+					if(nameSize > surTransMaxName)
+						surTransMaxName = nameSize;
+				}
+				value = subInvVector.get(t);
+				if(value != 0) {
+					int nameSize = transitions.get(t).getName().length();
+					if(nameSize > subTransMaxName)
+						subTransMaxName = nameSize;
+				}
+			}
+		}
+		
+		if(results.get(0).get(1) > 0) {
+			notePad.addTextLineNL("Problematics transitions for sur-p-invariants:", "text");
+			notePad.addTextLineNL("(in parenthesis number of sur-p-invariants for each transition):", "text");
+			for(int t=0; t<size; t++) {
+				int value = surInvVector.get(t);
+				if(value != 0) {
+					String line = "t_"+t+Tools.setToSize(transitions.get(t).getName(), surTransMaxName+3, false) +": "+value;
+					notePad.addTextLineNL(line, "text");
+				}
+			}
+		}
+		notePad.addTextLineNL("", "text");
+		if(results.get(0).get(2) > 0) {
+			notePad.addTextLineNL("Problematics transitions for sub-p-invariants:", "text");
+			notePad.addTextLineNL("(in parenthesis number of sub-p-invariants for each transition):", "text");
+			for(int t=0; t<size; t++) {
+				int value = subInvVector.get(t);
+				if(value != 0) {
+					String line = "t_"+t+Tools.setToSize(transitions.get(t).getName(), subTransMaxName+2, false) +": "+value;
+					notePad.addTextLineNL(line, "text");
+				}
+			}
+		}
+		
+		if(results.get(0).get(3) > 0) {
+			notePad.addTextLineNL("Problematics transitions for non p-invariant vector:", "text");
+			notePad.addTextLineNL("(in parenthesis number of non p-invariants for each transition):", "text");
+			for(int t=0; t<size; t++) {
+				int value = noInvVector.get(t);
+				if(value != 0) {
+					String line = "t_"+t+Tools.setToSize(transitions.get(t).getName(), subTransMaxName+2, false) +": "+value;
 					notePad.addTextLineNL(line, "text");
 				}
 			}

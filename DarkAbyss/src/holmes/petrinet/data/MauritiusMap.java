@@ -38,8 +38,8 @@ public class MauritiusMap {
 		
 		invariants = addIndexToInvariants(invariants);
 		
-		ArrayList<ArrayList<Integer>> subInvariants = InvariantsTools.returnInvWithTransition(invariants, rootTransition);
-		ArrayList<ArrayList<Integer>> antiInvariants = InvariantsTools.returnInvWithoutTransition(invariants, rootTransition);
+		ArrayList<ArrayList<Integer>> subInvariants = InvariantsTools.returnT_invWithTransition(invariants, rootTransition);
+		ArrayList<ArrayList<Integer>> antiInvariants = InvariantsTools.returnT_invWithoutTransition(invariants, rootTransition);
 		ArrayList<Integer> antiVector = InvariantsTools.getFrequency(antiInvariants, true);
 		transMCTNames = getMCTNamesVector();
 		
@@ -165,8 +165,8 @@ public class MauritiusMap {
 		}
 			
 		//dla danej tranzycji wyznacz: jej inwarianty i całą resztę
-		ArrayList<ArrayList<Integer>> invsWithCurrentNode = InvariantsTools.returnInvWithTransition(subInvariants, maxTransition);
-		ArrayList<ArrayList<Integer>> invsWithoutCurrentNode = InvariantsTools.returnInvWithoutTransition(subInvariants, maxTransition);
+		ArrayList<ArrayList<Integer>> invsWithCurrentNode = InvariantsTools.returnT_invWithTransition(subInvariants, maxTransition);
+		ArrayList<ArrayList<Integer>> invsWithoutCurrentNode = InvariantsTools.returnT_invWithoutTransition(subInvariants, maxTransition);
 		
 		if(invsWithoutCurrentNode.size() == 0 || howManyLeft == 0) {
 			// brak inwariantów bez tranzycji maxTransition: węzeł typu Data
@@ -407,8 +407,8 @@ public class MauritiusMap {
 		}
 			
 		//dla danej tranzycji wyznacz: jej inwarianty i całą resztę
-		ArrayList<ArrayList<Integer>> rightInvariants = InvariantsTools.returnInvWithTransition(subInvariants, maxTransition);
-		ArrayList<ArrayList<Integer>> leftInvariants = InvariantsTools.returnInvWithoutTransition(subInvariants, maxTransition);
+		ArrayList<ArrayList<Integer>> rightInvariants = InvariantsTools.returnT_invWithTransition(subInvariants, maxTransition);
+		ArrayList<ArrayList<Integer>> leftInvariants = InvariantsTools.returnT_invWithoutTransition(subInvariants, maxTransition);
 		
 		if(leftInvariants.size() == 0 || howManyLeft == 0) {
 			// brak inwariantów bez tranzycji maxTransition: węzeł typu Data

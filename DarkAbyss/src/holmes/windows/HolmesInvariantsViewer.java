@@ -609,7 +609,7 @@ public class HolmesInvariantsViewer extends JFrame {
 			return;
 		invNo--;
 		
-		ArrayList<Integer> data = InvariantsTools.singleInvAnalysis(invariantsMatrix, invNo, transitions, readArcTransLocations
+		ArrayList<Integer> data = InvariantsTools.singleT_invAnalysis(invariantsMatrix, invNo, transitions, readArcTransLocations
 				, incidenceMatrix, supportMatrix);
 		
 		if(data.get(0) == 0) 

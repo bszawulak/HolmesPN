@@ -612,7 +612,7 @@ public class HolmesKnockout extends JFrame {
 			mctTmpVector.add("MCT_"+(m+1));
 		}
 		
-		ArrayList<Integer> transInInvVector = InvariantsTools.transInInvariants();
+		ArrayList<Integer> transInInvVector = InvariantsTools.transInT_invariants();
 		int invNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix().size();
 		
 		ArrayList<String> secondResultLines = new ArrayList<String>();

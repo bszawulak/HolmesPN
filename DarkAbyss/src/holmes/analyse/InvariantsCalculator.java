@@ -126,11 +126,25 @@ public class InvariantsCalculator implements Runnable {
 			} else { //P-invariants
 				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode); //t_InvMode == false
 				this.calculateInvariants();
+
+				PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+				project.setP_InvMatrix(getInvariants(false));
+				GUIManager.getDefaultGUIManager().reset.setP_invariantsStatus(true);
+				logInternal("Operation successfull, invariants found: "+getInvariants(false).size()+"\n", true);
 				
-				ArrayList<ArrayList<Integer>> pInv = getInvariants(false);
+				ArrayList<Integer> arcClasses =  Check.getArcClassCount();
+				if(arcClasses.get(1) > 0) {
+					logInternal("\n", false);
+					logInternal("WARNING! Read-arcs detected. There are "+(arcClasses.get(1) / 2)+" read-arcs in net.\n", false);
+				}
 				
-				int x =1;
-				
+				if(doubleArcs.size() > 0) {
+					logInternal("\n", false);
+					logInternal("Double arcs (read-arcs) detected between nodes::\n", false);
+					for(ArrayList<Integer> trouble : doubleArcs) {
+						logInternal("Place: p_"+trouble.get(0)+" and Transition t_"+trouble.get(1)+"\n", false);
+					}
+				}
 			}
 		} catch (Exception e) {
 			log("Invariants generation failed.", "warning", false);
@@ -983,7 +997,7 @@ public class InvariantsCalculator implements Runnable {
 
 	/**
 	 * Metoda zwraca macierz inwariantów.
-	 * @param tinv boolean - true jeśli zwracać ma t-inwarianty
+	 * @param tinv boolean - true jeśli zwracać ma t-inwarianty, false dla p-inwariantów
 	 * @return ArrayList[ArrayList[Integer]] - macierz inwariantów (wiersze)
 	 * 
 	 */

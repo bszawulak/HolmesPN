@@ -108,17 +108,17 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Metoda sprawdza czy zbiór inwariantów faktycznie w całości zeruje macierz incydencji. Zwraca macierz wektorów,
-	 * które okazały się nie być inwariantami.
+	 * Metoda sprawdza czy zbiór t-inwariantów faktycznie w całości zeruje macierz incydencji. Zwraca macierz wektorów,
+	 * które okazały się nie być t-inwariantami.
 	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
-	 * @param invSet ArrayList[ArrayList[ArrayList]] - macierz inwariantów (nie wiadomo)
-	 * @return ArrayList[ArrayList[Integer]] - null jeśli wszystkie wektory to inwarianty, zwraca w formie tej macierzy listę
-	 *  wektorów, które inwariantami jednak nie są
+	 * @param invSet ArrayList[ArrayList[ArrayList]] - macierz t-inwariantów (nie wiadomo)
+	 * @return ArrayList[ArrayList[Integer]] - null jeśli wszystkie wektory to t-inwarianty, zwraca w formie tej macierzy listę
+	 *  wektorów, które t-inwariantami jednak nie są
 	 */
-	public static ArrayList<ArrayList<Integer>> isTInvariantSet(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {
+	public static ArrayList<ArrayList<Integer>> isT_invariantSet(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {
 		ArrayList<ArrayList<Integer>> noInv = new ArrayList<ArrayList<Integer>>();
 		for(ArrayList<Integer> inv : invSet) {
-			if(checkInvariant(CMatrix, inv, true) == false) {
+			if(checkT_invariant(CMatrix, inv, true) == false) {
 				noInv.add(inv);
 			}
 		}
@@ -126,15 +126,15 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Jak wyżej, ale zwraca tylko liczbę nie-inwariantów.
+	 * Jak wyżej, ale zwraca tylko liczbę nie t-inwariantów.
 	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
-	 * @param invSet ArrayList[ArrayList[ArrayList]] - macierz inwariantów (nie wiadomo)
-	 * @return int - ile wektorów nie jest prawidłowymi inwariantami
+	 * @param invSet ArrayList[ArrayList[ArrayList]] - macierz t-inwariantów (nie wiadomo)
+	 * @return int - ile wektorów nie jest prawidłowymi t-inwariantami
 	 */
-	public static int countNonInvariants(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {
+	public static int countNonT_invariants(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {
 		int result = 0;
 		for(ArrayList<Integer> inv : invSet) {
-			if(checkInvariant(CMatrix, inv, true) == false) {
+			if(checkT_invariant(CMatrix, inv, true) == false) {
 				result++;
 			}
 		}
@@ -142,10 +142,10 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Metoda agregująca wyniki testu zerowania macierzy incydencji. Dla sub/sur inwariantów zwraca informację o miejsach
-	 * dla których nie udało się dla pewnych inwariantów wyzerować kolumn.
+	 * Metoda agregująca wyniki testu zerowania macierzy incydencji. Dla sub/sur t-inwariantów zwraca informację o miejsach
+	 * dla których nie udało się dla pewnych t-inwariantów wyzerować kolumn.
 	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
-	 * @param invSet ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @param invSet ArrayList[ArrayList[Integer]] - macierz t-inwariantów
 	 * @return ArrayList[ArrayList[Integer]] - macierz wynikowa, pierwszy wektor to 4 elementowa informacja zbiorcza o:
 	 * 	inwariantach, sur, sub-inwariantach oraz nie-inwariantach. Kolejne wektory to informacja o miejscach w ramach
 	 *  odpowiednio sur-, sub- i nie-inwariantów.
@@ -169,7 +169,7 @@ public final class InvariantsTools {
 		}
 		
 		for(ArrayList<Integer> inv : invSet) {
-			ArrayList<Integer> vector = checkInvariantV2(CMatrix, inv, true);
+			ArrayList<Integer> vector = check_invariantV2(CMatrix, inv);
 			if(vector.get(0) == 0) {
 				zeroInvariants++;
 			} else if(vector.get(0) == -1) {
@@ -197,19 +197,76 @@ public final class InvariantsTools {
 	}
 	
 	/**
+	 * Metoda agregująca wyniki testu zerowania macierzy incydencji. Dla sub/sur p-inwariantów zwraca informację o miejsach
+	 * dla których nie udało się dla pewnych inwariantów wyzerować kolumn.
+	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji PT
+	 * @param invSet ArrayList[ArrayList[Integer]] - macierz p-inwariantów
+	 * @return ArrayList[ArrayList[Integer]] - macierz wynikowa, pierwszy wektor to 4 elementowa informacja zbiorcza o:
+	 * 	inwariantach, sur, sub-inwariantach oraz nie p-inwariantach. Kolejne wektory to informacja o miejscach w ramach
+	 *  odpowiednio sur-, sub- i nie-inwariantów.
+	 */
+	public static ArrayList<ArrayList<Integer>> countNonP_Invariants(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {
+		ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
+		
+		int subInv = 0; // neg
+		int surInv = 0; // pos
+		int nonInv = 0;
+		int zeroInvariants = 0;
+		
+		ArrayList<Integer> surTransVector = new ArrayList<Integer>();
+		ArrayList<Integer> subTransVector = new ArrayList<Integer>();
+		ArrayList<Integer> nonInvTransVector = new ArrayList<Integer>();
+		int transSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+		for(int t=0; t<transSize; t++) {
+			surTransVector.add(0);
+			subTransVector.add(0);
+			nonInvTransVector.add(0);
+		}
+		
+		ArrayList<ArrayList<Integer>> transposeMatrix = transposeMatrix(CMatrix);
+		//TODO:
+		for(ArrayList<Integer> inv : invSet) {
+			ArrayList<Integer> vector = check_invariantV2(transposeMatrix, inv);
+			if(vector.get(0) == 0) {
+				zeroInvariants++;
+			} else if(vector.get(0) == -1) {
+				subInv++;
+				subTransVector = quickSumT_inv(subTransVector, vector);
+			} else if(vector.get(0) == 1) {
+				surInv++;
+				surTransVector = quickSumT_inv(surTransVector, vector);
+			} else { // non-inv
+				nonInv++;
+				nonInvTransVector = quickSumT_inv(nonInvTransVector, vector);
+			}
+		}
+		ArrayList<Integer> summaryVector = new ArrayList<Integer>();
+		summaryVector.add(zeroInvariants);
+		summaryVector.add(surInv);
+		summaryVector.add(subInv);
+		summaryVector.add(nonInv);
+		
+		results.add(summaryVector);
+		results.add(surTransVector);
+		results.add(subTransVector);
+		results.add(nonInvTransVector);
+		return results;
+	}
+	
+	/**
 	 * Metoda zwraca wektor o wielkości zbioru inwariantów. Każda pozycja określa za pomocą pojedynczej
 	 * wartości liczbowej rodzaj odpowiedniego inwariantu.
 	 * @param invSet ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @return ArrayList[Integer] - wektor klasy inwariantów: 0: normalny, -1: sub-inv., 1: sur-inv., -99: non-inv.
 	 */
-	public static ArrayList<Integer> getInvariantsClassVector(ArrayList<ArrayList<Integer>> invSet)
+	public static ArrayList<Integer> getT_invariantsClassVector(ArrayList<ArrayList<Integer>> invSet)
 	{
 		ArrayList<Integer> results = new ArrayList<Integer>();
 		InvariantsCalculator ic = new InvariantsCalculator(true);
 		ArrayList<ArrayList<Integer>> incMatrix = ic.getCMatrix();
 		
 		for(ArrayList<Integer> inv : invSet) {
-			ArrayList<Integer> vector = checkInvariantV2(incMatrix, inv, true);
+			ArrayList<Integer> vector = check_invariantV2(incMatrix, inv);
 			if(vector.get(0) == 0) {
 				results.add(0);
 			} else if(vector.get(0) == -1) {
@@ -258,7 +315,7 @@ public final class InvariantsTools {
 	 * @param tInv boolean - true, jeśli testujemy T-inwarianty
 	 * @return boolean - true, jeśli inwariant przeszedł test, false jeśli nie wyzerował macierzy
 	 */
-	public static boolean checkInvariant(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> invariant, boolean tInv) {
+	public static boolean checkT_invariant(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> invariant, boolean tInv) {
 		//CMatrix - każdy wiersz to wektor miejsc indeksowany numerem tranzycji [2][3] - 2 tranzycja, 3 miejsce
 		if(tInv == true && CMatrix.size() > 0) {
 			ArrayList<Integer> placesSumVector = new ArrayList<Integer>();
@@ -287,36 +344,35 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Metoda sprawdza dokładnie wektor (inwariant) próbując za jego pomocą wyzerować macierz incydencji.
-	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
-	 * @param inv ArrayList[Integer] - inwariant (?)
-	 * @param tInv boolean - true: T-inwariant
+	 * Metoda sprawdza dokładnie wektor (P lub T-inwariant) próbując za jego pomocą wyzerować macierz incydencji.
+	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji, dla p-inw: transponowana
+	 * @param inv ArrayList[Integer] - inwariant
 	 * @return ArrayList[Integer] - pierwsza wartość ([0]) to wynik, kolejne miejsca do wektor wynikowy testu (miejsca dla T-inw)
 	 * 0: normalny, -1: sub-inv., 1: sur-inv., -50: non-inv
 	 */
-	public static ArrayList<Integer> checkInvariantV2(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> inv, boolean tInv) {
+	public static ArrayList<Integer> check_invariantV2(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> inv) {
 		ArrayList<Integer> results = new ArrayList<Integer>();
-		if(tInv != true || CMatrix.size() == 0)
+		if(CMatrix.size() == 0)
 			return null;
 		
 		ArrayList<Integer> invSupport = getSupport(inv);
-		ArrayList<Integer> placesSumVector = new ArrayList<Integer>();
+		ArrayList<Integer> elementsSumVector = new ArrayList<Integer>();
 		if(inv.size() != CMatrix.size())
 			return null;
 		
-		int placesNumber = CMatrix.get(0).size();
-		for(int i=0; i<placesNumber; i++) {
-			placesSumVector.add(0);
+		int transNumber = CMatrix.get(0).size();
+		for(int i=0; i<transNumber; i++) {
+			elementsSumVector.add(0);
 		}
 		
 		for(int sup : invSupport) { //dla wszystkich wektorów CMatrix ze wsparcia inwariantu
 			ArrayList<Integer> row = CMatrix.get(sup);
 			int multFactor = inv.get(sup);
 			
-			for(int p=0; p<placesNumber; p++) {
-				int oldVal = placesSumVector.get(p);
+			for(int p=0; p<transNumber; p++) {
+				int oldVal = elementsSumVector.get(p);
 				oldVal += row.get(p) * multFactor;
-				placesSumVector.set(p, oldVal);
+				elementsSumVector.set(p, oldVal);
 			}
 		}
 		
@@ -326,8 +382,8 @@ public final class InvariantsTools {
 		
 		results.add(0);
 		
-		for(int p=0; p<placesNumber; p++) {
-			int value = placesSumVector.get(p);
+		for(int t=0; t<transNumber; t++) {
+			int value = elementsSumVector.get(t);
 			if(value == 0) {
 				zeroes++;
 			} else if(value > 0) {
@@ -343,7 +399,7 @@ public final class InvariantsTools {
 			return results; //coś wybitnie nie tak z tym inwariantem
 		} 
 		
-		if(zeroes == placesNumber) {
+		if(zeroes == transNumber) {
 			results.set(0, 0); //normalny inwariant
 			return results;
 		}
@@ -708,7 +764,7 @@ public final class InvariantsTools {
 	 *  2 - inwarianty których nie ma w referencyjnym ale są w załadowanym<br>
 	 *  3 - inwarianty referencyjnego których nie ma w załadowanym zbiorze
 	 */
-	public static ArrayList<ArrayList<Integer>> compareInv(ArrayList<ArrayList<Integer>> refInvMatrix,
+	public static ArrayList<ArrayList<Integer>> compareT_invariants(ArrayList<ArrayList<Integer>> refInvMatrix,
 			ArrayList<ArrayList<Integer>> invLoadedMatrix) {
 		
 		int loadedInvSize = invLoadedMatrix.size();
@@ -933,7 +989,7 @@ public final class InvariantsTools {
 	 * @param transLoc int - nr reakcji, wg której budowany jest podzbiór wynikowy
 	 * @return ArrayList[ArrayList[Integer]] - podzbiór inwariantów z reakcją
 	 */
-	public static ArrayList<ArrayList<Integer>> returnInvWithTransition(ArrayList<ArrayList<Integer>> globalInv, int transLoc) {
+	public static ArrayList<ArrayList<Integer>> returnT_invWithTransition(ArrayList<ArrayList<Integer>> globalInv, int transLoc) {
 		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
 
 		for(ArrayList<Integer> vector : globalInv) {
@@ -970,7 +1026,7 @@ public final class InvariantsTools {
 	 * @param transLoc int - nr reakcji, wg której budowany jest podzbiór wynikowy
 	 * @return ArrayList[ArrayList[Integer]] - podzbiór inwariantów BEZ reakcji
 	 */
-	public static ArrayList<ArrayList<Integer>> returnInvWithoutTransition(ArrayList<ArrayList<Integer>> globalInv, int transLoc) {
+	public static ArrayList<ArrayList<Integer>> returnT_invWithoutTransition(ArrayList<ArrayList<Integer>> globalInv, int transLoc) {
 		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
 		for(ArrayList<Integer> vector : globalInv) {
 			if(vector.get(transLoc) == 0) {
@@ -1014,8 +1070,8 @@ public final class InvariantsTools {
 	}
 	
 	/**
-     * Zwraca wektor tranzycji które są w jakichkolwiek inwariantach.
-     * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+     * Zwraca wektor tranzycji które są w jakichkolwiek t-inwariantach.
+     * @param invMatrix ArrayList[ArrayList[Integer]] - macierz t-inwariantów
      * @return ArrayList[Integer] - wektor tranzycji pokrytych
      */
     public static ArrayList<Integer> getActiveTransitions(ArrayList<ArrayList<Integer>> invMatrix) { 
@@ -1037,7 +1093,7 @@ public final class InvariantsTools {
      * @return ArrayList[ArrayList[Integer]] - każdy wiersz: [0] # readarc [1] # inhibitor
      *  [2] # reset [3] # equal
      */
-    public static ArrayList<ArrayList<Integer>> getExtendedInvariantsInfo(ArrayList<ArrayList<Integer>> invMatrix) {
+    public static ArrayList<ArrayList<Integer>> getExtendedT_invariantsInfo(ArrayList<ArrayList<Integer>> invMatrix) {
     	ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
     	ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
     	
@@ -1090,7 +1146,7 @@ public final class InvariantsTools {
      * @return ArrayList[ArrayList[Integer]] - macierz wyników, w postaci 3-el. wektorów: [0] - pure in-trans,
      * 		[1] - in-trans (with inhibotors and/or readarcs), [2] - out-transitions
      */
-    public static ArrayList<ArrayList<Integer>> getInOutTransInfo(ArrayList<ArrayList<Integer>> invMatrix) {
+    public static ArrayList<ArrayList<Integer>> getT_invInOutTransInfo(ArrayList<ArrayList<Integer>> invMatrix) {
     	ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
     	ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
     	
@@ -1170,11 +1226,11 @@ public final class InvariantsTools {
 	*/
     
 	/**
-	 * Metoda zwraca wektor określający, czy dany inwariant jest wykonalny czy nie.
+	 * Metoda zwraca wektor określający, czy dany t-inwariant jest wykonalny czy nie.
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @return ArrayList[Integer] - wektor wynikowy: -1: non-feasible; 1: feasible
 	 */
-	public static ArrayList<Integer> getFeasibilityClassesStatic(ArrayList<ArrayList<Integer>> invariants) {
+	public static ArrayList<Integer> getT_invFeasibilityClassesStatic(ArrayList<ArrayList<Integer>> invariants) {
 		int invSize = invariants.size();
 		ArrayList<Integer> results = new ArrayList<Integer>();
 		ArrayList<Integer> readArcTransLocations = getReadArcTransitionsStatic();
@@ -1184,7 +1240,7 @@ public final class InvariantsTools {
 			ArrayList<Integer> invariant = invariants.get(i);
 			ArrayList<Integer> support = InvariantsTools.getSupport(invariant);
 			
-			if(isNonFeasibleStatic(support, readArcTransLocations, transitions) == true)
+			if(isT_invNonFeasibleStatic(support, readArcTransLocations, transitions) == true)
 				results.add(-1); //non-feasible
 			else
 				results.add(1); //feasible
@@ -1194,12 +1250,12 @@ public final class InvariantsTools {
 	}
     
     /**
-	 * (STATIC) Metoda ustala czy wsparcie inwariantu zawiera którąkolwiek z tranzycji związanych z łukiem odczytu.
-	 * @param support ArrayList[Integer] - wsparcie inwariantu
+	 * (STATIC) Metoda ustala czy wsparcie t-inwariantu zawiera którąkolwiek z tranzycji związanych z łukiem odczytu.
+	 * @param support ArrayList[Integer] - wsparcie t-inwariantu
 	 * @param readArcTransLocations ArrayList[Integer] - wektor lokazalicji tranzycji z łukami odczytu
 	 * @return boolean - true, jeśli wsparcie zawiera choć jedną z tranzycji
 	 */
-	private static boolean isNonFeasibleStatic(ArrayList<Integer> support, ArrayList<Integer> readArcTransLocations,
+	private static boolean isT_invNonFeasibleStatic(ArrayList<Integer> support, ArrayList<Integer> readArcTransLocations,
 			ArrayList<Transition> transitions) {
     	
 		ArrayList<Integer> readarcTransitions = new ArrayList<Integer>();
@@ -1341,10 +1397,10 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Metoda zwraca wektor o liczności tranzycji z informacją, w ilu inwariantach dana tranzycja występuje.
+	 * Metoda zwraca wektor o liczności tranzycji z informacją, w ilu t-inwariantach dana tranzycja występuje.
 	 * @return ArrayList[Integer] - wektor tranzycji
 	 */
-	public static ArrayList<Integer> transInInvariants() {
+	public static ArrayList<Integer> transInT_invariants() {
 		ArrayList<Integer> results = new ArrayList<Integer>();
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		
@@ -1406,7 +1462,7 @@ public final class InvariantsTools {
 	 * 		[9] = zawarte łuki resetujące<br>
 	 * 		[10] = zawarte łuki równościowe<br>
 	 */
-	public static ArrayList<Integer> singleInvAnalysis(ArrayList<ArrayList<Integer>> invMatrix, int invIndex, ArrayList<Transition> transitions,
+	public static ArrayList<Integer> singleT_invAnalysis(ArrayList<ArrayList<Integer>> invMatrix, int invIndex, ArrayList<Transition> transitions,
 			ArrayList<Integer> readArcTransLocations, ArrayList<ArrayList<Integer>> incidenceMatrix, ArrayList<ArrayList<Integer>> supportMatrix) {
 		ArrayList<Integer> results = new ArrayList<Integer>();
 		int containedSupportCounter = 0; // I wynik
@@ -1439,12 +1495,12 @@ public final class InvariantsTools {
 		}
 
 
-		if(isNonFeasibleStatic(supportVector, readArcTransLocations, transitions) == true)
+		if(isT_invNonFeasibleStatic(supportVector, readArcTransLocations, transitions) == true)
 			feasibleInv = -1; //non-feasible
 		else
 			feasibleInv = 1; //feasible
 		
-		ArrayList<Integer> vector = checkInvariantV2(incidenceMatrix, invariant, true);
+		ArrayList<Integer> vector = check_invariantV2(incidenceMatrix, invariant);
 		if(vector.get(0) == 0) {
 			invClass = 0;
 		} else if(vector.get(0) == -1) {
