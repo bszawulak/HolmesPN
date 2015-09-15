@@ -23,6 +23,9 @@ public class EditorResources {
 	public static final Color glowTransitonColorLevel2 = new Color(140, 190, 41, 100);
 	public static final Color glowTransitonColorLevel3 = new Color(140, 190, 41, 140);
 	
+	public static final Color glowPlaceColorLevelBlue = new Color(0, 102, 204, 180);
+	public static final Color glowPlaceColorLevelRed = new Color(255, 0, 0, 180);
+	
 	public static final Color glowMTCTransitonColorLevel1 = new Color(165, 0, 255, 50);
 	public static final Color glowMTCTransitonColorLevel2 = new Color(165, 0, 255, 100);
 	public static final Color glowMTCTransitonColorLevel3 = new Color(165, 0, 255, 140);

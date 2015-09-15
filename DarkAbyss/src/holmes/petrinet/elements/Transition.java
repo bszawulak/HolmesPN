@@ -13,10 +13,9 @@ import holmes.petrinet.functions.FunctionContainer;
 import holmes.petrinet.functions.FunctionsTools;
 
 /**
- * Klasa implementująca tranzycję w sieci Petriego. Zapewnia implementację
- * szeregu funkcjonalności powiązanych z aktywacją i odpalaniem tranzycji
- * na potrzeby symulacji dynamiki sieci Petriego, jak rezerwowanie tokenów
- * i wykrywanie aktywacji.
+ * Klasa implementująca tranzycję w sieci Petriego. Zapewnia implementację szeregu funkcjonalności 
+ * powiązanych z aktywacją i odpalaniem tranzycji na potrzeby symulacji dynamiki sieci Petriego, jak
+ * rezerwowanie tokenów i wykrywanie aktywacji.
  * @author students - pierwsza wersja
  * @author MR - tak tu namieszałem, że autorzy swojej roboty by już nie poznali :)
  * 	Behold: uber-tranzycja, wszystkie do tej pory zaimplementowane rodzaje tranzycji w jednej klasie

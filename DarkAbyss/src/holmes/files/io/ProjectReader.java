@@ -128,7 +128,7 @@ public class ProjectReader {
 			if(!status) {
 				projectCore.setT_InvMatrix(null, false);
 			} else {
-				GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(projectCore.getT_InvMatrix());
+				GUIManager.getDefaultGUIManager().getT_invBox().showT_invBoxWindow(projectCore.getT_InvMatrix());
 			}
 			
 			if(pInvariants) {
@@ -136,7 +136,7 @@ public class ProjectReader {
 				if(!status) {
 					projectCore.setP_InvMatrix(null);
 				} else {
-					//GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(projectCore.getP_InvMatrix());
+					GUIManager.getDefaultGUIManager().getP_invBox().showP_invBoxWindow(projectCore.getP_InvMatrix());
 				}
 			}
 			

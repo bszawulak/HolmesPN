@@ -430,8 +430,10 @@ public class GUIOperations {
 		}
 		
 		if(t_inv) {
-			overlord.getInvariantsBox().showInvariants(project.getT_InvMatrix());
+			overlord.getT_invBox().showT_invBoxWindow(project.getT_InvMatrix());
 			overlord.getSimulatorBox().createSimulatorProperties();
+		} else {
+			overlord.getP_invBox().showP_invBoxWindow(project.getP_InvMatrix());
 		}
 		return true;
 	}
@@ -534,8 +536,10 @@ public class GUIOperations {
 			}
 			
 			if(t_inv) {
-				overlord.getInvariantsBox().showInvariants(project.getT_InvMatrix());
+				overlord.getT_invBox().showT_invBoxWindow(project.getT_InvMatrix());
 				overlord.getSimulatorBox().createSimulatorProperties();
+			} else {
+				overlord.getP_invBox().showP_invBoxWindow(project.getP_InvMatrix());
 			}
 		
 			//co dalej z plikiem?

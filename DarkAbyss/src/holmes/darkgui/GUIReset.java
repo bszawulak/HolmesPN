@@ -22,10 +22,10 @@ import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.workspace.Workspace;
 
 /**
- * Klasa odpowiedzialna za różne rzeczy związane z czyszczeniem wszystkiego i niczego w ramach
+ * Klasa odpowiedzialna za różne rzeczy związane z czyszczeniem wszystkiego i wszystkich w ramach
  * programu.
+ * 
  * @author MR
- *
  */
 public class GUIReset {
 	private GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -165,14 +165,13 @@ public class GUIReset {
 			pNet.setT_InvMatrix(null, false);
 			pNet.getMCSdataCore().resetMSC();
 			
-			if(overlord.getInvariantsBox().getCurrentDockWindow() != null) {
-				overlord.getInvariantsBox().getCurrentDockWindow().resetInvariants();
-				overlord.getInvariantsBox().getCurrentDockWindow().removeAll();
+			if(overlord.getT_invBox().getCurrentDockWindow() != null) {
+				overlord.getT_invBox().getCurrentDockWindow().resetT_invariants();
+				overlord.getT_invBox().getCurrentDockWindow().removeAll();
 			}
-			overlord.getInvariantsBox().setCurrentDockWindow(
-					new HolmesDockWindowsTable(SubWindow.INVARIANTS, pNet.getT_InvMatrix()));	
-			overlord.getInvariantsBox().validate();
-			overlord.getInvariantsBox().repaint();
+			overlord.getT_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, pNet.getT_InvMatrix()));	
+			overlord.getT_invBox().validate();
+			overlord.getT_invBox().repaint();
 
 			t_invGenerated = false;
 			overlord.log("T-invariants data removed from memory.", "text", true);
@@ -182,14 +181,19 @@ public class GUIReset {
 			resetCommunicationProtocol();
 			pNet.setP_InvMatrix(null);
 			
+			if(overlord.getP_invBox().getCurrentDockWindow() != null) {
+				overlord.getP_invBox().getCurrentDockWindow().resetP_invariants();
+				overlord.getP_invBox().getCurrentDockWindow().removeAll();
+			}
+			overlord.getP_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, pNet.getP_InvMatrix()));	
+			overlord.getP_invBox().validate();
+			overlord.getP_invBox().repaint();
+			
 			p_invGenerated = false;
 			overlord.log("P-invariants data removed from memory.", "text", true);
 		}
 		
 		if(mctGenerated == true) {
-			//for (Transition transition : mastah.getWorkspace().getProject().getTransitions()) {
-			//	transition.setContainingInvariants(new ArrayList<ArrayList<Transition>>()); //czyszczenie
-			//}
 			if(overlord.getMctBox().getCurrentDockWindow() != null) {
 				overlord.getMctBox().getCurrentDockWindow().removeAll();
 				overlord.getMctBox().getCurrentDockWindow().resetMCT();

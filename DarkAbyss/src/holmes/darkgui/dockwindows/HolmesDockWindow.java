@@ -46,7 +46,7 @@ public class HolmesDockWindow extends SingleDock {
 	 * EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR, MCSselector, Knockout, FIXNET
 	 */
 	public enum DockWindowType {
-		EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR, MCSselector, Knockout, FIXNET
+		EDITOR, SIMULATOR, SELECTOR, T_INVARIANTS, P_INVARIANTS, ClusterSELECTOR, MctANALYZER, MCSselector, Knockout, FIXNET
 	}
 
 	/**
@@ -70,9 +70,12 @@ public class HolmesDockWindow extends SingleDock {
 		} else if (type == DockWindowType.SELECTOR) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Selection", scrollPane,
 					"Selection"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		} else if (type == DockWindowType.InvANALYZER) {
-			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_analysis", scrollPane,
+		} else if (type == DockWindowType.T_INVARIANTS) {
+			setDockable(GUIManager.externalWithListener(new DefaultDockable("Transition_Invariants", scrollPane,
 					"T-inv"), GUIManager.getDefaultGUIManager().getDockingListener()));
+		} else if (type == DockWindowType.P_INVARIANTS) {
+			setDockable(GUIManager.externalWithListener(new DefaultDockable("Place_Invariants", scrollPane,
+					"P-inv"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		} else if (type == DockWindowType.MctANALYZER) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("MCT_Groups", scrollPane,
 					"MCT"), GUIManager.getDefaultGUIManager().getDockingListener()));
@@ -85,13 +88,10 @@ public class HolmesDockWindow extends SingleDock {
 		} else if (type == DockWindowType.FIXNET) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Fix_selector", scrollPane,
 					"Fix"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		} else if (type == DockWindowType.Knockout)
+		} else if (type == DockWindowType.Knockout) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Knockout_selector", scrollPane,
 					"Knockout"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		else if (type == DockWindowType.InvSIMULATOR) {
-			setDockable(GUIManager.externalWithListener(new DefaultDockable("Invariants_simulator", scrollPane,
-					"InvSim"), GUIManager.getDefaultGUIManager().getDockingListener()));
-		}
+		} 
 
 		position = new Point(0, 0);
 		this.addDockable(getDockable(), position, position);
@@ -132,31 +132,28 @@ public class HolmesDockWindow extends SingleDock {
 			scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}
-
+	
 	/**
-	 * Metoda odpowiedzialna za wypełnienie sekcji symulatora inwariantów sieci.
+	 * Metoda wywoływana po wygenerowaniu t-inwariantów przez program. Zleca wykonanie
+	 * elementów interfejsu dla pokazywania t-inwariantów. 
+	 * @param t_invariants ArrayList[ArrayList[InvariantTransition]] - t-inwarianty
 	 */
-	//TODO: unused
-	public void createInvSimulatorProperties2() {
-		if (type == DockWindowType.InvSIMULATOR) {
-			//poniższa metoda wywołuje odpowiedni konstruktor obiektu klasy PropertiesTable
-			//setCurrentDockWindow(new HolmesDockWindowsTable(GUIManager.getDefaultGUIManager().getWorkspace()
-			//		.getProject().getInvSimulator()));
-			//scrollPane.getViewport().add(getCurrentDockWindow());
+	public void showT_invBoxWindow(ArrayList<ArrayList<Integer>> t_invariants) {
+		if (type == DockWindowType.T_INVARIANTS) {
+			setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, t_invariants));
+			scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}
 	
 	/**
-	 * Metoda wywoływana po wygenerowaniu inwariantów przez program. Zleca wykonanie
-	 * elementów interfejsu dla pokazywania inwariantów. W zasadzie nie różni się od
-	 * showExternalInvariants(...)
-	 * @param invariants ArrayList[ArrayList[InvariantTransition]] - inwarianty
+	 * Metoda wywoływana po wygenerowaniu t-inwariantów przez program. Zleca wykonanie
+	 * elementów interfejsu dla pokazywania t-inwariantów. 
+	 * @param p_invariants ArrayList[ArrayList[InvariantTransition]] - p-inwarianty
 	 */
-	public void showInvariants(ArrayList<ArrayList<Integer>> invariants) {
-		if (type == DockWindowType.InvANALYZER) {
-			setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.INVARIANTS, invariants));
+	public void showP_invBoxWindow(ArrayList<ArrayList<Integer>> p_invariants) {
+		if (type == DockWindowType.P_INVARIANTS) {
+			setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, p_invariants));
 			scrollPane.getViewport().add(getCurrentDockWindow());
-			//GUIManager.getDefaultGUIManager().getWorkspace().getProject().getAnalyzer().settInvariants(invariants); 
 		}
 	}
 	

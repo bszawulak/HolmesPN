@@ -53,6 +53,7 @@ import holmes.analyse.ProblemDetector;
 import holmes.clusters.ClusterDataPackage;
 import holmes.clusters.ClusterTransition;
 import holmes.darkgui.GUIManager;
+import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.GraphPanel;
 import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.data.MCSDataMatrix;
@@ -89,6 +90,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	private ArrayList<JComponent> components;
 	private int mode;
 	private ArrayList<Transition> transitions; // j.w.
+	private ArrayList<Place> places;
 	private ArrayList<ArrayList<Transition>> mctGroups; //używane tylko w przypadku, gdy obiekt jest typu DockWindowType.MctANALYZER
 	private ArrayList<ArrayList<Integer>> knockoutData;
 	// Containers & general use
@@ -118,12 +120,16 @@ public class HolmesDockWindowsTable extends JPanel {
 	private JTextArea MCTnameField;
 	//knockout:
 	private JTextArea knockoutTextArea;
-	//invariants:
-	private ArrayList<ArrayList<Integer>> invariantsMatrix; //używane w podoknie inwariantów
-	private int selectedInvIndex = -1;
+	//t-invariants:
+	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //używane w podoknie t-inwariantów
+	private int selectedT_invIndex = -1;
 	private boolean markMCT = false;
-	private boolean glowInv = true;
-	private JTextArea invNameField;
+	private boolean glowT_inv = true;
+	private JTextArea t_invNameField;
+	//t-invariants:
+	private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //używane w podoknie p-inwariantów
+	private int selectedP_invIndex = -1;
+	private JTextArea p_invNameField;
 	//clusters:
 	private JComboBox<String> chooseCluster;
 	private JComboBox<String> chooseClusterInv;
@@ -152,16 +158,15 @@ public class HolmesDockWindowsTable extends JPanel {
 	private static final int ARC = 2;
 	private static final int SHEET = 3;
 	private static final int SIMULATOR = 4;
-	private static final int INVARIANTS = 5;
+	private static final int tINVARIANTS = 5;
 	private static final int MCT = 6;
 	private static final int TIMETRANSITION = 7;
-	@SuppressWarnings("unused")
-	private static final int INVARIANTSSIMULATOR = 8;
+	private static final int pINVARIANTS = 8;
 	private static final int CLUSTERS = 9;
 	private static final int KNOCKOUT = 10;
 	private static final int META = 11;
 
-	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, META, ARC, SHEET, INVARIANTS, MCT, CLUSTERS, KNOCKOUT, MCS, FIXER }
+	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS, MCT, CLUSTERS, KNOCKOUT, MCS, FIXER }
 	
 	/**
 	 * Konstruktor główny, wybierający odpowiednią metodę do tworzenia podokna wybranego typu
@@ -186,8 +191,10 @@ public class HolmesDockWindowsTable extends JPanel {
 			createArcSubWindow((Arc) blackBox[0]);
 		} else if (subType == SubWindow.SHEET) {
 			createSheetSubWindow((WorkspaceSheet) blackBox[0]);
-		} else if (subType == SubWindow.INVARIANTS) {
-			createInvariantsSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
+		} else if (subType == SubWindow.T_INVARIANTS) {
+			createT_invSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
+		} else if (subType == SubWindow.P_INVARIANTS) {
+			createP_invSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
 		} else if (subType == SubWindow.MCT) {
 			createMCTSubWindow((ArrayList<ArrayList<Transition>>) blackBox[0]);
 		} else if (subType == SubWindow.CLUSTERS) {
@@ -2407,7 +2414,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
 	//**************************************************************************************
 	//*********************************                  ***********************************
-	//*********************************    INWARIANTY    ***********************************
+	//*********************************  t-INWARIANTY    ***********************************
 	//*********************************                  ***********************************
 	//**************************************************************************************
 	
@@ -2415,13 +2422,13 @@ public class HolmesDockWindowsTable extends JPanel {
 	 * Metoda pomocnicza konstruktora odpowiedzialna za wypełnienie podokna informacji o inwariantach sieci.
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 */
-	public void createInvariantsSubWindow(ArrayList<ArrayList<Integer>> invariantsData) {
+	public void createT_invSubWindow(ArrayList<ArrayList<Integer>> invariantsData) {
 		doNotUpdate = true;
 		if(invariantsData == null || invariantsData.size() == 0) {
 			return;
 		} else {
-			mode = INVARIANTS;
-			invariantsMatrix = invariantsData;
+			mode = tINVARIANTS;
+			t_invariantsMatrix = invariantsData;
 			transitions = overlord.getWorkspace().getProject().getTransitions();
 			overlord.reset.setT_invariantsStatus(true);
 		}
@@ -2431,14 +2438,14 @@ public class HolmesDockWindowsTable extends JPanel {
 		int positionY = 10;
 		initiateContainers();
 
-		JLabel chooseInvLabel = new JLabel("Invariant: ");
+		JLabel chooseInvLabel = new JLabel("T-invariant: ");
 		chooseInvLabel.setBounds(colA_posX, positionY, 80, 20);
 		components.add(chooseInvLabel);
 		
-		String[] invariantHeaders = new String[invariantsMatrix.size() + 3];
+		String[] invariantHeaders = new String[t_invariantsMatrix.size() + 3];
 		invariantHeaders[0] = "---";
-		for (int i = 0; i < invariantsMatrix.size(); i++) {
-			int invSize = InvariantsTools.getSupport(invariantsMatrix.get(i)).size();
+		for (int i = 0; i < t_invariantsMatrix.size(); i++) {
+			int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(i)).size();
 			invariantHeaders[i + 1] = "Inv. #" + (i+1) +" (size: "+invSize+")";
 		}
 		invariantHeaders[invariantHeaders.length-2] = "null transitions";
@@ -2452,17 +2459,17 @@ public class HolmesDockWindowsTable extends JPanel {
 				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
 				int items = comboBox.getItemCount();
 				if (comboBox.getSelectedIndex() == 0) {
-					selectedInvIndex = -1;
-					showInvariant(); //clean
+					selectedT_invIndex = -1;
+					showT_invariant(); //clean
 				} else if(comboBox.getSelectedIndex() == items-2) { 
-					selectedInvIndex = -1;
-					showDeadInv(); //show transition without invariants
+					selectedT_invIndex = -1;
+					showDeadT_inv(); //show transition without invariants
 				} else if(comboBox.getSelectedIndex() == items-1) { 
-					selectedInvIndex = -1;
-					showInvTransFrequency(); //show transition frequency (in invariants)
+					selectedT_invIndex = -1;
+					showT_invTransFrequency(); //show transition frequency (in invariants)
 				} else {
-					selectedInvIndex = comboBox.getSelectedIndex() - 1;
-					showInvariant();
+					selectedT_invIndex = comboBox.getSelectedIndex() - 1;
+					showT_invariant();
 				}
 			}
 		});
@@ -2474,9 +2481,9 @@ public class HolmesDockWindowsTable extends JPanel {
 		showDetailsButton.setBounds(colA_posX, positionY+=30, 120, 32);
 		showDetailsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(selectedInvIndex == -1)
+				if(selectedT_invIndex == -1)
 					return;
-				new HolmesInvariantsViewer(selectedInvIndex);
+				new HolmesInvariantsViewer(selectedT_invIndex);
 			}
 		});
 		components.add(showDetailsButton);
@@ -2492,7 +2499,7 @@ public class HolmesDockWindowsTable extends JPanel {
 				} else {
 					markMCT = false;
 				}
-				showInvariant();
+				showT_invariant();
 			}
 		});
 		components.add(markMCTcheckBox);
@@ -2504,28 +2511,28 @@ public class HolmesDockWindowsTable extends JPanel {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
-					glowInv = true;
+					glowT_inv = true;
 				} else {
-					glowInv = false;
+					glowT_inv = false;
 				}
-				showInvariant();
+				showT_invariant();
 			}
 		});
 		components.add(glowINVcheckBox);
 		
-		invNameField = new JTextArea();
-		invNameField.setLineWrap(true);
-		invNameField.addFocusListener(new FocusAdapter() {
+		t_invNameField = new JTextArea();
+		t_invNameField.setLineWrap(true);
+		t_invNameField.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent e) {
             	JTextArea field = (JTextArea) e.getSource();
             	if(field != null)
-            		changeInvName(field.getText());
+            		changeT_invName(field.getText());
             }
         });
 			
         JPanel descPanel = new JPanel();
         descPanel.setLayout(new BorderLayout());
-        descPanel.add(new JScrollPane(invNameField), BorderLayout.CENTER);
+        descPanel.add(new JScrollPane(t_invNameField), BorderLayout.CENTER);
         descPanel.setBounds(colA_posX, positionY += 40, 250, 80);
         components.add(descPanel);
 		
@@ -2543,28 +2550,28 @@ public class HolmesDockWindowsTable extends JPanel {
 	 * Zmiana nazwy inwariantu.
 	 * @param newName String - nowa nazwa
 	 */
-	protected void changeInvName(String newName) {
-		if(selectedInvIndex == -1)
+	protected void changeT_invName(String newName) {
+		if(selectedT_invIndex == -1)
 			return;
 
-		overlord.getWorkspace().getProject().accessT_InvDescriptions().set(selectedInvIndex, newName);
+		overlord.getWorkspace().getProject().accessT_InvDescriptions().set(selectedT_invIndex, newName);
 	}
 
 	/**
 	 * Metoda odpowiedzialna za podświetlanie inwariantów na rysunku sieci.
 	 */
-	private void showInvariant() {
+	private void showT_invariant() {
 		PetriNet pn = overlord.getWorkspace().getProject();
 		pn.resetNetColors();
 		
-		if(selectedInvIndex != -1)
+		if(selectedT_invIndex != -1)
 		{
-			ArrayList<Integer> invariant = invariantsMatrix.get(selectedInvIndex);
+			ArrayList<Integer> invariant = t_invariantsMatrix.get(selectedT_invIndex);
 			if(transitions.size() != invariant.size()) {
 				transitions = overlord.getWorkspace().getProject().getTransitions();
 				if(transitions == null || transitions.size() != invariant.size()) {
-					overlord.log("Critical error in invariants subwindow. "
-							+ "Invariants size differ from transition set cardinality!", "error", true);
+					overlord.log("Critical error in t-invariants subwindow. "
+							+ "T-invariants size differ from transition set cardinality!", "error", true);
 					return;
 				}
 			}
@@ -2579,18 +2586,18 @@ public class HolmesDockWindowsTable extends JPanel {
 				if(markMCT) {
 					int mctNo = transMCTvector.get(t);
 					if(mctNo == -1) {
-						transitions.get(t).setGlowedINV(glowInv, fireValue);
+						transitions.get(t).setGlowedINV(glowT_inv, fireValue);
 					} else {
 						transitions.get(t).setColorWithNumber(true, cp.getColor(mctNo), false, fireValue, true, "[MCT"+(mctNo+1)+"]");
 						transitions.get(t).setGlowedINV(false, fireValue);
 					}	
 				} else {
-					transitions.get(t).setGlowedINV(glowInv, fireValue);
+					transitions.get(t).setGlowedINV(glowT_inv, fireValue);
 				}
 			}
 			//name field:
-			String name = overlord.getWorkspace().getProject().accessT_InvDescriptions().get(selectedInvIndex);
-			invNameField.setText(name);
+			String name = overlord.getWorkspace().getProject().accessT_InvDescriptions().get(selectedT_invIndex);
+			t_invNameField.setText(name);
 			
 		}
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -2599,21 +2606,21 @@ public class HolmesDockWindowsTable extends JPanel {
 	/**
 	 * Metoda pokazująca w ilu inwariantach występuje każda tranzycja
 	 */
-	private void showInvTransFrequency() {
+	private void showT_invTransFrequency() {
 		PetriNet pn = overlord.getWorkspace().getProject();
 		pn.resetNetColors();
 		
-		ArrayList<Integer> freqVector = InvariantsTools.getFrequency(invariantsMatrix, false);
+		ArrayList<Integer> freqVector = InvariantsTools.getFrequency(t_invariantsMatrix, false);
 		ArrayList<Transition> transitions_tmp = overlord.getWorkspace().getProject().getTransitions();
 		
 		if(freqVector == null) {
-			JOptionPane.showMessageDialog(null, "No invariants data available.", "No invariants", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "T-invariants data unavailable.", "No t-invariants", JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			for(int i=0; i<freqVector.size(); i++) {
 				Transition realT = transitions_tmp.get(i);
 				
 				if(freqVector.get(i)!=0) {
-					realT.setGlowedINV(glowInv, freqVector.get(i));
+					realT.setGlowedINV(glowT_inv, freqVector.get(i));
 				} else
 					realT.setColorWithNumber(true, Color.red, true, 0, false, "");
 			}
@@ -2624,18 +2631,18 @@ public class HolmesDockWindowsTable extends JPanel {
 	/**
 	 * Metoda pomocnicza do zaznaczania tranzycji nie pokrytych inwariantami.
 	 */
-	private void showDeadInv() {
+	private void showDeadT_inv() {
 		PetriNet pn = overlord.getWorkspace().getProject();
 		pn.resetNetColors();
 		
 		HolmesNotepad note = new HolmesNotepad(640, 480);
-		note.addTextLineNL("Transitions not covered by invariants:", "text");
+		note.addTextLineNL("Transitions not covered by t-invariants:", "text");
 
-		ArrayList<Integer> deadTrans = InvariantsTools.detectUncovered(invariantsMatrix);
+		ArrayList<Integer> deadTrans = InvariantsTools.detectUncovered(t_invariantsMatrix, true);
 		ArrayList<Transition> transitions_tmp = overlord.getWorkspace().getProject().getTransitions();
 		int counter = 0;
 		if(deadTrans == null) {
-			JOptionPane.showMessageDialog(null, "No invariants data available.", "No invariants", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "T-invariants data unavailable.", "No t-invariants", JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			for(int i=0; i<deadTrans.size(); i++) {
 				int deadOne = deadTrans.get(i);
@@ -2657,6 +2664,215 @@ public class HolmesDockWindowsTable extends JPanel {
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************  p-INWARIANTY    ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+	
+	/**
+	 * Metoda pomocnicza konstruktora odpowiedzialna za wypełnienie podokna informacji o p-inwariantach sieci.
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 */
+	public void createP_invSubWindow(ArrayList<ArrayList<Integer>> pInvData) {
+		//TODO:
+		doNotUpdate = true;
+		if(pInvData == null || pInvData.size() == 0) {
+			return;
+		} else {
+			mode = pINVARIANTS;
+			p_invariantsMatrix = pInvData;
+			places = overlord.getWorkspace().getProject().getPlaces();
+			overlord.reset.setP_invariantsStatus(true);
+		}
+		
+		int colA_posX = 10;
+		int colB_posX = 100;
+		int positionY = 10;
+		initiateContainers();
+
+		JLabel chooseInvLabel = new JLabel("P-invariant: ");
+		chooseInvLabel.setBounds(colA_posX, positionY, 80, 20);
+		components.add(chooseInvLabel);
+		
+		String[] invariantHeaders = new String[p_invariantsMatrix.size() + 3];
+		invariantHeaders[0] = "---";
+		for (int i = 0; i < p_invariantsMatrix.size(); i++) {
+			int invSize = InvariantsTools.getSupport(p_invariantsMatrix.get(i)).size();
+			invariantHeaders[i + 1] = "Inv. #" + (i+1) +" (size: "+invSize+")";
+		}
+		invariantHeaders[invariantHeaders.length-2] = "null places";
+		invariantHeaders[invariantHeaders.length-1] = "inv/places frequency";
+		
+		JComboBox<String> chooseInvBox = new JComboBox<String>(invariantHeaders);
+		chooseInvBox.setBounds(colB_posX, positionY, 150, 20);
+		chooseInvBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				@SuppressWarnings("unchecked")
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				int items = comboBox.getItemCount();
+				if (comboBox.getSelectedIndex() == 0) {
+					selectedP_invIndex = -1;
+					showP_invariant(); //clean
+				} else if(comboBox.getSelectedIndex() == items-2) { 
+					selectedP_invIndex = -1;
+					showDeadP_inv(); //show transition without invariants
+				} else if(comboBox.getSelectedIndex() == items-1) { 
+					selectedP_invIndex = -1;
+					showP_invTransFrequency(); //show transition frequency (in invariants)
+				} else {
+					selectedP_invIndex = comboBox.getSelectedIndex() - 1;
+					showP_invariant();
+				}
+			}
+		});
+		components.add(chooseInvBox);
+		
+		JButton showDetailsButton = new JButton();
+		showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
+		showDetailsButton.setIcon(Tools.getResIcon32("/icons/menu/menu_invViewer.png"));
+		showDetailsButton.setBounds(colA_posX, positionY+=30, 120, 32);
+		showDetailsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(selectedP_invIndex == -1)
+					return;
+				//new HolmesInvariantsViewer(selectedT_invIndex);
+			}
+		});
+		components.add(showDetailsButton);
+		
+		p_invNameField = new JTextArea();
+		p_invNameField.setLineWrap(true);
+		p_invNameField.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+            	JTextArea field = (JTextArea) e.getSource();
+            	if(field != null)
+            		changeP_invName(field.getText());
+            }
+        });
+			
+        JPanel descPanel = new JPanel();
+        descPanel.setLayout(new BorderLayout());
+        descPanel.add(new JScrollPane(p_invNameField), BorderLayout.CENTER);
+        descPanel.setBounds(colA_posX, positionY += 40, 250, 80);
+        components.add(descPanel);
+		
+		doNotUpdate = false;
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			 panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		panel.setVisible(true);
+		add(panel);
+	}
+	
+	/**
+	 * Zmiana nazwy p-inwariantu.
+	 * @param newName String - nowa nazwa
+	 */
+	protected void changeP_invName(String newName) {
+		if(selectedT_invIndex == -1)
+			return;
+
+		overlord.getWorkspace().getProject().accessP_InvDescriptions().set(selectedP_invIndex, newName);
+	}
+
+	/**
+	 * Metoda odpowiedzialna za podświetlanie inwariantów na rysunku sieci.
+	 */
+	private void showP_invariant() {
+		PetriNet pn = overlord.getWorkspace().getProject();
+		pn.resetNetColors();
+		
+		if(selectedP_invIndex != -1)
+		{
+			ArrayList<Integer> invariant = p_invariantsMatrix.get(selectedP_invIndex);
+			if(places.size() != invariant.size()) {
+				places = overlord.getWorkspace().getProject().getPlaces();
+				if(places == null || places.size() != invariant.size()) {
+					overlord.log("Critical error in p-invariants subwindow. "
+							+ "P-invariants size differ from transition set cardinality!", "error", true);
+					return;
+				}
+			}
+			
+			for(int p=0; p<invariant.size(); p++) {
+				int value = invariant.get(p);
+				if(value == 0)
+					continue;
+
+				places.get(p).setColorWithNumber(true, EditorResources.glowPlaceColorLevelBlue, false, -1, false, "");
+			}
+			//name field:
+			String name = overlord.getWorkspace().getProject().accessP_InvDescriptions().get(selectedP_invIndex);
+			p_invNameField.setText(name);
+			
+		}
+		overlord.getWorkspace().getProject().repaintAllGraphPanels();
+	}
+	
+	/**
+	 * Metoda pokazująca w ilu inwariantach występuje każda tranzycja
+	 */
+	private void showP_invTransFrequency() {
+		PetriNet pn = overlord.getWorkspace().getProject();
+		pn.resetNetColors();
+		
+		ArrayList<Integer> freqVector = InvariantsTools.getFrequency(p_invariantsMatrix, false);
+		ArrayList<Place> places_tmp = pn.getPlaces();
+		
+		if(freqVector == null) {
+			JOptionPane.showMessageDialog(null, "P-invariants data unavailable.", "No p-invariants", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			for(int i=0; i<freqVector.size(); i++) {
+				Place realP = places_tmp.get(i);
+				if(freqVector.get(i)!=0) {
+					realP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelBlue, true, freqVector.get(i), false, "");
+				} else
+					realP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelRed, true, 0, false, "");
+			}
+		}
+		overlord.getWorkspace().getProject().repaintAllGraphPanels();
+	}
+	
+	/**
+	 * Metoda pomocnicza do zaznaczania tranzycji nie pokrytych inwariantami.
+	 */
+	private void showDeadP_inv() {
+		PetriNet pn = overlord.getWorkspace().getProject();
+		pn.resetNetColors();
+		
+		HolmesNotepad note = new HolmesNotepad(640, 480);
+		note.addTextLineNL("Places not covered by p-invariants:", "text");
+
+		ArrayList<Integer> deadPlaces = InvariantsTools.detectUncovered(p_invariantsMatrix, false);
+		ArrayList<Place> places_tmp = overlord.getWorkspace().getProject().getPlaces();
+		int counter = 0;
+		if(deadPlaces == null) {
+			JOptionPane.showMessageDialog(null, "P-invariants data unavailable.", "No p-invariants", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			for(int i=0; i<deadPlaces.size(); i++) {
+				int deadOne = deadPlaces.get(i);
+				Place realP = places_tmp.get(deadOne);
+				String p1 = Tools.setToSize("p"+deadOne, 5, false);
+				note.addTextLineNL(p1 + " | "+realP.getName(), "text");
+				realP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelRed, false, -1, false, "");
+				//realT.setGlowedINV(true, 0);
+				counter++;
+			}
+		}
+		if(counter > 0) {
+			note.setCaretFirstLine();
+			note.setVisible(true);
+		} else {
+			note.dispose();
+			note = null;
+		}
+		
+		overlord.getWorkspace().getProject().repaintAllGraphPanels();
+	}
+	
 	//**************************************************************************************
 	//*********************************                  ***********************************
 	//*********************************       MCT        ***********************************
@@ -2837,7 +3053,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		for(Transition transition : mct) {
 			int globalIndex = transitions.lastIndexOf(transition);
 			String t1 = Tools.setToSize("t"+globalIndex, 5, false);
-			note.addTextLineNL("T"+t1 + "_"+transition.getName(), "text");
+			note.addTextLineNL(t1+transition.getName(), "text");
 		}
 		
 		note.setCaretFirstLine();
@@ -4150,10 +4366,17 @@ public class HolmesDockWindowsTable extends JPanel {
 	}
 	
 	/**
-	 * Metoda czyści dane o inwariantach.
+	 * Metoda czyści dane o t-inwariantach.
 	 */
-	public void resetInvariants() {
-		invariantsMatrix = null;
+	public void resetT_invariants() {
+		t_invariantsMatrix = null;
+	}
+	
+	/**
+	 * Metoda czyści dane o p-inwariantach.
+	 */
+	public void resetP_invariants() {
+		p_invariantsMatrix = null;
 	}
 	
 	/**

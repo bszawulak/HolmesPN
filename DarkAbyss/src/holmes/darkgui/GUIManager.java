@@ -123,7 +123,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesDockWindow simulatorBox;	//podokno przycisków symulatorów sieci
 	private HolmesDockWindow selectionBox;	//podokno zaznaczonych elementów sieci
 	private HolmesDockWindow mctBox;			//podokno MCT
-	private HolmesDockWindow invariantsBox;	//podokno inwariantów
+	private HolmesDockWindow t_invariantsBox;	//podokno t-inwariantów
+	private HolmesDockWindow p_invariantsBox;
 	private HolmesDockWindow selElementBox;  //podokno klikniętego elementu sieci
 	private HolmesDockWindow clustersBox;	//podokno podświetlania klastrów
 	private HolmesDockWindow mcsBox;
@@ -131,7 +132,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesDockWindow knockoutBox;
 	
 	//UNUSED
-	private HolmesDockWindow invSimBox;
+	
 	
 	// docking listener
 	private DarkDockingListener dockingListener;
@@ -247,10 +248,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setPropertiesBox(new HolmesDockWindow(DockWindowType.EDITOR));
 		setSimulatorBox(new HolmesDockWindow(DockWindowType.SIMULATOR));
 		setSelectionBox(new HolmesDockWindow(DockWindowType.SELECTOR));
-		setInvariantsBox(new HolmesDockWindow(DockWindowType.InvANALYZER));
+		setT_invBox(new HolmesDockWindow(DockWindowType.T_INVARIANTS));
+		setP_invSim(new HolmesDockWindow(DockWindowType.P_INVARIANTS));
 		setClusterSelectionBox(new HolmesDockWindow(DockWindowType.ClusterSELECTOR));
 		setMctBox(new HolmesDockWindow(DockWindowType.MctANALYZER)); //aktywuj obiekt podokna wyświetlania zbiorów MCT
-		setInvSim(new HolmesDockWindow(DockWindowType.InvSIMULATOR));
 		setMCSBox(new HolmesDockWindow(DockWindowType.MCSselector));
 		setKnockoutBox(new HolmesDockWindow(DockWindowType.Knockout));
 		
@@ -273,11 +274,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
 		topRightTabDock.setSelectedDock(getPropertiesBox());
 		
-		bottomRightTabDock.addChildDock(getInvariantsBox(), new Position(1));
-		bottomRightTabDock.addChildDock(getMctBox(), new Position(2));
-		bottomRightTabDock.addChildDock(getMCSBox(), new Position(3));
-		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(4));
-		bottomRightTabDock.addChildDock(getInvSimBox(), new Position(5));
+		bottomRightTabDock.addChildDock(getT_invBox(), new Position(1));
+		bottomRightTabDock.addChildDock(getP_invBox(), new Position(2));
+		bottomRightTabDock.addChildDock(getMctBox(), new Position(3));
+		bottomRightTabDock.addChildDock(getMCSBox(), new Position(4));
+		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(5));
 		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
 		bottomRightTabDock.addChildDock(getFixBox(), new Position(7));
 
@@ -428,11 +429,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		topRightTabDock.setSelectedDock(getPropertiesBox());
 		
 		//bottomRightTabDock.addChildDock(getSimulatorBox(), new Position(0));
-		bottomRightTabDock.addChildDock(getInvariantsBox(), new Position(1));
+		bottomRightTabDock.addChildDock(getT_invBox(), new Position(1));
 		bottomRightTabDock.addChildDock(getMctBox(), new Position(2));
 		bottomRightTabDock.addChildDock(getMCSBox(), new Position(3));
 		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(4));
-		bottomRightTabDock.addChildDock(getInvSimBox(), new Position(5));
+		bottomRightTabDock.addChildDock(getP_invBox(), new Position(5));
 		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
 
 		// create the split docks
@@ -768,20 +769,36 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda ustawia nowe okno właściwości symulatora inwariantów.
-	 * @param invSim HolmesDockWindow - okno właściwości symulatora inwariantów
+	 * Metoda zwraca obiekt podokna dla podświetlania inwariantów sieci.
+	 * @return HolmesDockWindow - podokno inwariantów
 	 */
-	public void setInvSim(HolmesDockWindow invSim)
-	{
-		this.invSimBox = invSim;
+	public HolmesDockWindow getT_invBox() {
+		return t_invariantsBox;
+	}
+
+	/**
+	 * Metoda ta ustawia obiekt podokna dla podświetlania inwariantów sieci.
+	 * @param invariantsBox HolmesDockWindow - podokno inwariantów
+	 */
+	public void setT_invBox(HolmesDockWindow invariantsBox) {
+		this.t_invariantsBox = invariantsBox;
 	}
 	
 	/**
-	 * Metoda zwraca aktywne okno właściwości symulatora inwariantów.
-	 * @param invSim HolmesDockWindow - okno właściwości symulatora inwariantów
+	 * Metoda ustawia nowe okno właściwości p-inwariantów.
+	 * @param invSim HolmesDockWindow - okno p-inwariantów
 	 */
-	public HolmesDockWindow getInvSimBox() {
-		return invSimBox;
+	public void setP_invSim(HolmesDockWindow invSim)
+	{
+		this.p_invariantsBox = invSim;
+	}
+	
+	/**
+	 * Metoda zwraca aktywne okno właściwości p-inwariantów.
+	 * @param invSim HolmesDockWindow - okno p-inwariantów
+	 */
+	public HolmesDockWindow getP_invBox() {
+		return p_invariantsBox;
 	}
 
 	/**
@@ -1017,22 +1034,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void setDockingListener(DarkDockingListener dockingListener) {
 		this.dockingListener = dockingListener;
 	}
-
-	/**
-	 * Metoda zwraca obiekt podokna dla podświetlania inwariantów sieci.
-	 * @return HolmesDockWindow - podokno inwariantów
-	 */
-	public HolmesDockWindow getInvariantsBox() {
-		return invariantsBox;
-	}
-
-	/**
-	 * Metoda ta ustawia obiekt podokna dla podświetlania inwariantów sieci.
-	 * @param invariantsBox HolmesDockWindow - podokno inwariantów
-	 */
-	public void setInvariantsBox(HolmesDockWindow invariantsBox) {
-		this.invariantsBox = invariantsBox;
-	}
 	
 	/**
 	 * Metoda zwraca obiekt podokna wyboru klastrów do podświetlania.
@@ -1110,7 +1111,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda pokazuje podokienko zbiorów Knockout.
 	 */
-	//TODO
 	public void showKnockout(ArrayList<ArrayList<Integer>> knockoutData) {
 		getKnockoutBox().showKnockout(knockoutData);
 	}

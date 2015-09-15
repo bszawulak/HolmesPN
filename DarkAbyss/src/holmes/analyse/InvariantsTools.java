@@ -855,9 +855,9 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Metoda wykrywa, które tranzycje są pokryte przez inwarianty.
+	 * Metoda wykrywa, które elementy sieci są pokryte przez odpowiednie inwarianty.
 	 * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
-	 * @return ArrayList[Integer] - zbiór ID tranzycji pokrytych inwariantami
+	 * @return ArrayList[Integer] - zbiór ID elementów pokrytych inwariantami
 	 */
 	public static ArrayList<Integer> detectCovered(ArrayList<ArrayList<Integer>> invMatrix) {
 		ArrayList<Integer> coveredTransSet = new ArrayList<Integer>();
@@ -882,9 +882,10 @@ public final class InvariantsTools {
 	/**
 	 * Metoda wykrywa, które tranzycje nie są pokryte przez inwarianty.
 	 * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @param t_inv boolean - true, jeśli chodzi o t-inw., false: p-inwarianty
 	 * @return ArrayList[Integer] - zbiór ID tranzycji nie pokrytych inwariantami
 	 */
-	public static ArrayList<Integer> detectUncovered(ArrayList<ArrayList<Integer>> invMatrix) {
+	public static ArrayList<Integer> detectUncovered(ArrayList<ArrayList<Integer>> invMatrix, boolean t_inv) {
 		ArrayList<Integer> uncoveredTransSet = null;
 		ArrayList<Integer> coveredSet = detectCovered(invMatrix);
 		
@@ -897,12 +898,23 @@ public final class InvariantsTools {
 			}
 			
 		} else {
-			ArrayList<Transition> trans = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-			if(trans != null && trans.size()>0) {
-				int transSize = trans.size();
-				uncoveredTransSet = new ArrayList<Integer>();
-				for(int t=0; t<transSize; t++) {
-					uncoveredTransSet.add(t);
+			if(t_inv) {
+				ArrayList<Transition> trans = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+				if(trans != null && trans.size()>0) {
+					int transSize = trans.size();
+					uncoveredTransSet = new ArrayList<Integer>();
+					for(int t=0; t<transSize; t++) {
+						uncoveredTransSet.add(t);
+					}
+				}
+			} else {
+				ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+				if(places != null && places.size()>0) {
+					int placesSize = places.size();
+					uncoveredTransSet = new ArrayList<Integer>();
+					for(int p=0; p<placesSize; p++) {
+						uncoveredTransSet.add(p);
+					}
 				}
 			}
 		}
@@ -1038,11 +1050,11 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Metoda zwraca wektor mówiący o liczbie wystąpień danej tranzycji w inwariantach.
+	 * Metoda zwraca wektor mówiący o liczbie wystąpień danego elementu (P/T) w inwariantach.
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @param mmMode - Mauritius Map mode - w tym trybie ostatnia kolumna jest ignorowana, jako, że zawiera
-	 * indeks inwariantu w macierzy ogyrinalnej programu.
-	 * @return ArrayList[Integer] - wektor frekwencji wystąpień tranzycji
+	 * indeks inwariantu w macierzy oryginalnej programu.
+	 * @return ArrayList[Integer] - wektor frekwencji wystąpień elementu sieci
 	 */
 	public static ArrayList<Integer> getFrequency(ArrayList<ArrayList<Integer>> invariants, boolean mmMode) {
 		ArrayList<Integer> frequency = new ArrayList<Integer>();

@@ -1094,7 +1094,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 			PetriNet project = overlord.getWorkspace().getProject();
 			project.setT_InvMatrix(invariants, false);
 			overlord.io.exportGeneratedInvariants(true);
-			overlord.getInvariantsBox().showInvariants(project.getT_InvMatrix());
+			overlord.getT_invBox().showT_invBoxWindow(project.getT_InvMatrix());
 		} else if(n == 1) {
 			ArrayList<ArrayList<Integer>> invBackup = overlord.getWorkspace().getProject().getT_InvMatrix();
 			try {
@@ -1107,7 +1107,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		} else if(n == 2) {
 			PetriNet project = overlord.getWorkspace().getProject();
 			project.setT_InvMatrix(invariants, false);
-			overlord.getInvariantsBox().showInvariants(project.getT_InvMatrix());
+			overlord.getT_invBox().showT_invBoxWindow(project.getT_InvMatrix());
 		} //else: nic
 	}
 	

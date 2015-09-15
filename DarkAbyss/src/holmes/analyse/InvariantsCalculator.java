@@ -79,7 +79,6 @@ public class InvariantsCalculator implements Runnable {
 	/**
 	 * Metoda wirtualna - nadpisana, odpowiada za działanie w niezależnym wątku
 	 */
-	@SuppressWarnings("unused")
 	public void run() {
 		try {
 			logInternal("Invariant calculations started.\n", true);
@@ -89,7 +88,7 @@ public class InvariantsCalculator implements Runnable {
 				this.calculateInvariants();
 				
 				PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-				GUIManager.getDefaultGUIManager().getInvariantsBox().showInvariants(getInvariants(true));
+				GUIManager.getDefaultGUIManager().getT_invBox().showT_invBoxWindow(getInvariants(true));
 				project.setT_InvMatrix(getInvariants(true), true);
 				GUIManager.getDefaultGUIManager().reset.setT_invariantsStatus(true);
 				GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetT_invData();
@@ -128,6 +127,7 @@ public class InvariantsCalculator implements Runnable {
 				this.calculateInvariants();
 
 				PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+				GUIManager.getDefaultGUIManager().getP_invBox().showP_invBoxWindow(getInvariants(false));
 				project.setP_InvMatrix(getInvariants(false));
 				GUIManager.getDefaultGUIManager().reset.setP_invariantsStatus(true);
 				logInternal("Operation successfull, invariants found: "+getInvariants(false).size()+"\n", true);
