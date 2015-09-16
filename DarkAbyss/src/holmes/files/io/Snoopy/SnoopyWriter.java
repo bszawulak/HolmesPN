@@ -47,9 +47,6 @@ public class SnoopyWriter {
 	private ArrayList<Integer> holmesCoarsePlacesID = new ArrayList<Integer>();
 	private ArrayList<SnoopyWriterCoarse> snoopyWriterCoarseTransitions = new ArrayList<SnoopyWriterCoarse>();
 	private ArrayList<Integer> holmesCoarseTransitionsID = new ArrayList<Integer>();
-	
-	//TODO: come on!!!
-	private String dateAndTime = "2015-01-02 10:44:56";
 
 	/**
 	 * Konstruktor obiektu klasy SnoopyWriter uzyskujący dostęp do zasobów sieci.
