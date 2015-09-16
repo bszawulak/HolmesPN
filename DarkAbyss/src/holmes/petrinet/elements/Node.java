@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.settings.SettingsManager;
+import holmes.graphpanel.ElementDrawSettings;
 
 /**
  * Klasa implementująca wierzchołek sieci Petriego. Dziedziczą po niej klasy
@@ -143,8 +144,9 @@ public abstract class Node extends PetriNetElement {
 	 * Metoda pozwala narysować NAZWĘ wierzchołka sieci Petriego na odpowiednim arkuszu.
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza
+	 * @param eds ElementDrawSettings - opcje rysowania
 	 */
-	public void draw(Graphics2D g, int sheetId) {
+	public void draw(Graphics2D g, int sheetId, ElementDrawSettings eds) {
 		g.setColor(Color.black);
 		g.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		int width = g.getFontMetrics().stringWidth(getName());

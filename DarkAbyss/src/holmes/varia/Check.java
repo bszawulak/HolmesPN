@@ -14,10 +14,15 @@ public final class Check {
 
 	/**
      * Metoda zwraca macierz inwariantów jeśli istnieje i nie jest pusta.
+     * @param t_inv boolean - true, jeśli chodzi o t-inwarianty, false dla p-inwariantów
      * @return ArrayList[ArrayList[Integer]] - macierz inwariantów; null - jeśli pusta lub jej nie ma
      */
-    public static ArrayList<ArrayList<Integer>> invExists() {
-    	ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+    public static ArrayList<ArrayList<Integer>> invExists(boolean t_inv) {
+    	ArrayList<ArrayList<Integer>> invariants = null;
+    	if(t_inv)
+    		invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+    	else
+    		invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix();
 		if(invariants == null || invariants.size() < 1)
     		return null;
     	else
@@ -27,12 +32,16 @@ public final class Check {
     /**
      * Metoda zwraca macierz inwariantów jeśli istnieje i nie jest pusta. W przeciwnym wypadku zwraca null i
      * wyświetla odpowiedni komunikat.
+     * @param t_inv boolean - true, jeśli chodzi o t-inwarianty, false dla p-inwariantów
      * @return ArrayList[ArrayList[Integer]] - macierz inwariantów; null - jeśli pusta lub jej nie ma
      */
-    public static ArrayList<ArrayList<Integer>> invExistsWithWarning() {
-    	ArrayList<ArrayList<Integer>> invariants = invExists();
+    public static ArrayList<ArrayList<Integer>> invExistsWithWarning(boolean t_inv) {
+    	ArrayList<ArrayList<Integer>> invariants = invExists(t_inv);
+    	String symbol = "T-";
+    	if(!t_inv)
+    		symbol = "P-";
 		if(invariants == null) {
-			JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
+			JOptionPane.showMessageDialog(null, symbol+"invariants matrix empty! Operation cannot start.", 
 					"Warning", JOptionPane.WARNING_MESSAGE);
 			return null;
 		} else {

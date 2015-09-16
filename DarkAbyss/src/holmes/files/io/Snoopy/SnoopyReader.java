@@ -1,5 +1,6 @@
 package holmes.files.io.Snoopy;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -305,6 +306,9 @@ public class SnoopyReader {
 								int y = (int) getAttributeValue(line, " y=\"", 100);
 								int sub = (int) getAttributeValue(line, " net=\"", 0);
 								int elLocID = (int) getAttributeValue(line, " id=\"", 0);
+								String brush = getAttributeValueStr(line, " brush=\"", "255,255,255");
+								setBrushColor(place, brush);
+								
 								if(sub != 0)
 									sub--;
 								
@@ -360,6 +364,31 @@ public class SnoopyReader {
 			warnings = true;
 			GUIManager.getDefaultGUIManager().log("Warning: places read: "+(placesCounter+1)+
 					", places number set in file: "+(placesLimit+1), "warning", true);
+		}
+	}
+
+	/**
+	 * Metoda ustawia kolor miejsca lub tranzycji na wczytany z pliku Snoopiego.
+	 * @param node Node - miejsce lub tranzycja
+	 * @param brush String - np. 255,255,255
+	 */
+	private void setBrushColor(Node node, String brush) {
+		try {
+			String[] tableRGB = brush.split(",");
+			int r = Integer.parseInt(tableRGB[0]);
+			int g = Integer.parseInt(tableRGB[1]);
+			int b = Integer.parseInt(tableRGB[2]);
+			
+			if(r == 255 && g == 255 && b == 255)
+				return; //zostaw domyślny
+					
+			if(node instanceof Place) {
+				((Place)node).defColor = new Color(r,g,b);
+			} else if(node instanceof Transition) {
+				((Transition)node).defColor = new Color(r,g,b);
+			}
+		} catch (Exception e) {
+			
 		}
 	}
 
@@ -548,6 +577,8 @@ public class SnoopyReader {
 								int y = (int) getAttributeValue(line, " y=\"", 100);
 								int sub = (int) getAttributeValue(line, " net=\"", 0);
 								int elLocID = (int) getAttributeValue(line, " id=\"", 0);
+								String brush = getAttributeValueStr(line, " brush=\"", "255,255,255");
+								setBrushColor(transition, brush);
 								if(sub != 0)
 									sub--;
 								
@@ -1379,7 +1410,7 @@ public class SnoopyReader {
 	 * @param line String - linia z pliku
 	 * @param signature String - atrybut (format: ' nazwa="'    )
 	 * @param defaultVal double - wartość domyślna, jeśli nie da się przeczytać
-	 * @return double - wartość atrybutu
+	 * @return double - wartość odczytana atrybutu
 	 */
 	private double getAttributeValue(String line, String signature, double defaultVal) {
 		double result = defaultVal;
@@ -1389,6 +1420,25 @@ public class SnoopyReader {
 			location = tmp.indexOf("\"");
 			tmp = tmp.substring(0, location);
 			result = Double.parseDouble(tmp);
+		} catch (Exception e) {	
+		}
+		return result;
+	}
+	
+	/**
+	 * Metoda wycina wartość zadanego parametru z linii.
+	 * @param line String - linia z pliku
+	 * @param signature String - atrybut (format: ' nazwa="'    )
+	 * @param defaultVal String - wartość domyślna, jeśli nie da się przeczytać
+	 * @return String - wartość odczytana atrybutu
+	 */
+	private String getAttributeValueStr(String line, String signature, String defaultVal) {
+		String result = defaultVal;
+		try {
+			int location = line.indexOf(signature);
+			String tmp = line.substring(location + signature.length());
+			location = tmp.indexOf("\"");
+			result = tmp.substring(0, location);
 		} catch (Exception e) {	
 		}
 		return result;

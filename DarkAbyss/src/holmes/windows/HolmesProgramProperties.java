@@ -429,10 +429,12 @@ public class HolmesProgramProperties extends JFrame {
 		labelFontSize.setBounds(posX+150, posY, 200, 20);
 		panel.add(labelFontSize);
 		
-		JCheckBox boldCheckBox = checkboxWizard("Bold", posX+210, posY, 60, 20, "editorGraphFontBold", true);
+		JCheckBox boldCheckBox = checkboxWizard("Bold", posX+210, posY, 60, 20, 
+				"editorGraphFontBold", true);
 		panel.add(boldCheckBox);
 		
-		JCheckBox mctNameCheckBox = checkboxWizard("MCT names", posX+270, posY, 110, 20, "mctNameShow", true);
+		JCheckBox mctNameCheckBox = checkboxWizard("MCT names", posX+270, posY, 110, 20, 
+				"mctNameShow", true);
 		panel.add(mctNameCheckBox);
 		
 		
@@ -451,20 +453,22 @@ public class HolmesProgramProperties extends JFrame {
 			}
 		});
 		panel.add(fontSizeSpinner);
-		
-		
-		
-		
-		JCheckBox useShortNamesCheckBox = checkboxWizard("(Editor) Show short default names only", posX, posY+=20, 260, 20, "editorShowShortNames", true);
+
+		JCheckBox useShortNamesCheckBox = checkboxWizard("(Editor) Show short default names only", posX, posY+=20, 260, 20, 
+				"editorShowShortNames", true);
 		panel.add(useShortNamesCheckBox);
 	
-		JCheckBox view3dCheckBox = checkboxWizard("(Editor) Petri net elements 3d view", posX, posY+=20, 260, 20, "editor3Dview", true);
+		JCheckBox view3dCheckBox = checkboxWizard("(Editor) Petri net elements 3d view", posX, posY+=20, 260, 20, 
+				"editor3Dview", true);
 		panel.add(view3dCheckBox);
 		
-		JCheckBox snoopyStyleCheckBox = checkboxWizard("(Editor) Show Snoopy-styled graphics", posX, posY+=20, 260, 20, "editorSnoopyStyleGraphic", true);
+		JCheckBox snoopyStyleCheckBox = checkboxWizard("(Editor) Show Snoopy-styled graphics", posX, posY+=20, 260, 20, 
+				"editorSnoopyStyleGraphic", true);
 		panel.add(snoopyStyleCheckBox);
 		
-		//checkAndFix(settingsNew, "editorSnoopyStyleGraphic", "0");
+		JCheckBox snoopyColorsBox = checkboxWizard("(Editor) Show non default T/P colors", posX+270, posY, 260, 20, 
+				"editorSnoopyColors", true);
+		panel.add(snoopyColorsBox);
 		
 		noAction = false;
 		return panel;

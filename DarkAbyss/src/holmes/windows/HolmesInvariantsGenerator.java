@@ -385,7 +385,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 					logFieldTinv.append("=====================================================================\n");
 					logFieldTinv.append("Checking t0invariants correctness for "+invariants.size()+" invariants.\n");
 					InvariantsCalculator ic = new InvariantsCalculator(true);
-					ArrayList<ArrayList<Integer>> results = InvariantsTools.countNonT_InvariantsV2(ic.getCMatrix(), invariants);
+					ArrayList<ArrayList<Integer>> results = InvariantsTools.analysiseInvariantDetails(
+							ic.getCMatrix(), invariants, true);
 					logFieldTinv.append("Proper t-invariants (Cx = 0): "+results.get(0).get(0)+"\n");
 					logFieldTinv.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
 					logFieldTinv.append("Sub-invariants (Cx < 0): "+results.get(0).get(2)+"\n");
@@ -520,7 +521,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 					logFieldPinv.append("=====================================================================\n");
 				} else {
 					logFieldPinv.append("\n");
-					logFieldPinv.append("T-invariants reading has been unsuccessfull.\n");
+					logFieldPinv.append("P-invariants reading has been unsuccessfull.\n");
 				}
 			}
 		});
@@ -677,7 +678,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 					logFieldPinv.append("=====================================================================\n");
 					logFieldPinv.append("Checking invariants correctness for "+p_invariants.size()+" invariants.\n");
 					InvariantsCalculator ic = new InvariantsCalculator(true);
-					ArrayList<ArrayList<Integer>> results = InvariantsTools.countNonP_Invariants(ic.getCMatrix(), p_invariants);
+					ArrayList<ArrayList<Integer>> results = InvariantsTools.analysiseInvariantDetails(
+							ic.getCMatrix(), p_invariants, false);
 					logFieldPinv.append("Proper invariants (Cx = 0): "+results.get(0).get(0)+"\n");
 					logFieldPinv.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
 					logFieldPinv.append("Sub-invariants (Cx < 0): "+results.get(0).get(2)+"\n");
@@ -699,7 +701,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		loadRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
 		loadRefButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//testReference();
+				testReference(false);
 			}
 		});
 		loadRefButton.setFocusPainted(false);
@@ -829,10 +831,10 @@ public class HolmesInvariantsGenerator extends JFrame {
 	/**
 	 * Metoda wczytująca nowy plik inwariantów (o ile już jakieś są w systemie - celem bycia zbiorem referencyjnym w
 	 * stosunku do wczytanego tutaj) oraz porównująca go ze zbiorem referencyjnym.
-	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
+	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty, false dla p-inwariantów
 	 */
 	protected void testReference(boolean t_inv) {
-		ArrayList<ArrayList<Integer>> invariants = Check.invExistsWithWarning();
+		ArrayList<ArrayList<Integer>> invariants = Check.invExistsWithWarning(t_inv);
 		if(invariants == null)
 			return;
 		
@@ -860,43 +862,45 @@ public class HolmesInvariantsGenerator extends JFrame {
 		if(status == false) {
 			return;
 		}
-		refTest(invariants, io.getInvariantsList());
+		refTest(invariants, io.getInvariantsList(), t_inv);
 	}
 
 	/**
 	 * Metoda porównująca zbiory inwariantów: referencyjny i osobno wczytany.
 	 * @param invRefMatrix ArrayList[ArrayList[Integer]] - zbiór referencyjny inwariantów
 	 * @param invLoadedMatrix ArrayList[ArrayList[Integer]] - zbiór do porównania
+	 * @param t_inv boolean - true, jeśli chodz o t-inwarianty, false dla p-inwariantów
 	 */
-	private void refTest(ArrayList<ArrayList<Integer>> invRefMatrix, ArrayList<ArrayList<Integer>> invLoadedMatrix) {
+	private void refTest(ArrayList<ArrayList<Integer>> invRefMatrix, ArrayList<ArrayList<Integer>> invLoadedMatrix, boolean t_inv) {
 		if(invRefMatrix != null) {
+			String symbol = "t-";
+			if(!t_inv)
+				symbol = "p-";
 			
-			ArrayList<ArrayList<Integer>> res =  InvariantsTools.compareT_invariants(invRefMatrix, invLoadedMatrix);
-			logFieldTinv.append("\n");
-			logFieldTinv.append("=====================================================================\n");
-			logFieldTinv.append("Prev. computed set size:   "+invRefMatrix.size()+"\n");
-			logFieldTinv.append("Loaded (now) set size:    "+invLoadedMatrix.size()+"\n");
-			logFieldTinv.append("Common set size (load & ref): "+res.get(0).size()+"\n");
-			logFieldTinv.append("Loaded invariants not in a computed set:  "+res.get(1).size()+"\n");
-			logFieldTinv.append("Computed invariants not in a loaded set:  "+res.get(2).size()+"\n");
-			logFieldTinv.append("Repetitions in common set: "+res.get(3).get(0)+"\n");
-			logFieldTinv.append("Total repetitions in loaded:"+res.get(3).get(1)+"\n");
-			logFieldTinv.append("\n");
-			logFieldTinv.append("Inititating further tests for the loaded set of "+invLoadedMatrix.size()+" invariants.\n");
+			ArrayList<ArrayList<Integer>> res =  InvariantsTools.compareTwoInvariantsSets(invRefMatrix, invLoadedMatrix);
+			accessLogField(t_inv).append("\n");
+			accessLogField(t_inv).append("=====================================================================\n");
+			accessLogField(t_inv).append("Prev. computed set size:   "+invRefMatrix.size()+"\n");
+			accessLogField(t_inv).append("Loaded (now) set size:    "+invLoadedMatrix.size()+"\n");
+			accessLogField(t_inv).append("Common set size (load & ref): "+res.get(0).size()+"\n");
+			accessLogField(t_inv).append("Loaded "+symbol+"invariants not in a computed set:  "+res.get(1).size()+"\n");
+			accessLogField(t_inv).append("Computed "+symbol+"invariants not in a loaded set:  "+res.get(2).size()+"\n");
+			accessLogField(t_inv).append("Repetitions in common set: "+res.get(3).get(0)+"\n");
+			accessLogField(t_inv).append("Total repetitions in loaded:"+res.get(3).get(1)+"\n");
+			accessLogField(t_inv).append("\n");
+			accessLogField(t_inv).append("Inititating further tests for the loaded set of "+invLoadedMatrix.size()+" "+symbol+"invariants.\n");
 			int card = InvariantsTools.checkCanonity(invLoadedMatrix);
-			logFieldTinv.append("-> Non canonical invariants found : "+card+"\n");
+			accessLogField(t_inv).append("-> Non canonical "+symbol+"invariants found : "+card+"\n");
 			int value = InvariantsTools.checkSupportMinimality(invLoadedMatrix);
-			logFieldTinv.append("-> Non support-minimal inv. found: "+value+"\n");
+			accessLogField(t_inv).append("-> Non support-minimal "+symbol+"invariants found: "+value+"\n");
 			InvariantsCalculator ic = new InvariantsCalculator(true);
-			//value =  InvariantsTools.countNonInvariants(ic.getCMatrix(), invLoadedMatrix);
-			
-			ArrayList<ArrayList<Integer>> results = InvariantsTools.countNonT_InvariantsV2(ic.getCMatrix(), invLoadedMatrix);
-			logFieldTinv.append("Proper invariants (Cx = 0): "+results.get(0).get(0)+"\n");
-			logFieldTinv.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
-			logFieldTinv.append("Sun-invariants (Cx < 0): "+results.get(0).get(2)+"\n");
-			logFieldTinv.append("Non-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n");
-			logFieldTinv.append("=====================================================================\n");
-			logFieldTinv.append("\n");
+			ArrayList<ArrayList<Integer>> results = InvariantsTools.analysiseInvariantDetails(ic.getCMatrix(), invLoadedMatrix, t_inv);
+			accessLogField(t_inv).append("Proper "+symbol+"invariants (Cx = 0): "+results.get(0).get(0)+"\n");
+			accessLogField(t_inv).append("Sur-"+symbol+"invariants (Cx > 0): "+results.get(0).get(1)+"\n");
+			accessLogField(t_inv).append("Sun-"+symbol+"invariants (Cx < 0): "+results.get(0).get(2)+"\n");
+			accessLogField(t_inv).append("Non-"+symbol+"invariants (Cx <=> 0): "+results.get(0).get(3)+"\n");
+			accessLogField(t_inv).append("=====================================================================\n");
+			accessLogField(t_inv).append("\n");
 			
 			if(detailsPinv)
 				showSubSurT_invInfo(results, invLoadedMatrix.size());
@@ -1071,13 +1075,11 @@ public class HolmesInvariantsGenerator extends JFrame {
 	 * Metoda odpowiedzialna za obsługę przycisku tworzenia zbioru wykonalnych inwariantów.
 	 */
 	protected void checkAndMakeFeasible() {
-		ArrayList<ArrayList<Integer>> invariants = Check.invExistsWithWarning();
+		ArrayList<ArrayList<Integer>> invariants = Check.invExistsWithWarning(true);
 		if(invariants == null)
 			return;
-		
-		
+
 		overlord.getWorkspace().getProject().restoreMarkingZero();
-		
 		InvariantsCalculatorFeasible invF = new InvariantsCalculatorFeasible(invariants, true);
 		invariants = invF.getMinFeasible(feasibleCalcMode);
 		
@@ -1149,6 +1151,18 @@ public class HolmesInvariantsGenerator extends JFrame {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Metoda zwraca obiekt pola tekstowego logów dla odpowiednich inwariantów.
+	 * @param t_inv boolean - true, jeśli t-inwarianty, false jeśli p-inwarianty
+	 * @return JTextAres - pole tekstowe
+	 */
+	public JTextArea accessLogField(boolean t_inv) {
+		if(t_inv)
+			return accessLogFieldTinv();
+		else
+			return accessLogFieldPinv();
 	}
 	
 	/**

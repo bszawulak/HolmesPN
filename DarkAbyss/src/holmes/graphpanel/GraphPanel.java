@@ -293,8 +293,10 @@ public class GraphPanel extends JComponent {
 			}
 		}
 		
+		ElementDrawSettings eds = new ElementDrawSettings();
+		
 		for (Node n : getNodes()) {
-			n.draw(g2d, this.sheetId);	
+			n.draw(g2d, this.sheetId, eds);	
 		}
 		
 		ArrayList<ArrayList<Node>> elements = petriNet.getPNelements();

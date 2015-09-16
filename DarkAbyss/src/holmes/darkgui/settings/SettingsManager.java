@@ -133,6 +133,7 @@ public class SettingsManager {
 		
 		checkAndFix(settingsNew, "editor3Dview", "0");
 		checkAndFix(settingsNew, "editorSnoopyStyleGraphic", "0");
+		checkAndFix(settingsNew, "editorSnoopyColors", "0");
 		checkAndFix(settingsNew, "editorSnoopyCompatibleMode", "1");
 		checkAndFix(settingsNew, "editorShowShortNames", "0");
 		

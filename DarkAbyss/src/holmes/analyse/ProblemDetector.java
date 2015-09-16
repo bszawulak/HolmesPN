@@ -388,10 +388,9 @@ public class ProblemDetector {
 		ArrayList<ArrayList<Object>> result = new ArrayList<>();
 		result.add(res_places);
 		result.add(res_descr);
-		
-		
+
 		InvariantsCalculator ic = new InvariantsCalculator(true);
-		ArrayList<ArrayList<Integer>> matrix = InvariantsTools.countNonT_InvariantsV2(ic.getCMatrix(), invariants);
+		ArrayList<ArrayList<Integer>> matrix = InvariantsTools.analysiseInvariantDetails(ic.getCMatrix(), invariants, true);
 		
 		int invNumber = matrix.get(0).get(0);
 		int surNumber = matrix.get(0).get(1);

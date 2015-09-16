@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
+import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
 
 /**
@@ -32,6 +33,8 @@ public class Place extends Node {
 	public int txtYoff;
 	public int valueXoff;
 	public int valueYoff;
+	
+	public Color defColor = Color.WHITE;
 	
 	/**
 	 * Konstruktor obiektu miejsca sieci.
@@ -76,10 +79,11 @@ public class Place extends Node {
 	 * Metoda rysująca miejsce na danym arkuszu.
 	 * @param g Graphics2D - grafika 2D 
 	 * @param sheetId int - identyfikator arkusza
+	 * @param eds ElementDrawSettings - opcje rysowania
 	 */
-	public void draw(Graphics2D g, int sheetId)
+	public void draw(Graphics2D g, int sheetId, ElementDrawSettings eds)
 	{
-		g = ElementDraw.drawElement(this, g, sheetId);
+		g = ElementDraw.drawElement(this, g, sheetId, eds);
 		//super.draw(g, sheetId);
 	}
 

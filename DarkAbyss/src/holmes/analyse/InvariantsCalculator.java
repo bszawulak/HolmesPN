@@ -114,13 +114,13 @@ public class InvariantsCalculator implements Runnable {
 				
 				logInternal("\n", false);
 				logInternal("=====================================================================\n", false);
-				logInternal("Checking invariants correctness for "+t_invariantsList.size()+" invariants.\n", false);
+				logInternal("Checking t-invariants correctness for "+t_invariantsList.size()+" invariants.\n", false);
 				InvariantsCalculator ic = new InvariantsCalculator(true);
-				ArrayList<ArrayList<Integer>> results = InvariantsTools.countNonT_InvariantsV2(ic.getCMatrix(), t_invariantsList);
-				logInternal("Proper invariants (Cx = 0): "+results.get(0).get(0)+"\n", false);
-				logInternal("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n", false);
-				logInternal("Sub-invariants (Cx < 0): "+results.get(0).get(2)+"\n", false);
-				logInternal("Non-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n", false);
+				ArrayList<ArrayList<Integer>> results = InvariantsTools.analysiseInvariantDetails(ic.getCMatrix(), t_invariantsList, true);
+				logInternal("Proper t-invariants (Cx = 0): "+results.get(0).get(0)+"\n", false);
+				logInternal("Sur-t-invariants (Cx > 0): "+results.get(0).get(1)+"\n", false);
+				logInternal("Sub-t-invariants (Cx < 0): "+results.get(0).get(2)+"\n", false);
+				logInternal("Non-t-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n", false);
 				logInternal("=====================================================================\n", false);
 			} else { //P-invariants
 				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode); //t_InvMode == false
@@ -145,6 +145,17 @@ public class InvariantsCalculator implements Runnable {
 						logInternal("Place: p_"+trouble.get(0)+" and Transition t_"+trouble.get(1)+"\n", false);
 					}
 				}
+				
+				logInternal("\n", false);
+				logInternal("=====================================================================\n", false);
+				logInternal("Checking p-invariants correctness for "+p_invariantsList.size()+" invariants.\n", false);
+				InvariantsCalculator ic = new InvariantsCalculator(true);
+				ArrayList<ArrayList<Integer>> results = InvariantsTools.analysiseInvariantDetails(ic.getCMatrix(), p_invariantsList, false);
+				logInternal("Proper p-invariants (Cx = 0): "+results.get(0).get(0)+"\n", false);
+				logInternal("Sur-p-invariants (Cx > 0): "+results.get(0).get(1)+"\n", false);
+				logInternal("Sub-p-invariants (Cx < 0): "+results.get(0).get(2)+"\n", false);
+				logInternal("Non-p-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n", false);
+				logInternal("=====================================================================\n", false);
 			}
 		} catch (Exception e) {
 			log("Invariants generation failed.", "warning", false);
@@ -758,10 +769,7 @@ public class InvariantsCalculator implements Runnable {
 		
 		if(size > 1000) {
 			if(masterWindow != null) {
-				if(t_InvMode)
-					masterWindow.accessLogFieldTinv().append("\n");
-				else
-					masterWindow.accessLogFieldPinv().append("\n");
+				masterWindow.accessLogField(t_InvMode).append("\n");
 			}
 
 			for(ArrayList<Integer> newRow : newRowsMatrix) { //dodawanie nowych wierszy
@@ -770,10 +778,7 @@ public class InvariantsCalculator implements Runnable {
 				if(steps == (int)interval) {
 					steps = 0;
 					if(masterWindow != null) {
-						if(t_InvMode)
-							masterWindow.accessLogFieldTinv().append("*");
-						else
-							masterWindow.accessLogFieldPinv().append("*");
+						masterWindow.accessLogField(t_InvMode).append("*");
 					}
 				} else
 					steps++;
@@ -953,12 +958,7 @@ public class InvariantsCalculator implements Runnable {
 	private void logInternal(String msg, boolean date) {
 		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		if(masterWindow != null) {
-			JTextArea jta = null;
-			if(t_InvMode)
-				jta = masterWindow.accessLogFieldTinv();
-			else
-				jta = masterWindow.accessLogFieldPinv();
-			
+			JTextArea jta = masterWindow.accessLogField(t_InvMode);
 			if(date == false) {
 				jta.append(msg);
 				jta.setCaretPosition(jta.getDocument().getLength());

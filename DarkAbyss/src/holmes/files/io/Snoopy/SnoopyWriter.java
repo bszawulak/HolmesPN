@@ -2,7 +2,10 @@ package holmes.files.io.Snoopy;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JOptionPane;
 
@@ -538,6 +541,11 @@ public class SnoopyWriter {
 	 * @param bw BufferedWriter - obiekt zapisujący
 	 */
 	private void writeEnding(BufferedWriter bw) {
+		//private String dateAndTime = "2015-01-02 10:44:56";
+		DateFormat writeFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+		Date date = new Date();
+		String dateAndTime = writeFormat.format(date);
+		
 		try {
 			write(bw, "  <metadataclasses count=\"3\">");
 			write(bw, "    <metadataclass count=\"1\" name=\"General\">");

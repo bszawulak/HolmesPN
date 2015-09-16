@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
+import holmes.graphpanel.ElementDrawSettings;
 
 /**
  * Meta węzeł - typ T, typ P, typ TP
@@ -88,10 +89,11 @@ public class MetaNode extends Node {
 	 * Metoda rysująca meta-węzeł na danym arkuszu.
 	 * @param g Graphics2D - grafika 2D 
 	 * @param sheetId int - identyfikator arkusza
+	 * @param eds ElementDrawSettings - opcje rysowania
 	 */
-	public void draw(Graphics2D g, int sheetId)
+	public void draw(Graphics2D g, int sheetId, ElementDrawSettings eds)
 	{
-		g = ElementDraw.drawElement(this, g, sheetId);
+		g = ElementDraw.drawElement(this, g, sheetId, eds);
 	}
 	
 	/**

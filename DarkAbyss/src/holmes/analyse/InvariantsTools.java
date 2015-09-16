@@ -36,7 +36,7 @@ import holmes.utilities.Tools;
  * getCanonicalInfo - zwraca wektor z informacją które inwarianty są kononiczne<br>
  * checkSupportMinimality - sprawdza cały zbiór inwariantów i podaje liczbę nie-minimalnych<br>
  * checkSupportMinimalityThorough - jak wyżej, ale podaje które są nie-minimalne i co zawierają<br>
- * compareInv - porównanie dwóch zbiorów inwariantów ze sobą<br>
+ * compareTwoInvariantsSets - porównanie dwóch zbiorów inwariantów ze sobą<br>
  * printMatrix - pokazuje macierz na konsoli<br>
  * detectCovered - podaje zbiór tranzycji pokrytych przez inwarianty<br>
  * detectUncovered - j.w. : nie pokrytych<br>
@@ -142,34 +142,47 @@ public final class InvariantsTools {
 	}
 	
 	/**
-	 * Metoda agregująca wyniki testu zerowania macierzy incydencji. Dla sub/sur t-inwariantów zwraca informację o miejsach
-	 * dla których nie udało się dla pewnych t-inwariantów wyzerować kolumn.
+	 * Metoda agregująca wyniki testu zerowania macierzy incydencji. Dla sub/sur T/P-inwariantów zwraca informację o miejsach
+	 * dla których nie udało się dla pewnych T/P-inwariantów wyzerować kolumn.
 	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
 	 * @param invSet ArrayList[ArrayList[Integer]] - macierz t-inwariantów
+	 * @param t_inv boolean - true dla t-inwariantów, false dla p-inwariantów
 	 * @return ArrayList[ArrayList[Integer]] - macierz wynikowa, pierwszy wektor to 4 elementowa informacja zbiorcza o:
 	 * 	inwariantach, sur, sub-inwariantach oraz nie-inwariantach. Kolejne wektory to informacja o miejscach w ramach
 	 *  odpowiednio sur-, sub- i nie-inwariantów.
 	 */
-	public static ArrayList<ArrayList<Integer>> countNonT_InvariantsV2(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {
+	public static ArrayList<ArrayList<Integer>> analysiseInvariantDetails(ArrayList<ArrayList<Integer>> CMatrix, 
+			ArrayList<ArrayList<Integer>> invSet, boolean t_inv) {
 		ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
 		
 		int subInv = 0; // neg
 		int surInv = 0; // pos
-		int nonInv = 0;
-		int zeroInvariants = 0;
+		int nonInv = 0; // non
+		int zeroInvariants = 0; //proper inv.
 		
 		ArrayList<Integer> surPlacesVector = new ArrayList<Integer>();
 		ArrayList<Integer> subPlacesVector = new ArrayList<Integer>();
 		ArrayList<Integer> nonInvPlacesVector = new ArrayList<Integer>();
-		int placesSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size();
-		for(int p=0; p<placesSize; p++) {
+		
+		int elementsNumber = 0;
+		if(t_inv)
+			elementsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size();
+		else
+			elementsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+		
+		for(int i=0; i<elementsNumber; i++) {
 			surPlacesVector.add(0);
 			subPlacesVector.add(0);
 			nonInvPlacesVector.add(0);
 		}
 		
 		for(ArrayList<Integer> inv : invSet) {
-			ArrayList<Integer> vector = check_invariantV2(CMatrix, inv);
+			ArrayList<Integer> vector = null;
+			if(t_inv)
+				vector = check_invariantV2(CMatrix, inv);
+			else
+				vector = check_invariantV2(transposeMatrix(CMatrix), inv);
+			
 			if(vector.get(0) == 0) {
 				zeroInvariants++;
 			} else if(vector.get(0) == -1) {
@@ -193,63 +206,6 @@ public final class InvariantsTools {
 		results.add(surPlacesVector);
 		results.add(subPlacesVector);
 		results.add(nonInvPlacesVector);
-		return results;
-	}
-	
-	/**
-	 * Metoda agregująca wyniki testu zerowania macierzy incydencji. Dla sub/sur p-inwariantów zwraca informację o miejsach
-	 * dla których nie udało się dla pewnych inwariantów wyzerować kolumn.
-	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji PT
-	 * @param invSet ArrayList[ArrayList[Integer]] - macierz p-inwariantów
-	 * @return ArrayList[ArrayList[Integer]] - macierz wynikowa, pierwszy wektor to 4 elementowa informacja zbiorcza o:
-	 * 	inwariantach, sur, sub-inwariantach oraz nie p-inwariantach. Kolejne wektory to informacja o miejscach w ramach
-	 *  odpowiednio sur-, sub- i nie-inwariantów.
-	 */
-	public static ArrayList<ArrayList<Integer>> countNonP_Invariants(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<ArrayList<Integer>> invSet) {
-		ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
-		
-		int subInv = 0; // neg
-		int surInv = 0; // pos
-		int nonInv = 0;
-		int zeroInvariants = 0;
-		
-		ArrayList<Integer> surTransVector = new ArrayList<Integer>();
-		ArrayList<Integer> subTransVector = new ArrayList<Integer>();
-		ArrayList<Integer> nonInvTransVector = new ArrayList<Integer>();
-		int transSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
-		for(int t=0; t<transSize; t++) {
-			surTransVector.add(0);
-			subTransVector.add(0);
-			nonInvTransVector.add(0);
-		}
-		
-		ArrayList<ArrayList<Integer>> transposeMatrix = transposeMatrix(CMatrix);
-		//TODO:
-		for(ArrayList<Integer> inv : invSet) {
-			ArrayList<Integer> vector = check_invariantV2(transposeMatrix, inv);
-			if(vector.get(0) == 0) {
-				zeroInvariants++;
-			} else if(vector.get(0) == -1) {
-				subInv++;
-				subTransVector = quickSumT_inv(subTransVector, vector);
-			} else if(vector.get(0) == 1) {
-				surInv++;
-				surTransVector = quickSumT_inv(surTransVector, vector);
-			} else { // non-inv
-				nonInv++;
-				nonInvTransVector = quickSumT_inv(nonInvTransVector, vector);
-			}
-		}
-		ArrayList<Integer> summaryVector = new ArrayList<Integer>();
-		summaryVector.add(zeroInvariants);
-		summaryVector.add(surInv);
-		summaryVector.add(subInv);
-		summaryVector.add(nonInv);
-		
-		results.add(summaryVector);
-		results.add(surTransVector);
-		results.add(subTransVector);
-		results.add(nonInvTransVector);
 		return results;
 	}
 	
@@ -764,7 +720,7 @@ public final class InvariantsTools {
 	 *  2 - inwarianty których nie ma w referencyjnym ale są w załadowanym<br>
 	 *  3 - inwarianty referencyjnego których nie ma w załadowanym zbiorze
 	 */
-	public static ArrayList<ArrayList<Integer>> compareT_invariants(ArrayList<ArrayList<Integer>> refInvMatrix,
+	public static ArrayList<ArrayList<Integer>> compareTwoInvariantsSets(ArrayList<ArrayList<Integer>> refInvMatrix,
 			ArrayList<ArrayList<Integer>> invLoadedMatrix) {
 		
 		int loadedInvSize = invLoadedMatrix.size();
@@ -810,9 +766,6 @@ public final class InvariantsTools {
 			
 			if(presentInReferenceSet == false) {
 				loadedNotInRef.add(invMy);
-				//if(loadedNotInRef.contains(invMy)) {
-				//	repeatedNotFound++;
-				//} 
 			}
 		}
 		

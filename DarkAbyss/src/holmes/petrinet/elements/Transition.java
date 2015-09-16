@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
+import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.functions.FunctionContainer;
@@ -46,6 +47,8 @@ public class Transition extends Node {
 	public int txtYoff = 0;
 	public int valueXoff = 0;
 	public int valueYoff = 0;
+	
+	public Color defColor = new Color(224, 224, 224); //Color.LIGHT_GRAY;
 	
 	//opcje czasowe:
 	protected double TPN_eft = 0; //TPN
@@ -122,10 +125,11 @@ public class Transition extends Node {
 	/**
 	 * Metoda rysująca tranzycję na danym arkuszu.
 	 * @param g Graphics2D - grafika 2D
-	 * @param sheetId int - identyfikator arkusza 
+	 * @param sheetId int - identyfikator arkusza
+	 * @param eds ElementDrawSettings - opcje rysowania
 	 */
-	public void draw(Graphics2D g, int sheetId) {
-		g = ElementDraw.drawElement(this, g, sheetId);
+	public void draw(Graphics2D g, int sheetId, ElementDrawSettings eds) {
+		g = ElementDraw.drawElement(this, g, sheetId, eds);
 		//super.draw(g, sheetId);
 	}
 

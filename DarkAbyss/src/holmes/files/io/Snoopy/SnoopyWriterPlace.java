@@ -1,5 +1,6 @@
 package holmes.files.io.Snoopy;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
@@ -266,12 +267,18 @@ public class SnoopyWriterPlace {
 			GUIManager.getDefaultGUIManager().log("Critical error while writing Snoopy file. ID's don't match.", "error", true);
 		}
 		
+		Color snoopyColor = holmesPlace.defColor;
+		String brushStr = "255,255,255";
+		if(!snoopyColor.equals(Color.WHITE)) {
+			brushStr = snoopyColor.getRed()+","+snoopyColor.getGreen()+","+snoopyColor.getBlue();
+		}
+		
 		for(int i=0; i<locations; i++) { 
 			write(bw, "          <graphic x=\""+grParentsLocation.get(i).x+".00\""
 						+ " y=\""+grParentsLocation.get(i).y+".00\""
 						+ " id=\""+grParents.get(i)+"\" net=\""+locationsSheetID.get(i)+"\""
 						+ " show=\"1\" w=\"20.00\" h=\"20.00\" state=\"1\""
-						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+						+ " pen=\"0,0,0\" brush=\""+brushStr+"\"/>");
 		}
 		write(bw,"        </graphics>");
 		write(bw, "      </node>");
