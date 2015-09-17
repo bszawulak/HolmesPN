@@ -10,47 +10,20 @@ import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Transition;
 import holmes.varia.NetworkTransformations;
 
+public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 
-/**
- * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie Sparta,
- * tylko o wiele gorzej...
- * @author MR
- *
- */
-public class SnoopyWriterTransition {
-	protected Transition holmesTransition;
-	/** Identyfikator podstawowy tranzycji  */
-	protected int snoopyStartingID;
-	/** Identyfikator główny tranzycji (od zera do liczby tranzycji) */
-	protected int globalTransID;
-	/** Główny ID każdego ElementLocation (SnoopyID) */
-	protected ArrayList<Integer> grParents; // identyfikatory I typu dla jednej tranzycji, na ich bazie
-	 	// obliczane są identyfikatory II typu dla... wszystkiego
-	/** Małe ID, lokalizacje artybutów, wskazują na odpowiednie duże ID z  grParents */
-	protected ArrayList<Point> grParentsLocation; // lokalizacje powyższych, więcej niż 1 dla portali
-	protected boolean portal;
-	
-	/**
-	 * Konstruktor domyślny obiektu klasy SnoopyTransition.
-	 */
-	public SnoopyWriterTransition() {
-		grParents = new ArrayList<Integer>();
-		grParentsLocation = new ArrayList<Point>();
-		portal = false;
+	public SnoopyWriterTimeTransition() {
+		super();
 	}
 	
-	/**
-	 * Konstruktor główny, otrzymuje jako parametr obiekt tranzycji Holmes.
-	 * @param t Transition - obiekt tranzycji w programie głównym
-	 */
-	public SnoopyWriterTransition(Transition t) {
-		this();
-		holmesTransition = t;
+	public SnoopyWriterTimeTransition(Transition t) {
+		super(t);
 	}
 	
 	/**
 	 * Odradzam czytać kod tej metody. Zostaliście ostrzeżeni.
 	 * P.S. Jak ktoś coś tu bez mojej wiedzy zmieni - zabiję. MR
+	 * P.S.2 To i tak małe piwo. SnoopyWriterArc, subsekcja coarse - to się w koszmarach nikomu nawet nie śniło.
 	 * 
 	 * @param bw BufferedWriter - obiekt zapisujący
 	 * @param newFreeId int - aktualne wolne ID snoopiego dla węzła
@@ -94,12 +67,12 @@ public class SnoopyWriterTransition {
 			}
 			
 			if(locations == 1) { //główny węzeł
-				currID += 8;
+				currID += 12;
 			} else if (locations == 2){ //pierwsze miejsce logiczne
-				currID += 31;
+				currID += 41;
 				portal = true;
 			} else { //wszystkie kolejne miejsca logiczne
-				currID += 9;
+				currID += 34;
 				portal = true;
 			}
 			grParents.add(currID);
@@ -156,7 +129,7 @@ public class SnoopyWriterTransition {
 			} else { // dla logicznych
 				write(bw,"            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
 						+ " x=\""+(grParentsLocation.get(i).x+xOff)+".00\""
-						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+(grParents.get(i)-3)+"\""
+						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+(grParents.get(i)-5)+"\"" //TPN: -5
 						+ " net=\""+locationsSheetID.get(i)+"\" show=\"1\" grparent=\""
 						+grParents.get(i)+"\" state=\"1\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
@@ -186,7 +159,7 @@ public class SnoopyWriterTransition {
 			} else { // dla logicznych
 				write(bw,"            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
 						+ " x=\""+(grParentsLocation.get(i).x+xOff)+".00\""
-						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+(grParents.get(i)-2)+"\""
+						+ " y=\""+(grParentsLocation.get(i).y+yOff)+".00\" id=\""+(grParents.get(i)-4)+"\"" //TPN: -4
 						+ " net=\""+locationsSheetID.get(i)+"\" show=\"0\" grparent=\""
 						+ grParents.get(i)+"\" state=\"1\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
@@ -227,7 +200,7 @@ public class SnoopyWriterTransition {
 				write(bw, "            <graphic xoff=\""+xOff+".00\""
 						+ " x=\"" + (grParentsLocation.get(i).x+xOff) + ".00\""
 						+ " y=\"" + grParentsLocation.get(i).y + ".00\""
-						+ " id=\"" + (grParents.get(i)-1) + "\" net=\""+locationsSheetID.get(i)+"\" show=\"0\""
+						+ " id=\"" + (grParents.get(i)-3) + "\" net=\""+locationsSheetID.get(i)+"\" show=\"0\"" //TPN: -3
 						+ " grparent=\"" + grParents.get(i) + "\" state=\""+stateForEL.get(i)+"\""
 						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 			}
@@ -235,6 +208,25 @@ public class SnoopyWriterTransition {
 		
 		write(bw, "          </graphics>");
 		write(bw, "        </attribute>");
+		
+		//na razie tylko 1 wartość:
+		ArrayList<Integer> durations = new ArrayList<Integer>();
+		durations.add((int) holmesTransition.getDPNduration());
+		//opcja, jak DPN offline, to ustaw -1 czyli "?" ?
+		currID++;
+		writeDurationData(bw, currID, locations, locationsSheetID, durations, xOff, yOff, stateForEL);
+		currID++; //2x! sic!
+		
+		//na razie tylko 1 wektor:
+		ArrayList<ArrayList<Integer>> intervalMatrix = new ArrayList<>();
+		ArrayList<Integer> interval0 = new ArrayList<Integer>();
+		interval0.add((int) holmesTransition.getEFT());
+		interval0.add((int) holmesTransition.getLFT());
+		intervalMatrix.add(interval0);
+		currID++; 
+		writeIntervalData(bw, currID, locations, locationsSheetID, intervalMatrix, xOff, yOff, stateForEL);
+		currID++; //2x!
+		
 		
 		//SEKCJA WYŚWIETLANIA MIEJSCA I JEGO KOPII. TAK JAKBYŚMY JUŻ REDUNDATNIE NIE WYŚWIETLILI
 		//JEGO ELEMENTÓW NIE WIADOMO ILE RAZY...
@@ -269,32 +261,121 @@ public class SnoopyWriterTransition {
 		int lastParentID = grParents.get(locations-1);
 		return lastParentID;
 	}
-
-	/**
-	 * Metoda pomocnicza, zapisująca każdą linię + enter.
-	 * @param bw BufferedWriter - obiekt zapisujący
-	 * @param text String - linia tekstu
-	 */
-	protected void write(BufferedWriter bw, String text) {
-		try {
-			bw.write(text+"\n");
-		} catch (Exception e) {
-			
+	
+	public void writeDurationData(BufferedWriter bw, int currID, int locations, ArrayList<Integer> locationsSheetID, 
+			ArrayList<Integer> durationsList, int xOff, int yOff, ArrayList<Integer> stateForEL ) {
+		int col_count = durationsList.size();
+		
+		write(bw, "        <attribute name=\"Duration\" id=\"" + currID + "\" net=\""+locationsSheetID.get(0)+"\">");
+		write(bw, "          <colList row_count=\""+col_count+"\" col_count=\"2\" active_row=\"0\" active_col=\"0\">");
+		write(bw, "            <colList_head>");
+		write(bw, "              <colList_colLabel>");
+		write(bw, "                <![CDATA[Duration List]]>");
+		write(bw, "              </colList_colLabel>");
+		write(bw, "              <colList_colLabel>");
+		write(bw, "                <![CDATA[Duration]]>");
+		write(bw, "              </colList_colLabel>");
+		write(bw, "              <colList_body>");
+		
+		for(int i=0; i<durationsList.size(); i++) {
+			write(bw, "            <colList_row nr=\""+i+"\">");
+			write(bw, "              <colList_col nr=\"0\">");
+			if(i==0)
+				write(bw, "                <![CDATA[Main]]>");
+			else
+				write(bw, "                <![CDATA[List"+(i+1)+"]]>");
+			write(bw, "              </colList_col>");
+			write(bw, "              <colList_col nr=\"1\">");
+			write(bw, "                <![CDATA["+durationsList.get(i)+"]]>");
+			write(bw, "              </colList_col>");
+			write(bw, "            </colList_row>");
 		}
+		
+		write(bw, "              </colList_body>");
+		write(bw, "            </colList>");
+		
+		for(int i=0; i<locations; i++) { 
+			if(i==0) {//tylko główne miejsce
+				write(bw, "            <graphic xoff=\""+xOff+".00\""
+						+ " x=\"" + (grParentsLocation.get(i).x+xOff) + ".00\""
+						+ " y=\""+grParentsLocation.get(i).y+".00\""
+						+ " id=\"" + (grParents.get(i)-3) + "\" net=\""+locationsSheetID.get(i)+"\" show=\"1\""
+						+ " grparent=\"" + grParents.get(i) + "\" state=\""+stateForEL.get(i)+"\""
+						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+			} else { // dla logicznych
+				write(bw, "            <graphic xoff=\""+xOff+".00\""
+						+ " x=\"" + (grParentsLocation.get(i).x+xOff) + ".00\""
+						+ " y=\"" + grParentsLocation.get(i).y + ".00\""
+						+ " id=\"" + (grParents.get(i)-2) + "\" net=\""+locationsSheetID.get(i)+"\" show=\"1\"" //TPN: -3
+						+ " grparent=\"" + grParents.get(i) + "\" state=\""+stateForEL.get(i)+"\""
+						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+			}
+		}
+		write(bw, "          </graphics>");
+		write(bw, "        </attribute>");
 	}
 	
-	public String toString() {
-		String txt = "";
-		int tPos = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(holmesTransition);
-		txt += "T"+tPos + " [gTransID:"+globalTransID+"]";
-		txt += " [SnoopyStartID: "+snoopyStartingID+"]";
-		if(grParents.size()>0) {
-			txt += " [gParentID:";
-			for(int x : grParents) {
-				txt += " "+x;
-			}
-			txt += "]";
+	public void writeIntervalData(BufferedWriter bw, int currID, int locations, ArrayList<Integer> locationsSheetID, 
+			ArrayList<ArrayList<Integer>> intervalMatrix, int xOff, int yOff, ArrayList<Integer> stateForEL) {
+		
+		int col_count = intervalMatrix.size();
+		
+		write(bw, "        <attribute name=\"Duration\" id=\"" + currID + "\" net=\""+locationsSheetID.get(0)+"\">");
+		write(bw, "          <colList row_count=\""+col_count+"\" col_count=\"3\" active_row=\"0\" active_col=\"0\">");
+		write(bw, "            <colList_head>");
+		write(bw, "              <colList_colLabel>");
+		write(bw, "                <![CDATA[Interval List]]>");
+		write(bw, "              </colList_colLabel>");
+		write(bw, "              <colList_colLabel>");
+		write(bw, "                <![CDATA[EFT]]>");
+		write(bw, "              </colList_colLabel>");
+		write(bw, "              <colList_colLabel>");
+		write(bw, "                <![CDATA[LFT]]>");
+		write(bw, "              </colList_colLabel>");
+		write(bw, "              <colList_body>");
+		
+		for(int i=0; i<intervalMatrix.size(); i++) {
+			ArrayList<Integer> range = intervalMatrix.get(i);
+			int eft = range.get(0);
+			int lft = range.get(1);
+			
+			write(bw, "            <colList_row nr=\""+i+"\">");
+			write(bw, "              <colList_col nr=\"0\">");
+			if(i==0)
+				write(bw, "                <![CDATA[Main]]>");
+			else
+				write(bw, "                <![CDATA[IntervalList"+(i+1)+"]]>");
+			write(bw, "              </colList_col>");
+			write(bw, "              <colList_col nr=\"1\">");
+			write(bw, "                <![CDATA["+eft+"]]>");
+			write(bw, "              </colList_col>");
+			write(bw, "              <colList_col nr=\"1\">");
+			write(bw, "                <![CDATA["+lft+"]]>");
+			write(bw, "              </colList_col>");
+			write(bw, "            </colList_row>");
 		}
-		return txt;
+		
+		write(bw, "              </colList_body>");
+		write(bw, "            </colList>");
+		
+		for(int i=0; i<locations; i++) { 
+			if(i==0) {//tylko główne miejsce
+				write(bw, "            <graphic xoff=\""+xOff+".00\""
+						+ " x=\"" + (grParentsLocation.get(i).x+xOff) + ".00\""
+						+ " y=\""+grParentsLocation.get(i).y+".00\""
+						+ " id=\"" + (grParents.get(i)-1) + "\" net=\""+locationsSheetID.get(i)+"\" show=\"1\"" //TPN: -1
+						+ " grparent=\"" + grParents.get(i) + "\" state=\""+stateForEL.get(i)+"\""
+						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+			} else { // dla logicznych
+				write(bw, "            <graphic xoff=\""+xOff+".00\""
+						+ " x=\"" + (grParentsLocation.get(i).x+xOff) + ".00\""
+						+ " y=\"" + grParentsLocation.get(i).y + ".00\""
+						+ " id=\"" + (grParents.get(i)-1) + "\" net=\""+locationsSheetID.get(i)+"\" show=\"1\"" //TPN: -1
+						+ " grparent=\"" + grParents.get(i) + "\" state=\""+stateForEL.get(i)+"\""
+						+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
+			}
+		}
+		write(bw, "          </graphics>");
+		write(bw, "        </attribute>");
 	}
 }

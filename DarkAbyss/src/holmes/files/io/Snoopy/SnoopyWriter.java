@@ -71,9 +71,8 @@ public class SnoopyWriter {
 	}
 	
 	/**
-	 * Metoda realizująca zapis do pliku SPPED. Działa - 03.01.2015. I na tym
-	 * się zatrzymajmy w opisach.
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * Metoda realizująca zapis do pliku SPPED. Działa - 03.01.2015. I na tym się zatrzymajmy w opisach.
+	 * @return boolean - status operacji: true jeśli nie było problemów  (buahahahahahaha)
 	 */
 	public boolean writeSPPED(String filePath) {
 		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
@@ -216,7 +215,7 @@ public class SnoopyWriter {
 	
 	/**
 	 * Metoda realizująca zapis do pliku SPEPT - sieci rozszerzone.
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * @return boolean - status operacji: true jeśli nie było problemów  (buahahahahahaha)
 	 */
 	public boolean writeSPEPT(String filePath) {
 		int startNodeId = 226; // bo tak
@@ -381,7 +380,7 @@ public class SnoopyWriter {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Metoda realizująca zapis do pliku SPTPT - sieci czasowe. 
 	 * @return boolean - status operacji: true jeśli nie było problemów
@@ -436,11 +435,12 @@ public class SnoopyWriter {
 			write(bw, "    </nodeclass>");
 			
 			// TRANZYCJE:
+			//TODO:
 			int transNumber = transitions.size();
 			write(bw, "    <nodeclass count=\""+transNumber+"\" name=\"Transition\">");
 			int globalTransId = 0;
 			for(Transition t : transitions) {
-				SnoopyWriterTransition sTransition = new SnoopyWriterTransition(t);
+				SnoopyWriterTimeTransition sTransition = new SnoopyWriterTimeTransition(t);
 				snoopyWriterTransitions.add(sTransition);
 				holmesTransitionsID.add(t.getID());
 				
@@ -519,6 +519,7 @@ public class SnoopyWriter {
 			return false;
 		}
 	}
+	
 
 	/**
 	 * Metoda realizuje zapis pojedyńczej linii do pliku - zakończonej enterem.
