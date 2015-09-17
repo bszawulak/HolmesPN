@@ -39,7 +39,7 @@ import javax.swing.table.TableRowSorter;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.NetSimulator.NetType;
-import holmes.tables.InvariantsSimTableModel;
+import holmes.tables.InvariantsSimulatorTableModel;
 import holmes.tables.InvariantsTableModel;
 import holmes.tables.PTITableRenderer;
 import holmes.tables.PlacesTableModel;
@@ -71,7 +71,7 @@ public class HolmesNetTables extends JFrame {
 	private PlacesTableModel modelPlaces;
 	private TransitionsTableModel modelTransition;
 	private InvariantsTableModel modelBasicInvariants;
-	private InvariantsSimTableModel modelInvariantsSimData;
+	private InvariantsSimulatorTableModel modelInvariantsSimData;
 	private PTITableRenderer tableRenderer;
 	public int currentClickedRow;
 	private int simStepsForInv = 10000;
@@ -568,7 +568,7 @@ public class HolmesNetTables extends JFrame {
     	
     	int transNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
     	
-    	modelInvariantsSimData = new InvariantsSimTableModel(transNumber);        
+    	modelInvariantsSimData = new InvariantsSimulatorTableModel(transNumber);        
         table.setModel(modelInvariantsSimData);
         
         table.getColumnModel().getColumn(0).setHeaderValue("ID");
@@ -612,7 +612,7 @@ public class HolmesNetTables extends JFrame {
 	 */
 	public void resizeColumnWidth(JTable table) {
 	    TableColumnModel columnModel = table.getColumnModel();
-	    InvariantsSimTableModel itm = (InvariantsSimTableModel)table.getModel();
+	    InvariantsSimulatorTableModel itm = (InvariantsSimulatorTableModel)table.getModel();
 	    ArrayList<Integer> dTrans = itm.getZeroDeadTransitions();
 	    for (int column = 2; column < table.getColumnCount(); column++) {
 	        if(dTrans.get(column-2) == 0) {

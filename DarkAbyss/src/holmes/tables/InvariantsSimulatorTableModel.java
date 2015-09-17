@@ -10,7 +10,7 @@ import holmes.darkgui.GUIManager;
  * Klasa model dla tabeli inwariantów okna HolmesNetTables.
  * @author MR
  */
-public class InvariantsSimTableModel extends AbstractTableModel {
+public class InvariantsSimulatorTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -1557850148390063580L;
 	
 	private ArrayList<Integer> infeasibleInvariants;
@@ -22,7 +22,7 @@ public class InvariantsSimTableModel extends AbstractTableModel {
 	/**
 	 * Konstruktor klasy modelującej dla tablicy inwariantów.
 	 */
-	public InvariantsSimTableModel(int transNumber) {
+	public InvariantsSimulatorTableModel(int transNumber) {
 		columnNames = new String[transNumber+2];
 		columnNames[0] = "ID";
 		columnNames[1] = "Trans.#:";

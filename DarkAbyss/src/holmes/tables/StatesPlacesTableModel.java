@@ -9,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
 import holmes.windows.HolmesStatesManager;
 
 /**
- * Model tabeli stanów początkowych sieci.
+ * Model tabeli stanów początkowych sieci (klasyczny).
  * 
  * @author MR
  *

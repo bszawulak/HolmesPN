@@ -15,47 +15,41 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.table.TableCellRenderer;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.data.FiringRatesManager;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.data.FiringRateTransVector;
-import holmes.petrinet.elements.Transition;
-import holmes.tables.FiringRatesOneTransTableModel;
-import holmes.tables.FiringRatesOneTransTableRenderer;
+import holmes.petrinet.data.SSAplacesManager;
+import holmes.petrinet.data.SSAplacesVector;
+import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
+import holmes.tables.SSAplacesEditorTableModel;
+import holmes.tables.SSAplacesTableRenderer;
 import holmes.utilities.Tools;
 
-/**
- * Okno edycji firing rate przechowywanych w danym wektorze wejściowym.
- * 
- * @author MR
- */
-public class HolmesFiringRatesEditor extends JFrame {
+public class HolmesSSAplacesEditor extends JFrame {
 	private static final long serialVersionUID = -6810858686209063022L;
 	private GUIManager overlord;
 	private JFrame parentWindow;
-	private TableCellRenderer tableRenderer;
-	private FiringRatesOneTransTableModel tableModel;
+	private SSAplacesTableRenderer tableRenderer;
+	private SSAplacesEditorTableModel tableModel;
 	private JTable table;
 	private JPanel tablePanel;
-	private FiringRateTransVector frData;
-	private int frIndex;
+	private SSAplacesVector ssaVector;
+	private int ssaIndex;
 	private JTextArea vectorDescrTextArea;
 	
-	private ArrayList<Transition> transitions;
+	private ArrayList<Place> places;
 	private PetriNet pn;
-	private FiringRatesManager firingRatesManager;
+	private SSAplacesManager ssaManager;
 	
 	/**
-	 * Główny konstruktor okna menagera stanów początkowych.
+	 * Główny konstruktor okna menagera miejsc symulacji SSA.
 	 * @param parent JFrame - okno wywołujące
-	 * @param frData TransFiringRateVector - wektor firing rates
-	 * @param frIndex int - indeks powyższego wektora w tablicy
+	 * @param ssaVector SSAplacesVector - wektor SSA
+	 * @param ssaIndex int - indeks powyższego wektora w tablicy
 	 */
-	public HolmesFiringRatesEditor(JFrame parent, FiringRateTransVector frData, int frIndex) {
-		setTitle("Holmes firing rates editor");
+	public HolmesSSAplacesEditor(JFrame parent, SSAplacesVector ssaVector, int ssaIndex) {
+		setTitle("Holmes SSA components editor");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {
@@ -64,10 +58,10 @@ public class HolmesFiringRatesEditor extends JFrame {
     	this.overlord = GUIManager.getDefaultGUIManager();
     	this.pn = overlord.getWorkspace().getProject();
     	this.parentWindow = parent;
-    	this.frData = frData;
-    	this.frIndex = frIndex;
-    	this.transitions = pn.getTransitions();
-    	this.firingRatesManager = pn.accessFiringRatesManager();
+    	this.ssaVector = ssaVector;
+    	this.ssaIndex = ssaIndex;
+    	this.places = pn.getPlaces();
+    	this.ssaManager = pn.accessSSAmanager();
     	
     	initalizeComponents();
     	initiateListeners();
@@ -83,9 +77,9 @@ public class HolmesFiringRatesEditor extends JFrame {
 		tableModel.clearModel();
 		
 		//int selectedState = firingRatesManager.selectedVector;
-		int size = frData.getSize();
-    	for(int row=0; row<size; row++) {
-    		tableModel.addNew(row, transitions.get(row).getName(), frData.getFiringRate(row), frData.getStochasticType(row));
+		int size = ssaVector.getSize();
+    	for(int p=0; p<size; p++) {
+    		tableModel.addNew(p, places.get(p).getName(), ssaVector.getTokens(p));
     	}
     	
 		tableModel.fireTableDataChanged();
@@ -113,7 +107,7 @@ public class HolmesFiringRatesEditor extends JFrame {
 	private JPanel getTopPanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("Firing rates vector data"));
+		result.setBorder(BorderFactory.createTitledBorder("SSA components vector data"));
 		result.setPreferredSize(new Dimension(500, 100));
 		
 		JPanel filler = new JPanel(null);
@@ -121,15 +115,15 @@ public class HolmesFiringRatesEditor extends JFrame {
 		int posX = 5;
 		int posY = 0;
 		
-		JLabel label0 = new JLabel("Firing vector ID: ");
+		JLabel label0 = new JLabel("SSA vector ID: ");
 		label0.setBounds(posX, posY, 100, 20);
 		filler.add(label0);
 		
-		JLabel labelID = new JLabel(frIndex+"");
+		JLabel labelID = new JLabel(ssaIndex+"");
 		labelID.setBounds(posX+110, posY, 100, 20);
 		filler.add(labelID);
 		
-		vectorDescrTextArea = new JTextArea(firingRatesManager.getFRVectorDescription(frIndex));
+		vectorDescrTextArea = new JTextArea(ssaManager.accessSSAmatrix().get(ssaIndex).getDescription());
 		vectorDescrTextArea.setLineWrap(true);
 		vectorDescrTextArea.setEditable(true);
 		vectorDescrTextArea.addFocusListener(new FocusAdapter() {
@@ -137,7 +131,7 @@ public class HolmesFiringRatesEditor extends JFrame {
             	JTextArea field = (JTextArea) e.getSource();
             	if(field != null) {
             		String newComment = field.getText();
-            		firingRatesManager.setFRvectorDescription(frIndex, newComment);
+            		ssaManager.accessSSAmatrix().get(ssaIndex).setDescription(newComment);
             		fillTable();
             	}
             }
@@ -160,10 +154,10 @@ public class HolmesFiringRatesEditor extends JFrame {
 	public JPanel getMainTablePanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("Firing rates table"));
+		result.setBorder(BorderFactory.createTitledBorder("SSA components table"));
 		result.setPreferredSize(new Dimension(500, 500));
 		
-		tableModel = new FiringRatesOneTransTableModel(this, frIndex);
+		tableModel = new SSAplacesEditorTableModel(this, ssaIndex);
 		table = new RXTable(tableModel);
 		((RXTable)table).setSelectAllForEdit(true);
 		
@@ -171,19 +165,16 @@ public class HolmesFiringRatesEditor extends JFrame {
 		table.getColumnModel().getColumn(0).setPreferredWidth(30);
 		table.getColumnModel().getColumn(0).setMinWidth(30);
 		table.getColumnModel().getColumn(0).setMaxWidth(30);
-		table.getColumnModel().getColumn(1).setHeaderValue("Transition name");
+		table.getColumnModel().getColumn(1).setHeaderValue("Place name");
 		table.getColumnModel().getColumn(1).setPreferredWidth(600);
 		table.getColumnModel().getColumn(1).setMinWidth(100);
-		table.getColumnModel().getColumn(2).setHeaderValue("Firing rate");
+		table.getColumnModel().getColumn(2).setHeaderValue("Value");
 		table.getColumnModel().getColumn(2).setPreferredWidth(100);
 		table.getColumnModel().getColumn(2).setMinWidth(50);
-		table.getColumnModel().getColumn(3).setHeaderValue("SPN sub-type");
-		table.getColumnModel().getColumn(3).setPreferredWidth(80);
-		table.getColumnModel().getColumn(3).setMinWidth(70);
         
-		table.setName("FiringRatesTransitionTable");
+		table.setName("SSAplacesTable");
 		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		tableRenderer = new FiringRatesOneTransTableRenderer(table);
+		tableRenderer = new SSAplacesTableRenderer();
 		table.setDefaultRenderer(Object.class, tableRenderer);
 		table.setDefaultRenderer(Double.class, tableRenderer);
 
@@ -207,14 +198,14 @@ public class HolmesFiringRatesEditor extends JFrame {
 	}
 	
 	/**
-	 * Metoda ustawia nową wartość firing rate, wywoływana przez metodę TableModel która odpowiada za zmianę
-	 * wartości pola firing rate.
-	 * @param index int - nr wektora
-	 * @param transID int - nr tranzycji
-	 * @param newValue double - nowe firing rate
+	 * Metoda ustawia nową wartość dla miejsca w SSA, wywoływana przez metodę TableModel która odpowiada za zmianę
+	 * wartości pola value.
+	 * @param index int - indeks wektora
+	 * @param placeID int - indeks miejsca
+	 * @param newValue double - nowa wartość SSA
 	 */
-	public void changeRealValue(int index, int transID, double newValue) {
-		firingRatesManager.getFRVector(index).accessVector().get(transID).fr = newValue;
+	public void changeRealValue(int index, int placeID, double newValue) {
+		ssaManager.getSSAvector(index).accessVector().set(placeID, newValue);
 	}
 	
 	/**

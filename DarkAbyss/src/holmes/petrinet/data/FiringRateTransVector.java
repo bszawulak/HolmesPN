@@ -9,9 +9,10 @@ import holmes.petrinet.elements.Transition.StochaticsType;
  * 
  * @author MR
  */
-public class TransFiringRateVector {
+public class FiringRateTransVector {
 	private ArrayList<FRContainer> firingVector;
-	public String stateType = "";
+	private String frType = "";
+	private String frDescription = "";
 	
 	/**
 	 * Klasa kontener, przechowuje dane stochastyczne tranzycji
@@ -30,9 +31,10 @@ public class TransFiringRateVector {
 	/**
 	 * Konstruktor obiektu klasy TransFiringRateVector.
 	 */
-	public TransFiringRateVector() {
+	public FiringRateTransVector() {
 		firingVector = new ArrayList<FRContainer>();
-		stateType = "SSA1";
+		frType = "SSA1";
+		frDescription = "Default description for transitions firing rates vector.";
 	}
 	
 	/**
@@ -98,6 +100,38 @@ public class TransFiringRateVector {
 			return StochaticsType.ST;
 		else
 			return firingVector.get(index).sType;
+	}
+	
+	/**
+	 * Ustawia nowy opis wektora firing rates.
+	 * @param description String - opis
+	 */
+	public void setDescription(String description) {
+		this.frDescription = description;
+	}
+	
+	/**
+	 * Zwraca opis wektora firing rates.
+	 * @return String - opis
+	 */
+	public String getDescription() {
+		return this.frDescription;
+	}
+	
+	/**
+	 * Ustawia nowy typ wektora firing rates.
+	 * @param description String - opis
+	 */
+	public void setFrType(String description) {
+		this.frType = description;
+	}
+	
+	/**
+	 * Zwraca nazwę typu wektora firing rates.
+	 * @return String - opis
+	 */
+	public String getFrType() {
+		return this.frType;
 	}
 	
 	/**

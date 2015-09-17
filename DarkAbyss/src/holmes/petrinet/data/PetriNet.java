@@ -65,6 +65,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private MCSDataMatrix mcsData;
 	private StatesManager statesManager;
 	private FiringRatesManager firingRatesManager;
+	private SSAplacesManager ssaManager;
 	
 	private String lastFileName = "";
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
@@ -101,6 +102,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.methods = new PetriNetMethods(this);
 		this.simData = new NetSimulationDataCore();
 		this.statesManager = new StatesManager(this);
+		this.ssaManager = new SSAplacesManager(this);
 	}
 
 	/**
@@ -114,6 +116,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
 		this.setMCTanalyzer(new MCTCalculator(this));
 		this.statesManager = new StatesManager(this);
+		this.ssaManager = new SSAplacesManager(this);
 		this.firingRatesManager = new FiringRatesManager(this);
 		resetComm();
 		this.dataCore.netName = name;
@@ -158,6 +161,19 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		}
 		return returnPlaces;
 	}
+	
+	/**
+	 * Zwraca liczbę miejsc sieci.
+	 * @return int - liczba miejsc
+	 */
+	public int getPlacesNumber() {
+		int counter = 0;
+		for (Node n : this.dataCore.nodes) {
+			if (n instanceof Place)
+				counter++;
+		}
+		return counter;
+	}
 
 	/**
 	 * Metoda pozwala pobrać wszystkie obiekty tranzycji dla danej sieci.
@@ -172,6 +188,19 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				returnTransitions.add((Transition) n);
 		}
 		return returnTransitions;
+	}
+	
+	/**
+	 * Zwraca liczbę tranzycji sieci.
+	 * @return int - liczba tranzycji
+	 */
+	public int getTransitionsNumber() {
+		int counter = 0;
+		for (Node n : this.dataCore.nodes) {
+			if (n instanceof Transition)
+				counter++;
+		}
+		return counter;
 	}
 	
 	/**
@@ -772,6 +801,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		return this.statesManager;
 	}
 	
+	/**
+	 * Umożliwia dostęp do managera wektorów SSA sieci.
+	 * @return SSAplacesManager - obiekt managera
+	 */
+	public SSAplacesManager accessSSAmanager() {
+		return this.ssaManager;
+	}
+	
 	public void replaceStatesManager(StatesManager newStatesMngr) {
 		statesManager = newStatesMngr;
 	}
@@ -1017,6 +1054,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					saxParser.parse(xmlInput, handler);
 					addArcsAndNodes(handler.getArcList(), handler.getNodesList());
 					accessStatesManager().createCleanState();
+					accessSSAmanager().createCleanSSAvector();
 					accessFiringRatesManager().createCleanFRVector();
 					
 					String name = path;

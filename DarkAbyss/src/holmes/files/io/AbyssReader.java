@@ -79,6 +79,7 @@ public class AbyssReader {
 			IdGenerator.setStartId(maxGlobalId+1);
 			
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().createCleanState();
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessSSAmanager().createCleanSSAvector();
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager().createCleanFRVector();
 			
 			xstream.fromXML(source);

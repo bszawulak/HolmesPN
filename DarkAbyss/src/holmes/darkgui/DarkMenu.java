@@ -105,7 +105,7 @@ public class DarkMenu extends JMenuBar {
 		openMenuItem.getAccessibleContext().setAccessibleDescription("Open project");
 		openMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				guiManager.io.openAbyssProject();
+				guiManager.io.selectAndOpenHolmesProject();
 			}
 		});
 		fileMenu.add(openMenuItem);

@@ -9,17 +9,19 @@ import java.util.ArrayList;
  * @author MR
  *
  */
-public class PlacesStateVector implements Serializable {
+public class StatePlacesVector implements Serializable {
 	private static final long serialVersionUID = 6652562026923360610L;
 	private ArrayList<Double> stateVector;
-	public String stateType = "";
+	private String stateType = "";
+	private String stateDescription;
 	
 	/**
 	 * Konstruktor obiektu klasy PlacesStateVector.
 	 */
-	public PlacesStateVector() {
+	public StatePlacesVector() {
 		stateVector = new ArrayList<Double>();
 		stateType = "NORMAL";
+		stateDescription = "Default description for state.";
 	}
 	
 	/**
@@ -62,6 +64,38 @@ public class PlacesStateVector implements Serializable {
 			return -1;
 		else
 			return stateVector.get(index);
+	}
+	
+	/**
+	 * Ustawia nowy opis wektora stanów.
+	 * @param description String - opis
+	 */
+	public void setDescription(String description) {
+		this.stateDescription = description;
+	}
+	
+	/**
+	 * Zwraca opis wektora stanów.
+	 * @return String - opis
+	 */
+	public String getDescription() {
+		return this.stateDescription;
+	}
+	
+	/**
+	 * Ustawia typ wektora stanów.
+	 * @param type String - nazwa typu
+	 */
+	public void setStateType(String type) {
+		this.stateType = type;
+	}
+	
+	/**
+	 * Zwraca nazwę typu wektora stanów/
+	 * @return String - nazwa typu
+	 */
+	public String getStateType() {
+		return this.stateType;
 	}
 	
 	/**

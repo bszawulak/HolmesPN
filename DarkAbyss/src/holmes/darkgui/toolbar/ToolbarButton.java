@@ -24,8 +24,7 @@ import javax.swing.border.Border;
  * When the button is clicked, the action is performed.
  * </p>
  */
-public class ToolbarButton extends JLabel
-{
+public class ToolbarButton extends JLabel {
 	private static final long serialVersionUID = 3034370365062643549L;
 	/** The button will always have this size. */
 	private static final Dimension DEFAULT_SIZE = new Dimension(48, 48);
@@ -48,8 +47,7 @@ public class ToolbarButton extends JLabel
 	 * 
 	 * @param	action 		The action that will be performed when this button is clicked.
 	 */
-	public ToolbarButton(Action action)
-	{		
+	public ToolbarButton(Action action) {		
 		setDimensions();
 		setAction(action);
 		addMouseListener(new ClickListener());
@@ -61,8 +59,7 @@ public class ToolbarButton extends JLabel
 	 * Gets the action that will be performed when this button is clicked.
 	 * @return	The action that will be performed when this button is clicked.
 	 */
-	public Action getAction()
-	{
+	public Action getAction() {
 		return action;
 	}
 
@@ -72,14 +69,12 @@ public class ToolbarButton extends JLabel
 	 * @param action - The action that will be performed when this button is clicked.
 	 */
 	public void setAction(Action action) {
-		if (action == null)
-		{
+		if (action == null) {
 			throw new IllegalArgumentException("Acion is null.");
 		}
 		
 		this.action = action;
-		if (action instanceof AbstractAction)
-		{
+		if (action instanceof AbstractAction) {
 			ImageIcon icon = (ImageIcon)action.getValue(Action.SMALL_ICON);
 			this.setIcon(icon);
 			String description = (String)action.getValue(Action.SHORT_DESCRIPTION);
@@ -90,11 +85,9 @@ public class ToolbarButton extends JLabel
 	/**
 	 * This mouse listener performs the action when the mouse is clicked.
 	 */
-	private class ClickListener extends MouseAdapter
-	{
+	private class ClickListener extends MouseAdapter {
 		// Overwritten methods of MouseAdapter.
-		public void mouseClicked(MouseEvent mouseEvent)
-		{
+		public void mouseClicked(MouseEvent mouseEvent) {
 			// Create the action event.
 			ActionEvent actionEvent = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, 
 					(String)action.getValue(Action.SHORT_DESCRIPTION), mouseEvent.getModifiers());
@@ -103,13 +96,11 @@ public class ToolbarButton extends JLabel
 			action.actionPerformed(actionEvent);
 		}
 
-		public void mouseEntered(MouseEvent mouseEvent)
-		{
+		public void mouseEntered(MouseEvent mouseEvent) {
 			setBorder(LINE_BORDER);
 		}
 
-		public void mouseExited(MouseEvent mouseEvent)
-		{
+		public void mouseExited(MouseEvent mouseEvent) {
 			setBorder(EMPTY_BORDER);
 		}
 		
@@ -118,8 +109,7 @@ public class ToolbarButton extends JLabel
 	/**
 	 * Sets the preferred, maximum and minimum size of the button.
 	 */
-	private void setDimensions()
-	{
+	private void setDimensions() {
 		setPreferredSize(DEFAULT_SIZE);
 		setMaximumSize(DEFAULT_SIZE);
 		setMinimumSize(DEFAULT_SIZE);

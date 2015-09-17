@@ -15,8 +15,7 @@ public class StatesManager {
 	private GUIManager overlord;
 	private PetriNet pn;
 	
-	private ArrayList<PlacesStateVector> statesMatrix;
-	private ArrayList<String> statesNames;
+	private ArrayList<StatePlacesVector> statesMatrix;
 	public int selectedState = 0;
 	
 	/**
@@ -27,18 +26,15 @@ public class StatesManager {
 		overlord = GUIManager.getDefaultGUIManager();
 		this.pn = net;
 		
-		this.statesMatrix = new ArrayList<PlacesStateVector>();
-		statesMatrix.add(new PlacesStateVector());
-		
-		this.statesNames = new ArrayList<String>();
-		statesNames.add("Default name for state 1.");
+		this.statesMatrix = new ArrayList<StatePlacesVector>();
+		statesMatrix.add(new StatePlacesVector());
 	}
 	
 	/**
 	 * Dodaje wpis do wektorów stanów dla nowo utworzonego miejsca.
 	 */
 	public void addPlace() {
-		for(PlacesStateVector pVector: statesMatrix) {
+		for(StatePlacesVector pVector: statesMatrix) {
 			pVector.addPlace(0.0);
 		}
 	}
@@ -52,7 +48,7 @@ public class StatesManager {
 		if(index >= statesMatrix.get(0).getSize())
 			return false;
 		
-		for(PlacesStateVector pVector: statesMatrix) {
+		for(StatePlacesVector pVector: statesMatrix) {
 			boolean status = pVector.removePlace(index);
 			if(!status) {
 				overlord.log("Critical error: invalid place index in states matrix.", "error", true);
@@ -68,14 +64,18 @@ public class StatesManager {
 	 * @param index int - nr stanu
 	 * @return PlacesStateVector - obiekt wektora stanów
 	 */
-	public PlacesStateVector getState(int index) {
+	public StatePlacesVector getState(int index) {
 		if(index >= statesMatrix.size())
 			return null;
 		else
 			return statesMatrix.get(index);
 	}
 	
-	public PlacesStateVector getCurrentState() {
+	/**
+	 * Zwraca obiekt wektora stanu o aktualnie ustalonym indeksie.
+	 * @return PlacesStateVector - obiekt wektora stanów
+	 */
+	public StatePlacesVector getCurrentState() {
 		return statesMatrix.get(selectedState);
 	}
 	
@@ -83,12 +83,11 @@ public class StatesManager {
 	 * Metoda dodaje nowy stan sieci na bazie istniejącego w danej chwili w edytorze.
 	 */
 	public void addCurrentState() {
-		PlacesStateVector pVector = new PlacesStateVector();
+		StatePlacesVector pVector = new StatePlacesVector();
 		for(Place place : pn.getPlaces()) {
 			pVector.addPlace(place.getTokensNumber());
 		}
 		statesMatrix.add(pVector);
-		statesNames.add("Default name");
 	}
 	
 	/**
@@ -100,7 +99,6 @@ public class StatesManager {
 		for(Place place : places) {
 			statesMatrix.get(0).addPlace(place.getTokensNumber());
 		}
-		statesNames.set(0, "Default name");
 	}
 	
 	/**
@@ -109,7 +107,7 @@ public class StatesManager {
 	 */
 	public void setNetworkState(int stateID) {
 		ArrayList<Place> places = pn.getPlaces();
-		PlacesStateVector psVector = statesMatrix.get(stateID);
+		StatePlacesVector psVector = statesMatrix.get(stateID);
 		for(int p=0; p<places.size(); p++) {
 			Place place = places.get(p);
 			place.setTokensNumber((int)psVector.getTokens(p));
@@ -123,7 +121,7 @@ public class StatesManager {
 	 */
 	public void restoreSelectedState() {
 		ArrayList<Place> places = pn.getPlaces();
-		PlacesStateVector psVector = statesMatrix.get(selectedState);
+		StatePlacesVector psVector = statesMatrix.get(selectedState);
 		for(int p=0; p<places.size(); p++) {
 			Place place = places.get(p);
 			place.setTokensNumber((int)psVector.getTokens(p));
@@ -146,7 +144,7 @@ public class StatesManager {
 	 */
 	public void replaceStateWithNetState(int stateID) {
 		ArrayList<Place> places = pn.getPlaces();
-		PlacesStateVector psVector = statesMatrix.get(stateID);
+		StatePlacesVector psVector = statesMatrix.get(stateID);
 		for(int p=0; p<places.size(); p++) {
 			psVector.accessVector().set(p, (double) places.get(p).getTokensNumber());
 		}
@@ -158,47 +156,35 @@ public class StatesManager {
 	 * @return String - opis
 	 */
 	public String getStateDescription(int selected) {
-		return statesNames.get(selected);
+		return statesMatrix.get(selected).getDescription();
 	}
 	
 	/**
 	 * Ustawia opis stanu sieci.
 	 * @param selected int - nr stanu sieci
-	 * @return String - opis
+	 * @param newText String - opis
 	 */
 	public void setStateDescription(int selected, String newText) {
-		statesNames.set(selected, newText);
+		statesMatrix.get(selected).setDescription(newText);;
 	}
 	
 	/**
 	 * NA POTRZEBY ZAPISU PROJEKTU: dostęp do tablicy stanów.
 	 * @return ArrayList[PlacesStateVector] - tablica stanów sieci
 	 */
-	public ArrayList<PlacesStateVector> accessStateMatrix() {
+	public ArrayList<StatePlacesVector> accessStateMatrix() {
 		return this.statesMatrix;
 	}
-	
-	/**
-	 * NA POTRZEBY ZAPISU PROJEKTU: dostęp do tablicy nazw stanów.
-	 * @return ArrayList[PlacesStateVector] - tablica nazw stanów sieci
-	 */
-	public ArrayList<String> accessStateNames() {
-		return this.statesNames;
-	}
-	
+
 	/**
 	 * Metoda czyści tablicę stanów i ich nazw- tworzony jest nowy stan pierwszy.
 	 * @param isLoading boolean - jeśli true, nie tworzy pierwszych elementów (na potrzeby ProjectReader)
 	 */
 	public void reset(boolean isLoading) {
-		statesMatrix = new ArrayList<PlacesStateVector>();
-		statesNames = new ArrayList<String>();
-		
+		statesMatrix = new ArrayList<StatePlacesVector>();
 		if(isLoading == false) {
-			statesMatrix.add(new PlacesStateVector());
-			statesNames.add("Default name for state 1.");
+			statesMatrix.add(new StatePlacesVector());
 		}
-		
 		selectedState = 0;
 	}
 }

@@ -17,7 +17,7 @@ import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.StateSimulator;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.tables.InvariantContainer;
-import holmes.tables.InvariantsSimTableModel;
+import holmes.tables.InvariantsSimulatorTableModel;
 import holmes.tables.InvariantsTableModel;
 import holmes.tables.PlacesTableModel;
 import holmes.tables.TransitionsTableModel;
@@ -270,7 +270,7 @@ public class HolmesNetTablesActions {
 	 * @param singleMode boolean - true: 1 odpalenie tranzycji na turę(krok)
 	 * @param invSimNetType NetType - rodzaj symulacji sieci
 	 */
-	public void addInvariantsToModel(InvariantsSimTableModel modelInvariants, ArrayList<ArrayList<Integer>> invariantsMatrix,
+	public void addInvariantsToModel(InvariantsSimulatorTableModel modelInvariants, ArrayList<ArrayList<Integer>> invariantsMatrix,
 			int simSteps, boolean maximumMode, boolean singleMode, NetType invSimNetType) {
 		StateSimulator ss = new StateSimulator();
 		

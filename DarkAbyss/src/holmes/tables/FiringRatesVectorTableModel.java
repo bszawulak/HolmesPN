@@ -6,7 +6,12 @@ import javax.swing.table.DefaultTableModel;
 
 import holmes.windows.HolmesFiringRatesManager;
 
-public class FiringRatesTransitionsTableModel extends DefaultTableModel {
+/**
+ * Klasa tablicy firing rates dla tranzycji.
+ * 
+ * @author MR
+ */
+public class FiringRatesVectorTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = 3869824360655880298L;
 	private String[] columnNames;
 	private ArrayList<FRvectorClass> dataMatrix;
@@ -15,11 +20,16 @@ public class FiringRatesTransitionsTableModel extends DefaultTableModel {
 	private HolmesFiringRatesManager boss;
 	
 	public class FRvectorClass {
+		String selected;
 		int ID;
 		String frName;
 	}
 
-	public FiringRatesTransitionsTableModel(HolmesFiringRatesManager boss) {
+	/**
+	 * Konstruktor obiektu tablicy FiringRatesTransitionsTableModel.
+	 * @param boss HolmesFiringRatesManager - główne okno managera
+	 */
+	public FiringRatesVectorTableModel(HolmesFiringRatesManager boss) {
 		this.boss = boss;
 		clearModel();
 	}
@@ -28,22 +38,24 @@ public class FiringRatesTransitionsTableModel extends DefaultTableModel {
 	 * Czyści model tablicy.
 	 */
 	public void clearModel() {
-		columnNames = new String[2];
-		columnNames[0] = "ID";
-		columnNames[1] = "Vector name";
+		columnNames = new String[3];
+		columnNames[0] = "Selected";
+		columnNames[1] = "ID";
+		columnNames[2] = "Vector name";
 		
 		dataMatrix = new ArrayList<FRvectorClass>();
 		dataSize = 0;
-		
 	}
 	
 	/**
 	 * Dodawanie nowego wiersza do tablicy wektorów firing rates.
+	 * @param selected String - czy wybrany wektor
 	 * @param ID int - indeks wektora
 	 * @param name String - opis
 	 */
-	public void addNew(int ID, String name) {
+	public void addNew(String selected, int ID, String name) {
 		FRvectorClass row = new FRvectorClass();
+		row.selected = selected;
 		row.ID = ID;
 		row.frName = name;
 		dataMatrix.add(row);
@@ -91,7 +103,7 @@ public class FiringRatesTransitionsTableModel extends DefaultTableModel {
      * Zwraca status edytowalności komórek.
      */
     public boolean isCellEditable(int row, int column) {
-    	if(column == 1)
+    	if(column == 2)
     		return true;
     	else
     		return false;
@@ -105,8 +117,10 @@ public class FiringRatesTransitionsTableModel extends DefaultTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		switch(columnIndex) {
 			case 0:
-				return dataMatrix.get(rowIndex).ID;
+				return dataMatrix.get(rowIndex).selected;
 			case 1:
+				return dataMatrix.get(rowIndex).ID;
+			case 2:
 				return dataMatrix.get(rowIndex).frName;
 		}
 		return null;
@@ -114,12 +128,25 @@ public class FiringRatesTransitionsTableModel extends DefaultTableModel {
 	
 	public void setValueAt(Object value, int row, int col) {
 		try {
-			if(col == 1) {
+			if(col == 2) {
 				dataMatrix.get(row).frName = value.toString();
 				boss.changeState(row, col, value.toString());
 			}
 		} catch (Exception e) {
 			//dataMatrix.get(row).firingRate = 1.0;
+		}
+	}
+	
+	/**
+	 * Metoda ustawia flagę wyboru odpowiedniego stanu fr.
+	 * @param row int - nr wiersza
+	 */
+	public void setSelected(int row) {
+		for(int i=0; i<dataSize; i++) {
+			if(i == row)
+				dataMatrix.get(i).selected = "X";
+			else
+				dataMatrix.get(i).selected = "";
 		}
 	}
 }

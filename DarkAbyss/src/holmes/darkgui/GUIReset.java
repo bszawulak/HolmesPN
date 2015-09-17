@@ -102,6 +102,7 @@ public class GUIReset {
 		pNet.setMCTMatrix(null, false);
 		pNet.accessMCTnames().clear();
 		pNet.accessStatesManager().reset(false);
+		pNet.accessSSAmanager().reset(false);
 		pNet.accessFiringRatesManager().reset(false);
 		pNet.setMCSdataCore(new MCSDataMatrix());
 		overlord.simSettings.reset();

@@ -306,6 +306,7 @@ public class SelectionManager {
 				if(n instanceof Place) {
 					int index = places.indexOf((Place)n);
 					pn.accessStatesManager().removePlace(index);
+					pn.accessSSAmanager().removePlace(index);
 					if(FunctionsTools.revalidateFunctions((Place)n, index))
 						functionWarning = true;
 				}
@@ -388,6 +389,7 @@ public class SelectionManager {
 				if(n instanceof Place) {
 					int index = places.indexOf((Place)n);
 					pn.accessStatesManager().removePlace(index);
+					pn.accessSSAmanager().removePlace(index);
 					if(FunctionsTools.revalidateFunctions((Place)n, index))
 						functionWarning = true;
 				}

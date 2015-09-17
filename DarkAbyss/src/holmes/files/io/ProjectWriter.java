@@ -10,9 +10,10 @@ import java.util.Date;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.data.PlacesStateVector;
-import holmes.petrinet.data.TransFiringRateVector;
-import holmes.petrinet.data.TransFiringRateVector.FRContainer;
+import holmes.petrinet.data.SSAplacesVector;
+import holmes.petrinet.data.StatePlacesVector;
+import holmes.petrinet.data.FiringRateTransVector;
+import holmes.petrinet.data.FiringRateTransVector.FRContainer;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -42,10 +43,9 @@ public class ProjectWriter {
 	private ArrayList<String> p_invariantsNames = null;
 	private ArrayList<ArrayList<Transition>> mctData = null;
 	private ArrayList<String> mctNames = null;
-	private ArrayList<PlacesStateVector> statesMatrix = null;
-	private ArrayList<String> statesNames = null;
-	private ArrayList<TransFiringRateVector> firingRatesMatrix = null;
-	private ArrayList<String> frNames = null;
+	private ArrayList<StatePlacesVector> statesMatrix = null;
+	private ArrayList<FiringRateTransVector> firingRatesMatrix = null;
+	private ArrayList<SSAplacesVector> ssaMatrix = null;
 	
 	private String newline = "\n";
 	
@@ -66,9 +66,8 @@ public class ProjectWriter {
 		mctData = projectCore.getMCTMatrix();
 		mctNames = projectCore.accessMCTnames();
 		statesMatrix = projectCore.accessStatesManager().accessStateMatrix();
-		statesNames = projectCore.accessStatesManager().accessStateNames();
 		firingRatesMatrix = projectCore.accessFiringRatesManager().accessFRMatrix();
-		frNames = projectCore.accessFiringRatesManager().accessFRVectorsNames();
+		ssaMatrix = projectCore.accessSSAmanager().accessSSAmatrix();
 	}
 	
 	/**
@@ -97,6 +96,7 @@ public class ProjectWriter {
 			bw.write("  <StatesMatrix>"+newline);
 			bw.write("  <FunctionsData>"+newline);
 			bw.write("  <FiringRatesData>"+newline);
+			bw.write("  <SSAmatrix>"+newline);
 			bw.write("</Project blocks>"+newline);
 			
 			bw.write("<Net data>"+newline);
@@ -123,6 +123,10 @@ public class ProjectWriter {
 			bw.write("<Firing rates data>"+newline);
 			boolean statusFR = saveFiringRates(bw);
 			bw.write("<Firing rates data end>"+newline);
+			
+			bw.write("<SSA vectors data>"+newline);
+			boolean statusSSA = saveSSAvectors(bw);
+			bw.write("<SSA vectors data end>"+newline);
 			
 			bw.close();
 			return true;
@@ -650,23 +654,20 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<States: "+statesNumber+">"+newline);
 			for(int s=0; s<statesNumber; s++) {
 				sp = 4;
-				PlacesStateVector sVector = statesMatrix.get(s);
+				StatePlacesVector sVector = statesMatrix.get(s);
 				String stateLine = "";
 				for(Double value : sVector.accessVector()) {
 					stateLine += value + ";";
 				}
 				stateLine = stateLine.substring(0, stateLine.length()-1); //usun ostatni ';'
 				bw.write(spaces(sp)+stateLine+newline);
+				
+				String type = sVector.getStateType();
+				bw.write(spaces(sp)+type+";"+newline);
+				bw.write(spaces(sp)+Tools.convertToCode(sVector.getDescription())+newline);
 			}
 			sp = 2;
 			bw.write(spaces(sp)+"<EOSt>"+newline);
-			bw.write(spaces(sp)+"<States names>"+newline);
-			for(int i=0; i<statesNumber; i++) {
-				sp = 4;
-				bw.write(spaces(sp)+Tools.convertToCode(statesNames.get(i))+newline);
-			}
-			sp = 2;
-			bw.write(spaces(sp)+"<EOStn>"+newline);
 			
 			return true;
 		} catch (Exception e) {
@@ -689,7 +690,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<FRvectors: "+frNumber+">"+newline);
 			for(int fr=0; fr<frNumber; fr++) {
 				sp = 4;
-				TransFiringRateVector frVector = firingRatesMatrix.get(fr);
+				FiringRateTransVector frVector = firingRatesMatrix.get(fr);
 				String frLine = "";
 				String stochTypeLine = "";
 				for(FRContainer frc : frVector.accessVector()) {
@@ -701,20 +702,52 @@ public class ProjectWriter {
 				
 				stochTypeLine = stochTypeLine.substring(0, stochTypeLine.length()-1); //usun ostatni ';'
 				bw.write(spaces(sp)+stochTypeLine+newline);
+				
+				String type = frVector.getFrType();
+				bw.write(spaces(sp)+type+";"+newline);
+				bw.write(spaces(sp)+Tools.convertToCode(frVector.getDescription())+newline);
 			}
 			sp = 2;
-			bw.write(spaces(sp)+"<EOFRv>"+newline);
-			bw.write(spaces(sp)+"<Firing rates vector names>"+newline);
-			for(int i=0; i<frNumber; i++) {
-				sp = 4;
-				bw.write(spaces(sp)+Tools.convertToCode(frNames.get(i))+newline);
-			}
-			sp = 2;
-			bw.write(spaces(sp)+"<EOFRVn>"+newline);
-			
+			bw.write(spaces(sp)+"<EOFRv>"+newline);		
 			return true;
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Error while saving firing rates data.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			return false;
+		}
+	}
+	
+	/**
+	 * Sekcja odpowiedzialna za zapis tablicy wektorów danych SSA.
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @return boolean - true, jeśli operacja się powiodła a pacjent nie zmarł.
+	 */
+	private boolean saveSSAvectors(BufferedWriter bw) {
+		try {
+			int sp = 2;
+			int ssaNumber = ssaMatrix.size();
+	
+			bw.write(spaces(sp)+"<SSA vectors: "+ssaNumber+">"+newline);
+			for(int s=0; s<ssaNumber; s++) {
+				sp = 4;
+				SSAplacesVector sVector = ssaMatrix.get(s);
+				String stateLine = "";
+				for(Double value : sVector.accessVector()) {
+					stateLine += value + ";";
+				}
+				stateLine = stateLine.substring(0, stateLine.length()-1); //usun ostatni ';'
+				bw.write(spaces(sp)+stateLine+newline);
+				
+				String ssaType = sVector.getType().toString();
+				double ssaVolume = sVector.getVolume();
+				bw.write(spaces(sp)+ssaType+";"+ssaVolume+newline);
+				bw.write(spaces(sp)+Tools.convertToCode(sVector.getDescription())+newline);
+			}
+			sp = 2;
+			bw.write(spaces(sp)+"<EOSSA>"+newline);
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Error while saving SSA data.", "error", true);
 			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
 			return false;
 		}

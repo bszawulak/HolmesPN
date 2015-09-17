@@ -10,8 +10,7 @@ public class FiringRatesManager {
 	private GUIManager overlord;
 	private PetriNet pn;
 	
-	private ArrayList<TransFiringRateVector> firingRatesMatrix;
-	private ArrayList<String> frNames;
+	private ArrayList<FiringRateTransVector> firingRatesMatrix;
 	public int selectedVector = 0;
 	
 	/**
@@ -22,18 +21,15 @@ public class FiringRatesManager {
 		overlord = GUIManager.getDefaultGUIManager();
 		this.pn = net;
 		
-		this.firingRatesMatrix = new ArrayList<TransFiringRateVector>();
-		firingRatesMatrix.add(new TransFiringRateVector());
-		
-		this.frNames = new ArrayList<String>();
-		frNames.add("Default name for firing rate vector 1.");
+		this.firingRatesMatrix = new ArrayList<FiringRateTransVector>();
+		firingRatesMatrix.add(new FiringRateTransVector());
 	}
 	
 	/**
 	 * Dodaje wpis do wektorów firing rates dla nowo utworzonej tranzycji.
 	 */
 	public void addTrans() {
-		for(TransFiringRateVector frVector: firingRatesMatrix) {
+		for(FiringRateTransVector frVector: firingRatesMatrix) {
 			frVector.addTrans(1.0, StochaticsType.ST);
 		}
 	}
@@ -47,7 +43,7 @@ public class FiringRatesManager {
 		if(index >= firingRatesMatrix.get(0).getSize())
 			return false;
 		
-		for(TransFiringRateVector frVector: firingRatesMatrix) {
+		for(FiringRateTransVector frVector: firingRatesMatrix) {
 			boolean status = frVector.removeTrans(index);
 			if(!status) {
 				overlord.log("Critical error: invalid transition index in firing rates matrix.", "error", true);
@@ -63,14 +59,14 @@ public class FiringRatesManager {
 	 * @param index int - nr stanu
 	 * @return TransFiringRateVector - obiekt wektora firing rates
 	 */
-	public TransFiringRateVector getFRVector(int index) {
+	public FiringRateTransVector getFRVector(int index) {
 		if(index >= firingRatesMatrix.size())
 			return null;
 		else
 			return firingRatesMatrix.get(index);
 	}
 	
-	public TransFiringRateVector getCurrentFRVector() {
+	public FiringRateTransVector getCurrentFRVector() {
 		return firingRatesMatrix.get(selectedVector);
 	}
 	
@@ -78,12 +74,11 @@ public class FiringRatesManager {
 	 * Metoda dodaje nowy stan firing rates na bazie istniejącego w danej chwili w edytorze.
 	 */
 	public void addCurrentStateAsFRVector() {
-		TransFiringRateVector frVector = new TransFiringRateVector();
+		FiringRateTransVector frVector = new FiringRateTransVector();
 		for(Transition trans : pn.getTransitions()) {
 			frVector.addTrans(trans.getFiringRate(), trans.getStochasticType());
 		}
 		firingRatesMatrix.add(frVector);
-		frNames.add("Default name");
 	}
 	
 	/**
@@ -95,7 +90,6 @@ public class FiringRatesManager {
 		for(int t=0; t<transNo; t++) {
 			firingRatesMatrix.get(0).addTrans(1.0, StochaticsType.ST);
 		}
-		frNames.set(0, "Default name");
 	}
 	
 	/**
@@ -104,7 +98,7 @@ public class FiringRatesManager {
 	 */
 	public void setNetworkFRVector(int vectorID) {
 		ArrayList<Transition> transitions = pn.getTransitions();
-		TransFiringRateVector frVector = firingRatesMatrix.get(vectorID);
+		FiringRateTransVector frVector = firingRatesMatrix.get(vectorID);
 		for(int t=0; t<transitions.size(); t++) {
 			Transition trans = transitions.get(t);
 			trans.setStochasticType(frVector.getStochasticType(t));
@@ -116,7 +110,7 @@ public class FiringRatesManager {
 	/**
 	 * Przywraca aktualnie wybrany wektor firing rates.
 	 */
-	public void restoreSelectedState() {
+	public void restoreSelectedFRstate() {
 		setNetworkFRVector(selectedVector);
 	}
 	
@@ -133,9 +127,9 @@ public class FiringRatesManager {
 	 * Zastępuje wskazany stan aktualnym stanem sieci.
 	 * @param stateID int - wskazany stan z tabeli
 	 */
-	public void replaceVectorWithNetState(int vectorID) {
+	public void replaceFRvectorWithNetState(int vectorID) {
 		ArrayList<Transition> transitions = pn.getTransitions();
-		TransFiringRateVector frVector = firingRatesMatrix.get(vectorID);
+		FiringRateTransVector frVector = firingRatesMatrix.get(vectorID);
 		for(int t=0; t<transitions.size(); t++) {
 			frVector.accessVector().get(t).fr = transitions.get(t).getFiringRate();
 			frVector.accessVector().get(t).sType = transitions.get(t).getStochasticType();
@@ -143,37 +137,29 @@ public class FiringRatesManager {
 	}
 	
 	/**
-	 * Zwraca opis wektora fr.
-	 * @param selected int - nr wektora fr sieci
+	 * Zwraca opis wektora firing rates.
+	 * @param selected int - nr wektora firing rates sieci
 	 * @return String - opis
 	 */
 	public String getFRVectorDescription(int selected) {
-		return frNames.get(selected);
+		return firingRatesMatrix.get(selected).getDescription();
 	}
 	
 	/**
-	 * Ustawia opis wektora fr.
+	 * Ustawia opis wektora firing rates.
 	 * @param selected int - nr stanu sieci
 	 * @return String - opis
 	 */
-	public void setStateDescription(int selected, String newText) {
-		frNames.set(selected, newText);
+	public void setFRvectorDescription(int selected, String newText) {
+		firingRatesMatrix.get(selected).setDescription(newText);
 	}
 	
 	/**
 	 * NA POTRZEBY ZAPISU PROJEKTU: dostęp do tablicy wektorów fr.
 	 * @return ArrayList[PlacesStateVector] - tablica fr sieci
 	 */
-	public ArrayList<TransFiringRateVector> accessFRMatrix() {
+	public ArrayList<FiringRateTransVector> accessFRMatrix() {
 		return this.firingRatesMatrix;
-	}
-	
-	/**
-	 * NA POTRZEBY ZAPISU PROJEKTU: dostęp do tablicy nazw wektorów fr.
-	 * @return ArrayList[PlacesStateVector] - tablica nazw fr sieci
-	 */
-	public ArrayList<String> accessFRVectorsNames() {
-		return this.frNames;
 	}
 	
 	/**
@@ -182,13 +168,10 @@ public class FiringRatesManager {
 	 */
 	public void reset(boolean isLoading) {
 		if(isLoading) {
-			firingRatesMatrix = new ArrayList<TransFiringRateVector>();
-			frNames = new ArrayList<String>();
+			firingRatesMatrix = new ArrayList<FiringRateTransVector>();
 		} else {
-			firingRatesMatrix = new ArrayList<TransFiringRateVector>();
-			firingRatesMatrix.add(new TransFiringRateVector());
-			frNames = new ArrayList<String>();
-			frNames.add("Default name for firing rate vector 1.");
+			firingRatesMatrix = new ArrayList<FiringRateTransVector>();
+			firingRatesMatrix.add(new FiringRateTransVector());
 		}
 		selectedVector = 0;
 	}

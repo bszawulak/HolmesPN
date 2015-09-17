@@ -13,10 +13,12 @@ import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.FiringRatesManager;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.data.PlacesStateVector;
+import holmes.petrinet.data.SSAplacesManager;
+import holmes.petrinet.data.SSAplacesVector;
+import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.StatesManager;
-import holmes.petrinet.data.TransFiringRateVector;
-import holmes.petrinet.data.TransFiringRateVector.FRContainer;
+import holmes.petrinet.data.FiringRateTransVector;
+import holmes.petrinet.data.FiringRateTransVector.FRContainer;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -28,21 +30,17 @@ import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.Transition.StochaticsType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
+import holmes.tables.SSAplacesTableModel.SSAdataType;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
 
 /**
- * Metoda czytająca plik danych projektu: sieć, inwarianty, MCT.
- * 
- * Modyfikacje danych sieci: głównie poprzez dodawanie kolejnych elementów do metod:
- * 		parsePlaceLine(...)
- * 		parseTransitionLine(...)
- * 		parseArcLine(...)
+ * Metoda czytająca plik danych projektu.
  * 
  * @author MR
- *
  */
 public class ProjectReader {
+	private GUIManager overlord = null;
 	private PetriNet projectCore = null;
 	private ArrayList<Node> nodes = null;
 	private ArrayList<MetaNode> metanodes = null;
@@ -71,13 +69,15 @@ public class ProjectReader {
 	private boolean functions = false;
 	private boolean firingRates = false;
 	private boolean pInvariants = false;
+	private boolean ssaData = false;
 
 	
 	/**
 	 * Konstruktor obiektu klasy odczytywania projektu.
 	 */
 	public ProjectReader() {
-		projectCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		overlord = GUIManager.getDefaultGUIManager();
+		projectCore = overlord.getWorkspace().getProject();
 		nodes = projectCore.getNodes();
 		metanodes = projectCore.getMetaNodes();
 		arcs = projectCore.getArcs();
@@ -99,7 +99,7 @@ public class ProjectReader {
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
 	public boolean readProject(String filepath) {
-		boolean status = GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
+		boolean status = overlord.reset.newProjectInitiated();
 		if(status == false) {
 			return false;
 		}
@@ -108,18 +108,18 @@ public class ProjectReader {
 			DataInputStream dis = new DataInputStream(new FileInputStream(filepath));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(dis));
 			
-			GUIManager.getDefaultGUIManager().log("Reading project file: "+filepath, "text", true);
+			overlord.log("Reading project file: "+filepath, "text", true);
 			
 			status = readProjectHeader(buffer);
 			if(status == false) {
-				GUIManager.getDefaultGUIManager().log("Reading project data block failure.", "error", true);
+				overlord.log("Reading project data block failure.", "error", true);
 				buffer.close();
 				return false;
 			}
 			
 			status = readNetwork(buffer);
 			if(status == false) {
-				GUIManager.getDefaultGUIManager().log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
+				overlord.log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
 				buffer.close();
 				return false;
 			}
@@ -128,7 +128,7 @@ public class ProjectReader {
 			if(!status) {
 				projectCore.setT_InvMatrix(null, false);
 			} else {
-				GUIManager.getDefaultGUIManager().getT_invBox().showT_invBoxWindow(projectCore.getT_InvMatrix());
+				overlord.getT_invBox().showT_invBoxWindow(projectCore.getT_InvMatrix());
 			}
 			
 			if(pInvariants) {
@@ -136,7 +136,7 @@ public class ProjectReader {
 				if(!status) {
 					projectCore.setP_InvMatrix(null);
 				} else {
-					GUIManager.getDefaultGUIManager().getP_invBox().showP_invBoxWindow(projectCore.getP_InvMatrix());
+					overlord.getP_invBox().showP_invBoxWindow(projectCore.getP_InvMatrix());
 				}
 			}
 			
@@ -144,7 +144,7 @@ public class ProjectReader {
 			if(!status) {
 				projectCore.setMCTMatrix(null, false);
 			} else {
-				GUIManager.getDefaultGUIManager().getMctBox().showMCT(projectCore.getMCTMatrix());
+				overlord.getMctBox().showMCT(projectCore.getMCTMatrix());
 			}
 			
 			if(states) {
@@ -165,12 +165,21 @@ public class ProjectReader {
 				projectCore.accessFiringRatesManager().createCleanFRVector();
 			}
 			
-			GUIManager.getDefaultGUIManager().subnetsGraphics.addRequiredSheets();
-			GUIManager.getDefaultGUIManager().getWorkspace().setSelectedDock(0);
+			if(ssaData) {
+				status = readSSAvectors(buffer);
+				if(!status) {
+					projectCore.accessSSAmanager().createCleanSSAvector();
+				}
+			} else {
+				projectCore.accessSSAmanager().createCleanSSAvector();
+			}
+			
+			overlord.subnetsGraphics.addRequiredSheets();
+			overlord.getWorkspace().setSelectedDock(0);
 			buffer.close();
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading project file failed.", "error", true);
+			overlord.log("Reading project file failed.", "error", true);
 			return false;
 		}
 	}
@@ -187,7 +196,7 @@ public class ProjectReader {
 				line = line.substring(line.indexOf("name:")+6);
 				projectCore.setName(line);
 			} else {
-				GUIManager.getDefaultGUIManager().log("No project name tag in file.", "error", true);
+				overlord.log("No project name tag in file.", "error", true);
 				return false;
 			}
 			
@@ -196,7 +205,7 @@ public class ProjectReader {
 				//line = line.substring(line.indexOf("name:")+6);
 				//projectCore.setName(line);
 			} else {
-				GUIManager.getDefaultGUIManager().log("No project date tag in file.", "error", true);
+				overlord.log("No project date tag in file.", "error", true);
 				return false;
 			}
 			
@@ -208,7 +217,7 @@ public class ProjectReader {
 			} 
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Uknown error while reading project header.", "error", true);
+			overlord.log("Uknown error while reading project header.", "error", true);
 			return false;
 		}
 	}
@@ -246,8 +255,13 @@ public class ProjectReader {
 				pInvariants = true;
 				return;
 			}
+			query = "ssamatrix";
+			if(line.toLowerCase().contains(query)) {
+				ssaData = true;
+				return;
+			}
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading error in line: "+backup, "error", true);
+			overlord.log("Reading error in line: "+backup, "error", true);
 		}
 	}
 
@@ -342,8 +356,8 @@ public class ProjectReader {
 				}
 			}
 
-			ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+			ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 
 			//ARCS:
 			while(!((line = buffer.readLine()).contains("<Arcs data block>"))) //przewiń do łuków
@@ -382,15 +396,15 @@ public class ProjectReader {
 			else
 				notepad.dispose();
 			
-			GUIManager.getDefaultGUIManager().log("Read "+placesProcessed+" places, "+transitionsProcessed+ 
+			overlord.log("Read "+placesProcessed+" places, "+transitionsProcessed+ 
 					" transitions, "+arcsProcessed+" arcs, "+functionsRead+" functions.", "text", true);
 			if(functionsFailed > 0)
-				GUIManager.getDefaultGUIManager().log("Failed to correctly parse "+functionsFailed+" functions.", "error", true);
+				overlord.log("Failed to correctly parse "+functionsFailed+" functions.", "error", true);
 			
 			status = true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Project error reading failed in network section.", "error", true);
-			GUIManager.getDefaultGUIManager().log("Read so far: "+placesProcessed+" places, "+transitionsProcessed+ 
+			overlord.log("Project error reading failed in network section.", "error", true);
+			overlord.log("Read so far: "+placesProcessed+" places, "+transitionsProcessed+ 
 					" transitions, "+arcsProcessed+" arcs.", "error", true);
 			status = false;
 		}
@@ -424,7 +438,7 @@ public class ProjectReader {
 	
 			return status;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Failed to correctly parse line: "+functionLine, "warning", true);
+			overlord.log("Failed to correctly parse line: "+functionLine, "warning", true);
 			return false;
 		}
 	}
@@ -532,7 +546,7 @@ public class ProjectReader {
 				return;
 			}
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading file error in line: "+backup+" for Place "+placesProcessed, "error", true);
+			overlord.log("Reading file error in line: "+backup+" for Place "+placesProcessed, "error", true);
 		}
 	}
 	
@@ -704,7 +718,7 @@ public class ProjectReader {
 				return;
 			}
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading file error in line: "+backup+" for Transition "+transitionsProcessed, "error", true);
+			overlord.log("Reading file error in line: "+backup+" for Transition "+transitionsProcessed, "error", true);
 		}
 	}
 	
@@ -818,7 +832,7 @@ public class ProjectReader {
 				return;
 			}
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading file error in line: "+backup+" for MetaNode "+metanodesProcessed, "error", true);
+			overlord.log("Reading file error in line: "+backup+" for MetaNode "+metanodesProcessed, "error", true);
 		}
 	}
 	
@@ -975,7 +989,7 @@ public class ProjectReader {
 				}
 			}
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading file error in line: "+backup, "error", true);
+			overlord.log("Reading file error in line: "+backup, "error", true);
 		}
 		return null;
 	}
@@ -1052,20 +1066,20 @@ public class ProjectReader {
 					
 					
 					if(readLines != t_invariantsMatrix.size()) {
-						GUIManager.getDefaultGUIManager().log("Error: different numbers of t-invariants ("+t_invariantsMatrix.size()+
+						overlord.log("Error: different numbers of t-invariants ("+t_invariantsMatrix.size()+
 								") and their names ("+readLines+"). Operation failed.", "error", true);
 						return false;
 					}
 					
 				} else {
-					GUIManager.getDefaultGUIManager().log("T-invariants with wrong number of elements in file:"+problemWithInv, "error", true);
+					overlord.log("T-invariants with wrong number of elements in file:"+problemWithInv, "error", true);
 					return false;
 				}
 			}
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading invariants failed for t-invariant number: \n"+t_invariantsProcessed, "error", true);
+			overlord.log("Reading invariants failed for t-invariant number: \n"+t_invariantsProcessed, "error", true);
 			return false;
 		}
 	}
@@ -1142,20 +1156,20 @@ public class ProjectReader {
 					
 					
 					if(readLines != p_invariantsMatrix.size()) {
-						GUIManager.getDefaultGUIManager().log("Error: different numbers of p-invariants ("+p_invariantsMatrix.size()+
+						overlord.log("Error: different numbers of p-invariants ("+p_invariantsMatrix.size()+
 								") and their names ("+readLines+"). Operation failed.", "error", true);
 						return false;
 					}
 					
 				} else {
-					GUIManager.getDefaultGUIManager().log("P-invariants with wrong number of elements in file:"+problemWithInv, "error", true);
+					overlord.log("P-invariants with wrong number of elements in file:"+problemWithInv, "error", true);
 					return false;
 				}
 			}
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading p-invariants failed for invariant number: \n"+p_invariantsProcessed, "error", true);
+			overlord.log("Reading p-invariants failed for invariant number: \n"+p_invariantsProcessed, "error", true);
 			return false;
 		}
 	}
@@ -1232,13 +1246,13 @@ public class ProjectReader {
 					
 					
 					if(readLines != mctData.size()) {
-						GUIManager.getDefaultGUIManager().log("Error: different numbers of MCT sets ("+mctData.size()+
+						overlord.log("Error: different numbers of MCT sets ("+mctData.size()+
 								") and their names ("+readLines+"). Operation failed.", "error", true);
 						return false;
 					}
 					
 				} else {
-					GUIManager.getDefaultGUIManager().log("MCT with wrong number ID numbers for their transitions in file:"+problemWithMCTLines, "error", true);
+					overlord.log("MCT with wrong number ID numbers for their transitions in file:"+problemWithMCTLines, "error", true);
 					return false;
 				}
 			}
@@ -1247,7 +1261,7 @@ public class ProjectReader {
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading MCT sets failed for MCT number: \n"+mctProcessed, "error", true);
+			overlord.log("Reading MCT sets failed for MCT number: \n"+mctProcessed, "error", true);
 			return false;
 		}
 	}
@@ -1260,11 +1274,10 @@ public class ProjectReader {
 	private boolean readStates(BufferedReader buffer) {
 		try {
 			String line = "";
-			while(!((line = buffer.readLine()).contains("<States data>"))) //przewiń do zbiorów MCT
+			while(!((line = buffer.readLine()).contains("<States data>"))) //przewiń do wektorów stanów
 				;
 			
 			line = buffer.readLine();
-			int problems = 0;
 			int readedLine = 0;
 			
 			boolean go = true;
@@ -1275,13 +1288,23 @@ public class ProjectReader {
 			try {
 				while(go) {
 					readedLine++;
-					PlacesStateVector pVector = new PlacesStateVector();
+					StatePlacesVector pVector = new StatePlacesVector();
 					line = line.replace(" ", "");
 					String[] tab = line.split(";");
 					
 					for(int i=0; i<tab.length; i++) {
 						pVector.accessVector().add(Double.parseDouble(tab[i]));
 					}
+					
+					line = buffer.readLine(); //dane dodatkowe
+					line = line.trim();
+					tab = line.split(";");
+					pVector.setStateType(tab[0]);
+
+					line = buffer.readLine();
+					line = line.trim();
+					line = Tools.decodeString(line);
+					pVector.setDescription(line);
 
 					line = buffer.readLine();
 					if(line.contains("<EOSt>")) {
@@ -1292,44 +1315,16 @@ public class ProjectReader {
 				}
 			} catch (Exception e) {}
 			
-			if(readedLine > statesMngr.accessStateMatrix().size()) {
-				GUIManager.getDefaultGUIManager().log("Error reading state vector number "+(readedLine), "error", true);
+			if(((int)readedLine/3) > statesMngr.accessStateMatrix().size()) {
+				overlord.log("Error reading state vector number "+(readedLine), "error", true);
 				if(statesMngr.accessStateMatrix().size() == 0) {
 					statesMngr.createCleanState();
-					problems = 1;
 				}
-			}
-
-			if(problems==0) {
-				while(!((line = buffer.readLine()).contains("<States names>"))) //przewiń do nazw stanów
-					;
-				
-				ArrayList<String> statesNames = new ArrayList<String>();
-				line = buffer.readLine();
-				go = true;
-				while(go) {
-					//line = line.replace(" ", "");
-					line = line.trim();
-					line = Tools.decodeString(line);
-					
-					if(statesNames.size() < statesMngr.accessStateMatrix().size())
-						statesNames.add(line);
-					
-					line = buffer.readLine();
-					if(line.contains("<EOStn>")) {
-						go = false;
-					}
-				}
-				statesMngr.accessStateNames().addAll(statesNames);
-		
-			} else {
-				GUIManager.getDefaultGUIManager().log("Problems reading state vectors", "error", true);
-				return false;
 			}
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading state vectors failed.", "error", true);
+			overlord.log("Reading state vectors failed.", "error", true);
 			return false;
 		}
 	}
@@ -1342,11 +1337,10 @@ public class ProjectReader {
 	private boolean readFiringRates(BufferedReader buffer) {
 		try {
 			String line = "";
-			while(!((line = buffer.readLine()).contains("<Firing rates data>"))) //przewiń do zbiorów MCT
+			while(!((line = buffer.readLine()).contains("<Firing rates data>"))) //przewiń do wektorów firing rates
 				;
 			
 			line = buffer.readLine();
-			int problems = 0;
 			int readedLine = 0;
 			
 			boolean go = true;
@@ -1357,7 +1351,7 @@ public class ProjectReader {
 			try {
 				while(go) {
 					readedLine++;
-					TransFiringRateVector frVector = new TransFiringRateVector();
+					FiringRateTransVector frVector = new FiringRateTransVector();
 					line = line.replace(" ", "");
 					String[] tabFR = line.split(";");
 					
@@ -1380,6 +1374,16 @@ public class ProjectReader {
 						dataVector.add(frc);
 					}
 					frVector.accessVector().addAll(dataVector); //boxing
+					
+					line = buffer.readLine(); //dane dodatkowe
+					line = line.trim();
+					tabFR = line.split(";");
+					frVector.setFrType(tabFR[0]);
+
+					line = buffer.readLine();
+					line = line.trim();
+					line = Tools.decodeString(line);
+					frVector.setDescription(line);
 
 					line = buffer.readLine();
 					if(line.contains("<EOFRv>")) {
@@ -1389,53 +1393,92 @@ public class ProjectReader {
 					frateMngr.accessFRMatrix().add(frVector); //boxing in manager
 				}
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Operation failed, wrong firing rates data "+(readedLine), "error", true);
+				overlord.log("Operation failed, wrong firing rates data "+(readedLine), "error", true);
 				if(frateMngr.accessFRMatrix().size() == 0) {
 					frateMngr.createCleanFRVector();
-					problems = 1;
 				}
 			}
 			
-			if((readedLine/2) > frateMngr.accessFRMatrix().size()) {
-				GUIManager.getDefaultGUIManager().log("Operation failed, wrong firing rates data "+(readedLine), "error", true);
+			if((readedLine/4) > frateMngr.accessFRMatrix().size()) {
+				overlord.log("Operation failed, wrong firing rates data "+(readedLine), "error", true);
 				if(frateMngr.accessFRMatrix().size() == 0) {
 					frateMngr.createCleanFRVector();
-					problems = 1;
 				} else {
 					frateMngr.reset(false); //false!!!
 					frateMngr.createCleanFRVector();
-					problems = 1;
 				}
-			}
-
-			if(problems==0) {
-				while(!((line = buffer.readLine()).contains("<Firing rates vector names>"))) //przewiń do nazw fr
-					;
-				
-				ArrayList<String> frNames = new ArrayList<String>();
-				line = buffer.readLine();
-				go = true;
-				while(go) {
-					line = line.trim();
-					line = Tools.decodeString(line);
-					if(frNames.size() < frateMngr.accessFRMatrix().size())
-						frNames.add(line);
-					
-					line = buffer.readLine();
-					if(line.contains("<EOFRVn>")) {
-						go = false;
-					}
-				}
-				frateMngr.accessFRVectorsNames().addAll(frNames);
-		
-			} else {
-				GUIManager.getDefaultGUIManager().log("Problems reading firing rates vector names.", "error", true);
-				return false;
 			}
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading firing rates vectors failed.", "error", true);
+			overlord.log("Reading firing rates vectors failed.", "error", true);
+			return false;
+		}
+	}
+	
+	/**
+	 * Metoda czyta blok danych z wektorami SSA.
+	 * @param buffer BufferedReader - obiekt czytający
+	 * @return boolean - true, jeśli wszystko dobrze poszło
+	 */
+	private boolean readSSAvectors(BufferedReader buffer) {
+		try {
+			String line = "";
+			while(!((line = buffer.readLine()).contains("<SSA vectors data>"))) //przewiń do wektorów SSA
+				;
+			
+			line = buffer.readLine();
+			int readedLine = 0;
+			
+			boolean go = true;
+			SSAplacesManager ssaMngr = projectCore.accessSSAmanager();
+			ssaMngr.reset(true);
+
+			line = buffer.readLine();
+			try {
+				while(go) {
+					readedLine++;
+					SSAplacesVector pVector = new SSAplacesVector();
+					line = line.replace(" ", "");
+					String[] tab = line.split(";");
+					
+					for(int i=0; i<tab.length; i++) {
+						pVector.accessVector().add(Double.parseDouble(tab[i]));
+					}
+
+					line = buffer.readLine(); //dane dodatkowe
+					line = line.trim();
+					tab = line.split(";");
+					if(tab[0].equals("CAPACITY")) {
+						pVector.setType(SSAdataType.CAPACITY);
+					} else {
+						pVector.setType(SSAdataType.PARTICLES);
+					}
+					double volume = Double.parseDouble(tab[1]);
+					pVector.setVolume(volume);
+					
+					line = buffer.readLine(); //nazwa
+					line = line.trim();
+					line = Tools.decodeString(line);
+					pVector.setDescription(line);
+					
+					line = buffer.readLine();
+					if(line.contains("<EOSSA>")) {
+						go = false;
+					}
+					ssaMngr.accessSSAmatrix().add(pVector);
+				}
+			} catch (Exception e) {}
+			
+			if(((int)readedLine/3) > ssaMngr.accessSSAmatrix().size()) {
+				overlord.log("Error reading state vector number "+(readedLine), "error", true);
+				if(ssaMngr.accessSSAmatrix().size() == 0) {
+					ssaMngr.createCleanSSAvector();
+				}
+			}
+			return true;
+		} catch (Exception e) {
+			overlord.log("Reading SSA vectors failed.", "error", true);
 			return false;
 		}
 	}
@@ -1459,9 +1502,9 @@ public class ProjectReader {
 	 */
 	@SuppressWarnings("unused")
 	private void setGraphPanelSize() {
-		int nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size() - 1;
-		int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
-		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(SIN).getGraphPanel();
+		int nodeSID = overlord.getWorkspace().getSheets().size() - 1;
+		int SIN = overlord.IDtoIndex(nodeSID);
+		GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(SIN).getGraphPanel();
 		graphPanel.setSize(new Dimension(globalMaxWidth+300, globalMaxHeight+200));
 		graphPanel.setOriginSize(graphPanel.getSize());
 		graphPanel.repaint();

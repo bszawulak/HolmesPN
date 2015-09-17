@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.data.PlacesStateVector;
+import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.StatesManager;
 import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
@@ -35,7 +35,6 @@ import holmes.utilities.Tools;
  * Klasa tworząca okno managera stanów początkowych (m0) sieci.
  * 
  * @author MR
- *
  */
 public class HolmesStatesManager extends JFrame {
 	private static final long serialVersionUID = -4590055483268695118L;
@@ -201,7 +200,6 @@ public class HolmesStatesManager extends JFrame {
 					tableModel.setSelected(selected);
 					statesManager.setNetworkState(selected);
 					pn.repaintAllGraphPanels();
-					
 					tableModel.fireTableDataChanged();
 				}
 			}
@@ -326,7 +324,7 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void addLastStateToTable() {
 		int states = statesManager.accessStateMatrix().size();
-		PlacesStateVector psVector = statesManager.getState(states-1);
+		StatePlacesVector psVector = statesManager.getState(states-1);
 		
 		ArrayList<String> rowVector = new ArrayList<String>();
 		
@@ -353,7 +351,7 @@ public class HolmesStatesManager extends JFrame {
     		else
     			rowVector.add("");
     		
-    		PlacesStateVector psVector = statesManager.getState(row);
+    		StatePlacesVector psVector = statesManager.getState(row);
     		rowVector.add("m0("+(row+1)+")");
     		
     		for(int p=0; p<psVector.getSize(); p++) {

@@ -99,7 +99,7 @@ public class HolmesAbout extends JFrame {
 			
 		}
 		
-		JLabel nameLabel = new JLabel("Holmes v2.00 (alpha)");
+		JLabel nameLabel = new JLabel("Holmes v2.00 (beta rev. 1)");
 		nameLabel.setFont(new Font("Consolas", Font.PLAIN, 25));
 		nameLabel.setBounds(170, 40, 300, 40);
 		panel.add(nameLabel);
@@ -109,7 +109,7 @@ public class HolmesAbout extends JFrame {
 		nameLabel2.setBounds(170, 70, 330, 40);
 		panel.add(nameLabel2);
 		
-		JLabel nameLabel3 = new JLabel("Release: 7-06-2015");
+		JLabel nameLabel3 = new JLabel("Release: 18-09-2015");
 		nameLabel3.setFont(new Font("Consolas", Font.PLAIN, 14));
 		nameLabel3.setBounds(170, 110, 330, 40);
 		panel.add(nameLabel3);
@@ -134,7 +134,7 @@ public class HolmesAbout extends JFrame {
 		
 		textArea.setFont(new Font("Consolas", Font.PLAIN, 15));
 		textArea.append("Versions and authors:\n");
-		textArea.append("Holmes version 2.0, 2015, 47k+ lines of code total \n");
+		textArea.append("Holmes version 2.0, october 2015, 50k+ lines of code total \n");
 		textArea.append("  Radom Marcin, Ph.D.\n");
 		textArea.append("\n");
 		textArea.append("Abyss Version 1.2+, 2014-2015, 30k+ lines of code total \n");

@@ -25,7 +25,7 @@ public class NetSimulationData implements Serializable {
 	public ArrayList<Integer> disabledTransitionsIDs;
 	public ArrayList<Integer> disabledMCTids;
 	public ArrayList<Integer> disabledTotals;
-	public PlacesStateVector startingState;
+	public StatePlacesVector startingState;
 	
 	//wyniki symulacji:
 	public ArrayList<Double> placeTokensAvg;

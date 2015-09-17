@@ -29,6 +29,7 @@ import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesFiringRatesManager;
+import holmes.windows.HolmesSSAwindowManager;
 
 /**
  * Okno ustawień symulatorów programu. Pozwala ustawić parametry symulacji w globalnym obiekcie
@@ -81,7 +82,7 @@ public class HolmesSimSetup extends JFrame {
 	 */
 	private void initializeComponents() {
 		setTitle("Simulator settings");
-		setLocation(30,30);
+		setLocation(parentWindow.getX()+150, parentWindow.getY()+150);
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {}
@@ -430,7 +431,7 @@ public class HolmesSimSetup extends JFrame {
 	private JPanel createGillespieSSASimSettingsPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(x, y, width, height);
-		panel.setBorder(BorderFactory.createTitledBorder("Gillespie SSA settings"));
+		panel.setBorder(BorderFactory.createTitledBorder("Gillespie SSA (Stochastic Simulation Algorithm) settings"));
 		
 		int posX = 10;
 		int posY = 20;
@@ -439,12 +440,10 @@ public class HolmesSimSetup extends JFrame {
 		createFRWindowButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/fireRateIcon.png"));
 		createFRWindowButton.setBounds(posX, posY, 120, 40);
 		createFRWindowButton.setFocusPainted(false);
-		createFRWindowButton.setToolTipText("Loop single transition simulation");
+		createFRWindowButton.setToolTipText("Set transition firing rates for SSA.");
 		createFRWindowButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//new HolmesFiringRatesManager(ego);
-				JOptionPane.showMessageDialog(ego, "This feature is not yet implemented.", 
-						"Simulator unavailable", JOptionPane.INFORMATION_MESSAGE);
+				new HolmesFiringRatesManager(ego);
 			}
 		});
 		panel.add(createFRWindowButton);
@@ -454,16 +453,13 @@ public class HolmesSimSetup extends JFrame {
 		createCompoundsEditorWindowButton.setMargin(new Insets(0, 0, 0, 0));
 		createCompoundsEditorWindowButton.setFocusPainted(false);
 		createCompoundsEditorWindowButton.setBounds(posX+130, posY, 120, 40);
-		createCompoundsEditorWindowButton.setToolTipText("Loop single transition simulation");
+		createCompoundsEditorWindowButton.setToolTipText("Component vectors managaer for SSA.");
 		createCompoundsEditorWindowButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//new HolmesComponentsManager(ego);
-				JOptionPane.showMessageDialog(ego, "This feature is not yet implemented.", 
-						"Simulator unavailable", JOptionPane.INFORMATION_MESSAGE);
+				new HolmesSSAwindowManager(ego);
 			}
 		});
 		panel.add(createCompoundsEditorWindowButton);
-		
 		
 		return panel;
 	}

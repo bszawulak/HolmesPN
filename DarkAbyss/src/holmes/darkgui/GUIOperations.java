@@ -81,7 +81,7 @@ public class GUIOperations {
 	/**
 	 * Metoda odpowiedzialna za otwieranie pliku z zapisaną siecią w formacie .abyss lub pliku projektu
 	 */
-	public void openAbyssProject() {
+	public void selectAndOpenHolmesProject() {
 		boolean proceed = overlord.reset.newProjectInitiated();
 		if(proceed == false) {
 			return;
@@ -120,7 +120,6 @@ public class GUIOperations {
 				overlord.subnetsGraphics.resizePanels();
 			} else if (extension.toLowerCase().contains(".abyss")) { //ABYSS parser
 				status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
-				
 				overlord.setLastPath(file.getParentFile().getPath());
 			}
 			

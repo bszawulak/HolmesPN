@@ -493,6 +493,7 @@ public class GraphPanel extends JComponent {
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
 			overlord.getWorkspace().getProject().accessStatesManager().addPlace();
+			overlord.getWorkspace().getProject().accessSSAmanager().addPlace();
 		}
 	}
 

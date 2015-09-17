@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * Model tabeli prostego wyświetlania inwariantów - tylko ID i opis.
+ * 
+ * @author MR
+ */
 public class InvariantsSimpleTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = -1188248363088935217L;
 	private String[] columnNames;
@@ -24,7 +29,8 @@ public class InvariantsSimpleTableModel extends DefaultTableModel {
 	
 	/**
 	 * Metoda służaca do dodawania nowego wiersza (inwariantu) do tabeli danych.
-	 * @param dataRow ArrayList[String] - wiersz danych
+	 * @param id int - id inwariantu
+	 * @param name String - opis
 	 */
 	public void addNew(int id, String name) {
 		ArrayList<String> vector = new ArrayList<String>();

@@ -36,6 +36,9 @@ public class Place extends Node {
 	
 	public Color defColor = Color.WHITE;
 	
+	//SSA:
+	private double ssaValue = 0.0;
+	
 	/**
 	 * Konstruktor obiektu miejsca sieci.
 	 * @param nodeId int - identyfikator wierzchołka
@@ -165,6 +168,27 @@ public class Place extends Node {
 			return "(P" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(this)+")";
 		}
 	}
+	
+	//****************************************************************************************************************************
+	//********************************************      SSA       ****************************************************************
+	//****************************************************************************************************************************
+	
+	/**
+	 * Ustawia nową wartość cząstek dla miejsca w symulacji SSA.
+	 * @param value double - nowa wartość
+	 */
+	public void setSSAvalue(double value) {
+		this.ssaValue = value;
+	}
+	
+	/**
+	 * Zwraca aktualną wartość cząstek dla miejsca w symulacji SSA.
+	 * @return double - liczba cząstek
+	 */
+	public double getSSAvalue() {
+		return this.ssaValue;
+	}
+	
 	
 	//****************************************************************************************************************************
 	//****************************************************************************************************************************

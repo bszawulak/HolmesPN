@@ -187,7 +187,7 @@ public class Toolbar extends BorderDock {
 					private static final long serialVersionUID = -8017306615290773915L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().io.openAbyssProject();
+				GUIManager.getDefaultGUIManager().io.selectAndOpenHolmesProject();
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableOpen", openButton));

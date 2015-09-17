@@ -75,7 +75,7 @@ public class PTITableRenderer implements TableCellRenderer {
 		
 		renderer.setBackground(Color.white);
     	renderer.setFont(new Font("Arial", Font.BOLD, 9));
-    	InvariantsSimTableModel modelInvariants = (InvariantsSimTableModel) table.getModel();
+    	InvariantsSimulatorTableModel modelInvariants = (InvariantsSimulatorTableModel) table.getModel();
     	
 		if(modelInvariants.getInfeasibleInvariants().contains(row) == true) { //cały inw. na jasno szary
 			renderer.setBackground(Color.lightGray);
