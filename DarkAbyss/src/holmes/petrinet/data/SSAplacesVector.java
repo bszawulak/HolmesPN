@@ -20,7 +20,7 @@ public class SSAplacesVector {
 	 */
 	public SSAplacesVector() {
 		stateVector = new ArrayList<Double>();
-		description = "Default data vector description";
+		description = "Default SSA data vector description";
 		type = SSAdataType.CAPACITY;
 		experimentVolume = 0.0;
 	}
