@@ -227,6 +227,7 @@ public class HolmesFiringRatesManager extends JFrame {
 					firingRatesManager.addCurrentStateAsFRVector();
 					addLastStateToTable();
 					tableModel.fireTableDataChanged();
+					overlord.markNetChange();
 				}
 			}
 		});
@@ -278,11 +279,9 @@ public class HolmesFiringRatesManager extends JFrame {
 				int selected = table.getSelectedRow();
 				if(selected > -1)
 					new HolmesFiringRatesEditor(ego, firingRatesManager.getFRVector(selected), selected);
-				//removeStateAction();
 			}
 		});
 		result.add(editStateButton);
-		
 	    return result;
 	}
 	
@@ -310,6 +309,7 @@ public class HolmesFiringRatesManager extends JFrame {
 		
 		firingRatesManager.removeFRVector(selected);
 		fillTable();
+		overlord.markNetChange();
 	}
 	
 	/**
@@ -337,6 +337,7 @@ public class HolmesFiringRatesManager extends JFrame {
 		
 		firingRatesManager.replaceFRvectorWithNetState(selected);
 		fillTable();
+		overlord.markNetChange();
 	}
 	
 	/**
@@ -345,7 +346,6 @@ public class HolmesFiringRatesManager extends JFrame {
 	 */
 	private void addLastStateToTable() {
 		int states = firingRatesManager.accessFRMatrix().size();
-		//TransFiringRateVector frVector = firingRatesManager.getFRVector(states-1);
 		tableModel.addNew("", states-1, firingRatesManager.getFRVectorDescription(states-1));
 	}
 
@@ -377,6 +377,7 @@ public class HolmesFiringRatesManager extends JFrame {
             		selectedRow = table.getSelectedRow();
             		fillTable();
             		table.setRowSelectionInterval(selectedRow, selectedRow);
+            		overlord.markNetChange();
             	}
             }
         });

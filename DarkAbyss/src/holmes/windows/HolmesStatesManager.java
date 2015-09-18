@@ -38,6 +38,7 @@ import holmes.utilities.Tools;
  */
 public class HolmesStatesManager extends JFrame {
 	private static final long serialVersionUID = -4590055483268695118L;
+	private GUIManager overlord;
 	private StatesPlacesTableRenderer tableRenderer;
 	private StatesPlacesTableModel tableModel;
 	private JTable statesTable;
@@ -61,8 +62,8 @@ public class HolmesStatesManager extends JFrame {
 		} catch (Exception e ) {
 			
 		}
-    	
-    	pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+    	overlord = GUIManager.getDefaultGUIManager();
+    	pn = overlord.getWorkspace().getProject();
     	places = pn.getPlaces();
     	statesManager = pn.accessStatesManager();
     	selectedRow = 0;
@@ -70,7 +71,7 @@ public class HolmesStatesManager extends JFrame {
     	
     	initalizeComponents();
     	initiateListeners();
-    	GUIManager.getDefaultGUIManager().getFrame().setEnabled(false);
+    	overlord.getFrame().setEnabled(false);
     	fillTable();
     	setVisible(true);
 	}
@@ -164,6 +165,7 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	public void changeState(int row, int column, double value) {
 		statesManager.getState(row).accessVector().set(column-2, value);
+		overlord.markNetChange();
 	}
 	
 	/**
@@ -196,11 +198,11 @@ public class HolmesStatesManager extends JFrame {
 								"Set new state?", JOptionPane.YES_NO_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 				if (n == 0) {
-					
 					tableModel.setSelected(selected);
 					statesManager.setNetworkState(selected);
 					pn.repaintAllGraphPanels();
 					tableModel.fireTableDataChanged();
+					overlord.markNetChange();
 				}
 			}
 		});
@@ -226,7 +228,6 @@ public class HolmesStatesManager extends JFrame {
 					statesManager.addCurrentState();
 					addLastStateToTable();
 					tableModel.fireTableDataChanged();
-					//fillTable();
 				}
 			}
 		});
@@ -298,6 +299,7 @@ public class HolmesStatesManager extends JFrame {
 		
 		statesManager.removeState(selected);
 		fillTable();
+		overlord.markNetChange();
 	}
 	
 	/**
@@ -316,6 +318,7 @@ public class HolmesStatesManager extends JFrame {
 		
 		statesManager.replaceStateWithNetState(selected);
 		fillTable();
+		overlord.markNetChange();
 	}
 	
 	/**
@@ -334,6 +337,7 @@ public class HolmesStatesManager extends JFrame {
 			rowVector.add(""+psVector.getTokens(p));
     	}
 		tableModel.addNew(rowVector);
+		overlord.markNetChange();
 	}
 	
 	/**
@@ -428,7 +432,7 @@ public class HolmesStatesManager extends JFrame {
     private void initiateListeners() { //HAIL SITHIS
     	addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		    	GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
+		    	overlord.getFrame().setEnabled(true);
 		    }
 		});
     }

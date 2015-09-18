@@ -495,7 +495,7 @@ public class DarkMenu extends JMenuBar {
 		
 		JMenuItem genMCTGroups = new JMenuItem("Generate MCT Groups", KeyEvent.VK_1);
 		genMCTGroups.setIcon(Tools.getResIcon32("/icons/menu/menu_genMCT.png"));
-		genMCTGroups.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,ActionEvent.CTRL_MASK));
+		//genMCTGroups.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,ActionEvent.CTRL_MASK));
 		genMCTGroups.getAccessibleContext().setAccessibleDescription("Generate MCT Groups");
 		genMCTGroups.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

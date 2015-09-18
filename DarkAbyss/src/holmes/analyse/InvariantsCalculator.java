@@ -30,6 +30,7 @@ import holmes.windows.HolmesInvariantsGenerator;
  * @author MR (Nie chwaląc się, jam to popełnił)
  */
 public class InvariantsCalculator implements Runnable {
+	private GUIManager overlord;
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
 	private ArrayList<Place> places = new ArrayList<Place>();
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
@@ -65,12 +66,13 @@ public class InvariantsCalculator implements Runnable {
 	 * @param transCal boolean - true, jeśli liczymy T-inwarianty, false dla P-inwariantów
 	 */
 	public InvariantsCalculator(boolean transCal) {
-		masterWindow = GUIManager.getDefaultGUIManager().accessInvariantsWindow();
+		overlord = GUIManager.getDefaultGUIManager();
+		masterWindow = overlord.accessInvariantsWindow();
 		
 		t_InvMode = transCal;
-		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
+		places = overlord.getWorkspace().getProject().getPlaces();
+		transitions = overlord.getWorkspace().getProject().getTransitions();
+		arcs = overlord.getWorkspace().getProject().getArcs();
 		
 		zeroColumnVector = new ArrayList<Integer>();
 		nonZeroColumnVector = new ArrayList<Integer>();
@@ -87,11 +89,11 @@ public class InvariantsCalculator implements Runnable {
 				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode);
 				this.calculateInvariants();
 				
-				PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-				GUIManager.getDefaultGUIManager().getT_invBox().showT_invBoxWindow(getInvariants(true));
+				PetriNet project = overlord.getWorkspace().getProject();
+				overlord.getT_invBox().showT_invBoxWindow(getInvariants(true));
 				project.setT_InvMatrix(getInvariants(true), true);
-				GUIManager.getDefaultGUIManager().reset.setT_invariantsStatus(true);
-				GUIManager.getDefaultGUIManager().accessNetTablesWindow().resetT_invData();
+				overlord.reset.setT_invariantsStatus(true);
+				overlord.accessNetTablesWindow().resetT_invData();
 				logInternal("Operation successfull, invariants found: "+getInvariants(true).size()+"\n", true);
 				
 				ArrayList<Integer> arcClasses =  Check.getArcClassCount();
@@ -122,14 +124,16 @@ public class InvariantsCalculator implements Runnable {
 				logInternal("Sub-t-invariants (Cx < 0): "+results.get(0).get(2)+"\n", false);
 				logInternal("Non-t-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n", false);
 				logInternal("=====================================================================\n", false);
+				
+				overlord.markNetChange();
 			} else { //P-invariants
 				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode); //t_InvMode == false
 				this.calculateInvariants();
 
-				PetriNet project = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-				GUIManager.getDefaultGUIManager().getP_invBox().showP_invBoxWindow(getInvariants(false));
+				PetriNet project = overlord.getWorkspace().getProject();
+				overlord.getP_invBox().showP_invBoxWindow(getInvariants(false));
 				project.setP_InvMatrix(getInvariants(false));
-				GUIManager.getDefaultGUIManager().reset.setP_invariantsStatus(true);
+				overlord.reset.setP_invariantsStatus(true);
 				logInternal("Operation successfull, invariants found: "+getInvariants(false).size()+"\n", true);
 				
 				ArrayList<Integer> arcClasses =  Check.getArcClassCount();
@@ -156,6 +160,8 @@ public class InvariantsCalculator implements Runnable {
 				logInternal("Sub-p-invariants (Cx < 0): "+results.get(0).get(2)+"\n", false);
 				logInternal("Non-p-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n", false);
 				logInternal("=====================================================================\n", false);
+				
+				overlord.markNetChange();
 			}
 		} catch (Exception e) {
 			log("Invariants generation failed.", "warning", false);
@@ -575,7 +581,7 @@ public class InvariantsCalculator implements Runnable {
 			
 			if(resList.size() > 1) {
 				if(added == false) {
-					GUIManager.getDefaultGUIManager().log("Critical error calculating invariants. Error 00011", "error", true);
+					overlord.log("Critical error calculating invariants. Error 00011", "error", true);
 					//System.out.println("Inwariant się nie nadaje, ale jest mniejszy niż obecne w macierzy! ERROR!");		
 				}
 				
@@ -746,7 +752,7 @@ public class InvariantsCalculator implements Runnable {
 			 * na jakimś elemencie jest mniejszy, a nie tylko mniejszy/równy (CanInRefStrong > 0).
 			 */
 		} else {
-			GUIManager.getDefaultGUIManager().log("CheckCoverability function: catastrophic error, impossible state detected.", "error", true);
+			overlord.log("CheckCoverability function: catastrophic error, impossible state detected.", "error", true);
 			return 3; //teoretycznie NIGDY nie powinniśmy się tu pojawić
 		}
 	}
@@ -944,9 +950,9 @@ public class InvariantsCalculator implements Runnable {
 	 */
 	private void log(String msg, String type, boolean clean) {
 		if(clean) {
-			GUIManager.getDefaultGUIManager().log(msg, type, false);
+			overlord.log(msg, type, false);
 		} else {
-			GUIManager.getDefaultGUIManager().log("InvModule: "+msg, type, true);
+			overlord.log("InvModule: "+msg, type, true);
 		}
 	}
 	

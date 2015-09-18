@@ -226,16 +226,19 @@ public class HolmesFunctionalTrans extends JFrame {
 				enabledCheckBox.setSelected(false);
 				currentResult.setText("");
 				commentField.setText("");
+				
+				overlord.markNetChange();
 			}
 		});
 		resultPanel.add(clearButton);
 		
 		JCheckBox functionalActiveButton = new JCheckBox("Functional transition");
 		functionalActiveButton.setBounds(posX+650, posY+80, 150, 20);
-		if(transition.isFunctional())
+		if(transition.isFunctional()) {
 			functionalActiveButton.setSelected(true);
-		else
+		} else {
 			functionalActiveButton.setSelected(false);
+		}
 
 		functionalActiveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -247,6 +250,7 @@ public class HolmesFunctionalTrans extends JFrame {
 					transition.setFunctional(false);
 				}
 				pn.repaintAllGraphPanels();
+				overlord.markNetChange();
 			}
 		});
 		resultPanel.add(functionalActiveButton);
@@ -297,6 +301,7 @@ public class HolmesFunctionalTrans extends JFrame {
 		}
 		
 		tableFunc.setRowSelectionInterval(row, row);
+		overlord.markNetChange();
 	}
 
 	/**
@@ -408,6 +413,10 @@ public class HolmesFunctionalTrans extends JFrame {
 		}
 	}
 
+	/**
+	 * Tworzy panel tabeli informacyjnej z listą miejsc sieci.
+	 * @return JPanel - panel, a co ma być?
+	 */
 	private JPanel createPlacesTablePanel() {
 		JPanel resultPanel = new JPanel(new BorderLayout());
 		resultPanel.setPreferredSize(new Dimension(900, 200));

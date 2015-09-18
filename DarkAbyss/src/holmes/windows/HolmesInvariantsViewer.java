@@ -365,6 +365,7 @@ public class HolmesInvariantsViewer extends JFrame {
             		newComment = field.getText();
 
 				changeInvDescr(newComment);
+				overlord.markNetChange();
             }
         });
 			

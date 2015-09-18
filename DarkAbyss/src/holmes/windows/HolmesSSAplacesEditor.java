@@ -206,6 +206,7 @@ public class HolmesSSAplacesEditor extends JFrame {
 	 */
 	public void changeRealValue(int index, int placeID, double newValue) {
 		ssaManager.getSSAvector(index).accessVector().set(placeID, newValue);
+		overlord.markNetChange();
 	}
 	
 	/**

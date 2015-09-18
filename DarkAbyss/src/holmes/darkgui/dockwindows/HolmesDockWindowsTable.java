@@ -683,6 +683,7 @@ public class HolmesDockWindowsTable extends JPanel {
 				}
 				String newName = (String) field.getText();
 				changeName(newName);
+				overlord.markNetChange();
 			}
 		});
 		components.add(nameField);
@@ -701,6 +702,7 @@ public class HolmesDockWindowsTable extends JPanel {
             	if(field != null)
             		newComment = field.getText();
 				changeComment(newComment);
+				overlord.markNetChange();
             }
         });
 		
@@ -730,6 +732,7 @@ public class HolmesDockWindowsTable extends JPanel {
 				JSpinner spinner = (JSpinner) e.getSource();
 				int tokenz = (int) spinner.getValue();
 				setTokens(tokenz);
+				overlord.markNetChange();
 			}
 		});
 		if(problem)
@@ -738,8 +741,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
 		//SHEET ID
 		int sheetIndex = overlord.IDtoIndex(location.getSheetID());
-		GraphPanel graphPanel = overlord
-				.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 		int xPos = location.getPosition().x;
 		int width =  graphPanel.getSize().width;
 		int zoom = graphPanel.getZoom();
@@ -823,8 +825,10 @@ public class HolmesDockWindowsTable extends JPanel {
 					if(((Place)element).getElementLocations().size() > 1)
 						JOptionPane.showMessageDialog(null, "Place contains more than one location!", "Cannot proceed", 
 								JOptionPane.INFORMATION_MESSAGE);
-					else
+					else {
 						unPortal();
+						overlord.markNetChange();
+					}
 				}
 			}
 		});
@@ -1003,6 +1007,7 @@ public class HolmesDockWindowsTable extends JPanel {
 				}
 				String newName = (String) field.getText();
 				changeName(newName);
+				overlord.markNetChange();
 			}
 		});
 		components.add(nameField);
@@ -1022,6 +1027,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	            	if(field != null)
 	            		newComment = field.getText();
 					changeComment(newComment);
+					overlord.markNetChange();
 	            }
 	        });
 		
@@ -1119,8 +1125,10 @@ public class HolmesDockWindowsTable extends JPanel {
 					if(((Transition)element).getElementLocations().size() > 1)
 						JOptionPane.showMessageDialog(null, "Transition contains more than one location!", "Cannot proceed", 
 								JOptionPane.INFORMATION_MESSAGE);
-					else
+					else {
 						unPortal();
+						overlord.markNetChange();
+					}
 				}
 			}
 		});
@@ -1334,6 +1342,7 @@ public class HolmesDockWindowsTable extends JPanel {
 				}
 				String newName = (String) field.getText();
 				changeName(newName);
+				overlord.markNetChange();
 			}
 		});
 		components.add(nameField);
@@ -1353,6 +1362,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	            	if(field != null)
 	            		newComment = field.getText();
 					changeComment(newComment);
+					overlord.markNetChange();
 	            }
 	        });
 		
@@ -1378,6 +1388,7 @@ public class HolmesDockWindowsTable extends JPanel {
 				}						
 				double min = (double) field.getValue();
 				setMinFireTime(min);
+				overlord.markNetChange();
 			}
 		});
 
@@ -1392,6 +1403,7 @@ public class HolmesDockWindowsTable extends JPanel {
 				}						
 				double max = (double) field.getValue();
 				setMaxFireTime(max);
+				overlord.markNetChange();
 			}
 		});
 
@@ -1417,10 +1429,10 @@ public class HolmesDockWindowsTable extends JPanel {
 					field.commitEdit();
 					double time = (double) field.getValue();
 					setDurationTime(time);
+					overlord.markNetChange();
 				} catch (Exception ex) {
+					
 				}
-				
-				
 			}
 		});
 		components.add(durationField);
@@ -1437,6 +1449,8 @@ public class HolmesDockWindowsTable extends JPanel {
 					setTPNstatus(true);
 				else
 					setTPNstatus(false);
+				
+				overlord.markNetChange();
 			}
 		});
 		components.add(tpnBox);
@@ -1453,6 +1467,8 @@ public class HolmesDockWindowsTable extends JPanel {
 					setDPNstatus(true);
 				else
 					setDPNstatus(false);
+				
+				overlord.markNetChange();
 			}
 		});
 		components.add(dpnBox);
@@ -1542,8 +1558,10 @@ public class HolmesDockWindowsTable extends JPanel {
 					if(((Transition)element).getElementLocations().size() > 1)
 						JOptionPane.showMessageDialog(null, "Transition contains more than one location!", "Cannot proceed", 
 								JOptionPane.INFORMATION_MESSAGE);
-					else
+					else {
 						unPortal();
+						overlord.markNetChange();
+					}
 				}
 			}
 		});
@@ -1568,6 +1586,8 @@ public class HolmesDockWindowsTable extends JPanel {
 					((Transition)element).setFunctional(true);
 				else
 					((Transition)element).setFunctional(false);
+				
+				overlord.markNetChange();
 			}
 		});
 		components.add(functionalCheckBox);
@@ -1767,6 +1787,7 @@ public class HolmesDockWindowsTable extends JPanel {
 				}
 				String newName = (String) field.getText();
 				changeName(newName);
+				overlord.markNetChange();
 			}
 		});
 		components.add(nameField);
@@ -1786,6 +1807,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	            	if(field != null)
 	            		newComment = field.getText();
 					changeComment(newComment);
+					overlord.markNetChange();
 	            }
 	        });
 		

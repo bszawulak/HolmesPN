@@ -215,6 +215,7 @@ public class HolmesFiringRatesEditor extends JFrame {
 	 */
 	public void changeRealValue(int index, int transID, double newValue) {
 		firingRatesManager.getFRVector(index).accessVector().get(transID).fr = newValue;
+		overlord.markNetChange();
 	}
 	
 	/**

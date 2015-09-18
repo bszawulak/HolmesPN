@@ -175,6 +175,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 					overlord.io.generateINAinvariants(true);
 					overlord.reset.setT_invariantsStatus(true);
 					overlord.accessNetTablesWindow().resetT_invData();
+					overlord.markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, "INAwin32.exe status set to non ready. Please read initial warnings\n"
 							+ "in the Holmes log windows for more information.", "INAwin32 problem",JOptionPane.ERROR_MESSAGE);
@@ -198,6 +199,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 					logFieldTinv.append("=====================================================================\n");
 					logFieldTinv.append("Loaded t-invariants: "+overlord.getWorkspace().getProject().getT_InvMatrix().size()+"\n");
 					logFieldTinv.append("=====================================================================\n");
+					overlord.markNetChange();
 				} else {
 					logFieldTinv.append("\n");
 					logFieldTinv.append("Loading t-invariants from file has been unsuccessfull.\n");
@@ -497,6 +499,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 					overlord.io.generateINAinvariants(false);
 					overlord.reset.setP_invariantsStatus(true);
 					ArrayList<ArrayList<Integer>> pInv = overlord.getWorkspace().getProject().getP_InvMatrix();
+					overlord.markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, "INAwin32.exe status set to non ready. Please read initial warnings\n"
 							+ "in the Holmes log windows for more information.", "INAwin32 problem",JOptionPane.ERROR_MESSAGE);
@@ -519,6 +522,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 					logFieldPinv.append("=====================================================================\n");
 					logFieldPinv.append("Loaded p-invariants: "+overlord.getWorkspace().getProject().getP_InvMatrix().size()+"\n");
 					logFieldPinv.append("=====================================================================\n");
+					overlord.markNetChange();
 				} else {
 					logFieldPinv.append("\n");
 					logFieldPinv.append("P-invariants reading has been unsuccessfull.\n");
@@ -1097,6 +1101,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 			project.setT_InvMatrix(invariants, false);
 			overlord.io.exportGeneratedInvariants(true);
 			overlord.getT_invBox().showT_invBoxWindow(project.getT_InvMatrix());
+			overlord.markNetChange();
 		} else if(n == 1) {
 			ArrayList<ArrayList<Integer>> invBackup = overlord.getWorkspace().getProject().getT_InvMatrix();
 			try {
@@ -1110,6 +1115,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 			PetriNet project = overlord.getWorkspace().getProject();
 			project.setT_InvMatrix(invariants, false);
 			overlord.getT_invBox().showT_invBoxWindow(project.getT_InvMatrix());
+			overlord.markNetChange();
 		} //else: nic
 	}
 	

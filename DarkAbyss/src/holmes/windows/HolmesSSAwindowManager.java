@@ -314,6 +314,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		
 		ssaManager.removeSSAvector(selected);
 		fillTable();
+		overlord.markNetChange();
 	}
 	
 	/**
@@ -341,6 +342,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		
 		ssaManager.replaceSSAvectorWithNetState(selected);
 		fillTable();
+		overlord.markNetChange();
 	}
 	
 	/**
@@ -351,6 +353,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		int states = ssaManager.accessSSAmatrix().size();
 		SSAplacesVector ssaV = ssaManager.getSSAvector(states-1);
 		tableModel.addNew("", states-1, ssaV.getDescription(), ssaV.getType(), ssaV.getVolume());
+		overlord.markNetChange();
 	}
 
 	/**
@@ -381,6 +384,7 @@ public class HolmesSSAwindowManager extends JFrame {
             		selectedRow = table.getSelectedRow();
             		fillTable();
             		table.setRowSelectionInterval(selectedRow, selectedRow);
+            		overlord.markNetChange();
             	}
             }
         });
