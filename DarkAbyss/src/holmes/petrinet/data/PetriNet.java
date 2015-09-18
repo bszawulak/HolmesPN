@@ -43,7 +43,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.simpleframework.xml.Root;
 
-@Root
+
 /**
  * Klasa przechowująca listy wszystkich obiektów projektu oraz arkusze. Dodatkowo agreguje
  * metody działające na sieci - zapis, odczyt, generowanie MCT, klastrów, itd.
@@ -51,11 +51,12 @@ import org.simpleframework.xml.Root;
  * @author MR - dodatkowe metody
  *
  */
+@Root
 public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
-	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //macierz inwariantów
+	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //macierz t-inwariantów
 	private ArrayList<String> t_invariantsDescriptions;
-	private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //macierz inwariantów
+	private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //macierz p-inwariantów
 	private ArrayList<String> p_invariantsDescriptions;
 	
 	private ArrayList<ArrayList<Transition>> mctData;
@@ -86,6 +87,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	public boolean anythingChanged = false;
 	public GUIManager overlord;
+	
+	/** PN, timePN, extPN, funcPN, timeFuncPN, timeExtPN, funcExtPN, timeFuncExtPN, stochasticPN, stochasticFuncPN */
+	public enum GlobalNetType { PN, timePN, extPN, funcPN, timeFuncPN, timeExtPN, funcExtPN, timeFuncExtPN, stochasticPN, stochasticFuncPN }
+	/** SPPED, SPEPT, SPTPT, HOLMESPROJECT */
+	public enum GlobalFileNetType { SPPED, SPEPT, SPTPT, HOLMESPROJECT }
+	
 	
 	/**
 	 * Konstruktor obiektu klasy PetriNet - działa dla symulatora inwariantów.
@@ -1006,6 +1013,17 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		boolean status = sWr.writeSPEPT(filePath);
 		return status;
 	}
+	
+	/**
+	 * Metoda pozwala zapisać sieć do formatu SPTPT (czasowe) programu Snoopy.
+	 * @param filePath String - ścieżka docelowa pliku
+	 * @return boolean - status operacji: true jeśli nie było problemów
+	 */
+	public boolean saveAsSPTPT(String filePath) {
+		SnoopyWriter sWr = new SnoopyWriter();
+		boolean status = sWr.writeSPTPT(filePath);
+		return status;
+	}
 
 	/**
 	 * Metoda pozwala na odczyt całej sieci z pliku podanego w parametrze metody.
@@ -1478,4 +1496,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		setGraphPanels(newGraphPanels);
 		repaintAllGraphPanels();
 	}
+	
+	
 }

@@ -951,8 +951,9 @@ public class SubnetsControl {
 		SubnetsSnoopyCompatibility sc = new SubnetsSnoopyCompatibility();
 		ArrayList<ArrayList<Integer>> results = sc.macroCheck();
 		if(results == null) {
-			status = sc.checkAndFix(true);
+			return true;
 		} else {
+			status = sc.checkAndFix(true);
 			HolmesNotepad notePad = new HolmesNotepad(900,600);
 			
 			ArrayList<Integer> problemMultiEL = results.get(0);
@@ -977,9 +978,8 @@ public class SubnetsControl {
 			}
 			notePad.addTextLineNL(" ------ ", "text");
 			notePad.setVisible(true);
-			return false;
+			return status;
 		}
-		return status;
 	}
 
 	/** 

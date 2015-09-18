@@ -42,7 +42,7 @@ import com.javadocking.visualizer.SingleMaximizer;
  */
 public class Toolbar extends BorderDock {
 	private static final long serialVersionUID = 640320332920131092L;
-	private GUIManager guiManager;
+	private GUIManager overlord;
 	private SingleMaximizer maximizePanel;
 	private BorderDock toolBarBorderDock;
 	private CompositeLineDock horizontalCompositeToolBarDock;
@@ -67,8 +67,8 @@ public class Toolbar extends BorderDock {
 	 * Konstruktor domyślny obiektu klasy Toolbar.
 	 */
 	public Toolbar() {
-		guiManager = GUIManager.getDefaultGUIManager();
-		maximizePanel = guiManager.getMaximizer();
+		overlord = GUIManager.getDefaultGUIManager();
+		maximizePanel = overlord.getMaximizer();
 		ioButtonsDockables = new ArrayList<ButtonDockable>();
 
 		createIObuttons();
@@ -177,7 +177,7 @@ public class Toolbar extends BorderDock {
 					private static final long serialVersionUID = -3039335266465055547L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				//GUIManager.getDefaultGUIManager().getWorkspace().newTab(true, new Point(0,0), 1, MetaType.SUBNET);
+				//overlord.getWorkspace().newTab(true, new Point(0,0), 1, MetaType.SUBNET);
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableAdd", addButton));
@@ -187,7 +187,7 @@ public class Toolbar extends BorderDock {
 					private static final long serialVersionUID = -8017306615290773915L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().io.selectAndOpenHolmesProject();
+				overlord.io.selectAndOpenHolmesProject();
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableOpen", openButton));
@@ -198,10 +198,32 @@ public class Toolbar extends BorderDock {
 					private static final long serialVersionUID = 5723070117312880726L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().io.importProject();
+				overlord.io.importProject();
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableImport", importButton));
+
+		//zapis jako projekt
+		ToolbarButtonAction saveProjectButton = new ToolbarButtonAction(this,
+				"Save project", "Save Petri net as Holmes project file (always right option)", Tools.getResIcon48("/icons/toolbar/holmesSave.png")) {
+					private static final long serialVersionUID = 5723070117312880726L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
+				overlord.io.saveAsAbyssFile();
+			}
+		};
+		ioDockables.add(createButtonDockable("ButtonDockableImport", saveProjectButton));
+				
+		//export projektu do snoopiego
+		ToolbarButtonAction exportButton = new ToolbarButtonAction(this,
+				"Export net", "Export Petri net to other file formats", Tools.getResIcon48("/icons/toolbar/snoopyExport.png")) {
+					private static final long serialVersionUID = 5723070117312880726L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
+				overlord.io.saveAsGlobal();
+			}
+		};
+		ioDockables.add(createButtonDockable("ButtonDockableImport", exportButton));
 		
 		//zapis obrazu sieci do pliku
 		ToolbarButtonAction pictureButton = new ToolbarButtonAction(this,
@@ -209,7 +231,7 @@ public class Toolbar extends BorderDock {
 					private static final long serialVersionUID = 932011484445458070L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().io.exportProjectToImage();
+				overlord.io.exportProjectToImage();
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableImport", pictureButton));
@@ -218,7 +240,7 @@ public class Toolbar extends BorderDock {
 					private static final long serialVersionUID = -5107926050446252487L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+				overlord.getWorkspace().getProject().repaintAllGraphPanels();
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableRefresh", refreshButton));
@@ -228,7 +250,7 @@ public class Toolbar extends BorderDock {
 					private static final long serialVersionUID = 2969893062492924300L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
+				overlord.reset.newProjectInitiated();
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableRefresh", clearProject));
@@ -247,7 +269,7 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction generateINAinvariants = new ToolbarButtonAction(this, "GenerateINA", "Generate invariants using INA", 
 				Tools.getResIcon48("/icons/toolbar/terminal.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().io.generateINAinvariants();
+				overlord.io.generateINAinvariants();
 			}
 		};
 		analysisDockables.add(createButtonDockable("GenerateINAinv",generateINAinvariants));
@@ -256,7 +278,7 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction clusterButton = new ToolbarButtonAction(this, "ClusterAnalysis", "Cluster creation and analysis", 
 				Tools.getResIcon48("/icons/toolbar/clusters.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().showClusterWindow(); 
+				overlord.showClusterWindow(); 
 			}
 		};
 		analysisDockables.add(createButtonDockable("Clusters", clusterButton));
@@ -264,7 +286,7 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction netTablesButton = new ToolbarButtonAction(this, "NetDataTables", "Show net data as tables", 
 				Tools.getResIcon48("/icons/toolbar/netTables.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().showNetTablesWindow(); 
+				overlord.showNetTablesWindow(); 
 			}
 		};
 		analysisDockables.add(createButtonDockable("NetTables", netTablesButton));
@@ -272,7 +294,7 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction netSimLogButton = new ToolbarButtonAction(this, "NetSimLog", "Network simulation log", 
 				Tools.getResIcon32("/icons/toolbar/simLog.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().showSimLogWindow();
+				overlord.showSimLogWindow();
 			}
 		};
 		netSimLogButton.setEnabled(false);
@@ -281,7 +303,7 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction consoleButton = new ToolbarButtonAction(this, "ShowConsole", "Show program log console", 
 				Tools.getResIcon48("/icons/toolbar/terminal2.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().showConsole(true); 
+				overlord.showConsole(true); 
 
 			}
 		};
@@ -290,7 +312,7 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction cleanButton = new ToolbarButtonAction(this, "ClearColors", "Restore net default colors", 
 				Tools.getResIcon48("/icons/toolbar/cleanGraphColors.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().reset.clearGraphColors();
+				overlord.reset.clearGraphColors();
 			}
 		};
 		analysisDockables.add(createButtonDockable("CleanColor", cleanButton));
@@ -317,8 +339,8 @@ public class Toolbar extends BorderDock {
 			@SuppressWarnings("unused")
 			public void actionPerformed(ActionEvent actionEvent) 
 			{ 
-				JTree test = GUIManager.getDefaultGUIManager().getToolBox().getTree();
-				GUIManager.getDefaultGUIManager().getToolBox().selectPointer();
+				JTree test = overlord.getToolBox().getTree();
+				overlord.getToolBox().selectPointer();
 				//test.setSelectionPath(new TreePath());
 				int x = 1;
 				
@@ -377,12 +399,12 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction gridButton = new ToolbarButtonAction(this, "ShowGrid", "Show grid line", 
 				Tools.getResIcon32("/icons/toolbar/grid.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridLines").equals("1"))
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGridLines", "0", true);
+				if(overlord.getSettingsManager().getValue("editorGridLines").equals("1"))
+					overlord.getSettingsManager().setValue("editorGridLines", "0", true);
 				else
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGridLines", "1", true);
+					overlord.getSettingsManager().setValue("editorGridLines", "1", true);
 				
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+				overlord.getWorkspace().getProject().repaintAllGraphPanels();
 			}
 		};
 		analysisDockables.add(createButtonDockable("GridButton", gridButton));
@@ -392,7 +414,7 @@ public class Toolbar extends BorderDock {
 			public void actionPerformed(ActionEvent actionEvent) {
 				NetworkTransformations nt = new NetworkTransformations();
 				nt.alignNetToGrid();
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+				overlord.getWorkspace().getProject().repaintAllGraphPanels();
 			}
 		};
 		analysisDockables.add(createButtonDockable("GridAlignButton", gridAlignButton));
@@ -507,8 +529,8 @@ public class Toolbar extends BorderDock {
 		reverseLoopButton = new ToolbarButtonAction(this, "LoopBack", "Loop back to oldest action saved",
 				Tools.getResIcon48("/icons/toolbar/sim_back.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP_BACK);
+				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP_BACK);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableStepBack",reverseLoopButton));
@@ -516,8 +538,8 @@ public class Toolbar extends BorderDock {
 		reverseStepButton = new ToolbarButtonAction(this, "StepBack", "Single action back simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_back_step.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
+				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepBack", reverseStepButton));
@@ -525,8 +547,8 @@ public class Toolbar extends BorderDock {
 		loopSimButton = new ToolbarButtonAction(this, "Loop", "Loop simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_start.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP);
+				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableLoopSim",loopSimButton));
@@ -534,8 +556,8 @@ public class Toolbar extends BorderDock {
 		singleTransitionLoopSimButton = new ToolbarButtonAction(this, "LoopSingleTrans", "Loop single transition simulation", 
 				Tools.getResIcon48("/icons/toolbar/sim_start_single.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
+				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableLoopSingleTransitionSim",
@@ -544,8 +566,8 @@ public class Toolbar extends BorderDock {
 		pauseSimButton = new ToolbarButtonAction(this, "Pause", "Pause simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_pause.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().pause();
+				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+				overlord.getWorkspace().getProject().getSimulator().pause();
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockablePauseSim",pauseSimButton));
@@ -553,7 +575,7 @@ public class Toolbar extends BorderDock {
 		stopSimButton = new ToolbarButtonAction(this, "Stop", "Schedule a stop for the simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_stop.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().stop();
+				overlord.getWorkspace().getProject().getSimulator().stop();
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableStopSim",stopSimButton));
@@ -562,8 +584,8 @@ public class Toolbar extends BorderDock {
 				Tools.getResIcon48("/icons/toolbar/sim_forward_step.png")) {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION);
+				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepFwdSim", smallStepFwdSimButton));
@@ -571,8 +593,8 @@ public class Toolbar extends BorderDock {
 		stepFwdSimButton = new ToolbarButtonAction(this, "StepForward", "Step forward simulation",
 				Tools.getResIcon48("/icons/toolbar/sim_forward.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().setGraphMode(DrawModes.POINTER);
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.STEP);
+				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.STEP);
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableStepFwdSim", stepFwdSimButton));
@@ -580,7 +602,7 @@ public class Toolbar extends BorderDock {
 		resetSimButton = new ToolbarButtonAction(this, "Reset", "Reset simulator",
 				Tools.getResIcon48("/icons/toolbar/sim_reset.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+				overlord.getWorkspace().getProject().restoreMarkingZero();
 			}
 		};
 		simulationDockables.add(createButtonDockable("ButtonDockableResetSim", resetSimButton));

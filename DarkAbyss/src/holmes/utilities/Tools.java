@@ -135,6 +135,45 @@ public final class Tools {
 		return resultPath;
 	}
 	
+	public static String selectNetSaveFileDialog(String lastPath, FileFilter[] filter, 
+			String buttonText, String buttonToolTip, String suggestedFileName) {
+		String resultPath = "";
+		JFileChooser fc;
+		if(lastPath == null)
+			fc = new JFileChooser();
+		else
+			fc = new JFileChooser(lastPath);
+		
+		fc.setFileView(new HolmesFileView());
+
+		for(int i=0; i<filter.length; i++) {
+			fc.addChoosableFileFilter(filter[i]);
+		}
+		//TODO: detekcja domyślnego filtra
+		fc.setFileFilter(filter[0]);
+
+		if(!buttonText.equals(""))
+			fc.setApproveButtonText(buttonText);
+		if(!buttonToolTip.equals(""))
+			fc.setApproveButtonToolTipText(buttonToolTip);
+		
+		if(suggestedFileName.length() > 0) { //sugerowana nazwa pliku
+			fc.setSelectedFile(new File(suggestedFileName));
+		}
+		
+		fc.setAcceptAllFileFilterUsed(false);
+		int returnVal = fc.showDialog(fc, fc.getApproveButtonText());
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File f = fc.getSelectedFile();
+			resultPath = f.getPath();	
+		} else {
+			resultPath = "";
+		}
+		
+		lastExtension = fc.getFileFilter().getDescription().toLowerCase();
+		return resultPath;
+	}
+	
 	/**
 	 * Metoda wyświetla okno dialogowe dla wskazania katalogu.
 	 * @param lastPath String - ostatnia otwarta ścieżka dostępu

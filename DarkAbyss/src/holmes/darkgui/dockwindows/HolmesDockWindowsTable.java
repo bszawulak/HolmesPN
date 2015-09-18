@@ -70,6 +70,7 @@ import holmes.petrinet.simulators.NetSimulator;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
+import holmes.windows.HolmesFunctionalTrans;
 import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.HolmesStatesManager;
@@ -1103,7 +1104,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(portalLabel);
 		JCheckBox portalBox = new JCheckBox("", transition.isPortal());
-		portalBox.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
+		portalBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
 		if(((Transition)element).isPortal()) 
 			portalBox.setSelected(true);
 		else
@@ -1129,9 +1130,9 @@ public class HolmesDockWindowsTable extends JPanel {
 		JLabel functionLabel = new JLabel("Functional:", JLabel.LEFT);
 		functionLabel.setBounds(columnA_posX, columnA_Y+=20, 80, 20);
 		components.add(functionLabel);
-		
+
 		JCheckBox functionalCheckBox = new JCheckBox("", transition.isPortal());
-		functionalCheckBox.setBounds(columnB_posX, columnB_Y+=20, 150, 20);
+		functionalCheckBox.setBounds(columnB_posX, columnB_Y+=20, 30, 20);
 		if(((Transition)element).isFunctional())
 			functionalCheckBox.setSelected(true);
 		else
@@ -1147,6 +1148,18 @@ public class HolmesDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(functionalCheckBox);
+		
+		JButton functionsEditorButton = new JButton(Tools.getResIcon32("/icons/functionsWindow/functionsIcon.png"));
+		functionsEditorButton.setName("Functions editor");
+		functionsEditorButton.setText("<html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>");
+		functionsEditorButton.setMargin(new Insets(0, 0, 0, 0));
+		functionsEditorButton.setBounds(columnA_posX+125, columnA_Y-16, 110, 32);
+		functionsEditorButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				new HolmesFunctionalTrans((Transition) element);  
+			} 
+		});
+		components.add(functionsEditorButton);
 
 		// WSPÓŁRZĘDNE NAPISU:
 		columnA_Y += 20;
@@ -1515,7 +1528,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		components.add(portalLabel);
 
 		JCheckBox portalBox = new JCheckBox("", transition.isPortal());
-		portalBox.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
+		portalBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
 		if(((Transition)element).isPortal()) 
 			portalBox.setSelected(true);
 		else
@@ -1540,9 +1553,9 @@ public class HolmesDockWindowsTable extends JPanel {
 		JLabel functionLabel = new JLabel("Functional:", JLabel.LEFT);
 		functionLabel.setBounds(columnA_posX, columnA_Y+=20, 80, 20);
 		components.add(functionLabel);
-		
+
 		JCheckBox functionalCheckBox = new JCheckBox("", transition.isPortal());
-		functionalCheckBox.setBounds(columnB_posX, columnB_Y+=20, 150, 20);
+		functionalCheckBox.setBounds(columnB_posX, columnB_Y+=20, 30, 20);
 		if(((Transition)element).isFunctional())
 			functionalCheckBox.setSelected(true);
 		else
@@ -1558,6 +1571,18 @@ public class HolmesDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(functionalCheckBox);
+		
+		JButton functionsEditorButton = new JButton(Tools.getResIcon32("/icons/functionsWindow/functionsIcon.png"));
+		functionsEditorButton.setName("Functions editor");
+		functionsEditorButton.setText("<html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>");
+		functionsEditorButton.setMargin(new Insets(0, 0, 0, 0));
+		functionsEditorButton.setBounds(columnA_posX+125, columnA_Y-16, 110, 32);
+		functionsEditorButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				new HolmesFunctionalTrans((Transition) element);  
+			} 
+		});
+		components.add(functionsEditorButton);
 		
 		// WSPÓŁRZĘDNE NAPISU:
 		columnA_Y += 20;

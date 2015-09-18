@@ -248,7 +248,11 @@ public class HolmesProgramProperties extends JFrame {
 				"programUseOldSnoopyLoaders", true);
 		ioPanel.add(useOldLoaderCheckBox);
 
-		JCheckBox simpleEditorCheckBox = checkboxWizard("Simple editor", posX, posY+=20, 300, 20, 
+		JCheckBox checkSaveCheckBox = checkboxWizard("Warnings concerning wrong save format", posX, posY+=20, 300, 20, 
+				"editorExportCheckAndWarning", true);
+		ioPanel.add(checkSaveCheckBox);
+		
+		JCheckBox simpleEditorCheckBox = checkboxWizard("Use simple notepad (restart required)", posX, posY+=20, 300, 20, 
 				"programUseSimpleEditor", true);
 		ioPanel.add(simpleEditorCheckBox);
 		

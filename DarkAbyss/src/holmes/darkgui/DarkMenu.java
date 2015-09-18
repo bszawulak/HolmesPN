@@ -39,7 +39,7 @@ public class DarkMenu extends JMenuBar {
 	private JMenu hierachyMenu;
 	private JMenu analysisMenu;
 	private JMenu mctOperationsMenu;
-	//private JMenu clustersOperationsMenu;
+	private JMenu otherMenu;
 	private JMenu sheetsMenu;
 
 	// dockable
@@ -245,12 +245,6 @@ public class DarkMenu extends JMenuBar {
 
 		windowMenu.addSeparator();
 		
-		// // The JMenuItems for the dockables.
-		// for (int index = 0; index < dockables.size(); index++) {
-		// // Create the check box menu for the dockable.
-		// sheetItems.add(new DockableMenuItem(dockables.get(index)));
-		// sheetsMenu.add(sheetItems.get(index));
-		// }
 		windowMenu.add(new DockableMenuItem(guiManager.getToolBox().getDockable(),
 				Tools.getResIcon32("/icons/menu/menu_WindowTools.png")));
 		windowMenu.add(new DockableMenuItem(guiManager.getPropertiesBox().getDockable(),
@@ -477,43 +471,28 @@ public class DarkMenu extends JMenuBar {
 		});
 		analysisMenu.add(netSimItem);
 		
+
+		
+		
+		//*********************************************************************************************
+		//***********************************                 *****************************************
+		//***********************************    OTHER MENU   *****************************************
+		//***********************************                 *****************************************
+		//*********************************************************************************************
+		
+		otherMenu = new JMenu("Other");
+		otherMenu.setMnemonic(KeyEvent.VK_O);
+		otherMenu.getAccessibleContext().setAccessibleDescription("Other, unchecked or under-construction methods");
+		this.add(otherMenu);
 		
 		mctOperationsMenu = new JMenu("MCT");
 		mctOperationsMenu.setMnemonic(KeyEvent.VK_M);
 		mctOperationsMenu.getAccessibleContext().setAccessibleDescription("MCT Operations menu");
 		mctOperationsMenu.setPreferredSize(new Dimension(WIDTH, 38));
 		mctOperationsMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_genMCT.png"));
-		analysisMenu.add(mctOperationsMenu);
-		
-		
-		// The JMenuItem for invariants simulation
-		JMenuItem invSimul = new JMenuItem("Invariants Simulation", KeyEvent.VK_6);
-		invSimul.setIcon(Tools.getResIcon32("/icons/menu/menu_invSim.png"));
-		//invSimul.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4,ActionEvent.ALT_MASK));
-		invSimul.getAccessibleContext().setAccessibleDescription("Start Invariants Simulation");
-		invSimul.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					// poniższa 'linia':   ╯°□°）╯︵  ┻━━┻
-					/*
-					GUIManager.getDefaultGUIManager().startInvariantsSimulation(
-						Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().group.getSelection().getActionCommand())
-						,(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().spiner.getValue());
-					*/
-					JOptionPane.showMessageDialog(null, "Not implemented yet.", 
-							"Subsystem offline", JOptionPane.INFORMATION_MESSAGE);
-				} catch (Exception e) {
-					e.printStackTrace();
-					GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
-				}
-			}
-		});
-		analysisMenu.add(invSimul);
+		otherMenu.add(mctOperationsMenu);
 
-		//*********************************************************************************************
-		//***********************************    MCT MENU     *****************************************
-		//*********************************************************************************************
-
+		
 		JMenuItem genMCTGroups = new JMenuItem("Generate MCT Groups", KeyEvent.VK_1);
 		genMCTGroups.setIcon(Tools.getResIcon32("/icons/menu/menu_genMCT.png"));
 		genMCTGroups.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,ActionEvent.CTRL_MASK));
@@ -549,8 +528,8 @@ public class DarkMenu extends JMenuBar {
 		mctItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					//TODO anything
-					//GUIManager.getDefaultGUIManager().startInvariantsSimulation(Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().group.getSelection().getActionCommand()),(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getProperties().spiner.getValue());
+					JOptionPane.showMessageDialog(null, "Not implemented yet.", 
+							"Subsystem offline", JOptionPane.INFORMATION_MESSAGE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -559,12 +538,29 @@ public class DarkMenu extends JMenuBar {
 		mctItem.setEnabled(false);
 		mctSubMenu.add(mctItem);
 		
-		
-		//*********************************************************************************************
-		//***********************************                 *****************************************
-		//***********************************  CLUSTERS MENU  *****************************************
-		//***********************************                 *****************************************
-		//*********************************************************************************************
+		// The JMenuItem for invariants simulation
+		JMenuItem invSimul = new JMenuItem("Invariants Simulation", KeyEvent.VK_6);
+		invSimul.setIcon(Tools.getResIcon32("/icons/menu/menu_invSim.png"));
+		//invSimul.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4,ActionEvent.ALT_MASK));
+		invSimul.getAccessibleContext().setAccessibleDescription("Start Invariants Simulation");
+		invSimul.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					// poniższa 'linia':   ╯°□°）╯︵  ┻━━┻
+					/*
+					GUIManager.getDefaultGUIManager().startInvariantsSimulation(
+						Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().group.getSelection().getActionCommand())
+						,(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().spiner.getValue());
+					*/
+					JOptionPane.showMessageDialog(null, "Not implemented yet.", 
+							"Subsystem offline", JOptionPane.INFORMATION_MESSAGE);
+				} catch (Exception e) {
+					e.printStackTrace();
+					GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
+				}
+			}
+		});
+		otherMenu.add(invSimul);
 		
 		//CLUSTERS MENU
 		/*

@@ -136,6 +136,7 @@ public class SettingsManager {
 		checkAndFix(settingsNew, "editorSnoopyColors", "0");
 		checkAndFix(settingsNew, "editorSnoopyCompatibleMode", "1");
 		checkAndFix(settingsNew, "editorShowShortNames", "0");
+		checkAndFix(settingsNew, "editorExportCheckAndWarning", "1");
 		
 		try { 
 			String tmp = getValue("editorGraphFontSize");

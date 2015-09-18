@@ -87,7 +87,6 @@ public class SnoopyWriter {
 		int currentActiveID = startNodeId;
 		int arcsNumber = 0;
 		try {
-			
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
 			
 			//NAGŁÓWEK:
@@ -218,6 +217,14 @@ public class SnoopyWriter {
 	 * @return boolean - status operacji: true jeśli nie było problemów  (buahahahahahaha)
 	 */
 	public boolean writeSPEPT(String filePath) {
+		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
+		if(status == false) {
+			JOptionPane.showMessageDialog(null, "Problems that cannot be automatically fixed detected.\n"
+					+ "Plaese save as Project.", 
+					"Problem", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
 		int startNodeId = 226; // bo tak
 		int currentActiveID = startNodeId;
 		//int arcsNumber = 0;
@@ -387,7 +394,7 @@ public class SnoopyWriter {
 	 */
 	public boolean writeSPTPT(String filePath) {
 		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
-		if(!status) {
+		if(status == false) {
 			JOptionPane.showMessageDialog(null, "Problems that cannot be automatically fixed detected.\n"
 					+ "Plaese save as Project.", 
 					"Problem", JOptionPane.ERROR_MESSAGE);
@@ -425,7 +432,7 @@ public class SnoopyWriter {
 				currentActiveID = sPlace.writePlaceInfoToFile(bw, currentActiveID, globalPlaceId);
 				
 				if(sPlace.portal == true) { //jeśli właśnie dodane było portalem
-					currentActiveID += 13; //bo tak, pytajcie w Brandenburgu 'a czymuuu?'
+					currentActiveID += 13; //bo tak, pytajcie 'a czymu?' w Brandenburgu 
 				} else {
 					currentActiveID ++;
 				}

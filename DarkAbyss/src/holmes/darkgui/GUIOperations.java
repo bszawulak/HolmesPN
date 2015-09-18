@@ -19,16 +19,20 @@ import holmes.files.clusters.Rprotocols;
 import holmes.files.io.ProjectReader;
 import holmes.files.io.ProjectWriter;
 import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.data.PetriNet.GlobalFileNetType;
+import holmes.petrinet.data.PetriNet.GlobalNetType;
 import holmes.petrinet.elements.Transition;
 import holmes.utilities.HolmesFileView;
 import holmes.utilities.Tools;
+import holmes.varia.Check;
 import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Klasa odpowiedzialna za meta-obsługę wszystkich metod wejścia-wyjścia i paru innych, dla GUIManager.
- * W ogólności, inne elementy interfejsu wywołujś zawarte tutaj metody, a z nich sterowania w miarę 
+ * W ogólności, inne elementy interfejsu wywołują zawarte tutaj metody, a z nich sterowania w miarę 
  * potrzeby idzie dalej, aby zrealizować daną funkcję programu.
  * Krótko: kiedyś wszystkie metody tu zawarte były w klasie GUIManager. Ale zrobiło się tam zbyt tłoczno.
+ * Wciąż z resztą jest.
  * @author MR
  *
  */
@@ -58,11 +62,12 @@ public class GUIOperations {
 	 */
 	public void importProject() {
 		String lastPath = overlord.getLastPath();
-		FileFilter[] filters = new FileFilter[4];
-		filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
-		filters[1] = new ExtensionFileFilter("Snoopy Extended PN file (.spept)", new String[] { "SPEPT" });
-		filters[2] = new ExtensionFileFilter("Snoopy Time PN file (.sptpt)", new String[] { "SPTPT" });
-		filters[3] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
+		FileFilter[] filters = new FileFilter[5];
+		filters[0] = new ExtensionFileFilter("All supported Snoopy files", new String[] { "SPPED", "SPEPT", "SPTPT" });
+		filters[1] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+		filters[2] = new ExtensionFileFilter("Snoopy Extended PN file (.spept)", new String[] { "SPEPT" });
+		filters[3] = new ExtensionFileFilter("Snoopy Time PN file (.sptpt)", new String[] { "SPTPT" });
+		filters[4] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters,  "Select PN", "Select petri net file", "");
 		if(selectedFile.equals(""))
 			return;
@@ -334,17 +339,19 @@ public class GUIOperations {
 	}
 	
 	/**
-	 * Metoda ogólnego zapisu, pozwala wybrać format wyjściowy. Domyślnie SPPED
+	 * Metoda ogólnego zapisu, pozwala wybrać format wyjściowy. Domyślnie SPPED.
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean saveAsGlobal() {
 		String lastPath = overlord.getLastPath();
-		FileFilter[] filters = new FileFilter[4];
+		FileFilter[] filters = new FileFilter[5];
 		filters[0] = new ExtensionFileFilter("Snoopy Petri Net (.spped)", new String[] { "SPPED" });
 		filters[1] = new ExtensionFileFilter("Snoopy Extended Petri Net (.spept)", new String[] { "SPEPT" });
-		filters[2] = new ExtensionFileFilter("Holmes Project File (.project)", new String[] { "PROJECT" });
-		filters[3] = new ExtensionFileFilter("INA PNT format (.pnt)", new String[] { "PNT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", overlord.getWorkspace().getProject().getFileName());
+		filters[2] = new ExtensionFileFilter("Snoopy Time Petri Net (.sptpt)", new String[] { "SPTPT" });
+		filters[3] = new ExtensionFileFilter("Holmes Project File (.project)", new String[] { "PROJECT" });
+		filters[4] = new ExtensionFileFilter("INA PNT format (.pnt)", new String[] { "PNT" });
+
+		String selectedFile = Tools.selectNetSaveFileDialog(lastPath, filters, "Save", "", overlord.getWorkspace().getProject().getFileName());
 		if(selectedFile.equals("")) {
 			return false;
 		}
@@ -357,7 +364,11 @@ public class GUIOperations {
 			JOptionPane.showMessageDialog(null, "File choosing error. Cannot proceed.", "Error", JOptionPane.ERROR_MESSAGE);
 			overlord.log("File choosing error. No extension: "+extension, "error", true);
 			return false;
-		} else if (extension.contains(".spped")) {
+		}
+
+		extension = checkFileFormatCorrectness(extension);
+
+		if (extension.contains(".spped")) {
 			File file = new File(selectedFile);
 			String fileExtension = ".spped";
 			if(selectedFile.toLowerCase().contains(".spped"))
@@ -373,6 +384,15 @@ public class GUIOperations {
 				fileExtension = "";
 			
 			boolean status = overlord.getWorkspace().getProject().saveAsSPEPT(file.getPath() + fileExtension);
+			overlord.setLastPath(file.getParentFile().getPath());
+			return status;
+		} else if (extension.contains(".sptpt")) {
+			File file = new File(selectedFile);
+			String fileExtension = ".sptpt";
+			if(selectedFile.toLowerCase().contains(".sptpt"))
+				fileExtension = "";
+			
+			boolean status = overlord.getWorkspace().getProject().saveAsSPTPT(file.getPath() + fileExtension);
 			overlord.setLastPath(file.getParentFile().getPath());
 			return status;
 		} else if (extension.contains(".project")) {
@@ -398,6 +418,67 @@ public class GUIOperations {
 			return status;
 		}
 		return false;
+	}
+
+	/**
+	 * Metoda sprawdza, czy wybrany format zapisu się nadaje.
+	 * @param extension String - wybrany format pliku
+	 * @return String - format, który będzie użyty
+	 */
+	//TODO
+	private String checkFileFormatCorrectness(String extension) {
+		if(overlord.getSettingsManager().getValue("editorExportCheckAndWarning").equals("0"))
+			return extension; //stop whining mode ON
+		
+		if(extension.contains(".project"))
+			return extension; //always right! ;)
+		
+		GlobalNetType netType = Check.getSuggestedNetType();
+		
+		String fileFormat = "";
+		String additionalWhining = "";
+		String netRealName = "";
+		if(netType != null) {
+			GlobalFileNetType suggestion = Check.suggestesFileFormat(netType);
+			fileFormat = Check.getExtension(suggestion);
+			fileFormat = fileFormat.toLowerCase();
+			netRealName = Check.getNetName(netType);
+			if(Check.isHierarchical()) {
+				additionalWhining = "\nWarning: hierachical net structure detected. Using Holmes project STRONGLY ADVISED.\n"
+						+ "You have been warned...\n";
+			}
+		} else {
+			netRealName = "Unknown";
+			fileFormat = "Holmes Project file";
+			additionalWhining = "Warning. There has been a problem detecting type of the Petri net.\n"
+					+ "Please advise authors and in the meantime: Holmes project file is STRONGLY RECOMMENDED.";
+		}
+		
+		if(extension.toLowerCase().contains(fileFormat) && additionalWhining.length()==0) {
+			return extension;
+		} else {
+			if(fileFormat.equals(".project"))
+				fileFormat = "Holmes project file (.project)";
+			
+			Object[] options = {"Use selected anyway", "Use suggested format", "Save as project", "Cancel save",};
+			int n = JOptionPane.showOptionDialog(null,
+							"Selected net file format: "+extension+"\n"
+							+ "Net real type: "+netRealName+"\n"
+							+ "Suggested file format: "+fileFormat+"\n\n"
+							+ "Selected format will not contain all features of the current Petri Net. Resulting file\n"
+							+ "will contain reduced net or will be corrupted.\n"+additionalWhining,
+							"Invalid out net file format", JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+			if (n == 0) {
+				return extension;
+			} else if (n == 1) {
+				return "."+fileFormat;
+			} else if (n == 2) {
+				return ".project";
+			} else {
+				return "";
+			}	
+		}
 	}
 	
 	/**
