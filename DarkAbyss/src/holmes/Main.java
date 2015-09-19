@@ -26,7 +26,6 @@ public class Main {
 			public void run() {
 				try {
 					guiManager = new GUIManager(new JFrame("Holmes 2.0")); //and pray
-					guiManager.getSimulatorBox().createSimulatorProperties();
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}

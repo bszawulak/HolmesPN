@@ -521,6 +521,7 @@ public class GraphPanel extends JComponent {
 			n.setTPNstatus(true);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
+			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
 		}
 	}
 	
@@ -534,6 +535,7 @@ public class GraphPanel extends JComponent {
 			n.setFunctional(true);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
+			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
 		}
 	}
 

@@ -3,6 +3,9 @@ package holmes.petrinet.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import holmes.darkgui.GUIManager;
+import holmes.petrinet.elements.Place;
+
 /**
  * Klasa zarządzająca stanem sieci klasycznej, tj. liczbą tokenów w miejsach.
  * 
@@ -64,6 +67,39 @@ public class StatePlacesVector implements Serializable {
 			return -1;
 		else
 			return stateVector.get(index);
+	}
+	
+	/**
+	 * Ustawia wskazaną liczbę tokenów w wektorze stanu dla danego miejsca.
+	 * @param index int - indeks miejsca
+	 * @param tokens double - liczba tokenów
+	 */
+	public void setTokens(int index, double tokens) {
+		if(index < stateVector.size())
+			stateVector.set(index, tokens);
+	}
+	
+	/**
+	 * Dodaje wskazaną liczbę tokenów do wektora stanu dla danego miejsca.
+	 * @param index int - indeks miejsca
+	 * @param tokens double - liczba tokenów
+	 */
+	public void addTokens(int index, double tokens) {
+		if(index < stateVector.size()) {
+			double oldValue = stateVector.get(index);
+			stateVector.set(index, oldValue+tokens);
+		}
+	}
+	
+	/**
+	 * Uaktualnia cały wektor stanu chwilowym stanem sieci.
+	 */
+	public void updateWholeVector() {
+		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		int placesNumber = places.size();
+		for(int p=0; p<placesNumber; p++) {
+			stateVector.set(p, (double) places.get(p).getTokensNumber());
+		}
 	}
 	
 	/**

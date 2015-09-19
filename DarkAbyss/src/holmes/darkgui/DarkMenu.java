@@ -66,6 +66,7 @@ public class DarkMenu extends JMenuBar {
 		
 		// Build the File menu.
 		fileMenu = new JMenu("File");
+		
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		fileMenu.getAccessibleContext().setAccessibleDescription("The File Menu");
 		this.add(fileMenu);

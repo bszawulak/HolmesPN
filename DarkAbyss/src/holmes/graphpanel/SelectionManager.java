@@ -782,7 +782,11 @@ public class SelectionManager {
 		for (ElementLocation el : getSelectedElementLocations()) {
 			if (el.getParentNode().getType() == PetriNetElementType.PLACE && !safetyNodesList.contains(el.getParentNode())) {
 				safetyNodesList.add(el.getParentNode());
-				((Place) el.getParentNode()).modifyTokensNumber(1);
+				Place place = (Place) el.getParentNode();
+				place.modifyTokensNumber(1);
+				
+				ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+				overlord.getWorkspace().getProject().accessStatesManager().getState(0).addTokens(places.indexOf(place), 1);
 			}
 			if(el.getParentNode().getType() == PetriNetElementType.META && !safetyNodesList.contains(el.getParentNode())) {
 				try {

@@ -131,7 +131,7 @@ public class StandardTokenSimulator implements IEngine {
 				generated = true; 
 			} else {
 				if (netSimType == NetType.TIME || netSimType == NetType.HYBRID) {
-					//return launchableTransitions;
+					return launchableTransitions;
 				} else {
 					safetyCounter++;
 					if(safetyCounter == 9) { // safety measure

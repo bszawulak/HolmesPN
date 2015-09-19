@@ -498,10 +498,13 @@ public final class ElementDraw {
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					
 					if(eds.snoopyMode) {
-						g.setColor(portalColor);
+						g.setColor(portalSelColor); 
 						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 					} else {
-						g.setColor(Color.blue);
+						g.setColor(portalSelColor);
+						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
+						
+						g.setColor(Color.BLACK);
 						g.setStroke(new BasicStroke(1.5F));
 						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
 						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);

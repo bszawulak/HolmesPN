@@ -754,13 +754,13 @@ public class HolmesClusters extends JFrame {
 			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 			
 			FileFilter filter[] = new FileFilter[1];
-			filter[0] = new ExtensionFileFilter("Holmes CLustering file (.acl)",  new String[] { "acl" });
+			filter[0] = new ExtensionFileFilter("Holmes CLustering file (.hcl)",  new String[] { "hcl", "acl" });
 			String newLocation = Tools.selectFileDialog(lastPath, filter, "Save table", "", "");
 			if(newLocation.equals(""))
 				return;
 			
-			if(!newLocation.contains(".acl"))
-				newLocation += ".acl";
+			if(!newLocation.contains(".hcl"))
+				newLocation += ".hcl";
 
 			FileOutputStream fos= new FileOutputStream(newLocation);
 			ObjectOutputStream oos= new ObjectOutputStream(fos);
@@ -784,7 +784,7 @@ public class HolmesClusters extends JFrame {
 		try
 		{
 			FileFilter filter[] = new FileFilter[1];
-			filter[0] = new ExtensionFileFilter("Holmes CLustering file (.acl)",  new String[] { "acl" });
+			filter[0] = new ExtensionFileFilter("Holmes CLustering file (.hcl)",  new String[] { "hcl", "acl" });
 			newLocation = Tools.selectFileDialog(lastPath, filter, "Load table", "", "");
 			if(newLocation.equals("")) 
 				return;

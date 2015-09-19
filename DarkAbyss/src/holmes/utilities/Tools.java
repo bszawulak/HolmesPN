@@ -331,7 +331,7 @@ public final class Tools {
 			result = icon.getImage();
 		} catch (Exception e) {
 			try {
-				//TRZY PIERD... LINIJKI KOSZTOWAŁY MNIE PRAWIE 2 GODZINY SZUKANIA PO NECIE
+				//DWIE-TRZY PIERD... LINIJKI KOSZTOWAŁY MNIE PRAWIE 2 GODZINY SZUKANIA PO NECIE
 				//Po Eclipsem oczywiście getClass().getResource działa jak marzenie
 				//przy eksporcie do Jar, okazuje się że nic nie działa a wyjątek który
 				//wyskakuje jest NIEMOŻLIWE DO OBSŁUŻENIA przez nawet catch (Exception e )

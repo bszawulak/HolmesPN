@@ -34,8 +34,12 @@ import holmes.workspace.WorkspaceSheet;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
@@ -45,7 +49,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -189,7 +195,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		setFrame(frejm);
 		try {	
-			frame.setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+			frame.setIconImage(Tools.getImageFromIcon("/icons/holmes.png"));
 		} catch (Exception e ) { }
 		
 		frame.getContentPane().add(this);
@@ -213,11 +219,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
+		//JFrame.setDefaultLookAndFeelDecorated(true);
+		
 		getFrame().setLocation((int) (screenSize.width * 0.1) / 2, (int) (screenSize.height * 0.1) / 2);
 		getFrame().setSize((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
 		getFrame().setVisible(true);
 		getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
-
+		
+		
 		// Create the dock model for the docks.
 		setDockModel(new FloatDockModel());
 		getDockModel().addOwner("frame0", getFrame());
@@ -353,8 +362,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 				if(status == true) {
 					Object[] options = {"Exit", "Save and exit", "Cancel",};
 					int n = JOptionPane.showOptionDialog(null,
-									"Network has been changed since last save. Quit, save&quit or do not quit now?",
-									"Data lose warning", JOptionPane.YES_NO_OPTION,
+									"Network or its data have been changed since last save. Exit, save&exit or do not exit now?",
+									"Project has been modified", JOptionPane.YES_NO_OPTION,
 									JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 					if (n == 2) { //cancel
 						return;
@@ -391,6 +400,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		File f = new File(path);
 		if(f.exists())
 			lastPath = path;	
+
+		getSimulatorBox().createSimulatorProperties();
 	}
 	
 	/**

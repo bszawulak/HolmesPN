@@ -59,6 +59,7 @@ import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
+import holmes.petrinet.elements.Arc.TypesOfArcs;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
@@ -2163,22 +2164,24 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
 		
-		// ARC WEIGHT
-        JLabel weightLabel = new JLabel("Weight:", JLabel.LEFT);
-        weightLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-		components.add(weightLabel);
-		
-		SpinnerModel weightSpinnerModel = new SpinnerNumberModel(arc.getWeight(), 0, Integer.MAX_VALUE, 1);
-		JSpinner weightSpinner = new JSpinner(weightSpinnerModel);
-		weightSpinner.setBounds(columnB_posX-10, columnB_Y += 20, colBCompLength/3, 20);
-		weightSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int tokenz = (int) spinner.getValue();
-				setWeight(tokenz);
-			}
-		});
-		components.add(weightSpinner);
+        if(((Arc)element).getArcType() != TypesOfArcs.RESET) {
+        	// ARC WEIGHT
+        	JLabel weightLabel = new JLabel("Weight:", JLabel.LEFT);
+            weightLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+    		components.add(weightLabel);
+    		
+    		SpinnerModel weightSpinnerModel = new SpinnerNumberModel(arc.getWeight(), 0, Integer.MAX_VALUE, 1);
+    		JSpinner weightSpinner = new JSpinner(weightSpinnerModel);
+    		weightSpinner.setBounds(columnB_posX-10, columnB_Y += 20, colBCompLength/3, 20);
+    		weightSpinner.addChangeListener(new ChangeListener() {
+    			public void stateChanged(ChangeEvent e) {
+    				JSpinner spinner = (JSpinner) e.getSource();
+    				int tokenz = (int) spinner.getValue();
+    				setWeight(tokenz);
+    			}
+    		});
+    		components.add(weightSpinner);
+        }
 
 		// startNode
 		columnB_posX+= 30;
@@ -4315,6 +4318,8 @@ public class HolmesDockWindowsTable extends JPanel {
 		Place place = (Place) element;
 		if (mode == PLACE) {
 			place.setTokensNumber(tokenz);
+			ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+			overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokenz);
 			repaintGraphPanel();
 		}
 	}

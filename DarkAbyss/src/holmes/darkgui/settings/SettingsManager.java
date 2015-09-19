@@ -185,7 +185,7 @@ public class SettingsManager {
 	 */
 	private void writeSettingsFile() {
 		try {
-			File configFile = new File("abyss.cfg");
+			File configFile = new File("holmes.cfg");
 			FileWriter cfgFileWriter = new FileWriter(configFile, false);
 			for (Setting data : settings) {
 				cfgFileWriter.write(data.getID() + " " + data.getValue()+"\n");
@@ -204,7 +204,7 @@ public class SettingsManager {
 	 * 		wypadku podejmowana jest jeszcze TYLKO jedna próba, bez dalszej rekurencji
 	 */
 	private void readSettingsFile(boolean error) {
-		Path path = Paths.get("abyss.cfg");
+		Path path = Paths.get("holmes.cfg");
 		String currentLine;
 		settings.clear();
 		try (Scanner scanner = new Scanner(path)) {
@@ -224,11 +224,11 @@ public class SettingsManager {
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
-				"The file \"abyss\".cfg, which normally contains the settings for this application,\n"
+				"The file \"holmes\".cfg, which normally contains the settings for this application,\n"
 				+ "has not been found or contains invalid values. Restoring default file.",
 				"Settings file not found or damaged",
 				JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Settings file not found or damaged. The file \"abyss\".cfg, which normally "
+			GUIManager.getDefaultGUIManager().log("Settings file not found or damaged. The file \"holmes\".cfg, which normally "
 					+ "contains the settings for this application, has not been found or contains invalid values. Restoring default file.", "error", true);
 			
 			if(error) 
@@ -261,10 +261,10 @@ public class SettingsManager {
 			return new Setting(ID, value);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, 
-					"The file \"abyss\".cfg, which normally contains the settings for this application, is corrupt. Unable to load settings.",
+					"The file \"holmes\".cfg, which normally contains the settings for this application, is corrupt. Unable to load settings.",
 					"Settings corrupt, converting line has failed.",
 					JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Settings corrupt! The file \"abyss\".cfg, which normally contains the "
+			GUIManager.getDefaultGUIManager().log("Settings corrupt! The file \"holmes\".cfg, which normally contains the "
 					+ "settings for this application, is corrupt. Unable to load setting line: ", "error", true);
 			GUIManager.getDefaultGUIManager().log(line, "italic", false);
 			return null;

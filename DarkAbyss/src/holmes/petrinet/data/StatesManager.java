@@ -28,6 +28,8 @@ public class StatesManager {
 		
 		this.statesMatrix = new ArrayList<StatePlacesVector>();
 		statesMatrix.add(new StatePlacesVector());
+		statesMatrix.get(0).setDescription("Default first (0) working state for current net editing. "
+					+ "For analytical purposes please use new states 1, 2 or higher.");
 	}
 	
 	/**
@@ -184,6 +186,8 @@ public class StatesManager {
 		statesMatrix = new ArrayList<StatePlacesVector>();
 		if(isLoading == false) {
 			statesMatrix.add(new StatePlacesVector());
+			statesMatrix.get(0).setDescription("Default first (0) working state for current net editing. "
+					+ "For analytical purposes please use new states 1, 2 or higher.");
 		}
 		selectedState = 0;
 	}
