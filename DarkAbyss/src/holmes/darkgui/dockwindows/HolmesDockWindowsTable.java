@@ -4312,14 +4312,14 @@ public class HolmesDockWindowsTable extends JPanel {
 	/**
 	 * Metoda zmienia liczbę tokenów dla miejsca sieci, poza listenerem, który
 	 * jest klasą anonimową (i nie widzi pola element).
-	 * @param tokenz int - nowa liczba tokenów
+	 * @param tokens int - nowa liczba tokenów
 	 */
-	private void setTokens(int tokenz) {
+	private void setTokens(int tokens) {
 		Place place = (Place) element;
 		if (mode == PLACE) {
-			place.setTokensNumber(tokenz);
+			place.setTokensNumber(tokens);
 			ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-			overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokenz);
+			overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
 			repaintGraphPanel();
 		}
 	}
