@@ -27,6 +27,9 @@ public class StandardTokenSimulator implements IEngine {
 	private boolean maxMode = false;
 	private boolean singleMode = false;
 	private double planckDistance = 1.0;
+	
+	//jesli true, wtedy TDPN dziala tak, że clock liczy do EFT i zaraz potem wchodzi DPN
+	private boolean TDPNdecision1 = false;
 
 	/**
 	 * Konstruktor obiektu klasy SimulatorEngine.
@@ -57,6 +60,11 @@ public class StandardTokenSimulator implements IEngine {
 		} else {
 			this.generator = new StandardRandom(System.currentTimeMillis());
 		}
+		
+		if(overlord.getSettingsManager().getValue("simTDPNrunWhenEft").equals("1"))
+			TDPNdecision1 = true;
+		else
+			TDPNdecision1 = false;
 		
 		//INIT:
 		this.transitions = transitions;
@@ -254,12 +262,15 @@ public class StandardTokenSimulator implements IEngine {
 						continue;
 					}
 					
-				} else { //TPN wciąż liczy 
+				} else { //nie-TPN
 					if(dpn_transition.isActive()) {
 						if(dpn_transition.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
 							int eft = (int) dpn_transition.getEFT();
 							int lft = (int) dpn_transition.getLFT();
-							dpn_transition.setTPNtimerLimit(getRandomInt(eft, lft));
+							if(TDPNdecision1)
+								dpn_transition.setTPNtimerLimit(eft);
+							else
+								dpn_transition.setTPNtimerLimit(getRandomInt(eft, lft));
 							dpn_transition.setTPNtimer(0); //start timer
 							
 							if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja

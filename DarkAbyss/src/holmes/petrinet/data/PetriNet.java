@@ -1086,12 +1086,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					name = name.replace(".colpn", "");
 					name = name.replace(".sptpt", "");
 					setName(name);
-					
 				} else { //Holmes project
 					SnoopyReader reader = new SnoopyReader(0, path);
 					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
 					accessStatesManager().createCleanState();
 					accessFiringRatesManager().createCleanFRVector();
+					accessSSAmanager().createCleanSSAvector();
 					overlord.subnetsGraphics.addRequiredSheets();
 					overlord.subnetsGraphics.resizePanels();
 					overlord.getWorkspace().setSelectedDock(0);

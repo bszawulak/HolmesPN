@@ -57,6 +57,7 @@ import holmes.utilities.Tools;
  */
 public class HolmesNodeInfo extends JFrame {
 	private static final long serialVersionUID = 1476738825515760744L;
+	private GUIManager overlord;
 	private Place place;
 	private Transition transition;
 	private JPanel mainPanel;
@@ -82,6 +83,7 @@ public class HolmesNodeInfo extends JFrame {
 	 * @param papa JFrame - okno wywołujące
 	 */
 	public HolmesNodeInfo(Place place, JFrame papa) {
+		overlord = GUIManager.getDefaultGUIManager();
 		parentFrame = papa;
 		this.place = place;
 		setTitle("Node: "+place.getName());
@@ -96,6 +98,7 @@ public class HolmesNodeInfo extends JFrame {
 	 * @param papa JFrame - okno wywołujące
 	 */
 	public HolmesNodeInfo(Transition transition, JFrame papa) {
+		overlord = GUIManager.getDefaultGUIManager();
 		parentFrame = papa;
 		this.transition = transition;
 		setTitle("Node: "+transition.getName());
@@ -108,6 +111,7 @@ public class HolmesNodeInfo extends JFrame {
 	}
 	
 	public HolmesNodeInfo(MetaNode metanode, JFrame papa) {
+		overlord = GUIManager.getDefaultGUIManager();
 		parentFrame = papa;
 		setTitle("MetaNode: "+metanode.getName());
 
@@ -123,7 +127,7 @@ public class HolmesNodeInfo extends JFrame {
 			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
 		} catch (Exception e ) {}
 		
-		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
+		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
 			mainSimulatorActive = true;
 
 		parentFrame.setEnabled(false);
@@ -165,7 +169,7 @@ public class HolmesNodeInfo extends JFrame {
 		labelID.setBounds(infPanelX, infPanelY, 20, 20);
 		infoPanel.add(labelID);
 		
-		int id = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(place);
+		int id = overlord.getWorkspace().getProject().getPlaces().indexOf(place);
 		JFormattedTextField idTextBox = new JFormattedTextField(id);
 		idTextBox.setBounds(infPanelX+20, infPanelY, 30, 20);
 		idTextBox.setEditable(false);
@@ -190,7 +194,7 @@ public class HolmesNodeInfo extends JFrame {
         int tok = place.getTokensNumber();
         boolean problem = false;
         if(tok < 0) {
-        	GUIManager.getDefaultGUIManager().log("Negative number of tokens in "+place.getName(), "error", true);
+        	overlord.log("Negative number of tokens in "+place.getName(), "error", true);
         	tok = 0;
         	problem = true;
         }
@@ -208,6 +212,8 @@ public class HolmesNodeInfo extends JFrame {
 				JSpinner spinner = (JSpinner) e.getSource();
 				int tokens = (int) spinner.getValue();
 				action.setTokens(place, tokens);
+				ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+				overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
 			}
 		});
 		infoPanel.add(tokenSpinner);
@@ -447,7 +453,7 @@ public class HolmesNodeInfo extends JFrame {
 		labelID.setBounds(infPanelX, infPanelY, 20, 20);
 		infoPanel.add(labelID);
 		
-		int id = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(transition);
+		int id = overlord.getWorkspace().getProject().getTransitions().indexOf(transition);
 		JFormattedTextField idTextBox = new JFormattedTextField(id);
 		idTextBox.setBounds(infPanelX+20, infPanelY, 30, 20);
 		idTextBox.setEditable(false);
@@ -626,7 +632,7 @@ public class HolmesNodeInfo extends JFrame {
 					transIntervalSpinner.setModel(spinnerClustersModel);
 					transInterval = cVal;
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Cannot update transition interval for simulator (Transition Info Windows).", "warning", true);
+					overlord.log("Cannot update transition interval for simulator (Transition Info Windows).", "warning", true);
 				}
 			}
 		});
@@ -786,7 +792,7 @@ public class HolmesNodeInfo extends JFrame {
 				problemCounter++;
 				i--;
 				if(problemCounter == 10) {
-					GUIManager.getDefaultGUIManager().log("Unable to gather "+repeated+" data vectors (places) of same size. "
+					overlord.log("Unable to gather "+repeated+" data vectors (places) of same size. "
 							+ "State simulator cannot proceed "+simSteps+ " steps. First pass had: "+ dataVector.size() +" steps.", "error", true);
 					break;
 				} else {

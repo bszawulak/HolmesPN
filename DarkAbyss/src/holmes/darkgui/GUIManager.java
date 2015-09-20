@@ -34,12 +34,8 @@ import holmes.workspace.WorkspaceSheet;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
@@ -49,9 +45,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.Action;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -769,8 +763,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void setKnockoutBox(HolmesDockWindow knockoutBox) {
 		this.knockoutBox = knockoutBox;
 	}
-	
-	
+
 	/**
 	 * Metoda zwraca obiekt podokna wyświetlania zbiorów knockout.
 	 * @return HolmesDockWindow - okno wyboru knockoutBox

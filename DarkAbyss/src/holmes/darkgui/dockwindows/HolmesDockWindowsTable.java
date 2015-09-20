@@ -71,7 +71,7 @@ import holmes.petrinet.simulators.NetSimulator;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
-import holmes.windows.HolmesFunctionalTrans;
+import holmes.windows.HolmesFunctionsBuilder;
 import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.HolmesStatesManager;
@@ -1165,7 +1165,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		functionsEditorButton.setBounds(columnA_posX+125, columnA_Y-16, 110, 32);
 		functionsEditorButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesFunctionalTrans((Transition) element);  
+				new HolmesFunctionsBuilder((Transition) element);  
 			} 
 		});
 		components.add(functionsEditorButton);
@@ -1600,7 +1600,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		functionsEditorButton.setBounds(columnA_posX+125, columnA_Y-16, 110, 32);
 		functionsEditorButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesFunctionalTrans((Transition) element);  
+				new HolmesFunctionsBuilder((Transition) element);  
 			} 
 		});
 		components.add(functionsEditorButton);

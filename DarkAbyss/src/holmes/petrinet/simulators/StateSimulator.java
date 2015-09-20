@@ -293,8 +293,7 @@ public class StateSimulator implements Runnable {
 		readyToSimulate = false;
 		restoreInternalMarkingZero();
 	}
-	
-	//TODO:
+
 	/**
 	 * Uniwersalna metoda pracująca w osobnym wątku, zbierająca dane o symulacji sieci przez zadaną liczbe kroków
 	 * oraz przez ustaloną liczbę powtórek symulacji. Zwraca obiekt klasy kontenerowej NetSimulationData. Może być

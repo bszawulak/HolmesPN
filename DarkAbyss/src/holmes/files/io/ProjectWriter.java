@@ -651,20 +651,24 @@ public class ProjectWriter {
 			int sp = 2;
 			int statesNumber = statesMatrix.size();
 	
-			bw.write(spaces(sp)+"<States: "+statesNumber+">"+newline);
-			for(int s=0; s<statesNumber; s++) {
-				sp = 4;
-				StatePlacesVector sVector = statesMatrix.get(s);
-				String stateLine = "";
-				for(Double value : sVector.accessVector()) {
-					stateLine += value + ";";
+			if(places.size() > 0) { 
+				bw.write(spaces(sp)+"<States: "+statesNumber+">"+newline);
+				for(int s=0; s<statesNumber; s++) {
+					sp = 4;
+					StatePlacesVector sVector = statesMatrix.get(s);
+					String stateLine = "";
+					for(Double value : sVector.accessVector()) {
+						stateLine += value + ";";
+					}
+					stateLine = stateLine.substring(0, stateLine.length()-1); //usun ostatni ';'
+					bw.write(spaces(sp)+stateLine+newline);
+					
+					String type = sVector.getStateType();
+					bw.write(spaces(sp)+type+";"+newline);
+					bw.write(spaces(sp)+Tools.convertToCode(sVector.getDescription())+newline);
 				}
-				stateLine = stateLine.substring(0, stateLine.length()-1); //usun ostatni ';'
-				bw.write(spaces(sp)+stateLine+newline);
-				
-				String type = sVector.getStateType();
-				bw.write(spaces(sp)+type+";"+newline);
-				bw.write(spaces(sp)+Tools.convertToCode(sVector.getDescription())+newline);
+			} else {
+				bw.write(spaces(sp)+"<States: 0>"+newline);
 			}
 			sp = 2;
 			bw.write(spaces(sp)+"<EOSt>"+newline);
@@ -687,25 +691,29 @@ public class ProjectWriter {
 			int sp = 2;
 			int frNumber = firingRatesMatrix.size();
 	
-			bw.write(spaces(sp)+"<FRvectors: "+frNumber+">"+newline);
-			for(int fr=0; fr<frNumber; fr++) {
-				sp = 4;
-				FiringRateTransVector frVector = firingRatesMatrix.get(fr);
-				String frLine = "";
-				String stochTypeLine = "";
-				for(FRContainer frc : frVector.accessVector()) {
-					frLine += frc.fr + ";";
-					stochTypeLine += frc.sType + ";";
+			if(transitions.size()>0) {
+				bw.write(spaces(sp)+"<FRvectors: "+frNumber+">"+newline);
+				for(int fr=0; fr<frNumber; fr++) {
+					sp = 4;
+					FiringRateTransVector frVector = firingRatesMatrix.get(fr);
+					String frLine = "";
+					String stochTypeLine = "";
+					for(FRContainer frc : frVector.accessVector()) {
+						frLine += frc.fr + ";";
+						stochTypeLine += frc.sType + ";";
+					}
+					frLine = frLine.substring(0, frLine.length()-1); //usun ostatni ';'
+					bw.write(spaces(sp)+frLine+newline);
+					
+					stochTypeLine = stochTypeLine.substring(0, stochTypeLine.length()-1); //usun ostatni ';'
+					bw.write(spaces(sp)+stochTypeLine+newline);
+					
+					String type = frVector.getFrType();
+					bw.write(spaces(sp)+type+";"+newline);
+					bw.write(spaces(sp)+Tools.convertToCode(frVector.getDescription())+newline);
 				}
-				frLine = frLine.substring(0, frLine.length()-1); //usun ostatni ';'
-				bw.write(spaces(sp)+frLine+newline);
-				
-				stochTypeLine = stochTypeLine.substring(0, stochTypeLine.length()-1); //usun ostatni ';'
-				bw.write(spaces(sp)+stochTypeLine+newline);
-				
-				String type = frVector.getFrType();
-				bw.write(spaces(sp)+type+";"+newline);
-				bw.write(spaces(sp)+Tools.convertToCode(frVector.getDescription())+newline);
+			} else {
+				bw.write(spaces(sp)+"<FRvectors: 0>"+newline);
 			}
 			sp = 2;
 			bw.write(spaces(sp)+"<EOFRv>"+newline);		
@@ -727,22 +735,27 @@ public class ProjectWriter {
 			int sp = 2;
 			int ssaNumber = ssaMatrix.size();
 	
-			bw.write(spaces(sp)+"<SSA vectors: "+ssaNumber+">"+newline);
-			for(int s=0; s<ssaNumber; s++) {
-				sp = 4;
-				SSAplacesVector sVector = ssaMatrix.get(s);
-				String stateLine = "";
-				for(Double value : sVector.accessVector()) {
-					stateLine += value + ";";
+			if(places.size() > 0) {
+				bw.write(spaces(sp)+"<SSA vectors: "+ssaNumber+">"+newline);
+				for(int s=0; s<ssaNumber; s++) {
+					sp = 4;
+					SSAplacesVector sVector = ssaMatrix.get(s);
+					String stateLine = "";
+					for(Double value : sVector.accessVector()) {
+						stateLine += value + ";";
+					}
+					stateLine = stateLine.substring(0, stateLine.length()-1); //usun ostatni ';'
+					bw.write(spaces(sp)+stateLine+newline);
+					
+					String ssaType = sVector.getType().toString();
+					double ssaVolume = sVector.getVolume();
+					bw.write(spaces(sp)+ssaType+";"+ssaVolume+newline);
+					bw.write(spaces(sp)+Tools.convertToCode(sVector.getDescription())+newline);
 				}
-				stateLine = stateLine.substring(0, stateLine.length()-1); //usun ostatni ';'
-				bw.write(spaces(sp)+stateLine+newline);
-				
-				String ssaType = sVector.getType().toString();
-				double ssaVolume = sVector.getVolume();
-				bw.write(spaces(sp)+ssaType+";"+ssaVolume+newline);
-				bw.write(spaces(sp)+Tools.convertToCode(sVector.getDescription())+newline);
+			} else {
+				bw.write(spaces(sp)+"<SSA vectors: 0>"+newline);
 			}
+			
 			sp = 2;
 			bw.write(spaces(sp)+"<EOSSA>"+newline);
 			return true;

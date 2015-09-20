@@ -44,7 +44,7 @@ import net.objecthunter.exp4j.Expression;
  * 
  * @author MR
  */
-public class HolmesFunctionalTrans extends JFrame {
+public class HolmesFunctionsBuilder extends JFrame {
 	private static final long serialVersionUID = 1235426932930026597L;
 	private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
 	private Transition transition;
@@ -71,7 +71,7 @@ public class HolmesFunctionalTrans extends JFrame {
 	 * Konstruktor okna zarządzania funkcjami tranzycji.
 	 * @param trans Transition - wskazana tranzycja
 	 */
-	public HolmesFunctionalTrans(Transition trans) {
+	public HolmesFunctionsBuilder(Transition trans) {
 		overlord = GUIManager.getDefaultGUIManager();
 		pn = overlord.getWorkspace().getProject();
 		this.transition = trans;
@@ -130,7 +130,7 @@ public class HolmesFunctionalTrans extends JFrame {
 	private JPanel createAuxPanel() {
 		JPanel resultPanel = new JPanel(new BorderLayout());
 		resultPanel.setPreferredSize(new Dimension(900, 400));
-		resultPanel.setBorder(BorderFactory.createTitledBorder("Options"));
+		//resultPanel.setBorder(BorderFactory.createTitledBorder("Options"));
 		
 		resultPanel.add(createBuilderPanel(),BorderLayout.NORTH);
 		resultPanel.add(createPlacesTablePanel(), BorderLayout.CENTER);
@@ -189,7 +189,7 @@ public class HolmesFunctionalTrans extends JFrame {
 		validateButton.setText("Check and add");
 		validateButton.setToolTipText("Validate the equation and add it to transition functions list");
 		validateButton.setMargin(new Insets(0, 0, 0, 0));
-		validateButton.setBounds(posX+650, posY+20, 120, 20);
+		validateButton.setBounds(posX+650, posY+20, 120, 22);
 		validateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				addFunctionAction();
@@ -201,7 +201,7 @@ public class HolmesFunctionalTrans extends JFrame {
 		clearButton.setText("Clear function");
 		clearButton.setToolTipText("Clear the equation from the list");
 		clearButton.setMargin(new Insets(0, 0, 0, 0));
-		clearButton.setBounds(posX+650, posY+50, 120, 20);
+		clearButton.setBounds(posX+650, posY+50, 120, 22);
 		clearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				int row = tableFunc.getSelectedRow();
@@ -232,8 +232,20 @@ public class HolmesFunctionalTrans extends JFrame {
 		});
 		resultPanel.add(clearButton);
 		
+		JButton helpButton = new JButton(Tools.getResIcon16("/icons/functionsWindow/helpIcon.png"));
+		helpButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</html>");
+		helpButton.setToolTipText("Show list of operations and functions");
+		helpButton.setMargin(new Insets(0, 0, 0, 0));
+		helpButton.setBounds(posX+650, posY+80, 120, 22);
+		helpButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				helpNotepad();
+			}
+		});
+		resultPanel.add(helpButton);
+		
 		JCheckBox functionalActiveButton = new JCheckBox("Functional transition");
-		functionalActiveButton.setBounds(posX+650, posY+80, 150, 20);
+		functionalActiveButton.setBounds(posX+650, posY+110, 150, 20);
 		if(transition.isFunctional()) {
 			functionalActiveButton.setSelected(true);
 		} else {
@@ -271,6 +283,22 @@ public class HolmesFunctionalTrans extends JFrame {
 		return resultPanel;
 	}
 	
+	protected void helpNotepad() {
+		HolmesNotepad notePad = new HolmesNotepad(640,500);
+		notePad.setVisible(true);
+		notePad.addTextLineNL("Arithemic operators:", "text");
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("Addition: 2 + 2\nSubtraction: 2 - 2\nMultiplication: 2 * 2\nDivision: 2 / 2\n"
+				+ "Exponentation: 2 ^ 2\nUnary Minus,Plus (Sign Operators): +2 - (-2)\nModulo: 2 % 2", "text");
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("Functions:", "text");
+		notePad.addTextLineNL("\nabs: absolute value\nacos: arc cosine\nasin: arc sine\natan: arc tangent\ncbrt: cubic root\n"
+				+ "ceil: nearest upper integer\ncos: cosine\ncosh: hyperbolic cosine\nexp: euler's number raised to the power (e^x)\n"
+				+ "floor: nearest lower integer\nlog: logarithmus naturalis (base e)\nlog10: logarithm (base 10)\nlog2: logarithm (base 2)\n"
+				+ "sin: sine\nsinh: hyperbolic sine\nsqrt: square root\ntan: tangent\ntanh: hyperbolic tangent", "text");
+		notePad.setCaretFirstLine();
+	}
+
 	/**
 	 * Obsługa przycisku dodawania nowej funkcji
 	 */
@@ -280,6 +308,7 @@ public class HolmesFunctionalTrans extends JFrame {
 			return;
 
 		commentField.setText("");
+		currentResult.setText("");
 		String fID = (String) tableFunc.getValueAt(row, 0);
 		boolean enabled = enabledCheckBox.isSelected();
 		FunctionContainer container = transition.getFunctionContainer(fID);
@@ -292,13 +321,22 @@ public class HolmesFunctionalTrans extends JFrame {
 		tableFunc.getModel().setValueAt(container.function, row, 2);
 		tableFunc.getModel().setValueAt(correct, row, 3);
 		tableFunc.getModel().setValueAt(enabled, row, 6);
-		tableFuncModel.fireTableDataChanged();
+		
 		
 		Expression exp = transition.getFunctionContainer(fID).equation;
-		if(exp != null) {
+		if(exp != null && correct) {
 			double result = exp.evaluate();
-			currentResult.setText(formatter.format(result));
+			
+			if((new Double(result)).isNaN()) {
+				currentResult.setText("Not-A-Number");
+				container.correct = false;
+				container.enabled = false;
+				tableFunc.getModel().setValueAt(container.correct, row, 3);
+				tableFunc.getModel().setValueAt(container.enabled, row, 6);
+			} else
+				currentResult.setText(formatter.format(result));
 		}
+		tableFuncModel.fireTableDataChanged();
 		
 		tableFunc.setRowSelectionInterval(row, row);
 		overlord.markNetChange();
@@ -318,9 +356,9 @@ public class HolmesFunctionalTrans extends JFrame {
 		tableFunc = new JTable(tableFuncModel);
 		
 		tableFunc.getColumnModel().getColumn(0).setHeaderValue("fID");
-		tableFunc.getColumnModel().getColumn(0).setPreferredWidth(60);
-		tableFunc.getColumnModel().getColumn(0).setMinWidth(60);
-		tableFunc.getColumnModel().getColumn(0).setMaxWidth(60);
+		tableFunc.getColumnModel().getColumn(0).setPreferredWidth(70);
+		tableFunc.getColumnModel().getColumn(0).setMinWidth(70);
+		tableFunc.getColumnModel().getColumn(0).setMaxWidth(70);
 		tableFunc.getColumnModel().getColumn(1).setHeaderValue("Place name");
 		tableFunc.getColumnModel().getColumn(1).setPreferredWidth(300);
 		tableFunc.getColumnModel().getColumn(1).setMinWidth(100);

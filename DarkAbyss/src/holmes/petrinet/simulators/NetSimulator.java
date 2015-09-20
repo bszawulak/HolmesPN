@@ -187,8 +187,13 @@ public class NetSimulator {
 	private boolean isPossibleStep() {
 		ArrayList<Transition> transitions = petriNet.getTransitions();
 		for (Transition transition : transitions) {
-			if (transition.isActive())
+			if (transition.isActive()) {
 				return true;
+			}
+			if(transition.getDPNtimer() >= 0 && transition.getDPNduration() != 0) {
+				return true;
+			}
+				
 		}
 		return false;
 	}

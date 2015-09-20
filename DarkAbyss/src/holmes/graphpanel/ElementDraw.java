@@ -194,34 +194,38 @@ public final class ElementDraw {
 				
 				//TIME TRANSITION
 				if(trans.getTransType() == TransitionType.TPN) {
-					g.setColor(Color.black);
-					g.setFont(f_plain);
-					String eft = String.valueOf( trans.getEFT() );
-					g.drawString(eft, nodeBounds.x+35, nodeBounds.y + 8);
+					int dpnTextOffset = -5;
+					if(trans.getTPNstatus()) {
+						dpnTextOffset = -15;
+						g.setColor(Color.black);
+						g.setFont(f_plain);
+						String eft = String.valueOf( trans.getEFT() );
+						g.drawString(eft, nodeBounds.x+35, nodeBounds.y + 8);
 
-					String lft = String.valueOf( trans.getLFT() );
-					g.drawString(lft, nodeBounds.x +35, nodeBounds.y + 28);
+						String lft = String.valueOf( trans.getLFT() );
+						g.drawString(lft, nodeBounds.x +35, nodeBounds.y + 28);
 
-					int intTimer = (int) trans.getTPNtimer();
-					int intFireTime = (int) trans.getTPNtimerLimit();
-					String timeInfo = ""+intTimer+"  /  "+intFireTime;
-					
-					if(!trans.isActive())
-						timeInfo = "# / #";
-					
-					int offset = -9;
-					if(timeInfo.length() < 7)
-						offset = 4;
-					else if(timeInfo.length() < 9)
-						offset = 1;
-					else if(timeInfo.length() < 10)
-						offset = -3;
-					else if(timeInfo.length() < 11)
-						offset = -5;
-					else if(timeInfo.length() < 12)
-						offset = -7;
-					
-					g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y + -4);
+						int intTimer = (int) trans.getTPNtimer();
+						int intFireTime = (int) trans.getTPNtimerLimit();
+						String timeInfo = ""+intTimer+"  /  "+intFireTime;
+						
+						if(!trans.isActive())
+							timeInfo = "# / #";
+						
+						int offset = -9;
+						if(timeInfo.length() < 7)
+							offset = 4;
+						else if(timeInfo.length() < 9)
+							offset = 1;
+						else if(timeInfo.length() < 10)
+							offset = -3;
+						else if(timeInfo.length() < 11)
+							offset = -5;
+						else if(timeInfo.length() < 12)
+							offset = -7;
+						
+						g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y + -4);
+					}
 					
 					if(trans.getDPNstatus()) {
 						String dur = String.valueOf( trans.getDPNduration() );
@@ -231,7 +235,7 @@ public final class ElementDraw {
 							dur = " # / "+dur;
 						}
 						dur = "("+dur+")";
-						offset = -9;
+						int offset = -9;
 						if(dur.length() < 7)
 							offset = 2;
 						else if(dur.length() < 9)
@@ -247,7 +251,7 @@ public final class ElementDraw {
 						
 						g.setFont(f_bold);
 						g.setColor(Color.red);
-						g.drawString(dur, nodeBounds.x +offset, nodeBounds.y + -15);
+						g.drawString(dur, nodeBounds.x +offset, nodeBounds.y + dpnTextOffset);
 						g.setColor(Color.black);
 						g.setFont(f_plain);
 					}

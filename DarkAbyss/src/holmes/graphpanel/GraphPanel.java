@@ -565,6 +565,12 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewSubnetPT(Point p) {
 		if (isLegalLocation(p)) {
+			if(overlord.getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1")) {
+					JOptionPane.showMessageDialog(null, "Snoopy compatibility mode is activated in program options.\n"
+							+ "Dual interface (PT) subnetworks are not allowed.", 
+							"Compatibility issue", JOptionPane.INFORMATION_MESSAGE);
+					return;
+			}
 			overlord.getWorkspace().newTab(true, p, this.sheetId, MetaType.SUBNET);
 		}
 	}

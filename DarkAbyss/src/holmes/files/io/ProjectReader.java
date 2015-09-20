@@ -1279,6 +1279,8 @@ public class ProjectReader {
 			
 			line = buffer.readLine();
 			int readedLine = 0;
+			if(line.equals("States: 0"))
+				return false;
 			
 			boolean go = true;
 			StatesManager statesMngr = projectCore.accessStatesManager();
@@ -1342,6 +1344,8 @@ public class ProjectReader {
 			
 			line = buffer.readLine();
 			int readedLine = 0;
+			if(line.equals("FRvectors: 0"))
+				return false;
 			
 			boolean go = true;
 			FiringRatesManager frateMngr = projectCore.accessFiringRatesManager();
@@ -1429,6 +1433,8 @@ public class ProjectReader {
 			
 			line = buffer.readLine();
 			int readedLine = 0;
+			if(line.equals("SSA vectors: 0"))
+				return false;
 			
 			boolean go = true;
 			SSAplacesManager ssaMngr = projectCore.accessSSAmanager();

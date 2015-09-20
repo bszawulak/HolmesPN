@@ -49,8 +49,6 @@ public class SnoopyReader {
 	 * @param path String - ścieżka do pliku
 	 */
 	public SnoopyReader(int type, String path) {
-		
-		
 		coreReader(path);
 		
 		if(warnings)
@@ -70,15 +68,16 @@ public class SnoopyReader {
 			GUIManager.getDefaultGUIManager().log("Reading Snoopy file: "+filepath, "text", true);	
 			
 			readNodesBlock(buffer);
-			
 			readArcsBlock(buffer);
-			
-			//buffer.close();
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Reading Snoopy net failed.", "error", true);
 		} finally {
-			try { buffer.close(); }
-			catch (Exception e2) {}
+			try { 
+				buffer.close(); 
+			}
+			catch (Exception e2) {
+				;
+			}
 		}
 	}
 

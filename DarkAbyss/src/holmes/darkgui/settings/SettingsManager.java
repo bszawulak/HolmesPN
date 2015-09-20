@@ -161,6 +161,7 @@ public class SettingsManager {
 		checkAndFix(settingsNew, "simTransReadArcTokenReserv", "1"); //jeśli 1, tranzycje rezerwują tokeny poprzez readarc
 		checkAndFix(settingsNew, "simPlacesColors", "1");
 		checkAndFix(settingsNew, "simSingleMode", "1");
+		checkAndFix(settingsNew, "simTDPNrunWhenEft", "0");
 		
 		settings = new ArrayList<Setting>(settingsNew);
 		writeSettingsFile();

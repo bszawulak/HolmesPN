@@ -320,7 +320,7 @@ public final class Tools {
 	 * Oto metoda. Klękajcie narody, kosztowała 2 godziny pracy, jak zawsze wynik to kilka linii.
 	 * TYCH linii.
 	 * @param resPath String - ścieżka do source katalogu zasobów
-	 * @return Image - obiekt klasy Image, niegodny Jara jak się okazuje
+	 * @return Image - obiekt kurwa klasy Image, niegodny Jar'a jak się okazuje
 	 */
 	public static Image getImageFromIcon(String resPath) {
 		resPath = resPath.toLowerCase();

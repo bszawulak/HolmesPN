@@ -568,8 +568,14 @@ public class HolmesProgramProperties extends JFrame {
 				posX, posY+=20, 360, 20, "simSingleMode", true);
 		panel.add(singleMaxModeCheckBox);
 		
+		JCheckBox simTDPNrunTimeCheckBox = checkboxWizard("TDPN transition acts like DPN when TPN internal clock = EFT", 
+				posX, posY+=20, 360, 20, "simTDPNrunWhenEft", true);
+		panel.add(simTDPNrunTimeCheckBox);
+		
+		
+		
 		JCheckBox placesColorsCheckBox = checkboxWizard("Places change colors during simulation", 
-				posX, posY+=20, 360, 20, "simPlacesColors", true);
+				posX, posY+60, 360, 20, "simPlacesColors", true);
 		panel.add(placesColorsCheckBox);
 		
 		noAction = false;
