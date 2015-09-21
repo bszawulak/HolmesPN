@@ -16,6 +16,8 @@ import holmes.petrinet.elements.Transition;
  * Klasa implementująca tranzycje czasowe w modelu TPN (Time Petri Net)
  * 
  * @author BS
+ * <br><br>
+ * [MR] implementacja przeniesiona do klasy Transition. Jak każdy inny model sieci, nie tylko czasowy
  *
  */
 public class TimeTransition2 {

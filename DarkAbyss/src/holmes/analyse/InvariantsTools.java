@@ -1055,14 +1055,32 @@ public final class InvariantsTools {
     /**
      * Metoda zwraca informację o inwariantach które zawierają łuki odczytu, hamujące, resetujące i wyrównujące
      * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
+     * @param searchDoubleArcs boolean - true, jeśli readarc ma uwzględniach łuki podwójne
      * @return ArrayList[ArrayList[Integer]] - każdy wiersz: [0] # readarc [1] # inhibitor
      *  [2] # reset [3] # equal
      */
-    public static ArrayList<ArrayList<Integer>> getExtendedT_invariantsInfo(ArrayList<ArrayList<Integer>> invMatrix) {
+    public static ArrayList<ArrayList<Integer>> getExtendedT_invariantsInfo(ArrayList<ArrayList<Integer>> invMatrix,
+    		boolean searchDoubleArcs) {
     	ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
     	ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
     	
     	int invMatrixSize = invMatrix.size();
+    	
+    	
+    	ArrayList<Integer> transIDdouble = new ArrayList<Integer>();
+    	if(searchDoubleArcs) {
+    		InvariantsCalculator ic = new InvariantsCalculator(true);
+    		ArrayList<ArrayList<Integer>> doubleArcs = ic.getDoubleArcs();
+    		
+    		for(int i=0; i<transitions.size(); i++)
+    			transIDdouble.add(0);
+    		
+    		for(ArrayList<Integer> vector : doubleArcs) {
+				int value = transIDdouble.get(vector.get(1));
+				transIDdouble.set(vector.get(1), value+1);
+    		}
+    	}
+    	
     	for(int i=0; i<invMatrixSize; i++) {
     		ArrayList<Integer> invariant = invMatrix.get(i);
     		int readArcs = 0;
@@ -1091,6 +1109,10 @@ public final class InvariantsTools {
     						equals++;
     					}
     				}
+    			}
+    			if(searchDoubleArcs) {
+    				if(transIDdouble.get(e) > 0)
+    					readArcs += transIDdouble.get(e);
     			}
     		}
     		ArrayList<Integer> invInfo = new ArrayList<Integer>();
@@ -1484,6 +1506,20 @@ public final class InvariantsTools {
 		
 		//informacje o połączeniach:
 		
+		ArrayList<Integer> transIDdouble = new ArrayList<Integer>();
+    	//if(searchDoubleArcs) {
+    		InvariantsCalculator ic = new InvariantsCalculator(true);
+    		ArrayList<ArrayList<Integer>> doubleArcs = ic.getDoubleArcs();
+    		
+    		for(int i=0; i<transitions.size(); i++)
+    			transIDdouble.add(0);
+    		
+    		for(ArrayList<Integer> pair : doubleArcs) {
+				int value = transIDdouble.get(pair.get(1));
+				transIDdouble.set(pair.get(1), value+1);
+    		}
+    	//}
+		
 		for(int e=0; e<invSize; e++) {
 			int supp = invariant.get(e);
 			if(supp == 0) continue;
@@ -1518,6 +1554,9 @@ public final class InvariantsTools {
 						outArcs++;
 				}
 			}
+			
+			if(transIDdouble.get(e) > 0)
+				readArcs += transIDdouble.get(e);
 			
 			if(inArcs == 0 && extInArcs == 0)
 				pureInTrans++;

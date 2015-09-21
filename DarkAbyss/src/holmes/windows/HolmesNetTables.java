@@ -241,7 +241,7 @@ public class HolmesNetTables extends JFrame {
 		yPos = yPos + bHeight - 5;
 		
 		//JButton invButton = createStandardButton("Invariants", Tools.getResIcon32(""));
-		JButton invButton = new JButton("Invariants");
+		JButton invButton = new JButton("t-invariants");
 		invButton.setFocusPainted(false);
 		invButton.setMargin(new Insets(0, 0, 0, 0));
 		invButton.setIcon(Tools.getResIcon16("/icons/netTables/invIcon.png"));

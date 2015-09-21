@@ -189,7 +189,9 @@ public class HolmesInvariantsViewer extends JFrame {
 	private void initalizeComponents() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
-		} catch (Exception e ) { }
+		} catch (Exception e ) { 
+			
+		}
 		setLayout(new BorderLayout());
 		setSize(new Dimension(800, 650));
 		setLocation(50, 50);
@@ -221,9 +223,9 @@ public class HolmesInvariantsViewer extends JFrame {
 		invCombo = new JComboBox<String>();
 		invCombo.addItem(" ---------- ");
 		for(int i=0; i < invariantsMatrix.size(); i++) {
-			invCombo.addItem("Invariant "+(i+1));
+			invCombo.addItem("Invariant "+(i+1)+" (ID:"+i+")");
 		}
-		invCombo.setBounds(posXda+75, posYda, 140, 20);
+		invCombo.setBounds(posXda+75, posYda, 160, 20);
 		invCombo.setSelectedIndex(currentSelected);
 		invCombo.setMaximumRowCount(6);
 		invCombo.addActionListener(new ActionListener() {
@@ -240,7 +242,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		result.add(invCombo);
 		
 		JButton nextButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>");
-		nextButton.setBounds(posXda+220, posYda, 80, 20);
+		nextButton.setBounds(posXda+240, posYda, 80, 20);
 		nextButton.setMargin(new Insets(0, 0, 0, 0));
 		nextButton.setIcon(Tools.getResIcon16("/icons/invViewer/nextIcon.png"));
 		nextButton.setToolTipText("Show next invariant data.");
@@ -256,7 +258,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		result.add(nextButton);
 		
 		JButton prevButton = new JButton("Previous");
-		prevButton.setBounds(posXda+310, posYda, 80, 20);
+		prevButton.setBounds(posXda+330, posYda, 80, 20);
 		prevButton.setMargin(new Insets(0, 0, 0, 0));
 		prevButton.setIcon(Tools.getResIcon16("/icons/invViewer/prevIcon.png"));
 		prevButton.setToolTipText("Show previous invariant data.");
@@ -452,7 +454,6 @@ public class HolmesInvariantsViewer extends JFrame {
 			}
 		});
 		result.add(maximumModeCheckBox);
-		
 	    return result;
 	}
 	
@@ -586,9 +587,6 @@ public class HolmesInvariantsViewer extends JFrame {
 		
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		table.validate();
-
-		//tableScrollPane.setViewportView(table);
-		//tableScrollPane.repaint();
 	}
 
 	/**
@@ -655,7 +653,6 @@ public class HolmesInvariantsViewer extends JFrame {
 		
 		tableScrollPane.setViewportView(table);
 		tableScrollPane.repaint();
-
 		descriptionTextArea.setText(overlord.getWorkspace().getProject().getT_InvDescription(invNo));
 	}
 	
@@ -796,7 +793,6 @@ public class HolmesInvariantsViewer extends JFrame {
 				int transId = Integer.parseInt(id);
 				new HolmesNodeInfo(transitions.get(transId), this);
 			}
-
 		} catch (Exception e) {
 			
 		}

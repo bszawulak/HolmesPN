@@ -191,7 +191,7 @@ public class HolmesNetTablesActions {
     	if(dataMatrix == null || dataMatrix.size() == 0) {
     		dataMatrix = new ArrayList<InvariantContainer>();
     		ArrayList<ArrayList<Integer>> nonMinimalInvariants = InvariantsTools.checkSupportMinimalityThorough(invMatrix);
-    		ArrayList<ArrayList<Integer>> arcsInfoMatrix = InvariantsTools.getExtendedT_invariantsInfo(invMatrix);
+    		ArrayList<ArrayList<Integer>> arcsInfoMatrix = InvariantsTools.getExtendedT_invariantsInfo(invMatrix, true);
     		ArrayList<ArrayList<Integer>> inOutInfoMatrix = InvariantsTools.getT_invInOutTransInfo(invMatrix);
     		ArrayList<Integer> invariantsClassVector = InvariantsTools.getT_invariantsClassVector(invMatrix);
     		ArrayList<Integer> feasibleVector = InvariantsTools.getT_invFeasibilityClassesStatic(invMatrix);

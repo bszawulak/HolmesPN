@@ -276,7 +276,7 @@ public class HolmesNetProperties extends JFrame {
 		label_arcNumber.setBounds(xPos+label5.getWidth()+10, label5.getLocation().y, numberLabelWidth, 20);
 		panel.add(label_arcNumber);
 		//NET INVARIANTS:
-		JLabel label6 = new JLabel("Invariants:");
+		JLabel label6 = new JLabel("t-invariants:");
 		label6.setBounds(xPos, yPosA+=spacing, 100, 20);
 		panel.add(label6);
 		label_invNumber = new JLabel("N/A");

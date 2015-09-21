@@ -941,6 +941,15 @@ public class InvariantsCalculator implements Runnable {
 		else
 			this.p_invariantsList = invMatrix;
 	}
+
+	/**
+	 * Macierz łuków podwójnych. Każdy wiersz to 2-elementowy wektor, [0] to id miejsca, [1] to id tranzycji
+	 * @return ArrayList[ArrayList[Integer]] - macierz łuków podwójnych
+	 */
+	public ArrayList<ArrayList<Integer>> getDoubleArcs() {
+		this.createTPIncidenceAndIdentityMatrix(true, true);
+		return doubleArcs;
+	}
 	
 	/**
 	 * Metoda zapisująca komunikaty w oknie logów.
@@ -974,6 +983,5 @@ public class InvariantsCalculator implements Runnable {
 				//masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
 			}
 		}
-		
 	}
 }

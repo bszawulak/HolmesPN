@@ -189,7 +189,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		setFrame(frejm);
 		try {	
-			frame.setIconImage(Tools.getImageFromIcon("/icons/holmes.png"));
+			frame.setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) { }
 		
 		frame.getContentPane().add(this);

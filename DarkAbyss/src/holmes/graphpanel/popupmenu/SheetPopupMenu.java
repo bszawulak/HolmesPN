@@ -167,7 +167,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 				GUIManager.getDefaultGUIManager().io.loadExternalAnalysis(true);
 			}
 		}));
-		analMenu.add(createMenuItem("Generate invariants", "generateINA.png", null, new ActionListener() {
+		analMenu.add(createMenuItem("Generate t-invariants", "generateINA.png", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GUIManager.getDefaultGUIManager().io.fastGenerateTinvariants();
 			}
@@ -179,7 +179,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 			}
 		}));
 		
-		JMenu mctSubMenu = new JMenu("MCT Advanced Generation");
+		JMenu mctSubMenu = new JMenu("MCT Options");
 		analMenu.add(mctSubMenu);
 		
 		JMenuItem mct1 = createMenuItem("Simple MCT file", "", null, new ActionListener() {
@@ -197,7 +197,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 		mct2.setEnabled(false);
 		mctSubMenu.add(mct2);
 		
-		JMenuItem mct3 = createMenuItem("Other file", "", null, new ActionListener() {
+		JMenuItem mct3 = createMenuItem("Other files", "", null, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//GUIManager.getDefaultGUIManager().generateMCT();
 			}
