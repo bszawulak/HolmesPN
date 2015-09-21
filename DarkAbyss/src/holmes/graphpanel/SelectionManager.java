@@ -785,8 +785,11 @@ public class SelectionManager {
 				Place place = (Place) el.getParentNode();
 				place.modifyTokensNumber(1);
 				
-				ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-				overlord.getWorkspace().getProject().accessStatesManager().getState(0).addTokens(places.indexOf(place), 1);
+				if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
+					int tokens = place.getTokensNumber();
+					ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+					overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+				}
 			}
 			if(el.getParentNode().getType() == PetriNetElementType.META && !safetyNodesList.contains(el.getParentNode())) {
 				try {
@@ -816,8 +819,15 @@ public class SelectionManager {
 			if (el.getParentNode().getType() == PetriNetElementType.PLACE && !safetyNodesList.contains(el.getParentNode())) {
 				safetyNodesList.add(el.getParentNode());
 				int tokens = ((Place) el.getParentNode()).getTokensNumber();
-				if(tokens >= 1)
+				if(tokens >= 1) {
 					((Place) el.getParentNode()).modifyTokensNumber(-1);
+				
+					if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
+						int value = ((Place) el.getParentNode()).getTokensNumber();
+						ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+						overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(((Place) el.getParentNode())), value);
+					}
+				}
 			}
 		}
 		invokeActionListener();

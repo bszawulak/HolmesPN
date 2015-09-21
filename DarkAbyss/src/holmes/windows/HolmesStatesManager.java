@@ -194,7 +194,7 @@ public class HolmesStatesManager extends JFrame {
 				int selected = statesTable.getSelectedRow();
 				Object[] options = {"Set new state", "Keep old state",};
 				int n = JOptionPane.showOptionDialog(null,
-								"Set all places of the net according to the selected (table row: "+selected+") state?",
+								"Set all places of the net according to the selected (table row: "+(selected+1)+") state?",
 								"Set new state?", JOptionPane.YES_NO_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 				if (n == 0) {
@@ -290,7 +290,7 @@ public class HolmesStatesManager extends JFrame {
 		
 		Object[] options = {"Remove state", "Cancel",};
 		int n = JOptionPane.showOptionDialog(null,
-						"Remove selected state (table row: "+selected+") from the states table?",
+						"Remove selected state (table row: "+(selected+1)+") from the states table?",
 						"Remove state?", JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 		if (n == 1) {
@@ -309,7 +309,7 @@ public class HolmesStatesManager extends JFrame {
 		int selected = statesTable.getSelectedRow();
 		Object[] options = {"Replace state", "Cancel",};
 		int n = JOptionPane.showOptionDialog(null,
-						"Replace selected state (table row: "+selected+") with the current net state?",
+						"Replace selected state (table row: "+(selected+1)+") with the current net state?",
 						"Replace state?", JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 		if (n == 1) {

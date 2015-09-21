@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.settings.SettingsManager;
 import holmes.graphpanel.ElementDrawSettings;
+import holmes.petrinet.elements.Transition.TransitionType;
 
 /**
  * Klasa implementująca wierzchołek sieci Petriego. Dziedziczą po niej klasy
@@ -161,10 +162,11 @@ public abstract class Node extends PetriNetElement {
 	 * @param sheetId int - identyfikator arkusza
 	 * @param places ArrayList[Place] - wektor miejsc
 	 * @param transitions ArrayList[Transition] - wektor tranzycji
-	 * @param arrayList3 ArrayList[MetaNode] - wektor metawęzłów
+	 * @param transitions ArrayList[Transition] - wektor tranzycji czasowych
+	 * @param metanodes ArrayList[MetaNode] - wektor metawęzłów
 	 */
-	public void drawName(Graphics2D g, int sheetId, ArrayList<Node> places, ArrayList<Node> transitions,
-			 ArrayList<Node> arrayList3) {
+	public void drawName(Graphics2D g, int sheetId, ArrayList<Node> places, ArrayList<Node> transitions, ArrayList<Node> timeTransitions,
+			 ArrayList<Node> metanodes) {
 		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
 		String name = getName();
 		if(sm.getValue("editorShowShortNames").equals("1")) {
@@ -172,10 +174,15 @@ public abstract class Node extends PetriNetElement {
 				int x = places.indexOf(this);
 				name = "p"+x;
 			} else if (this instanceof Transition) {
-				int x = transitions.indexOf(this);
-				name = "t"+x;
+				if(((Transition)this).getTransType() == TransitionType.PN) {
+					int x = transitions.indexOf(this);
+					name = "t"+x;
+				} else {
+					int x = timeTransitions.indexOf(this);
+					name = "tt"+x;
+				}
 			} else {
-				int x = arrayList3.indexOf(this);
+				int x = metanodes.indexOf(this);
 				name = "M"+x;
 			}
 		}

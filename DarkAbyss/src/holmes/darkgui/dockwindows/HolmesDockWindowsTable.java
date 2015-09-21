@@ -608,7 +608,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		spiner.setEnabled(false);
 		startButton.setEnabled(false);
 		invariantsSimulatorPanel.add(startButton);
-		components.add(invariantsSimulatorPanel);
+		//components.add(invariantsSimulatorPanel);
 		
 		panel.setLayout(null); 
 		for (int i = 0; i < components.size(); i++) {
@@ -4318,8 +4318,11 @@ public class HolmesDockWindowsTable extends JPanel {
 		Place place = (Place) element;
 		if (mode == PLACE) {
 			place.setTokensNumber(tokens);
-			ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-			overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+			
+			if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
+				ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+				overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+			}
 			repaintGraphPanel();
 		}
 	}

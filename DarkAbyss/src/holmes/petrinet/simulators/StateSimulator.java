@@ -255,7 +255,6 @@ public class StateSimulator implements Runnable {
 				for(Transition trans : launchingTransitions) {
 					int index = transitions.lastIndexOf(trans);
 					transRow.set(index, 1); //dodaj tylko tranzycjom, które odpaliły
-					
 					int fired = transitionsTotalFiring.get(index);
 					transitionsTotalFiring.set(index, fired+1); //wektor sumy odpaleń
 				}
@@ -381,15 +380,14 @@ public class StateSimulator implements Runnable {
 
 				if (isPossibleStep()){ 
 					launchingTransitions = engine.getTransLaunchList(emptySteps);
+					launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
+					removeDPNtransition(launchingTransitions);
 					
 					for(Transition trans : launchingTransitions) {
 						int index = transitions.lastIndexOf(trans);
 						int val = totalTransFiringInTurn.get(index) + 1;
 						totalTransFiringInTurn.set(index, val);
 					}
-					
-					launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
-					removeDPNtransition(launchingTransitions);
 				} else {
 					pBarTotal--;
 					break;
@@ -597,15 +595,16 @@ public class StateSimulator implements Runnable {
 			internalSteps++;
 			if (isPossibleStep()){ 
 				launchableTransitions = engine.getTransLaunchList(emptySteps);
+
+				launchSubtractPhase(launchableTransitions);
+				removeDPNtransition(launchableTransitions);
 				
+				//TODO: przeniesiono znad tych dwóch polecenia wyżej
 				for(Transition trans : launchableTransitions) {
 					int index = transitions.lastIndexOf(trans);
 					int fired = transitionsTotalFiring.get(index);
 					transitionsTotalFiring.set(index, fired+1); //wektor sumy odpaleń
 				}
-				
-				launchSubtractPhase(launchableTransitions);
-				removeDPNtransition(launchableTransitions);
 			} else {
 				break;
 			}
@@ -696,6 +695,8 @@ public class StateSimulator implements Runnable {
 			internalSteps++;
 			if (isPossibleStep()){ 
 				launchableTransitions = engine.getTransLaunchList(emptySteps);
+				launchSubtractPhase(launchableTransitions); //zabierz tokeny poprzez aktywne tranzycje
+				removeDPNtransition(launchableTransitions);
 				
 				if(launchableTransitions.contains(trans)) {
 					transDataVector.add(1);
@@ -703,9 +704,6 @@ public class StateSimulator implements Runnable {
 				} else {
 					transDataVector.add(0);
 				}
-				
-				launchSubtractPhase(launchableTransitions); //zabierz tokeny poprzez aktywne tranzycje
-				removeDPNtransition(launchableTransitions);
 			} else {
 				break;
 			}
@@ -751,16 +749,15 @@ public class StateSimulator implements Runnable {
 				
 				if (isPossibleStep()){ 
 					launchableTransitions = engine.getTransLaunchList(emptySteps);
+					launchSubtractPhase(launchableTransitions);
+					removeDPNtransition(launchableTransitions);
+					internalSteps++;
 					
 					for(Transition trans : launchableTransitions) {
 						int index = transitions.lastIndexOf(trans);
 						double fired = transFiring.get(index);
 						transFiring.set(index, fired+1); //wektor sumy odpaleń
 					}
-					
-					launchSubtractPhase(launchableTransitions);
-					removeDPNtransition(launchableTransitions);
-					internalSteps++;
 				} else {
 					break;
 				}

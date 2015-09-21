@@ -118,7 +118,7 @@ public class DarkMenu extends JMenuBar {
 		importMenuItem.getAccessibleContext().setAccessibleDescription("Import project");
 		importMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				guiManager.io.importProject();
+				guiManager.io.importNetwork();
 			}
 		});
 		fileMenu.add(importMenuItem);

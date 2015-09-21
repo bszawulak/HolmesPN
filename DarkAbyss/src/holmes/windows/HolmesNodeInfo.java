@@ -212,8 +212,11 @@ public class HolmesNodeInfo extends JFrame {
 				JSpinner spinner = (JSpinner) e.getSource();
 				int tokens = (int) spinner.getValue();
 				action.setTokens(place, tokens);
-				ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-				overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+				
+				if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
+					ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+					overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+				}
 			}
 		});
 		infoPanel.add(tokenSpinner);

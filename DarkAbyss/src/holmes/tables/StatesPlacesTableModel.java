@@ -165,6 +165,8 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 		double newValue = 0;
 		try {
 			newValue = Double.parseDouble(value.toString());
+			if(newValue < 0)
+				newValue = 0;
 			ArrayList<String> rowVector = dataMatrix.get(row);
 			rowVector.set(col, ""+(int)newValue);
 			//change state vector:

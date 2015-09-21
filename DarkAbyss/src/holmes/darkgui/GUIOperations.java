@@ -60,7 +60,7 @@ public class GUIOperations {
 	 * Obsługuje między innymi sieci zwykłe i czasowe programu Snoopy oraz sieci
 	 * w formacie programu INA.
 	 */
-	public void importProject() {
+	public void importNetwork() {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[5];
 		filters[0] = new ExtensionFileFilter("All supported Snoopy files", new String[] { "SPPED", "SPEPT", "SPTPT" });
@@ -87,11 +87,6 @@ public class GUIOperations {
 	 * Metoda odpowiedzialna za otwieranie pliku z zapisaną siecią w formacie .abyss lub pliku projektu
 	 */
 	public void selectAndOpenHolmesProject() {
-		boolean proceed = overlord.reset.newProjectInitiated();
-		if(proceed == false) {
-			return;
-		}
-		
 		String lastPath = overlord.getLastPath();
 		JFileChooser fc;
 		if(lastPath==null)
@@ -116,14 +111,20 @@ public class GUIOperations {
 				return;
 			if(!file.exists()) 
 				return;
+			
+			boolean proceed = overlord.reset.newProjectInitiated();
+			if(proceed == false) {
+				return;
+			}
+			
 			boolean status = false;
-			if (extension.toLowerCase().contains(".apf") || extension.toLowerCase().contains(".project")) { //ABYSS project reader
+			if (extension.toLowerCase().contains(".apf") || extension.toLowerCase().contains(".project")) { //ABYSS/Holmes project reader
 				ProjectReader pRdr = new ProjectReader();
 				status = pRdr.readProject(file.getPath());
 				
 				overlord.setLastPath(file.getParentFile().getPath());	
 				overlord.subnetsGraphics.resizePanels();
-			} else if (extension.toLowerCase().contains(".abyss")) { //ABYSS parser
+			} else if (extension.toLowerCase().contains(".abyss")) { //ABYSS parser, plug and pray
 				status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
 				overlord.setLastPath(file.getParentFile().getPath());
 			}

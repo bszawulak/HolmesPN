@@ -198,7 +198,7 @@ public class Toolbar extends BorderDock {
 					private static final long serialVersionUID = 5723070117312880726L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.io.importProject();
+				overlord.io.importNetwork();
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableImport", importButton));
