@@ -183,7 +183,7 @@ public class HolmesSimSetup extends JFrame {
 		simulatorLabel.setBounds(posX, posY+40, 180, 20);
 		panel.add(simulatorLabel);
 		
-		String[] simulatorName = {"Standard token simulator", "Stochastics Simulation Algorithm (SSA)", 
+		String[] simulatorName = {"Standard token simulator", "Stochastics simulation for SPN", 
 				"Gillespie SSA (exact version)", "Gillespie SSA (fast version)"};
 		simulatorType = new JComboBox<String>(simulatorName);
 		simulatorType.setBounds(posX, posY+60, 250, 20);
