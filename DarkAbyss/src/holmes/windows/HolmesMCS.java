@@ -68,7 +68,7 @@ public class HolmesMCS extends JFrame {
 	 */
 	public HolmesMCS() {
 		try {
-			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 			transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		} catch (Exception e ) {
 			

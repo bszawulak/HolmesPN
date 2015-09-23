@@ -84,7 +84,7 @@ public class HolmesSimSetup extends JFrame {
 		setTitle("Simulator settings");
 		setLocation(parentWindow.getX()+150, parentWindow.getY()+150);
     	try {
-    		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+    		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {}
 		setSize(new Dimension(620, 400));
 		

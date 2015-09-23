@@ -134,7 +134,7 @@ public class HolmesSimKnockVis extends JFrame {
 		setTitle("Knockout data visualisation");
 		setLocation(boss.getLocation().x+30,boss. getLocation().y+30);
     	try {
-    		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+    		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {}
 		setSize(new Dimension(1200, 900));
 		

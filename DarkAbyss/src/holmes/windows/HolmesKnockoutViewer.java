@@ -52,7 +52,7 @@ public class HolmesKnockoutViewer extends JFrame {
 	 */
 	private void initalizeComponents() {
 		try {
-			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) { }
 		setLayout(new BorderLayout());
 		setSize(new Dimension(640, 400));

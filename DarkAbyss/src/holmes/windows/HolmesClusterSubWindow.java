@@ -74,7 +74,7 @@ public class HolmesClusterSubWindow extends JFrame {
 	public HolmesClusterSubWindow(HolmesClusters parent, Clustering dataPackage, int mode) {
 		this();
     	try {
-    		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+    		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
 			
 		}

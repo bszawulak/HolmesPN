@@ -3940,7 +3940,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		detector = new ProblemDetector(this);
 		//TODO
 		
-		JLabel label0 = new JLabel("Invariants:");
+		JLabel label0 = new JLabel("t-invariants:");
 		label0.setBounds(posX, posY, 100, 20);
 		components.add(label0);
 		

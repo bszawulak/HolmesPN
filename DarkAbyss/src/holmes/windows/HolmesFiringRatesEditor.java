@@ -57,7 +57,7 @@ public class HolmesFiringRatesEditor extends JFrame {
 	public HolmesFiringRatesEditor(JFrame parent, FiringRateTransVector frData, int frIndex) {
 		setTitle("Holmes firing rates editor");
     	try {
-    		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+    		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
 			
 		}

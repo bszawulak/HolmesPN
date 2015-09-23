@@ -60,7 +60,7 @@ public class HolmesFiringRatesManager extends JFrame {
 	public HolmesFiringRatesManager(JFrame parent) {
 		setTitle("Holmes SPN transitions firing rates manager");
     	try {
-    		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+    		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
 			
 		}

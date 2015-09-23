@@ -91,7 +91,7 @@ public class HolmesClusters extends JFrame {
     	myself = this;
     	myself.setTitle("Cluster Analyzer");
     	try {
-    		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+    		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
 			
 		}

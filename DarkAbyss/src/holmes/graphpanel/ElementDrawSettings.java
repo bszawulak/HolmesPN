@@ -14,7 +14,13 @@ import holmes.darkgui.settings.SettingsManager;
 public class ElementDrawSettings {
 	public boolean view3d = false;
 	public boolean snoopyMode = false;
+	/**
+	 * True oznacza zmianę kolorów w czasie symulacji
+	 */
 	public boolean crazyColors = false;
+	/**
+	 * True oznacza zachowanie kolorów wgranych ze Snoopiego
+	 */
 	public boolean nonDefColors = false;
 	
 	public ElementDrawSettings() {

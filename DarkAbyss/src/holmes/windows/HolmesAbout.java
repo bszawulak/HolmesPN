@@ -32,7 +32,7 @@ public class HolmesAbout extends JFrame {
 		parentFrame = parent;
 		parentFrame.setEnabled(false);
 		try {
-			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
 			
 		}

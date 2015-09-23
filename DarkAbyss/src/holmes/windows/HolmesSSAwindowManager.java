@@ -58,7 +58,7 @@ public class HolmesSSAwindowManager extends JFrame {
 	public HolmesSSAwindowManager(JFrame parent) {
 		setTitle("Holmes SSA vectors manager");
     	try {
-    		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+    		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
 			
 		}

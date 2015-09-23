@@ -59,7 +59,7 @@ public class HolmesNotepad extends JFrame {
 	private HolmesNotepad() {
 		setTitle("Holmes Notepad");
     	try {
-    		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+    		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
 			
 		}

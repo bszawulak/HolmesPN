@@ -83,7 +83,7 @@ public class HolmesKnockout extends JFrame {
 	 */
 	public HolmesKnockout() {
 		try {
-			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
 			
 		}

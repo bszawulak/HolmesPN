@@ -53,7 +53,7 @@ public class HolmesProgramProperties extends JFrame {
 		action = new HolmesProgramPropertiesActions(sm);
 		
 		try {
-			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
 			
 		}

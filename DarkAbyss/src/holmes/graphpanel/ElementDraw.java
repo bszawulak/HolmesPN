@@ -416,28 +416,31 @@ public final class ElementDraw {
 				if(el.isPortalSelected()) { //dla wszystkich innych ElLocations portalu właśnie klikniętego
 					g.setColor(portalSelColor);
 				} else {
-					if(eds.crazyColors) {
-						g.setColor(getColor(place.getTokensNumber()));
-					} else {
-						g.setColor(normalColor);
-					}
+					g.setColor(normalColor);
 				}
 				g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				
-				if(!eds.nonDefColors) {
+				if(eds.nonDefColors == false) {
 					Color back = g.getColor(); // te 4 linie: lekki trojwymiar, ladniejsza
 					g.setColor(new Color(249,249,249));
 					g.fillOval(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width-3, nodeBounds.height-3);
 					g.setColor(back);
 				}
-				//g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				//g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				//g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				
+
 				g.setColor(Color.DARK_GRAY);
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
+				if(eds.crazyColors) {
+					g.setColor(getColor(place.getTokensNumber()));
+					g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					//g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					//g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					g.setColor(Color.DARK_GRAY);
+					g.setStroke(new BasicStroke(1.5F));
+					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				}
+				
 				drawTokens(g, place, nodeBounds);
 				
 				//RYSOWANIE PORTALU - OKRĄG W ŚRODKU
@@ -515,6 +518,8 @@ public final class ElementDraw {
 						
 					}
 				}
+				
+				
 			}
 		} else if(node instanceof MetaNode) {
 			MetaNode metanode = (MetaNode)node;

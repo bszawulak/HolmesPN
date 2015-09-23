@@ -58,7 +58,7 @@ public class HolmesStatesManager extends JFrame {
 	public HolmesStatesManager() {
 		setTitle("Holmes starting states manager");
     	try {
-    		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+    		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
 			
 		}

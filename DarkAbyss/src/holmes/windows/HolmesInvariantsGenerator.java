@@ -62,7 +62,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 	 */
 	public HolmesInvariantsGenerator() {
 		try {
-			setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
 			
 		}

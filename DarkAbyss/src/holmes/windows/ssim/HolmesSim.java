@@ -157,7 +157,7 @@ public class HolmesSim extends JFrame {
 		setTitle("State Simulator");
 		setLocation(30,30);
     	try {
-    		setIconImage(Tools.getImageFromIcon("/icons/blackhole.png"));
+    		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {}
 		setSize(new Dimension(1000, 750));
 		
