@@ -11,7 +11,7 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 
-public class SSAengine implements IEngine {
+public class SPNengine implements IEngine {
 	private GUIManager overlord;
 	private Map<Place, ArrayList<Transition>> involvedTransitionsMap;
 	private Map<Transition, ArrayList<Place>> involvedPlacesMap;

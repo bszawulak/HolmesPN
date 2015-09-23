@@ -202,6 +202,7 @@ public class NetSimulationDataCore implements Serializable {
 		} catch(Exception ioe){
 			String msg = "Simulation data loading failed for file "+newLocation;
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			GUIManager.getDefaultGUIManager().log(ioe.getMessage(), "error", true);
 			return false;
 		}
 	}

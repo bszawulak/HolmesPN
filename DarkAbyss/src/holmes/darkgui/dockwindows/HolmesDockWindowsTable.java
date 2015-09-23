@@ -3304,7 +3304,8 @@ public class HolmesDockWindowsTable extends JPanel {
 		components.add(mctMode);
 
 		JButton showDetailsButton = new JButton();
-		showDetailsButton.setText("Show details");
+		showDetailsButton.setText("<html>&nbsp;Show&nbsp;<br>details</html>");//TODO:
+		showDetailsButton.setIcon(Tools.getResIcon22("/icons/clustWindow/showInfo.png"));
 		showDetailsButton.setBounds(colA_posX, positionY+=30, 130, 30);
 		showDetailsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -3314,7 +3315,8 @@ public class HolmesDockWindowsTable extends JPanel {
 		components.add(showDetailsButton);
 		
 		JButton screenshotsButton = new JButton();
-		screenshotsButton.setText("Export pictures");
+		screenshotsButton.setText("<html>&nbsp;Export&nbsp;<br>pictures</html>");
+		screenshotsButton.setIcon(Tools.getResIcon22("/icons/clustWindow/exportPictures.png"));
 		screenshotsButton.setBounds(colA_posX+135, positionY, 130, 30);
 		screenshotsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {

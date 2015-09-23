@@ -172,8 +172,8 @@ public class StateSimulator implements Runnable {
 					engine = new StandardTokenSimulator();
 				}
 			} else if (engineType == 1) {
-				if(!(engine instanceof SSAengine)) {
-					engine = new SSAengine();
+				if(!(engine instanceof SPNengine)) {
+					engine = new SPNengine();
 				}
 			} else { //domyślnie standardowy silnik
 				if(!(engine instanceof StandardTokenSimulator)) {
@@ -1037,7 +1037,7 @@ public class StateSimulator implements Runnable {
 	public void setEngine(int type) {
 		readyToSimulate = false;
 		if(type == 1) {
-			engine = new SSAengine();
+			engine = new SPNengine();
 			overlord.simSettings.setSimulatorType(1);
 		} else {
 			engine = new StandardTokenSimulator();
