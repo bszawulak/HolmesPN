@@ -141,8 +141,10 @@ public class HolmesSimKnockActions {
 	
 	/**
 	 * Metoda wywoływana przyciskiem aktywującym zbieranie danych symulacji typu knockout.
+	 * @param dataSelectedTransTextArea JTextArea - pole z wpisanymi tranzycjami do wyłączenia
+	 * @param manualSelection boolean - true, jeśli symulacja dotyczy tylko ręcznie wyłączonych tranzycji 
 	 */
-	public void acquireDataForKnockoutSet(JTextArea dataSelectedTransTextArea) {
+	public void acquireDataForKnockoutSet(JTextArea dataSelectedTransTextArea, boolean manualSelection) {
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 			JOptionPane.showMessageDialog(null,
 					"Main simulator active. Please turn if off before starting state simulator process", 
@@ -169,7 +171,7 @@ public class HolmesSimKnockActions {
 		
 		
 		NetSimulationData currentDataPackage = new NetSimulationData();
-		updateNetOfflineStatus(dataSelectedTransTextArea, transitions, true, currentDataPackage);
+		updateNetOfflineStatus(dataSelectedTransTextArea, transitions, manualSelection, currentDataPackage);
 		
 		boss.ssimKnock.setThreadDetails(3, boss.mainSimWindow, boss.dataProgressBarKnockout, 
 				currentDataPackage);
@@ -363,63 +365,73 @@ public class HolmesSimKnockActions {
 	 * Metoda ustawiająca status offline dla odpowiednich tranzycji.
 	 * @param dataSelectedTransTextArea JTextArea - pole tekstowe z T i MCT do wyłączenia
 	 * @param transitions ArrayList[Transition] - wektor tranzycji
-	 * @param status boolean - true blokuje tranzycję, false odblokowuje
+	 * @param manualSelection boolean - true dodaje tylko tranzycje ręcznie wyłączone
 	 * @param currentDataPackage NetSimulationData - obiekt danych symulacji
 	 */
 	private void updateNetOfflineStatus(JTextArea dataSelectedTransTextArea, ArrayList<Transition> transitions, 
-			boolean status, NetSimulationData currentDataPackage) {
-		ArrayList<ArrayList<Transition>> mcts = pn.getMCTMatrix();
-
-		ArrayList<Transition> disableList = new ArrayList<Transition>();
-		String dataTxt = dataSelectedTransTextArea.getText();
-		while(dataTxt.contains("tr#")) {
-			int index = dataTxt.indexOf("tr#");
-			String tmp = dataTxt.substring(index);
-			int semiIndex = tmp.indexOf(";");
-			int hashIndex = tmp.indexOf("#");
-			
-			String value = tmp.substring(hashIndex+1, semiIndex);
-			int transIndex = Integer.parseInt(value);
-			if(!disableList.contains(transitions.get(transIndex))) {
-				disableList.add(transitions.get(transIndex));
-				currentDataPackage.disabledTransitionsIDs.add(transIndex);
+			boolean manualSelection, NetSimulationData currentDataPackage) {
+		
+		if(manualSelection) {
+			for(int t=0; t<transitions.size(); t++) {
+				Transition trans = transitions.get(t);
+				if(trans.isOffline()) {
+					currentDataPackage.disabledTransitionsIDs.add(t);
+					currentDataPackage.disabledTotals.add(t);
+				}
+			}
+		} else {
+			ArrayList<ArrayList<Transition>> mcts = pn.getMCTMatrix();
+			ArrayList<Transition> disableList = new ArrayList<Transition>();
+			String dataTxt = dataSelectedTransTextArea.getText();
+			while(dataTxt.contains("tr#")) {
+				int index = dataTxt.indexOf("tr#");
+				String tmp = dataTxt.substring(index);
+				int semiIndex = tmp.indexOf(";");
+				int hashIndex = tmp.indexOf("#");
 				
-				if(!currentDataPackage.disabledTotals.contains(transIndex))
-					currentDataPackage.disabledTotals.add(transIndex);
+				String value = tmp.substring(hashIndex+1, semiIndex);
+				int transIndex = Integer.parseInt(value);
+				if(!disableList.contains(transitions.get(transIndex))) {
+					disableList.add(transitions.get(transIndex));
+					currentDataPackage.disabledTransitionsIDs.add(transIndex);
+					
+					if(!currentDataPackage.disabledTotals.contains(transIndex))
+						currentDataPackage.disabledTotals.add(transIndex);
+				}
+				
+				tmp = tmp.substring(0, semiIndex+1);
+				dataTxt = dataTxt.replace(tmp, "");
 			}
 			
-			tmp = tmp.substring(0, semiIndex+1);
-			dataTxt = dataTxt.replace(tmp, "");
-		}
-		
-		//deaktywuj wszystkie tranzycje ze zbioru MCT:
-		while(dataTxt.contains("MCT#")) {
-			int index = dataTxt.indexOf("MCT#");
-			String tmp = dataTxt.substring(index);
-			int semiIndex = tmp.indexOf(";");
-			int hashIndex = tmp.indexOf("#");
-			String value = tmp.substring(hashIndex+1, semiIndex);
-			int mctIndex = Integer.parseInt(value);
-			
-			ArrayList<Transition> mct = mcts.get(mctIndex-1);
-			currentDataPackage.disabledMCTids.add(mctIndex-1);
-			for(Transition trans : mct) {
-				if(!disableList.contains(trans))
-					disableList.add(trans);
+			//deaktywuj wszystkie tranzycje ze zbioru MCT:
+			while(dataTxt.contains("MCT#")) {
+				int index = dataTxt.indexOf("MCT#");
+				String tmp = dataTxt.substring(index);
+				int semiIndex = tmp.indexOf(";");
+				int hashIndex = tmp.indexOf("#");
+				String value = tmp.substring(hashIndex+1, semiIndex);
+				int mctIndex = Integer.parseInt(value);
 				
-				if(!currentDataPackage.disabledTotals.contains(transitions.indexOf(trans)))
-					currentDataPackage.disabledTotals.add(transitions.indexOf(trans));
+				ArrayList<Transition> mct = mcts.get(mctIndex-1);
+				currentDataPackage.disabledMCTids.add(mctIndex-1);
+				for(Transition trans : mct) {
+					if(!disableList.contains(trans))
+						disableList.add(trans);
+					
+					if(!currentDataPackage.disabledTotals.contains(transitions.indexOf(trans)))
+						currentDataPackage.disabledTotals.add(transitions.indexOf(trans));
+				}
+				
+				tmp = tmp.substring(0, semiIndex+1);
+				dataTxt = dataTxt.replace(tmp, "");
 			}
 			
-			tmp = tmp.substring(0, semiIndex+1);
-			dataTxt = dataTxt.replace(tmp, "");
-		}
-		
-		for(Transition trans : transitions) {
-			if(disableList.contains(trans))
-				trans.setOffline(true);
-			else
-				trans.setOffline(false);
+			for(Transition trans : transitions) {
+				if(disableList.contains(trans))
+					trans.setOffline(true);
+				else
+					trans.setOffline(false);
+			}
 		}
 	}
 

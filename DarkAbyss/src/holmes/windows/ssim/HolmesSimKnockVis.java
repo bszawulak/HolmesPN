@@ -132,11 +132,11 @@ public class HolmesSimKnockVis extends JFrame {
 	private void initializeComponents() {
 		setVisible(true);
 		setTitle("Knockout data visualisation");
-		setLocation(boss.getLocation().x+30,boss. getLocation().y+30);
+		setLocation(boss.getLocation().x,boss. getLocation().y);
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {}
-		setSize(new Dimension(1200, 900));
+		setSize(new Dimension(1200, 920));
 		
 		JPanel main = new JPanel(new BorderLayout()); //główny panel okna
 		add(main);
@@ -176,7 +176,7 @@ public class HolmesSimKnockVis extends JFrame {
 	private JPanel getActionsPanel() {
 		JPanel result = new JPanel(null);
 		result.setBorder(BorderFactory.createTitledBorder("Main options panel"));
-		result.setPreferredSize(new Dimension(670, 100));
+		result.setPreferredSize(new Dimension(670, 120));
 	
 		int posXda = 10;
 		int posYda = 20;
@@ -201,6 +201,24 @@ public class HolmesSimKnockVis extends JFrame {
 		});
 		result.add(referencesCombo);
 		
+		JLabel label3 = new JLabel("Sim. series:");
+		label3.setBounds(posXda+600, posYda, 80, 20);
+		result.add(label3);
+		
+		String[] dataSeries = { " ----- " };
+		seriesCombo = new JComboBox<String>(dataSeries); //final, aby listener przycisku odczytał wartość
+		seriesCombo.setToolTipText("Select dataset series (presumably with every transition disable one per dataset)");
+		seriesCombo.setBounds(posXda+680, posYda, 250, 20);
+		seriesCombo.setMaximumRowCount(12);
+		seriesCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate) 
+					return;
+			}
+			
+		});
+		result.add(seriesCombo);
+		
 		JLabel label2 = new JLabel("Data sets:");
 		label2.setBounds(posXda, posYda+=25, 70, 20);
 		result.add(label2);
@@ -208,7 +226,7 @@ public class HolmesSimKnockVis extends JFrame {
 		String[] data2 = { " ----- " };
 		dataCombo = new JComboBox<String>(data2); //final, aby listener przycisku odczytał wartość
 		dataCombo.setToolTipText("Select dataset (presumably with some transition(s) knocked out)");
-		dataCombo.setBounds(posXda+80, posYda, 500, 20);
+		dataCombo.setBounds(posXda+80, posYda, 850, 20);
 		dataCombo.setMaximumRowCount(12);
 		dataCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -221,26 +239,10 @@ public class HolmesSimKnockVis extends JFrame {
 		});
 		result.add(dataCombo);
 
-		JLabel label3 = new JLabel("Sim. series:");
-		label3.setBounds(posXda, posYda+=25, 80, 20);
-		result.add(label3);
 		
-		String[] dataSeries = { " ----- " };
-		seriesCombo = new JComboBox<String>(dataSeries); //final, aby listener przycisku odczytał wartość
-		seriesCombo.setToolTipText("Select dataset series (presumably with every transition disable one per dataset)");
-		seriesCombo.setBounds(posXda+80, posYda, 250, 20);
-		seriesCombo.setMaximumRowCount(12);
-		seriesCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate) 
-					return;
-			}
-			
-		});
-		result.add(seriesCombo);
 		
 		JButton showRefDataButton = new JButton("<html>Show reference<br/>&nbsp; &nbsp; &nbsp; &nbsp; dataset</html>");
-		showRefDataButton.setBounds(posXda+590, 20, 175, 36);
+		showRefDataButton.setBounds(posXda, posYda+=25, 175, 36);
 		showRefDataButton.setMargin(new Insets(0, 0, 0, 0));
 		showRefDataButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/visShowRefButton.png"));
 		showRefDataButton.addActionListener(new ActionListener() {
@@ -256,7 +258,7 @@ public class HolmesSimKnockVis extends JFrame {
 		result.add(showRefDataButton);
 		
 		JButton showKnockDataButton = new JButton("<html>Show knockout<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataset</html>");
-		showKnockDataButton.setBounds(posXda+770, 20, 175, 36);
+		showKnockDataButton.setBounds(posXda+180, posYda, 175, 36);
 		showKnockDataButton.setMargin(new Insets(0, 0, 0, 0));
 		showKnockDataButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visShowDataSetButton.png"));
 		showKnockDataButton.addActionListener(new ActionListener() {
@@ -272,7 +274,7 @@ public class HolmesSimKnockVis extends JFrame {
 		result.add(showKnockDataButton);
 		
 		JButton showChartKnockButton = new JButton("<html>Compare reference<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and knockout</html>");
-		showChartKnockButton.setBounds(posXda+950, 20, 175, 36);
+		showChartKnockButton.setBounds(posXda+360, posYda, 175, 36);
 		showChartKnockButton.setMargin(new Insets(0, 0, 0, 0));
 		showChartKnockButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visCompRefDataButton.png"));
 		showChartKnockButton.addActionListener(new ActionListener() {
@@ -293,7 +295,7 @@ public class HolmesSimKnockVis extends JFrame {
 		result.add(showChartKnockButton);
 		
 		JButton showSeriesButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;Full series&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;datatables</html>");
-		showSeriesButton.setBounds(posXda+590, 60, 175, 36);
+		showSeriesButton.setBounds(posXda+600, posYda, 175, 36);
 		showSeriesButton.setMargin(new Insets(0, 0, 0, 0));
 		showSeriesButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visRefDataSeriesButton.png"));
 		showSeriesButton.addActionListener(new ActionListener() {
@@ -307,7 +309,7 @@ public class HolmesSimKnockVis extends JFrame {
 		result.add(showSeriesButton);
 		
 		JButton showNotepadButton = new JButton("<html>&nbsp; &nbsp;Show notepad<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary</html>");
-		showNotepadButton.setBounds(posXda+770, 60, 175, 36);
+		showNotepadButton.setBounds(posXda+780, posYda, 175, 36);
 		showNotepadButton.setMargin(new Insets(0, 0, 0, 0));
 		showNotepadButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visRefDataSeriesNotepadButton.png"));
 		showNotepadButton.addActionListener(new ActionListener() {
@@ -1380,7 +1382,7 @@ public class HolmesSimKnockVis extends JFrame {
 		notePad.addTextLineNL(" +/-20% treshold for increased/decreased firing of transitions ", "text");
 		notePad.addTextLineNL("===============================================================================", "text");
 		notePad.addTextLineNL("", "text");
-    	//TODO:
+
     	for(int t=0; t<transNumber; t++) {
     		NetSimulationData dataSet = dataPackage.get(t);
 
@@ -1508,7 +1510,7 @@ public class HolmesSimKnockVis extends JFrame {
 		notePad.addTextLineNL(" +/-20% treshold for increased/decreased tokens in places ", "text");
 		notePad.addTextLineNL("===============================================================================", "text");
 		notePad.addTextLineNL("", "text");
-    	//TODO:
+
     	for(int t=0; t<transNumber; t++) {
     		NetSimulationData dataSet = dataPackage.get(t);
 
@@ -1744,12 +1746,14 @@ public class HolmesSimKnockVis extends JFrame {
 				referencesCombo.setSelectedIndex(0);
 		}
 		
+		ArrayList<Transition> transitions = pn.getTransitions();
 		
 		//knockout data:
 		ArrayList<NetSimulationData> knockout = pn.accessSimKnockoutData().accessKnockoutDataSets();
 		int knockSize = knockout.size();
 		int oldKnockSelected = 0;
 		oldKnockSelected = dataCombo.getSelectedIndex();
+
 		dataCombo.removeAllItems();
 		dataCombo.addItem(" ----- ");
 		if(knockSize > 0) {
@@ -1764,8 +1768,14 @@ public class HolmesSimKnockVis extends JFrame {
 				}
 				disTxt = disTxt.replace(", ", " ");
 				
+				String transName = "(multiple transitions";
+				if(knockout.get(r).disabledTransitionsIDs.size() == 1) {
+					transName = "("+transitions.get(knockout.get(r).disabledTransitionsIDs.get(0)).getName();
+				}
+				transName += ")";
+				
 				String name = "Data set:"+r+":    "+disTxt+"     NetMode:"+knockout.get(r).netSimType+
-						"   MaxMode:"+knockout.get(r).maxMode;
+						"   MaxMode:"+knockout.get(r).maxMode+"  "+transName;
 				
 				//String name = "Data set:"+r+" Date: "+knockout.get(r).date+" NetMode:"+knockout.get(r).netSimType+
 				//		" MaxMode:"+knockout.get(r).maxMode;

@@ -123,6 +123,7 @@ public class HolmesSim extends JFrame {
 	private JButton simSettingsButton;
 	private boolean workInProgress;
 	
+	public JTabbedPane mainTabPanel;
 	
 	/**
 	 * Konstruktor domyślny obiektu klasy StateSimulator (podokna Holmes)
@@ -170,17 +171,17 @@ public class HolmesSim extends JFrame {
 		tabbedPane.addTab("Transitions dynamics", Tools.getResIcon16("/icons/stateSim/transDyn.png"), createTransitionsTabPanel(), "Transistions dynamics");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-		JTabbedPane iownyou = new JTabbedPane();
+		mainTabPanel = new JTabbedPane();
 		JPanel firstTab = new JPanel(new BorderLayout());
 		firstTab.add(craeteDataAcquisitionPanel(), BorderLayout.NORTH);
 		firstTab.add(tabbedPane, BorderLayout.CENTER);
 
-		iownyou.addTab("Simple mode", Tools.getResIcon16("/icons/stateSim/simpleSimTab.png"), firstTab, "Places dynamics");
+		mainTabPanel.addTab("Simple mode", Tools.getResIcon16("/icons/stateSim/simpleSimTab.png"), firstTab, "Simple mode");
 		
 		knockoutTab = new HolmesSimKnock(this);
-		iownyou.addTab("KnockoutSim", Tools.getResIcon16("/icons/stateSim/knockSimTab.png"), knockoutTab, "Transistions dynamics");
+		mainTabPanel.addTab("KnockoutSim", Tools.getResIcon16("/icons/stateSim/knockSimTab.png"), knockoutTab, "KnockoutSim");
 		
-		main.add(iownyou, BorderLayout.CENTER);
+		main.add(mainTabPanel, BorderLayout.CENTER);
 		
 		repaint();
 	}

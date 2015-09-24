@@ -77,6 +77,9 @@ public class HolmesSimKnock extends JPanel {
 	private JButton acqRefDataButton;
 	private JButton acqDataSimButton;
 	private JButton simSettingsButton; 
+	private JButton loadAllButton;
+	private JButton saveAllButton;
+	private JButton showVisualsButton;
 	
 	
 	public boolean refSimInProgress = false;
@@ -417,10 +420,25 @@ public class HolmesSimKnock extends JPanel {
 		acqDataSimButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
 		acqDataSimButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				if(dataSimUseEditorOffline && dataSimComputeAll) {
+					JOptionPane.showMessageDialog(mainSimWindow.getFrame(), 
+							"Simulation for manually disabled transition and for all transition are mutually\n"
+							+ "exclusive. Please choose only one.", 
+							"Forced stop",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				
 				if(dataSimComputeAll) {
 					action.acquireAll();
+					return;
+				} 
+				
+				if(dataSimUseEditorOffline) {
+					action.acquireDataForKnockoutSet(dataSelectedTransTextArea, true);
+					return;
 				} else {
-					action.acquireDataForKnockoutSet(dataSelectedTransTextArea);
+					action.acquireDataForKnockoutSet(dataSelectedTransTextArea, false);
+					return;
 				}
 			}
 		});
@@ -456,9 +474,9 @@ public class HolmesSimKnock extends JPanel {
 		special.setBounds(posXda+120, posYda, 650, 40);
 		result.add(special);
 		
-		dataSimUseEditorOfflineCheckBox = new JCheckBox("Use editor offline marks");
-		dataSimUseEditorOfflineCheckBox.setBounds(10, 15, 170, 20);
-		dataSimUseEditorOfflineCheckBox.setEnabled(false);
+		dataSimUseEditorOfflineCheckBox = new JCheckBox("Manually disabled transitions");
+		dataSimUseEditorOfflineCheckBox.setBounds(10, 15, 190, 20);
+		//dataSimUseEditorOfflineCheckBox.setEnabled(false);
 		dataSimUseEditorOfflineCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -472,7 +490,7 @@ public class HolmesSimKnock extends JPanel {
 		special.add(dataSimUseEditorOfflineCheckBox);
 		
 		dataSimComputeForAllTransitions = new JCheckBox("All transitions (one by one)");
-		dataSimComputeForAllTransitions.setBounds(180, 15, 180, 20);
+		dataSimComputeForAllTransitions.setBounds(210, 15, 180, 20);
 		dataSimComputeForAllTransitions.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -486,7 +504,7 @@ public class HolmesSimKnock extends JPanel {
 		special.add(dataSimComputeForAllTransitions);
 		
 		JCheckBox showdataCheckBox = new JCheckBox("Show results in notepad");
-	    showdataCheckBox.setBounds(posXda+360, 15, 170, 20);
+	    showdataCheckBox.setBounds(400, 15, 170, 20);
 	    showdataCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -627,7 +645,7 @@ public class HolmesSimKnock extends JPanel {
 		int posXda = 10;
 		int posYda = 20;
 		
-		JButton loadAllButton = new JButton("Load all");
+		loadAllButton = new JButton("Load all");
 		loadAllButton.setBounds(posXda, posYda, 130, 40);
 		loadAllButton.setMargin(new Insets(0, 0, 0, 0));
 		loadAllButton.setFocusPainted(false);
@@ -640,7 +658,7 @@ public class HolmesSimKnock extends JPanel {
 		});
 		result.add(loadAllButton);
 		
-		JButton saveAllButton = new JButton("Save all");
+		saveAllButton = new JButton("Save all");
 		saveAllButton.setBounds(posXda+140, posYda, 130, 40);
 		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
 		saveAllButton.setFocusPainted(false);
@@ -653,7 +671,7 @@ public class HolmesSimKnock extends JPanel {
 		});
 		result.add(saveAllButton);
 
-		JButton showVisualsButton = new JButton("Analyse");
+		showVisualsButton = new JButton("Analyse");
 		showVisualsButton.setBounds(posXda+280, posYda, 130, 40);
 		showVisualsButton.setMargin(new Insets(0, 0, 0, 0));
 		showVisualsButton.setFocusPainted(false);
@@ -724,6 +742,11 @@ public class HolmesSimKnock extends JPanel {
 		acqDataSimButton.setEnabled(state);
 		simSettingsButton.setEnabled(state);
 		stateManagerButton.setEnabled(state);
+		
+		loadAllButton.setEnabled(state);
+		saveAllButton.setEnabled(state);
+		
+		mainSimWindow.mainTabPanel.setEnabledAt(0, state);
 		
 		GUIManager.getDefaultGUIManager().getFrame().setEnabled(state);
 	}

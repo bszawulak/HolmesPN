@@ -569,7 +569,7 @@ public class HolmesProgramProperties extends JFrame {
 		panel.add(singleMaxModeCheckBox);
 		
 		JCheckBox simTDPNrunTimeCheckBox = checkboxWizard("TDPN transition acts like DPN when TPN internal clock = EFT", 
-				posX, posY+=20, 360, 20, "simTDPNrunWhenEft", true);
+				posX, posY+=20, 380, 20, "simTDPNrunWhenEft", true);
 		panel.add(simTDPNrunTimeCheckBox);
 		
 		
