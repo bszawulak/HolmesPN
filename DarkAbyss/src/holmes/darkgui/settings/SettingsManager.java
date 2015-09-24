@@ -96,7 +96,7 @@ public class SettingsManager {
 		//checkAndFix(settingsNew, "abyss_version", "1.30 release 30-3-2015");
 		//settingsNew.add(new Setting("abyss_version", "1.31 release 7-4-2015")); 
 		//settingsNew.add(new Setting("abyss_version", "1.37 release 19-4-2015")); //always add new
-		settingsNew.add(new Setting("holmes_version", "2.0 (beta revision 1)"));
+		settingsNew.add(new Setting("holmes_version", "2.0"));
 		
 		checkAndFix(settingsNew, "r_path", "c://Program Files//R//R-3.1.2//bin//Rscript.exe");
 		checkAndFix(settingsNew, "r_path64","c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
