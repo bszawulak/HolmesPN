@@ -196,8 +196,11 @@ public class SPNengine implements IEngine {
                 }
 			}
 		}
-
-		double probTime = -(Math.log(1 - generator.nextDouble()) / (massActionKineticModifier * transition.getFiringRate()) );
+		double denominator = (massActionKineticModifier * transition.getFiringRate());
+		if(denominator == 0)
+			denominator = 0.0000000001;
+		
+		double probTime = -(Math.log(1 - generator.nextDouble()) / denominator );
 		transition.setSSAprobTime(probTime);
 	}
 

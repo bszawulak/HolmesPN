@@ -205,6 +205,8 @@ public class HolmesDockWindowsTable extends JPanel {
 			createMCSSubWindow((MCSDataMatrix) blackBox[0]);
 		} else if (subType == SubWindow.FIXER) {
 			createFixerSubWindow();
+		} else if (subType == SubWindow.KNOCKOUT) {
+			createKnockoutData((ArrayList<ArrayList<Integer>>) blackBox[0]);
 		} 
 	}
 	
@@ -3791,7 +3793,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	 * @param type2 - nie ważne co, ważne że wyróżnia konstruktor
 	 * @param type3 - nie ważne co, ważne że wyróżnia konstruktor
 	 */
-	public HolmesDockWindowsTable(ArrayList<ArrayList<Integer>> knockoutData, boolean type1, int type2, boolean type3)
+	public void createKnockoutData(ArrayList<ArrayList<Integer>> knockoutData)
 	{
 		if(knockoutData == null || knockoutData.size() == 0) {
 			knockoutData = null;

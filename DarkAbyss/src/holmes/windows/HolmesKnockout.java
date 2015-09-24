@@ -76,7 +76,7 @@ public class HolmesKnockout extends JFrame {
 	private ArrayList<Integer> commonSetToObjR = null;
 	
 	private int currentTreshold = 20;
-	private boolean contractedMode = false;
+	private boolean contractedMode = true;
 	
 	/**
 	 * Konstruktor obiektu klasy HolmesKnockout
@@ -172,6 +172,7 @@ public class HolmesKnockout extends JFrame {
 		
 		JCheckBox contractedModeBox = new JCheckBox("Contracted");
 		contractedModeBox.setBounds(posX+690, posY, 90, 20);
+		contractedModeBox.setEnabled(true);
 		contractedModeBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();

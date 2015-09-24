@@ -458,6 +458,7 @@ public class HolmesSimKnock extends JPanel {
 		
 		dataSimUseEditorOfflineCheckBox = new JCheckBox("Use editor offline marks");
 		dataSimUseEditorOfflineCheckBox.setBounds(10, 15, 170, 20);
+		dataSimUseEditorOfflineCheckBox.setEnabled(false);
 		dataSimUseEditorOfflineCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();

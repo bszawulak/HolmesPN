@@ -193,11 +193,11 @@ public class HolmesDockWindow extends SingleDock {
 	}
 	
 	/**
-	 * Metoda odpowiedzialna za pokazanie podokna ze zbiorami MCS sieci.
+	 * Metoda odpowiedzialna za pokazanie podokna ze zbiorami Knockout sieci.
 	 */
 	public void showKnockout(ArrayList<ArrayList<Integer>> knockoutData) {
 		if (type == DockWindowType.Knockout) {
-			setCurrentDockWindow(new HolmesDockWindowsTable(knockoutData, true, 55, true));
+			setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.KNOCKOUT, knockoutData));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}

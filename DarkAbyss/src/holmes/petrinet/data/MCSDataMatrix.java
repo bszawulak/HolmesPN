@@ -76,8 +76,8 @@ public class MCSDataMatrix {
 				if(mcsDataCore.get(pos).size() > 0) {
 					Object[] options = {"Replace", "Cancel"};
 					int decision = JOptionPane.showOptionDialog(null,
-									"Existing MCS list detected in a given location. Replace?",
-									"Position contains data", JOptionPane.YES_NO_OPTION,
+									"Existing MCS list detected for a given transition. Replace?",
+									"Transition already have MCS data", JOptionPane.YES_NO_OPTION,
 									JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 					if (decision == 1) {
 						return;
