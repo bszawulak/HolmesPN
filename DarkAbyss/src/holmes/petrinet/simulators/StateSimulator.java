@@ -733,11 +733,9 @@ public class StateSimulator implements Runnable {
 		}
 		prepareNetM0(); //backup, m0, etc.
 		ArrayList<Transition> launchableTransitions = null;
-		
 		ArrayList<ArrayList<Double>> firingHistory = new ArrayList<>();
 		
 		for(int r=0; r<reps; r++) {
-			
 			ArrayList<Double> transFiring = new ArrayList<Double>();
 			
 			for(int t=0; t<transitions.size(); t++) {
