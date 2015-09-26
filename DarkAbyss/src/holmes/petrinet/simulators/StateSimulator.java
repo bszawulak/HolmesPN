@@ -48,6 +48,8 @@ public class StateSimulator implements Runnable {
 	private int simulationType;	//aktywny tryb symulacji
 
 	private NetSimulationData currentDataPackage;
+	private ArrayList<ArrayList<Double>> quickSimAllStats;
+	private QuickSimTools quickSim;
 
 	/**
 	 * Główny konstruktor obiektu klasy StateSimulator.
@@ -79,6 +81,12 @@ public class StateSimulator implements Runnable {
 			this.boss = (HolmesSim)blackBox[0];
 			this.progressBar = (JProgressBar)blackBox[1];
 			this.currentDataPackage = (NetSimulationData)blackBox[2];
+		} else if(simulationType == 5) { //QuickSimReps
+			this.progressBar = (JProgressBar)blackBox[0];
+			this.quickSim = (QuickSimTools)blackBox[1];
+		} else if(simulationType == 6) { //QuickSimNoReps
+			this.progressBar = (JProgressBar)blackBox[0];
+			this.quickSim = (QuickSimTools)blackBox[1];
 		}
 	}
 
@@ -99,6 +107,12 @@ public class StateSimulator implements Runnable {
 		} else if(simulationType == 4) {
 			NetSimulationData data = simulateNetReferenceAndKnockout();
 			boss.accessKnockoutTab().action.pingPongSimulation(data, transitions, places, terminate);
+		} else if(simulationType == 5) {
+			quickSimGatherData();
+			quickSim.finishedStatsData(quickSimAllStats, transitions, places);
+		} else if(simulationType == 6) {
+			quickSimGatherDataNoReps();
+			quickSim.finishedStatsData(quickSimAllStats, transitions, places);
 		}
 		this.terminate = false;
 	}
@@ -810,6 +824,8 @@ public class StateSimulator implements Runnable {
 		return result;
 	}
 	
+	
+	
 	//********************************************************************************************************************************
 	//****************************************              **************************************************************************
 	//****************************************   INTERNALS  **************************************************************************
@@ -1049,5 +1065,230 @@ public class StateSimulator implements Runnable {
 	 */
 	public IEngine getEngine() {
 		return this.engine;
+	}
+	
+	//********************************************************************************************************************************
+	//****************************************    	        **************************************************************************
+	//****************************************   quickSim   **************************************************************************
+	//****************************************              **************************************************************************
+	//********************************************************************************************************************************
+	
+	public ArrayList<ArrayList<Double>> quickSimGatherData() {
+		if(readyToSimulate == false) {
+			overlord.log("Simulation simple mode cannot start.", "warning", true);
+			return null;
+		}
+		prepareNetM0(); //backup, m0, etc.
+		ArrayList<Transition> launchableTransitions = null;
+		ArrayList<ArrayList<Double>> firingHistory = new ArrayList<>();
+		
+		ArrayList<ArrayList<Double>> tokensHistory = new ArrayList<>();
+		//ArrayList<>
+		
+		int steps = overlord.simSettings.getSimSteps();
+		int reps = overlord.simSettings.getRepetitions();
+		if(reps > 20)
+			reps = 20;
+		boolean emptySteps = overlord.simSettings.isEmptySteps();
+		progressBar.setValue(0);
+		progressBar.setMaximum(reps*steps);
+		int trueStep = 0;
+		int updateTime = (reps*steps)/50;
+		
+		for(int r=0; r<reps; r++) {
+			ArrayList<Double> transFiring = new ArrayList<Double>();
+			ArrayList<Double> tokensSum = new ArrayList<Double>();
+			
+			for(int t=0; t<transitions.size(); t++) {
+				transFiring.add(0.0);
+			}
+			for(int p=0; p<places.size(); p++) {
+				tokensSum.add(0.0);
+			}
+			
+			
+			int internalSteps = 0;
+			for(int i=0; i<steps; i++) {
+				
+				trueStep++;
+				if(trueStep<0)
+					trueStep = Integer.MAX_VALUE;
+				
+				progressBar.setValue(trueStep);
+				if(trueStep % updateTime == 0) {
+					progressBar.update(progressBar.getGraphics());
+				}
+				
+				if (isPossibleStep()){ 
+					launchableTransitions = engine.getTransLaunchList(emptySteps);
+					launchSubtractPhase(launchableTransitions);
+					removeDPNtransition(launchableTransitions);
+					internalSteps++;
+					
+					for(Transition trans : launchableTransitions) {
+						int index = transitions.lastIndexOf(trans);
+						double fired = transFiring.get(index);
+						transFiring.set(index, fired+1); //wektor sumy odpaleń
+					}
+				} else {
+					break;
+				}
+				launchAddPhase(launchableTransitions);
+				
+				for(int p=0; p<places.size(); p++) {
+					double oldVal = tokensSum.get(p);
+					tokensSum.set(p, oldVal+places.get(p).getTokensNumber());
+				}
+			}
+
+			//srednia liczba odpaleń:
+			for(int t=0; t<transFiring.size(); t++) {
+				double fired = transFiring.get(t);
+				fired /= (double)internalSteps;
+				transFiring.set(t, fired);
+			}
+			firingHistory.add(transFiring);
+			
+			for(int p=0; p<places.size(); p++) {
+				double tokens = tokensSum.get(p);
+				tokens /= (double)internalSteps;
+				tokensSum.set(p, tokens);
+			}
+			tokensHistory.add(tokensSum);
+			
+			restoreInternalMarkingZero();
+		}
+		
+		//przygotowanie wektorów wynikowych:
+		ArrayList<Double> avgFiring = new ArrayList<Double>();
+		ArrayList<Double> stdDev = new ArrayList<Double>();
+		ArrayList<Double> avgTokens = new ArrayList<Double>();
+		for(int t=0; t<transitions.size(); t++) {
+			avgFiring.add(0.0);
+		}
+		for(int p=0; p<places.size(); p++) {
+			avgTokens.add(0.0);
+		}
+		
+		//liczenie średnich:
+		for(int t=0; t<transitions.size(); t++) {
+			for(int r=0; r<reps; r++) {
+				double value = firingHistory.get(r).get(t);
+				double oldRes = avgFiring.get(t);
+				avgFiring.set(t, oldRes+value);
+			}
+			double oldRes = avgFiring.get(t);
+			oldRes /= (double)reps;
+			avgFiring.set(t, oldRes);
+		}
+		
+		for(int p=0; p<places.size(); p++) {
+			for(int r=0; r<reps; r++) {
+				double value = tokensHistory.get(r).get(p);
+				double oldRes = avgTokens.get(p);
+				avgTokens.set(p, oldRes+value);
+			}
+			double oldRes = avgTokens.get(p);
+			oldRes /= (double)reps;
+			avgTokens.set(p, oldRes);
+		}
+		
+		
+		//stdDev
+		for(int t=0; t<transitions.size(); t++) {
+			double variance = 0.0;
+			for(int r=0; r<reps; r++) {
+				double value = avgFiring.get(t); //średnia obliczona krok wcześniej
+				double diff = value - firingHistory.get(r).get(t); 
+				variance += (diff*diff);
+			}
+			variance /= (double)reps;
+			stdDev.add(Math.sqrt(variance));
+		}
+		
+		
+		readyToSimulate = false;
+		restoreInternalMarkingZero();
+		quickSimAllStats = new ArrayList<>();
+		quickSimAllStats.add(avgFiring);
+		quickSimAllStats.add(stdDev);
+		quickSimAllStats.addAll(tokensHistory);
+		return quickSimAllStats;
+	}
+	
+	public ArrayList<ArrayList<Double>> quickSimGatherDataNoReps() {
+		if(readyToSimulate == false) {
+			overlord.log("Simulation simple mode cannot start.", "warning", true);
+			return null;
+		}
+		prepareNetM0(); //backup, m0, etc.
+		ArrayList<Transition> launchableTransitions = null;
+		
+		int steps = overlord.simSettings.getSimSteps();
+		boolean emptySteps = overlord.simSettings.isEmptySteps();
+		ArrayList<Double> transFiring = new ArrayList<Double>();
+		ArrayList<Double> tokensSum = new ArrayList<Double>();
+		for(int t=0; t<transitions.size(); t++) {
+			transFiring.add(0.0);
+		}
+		for(int p=0; p<places.size(); p++) {
+			tokensSum.add(0.0);
+		}
+		
+		progressBar.setValue(0);
+		progressBar.setMaximum(steps);
+		int updateTime = (steps)/50;
+		
+		int internalSteps = 0;
+		for(int i=0; i<steps; i++) {
+
+			
+			
+			if (isPossibleStep()){ 
+				launchableTransitions = engine.getTransLaunchList(emptySteps);
+				launchSubtractPhase(launchableTransitions);
+				removeDPNtransition(launchableTransitions);
+				internalSteps++;
+				
+				for(Transition trans : launchableTransitions) {
+					int index = transitions.lastIndexOf(trans);
+					double fired = transFiring.get(index);
+					transFiring.set(index, fired+1); //wektor sumy odpaleń
+				}
+			} else {
+				break;
+			}
+			launchAddPhase(launchableTransitions);
+			for(int p=0; p<places.size(); p++) {
+				double oldVal = tokensSum.get(p);
+				tokensSum.set(p, oldVal+places.get(p).getTokensNumber());
+			}
+			
+			progressBar.setValue(internalSteps);
+			if(internalSteps % updateTime == 0) {
+				progressBar.update(progressBar.getGraphics());
+			}
+		}
+
+		//srednia liczba odpaleń:
+		for(int t=0; t<transFiring.size(); t++) {
+			double fired = transFiring.get(t);
+			fired /= (double)internalSteps;
+			transFiring.set(t, fired);
+		}
+		for(int p=0; p<places.size(); p++) {
+			double tokens = tokensSum.get(p);
+			tokens /= (double)internalSteps;
+			tokensSum.set(p, tokens);
+			
+		}
+		
+		restoreInternalMarkingZero();
+		readyToSimulate = false;
+		quickSimAllStats = new ArrayList<>();
+		quickSimAllStats.add(transFiring);
+		quickSimAllStats.add(null);
+		quickSimAllStats.add(tokensSum);
+		return quickSimAllStats;
 	}
 }

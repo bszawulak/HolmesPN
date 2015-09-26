@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.ElementDraw;
+import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 
@@ -39,6 +40,8 @@ public class Arc extends PetriNetElement {
 	private Arc pairedArc;
 	private boolean isMainArcOfPair = false;
 	private TypesOfArcs arcType;
+	
+	public boolean qSimRed = false;
 
 	/** NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC */
 	public enum TypesOfArcs { NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC }
@@ -282,9 +285,10 @@ public class Arc extends PetriNetElement {
 	 * @param g Graphics2D - grafika 2D
 	 * @param sheetId int - identyfikator arkusza
 	 * @param zoom int - zoom, unused
+	 * @param eds ElementDrawSettings - ustawienia rysowania
 	 */
-	public void draw(Graphics2D g, int sheetId, int zoom) {
-		g = ElementDraw.drawArc(this, g, sheetId, zoom);
+	public void draw(Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) {
+		g = ElementDraw.drawArc(this, g, sheetId, zoom, eds);
 	}
 
 	/**

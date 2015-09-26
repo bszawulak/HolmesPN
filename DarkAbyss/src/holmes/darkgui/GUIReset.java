@@ -41,6 +41,7 @@ public class GUIReset {
 	public void clearGraphColors() {
 		overlord.getWorkspace().getProject().resetNetColors();
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
+		overlord.simSettings.quickSimToken = false;
 	}
 	
 	/**

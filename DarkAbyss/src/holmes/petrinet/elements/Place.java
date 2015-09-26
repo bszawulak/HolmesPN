@@ -20,6 +20,7 @@ import holmes.petrinet.data.IdGenerator;
  */
 public class Place extends Node {
 	private static final long serialVersionUID = 2346995422046987174L;
+	protected static int realRadius = 18;
 	private int tokensNumber = 0;
 	private int reservedTokens = 0;
 	
@@ -39,6 +40,13 @@ public class Place extends Node {
 	//SSA:
 	private double ssaValue = 0.0;
 	
+	//quickSim
+	public int qSimFillValue = 0;
+	public double qSimTokens = 0;
+	public String qSimText = "";
+	public Color qSimColor = Color.WHITE;
+	public boolean qSimDrawed = false;
+	
 	/**
 	 * Konstruktor obiektu miejsca sieci.
 	 * @param nodeId int - identyfikator wierzchołka
@@ -46,7 +54,7 @@ public class Place extends Node {
 	 * @param placePosition Point - punkt lokalizacji
 	 */
 	public Place(int nodeId, int sheetId, Point placePosition) {
-		super(sheetId, nodeId, placePosition, 18);
+		super(sheetId, nodeId, placePosition, realRadius);
 		this.setName("Place" + Integer.toString(IdGenerator.getNextPlaceId()));
 		this.setType(PetriNetElementType.PLACE);
 	}
@@ -60,7 +68,7 @@ public class Place extends Node {
 	 * @param tokensNumber int - liczba tokenów
 	 */
 	public Place(int nodeId, ArrayList<ElementLocation> elementLocations, String name, String comment, int tokensNumber) {
-		super(nodeId, elementLocations, 18);
+		super(nodeId, elementLocations, realRadius);
 		this.setName(name);
 		this.setComment(comment);
 		this.setTokensNumber(tokensNumber);
@@ -73,7 +81,7 @@ public class Place extends Node {
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji 
 	 */
 	public Place(int nodeId, ArrayList<ElementLocation> elementLocations) {
-		super(nodeId, elementLocations, 18);
+		super(nodeId, elementLocations, realRadius);
 		this.setName("Place" + Integer.toString(IdGenerator.getNextPlaceId()));
 		this.setType(PetriNetElementType.PLACE);
 	}

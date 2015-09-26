@@ -36,6 +36,8 @@ public class SimulatorGlobals {
 	
 	private boolean ssaMassActionKineticsEnabled = false;
 	
+	public boolean quickSimToken = false;
+	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.
 	 */

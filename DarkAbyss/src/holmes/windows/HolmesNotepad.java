@@ -42,7 +42,7 @@ import holmes.workspace.ExtensionFileFilter;
 public class HolmesNotepad extends JFrame {
 	private static final long serialVersionUID = 1694133455242675169L;
 
-	private String newline = "\n";
+	private String newline = "\r\n";
 	private StyledDocument doc; //
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
 	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel

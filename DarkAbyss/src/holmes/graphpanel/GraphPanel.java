@@ -284,8 +284,10 @@ public class GraphPanel extends JComponent {
 			}
 		}
 		
+		ElementDrawSettings eds = new ElementDrawSettings();
+		
 		for (Arc a : getArcs()) {
-			a.draw(g2d, this.sheetId, getZoom());
+			a.draw(g2d, this.sheetId, getZoom(), eds);
 		}
 		if (this.isSimulationActive()) {
 			for (Arc a : getArcs()) {
@@ -293,7 +295,7 @@ public class GraphPanel extends JComponent {
 			}
 		}
 		
-		ElementDrawSettings eds = new ElementDrawSettings();
+		
 		
 		for (Node n : getNodes()) {
 			n.draw(g2d, this.sheetId, eds);	
@@ -313,7 +315,7 @@ public class GraphPanel extends JComponent {
 			g2d.fillRoundRect(getSelectingRect().x, getSelectingRect().y, getSelectingRect().width, getSelectingRect().height, 3, 3);
 		}
 		if (drawnArc != null) {
-			drawnArc.draw(g2d, this.sheetId, getZoom());
+			drawnArc.draw(g2d, this.sheetId, getZoom(), eds);
 		}
 		
 		if(overlord.debug)

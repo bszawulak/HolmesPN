@@ -1428,16 +1428,18 @@ public class HolmesSimKnockVis extends JFrame {
     		
     			double diff = refSet.transFiringsAvg.get(t1) - dataSet.transFiringsAvg.get(t1);
     			diff = (diff / refSet.transFiringsAvg.get(t1));
-    			if(diff < 0) { //wzrosło w stos. do ref
+    			String txt = "[firing chance refSet:"+ formatter2.format(refSet.transFiringsAvg.get(t1)*100)+"% dataSet: "
+    					+formatter2.format(dataSet.transFiringsAvg.get(t1)*100)+"%] ";
+    			if(diff < 0) { //wzrosło w stos. do ref		
     				diff *= -1;
     				double value = diff * 100;
-					data.put(value, "t"+t1+"_"+transitions.get(t1).getName());
+					data.put(value, txt+"t"+t1+"_"+transitions.get(t1).getName());
     				transVector.set(t1, 0);
     				continue;
     			} else {
     				diff *= -1;
     				double value = diff * 100;
-					data.put(value, "t"+t1+"_"+transitions.get(t1).getName());
+					data.put(value, txt+"t"+t1+"_"+transitions.get(t1).getName());
     				transVector.set(t1, 0);
     				continue;
     			}
@@ -1445,12 +1447,12 @@ public class HolmesSimKnockVis extends JFrame {
 
     		for(Double key: data.keySet()){
     			if(key < -20) {
-    				notePad.addTextLineNL("      (DECREASED) [avg fired chance: "+formatter1.format(key)+"%] "
+    				notePad.addTextLineNL("      (DECREASED) [change: "+formatter1.format(key)+"%] "
     						+data.get(key), "text");
     			} 
     			
     			if(key > 20) {
-    				notePad.addTextLineNL("      (INCREASED) [avg fired chance: +"+formatter1.format(key)+"%] "
+    				notePad.addTextLineNL("      (INCREASED) [change: +"+formatter1.format(key)+"%] "
     						+data.get(key), "text");
     			}
 

@@ -29,6 +29,8 @@ public class Transition extends Node {
 	public enum TransitionType { PN, TPN, DPN, TDPN }
 	protected TransitionType transType;
 	
+	protected static int realRadius = 15;
+	
 	//podstawowe właściwości:
 	protected boolean isLaunching;
 	protected boolean isGlowedINV = false;
@@ -71,6 +73,13 @@ public class Transition extends Node {
 	protected double firingRate = 1.0;
 	protected double ssaProbTime = 0.0;
 	
+	//quickSim - kolorowanie wyników symulacji
+	public int qSimFillValue = 0;
+	public double qSimFired = 0;
+	public String qSimText = "";
+	public Color qSimColor = Color.WHITE;
+	public boolean qSimDrawed = false;
+	
 	//inne:
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 
@@ -85,7 +94,7 @@ public class Transition extends Node {
 	 * @param comment String - komentarz tranzycji
 	 */
 	public Transition(int transitionId, ArrayList<ElementLocation> elementLocations, String name, String comment) {
-		super(transitionId, elementLocations, 15);
+		super(transitionId, elementLocations, realRadius);
 		this.setName(name);
 		this.setComment(comment);
 		this.fList = new ArrayList<FunctionContainer>();
@@ -99,7 +108,7 @@ public class Transition extends Node {
 	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
 	 */
 	public Transition(int transitionId, ArrayList<ElementLocation> elementLocations) {
-		super(transitionId, elementLocations, 15);
+		super(transitionId, elementLocations, realRadius);
 		this.setName("Transition" + Integer.toString(IdGenerator.getNextTransitionId()));
 		this.fList = new ArrayList<FunctionContainer>();
 		this.setType(PetriNetElementType.TRANSITION);
@@ -114,7 +123,7 @@ public class Transition extends Node {
 	 * @param transitionPosition Point - punkt lokalizacji tranzycji
 	 */
 	public Transition(int transitionId, int sheetId, Point transitionPosition) {
-		super(sheetId, transitionId, transitionPosition, 15);
+		super(sheetId, transitionId, transitionPosition, realRadius);
 		this.setName("Transition" + Integer.toString(IdGenerator.getNextTransitionId()));
 		this.fList = new ArrayList<FunctionContainer>();
 		this.setType(PetriNetElementType.TRANSITION);

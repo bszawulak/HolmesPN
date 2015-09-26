@@ -69,12 +69,14 @@ import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.simulators.NetSimulator;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.QuickSimTools;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesFunctionsBuilder;
 import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.HolmesStatesManager;
+import holmes.windows.ssim.HolmesSimSetup;
 import holmes.workspace.WorkspaceSheet;
 
 /**
@@ -153,6 +155,13 @@ public class HolmesDockWindowsTable extends JPanel {
 	public JLabel fixIOTransitions;
 	public JLabel fixlinearTrans;
 	private ProblemDetector detector;
+	//quickSim:
+	private QuickSimTools quickSim;
+	private boolean scanTransitions = true;
+	private boolean scanPlaces = true;
+	private boolean markArcs = true;
+	private boolean repetitions = true;
+	public JProgressBar quickProgressBar;
 
 	// modes
 	private static final int PLACE = 0;
@@ -2703,7 +2712,6 @@ public class HolmesDockWindowsTable extends JPanel {
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 */
 	public void createP_invSubWindow(ArrayList<ArrayList<Integer>> pInvData) {
-		//TODO:
 		doNotUpdate = true;
 		if(pInvData == null || pInvData.size() == 0) {
 			return;
@@ -3282,7 +3290,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		components.add(mctMode);
 
 		JButton showDetailsButton = new JButton();
-		showDetailsButton.setText("<html>&nbsp;Show&nbsp;<br>details</html>");//TODO:
+		showDetailsButton.setText("<html>&nbsp;Show&nbsp;<br>details</html>");
 		showDetailsButton.setIcon(Tools.getResIcon22("/icons/clustWindow/showInfo.png"));
 		showDetailsButton.setBounds(colA_posX, positionY+=30, 130, 30);
 		showDetailsButton.addActionListener(new ActionListener() {
@@ -3918,8 +3926,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		
 		initiateContainers();
 		detector = new ProblemDetector(this);
-		//TODO
-		
+
 		JLabel label0 = new JLabel("t-invariants:");
 		label0.setBounds(posX, posY, 100, 20);
 		components.add(label0);
@@ -4029,98 +4036,94 @@ public class HolmesDockWindowsTable extends JPanel {
 	public void createQuickSimSubWindow() {
 		int posX = 10;
 		int posY = 10;
-		
+		//TODO:
 		initiateContainers();
 		
-		//TODO
+		quickSim = new QuickSimTools(this);
 		
-		JLabel label0 = new JLabel("t-invariants:");
-		label0.setBounds(posX, posY, 100, 20);
-		components.add(label0);
-		
-		fixInvariants = new JLabel("Normal: 0 / Non-inv.: 0");
-		fixInvariants.setBounds(posX, posY+=20, 190, 20);
-		components.add(fixInvariants);
-		
-		fixInvariants2 = new JLabel("Sub-inv.: 0 / Sur-inv: 0");
-		fixInvariants2.setBounds(posX, posY+=20, 190, 20);
-		components.add(fixInvariants2);
-		
-		JButton markInvButton = new JButton();
-		markInvButton.setText("<html>Show<br>&nbsp;&nbsp;&nbsp;inv.</html>");
-		markInvButton.setBounds(posX+185, posY-18, 100, 32);
-		markInvButton.setMargin(new Insets(0, 0, 0, 0));
-		markInvButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
-		markInvButton.addActionListener(new ActionListener() {
+		JButton acqDataButton = new JButton("SimStart");
+		acqDataButton.setBounds(posX, posY, 110, 40);
+		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
+		acqDataButton.setFocusPainted(false);
+		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states");
+		acqDataButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
+				quickSim.acquireData(scanTransitions, scanPlaces, markArcs, repetitions, quickProgressBar);
+			}
+		});
+		components.add(acqDataButton);
 
-			}
-		});
-		markInvButton.setFocusPainted(false);
-		components.add(markInvButton);
-		
-		JLabel label1 = new JLabel("Input and output places:");
-		label1.setBounds(posX, posY+=25, 200, 20);
-		components.add(label1);
-		
-		fixIOPlaces = new JLabel("Input: 0 / Output: 0");
-		fixIOPlaces.setBounds(posX, posY+=20, 190, 20);
-		components.add(fixIOPlaces);
-		
-		JButton markIOPlacesButton = new JButton();
-		markIOPlacesButton.setText("<html>Show<br>places</html>");
-		markIOPlacesButton.setBounds(posX+185, posY-16, 100, 32);
-		markIOPlacesButton.setMargin(new Insets(0, 0, 0, 0));
-		markIOPlacesButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
-		markIOPlacesButton.addActionListener(new ActionListener() {
+		JButton simSettingsButton = new JButton("SimSettings");
+		simSettingsButton.setBounds(posX+120, posY, 130, 40);
+		simSettingsButton.setMargin(new Insets(0, 0, 0, 0));
+		simSettingsButton.setFocusPainted(false);
+		simSettingsButton.setIcon(Tools.getResIcon32("/icons/simSettings/setupIcon.png"));
+		simSettingsButton.setToolTipText("Set simulator options.");
+		simSettingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				
+				new HolmesSimSetup(GUIManager.getDefaultGUIManager().getFrame());
 			}
 		});
-		markIOPlacesButton.setFocusPainted(false);
-		components.add(markIOPlacesButton);
+		components.add(simSettingsButton);
 		
-		JLabel label2 = new JLabel("Input and output transitions:");
-		label2.setBounds(posX, posY+=25, 200, 20);
-		components.add(label2);
+		quickProgressBar = new JProgressBar();
+		quickProgressBar.setBounds(posX, posY+=45, 280, 25);
+		quickProgressBar.setMaximum(100);
+		quickProgressBar.setMinimum(0);
+		quickProgressBar.setValue(0);
+		quickProgressBar.setStringPainted(true);
+	    //Border border = BorderFactory.createTitledBorder("Progress");
+	    //quickProgressBar.setBorder(border);
+	    components.add(quickProgressBar);
 		
-		fixIOTransitions = new JLabel("Input: 0 / Output: 0");
-		fixIOTransitions.setBounds(posX, posY+=20, 190, 20);
-		components.add(fixIOTransitions);
+		JPanel borderPanel = new JPanel(null);
+		//borderPanel.setLayout(new BorderLayout());
+		borderPanel.setBounds(posX, posY+=30, 280, 80);
+		borderPanel.setBorder(BorderFactory.createTitledBorder("Data type simulated"));
+		components.add(borderPanel);
 		
-		JButton markIOTransButton = new JButton();
-		markIOTransButton.setText("<html>Show<br>trans.</html>");
-		markIOTransButton.setBounds(posX+185, posY-14, 100, 32);
-		markIOTransButton.setMargin(new Insets(0, 0, 0, 0));
-		markIOTransButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
-		markIOTransButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				
+		JCheckBox transBox = new JCheckBox("Transitions firing data", scanTransitions);
+		transBox.setBounds(5, 15, 160, 20);
+		transBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				scanTransitions = box.isSelected();
 			}
 		});
-		markIOTransButton.setFocusPainted(false);
-		components.add(markIOTransButton);
+		borderPanel.add(transBox);
+
 		
-		JLabel label3 = new JLabel("Linear transitions and places");
-		label3.setBounds(posX, posY+=25, 200, 20);
-		components.add(label3);
-		
-		fixlinearTrans = new JLabel("Transitions: 0 / Places: 0");
-		fixlinearTrans.setBounds(posX, posY+=20, 190, 20);
-		components.add(fixlinearTrans);
-		
-		JButton markLinearTPButton = new JButton();
-		markLinearTPButton.setText("<html>Show<br>T & P</html>");
-		markLinearTPButton.setBounds(posX+185, posY-12, 100, 32);
-		markLinearTPButton.setMargin(new Insets(0, 0, 0, 0));
-		markLinearTPButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
-		markLinearTPButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				
+		JCheckBox placesBox = new JCheckBox("Places tokens data", scanPlaces);
+		placesBox.setBounds(5, 35, 160, 20);
+		placesBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				scanPlaces = box.isSelected();
 			}
 		});
-		markLinearTPButton.setFocusPainted(false);
-		components.add(markLinearTPButton);
+		borderPanel.add(placesBox);
+		
+		JCheckBox arcsBox = new JCheckBox("Color arcs", markArcs);
+		arcsBox.setBounds(5, 55, 140, 20);
+		arcsBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				markArcs = box.isSelected();
+			}
+		});
+		borderPanel.add(arcsBox);
+		
+		JCheckBox repsBox = new JCheckBox("Repetitions", repetitions);
+		repsBox.setBounds(165, 15, 100, 20);
+		repsBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				repetitions = box.isSelected();
+			}
+		});
+		borderPanel.add(repsBox);
+
 		
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)

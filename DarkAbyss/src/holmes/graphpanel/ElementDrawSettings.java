@@ -22,6 +22,9 @@ public class ElementDrawSettings {
 	 * True oznacza zachowanie kolorów wgranych ze Snoopiego
 	 */
 	public boolean nonDefColors = false;
+	public boolean quickSimMode = false;
+	
+	public int arcSize = 0;
 	
 	public ElementDrawSettings() {
 		checkSettings();
@@ -55,5 +58,9 @@ public class ElementDrawSettings {
 		} else {
 			nonDefColors = false;
 		}
+		
+		quickSimMode = GUIManager.getDefaultGUIManager().simSettings.quickSimToken;
+		
+		arcSize = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
 	}
 }

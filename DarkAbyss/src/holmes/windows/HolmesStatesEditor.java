@@ -190,8 +190,10 @@ public class HolmesStatesEditor extends JFrame {
 		return result;
 	}
 	
+	/**
+	 * Metoda zmienia liczbę tokenów w wektorze na podaną w oknie.
+	 */
 	protected void changeGlobalTokensNumber() {
-		//TODO:
 		Object[] options = {"Change all", "Cancel",};
 		int n = JOptionPane.showOptionDialog(null,
 						"Change ALL current tokens in state to the new value: "+globalTokensNumber+"?",
@@ -210,8 +212,6 @@ public class HolmesStatesEditor extends JFrame {
 			}
 			
 			tableModel.fireTableDataChanged();
-			//change vector in parent window
-			
 		}
 	}
 

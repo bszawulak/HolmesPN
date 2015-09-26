@@ -1403,8 +1403,21 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		setTransitionGlowedMTC(false);
 		resetTransitionGraphics();
 		resetPlaceGraphics();
+		resetArcGraphics();
+		resetNodes();
 	}
 	
+	private void resetNodes() {
+		for (Node n : getNodes())
+			n.qSimFailed = false;
+	}
+
+	private void resetArcGraphics() {
+		for(Arc arc : getArcs()) {
+			arc.qSimRed = false;
+		}
+	}
+
 	/**
 	 * Metoda wygasza kolorowanie tranzycji, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
@@ -1414,6 +1427,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				Transition trans = ((Transition) n);
 				trans.setColorWithNumber(false, Color.white, false, -1, false, "");
 				trans.resetOffs();
+				
+				trans.qSimDrawed = false;
 			}
 	}
 	
@@ -1426,6 +1441,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				Place place = ((Place) n);
 				place.setColorWithNumber(false, Color.white, false, -1, false, "");
 				place.resetOffs();
+				
+				place.qSimDrawed = false;
 			}
 	}
 	

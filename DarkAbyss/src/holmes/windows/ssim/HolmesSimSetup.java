@@ -30,6 +30,7 @@ import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesFiringRatesManager;
 import holmes.windows.HolmesSSAwindowManager;
+import holmes.windows.HolmesStatesManager;
 
 /**
  * Okno ustawień symulatorów programu. Pozwala ustawić parametry symulacji w globalnym obiekcie
@@ -178,6 +179,19 @@ public class HolmesSimSetup extends JFrame {
 			}
 		});
 		panel.add(generatorType);
+		
+		JButton stateManagerButton = new JButton();
+	    stateManagerButton.setText("<html>States<br>Manager</html>");
+	    stateManagerButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
+	    stateManagerButton.setBounds(posX+380, posY, 130, 40);
+	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
+	    stateManagerButton.setFocusPainted(false);
+	    stateManagerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				new HolmesStatesManager();
+			}
+		});
+	    panel.add(stateManagerButton);
 		
 		JLabel simulatorLabel = new JLabel("Simulator selection:");
 		simulatorLabel.setBounds(posX, posY+40, 180, 20);

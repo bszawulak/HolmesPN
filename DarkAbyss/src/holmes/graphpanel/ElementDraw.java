@@ -48,6 +48,7 @@ public final class ElementDraw {
 	 * @param eds ElementDrawSettings - opcje rysowania
 	 * @return Graphics2D - obiekt rysujący
 	 */
+	@SuppressWarnings("unused")
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId, ElementDrawSettings eds) {
 		if(node instanceof Transition) {
 			Transition trans = (Transition)node;
@@ -170,7 +171,33 @@ public final class ElementDraw {
 				g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				g.setColor(back);
 				
-				g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
+				
+				
+				if(trans.qSimDrawed) {
+					int w = nodeBounds.width;
+					int h = nodeBounds.height;
+					if(trans.qSimFired == 0) {
+						try {
+							BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/transDead.png"));
+							g.drawImage(img, null, nodeBounds.x, nodeBounds.y+8);
+						} catch (Exception e) { }
+						
+						g.setColor(Color.RED);
+						g.setStroke(new BasicStroke(2.5F));
+						g.drawOval(nodeBounds.x-10, nodeBounds.y-10, nodeBounds.width +20, nodeBounds.height +20);
+						g.drawOval(nodeBounds.x-11, nodeBounds.y-11, nodeBounds.width +22, nodeBounds.height +22);
+					} else {
+						g.setColor(trans.qSimColor);
+						g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+						
+						g.setColor(Color.white);
+						g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height-(trans.qSimFillValue-2));
+					}
+					//g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
+				} else {
+					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
+				}
+				
 				g.setColor(Color.DARK_GRAY);
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -373,7 +400,7 @@ public final class ElementDraw {
 			for (ElementLocation el : node.getNodeLocations(sheetId)) {
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - place.getRadius(), el.getPosition().y - place.getRadius(), 
 						place.getRadius() * 2, place.getRadius() * 2);
-		
+				
 				if(eds.view3d) {
 					Color backup = g.getColor();	
 					g.setColor(Color.DARK_GRAY);
@@ -440,7 +467,7 @@ public final class ElementDraw {
 					g.setStroke(new BasicStroke(1.5F));
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
-				
+
 				drawTokens(g, place, nodeBounds);
 				
 				//RYSOWANIE PORTALU - OKRĄG W ŚRODKU
@@ -453,6 +480,27 @@ public final class ElementDraw {
 						g.setStroke(new BasicStroke(1.5F));
 						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
 						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
+					}
+				}
+				
+				if(place.qSimDrawed) {
+					if(place.qSimTokens == 0) {
+						g.setColor(Color.RED);
+						g.setStroke(new BasicStroke(2.5F));
+						g.drawOval(nodeBounds.x-10, nodeBounds.y-10, nodeBounds.width +20, nodeBounds.height +20);
+						g.drawOval(nodeBounds.x-11, nodeBounds.y-11, nodeBounds.width +22, nodeBounds.height +22);
+					} else {
+						//TODO:
+						g.setStroke(new BasicStroke(1F));
+						
+						g.setColor(place.qSimColor);
+						g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height);
+						
+						g.setColor(Color.white);
+						g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height-(place.qSimFillValue-2));
+						
+						g.setColor(Color.BLACK);
+						g.drawRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height);
 					}
 				}
 				
@@ -577,9 +625,10 @@ public final class ElementDraw {
 	 * @param g Graphics2D - obiekt rysujący
 	 * @param sheetId int - numer arkusza
 	 * @param zoom int - zoom
+	 * @param eds ElementDrawSettings - ustawienia rysowania
 	 * @return Graphics2D - obiekt rysujący
 	 */
-	public static Graphics2D drawArc(Arc arc, Graphics2D g, int sheetId, int zoom) {
+	public static Graphics2D drawArc(Arc arc, Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) {
 		if (arc.getLocationSheetId() != sheetId)
 			return g;
 
@@ -602,17 +651,24 @@ public final class ElementDraw {
 			p1.setLocation(p1.x+1, p1.y);
 		}
 		
+		int incFactorM = 0;
+		int incFactorRadius = 0;
+		if(arc.qSimRed) {
+			incFactorM = 6;
+			incFactorRadius = 15;
+		}
+		
 		double alfa = p2.x - p1.x + p2.y - p1.y == 0 ? 0 : Math.atan(((double) p2.y - (double) p1.y) / ((double) p2.x - (double) p1.x));
 		double alfaCos = Math.cos(alfa);
 		double alfaSin = Math.sin(alfa);
 		double sign = p2.x < arc.getStartLocation().getPosition().x ? 1 : -1;
-		double M = 4;
+		double M = 4 + incFactorM;
 		double xp = p2.x + endRadius * alfaCos * sign;
 		double yp = p2.y + endRadius * alfaSin * sign;
-		double xl = p2.x + (endRadius + 10) * alfaCos * sign + M * alfaSin;
-		double yl = p2.y + (endRadius + 10) * alfaSin * sign - M * alfaCos;
-		double xk = p2.x + (endRadius + 10) * alfaCos * sign - M * alfaSin;
-		double yk = p2.y + (endRadius + 10) * alfaSin * sign + M * alfaCos;
+		double xl = p2.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign + M * alfaSin;
+		double yl = p2.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign - M * alfaCos;
+		double xk = p2.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign - M * alfaSin;
+		double yk = p2.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign + M * alfaCos;
 
 		if (arc.getSelected()) {
 			g.setColor(EditorResources.selectionColorLevel3);
@@ -628,8 +684,7 @@ public final class ElementDraw {
 		else
 			g.setColor(new Color(176, 23, 31));
 
-		int leftRight = 0; //im wieksze, tym bardziej w prawo
-		int upDown = 0; //im większa, tym mocniej w dół
+		
 
 		//NIE-KLIKNIĘTY ŁUK
 		if (arc.getPairedArc() == null || arc.isMainArcOfPair()) { 
@@ -643,19 +698,30 @@ public final class ElementDraw {
 				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
 				g.setStroke(backup);
 			} else {
-				int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
-				g.setStroke(new BasicStroke(sizeS));
+				//int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
+				g.setStroke(new BasicStroke(eds.arcSize));
 				
 				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
 			}
 		}
+		
+		if(arc.qSimRed) {
+			g.setColor(Color.RED);
+			g.setStroke(new BasicStroke(4));
+			g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
+		}
 				
 		//STRZAŁKI
+		int leftRight = 0; //im wieksze, tym bardziej w prawo
+		int upDown = 0; //im większa, tym mocniej w dół
 		
 		g.setStroke(sizeStroke);
+		
+		
 		if(arc.getArcType() == TypesOfArcs.NORMAL || arc.getArcType() == TypesOfArcs.READARC) {
 			g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
 					new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
+
 		} else if (arc.getArcType() == TypesOfArcs.INHIBITOR) {
 			int xPos = (int) ((xl + xk)/2);
 	    	int yPos = (int) ((yl + yk)/2);
