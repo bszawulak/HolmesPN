@@ -172,7 +172,7 @@ public class HolmesKnockout extends JFrame {
 		
 		JCheckBox contractedModeBox = new JCheckBox("Contracted");
 		contractedModeBox.setBounds(posX+690, posY, 90, 20);
-		contractedModeBox.setEnabled(true);
+		contractedModeBox.setSelected(true);
 		contractedModeBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();

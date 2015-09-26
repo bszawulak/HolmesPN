@@ -13,8 +13,14 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 
+/**
+ * Nakładka na symulator stanów odpowiedzialna za wyświetlanie informacji statystycznych na obrazie sieci.
+ * 
+ * @author MR
+ */
 public class QuickSimTools {
 	private GUIManager overlord;
+	@SuppressWarnings("unused")
 	private HolmesDockWindowsTable subwindow;
 	private StateSimulator quickSim;
 	
@@ -22,6 +28,10 @@ public class QuickSimTools {
 	private boolean scanPlaces = true;
 	private boolean markArcs = true;
 	
+	/**
+	 * Konstruktor obiektu klasy QuickSimTools.
+	 * @param holmesDockWindowsTable HolmesDockWindowsTable - panel zarządzający sekcji 6 okna głównego
+	 */
 	public QuickSimTools(HolmesDockWindowsTable holmesDockWindowsTable) {
 		this.overlord = GUIManager.getDefaultGUIManager();
 		this.subwindow = holmesDockWindowsTable;
@@ -63,7 +73,7 @@ public class QuickSimTools {
 	public void finishedStatsData(ArrayList<ArrayList<Double>> quickSimAllStats, ArrayList<Transition> transitions,
 			ArrayList<Place> places) {
 		ArrayList<Double> avgFire = quickSimAllStats.get(0);
-		ArrayList<Double> stdDev = quickSimAllStats.get(1);
+		//ArrayList<Double> stdDev = quickSimAllStats.get(1);
 		ArrayList<Double> avgTokens = quickSimAllStats.get(2);
 		
 		overlord.simSettings.quickSimToken = true;
