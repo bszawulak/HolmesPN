@@ -93,6 +93,18 @@ public class StatesManager {
 	}
 	
 	/**
+	 * Metoda dodaje nowy czysty stan sieci.
+	 */
+	public void addNewCleanState() {
+		StatePlacesVector pVector = new StatePlacesVector();
+		int placesNumber = pn.getPlacesNumber();
+		for(int p=0; p<placesNumber; p++) {
+			pVector.addPlace(0);
+		}
+		statesMatrix.add(pVector);
+	}
+	
+	/**
 	 * Metoda czyści stany sieci i tworzy nowy pierwszy stan sieci.
 	 */
 	public void createCleanState() {

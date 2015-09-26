@@ -161,6 +161,12 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 		}
 	}
 	
+	/**
+	 * Ustawia nową wartość we wskazanej komórce tabeli stanów.
+	 * @param value Object - nowa wartość, tokeny
+	 * @param row int - nr wiersza
+	 * @param col int - nr kolumny
+	 */
 	public void setValueAt(Object value, int row, int col) {
 		double newValue = 0;
 		try {
@@ -169,8 +175,21 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 				newValue = 0;
 			ArrayList<String> rowVector = dataMatrix.get(row);
 			rowVector.set(col, ""+(int)newValue);
-			//change state vector:
+
 			boss.changeState(row, col, newValue);
+		} catch (Exception e) {
+			
+		}
+	}
+	
+	public void setQuietlyValueAt(Object value, int row, int col) {
+		double newValue = 0;
+		try {
+			newValue = Double.parseDouble(value.toString());
+			if(newValue < 0)
+				newValue = 0;
+			ArrayList<String> rowVector = dataMatrix.get(row);
+			rowVector.set(col, ""+(int)newValue);
 		} catch (Exception e) {
 			
 		}

@@ -46,7 +46,7 @@ public class HolmesDockWindow extends SingleDock {
 	 * EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR, MCSselector, Knockout, FIXNET
 	 */
 	public enum DockWindowType {
-		EDITOR, SIMULATOR, SELECTOR, T_INVARIANTS, P_INVARIANTS, ClusterSELECTOR, MctANALYZER, MCSselector, Knockout, FIXNET
+		EDITOR, SIMULATOR, SELECTOR, T_INVARIANTS, P_INVARIANTS, ClusterSELECTOR, MctANALYZER, MCSselector, Knockout, FIXNET, QuickSim
 	}
 
 	/**
@@ -88,6 +88,9 @@ public class HolmesDockWindow extends SingleDock {
 		} else if (type == DockWindowType.FIXNET) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Fix_selector", scrollPane,
 					"Fix"), GUIManager.getDefaultGUIManager().getDockingListener()));
+		} else if (type == DockWindowType.QuickSim) {
+			setDockable(GUIManager.externalWithListener(new DefaultDockable("Quick_simulator", scrollPane,
+					"qSim"), GUIManager.getDefaultGUIManager().getDockingListener()));
 		} else if (type == DockWindowType.Knockout) {
 			setDockable(GUIManager.externalWithListener(new DefaultDockable("Knockout_selector", scrollPane,
 					"Knockout"), GUIManager.getDefaultGUIManager().getDockingListener()));
@@ -102,6 +105,9 @@ public class HolmesDockWindow extends SingleDock {
 			scrollPane.getViewport().add(getSelectionPanel());
 		} else if (type == DockWindowType.FIXNET) {
 			setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.FIXER));
+			scrollPane.getViewport().add(getCurrentDockWindow());
+		} else if (type == DockWindowType.QuickSim) {
+			setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.QUICKSIM));
 			scrollPane.getViewport().add(getCurrentDockWindow());
 		}
 	}

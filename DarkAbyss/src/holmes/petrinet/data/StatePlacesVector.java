@@ -92,7 +92,7 @@ public class StatePlacesVector implements Serializable {
 	}
 	
 	/**
-	 * Uaktualnia cały wektor stanu chwilowym stanem sieci.
+	 * Uaktualnia cały wektor stanu chwilowym stanem sieci (liczbą tokenów)
 	 */
 	public void updateWholeVector() {
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
@@ -103,7 +103,7 @@ public class StatePlacesVector implements Serializable {
 	}
 	
 	/**
-	 * Ustawia nowy opis wektora stanów.
+	 * Ustawia nowy opis wektora stanów (liczby tokenów sieci).
 	 * @param description String - opis
 	 */
 	public void setDescription(String description) {
@@ -111,7 +111,7 @@ public class StatePlacesVector implements Serializable {
 	}
 	
 	/**
-	 * Zwraca opis wektora stanów.
+	 * Zwraca opis wektora stanu (liczby tokenów w sieci).
 	 * @return String - opis
 	 */
 	public String getDescription() {
@@ -119,7 +119,7 @@ public class StatePlacesVector implements Serializable {
 	}
 	
 	/**
-	 * Ustawia typ wektora stanów.
+	 * Ustawia typ wektora stanu (liczby tokenów w sieci).
 	 * @param type String - nazwa typu
 	 */
 	public void setStateType(String type) {
@@ -127,7 +127,7 @@ public class StatePlacesVector implements Serializable {
 	}
 	
 	/**
-	 * Zwraca nazwę typu wektora stanów/
+	 * Zwraca nazwę typu wektora stanu (liczby tokenów sieci).
 	 * @return String - nazwa typu
 	 */
 	public String getStateType() {
@@ -135,7 +135,7 @@ public class StatePlacesVector implements Serializable {
 	}
 	
 	/**
-	 * Umożliwia dostęp do wektora danych.
+	 * Umożliwia dostęp do wektora danych stanu sieci - liczby tokenów w miejsach.
 	 * @return ArrayList[Double] - wektor stanu sieci klasycznej
 	 */
 	public ArrayList<Double> accessVector() {

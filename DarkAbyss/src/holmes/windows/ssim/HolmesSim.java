@@ -87,7 +87,7 @@ public class HolmesSim extends JFrame {
 	public boolean doNotUpdate = false;
 	
 	private JProgressBar progressBar;
-	private int transInterval = 10;
+	private int transInterval = 100;
 	private boolean sortedP = false;
 	private boolean sortedT = false;
 	
@@ -577,7 +577,7 @@ public class HolmesSim extends JFrame {
 		transChartOptionsPanel.add(label1);
 		
 		int mValue = overlord.simSettings.getSimSteps()/10;
-		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(100, 0, mValue, 10);
+		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(transInterval, 0, mValue, 10);
 		transIntervalSpinner = new JSpinner(intervSpinnerModel);
 		transIntervalSpinner.setBounds(posXchart+330, posYchart+3, 60, 20);
 		transIntervalSpinner.addChangeListener(new ChangeListener() {
@@ -1043,6 +1043,9 @@ public class HolmesSim extends JFrame {
 			//test.add(value);
 			series.add(step, value);
 			step += transInterval;
+			
+			if(transInterval>1)
+				step--;
 			//counter++;
 		}
 		transitionsSeriesDataSet.addSeries(series);
@@ -1526,7 +1529,7 @@ public class HolmesSim extends JFrame {
 		clearAllData();
 		fillPlacesAndTransitionsData();
 		
-		transInterval = 10;
+		transInterval = 100;
 		transChartType = 0;
 		placesChartType = 0;
 		

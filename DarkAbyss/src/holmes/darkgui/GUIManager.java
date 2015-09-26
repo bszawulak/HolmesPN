@@ -130,6 +130,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesDockWindow mcsBox;
 	private HolmesDockWindow fixBox;
 	private HolmesDockWindow knockoutBox;
+	private HolmesDockWindow quickSimBox;
 	
 	//UNUSED
 	
@@ -257,8 +258,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setMctBox(new HolmesDockWindow(DockWindowType.MctANALYZER)); //aktywuj obiekt podokna wyświetlania zbiorów MCT
 		setMCSBox(new HolmesDockWindow(DockWindowType.MCSselector));
 		setKnockoutBox(new HolmesDockWindow(DockWindowType.Knockout));
-		
-		
+		setQuickSimBox(new HolmesDockWindow(DockWindowType.QuickSim));
+
 		// create menu
 		setMenu(new DarkMenu());
 		getFrame().setJMenuBar(getMenu());
@@ -283,7 +284,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		bottomRightTabDock.addChildDock(getMCSBox(), new Position(4));
 		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(5));
 		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
-		bottomRightTabDock.addChildDock(getFixBox(), new Position(7));
+		bottomRightTabDock.addChildDock(getQuickSimBox(), new Position(7));
+		bottomRightTabDock.addChildDock(getFixBox(), new Position(8));
 
 		// create the split docks
 		//leftSplitDock = new SplitDock();
@@ -770,6 +772,22 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public HolmesDockWindow getKnockoutBox() {
 		return knockoutBox;
+	}
+	
+	/**
+	 * Metoda ustawia nowe podokno symulatora QuickSim.
+	 * @param quickSimBox HolmesDockWindow - nowe okno QuickSim
+	 */
+	public void setQuickSimBox(HolmesDockWindow quickSimBox) {
+		this.quickSimBox = quickSimBox;
+	}
+
+	/**
+	 * Metoda zwraca obiekt podokna symulatora QuickSim.
+	 * @return HolmesDockWindow - okno QuickSim
+	 */
+	public HolmesDockWindow getQuickSimBox() {
+		return quickSimBox;
 	}
 	
 	/**

@@ -168,7 +168,8 @@ public class HolmesDockWindowsTable extends JPanel {
 	private static final int KNOCKOUT = 10;
 	private static final int META = 11;
 
-	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS, MCT, CLUSTERS, KNOCKOUT, MCS, FIXER }
+	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS, 
+		MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM }
 	
 	/**
 	 * Konstruktor główny, wybierający odpowiednią metodę do tworzenia podokna wybranego typu
@@ -205,9 +206,11 @@ public class HolmesDockWindowsTable extends JPanel {
 			createMCSSubWindow((MCSDataMatrix) blackBox[0]);
 		} else if (subType == SubWindow.FIXER) {
 			createFixerSubWindow();
+		} else if (subType == SubWindow.QUICKSIM) {
+			createQuickSimSubWindow();
 		} else if (subType == SubWindow.KNOCKOUT) {
 			createKnockoutData((ArrayList<ArrayList<Integer>>) blackBox[0]);
-		} 
+		}  
 	}
 	
 	//**************************************************************************************
@@ -732,8 +735,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		tokenSpinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
 		tokenSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int tokenz = (int) spinner.getValue();
+				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
 				setTokens(tokenz);
 				overlord.markNetChange();
 			}
@@ -782,17 +784,13 @@ public class HolmesDockWindowsTable extends JPanel {
 		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
 		locationXSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int x = (int) spinner.getValue();
-				setX(x);
+				setX((int) ((JSpinner) e.getSource()).getValue());
 			}
 		});
 		JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
 		locationYSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int y = (int) spinner.getValue();
-				setY(y);
+				setY((int) ((JSpinner) e.getSource()).getValue());
 			}
 		});
 		if(zoom != 100) {
@@ -864,9 +862,8 @@ public class HolmesDockWindowsTable extends JPanel {
 			public void stateChanged(ChangeEvent e) {
 				if(doNotUpdate==true)
 					return;
-				JSpinner spinner = (JSpinner) e.getSource();
-				int x = (int) spinner.getValue();
-				Point res = setNameOffsetX(x, place_tmp, el_tmp);
+
+				Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
 				doNotUpdate = true;
 				nameLocationXSpinnerModel.setValue(res.x);
 				doNotUpdate = false;
@@ -892,9 +889,8 @@ public class HolmesDockWindowsTable extends JPanel {
 			public void stateChanged(ChangeEvent e) {
 				if(doNotUpdate==true)
 					return;
-				JSpinner spinner = (JSpinner) e.getSource();
-				int y = (int) spinner.getValue();
-				Point res = setNameOffsetY(y, place_tmp, el_tmp);
+				
+				Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
 				doNotUpdate = true;
 				nameLocationYSpinnerModel.setValue(res.y);
 				doNotUpdate = false;	
@@ -1082,17 +1078,13 @@ public class HolmesDockWindowsTable extends JPanel {
 		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
 		locationXSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int x = (int) spinner.getValue();
-				setX(x);
+				setX((int) ((JSpinner) e.getSource()).getValue());
 			}
 		});
 		JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
 		locationYSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int y = (int) spinner.getValue();
-				setY(y);
+				setY((int) ((JSpinner) e.getSource()).getValue());
 			}
 		});
 		if(zoom != 100) {
@@ -1199,9 +1191,7 @@ public class HolmesDockWindowsTable extends JPanel {
 			public void stateChanged(ChangeEvent e) {
 				if(doNotUpdate==true)
 					return;
-				JSpinner spinner = (JSpinner) e.getSource();
-				int x = (int) spinner.getValue();
-				Point res = setNameOffsetX(x, trans_tmp, el_tmp);
+				Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
 				doNotUpdate = true;
 				nameLocationXSpinnerModel.setValue(res.x);
 				doNotUpdate = false;
@@ -1227,9 +1217,8 @@ public class HolmesDockWindowsTable extends JPanel {
 			public void stateChanged(ChangeEvent e) {
 				if(doNotUpdate==true)
 					return;
-				JSpinner spinner = (JSpinner) e.getSource();
-				int y = (int) spinner.getValue();
-				Point res = setNameOffsetY(y, trans_tmp, el_tmp);
+
+				Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
 				doNotUpdate = true;
 				nameLocationYSpinnerModel.setValue(res.y);
 				doNotUpdate = false;	
@@ -1516,17 +1505,13 @@ public class HolmesDockWindowsTable extends JPanel {
 		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
 		locationXSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int x = (int) spinner.getValue();
-				setX(x);
+				setX((int) ((JSpinner) e.getSource()).getValue());
 			}
 		});
 		JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
 		locationYSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int y = (int) spinner.getValue();
-				setY(y);
+				setY((int) ((JSpinner) e.getSource()).getValue());
 			}
 		});
 		if(zoom != 100) {
@@ -1634,9 +1619,8 @@ public class HolmesDockWindowsTable extends JPanel {
 			public void stateChanged(ChangeEvent e) {
 				if(doNotUpdate==true)
 					return;
-				JSpinner spinner = (JSpinner) e.getSource();
-				int x = (int) spinner.getValue();
-				Point res = setNameOffsetX(x, trans_tmp, el_tmp);
+
+				Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
 				doNotUpdate = true;
 				nameLocationXSpinnerModel.setValue(res.x);
 				doNotUpdate = false;
@@ -1662,9 +1646,8 @@ public class HolmesDockWindowsTable extends JPanel {
 			public void stateChanged(ChangeEvent e) {
 				if(doNotUpdate==true)
 					return;
-				JSpinner spinner = (JSpinner) e.getSource();
-				int y = (int) spinner.getValue();
-				Point res = setNameOffsetY(y, trans_tmp, el_tmp);
+
+				Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
 				doNotUpdate = true;
 				nameLocationYSpinnerModel.setValue(res.y);
 				doNotUpdate = false;	
@@ -1974,17 +1957,13 @@ public class HolmesDockWindowsTable extends JPanel {
 		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
 		locationXSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int x = (int) spinner.getValue();
-				setX(x);
+				setX((int) ((JSpinner) e.getSource()).getValue());
 			}
 		});
 		JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
 		locationYSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int y = (int) spinner.getValue();
-				setY(y);
+				setY((int) ((JSpinner) e.getSource()).getValue());
 			}
 		});
 		if(zoom != 100) {
@@ -2026,9 +2005,8 @@ public class HolmesDockWindowsTable extends JPanel {
 			public void stateChanged(ChangeEvent e) {
 				if(doNotUpdate==true)
 					return;
-				JSpinner spinner = (JSpinner) e.getSource();
-				int x = (int) spinner.getValue();
-				Point res = setNameOffsetX(x, meta_tmp, el_tmp);
+
+				Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), meta_tmp, el_tmp);
 				doNotUpdate = true;
 				nameLocationXSpinnerModel.setValue(res.x);
 				doNotUpdate = false;
@@ -2054,9 +2032,8 @@ public class HolmesDockWindowsTable extends JPanel {
 			public void stateChanged(ChangeEvent e) {
 				if(doNotUpdate==true)
 					return;
-				JSpinner spinner = (JSpinner) e.getSource();
-				int y = (int) spinner.getValue();
-				Point res = setNameOffsetY(y, meta_tmp, el_tmp);
+
+				Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), meta_tmp, el_tmp);
 				doNotUpdate = true;
 				nameLocationYSpinnerModel.setValue(res.y);
 				doNotUpdate = false;	
@@ -2177,8 +2154,7 @@ public class HolmesDockWindowsTable extends JPanel {
     		weightSpinner.setBounds(columnB_posX-10, columnB_Y += 20, colBCompLength/3, 20);
     		weightSpinner.addChangeListener(new ChangeListener() {
     			public void stateChanged(ChangeEvent e) {
-    				JSpinner spinner = (JSpinner) e.getSource();
-    				int tokenz = (int) spinner.getValue();
+    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
     				setWeight(tokenz);
     			}
     		});
@@ -4027,6 +4003,120 @@ public class HolmesDockWindowsTable extends JPanel {
 		markLinearTPButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				detector.markLinearRegions();
+			}
+		});
+		markLinearTPButton.setFocusPainted(false);
+		components.add(markLinearTPButton);
+		
+		panel.setLayout(null);
+		for (int i = 0; i < components.size(); i++)
+			 panel.add(components.get(i));
+		panel.setOpaque(true);
+		panel.repaint();
+		panel.setVisible(true);
+		add(panel);
+	}
+	
+	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************     quickSim     ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+	
+	/**
+	 * Tworzy okno wykrywania i wskazywania problemów sieci.
+	 */
+	public void createQuickSimSubWindow() {
+		int posX = 10;
+		int posY = 10;
+		
+		initiateContainers();
+		
+		//TODO
+		
+		JLabel label0 = new JLabel("t-invariants:");
+		label0.setBounds(posX, posY, 100, 20);
+		components.add(label0);
+		
+		fixInvariants = new JLabel("Normal: 0 / Non-inv.: 0");
+		fixInvariants.setBounds(posX, posY+=20, 190, 20);
+		components.add(fixInvariants);
+		
+		fixInvariants2 = new JLabel("Sub-inv.: 0 / Sur-inv: 0");
+		fixInvariants2.setBounds(posX, posY+=20, 190, 20);
+		components.add(fixInvariants2);
+		
+		JButton markInvButton = new JButton();
+		markInvButton.setText("<html>Show<br>&nbsp;&nbsp;&nbsp;inv.</html>");
+		markInvButton.setBounds(posX+185, posY-18, 100, 32);
+		markInvButton.setMargin(new Insets(0, 0, 0, 0));
+		markInvButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
+		markInvButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+
+			}
+		});
+		markInvButton.setFocusPainted(false);
+		components.add(markInvButton);
+		
+		JLabel label1 = new JLabel("Input and output places:");
+		label1.setBounds(posX, posY+=25, 200, 20);
+		components.add(label1);
+		
+		fixIOPlaces = new JLabel("Input: 0 / Output: 0");
+		fixIOPlaces.setBounds(posX, posY+=20, 190, 20);
+		components.add(fixIOPlaces);
+		
+		JButton markIOPlacesButton = new JButton();
+		markIOPlacesButton.setText("<html>Show<br>places</html>");
+		markIOPlacesButton.setBounds(posX+185, posY-16, 100, 32);
+		markIOPlacesButton.setMargin(new Insets(0, 0, 0, 0));
+		markIOPlacesButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
+		markIOPlacesButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				
+			}
+		});
+		markIOPlacesButton.setFocusPainted(false);
+		components.add(markIOPlacesButton);
+		
+		JLabel label2 = new JLabel("Input and output transitions:");
+		label2.setBounds(posX, posY+=25, 200, 20);
+		components.add(label2);
+		
+		fixIOTransitions = new JLabel("Input: 0 / Output: 0");
+		fixIOTransitions.setBounds(posX, posY+=20, 190, 20);
+		components.add(fixIOTransitions);
+		
+		JButton markIOTransButton = new JButton();
+		markIOTransButton.setText("<html>Show<br>trans.</html>");
+		markIOTransButton.setBounds(posX+185, posY-14, 100, 32);
+		markIOTransButton.setMargin(new Insets(0, 0, 0, 0));
+		markIOTransButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
+		markIOTransButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				
+			}
+		});
+		markIOTransButton.setFocusPainted(false);
+		components.add(markIOTransButton);
+		
+		JLabel label3 = new JLabel("Linear transitions and places");
+		label3.setBounds(posX, posY+=25, 200, 20);
+		components.add(label3);
+		
+		fixlinearTrans = new JLabel("Transitions: 0 / Places: 0");
+		fixlinearTrans.setBounds(posX, posY+=20, 190, 20);
+		components.add(fixlinearTrans);
+		
+		JButton markLinearTPButton = new JButton();
+		markLinearTPButton.setText("<html>Show<br>T & P</html>");
+		markLinearTPButton.setBounds(posX+185, posY-12, 100, 32);
+		markLinearTPButton.setMargin(new Insets(0, 0, 0, 0));
+		markLinearTPButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
+		markLinearTPButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				
 			}
 		});
 		markLinearTPButton.setFocusPainted(false);

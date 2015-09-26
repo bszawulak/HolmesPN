@@ -516,7 +516,7 @@ public class HolmesProgramProperties extends JFrame {
 			snoopyCompatibilityCheckBox.setSelected(false);
 		panel.add(snoopyCompatibilityCheckBox);
 		
-		JCheckBox subnetCompressionCheckBox = checkboxWizard("Use meta-arcs compression for metanodes", posX, posY, 350, 20, 
+		JCheckBox subnetCompressionCheckBox = checkboxWizard("Use meta-arcs compression for metanodes", posX, posY+=20, 350, 20, 
 				"editorSubnetCompressMode", true);
 		panel.add(subnetCompressionCheckBox);
 		

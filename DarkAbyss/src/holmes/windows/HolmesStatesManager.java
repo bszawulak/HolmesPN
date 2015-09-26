@@ -38,6 +38,7 @@ import holmes.utilities.Tools;
  */
 public class HolmesStatesManager extends JFrame {
 	private static final long serialVersionUID = -4590055483268695118L;
+	private JFrame ego;
 	private GUIManager overlord;
 	private StatesPlacesTableRenderer tableRenderer;
 	private StatesPlacesTableModel tableModel;
@@ -63,11 +64,12 @@ public class HolmesStatesManager extends JFrame {
 			
 		}
     	overlord = GUIManager.getDefaultGUIManager();
+    	ego = this;
     	pn = overlord.getWorkspace().getProject();
     	places = pn.getPlaces();
     	statesManager = pn.accessStatesManager();
     	selectedRow = 0;
-    	cellWidth = 30;
+    	cellWidth = 50;
     	
     	initalizeComponents();
     	initiateListeners();
@@ -158,17 +160,6 @@ public class HolmesStatesManager extends JFrame {
 	}
 	
 	/**
-	 * Metoda wywoływana przez akcję renderera tablicy, gdy następuje zmiana w komórce.
-	 * @param row int - nr wiersza tablicy
-	 * @param column int - nr kolumny tablicy
-	 * @param value double - nowa wartość
-	 */
-	public void changeState(int row, int column, double value) {
-		statesManager.getState(row).accessVector().set(column-2, value);
-		overlord.markNetChange();
-	}
-	
-	/**
 	 * Tworzy panel przycisków bocznych.
 	 * @return JPanel - panel
 	 */
@@ -184,6 +175,8 @@ public class HolmesStatesManager extends JFrame {
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
+		selectStateButton.setToolTipText("Sets selected state as the active one and changes number of tokens in\n"
+				+ "net places according to values of the selected state.");
 		selectStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/selectStateIcon.png"));
 		selectStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -212,6 +205,7 @@ public class HolmesStatesManager extends JFrame {
 		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
+		addNewStateButton.setToolTipText("Create new state vector based on current net state (distribution of tokens in places)");
 		addNewStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/addStateIcon.png"));
 		addNewStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -233,10 +227,37 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewStateButton);
 		
-		JButton replaceStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;</html>");
+		JButton addNewCleanStateButton = new JButton("<html>Create new<br/>state vector</html>");
+		addNewCleanStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		addNewCleanStateButton.setMargin(new Insets(0, 0, 0, 0));
+		addNewCleanStateButton.setFocusPainted(false);
+		addNewCleanStateButton.setToolTipText("Create new and clean state vector (all tokens values set to 0).");
+		addNewCleanStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/addCleanState.png"));
+		addNewCleanStateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(places.size() == 0) {
+					noNetInfo();
+					return;
+				}
+				Object[] options = {"Add new state", "Cancel",};
+				int n = JOptionPane.showOptionDialog(null,
+								"Add clean net state to states table?",
+								"Add clean new state?", JOptionPane.YES_NO_OPTION,
+								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+				if (n == 0) {
+					statesManager.addNewCleanState();
+					addLastStateToTable();
+					tableModel.fireTableDataChanged();
+				}
+			}
+		});
+		result.add(addNewCleanStateButton);
+		
+		JButton replaceStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;</html>");
 		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
+		replaceStateButton.setToolTipText("Replace the values of the selected state from the table with the current net places values.");
 		replaceStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/replaceStateIcon.png"));
 		replaceStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -249,10 +270,11 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(replaceStateButton);
 		
-		JButton removeStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;</html>");
+		JButton removeStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;</html>");
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
+		removeStateButton.setToolTipText("Removes state vector from project data.");
 		removeStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/removeStateIcon.png"));
 		removeStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -264,6 +286,24 @@ public class HolmesStatesManager extends JFrame {
 			}
 		});
 		result.add(removeStateButton);
+		
+		JButton editStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>state vector</html>");
+		editStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		editStateButton.setMargin(new Insets(0, 0, 0, 0));
+		editStateButton.setFocusPainted(false);
+		editStateButton.setIcon(Tools.getResIcon32("/icons/stateManager/stateEdit.png"));
+		editStateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(places.size() == 0) {
+					noNetInfo();
+					return;
+				}
+				int selected = statesTable.getSelectedRow();
+				if(selected > -1)
+					new HolmesStatesEditor((HolmesStatesManager)ego, statesManager.getState(selected), selected);
+			}
+		});
+		result.add(editStateButton);
 		
 	    return result;
 	}
@@ -319,6 +359,19 @@ public class HolmesStatesManager extends JFrame {
 		statesManager.replaceStateWithNetState(selected);
 		fillTable();
 		overlord.markNetChange();
+	}
+	
+	/**
+	 * Zmienia komórkę tabeli, wywoływane z poziomu okna edytora stanów.
+	 * @param index int - nr wiersza
+	 * @param placeID int - nr kolumny
+	 * @param newValue double - liczba tokenów
+	 * @param update boolean - jeśli true, odświeża tablicę
+	 */
+	public void changeTableCell(int index, int placeID, double newValue, boolean update) {
+		tableModel.setQuietlyValueAt(newValue, index, placeID);
+		if(update)
+			tableModel.fireTableDataChanged();
 	}
 	
 	/**
@@ -407,9 +460,21 @@ public class HolmesStatesManager extends JFrame {
 	}
 	
 	/**
+	 * Metoda wywoływana przez akcję renderera tablicy, gdy następuje zmiana w komórce.
+	 * @param row int - nr wiersza tablicy
+	 * @param column int - nr kolumny tablicy
+	 * @param value double - nowa wartość
+	 */
+	public void changeState(int row, int column, double value) {
+		statesManager.getState(row).accessVector().set(column-2, value);
+		overlord.markNetChange();
+		tableModel.fireTableDataChanged();
+	}
+	
+	/**
 	 * Ustawia pole opisy wybranego stanu.
 	 */
-	private void fillDescriptionField() {
+	public void fillDescriptionField() {
 		String description = statesManager.getStateDescription(selectedRow);
 		stateDescrTextArea.setText(description);
 	}
