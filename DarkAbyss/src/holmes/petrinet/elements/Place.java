@@ -41,11 +41,15 @@ public class Place extends Node {
 	private double ssaValue = 0.0;
 	
 	//quickSim
-	public int qSimFillValue = 0;
-	public double qSimTokens = 0;
-	public String qSimText = "";
-	public Color qSimColor = Color.WHITE;
-	public boolean qSimDrawed = false;
+	public boolean qSimDrawed = false; //czy rysować dodatkowe oznaczenie miejsca - okrąg
+	public int qSimOvalSize = 10; //rozmiar okręgu oznaczającego
+	public Color qSimOvalColor = Color.RED;
+	public Color qSimFillColor = Color.WHITE; //kolor oznaczenia
+	public boolean qSimDrawStats = false; //czy rysować dodatkowe dane statystyczne
+	public int qSimFillValue = 0; //poziom wypełnienia danychy
+	public double qSimTokens = 0; //ile średnio tokenów w symulacji
+	public String qSimText = ""; //dodatkowy tekst
+	
 	
 	/**
 	 * Konstruktor obiektu miejsca sieci.
@@ -96,6 +100,40 @@ public class Place extends Node {
 	{
 		g = ElementDraw.drawElement(this, g, sheetId, eds);
 		//super.draw(g, sheetId);
+	}
+	
+	/**
+	 * Zwraca zbiór tranzycji wejściowych *p.
+	 * @return ArrayList[Transition] - lista tranzycji ze zbioru *p
+	 */
+	public ArrayList<Transition> getPreTransitions() {
+		ArrayList<Transition> preTransitions = new ArrayList<Transition>();
+		for(ElementLocation el : getElementLocations()) {
+			for(Arc arc : el.getInArcs()) {
+				Node n = arc.getStartNode();
+				if(!preTransitions.contains(n)) {
+					preTransitions.add((Transition)n);
+				}
+			}
+		}
+		return preTransitions;
+	}
+	
+	/**
+	 * Zwraca zbiór tranzycji wyjściowych p*.
+	 * @return ArrayList[Transition] - lista tranzycji ze zbioru p*
+	 */
+	public ArrayList<Transition> getPostTransitions() {
+		ArrayList<Transition> postTransitions = new ArrayList<Transition>();
+		for(ElementLocation el : getElementLocations()) {
+			for(Arc arc : el.getOutArcs()) {
+				Node n = arc.getEndNode();
+				if(!postTransitions.contains(n)) {
+					postTransitions.add((Transition)n);
+				}
+			}
+		}
+		return postTransitions;
 	}
 
 	/**

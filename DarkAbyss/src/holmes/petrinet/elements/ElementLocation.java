@@ -28,6 +28,9 @@ public class ElementLocation implements Serializable {
 	
 	private ArrayList<Arc> metaInArcs = new ArrayList<Arc>();
 	private ArrayList<Arc> metaOutArcs = new ArrayList<Arc>();
+	
+	public boolean qSimArcSign = false; //czy łuk między takimi EL ma być wzmocniony
+	public boolean qSimDrawed = false; //czy ten EL ma być dodatkowo oznaczony
 
 	/**
 	 * Konstruktor obiektów ElementLocation.

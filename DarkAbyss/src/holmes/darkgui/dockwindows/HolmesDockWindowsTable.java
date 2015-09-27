@@ -134,6 +134,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //używane w podoknie p-inwariantów
 	private int selectedP_invIndex = -1;
 	private JTextArea p_invNameField;
+	private boolean invStructure = true;
 	//clusters:
 	private JComboBox<String> chooseCluster;
 	private JComboBox<String> chooseClusterInv;
@@ -2467,6 +2468,7 @@ public class HolmesDockWindowsTable extends JPanel {
 			mode = tINVARIANTS;
 			t_invariantsMatrix = invariantsData;
 			transitions = overlord.getWorkspace().getProject().getTransitions();
+			places = overlord.getWorkspace().getProject().getPlaces();
 			overlord.reset.setT_invariantsStatus(true);
 		}
 		
@@ -2527,7 +2529,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
 		JCheckBox markMCTcheckBox = new JCheckBox("Color MCT");
 		markMCTcheckBox.setBounds(colA_posX+130, positionY-5, 120, 20);
-		markMCTcheckBox.setSelected(false);;
+		markMCTcheckBox.setSelected(false);
 		markMCTcheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -2543,7 +2545,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		
 		JCheckBox glowINVcheckBox = new JCheckBox("Transitions glow");
 		glowINVcheckBox.setBounds(colA_posX+130, positionY+15, 120, 20);
-		glowINVcheckBox.setSelected(true);;
+		glowINVcheckBox.setSelected(true);
 		glowINVcheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -2572,6 +2574,22 @@ public class HolmesDockWindowsTable extends JPanel {
         descPanel.add(new JScrollPane(t_invNameField), BorderLayout.CENTER);
         descPanel.setBounds(colA_posX, positionY += 40, 250, 80);
         components.add(descPanel);
+        
+        JCheckBox markAreaCheckBox = new JCheckBox("Invariant-net structure painted");
+        markAreaCheckBox.setBounds(colA_posX, positionY+=85, 200, 20);
+        markAreaCheckBox.setSelected(true);
+        markAreaCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					invStructure = true;
+				} else {
+					invStructure = false;
+				}
+				showT_invariant();
+			}
+		});
+		components.add(markAreaCheckBox);
 		
 		doNotUpdate = false;
 		panel.setLayout(null);
@@ -2614,24 +2632,84 @@ public class HolmesDockWindowsTable extends JPanel {
 			}
 			
 			ArrayList<Integer> transMCTvector = overlord.getWorkspace().getProject().getMCTtransIndicesVector();
+			ArrayList<Transition> invTransitions = new ArrayList<Transition>();
 			ColorPalette cp = new ColorPalette();
 			for(int t=0; t<invariant.size(); t++) {
 				int fireValue = invariant.get(t);
-				if(fireValue == 0)
+				Transition trans = transitions.get(t);
+				if(fireValue == 0) {
+					trans.qSimDrawed = false;
+					trans.qSimArcSign = false;
 					continue;
-
+				}
+				
+				invTransitions.add(trans);
 				if(markMCT) {
 					int mctNo = transMCTvector.get(t);
 					if(mctNo == -1) {
-						transitions.get(t).setGlowedINV(glowT_inv, fireValue);
+						trans.setGlowedINV(glowT_inv, fireValue);
 					} else {
-						transitions.get(t).setColorWithNumber(true, cp.getColor(mctNo), false, fireValue, true, "[MCT"+(mctNo+1)+"]");
-						transitions.get(t).setGlowedINV(false, fireValue);
+						trans.setColorWithNumber(true, cp.getColor(mctNo), false, fireValue, true, "[MCT"+(mctNo+1)+"]");
+						trans.setGlowedINV(false, fireValue);
 					}	
 				} else {
-					transitions.get(t).setGlowedINV(glowT_inv, fireValue);
+					trans.setGlowedINV(glowT_inv, fireValue);
+				}
+				
+				if(invStructure) {
+					trans.qSimDrawed = true;
+					trans.qSimArcSign = true;
+					trans.qSimFillColor = new Color(0, 102, 0);
+					for(ElementLocation el : trans.getElementLocations()) {
+						el.qSimArcSign = true;
+						//el.qSimDrawed = true;
+					}
 				}
 			}
+			
+			if(invStructure) {
+				for(Place place : places) { //zaznacz wszystkie EL struktury t-inwariantu
+					for(ElementLocation el : place.getElementLocations()) { //dla każdej lokalizacji miejsca
+						boolean inFound = false;
+						for(Arc inArc : el.getInArcs()) { //sprawdź łuki wejściowe
+							if(((Transition)inArc.getStartNode()).qSimDrawed) {
+								inFound = true; //to znaczy, że prowadzi tu łuk z tranzycji inwariantu
+								break;
+							}
+						}
+						if(!inFound)
+							continue;
+						
+						for(ElementLocation el2 : place.getElementLocations()) { 
+							for(Arc outArc : el2.getOutArcs()) { //sprawdź łuki wyjściowe
+								if(((Transition)outArc.getEndNode()).qSimDrawed) {
+									el2.qSimArcSign = true;	//to znaczy, że prowadzi stąd łuk do tranzycji inwariantu
+									el2.qSimDrawed = true;
+									el.qSimArcSign = true;
+									el.qSimDrawed = true;
+									place.qSimFillColor = new Color(0, 102, 0);
+									place.qSimDrawed = true;
+									
+									place.qSimTokens = 0; //jakie to płytkie :)
+									place.qSimOvalColor = new Color(0, 102, 0);
+									place.qSimOvalSize = 0;
+									break;
+								}
+							}
+						}
+					}
+					
+					
+				}
+				
+				for(Arc arc : pn.getArcs()) {
+					if(arc.getStartLocation().qSimArcSign && arc.getEndLocation().qSimArcSign) {
+						arc.qSimForcedArc = true;
+						arc.qSimForcedColor = new Color(0, 102, 0);
+					}
+				}
+			}
+			
 			//name field:
 			String name = overlord.getWorkspace().getProject().accessT_InvDescriptions().get(selectedT_invIndex);
 			t_invNameField.setText(name);
@@ -3238,7 +3316,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		//SPOSÓB WYŚWIETLANIA - TRANZYCJE CZY ODPALENIA
 		JCheckBox transFiringMode = new JCheckBox("Show transition average firing");
 		transFiringMode.setBounds(colA_posX-3, positionY+=20, 220, 20);
-		transFiringMode.setSelected(false);;
+		transFiringMode.setSelected(false);
 		transFiringMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -3256,7 +3334,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
 		JCheckBox scaleMode = new JCheckBox("Show scaled colors");
 		scaleMode.setBounds(colA_posX-3, positionY+=20, 170, 20);
-		scaleMode.setSelected(false);;
+		scaleMode.setSelected(false);
 		scaleMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();

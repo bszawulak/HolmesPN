@@ -1073,6 +1073,11 @@ public class StateSimulator implements Runnable {
 	//****************************************              **************************************************************************
 	//********************************************************************************************************************************
 	
+	/**
+	 * Metoda używana przez moduł quickSim, zbiera dane o średniej liczbie uruchomień tranzycji oraz tokenach
+	 * w miejscach. Powtarza symulacje maksymalnie 20 razy.
+	 * @return ArrayList[ArrayList[Double]] - macierz wektorów danych
+	 */
 	public ArrayList<ArrayList<Double>> quickSimGatherData() {
 		if(readyToSimulate == false) {
 			overlord.log("Simulation simple mode cannot start.", "warning", true);
@@ -1216,6 +1221,11 @@ public class StateSimulator implements Runnable {
 		return quickSimAllStats;
 	}
 	
+	/**
+	 * Metoda używana przez moduł quickSim, zbiera dane o średniej liczbie uruchomień tranzycji oraz tokenach
+	 * w miejscach. Nie powtarza symulacji - 1 przebieg.
+	 * @return ArrayList[ArrayList[Double]] - macierz wektorów danych
+	 */
 	public ArrayList<ArrayList<Double>> quickSimGatherDataNoReps() {
 		if(readyToSimulate == false) {
 			overlord.log("Simulation simple mode cannot start.", "warning", true);

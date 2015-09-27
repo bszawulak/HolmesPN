@@ -31,7 +31,7 @@ public abstract class Node extends PetriNetElement {
 	final static float dash1[] = { 2.0f };
 	final static BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 	
-	public boolean qSimFailed = false;
+	public boolean qSimArcSign = false; //znacznik dła łuku - czy ma być wzmocniony pomiędzy węzłami które mają tu wartość true
 
 	/**
 	 * Konstruktor obiektu klasy Node. Ustawia też początkowe wartości przesunięcia nazwy wierzchołka.

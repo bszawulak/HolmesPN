@@ -41,7 +41,8 @@ public class Arc extends PetriNetElement {
 	private boolean isMainArcOfPair = false;
 	private TypesOfArcs arcType;
 	
-	public boolean qSimRed = false;
+	public boolean qSimForcedArc = false; //czy łuk ma być wzmocniony
+	public Color qSimForcedColor = Color.BLACK; //kolor wzmocnienia
 
 	/** NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC */
 	public enum TypesOfArcs { NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC }

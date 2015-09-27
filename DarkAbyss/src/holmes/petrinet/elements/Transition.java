@@ -74,11 +74,15 @@ public class Transition extends Node {
 	protected double ssaProbTime = 0.0;
 	
 	//quickSim - kolorowanie wyników symulacji
-	public int qSimFillValue = 0;
-	public double qSimFired = 0;
-	public String qSimText = "";
-	public Color qSimColor = Color.WHITE;
-	public boolean qSimDrawed = false;
+	public boolean qSimDrawed = false; // czy rysować dodatkowe oznaczenie tranzycji - okrąg
+	public int qSimOvalSize = 10; //rozmiar okręgu oznaczającego
+	public Color qSimOvalColor = Color.RED;
+	public Color qSimFillColor = Color.WHITE; //domyślny kolor
+	public boolean qSimDrawStats = false; // czy rysować wypełnienie tranzycji
+	public int qSimFillValue = 0; //poziom wypełnienia
+	public double qSimFired = 0; //ile razy uruchomiona
+	public String qSimText = ""; //dodatkowy tekst
+	
 	
 	//inne:
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
@@ -140,6 +144,40 @@ public class Transition extends Node {
 	public void draw(Graphics2D g, int sheetId, ElementDrawSettings eds) {
 		g = ElementDraw.drawElement(this, g, sheetId, eds);
 		//super.draw(g, sheetId);
+	}
+	
+	/**
+	 * Zwraca zbiór miejsc wejściowych *t.
+	 * @return ArrayList[Place] - lista miejsc ze zbioru *t
+	 */
+	public ArrayList<Place> getPrePlaces() {
+		ArrayList<Place> prePlaces = new ArrayList<Place>();
+		for(ElementLocation el : getElementLocations()) {
+			for(Arc arc : el.getInArcs()) {
+				Node n = arc.getStartNode();
+				if(!prePlaces.contains(n)) {
+					prePlaces.add((Place)n);
+				}
+			}
+		}
+		return prePlaces;
+	}
+	
+	/**
+	 * Zwraca zbiór miejsc wyjściowych t*.
+	 * @return ArrayList[Place] - lista miejsc ze zbioru t*
+	 */
+	public ArrayList<Place> getPostPlaces() {
+		ArrayList<Place> postPlaces = new ArrayList<Place>();
+		for(ElementLocation el : getElementLocations()) {
+			for(Arc arc : el.getOutArcs()) {
+				Node n = arc.getEndNode();
+				if(!postPlaces.contains(n)) {
+					postPlaces.add((Place)n);
+				}
+			}
+		}
+		return postPlaces;
 	}
 
 	/**

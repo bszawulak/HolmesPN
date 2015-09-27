@@ -50,7 +50,7 @@ public final class ElementDraw {
 	 */
 	@SuppressWarnings("unused")
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId, ElementDrawSettings eds) {
-		if(node instanceof Transition) {
+		if(node instanceof Transition) { //TODO: znacznik tranzycji
 			Transition trans = (Transition)node;
 			Color portalColor = new Color(224,224,224);
 			Color portalSelColor = EditorResources.selectionColorLevel3;
@@ -173,25 +173,45 @@ public final class ElementDraw {
 				
 				
 				
-				if(trans.qSimDrawed) {
+				if(trans.qSimDrawed && el.qSimDrawed) {
 					int w = nodeBounds.width;
 					int h = nodeBounds.height;
 					if(trans.qSimFired == 0) {
-						try {
-							BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/transDead.png"));
-							g.drawImage(img, null, nodeBounds.x, nodeBounds.y+8);
-						} catch (Exception e) { }
 						
-						g.setColor(Color.RED);
+						if(trans.qSimDrawStats) {
+							try {
+								//BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/transDead.png"));
+								//g.drawImage(img, null, nodeBounds.x, nodeBounds.y+8);
+								g.setColor(new Color(96,96,96));
+								g.fillRect(nodeBounds.x+2, nodeBounds.y+10, 23, 10);
+								g.setColor(Color.BLACK);
+								g.drawRect(nodeBounds.x+2, nodeBounds.y+10, 23, 10);
+								
+								g.fillRect(nodeBounds.x+25, nodeBounds.y+12, 3, 6);
+								g.setColor(Color.RED);
+								//g.fillRect(nodeBounds.x+3, nodeBounds.y+11, 3, 8);
+								g.drawLine(nodeBounds.x+15, nodeBounds.y+11, nodeBounds.x+13, nodeBounds.y+15);
+								g.drawLine(nodeBounds.x+13, nodeBounds.y+15, nodeBounds.x+16, nodeBounds.y+14);
+								g.drawLine(nodeBounds.x+16, nodeBounds.y+14, nodeBounds.x+14, nodeBounds.y+19);
+							} catch (Exception e) { }
+						}
+						
+						
+						g.setColor(trans.qSimOvalColor);
 						g.setStroke(new BasicStroke(2.5F));
-						g.drawOval(nodeBounds.x-10, nodeBounds.y-10, nodeBounds.width +20, nodeBounds.height +20);
-						g.drawOval(nodeBounds.x-11, nodeBounds.y-11, nodeBounds.width +22, nodeBounds.height +22);
-					} else {
-						g.setColor(trans.qSimColor);
-						g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 						
-						g.setColor(Color.white);
-						g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height-(trans.qSimFillValue-2));
+						int os = trans.qSimOvalSize;
+						g.drawOval(nodeBounds.x-os, nodeBounds.y-os, nodeBounds.width +(2*os), nodeBounds.height +(2*os));
+						g.drawOval(nodeBounds.x-(os+1), nodeBounds.y-(os+1), nodeBounds.width +(2*os+2), nodeBounds.height +(2*os+2));
+
+					} else {
+						if(trans.qSimDrawStats) {
+							g.setColor(trans.qSimFillColor);
+							g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+							
+							g.setColor(Color.white);
+							g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height-(trans.qSimFillValue-2));
+						}
 					}
 					//g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
 				} else {
@@ -378,7 +398,7 @@ public final class ElementDraw {
 					}
 				}
 			}
-		} else if(node instanceof Place) { // MIEJSCA
+		} else if(node instanceof Place) { // MIEJSCA  //TODO: znacznik miejsc
 			Place place = (Place)node;
 			Color portalColor = Color.WHITE;
 			Color portalSelColor = EditorResources.selectionColorLevel3;
@@ -483,24 +503,26 @@ public final class ElementDraw {
 					}
 				}
 				
-				if(place.qSimDrawed) {
+				if(place.qSimDrawed && el.qSimDrawed) {
 					if(place.qSimTokens == 0) {
-						g.setColor(Color.RED);
+						g.setColor(place.qSimOvalColor);
 						g.setStroke(new BasicStroke(2.5F));
-						g.drawOval(nodeBounds.x-10, nodeBounds.y-10, nodeBounds.width +20, nodeBounds.height +20);
-						g.drawOval(nodeBounds.x-11, nodeBounds.y-11, nodeBounds.width +22, nodeBounds.height +22);
+						int os = place.qSimOvalSize;
+						g.drawOval(nodeBounds.x-os, nodeBounds.y-os, nodeBounds.width +(2*os), nodeBounds.height +(2*os));
+						g.drawOval(nodeBounds.x-(os+1), nodeBounds.y-(os+1), nodeBounds.width +(2*os+2), nodeBounds.height +(2*os+2));
 					} else {
-						//TODO:
-						g.setStroke(new BasicStroke(1F));
-						
-						g.setColor(place.qSimColor);
-						g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height);
-						
-						g.setColor(Color.white);
-						g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height-(place.qSimFillValue-2));
-						
-						g.setColor(Color.BLACK);
-						g.drawRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height);
+						if(place.qSimDrawStats) {
+							g.setStroke(new BasicStroke(1F));
+							
+							g.setColor(place.qSimFillColor);
+							g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height);
+							
+							g.setColor(Color.white);
+							g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height-(place.qSimFillValue-2));
+							
+							g.setColor(Color.BLACK);
+							g.drawRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height);
+						}
 					}
 				}
 				
@@ -569,7 +591,7 @@ public final class ElementDraw {
 				
 				
 			}
-		} else if(node instanceof MetaNode) {
+		} else if(node instanceof MetaNode) { //TODO: znacznik meta
 			MetaNode metanode = (MetaNode)node;
 			for (ElementLocation el : metanode.getNodeLocations(sheetId)) {
 				int radius = metanode.getRadius();
@@ -628,7 +650,7 @@ public final class ElementDraw {
 	 * @param eds ElementDrawSettings - ustawienia rysowania
 	 * @return Graphics2D - obiekt rysujący
 	 */
-	public static Graphics2D drawArc(Arc arc, Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) {
+	public static Graphics2D drawArc(Arc arc, Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) { //TODO: metoda drawArc
 		if (arc.getLocationSheetId() != sheetId)
 			return g;
 
@@ -653,7 +675,7 @@ public final class ElementDraw {
 		
 		int incFactorM = 0;
 		int incFactorRadius = 0;
-		if(arc.qSimRed) {
+		if(arc.qSimForcedArc) {
 			incFactorM = 6;
 			incFactorRadius = 15;
 		}
@@ -684,8 +706,6 @@ public final class ElementDraw {
 		else
 			g.setColor(new Color(176, 23, 31));
 
-		
-
 		//NIE-KLIKNIĘTY ŁUK
 		if (arc.getPairedArc() == null || arc.isMainArcOfPair()) { 
 			//czyli nie rysuje kreski tylko wtedy, jeśli to podrzędny łuk w ramach read-arc - żeby nie dublować
@@ -700,28 +720,29 @@ public final class ElementDraw {
 			} else {
 				//int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
 				g.setStroke(new BasicStroke(eds.arcSize));
-				
 				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
 			}
 		}
 		
-		if(arc.qSimRed) {
-			g.setColor(Color.RED);
+		if(arc.qSimForcedArc) {
+			g.setColor(arc.qSimForcedColor);
 			g.setStroke(new BasicStroke(4));
 			g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
 		}
 				
 		//STRZAŁKI
-		int leftRight = 0; //im wieksze, tym bardziej w prawo
-		int upDown = 0; //im większa, tym mocniej w dół
+		//int leftRight = 0; //im wieksze, tym bardziej w prawo
+		//int upDown = 0; //im większa, tym mocniej w dół
 		
 		g.setStroke(sizeStroke);
 		
 		
 		if(arc.getArcType() == TypesOfArcs.NORMAL || arc.getArcType() == TypesOfArcs.READARC) {
-			g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
-					new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
+			//g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
+			//		new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
 
+			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
+					new int[] { (int) yp, (int) yl, (int) yk }, 3);
 		} else if (arc.getArcType() == TypesOfArcs.INHIBITOR) {
 			int xPos = (int) ((xl + xk)/2);
 	    	int yPos = (int) ((yl + yk)/2);
@@ -730,8 +751,10 @@ public final class ElementDraw {
 	    	
 	    	g.drawOval((int)(xPos-5-xT), (int)(yPos-5-yT), 10, 10);
 		} else if (arc.getArcType() == TypesOfArcs.RESET) {
-			g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
-					new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
+			//g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
+			//		new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
+			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
+					new int[] { (int) yp, (int) yl, (int) yk }, 3);
 			
 			xl = p2.x + (endRadius + 30) * alfaCos * sign + M * alfaSin;
 			yl = p2.y + (endRadius + 30) * alfaSin * sign - M * alfaCos;
@@ -740,8 +763,10 @@ public final class ElementDraw {
 			double newxp = p2.x - (endRadius-45) * alfaCos * sign;
 			double newyp = p2.y - (endRadius-45) * alfaSin * sign;
 			
-			g.fillPolygon(new int[] { (int) newxp, (int) xl+leftRight, (int) xk+leftRight }, 
-					new int[] { (int) newyp, (int) yl+upDown, (int) yk+upDown }, 3);
+			//g.fillPolygon(new int[] { (int) newxp, (int) xl+leftRight, (int) xk+leftRight }, 
+			//		new int[] { (int) newyp, (int) yl+upDown, (int) yk+upDown }, 3);
+			g.fillPolygon(new int[] { (int) newxp, (int) xl, (int) xk }, 
+					new int[] { (int) newyp, (int) yl, (int) yk }, 3);
 		} else if (arc.getArcType() == TypesOfArcs.EQUAL) {
 			int xPos = (int) ((xl + xk)/2);
 	    	int yPos = (int) ((yl + yk)/2);
@@ -764,9 +789,10 @@ public final class ElementDraw {
 			double ykmeta = p2.y + (endRadius + 13) * alfaSin * sign + Mmeta * alfaCos;
 			
 			g.setColor( new Color(30, 144, 255, 250));
-			g.fillPolygon(new int[] { (int) xpmeta+leftRight, (int) xlmeta+leftRight, (int) xkmeta+leftRight }, 
-					new int[] { (int) ypmeta+upDown, (int) ylmeta+upDown, (int) ykmeta+upDown }, 3);
-
+			//g.fillPolygon(new int[] { (int) xpmeta+leftRight, (int) xlmeta+leftRight, (int) xkmeta+leftRight }, 
+			//		new int[] { (int) ypmeta+upDown, (int) ylmeta+upDown, (int) ykmeta+upDown }, 3);
+			g.fillPolygon(new int[] { (int) xpmeta, (int) xlmeta, (int) xkmeta }, 
+					new int[] { (int) ypmeta, (int) ylmeta, (int) ykmeta }, 3);
 		}
 		
 		

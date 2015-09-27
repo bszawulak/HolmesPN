@@ -1396,7 +1396,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda czyści kolory sieci do domyślnych.
+	 * Resetuje kolory sieci do domyślnych.
 	 */
 	public void resetNetColors() {
 		turnTransitionGlowingOff();
@@ -1407,14 +1407,25 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		resetNodes();
 	}
 	
+	/**
+	 * Resetuje markery wyświetlania koloru każdego węzła i każdego element location
+	 */
 	private void resetNodes() {
-		for (Node n : getNodes())
-			n.qSimFailed = false;
+		for (Node n : getNodes()) {
+			n.qSimArcSign = false;
+			for(ElementLocation el : n.getElementLocations()) {
+				el.qSimArcSign = false;
+				el.qSimDrawed = false;
+			}
+		}
 	}
 
+	/**
+	 * Resetuje marker wyświetlania wzmocnionej grafiki rysowania łuku.
+	 */
 	private void resetArcGraphics() {
 		for(Arc arc : getArcs()) {
-			arc.qSimRed = false;
+			arc.qSimForcedArc = false;
 		}
 	}
 
@@ -1429,6 +1440,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				trans.resetOffs();
 				
 				trans.qSimDrawed = false;
+				trans.qSimDrawStats = false;
+				trans.qSimArcSign = false;
+				trans.qSimOvalSize = 10;
 			}
 	}
 	
@@ -1443,6 +1457,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				place.resetOffs();
 				
 				place.qSimDrawed = false;
+				place.qSimDrawStats = false;
+				place.qSimArcSign = false;
+				place.qSimOvalSize = 10;
 			}
 	}
 	
