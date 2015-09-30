@@ -659,18 +659,15 @@ public class SnoopyReader {
 		try {
 			double eft = Double.parseDouble((String) tableVector.get(4));
 			double lft = Double.parseDouble((String) tableVector.get(5));
-			transition.setEFT(eft);
 			transition.setLFT(lft);
+			transition.setEFT(eft);
 			transition.setTPNstatus(true);
 		} catch (Exception e) {
 			transition.setEFT(0);
 			transition.setLFT(0);
 			transition.setTPNstatus(true);
 		}
-		
 	}
-
-	
 
 	/**
 	 * Metoda czytająca blok coarse-places w pliku Snoopiego.

@@ -345,12 +345,13 @@ public class GUIOperations {
 	 */
 	public boolean saveAsGlobal() {
 		String lastPath = overlord.getLastPath();
-		FileFilter[] filters = new FileFilter[5];
-		filters[0] = new ExtensionFileFilter("Snoopy Petri Net (.spped)", new String[] { "SPPED" });
-		filters[1] = new ExtensionFileFilter("Snoopy Extended Petri Net (.spept)", new String[] { "SPEPT" });
-		filters[2] = new ExtensionFileFilter("Snoopy Time Petri Net (.sptpt)", new String[] { "SPTPT" });
-		filters[3] = new ExtensionFileFilter("Holmes Project File (.project)", new String[] { "PROJECT" });
-		filters[4] = new ExtensionFileFilter("INA PNT format (.pnt)", new String[] { "PNT" });
+		FileFilter[] filters = new FileFilter[6];
+		filters[0] = new ExtensionFileFilter("All supported Snoopy files", new String[] { "SPPED", "SPEPT", "SPTPT" });
+		filters[1] = new ExtensionFileFilter("Snoopy Petri Net (.spped)", new String[] { "SPPED" });
+		filters[2] = new ExtensionFileFilter("Snoopy Extended Petri Net (.spept)", new String[] { "SPEPT" });
+		filters[3] = new ExtensionFileFilter("Snoopy Time Petri Net (.sptpt)", new String[] { "SPTPT" });
+		filters[4] = new ExtensionFileFilter("Holmes Project File (.project)", new String[] { "PROJECT" });
+		filters[5] = new ExtensionFileFilter("INA PNT format (.pnt)", new String[] { "PNT" });
 
 		String selectedFile = Tools.selectNetSaveFileDialog(lastPath, filters, "Save", "", overlord.getWorkspace().getProject().getFileName());
 		if(selectedFile.equals("")) {

@@ -15,8 +15,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -108,6 +110,9 @@ public class HolmesSimKnockVis extends JFrame {
 	private JTable transTable;
 	private JTable placesCompAllTable;
 	private JTable transCompAllTable;
+	
+	
+	protected boolean notepadInfo = false;
 	
 	
 	/**
@@ -321,6 +326,21 @@ public class HolmesSimKnockVis extends JFrame {
 			}
 		});
 		result.add(showNotepadButton);
+		
+		JCheckBox sortedCheckBox = new JCheckBox("Notepad");
+		sortedCheckBox.setBounds(posXda+960, posYda, 80, 20);
+		sortedCheckBox.setSelected(false);
+		sortedCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					notepadInfo = true;
+				} else {
+					notepadInfo = false;
+				}
+			}
+		});
+		result.add(sortedCheckBox);
 		
 		return result;
 	}
@@ -963,6 +983,18 @@ public class HolmesSimKnockVis extends JFrame {
     	
         placesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         placesTable.validate();
+        
+        if(notepadInfo) {
+        	//TODO:
+        	HolmesNotepad notePad = new HolmesNotepad(900,600);
+    		notePad.setVisible(true);
+    		notePad.addTextLineNL("===============================================================================", "text");
+    		notePad.addTextLineNL("", "text");
+    		
+    		
+    		
+    		
+        }
     }
 
     /**
@@ -1226,6 +1258,15 @@ public class HolmesSimKnockVis extends JFrame {
     	resizeColumnWidth(placesCompAllTable);
     	
     	
+    	HolmesNotepad notePadTrans = null;
+    	HolmesNotepad notePadPlaces = null;
+    	if(notepadInfo) {
+    		notePadTrans = new HolmesNotepad(900,600);
+    		notePadTrans.setVisible(true);
+    		notePadPlaces = new HolmesNotepad(900,600);
+    		notePadPlaces.setVisible(true);
+    	}
+
     	//TODO:
     	modelTransCompAll.tTableData = new ArrayList<>();
     	modelPlacesCompAll.pTableData = new ArrayList<>();
@@ -1348,6 +1389,18 @@ public class HolmesSimKnockVis extends JFrame {
     		modelTransCompAll.tTableData.add(tTableVector);
     		modelPlacesCompAll.addNew(pVector);
     		modelPlacesCompAll.pTableData.add(pTableVector);
+    		
+    		if(notepadInfo) {
+    			for(String s : tVector) {
+    				notePadTrans.addTextLine(s+";", "text");
+    			}
+    			
+    			for(String s : pVector) {
+    				notePadPlaces.addTextLine(s+";", "text");
+    			}
+    			notePadTrans.addTextLineNL("", "text");
+    			notePadPlaces.addTextLineNL("", "text");
+    		}
     	}
     }
     

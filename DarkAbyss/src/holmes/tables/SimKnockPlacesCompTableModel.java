@@ -118,8 +118,6 @@ public class SimKnockPlacesCompTableModel extends AbstractTableModel {
     			pc.signifLvl2 = "no";
     		}
     	}
-    	
-		
 		dataMatrix.add(pc);
 		dataSize++;
 	}
