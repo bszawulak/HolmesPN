@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
+import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -658,8 +659,8 @@ public final class ElementDraw {
 		Stroke sizeStroke = g.getStroke();
 		
 		ArrayList<Point> breakPoints = null;
-		//breakPoints = arc.accessBreaks();
-		int breaks = 0;// = breakPoints.size();
+		breakPoints = arc.accessBreaks();
+		int breaks = breakPoints.size();
 
 		Point startP = new Point((Point)arc.getStartLocation().getPosition());
 		Point endP = new Point();
@@ -667,7 +668,6 @@ public final class ElementDraw {
 		if (arc.getEndLocation() == null) {
 			endP = (Point)arc.getTempEndPoint();
 		} else {
-			//TODO: if break, pobierz ostatni (na potrzeby grotu)
 			endP = (Point)arc.getEndLocation().getPosition().clone();
 			endRadius = arc.getEndLocation().getParentNode().getRadius();// * zoom / 100;
 		}
@@ -678,17 +678,6 @@ public final class ElementDraw {
 		if(distX == distY) {
 			startP.setLocation(startP.x+1, startP.y);
 		}
-		
-		
-		
-		//TROLING:
-		breakPoints = new ArrayList<Point>();
-		if(arc.getEndLocation() != null) {
-			breakPoints.add(new Point( (startP.x + endP.x)/2, ((startP.y + endP.y)/2)+20 ) );
-			breaks = breakPoints.size();
-			//endP = (Point)breakPoints.get(breaks-1).clone();
-		}
-		
 
 		int incFactorM = 0;
 		int incFactorRadius = 0;
@@ -698,13 +687,16 @@ public final class ElementDraw {
 		}
 		
 		Point tmpStart = (Point)startP.clone();
-		if(breaks>0)
+		if(breaks>0) {
 			tmpStart = breakPoints.get(breaks-1);
+			
+		}
 		
 		double alfa = endP.x - tmpStart.x + endP.y - tmpStart.y == 0 ? 0 : Math.atan(((double) endP.y - (double) tmpStart.y) / ((double) endP.x - (double) tmpStart.x));
 		double alfaCos = Math.cos(alfa);
 		double alfaSin = Math.sin(alfa);
-		double sign = endP.x < arc.getStartLocation().getPosition().x ? 1 : -1;
+		//double sign = endP.x < arc.getStartLocation().getPosition().x ? 1 : -1;
+		double sign = endP.x < tmpStart.x ? 1 : -1;
 		double M = 4 + incFactorM;
 		double xp = endP.x + endRadius * alfaCos * sign;
 		double yp = endP.y + endRadius * alfaSin * sign;
@@ -994,6 +986,120 @@ public final class ElementDraw {
 		}
 		
 		return Color.white;
+	}
+
+	public static void drawToken(Graphics2D g, int sheetId, Arc arc) {
+		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
+		int step = arc.getSimulationStep();
+		int weight = arc.getWeight();
+		ArrayList<Point> breakPoints = null;
+		int breaks = 0;
+		breaks = (breakPoints=arc.accessBreaks()).size(); //pro...
+			
+		
+		
+		if (!arc.isTransportingTokens || arc.getLocationSheetId() != sheetId || weight == 0 || step > STEP_COUNT)
+			return;
+		// if(this.getEndNodeEdgeIntersection() == null)
+		// return;
+		Point startPos = arc.getStartLocation().getPosition();
+		Point endPos = arc.getEndLocation().getPosition();
+		
+		double a = 0;
+		double b = 0;
+		double arcWidth = 0;
+		double stepSize = 0;
+		if(breaks > 0) { //o żesz...
+			double tmp;
+			ArrayList<Double> distances = new ArrayList<Double>(); //dlugości odcinków
+			ArrayList<Point> lines = new ArrayList<Point>(); //odcinki składające się na łuk
+			tmp = Math.hypot(startPos.x - breakPoints.get(0).x, startPos.y - breakPoints.get(0).y);
+			distances.add(tmp);
+			
+			arcWidth += tmp;
+			for(int br=1; br<breaks; br++) {
+				tmp = Math.hypot(breakPoints.get(br-1).x - breakPoints.get(br).x, breakPoints.get(br-1).y - breakPoints.get(br).y);
+				distances.add(tmp);
+				lines.add(breakPoints.get(br-1));
+				arcWidth += tmp;
+			}
+			tmp = Math.hypot(breakPoints.get(breaks-1).x - endPos.x, breakPoints.get(breaks-1).y - endPos.y); //suma odcinków
+			distances.add(tmp);
+			
+			arcWidth += tmp;
+			//koniec liczenia długości łuku
+			
+			lines.add(startPos);
+			lines.addAll(breakPoints);
+			lines.add(endPos);
+			
+			stepSize = arcWidth / (double) STEP_COUNT;
+			double endPoint = stepSize * step;
+			
+			double counter = distances.get(0);
+			for(int i=1; i<distances.size()+1; i++) {
+				if(counter > endPoint) {
+					double distInCurrent = counter - endPoint;
+					double tylePrzeszedl = distances.get(i-1) - distInCurrent;
+					double proportion = tylePrzeszedl / distances.get(i-1);
+					//proportion *= distances.get(i-1); //długość do przebycia
+					
+					Point startingPoint = lines.get(i-1);
+					Point endingPoint = lines.get(i);
+					int signX = 1;
+					int signY = 1;
+					if(startingPoint.x > endingPoint.x)
+						signX = -1;
+					if(startingPoint.y > endingPoint.y)
+						signY = -1;
+					
+					int distX = Math.abs(startingPoint.x - endingPoint.x);
+					int distY = Math.abs(startingPoint.y - endingPoint.y);
+					
+					a = startingPoint.x + (signX * proportion * distX);
+					b = startingPoint.y + (signY * proportion * distY);
+					//b = endPos.y + stepSize * step * (startPos.y - endPos.y) / arcWidth;
+					
+					break;
+				}
+				if(i < distances.size())
+					counter += distances.get(i);
+			}
+			
+			
+		} else {
+			arcWidth = Math.hypot(startPos.x - endPos.x, startPos.y - endPos.y); //TODO: suma po breakach, potem wybrać odcinek, a potem jego dlugość
+			stepSize = arcWidth / (double) STEP_COUNT;
+			
+			if (arc.isSimulationForwardDirection()) {
+				a = startPos.x - stepSize * step * (startPos.x - endPos.x) / arcWidth;
+				b = startPos.y - stepSize * step * (startPos.y - endPos.y) / arcWidth;
+			} else {
+				a = endPos.x + stepSize * step * (startPos.x - endPos.x) / arcWidth;
+				b = endPos.y + stepSize * step * (startPos.y - endPos.y) / arcWidth;
+			}
+		}
+
+		
+		g.setColor(EditorResources.tokenDefaultColor);
+		g.fillOval((int) a - 5, (int) b - 5, 10, 10);
+		g.setColor(Color.black);
+		g.setStroke(EditorResources.tokenDefaultStroke);
+		g.drawOval((int) a - 5, (int) b - 5, 10, 10);
+		
+		Font font1 = new Font("Tahoma", Font.BOLD, 14);
+		Font font2 = new Font("Tahoma", Font.BOLD, 13);
+		Font font3 = new Font("Tahoma", Font.PLAIN, 12);
+		TextLayout textLayout1 = new TextLayout(Integer.toString(weight), font1, g.getFontRenderContext());
+		TextLayout textLayout2 = new TextLayout(Integer.toString(weight), font2, g.getFontRenderContext());
+		TextLayout textLayout3 = new TextLayout(Integer.toString(weight), font3, g.getFontRenderContext());
+		
+		g.setColor(new Color(255, 255, 255, 70));
+		textLayout1.draw(g, (int) a + 10, (int) b);
+		g.setColor(new Color(255, 255, 255, 150));
+		textLayout2.draw(g, (int) a + 10, (int) b);
+		g.setColor(Color.black);
+		textLayout3.draw(g, (int) a + 10, (int) b);
 	}
 
 }

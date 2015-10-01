@@ -32,7 +32,7 @@ public class Arc extends PetriNetElement {
 	private boolean selected = false;
 	private boolean isCorrect = false;
 	private int weight = 1;
-	private boolean isTransportingTokens = false;
+	public boolean isTransportingTokens = false;
 	private int simulationStep = 0;
 	private boolean simulationForwardDirection = true;
 	
@@ -222,46 +222,9 @@ public class Arc extends PetriNetElement {
 	 * @param sheetId int - identyfikator arkusza
 	 */
 	public void drawSimulationToken(Graphics2D g, int sheetId) {
-		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
-		int step = this.getSimulationStep();
+		ElementDraw.drawToken(g, sheetId, this);
 		
-		if (!this.isTransportingTokens || this.getLocationSheetId() != sheetId
-				|| this.weight == 0 || step > STEP_COUNT)
-			return;
-		// if(this.getEndNodeEdgeIntersection() == null)
-		// return;
-		Point startPos = this.getStartLocation().getPosition();
-		Point endPos = this.getEndLocation().getPosition();
-		double arcWidth = Math.hypot(startPos.x - endPos.x, startPos.y - endPos.y); //TODO: suma po breakach, potem wybrać odcinek, a potem jego dlugość
-		double stepSize = arcWidth / (double) STEP_COUNT;
-		double a = 0;
-		double b = 0;
-		if (this.isSimulationForwardDirection()) {
-			a = startPos.x - stepSize * step * (startPos.x - endPos.x) / arcWidth;
-			b = startPos.y - stepSize * step * (startPos.y - endPos.y) / arcWidth;
-		} else {
-			a = endPos.x + stepSize * step * (startPos.x - endPos.x) / arcWidth;
-			b = endPos.y + stepSize * step * (startPos.y - endPos.y) / arcWidth;
-		}
-		g.setColor(EditorResources.tokenDefaultColor);
-		g.fillOval((int) a - 5, (int) b - 5, 10, 10);
-		g.setColor(Color.black);
-		g.setStroke(EditorResources.tokenDefaultStroke);
-		g.drawOval((int) a - 5, (int) b - 5, 10, 10);
 		
-		Font font1 = new Font("Tahoma", Font.BOLD, 14);
-		Font font2 = new Font("Tahoma", Font.BOLD, 13);
-		Font font3 = new Font("Tahoma", Font.PLAIN, 12);
-		TextLayout textLayout1 = new TextLayout(Integer.toString(this.weight), font1, g.getFontRenderContext());
-		TextLayout textLayout2 = new TextLayout(Integer.toString(this.weight), font2, g.getFontRenderContext());
-		TextLayout textLayout3 = new TextLayout(Integer.toString(this.weight), font3, g.getFontRenderContext());
-		
-		g.setColor(new Color(255, 255, 255, 70));
-		textLayout1.draw(g, (int) a + 10, (int) b);
-		g.setColor(new Color(255, 255, 255, 150));
-		textLayout2.draw(g, (int) a + 10, (int) b);
-		g.setColor(Color.black);
-		textLayout3.draw(g, (int) a + 10, (int) b);
 
 	}
 

@@ -2,6 +2,7 @@ package holmes.darkgui.toolbar;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import org.nfunk.jep.JEP;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel.DrawModes;
+import holmes.petrinet.elements.Arc;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
@@ -329,7 +331,7 @@ public class Toolbar extends BorderDock {
 					aa.addTextLineNL(""+generator.nextDouble()+" vs. "+generator2.nextDouble(), "text");
 				}
 				*/
-				
+				/*
 				HolmesNotepad aa = new HolmesNotepad(600, 480);
 				aa.setVisible(true);
 				
@@ -341,7 +343,14 @@ public class Toolbar extends BorderDock {
 				myParser.parseExpression(expressionString);
 				double result = myParser.getValue();
 				aa.addTextLineNL(expressionString+" = "+result, "text");
+				*/
 				
+				for(Arc arc : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs()) {
+					Point startP = new Point((Point)arc.getStartLocation().getPosition());
+					Point endP = (Point)arc.getEndLocation().getPosition().clone();
+					arc.accessBreaks().add( new Point( (startP.x + endP.x)/2, ((startP.y + endP.y)/2)+20 ) );
+
+				}
 			}
 		};
 		testButton.setEnabled(false);
