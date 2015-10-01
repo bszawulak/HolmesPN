@@ -815,15 +815,15 @@ public class Transition extends Node {
 	/**
 	 * Metoda podmienia zapis funkcji w tranzycji.
 	 * @param fID String - identyfikator funkcji dla danej tranzycji
-	 * @param function String - nowa forma funkcji
+	 * @param expression String - nowa forma funkcji
 	 * @param correct boolean - true jeśli funkcja została zweryfikowana jako prawidłowa
 	 * @param enabled boolean - true, jeśli funkcja ma być aktywna (np. w symulatorze)
 	 * @return boolean - true, jeśli znaleziono identyfikator i podmieniono funkcję
 	 */
-	public boolean updateFunctionString(String fID, String function, boolean correct, boolean enabled) {
+	public boolean updateFunctionString(String fID, String expression, boolean correct, boolean enabled) {
 		for(FunctionContainer fc : accessFunctionsList()) {
 			if(fc.fID.equals(fID)) {
-				fc.function = function;
+				fc.simpleExpression = expression;
 				fc.correct = correct;
 				fc.enabled = enabled;
 				return true;

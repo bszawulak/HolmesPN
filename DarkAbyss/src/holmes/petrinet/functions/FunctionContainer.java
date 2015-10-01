@@ -6,7 +6,6 @@ import java.util.Map;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import net.objecthunter.exp4j.Expression;
 
 /**
  * Klasa kontener - przechowuje danej o funkcji tranzycji.
@@ -14,14 +13,15 @@ import net.objecthunter.exp4j.Expression;
  * @author MR
  */
 public class FunctionContainer {
-	public String function = "";
+	//public String function = "";
 	public String fID = "";
 	public Arc arc = null;
 	public boolean enabled = false;
 	public boolean correct = false;
 	public boolean inTransArc = false;
 	public Map<String, Place> involvedPlaces = new LinkedHashMap<String, Place>();
-	public Expression equation = null;
+	//public Expression equation = null;
+	public String simpleExpression = "";
 	public double currentValue = -1;
 	
 	private Transition parent = null;
@@ -30,6 +30,6 @@ public class FunctionContainer {
 	}
 	
 	public String toString() {
-		return "fID: "+fID+" | Function: "+function+ " | Correct: "+correct+" | Enabled: "+enabled+" | Parent: "+parent.toString();
+		return "fID: "+fID+" | Function: "+simpleExpression+ " | Correct: "+correct+" | Enabled: "+enabled+" | Parent: "+parent.toString();
 	}
 }

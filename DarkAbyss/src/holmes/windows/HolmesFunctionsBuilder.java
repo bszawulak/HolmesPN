@@ -24,6 +24,8 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import org.nfunk.jep.JEP;
+
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
@@ -37,7 +39,6 @@ import holmes.tables.FunctionalTransAuxTableModel;
 import holmes.tables.FunctionalTransTableModel;
 import holmes.tables.FunctionalTransTableRenderer;
 import holmes.utilities.Tools;
-import net.objecthunter.exp4j.Expression;
 
 /**
  * Okno zarządzania funkcjami wskazanej tranzycji.
@@ -211,8 +212,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 				
 				String fID = (String) tableFunc.getValueAt(row, 0);
 				FunctionContainer container = transition.getFunctionContainer(fID);
-				container.function = "";
-				container.equation = null;
+				container.simpleExpression = "";
 				container.correct = false;
 				container.enabled = false;
 
@@ -286,16 +286,50 @@ public class HolmesFunctionsBuilder extends JFrame {
 	protected void helpNotepad() {
 		HolmesNotepad notePad = new HolmesNotepad(640,500);
 		notePad.setVisible(true);
-		notePad.addTextLineNL("Arithemic operators:", "text");
+		notePad.addTextLineNL("Arithemic and logic operators:", "text");
 		notePad.addTextLineNL("", "text");
-		notePad.addTextLineNL("Addition: 2 + 2\nSubtraction: 2 - 2\nMultiplication: 2 * 2\nDivision: 2 / 2\n"
-				+ "Exponentation: 2 ^ 2\nUnary Minus,Plus (Sign Operators): +2 - (-2)\nModulo: 2 % 2", "text");
+		notePad.addTextLineNL("                                      |Double |Complex|String |Vector|", "text");
+		notePad.addTextLineNL(" Power                         ^      |   X   |   X   |       |      |", "text");
+		notePad.addTextLineNL(" Boolean Not                   !      |   X   |       |       |      |", "text");
+		notePad.addTextLineNL(" Unary Plus, Unary Minus       +x, -x |   X   |   X   |       |      |", "text");
+		notePad.addTextLineNL(" Modulus                       %      |   X   |       |       |      |", "text");
+		notePad.addTextLineNL(" Division                      /      |   X   |   X   |       |   X  |", "text");
+		notePad.addTextLineNL(" Multiplication                *      |   X   |   X   |       |   X  |", "text");
+		notePad.addTextLineNL(" Addition, Subtraction         +, -   |   X   |   X   |   X   |      |", "text");
+		notePad.addTextLineNL(" Less of Equal, More or Equal  <=, >= |   X   |       |       |      |", "text");
+		notePad.addTextLineNL(" Less than, Greater than       <, >   |   X   |       |       |      |", "text");
+		notePad.addTextLineNL(" Not Equal, Equal              !=, == |   X   |   X   |   X   |      |", "text");
+		notePad.addTextLineNL(" Boolean And                   &&     |   X   |       |       |      |", "text");
+		notePad.addTextLineNL(" Boolean Or                    ||     |   X   |       |       |      |", "text");
+		notePad.addTextLineNL("                                                                     ", "text");
+		notePad.addTextLineNL("                                                                    ", "text");
+		
 		notePad.addTextLineNL("", "text");
 		notePad.addTextLineNL("Functions:", "text");
-		notePad.addTextLineNL("\nabs: absolute value\nacos: arc cosine\nasin: arc sine\natan: arc tangent\ncbrt: cubic root\n"
-				+ "ceil: nearest upper integer\ncos: cosine\ncosh: hyperbolic cosine\nexp: euler's number raised to the power (e^x)\n"
-				+ "floor: nearest lower integer\nlog: logarithmus naturalis (base e)\nlog10: logarithm (base 10)\nlog2: logarithm (base 2)\n"
-				+ "sin: sine\nsinh: hyperbolic sine\nsqrt: square root\ntan: tangent\ntanh: hyperbolic tangent", "text");
+		notePad.addTextLineNL("                                      |Double |Complex|", "text");
+		notePad.addTextLineNL(" Sine                        sin()    |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Cosine                      cos()    |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Tangent                     tan()    |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Arc Sine                    asin()   |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Arc Cosine                  acos()   |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Arc Tangent                 atan()   |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Hyperbolic Sine             sinh()   |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Hyperbolic Cosine           cosh()   |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Hyperbolic Tangent          tanh()   |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Inverse Hyperbolic Sine     asinh()  |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Inverse Hyperbolic Cosine   acosh()  |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Inverse Hyperbolic Tangent  atanh()  |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Natural Logarithm           ln()     |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Logarithm base 10           log()    |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Angle                       angle()  |   X   |       |", "text");
+		notePad.addTextLineNL(" Absolute Value / Magnitude  abs()    |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Random number (between 0-1) rand()   |       |       |", "text");
+		notePad.addTextLineNL(" Modulus                     mod()    |   X   |       |", "text");
+		notePad.addTextLineNL(" Square Root                 sqrt()   |   X   |   X   |", "text");
+		notePad.addTextLineNL(" Sum                         sum()    |   X   |       |", "text");
+		notePad.addTextLineNL("                                      |       |       |", "text");
+		notePad.addTextLineNL(" Real Component              re()     |       |   X   |", "text");
+		notePad.addTextLineNL(" Imaginary Component         im()     |       |   X   |", "text");
 		notePad.setCaretFirstLine();
 	}
 
@@ -317,12 +351,32 @@ public class HolmesFunctionsBuilder extends JFrame {
 		if(!correct)
 			enabled = false;
 		
-		transition.updateFunctionString(fID, container.function, correct, enabled);
-		tableFunc.getModel().setValueAt(container.function, row, 2);
+		transition.updateFunctionString(fID, container.simpleExpression, correct, enabled);
+		tableFunc.getModel().setValueAt(container.simpleExpression, row, 2);
 		tableFunc.getModel().setValueAt(correct, row, 3);
 		tableFunc.getModel().setValueAt(enabled, row, 6);
 		
+		JEP myParser = new JEP();
+		myParser.addStandardFunctions();
+		for(String key : container.involvedPlaces.keySet()) {
+			Place place = container.involvedPlaces.get(key);
+			myParser.addVariable(key, place.getTokensNumber());
+		}
+
+		myParser.parseExpression(container.simpleExpression);
+
+		double result = myParser.getValue();
+		if((new Double(result)).isNaN()) {
+			currentResult.setText("Not-A-Number");
+			container.correct = false;
+			container.enabled = false;
+			tableFunc.getModel().setValueAt(container.correct, row, 3);
+			tableFunc.getModel().setValueAt(container.enabled, row, 6);
+		} else {
+			currentResult.setText(formatter.format(result));
+		}
 		
+		/*
 		Expression exp = transition.getFunctionContainer(fID).equation;
 		if(exp != null && correct) {
 			double result = exp.evaluate();
@@ -336,6 +390,8 @@ public class HolmesFunctionsBuilder extends JFrame {
 			} else
 				currentResult.setText(formatter.format(result));
 		}
+		*/
+		
 		tableFuncModel.fireTableDataChanged();
 		
 		tableFunc.setRowSelectionInterval(row, row);
@@ -403,14 +459,14 @@ public class HolmesFunctionsBuilder extends JFrame {
 			if(!fc.inTransArc) // jeśli nie jest to łuk WEJŚCIOWY DO TRANZYCJI - ignoruj
 				continue;
 
-			tableFuncModel.addNew(fc.fID, fc.arc.getStartNode().getName(), fc.function, fc.correct, fc.arc.getArcType(), fc.arc.getWeight(), fc.enabled);
+			tableFuncModel.addNew(fc.fID, fc.arc.getStartNode().getName(), fc.simpleExpression, fc.correct, fc.arc.getArcType(), fc.arc.getWeight(), fc.enabled);
 		}
 		
 		for(FunctionContainer fc : fVector) {
 			if(fc.inTransArc) // jeśli nie jest to łuk WYJŚCIOWY Z TRANZYCJI, tylko wejściowy do niej - ignoruj
 				continue;
 
-			tableFuncModel.addNew(fc.fID, fc.arc.getEndNode().getName(), fc.function, fc.correct, fc.arc.getArcType(), fc.arc.getWeight(), fc.enabled);
+			tableFuncModel.addNew(fc.fID, fc.arc.getEndNode().getName(), fc.simpleExpression, fc.correct, fc.arc.getArcType(), fc.arc.getWeight(), fc.enabled);
 		}
 
 		tableFunc.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);

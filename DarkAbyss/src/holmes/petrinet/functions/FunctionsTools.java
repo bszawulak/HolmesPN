@@ -1,20 +1,18 @@
 package holmes.petrinet.functions;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JTextArea;
+
+import org.nfunk.jep.JEP;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.windows.HolmesNotepad;
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
-import net.objecthunter.exp4j.ValidationResult;
 
 /**
  * Klasa metod zarządzania tranzycjami funkcyjnymi.
@@ -44,18 +42,15 @@ public class FunctionsTools {
 	
 		for(Transition transition : transitions) {
 			for(FunctionContainer fc : transition.accessFunctionsList()) {
-				
-				//if(fc.involvedPlaces.contains(place)) {
 				if(fc.involvedPlaces.containsKey("p"+placeIndex)) {
 					int transIndex = transitions.indexOf(transition);
-					overlord.log("Function: \'"+fc.function+"\' (fID: "+fc.fID+") of transition t"+transIndex+" has been disabled due to removal of "
-							+ "place p"+placeIndex, "warning", false);
+					overlord.log("Function: \'"+fc.simpleExpression+"\' (fID: "+fc.fID+") of transition t"+transIndex+
+							" has been disabled due to removal of place p"+placeIndex, "warning", false);
 					
 					fc.enabled = false;
 					fc.correct = false;
-					fc.function = fc.function.replaceAll("p"+placeIndex, " ??? ");
+					fc.simpleExpression = fc.simpleExpression.replaceAll("p"+placeIndex, " ??? ");
 					fc.involvedPlaces.remove("p"+placeIndex);
-					fc.equation = null;
 					fc.currentValue = -1;
 					removedAnything = true;
 				}
@@ -75,14 +70,14 @@ public class FunctionsTools {
 		int placesNumber = places.size();
 		fc.involvedPlaces.clear();
 		Pattern p = Pattern.compile("p\\d+");
-		Matcher m = p.matcher(fc.function);
+		Matcher m = p.matcher(fc.simpleExpression);
 		ArrayList<String> foundPlaces = new ArrayList<>();
 		while (m.find()) {
 			String x = m.group();
 			foundPlaces.add(x);
 			int index = Integer.parseInt(x.substring(1));
 			if(index >= placesNumber || index < 0) {
-				fc.function = fc.function.replace(x, " ??? ");
+				fc.simpleExpression = fc.simpleExpression.replace(x, " ??? ");
 				if(commentField != null) {
 					commentField.append("Non existing place identifier used: "+x+"\n");
 				}
@@ -123,47 +118,36 @@ public class FunctionsTools {
 					continue;
 				
 				resetPlaceVector(fc, null, places);
-				if(fc.function.contains("???") || fc.function.length()==0) {
+				if(fc.simpleExpression.contains("???") || fc.simpleExpression.length()==0) {
 					errorsFlag = true;
 					fc.enabled = false;
 					fc.correct = false;
-					fc.equation = null;
 					if(logErrors)
 						notepad.addTextLineNL("t"+transCounter+" : "+fc.toString(), "text");
 				}
 				
 				try {
-					ExpressionBuilder builder = new ExpressionBuilder(fc.function);
-					for(String key : fc.involvedPlaces.keySet()) {
-						builder.variable(key);
-					}
-					Expression expression = builder.build();
+					JEP myParser = new JEP();
+					myParser.addStandardFunctions();
 					for(String key : fc.involvedPlaces.keySet()) {
 						Place place = fc.involvedPlaces.get(key);
-						expression.setVariable(key, place.getTokensNumber());
+						myParser.addVariable(key, place.getTokensNumber());
 					}
-					
-					ValidationResult result = expression.validate();
-					List<String> errors = result.getErrors();
-					if(errors != null && logErrors) {
-						errorsFlag = true;
+
+					myParser.parseExpression(fc.simpleExpression);
+					if(myParser.hasError()) {
+						HolmesNotepad note = new HolmesNotepad(640, 480);
+						note.setVisible(true);
 						notepad.addTextLineNL("  variables initialization error (function disabled):", "text");
-						for(String error : errors) {
-							notepad.addTextLineNL("    * "+error, "text");
-						}
-					}
-					
-					if(result.isValid()) {
-						fc.equation = expression;
-					} else {
-						fc.equation = null;
+						note.addTextLineNL("    * "+myParser.getErrorInfo(), "text");
 						fc.enabled = false;
 						fc.correct = false;
+					} else {
+						fc.correct = true;
 					}
 				} catch (Exception e) {
 					errorsFlag = true;
 					notepad.addTextLineNL("   CRITICAL ERROR WHILE INITIALIZATION. FUNCTION DISABLED.", "text");
-					fc.equation = null;
 					fc.enabled = false;
 					fc.correct = false;
 				}
@@ -184,52 +168,39 @@ public class FunctionsTools {
 	public static boolean validateFunction(FunctionContainer fc, String newEquation, boolean silence, JTextArea commentField, 
 			ArrayList<Place> places) {
 		
-		fc.function = newEquation;
+		fc.simpleExpression = newEquation;
 		resetPlaceVector(fc, commentField, places);
-		if(fc.function.contains("???") || fc.function.length()==0)
+		if(fc.simpleExpression.contains("???") || fc.simpleExpression.length()==0)
 			return false;
 		
 		try {
-			ExpressionBuilder builder = new ExpressionBuilder(fc.function);
-			for(String key : fc.involvedPlaces.keySet()) {
-				builder.variable(key);
-			}
-			Expression expression = builder.build();
+			JEP myParser = new JEP();
+			myParser.addStandardFunctions();
 			for(String key : fc.involvedPlaces.keySet()) {
 				Place place = fc.involvedPlaces.get(key);
-				expression.setVariable(key, place.getTokensNumber());
+				myParser.addVariable(key, place.getTokensNumber());
 			}
-			
-			ValidationResult result = expression.validate();
-			List<String> errors = result.getErrors();
-			if(errors != null && !silence) {
+
+			myParser.parseExpression(fc.simpleExpression);
+			boolean errors = myParser.hasError();
+			if(errors) {
 				HolmesNotepad note = new HolmesNotepad(640, 480);
 				note.setVisible(true);
+				note.addTextLineNL(myParser.getErrorInfo(), "text");
 				
-				for(String error : errors) {
-					note.addTextLineNL(error, "text");
+				if(commentField != null) {
+					commentField.append(myParser.getErrorInfo()+"\n");
 				}
-			}
-			
-			if(commentField != null) {
-				if(errors != null) {
-					for(String error : errors) {
-						commentField.append(error+"\n");
-					}
-				}
-			}
-			
-			if(result.isValid()) {
-				fc.equation = expression;
-			} else {
-				fc.equation = null;
+				
 				fc.enabled = false;
 				fc.correct = false;
+			} else {
+				fc.correct = true;
 			}
-			return true;
+			
+			return (!errors);
 		} catch (Exception e) {
-			commentField.append("Function creation critically failed for: "+fc.function+"\n");
-			fc.equation = null;
+			commentField.append("Function creation critically failed for: "+fc.simpleExpression+"\n");
 			fc.enabled = false;
 			fc.correct = false;
 			return false;
@@ -285,13 +256,18 @@ public class FunctionsTools {
 	 */
 	private static double getFunctionValue(FunctionContainer fc) {
 		try {
-			for(String key : fc.involvedPlaces.keySet()) { //aktualna wartość tokenów
+			JEP myParser = new JEP();
+			myParser.addStandardFunctions();
+			for(String key : fc.involvedPlaces.keySet()) {
 				Place place = fc.involvedPlaces.get(key);
-				fc.equation.setVariable(key, place.getTokensNumber());
+				myParser.addVariable(key, place.getTokensNumber());
 			}
-			double result = fc.equation.evaluate(); //wymagana waga do aktywacji
+			myParser.parseExpression(fc.simpleExpression);
+			double result = myParser.getValue();
+			
 			return result;
 		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Parsing equation failed for "+fc.simpleExpression, "error", true);
 			return -1;
 		}
 	}

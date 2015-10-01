@@ -461,10 +461,10 @@ public class ProjectWriter {
 				Transition transition = transitions.get(t);
 				ArrayList<FunctionContainer> fVector = transition.accessFunctionsList();
 				for(FunctionContainer fc : fVector) {
-					if(fc.function.length() == 0)
+					if(fc.simpleExpression.length() == 0)
 						continue;
 					
-					bw.write(spaces(sp)+"<T"+t+";"+fc.fID+";"+fc.function+";"+fc.correct+";"+fc.enabled+">"+newline);
+					bw.write(spaces(sp)+"<T"+t+";"+fc.fID+";"+fc.simpleExpression+";"+fc.correct+";"+fc.enabled+">"+newline);
 				}
 			}
 			

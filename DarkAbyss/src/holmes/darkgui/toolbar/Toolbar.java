@@ -339,11 +339,12 @@ public class Toolbar extends BorderDock {
 				JEP myParser = new JEP();
 				myParser.addStandardFunctions();
 				myParser.addVariable("p0", 2.0);
-				myParser.addVariable("p1", 2.0);
+				myParser.addVariable("p2", 2.0);
 				String expressionString = "(p1+p0)<1";
 				myParser.parseExpression(expressionString);
 				double result = myParser.getValue();
 				aa.addTextLineNL(expressionString+" = "+result, "text");
+				
 			}
 		};
 		testButton.setEnabled(false);
