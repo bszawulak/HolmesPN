@@ -36,6 +36,9 @@ public class Arc extends PetriNetElement {
 	private int simulationStep = 0;
 	private boolean simulationForwardDirection = true;
 	
+	private ArrayList<Point> breakPoints = null;
+	public boolean isBreakArc = false; 
+	
 	//read-arc parameters:
 	private Arc pairedArc;
 	private boolean isMainArcOfPair = false;
@@ -53,10 +56,9 @@ public class Arc extends PetriNetElement {
 	 * @param endPosition ElementLocation - lokalicja celu łuku
 	 */
 	public Arc(ElementLocation startPosition, ElementLocation endPosition, TypesOfArcs type) {
-		this.arcType = type; 
-		this.setStartLocation(startPosition);
+		this(startPosition, type);
+
 		this.setEndLocation(endPosition);
-		this.setType(PetriNetElementType.ARC);
 		this.setID(IdGenerator.getNextId());
 		this.lookForArcPair();
 	}
@@ -69,28 +71,10 @@ public class Arc extends PetriNetElement {
 	 * @param endPosition ElementLocation - lokacja celu łuku
 	 */
 	public Arc(int arcId, ElementLocation startPosition, ElementLocation endPosition, TypesOfArcs type) {
-		this.arcType = type;
-		this.setStartLocation(startPosition);
-		this.setEndLocation(endPosition);
-		this.setType(PetriNetElementType.ARC);
-		this.setID(arcId);
-		this.lookForArcPair();
-	}
+		this(startPosition, type);
 
-	/**
-	 * Konstruktor obiektu klasy Arc - chwilowo nieużywany.
-	 * @param startPosition ElementLocation - lokacja źródła łuku
-	 * @param endPosition ElementLocation - lokacja celu łuku
-	 * @param comment String - komentarz
-	 */
-	public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment, TypesOfArcs type) {
-		this.arcType = type;
-		this.setID(IdGenerator.getNextId());
-		this.setStartLocation(startPosition);
 		this.setEndLocation(endPosition);
-		this.checkIsCorect(endPosition);
-		this.setType(PetriNetElementType.ARC);
-		this.setComment(comment);
+		this.setID(arcId);
 		this.lookForArcPair();
 	}
 
@@ -102,12 +86,11 @@ public class Arc extends PetriNetElement {
 	 * @param weight int - waga łuku
 	 */
 	public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment, int weight, TypesOfArcs type) {
-		this.arcType = type;
+		this(startPosition, type);
+		
 		this.setID(IdGenerator.getNextId());
-		this.setStartLocation(startPosition);
 		this.setEndLocation(endPosition);
 		this.checkIsCorect(endPosition);
-		this.setType(PetriNetElementType.ARC);
 		this.setComment(comment);
 		this.setWeight(weight);
 		this.lookForArcPair();
@@ -123,7 +106,24 @@ public class Arc extends PetriNetElement {
 		this.setStartLocation(startPosition);
 		this.setEndPoint(startPosition.getPosition());
 		this.setType(PetriNetElementType.ARC);
+		
+		this.breakPoints = new ArrayList<Point>();
 	}
+	
+	public ArrayList<Point> accessBreaks() {
+		return this.breakPoints;
+	}
+	
+	public void addBreakPoint(Point breakP) {
+		this.breakPoints.add(breakP);
+		isBreakArc = true;
+	}
+	
+	public void clearBreaks() {
+		this.breakPoints.clear();
+		isBreakArc = false;
+	}
+	
 
 	/**
 	 * Metoda sprawdza, czy aktualny łuk jest łukiem odczytu (read-arc).
@@ -223,24 +223,25 @@ public class Arc extends PetriNetElement {
 	 */
 	public void drawSimulationToken(Graphics2D g, int sheetId) {
 		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
+		int step = this.getSimulationStep();
 		
 		if (!this.isTransportingTokens || this.getLocationSheetId() != sheetId
-				|| this.weight == 0 || this.getSimulationStep() > STEP_COUNT)
+				|| this.weight == 0 || step > STEP_COUNT)
 			return;
 		// if(this.getEndNodeEdgeIntersection() == null)
 		// return;
-		Point A = this.getStartLocation().getPosition();
-		Point B = this.getEndLocation().getPosition();
-		double arcWidth = Math.hypot(A.x - B.x, A.y - B.y);
+		Point startPos = this.getStartLocation().getPosition();
+		Point endPos = this.getEndLocation().getPosition();
+		double arcWidth = Math.hypot(startPos.x - endPos.x, startPos.y - endPos.y); //TODO: suma po breakach, potem wybrać odcinek, a potem jego dlugość
 		double stepSize = arcWidth / (double) STEP_COUNT;
 		double a = 0;
 		double b = 0;
 		if (this.isSimulationForwardDirection()) {
-			a = A.x - stepSize * getSimulationStep() * (A.x - B.x) / arcWidth;
-			b = A.y - stepSize * getSimulationStep() * (A.y - B.y) / arcWidth;
+			a = startPos.x - stepSize * step * (startPos.x - endPos.x) / arcWidth;
+			b = startPos.y - stepSize * step * (startPos.y - endPos.y) / arcWidth;
 		} else {
-			a = B.x + stepSize * getSimulationStep() * (A.x - B.x) / arcWidth;
-			b = B.y + stepSize * getSimulationStep() * (A.y - B.y) / arcWidth;
+			a = endPos.x + stepSize * step * (startPos.x - endPos.x) / arcWidth;
+			b = endPos.y + stepSize * step * (startPos.y - endPos.y) / arcWidth;
 		}
 		g.setColor(EditorResources.tokenDefaultColor);
 		g.fillOval((int) a - 5, (int) b - 5, 10, 10);

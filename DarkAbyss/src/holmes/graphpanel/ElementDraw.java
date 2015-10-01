@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -655,24 +656,40 @@ public final class ElementDraw {
 			return g;
 
 		Stroke sizeStroke = g.getStroke();
+		
+		ArrayList<Point> breakPoints = null;
+		//breakPoints = arc.accessBreaks();
+		int breaks = 0;// = breakPoints.size();
 
-		Point p1 = new Point((Point)arc.getStartLocation().getPosition());
-		Point p2 = new Point();
+		Point startP = new Point((Point)arc.getStartLocation().getPosition());
+		Point endP = new Point();
 		int endRadius = 0;
 		if (arc.getEndLocation() == null) {
-			p2 = (Point)arc.getTempEndPoint();
+			endP = (Point)arc.getTempEndPoint();
 		} else {
-			p2 = (Point)arc.getEndLocation().getPosition().clone();
+			//TODO: if break, pobierz ostatni (na potrzeby grotu)
+			endP = (Point)arc.getEndLocation().getPosition().clone();
 			endRadius = arc.getEndLocation().getParentNode().getRadius();// * zoom / 100;
 		}
 		
-		int distX = Tools.absolute(p1.x - p2.x);
-		int distY = Tools.absolute(p1.y - p2.y);
+		int distX = Tools.absolute(startP.x - endP.x);
+		int distY = Tools.absolute(startP.y - endP.y);
 		
 		if(distX == distY) {
-			p1.setLocation(p1.x+1, p1.y);
+			startP.setLocation(startP.x+1, startP.y);
 		}
 		
+		
+		
+		//TROLING:
+		breakPoints = new ArrayList<Point>();
+		if(arc.getEndLocation() != null) {
+			breakPoints.add(new Point( (startP.x + endP.x)/2, ((startP.y + endP.y)/2)+20 ) );
+			breaks = breakPoints.size();
+			//endP = (Point)breakPoints.get(breaks-1).clone();
+		}
+		
+
 		int incFactorM = 0;
 		int incFactorRadius = 0;
 		if(arc.qSimForcedArc) {
@@ -680,22 +697,30 @@ public final class ElementDraw {
 			incFactorRadius = 15;
 		}
 		
-		double alfa = p2.x - p1.x + p2.y - p1.y == 0 ? 0 : Math.atan(((double) p2.y - (double) p1.y) / ((double) p2.x - (double) p1.x));
+		Point tmpStart = (Point)startP.clone();
+		if(breaks>0)
+			tmpStart = breakPoints.get(breaks-1);
+		
+		double alfa = endP.x - tmpStart.x + endP.y - tmpStart.y == 0 ? 0 : Math.atan(((double) endP.y - (double) tmpStart.y) / ((double) endP.x - (double) tmpStart.x));
 		double alfaCos = Math.cos(alfa);
 		double alfaSin = Math.sin(alfa);
-		double sign = p2.x < arc.getStartLocation().getPosition().x ? 1 : -1;
+		double sign = endP.x < arc.getStartLocation().getPosition().x ? 1 : -1;
 		double M = 4 + incFactorM;
-		double xp = p2.x + endRadius * alfaCos * sign;
-		double yp = p2.y + endRadius * alfaSin * sign;
-		double xl = p2.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign + M * alfaSin;
-		double yl = p2.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign - M * alfaCos;
-		double xk = p2.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign - M * alfaSin;
-		double yk = p2.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign + M * alfaCos;
+		double xp = endP.x + endRadius * alfaCos * sign;
+		double yp = endP.y + endRadius * alfaSin * sign;
+		double xl = endP.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign + M * alfaSin;
+		double yl = endP.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign - M * alfaCos;
+		double xk = endP.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign - M * alfaSin;
+		double yk = endP.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign + M * alfaCos;
 
+		//trolling:	
+		
+		
+				
 		if (arc.getSelected()) {
 			g.setColor(EditorResources.selectionColorLevel3);
 			g.setStroke(EditorResources.glowStrokeArc);
-			g.drawLine(p1.x, p1.y, p2.x, p2.y);
+			g.drawLine(startP.x, startP.y, endP.x, endP.y);
 			g.drawPolygon(new int[] { (int) xp, (int) xl, (int) xk },
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
 		}
@@ -713,21 +738,24 @@ public final class ElementDraw {
 				g.setColor( new Color(30, 144, 255, 150));
 				Stroke backup = g.getStroke();
 				g.setStroke(new BasicStroke(4));
-				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
-				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
-				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
+				g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+				g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+				g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 				g.setStroke(backup);
 			} else {
 				//int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
 				g.setStroke(new BasicStroke(eds.arcSize));
-				g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
+				if(breaks > 0)
+					drawBreaks(g, arc, startP, (int)xp, (int)yp, breakPoints, breaks);
+				else
+					g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 			}
 		}
 		
 		if(arc.qSimForcedArc) {
 			g.setColor(arc.qSimForcedColor);
 			g.setStroke(new BasicStroke(4));
-			g.drawLine(p1.x, p1.y, (int) xp, (int) yp);
+			g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 		}
 				
 		//STRZAŁKI
@@ -756,12 +784,12 @@ public final class ElementDraw {
 			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
 			
-			xl = p2.x + (endRadius + 30) * alfaCos * sign + M * alfaSin;
-			yl = p2.y + (endRadius + 30) * alfaSin * sign - M * alfaCos;
-			xk = p2.x + (endRadius + 30) * alfaCos * sign - M * alfaSin;
-			yk = p2.y + (endRadius + 30) * alfaSin * sign + M * alfaCos;
-			double newxp = p2.x - (endRadius-45) * alfaCos * sign;
-			double newyp = p2.y - (endRadius-45) * alfaSin * sign;
+			xl = endP.x + (endRadius + 30) * alfaCos * sign + M * alfaSin;
+			yl = endP.y + (endRadius + 30) * alfaSin * sign - M * alfaCos;
+			xk = endP.x + (endRadius + 30) * alfaCos * sign - M * alfaSin;
+			yk = endP.y + (endRadius + 30) * alfaSin * sign + M * alfaCos;
+			double newxp = endP.x - (endRadius-45) * alfaCos * sign;
+			double newyp = endP.y - (endRadius-45) * alfaSin * sign;
 			
 			//g.fillPolygon(new int[] { (int) newxp, (int) xl+leftRight, (int) xk+leftRight }, 
 			//		new int[] { (int) newyp, (int) yl+upDown, (int) yk+upDown }, 3);
@@ -781,12 +809,12 @@ public final class ElementDraw {
 	    	g.fillOval((int)(xPos-4+xT), (int)(yPos-4+yT), 8, 8);
 		} else if (arc.getArcType() == TypesOfArcs.META_ARC) {
 			double Mmeta = 6;
-			double xpmeta = p2.x + (endRadius-10) * alfaCos * sign;
-			double ypmeta = p2.y + (endRadius-10) * alfaSin * sign;
-			double xlmeta = p2.x + (endRadius + 13) * alfaCos * sign + Mmeta * alfaSin;
-			double ylmeta = p2.y + (endRadius + 13) * alfaSin * sign - Mmeta * alfaCos;
-			double xkmeta = p2.x + (endRadius + 13) * alfaCos * sign - Mmeta * alfaSin;
-			double ykmeta = p2.y + (endRadius + 13) * alfaSin * sign + Mmeta * alfaCos;
+			double xpmeta = endP.x + (endRadius-10) * alfaCos * sign;
+			double ypmeta = endP.y + (endRadius-10) * alfaSin * sign;
+			double xlmeta = endP.x + (endRadius + 13) * alfaCos * sign + Mmeta * alfaSin;
+			double ylmeta = endP.y + (endRadius + 13) * alfaSin * sign - Mmeta * alfaCos;
+			double xkmeta = endP.x + (endRadius + 13) * alfaCos * sign - Mmeta * alfaSin;
+			double ykmeta = endP.y + (endRadius + 13) * alfaSin * sign + Mmeta * alfaCos;
 			
 			g.setColor( new Color(30, 144, 255, 250));
 			//g.fillPolygon(new int[] { (int) xpmeta+leftRight, (int) xlmeta+leftRight, (int) xkmeta+leftRight }, 
@@ -799,11 +827,11 @@ public final class ElementDraw {
 		//**********************************************
 		//***********    LOKALIZACJA WAGI    ***********
 		//**********************************************
-		int x_weight = (p2.x + p1.x) / 2;
-		int y_weight = (p2.y + p1.y) / 2;
+		int x_weight = (endP.x + startP.x) / 2;
+		int y_weight = (endP.y + startP.y) / 2;
 		
 		//double atang = Math.atan2(p2.y-p1.y,p2.x-p1.x)*180.0/Math.PI;
-		double atang = Math.toDegrees(Math.atan2(p2.y-p1.y,p2.x-p1.x));
+		double atang = Math.toDegrees(Math.atan2(endP.y-startP.y,endP.x-startP.x));
 		if(atang < 0){
 			atang += 360;
 	    }
@@ -823,6 +851,23 @@ public final class ElementDraw {
 			g.drawString(Integer.toString(arc.getWeight()), x_weight, y_weight + 10);
 		}
 		return g;
+	}
+
+	private static void drawBreaks(Graphics2D g, Arc arc, Point startP, int endPx, int endPy, ArrayList<Point> breaksVector, int breaks) {
+		// TODO Auto-generated method stub
+		g.drawLine(startP.x, startP.y, (int) breaksVector.get(0).x, (int) breaksVector.get(0).y);
+		
+		for(int b=1; b<breaks; b++) {
+			Point breakStart = breaksVector.get(b-1);
+			Point breakEnd = breaksVector.get(b);
+			
+			g.drawLine(breakStart.x, breakStart.y, breakEnd.x, breakEnd.y);
+		}
+		Point lastPoint = breaksVector.get(breaks-1);
+		
+		//Point breakLast = (Point)arc.getEndLocation().getPosition().clone();
+		g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
+		
 	}
 
 	/**
