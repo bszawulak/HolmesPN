@@ -13,9 +13,6 @@ import org.nfunk.jep.JEP;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel.DrawModes;
-import holmes.petrinet.simulators.HighQualityRandom;
-import holmes.petrinet.simulators.IRandomGenerator;
-import holmes.petrinet.simulators.StandardRandom;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;

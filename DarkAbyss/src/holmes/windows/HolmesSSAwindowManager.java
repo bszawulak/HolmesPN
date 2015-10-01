@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,6 +26,7 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SSAplacesManager;
 import holmes.petrinet.data.SSAplacesVector;
+import holmes.petrinet.data.SSAplacesVector.SSAdataType;
 import holmes.petrinet.elements.Place;
 import holmes.tables.SSAplacesTableModel;
 import holmes.tables.SSAplacesTableRenderer;
@@ -49,6 +51,9 @@ public class HolmesSSAwindowManager extends JFrame {
 	private ArrayList<Place> places;
 	private PetriNet pn;
 	private SSAplacesManager ssaManager;
+	
+	private boolean doNotUpdate = false;
+	private JComboBox<String> typeCombo;
 	
 	private int selectedRow;
 	
@@ -101,9 +106,9 @@ public class HolmesSSAwindowManager extends JFrame {
 		table.getColumnModel().getColumn(2).setHeaderValue("Vector description");
 		table.getColumnModel().getColumn(2).setMinWidth(50);
 		table.getColumnModel().getColumn(3).setHeaderValue("Data type");
-		table.getColumnModel().getColumn(3).setPreferredWidth(80);
-		table.getColumnModel().getColumn(3).setMinWidth(80);
-		table.getColumnModel().getColumn(3).setMaxWidth(80);
+		table.getColumnModel().getColumn(3).setPreferredWidth(120);
+		table.getColumnModel().getColumn(3).setMinWidth(120);
+		table.getColumnModel().getColumn(3).setMaxWidth(120);
 		table.getColumnModel().getColumn(4).setHeaderValue("Volume");
 		table.getColumnModel().getColumn(4).setPreferredWidth(50);
 		table.getColumnModel().getColumn(4).setMinWidth(50);
@@ -365,11 +370,11 @@ public class HolmesSSAwindowManager extends JFrame {
 		result.setBorder(BorderFactory.createTitledBorder("Others"));
 		result.setPreferredSize(new Dimension(900, 150));
 
-		int posXda = 10;
-		int posYda = 15;
+		int posX = 10;
+		int posY = 15;
 		
 		JLabel label0 = new JLabel("State description:");
-		label0.setBounds(posXda, posYda, 140, 20);
+		label0.setBounds(posX, posY, 140, 20);
 		result.add(label0);
 		
 		vectorDescrTextArea = new JTextArea();
@@ -388,12 +393,46 @@ public class HolmesSSAwindowManager extends JFrame {
             	}
             }
         });
-		
+
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
         CreationPanel.add(new JScrollPane(vectorDescrTextArea), BorderLayout.CENTER);
-        CreationPanel.setBounds(posXda, posYda+=25, 600, 100);
+        CreationPanel.setBounds(posX, posY+=25, 500, 100);
         result.add(CreationPanel);
+        
+        String[] data = new String[2];
+        data[0] = "Molecules [number]";
+        data[1] = "Concentration [mole^-1]";
+		typeCombo = new JComboBox<String>(data);
+		typeCombo.setBounds(posX+510, posY, 180, 20);
+		
+		if(ssaManager.getCurrentSSAvector().getType() == SSAdataType.MOLECULES)
+			typeCombo.setSelectedIndex(0);
+		else
+			typeCombo.setSelectedIndex(1);
+		
+		typeCombo.addActionListener(new ActionListener() {
+			@SuppressWarnings("unchecked")
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+				
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				int mode = comboBox.getSelectedIndex();
+				if(mode == 0) {
+					ssaManager.getSSAvector(selectedRow).setType(SSAdataType.MOLECULES);
+					tableModel.changeType(selectedRow, SSAdataType.MOLECULES);
+					
+				} else {
+					ssaManager.getSSAvector(selectedRow).setType(SSAdataType.CONCENTRATION);
+					tableModel.changeType(selectedRow, SSAdataType.CONCENTRATION);
+				}
+				
+				tableModel.fireTableDataChanged();
+			}
+		});
+
+		result.add(typeCombo);
 		
 	    return result;
 	}
@@ -411,9 +450,17 @@ public class HolmesSSAwindowManager extends JFrame {
 	 */
 	protected void cellClickAction() {
 		try {
+			doNotUpdate = true;
 			int newSelection = table.getSelectedRow();
 			selectedRow = newSelection;
 			fillDescriptionField();
+			
+			if(ssaManager.getSSAvector(selectedRow).getType() == SSAdataType.MOLECULES)
+				typeCombo.setSelectedIndex(0);
+			else
+				typeCombo.setSelectedIndex(1);
+			
+			doNotUpdate = false;
 		} catch (Exception e) {
 			
 		}

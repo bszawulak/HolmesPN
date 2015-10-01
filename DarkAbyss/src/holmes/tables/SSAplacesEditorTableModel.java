@@ -4,8 +4,10 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EventObject;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
+import holmes.petrinet.data.SSAplacesVector.SSAdataType;
 import holmes.windows.HolmesSSAplacesEditor;
 
 /**
@@ -22,6 +24,8 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 	private int ssaVectorIndex;
 	public boolean changes = false;
 	
+	private SSAdataType dataType;
+	
 	public class SSAdataClass {
 		public int ID;
 		public String name;
@@ -32,10 +36,12 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 	 * Konstruktor klasy modelującej tablicę wektora miejsc SSA.
 	 * @param boss HolmesSSAplacesEditor - obiekt okna tablicy
 	 * @param ssaVectorIndex int - nr wybranego wektora
+	 * @param dataType SSAdataType - rodzaj danych
 	 */
-	public SSAplacesEditorTableModel(HolmesSSAplacesEditor boss, int ssaVectorIndex) {
+	public SSAplacesEditorTableModel(HolmesSSAplacesEditor boss, int ssaVectorIndex, SSAdataType dataType) {
 		this.boss = boss;
 		this.ssaVectorIndex = ssaVectorIndex;
+		this.dataType = dataType;
 		clearModel();
 	}
 	
@@ -151,8 +157,28 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 		try {
 			if(col == 2) {
 				newValue = Double.parseDouble(value.toString());
-				dataMatrix.get(row).ssaValue = newValue;
-				boss.changeRealValue(ssaVectorIndex, row, newValue);
+				if(dataType == SSAdataType.MOLECULES) {
+					if(newValue > 0.9) {
+						dataMatrix.get(row).ssaValue = newValue;
+						boss.changeRealValue(ssaVectorIndex, row, newValue);
+					} else {
+						JOptionPane.showMessageDialog(boss, 
+								"Data type set for molecules. Expected number from a range of\n"
+								+ "1 to (usually) billions - not fractions (there is no "+newValue+" molecule!).", 
+								"Invalid value, integer number of molecules expected",JOptionPane.WARNING_MESSAGE);
+					}
+				} else {
+					if(newValue < 10) {
+						dataMatrix.get(row).ssaValue = newValue;
+						boss.changeRealValue(ssaVectorIndex, row, newValue);
+					} else {
+						JOptionPane.showMessageDialog(boss, 
+								"Data type set for concentration. Units are moles/litre. Expected number \n"
+								+ "from a range of 0 to (usually) tiny fraction (e.g. 1e-12). This value will\n"
+								+ "be MULTIPLIED by Avogadro constant (6.022*10^23 molecules!)", 
+								"Invalid value, moles/litre expected",JOptionPane.WARNING_MESSAGE);
+					}
+				}
 			}
 		} catch (Exception e) {
 			//dataMatrix.get(row).firingRate = 1.0;

@@ -15,6 +15,7 @@ import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SSAplacesManager;
 import holmes.petrinet.data.SSAplacesVector;
+import holmes.petrinet.data.SSAplacesVector.SSAdataType;
 import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.StatesManager;
 import holmes.petrinet.data.FiringRateTransVector;
@@ -30,7 +31,6 @@ import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.Transition.StochaticsType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
-import holmes.tables.SSAplacesTableModel.SSAdataType;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
 
@@ -1455,10 +1455,10 @@ public class ProjectReader {
 					line = buffer.readLine(); //dane dodatkowe
 					line = line.trim();
 					tab = line.split(";");
-					if(tab[0].equals("CAPACITY")) {
-						pVector.setType(SSAdataType.CAPACITY);
+					if(tab[0].equals("CAPACITY") || tab[0].equals("MOLECULES")) {
+						pVector.setType(SSAdataType.MOLECULES);
 					} else {
-						pVector.setType(SSAdataType.PARTICLES);
+						pVector.setType(SSAdataType.CONCENTRATION);
 					}
 					double volume = Double.parseDouble(tab[1]);
 					pVector.setVolume(volume);

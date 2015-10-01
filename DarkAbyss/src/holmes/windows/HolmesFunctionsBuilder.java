@@ -302,10 +302,9 @@ public class HolmesFunctionsBuilder extends JFrame {
 		notePad.addTextLineNL(" Boolean And                   &&     |   X   |       |       |      |", "text");
 		notePad.addTextLineNL(" Boolean Or                    ||     |   X   |       |       |      |", "text");
 		notePad.addTextLineNL("                                                                     ", "text");
-		notePad.addTextLineNL("                                                                    ", "text");
 		
 		notePad.addTextLineNL("", "text");
-		notePad.addTextLineNL("Functions:", "text");
+		notePad.addTextLineNL(" Mathematical functions table:", "text");
 		notePad.addTextLineNL("                                      |Double |Complex|", "text");
 		notePad.addTextLineNL(" Sine                        sin()    |   X   |   X   |", "text");
 		notePad.addTextLineNL(" Cosine                      cos()    |   X   |   X   |", "text");
@@ -327,7 +326,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		notePad.addTextLineNL(" Modulus                     mod()    |   X   |       |", "text");
 		notePad.addTextLineNL(" Square Root                 sqrt()   |   X   |   X   |", "text");
 		notePad.addTextLineNL(" Sum                         sum()    |   X   |       |", "text");
-		notePad.addTextLineNL("                                      |       |       |", "text");
+		notePad.addTextLineNL("               Complex numbers arythmetic:             ", "text");
 		notePad.addTextLineNL(" Real Component              re()     |       |   X   |", "text");
 		notePad.addTextLineNL(" Imaginary Component         im()     |       |   X   |", "text");
 		notePad.setCaretFirstLine();

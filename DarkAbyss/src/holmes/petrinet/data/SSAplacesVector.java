@@ -2,8 +2,6 @@ package holmes.petrinet.data;
 
 import java.util.ArrayList;
 
-import holmes.tables.SSAplacesTableModel.SSAdataType;
-
 /**
  * Klasa definiująca wektor danych wejściowych SSA.
  * 
@@ -15,13 +13,15 @@ public class SSAplacesVector {
 	private SSAdataType type;
 	private double experimentVolume;
 	
+	public enum SSAdataType { MOLECULES, CONCENTRATION };
+	
 	/**
 	 * Konstruktor obiektu klasy SSAplacesVector.
 	 */
 	public SSAplacesVector() {
 		stateVector = new ArrayList<Double>();
 		description = "Default SSA data vector description";
-		type = SSAdataType.CAPACITY;
+		type = SSAdataType.MOLECULES;
 		experimentVolume = 0.0;
 	}
 	

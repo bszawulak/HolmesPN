@@ -20,6 +20,7 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SSAplacesManager;
 import holmes.petrinet.data.SSAplacesVector;
+import holmes.petrinet.data.SSAplacesVector.SSAdataType;
 import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
 import holmes.tables.SSAplacesEditorTableModel;
@@ -37,6 +38,8 @@ public class HolmesSSAplacesEditor extends JFrame {
 	private SSAplacesVector ssaVector;
 	private int ssaIndex;
 	private JTextArea vectorDescrTextArea;
+	private SSAdataType dataType = SSAdataType.MOLECULES;
+	private String dataTypeUnits = "";
 	
 	private ArrayList<Place> places;
 	private PetriNet pn;
@@ -62,7 +65,15 @@ public class HolmesSSAplacesEditor extends JFrame {
     	this.ssaIndex = ssaIndex;
     	this.places = pn.getPlaces();
     	this.ssaManager = pn.accessSSAmanager();
+    	this.dataType = ssaVector.getType();
     	
+    	dataTypeUnits = "";
+		if(dataType == SSAdataType.MOLECULES) {
+			dataTypeUnits += " [number]";
+		} else {
+			dataTypeUnits += " [mole/litre]";
+		}
+		
     	initalizeComponents();
     	initiateListeners();
     	fillTable();
@@ -123,6 +134,15 @@ public class HolmesSSAplacesEditor extends JFrame {
 		labelID.setBounds(posX+110, posY, 100, 20);
 		filler.add(labelID);
 		
+		JLabel label1 = new JLabel("Data vector type:");
+		label1.setBounds(posX+220, posY, 100, 20);
+		filler.add(label1);
+		
+		
+		JLabel label2 = new JLabel(""+dataType+dataTypeUnits);
+		label2.setBounds(posX+330, posY, 230, 20);
+		filler.add(label2);
+		
 		vectorDescrTextArea = new JTextArea(ssaManager.accessSSAmatrix().get(ssaIndex).getDescription());
 		vectorDescrTextArea.setLineWrap(true);
 		vectorDescrTextArea.setEditable(true);
@@ -136,6 +156,8 @@ public class HolmesSSAplacesEditor extends JFrame {
             	}
             }
         });
+		
+		
 		
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
@@ -157,7 +179,7 @@ public class HolmesSSAplacesEditor extends JFrame {
 		result.setBorder(BorderFactory.createTitledBorder("SSA components table"));
 		result.setPreferredSize(new Dimension(500, 500));
 		
-		tableModel = new SSAplacesEditorTableModel(this, ssaIndex);
+		tableModel = new SSAplacesEditorTableModel(this, ssaIndex, dataType);
 		table = new RXTable(tableModel);
 		((RXTable)table).setSelectAllForEdit(true);
 		
@@ -168,7 +190,7 @@ public class HolmesSSAplacesEditor extends JFrame {
 		table.getColumnModel().getColumn(1).setHeaderValue("Place name");
 		table.getColumnModel().getColumn(1).setPreferredWidth(600);
 		table.getColumnModel().getColumn(1).setMinWidth(100);
-		table.getColumnModel().getColumn(2).setHeaderValue("Value");
+		table.getColumnModel().getColumn(2).setHeaderValue(dataTypeUnits);
 		table.getColumnModel().getColumn(2).setPreferredWidth(100);
 		table.getColumnModel().getColumn(2).setMinWidth(50);
         

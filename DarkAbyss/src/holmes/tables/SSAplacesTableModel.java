@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
 
+import holmes.petrinet.data.SSAplacesVector.SSAdataType;
+
 /**
  * Model tabeli do wyświetlania listy wektorów stanów miejsc w SSA.
  * 
@@ -14,8 +16,6 @@ public class SSAplacesTableModel extends DefaultTableModel {
 	private String[] columnNames;
 	private ArrayList<SSAtableContainer> dataMatrix;
 	private int dataSize;
-	
-	public enum SSAdataType{ CAPACITY, PARTICLES };
 	
 	public class SSAtableContainer {
 		public String selected;
@@ -45,6 +45,10 @@ public class SSAplacesTableModel extends DefaultTableModel {
 		
 		dataMatrix = new ArrayList<SSAtableContainer>();
 		dataSize = 0;
+	}
+	
+	public void changeType(int row, SSAdataType type) {
+		dataMatrix.get(row).type = type;
 	}
 	
 	/**
