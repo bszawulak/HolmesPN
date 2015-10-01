@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="libraries/RCaller-2.4-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="libraries/Jama-1.0.3.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Rince/git/ipne/DarkAbyss/libraries/exp4j-0.4.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Rince/git/ipne/DarkAbyss/libraries/jep-2.23.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

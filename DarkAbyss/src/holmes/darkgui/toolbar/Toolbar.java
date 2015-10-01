@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import org.nfunk.jep.JEP;
+
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.simulators.HighQualityRandom;
@@ -320,6 +322,7 @@ public class Toolbar extends BorderDock {
 		//TODO:
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/aaa.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {	
+				/*
 				HolmesNotepad aa = new HolmesNotepad(600, 480);
 				aa.setVisible(true);
 				
@@ -328,6 +331,19 @@ public class Toolbar extends BorderDock {
 				for(int i=0; i<30; i++) {
 					aa.addTextLineNL(""+generator.nextDouble()+" vs. "+generator2.nextDouble(), "text");
 				}
+				*/
+				
+				HolmesNotepad aa = new HolmesNotepad(600, 480);
+				aa.setVisible(true);
+				
+				JEP myParser = new JEP();
+				myParser.addStandardFunctions();
+				myParser.addVariable("p0", 2.0);
+				myParser.addVariable("p1", 2.0);
+				String expressionString = "(p1+p0)<1";
+				myParser.parseExpression(expressionString);
+				double result = myParser.getValue();
+				aa.addTextLineNL(expressionString+" = "+result, "text");
 			}
 		};
 		testButton.setEnabled(false);
