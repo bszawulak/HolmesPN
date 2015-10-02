@@ -902,11 +902,6 @@ public class ProjectReader {
 			int transElLoc = -1;
 			int metaElLoc = -1;
 			
-			if(backup.contains("<Arc: NORMAL; T21(0) -> P34(0); 1>")) {
-				@SuppressWarnings("unused")
-				boolean error = true;
-			}
-			
 			if(placeFirst) { //pierwsze jest miejsce
 				if(metaSecond == false) {
 					placeIndex = Integer.parseInt(arcDataTable[0]);
@@ -918,10 +913,10 @@ public class ProjectReader {
 					ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 					Arc newArc = new Arc(pEL, tEL, "", weight, arcType);
 					
-					if(arcType == TypesOfArcs.META_ARC) {
-						@SuppressWarnings("unused")
-						int error = 1;
-					}
+					if(tab.length > 3)
+						addBroken(newArc, tab[3]);
+					else
+						newArc.clearBreakPoints();
 					
 					return newArc;
 				} else { //metaSecond == true
@@ -934,10 +929,10 @@ public class ProjectReader {
 					ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 					Arc newArc = new Arc(pEL, mEL, "", weight, arcType);
 					
-					if(arcType != TypesOfArcs.META_ARC) {
-						@SuppressWarnings("unused")
-						int error = 1;
-					}
+					if(tab.length > 3)
+						addBroken(newArc, tab[3]);
+					else
+						newArc.clearBreakPoints();
 					
 					return newArc;
 				}
@@ -952,6 +947,12 @@ public class ProjectReader {
 						ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 						ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 						Arc newArc = new Arc(mEL, tEL, "", weight, arcType);
+						
+						if(tab.length > 3)
+							addBroken(newArc, tab[3]);
+						else
+							newArc.clearBreakPoints();
+						
 						return newArc;
 					} else { //drugie jest miejsce
 						metaIndex = Integer.parseInt(arcDataTable[0]);
@@ -962,6 +963,12 @@ public class ProjectReader {
 						ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 						ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 						Arc newArc = new Arc(mEL, pEL, "", weight, arcType);
+						
+						if(tab.length > 3)
+							addBroken(newArc, tab[3]);
+						else
+							newArc.clearBreakPoints();
+						
 						return newArc;
 					}
 				} else { //placesFirst = false, metaFirst = false -> pierwsza jest tranzycja
@@ -974,6 +981,12 @@ public class ProjectReader {
 						ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 						ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 						Arc newArc = new Arc(tEL, mEL, "", weight, arcType);
+						
+						if(tab.length > 3)
+							addBroken(newArc, tab[3]);
+						else
+							newArc.clearBreakPoints();
+						
 						return newArc;
 					} else { //drugie jest miejsce
 						transIndex = Integer.parseInt(arcDataTable[0]);
@@ -984,6 +997,12 @@ public class ProjectReader {
 						ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 						ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 						Arc newArc = new Arc(tEL, pEL, "", weight, arcType);
+						
+						if(tab.length > 3)
+							addBroken(newArc, tab[3]);
+						else
+							newArc.clearBreakPoints();
+						
 						return newArc;
 					}
 				}
@@ -992,6 +1011,19 @@ public class ProjectReader {
 			overlord.log("Reading file error in line: "+backup, "error", true);
 		}
 		return null;
+	}
+
+	private void addBroken(Arc newArc, String brokenLine) {
+		// TODO Auto-generated method stub
+		String[] tab = brokenLine.split("|");
+		for(String s : tab) {
+			try {
+				String[] coords = s.split(".");
+				int x = Integer.parseInt(coords[0]);
+				int y = Integer.parseInt(coords[1]);
+				newArc.addBreakPoint(new Point(x,y));;
+			} catch (Exception e) {}
+		}
 	}
 
 	/**

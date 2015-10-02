@@ -28,6 +28,7 @@ import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.subnets.SubnetsTools;
 import holmes.utilities.Tools;
 import holmes.workspace.WorkspaceSheet;
+import javafx.scene.shape.DrawMode;
 
 /**
  * Klasa, której zadaniem jest reprezentacja graficzna używanej w programie
@@ -1077,6 +1078,7 @@ public class GraphPanel extends JComponent {
 		 * @param clickedLocation ElementLocation - gdzie kliknięto
 		 * @param arcType DrawModes - tryb rysowania, tj. rodzaj rysowanego łuku
 		 */
+		//TODO
 		private void handleArcsDrawing(ElementLocation clickedLocation, DrawModes arcType) {
 			getSelectionManager().deselectAllElements();
 			
@@ -1182,9 +1184,9 @@ public class GraphPanel extends JComponent {
 									JOptionPane.WARNING_MESSAGE);
 							proceed = false;
 						} else {
-							JOptionPane.showMessageDialog(null, "Non-standard arc leading in reverse direction!", "Problem", 
-								JOptionPane.WARNING_MESSAGE);
-							proceed = false;
+							//JOptionPane.showMessageDialog(null, "Non-standard arc leading in reverse direction!", "Problem", 
+							//	JOptionPane.WARNING_MESSAGE);
+							//proceed = false;
 						}
 					}
 
@@ -1208,8 +1210,9 @@ public class GraphPanel extends JComponent {
 							clearDrawnArc();
 						} else {
 							overlord.getWorkspace().getProject().restoreMarkingZero();
+							TypesOfArcs thisArc = convertType(arcType);
 							
-							Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), clickedLocation, TypesOfArcs.NORMAL);
+							Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), clickedLocation, thisArc);
 							
 							if(arcType == DrawModes.ARC) {
 								if(arc.getArcType() != TypesOfArcs.READARC) //ważne dla tworzenia read-arc poprzez nałożenie ręczne 2 łuków!
@@ -1454,6 +1457,19 @@ public class GraphPanel extends JComponent {
 			scrollSheetHorizontal(-(centerX - clickedX)); // w lewo
 			scrollSheetVertical(clickedY - centerY); //w dół
 		} 
+	}
+
+	public TypesOfArcs convertType(DrawModes arcType) {
+		if(arcType == DrawModes.ARC_INHIBITOR)
+			return TypesOfArcs.INHIBITOR;
+		else if(arcType == DrawModes.ARC_EQUAL)
+			return TypesOfArcs.EQUAL;
+		else if(arcType == DrawModes.ARC_RESET)
+			return TypesOfArcs.RESET;
+		else if(arcType == DrawModes.READARC)
+			return TypesOfArcs.READARC;
+		else
+			return TypesOfArcs.NORMAL;
 	}
 
 	/**

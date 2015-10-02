@@ -115,15 +115,65 @@ public class Arc extends PetriNetElement {
 		if(this.getArcType() == TypesOfArcs.META_ARC)
 			return;
 		
+		if(this.getArcType() != TypesOfArcs.NORMAL) { //LOAD PROJECT SUBROUTINE
+			if(this.getArcType() == TypesOfArcs.READARC) {
+				for (Arc a : this.getEndLocation().getOutArcs()) {
+					if (a.getEndLocation() == this.getStartLocation()) {
+						if(a.getArcType() != TypesOfArcs.READARC)
+							continue; //load project purpose
+
+						a.setMainArcOfPair(true);
+						a.setPairedArc(this);
+						this.setPairedArc(a);
+					}
+				}
+			}
+			
+			handleComplexArcGraphics(null);
+			return;
+		}
+		
 		ArrayList<Arc> candidates = this.getEndLocation().getOutArcs();
 		for (Arc a : candidates) {
 			if (a.getEndLocation() == this.getStartLocation()) {
+				if(a.getArcType() != TypesOfArcs.NORMAL) {//tylko normal + normal = readarc
+					handleComplexArcGraphics(a);
+					continue;
+				
+				}
 				a.setMainArcOfPair(true);
 				a.setPairedArc(this);
 				this.setPairedArc(a);
 			}
 		}
 		//TODO: flaga readarc?
+	}
+
+	/**
+	 * Rozsuwa łuki (łamiąc je) względem siebie.
+	 * @param arc Arc - inny łuk niż normal idący w drugą stronę
+	 */
+	private void handleComplexArcGraphics(Arc arc) {
+		if(this.breakPoints.size() == 0) {
+			Point startP = getStartLocation().getPosition();
+			Point endP = getEndLocation().getPosition();
+			
+			Point breakPoint = new Point(((startP.x + endP.x)/2)+15,((startP.y + endP.y)/2)+15);
+			breakPoints.add(breakPoint);
+		}
+		
+		if(arc == null)
+			return;
+		
+		if(arc.breakPoints.size() == 0) {
+			Point startP = arc.getStartLocation().getPosition();
+			Point endP = arc.getEndLocation().getPosition();
+			
+			Point breakPoint = new Point(((startP.x + endP.x)/2)-15,((startP.y + endP.y)/2)-15);
+			arc.accessBreaks().add(breakPoint);
+		}
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**

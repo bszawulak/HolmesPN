@@ -1244,6 +1244,8 @@ public class SnoopyReader {
 					// XY Locations
 					if(line.contains("<graphics count=\"")) {
 						readAnything = true;
+						ArrayList<Point> newBreakPoints = new ArrayList<Point>();
+						Arc nArc = null;
 						while(!(line = buffer.readLine()).contains("</graphics>")) {
 							if(line.contains("<graphic ")) {
 								int sourceID = (int) getAttributeValue(line, " source=\"", -1);
@@ -1359,7 +1361,7 @@ public class SnoopyReader {
 									}
 									
 									if(createArc) {
-										Arc nArc = new Arc(sourceEL, targetEL, comment, multiplicity, currentType);
+										nArc = new Arc(sourceEL, targetEL, comment, multiplicity, currentType);
 										arcList.add(nArc);
 										edgesCounter++;
 									} else {
@@ -1382,6 +1384,22 @@ public class SnoopyReader {
 												+ "be created. This should not influence invariants-based analysis.", "warning", true);
 										warnings = true;
 									}
+								}
+							} else if(line.contains("<point ")) {
+								//TODO:
+								int posX = (int) getAttributeValue(line, " x=\"", -1);
+								int posY = (int) getAttributeValue(line, " y=\"", -1);
+								newBreakPoints.add(new Point(posX, posY));
+							}
+						}
+						
+						if(newBreakPoints.size() > 2 && nArc != null) {
+							newBreakPoints.remove(0);
+							newBreakPoints.remove(newBreakPoints.size()-1);
+							
+							for(Point point : newBreakPoints) {
+								if(point.x > 0 && point.y > 0) {
+									nArc.addBreakPoint((Point)point.clone());
 								}
 							}
 						}

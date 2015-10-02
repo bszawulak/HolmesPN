@@ -836,28 +836,35 @@ public final class ElementDraw {
 		//**********************************************
 		//***********    LOKALIZACJA WAGI    ***********
 		//**********************************************
-		int x_weight = (endP.x + startP.x) / 2;
-		int y_weight = (endP.y + startP.y) / 2;
-		
-		//double atang = Math.atan2(p2.y-p1.y,p2.x-p1.x)*180.0/Math.PI;
-		double atang = Math.toDegrees(Math.atan2(endP.y-startP.y,endP.x-startP.x));
-		if(atang < 0){
-			atang += 360;
-	    }
-		if(atang == 90 || atang == 270) { //pionowo
-			x_weight = x_weight + 10;
-		}
-		atang = atang % 90;
-		if(atang < 45.0) {
-			y_weight = y_weight + 5;
-			x_weight = x_weight - 5;
-		} else {
-			y_weight = y_weight - 15;
-		}
-		
 		if (arc.getWeight() > 1) {
-			g.setFont(new Font("Tahoma", Font.PLAIN, 18));
-			g.drawString(Integer.toString(arc.getWeight()), x_weight, y_weight + 10);
+			if(arc.accessBreaks().size() > 0) {
+				Point breakP = arc.accessBreaks().get(0);
+				
+				g.setFont(new Font("Tahoma", Font.PLAIN, 18));
+				g.drawString(Integer.toString(arc.getWeight()), breakP.x, breakP.y - 10);
+			} else {
+				int x_weight = (endP.x + startP.x) / 2;
+				int y_weight = (endP.y + startP.y) / 2;
+				
+				//double atang = Math.atan2(p2.y-p1.y,p2.x-p1.x)*180.0/Math.PI;
+				double atang = Math.toDegrees(Math.atan2(endP.y-startP.y,endP.x-startP.x));
+				if(atang < 0){
+					atang += 360;
+			    }
+				if(atang == 90 || atang == 270) { //pionowo
+					x_weight = x_weight + 10;
+				}
+				atang = atang % 90;
+				if(atang < 45.0) {
+					y_weight = y_weight + 5;
+					x_weight = x_weight - 5;
+				} else {
+					y_weight = y_weight - 15;
+				}
+
+				g.setFont(new Font("Tahoma", Font.PLAIN, 18));
+				g.drawString(Integer.toString(arc.getWeight()), x_weight, y_weight + 10);
+			}
 		}
 		return g;
 	}

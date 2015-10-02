@@ -584,7 +584,6 @@ public class SnoopyWriterArc {
 				} else if(interfacesIN.contains(startN) && interfacesOUT.contains(endN) && arcStartElLocation.getSheetID() == 0) {
 					GUIManager.getDefaultGUIManager().log("Error - SnoopyWriter encountered problem with net structure.", "error", true);
 				} else { 
-				
 					if(startN instanceof Place) {
 						int addToSPPEDAsSource = holmesPlacesID.lastIndexOf(startN.getID()); //który to był
 						int startLocIndex = startN.getElementLocations().indexOf(arcStartElLocation);
@@ -665,9 +664,21 @@ public class SnoopyWriterArc {
 					//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
 					//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
 					//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
-					write(bw, "            <points count=\"2\">"); //bez łamańców
-					write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
-					write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+					if(arc.accessBreaks().size() == 0) {
+						write(bw, "            <points count=\"2\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+					} else {
+						write(bw, "            <points count=\""+(arc.accessBreaks().size()+2)+"\">"); //bez łamańców
+						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						for(Point point : arc.accessBreaks()) {
+							write(bw, "              <point x=\""+point.x+".00\" y=\""+point.y+".00\"/>");
+						}
+						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+					}
+					//write(bw, "            <points count=\"2\">"); //bez łamańców
+					//write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+					//write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
 					write(bw, "            </points>");
 					write(bw, "          </graphic>");
 					write(bw, "        </graphics>");
@@ -708,10 +719,12 @@ public class SnoopyWriterArc {
 	 * Najbardziej szaleńcza z metod - odpowiada za zapis łuki w sieci wielopoziomowej
 	 * @param interfaceNodeElLocation ElementLocation - interfejs
 	 * @param arcEndElLocation ElementLocation - element z pary dla intefejsu
-	 * @param arc Arc - aktualnie przetwarzany łuk
+	 * @param arcus Arc - aktualnie przetwarzany łuk
 	 * @param metaArcs ArrayList[Arc] - z tej tablicy usuwamy wykorzystane meta-łuki
 	 * @param baseIDforNode int - aktualny wolny ID
 	 * @param isInInterface boolean - true, jeśli interfaceNodeElLocation jest intefejsem wejściowym (IN)
+	 * @param bw BufferedWriter - obiekt zapisujący
+	 * @param arcType TypesOfArcs - typ łuku
 	 * @return int - nr następnego wolnego ID
 	 */
 	private int omgThisIsCrazy(ElementLocation interfaceNodeElLocation, ElementLocation arcEndElLocation, Arc arcus, 
@@ -899,7 +912,7 @@ public class SnoopyWriterArc {
 			write(bw, "          <graphic id=\""+grParents.get(i)+"\" net=\""+(subnetsPath.get(i).subnet+1)+"\""
 					+ " source=\""+subSourceIDs.get(i)+"\""
 					+ " target=\""+subTargetIDs.get(i)+"\" state=\""+state+"\" show=\"1\""
-					+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");			
+					+ " pen=\"0,0,0\" brush=\"0,0,0\" edge_designtype=\"3\">");
 			write(bw, "            <points count=\"2\">"); //bez łamańców
 			write(bw, "              <point x=\""+(subSourcePoint.get(i).x)+".00\" y=\""+(subSourcePoint.get(i).y)+".00\"/>");
 			write(bw, "              <point x=\""+(subTargetPoint.get(i).x)+".00\" y=\""+(subTargetPoint.get(i).y)+".00\"/>");
@@ -1157,9 +1170,18 @@ public class SnoopyWriterArc {
 						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
 						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
 						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
-						write(bw, "            <points count=\"2\">"); //bez łamańców
-						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
-						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						if(a.accessBreaks().size() == 0) {
+							write(bw, "            <points count=\"2\">"); //bez łamańców
+							write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+							write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						} else {
+							write(bw, "            <points count=\""+(a.accessBreaks().size()+2)+"\">"); //bez łamańców
+							write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+							for(Point point : a.accessBreaks()) {
+								write(bw, "              <point x=\""+point.x+".00\" y=\""+point.y+".00\"/>");
+							}
+							write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						}
 						write(bw, "            </points>");
 						write(bw, "          </graphic>");
 						write(bw, "        </graphics>");
@@ -1273,9 +1295,18 @@ public class SnoopyWriterArc {
 						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
 						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
 						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
-						write(bw, "            <points count=\"2\">"); //bez łamańców
-						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
-						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						if(a.accessBreaks().size() == 0) {
+							write(bw, "            <points count=\"2\">"); //bez łamańców
+							write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+							write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						} else {
+							write(bw, "            <points count=\""+(a.accessBreaks().size()+2)+"\">"); //bez łamańców
+							write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+							for(Point point : a.accessBreaks()) {
+								write(bw, "              <point x=\""+point.x+".00\" y=\""+point.y+".00\"/>");
+							}
+							write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						}
 						write(bw, "            </points>");
 						write(bw, "          </graphic>");
 						write(bw, "        </graphics>");
@@ -1425,9 +1456,22 @@ public class SnoopyWriterArc {
 						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
 						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
 						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
-						write(bw, "            <points count=\"2\">"); //bez łamańców
-						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
-						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						if(a.accessBreaks().size() == 0) {
+							write(bw, "            <points count=\"2\">"); //bez łamańców
+							write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+							write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						} else {
+							write(bw, "            <points count=\""+(a.accessBreaks().size()+2)+"\">"); //bez łamańców
+							write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+							for(Point point : a.accessBreaks()) {
+								write(bw, "              <point x=\""+point.x+".00\" y=\""+point.y+".00\"/>");
+							}
+							write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						}
+						
+						//write(bw, "            <points count=\"2\">"); //bez łamańców
+						//write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						//write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
 						write(bw, "            </points>");
 						write(bw, "          </graphic>");
 						write(bw, "        </graphics>");
@@ -1548,9 +1592,21 @@ public class SnoopyWriterArc {
 						//teoretycznie poniższe powinny być wyliczone z układu równań do rozwiązywania
 						//problemu współrzędnych przecięcia prostej z okręgiem (lub z rogiem kwadratu - tr.)
 						//na szczęście można wpisać współrzędne docelowe węzłów, Snoopy jest tu wyrozumiały
-						write(bw, "            <points count=\"2\">"); //bez łamańców
-						write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
-						write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						if(a.accessBreaks().size() == 0) {
+							write(bw, "            <points count=\"2\">"); //bez łamańców
+							write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+							write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						} else {
+							write(bw, "            <points count=\""+(a.accessBreaks().size()+2)+"\">"); //bez łamańców
+							write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+							for(Point point : a.accessBreaks()) {
+								write(bw, "              <point x=\""+point.x+".00\" y=\""+point.y+".00\"/>");
+							}
+							write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
+						}
+						//write(bw, "            <points count=\"2\">"); //bez łamańców
+						//write(bw, "              <point x=\""+realSourceX+".00\" y=\""+realSourceY+".00\"/>");
+						//write(bw, "              <point x=\""+realTargetX+".00\" y=\""+realTargetY+".00\"/>");
 						write(bw, "            </points>");
 						write(bw, "          </graphic>");
 						write(bw, "        </graphics>");
