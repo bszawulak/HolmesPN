@@ -1,15 +1,12 @@
 package holmes.petrinet.elements;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.font.TextLayout;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
-import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
@@ -109,21 +106,6 @@ public class Arc extends PetriNetElement {
 		
 		this.breakPoints = new ArrayList<Point>();
 	}
-	
-	public ArrayList<Point> accessBreaks() {
-		return this.breakPoints;
-	}
-	
-	public void addBreakPoint(Point breakP) {
-		this.breakPoints.add(breakP);
-		isBreakArc = true;
-	}
-	
-	public void clearBreaks() {
-		this.breakPoints.clear();
-		isBreakArc = false;
-	}
-	
 
 	/**
 	 * Metoda sprawdza, czy aktualny łuk jest łukiem odczytu (read-arc).
@@ -223,9 +205,6 @@ public class Arc extends PetriNetElement {
 	 */
 	public void drawSimulationToken(Graphics2D g, int sheetId) {
 		ElementDraw.drawToken(g, sheetId, this);
-		
-		
-
 	}
 
 	/**
@@ -324,12 +303,34 @@ public class Arc extends PetriNetElement {
 	 * @return boolean - true, jeśli łuk jest częcią łuku; false w przeciwnym wypadku
 	 */
 	public boolean checkIntersection(Point P) {
-		Point A = getStartLocation().getPosition();
-		Point B = getEndLocation().getPosition();
-		if (Line2D.ptSegDist(A.x, A.y, B.x, B.y, P.x, P.y) <= 3)
-			return true;
-		else
-			return false;
+		int breaks = breakPoints.size();
+		if(breaks > 0) {
+			Point start = getStartLocation().getPosition();
+			Point b0 = breakPoints.get(0);
+			if (Line2D.ptSegDist(start.x, start.y, b0.x, b0.y, P.x, P.y) <= 3) //piewszy odcinek
+				return true;
+			
+			for(int i=1; i<breaks; i++) {
+				if (Line2D.ptSegDist(breakPoints.get(i-1).x, breakPoints.get(i-1).y, breakPoints.get(i).x, breakPoints.get(i).y, P.x, P.y) <= 3) //piewszy odcinek
+					return true;
+			}
+			
+			Point bFinal = breakPoints.get(breaks-1);
+			Point end = getEndLocation().getPosition();
+			
+			if (Line2D.ptSegDist(bFinal.x, bFinal.y, end.x, end.y, P.x, P.y) <= 3)
+				return true;
+			else
+				return false;
+			
+		} else {
+			Point A = getStartLocation().getPosition();
+			Point B = getEndLocation().getPosition();
+			if (Line2D.ptSegDist(A.x, A.y, B.x, B.y, P.x, P.y) <= 3)
+				return true;
+			else
+				return false;
+		}
 	}
 
 	/**
@@ -527,6 +528,102 @@ public class Arc extends PetriNetElement {
 	public void setArcType(TypesOfArcs type) {
 		arcType = type;
 	}
+	
+	//****************************************************************************************************
+	//************************************     BREAKING BAD     ******************************************
+	//****************************************************************************************************
+	
+	/**
+	 * Uzyskanie dostępu do tablicy punktów łamiących.
+	 * @return ArrayList[Point] - wektor punktów
+	 */
+	public ArrayList<Point> accessBreaks() {
+		return this.breakPoints;
+	}
+	
+	/**
+	 * Dodaje punkt łamiący dla łuku.
+ 	 * @param breakP Point - obiekt współrzędnych
+	 */
+	public void addBreakPoint(Point breakP) {
+		this.breakPoints.add(breakP);
+		isBreakArc = true;
+	}
+	
+	/**
+	 * Czyści do zera wektor punktów łamiących.
+	 */
+	public void clearBreakPoints() {
+		this.breakPoints.clear();
+		isBreakArc = false;
+	}
+	
+	public void updateAllBreakPointsLocations(Point delta) {
+		for(Point breakP : breakPoints) {
+			breakP.setLocation(breakP.x+delta.x, breakP.y+delta.y);
+		}
+	}
+	
+	/**
+	 * Zwraca punkt łamiący łuk, o ile kliknięto w jego pobliżu
+	 * @param mousePt Point - tu kliknięto myszą
+	 * @return Point - punkt łamiący łuku (jeśli istnieje w pobliżu mousePt)
+	 */
+	public Point checkBreakIntersection(Point mousePt) {
+		for(Point breakP : breakPoints) {
+			if (breakP.x - 5 < mousePt.x && breakP.y - 5 < mousePt.y
+					&& breakP.x + 5 > mousePt.x && breakP.y + 5 > mousePt.y)
+				return breakP;
+		}
+		return null;
+	}
+	
+	/**
+	 * Dodaje nowy punkt łamiący łuku, najpierw sprawdza który odcinek łuku podzielić.
+	 * @param breakP Point - punkt kliknięty NA łuku (zapewnione przed wywołaniem tej metody!)
+	 */
+	public void createNewBreakPoint(Point breakP) {
+		Point start = this.getStartLocation().getPosition();
+		int breaks = breakPoints.size();
+		if(breaks == 0) {
+			addBreakPoint(breakP);
+		} else {
+			int whereToInsert = 0;
+			Point b0 = breakPoints.get(0);
+			if (Line2D.ptSegDist(start.x, start.y, b0.x, b0.y, breakP.x, breakP.y) <= 3) {//piewszy odcinek
+				breakPoints.add(whereToInsert, breakP);
+				return;
+			}
+			
+			for(int i=1; i<breaks; i++) {
+				whereToInsert++;
+				if (Line2D.ptSegDist(breakPoints.get(i-1).x, breakPoints.get(i-1).y, breakPoints.get(i).x, breakPoints.get(i).y, breakP.x, breakP.y) <= 3) {
+					breakPoints.add(whereToInsert, breakP);
+					return;
+				}
+			}
+			
+			//jeśli dotąd żaden odcinek, to wstawiamy na koniec listy:
+			breakPoints.add(breakP);
+		}
+	}
+	
+	/**
+	 * Usuwa podany punkt łamiący łuku, tj. najbliższy do breakP.
+	 * @param breakP Point - tu kliknięto myszą, najpierw metoda sprawdzi, czy blisko tego jest break point
+	 */
+	public void removeBreakPoint(Point breakP) {
+		Point toRemove = checkBreakIntersection(breakP);
+		if(toRemove != null) {
+			breakPoints.remove(toRemove);
+			if(breakPoints.size() == 0)
+				isBreakArc = false;
+		}
+	}
+	
+	//********************************************************************************************************
+	//********************************************************************************************************
+	//********************************************************************************************************
 	
 	/**
 	 * Metoda zwracająca dane o łuku w formie łańcucha znaków.

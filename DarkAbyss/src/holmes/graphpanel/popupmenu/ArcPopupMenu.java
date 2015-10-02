@@ -1,5 +1,9 @@
 package holmes.graphpanel.popupmenu;
 
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
@@ -18,6 +22,49 @@ public class ArcPopupMenu extends NodePopupMenu {
 	 */
 	public ArcPopupMenu(GraphPanel graphPanel, Arc a, PetriNetElementType pne) {
 		super(graphPanel, pne, a);
+		
+		this.addMenuItem("Create break point here", "", new ActionListener() {
+			Arc arc = null;
+			public void actionPerformed(ActionEvent e) {
+				Point breakP = getGraphPanel().arcNewBreakPoint;
+				if(breakP == null)
+					return;
+				
+				arc.createNewBreakPoint(breakP);
+				getGraphPanel().repaint();
+			}
+			private ActionListener yesWeCan(Arc arc){
+				this.arc = arc;
+				return this;
+		    }
+		}.yesWeCan(a) ); 
+		
+		this.addMenuItem("Remove break point", "", new ActionListener() {
+			Arc arc = null;
+			public void actionPerformed(ActionEvent e) {
+				Point breakP = getGraphPanel().arcNewBreakPoint;
+				if(breakP == null) {
+					return;
+				}
+				arc.removeBreakPoint(breakP);
+				getGraphPanel().repaint();
+			}
+			private ActionListener yesWeCan(Arc arc){
+				this.arc = arc;
+				return this;
+		    }
+		}.yesWeCan(a) );
+		
+		this.addMenuItem("Remove ALL break points", "", new ActionListener() {
+			Arc arc = null;
+			public void actionPerformed(ActionEvent e) {
+				arc.clearBreakPoints();
+				getGraphPanel().repaint();
+			}
+			private ActionListener yesWeCan(Arc arc){
+				this.arc = arc;
+				return this;
+		    }
+		}.yesWeCan(a) );
 	}
-
 }

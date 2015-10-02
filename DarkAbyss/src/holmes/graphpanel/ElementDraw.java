@@ -657,9 +657,7 @@ public final class ElementDraw {
 			return g;
 
 		Stroke sizeStroke = g.getStroke();
-		
-		ArrayList<Point> breakPoints = null;
-		breakPoints = arc.accessBreaks();
+		ArrayList<Point> breakPoints = arc.accessBreaks();
 		int breaks = breakPoints.size();
 
 		Point startP = new Point((Point)arc.getStartLocation().getPosition());
@@ -676,7 +674,7 @@ public final class ElementDraw {
 		int distY = Tools.absolute(startP.y - endP.y);
 		
 		if(distX == distY) {
-			startP.setLocation(startP.x+1, startP.y);
+			startP.setLocation(startP.x+1, startP.y); //yes, this magic is essential
 		}
 
 		int incFactorM = 0;
@@ -689,7 +687,6 @@ public final class ElementDraw {
 		Point tmpStart = (Point)startP.clone();
 		if(breaks>0) {
 			tmpStart = breakPoints.get(breaks-1);
-			
 		}
 		
 		double alfa = endP.x - tmpStart.x + endP.y - tmpStart.y == 0 ? 0 : Math.atan(((double) endP.y - (double) tmpStart.y) / ((double) endP.x - (double) tmpStart.x));
@@ -704,11 +701,7 @@ public final class ElementDraw {
 		double yl = endP.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign - M * alfaCos;
 		double xk = endP.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign - M * alfaSin;
 		double yk = endP.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign + M * alfaCos;
-
-		//trolling:	
-		
-		
-				
+	
 		if (arc.getSelected()) {
 			g.setColor(EditorResources.selectionColorLevel3);
 			g.setStroke(EditorResources.glowStrokeArc);
@@ -742,20 +735,37 @@ public final class ElementDraw {
 				else
 					g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 			}
+		} else {
+			g.setStroke(new BasicStroke(eds.arcSize));
+			if(breaks > 0)
+				drawBreaks(g, arc, startP, (int)xp, (int)yp, breakPoints, breaks);
+			else
+				g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 		}
 		
 		if(arc.qSimForcedArc) {
 			g.setColor(arc.qSimForcedColor);
 			g.setStroke(new BasicStroke(4));
 			g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+			
+			alfa = endP.x - startP.x + endP.y - startP.y == 0 ? 0 : Math.atan(((double) endP.y - (double) startP.y) / ((double) endP.x - (double) startP.x));
+			alfaCos = Math.cos(alfa);
+			alfaSin = Math.sin(alfa);
+			//double sign = endP.x < arc.getStartLocation().getPosition().x ? 1 : -1;
+			sign = endP.x < startP.x ? 1 : -1;
+			M = 4 + incFactorM;
+			xp = endP.x + endRadius * alfaCos * sign;
+			yp = endP.y + endRadius * alfaSin * sign;
+			xl = endP.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign + M * alfaSin;
+			yl = endP.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign - M * alfaCos;
+			xk = endP.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign - M * alfaSin;
+			yk = endP.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign + M * alfaCos;
 		}
 				
 		//STRZAŁKI
 		//int leftRight = 0; //im wieksze, tym bardziej w prawo
 		//int upDown = 0; //im większa, tym mocniej w dół
-		
 		g.setStroke(sizeStroke);
-		
 		
 		if(arc.getArcType() == TypesOfArcs.NORMAL || arc.getArcType() == TypesOfArcs.READARC) {
 			//g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
@@ -769,7 +779,14 @@ public final class ElementDraw {
 	    	int xT = (int) ((xPos - xp)/3.14);
 	    	int yT = (int) ((yPos - yp)/3.14);
 	    	
-	    	g.drawOval((int)(xPos-5-xT), (int)(yPos-5-yT), 10, 10);
+	    	if(arc.qSimForcedArc) {
+				g.setColor(arc.qSimForcedColor);
+				g.setStroke(new BasicStroke(4));
+				g.drawOval((int)(xPos-6-xT), (int)(yPos-6-yT), 12, 12);
+	    	} else {
+	    		g.drawOval((int)(xPos-5-xT), (int)(yPos-5-yT), 10, 10);
+	    	}
+	    	
 		} else if (arc.getArcType() == TypesOfArcs.RESET) {
 			//g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
 			//		new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
@@ -845,21 +862,27 @@ public final class ElementDraw {
 		return g;
 	}
 
+	/**
+	 * Metoda rysuje łuk łamany.
+	 * @param g Graphics2D - obiekt rysujący
+	 * @param arc Arc
+	 * @param startP Point - punkt startowy łuku
+	 * @param endPx int - współrzędna x elementu docelowego łuku
+	 * @param endPy int - współrzędna y elementu docelowego łuku
+	 * @param breaksVector ArrayList[Point] - wektor punktów łąmiących
+	 * @param breaks int - liczba punktów łamiących
+	 */
 	private static void drawBreaks(Graphics2D g, Arc arc, Point startP, int endPx, int endPy, ArrayList<Point> breaksVector, int breaks) {
-		// TODO Auto-generated method stub
 		g.drawLine(startP.x, startP.y, (int) breaksVector.get(0).x, (int) breaksVector.get(0).y);
 		
 		for(int b=1; b<breaks; b++) {
-			Point breakStart = breaksVector.get(b-1);
-			Point breakEnd = breaksVector.get(b);
-			
-			g.drawLine(breakStart.x, breakStart.y, breakEnd.x, breakEnd.y);
+			Point breakPoint = breaksVector.get(b-1);
+			g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
+			g.fillOval((int)(breakPoint.x-3), (int)(breakPoint.y-3), 6, 6);
 		}
 		Point lastPoint = breaksVector.get(breaks-1);
-		
-		//Point breakLast = (Point)arc.getEndLocation().getPosition().clone();
 		g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
-		
+		g.fillOval((int)(lastPoint.x-3), (int)(lastPoint.y-3), 6, 6);
 	}
 
 	/**
@@ -988,6 +1011,12 @@ public final class ElementDraw {
 		return Color.white;
 	}
 
+	/**
+	 * Rysowanie tokenów.
+	 * @param g Graphics2D - obiekt rysujący
+	 * @param sheetId int - indeks arkusza
+	 * @param arc Arc - łuk
+	 */
 	public static void drawToken(Graphics2D g, int sheetId, Arc arc) {
 		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
 		int step = arc.getSimulationStep();
@@ -995,9 +1024,7 @@ public final class ElementDraw {
 		ArrayList<Point> breakPoints = null;
 		int breaks = 0;
 		breaks = (breakPoints=arc.accessBreaks()).size(); //pro...
-			
-		
-		
+
 		if (!arc.isTransportingTokens || arc.getLocationSheetId() != sheetId || weight == 0 || step > STEP_COUNT)
 			return;
 		// if(this.getEndNodeEdgeIntersection() == null)
@@ -1005,72 +1032,16 @@ public final class ElementDraw {
 		Point startPos = arc.getStartLocation().getPosition();
 		Point endPos = arc.getEndLocation().getPosition();
 		
-		double a = 0;
-		double b = 0;
+
 		double arcWidth = 0;
 		double stepSize = 0;
 		if(breaks > 0) { //o żesz...
-			double tmp;
-			ArrayList<Double> distances = new ArrayList<Double>(); //dlugości odcinków
-			ArrayList<Point> lines = new ArrayList<Point>(); //odcinki składające się na łuk
-			tmp = Math.hypot(startPos.x - breakPoints.get(0).x, startPos.y - breakPoints.get(0).y);
-			distances.add(tmp);
-			
-			arcWidth += tmp;
-			for(int br=1; br<breaks; br++) {
-				tmp = Math.hypot(breakPoints.get(br-1).x - breakPoints.get(br).x, breakPoints.get(br-1).y - breakPoints.get(br).y);
-				distances.add(tmp);
-				lines.add(breakPoints.get(br-1));
-				arcWidth += tmp;
-			}
-			tmp = Math.hypot(breakPoints.get(breaks-1).x - endPos.x, breakPoints.get(breaks-1).y - endPos.y); //suma odcinków
-			distances.add(tmp);
-			
-			arcWidth += tmp;
-			//koniec liczenia długości łuku
-			
-			lines.add(startPos);
-			lines.addAll(breakPoints);
-			lines.add(endPos);
-			
-			stepSize = arcWidth / (double) STEP_COUNT;
-			double endPoint = stepSize * step;
-			
-			double counter = distances.get(0);
-			for(int i=1; i<distances.size()+1; i++) {
-				if(counter > endPoint) {
-					double distInCurrent = counter - endPoint;
-					double tylePrzeszedl = distances.get(i-1) - distInCurrent;
-					double proportion = tylePrzeszedl / distances.get(i-1);
-					//proportion *= distances.get(i-1); //długość do przebycia
-					
-					Point startingPoint = lines.get(i-1);
-					Point endingPoint = lines.get(i);
-					int signX = 1;
-					int signY = 1;
-					if(startingPoint.x > endingPoint.x)
-						signX = -1;
-					if(startingPoint.y > endingPoint.y)
-						signY = -1;
-					
-					int distX = Math.abs(startingPoint.x - endingPoint.x);
-					int distY = Math.abs(startingPoint.y - endingPoint.y);
-					
-					a = startingPoint.x + (signX * proportion * distX);
-					b = startingPoint.y + (signY * proportion * distY);
-					//b = endPos.y + stepSize * step * (startPos.y - endPos.y) / arcWidth;
-					
-					break;
-				}
-				if(i < distances.size())
-					counter += distances.get(i);
-			}
-			
-			
+			handleBrokenArc(g, STEP_COUNT, step, breakPoints, breaks, startPos, endPos, arcWidth, weight);
 		} else {
 			arcWidth = Math.hypot(startPos.x - endPos.x, startPos.y - endPos.y); //TODO: suma po breakach, potem wybrać odcinek, a potem jego dlugość
 			stepSize = arcWidth / (double) STEP_COUNT;
-			
+			double a = 0;
+			double b = 0;
 			if (arc.isSimulationForwardDirection()) {
 				a = startPos.x - stepSize * step * (startPos.x - endPos.x) / arcWidth;
 				b = startPos.y - stepSize * step * (startPos.y - endPos.y) / arcWidth;
@@ -1078,8 +1049,99 @@ public final class ElementDraw {
 				a = endPos.x + stepSize * step * (startPos.x - endPos.x) / arcWidth;
 				b = endPos.y + stepSize * step * (startPos.y - endPos.y) / arcWidth;
 			}
+			
+			g.setColor(EditorResources.tokenDefaultColor);
+			g.fillOval((int) a - 5, (int) b - 5, 10, 10);
+			g.setColor(Color.black);
+			g.setStroke(EditorResources.tokenDefaultStroke);
+			g.drawOval((int) a - 5, (int) b - 5, 10, 10);
+			
+			Font font1 = new Font("Tahoma", Font.BOLD, 14);
+			Font font2 = new Font("Tahoma", Font.BOLD, 13);
+			Font font3 = new Font("Tahoma", Font.PLAIN, 12);
+			TextLayout textLayout1 = new TextLayout(Integer.toString(weight), font1, g.getFontRenderContext());
+			TextLayout textLayout2 = new TextLayout(Integer.toString(weight), font2, g.getFontRenderContext());
+			TextLayout textLayout3 = new TextLayout(Integer.toString(weight), font3, g.getFontRenderContext());
+			
+			g.setColor(new Color(255, 255, 255, 70));
+			textLayout1.draw(g, (int) a + 10, (int) b);
+			g.setColor(new Color(255, 255, 255, 150));
+			textLayout2.draw(g, (int) a + 10, (int) b);
+			g.setColor(Color.black);
+			textLayout3.draw(g, (int) a + 10, (int) b);
 		}
+	}
+	
+	/**
+	 * Rysowanie tokenów po łuku łamanym. Euklides dziękuje i idzie w cholerę, bo ma dosyć.
+	 * @param g Graphics2D - obiekt rysujący
+	 * @param STEP_COUNT int - max. licznik kroków (faz rysowania)
+	 * @param step int - aktualny krok
+	 * @param breakPoints ArrayList[Point] - lista punktów łamiących łuku
+	 * @param breaks int - liczba powyższych
+	 * @param startPos Point - pozycja węzła startowego
+	 * @param endPos Point - pozycja węzła końcowego łuku
+	 * @param arcWidth int - szerokość kreski łuku
+	 * @param weight int - waga łuku
+	 */
+	private static void handleBrokenArc(Graphics2D g, int STEP_COUNT, int step, ArrayList<Point> breakPoints,
+			int breaks, Point startPos, Point endPos, double arcWidth, int weight) {
+		double stepSize;
+		double tmp = 0;
+		double a = 0;
+		double b = 0;
+		
+		ArrayList<Double> segmentLengths = new ArrayList<Double>(); //dlugości odcinków
+		ArrayList<Point> allPointsVector = new ArrayList<Point>(); //odcinki składające się na łuk
+		tmp = Math.hypot(startPos.x - breakPoints.get(0).x, startPos.y - breakPoints.get(0).y);
+		segmentLengths.add(tmp);
+		allPointsVector.add(startPos);
+		arcWidth += tmp;
+		allPointsVector.add(breakPoints.get(0));
+		for(int br=1; br<breaks; br++) {
+			tmp = Math.hypot(breakPoints.get(br-1).x - breakPoints.get(br).x, breakPoints.get(br-1).y - breakPoints.get(br).y);
+			segmentLengths.add(tmp);
+			allPointsVector.add(breakPoints.get(br));
+			arcWidth += tmp;
+		}
+		tmp = Math.hypot(breakPoints.get(breaks-1).x - endPos.x, breakPoints.get(breaks-1).y - endPos.y); //suma odcinków
+		segmentLengths.add(tmp);
+		allPointsVector.add(endPos);
+		arcWidth += tmp;
+		//koniec liczenia długości łuku
 
+		stepSize = arcWidth / (double) STEP_COUNT;
+		double endPoint = stepSize * step;
+		
+		double counter = segmentLengths.get(0);
+		for(int i=1; i<segmentLengths.size()+1; i++) { //kosmos panie, kosmos
+			if(counter > endPoint) {
+				double distInCurrent = counter - endPoint;
+				double tylePrzeszedl = segmentLengths.get(i-1) - distInCurrent;
+				double proportion = tylePrzeszedl / segmentLengths.get(i-1);
+				//proportion *= distances.get(i-1); //długość do przebycia
+				
+				Point startingPoint = allPointsVector.get(i-1);
+				Point endingPoint = allPointsVector.get(i);
+				int signX = 1;
+				int signY = 1;
+				if(startingPoint.x > endingPoint.x)
+					signX = -1;
+				if(startingPoint.y > endingPoint.y)
+					signY = -1;
+				
+				int distX = Math.abs(startingPoint.x - endingPoint.x);
+				int distY = Math.abs(startingPoint.y - endingPoint.y);
+				
+				a = startingPoint.x + (signX * proportion * distX);
+				b = startingPoint.y + (signY * proportion * distY);
+				//b = endPos.y + stepSize * step * (startPos.y - endPos.y) / arcWidth;
+				
+				break;
+			}
+			if(i < segmentLengths.size())
+				counter += segmentLengths.get(i);
+		}
 		
 		g.setColor(EditorResources.tokenDefaultColor);
 		g.fillOval((int) a - 5, (int) b - 5, 10, 10);
@@ -1101,5 +1163,4 @@ public final class ElementDraw {
 		g.setColor(Color.black);
 		textLayout3.draw(g, (int) a + 10, (int) b);
 	}
-
 }

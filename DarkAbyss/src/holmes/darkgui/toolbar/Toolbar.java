@@ -41,6 +41,7 @@ import com.javadocking.visualizer.SingleMaximizer;
  * @author MR
  *
  */
+@SuppressWarnings("unused")
 public class Toolbar extends BorderDock {
 	private static final long serialVersionUID = 640320332920131092L;
 	private GUIManager overlord;
@@ -539,10 +540,7 @@ public class Toolbar extends BorderDock {
 		allowOnlySimulationDisruptButtons();
 		simulationDockables.get(5).getContent().setEnabled(false);
 	}
-	
-	
-	
-	@SuppressWarnings({ "serial", "unused" })
+	@SuppressWarnings({ "serial" })
 	/**
 	 * Metoda odpowiedzialna za tworzenie tablicy przycisków symulatora.
 	 * @return ArrayList[ButtonDockable] - tablica zawierająca obiekty przycisków
@@ -632,8 +630,7 @@ public class Toolbar extends BorderDock {
 		
 		return simulationDockables;
 	}
-	
-	@SuppressWarnings("unused")
+
 	private JPanel createSubtoolsPanel() {
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 		panel.setPreferredSize(new Dimension(200, 60));

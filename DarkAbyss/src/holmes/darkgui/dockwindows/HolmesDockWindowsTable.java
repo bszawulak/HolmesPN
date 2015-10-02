@@ -2430,6 +2430,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		JCheckBox autoscrollBox = new JCheckBox("", sheet.getGraphPanel().isAutoDragScroll());
 		autoscrollBox.setBounds(columnB_posX-4, columnB_Y, colACompLength, 20);
 		autoscrollBox.setLocation(columnB_posX-4, columnB_Y += 20);
+		autoscrollBox.setSelected(true);
 		autoscrollBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {

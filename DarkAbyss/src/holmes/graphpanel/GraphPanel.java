@@ -50,7 +50,7 @@ public class GraphPanel extends JComponent {
 	private Rectangle selectingRect = null;
 	private Arc drawnArc = null;
 	private int sheetId;
-	private boolean autoDragScroll = false;
+	private boolean autoDragScroll = true;
 	private boolean isSimulationActive = false;
 	private int zoom = 100;
 	private Dimension originSize;
@@ -63,6 +63,11 @@ public class GraphPanel extends JComponent {
 		TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
 		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
 		SUBNET_T, SUBNET_P, SUBNET_PT }
+	
+	/** Jeśli nie jest równy null, to znaczy, że właśnie przesuwamy jakiś punkt łamiący łuk */
+	public Point arcBreakPoint = null;
+	public Point arcNewBreakPoint = null;
+
 
 	/**
 	 * Konstruktor obiektu klasy GraphPanel
@@ -728,9 +733,11 @@ public class GraphPanel extends JComponent {
 	 * Metoda pozwala pobrać nowy obiekt będący menu kontekstowym dla każdego łuku.
 	 * @param arc Arc - obiekt klikniętego łuku
 	 * @param pne PetriNetElementType - typ klikniętego elementu
+	 * @param mousePt2  Point - kliknięty punkt
 	 * @return ArcPopupMenu - obiekt menu kontekstowego
 	 */
-	public ArcPopupMenu getArcPopupMenu(Arc arc, PetriNetElementType pne) {
+	public ArcPopupMenu getArcPopupMenu(Arc arc, PetriNetElementType pne, Point mousePt2) {
+		arcNewBreakPoint = (Point) mousePt2.clone(); //będzie potrzebne (opcjonalnie) w oknie kontekstowycm
 		return new ArcPopupMenu(this, arc, pne);
 	}
 		
@@ -775,16 +782,16 @@ public class GraphPanel extends JComponent {
 	}
 	
 	/**
-	 * 
-	 * @return boolean
+	 * Nastarsi górole nie pamietajo, co to robi.
+	 * @return boolean - jakaś wartość logiczna, byle dobra bo się softłyr wywoli
 	 */
 	public boolean isSnapToMesh() {
 		return snapToMesh;
 	}
 
 	/**
-	 * 
-	 * @param snapToMesh boolean
+	 * Patrz komentorz wyżyj. Ło Jezusicku, ale tu dziwnie.
+	 * @param snapToMesh boolean - wartość logiczna, to chyba logiczne
 	 */
 	public void setSnapToMesh(boolean snapToMesh) {
 		this.snapToMesh = snapToMesh;
@@ -854,8 +861,18 @@ public class GraphPanel extends JComponent {
 		 * Metoda aktywowana w momencie puszczenia przycisku myszy.
 		 */
 		public void mouseReleased(MouseEvent e) {
-			setSelectingRect(null);
-			e.getComponent().repaint();
+			if(arcBreakPoint != null) {
+				mousePt = e.getPoint();
+				mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);
+				arcBreakPoint.setLocation(mousePt.x, mousePt.y);
+				arcBreakPoint = null;
+				setSelectingRect(null);
+				e.getComponent().repaint();
+			} else {
+			
+				setSelectingRect(null);
+				e.getComponent().repaint();
+			}
 		}
 
 		/**
@@ -868,6 +885,10 @@ public class GraphPanel extends JComponent {
 					getSelectionManager().doubleClickReactionHandler();
 				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown() == true)
 					getSelectionManager().decreaseTokensNumber();
+			} else if (e.getClickCount() == 1) {
+				if (e.getButton() == MouseEvent.BUTTON1 && e.isControlDown() == true) {
+					getSelectionManager().doubleClickReactionHandler();
+				}
 			}
 		}
 
@@ -890,6 +911,13 @@ public class GraphPanel extends JComponent {
 			mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);
 			ElementLocation el = getSelectionManager().getPossiblySelectedElementLocation(mousePt);
 			Arc a = getSelectionManager().getPossiblySelectedArc(mousePt);
+			
+			if(a != null && el == null && e.getButton() == MouseEvent.BUTTON1) {
+				arcBreakPoint = a.checkBreakIntersection(mousePt);
+				if(arcBreakPoint != null)
+					return;
+			}
+			
 			// nie kliknięto ani w Node ani w Arc
 			if (el == null && a == null) {
 				if (e.getButton() == MouseEvent.BUTTON3) { //menu kontekstowe
@@ -1038,7 +1066,7 @@ public class GraphPanel extends JComponent {
 				}
 				clearDrawnArc();
 				if (e.getButton() == MouseEvent.BUTTON3) { // menu konteksowe łuku
-					getArcPopupMenu(a, PetriNetElementType.ARC).show(e);
+					getArcPopupMenu(a, PetriNetElementType.ARC, mousePt).show(e);
 				}
 			}
 			e.getComponent().repaint();
@@ -1221,14 +1249,13 @@ public class GraphPanel extends JComponent {
 				} //if (drawnArc.checkIsCorect(clickedLocation)) {
 			}
 		}
-		
-		
 	} //end class MouseHandler
 
 	/**
 	 * Prywatna klasa wewnątrz GraphPanel, realizująca interakcje ze strony
 	 * myszy związane z jej poruszaniem się po arkuszu.
 	 * @author students
+	 * @author MR
 	 *
 	 */
 	private class MouseMotionHandler extends MouseMotionAdapter {
@@ -1251,6 +1278,14 @@ public class GraphPanel extends JComponent {
 		public void mouseDragged(MouseEvent e) {
 			Point dragPoint = e.getPoint();
 			dragPoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
+			if(arcBreakPoint != null) {
+				int x = dragPoint.x < 10 ? 10 : dragPoint.x;
+				int y = dragPoint.y < 10 ? 10 : dragPoint.y;
+				arcBreakPoint.setLocation(x, y);
+				e.getComponent().repaint();
+				return;
+			}
+			
 			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.READARC || getDrawMode() == DrawModes.ARC_INHIBITOR 
 					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL)  
 					&& drawnArc != null)
@@ -1270,6 +1305,10 @@ public class GraphPanel extends JComponent {
 						el.updateLocation(delta);
 					getSelectionManager().dragSelected();
 				}
+				for (Arc a : getSelectionManager().getSelectedArcs()) {
+					a.updateAllBreakPointsLocations(delta);
+				}
+				
 				adjustScroll(dragPoint, mousePt);
 				mousePt = dragPoint;
 			}
@@ -1298,15 +1337,16 @@ public class GraphPanel extends JComponent {
 				e.getComponent().repaint();
 			} else {
 				//clearDrawnArc(); //WTH?!
-				//e.getComponent().repaint(); //DZYZYS!!!!!!!!!!!!
+				//e.getComponent().repaint(); //ŁO JEZU!!!!!!!!!!!!
 			}
-			//e.getComponent().repaint(); //WTF?!
+			//e.getComponent().repaint(); //WTF?! NA CZYM TO MA DZIAŁAĆ, NA KOMPACH NASA???
 		}
 	} //end class MouseMotionHandler
 
 	/**
 	 * Wewnątrzna klasa odpowiedzialna za obługę rolki myszy.
 	 * @author students
+	 * @author MR
 	 *
 	 */
 	public class MouseWheelHandler implements MouseWheelListener {

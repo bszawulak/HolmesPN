@@ -790,23 +790,26 @@ public class SelectionManager {
 					ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 					overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
 				}
-			}
-			if(el.getParentNode().getType() == PetriNetElementType.META && !safetyNodesList.contains(el.getParentNode())) {
+			} else if(el.getParentNode().getType() == PetriNetElementType.META && !safetyNodesList.contains(el.getParentNode())) {
 				try {
 					MetaNode node = (MetaNode)el.getParentNode();
 					safetyNodesList.add(node);
 					int sheetID = node.getRepresentedSheetID();
 					int sheetIndex = overlord.getWorkspace().getIndexOfId(sheetID);
 					overlord.getWorkspace().setSelectedDock(sheetIndex);
+					invokeActionListener();
 					break;
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null, "Wrong sheet number linked to this meta-node.", 
 							"Serious problem", JOptionPane.WARNING_MESSAGE);
+					invokeActionListener();
 					break;
 				}
+			} else {
+				invokeActionListener();
 			}
 		}
-		invokeActionListener();
+		
 	}
 
 	/**
@@ -830,7 +833,7 @@ public class SelectionManager {
 				}
 			}
 		}
-		invokeActionListener();
+		//invokeActionListener();
 	}
 
 	// ================================================================================
