@@ -4,32 +4,34 @@ import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
 
-import holmes.windows.HolmesFiringRatesManager;
+import holmes.petrinet.data.SPNdataVector.SPNvectorSuperType;
+import holmes.windows.HolmesSPNmanager;
 
 /**
- * Klasa tablicy firing rates dla tranzycji.
+ * Klasa tablicy wszystkich wektorów tranzycji SPN.
  * 
  * @author MR
  */
-public class FiringRatesVectorTableModel extends DefaultTableModel {
+public class SPNdataVectorsTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = 3869824360655880298L;
 	private String[] columnNames;
-	private ArrayList<FRvectorClass> dataMatrix;
+	private ArrayList<SPNvectorTableClass> dataMatrix;
 	private int dataSize;
 	public boolean changes = false;
-	private HolmesFiringRatesManager boss;
+	private HolmesSPNmanager boss;
 	
-	public class FRvectorClass {
-		String selected;
-		int ID;
-		String frName;
+	public class SPNvectorTableClass {
+		public String selected;
+		public int ID;
+		public String frName;
+		public SPNvectorSuperType superType;
 	}
 
 	/**
-	 * Konstruktor obiektu tablicy FiringRatesTransitionsTableModel.
-	 * @param boss HolmesFiringRatesManager - główne okno managera
+	 * Konstruktor obiektu tablicy SPNdataVectorsTableModel.
+	 * @param boss HolmesSPNmanager - główne okno managera
 	 */
-	public FiringRatesVectorTableModel(HolmesFiringRatesManager boss) {
+	public SPNdataVectorsTableModel(HolmesSPNmanager boss) {
 		this.boss = boss;
 		clearModel();
 	}
@@ -38,26 +40,29 @@ public class FiringRatesVectorTableModel extends DefaultTableModel {
 	 * Czyści model tablicy.
 	 */
 	public void clearModel() {
-		columnNames = new String[3];
+		columnNames = new String[4];
 		columnNames[0] = "Selected";
 		columnNames[1] = "ID";
-		columnNames[2] = "Vector name";
+		columnNames[2] = "Description";
+		columnNames[3] = "SuperType";
 		
-		dataMatrix = new ArrayList<FRvectorClass>();
+		dataMatrix = new ArrayList<SPNvectorTableClass>();
 		dataSize = 0;
 	}
 	
 	/**
-	 * Dodawanie nowego wiersza do tablicy wektorów firing rates.
+	 * Dodawanie nowego wiersza do tablicy wektorów SPN.
 	 * @param selected String - czy wybrany wektor
 	 * @param ID int - indeks wektora
 	 * @param name String - opis
+	 * @param superType SPNvectorSuperType - typ wektora danych SPN
 	 */
-	public void addNew(String selected, int ID, String name) {
-		FRvectorClass row = new FRvectorClass();
+	public void addNew(String selected, int ID, String name, SPNvectorSuperType superType) {
+		SPNvectorTableClass row = new SPNvectorTableClass();
 		row.selected = selected;
 		row.ID = ID;
 		row.frName = name;
+		row.superType = superType;
 		dataMatrix.add(row);
 		dataSize++;
 	}
@@ -122,6 +127,8 @@ public class FiringRatesVectorTableModel extends DefaultTableModel {
 				return dataMatrix.get(rowIndex).ID;
 			case 2:
 				return dataMatrix.get(rowIndex).frName;
+			case 3:
+				return dataMatrix.get(rowIndex).superType;
 		}
 		return null;
 	}

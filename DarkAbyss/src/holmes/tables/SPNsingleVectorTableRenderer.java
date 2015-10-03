@@ -12,25 +12,24 @@ import javax.swing.table.TableCellRenderer;
 import holmes.petrinet.elements.Transition.StochaticsType;
 
 /**
- * Klasa rysująca tablicę tranzycji dla okna edycji firing rates.
+ * Klasa rysująca tablicę tranzycji dla jednego wektora danych SPN.
  * @author MR
  */
-public class FiringRatesOneTransTableRenderer implements TableCellRenderer {
+public class SPNsingleVectorTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
 	@SuppressWarnings("unused")
 	private JTable table;
 	private static final Font fontNormal =  new Font("Verdana", Font.PLAIN, 12);
 	
 	/**
-	 * Konstruktor domyślny obiektów klasy FiringRatesOneTransTableRenderer.
+	 * Konstruktor domyślny obiektów klasy SPNoneTransTableRenderer.
 	 */
-	public FiringRatesOneTransTableRenderer(JTable table) {
+	public SPNsingleVectorTableRenderer(JTable table) {
 		this.table = table;
 	}
 	
 	/**
-	 * Przeciążona metoda odpowiedzialna za zwrócenie komórki tabeli w zależności od ustawionego
-	 * modelu tabeli.
+	 * Przeciążona metoda odpowiedzialna za zwrócenie komórki tabeli.
 	 * @param table Jtable - tabela danych
 	 * @param value Object - wartość do komórki
 	 * @param isSelected boolean - czy zaznaczona komórka

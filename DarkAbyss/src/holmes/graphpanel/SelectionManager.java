@@ -880,10 +880,13 @@ public class SelectionManager {
 		for (Arc a : this.getGraphPanelArcs()) {
 			if (a.getLocationSheetId() == this.getGraphPanel().getSheetId())
 				if (a.checkIntersection(p)) {
-					if (a.getPairedArc() != null && !a.isMainArcOfPair())
-						return a.getPairedArc();
-					else
-						return a;
+					//TODO:
+					return a;
+					
+					//if (a.getPairedArc() != null && !a.isMainArcOfPair())
+						//return a.getPairedArc();
+					//else
+						//return a;
 				}
 		}
 		return null;

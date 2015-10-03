@@ -7,40 +7,42 @@ import java.util.EventObject;
 import javax.swing.table.DefaultTableModel;
 
 import holmes.petrinet.elements.Transition.StochaticsType;
-import holmes.windows.HolmesFiringRatesEditor;
+import holmes.windows.HolmesSPNeditor;
 
 /**
- * Model tabeli firing rates tranzycji sieci.
+ * Model tabeli tranzycji dla jednego wektora danych SPN.
  * 
  * @author MR
  */
-public class FiringRatesOneTransTableModel extends DefaultTableModel {
+public class SPNsingleVectorTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = -6898959322396110431L;
 	private String[] columnNames;
 	private ArrayList<FRDataClass> dataMatrix;
 	private int dataSize;
-	private HolmesFiringRatesEditor boss;
+	@SuppressWarnings("unused")
+	private HolmesSPNeditor boss;
+	@SuppressWarnings("unused")
 	private int frVectorIndex;
 	public boolean changes = false;
 	
 	public class FRDataClass {
 		public int ID;
 		public String name;
-		public Double firingRate;
+		public String dataVector;
 		public StochaticsType subType;
 	}
 
 	/**
-	 * Konstruktor klasy modelującej tablicę wektora firing rate.
+	 * Konstruktor klasy modelującej tablicę wektora danych tranzycji SPN.
 	 */
-	public FiringRatesOneTransTableModel(HolmesFiringRatesEditor boss, int frVectorIndex) {
+	public SPNsingleVectorTableModel(HolmesSPNeditor boss, int frVectorIndex) {
 		this.boss = boss;
 		this.frVectorIndex = frVectorIndex;
 		clearModel();
 	}
 	
 	/**
-	 * Czyści model tablicy.
+	 * Czyści model tablicy danych tranzycji SPN.
 	 */
 	public void clearModel() {
 		columnNames = new String[4];
@@ -54,11 +56,18 @@ public class FiringRatesOneTransTableModel extends DefaultTableModel {
 		
 	}
 	
-	public void addNew(int ID, String name, double firingRate, StochaticsType sType) {
+	/**
+	 * Dodaje nowy wiersza do modelu tablicy danych tranzycji SPN.
+	 * @param ID int - indeks trabzycji
+	 * @param name String - nazwa tranzycji
+	 * @param SPNtransData String - dane dla SPN
+	 * @param sType StochaticsType - podtyp w SPN
+	 */
+	public void addNew(int ID, String name, String SPNtransData, StochaticsType sType) {
 		FRDataClass row = new FRDataClass();
 		row.ID = ID;
 		row.name = name;
-		row.firingRate = firingRate;
+		row.dataVector = SPNtransData;
 		row.subType = sType;
 		dataMatrix.add(row);
 		dataSize++;
@@ -105,11 +114,7 @@ public class FiringRatesOneTransTableModel extends DefaultTableModel {
      * Zwraca status edytowalności komórek.
      */
     public boolean isCellEditable(int row, int column) {
-    	if(column == 2) {
-    		return true;
-    	} else { 
-    		return false;
-    	}
+    	return false;
     }
     
     /**
@@ -137,7 +142,7 @@ public class FiringRatesOneTransTableModel extends DefaultTableModel {
 			case 1:
 				return dataMatrix.get(rowIndex).name;
 			case 2:
-				return dataMatrix.get(rowIndex).firingRate;
+				return dataMatrix.get(rowIndex).dataVector;
 			case 3:
 				return dataMatrix.get(rowIndex).subType;
 		}
@@ -151,15 +156,14 @@ public class FiringRatesOneTransTableModel extends DefaultTableModel {
 	 * @param col int - nr kolumny
 	 */
 	public void setValueAt(Object value, int row, int col) {
-		double newValue = 0;
 		try {
 			if(col == 2) {
-				newValue = Double.parseDouble(value.toString());
-				dataMatrix.get(row).firingRate = newValue;
-				boss.changeRealValue(frVectorIndex, row, newValue);
+				dataMatrix.get(row).dataVector = value.toString();
+			} else if(col == 3) {
+				dataMatrix.get(row).subType = (StochaticsType)value;
 			}
 		} catch (Exception e) {
-			//dataMatrix.get(row).firingRate = 1.0;
+
 		}
 	}
 }

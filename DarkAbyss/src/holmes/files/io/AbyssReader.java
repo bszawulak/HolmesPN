@@ -80,7 +80,7 @@ public class AbyssReader {
 			
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().createCleanState();
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessSSAmanager().createCleanSSAvector();
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager().createCleanFRVector();
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager().createCleanSPNdataVector();
 			
 			xstream.fromXML(source);
 			GUIManager.getDefaultGUIManager().log("Petri net (.abyss) successfully read from file "+path, "text", true);

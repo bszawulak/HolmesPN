@@ -63,7 +63,8 @@ public class HolmesNotepad extends JFrame {
 		} catch (Exception e ) {
 			
 		}
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
 	/**

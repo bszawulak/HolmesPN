@@ -226,7 +226,7 @@ public class InvariantsCalculator implements Runnable {
 			int pPosition = 0;
 			int incidenceValue = 0;
 			
-			if(oneArc.getArcType() != TypesOfArcs.NORMAL) {
+			if(oneArc.getArcType() != TypesOfArcs.NORMAL && !(oneArc.getArcType() == TypesOfArcs.READARC)) {
 				continue;
 			}
 

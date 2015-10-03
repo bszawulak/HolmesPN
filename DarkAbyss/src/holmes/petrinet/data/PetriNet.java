@@ -64,8 +64,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<String> mctNames;
 	private NetSimulationDataCore simData;
 	private MCSDataMatrix mcsData;
-	private StatesManager statesManager;
-	private FiringRatesManager firingRatesManager;
+	private StatePlacesManager statesManager;
+	private SPNdataVectorManager firingRatesManager;
 	private SSAplacesManager ssaManager;
 	
 	private String lastFileName = "";
@@ -108,7 +108,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.mcsData = new MCSDataMatrix();
 		this.methods = new PetriNetMethods(this);
 		this.simData = new NetSimulationDataCore();
-		this.statesManager = new StatesManager(this);
+		this.statesManager = new StatePlacesManager(this);
 		this.ssaManager = new SSAplacesManager(this);
 	}
 
@@ -122,9 +122,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.workspace = workspace;
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
 		this.setMCTanalyzer(new MCTCalculator(this));
-		this.statesManager = new StatesManager(this);
+		this.statesManager = new StatePlacesManager(this);
 		this.ssaManager = new SSAplacesManager(this);
-		this.firingRatesManager = new FiringRatesManager(this);
+		this.firingRatesManager = new SPNdataVectorManager(this);
 		resetComm();
 		this.dataCore.netName = name;
 		this.mcsData = new MCSDataMatrix();
@@ -804,7 +804,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Umożliwia dostęp do managera stanów sieci.
 	 * @return StatesManager - obiekt managera
 	 */
-	public StatesManager accessStatesManager() {
+	public StatePlacesManager accessStatesManager() {
 		return this.statesManager;
 	}
 	
@@ -816,7 +816,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		return this.ssaManager;
 	}
 	
-	public void replaceStatesManager(StatesManager newStatesMngr) {
+	public void replaceStatesManager(StatePlacesManager newStatesMngr) {
 		statesManager = newStatesMngr;
 	}
 	
@@ -824,11 +824,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Umożliwia dostęp do managera odpaleń tranzycji SPN sieci.
 	 * @return FiringRatesManager - obiekt managera fr
 	 */
-	public FiringRatesManager accessFiringRatesManager() {
+	public SPNdataVectorManager accessFiringRatesManager() {
 		return this.firingRatesManager;
 	}
 	
-	public void replaceStatesManager(FiringRatesManager newStatesMngr) {
+	public void replaceStatesManager(SPNdataVectorManager newStatesMngr) {
 		this.firingRatesManager = newStatesMngr;
 	}
 	
@@ -1073,7 +1073,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					addArcsAndNodes(handler.getArcList(), handler.getNodesList());
 					accessStatesManager().createCleanState();
 					accessSSAmanager().createCleanSSAvector();
-					accessFiringRatesManager().createCleanFRVector();
+					accessFiringRatesManager().createCleanSPNdataVector();
 					
 					String name = path;
 					int ind = name.lastIndexOf("\\");
@@ -1090,7 +1090,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					SnoopyReader reader = new SnoopyReader(0, path);
 					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
 					accessStatesManager().createCleanState();
-					accessFiringRatesManager().createCleanFRVector();
+					accessFiringRatesManager().createCleanSPNdataVector();
 					accessSSAmanager().createCleanSSAvector();
 					overlord.subnetsGraphics.addRequiredSheets();
 					overlord.subnetsGraphics.resizePanels();
@@ -1108,7 +1108,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				communicationProtocol.readPNT(path);
 				addArcsAndNodes(communicationProtocol.getArcArray(), communicationProtocol.getNodeArray());
 				accessStatesManager().createCleanState();
-				accessFiringRatesManager().createCleanFRVector();
+				accessFiringRatesManager().createCleanSPNdataVector();
 			}
 			
 			overlord.log("Petri net successfully imported from file "+path, "text", true);

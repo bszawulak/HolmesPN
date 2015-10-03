@@ -10,16 +10,17 @@ import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
-import holmes.petrinet.data.FiringRatesManager;
+import holmes.petrinet.data.SPNdataVectorManager;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SSAplacesManager;
 import holmes.petrinet.data.SSAplacesVector;
 import holmes.petrinet.data.SSAplacesVector.SSAdataType;
 import holmes.petrinet.data.StatePlacesVector;
-import holmes.petrinet.data.StatesManager;
-import holmes.petrinet.data.FiringRateTransVector;
-import holmes.petrinet.data.FiringRateTransVector.FRContainer;
+import holmes.petrinet.data.StatePlacesManager;
+import holmes.petrinet.data.SPNdataVector;
+import holmes.petrinet.data.SPNdataVector.SPNdataContainer;
+import holmes.petrinet.data.SPNdataVector.SPNvectorSuperType;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -159,10 +160,10 @@ public class ProjectReader {
 			if(firingRates) {
 				status = readFiringRates(buffer);
 				if(!status) {
-					projectCore.accessFiringRatesManager().createCleanFRVector();
+					projectCore.accessFiringRatesManager().createCleanSPNdataVector();
 				}
 			} else {
-				projectCore.accessFiringRatesManager().createCleanFRVector();
+				projectCore.accessFiringRatesManager().createCleanSPNdataVector();
 			}
 			
 			if(ssaData) {
@@ -837,7 +838,7 @@ public class ProjectReader {
 	}
 	
 	/**
-	 * Metoda czytające dane o łukach w pliku projektu.
+	 * Metoda czytające dane o łukach z pliku projektu Holmes.
 	 * @param line String - ostatnio przeczytana linia
 	 * @param places ArrayList[Place] - wektor miejsc
 	 * @param transitions ArrayList[Transition] - wektor tranzycji
@@ -913,11 +914,9 @@ public class ProjectReader {
 					ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 					Arc newArc = new Arc(pEL, tEL, "", weight, arcType);
 					
+					newArc.clearBreakPoints();
 					if(tab.length > 3)
 						addBroken(newArc, tab[3]);
-					else
-						newArc.clearBreakPoints();
-					
 					return newArc;
 				} else { //metaSecond == true
 					placeIndex = Integer.parseInt(arcDataTable[0]);
@@ -929,11 +928,9 @@ public class ProjectReader {
 					ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 					Arc newArc = new Arc(pEL, mEL, "", weight, arcType);
 					
+					newArc.clearBreakPoints();
 					if(tab.length > 3)
 						addBroken(newArc, tab[3]);
-					else
-						newArc.clearBreakPoints();
-					
 					return newArc;
 				}
 			} else { //placeFirst = false
@@ -948,11 +945,9 @@ public class ProjectReader {
 						ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 						Arc newArc = new Arc(mEL, tEL, "", weight, arcType);
 						
+						newArc.clearBreakPoints();
 						if(tab.length > 3)
 							addBroken(newArc, tab[3]);
-						else
-							newArc.clearBreakPoints();
-						
 						return newArc;
 					} else { //drugie jest miejsce
 						metaIndex = Integer.parseInt(arcDataTable[0]);
@@ -964,11 +959,9 @@ public class ProjectReader {
 						ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 						Arc newArc = new Arc(mEL, pEL, "", weight, arcType);
 						
+						newArc.clearBreakPoints();
 						if(tab.length > 3)
 							addBroken(newArc, tab[3]);
-						else
-							newArc.clearBreakPoints();
-						
 						return newArc;
 					}
 				} else { //placesFirst = false, metaFirst = false -> pierwsza jest tranzycja
@@ -982,11 +975,9 @@ public class ProjectReader {
 						ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 						Arc newArc = new Arc(tEL, mEL, "", weight, arcType);
 						
+						newArc.clearBreakPoints();
 						if(tab.length > 3)
 							addBroken(newArc, tab[3]);
-						else
-							newArc.clearBreakPoints();
-						
 						return newArc;
 					} else { //drugie jest miejsce
 						transIndex = Integer.parseInt(arcDataTable[0]);
@@ -998,11 +989,9 @@ public class ProjectReader {
 						ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 						Arc newArc = new Arc(tEL, pEL, "", weight, arcType);
 						
+						newArc.clearBreakPoints();
 						if(tab.length > 3)
 							addBroken(newArc, tab[3]);
-						else
-							newArc.clearBreakPoints();
-						
 						return newArc;
 					}
 				}
@@ -1013,12 +1002,17 @@ public class ProjectReader {
 		return null;
 	}
 
+	/**
+	 * Dodaje nowy wektór punktów łamiących łuk.
+	 * @param newArc Arc - łuk
+	 * @param brokenLine String - linia punktów
+	 */
 	private void addBroken(Arc newArc, String brokenLine) {
-		// TODO Auto-generated method stub
-		String[] tab = brokenLine.split("|");
-		for(String s : tab) {
+		String[] tab = brokenLine.split("x");
+		for(int i=0; i<tab.length; i++) {
+			String s = tab[i];
 			try {
-				String[] coords = s.split(".");
+				String[] coords = s.split("-");
 				int x = Integer.parseInt(coords[0]);
 				int y = Integer.parseInt(coords[1]);
 				newArc.addBreakPoint(new Point(x,y));;
@@ -1315,7 +1309,7 @@ public class ProjectReader {
 				return false;
 			
 			boolean go = true;
-			StatesManager statesMngr = projectCore.accessStatesManager();
+			StatePlacesManager statesMngr = projectCore.accessStatesManager();
 			statesMngr.reset(true);
 
 			line = buffer.readLine();
@@ -1380,78 +1374,155 @@ public class ProjectReader {
 				return false;
 			
 			boolean go = true;
-			FiringRatesManager frateMngr = projectCore.accessFiringRatesManager();
+			SPNdataVectorManager frateMngr = projectCore.accessFiringRatesManager();
 			frateMngr.reset(true);
 
 			line = buffer.readLine();
+			readedLine++;
+			int readProtocol = 0;
 			try {
 				while(go) {
-					readedLine++;
-					FiringRateTransVector frVector = new FiringRateTransVector();
-					line = line.replace(" ", "");
-					String[] tabFR = line.split(";");
 					
-					line = buffer.readLine();//typ tranzycji
+					SPNdataVector frVector = new SPNdataVector();
 					line = line.replace(" ", "");
-					String[] tabType = line.split(";");
 					
-					ArrayList<FRContainer> dataVector = new ArrayList<FRContainer>();
-					for(int i=0; i<tabFR.length; i++) {
-						StochaticsType subType = StochaticsType.ST;
-						if(tabType[i].equals("DT"))
-							subType = StochaticsType.DT;
-						else if(tabType[i].equals("IM"))
-							subType = StochaticsType.IM;
-						else if(tabType[i].equals("SchT"))
-							subType = StochaticsType.SchT;
+					String[] dataVectorTable = line.split(";");
+					
+					if(dataVectorTable.length < (transitionsProcessed + 10)) {
+						readProtocol = 0;
+						//old project file
+						line = buffer.readLine();//typ tranzycji
+						readedLine++;
+						line = line.replace(" ", "");
+						String[] tabType = line.split(";");
 						
-						FRContainer frc = frVector.newContainer(Double.parseDouble(tabFR[i]), subType);
+						ArrayList<SPNdataContainer> dataVector = new ArrayList<SPNdataContainer>();
+						for(int i=0; i<dataVectorTable.length; i++) {
+							StochaticsType subType = StochaticsType.ST;
+							if(tabType[i].equals("DT"))
+								subType = StochaticsType.DT;
+							else if(tabType[i].equals("IM"))
+								subType = StochaticsType.IM;
+							else if(tabType[i].equals("SchT"))
+								subType = StochaticsType.SchT;
+							
+							//TODO: nowy konstruktor, wektor zapisu
+							SPNdataContainer frc = frVector.newContainer(dataVectorTable[i], subType);
 
-						dataVector.add(frc);
+							dataVector.add(frc);
+						}
+						frVector.accessVector().addAll(dataVector); //boxing
+					} else {
+						readProtocol = 1;
+						//new SPN block
+						frVector.setSPNtype(SPNvectorSuperType.SPN);
+						frVector.setDescription("Read errors");
+						ArrayList<SPNdataContainer> dataVector = parseSPNdataVector(dataVectorTable, frVector);
+						frVector.accessVector().addAll(dataVector);
 					}
-					frVector.accessVector().addAll(dataVector); //boxing
-					
+
 					line = buffer.readLine(); //dane dodatkowe
+					readedLine++;
 					line = line.trim();
-					tabFR = line.split(";");
-					frVector.setFrType(tabFR[0]);
+					dataVectorTable = line.split(";");
+					
+					if(dataVectorTable[0].equals("SSA")) {
+						frVector.setSPNtype(SPNvectorSuperType.SSA);
+					} else {
+						frVector.setSPNtype(SPNvectorSuperType.SPN);
+					}
 
 					line = buffer.readLine();
+					readedLine++;
 					line = line.trim();
 					line = Tools.decodeString(line);
 					frVector.setDescription(line);
 
 					line = buffer.readLine();
+					readedLine++;
 					if(line.contains("<EOFRv>")) {
 						go = false;
+						readedLine--;
 					}
 					
-					frateMngr.accessFRMatrix().add(frVector); //boxing in manager
+					frateMngr.accessSPNmatrix().add(frVector); //boxing in manager
 				}
 			} catch (Exception e) {
-				overlord.log("Operation failed, wrong firing rates data "+(readedLine), "error", true);
-				if(frateMngr.accessFRMatrix().size() == 0) {
-					frateMngr.createCleanFRVector();
+				overlord.log("Operation failed, wrong SPN data in line "+(readedLine), "error", true);
+				if(frateMngr.accessSPNmatrix().size() == 0) {
+					frateMngr.createCleanSPNdataVector();
 				}
 			}
 			
-			if((readedLine/4) > frateMngr.accessFRMatrix().size()) {
-				overlord.log("Operation failed, wrong firing rates data "+(readedLine), "error", true);
-				if(frateMngr.accessFRMatrix().size() == 0) {
-					frateMngr.createCleanFRVector();
-				} else {
-					frateMngr.reset(false); //false!!!
-					frateMngr.createCleanFRVector();
+			if(readProtocol == 0) {
+				if((readedLine/4) > frateMngr.accessSPNmatrix().size()) {
+					overlord.log("Error: SPN vector could not be read. Creating clean vector.", "error", true);
+					if(frateMngr.accessSPNmatrix().size() == 0) {
+						frateMngr.createCleanSPNdataVector();
+					} else {
+						frateMngr.reset(false); //false!!!
+						frateMngr.createCleanSPNdataVector();
+					}
+				}
+			} else {
+				if((readedLine/3) > frateMngr.accessSPNmatrix().size()) {
+					
+					if(frateMngr.accessSPNmatrix().size() == 0) {
+						frateMngr.createCleanSPNdataVector();
+						overlord.log("Error: SPN vector could not be read. Creating clean vector.", "error", true);
+					} else {
+						overlord.log("Warning: some SPN vector could not be read properly. Possible data corruption.", "error", true);
+						//frateMngr.reset(false); //false!!!
+						//frateMngr.createCleanSPNdataVector();
+					}
 				}
 			}
 			
 			return true;
 		} catch (Exception e) {
-			overlord.log("Reading firing rates vectors failed.", "error", true);
+			overlord.log("Reading SPN data vectors failed.", "error", true);
 			return false;
 		}
 	}
 	
+	private ArrayList<SPNdataContainer> parseSPNdataVector(String[] dataVectorTable, SPNdataVector frVector) {
+		ArrayList<SPNdataContainer> spnVector = new ArrayList<SPNdataContainer>();
+		
+		/*
+		 * public String ST_function = "";
+		public int IM_priority = 0;
+		public int DET_delay = 0;
+		public String SCH_start = "";
+		public int SCH_rep = 0;
+		public String SCH_end = "";
+		public StochaticsType sType = StochaticsType.ST;
+		 */
+		if(dataVectorTable[0].contains("version101:")) {
+			dataVectorTable[0] = dataVectorTable[0].replace("version101:", "");
+			for(int i=0; i<transitionsProcessed; i++) {
+				SPNdataContainer box = frVector.newContainer();
+				box.ST_function = dataVectorTable[i*7];
+				try { box.IM_priority = Integer.parseInt(dataVectorTable[(i*7)+1]); } catch(Exception e) {}
+				try { box.DET_delay = Integer.parseInt(dataVectorTable[(i*7)+2]); } catch(Exception e) {}
+				box.SCH_start = dataVectorTable[(i*7)+3];
+				try { box.SCH_rep = Integer.parseInt(dataVectorTable[(i*7)+4]); } catch(Exception e) {}
+				box.SCH_end = dataVectorTable[(i*7)+5];
+				
+				if(dataVectorTable[(i*7)+5].equals("IM"))
+					box.sType = StochaticsType.IM;
+				else if(dataVectorTable[(i*7)+5].equals("DT"))
+					box.sType = StochaticsType.DT;
+				else if(dataVectorTable[(i*7)+5].equals("SchT"))
+					box.sType = StochaticsType.SchT;
+				else
+					box.sType = StochaticsType.ST;
+				
+				spnVector.add(box);
+			}
+		}
+		return spnVector;
+	}
+
 	/**
 	 * Metoda czyta blok danych z wektorami SSA.
 	 * @param buffer BufferedReader - obiekt czytający

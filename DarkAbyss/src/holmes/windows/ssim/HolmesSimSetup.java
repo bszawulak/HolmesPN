@@ -28,7 +28,7 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.utilities.Tools;
-import holmes.windows.HolmesFiringRatesManager;
+import holmes.windows.HolmesSPNmanager;
 import holmes.windows.HolmesSSAwindowManager;
 import holmes.windows.HolmesStatesManager;
 
@@ -410,7 +410,7 @@ public class HolmesSimSetup extends JFrame {
 		createFRWindowButton.setToolTipText("Loop single transition simulation");
 		createFRWindowButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesFiringRatesManager(ego);
+				new HolmesSPNmanager(ego);
 			}
 		});
 		panel.add(createFRWindowButton);
@@ -457,7 +457,7 @@ public class HolmesSimSetup extends JFrame {
 		createFRWindowButton.setToolTipText("Set transition firing rates for SSA.");
 		createFRWindowButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesFiringRatesManager(ego);
+				new HolmesSPNmanager(ego);
 			}
 		});
 		panel.add(createFRWindowButton);

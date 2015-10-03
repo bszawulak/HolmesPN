@@ -30,7 +30,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.StatePlacesVector;
-import holmes.petrinet.data.StatesManager;
+import holmes.petrinet.data.StatePlacesManager;
 import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
 import holmes.tables.StatesPlacesEditorTableModel;
@@ -50,7 +50,7 @@ public class HolmesStatesEditor extends JFrame {
 	
 	private ArrayList<Place> places;
 	private PetriNet pn;
-	private StatesManager statesManager;
+	private StatePlacesManager statesManager;
 	
 	private long globalTokensNumber = 0;
 	

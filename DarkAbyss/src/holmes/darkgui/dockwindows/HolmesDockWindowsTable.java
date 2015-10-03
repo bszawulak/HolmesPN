@@ -117,6 +117,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	private ElementLocation elementLocation;
 	public SpinnerModel nameLocationXSpinnerModel = null;
 	public SpinnerModel nameLocationYSpinnerModel = null;
+	private Arc pairedArc = null;
 	//MCT:
 	private int selectedMCTindex = -1;
 	private boolean colorMCT = false;
@@ -2106,7 +2107,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	 */
 	public void createArcSubWindow(Arc arc) {
 		int columnA_posX = 10;
-		int columnB_posX = 100;
+		int columnB_posX = 110;
 		int columnA_Y = 0;
 		int columnB_Y = 0;
 		int colACompLength = 70;
@@ -2115,10 +2116,11 @@ public class HolmesDockWindowsTable extends JPanel {
 		// set mode
 		mode = ARC;
 		element = arc;
+		pairedArc = arc.getPairedArc();
 		elementLocation = arc.getStartLocation();
 		
 		Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
-		
+		//TODO:
 		// ARC ID
 		JLabel idLabel = new JLabel("gID:", JLabel.LEFT);
 		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
@@ -2154,21 +2156,58 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(CreationPanel);
 		
         if(((Arc)element).getArcType() != TypesOfArcs.RESET) {
-        	// ARC WEIGHT
-        	JLabel weightLabel = new JLabel("Weight:", JLabel.LEFT);
-            weightLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-    		components.add(weightLabel);
-    		
-    		SpinnerModel weightSpinnerModel = new SpinnerNumberModel(arc.getWeight(), 0, Integer.MAX_VALUE, 1);
-    		JSpinner weightSpinner = new JSpinner(weightSpinnerModel);
-    		weightSpinner.setBounds(columnB_posX-10, columnB_Y += 20, colBCompLength/3, 20);
-    		weightSpinner.addChangeListener(new ChangeListener() {
-    			public void stateChanged(ChangeEvent e) {
-    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-    				setWeight(tokenz);
-    			}
-    		});
-    		components.add(weightSpinner);
+        	if(((Arc)element).getArcType() == TypesOfArcs.READARC && pairedArc != null) {
+        		String type1 = "T-->P";
+        		String type2 = "P-->T";
+            	if(((Arc)element).getStartNode() instanceof Place) {
+            		type1 = "P-->T";
+            		type2 = "T-->P";
+            	}
+            	JLabel weightLabel = new JLabel("Weight ("+type1+")", JLabel.LEFT);
+                weightLabel.setBounds(columnA_posX, columnA_Y += 20, 100, 20);
+        		components.add(weightLabel);
+        		
+        		SpinnerModel weightSpinnerModel = new SpinnerNumberModel(arc.getWeight(), 0, Integer.MAX_VALUE, 1);
+        		JSpinner weightSpinner = new JSpinner(weightSpinnerModel);
+        		weightSpinner.setBounds(columnB_posX-10, columnB_Y += 20, colBCompLength/3, 20);
+        		weightSpinner.addChangeListener(new ChangeListener() {
+        			public void stateChanged(ChangeEvent e) {
+        				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+        				setWeight(tokenz, (Arc)element);
+        			}
+        		});
+        		components.add(weightSpinner);
+        		
+        		JLabel weightLabel2 = new JLabel("Weight ("+type2+")", JLabel.LEFT);
+        		weightLabel2.setBounds(columnA_posX, columnA_Y += 20, 100, 20);
+        		components.add(weightLabel2);
+        		
+        		SpinnerModel weightSpinnerModel2 = new SpinnerNumberModel(pairedArc.getWeight(), 0, Integer.MAX_VALUE, 1);
+        		JSpinner weightSpinner2 = new JSpinner(weightSpinnerModel2);
+        		weightSpinner2.setBounds(columnB_posX-10, columnB_Y += 20, colBCompLength/3, 20);
+        		weightSpinner2.addChangeListener(new ChangeListener() {
+        			public void stateChanged(ChangeEvent e) {
+        				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+        				setWeight(tokenz, pairedArc);
+        			}
+        		});
+        		components.add(weightSpinner2);
+        	} else {
+        		JLabel weightLabel = new JLabel("Weight:", JLabel.LEFT);
+                weightLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+        		components.add(weightLabel);
+        		
+        		SpinnerModel weightSpinnerModel = new SpinnerNumberModel(arc.getWeight(), 0, Integer.MAX_VALUE, 1);
+        		JSpinner weightSpinner = new JSpinner(weightSpinnerModel);
+        		weightSpinner.setBounds(columnB_posX-10, columnB_Y += 20, colBCompLength/3, 20);
+        		weightSpinner.addChangeListener(new ChangeListener() {
+        			public void stateChanged(ChangeEvent e) {
+        				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+        				setWeight(tokenz, (Arc)element);
+        			}
+        		});
+        		components.add(weightSpinner);
+        	}
         }
 
 		// startNode
@@ -2188,11 +2227,11 @@ public class HolmesDockWindowsTable extends JPanel {
 		JLabel readArcLabel = new JLabel("Read arc:", JLabel.LEFT);
 		readArcLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(readArcLabel);
-		Arc readArc = arc.getPairedArc();
+		
 		
 		String txt = "no";
-		if(readArc != null) {
-			txt = "yes [paired arc ID: "+readArc.getID()+"]";
+		if(pairedArc != null) {
+			txt = "yes [paired arc ID: "+pairedArc.getID()+"]";
 		} else {
 			if(InvariantsTools.isDoubleArc(arc) == true) {
 				txt = "double arc (hidden readarc)";
@@ -4507,9 +4546,9 @@ public class HolmesDockWindowsTable extends JPanel {
 	 * Metoda zmienia wagę dla łuku sieci, poza listenerem, który
 	 * jest klasą anonimową (i nie widzi pola element).
 	 * @param weight int - nowa waga
+	 * @param arc Arc - łuk
 	 */
-	private void setWeight(int weight) {
-		Arc arc = (Arc) element;
+	private void setWeight(int weight, Arc arc) {
 		if (mode == ARC) {
 			arc.setWeight(weight);
 			repaintGraphPanel();

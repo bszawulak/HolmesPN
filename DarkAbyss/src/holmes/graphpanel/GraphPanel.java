@@ -28,7 +28,6 @@ import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.subnets.SubnetsTools;
 import holmes.utilities.Tools;
 import holmes.workspace.WorkspaceSheet;
-import javafx.scene.shape.DrawMode;
 
 /**
  * Klasa, której zadaniem jest reprezentacja graficzna używanej w programie
@@ -1035,9 +1034,7 @@ public class GraphPanel extends JComponent {
 						getMetaNodePopupMenu(el, PetriNetElementType.META).show(e);
 					}
 				}
-			}
-			
-			else if (a != null) { // kliknięto w łuk, więc zostanie on zaznaczony
+			} else if (a != null) { // kliknięto w łuk, więc zostanie on zaznaczony
 				if (getDrawMode() == DrawModes.ERASER) {
 					if(overlord.reset.isSimulatorActiveWarning(
 							"Operation impossible when simulator is working.", "Warning") == true)
@@ -1221,7 +1218,7 @@ public class GraphPanel extends JComponent {
 							} else if(arcType == DrawModes.READARC) {
 								//arc.setArcType(TypesOfArcs.INHIBITOR);
 								getArcs().add(arc);
-								Arc arc2 = new Arc(IdGenerator.getNextId(), clickedLocation, drawnArc.getStartLocation(), TypesOfArcs.NORMAL);
+								Arc arc2 = new Arc(IdGenerator.getNextId(), clickedLocation, drawnArc.getStartLocation(), TypesOfArcs.READARC);
 								getArcs().add(arc2);
 								arc.setArcType(TypesOfArcs.READARC);
 								arc2.setArcType(TypesOfArcs.READARC);

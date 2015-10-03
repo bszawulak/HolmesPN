@@ -190,8 +190,8 @@ public class Arc extends PetriNetElement {
 	 */
 	public void setWeight(int weight) {
 		this.weight = weight;
-		if (pairedArc != null && isMainArcOfPair)
-			pairedArc.setWeight(weight);
+		//if (pairedArc != null && isMainArcOfPair)
+		//	pairedArc.setWeight(weight);
 	}
 
 	/**

@@ -13,8 +13,8 @@ import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SSAplacesVector;
 import holmes.petrinet.data.StatePlacesVector;
-import holmes.petrinet.data.FiringRateTransVector;
-import holmes.petrinet.data.FiringRateTransVector.FRContainer;
+import holmes.petrinet.data.SPNdataVector;
+import holmes.petrinet.data.SPNdataVector.SPNdataContainer;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -45,7 +45,7 @@ public class ProjectWriter {
 	private ArrayList<ArrayList<Transition>> mctData = null;
 	private ArrayList<String> mctNames = null;
 	private ArrayList<StatePlacesVector> statesMatrix = null;
-	private ArrayList<FiringRateTransVector> firingRatesMatrix = null;
+	private ArrayList<SPNdataVector> firingRatesMatrix = null;
 	private ArrayList<SSAplacesVector> ssaMatrix = null;
 	
 	private String newline = "\n";
@@ -67,7 +67,7 @@ public class ProjectWriter {
 		mctData = projectCore.getMCTMatrix();
 		mctNames = projectCore.accessMCTnames();
 		statesMatrix = projectCore.accessStatesManager().accessStateMatrix();
-		firingRatesMatrix = projectCore.accessFiringRatesManager().accessFRMatrix();
+		firingRatesMatrix = projectCore.accessFiringRatesManager().accessSPNmatrix();
 		ssaMatrix = projectCore.accessSSAmanager().accessSSAmatrix();
 	}
 	
@@ -720,11 +720,12 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<FRvectors: "+frNumber+">"+newline);
 				for(int fr=0; fr<frNumber; fr++) {
 					sp = 4;
-					FiringRateTransVector frVector = firingRatesMatrix.get(fr);
+					SPNdataVector frVector = firingRatesMatrix.get(fr);
+					/*
 					String frLine = "";
 					String stochTypeLine = "";
-					for(FRContainer frc : frVector.accessVector()) {
-						frLine += frc.fr + ";";
+					for(SPNdataContainer frc : frVector.accessVector()) {
+						frLine += frc.ST_function + ";"; //TODO: moduł wektora zapisu
 						stochTypeLine += frc.sType + ";";
 					}
 					frLine = frLine.substring(0, frLine.length()-1); //usun ostatni ';'
@@ -732,9 +733,15 @@ public class ProjectWriter {
 					
 					stochTypeLine = stochTypeLine.substring(0, stochTypeLine.length()-1); //usun ostatni ';'
 					bw.write(spaces(sp)+stochTypeLine+newline);
+					*/
+					String dataLine = "version101:";
+					for(SPNdataContainer frc : frVector.accessVector()) {
+						dataLine += (frc.returnSaveVector()+";");
+					}
+					dataLine = dataLine.substring(0, dataLine.length()-1); //usun ostatni ';'
+					bw.write(spaces(sp)+dataLine+newline);
 					
-					String type = frVector.getFrType();
-					bw.write(spaces(sp)+type+";"+newline);
+					bw.write(spaces(sp)+frVector.getSPNtype()+";"+newline);
 					bw.write(spaces(sp)+Tools.convertToCode(frVector.getDescription())+newline);
 				}
 			} else {

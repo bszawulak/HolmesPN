@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * @author MR
  */
 public class SSAplacesVector {
-	private ArrayList<Double> stateVector;
+	private ArrayList<Double> ssaVector;
 	private String description = "";
 	private SSAdataType type;
 	private double experimentVolume;
@@ -19,7 +19,7 @@ public class SSAplacesVector {
 	 * Konstruktor obiektu klasy SSAplacesVector.
 	 */
 	public SSAplacesVector() {
-		stateVector = new ArrayList<Double>();
+		ssaVector = new ArrayList<Double>();
 		description = "Default SSA data vector description";
 		type = SSAdataType.MOLECULES;
 		experimentVolume = 0.0;
@@ -30,7 +30,7 @@ public class SSAplacesVector {
 	 * @param value double - liczba tokenów
 	 */
 	public void addPlace(double value) {
-		stateVector.add(value);
+		ssaVector.add(value);
 	}
 	
 	/**
@@ -39,10 +39,10 @@ public class SSAplacesVector {
 	 * @return boolean - true, jeśli operacja się udała
 	 */
 	public boolean removePlace(int index) {
-		if(index >= stateVector.size())
+		if(index >= ssaVector.size())
 			return false;
 		
-		stateVector.remove(index);
+		ssaVector.remove(index);
 		return true;
 	}
 	
@@ -51,7 +51,7 @@ public class SSAplacesVector {
 	 * @return int - rozmiar wektora SSA.
 	 */
 	public int getSize() {
-		return stateVector.size();
+		return ssaVector.size();
 	}
 	
 	/**
@@ -60,10 +60,10 @@ public class SSAplacesVector {
 	 * @return double - liczba cząstek
 	 */
 	public double getTokens(int index) {
-		if(index >= stateVector.size())
+		if(index >= ssaVector.size())
 			return -1;
 		else
-			return stateVector.get(index);
+			return ssaVector.get(index);
 	}
 	
 	/**
@@ -119,6 +119,6 @@ public class SSAplacesVector {
 	 * @return ArrayList[Double] - wektor stanu SSA
 	 */
 	public ArrayList<Double> accessVector() {
-		return this.stateVector;
+		return this.ssaVector;
 	}
 }

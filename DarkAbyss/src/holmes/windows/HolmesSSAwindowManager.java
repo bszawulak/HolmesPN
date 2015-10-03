@@ -80,6 +80,8 @@ public class HolmesSSAwindowManager extends JFrame {
     	fillTable();
     	setVisible(true);
     	parentWindow.setEnabled(false);
+    	
+    	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
 	/**

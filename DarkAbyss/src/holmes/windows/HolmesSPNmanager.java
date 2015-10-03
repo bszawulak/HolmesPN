@@ -22,43 +22,43 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.data.FiringRatesManager;
+import holmes.petrinet.data.SPNdataVectorManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
-import holmes.tables.FiringRatesVectorRenderer;
-import holmes.tables.FiringRatesVectorTableModel;
+import holmes.tables.SPNdataVectorsRenderer;
+import holmes.tables.SPNdataVectorsTableModel;
 import holmes.tables.RXTable;
 import holmes.utilities.Tools;
 
 /**
- * Okno zarządzania wektorami firing rates dla tranzycji stochastycznych.
+ * Okno zarządzania wektorami danych SPN dla tranzycji stochastycznych.
  * 
  * @author MR
  */
-public class HolmesFiringRatesManager extends JFrame {
+public class HolmesSPNmanager extends JFrame {
 	private static final long serialVersionUID = 8184934957669150556L;
 	private GUIManager overlord;
 	private JFrame parentWindow;
 	private JFrame ego;
 	@SuppressWarnings("unused")
 	private boolean doNotUpdate = false;
-	private FiringRatesVectorRenderer tableRenderer;
-	private FiringRatesVectorTableModel tableModel;
+	private SPNdataVectorsRenderer tableRenderer;
+	private SPNdataVectorsTableModel tableModel;
 	private JTable table;
 	private JPanel tablePanel;
 	private JTextArea vectorDescrTextArea;
 	
 	private ArrayList<Transition> transitions;
 	private PetriNet pn;
-	private FiringRatesManager firingRatesManager;
+	private SPNdataVectorManager spnManager;
 	
 	private int selectedRow;
 	
 	/**
-	 * Główny konstruktor okna menagera stanów początkowych.
+	 * Główny konstruktor okna menagera danych SPN.
 	 */
-	public HolmesFiringRatesManager(JFrame parent) {
-		setTitle("Holmes SPN transitions firing rates manager");
+	public HolmesSPNmanager(JFrame parent) {
+		setTitle("Holmes SPN transitions data manager");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
@@ -69,7 +69,7 @@ public class HolmesFiringRatesManager extends JFrame {
     	this.ego = this;
     	this.parentWindow = parent;
     	this.transitions = pn.getTransitions();
-    	this.firingRatesManager = pn.accessFiringRatesManager();
+    	this.spnManager = pn.accessFiringRatesManager();
     	this.selectedRow = 0;
     	
     	initalizeComponents();
@@ -77,6 +77,8 @@ public class HolmesFiringRatesManager extends JFrame {
     	fillTable();
     	setVisible(true);
     	parentWindow.setEnabled(false);
+    	
+    	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
 	/**
@@ -86,10 +88,10 @@ public class HolmesFiringRatesManager extends JFrame {
 	public JPanel getMainTablePanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("Firing rates vectors table"));
+		result.setBorder(BorderFactory.createTitledBorder("SPN vectors table"));
 		result.setPreferredSize(new Dimension(500, 500));
 		
-		tableModel = new FiringRatesVectorTableModel(this);
+		tableModel = new SPNdataVectorsTableModel(this);
 		table = new RXTable(tableModel);
 		((RXTable)table).setSelectAllForEdit(true);
 		
@@ -101,13 +103,15 @@ public class HolmesFiringRatesManager extends JFrame {
 		table.getColumnModel().getColumn(1).setPreferredWidth(30);
 		table.getColumnModel().getColumn(1).setMinWidth(30);
 		table.getColumnModel().getColumn(1).setMaxWidth(30);
-		table.getColumnModel().getColumn(2).setHeaderValue("Firing rate vector description");
+		table.getColumnModel().getColumn(2).setHeaderValue("SPN data vector description");
 		table.getColumnModel().getColumn(2).setMinWidth(50);
+		table.getColumnModel().getColumn(3).setHeaderValue("Vector type");
+		table.getColumnModel().getColumn(3).setMinWidth(80);
+		table.getColumnModel().getColumn(3).setMaxWidth(80);
 
-        
 		table.setName("FiringRatesTable");
 		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		tableRenderer = new FiringRatesVectorRenderer(table);
+		tableRenderer = new SPNdataVectorsRenderer(table);
 		table.setDefaultRenderer(Object.class, tableRenderer);
 		table.setDefaultRenderer(Double.class, tableRenderer);
 		table.setDefaultRenderer(Integer.class, tableRenderer);
@@ -161,7 +165,7 @@ public class HolmesFiringRatesManager extends JFrame {
 	 * @param value String - nowy opis
 	 */
 	public void changeState(int row, int column, String value) {
-		firingRatesManager.accessFRMatrix().get(row).setDescription(value);
+		spnManager.accessSPNmatrix().get(row).setDescription(value);
 	}
 	
 	/**
@@ -176,7 +180,7 @@ public class HolmesFiringRatesManager extends JFrame {
 		int posXda = 10;
 		int posYda = 25;
 		
-		JButton selectStateButton = new JButton("<html>Select this<br>firing rates</html>");
+		JButton selectStateButton = new JButton("<html>Select this<br>SPN vector</html>");
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
@@ -194,12 +198,12 @@ public class HolmesFiringRatesManager extends JFrame {
 				Object[] options = {"Set new rates", "Keep old ones",};
 				int n = JOptionPane.showOptionDialog(null,
 								"Set all transitions of the net according to the selected\n"
-								+ "firing rates vector (table row: "+selected+") ?",
+								+ "SPN data vector (table row: "+selected+") ?",
 								"Set new firing rates?", JOptionPane.YES_NO_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 				if (n == 0) {
 					tableModel.setSelected(selected);
-					firingRatesManager.setNetworkFRVector(selected);
+					spnManager.setNetworkSPNdataVector(selected);
 					tableModel.fireTableDataChanged();
 
 				}
@@ -207,7 +211,7 @@ public class HolmesFiringRatesManager extends JFrame {
 		});
 		result.add(selectStateButton);
 		
-		JButton addNewStateButton = new JButton("<html>Save current<br/>&nbsp;&nbsp;firing rates</html>");
+		JButton addNewStateButton = new JButton("<html>Save current<br/>&nbsp;&nbsp;SPN vector</html>");
 		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
@@ -221,10 +225,10 @@ public class HolmesFiringRatesManager extends JFrame {
 				Object[] options = {"Add new vector", "Cancel",};
 				int n = JOptionPane.showOptionDialog(null,
 								"Remember current net firing rates in the table?",
-								"Add new firing rates vactor?", JOptionPane.YES_NO_OPTION,
+								"Add new SPN data vactor?", JOptionPane.YES_NO_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 				if (n == 0) {
-					firingRatesManager.addCurrentStateAsFRVector();
+					spnManager.addCurrentFRasSPNdataVector();
 					addLastStateToTable();
 					tableModel.fireTableDataChanged();
 					overlord.markNetChange();
@@ -233,7 +237,7 @@ public class HolmesFiringRatesManager extends JFrame {
 		});
 		result.add(addNewStateButton);
 		
-		JButton replaceStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>firing rates</html>");
+		JButton replaceStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>SPN vector</html>");
 		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
@@ -249,7 +253,7 @@ public class HolmesFiringRatesManager extends JFrame {
 		});
 		result.add(replaceStateButton);
 		
-		JButton removeStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>firing rates</html>");
+		JButton removeStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>SPN vector</html>");
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
@@ -265,7 +269,7 @@ public class HolmesFiringRatesManager extends JFrame {
 		});
 		result.add(removeStateButton);
 		
-		JButton editStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>firing rates</html>");
+		JButton editStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>SPN vector</html>");
 		editStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
@@ -278,7 +282,7 @@ public class HolmesFiringRatesManager extends JFrame {
 				}
 				int selected = table.getSelectedRow();
 				if(selected > -1)
-					new HolmesFiringRatesEditor(ego, firingRatesManager.getFRVector(selected), selected);
+					new HolmesSPNeditor(ego, spnManager.getSPNdataVector(selected), selected);
 			}
 		});
 		result.add(editStateButton);
@@ -290,24 +294,24 @@ public class HolmesFiringRatesManager extends JFrame {
 	 */
 	private void removeStateAction() {
 		int selected = table.getSelectedRow();
-		int states = firingRatesManager.accessFRMatrix().size();
+		int states = spnManager.accessSPNmatrix().size();
 		if(states == 1) {
-			JOptionPane.showMessageDialog(null, "At least one net firing rates vector must remain!", 
+			JOptionPane.showMessageDialog(null, "At least one net SPN data vector must remain!", 
 					"Cannot delete!",JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
 		Object[] options = {"Remove vector", "Cancel",};
 		int n = JOptionPane.showOptionDialog(null,
-						"Remove selected firing rates vector from the table\n"
+						"Remove selected SPN data vector from the table\n"
 						+ "(table row: "+selected+") ?",
-						"Remove firing rates vector?", JOptionPane.YES_NO_OPTION,
+						"Remove SPN data vector?", JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
 		}
 		
-		firingRatesManager.removeFRVector(selected);
+		spnManager.removeSPNvector(selected);
 		fillTable();
 		overlord.markNetChange();
 	}
@@ -321,32 +325,32 @@ public class HolmesFiringRatesManager extends JFrame {
 	}
 	
 	/**
-	 * Zastępowanie wektora firing rates z tabeli, aktualnym stanem fr sieci.
+	 * Zastępowanie wektora danych SPN z tabeli, aktualnym stanem firing rates sieci.
 	 */
 	private void replaceStateAction() {
 		int selected = table.getSelectedRow();
 		Object[] options = {"Replace vector", "Cancel",};
 		int n = JOptionPane.showOptionDialog(null,
-						"Replace selected firing rates vector (table row: "+selected+")\n"
-								+ "with the currently set net rates?",
-						"Replace firing rates vector?", JOptionPane.YES_NO_OPTION,
+						"Replace selected SPN data vector (table row: "+selected+")\n"
+								+ "with the currently set net firing rates?",
+						"Replace SPN data vector?", JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
 		}
 		
-		firingRatesManager.replaceFRvectorWithNetState(selected);
+		spnManager.replaceSPNvectorWithNetFRates(selected);
 		fillTable();
 		overlord.markNetChange();
 	}
 	
 	/**
-	 * Metoda dodaje ostatni wektor firing rates z listy stanów do tabeli - potrzeba do akcji przycisku dodającego
+	 * Metoda dodaje ostatni wektor danych SPN z listy stanów do tabeli - potrzeba do akcji przycisku dodającego
 	 * aktualny stan sieci do tabeli stanów.
 	 */
 	private void addLastStateToTable() {
-		int states = firingRatesManager.accessFRMatrix().size();
-		tableModel.addNew("", states-1, firingRatesManager.getFRVectorDescription(states-1));
+		int states = spnManager.accessSPNmatrix().size();
+		tableModel.addNew("", states-1, spnManager.getSPNvectorDescription(states-1), spnManager.getSPNvectorType(states-1));
 	}
 
 	/**
@@ -373,7 +377,7 @@ public class HolmesFiringRatesManager extends JFrame {
             	JTextArea field = (JTextArea) e.getSource();
             	if(field != null) {
             		String newComment = field.getText();
-            		firingRatesManager.setFRvectorDescription(selectedRow, newComment);
+            		spnManager.setSPNvectorDescription(selectedRow, newComment);
             		selectedRow = table.getSelectedRow();
             		fillTable();
             		table.setRowSelectionInterval(selectedRow, selectedRow);
@@ -396,7 +400,7 @@ public class HolmesFiringRatesManager extends JFrame {
 	 * Ustawia pole opisu wybranego stanu.
 	 */
 	private void fillDescriptionField() {
-		String description = firingRatesManager.getFRVectorDescription(selectedRow);
+		String description = spnManager.getSPNvectorDescription(selectedRow);
 		vectorDescrTextArea.setText(description);
 	}
 	
@@ -421,13 +425,13 @@ public class HolmesFiringRatesManager extends JFrame {
 	private void fillTable() {
 		tableModel.clearModel();
 		
-		int selectedFR = firingRatesManager.selectedVector;
+		int selectedFR = spnManager.selectedVector;
 		
-    	for(int row=0; row<firingRatesManager.accessFRMatrix().size(); row++) {
+    	for(int row=0; row<spnManager.accessSPNmatrix().size(); row++) {
     		if(row == selectedFR) {
-    			tableModel.addNew("X", row, firingRatesManager.getFRVectorDescription(row));
+    			tableModel.addNew("X", row, spnManager.getSPNvectorDescription(row), spnManager.getSPNvectorType(row));
     		} else {
-    			tableModel.addNew("", row, firingRatesManager.getFRVectorDescription(row));
+    			tableModel.addNew("", row, spnManager.getSPNvectorDescription(row), spnManager.getSPNvectorType(row));
     		}
     	}
     	

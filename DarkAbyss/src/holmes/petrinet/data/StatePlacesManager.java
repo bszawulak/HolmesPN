@@ -11,7 +11,7 @@ import holmes.petrinet.elements.Place;
  * @author MR
  *
  */
-public class StatesManager {
+public class StatePlacesManager {
 	private GUIManager overlord;
 	private PetriNet pn;
 	
@@ -22,7 +22,7 @@ public class StatesManager {
 	 * Konstruktor obiektu klasy StatesManager
 	 * @param net PetriNet - główny obiekt sieci
 	 */
-	public StatesManager(PetriNet net) {
+	public StatePlacesManager(PetriNet net) {
 		overlord = GUIManager.getDefaultGUIManager();
 		this.pn = net;
 		

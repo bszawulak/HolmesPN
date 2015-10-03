@@ -11,11 +11,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 /**
- * Renderer tablicy wyświetlania wektorów firing rate.
+ * Renderer tablicy wyświetlania wszystkich wektorów danych SPN.
  * 
  * @author MR
  */
-public class FiringRatesVectorRenderer implements TableCellRenderer {
+public class SPNdataVectorsRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
 	private static final DecimalFormat formatter = new DecimalFormat( "#" );
 	@SuppressWarnings("unused")
@@ -24,9 +24,9 @@ public class FiringRatesVectorRenderer implements TableCellRenderer {
 	private static final Font fontBold =  new Font("Verdana", Font.BOLD, 9);
 	
 	/**
-	 * Konstruktor domyślny obiektów klasy FiringRatesVectorRenderer.
+	 * Konstruktor domyślny obiektów klasy SPNdataVectorsRenderer.
 	 */
-	public FiringRatesVectorRenderer(JTable table) {
+	public SPNdataVectorsRenderer(JTable table) {
 		this.table = table;
 	}
 

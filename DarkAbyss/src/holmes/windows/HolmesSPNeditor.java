@@ -2,10 +2,11 @@ package holmes.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -15,15 +16,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.data.FiringRatesManager;
+import holmes.petrinet.data.SPNdataVectorManager;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.data.FiringRateTransVector;
+import holmes.petrinet.data.SPNdataVector.SPNdataContainer;
+import holmes.petrinet.data.SPNdataVector;
 import holmes.petrinet.elements.Transition;
-import holmes.tables.FiringRatesOneTransTableModel;
-import holmes.tables.FiringRatesOneTransTableRenderer;
+import holmes.tables.SPNsingleVectorTableModel;
+import holmes.tables.SPNsingleVectorTableRenderer;
 import holmes.tables.RXTable;
 import holmes.utilities.Tools;
 
@@ -32,30 +36,31 @@ import holmes.utilities.Tools;
  * 
  * @author MR
  */
-public class HolmesFiringRatesEditor extends JFrame {
+public class HolmesSPNeditor extends JFrame {
 	private static final long serialVersionUID = -6810858686209063022L;
 	private GUIManager overlord;
 	private JFrame parentWindow;
+	private JFrame ego;
 	private TableCellRenderer tableRenderer;
-	private FiringRatesOneTransTableModel tableModel;
+	private SPNsingleVectorTableModel tableModel;
 	private JTable table;
 	private JPanel tablePanel;
-	private FiringRateTransVector frData;
+	private SPNdataVector frData;
 	private int frIndex;
 	private JTextArea vectorDescrTextArea;
 	
 	private ArrayList<Transition> transitions;
 	private PetriNet pn;
-	private FiringRatesManager firingRatesManager;
+	private SPNdataVectorManager firingRatesManager;
 	
 	/**
-	 * Główny konstruktor okna menagera stanów początkowych.
+	 * Główny konstruktor okna menagera danych SPN.
 	 * @param parent JFrame - okno wywołujące
-	 * @param frData TransFiringRateVector - wektor firing rates
+	 * @param frData SPNtransitionsVector - wektor danych SPN
 	 * @param frIndex int - indeks powyższego wektora w tablicy
 	 */
-	public HolmesFiringRatesEditor(JFrame parent, FiringRateTransVector frData, int frIndex) {
-		setTitle("Holmes firing rates editor");
+	public HolmesSPNeditor(JFrame parent, SPNdataVector frData, int frIndex) {
+		setTitle("Holmes SPN data editor");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {
@@ -63,6 +68,7 @@ public class HolmesFiringRatesEditor extends JFrame {
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
     	this.pn = overlord.getWorkspace().getProject();
+    	this.ego = this;
     	this.parentWindow = parent;
     	this.frData = frData;
     	this.frIndex = frIndex;
@@ -74,20 +80,37 @@ public class HolmesFiringRatesEditor extends JFrame {
     	fillTable();
     	setVisible(true);
     	parentWindow.setEnabled(false);
+    	
+    	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
 	/**
 	 * Wypełnianie tabeli nowymi danymi - tj. odświeżanie.
 	 */
-	private void fillTable() {
+	public void fillTable() {
 		tableModel.clearModel();
 		
 		//int selectedState = firingRatesManager.selectedVector;
-		int size = frData.getSize();
-    	for(int row=0; row<size; row++) {
-    		tableModel.addNew(row, transitions.get(row).getName(), frData.getFiringRate(row), frData.getStochasticType(row));
-    	}
-    	
+		//int size = frData.getSize();
+		
+		int row = -1;
+		for(SPNdataContainer frBox : frData.accessVector()) {
+			row++;
+			switch(frBox.sType) {
+				case ST:
+					tableModel.addNew(row, transitions.get(row).getName(), ""+frData.getFiringRate(row), frBox.sType);
+					break;
+				case DT:
+					tableModel.addNew(row, transitions.get(row).getName(), ""+frBox.DET_delay, frBox.sType);
+					break;
+				case IM:
+					tableModel.addNew(row, transitions.get(row).getName(), ""+frBox.IM_priority, frBox.sType);
+					break;
+				case SchT:
+					tableModel.addNew(row, transitions.get(row).getName(), ""+frBox.SCH_start+"; "+frBox.SCH_rep+"; "+frBox.SCH_end, frBox.sType);
+					break;
+			}
+		}
 		tableModel.fireTableDataChanged();
 	}
 	
@@ -113,7 +136,7 @@ public class HolmesFiringRatesEditor extends JFrame {
 	private JPanel getTopPanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("Firing rates vector data"));
+		result.setBorder(BorderFactory.createTitledBorder("SPN transitions data"));
 		result.setPreferredSize(new Dimension(500, 100));
 		
 		JPanel filler = new JPanel(null);
@@ -121,15 +144,15 @@ public class HolmesFiringRatesEditor extends JFrame {
 		int posX = 5;
 		int posY = 0;
 		
-		JLabel label0 = new JLabel("Firing vector ID: ");
-		label0.setBounds(posX, posY, 100, 20);
+		JLabel label0 = new JLabel("SPN data vector ID: ");
+		label0.setBounds(posX, posY, 120, 20);
 		filler.add(label0);
 		
 		JLabel labelID = new JLabel(frIndex+"");
-		labelID.setBounds(posX+110, posY, 100, 20);
+		labelID.setBounds(posX+130, posY, 100, 20);
 		filler.add(labelID);
 		
-		vectorDescrTextArea = new JTextArea(firingRatesManager.getFRVectorDescription(frIndex));
+		vectorDescrTextArea = new JTextArea(firingRatesManager.getSPNvectorDescription(frIndex));
 		vectorDescrTextArea.setLineWrap(true);
 		vectorDescrTextArea.setEditable(true);
 		vectorDescrTextArea.addFocusListener(new FocusAdapter() {
@@ -137,7 +160,7 @@ public class HolmesFiringRatesEditor extends JFrame {
             	JTextArea field = (JTextArea) e.getSource();
             	if(field != null) {
             		String newComment = field.getText();
-            		firingRatesManager.setFRvectorDescription(frIndex, newComment);
+            		firingRatesManager.setSPNvectorDescription(frIndex, newComment);
             		fillTable();
             	}
             }
@@ -160,10 +183,10 @@ public class HolmesFiringRatesEditor extends JFrame {
 	public JPanel getMainTablePanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("Firing rates table"));
+		result.setBorder(BorderFactory.createTitledBorder("SPN data vector transitions table"));
 		result.setPreferredSize(new Dimension(500, 500));
 		
-		tableModel = new FiringRatesOneTransTableModel(this, frIndex);
+		tableModel = new SPNsingleVectorTableModel(this, frIndex);
 		table = new RXTable(tableModel);
 		((RXTable)table).setSelectAllForEdit(true);
 		
@@ -174,7 +197,7 @@ public class HolmesFiringRatesEditor extends JFrame {
 		table.getColumnModel().getColumn(1).setHeaderValue("Transition name");
 		table.getColumnModel().getColumn(1).setPreferredWidth(600);
 		table.getColumnModel().getColumn(1).setMinWidth(100);
-		table.getColumnModel().getColumn(2).setHeaderValue("Firing rate");
+		table.getColumnModel().getColumn(2).setHeaderValue("Data");
 		table.getColumnModel().getColumn(2).setPreferredWidth(100);
 		table.getColumnModel().getColumn(2).setMinWidth(50);
 		table.getColumnModel().getColumn(3).setHeaderValue("SPN sub-type");
@@ -183,19 +206,19 @@ public class HolmesFiringRatesEditor extends JFrame {
         
 		table.setName("FiringRatesTransitionTable");
 		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		tableRenderer = new FiringRatesOneTransTableRenderer(table);
+		tableRenderer = new SPNsingleVectorTableRenderer(table);
 		table.setDefaultRenderer(Object.class, tableRenderer);
 		table.setDefaultRenderer(Double.class, tableRenderer);
 
-		
-		table.addMouseListener(new MouseAdapter() {
-        	public void mouseClicked(MouseEvent e) {
-          	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
-          	    		;	//cellClickAction();
-          	    }
-          	 }
-      	});
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+	        public void valueChanged(ListSelectionEvent event) {
+	            // do some actions here, for example
+	            // print first column value from selected row
+	        	int selectedRow = table.getSelectedRow();
+	        	if(selectedRow > -1)
+	        		new HolmesSPNtransitionEditor(ego, frData.getSPNtransitionContainer(selectedRow), transitions.get(selectedRow), new Point(400, 400)); 
+	        }
+	    });
     	
 		table.setRowSelectionAllowed(false);
     	
@@ -211,10 +234,10 @@ public class HolmesFiringRatesEditor extends JFrame {
 	 * wartości pola firing rate.
 	 * @param index int - nr wektora
 	 * @param transID int - nr tranzycji
-	 * @param newValue double - nowe firing rate
+	 * @param newValue String - nowa funkcja firing rate
 	 */
-	public void changeRealValue(int index, int transID, double newValue) {
-		firingRatesManager.getFRVector(index).accessVector().get(transID).fr = newValue;
+	public void changeRealValue(int index, int transID, String newValue) {
+		firingRatesManager.getSPNdataVector(index).accessVector().get(transID).ST_function = newValue;
 		overlord.markNetChange();
 	}
 	
@@ -227,5 +250,11 @@ public class HolmesFiringRatesEditor extends JFrame {
 		    	parentWindow.setEnabled(true);
 		    }
 		});
+    	
+    	addWindowListener(new WindowAdapter() {
+  	  	    public void windowActivated(WindowEvent e) {
+  	  	    	fillTable();
+  	  	    }  
+    	});
     }
 }
