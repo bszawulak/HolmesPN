@@ -323,9 +323,9 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		main.add(spnTypeCombo);
 		if(myData.sType == StochaticsType.ST)
 			spnTypeCombo.setSelectedIndex(0);
-		else if(myData.sType == StochaticsType.ST)
+		else if(myData.sType == StochaticsType.IM)
 			spnTypeCombo.setSelectedIndex(1);
-		else if(myData.sType == StochaticsType.ST)
+		else if(myData.sType == StochaticsType.DT)
 			spnTypeCombo.setSelectedIndex(2);
 		else
 			spnTypeCombo.setSelectedIndex(3);

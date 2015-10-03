@@ -1508,11 +1508,11 @@ public class ProjectReader {
 				try { box.SCH_rep = Integer.parseInt(dataVectorTable[(i*7)+4]); } catch(Exception e) {}
 				box.SCH_end = dataVectorTable[(i*7)+5];
 				
-				if(dataVectorTable[(i*7)+5].equals("IM"))
+				if(dataVectorTable[(i*7)+6].equals("IM"))
 					box.sType = StochaticsType.IM;
-				else if(dataVectorTable[(i*7)+5].equals("DT"))
+				else if(dataVectorTable[(i*7)+6].equals("DT"))
 					box.sType = StochaticsType.DT;
-				else if(dataVectorTable[(i*7)+5].equals("SchT"))
+				else if(dataVectorTable[(i*7)+6].equals("SchT"))
 					box.sType = StochaticsType.SchT;
 				else
 					box.sType = StochaticsType.ST;
