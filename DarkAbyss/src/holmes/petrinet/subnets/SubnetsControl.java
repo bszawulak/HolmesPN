@@ -16,7 +16,7 @@ import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.windows.HolmesNotepad;
 import holmes.workspace.Workspace;
@@ -105,7 +105,7 @@ public class SubnetsControl {
 			
 			
 			//if(!hasMetaArc) { //utwórz meta łuk, bo go jeszcze nie ma z tego węzła (od startLocation)
-				Arc arc = new Arc(IdGenerator.getNextId(), semiArc.getStartLocation(), endMetanodeLocation, TypesOfArcs.META_ARC);
+				Arc arc = new Arc(IdGenerator.getNextId(), semiArc.getStartLocation(), endMetanodeLocation, TypeOfArc.META_ARC);
 				arcs.add(arc);
 			//}
 			
@@ -177,7 +177,7 @@ public class SubnetsControl {
 			endNode.setPortal(true);
 			
 			//if(!hasMetaArc) { //utwórz meta łuk, bo go jeszcze nie ma do tego węzła (od startLocation)
-				Arc arc = new Arc(IdGenerator.getNextId(), startMetanode, endPTNode, TypesOfArcs.META_ARC);
+				Arc arc = new Arc(IdGenerator.getNextId(), startMetanode, endPTNode, TypeOfArc.META_ARC);
 				arcs.add(arc);
 			//}
 
@@ -252,9 +252,9 @@ public class SubnetsControl {
 			} else {
 				Arc newArc = null;
 				if(isInterfIN) {
-					newArc = new Arc(IdGenerator.getNextId(), nexus, metaEL, TypesOfArcs.META_ARC);
+					newArc = new Arc(IdGenerator.getNextId(), nexus, metaEL, TypeOfArc.META_ARC);
 				} else {
-					newArc = new Arc(IdGenerator.getNextId(), metaEL, nexus, TypesOfArcs.META_ARC);
+					newArc = new Arc(IdGenerator.getNextId(), metaEL, nexus, TypeOfArc.META_ARC);
 				}
 				overlord.getWorkspace().getProject().getArcs().add(newArc);
 			}
@@ -275,9 +275,9 @@ public class SubnetsControl {
 			
 			Arc newArc = null;
 			if(isInterfIN) {
-				newArc = new Arc(IdGenerator.getNextId(), newEL, metaEL, TypesOfArcs.META_ARC);
+				newArc = new Arc(IdGenerator.getNextId(), newEL, metaEL, TypeOfArc.META_ARC);
 			} else {
-				newArc = new Arc(IdGenerator.getNextId(), metaEL, newEL, TypesOfArcs.META_ARC);
+				newArc = new Arc(IdGenerator.getNextId(), metaEL, newEL, TypeOfArc.META_ARC);
 			}
 			overlord.getWorkspace().getProject().getArcs().add(newArc);
 		}
@@ -749,7 +749,7 @@ public class SubnetsControl {
 			parent.getElementLocations().add(newPortalEL);
 			parent.getNamesLocations().add(nameEL);
 			
-			Arc arc = new Arc(IdGenerator.getNextId(), newPortalEL, metanodeEL, TypesOfArcs.META_ARC);
+			Arc arc = new Arc(IdGenerator.getNextId(), newPortalEL, metanodeEL, TypeOfArc.META_ARC);
 			arcs.add(arc);
 		}
 	}
@@ -822,7 +822,7 @@ public class SubnetsControl {
 		
 		//teraz w końcu dodaj do nexus brakujące łuki (a raczej Z niego do META)
 		for(int i=0; i<howMany; i++) {
-			Arc arc = new Arc(IdGenerator.getNextId(), nexus, metanodeEL, TypesOfArcs.META_ARC);
+			Arc arc = new Arc(IdGenerator.getNextId(), nexus, metanodeEL, TypeOfArc.META_ARC);
 			arcs.add(arc);
 		}
 	}
@@ -850,7 +850,7 @@ public class SubnetsControl {
 			parent.getElementLocations().add(newPortalEL);
 			parent.getNamesLocations().add(nameEL);
 			
-			Arc arc = new Arc(IdGenerator.getNextId(), metanodeEL, newPortalEL, TypesOfArcs.META_ARC);
+			Arc arc = new Arc(IdGenerator.getNextId(), metanodeEL, newPortalEL, TypeOfArc.META_ARC);
 			arcs.add(arc);
 		}
 	}
@@ -924,7 +924,7 @@ public class SubnetsControl {
 		
 		//teraz w końcu dodaj do nexus brakujące łuki (a raczej Z niego do META)
 		for(int i=0; i<howMany; i++) {
-			Arc arc = new Arc(IdGenerator.getNextId(), metanodeEL, nexus, TypesOfArcs.META_ARC);
+			Arc arc = new Arc(IdGenerator.getNextId(), metanodeEL, nexus, TypeOfArc.META_ARC);
 			arcs.add(arc);
 		}
 	}

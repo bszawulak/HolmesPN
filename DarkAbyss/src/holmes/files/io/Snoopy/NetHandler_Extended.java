@@ -16,7 +16,7 @@ import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 
 /**
@@ -450,18 +450,18 @@ public class NetHandler_Extended extends NetHandler {
 					}
 				}
 				//arcComment += arcType;
-				Arc newArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
+				Arc newArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypeOfArc.NORMAL);
 				arcList.add(newArc);
 				
 				if(arcType.equals("Read Edge")) {
-					Arc nArc2 = new Arc(globalElementLocationList.get(tmpTarget), globalElementLocationList.get(tmpSource), arcComment, arcMultiplicity, TypesOfArcs.READARC);
+					Arc nArc2 = new Arc(globalElementLocationList.get(tmpTarget), globalElementLocationList.get(tmpSource), arcComment, arcMultiplicity, TypeOfArc.READARC);
 					arcList.add(nArc2);
 				} else if(arcType.equals("Inhibitor Edge")) {
-					newArc.setArcType(TypesOfArcs.INHIBITOR);
+					newArc.setArcType(TypeOfArc.INHIBITOR);
 				} else if(arcType.equals("Reset Edge")) {
-					newArc.setArcType(TypesOfArcs.RESET);
+					newArc.setArcType(TypeOfArc.RESET);
 				} else if(arcType.equals("Equal Edge")) {
-					newArc.setArcType(TypesOfArcs.EQUAL);
+					newArc.setArcType(TypeOfArc.EQUAL);
 				}
 			}
 

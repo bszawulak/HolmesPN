@@ -15,7 +15,7 @@ import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 
 /**
@@ -478,7 +478,7 @@ public class NetHandler_Classic extends NetHandler {
 					}
 				}
 				try {
-					Arc nArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
+					Arc nArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypeOfArc.NORMAL);
 					arcList.add(nArc);
 				} catch (Exception e) {
 					GUIManager.getDefaultGUIManager().log("Error: unable to add arc.", "error", true);

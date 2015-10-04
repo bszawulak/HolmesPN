@@ -15,7 +15,7 @@ import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.varia.Check;
 
@@ -324,9 +324,9 @@ public class SnoopyWriter {
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(0) + "\" name=\"Edge\">");
 				if(weAreInDeepShit)
-					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypesOfArcs.NORMAL, arcClasses.get(0));
+					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypeOfArc.NORMAL, arcClasses.get(0));
 				else
-					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.NORMAL, arcClasses.get(0));
+					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypeOfArc.NORMAL, arcClasses.get(0));
 				write(bw, "    </edgeclass>");
 			}
 		
@@ -335,9 +335,9 @@ public class SnoopyWriter {
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(1) + "\" name=\"Read Edge\">");
 				if(weAreInDeepShit)
-					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypesOfArcs.READARC, arcClasses.get(1));
+					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypeOfArc.READARC, arcClasses.get(1));
 				else
-					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.READARC, arcClasses.get(1));
+					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypeOfArc.READARC, arcClasses.get(1));
 				write(bw, "    </edgeclass>");
 			}
 			
@@ -346,9 +346,9 @@ public class SnoopyWriter {
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(2) + "\" name=\"Inhibitor Edge\">");
 				if(weAreInDeepShit)
-					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypesOfArcs.INHIBITOR, arcClasses.get(2));
+					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypeOfArc.INHIBITOR, arcClasses.get(2));
 				else
-					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.INHIBITOR, arcClasses.get(2));
+					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypeOfArc.INHIBITOR, arcClasses.get(2));
 				write(bw, "    </edgeclass>");
 			}
 			
@@ -357,9 +357,9 @@ public class SnoopyWriter {
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(3) + "\" name=\"Reset Edge\">");
 				if(weAreInDeepShit)
-					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypesOfArcs.RESET, arcClasses.get(3));
+					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypeOfArc.RESET, arcClasses.get(3));
 				else
-					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.RESET, arcClasses.get(3));
+					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypeOfArc.RESET, arcClasses.get(3));
 				write(bw, "    </edgeclass>");
 			}
 			
@@ -368,9 +368,9 @@ public class SnoopyWriter {
 			} else {
 				write(bw, "    <edgeclass count=\"" + arcClasses.get(4) + "\" name=\"Equal Edge\">");
 				if(weAreInDeepShit)
-					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypesOfArcs.EQUAL, arcClasses.get(4));
+					currentActiveID = arcWriter.addArcsAndCoarseToFile(bw, currentActiveID, true, TypeOfArc.EQUAL, arcClasses.get(4));
 				else
-					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypesOfArcs.EQUAL, arcClasses.get(4));
+					currentActiveID = arcWriter.addArcsInfoExtended(bw, currentActiveID, TypeOfArc.EQUAL, arcClasses.get(4));
 				write(bw, "    </edgeclass>");
 			}
 

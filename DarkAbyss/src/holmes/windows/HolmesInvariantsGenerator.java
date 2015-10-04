@@ -33,7 +33,7 @@ import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.utilities.Tools;
 import holmes.varia.Check;
@@ -778,7 +778,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 			int pPosition = 0;
 			int incidenceValue = 0;
 			
-			if(oneArc.getArcType() != TypesOfArcs.NORMAL) {
+			if(oneArc.getArcType() != TypeOfArc.NORMAL) {
 				continue;
 			}
 

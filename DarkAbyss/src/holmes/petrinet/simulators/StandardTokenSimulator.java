@@ -188,7 +188,7 @@ public class StandardTokenSimulator implements IEngine {
 			for (int i = 0; i < transitionsIndexList.size(); i++) {
 				Transition transition = transitions.get(transitionsIndexList.get(i));
 				if (transition.isActive() ) {
-					if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
+					if ((generator.nextInt(100) < 50) || maxMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -209,7 +209,7 @@ public class StandardTokenSimulator implements IEngine {
 				}
 				
 				if (transition.isActive() ) {
-					if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
+					if ((generator.nextInt(100) < 50) || maxMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}
@@ -498,7 +498,7 @@ public class StandardTokenSimulator implements IEngine {
 					transition.setTPNtimer(-1);
 				}
 			} else if (transition.isActive() ) {
-				if ((generator.nextInt(10) < 5) || maxMode) { // 50% 0-4 / 5-9
+				if ((generator.nextInt(100) < 50) || maxMode) { // 50% 0-4 / 5-9
 					transition.bookRequiredTokens();
 					launchableTransitions.add(transition);
 				}

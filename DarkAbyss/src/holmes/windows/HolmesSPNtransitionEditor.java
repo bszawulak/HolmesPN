@@ -22,7 +22,7 @@ import javax.swing.text.DefaultFormatter;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.SPNdataVector;
-import holmes.petrinet.data.SPNdataVector.SPNdataContainer;
+import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.StochaticsType;
@@ -39,7 +39,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
 	private GUIManager overlord;
 	private PetriNet pn;
 	private JFrame parentWindow;
-	private SPNdataContainer myData;
+	private SPNtransitionData myData;
 	private Transition transition;
 	private boolean doNotUpdate = false;
 	
@@ -54,11 +54,11 @@ public class HolmesSPNtransitionEditor extends JFrame {
 	/**
 	 * Konstruktor okna ustawień tranzycji w modelu SPN.
 	 * @param boss JFrame - okno wywołujące
-	 * @param data FRContainer - dane SPN
+	 * @param data SPNtransitionData - dane SPN
 	 * @param trans Transition - tranzycja
 	 * @param xyLoc Point - lokalizacja kliknięcia
 	 */
-	public HolmesSPNtransitionEditor(JFrame boss, SPNdataContainer data, Transition trans, Point xyLoc) {
+	public HolmesSPNtransitionEditor(JFrame boss, SPNtransitionData data, Transition trans, Point xyLoc) {
 		setTitle("Holmes SPN transition editor");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));

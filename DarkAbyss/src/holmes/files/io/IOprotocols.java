@@ -22,7 +22,7 @@ import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 
 /**
@@ -1000,7 +1000,7 @@ public class IOprotocols {
 							int t1 = trans[Integer.parseInt(placeArcListPre.get(k)[j])][1];
 							arcArray.add(new Arc(nodeArray.get(t1 - 1).getLastLocation(), 
 									nodeArray.get(k).getLastLocation(), "", 
-									placeArcListPreWeight.get(0).get(pozycja_a), TypesOfArcs.NORMAL));
+									placeArcListPreWeight.get(0).get(pozycja_a), TypeOfArc.NORMAL));
 							pozycja_a++;
 						}
 					}
@@ -1010,7 +1010,7 @@ public class IOprotocols {
 							int t2 = trans[Integer.parseInt(placeArcListPost.get(k)[j])][1];
 							arcArray.add(new Arc(nodeArray.get(k).getLastLocation(), 
 									nodeArray.get(t2 - 1).getLastLocation(), "",
-									placeArcListPostWeight.get(0).get(pozycja_a), TypesOfArcs.NORMAL));
+									placeArcListPostWeight.get(0).get(pozycja_a), TypeOfArc.NORMAL));
 							pozycja_a++;
 
 						}

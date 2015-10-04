@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
 
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 
 /**
  * Klasa modelująca tablicę edycji funkcji dla tranzycji.
@@ -22,7 +22,7 @@ public class FunctionalTransTableModel extends DefaultTableModel {
     	public String name;
     	public String function;
     	public boolean correct;
-    	public TypesOfArcs arcType;
+    	public TypeOfArc arcType;
     	public int weight;
     	public boolean enabled;
     }
@@ -49,7 +49,7 @@ public class FunctionalTransTableModel extends DefaultTableModel {
 	 * @param weight int - waga łuku
 	 * @param enable boolean - czy f jest aktywna
 	 */
-	public void addNew(String pID, String name, String function, boolean isOK, TypesOfArcs arcType, int weight, boolean enable) {
+	public void addNew(String pID, String name, String function, boolean isOK, TypeOfArc arcType, int weight, boolean enable) {
 		FContainer fC = new FContainer();
 		fC.pID = pID;
 		fC.name = name;
@@ -165,7 +165,7 @@ public class FunctionalTransTableModel extends DefaultTableModel {
 					dataMatrix.get(row).correct = correct;
 					break;
 				case 4:
-					TypesOfArcs toa = (TypesOfArcs)value;
+					TypeOfArc toa = (TypeOfArc)value;
 					dataMatrix.get(row).arcType = toa;
 					break;
 				case 5:

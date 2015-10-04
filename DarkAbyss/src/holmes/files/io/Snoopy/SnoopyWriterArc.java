@@ -11,7 +11,7 @@ import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.subnets.SubnetsTools;
 
@@ -66,13 +66,13 @@ public class SnoopyWriterArc {
 	 * @return int - następne wolne ID
 	 */
 	public int addArcsAndCoarseToFile(BufferedWriter bw, int currentActiveID, boolean extended, Object... blackBox) {
-		TypesOfArcs arcType = TypesOfArcs.NORMAL;
+		TypeOfArc arcType = TypeOfArc.NORMAL;
 		//int toSave = -1;
 		if(extended) {
-			arcType = (TypesOfArcs)blackBox[0];
+			arcType = (TypeOfArc)blackBox[0];
 			//toSave = (int)blackBox[1];
 		} else {
-			arcType = TypesOfArcs.NORMAL;
+			arcType = TypeOfArc.NORMAL;
 			
 		}
 		
@@ -85,7 +85,7 @@ public class SnoopyWriterArc {
 		
 		//podziel łuki na dwa zbiory:
 		for(Arc arc : arcs) {
-			if(arc.getArcType() == TypesOfArcs.META_ARC) {
+			if(arc.getArcType() == TypeOfArc.META_ARC) {
 				metaArcs.add(arc);
 			} else if (arc.getArcType() == arcType) {
 				normalArcs.add(arc);
@@ -292,7 +292,7 @@ public class SnoopyWriterArc {
 					int subNetID = metanode.getRepresentedSheetID() + 1;
 					
 					write(bw, "      <edge source=\""+nodeSourceID+"\" target=\""+nodeTargetID+"\" id=\""+(baseIDforNode)+"\" net=\""+sheetMainID+"\">");
-					if(arc.getArcType() != TypesOfArcs.RESET) {
+					if(arc.getArcType() != TypeOfArc.RESET) {
 						write(bw, "        <attribute name=\"Multiplicity\" id=\""+(baseIDforNode+1)+"\" net=\""+sheetMainID+"\">");
 						write(bw, "          <![CDATA["+weight+"]]>");
 						write(bw, "          <graphics count=\"2\">");
@@ -512,7 +512,7 @@ public class SnoopyWriterArc {
 					
 					write(bw, "      <edge source=\""+nodeSourceID+"\" target=\""+nodeTargetID+"\" id=\""+(baseIDforNode)+"\" net=\""+sheetMainID+"\">");
 					
-					if(arc.getArcType() != TypesOfArcs.RESET) {
+					if(arc.getArcType() != TypeOfArc.RESET) {
 						write(bw, "        <attribute name=\"Multiplicity\" id=\""+(baseIDforNode+1)+"\" net=\""+sheetMainID+"\">");
 						write(bw, "          <![CDATA["+weight+"]]>");
 						write(bw, "          <graphics count=\"2\">");
@@ -628,7 +628,7 @@ public class SnoopyWriterArc {
 					int sheetMainID = arcStartElLocation.getSheetID() + 1;	
 					
 					write(bw, "      <edge source=\""+nodeSourceID+"\" target=\""+nodeTargetID+"\" id=\""+(baseIDforNode)+"\" net=\""+sheetMainID+"\">");
-					if(arc.getArcType() != TypesOfArcs.RESET) {
+					if(arc.getArcType() != TypeOfArc.RESET) {
 						write(bw, "        <attribute name=\"Multiplicity\" id=\""+(baseIDforNode+1)+"\" net=\""+sheetMainID+"\">");
 						write(bw, "          <![CDATA["+weight+"]]>");
 						write(bw, "          <graphics count=\"1\">");
@@ -728,7 +728,7 @@ public class SnoopyWriterArc {
 	 * @return int - nr następnego wolnego ID
 	 */
 	private int omgThisIsCrazy(ElementLocation interfaceNodeElLocation, ElementLocation arcEndElLocation, Arc arcus, 
-			ArrayList<Arc> metaArcs, int baseIDforNode, boolean isInInterface, BufferedWriter bw, TypesOfArcs arcType) {
+			ArrayList<Arc> metaArcs, int baseIDforNode, boolean isInInterface, BufferedWriter bw, TypeOfArc arcType) {
 
 		int IDbackup = baseIDforNode;
 		int spaceBetweenIDs = 0;
@@ -858,7 +858,7 @@ public class SnoopyWriterArc {
 		write(bw, "      <edge source=\""+mainSourceID+"\" target=\""+mainTargetID+"\" id=\""+(grParents.get(0)-5)+
 				"\" net=\""+(subnetsPath.get(0).subnet)+"\">");
 		int xOff = 20;
-		if(arcType != TypesOfArcs.RESET) {
+		if(arcType != TypeOfArc.RESET) {
 			write(bw, "        <attribute name=\"Multiplicity\" id=\""+(grParents.get(0)-4)+"\" net=\""+(subnetsPath.get(0).subnet+1)+"\">");
 			write(bw, "          <![CDATA["+arcus.getWeight()+"]]>");
 			write(bw, "          <graphics count=\""+pathSize+"\">");
@@ -1347,7 +1347,7 @@ public class SnoopyWriterArc {
 	 * @return int - następny wolny ID
 	 */
 	//TODO: Extended Petri Net (single-level)
-	public int addArcsInfoExtended(BufferedWriter bw, int currentActiveID, TypesOfArcs arcClass, int howManyToSave) {
+	public int addArcsInfoExtended(BufferedWriter bw, int currentActiveID, TypeOfArc arcClass, int howManyToSave) {
 		int howManySaved = 0;
 		int nextID = currentActiveID;
 		int xOff = 0;
@@ -1416,7 +1416,7 @@ public class SnoopyWriterArc {
 								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
 						nextID++; //444
 						
-						if(arcClass != TypesOfArcs.RESET) {
+						if(arcClass != TypeOfArc.RESET) {
 							write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
 							nextID++; //445
 							write(bw, "          <![CDATA["+weight+"]]>");
@@ -1498,7 +1498,7 @@ public class SnoopyWriterArc {
 				//kolekcjonowanie danych:
 				for(Arc a : outArcs) { //dla każdego łuku
 					try {
-						if(a.getArcType() != arcClass || a.getArcType() == TypesOfArcs.READARC)
+						if(a.getArcType() != arcClass || a.getArcType() == TypeOfArc.READARC)
 							continue;
 						
 						int weight = a.getWeight(); //waga łuku
@@ -1552,7 +1552,7 @@ public class SnoopyWriterArc {
 								+ " target=\""+nodeTargetID+"\" id=\""+nextID+"\" net=\"1\">");
 						nextID++; //444
 						
-						if(arcClass != TypesOfArcs.RESET) {
+						if(arcClass != TypeOfArc.RESET) {
 							write(bw, "        <attribute name=\"Multiplicity\" id=\""+nextID+"\" net=\"1\">");
 							nextID++; //445
 							write(bw, "          <![CDATA["+weight+"]]>");
@@ -1623,7 +1623,7 @@ public class SnoopyWriterArc {
 			//iteracja++;
 		} //dla wszystkich tranzycji
 		
-		if(howManySaved != howManyToSave && arcClass != TypesOfArcs.READARC) {
+		if(howManySaved != howManyToSave && arcClass != TypeOfArc.READARC) {
 			GUIManager.getDefaultGUIManager().log("Arcs saved do not match size of Arcs internal set."
 					+ " Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.",
 					 "error", true);

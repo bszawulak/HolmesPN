@@ -82,7 +82,7 @@ public class SPNdataVectorManager {
 	public void addCurrentFRasSPNdataVector() {
 		SPNdataVector frVector = new SPNdataVector();
 		for(Transition trans : pn.getTransitions()) {
-			frVector.addTrans(""+trans.getFiringRate(), trans.getStochasticType());
+			frVector.addTrans(""+trans.getFiringRate(), trans.getSPNtype());
 		}
 		SPNdataMatrix.add(frVector);
 	}
@@ -107,7 +107,7 @@ public class SPNdataVectorManager {
 		SPNdataVector frVector = SPNdataMatrix.get(vectorID);
 		for(int t=0; t<transitions.size(); t++) {
 			Transition trans = transitions.get(t);
-			trans.setStochasticType(frVector.getStochasticType(t));
+			trans.setSPNtype(frVector.getStochasticType(t));
 			trans.setFiringRate(frVector.getFiringRate(t));
 		}
 		selectedVector = vectorID;
@@ -138,7 +138,7 @@ public class SPNdataVectorManager {
 		SPNdataVector frVector = SPNdataMatrix.get(vectorID);
 		for(int t=0; t<transitions.size(); t++) {
 			frVector.accessVector().get(t).ST_function = ""+transitions.get(t).getFiringRate();
-			frVector.accessVector().get(t).sType = transitions.get(t).getStochasticType();
+			frVector.accessVector().get(t).sType = transitions.get(t).getSPNtype();
 		}
 	}
 	

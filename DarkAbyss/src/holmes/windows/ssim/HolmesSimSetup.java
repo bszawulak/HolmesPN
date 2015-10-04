@@ -57,8 +57,15 @@ public class HolmesSimSetup extends JFrame {
 	private JRadioButton maxModeRadioButton;
 	private JRadioButton singleModeRadioButton;
 	
+	//SPN immediate
+	private ButtonGroup immSPNmode = new ButtonGroup();
+	private JRadioButton immOnly1RadioButton;
+	private JRadioButton immSchedRadioButton;
+	private JRadioButton immProbRadioButton;
+	
 	private JCheckBox allowEmptySteps;
 	private JCheckBox useMassActionKinetics;
+	private JCheckBox detRemoveMode;
 	private JComboBox<String> generatorType;
 	private JComboBox<String> simulatorType;
 
@@ -87,15 +94,15 @@ public class HolmesSimSetup extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e ) {}
-		setSize(new Dimension(620, 400));
+		setSize(new Dimension(620, 490));
 		
 		JPanel main = new JPanel(null); //główny panel okna
 		add(main);
 		
 		main.add(createGlobalOptionsPanel(0, 0, 600, 110));
 		main.add(createStdSimulatorSettingsPanel(0, 110, 600, 110));
-		main.add(createStochasticSimSettingsPanel(0, 220, 600, 70));
-		main.add(createGillespieSSASimSettingsPanel(0, 290, 600, 70));
+		main.add(createStochasticSimSettingsPanel(0, 220, 600, 160));
+		main.add(createGillespieSSASimSettingsPanel(0, 380, 600, 70));
 
 		setVisible(true);
 	}
@@ -131,6 +138,10 @@ public class HolmesSimSetup extends JFrame {
 				JSpinner spinner = (JSpinner) e.getSource();
 				int value = (int) spinner.getValue();
 				settings.setSimSteps(value);
+				
+				if(parentWindow instanceof HolmesSim) {
+					((HolmesSim)parentWindow).updateIntervalSpinner();
+				}
 			}
 		});
 		panel.add(simStepsSpinner);
@@ -388,7 +399,7 @@ public class HolmesSimSetup extends JFrame {
 	}
 
 	/**
-	 * Tworzy panel opcji symulatora Gillespie SSA.
+	 * Tworzy panel opcji symulatora SPN.
 	 * @param x int - pozycja x panelu
 	 * @param y int - pozycja y panelu
 	 * @param width int - szerokość preferowana
@@ -431,6 +442,86 @@ public class HolmesSimSetup extends JFrame {
 			}
 		});
 		panel.add(useMassActionKinetics);
+		
+		detRemoveMode = new JCheckBox("Remove deactivated deterministic SPN transitions");
+		detRemoveMode.setToolTipText("When this mode is selected, deterministic SPN transition which after its delay time\n"
+									+ "is no longer active, will be remove from the firing sequence. Otherwise, it will fire\n"
+									+ "as soon as it become activated again = will act as immediate in that moment.");
+		detRemoveMode.setBounds(posX+130, posY+20, 350, 20);
+		detRemoveMode.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				if(doNotUpdate)
+					return;
+
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					settings.setSPNdetRemoveMode(true);
+				} else {
+					settings.setSPNdetRemoveMode(false);
+				}
+			}
+		});
+		panel.add(detRemoveMode);
+		
+		
+		JPanel immSPNModePanel = new JPanel(null);
+		immSPNModePanel.setBounds(posX, posY+45, 240, 90);
+		immSPNModePanel.setBorder(BorderFactory.createTitledBorder("Immediate-transition SPN mode:"));
+		panel.add(immSPNModePanel);
+		
+		immOnly1RadioButton = new JRadioButton("Only 1 with the highest priority fire");
+		immOnly1RadioButton.setBounds(5, 20, 220, 20);
+		immOnly1RadioButton.setToolTipText("Only 1 transition with the highest priority will fire, then all will be evaluated from the beginning.");
+		immOnly1RadioButton.setActionCommand("0");
+		immOnly1RadioButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+				if(aButton.isSelected() == true) {
+					if(doNotUpdate)
+						return;
+					
+					settings.setSPNimmediateMode(0);
+				}
+			}
+		});
+		immSPNModePanel.add(immOnly1RadioButton);
+		groupNetType.add(immOnly1RadioButton);
+
+		immSchedRadioButton = new JRadioButton("Sequenced firing by priority");
+		immSchedRadioButton.setBounds(5, 40, 220, 20);
+		immOnly1RadioButton.setToolTipText("Sequenced firing of active immediate transition by priority.");
+		immSchedRadioButton.setActionCommand("1");
+		immSchedRadioButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+				if(aButton.isSelected() == true) {
+					if(doNotUpdate)
+						return;
+					
+					settings.setSPNimmediateMode(1);
+				}
+			}
+		});
+		immSPNModePanel.add(immSchedRadioButton);
+		groupNetType.add(immSchedRadioButton);
+		
+		immProbRadioButton = new JRadioButton("Priority - probability mode");
+		immProbRadioButton.setBounds(5, 60, 220, 20);
+		immProbRadioButton.setToolTipText("1 from active IM transition will fire, probability depends on priority set for transition.");
+		immProbRadioButton.setActionCommand("2");
+		immProbRadioButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+				if(aButton.isSelected() == true) {
+					if(doNotUpdate)
+						return;
+					
+					settings.setSPNimmediateMode(2);
+				}
+			}
+		});
+		immSPNModePanel.add(immProbRadioButton);
+		groupNetType.add(immProbRadioButton);
 		
 		return panel;
 	}
@@ -510,6 +601,11 @@ public class HolmesSimSetup extends JFrame {
 		else
 			useMassActionKinetics.setSelected(false);
 		
+		if(settings.isSPNdetRemoveMode())
+			detRemoveMode.setSelected(true);
+		else
+			detRemoveMode.setSelected(false);
+		
 		if(settings.getGeneratorType() == 0)
 			generatorType.setSelectedIndex(0);
 		else
@@ -519,6 +615,14 @@ public class HolmesSimSetup extends JFrame {
 			simulatorType.setSelectedIndex(0);
 		else
 			simulatorType.setSelectedIndex(1);
+		
+		int imSPNmode = settings.getSPNimmediateMode();
+		if(imSPNmode == 0)
+			immSPNmode.setSelected(immOnly1RadioButton.getModel(), true);
+		else if(imSPNmode == 1)
+			immSPNmode.setSelected(immSchedRadioButton.getModel(), true);
+		else if(imSPNmode == 2)
+			immSPNmode.setSelected(immProbRadioButton.getModel(), true);
 		
 		doNotUpdate = false;
 	}

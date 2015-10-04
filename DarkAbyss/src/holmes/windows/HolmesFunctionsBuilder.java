@@ -29,7 +29,7 @@ import org.nfunk.jep.JEP;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.functions.FunctionContainer;
@@ -480,8 +480,8 @@ public class HolmesFunctionsBuilder extends JFrame {
 	protected void cellClickedFuncTable() {
 		int row = tableFunc.getSelectedRow();
 		if(row > -1) {
-			TypesOfArcs type = (TypesOfArcs) tableFunc.getValueAt(row, 4);
-			if(type == TypesOfArcs.NORMAL) {
+			TypeOfArc type = (TypeOfArc) tableFunc.getValueAt(row, 4);
+			if(type == TypeOfArc.NORMAL) {
 				functionField.setEnabled(true);
 				enabledCheckBox.setEnabled(true);
 				validateButton.setEnabled(true);

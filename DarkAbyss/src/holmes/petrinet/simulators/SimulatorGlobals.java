@@ -31,8 +31,12 @@ public class SimulatorGlobals {
 	private int simReps = 100;
 
 	public long currentStep = 0;
-	private int simulatorType = 0; // 0 -standard, 1 - SSA, 2 - Gillespie SSA
+	public double currentTime = 0;
+	private int simulatorType = 0; // 0 -standard, 1 - SSPN, 2 - Gillespie SSA
 	private int generatorType = 0; // 0 - Random (Java), 1 - HighQualityRandomGenerator
+	
+	private int SPNimmediateMode = 2;
+	private boolean SPNdetRemove = true;
 	
 	private boolean ssaMassActionKineticsEnabled = false;
 	
@@ -316,6 +320,39 @@ public class SimulatorGlobals {
 		simReps = 100;
 
 		currentStep = 0;
+	}
+	
+	/**
+	 * Zwraca tryb działania tranzycji IMMEDIATE w SPN
+	 * @return int: <br>
+	 * 		0 - tylko 1, najwyższy priorytet<br>
+	 * 		1 - lista aktywnych w danym kroku<br>
+	 * 		2 - priotetet = prawdopodobobieństwo
+	 */
+	public int getSPNimmediateMode() {
+		return this.SPNimmediateMode;
+	}
+	
+	/**
+	 * Ustawia tryb działania tranzycji IMMEDIATE w SPN
+	 * @param type int: <br>
+	 * 		0 - tylko 1, najwyższy priorytet<br>
+	 * 		1 - lista aktywnych w danym kroku<br>
+	 * 		2 - priotetet = prawdopodobobieństwo
+	 */
+	public void setSPNimmediateMode(int type) {
+		if(type < 0 || type > 2)
+			type = 2;
+		
+		this.SPNimmediateMode = type;
+	}
+	
+	public boolean isSPNdetRemoveMode() {
+		return this.SPNdetRemove;
+	}
+	
+	public void setSPNdetRemoveMode(boolean mode) {
+		this.SPNdetRemove = mode;
 	}
 	
 	/**

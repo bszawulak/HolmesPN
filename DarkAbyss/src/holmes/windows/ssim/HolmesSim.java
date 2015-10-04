@@ -1541,6 +1541,12 @@ public class HolmesSim extends JFrame {
 		doNotUpdate = false;
 	}
 	
+	public void updateIntervalSpinner() {
+		int mValue = overlord.simSettings.getSimSteps()/10;
+		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(100, 0, mValue, 10);
+		transIntervalSpinner.setModel(intervSpinnerModel);
+	}
+	
 	public JFrame getFrame() {
 		return ego;
 	}

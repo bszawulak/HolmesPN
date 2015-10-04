@@ -13,7 +13,7 @@ import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.varia.Check;
 import holmes.windows.HolmesInvariantsGenerator;
@@ -226,7 +226,7 @@ public class InvariantsCalculator implements Runnable {
 			int pPosition = 0;
 			int incidenceValue = 0;
 			
-			if(oneArc.getArcType() != TypesOfArcs.NORMAL && !(oneArc.getArcType() == TypesOfArcs.READARC)) {
+			if(oneArc.getArcType() != TypeOfArc.NORMAL && !(oneArc.getArcType() == TypeOfArc.READARC)) {
 				continue;
 			}
 

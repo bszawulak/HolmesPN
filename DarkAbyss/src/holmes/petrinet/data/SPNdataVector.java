@@ -11,7 +11,7 @@ import holmes.petrinet.elements.Transition.StochaticsType;
  * @author MR
  */
 public class SPNdataVector {
-	private ArrayList<SPNdataContainer> dataVector;
+	private ArrayList<SPNtransitionData> dataVector;
 	private SPNvectorSuperType SPNvectorType = SPNvectorSuperType.SPN;
 	private String SPNvectorDescription = "";
 	
@@ -19,47 +19,10 @@ public class SPNdataVector {
 	public enum SPNvectorSuperType { SPN, SSA }
 	
 	/**
-	 * Klasa kontener, przechowuje dane stochastyczne tranzycji
-	 * @author MR
-	 */
-	public class SPNdataContainer {
-		public String ST_function = "";
-		public int IM_priority = 0;
-		public int DET_delay = 0;
-		public String SCH_start = "";
-		public int SCH_rep = 0;
-		public String SCH_end = "";
-		public StochaticsType sType = StochaticsType.ST;
-		
-		public SPNdataContainer() {
-			
-		}
-		
-		public SPNdataContainer(String value, StochaticsType sType) {
-			this.ST_function = value;
-			this.sType = sType;
-		}
-		
-		public String returnSaveVector() {
-			String data = "";
-			data += (ST_function+";");
-			data += (IM_priority+";");
-			data += (DET_delay+";");
-			data += (SCH_start+";");
-			data += (SCH_rep+";");
-			data += (SCH_end+";");
-			data += (sType);
-			
-			
-			return data;
-		}
-	}
-	
-	/**
 	 * Konstruktor obiektu klasy SPNtransitionsVector.
 	 */
 	public SPNdataVector() {
-		dataVector = new ArrayList<SPNdataContainer>();
+		dataVector = new ArrayList<SPNtransitionData>();
 		SPNvectorType = SPNvectorSuperType.SPN;
 		SPNvectorDescription = "Default description for SPN transitions data vector.";
 	}
@@ -70,16 +33,16 @@ public class SPNdataVector {
 	 * @param subType StochaticsType - typ SPN tranzycji
 	 * @return SPNdataContainer - obiekt
 	 */
-	public SPNdataContainer newContainer(String frFunction, StochaticsType subType) {
-		return new SPNdataContainer(frFunction, subType);
+	public SPNtransitionData newContainer(String frFunction, StochaticsType subType) {
+		return new SPNtransitionData(frFunction, subType);
 	}
 	
 	/**
 	 * Zwraca czysty kontener danych dla tranzycji SPN.
 	 * @return SPNdataContainer
 	 */
-	public SPNdataContainer newContainer() {
-		return new SPNdataContainer();
+	public SPNtransitionData newContainer() {
+		return new SPNtransitionData();
 	}
 	
 	/**
@@ -87,7 +50,7 @@ public class SPNdataVector {
 	 * @param index int - indeks tranzycji
 	 * @return SPNdataContainer - dane tranzycji w modelu SPN
 	 */
-	public SPNdataContainer getSPNtransitionContainer(int index) {
+	public SPNtransitionData getSPNtransitionContainer(int index) {
 		if(index >= dataVector.size())
 			return null;
 		else
@@ -100,7 +63,7 @@ public class SPNdataVector {
 	 * @param sType StochaticsType - typ stochastyczny tranzycji
 	 */
 	public void addTrans(String value, StochaticsType sType) {
-		dataVector.add(new SPNdataContainer(value, sType));
+		dataVector.add(new SPNtransitionData(value, sType));
 	}
 	
 	/**
@@ -209,7 +172,7 @@ public class SPNdataVector {
 	 * Umożliwia dostęp do wektora danych tranzycji SPN.
 	 * @return ArrayList[SPNdataContainer] - wektor danych tranzycji SPN dla wybranej tranzycji
 	 */
-	public ArrayList<SPNdataContainer> accessVector() {
+	public ArrayList<SPNtransitionData> accessVector() {
 		return this.dataVector;
 	}
 }

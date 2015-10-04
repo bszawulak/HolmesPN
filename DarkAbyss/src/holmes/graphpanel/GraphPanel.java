@@ -21,7 +21,7 @@ import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
@@ -1082,7 +1082,7 @@ public class GraphPanel extends JComponent {
 			Node node = clickedLocation.getParentNode();
 			if(drawnArc == null && node instanceof MetaNode) {
 				if(arcType == DrawModes.ARC) {
-					drawnArc = new Arc(clickedLocation, TypesOfArcs.NORMAL);
+					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
 					return;
 				} else {
 					JOptionPane.showMessageDialog(null, "Only normal arc allowed from meta-node!", 
@@ -1093,15 +1093,15 @@ public class GraphPanel extends JComponent {
 			
 			if (drawnArc == null) {
 				if(arcType == DrawModes.ARC)
-					drawnArc = new Arc(clickedLocation, TypesOfArcs.NORMAL);
+					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
 				else if(arcType == DrawModes.READARC)
-					drawnArc = new Arc(clickedLocation, TypesOfArcs.READARC);
+					drawnArc = new Arc(clickedLocation, TypeOfArc.READARC);
 				else if(arcType == DrawModes.ARC_INHIBITOR)
-					drawnArc = new Arc(clickedLocation, TypesOfArcs.INHIBITOR);
+					drawnArc = new Arc(clickedLocation, TypeOfArc.INHIBITOR);
 				else if(arcType == DrawModes.ARC_RESET)
-					drawnArc = new Arc(clickedLocation, TypesOfArcs.RESET);
+					drawnArc = new Arc(clickedLocation, TypeOfArc.RESET);
 				else if(arcType == DrawModes.ARC_EQUAL)
-					drawnArc = new Arc(clickedLocation, TypesOfArcs.EQUAL);
+					drawnArc = new Arc(clickedLocation, TypeOfArc.EQUAL);
 			} else { 
 				
 				if(clickedLocation.getParentNode() instanceof MetaNode) { //kończymy w meta-node
@@ -1111,7 +1111,7 @@ public class GraphPanel extends JComponent {
 						clearDrawnArc();
 						return;
 					}
-					if(drawnArc.getArcType() != TypesOfArcs.NORMAL) {
+					if(drawnArc.getArcType() != TypeOfArc.NORMAL) {
 						JOptionPane.showMessageDialog(null, "Only normal arc can be connected with meta-node.", 
 								"Problem", JOptionPane.WARNING_MESSAGE);
 						clearDrawnArc();
@@ -1207,29 +1207,29 @@ public class GraphPanel extends JComponent {
 							clearDrawnArc();
 						} else {
 							overlord.getWorkspace().getProject().restoreMarkingZero();
-							TypesOfArcs thisArc = convertType(arcType);
+							TypeOfArc thisArc = convertType(arcType);
 							
 							Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), clickedLocation, thisArc);
 							
 							if(arcType == DrawModes.ARC) {
-								if(arc.getArcType() != TypesOfArcs.READARC) //ważne dla tworzenia read-arc poprzez nałożenie ręczne 2 łuków!
-									arc.setArcType(TypesOfArcs.NORMAL); 
+								if(arc.getArcType() != TypeOfArc.READARC) //ważne dla tworzenia read-arc poprzez nałożenie ręczne 2 łuków!
+									arc.setArcType(TypeOfArc.NORMAL); 
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.READARC) {
 								//arc.setArcType(TypesOfArcs.INHIBITOR);
 								getArcs().add(arc);
-								Arc arc2 = new Arc(IdGenerator.getNextId(), clickedLocation, drawnArc.getStartLocation(), TypesOfArcs.READARC);
+								Arc arc2 = new Arc(IdGenerator.getNextId(), clickedLocation, drawnArc.getStartLocation(), TypeOfArc.READARC);
 								getArcs().add(arc2);
-								arc.setArcType(TypesOfArcs.READARC);
-								arc2.setArcType(TypesOfArcs.READARC);
+								arc.setArcType(TypeOfArc.READARC);
+								arc2.setArcType(TypeOfArc.READARC);
 							} else if(arcType == DrawModes.ARC_INHIBITOR) {
-								arc.setArcType(TypesOfArcs.INHIBITOR);
+								arc.setArcType(TypeOfArc.INHIBITOR);
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.ARC_RESET) {
-								arc.setArcType(TypesOfArcs.RESET);
+								arc.setArcType(TypeOfArc.RESET);
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.ARC_EQUAL) {
-								arc.setArcType(TypesOfArcs.EQUAL);
+								arc.setArcType(TypeOfArc.EQUAL);
 								getArcs().add(arc);
 							}
 							clearDrawnArc();
@@ -1456,17 +1456,17 @@ public class GraphPanel extends JComponent {
 		} 
 	}
 
-	public TypesOfArcs convertType(DrawModes arcType) {
+	public TypeOfArc convertType(DrawModes arcType) {
 		if(arcType == DrawModes.ARC_INHIBITOR)
-			return TypesOfArcs.INHIBITOR;
+			return TypeOfArc.INHIBITOR;
 		else if(arcType == DrawModes.ARC_EQUAL)
-			return TypesOfArcs.EQUAL;
+			return TypeOfArc.EQUAL;
 		else if(arcType == DrawModes.ARC_RESET)
-			return TypesOfArcs.RESET;
+			return TypeOfArc.RESET;
 		else if(arcType == DrawModes.READARC)
-			return TypesOfArcs.READARC;
+			return TypeOfArc.READARC;
 		else
-			return TypesOfArcs.NORMAL;
+			return TypeOfArc.NORMAL;
 	}
 
 	/**

@@ -9,7 +9,8 @@ import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.data.SPNtransitionData;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.functions.FunctionContainer;
 import holmes.petrinet.functions.FunctionsTools;
 
@@ -49,8 +50,17 @@ public class Transition extends Node {
 	public int txtYoff = 0;
 	public int valueXoff = 0;
 	public int valueYoff = 0;
-	
 	public Color defColor = new Color(224, 224, 224); //Color.LIGHT_GRAY;
+	
+	//quickSim - kolorowanie wyników symulacji
+	public boolean qSimDrawed = false; // czy rysować dodatkowe oznaczenie tranzycji - okrąg
+	public int qSimOvalSize = 10; //rozmiar okręgu oznaczającego
+	public Color qSimOvalColor = Color.RED;
+	public Color qSimFillColor = Color.WHITE; //domyślny kolor
+	public boolean qSimDrawStats = false; // czy rysować wypełnienie tranzycji
+	public int qSimFillValue = 0; //poziom wypełnienia
+	public double qSimFired = 0; //ile razy uruchomiona
+	public String qSimText = ""; //dodatkowy tekst
 	
 	//opcje czasowe:
 	protected double TPN_eft = 0; //TPN
@@ -71,24 +81,15 @@ public class Transition extends Node {
 	public enum StochaticsType { ST, DT, IM, SchT }
 	protected StochaticsType stochasticType;
 	protected double firingRate = 1.0;
-	protected double ssaProbTime = 0.0;
+	protected SPNtransitionData SPNbox = null;
 	
-	//quickSim - kolorowanie wyników symulacji
-	public boolean qSimDrawed = false; // czy rysować dodatkowe oznaczenie tranzycji - okrąg
-	public int qSimOvalSize = 10; //rozmiar okręgu oznaczającego
-	public Color qSimOvalColor = Color.RED;
-	public Color qSimFillColor = Color.WHITE; //domyślny kolor
-	public boolean qSimDrawStats = false; // czy rysować wypełnienie tranzycji
-	public int qSimFillValue = 0; //poziom wypełnienia
-	public double qSimFired = 0; //ile razy uruchomiona
-	public String qSimText = ""; //dodatkowy tekst
-	
-	
+	//SSA
+	protected double SPNprobTime = 0.0;
+
 	//inne:
 	protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
-
-	//tu było mnóstwo zbędnych konstruktorów potrzebnych równie zbędnej klasie TimeTransition
-	//zostały przeniesione jako dolny komentarz do niej, czyli do pakietu holmes.obsolete
+	
+	
 
 	/**
 	 * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
@@ -412,15 +413,15 @@ public class Transition extends Node {
 	
 		for (Arc arc : getInArcs()) {
 			Place arcStartPlace = (Place) arc.getStartNode();
-			TypesOfArcs arcType = arc.getArcType();
+			TypeOfArc arcType = arc.getArcType();
 			int startPlaceTokens = arcStartPlace.getNonReservedTokensNumber();
 			
-			if(arcType == TypesOfArcs.INHIBITOR) { 
+			if(arcType == TypeOfArc.INHIBITOR) { 
 				if(startPlaceTokens > 0)
 					return false; //nieaktywna
 				else
 					continue; //aktywna (nie jest w danej chwili blokowana)
-			} else if(arcType == TypesOfArcs.EQUAL && startPlaceTokens != arc.getWeight()) { //DOKŁADNIE TYLE CO WAGA
+			} else if(arcType == TypeOfArc.EQUAL && startPlaceTokens != arc.getWeight()) { //DOKŁADNIE TYLE CO WAGA
 				return false;
 			} else {
 				if(isFunctional) { //fast, no method
@@ -444,16 +445,16 @@ public class Transition extends Node {
 		for (Arc arc : getInArcs()) { //dla inhibitor nie działa, w ogóle tu nie wejdzie
 			Place origin = (Place) arc.getStartNode();
 			
-			if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+			if(arc.getArcType() == TypeOfArc.INHIBITOR) {
 				//tylko gdy inhibitor jest jedynym łukiem IN dla tranzycji 'wejściowej' (w standardowym sensie)
 				origin.reserveTokens(0); //więcej nie ma, bo inaczej w ogóle by nas tu nie było
-			} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+			} else if(arc.getArcType() == TypeOfArc.EQUAL) {
 				origin.reserveTokens(arc.getWeight()); //więcej nie ma, bo inaczej w ogóle by nas tu nie było
-			} else if(arc.getArcType() == TypesOfArcs.RESET) {
+			} else if(arc.getArcType() == TypeOfArc.RESET) {
 				int freeToken = origin.getNonReservedTokensNumber();
 				origin.reserveTokens(freeToken); //all left
 			} else { //read arc / normal
-				if(arc.getArcType() == TypesOfArcs.READARC) {
+				if(arc.getArcType() == TypeOfArc.READARC) {
 					if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simTransReadArcTokenReserv").equals("0")) {
 						continue; //nie rezerwuj przez read-arc
 					} else {
@@ -481,8 +482,7 @@ public class Transition extends Node {
 	 */
 	public void returnBookedTokens() {
 		for (Arc arc : getInArcs()) {
-			Place origin = (Place) arc.getStartNode();
-			origin.freeReservedTokens();
+			((Place) arc.getStartNode()).freeReservedTokens();
 		}
 	}
 
@@ -869,7 +869,7 @@ public class Transition extends Node {
 	 * Metoda zwraca podtyp SPN tranzycji.
 	 * @return StochaticsType - podtyp tranzycji stochastycznej
 	 */
-	public StochaticsType getStochasticType() {
+	public StochaticsType getSPNtype() {
 		return this.stochasticType;
 	}
 	
@@ -877,7 +877,7 @@ public class Transition extends Node {
 	 * Metoda ustawia podtyp SPN tranzycji.
 	 * @param value TransitionType -  podtyp tranzycji stochastycznej
 	 */
-	public void setStochasticType(StochaticsType value) {
+	public void setSPNtype(StochaticsType value) {
 		this.stochasticType = value;
 	}
 	
@@ -896,12 +896,30 @@ public class Transition extends Node {
 	public void setFiringRate(double firingRate) {
 		this.firingRate = firingRate;
 	}
-	
-	public void setSSAprobTime(double value) {
-		this.ssaProbTime = value;
+
+	/**
+	 * Metoda zwraca kontener danych SPN tranzycji.
+	 * @return SPNtransitionData - kontener danych
+	 */
+	public SPNtransitionData getSPNbox() {
+		return this.SPNbox;
 	}
 	
-	public double getSSAprobTime() {
-		return this.ssaProbTime;
+	/**
+	 * Metoda ustawia nowy kontener danych SPN tranzycji.
+	 * param SPNbox SPNtransitionData - kontener danych
+	 */
+	public void setSPNbox(SPNtransitionData SPNbox) {
+		this.SPNbox = SPNbox;
+	}
+	
+	
+	
+	public void setSPNprobTime(double time) {
+		this.SPNprobTime = time;
+	}
+	
+	public double getSPNprobTime() {
+		return this.SPNprobTime;
 	}
 }

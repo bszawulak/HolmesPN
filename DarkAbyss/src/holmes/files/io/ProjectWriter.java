@@ -14,7 +14,7 @@ import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SSAplacesVector;
 import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.SPNdataVector;
-import holmes.petrinet.data.SPNdataVector.SPNdataContainer;
+import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -735,7 +735,7 @@ public class ProjectWriter {
 					bw.write(spaces(sp)+stochTypeLine+newline);
 					*/
 					String dataLine = "version101:";
-					for(SPNdataContainer frc : frVector.accessVector()) {
+					for(SPNtransitionData frc : frVector.accessVector()) {
 						dataLine += (frc.returnSaveVector()+";");
 					}
 					dataLine = dataLine.substring(0, dataLine.length()-1); //usun ostatni ';'

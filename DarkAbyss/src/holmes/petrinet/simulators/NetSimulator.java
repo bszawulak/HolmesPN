@@ -14,7 +14,7 @@ import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
 import holmes.windows.HolmesNotepad;
@@ -288,32 +288,32 @@ public class NetSimulator {
 				if (backtracking == false) { //inArcs
 					place = (Place) arc.getStartNode();
 					
-					if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
 						arc.setTransportingTokens(false);
 						// nic nie zabieraj
-					} else if(arc.getArcType() == TypesOfArcs.READARC) {
+					} else if(arc.getArcType() == TypeOfArc.READARC) {
 						arc.setTransportingTokens(false);
 						// nic nie zabieraj
-					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+					} else if(arc.getArcType() == TypeOfArc.RESET) {
 						int tokens = place.getTokensNumber();
 						place.modifyTokensNumber(-tokens);
-					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+					} else if(arc.getArcType() == TypeOfArc.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
 					}
 				} else { //outArcs
 					place = (Place) arc.getEndNode();
-					if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
 						arc.setTransportingTokens(false);
 						// nic nie oddawaj
-					} else if(arc.getArcType() == TypesOfArcs.READARC) {
+					} else if(arc.getArcType() == TypeOfArc.READARC) {
 						arc.setTransportingTokens(false);
 						// nic nie oddawaj
-					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+					} else if(arc.getArcType() == TypeOfArc.RESET) {
 						place.modifyTokensNumber(-1); 
 						// PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
-					}  else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+					}  else if(arc.getArcType() == TypeOfArc.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
@@ -355,16 +355,16 @@ public class NetSimulator {
 				if (backtracking == false) { //inArcs
 					place = (Place) arc.getStartNode();
 					
-					if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
 						arc.setTransportingTokens(false);
 						// nic nie zabieraj
-					} else if(arc.getArcType() == TypesOfArcs.READARC) {
+					} else if(arc.getArcType() == TypeOfArc.READARC) {
 						arc.setTransportingTokens(false);
 						// nic nie zabieraj
-					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+					} else if(arc.getArcType() == TypeOfArc.RESET) {
 						int tokens = place.getTokensNumber();
 						place.modifyTokensNumber(-tokens);
-					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+					} else if(arc.getArcType() == TypeOfArc.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
@@ -372,16 +372,16 @@ public class NetSimulator {
 					}
 				} else { //outArcs
 					place = (Place) arc.getEndNode();
-					if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
 						arc.setTransportingTokens(false);
 						// nic nie oddawaj
-					} else if(arc.getArcType() == TypesOfArcs.READARC) {
+					} else if(arc.getArcType() == TypeOfArc.READARC) {
 						arc.setTransportingTokens(false);
 						// nic nie oddawaj
-					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+					} else if(arc.getArcType() == TypeOfArc.RESET) {
 						place.modifyTokensNumber(-1); 
 						// PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
-					}  else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+					}  else if(arc.getArcType() == TypeOfArc.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
@@ -410,7 +410,7 @@ public class NetSimulator {
 				arcs = tran.getInArcs();
 			
 			for (Arc arc : arcs) {
-				if(arc.getArcType() == TypesOfArcs.INHIBITOR || arc.getArcType() == TypesOfArcs.READARC)
+				if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC)
 					continue;
 				
 				arc.setSimulationForwardDirection(!backtracking);
@@ -444,7 +444,7 @@ public class NetSimulator {
 			tran.setLaunching(true);
 			
 			for (Arc arc : arcs) {
-				if(arc.getArcType() == TypesOfArcs.INHIBITOR || arc.getArcType() == TypesOfArcs.READARC)
+				if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC)
 					continue;
 				
 				arc.setSimulationForwardDirection(!backtracking);
@@ -472,7 +472,7 @@ public class NetSimulator {
 				arcs = transition.getInArcs();
 			//dodaj odpowiednią liczbę tokenów do miejsc
 			for (Arc arc : arcs) {
-				if(arc.getArcType() == TypesOfArcs.READARC)
+				if(arc.getArcType() == TypeOfArc.READARC)
 					continue;
 				
 				Place place;
@@ -481,7 +481,7 @@ public class NetSimulator {
 				else
 					place = (Place) arc.getStartNode();
 				
-				if(arc.getArcType() != TypesOfArcs.NORMAL)
+				if(arc.getArcType() != TypeOfArc.NORMAL)
 					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
 							" arc: "+arc.toString(), "error", true);
 				
@@ -516,7 +516,7 @@ public class NetSimulator {
 				arcs = transition.getInArcs();
 			}
 			for (Arc arc : arcs) {
-				if(arc.getArcType() == TypesOfArcs.READARC)
+				if(arc.getArcType() == TypeOfArc.READARC)
 					continue;
 				
 				Place place;
@@ -525,7 +525,7 @@ public class NetSimulator {
 				else
 					place = (Place) arc.getStartNode();
 				
-				if(arc.getArcType() != TypesOfArcs.NORMAL)
+				if(arc.getArcType() != TypeOfArc.NORMAL)
 					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
 							" arc: "+arc.toString(), "error", true);
 				

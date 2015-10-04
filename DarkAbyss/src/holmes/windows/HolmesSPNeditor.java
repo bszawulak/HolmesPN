@@ -22,8 +22,8 @@ import javax.swing.table.TableCellRenderer;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.SPNdataVectorManager;
+import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.data.SPNdataVector.SPNdataContainer;
 import holmes.petrinet.data.SPNdataVector;
 import holmes.petrinet.elements.Transition;
 import holmes.tables.SPNsingleVectorTableModel;
@@ -94,7 +94,7 @@ public class HolmesSPNeditor extends JFrame {
 		//int size = frData.getSize();
 		
 		int row = -1;
-		for(SPNdataContainer frBox : frData.accessVector()) {
+		for(SPNtransitionData frBox : frData.accessVector()) {
 			row++;
 			switch(frBox.sType) {
 				case ST:

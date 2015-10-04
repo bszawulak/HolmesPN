@@ -25,6 +25,14 @@ public class StandardRandom implements IRandomGenerator  {
 	
 	@Override
 	public long nextLong(long max) {
+		long bits, val;
+		do {
+			bits = (generator.nextLong() << 1) >>> 1;
+			val = bits % max;
+		} while (bits-val+(max-1) < 0L);
+		
+		return val;
+		/*
 		long v = generator.nextLong();
 		long ref = Long.MAX_VALUE;
 		
@@ -35,6 +43,7 @@ public class StandardRandom implements IRandomGenerator  {
 			result--;
 			
 		return result;
+		*/
 	}
 	
 	@Override

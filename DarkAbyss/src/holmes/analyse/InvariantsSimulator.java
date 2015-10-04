@@ -228,7 +228,7 @@ public class InvariantsSimulator {
 			for (i = 0; i < allTransitions.size(); i++) {
 				Transition transition = allTransitions.get(indexList.get(i));
 				if (transition.isActive())
-					if ((randomLaunch.nextInt(10) < 4) || maximumMode) {
+					if ((randomLaunch.nextInt(100) < 50) || maximumMode) {
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
 					}

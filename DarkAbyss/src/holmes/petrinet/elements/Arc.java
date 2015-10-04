@@ -39,20 +39,20 @@ public class Arc extends PetriNetElement {
 	//read-arc parameters:
 	private Arc pairedArc;
 	private boolean isMainArcOfPair = false;
-	private TypesOfArcs arcType;
+	private TypeOfArc arcType;
 	
 	public boolean qSimForcedArc = false; //czy łuk ma być wzmocniony
 	public Color qSimForcedColor = Color.BLACK; //kolor wzmocnienia
 
 	/** NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC */
-	public enum TypesOfArcs { NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC }
+	public enum TypeOfArc { NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC }
 	
 	/**
 	 * Konstruktor obiektu klasy Arc - chwilowo nieużywany.
 	 * @param startPosition ElementLocation - lokalicja żródła łuku
 	 * @param endPosition ElementLocation - lokalicja celu łuku
 	 */
-	public Arc(ElementLocation startPosition, ElementLocation endPosition, TypesOfArcs type) {
+	public Arc(ElementLocation startPosition, ElementLocation endPosition, TypeOfArc type) {
 		this(startPosition, type);
 
 		this.setEndLocation(endPosition);
@@ -67,7 +67,7 @@ public class Arc extends PetriNetElement {
 	 * @param startPosition ElementLocation - lokacja źródła łuku
 	 * @param endPosition ElementLocation - lokacja celu łuku
 	 */
-	public Arc(int arcId, ElementLocation startPosition, ElementLocation endPosition, TypesOfArcs type) {
+	public Arc(int arcId, ElementLocation startPosition, ElementLocation endPosition, TypeOfArc type) {
 		this(startPosition, type);
 
 		this.setEndLocation(endPosition);
@@ -82,7 +82,7 @@ public class Arc extends PetriNetElement {
 	 * @param comment String - komentarz
 	 * @param weight int - waga łuku
 	 */
-	public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment, int weight, TypesOfArcs type) {
+	public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment, int weight, TypeOfArc type) {
 		this(startPosition, type);
 		
 		this.setID(IdGenerator.getNextId());
@@ -98,7 +98,7 @@ public class Arc extends PetriNetElement {
 	 * rysowania (prowadzenia) łuku do miejsca docelowego.
 	 * @param startPosition ElementLocation - lokalizacja źródła łuku
 	 */
-	public Arc(ElementLocation startPosition, TypesOfArcs type) {
+	public Arc(ElementLocation startPosition, TypeOfArc type) {
 		this.arcType = type;
 		this.setStartLocation(startPosition);
 		this.setEndPoint(startPosition.getPosition());
@@ -112,14 +112,14 @@ public class Arc extends PetriNetElement {
 	 * Jeśli tak, ustala wartość obiektu łuku 
 	 */
 	public void lookForArcPair() {
-		if(this.getArcType() == TypesOfArcs.META_ARC)
+		if(this.getArcType() == TypeOfArc.META_ARC)
 			return;
 		
-		if(this.getArcType() != TypesOfArcs.NORMAL) { //LOAD PROJECT SUBROUTINE
-			if(this.getArcType() == TypesOfArcs.READARC) {
+		if(this.getArcType() != TypeOfArc.NORMAL) { //LOAD PROJECT SUBROUTINE
+			if(this.getArcType() == TypeOfArc.READARC) {
 				for (Arc a : this.getEndLocation().getOutArcs()) {
 					if (a.getEndLocation() == this.getStartLocation()) {
-						if(a.getArcType() != TypesOfArcs.READARC)
+						if(a.getArcType() != TypeOfArc.READARC)
 							continue; //load project purpose
 
 						a.setMainArcOfPair(true);
@@ -136,7 +136,7 @@ public class Arc extends PetriNetElement {
 		ArrayList<Arc> candidates = this.getEndLocation().getOutArcs();
 		for (Arc a : candidates) {
 			if (a.getEndLocation() == this.getStartLocation()) {
-				if(a.getArcType() != TypesOfArcs.NORMAL) {//tylko normal + normal = readarc
+				if(a.getArcType() != TypeOfArc.NORMAL) {//tylko normal + normal = readarc
 					handleComplexArcGraphics(a);
 					continue;
 				
@@ -398,7 +398,7 @@ public class Arc extends PetriNetElement {
 	public void setStartLocation(ElementLocation startLocation) {
 		this.locationStart = startLocation;
 		
-		if(this.arcType == TypesOfArcs.META_ARC) {
+		if(this.arcType == TypeOfArc.META_ARC) {
 			this.locationStart.accessMetaOutArcs().add(this);
 		} else {
 			this.locationStart.addOutArc(this);
@@ -422,7 +422,7 @@ public class Arc extends PetriNetElement {
 			return;
 		this.locationEnd = elementLocation;
 		
-		if(this.arcType == TypesOfArcs.META_ARC) {
+		if(this.arcType == TypeOfArc.META_ARC) {
 			this.locationEnd.accessMetaInArcs().add(this);
 		} else {
 			this.locationEnd.addInArc(this);
@@ -453,7 +453,7 @@ public class Arc extends PetriNetElement {
 	 * wyjściowego) łuku (odłącza łuk od wierzchołków).
 	 */
 	public void unlinkElementLocations() {
-		if(arcType == TypesOfArcs.META_ARC) {
+		if(arcType == TypeOfArc.META_ARC) {
 			if (this.locationStart != null)
 				this.locationStart.accessMetaOutArcs().remove(this);
 			if (this.locationEnd != null)
@@ -540,11 +540,11 @@ public class Arc extends PetriNetElement {
 	 * @param pairedArc Arc - łuk odczytu
 	 */
 	public void setPairedArc(Arc pairedArc) {
-		if(this.getArcType() == TypesOfArcs.META_ARC)
+		if(this.getArcType() == TypeOfArc.META_ARC)
 			return;
 		
 		this.pairedArc = pairedArc;
-		this.arcType = TypesOfArcs.READARC;
+		this.arcType = TypeOfArc.READARC;
 	}
 
 	/**
@@ -567,7 +567,7 @@ public class Arc extends PetriNetElement {
 	 * Metoda zwraca typ łuku.
 	 * @return TypesOfArcs
 	 */
-	public TypesOfArcs getArcType() {
+	public TypeOfArc getArcType() {
 		return arcType;
 	}
 	
@@ -575,7 +575,7 @@ public class Arc extends PetriNetElement {
 	 * Tylko do użytku wczytywania danych: ustawia typ łuku.
 	 * @param type TypesOfArcs - typ łuku
 	 */
-	public void setArcType(TypesOfArcs type) {
+	public void setArcType(TypeOfArc type) {
 		arcType = type;
 	}
 	

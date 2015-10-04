@@ -21,7 +21,7 @@ import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.utilities.Tools;
@@ -719,7 +719,7 @@ public final class ElementDraw {
 		//NIE-KLIKNIĘTY ŁUK
 		if (arc.getPairedArc() == null || arc.isMainArcOfPair()) { 
 			//czyli nie rysuje kreski tylko wtedy, jeśli to podrzędny łuk w ramach read-arc - żeby nie dublować
-			if(arc.getArcType() == TypesOfArcs.META_ARC) {
+			if(arc.getArcType() == TypeOfArc.META_ARC) {
 				g.setColor( new Color(30, 144, 255, 150));
 				Stroke backup = g.getStroke();
 				g.setStroke(new BasicStroke(4));
@@ -767,13 +767,13 @@ public final class ElementDraw {
 		//int upDown = 0; //im większa, tym mocniej w dół
 		g.setStroke(sizeStroke);
 		
-		if(arc.getArcType() == TypesOfArcs.NORMAL || arc.getArcType() == TypesOfArcs.READARC) {
+		if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.READARC) {
 			//g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
 			//		new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
 
 			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
-		} else if (arc.getArcType() == TypesOfArcs.INHIBITOR) {
+		} else if (arc.getArcType() == TypeOfArc.INHIBITOR) {
 			int xPos = (int) ((xl + xk)/2);
 	    	int yPos = (int) ((yl + yk)/2);
 	    	int xT = (int) ((xPos - xp)/3.14);
@@ -787,7 +787,7 @@ public final class ElementDraw {
 	    		g.drawOval((int)(xPos-5-xT), (int)(yPos-5-yT), 10, 10);
 	    	}
 	    	
-		} else if (arc.getArcType() == TypesOfArcs.RESET) {
+		} else if (arc.getArcType() == TypeOfArc.RESET) {
 			//g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
 			//		new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
 			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
@@ -804,7 +804,7 @@ public final class ElementDraw {
 			//		new int[] { (int) newyp, (int) yl+upDown, (int) yk+upDown }, 3);
 			g.fillPolygon(new int[] { (int) newxp, (int) xl, (int) xk }, 
 					new int[] { (int) newyp, (int) yl, (int) yk }, 3);
-		} else if (arc.getArcType() == TypesOfArcs.EQUAL) {
+		} else if (arc.getArcType() == TypeOfArc.EQUAL) {
 			int xPos = (int) ((xl + xk)/2);
 	    	int yPos = (int) ((yl + yk)/2);
 	    	int xT = (int) ((xPos - xp)/3.14);
@@ -816,7 +816,7 @@ public final class ElementDraw {
 	    	yT = (int) ((yPos - yp));
 	    	
 	    	g.fillOval((int)(xPos-4+xT), (int)(yPos-4+yT), 8, 8);
-		} else if (arc.getArcType() == TypesOfArcs.META_ARC) {
+		} else if (arc.getArcType() == TypeOfArc.META_ARC) {
 			double Mmeta = 6;
 			double xpmeta = endP.x + (endRadius-10) * alfaCos * sign;
 			double ypmeta = endP.y + (endRadius-10) * alfaSin * sign;

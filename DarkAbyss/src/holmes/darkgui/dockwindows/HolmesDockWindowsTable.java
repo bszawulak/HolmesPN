@@ -59,7 +59,7 @@ import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
@@ -2155,8 +2155,8 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
 		
-        if(((Arc)element).getArcType() != TypesOfArcs.RESET) {
-        	if(((Arc)element).getArcType() == TypesOfArcs.READARC && pairedArc != null) {
+        if(((Arc)element).getArcType() != TypeOfArc.RESET) {
+        	if(((Arc)element).getArcType() == TypeOfArc.READARC && pairedArc != null) {
         		String type1 = "T-->P";
         		String type2 = "P-->T";
             	if(((Arc)element).getStartNode() instanceof Place) {

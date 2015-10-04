@@ -16,7 +16,7 @@ import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.Transition.TransitionType;
 
 /**
@@ -510,7 +510,7 @@ public class NetHandler_Time extends NetHandler {
 				}
 			}
 			Arc nArc = new Arc(globalElementLocationList.get(tmpSource),
-					globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypesOfArcs.NORMAL);
+					globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypeOfArc.NORMAL);
 			arcList.add(nArc);
 			edge = false;
 		}

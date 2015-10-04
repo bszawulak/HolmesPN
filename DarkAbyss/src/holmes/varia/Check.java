@@ -11,7 +11,7 @@ import holmes.petrinet.data.PetriNet.GlobalNetType;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
 
@@ -73,20 +73,20 @@ public final class Check {
 		int doubleArc = 0;
 		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
 		for(Arc a : arcs) {
-			if(a.getArcType() == TypesOfArcs.NORMAL) {
+			if(a.getArcType() == TypeOfArc.NORMAL) {
 				if(InvariantsTools.isDoubleArc(a) == true) {
 					doubleArc++;
 				} else
 					normal++;
-			} else if(a.getArcType() == TypesOfArcs.READARC)
+			} else if(a.getArcType() == TypeOfArc.READARC)
 				readArc++;
-			else if(a.getArcType() == TypesOfArcs.INHIBITOR)
+			else if(a.getArcType() == TypeOfArc.INHIBITOR)
 				inhibitor++;
-			else if(a.getArcType() == TypesOfArcs.RESET)
+			else if(a.getArcType() == TypeOfArc.RESET)
 				reset++;
-			else if(a.getArcType() == TypesOfArcs.EQUAL)
+			else if(a.getArcType() == TypeOfArc.EQUAL)
 				equal++;
-			else if(a.getArcType() == TypesOfArcs.META_ARC)
+			else if(a.getArcType() == TypeOfArc.META_ARC)
 				meta++;
 		}
 		result.add(normal);

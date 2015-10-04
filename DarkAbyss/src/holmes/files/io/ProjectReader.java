@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.SPNdataVectorManager;
+import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SSAplacesManager;
@@ -19,7 +20,6 @@ import holmes.petrinet.data.SSAplacesVector.SSAdataType;
 import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.StatePlacesManager;
 import holmes.petrinet.data.SPNdataVector;
-import holmes.petrinet.data.SPNdataVector.SPNdataContainer;
 import holmes.petrinet.data.SPNdataVector.SPNvectorSuperType;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
@@ -27,7 +27,7 @@ import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.Transition.StochaticsType;
 import holmes.petrinet.elements.Transition.TransitionType;
@@ -853,17 +853,17 @@ public class ProjectReader {
 			String[] tab = line.split(";");
 			
 			String typeLine = tab[0];
-			TypesOfArcs arcType = TypesOfArcs.NORMAL;
+			TypeOfArc arcType = TypeOfArc.NORMAL;
 			if(typeLine.contains("READARC"))
-				arcType = TypesOfArcs.READARC;
+				arcType = TypeOfArc.READARC;
 			else if(typeLine.contains("INHIBITOR"))
-				arcType = TypesOfArcs.INHIBITOR;
+				arcType = TypeOfArc.INHIBITOR;
 			else if(typeLine.contains("RESET"))
-				arcType = TypesOfArcs.RESET;
+				arcType = TypeOfArc.RESET;
 			else if(typeLine.contains("EQUAL"))
-				arcType = TypesOfArcs.EQUAL;
+				arcType = TypeOfArc.EQUAL;
 			else if(typeLine.contains("META_ARC"))
-				arcType = TypesOfArcs.META_ARC;
+				arcType = TypeOfArc.META_ARC;
 			
 			tab[2] = tab[2].replace(">", "");
 			int weight = Integer.parseInt(tab[2]);
@@ -1396,7 +1396,7 @@ public class ProjectReader {
 						line = line.replace(" ", "");
 						String[] tabType = line.split(";");
 						
-						ArrayList<SPNdataContainer> dataVector = new ArrayList<SPNdataContainer>();
+						ArrayList<SPNtransitionData> dataVector = new ArrayList<SPNtransitionData>();
 						for(int i=0; i<dataVectorTable.length; i++) {
 							StochaticsType subType = StochaticsType.ST;
 							if(tabType[i].equals("DT"))
@@ -1407,7 +1407,7 @@ public class ProjectReader {
 								subType = StochaticsType.SchT;
 							
 							//TODO: nowy konstruktor, wektor zapisu
-							SPNdataContainer frc = frVector.newContainer(dataVectorTable[i], subType);
+							SPNtransitionData frc = frVector.newContainer(dataVectorTable[i], subType);
 
 							dataVector.add(frc);
 						}
@@ -1417,7 +1417,7 @@ public class ProjectReader {
 						//new SPN block
 						frVector.setSPNtype(SPNvectorSuperType.SPN);
 						frVector.setDescription("Read errors");
-						ArrayList<SPNdataContainer> dataVector = parseSPNdataVector(dataVectorTable, frVector);
+						ArrayList<SPNtransitionData> dataVector = parseSPNdataVector(dataVectorTable, frVector);
 						frVector.accessVector().addAll(dataVector);
 					}
 
@@ -1485,8 +1485,14 @@ public class ProjectReader {
 		}
 	}
 	
-	private ArrayList<SPNdataContainer> parseSPNdataVector(String[] dataVectorTable, SPNdataVector frVector) {
-		ArrayList<SPNdataContainer> spnVector = new ArrayList<SPNdataContainer>();
+	/**
+	 * Czyta tablicę danych wektora SPN składającą się z tekstowego zapisu obiektów SPNtransitionData.
+	 * @param dataVectorTable String[] - tablica danych
+	 * @param frVector SPNdataVector
+	 * @return ArrayList[SPNtransitionData] - wektor danych obiektów SPNtransitionData
+	 */
+	private ArrayList<SPNtransitionData> parseSPNdataVector(String[] dataVectorTable, SPNdataVector frVector) {
+		ArrayList<SPNtransitionData> spnVector = new ArrayList<SPNtransitionData>();
 		
 		/*
 		 * public String ST_function = "";
@@ -1500,7 +1506,7 @@ public class ProjectReader {
 		if(dataVectorTable[0].contains("version101:")) {
 			dataVectorTable[0] = dataVectorTable[0].replace("version101:", "");
 			for(int i=0; i<transitionsProcessed; i++) {
-				SPNdataContainer box = frVector.newContainer();
+				SPNtransitionData box = frVector.newContainer();
 				box.ST_function = dataVectorTable[i*7];
 				try { box.IM_priority = Integer.parseInt(dataVectorTable[(i*7)+1]); } catch(Exception e) {}
 				try { box.DET_delay = Integer.parseInt(dataVectorTable[(i*7)+2]); } catch(Exception e) {}

@@ -17,7 +17,7 @@ import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.Transition.TransitionType;
 
@@ -1095,7 +1095,7 @@ public class SnoopyReader {
 			line = buffer.readLine();
 		}
 		if(!line.contains("<edgeclass count=\"0\"") && line.contains("name=\"Edge\"")) { //są jakieś łuki?
-			readEdges(buffer, line, TypesOfArcs.NORMAL);
+			readEdges(buffer, line, TypeOfArc.NORMAL);
 		}
 		
 		// Read Edge
@@ -1105,7 +1105,7 @@ public class SnoopyReader {
 			line = buffer.readLine();
 		}
 		if(!line.contains("<edgeclass count=\"0\"") && line.contains("name=\"Read Edge\"")) { //są jakieś łuki?
-			readEdges(buffer, line, TypesOfArcs.READARC);
+			readEdges(buffer, line, TypeOfArc.READARC);
 		}
 		
 		// Inhibitor Edge
@@ -1115,7 +1115,7 @@ public class SnoopyReader {
 			line = buffer.readLine();
 		}
 		if(!line.contains("<edgeclass count=\"0\"") && line.contains("name=\"Inhibitor Edge\"")) { //są jakieś łuki?
-			readEdges(buffer, line, TypesOfArcs.INHIBITOR);
+			readEdges(buffer, line, TypeOfArc.INHIBITOR);
 		}
 		
 		// Reset Edge
@@ -1125,7 +1125,7 @@ public class SnoopyReader {
 			line = buffer.readLine();
 		}
 		if(!line.contains("<edgeclass count=\"0\"") && line.contains("name=\"Reset Edge\"")) { //są jakieś łuki?
-			readEdges(buffer, line, TypesOfArcs.RESET);
+			readEdges(buffer, line, TypeOfArc.RESET);
 		}
 		
 		// Equal Edge
@@ -1135,7 +1135,7 @@ public class SnoopyReader {
 			line = buffer.readLine();
 		}
 		if(!line.contains("<edgeclass count=\"0\"") && line.contains("name=\"Equal Edge\"")) { //są jakieś łuki?
-			readEdges(buffer, line, TypesOfArcs.EQUAL);
+			readEdges(buffer, line, TypeOfArc.EQUAL);
 		}
 		
 	}
@@ -1146,7 +1146,7 @@ public class SnoopyReader {
 	 * @param line String - ostatnio przeczytana linia
 	 * @param arcType TypesOfArcs - typ łuku wykryty w metodzie nadrzędnej
 	 */
-	private void readEdges(BufferedReader buffer, String line, TypesOfArcs arcType) {
+	private void readEdges(BufferedReader buffer, String line, TypeOfArc arcType) {
 		String backFirstLine = line;
 		int edgesCounter = -1;
 		int edgesLimit = 0;
@@ -1259,7 +1259,7 @@ public class SnoopyReader {
 								try {
 									ElementLocation sourceEL = null;
 									ElementLocation targetEL = null;
-									TypesOfArcs currentType = arcType; 
+									TypeOfArc currentType = arcType; 
 									int eLsourceLocation = snoopyNodesElLocIDList.get(sourceLocationInNodes).indexOf(sourceID);
 									if(eLsourceLocation == -1) { //szukaj wśród elementów wektora coarse-nodes
 										int coarseIndex = -1;
@@ -1302,7 +1302,7 @@ public class SnoopyReader {
 										if(foundInCoarses || snoopyErrorFixed) {
 											int coarseID = snoopyNodesIdList.size() - snoopyCoarseNodesIdList.size() + coarseIndex;
 											sourceEL = nodesList.get(coarseID).getElementLocations().get(coarseSubLocation);
-											currentType = TypesOfArcs.META_ARC;
+											currentType = TypeOfArc.META_ARC;
 											if(snoopyErrorFixed == false) //tylko dla coarse-nodes
 												edgesCounter--;
 										}
@@ -1352,7 +1352,7 @@ public class SnoopyReader {
 										if(found || snoopyErrorFixed) {
 											int coarseID = snoopyNodesIdList.size() - snoopyCoarseNodesIdList.size() + coarseIndex;
 											targetEL = nodesList.get(coarseID).getElementLocations().get(coarseSubLocation);
-											currentType = TypesOfArcs.META_ARC;
+											currentType = TypeOfArc.META_ARC;
 											if(snoopyErrorFixed == false) //tylko dla coarse-nodes
 												edgesCounter--;
 										}

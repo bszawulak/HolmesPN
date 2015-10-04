@@ -12,7 +12,7 @@ import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.varia.Check;
 import holmes.windows.HolmesInvariantsGenerator;
 
@@ -477,7 +477,7 @@ public class InvariantsCalculatorFeasible {
 
 		for(ElementLocation el : place.getElementLocations()) {
 			for(Arc a : el.getInArcs()) { //tylko łuki wejściowe
-				if(a.getArcType() == TypesOfArcs.READARC || a.getArcType() == TypesOfArcs.INHIBITOR) 
+				if(a.getArcType() == TypeOfArc.READARC || a.getArcType() == TypeOfArc.INHIBITOR) 
 					continue; //czyli poniższe działa tylko dla: NORMAL, RESET i EQUAL
 
 				Transition trans = (Transition) a.getStartNode();
@@ -505,9 +505,9 @@ public class InvariantsCalculatorFeasible {
 			
 			for(ElementLocation el : transition.getElementLocations()) {
 				for(Arc a : el.getOutArcs()) {
-					if(a.getArcType() != TypesOfArcs.READARC) {
+					if(a.getArcType() != TypeOfArc.READARC) {
 						
-						if(a.getArcType() == TypesOfArcs.NORMAL) {
+						if(a.getArcType() == TypeOfArc.NORMAL) {
 							if(InvariantsTools.isDoubleArc(a) == false)
 								continue;
 						} else {	
@@ -555,7 +555,7 @@ public class InvariantsCalculatorFeasible {
 		ArrayList<Integer> raTrans = new ArrayList<Integer>();
 		ArrayList<Arc> arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
 		for(Arc a : arcs) {
-			if(a.getArcType() == TypesOfArcs.READARC) { //tylko łuki odczytu
+			if(a.getArcType() == TypeOfArc.READARC) { //tylko łuki odczytu
 				Node node = a.getEndNode();
 				if(node instanceof Transition) { 
 					// nie trzeba dodatkowo dla Place, readarc to w programie 2 łuki: jeden w tą, drugi w drugą stronę
@@ -567,7 +567,7 @@ public class InvariantsCalculatorFeasible {
 					if(raTrans.contains(position) == false)
 						raTrans.add(position);
 				}
-			} else if(a.getArcType() == TypesOfArcs.NORMAL){
+			} else if(a.getArcType() == TypeOfArc.NORMAL){
 				if(InvariantsTools.isDoubleArc(a) == true) {
 					Node n = a.getEndNode();
 					if(n instanceof Place) {

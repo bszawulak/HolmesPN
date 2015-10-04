@@ -12,7 +12,7 @@ import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.windows.HolmesNodeInfo;
 
@@ -60,7 +60,7 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 		boolean proceed = true;
 		if(pne == PetriNetElementType.ARC) {
 			Arc arc = (Arc)pneObject;
-			if(arc.getArcType() == TypesOfArcs.META_ARC)
+			if(arc.getArcType() == TypeOfArc.META_ARC)
 				proceed = false;
 		}
 		

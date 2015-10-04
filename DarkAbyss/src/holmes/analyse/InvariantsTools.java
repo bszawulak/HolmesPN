@@ -12,7 +12,7 @@ import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Arc.TypesOfArcs;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.utilities.Tools;
 
 /**
@@ -1096,16 +1096,16 @@ public final class InvariantsTools {
     			Transition transition = transitions.get(e);
     			for(ElementLocation el : transition.getElementLocations()) {
     				for(Arc arc : el.getInArcs()) {
-    					if(arc.getArcType() == TypesOfArcs.NORMAL)
+    					if(arc.getArcType() == TypeOfArc.NORMAL)
     						continue;
     					
-    					if(arc.getArcType() == TypesOfArcs.READARC) {
+    					if(arc.getArcType() == TypeOfArc.READARC) {
     						readArcs++;
-    					} else if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+    					} else if(arc.getArcType() == TypeOfArc.INHIBITOR) {
     						inhibitors++;
-    					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+    					} else if(arc.getArcType() == TypeOfArc.RESET) {
     						resets++;
-    					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+    					} else if(arc.getArcType() == TypeOfArc.EQUAL) {
     						equals++;
     					}
     				}
@@ -1155,7 +1155,7 @@ public final class InvariantsTools {
     			int outArcs = 0;
     			for(ElementLocation el : transition.getElementLocations()) {
     				for(Arc a : el.getInArcs()) {
-    					if(a.getArcType() == TypesOfArcs.INHIBITOR || a.getArcType() == TypesOfArcs.READARC) {
+    					if(a.getArcType() == TypeOfArc.INHIBITOR || a.getArcType() == TypeOfArc.READARC) {
     						extInArcs++;
     					} else {
     						inArcs++;
@@ -1163,7 +1163,7 @@ public final class InvariantsTools {
     				}
     				
     				for(Arc a : el.getOutArcs()) {
-    					if(a.getArcType() != TypesOfArcs.READARC) //nie liczy się: to jest in-arc w myśl dziwnych definicji!
+    					if(a.getArcType() != TypeOfArc.READARC) //nie liczy się: to jest in-arc w myśl dziwnych definicji!
     						outArcs++;
     				}
     			}
@@ -1262,7 +1262,7 @@ public final class InvariantsTools {
 				for(ElementLocation el : transition.getElementLocations()) {
 					
 					for(Arc arc : el.getInArcs()) {
-						if(arc.getArcType() == TypesOfArcs.READARC) {
+						if(arc.getArcType() == TypeOfArc.READARC) {
 							Place p = (Place) arc.getStartNode();
 							
 							if((p.getTokensNumber() == 0) && connPlaces.contains(p) == false)
@@ -1303,7 +1303,7 @@ public final class InvariantsTools {
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		
 		for(Arc a : arcs) {
-			if(a.getArcType() == TypesOfArcs.READARC) { //tylko łuki odczytu
+			if(a.getArcType() == TypeOfArc.READARC) { //tylko łuki odczytu
 				Node node = a.getEndNode();
 				if(node instanceof Transition) { 
 					// nie trzeba dodatkowo dla Place, readarc to w programie 2 łuki: jeden w tą, drugi w drugą stronę
@@ -1330,7 +1330,7 @@ public final class InvariantsTools {
 
 		for(ElementLocation el : place.getElementLocations()) {
 			for(Arc a : el.getInArcs()) { //tylko łuki wejściowe
-				if(a.getArcType() == TypesOfArcs.READARC || a.getArcType() == TypesOfArcs.INHIBITOR) 
+				if(a.getArcType() == TypeOfArc.READARC || a.getArcType() == TypeOfArc.INHIBITOR) 
 					continue; //czyli poniższe działa tylko dla: NORMAL, RESET i EQUAL
 
 				Transition trans = (Transition) a.getStartNode();
@@ -1530,27 +1530,27 @@ public final class InvariantsTools {
 			int outArcs = 0;
 			for(ElementLocation el : transition.getElementLocations()) {
 				for(Arc arc : el.getInArcs()) {
-					if(arc.getArcType() == TypesOfArcs.INHIBITOR || arc.getArcType() == TypesOfArcs.READARC) {
+					if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC) {
 						extInArcs++;
 					} else {
 						inArcs++;
 					}
 					
-					if(arc.getArcType() == TypesOfArcs.NORMAL)
+					if(arc.getArcType() == TypeOfArc.NORMAL)
 						continue;
 					
-					if(arc.getArcType() == TypesOfArcs.READARC) {
+					if(arc.getArcType() == TypeOfArc.READARC) {
 						readArcs++;
-					} else if(arc.getArcType() == TypesOfArcs.INHIBITOR) {
+					} else if(arc.getArcType() == TypeOfArc.INHIBITOR) {
 						inhibitors++;
-					} else if(arc.getArcType() == TypesOfArcs.RESET) {
+					} else if(arc.getArcType() == TypeOfArc.RESET) {
 						resets++;
-					} else if(arc.getArcType() == TypesOfArcs.EQUAL) {
+					} else if(arc.getArcType() == TypeOfArc.EQUAL) {
 						equals++;
 					}
 				}
 				for(Arc a : el.getOutArcs()) {
-					if(a.getArcType() != TypesOfArcs.READARC) //nie liczy się: to jest in-arc w myśl dziwnych definicji!
+					if(a.getArcType() != TypeOfArc.READARC) //nie liczy się: to jest in-arc w myśl dziwnych definicji!
 						outArcs++;
 				}
 			}
