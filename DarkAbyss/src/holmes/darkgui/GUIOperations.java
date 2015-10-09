@@ -346,6 +346,7 @@ public class GUIOperations {
 	public boolean saveAsGlobal() {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[6];
+		
 		filters[0] = new ExtensionFileFilter("All supported Snoopy files", new String[] { "SPPED", "SPEPT", "SPTPT" });
 		filters[1] = new ExtensionFileFilter("Snoopy Petri Net (.spped)", new String[] { "SPPED" });
 		filters[2] = new ExtensionFileFilter("Snoopy Extended Petri Net (.spept)", new String[] { "SPEPT" });
@@ -435,6 +436,11 @@ public class GUIOperations {
 		if(extension.contains(".project"))
 			return extension; //always right! ;)
 		
+		if(extension.contains("all supported")) {
+			extension = "snoopy petri net (.spped)";
+			Tools.lastExtension = extension;
+		}
+		
 		GlobalNetType netType = Check.getSuggestedNetType();
 		
 		String fileFormat = "";
@@ -461,6 +467,8 @@ public class GUIOperations {
 		} else {
 			if(fileFormat.equals(".project"))
 				fileFormat = "Holmes project file (.project)";
+			
+			
 			
 			Object[] options = {"Use selected anyway", "Use suggested format", "Save as project", "Cancel save",};
 			int n = JOptionPane.showOptionDialog(null,
