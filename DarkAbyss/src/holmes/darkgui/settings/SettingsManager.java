@@ -151,8 +151,9 @@ public class SettingsManager {
 		//invariants:
 		checkAndFix(settingsNew, "analysisBinaryCSVInvariants", "0");
 		checkAndFix(settingsNew, "analysisFeasibleSelfPropAccepted", "1");
-		
 		checkAndFix(settingsNew, "analysisMCSReduction", "1");
+		
+		checkAndFix(settingsNew, "analysisRemoveNonInv", "0");
 		
 		//knockout:
 		checkAndFix(settingsNew, "mctNameShow", "1");

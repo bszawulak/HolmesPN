@@ -1,4 +1,4 @@
-package holmes.tables;
+package holmes.tables.simKnock;
 
 import java.util.ArrayList;
 

@@ -199,15 +199,19 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().addComponentListener(this);
 		
 		createHiddenConsole(); // okno konsoli logowania zdarzeń
+		
+		settingsManager = new SettingsManager();
+		settingsManager.loadSettings();
+		frame.setTitle("Holmes "+settingsManager.getValue("holmes_version"));
+		
+		
 		createClusterWindow(); // okno tabeli klastrów
 		createNetPropertiesWindow(); // okno właściwości sieci
 		createSearchWindow(); // okno wyszukiwania elementów sieci
 		createNetTablesWindow(); // okno tabel sieci
 		createInvariantsWindow(); // okno generatora inwariantów
 		
-		settingsManager = new SettingsManager();
-		settingsManager.loadSettings();
-		frame.setTitle("Holmes "+settingsManager.getValue("holmes_version"));
+		
 		initializeEnvironment(); //wczytuje ustawienia, ustawia wewnętrzne zmienne programu
 		
 		// Set the frame properties and show it.

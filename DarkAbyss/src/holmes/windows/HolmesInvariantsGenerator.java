@@ -273,6 +273,27 @@ public class HolmesInvariantsGenerator extends JFrame {
 		});
 		feasModeCheckBox.setSelected(true);
 		panel.add(feasModeCheckBox);
+		
+		JCheckBox invPurityCheckBox = new JCheckBox("Clean non-inv.");
+		invPurityCheckBox.setBounds(posX+505, posY+56, 140, 20);
+		invPurityCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "1", true);
+					//cleanNonInvariant = true;//TODO:
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "0", true);
+					//cleanNonInvariant = false;
+				}
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1")) 
+			invPurityCheckBox.setSelected(true);
+		else
+			invPurityCheckBox.setSelected(false);
+
+		panel.add(invPurityCheckBox);
 
 		return panel;
 	}

@@ -209,6 +209,31 @@ public final class InvariantsTools {
 		return results;
 	}
 	
+	public static ArrayList<ArrayList<Integer>> getOnlyRealInvariants(ArrayList<ArrayList<Integer>> CMatrix, 
+			ArrayList<ArrayList<Integer>> invSet, boolean t_inv) {
+		ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
+
+		
+		for(ArrayList<Integer> inv : invSet) {
+			ArrayList<Integer> vector = null;
+			if(t_inv)
+				vector = check_invariantV2(CMatrix, inv);
+			else
+				vector = check_invariantV2(transposeMatrix(CMatrix), inv);
+			
+			if(vector.get(0) == 0) {
+				results.add(inv);
+			} else if(vector.get(0) == -1) {
+				//subInv++;
+			} else if(vector.get(0) == 1) {
+				//surInv++;
+			} else { // non-inv
+				//nonInv++;
+			}
+		}
+		return results;
+	}
+	
 	/**
 	 * Metoda zwraca wektor o wielkości zbioru inwariantów. Każda pozycja określa za pomocą pojedynczej
 	 * wartości liczbowej rodzaj odpowiedniego inwariantu.

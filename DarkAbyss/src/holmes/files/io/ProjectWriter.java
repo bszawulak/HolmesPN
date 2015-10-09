@@ -376,7 +376,21 @@ public class ProjectWriter {
 							String endLoc = "P"+endNodeIndex+"("+endNodeLocationIndex+")";
 							int weight = arc.getWeight();
 							
-							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
+							
+							
+							String brokenLine = "";
+							if(arc.accessBreaks().size() > 0) {
+								brokenLine += ";";
+								for(Point point : arc.accessBreaks()) {
+									brokenLine += point.x;
+									brokenLine += "-";
+									brokenLine += point.y;
+									brokenLine += "x";
+								}
+								brokenLine = brokenLine.substring(0, brokenLine.length()-1);
+							}
+							
+							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+brokenLine+newline);
 							savedArcs++;
 						} else if(endNode instanceof MetaNode) {
 							String startLoc = "T"+t+"("+e+")";
@@ -394,19 +408,7 @@ public class ProjectWriter {
 							String endLoc = "M"+endNodeIndex+"("+endNodeLocationIndex+")";
 							int weight = arc.getWeight();
 							
-							String brokenLine = "";
-							if(arc.accessBreaks().size() > 0) {
-								brokenLine += ";";
-								for(Point point : arc.accessBreaks()) {
-									brokenLine += point.x;
-									brokenLine += "-";
-									brokenLine += point.y;
-									brokenLine += "x";
-								}
-								brokenLine = brokenLine.substring(0, brokenLine.length()-1);
-							}
-							
-							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+brokenLine+newline);
+							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
 							savedArcs++;
 						}
 					}

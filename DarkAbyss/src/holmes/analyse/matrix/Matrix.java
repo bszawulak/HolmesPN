@@ -1,4 +1,4 @@
-package holmes.analyzer.matrix;
+package holmes.analyse.matrix;
 
 /**
  * Klasa abstrakcyjna definiująca podstawowe operacje na macierz t x p, gdzie

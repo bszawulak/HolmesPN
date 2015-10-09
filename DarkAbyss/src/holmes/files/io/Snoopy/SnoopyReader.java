@@ -36,6 +36,7 @@ public class SnoopyReader {
 	
 	private ArrayList<Arc> arcList = new ArrayList<Arc>();
 	private ArrayList<Node> nodesList = new ArrayList<Node>();
+	
 	private ArrayList<Integer> snoopyNodesIdList = new ArrayList<Integer>();
 	/** Chwilowo do niczego nie potrzebny wektor, łuki idą do snoopyCoarseNodesElLocIDList */
 	private ArrayList<Integer> snoopyCoarseNodesIdList = new ArrayList<Integer>();

@@ -1,28 +1,29 @@
-package holmes.tables;
+package holmes.tables.simKnock;
 
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
 import holmes.petrinet.data.NetSimulationData;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.Place;
 
 /**
- * Model tabeli danych statystycznych dla tranzycji (symulacja knockout).
+ * Model tabeli danych statystycznych dla miejsca (symulacja knockout).
  * 
  * @author MR
  *
  */
-public class SimKnockTransTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = -5809682023062187908L;
-
-	public class TransContainer {
+public class SimKnockPlacesTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 7417629500439797992L;
+	//private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
+	
+	public class PlaceContainer {
     	public int ID;
     	public String name;
-    	public double firingAvg;
-    	public double firingMin;
-    	public double firingMax;
-    	public String noFiring;
+    	public double tokenAvg;
+    	public double tokenMin;
+    	public double tokenMax;
+    	public String noTokens;
     	public double stdDev;
     	
     	public double s1;
@@ -32,52 +33,50 @@ public class SimKnockTransTableModel extends AbstractTableModel {
     	public double s5;
     }
 	
-	private String[] columnNames = {"ID", "Transition name", "AvgF", "MinF", "MaxF", "noF", "stdDev", "S1 %", "S2 %", "S3 %", "S4 %", "S5 %"};
-	private ArrayList<TransContainer> dataMatrix;
+	private String[] columnNames = {"ID", "Place name", "AvgT", "MinT", "MaxT", "noT", "stdDev", "S1 %", "S2 %", "S3 %", "S4 %", "S5 %"};
+	private ArrayList<PlaceContainer> dataMatrix;
 	private int dataSize;
 	
 	/**
-	 * Konstruktor klasy modelującej tablicę tranzycji.
+	 * Konstruktor klasy modelującej tablicę miejsc.
 	 */
-	public SimKnockTransTableModel() {
-		dataMatrix = new ArrayList<TransContainer>();
+	public SimKnockPlacesTableModel() {
+		dataMatrix = new ArrayList<PlaceContainer>();
 		dataSize = 0;
 	}
 	
 	/**
-	 * Metoda dodająca nowy wiersz do modelu tablicy tranzycji.
+	 * Metoda dodająca nowy wiersz do modelu tablicy miejsc.
 	 * @param data NetSimulationData - obiekt danych statystycznych
-	 * @param index int - index tranzycji
-	 * @param t Transition - tranzycja
+	 * @param index int - index miejsca
+	 * @param p Place - miejsce
 	 */
-	public void addNew(NetSimulationData data, int index, Transition t) {
-		TransContainer tc = new TransContainer();
-		tc.ID = index;
+	public void addNew(NetSimulationData data, int index, Place p) {
+		PlaceContainer pc = new PlaceContainer();
+		pc.ID = index;
 		
-		if(t != null)
-			tc.name = t.getName();
+		if(p != null)
+			pc.name = p.getName();
 		else
-			tc.name = "Transition "+index;
+			pc.name = "Place "+index;
 		
-		if(data.disabledTotals.contains(index)) {
-			tc.name = " <OFFLINE> " + tc.name;
-		} else if(data.transFiringsAvg.get(index) == 0) {
-			tc.name = " <KNOCKOUT> " + tc.name;
-		}
-
-		tc.firingAvg = data.transFiringsAvg.get(index);
-		tc.firingMin = data.transFiringsMin.get(index);
-		tc.firingMax = data.transFiringsMax.get(index);
-		tc.noFiring = "" + data.transZeroFiring.get(index); // +"/"+data.reps;
+		if(data.placeTokensAvg.get(index) == 0)
+			pc.name = "<KNOCKOUT>" + pc.name;
+				
 		
-		tc.stdDev = data.transStdDev.get(index);
-		tc.s1 = data.transWithinStdDev.get(index).get(0) * 100 / data.reps;
-		tc.s2 = data.transWithinStdDev.get(index).get(1) * 100 / data.reps;
-		tc.s3 = data.transWithinStdDev.get(index).get(2) * 100 / data.reps;
-		tc.s4 = data.transWithinStdDev.get(index).get(3) * 100 / data.reps;
-		tc.s5 = data.transWithinStdDev.get(index).get(4) * 100 / data.reps;
+		pc.tokenAvg = data.placeTokensAvg.get(index);
+		pc.tokenMin = data.placeTokensMin.get(index);
+		pc.tokenMax = data.placeTokensMax.get(index);
+		pc.noTokens = "" + data.placeZeroTokens.get(index); // +"/"+data.reps;
 		
-		dataMatrix.add(tc);
+		pc.stdDev = data.placeStdDev.get(index);
+		pc.s1 = data.placeWithinStdDev.get(index).get(0) * 100 / data.reps;
+		pc.s2 = data.placeWithinStdDev.get(index).get(1) * 100 / data.reps;
+		pc.s3 = data.placeWithinStdDev.get(index).get(2) * 100 / data.reps;
+		pc.s4 = data.placeWithinStdDev.get(index).get(3) * 100 / data.reps;
+		pc.s5 = data.placeWithinStdDev.get(index).get(4) * 100 / data.reps;
+		
+		dataMatrix.add(pc);
 		dataSize++;
 	}
 	
@@ -138,16 +137,20 @@ public class SimKnockTransTableModel extends AbstractTableModel {
         	returnValue = dataMatrix.get(rowIndex).name;
             break;
         case 2:
-        	returnValue = dataMatrix.get(rowIndex).firingAvg;
+        	returnValue = dataMatrix.get(rowIndex).tokenAvg;
+        	try{
+        		//Double value = Double.parseDouble(returnValue.toString());
+        		//returnValue = value;
+        	} catch (Exception e) { }
             break;
         case 3:
-        	returnValue = dataMatrix.get(rowIndex).firingMin;
+        	returnValue = dataMatrix.get(rowIndex).tokenMin;
             break;
         case 4:
-        	returnValue = dataMatrix.get(rowIndex).firingMax;
+        	returnValue = dataMatrix.get(rowIndex).tokenMax;
             break;
         case 5:
-        	returnValue = dataMatrix.get(rowIndex).noFiring;
+        	returnValue = dataMatrix.get(rowIndex).noTokens;
             break;
         case 6:
         	returnValue = dataMatrix.get(rowIndex).stdDev;

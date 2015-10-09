@@ -76,6 +76,8 @@ public class InvariantsCalculator implements Runnable {
 		
 		zeroColumnVector = new ArrayList<Integer>();
 		nonZeroColumnVector = new ArrayList<Integer>();
+		
+		
 	}
 	
 	/**
@@ -88,6 +90,24 @@ public class InvariantsCalculator implements Runnable {
 			if(t_InvMode == true) {
 				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode);
 				this.calculateInvariants();
+				
+				
+				
+
+				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1")) {
+					logInternal("\n", false);
+					logInternal("Removing all non-canonical t-invariants from the dataset."+"\n", false);
+					InvariantsCalculator minion_ic = new InvariantsCalculator(true);
+					ArrayList<ArrayList<Integer>> cleanInv = InvariantsTools.getOnlyRealInvariants(
+							minion_ic.getCMatrix(), getInvariants(true), true);
+			
+					if(getInvariants(true).size() != cleanInv.size()) {
+						logInternal((getInvariants(true).size() - cleanInv.size())+" non-canonical t-invariants has been removed: "
+								+ cleanInv.size()+ " remained from "+getInvariants(true).size()+"\n", false);
+					}
+					
+					t_invariantsList = cleanInv;
+				}
 				
 				PetriNet project = overlord.getWorkspace().getProject();
 				overlord.getT_invBox().showT_invBoxWindow(getInvariants(true));
@@ -125,10 +145,26 @@ public class InvariantsCalculator implements Runnable {
 				logInternal("Non-t-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n", false);
 				logInternal("=====================================================================\n", false);
 				
+					
 				overlord.markNetChange();
 			} else { //P-invariants
 				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode); //t_InvMode == false
 				this.calculateInvariants();
+				
+				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1")) {
+					logInternal("\n", false);
+					logInternal("Removing all non-canonical p-invariants from the dataset."+"\n", false);
+					InvariantsCalculator minion_ic = new InvariantsCalculator(false);
+					ArrayList<ArrayList<Integer>> cleanInv = InvariantsTools.getOnlyRealInvariants(
+							minion_ic.getCMatrix(), getInvariants(false), false);
+			
+					if(getInvariants(false).size() != cleanInv.size()) {
+						logInternal((getInvariants(false).size() - cleanInv.size())+" non-canonical p-invariants has been removed: "
+								+ cleanInv.size()+ " remained from "+getInvariants(false).size()+"\n", false);
+					}
+					
+					p_invariantsList = cleanInv;
+				}
 
 				PetriNet project = overlord.getWorkspace().getProject();
 				overlord.getP_invBox().showP_invBoxWindow(getInvariants(false));
@@ -160,6 +196,8 @@ public class InvariantsCalculator implements Runnable {
 				logInternal("Sub-p-invariants (Cx < 0): "+results.get(0).get(2)+"\n", false);
 				logInternal("Non-p-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n", false);
 				logInternal("=====================================================================\n", false);
+				
+				
 				
 				overlord.markNetChange();
 			}

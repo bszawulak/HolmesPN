@@ -1,4 +1,4 @@
-package holmes.analyzer.matrix;
+package holmes.analyse.matrix;
 
 import java.util.ArrayList;
 

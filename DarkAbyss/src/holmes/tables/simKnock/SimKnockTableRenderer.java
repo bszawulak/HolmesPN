@@ -1,4 +1,4 @@
-package holmes.tables;
+package holmes.tables.simKnock;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -10,8 +10,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import holmes.tables.SimKnockPlacesCompAllTableModel.DetailsPlace;
-import holmes.tables.SimKnockTransCompAllTableModel.DetailsTrans;
+import holmes.tables.simKnock.SimKnockPlacesCompAllTableModel.DetailsPlace;
+import holmes.tables.simKnock.SimKnockTransCompAllTableModel.DetailsTrans;
 
 public class SimKnockTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();

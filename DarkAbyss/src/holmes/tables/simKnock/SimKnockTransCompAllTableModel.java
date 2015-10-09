@@ -1,42 +1,42 @@
-package holmes.tables;
+package holmes.tables.simKnock;
 
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Model tabeli danych statystycznych dla miejsc
+ * Model tabeli danych statystycznych dla tranzycji (wszystkich)
  * 
  * @author MR
  *
  */
-public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = 2403086900970134182L;
+public class SimKnockTransCompAllTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = -1394169736979919555L;
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
-	public ArrayList<ArrayList<DetailsPlace>> pTableData;
+	public ArrayList<ArrayList<DetailsTrans>> tTableData;
 	
-	public class DetailsPlace {
-		public DetailsPlace() {}
+	public class DetailsTrans {
+		public DetailsTrans() {}
 		
-		public double refAvgTokens;
-		public double knockAvgTokens;
+		public double refAvgFiring;
+		public double knockAvgFiring;
 		public int knockDisabled;
 		public boolean significance1;
 		public boolean significance2;
 		public double diff;
 	}
-	
+
 	/**
 	 * Konstruktor klasy modelującej tablicę tranzycji.
 	 */
-	public SimKnockPlacesCompAllTableModel(int placesNumber) {
-		columnNames = new String[placesNumber+3];
+	public SimKnockTransCompAllTableModel(int transNumber) {
+		columnNames = new String[transNumber+3];
 		columnNames[0] = "ID";
 		columnNames[1] = "Offline transition name:";
 		columnNames[2] = "Knocked:";
-		for(int i=0; i<placesNumber; i++) {
+		for(int i=0; i<transNumber; i++) {
 			columnNames[i+3] = "t"+i;
 		}
 		
@@ -44,8 +44,8 @@ public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
 		dataSize = 0;
 	}
 	
-	public DetailsPlace newDetailsInstance() {
-		return new DetailsPlace();
+	public DetailsTrans newDetailsInstance() {
+		return new DetailsTrans();
 	}
 	
 	/**
@@ -95,7 +95,6 @@ public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
         if (dataMatrix.isEmpty()) {
             return Object.class;
         }
-   
         return getValueAt(0, columnIndex).getClass();
     }
 

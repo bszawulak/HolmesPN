@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import holmes.analyzer.matrix.IncidenceMatrix;
-import holmes.analyzer.matrix.InputMatrix;
-import holmes.analyzer.matrix.OutputMatrix;
+import holmes.analyse.matrix.IncidenceMatrix;
+import holmes.analyse.matrix.InputMatrix;
+import holmes.analyse.matrix.OutputMatrix;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;

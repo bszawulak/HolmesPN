@@ -1388,7 +1388,7 @@ public class ProjectReader {
 					
 					String[] dataVectorTable = line.split(";");
 					
-					if(dataVectorTable.length < (transitionsProcessed + 10)) {
+					if(dataVectorTable.length < (transitionsProcessed + 3)) {
 						readProtocol = 0;
 						//old project file
 						line = buffer.readLine();//typ tranzycji
