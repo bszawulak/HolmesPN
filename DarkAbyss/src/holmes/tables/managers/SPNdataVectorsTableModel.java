@@ -1,11 +1,11 @@
-package holmes.tables;
+package holmes.tables.managers;
 
 import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
 
 import holmes.petrinet.data.SPNdataVector.SPNvectorSuperType;
-import holmes.windows.HolmesSPNmanager;
+import holmes.windows.managers.HolmesSPNmanager;
 
 /**
  * Klasa tablicy wszystkich wektorów tranzycji SPN.

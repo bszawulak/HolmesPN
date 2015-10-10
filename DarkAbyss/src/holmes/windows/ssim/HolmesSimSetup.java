@@ -28,9 +28,9 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.utilities.Tools;
-import holmes.windows.HolmesSPNmanager;
-import holmes.windows.HolmesSSAwindowManager;
-import holmes.windows.HolmesStatesManager;
+import holmes.windows.managers.HolmesSPNmanager;
+import holmes.windows.managers.HolmesSSAwindowManager;
+import holmes.windows.managers.HolmesStatesManager;
 
 /**
  * Okno ustawień symulatorów programu. Pozwala ustawić parametry symulacji w globalnym obiekcie

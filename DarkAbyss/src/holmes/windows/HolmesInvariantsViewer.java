@@ -205,7 +205,7 @@ public class HolmesInvariantsViewer extends JFrame {
 	}
 	
 	/**
-	 * Tworzy panel przycisków bocznych.
+	 * Tworzy panel przycisków górnych.
 	 * @return JPanel - panel
 	 */
 	public JPanel getUpperPanel() {

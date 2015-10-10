@@ -54,6 +54,10 @@ public class PetriNetElement implements Serializable {
 	protected void setID(int iD) {
 		this.ID = iD;
 	}
+	
+	public void importOnlySetID(int iD) {
+		this.ID = iD;
+	}
 
 	/**
 	 * Metoda pozwala pobrać komentarz do elementu sieci Petriego.

@@ -1086,7 +1086,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					name = name.replace(".colpn", "");
 					name = name.replace(".sptpt", "");
 					setName(name);
-				} else { //Holmes project
+				} else { //new loader
 					SnoopyReader reader = new SnoopyReader(0, path);
 					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
 					accessStatesManager().createCleanState();

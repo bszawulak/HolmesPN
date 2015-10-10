@@ -1,4 +1,4 @@
-package holmes.windows;
+package holmes.windows.managers;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -28,8 +28,8 @@ import holmes.petrinet.data.SSAplacesManager;
 import holmes.petrinet.data.SSAplacesVector;
 import holmes.petrinet.data.SSAplacesVector.SSAdataType;
 import holmes.petrinet.elements.Place;
-import holmes.tables.SSAplacesTableModel;
-import holmes.tables.SSAplacesTableRenderer;
+import holmes.tables.managers.SSAplacesTableModel;
+import holmes.tables.managers.SSAplacesTableRenderer;
 import holmes.utilities.Tools;
 
 /**

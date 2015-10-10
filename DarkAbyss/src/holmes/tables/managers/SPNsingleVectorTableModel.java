@@ -1,4 +1,4 @@
-package holmes.tables;
+package holmes.tables.managers;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -6,59 +6,69 @@ import java.util.EventObject;
 
 import javax.swing.table.DefaultTableModel;
 
-import holmes.windows.HolmesStatesEditor;
+import holmes.petrinet.elements.Transition.StochaticsType;
+import holmes.windows.managers.HolmesSPNeditor;
 
-public class StatesPlacesEditorTableModel extends DefaultTableModel {
-	private static final long serialVersionUID = -7416704094839931505L;
+/**
+ * Model tabeli tranzycji dla jednego wektora danych SPN.
+ * 
+ * @author MR
+ */
+public class SPNsingleVectorTableModel extends DefaultTableModel {
+	private static final long serialVersionUID = -6898959322396110431L;
 	private String[] columnNames;
-	private ArrayList<PlaceEditContainer> dataMatrix;
+	private ArrayList<FRDataClass> dataMatrix;
 	private int dataSize;
-	private HolmesStatesEditor boss;
-	private int stateVectorIndex;
+	@SuppressWarnings("unused")
+	private HolmesSPNeditor boss;
+	@SuppressWarnings("unused")
+	private int frVectorIndex;
 	public boolean changes = false;
 	
-	public class PlaceEditContainer {
+	public class FRDataClass {
 		public int ID;
 		public String name;
-		public Double tokens;
+		public String dataVector;
+		public StochaticsType subType;
 	}
 
 	/**
-	 * Konstruktor klasy modelującej tablicę miejsc i ich stanu.
-	 * @param boss HolmesStatesEditor - obiekt okna tablicy
-	 * @param stateVectorIndex int - nr wybranego wektora
+	 * Konstruktor klasy modelującej tablicę wektora danych tranzycji SPN.
 	 */
-	public StatesPlacesEditorTableModel(HolmesStatesEditor boss, int stateVectorIndex) {
+	public SPNsingleVectorTableModel(HolmesSPNeditor boss, int frVectorIndex) {
 		this.boss = boss;
-		this.stateVectorIndex = stateVectorIndex;
+		this.frVectorIndex = frVectorIndex;
 		clearModel();
 	}
 	
 	/**
-	 * Czyści model tablicy.
+	 * Czyści model tablicy danych tranzycji SPN.
 	 */
 	public void clearModel() {
-		columnNames = new String[3];
+		columnNames = new String[4];
 		columnNames[0] = "ID";
-		columnNames[1] = "Place Name";
-		columnNames[2] = "Value";
+		columnNames[1] = "Transition Name";
+		columnNames[2] = "Firing rate";
+		columnNames[3] = "SPN subtype";
 		
-		dataMatrix = new ArrayList<PlaceEditContainer>();
+		dataMatrix = new ArrayList<FRDataClass>();
 		dataSize = 0;
 		
 	}
 	
 	/**
-	 * Dodaje nowy wektor danych do tablicy.
-	 * @param ID int - indeks miejsca
-	 * @param name String - nazwa miejsca
-	 * @param value double - liczba tokenów
+	 * Dodaje nowy wiersza do modelu tablicy danych tranzycji SPN.
+	 * @param ID int - indeks trabzycji
+	 * @param name String - nazwa tranzycji
+	 * @param SPNtransData String - dane dla SPN
+	 * @param sType StochaticsType - podtyp w SPN
 	 */
-	public void addNew(int ID, String name, double value) {
-		PlaceEditContainer row = new PlaceEditContainer();
+	public void addNew(int ID, String name, String SPNtransData, StochaticsType sType) {
+		FRDataClass row = new FRDataClass();
 		row.ID = ID;
 		row.name = name;
-		row.tokens = value;
+		row.dataVector = SPNtransData;
+		row.subType = sType;
 		dataMatrix.add(row);
 		dataSize++;
 	}
@@ -104,11 +114,7 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
      * Zwraca status edytowalności komórek.
      */
     public boolean isCellEditable(int row, int column) {
-    	if(column == 2) {
-    		return true;
-    	} else { 
-    		return false;
-    	}
+    	return false;
     }
     
     /**
@@ -136,7 +142,9 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 			case 1:
 				return dataMatrix.get(rowIndex).name;
 			case 2:
-				return dataMatrix.get(rowIndex).tokens;
+				return dataMatrix.get(rowIndex).dataVector;
+			case 3:
+				return dataMatrix.get(rowIndex).subType;
 		}
 		return null;
 	}
@@ -148,26 +156,14 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 	 * @param col int - nr kolumny
 	 */
 	public void setValueAt(Object value, int row, int col) {
-		double newValue = 0;
 		try {
 			if(col == 2) {
-				newValue = Double.parseDouble(value.toString());
-				dataMatrix.get(row).tokens = newValue;
-				boss.changeRealValue(stateVectorIndex, row, newValue);
+				dataMatrix.get(row).dataVector = value.toString();
+			} else if(col == 3) {
+				dataMatrix.get(row).subType = (StochaticsType)value;
 			}
 		} catch (Exception e) {
-			//dataMatrix.get(row).firingRate = 1.0;
-		}
-	}
-	
-	public void setQuietlyValueAt(Object value, int row, int col) {
-		double newValue = 0;
-		try {
-			if(col == 2) {
-				newValue = Double.parseDouble(value.toString());
-				dataMatrix.get(row).tokens = newValue;
-			}
-		} catch (Exception e) {
+
 		}
 	}
 }

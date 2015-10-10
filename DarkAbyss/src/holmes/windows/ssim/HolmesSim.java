@@ -70,7 +70,7 @@ import holmes.petrinet.simulators.StateSimulator;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
-import holmes.windows.HolmesStatesManager;
+import holmes.windows.managers.HolmesStatesManager;
 import holmes.workspace.ExtensionFileFilter;
 
 /**

@@ -26,7 +26,7 @@ import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.StateSimulator;
 import holmes.utilities.Tools;
-import holmes.windows.HolmesStatesManager;
+import holmes.windows.managers.HolmesStatesManager;
 
 /**
  * Klasa odpowiedzialna za tworzenie podstrony knockoutSim.

@@ -1,33 +1,23 @@
-package holmes.tables;
+package holmes.tables.managers;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.text.DecimalFormat;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-/**
- * Renderer tablicy wyświetlania wszystkich wektorów danych SPN.
- * 
- * @author MR
- */
-public class SPNdataVectorsRenderer implements TableCellRenderer {
+public class SSAplacesTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
-	private static final DecimalFormat formatter = new DecimalFormat( "#" );
-	@SuppressWarnings("unused")
-	private JTable table;
 	private static final Font fontNormal =  new Font("Verdana", Font.PLAIN, 9);
 	private static final Font fontBold =  new Font("Verdana", Font.BOLD, 9);
 	
 	/**
-	 * Konstruktor domyślny obiektów klasy SPNdataVectorsRenderer.
+	 * Konstruktor domyślny obiektów klasy StatesPlacesTableRenderer.
 	 */
-	public SPNdataVectorsRenderer(JTable table) {
-		this.table = table;
+	public SSAplacesTableRenderer() {
 	}
 
 	
@@ -42,7 +32,7 @@ public class SPNdataVectorsRenderer implements TableCellRenderer {
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
-
+    	
     	JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		oLabel.setBackground(Color.white);
 		oLabel.setFont(fontNormal);
@@ -52,15 +42,10 @@ public class SPNdataVectorsRenderer implements TableCellRenderer {
     	if(firstCell.toString().equals("X")) {
     		oLabel.setFont(fontBold);
     	}
+    	
     	if(selectedRow == row)
     		oLabel.setBackground(Color.lightGray);
-    	
-    	
-    	if(value instanceof Double) {
-            value = formatter.format((Number)value);
-        }
-    	
-    	
+
     	oLabel.setText(value.toString());
         return oLabel;
     }

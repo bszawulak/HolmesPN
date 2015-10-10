@@ -1,4 +1,4 @@
-package holmes.windows;
+package holmes.windows.managers;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,9 +25,9 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.SPNdataVectorManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
-import holmes.tables.SPNdataVectorsRenderer;
-import holmes.tables.SPNdataVectorsTableModel;
 import holmes.tables.RXTable;
+import holmes.tables.managers.SPNdataVectorsRenderer;
+import holmes.tables.managers.SPNdataVectorsTableModel;
 import holmes.utilities.Tools;
 
 /**

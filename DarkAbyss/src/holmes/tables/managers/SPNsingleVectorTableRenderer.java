@@ -1,4 +1,4 @@
-package holmes.tables;
+package holmes.tables.managers;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -9,17 +9,24 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-public class SSAplacesTableRenderer implements TableCellRenderer {
+import holmes.petrinet.elements.Transition.StochaticsType;
+
+/**
+ * Klasa rysująca tablicę tranzycji dla jednego wektora danych SPN.
+ * @author MR
+ */
+public class SPNsingleVectorTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
-	private static final Font fontNormal =  new Font("Verdana", Font.PLAIN, 9);
-	private static final Font fontBold =  new Font("Verdana", Font.BOLD, 9);
+	@SuppressWarnings("unused")
+	private JTable table;
+	private static final Font fontNormal =  new Font("Verdana", Font.PLAIN, 12);
 	
 	/**
-	 * Konstruktor domyślny obiektów klasy StatesPlacesTableRenderer.
+	 * Konstruktor domyślny obiektów klasy SPNoneTransTableRenderer.
 	 */
-	public SSAplacesTableRenderer() {
+	public SPNsingleVectorTableRenderer(JTable table) {
+		this.table = table;
 	}
-
 	
 	/**
 	 * Przeciążona metoda odpowiedzialna za zwrócenie komórki tabeli.
@@ -32,21 +39,28 @@ public class SSAplacesTableRenderer implements TableCellRenderer {
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
-    	
+
     	JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		oLabel.setBackground(Color.white);
 		oLabel.setFont(fontNormal);
-		int selectedRow = table.getSelectedRow();
-		Object firstCell = table.getValueAt(row, 0);
+		if(column < 2) {
+			oLabel.setText(value.toString());
+		} else if(column == 2) {
+			
+			oLabel.setText(value.toString());
+		} else {
+			StochaticsType sType = (StochaticsType)value;
+			if(sType == StochaticsType.ST) {
+				oLabel.setText("Stochastic");
+			} else if(sType == StochaticsType.IM) {
+				oLabel.setText("Immediate");
+			}	else if(sType == StochaticsType.DT) {
+				oLabel.setText("Deterministic");
+			}  else {
+				oLabel.setText("Scheduled");
+			}
+		}
 
-    	if(firstCell.toString().equals("X")) {
-    		oLabel.setFont(fontBold);
-    	}
-    	
-    	if(selectedRow == row)
-    		oLabel.setBackground(Color.lightGray);
-
-    	oLabel.setText(value.toString());
         return oLabel;
     }
 }

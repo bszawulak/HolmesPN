@@ -1,74 +1,69 @@
-package holmes.tables;
+package holmes.tables.managers;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EventObject;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-import holmes.petrinet.elements.Transition.StochaticsType;
-import holmes.windows.HolmesSPNeditor;
+import holmes.petrinet.data.SSAplacesVector.SSAdataType;
+import holmes.windows.managers.HolmesSSAplacesEditor;
 
 /**
- * Model tabeli tranzycji dla jednego wektora danych SPN.
+ * Model tablicy do edycji wartości komponentów w miejscach dla symulatora SSA.
  * 
  * @author MR
  */
-public class SPNsingleVectorTableModel extends DefaultTableModel {
-	private static final long serialVersionUID = -6898959322396110431L;
+public class SSAplacesEditorTableModel extends DefaultTableModel {
+	private static final long serialVersionUID = 5334544477964813872L;
 	private String[] columnNames;
-	private ArrayList<FRDataClass> dataMatrix;
+	private ArrayList<SSAdataClass> dataMatrix;
 	private int dataSize;
-	@SuppressWarnings("unused")
-	private HolmesSPNeditor boss;
-	@SuppressWarnings("unused")
-	private int frVectorIndex;
+	private HolmesSSAplacesEditor boss;
+	private int ssaVectorIndex;
 	public boolean changes = false;
 	
-	public class FRDataClass {
+	private SSAdataType dataType;
+	
+	public class SSAdataClass {
 		public int ID;
 		public String name;
-		public String dataVector;
-		public StochaticsType subType;
+		public Double ssaValue;
 	}
 
 	/**
-	 * Konstruktor klasy modelującej tablicę wektora danych tranzycji SPN.
+	 * Konstruktor klasy modelującej tablicę wektora miejsc SSA.
+	 * @param boss HolmesSSAplacesEditor - obiekt okna tablicy
+	 * @param ssaVectorIndex int - nr wybranego wektora
+	 * @param dataType SSAdataType - rodzaj danych
 	 */
-	public SPNsingleVectorTableModel(HolmesSPNeditor boss, int frVectorIndex) {
+	public SSAplacesEditorTableModel(HolmesSSAplacesEditor boss, int ssaVectorIndex, SSAdataType dataType) {
 		this.boss = boss;
-		this.frVectorIndex = frVectorIndex;
+		this.ssaVectorIndex = ssaVectorIndex;
+		this.dataType = dataType;
 		clearModel();
 	}
 	
 	/**
-	 * Czyści model tablicy danych tranzycji SPN.
+	 * Czyści model tablicy.
 	 */
 	public void clearModel() {
-		columnNames = new String[4];
+		columnNames = new String[3];
 		columnNames[0] = "ID";
-		columnNames[1] = "Transition Name";
-		columnNames[2] = "Firing rate";
-		columnNames[3] = "SPN subtype";
+		columnNames[1] = "Place Name";
+		columnNames[2] = "Value";
 		
-		dataMatrix = new ArrayList<FRDataClass>();
+		dataMatrix = new ArrayList<SSAdataClass>();
 		dataSize = 0;
 		
 	}
 	
-	/**
-	 * Dodaje nowy wiersza do modelu tablicy danych tranzycji SPN.
-	 * @param ID int - indeks trabzycji
-	 * @param name String - nazwa tranzycji
-	 * @param SPNtransData String - dane dla SPN
-	 * @param sType StochaticsType - podtyp w SPN
-	 */
-	public void addNew(int ID, String name, String SPNtransData, StochaticsType sType) {
-		FRDataClass row = new FRDataClass();
+	public void addNew(int ID, String name, double value) {
+		SSAdataClass row = new SSAdataClass();
 		row.ID = ID;
 		row.name = name;
-		row.dataVector = SPNtransData;
-		row.subType = sType;
+		row.ssaValue = value;
 		dataMatrix.add(row);
 		dataSize++;
 	}
@@ -114,7 +109,11 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
      * Zwraca status edytowalności komórek.
      */
     public boolean isCellEditable(int row, int column) {
-    	return false;
+    	if(column == 2) {
+    		return true;
+    	} else { 
+    		return false;
+    	}
     }
     
     /**
@@ -142,9 +141,7 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 			case 1:
 				return dataMatrix.get(rowIndex).name;
 			case 2:
-				return dataMatrix.get(rowIndex).dataVector;
-			case 3:
-				return dataMatrix.get(rowIndex).subType;
+				return dataMatrix.get(rowIndex).ssaValue;
 		}
 		return null;
 	}
@@ -156,14 +153,35 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 	 * @param col int - nr kolumny
 	 */
 	public void setValueAt(Object value, int row, int col) {
+		double newValue = 0;
 		try {
 			if(col == 2) {
-				dataMatrix.get(row).dataVector = value.toString();
-			} else if(col == 3) {
-				dataMatrix.get(row).subType = (StochaticsType)value;
+				newValue = Double.parseDouble(value.toString());
+				if(dataType == SSAdataType.MOLECULES) {
+					if(newValue > 0.9) {
+						dataMatrix.get(row).ssaValue = newValue;
+						boss.changeRealValue(ssaVectorIndex, row, newValue);
+					} else {
+						JOptionPane.showMessageDialog(boss, 
+								"Data type set for molecules. Expected number from a range of\n"
+								+ "1 to (usually) billions - not fractions (there is no "+newValue+" molecule!).", 
+								"Invalid value, integer number of molecules expected",JOptionPane.WARNING_MESSAGE);
+					}
+				} else {
+					if(newValue < 10) {
+						dataMatrix.get(row).ssaValue = newValue;
+						boss.changeRealValue(ssaVectorIndex, row, newValue);
+					} else {
+						JOptionPane.showMessageDialog(boss, 
+								"Data type set for concentration. Units are moles/litre. Expected number \n"
+								+ "from a range of 0 to (usually) tiny fraction (e.g. 1e-12). This value will\n"
+								+ "be MULTIPLIED by Avogadro constant (6.022*10^23 molecules!)", 
+								"Invalid value, moles/litre expected",JOptionPane.WARNING_MESSAGE);
+					}
+				}
 			}
 		} catch (Exception e) {
-
+			//dataMatrix.get(row).firingRate = 1.0;
 		}
 	}
 }

@@ -75,7 +75,7 @@ import holmes.utilities.Tools;
 import holmes.windows.HolmesFunctionsBuilder;
 import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesNotepad;
-import holmes.windows.HolmesStatesManager;
+import holmes.windows.managers.HolmesStatesManager;
 import holmes.windows.ssim.HolmesSimSetup;
 import holmes.workspace.WorkspaceSheet;
 

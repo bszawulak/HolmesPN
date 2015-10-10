@@ -42,6 +42,7 @@ public final class ElementDraw {
 
 	}
 
+	//TODO: znacznik tranzycji
 	/**
 	 * Główna metoda statyczna odpowiedzialna za rysowanie węzłów sieci.
 	 * @param node Node - obiekt węzła
@@ -52,7 +53,7 @@ public final class ElementDraw {
 	 */
 	@SuppressWarnings("unused")
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId, ElementDrawSettings eds) {
-		if(node instanceof Transition) { //TODO: znacznik tranzycji
+		if(node instanceof Transition) { 
 			Transition trans = (Transition)node;
 			Color portalColor = new Color(224,224,224);
 			Color portalSelColor = EditorResources.selectionColorLevel3;
@@ -118,7 +119,9 @@ public final class ElementDraw {
 						g.setColor(EditorResources.glowTransitonColorLevel3);
 						g.setStroke(EditorResources.glowStrokeLevel3);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					} else if (el.isSelected() && !el.isPortalSelected()) {
+					} 
+					//NIGDY ELSE!:
+					if (el.isSelected() && !el.isPortalSelected()) {
 						g.setColor(EditorResources.selectionColorLevel1);
 						g.setStroke(EditorResources.glowStrokeLevel1);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);

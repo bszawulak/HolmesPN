@@ -17,7 +17,8 @@ import holmes.darkgui.dockable.DockableMenuItem;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesInvariantsViewer;
-import holmes.windows.HolmesStatesManager;
+import holmes.windows.HolmesMergeNets;
+import holmes.windows.managers.HolmesStatesManager;
 
 import com.javadocking.dockable.Dockable;
 
@@ -122,6 +123,18 @@ public class DarkMenu extends JMenuBar {
 			}
 		});
 		fileMenu.add(importMenuItem);
+		
+		// merge from file
+		JMenuItem mergeMenuItem = new JMenuItem("Merge nets...");
+		mergeMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_MergeIcon.png"));
+		//mergeMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
+		mergeMenuItem.getAccessibleContext().setAccessibleDescription("Merge projects");
+		mergeMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new HolmesMergeNets();
+			}
+		});
+		fileMenu.add(mergeMenuItem);
 		
 		fileMenu.addSeparator();
 		

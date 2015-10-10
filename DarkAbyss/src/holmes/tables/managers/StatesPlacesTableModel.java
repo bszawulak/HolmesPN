@@ -1,4 +1,4 @@
-package holmes.tables;
+package holmes.tables.managers;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.EventObject;
 
 import javax.swing.table.AbstractTableModel;
 
-import holmes.windows.HolmesStatesManager;
+import holmes.windows.managers.HolmesStatesManager;
 
 /**
  * Model tabeli stanów początkowych sieci (klasyczny).

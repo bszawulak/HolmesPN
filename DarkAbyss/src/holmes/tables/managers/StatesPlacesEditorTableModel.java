@@ -1,47 +1,36 @@
-package holmes.tables;
+package holmes.tables.managers;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EventObject;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-import holmes.petrinet.data.SSAplacesVector.SSAdataType;
-import holmes.windows.HolmesSSAplacesEditor;
+import holmes.windows.managers.HolmesStatesEditor;
 
-/**
- * Model tablicy do edycji wartości komponentów w miejscach dla symulatora SSA.
- * 
- * @author MR
- */
-public class SSAplacesEditorTableModel extends DefaultTableModel {
-	private static final long serialVersionUID = 5334544477964813872L;
+public class StatesPlacesEditorTableModel extends DefaultTableModel {
+	private static final long serialVersionUID = -7416704094839931505L;
 	private String[] columnNames;
-	private ArrayList<SSAdataClass> dataMatrix;
+	private ArrayList<PlaceEditContainer> dataMatrix;
 	private int dataSize;
-	private HolmesSSAplacesEditor boss;
-	private int ssaVectorIndex;
+	private HolmesStatesEditor boss;
+	private int stateVectorIndex;
 	public boolean changes = false;
 	
-	private SSAdataType dataType;
-	
-	public class SSAdataClass {
+	public class PlaceEditContainer {
 		public int ID;
 		public String name;
-		public Double ssaValue;
+		public Double tokens;
 	}
 
 	/**
-	 * Konstruktor klasy modelującej tablicę wektora miejsc SSA.
-	 * @param boss HolmesSSAplacesEditor - obiekt okna tablicy
-	 * @param ssaVectorIndex int - nr wybranego wektora
-	 * @param dataType SSAdataType - rodzaj danych
+	 * Konstruktor klasy modelującej tablicę miejsc i ich stanu.
+	 * @param boss HolmesStatesEditor - obiekt okna tablicy
+	 * @param stateVectorIndex int - nr wybranego wektora
 	 */
-	public SSAplacesEditorTableModel(HolmesSSAplacesEditor boss, int ssaVectorIndex, SSAdataType dataType) {
+	public StatesPlacesEditorTableModel(HolmesStatesEditor boss, int stateVectorIndex) {
 		this.boss = boss;
-		this.ssaVectorIndex = ssaVectorIndex;
-		this.dataType = dataType;
+		this.stateVectorIndex = stateVectorIndex;
 		clearModel();
 	}
 	
@@ -54,16 +43,22 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 		columnNames[1] = "Place Name";
 		columnNames[2] = "Value";
 		
-		dataMatrix = new ArrayList<SSAdataClass>();
+		dataMatrix = new ArrayList<PlaceEditContainer>();
 		dataSize = 0;
 		
 	}
 	
+	/**
+	 * Dodaje nowy wektor danych do tablicy.
+	 * @param ID int - indeks miejsca
+	 * @param name String - nazwa miejsca
+	 * @param value double - liczba tokenów
+	 */
 	public void addNew(int ID, String name, double value) {
-		SSAdataClass row = new SSAdataClass();
+		PlaceEditContainer row = new PlaceEditContainer();
 		row.ID = ID;
 		row.name = name;
-		row.ssaValue = value;
+		row.tokens = value;
 		dataMatrix.add(row);
 		dataSize++;
 	}
@@ -141,7 +136,7 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 			case 1:
 				return dataMatrix.get(rowIndex).name;
 			case 2:
-				return dataMatrix.get(rowIndex).ssaValue;
+				return dataMatrix.get(rowIndex).tokens;
 		}
 		return null;
 	}
@@ -157,31 +152,22 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 		try {
 			if(col == 2) {
 				newValue = Double.parseDouble(value.toString());
-				if(dataType == SSAdataType.MOLECULES) {
-					if(newValue > 0.9) {
-						dataMatrix.get(row).ssaValue = newValue;
-						boss.changeRealValue(ssaVectorIndex, row, newValue);
-					} else {
-						JOptionPane.showMessageDialog(boss, 
-								"Data type set for molecules. Expected number from a range of\n"
-								+ "1 to (usually) billions - not fractions (there is no "+newValue+" molecule!).", 
-								"Invalid value, integer number of molecules expected",JOptionPane.WARNING_MESSAGE);
-					}
-				} else {
-					if(newValue < 10) {
-						dataMatrix.get(row).ssaValue = newValue;
-						boss.changeRealValue(ssaVectorIndex, row, newValue);
-					} else {
-						JOptionPane.showMessageDialog(boss, 
-								"Data type set for concentration. Units are moles/litre. Expected number \n"
-								+ "from a range of 0 to (usually) tiny fraction (e.g. 1e-12). This value will\n"
-								+ "be MULTIPLIED by Avogadro constant (6.022*10^23 molecules!)", 
-								"Invalid value, moles/litre expected",JOptionPane.WARNING_MESSAGE);
-					}
-				}
+				dataMatrix.get(row).tokens = newValue;
+				boss.changeRealValue(stateVectorIndex, row, newValue);
 			}
 		} catch (Exception e) {
 			//dataMatrix.get(row).firingRate = 1.0;
+		}
+	}
+	
+	public void setQuietlyValueAt(Object value, int row, int col) {
+		double newValue = 0;
+		try {
+			if(col == 2) {
+				newValue = Double.parseDouble(value.toString());
+				dataMatrix.get(row).tokens = newValue;
+			}
+		} catch (Exception e) {
 		}
 	}
 }

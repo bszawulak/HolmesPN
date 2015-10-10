@@ -1,4 +1,4 @@
-package holmes.tables;
+package holmes.tables.managers;
 
 import java.util.ArrayList;
 

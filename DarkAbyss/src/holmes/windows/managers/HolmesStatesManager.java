@@ -1,4 +1,4 @@
-package holmes.windows;
+package holmes.windows.managers;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -27,8 +27,8 @@ import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.StatePlacesManager;
 import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
-import holmes.tables.StatesPlacesTableModel;
-import holmes.tables.StatesPlacesTableRenderer;
+import holmes.tables.managers.StatesPlacesTableModel;
+import holmes.tables.managers.StatesPlacesTableRenderer;
 import holmes.utilities.Tools;
 
 /**
