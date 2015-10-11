@@ -8,9 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -30,15 +27,8 @@ import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import javax.xml.parsers.SAXParser;
-
-import com.sun.scenario.effect.Merge;
 
 import holmes.darkgui.GUIManager;
-import holmes.files.io.Snoopy.NetHandler_Classic;
-import holmes.files.io.Snoopy.NetHandler_Colored;
-import holmes.files.io.Snoopy.NetHandler_Extended;
-import holmes.files.io.Snoopy.NetHandler_Time;
 import holmes.files.io.Snoopy.SnoopyReader;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.IdGenerator;
@@ -51,7 +41,6 @@ import holmes.petrinet.elements.Transition;
 import holmes.tables.MergeNodesTableModel;
 import holmes.utilities.Tools;
 import holmes.workspace.ExtensionFileFilter;
-import holmes.workspace.Workspace;
 
 /**
  * Okno łączenia sieci.
@@ -458,6 +447,9 @@ public class HolmesMergeNets extends JFrame {
 		
 		for(Arc a : newArcs) {
 			a.importOnlySetID(IdGenerator.getNextId());
+			for(Point p : a.accessBreaks()) {
+				p.setLocation(p.x, p.y+dimSheet0.height);
+			}
 			arcs.add(a);
 		}
 		
