@@ -50,7 +50,7 @@ public class GraphPanel extends JComponent {
 	private Rectangle selectingRect = null;
 	private Arc drawnArc = null;
 	private int sheetId;
-	private boolean autoDragScroll = true;
+	private boolean autoDragScroll = false;
 	private boolean isSimulationActive = false;
 	private int zoom = 100;
 	private Dimension originSize;

@@ -43,6 +43,8 @@ public class NetSimulationData implements Serializable {
 	
 	private long idSeries = -1;
 	
+	private String data = "";
+	
 	public NetSimulationData() {
 		placeTokensAvg = new ArrayList<Double>();
 		placeTokensMin = new ArrayList<Double>();
