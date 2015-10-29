@@ -1080,6 +1080,13 @@ public class GraphPanel extends JComponent {
 			getSelectionManager().deselectAllElements();
 			
 			Node node = clickedLocation.getParentNode();
+			if(node.isInvisible() == true) {
+				JOptionPane.showMessageDialog(null, "Cannot draw arc to invisible node!", 
+						"Problem", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
+			
 			if(drawnArc == null && node instanceof MetaNode) {
 				if(arcType == DrawModes.ARC) {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);

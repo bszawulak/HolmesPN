@@ -8,7 +8,10 @@ import javax.swing.JOptionPane;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
+import holmes.petrinet.elements.Node;
+import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
+import holmes.petrinet.elements.Place;
 
 /**
  * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji związanych z miejscami.
@@ -45,6 +48,22 @@ public class PlacePopupMenu extends NodePopupMenu {
 			});
 		}
 		*/
+		
+		this.addMenuItem("Invisibility ON/OFF", "smallInvisibility.png", new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+					return;
+				
+				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
+				if(n instanceof Place) {
+					if(n.isInvisible() == true)
+						n.setInvisibility(false);
+					else
+						n.setInvisibility(true);
+				}
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			}
+		});
 		
 		if(pne == PetriNetElementType.TRANSITION || pne == PetriNetElementType.PLACE) {
 			this.addMenuItem("Clone this Place into Portal", "portal.png", new ActionListener() {

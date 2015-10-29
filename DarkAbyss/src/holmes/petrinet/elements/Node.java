@@ -32,7 +32,8 @@ public abstract class Node extends PetriNetElement {
 	final static BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 	
 	public boolean qSimArcSign = false; //znacznik dła łuku - czy ma być wzmocniony pomiędzy węzłami które mają tu wartość true
-
+	protected boolean invisible = false;
+	
 	/**
 	 * Konstruktor obiektu klasy Node. Ustawia też początkowe wartości przesunięcia nazwy wierzchołka.
 	 * @param sheetId int - identyfikator arkusza
@@ -395,6 +396,9 @@ public abstract class Node extends PetriNetElement {
 	 */
 	public ArrayList<Arc> getInArcs() {
 		ArrayList<Arc> totalInArcs = new ArrayList<Arc>();
+		if(isInvisible())
+			return totalInArcs;
+		
 		for (ElementLocation location : getNodeLocations()) {
 			totalInArcs.addAll(location.getInArcs());
 		}
@@ -407,6 +411,9 @@ public abstract class Node extends PetriNetElement {
 	 */
 	public ArrayList<Arc> getOutArcs() {
 		ArrayList<Arc> totalOutArcs = new ArrayList<Arc>();
+		if(isInvisible())
+			return totalOutArcs;
+		
 		for (ElementLocation location : getNodeLocations()) {
 			totalOutArcs.addAll(location.getOutArcs());
 		}
@@ -512,5 +519,21 @@ public abstract class Node extends PetriNetElement {
 			return 0;
 		}
 		return namesLocations.get(index).getPosition().y;
+	}
+	
+	/**
+	 * Metoda ustawia status niewidzialności tranzycji w symulatorze.
+	 * @param status boolean - true, jeśli ma być niewidzialna
+	 */
+	public void setInvisibility(boolean status) {
+		invisible = status;
+	}
+	
+	/**
+	 * Metoda zwraca status niewidzialności tranzycji.
+	 * @return boolean - true, jeśli tranzycja jest niewidzialna
+	 */
+	public boolean isInvisible() {
+		return invisible;
 	}
 }

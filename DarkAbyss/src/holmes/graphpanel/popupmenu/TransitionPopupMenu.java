@@ -46,6 +46,22 @@ public class TransitionPopupMenu extends NodePopupMenu {
 			}
 		});
 		
+		this.addMenuItem("Invisibility ON/OFF", "smallInvisibility.png", new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+					return;
+				
+				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
+				if(n instanceof Transition) {
+					if(((Transition) n).isInvisible() == true)
+						((Transition) n).setInvisibility(false);
+					else
+						((Transition) n).setInvisibility(true);
+				}
+				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			}
+		});
+		
 		
 		this.addMenuItem("Functions builder...", "functionalWindowIcon.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

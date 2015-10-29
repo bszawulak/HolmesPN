@@ -363,6 +363,14 @@ public final class ElementDraw {
 					} catch (Exception e) { }
 				}
 				
+				if(trans.isInvisible() == true) {
+					try {
+						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
+						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
+								nodeBounds.y-(trans.getRadius()+2));
+					} catch (Exception e) { }
+				}
+				
 				//dodatkowy tekst nad tranzycją
 				if(trans.showAddText() == true) {
 					String txt = trans.returnAddText();
@@ -491,6 +499,14 @@ public final class ElementDraw {
 					g.setColor(Color.DARK_GRAY);
 					g.setStroke(new BasicStroke(1.5F));
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				}
+				
+				if(place.isInvisible() == true) {
+					try {
+						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
+						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), 
+								nodeBounds.y-(place.getRadius()-3));
+					} catch (Exception e) { }
 				}
 
 				drawTokens(g, place, nodeBounds);

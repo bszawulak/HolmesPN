@@ -37,6 +37,7 @@ public class Transition extends Node {
 	protected boolean isGlowedINV = false;
 	protected boolean isGlowedMTC = false;
 	protected boolean offline = false;		// czy wyłączona (MCS, inne)
+
 	
 	//wyświetlanie dodatkowych tekstów nad ikoną:
 	protected boolean isColorChanged = false;		//zmiana koloru - status

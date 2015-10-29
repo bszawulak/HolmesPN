@@ -148,7 +148,10 @@ public class ElementLocation implements Serializable {
 	 * @return ArrayList[Arc] - lista łuków wyjściowych
 	 */
 	public ArrayList<Arc> getOutArcs() {
-		return outArcs;
+		if(parentNode.isInvisible())
+			return new ArrayList<Arc>();
+		else
+			return outArcs;
 	}
 
 	/**
@@ -164,7 +167,10 @@ public class ElementLocation implements Serializable {
 	 * @return ArrayList[Arc] - lista łuków wejściowych
 	 */
 	public ArrayList<Arc> getInArcs() {
-		return inArcs;
+		if(parentNode.isInvisible())
+			return new ArrayList<Arc>();
+		else
+			return inArcs;
 	}
 
 	/**
