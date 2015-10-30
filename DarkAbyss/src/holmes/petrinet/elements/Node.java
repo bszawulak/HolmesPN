@@ -396,8 +396,8 @@ public abstract class Node extends PetriNetElement {
 	 */
 	public ArrayList<Arc> getInArcs() {
 		ArrayList<Arc> totalInArcs = new ArrayList<Arc>();
-		if(isInvisible())
-			return totalInArcs;
+		//if(isInvisible())
+		//	return totalInArcs;
 		
 		for (ElementLocation location : getNodeLocations()) {
 			totalInArcs.addAll(location.getInArcs());
@@ -411,8 +411,8 @@ public abstract class Node extends PetriNetElement {
 	 */
 	public ArrayList<Arc> getOutArcs() {
 		ArrayList<Arc> totalOutArcs = new ArrayList<Arc>();
-		if(isInvisible())
-			return totalOutArcs;
+		//if(isInvisible())
+		//	return totalOutArcs;
 		
 		for (ElementLocation location : getNodeLocations()) {
 			totalOutArcs.addAll(location.getOutArcs());

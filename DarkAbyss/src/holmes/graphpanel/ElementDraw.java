@@ -41,6 +41,22 @@ public final class ElementDraw {
 	private ElementDraw() {
 
 	}
+	
+	private static void drawCrossHair(Graphics2D g, int x, int y, Color color){
+	    g.setColor(color);
+	    g.setStroke(new BasicStroke(4.0f));
+	    
+	    g.drawOval(x, y, 60, 60);
+	    g.fillArc(x+20, y + 41 , 20, 20, -45, -90);
+	    g.fillArc(x - 1, y + 20, 20, 20, -135, -90);
+	    g.fillArc(x + 20, y - 1, 20, 20, -225, -90);
+	    g.fillArc(x + 41, y + 20, 20, 20, -315, -90);
+
+	    g.fillArc(x+35, y + 36 , 20, 20, 0, -90);
+	    g.fillArc(x+5, y + 36 , 20, 20, -90, -90);
+	    g.fillArc(x+5, y + 5 , 20, 20, -180, -90);
+	    g.fillArc(x+35, y + 5 , 20, 20, -270, -90);
+	}
 
 	//TODO: znacznik tranzycji
 	/**
@@ -135,8 +151,10 @@ public final class ElementDraw {
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 						
 						try {
-							BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/selectedSign.png"));
-							g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), nodeBounds.y-(trans.getRadius()+2));
+							//BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/selectedSign.png"));
+							//g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), nodeBounds.y-(trans.getRadius()+2));
+							
+							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.black);
 						} catch (Exception e) { }
 					}
 				}
@@ -399,6 +417,7 @@ public final class ElementDraw {
 					g.setColor(EditorResources.selectionColorLevel2);
 					g.setStroke(EditorResources.glowStrokeLevel2);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan);
 					
 					if(eds.snoopyMode) {
 						g.setColor(portalSelColor);
@@ -409,6 +428,8 @@ public final class ElementDraw {
 						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
 						g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
 					}
+					
+					
 				}
 			}
 		} else if(node instanceof Place) { // MIEJSCA  //TODO: znacznik miejsc
@@ -457,8 +478,9 @@ public final class ElementDraw {
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					
 					try {
-						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/selectedSign.png"));
-						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), nodeBounds.y-(place.getRadius()-4));
+						//BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/selectedSign.png"));
+						//g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), nodeBounds.y-(place.getRadius()-4));
+						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.black);
 					} catch (Exception e) {
 						
 					}
@@ -608,6 +630,8 @@ public final class ElementDraw {
 						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
 						
 					}
+					
+					drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.blue);
 				}
 				
 				

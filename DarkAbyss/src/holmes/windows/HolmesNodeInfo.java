@@ -2,6 +2,7 @@ package holmes.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -9,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.ParseException;
@@ -21,11 +23,14 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
@@ -60,7 +65,7 @@ public class HolmesNodeInfo extends JFrame {
 	private GUIManager overlord;
 	private Place place;
 	private Transition transition;
-	private JPanel mainPanel;
+	private JPanel mainInfoPanel;
 	private JFrame parentFrame;
 	private HolmesNodeInfoActions action = new HolmesNodeInfoActions(this);
 	public boolean mainSimulatorActive = false;
@@ -89,9 +94,20 @@ public class HolmesNodeInfo extends JFrame {
 		setTitle("Node: "+place.getName());
 
 		initializeCommon();
-		initializePlaceInfo();
+		
+		JPanel main = new JPanel(new BorderLayout()); //główny panel okna
+		add(main);
+		
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.addTab("General info", Tools.getResIcon16("/icons/stateSim/aaa.png"), initializePlaceInfo(), "General information about node");
+		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+		tabbedPane.addTab("Invariants data", Tools.getResIcon16("/icons/stateSim/bbb.png"), initializePlaceInvPanel(), "Invariants going through node");
+		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+		
+		main.add(tabbedPane);
+		
 	}
-	
+
 	/**
 	 * Konstruktor do tworzenia okna właściwości tranzycji.
 	 * @param transition Transition - obiekt tranzycji
@@ -107,7 +123,17 @@ public class HolmesNodeInfo extends JFrame {
 			choosenNetType = NetType.TIME;
 		
 		initializeCommon();
-		initializeTransitionInfo();
+		
+		JPanel main = new JPanel(new BorderLayout()); //główny panel okna
+		add(main);
+		
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.addTab("General info", Tools.getResIcon16("/icons/stateSim/aaa.png"), initializeTransitionInfo(), "General information about node");
+		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+		tabbedPane.addTab("Invariants data", Tools.getResIcon16("/icons/stateSim/bbb.png"), initializeTransInvPanel(), "Invariants going through node");
+		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+
+		main.add(tabbedPane);
 	}
 	
 	public HolmesNodeInfo(MetaNode metanode, JFrame papa) {
@@ -132,6 +158,8 @@ public class HolmesNodeInfo extends JFrame {
 
 		parentFrame.setEnabled(false);
 		setResizable(false);
+		setLocation(20, 20);
+		setSize(new Dimension(600, 480));
 		
 		addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -145,19 +173,16 @@ public class HolmesNodeInfo extends JFrame {
 	/**
 	 * Metoda odpowiedzialna za elementy interfejsu właściwości dla miejsca sieci.
 	 */
-	private void initializePlaceInfo() {
-		this.setLocation(20, 20);
-		setSize(new Dimension(600, 450));
-
-		mainPanel = new JPanel(null);
-		mainPanel.setBounds(0, 0, 600, 480);
+	private JPanel initializePlaceInfo() {
+		mainInfoPanel = new JPanel(null);
+		mainInfoPanel.setBounds(0, 0, 600, 480);
 		
 		int mPanelX = 0;
 		int mPanelY = 0;
 		
 		//panel informacji podstawowych
 		JPanel infoPanel = new JPanel(null);
-		infoPanel.setBounds(mPanelX, mPanelY, mainPanel.getWidth()-10, 130);
+		infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-10, 130);
 		infoPanel.setBorder(BorderFactory.createTitledBorder("Place general information:"));
 		
 		int infPanelX = 10;
@@ -303,20 +328,56 @@ public class HolmesNodeInfo extends JFrame {
         infoPanel.add(creationPanel);
         infPanelY += 60;
         
-		mainPanel.add(infoPanel);
+		mainInfoPanel.add(infoPanel);
 		
 		JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
 		chartMainPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
-		chartMainPanel.setBounds(0, infoPanel.getHeight(), mainPanel.getWidth()-10, 245);
+		chartMainPanel.setBounds(0, infoPanel.getHeight(), mainInfoPanel.getWidth()-10, 245);
 		chartMainPanel.add(createChartPanel(place), BorderLayout.CENTER);
-		mainPanel.add(chartMainPanel);
+		mainInfoPanel.add(chartMainPanel);
 		
 		
 		JPanel chartButtonPanel = panelButtonsPlace(infoPanel, chartMainPanel); //dolny panel przycisków
-		mainPanel.add(chartButtonPanel);
+		mainInfoPanel.add(chartButtonPanel);
 		
 		fillPlaceDynamicData(chartMainPanel);
-		add(mainPanel);
+		
+		return mainInfoPanel;
+	}
+	
+	//TODO:
+	private JPanel initializePlaceInvPanel() {
+		JPanel panel = new JPanel(null);
+		panel.setBounds(0, 0, 600, 480);
+		
+		int posX = 20;
+		int posY = 20;
+		
+		final JProgressBar progressBar = new JProgressBar();
+		
+		JButton tInvButton = new JButton("Get t-inv list");
+		tInvButton.setBounds(posX, posY, 140, 25);
+		tInvButton.setMargin(new Insets(0, 0, 0, 0));
+		tInvButton.setIcon(Tools.getResIcon32("/icons/stateSim/aaa.png"));
+		tInvButton.setToolTipText("Show information about t-invariants going through place");
+		tInvButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				action.showTinvForPlace(place, progressBar);
+			}
+		});
+		panel.add(tInvButton);
+		
+		progressBar.setBounds(posX, posY+40, 500, 40);
+		progressBar.setMaximum(100);
+		progressBar.setMinimum(0);
+	    progressBar.setValue(0);
+	    progressBar.setStringPainted(true);
+	    Border border = BorderFactory.createTitledBorder("Progress");
+	    progressBar.setBorder(border);
+		
+	    panel.add(progressBar);
+		
+		return panel;
 	}
 
 	/**
@@ -327,7 +388,7 @@ public class HolmesNodeInfo extends JFrame {
 	 */
 	private JPanel panelButtonsPlace(JPanel infoPanel, JPanel chartMainPanel) {
 		JPanel chartButtonPanel = new JPanel(null);
-		chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainPanel.getWidth()-10, 50);
+		chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainInfoPanel.getWidth()-10, 50);
 		
 		int chartX = 5;
 		int chartY_1st = 0;
@@ -432,12 +493,9 @@ public class HolmesNodeInfo extends JFrame {
 	/**
 	 * Metoda odpowiedzialna za elementy interfejsu właściwości dla tranzycji sieci.
 	 */
-	private void initializeTransitionInfo() {
-		this.setLocation(20, 20);
-		setSize(new Dimension(600, 450));
-
-		mainPanel = new JPanel(null);
-		mainPanel.setBounds(0, 0, 600, 450);
+	private JPanel initializeTransitionInfo() {
+		mainInfoPanel = new JPanel(null);
+		mainInfoPanel.setBounds(0, 0, 600, 450);
 		
 		int mPanelX = 0;
 		int mPanelY = 0;
@@ -564,22 +622,58 @@ public class HolmesNodeInfo extends JFrame {
 
         infoPanel.add(creationPanel);
         infPanelY += 60;
-        mainPanel.add(infoPanel);
+        mainInfoPanel.add(infoPanel);
         
         //************************* NEWLINE *************************
         
         JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
         chartMainPanel.setBorder(BorderFactory.createTitledBorder("Transition chart"));
-        chartMainPanel.setBounds(0, infoPanel.getHeight(), mainPanel.getWidth()-10, 245);
+        chartMainPanel.setBounds(0, infoPanel.getHeight(), mainInfoPanel.getWidth()-10, 245);
         chartMainPanel.add(createChartPanel(transition), BorderLayout.CENTER);
-		mainPanel.add(chartMainPanel);
+		mainInfoPanel.add(chartMainPanel);
 		
 		JPanel chartButtonPanel = panelButtonsTransition(infoPanel, chartMainPanel);
-		mainPanel.add(chartButtonPanel);
+		mainInfoPanel.add(chartButtonPanel);
+
+		try {
+			fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
+		} catch (Exception e) {}
+		return mainInfoPanel;
+	}
+	
+	private JPanel initializeTransInvPanel() {
+		JPanel panel = new JPanel(null);
+		panel.setBounds(0, 0, 600, 480);
 		
-		add(mainPanel);
+		int posX = 20;
+		int posY = 20;
 		
-		fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
+		final JProgressBar progressBar = new JProgressBar();
+		
+		JButton tInvButton = new JButton("Get t-inv list");
+		tInvButton.setBounds(posX, posY, 140, 25);
+		tInvButton.setMargin(new Insets(0, 0, 0, 0));
+		tInvButton.setIcon(Tools.getResIcon32("/icons/stateSim/aaa.png"));
+		tInvButton.setToolTipText("Show information about t-invariants going through transition");
+		tInvButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				action.showTinvForTransition(transition, progressBar);
+			}
+		});
+		panel.add(tInvButton);
+		
+		
+		progressBar.setBounds(posX, posY+40, 500, 40);
+		progressBar.setMaximum(100);
+		progressBar.setMinimum(0);
+	    progressBar.setValue(0);
+	    progressBar.setStringPainted(true);
+	    Border border = BorderFactory.createTitledBorder("Progress");
+	    progressBar.setBorder(border);
+		
+	    panel.add(progressBar);
+	    
+		return panel;
 	}
 
 	/**
@@ -590,7 +684,7 @@ public class HolmesNodeInfo extends JFrame {
 	 */
 	private JPanel panelButtonsTransition(JPanel infoPanel, JPanel chartMainPanel) {
 		JPanel chartButtonPanel = new JPanel(null);
-		chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainPanel.getWidth()-10, 50);
+		chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainInfoPanel.getWidth()-10, 50);
 		
 		int chartX = 5;
 		int chartY_1st = 0;

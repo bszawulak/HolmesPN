@@ -89,6 +89,19 @@ public class HolmesNotepad extends JFrame {
         this.pack();
         setVisible(false); 
 	}
+	
+	public HolmesNotepad(int width, int height, boolean simpleToken) {
+		this();
+		
+		simpleMode = simpleToken;
+		setPreferredSize(new Dimension(width, height));
+		setLocation(50,50);
+		
+		JPanel mainPanel = createEditor(width, height);
+        setContentPane(mainPanel);
+        this.pack();
+        setVisible(false); 
+	}
 
 	/**
 	 * Metoda pomocnica tworząca główne elementy okna notatnika.

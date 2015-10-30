@@ -248,7 +248,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		JButton makeFeasibleButton = new JButton();
 		makeFeasibleButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Make<br>&nbsp;&nbsp;feasible</html>");
-		makeFeasibleButton.setBounds(posX+380, posY+40, 120, 36);
+		makeFeasibleButton.setBounds(posX+255, posY+40, 120, 36);
 		makeFeasibleButton.setMargin(new Insets(0, 0, 0, 0));
 		makeFeasibleButton.setIcon(Tools.getResIcon22("/icons/invWindow/makeFeasible.png"));
 		makeFeasibleButton.addActionListener(new ActionListener() {
@@ -260,7 +260,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		panel.add(makeFeasibleButton);
 		
 		JCheckBox feasModeCheckBox = new JCheckBox("Feasible adv. mode");
-		feasModeCheckBox.setBounds(posX+505, posY+36, 140, 20);
+		feasModeCheckBox.setBounds(posX+380, posY+36, 140, 20); //505
 		feasModeCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -275,7 +275,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		panel.add(feasModeCheckBox);
 		
 		JCheckBox invPurityCheckBox = new JCheckBox("Clean non-inv.");
-		invPurityCheckBox.setBounds(posX+505, posY+56, 140, 20);
+		invPurityCheckBox.setBounds(posX+380, posY+56, 120, 20);
 		invPurityCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -292,8 +292,25 @@ public class HolmesInvariantsGenerator extends JFrame {
 			invPurityCheckBox.setSelected(true);
 		else
 			invPurityCheckBox.setSelected(false);
-
 		panel.add(invPurityCheckBox);
+		
+		JCheckBox removeSingleInvCheckBox = new JCheckBox("Remove 1-el. inv.");
+		removeSingleInvCheckBox.setBounds(posX+510, posY+56, 120, 20);
+		removeSingleInvCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "0", true);
+				}
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1")) 
+			removeSingleInvCheckBox.setSelected(true);
+		else
+			removeSingleInvCheckBox.setSelected(false);
+		panel.add(removeSingleInvCheckBox);
 
 		return panel;
 	}

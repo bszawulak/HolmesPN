@@ -91,9 +91,6 @@ public class InvariantsCalculator implements Runnable {
 				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode);
 				this.calculateInvariants();
 				
-				
-				
-
 				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1")) {
 					logInternal("\n", false);
 					logInternal("Removing all non-canonical t-invariants from the dataset."+"\n", false);
@@ -107,6 +104,30 @@ public class InvariantsCalculator implements Runnable {
 					}
 					
 					t_invariantsList = cleanInv;
+				}
+				
+				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1")) {
+					logInternal("\n", false);
+					logInternal("Removing all single-element t-invariants from the dataset."+"\n", false);
+					
+					int size = t_invariantsList.size();
+					int removed = 0;
+					for(int i=0; i<size; i++) {
+						ArrayList<Integer> inv = t_invariantsList.get(i);
+						int supportSum = 0;
+						for(int j : inv) {
+							supportSum += j;
+						}
+						if(supportSum == 1) {
+							t_invariantsList.remove(i);
+							i--;
+							size--;
+							removed++;
+						}
+					}
+
+					logInternal(removed+" single-element t-invariants has been removed. T-invariants current size: "
+								+ t_invariantsList.size()+"\n", false);
 				}
 				
 				PetriNet project = overlord.getWorkspace().getProject();
@@ -259,6 +280,7 @@ public class InvariantsCalculator implements Runnable {
 			CMatrix.add(new ArrayList<Integer>(transRow));
 		}
 		//wypełnianie macierzy incydencji
+		int disabledArcs = 0;
 		for (Arc oneArc : arcs) {
 			int tPosition = 0;
 			int pPosition = 0;
@@ -267,7 +289,11 @@ public class InvariantsCalculator implements Runnable {
 			if(oneArc.getArcType() != TypeOfArc.NORMAL && !(oneArc.getArcType() == TypeOfArc.READARC)) {
 				continue;
 			}
-
+			if(oneArc.getStartNode().isInvisible() || oneArc.getEndNode().isInvisible()) {
+				disabledArcs++;
+				continue;
+			}
+			
 			if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION) {
 				tPosition = transitionsMap.get(oneArc.getStartNode());
 				pPosition = placesMap.get(oneArc.getEndNode());
@@ -277,6 +303,8 @@ public class InvariantsCalculator implements Runnable {
 				pPosition = placesMap.get(oneArc.getStartNode());
 				incidenceValue = -1 * oneArc.getWeight();
 			}
+			
+			
 			
 			int oldValue = globalIncidenceMatrix.get(tPosition).get(pPosition);
 			if(oldValue != 0) { //detekcja łuków podwójnych

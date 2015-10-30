@@ -154,6 +154,7 @@ public class SettingsManager {
 		checkAndFix(settingsNew, "analysisMCSReduction", "1");
 		
 		checkAndFix(settingsNew, "analysisRemoveNonInv", "0");
+		checkAndFix(settingsNew, "analysisRemoveSingleElementInv", "0");
 		
 		//knockout:
 		checkAndFix(settingsNew, "mctNameShow", "1");
