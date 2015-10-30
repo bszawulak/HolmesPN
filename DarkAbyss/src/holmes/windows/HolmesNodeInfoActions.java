@@ -93,9 +93,9 @@ public class HolmesNodeInfoActions {
 		
 		ArrayList<ArrayList<Integer>> invariantsSubMatrix = new ArrayList<>();
 		
-		int invs = -1;
+		//int invs = -1;
 		for(ArrayList<Integer> invariant : invariantsMatrix) {
-			invs++;
+			//invs++;
 			int position = -1;
 			
 			boolean sourcePlaceFound = false;
@@ -173,7 +173,7 @@ public class HolmesNodeInfoActions {
 					continue;
 			}
 			vector = vector.substring(0, vector.length()-1);
-			notepad.addTextLineNL(counter+": "+vector, "text");
+			notepad.addTextLineNL(counter+";"+vector, "text");
 			counter++;
 		}
 
@@ -222,7 +222,7 @@ public class HolmesNodeInfoActions {
 					continue;
 			}
 			vector = vector.substring(0, vector.length()-1);
-			notepad.addTextLineNL(counter+": "+vector, "text");
+			notepad.addTextLineNL(counter+";"+vector, "text");
 			counter++;
 		}
 
@@ -303,13 +303,13 @@ public class HolmesNodeInfoActions {
 		ArrayList<Integer> transMCTvector = overlord.getWorkspace().getProject().getMCTtransIndicesVector();
 		
 		
-		int transNumber = 0;
+		//int transNumber = 0;
 		for(int t=0; t<invariant.size(); t++) {
 			int fireValue = invariant.get(t);
 			if(fireValue == 0)
 				continue;
 			
-			transNumber++;
+			//transNumber++;
 			int mctNo = transMCTvector.get(t);
 			if(mctNo == -1) { 
 				singleT.add("t"+t+"_"+transitions.get(t).getName());

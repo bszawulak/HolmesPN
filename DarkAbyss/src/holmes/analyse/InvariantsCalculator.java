@@ -280,7 +280,7 @@ public class InvariantsCalculator implements Runnable {
 			CMatrix.add(new ArrayList<Integer>(transRow));
 		}
 		//wypełnianie macierzy incydencji
-		int disabledArcs = 0;
+		//int disabledArcs = 0;
 		for (Arc oneArc : arcs) {
 			int tPosition = 0;
 			int pPosition = 0;
@@ -290,7 +290,7 @@ public class InvariantsCalculator implements Runnable {
 				continue;
 			}
 			if(oneArc.getStartNode().isInvisible() || oneArc.getEndNode().isInvisible()) {
-				disabledArcs++;
+				//disabledArcs++;
 				continue;
 			}
 			

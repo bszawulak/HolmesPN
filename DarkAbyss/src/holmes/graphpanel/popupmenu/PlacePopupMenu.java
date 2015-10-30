@@ -9,7 +9,6 @@ import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Place;
 
