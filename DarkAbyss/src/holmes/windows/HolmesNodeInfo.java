@@ -98,9 +98,9 @@ public class HolmesNodeInfo extends JFrame {
 		add(main);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("General info", Tools.getResIcon16("/icons/stateSim/aaa.png"), initializePlaceInfo(), "General information about node");
+		tabbedPane.addTab("General info", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializePlaceInfo(), "General information about node");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Invariants data", Tools.getResIcon16("/icons/stateSim/bbb.png"), initializePlaceInvPanel(), "Invariants going through node");
+		tabbedPane.addTab("Invariants data", Tools.getResIcon16("/icons/nodeViewer/tab2.png"), initializePlaceInvPanel(), "Invariants going through node");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 		
 		main.add(tabbedPane);
@@ -127,9 +127,9 @@ public class HolmesNodeInfo extends JFrame {
 		add(main);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("General info", Tools.getResIcon16("/icons/stateSim/aaa.png"), initializeTransitionInfo(), "General information about node");
+		tabbedPane.addTab("General info", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializeTransitionInfo(), "General information about node");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Invariants data", Tools.getResIcon16("/icons/stateSim/bbb.png"), initializeTransInvPanel(), "Invariants going through node");
+		tabbedPane.addTab("Invariants data", Tools.getResIcon16("/icons/nodeViewer/tab2.png"), initializeTransInvPanel(), "Invariants going through node");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
 		main.add(tabbedPane);
@@ -355,9 +355,9 @@ public class HolmesNodeInfo extends JFrame {
 		final JProgressBar progressBar = new JProgressBar();
 		
 		JButton tInvButton = new JButton("Get t-inv list");
-		tInvButton.setBounds(posX, posY, 140, 25);
+		tInvButton.setBounds(posX, posY, 140, 32);
 		tInvButton.setMargin(new Insets(0, 0, 0, 0));
-		tInvButton.setIcon(Tools.getResIcon32("/icons/stateSim/aaa.png"));
+		tInvButton.setIcon(Tools.getResIcon32("/icons/nodeViewer/iconInv.png"));
 		tInvButton.setToolTipText("Show information about t-invariants going through place");
 		tInvButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -650,9 +650,9 @@ public class HolmesNodeInfo extends JFrame {
 		final JProgressBar progressBar = new JProgressBar();
 		
 		JButton tInvButton = new JButton("Get t-inv list");
-		tInvButton.setBounds(posX, posY, 140, 25);
+		tInvButton.setBounds(posX, posY, 140, 32);
 		tInvButton.setMargin(new Insets(0, 0, 0, 0));
-		tInvButton.setIcon(Tools.getResIcon32("/icons/stateSim/aaa.png"));
+		tInvButton.setIcon(Tools.getResIcon32("/icons/nodeViewer/iconInv.png"));
 		tInvButton.setToolTipText("Show information about t-invariants going through transition");
 		tInvButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
