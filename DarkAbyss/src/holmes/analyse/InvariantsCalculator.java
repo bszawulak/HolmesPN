@@ -17,6 +17,7 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.varia.Check;
 import holmes.windows.HolmesInvariantsGenerator;
+import holmes.windows.HolmesNotepad;
 
 /**
  * 10.06.2014: Metoda stara się liczyć inwarianty. Coś nie wyszło i to ostro... (author: BS) <br>
@@ -59,7 +60,11 @@ public class InvariantsCalculator implements Runnable {
 	private int oldReplaced = 0;
 	private int notCanonical = 0;
 	
+	private boolean showInvSetsDifference = false;
+	
 	private HolmesInvariantsGenerator masterWindow = null;
+	
+	private ArrayList<ArrayList<Integer>> invBackupMatrix = null;
 	
 	/**
 	 * Konstruktor obiektu klasy InvariantsCalculator. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.
@@ -88,6 +93,11 @@ public class InvariantsCalculator implements Runnable {
 			logInternal("Invariant calculations started.\n", true);
 			
 			if(t_InvMode == true) {
+				PetriNet project = overlord.getWorkspace().getProject();
+				if(showInvSetsDifference) {
+					invBackupMatrix = project.getT_InvMatrix();
+				}
+				
 				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode);
 				this.calculateInvariants();
 				
@@ -130,7 +140,7 @@ public class InvariantsCalculator implements Runnable {
 								+ t_invariantsList.size()+"\n", false);
 				}
 				
-				PetriNet project = overlord.getWorkspace().getProject();
+				
 				overlord.getT_invBox().showT_invBoxWindow(getInvariants(true));
 				project.setT_InvMatrix(getInvariants(true), true);
 				overlord.reset.setT_invariantsStatus(true);
@@ -168,6 +178,58 @@ public class InvariantsCalculator implements Runnable {
 				
 					
 				overlord.markNetChange();
+				
+				if(showInvSetsDifference) {
+					if(invBackupMatrix != null && invBackupMatrix.size() > 0) {
+					//TODO:
+						logInternal("Calculating difference...", false);
+						logInternal("", false);
+						int size = getInvariants(true).size();
+						int step = size / 50;
+						if(step == 0)
+							step = 1;
+						int counter = -1;
+						int removed = 0;
+						for(ArrayList<Integer> invariant : getInvariants(true)) {
+							counter++;
+							if(counter % step == 0) {
+								if(masterWindow != null) {
+									masterWindow.accessLogField(t_InvMode).append("*");
+								}
+							}
+							
+							for(int i=0; i<invBackupMatrix.size(); i++) {
+								if(InvariantsTools.areSameInvariants(invariant, invBackupMatrix.get(i))) {
+									invBackupMatrix.remove(i);
+									removed++;
+									break;
+								}
+							}
+						}
+						
+						HolmesNotepad notePad = new HolmesNotepad(900,600);
+						notePad.setVisible(true);
+						notePad.addTextLineNL("Difference set size: "+invBackupMatrix.size(), "text");
+						notePad.addTextLineNL("Removed "+removed+" t-invariants that are present in the current set.", "text");
+						notePad.addTextLineNL("CSV below contains invariants that are not present in the currenly gerenerated set and have been present in the previously generated set.", "text");
+						notePad.addTextLineNL("CSV set:", "text");
+						notePad.addTextLineNL("", "text");
+						for(int i=0; i<invBackupMatrix.size(); i++) {
+							
+							
+							String csvVector = i+";";
+							for(int supp : invBackupMatrix.get(i)) {
+								csvVector += supp+";";
+							}
+							csvVector = csvVector.substring(0, csvVector.length()-1);
+							notePad.addTextLineNL(csvVector, "text");
+							
+						}
+						
+						
+					}
+				}
+				
 			} else { //P-invariants
 				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode); //t_InvMode == false
 				this.calculateInvariants();
@@ -1029,6 +1091,15 @@ public class InvariantsCalculator implements Runnable {
 		} else {
 			overlord.log("InvModule: "+msg, type, true);
 		}
+	}
+	
+	/**
+	 * Ustawia wartość flagi odpowiadającej za to, czy zostanie pokazany zbiór-różnica pomiędzy właśnie stworzonymi inwariantami
+	 * a starym zbiorem.
+	 * @param value boolean - nowa wartość
+	 */
+	public void setShowInvDiff(boolean value) {
+		showInvSetsDifference = value;
 	}
 	
 	/**

@@ -56,6 +56,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 	private boolean detailsTinv = true;
 	private boolean detailsPinv = true;
 	private int feasibleCalcMode = 1;
+	
+	private boolean showInvDiff = false;
 
 	/**
 	 * Główny konstruktor okna generatora inwariantów.
@@ -154,6 +156,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 				} else {
 					setGeneratorStatus(true);
 					invGenerator = new InvariantsCalculator(true);
+					invGenerator.setShowInvDiff(showInvDiff);
 					Thread myThread = new Thread(invGenerator);
 					myThread.start();
 				}
@@ -481,6 +484,22 @@ public class HolmesInvariantsGenerator extends JFrame {
 		});
 		detailsCheckBox.setSelected(true);
 		panel.add(detailsCheckBox);
+		
+		//TODO:
+		JCheckBox showDiffCheckBox = new JCheckBox("Show difference");
+		showDiffCheckBox.setBounds(posX, posY+220, 130, 20);
+		showDiffCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					showInvDiff = true;
+				} else {
+					showInvDiff = false;
+				}
+			}
+		});
+		showDiffCheckBox.setSelected(false);
+		panel.add(showDiffCheckBox);
 
 		return panel;
 	}

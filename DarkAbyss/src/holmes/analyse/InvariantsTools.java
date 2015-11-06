@@ -1607,4 +1607,22 @@ public final class InvariantsTools {
 		
 		return results;
 	}
+	
+	/**
+	 * Sprawdza, czy 2 inwarianty są takie same.
+	 * @param inv1 ArrayList[Integer] - inwariant 1
+	 * @param inv2 ArrayList[Integer] - inwariant 2
+	 * @return boolean - true, jeśli są identyczne
+	 */
+	public static boolean areSameInvariants(ArrayList<Integer> inv1, ArrayList<Integer> inv2) {
+		if(inv1.size() != inv2.size())
+			return false;
+		else {
+			for(int i=0; i<inv1.size(); i++) {
+				if(inv1.get(i) != inv2.get(i))
+					return false;
+			}
+			return true;
+		}
+	}
 }

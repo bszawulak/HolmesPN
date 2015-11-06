@@ -716,7 +716,7 @@ public class SnoopyWriterArc {
 	//********************************************************************************************************************
 	
 	/**
-	 * Najbardziej szaleńcza z metod - odpowiada za zapis łuki w sieci wielopoziomowej
+	 * Najbardziej szaleńcza z metod - odpowiada za zapis łuku w sieci wielopoziomowej
 	 * @param interfaceNodeElLocation ElementLocation - interfejs
 	 * @param arcEndElLocation ElementLocation - element z pary dla intefejsu
 	 * @param arcus Arc - aktualnie przetwarzany łuk
