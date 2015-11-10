@@ -91,6 +91,18 @@ public class SimKnockTableRenderer implements TableCellRenderer {
     		} 
     	}
     	
+    	if(column == 2 || column == 4) {
+    		if(table.getName().equals("TransitionsCompTable")) {
+    			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    			oLabel.setForeground(Color.black);
+    			oLabel.setFont(fontNormal);
+    			
+    			oLabel.setText(value+"%");
+    			return oLabel;
+    		}
+    		
+    		
+    	}
     	//kolumna 6: róznice procentowe
 		if(column == 6) {
 			//JLabel oLabel = new JLabel(); //(JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);

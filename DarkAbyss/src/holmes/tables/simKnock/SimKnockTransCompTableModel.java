@@ -15,6 +15,7 @@ import holmes.petrinet.elements.Transition;
  */
 public class SimKnockTransCompTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -2454782753413053173L;
+	public int tableType = 0;
 	
 	public class TransCompContainer {
     	public int ID;
@@ -83,9 +84,13 @@ public class SimKnockTransCompTableModel extends AbstractTableModel {
 			if(diff < 0) { //zwiększyło (sic!) się po symulacji
 				diff *= -1;
 				tc.firingAvgPercDiff = diff;
+				
+				tc.firingAvgPercDiff = (tc.firingAvgKnock - tc.firingAvgRef)*100;
 			} else {
 				diff *= -1;
 				tc.firingAvgPercDiff = diff;
+				
+				tc.firingAvgPercDiff = (tc.firingAvgKnock - tc.firingAvgRef)*100;
 			}
 			
 			if(tc.firingAvgKnock == 0)
@@ -97,6 +102,9 @@ public class SimKnockTransCompTableModel extends AbstractTableModel {
 				tc.firingAvgPercDiff = 999999.0; // +inf
 		}
     	tc.noFiringKnock = ""+dataKnock.transZeroFiring.get(index);//+"/"+dataKnock.reps;
+    	
+    	tc.firingAvgKnock *= 100;
+    	tc.firingAvgRef *= 100;
     	
     	
     	//significance level 1 - min <> max ref/knock
