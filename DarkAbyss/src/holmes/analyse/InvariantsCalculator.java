@@ -223,10 +223,7 @@ public class InvariantsCalculator implements Runnable {
 							}
 							csvVector = csvVector.substring(0, csvVector.length()-1);
 							notePad.addTextLineNL(csvVector, "text");
-							
 						}
-						
-						
 					}
 				}
 				

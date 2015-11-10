@@ -44,6 +44,10 @@ public class SimKnockTransCompTableModel extends AbstractTableModel {
 		dataSize = 0;
 	}
 	
+	public ArrayList<TransCompContainer> accessDataMatrix() {
+		return dataMatrix;
+	}
+	
 	/**
 	 * Metoda dodająca nowy wiersz do modelu tablicy tranzycji.
 	 * @param dataRef NetSimulationData - obiekt danych referencyjnych

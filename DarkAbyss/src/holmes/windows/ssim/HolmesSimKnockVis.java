@@ -57,10 +57,12 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.tables.simKnock.SimKnockPlacesCompAllTableModel;
 import holmes.tables.simKnock.SimKnockPlacesCompTableModel;
+import holmes.tables.simKnock.SimKnockPlacesCompTableModel.PlaceCompContainer;
 import holmes.tables.simKnock.SimKnockPlacesTableModel;
 import holmes.tables.simKnock.SimKnockTableRenderer;
 import holmes.tables.simKnock.SimKnockTransCompAllTableModel;
 import holmes.tables.simKnock.SimKnockTransCompTableModel;
+import holmes.tables.simKnock.SimKnockTransCompTableModel.TransCompContainer;
 import holmes.tables.simKnock.SimKnockTransTableModel;
 import holmes.tables.simKnock.SimKnockPlacesCompAllTableModel.DetailsPlace;
 import holmes.tables.simKnock.SimKnockTransCompAllTableModel.DetailsTrans;
@@ -985,16 +987,33 @@ public class HolmesSimKnockVis extends JFrame {
         placesTable.validate();
         
         if(notepadInfo) {
-        	//TODO:
-        	HolmesNotepad notePad = new HolmesNotepad(900,600);
-    		notePad.setVisible(true);
-    		notePad.addTextLineNL("===============================================================================", "text");
-    		notePad.addTextLineNL("", "text");
+        	HolmesNotepad notepad = null;
+        	notepad = new HolmesNotepad(900,600);
+        	notepad.setVisible(true);
+
+        	notepad.addTextLine("PLACES", "text");
+    		for(PlaceCompContainer data : modelPlacesComp.accessDataMatrix()) {
+    			double diff = data.tokenAvgPercDiff/100;
+    			String dif = "";
+    			if(data.tokenAvgPercDiff == -999999.0) {
+    				dif = " -inf";
+    			} else if(data.tokenAvgPercDiff == 999991.0) {
+    				dif = " ---";
+    			} else if(data.tokenAvgPercDiff == 999999.0) {
+    				dif = " +inf";
+    			} else {
+    				dif = ""+diff;
+    			}
+    			
+    			String row = data.ID+";"+data.name+";"+data.tokenAvgRef+";"+data.tokenAvgKnock+";"+
+    					dif+"\n";
+    			row = row.replace(".", ",");
+    			
+    			notepad.addTextLine(row, "text");
+    		}
     		
-    		
-    		
-    		
-        }
+    		//notePadTrans.addTextLine(";", "text");
+    	}
     }
 
     /**
@@ -1173,6 +1192,36 @@ public class HolmesSimKnockVis extends JFrame {
     	
     	transTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         transTable.validate();
+        
+        //TODO:
+        
+        if(notepadInfo) {
+        	HolmesNotepad notepad = null;
+        	notepad = new HolmesNotepad(900,600);
+        	notepad.setVisible(true);
+        	notepad.addTextLine("TRANSITIONS\n", "text");
+    		
+    		for(TransCompContainer data : modelTransComp.accessDataMatrix()) {
+    			double diff = data.firingAvgPercDiff;
+    			String dif = "";
+    			if(diff == -999999.0) {
+    				dif = " -inf";
+    			} else if(diff == 999991.0) {
+    				dif = " ---";
+    			} else if(diff == 999999.0) {
+    				dif = " +inf";
+    			} else {
+    				dif = ""+diff/100;
+    			}
+    			
+    			String row = data.ID+";"+data.name+";"+data.firingAvgRef/100+";"+data.firingAvgKnock/100+";"+dif+"\n";
+    			row = row.replace(".", ",");
+    			
+    			notepad.addTextLine(row, "text");
+    		}
+    		
+    		//notePadTrans.addTextLine(";", "text");
+    	}
     }
     
     /**

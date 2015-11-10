@@ -54,7 +54,7 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     	if(mode == 1)
-    		return paintCellsComp(value, isSelected, hasFocus, row, column);
+    		return paintCellsComp(table, value, isSelected, hasFocus, row, column);
     	else if(mode == 2)
     		return paintCellsCompAll(value, isSelected, hasFocus, row, column);
     	else
@@ -70,7 +70,7 @@ public class SimKnockTableRenderer implements TableCellRenderer {
      * @param column int - nr kolumny
      * @return Component - zależy od kolumny
      */
-    private Component paintCellsComp(Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    private Component paintCellsComp(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     	
     	if(column == 1) {
     		String name = value.toString();
@@ -91,18 +91,21 @@ public class SimKnockTableRenderer implements TableCellRenderer {
     		} 
     	}
     	
+    	/*
     	if(column == 2 || column == 4) {
     		if(table.getName().equals("TransitionsCompTable")) {
     			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     			oLabel.setForeground(Color.black);
     			oLabel.setFont(fontNormal);
     			
-    			oLabel.setText(value+"%");
+    			oLabel.setText(value+"");
+    			//getT
     			return oLabel;
     		}
     		
     		
-    	}
+    	}*/
+    	
     	//kolumna 6: róznice procentowe
 		if(column == 6) {
 			//JLabel oLabel = new JLabel(); //(JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);

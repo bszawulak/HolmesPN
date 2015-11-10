@@ -43,6 +43,10 @@ public class SimKnockPlacesCompTableModel extends AbstractTableModel {
 		dataSize = 0;
 	}
 	
+	public ArrayList<PlaceCompContainer> accessDataMatrix() {
+		return dataMatrix;
+	}
+	
 	/**
 	 * Metoda dodająca nowy wiersz do modelu tablicy miejsc.
 	 * @param dataRef NetSimulationData - obiekt danych referencyjnych
