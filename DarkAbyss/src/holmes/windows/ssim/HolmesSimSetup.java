@@ -485,7 +485,7 @@ public class HolmesSimSetup extends JFrame {
 			}
 		});
 		immSPNModePanel.add(immOnly1RadioButton);
-		groupNetType.add(immOnly1RadioButton);
+		immSPNmode.add(immOnly1RadioButton);
 
 		immSchedRadioButton = new JRadioButton("Sequenced firing by priority");
 		immSchedRadioButton.setBounds(5, 40, 220, 20);
@@ -503,7 +503,7 @@ public class HolmesSimSetup extends JFrame {
 			}
 		});
 		immSPNModePanel.add(immSchedRadioButton);
-		groupNetType.add(immSchedRadioButton);
+		immSPNmode.add(immSchedRadioButton);
 		
 		immProbRadioButton = new JRadioButton("Priority - probability mode");
 		immProbRadioButton.setBounds(5, 60, 220, 20);
@@ -521,7 +521,7 @@ public class HolmesSimSetup extends JFrame {
 			}
 		});
 		immSPNModePanel.add(immProbRadioButton);
-		groupNetType.add(immProbRadioButton);
+		immSPNmode.add(immProbRadioButton);
 		
 		return panel;
 	}
