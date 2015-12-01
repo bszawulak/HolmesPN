@@ -392,6 +392,7 @@ public class ClusterReader {
 					return null;
 				}
 				//TODO:
+				/*
 				while((line = br.readLine()) != null && !line.contains("Cluster sizes and average silhouette widths")) 
 					; 
 				line = br.readLine(); // następną linię ignorujemy ("Output: Cluster sizes and...")
@@ -410,7 +411,7 @@ public class ClusterReader {
         			}
         		}
         		data.metaData.clusterMSS = new ArrayList<>(mssVector);
-
+*/
 				//TUTAJ WSTAWIC CZYTANIE MSS OD NOWA!!!!
 				/**
 				 * Output:Silhouette of 48 units in 13 clusters from silhouette.default(x = cutree(klastry, ile), dist = odleglosc) :
@@ -440,8 +441,8 @@ Output:          1
 
 				 */
 				
-				//while((line = br.readLine()) != null && !line.contains("Individual silhouette widths")) 
-				//	; //przewijanie *prawie* do sekcji z klastrami
+				while((line = br.readLine()) != null && !line.contains("Individual silhouette widths")) 
+					; //przewijanie *prawie* do sekcji z klastrami
 				
 				while((line = br.readLine()) != null && !line.contains("[1]"))
 					;
