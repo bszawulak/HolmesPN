@@ -33,6 +33,7 @@ public class ClusterReader {
 	 * @param path String - ścieżka do katalogu z plikami
 	 * @return ArrayList[ArrayList[Clustering]] - tablica danych
 	 */
+	//TODO: ???
 	public ArrayList<ArrayList<Clustering>> readDirectory(String path) {
 		if(checkFiles(path) == -2) { //no cluster files
 			return null;
@@ -390,9 +391,57 @@ public class ClusterReader {
 					br.close();
 					return null;
 				}
+				//TODO:
+				while((line = br.readLine()) != null && !line.contains("Cluster sizes and average silhouette widths")) 
+					; 
+				line = br.readLine(); // następną linię ignorujemy ("Output: Cluster sizes and...")
+        		int readValues = 0;
+        		ArrayList<Float> mssVector = new ArrayList<Float>();
+        		while(!(line = br.readLine()).contains("Output:Individual")) {
+        			//teraz czytamy parami linii, informacje o klastrach
+        			line = line.replace(":", " ");
+        			String line1[] = line.split("\\s+"); //wagi klastrów
+        			line = br.readLine();
+        			line = line.replace(":", " ");
+        			String line2[] = line.split("\\s+"); //miara MSS
+        			
+        			for(int i=1; i<line1.length; i++) {
+        				mssVector.add(Float.parseFloat(line2[i]));
+        			}
+        		}
+        		data.metaData.clusterMSS = new ArrayList<>(mssVector);
+
+				//TUTAJ WSTAWIC CZYTANIE MSS OD NOWA!!!!
+				/**
+				 * Output:Silhouette of 48 units in 13 clusters from silhouette.default(x = cutree(klastry, ile), dist = odleglosc) :
+Output: Cluster sizes and average silhouette widths:
+Output:        1         1         1         1         2        10         2         4 
+Output:0.0000000 0.0000000 0.0000000 0.0000000 0.3827287 0.5145939 0.4885858 0.6419522 
+Output:        8         4         4         2         8 
+Output:0.2907803 0.6621263 0.5918689 0.8195586 0.7478590 
+Output:Individual silhouette widths:
+Output:   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+Output: 0.0000  0.3864  0.5604  0.5088  0.6600  0.8409 
+Output:[1] "1"
+Output:[1] "2"
+Output:[1] "3"
+Output:[1] "4"
+Output:[1] "5" "9"
+Output: [1] "6"  "8"  "41" "42" "43" "44" "45" "46" "47" "48"
+Output:[1] "7"  "20"
+Output:[1] "10" "13" "21" "24"
+Output:[1] "11" "12" "16" "17" "22" "23" "27" "28"
+Output:[1] "14" "15" "25" "26"
+Output:[1] "18" "19" "29" "30"
+Output:[1] "31" "36"
+Output:[1] "32" "33" "34" "35" "37" "38" "39" "40"
+Output:null device 
+Output:          1 
+
+				 */
 				
-				while((line = br.readLine()) != null && !line.contains("Individual silhouette widths")) 
-					; //przewijanie *prawie* do sekcji z klastrami
+				//while((line = br.readLine()) != null && !line.contains("Individual silhouette widths")) 
+				//	; //przewijanie *prawie* do sekcji z klastrami
 				
 				while((line = br.readLine()) != null && !line.contains("[1]"))
 					;

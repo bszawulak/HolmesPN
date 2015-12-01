@@ -693,7 +693,11 @@ public class HolmesClusterSubWindow extends JFrame {
 				dataCore.algorithm = fullData.metaData.algorithmName;
 				dataCore.metric = fullData.metaData.metricName;
 				dataCore.clNumber = fullData.metaData.clusterNumber;
+
 				dataCore.clSize = new ArrayList<Integer>(fullData.metaData.clusterSize);
+				for(int cl=0; cl<dataCore.clSize.size(); cl++) {
+					dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
+				}
 				GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)
 				JOptionPane.showMessageDialog(null, "Operation successfull. Clusters are ready to show.", 
 						"Status",JOptionPane.INFORMATION_MESSAGE);
@@ -743,7 +747,11 @@ public class HolmesClusterSubWindow extends JFrame {
 			dataCore.algorithm = fullData.metaData.algorithmName;
 			dataCore.metric = fullData.metaData.metricName;
 			dataCore.clNumber = fullData.metaData.clusterNumber;
+			
 			dataCore.clSize = new ArrayList<Integer>(fullData.metaData.clusterSize);
+			for(int cl=0; cl<dataCore.clSize.size(); cl++) {
+				dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
+			}
 			
 			GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)
 			deleteTmpFile(resultFiles);
