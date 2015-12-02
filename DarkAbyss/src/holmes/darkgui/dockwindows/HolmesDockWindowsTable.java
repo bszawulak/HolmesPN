@@ -50,6 +50,7 @@ import javax.swing.text.DefaultFormatter;
 import holmes.analyse.InvariantsTools;
 import holmes.analyse.MCTCalculator;
 import holmes.analyse.ProblemDetector;
+import holmes.analyse.TimeComputations;
 import holmes.clusters.ClusterDataPackage;
 import holmes.clusters.ClusterTransition;
 import holmes.darkgui.GUIManager;
@@ -136,6 +137,10 @@ public class HolmesDockWindowsTable extends JPanel {
 	private int selectedP_invIndex = -1;
 	private JTextArea p_invNameField;
 	private boolean invStructure = true;
+	private JLabel minTimeLabel;
+	private JLabel avgTimeLabel;
+	private JLabel maxTimeLabel;
+	private JLabel structureLabel;
 	//clusters:
 	private JComboBox<String> chooseCluster;
 	private JComboBox<String> chooseClusterInv;
@@ -2120,7 +2125,6 @@ public class HolmesDockWindowsTable extends JPanel {
 		elementLocation = arc.getStartLocation();
 		
 		Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
-		//TODO:
 		// ARC ID
 		JLabel idLabel = new JLabel("gID:", JLabel.LEFT);
 		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
@@ -2631,6 +2635,36 @@ public class HolmesDockWindowsTable extends JPanel {
 		});
 		components.add(markAreaCheckBox);
 		
+		//TODO:
+		//TPN:
+		JLabel labelTime1 = new JLabel("Min. time: ");
+		labelTime1.setBounds(colA_posX, positionY+=20, 80, 20);
+		components.add(labelTime1);
+		minTimeLabel = new JLabel("---");
+		minTimeLabel.setBounds(colB_posX, positionY, 80, 20);
+		components.add(minTimeLabel);
+		
+		JLabel labelTime2 = new JLabel("Avg. time: ");
+		labelTime2.setBounds(colA_posX, positionY+=20, 80, 20);
+		components.add(labelTime2);
+		avgTimeLabel = new JLabel("---");
+		avgTimeLabel.setBounds(colB_posX, positionY, 80, 20);
+		components.add(avgTimeLabel);
+		
+		JLabel labelTime3 = new JLabel("Max. time: ");
+		labelTime3.setBounds(colA_posX, positionY+=20, 80, 20);
+		components.add(labelTime3);
+		maxTimeLabel = new JLabel("---");
+		maxTimeLabel.setBounds(colB_posX, positionY, 80, 20);
+		components.add(maxTimeLabel);
+		
+		JLabel labelTime4 = new JLabel("Structure:");
+		labelTime4.setBounds(colA_posX, positionY+=20, 80, 20);
+		components.add(labelTime4);
+		structureLabel = new JLabel("---");
+		structureLabel.setBounds(colB_posX, positionY, 200, 20);
+		components.add(structureLabel);
+		
 		doNotUpdate = false;
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
@@ -2750,10 +2784,31 @@ public class HolmesDockWindowsTable extends JPanel {
 				}
 			}
 			
-			//name field:
+			//subwindow fields:
 			String name = overlord.getWorkspace().getProject().accessT_InvDescriptions().get(selectedT_invIndex);
 			t_invNameField.setText(name);
 			
+			ArrayList<Double> timeVector = TimeComputations.getT_InvTimeValues(invariant, transitions);
+			if(timeVector!=null) {
+				minTimeLabel.setText(String.format("%.2f", timeVector.get(0)+timeVector.get(3)));
+				avgTimeLabel.setText(String.format("%.2f", timeVector.get(2)+timeVector.get(3)));
+				maxTimeLabel.setText(String.format("%.2f", timeVector.get(1)+timeVector.get(3)));
+			
+				String structText = "";
+				if(timeVector.get(5)>0) {
+					structText += ""+timeVector.get(5).intValue()+"xTPN; ";
+				}
+				if(timeVector.get(6)>0) {
+					structText += ""+timeVector.get(6).intValue()+"xDPN; ";
+				}
+				if(timeVector.get(7)>0) {
+					structText += ""+timeVector.get(7).intValue()+"xTDPN; ";
+				}
+				if(timeVector.get(4)>0) {
+					structText += ""+timeVector.get(4).intValue()+"xPN; ";
+				}
+				structureLabel.setText(structText);
+			}
 		}
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}

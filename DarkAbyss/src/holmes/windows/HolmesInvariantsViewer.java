@@ -32,6 +32,7 @@ import javax.swing.table.TableRowSorter;
 
 import holmes.analyse.InvariantsCalculator;
 import holmes.analyse.InvariantsTools;
+import holmes.analyse.TimeComputations;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
@@ -67,6 +68,14 @@ public class HolmesInvariantsViewer extends JFrame {
 	private JLabel labelReadArcs;
 	private JLabel labelInhibitors;
 	private JTextArea descriptionTextArea;
+	//time
+	private JLabel labelEFT;
+	private JLabel labelAVG;
+	private JLabel labelLFT;
+	private JLabel labelTPNtrans;
+	private JLabel labelDPNtrans;
+	private JLabel labelTDPNtrans;
+	private JLabel labelPNtrans;
 	
 	private JTable table;
 	private DefaultTableModel tableModel;
@@ -211,7 +220,7 @@ public class HolmesInvariantsViewer extends JFrame {
 	public JPanel getUpperPanel() {
 		JPanel result = new JPanel(null);
 		result.setBorder(BorderFactory.createTitledBorder("General information"));
-		result.setPreferredSize(new Dimension(800, 160));
+		result.setPreferredSize(new Dimension(800, 200));
 
 		int posXda = 10;
 		int posYda = 25;
@@ -353,10 +362,80 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelInhibitors.setBounds(posXda+510, posYda, 40, 20);
 		result.add(labelInhibitors);
 		
+		//TIME:
+		JLabel label11 = new JLabel("Min. time:");
+		label11.setBounds(posXda, posYda+=20, 70, 20);
+		result.add(label11);
+		
+		labelEFT = new JLabel("---");
+		labelEFT.setBounds(posXda+75, posYda, 40, 20);
+		result.add(labelEFT);
+		
+		JLabel label12 = new JLabel("Avg. time:");
+		label12.setBounds(posXda+140, posYda, 70, 20);
+		result.add(label12);
+		
+		labelAVG = new JLabel("---");
+		labelAVG.setBounds(posXda+210, posYda, 40, 20);
+		result.add(labelAVG);
+		
+		JLabel label13 = new JLabel("Max. time:");
+		label13.setBounds(posXda+280, posYda, 70, 20);
+		result.add(label13);
+		
+		labelLFT = new JLabel("---");
+		labelLFT.setBounds(posXda+350, posYda, 40, 20);
+		result.add(labelLFT);
+		
+		JLabel label16 = new JLabel("TPN trans:");
+		label16.setBounds(posXda, posYda+=20, 70, 20);
+		result.add(label16);
+		
+		labelTPNtrans = new JLabel("---");
+		labelTPNtrans.setBounds(posXda+75, posYda, 40, 20);
+		result.add(labelTPNtrans);
+		
+		JLabel label17 = new JLabel("DPN trans:");
+		label17.setBounds(posXda+110, posYda, 70, 20);
+		result.add(label17);
+		
+		labelDPNtrans = new JLabel("---");
+		labelDPNtrans.setBounds(posXda+180, posYda, 40, 20);
+		result.add(labelDPNtrans);
+		
+		JLabel label18 = new JLabel("TDPN trans:");
+		label18.setBounds(posXda+220, posYda, 70, 20);
+		result.add(label18);
+		
+		labelTDPNtrans = new JLabel("---");
+		labelTDPNtrans.setBounds(posXda+290, posYda, 40, 20);
+		result.add(labelTDPNtrans);
+		
+		JLabel label19 = new JLabel("PN trans:");
+		label19.setBounds(posXda+330, posYda, 70, 20);
+		result.add(label19);
+		
+		labelPNtrans = new JLabel("---");
+		labelPNtrans.setBounds(posXda+400, posYda, 40, 20);
+		result.add(labelPNtrans);
+		//labelSur = new JLabel("---");
+		//labelSur.setBounds(posXda+400, posYda, 40, 20);
+		//result.add(labelSur);
+		
+		//JLabel label15 = new JLabel("Canonical:");
+		//label15.setBounds(posXda+440, posYda, 70, 20);
+		//result.add(label15);
+		
+		//labelCanon = new JLabel("---");
+		//labelCanon.setBounds(posXda+510, posYda, 40, 20);
+		//result.add(labelCanon);
+		
+		
+		//END TIME
 		JLabel comLabel = new JLabel("Description:");
 		comLabel.setBounds(posXda, posYda+=20, 70, 20);
 		result.add(comLabel);
-		
+
 		descriptionTextArea = new JTextArea();
 		descriptionTextArea.setLineWrap(true);
 		descriptionTextArea.addFocusListener(new FocusAdapter() {
@@ -654,6 +733,19 @@ public class HolmesInvariantsViewer extends JFrame {
 		tableScrollPane.setViewportView(table);
 		tableScrollPane.repaint();
 		descriptionTextArea.setText(overlord.getWorkspace().getProject().getT_InvDescription(invNo));
+		
+		
+		//TIME:
+		ArrayList<Double> timeVector = TimeComputations.getT_InvTimeValues(invariantsMatrix.get(invNo), transitions);
+		
+		labelEFT.setText(String.format("%.2f", timeVector.get(0)+timeVector.get(3)));
+		labelAVG.setText(String.format("%.2f", timeVector.get(2)+timeVector.get(3)));
+		labelLFT.setText(String.format("%.2f", timeVector.get(1)+timeVector.get(3)));
+		
+		labelTPNtrans.setText(""+timeVector.get(5).intValue());
+		labelDPNtrans.setText(""+timeVector.get(6).intValue());
+		labelTDPNtrans.setText(""+timeVector.get(7).intValue());
+		labelPNtrans.setText(""+timeVector.get(4).intValue());
 	}
 	
 	/**
@@ -690,9 +782,19 @@ public class HolmesInvariantsViewer extends JFrame {
 		}
 		Collections.sort(mcts);
 		String description = overlord.getWorkspace().getProject().accessT_InvDescriptions().get(invNo);
-		note.addTextLineNL("Invariant "+(invNo+1), "text");
-		note.addTextLineNL("Descrption: "+description, "text");
+		note.addTextLineNL("T-Invariant "+(invNo+1), "text");
+		note.addTextLineNL("Description: "+description, "text");
 		note.addTextLineNL("Total number of transitions: "+transNumber, "text");
+		//TIME DATA:
+		ArrayList<Double> timeVector = TimeComputations.getT_InvTimeValues(invariant, transitions);
+		note.addTextLineNL("Minimum firing time: "+String.format("%.2f", timeVector.get(0)+timeVector.get(3)), "text");
+		note.addTextLineNL("Maximum firing time: "+String.format("%.2f", timeVector.get(1)+timeVector.get(3)), "text");
+		note.addTextLineNL("Average firing time: "+String.format("%.2f", timeVector.get(2)+timeVector.get(3)), "text");
+		note.addTextLineNL("TPN trans: "+(timeVector.get(5).intValue())+" | DPN trans: "+(timeVector.get(6).intValue())+
+				" | TDPN trans: "+(timeVector.get(7).intValue())+" | PN trans: "+(timeVector.get(4).intValue()), "text");
+		note.addTextLineNL(" ", "text");
+		
+		
 		note.addTextLineNL("Support structure:", "text");
 		for(int mct : mcts) {
 			String MCTname = overlord.getWorkspace().getProject().getMCTname(mct);
@@ -749,6 +851,14 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelOutT.setText("---");
 		labelReadArcs.setText("---");
 		labelInhibitors.setText("---");
+		
+		labelEFT.setText("---");
+		labelAVG.setText("---");
+		labelLFT.setText("---");
+		labelTPNtrans.setText("---");
+		labelDPNtrans.setText("---");
+		labelTDPNtrans.setText("---");
+		labelPNtrans.setText("---");
 		
 		table.setModel(new DefaultTableModel());
 		//tableModel.clear();

@@ -685,7 +685,7 @@ public class HolmesClusterSubWindow extends JFrame {
 							+"\nExporting cannon proceed.", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				//TODO:
+
 				ClusterDataPackage dataCore = new ClusterDataPackage();
 				dataCore.dataMatrix = fullData.getClusteringColored(); //najbardziej czasochłonne
 				dataCore.clustersInvariants = fullData.clustersInv;
@@ -696,7 +696,7 @@ public class HolmesClusterSubWindow extends JFrame {
 
 				dataCore.clSize = new ArrayList<Integer>(fullData.metaData.clusterSize);
 				for(int cl=0; cl<dataCore.clSize.size(); cl++) {
-					dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
+					;//dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
 				}
 				GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)
 				JOptionPane.showMessageDialog(null, "Operation successfull. Clusters are ready to show.", 
@@ -750,7 +750,7 @@ public class HolmesClusterSubWindow extends JFrame {
 			
 			dataCore.clSize = new ArrayList<Integer>(fullData.metaData.clusterSize);
 			for(int cl=0; cl<dataCore.clSize.size(); cl++) {
-				dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
+				;//dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
 			}
 			
 			GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)

@@ -246,7 +246,7 @@ public final class ElementDraw {
 				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				
 				if (trans.isPortal()) {
-					if( trans.getTransType() == TransitionType.TPN || trans.getTransType() == TransitionType.DPN ) {
+					if( trans.getTransType() == TransitionType.TPN  ) {//|| trans.getTransType() == TransitionType.DPN ) {
 						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
 						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
 					} else {

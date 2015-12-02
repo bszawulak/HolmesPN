@@ -27,7 +27,7 @@ public class Transition extends Node {
 	private static final long serialVersionUID = -4981812911464514746L;
 
 	/** NORMAL, TPN, DPN, TDPN */
-	public enum TransitionType { PN, TPN, DPN, TDPN }
+	public enum TransitionType { PN, TPN }; //, DPN, TDPN }
 	protected TransitionType transType;
 	
 	protected static int realRadius = 15;
