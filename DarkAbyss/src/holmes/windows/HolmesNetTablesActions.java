@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import holmes.analyse.InvariantsTools;
+import holmes.analyse.TimeComputations;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
@@ -376,5 +377,42 @@ public class HolmesNetTablesActions {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Metoda pokazuje dane czasowe inwariantów.
+	 */
+	public void showTimeDataNotepad() {
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		ArrayList<Transition> transitions = pn.getTransitions();
+		ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
+		if(invMatrix == null || invMatrix.size() == 0) 
+			return;
+		int invMatrixSize = invMatrix.size();
+		
+		HolmesNotepad note = new HolmesNotepad(800, 600);
+		
+		note.addTextLineNL(" No.           Min.         Avg.          Max.", "text");
+		for(int i=0; i<invMatrixSize; i++) {
+			ArrayList<Integer> invariant = invMatrix.get(i);
+			ArrayList<Double> timeVector = TimeComputations.getT_InvTimeValues(invariant, transitions);
+			
+			String line = "";
+			String eftStr = String.format("%.2f", timeVector.get(0)+timeVector.get(3));
+			String lftStr = String.format("%.2f", timeVector.get(1)+timeVector.get(3));
+			String avgStr = String.format("%.2f", timeVector.get(2)+timeVector.get(3));
+
+			
+			line += Tools.setToSize("i_"+i, 5, false);
+			line += Tools.setToSize(eftStr, 14, true);
+			line += Tools.setToSize(avgStr, 14, true);
+			line += Tools.setToSize(lftStr, 14, true);
+			note.addTextLineNL(line, "text");
+		}
+		
+		
+		
+		note.setCaretFirstLine();
+		note.setVisible(true);
 	}
 }

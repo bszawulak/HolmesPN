@@ -48,8 +48,8 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa odpowiedzialna za rysowanie i obsługę okna tabel elementów sieci.
+ * 
  * @author MR
- *
  */
 public class HolmesNetTables extends JFrame {
 	private static final long serialVersionUID = 8429744762731301629L;
@@ -382,6 +382,19 @@ public class HolmesNetTables extends JFrame {
 		buttonsInvariantsPanel.add(simMode);
 		
 		//TODO:
+		
+		JButton timeDataButton = new JButton("Time & Inv.");
+		timeDataButton.setFocusPainted(false);
+		timeDataButton.setBounds(xPos, yPos+=210, 110, 30);
+		timeDataButton.setMargin(new Insets(0, 0, 0, 0));
+		timeDataButton.setIcon(Tools.getResIcon22("/icons/stateSim/aaa.png"));
+		timeDataButton.setToolTipText("Show time data for t-invariants");
+		timeDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				action.showTimeDataNotepad();
+			}
+		});
+		buttonsPanel.add(timeDataButton);
 
 		//****
 		buttonsPanel.add(buttonsInvariantsPanel);
@@ -665,6 +678,12 @@ public class HolmesNetTables extends JFrame {
 	//public void componentMoved(ComponentEvent e) {} //unused
 	//public void componentShown(ComponentEvent e) {} //unused
 	
+	
+	//*********************************************************************************************************************
+	//*********************************************************************************************************************
+	//*********************************************************************************************************************
+	//*********************************************************************************************************************
+	//*********************************************************************************************************************
 	
 	/**
 	 * Klasa wewnętrzna, służy do wyświetlania komentarz gdy kursor znajduje się nad nazwą kolumny

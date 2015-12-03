@@ -67,6 +67,7 @@ import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.PetriNetElement;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.simulators.NetSimulator;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
@@ -119,6 +120,8 @@ public class HolmesDockWindowsTable extends JPanel {
 	public SpinnerModel nameLocationXSpinnerModel = null;
 	public SpinnerModel nameLocationYSpinnerModel = null;
 	private Arc pairedArc = null;
+	public JCheckBox tpnCheckBox;
+	public JCheckBox pnCheckBox;
 	//MCT:
 	private int selectedMCTindex = -1;
 	private boolean colorMCT = false;
@@ -1052,6 +1055,59 @@ public class HolmesDockWindowsTable extends JPanel {
         CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
         columnB_Y += 20;
         components.add(CreationPanel);
+        
+        //CHANGE TYPE:
+        JLabel changeTypeLabel = new JLabel("Trans. Type:", JLabel.LEFT);
+        changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(changeTypeLabel);
+		
+        pnCheckBox = new JCheckBox("Standard", transition.isPortal());
+        pnCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
+		if(((Transition)element).getTransType() == TransitionType.PN)
+			pnCheckBox.setSelected(true);
+		else
+			pnCheckBox.setSelected(false);
+		
+		pnCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(doNotUpdate)
+					return;
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected()) {
+					((Transition)element).setTransType(TransitionType.PN);
+					
+					doNotUpdate = true;
+					tpnCheckBox.setSelected(false);
+					doNotUpdate = false;
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+				} 
+			}
+		});
+		components.add(pnCheckBox);
+		
+		tpnCheckBox = new JCheckBox("Time", transition.isPortal());
+		tpnCheckBox.setBounds(columnB_posX+100, columnB_Y, 80, 20);
+		if(((Transition)element).getTransType() == TransitionType.TPN)
+			tpnCheckBox.setSelected(true);
+		else
+			tpnCheckBox.setSelected(false);
+		
+		tpnCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(doNotUpdate)
+					return;
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected()) {
+					((Transition)element).setTransType(TransitionType.TPN);
+					
+					doNotUpdate = true;
+					pnCheckBox.setSelected(false);
+					doNotUpdate = false;
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+				} 
+			}
+		});
+		components.add(tpnCheckBox);
 		
 		//SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
@@ -1126,6 +1182,7 @@ public class HolmesDockWindowsTable extends JPanel {
 			portalBox.setSelected(true);
 		else
 			portalBox.setSelected(false);
+		
 		portalBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -1381,6 +1438,59 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
         
+        //CHANGE TYPE:
+        JLabel changeTypeLabel = new JLabel("Trans. Type:", JLabel.LEFT);
+        changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(changeTypeLabel);
+		
+        pnCheckBox = new JCheckBox("Standard", transition.isPortal());
+        pnCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
+		if(((Transition)element).getTransType() == TransitionType.PN)
+			pnCheckBox.setSelected(true);
+		else
+			pnCheckBox.setSelected(false);
+		
+		pnCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(doNotUpdate)
+					return;
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected()) {
+					((Transition)element).setTransType(TransitionType.PN);
+					
+					doNotUpdate = true;
+					tpnCheckBox.setSelected(false);
+					doNotUpdate = false;
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+				} 
+			}
+		});
+		components.add(pnCheckBox);
+		
+		tpnCheckBox = new JCheckBox("Time", transition.isPortal());
+		tpnCheckBox.setBounds(columnB_posX+100, columnB_Y, 80, 20);
+		if(((Transition)element).getTransType() == TransitionType.TPN)
+			tpnCheckBox.setSelected(true);
+		else
+			tpnCheckBox.setSelected(false);
+		
+		tpnCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(doNotUpdate)
+					return;
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected()) {
+					((Transition)element).setTransType(TransitionType.TPN);
+					
+					doNotUpdate = true;
+					pnCheckBox.setSelected(false);
+					doNotUpdate = false;
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+				} 
+			}
+		});
+		components.add(tpnCheckBox);
+		
 		// EFT / LFT TIMES:
 		JLabel minMaxLabel = new JLabel("EFT / LFT:", JLabel.LEFT);
 		minMaxLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
@@ -2635,7 +2745,6 @@ public class HolmesDockWindowsTable extends JPanel {
 		});
 		components.add(markAreaCheckBox);
 		
-		//TODO:
 		//TPN:
 		JLabel labelTime1 = new JLabel("Min. time: ");
 		labelTime1.setBounds(colA_posX, positionY+=20, 80, 20);

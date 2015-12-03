@@ -15,10 +15,15 @@ import org.nfunk.jep.JEP;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.elements.Arc;
+import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.simulators.IRandomGenerator;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.StandardRandom;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
 import holmes.windows.HolmesNotepad;
+import sun.net.ftp.FtpClient.TransferType;
 
 import com.javadocking.DockingManager;
 import com.javadocking.dock.BorderDock;
@@ -322,6 +327,44 @@ public class Toolbar extends BorderDock {
 		//TODO:
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/aaa.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {	
+				
+				IRandomGenerator generator2 = new StandardRandom();
+				
+				for(Transition t : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+					t.setTransType(TransitionType.TPN);
+					int value = (int) generator2.nextLong(10);
+					int eft = 0;
+					int lft = 1;
+					int duration = 2;
+					
+					if(value > 8) {
+						eft = (int) generator2.nextLong(6);
+						lft = (int) generator2.nextLong(eft+6)+1;
+						duration = (int) generator2.nextLong(10);
+						
+						t.setDPNstatus(true);
+						t.setTPNstatus(true);
+						t.setLFT(lft);
+						t.setEFT(eft);
+						t.setDPNduration(duration);
+						
+					} else if(value > 0) {
+						duration = (int) generator2.nextLong(10);
+						
+						t.setDPNstatus(true);
+						t.setDPNduration(duration);
+					} else {
+						eft = (int) generator2.nextLong(6);
+						lft = (int) generator2.nextLong(eft+6)+1;
+						
+						t.setTPNstatus(true);
+						t.setLFT(lft);
+						t.setEFT(eft);
+					}
+					
+				}
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+				
 				/*
 				HolmesNotepad aa = new HolmesNotepad(600, 480);
 				aa.setVisible(true);
@@ -345,13 +388,7 @@ public class Toolbar extends BorderDock {
 				double result = myParser.getValue();
 				aa.addTextLineNL(expressionString+" = "+result, "text");
 				*/
-				
-				for(Arc arc : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs()) {
-					Point startP = new Point((Point)arc.getStartLocation().getPosition());
-					Point endP = (Point)arc.getEndLocation().getPosition().clone();
-					arc.accessBreaks().add( new Point( (startP.x + endP.x)/2, ((startP.y + endP.y)/2)+20 ) );
 
-				}
 			}
 		};
 		testButton.setEnabled(false);
