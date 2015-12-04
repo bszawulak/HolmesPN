@@ -392,7 +392,7 @@ public class HolmesNetTablesActions {
 		
 		HolmesNotepad note = new HolmesNotepad(800, 600);
 		
-		note.addTextLineNL(" No.           Min.         Avg.          Max.", "text");
+		note.addTextLineNL(" No.           Min.         Avg.          Max.    PN   TPN  DPN TDPN", "text");
 		for(int i=0; i<invMatrixSize; i++) {
 			ArrayList<Integer> invariant = invMatrix.get(i);
 			ArrayList<Double> timeVector = TimeComputations.getT_InvTimeValues(invariant, transitions);
@@ -402,11 +402,20 @@ public class HolmesNetTablesActions {
 			String lftStr = String.format("%.2f", timeVector.get(1)+timeVector.get(3));
 			String avgStr = String.format("%.2f", timeVector.get(2)+timeVector.get(3));
 
+			String normal = ""+timeVector.get(4).intValue();
+			String tpn = ""+timeVector.get(5).intValue();
+			String dpn = ""+timeVector.get(6).intValue();
+			String tdpn = ""+timeVector.get(7).intValue();
 			
 			line += Tools.setToSize("i_"+i, 5, false);
 			line += Tools.setToSize(eftStr, 14, true);
 			line += Tools.setToSize(avgStr, 14, true);
 			line += Tools.setToSize(lftStr, 14, true);
+			line += "    ";
+			line += Tools.setToSize(normal, 5, false);
+			line += Tools.setToSize(tpn, 5, false);
+			line += Tools.setToSize(dpn, 5, false);
+			line += Tools.setToSize(tdpn, 5, false);
 			note.addTextLineNL(line, "text");
 		}
 		

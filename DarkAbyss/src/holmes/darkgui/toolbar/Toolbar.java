@@ -337,7 +337,7 @@ public class Toolbar extends BorderDock {
 					int lft = 1;
 					int duration = 2;
 					
-					if(value > 8) {
+					if(value > 7) {
 						eft = (int) generator2.nextLong(6);
 						lft = (int) generator2.nextLong(eft+6)+1;
 						duration = (int) generator2.nextLong(10);
@@ -348,7 +348,7 @@ public class Toolbar extends BorderDock {
 						t.setEFT(eft);
 						t.setDPNduration(duration);
 						
-					} else if(value > 0) {
+					} else if(value > 3) {
 						duration = (int) generator2.nextLong(10);
 						
 						t.setDPNstatus(true);

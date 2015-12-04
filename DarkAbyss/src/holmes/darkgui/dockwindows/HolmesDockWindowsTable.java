@@ -130,6 +130,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	//knockout:
 	private JTextArea knockoutTextArea;
 	//t-invariants:
+	private JComboBox<String> chooseInvBox;
 	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //używane w podoknie t-inwariantów
 	private int selectedT_invIndex = -1;
 	private boolean markMCT = false;
@@ -2643,8 +2644,8 @@ public class HolmesDockWindowsTable extends JPanel {
 		}
 		invariantHeaders[invariantHeaders.length-2] = "null transitions";
 		invariantHeaders[invariantHeaders.length-1] = "inv/trans frequency";
-		
-		JComboBox<String> chooseInvBox = new JComboBox<String>(invariantHeaders);
+
+		chooseInvBox = new JComboBox<String>(invariantHeaders);
 		chooseInvBox.setBounds(colB_posX, positionY, 150, 20);
 		chooseInvBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -2668,6 +2669,37 @@ public class HolmesDockWindowsTable extends JPanel {
 		});
 		components.add(chooseInvBox);
 		
+		JButton prevButton = new JButton("Previous");
+		prevButton.setBounds(colB_posX-50, positionY+=25, 100, 20);
+		prevButton.setMargin(new Insets(0, 0, 0, 0));
+		prevButton.setIcon(Tools.getResIcon16("/icons/invViewer/prevIcon.png"));
+		prevButton.setToolTipText("Show previous invariant data.");
+		prevButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int sel = chooseInvBox.getSelectedIndex();
+				if(sel > 0) {
+					chooseInvBox.setSelectedIndex(sel-1);
+				}
+			}
+		});
+		components.add(prevButton);
+		
+		JButton nextButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>");
+		nextButton.setBounds(colB_posX+55, positionY, 100, 20);
+		nextButton.setMargin(new Insets(0, 0, 0, 0));
+		nextButton.setIcon(Tools.getResIcon16("/icons/invViewer/nextIcon.png"));
+		nextButton.setToolTipText("Show next invariant data.");
+		nextButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int sel = chooseInvBox.getSelectedIndex();
+				int max = chooseInvBox.getItemCount();
+				if(sel < max-1) {
+					chooseInvBox.setSelectedIndex(sel+1);
+				}
+			}
+		});
+		components.add(nextButton);
+
 		JButton showDetailsButton = new JButton();
 		showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
 		showDetailsButton.setIcon(Tools.getResIcon32("/icons/menu/menu_invViewer.png"));
@@ -3630,7 +3662,17 @@ public class HolmesDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(chooseClusterInv);
-		
+		//TODO:
+		JButton showTimeDetailsButton = new JButton();
+		showTimeDetailsButton.setText("<html>&nbsp;Time&nbsp;<br>details</html>");
+		showTimeDetailsButton.setIcon(Tools.getResIcon22("/icons/clustWindow/showInfo.png"));
+		showTimeDetailsButton.setBounds(colA_posX, positionY+=30, 130, 30);
+		showTimeDetailsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				showTimeDataNotepad();
+			}
+		});
+		components.add(showTimeDetailsButton);
 		
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
@@ -3640,6 +3682,84 @@ public class HolmesDockWindowsTable extends JPanel {
 		panel.setVisible(true);
 		doNotUpdate = true;
 		add(panel);
+	}
+	
+	private void showTimeDataNotepad() {
+		if(selectedClusterIndex == -1)
+			return;
+		
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		ArrayList<Transition> transitions = pn.getTransitions();
+		ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
+		if(invMatrix == null || invMatrix.size() == 0) 
+			return;
+
+		ArrayList<Integer> clInvariants = clusterColorsData.clustersInvariants.get(selectedClusterIndex);
+		ArrayList<ArrayList<Integer>> invSubMatrix = new ArrayList<>();
+		for(int i : clInvariants) {
+			invSubMatrix.add(invMatrix.get(i));
+		}
+		
+		ArrayList<Double> avgStatsVector = new ArrayList<>();
+
+		HolmesNotepad note = new HolmesNotepad(800, 600);
+		
+		note.addTextLineNL("", "text");
+		note.addTextLineNL("Cluster: "+(selectedClusterIndex+1)+" ("+clusterColorsData.clSize.get(selectedClusterIndex)+" inv.) alg.: "+clusterColorsData.algorithm
+				+" metric: "+clusterColorsData.metric, "text");
+		note.addTextLineNL("", "text");
+		note.addTextLineNL("T-invariants and their time values:", "text");
+		
+		note.addTextLineNL(" No.           Min.         Avg.          Max.    PN   TPN  DPN TDPN", "text");
+		for(int i=0; i<invSubMatrix.size(); i++) {
+			ArrayList<Integer> invariant = invSubMatrix.get(i);
+			ArrayList<Double> timeVector = TimeComputations.getT_InvTimeValues(invariant, transitions);
+			avgStatsVector.add(timeVector.get(2)+timeVector.get(3));
+			
+			String line = "";
+			String eftStr = String.format("%.2f", timeVector.get(0)+timeVector.get(3));
+			String lftStr = String.format("%.2f", timeVector.get(1)+timeVector.get(3));
+			String avgStr = String.format("%.2f", timeVector.get(2)+timeVector.get(3));
+
+			String normal = ""+timeVector.get(4).intValue();
+			String tpn = ""+timeVector.get(5).intValue();
+			String dpn = ""+timeVector.get(6).intValue();
+			String tdpn = ""+timeVector.get(7).intValue();
+			
+			line += Tools.setToSize("i_"+clInvariants.get(i), 5, false);
+			line += Tools.setToSize(eftStr, 14, true);
+			line += Tools.setToSize(avgStr, 14, true);
+			line += Tools.setToSize(lftStr, 14, true);
+			line += "    ";
+			line += Tools.setToSize(normal, 5, false);
+			line += Tools.setToSize(tpn, 5, false);
+			line += Tools.setToSize(dpn, 5, false);
+			line += Tools.setToSize(tdpn, 5, false);
+			note.addTextLineNL(line, "text");
+		}
+		
+		//średnie, odchylenia:
+		double avgMean = 0;
+		for(double avg : avgStatsVector) {
+			avgMean += avg;
+		}
+		avgMean /= (double)avgStatsVector.size();
+
+		double variance = 0;
+		for(double avg : avgStatsVector) {
+			variance += (avgMean-avg)*(avgMean-avg);
+		}
+		variance /= (double)avgStatsVector.size();
+		
+		double stdDev = Math.sqrt(variance);
+		
+		note.addTextLineNL("", "text");
+		note.addTextLineNL("Mean of average times: "+avgMean, "text");
+		note.addTextLineNL("Variance: "+variance, "text");
+		note.addTextLineNL("Standard deviation: "+stdDev, "text");
+
+		note.setCaretFirstLine();
+		note.setVisible(true);
 	}
 	
 	/**

@@ -249,25 +249,9 @@ public class HolmesInvariantsViewer extends JFrame {
 			
 		});
 		result.add(invCombo);
-		
-		JButton nextButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>");
-		nextButton.setBounds(posXda+240, posYda, 80, 20);
-		nextButton.setMargin(new Insets(0, 0, 0, 0));
-		nextButton.setIcon(Tools.getResIcon16("/icons/invViewer/nextIcon.png"));
-		nextButton.setToolTipText("Show next invariant data.");
-		nextButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				currentSelected++;
-				if(currentSelected > invariantsMatrix.size())
-					currentSelected = 1;
-				
-				invCombo.setSelectedIndex(currentSelected);
-			}
-		});
-		result.add(nextButton);
-		
+
 		JButton prevButton = new JButton("Previous");
-		prevButton.setBounds(posXda+330, posYda, 80, 20);
+		prevButton.setBounds(posXda+245, posYda, 80, 20);
 		prevButton.setMargin(new Insets(0, 0, 0, 0));
 		prevButton.setIcon(Tools.getResIcon16("/icons/invViewer/prevIcon.png"));
 		prevButton.setToolTipText("Show previous invariant data.");
@@ -281,6 +265,22 @@ public class HolmesInvariantsViewer extends JFrame {
 			}
 		});
 		result.add(prevButton);
+		
+		JButton nextButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>");
+		nextButton.setBounds(posXda+335, posYda, 80, 20);
+		nextButton.setMargin(new Insets(0, 0, 0, 0));
+		nextButton.setIcon(Tools.getResIcon16("/icons/invViewer/nextIcon.png"));
+		nextButton.setToolTipText("Show next invariant data.");
+		nextButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				currentSelected++;
+				if(currentSelected > invariantsMatrix.size())
+					currentSelected = 1;
+				
+				invCombo.setSelectedIndex(currentSelected);
+			}
+		});
+		result.add(nextButton);
 
 		JLabel label1 = new JLabel("Minimal:");
 		label1.setBounds(posXda, posYda+=20, 70, 20);
