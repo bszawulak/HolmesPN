@@ -99,12 +99,12 @@ public class HolmesAbout extends JFrame {
 			
 		}
 		
-		JLabel nameLabel = new JLabel("Holmes v2.00");
+		JLabel nameLabel = new JLabel("Holmes v2.08");
 		nameLabel.setFont(new Font("Consolas", Font.PLAIN, 25));
 		nameLabel.setBounds(170, 30, 300, 40);
 		panel.add(nameLabel);
 		
-		JLabel nameLabel1b = new JLabel("(rev. 1)");
+		JLabel nameLabel1b = new JLabel("(beta)");
 		nameLabel1b.setFont(new Font("Consolas", Font.PLAIN, 18));
 		nameLabel1b.setBounds(170, 50, 300, 40);
 		panel.add(nameLabel1b);
@@ -114,7 +114,7 @@ public class HolmesAbout extends JFrame {
 		nameLabel2.setBounds(170, 70, 330, 40);
 		panel.add(nameLabel2);
 		
-		JLabel nameLabel3 = new JLabel("Release: 24-09-2015");
+		JLabel nameLabel3 = new JLabel("Release: 21-12-2015");
 		nameLabel3.setFont(new Font("Consolas", Font.PLAIN, 14));
 		nameLabel3.setBounds(170, 110, 330, 40);
 		panel.add(nameLabel3);

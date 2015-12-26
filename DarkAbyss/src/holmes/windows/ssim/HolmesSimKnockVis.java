@@ -102,6 +102,8 @@ public class HolmesSimKnockVis extends JFrame {
 	//tablice:
 	private DefaultTableModel model;
 	private SimKnockTableRenderer tableRenderer;
+	private SimKnockTableRenderer tableRendererPlaces;
+	private SimKnockTableRenderer tableRendererTrans;
 	private SimKnockPlacesTableModel modelPlaces;
 	private SimKnockPlacesCompTableModel modelPlacesComp;
 	private SimKnockPlacesCompAllTableModel modelPlacesCompAll;
@@ -961,12 +963,13 @@ public class HolmesSimKnockVis extends JFrame {
     	
     	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(placesTable.getModel());
     	placesTable.setRowSorter(sorter);
-        
+        //TODO:
     	placesTable.setName("PlacesCompTable");
     	placesTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-    	tableRenderer.setMode(1);
-    	placesTable.setDefaultRenderer(String.class, tableRenderer);
-    	placesTable.setDefaultRenderer(Double.class, tableRenderer);
+    	tableRendererPlaces = new SimKnockTableRenderer(placesTable);
+    	tableRendererPlaces.setMode(2);
+    	placesTable.setDefaultRenderer(String.class, tableRendererPlaces);
+    	placesTable.setDefaultRenderer(Double.class, tableRendererPlaces);
 
     	try {
     		if(places.size() == 0) {
@@ -1017,7 +1020,7 @@ public class HolmesSimKnockVis extends JFrame {
     }
 
     /**
-	 * Metoda tworząca tabelę tranzycji
+	 * Metoda tworząca tabelę danych dla tranzycji.
 	 * @param ref  boolean - true, jeśli wywołane przez zbiór referencyjny
 	 */
     private void createTransTable(boolean ref) {
@@ -1036,7 +1039,7 @@ public class HolmesSimKnockVis extends JFrame {
     	transTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
     	transTable.getColumnModel().getColumn(0).setMinWidth(cellSize);
     	transTable.getColumnModel().getColumn(0).setMaxWidth(cellSize);
-    	transTable.getColumnModel().getColumn(1).setHeaderValue("Place name:");
+    	transTable.getColumnModel().getColumn(1).setHeaderValue("Transition name:");
     	transTable.getColumnModel().getColumn(1).setPreferredWidth(300);
     	transTable.getColumnModel().getColumn(1).setMinWidth(100);
     	transTable.getColumnModel().getColumn(2).setHeaderValue("AvgF:");
@@ -1128,7 +1131,7 @@ public class HolmesSimKnockVis extends JFrame {
     	transTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
     	transTable.getColumnModel().getColumn(0).setMinWidth(cellSize);
     	transTable.getColumnModel().getColumn(0).setMaxWidth(cellSize);
-    	transTable.getColumnModel().getColumn(1).setHeaderValue("Place name");
+    	transTable.getColumnModel().getColumn(1).setHeaderValue("Transition name");
     	transTable.getColumnModel().getColumn(1).setPreferredWidth(300);
     	transTable.getColumnModel().getColumn(1).setMinWidth(100);
     	transTable.getColumnModel().getColumn(2).setHeaderValue("AvgFRef");
@@ -1170,9 +1173,10 @@ public class HolmesSimKnockVis extends JFrame {
         
     	transTable.setName("TransitionsCompTable");
     	transTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-    	tableRenderer.setMode(1);
-    	transTable.setDefaultRenderer(String.class, tableRenderer);
-    	transTable.setDefaultRenderer(Double.class, tableRenderer);
+    	tableRendererTrans = new SimKnockTableRenderer(transTable);
+    	tableRendererTrans.setMode(1);
+    	transTable.setDefaultRenderer(String.class, tableRendererTrans);
+    	transTable.setDefaultRenderer(Double.class, tableRendererTrans);
     	
 
     	try {
@@ -1267,7 +1271,7 @@ public class HolmesSimKnockVis extends JFrame {
     	transCompAllTable.setName("TransitionsCompAllTable");
     	transCompAllTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
     	SimKnockTableRenderer tableRendererTransitions = new SimKnockTableRenderer(transCompAllTable);
-    	tableRendererTransitions.setMode(2);
+    	tableRendererTransitions.setMode(3);
     	transCompAllTable.setDefaultRenderer(String.class, tableRendererTransitions);
     	transCompAllTable.setDefaultRenderer(Double.class, tableRendererTransitions);
     	transCompAllTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -1299,7 +1303,7 @@ public class HolmesSimKnockVis extends JFrame {
     	placesCompAllTable.setName("PlacesCompAllTable");
     	placesCompAllTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
     	SimKnockTableRenderer tableRendererPlaces = new SimKnockTableRenderer(placesCompAllTable);
-    	tableRendererPlaces.setMode(2);
+    	tableRendererPlaces.setMode(3);
     	placesCompAllTable.setDefaultRenderer(String.class, tableRendererPlaces);
     	placesCompAllTable.setDefaultRenderer(Double.class, tableRendererPlaces);
     	placesCompAllTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

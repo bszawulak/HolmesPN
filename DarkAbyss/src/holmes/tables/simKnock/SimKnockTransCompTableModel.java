@@ -74,12 +74,6 @@ public class SimKnockTransCompTableModel extends AbstractTableModel {
 		} else if(dataKnock.transFiringsAvg.get(index) == 0) {
 			tc.name = " <KNOCKOUT> " + tc.name;
 		}
-		//TODO: check diff
-		//difference %:
-		if(index == 0) {
-			@SuppressWarnings("unused")
-			int x=1;
-		}
 		
 		tc.firingAvgPercDiff = 0.0;
 		double diff = tc.firingAvgRef - tc.firingAvgKnock;

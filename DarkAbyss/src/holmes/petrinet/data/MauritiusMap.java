@@ -44,10 +44,12 @@ public class MauritiusMap {
 		transMCTNames = getMCTNamesVector();
 		
 		//usuń tranzycje z anty-listy:
-		for(ArrayList<Integer> inv : subInvariants) {
-			for(int i=0; i<inv.size()-1; i++) { //!!! ostatnie pole ignorujemy - to indeks inwariantu
-				if(antiVector.get(i) > 0) {
-					inv.set(i, 0);
+		if(antiVector.size() == subInvariants.size()) {
+			for(ArrayList<Integer> inv : subInvariants) {
+				for(int i=0; i<inv.size()-1; i++) { //!!! ostatnie pole ignorujemy - to indeks inwariantu
+					if(antiVector.get(i) > 0) {
+						inv.set(i, 0);
+					}
 				}
 			}
 		}

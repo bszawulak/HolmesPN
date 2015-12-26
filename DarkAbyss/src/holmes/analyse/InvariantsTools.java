@@ -1036,8 +1036,9 @@ public final class InvariantsTools {
 	 */
 	public static ArrayList<Integer> getFrequency(ArrayList<ArrayList<Integer>> invariants, boolean mmMode) {
 		ArrayList<Integer> frequency = new ArrayList<Integer>();
-		if(invariants == null || invariants.size() ==0)
+		if(invariants == null || invariants.size() ==0) {
 			return frequency;
+		}
 		
 		int invNumber = invariants.size();
 		int invSize = invariants.get(0).size();

@@ -73,7 +73,8 @@ public class SimKnockPlacesCompTableModel extends AbstractTableModel {
 		
 		//difference %:
 		pc.tokenAvgPercDiff = 0.0; 
-		double diff = pc.tokenAvgRef - pc.tokenAvgKnock;
+		//double diff = pc.tokenAvgRef - pc.tokenAvgKnock;
+		/*
 		if(pc.tokenAvgRef != 0) {
 			diff = (diff / pc.tokenAvgRef)*100;
 			if(diff < 0) { //zwiększyło (sic!) się po symulacji
@@ -91,6 +92,17 @@ public class SimKnockPlacesCompTableModel extends AbstractTableModel {
 			else
 				pc.tokenAvgPercDiff = 999999.0; // +inf
 		}
+		*/
+		//TODO:
+		double diff = pc.tokenAvgRef - pc.tokenAvgKnock;
+		if(diff < 0) { //zwiększyło (sic!) się po symulacji
+			diff *= -1;
+			pc.tokenAvgPercDiff = diff;
+		} else {
+			diff *= -1;
+			pc.tokenAvgPercDiff = diff;
+		}
+		
     	pc.noTokensKnock = ""+dataKnock.placeZeroTokens.get(index);//+"/"+dataKnock.reps;
     	
     	//significance level 1 - min <> max ref/knock

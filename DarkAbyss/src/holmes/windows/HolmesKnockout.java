@@ -298,6 +298,18 @@ public class HolmesKnockout extends JFrame {
 		saveImgButton.setFocusPainted(false);
 		panel.add(saveImgButton);
 		
+		JButton expInvKnockButton = new JButton("<html>Inv. knockout</html>");
+		expInvKnockButton.setBounds(posX+390, posY+65, 120, 36);
+		expInvKnockButton.setMargin(new Insets(0, 0, 0, 0));
+		expInvKnockButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/saaaamage.png"));
+		expInvKnockButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				invData();
+			}
+		});
+		expInvKnockButton.setFocusPainted(false);
+		panel.add(expInvKnockButton);
+		
 		JCheckBox shortTextCheckBox = new JCheckBox("Show full names");
 		shortTextCheckBox.setBounds(posX+490, posY, 130, 20);
 		shortTextCheckBox.addActionListener(new ActionListener() {
@@ -317,6 +329,15 @@ public class HolmesKnockout extends JFrame {
 		return panel;
 	}
 	
+	protected void invData() {
+		// TODO Auto-generated method stub
+		//HolmesNotepad notePad = new HolmesNotepad(900,600);
+		//notePad.setVisible(true);
+		
+		
+		
+	}
+
 	/**
 	 * Metoda tworząca główmu panel mapy.
 	 * @param x int - współrzędna x

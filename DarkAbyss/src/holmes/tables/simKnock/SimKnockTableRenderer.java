@@ -54,8 +54,10 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     	if(mode == 1)
-    		return paintCellsComp(table, value, isSelected, hasFocus, row, column);
-    	else if(mode == 2)
+    		return paintCellsCompTrans(table, value, isSelected, hasFocus, row, column);
+    	else if(mode == 2) //porównywanie ref i knock dla miejsc
+    		return paintCellsCompPlaces(table, value, isSelected, hasFocus, row, column);
+    	else if(mode == 3)
     		return paintCellsCompAll(value, isSelected, hasFocus, row, column);
     	else
     		return paintCellsDefault(value, isSelected, hasFocus, row, column);
@@ -70,8 +72,7 @@ public class SimKnockTableRenderer implements TableCellRenderer {
      * @param column int - nr kolumny
      * @return Component - zależy od kolumny
      */
-    private Component paintCellsComp(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-    	
+    private Component paintCellsCompTrans(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     	if(column == 1) {
     		String name = value.toString();
     		if(name.contains("<OFFLINE")) {
@@ -89,25 +90,7 @@ public class SimKnockTableRenderer implements TableCellRenderer {
     			oLabel.setText(name);
     			return oLabel;
     		} 
-    	}
-    	
-    	/*
-    	if(column == 2 || column == 4) {
-    		if(table.getName().equals("TransitionsCompTable")) {
-    			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-    			oLabel.setForeground(Color.black);
-    			oLabel.setFont(fontNormal);
-    			
-    			oLabel.setText(value+"");
-    			//getT
-    			return oLabel;
-    		}
-    		
-    		
-    	}*/
-    	
-    	//kolumna 6: róznice procentowe
-		if(column == 6) {
+    	} else if(column == 6) { //kolumna 6: różnice procentowe
 			//JLabel oLabel = new JLabel(); //(JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			oLabel.setForeground(Color.black);
@@ -145,10 +128,98 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 				oLabel.setText(value+"%");
 			}
 			return oLabel;
+		} else if(column == 8 || column == 9) { //significance levels
+			//JLabel oLabel = new JLabel(); //(JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			oLabel.setForeground(Color.black);
+			oLabel.setFont(fontNormal);
+			if(value instanceof String) {
+				String val = value.toString();
+				if(val.contains("OK")) {
+					oLabel.setForeground(Color.black);
+					oLabel.setBackground(Color.green);
+					oLabel.setFont(fontBold);
+					oLabel.setText("OK");
+				} else {
+					oLabel.setForeground(Color.black);
+					oLabel.setBackground(Color.white);
+					oLabel.setFont(fontBold);
+					oLabel.setText("n/a");
+				}
+			} else {
+				oLabel.setText(value.toString());
+			}
+			
+			return oLabel;
 		}
 
-		//significance levels
-		if(column == 8 || column == 9) {
+		if(value instanceof Double) {
+			double val = (double)value;
+			if(column == 2 || column == 4) { //dla sredniej liczby odpalen
+				value = formatter2.format((Number)value);
+			} else { //stdDev :
+				if(val < 10)
+					value = formatter3.format((Number)value);
+				else if(val < 100)
+					value = formatter2.format((Number)value);
+				else
+					value = formatter1.format((Number)value);
+			}
+		}
+		
+		Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		renderer.setForeground(Color.black);
+		renderer.setBackground(Color.white);
+		renderer.setFont(fontNormal);
+	    return renderer;
+	}
+    
+    /**
+     * Metoda trybu rysowania dla komórek tabeli porównawczej dwóch zbiorów knockout DLA MIEJSC.
+     * @param value Object - wartość do wpisania
+     * @param isSelected boolean - czy komórka jest wybrana
+     * @param hasFocus boolean - czy jest aktywna
+     * @param row int - nr wiersza
+     * @param column int - nr kolumny
+     * @return Component - zależy od kolumny
+     */
+    private Component paintCellsCompPlaces(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    	if(column == 1) {
+    		String name = value.toString();
+    		if(name.contains("<OFFLINE")) {
+    			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    			oLabel.setForeground(Color.black);
+    			oLabel.setBackground(Color.red);
+    			oLabel.setFont(fontNormal);
+    			oLabel.setText(name);
+    			return oLabel;
+    		} else if(name.contains("<KNOCKOUT")) {
+    			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    			oLabel.setForeground(Color.black);
+    			oLabel.setBackground(Color.lightGray);
+    			oLabel.setFont(fontNormal);
+    			oLabel.setText(name);
+    			return oLabel;
+    		} 
+    	} else if(column == 6) {
+			if(value instanceof Double) {
+				double val = (double)value;
+				String sign = "+";
+				if(val < 0)
+					sign = "";
+				JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				oLabel.setForeground(Color.black);
+				oLabel.setFont(fontNormal);
+				oLabel.setText(sign+formatter2.format((double)value));
+				return oLabel;
+			} else {
+				JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				oLabel.setForeground(Color.black);
+				oLabel.setFont(fontNormal);
+				oLabel.setText(formatter2.format((double)value));
+				return oLabel;
+			}
+		} else if(column == 8 || column == 9) { //significance levels
 			//JLabel oLabel = new JLabel(); //(JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			JLabel oLabel = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			oLabel.setForeground(Color.black);
