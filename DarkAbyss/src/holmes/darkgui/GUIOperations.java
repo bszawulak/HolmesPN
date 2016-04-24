@@ -80,6 +80,9 @@ public class GUIOperations {
 		if(status == true) {
 			overlord.setLastPath(file.getParentFile().getPath());
 			overlord.getSimulatorBox().createSimulatorProperties();
+			GUIManager.getDefaultGUIManager().getFrame().setTitle(
+					"Holmes "+GUIManager.getDefaultGUIManager().getSettingsManager().getValue("holmes_version")+
+					"  "+Tools.getFileName(file));
 		}
 	}
 	
@@ -131,6 +134,9 @@ public class GUIOperations {
 			
 			if(status) {
 				overlord.log("Reading project file succcessful.", "text", true);
+				GUIManager.getDefaultGUIManager().getFrame().setTitle(
+						"Holmes "+GUIManager.getDefaultGUIManager().getSettingsManager().getValue("holmes_version")+
+						"  "+Tools.getFileName(file));
 			}
 		}
 	}

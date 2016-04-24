@@ -222,6 +222,15 @@ public final class Tools {
 		return filePath + "\\";
 	}
 	
+	public static String getFileName(File x) {
+		if(x == null)
+			return null;
+		
+		String absolutePath = x.getAbsolutePath();
+		String filePath = absolutePath. substring(absolutePath.lastIndexOf(File.separator));
+		return filePath + "\\";
+	}
+	
 	public static boolean ifExist(String path) {
 		File tmp = new File(path);
 		return tmp.exists();

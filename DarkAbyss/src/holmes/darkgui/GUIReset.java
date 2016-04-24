@@ -19,6 +19,7 @@ import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.NetSimulator;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.utilities.Tools;
 import holmes.workspace.Workspace;
 
 /**
@@ -48,7 +49,7 @@ public class GUIReset {
 	 * Metoda odpowiedzialna za czyszczenie danych i przywracanie programu do stanu początkowego.
 	 */
 	public boolean newProjectInitiated() {
-		if(isSimulatorActiveWarning("Please stop simulation completely before contynuing.", "Warning") == true) {
+		if(isSimulatorActiveWarning("Please stop simulation completely before continuing.", "Warning") == true) {
 			return false;
 		}
 
@@ -138,6 +139,9 @@ public class GUIReset {
 		
 		reset2ndOrderData(false);
 		IdGenerator.resetIDgenerator();
+		
+		GUIManager.getDefaultGUIManager().getFrame().setTitle(
+				"Holmes "+GUIManager.getDefaultGUIManager().getSettingsManager().getValue("holmes_version"));
 		
 		overlord.cleanDockables();
 		overlord.markNetSaved();
