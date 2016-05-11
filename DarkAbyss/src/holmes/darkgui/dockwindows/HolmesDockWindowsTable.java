@@ -59,6 +59,7 @@ import holmes.graphpanel.GraphPanel;
 import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.ElementLocation;
@@ -993,7 +994,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
 		components.add(idLabel);
 		
-		int gID = overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transition);
+		final int gID = overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transition);
 		JLabel idLabel2 = new JLabel(Integer.toString(gID));
 		idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
 		idLabel2.setFont(normalFont);
@@ -1109,6 +1110,36 @@ public class HolmesDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(tpnCheckBox);
+		
+		JLabel frLabel = new JLabel("Firing:", JLabel.LEFT);
+		frLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(frLabel);	
+		
+		JTextArea frField = new JTextArea(""+((Transition)element).getFiringRate());
+		frField.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
+		frField.setLineWrap(true);
+		frField.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+            	JTextArea field = (JTextArea) e.getSource();
+            	String newFR = "";
+            	if(field != null)
+            		newFR = field.getText();
+            	
+            	try {
+            		 double newVal = Double.parseDouble(newFR);
+
+            		 SPNtransitionData xxx = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager()
+            		.getCurrentSPNdataVector().accessVector().get(gID);
+            		 ((Transition)element).setFiringRate(newVal);
+            		 xxx.ST_function = newFR;
+            	} catch (Exception ee) {
+            		
+            	}
+				//changeComment(newComment);
+				//overlord.markNetChange();
+            }
+        });
+		components.add(frField);	
 		
 		//SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());

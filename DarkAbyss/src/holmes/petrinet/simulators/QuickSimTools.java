@@ -13,6 +13,7 @@ import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.utilities.Tools;
 
 /**
  * Nakładka na symulator stanów odpowiedzialna za wyświetlanie informacji statystycznych na obrazie sieci.
@@ -94,6 +95,9 @@ public class QuickSimTools {
 			Transition trans = transitions.get(t);
 			double firing = avgFire.get(t);
 			trans.qSimFired = firing;
+			
+			//trans.
+			trans.setAddText(Tools.cutValueExt(firing, 8));
 			
 			double reliance = firing/max;
 			int fill = (int)((double)30 * reliance);

@@ -390,7 +390,7 @@ public final class ElementDraw {
 				}
 				
 				//dodatkowy tekst nad tranzycją
-				if(trans.showAddText() == true) {
+				if(trans.isShowedAddText() == true) {
 					String txt = trans.returnAddText();
 					
 					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2);

@@ -263,8 +263,13 @@ public class Transition extends Node {
 	 * Metoda zwraca informację, czy ma być wyświetlany dodatkowy tekst obok rysunku tranzycji.
 	 * @return boolean - true, jeśli tak
 	 */
-	public boolean showAddText() {
+	public boolean isShowedAddText() {
 		return showTransitionAddText;
+	}
+	
+	public void setAddText(String txt) {
+		showTransitionAddText = true;
+		transAdditionalText = txt;
 	}
 	
 	/**

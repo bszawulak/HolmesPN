@@ -96,18 +96,31 @@ public class HolmesSPNeditor extends JFrame {
 		int row = -1;
 		for(SPNtransitionData frBox : frData.accessVector()) {
 			row++;
+			
+			String postFix = "";
+			Transition t = transitions.get(row);
+			int inSize = t.getInArcs().size();
+			int outSize = t.getOutArcs().size();
+			
+			if(inSize == 0 && outSize != 0)
+				postFix += "     - IN -    ";
+			if(inSize != 0 && outSize == 0)
+				postFix += "     - OUT -    ";
+			if(inSize == 0 && outSize == 0)
+				postFix += "     * IN/OUT *    ";
+			
 			switch(frBox.sType) {
 				case ST:
-					tableModel.addNew(row, transitions.get(row).getName(), ""+frData.getFiringRate(row), frBox.sType);
+					tableModel.addNew(row, postFix+transitions.get(row).getName(), ""+frData.getFiringRate(row), frBox.sType);
 					break;
 				case DT:
-					tableModel.addNew(row, transitions.get(row).getName(), ""+frBox.DET_delay, frBox.sType);
+					tableModel.addNew(row, postFix+transitions.get(row).getName(), ""+frBox.DET_delay, frBox.sType);
 					break;
 				case IM:
-					tableModel.addNew(row, transitions.get(row).getName(), ""+frBox.IM_priority, frBox.sType);
+					tableModel.addNew(row, postFix+transitions.get(row).getName(), ""+frBox.IM_priority, frBox.sType);
 					break;
 				case SchT:
-					tableModel.addNew(row, transitions.get(row).getName(), ""+frBox.SCH_start+"; "+frBox.SCH_rep+"; "+frBox.SCH_end, frBox.sType);
+					tableModel.addNew(row, postFix+transitions.get(row).getName(), ""+frBox.SCH_start+"; "+frBox.SCH_rep+"; "+frBox.SCH_end, frBox.sType);
 					break;
 			}
 		}

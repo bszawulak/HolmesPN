@@ -462,7 +462,12 @@ public class SPNengine implements IEngine {
 				for (Place prePlace : prePlaces) {
 					int placeLoc = placesMap.get(prePlace);
 					int transLoc = transitionsMap.get(transition);
-                    long firingNumber = prePlace.getTokensNumber() / tpIncidenceMatrix.get(transLoc).get(placeLoc);
+					int arc = tpIncidenceMatrix.get(transLoc).get(placeLoc);
+					if(arc==0) {
+						arc = 1; //readarc
+						arc = prePlace.getTokensNumber();
+					}
+                    long firingNumber = prePlace.getTokensNumber() / arc;
                     massActionKineticModifier = massActionKineticModifier < firingNumber ? massActionKineticModifier : firingNumber;
                 }
 			}

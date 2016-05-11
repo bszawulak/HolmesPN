@@ -99,7 +99,7 @@ public class SPNdataVector {
 		else {
 			try {
 				//TODO: moduł obliczania z funkcji:
-				double fr = Integer.parseInt(dataVector.get(index).ST_function);
+				double fr = Double.parseDouble(dataVector.get(index).ST_function);
 				return fr;
 			} catch(Exception e) {
 				GUIManager.getDefaultGUIManager().log("Firing rate function evaluation failed for t"+index+", returning 1.0.", "warning", true);
