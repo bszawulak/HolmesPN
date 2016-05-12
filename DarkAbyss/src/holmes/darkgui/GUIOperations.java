@@ -21,6 +21,9 @@ import holmes.files.io.ProjectWriter;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.PetriNet.GlobalFileNetType;
 import holmes.petrinet.data.PetriNet.GlobalNetType;
+import holmes.petrinet.elements.Arc;
+import holmes.petrinet.elements.ElementLocation;
+import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.utilities.HolmesFileView;
 import holmes.utilities.Tools;
@@ -1081,5 +1084,64 @@ public class GUIOperations {
 			}
 		}
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
+	}
+	
+	
+	public void fixArcsProblem() {
+		ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
+		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
+		
+		int arcSize = arcs.size();
+		int arcCounter = 0;
+		int ghosts = 0;
+		
+		for(Place p : places) { 
+			for(ElementLocation el : p.getElementLocations()) {
+				ArrayList<Arc> outArcs = el.getOutArcs();
+
+				for(Arc a : outArcs) { //dla każdego łuku
+					arcCounter++;
+					if(!arcs.contains(a)) {
+						ghosts++;
+						int placeId = places.indexOf(p);
+						int transId = transitions.indexOf((Transition)a.getEndNode());
+						overlord.log("Invisible arc: p"+placeId+" -> t"+transId+". Removing...", "error", false);
+						removeArc(a, arcs);
+					}
+				}
+			}
+		}
+		
+		for(Transition t : transitions) { 
+			for(ElementLocation el : t.getElementLocations()) {
+				ArrayList<Arc> outArcs = el.getOutArcs();
+
+				for(Arc a : outArcs) { //dla każdego łuku
+					arcCounter++;
+					if(!arcs.contains(a)) {
+						ghosts++;
+						
+						int transId = transitions.indexOf(t);
+						int placeId = places.indexOf((Place)a.getEndNode());
+						overlord.log("Invisible arc: t"+transId+" -> p"+placeId+". Removing...", "error", false);
+						removeArc(a, arcs);
+					}
+				}
+			}
+		}
+		
+		overlord.log("Arc list: "+arcSize+", processed arcs: "+arcCounter+", removed ghost-arcs: "+ghosts, "text", true);
+	}
+	
+	private void removeArc(Arc arc, ArrayList<Arc> arcs) {
+		overlord.markNetChange();
+		arc.unlinkElementLocations();
+		arcs.remove(arc);
+		if (arc.getPairedArc() != null) { // jeśli to read-arc, usuń też łuk sparowany
+			Arc a = arc.getPairedArc();
+			a.unlinkElementLocations();
+			arcs.remove(a);
+		}
 	}
 }

@@ -576,6 +576,23 @@ public class DarkMenu extends JMenuBar {
 		});
 		otherMenu.add(invSimul);
 		
+		JMenuItem fixNet = new JMenuItem("FixArcs", KeyEvent.VK_7);
+		fixNet.setIcon(Tools.getResIcon32("/icons/menu/aaa.png"));
+		//invSimul.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4,ActionEvent.ALT_MASK));
+		fixNet.getAccessibleContext().setAccessibleDescription("Fix arc problems");
+		fixNet.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					// poniższa 'linia':   ╯°□°）╯︵  ┻━━┻
+					GUIManager.getDefaultGUIManager().io.fixArcsProblem();
+				} catch (Exception e) {
+					e.printStackTrace();
+					GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
+				}
+			}
+		});
+		otherMenu.add(fixNet);
+		
 		//CLUSTERS MENU
 		/*
 		clustersOperationsMenu = new JMenu("Clusters");
