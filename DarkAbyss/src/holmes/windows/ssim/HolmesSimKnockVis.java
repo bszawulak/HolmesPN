@@ -174,7 +174,7 @@ public class HolmesSimKnockVis extends JFrame {
 		
 		main.add(mainTabbedPanel, BorderLayout.CENTER);
 		
-		this.boss.setEnabled(false);
+		//this.boss.setEnabled(false);
 		GUIManager.getDefaultGUIManager().getFrame().setEnabled(false);
 	}
 	
