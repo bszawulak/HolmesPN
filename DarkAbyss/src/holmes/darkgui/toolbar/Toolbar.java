@@ -6,12 +6,15 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTree;
 
 import org.nfunk.jep.JEP;
 
+import holmes.analyse.MDTSCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.elements.Arc;
@@ -395,7 +398,7 @@ public class Toolbar extends BorderDock {
 		analysisDockables.add(createButtonDockable("Testing", testButton));
 		
 		//TODO:
-		/*
+		
 		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", Tools.getResIcon48("/icons/toolbar/a.png")) {
 			@SuppressWarnings("unused")
 			public void actionPerformed(ActionEvent actionEvent) 
@@ -431,7 +434,7 @@ public class Toolbar extends BorderDock {
 			}
 		};
 		analysisDockables.add(createButtonDockable("Testing2", testButton2));
-		*/
+		
 		
 		return analysisDockables;
 	}

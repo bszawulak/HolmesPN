@@ -49,8 +49,8 @@ public class RClusteringParserToXLS{
 	// ustaw kolor dla komorki wzgledem wartosci Mean
 	private Colour setColorMeanMssPerCluster(double meanValue){
 		if (meanValue >= 0.71) return Colour.DARK_GREEN;
-		else if (meanValue >= 0.61) return Colour.SEA_GREEN;
-		else if (meanValue >= 0.51) return Colour.LIGHT_GREEN;
+		else if (meanValue >= 0.61) return Colour.LIGHT_GREEN;
+		else if (meanValue >= 0.50) return Colour.SEA_GREEN;
 		else if (meanValue >= 0.34) return Colour.YELLOW;
 		else if (meanValue > 0.25) return Colour.LIGHT_ORANGE;
 		else if (meanValue <= 0.25) return Colour.RED;
@@ -89,26 +89,26 @@ public class RClusteringParserToXLS{
 		WritableCellFormat cellFormat = new WritableCellFormat(cellFont);
 		cellFormat.setWrap(true);
 		cellFormat.setAlignment(Alignment.CENTRE);
-		sheet.addCell(new Label(column, 2, "Przedziały zarys", cellFormat));
+		sheet.addCell(new Label(column, 2, "Range", cellFormat));
 		sheet.setColumnView(column, 30);
-		sheet.addCell(new Label(column+1, 2, "Interpretacja", cellFormat));
+		sheet.addCell(new Label(column+1, 2, "Evaluation", cellFormat));
 		sheet.setColumnView(column+1, 20);
 		
 		sheet.addCell(new Label(column, 3, "0.71-1.00", getCellFormat(setColorMeanMssPerCluster(0.9), false)));
 		sheet.addCell(new Label(column+1, 3, "Strong structure", getCellFormat(setColorMeanMssPerCluster(0.9), false)));
 		sheet.addCell(new Label(column, 4, "0.61-0.70", getCellFormat(setColorMeanMssPerCluster(0.7), false)));
 		sheet.addCell(new Label(column+1, 4, "Important structure", getCellFormat(setColorMeanMssPerCluster(0.7), false)));
-		sheet.addCell(new Label(column, 5, "0.51-0.60", getCellFormat(setColorMeanMssPerCluster(0.6), false)));
+		sheet.addCell(new Label(column, 5, "0.50-0.60", getCellFormat(setColorMeanMssPerCluster(0.6), false)));
 		sheet.addCell(new Label(column+1, 5, "Important structure", getCellFormat(setColorMeanMssPerCluster(0.6), false)));
-		sheet.addCell(new Label(column, 6, "0.34-0.50", getCellFormat(setColorMeanMssPerCluster(0.4), false)));
+		sheet.addCell(new Label(column, 6, "0.34-0.49", getCellFormat(setColorMeanMssPerCluster(0.4), false)));
 		sheet.addCell(new Label(column+1, 6, "Weak structure", getCellFormat(setColorMeanMssPerCluster(0.4), false)));
 		sheet.addCell(new Label(column, 7, "0.25-0.33", getCellFormat(setColorMeanMssPerCluster(0.3), false)));
 		sheet.addCell(new Label(column+1, 7, "Weak structure", getCellFormat(setColorMeanMssPerCluster(0.3), false)));
 		sheet.addCell(new Label(column, 8, "<= 0.25", getCellFormat(setColorMeanMssPerCluster(0.1), false)));
 		sheet.addCell(new Label(column+1, 8, "No structure", getCellFormat(setColorMeanMssPerCluster(0.1), false)));
 		
-		sheet.addCell(new Label(column, 10, "Klastry jedynkowe", cellFormat));
-		sheet.addCell(new Label(column+1, 10, "Interpretacja", cellFormat));
+		sheet.addCell(new Label(column, 10, "Single clusters", cellFormat));
+		sheet.addCell(new Label(column+1, 10, "Evaluation", cellFormat));
 		sheet.addCell(new Label(column, 11, "1-4", getCellFormat(setColorSingleInvariantPerCluster(1), false)));
 		sheet.addCell(new Label(column+1, 11, "Very good", getCellFormat(setColorSingleInvariantPerCluster(1), false)));
 		sheet.addCell(new Label(column, 12, "5-9", getCellFormat(setColorSingleInvariantPerCluster(6), false)));
@@ -199,7 +199,7 @@ public class RClusteringParserToXLS{
 				else kolumna = column;
 				
 				if (newColumn) sheet.addCell(new Label(column, tabIndexes[column], parts[1], getCellFormat(Colour.WHITE, true)));
-				sheet.addCell(new Label(kolumna, tabIndexes[column], "Lp.", getCellFormat(Colour.WHITE, true)));
+				sheet.addCell(new Label(kolumna, tabIndexes[column], "1:", getCellFormat(Colour.WHITE, true)));
 				sheet.addCell(new Label(kolumna+1, tabIndexes[column]++, parts[0], getCellFormat(Colour.WHITE, true)));
 				if (newColumn) for (int k = 1; k < clusters.length; ++k) sheet.addCell(new Number(column, tabIndexes[column]+k-1, (k+1), getCellFormat(Colour.WHITE, false))); // numery kolejnych klastrow, od 2
 			}
@@ -212,7 +212,7 @@ public class RClusteringParserToXLS{
 				parts[0] = parts[0].substring(0, 1).toUpperCase() + parts[0].substring(1); //pierwsza litera nazwy z duzej
 				parts[1] = parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1); //pierwsza litera nazwy z duzej
 				
-				sheet.addCell(new Label(column, tabIndexes[column], "Lp.", getCellFormat(Colour.WHITE, true)));
+				sheet.addCell(new Label(column, tabIndexes[column], "1:", getCellFormat(Colour.WHITE, true)));
 				sheet.addCell(new Label(column+1, tabIndexes[column]++, parts[0], getCellFormat(Colour.WHITE, true)));
 			}
 			for (int j = 1; j < clusters.length;  ++j) { // przetwarzanie dla kazdego klastrowania osobno

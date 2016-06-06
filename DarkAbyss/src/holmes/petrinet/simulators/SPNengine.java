@@ -434,12 +434,26 @@ public class SPNengine implements IEngine {
 		if(lastFiredTransition.getSPNtype() == StochaticsType.ST)
 			transitionSTtypeUpdateList.add(lastFiredTransition); //ważne dla wejściowych, gdyż one nie zostałyby tutaj
 			//dodane przez kod poniżej, więc dodajemy ręcznie tym poleceniem
+		
 
 		ArrayList<Place> changedPlaces = involvedPlacesMap.get(lastFiredTransition);
 		for(Place place : changedPlaces) {
 			for(Transition trans : involvedTransitionsMap.get(place)) {
 				if(!transitionSTtypeUpdateList.contains(trans) && trans.getSPNtype() == StochaticsType.ST) {
 					transitionSTtypeUpdateList.add(trans);
+				}
+			}
+		}
+		
+		for(Transition t : transitions) {
+			if(t.getOutArcs().size() == 0) {
+				if(!transitionSTtypeUpdateList.contains(t) && t.getSPNtype() == StochaticsType.ST) {
+					transitionSTtypeUpdateList.add(t);
+				}
+			}
+			if(t.getInArcs().size() == 0) {
+				if(!transitionSTtypeUpdateList.contains(t) && t.getSPNtype() == StochaticsType.ST) {
+					transitionSTtypeUpdateList.add(t);
 				}
 			}
 		}
@@ -455,10 +469,20 @@ public class SPNengine implements IEngine {
 		if(settings.isSSAMassAction()) {
 			
 			ArrayList<Place> prePlaces = prePlacesMap.get(transition);
+			
+			if(transition.getID() == 68) {
+				int y=1;
+				y=2;
+			}
+			
 			if(prePlaces.size() == 0) {
 				massActionKineticModifier = 1;
 			} else {
 				massActionKineticModifier = Long.MAX_VALUE;
+				if(prePlaces.isEmpty()) {
+					int x=1;
+				}
+				
 				for (Place prePlace : prePlaces) {
 					int placeLoc = placesMap.get(prePlace);
 					int transLoc = transitionsMap.get(transition);
