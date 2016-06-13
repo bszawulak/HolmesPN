@@ -88,6 +88,7 @@ public class HolmesSim extends JFrame {
 	
 	private JProgressBar progressBar;
 	private int transInterval = 100;
+	private int placesInterval = 100;
 	private boolean sortedP = false;
 	private boolean sortedT = false;
 	
@@ -110,6 +111,7 @@ public class HolmesSim extends JFrame {
 	private JPanel placesJPanel;
 	private JPanel transitionsJPanel;
 	private JSpinner transIntervalSpinner;
+	private JSpinner placesIntervalSpinner;
 	private JComboBox<String> placesCombo = null;
 	private JComboBox<String> transitionsCombo = null;
 	private ChartProperties chartDetails;
@@ -329,6 +331,23 @@ public class HolmesSim extends JFrame {
 			}
 		});
 		placesChartOptionsPanel.add(showNotepadButton);
+		
+		JLabel labelInt = new JLabel("Interval:");
+		labelInt.setBounds(posXchart+280, posYchart+2, 70, 20);
+		placesChartOptionsPanel.add(labelInt);
+		
+		int mValue = overlord.simSettings.getSimSteps()/10;
+		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(placesInterval, 0, mValue, 10);
+		placesIntervalSpinner = new JSpinner(intervSpinnerModel);
+		placesIntervalSpinner.setBounds(posXchart+330, posYchart+3, 60, 20);
+		placesIntervalSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner spinner = (JSpinner) e.getSource();
+				placesInterval = (int) spinner.getValue();
+				clearPlacesChart();
+			}
+		});
+		placesChartOptionsPanel.add(placesIntervalSpinner);
 		
 		JCheckBox sortedCheckBox = new JCheckBox("Sorted by tokens");
 		sortedCheckBox.setBounds(posXchart+460, posYchart+10, 130, 20);
@@ -826,9 +845,27 @@ public class HolmesSim extends JFrame {
 		
 		XYSeries series = new XYSeries(name);
 		//ArrayList<Integer> test = new ArrayList<Integer>();
-		for(int step=0; step<placesRawData.size(); step++) {
-			int value = placesRawData.get(step).get(selPlaceID);
-			series.add(step, value);
+		
+		int interval = placesInterval;
+		int maxStep = placesRawData.size()-interval-1;
+		
+		if(placesRawData.size() > 10*interval) {
+			for(int step=0; step<maxStep; step+=interval) {
+				
+				double value = 0;
+				for(int j=0; j<interval; j++) {
+					value += placesRawData.get(step+j).get(selPlaceID);
+				}
+				value = value / interval;
+				
+				//int value = placesRawData.get(step).get(selPlaceID);
+				series.add(step, value);
+			}
+		} else {
+			for(int step=0; step<placesRawData.size(); step++) {
+				int value = placesRawData.get(step).get(selPlaceID);
+				series.add(step, value);
+			}
 		}
 		placesSeriesDataSet.addSeries(series);
 	}
@@ -1530,12 +1567,17 @@ public class HolmesSim extends JFrame {
 		fillPlacesAndTransitionsData();
 		
 		transInterval = 100;
+		placesInterval = 100;
 		transChartType = 0;
 		placesChartType = 0;
 		
 		int mValue = overlord.simSettings.getSimSteps()/10;
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(100, 0, mValue, 10);
 		transIntervalSpinner.setModel(intervSpinnerModel);
+		
+		SpinnerModel intervSpinnerModel2 = new SpinnerNumberModel(100, 0, mValue, 10);
+		placesIntervalSpinner.setModel(intervSpinnerModel2);
+		
 		
 		((HolmesSimKnock)knockoutTab).resetWindow();
 		doNotUpdate = false;
@@ -1545,6 +1587,9 @@ public class HolmesSim extends JFrame {
 		int mValue = overlord.simSettings.getSimSteps()/10;
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(100, 0, mValue, 10);
 		transIntervalSpinner.setModel(intervSpinnerModel);
+		
+		SpinnerModel intervSpinnerModel2 = new SpinnerNumberModel(100, 0, mValue, 10);
+		placesIntervalSpinner.setModel(intervSpinnerModel2);
 	}
 	
 	public JFrame getFrame() {
