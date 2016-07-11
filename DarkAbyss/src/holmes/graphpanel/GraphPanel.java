@@ -300,8 +300,6 @@ public class GraphPanel extends JComponent {
 			}
 		}
 		
-		
-		
 		for (Node n : getNodes()) {
 			n.draw(g2d, this.sheetId, eds);	
 		}
