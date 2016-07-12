@@ -56,6 +56,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
 	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //macierz t-inwariantów
 	private ArrayList<String> t_invariantsDescriptions;
+	private ArrayList<Integer> t_invariantsTypes;
 	private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //macierz p-inwariantów
 	private ArrayList<String> p_invariantsDescriptions;
 	
@@ -506,14 +507,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void setT_InvMatrix(ArrayList<ArrayList<Integer>> t_invariants, boolean generateMCT) {
 		this.t_invariantsMatrix = t_invariants;
 		this.t_invariantsDescriptions = null;
+		this.t_invariantsTypes = null;
 		
 		if(t_invariants == null)
 			return;
-		else 
+		else {
 			this.t_invariantsDescriptions = new ArrayList<String>();
+			this.t_invariantsTypes = new ArrayList<Integer>();
+		}
 		
 		for(int i=0; i<t_invariantsMatrix.size(); i++) {
 			t_invariantsDescriptions.add("Default description of t-invariant #"+(i+1));
+			t_invariantsTypes.add(99999);
 		}
 		
 		if(generateMCT) {
@@ -551,6 +556,17 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			return;
 		if(namesVector.size() == t_invariantsMatrix.size())
 			this.t_invariantsDescriptions = namesVector;
+	}
+	
+	/**
+	 * Metoda ustawia nowy wektor typów t-inwariantów
+	 * @param typesVector ArrayList[Integer] - nowy wektor typów t-inw.
+	 */
+	public void setT_InvTypes(ArrayList<Integer> typesVector) {
+		if(t_invariantsMatrix == null)
+			return;
+		if(typesVector.size() == t_invariantsMatrix.size())
+			this.t_invariantsTypes = typesVector;
 	}
 	
 	/**
@@ -616,6 +632,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<String> accessT_InvDescriptions() {
 		return t_invariantsDescriptions;
+	}
+	
+	/**
+	 * Metoda zwraca wektor informacji o type t-inwariantu.
+	 * @return ArrayList[Integer] - wektor typów t-inwariantów
+	 */
+	public ArrayList<Integer> accessT_InvTypesVector() {
+		return t_invariantsTypes;
 	}
 	
 	/**

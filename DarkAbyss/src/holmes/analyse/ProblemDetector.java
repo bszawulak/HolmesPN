@@ -390,7 +390,7 @@ public class ProblemDetector {
 		result.add(res_descr);
 
 		InvariantsCalculator ic = new InvariantsCalculator(true);
-		ArrayList<ArrayList<Integer>> matrix = InvariantsTools.analysiseInvariantDetails(ic.getCMatrix(), invariants, true);
+		ArrayList<ArrayList<Integer>> matrix = InvariantsTools.analyseInvariantDetails(ic.getCMatrix(), invariants, true);
 		
 		int invNumber = matrix.get(0).get(0);
 		int surNumber = matrix.get(0).get(1);

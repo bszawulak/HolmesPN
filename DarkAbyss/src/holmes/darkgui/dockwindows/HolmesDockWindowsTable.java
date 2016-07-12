@@ -132,6 +132,9 @@ public class HolmesDockWindowsTable extends JPanel {
 	private JTextArea knockoutTextArea;
 	//t-invariants:
 	private JComboBox<String> chooseInvBox;
+	private JComboBox<String> chooseSurInvBox;
+	private JComboBox<String> chooseSubInvBox;
+	private JComboBox<String> chooseNoneInvBox;
 	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //używane w podoknie t-inwariantów
 	private int selectedT_invIndex = -1;
 	private boolean markMCT = false;
@@ -2730,6 +2733,99 @@ public class HolmesDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(nextButton);
+		
+		JButton recalculateTypesButton = new JButton();
+		//showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
+		recalculateTypesButton.setIcon(Tools.getResIcon16("/icons/menu/aaa.png"));
+		recalculateTypesButton.setBounds(colA_posX, positionY+=30, 50, 20);
+		recalculateTypesButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				//if(selectedT_invIndex == -1)
+				//	return;
+				//new HolmesInvariantsViewer(selectedT_invIndex);
+			}
+		});
+		components.add(recalculateTypesButton);
+		
+		//sur-sub-non-invariants:
+		ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
+
+		ArrayList<Integer> sursInv = new ArrayList<Integer>();
+		ArrayList<Integer> subsInv = new ArrayList<Integer>();
+		ArrayList<Integer> nonsInv = new ArrayList<Integer>();
+		
+		for(int i=0; i<typesVector.size(); i++) { //zliczanie tałatajstwa
+			if(typesVector.get(i) == 1)
+				sursInv.add(i);
+			else if(typesVector.get(i) == -1)
+				subsInv.add(i);
+			if(typesVector.get(i) == 11)
+				nonsInv.add(i);
+		}
+		
+		String[] surHeaders = new String[sursInv.size() + 1];
+		surHeaders[0] = "---";
+		if(sursInv.size() > 0) {
+			for (int i = 0; i < sursInv.size(); i++) {
+				int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(sursInv.get(i))).size();
+				surHeaders[i + 1] = "Inv. #" + (sursInv.get(i)+1) +" (size: "+invSize+")";
+			}
+		}
+		String[] subHeaders = new String[subsInv.size() + 1];
+		subHeaders[0] = "---";
+		if(subsInv.size() > 0) {
+			for (int i = 0; i < subsInv.size(); i++) {
+				int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(subsInv.get(i))).size();
+				subHeaders[i + 1] = "Inv. #" + (subsInv.get(i)+1) +" (size: "+invSize+")";
+			}
+		}
+		String[] nonsHeaders = new String[nonsInv.size() + 1];
+		nonsHeaders[0] = "---";
+		if(nonsInv.size() > 0) {
+			for (int i = 0; i < nonsInv.size(); i++) {
+				int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(nonsInv.get(i))).size();
+				nonsHeaders[i + 1] = "Inv. #" + (nonsInv.get(i)+1) +" (size: "+invSize+")";
+			}
+		}
+		
+		JLabel surLabel1 = new JLabel("Sur-inv: ");
+		surLabel1.setBounds(colA_posX, positionY+=20, 80, 20);
+		components.add(surLabel1);
+
+		chooseSurInvBox = new JComboBox<String>(surHeaders);
+		chooseSurInvBox.setBounds(colB_posX, positionY, 150, 20);
+		chooseSurInvBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				
+			}
+		});
+		components.add(chooseSurInvBox);
+		
+		JLabel subLabel1 = new JLabel("Sub-inv: ");
+		subLabel1.setBounds(colA_posX, positionY+=20, 80, 20);
+		components.add(subLabel1);
+		
+		chooseSubInvBox = new JComboBox<String>(subHeaders);
+		chooseSubInvBox.setBounds(colB_posX, positionY, 150, 20);
+		chooseSubInvBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				
+			}
+		});
+		components.add(chooseSubInvBox);
+		
+		JLabel noneLabel1 = new JLabel("None-inv: ");
+		noneLabel1.setBounds(colA_posX, positionY+=20, 80, 20);
+		components.add(noneLabel1);
+		
+		chooseNoneInvBox = new JComboBox<String>(subHeaders);
+		chooseNoneInvBox.setBounds(colB_posX, positionY, 150, 20);
+		chooseNoneInvBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				
+			}
+		});
+		components.add(chooseNoneInvBox);
 
 		JButton showDetailsButton = new JButton();
 		showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");

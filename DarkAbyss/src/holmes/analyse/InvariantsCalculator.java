@@ -169,7 +169,7 @@ public class InvariantsCalculator implements Runnable {
 				logInternal("=====================================================================\n", false);
 				logInternal("Checking t-invariants correctness for "+t_invariantsList.size()+" invariants.\n", false);
 				InvariantsCalculator ic = new InvariantsCalculator(true);
-				ArrayList<ArrayList<Integer>> results = InvariantsTools.analysiseInvariantDetails(ic.getCMatrix(), t_invariantsList, true);
+				ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(ic.getCMatrix(), t_invariantsList, true);
 				logInternal("Proper t-invariants (Cx = 0): "+results.get(0).get(0)+"\n", false);
 				logInternal("Sur-t-invariants (Cx > 0): "+results.get(0).get(1)+"\n", false);
 				logInternal("Sub-t-invariants (Cx < 0): "+results.get(0).get(2)+"\n", false);
@@ -270,7 +270,7 @@ public class InvariantsCalculator implements Runnable {
 				logInternal("=====================================================================\n", false);
 				logInternal("Checking p-invariants correctness for "+p_invariantsList.size()+" invariants.\n", false);
 				InvariantsCalculator ic = new InvariantsCalculator(true);
-				ArrayList<ArrayList<Integer>> results = InvariantsTools.analysiseInvariantDetails(ic.getCMatrix(), p_invariantsList, false);
+				ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(ic.getCMatrix(), p_invariantsList, false);
 				logInternal("Proper p-invariants (Cx = 0): "+results.get(0).get(0)+"\n", false);
 				logInternal("Sur-p-invariants (Cx > 0): "+results.get(0).get(1)+"\n", false);
 				logInternal("Sub-p-invariants (Cx < 0): "+results.get(0).get(2)+"\n", false);

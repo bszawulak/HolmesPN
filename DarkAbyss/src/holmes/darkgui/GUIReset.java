@@ -19,7 +19,6 @@ import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.NetSimulator;
 import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
-import holmes.utilities.Tools;
 import holmes.workspace.Workspace;
 
 /**

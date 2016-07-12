@@ -428,7 +428,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 					logFieldTinv.append("=====================================================================\n");
 					logFieldTinv.append("Checking t0invariants correctness for "+invariants.size()+" invariants.\n");
 					InvariantsCalculator ic = new InvariantsCalculator(true);
-					ArrayList<ArrayList<Integer>> results = InvariantsTools.analysiseInvariantDetails(
+					ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(
 							ic.getCMatrix(), invariants, true);
 					logFieldTinv.append("Proper t-invariants (Cx = 0): "+results.get(0).get(0)+"\n");
 					logFieldTinv.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
@@ -739,7 +739,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 					logFieldPinv.append("=====================================================================\n");
 					logFieldPinv.append("Checking invariants correctness for "+p_invariants.size()+" invariants.\n");
 					InvariantsCalculator ic = new InvariantsCalculator(true);
-					ArrayList<ArrayList<Integer>> results = InvariantsTools.analysiseInvariantDetails(
+					ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(
 							ic.getCMatrix(), p_invariants, false);
 					logFieldPinv.append("Proper invariants (Cx = 0): "+results.get(0).get(0)+"\n");
 					logFieldPinv.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
@@ -955,7 +955,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 			int value = InvariantsTools.checkSupportMinimality(invLoadedMatrix);
 			accessLogField(t_inv).append("-> Non support-minimal "+symbol+"invariants found: "+value+"\n");
 			InvariantsCalculator ic = new InvariantsCalculator(true);
-			ArrayList<ArrayList<Integer>> results = InvariantsTools.analysiseInvariantDetails(ic.getCMatrix(), invLoadedMatrix, t_inv);
+			ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(ic.getCMatrix(), invLoadedMatrix, t_inv);
 			accessLogField(t_inv).append("Proper "+symbol+"invariants (Cx = 0): "+results.get(0).get(0)+"\n");
 			accessLogField(t_inv).append("Sur-"+symbol+"invariants (Cx > 0): "+results.get(0).get(1)+"\n");
 			accessLogField(t_inv).append("Sun-"+symbol+"invariants (Cx < 0): "+results.get(0).get(2)+"\n");
