@@ -400,7 +400,7 @@ public class Toolbar extends BorderDock {
 		//TODO:
 		
 		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", Tools.getResIcon48("/icons/toolbar/a.png")) {
-			@SuppressWarnings("unused")
+			//@SuppressWarnings("unused")
 			public void actionPerformed(ActionEvent actionEvent) 
 			{ 
 				JTree test = overlord.getToolBox().getTree();

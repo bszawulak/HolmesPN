@@ -531,7 +531,7 @@ public final class ElementDraw {
 					} catch (Exception e) { }
 				}
 
-				drawTokens(g, place, nodeBounds);
+				
 				
 				//RYSOWANIE PORTALU - OKRĄG W ŚRODKU
 				if (place.isPortal()) {
@@ -634,7 +634,7 @@ public final class ElementDraw {
 					drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.blue);
 				}
 				
-				
+				drawTokens(g, place, nodeBounds);
 			}
 		} else if(node instanceof MetaNode) { //TODO: znacznik meta
 			MetaNode metanode = (MetaNode)node;

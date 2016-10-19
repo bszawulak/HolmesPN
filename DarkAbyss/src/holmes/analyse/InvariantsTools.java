@@ -188,6 +188,8 @@ public final class InvariantsTools {
 		ArrayList<Integer> nonInvPlacesVector = new ArrayList<Integer>();
 		ArrayList<Integer> markingVector = new ArrayList<Integer>();
 		
+		ArrayList<Integer> invTypes = new ArrayList<Integer>();
+		
 		int elementsNumber = 0;
 		if(t_inv)
 			elementsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size();
@@ -210,18 +212,22 @@ public final class InvariantsTools {
 			if(vector.get(0) == 0) {
 				zeroInvariants++;
 				markingVector.add(0);
+				invTypes.add(0);
 			} else if(vector.get(0) == -1) {
 				subInv++;
 				subPlacesVector = quickSumT_inv(subPlacesVector, vector);
 				markingVector.add(-1);
+				invTypes.add(-1);
 			} else if(vector.get(0) == 1) {
 				surInv++;
 				surPlacesVector = quickSumT_inv(surPlacesVector, vector);
 				markingVector.add(1);
+				invTypes.add(1);
 			} else { // non-inv
 				nonInv++;
 				nonInvPlacesVector = quickSumT_inv(nonInvPlacesVector, vector);
 				markingVector.add(11);
+				invTypes.add(11);
 			}
 		}
 		ArrayList<Integer> summaryVector = new ArrayList<Integer>();
@@ -235,7 +241,42 @@ public final class InvariantsTools {
 		results.add(subPlacesVector);
 		results.add(nonInvPlacesVector);
 		results.add(markingVector);
+		
+		//inv types:
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setT_InvTypes(invTypes);
+		
 		return results;
+	}
+	
+	/**
+	 * Metoda aktualizuje wektor typów inwariantów (sur/sub/none)
+	 * @param CMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
+	 * @param invSet ArrayList[ArrayList[Integer]] - macierz t-inwariantów
+	 * @param t_inv boolean - true dla t-inwariantów, false dla p-inwariantów
+	 */
+	public static void analyseInvariantTypes(ArrayList<ArrayList<Integer>> CMatrix, 
+			ArrayList<ArrayList<Integer>> invSet, boolean t_inv) {
+
+		ArrayList<Integer> invTypes = new ArrayList<Integer>();
+		for(ArrayList<Integer> inv : invSet) {
+			ArrayList<Integer> vector = null;
+			if(t_inv)
+				vector = check_invariantV2(CMatrix, inv);
+			else
+				vector = check_invariantV2(transposeMatrix(CMatrix), inv);
+			
+			if(vector.get(0) == 0) {
+				invTypes.add(0);
+			} else if(vector.get(0) == -1) {
+				invTypes.add(-1);
+			} else if(vector.get(0) == 1) {
+				invTypes.add(1);
+			} else { // non-inv
+				invTypes.add(11);
+			}
+		}
+		//inv types:
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setT_InvTypes(invTypes);
 	}
 	
 	public static ArrayList<ArrayList<Integer>> getOnlyRealInvariants(ArrayList<ArrayList<Integer>> CMatrix, 

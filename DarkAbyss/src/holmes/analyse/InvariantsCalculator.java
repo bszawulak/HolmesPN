@@ -140,9 +140,8 @@ public class InvariantsCalculator implements Runnable {
 								+ t_invariantsList.size()+"\n", false);
 				}
 				
-				
-				overlord.getT_invBox().showT_invBoxWindow(getInvariants(true));
 				project.setT_InvMatrix(getInvariants(true), true);
+				overlord.getT_invBox().showT_invBoxWindow(getInvariants(true));
 				overlord.reset.setT_invariantsStatus(true);
 				overlord.accessNetTablesWindow().resetT_invData();
 				logInternal("Operation successfull, invariants found: "+getInvariants(true).size()+"\n", true);
@@ -176,8 +175,8 @@ public class InvariantsCalculator implements Runnable {
 				logInternal("Non-t-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n", false);
 				logInternal("=====================================================================\n", false);
 				
-					
 				overlord.markNetChange();
+				overlord.getT_invBox().getCurrentDockWindow().refreshSubSurCombos();
 				
 				if(showInvSetsDifference) {
 					if(invBackupMatrix != null && invBackupMatrix.size() > 0) {

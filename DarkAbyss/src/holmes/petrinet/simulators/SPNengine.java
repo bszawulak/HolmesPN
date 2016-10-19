@@ -470,17 +470,12 @@ public class SPNengine implements IEngine {
 			
 			ArrayList<Place> prePlaces = prePlacesMap.get(transition);
 			
-			if(transition.getID() == 68) {
-				int y=1;
-				y=2;
-			}
-			
 			if(prePlaces.size() == 0) {
 				massActionKineticModifier = 1;
 			} else {
 				massActionKineticModifier = Long.MAX_VALUE;
 				if(prePlaces.isEmpty()) {
-					int x=1;
+					//int x=1;
 				}
 				
 				for (Place prePlace : prePlaces) {

@@ -47,6 +47,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
+import holmes.analyse.InvariantsCalculator;
 import holmes.analyse.InvariantsTools;
 import holmes.analyse.MCTCalculator;
 import holmes.analyse.ProblemDetector;
@@ -2734,18 +2735,34 @@ public class HolmesDockWindowsTable extends JPanel {
 		});
 		components.add(nextButton);
 		
-		JButton recalculateTypesButton = new JButton();
+		JButton recalculateTypesButton = new JButton("Refresh");
 		//showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
-		recalculateTypesButton.setIcon(Tools.getResIcon16("/icons/menu/aaa.png"));
-		recalculateTypesButton.setBounds(colA_posX, positionY+=30, 50, 20);
+		//recalculateTypesButton.setIcon(Tools.getResIcon16("/icons/menu/aaa.png"));
+		recalculateTypesButton.setBounds(colA_posX, positionY+=25, 100, 20);
 		recalculateTypesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				//if(selectedT_invIndex == -1)
-				//	return;
-				//new HolmesInvariantsViewer(selectedT_invIndex);
+				refreshSubSurCombos();
 			}
 		});
 		components.add(recalculateTypesButton);
+		
+		JButton recalculateInvTypesButton = new JButton("Recalculate");
+		//showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
+		recalculateInvTypesButton.setIcon(Tools.getResIcon16("/icons/menu/aaa.png"));
+		recalculateInvTypesButton.setBounds(colA_posX+105, positionY, 130, 20);
+		recalculateInvTypesButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				try {
+					InvariantsCalculator ic = new InvariantsCalculator(true);
+					InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), t_invariantsMatrix, true);
+					
+					refreshSubSurCombos();
+				} catch (Exception e) {
+					
+				}
+			}
+		});
+		components.add(recalculateInvTypesButton);
 		
 		//sur-sub-non-invariants:
 		ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
@@ -2789,14 +2806,29 @@ public class HolmesDockWindowsTable extends JPanel {
 		}
 		
 		JLabel surLabel1 = new JLabel("Sur-inv: ");
-		surLabel1.setBounds(colA_posX, positionY+=20, 80, 20);
+		surLabel1.setBounds(colA_posX, positionY+=25, 80, 20);
 		components.add(surLabel1);
 
 		chooseSurInvBox = new JComboBox<String>(surHeaders);
 		chooseSurInvBox.setBounds(colB_posX, positionY, 150, 20);
 		chooseSurInvBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				
+				@SuppressWarnings("unchecked")
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				if (comboBox.getSelectedIndex() == 0) {
+					selectedT_invIndex = -1;
+					showT_invariant(); //clean
+				} else {
+					try {
+						String txt = (String)comboBox.getSelectedItem();
+						txt = txt.substring(txt.indexOf("#")+1);
+						txt = txt.substring(0, txt.indexOf(" "));
+						int index = Integer.parseInt(txt);
+						
+						selectedT_invIndex = index - 1;
+						showT_invariant();
+					} catch (Exception e){}
+				}
 			}
 		});
 		components.add(chooseSurInvBox);
@@ -2809,7 +2841,22 @@ public class HolmesDockWindowsTable extends JPanel {
 		chooseSubInvBox.setBounds(colB_posX, positionY, 150, 20);
 		chooseSubInvBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				
+				@SuppressWarnings("unchecked")
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				if (comboBox.getSelectedIndex() == 0) {
+					selectedT_invIndex = -1;
+					showT_invariant(); //clean
+				} else {
+					try {
+						String txt = (String)comboBox.getSelectedItem();
+						txt = txt.substring(txt.indexOf("#")+1);
+						txt = txt.substring(0, txt.indexOf(" "));
+						int index = Integer.parseInt(txt);
+						
+						selectedT_invIndex = index - 1;
+						showT_invariant();
+					} catch (Exception e){}
+				}
 			}
 		});
 		components.add(chooseSubInvBox);
@@ -2822,7 +2869,22 @@ public class HolmesDockWindowsTable extends JPanel {
 		chooseNoneInvBox.setBounds(colB_posX, positionY, 150, 20);
 		chooseNoneInvBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				
+				@SuppressWarnings("unchecked")
+				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+				if (comboBox.getSelectedIndex() == 0) {
+					selectedT_invIndex = -1;
+					showT_invariant(); //clean
+				} else {
+					try {
+						String txt = (String)comboBox.getSelectedItem();
+						txt = txt.substring(txt.indexOf("#")+1);
+						txt = txt.substring(0, txt.indexOf(" "));
+						int index = Integer.parseInt(txt);
+						
+						selectedT_invIndex = index - 1;
+						showT_invariant();
+					} catch (Exception e){}
+				}
 			}
 		});
 		components.add(chooseNoneInvBox);
@@ -2941,6 +3003,55 @@ public class HolmesDockWindowsTable extends JPanel {
 		panel.repaint();
 		panel.setVisible(true);
 		add(panel);
+	}
+	
+	/**
+	 * Metoda odświeża zawartość comboBoxów dla niekanonicznych "inwariantów".
+	 */
+	public void refreshSubSurCombos() {
+		ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
+
+		ArrayList<Integer> sursInv = new ArrayList<Integer>();
+		ArrayList<Integer> subsInv = new ArrayList<Integer>();
+		ArrayList<Integer> nonsInv = new ArrayList<Integer>();
+		
+		for(int i=0; i<typesVector.size(); i++) { //zliczanie tałatajstwa
+			if(typesVector.get(i) == 1)
+				sursInv.add(i);
+			else if(typesVector.get(i) == -1)
+				subsInv.add(i);
+			if(typesVector.get(i) == 11)
+				nonsInv.add(i);
+		}
+		
+		String[] surHeaders = new String[sursInv.size() + 1];
+		surHeaders[0] = "---";
+		if(sursInv.size() > 0) {
+			for (int i = 0; i < sursInv.size(); i++) {
+				int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(sursInv.get(i))).size();
+				surHeaders[i + 1] = "Inv. #" + (sursInv.get(i)+1) +" (size: "+invSize+")";
+			}
+		}
+		String[] subHeaders = new String[subsInv.size() + 1];
+		subHeaders[0] = "---";
+		if(subsInv.size() > 0) {
+			for (int i = 0; i < subsInv.size(); i++) {
+				int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(subsInv.get(i))).size();
+				subHeaders[i + 1] = "Inv. #" + (subsInv.get(i)+1) +" (size: "+invSize+")";
+			}
+		}
+		String[] nonsHeaders = new String[nonsInv.size() + 1];
+		nonsHeaders[0] = "---";
+		if(nonsInv.size() > 0) {
+			for (int i = 0; i < nonsInv.size(); i++) {
+				int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(nonsInv.get(i))).size();
+				nonsHeaders[i + 1] = "Inv. #" + (nonsInv.get(i)+1) +" (size: "+invSize+")";
+			}
+		}
+		
+		chooseSurInvBox.setModel(new DefaultComboBoxModel<String>(surHeaders));
+		chooseSubInvBox.setModel(new DefaultComboBoxModel<String>(subHeaders));
+		chooseNoneInvBox.setModel(new DefaultComboBoxModel<String>(nonsHeaders));
 	}
 	
 	/**
