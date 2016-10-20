@@ -41,9 +41,14 @@ public class CHmetricReader {
 	 * @throws NumberFormatException
 	 * @throws IOException
 	 */
-	private ArrayList<Double> parseSingleClusterInfo(String source) throws NumberFormatException, IOException{
+	private ArrayList<Double> parseSingleClusterInfo(String source) throws NumberFormatException, IOException {
 		ArrayList<Double> measureValuesHC = new ArrayList<Double>();
 		File file = new File(source);
+		
+		if(!file.exists()) { //wystarczy, bo procedura wczytywania do tabeli gdy natrafi na null wpisze 0.0
+			return measureValuesHC;
+		}
+		
 		FileInputStream fis = new FileInputStream(file);
 		byte[] data = new byte[(int) file.length()];
 		fis.read(data);

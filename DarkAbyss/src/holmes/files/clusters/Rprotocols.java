@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
 import rcaller.RCaller;
@@ -29,6 +30,8 @@ public class Rprotocols implements Runnable {
 	String scriptNamePearson;
 	String commandsPearson;
 	int processingMode = 0; //default : all clusters
+	
+	ArrayList<String> commandsValidate;
 	
 	/**
 	 * Główna metoda wykonywalna, odpowiedzialna za uruchomienie procesu uruchamiania
@@ -65,8 +68,10 @@ public class Rprotocols implements Runnable {
 	 * @param pearsonScript String - skrypt dla metryk Persona
 	 * @param pearsonCommand - ścieżka do parametrów wywołania skrypu wyżej
 	 * @param nrClusters int - liczba klastrów do przetworzenia w każdym z 56 przypadków
+	 * @param commandsValidate ArrayList[String] - lista wywołań w R do uruchomienia
 	 */
-	public void setForRunnableAllClusters(String pathToR, String pathOutput, String fileNameCSV, String scriptName, String commands, String pearsonScript, String pearsonCommand, int nrClusters) {
+	public void setForRunnableAllClusters(String pathToR, String pathOutput, String fileNameCSV, String scriptName, String commands, 
+			String pearsonScript, String pearsonCommand, int nrClusters, ArrayList<String> commandsValidate) {
 		this.pathToR = pathToR;
 		this.pathOutput = pathOutput;
 		this.fileNameCSV = fileNameCSV;
@@ -76,6 +81,8 @@ public class Rprotocols implements Runnable {
 		
 		this.scriptNamePearson = pearsonScript;
 		this.commandsPearson = pearsonCommand;
+		
+		this.commandsValidate = commandsValidate;
 	}
 	
 	/**

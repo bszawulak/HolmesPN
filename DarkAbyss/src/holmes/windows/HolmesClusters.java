@@ -83,6 +83,8 @@ public class HolmesClusters extends JFrame {
     private String pathCSVfile = "";
     private String pathClustersDir = "";
     
+    private ArrayList<String> commandsValidate;
+    
     /**
      * Konstruktor domyślny obiektu okna klasy HolmesClusters. Tworzy wszystkie elementy okna
      * z tabelą klastrów.
@@ -135,6 +137,8 @@ public class HolmesClusters extends JFrame {
         gbc.weighty = 0;
         mainPanel.add(textPanel, gbc);
         
+        commandsValidate = new ArrayList<String>(); //lista 'miar' (z 56) do obliczeń
+        
         this.setContentPane(mainPanel);
         this.pack();
     }
@@ -177,7 +181,7 @@ public class HolmesClusters extends JFrame {
 		generateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				buttonGenerateClusterings();
+				buttonGenerateClusterings(commandsValidate);
 			}
 		});
 		generateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -190,7 +194,7 @@ public class HolmesClusters extends JFrame {
      	generateCHButton.setToolTipText("Compute Caliński-Harabasz metrics for a given number of clusters.");
      	generateCHButton.addActionListener(new ActionListener() {
      		public void actionPerformed(ActionEvent actionEvent) {
-     			buttonComputeCHmetrics();
+     			buttonComputeCHmetrics(commandsValidate);
      		}
      	});
      	generateCHButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -261,6 +265,20 @@ public class HolmesClusters extends JFrame {
  		});
         excelExport.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(excelExport);
+        textPanel.add(Box.createVerticalStrut(7));
+        
+        
+        JButton configButton = createStandardButton("", 
+        		Tools.getResIcon48("/icons/clustWindow/aaa.png"));
+        configButton.setToolTipText("R scripts run configurations");
+        configButton.addActionListener(new ActionListener() {
+ 			@Override
+ 			public void actionPerformed(ActionEvent actionEvent) {
+ 				buttonExportTableToExcel();
+ 			}
+ 		});
+        configButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        textPanel.add(configButton);
         textPanel.add(Box.createVerticalStrut(7));
 
 		return textPanel;
@@ -565,10 +583,11 @@ public class HolmesClusters extends JFrame {
      * Metoda realizuje generowanie klastrowań dla inwariantów z sieci. Inwarianty będą 
      * w formie pliku CSV, który będzie utworzony automatycznie, tak więc sieć i inwarianty
      * muszą już istnieć w programie. W jej efekcie powstaje katalog z klastrowaniami.
+     * @param commandsValidate ArrayList[String] - lista wywołań w R do uruchomienia
      */
-    private void buttonGenerateClusterings() {
+    private void buttonGenerateClusterings(ArrayList<String> commandsValidate) {
 		if(clustersToGenerate > 1) {
-			pathCSVfile = GUIManager.getDefaultGUIManager().io.generateClustersCase56(clustersToGenerate);
+			pathCSVfile = GUIManager.getDefaultGUIManager().io.generateClustersCase56(clustersToGenerate, commandsValidate);
 			if(pathCSVfile == null) { //jeśli coś się nie udało
 				//pathClustersDir = ""; //ścieżka do katalogu klastrowań
 				pathCSVfile = ""; //ścieżka do pliku CSV
@@ -683,11 +702,12 @@ public class HolmesClusters extends JFrame {
     /**
      * Metoda odpowiedzialna za wygenerowanie metryk Celińskiego-Harabasza dla
      * zadanego limitu liczby klastrów.
+     * @param commandsValidate ArrayList[String] - lista wywołań w R do uruchomienia
      */
-    private void buttonComputeCHmetrics() {
+    private void buttonComputeCHmetrics(ArrayList<String> commandsValidate) {
 		if(clustersToGenerate > 1) {
 			@SuppressWarnings("unused")
-			String newCHpath = GUIManager.getDefaultGUIManager().io.generateAllCHindexes(clustersToGenerate);
+			String newCHpath = GUIManager.getDefaultGUIManager().io.generateAllCHindexes(clustersToGenerate, commandsValidate);
 			//uwaga! w powyższym katalogu miary dopiero powstają!
 		}
 	}
@@ -738,6 +758,7 @@ public class HolmesClusters extends JFrame {
 					dataTableCase56.getMatrix().get(i).get(cl).evalCH = chDataCore.get(i).get(cl);
 				} catch (Exception e) {
 					GUIManager.getDefaultGUIManager().log("Filling CH metric failed for subtable "+i+" row: "+cl, "error", false);
+					dataTableCase56.getMatrix().get(i).get(cl).evalCH = 0.0;
 				}
 			}
 		}

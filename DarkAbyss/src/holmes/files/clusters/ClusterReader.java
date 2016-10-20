@@ -91,7 +91,7 @@ public class ClusterReader {
 			return result;
 		}
 		
-		for(int i=1; i<56; i++) {
+		for(int i=1; i<=56; i++) {
 			if(checkList[i] == 0) { //dla każdego brakującego pliku
 				//stwórz kopię:
 				try {

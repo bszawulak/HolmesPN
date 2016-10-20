@@ -748,9 +748,10 @@ public class GUIOperations {
 	/**
 	 * Metoda odpowiedzialna za obliczanie metryk Calinskiego-Harabasza dla klastrów sieci Petriego.
 	 * @param howMany int - maksymalna liczba klastrów
+	 * @param commandsValidate ArrayList[String] - lista wywołań w R do uruchomienia
 	 * @return String - katalog z plikami miar
 	 */
-	public String generateAllCHindexes(int howMany) {
+	public String generateAllCHindexes(int howMany, ArrayList<String> commandsValidate) {
 		if(!overlord.getRStatus()) { //sprawda, czy Rscript.exe jest na miejscu
 			overlord.checkRlangStatus(true); // zapytanie gdzie się podziewa Rscript.exe
 			if(!overlord.getRStatus()) { //jeśli wciąż...
@@ -818,7 +819,7 @@ public class GUIOperations {
 			Runnable runnable = new Rprotocols(1);
 			((Rprotocols)runnable).setForRunnableAllClusters(r_path, dir_path, "cluster.csv", 
 					"scripts\\f_CHindex.r", "scripts\\f_clusters_run.r", 
-					"scripts\\f_CHindex_Pearson.r", "scripts\\f_clusters_Pearson_run.r", howMany);
+					"scripts\\f_CHindex_Pearson.r", "scripts\\f_clusters_Pearson_run.r", howMany, commandsValidate);
 	        Thread thread = new Thread(runnable);
 	        thread.start();
 	        return dir_path;
@@ -833,9 +834,10 @@ public class GUIOperations {
 	
 	/**
 	 * Metoda odpowiedzialna za generowanie klastrowań na bazie inwariantów sieci.
+	 * @param commandsValidate ArrayList[String] - lista wywołań w R do uruchomienia
 	 * @return String - ścieżka do pliku cluster.csv na bazie którego powstały inne pliki
 	 */
-	public String generateClustersCase56(int howMany) {
+	public String generateClustersCase56(int howMany, ArrayList<String> commandsValidate) {
 		if(!overlord.getRStatus()) { //sprawdź, czy Rscript.exe jest na miejscu
 			overlord.checkRlangStatus(true); // zapytanie gdzie się podziewa Rscript.exe
 			if(!overlord.getRStatus()) { //jeśli wciąż...
@@ -896,7 +898,7 @@ public class GUIOperations {
 			Runnable runnable = new Rprotocols();
 			((Rprotocols)runnable).setForRunnableAllClusters(overlord.getSettingsManager().getValue("r_path"), dir_path, "cluster.csv", 
 					"scripts\\f_clusters.r", "scripts\\f_clusters_run.r", 
-					"scripts\\f_clusters_Pearson.r", "scripts\\f_clusters_Pearson_run.r", c_number);
+					"scripts\\f_clusters_Pearson.r", "scripts\\f_clusters_Pearson_run.r", c_number, commandsValidate);
 			((Rprotocols)runnable).setWorkingMode(0);
             Thread thread = new Thread(runnable);
             thread.start();
