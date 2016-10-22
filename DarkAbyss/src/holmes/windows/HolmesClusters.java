@@ -274,7 +274,7 @@ public class HolmesClusters extends JFrame {
         configButton.addActionListener(new ActionListener() {
  			@Override
  			public void actionPerformed(ActionEvent actionEvent) {
- 				buttonExportTableToExcel();
+ 				new HolmesClusterConfig(commandsValidate, myself);
  			}
  		});
         configButton.setAlignmentX(Component.CENTER_ALIGNMENT);
