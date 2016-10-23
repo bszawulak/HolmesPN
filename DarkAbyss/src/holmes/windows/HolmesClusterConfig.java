@@ -159,7 +159,8 @@ public class HolmesClusterConfig extends JFrame {
 		cleanAllCB.setBounds(posX, posY, 140, 20);
 		cleanAllCB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				cleanAll();
+				commandsValidate.clear();
+				updateComponents();
 			}
 		});
 		cleanAllCB.setSelected(true);
@@ -169,7 +170,8 @@ public class HolmesClusterConfig extends JFrame {
 		setAllCB.setBounds(posX+150, posY, 140, 20);
 		setAllCB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				setAll();
+				commandsAddAll();
+				updateComponents();
 			}
 		});
 		setAllCB.setSelected(true);
@@ -1149,7 +1151,7 @@ public class HolmesClusterConfig extends JFrame {
     private void initiateListeners() { //HAIL SITHIS
     	addWindowListener(new WindowAdapter() {
   	  	    public void windowActivated(WindowEvent e) {
-  	  	    	//fillComponents();
+  	  	    	updateComponents();
   	  	    }  
     	});
     	
@@ -1161,141 +1163,299 @@ public class HolmesClusterConfig extends JFrame {
 		});
     }
     
-    private void cleanAll() {
-    	corAvgCB.setSelected(false);
-    	corCentrCB.setSelected(false);
-    	corComplCB.setSelected(false);
-    	corMcQCB.setSelected(false);
-    	corMedCB.setSelected(false);
-    	corSingCB.setSelected(false);
-    	corWardCB.setSelected(false);
-    		
-    	pearAvgCB.setSelected(false);
-    	pearCentrCB.setSelected(false);
-    	pearComplCB.setSelected(false);
-    	pearMcQCB.setSelected(false);
-    	pearMedCB.setSelected(false);
-    	pearSingCB.setSelected(false);
-    	pearWardCB.setSelected(false);
-    		
-    	binAvgCB.setSelected(false);
-    	binCentrCB.setSelected(false);
-    	binComplCB.setSelected(false);
-    	binMcQCB.setSelected(false);
-    	binMedCB.setSelected(false);
-    	binSingCB.setSelected(false);
-    	binWardCB.setSelected(false);
-    		
-    	canAvgCB.setSelected(false);
-    	canCentrCB.setSelected(false);
-    	canComplCB.setSelected(false);
-    	canMcQCB.setSelected(false);
-    	canMedCB.setSelected(false);
-    	canSingCB.setSelected(false);
-    	canWardCB.setSelected(false);
-    		
-    	eucAvgCB.setSelected(false);
-    	eucCentrCB.setSelected(false);
-    	eucComplCB.setSelected(false);
-    	eucMcQCB.setSelected(false);
-    	eucMedCB.setSelected(false);
-    	eucSingCB.setSelected(false);
-    	eucWardCB.setSelected(false);
-    		
-    	manAvgCB.setSelected(false);
-    	manCentrCB.setSelected(false);
-    	manComplCB.setSelected(false);
-    	manMcQCB.setSelected(false);
-    	manMedCB.setSelected(false);
-    	manSingCB.setSelected(false);
-    	manWardCB.setSelected(false);
-    		
-    	maxAvgCB.setSelected(false);
-    	maxCentrCB.setSelected(false);
-    	maxComplCB.setSelected(false);
-    	maxMcQCB.setSelected(false);
-    	maxMedCB.setSelected(false);
-    	maxSingCB.setSelected(false);
-    	maxWardCB.setSelected(false);
-    		
-    	minAvgCB.setSelected(false);
-    	minCentrCB.setSelected(false);
-    	minComplCB.setSelected(false);
-    	minMcQCB.setSelected(false);
-    	minMedCB.setSelected(false);
-    	minSingCB.setSelected(false);
-    	minWardCB.setSelected(false);
+    private void updateComponents() {
+    	if(commandsValidate.contains("\"correlation\",\"average\""))
+    		corAvgCB.setSelected(true);
+    	else
+    		corAvgCB.setSelected(false);
     	
-    	commandsValidate.clear();
-    }
-    
-    private void setAll() {
-    	corAvgCB.setSelected(true);
-    	corCentrCB.setSelected(true);
-    	corComplCB.setSelected(true);
-    	corMcQCB.setSelected(true);
-    	corMedCB.setSelected(true);
-    	corSingCB.setSelected(true);
-    	corWardCB.setSelected(true);
-    		
-    	pearAvgCB.setSelected(true);
-    	pearCentrCB.setSelected(true);
-    	pearComplCB.setSelected(true);
-    	pearMcQCB.setSelected(true);
-    	pearMedCB.setSelected(true);
-    	pearSingCB.setSelected(true);
-    	pearWardCB.setSelected(true);
-    		
-    	binAvgCB.setSelected(true);
-    	binCentrCB.setSelected(true);
-    	binComplCB.setSelected(true);
-    	binMcQCB.setSelected(true);
-    	binMedCB.setSelected(true);
-    	binSingCB.setSelected(true);
-    	binWardCB.setSelected(true);
-    		
-    	canAvgCB.setSelected(true);
-    	canCentrCB.setSelected(true);
-    	canComplCB.setSelected(true);
-    	canMcQCB.setSelected(true);
-    	canMedCB.setSelected(true);
-    	canSingCB.setSelected(true);
-    	canWardCB.setSelected(true);
-    		
-    	eucAvgCB.setSelected(true);
-    	eucCentrCB.setSelected(true);
-    	eucComplCB.setSelected(true);
-    	eucMcQCB.setSelected(true);
-    	eucMedCB.setSelected(true);
-    	eucSingCB.setSelected(true);
-    	eucWardCB.setSelected(true);
-    		
-    	manAvgCB.setSelected(true);
-    	manCentrCB.setSelected(true);
-    	manComplCB.setSelected(true);
-    	manMcQCB.setSelected(true);
-    	manMedCB.setSelected(true);
-    	manSingCB.setSelected(true);
-    	manWardCB.setSelected(true);
-    		
-    	maxAvgCB.setSelected(true);
-    	maxCentrCB.setSelected(true);
-    	maxComplCB.setSelected(true);
-    	maxMcQCB.setSelected(true);
-    	maxMedCB.setSelected(true);
-    	maxSingCB.setSelected(true);
-    	maxWardCB.setSelected(true);
-    		
-    	minAvgCB.setSelected(true);
-    	minCentrCB.setSelected(true);
-    	minComplCB.setSelected(true);
-    	minMcQCB.setSelected(true);
-    	minMedCB.setSelected(true);
-    	minSingCB.setSelected(true);
-    	minWardCB.setSelected(true);
+    	if(commandsValidate.contains("\"correlation\",\"centroid\""))
+    		corCentrCB.setSelected(true);
+    	else
+    		corCentrCB.setSelected(false);
     	
-    	commandsValidate.clear();
-    	selectAll();
+    	if(commandsValidate.contains("\"correlation\",\"complete\""))
+    		corComplCB.setSelected(true);
+    	else
+    		corComplCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"correlation\",\"mcquitty\""))
+    		corMcQCB.setSelected(true);
+    	else
+    		corMcQCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"correlation\",\"median\""))
+    		corMedCB.setSelected(true);
+    	else
+    		corMedCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"correlation\",\"single\""))
+    		corSingCB.setSelected(true);
+    	else
+    		corSingCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"correlation\",\"ward\""))
+    		corWardCB.setSelected(true);
+    	else
+    		corWardCB.setSelected(false);
+    	
+    	//---
+    	
+    	if(commandsValidate.contains("\"pearson\",\"average\""))
+    		pearAvgCB.setSelected(true);
+    	else
+    		pearAvgCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"pearson\",\"centroid\""))
+    		pearCentrCB.setSelected(true);
+    	else
+    		pearCentrCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"pearson\",\"complete\""))
+    		pearComplCB.setSelected(true);
+    	else
+    		pearComplCB.setSelected(false);
+    		
+    	if(commandsValidate.contains("\"pearson\",\"mcquitty\""))
+    		pearMcQCB.setSelected(true);
+    	else
+    		pearMcQCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"pearson\",\"median\""))
+    		pearMedCB.setSelected(true);
+    	else
+    		pearMedCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"pearson\",\"single\""))
+    		pearSingCB.setSelected(true);
+    	else
+    		pearSingCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"pearson\",\"ward\""))
+    		pearWardCB.setSelected(true);
+    	else
+    		pearWardCB.setSelected(false);
+    	
+    	//------
+    	if(commandsValidate.contains("\"binary\",\"average\""))
+    		binAvgCB.setSelected(true);
+    	else
+    		binAvgCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"binary\",\"centroid\""))
+    		binCentrCB.setSelected(true);
+    	else
+    		binCentrCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"binary\",\"complete\""))
+    		binComplCB.setSelected(true);
+    	else
+    		binComplCB.setSelected(false);
+    		
+    	if(commandsValidate.contains("\"binary\",\"mcquitty\""))
+    		binMcQCB.setSelected(true);
+    	else
+    		binMcQCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"binary\",\"median\""))
+    		binMedCB.setSelected(true);
+    	else
+    		binMedCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"binary\",\"single\""))
+    		binSingCB.setSelected(true);
+    	else
+    		binSingCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"binary\",\"ward.D\""))
+    		binWardCB.setSelected(true);
+    	else
+    		binWardCB.setSelected(false);
+    	
+    	//-----
+    	
+    	if(commandsValidate.contains("\"canberra\",\"average\""))
+    		canAvgCB.setSelected(true);
+    	else
+    		canAvgCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"canberra\",\"centroid\""))
+    		canCentrCB.setSelected(true);
+    	else
+    		canCentrCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"canberra\",\"complete\""))
+    		canComplCB.setSelected(true);
+    	else
+    		canComplCB.setSelected(false);
+    		
+    	if(commandsValidate.contains("\"canberra\",\"mcquitty\""))
+    		canMcQCB.setSelected(true);
+    	else
+    		canMcQCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"canberra\",\"median\""))
+    		canMedCB.setSelected(true);
+    	else
+    		canMedCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"canberra\",\"single\""))
+    		canSingCB.setSelected(true);
+    	else
+    		canSingCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"canberra\",\"ward.D\""))
+    		canWardCB.setSelected(true);
+    	else
+    		canWardCB.setSelected(false);
+    		
+    	//---
+    	
+    	if(commandsValidate.contains("\"euclidean\",\"average\""))
+    		eucAvgCB.setSelected(true);
+    	else
+    		eucAvgCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"euclidean\",\"centroid\""))
+    		eucCentrCB.setSelected(true);
+    	else
+    		eucCentrCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"euclidean\",\"complete\""))
+    		eucComplCB.setSelected(true);
+    	else
+    		eucComplCB.setSelected(false);
+    		
+    	if(commandsValidate.contains("\"euclidean\",\"mcquitty\""))
+    		eucMcQCB.setSelected(true);
+    	else
+    		eucMcQCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"euclidean\",\"median\""))
+    		eucMedCB.setSelected(true);
+    	else
+    		eucMedCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"euclidean\",\"single\""))
+    		eucSingCB.setSelected(true);
+    	else
+    		eucSingCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"euclidean\",\"ward.D\""))
+    		eucWardCB.setSelected(true);
+    	else
+    		eucWardCB.setSelected(false);
+    		
+    	//----
+    	
+    	if(commandsValidate.contains("\"manhattan\",\"average\""))
+    		manAvgCB.setSelected(true);
+    	else
+    		manAvgCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"manhattan\",\"centroid\""))
+    		manCentrCB.setSelected(true);
+    	else
+    		manCentrCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"manhattan\",\"complete\""))
+    		manComplCB.setSelected(true);
+    	else
+    		manComplCB.setSelected(false);
+    		
+    	if(commandsValidate.contains("\"manhattan\",\"mcquitty\""))
+    		manMcQCB.setSelected(true);
+    	else
+    		manMcQCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"manhattan\",\"median\""))
+    		manMedCB.setSelected(true);
+    	else
+    		manMedCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"manhattan\",\"single\""))
+    		manSingCB.setSelected(true);
+    	else
+    		manSingCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"manhattan\",\"ward.D\""))
+    		manWardCB.setSelected(true);
+    	else
+    		manWardCB.setSelected(false);
+    		
+    	//----
+    	
+    	if(commandsValidate.contains("\"maximum\",\"average\""))
+    		maxAvgCB.setSelected(true);
+    	else
+    		maxAvgCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"maximum\",\"centroid\""))
+    		maxCentrCB.setSelected(true);
+    	else
+    		maxCentrCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"maximum\",\"complete\""))
+    		maxComplCB.setSelected(true);
+    	else
+    		maxComplCB.setSelected(false);
+    		
+    	if(commandsValidate.contains("\"maximum\",\"mcquitty\""))
+    		maxMcQCB.setSelected(true);
+    	else
+    		maxMcQCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"maximum\",\"median\""))
+    		maxMedCB.setSelected(true);
+    	else
+    		maxMedCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"maximum\",\"single\""))
+    		maxSingCB.setSelected(true);
+    	else
+    		maxSingCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"maximum\",\"ward.D\""))
+    		maxWardCB.setSelected(true);
+    	else
+    		maxWardCB.setSelected(false);
+    		
+    	//---
+    	
+    	if(commandsValidate.contains("\"minkowski\",\"average\""))
+    		minAvgCB.setSelected(true);
+    	else
+    		minAvgCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"minkowski\",\"centroid\""))
+    		minCentrCB.setSelected(true);
+    	else
+    		minCentrCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"minkowski\",\"complete\""))
+    		minComplCB.setSelected(true);
+    	else
+    		minComplCB.setSelected(false);
+    		
+    	if(commandsValidate.contains("\"minkowski\",\"mcquitty\""))
+    		minMcQCB.setSelected(true);
+    	else
+    		minMcQCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"minkowski\",\"median\""))
+    		minMedCB.setSelected(true);
+    	else
+    		minMedCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"minkowski\",\"single\""))
+    		minSingCB.setSelected(true);
+    	else
+    		minSingCB.setSelected(false);
+    	
+    	if(commandsValidate.contains("\"minkowski\",\"ward.D\""))
+    		minWardCB.setSelected(true);
+    	else
+    		minWardCB.setSelected(false);
     }
     
     private void pearsonsOnly() {
@@ -1367,7 +1527,7 @@ public class HolmesClusterConfig extends JFrame {
     	selectPearsonOnly();
     }
     
-    private void selectAll() {
+    private void commandsAddAll() {
     	commandsValidate.add("\"correlation\",\"average\"");
     	commandsValidate.add("\"correlation\",\"centroid\"");
     	commandsValidate.add("\"correlation\",\"complete\"");
@@ -1450,4 +1610,6 @@ public class HolmesClusterConfig extends JFrame {
     	commandsValidate.add("\"pearson\",\"single\"");
     	commandsValidate.add("\"pearson\",\"ward\"");
     }
+    
+    
 }
