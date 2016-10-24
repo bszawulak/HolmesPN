@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import holmes.darkgui.GUIManager;
@@ -104,14 +105,15 @@ public class HolmesClusterConfig extends JFrame {
 		}
 		commandsValidate = comm;
 		boss = parent;
-		boss.setEnabled(false);
 		
-		setVisible(true);
+		
+		setVisible(false);
 		this.setTitle("Clustering config");
 		
 		setLayout(new BorderLayout());
 		setSize(new Dimension(1050, 300));
 		setLocation(15, 15);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		
 		mainPanel = createMainPanel();
 		add(mainPanel, BorderLayout.CENTER);
@@ -181,7 +183,8 @@ public class HolmesClusterConfig extends JFrame {
 		pearsonsCB.setBounds(posX+300, posY, 140, 20);
 		pearsonsCB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				pearsonsOnly();
+				selectPearsonOnly();
+				updateComponents();
 			}
 		});
 		pearsonsCB.setSelected(true);
@@ -1151,12 +1154,20 @@ public class HolmesClusterConfig extends JFrame {
     private void initiateListeners() { //HAIL SITHIS
     	addWindowListener(new WindowAdapter() {
   	  	    public void windowActivated(WindowEvent e) {
+  	  	    	boss.setEnabled(false);
+  	  	    	GUIManager.getDefaultGUIManager().getFrame().setEnabled(false);
   	  	    	updateComponents();
   	  	    }  
     	});
     	
     	addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		    	if(commandsValidate.size() == 0) {
+		    		JOptionPane.showMessageDialog(null, "At least one clustering method must be chosen."
+		    				+ "\nSelecting CorrelatedPearson-Average(UPGMA)","Problem", JOptionPane.WARNING_MESSAGE);
+		    	}
+		    	commandsValidate.add("\"correlation\",\"average\"");
+		    	
 		    	boss.setEnabled(true);
 		    	GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
 		    }
@@ -1458,75 +1469,6 @@ public class HolmesClusterConfig extends JFrame {
     		minWardCB.setSelected(false);
     }
     
-    private void pearsonsOnly() {
-    	corAvgCB.setSelected(true);
-    	corCentrCB.setSelected(true);
-    	corComplCB.setSelected(true);
-    	corMcQCB.setSelected(true);
-    	corMedCB.setSelected(true);
-    	corSingCB.setSelected(true);
-    	corWardCB.setSelected(true);
-    		
-    	pearAvgCB.setSelected(true);
-    	pearCentrCB.setSelected(true);
-    	pearComplCB.setSelected(true);
-    	pearMcQCB.setSelected(true);
-    	pearMedCB.setSelected(true);
-    	pearSingCB.setSelected(true);
-    	pearWardCB.setSelected(true);
-    		
-    	binAvgCB.setSelected(false);
-    	binCentrCB.setSelected(false);
-    	binComplCB.setSelected(false);
-    	binMcQCB.setSelected(false);
-    	binMedCB.setSelected(false);
-    	binSingCB.setSelected(false);
-    	binWardCB.setSelected(false);
-    		
-    	canAvgCB.setSelected(false);
-    	canCentrCB.setSelected(false);
-    	canComplCB.setSelected(false);
-    	canMcQCB.setSelected(false);
-    	canMedCB.setSelected(false);
-    	canSingCB.setSelected(false);
-    	canWardCB.setSelected(false);
-    		
-    	eucAvgCB.setSelected(false);
-    	eucCentrCB.setSelected(false);
-    	eucComplCB.setSelected(false);
-    	eucMcQCB.setSelected(false);
-    	eucMedCB.setSelected(false);
-    	eucSingCB.setSelected(false);
-    	eucWardCB.setSelected(false);
-    		
-    	manAvgCB.setSelected(false);
-    	manCentrCB.setSelected(false);
-    	manComplCB.setSelected(false);
-    	manMcQCB.setSelected(false);
-    	manMedCB.setSelected(false);
-    	manSingCB.setSelected(false);
-    	manWardCB.setSelected(false);
-    		
-    	maxAvgCB.setSelected(false);
-    	maxCentrCB.setSelected(false);
-    	maxComplCB.setSelected(false);
-    	maxMcQCB.setSelected(false);
-    	maxMedCB.setSelected(false);
-    	maxSingCB.setSelected(false);
-    	maxWardCB.setSelected(false);
-    		
-    	minAvgCB.setSelected(false);
-    	minCentrCB.setSelected(false);
-    	minComplCB.setSelected(false);
-    	minMcQCB.setSelected(false);
-    	minMedCB.setSelected(false);
-    	minSingCB.setSelected(false);
-    	minWardCB.setSelected(false);
-    	
-    	commandsValidate.clear();
-    	selectPearsonOnly();
-    }
-    
     private void commandsAddAll() {
     	commandsValidate.add("\"correlation\",\"average\"");
     	commandsValidate.add("\"correlation\",\"centroid\"");
@@ -1594,6 +1536,8 @@ public class HolmesClusterConfig extends JFrame {
     }
     
     private void selectPearsonOnly() {
+    	commandsValidate.clear();
+    	
     	commandsValidate.add("\"correlation\",\"average\"");
     	commandsValidate.add("\"correlation\",\"centroid\"");
     	commandsValidate.add("\"correlation\",\"complete\"");

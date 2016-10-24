@@ -116,6 +116,10 @@ public class Rprotocols implements Runnable {
 		return sb.toString();
 	}
 
+	/**
+	 * Obliczanie miar CH dla klastrów.
+	 * @throws IOException
+	 */
 	public void executeCHmetricScripts() throws IOException{		
 		File file = new File(scriptName);
 		FileInputStream fis = new FileInputStream(file);
@@ -129,6 +133,11 @@ public class Rprotocols implements Runnable {
 		String line;
 		
 		while ((line = br.readLine()) != null) {
+			if(!commandsValidate.contains(line)) {
+				continue;
+			}
+			
+			
 			RCaller rcaller = new RCaller();
 			RCode code = new RCode();
 			rcaller.setRscriptExecutable(pathToR);
@@ -171,6 +180,9 @@ public class Rprotocols implements Runnable {
 		
 		//int counter = 0;
 		while ((line = br.readLine()) != null) {
+			if(!commandsValidate.contains(line)) {
+				continue;
+			}
 			//counter++;
 			RCaller rcaller = new RCaller();
 			RCode code = new RCode();

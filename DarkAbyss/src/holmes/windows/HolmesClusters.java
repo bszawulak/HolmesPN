@@ -84,6 +84,7 @@ public class HolmesClusters extends JFrame {
     private String pathClustersDir = "";
     
     private ArrayList<String> commandsValidate;
+    private HolmesClusterConfig minion;
     
     /**
      * Konstruktor domyślny obiektu okna klasy HolmesClusters. Tworzy wszystkie elementy okna
@@ -138,9 +139,12 @@ public class HolmesClusters extends JFrame {
         mainPanel.add(textPanel, gbc);
         
         commandsValidate = new ArrayList<String>(); //lista 'miar' (z 56) do obliczeń
+        commandsAddAll();
         
         this.setContentPane(mainPanel);
         this.pack();
+        
+        minion = new HolmesClusterConfig(commandsValidate, myself);
     }
 
     /**
@@ -274,7 +278,7 @@ public class HolmesClusters extends JFrame {
         configButton.addActionListener(new ActionListener() {
  			@Override
  			public void actionPerformed(ActionEvent actionEvent) {
- 				new HolmesClusterConfig(commandsValidate, myself);
+ 				minion.setVisible(true);
  			}
  		});
         configButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -885,6 +889,75 @@ public class HolmesClusters extends JFrame {
     public void resetWindow() {
     	//tablePanel = createTablePanelCase56();
     	tableModel.setRowCount(0);
+    }
+    
+    /**
+     * Metoda wpisuje wszystkie kombinacje klastrowania na listę zadań
+     */
+    private void commandsAddAll() {
+    	commandsValidate.add("\"correlation\",\"average\"");
+    	commandsValidate.add("\"correlation\",\"centroid\"");
+    	commandsValidate.add("\"correlation\",\"complete\"");
+    	commandsValidate.add("\"correlation\",\"mcquitty\"");
+    	commandsValidate.add("\"correlation\",\"median\"");
+    	commandsValidate.add("\"correlation\",\"single\"");
+    	commandsValidate.add("\"correlation\",\"ward\"");
+    	
+    	commandsValidate.add("\"pearson\",\"average\"");
+    	commandsValidate.add("\"pearson\",\"centroid\"");
+    	commandsValidate.add("\"pearson\",\"complete\"");
+    	commandsValidate.add("\"pearson\",\"mcquitty\"");
+    	commandsValidate.add("\"pearson\",\"median\"");
+    	commandsValidate.add("\"pearson\",\"single\"");
+    	commandsValidate.add("\"pearson\",\"ward\"");
+    	
+    	commandsValidate.add("\"binary\",\"average\"");
+    	commandsValidate.add("\"binary\",\"centroid\"");
+    	commandsValidate.add("\"binary\",\"complete\"");
+    	commandsValidate.add("\"binary\",\"mcquitty\"");
+    	commandsValidate.add("\"binary\",\"median\"");
+    	commandsValidate.add("\"binary\",\"single\"");
+    	commandsValidate.add("\"binary\",\"ward.D\"");
+    	
+    	commandsValidate.add("\"canberra\",\"average\"");
+    	commandsValidate.add("\"canberra\",\"centroid\"");
+    	commandsValidate.add("\"canberra\",\"complete\"");
+    	commandsValidate.add("\"canberra\",\"mcquitty\"");
+    	commandsValidate.add("\"canberra\",\"median\"");
+    	commandsValidate.add("\"canberra\",\"single\"");
+    	commandsValidate.add("\"canberra\",\"ward.D\"");
+    	
+    	commandsValidate.add("\"euclidean\",\"average\"");
+    	commandsValidate.add("\"euclidean\",\"centroid\"");
+    	commandsValidate.add("\"euclidean\",\"complete\"");
+    	commandsValidate.add("\"euclidean\",\"mcquitty\"");
+    	commandsValidate.add("\"euclidean\",\"median\"");
+    	commandsValidate.add("\"euclidean\",\"single\"");
+    	commandsValidate.add("\"euclidean\",\"ward.D\"");
+    	
+    	commandsValidate.add("\"manhattan\",\"average\"");
+    	commandsValidate.add("\"manhattan\",\"centroid\"");
+    	commandsValidate.add("\"manhattan\",\"complete\"");
+    	commandsValidate.add("\"manhattan\",\"mcquitty\"");
+    	commandsValidate.add("\"manhattan\",\"median\"");
+    	commandsValidate.add("\"manhattan\",\"single\"");
+    	commandsValidate.add("\"manhattan\",\"ward.D\"");
+    	
+    	commandsValidate.add("\"maximum\",\"average\"");
+    	commandsValidate.add("\"maximum\",\"centroid\"");
+    	commandsValidate.add("\"maximum\",\"complete\"");
+    	commandsValidate.add("\"maximum\",\"mcquitty\"");
+    	commandsValidate.add("\"maximum\",\"median\"");
+    	commandsValidate.add("\"maximum\",\"single\"");
+    	commandsValidate.add("\"maximum\",\"ward.D\"");
+    	
+    	commandsValidate.add("\"minkowski\",\"average\"");
+    	commandsValidate.add("\"minkowski\",\"centroid\"");
+    	commandsValidate.add("\"minkowski\",\"complete\"");
+    	commandsValidate.add("\"minkowski\",\"mcquitty\"");
+    	commandsValidate.add("\"minkowski\",\"median\"");
+    	commandsValidate.add("\"minkowski\",\"single\"");
+    	commandsValidate.add("\"minkowski\",\"ward.D\"");
     }
     
     //**************************************************************************************************
