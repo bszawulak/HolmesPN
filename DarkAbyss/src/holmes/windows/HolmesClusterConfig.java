@@ -13,7 +13,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -190,17 +189,18 @@ public class HolmesClusterConfig extends JFrame {
 		pearsonsCB.setSelected(true);
 		panel.add(pearsonsCB);
 		
+		/*
 		JButton aaa = new JButton("Test");
 		aaa.setBounds(posX+450, posY, 140, 20);
 		aaa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				//pearsonsOnly();
-				int x;
-				x=1;
+				//int x;
+				//x=1;
 			}
 		});
 		aaa.setSelected(true);
-		panel.add(aaa);
+		panel.add(aaa);*/
 		
 		return panel;
 	}

@@ -273,7 +273,7 @@ public class HolmesClusters extends JFrame {
         
         
         JButton configButton = createStandardButton("", 
-        		Tools.getResIcon48("/icons/clustWindow/aaa.png"));
+        		Tools.getResIcon48("/icons/clustWindow/buttonConfig.png"));
         configButton.setToolTipText("R scripts run configurations");
         configButton.addActionListener(new ActionListener() {
  			@Override
