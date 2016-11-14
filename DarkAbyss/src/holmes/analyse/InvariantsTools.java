@@ -244,6 +244,7 @@ public final class InvariantsTools {
 		
 		//inv types:
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setT_InvTypes(invTypes);
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setT_invTypesComputed(true);
 		
 		return results;
 	}
@@ -277,6 +278,7 @@ public final class InvariantsTools {
 		}
 		//inv types:
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setT_InvTypes(invTypes);
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setT_invTypesComputed(true);
 	}
 	
 	public static ArrayList<ArrayList<Integer>> getOnlyRealInvariants(ArrayList<ArrayList<Integer>> CMatrix, 

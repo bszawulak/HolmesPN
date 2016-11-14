@@ -56,6 +56,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
 	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //macierz t-inwariantów
 	private ArrayList<String> t_invariantsDescriptions;
+	private boolean t_invComputed = false;
 	private ArrayList<Integer> t_invariantsTypes;
 	private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //macierz p-inwariantów
 	private ArrayList<String> p_invariantsDescriptions;
@@ -111,6 +112,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.simData = new NetSimulationDataCore();
 		this.statesManager = new StatePlacesManager(this);
 		this.ssaManager = new SSAplacesManager(this);
+		this.t_invComputed = false;
 	}
 
 	/**
@@ -131,6 +133,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.mcsData = new MCSDataMatrix();
 		this.methods = new PetriNetMethods(this);
 		this.simData = new NetSimulationDataCore();
+		this.t_invComputed = false;
 	}
 	
 	/**
@@ -500,7 +503,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda ustawia nową macierz t-inwariantów sieci.
+	 * Metoda ustawia nową macierz t-inwariantów sieci. Przy okazji resetuje macierz typów inwariantów.
 	 * @param t_invariants ArrayList[ArrayList[Integer]] - macierz t-inwariantów
 	 * @param generateMCT boolean - true, jeśli mają być wygenerowane zbiory MCT 
 	 */
@@ -508,6 +511,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.t_invariantsMatrix = t_invariants;
 		this.t_invariantsDescriptions = null;
 		this.t_invariantsTypes = null;
+		this.t_invComputed = false;
 		
 		if(t_invariants == null)
 			return;
@@ -648,6 +652,22 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<String> accessP_InvDescriptions() {
 		return p_invariantsDescriptions;
+	}
+	
+	/**
+	 * Ustawia status wektora typów t-inwariantów, tj. czy został już obliczony, czy nie.
+	 * @param status boolean - status
+	 */
+	public void setT_invTypesComputed(boolean status) {
+		this.t_invComputed = status;
+	}
+	
+	/**
+	 * Zwraca true, jeśli istnieje wektor typów t-inwariantów (został obliczony)
+	 * @return boolean t_invComputed - status
+	 */
+	public boolean getT_invTypesComputed() {
+		return this.t_invComputed;
 	}
 	
 	/**

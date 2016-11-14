@@ -29,6 +29,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 
+import holmes.analyse.InvariantsCalculator;
+import holmes.analyse.InvariantsTools;
 import holmes.analyse.NetPropertiesAnalyzer;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Arc;
@@ -153,18 +155,49 @@ public class HolmesNetProperties extends JFrame {
 			transFiresInInv.add(0);
 		}
 		
+		int sur = 0;
+		int sub = 0;
+		int none = 0;
+		int normal = 0;
+		if(invariantsMatrix != null) {
+			//sprawdza czy określono typy inwariantów, jeśli nie - wymusza przeliczenie 
+			if(overlord.getWorkspace().getProject().getT_invTypesComputed() == false) {
+				textField.append("Computing t-invariants types vector\n");
+				InvariantsCalculator ic = new InvariantsCalculator(true);
+				InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), invariantsMatrix, true);
+			}
+			ArrayList<Integer> invTypes = overlord.getWorkspace().getProject().accessT_InvTypesVector();
+			
+			for(int i=0; i<invTypes.size(); i++) {
+				if(invTypes.get(i) == 0) {
+					normal++;
+				} else if(invTypes.get(i) == -1) {
+					sub++;
+				} else if(invTypes.get(i) == 1) {
+					sur++;
+				} else {
+					none++;
+				}
+			}
+		}
+		
+		textField.setText("");
 		int transInNoInvariant = 0;
 		if(inv_number > 0) {
+			ArrayList<Integer> invTypes = overlord.getWorkspace().getProject().accessT_InvTypesVector();
 			for(int inv=0; inv < invariantsMatrix.size(); inv++) { // po wszystkich inwariantach
-				for(int trans=0; trans < invariantsMatrix.get(0).size(); trans++) { //po wszystkich tranzycjach
-					if(invariantsMatrix.get(inv).get(trans) > 0) {
-						int oldVal = transInInv.get(trans);
+				if(invTypes.get(inv) != 0) //tylko prawdziwe t-inv
+					continue;
+				
+				for(int t=0; t < invariantsMatrix.get(0).size(); t++) { //po wszystkich tranzycjach
+					if(invariantsMatrix.get(inv).get(t) > 0) {
+						int oldVal = transInInv.get(t);
 						oldVal++;
-						transInInv.set(trans, oldVal);
+						transInInv.set(t, oldVal);
 						
-						oldVal = transFiresInInv.get(trans);
-						oldVal += invariantsMatrix.get(inv).get(trans);
-						transFiresInInv.set(trans, oldVal);
+						oldVal = transFiresInInv.get(t);
+						oldVal += invariantsMatrix.get(inv).get(t);
+						transFiresInInv.set(t, oldVal);
 					}
 				}
 			}
@@ -174,14 +207,21 @@ public class HolmesNetProperties extends JFrame {
 					transInNoInvariant++;
 				}
 			}
-			textField.setText("");
+			textField.append("Proper t-invariants (Cx = 0): "+normal+"\n");
+			textField.append("Sur-t-invariants (Cx > 0): "+sur+"\n");
+			textField.append("Sub-t-invariants (Cx < 0): "+sub+"\n");
+			textField.append("Non-t-invariants (Cx <=> 0): "+none+"\n");
 			
 			//WYŚWIETLANIE DANYCH:
 			if(transInNoInvariant==0) {
-				textField.append("The net is covered by t-invariants.\n");
+				textField.append("\n");
+				textField.append("The net is covered by t-invariants (only vectors x such as Cx=0 are considered).\n");
 				textField.append("\n");
 			} else {
-				textField.append("The net is not covered by t-invariants. Transitions outside invariants set:\n");
+				textField.append("\n");
+				textField.append("The net is not covered by t-invariants (only vectors x such as Cx=0 are considered).\n");
+				textField.append("Transitions not covered by the "+normal+" t-invariants:\n");
+				textField.append("\n");
 				for(int i=0; i<idTransNoInv.size(); i++) {
 					int tNumber = idTransNoInv.get(i);
 					String txt1 = Tools.setToSize("t"+tNumber, 5, false);
@@ -190,7 +230,7 @@ public class HolmesNetProperties extends JFrame {
 				textField.append("\n");
 			}
 			
-			textField.append("Transitions data:\n");
+			textField.append("Transitions within "+normal+" t-invariants:\n");
 			for(int i=0; i<transitions.size(); i++) {
 				if(transInInv.get(i) > 0) { //dla tranz. w inwariantach
 					int transInv = transInInv.get(i);

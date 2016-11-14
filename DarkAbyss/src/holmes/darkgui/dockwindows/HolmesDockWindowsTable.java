@@ -2739,6 +2739,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		//showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
 		//recalculateTypesButton.setIcon(Tools.getResIcon16("/icons/menu/aaa.png"));
 		recalculateTypesButton.setBounds(colA_posX, positionY+=25, 100, 20);
+		recalculateTypesButton.setToolTipText("If t-inv types have been determined, this button will refresh the content of the three comboboxes below:");
 		recalculateTypesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				refreshSubSurCombos();
@@ -2748,7 +2749,8 @@ public class HolmesDockWindowsTable extends JPanel {
 		
 		JButton recalculateInvTypesButton = new JButton("Recalculate");
 		//showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
-		recalculateInvTypesButton.setIcon(Tools.getResIcon16("/icons/menu/aaa.png"));
+		recalculateInvTypesButton.setIcon(Tools.getResIcon16("/icons/portal.png"));
+		recalculateInvTypesButton.setToolTipText("This will force the program to determine the type of t-invariants (it may take time) and refresh the comboboxes below:");
 		recalculateInvTypesButton.setBounds(colA_posX+105, positionY, 130, 20);
 		recalculateInvTypesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
