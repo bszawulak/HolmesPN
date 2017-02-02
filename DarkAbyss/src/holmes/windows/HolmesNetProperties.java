@@ -207,7 +207,7 @@ public class HolmesNetProperties extends JFrame {
 					transInNoInvariant++;
 				}
 			}
-			textField.append("Proper t-invariants (Cx = 0): "+normal+"\n");
+			textField.append("t-invariants (Cx = 0): "+normal+"\n");
 			textField.append("Sur-t-invariants (Cx > 0): "+sur+"\n");
 			textField.append("Sub-t-invariants (Cx < 0): "+sub+"\n");
 			textField.append("Non-t-invariants (Cx <=> 0): "+none+"\n");

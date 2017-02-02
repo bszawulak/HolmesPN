@@ -394,8 +394,8 @@ public class Toolbar extends BorderDock {
 
 			}
 		};
-		testButton.setEnabled(false);
-		analysisDockables.add(createButtonDockable("Testing", testButton));
+		//testButton.setEnabled(false);
+		//analysisDockables.add(createButtonDockable("Testing", testButton));
 		
 		//TODO:
 		
@@ -433,7 +433,7 @@ public class Toolbar extends BorderDock {
 				
 			}
 		};
-		analysisDockables.add(createButtonDockable("Testing2", testButton2));
+		//analysisDockables.add(createButtonDockable("Testing2", testButton2));
 		
 		
 		return analysisDockables;

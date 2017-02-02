@@ -43,6 +43,20 @@ public class MauritiusMap {
 		ArrayList<Integer> antiVector = InvariantsTools.getFrequency(antiInvariants, true);
 		transMCTNames = getMCTNamesVector();
 		
+		
+		ArrayList<ArrayList<Integer>> modInvariants = new ArrayList<>();
+		for(int i=0; i<subInvariants.size(); i++) {
+			ArrayList<Integer> pseudoInv = new ArrayList<>();
+			for(int j=0; j<antiVector.size(); j++) {
+				if(antiVector.get(j) == 0)
+					pseudoInv.add(1);
+				else
+					pseudoInv.add(0);
+			}
+			modInvariants.add(pseudoInv);
+		}
+		
+		/*
 		//usuń tranzycje z anty-listy:
 		if(antiVector.size() == subInvariants.size()) {
 			for(ArrayList<Integer> inv : subInvariants) {
@@ -79,8 +93,10 @@ public class MauritiusMap {
 				}
 			}
 		}
+		*/
 
-		createMTreeV2(subInvariants, rootTransition, root);
+		createMTreeV2(modInvariants, rootTransition, root);
+		//createMTreeV2(invariants, rootTransition, root);
 	}
 	
 	/**

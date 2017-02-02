@@ -591,7 +591,7 @@ public class DarkMenu extends JMenuBar {
 				}
 			}
 		});
-		otherMenu.add(fixNet);
+		//otherMenu.add(fixNet);
 		
 		//CLUSTERS MENU
 		/*
