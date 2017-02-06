@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import holmes.clusters.Clustering;
 import holmes.clusters.ClusteringExtended;
 import holmes.darkgui.GUIManager;
+import holmes.petrinet.elements.Transition;
 import holmes.utilities.Tools;
 
 /**
@@ -354,6 +355,10 @@ public class ClusterReader {
 					}
 					data.metaData.MCTnumber = data.mctSets.size(); //ile nietrywalnych MCT
 
+					//rewrite
+					//ArrayList<ArrayList<Transition>> mct222 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTMatrix();
+					//for()
+					//int x = 1;
 				} else {
 					GUIManager.getDefaultGUIManager().log("MCT file corrupt. Path: "+filePaths[2], "error", true);
 					br.close();
