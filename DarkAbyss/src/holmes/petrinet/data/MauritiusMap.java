@@ -94,8 +94,9 @@ public class MauritiusMap {
 			}
 		}
 		*/
-
-		createMTreeV2(modInvariants, rootTransition, root);
+		
+		createMTreeV2(antiInvariants, rootTransition, root);
+		//createMTreeV2(modInvariants, rootTransition, root);
 		//createMTreeV2(invariants, rootTransition, root);
 	}
 	

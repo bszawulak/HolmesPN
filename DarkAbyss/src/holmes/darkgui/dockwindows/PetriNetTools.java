@@ -73,9 +73,10 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		DefaultMutableTreeNode otherPetriNetsNode = new DefaultMutableTreeNode("Other transitions");
 		otherPetriNetsNode.add(new DefaultMutableTreeNode("(TPN) Time"));
 		otherPetriNetsNode.add(new DefaultMutableTreeNode("(FPN) Functional"));
-		otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Immediate"));
-		otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Deterministic"));
-		otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Scheduled"));
+		otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Stochastic"));
+		//otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Immediate"));
+		//otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Deterministic"));
+		//otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Scheduled"));
 		
 		DefaultMutableTreeNode hierachicalNode = new DefaultMutableTreeNode("Subsets");
 		hierachicalNode.add(new DefaultMutableTreeNode("Subnet T-type"));
@@ -188,6 +189,9 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			case "(FPN) Functional":
 				guiManager.getWorkspace().setGraphMode(DrawModes.FUNCTIONALTRANS);
 				break;
+			case "(SPN) Stochastic":
+				guiManager.getWorkspace().setGraphMode(DrawModes.STOCHASTICTRANS);
+				break;
 			case "(SPN) Immediate":
 				guiManager.getWorkspace().setGraphMode(DrawModes.IMMEDIATETRANS);
 				break;
@@ -238,7 +242,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		private static final long serialVersionUID = 3169140404884453079L;
 		private ImageIcon placeIcon, transitionIcon, pointerIcon,
 				eraserIcon, timeTransitionIcon, functionalTransIcon,
-				immediateTransIcon, deterministicTransIcon, scheduledTransIcon;
+				stochasticTrans, immediateTransIcon, deterministicTransIcon, scheduledTransIcon;
 
 		private ImageIcon arcIcon, arcIconRead, arcIconInh, arcIconRst, arcIconEql, arcIconModifier;
 		
@@ -252,6 +256,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			transitionIcon = Tools.getResIcon16("/icons/transition.gif");
 			timeTransitionIcon = Tools.getResIcon16("/icons/timeTransition.gif");
 			functionalTransIcon = Tools.getResIcon16("/icons/funcTransition.gif");
+			stochasticTrans = Tools.getResIcon16("/icons/stochasticTransition.gif");
 			immediateTransIcon = Tools.getResIcon16("/icons/immediateTransition.gif");
 			deterministicTransIcon = Tools.getResIcon16("/icons/deterministicTransition.gif");
 			scheduledTransIcon = Tools.getResIcon16("/icons/scheduledTransition.gif");
@@ -313,6 +318,10 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				case "(FPN) Functional":
 					setIcon(functionalTransIcon);
 					setToolTipText("Allows you to place a Functional Transition on the sheet.");
+					break;
+				case "(SPN) Stochastic":
+					setIcon(stochasticTrans);
+					setToolTipText("Allows you to place a Stochastic Transition on the sheet.");
 					break;
 				case "(SPN) Immediate":
 					setIcon(immediateTransIcon);

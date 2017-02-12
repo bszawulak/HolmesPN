@@ -60,7 +60,7 @@ public class GraphPanel extends JComponent {
 		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
 		SUBNET_T, SUBNET_P, SUBNET_PT */
 	public enum DrawModes { POINTER, ERASER, PLACE, 
-		TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
+		TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, STOCHASTICTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
 		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
 		SUBNET_T, SUBNET_P, SUBNET_PT }
 	
@@ -948,6 +948,13 @@ public class GraphPanel extends JComponent {
 						overlord.markNetChange();
 						break;
 					case TRANSITION:
+						overlord.getWorkspace().getProject().restoreMarkingZero();
+						
+						addNewTransition(mousePt);
+						overlord.reset.reset2ndOrderData(true);
+						overlord.markNetChange();
+						break;
+					case STOCHASTICTRANS:
 						overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						addNewTransition(mousePt);
