@@ -33,6 +33,7 @@ import holmes.workspace.WorkspaceSheet;
  * Klasa, której zadaniem jest reprezentacja graficzna używanej w programie
  * sieci Petriego oraz oferowanie interfejsu umożliwiającego interakcję ze
  * strony użytkownika.
+ * Drobne zmiany
  * 
  * @author students
  * @author MR - zmiany, zmiany, zmiany
@@ -67,7 +68,6 @@ public class GraphPanel extends JComponent {
 	/** Jeśli nie jest równy null, to znaczy, że właśnie przesuwamy jakiś punkt łamiący łuk */
 	public Point arcBreakPoint = null;
 	public Point arcNewBreakPoint = null;
-
 
 	/**
 	 * Konstruktor obiektu klasy GraphPanel
