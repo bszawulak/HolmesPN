@@ -94,6 +94,8 @@ public class QuickSimTools {
 		for(int t=0; t<transSize; t++) {
 			Transition trans = transitions.get(t);
 			double firing = avgFire.get(t);
+			String tmp = Tools.cutValueExt(firing, 3);
+			firing = Double.parseDouble(tmp);
 			trans.qSimFired = firing;
 			
 			//trans.
@@ -101,6 +103,8 @@ public class QuickSimTools {
 			
 			double reliance = firing/max;
 			int fill = (int)((double)30 * reliance);
+
+			
 			trans.qSimFillValue = fill;
 			
 			if(firing < 0.05) {

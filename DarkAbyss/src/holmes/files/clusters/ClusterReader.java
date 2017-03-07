@@ -365,6 +365,10 @@ public class ClusterReader {
 				return null;
 			}
 		}
+		
+		
+		
+		
 		GUIManager.getDefaultGUIManager().log("MCT data: extracted.", "text",true);
 		//SEKCJA III: ODCZYT PLIKU KLASTROWANIA
 		

@@ -78,6 +78,8 @@ public class HolmesKnockout extends JFrame {
 	private int currentTreshold = 20;
 	private boolean contractedMode = true;
 	
+	private int globalMode = 0;
+	
 	/**
 	 * Konstruktor obiektu klasy HolmesKnockout
 	 */
@@ -169,6 +171,32 @@ public class HolmesKnockout extends JFrame {
 			}
 		});
 		panel.add(tokenSpinner);
+
+		final JComboBox<String> modeCombo = new JComboBox<String>(dataT);
+		modeCombo.setBounds(posX+560, posY+20, 270, 20);
+		modeCombo.setSelectedIndex(0);
+		modeCombo.setMaximumRowCount(6);
+		modeCombo.removeAllItems();
+		modeCombo.addItem("Show tree for ramaining transitions");
+		modeCombo.addItem("Show tree for knocked transitions");
+		modeCombo.addItem("Show tree for knocked transitions (threshold)");
+		modeCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				int selected = modeCombo.getSelectedIndex();
+				if(selected == 0) {
+					globalMode = 0;
+				} else if (selected == 1) {
+					globalMode = 1;
+				} else if (selected == 2) {
+					globalMode = 2;
+				} else {
+					globalMode = 1;
+				}
+			}
+			
+		});
+		
+		panel.add(modeCombo);
 		
 		JCheckBox contractedModeBox = new JCheckBox("Contracted");
 		contractedModeBox.setBounds(posX+690, posY, 90, 20);
@@ -192,7 +220,8 @@ public class HolmesKnockout extends JFrame {
 		generateButton.setToolTipText("Generate knockout map for the currently selected transition.");
 		generateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				mmCurrentObject = generateMap();
+				//globalMode = 0;
+				mmCurrentObject = generateMap(globalMode);
 				if(mmCurrentObject != null) {
 					paintMap();
 				}
@@ -209,7 +238,13 @@ public class HolmesKnockout extends JFrame {
 		showKnockoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				try {
-					MauritiusMap infoMap = generateMap();
+					//globalMode = 1;
+					MauritiusMap infoMap;
+					if(globalMode == 0)
+						infoMap = generateMap(1); //nie ma sensu dla 'remaining transitions', tylko dla knockoutowanych
+					else
+						infoMap = generateMap(globalMode);
+					
 					if(infoMap != null) {
 						HolmesNotepad notePad = new HolmesNotepad(900,600);
 						notePad.setVisible(true);
@@ -248,8 +283,8 @@ public class HolmesKnockout extends JFrame {
 		toNetKnockoutButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/sendToNet.png"));
 		toNetKnockoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				
-				MauritiusMap infoMap = generateMap();
+				//globalMode = 1;
+				MauritiusMap infoMap = generateMap(globalMode);
 				if(infoMap != null) {
 					getKnockoutInfoToNet(infoMap);
 				}
@@ -387,13 +422,20 @@ public class HolmesKnockout extends JFrame {
 		try {
 			notePad.addTextLineNL("Objective reaction (knock-out reaction): "+infoMap.getRoot().transName, "text");
 			notePad.addTextLineNL("", "text");
-			notePad.addTextLineNL("Reactions knocked out: ", "text");
-			Collections.sort(dataMatrix.get(0));
-			for(int element : dataMatrix.get(0)) {
-				notePad.addTextLineNL("[t_"+element+"] : "+transitions.get(element).getName(), "text");
+			
+			if(dataMatrix.get(0).size() == 0) {
+				notePad.addTextLine("Reactions knocked out: ", "text");
+				notePad.addTextLineNL(" 0  (zero, all transitions present in some unaffected t-invariants).", "text");
+			} else {
+				notePad.addTextLineNL("Reactions knocked out: ", "text");
+				Collections.sort(dataMatrix.get(0));
+				for(int element : dataMatrix.get(0)) {
+					notePad.addTextLineNL("[t_"+element+"] : "+transitions.get(element).getName(), "text");
+				}
 			}
+			
 			notePad.addTextLineNL("", "text");
-			notePad.addTextLineNL("Common-group (MCT) reactions: ", "text");
+			notePad.addTextLineNL("Common-group (e.g., MCT set) reactions: ", "text");
 			
 			Collections.sort(dataMatrix.get(1));
 			for(int element : dataMatrix.get(1)) {
@@ -405,7 +447,6 @@ public class HolmesKnockout extends JFrame {
 			GUIManager.getDefaultGUIManager().log("Error"+e.getMessage(), "error", true);
 		}
 		
-		//TODO:
 		try {
 			int rootTransition = transitionsCombo.getSelectedIndex()-1;
 			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
@@ -413,10 +454,14 @@ public class HolmesKnockout extends JFrame {
 			
 			notePad.addTextLineNL("", "text");
 			
+			notePad.addTextLineNL("t-invariants unaffected by knockout: "+(invariants.size() - invIndices.size()) , "text");
+			notePad.addTextLineNL("t-invariants disabled: "+invIndices.size() , "text");
+			
 			String name = transitions.get(rootTransition).getName();
-			notePad.addTextLineNL("Invariants with transition t"+rootTransition+"_"+name, "text");
+			notePad.addTextLineNL("t-ivariants ("+invIndices.size() + ") with transition t_"+rootTransition+"_"+name+ " (disabled t-inv.):", "text");
+			notePad.addTextLineNL("", "text");
 			for(int element : invIndices) {
-				notePad.addTextLineNL("i_"+element+" , ", "text");
+				notePad.addTextLine("i_"+element+" , ", "text");
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error in invariants section.\n"+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -443,8 +488,12 @@ public class HolmesKnockout extends JFrame {
 		ArrayList<Integer> transCommonSetSize = new ArrayList<Integer>();
 		
 		//oblicz wszystkie:
+		int mode = 1;
+		if(globalMode != 0)
+			mode = globalMode; //nie ma sensu dla 'remaining transitions' (case 0), a tylko dla knockoutowanych
+		
 		for(int t=0; t<transNumber; t++) {
-			MauritiusMap mm = new MauritiusMap(invariants, t, currentTreshold);
+			MauritiusMap mm = new MauritiusMap(invariants, t, currentTreshold, mode);
 			ArrayList<ArrayList<Integer>> dataMatrix = collectMapData(mm);
 			transFailDependency.add(dataMatrix.get(0).size());
 			transCommonSetSize.add(dataMatrix.get(1).size());
@@ -850,9 +899,11 @@ public class HolmesKnockout extends JFrame {
 
 	/**
 	 * Metoda odpowiedzialna za wygenerowanie mapy.
+	 * @param mode int - 0: tworzy drzewo dla pozostałych inv/trans, 1: tworzy drzewo dla deaktywowanych inv/trans,
+	 * 		2: tworzy drzewo dla deaktywowanych inv/trans z progiem
 	 * @return MauritiusMapBT - obiekt mapy
 	 */
-	private MauritiusMap generateMap() {
+	private MauritiusMap generateMap(int mode) {
 		int selection = transitionsCombo.getSelectedIndex();
 		if(selection == 0) {
 			JOptionPane.showMessageDialog(null, "Please choose main reaction for Mauritius Map.", 
@@ -871,7 +922,7 @@ public class HolmesKnockout extends JFrame {
 
 		MauritiusMap mm = null;
 		try {
-			mm = new MauritiusMap(invariants, selection, currentTreshold);
+			mm = new MauritiusMap(invariants, selection, currentTreshold, mode);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Mauritius Map creation failed.", 
 					"Error", JOptionPane.INFORMATION_MESSAGE);
@@ -893,7 +944,7 @@ public class HolmesKnockout extends JFrame {
 	 * @return BufferedImage - obrazek
 	 */
 	public BufferedImage getImageFromPanel() {
-		MauritiusMap mm = generateMap();
+		MauritiusMap mm = generateMap(globalMode);
 		mmp.registerNewMap(mm, contractedMode);
 		mmp.repaint();
 		

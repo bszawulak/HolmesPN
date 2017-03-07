@@ -30,31 +30,73 @@ public class MauritiusMap {
 	 * @param rootTransition int - indeks tranzycji bazowej
 	 * @param coverageVal int - od 0 do 100. Np. 20 oznacza, że tranzycja musi być obecna w 20% inwariantów zbioru 
 	 * 		bazowego lub więcej
+	 * @param mode int - 0: tworzy drzewo dla pozostałych inv/trans, 1: tworzy drzewo dla deaktywowanych inv/trans,
+	 * 		2: tworzy drzewo dla deaktywowanych inv/trans z progiem
 	 */
-	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants, int rootTransition, int coverageVal) {
+	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants, int rootTransition, int coverageVal, int mode) {
 		root = new BTNode();
 		root.type = NodeType.ROOT;
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		
+		transMCTNames = getMCTNamesVector();
 		invariants = addIndexToInvariants(invariants);
 		
-		ArrayList<ArrayList<Integer>> subInvariants = InvariantsTools.returnT_invWithTransition(invariants, rootTransition);
-		ArrayList<ArrayList<Integer>> antiInvariants = InvariantsTools.returnT_invWithoutTransition(invariants, rootTransition);
-		ArrayList<Integer> antiVector = InvariantsTools.getFrequency(antiInvariants, true);
-		transMCTNames = getMCTNamesVector();
+		//ArrayList<ArrayList<Integer>> subInvariants = InvariantsTools.returnT_invWithTransition(invariants, rootTransition);
+		//ArrayList<ArrayList<Integer>> antiInvariants = InvariantsTools.returnT_invWithoutTransition(invariants, rootTransition);
+		//ArrayList<Integer> antiVector = InvariantsTools.getFrequency(antiInvariants, true);
 		
 		
-		ArrayList<ArrayList<Integer>> modInvariants = new ArrayList<>();
-		for(int i=0; i<subInvariants.size(); i++) {
-			ArrayList<Integer> pseudoInv = new ArrayList<>();
-			for(int j=0; j<antiVector.size(); j++) {
-				if(antiVector.get(j) == 0)
-					pseudoInv.add(1);
-				else
-					pseudoInv.add(0);
+		if(mode == 0) { //dla pozostałych inv (tj. tych BEZ wybranej tranzycji)
+			ArrayList<ArrayList<Integer>> antiInvariants = InvariantsTools.returnT_invWithoutTransition(invariants, rootTransition);
+			createMTreeV2(antiInvariants, rootTransition, root);
+		} else if(mode == 1) { //dla deaktywowanych inv (tj. tych z wybraną tranzycją)
+			//1) wybierz zbiór S1 inv. z tranzycją T
+			//2) wybierz zbiór S2 inv. bez tranzycji T
+			//3) usun z S1 tranzycje, ktore wystepuja w S2 (bo one sa odporne)
+			
+			ArrayList<ArrayList<Integer>> invariantsWITHroot = InvariantsTools.returnT_invWithTransition(invariants, rootTransition);
+			ArrayList<ArrayList<Integer>> invariantsWITHOUTroot = InvariantsTools.returnT_invWithoutTransition(invariants, rootTransition);
+			ArrayList<Integer> antiVector = InvariantsTools.getFrequency(invariantsWITHOUTroot, true);
+			
+			for(int i=0; i<invariantsWITHroot.size(); i++) {
+				ArrayList<Integer> modInv =  invariantsWITHroot.get(i);
+				for(int j=0; j<antiVector.size(); j++) {
+					if(antiVector.get(j) > 0)
+						modInv.set(j, 0);
+					else
+						;
+				}
 			}
-			modInvariants.add(pseudoInv);
+			createMTreeV2(invariantsWITHroot, rootTransition, root);
+		} else if(mode == 1) {  //dla deaktywowanych inv z progiem
+			//1) wybierz zbiór S1 inv. z tranzycją T
+			//2) wybierz zbiór S2 inv. bez tranzycji T
+			//3) usun z S1 tranzycje, ktore wystepuja w S2 częściej niz próg
+			
+			
+			ArrayList<ArrayList<Integer>> invariantsWITHroot = InvariantsTools.returnT_invWithTransition(invariants, rootTransition);
+			ArrayList<ArrayList<Integer>> invariantsWITHOUTroot = InvariantsTools.returnT_invWithoutTransition(invariants, rootTransition);
+			ArrayList<Integer> antiVector = InvariantsTools.getFrequency(invariantsWITHOUTroot, true);
+			
+			float treshold = (float)coverageVal / (float)100;
+			float maxCoverage = antiVector.get(rootTransition);
+			
+			for(int i=0; i<invariantsWITHroot.size(); i++) {
+				ArrayList<Integer> modInv =  invariantsWITHroot.get(i);
+				for(int j=0; j<antiVector.size(); j++) {
+					if(antiVector.get(j) > 0)
+						modInv.set(j, 0);
+					else
+						;
+				}
+			}
+			createMTreeV2(invariantsWITHroot, rootTransition, root);
+		} else { //default - dla deaktywowanych
+			
+			ArrayList<ArrayList<Integer>> subInvariants = InvariantsTools.returnT_invWithTransition(invariants, rootTransition);
+			createMTreeV2(subInvariants, rootTransition, root);
 		}
+		
+		
 		
 		/*
 		//usuń tranzycje z anty-listy:
@@ -94,10 +136,7 @@ public class MauritiusMap {
 			}
 		}
 		*/
-		
-		createMTreeV2(antiInvariants, rootTransition, root);
-		//createMTreeV2(modInvariants, rootTransition, root);
-		//createMTreeV2(invariants, rootTransition, root);
+
 	}
 	
 	/**

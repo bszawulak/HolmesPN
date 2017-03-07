@@ -139,7 +139,9 @@ public class HolmesAbout extends JFrame {
 		
 		textArea.setFont(new Font("Consolas", Font.PLAIN, 15));
 		textArea.append("Versions and authors:\n");
-		textArea.append("Holmes version 2.0, october 2015, 50k+ lines of code total \n");
+		textArea.append("Holmes version 1.0, january 2017, 57k+ lines of code total \n");
+		textArea.append("\n");
+		textArea.append("Holmes version 0.8, october 2015, 50k+ lines of code total \n");
 		textArea.append("  Radom Marcin, Ph.D.\n");
 		textArea.append("\n");
 		textArea.append("Abyss Version 1.2+, 2014-2015, 30k+ lines of code total \n");

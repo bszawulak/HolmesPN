@@ -68,7 +68,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Inhibitor Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Reset Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Equal Arc"));
-		basicPetriNetsNode.add(new DefaultMutableTreeNode("Modifier Arc"));
+		//basicPetriNetsNode.add(new DefaultMutableTreeNode("Modifier Arc"));
 
 		DefaultMutableTreeNode otherPetriNetsNode = new DefaultMutableTreeNode("Other transitions");
 		otherPetriNetsNode.add(new DefaultMutableTreeNode("(TPN) Time"));
