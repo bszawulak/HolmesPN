@@ -28,8 +28,8 @@ public class MauritiusMap {
 	 * Konstruktor używany do tworzenia mapy
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
 	 * @param rootTransition int - indeks tranzycji bazowej
-	 * @param coverageVal int - od 0 do 100. Np. 20 oznacza, że tranzycja musi być obecna w 20% inwariantów zbioru 
-	 * 		bazowego lub więcej
+	 * @param coverageVal int - od 0 do 100. Np. 90 oznacza, aby być uznana za wyłączoną, jeśli nie więcej niż 10% jej wystąpień jest
+	 * 		w zbiorze inwariantów WCIĄŻ działających (nie-wyłączonych)
 	 * @param mode int - 0: tworzy drzewo dla pozostałych inv/trans, 1: tworzy drzewo dla deaktywowanych inv/trans,
 	 * 		2: tworzy drzewo dla deaktywowanych inv/trans z progiem
 	 */
@@ -67,18 +67,28 @@ public class MauritiusMap {
 				}
 			}
 			createMTreeV2(invariantsWITHroot, rootTransition, root);
-		} else if(mode == 1) {  //dla deaktywowanych inv z progiem
+		} else if(mode == 2) {  //dla deaktywowanych inv z progiem
 			//1) wybierz zbiór S1 inv. z tranzycją T
 			//2) wybierz zbiór S2 inv. bez tranzycji T
-			//3) usun z S1 tranzycje, ktore wystepuja w S2 częściej niz próg
-			
+			//3) usun z S1 tranzycje, ktore wystepuja w S2 częściej niz próg (% wyłączenia: 100 oznacza, że tranzycja nie ma prawa
+			// 		wystąpić w zbiorze inwariantów wciąż działających, 90 oznacza, że maks 10% wszystkich wystąpień danej tranzycji
+			//		może być w zbiorze inwariantów wciąż aktywnych).
 			
 			ArrayList<ArrayList<Integer>> invariantsWITHroot = InvariantsTools.returnT_invWithTransition(invariants, rootTransition);
 			ArrayList<ArrayList<Integer>> invariantsWITHOUTroot = InvariantsTools.returnT_invWithoutTransition(invariants, rootTransition);
 			ArrayList<Integer> antiVector = InvariantsTools.getFrequency(invariantsWITHOUTroot, true);
+			ArrayList<Integer> knockVector = InvariantsTools.getFrequency(invariantsWITHroot, true);
 			
-			float treshold = (float)coverageVal / (float)100;
-			float maxCoverage = antiVector.get(rootTransition);
+			float treshold = (float)(100 - coverageVal) / (float)100; //% możliwych w zbiorze wciąż aktywnych t-inw.
+
+			for(int j=0; j<antiVector.size(); j++) {
+				try {
+					float x = (float)(antiVector.get(j)) / (float)(antiVector.get(j) + knockVector.get(j));
+					if(x < treshold) {
+						antiVector.set(j, 0); //udawajmy, że jej tam w ogóle nie ma, na potrzeby bloku niżej
+					}
+				} catch (Exception e) {} //divide by zero - ignore
+			}
 			
 			for(int i=0; i<invariantsWITHroot.size(); i++) {
 				ArrayList<Integer> modInv =  invariantsWITHroot.get(i);

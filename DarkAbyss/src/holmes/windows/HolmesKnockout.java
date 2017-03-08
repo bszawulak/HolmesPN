@@ -75,7 +75,7 @@ public class HolmesKnockout extends JFrame {
 	private ArrayList<Integer> disabledSetByObjR = null;
 	private ArrayList<Integer> commonSetToObjR = null;
 	
-	private int currentTreshold = 20;
+	private int currentTreshold = 100;
 	private boolean contractedMode = true;
 	
 	private int globalMode = 0;
@@ -412,10 +412,6 @@ public class HolmesKnockout extends JFrame {
 			dataMatrix.get(0).remove(dataMatrix.get(0).indexOf(-1));
 		if(dataMatrix.get(1).contains(-1))
 			dataMatrix.get(1).remove(dataMatrix.get(1).indexOf(-1));
-		//int noteValue = infoMap.getRoot().transFrequency;
-		//knockOutDataFailed = new ArrayList<Integer>();
-		//knockOutDataObjR = new ArrayList<Integer>();
-		//collectInfo(infoMap.getRoot(), noteValue);
 		
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		
