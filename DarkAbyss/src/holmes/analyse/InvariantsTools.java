@@ -1146,6 +1146,44 @@ public final class InvariantsTools {
 	}
 	
 	/**
+	 * Metoda zwraca wektor mówiący o liczbie wystąpień danego elementu w NORMALNYCH t-inwariantach.
+	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+	 * @param mmMode - Mauritius Map mode - w tym trybie ostatnia kolumna jest ignorowana, jako, że zawiera
+	 * indeks inwariantu w macierzy oryginalnej programu.
+	 * @return ArrayList[Integer] - wektor frekwencji wystąpień elementu sieci
+	 */
+	public static ArrayList<Integer> getFrequencyRealInvariants(ArrayList<ArrayList<Integer>> invariants, boolean mmMode) {
+		ArrayList<Integer> frequency = new ArrayList<Integer>();
+		if(invariants == null || invariants.size() ==0) {
+			return frequency;
+		}
+		
+		ArrayList<Integer> typesVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessT_InvTypesVector();
+		
+		int invNumber = invariants.size();
+		int invSize = invariants.get(0).size();
+		
+		if(mmMode)
+			invSize--;
+		
+		int freq = 0;
+		for(int column=0; column<invSize; column++) {
+			freq = 0;
+			for(int row=0; row<invNumber; row++) {
+				if(typesVector.get(row) != 0)
+					continue;
+				
+				if(invariants.get(row).get(column) != 0) {
+					freq++;
+				}
+			}
+			frequency.add(freq);
+		}
+		
+		return frequency;
+	}
+	
+	/**
      * Zwraca wektor tranzycji które są w jakichkolwiek t-inwariantach.
      * @param invMatrix ArrayList[ArrayList[Integer]] - macierz t-inwariantów
      * @return ArrayList[Integer] - wektor tranzycji pokrytych

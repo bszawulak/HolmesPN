@@ -3201,8 +3201,15 @@ public class HolmesDockWindowsTable extends JPanel {
 		PetriNet pn = overlord.getWorkspace().getProject();
 		pn.resetNetColors();
 		
-		ArrayList<Integer> freqVector = InvariantsTools.getFrequency(t_invariantsMatrix, false);
+		//TODO:
+		
+		
+		
+		//ArrayList<Integer> freqVector = InvariantsTools.getFrequency(t_invariantsMatrix, false);
+		ArrayList<Integer> freqVector = InvariantsTools.getFrequencyRealInvariants(t_invariantsMatrix, false);
 		ArrayList<Transition> transitions_tmp = overlord.getWorkspace().getProject().getTransitions();
+		
+		
 		
 		if(freqVector == null) {
 			JOptionPane.showMessageDialog(null, "T-invariants data unavailable.", "No t-invariants", JOptionPane.INFORMATION_MESSAGE);
