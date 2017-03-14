@@ -3210,7 +3210,6 @@ public class HolmesDockWindowsTable extends JPanel {
 		ArrayList<Transition> transitions_tmp = overlord.getWorkspace().getProject().getTransitions();
 		
 		
-		
 		if(freqVector == null) {
 			JOptionPane.showMessageDialog(null, "T-invariants data unavailable.", "No t-invariants", JOptionPane.INFORMATION_MESSAGE);
 		} else {

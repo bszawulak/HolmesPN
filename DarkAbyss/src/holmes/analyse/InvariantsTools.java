@@ -1170,7 +1170,7 @@ public final class InvariantsTools {
 		for(int column=0; column<invSize; column++) {
 			freq = 0;
 			for(int row=0; row<invNumber; row++) {
-				if(typesVector.get(row) != 0)
+				if(typesVector.get(row) != 0 && (typesVector.get(row)!=99999))
 					continue;
 				
 				if(invariants.get(row).get(column) != 0) {
