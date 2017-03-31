@@ -140,7 +140,7 @@ public class InvariantsCalculator implements Runnable {
 								+ t_invariantsList.size()+"\n", false);
 				}
 				
-				project.setT_InvMatrix(getInvariants(true), true);
+				project.setT_InvMatrix(getInvariants(true), true); //MCT HERE!!!
 				overlord.getT_invBox().showT_invBoxWindow(getInvariants(true));
 				overlord.reset.setT_invariantsStatus(true);
 				overlord.accessNetTablesWindow().resetT_invData();
@@ -177,6 +177,12 @@ public class InvariantsCalculator implements Runnable {
 				
 				overlord.markNetChange();
 				overlord.getT_invBox().getCurrentDockWindow().refreshSubSurCombos();
+
+				//MCT AGAIN!
+				MCTCalculator analyzer = overlord.getWorkspace().getProject().getMCTanalyzer();
+				ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
+				overlord.getWorkspace().getProject().setMCTMatrix(mct, true);
+				overlord.getMctBox().showMCT(mct);
 				
 				if(showInvSetsDifference) {
 					if(invBackupMatrix != null && invBackupMatrix.size() > 0) {

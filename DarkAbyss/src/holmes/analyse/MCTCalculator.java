@@ -64,21 +64,34 @@ public class MCTCalculator {
 	 */
 	public ArrayList<ArrayList<Transition>> generateMCT() {
 		ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		ArrayList<ArrayList<Integer>> invariantsTranspose =	InvariantsTools.transposeMatrix(
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() );
+		ArrayList<ArrayList<Integer>> invariantsTranspose = null;
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_invTypesComputed() == true) {
+			//tylko prawdziwe mct
+			ArrayList<Integer> tInvTypes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessT_InvTypesVector();
+			ArrayList<ArrayList<Integer>> tInv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() ;
+			ArrayList<ArrayList<Integer>> cleantInv = new ArrayList<>();
+			
+			for(int x=0; x<tInv.size(); x++) {
+				if(tInvTypes.get(x) == 0)
+					cleantInv.add(tInv.get(x));
+			}
+			invariantsTranspose =	InvariantsTools.transposeMatrix(cleantInv );
+		} else {
+			invariantsTranspose =	InvariantsTools.transposeMatrix(
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() );
+		}
 		
 		invariantsTranspose = InvariantsTools.returnBinaryMatrix(invariantsTranspose);
 		
 		ArrayList<ArrayList<Transition>> mctGroups = new ArrayList<ArrayList<Transition>>();
 		int size = allTransitions.size();
-		
+	
 		
 		for(int t1=0; t1<size; t1++) {
 			ArrayList<Transition> currentMCT = new ArrayList<Transition>();
 			ArrayList<Integer> invVector = invariantsTranspose.get(t1);
 			ArrayList<Integer> support = InvariantsTools.getSupport(invVector); //tutaj: niezerowy, jeśli t należy do inw
 			for(int t2=0; t2<size; t2++) {
-				
 				ArrayList<Integer> invVector2 = invariantsTranspose.get(t2);
 				if(invVector.equals(invVector2) && support.size()>0 ) {
 					currentMCT.add(allTransitions.get(t2));
@@ -87,6 +100,7 @@ public class MCTCalculator {
 			if ((currentMCT.size() > 0) && !mctGroups.contains(currentMCT))
 				mctGroups.add(currentMCT);
 		}
+		
 		GUIManager.getDefaultGUIManager().reset.setMCTStatus(true); //status zbiorów MCT: wczytane
 		return mctGroups;
 	}
