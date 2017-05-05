@@ -604,7 +604,7 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				double eft = Double.parseDouble(line);
-				transition.setEFT(eft);
+				transition.forceSetEFT(eft);
 				return;
 			}
 			

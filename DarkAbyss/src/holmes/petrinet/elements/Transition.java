@@ -565,6 +565,18 @@ public class Transition extends Node {
 	}
 	
 	/**
+	 * Na potrzeby wczytywania pliku projektu, bez porownania z LFT
+	 * @param value
+	 */
+	public void forceSetEFT(double value) {
+		if(value < 0) {
+			this.TPN_eft = 0;
+			return;
+		}
+		this.TPN_eft = value;
+	}
+	
+	/**
 	 * Metoda pozwala odczytać przypisany czas EFT tranzycji.
 	 * @return double - czas EFT
 	 */

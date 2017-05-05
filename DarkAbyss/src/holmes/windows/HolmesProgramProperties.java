@@ -443,7 +443,7 @@ public class HolmesProgramProperties extends JFrame {
 		
 		
 		SpinnerModel fontSizeSpinnerModel = new SpinnerNumberModel(
-				Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontSize")), 7, 16, 1);
+				Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontSize")), 7, 30, 1);
 		JSpinner fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
 		fontSizeSpinner.setBounds(posX+150, posY+=20, 80, 20);
 		fontSizeSpinner.addChangeListener(new ChangeListener() {
