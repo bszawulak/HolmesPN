@@ -257,7 +257,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		
 		initiateContainers();
 		
-		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
+		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode", "Color"};
 		mode = SIMULATOR;
 		setSimulator(sim);
 		
@@ -285,7 +285,9 @@ public class HolmesDockWindowsTable extends JPanel {
 					simMode.setSelectedIndex(1);
 				} else if(change == 2) {
 					simMode.setSelectedIndex(2);
-				} else {
+				} else if(change == 3) {
+					simMode.setSelectedIndex(3);
+				}else {
 					overlord.log("Error while changing graphical simulator mode.", "error", true);
 				}
 				doNotUpdate = false;

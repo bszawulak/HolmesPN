@@ -66,7 +66,7 @@ public class NetSimulator {
 
 	/** BASIC, TIME, HYBRID */
 	public enum NetType {
-		BASIC, TIME, HYBRID
+		BASIC, TIME, HYBRID, COLOR
 	}
 
 	/**
@@ -219,6 +219,10 @@ public class NetSimulator {
 			this.netSimType = NetType.HYBRID;
 			engine.setNetSimType(netSimType);
 			return 2;
+		} else if (check == 3) {
+			this.netSimType = NetType.COLOR;
+			engine.setNetSimType(netSimType);
+			return 3;
 		}
 		return -1;
 	}

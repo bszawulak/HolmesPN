@@ -25,6 +25,7 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.petrinet.subnets.SubnetsTools;
 import holmes.utilities.Tools;
 import holmes.workspace.WorkspaceSheet;
@@ -290,6 +291,10 @@ public class GraphPanel extends JComponent {
 		}
 		
 		ElementDrawSettings eds = new ElementDrawSettings();
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().getSimNetType() == NetType.COLOR) {
+			eds.color = true;
+		}
+		//TODO:
 		
 		for (Arc a : getArcs()) {
 			a.draw(g2d, this.sheetId, getZoom(), eds);

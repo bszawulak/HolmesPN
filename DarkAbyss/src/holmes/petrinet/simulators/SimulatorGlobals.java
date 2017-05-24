@@ -189,6 +189,8 @@ public class SimulatorGlobals {
 			return 1;
 		} else if (type == 2) {
 			return 2;
+		} else if (type == 3) {
+			return 3;
 		}
 		return 1;
 	}

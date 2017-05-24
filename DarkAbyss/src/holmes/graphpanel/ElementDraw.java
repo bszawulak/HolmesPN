@@ -635,6 +635,14 @@ public final class ElementDraw {
 				}
 				
 				drawTokens(g, place, nodeBounds);
+				
+				if (eds.color == true) {
+					String txt = "["+place.getTokensNumber()+","+place.token1Red+","+place.token2Blue+","+place.token3Green+","+place.token4Black+","+place.token5White+"]";
+					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2 ) - 15;
+					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
+					g.setColor(Color.BLUE);
+					g.drawString(txt, posX, posY);
+				}
 			}
 		} else if(node instanceof MetaNode) { //TODO: znacznik meta
 			MetaNode metanode = (MetaNode)node;

@@ -50,6 +50,16 @@ public class Place extends Node {
 	public double qSimTokens = 0; //ile średnio tokenów w symulacji
 	public String qSimText = ""; //dodatkowy tekst
 	
+	public int token1Red = 0;
+	public int token2Blue = 0;
+	public int token3Green = 0;
+	public int token4Black = 0;
+	public int token5White = 0;
+	public int reserved1Red = 0;
+	public int reserved2Blue = 0;
+	public int reserved3Green = 0;
+	public int reserved4Black = 0;
+	public int reserved5White = 0;
 	
 	/**
 	 * Konstruktor obiektu miejsca sieci.

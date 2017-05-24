@@ -194,6 +194,18 @@ public class StandardTokenSimulator implements IEngine {
 					}
 				}
 			}
+		} if (simulationType == NetType.COLOR) {
+			Collections.shuffle(transitionsIndexList);
+
+			for (int i = 0; i < transitionsIndexList.size(); i++) {
+				Transition transition = transitions.get(transitionsIndexList.get(i));
+				if (transition.isActive() ) {
+					if ((generator.nextInt(100) < 50) || maxMode) { // 50% 0-4 / 5-9
+						transition.bookRequiredTokens();
+						launchableTransitions.add(transition);
+					}
+				}
+			}
 		} else if (simulationType == NetType.HYBRID) { 
 			timeTransDecisions();
 			
