@@ -327,6 +327,14 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("CleanColor", cleanButton));
 		
+		ToolbarButtonAction fireRatesButton = new ToolbarButtonAction(this, "FiringRates", "Show Firing rates manager window", 
+				Tools.getResIcon48("/icons/toolbar/firingRates.png")) {
+			public void actionPerformed(ActionEvent actionEvent) {
+				//overlord.reset.clearGraphColors();
+			}
+		};
+		analysisDockables.add(createButtonDockable("FiringRates", fireRatesButton));
+		
 		//TODO:
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/aaa.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {	
