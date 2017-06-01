@@ -26,6 +26,7 @@ import holmes.petrinet.simulators.StandardRandom;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
 import holmes.windows.HolmesNotepad;
+import holmes.windows.managers.HolmesSPNmanager;
 import sun.net.ftp.FtpClient.TransferType;
 
 import com.javadocking.DockingManager;
@@ -330,6 +331,7 @@ public class Toolbar extends BorderDock {
 		ToolbarButtonAction fireRatesButton = new ToolbarButtonAction(this, "FiringRates", "Show Firing rates manager window", 
 				Tools.getResIcon48("/icons/toolbar/firingRates.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {
+				new HolmesSPNmanager(GUIManager.getDefaultGUIManager().getFrame());
 				//overlord.reset.clearGraphColors();
 			}
 		};
