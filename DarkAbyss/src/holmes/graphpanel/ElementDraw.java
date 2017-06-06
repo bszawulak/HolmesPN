@@ -34,6 +34,13 @@ import holmes.utilities.Tools;
 public final class ElementDraw {
 	private static Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);
 	private static Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
+	
+	private static Color cRed = Color.red;
+	private static Color cGreen = Color.green;
+	private static Color cBlue = Color.blue;
+	private static Color cYellow = new Color(255,155,0) ;
+	private static Color cGrey = Color.gray;
+	private static Color cBlack = Color.black;
 
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
@@ -636,12 +643,66 @@ public final class ElementDraw {
 				
 				drawTokens(g, place, nodeBounds);
 				
-				if (eds.color == true) {
-					String txt = "["+place.getTokensNumber()+","+place.token1Red+","+place.token2Blue+","+place.token3Green+","+place.token4Black+","+place.token5White+"]";
-					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2 ) - 15;
+				//TODO: COLORS
+				if (eds.color == true || place.isColored) {
+					Font currentFont = g.getFont();
+					Font newFont = currentFont.deriveFont(currentFont.getSize() * 1.4F);
+					g.setFont(newFont);
+					
+					String txtT0 = "" +place.getColorTokensNumber(0);
+					String txtT1 = "" +place.getColorTokensNumber(1);
+					String txtT2 = "" +place.getColorTokensNumber(2);
+					String txtT3 = "" +place.getColorTokensNumber(3);
+					String txtT4 = "" +place.getColorTokensNumber(4);
+					String txtT5 = "" +place.getColorTokensNumber(5);
+					int txtW0 = g.getFontMetrics().stringWidth(txtT0);
+					int txtW1 = g.getFontMetrics().stringWidth(txtT1);
+					int txtW2 = g.getFontMetrics().stringWidth(txtT2);
+					int txtW3 = g.getFontMetrics().stringWidth(txtT3);
+					int txtW4 = g.getFontMetrics().stringWidth(txtT4);
+					int txtW5 = g.getFontMetrics().stringWidth(txtT5);
+					
+					g.setColor(Color.black);
+					String txt = "[";
+					int posX = nodeBounds.x - (g.getFontMetrics().stringWidth(txt) / 2 ) - 15;
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
-					g.setColor(Color.BLUE);
 					g.drawString(txt, posX, posY);
+					
+					posX += (txtW0 - 6*txtT0.length() );
+					g.setColor(cRed);
+					g.drawString(txtT0, posX, posY);
+					
+					posX += (txtW1 - 6*txtT1.length()  + txtW0);
+					g.setColor(cGreen);
+					g.drawString(txtT1, posX, posY);
+					
+					posX += (txtW2 - 6*txtT2.length()  + txtW1);
+					g.setColor(cBlue);
+					g.drawString(txtT2, posX, posY);
+					
+					posX += (txtW3 - 6*txtT3.length()  + txtW2);
+					g.setColor(cYellow);
+					g.drawString(txtT3, posX, posY);
+					
+					posX += (txtW4 - 6*txtT4.length()  + txtW3);
+					g.setColor(cGrey);
+					g.drawString(txtT4, posX, posY);
+					
+					posX += (txtW5 - 6*txtT5.length()  + txtW4);
+					g.setColor(cBlack);
+					g.drawString(txtT5, posX, posY);
+					
+					txt = "]";
+					posX += (g.getFontMetrics().stringWidth(txt) + txtW5 );
+					g.setColor(cBlack);
+					g.drawString(txt, posX, posY);
+					
+					g.setFont(currentFont);
+					//String txt = "["+place.getTokensNumber()+","+place.token1green+","+place.token2blue+","+place.token3yellow+","+place.token4grey+","+place.token5black+"]";
+					//int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2 ) - 15;
+					//int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
+					//g.setColor(Color.BLUE);
+					//g.drawString(txt, posX, posY);
 				}
 			}
 		} else if(node instanceof MetaNode) { //TODO: znacznik meta
@@ -1096,7 +1157,7 @@ public final class ElementDraw {
 		if(breaks > 0) { //o żesz...
 			handleBrokenArc(g, STEP_COUNT, step, breakPoints, breaks, startPos, endPos, arcWidth, weight);
 		} else {
-			arcWidth = Math.hypot(startPos.x - endPos.x, startPos.y - endPos.y); //TODO: suma po breakach, potem wybrać odcinek, a potem jego dlugość
+			arcWidth = Math.hypot(startPos.x - endPos.x, startPos.y - endPos.y); //suma po breakach, potem wybrać odcinek, a potem jego dlugość
 			stepSize = arcWidth / (double) STEP_COUNT;
 			double a = 0;
 			double b = 0;

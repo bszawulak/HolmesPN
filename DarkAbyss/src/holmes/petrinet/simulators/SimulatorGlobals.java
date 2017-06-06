@@ -38,7 +38,7 @@ public class SimulatorGlobals {
 	private int SPNimmediateMode = 2;
 	private boolean SPNdetRemove = true;
 	
-	private boolean ssaMassActionKineticsEnabled = false;
+	private boolean ssaMassActionKineticsEnabled = true;
 	
 	public boolean quickSimToken = false;
 	

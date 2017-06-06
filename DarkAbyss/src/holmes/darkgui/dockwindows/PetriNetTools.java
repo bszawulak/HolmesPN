@@ -68,6 +68,9 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Inhibitor Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Reset Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Equal Arc"));
+		
+		basicPetriNetsNode.add(new DefaultMutableTreeNode("C-Place"));
+		basicPetriNetsNode.add(new DefaultMutableTreeNode("C-Arc"));
 		//basicPetriNetsNode.add(new DefaultMutableTreeNode("Modifier Arc"));
 
 		DefaultMutableTreeNode otherPetriNetsNode = new DefaultMutableTreeNode("Other transitions");
@@ -228,6 +231,12 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			case "General Subnet":
 				guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_PT);
 				break;
+			case "C-Place":
+				guiManager.getWorkspace().setGraphMode(DrawModes.CPLACE);
+				break;
+			case "C-Arc":
+				guiManager.getWorkspace().setGraphMode(DrawModes.CARC);
+				break;
 			}
 
 		}
@@ -247,6 +256,8 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		private ImageIcon arcIcon, arcIconRead, arcIconInh, arcIconRst, arcIconEql, arcIconModifier;
 		
 		private ImageIcon subnetT, subnetP, subnetPT;
+		
+		private ImageIcon cplaceIcon, carcIcon;
 		/**
 		 * Konstruktor domyślny obiektu klasy wewnętrznej LeafRenderer. Tworzy ikony
 		 * narzędzi rysowania sieci Petriego.
@@ -274,6 +285,9 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			subnetT = Tools.getResIcon16("/icons/subnetT.gif");
 			subnetP = Tools.getResIcon16("/icons/subnetP.gif");
 			subnetPT = Tools.getResIcon16("/icons/subnetPT.gif");
+			
+			cplaceIcon = Tools.getResIcon16("/icons/cplace.gif");
+			carcIcon = Tools.getResIcon16("/icons/carc.gif");
 		}
 
 		/**
@@ -370,6 +384,14 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				case "General Subnet":
 					setIcon(subnetPT);
 					setToolTipText("Allows you to create subnet with P/T interfaces.");
+					break;
+				case "C-Place":
+					setIcon(cplaceIcon);
+					setToolTipText("Allows you to create colored place.");
+					break;
+				case "C-Arc":
+					setIcon(carcIcon);
+					setToolTipText("Allows you to create arc for colored net.");
 					break;
 				}
 			} else {

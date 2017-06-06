@@ -747,29 +747,32 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(CreationPanel);
         
 		// PLACE TOKEN
-        JLabel tokenLabel = new JLabel("Tokens:", JLabel.LEFT);
-        tokenLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-        components.add(tokenLabel);
-        int tok = place.getTokensNumber();
-        boolean problem = false;
-        if(tok < 0) {
-        	overlord.log("Negative number of tokens in "+place.getName(), "error", true);
-        	tok = 0;
-        	problem = true;
+        if(!place.isColored) {
+        	JLabel tokenLabel = new JLabel("Tokens:", JLabel.LEFT);
+            tokenLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+            components.add(tokenLabel);
+            int tok = place.getTokensNumber();
+            boolean problem = false;
+            if(tok < 0) {
+            	overlord.log("Negative number of tokens in "+place.getName(), "error", true);
+            	tok = 0;
+            	problem = true;
+            }
+    		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok, 0, Integer.MAX_VALUE, 1);
+    		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
+    		tokenSpinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
+    		tokenSpinner.addChangeListener(new ChangeListener() {
+    			public void stateChanged(ChangeEvent e) {
+    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+    				setTokens(tokenz);
+    				overlord.markNetChange();
+    			}
+    		});
+    		if(problem)
+    			tokenSpinner.setEnabled(false);
+    		components.add(tokenSpinner);
         }
-		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok, 0, Integer.MAX_VALUE, 1);
-		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
-		tokenSpinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
-		tokenSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-				setTokens(tokenz);
-				overlord.markNetChange();
-			}
-		});
-		if(problem)
-			tokenSpinner.setEnabled(false);
-		components.add(tokenSpinner);
+        
 
 		//SHEET ID
 		int sheetIndex = overlord.IDtoIndex(location.getSheetID());
@@ -960,6 +963,122 @@ public class HolmesDockWindowsTable extends JPanel {
 		    }
 		}.yesWeCan(place, location) ); 
 		components.add(nameLocChangeButton);
+		
+		//COLORS:
+		//TODO
+		if(place.isColored) {
+			// PLACE TOKEN
+			JLabel tokenLabel = new JLabel("T0 Red:", JLabel.LEFT);
+            tokenLabel.setBounds(columnA_posX, columnA_Y += 50, colACompLength, 20);
+            components.add(tokenLabel);
+            int tok0 = place.getTokensNumber();
+            boolean problem = false;
+            if(tok0 < 0) {
+            	overlord.log("Negative number of tokens in "+place.getName(), "error", true);
+            	tok0 = 0;
+            	problem = true;
+            }
+    		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok0, 0, Integer.MAX_VALUE, 1);
+    		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
+    		tokenSpinner.setBounds(columnB_posX, columnB_Y += 75, 95, 20);
+    		tokenSpinner.addChangeListener(new ChangeListener() {
+    			public void stateChanged(ChangeEvent e) {
+    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+    				setTokens(tokenz);
+    				overlord.markNetChange();
+    			}
+    		});
+    		if(problem)
+    			tokenSpinner.setEnabled(false);
+    		components.add(tokenSpinner);
+    		
+	        JLabel token1Label = new JLabel("T1 Green:", JLabel.LEFT);
+	        token1Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+	        components.add(token1Label);
+	        int tok1 = place.getColorTokensNumber(1);
+
+			SpinnerModel token1SpinnerModel = new SpinnerNumberModel(tok1, 0, Integer.MAX_VALUE, 1);
+			JSpinner token1Spinner = new JSpinner(token1SpinnerModel);
+			token1Spinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
+			token1Spinner.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+					setColorTokens(tokenz, 1);
+					overlord.markNetChange();
+				}
+			});
+			components.add(token1Spinner);
+			
+			JLabel token2Label = new JLabel("T2 Blue:", JLabel.LEFT);
+	        token2Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+	        components.add(token2Label);
+	        int tok2 = place.getColorTokensNumber(2);
+
+			SpinnerModel token2SpinnerModel = new SpinnerNumberModel(tok2, 0, Integer.MAX_VALUE, 1);
+			JSpinner token2Spinner = new JSpinner(token2SpinnerModel);
+			token2Spinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
+			token2Spinner.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+					setColorTokens(tokenz, 2);
+					overlord.markNetChange();
+				}
+			});
+			components.add(token2Spinner);
+			
+			JLabel token3Label = new JLabel("T3 Yellow:", JLabel.LEFT);
+	        token3Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+	        components.add(token3Label);
+	        int tok3 = place.getColorTokensNumber(3);
+
+			SpinnerModel token3SpinnerModel = new SpinnerNumberModel(tok3, 0, Integer.MAX_VALUE, 1);
+			JSpinner token3Spinner = new JSpinner(token3SpinnerModel);
+			token3Spinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
+			token3Spinner.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+					setColorTokens(tokenz, 3);
+					overlord.markNetChange();
+				}
+			});
+			components.add(token3Spinner);
+			
+			JLabel token4Label = new JLabel("T4 Grey:", JLabel.LEFT);
+	        token4Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+	        components.add(token4Label);
+	        int tok4 = place.getColorTokensNumber(4);
+
+			SpinnerModel token4SpinnerModel = new SpinnerNumberModel(tok4, 0, Integer.MAX_VALUE, 1);
+			JSpinner token4Spinner = new JSpinner(token4SpinnerModel);
+			token4Spinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
+			token4Spinner.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+					setColorTokens(tokenz, 4);
+					overlord.markNetChange();
+				}
+			});
+			components.add(token4Spinner);
+			
+			JLabel token5Label = new JLabel("T5 Black:", JLabel.LEFT);
+	        token5Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+	        components.add(token5Label);
+	        int tok5 = place.getColorTokensNumber(5);
+
+			SpinnerModel token5SpinnerModel = new SpinnerNumberModel(tok5, 0, Integer.MAX_VALUE, 1);
+			JSpinner token5Spinner = new JSpinner(token5SpinnerModel);
+			token5Spinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
+			token5Spinner.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+					setColorTokens(tokenz, 5);
+					overlord.markNetChange();
+				}
+			});
+			components.add(token5Spinner);
+		}
+		
+		
 		
 		panel.setLayout(null);
 		for (JComponent component : components) {
@@ -5069,6 +5188,41 @@ public class HolmesDockWindowsTable extends JPanel {
 			if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
 				ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 				overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+			}
+			repaintGraphPanel();
+		}
+	}
+	
+	/**
+	 * Metoda zmienia liczbę tokenów dla miejsca kolorowego sieci, poza listenerem, który
+	 * jest klasą anonimową (i nie widzi pola element).
+	 * @param tokens int - nowa liczba tokenów
+	 * @param i int - nr porządkowy tokenu, default 0, od 0 do 5
+	 */
+	private void setColorTokens(int tokens, int i) {
+		Place place = (Place) element;
+		if (mode == PLACE && place.isColored) {
+			switch(i) {
+				case 0:
+					place.setColorTokensNumber(tokens, 0);
+					break;
+				case 1:
+					place.setColorTokensNumber(tokens, 1);
+					break;
+				case 2:
+					place.setColorTokensNumber(tokens, 2);
+					break;
+				case 3:
+					place.setColorTokensNumber(tokens, 3);
+					break;
+				case 4:
+					place.setColorTokensNumber(tokens, 4);
+					break;
+				case 5:
+					place.setColorTokensNumber(tokens, 5);
+					break;
+				default:
+					place.setTokensNumber(tokens);
 			}
 			repaintGraphPanel();
 		}

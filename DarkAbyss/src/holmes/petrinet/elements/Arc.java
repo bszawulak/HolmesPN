@@ -23,6 +23,7 @@ import holmes.petrinet.data.PetriNet;
  */
 public class Arc extends PetriNetElement {
 	private static final long serialVersionUID = 5365625190238686098L;
+	
 	private ElementLocation locationStart;
 	private ElementLocation locationEnd = null;
 	private Point tempEndPoint = null;
@@ -36,6 +37,13 @@ public class Arc extends PetriNetElement {
 	private ArrayList<Point> breakPoints = null;
 	public boolean isBreakArc = false; 
 	
+	//colors:
+	private int weight1green;
+	private int weight2blue;
+	private int weight3yellow;
+	private int weight4grey;
+	private int weight5black;
+	
 	//read-arc parameters:
 	private Arc pairedArc;
 	private boolean isMainArcOfPair = false;
@@ -44,8 +52,8 @@ public class Arc extends PetriNetElement {
 	public boolean qSimForcedArc = false; //czy łuk ma być wzmocniony
 	public Color qSimForcedColor = Color.BLACK; //kolor wzmocnienia
 
-	/** NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC */
-	public enum TypeOfArc { NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC }
+	/** NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR */
+	public enum TypeOfArc { NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR }
 	
 	/**
 	 * Konstruktor obiektu klasy Arc - chwilowo nieużywany.
@@ -192,6 +200,60 @@ public class Arc extends PetriNetElement {
 		this.weight = weight;
 		//if (pairedArc != null && isMainArcOfPair)
 		//	pairedArc.setWeight(weight);
+	}
+	
+	/**
+	 * Metoda zwracająca wagę łuku kolorowego.
+	 * @param i int - nr porządkowy koloru, default 0, od 0 do 5
+	 * @return int - waga dla koloru
+	 */
+	public int getColorWeight(int i) {
+		switch(i) {
+			case 0:
+				return weight;
+			case 1:
+				return weight1green;
+			case 2:
+				return weight2blue;
+			case 3:
+				return weight3yellow;
+			case 4:
+				return weight4grey;
+			case 5:
+				return weight5black;
+			default:
+				return weight;
+		}
+	}
+	
+	/**
+	 * Metoda pozwalająca ustawić wagę kolorowego łuku.
+	 * @param weight int - waga łuku
+	 * @param i int - nr porządkowy koloru, default 0, od 0 do 5
+	 */
+	public void setColorWeight(int w, int i) {
+		switch(i) {
+			case 0:
+				this.weight = w;
+				break;
+			case 1:
+				this.weight1green = w;
+				break;
+			case 2:
+				this.weight2blue = w;
+				break;
+			case 3:
+				this.weight3yellow = w;
+				break;
+			case 4:
+				this.weight4grey = w;
+				break;
+			case 5:
+				this.weight5black = w;
+				break;
+			default:
+				this.weight = w;
+		}
 	}
 
 	/**

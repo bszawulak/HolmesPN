@@ -26,8 +26,8 @@ import holmes.petrinet.functions.FunctionsTools;
 public class Transition extends Node {
 	private static final long serialVersionUID = -4981812911464514746L;
 
-	/** NORMAL, TPN, DPN, TDPN */
-	public enum TransitionType { PN, TPN }; //, DPN, TDPN }
+	/** PN, TPN, CPNbasic */
+	public enum TransitionType { PN, TPN, CPNbasic }; //, DPN, TDPN, CPNbasic }
 	protected TransitionType transType;
 	
 	protected static int realRadius = 15;
@@ -72,6 +72,14 @@ public class Transition extends Node {
 	protected double DPNtimer = -1; //DPN
 	protected boolean TPNactive = false;
 	protected boolean DPNactive = false;
+	
+	//opcje kolorow (basic) ?
+	protected boolean produce0red;
+	protected boolean produce1green;
+	protected boolean produce2blue;
+	protected boolean produce3yellow;
+	protected boolean produce4grey;
+	protected boolean produce5black;
 	
 	//tranzycja funkcyjna:
 	protected boolean isFunctional = false;

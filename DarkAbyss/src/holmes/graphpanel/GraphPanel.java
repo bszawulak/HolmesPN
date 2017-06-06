@@ -60,11 +60,12 @@ public class GraphPanel extends JComponent {
 	private boolean snapToMesh = false;
 	/** TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
 		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
-		SUBNET_T, SUBNET_P, SUBNET_PT */
+		SUBNET_T, SUBNET_P, SUBNET_PT, CPLACE, CARC */
 	public enum DrawModes { POINTER, ERASER, PLACE, 
 		TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, STOCHASTICTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
 		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
-		SUBNET_T, SUBNET_P, SUBNET_PT }
+		SUBNET_T, SUBNET_P, SUBNET_PT,
+		CPLACE, CARC }
 	
 	/** Jeśli nie jest równy null, to znaczy, że właśnie przesuwamy jakiś punkt łamiący łuk */
 	public Point arcBreakPoint = null;
@@ -506,6 +507,21 @@ public class GraphPanel extends JComponent {
 			overlord.getWorkspace().getProject().accessSSAmanager().addPlace();
 		}
 	}
+	
+	/**
+	 * Dodawanie miejsca dla sieci kolorowanej - menu kontekstowe.
+	 * @param p Point - punkt dodawania miejsca
+	 */
+	private void addNewCPlace(Point p) {
+		if (isLegalLocation(p)) {
+			Place n = new Place(IdGenerator.getNextId(), this.sheetId, p);
+			n.isColored = true;
+			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
+			getNodes().add(n);
+			overlord.getWorkspace().getProject().accessStatesManager().addPlace();
+			overlord.getWorkspace().getProject().accessSSAmanager().addPlace();
+		}
+	}
 
 	/**
 	 * Metoda związana z mousePressed(MouseEvent).
@@ -637,7 +653,7 @@ public class GraphPanel extends JComponent {
 	 * są przez typ DrawModes.
 	 * @return DrawModes - aktualny tryb rysowania, z pola this.drawMode:  TRANSITION, TIMETRANSITION, 
 	 * FUNCTIONALTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS, ARC, ARC_INHIBITOR, ARC_RESET, 
-	 * ARC_EQUAL, READARC, ARC_MODIFIER, SUBNET_T, SUBNET_P, SUBNET_PT
+	 * ARC_EQUAL, READARC, ARC_MODIFIER, SUBNET_T, SUBNET_P, SUBNET_PT, CPLACE, CARC
 	 */
 	public DrawModes getDrawMode() {
 		return this.drawMode;
@@ -982,6 +998,13 @@ public class GraphPanel extends JComponent {
 						overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						addNewTimeTransition(mousePt);
+						overlord.reset.reset2ndOrderData(true);
+						overlord.markNetChange();
+						break;
+					case CPLACE:
+						overlord.getWorkspace().getProject().restoreMarkingZero();
+						
+						addNewCPlace(mousePt);
 						overlord.reset.reset2ndOrderData(true);
 						overlord.markNetChange();
 						break;
