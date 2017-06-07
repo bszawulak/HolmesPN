@@ -1577,6 +1577,18 @@ public final class InvariantsTools {
 		return false;
 	}
 	
+	public static Arc getPairedArc(Arc arc) {
+		Node startN = arc.getStartNode();
+		Node endN = arc.getEndNode();
+		
+		for(Arc a : endN.getOutArcs()) {
+			if(a.getEndNode() == startN) {
+				return a;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Metoda sprawdza dokładnie strukturę inwariantu o zadanym indeksie. Na potrzeby okna HolmesInvariantsViewer.
 	 * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów

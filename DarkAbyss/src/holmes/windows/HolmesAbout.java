@@ -99,7 +99,7 @@ public class HolmesAbout extends JFrame {
 			
 		}
 		
-		JLabel nameLabel = new JLabel("Holmes v1.0.0");
+		JLabel nameLabel = new JLabel("Holmes v1.0.5");
 		nameLabel.setFont(new Font("Consolas", Font.PLAIN, 25));
 		nameLabel.setBounds(170, 30, 300, 40);
 		panel.add(nameLabel);

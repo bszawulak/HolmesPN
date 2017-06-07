@@ -60,7 +60,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		miscNode.add(pointerNode);
 		miscNode.add(new DefaultMutableTreeNode("Eraser"));
 
-		DefaultMutableTreeNode basicPetriNetsNode = new DefaultMutableTreeNode("Simple Petri Nets");
+		DefaultMutableTreeNode basicPetriNetsNode = new DefaultMutableTreeNode("Petri net elements");
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Place"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Transition"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Arc"));
@@ -70,6 +70,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Equal Arc"));
 		
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("C-Place"));
+		basicPetriNetsNode.add(new DefaultMutableTreeNode("C-Transition"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("C-Arc"));
 		//basicPetriNetsNode.add(new DefaultMutableTreeNode("Modifier Arc"));
 
@@ -234,6 +235,9 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			case "C-Place":
 				guiManager.getWorkspace().setGraphMode(DrawModes.CPLACE);
 				break;
+			case "C-Transition":
+				guiManager.getWorkspace().setGraphMode(DrawModes.CTRANSITION);
+				break;
 			case "C-Arc":
 				guiManager.getWorkspace().setGraphMode(DrawModes.CARC);
 				break;
@@ -257,7 +261,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		
 		private ImageIcon subnetT, subnetP, subnetPT;
 		
-		private ImageIcon cplaceIcon, carcIcon;
+		private ImageIcon cplaceIcon, ctransitionIcon, carcIcon;
 		/**
 		 * Konstruktor domyślny obiektu klasy wewnętrznej LeafRenderer. Tworzy ikony
 		 * narzędzi rysowania sieci Petriego.
@@ -287,6 +291,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			subnetPT = Tools.getResIcon16("/icons/subnetPT.gif");
 			
 			cplaceIcon = Tools.getResIcon16("/icons/cplace.gif");
+			ctransitionIcon = Tools.getResIcon16("/icons/ctransition.gif");
 			carcIcon = Tools.getResIcon16("/icons/carc.gif");
 		}
 
@@ -388,6 +393,10 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				case "C-Place":
 					setIcon(cplaceIcon);
 					setToolTipText("Allows you to create colored place.");
+					break;
+				case "C-Transition":
+					setIcon(ctransitionIcon);
+					setToolTipText("Allows you to create colored transition.");
 					break;
 				case "C-Arc":
 					setIcon(carcIcon);

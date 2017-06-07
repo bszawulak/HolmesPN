@@ -74,12 +74,12 @@ public class Transition extends Node {
 	protected boolean DPNactive = false;
 	
 	//opcje kolorow (basic) ?
-	protected boolean produce0red;
-	protected boolean produce1green;
-	protected boolean produce2blue;
-	protected boolean produce3yellow;
-	protected boolean produce4grey;
-	protected boolean produce5black;
+	private int reqT0red = 1;
+	private int reqT1green = 0;
+	private int reqT2blue = 0;
+	private int reqT3yellow = 0;
+	private int reqT4gray = 0;
+	private int reqT5black = 0;
 	
 	//tranzycja funkcyjna:
 	protected boolean isFunctional = false;
@@ -948,4 +948,59 @@ public class Transition extends Node {
 	public double getSPNprobTime() {
 		return this.SPNprobTime;
 	}
+	
+	/**
+	 * Metoda zwraca liczbę potrzebnych tokenów do produkcji (z danego koloru)
+	 * @param i int - nr porzadkowy koloru, default 0, od 0 do 5
+	 * @return int - wymagana liczba tokenów danego koloru
+	 */
+	public int getReqTokens(int i) {
+		switch(i) {
+			case 0:
+				return reqT0red;
+			case 1:
+				return reqT1green;
+			case 2:
+				return reqT2blue;
+			case 3:
+				return reqT3yellow;
+			case 4:
+				return reqT4gray;
+			case 5:
+				return reqT5black;
+			default:
+				return reqT0red;
+		}
+	}
+	
+	/**
+	 * Metoda ustawia wymaganą liczbę tokenów danego koloru dla aktywacji tranzycji.
+	 * @param tokens int - liczba tokenów
+	 * @param i int - nr porządkowy koloru, default 0, od 0 do 5
+	 */
+	public void setReqTokens(int tokens, int i) {
+		switch(i) {
+			case 0:
+				reqT0red = tokens;
+				break;
+			case 1:
+				reqT1green = tokens;
+				break;
+			case 2:
+				reqT2blue = tokens;
+				break;
+			case 3:
+				reqT3yellow = tokens;
+				break;
+			case 4:
+				reqT4gray = tokens;
+				break;
+			case 5:
+				reqT5black = tokens;
+				break;
+			default:
+				reqT0red = tokens;
+		}
+	}
+
 }

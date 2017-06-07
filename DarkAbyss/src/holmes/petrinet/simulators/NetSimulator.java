@@ -295,8 +295,8 @@ public class NetSimulator {
 					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
 						arc.setTransportingTokens(false);
 						// nic nie zabieraj
-					} else if(arc.getArcType() == TypeOfArc.READARC) {
-						arc.setTransportingTokens(false);
+					//} else if(arc.getArcType() == TypeOfArc.READARC) {
+					//	arc.setTransportingTokens(false);
 						// nic nie zabieraj
 					} else if(arc.getArcType() == TypeOfArc.RESET) {
 						int tokens = place.getTokensNumber();
@@ -311,8 +311,8 @@ public class NetSimulator {
 					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
 						arc.setTransportingTokens(false);
 						// nic nie oddawaj
-					} else if(arc.getArcType() == TypeOfArc.READARC) {
-						arc.setTransportingTokens(false);
+					//} else if(arc.getArcType() == TypeOfArc.READARC) {
+					//	arc.setTransportingTokens(false);
 						// nic nie oddawaj
 					} else if(arc.getArcType() == TypeOfArc.RESET) {
 						place.modifyTokensNumber(-1); 
@@ -362,8 +362,8 @@ public class NetSimulator {
 					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
 						arc.setTransportingTokens(false);
 						// nic nie zabieraj
-					} else if(arc.getArcType() == TypeOfArc.READARC) {
-						arc.setTransportingTokens(false);
+					//} else if(arc.getArcType() == TypeOfArc.READARC) {
+					//	arc.setTransportingTokens(false);
 						// nic nie zabieraj
 					} else if(arc.getArcType() == TypeOfArc.RESET) {
 						int tokens = place.getTokensNumber();
@@ -379,8 +379,8 @@ public class NetSimulator {
 					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
 						arc.setTransportingTokens(false);
 						// nic nie oddawaj
-					} else if(arc.getArcType() == TypeOfArc.READARC) {
-						arc.setTransportingTokens(false);
+					//} else if(arc.getArcType() == TypeOfArc.READARC) {
+					//	arc.setTransportingTokens(false);
 						// nic nie oddawaj
 					} else if(arc.getArcType() == TypeOfArc.RESET) {
 						place.modifyTokensNumber(-1); 
@@ -414,7 +414,8 @@ public class NetSimulator {
 				arcs = tran.getInArcs();
 			
 			for (Arc arc : arcs) {
-				if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC)
+				//if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC)
+				if(arc.getArcType() == TypeOfArc.INHIBITOR )
 					continue;
 				
 				arc.setSimulationForwardDirection(!backtracking);
@@ -448,7 +449,8 @@ public class NetSimulator {
 			tran.setLaunching(true);
 			
 			for (Arc arc : arcs) {
-				if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC)
+				//if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC)
+				if(arc.getArcType() == TypeOfArc.INHIBITOR)
 					continue;
 				
 				arc.setSimulationForwardDirection(!backtracking);
@@ -477,7 +479,7 @@ public class NetSimulator {
 			//dodaj odpowiednią liczbę tokenów do miejsc
 			for (Arc arc : arcs) {
 				if(arc.getArcType() == TypeOfArc.READARC)
-					continue;
+					;//continue;
 				
 				Place place;
 				if (backtracking == false)
@@ -485,10 +487,13 @@ public class NetSimulator {
 				else
 					place = (Place) arc.getStartNode();
 				
-				if(arc.getArcType() != TypeOfArc.NORMAL)
+				if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR 
+						|| arc.getArcType() == TypeOfArc.READARC ) { //!!!!!! było bez drugiego członu po ||
+					;
+				} else {
 					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
 							" arc: "+arc.toString(), "error", true);
-				
+				}
 				//tylko zwykły łuk
 				FunctionsTools.functionalAddition(transition, arc, place);
 				//place.modifyTokensNumber(arc.getWeight());
@@ -529,9 +534,13 @@ public class NetSimulator {
 				else
 					place = (Place) arc.getStartNode();
 				
-				if(arc.getArcType() != TypeOfArc.NORMAL)
+				if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR 
+						|| arc.getArcType() == TypeOfArc.READARC ) { //!!!!!! było bez drugiego członu po ||
+					;
+				} else {
 					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
 							" arc: "+arc.toString(), "error", true);
+				}
 				
 				//tylko zwykły łuk
 				FunctionsTools.functionalAddition(transition, arc, place);

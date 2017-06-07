@@ -248,10 +248,15 @@ public final class ElementDraw {
 					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
 				}
 				
-				g.setColor(Color.DARK_GRAY);
+				
+				if(trans.getTransType() == TransitionType.CPNbasic) {
+					g.setColor(Color.BLUE);
+				} else {
+					g.setColor(Color.DARK_GRAY);
+				}
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				
+
 				if (trans.isPortal()) {
 					if( trans.getTransType() == TransitionType.TPN  ) {//|| trans.getTransType() == TransitionType.DPN ) {
 						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
@@ -267,6 +272,9 @@ public final class ElementDraw {
 						}
 					}
 				}
+				
+				
+				
 				// -------- do tego miejsca wspólne dla Transition i TimeTransition --------
 				
 				//TIME TRANSITION
@@ -351,6 +359,18 @@ public final class ElementDraw {
 					g.setFont(new Font("Garamond", Font.BOLD + Font.ITALIC, 22));
 					g.setColor(Color.RED);
 					g.drawString("f", posX, posY);	
+					g.setFont(old);
+					g.setColor(oldC);
+				}
+				
+				if(trans.getTransType() == TransitionType.CPNbasic) {
+					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth("C") / 2 - 4;
+					int posY = nodeBounds.y + nodeBounds.height / 2 + 8;
+					Font old = g.getFont();
+					Color oldC = g.getColor();
+					g.setFont(new Font("Garamond", Font.BOLD, 22));
+					g.setColor(Color.RED);
+					g.drawString("C", posX, posY);	
 					g.setFont(old);
 					g.setColor(oldC);
 				}
@@ -516,7 +536,12 @@ public final class ElementDraw {
 					g.setColor(back);
 				}
 
-				g.setColor(Color.DARK_GRAY);
+				if(place.isColored) {
+					g.setColor(Color.BLUE);
+				} else {
+					g.setColor(Color.DARK_GRAY);
+				}
+				
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
@@ -823,9 +848,13 @@ public final class ElementDraw {
 		}
 
 		g.setStroke(new BasicStroke(1.0f));
-		if (arc.getIsCorect())
-			g.setColor(Color.darkGray);
-		else
+		if (arc.getIsCorect()) {
+			if(arc.getArcType() == TypeOfArc.COLOR) {
+				g.setStroke(new BasicStroke(2.0f));
+				g.setColor(Color.blue);
+			} else
+				g.setColor(Color.darkGray);
+		} else
 			g.setColor(new Color(176, 23, 31));
 
 		//NIE-KLIKNIĘTY ŁUK
@@ -879,12 +908,17 @@ public final class ElementDraw {
 		//int upDown = 0; //im większa, tym mocniej w dół
 		g.setStroke(sizeStroke);
 		
-		if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.READARC) {
+		if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.READARC ) {
 			//g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
 			//		new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
 
 			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
+		} else if(arc.getArcType() == TypeOfArc.COLOR ) {
+
+			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
+					new int[] { (int) yp, (int) yl, (int) yk }, 3);
+			
 		} else if (arc.getArcType() == TypeOfArc.INHIBITOR) {
 			int xPos = (int) ((xl + xk)/2);
 	    	int yPos = (int) ((yl + yk)/2);

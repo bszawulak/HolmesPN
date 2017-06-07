@@ -65,7 +65,7 @@ public class GraphPanel extends JComponent {
 		TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, STOCHASTICTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
 		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
 		SUBNET_T, SUBNET_P, SUBNET_PT,
-		CPLACE, CARC }
+		CPLACE, CTRANSITION, CARC }
 	
 	/** Jeśli nie jest równy null, to znaczy, że właśnie przesuwamy jakiś punkt łamiący łuk */
 	public Point arcBreakPoint = null;
@@ -530,6 +530,20 @@ public class GraphPanel extends JComponent {
 	private void addNewTransition(Point p) {
 		if (isLegalLocation(p)) {
 			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, p);
+			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
+			getNodes().add(n);
+			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
+		}
+	}
+	
+	/**
+	 * Metoda związana z mousePressed(MouseEvent).
+	 * @param p Point - punkt dodawania kolorowej tranzycji
+	 */
+	private void addNewCTransition(Point p) {
+		if (isLegalLocation(p)) {
+			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, p);
+			n.setTransType(TransitionType.CPNbasic);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
@@ -1008,6 +1022,13 @@ public class GraphPanel extends JComponent {
 						overlord.reset.reset2ndOrderData(true);
 						overlord.markNetChange();
 						break;
+					case CTRANSITION:
+						overlord.getWorkspace().getProject().restoreMarkingZero();
+						
+						addNewCTransition(mousePt);
+						overlord.reset.reset2ndOrderData(true);
+						overlord.markNetChange();
+						break;
 					case SUBNET_P:
 						addNewSubnetP(mousePt);
 						break;
@@ -1027,7 +1048,8 @@ public class GraphPanel extends JComponent {
 						|| getDrawMode() == DrawModes.READARC 
 						|| getDrawMode() == DrawModes.ARC_INHIBITOR 
 						|| getDrawMode() == DrawModes.ARC_RESET 
-						|| getDrawMode() == DrawModes.ARC_EQUAL) {
+						|| getDrawMode() == DrawModes.ARC_EQUAL
+						|| getDrawMode() == DrawModes.CARC) {
 					handleArcsDrawing(el, getDrawMode());
 					
 				} else if (getDrawMode() == DrawModes.ERASER) { //kasowanie czegoś
@@ -1142,6 +1164,9 @@ public class GraphPanel extends JComponent {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.RESET);
 				else if(arcType == DrawModes.ARC_EQUAL)
 					drawnArc = new Arc(clickedLocation, TypeOfArc.EQUAL);
+				else if(arcType == DrawModes.CARC) {
+					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
+				}
 			} else { 
 				
 				if(clickedLocation.getParentNode() instanceof MetaNode) { //kończymy w meta-node
@@ -1271,6 +1296,9 @@ public class GraphPanel extends JComponent {
 							} else if(arcType == DrawModes.ARC_EQUAL) {
 								arc.setArcType(TypeOfArc.EQUAL);
 								getArcs().add(arc);
+							} else if(arcType == DrawModes.CARC) {
+								arc.setArcType(TypeOfArc.COLOR);
+								getArcs().add(arc);
 							}
 							clearDrawnArc();
 
@@ -1327,7 +1355,7 @@ public class GraphPanel extends JComponent {
 			}
 			
 			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.READARC || getDrawMode() == DrawModes.ARC_INHIBITOR 
-					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL)  
+					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL || getDrawMode() == DrawModes.CARC)  
 					&& drawnArc != null)
 				return;
 			if (getSelectingRect() != null) {
@@ -1369,7 +1397,8 @@ public class GraphPanel extends JComponent {
 			}
 			
 			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.READARC ||getDrawMode() == DrawModes.ARC_INHIBITOR 
-					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL) && drawnArc != null) {
+					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL 
+					|| getDrawMode() == DrawModes.CARC) && drawnArc != null) {
 				Point movePoint = e.getPoint();
 				movePoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
 				drawnArc.setEndPoint(movePoint);

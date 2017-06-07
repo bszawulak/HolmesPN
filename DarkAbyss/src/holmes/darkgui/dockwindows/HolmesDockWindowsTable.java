@@ -192,8 +192,9 @@ public class HolmesDockWindowsTable extends JPanel {
 	private static final int CLUSTERS = 9;
 	private static final int KNOCKOUT = 10;
 	private static final int META = 11;
+	private static final int CTRANSITION = 12;
 
-	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS, 
+	public enum SubWindow { SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, CTRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS, 
 		MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM }
 	
 	/**
@@ -213,6 +214,8 @@ public class HolmesDockWindowsTable extends JPanel {
 			createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
 		} else if (subType == SubWindow.TIMETRANSITION) {
 			createTimeTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+		} else if (subType == SubWindow.CTRANSITION) {
+			createColorTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
 		} else if (subType == SubWindow.META) {
 			createMetaNodeSubWindow((MetaNode) blackBox[0], (ElementLocation) blackBox[1]);
 		} else if (subType == SubWindow.ARC) {
@@ -804,6 +807,35 @@ public class HolmesDockWindowsTable extends JPanel {
 			zoomLabel2.setForeground(Color.red);
 		components.add(zoomLabel2);
 		
+		// PORTAL
+		JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
+		portalLabel.setBounds(columnB_posX+110, columnB_Y, colACompLength, 20);
+		components.add(portalLabel);
+		JCheckBox portalBox = new JCheckBox("", place.isPortal());
+		portalBox.setBounds(columnB_posX+180, columnB_Y, colACompLength, 20);
+		if(((Place)element).isPortal()) 
+			portalBox.setSelected(true);
+		else
+			portalBox.setSelected(false);
+		portalBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected()) {
+					makePortal();
+				} else {
+					if(((Place)element).getElementLocations().size() > 1)
+						JOptionPane.showMessageDialog(null, "Place contains more than one location!", "Cannot proceed", 
+								JOptionPane.INFORMATION_MESSAGE);
+					else {
+						unPortal();
+						overlord.markNetChange();
+					}
+				}
+			}
+		});
+		components.add(portalBox);
+		
 		//LOKALIZACJA:
 		JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
 		locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
@@ -836,34 +868,8 @@ public class HolmesDockWindowsTable extends JPanel {
 		locationSpinnerPanel.setBounds(columnA_posX+90, columnB_Y += 20, colBCompLength, 20);
 		components.add(locationSpinnerPanel);
 		
-		// PORTAL
-		JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
-		portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-		components.add(portalLabel);
-		JCheckBox portalBox = new JCheckBox("", place.isPortal());
-		portalBox.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
-		if(((Place)element).isPortal()) 
-			portalBox.setSelected(true);
-		else
-			portalBox.setSelected(false);
-		portalBox.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				JCheckBox box = (JCheckBox) e.getSource();
-				if (box.isSelected()) {
-					makePortal();
-				} else {
-					if(((Place)element).getElementLocations().size() > 1)
-						JOptionPane.showMessageDialog(null, "Place contains more than one location!", "Cannot proceed", 
-								JOptionPane.INFORMATION_MESSAGE);
-					else {
-						unPortal();
-						overlord.markNetChange();
-					}
-				}
-			}
-		});
-		components.add(portalBox);
+		
+		
 
 		// WSPÓŁRZĘDNE NAPISU:
 		columnA_Y += 20;
@@ -980,7 +986,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
     		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok0, 0, Integer.MAX_VALUE, 1);
     		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
-    		tokenSpinner.setBounds(columnB_posX, columnB_Y += 75, 95, 20);
+    		tokenSpinner.setBounds(columnB_posX-30, columnB_Y += 75, 75, 20);
     		tokenSpinner.addChangeListener(new ChangeListener() {
     			public void stateChanged(ChangeEvent e) {
     				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
@@ -992,6 +998,24 @@ public class HolmesDockWindowsTable extends JPanel {
     			tokenSpinner.setEnabled(false);
     		components.add(tokenSpinner);
     		
+    		JLabel token3Label = new JLabel("T3 Yellow:", JLabel.LEFT);
+	        token3Label.setBounds(columnB_posX+60, columnB_Y, colACompLength, 20);
+	        components.add(token3Label);
+	        int tok3 = place.getColorTokensNumber(3);
+
+			SpinnerModel token3SpinnerModel = new SpinnerNumberModel(tok3, 0, Integer.MAX_VALUE, 1);
+			JSpinner token3Spinner = new JSpinner(token3SpinnerModel);
+			token3Spinner.setBounds(columnB_posX+130, columnB_Y, 75, 20);
+			token3Spinner.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+					setColorTokens(tokenz, 3);
+					overlord.markNetChange();
+				}
+			});
+			components.add(token3Spinner);
+    		
+    		
 	        JLabel token1Label = new JLabel("T1 Green:", JLabel.LEFT);
 	        token1Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 	        components.add(token1Label);
@@ -999,7 +1023,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
 			SpinnerModel token1SpinnerModel = new SpinnerNumberModel(tok1, 0, Integer.MAX_VALUE, 1);
 			JSpinner token1Spinner = new JSpinner(token1SpinnerModel);
-			token1Spinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
+			token1Spinner.setBounds(columnB_posX-30, columnB_Y += 20, 75, 20);
 			token1Spinner.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
@@ -1009,48 +1033,14 @@ public class HolmesDockWindowsTable extends JPanel {
 			});
 			components.add(token1Spinner);
 			
-			JLabel token2Label = new JLabel("T2 Blue:", JLabel.LEFT);
-	        token2Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-	        components.add(token2Label);
-	        int tok2 = place.getColorTokensNumber(2);
-
-			SpinnerModel token2SpinnerModel = new SpinnerNumberModel(tok2, 0, Integer.MAX_VALUE, 1);
-			JSpinner token2Spinner = new JSpinner(token2SpinnerModel);
-			token2Spinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
-			token2Spinner.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-					setColorTokens(tokenz, 2);
-					overlord.markNetChange();
-				}
-			});
-			components.add(token2Spinner);
-			
-			JLabel token3Label = new JLabel("T3 Yellow:", JLabel.LEFT);
-	        token3Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-	        components.add(token3Label);
-	        int tok3 = place.getColorTokensNumber(3);
-
-			SpinnerModel token3SpinnerModel = new SpinnerNumberModel(tok3, 0, Integer.MAX_VALUE, 1);
-			JSpinner token3Spinner = new JSpinner(token3SpinnerModel);
-			token3Spinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
-			token3Spinner.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-					setColorTokens(tokenz, 3);
-					overlord.markNetChange();
-				}
-			});
-			components.add(token3Spinner);
-			
 			JLabel token4Label = new JLabel("T4 Grey:", JLabel.LEFT);
-	        token4Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+	        token4Label.setBounds(columnB_posX+60, columnB_Y, colACompLength, 20);
 	        components.add(token4Label);
 	        int tok4 = place.getColorTokensNumber(4);
 
 			SpinnerModel token4SpinnerModel = new SpinnerNumberModel(tok4, 0, Integer.MAX_VALUE, 1);
 			JSpinner token4Spinner = new JSpinner(token4SpinnerModel);
-			token4Spinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
+			token4Spinner.setBounds(columnB_posX+130, columnB_Y, 75, 20);
 			token4Spinner.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
@@ -1060,14 +1050,31 @@ public class HolmesDockWindowsTable extends JPanel {
 			});
 			components.add(token4Spinner);
 			
+			JLabel token2Label = new JLabel("T2 Blue:", JLabel.LEFT);
+	        token2Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+	        components.add(token2Label);
+	        int tok2 = place.getColorTokensNumber(2);
+
+			SpinnerModel token2SpinnerModel = new SpinnerNumberModel(tok2, 0, Integer.MAX_VALUE, 1);
+			JSpinner token2Spinner = new JSpinner(token2SpinnerModel);
+			token2Spinner.setBounds(columnB_posX-30, columnB_Y += 20, 75, 20);
+			token2Spinner.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+					setColorTokens(tokenz, 2);
+					overlord.markNetChange();
+				}
+			});
+			components.add(token2Spinner);
+			
 			JLabel token5Label = new JLabel("T5 Black:", JLabel.LEFT);
-	        token5Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+	        token5Label.setBounds(columnB_posX+60, columnB_Y, colACompLength, 20);
 	        components.add(token5Label);
 	        int tok5 = place.getColorTokensNumber(5);
 
 			SpinnerModel token5SpinnerModel = new SpinnerNumberModel(tok5, 0, Integer.MAX_VALUE, 1);
 			JSpinner token5Spinner = new JSpinner(token5SpinnerModel);
-			token5Spinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
+			token5Spinner.setBounds(columnB_posX+130, columnB_Y, 75, 20);
 			token5Spinner.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					int tokenz = (int) ((JSpinner) e.getSource()).getValue();
@@ -1236,7 +1243,7 @@ public class HolmesDockWindowsTable extends JPanel {
 		});
 		components.add(tpnCheckBox);
 		
-		JLabel frLabel = new JLabel("Firing:", JLabel.LEFT);
+		JLabel frLabel = new JLabel("Firing rate:", JLabel.LEFT);
 		frLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(frLabel);	
 		
@@ -1983,6 +1990,311 @@ public class HolmesDockWindowsTable extends JPanel {
 	}
 	
 	//**************************************************************************************
+	//*********************************                  ***********************************
+	//*********************************    TRANZYCJA     ***********************************
+	//*********************************                  ***********************************
+	//**************************************************************************************
+
+	/**
+	 * Metoda odpowiedzialna za tworzenie podokna właściwości klikniętej tranzycji.
+	 * @param transition Transition - obiekt tranzycji sieci
+	 * @param location ElementLocation - lokalizacja tranzycji
+	*/
+	//TODO: kolor
+	public void createColorTransitionSubWindow(Transition transition, ElementLocation location) {
+		int columnA_posX = 10;
+		int columnB_posX = 100;
+		int columnA_Y = 0;
+		int columnB_Y = 0;
+		int colACompLength = 70;
+		int colBCompLength = 200;
+
+		mode = CTRANSITION;
+		elementLocation = location;
+		initiateContainers();
+		element = transition;
+		Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
+		
+		JLabel colorLabel = new JLabel("Colored transition data:", JLabel.LEFT);
+		colorLabel.setBounds(columnA_posX, columnA_Y += 10, 220, 20);
+		components.add(colorLabel);
+		columnB_Y += 10;
+		
+		// ID:
+		JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
+		idLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(idLabel);
+		
+		final int gID = overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transition);
+		JLabel idLabel2 = new JLabel(Integer.toString(gID));
+		idLabel2.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
+		idLabel2.setFont(normalFont);
+		components.add(idLabel2);
+		
+		JLabel idLabel3 = new JLabel("gID:");
+		idLabel3.setBounds(columnB_posX+35, columnA_Y, 50, 20);
+		components.add(idLabel3);
+		JLabel idLabel4 = new JLabel(transition.getID()+"");
+		idLabel4.setBounds(columnB_posX+60, columnB_Y, 50, 20);
+		idLabel4.setFont(normalFont);
+		components.add(idLabel4);
+
+		// TRANSITION NAME:
+		JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
+		nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(nameLabel);
+		
+		DefaultFormatter format = new DefaultFormatter();
+	    format.setOverwriteMode(false);
+		JFormattedTextField nameField = new JFormattedTextField(format);
+		nameField.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		nameField.setValue(transition.getName());
+		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				JFormattedTextField field = (JFormattedTextField) e.getSource();
+				try {
+					field.commitEdit();
+				} catch (ParseException ex) {
+				}
+				String newName = (String) field.getText();
+				changeName(newName);
+				overlord.markNetChange();
+			}
+		});
+		components.add(nameField);
+		
+		//KOMENTARZE WIERZCHOŁKA:
+		JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
+		comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		columnA_Y += 20;
+		components.add(comLabel);	
+		
+		JTextArea commentField = new JTextArea(transition.getComment());
+		commentField.setLineWrap(true);
+		commentField.addFocusListener(new FocusAdapter() {
+	            public void focusLost(FocusEvent e) {
+	            	JTextArea field = (JTextArea) e.getSource();
+	            	String newComment = "";
+	            	if(field != null)
+	            		newComment = field.getText();
+					changeComment(newComment);
+					overlord.markNetChange();
+	            }
+	        });
+		
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(commentField), BorderLayout.CENTER);
+        CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
+        columnB_Y += 20;
+        components.add(CreationPanel);
+        
+      
+
+		
+		//SHEET ID
+        int sheetIndex = overlord.IDtoIndex(location.getSheetID());
+		GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		int xPos = location.getPosition().x;
+		int width =  graphPanel.getSize().width;
+		int zoom = graphPanel.getZoom();
+		int yPos = location.getPosition().y;
+		int height =  graphPanel.getSize().height;
+		width = (int) (((double)100/(double)zoom) * width);
+		height = (int) (((double)100/(double)zoom) * height);
+		
+		JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
+		sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(sheetLabel);
+		JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
+		sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+		sheetIdLabel.setFont(normalFont);
+		components.add(sheetIdLabel);
+		
+		//ZOOM:
+		JLabel zoomLabel = new JLabel("Zoom:");
+		zoomLabel.setBounds(columnB_posX+30, columnB_Y, 50, 20);
+		components.add(zoomLabel);
+		JLabel zoomLabel2 = new JLabel(""+zoom);
+		zoomLabel2.setBounds(columnB_posX+70, columnB_Y, colBCompLength, 20);
+		zoomLabel2.setFont(normalFont);
+		if(zoom != 100)
+			zoomLabel2.setForeground(Color.red);
+		components.add(zoomLabel2);
+		
+		//PORTAL
+		JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
+		portalLabel.setBounds(columnB_posX+120, columnB_Y, colACompLength, 20);
+		components.add(portalLabel);
+		
+		JCheckBox portalBox = new JCheckBox("", transition.isPortal());
+		portalBox.setBounds(columnB_posX+180, columnB_Y, 30, 20);
+		if(((Transition)element).isPortal()) 
+			portalBox.setSelected(true);
+		else
+			portalBox.setSelected(false);
+		
+		portalBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JCheckBox box = (JCheckBox) e.getSource();
+				if (box.isSelected()) {
+					makePortal();
+				} else {
+					if(((Transition)element).getElementLocations().size() > 1)
+						JOptionPane.showMessageDialog(null, "Transition contains more than one location!", "Cannot proceed", 
+								JOptionPane.INFORMATION_MESSAGE);
+					else {
+						unPortal();
+						overlord.markNetChange();
+					}
+				}
+			}
+		});
+		components.add(portalBox);
+		
+		//LOKALIZACJA:
+		JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
+		locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		components.add(locLabel);
+		
+		SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
+		SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
+		
+		JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
+		locationXSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				setX((int) ((JSpinner) e.getSource()).getValue());
+			}
+		});
+		JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
+		locationYSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				setY((int) ((JSpinner) e.getSource()).getValue());
+			}
+		});
+		if(zoom != 100) {
+			locationXSpinner.setEnabled(false);
+			locationYSpinner.setEnabled(false);
+		}
+		JPanel locationSpinnerPanel = new JPanel();
+		locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel,BoxLayout.X_AXIS));
+		locationSpinnerPanel.add(locationXSpinner);
+		locationSpinnerPanel.add(new JLabel(" , "));
+		locationSpinnerPanel.add(locationYSpinner);
+		
+		locationSpinnerPanel.setBounds(columnA_posX+90, columnB_Y += 20, colBCompLength, 20);
+		components.add(locationSpinnerPanel);
+		
+
+		// WSPÓŁRZĘDNE NAPISU:
+		columnA_Y += 20;
+		columnB_Y += 20;
+		
+		JLabel locNameLabel = new JLabel("Name offset:", JLabel.LEFT);
+		locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength+10, 20);
+		components.add(locNameLabel);
+
+		int locationIndex = transition.getElementLocations().indexOf(location);
+		int xNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().x;
+		int yNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().y;
+		
+		nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
+		nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
+		
+		JLabel locNameLabelX = new JLabel("xOff: ", JLabel.LEFT);
+		locNameLabelX.setBounds(columnA_posX+90, columnA_Y, 40, 20);
+		components.add(locNameLabelX);
+		
+		JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
+		nameLocationXSpinner.setBounds(columnA_posX+125, columnA_Y, 60, 20);
+		nameLocationXSpinner.addChangeListener(new ChangeListener() {
+			private Transition trans_tmp;
+			private ElementLocation el_tmp;
+			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate==true)
+					return;
+				Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+				doNotUpdate = true;
+				nameLocationXSpinnerModel.setValue(res.x);
+				doNotUpdate = false;
+			}
+			private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc){
+				trans_tmp = transition;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(transition, location) ); 
+		
+		components.add(nameLocationXSpinner);
+		
+		JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
+		locNameLabelY.setBounds(columnA_posX+195, columnB_Y, 40, 20);
+		components.add(locNameLabelY);
+		
+		JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
+		nameLocationYSpinner.setBounds(columnA_posX+230, columnA_Y, 60, 20);
+		nameLocationYSpinner.addChangeListener(new ChangeListener() {
+			private Transition trans_tmp;
+			private ElementLocation el_tmp;
+			public void stateChanged(ChangeEvent e) {
+				if(doNotUpdate==true)
+					return;
+
+				Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+				doNotUpdate = true;
+				nameLocationYSpinnerModel.setValue(res.y);
+				doNotUpdate = false;	
+			}
+			private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc){
+				trans_tmp = transition;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(transition, location) ); 
+		components.add(nameLocationYSpinner);
+		
+		JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
+		nameLocChangeButton.setName("LocNameChanger");
+		nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
+		nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+		nameLocChangeButton.setBounds(columnA_posX+90, columnA_Y += 25, 150, 40);
+		nameLocChangeButton.addActionListener(new ActionListener() {
+			// anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+			private Transition trans_tmp;
+			private ElementLocation el_tmp;
+			public void actionPerformed(ActionEvent actionEvent) {
+				JButton button_tmp = (JButton) actionEvent.getSource();
+				
+				if(nameLocChangeMode == false) {
+					button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
+					nameLocChangeMode = true;
+					overlord.setNameLocationChangeMode(trans_tmp, el_tmp, true);
+				} else {
+					button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
+					nameLocChangeMode = false;
+					overlord.setNameLocationChangeMode(null, null, false);
+				}
+			} 
+			private ActionListener yesWeCan(Transition transition, ElementLocation inLoc){
+				trans_tmp = transition;
+				el_tmp = inLoc;
+		        return this;
+		    }
+		}.yesWeCan(transition, location) ); 
+		components.add(nameLocChangeButton);
+		 
+		panel.setLayout(null);
+		for (JComponent component : components) {
+			panel.add(component);
+		}
+
+		panel.setOpaque(true);
+		panel.repaint();
+		add(panel);
+	}
+	
+	//**************************************************************************************
 	//*********************************        META      ***********************************
 	//*********************************                  ***********************************
 	//*********************************       WĘZEŁ      ***********************************
@@ -2426,7 +2738,7 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
 		
-        if(((Arc)element).getArcType() != TypeOfArc.RESET) {
+        if(((Arc)element).getArcType() != TypeOfArc.RESET && ((Arc)element).getArcType() != TypeOfArc.COLOR) {
         	if(((Arc)element).getArcType() == TypeOfArc.READARC && pairedArc != null) {
         		String type1 = "T-->P";
         		String type2 = "P-->T";
@@ -2514,17 +2826,17 @@ public class HolmesDockWindowsTable extends JPanel {
 		readArcLabel2.setBounds(columnB_posX-40, columnB_Y += 20, colACompLength+60, 20);
 		components.add(readArcLabel2);
 		
-		JLabel startNodeLabel = new JLabel("Start Node:", JLabel.LEFT);
-		startNodeLabel.setBounds(columnA_posX+90, columnA_Y += 20, colACompLength, 20);
+		JLabel startNodeLabel = new JLabel("Start Node name:", JLabel.LEFT);
+		startNodeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(startNodeLabel);
 		columnB_Y += 20;
 		
-		JLabel label2A = new JLabel("Name:", JLabel.LEFT);
-		label2A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-		components.add(label2A);
+		//JLabel label2A = new JLabel("Name:", JLabel.LEFT);
+		//label2A.setBounds(columnA_posX+80, columnA_Y , colACompLength, 20);
+		//components.add(label2A);
 		JLabel label2B = new JLabel(arc.getStartNode().getName());
 		label2B.setFont(normalFont);
-		label2B.setBounds(columnA_posX+40, columnB_Y += 20, colBCompLength+40, 20);
+		label2B.setBounds(columnA_posX+110, columnB_Y , colBCompLength+40, 20);
 		components.add(label2B);
 		
 		JLabel label1A = new JLabel("gID:", JLabel.LEFT);
@@ -2553,17 +2865,17 @@ public class HolmesDockWindowsTable extends JPanel {
 		components.add(label4B);
 		
 		// endNode
-		JLabel endNodeLabel = new JLabel("End Node:", JLabel.LEFT);
-		endNodeLabel.setBounds(columnA_posX+90, columnA_Y += 20, colACompLength, 20);
+		JLabel endNodeLabel = new JLabel("End Node name:", JLabel.LEFT);
+		endNodeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
 		components.add(endNodeLabel);
 		columnB_Y += 20;
 
-		JLabel label6A = new JLabel("Name:", JLabel.LEFT);
-		label6A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-		components.add(label6A);
+		//JLabel label6A = new JLabel("Name:", JLabel.LEFT);
+		//label6A.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+		//components.add(label6A);
 		JLabel label6B = new JLabel(arc.getEndNode().getName());
 		label6B.setFont(normalFont);
-		label6B.setBounds(columnA_posX+40, columnB_Y += 20, colBCompLength+40, 20);
+		label6B.setBounds(columnA_posX+110, columnB_Y, colBCompLength+40, 20);
 		components.add(label6B);
 		
 		JLabel label5A = new JLabel("gID:", JLabel.LEFT);
@@ -2590,6 +2902,213 @@ public class HolmesDockWindowsTable extends JPanel {
 		label8B.setFont(normalFont);
 		label8B.setBounds(columnA_posX+210, columnB_Y, colBCompLength, 20);
 		components.add(label8B);
+		
+		//KOLORY
+		//TODO:
+		if(arc.getArcType() == TypeOfArc.COLOR) {
+			String type1 = "T-->P (Transition to Place weights):";
+			String type2 = "P-->T (Place to Transition weights):";
+			pairedArc = InvariantsTools.getPairedArc(arc);
+			if(pairedArc != null) {
+				if(((Arc)element).getStartNode() instanceof Place) {
+            		type1 = "P-->T (Place to Transition weights):";
+            		type2 = "T-->P (Transition to Place weights):";
+            	}
+				
+				JLabel weightPair1Label = new JLabel(type1, JLabel.LEFT);
+				weightPair1Label.setBounds(columnA_posX, columnA_Y += 20, 260, 20);
+				columnB_Y += 20;
+	    		components.add(weightPair1Label);
+			}
+			JLabel weight0Label = new JLabel("W0 (red):", JLabel.LEFT);
+			weight0Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+    		components.add(weight0Label);
+    		
+    		SpinnerModel weightT0SpinnerModel = new SpinnerNumberModel(arc.getColorWeight(0), 0, Integer.MAX_VALUE, 1);
+    		JSpinner weightT0Spinner = new JSpinner(weightT0SpinnerModel);
+    		weightT0Spinner.setBounds(columnB_posX-60, columnB_Y += 20, 65, 20);
+    		weightT0Spinner.addChangeListener(new ChangeListener() {
+    			public void stateChanged(ChangeEvent e) {
+    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+    				setColorWeight(tokenz, (Arc)element, 0);
+    			}
+    		});
+    		components.add(weightT0Spinner);
+			
+    		JLabel weight3Label = new JLabel("W3 (yellow):", JLabel.LEFT);
+    		weight3Label.setBounds(columnB_posX+10, columnB_Y, 80, 20);
+    		components.add(weight3Label);
+    		
+    		SpinnerModel weightT3SpinnerModel = new SpinnerNumberModel(arc.getColorWeight(3), 0, Integer.MAX_VALUE, 1);
+    		JSpinner weightT3Spinner = new JSpinner(weightT3SpinnerModel);
+    		weightT3Spinner.setBounds(columnB_posX+90, columnB_Y, 65, 20);
+    		weightT3Spinner.addChangeListener(new ChangeListener() {
+    			public void stateChanged(ChangeEvent e) {
+    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+    				setColorWeight(tokenz, (Arc)element, 3);
+    			}
+    		});
+    		components.add(weightT3Spinner);
+    		
+    		JLabel weight1Label = new JLabel("W1 (green):", JLabel.LEFT);
+    		weight1Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+    		components.add(weight1Label);
+    		
+    		SpinnerModel weightT1SpinnerModel = new SpinnerNumberModel(arc.getColorWeight(1), 0, Integer.MAX_VALUE, 1);
+    		JSpinner weightT1Spinner = new JSpinner(weightT1SpinnerModel);
+    		weightT1Spinner.setBounds(columnB_posX-60, columnB_Y += 20, 65, 20);
+    		weightT1Spinner.addChangeListener(new ChangeListener() {
+    			public void stateChanged(ChangeEvent e) {
+    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+    				setColorWeight(tokenz, (Arc)element, 1);
+    			}
+    		});
+    		components.add(weightT1Spinner);
+			
+    		JLabel weight4Label = new JLabel("W4 (gray):", JLabel.LEFT);
+    		weight4Label.setBounds(columnB_posX+10, columnB_Y, 80, 20);
+    		components.add(weight4Label);
+    		
+    		SpinnerModel weightT4SpinnerModel = new SpinnerNumberModel(arc.getColorWeight(4), 0, Integer.MAX_VALUE, 1);
+    		JSpinner weightT4Spinner = new JSpinner(weightT4SpinnerModel);
+    		weightT4Spinner.setBounds(columnB_posX+90, columnB_Y, 65, 20);
+    		weightT4Spinner.addChangeListener(new ChangeListener() {
+    			public void stateChanged(ChangeEvent e) {
+    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+    				setColorWeight(tokenz, (Arc)element, 4);
+    			}
+    		});
+    		components.add(weightT4Spinner);
+    		
+    		JLabel weight2Label = new JLabel("W2 (blue):", JLabel.LEFT);
+    		weight2Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+    		components.add(weight2Label);
+    		
+    		SpinnerModel weightT2SpinnerModel = new SpinnerNumberModel(arc.getColorWeight(2), 0, Integer.MAX_VALUE, 1);
+    		JSpinner weightT2Spinner = new JSpinner(weightT2SpinnerModel);
+    		weightT2Spinner.setBounds(columnB_posX-60, columnB_Y += 20, 65, 20);
+    		weightT2Spinner.addChangeListener(new ChangeListener() {
+    			public void stateChanged(ChangeEvent e) {
+    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+    				setColorWeight(tokenz, (Arc)element, 2);
+    			}
+    		});
+    		components.add(weightT2Spinner);
+			
+    		JLabel weight5Label = new JLabel("W5 (black):", JLabel.LEFT);
+    		weight5Label.setBounds(columnB_posX+10, columnB_Y, 80, 20);
+    		components.add(weight5Label);
+    		
+    		SpinnerModel weightT5SpinnerModel = new SpinnerNumberModel(arc.getColorWeight(5), 0, Integer.MAX_VALUE, 1);
+    		JSpinner weightT5Spinner = new JSpinner(weightT5SpinnerModel);
+    		weightT5Spinner.setBounds(columnB_posX+90, columnB_Y, 65, 20);
+    		weightT5Spinner.addChangeListener(new ChangeListener() {
+    			public void stateChanged(ChangeEvent e) {
+    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+    				setColorWeight(tokenz, (Arc)element, 5);
+    			}
+    		});
+    		components.add(weightT5Spinner);
+    		
+    		//dla łuku kolorowego sparowanego:
+    		if(pairedArc != null) {
+    			JLabel weightPair2Label = new JLabel(type2, JLabel.LEFT);
+    			weightPair2Label.setBounds(columnA_posX, columnA_Y += 20, 260, 20);
+				columnB_Y += 20;
+	    		components.add(weightPair2Label);
+    			
+	    		JLabel weightp0Label = new JLabel("W0 (red):", JLabel.LEFT);
+	    		weightp0Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+	    		components.add(weightp0Label);
+	    		
+	    		SpinnerModel weightTp0SpinnerModel = new SpinnerNumberModel(pairedArc.getColorWeight(0), 0, Integer.MAX_VALUE, 1);
+	    		JSpinner weightTp0Spinner = new JSpinner(weightTp0SpinnerModel);
+	    		weightTp0Spinner.setBounds(columnB_posX-60, columnB_Y += 20, 65, 20);
+	    		weightTp0Spinner.addChangeListener(new ChangeListener() {
+	    			public void stateChanged(ChangeEvent e) {
+	    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+	    				setColorWeight(tokenz, pairedArc, 0);
+	    			}
+	    		});
+	    		components.add(weightTp0Spinner);
+				
+	    		JLabel weightp3Label = new JLabel("W3 (yellow):", JLabel.LEFT);
+	    		weightp3Label.setBounds(columnB_posX+10, columnB_Y, 80, 20);
+	    		components.add(weightp3Label);
+	    		
+	    		SpinnerModel weightTp3SpinnerModel = new SpinnerNumberModel(pairedArc.getColorWeight(3), 0, Integer.MAX_VALUE, 1);
+	    		JSpinner weightTp3Spinner = new JSpinner(weightTp3SpinnerModel);
+	    		weightTp3Spinner.setBounds(columnB_posX+90, columnB_Y, 65, 20);
+	    		weightTp3Spinner.addChangeListener(new ChangeListener() {
+	    			public void stateChanged(ChangeEvent e) {
+	    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+	    				setColorWeight(tokenz, pairedArc, 3);
+	    			}
+	    		});
+	    		components.add(weightTp3Spinner);
+	    		
+	    		JLabel weightp1Label = new JLabel("W1 (green):", JLabel.LEFT);
+	    		weightp1Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+	    		components.add(weightp1Label);
+	    		
+	    		SpinnerModel weightTp1SpinnerModel = new SpinnerNumberModel(pairedArc.getColorWeight(1), 0, Integer.MAX_VALUE, 1);
+	    		JSpinner weightTp1Spinner = new JSpinner(weightTp1SpinnerModel);
+	    		weightTp1Spinner.setBounds(columnB_posX-60, columnB_Y += 20, 65, 20);
+	    		weightTp1Spinner.addChangeListener(new ChangeListener() {
+	    			public void stateChanged(ChangeEvent e) {
+	    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+	    				setColorWeight(tokenz, pairedArc, 1);
+	    			}
+	    		});
+	    		components.add(weightTp1Spinner);
+				
+	    		JLabel weightp4Label = new JLabel("W4 (gray):", JLabel.LEFT);
+	    		weightp4Label.setBounds(columnB_posX+10, columnB_Y, 80, 20);
+	    		components.add(weightp4Label);
+	    		
+	    		SpinnerModel weightTp4SpinnerModel = new SpinnerNumberModel(pairedArc.getColorWeight(4), 0, Integer.MAX_VALUE, 1);
+	    		JSpinner weightTp4Spinner = new JSpinner(weightTp4SpinnerModel);
+	    		weightTp4Spinner.setBounds(columnB_posX+90, columnB_Y, 65, 20);
+	    		weightTp4Spinner.addChangeListener(new ChangeListener() {
+	    			public void stateChanged(ChangeEvent e) {
+	    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+	    				setColorWeight(tokenz, pairedArc, 4);
+	    			}
+	    		});
+	    		components.add(weightTp4Spinner);
+	    		
+	    		JLabel weightp2Label = new JLabel("W2 (blue):", JLabel.LEFT);
+	    		weightp2Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+	    		components.add(weightp2Label);
+	    		
+	    		SpinnerModel weightTp2SpinnerModel = new SpinnerNumberModel(pairedArc.getColorWeight(2), 0, Integer.MAX_VALUE, 1);
+	    		JSpinner weightTp2Spinner = new JSpinner(weightTp2SpinnerModel);
+	    		weightTp2Spinner.setBounds(columnB_posX-60, columnB_Y += 20, 65, 20);
+	    		weightTp2Spinner.addChangeListener(new ChangeListener() {
+	    			public void stateChanged(ChangeEvent e) {
+	    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+	    				setColorWeight(tokenz, pairedArc, 2);
+	    			}
+	    		});
+	    		components.add(weightTp2Spinner);
+				
+	    		JLabel weightp5Label = new JLabel("W5 (black):", JLabel.LEFT);
+	    		weightp5Label.setBounds(columnB_posX+10, columnB_Y, 80, 20);
+	    		components.add(weightp5Label);
+	    		
+	    		SpinnerModel weightTp5SpinnerModel = new SpinnerNumberModel(pairedArc.getColorWeight(5), 0, Integer.MAX_VALUE, 1);
+	    		JSpinner weightTp5Spinner = new JSpinner(weightTp5SpinnerModel);
+	    		weightTp5Spinner.setBounds(columnB_posX+90, columnB_Y, 65, 20);
+	    		weightTp5Spinner.addChangeListener(new ChangeListener() {
+	    			public void stateChanged(ChangeEvent e) {
+	    				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+	    				setColorWeight(tokenz, pairedArc, 5);
+	    			}
+	    		});
+	    		components.add(weightTp5Spinner);
+    		}
+		}
+		
 		
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
@@ -5237,6 +5756,43 @@ public class HolmesDockWindowsTable extends JPanel {
 	private void setWeight(int weight, Arc arc) {
 		if (mode == ARC) {
 			arc.setWeight(weight);
+			repaintGraphPanel();
+		}
+	}
+	
+	/**
+	 * Metoda zmienia wagę dla łuku sieci, poza listenerem, który
+	 * jest klasą anonimową (i nie widzi pola element).
+	 * @param weight int - nowa waga dla koloru
+	 * @param arc Arc - obiekt łuku
+	 * @param i int - nr porządkowy koloru, default 0, od 0 do 5
+	 */
+	private void setColorWeight(int weight, Arc arc, int i) {
+		if (mode == ARC) {
+			switch(i) {
+				case 0:
+					arc.setColorWeight(weight, i);
+					break;
+				case 1:
+					arc.setColorWeight(weight, i);
+					break;
+				case 2:
+					arc.setColorWeight(weight, i);
+					break;
+				case 3:
+					arc.setColorWeight(weight, i);
+					break;
+				case 4:
+					arc.setColorWeight(weight, i);
+					break;
+				case 5:
+					arc.setColorWeight(weight, i);
+					break;
+				default:
+					arc.setColorWeight(weight, i);
+					break;
+			}
+			
 			repaintGraphPanel();
 		}
 	}

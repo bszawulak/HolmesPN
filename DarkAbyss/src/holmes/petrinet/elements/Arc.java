@@ -38,11 +38,11 @@ public class Arc extends PetriNetElement {
 	public boolean isBreakArc = false; 
 	
 	//colors:
-	private int weight1green;
-	private int weight2blue;
-	private int weight3yellow;
-	private int weight4grey;
-	private int weight5black;
+	private int weight1green = 0;
+	private int weight2blue = 0;
+	private int weight3yellow = 0;
+	private int weight4grey = 0;
+	private int weight5black = 0;
 	
 	//read-arc parameters:
 	private Arc pairedArc;
@@ -228,7 +228,7 @@ public class Arc extends PetriNetElement {
 	
 	/**
 	 * Metoda pozwalająca ustawić wagę kolorowego łuku.
-	 * @param weight int - waga łuku
+	 * @param w int - waga łuku
 	 * @param i int - nr porządkowy koloru, default 0, od 0 do 5
 	 */
 	public void setColorWeight(int w, int i) {
