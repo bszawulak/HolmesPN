@@ -546,6 +546,33 @@ public class ProjectReader {
 				place.getNamesLocations().get(eLocIndex).setNotSnappedPosition(newP);
 				return;
 			}
+			
+			query = "Place colored:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {
+					place.isColored = true;
+				}
+				return;
+			}
+			
+			query = "Place colors:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				String[] tab = line.split(";");
+				try {
+					place.setColorTokensNumber(Integer.parseInt(tab[0]), 0);
+					place.setColorTokensNumber(Integer.parseInt(tab[1]), 1);
+					place.setColorTokensNumber(Integer.parseInt(tab[2]), 2);
+					place.setColorTokensNumber(Integer.parseInt(tab[3]), 3);
+					place.setColorTokensNumber(Integer.parseInt(tab[4]), 4);
+					place.setColorTokensNumber(Integer.parseInt(tab[5]), 5);
+				} catch (Exception e) {}
+				
+				return;
+			}
 		} catch (Exception e) {
 			overlord.log("Reading file error in line: "+backup+" for Place "+placesProcessed, "error", true);
 		}

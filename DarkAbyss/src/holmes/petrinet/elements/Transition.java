@@ -950,11 +950,22 @@ public class Transition extends Node {
 	}
 	
 	/**
+	 * Metoda informujaca, czy tranzycja jest kolorowana
+	 * @return boolean - true, jeśli colored, false jeśli nie
+	 */
+	public boolean isColored() {
+		if(transType == TransitionType.CPNbasic)
+			return true;
+		else
+			return false;
+	}
+	
+	/**
 	 * Metoda zwraca liczbę potrzebnych tokenów do produkcji (z danego koloru)
 	 * @param i int - nr porzadkowy koloru, default 0, od 0 do 5
 	 * @return int - wymagana liczba tokenów danego koloru
 	 */
-	public int getReqTokens(int i) {
+	public int getRequiredColoredTokens(int i) {
 		switch(i) {
 			case 0:
 				return reqT0red;

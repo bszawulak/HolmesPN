@@ -159,6 +159,15 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Place comment:"+Tools.convertToCode(place.getComment())+">"+newline); //komentarz
 				bw.write(spaces(sp)+"<Place tokens:"+place.getTokensNumber()+">"+newline); //tokeny
 				
+				bw.write(spaces(sp)+"<Place colored:"+place.isColored+">"+newline);
+				bw.write(spaces(sp)+"<Place colors:"
+						+place.getColorTokensNumber(0)+";"
+						+place.getColorTokensNumber(1)+";"
+						+place.getColorTokensNumber(2)+";"
+						+place.getColorTokensNumber(3)+";"
+						+place.getColorTokensNumber(4)+";"
+						+place.getColorTokensNumber(5)+">"+newline);
+				
 				bw.write(spaces(sp)+"<Location data"+">"+newline);
 				sp = 8;
 				bw.write(spaces(sp)+"<Place portal status:"+place.isPortal()+">"+newline);
@@ -206,6 +215,15 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition TPN status:"+trans.getTPNstatus()+">"+newline); //is TPN active?
 				bw.write(spaces(sp)+"<Transition DPN status:"+trans.getDPNstatus()+">"+newline); //is DPN active?
 				bw.write(spaces(sp)+"<Transition function flag:"+trans.isFunctional()+">"+newline); //is functional?
+				
+				bw.write(spaces(sp)+"<Transition colored:"+trans.isColored()+">"+newline); //is colored?
+				bw.write(spaces(sp)+"<Transition colors threshold:"
+						+trans.getRequiredColoredTokens(0)+";"
+						+trans.getRequiredColoredTokens(1)+";"
+						+trans.getRequiredColoredTokens(2)+";"
+						+trans.getRequiredColoredTokens(3)+";"
+						+trans.getRequiredColoredTokens(4)+";"
+						+trans.getRequiredColoredTokens(5)+">"+newline);
 				
 				bw.write(spaces(sp)+"<Location data"+">"+newline);
 				sp = 8;

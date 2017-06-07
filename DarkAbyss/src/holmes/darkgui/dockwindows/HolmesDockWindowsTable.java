@@ -2000,7 +2000,6 @@ public class HolmesDockWindowsTable extends JPanel {
 	 * @param transition Transition - obiekt tranzycji sieci
 	 * @param location ElementLocation - lokalizacja tranzycji
 	*/
-	//TODO: kolor
 	public void createColorTransitionSubWindow(Transition transition, ElementLocation location) {
 		int columnA_posX = 10;
 		int columnB_posX = 100;
@@ -2008,6 +2007,8 @@ public class HolmesDockWindowsTable extends JPanel {
 		int columnB_Y = 0;
 		int colACompLength = 70;
 		int colBCompLength = 200;
+		
+		//TODO: 
 
 		mode = CTRANSITION;
 		elementLocation = location;
@@ -2088,10 +2089,7 @@ public class HolmesDockWindowsTable extends JPanel {
         CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
         columnB_Y += 20;
         components.add(CreationPanel);
-        
-      
 
-		
 		//SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
 		GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
@@ -2284,6 +2282,101 @@ public class HolmesDockWindowsTable extends JPanel {
 		}.yesWeCan(transition, location) ); 
 		components.add(nameLocChangeButton);
 		 
+		JLabel reqLabel = new JLabel("Required tokens threshold:", JLabel.LEFT);
+		reqLabel.setBounds(columnA_posX, columnA_Y += 50, 220, 20);
+		columnB_Y += 76;
+		components.add(reqLabel);
+		
+		JLabel reqT0Label = new JLabel("T0 red:", JLabel.LEFT);
+		reqT0Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+		components.add(reqT0Label);
+		
+		SpinnerModel weightT0SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(0), 0, Integer.MAX_VALUE, 1);
+		JSpinner weightT0Spinner = new JSpinner(weightT0SpinnerModel);
+		weightT0Spinner.setBounds(columnB_posX-35, columnB_Y += 20, 65, 20);
+		weightT0Spinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+				setActivationWeight(tokenz, (Transition)element, 0);
+			}
+		});
+		components.add(weightT0Spinner);
+		
+		JLabel reqT3Label = new JLabel("T3 yellow:", JLabel.LEFT);
+		reqT3Label.setBounds(columnB_posX+40, columnB_Y, 80, 20);
+		components.add(reqT3Label);
+		
+		SpinnerModel weightT3SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(3), 0, Integer.MAX_VALUE, 1);
+		JSpinner weightT3Spinner = new JSpinner(weightT3SpinnerModel);
+		weightT3Spinner.setBounds(columnB_posX+100, columnB_Y, 65, 20);
+		weightT3Spinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+				setActivationWeight(tokenz, (Transition)element, 3);
+			}
+		});
+		components.add(weightT3Spinner);
+		
+		JLabel reqT1Label = new JLabel("T1 green:", JLabel.LEFT);
+		reqT1Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+		components.add(reqT1Label);
+		
+		SpinnerModel weightT1SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(1), 0, Integer.MAX_VALUE, 1);
+		JSpinner weightT1Spinner = new JSpinner(weightT1SpinnerModel);
+		weightT1Spinner.setBounds(columnB_posX-35, columnB_Y += 20, 65, 20);
+		weightT1Spinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+				setActivationWeight(tokenz, (Transition)element, 1);
+			}
+		});
+		components.add(weightT1Spinner);
+		
+		JLabel reqT4Label = new JLabel("T4 gray:", JLabel.LEFT);
+		reqT4Label.setBounds(columnB_posX+40, columnB_Y, 80, 20);
+		components.add(reqT4Label);
+		
+		SpinnerModel weightT4SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(4), 0, Integer.MAX_VALUE, 1);
+		JSpinner weightT4Spinner = new JSpinner(weightT4SpinnerModel);
+		weightT4Spinner.setBounds(columnB_posX+100, columnB_Y, 65, 20);
+		weightT4Spinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+				setActivationWeight(tokenz, (Transition)element, 4);
+			}
+		});
+		components.add(weightT4Spinner);
+		
+		JLabel reqT2Label = new JLabel("T2 blue:", JLabel.LEFT);
+		reqT2Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+		components.add(reqT2Label);
+		
+		SpinnerModel weightT2SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(2), 0, Integer.MAX_VALUE, 1);
+		JSpinner weightT2Spinner = new JSpinner(weightT2SpinnerModel);
+		weightT2Spinner.setBounds(columnB_posX-35, columnB_Y += 20, 65, 20);
+		weightT2Spinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+				setActivationWeight(tokenz, (Transition)element, 2);
+			}
+		});
+		components.add(weightT2Spinner);
+		
+		JLabel reqT5Label = new JLabel("T5 black:", JLabel.LEFT);
+		reqT5Label.setBounds(columnB_posX+40, columnB_Y, 80, 20);
+		components.add(reqT5Label);
+		
+		SpinnerModel weightT5SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(5), 0, Integer.MAX_VALUE, 1);
+		JSpinner weightT5Spinner = new JSpinner(weightT5SpinnerModel);
+		weightT5Spinner.setBounds(columnB_posX+100, columnB_Y, 65, 20);
+		weightT5Spinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+				setActivationWeight(tokenz, (Transition)element, 5);
+			}
+		});
+		components.add(weightT5Spinner);
+		
 		panel.setLayout(null);
 		for (JComponent component : components) {
 			panel.add(component);
@@ -3840,11 +3933,7 @@ public class HolmesDockWindowsTable extends JPanel {
 	private void showT_invTransFrequency() {
 		PetriNet pn = overlord.getWorkspace().getProject();
 		pn.resetNetColors();
-		
-		//TODO:
-		
-		
-		
+
 		//ArrayList<Integer> freqVector = InvariantsTools.getFrequency(t_invariantsMatrix, false);
 		ArrayList<Integer> freqVector = InvariantsTools.getFrequencyRealInvariants(t_invariantsMatrix, false);
 		ArrayList<Transition> transitions_tmp = overlord.getWorkspace().getProject().getTransitions();
@@ -4548,7 +4637,7 @@ public class HolmesDockWindowsTable extends JPanel {
 			}
 		});
 		components.add(chooseClusterInv);
-		//TODO:
+
 		JButton showTimeDetailsButton = new JButton();
 		showTimeDetailsButton.setText("<html>&nbsp;Time&nbsp;<br>details</html>");
 		showTimeDetailsButton.setIcon(Tools.getResIcon22("/icons/clustWindow/showInfo.png"));
@@ -5324,7 +5413,6 @@ public class HolmesDockWindowsTable extends JPanel {
 	public void createQuickSimSubWindow() {
 		int posX = 10;
 		int posY = 10;
-		//TODO:
 		initiateContainers();
 		
 		quickSim = new QuickSimTools(this);
@@ -5795,6 +5883,38 @@ public class HolmesDockWindowsTable extends JPanel {
 			
 			repaintGraphPanel();
 		}
+	}
+	
+	/**
+	 * Metoda zmienia liczbę tokenów aktywacji tranzycji, poza listenerem, który
+	 * jest klasą anonimową (i nie widzi pola element).
+	 * @param weight int - nowa waga aktywacji dla koloru
+	 * @param trans Transition - obiekt łuku
+	 * @param i int - nr porządkowy koloru, default 0, od 0 do 5
+	 */
+	private void setActivationWeight(int weight, Transition trans, int i) {
+		switch(i) {
+		case 0:
+			trans.setReqTokens(weight, 0);
+			break;
+		case 1:
+			trans.setReqTokens(weight, 1);
+			break;
+		case 2:
+			trans.setReqTokens(weight, 2);
+			break;
+		case 3:
+			trans.setReqTokens(weight, 3);
+			break;
+		case 4:
+			trans.setReqTokens(weight, 4);
+			break;
+		case 5:
+			trans.setReqTokens(weight, 5);
+			break;
+		default:
+			trans.setReqTokens(weight, 0);
+	}
 	}
 	
 	/**
