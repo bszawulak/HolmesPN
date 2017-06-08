@@ -363,8 +363,9 @@ public final class ElementDraw {
 					g.setColor(oldC);
 				}
 				
+				//SYMBOL TRANZYCJI KOLOROWANEJ
 				if(trans.getTransType() == TransitionType.CPNbasic) {
-					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth("C") / 2 - 4;
+					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth("C") / 2 - 3;
 					int posY = nodeBounds.y + nodeBounds.height / 2 + 8;
 					Font old = g.getFont();
 					Color oldC = g.getColor();
@@ -455,8 +456,89 @@ public final class ElementDraw {
 						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
 						g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
 					}
+				}
+				
+				if (eds.color == true || trans.getTransType() == TransitionType.CPNbasic) {
+					Font currentFont = g.getFont();
+					Font newFont = currentFont.deriveFont(currentFont.getSize() * 1.4F);
+					g.setFont(newFont);
+					
+					int r0 = trans.getRequiredColoredTokens(0);
+					int r1 = trans.getRequiredColoredTokens(1);
+					int r2 = trans.getRequiredColoredTokens(2);
+					int r3 = trans.getRequiredColoredTokens(3);
+					int r4 = trans.getRequiredColoredTokens(4);
+					int r5 = trans.getRequiredColoredTokens(5);
+					String txtT0 = "" +r0;
+					String txtT1 = "" +r1;
+					String txtT2 = "" +r2;
+					String txtT3 = "" +r3;
+					String txtT4 = "" +r4;
+					String txtT5 = "" +r5;
+					int txtW0 = g.getFontMetrics().stringWidth(txtT0);
+					int txtW1 = g.getFontMetrics().stringWidth(txtT1);
+					int txtW2 = g.getFontMetrics().stringWidth(txtT2);
+					int txtW3 = g.getFontMetrics().stringWidth(txtT3);
+					int txtW4 = g.getFontMetrics().stringWidth(txtT4);
+					int txtW5 = g.getFontMetrics().stringWidth(txtT5);
 					
 					
+					
+					g.setColor(Color.black);
+					String txt = "<";
+					int posX = nodeBounds.x - (g.getFontMetrics().stringWidth(txt) / 2 ) - 15;
+					int posY = nodeBounds.y - 1;
+					g.drawString(txt, posX, posY);
+					int lastSize = g.getFontMetrics().stringWidth(txt);
+					
+					if(r0 > 0) {
+						posX += (txtW0 - 6*txtT0.length() + lastSize);
+						g.setColor(cRed);
+						g.drawString(txtT0, posX, posY);
+						lastSize = txtW0;
+					}
+					
+					if(r1 > 0) {
+						posX += (txtW1 - 6*txtT1.length()  + lastSize);
+						g.setColor(cGreen);
+						g.drawString(txtT1, posX, posY);
+						lastSize = txtW1;
+					}
+					
+					if(r2 > 0) {
+						posX += (txtW2 - 6*txtT2.length()  + lastSize);
+						g.setColor(cBlue);
+						g.drawString(txtT2, posX, posY);
+						lastSize = txtW2;
+					}
+					
+					if(r3 > 0) {
+						posX += (txtW3 - 6*txtT3.length()  + lastSize);
+						g.setColor(cYellow);
+						g.drawString(txtT3, posX, posY);
+						lastSize = txtW3;
+					}
+					
+					if(r4 > 0) {
+						posX += (txtW4 - 6*txtT4.length()  + lastSize);
+						g.setColor(cGrey);
+						g.drawString(txtT4, posX, posY);
+						lastSize = txtW4;
+					}
+					
+					if(r5 > 0) {
+						posX += (txtW5 - 6*txtT5.length()  + lastSize);
+						g.setColor(cBlack);
+						g.drawString(txtT5, posX, posY);
+						lastSize = txtW5;
+					}
+					
+					txt = ">";
+					posX += (g.getFontMetrics().stringWidth(txt) );
+					g.setColor(cBlack);
+					g.drawString(txt, posX, posY);
+					
+					g.setFont(currentFont);
 				}
 			}
 		} else if(node instanceof Place) { // MIEJSCA  //TODO: znacznik miejsc
@@ -723,11 +805,6 @@ public final class ElementDraw {
 					g.drawString(txt, posX, posY);
 					
 					g.setFont(currentFont);
-					//String txt = "["+place.getTokensNumber()+","+place.token1green+","+place.token2blue+","+place.token3yellow+","+place.token4grey+","+place.token5black+"]";
-					//int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2 ) - 15;
-					//int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
-					//g.setColor(Color.BLUE);
-					//g.drawString(txt, posX, posY);
 				}
 			}
 		} else if(node instanceof MetaNode) { //TODO: znacznik meta
@@ -1047,6 +1124,19 @@ public final class ElementDraw {
 	private static void drawTokens(Graphics2D g, Place place, Rectangle nodeBounds) {
 		g.setColor(Color.black);
 		g.setFont(new Font("TimesRoman", Font.BOLD, 14));
+		
+		if(place.isColored) {
+				int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth("C") / 2 - 3;
+				int posY = nodeBounds.y + nodeBounds.height / 2 + 8;
+				Font old = g.getFont();
+				Color oldC = g.getColor();
+				g.setFont(new Font("Garamond", Font.BOLD, 22));
+				g.setColor(Color.RED);
+				g.drawString("C", posX, posY);	
+				g.setFont(old);
+				g.setColor(oldC);
+			return;
+		}
 		
 		if (place.getTokensNumber() == 1) {
 			int x = nodeBounds.x + nodeBounds.width / 2;

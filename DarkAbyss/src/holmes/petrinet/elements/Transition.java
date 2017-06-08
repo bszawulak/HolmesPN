@@ -989,7 +989,7 @@ public class Transition extends Node {
 	 * @param tokens int - liczba tokenów
 	 * @param i int - nr porządkowy koloru, default 0, od 0 do 5
 	 */
-	public void setReqTokens(int tokens, int i) {
+	public void setRequiredColoredTokens(int tokens, int i) {
 		switch(i) {
 			case 0:
 				reqT0red = tokens;

@@ -5767,15 +5767,21 @@ public class HolmesDockWindowsTable extends JPanel {
 		element.setComment(newComment);	
 	}
 
+	/**
+	 * Tworzenie portalu z aktualnie wybranego elementu sieci.
+	 */
 	private void makePortal() {
-		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
+		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION || mode == CTRANSITION) {
 			Node node = (Node) element;
 			node.setPortal(true);
 		}
 	}
 
+	/**
+	 * Wyłączenie statusu portalu na elemencie posiadającym tylko jedno EL.
+	 */
 	private void unPortal() {
-		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
+		if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION || mode == CTRANSITION) {
 			Node node = (Node) element;
 			if(node.getElementLocations().size() == 1)
 				node.setPortal(false);
@@ -5895,25 +5901,25 @@ public class HolmesDockWindowsTable extends JPanel {
 	private void setActivationWeight(int weight, Transition trans, int i) {
 		switch(i) {
 		case 0:
-			trans.setReqTokens(weight, 0);
+			trans.setRequiredColoredTokens(weight, 0);
 			break;
 		case 1:
-			trans.setReqTokens(weight, 1);
+			trans.setRequiredColoredTokens(weight, 1);
 			break;
 		case 2:
-			trans.setReqTokens(weight, 2);
+			trans.setRequiredColoredTokens(weight, 2);
 			break;
 		case 3:
-			trans.setReqTokens(weight, 3);
+			trans.setRequiredColoredTokens(weight, 3);
 			break;
 		case 4:
-			trans.setReqTokens(weight, 4);
+			trans.setRequiredColoredTokens(weight, 4);
 			break;
 		case 5:
-			trans.setReqTokens(weight, 5);
+			trans.setRequiredColoredTokens(weight, 5);
 			break;
 		default:
-			trans.setReqTokens(weight, 0);
+			trans.setRequiredColoredTokens(weight, 0);
 	}
 	}
 	

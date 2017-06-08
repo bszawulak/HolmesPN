@@ -16,6 +16,7 @@ import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.SPNdataVector;
 import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.elements.Arc;
+import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
@@ -340,7 +341,14 @@ public class ProjectWriter {
 								brokenLine = brokenLine.substring(0, brokenLine.length()-1);
 							}
 							
-							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+brokenLine+newline);
+							boolean isColored = false;
+							if(arc.getArcType() == TypeOfArc.COLOR)
+								isColored = true;
+							String coloredWeights = ""+arc.getColorWeight(0)+":"+arc.getColorWeight(1)+":"+arc.getColorWeight(2)+":"
+									+arc.getColorWeight(3)+":"+arc.getColorWeight(4)+":"+arc.getColorWeight(5);
+							
+							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+brokenLine+";"+isColored
+									+";"+coloredWeights+newline);
 							savedArcs++;
 						} else if(endNode instanceof MetaNode) {
 							String startLoc = "P"+p+"("+e+")";
@@ -357,7 +365,7 @@ public class ProjectWriter {
 							
 							String endLoc = "M"+endNodeIndex+"("+endNodeLocationIndex+")";
 							int weight = arc.getWeight();
-							
+
 							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
 							savedArcs++;
 						} 
@@ -408,7 +416,14 @@ public class ProjectWriter {
 								brokenLine = brokenLine.substring(0, brokenLine.length()-1);
 							}
 							
-							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+brokenLine+newline);
+							boolean isColored = false;
+							if(arc.getArcType() == TypeOfArc.COLOR)
+								isColored = true;
+							String coloredWeights = ""+arc.getColorWeight(0)+":"+arc.getColorWeight(1)+":"+arc.getColorWeight(2)+":"
+									+arc.getColorWeight(3)+":"+arc.getColorWeight(4)+":"+arc.getColorWeight(5);
+							
+							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+brokenLine+";"+isColored
+									+";"+coloredWeights+newline);
 							savedArcs++;
 						} else if(endNode instanceof MetaNode) {
 							String startLoc = "T"+t+"("+e+")";
@@ -499,7 +514,6 @@ public class ProjectWriter {
 				GUIManager.getDefaultGUIManager().log("Error: saved "+savedArcs+" out of total "+totalArcs+" arcs.", "error", true);
 			}
 			
-			//TODO:
 			bw.write(spaces(sp)+"<Functions data block"+">"+newline);
 			sp = 4;
 			for(int t=0; t<transitions.size(); t++) {

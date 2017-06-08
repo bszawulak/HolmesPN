@@ -745,6 +745,34 @@ public class ProjectReader {
 				transition.getNamesLocations().get(eLocIndex).setNotSnappedPosition(newP);
 				return;
 			}
+			
+			query = "Transition colored:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {
+					transition.setTransType(TransitionType.CPNbasic);
+				}
+				return;
+			}
+			
+			query = "Transition colors threshold:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				String[] tab = line.split(";");
+				try {
+					transition.setRequiredColoredTokens(Integer.parseInt(tab[0]), 0);
+					transition.setRequiredColoredTokens(Integer.parseInt(tab[1]), 1);
+					transition.setRequiredColoredTokens(Integer.parseInt(tab[2]), 2);
+					transition.setRequiredColoredTokens(Integer.parseInt(tab[3]), 3);
+					transition.setRequiredColoredTokens(Integer.parseInt(tab[4]), 4);
+					transition.setRequiredColoredTokens(Integer.parseInt(tab[5]), 5);
+				} catch (Exception e) {}
+				
+				return;
+			}
+			
 		} catch (Exception e) {
 			overlord.log("Reading file error in line: "+backup+" for Transition "+transitionsProcessed, "error", true);
 		}
@@ -930,6 +958,20 @@ public class ProjectReader {
 			int transElLoc = -1;
 			int metaElLoc = -1;
 			
+			boolean colorReadOk = false;
+			boolean colorStatus = false;
+			String[] colorsWeights = null;
+			try {
+				int len = tab.length;
+				if(len > 4) {
+					if(tab[4].equals("true")) {
+						colorStatus = true;
+					}
+					colorsWeights = tab[5].split(":");
+					colorReadOk = true;
+				}
+			} catch (Exception e) {}
+			
 			if(placeFirst) { //pierwsze jest miejsce
 				if(metaSecond == false) {
 					placeIndex = Integer.parseInt(arcDataTable[0]);
@@ -944,6 +986,9 @@ public class ProjectReader {
 					newArc.clearBreakPoints();
 					if(tab.length > 3)
 						addBroken(newArc, tab[3]);
+					
+					if(colorReadOk)
+						addColorsToArc(newArc, colorStatus, colorsWeights);
 					return newArc;
 				} else { //metaSecond == true
 					placeIndex = Integer.parseInt(arcDataTable[0]);
@@ -958,6 +1003,7 @@ public class ProjectReader {
 					newArc.clearBreakPoints();
 					if(tab.length > 3)
 						addBroken(newArc, tab[3]);
+					
 					return newArc;
 				}
 			} else { //placeFirst = false
@@ -975,6 +1021,7 @@ public class ProjectReader {
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
 							addBroken(newArc, tab[3]);
+
 						return newArc;
 					} else { //drugie jest miejsce
 						metaIndex = Integer.parseInt(arcDataTable[0]);
@@ -989,6 +1036,9 @@ public class ProjectReader {
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
 							addBroken(newArc, tab[3]);
+						
+						if(colorReadOk)
+							addColorsToArc(newArc, colorStatus, colorsWeights);
 						return newArc;
 					}
 				} else { //placesFirst = false, metaFirst = false -> pierwsza jest tranzycja
@@ -1005,6 +1055,9 @@ public class ProjectReader {
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
 							addBroken(newArc, tab[3]);
+						
+						if(colorReadOk)
+							addColorsToArc(newArc, colorStatus, colorsWeights);
 						return newArc;
 					} else { //drugie jest miejsce
 						transIndex = Integer.parseInt(arcDataTable[0]);
@@ -1019,6 +1072,9 @@ public class ProjectReader {
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
 							addBroken(newArc, tab[3]);
+						
+						if(colorReadOk)
+							addColorsToArc(newArc, colorStatus, colorsWeights);
 						return newArc;
 					}
 				}
@@ -1027,6 +1083,28 @@ public class ProjectReader {
 			overlord.log("Reading file error in line: "+backup, "error", true);
 		}
 		return null;
+	}
+
+	/**
+	 * Dodaje dane wag kolorów do łuku.
+	 * @param newArc Arc - obiekt łuku
+	 * @param colorStatus boolean - status koloru
+	 * @param colorsWeights string[] - tablica wag (string!)
+	 */
+	private void addColorsToArc(Arc newArc, boolean colorStatus, String[] colorsWeights) {
+		try {
+			if(colorStatus)
+				newArc.setArcType(TypeOfArc.COLOR);
+			
+			newArc.setColorWeight(Integer.parseInt(colorsWeights[0]), 0);
+			newArc.setColorWeight(Integer.parseInt(colorsWeights[1]), 1);
+			newArc.setColorWeight(Integer.parseInt(colorsWeights[2]), 2);
+			newArc.setColorWeight(Integer.parseInt(colorsWeights[3]), 3);
+			newArc.setColorWeight(Integer.parseInt(colorsWeights[4]), 4);
+			newArc.setColorWeight(Integer.parseInt(colorsWeights[5]), 5);
+		} catch (Exception e) {
+			overlord.log("Error while adding color data to arc: "+newArc.toString(), "error", true);
+		}
 	}
 
 	/**
