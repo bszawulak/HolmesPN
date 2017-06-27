@@ -775,32 +775,32 @@ public final class ElementDraw {
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
 					g.drawString(txt, posX, posY);
 					
-					posX += (txtW0 - 6*txtT0.length() );
+					posX += (txtW0 - 8*txtT0.length() );
 					g.setColor(cRed);
 					g.drawString(txtT0, posX, posY);
 					
-					posX += (txtW1 - 6*txtT1.length()  + txtW0);
+					posX += (txtW1 - 10*txtT1.length()  + txtW0);
 					g.setColor(cGreen);
 					g.drawString(txtT1, posX, posY);
 					
-					posX += (txtW2 - 6*txtT2.length()  + txtW1);
+					posX += (txtW2 - 10*txtT2.length()  + txtW1);
 					g.setColor(cBlue);
 					g.drawString(txtT2, posX, posY);
 					
-					posX += (txtW3 - 6*txtT3.length()  + txtW2);
+					posX += (txtW3 - 10*txtT3.length()  + txtW2);
 					g.setColor(cYellow);
 					g.drawString(txtT3, posX, posY);
 					
-					posX += (txtW4 - 6*txtT4.length()  + txtW3);
+					posX += (txtW4 - 10*txtT4.length()  + txtW3);
 					g.setColor(cGrey);
 					g.drawString(txtT4, posX, posY);
 					
-					posX += (txtW5 - 6*txtT5.length()  + txtW4);
+					posX += (txtW5 - 10*txtT5.length()  + txtW4);
 					g.setColor(cBlack);
 					g.drawString(txtT5, posX, posY);
 					
 					txt = "]";
-					posX += (g.getFontMetrics().stringWidth(txt) + txtW5 );
+					posX += (g.getFontMetrics().stringWidth(txt) + txtW5 -5);
 					g.setColor(cBlack);
 					g.drawString(txt, posX, posY);
 					
@@ -1059,12 +1059,18 @@ public final class ElementDraw {
 		//**********************************************
 		//***********    LOKALIZACJA WAGI    ***********
 		//**********************************************
-		if (arc.getWeight() > 1) {
+		String wTxt = Integer.toString(arc.getWeight());
+		if(arc.getArcType() == TypeOfArc.COLOR) {
+			wTxt = arc.getColorWeight(0)+","+arc.getColorWeight(1)+","+arc.getColorWeight(2)+","+
+					arc.getColorWeight(3)+","+arc.getColorWeight(4)+","+arc.getColorWeight(5);
+		}
+		
+		if (arc.getWeight() > 1 || arc.getArcType() == TypeOfArc.COLOR) {
 			if(arc.accessBreaks().size() > 0) {
 				Point breakP = arc.accessBreaks().get(0);
 				
 				g.setFont(new Font("Tahoma", Font.PLAIN, 18));
-				g.drawString(Integer.toString(arc.getWeight()), breakP.x, breakP.y - 10);
+				g.drawString(wTxt, breakP.x, breakP.y - 10);
 			} else {
 				int x_weight = (endP.x + startP.x) / 2;
 				int y_weight = (endP.y + startP.y) / 2;
@@ -1086,7 +1092,7 @@ public final class ElementDraw {
 				}
 
 				g.setFont(new Font("Tahoma", Font.PLAIN, 18));
-				g.drawString(Integer.toString(arc.getWeight()), x_weight, y_weight + 10);
+				g.drawString(wTxt, x_weight, y_weight + 10);
 			}
 		}
 		return g;
@@ -1279,7 +1285,7 @@ public final class ElementDraw {
 		double arcWidth = 0;
 		double stepSize = 0;
 		if(breaks > 0) { //o żesz...
-			handleBrokenArc(g, STEP_COUNT, step, breakPoints, breaks, startPos, endPos, arcWidth, weight);
+			handleBrokenArc(g, STEP_COUNT, step, breakPoints, breaks, startPos, endPos, arcWidth, weight, arc);
 		} else {
 			arcWidth = Math.hypot(startPos.x - endPos.x, startPos.y - endPos.y); //suma po breakach, potem wybrać odcinek, a potem jego dlugość
 			stepSize = arcWidth / (double) STEP_COUNT;
@@ -1299,12 +1305,20 @@ public final class ElementDraw {
 			g.setStroke(EditorResources.tokenDefaultStroke);
 			g.drawOval((int) a - 5, (int) b - 5, 10, 10);
 			
+			
+			String wTxt = Integer.toString(weight);
+			if(arc.getArcType() == TypeOfArc.COLOR) {
+				wTxt = arc.getColorWeight(0)+","+arc.getColorWeight(1)+","+arc.getColorWeight(2)+","+
+						arc.getColorWeight(3)+","+arc.getColorWeight(4)+","+arc.getColorWeight(5);
+			}
+			
 			Font font1 = new Font("Tahoma", Font.BOLD, 14);
 			Font font2 = new Font("Tahoma", Font.BOLD, 13);
 			Font font3 = new Font("Tahoma", Font.PLAIN, 12);
-			TextLayout textLayout1 = new TextLayout(Integer.toString(weight), font1, g.getFontRenderContext());
-			TextLayout textLayout2 = new TextLayout(Integer.toString(weight), font2, g.getFontRenderContext());
-			TextLayout textLayout3 = new TextLayout(Integer.toString(weight), font3, g.getFontRenderContext());
+			
+			TextLayout textLayout1 = new TextLayout(wTxt, font1, g.getFontRenderContext());
+			TextLayout textLayout2 = new TextLayout(wTxt, font2, g.getFontRenderContext());
+			TextLayout textLayout3 = new TextLayout(wTxt, font3, g.getFontRenderContext());
 			
 			g.setColor(new Color(255, 255, 255, 70));
 			textLayout1.draw(g, (int) a + 10, (int) b);
@@ -1326,9 +1340,10 @@ public final class ElementDraw {
 	 * @param endPos Point - pozycja węzła końcowego łuku
 	 * @param arcWidth int - szerokość kreski łuku
 	 * @param weight int - waga łuku
+	 * @param Arc arc - obiekt łuku
 	 */
 	private static void handleBrokenArc(Graphics2D g, int STEP_COUNT, int step, ArrayList<Point> breakPoints,
-			int breaks, Point startPos, Point endPos, double arcWidth, int weight) {
+			int breaks, Point startPos, Point endPos, double arcWidth, int weight, Arc arc) {
 		double stepSize;
 		double tmp = 0;
 		double a = 0;
@@ -1392,12 +1407,18 @@ public final class ElementDraw {
 		g.setStroke(EditorResources.tokenDefaultStroke);
 		g.drawOval((int) a - 5, (int) b - 5, 10, 10);
 		
+		String wTxt = Integer.toString(weight);
+		if(arc.getArcType() == TypeOfArc.COLOR) {
+			wTxt = arc.getColorWeight(0)+","+arc.getColorWeight(1)+","+arc.getColorWeight(2)+","+
+					arc.getColorWeight(3)+","+arc.getColorWeight(4)+","+arc.getColorWeight(5);
+		}
+
 		Font font1 = new Font("Tahoma", Font.BOLD, 14);
 		Font font2 = new Font("Tahoma", Font.BOLD, 13);
 		Font font3 = new Font("Tahoma", Font.PLAIN, 12);
-		TextLayout textLayout1 = new TextLayout(Integer.toString(weight), font1, g.getFontRenderContext());
-		TextLayout textLayout2 = new TextLayout(Integer.toString(weight), font2, g.getFontRenderContext());
-		TextLayout textLayout3 = new TextLayout(Integer.toString(weight), font3, g.getFontRenderContext());
+		TextLayout textLayout1 = new TextLayout(wTxt, font1, g.getFontRenderContext());
+		TextLayout textLayout2 = new TextLayout(wTxt, font2, g.getFontRenderContext());
+		TextLayout textLayout3 = new TextLayout(wTxt, font3, g.getFontRenderContext());
 		
 		g.setColor(new Color(255, 255, 255, 70));
 		textLayout1.draw(g, (int) a + 10, (int) b);

@@ -431,7 +431,7 @@ public class Transition extends Node {
 			int startPlaceTokens = arcStartPlace.getNonReservedTokensNumber();
 			
 			if(arcType == TypeOfArc.INHIBITOR) { 
-				if(startPlaceTokens > 0)
+				if(startPlaceTokens > arc.getWeight())
 					return false; //nieaktywna
 				else
 					continue; //aktywna (nie jest w danej chwili blokowana)
@@ -452,6 +452,74 @@ public class Transition extends Node {
 	}
 
 	/**
+	 * Metoda pozwala sprawdzić, czy tranzycja kolorowana jest aktywna i może zostać odpalona.
+	 * @return boolean - true, jeśli tranzycja jest aktywna i może zostać odpalona; false w przeciwnym wypadku
+	 */
+	public boolean isColorActive() { 
+		if(offline == true)
+			return false;
+		
+		int req0red = 0;
+		int req1green = 0;
+		int req2blue = 0;
+		int req3yellow = 0;
+		int req4grey = 0;
+		int req5black = 0;
+		
+		int tokens0red = 0;
+		int tokens1green = 0;
+		int tokens2blue = 0;
+		int tokens3yellow = 0;
+		int tokens4grey = 0;
+		int tokens5black = 0;
+		
+		for (Arc arc : getInArcs()) {
+			Place arcStartPlace = (Place) arc.getStartNode();
+			TypeOfArc arcType = arc.getArcType();
+			
+			if(arcType != TypeOfArc.COLOR) { //dla zwykłych łuków
+				int startPlaceTokens = arcStartPlace.getNonReservedTokensNumber();
+				if(arcType == TypeOfArc.INHIBITOR) { 
+					if(startPlaceTokens > arc.getWeight())
+						return false; //nieaktywna
+					else
+						continue; //aktywna (nie jest w danej chwili blokowana)
+				} else if(arcType == TypeOfArc.EQUAL && startPlaceTokens != arc.getWeight()) { //DOKŁADNIE TYLE CO WAGA
+					return false;
+				} else {
+					if(isFunctional) { //fast, no method
+						boolean status = FunctionsTools.getFunctionDecision(startPlaceTokens, arc, arc.getWeight(), this);
+						if(status == false)
+							return false; //zwróc tylko jesli false 
+					} else {
+						if (startPlaceTokens < arc.getWeight())
+							return false;
+					}
+				}	
+			}
+			
+			req0red += arc.getColorWeight(0);
+			req1green += arc.getColorWeight(1);
+			req2blue += arc.getColorWeight(2);
+			req3yellow += arc.getColorWeight(3);
+			req4grey += arc.getColorWeight(4);
+			req5black += arc.getColorWeight(5);
+			
+			tokens0red += arcStartPlace.getNonReservedColorTokensNumber(0);
+			tokens1green += arcStartPlace.getNonReservedColorTokensNumber(1);
+			tokens2blue += arcStartPlace.getNonReservedColorTokensNumber(2);
+			tokens3yellow += arcStartPlace.getNonReservedColorTokensNumber(3);
+			tokens4grey += arcStartPlace.getNonReservedColorTokensNumber(4);
+			tokens5black += arcStartPlace.getNonReservedColorTokensNumber(5);
+		}
+		if (req0red > tokens0red || req1green > tokens1green || req2blue > tokens2blue || req3yellow > tokens3yellow ||
+				req4grey > tokens4grey || req5black > tokens5black) {
+			return false;
+		} else
+			return true;
+	}
+
+	/**
 	 * Metoda pozwala zarezerwować we wszystkich miejscach wejściowych
 	 * niezbędne do uruchomienia tokeny. Inne tranzycje nie mogą ich odebrać.
 	 */
@@ -467,6 +535,13 @@ public class Transition extends Node {
 			} else if(arc.getArcType() == TypeOfArc.RESET) {
 				int freeToken = origin.getNonReservedTokensNumber();
 				origin.reserveTokens(freeToken); //all left
+			} else if(arc.getArcType() == TypeOfArc.COLOR) {
+				origin.reserveColorTokens(arc.getColorWeight(0), 0); 
+				origin.reserveColorTokens(arc.getColorWeight(1), 1); 
+				origin.reserveColorTokens(arc.getColorWeight(2), 2); 
+				origin.reserveColorTokens(arc.getColorWeight(3), 3); 
+				origin.reserveColorTokens(arc.getColorWeight(4), 4); 
+				origin.reserveColorTokens(arc.getColorWeight(5), 5); 
 			} else { //read arc / normal
 				if(arc.getArcType() == TypeOfArc.READARC) {
 					if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simTransReadArcTokenReserv").equals("0")) {

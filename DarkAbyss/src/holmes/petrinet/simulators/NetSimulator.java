@@ -144,7 +144,6 @@ public class NetSimulator {
 		ActionListener taskPerformer = new SimulationPerformer();
 		//ustawiania stanu przycisków symulacji:
 		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
-		
 		checkSimulatorNetType(); //trust no one
 		
 		switch (getSimulatorStatus()) {
@@ -186,14 +185,23 @@ public class NetSimulator {
 	 */
 	private boolean isPossibleStep() {
 		ArrayList<Transition> transitions = petriNet.getTransitions();
-		for (Transition transition : transitions) {
-			if (transition.isActive()) {
-				return true;
+		
+		if(netSimType == NetType.COLOR) { //kolorowane
+			for (Transition transition : transitions) {
+				if (transition.isColorActive()) { //ok
+					return true;
+				}				
 			}
-			if(transition.getDPNtimer() >= 0 && transition.getDPNduration() != 0) {
-				return true;
+		} else {
+			for (Transition transition : transitions) {
+				if (transition.isActive()) {
+					return true;
+				}
+				if(transition.getDPNtimer() >= 0 && transition.getDPNduration() != 0) {
+					return true;
+				}
+					
 			}
-				
 		}
 		return false;
 	}
@@ -303,6 +311,13 @@ public class NetSimulator {
 						place.modifyTokensNumber(-tokens);
 					} else if(arc.getArcType() == TypeOfArc.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
+					} else if(arc.getArcType() == TypeOfArc.COLOR) {
+						place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
+						place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
+						place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
+						place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
+						place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
+						place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
 					}
@@ -319,6 +334,13 @@ public class NetSimulator {
 						// PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
 					}  else if(arc.getArcType() == TypeOfArc.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
+					} else if(arc.getArcType() == TypeOfArc.COLOR) {
+						place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
+						place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
+						place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
+						place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
+						place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
+						place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
 					}
@@ -370,6 +392,13 @@ public class NetSimulator {
 						place.modifyTokensNumber(-tokens);
 					} else if(arc.getArcType() == TypeOfArc.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
+					} else if(arc.getArcType() == TypeOfArc.COLOR) {
+						place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
+						place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
+						place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
+						place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
+						place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
+						place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
 						//place.modifyTokensNumber(-arc.getWeight());
@@ -385,8 +414,15 @@ public class NetSimulator {
 					} else if(arc.getArcType() == TypeOfArc.RESET) {
 						place.modifyTokensNumber(-1); 
 						// PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
-					}  else if(arc.getArcType() == TypeOfArc.EQUAL) {
+					} else if(arc.getArcType() == TypeOfArc.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
+					} else if(arc.getArcType() == TypeOfArc.COLOR) {
+						place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
+						place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
+						place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
+						place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
+						place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
+						place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
 						//place.modifyTokensNumber(-arc.getWeight());
@@ -494,9 +530,20 @@ public class NetSimulator {
 					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
 							" arc: "+arc.toString(), "error", true);
 				}
-				//tylko zwykły łuk
-				FunctionsTools.functionalAddition(transition, arc, place);
-				//place.modifyTokensNumber(arc.getWeight());
+				
+				if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
+					place.modifyColorTokensNumber(arc.getColorWeight(0), 0);
+					place.modifyColorTokensNumber(arc.getColorWeight(1), 1);
+					place.modifyColorTokensNumber(arc.getColorWeight(2), 2);
+					place.modifyColorTokensNumber(arc.getColorWeight(3), 3);
+					place.modifyColorTokensNumber(arc.getColorWeight(4), 4);
+					place.modifyColorTokensNumber(arc.getColorWeight(5), 5);
+				} else {
+					//tylko zwykły łuk
+					FunctionsTools.functionalAddition(transition, arc, place);
+					//place.modifyTokensNumber(arc.getWeight());
+				}
+					
 			}
 			transition.resetTimeVariables();
 		}
@@ -542,9 +589,18 @@ public class NetSimulator {
 							" arc: "+arc.toString(), "error", true);
 				}
 				
-				//tylko zwykły łuk
-				FunctionsTools.functionalAddition(transition, arc, place);
-				//place.modifyTokensNumber(arc.getWeight());
+				if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
+					place.modifyColorTokensNumber(arc.getColorWeight(0), 0);
+					place.modifyColorTokensNumber(arc.getColorWeight(1), 1);
+					place.modifyColorTokensNumber(arc.getColorWeight(2), 2);
+					place.modifyColorTokensNumber(arc.getColorWeight(3), 3);
+					place.modifyColorTokensNumber(arc.getColorWeight(4), 4);
+					place.modifyColorTokensNumber(arc.getColorWeight(5), 5);
+				} else {
+					//tylko zwykły łuk
+					FunctionsTools.functionalAddition(transition, arc, place);
+					//place.modifyTokensNumber(arc.getWeight());
+				}
 			}
 			transitions.remove(transition);
 			return true;
@@ -826,7 +882,7 @@ public class NetSimulator {
 		/**
 		 * Metoda aktualizuje wyświetlanie graficznej części symulacji po wykonaniu każdego kroku.
 		 */
-		protected void updateStep() {
+		protected void updateStepCounter() {
 			overlord.getWorkspace().incrementSimulationStep();
 			//tutaj nic się nie dzieje: a chyba chodziło o update podokna właściwości z liczbą tokenów
 			overlord.getSimulatorBox().updateSimulatorProperties();
@@ -854,7 +910,7 @@ public class NetSimulator {
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
-			updateStep();
+			updateStepCounter();
 		}
 	}
 
@@ -894,7 +950,7 @@ public class NetSimulator {
 		 */
 		public void actionPerformed(ActionEvent event) {
 			int DEFAULT_COUNTER = overlord.simSettings.getTransDelay();
-			updateStep(); // rusz tokeny
+			updateStepCounter(); // rusz tokeny
 			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
 				//z miejsc wejściowych i oddawania ich tranzycjom
 				if (scheduledStop) { // jeśli symulacja ma się zatrzymać
@@ -992,11 +1048,12 @@ public class NetSimulator {
 		 */
 		public void actionPerformed(ActionEvent event) {
 			int DEFAULT_COUNTER = overlord.simSettings.getTransDelay();
-			updateStep(); // update graphics
-			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // subtract phase
-				if (scheduledStop) { // executing scheduled stop
+			updateStepCounter(); // update graphics
+			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
+				//z miejsc wejściowych i oddawania ich tranzycjom
+				if (scheduledStop) { // jeśli symulacja ma się zatrzymać
 					executeScheduledStop();
-				} else if (isPossibleStep()) { // if steps remaining
+				} else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
 					if (remainingTransitionsAmount == 0) {
 						timeCounter++;
 						overlord.io.updateTimeStep(""+timeCounter);
@@ -1092,7 +1149,7 @@ public class NetSimulator {
 		 */
 		public void actionPerformed(ActionEvent event) {
 			int DEFAULT_COUNTER = overlord.simSettings.getTransDelay();
-			updateStep(); // update graphics
+			updateStepCounter(); // update graphics
 			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // subtract phase
 				if (scheduledStop) { // executing scheduled stop
 					executeScheduledStop();

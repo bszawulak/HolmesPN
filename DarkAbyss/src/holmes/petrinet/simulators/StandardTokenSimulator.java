@@ -194,14 +194,14 @@ public class StandardTokenSimulator implements IEngine {
 					}
 				}
 			}
-		} if (simulationType == NetType.COLOR) {
+		} if (simulationType == NetType.COLOR) { //ok
 			Collections.shuffle(transitionsIndexList);
 
 			for (int i = 0; i < transitionsIndexList.size(); i++) {
 				Transition transition = transitions.get(transitionsIndexList.get(i));
-				if (transition.isActive() ) {
+				if (transition.isColorActive() ) {
 					if ((generator.nextInt(100) < 50) || maxMode) { // 50% 0-4 / 5-9
-						transition.bookRequiredTokens();
+						transition.bookRequiredTokens(); //ok
 						launchableTransitions.add(transition);
 					}
 				}

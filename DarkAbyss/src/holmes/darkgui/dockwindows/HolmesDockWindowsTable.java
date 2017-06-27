@@ -464,6 +464,32 @@ public class HolmesDockWindowsTable extends JPanel {
 		});
 		components.add(saveButton);
 		
+		JButton c1Button = new JButton("Store");
+		c1Button.setName("reset");
+		c1Button.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
+		c1Button.setToolTipText("Reset all tokens in places.");
+		c1Button.setEnabled(true);
+		c1Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				overlord.getWorkspace().getProject().storeColors();
+			}
+		});
+		components.add(c1Button);
+		
+		JButton c2Button = new JButton("Reset");
+		c2Button.setName("reset");
+		c2Button.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
+		c2Button.setToolTipText("Reset all tokens in places.");
+		c2Button.setEnabled(true);
+		c2Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				overlord.getWorkspace().getProject().restoreColors();
+			}
+		});
+		components.add(c2Button);
+		
 		JButton statesButton = new JButton("State manager");
 		statesButton.setName("State manager");
 		statesButton.setBounds(columnA_posX, columnB_Y += 35, colACompLength*2, 30);

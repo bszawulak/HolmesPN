@@ -61,6 +61,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //macierz p-inwariantów
 	private ArrayList<String> p_invariantsDescriptions;
 	
+	private ArrayList<ArrayList<Integer>> colorVector = null;
+	
 	private ArrayList<ArrayList<Transition>> mctData;
 	private ArrayList<Integer> transitionMCTnumber;
 	private ArrayList<String> mctNames;
@@ -927,6 +929,68 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {
 			overlord.log("Unknown error: unable to restore state m0 on request.", "error", true);
+		}
+	}
+	
+	/**
+	 * Metoda przechowuje stan kolorowany m0 sieci na życzenie.
+	 */
+	public void storeColors() {
+		ArrayList<Place> places = getPlaces();
+		colorVector = new ArrayList<>();
+		for(int p = 0; p<places.size(); p++) {
+			Place place = places.get(p);
+			ArrayList<Integer> tokensC = new ArrayList<Integer>();
+			tokensC.add(place.getColorTokensNumber(0));
+			tokensC.add(place.getColorTokensNumber(1));
+			tokensC.add(place.getColorTokensNumber(2));
+			tokensC.add(place.getColorTokensNumber(3));
+			tokensC.add(place.getColorTokensNumber(4));
+			tokensC.add(place.getColorTokensNumber(5));
+			colorVector.add(tokensC);
+		}
+	}
+	
+	/**
+	 * Metoda przywraca stan początkowy sieci
+	 */
+	public void restoreColors() {
+		try {
+			if(colorVector == null)
+				return;
+			
+			ArrayList<Place> places = getPlaces();
+			for(int p = 0; p<places.size(); p++) {
+				Place place = places.get(p);
+				place.setColorTokensNumber(colorVector.get(p).get(0), 0);
+				place.setColorTokensNumber(colorVector.get(p).get(1), 1);
+				place.setColorTokensNumber(colorVector.get(p).get(2), 2);
+				place.setColorTokensNumber(colorVector.get(p).get(3), 3);
+				place.setColorTokensNumber(colorVector.get(p).get(4), 4);
+				place.setColorTokensNumber(colorVector.get(p).get(5), 5);
+			}
+			
+			ArrayList<Transition> transitions = getTransitions();
+
+			for(int i=0; i<transitions.size(); i++) {
+				Transition trans = transitions.get(i);
+				trans.setLaunching(false);
+				
+				if(trans.getTransType() == TransitionType.TPN) {
+					trans.resetTimeVariables();
+				}
+			}
+			
+			NetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
+			setSimulator(new NetSimulator(nt, this));
+			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
+			overlord.io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
+			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep();
+			
+			repaintAllGraphPanels();
+			getSimulator().getSimLogger().logSimReset();
+		} catch (Exception e) {
+			overlord.log("Unknown error: unable to restore colored state m0 on request.", "error", true);
 		}
 	}
 	
