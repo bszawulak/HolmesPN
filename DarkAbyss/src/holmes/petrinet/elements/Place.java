@@ -384,7 +384,13 @@ public class Place extends Node {
 	 */
 	public void freeReservedTokens() {
 		this.reservedTokens = 0;
+		this.reserved1green = 0;
+		this.reserved2blue = 0;
+		this.reserved3yellow = 0;
+		this.reserved4grey = 0;
+		this.reserved5black = 0;
 	}
+
 	
 	/**
 	 * Metoda zwalnia wszystkie zarezerwowane kolorowe tokeny.

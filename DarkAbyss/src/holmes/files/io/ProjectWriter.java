@@ -339,6 +339,8 @@ public class ProjectWriter {
 									brokenLine += "x";
 								}
 								brokenLine = brokenLine.substring(0, brokenLine.length()-1);
+							} else {
+								brokenLine += ";99999-11111";
 							}
 							
 							boolean isColored = false;
@@ -414,6 +416,8 @@ public class ProjectWriter {
 									brokenLine += "x";
 								}
 								brokenLine = brokenLine.substring(0, brokenLine.length()-1);
+							} else {
+								brokenLine += ";99999-11111";
 							}
 							
 							boolean isColored = false;

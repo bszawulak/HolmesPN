@@ -249,7 +249,24 @@ public class NetSimulator {
 	 */
 	private void checkSimulatorNetType() {
 		if(netSimType == NetType.BASIC) {
-			return;
+			boolean colorDetected = false;
+			for(Node n : petriNet.getNodes()) {
+				if(n instanceof Place) { 
+					if(((Place)n).isColored)
+						colorDetected = true;
+					break;
+				}
+			}
+			
+			if(colorDetected) {
+				JOptionPane.showMessageDialog(null, "Current net contains color places.\nSimulator switched to color mode.",
+						"Invalid mode", JOptionPane.ERROR_MESSAGE);
+				overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(3);
+				netSimType = NetType.COLOR;
+				engine.setNetSimType(netSimType);
+				return;
+			} else
+				return;
 		} else if(netSimType == NetType.TIME) {
 			for(Node n : petriNet.getNodes()) {
 				if(n instanceof Place) { //miejsca ignorujemy
@@ -958,7 +975,7 @@ public class NetSimulator {
 				} else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
 					if (remainingTransitionsAmount == 0) {
 						timeCounter++;
-						overlord.io.updateTimeStep(""+timeCounter); // TODO UPDATE
+						overlord.io.updateTimeStep(""+timeCounter);
 						overlord.simSettings.currentStep = timeCounter;
 						
 						launchingTransitions = engine.getTransLaunchList(emptySteps);
@@ -989,8 +1006,8 @@ public class NetSimulator {
 					// simulation ends, no possible steps remaining
 					setSimulationActive(false);
 					stopSimulation();
-					JOptionPane.showMessageDialog(null, "Simulation ended, no active transitions.",
-							"Simulation ended", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
+							"Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
 				}
 				transitionDelay = 0;
 			} else if (transitionDelay >= DEFAULT_COUNTER && !subtractPhase) { 
@@ -1085,7 +1102,8 @@ public class NetSimulator {
 					// simulation ends, no possible steps remaining
 					setSimulationActive(false);
 					stopSimulation();
-					JOptionPane.showMessageDialog(null, "Simulation ended","No more available steps!",JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
+							"Simulation stopped",JOptionPane.INFORMATION_MESSAGE);
 					overlord.log("Simulation ended - no more available steps.", "text", true);
 				}
 				transitionDelay = 0;

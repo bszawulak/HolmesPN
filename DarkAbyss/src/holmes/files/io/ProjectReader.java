@@ -1108,7 +1108,7 @@ public class ProjectReader {
 	}
 
 	/**
-	 * Dodaje nowy wektór punktów łamiących łuk.
+	 * Dodaje nowy wektor punktów łamiących łuk.
 	 * @param newArc Arc - łuk
 	 * @param brokenLine String - linia punktów
 	 */
@@ -1120,6 +1120,10 @@ public class ProjectReader {
 				String[] coords = s.split("-");
 				int x = Integer.parseInt(coords[0]);
 				int y = Integer.parseInt(coords[1]);
+				
+				if(x == 99999 && y == 11111)
+					return;
+				
 				newArc.addBreakPoint(new Point(x,y));;
 			} catch (Exception e) {}
 		}

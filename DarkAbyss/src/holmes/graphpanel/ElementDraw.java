@@ -458,6 +458,7 @@ public final class ElementDraw {
 					}
 				}
 				
+				/*
 				if (eds.color == true || trans.getTransType() == TransitionType.CPNbasic) {
 					Font currentFont = g.getFont();
 					Font newFont = currentFont.deriveFont(currentFont.getSize() * 1.4F);
@@ -540,6 +541,7 @@ public final class ElementDraw {
 					
 					g.setFont(currentFont);
 				}
+				*/
 			}
 		} else if(node instanceof Place) { // MIEJSCA  //TODO: znacznik miejsc
 			Place place = (Place)node;
@@ -1092,7 +1094,68 @@ public final class ElementDraw {
 				}
 
 				g.setFont(new Font("Tahoma", Font.PLAIN, 18));
-				g.drawString(wTxt, x_weight, y_weight + 10);
+				
+				if(arc.getArcType() == TypeOfArc.COLOR) {
+					//test długości ciągu wag:
+					int aW0 = arc.getColorWeight(0);
+					int aW1 = arc.getColorWeight(1);
+					int aW2 = arc.getColorWeight(2);
+					int aW3 = arc.getColorWeight(3);
+					int aW4 = arc.getColorWeight(4);
+					int aW5 = arc.getColorWeight(5);
+					int defract = 0;
+					if(aW0 > 0)
+						defract += 7;
+					if(aW1 > 0)
+						defract += 7;
+					if(aW2 > 0)
+						defract += 7;
+					if(aW3 > 0)
+						defract += 7;
+					if(aW4 > 0)
+						defract += 7;
+					if(aW5 > 0)
+						defract += 7;
+				
+					x_weight-=defract;
+					y_weight+=10;
+					
+					if(aW0 > 0) {
+						g.setColor(cRed);
+						g.drawString(""+aW0, x_weight, y_weight);
+						x_weight += 11;
+					}
+					if(aW1 > 0) {
+						g.setColor(cGreen);
+						g.drawString(""+aW1, x_weight, y_weight);
+						x_weight += 11;
+					}
+					if(aW2 > 0) {
+						g.setColor(cBlue);
+						g.drawString(""+aW2, x_weight, y_weight);
+						x_weight += 11;
+					}
+					if(aW3 > 0) {
+						g.setColor(cYellow);
+						g.drawString(""+aW3, x_weight, y_weight);
+						x_weight += 11;
+					}
+					if(aW4 > 0) {
+						g.setColor(cGrey);
+						g.drawString(""+aW4, x_weight, y_weight);
+						x_weight += 11;
+					}
+					if(aW5 > 0) {
+						g.setColor(cBlack);
+						g.drawString(""+aW5, x_weight, y_weight);
+						x_weight += 11;
+					}
+				} else {
+					g.drawString(wTxt, x_weight, y_weight + 10);
+				}
+				
+				
+				
 			}
 		}
 		return g;
