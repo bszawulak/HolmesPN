@@ -143,6 +143,7 @@ public final class ElementDraw {
 						g.setStroke(EditorResources.glowStrokeLevel3);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					} 
+					
 					//NIGDY ELSE!:
 					if (el.isSelected() && !el.isPortalSelected()) {
 						g.setColor(EditorResources.selectionColorLevel1);
@@ -1324,7 +1325,7 @@ public final class ElementDraw {
 	}
 
 	/**
-	 * Rysowanie tokenów.
+	 * Rysowanie tokenów w ruchu podczas symulacji.
 	 * @param g Graphics2D - obiekt rysujący
 	 * @param sheetId int - indeks arkusza
 	 * @param arc Arc - łuk
@@ -1332,15 +1333,17 @@ public final class ElementDraw {
 	public static void drawToken(Graphics2D g, int sheetId, Arc arc) {
 		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
 		int step = arc.getSimulationStep();
-		int weight = arc.getWeight();
+		int weight = 0; //arc.getWeight();
+		
+		if (!arc.isTransportingTokens || arc.getLocationSheetId() != sheetId  || step > STEP_COUNT) {
+			return;
+		} else {
+		}
+
+		weight = arc.getWeight();
 		ArrayList<Point> breakPoints = null;
 		int breaks = 0;
 		breaks = (breakPoints=arc.accessBreaks()).size(); //pro...
-
-		if (!arc.isTransportingTokens || arc.getLocationSheetId() != sheetId || weight == 0 || step > STEP_COUNT)
-			return;
-		// if(this.getEndNodeEdgeIntersection() == null)
-		// return;
 		Point startPos = arc.getStartLocation().getPosition();
 		Point endPos = arc.getEndLocation().getPosition();
 		
