@@ -92,6 +92,7 @@ public class GUIOperations {
 	/**
 	 * Metoda odpowiedzialna za otwieranie pliku z zapisaną siecią w formacie .abyss lub pliku projektu
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	public void selectAndOpenHolmesProject() {
 		String lastPath = overlord.getLastPath();
 		JFileChooser fc;

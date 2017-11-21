@@ -397,7 +397,7 @@ public class HolmesSearch extends JFrame {
 	 */
 	protected void centerOnElement(String type, int index, ElementLocation portalLoc) {
 		/**
-		// THE HOLY CODE, ZOSTAWIĆ JAKO KOMENTARZ, NIE RAZ SIĘ JESZCZE PRZYDA
+		// THE HOLY CODE, ZOSTAWIĆ JAKO KOMENTARZ, NIERAZ SIĘ JESZCZE PRZYDA
 		ArrayList<Node> nod = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
 		if(nod.size() > 0) {
 		ArrayList<ElementLocation> el = nod.get(0).getElementLocations();

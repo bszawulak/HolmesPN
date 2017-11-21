@@ -964,7 +964,7 @@ public final class ElementDraw {
 				g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 		}
 		
-		if(arc.qSimForcedArc) {
+		if(arc.qSimForcedArc && breaks == 0) {
 			g.setColor(arc.qSimForcedColor);
 			g.setStroke(new BasicStroke(4));
 			g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
@@ -1173,8 +1173,12 @@ public final class ElementDraw {
 	 * @param breaks int - liczba punktów łamiących
 	 */
 	private static void drawBreaks(Graphics2D g, Arc arc, Point startP, int endPx, int endPy, ArrayList<Point> breaksVector, int breaks) {
-		g.drawLine(startP.x, startP.y, (int) breaksVector.get(0).x, (int) breaksVector.get(0).y);
+		if(arc.qSimForcedArc) {
+			g.setColor(arc.qSimForcedColor);
+			g.setStroke(new BasicStroke(4));
+		}
 		
+		g.drawLine(startP.x, startP.y, (int) breaksVector.get(0).x, (int) breaksVector.get(0).y);
 		for(int b=1; b<breaks; b++) {
 			Point breakPoint = breaksVector.get(b-1);
 			g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);

@@ -19,6 +19,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 
 import javax.imageio.ImageIO;
@@ -1111,8 +1112,55 @@ public class HolmesDockWindowsTable extends JPanel {
 			components.add(token5Spinner);
 		}
 		
+		JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
+		debugModeLabel1.setBounds(columnA_posX, columnA_Y += 45, colACompLength, 20);
+		components.add(debugModeLabel1);	
 		
-		
+		JTextArea debugChangeID = new JTextArea("");
+		debugChangeID.setBounds(columnB_posX, columnB_Y += 70, 60, 20);
+		debugChangeID.setLineWrap(true);
+		debugChangeID.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+            	JTextArea field = (JTextArea) e.getSource();
+            	String newFR = "";
+            	if(field != null)
+            		newFR = field.getText();
+            	
+            	try {
+            		 int id = Integer.parseInt(newFR);
+            		 
+            		 ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+            		 if(id>=0 && id<places.size()) {
+
+            			 Place p1 = (Place)element;
+            			 Place p2 = places.get(id);
+            			 if(places.indexOf(p1) == id)
+            				 return;
+            			 
+            			 int pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p1); 
+            			 int pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p2);
+            			 Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
+            			 GUIManager.getDefaultGUIManager().log("Swapping places "+p1.getName()+" and "+p2.getName()+" successfull.", "text", true);
+            		 
+            			 WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            		 //ElementLocation loc1st = ((Transition)element).getElementLocations().get(0);
+            			 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
+            		 }        
+            	} catch (Exception ee) {
+            	}
+            }
+        });
+		components.add(debugChangeID);
+		JButton aaa = new JButton();
+		aaa.setName("ChangeID");
+		aaa.setText("Change ID");
+		aaa.setMargin(new Insets(0, 0, 0, 0));
+		aaa.setBounds(columnB_posX+70, columnB_Y, 80, 20);
+		aaa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+			} 
+		});
+		components.add(aaa);
 		panel.setLayout(null);
 		for (JComponent component : components) {
 			panel.add(component);
@@ -1523,6 +1571,58 @@ public class HolmesDockWindowsTable extends JPanel {
 		    }
 		}.yesWeCan(transition, location) ); 
 		components.add(nameLocChangeButton);
+		
+		
+		JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
+		debugModeLabel1.setBounds(columnA_posX, columnA_Y += 45, colACompLength, 20);
+		components.add(debugModeLabel1);	
+		
+		JTextArea debugChangeID = new JTextArea("");
+		debugChangeID.setBounds(columnB_posX, columnB_Y += 70, 60, 20);
+		debugChangeID.setLineWrap(true);
+		debugChangeID.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+            	JTextArea field = (JTextArea) e.getSource();
+            	String newFR = "";
+            	if(field != null)
+            		newFR = field.getText();
+            	
+            	try {
+            		 int id = Integer.parseInt(newFR);
+            		 
+            		 ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+            		 if(id>=0 && id<transitions.size()) {
+
+            			 Transition t1 = (Transition)element;
+            			 Transition t2 = transitions.get(id);
+            			 if(transitions.indexOf(t1) == id)
+            				 return;
+            			 
+            			 int pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t1); 
+            			 int pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t2);
+            			 Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
+            			 GUIManager.getDefaultGUIManager().log("Swapping transitions "+t1.getName()+" and "+t2.getName()+" successfull.", "text", true);
+            		 
+            			 WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            		 //ElementLocation loc1st = ((Transition)element).getElementLocations().get(0);
+            			 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
+            		 }        
+            	} catch (Exception ee) {
+            	}
+            }
+        });
+		components.add(debugChangeID);	
+		
+		JButton aaa = new JButton();
+		aaa.setName("ChangeID");
+		aaa.setText("Change ID");
+		aaa.setMargin(new Insets(0, 0, 0, 0));
+		aaa.setBounds(columnB_posX+70, columnB_Y, 80, 20);
+		aaa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+			} 
+		});
+		components.add(aaa);
 		 
 		panel.setLayout(null);
 		for (JComponent component : components) {
@@ -4675,6 +4775,17 @@ public class HolmesDockWindowsTable extends JPanel {
 		});
 		components.add(showTimeDetailsButton);
 		
+		JButton showClustersDataButton = new JButton();
+		showClustersDataButton.setText("<html>&nbsp;Clusters&nbsp;<br>details</html>");
+		showClustersDataButton.setIcon(Tools.getResIcon22("/icons/clustWindow/showInfo.png"));
+		showClustersDataButton.setBounds(colA_posX, positionY+=35, 130, 30);
+		showClustersDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				showClustersData();
+			}
+		});
+		components.add(showClustersDataButton);
+		
 		panel.setLayout(null);
 		for (int i = 0; i < components.size(); i++)
 			 panel.add(components.get(i));
@@ -4761,6 +4872,69 @@ public class HolmesDockWindowsTable extends JPanel {
 
 		note.setCaretFirstLine();
 		note.setVisible(true);
+	}
+	
+	//TODO 
+	private void showClustersData() {
+		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		ArrayList<Transition> transitions = pn.getTransitions();
+		ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
+		if(invMatrix == null || invMatrix.size() == 0) 
+			return;
+
+		HolmesNotepad note = new HolmesNotepad(800, 600);
+		
+		for(int i = 0; i< clusterColorsData.clustersInvariants.size(); i++) {
+			note.addTextLineNL("Cluster#"+i, "text");
+			
+			ArrayList<Integer> invariantsIndices = clusterColorsData.clustersInvariants.get(i);
+			ArrayList<ArrayList<Integer>> invSubMatrix = new ArrayList<>();
+			for(int j : invariantsIndices) {
+				invSubMatrix.add(invMatrix.get(j));
+			}
+			
+			for(int inv=0; inv < invSubMatrix.size(); inv++) {
+				int invIndex = invariantsIndices.get(inv);
+				note.addTextLine("x"+invIndex, "text");
+				
+				for(int trans=0; trans<invSubMatrix.get(inv).size(); trans++) {
+					note.addTextLine(";"+invSubMatrix.get(inv).get(trans), "text");
+				}
+				note.addTextLineNL("", "text");
+			}
+			
+		}
+		note.addTextLineNL("", "text");note.addTextLineNL("", "text");note.addTextLineNL("", "text");note.addTextLineNL("", "text");note.addTextLineNL("", "text");
+		
+		
+		for(int i = 0; i< clusterColorsData.clustersInvariants.size(); i++) {
+			note.addTextLineNL("Cluster#"+i, "text");
+			
+			ArrayList<Integer> invariantsIndices = clusterColorsData.clustersInvariants.get(i);
+			ArrayList<ArrayList<Integer>> invSubMatrix = new ArrayList<>();
+			for(int j : invariantsIndices) {
+				invSubMatrix.add(invMatrix.get(j));
+			}
+			
+			for(int inv=0; inv < invSubMatrix.size(); inv++) {
+				int invIndex = invariantsIndices.get(inv);
+				note.addTextLine("x"+invIndex, "text");
+				
+				for(int trans=0; trans<invSubMatrix.get(inv).size(); trans++) {
+					if(invSubMatrix.get(inv).get(trans)>0) {
+						note.addTextLine(";t"+trans, "text");
+					}
+					
+					
+				}
+				note.addTextLineNL("", "text");
+			}
+			
+		}
+		
+		note.setCaretFirstLine();
+		note.setVisible(true);
+		
 	}
 	
 	/**

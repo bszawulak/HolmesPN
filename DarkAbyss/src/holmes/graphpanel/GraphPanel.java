@@ -336,41 +336,49 @@ public class GraphPanel extends JComponent {
 	 * @param g2d Graphics2D - obiekt rysujący
 	 */
 	private void debugInfo(Graphics2D g2d) {
-		g2d.setColor(Color.BLACK);
+		g2d.setColor(Color.RED);
 		g2d.setFont(new Font("TimesRoman", Font.BOLD, 15));
+		String status = "";
 		
-		String status = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus().toString();
+		int x = 20;
+		int y = 0;
+		
+		status = "DEBUG MODE ACTIVATED";
+		g2d.drawString(status, x, y+=20);
+		g2d.setColor(Color.BLACK);
+		
+		status = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus().toString();
 		if(status.equals("LOOP"))
 			status = "Status: ACTIVE";
 		else
 			status = "Status: "+status;
-		g2d.drawString(status, 20, 20);
+		g2d.drawString(status, x, y+=20);
 		
 		status = overlord.simSettings.getNetType().toString();
 		status = "Status: "+status;
-		g2d.drawString(status, 20, 40);
+		g2d.drawString(status, x, y+=20);
 		
 		boolean max = overlord.simSettings.isMaxMode();
 		if(max)
 			status = "Maximum mode ON";
 		else
 			status = "Maximum mode OFF";
-		g2d.drawString(status, 20, 60);
+		g2d.drawString(status, x, y+=20);
 		
 		boolean single = overlord.simSettings.isSingleMode();
 		if(single)
 			status = "Single mode ON";
 		else
 			status = "Single mode OFF";
-		g2d.drawString(status, 20, 80);
+		g2d.drawString(status, x, y+=20);
 		
 		int arcDelay = overlord.simSettings.getArcDelay();
 		status = "Arc delay: "+arcDelay;
-		g2d.drawString(status, 20, 100);
+		g2d.drawString(status, x, y+=20);
 		
 		int transDelay = overlord.simSettings.getTransDelay();
 		status = "Trans. firing delay: "+transDelay;
-		g2d.drawString(status, 20, 120);
+		g2d.drawString(status, x, y+=20);
 	}
 
 	/**

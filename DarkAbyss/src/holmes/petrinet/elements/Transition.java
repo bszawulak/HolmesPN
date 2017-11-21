@@ -473,6 +473,11 @@ public class Transition extends Node {
 		int tokens4grey = 0;
 		int tokens5black = 0;
 		
+		if(this.getName().equals("Transition10")) {
+			int x=1;
+			x=2;
+		}
+		
 		for (Arc arc : getInArcs()) {
 			Place arcStartPlace = (Place) arc.getStartNode();
 			TypeOfArc arcType = arc.getArcType();

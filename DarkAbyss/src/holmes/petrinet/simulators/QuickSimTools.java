@@ -99,7 +99,7 @@ public class QuickSimTools {
 			trans.qSimFired = firing;
 			
 			//trans.
-			trans.setAddText(Tools.cutValueExt(firing, 8));
+			//trans.setAddText(Tools.cutValueExt(firing, 8));
 			
 			double reliance = firing/max;
 			int fill = (int)((double)30 * reliance);
