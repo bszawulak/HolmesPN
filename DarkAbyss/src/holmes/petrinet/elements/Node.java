@@ -172,6 +172,7 @@ public abstract class Node extends PetriNetElement {
 			 ArrayList<Node> metanodes) {
 		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
 		String name = getName();
+		int add_transY = 0;
 		if(sm.getValue("editorShowShortNames").equals("1")) {
 			if(this instanceof Place) {
 				int x = places.indexOf(this);
@@ -189,7 +190,9 @@ public abstract class Node extends PetriNetElement {
 				name = "M"+x;
 			}
 		}
-		
+		if (this instanceof Transition) {
+			add_transY = 3;
+		}
 		g.setColor(Color.black);
 		if(sm.getValue("editorGraphFontBold").equals("0")) {
 			g.setFont(new Font("Tahoma", Font.PLAIN, Integer.parseInt(sm.getValue("editorGraphFontSize"))));
@@ -213,7 +216,7 @@ public abstract class Node extends PetriNetElement {
 				drawX = (nodePoint.x - name_width / 2); //oryginalny kod
 			if(drawY < 0 )
 				drawY = nodePoint.y + getRadius() + 15; //oryginalny kod
-			g.drawString(name, drawX, drawY);
+			g.drawString(name, drawX, drawY+add_transY);
 		}
 	}
 
