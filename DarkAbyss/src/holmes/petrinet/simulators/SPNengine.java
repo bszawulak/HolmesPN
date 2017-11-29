@@ -330,6 +330,9 @@ public class SPNengine implements IEngine {
 				roulette.add(trans);
 				prioritySum += trans.getSPNbox().IM_priority;
 			}
+			if(roulette.size() == 0)
+				return null;
+			
 			for(Transition trans : roulette) {
 				trans.returnBookedTokens(); //zwolnij tokeny
 			}

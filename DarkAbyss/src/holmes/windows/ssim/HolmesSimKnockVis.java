@@ -1034,6 +1034,7 @@ public class HolmesSimKnockVis extends JFrame {
     	int cellSize = 50;
     	int largeCell = 65;
     	int svaluesCell = 35;
+    	int hugeCell = 80;
     	
     	transTable.getColumnModel().getColumn(0).setHeaderValue("ID");
     	transTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
@@ -1043,17 +1044,17 @@ public class HolmesSimKnockVis extends JFrame {
     	transTable.getColumnModel().getColumn(1).setPreferredWidth(300);
     	transTable.getColumnModel().getColumn(1).setMinWidth(100);
     	transTable.getColumnModel().getColumn(2).setHeaderValue("AvgF:");
-    	transTable.getColumnModel().getColumn(2).setPreferredWidth(largeCell);
-    	transTable.getColumnModel().getColumn(2).setMinWidth(largeCell);
-    	transTable.getColumnModel().getColumn(2).setMaxWidth(largeCell);
+    	transTable.getColumnModel().getColumn(2).setPreferredWidth(hugeCell);
+    	transTable.getColumnModel().getColumn(2).setMinWidth(hugeCell);
+    	transTable.getColumnModel().getColumn(2).setMaxWidth(hugeCell);
     	transTable.getColumnModel().getColumn(3).setHeaderValue("MinF:");
-    	transTable.getColumnModel().getColumn(3).setPreferredWidth(largeCell);
-    	transTable.getColumnModel().getColumn(3).setMinWidth(largeCell);
-    	transTable.getColumnModel().getColumn(3).setMaxWidth(largeCell);
+    	transTable.getColumnModel().getColumn(3).setPreferredWidth(hugeCell);
+    	transTable.getColumnModel().getColumn(3).setMinWidth(hugeCell);
+    	transTable.getColumnModel().getColumn(3).setMaxWidth(hugeCell);
     	transTable.getColumnModel().getColumn(4).setHeaderValue("MaxF:");
-    	transTable.getColumnModel().getColumn(4).setPreferredWidth(largeCell);
-    	transTable.getColumnModel().getColumn(4).setMinWidth(largeCell);
-    	transTable.getColumnModel().getColumn(4).setMaxWidth(largeCell);
+    	transTable.getColumnModel().getColumn(4).setPreferredWidth(hugeCell);
+    	transTable.getColumnModel().getColumn(4).setMinWidth(hugeCell);
+    	transTable.getColumnModel().getColumn(4).setMaxWidth(hugeCell);
     	transTable.getColumnModel().getColumn(5).setHeaderValue("notF:");
     	transTable.getColumnModel().getColumn(5).setPreferredWidth(cellSize);
     	transTable.getColumnModel().getColumn(5).setMinWidth(cellSize);

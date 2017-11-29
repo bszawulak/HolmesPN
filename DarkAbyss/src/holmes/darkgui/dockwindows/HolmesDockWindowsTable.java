@@ -5027,12 +5027,20 @@ public class HolmesDockWindowsTable extends JPanel {
 			for(int c=0; c<clusters; c++) {
 				progressBar.setValue(c);
 				progressBar.update(progressBar.getGraphics());
-				String clusterName = "cluster"+c+"("+clusterColorsData.clSize.get(c)+")";
+				int number =  c+1;
+				String clusterName = "cluster_"+number+"_(invariants_"+clusterColorsData.clSize.get(c)+")";
 				selectedClusterIndex = c;
+				clustersMCT = false;
 				showClusters();
 				String fileName = ""+dirPath + "//"+clusterName+".png";
 				BufferedImage image = main.createImageFromSheet();
 				ImageIO.write(image, "png", new File(fileName));
+				
+				clustersMCT = true;
+				showClusters();
+				fileName = ""+dirPath + "//"+clusterName+"_MCTview.png";
+				BufferedImage image2 = main.createImageFromSheet();
+				ImageIO.write(image2, "png", new File(fileName));
 			}
 		} catch (Exception e) {
 			overlord.log("Saving clusters screenshots failed.", "error", true);

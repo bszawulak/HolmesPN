@@ -94,12 +94,12 @@ public class QuickSimTools {
 		for(int t=0; t<transSize; t++) {
 			Transition trans = transitions.get(t);
 			double firing = avgFire.get(t);
-			String tmp = Tools.cutValueExt(firing, 3);
+			String tmp = Tools.cutValueExt(firing, 6);
 			firing = Double.parseDouble(tmp);
 			trans.qSimFired = firing;
 			
 			//trans.
-			//trans.setAddText(Tools.cutValueExt(firing, 8));
+			trans.setAddText(Tools.cutValueExt(firing, 8));
 			
 			double reliance = firing/max;
 			int fill = (int)((double)30 * reliance);
@@ -123,7 +123,7 @@ public class QuickSimTools {
 				
 				trans.qSimDrawed = true;
 				trans.qSimDrawStats = true;
-				if(firing == 0) {
+				if(firing < 0.01) {
 					trans.qSimArcSign = true;
 					trans.qSimOvalColor = Color.RED;
 				} else {

@@ -16,7 +16,8 @@ import holmes.tables.simKnock.SimKnockTransCompAllTableModel.DetailsTrans;
 public class SimKnockTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
 	private JTable table;
-	private static final DecimalFormat formatter3 = new DecimalFormat( "#.###" );
+	private static final DecimalFormat formatter6 = new DecimalFormat( "#.#####" );
+	private static final DecimalFormat formatter3 = new DecimalFormat( "#.####" );
 	private static final DecimalFormat formatter2 = new DecimalFormat( "#.##" );
 	private static final DecimalFormat formatter1 = new DecimalFormat( "#.#" );
 	private static final Font fontNormal =  new Font("Verdana", Font.PLAIN, 12);
@@ -290,16 +291,20 @@ public class SimKnockTableRenderer implements TableCellRenderer {
     			return oLabel;
     		} 
     	}
+	
 		
-		if(value instanceof Double) {
+		if(value instanceof Double || value instanceof Number) {
 			double val = (double)value;
-			if(val < 10)
+			if(val < 1) {
+				value = formatter6.format((Number)value);
+			} else if(val < 10) 
 				value = formatter3.format((Number)value);
 			else if(val < 100)
 				value = formatter2.format((Number)value);
 			else
 				value = formatter1.format((Number)value);
 		}
+		
 		
 		Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		renderer.setForeground(Color.black);

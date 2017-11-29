@@ -1,5 +1,6 @@
 package holmes.tables.simKnock;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
@@ -15,7 +16,8 @@ import holmes.petrinet.elements.Transition;
  */
 public class SimKnockTransTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -5809682023062187908L;
-
+	private static final DecimalFormat formatter3 = new DecimalFormat( "#.#####" );
+	
 	public class TransContainer {
     	public int ID;
     	public String name;
@@ -138,13 +140,16 @@ public class SimKnockTransTableModel extends AbstractTableModel {
         	returnValue = dataMatrix.get(rowIndex).name;
             break;
         case 2:
-        	returnValue = dataMatrix.get(rowIndex).firingAvg;
+        	returnValue = formatter3.format((Number)dataMatrix.get(rowIndex).firingAvg);
+        	//returnValue = dataMatrix.get(rowIndex).firingAvg;returnValue = formatter3.format((Number)dataMatrix.get(rowIndex).firingAvg);
             break;
         case 3:
-        	returnValue = dataMatrix.get(rowIndex).firingMin;
+        	returnValue = formatter3.format((Number)dataMatrix.get(rowIndex).firingMin);
+        	//returnValue = dataMatrix.get(rowIndex).firingMin;
             break;
         case 4:
-        	returnValue = dataMatrix.get(rowIndex).firingMax;
+        	returnValue = formatter3.format((Number)dataMatrix.get(rowIndex).firingMax);
+        	//returnValue = dataMatrix.get(rowIndex).firingMax;
             break;
         case 5:
         	returnValue = dataMatrix.get(rowIndex).noFiring;
