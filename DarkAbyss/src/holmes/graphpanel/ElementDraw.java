@@ -142,7 +142,19 @@ public final class ElementDraw {
 						g.setColor(EditorResources.glowTransitonColorLevel3);
 						g.setStroke(EditorResources.glowStrokeLevel3);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					} 
+					} else if (trans.isGlowed_Sub()) { //jeśli ma się świecić jako podsieć
+						g.setColor(EditorResources.glowMTCTransitonColorLevel1);
+						g.setStroke(EditorResources.glowStrokeLevel1);
+						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
+						g.setColor(EditorResources.glowMTCTransitonColorLevel2);
+						g.setStroke(EditorResources.glowStrokeLevel2);
+						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
+						g.setColor(EditorResources.glowMTCTransitonColorLevel3);
+						g.setStroke(EditorResources.glowStrokeLevel3);
+						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					}
 					
 					//NIGDY ELSE!:
 					if (el.isSelected() && !el.isPortalSelected()) {
@@ -548,6 +560,7 @@ public final class ElementDraw {
 			Place place = (Place)node;
 			Color portalColor = Color.WHITE;
 			Color portalSelColor = EditorResources.selectionColorLevel3;
+            Color subNetColor = EditorResources.glowMTCTransitonColorLevel3;
 			Color normalColor = Color.WHITE;
 			
 			if(eds.nonDefColors) {
@@ -576,6 +589,21 @@ public final class ElementDraw {
 					g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					g.setColor(backup);
 				}
+
+				if (place.isGlowed_Sub()) { //jeśli ma się świecić jako podsieć
+					g.setColor(EditorResources.glowMTCTransitonColorLevel1);
+					g.setStroke(EditorResources.glowStrokeLevel1);
+					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
+					g.setColor(EditorResources.glowMTCTransitonColorLevel2);
+					g.setStroke(EditorResources.glowStrokeLevel2);
+					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
+					g.setColor(EditorResources.glowMTCTransitonColorLevel3);
+					g.setStroke(EditorResources.glowStrokeLevel3);
+					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				}
+
 				if (el.isSelected() && !el.isPortalSelected()) {
 					g.setColor(EditorResources.selectionColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
@@ -609,7 +637,9 @@ public final class ElementDraw {
 				//wypełnianie kolorem:
 				if(el.isPortalSelected()) { //dla wszystkich innych ElLocations portalu właśnie klikniętego
 					g.setColor(portalSelColor);
-				} else {
+				} else if (place.isGlowed_Sub()){
+					g.setColor(subNetColor);
+				} else{
 					g.setColor(normalColor);
 				}
 				g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -927,6 +957,14 @@ public final class ElementDraw {
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
 		}
 
+        if (arc.isGlowed_Sub() && breaks == 0) {
+            g.setColor(EditorResources.glowMTCTransitonColorLevel3);
+            g.setStroke(EditorResources.glowStrokeArc);
+            g.drawLine(startP.x, startP.y, endP.x, endP.y);
+            g.drawPolygon(new int[] { (int) xp, (int) xl, (int) xk },
+                    new int[] { (int) yp, (int) yl, (int) yk }, 3);
+        }
+
 		g.setStroke(new BasicStroke(1.0f));
 		if (arc.getIsCorect()) {
 			if(arc.getArcType() == TypeOfArc.COLOR) {
@@ -963,6 +1001,17 @@ public final class ElementDraw {
 			else
 				g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 		}
+
+		if(arc.isColorChanged() && breaks == 0) {
+			Color oldColor = g.getColor();
+			g.setColor(arc.getArcNewColor());
+			g.setStroke(EditorResources.glowStrokeArc);
+			g.drawLine(startP.x, startP.y, endP.x, endP.y);
+			g.drawPolygon(new int[] { (int) xp, (int) xl, (int) xk },
+					new int[] { (int) yp, (int) yl, (int) yk }, 3);
+			g.setColor(oldColor);
+		}
+
 		
 		if(arc.qSimForcedArc && breaks == 0) {
 			g.setColor(arc.qSimForcedColor);
@@ -1179,14 +1228,61 @@ public final class ElementDraw {
 		}
 		
 		g.drawLine(startP.x, startP.y, (int) breaksVector.get(0).x, (int) breaksVector.get(0).y);
+
+		if(arc.isColorChanged()) {
+			Color oldColor = g.getColor();
+			g.setColor(arc.getArcNewColor());
+			g.setStroke(EditorResources.glowStrokeArc);
+			g.drawLine(startP.x, startP.y, (int) breaksVector.get(0).x, (int) breaksVector.get(0).y);
+			g.setColor(oldColor);
+		}
+
+		if( arc.isGlowed_Sub()) {
+			Color oldColor = g.getColor();
+			g.setColor(EditorResources.glowMTCTransitonColorLevel3);
+			g.setStroke(EditorResources.glowStrokeArc);
+			g.drawLine(startP.x, startP.y, (int) breaksVector.get(0).x, (int) breaksVector.get(0).y);
+			g.setColor(oldColor);
+		}
+
 		for(int b=1; b<breaks; b++) {
 			Point breakPoint = breaksVector.get(b-1);
 			g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 			g.fillOval((int)(breakPoint.x-3), (int)(breakPoint.y-3), 6, 6);
+
+			if(arc.isColorChanged() ) {
+				Color oldColor = g.getColor();
+				g.setColor(arc.getArcNewColor());
+				g.setStroke(EditorResources.glowStrokeArc);
+				g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
+				g.setColor(oldColor);
+			}
+			if(arc.isGlowed_Sub() ) {
+				Color oldColor = g.getColor();
+				g.setColor(EditorResources.glowMTCTransitonColorLevel3);
+				g.setStroke(EditorResources.glowStrokeArc);
+				g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
+				g.setColor(oldColor);
+			}
+
 		}
 		Point lastPoint = breaksVector.get(breaks-1);
 		g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 		g.fillOval((int)(lastPoint.x-3), (int)(lastPoint.y-3), 6, 6);
+		if(arc.isColorChanged()) {
+			Color oldColor = g.getColor();
+			g.setColor(arc.getArcNewColor());
+			g.setStroke(EditorResources.glowStrokeArc);
+			g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
+			g.setColor(oldColor);
+		}
+		if(arc.isGlowed_Sub()) {
+			Color oldColor = g.getColor();
+			g.setColor(EditorResources.glowMTCTransitonColorLevel3);
+			g.setStroke(EditorResources.glowStrokeArc);
+			g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
+			g.setColor(oldColor);
+		}
 	}
 
 	/**
@@ -1410,7 +1506,7 @@ public final class ElementDraw {
 	 * @param endPos Point - pozycja węzła końcowego łuku
 	 * @param arcWidth int - szerokość kreski łuku
 	 * @param weight int - waga łuku
-	 * @param Arc arc - obiekt łuku
+	 * @param arc Arc - obiekt łuku
 	 */
 	private static void handleBrokenArc(Graphics2D g, int STEP_COUNT, int step, ArrayList<Point> breakPoints,
 			int breaks, Point startPos, Point endPos, double arcWidth, int weight, Arc arc) {

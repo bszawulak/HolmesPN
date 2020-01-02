@@ -131,6 +131,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesDockWindow fixBox;
 	private HolmesDockWindow knockoutBox;
 	private HolmesDockWindow quickSimBox;
+	private HolmesDockWindow decompositionBox;
 	
 	//UNUSED
 	
@@ -172,7 +173,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private Node nameSelectedNode = null;
 	private ElementLocation nameNodeEL = null;
 	
-	public ArrayList<Dockable> globalSheetsList = new ArrayList<Dockable>();
+	public ArrayList<Dockable> globalSheetsList = new ArrayList<>();
 	
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
@@ -191,7 +192,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setFrame(frejm);
 		try {	
 			frame.setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) { }
+		} catch (Exception e ) {
+			System.out.println(e.getMessage());
+		}
 		
 		frame.getContentPane().add(this);
 		frame.addComponentListener(this);
@@ -263,6 +266,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setMCSBox(new HolmesDockWindow(DockWindowType.MCSselector));
 		setKnockoutBox(new HolmesDockWindow(DockWindowType.Knockout));
 		setQuickSimBox(new HolmesDockWindow(DockWindowType.QuickSim));
+		setDecompositionBox(new HolmesDockWindow(DockWindowType.DECOMPOSITION));
 
 		// create menu
 		setMenu(new DarkMenu());
@@ -290,6 +294,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
 		bottomRightTabDock.addChildDock(getQuickSimBox(), new Position(7));
 		bottomRightTabDock.addChildDock(getFixBox(), new Position(8));
+		bottomRightTabDock.addChildDock(getDecompositionBox(), new Position(9));
 
 		// create the split docks
 		//leftSplitDock = new SplitDock();
@@ -359,19 +364,18 @@ public class GUIManager extends JPanel implements ComponentListener {
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 		    	boolean status = GUIManager.getDefaultGUIManager().getNetChangeStatus();
-				if(status == true) {
+				if(status) {
 					Object[] options = {"Exit", "Save and exit", "Cancel",};
 					int n = JOptionPane.showOptionDialog(null,
 									"Network or its data have been changed since last save. Exit, save&exit or do not exit now?",
 									"Project has been modified", JOptionPane.YES_NO_OPTION,
 									JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
-					if (n == 2) { //cancel
-						return;
-					} else if (n == 1) { //try to save
+					//cancel
+					if (n == 2) return;
+					else if (n == 1) { //try to save
 						boolean savingStatus = io.saveAsGlobal();
-						if(savingStatus == false) {
-							return;
-						} else {
+						if(!savingStatus) return;
+						else {
 							log("Exiting program","text",true);
 			            	windowConsole.saveLogToFile(null);
 			            	System.exit(0);
@@ -403,78 +407,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		getSimulatorBox().createSimulatorProperties();
 	}
-	
-	/**
-	 * Metoda odpowiedzialna za przywrócenie widoku domyślnego.
-	 */
-	//TODO: prawdopodobnie w tej formie spowoduje katastrofę...
-	@SuppressWarnings("unused")
-	public void restoreDefaultVisuals() {
-		if(true)
-			return;
-		
-		for (WorkspaceSheet sheet : workspace.getSheets()) {
-			// repaint all sheets in workspace
-			sheet.getGraphPanel().repaint();
-		}
-		// redock all sheets
-		workspace.redockSheets();
-		// recreate dock structure
-		// getDockModel().RootDock(totalSplitDock);
-		//
-		
-		leftTabDock.emptyChild(getToolBox());
-		topRightTabDock.emptyChild(getPropertiesBox());
 
-		leftTabDock = new CompositeTabDock(); // default Toolbox dock
-		topRightTabDock = new CompositeTabDock(); // default Properties dock
-		bottomRightTabDock = new CompositeTabDock(); // default Simulator dock
-		
-		//leftTabDock.setHeaderPosition(Position.BOTTOM);
-		leftTabDock.addChildDock(getToolBox(), new Position(0));
-		leftTabDock.addChildDock(getSimulatorBox(), new Position(1));
-		leftTabDock.setSelectedDock(getToolBox());
-		
-		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
-		topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
-		topRightTabDock.setSelectedDock(getPropertiesBox());
-		
-		//bottomRightTabDock.addChildDock(getSimulatorBox(), new Position(0));
-		bottomRightTabDock.addChildDock(getT_invBox(), new Position(1));
-		bottomRightTabDock.addChildDock(getMctBox(), new Position(2));
-		bottomRightTabDock.addChildDock(getMCSBox(), new Position(3));
-		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(4));
-		bottomRightTabDock.addChildDock(getP_invBox(), new Position(5));
-		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
-
-		// create the split docks
-		leftSplitDock = new SplitDock();
-		leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
-		leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
-		//leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 10);
-		leftSplitDock.setDividerLocation(180);
-
-		rightSplitDock = new SplitDock();
-		rightSplitDock.addChildDock(topRightTabDock, new Position(Position.TOP));
-		rightSplitDock.addChildDock(bottomRightTabDock, new Position(Position.BOTTOM));
-		rightSplitDock.setDividerLocation((int) (screenSize.getHeight() * 2 / 5));
-
-		totalSplitDock = new SplitDock();
-		totalSplitDock.addChildDock(leftSplitDock, new Position(Position.LEFT));
-		totalSplitDock.addChildDock(rightSplitDock,new Position(Position.RIGHT));
-		totalSplitDock.setDividerLocation((int) screenSize.getWidth() - (int) screenSize.getWidth() / 6);
-		
-		// Add root dock
-		getDockModel().addRootDock("totalSplitDock", totalSplitDock, frame);
-		add(totalSplitDock, BorderLayout.CENTER);
-		
-		// save docking paths
-		DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getToolBox().getDockable()));
-		DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getPropertiesBox().getDockable()));
-		
-		this.repaint();
-	}
-	
 	/**
 	 * Metoda pomocnicza konstruktora. Ustawia główne zmienne programu, wczytuje plik
 	 * właściwości, itd.
@@ -728,7 +661,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ustawia nowe podokno dedykowane do wyświetlania zbiorów MCT.
 	 * @param mctBox HolmesDockWindow - nowe okno wyboru MCT
 	 */
-	public void setMctBox(HolmesDockWindow mctBox) {
+	private void setMctBox(HolmesDockWindow mctBox) {
 		this.mctBox = mctBox;
 	}
 	
@@ -736,14 +669,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt podokna wyświetlania zbiorów MCS.
 	 * @return HolmesDockWindow - okno wyboru MCS
 	 */
-	public HolmesDockWindow getMCSBox() {
+	private HolmesDockWindow getMCSBox() {
 		return mcsBox;
 	}
 	/**
 	 * Metoda ustawia nowe podokno dedykowane do wyświetlania zbiorów MCS.
 	 * @param mcsBox HolmesDockWindow - nowe okno wyboru MCS
 	 */
-	public void setMCSBox(HolmesDockWindow mcsBox) {
+	private void setMCSBox(HolmesDockWindow mcsBox) {
 		this.mcsBox = mcsBox;
 	}
 	
@@ -751,14 +684,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt podokna naprawy sieci.
 	 * @return HolmesDockWindow - okno naprawcze
 	 */
-	public HolmesDockWindow getFixBox() {
+	private HolmesDockWindow getFixBox() {
 		return this.fixBox;
 	}
 	/**
 	 * Metoda ustawia nowe podokno naprawcze sieci.
-	 * @param mcsBox HolmesDockWindow - nowe okno naprawy
+	 * @param fixBox HolmesDockWindow - nowe okno naprawy
 	 */
-	public void setFixBox(HolmesDockWindow fixBox) {
+	private void setFixBox(HolmesDockWindow fixBox) {
 		this.fixBox = fixBox;
 	}
 	
@@ -766,7 +699,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ustawia nowe podokno dedykowane do wyświetlania zbiorów knockout.
 	 * @param knockoutBox HolmesDockWindow - nowe okno wyboru knockoutBox
 	 */
-	public void setKnockoutBox(HolmesDockWindow knockoutBox) {
+	private void setKnockoutBox(HolmesDockWindow knockoutBox) {
 		this.knockoutBox = knockoutBox;
 	}
 
@@ -774,7 +707,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt podokna wyświetlania zbiorów knockout.
 	 * @return HolmesDockWindow - okno wyboru knockoutBox
 	 */
-	public HolmesDockWindow getKnockoutBox() {
+	private HolmesDockWindow getKnockoutBox() {
 		return knockoutBox;
 	}
 	
@@ -782,15 +715,31 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ustawia nowe podokno symulatora QuickSim.
 	 * @param quickSimBox HolmesDockWindow - nowe okno QuickSim
 	 */
-	public void setQuickSimBox(HolmesDockWindow quickSimBox) {
+	private void setQuickSimBox(HolmesDockWindow quickSimBox) {
 		this.quickSimBox = quickSimBox;
+	}
+
+	/**
+	 * Metoda ustawia nowe podokno dekompozycji.
+	 * @param deompositionBox HolmesDockWindow - nowe okno dekompozycji
+	 */
+	public void setDecompositionBox(HolmesDockWindow deompositionBox){
+		this.decompositionBox = deompositionBox;
+	}
+
+	/**
+	 * Metoda zwraca obiekt podokna dekompozycji.
+	 * @return HolmesDockWindow - okno dekompozycji
+	 */
+	public HolmesDockWindow getDecompositionBox() {
+		return decompositionBox;
 	}
 
 	/**
 	 * Metoda zwraca obiekt podokna symulatora QuickSim.
 	 * @return HolmesDockWindow - okno QuickSim
 	 */
-	public HolmesDockWindow getQuickSimBox() {
+	private HolmesDockWindow getQuickSimBox() {
 		return quickSimBox;
 	}
 	
@@ -806,7 +755,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ta ustawia obiekt podokna dla podświetlania inwariantów sieci.
 	 * @param invariantsBox HolmesDockWindow - podokno inwariantów
 	 */
-	public void setT_invBox(HolmesDockWindow invariantsBox) {
+	private void setT_invBox(HolmesDockWindow invariantsBox) {
 		this.t_invariantsBox = invariantsBox;
 	}
 	
@@ -814,14 +763,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ustawia nowe okno właściwości p-inwariantów.
 	 * @param invSim HolmesDockWindow - okno p-inwariantów
 	 */
-	public void setP_invSim(HolmesDockWindow invSim)
+	private void setP_invSim(HolmesDockWindow invSim)
 	{
 		this.p_invariantsBox = invSim;
 	}
 	
 	/**
 	 * Metoda zwraca aktywne okno właściwości p-inwariantów.
-	 * @param invSim HolmesDockWindow - okno p-inwariantów
 	 */
 	public HolmesDockWindow getP_invBox() {
 		return p_invariantsBox;
@@ -1020,7 +968,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt okna przycisków programu.
 	 * @return Toolbar - obiekt okna przycisków
 	 */
-	public Toolbar getShortcutsBar() {
+	private Toolbar getShortcutsBar() {
 		return shortcutsBar;
 	}
 
@@ -1076,7 +1024,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void setClusterSelectionBox(HolmesDockWindow clusterBox) {
 		this.clustersBox = clusterBox;
 	}
-	
+
 	/**
 	 * Metoda zwraca obiekt okna konsoli programu.
 	 * @return HolmesConsole - obiekt konsoli
@@ -1299,8 +1247,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void showNetTablesWindow() {
 		if(windowNetTables != null) {
-			if(reset.isSimulatorActiveWarning("Warning: simulator active. Cannot proceed until manually stopped."
-					, "Net simulator working") == false) {
+			if(!reset.isSimulatorActiveWarning("Warning: simulator active. Cannot proceed until manually stopped."
+					, "Net simulator working")) {
 				windowNetTables.setVisible(true);
 			}
 		}

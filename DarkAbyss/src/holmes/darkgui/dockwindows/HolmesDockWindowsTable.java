@@ -1,26 +1,19 @@
 package holmes.darkgui.dockwindows;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
@@ -48,11 +41,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
-import holmes.analyse.InvariantsCalculator;
-import holmes.analyse.InvariantsTools;
-import holmes.analyse.MCTCalculator;
-import holmes.analyse.ProblemDetector;
-import holmes.analyse.TimeComputations;
+import holmes.analyse.*;
 import holmes.clusters.ClusterDataPackage;
 import holmes.clusters.ClusterTransition;
 import holmes.darkgui.GUIManager;
@@ -83,6 +72,7 @@ import holmes.windows.HolmesNotepad;
 import holmes.windows.managers.HolmesStatesManager;
 import holmes.windows.ssim.HolmesSimSetup;
 import holmes.workspace.WorkspaceSheet;
+import jxl.biff.drawing.ComboBox;
 
 /**
  * Klasa zawierająca szczegóły interfejsu podokien dokowalnych programu.
@@ -102,6 +92,15 @@ public class HolmesDockWindowsTable extends JPanel {
     private ArrayList<Place> places;
     private ArrayList<ArrayList<Transition>> mctGroups; //używane tylko w przypadku, gdy obiekt jest typu DockWindowType.MctANALYZER
     private ArrayList<ArrayList<Integer>> knockoutData;
+
+    public JPanel getPanel() {
+        return panel;
+    }
+
+    public void setPanel(JPanel panel) {
+        this.panel = panel;
+    }
+
     // Containers & general use
     private JPanel panel; // główny panel okna
     private boolean stopAction = false;
@@ -180,6 +179,13 @@ public class HolmesDockWindowsTable extends JPanel {
     private boolean repetitions = true;
     private JProgressBar quickProgressBar;
 
+    //deco
+    private int choosenDeco = 0;
+    private JTextArea elementsOfDecomposedStructure;
+    private int selectedSubNetindex = -1;
+    private boolean colorSubNet = false;
+    private boolean allSubNetsselected = false;
+
     // modes
     private static final int PLACE = 0;
     private static final int TRANSITION = 1;
@@ -194,10 +200,11 @@ public class HolmesDockWindowsTable extends JPanel {
     private static final int KNOCKOUT = 10;
     private static final int META = 11;
     private static final int CTRANSITION = 12;
+    private static final int DECOMPOSITION = 13;
 
     public enum SubWindow {
         SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, CTRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS,
-        MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM
+        MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM, DECOMPOSITION
     }
 
     /**
@@ -259,6 +266,9 @@ public class HolmesDockWindowsTable extends JPanel {
                 break;
             case KNOCKOUT:
                 createKnockoutData((ArrayList<ArrayList<Integer>>) blackBox[0]);
+                break;
+            case DECOMPOSITION:
+                createDecompositionData();
                 break;
         }
 
@@ -711,6 +721,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
             }
             String newName = field.getText();
             changeName(newName);
@@ -1093,6 +1104,7 @@ public class HolmesDockWindowsTable extends JPanel {
                         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
                     }
                 } catch (Exception ee) {
+                    System.out.println(ee.getMessage());
                 }
             }
         });
@@ -1174,6 +1186,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
             }
             String newName = field.getText();
             changeName(newName);
@@ -1278,7 +1291,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     ((Transition) element).setFiringRate(newVal);
                     xxx.ST_function = newFR;
                 } catch (Exception ee) {
-
+                    System.out.println(ee.getMessage());
                 }
                 //changeComment(newComment);
                 //overlord.markNetChange();
@@ -1536,6 +1549,7 @@ public class HolmesDockWindowsTable extends JPanel {
                         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
                     }
                 } catch (Exception ee) {
+                    System.out.println(ee.getMessage());
                 }
             }
         });
@@ -1620,6 +1634,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
             }
             String newName = field.getText();
             changeName(newName);
@@ -1713,6 +1728,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
             }
             double min = (double) field.getValue();
             setMinFireTime(min);
@@ -1726,6 +1742,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
             }
             double max = (double) field.getValue();
             setMaxFireTime(max);
@@ -1755,7 +1772,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 setDurationTime(time);
                 overlord.markNetChange();
             } catch (Exception ex) {
-
+                System.out.println(ex.getMessage());
             }
         });
         components.add(durationField);
@@ -2080,6 +2097,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
             }
             String newName = field.getText();
             changeName(newName);
@@ -2464,6 +2482,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
             }
             String newName = field.getText();
             changeName(newName);
@@ -2579,23 +2598,20 @@ public class HolmesDockWindowsTable extends JPanel {
 
             public void actionPerformed(ActionEvent actionEvent) {
                 if (doNotUpdate) return;
-                boolean status = false;
                 if (myMeta.getMetaType() != MetaType.SUBNET) {
                     overlord.subnetsHQ.changeSubnetType(myMeta, MetaType.SUBNET);
                 }
-                if (!status) {
-                    doNotUpdate = true;
-                    Enumeration<AbstractButton> wtf = groupRadioMetaType.getElements();
-                    JRadioButton radioB = (JRadioButton) wtf.nextElement(); //first: t-type
-                    if (myMeta.getMetaType() == MetaType.SUBNETPLACE)
-                        radioB = (JRadioButton) wtf.nextElement(); //second p-type
-                    if (myMeta.getMetaType() == MetaType.SUBNET) {
-                        radioB = (JRadioButton) wtf.nextElement(); //second
-                        radioB = (JRadioButton) wtf.nextElement(); //third pt-type
-                    }
-                    groupRadioMetaType.setSelected(radioB.getModel(), true);
-                    doNotUpdate = false;
+                doNotUpdate = true;
+                Enumeration<AbstractButton> wtf = groupRadioMetaType.getElements();
+                JRadioButton radioB = (JRadioButton) wtf.nextElement(); //first: t-type
+                if (myMeta.getMetaType() == MetaType.SUBNETPLACE)
+                    radioB = (JRadioButton) wtf.nextElement(); //second p-type
+                if (myMeta.getMetaType() == MetaType.SUBNET) {
+                    radioB = (JRadioButton) wtf.nextElement(); //second
+                    radioB = (JRadioButton) wtf.nextElement(); //third pt-type
                 }
+                groupRadioMetaType.setSelected(radioB.getModel(), true);
+                doNotUpdate = false;
             }
 
             private ActionListener yesWeCan(MetaNode metaN) {
@@ -3226,6 +3242,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
             }
             String newName = field.getText();
 
@@ -3453,7 +3470,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
                 refreshSubSurCombos();
             } catch (Exception e) {
-
+                System.out.println(e.getMessage());
             }
         });
         components.add(recalculateInvTypesButton);
@@ -3514,13 +3531,14 @@ public class HolmesDockWindowsTable extends JPanel {
             } else {
                 try {
                     String txt = (String) comboBox.getSelectedItem();
-                    txt = txt.substring(txt.indexOf("#") + 1);
+                    txt = Objects.requireNonNull(txt).substring(txt.indexOf("#") + 1);
                     txt = txt.substring(0, txt.indexOf(" "));
                     int index = Integer.parseInt(txt);
 
                     selectedT_invIndex = index - 1;
                     showT_invariant();
                 } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
             }
         });
@@ -3541,13 +3559,14 @@ public class HolmesDockWindowsTable extends JPanel {
             } else {
                 try {
                     String txt = (String) comboBox.getSelectedItem();
-                    txt = txt.substring(txt.indexOf("#") + 1);
+                    txt = Objects.requireNonNull(txt).substring(txt.indexOf("#") + 1);
                     txt = txt.substring(0, txt.indexOf(" "));
                     int index = Integer.parseInt(txt);
 
                     selectedT_invIndex = index - 1;
                     showT_invariant();
                 } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
             }
         });
@@ -3568,13 +3587,14 @@ public class HolmesDockWindowsTable extends JPanel {
             } else {
                 try {
                     String txt = (String) comboBox.getSelectedItem();
-                    txt = txt.substring(txt.indexOf("#") + 1);
+                    txt = Objects.requireNonNull(txt).substring(txt.indexOf("#") + 1);
                     txt = txt.substring(0, txt.indexOf(" "));
                     int index = Integer.parseInt(txt);
 
                     selectedT_invIndex = index - 1;
                     showT_invariant();
                 } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
             }
         });
@@ -3918,7 +3938,6 @@ public class HolmesDockWindowsTable extends JPanel {
             note.setVisible(true);
         } else {
             note.dispose();
-            note = null;
         }
 
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -4121,7 +4140,6 @@ public class HolmesDockWindowsTable extends JPanel {
             note.setVisible(true);
         } else {
             note.dispose();
-            note = null;
         }
 
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -4717,7 +4735,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
             chooseClusterInv.setModel(new DefaultComboBoxModel<>(clustersInvHeaders));
         } catch (Exception e) {
-
+            System.out.println(e.getMessage());
         }
         doNotUpdate = false;
     }
@@ -4946,9 +4964,6 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     private void createMCSSubWindow(MCSDataMatrix mcsData) {
         transitions = overlord.getWorkspace().getProject().getTransitions();
-        if (mcsData == null || transitions.size() == 0) {
-            //return;
-        }
 
         initiateContainers();
 
@@ -4989,10 +5004,11 @@ public class HolmesDockWindowsTable extends JPanel {
 
                 String newRow;
                 for (ArrayList<Integer> set : sets) {
-                    newRow = "[";
+                    StringBuilder newRowBuilder = new StringBuilder("[");
                     for (int el : set) {
-                        newRow += el + ", ";
+                        newRowBuilder.append(el).append(", ");
                     }
+                    newRow = newRowBuilder.toString();
                     newRow += "]";
                     newRow = newRow.replace(", ]", "]");
                     mcsMCSforObjRCombo.addItem(newRow);
@@ -5014,7 +5030,7 @@ public class HolmesDockWindowsTable extends JPanel {
         mcsMCSforObjRCombo = new JComboBox<>(init);
         mcsMCSforObjRCombo.setBounds(posX + 60, posY, 160, 20);
         mcsMCSforObjRCombo.addActionListener(actionEvent -> {
-            if (stopAction == true)
+            if (stopAction)
                 return;
 
             @SuppressWarnings("unchecked")
@@ -5025,7 +5041,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 //MCSDataMatrix mcsDataCore = overlord.getWorkspace().getProject().getMCSdataCore();
                 int selTrans = mcsObjRCombo.getSelectedIndex();
                 selTrans--;
-                showMCSDataInNet(comboBox.getSelectedItem().toString(), selTrans);
+                showMCSDataInNet(Objects.requireNonNull(comboBox.getSelectedItem()).toString(), selTrans);
             }
         });
         components.add(mcsMCSforObjRCombo);
@@ -5098,7 +5114,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             overlord.getWorkspace().getProject().repaintAllGraphPanels();
         } catch (Exception e) {
-
+            System.out.println(e.getMessage());
         }
     }
 
@@ -5112,13 +5128,11 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param knockoutData ArrayList[ArrayList[Integer]] - macierz danych o knockout
      */
     private void createKnockoutData(ArrayList<ArrayList<Integer>> knockoutData) {
-        if (knockoutData == null || knockoutData.size() == 0) {
-            knockoutData = null;
+        if (knockoutData == null || knockoutData.isEmpty()) {
             return;
         } else {
             mode = KNOCKOUT;
             this.knockoutData = knockoutData;
-            //overlord.reset.setMCTStatus(true);
         }
 
         int colA_posX = 10;
@@ -5428,6 +5442,282 @@ public class HolmesDockWindowsTable extends JPanel {
         add(panel);
     }
 
+    //**************************************************************************************
+    //*********************************                  ***********************************
+    //*********************************   Decomposition  ***********************************
+    //*********************************                  ***********************************
+    //**************************************************************************************
+
+    /**
+     * Tworzy okno z opcjami do dekompozycji
+     */
+
+    private void createDecompositionData() {
+
+
+        int posX = 10;
+        int posY = 10;
+
+        /*
+        String[] newComoList = new String[SubnetCalculator.functionalSubNets.size()];
+        for (int i = 0; i < SubnetCalculator.functionalSubNets.size(); i++) {
+            newComoList[i] = "Functional subnet " + i;
+        }
+        */
+
+        //
+
+
+       if (SubnetCalculator.functionalSubNets == null || SubnetCalculator.functionalSubNets.size() == 0) {
+            //return;
+       } else {
+            mode = DECOMPOSITION;
+            //clusterColorsData = clusteringData;
+            //overlord.reset.setDecompositionStatus(true);
+           SubnetCalculator.cleanSubnets();
+       }
+
+        SubnetCalculator.cleanSubnets();
+
+        initiateContainers();
+
+        JLabel chooseDecoLabel = new JLabel("Choose Decomposition: ");
+        chooseDecoLabel.setBounds(posX, posY, 150, 20);
+        components.add(chooseDecoLabel);
+
+        String[] decoList = {"Functional"};
+
+        JComboBox<String> chooseMctBox = new JComboBox<>(decoList);
+        chooseMctBox.setBounds(posX, posY + 30, 150, 20);
+        chooseMctBox.addActionListener(actionEvent -> {
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            choosenDeco = comboBox.getSelectedIndex();
+        });
+        components.add(chooseMctBox);
+
+        JButton calculateDeco = new JButton("Calculate");
+        calculateDeco.setBounds(posX + 200, posY + 30, 100, 50);
+        calculateDeco.addActionListener(actionEvent -> calculateDeco(choosenDeco));
+        components.add(calculateDeco);
+
+        JComboBox<String> subnetList = new JComboBox<>();
+        subnetList.setBounds(posX, posY + 60, 150, 20);
+        subnetList.addActionListener(actionEvent -> {
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            int selected = comboBox.getSelectedIndex();
+            if (selected == 0) {
+                selectedMCTindex = -1;
+                allMCTselected = false;
+                showSubNet();
+                MCTnameField.setText("");
+            } else if (selected == comboBox.getItemCount() - 1) {
+                allMCTselected = true;
+                showAllColors();
+            } else {
+                selectedMCTindex = selected - 1;
+                allMCTselected = false;
+                showSubNet();
+            }
+        });
+        components.add(subnetList);
+
+        //TODO uruchomić
+        elementsOfDecomposedStructure = new JTextArea();
+        elementsOfDecomposedStructure.setLineWrap(true);
+        elementsOfDecomposedStructure.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent e) {
+                JTextArea field = (JTextArea) e.getSource();
+                if (field != null)
+                    changeSubNetname(field.getText());
+            }
+        });
+
+        JPanel descPanel = new JPanel();
+        descPanel.setLayout(new BorderLayout());
+        descPanel.add(new JScrollPane(MCTnameField), BorderLayout.CENTER);
+        descPanel.setBounds(posX, posY + 100, 250, 80);
+        components.add(descPanel);
+
+
+        panel.setLayout(null);
+        for (JComponent component : components) panel.add(component);
+        panel.setOpaque(true);
+        panel.repaint();
+        panel.setVisible(true);
+        add(panel);
+    }
+
+    private void changeSubNetname(String newName) {
+        if (selectedSubNetindex == -1)
+            return;
+
+        overlord.getWorkspace().getProject().accessMCTnames().set(selectedSubNetindex, newName);
+    }
+
+    private void calculateDeco(int index) {
+        switch (index) {
+            case 0:
+                getFunctionalSubnet(index);
+                break;
+            case 1: //calc mct
+                break;
+            default: //do nothing
+                break;
+        }
+    }
+
+    private void getFunctionalSubnet(int index) {
+        SubnetCalculator.generateFS();
+        String[] newComoList = new String[SubnetCalculator.functionalSubNets.size() + 3];
+        for (int i = 0; i < SubnetCalculator.functionalSubNets.size(); i++) {
+            newComoList[i + 1] = "Functional subnet " + i;
+        }
+        newComoList[0] = "--";
+        newComoList[SubnetCalculator.functionalSubNets.size() + 1] = "All non trivial subnets";
+        newComoList[SubnetCalculator.functionalSubNets.size() + 2] = "All subnets";
+
+        int listIndex = components.stream().map(Component::getLocation).collect(Collectors.toList()).indexOf(new Point(10, 70));
+
+        JComboBox<String> newCB = new JComboBox<>(newComoList);
+        newCB.setBounds(10, 70, 150, 20);
+        newCB.addActionListener(actionEvent -> {
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            int selected = comboBox.getSelectedIndex();
+            if (selected == 0) {
+                selectedSubNetindex = -1;
+                allSubNetsselected = false;
+                showSubNet();
+                elementsOfDecomposedStructure.setText("");
+            } else if (selected == comboBox.getItemCount() - 1) {
+                allSubNetsselected = true;
+                showAllSubColors(true);
+            } else if (selected == comboBox.getItemCount() - 2) {
+                allSubNetsselected = true;
+                showAllSubColors(false);
+            } else {
+                selectedSubNetindex = selected - 1;
+                allSubNetsselected = false;
+                showSubNet();
+            }
+        });
+        newCB.setVisible(true);
+        this.components.set(listIndex, newCB);
+        this.components.get(index).setVisible(true);
+        this.panel.removeAll();
+
+        for (JComponent component : this.components) this.panel.add(component);
+
+        this.panel.repaint();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
+
+    }
+
+    private void showSubNet() {
+        PetriNet pn = overlord.getWorkspace().getProject();
+        pn.resetNetColors();
+
+        if (selectedSubNetindex == -1)
+            return;
+
+        SubnetCalculator.SubNet subnet = SubnetCalculator.functionalSubNets.get(selectedSubNetindex);
+        int size = SubnetCalculator.functionalSubNets.size();
+        ColorPalette cp = new ColorPalette();
+
+        //places
+        for (Place place : subnet.getSubPlaces()) {
+            if (!colorSubNet) {
+                place.setGlowedSub(true);
+
+            } else {
+                if (selectedSubNetindex == size - 1)
+                    place.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
+                else
+                    place.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+            }
+        }
+
+        //arcs
+        for (Arc arc : subnet.getSubArcs()) {
+            if (!colorSubNet)
+                arc.setGlowedSub(true);
+        }
+
+        //transitions
+        for (Transition transition : subnet.getSubTransitions()) {
+            if (!colorSubNet) {
+                transition.setGlowed_MTC(true);
+
+            } else {
+                if (selectedSubNetindex == size - 1)
+                    transition.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
+                else
+                    transition.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+            }
+        }
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
+
+        //name field:
+        if (overlord.getWorkspace().getProject().accessSubNetNames() != null) {
+            String name = overlord.getWorkspace().getProject().accessSubNetNames().get(selectedSubNetindex);
+            elementsOfDecomposedStructure.setText(name);
+        }
+    }
+
+    private void showAllSubColors(boolean trivial) {
+        PetriNet pn = overlord.getWorkspace().getProject();
+        pn.resetNetColors();
+
+        ColorPalette cp = new ColorPalette();
+        for (int m = 0; m < SubnetCalculator.functionalSubNets.size(); m++) {
+            Color currentColor = cp.getColor();
+            SubnetCalculator.SubNet subNet = SubnetCalculator.functionalSubNets.get(m);
+            ArrayList<Transition> transitions = subNet.getSubTransitions();
+            if (transitions.size() > 1 || trivial) {
+                for (Transition transition : transitions) {
+                    transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                }
+
+                ArrayList<Place> places = SubnetCalculator.functionalSubNets.get(m).getSubPlaces();
+                for (Place place : places) {
+                    if (subNet.getSubBorderPlaces().contains(place))
+                        place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                    else
+                        place.setColorWithNumber(true, currentColor, false, m, true, "");
+                }
+                ArrayList<Arc> arcs = SubnetCalculator.functionalSubNets.get(m).getSubArcs();
+                for (Arc arc : arcs) {
+                    arc.setColor(true, currentColor);
+                }
+            }
+        }
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
+    }
+
+    private Color calcMiddleColor(Color one, Color two) {
+        int blue = 0;
+        int red = 0;
+        int green = 0;
+        int absBlue = Math.abs(one.getBlue() - two.getBlue());
+        int absRed = Math.abs(one.getRed() - two.getRed());
+        int absGreen = Math.abs(one.getGreen() - two.getGreen());
+
+        if (one.getBlue() > two.getBlue())
+            blue = one.getBlue() - (absBlue / 2);
+        else
+            blue = two.getBlue() - (absBlue / 2);
+
+        if (one.getRed() > two.getRed())
+            red = one.getRed() - (absRed / 2);
+        else
+            red = two.getRed() - (absRed / 2);
+
+        if (one.getGreen() > two.getGreen())
+            green = one.getGreen() - (absGreen / 2);
+        else
+            green = two.getGreen() - (absGreen / 2);
+
+        return new Color(red, green, blue);
+    }
 
     //**************************************************************************************
     //**************************************************************************************

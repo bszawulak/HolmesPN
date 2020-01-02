@@ -1,6 +1,7 @@
 package holmes.petrinet.data;
 
 import holmes.analyse.MCTCalculator;
+import holmes.analyse.SubnetCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.files.io.AbyssReader;
 import holmes.files.io.AbyssWriter;
@@ -53,10 +54,10 @@ import org.simpleframework.xml.Root;
  */
 @Root
 public class PetriNet implements SelectionActionListener, Cloneable {
-	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<SelectionActionListener>();
+	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<>();
 	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //macierz t-inwariantów
 	private ArrayList<String> t_invariantsDescriptions;
-	private boolean t_invComputed = false;
+	private boolean t_invComputed;
 	private ArrayList<Integer> t_invariantsTypes;
 	private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //macierz p-inwariantów
 	private ArrayList<String> p_invariantsDescriptions;
@@ -71,9 +72,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private StatePlacesManager statesManager;
 	private SPNdataVectorManager firingRatesManager;
 	private SSAplacesManager ssaManager;
+
+	private ArrayList<String> subNetNames;
 	
 	private String lastFileName = "";
-	private PetriNetData dataCore = new PetriNetData(new ArrayList<Node>(), new ArrayList<Arc>(), "default");
+	private PetriNetData dataCore = new PetriNetData(new ArrayList<>(), new ArrayList<>(), "default");
 	
 	private ArrayList<GraphPanel> graphPanels;
 	
@@ -123,7 +126,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public PetriNet(Workspace workspace, String name) {
 		this.overlord = GUIManager.getDefaultGUIManager();
-		this.setGraphPanels(new ArrayList<GraphPanel>());
+		this.setGraphPanels(new ArrayList<>());
 		this.workspace = workspace;
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
 		this.setMCTanalyzer(new MCTCalculator(this));
@@ -167,7 +170,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return ArrayList[Place] - lista miejsc projektu sieci
 	 */
 	public ArrayList<Place> getPlaces() {
-		ArrayList<Place> returnPlaces = new ArrayList<Place>();
+		ArrayList<Place> returnPlaces = new ArrayList<>();
 		for (Node n : this.dataCore.nodes) {
 			if (n instanceof Place)
 				returnPlaces.add((Place) n);
@@ -195,7 +198,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return ArrayList[Transition] - lista tranzycji projektu sieci
 	 */
 	public ArrayList<Transition> getTransitions() {
-		ArrayList<Transition> returnTransitions = new ArrayList<Transition>();
+		ArrayList<Transition> returnTransitions = new ArrayList<>();
 		for (Node n : this.dataCore.nodes) {
 			if (n instanceof Transition)
 				returnTransitions.add((Transition) n);
@@ -221,7 +224,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return ArrayList[TimeTransition] - lista tranzycji czasowych projektu sieci
 	 */
 	public ArrayList<Transition> getTimeTransitions() {
-		ArrayList<Transition> returnTransitions = new ArrayList<Transition>();
+		ArrayList<Transition> returnTransitions = new ArrayList<>();
 		for (Node n : this.dataCore.nodes) {
 			if (n instanceof Transition) {
 				if (((Transition)n).getTransType() == TransitionType.TPN)
@@ -238,10 +241,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public ArrayList<ArrayList<Node>> getPNelements() {
 		ArrayList<ArrayList<Node>> result = new ArrayList<>();
-		ArrayList<Node> places = new ArrayList<Node>();
-		ArrayList<Node> transitions = new ArrayList<Node>();
-		ArrayList<Node> timeTransitions = new ArrayList<Node>();
-		ArrayList<Node> metaNodes = new ArrayList<Node>();
+		ArrayList<Node> places = new ArrayList<>();
+		ArrayList<Node> transitions = new ArrayList<>();
+		ArrayList<Node> timeTransitions = new ArrayList<>();
+		ArrayList<Node> metaNodes = new ArrayList<>();
 		
 		for(Node n : this.dataCore.nodes) {
 			if (n instanceof Place) {
@@ -267,7 +270,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return ArrayList[MetaNoda] - lista meta-węzłów
 	 */
 	public ArrayList<MetaNode> getMetaNodes() {
-		ArrayList<MetaNode> returnNodes = new ArrayList<MetaNode>();
+		ArrayList<MetaNode> returnNodes = new ArrayList<>();
 		for (Node n : this.dataCore.nodes) {
 			if (n instanceof MetaNode) {
 				returnNodes.add((MetaNode) n);
@@ -335,7 +338,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param arcs ArrayList[Arc] - nowa lista łuków
 	 * @param nodes ArrayList[Node] - nowa lista wierzchołków
 	 */
-	public void addArcsAndNodes(ArrayList<Arc> arcs, ArrayList<Node> nodes) {
+	private void addArcsAndNodes(ArrayList<Arc> arcs, ArrayList<Node> nodes) {
 		this.getArcs().addAll(arcs);
 		this.getNodes().addAll(nodes);
 	}
@@ -477,7 +480,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda ustawiająca tablicę arkuszy sieci.
 	 * @param graphPanels ArrayList[GraphPanel] - arkusze sieci
 	 */
-	public void setGraphPanels(ArrayList<GraphPanel> graphPanels) {
+	private void setGraphPanels(ArrayList<GraphPanel> graphPanels) {
 		this.graphPanels = graphPanels;
 	}
 
@@ -518,8 +521,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		if(t_invariants == null)
 			return;
 		else {
-			this.t_invariantsDescriptions = new ArrayList<String>();
-			this.t_invariantsTypes = new ArrayList<Integer>();
+			this.t_invariantsDescriptions = new ArrayList<>();
+			this.t_invariantsTypes = new ArrayList<>();
 		}
 		
 		for(int i=0; i<t_invariantsMatrix.size(); i++) {
@@ -546,7 +549,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		if(p_invariants == null)
 			return;
 		else 
-			this.p_invariantsDescriptions = new ArrayList<String>();
+			this.p_invariantsDescriptions = new ArrayList<>();
 		
 		for(int i=0; i<p_invariantsMatrix.size(); i++) {
 			p_invariantsDescriptions.add("Default description of p-invariant #"+(i+1));
@@ -679,7 +682,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void setMCTMatrix(ArrayList<ArrayList<Transition>> mct, boolean sort) {
 		this.mctData = mct;
-		this.mctNames = new ArrayList<String>();
+		this.mctNames = new ArrayList<>();
 		if(mct == null)
 			return;
 		
@@ -726,6 +729,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			return;
 		if(namesVector.size() == mctData.size())
 			this.mctNames = namesVector;
+	}
+
+	public ArrayList<String> accessSubNetNames() {
+		return subNetNames;
+	}
+
+	public void setSubNetNames(ArrayList<String> namesVector) {
+		if(namesVector.size() == SubnetCalculator.functionalSubNets.size())
+			this.subNetNames = namesVector;
 	}
 	
 	/**
@@ -886,13 +898,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void restoreMarkingZero() {
 		try {
-			ArrayList<Transition> transitions = getTransitions();
 			accessStatesManager().restoreSelectedState();
 	
-			for(int i=0; i<transitions.size(); i++) {
-				Transition trans = transitions.get(i);
+			for(Transition trans : getTransitions()) {
 				trans.setLaunching(false);
-				
+
 				if(trans.getTransType() == TransitionType.TPN) {
 					trans.resetTimeVariables();
 				}
@@ -919,8 +929,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		try {
 			accessStatesManager().restoreSelectedState();
 	
-			for(int i=0; i<transitions.size(); i++) {
-				Transition trans = transitions.get(i);
+			for(Transition trans : transitions) {
 				trans.setLaunching(false);
 				if(trans.getTransType() == TransitionType.TPN) {
 					trans.resetTimeVariables();
@@ -936,11 +945,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda przechowuje stan kolorowany m0 sieci na życzenie.
 	 */
 	public void storeColors() {
-		ArrayList<Place> places = getPlaces();
 		colorVector = new ArrayList<>();
-		for(int p = 0; p<places.size(); p++) {
-			Place place = places.get(p);
-			ArrayList<Integer> tokensC = new ArrayList<Integer>();
+		for(Place place : getPlaces()) {
+			ArrayList<Integer> tokensC = new ArrayList<>();
 			tokensC.add(place.getColorTokensNumber(0));
 			tokensC.add(place.getColorTokensNumber(1));
 			tokensC.add(place.getColorTokensNumber(2));
@@ -972,8 +979,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			
 			ArrayList<Transition> transitions = getTransitions();
 
-			for(int i=0; i<transitions.size(); i++) {
-				Transition trans = transitions.get(i);
+			for(Transition trans : transitions) {
 				trans.setLaunching(false);
 				
 				if(trans.getTransType() == TransitionType.TPN) {
@@ -997,7 +1003,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda wyłączająca świecenie tranzycji np. w ramach aktywacji niezmiennika.
 	 */
-	public void turnTransitionGlowingOff() {
+	private void turnTransitionGlowingOff() {
 		for (GraphPanel gp : getGraphPanels()) {
 			gp.getSelectionManager().removeTransitionsGlowing();
 			gp.repaint();
@@ -1025,17 +1031,16 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				gpIterator.remove();
 				for (Iterator<Node> nodeIterator = getNodes().iterator(); nodeIterator.hasNext();) {
 					Node n = nodeIterator.next();
-					for (Iterator<ElementLocation> elIterator = n.getNodeLocations(sheetID).iterator(); elIterator.hasNext();) {
-						ElementLocation el = elIterator.next();
+					for (ElementLocation el : n.getNodeLocations(sheetID)) {
 						if (!n.removeElementLocation(el)) {
 							nodeIterator.remove();
 						}
-						for (Iterator<Arc> j = el.getInArcs().iterator(); j.hasNext();) {
+						for (Iterator<Arc> j = el.getInArcs().iterator(); j.hasNext(); ) {
 							this.getArcs().remove(j.next());
 							j.remove();
 						}
 						// deletes all out arcs of current ElementLocation
-						for (Iterator<Arc> j = el.getOutArcs().iterator(); j.hasNext();) {
+						for (Iterator<Arc> j = el.getOutArcs().iterator(); j.hasNext(); ) {
 							this.getArcs().remove(j.next());
 							j.remove();
 						}
@@ -1060,10 +1065,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public boolean checkNameConflict(String name) {
 		for (Node n : this.getNodes())
-			if (n.getName() == name)
+			if (n.getName().equals(name))
 				return true;
 		for (Arc a : this.getArcs())
-			if (a.getName() == name)
+			if (a.getName().equals(name))
 				return true;
 		return false;
 	}
@@ -1073,7 +1078,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return ArrayList[BufferedImage] - lista obrazów
 	 */
 	public ArrayList<BufferedImage> getImagesFromGraphPanels() {
-		ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
+		ArrayList<BufferedImage> images = new ArrayList<>();
 		for (GraphPanel g : this.getGraphPanels())
 			images.add(g.createImageFromSheet());
 		return images;
@@ -1085,8 +1090,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean saveAsPNT(String filePath) {
-		boolean status = communicationProtocol.writePNT(filePath, getPlaces(), getTransitions(), getArcs());
-		return status;
+		return communicationProtocol.writePNT(filePath, getPlaces(), getTransitions(), getArcs());
 	}
 	
 	/**
@@ -1096,8 +1100,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public boolean saveAsAbyss(String filePath) {
 		ABYSSSwriter = new AbyssWriter();
-		boolean status = ABYSSSwriter.write(filePath);
-		return status;
+		return ABYSSSwriter.write(filePath);
 	}
 	
 	/**
@@ -1107,8 +1110,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public boolean saveAsSPPED(String filePath) {
 		SnoopyWriter sWr = new SnoopyWriter();
-		boolean status = sWr.writeSPPED(filePath);
-		return status;
+		return sWr.writeSPPED(filePath);
 	}
 	
 	/**
@@ -1118,8 +1120,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public boolean saveAsSPEPT(String filePath) {
 		SnoopyWriter sWr = new SnoopyWriter();
-		boolean status = sWr.writeSPEPT(filePath);
-		return status;
+		return sWr.writeSPEPT(filePath);
 	}
 	
 	/**
@@ -1129,8 +1130,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public boolean saveAsSPTPT(String filePath) {
 		SnoopyWriter sWr = new SnoopyWriter();
-		boolean status = sWr.writeSPTPT(filePath);
-		return status;
+		return sWr.writeSPTPT(filePath);
 	}
 
 	/**
@@ -1139,7 +1139,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public boolean loadFromFile(String path) {
 		boolean status = overlord.reset.newProjectInitiated();
-		if(status == false) {
+		if(!status) {
 			return false;
 		}
 		
@@ -1381,13 +1381,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		try {
 			if(t_inv) {
 				boolean status = communicationProtocol.readT_invariants(path);
-				if(status == false)
+				if(!status)
 					return false;
 				setT_InvMatrix(communicationProtocol.getInvariantsList(), true);
 				overlord.reset.setT_invariantsStatus(true); //status t-inwariantów: wczytane
 			} else {
 				boolean status = communicationProtocol.readP_invariants(path);
-				if(status == false)
+				if(!status)
 					return false;
 				setP_InvMatrix(communicationProtocol.getInvariantsList());
 				overlord.reset.setP_invariantsStatus(true); //status p-inwariantów: wczytane
@@ -1456,16 +1456,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public int returnCleanSheetID() {
 		int SID = 0;
 
-		if (getDataCore().nodes.isEmpty()) { //zakładamy, że zawsze istnieje arkusz zerowy
-			SID = 0;
-		} else {
+		if (!getDataCore().nodes.isEmpty()) { //zakładamy, że zawsze istnieje arkusz zerowy
 			int tSID;
-			ArrayList<Integer> sheetList = new ArrayList<Integer>();
-			int k = 0;
-			for (k = 0; k < overlord.getWorkspace().getSheets().size(); k++)
-				sheetList.add(overlord.getWorkspace().getSheets().get(k).getId());
+			ArrayList<Integer> sheetList = new ArrayList<>();
 
-			int[] tabSID = new int[overlord.getWorkspace().getSheets().get(k - 1).getId() + 1];
+			for (WorkspaceSheet ws : overlord.getWorkspace().getSheets())
+				sheetList.add(ws.getId());
+
+			int[] tabSID = new int[overlord.getWorkspace().getSheets().get(overlord.getWorkspace().getSheets().size() - 1).getId() + 1];
 
 			for (int j = 0; j < getDataCore().nodes.size(); j++) {
 				for (int i = 0; i < getDataCore().nodes.get(j).getNodeLocations().size(); i++) {
@@ -1475,15 +1473,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 			boolean emptySheet = false;
 			int emptySheetIndex = 999999999;
-			for (int l = 0; l < sheetList.size(); l++) {
-				if (tabSID[sheetList.get(l)] == 0) {
+			for (Integer integer : sheetList) {
+				if (tabSID[integer] == 0) {
 					emptySheet = true;
-					if (emptySheetIndex > sheetList.get(l)) {
-						emptySheetIndex = sheetList.get(l);
+					if (emptySheetIndex > integer) {
+						emptySheetIndex = integer;
 					}
 				}
 			}
-			if (emptySheet == true) {
+			if (emptySheet) {
 				SID = emptySheetIndex;
 			} else {
 				SID = overlord.getWorkspace().newTab(false, new Point(0,0), 1, MetaType.SUBNET);
@@ -1496,11 +1494,24 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda ustawia podświetlanie zbiorów MCT.
 	 * @param isGlowedMTC boolean - true jeśli MCT ma być podświetlony
 	 */
-	public void setTransitionGlowedMTC(boolean isGlowedMTC) {
+	private void setTransitionGlowedMTC(boolean isGlowedMTC) {
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION) {
 				((Transition) n).setGlowed_MTC(isGlowedMTC);
 			}
+	}
+
+	/**
+	 * Metoda ustawia podświetlanie podsieci.
+	 * @param isGlowedSubnet boolean - true jeśli MCT ma być podświetlony
+	 */
+	private void setGlowedSubnet(boolean isGlowedSubnet) {
+		for (Node n : getNodes()){
+				n.setGlowedSub(isGlowedSubnet);
+			}
+		for(Arc a : getArcs()){
+			a.setGlowedSub(isGlowedSubnet);
+		}
 	}
 	
 	/**
@@ -1509,6 +1520,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void resetNetColors() {
 		turnTransitionGlowingOff();
 		setTransitionGlowedMTC(false);
+		setGlowedSubnet(false);
 		resetTransitionGraphics();
 		resetPlaceGraphics();
 		resetArcGraphics();
@@ -1532,15 +1544,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Resetuje marker wyświetlania wzmocnionej grafiki rysowania łuku.
 	 */
 	private void resetArcGraphics() {
-		for(Arc arc : getArcs()) {
-			arc.qSimForcedArc = false;
+		for(Arc a : getArcs()) {
+			a.qSimForcedArc = false;
+			if (a.getType() == PetriNetElementType.ARC) {
+				a.setColor(false, Color.BLACK);
+			}
 		}
 	}
 
 	/**
 	 * Metoda wygasza kolorowanie tranzycji, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
-	public void resetTransitionGraphics() {
+	private void resetTransitionGraphics() {
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION) {
 				Transition trans = ((Transition) n);
@@ -1557,7 +1572,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda wygasza kolorowanie miejsca, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
-	public void resetPlaceGraphics() {
+	private void resetPlaceGraphics() {
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.PLACE) {
 				Place place = ((Place) n);
@@ -1587,11 +1602,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 							+ "please do it before continuing or it will be lost.",
 							"Continue loading new net?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-			if (n == 0) {
-				return true;
-			} else {
-				return false;
-			}
+			return n == 0;
 		}
 	}
 	
@@ -1621,12 +1632,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			gp.getSelectionManager().forceDeselectAllElements();
 		}
 		
-		setNodes(new ArrayList<Node>());
-		setArcs(new ArrayList<Arc>());
+		setNodes(new ArrayList<>());
+		setArcs(new ArrayList<>());
 		
 		repaintAllGraphPanels();
 		
-		ArrayList<GraphPanel> newGraphPanels = new ArrayList<GraphPanel>();
+		ArrayList<GraphPanel> newGraphPanels = new ArrayList<>();
 		for (GraphPanel gp : getGraphPanels()) {
 			int sheetID = gp.getSheetId();
 			WorkspaceSheet.SheetPanel sheetPanel = (WorkspaceSheet.SheetPanel) gp.getParent();

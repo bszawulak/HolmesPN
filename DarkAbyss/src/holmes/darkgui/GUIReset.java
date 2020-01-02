@@ -1,14 +1,16 @@
 package holmes.darkgui;
 
+import java.awt.*;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import com.javadocking.dock.CompositeDock;
 import com.javadocking.dockable.Dockable;
 
 import holmes.analyse.MCTCalculator;
 import holmes.clusters.ClusterDataPackage;
+import holmes.darkgui.dockwindows.HolmesDockWindow;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable.SubWindow;
 import holmes.graphpanel.GraphPanel;
@@ -33,6 +35,7 @@ public class GUIReset {
 	private boolean p_invGenerated = false;
 	private boolean mctGenerated = false;
 	private boolean clustersGenerated = false;
+	private boolean subNetGenerated = false;
 
 	/**
 	 * Metoda przywraca szaro-burą domyslną kolorystykę wyświetlanej sieci - czyści kolory wprowadzone
@@ -229,6 +232,21 @@ public class GUIReset {
 			clustersGenerated = false;
 			overlord.log("Clustering data removed from memory.", "text", true);
 		}
+
+		if(subNetGenerated){
+			if(overlord.getDecompositionBox().getCurrentDockWindow() != null) {
+				DefaultComboBoxModel model = new DefaultComboBoxModel();
+				((JComboBox)overlord.getDecompositionBox().getCurrentDockWindow().getPanel(). getComponent(3)).setModel(model);
+			}
+			overlord.getDecompositionBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.DECOMPOSITION, null));
+			overlord.getDecompositionBox().validate();
+			overlord.getDecompositionBox().repaint();
+
+
+			subNetGenerated = false;
+			overlord.log("Decomposition data removed from memory.", "text", true);
+		}
+
 	}
 	
 	/**
@@ -273,6 +291,10 @@ public class GUIReset {
 	 */
 	public void setClustersStatus(boolean status) {
 		clustersGenerated = status;
+	}
+
+	public void setDecompositionStatus(boolean status) {
+		subNetGenerated = status;
 	}
 	
 	/**

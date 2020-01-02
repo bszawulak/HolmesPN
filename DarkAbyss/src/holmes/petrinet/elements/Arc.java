@@ -14,781 +14,836 @@ import holmes.petrinet.data.PetriNet;
 
 /**
  * Klasa implementująca łuk w sieci Petriego. Przechowuje referencje
- * lokalizacji na swoim początku i  końcu (istotne: lokacji, nie bezpośrednio 
- * wierzchołków). Poprzez owe lokacje można uzyskać dostęp do wierzchołków, 
+ * lokalizacji na swoim początku i  końcu (istotne: lokacji, nie bezpośrednio
+ * wierzchołków). Poprzez owe lokacje można uzyskać dostęp do wierzchołków,
  * do których należy.
+ *
  * @author students
  * @author MR - poprawki (klasy łuków)
- *
  */
 public class Arc extends PetriNetElement {
-	private static final long serialVersionUID = 5365625190238686098L;
-	
-	private ElementLocation locationStart;
-	private ElementLocation locationEnd = null;
-	private Point tempEndPoint = null;
-	private boolean selected = false;
-	private boolean isCorrect = false;
-	private int weight = 1;
-	public boolean isTransportingTokens = false;
-	private int simulationStep = 0;
-	private boolean simulationForwardDirection = true;
-	
-	private ArrayList<Point> breakPoints = null;
-	public boolean isBreakArc = false; 
-	
-	//colors:
-	private int weight1green = 0;
-	private int weight2blue = 0;
-	private int weight3yellow = 0;
-	private int weight4grey = 0;
-	private int weight5black = 0;
-	
-	//read-arc parameters:
-	private Arc pairedArc;
-	private boolean isMainArcOfPair = false;
-	private TypeOfArc arcType;
-	
-	public boolean qSimForcedArc = false; //czy łuk ma być wzmocniony
-	public Color qSimForcedColor = Color.BLACK; //kolor wzmocnienia
+    private static final long serialVersionUID = 5365625190238686098L;
 
-	/** NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR */
-	public enum TypeOfArc { NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR }
-	
-	/**
-	 * Konstruktor obiektu klasy Arc - chwilowo nieużywany.
-	 * @param startPosition ElementLocation - lokalicja żródła łuku
-	 * @param endPosition ElementLocation - lokalicja celu łuku
-	 */
-	public Arc(ElementLocation startPosition, ElementLocation endPosition, TypeOfArc type) {
-		this(startPosition, type);
+    private ElementLocation locationStart;
+    private ElementLocation locationEnd = null;
+    private Point tempEndPoint = null;
+    private boolean selected = false;
+    private boolean isCorrect = false;
+    private int weight = 1;
+    public boolean isTransportingTokens = false;
+    private int simulationStep = 0;
+    private boolean simulationForwardDirection = true;
 
-		this.setEndLocation(endPosition);
-		this.setID(IdGenerator.getNextId());
-		this.lookForArcPair();
-	}
+    private ArrayList<Point> breakPoints;
+    private boolean isBreakArc = false;
 
-	/**
-	 * Konstruktor obiektu klasy Arc - mousePressed(MouseEvent) - używany w momencie wybrania prawidłowego (!) 
-	 * wierzchołka docelowego dla łuku.
-	 * @param arcId int - identyfikator łuku
-	 * @param startPosition ElementLocation - lokacja źródła łuku
-	 * @param endPosition ElementLocation - lokacja celu łuku
-	 */
-	public Arc(int arcId, ElementLocation startPosition, ElementLocation endPosition, TypeOfArc type) {
-		this(startPosition, type);
+    //colors:
+    private int weight1green = 0;
+    private int weight2blue = 0;
+    private int weight3yellow = 0;
+    private int weight4grey = 0;
+    private int weight5black = 0;
 
-		this.setEndLocation(endPosition);
-		this.setID(arcId);
-		this.lookForArcPair();
-	}
+    private boolean isColorChanged;
+    private Color arcColorValue;
 
-	/**
-	 * Konstruktor obiektu klasy Arc - odczyt sieci z pliku
-	 * @param startPosition ElementLocation - lokacja źródła łuku
-	 * @param endPosition ElementLocation - lokacja celu łuku
-	 * @param comment String - komentarz
-	 * @param weight int - waga łuku
-	 */
-	public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment, int weight, TypeOfArc type) {
-		this(startPosition, type);
-		
-		this.setID(IdGenerator.getNextId());
-		this.setEndLocation(endPosition);
-		this.checkIsCorect(endPosition);
-		this.setComment(comment);
-		this.setWeight(weight);
-		this.lookForArcPair();
-	}
+    //read-arc parameters:
+    private Arc pairedArc;
+    private boolean isMainArcOfPair = false;
+    private TypeOfArc arcType;
 
-	/**
-	 * Konstruktor obiektu klasy Arc - bez ID, TYLKO na potrzeby rysowania konturu w momencie rozpoczęcia
-	 * rysowania (prowadzenia) łuku do miejsca docelowego.
-	 * @param startPosition ElementLocation - lokalizacja źródła łuku
-	 */
-	public Arc(ElementLocation startPosition, TypeOfArc type) {
-		this.arcType = type;
-		this.setStartLocation(startPosition);
-		this.setEndPoint(startPosition.getPosition());
-		this.setType(PetriNetElementType.ARC);
-		
-		this.breakPoints = new ArrayList<Point>();
-	}
+    public boolean qSimForcedArc = false; //czy łuk ma być wzmocniony
+    public Color qSimForcedColor = Color.BLACK; //kolor wzmocnienia
 
-	/**
-	 * Metoda sprawdza, czy aktualny łuk jest łukiem odczytu (read-arc).
-	 * Jeśli tak, ustala wartość obiektu łuku 
-	 */
-	public void lookForArcPair() {
-		if(this.getArcType() == TypeOfArc.META_ARC)
-			return;
-		
-		if(this.getArcType() != TypeOfArc.NORMAL) { //LOAD PROJECT SUBROUTINE
-			if(this.getArcType() == TypeOfArc.READARC) {
-				for (Arc a : this.getEndLocation().getOutArcs()) {
-					if (a.getEndLocation() == this.getStartLocation()) {
-						if(a.getArcType() != TypeOfArc.READARC)
-							continue; //load project purpose
+    /**
+     * NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR
+     */
+    public enum TypeOfArc {NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR}
 
-						a.setMainArcOfPair(true);
-						a.setPairedArc(this);
-						this.setPairedArc(a);
-					}
-				}
-			}
-			
-			handleComplexArcGraphics(null);
-			return;
-		}
-		
-		ArrayList<Arc> candidates = this.getEndLocation().getOutArcs();
-		for (Arc a : candidates) {
-			if (a.getEndLocation() == this.getStartLocation()) {
-				if(a.getArcType() != TypeOfArc.NORMAL) {//tylko normal + normal = readarc
-					handleComplexArcGraphics(a);
-					continue;
-				
-				}
-				a.setMainArcOfPair(true);
-				a.setPairedArc(this);
-				this.setPairedArc(a);
-			}
-		}
-		//TODO: flaga readarc?
-	}
+    /**
+     * Konstruktor obiektu klasy Arc - chwilowo nieużywany.
+     *
+     * @param startPosition ElementLocation - lokalicja żródła łuku
+     * @param endPosition   ElementLocation - lokalicja celu łuku
+     */
+    public Arc(ElementLocation startPosition, ElementLocation endPosition, TypeOfArc type) {
+        this(startPosition, type);
 
-	/**
-	 * Rozsuwa łuki (łamiąc je) względem siebie.
-	 * @param arc Arc - inny łuk niż normal idący w drugą stronę
-	 */
-	private void handleComplexArcGraphics(Arc arc) {
-		if(this.breakPoints.size() == 0) {
-			Point startP = getStartLocation().getPosition();
-			Point endP = getEndLocation().getPosition();
-			
-			Point breakPoint = new Point(((startP.x + endP.x)/2)+15,((startP.y + endP.y)/2)+15);
-			breakPoints.add(breakPoint);
-		}
-		
-		if(arc == null)
-			return;
-		
-		if(arc.breakPoints.size() == 0) {
-			Point startP = arc.getStartLocation().getPosition();
-			Point endP = arc.getEndLocation().getPosition();
-			
-			Point breakPoint = new Point(((startP.x + endP.x)/2)-15,((startP.y + endP.y)/2)-15);
-			arc.accessBreaks().add(breakPoint);
-		}
-		// TODO Auto-generated method stub
-		
-	}
+        this.setEndLocation(endPosition);
+        this.setID(IdGenerator.getNextId());
+        this.lookForArcPair();
+    }
 
-	/**
-	 * Metoda zwracająca wagę łuku.
-	 * @return int - waga łuku
-	 */
-	public int getWeight() {
-		return weight;
-	}
+    /**
+     * Konstruktor obiektu klasy Arc - mousePressed(MouseEvent) - używany w momencie wybrania prawidłowego (!)
+     * wierzchołka docelowego dla łuku.
+     *
+     * @param arcId         int - identyfikator łuku
+     * @param startPosition ElementLocation - lokacja źródła łuku
+     * @param endPosition   ElementLocation - lokacja celu łuku
+     */
+    public Arc(int arcId, ElementLocation startPosition, ElementLocation endPosition, TypeOfArc type) {
+        this(startPosition, type);
 
-	/**
-	 * Metoda pozwalająca ustawić wagę łuku.
-	 * @param weight int - waga łuku
-	 */
-	public void setWeight(int weight) {
-		this.weight = weight;
-		//if (pairedArc != null && isMainArcOfPair)
-		//	pairedArc.setWeight(weight);
-	}
-	
-	/**
-	 * Metoda zwracająca wagę łuku kolorowego.
-	 * @param i int - nr porządkowy koloru, default 0, od 0 do 5
-	 * @return int - waga dla koloru
-	 */
-	public int getColorWeight(int i) {
-		switch(i) {
-			case 0:
-				return weight;
-			case 1:
-				return weight1green;
-			case 2:
-				return weight2blue;
-			case 3:
-				return weight3yellow;
-			case 4:
-				return weight4grey;
-			case 5:
-				return weight5black;
-			default:
-				return weight;
-		}
-	}
-	
-	/**
-	 * Metoda pozwalająca ustawić wagę kolorowego łuku.
-	 * @param w int - waga łuku
-	 * @param i int - nr porządkowy koloru, default 0, od 0 do 5
-	 */
-	public void setColorWeight(int w, int i) {
-		switch(i) {
-			case 0:
-				this.weight = w;
-				break;
-			case 1:
-				this.weight1green = w;
-				break;
-			case 2:
-				this.weight2blue = w;
-				break;
-			case 3:
-				this.weight3yellow = w;
-				break;
-			case 4:
-				this.weight4grey = w;
-				break;
-			case 5:
-				this.weight5black = w;
-				break;
-			default:
-				this.weight = w;
-		}
-	}
+        this.setEndLocation(endPosition);
+        this.setID(arcId);
+        this.lookForArcPair();
+    }
 
-	/**
-	 * Metoda zwraca komentarz związany z łukiem.
-	 * @return comment String - komentarz do łuku
-	 */
-	public String getComment() {
-		return comment;
-	}
+    /**
+     * Konstruktor obiektu klasy Arc - odczyt sieci z pliku
+     *
+     * @param startPosition ElementLocation - lokacja źródła łuku
+     * @param endPosition   ElementLocation - lokacja celu łuku
+     * @param comment       String - komentarz
+     * @param weight        int - waga łuku
+     */
+    public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment, int weight, TypeOfArc type) {
+        this(startPosition, type);
 
-	/**
-	 * Metoda ustawiająca komentarz dla łuku.
-	 * @param com String - komentarz do łuku
-	 */
-	public void setComment(String com) {
-		comment = com;
-		if (pairedArc != null && isMainArcOfPair)
-			pairedArc.setComment(com);
-	}
+        this.setID(IdGenerator.getNextId());
+        this.setEndLocation(endPosition);
+        this.checkIsCorect(endPosition);
+        this.setComment(comment);
+        this.setWeight(weight);
+        this.lookForArcPair();
+    }
 
-	/**
-	 * Metoda pozwala pobrać wierzchołek początkowy łuku.
-	 * @return Node - wierzchołek wejściowy łuku
-	 */
-	public Node getStartNode() {
-		return this.locationStart.getParentNode();
-	}
+    /**
+     * Konstruktor obiektu klasy Arc - bez ID, TYLKO na potrzeby rysowania konturu w momencie rozpoczęcia
+     * rysowania (prowadzenia) łuku do miejsca docelowego.
+     *
+     * @param startPosition ElementLocation - lokalizacja źródła łuku
+     */
+    public Arc(ElementLocation startPosition, TypeOfArc type) {
+        this.arcType = type;
+        this.setStartLocation(startPosition);
+        this.setEndPoint(startPosition.getPosition());
+        this.setType(PetriNetElementType.ARC);
 
-	/**
-	 * Metoda pozwala pobrać wierzchołek końcowy łuku.
-	 * @return Node - wierzchołek wyjściowy łuku
-	 */
-	public Node getEndNode() {
-		if (this.locationEnd != null)
-			return this.locationEnd.getParentNode();
-		return null;
-	}
+        this.breakPoints = new ArrayList<>();
+    }
 
-	/**
-	 * Metoda pozwala pobrać identyfikator arkusza, na którym znajduje się łuk.
-	 * @return int - identyfikator arkusza
-	 */
-	public int getLocationSheetId() {
-		return this.locationStart.getSheetID();
-	}
+    /**
+     * Metoda sprawdza, czy aktualny łuk jest łukiem odczytu (read-arc).
+     * Jeśli tak, ustala wartość obiektu łuku
+     */
+    private void lookForArcPair() {
+        if (this.getArcType() == TypeOfArc.META_ARC)
+            return;
 
-	/**
-	 * Metoda pozwala obliczyć długość łuku na arkuszu w pikselach.
-	 * @return double - długość łuku
-	 */
-	public double getWidth() {
-		Point A = this.getStartLocation().getPosition();
-		Point B = this.getEndLocation().getPosition();
-		return Math.hypot(A.x - B.x, A.y - B.y);
-	}
+        if (this.getArcType() != TypeOfArc.NORMAL) { //LOAD PROJECT SUBROUTINE
+            if (this.getArcType() == TypeOfArc.READARC) {
+                for (Arc a : this.getEndLocation().getOutArcs()) {
+                    if (a.getEndLocation() == this.getStartLocation()) {
+                        if (a.getArcType() != TypeOfArc.READARC)
+                            continue; //load project purpose
 
-	/**
-	 * Metoda pozwala narysować token na łuku w czasie symulacji.
-	 * @param g Graphics2D - grafika 2D
-	 * @param sheetId int - identyfikator arkusza
-	 */
-	public void drawSimulationToken(Graphics2D g, int sheetId) {
-		ElementDraw.drawToken(g, sheetId, this);
-	}
+                        a.setMainArcOfPair(true);
+                        a.setPairedArc(this);
+                        this.setPairedArc(a);
+                    }
+                }
+            }
 
-	/**
-	 * Metoda przechodzi do kolejnego kroku rysowania symulacji na łuku. W zasadzie to
-	 * głównie zwiększa simulationStep, który odpowiada za liczbę 'klatek' przepływu tokenu.
-	 */
-	public void incrementSimulationStep() {
-		if (!this.isTransportingTokens)
-			return;
-		
-		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
-		this.simulationStep++;
-		
-		if (this.getSimulationStep() > STEP_COUNT) {
-			this.setSimulationStep(0);
-			this.setTransportingTokens(false);
-		}
-	}
+            handleComplexArcGraphics(null);
+            return;
+        }
 
-	/**
-	 * Metoda rysująca łuk na danym arkuszu przy zmienionych rozmiarach arkusza.
-	 * @param g Graphics2D - grafika 2D
-	 * @param sheetId int - identyfikator arkusza
-	 * @param zoom int - zoom, unused
-	 * @param eds ElementDrawSettings - ustawienia rysowania
-	 */
-	public void draw(Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) {
-		g = ElementDraw.drawArc(this, g, sheetId, zoom, eds);
-	}
+        ArrayList<Arc> candidates = this.getEndLocation().getOutArcs();
+        for (Arc a : candidates) {
+            if (a.getEndLocation() == this.getStartLocation()) {
+                if (a.getArcType() != TypeOfArc.NORMAL) {//tylko normal + normal = readarc
+                    handleComplexArcGraphics(a);
+                    continue;
 
-	/**
-	 * Metoda pozwala sprawdzić, czy łuk jest poprawny.
-	 * @return boolean - true, jeśli łuk jest poprawny; false w przeciwnym wypadku
-	 */
-	public boolean getIsCorect() {
-		return this.isCorrect;
-	}
+                }
+                a.setMainArcOfPair(true);
+                a.setPairedArc(this);
+                this.setPairedArc(a);
+            }
+        }
+        //TODO: flaga readarc?
+    }
 
-	/**
-	 * Metoda pozwala sprawdzić, czy łuk byłby poprawny dla danej lokalizacji wierzchołka wyjściowego.
-	 * @param e ElementLocation - lokalizacja wierzchołka wyjściowego
-	 * @return boolean - true, jeśli łuk byłby poprawny; false w przeciwnym wypadku
-	 */
-	public boolean checkIsCorect(ElementLocation e) {
-		this.isCorrect = true;
-		if (e == null 
-			|| e.getParentNode().getType() == this.getStartLocation().getParentNode().getType()
-			|| e == this.getStartLocation()) {
-			this.isCorrect = false;
-		}
-		return this.isCorrect;
-	}
+    /**
+     * Rozsuwa łuki (łamiąc je) względem siebie.
+     *
+     * @param arc Arc - inny łuk niż normal idący w drugą stronę
+     */
+    private void handleComplexArcGraphics(Arc arc) {
+        if (this.breakPoints.size() == 0) {
+            Point startP = getStartLocation().getPosition();
+            Point endP = getEndLocation().getPosition();
 
-	/**
-	 * Metoda pozwala ustawić punkt lokacji wierzchołka wyjściowego łuku.
-	 * @param p Point - punkt lokalizacji wierzchołka wyjściowego
-	 */
-	public void setEndPoint(Point p) {
-		this.tempEndPoint = p;
-	}
-	
-	public Point getTempEndPoint() {
-		return this.tempEndPoint;
-	}
+            Point breakPoint = new Point(((startP.x + endP.x) / 2) + 15, ((startP.y + endP.y) / 2) + 15);
+            breakPoints.add(breakPoint);
+        }
 
-	/**
-	 * Metoda pozwala pobrać stan zaznaczenia łuku.
-	 * @return boolean - true, jeśli łuk jest zaznaczony; false w przeciwnym wypadku
-	 */
-	public boolean getSelected() {
-		return selected;
-	}
+        if (arc == null)
+            return;
 
-	/**
-	 * Metoda pozwala sprawdzić czy łuk zostanie zaznaczony.
-	 * @return true, jeśli łuk zostanie zaznaczony; false w przeciwnym wypadku
-	 */
-	public boolean checkSelection() {
-		if (this.locationEnd == null || this.locationStart == null)
-			return false;
-		setSelected(this.locationEnd.isSelected() && this.locationStart.isSelected());
-		return this.getSelected();
-	}
+        if (arc.breakPoints.size() == 0) {
+            Point startP = arc.getStartLocation().getPosition();
+            Point endP = arc.getEndLocation().getPosition();
 
-	/**
-	 * Metoda pozwala ustawić zaznaczenie łuku.
-	 * @param select boolean - wartość zaznaczenia łuku
-	 */
-	public void setSelected(boolean select) {
-		this.selected = select;
-	}
+            Point breakPoint = new Point(((startP.x + endP.x) / 2) - 15, ((startP.y + endP.y) / 2) - 15);
+            arc.accessBreaks().add(breakPoint);
+        }
+        // TODO Auto-generated method stub
 
-	/**
-	 * Metoda pozwala sprawdzić, czy punkt jest częcią łuku.
-	 * @param P Point - punkt (x,y)
-	 * @return boolean - true, jeśli łuk jest częcią łuku; false w przeciwnym wypadku
-	 */
-	public boolean checkIntersection(Point P) {
-		int breaks = breakPoints.size();
-		if(breaks > 0) {
-			Point start = getStartLocation().getPosition();
-			Point b0 = breakPoints.get(0);
-			if (Line2D.ptSegDist(start.x, start.y, b0.x, b0.y, P.x, P.y) <= 3) //piewszy odcinek
-				return true;
-			
-			for(int i=1; i<breaks; i++) {
-				if (Line2D.ptSegDist(breakPoints.get(i-1).x, breakPoints.get(i-1).y, breakPoints.get(i).x, breakPoints.get(i).y, P.x, P.y) <= 3) //piewszy odcinek
-					return true;
-			}
-			
-			Point bFinal = breakPoints.get(breaks-1);
-			Point end = getEndLocation().getPosition();
-			
-			if (Line2D.ptSegDist(bFinal.x, bFinal.y, end.x, end.y, P.x, P.y) <= 3)
-				return true;
-			else
-				return false;
-			
-		} else {
-			Point A = getStartLocation().getPosition();
-			Point B = getEndLocation().getPosition();
-			if (Line2D.ptSegDist(A.x, A.y, B.x, B.y, P.x, P.y) <= 3)
-				return true;
-			else
-				return false;
-		}
-	}
+    }
 
-	/**
-	 * Metoda pozwala pobrać lokację wierzchołka wejściowego łuku.
-	 * @return startLocation ElementLocation - lokalizacja wierzchołka wejściowego łuku
-	 */
-	public ElementLocation getStartLocation() {
-		return locationStart;
-	}
+    /**
+     * Metoda zwracająca wagę łuku.
+     *
+     * @return int - waga łuku
+     */
+    public int getWeight() {
+        return weight;
+    }
 
-	/**
-	 * Metoda pozwala ustawić lokalizację wierzchołka wejściowego łuku.
-	 * @param startLocation ElementLocation - lokalizacja wierzchołka wejściowego
-	 */
-	public void setStartLocation(ElementLocation startLocation) {
-		this.locationStart = startLocation;
-		
-		if(this.arcType == TypeOfArc.META_ARC) {
-			this.locationStart.accessMetaOutArcs().add(this);
-		} else {
-			this.locationStart.addOutArc(this);
-		}
-	}
+    /**
+     * Metoda pozwalająca ustawić wagę łuku.
+     *
+     * @param weight int - waga łuku
+     */
+    public void setWeight(int weight) {
+        this.weight = weight;
+        //if (pairedArc != null && isMainArcOfPair)
+        //	pairedArc.setWeight(weight);
+    }
 
-	/**
-	 * Jak setStartLocation, z tym, że nie dodaje łuku do listy łuków obiektu locationStart.
-	 * @param startLocation ElementLocation - nowy element location. Okrętu się pan spodziewałeś?
-	 */
-	public void modifyStartLocation(ElementLocation startLocation) {
-		this.locationStart = startLocation;
-	}
+    /**
+     * Metoda zwracająca wagę łuku kolorowego.
+     *
+     * @param i int - nr porządkowy koloru, default 0, od 0 do 5
+     * @return int - waga dla koloru
+     */
+    public int getColorWeight(int i) {
+        switch (i) {
+            case 0:
+                return weight;
+            case 1:
+                return weight1green;
+            case 2:
+                return weight2blue;
+            case 3:
+                return weight3yellow;
+            case 4:
+                return weight4grey;
+            case 5:
+                return weight5black;
+            default:
+                return weight;
+        }
+    }
 
-	/**
-	 * Metoda pozwala ustawić lokację wierzchołka wyjściowego łuku.
-	 * @param elementLocation ElementLocation - lokalizacja wierzchołka wyjściowego
-	 */
-	public void setEndLocation(ElementLocation elementLocation) {
-		if (elementLocation == null)
-			return;
-		this.locationEnd = elementLocation;
-		
-		if(this.arcType == TypeOfArc.META_ARC) {
-			this.locationEnd.accessMetaInArcs().add(this);
-		} else {
-			this.locationEnd.addInArc(this);
-		}
+    /**
+     * Metoda pozwalająca ustawić wagę kolorowego łuku.
+     *
+     * @param w int - waga łuku
+     * @param i int - nr porządkowy koloru, default 0, od 0 do 5
+     */
+    public void setColorWeight(int w, int i) {
+        switch (i) {
+            case 0:
+                this.weight = w;
+                break;
+            case 1:
+                this.weight1green = w;
+                break;
+            case 2:
+                this.weight2blue = w;
+                break;
+            case 3:
+                this.weight3yellow = w;
+                break;
+            case 4:
+                this.weight4grey = w;
+                break;
+            case 5:
+                this.weight5black = w;
+                break;
+            default:
+                this.weight = w;
+        }
+    }
 
-		this.tempEndPoint = null;
-		this.isCorrect = true;
-	}
-	
-	/**
-	 * Działa jak setEndLocation, ale nie dodaje łuku do listy łuków obiektu locationEnd.
-	 * @param elementLocation ElementLocation - nowy element location. Okrętu się pan spodziewałeś?
-	 */
-	public void modifyEndLocation(ElementLocation elementLocation) {
-		this.locationEnd = elementLocation;
-	}
-	
-	/**
-	 * Metoda pozwala pobrać lokalizację wierzchołka wyjściowego łuku.
-	 * @return ElementLocation - lokalizacja wierzchołka wyjściowego łuku
-	 */
-	public ElementLocation getEndLocation() {
-		return locationEnd;
-	}
+    public void setColor(boolean isColorChanged, Color arcColorValue) {
+        this.isColorChanged = isColorChanged;
+        this.arcColorValue = arcColorValue;
+    }
 
-	/**
-	 * Usuwa łuk z referencji lokacji obu wierzchołków (wejściowego i
-	 * wyjściowego) łuku (odłącza łuk od wierzchołków).
-	 */
-	public void unlinkElementLocations() {
-		if(arcType == TypeOfArc.META_ARC) {
-			if (this.locationStart != null)
-				this.locationStart.accessMetaOutArcs().remove(this);
-			if (this.locationEnd != null)
-				this.locationEnd.accessMetaInArcs().remove(this);
-		} else {
-			if (this.locationStart != null)
-				this.locationStart.removeOutArc(this);
-			if (this.locationEnd != null)
-				this.locationEnd.removeInArc(this);
-		}
-	}
+    public boolean isColorChanged() {
+        return isColorChanged;
+    }
 
-	/**
-	 * Metoda pozwala sprawdzić, czy łuk aktualnie transportuje tokeny.
-	 * @return boolean - true, jeśli łuk transportuje tokeny; false w przeciwnym wypadku
-	 */
-	public boolean isTransportingTokens() {
-		return isTransportingTokens;
-	}
+    public Color getArcNewColor() {
+        return arcColorValue;
+    }
 
-	/**
-	 * Metoda pozwala ustawić, czy łuk aktualnie transportuje tokeny.
-	 * @param isTransportingTokens boolean - wartość określająca, czy łuk transportuje aktualnie tokeny
-	 */
-	public void setTransportingTokens(boolean isTransportingTokens) {
-		this.isTransportingTokens = isTransportingTokens;
-		this.setSimulationStep(0);
-		if (!isTransportingTokens) {
-			if (isSimulationForwardDirection()) {
-				if (getStartNode().getType() == PetriNetElementType.TRANSITION)
-					((Transition) getStartNode()).setLaunching(false);
-			} else {
-				if (getEndNode().getType() == PetriNetElementType.TRANSITION)
-					((Transition) getEndNode()).setLaunching(false);
-			}
-		}
-	}
+    /**
+     * Metoda zwraca komentarz związany z łukiem.
+     *
+     * @return comment String - komentarz do łuku
+     */
+    public String getComment() {
+        return comment;
+    }
 
-	/**
-	 * Metoda pozwala pobrać aktualny krok wizualizacji symulacji.
-	 * @return int - numer aktualnego kroku wizualizacji symulacji
-	 */
-	public int getSimulationStep() {
-		return simulationStep;
-	}
+    /**
+     * Metoda ustawiająca komentarz dla łuku.
+     *
+     * @param com String - komentarz do łuku
+     */
+    public void setComment(String com) {
+        comment = com;
+        if (pairedArc != null && isMainArcOfPair)
+            pairedArc.setComment(com);
+    }
 
-	/**
-	 * Metoda pozwala ustawić aktualny krok wizualizacji symulacji.
-	 * @param symulationStep int - numer kroku symulacji
-	 */
-	public void setSimulationStep(int symulationStep) {
-		this.simulationStep = symulationStep;
-	}
+    /**
+     * Metoda pozwala pobrać wierzchołek początkowy łuku.
+     *
+     * @return Node - wierzchołek wejściowy łuku
+     */
+    public Node getStartNode() {
+        return this.locationStart.getParentNode();
+    }
 
-	/**
-	 * Metoda pozwala sprawdzić, czy symulacja zachodzi zgodnie ze 
-	 * skierowaniem łuku (do przodu).
-	 * @return boolean - true, jeśli symulacja zachodzi zgodnie ze skierowaniem łuku (do przodu);
-	 * 		false w przeciwnym wypadku
-	 */
-	public boolean isSimulationForwardDirection() {
-		return simulationForwardDirection;
-	}
+    /**
+     * Metoda pozwala pobrać wierzchołek końcowy łuku.
+     *
+     * @return Node - wierzchołek wyjściowy łuku
+     */
+    public Node getEndNode() {
+        if (this.locationEnd != null)
+            return this.locationEnd.getParentNode();
+        return null;
+    }
 
-	/**
-	 * Metoda pozwala ustawić kierunek wizualizacji symulacji na łuku.
-	 * @param simulationForwardDirection boolean - true dla symulacji 'do przodu';
-	 * 		false w przeciwnym wypadku
-	 */
-	public void setSimulationForwardDirection(boolean simulationForwardDirection) {
-		this.simulationForwardDirection = simulationForwardDirection;
-	}
+    /**
+     * Metoda pozwala pobrać identyfikator arkusza, na którym znajduje się łuk.
+     *
+     * @return int - identyfikator arkusza
+     */
+    public int getLocationSheetId() {
+        return this.locationStart.getSheetID();
+    }
 
-	/**
-	 * Metoda zwracająca łuk odczytu dla danego łuku.
-	 * @return Arc - łuk odczytu
-	 */
-	public Arc getPairedArc() {
-		return pairedArc;
-	}
+    /**
+     * Metoda pozwala obliczyć długość łuku na arkuszu w pikselach.
+     *
+     * @return double - długość łuku
+     */
+    public double getWidth() {
+        Point A = this.getStartLocation().getPosition();
+        Point B = this.getEndLocation().getPosition();
+        return Math.hypot(A.x - B.x, A.y - B.y);
+    }
 
-	/**
-	 * Metoda ustawia wartość pairedArc jeśli łuk jest łukiem odczytu.
-	 * @param pairedArc Arc - łuk odczytu
-	 */
-	public void setPairedArc(Arc pairedArc) {
-		if(this.getArcType() == TypeOfArc.META_ARC)
-			return;
-		
-		this.pairedArc = pairedArc;
-		this.arcType = TypeOfArc.READARC;
-	}
+    /**
+     * Metoda pozwala narysować token na łuku w czasie symulacji.
+     *
+     * @param g       Graphics2D - grafika 2D
+     * @param sheetId int - identyfikator arkusza
+     */
+    public void drawSimulationToken(Graphics2D g, int sheetId) {
+        ElementDraw.drawToken(g, sheetId, this);
+    }
 
-	/**
-	 * Metoda informuje, czy łuk jest głównym łukiem z pary (read-arc)
-	 * @return boolean - true jeżeli łuk jest głównym z pary; false w przeciwnym wypadku
-	 */
-	public boolean isMainArcOfPair() {
-		return isMainArcOfPair;
-	}
+    /**
+     * Metoda przechodzi do kolejnego kroku rysowania symulacji na łuku. W zasadzie to
+     * głównie zwiększa simulationStep, który odpowiada za liczbę 'klatek' przepływu tokenu.
+     */
+    public void incrementSimulationStep() {
+        if (!this.isTransportingTokens)
+            return;
 
-	/**
-	 * Metoda pozwala ustalić wartość flagi, czy łuk jest głównym w parze (read-arc)
-	 * @param isMainArcOfPair boolean - true jeśli jest; false w przeciwnym wypadku
-	 */
-	public void setMainArcOfPair(boolean isMainArcOfPair) {
-		this.isMainArcOfPair = isMainArcOfPair;
-	}
-	
-	/**
-	 * Metoda zwraca typ łuku.
-	 * @return TypesOfArcs
-	 */
-	public TypeOfArc getArcType() {
-		return arcType;
-	}
-	
-	/**
-	 * Tylko do użytku wczytywania danych: ustawia typ łuku.
-	 * @param type TypesOfArcs - typ łuku
-	 */
-	public void setArcType(TypeOfArc type) {
-		arcType = type;
-	}
-	
-	//****************************************************************************************************
-	//************************************     BREAKING BAD     ******************************************
-	//****************************************************************************************************
-	
-	/**
-	 * Uzyskanie dostępu do tablicy punktów łamiących.
-	 * @return ArrayList[Point] - wektor punktów
-	 */
-	public ArrayList<Point> accessBreaks() {
-		return this.breakPoints;
-	}
-	
-	/**
-	 * Dodaje punkt łamiący dla łuku.
- 	 * @param breakP Point - obiekt współrzędnych
-	 */
-	public void addBreakPoint(Point breakP) {
-		this.breakPoints.add(breakP);
-		isBreakArc = true;
-	}
-	
-	/**
-	 * Czyści do zera wektor punktów łamiących.
-	 */
-	public void clearBreakPoints() {
-		this.breakPoints.clear();
-		isBreakArc = false;
-	}
-	
-	public void updateAllBreakPointsLocations(Point delta) {
-		for(Point breakP : breakPoints) {
-			breakP.setLocation(breakP.x+delta.x, breakP.y+delta.y);
-		}
-	}
-	
-	/**
-	 * Zwraca punkt łamiący łuk, o ile kliknięto w jego pobliżu
-	 * @param mousePt Point - tu kliknięto myszą
-	 * @return Point - punkt łamiący łuku (jeśli istnieje w pobliżu mousePt)
-	 */
-	public Point checkBreakIntersection(Point mousePt) {
-		for(Point breakP : breakPoints) {
-			if (breakP.x - 5 < mousePt.x && breakP.y - 5 < mousePt.y
-					&& breakP.x + 5 > mousePt.x && breakP.y + 5 > mousePt.y)
-				return breakP;
-		}
-		return null;
-	}
-	
-	/**
-	 * Dodaje nowy punkt łamiący łuku, najpierw sprawdza który odcinek łuku podzielić.
-	 * @param breakP Point - punkt kliknięty NA łuku (zapewnione przed wywołaniem tej metody!)
-	 */
-	public void createNewBreakPoint(Point breakP) {
-		Point start = this.getStartLocation().getPosition();
-		int breaks = breakPoints.size();
-		if(breaks == 0) {
-			addBreakPoint(breakP);
-		} else {
-			int whereToInsert = 0;
-			Point b0 = breakPoints.get(0);
-			if (Line2D.ptSegDist(start.x, start.y, b0.x, b0.y, breakP.x, breakP.y) <= 3) {//piewszy odcinek
-				breakPoints.add(whereToInsert, breakP);
-				return;
-			}
-			
-			for(int i=1; i<breaks; i++) {
-				whereToInsert++;
-				if (Line2D.ptSegDist(breakPoints.get(i-1).x, breakPoints.get(i-1).y, breakPoints.get(i).x, breakPoints.get(i).y, breakP.x, breakP.y) <= 3) {
-					breakPoints.add(whereToInsert, breakP);
-					return;
-				}
-			}
-			
-			//jeśli dotąd żaden odcinek, to wstawiamy na koniec listy:
-			breakPoints.add(breakP);
-		}
-	}
-	
-	/**
-	 * Usuwa podany punkt łamiący łuku, tj. najbliższy do breakP.
-	 * @param breakP Point - tu kliknięto myszą, najpierw metoda sprawdzi, czy blisko tego jest break point
-	 */
-	public void removeBreakPoint(Point breakP) {
-		Point toRemove = checkBreakIntersection(breakP);
-		if(toRemove != null) {
-			breakPoints.remove(toRemove);
-			if(breakPoints.size() == 0)
-				isBreakArc = false;
-		}
-	}
-	
-	//********************************************************************************************************
-	//********************************************************************************************************
-	//********************************************************************************************************
-	
-	/**
-	 * Metoda zwracająca dane o łuku w formie łańcucha znaków.
-	 * @return String - łańcuch znaków informacji o łuku sieci
-	 */
-	public String toString() {
-		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		String startNode = "";
-		int startNodeLoc = -1;
-		int startELLoc = -1;
-		int startNodeID = -1;
-		if(this.getStartLocation() != null) {
-			Node node = this.getStartLocation().getParentNode();
-			if(node != null) {
-				if(node instanceof Place) {
-					startNode = "P";
-					startNodeLoc = pn.getPlaces().indexOf(node);
-				} else if(node instanceof Transition) { 
-					startNode = "T";
-					startNodeLoc = pn.getTransitions().indexOf(node);
-				} else if(node instanceof MetaNode) {
-					startNode = "M"; 
-					startNodeLoc = pn.getMetaNodes().indexOf(node);
-				}
-				startELLoc = node.getElementLocations().indexOf(this.getStartLocation());
-				startNodeID = node.getID();
-			}
-		}
-		String endNode = "";
-		int endNodeLoc = -1;
-		int endELLoc = -1;
-		int endNodeID = -1;
-		if(this.getEndLocation() != null) {
-			Node node = this.getEndLocation().getParentNode();
-			if(node != null) {
-				if(node instanceof Place) {
-					endNode = "P";
-					endNodeLoc = pn.getPlaces().indexOf(node);
-				} else if(node instanceof Transition) {
-					endNode = "T";
-					endNodeLoc = pn.getTransitions().indexOf(node);
-				} else if(node instanceof MetaNode) {
-					endNode = "M";
-					endNodeLoc = pn.getMetaNodes().indexOf(node);
-				}
-				endELLoc = node.getElementLocations().indexOf(this.getEndLocation());
-				endNodeID = node.getID();
-			}
-		}
-		
-		String s = " ArcType: "+arcType.toString()
-				+" StartNode: " + startNode + startNodeLoc + "("+startELLoc+") [gID:"+startNodeID+"]  ==>  "
-				+ " EndNode: " + endNode + endNodeLoc + "("+endELLoc+") [gID:"+endNodeID+"]";
-		return s;
-	}
+        int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
+        this.simulationStep++;
+
+        if (this.getSimulationStep() > STEP_COUNT) {
+            this.setSimulationStep(0);
+            this.setTransportingTokens(false);
+        }
+    }
+
+    /**
+     * Metoda rysująca łuk na danym arkuszu przy zmienionych rozmiarach arkusza.
+     *
+     * @param g       Graphics2D - grafika 2D
+     * @param sheetId int - identyfikator arkusza
+     * @param zoom    int - zoom, unused
+     * @param eds     ElementDrawSettings - ustawienia rysowania
+     */
+    public void draw(Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) {
+        ElementDraw.drawArc(this, g, sheetId, zoom, eds);
+    }
+
+    /**
+     * Metoda pozwala sprawdzić, czy łuk jest poprawny.
+     *
+     * @return boolean - true, jeśli łuk jest poprawny; false w przeciwnym wypadku
+     */
+    public boolean getIsCorect() {
+        return this.isCorrect;
+    }
+
+    /**
+     * Metoda pozwala sprawdzić, czy łuk byłby poprawny dla danej lokalizacji wierzchołka wyjściowego.
+     *
+     * @param e ElementLocation - lokalizacja wierzchołka wyjściowego
+     * @return boolean - true, jeśli łuk byłby poprawny; false w przeciwnym wypadku
+     */
+    public boolean checkIsCorect(ElementLocation e) {
+        this.isCorrect = e != null
+                && e.getParentNode().getType() != this.getStartLocation().getParentNode().getType()
+                && e != this.getStartLocation();
+        return this.isCorrect;
+    }
+
+    /**
+     * Metoda pozwala ustawić punkt lokacji wierzchołka wyjściowego łuku.
+     *
+     * @param p Point - punkt lokalizacji wierzchołka wyjściowego
+     */
+    public void setEndPoint(Point p) {
+        this.tempEndPoint = p;
+    }
+
+    public Point getTempEndPoint() {
+        return this.tempEndPoint;
+    }
+
+    /**
+     * Metoda pozwala pobrać stan zaznaczenia łuku.
+     *
+     * @return boolean - true, jeśli łuk jest zaznaczony; false w przeciwnym wypadku
+     */
+    public boolean getSelected() {
+        return selected;
+    }
+
+    /**
+     * Metoda pozwala sprawdzić czy łuk zostanie zaznaczony.
+     *
+     * @return true, jeśli łuk zostanie zaznaczony; false w przeciwnym wypadku
+     */
+    public boolean checkSelection() {
+        if (this.locationEnd == null || this.locationStart == null)
+            return false;
+        setSelected(this.locationEnd.isSelected() && this.locationStart.isSelected());
+        return this.getSelected();
+    }
+
+    /**
+     * Metoda pozwala ustawić zaznaczenie łuku.
+     *
+     * @param select boolean - wartość zaznaczenia łuku
+     */
+    public void setSelected(boolean select) {
+        this.selected = select;
+    }
+
+    /**
+     * Metoda pozwala sprawdzić, czy punkt jest częcią łuku.
+     *
+     * @param P Point - punkt (x,y)
+     * @return boolean - true, jeśli łuk jest częcią łuku; false w przeciwnym wypadku
+     */
+    public boolean checkIntersection(Point P) {
+        int breaks = breakPoints.size();
+        if (breaks > 0) {
+            Point start = getStartLocation().getPosition();
+            Point b0 = breakPoints.get(0);
+            if (Line2D.ptSegDist(start.x, start.y, b0.x, b0.y, P.x, P.y) <= 3) //piewszy odcinek
+                return true;
+
+            for (int i = 1; i < breaks; i++) {
+                if (Line2D.ptSegDist(breakPoints.get(i - 1).x, breakPoints.get(i - 1).y, breakPoints.get(i).x, breakPoints.get(i).y, P.x, P.y) <= 3) //piewszy odcinek
+                    return true;
+            }
+
+            Point bFinal = breakPoints.get(breaks - 1);
+            Point end = getEndLocation().getPosition();
+
+            return Line2D.ptSegDist(bFinal.x, bFinal.y, end.x, end.y, P.x, P.y) <= 3;
+        } else {
+            Point A = getStartLocation().getPosition();
+            Point B = getEndLocation().getPosition();
+            return Line2D.ptSegDist(A.x, A.y, B.x, B.y, P.x, P.y) <= 3;
+        }
+    }
+
+    /**
+     * Metoda pozwala pobrać lokację wierzchołka wejściowego łuku.
+     *
+     * @return startLocation ElementLocation - lokalizacja wierzchołka wejściowego łuku
+     */
+    public ElementLocation getStartLocation() {
+        return locationStart;
+    }
+
+    /**
+     * Metoda pozwala ustawić lokalizację wierzchołka wejściowego łuku.
+     *
+     * @param startLocation ElementLocation - lokalizacja wierzchołka wejściowego
+     */
+    private void setStartLocation(ElementLocation startLocation) {
+        this.locationStart = startLocation;
+
+        if (this.arcType == TypeOfArc.META_ARC) {
+            this.locationStart.accessMetaOutArcs().add(this);
+        } else {
+            this.locationStart.addOutArc(this);
+        }
+    }
+
+    /**
+     * Jak setStartLocation, z tym, że nie dodaje łuku do listy łuków obiektu locationStart.
+     *
+     * @param startLocation ElementLocation - nowy element location. Okrętu się pan spodziewałeś?
+     */
+    public void modifyStartLocation(ElementLocation startLocation) {
+        this.locationStart = startLocation;
+    }
+
+    /**
+     * Metoda pozwala ustawić lokację wierzchołka wyjściowego łuku.
+     *
+     * @param elementLocation ElementLocation - lokalizacja wierzchołka wyjściowego
+     */
+    private void setEndLocation(ElementLocation elementLocation) {
+        if (elementLocation == null)
+            return;
+        this.locationEnd = elementLocation;
+
+        if (this.arcType == TypeOfArc.META_ARC) {
+            this.locationEnd.accessMetaInArcs().add(this);
+        } else {
+            this.locationEnd.addInArc(this);
+        }
+
+        this.tempEndPoint = null;
+        this.isCorrect = true;
+    }
+
+    /**
+     * Działa jak setEndLocation, ale nie dodaje łuku do listy łuków obiektu locationEnd.
+     *
+     * @param elementLocation ElementLocation - nowy element location. Okrętu się pan spodziewałeś?
+     */
+    public void modifyEndLocation(ElementLocation elementLocation) {
+        this.locationEnd = elementLocation;
+    }
+
+    /**
+     * Metoda pozwala pobrać lokalizację wierzchołka wyjściowego łuku.
+     *
+     * @return ElementLocation - lokalizacja wierzchołka wyjściowego łuku
+     */
+    public ElementLocation getEndLocation() {
+        return locationEnd;
+    }
+
+    /**
+     * Usuwa łuk z referencji lokacji obu wierzchołków (wejściowego i
+     * wyjściowego) łuku (odłącza łuk od wierzchołków).
+     */
+    public void unlinkElementLocations() {
+        if (arcType == TypeOfArc.META_ARC) {
+            if (this.locationStart != null)
+                this.locationStart.accessMetaOutArcs().remove(this);
+            if (this.locationEnd != null)
+                this.locationEnd.accessMetaInArcs().remove(this);
+        } else {
+            if (this.locationStart != null)
+                this.locationStart.removeOutArc(this);
+            if (this.locationEnd != null)
+                this.locationEnd.removeInArc(this);
+        }
+    }
+
+    /**
+     * Metoda pozwala sprawdzić, czy łuk aktualnie transportuje tokeny.
+     *
+     * @return boolean - true, jeśli łuk transportuje tokeny; false w przeciwnym wypadku
+     */
+    public boolean isTransportingTokens() {
+        return isTransportingTokens;
+    }
+
+    /**
+     * Metoda pozwala ustawić, czy łuk aktualnie transportuje tokeny.
+     *
+     * @param isTransportingTokens boolean - wartość określająca, czy łuk transportuje aktualnie tokeny
+     */
+    public void setTransportingTokens(boolean isTransportingTokens) {
+        this.isTransportingTokens = isTransportingTokens;
+        this.setSimulationStep(0);
+        if (!isTransportingTokens) {
+            if (isSimulationForwardDirection()) {
+                if (getStartNode().getType() == PetriNetElementType.TRANSITION)
+                    ((Transition) getStartNode()).setLaunching(false);
+            } else {
+                if (getEndNode().getType() == PetriNetElementType.TRANSITION)
+                    ((Transition) getEndNode()).setLaunching(false);
+            }
+        }
+    }
+
+    /**
+     * Metoda pozwala pobrać aktualny krok wizualizacji symulacji.
+     *
+     * @return int - numer aktualnego kroku wizualizacji symulacji
+     */
+    public int getSimulationStep() {
+        return simulationStep;
+    }
+
+    /**
+     * Metoda pozwala ustawić aktualny krok wizualizacji symulacji.
+     *
+     * @param symulationStep int - numer kroku symulacji
+     */
+    private void setSimulationStep(int symulationStep) {
+        this.simulationStep = symulationStep;
+    }
+
+    /**
+     * Metoda pozwala sprawdzić, czy symulacja zachodzi zgodnie ze
+     * skierowaniem łuku (do przodu).
+     *
+     * @return boolean - true, jeśli symulacja zachodzi zgodnie ze skierowaniem łuku (do przodu);
+     * false w przeciwnym wypadku
+     */
+    public boolean isSimulationForwardDirection() {
+        return simulationForwardDirection;
+    }
+
+    /**
+     * Metoda pozwala ustawić kierunek wizualizacji symulacji na łuku.
+     *
+     * @param simulationForwardDirection boolean - true dla symulacji 'do przodu';
+     *                                   false w przeciwnym wypadku
+     */
+    public void setSimulationForwardDirection(boolean simulationForwardDirection) {
+        this.simulationForwardDirection = simulationForwardDirection;
+    }
+
+    /**
+     * Metoda zwracająca łuk odczytu dla danego łuku.
+     *
+     * @return Arc - łuk odczytu
+     */
+    public Arc getPairedArc() {
+        return pairedArc;
+    }
+
+    /**
+     * Metoda ustawia wartość pairedArc jeśli łuk jest łukiem odczytu.
+     *
+     * @param pairedArc Arc - łuk odczytu
+     */
+    private void setPairedArc(Arc pairedArc) {
+        if (this.getArcType() == TypeOfArc.META_ARC)
+            return;
+
+        this.pairedArc = pairedArc;
+        this.arcType = TypeOfArc.READARC;
+    }
+
+    /**
+     * Metoda informuje, czy łuk jest głównym łukiem z pary (read-arc)
+     *
+     * @return boolean - true jeżeli łuk jest głównym z pary; false w przeciwnym wypadku
+     */
+    public boolean isMainArcOfPair() {
+        return isMainArcOfPair;
+    }
+
+    /**
+     * Metoda pozwala ustalić wartość flagi, czy łuk jest głównym w parze (read-arc)
+     *
+     * @param isMainArcOfPair boolean - true jeśli jest; false w przeciwnym wypadku
+     */
+    private void setMainArcOfPair(boolean isMainArcOfPair) {
+        this.isMainArcOfPair = isMainArcOfPair;
+    }
+
+    /**
+     * Metoda zwraca typ łuku.
+     *
+     * @return TypesOfArcs
+     */
+    public TypeOfArc getArcType() {
+        return arcType;
+    }
+
+    /**
+     * Tylko do użytku wczytywania danych: ustawia typ łuku.
+     *
+     * @param type TypesOfArcs - typ łuku
+     */
+    public void setArcType(TypeOfArc type) {
+        arcType = type;
+    }
+
+    //****************************************************************************************************
+    //************************************     BREAKING BAD     ******************************************
+    //****************************************************************************************************
+
+    /**
+     * Uzyskanie dostępu do tablicy punktów łamiących.
+     *
+     * @return ArrayList[Point] - wektor punktów
+     */
+    public ArrayList<Point> accessBreaks() {
+        return this.breakPoints;
+    }
+
+    /**
+     * Dodaje punkt łamiący dla łuku.
+     *
+     * @param breakP Point - obiekt współrzędnych
+     */
+    public void addBreakPoint(Point breakP) {
+        this.breakPoints.add(breakP);
+        isBreakArc = true;
+    }
+
+    /**
+     * Czyści do zera wektor punktów łamiących.
+     */
+    public void clearBreakPoints() {
+        this.breakPoints.clear();
+        isBreakArc = false;
+    }
+
+    public void updateAllBreakPointsLocations(Point delta) {
+        for (Point breakP : breakPoints) {
+            breakP.setLocation(breakP.x + delta.x, breakP.y + delta.y);
+        }
+    }
+
+    /**
+     * Zwraca punkt łamiący łuk, o ile kliknięto w jego pobliżu
+     *
+     * @param mousePt Point - tu kliknięto myszą
+     * @return Point - punkt łamiący łuku (jeśli istnieje w pobliżu mousePt)
+     */
+    public Point checkBreakIntersection(Point mousePt) {
+        for (Point breakP : breakPoints) {
+            if (breakP.x - 5 < mousePt.x && breakP.y - 5 < mousePt.y
+                    && breakP.x + 5 > mousePt.x && breakP.y + 5 > mousePt.y)
+                return breakP;
+        }
+        return null;
+    }
+
+    /**
+     * Dodaje nowy punkt łamiący łuku, najpierw sprawdza który odcinek łuku podzielić.
+     *
+     * @param breakP Point - punkt kliknięty NA łuku (zapewnione przed wywołaniem tej metody!)
+     */
+    public void createNewBreakPoint(Point breakP) {
+        Point start = this.getStartLocation().getPosition();
+        int breaks = breakPoints.size();
+        if (breaks == 0) {
+            addBreakPoint(breakP);
+        } else {
+            int whereToInsert = 0;
+            Point b0 = breakPoints.get(0);
+            if (Line2D.ptSegDist(start.x, start.y, b0.x, b0.y, breakP.x, breakP.y) <= 3) {//piewszy odcinek
+                breakPoints.add(whereToInsert, breakP);
+                return;
+            }
+
+            for (int i = 1; i < breaks; i++) {
+                whereToInsert++;
+                if (Line2D.ptSegDist(breakPoints.get(i - 1).x, breakPoints.get(i - 1).y, breakPoints.get(i).x, breakPoints.get(i).y, breakP.x, breakP.y) <= 3) {
+                    breakPoints.add(whereToInsert, breakP);
+                    return;
+                }
+            }
+
+            //jeśli dotąd żaden odcinek, to wstawiamy na koniec listy:
+            breakPoints.add(breakP);
+        }
+    }
+
+    /**
+     * Usuwa podany punkt łamiący łuku, tj. najbliższy do breakP.
+     *
+     * @param breakP Point - tu kliknięto myszą, najpierw metoda sprawdzi, czy blisko tego jest break point
+     */
+    public void removeBreakPoint(Point breakP) {
+        Point toRemove = checkBreakIntersection(breakP);
+        if (toRemove != null) {
+            breakPoints.remove(toRemove);
+            if (breakPoints.size() == 0)
+                isBreakArc = false;
+        }
+    }
+
+    //********************************************************************************************************
+    //********************************************************************************************************
+    //********************************************************************************************************
+
+    /**
+     * Metoda zwracająca dane o łuku w formie łańcucha znaków.
+     *
+     * @return String - łańcuch znaków informacji o łuku sieci
+     */
+    public String toString() {
+        PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+        String startNode = "";
+        int startNodeLoc = -1;
+        int startELLoc = -1;
+        int startNodeID = -1;
+        if (this.getStartLocation() != null) {
+            Node node = this.getStartLocation().getParentNode();
+            if (node != null) {
+                if (node instanceof Place) {
+                    startNode = "P";
+                    startNodeLoc = pn.getPlaces().indexOf(node);
+                } else if (node instanceof Transition) {
+                    startNode = "T";
+                    startNodeLoc = pn.getTransitions().indexOf(node);
+                } else if (node instanceof MetaNode) {
+                    startNode = "M";
+                    startNodeLoc = pn.getMetaNodes().indexOf(node);
+                }
+                startELLoc = node.getElementLocations().indexOf(this.getStartLocation());
+                startNodeID = node.getID();
+            }
+        }
+        String endNode = "";
+        int endNodeLoc = -1;
+        int endELLoc = -1;
+        int endNodeID = -1;
+        if (this.getEndLocation() != null) {
+            Node node = this.getEndLocation().getParentNode();
+            if (node != null) {
+                if (node instanceof Place) {
+                    endNode = "P";
+                    endNodeLoc = pn.getPlaces().indexOf(node);
+                } else if (node instanceof Transition) {
+                    endNode = "T";
+                    endNodeLoc = pn.getTransitions().indexOf(node);
+                } else if (node instanceof MetaNode) {
+                    endNode = "M";
+                    endNodeLoc = pn.getMetaNodes().indexOf(node);
+                }
+                endELLoc = node.getElementLocations().indexOf(this.getEndLocation());
+                endNodeID = node.getID();
+            }
+        }
+
+        return " ArcType: " + arcType.toString()
+                + " StartNode: " + startNode + startNodeLoc + "(" + startELLoc + ") [gID:" + startNodeID + "]  ==>  "
+                + " EndNode: " + endNode + endNodeLoc + "(" + endELLoc + ") [gID:" + endNodeID + "]";
+    }
 }

@@ -12,9 +12,7 @@ import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
@@ -46,7 +44,7 @@ public class HolmesDockWindow extends SingleDock {
      * EDITOR, SIMULATOR, SELECTOR, InvANALYZER, ClusterSELECTOR, MctANALYZER, InvSIMULATOR, MCSselector, Knockout, FIXNET
      */
     public enum DockWindowType {
-        EDITOR, SIMULATOR, SELECTOR, T_INVARIANTS, P_INVARIANTS, ClusterSELECTOR, MctANALYZER, MCSselector, Knockout, FIXNET, QuickSim
+        EDITOR, SIMULATOR, SELECTOR, T_INVARIANTS, P_INVARIANTS, ClusterSELECTOR, MctANALYZER, MCSselector, Knockout, FIXNET, QuickSim, DECOMPOSITION
     }
 
     /**
@@ -107,21 +105,33 @@ public class HolmesDockWindow extends SingleDock {
                 setDockable(GUIManager.externalWithListener(new DefaultDockable("Knockout_selector", scrollPane,
                         "Knockout"), GUIManager.getDefaultGUIManager().getDockingListener()));
                 break;
+            case DECOMPOSITION:
+                setDockable(GUIManager.externalWithListener(new DefaultDockable("Decomposition", scrollPane,
+                        "DECOMPOSITION"), GUIManager.getDefaultGUIManager().getDockingListener()));
+                break;
         }
 
         position = new Point(0, 0);
         this.addDockable(getDockable(), position, position);
 
         //immediate creation:
-        if (type == DockWindowType.SELECTOR) {
-            setSelectionPanel(new SelectionPanel());
-            scrollPane.getViewport().add(getSelectionPanel());
-        } else if (type == DockWindowType.FIXNET) {
-            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.FIXER));
-            scrollPane.getViewport().add(getCurrentDockWindow());
-        } else if (type == DockWindowType.QuickSim) {
-            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.QUICKSIM));
-            scrollPane.getViewport().add(getCurrentDockWindow());
+        switch (type) {
+            case SELECTOR:
+                setSelectionPanel(new SelectionPanel());
+                scrollPane.getViewport().add(getSelectionPanel());
+                break;
+            case FIXNET:
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.FIXER));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+                break;
+            case QuickSim:
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.QUICKSIM));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+                break;
+            case DECOMPOSITION:
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.DECOMPOSITION));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+                break;
         }
     }
 
@@ -178,6 +188,13 @@ public class HolmesDockWindow extends SingleDock {
         }
     }
 
+    public void showDecompositionBoxWindows(){
+        if (type == DockWindowType.DECOMPOSITION) {
+            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.DECOMPOSITION));
+            scrollPane.getViewport().add(getCurrentDockWindow());
+        }
+    }
+
     /**
      * Metoda wywoływana w momencie, kiedy z okna klastrów wpłyną dane o kolorach
      * tranzycji w każdym klastrze. Wtedy tworzy całą resztę elementów podokna klastrów.
@@ -230,7 +247,7 @@ public class HolmesDockWindow extends SingleDock {
      */
     public void updateSimulatorProperties() {
         if (type == DockWindowType.SIMULATOR) {
-            //getCurrentDockWindow().updateSimulatorProperties(); //pusta metoda
+            //getCurrentDockWindow().updateSimulatorProperties(); //pusta metoda TODO Sprawdzić czy usunąć
         }
     }
 
