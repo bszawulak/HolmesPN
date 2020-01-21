@@ -5485,7 +5485,7 @@ public class HolmesDockWindowsTable extends JPanel {
         chooseDecoLabel.setBounds(posX, posY, 150, 20);
         components.add(chooseDecoLabel);
 
-        String[] decoList = {"Functional"};
+        String[] decoList = {"Functional","S-nets","T-nets", "maxADT","Teng-Zhang","Hou","Nishi"};
 
         JComboBox<String> chooseMctBox = new JComboBox<>(decoList);
         chooseMctBox.setBounds(posX, posY + 30, 150, 20);
@@ -5508,7 +5508,7 @@ public class HolmesDockWindowsTable extends JPanel {
             if (selected == 0) {
                 selectedMCTindex = -1;
                 allMCTselected = false;
-                showSubNet();
+                showSubNet(0);
                 MCTnameField.setText("");
             } else if (selected == comboBox.getItemCount() - 1) {
                 allMCTselected = true;
@@ -5516,7 +5516,7 @@ public class HolmesDockWindowsTable extends JPanel {
             } else {
                 selectedMCTindex = selected - 1;
                 allMCTselected = false;
-                showSubNet();
+                showSubNet(0);
             }
         });
         components.add(subnetList);
@@ -5559,12 +5559,28 @@ public class HolmesDockWindowsTable extends JPanel {
             case 0:
                 getFunctionalSubnet(index);
                 break;
-            case 1: //calc mct
+            case 1:
+                getSnets(index);
+                break;
+            case 2:
+                getTnets(index);
+                break;
+            case 3:
+                getMaxADT(index);
+                break;
+            case 4:
+                getTZ(index);
+                break;
+            case 5:
+                getHou(index);
+                break;
+            case 6:
+                getNishi(index);
                 break;
             default: //do nothing
                 break;
         }
-    }
+    };
 
     private void getFunctionalSubnet(int index) {
         SubnetCalculator.generateFS();
@@ -5586,18 +5602,18 @@ public class HolmesDockWindowsTable extends JPanel {
             if (selected == 0) {
                 selectedSubNetindex = -1;
                 allSubNetsselected = false;
-                showSubNet();
+                showSubNet(0);
                 elementsOfDecomposedStructure.setText("");
             } else if (selected == comboBox.getItemCount() - 1) {
                 allSubNetsselected = true;
-                showAllSubColors(true);
+                showAllSubColors(true,0);
             } else if (selected == comboBox.getItemCount() - 2) {
                 allSubNetsselected = true;
-                showAllSubColors(false);
+                showAllSubColors(false,0);
             } else {
                 selectedSubNetindex = selected - 1;
                 allSubNetsselected = false;
-                showSubNet();
+                showSubNet(0);
             }
         });
         newCB.setVisible(true);
@@ -5612,15 +5628,323 @@ public class HolmesDockWindowsTable extends JPanel {
 
     }
 
-    private void showSubNet() {
+    private void  getSnets(int index){
+        SubnetCalculator.generateSnets();
+        String[] newComoList = new String[SubnetCalculator.snetSubNets.size() + 3];
+        for (int i = 0; i < SubnetCalculator.snetSubNets.size(); i++) {
+            newComoList[i + 1] = "S-net subnet " + i;
+        }
+        newComoList[0] = "--";
+        newComoList[SubnetCalculator.snetSubNets.size() + 1] = "All non trivial subnets";
+        newComoList[SubnetCalculator.snetSubNets.size() + 2] = "All subnets";
+
+        int listIndex = components.stream().map(Component::getLocation).collect(Collectors.toList()).indexOf(new Point(10, 70));
+
+        JComboBox<String> newCB = new JComboBox<>(newComoList);
+        newCB.setBounds(10, 70, 150, 20);
+        newCB.addActionListener(actionEvent -> {
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            int selected = comboBox.getSelectedIndex();
+            if (selected == 0) {
+                selectedSubNetindex = -1;
+                allSubNetsselected = false;
+                showSubNet(1);
+                elementsOfDecomposedStructure.setText("");
+            } else if (selected == comboBox.getItemCount() - 1) {
+                allSubNetsselected = true;
+                showAllSubColors(true,1);
+            } else if (selected == comboBox.getItemCount() - 2) {
+                allSubNetsselected = true;
+                showAllSubColors(false,1);
+            } else {
+                selectedSubNetindex = selected - 1;
+                allSubNetsselected = false;
+                showSubNet(1);
+            }
+        });
+        newCB.setVisible(true);
+        this.components.set(listIndex, newCB);
+        this.components.get(index).setVisible(true);
+        this.panel.removeAll();
+
+        for (JComponent component : this.components) this.panel.add(component);
+
+        this.panel.repaint();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
+
+    }
+
+
+
+    private void  getTnets(int index){
+        SubnetCalculator.generateTnets();
+        String[] newComoList = new String[SubnetCalculator.tnetSubNets.size() + 3];
+        for (int i = 0; i < SubnetCalculator.tnetSubNets.size(); i++) {
+            newComoList[i + 1] = "T-net subnet " + i;
+        }
+        newComoList[0] = "--";
+        newComoList[SubnetCalculator.tnetSubNets.size() + 1] = "All non trivial subnets";
+        newComoList[SubnetCalculator.tnetSubNets.size() + 2] = "All subnets";
+
+        int listIndex = components.stream().map(Component::getLocation).collect(Collectors.toList()).indexOf(new Point(10, 70));
+
+        JComboBox<String> newCB = new JComboBox<>(newComoList);
+        newCB.setBounds(10, 70, 150, 20);
+        newCB.addActionListener(actionEvent -> {
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            int selected = comboBox.getSelectedIndex();
+            if (selected == 0) {
+                selectedSubNetindex = -1;
+                allSubNetsselected = false;
+                showSubNet(2);
+                elementsOfDecomposedStructure.setText("");
+            } else if (selected == comboBox.getItemCount() - 1) {
+                allSubNetsselected = true;
+                showAllSubColors(true,2);
+            } else if (selected == comboBox.getItemCount() - 2) {
+                allSubNetsselected = true;
+                showAllSubColors(false,2);
+            } else {
+                selectedSubNetindex = selected - 1;
+                allSubNetsselected = false;
+                showSubNet(2);
+            }
+        });
+        newCB.setVisible(true);
+        this.components.set(listIndex, newCB);
+        this.components.get(index).setVisible(true);
+        this.panel.removeAll();
+
+        for (JComponent component : this.components) this.panel.add(component);
+
+        this.panel.repaint();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
+
+    }
+
+    private void  getMaxADT(int index){
+        SubnetCalculator.generateADT();
+        String[] newComoList = new String[SubnetCalculator.adtSubNets.size() + 3];
+        for (int i = 0; i < SubnetCalculator.adtSubNets.size(); i++) {
+            newComoList[i + 1] = "ADT subnet " + i;
+        }
+        newComoList[0] = "--";
+        newComoList[SubnetCalculator.adtSubNets.size() + 1] = "All non trivial subnets";
+        newComoList[SubnetCalculator.adtSubNets.size() + 2] = "All subnets";
+
+        int listIndex = components.stream().map(Component::getLocation).collect(Collectors.toList()).indexOf(new Point(10, 70));
+
+        JComboBox<String> newCB = new JComboBox<>(newComoList);
+        newCB.setBounds(10, 70, 150, 20);
+        newCB.addActionListener(actionEvent -> {
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            int selected = comboBox.getSelectedIndex();
+            if (selected == 0) {
+                selectedSubNetindex = -1;
+                allSubNetsselected = false;
+                showSubNet(3);
+                elementsOfDecomposedStructure.setText("");
+            } else if (selected == comboBox.getItemCount() - 1) {
+                allSubNetsselected = true;
+                showAllSubColors(true,3);
+            } else if (selected == comboBox.getItemCount() - 2) {
+                allSubNetsselected = true;
+                showAllSubColors(false,3);
+            } else {
+                selectedSubNetindex = selected - 1;
+                allSubNetsselected = false;
+                showSubNet(3);
+            }
+        });
+        newCB.setVisible(true);
+        this.components.set(listIndex, newCB);
+        this.components.get(index).setVisible(true);
+        this.panel.removeAll();
+
+        for (JComponent component : this.components) this.panel.add(component);
+
+        this.panel.repaint();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
+
+    }
+
+    private void  getTZ(int index){
+        SubnetCalculator.generateTZ();
+        String[] newComoList = new String[SubnetCalculator.tzSubNets.size() + 3];
+        for (int i = 0; i < SubnetCalculator.tzSubNets.size(); i++) {
+            newComoList[i + 1] = "Teng-Zeng subnet " + i;
+        }
+        newComoList[0] = "--";
+        newComoList[SubnetCalculator.tzSubNets.size() + 1] = "All non trivial subnets";
+        newComoList[SubnetCalculator.tzSubNets.size() + 2] = "All subnets";
+
+        int listIndex = components.stream().map(Component::getLocation).collect(Collectors.toList()).indexOf(new Point(10, 70));
+
+        JComboBox<String> newCB = new JComboBox<>(newComoList);
+        newCB.setBounds(10, 70, 150, 20);
+        newCB.addActionListener(actionEvent -> {
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            int selected = comboBox.getSelectedIndex();
+            if (selected == 0) {
+                selectedSubNetindex = -1;
+                allSubNetsselected = false;
+                showSubNet(4);
+                elementsOfDecomposedStructure.setText("");
+            } else if (selected == comboBox.getItemCount() - 1) {
+                allSubNetsselected = true;
+                showAllSubColors(true,4);
+            } else if (selected == comboBox.getItemCount() - 2) {
+                allSubNetsselected = true;
+                showAllSubColors(false,4);
+            } else {
+                selectedSubNetindex = selected - 1;
+                allSubNetsselected = false;
+                showSubNet(4);
+            }
+        });
+        newCB.setVisible(true);
+        this.components.set(listIndex, newCB);
+        this.components.get(index).setVisible(true);
+        this.panel.removeAll();
+
+        for (JComponent component : this.components) this.panel.add(component);
+
+        this.panel.repaint();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
+
+    }
+
+    private void  getHou(int index){
+        SubnetCalculator.generateHou();
+        String[] newComoList = new String[SubnetCalculator.houSubNets.size() + 3];
+        for (int i = 0; i < SubnetCalculator.houSubNets.size(); i++) {
+            newComoList[i + 1] = "Hou subnet " + i;
+        }
+        newComoList[0] = "--";
+        newComoList[SubnetCalculator.houSubNets.size() + 1] = "All non trivial subnets";
+        newComoList[SubnetCalculator.houSubNets.size() + 2] = "All subnets";
+
+        int listIndex = components.stream().map(Component::getLocation).collect(Collectors.toList()).indexOf(new Point(10, 70));
+
+        JComboBox<String> newCB = new JComboBox<>(newComoList);
+        newCB.setBounds(10, 70, 150, 20);
+        newCB.addActionListener(actionEvent -> {
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            int selected = comboBox.getSelectedIndex();
+            if (selected == 0) {
+                selectedSubNetindex = -1;
+                allSubNetsselected = false;
+                showSubNet(5);
+                elementsOfDecomposedStructure.setText("");
+            } else if (selected == comboBox.getItemCount() - 1) {
+                allSubNetsselected = true;
+                showAllSubColors(true,5);
+            } else if (selected == comboBox.getItemCount() - 2) {
+                allSubNetsselected = true;
+                showAllSubColors(false,5);
+            } else {
+                selectedSubNetindex = selected - 1;
+                allSubNetsselected = false;
+                showSubNet(5);
+            }
+        });
+        newCB.setVisible(true);
+        this.components.set(listIndex, newCB);
+        //this.components.get(index).setVisible(true);
+        this.panel.removeAll();
+
+        for (JComponent component : this.components) this.panel.add(component);
+
+        this.panel.repaint();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
+
+    }
+
+    private void  getNishi(int index){
+        SubnetCalculator.generateNishi();
+        String[] newComoList = new String[SubnetCalculator.nishiSubNets.size() + 3];
+        for (int i = 0; i < SubnetCalculator.nishiSubNets.size(); i++) {
+            newComoList[i + 1] = "Nishi subnet " + i;
+        }
+        newComoList[0] = "--";
+        newComoList[SubnetCalculator.nishiSubNets.size() + 1] = "All non trivial subnets";
+        newComoList[SubnetCalculator.nishiSubNets.size() + 2] = "All subnets";
+
+        int listIndex = components.stream().map(Component::getLocation).collect(Collectors.toList()).indexOf(new Point(10, 70));
+
+        JComboBox<String> newCB = new JComboBox<>(newComoList);
+        newCB.setBounds(10, 70, 150, 20);
+        newCB.addActionListener(actionEvent -> {
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            int selected = comboBox.getSelectedIndex();
+            if (selected == 0) {
+                selectedSubNetindex = -1;
+                allSubNetsselected = false;
+                showSubNet(6);
+                elementsOfDecomposedStructure.setText("");
+            } else if (selected == comboBox.getItemCount() - 1) {
+                allSubNetsselected = true;
+                showAllSubColors(true,6);
+            } else if (selected == comboBox.getItemCount() - 2) {
+                allSubNetsselected = true;
+                showAllSubColors(false,6);
+            } else {
+                selectedSubNetindex = selected - 1;
+                allSubNetsselected = false;
+                showSubNet(6);
+            }
+        });
+        newCB.setVisible(true);
+        this.components.set(listIndex, newCB);
+        //this.components.get(index).setVisible(true);
+        this.panel.removeAll();
+
+        for (JComponent component : this.components) this.panel.add(component);
+
+        this.panel.repaint();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
+
+    }
+
+    private void showSubNet(int typeOfDecomposition) {
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
 
         if (selectedSubNetindex == -1)
             return;
+        SubnetCalculator.SubNet subnet = null;
+        int size =0;
+        switch(typeOfDecomposition){
+            case 0 :
+                subnet = SubnetCalculator.functionalSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.functionalSubNets.size();
+                break;
+            case 1 :
+                subnet = SubnetCalculator.snetSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.snetSubNets.size();
+                break;
+            case 2 :
+                subnet = SubnetCalculator.tnetSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.tnetSubNets.size();
+                break;
+            case 3 :
+                subnet = SubnetCalculator.adtSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.adtSubNets.size();
+                break;
+            case 4 :
+                subnet = SubnetCalculator.tzSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.tzSubNets.size();
+                break;
+            case 5:
+                subnet = SubnetCalculator.houSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.houSubNets.size();
+                break;
+            case 6:
+                subnet = SubnetCalculator.nishiSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.nishiSubNets.size();
+                break;
+        }
 
-        SubnetCalculator.SubNet subnet = SubnetCalculator.functionalSubNets.get(selectedSubNetindex);
-        int size = SubnetCalculator.functionalSubNets.size();
         ColorPalette cp = new ColorPalette();
 
         //places
@@ -5663,34 +5987,125 @@ public class HolmesDockWindowsTable extends JPanel {
         }
     }
 
-    private void showAllSubColors(boolean trivial) {
+    private void showAllSubColors(boolean trivial, int subnetType) {
+        ArrayList<SubnetCalculator.SubNet> subnets = getCorrectSubnet(subnetType);
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
 
         ColorPalette cp = new ColorPalette();
-        for (int m = 0; m < SubnetCalculator.functionalSubNets.size(); m++) {
-            Color currentColor = cp.getColor();
-            SubnetCalculator.SubNet subNet = SubnetCalculator.functionalSubNets.get(m);
-            ArrayList<Transition> transitions = subNet.getSubTransitions();
-            if (transitions.size() > 1 || trivial) {
-                for (Transition transition : transitions) {
-                    transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
-                }
 
-                ArrayList<Place> places = SubnetCalculator.functionalSubNets.get(m).getSubPlaces();
-                for (Place place : places) {
-                    if (subNet.getSubBorderPlaces().contains(place))
-                        place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
-                    else
-                        place.setColorWithNumber(true, currentColor, false, m, true, "");
+        if(subnetType == 0) {
+            for (int m = 0; m < subnets.size(); m++) {
+                Color currentColor = cp.getColor();
+                SubnetCalculator.SubNet subNet = subnets.get(m);
+                ArrayList<Transition> transitions = subNet.getSubTransitions();
+                if (transitions.size() > 1 || trivial) {
+                    for (Transition transition : transitions) {
+                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                    }
+
+                    ArrayList<Place> places = subnets.get(m).getSubPlaces();
+                    for (Place place : places) {
+                        if (subNet.getSubBorderPlaces().contains(place))
+                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                        else
+                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                    }
+                    ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
+                    for (Arc arc : arcs) {
+                        arc.setColor(true, currentColor);
+                    }
                 }
-                ArrayList<Arc> arcs = SubnetCalculator.functionalSubNets.get(m).getSubArcs();
-                for (Arc arc : arcs) {
-                    arc.setColor(true, currentColor);
+            }
+        }
+        if(subnetType == 1) {
+            for (int m = 0; m < subnets.size(); m++) {
+                Color currentColor = cp.getColor();
+                SubnetCalculator.SubNet subNet = subnets.get(m);
+                ArrayList<Place> places = subNet.getSubPlaces();
+                if (places.size() > 1 || trivial) {
+                    for (Place place : places) {
+                        place.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + places.size() + ")");
+                    }
+
+                    ArrayList<Transition> transitions = subnets.get(m).getSubTransitions();
+                    for (Transition transition : transitions) {
+                        if (subNet.getSubBorderTransition().contains(transition))
+                            transition.setColorWithNumber(true, calcMiddleColor(currentColor, transition.getTransitionNewColor()), false, m, true, "");
+                        else
+                            transition.setColorWithNumber(true, currentColor, false, m, true, "");
+                    }
+                    ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
+                    for (Arc arc : arcs) {
+                        arc.setColor(true, currentColor);
+                    }
+                }
+            }
+        }
+        if(subnetType == 2) {
+            for (int m = 0; m < subnets.size(); m++) {
+                Color currentColor = cp.getColor();
+                SubnetCalculator.SubNet subNet = subnets.get(m);
+                ArrayList<Transition> transitions = subNet.getSubTransitions();
+                if (transitions.size() > 1 || trivial) {
+                    for (Transition transition : transitions) {
+                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                    }
+
+                    ArrayList<Place> places = subnets.get(m).getSubPlaces();
+                    for (Place place : places) {
+                        if (subNet.getSubBorderPlaces().contains(place))
+                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                        else
+                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                    }
+                    ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
+                    for (Arc arc : arcs) {
+                        arc.setColor(true, currentColor);
+                    }
+                }
+            }
+        }
+
+        if(subnetType == 3) {
+            for (int m = 0; m < subnets.size(); m++) {
+                Color currentColor = cp.getColor();
+                SubnetCalculator.SubNet subNet = subnets.get(m);
+                ArrayList<Transition> transitions = subNet.getSubTransitions();
+                if (transitions.size() > 1 || trivial) {
+                    for (Transition transition : transitions) {
+                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                    }
+
+                    ArrayList<Place> places = subnets.get(m).getSubPlaces();
+                    for (Place place : places) {
+                        if (subNet.getSubBorderPlaces().contains(place))
+                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                        else
+                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                    }
+                    ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
+                    for (Arc arc : arcs) {
+                        arc.setColor(true, currentColor);
+                    }
                 }
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
+    }
+
+    private ArrayList<SubnetCalculator.SubNet> getCorrectSubnet(int type){
+        switch(type){
+            case 0:
+                return SubnetCalculator.functionalSubNets;
+            case 1 :
+                return SubnetCalculator.snetSubNets;
+            case 2:
+                return SubnetCalculator.tnetSubNets;
+            case 3:
+                return SubnetCalculator.adtSubNets;
+        }
+        return SubnetCalculator.functionalSubNets;
     }
 
     private Color calcMiddleColor(Color one, Color two) {
@@ -5716,7 +6131,8 @@ public class HolmesDockWindowsTable extends JPanel {
         else
             green = two.getGreen() - (absGreen / 2);
 
-        return new Color(red, green, blue);
+        //return new Color(red, green, blue);
+        return Color.LIGHT_GRAY;
     }
 
     //**************************************************************************************
