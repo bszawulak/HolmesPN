@@ -81,10 +81,49 @@ public class InvariantsCalculator implements Runnable {
 		
 		zeroColumnVector = new ArrayList<Integer>();
 		nonZeroColumnVector = new ArrayList<Integer>();
-		
-		
+
 	}
-	
+
+	/**
+	 * Konstruktor do testów
+	 * @param transCal
+	 */
+	public InvariantsCalculator(ArrayList<Place> pl, ArrayList<Transition> tr, ArrayList<Arc> ar, boolean transCal) {
+		overlord = GUIManager.getDefaultGUIManager();
+		//masterWindow = overlord.accessInvariantsWindow();
+
+		t_InvMode = transCal;
+		places = pl;
+		transitions = tr;
+		arcs = ar;
+
+		zeroColumnVector = new ArrayList<Integer>();
+		nonZeroColumnVector = new ArrayList<Integer>();
+
+	}
+
+	/**
+	 * Metoda wirtualna - nadpisana, odpowiada za działanie w niezależnym wątku
+	 */
+	public void generateInvariantsForTest(PetriNet project) {
+		try {
+			if(t_InvMode == true) {
+				//PetriNet project = overlord.getWorkspace().getProject();
+				if(showInvSetsDifference) {
+					invBackupMatrix = project.getT_InvMatrix();
+				}
+
+				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode);
+				this.calculateInvariants();
+			}
+		} catch (Exception e) {
+			log("Invariants generation failed.", "warning", false);
+			logInternal("Invariants generation failed.\n", true);
+		} finally {
+			//masterWindow.resetInvariantGenerator(); //odłącz obiekt
+		}
+	}
+
 	/**
 	 * Metoda wirtualna - nadpisana, odpowiada za działanie w niezależnym wątku
 	 */

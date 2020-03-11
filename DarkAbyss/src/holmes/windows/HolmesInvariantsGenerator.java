@@ -626,6 +626,45 @@ public class HolmesInvariantsGenerator extends JFrame {
 		showInvariantsButton.setFocusPainted(false);
 		panel.add(showInvariantsButton);
 
+
+		JCheckBox invPurityCheckBox = new JCheckBox("Clean non-inv.");
+		invPurityCheckBox.setBounds(posX+380, posY+56, 120, 20);
+		invPurityCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "1", true);
+					//cleanNonInvariant = true;//TODO:
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "0", true);
+					//cleanNonInvariant = false;
+				}
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1"))
+			invPurityCheckBox.setSelected(true);
+		else
+			invPurityCheckBox.setSelected(false);
+		panel.add(invPurityCheckBox);
+
+		JCheckBox removeSingleInvCheckBox = new JCheckBox("Remove 1-el. inv.");
+		removeSingleInvCheckBox.setBounds(posX+510, posY+56, 120, 20);
+		removeSingleInvCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+				if (abstractButton.getModel().isSelected()) {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "1", true);
+				} else {
+					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "0", true);
+				}
+			}
+		});
+		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1"))
+			removeSingleInvCheckBox.setSelected(true);
+		else
+			removeSingleInvCheckBox.setSelected(false);
+		panel.add(removeSingleInvCheckBox);
+
 		return panel;
 	}
 

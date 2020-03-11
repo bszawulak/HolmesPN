@@ -16,17 +16,7 @@ import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.subnets.SubnetsControl;
 import holmes.petrinet.subnets.SubnetsGraphics;
 import holmes.utilities.Tools;
-import holmes.windows.HolmesAbout;
-import holmes.windows.HolmesClusters;
-import holmes.windows.HolmesConsole;
-import holmes.windows.HolmesInvariantsGenerator;
-import holmes.windows.HolmesKnockout;
-import holmes.windows.HolmesMCS;
-import holmes.windows.HolmesNetProperties;
-import holmes.windows.HolmesNetTables;
-import holmes.windows.HolmesNotepad;
-import holmes.windows.HolmesProgramProperties;
-import holmes.windows.HolmesSearch;
+import holmes.windows.*;
 import holmes.windows.ssim.HolmesSim;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
@@ -165,6 +155,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesInvariantsGenerator windowInvariants; //okno generatora inwariantów
 	private HolmesMCS windowMCS; //okno generatora MCS
 	private HolmesKnockout windowsKnockout;
+	private HolmesDecomposition windowsDeco;
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	private boolean inaReady = true;
@@ -1367,6 +1358,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 			windowsKnockout = new HolmesKnockout();
 		}
 	}
+
+	/**
+	 * Metoda tworzy nowe okno analizatora wykluczeń.
+	 */
+	public void createDecompositionWindow() {
+		if(windowsDeco == null) {
+			windowsDeco = new HolmesDecomposition();
+		}
+	}
 	
 	/**
 	 * Metoda pokazuje okno analizatora wykluczeń.
@@ -1374,6 +1374,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void showKnockoutWindow() {
 		if(windowsKnockout != null) {
 			windowsKnockout.setVisible(true);
+		}
+	}
+
+	public void showDecoWindow() {
+		if(windowsDeco != null) {
+			windowsDeco.setVisible(true);
 		}
 	}
 	

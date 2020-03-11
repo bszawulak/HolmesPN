@@ -484,10 +484,22 @@ public class DarkMenu extends JMenuBar {
 			}
 		});
 		analysisMenu.add(netSimItem);
-		
 
-		
-		
+		// Knockout window
+		JMenuItem decoWindowItem = new JMenuItem("Decomposition analysis...", KeyEvent.VK_6);
+		decoWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
+		decoWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK));
+		decoWindowItem.getAccessibleContext().setAccessibleDescription("Decomposition analysis tools");
+		decoWindowItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().createDecompositionWindow();
+				GUIManager.getDefaultGUIManager().showDecoWindow();
+			}
+		});
+		analysisMenu.add(decoWindowItem);
+
+
+
 		//*********************************************************************************************
 		//***********************************                 *****************************************
 		//***********************************    OTHER MENU   *****************************************

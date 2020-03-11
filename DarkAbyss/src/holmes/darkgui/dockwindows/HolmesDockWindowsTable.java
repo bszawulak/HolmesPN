@@ -5461,7 +5461,7 @@ public class HolmesDockWindowsTable extends JPanel {
         /*
         String[] newComoList = new String[SubnetCalculator.functionalSubNets.size()];
         for (int i = 0; i < SubnetCalculator.functionalSubNets.size(); i++) {
-            newComoList[i] = "Functional subnet " + i;
+            newComoList[i] = "Functional subnet " + overlordi;
         }
         */
 
@@ -5485,7 +5485,7 @@ public class HolmesDockWindowsTable extends JPanel {
         chooseDecoLabel.setBounds(posX, posY, 150, 20);
         components.add(chooseDecoLabel);
 
-        String[] decoList = {"Functional", "S-nets", "T-nets", "maxADT", "Teng-Zhang", "Hou", "Nishi"};
+        String[] decoList = {"Functional", "S-nets", "T-nets", "maxADT", "Teng-Zhang", "Hou", "Nishi","Cycle","Ootsuki"};
 
         JComboBox<String> chooseMctBox = new JComboBox<>(decoList);
         chooseMctBox.setBounds(posX, posY + 30, 150, 20);
@@ -5608,7 +5608,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private JComboBox<String> generateButton(int index){
         if(index==0||index==1||index==2||index==3)
             return generateProperDecoButton(index);
-        if(index==4||index==5||index==6)
+        if(index==4||index==5||index==6||index==7)
             return generateInProperDecoButton(index);
 
         return generateProperDecoButton(index);
@@ -5696,11 +5696,16 @@ public class HolmesDockWindowsTable extends JPanel {
                 return "Hou ";
             case 6:
                 return "Nishi ";
+            case 7:
+                return "Cycle";
+            case 8:
+                return "Ootsuki";
         }
         return "";
     }
 
     private void generateProperSubNet(int index) {
+        SubnetCalculator.compileElements();
         switch (index) {
             case 0:
                 SubnetCalculator.generateFS();
@@ -5723,6 +5728,12 @@ public class HolmesDockWindowsTable extends JPanel {
             case 6:
                 SubnetCalculator.generateNishi();
                 break;
+            case 7:
+                SubnetCalculator.generateCycle();
+                break;
+            case 8:
+                SubnetCalculator.generateOotsuki();
+                break;
         }
     }
 
@@ -5742,6 +5753,10 @@ public class HolmesDockWindowsTable extends JPanel {
                 return SubnetCalculator.houSubNets.size();
             case 6:
                 return SubnetCalculator.nishiSubNets.size();
+            case 7:
+                return SubnetCalculator.cycleSubNets.size();
+            case 8:
+                return SubnetCalculator.ootsukiSubNets.size();
         }
         return 0;
     }
@@ -5782,6 +5797,14 @@ public class HolmesDockWindowsTable extends JPanel {
             case 6:
                 subnet = SubnetCalculator.nishiSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.nishiSubNets.size();
+                break;
+            case 7:
+                subnet = SubnetCalculator.cycleSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.cycleSubNets.size();
+                break;
+            case 8:
+                subnet = SubnetCalculator.ootsukiSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.ootsukiSubNets.size();
                 break;
         }
 
@@ -5939,26 +5962,37 @@ public class HolmesDockWindowsTable extends JPanel {
 
         if (subnetType == 3) {
             for (int m = 0; m < subnets.size(); m++) {
-                Color currentColor = cp.getColor();
-                SubnetCalculator.SubNet subNet = subnets.get(m);
-                ArrayList<Transition> transitions = subNet.getSubTransitions();
-                if (transitions.size() > 1 || trivial) {
-                    for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                Color currentColor;
+                /*if(subnets.get(m).isProper()) {
+                */
+                    currentColor = cp.getColor();
+                  /*  if(currentColor == Color.red)
+                        currentColor = cp.getColor();
+                }
+                else{*/
+                  //  currentColor=Color.red;
+                //}
+
+                    SubnetCalculator.SubNet subNet = subnets.get(m);
+                    ArrayList<Transition> transitions = subNet.getSubTransitions();
+                    if (transitions.size() > 1 || trivial) {
+                        for (Transition transition : transitions) {
+                            transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                        }
+
+                        ArrayList<Place> places = subnets.get(m).getSubPlaces();
+                        for (Place place : places) {
+                            if (subNet.getSubBorderPlaces().contains(place))
+                                place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                            else
+                                place.setColorWithNumber(true, currentColor, false, m, true, "");
+                        }
+                        ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
+                        for (Arc arc : arcs) {
+                            arc.setColor(true, currentColor);
+                        }
                     }
 
-                    ArrayList<Place> places = subnets.get(m).getSubPlaces();
-                    for (Place place : places) {
-                        if (subNet.getSubBorderPlaces().contains(place))
-                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
-                        else
-                            place.setColorWithNumber(true, currentColor, false, m, true, "");
-                    }
-                    ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
-                    for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
-                    }
-                }
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -5980,6 +6014,10 @@ public class HolmesDockWindowsTable extends JPanel {
                 return SubnetCalculator.houSubNets;
             case 6:
                 return SubnetCalculator.nishiSubNets;
+            case 7:
+                return SubnetCalculator.cycleSubNets;
+            case 8:
+                return SubnetCalculator.ootsukiSubNets;
         }
         return SubnetCalculator.functionalSubNets;
     }
