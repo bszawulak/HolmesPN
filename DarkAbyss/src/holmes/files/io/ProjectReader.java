@@ -132,7 +132,7 @@ public class ProjectReader {
 				overlord.getT_invBox().showT_invBoxWindow(projectCore.getT_InvMatrix());
 			}
 
-			overlord.getDecompositionBox().showDecompositionBoxWindows();
+			//overlord.getDecompositionBox().showDecompositionBoxWindows();
 			
 			if(pInvariants) {
 				status = readPInvariants(buffer);

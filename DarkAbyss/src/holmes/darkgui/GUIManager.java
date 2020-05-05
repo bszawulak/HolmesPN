@@ -121,7 +121,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesDockWindow fixBox;
 	private HolmesDockWindow knockoutBox;
 	private HolmesDockWindow quickSimBox;
-	private HolmesDockWindow decompositionBox;
+	//-//private HolmesDockWindow decompositionBox;
 	
 	//UNUSED
 	
@@ -257,7 +257,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setMCSBox(new HolmesDockWindow(DockWindowType.MCSselector));
 		setKnockoutBox(new HolmesDockWindow(DockWindowType.Knockout));
 		setQuickSimBox(new HolmesDockWindow(DockWindowType.QuickSim));
-		setDecompositionBox(new HolmesDockWindow(DockWindowType.DECOMPOSITION));
+		//setDecompositionBox(new HolmesDockWindow(DockWindowType.DECOMPOSITION));
 
 		// create menu
 		setMenu(new DarkMenu());
@@ -285,7 +285,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
 		bottomRightTabDock.addChildDock(getQuickSimBox(), new Position(7));
 		bottomRightTabDock.addChildDock(getFixBox(), new Position(8));
-		bottomRightTabDock.addChildDock(getDecompositionBox(), new Position(9));
+		//bottomRightTabDock.addChildDock(getDecompositionBox(), new Position(9));
 
 		// create the split docks
 		//leftSplitDock = new SplitDock();
@@ -714,18 +714,21 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ustawia nowe podokno dekompozycji.
 	 * @param deompositionBox HolmesDockWindow - nowe okno dekompozycji
 	 */
+	//-//
+	/*
 	public void setDecompositionBox(HolmesDockWindow deompositionBox){
 		this.decompositionBox = deompositionBox;
 	}
-
+*/
 	/**
 	 * Metoda zwraca obiekt podokna dekompozycji.
 	 * @return HolmesDockWindow - okno dekompozycji
 	 */
+	/*
 	public HolmesDockWindow getDecompositionBox() {
 		return decompositionBox;
 	}
-
+*/
 	/**
 	 * Metoda zwraca obiekt podokna symulatora QuickSim.
 	 * @return HolmesDockWindow - okno QuickSim

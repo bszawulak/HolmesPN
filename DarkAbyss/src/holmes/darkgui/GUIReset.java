@@ -234,6 +234,7 @@ public class GUIReset {
 		}
 
 		if(subNetGenerated){
+			/*
 			if(overlord.getDecompositionBox().getCurrentDockWindow() != null) {
 				DefaultComboBoxModel model = new DefaultComboBoxModel();
 				((JComboBox)overlord.getDecompositionBox().getCurrentDockWindow().getPanel(). getComponent(3)).setModel(model);
@@ -241,7 +242,7 @@ public class GUIReset {
 			overlord.getDecompositionBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.DECOMPOSITION, null));
 			overlord.getDecompositionBox().validate();
 			overlord.getDecompositionBox().repaint();
-
+*/
 
 			subNetGenerated = false;
 			overlord.log("Decomposition data removed from memory.", "text", true);

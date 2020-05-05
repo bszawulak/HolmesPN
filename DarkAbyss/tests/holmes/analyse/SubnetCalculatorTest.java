@@ -1054,22 +1054,22 @@ class SubnetCalculatorTest {
 
         ceateTestNetSeven();
         SubnetCalculator.generateTZ();
-        assertEquals(3,SubnetCalculator.tzSubNets.size());
+        assertEquals(2,SubnetCalculator.tzSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetEight();
         SubnetCalculator.generateTZ();
-        assertEquals(3,SubnetCalculator.tzSubNets.size());
+        assertEquals(2,SubnetCalculator.tzSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetNine();
         SubnetCalculator.generateTZ();
-        assertEquals(3,SubnetCalculator.tzSubNets.size());
+        assertEquals(4,SubnetCalculator.tzSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetTen();
         SubnetCalculator.generateTZ();
-        assertEquals(3,SubnetCalculator.tzSubNets.size());
+        assertEquals(4,SubnetCalculator.tzSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetEleven();
@@ -1215,7 +1215,7 @@ class SubnetCalculatorTest {
         SubnetCalculator.generateCycle();
         assertEquals(0,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
-/*
+
         ceateTestNetFive();
         SubnetCalculator.generateCycle();
         assertEquals(1,SubnetCalculator.cycleSubNets.size());
@@ -1225,7 +1225,7 @@ class SubnetCalculatorTest {
         SubnetCalculator.generateCycle();
         assertEquals(2,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
-*/
+
         ceateTestNetSeven();
         SubnetCalculator.generateCycle();
         assertEquals(2,SubnetCalculator.cycleSubNets.size());
@@ -1395,22 +1395,22 @@ class SubnetCalculatorTest {
 
         ceateTestNetEleven();
         SubnetCalculator.generateNishi();
-        assertEquals(1,SubnetCalculator.nishiSubNets.size());
+        assertEquals(3,SubnetCalculator.nishiSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetTwelve();
         SubnetCalculator.generateNishi();
-        assertEquals(1,SubnetCalculator.nishiSubNets.size());
+        assertEquals(3,SubnetCalculator.nishiSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetThirteen();
         SubnetCalculator.generateNishi();
-        assertEquals(1,SubnetCalculator.nishiSubNets.size());
+        assertEquals(3,SubnetCalculator.nishiSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetFourteen();
         SubnetCalculator.generateNishi();
-        assertEquals(1,SubnetCalculator.nishiSubNets.size());
+        assertEquals(3,SubnetCalculator.nishiSubNets.size());
         SubnetCalculator.cleanSubnets();
     }
 
@@ -1438,32 +1438,32 @@ class SubnetCalculatorTest {
 
         ceateTestNetFive();
         SubnetCalculator.generateOotsuki();
-        assertEquals(0,SubnetCalculator.ootsukiSubNets.size());
+        assertEquals(1,SubnetCalculator.ootsukiSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetSix();
         SubnetCalculator.generateOotsuki();
-        assertEquals(0,SubnetCalculator.ootsukiSubNets.size());
+        assertEquals(2,SubnetCalculator.ootsukiSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetSeven();
         SubnetCalculator.generateOotsuki();
-        assertEquals(0,SubnetCalculator.ootsukiSubNets.size());
+        assertEquals(2,SubnetCalculator.ootsukiSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetEight();
         SubnetCalculator.generateOotsuki();
-        assertEquals(0,SubnetCalculator.ootsukiSubNets.size());
+        assertEquals(1,SubnetCalculator.ootsukiSubNets.size());//poprawka
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetNine();
         SubnetCalculator.generateOotsuki();
-        assertEquals(0,SubnetCalculator.ootsukiSubNets.size());
+        assertEquals(1,SubnetCalculator.ootsukiSubNets.size());//poprawka
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetTen();
         SubnetCalculator.generateOotsuki();
-        assertEquals(0,SubnetCalculator.ootsukiSubNets.size());
+        assertEquals(1,SubnetCalculator.ootsukiSubNets.size());//poprwka
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetEleven();
@@ -1478,12 +1478,12 @@ class SubnetCalculatorTest {
 
         ceateTestNetThirteen();
         SubnetCalculator.generateOotsuki();
-        assertEquals(1,SubnetCalculator.ootsukiSubNets.size());
+        assertEquals(3,SubnetCalculator.ootsukiSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetFourteen();
         SubnetCalculator.generateOotsuki();
-        assertEquals(1,SubnetCalculator.ootsukiSubNets.size());
+        assertEquals(3,SubnetCalculator.ootsukiSubNets.size());
         SubnetCalculator.cleanSubnets();
     }
 }
