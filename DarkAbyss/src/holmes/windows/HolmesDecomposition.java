@@ -41,6 +41,7 @@ public class HolmesDecomposition extends JFrame {
     DefaultListModel listModelTwo = new DefaultListModel();
 
     boolean dualMode = false;
+    boolean properDecoMode = true;
 
     //Similarities
     boolean showSimi = false;
@@ -57,7 +58,7 @@ public class HolmesDecomposition extends JFrame {
 
     private float sorenIndex = 0;
     private float jackobIndex = 0;
-    private float smc=0;
+    private float smc = 0;
     //private float tverIndex =0;
 
     JLabel vpfn;
@@ -119,7 +120,7 @@ public class HolmesDecomposition extends JFrame {
         int posX = 10;
         int posY = 20;
 
-        JCheckBox functionalCheckBox = new JCheckBox("Functional");
+        JCheckBox functionalCheckBox = new JCheckBox("Functional nets");
         functionalCheckBox.setBounds(posX + 10, posY + 30, 100, 20);
         functionalCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, functionalCheckBox, 0));
         functionalCheckBox.setSelected(false);
@@ -131,24 +132,35 @@ public class HolmesDecomposition extends JFrame {
         snetCheckBox.setSelected(false);
         panel.add(snetCheckBox);
 
+        /*
         JCheckBox tnetCheckBox = new JCheckBox("T-net");
         tnetCheckBox.setBounds(posX + 10, posY + 90, 100, 20);
         tnetCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, tnetCheckBox, 2));
         tnetCheckBox.setSelected(false);
         panel.add(tnetCheckBox);
+        */
+
+
+        JCheckBox adtCheckBox = new JCheckBox("T-net/maxADT-sets");
+        adtCheckBox.setBounds(posX + 10, posY + 90, 100, 20);
+        adtCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, adtCheckBox, 3));
+        adtCheckBox.setSelected(false);
+        panel.add(adtCheckBox);
 
         JCheckBox ssnetCheckBox = new JCheckBox("state S-net");
         ssnetCheckBox.setBounds(posX + 10, posY + 120, 100, 20);
-        ssnetCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, tnetCheckBox, 99));
+        ssnetCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, ssnetCheckBox, 99));
         ssnetCheckBox.setSelected(false);
         ssnetCheckBox.setEnabled(false);
         panel.add(ssnetCheckBox);
 
-        JCheckBox adtCheckBox = new JCheckBox("maxADT");
-        adtCheckBox.setBounds(posX + 10, posY + 150, 100, 20);
-        adtCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, adtCheckBox, 3));
-        adtCheckBox.setSelected(false);
-        panel.add(adtCheckBox);
+
+        JCheckBox mctCheckBox = new JCheckBox("MCT");
+        mctCheckBox.setBounds(posX + 10, posY + 150, 100, 20);
+        mctCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, mctCheckBox, 9));
+        mctCheckBox.setSelected(false);
+        mctCheckBox.setEnabled(false);
+        panel.add(mctCheckBox);
 
         JCheckBox tzCheckBox = new JCheckBox("Teng-zeng");
         tzCheckBox.setBounds(posX + 10, posY + 180, 100, 20);
@@ -180,14 +192,7 @@ public class HolmesDecomposition extends JFrame {
         ootsukiCheckBox.setSelected(false);
         panel.add(ootsukiCheckBox);
 
-        JCheckBox mctCheckBox = new JCheckBox("MCT");
-        mctCheckBox.setBounds(posX + 10, posY + 330, 100, 20);
-        mctCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, mctCheckBox, 9));
-        mctCheckBox.setSelected(false);
-        panel.add(mctCheckBox);
-
         return panel;
-
     }
 
 
@@ -553,14 +558,24 @@ public class HolmesDecomposition extends JFrame {
         expDecoButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         expDecoButton.addActionListener(actionEvent -> calculateDeco());
         expDecoButton.setFocusPainted(false);
-        panel.add(expDecoButton);
+        panel.add(expDecoButton);//,BorderLayout.LINE_START);
 
         JCheckBox dualCheckBox = new JCheckBox("Compare two decompositions");
-        dualCheckBox.setBounds(posX + 140, posY, 200, 20);
+        dualCheckBox.setBounds(posX + 140, posY, 250, 20);
         dualCheckBox.addActionListener(actionEvent -> setDual());
         dualCheckBox.setSelected(false);
-        panel.add(dualCheckBox);
+        panel.add(dualCheckBox);//,BorderLayout.CENTER);
 
+        JButton infoButton = new JButton("Info");//"<html>Decomposition\nDescriptions<html>");
+        infoButton.setBounds(posX + 440, posY, 120, 36);
+        infoButton.setMargin(new Insets(0, 0, 0, 0));
+        infoButton.setIcon(Tools.getResIcon32("icons/stateSim/showNotepad.png"));
+        infoButton.addActionListener(actionEvent -> showInfo());
+        infoButton.setFocusPainted(false);
+        infoButton.setEnabled(false);
+        panel.add(infoButton);//,BorderLayout.LINE_END);
+
+        //this.add(panel);
         return panel;
     }
 
@@ -580,24 +595,50 @@ public class HolmesDecomposition extends JFrame {
         decoListOne.addListSelectionListener(evt -> {
                     JList<String> comboBox = (JList<String>) evt.getSource();
                     int selected = comboBox.getSelectedIndex();
-                    if (selected == 0) {
-                        selectedSubNetindex = -1;
-                        allSubNetsselected = false;
-                        showSubNet(choosenDeco.get(0));
-                    } else if (selected == comboBox.getModel().getSize() - 1) {
-                        allSubNetsselected = true;
-                        showAllSubColors(true, choosenDeco.get(0));
-                    } else if (selected == comboBox.getModel().getSize() - 2) {
-                        allSubNetsselected = true;
-                        showAllSubColors(false, choosenDeco.get(0));
-                    } else {
-                        if (dualMode) {
-                            if (!decoListTwo.isSelectionEmpty())
-                                showTwoSubnets();
-                        } else {
-                            selectedSubNetindex = selected - 1;
+                    //if(propDec)
+
+            int subnetsize = getSubnetSize(choosenDeco.get(0));
+            int cimboboxSize = comboBox.getModel().getSize();
+
+                    if (subnetsize + 3 == cimboboxSize) {
+
+                        if (selected == 0) {
+                            selectedSubNetindex = -1;
                             allSubNetsselected = false;
                             showSubNet(choosenDeco.get(0));
+                        } else if (selected == comboBox.getModel().getSize() - 1) {
+                            allSubNetsselected = true;
+                            showAllSubColors(true, choosenDeco.get(0));
+                        } else if (selected == comboBox.getModel().getSize() - 2) {
+                            allSubNetsselected = true;
+                            showAllSubColors(false, choosenDeco.get(0));
+                        } else {
+                            if (dualMode) {
+                                if (!decoListTwo.isSelectionEmpty())
+                                    showTwoSubnets();
+                            } else {
+                                selectedSubNetindex = selected - 1;
+                                allSubNetsselected = false;
+                                showSubNet(choosenDeco.get(0));
+                            }
+                        }
+                    }else{
+                        if (selected == 0) {
+                            selectedSubNetindex = -1;
+                            allSubNetsselected = false;
+                            showSubNet(choosenDeco.get(0));
+                        } else if (selected == comboBox.getModel().getSize() - 1) {
+                            allSubNetsselected = true;
+                            showAllSubColors(true, choosenDeco.get(0));
+                        } else {
+                            if (dualMode) {
+                                if (!decoListTwo.isSelectionEmpty())
+                                    showTwoSubnets();
+                            } else {
+                                selectedSubNetindex = selected - 1;
+                                allSubNetsselected = false;
+                                showSubNet(choosenDeco.get(0));
+                            }
                         }
                     }
 
@@ -878,6 +919,41 @@ public class HolmesDecomposition extends JFrame {
         return newCB;
     }
 
+    /*
+      private int getSubnetSize(int typeOfDecomposition){
+          int size = 0;
+          switch (typeOfDecomposition) {
+              case 0:
+                  size = SubnetCalculator.functionalSubNets.size();
+                  break;
+              case 1:
+                  size = SubnetCalculator.snetSubNets.size();
+                  break;
+              case 2:
+                  size = SubnetCalculator.tnetSubNets.size();
+                  break;
+              case 3:
+                  size = SubnetCalculator.adtSubNets.size();
+                  break;
+              case 4:
+                  size = SubnetCalculator.tzSubNets.size();
+                  break;
+              case 5:
+                  size = SubnetCalculator.houSubNets.size();
+                  break;
+              case 6:
+                  size = SubnetCalculator.nishiSubNets.size();
+                  break;
+              case 7:
+                  size = SubnetCalculator.cycleSubNets.size();
+                  break;
+              case 8:
+                  size = SubnetCalculator.ootsukiSubNets.size();
+                  break;
+          }
+          return size;
+      }
+  */
     private void showSubNet(int typeOfDecomposition) {
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
@@ -969,15 +1045,15 @@ public class HolmesDecomposition extends JFrame {
 
     private void showTwoSubnets() {
         //zerowanie
-        npfn=0;
-        npsn=0;
-        npcn=0;
-        ntfn=0;
-        ntsn=0;
-        ntcn=0;
-        nafn=0;
-        nasn=0;
-        nacn=0;
+        npfn = 0;
+        npsn = 0;
+        npcn = 0;
+        ntfn = 0;
+        ntsn = 0;
+        ntcn = 0;
+        nafn = 0;
+        nasn = 0;
+        nacn = 0;
 
         int firsttype = decoListOne.getSelectedIndex();
         int secondtype = decoListTwo.getSelectedIndex();
@@ -1157,7 +1233,7 @@ public class HolmesDecomposition extends JFrame {
         calcStatistics();
     }
 
-    private void calcStatistics(){
+    private void calcStatistics() {
         vafn.setText(String.valueOf(nafn));
         vafn.updateUI();
         vpfn.setText(String.valueOf(npfn));
@@ -1179,18 +1255,18 @@ public class HolmesDecomposition extends JFrame {
         vtcn.updateUI();
 
         //Simple matching coefficient
-        smc = ((float) ntcn+npcn+nacn)/((ntfn+ntsn+npfn+npsn+nafn+nasn)-(ntcn+npcn+nacn));
+        smc = ((float) ntcn + npcn + nacn) / ((ntfn + ntsn + npfn + npsn + nafn + nasn) - (ntcn + npcn + nacn));
         valueOfSMC.setText(String.valueOf(smc));
         valueOfSMC.updateUI();
 
         //Sorensen index
         //(2* common subgraph)/(subnet_1 + subnet_2)
-        sorenIndex = (2*((float) ntcn+npcn+nacn))/(ntfn+ntsn+npfn+npsn+nafn+nasn);
+        sorenIndex = (2 * ((float) ntcn + npcn + nacn)) / (ntfn + ntsn + npfn + npsn + nafn + nasn);
         valueOfSorensenIndex.setText(String.valueOf(sorenIndex));
         valueOfSorensenIndex.updateUI();
         //Jaccard index
         //(common subgraph)/(subnet_1+subnet_2 - common subgraph)
-        jackobIndex = ((float) ntcn+npcn+nacn)/((ntfn+ntsn+npfn+npsn+nafn+nasn) - (ntcn+npcn+nacn) );
+        jackobIndex = ((float) ntcn + npcn + nacn) / ((ntfn + ntsn + npfn + npsn + nafn + nasn) - (ntcn + npcn + nacn));
         valueOfJackobsenIndex.setText(String.valueOf(jackobIndex));
         valueOfJackobsenIndex.updateUI();
         //Tversky index
@@ -1375,6 +1451,40 @@ public class HolmesDecomposition extends JFrame {
 
         //return new Color(red, green, blue);
         return Color.LIGHT_GRAY;
+    }
+
+
+    private void showInfo() {
+        JFrame infoWindow = new JFrame();
+
+        JPanel infoPanel = new JPanel();
+        JLabel infoFunctional = new JLabel("tekst tekst tekst");
+        JLabel infoTengZeng = new JLabel("tekst tekst tekst");
+        JLabel infoTnet = new JLabel("tekst tekst tekst");
+        JLabel infoSnet = new JLabel("tekst tekst tekst");
+        JLabel infoADT = new JLabel("tekst \n tekst \n tekst");
+        JLabel infoHou = new JLabel("tekst tekst tekst");
+        JLabel infoCycle = new JLabel("tekst tekst tekst");
+        JLabel infoNishi = new JLabel("tekst tekst tekst");
+        JLabel infoOotsuki = new JLabel("tekst tekst tekst");
+        infoPanel.add(infoFunctional);
+        infoPanel.add(infoTengZeng);
+        infoPanel.add(infoTnet);
+        infoPanel.add(infoSnet);
+        infoPanel.add(infoADT);
+        infoPanel.add(infoHou);
+        infoPanel.add(infoCycle);
+        infoPanel.add(infoNishi);
+        infoPanel.add(infoOotsuki);
+        infoWindow.add(infoPanel);
+
+        JTextArea textA = new JTextArea(5, 30);
+        JScrollPane scrollPane = new JScrollPane(textA);
+        setPreferredSize(new Dimension(450, 110));
+        infoPanel.add(scrollPane, BorderLayout.CENTER);
+
+        infoWindow.setVisible(true);
+
     }
 
 }
