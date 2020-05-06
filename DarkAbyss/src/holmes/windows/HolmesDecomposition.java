@@ -98,7 +98,7 @@ public class HolmesDecomposition extends JFrame {
     private JPanel createMainPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        buttonPanel = createLeftButtonPanel(0, 0, 150, 130);
+        buttonPanel = createLeftButtonPanel(0, 0, 180, 130);
         logMainPanel = createGraphPanel(0, 130, 500, 300);
         topButtonPanel = createTopButtonPanel(200, 130, 900, 75);
         infoPanel = createInfoPanel(400, 130, 200, 300);
@@ -121,13 +121,13 @@ public class HolmesDecomposition extends JFrame {
         int posY = 20;
 
         JCheckBox functionalCheckBox = new JCheckBox("Functional nets");
-        functionalCheckBox.setBounds(posX + 10, posY + 30, 100, 20);
+        functionalCheckBox.setBounds(posX + 10, posY + 30, 150, 20);
         functionalCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, functionalCheckBox, 0));
         functionalCheckBox.setSelected(false);
         panel.add(functionalCheckBox);
 
         JCheckBox snetCheckBox = new JCheckBox("S-net");
-        snetCheckBox.setBounds(posX + 10, posY + 60, 100, 20);
+        snetCheckBox.setBounds(posX + 10, posY + 60, 150, 20);
         snetCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, snetCheckBox, 1));
         snetCheckBox.setSelected(false);
         panel.add(snetCheckBox);
@@ -141,14 +141,14 @@ public class HolmesDecomposition extends JFrame {
         */
 
 
-        JCheckBox adtCheckBox = new JCheckBox("T-net/maxADT-sets");
-        adtCheckBox.setBounds(posX + 10, posY + 90, 100, 20);
+        JCheckBox adtCheckBox = new JCheckBox("T-net/maxADT");
+        adtCheckBox.setBounds(posX + 10, posY + 90, 150, 20);
         adtCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, adtCheckBox, 3));
         adtCheckBox.setSelected(false);
         panel.add(adtCheckBox);
 
         JCheckBox ssnetCheckBox = new JCheckBox("state S-net");
-        ssnetCheckBox.setBounds(posX + 10, posY + 120, 100, 20);
+        ssnetCheckBox.setBounds(posX + 10, posY + 120, 150, 20);
         ssnetCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, ssnetCheckBox, 99));
         ssnetCheckBox.setSelected(false);
         ssnetCheckBox.setEnabled(false);
@@ -156,41 +156,47 @@ public class HolmesDecomposition extends JFrame {
 
 
         JCheckBox mctCheckBox = new JCheckBox("MCT");
-        mctCheckBox.setBounds(posX + 10, posY + 150, 100, 20);
+        mctCheckBox.setBounds(posX + 10, posY + 150, 150, 20);
         mctCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, mctCheckBox, 9));
         mctCheckBox.setSelected(false);
         mctCheckBox.setEnabled(false);
         panel.add(mctCheckBox);
 
         JCheckBox tzCheckBox = new JCheckBox("Teng-zeng");
-        tzCheckBox.setBounds(posX + 10, posY + 180, 100, 20);
+        tzCheckBox.setBounds(posX + 10, posY + 180, 150, 20);
         tzCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, tzCheckBox, 4));
         tzCheckBox.setSelected(false);
         panel.add(tzCheckBox);
 
-        JCheckBox houCheckBox = new JCheckBox("Hou");
-        houCheckBox.setBounds(posX + 10, posY + 210, 100, 20);
+        JCheckBox houCheckBox = new JCheckBox("Paths (Hou)");
+        houCheckBox.setBounds(posX + 10, posY + 210, 150, 20);
         houCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, houCheckBox, 5));
         houCheckBox.setSelected(false);
         panel.add(houCheckBox);
 
-        JCheckBox nishiCheckBox = new JCheckBox("Nishi");
-        nishiCheckBox.setBounds(posX + 10, posY + 240, 100, 20);
+        JCheckBox nishiCheckBox = new JCheckBox("AugSeq (Nishi)");
+        nishiCheckBox.setBounds(posX + 10, posY + 240, 150, 20);
         nishiCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, nishiCheckBox, 6));
         nishiCheckBox.setSelected(false);
         panel.add(nishiCheckBox);
 
         JCheckBox cycleCheckBox = new JCheckBox("Cycle");
-        cycleCheckBox.setBounds(posX + 10, posY + 270, 100, 20);
+        cycleCheckBox.setBounds(posX + 10, posY + 270, 150, 20);
         cycleCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, cycleCheckBox, 7));
         cycleCheckBox.setSelected(false);
         panel.add(cycleCheckBox);
 
-        JCheckBox ootsukiCheckBox = new JCheckBox("Ootsuki");
-        ootsukiCheckBox.setBounds(posX + 10, posY + 300, 100, 20);
+        JCheckBox ootsukiCheckBox = new JCheckBox("P1 (Ootsuki)");
+        ootsukiCheckBox.setBounds(posX + 10, posY + 300, 150, 20);
         ootsukiCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, ootsukiCheckBox, 8));
         ootsukiCheckBox.setSelected(false);
         panel.add(ootsukiCheckBox);
+
+        JCheckBox smcCheckBox = new JCheckBox("SMC");
+        smcCheckBox.setBounds(posX + 10, posY + 330, 150, 20);
+        smcCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, smcCheckBox, 9));
+        smcCheckBox.setSelected(false);
+        panel.add(smcCheckBox);
 
         return panel;
     }
@@ -767,6 +773,9 @@ public class HolmesDecomposition extends JFrame {
             case 8:
                 SubnetCalculator.generateOotsuki();
                 break;
+            case 9:
+                SubnetCalculator.generateSMC();
+                break;
         }
     }
 
@@ -790,6 +799,8 @@ public class HolmesDecomposition extends JFrame {
                 return SubnetCalculator.cycleSubNets.size();
             case 8:
                 return SubnetCalculator.ootsukiSubNets.size();
+            case 9:
+                return SubnetCalculator.smcSubNets.size();
         }
         return 0;
     }
@@ -814,6 +825,8 @@ public class HolmesDecomposition extends JFrame {
                 return "Cycle";
             case 8:
                 return "Ootsuki";
+            case 9:
+                return "SMC";
         }
         return "";
     }
@@ -838,14 +851,16 @@ public class HolmesDecomposition extends JFrame {
                 return SubnetCalculator.cycleSubNets;
             case 8:
                 return SubnetCalculator.ootsukiSubNets;
+            case 9:
+                return SubnetCalculator.smcSubNets;
         }
         return SubnetCalculator.functionalSubNets;
     }
 
     private JList generateButton(int index) {
-        if (index == 0 || index == 1 || index == 2 || index == 3)
+        if (index == 0 || index == 1 || index == 2 || index == 3 || index ==8 )
             return generateProperDecoButton(index);
-        if (index == 4 || index == 5 || index == 6 || index == 7)
+        if (index == 4 || index == 5 || index == 6 || index == 7 || index == 9)
             return generateInProperDecoButton(index);
 
         return generateProperDecoButton(index);
@@ -999,6 +1014,10 @@ public class HolmesDecomposition extends JFrame {
                 subnet = SubnetCalculator.ootsukiSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.ootsukiSubNets.size();
                 break;
+            case 9:
+                subnet = SubnetCalculator.smcSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.smcSubNets.size();
+                break;
         }
 
         ColorPalette cp = new ColorPalette();
@@ -1100,6 +1119,10 @@ public class HolmesDecomposition extends JFrame {
                 firstsubnet = SubnetCalculator.ootsukiSubNets.get(decoListOne.getSelectedIndex() - 1);
                 firstsize = SubnetCalculator.ootsukiSubNets.size();
                 break;
+            case 9:
+                firstsubnet = SubnetCalculator.smcSubNets.get(decoListOne.getSelectedIndex() - 1);
+                firstsize= SubnetCalculator.smcSubNets.size();
+                break;
         }
 
 
@@ -1142,6 +1165,11 @@ public class HolmesDecomposition extends JFrame {
                 secondsubnet = SubnetCalculator.ootsukiSubNets.get(decoListTwo.getSelectedIndex() - 1);
                 secondsize = SubnetCalculator.ootsukiSubNets.size();
                 break;
+            case 9:
+                secondsubnet = SubnetCalculator.smcSubNets.get(decoListOne.getSelectedIndex() - 1);
+                secondsize= SubnetCalculator.smcSubNets.size();
+                break;
+
         }
 
         ColorPalette cp = new ColorPalette();

@@ -27,7 +27,6 @@ import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.managers.HolmesSPNmanager;
-import sun.net.ftp.FtpClient.TransferType;
 
 import com.javadocking.DockingManager;
 import com.javadocking.dock.BorderDock;

@@ -4,16 +4,13 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.*;
 
 import javax.swing.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Klasa odpowiedzialna za dekompozycję PN do wybranych typów podsieci
  */
 public class SubnetCalculator {
-    private enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE}
+    private enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, SMC}
 
     public static ArrayList<SubNet> functionalSubNets = new ArrayList<>();
     public static ArrayList<SubNet> snetSubNets = new ArrayList<>();
@@ -25,6 +22,7 @@ public class SubnetCalculator {
     public static ArrayList<SubNet> nishiSubNets = new ArrayList<>();
     public static ArrayList<SubNet> cycleSubNets = new ArrayList<>();
     public static ArrayList<SubNet> ootsukiSubNets = new ArrayList<>();
+    public static ArrayList<SubNet> smcSubNets = new ArrayList<>();
     public static ArrayList<Path> paths = new ArrayList<>();
 
     private static ArrayList<ArrayList<Path>> houResultList = new ArrayList<>();
@@ -34,7 +32,8 @@ public class SubnetCalculator {
 
     private static ArrayList<Transition> allTransitions;
     private static ArrayList<Place> allPlaces;
-    private static ArrayList<ArrayList<Integer>> invMatrix;
+    private static ArrayList<ArrayList<Integer>> invMatrixT;
+    private static ArrayList<ArrayList<Integer>> invMatrixP;
     private static ArrayList<Node> allNodes;
     private static ArrayList<Node> usedNodes;
 
@@ -45,7 +44,8 @@ public class SubnetCalculator {
     public static void compileElements() {
         allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
         allPlaces = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-        invMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+        invMatrixT = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+        invMatrixP = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix();
         allNodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
         usedNodes = new ArrayList<>();
     }
@@ -53,38 +53,47 @@ public class SubnetCalculator {
     public static void compileTestElements(ArrayList<Transition> at, ArrayList<Place> ap, ArrayList<Node> an, ArrayList<ArrayList<Integer>> ati) {
         allTransitions = at;
         allPlaces = ap;
-        invMatrix = ati;
+        invMatrixT = ati;
         allNodes = an;
         usedNodes = new ArrayList<>();
     }
 
     public static void generateFS() {
-        //cleanSubnets();
-
         while (!allTransitions.isEmpty()) {
             Transition firstTransition = allTransitions.get(0);
             ArrayList<Transition> temporaryList = new ArrayList<>();
             temporaryList.add(firstTransition);
             allTransitions.remove(firstTransition);
-
-            for (Transition transition : allTransitions) {
-                ArrayList<Transition> listToAdd = new ArrayList<>();
-                if (chceckParalellInputOutPut(transition, temporaryList)) {
-                    if (!listToAdd.contains(transition))
-                        listToAdd.add(transition);
-                }
-                temporaryList.addAll(listToAdd);
-            }
-
+            temporaryList = findFunctionalTransition(temporaryList);
             functionalSubNets.add(new SubNet(SubNetType.ZAJCEV, temporaryList, null, null, null, null));
-            allTransitions.removeAll(temporaryList);
         }
 
         if (!functionalSubNets.isEmpty()) {
             //TODO
             //GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
         }
+    }
 
+    private static ArrayList<Transition> findFunctionalTransition(ArrayList<Transition>temporaryList)
+    {
+        boolean found = false;
+        for (Transition transition : allTransitions) {
+            ArrayList<Transition> listToAdd = new ArrayList<>();
+            if (chceckParalellInputOutPut(transition, temporaryList)) {
+                if (!listToAdd.contains(transition)) {
+                    listToAdd.add(transition);
+                    found=true;
+                }
+            }
+            temporaryList.addAll(listToAdd);
+        }
+
+        allTransitions.removeAll(temporaryList);
+        if(found)
+        {
+            temporaryList = findFunctionalTransition(temporaryList);
+        }
+        return temporaryList;
     }
 
     private static boolean chceckParalellInputOutPut(Node newTran, ArrayList<Transition> sub) {
@@ -171,19 +180,15 @@ public class SubnetCalculator {
         tzResultList = new ArrayList<>();
         ootsukiResultList = new ArrayList<>();
         ootsukiSubNets = new ArrayList<>();
+        smcSubNets = new ArrayList<>();
     }
 
     public static void generateSnets() {
-        //cleanSubnets();
-        //ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        if (invMatrix != null) {
-            if (!invMatrix.isEmpty()) {
-                //ArrayList<ArrayList<Integer>> invMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
-                //ArrayList<ArrayList<Integer>> nonAssignedRows = invMatrix;// new ArrayList<>();
-
+        if (invMatrixT != null) {
+            if (!invMatrixT.isEmpty()) {
                 ArrayList<ArrayList<Place>> placesOfSupport = new ArrayList<>();
 
-                for (ArrayList<Integer> inv : invMatrix) {
+                for (ArrayList<Integer> inv : invMatrixT) {
                     ArrayList<Transition> invSupport = new ArrayList<>();
                     for (int i = 0; i < inv.size(); i++) {//Integer t : inv ) {
                         if (inv.get(i) > 0)
@@ -265,103 +270,23 @@ public class SubnetCalculator {
     }
 
     public static void generateTnets() {
-        //cleanSubnets();
-        //ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        //ArrayList<ArrayList<Integer>> invMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
-/*
-        if (invMatrix == null || invMatrix.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "You need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        for (ArrayList<Integer> inv : invMatrix) {
-            ArrayList<Transition> subnet = new ArrayList<>();
-            for (int i = 0; i < inv.size(); i++) {
-                if (inv.get(i) > 0)
-                    subnet.add(allTransitions.get(i));
-            }
-
-            tnetSubNets.add(new SubNet(SubNetType.TNET, subnet, null, null, null, null));
-        }
-*/
-        //////
-        //cleanSubnets();
-        //ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        if (invMatrix != null) {
-            if (!invMatrix.isEmpty()) {
-                //ArrayList<ArrayList<Integer>> invMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
-                //ArrayList<ArrayList<Integer>> nonAssignedRows = invMatrix;// new ArrayList<>();
-/*
-                ArrayList<ArrayList<Place>> placesOfSupport = new ArrayList<>();
-
-                for (ArrayList<Integer> inv : invMatrix) {
-                    ArrayList<Transition> invSupport = new ArrayList<>();
-                    for (int i = 0; i < inv.size(); i++) {//Integer t : inv ) {
-                        if (inv.get(i) > 0)
-                            invSupport.add(allTransitions.get(i));
-                    }
-
-                    ArrayList<Place> invPlace = new ArrayList<>();
-                    for (int i = 0; i < invSupport.size(); i++) {
-                        for (int j = i + 1; j < invSupport.size(); j++) {
-                            for (Place ip : invSupport.get(i).getPostPlaces()) {
-                                for (Place jp : invSupport.get(j).getPrePlaces()) {
-                                    if (ip.getID() == jp.getID() && !inv.contains(ip))
-                                        invPlace.add(ip);
-                                }
-                            }
-
-                            for (Place ip : invSupport.get(i).getPrePlaces()) {
-                                for (Place jp : invSupport.get(j).getPostPlaces()) {
-                                    if (ip.getID() == jp.getID() && !inv.contains(ip))
-                                        invPlace.add(ip);
-                                }
-                            }
-                        }
-                    }
-                    placesOfSupport.add(invPlace);
-                }
-*/
-                //Sprawdzamy w jakich T-invariantach występują te miejsca...
-                /*
-                ArrayList<>
-
-                Integer[][] matrix = new Integer[allTransitions.size()][transitionsOfSupport.size()];
-                ArrayList<ArrayList<Integer>> list = new ArrayList<>();
-                for (Transition t : allTransitions
-                ) {
-                    ArrayList<Integer> l = new ArrayList<>();
-                    for (ArrayList<Transition> sup : transitionsOfSupport
-                    ) {
-                        if (sup.contains(t)) {
-                            matrix[allTransitions.indexOf(t)][transitionsOfSupport.indexOf(sup)] = 1;
-                            l.add(transitionsOfSupport.indexOf(sup));
-                        } else {
-                            matrix[allTransitions.indexOf(t)][transitionsOfSupport.indexOf(sup)] = 0;
-                        }
-                    }
-                    list.add(l);
-                }
-*/
-                //create s-net
-
+        if (invMatrixT != null) {
+            if (!invMatrixT.isEmpty()) {
                 ArrayList<ArrayList<Transition>> tnets = new ArrayList<>();
                 ArrayList<Integer> used = new ArrayList<>();
-                for (int i = 0; i < invMatrix.size(); i++) {
+                for (int i = 0; i < invMatrixT.size(); i++) {
                     if (!used.contains(i)) {
 
                     }
                 }
 
-
-
-                for (int i = 0; i < invMatrix.get(0).size(); i++) {
+                for (int i = 0; i < invMatrixT.get(0).size(); i++) {
                     if (!used.contains(i)) {
                         ArrayList<Transition> net = new ArrayList<>();
                         net.add(allTransitions.get(i));
                         used.add(i);
-                        for (int j = i + 1; j < invMatrix.size(); j++) {
-                            if (invMatrix.get(i).equals(invMatrix.get(j)) && !used.contains(j)) {
+                        for (int j = i + 1; j < invMatrixT.size(); j++) {
+                            if (invMatrixT.get(i).equals(invMatrixT.get(j)) && !used.contains(j)) {
                                 net.add(allTransitions.get(j));
                                 used.add(j);
                             }
@@ -373,7 +298,6 @@ public class SubnetCalculator {
                     }
                 }
 
-
                 if (!tnetSubNets.isEmpty()) {
                     //GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
                 }
@@ -383,78 +307,20 @@ public class SubnetCalculator {
         } else {
             JOptionPane.showMessageDialog(null, "Before determine ADT sets, you need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
-
-
     }
 
-    /*
-        public static void generateSnets() {
-            cleanSubnets();
-            ArrayList<Place> allPlaces = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-
-            while (!allPlaces.isEmpty()) {
-                Place firstPlace = allPlaces.get(0);
-                ArrayList<Place> temporaryList = new ArrayList<>();
-                temporaryList.add(firstPlace);
-                allPlaces.remove(firstPlace);
-
-                for (Place place : allPlaces) {
-                    ArrayList<Place> listToAdd = new ArrayList<>();
-                    if (chceckSeqInputOutPut(place, temporaryList)) {
-                        if (!listToAdd.contains(place))
-                            listToAdd.add(place);
-                    }
-                    temporaryList.addAll(listToAdd);
-                }
-
-                snetSubNets.add(new SubNet(SubNetType.SNET, null, temporaryList, null, null, null));
-                allPlaces.removeAll(temporaryList);
-            }
-
-            if (!functionalSubNets.isEmpty())
-                GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
-        }
-
-        public static void generateTnets() {
-            cleanSubnets();
-            ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-
-            while (!allTransitions.isEmpty()) {
-                Transition firstTransition = allTransitions.get(0);
-                ArrayList<Transition> temporaryList = new ArrayList<>();
-                temporaryList.add(firstTransition);
-                allTransitions.remove(firstTransition);
-
-                for (Transition transition : allTransitions) {
-                    ArrayList<Transition> listToAdd = new ArrayList<>();
-                    if (chceckSeqTInputOutPut(transition, temporaryList)) {
-                        if (!listToAdd.contains(transition))
-                            listToAdd.add(transition);
-                    }
-                    temporaryList.addAll(listToAdd);
-                }
-
-                tnetSubNets.add(new SubNet(SubNetType.TNET, temporaryList, null, null, null, null));
-                allTransitions.removeAll(temporaryList);
-            }
-
-
-            if (!tnetSubNets.isEmpty())
-                GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
-        }
-    */
     public static void generateADT() {
         //cleanSubnets();
 
-        if (invMatrix != null) {
-            if (!invMatrix.isEmpty()) {
+        if (invMatrixT != null) {
+            if (!invMatrixT.isEmpty()) {
                 //ArrayList<ArrayList<Integer>> invMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
                 ArrayList<ArrayList<Integer>> nonAssignedRows = new ArrayList<>();
 
-                for (int i = 0; i < invMatrix.get(0).size(); i++) {
+                for (int i = 0; i < invMatrixT.get(0).size(); i++) {
                     ArrayList<Integer> newRow = new ArrayList<>();
-                    for (int j = 0; j < invMatrix.size(); j++) {
-                        newRow.add(invMatrix.get(j).get(i));
+                    for (int j = 0; j < invMatrixT.size(); j++) {
+                        newRow.add(invMatrixT.get(j).get(i));
                     }
                     nonAssignedRows.add(newRow);
                 }
@@ -489,43 +355,6 @@ public class SubnetCalculator {
         } else {
             JOptionPane.showMessageDialog(null, "Before determine ADT sets, you need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
-    }
-
-    private static void checkIfMaximal(ArrayList<Integer> newADTset) {
-        ArrayList<Transition> transitions = getTransitionsForADT(newADTset);
-        ArrayList<Transition> used = new ArrayList<>();
-
-        /*
-        while(transitions.size()>0){
-            ArrayList<Transition> maxADT = new ArrayList<Transition>();
-            used.add(transitions.get(0));
-            maxADT.add(transitions.get(0));
-            transitions.remove(0);
-            boolean connected = false;
-            for (Transition t :transitions) {
-                for (Place p: t.getPostPlaces()                     ) {
-                    if(maxADT.get(maxADT.size()-1).getPrePlaces().contains(p)) {
-                        used.add(t);
-                        maxADT.add(t);
-                        connected = true;
-                        return;
-                    }
-                }
-            }
-
-
-        }
-        */
-
-    }
-
-    private static ArrayList<Transition> getTransitionsForADT(ArrayList<Integer> maxADTset) {
-        //ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        ArrayList<Transition> transitionsForADT = new ArrayList<Transition>();
-        for (Integer number : maxADTset) {
-            transitionsForADT.add(allTransitions.get(number));
-        }
-        return transitionsForADT;
     }
 
     public static void generateADP() {
@@ -967,6 +796,26 @@ public class SubnetCalculator {
         */
     }
 
+    public static void generateSMC(){
+
+        //dla každego inwariantu
+        for (ArrayList<Integer> inv: invMatrixP) {
+            int numberOfTokensInInv = 0;
+            ArrayList<Place> invSupp = new ArrayList<Place>();
+            //dla každego miejsca
+            for (int i = 0 ; i<inv.size() ; i++) {
+                if(inv.get(i)!=0) {
+                    numberOfTokensInInv += allPlaces.get(i).getTokensNumber();
+                    invSupp.add(allPlaces.get(i));
+                }
+            }
+
+            if(numberOfTokensInInv==1){
+                smcSubNets.add(new SubNet(SubNetType.SMC, null, invSupp, null, null, null));
+            }
+        }
+    }
+
 
     private static boolean checkIfContains(ArrayList<Path> anotherPath, Path path, ArrayList<ArrayList<Path>> connected) {
         for (Path pa : anotherPath) {
@@ -976,7 +825,6 @@ public class SubnetCalculator {
                         if (n1.getID() == n2.getID())
                             return true;
                     }
-
                 }
             }
         }
@@ -991,7 +839,6 @@ public class SubnetCalculator {
                         if (n1.getID() == n2.getID())
                             return true;
                     }
-
                 }
             }
         }
@@ -1425,6 +1272,9 @@ public class SubnetCalculator {
                     break;
                 case OOSTUKI:
                     createPathBasedSubNet(subPath);
+                    break;
+                case SMC:
+                    createPlaceBasedSubNet(subPlaces);
                     break;
             }
         }
