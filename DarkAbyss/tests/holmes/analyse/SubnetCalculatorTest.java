@@ -1197,72 +1197,72 @@ class SubnetCalculatorTest {
     void generateCycle() {
 
         ceateTestNetOne();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(0,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetTwo();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(0,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetThree();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(0,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetFour();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(0,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetFive();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(1,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetSix();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(2,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetSeven();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(2,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetEight();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(2,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetNine();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(4,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetTen();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(4,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetEleven();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(0,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetTwelve();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(0,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetThirteen();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(0,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 
         ceateTestNetFourteen();
-        SubnetCalculator.generateCycle();
+        SubnetCalculator.generateCycle(false);
         assertEquals(0,SubnetCalculator.cycleSubNets.size());
         SubnetCalculator.cleanSubnets();
 

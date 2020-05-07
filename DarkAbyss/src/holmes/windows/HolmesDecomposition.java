@@ -768,7 +768,7 @@ public class HolmesDecomposition extends JFrame {
                 SubnetCalculator.generateNishi();
                 break;
             case 7:
-                SubnetCalculator.generateCycle();
+                SubnetCalculator.generateCycle(false);
                 break;
             case 8:
                 SubnetCalculator.generateOotsuki();

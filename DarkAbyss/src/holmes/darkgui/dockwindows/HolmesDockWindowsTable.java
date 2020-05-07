@@ -5729,7 +5729,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 SubnetCalculator.generateNishi();
                 break;
             case 7:
-                SubnetCalculator.generateCycle();
+                SubnetCalculator.generateCycle(false);
                 break;
             case 8:
                 SubnetCalculator.generateOotsuki();

@@ -5,6 +5,7 @@ import holmes.petrinet.elements.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.function.ToDoubleBiFunction;
 
 /**
  * Klasa odpowiedzialna za dekompozycję PN do wybranych typów podsieci
@@ -69,7 +70,6 @@ public class SubnetCalculator {
         }
 
         if (!functionalSubNets.isEmpty()) {
-            //TODO
             //GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
         }
     }
@@ -270,43 +270,7 @@ public class SubnetCalculator {
     }
 
     public static void generateTnets() {
-        if (invMatrixT != null) {
-            if (!invMatrixT.isEmpty()) {
-                ArrayList<ArrayList<Transition>> tnets = new ArrayList<>();
-                ArrayList<Integer> used = new ArrayList<>();
-                for (int i = 0; i < invMatrixT.size(); i++) {
-                    if (!used.contains(i)) {
-
-                    }
-                }
-
-                for (int i = 0; i < invMatrixT.get(0).size(); i++) {
-                    if (!used.contains(i)) {
-                        ArrayList<Transition> net = new ArrayList<>();
-                        net.add(allTransitions.get(i));
-                        used.add(i);
-                        for (int j = i + 1; j < invMatrixT.size(); j++) {
-                            if (invMatrixT.get(i).equals(invMatrixT.get(j)) && !used.contains(j)) {
-                                net.add(allTransitions.get(j));
-                                used.add(j);
-                            }
-                        }
-
-                        tnets.add(net);
-                        //tnetSubNets.add(new SubNet(SubNetType.TNET, null, net, null, null, null));
-                        tnetSubNets.add(new SubNet(SubNetType.TNET, net, null, null, null, null));
-                    }
-                }
-
-                if (!tnetSubNets.isEmpty()) {
-                    //GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Before determine ADT sets, you need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
-        }
+        //TODO  unifikacja z ADT
     }
 
     public static void generateADT() {
@@ -358,7 +322,6 @@ public class SubnetCalculator {
     }
 
     public static void generateADP() {
-        //public  static void  generateSnets(){
         //cleanSubnets();
 
         if (GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix() != null) {
@@ -457,7 +420,7 @@ public class SubnetCalculator {
         }
 
         tzResultList = temp;
-        //tzResultList.clear();
+        tzResultList.clear();
 
         if (!tzSubNets.isEmpty()) {
             //GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
@@ -493,7 +456,7 @@ public class SubnetCalculator {
         paths.addAll(sinkSourcePaths);
     }
 
-    public static void generateCycle() {
+    public static void generateCycle(boolean isOotsuki) {
         //cleanSubnets();
         paths = calculatePaths();
 
@@ -503,7 +466,6 @@ public class SubnetCalculator {
                 list.add(path);
                 tzResultList.add(list);
             } else {
-
                 ArrayList<Path> localListOfPaths = new ArrayList<>(paths);
                 ArrayList<Path> listOfCycles = new ArrayList<>();
 
@@ -531,7 +493,8 @@ public class SubnetCalculator {
         }
 
         tzResultList = temp;
-        //tzResultList.clear();
+        if(!isOotsuki)
+            tzResultList.clear();
 
         if (!cycleSubNets.isEmpty()) {
 //            GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
@@ -664,7 +627,7 @@ public class SubnetCalculator {
 
     public static void generateOotsuki() {
         if (cycleSubNets == null || cycleSubNets.isEmpty()) {
-            generateCycle();
+            generateCycle(true);
         }
         if (houSubNets == null || houSubNets.isEmpty()) {
             generateHou();
@@ -676,23 +639,16 @@ public class SubnetCalculator {
         ootsukiResultList.addAll(tzResultList);
 
         ArrayList<ArrayList<Path>> allFiringSeq = new ArrayList<>(ootsukiResultList);
-        ArrayList<ArrayList<Path>> used = new ArrayList<>();
-        ArrayList<ArrayList<Path>> ootsukiResults = new ArrayList<>();
-        boolean foundConnectedFS = false;
         ArrayList<Path> fs = new ArrayList<>();
 
-
-        ////
         while(!allFiringSeq.isEmpty())
         {
             //weź pierwszy element
             ArrayList<Path> root = allFiringSeq.get(0);
             allFiringSeq.remove(0);
-
-            //pętla tworząca strukture
-
             boolean repeat = true;
 
+            //pętla tworząca strukture
             while (repeat)
             {
                 repeat = false;
@@ -706,8 +662,6 @@ public class SubnetCalculator {
                         if(isConnected)
                             groupsToAdd.add(group);
                     }
-
-                    //if true remember
                 }
 
                 if(!groupsToAdd.isEmpty())
@@ -718,86 +672,14 @@ public class SubnetCalculator {
                         allFiringSeq.remove(list);
                     }
                 }
-                //found
-                //add to root and repeat
-                //notfound
-                //go out
             }
 
             ootsukiSubNets.add(new SubNet(SubNetType.OOSTUKI, null, null, null, null, new ArrayList<>(root)));
             //dodaj nową sieć
         }
-
-
-        ////
-
-
-
-/*
-
-        while (ootsukiResultList.size() != used.size()) {
-
-            if (allFiringSeq.size() == 0) {
-                if (foundConnectedFS)
-                    ootsukiSubNets.add(new SubNet(SubNetType.OOSTUKI, null, null, null, null, new ArrayList<>(fs)));
-
-                return;
-            }
-            if (!foundConnectedFS) {
-                fs = allFiringSeq.get(0);
-                used.add(fs);
-                allFiringSeq.remove(used);
-            }
-
-
-            foundConnectedFS = false;
-
-
-            ArrayList<ArrayList<Path>> connected = new ArrayList<>();
-            //znajdowanie
-            for (ArrayList<Path> anotherfs : allFiringSeq) {
-                for (Path path : fs)
-                    //if(anotherfs.contains(path)&&!connected.contains(anotherfs)) {
-                    if (!anotherfs.contains(path) && checkIfContains(anotherfs, path, connected)) {//&&!connected.contains(anotherfs)){
-                        connected.add(anotherfs);
-                        foundConnectedFS = true;
-                    }
-            }
-
-            //czy znalazło
-
-            if (foundConnectedFS) {
-                for (ArrayList<Path> element : connected) {
-                    for (Path p : element) {
-                        if (!fs.contains(p))
-                            fs.add(p);
-                    }
-                }
-
-            } else {
-                ootsukiSubNets.add(new SubNet(SubNetType.OOSTUKI, null, null, null, null, new ArrayList<>(fs)));
-                foundConnectedFS = false;
-
-            }
-            for (ArrayList<Path> p : connected) {
-                if (!used.contains(p))
-                    used.add(p);
-            }
-            //used.addAll(connected);
-            allFiringSeq.removeAll(used);
-
-
-            //tak - dodaj
-
-
-            //nie- utwórz sieć i zacznij nową
-
-        }
-        */
     }
 
     public static void generateSMC(){
-
         //dla každego inwariantu
         for (ArrayList<Integer> inv: invMatrixP) {
             int numberOfTokensInInv = 0;
@@ -852,16 +734,8 @@ public class SubnetCalculator {
             houResultList.add(used);
             return true;
         }
-        //is not end
-        for (int i = 1; i < used.size(); i++) {
-            //na80%b tutaj wychodzi wcześniej rpzed dojściem do końca
-            //dodać warunek zabraniający cykli?
-            //if (used.get(i).startNode==used.get(used.size()-1).endNode)
-            //if (used.get(i).startNode==used.get(used.size()-1).endNode)
-            //   return false;
-        }
-        ArrayList<Path> posible = findPathsFrom(used.get(used.size() - 1).endNode, unUsed);
-        for (Path pos : posible) {
+        ArrayList<Path> possible = findPathsFrom(used.get(used.size() - 1).endNode, unUsed);
+        for (Path pos : possible) {
             ArrayList<Path> NewUsed = new ArrayList<Path>(used);
             ArrayList<Path> NEWunUsed = new ArrayList<Path>(unUsed);
             NewUsed.add(pos);
@@ -883,25 +757,17 @@ public class SubnetCalculator {
             nishiResultList.add(used);
             return true;
         }
-        //is not end
-        for (int i = 1; i < used.size(); i++) {
-            //na80%b tutaj wychodzi wcześniej rpzed dojściem do końca
-            //dodać warunek zabraniający cykli?
-            //if (used.get(i).startNode==used.get(used.size()-1).endNode)
-            //if (used.get(i).startNode==used.get(used.size()-1).endNode)
-            //   return false;
-        }
-        ArrayList<Path> posible = findNishiPathsFrom(used.get(used.size() - 1).endNode, unUsed);
-        for (Path pos : posible) {
+        ArrayList<Path> possible = findNishiPathsFrom(used.get(used.size() - 1).endNode, unUsed);
+        for (Path pos : possible) {
             ArrayList<Path> NewUsed = new ArrayList<Path>(used);
             ArrayList<Path> NEWunUsed = new ArrayList<Path>(unUsed);
             NewUsed.add(pos);
             NEWunUsed.remove(pos);
 
-            for (Path paralelPath : paths) {
-                if ((paralelPath.startNode == pos.startNode && paralelPath.endNode == pos.endNode) && !paralelPath.equals(pos)) {
-                    NEWunUsed.remove(paralelPath);
-                    NewUsed.add(paralelPath);
+            for (Path parallelPath : paths) {
+                if ((parallelPath.startNode == pos.startNode && parallelPath.endNode == pos.endNode) && !parallelPath.equals(pos)) {
+                    NEWunUsed.remove(parallelPath);
+                    NewUsed.add(parallelPath);
                 }
             }
             depNishi(NewUsed, NEWunUsed, outNodes);
@@ -913,7 +779,6 @@ public class SubnetCalculator {
     private static boolean dep(ArrayList<Path> used, ArrayList<Path> unUsed) {
         //is cycle add
         if (used.get(0).startNode == used.get(used.size() - 1).endNode) {
-            //System.out.println("Dodałem");
             tzResultList.add(used);
             return true;
         }
@@ -938,7 +803,8 @@ public class SubnetCalculator {
         ArrayList<Path> possible = new ArrayList<>();
         for (Path p : list) {
             if (p.startNode == end)
-                possible.add(p);
+                if(!p.isCycle)
+                    possible.add(p);
         }
         return possible;
     }
@@ -957,25 +823,6 @@ public class SubnetCalculator {
         return possible;
     }
 
-    private static ArrayList<Path> calculatePathsCycles() {
-        ArrayList<Path> listOfPaths = new ArrayList<>();
-        //ArrayList<Node> allNodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
-
-        ArrayList<Node> listOfNodes = allNodes;
-        while (!listOfNodes.isEmpty()) {
-            Node node = listOfNodes.get(0);
-            listOfNodes.remove(0);
-
-            for (Node next : listOfNodes) {
-                if (node.getOutNodes().contains(next)) {
-
-                }
-            }
-        }
-
-        return listOfPaths;
-    }
-
     private static ArrayList<Node> calculatePath(Node m, ArrayList<Node> path) {
         if (path.contains(m)) {
             return path;
@@ -983,23 +830,15 @@ public class SubnetCalculator {
         usedNodes.add(m);
         path.add(m);
         if (m.getOutNodes().size() > 0) {
-            if (m.getOutNodes().size() == 1) {//&&m.getInNodes().size()==1){// || m.getOutNodes().size()>1&&m.getInNodes().size()>1){
+            if (m.getOutNodes().size() == 1) {
                 calculatePath(m.getOutNodes().get(0), path);
             }
-            //else
-            // {
-
-            // }
         }
         return path;
     }
 
     private static ArrayList<Path> calculatePaths() {
         ArrayList<Path> listOfPaths = new ArrayList<>();
-        //ArrayList<Node> allNodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
-
-        //----------------------------------------------------
-        //*
         for (Node n : allNodes) {
             if (n.getOutNodes().size() > 1 || n.getInNodes().size() == 0 || (n.getInNodes().size() > 1 && n.getOutNodes().size() != 0)) {
 
@@ -1016,8 +855,6 @@ public class SubnetCalculator {
                         }
                     }
                 } else {
-
-                    //}
                     ArrayList<Node> nodes = calculatePath(n, new ArrayList<Node>());
                     listOfPaths.add(new Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes)));
                 }
@@ -1030,44 +867,11 @@ public class SubnetCalculator {
                 listOfPaths.add(new Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true));
             }
         }
-
-
-        //*/
-        //----------------------------------------------------
-        /*
-        ArrayList<Node> listOfStartNodes = new ArrayList<>();
-        for (Node n : allNodes) {
-            if (n.getOutNodes().size() > 1 || n.getInNodes().size() > 1) {
-                if (!(n.getOutNodes().size() == 0 || n.getInNodes().size() == 0))
-                    listOfStartNodes.add(n);
-            }
-        }
-
-        if(listOfStartNodes.isEmpty()){
-            listOfStartNodes.add(allNodes.get(0));
-        }
-
-        for (Node n : listOfStartNodes) {
-            ArrayList<Node> pathList = new ArrayList<Node>();
-            pathList.add(n);
-            for (Node singeOutNode : n.getOutNodes()) {
-                pathList.add(singeOutNode);
-                pathList = getDeeper(singeOutNode, pathList);
-
-                if (!pathList.isEmpty()) {
-                    listOfPaths.add(new Path(pathList.get(0), pathList.get(pathList.size() - 1), new ArrayList<>(pathList)));
-                    pathList.clear();
-                    pathList.add(n);
-                }
-            }
-        }
-        */
         return listOfPaths;
     }
 
     private static ArrayList<Path> calculatePathsHou() {
         ArrayList<Path> listOfPaths = new ArrayList<>();
-        //ArrayList<Node> allNodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
 
         ArrayList<Node> listOfStartNodes = new ArrayList<>();
         for (Node n : allNodes) {
@@ -1095,17 +899,6 @@ public class SubnetCalculator {
     }
 
     private static ArrayList<Node> getDeeper(Node n, ArrayList<Node> list) {
-
-        //warunek stopu w przyadku cyklu poprawić, przerobić
-        /// nie działa w prostym przypadku, gdy scieżka jest sama cyklem!
-        //
-        /*
-        if(list.get(0).getInNodes().contains(n))
-        {
-
-        }
-        */
-
         if (n.getOutNodes().size() > 1 || n.getInNodes().size() > 1) {
             return list;
         } else {
@@ -1115,66 +908,12 @@ public class SubnetCalculator {
                 list = getDeeper(n.getOutNodes().get(0), list);
             }
         }
-
         return list;
     }
-/*
-    private static void transitionStep(ArrayList<ArrayList<Integer>> im, int row, int column, ArrayList<ArrayList<Integer>> check) {
-        for (int i = row; i < im.get(row).size(); i++) {
-            if (check.get(row).get(i) >= 1) {
-                addNewSubnet(check);
-            } else {
-                if (im.get(row).get(i) > 0) {
-                    check.get(row).set(i, 1);
-                    placeStep(im, i, column, check);
-                }
-            }
-        }
-    }
 
-    private static void addNewSubnet(ArrayList<ArrayList<Integer>> check) {
-        SubNet sn = new SubNet();
-
-        ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        ArrayList<Place> allPlaces = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-
-        ArrayList<Transition> transitions = new ArrayList<>();
-        ArrayList<Place> places = new ArrayList<>();
-        for (int i = 0; i < check.size(); i++) {
-            for (int j = 0; j < check.get(i).size(); j++) {
-                if (check.get(i).get(j) != 0) {
-                    if (!transitions.contains(allTransitions.get(i))) {
-                        transitions.add(allTransitions.get(i));
-                    }
-                    if (!places.contains(allPlaces.get(j))) {
-                        places.add(allPlaces.get(j));
-                    }
-                }
-            }
-        }
-        sn.setSubPlaces(places);
-        sn.setSubTransitions(transitions);
-        sn.calculateArcs(places);
-        tzSubNets.add(sn);
-    }
-
-
-
-    private static void placeStep(ArrayList<ArrayList<Integer>> im, int row, int column, ArrayList<ArrayList<Integer>> check) {
-        ArrayList<Integer> columnVector = getColumn(im, column);
-        for (int i = column; i < columnVector.size(); i++) {
-            if (check.get(i).get(row) >= 1) {
-                if (check.get(i).get(row) == 2)
-                    addNewSubnet(check);
-            } else {
-                if (columnVector.get(i) > 0) {
-                    check.get(row).set(i, 1);
-                    transitionStep(im, row, i, check);
-                }
-            }
-        }
-    }
-    */
+/**
+    UNUSED METHODS
+ */
 
     private static ArrayList<Integer> getColumn(ArrayList<ArrayList<Integer>> im, int column) {
         ArrayList<Integer> newRow = new ArrayList<>();
