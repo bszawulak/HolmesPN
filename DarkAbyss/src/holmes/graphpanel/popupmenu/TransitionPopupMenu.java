@@ -2,6 +2,7 @@ package holmes.graphpanel.popupmenu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -30,48 +31,54 @@ public class TransitionPopupMenu extends NodePopupMenu {
 	public TransitionPopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
 		super(graphPanel, pne, el.getParentNode());
 		
-		this.addMenuItem("Transition ON/OFF", "offlineSmall.png", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
-					return;
-				
-				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
-				if(n instanceof Transition) {
-					if(((Transition) n).isOffline() == true)
-						((Transition) n).setOffline(false);
-					else
-						((Transition) n).setOffline(true);
-				}
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+		this.addMenuItem("Transition ON/OFF", "offlineSmall.png", e -> {
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+				return;
+
+			ArrayList<Node> listOfSelectedNodes =  new ArrayList<>();
+			for (ElementLocation el1 : getGraphPanel().getSelectionManager().getSelectedElementLocations()) {
+				if(!listOfSelectedNodes.contains(el1.getParentNode()))
+					listOfSelectedNodes.add(el1.getParentNode());
 			}
+
+			for (Node n : listOfSelectedNodes) {
+				if (n instanceof Transition) {
+					((Transition) n).setOffline(!((Transition) n).isOffline());
+				}
+			}
+
+			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 		});
 		
-		this.addMenuItem("Invisibility ON/OFF", "smallInvisibility.png", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
-					return;
-				
-				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
-				if(n instanceof Transition) {
-					if(((Transition) n).isInvisible() == true)
-						((Transition) n).setInvisibility(false);
-					else
-						((Transition) n).setInvisibility(true);
-				}
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+		this.addMenuItem("Invisibility ON/OFF", "smallInvisibility.png", e -> {
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+				return;
+
+			ArrayList<Node> listOfSelectedNodes =  new ArrayList<>();
+			for (ElementLocation el12 : getGraphPanel().getSelectionManager().getSelectedElementLocations()) {
+				if(!listOfSelectedNodes.contains(el12.getParentNode()))
+					listOfSelectedNodes.add(el12.getParentNode());
 			}
+
+			for (Node n : listOfSelectedNodes) {
+				if (n instanceof Transition) {
+					if (n.isInvisible())
+						n.setInvisibility(false);
+					else
+						n.setInvisibility(true);
+				}
+			}
+			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 		});
 		
 		
-		this.addMenuItem("Functions builder...", "functionalWindowIcon.png", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
-					return;
-				
-				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
-				if(n instanceof Transition) {
-					new HolmesFunctionsBuilder((Transition)n);  
-				}
+		this.addMenuItem("Functions builder...", "functionalWindowIcon.png", e -> {
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+				return;
+
+			Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
+			if(n instanceof Transition) {
+				new HolmesFunctionsBuilder((Transition)n);
 			}
 		});
 		
@@ -97,21 +104,19 @@ public class TransitionPopupMenu extends NodePopupMenu {
 			}
 		});
 		*/
-		this.addMenuItem("Clone this Transition into Portal", "portal.png", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
-					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-							"Operation impossible when simulator is working."
-							, "Warning") == true)
-						return;
-					
-					//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
-					getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
-					GUIManager.getDefaultGUIManager().markNetChange();
-				} else {
-					JOptionPane.showMessageDialog(null, "Option possible for one transition only.", "Too many selections", 
-							JOptionPane.INFORMATION_MESSAGE);
-				}
+		this.addMenuItem("Clone this Transition into Portal", "portal.png", e -> {
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
+				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+						"Operation impossible when simulator is working."
+						, "Warning"))
+					return;
+
+				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
+				getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
+				GUIManager.getDefaultGUIManager().markNetChange();
+			} else {
+				JOptionPane.showMessageDialog(null, "Option possible for one transition only.", "Too many selections",
+						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 	}
