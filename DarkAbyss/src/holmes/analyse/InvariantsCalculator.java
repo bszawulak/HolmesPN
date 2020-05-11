@@ -32,11 +32,11 @@ import holmes.windows.HolmesNotepad;
  */
 public class InvariantsCalculator implements Runnable {
 	private GUIManager overlord;
-	private ArrayList<Arc> arcs = new ArrayList<Arc>();
-	private ArrayList<Place> places = new ArrayList<Place>();
-	private ArrayList<Transition> transitions = new ArrayList<Transition>();
-	private ArrayList<ArrayList<Integer>> t_invariantsList = new ArrayList<ArrayList<Integer>>();
-	private ArrayList<ArrayList<Integer>> p_invariantsList = new ArrayList<ArrayList<Integer>>();
+	private ArrayList<Arc> arcs;
+	private ArrayList<Place> places;
+	private ArrayList<Transition> transitions;
+	private ArrayList<ArrayList<Integer>> t_invariantsList = new ArrayList<>();
+	private ArrayList<ArrayList<Integer>> p_invariantsList = new ArrayList<>();
 
 	private ArrayList<ArrayList<Integer>> globalIncidenceMatrix; //aktualna macierz przekształceń liniowych
 	private ArrayList<Integer> GLOBAL_INC_VECTOR;
@@ -86,7 +86,7 @@ public class InvariantsCalculator implements Runnable {
 
 	/**
 	 * Konstruktor do testów
-	 * @param transCal
+	 * @param pl,tr,ar,transCal
 	 */
 	public InvariantsCalculator(ArrayList<Place> pl, ArrayList<Transition> tr, ArrayList<Arc> ar, boolean transCal) {
 		overlord = GUIManager.getDefaultGUIManager();
@@ -107,7 +107,7 @@ public class InvariantsCalculator implements Runnable {
 	 */
 	public void generateInvariantsForTest(PetriNet project) {
 		try {
-			if(t_InvMode == true) {
+			if(t_InvMode) {
 				//PetriNet project = overlord.getWorkspace().getProject();
 				if(showInvSetsDifference) {
 					invBackupMatrix = project.getT_InvMatrix();
@@ -116,11 +116,19 @@ public class InvariantsCalculator implements Runnable {
 				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode);
 				this.calculateInvariants();
 			}
+			else
+			{
+				//PetriNet project = overlord.getWorkspace().getProject();
+				if(showInvSetsDifference) {
+					invBackupMatrix = project.getP_InvMatrix();
+				}
+
+				this.createTPIncidenceAndIdentityMatrix(false, t_InvMode);
+				this.calculateInvariants();
+			}
 		} catch (Exception e) {
 			log("Invariants generation failed.", "warning", false);
 			logInternal("Invariants generation failed.\n", true);
-		} finally {
-			//masterWindow.resetInvariantGenerator(); //odłącz obiekt
 		}
 	}
 
@@ -131,7 +139,7 @@ public class InvariantsCalculator implements Runnable {
 		try {
 			logInternal("Invariant calculations started.\n", true);
 			
-			if(t_InvMode == true) {
+			if(t_InvMode) {
 				PetriNet project = overlord.getWorkspace().getProject();
 				if(showInvSetsDifference) {
 					invBackupMatrix = project.getT_InvMatrix();

@@ -54,7 +54,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
 
     }
 
@@ -95,7 +95,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
 
     void ceateTestNetThree(){
@@ -130,7 +130,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
 
     void ceateTestNetFour(){
@@ -165,7 +165,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
     //cycles
     void ceateTestNetFive(){
@@ -203,7 +203,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
 
     void ceateTestNetSix(){
@@ -262,7 +262,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
 
     void ceateTestNetSeven(){
@@ -318,7 +318,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
 
     void ceateTestNetEight(){
@@ -374,7 +374,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
 
     void ceateTestNetNine(){
@@ -449,7 +449,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
 
     void ceateTestNetTen(){
@@ -523,7 +523,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
     //trees
     void ceateTestNetEleven(){
@@ -574,7 +574,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
 
     void ceateTestNetTwelve(){
@@ -625,7 +625,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(pl,tl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
 
     void ceateTestNetThirteen(){
@@ -675,7 +675,7 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(tl,pl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(pl,tl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(pl,tl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
 
     void ceateTestNetFourteen(){
@@ -725,7 +725,645 @@ class SubnetCalculatorTest {
         PetriNet pn = new PetriNet(nl,al);
         tc = new InvariantsCalculator(tl,pl,al,true);
         tc.generateInvariantsForTest(pn);
-        SubnetCalculator.compileTestElements(pl,tl,nl,tc.getInvariants(true));
+        SubnetCalculator.compileTestElements(pl,tl,nl,tc.getInvariants(true),tc.getInvariants(false));
+    }
+
+    void ceateTestNetSMCOne(){
+        ArrayList<Place> tl = new ArrayList<>();
+        Place t1 = new Place(0,0,new Point(1,1));
+        t1.setTokensNumber(1);
+        tl.add(t1);
+        Place t2 = new Place(1,0,new Point(1,2));
+        t2.setTokensNumber(1);
+        tl.add(t2);
+        Place t3 = new Place(2,0,new Point(1,3));
+        tl.add(t3);
+
+        Place t4 = new Place(3,0,new Point(1,4));
+        tl.add(t4);
+        Place t5 = new Place(4,0,new Point(1,5));
+        tl.add(t5);
+        Place t6 = new Place(5,0,new Point(1,6));
+        t6.setTokensNumber(1);
+        tl.add(t6);
+
+        ArrayList<Transition> pl = new ArrayList<>();
+        Transition p1 = new Transition(99,0,new Point(1,1));
+        pl.add(p1);
+        Transition p2 = new Transition(98,0,new Point(1,1));
+        pl.add(p2);
+        Transition p3 = new Transition(97,0,new Point(1,1));
+        pl.add(p3);
+
+
+        ArrayList<Node> nl = new ArrayList<>();
+        nl.add(p1);
+        nl.add(p2);
+        nl.add(p3);
+        nl.add(t2);
+        nl.add(t1);
+        nl.add(t3);
+        nl.add(t4);
+        nl.add(t5);
+        nl.add(t6);
+
+        Arc a1 = new Arc(50,p2.getElementLocations().get(0),t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(51,t1.getElementLocations().get(0),p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(50,p1.getElementLocations().get(0),t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(51,t4.getElementLocations().get(0),p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a5 = new Arc(55,p2.getElementLocations().get(0),t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a6 = new Arc(56,t5.getElementLocations().get(0),p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(57,p3.getElementLocations().get(0),t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(58,t2.getElementLocations().get(0),p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a9 = new Arc(59,p3.getElementLocations().get(0),t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(60,t6.getElementLocations().get(0),p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a11 = new Arc(61,p1.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a12 = new Arc(62,t3.getElementLocations().get(0),p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        ArrayList<Arc> al = new ArrayList<>();
+        al.add(a1);
+        al.add(a2);
+        al.add(a3);
+        al.add(a4);
+        al.add(a5);
+        al.add(a6);
+        al.add(a7);
+        al.add(a8);
+        al.add(a9);
+        al.add(a10);
+        al.add(a11);
+        al.add(a12);
+
+        PetriNet pn = new PetriNet(nl,al);
+        tc = new InvariantsCalculator(tl,pl,al,false);
+        tc.generateInvariantsForTest(pn);
+        SubnetCalculator.compileTestElements(pl,tl,nl,tc.getInvariants(true),tc.getInvariants(false));
+    }
+
+    void ceateTestNetSMCTwo(){
+        ArrayList<Transition> tl = new ArrayList<>();
+        Transition t1 = new Transition(0,0,new Point(1,1));
+        tl.add(t1);
+        Transition t2 = new Transition(1,0,new Point(1,2));
+        tl.add(t2);
+        Transition t3 = new Transition(2,0,new Point(1,3));
+        tl.add(t3);
+        Transition t4 = new Transition(3,0,new Point(1,1));
+        tl.add(t4);
+        Transition t5 = new Transition(4,0,new Point(1,2));
+        tl.add(t5);
+        Transition t6 = new Transition(5,0,new Point(1,3));
+        tl.add(t6);
+        Transition t7 = new Transition(6,0,new Point(1,1));
+        tl.add(t7);
+        Transition t8 = new Transition(7,0,new Point(1,2));
+        tl.add(t8);
+        Transition t9 = new Transition(8,0,new Point(1,3));
+        tl.add(t9);
+        Transition t10 = new Transition(9,0,new Point(1,1));
+        tl.add(t10);
+        Transition t11 = new Transition(10,0,new Point(1,1));
+        tl.add(t11);
+        Transition t12 = new Transition(11,0,new Point(1,2));
+        tl.add(t12);
+        Transition t13 = new Transition(12,0,new Point(1,3));
+        tl.add(t13);
+        Transition t14 = new Transition(13,0,new Point(1,2));
+        tl.add(t14);
+        Transition t15 = new Transition(14,0,new Point(1,3));
+        tl.add(t15);
+
+        ArrayList<Place> pl = new ArrayList<>();
+        Place p1 = new Place(99,0,new Point(1,1));
+        p1.setTokensNumber(1);
+        pl.add(p1);
+        Place p2 = new Place(98,0,new Point(1,1));
+        pl.add(p2);
+        Place p3 = new Place(97,0,new Point(1,1));
+        pl.add(p3);
+        Place p4 = new Place(96,0,new Point(1,1));
+        pl.add(p4);
+
+        Place p5 = new Place(79,0,new Point(1,1));
+        pl.add(p5);
+        Place p6 = new Place(78,0,new Point(1,1));
+        pl.add(p6);
+        Place p7 = new Place(77,0,new Point(1,1));
+        pl.add(p7);
+        Place p8 = new Place(76,0,new Point(1,1));
+        pl.add(p8);
+
+        Place p9 = new Place(69,0,new Point(1,1));
+        pl.add(p9);
+        Place p10 = new Place(68,0,new Point(1,1));
+        pl.add(p10);
+        Place p11 = new Place(67,0,new Point(1,1));
+        pl.add(p11);
+        Place p12 = new Place(66,0,new Point(1,1));
+        pl.add(p12);
+
+        Place p13 = new Place(59,0,new Point(1,1));
+        pl.add(p13);
+        Place p14 = new Place(58,0,new Point(1,1));
+        pl.add(p14);
+        Place p15 = new Place(57,0,new Point(1,1));
+        pl.add(p15);
+        Place p16 = new Place(56,0,new Point(1,1));
+        pl.add(p16);
+
+
+        ArrayList<Node> nl = new ArrayList<>();
+        nl.add(p1);
+        nl.add(p2);
+        nl.add(p3);
+        nl.add(p4);
+        nl.add(p5);
+        nl.add(p6);
+        nl.add(p7);
+        nl.add(p8);
+        nl.add(p9);
+        nl.add(p10);
+        nl.add(p11);
+        nl.add(p12);
+        nl.add(p13);
+        nl.add(p14);
+        nl.add(p15);
+        nl.add(p16);
+
+        nl.add(t1);
+        nl.add(t2);
+        nl.add(t3);
+        nl.add(t4);
+        nl.add(t5);
+        nl.add(t6);
+        nl.add(t7);
+        nl.add(t8);
+        nl.add(t9);
+        nl.add(t10);
+        nl.add(t11);
+        nl.add(t12);
+        nl.add(t13);
+        nl.add(t14);
+        nl.add(t15);
+
+        Arc a29 = new Arc(50,p1.getElementLocations().get(0),t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a30 = new Arc(51,t1.getElementLocations().get(0),p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a31 = new Arc(52,p2.getElementLocations().get(0),t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a32 = new Arc(50,t2.getElementLocations().get(0),p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a33 = new Arc(51,p4.getElementLocations().get(0),t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a34 = new Arc(52,t6.getElementLocations().get(0),p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a1 = new Arc(50,p5.getElementLocations().get(0),t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(51,t7.getElementLocations().get(0),p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(52,p6.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(10,t3.getElementLocations().get(0),p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(11,p3.getElementLocations().get(0),t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a6 = new Arc(12,t4.getElementLocations().get(0),p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(21,p3.getElementLocations().get(0),t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(22,t5.getElementLocations().get(0),p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a9 = new Arc(32,t2.getElementLocations().get(0),p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(32,p7.getElementLocations().get(0),t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a11 = new Arc(30,t8.getElementLocations().get(0),p8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a12 = new Arc(41,p8.getElementLocations().get(0),t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a13 = new Arc(42,t9.getElementLocations().get(0),p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a14 = new Arc(71,p9.getElementLocations().get(0),t10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a15 = new Arc(72,t10.getElementLocations().get(0),p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a16 = new Arc(72,p10.getElementLocations().get(0),t11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a17 = new Arc(80,t11.getElementLocations().get(0),p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a18 = new Arc(81,p11.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a19 = new Arc(82,t2.getElementLocations().get(0),p12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a20 = new Arc(92,p12.getElementLocations().get(0),t12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a21 = new Arc(90,t12.getElementLocations().get(0),p13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a22 = new Arc(91,p13.getElementLocations().get(0),t13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a23 = new Arc(112,t13.getElementLocations().get(0),p14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a24 = new Arc(151,p14.getElementLocations().get(0),t14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a25 = new Arc(152,t14.getElementLocations().get(0),p15.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a26 = new Arc(252,p15.getElementLocations().get(0),t15.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a27 = new Arc(250,t15.getElementLocations().get(0),p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a28 = new Arc(251,p16.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+
+        ArrayList<Arc> al = new ArrayList<>();
+        al.add(a1);
+        al.add(a2);
+        al.add(a3);
+        al.add(a4);
+        al.add(a5);
+        al.add(a6);
+        al.add(a7);
+        al.add(a8);
+        al.add(a9);
+        al.add(a10);
+        al.add(a11);
+        al.add(a12);
+        al.add(a13);
+        al.add(a14);
+        al.add(a15);
+        al.add(a16);
+        al.add(a17);
+        al.add(a18);
+        al.add(a19);
+        al.add(a20);
+        al.add(a21);
+        al.add(a22);
+        al.add(a23);
+        al.add(a24);
+        al.add(a25);
+        al.add(a26);
+        al.add(a27);
+        al.add(a28);
+        al.add(a29);
+        al.add(a30);
+        al.add(a31);
+        al.add(a32);
+        al.add(a33);
+        al.add(a34);
+
+        PetriNet pn = new PetriNet(nl,al);
+        tc = new InvariantsCalculator(pl,tl,al,false);
+        tc.generateInvariantsForTest(pn);
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
+    }
+
+    void ceateTestNetSMCThree(){
+        ArrayList<Transition> tl = new ArrayList<>();
+        Transition t1 = new Transition(0,0,new Point(1,1));
+        tl.add(t1);
+        Transition t2 = new Transition(1,0,new Point(1,2));
+        tl.add(t2);
+        Transition t3 = new Transition(2,0,new Point(1,3));
+        tl.add(t3);
+        Transition t4 = new Transition(3,0,new Point(1,1));
+        tl.add(t4);
+        Transition t5 = new Transition(4,0,new Point(1,2));
+        tl.add(t5);
+        Transition t6 = new Transition(5,0,new Point(1,3));
+        tl.add(t6);
+        Transition t7 = new Transition(6,0,new Point(1,1));
+        tl.add(t7);
+        Transition t8 = new Transition(7,0,new Point(1,2));
+        tl.add(t8);
+        Transition t9 = new Transition(8,0,new Point(1,3));
+        tl.add(t9);
+        Transition t10 = new Transition(9,0,new Point(1,1));
+        tl.add(t10);
+        Transition t11 = new Transition(10,0,new Point(1,1));
+        tl.add(t11);
+        Transition t12 = new Transition(11,0,new Point(1,2));
+        tl.add(t12);
+        Transition t13 = new Transition(12,0,new Point(1,3));
+        tl.add(t13);
+        Transition t14 = new Transition(13,0,new Point(1,2));
+        tl.add(t14);
+        Transition t15 = new Transition(14,0,new Point(1,3));
+        tl.add(t15);
+
+        ArrayList<Place> pl = new ArrayList<>();
+        Place p1 = new Place(99,0,new Point(1,1));
+        pl.add(p1);
+        Place p2 = new Place(98,0,new Point(1,1));
+        pl.add(p2);
+        Place p3 = new Place(97,0,new Point(1,1));
+        pl.add(p3);
+        Place p4 = new Place(96,0,new Point(1,1));
+        pl.add(p4);
+
+        Place p5 = new Place(79,0,new Point(1,1));
+        pl.add(p5);
+        Place p6 = new Place(78,0,new Point(1,1));
+        pl.add(p6);
+        Place p7 = new Place(77,0,new Point(1,1));
+        p7.setTokensNumber(1);
+        pl.add(p7);
+        Place p8 = new Place(76,0,new Point(1,1));
+        pl.add(p8);
+
+        Place p9 = new Place(69,0,new Point(1,1));
+        pl.add(p9);
+        Place p10 = new Place(68,0,new Point(1,1));
+        pl.add(p10);
+        Place p11 = new Place(67,0,new Point(1,1));
+        pl.add(p11);
+        Place p12 = new Place(66,0,new Point(1,1));
+        pl.add(p12);
+
+        Place p13 = new Place(59,0,new Point(1,1));
+        pl.add(p13);
+        Place p14 = new Place(58,0,new Point(1,1));
+        pl.add(p14);
+        Place p15 = new Place(57,0,new Point(1,1));
+        pl.add(p15);
+        Place p16 = new Place(56,0,new Point(1,1));
+        pl.add(p16);
+
+
+        ArrayList<Node> nl = new ArrayList<>();
+        nl.add(p1);
+        nl.add(p2);
+        nl.add(p3);
+        nl.add(p4);
+        nl.add(p5);
+        nl.add(p6);
+        nl.add(p7);
+        nl.add(p8);
+        nl.add(p9);
+        nl.add(p10);
+        nl.add(p11);
+        nl.add(p12);
+        nl.add(p13);
+        nl.add(p14);
+        nl.add(p15);
+        nl.add(p16);
+
+        nl.add(t1);
+        nl.add(t2);
+        nl.add(t3);
+        nl.add(t4);
+        nl.add(t5);
+        nl.add(t6);
+        nl.add(t7);
+        nl.add(t8);
+        nl.add(t9);
+        nl.add(t10);
+        nl.add(t11);
+        nl.add(t12);
+        nl.add(t13);
+        nl.add(t14);
+        nl.add(t15);
+
+        Arc a29 = new Arc(50,p1.getElementLocations().get(0),t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a30 = new Arc(51,t1.getElementLocations().get(0),p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a31 = new Arc(52,p2.getElementLocations().get(0),t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a32 = new Arc(50,t2.getElementLocations().get(0),p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a33 = new Arc(51,p4.getElementLocations().get(0),t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a34 = new Arc(52,t6.getElementLocations().get(0),p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a1 = new Arc(50,p5.getElementLocations().get(0),t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(51,t7.getElementLocations().get(0),p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(52,p6.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(10,t3.getElementLocations().get(0),p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(11,p3.getElementLocations().get(0),t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a6 = new Arc(12,t4.getElementLocations().get(0),p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(21,p3.getElementLocations().get(0),t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(22,t5.getElementLocations().get(0),p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a9 = new Arc(32,t2.getElementLocations().get(0),p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(32,p7.getElementLocations().get(0),t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a11 = new Arc(30,t8.getElementLocations().get(0),p8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a12 = new Arc(41,p8.getElementLocations().get(0),t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a13 = new Arc(42,t9.getElementLocations().get(0),p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a14 = new Arc(71,p9.getElementLocations().get(0),t10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a15 = new Arc(72,t10.getElementLocations().get(0),p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a16 = new Arc(72,p10.getElementLocations().get(0),t11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a17 = new Arc(80,t11.getElementLocations().get(0),p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a18 = new Arc(81,p11.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a19 = new Arc(82,t2.getElementLocations().get(0),p12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a20 = new Arc(92,p12.getElementLocations().get(0),t12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a21 = new Arc(90,t12.getElementLocations().get(0),p13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a22 = new Arc(91,p13.getElementLocations().get(0),t13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a23 = new Arc(112,t13.getElementLocations().get(0),p14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a24 = new Arc(151,p14.getElementLocations().get(0),t14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a25 = new Arc(152,t14.getElementLocations().get(0),p15.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a26 = new Arc(252,p15.getElementLocations().get(0),t15.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a27 = new Arc(250,t15.getElementLocations().get(0),p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a28 = new Arc(251,p16.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+
+        ArrayList<Arc> al = new ArrayList<>();
+        al.add(a1);
+        al.add(a2);
+        al.add(a3);
+        al.add(a4);
+        al.add(a5);
+        al.add(a6);
+        al.add(a7);
+        al.add(a8);
+        al.add(a9);
+        al.add(a10);
+        al.add(a11);
+        al.add(a12);
+        al.add(a13);
+        al.add(a14);
+        al.add(a15);
+        al.add(a16);
+        al.add(a17);
+        al.add(a18);
+        al.add(a19);
+        al.add(a20);
+        al.add(a21);
+        al.add(a22);
+        al.add(a23);
+        al.add(a24);
+        al.add(a25);
+        al.add(a26);
+        al.add(a27);
+        al.add(a28);
+        al.add(a29);
+        al.add(a30);
+        al.add(a31);
+        al.add(a32);
+        al.add(a33);
+        al.add(a34);
+
+        PetriNet pn = new PetriNet(nl,al);
+        tc = new InvariantsCalculator(pl,tl,al,false);
+        tc.generateInvariantsForTest(pn);
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
+    }
+
+    void ceateTestNetSMCFour(){
+        ArrayList<Transition> tl = new ArrayList<>();
+        Transition t1 = new Transition(0,0,new Point(1,1));
+        tl.add(t1);
+        Transition t2 = new Transition(1,0,new Point(1,2));
+        tl.add(t2);
+        Transition t3 = new Transition(2,0,new Point(1,3));
+        tl.add(t3);
+        Transition t4 = new Transition(3,0,new Point(1,1));
+        tl.add(t4);
+        Transition t5 = new Transition(4,0,new Point(1,2));
+        tl.add(t5);
+        Transition t6 = new Transition(5,0,new Point(1,3));
+        tl.add(t6);
+        Transition t7 = new Transition(6,0,new Point(1,1));
+        tl.add(t7);
+        Transition t8 = new Transition(7,0,new Point(1,2));
+        tl.add(t8);
+        Transition t9 = new Transition(8,0,new Point(1,3));
+        tl.add(t9);
+        Transition t10 = new Transition(9,0,new Point(1,1));
+        tl.add(t10);
+        Transition t11 = new Transition(10,0,new Point(1,1));
+        tl.add(t11);
+        Transition t12 = new Transition(11,0,new Point(1,2));
+        tl.add(t12);
+        Transition t13 = new Transition(12,0,new Point(1,3));
+        tl.add(t13);
+        Transition t14 = new Transition(13,0,new Point(1,2));
+        tl.add(t14);
+        Transition t15 = new Transition(14,0,new Point(1,3));
+        tl.add(t15);
+
+        ArrayList<Place> pl = new ArrayList<>();
+        Place p1 = new Place(99,0,new Point(1,1));
+        pl.add(p1);
+        Place p2 = new Place(98,0,new Point(1,1));
+        pl.add(p2);
+        Place p3 = new Place(97,0,new Point(1,1));
+        pl.add(p3);
+        Place p4 = new Place(96,0,new Point(1,1));
+        pl.add(p4);
+
+        Place p5 = new Place(79,0,new Point(1,1));
+        pl.add(p5);
+        Place p6 = new Place(78,0,new Point(1,1));
+        pl.add(p6);
+        Place p7 = new Place(77,0,new Point(1,1));
+        pl.add(p7);
+        Place p8 = new Place(76,0,new Point(1,1));
+        pl.add(p8);
+
+        Place p9 = new Place(69,0,new Point(1,1));
+        pl.add(p9);
+        Place p10 = new Place(68,0,new Point(1,1));
+        pl.add(p10);
+        Place p11 = new Place(67,0,new Point(1,1));
+        pl.add(p11);
+        Place p12 = new Place(66,0,new Point(1,1));
+        pl.add(p12);
+
+        Place p13 = new Place(59,0,new Point(1,1));
+        pl.add(p13);
+        Place p14 = new Place(58,0,new Point(1,1));
+        pl.add(p14);
+        Place p15 = new Place(57,0,new Point(1,1));
+        pl.add(p15);
+        Place p16 = new Place(56,0,new Point(1,1));
+        pl.add(p16);
+
+
+        ArrayList<Node> nl = new ArrayList<>();
+        nl.add(p1);
+        nl.add(p2);
+        nl.add(p3);
+        nl.add(p4);
+        nl.add(p5);
+        nl.add(p6);
+        nl.add(p7);
+        nl.add(p8);
+        nl.add(p9);
+        nl.add(p10);
+        nl.add(p11);
+        nl.add(p12);
+        nl.add(p13);
+        nl.add(p14);
+        nl.add(p15);
+        nl.add(p16);
+
+        nl.add(t1);
+        nl.add(t2);
+        nl.add(t3);
+        nl.add(t4);
+        nl.add(t5);
+        nl.add(t6);
+        nl.add(t7);
+        nl.add(t8);
+        nl.add(t9);
+        nl.add(t10);
+        nl.add(t11);
+        nl.add(t12);
+        nl.add(t13);
+        nl.add(t14);
+        nl.add(t15);
+
+        Arc a29 = new Arc(50,p1.getElementLocations().get(0),t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a30 = new Arc(51,t1.getElementLocations().get(0),p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a31 = new Arc(52,p2.getElementLocations().get(0),t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a32 = new Arc(50,t2.getElementLocations().get(0),p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a33 = new Arc(51,p4.getElementLocations().get(0),t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a34 = new Arc(52,t6.getElementLocations().get(0),p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a1 = new Arc(50,p5.getElementLocations().get(0),t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(51,t7.getElementLocations().get(0),p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(52,p6.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(10,t3.getElementLocations().get(0),p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(11,p3.getElementLocations().get(0),t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a6 = new Arc(12,t4.getElementLocations().get(0),p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(21,p3.getElementLocations().get(0),t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(22,t5.getElementLocations().get(0),p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a9 = new Arc(32,t2.getElementLocations().get(0),p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(32,p7.getElementLocations().get(0),t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a11 = new Arc(30,t8.getElementLocations().get(0),p8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a12 = new Arc(41,p8.getElementLocations().get(0),t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a13 = new Arc(42,t9.getElementLocations().get(0),p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a14 = new Arc(71,p9.getElementLocations().get(0),t10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a15 = new Arc(72,t10.getElementLocations().get(0),p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a16 = new Arc(72,p10.getElementLocations().get(0),t11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a17 = new Arc(80,t11.getElementLocations().get(0),p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a18 = new Arc(81,p11.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a19 = new Arc(82,t2.getElementLocations().get(0),p12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a20 = new Arc(92,p12.getElementLocations().get(0),t12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a21 = new Arc(90,t12.getElementLocations().get(0),p13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a22 = new Arc(91,p13.getElementLocations().get(0),t13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a23 = new Arc(112,t13.getElementLocations().get(0),p14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a24 = new Arc(151,p14.getElementLocations().get(0),t14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a25 = new Arc(152,t14.getElementLocations().get(0),p15.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a26 = new Arc(252,p15.getElementLocations().get(0),t15.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a27 = new Arc(250,t15.getElementLocations().get(0),p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a28 = new Arc(251,p16.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+
+        ArrayList<Arc> al = new ArrayList<>();
+        al.add(a1);
+        al.add(a2);
+        al.add(a3);
+        al.add(a4);
+        al.add(a5);
+        al.add(a6);
+        al.add(a7);
+        al.add(a8);
+        al.add(a9);
+        al.add(a10);
+        al.add(a11);
+        al.add(a12);
+        al.add(a13);
+        al.add(a14);
+        al.add(a15);
+        al.add(a16);
+        al.add(a17);
+        al.add(a18);
+        al.add(a19);
+        al.add(a20);
+        al.add(a21);
+        al.add(a22);
+        al.add(a23);
+        al.add(a24);
+        al.add(a25);
+        al.add(a26);
+        al.add(a27);
+        al.add(a28);
+        al.add(a29);
+        al.add(a30);
+        al.add(a31);
+        al.add(a32);
+        al.add(a33);
+        al.add(a34);
+
+        PetriNet pn = new PetriNet(nl,al);
+        tc = new InvariantsCalculator(pl,tl,al,false);
+        tc.generateInvariantsForTest(pn);
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
     }
 
     @Test
@@ -876,6 +1514,7 @@ class SubnetCalculatorTest {
 
     @Test
     void generateTnets() {
+        /*
         ceateTestNetOne();
         SubnetCalculator.generateTnets();
         assertEquals(1,SubnetCalculator.tnetSubNets.size());
@@ -945,6 +1584,8 @@ class SubnetCalculatorTest {
         SubnetCalculator.generateTnets();
         assertEquals(1,SubnetCalculator.tnetSubNets.size());
         SubnetCalculator.cleanSubnets();
+        */
+
     }
 
     @Test
@@ -1485,5 +2126,29 @@ class SubnetCalculatorTest {
         SubnetCalculator.generateOotsuki();
         assertEquals(3,SubnetCalculator.ootsukiSubNets.size());
         SubnetCalculator.cleanSubnets();
+    }
+
+    @Test
+    void generateSMC() {
+        ceateTestNetSMCOne();
+        SubnetCalculator.generateSMC();
+        assertEquals(4, SubnetCalculator.smcSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetSMCTwo();
+        SubnetCalculator.generateSMC();
+        assertEquals(3, SubnetCalculator.smcSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetSMCThree();
+        SubnetCalculator.generateSMC();
+        assertEquals(1, SubnetCalculator.smcSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetSMCFour();
+        SubnetCalculator.generateSMC();
+        assertEquals(0, SubnetCalculator.smcSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
     }
 }

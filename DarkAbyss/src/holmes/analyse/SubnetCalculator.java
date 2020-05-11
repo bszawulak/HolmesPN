@@ -51,10 +51,11 @@ public class SubnetCalculator {
         usedNodes = new ArrayList<>();
     }
 
-    public static void compileTestElements(ArrayList<Transition> at, ArrayList<Place> ap, ArrayList<Node> an, ArrayList<ArrayList<Integer>> ati) {
+    public static void compileTestElements(ArrayList<Transition> at, ArrayList<Place> ap, ArrayList<Node> an, ArrayList<ArrayList<Integer>> ati, ArrayList<ArrayList<Integer>> api) {
         allTransitions = at;
         allPlaces = ap;
         invMatrixT = ati;
+        invMatrixP = api;
         allNodes = an;
         usedNodes = new ArrayList<>();
     }
