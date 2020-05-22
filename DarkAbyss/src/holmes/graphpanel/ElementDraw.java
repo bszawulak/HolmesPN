@@ -285,9 +285,16 @@ public final class ElementDraw {
 						}
 					}
 				}
-				
-				
-				
+
+				//RAMKA dodać wyłączenie
+				/*
+				if(trans.borderFrame){
+					g.drawRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
+					g.drawRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-4, nodeBounds.height-4);
+					g.drawRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width-6, nodeBounds.height-6);
+				}
+				*/
+
 				// -------- do tego miejsca wspólne dla Transition i TimeTransition --------
 				
 				//TIME TRANSITION

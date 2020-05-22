@@ -66,6 +66,7 @@ public class Transition extends Node {
     public int qSimFillValue = 0; //poziom wypełnienia
     public double qSimFired = 0; //ile razy uruchomiona
     public String qSimText = ""; //dodatkowy tekst
+    public boolean borderFrame = false;
 
     //opcje czasowe:
     private double TPN_eft = 0; //TPN
@@ -328,6 +329,16 @@ public class Transition extends Node {
         this.transNumericalValue = transNumericalValue;
         this.showTransitionAddText = showText;
         this.transAdditionalText = text;
+    }
+
+    public void setFrame(boolean is){
+        this.borderFrame = is;
+        /*
+        if(borderFrame)
+            this.borderFrame = false;
+        else
+            this.borderFrame = true;
+            */
     }
 
     /**
@@ -593,6 +604,8 @@ public class Transition extends Node {
             }
         }
     }
+
+
 
     /**
      * Metoda pozwala zwolnić wszystkie zarezerwowane tokeny we wszystkich

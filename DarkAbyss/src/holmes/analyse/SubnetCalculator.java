@@ -11,7 +11,7 @@ import java.util.function.ToDoubleBiFunction;
  * Klasa odpowiedzialna za dekompozycję PN do wybranych typów podsieci
  */
 public class SubnetCalculator {
-    private enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, SMC}
+    private enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, SMC, MCT, TINV, PINV}
 
     public static ArrayList<SubNet> functionalSubNets = new ArrayList<>();
     public static ArrayList<SubNet> snetSubNets = new ArrayList<>();
@@ -24,6 +24,9 @@ public class SubnetCalculator {
     public static ArrayList<SubNet> cycleSubNets = new ArrayList<>();
     public static ArrayList<SubNet> ootsukiSubNets = new ArrayList<>();
     public static ArrayList<SubNet> smcSubNets = new ArrayList<>();
+    public static ArrayList<SubNet> mctSubNets = new ArrayList<>();
+    public static ArrayList<SubNet> tinvSubNets = new ArrayList<>();
+    public static ArrayList<SubNet> pinvSubNets = new ArrayList<>();
     public static ArrayList<Path> paths = new ArrayList<>();
 
     private static ArrayList<ArrayList<Path>> houResultList = new ArrayList<>();
@@ -75,23 +78,21 @@ public class SubnetCalculator {
         }
     }
 
-    private static ArrayList<Transition> findFunctionalTransition(ArrayList<Transition>temporaryList)
-    {
+    private static ArrayList<Transition> findFunctionalTransition(ArrayList<Transition> temporaryList) {
         boolean found = false;
         for (Transition transition : allTransitions) {
             ArrayList<Transition> listToAdd = new ArrayList<>();
             if (chceckParalellInputOutPut(transition, temporaryList)) {
                 if (!listToAdd.contains(transition)) {
                     listToAdd.add(transition);
-                    found=true;
+                    found = true;
                 }
             }
             temporaryList.addAll(listToAdd);
         }
 
         allTransitions.removeAll(temporaryList);
-        if(found)
-        {
+        if (found) {
             temporaryList = findFunctionalTransition(temporaryList);
         }
         return temporaryList;
@@ -182,6 +183,8 @@ public class SubnetCalculator {
         ootsukiResultList = new ArrayList<>();
         ootsukiSubNets = new ArrayList<>();
         smcSubNets = new ArrayList<>();
+        tinvSubNets = new ArrayList<>();
+        pinvSubNets = new ArrayList<>();
     }
 
     public static void generateSnets() {
@@ -272,6 +275,57 @@ public class SubnetCalculator {
 
     public static void generateTnets() {
         //TODO  unifikacja z ADT
+    }
+
+    public static void generateMCT() {
+        ArrayList<ArrayList<Transition>> mctsets = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTMatrix();
+        if(mctsets!=null && !mctsets.isEmpty()) {
+            for (ArrayList<Transition> mct : mctsets) {
+                mctSubNets.add(new SubNet(SubNetType.MCT, mct, null, null, null, null));
+            }
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    public static void generateTInv() {
+        if (invMatrixT != null) {
+            if (!invMatrixT.isEmpty()) {
+                for (ArrayList<Integer> inv : invMatrixT) {
+                    ArrayList<Transition> subTransitions = new ArrayList<>();
+                    for (int i = 0; i < inv.size(); i++) {
+                        if (inv.get(i) > 0)
+                            subTransitions.add(allTransitions.get(i));
+                    }
+                    tinvSubNets.add(new SubNet(SubNetType.TINV, subTransitions, null, null, null, null));
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    public static void generatePInv() {
+        if (invMatrixT != null) {
+            if (!invMatrixT.isEmpty()) {
+                for (ArrayList<Integer> inv : invMatrixP) {
+                    ArrayList<Place> subPlaces = new ArrayList<>();
+                    for (int i = 0; i < inv.size(); i++) {
+                        if (inv.get(i) > 0)
+                            subPlaces.add(allPlaces.get(i));
+                    }
+                    pinvSubNets.add(new SubNet(SubNetType.PINV, null, subPlaces, null, null, null));
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     public static void generateADT() {
@@ -494,7 +548,7 @@ public class SubnetCalculator {
         }
 
         tzResultList = temp;
-        if(!isOotsuki)
+        if (!isOotsuki)
             tzResultList.clear();
 
         if (!cycleSubNets.isEmpty()) {
@@ -642,33 +696,29 @@ public class SubnetCalculator {
         ArrayList<ArrayList<Path>> allFiringSeq = new ArrayList<>(ootsukiResultList);
         ArrayList<Path> fs = new ArrayList<>();
 
-        while(!allFiringSeq.isEmpty())
-        {
+        while (!allFiringSeq.isEmpty()) {
             //weź pierwszy element
             ArrayList<Path> root = allFiringSeq.get(0);
             allFiringSeq.remove(0);
             boolean repeat = true;
 
             //pętla tworząca strukture
-            while (repeat)
-            {
+            while (repeat) {
                 repeat = false;
                 ArrayList<ArrayList<Path>> groupsToAdd = new ArrayList<>();
-                for(Path path : root)
-                {
+                for (Path path : root) {
                     boolean isConnected = false;
 
-                    for (ArrayList<Path> group : allFiringSeq ) {
-                        isConnected=checkIfContains(group,path);
-                        if(isConnected)
+                    for (ArrayList<Path> group : allFiringSeq) {
+                        isConnected = checkIfContains(group, path);
+                        if (isConnected)
                             groupsToAdd.add(group);
                     }
                 }
 
-                if(!groupsToAdd.isEmpty())
-                {
-                    repeat=true;
-                    for(ArrayList<Path> list :groupsToAdd) {
+                if (!groupsToAdd.isEmpty()) {
+                    repeat = true;
+                    for (ArrayList<Path> list : groupsToAdd) {
                         root.addAll(list);
                         allFiringSeq.remove(list);
                     }
@@ -680,20 +730,20 @@ public class SubnetCalculator {
         }
     }
 
-    public static void generateSMC(){
+    public static void generateSMC() {
         //dla každego inwariantu
-        for (ArrayList<Integer> inv: invMatrixP) {
+        for (ArrayList<Integer> inv : invMatrixP) {
             int numberOfTokensInInv = 0;
             ArrayList<Place> invSupp = new ArrayList<Place>();
             //dla každego miejsca
-            for (int i = 0 ; i<inv.size() ; i++) {
-                if(inv.get(i)!=0) {
+            for (int i = 0; i < inv.size(); i++) {
+                if (inv.get(i) != 0) {
                     numberOfTokensInInv += allPlaces.get(i).getTokensNumber();
                     invSupp.add(allPlaces.get(i));
                 }
             }
 
-            if(numberOfTokensInInv==1){
+            if (numberOfTokensInInv == 1) {
                 smcSubNets.add(new SubNet(SubNetType.SMC, null, invSupp, null, null, null));
             }
         }
@@ -804,7 +854,7 @@ public class SubnetCalculator {
         ArrayList<Path> possible = new ArrayList<>();
         for (Path p : list) {
             if (p.startNode == end)
-                if(!p.isCycle)
+                if (!p.isCycle)
                     possible.add(p);
         }
         return possible;
@@ -912,9 +962,9 @@ public class SubnetCalculator {
         return list;
     }
 
-/**
-    UNUSED METHODS
- */
+    /**
+     * UNUSED METHODS
+     */
 
     private static ArrayList<Integer> getColumn(ArrayList<ArrayList<Integer>> im, int column) {
         ArrayList<Integer> newRow = new ArrayList<>();
@@ -1011,9 +1061,18 @@ public class SubnetCalculator {
                     createPathBasedSubNet(subPath);
                     break;
                 case OOSTUKI:
-                    createPathBasedSubNet(subPath);
+                    createPathOotsukiBasedSubNet(subPath);
                     break;
                 case SMC:
+                    createPlaceBasedSubNet(subPlaces);
+                    break;
+                case MCT:
+                    createTransirionBasedSubNet(subTransitions);
+                    break;
+                case TINV:
+                    createTransirionBasedSubNet(subTransitions);
+                    break;
+                case PINV:
                     createPlaceBasedSubNet(subPlaces);
                     break;
             }
@@ -1035,7 +1094,7 @@ public class SubnetCalculator {
                                 subPlaces.add(p);
                 }
             }
-            calculateInternalArcs(subPlaces, subTransitions);
+            calculateInternalArcs(subPlaces, subTransitions, pathList);
         }
 
         private void calculateArcs(ArrayList<Place> subPlaces) {
@@ -1051,8 +1110,43 @@ public class SubnetCalculator {
             this.subArcs = listOfAllArcs;
         }
 
-        private void calculateInternalArcs(ArrayList<Place> subPlaces, ArrayList<Transition> subTransitions) {
+        private void createPathOotsukiBasedSubNet(ArrayList<Path> pathList) {
+
+            ArrayList<Place> localSubPlaces = new ArrayList<>();
+            for (Path path : pathList
+            ) {
+                for (Node node : path.path) {
+                    for (Place p : allPlaces)
+                        if (p.getID() == node.getID())
+                            if (!localSubPlaces.contains(p))
+                                localSubPlaces.add(p);
+                }
+            }
+
+            createPlaceBasedSubNet(localSubPlaces);
+        }
+
+        private void calculateInternalArcs(ArrayList<Place> subPlaces, ArrayList<Transition> subTransitions, ArrayList<Path> pathList) {
             ArrayList<Arc> listOfAllArcs = new ArrayList<>();
+            for (Path path : pathList) {
+                for (int i = 0; i < path.path.size() - 1; i++) {
+                    Node startNode = path.path.get(i);
+                    Node endNode = path.path.get(i + 1);
+                    for (Arc arc : startNode.getOutArcs()) {
+                        if (arc.getEndNode().getID() == endNode.getID())
+                            listOfAllArcs.add(arc);
+                    }
+                }
+
+                for (Arc arc : path.endNode.getOutArcs()) {
+                    if (arc.getEndNode().getID() == path.startNode.getID())
+                        listOfAllArcs.add(arc);
+                }
+            }
+
+
+
+            /* OLD VAIRANT
             for (Place place : subPlaces) {
                 for (Transition transition : subTransitions) {
                     for (Arc arc : place.getInArcs())
@@ -1065,6 +1159,7 @@ public class SubnetCalculator {
                                 listOfAllArcs.add(arc);
                 }
             }
+            */
             this.subArcs = listOfAllArcs;
         }
 

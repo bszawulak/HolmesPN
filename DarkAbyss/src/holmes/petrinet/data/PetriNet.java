@@ -1525,6 +1525,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		resetPlaceGraphics();
 		resetArcGraphics();
 		resetNodes();
+		//reset frame
 	}
 	
 	/**
