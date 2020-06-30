@@ -477,7 +477,59 @@ public final class ElementDraw {
 						g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
 					}
 				}
-				
+
+				if(trans.branchColor != null){
+					Color oldColor = g.getColor();
+					g.setColor(trans.branchColor);
+					g.drawRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-1, nodeBounds.height-1);
+					g.setColor(oldColor);
+					trans.setColorWithNumber(true, trans.branchColor, false, 0, true, "");
+				}
+
+				if(!trans.branchBorderColors.isEmpty()){
+					int x = 0;
+					int y = 0;
+					for (Color c: trans.branchBorderColors) {
+						g.setColor(Color.black);
+						g.drawOval(nodeBounds.x+40+x, nodeBounds.y+y, 6, 6);
+						g.setColor(c);
+						g.drawOval(nodeBounds.x+40+x, nodeBounds.y+y, 5, 5);
+
+
+						y=y+6;
+						if(y==42)
+						{
+							y=0;
+							x=x+6;
+						}
+					}
+				}
+
+				//dubel
+				if (el.isPortalSelected() && !el.isSelected()) {
+					g.setColor(Color.BLACK);
+					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
+					g.setColor(EditorResources.selectionColorLevel1);
+					g.setStroke(EditorResources.glowStrokeLevel1);
+					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
+					g.setColor(EditorResources.selectionColorLevel2);
+					g.setStroke(EditorResources.glowStrokeLevel2);
+					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan);
+
+					if(eds.snoopyMode) {
+						g.setColor(portalSelColor);
+						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
+					} else {
+						g.setColor(Color.BLACK);
+						g.setStroke(new BasicStroke(1.5F));
+						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
+						g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
+					}
+				}
+
 				/*
 				if (eds.color == true || trans.getTransType() == TransitionType.CPNbasic) {
 					Font currentFont = g.getFont();
@@ -789,6 +841,45 @@ public final class ElementDraw {
 				}
 				
 				drawTokens(g, place, nodeBounds);
+
+				if(place.branchColor != null){
+					Color oldColor = g.getColor();
+					g.setColor(place.branchColor);
+					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-1, nodeBounds.height-1);
+					g.setColor(oldColor);
+				}
+
+				if(!place.branchBorderColors.isEmpty()){
+					int x = 0;
+					int y = 0;
+					for (Color c: place.branchBorderColors) {
+						g.setColor(Color.black);
+						g.fillOval(nodeBounds.x+40+x, nodeBounds.y+y, 6, 6);
+						g.setColor(c);
+						g.fillOval(nodeBounds.x+40+x, nodeBounds.y+y, 5, 5);
+
+
+						y=y+6;
+						if(y==42)
+						{
+							y=0;
+							x=x+6;
+						}
+					}
+				}
+
+				//dubel
+				if (place.isPortal()) {
+					if(eds.snoopyMode) {
+						g.setColor(portalColor);
+						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
+					} else {
+						g.setColor(Color.BLACK);
+						g.setStroke(new BasicStroke(1.5F));
+						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
+						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
+					}
+				}
 				
 				//TODO: COLORS
 				if (eds.color == true || place.isColored) {
@@ -998,16 +1089,58 @@ public final class ElementDraw {
 				g.setStroke(new BasicStroke(eds.arcSize));
 				if(breaks > 0)
 					drawBreaks(g, arc, startP, (int)xp, (int)yp, breakPoints, breaks);
-				else
-					g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+				else {
+
+					if(!arc.layers.isEmpty())
+					{
+						int move=0;
+						for (Color color : arc.layers) {
+							g.setColor(color);
+							Stroke backup = g.getStroke();
+							g.setStroke(new BasicStroke(3));
+							g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
+							g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
+							g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
+							g.setStroke(backup);
+							move=move+3;
+						}
+						//arc.layers.clear();
+					}else{
+						g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+					}
+				}
 			}
+
+			///TODO ZMIENIĆ LOKALIZACJE
+
+
+
 		} else {
 			g.setStroke(new BasicStroke(eds.arcSize));
 			if(breaks > 0)
 				drawBreaks(g, arc, startP, (int)xp, (int)yp, breakPoints, breaks);
-			else
-				g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+			else {
+				if(!arc.layers.isEmpty())
+				{
+					int move=0;
+					for (Color color : arc.layers) {
+						g.setColor(color);
+						Stroke backup = g.getStroke();
+						g.setStroke(new BasicStroke(3));
+						g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
+						g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
+						g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
+						g.setStroke(backup);
+						move=move+3;
+					}
+					//arc.layers.clear();
+				}else{
+					g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+				}
+			}
 		}
+
+
 
 		if(arc.isColorChanged() && breaks == 0) {
 			Color oldColor = g.getColor();
@@ -1038,7 +1171,7 @@ public final class ElementDraw {
 			xk = endP.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign - M * alfaSin;
 			yk = endP.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign + M * alfaCos;
 		}
-				
+
 		//STRZAŁKI
 		//int leftRight = 0; //im wieksze, tym bardziej w prawo
 		//int upDown = 0; //im większa, tym mocniej w dół
@@ -1252,6 +1385,20 @@ public final class ElementDraw {
 			g.setColor(oldColor);
 		}
 
+		if(!arc.layers.isEmpty()) {
+			int move = 0;
+			for (Color color : arc.layers) {
+				g.setColor(color);
+				Stroke backup = g.getStroke();
+				g.setStroke(new BasicStroke(3));
+				g.drawLine(startP.x + move, startP.y + move, (int) breaksVector.get(0).x + move, (int) breaksVector.get(0).y + move);
+				g.drawLine(startP.x + move, startP.y + move, (int) breaksVector.get(0).x + move, (int) breaksVector.get(0).y + move);
+				g.drawLine(startP.x + move, startP.y + move, (int) breaksVector.get(0).x + move, (int) breaksVector.get(0).y + move);
+				g.setStroke(backup);
+				move = move + 3;
+			}
+		}
+
 		for(int b=1; b<breaks; b++) {
 			Point breakPoint = breaksVector.get(b-1);
 			g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
@@ -1272,6 +1419,19 @@ public final class ElementDraw {
 				g.setColor(oldColor);
 			}
 
+			int move=0;
+			for (Color color : arc.layers) {
+				g.setColor(color);
+				Stroke backup = g.getStroke();
+				g.setStroke(new BasicStroke(3));
+				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
+				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
+				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
+				g.setStroke(backup);
+				move=move+3;
+
+			}
+
 		}
 		Point lastPoint = breaksVector.get(breaks-1);
 		g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
@@ -1289,6 +1449,20 @@ public final class ElementDraw {
 			g.setStroke(EditorResources.glowStrokeArc);
 			g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 			g.setColor(oldColor);
+		}
+
+		if(!arc.layers.isEmpty()) {
+			int move = 0;
+			for (Color color : arc.layers) {
+				g.setColor(color);
+				Stroke backup = g.getStroke();
+				g.setStroke(new BasicStroke(3));
+				g.drawLine(lastPoint.x + move, lastPoint.y + move, (int) endPx + move, (int) endPy + move);
+				g.drawLine(lastPoint.x + move, lastPoint.y + move, (int) endPx + move, (int) endPy + move);
+				g.drawLine(lastPoint.x + move, lastPoint.y + move, (int) endPx + move, (int) endPy + move);
+				g.setStroke(backup);
+				move = move + 3;
+			}
 		}
 	}
 

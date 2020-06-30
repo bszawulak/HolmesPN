@@ -30,6 +30,8 @@ public abstract class Node extends PetriNetElement {
 	private int radius = 20;
 	final static float dash1[] = { 2.0f };
 	final static BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+	public Color branchColor = null;
+	public ArrayList<Color> branchBorderColors = new ArrayList<>();
 	
 	public boolean qSimArcSign = false; //znacznik dła łuku - czy ma być wzmocniony pomiędzy węzłami które mają tu wartość true
 	protected boolean invisible = false;

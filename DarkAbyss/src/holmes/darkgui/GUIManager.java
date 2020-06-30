@@ -156,6 +156,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesMCS windowMCS; //okno generatora MCS
 	private HolmesKnockout windowsKnockout;
 	private HolmesDecomposition windowsDeco;
+	private HolmesBranchVerticesPrototype windowsBranch;
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	private boolean inaReady = true;
@@ -1363,14 +1364,23 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda tworzy nowe okno analizatora wykluczeń.
+	 * Metoda tworzy nowe okno analizatora dekompozycji.
 	 */
 	public void createDecompositionWindow() {
 		if(windowsDeco == null) {
 			windowsDeco = new HolmesDecomposition();
 		}
 	}
-	
+
+	/**
+	 * Metoda tworzy prototypowe okno dla branchowych wierzchołków.
+	 */
+	public void createBranchWindow() {
+		if(windowsBranch == null) {
+			windowsBranch = new HolmesBranchVerticesPrototype();
+		}
+	}
+
 	/**
 	 * Metoda pokazuje okno analizatora wykluczeń.
 	 */
@@ -1383,6 +1393,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void showDecoWindow() {
 		if(windowsDeco != null) {
 			windowsDeco.setVisible(true);
+		}
+	}
+
+	public void showBranchWindow() {
+		if(windowsBranch != null) {
+			windowsBranch.setVisible(true);
 		}
 	}
 	

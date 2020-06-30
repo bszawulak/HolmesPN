@@ -987,7 +987,7 @@ public class SubnetCalculator {
         return isMore != isLess;
     }
 
-    private static class Path {
+    public static class Path {
         public Node startNode;
         public Node endNode;
         public ArrayList<Node> path;

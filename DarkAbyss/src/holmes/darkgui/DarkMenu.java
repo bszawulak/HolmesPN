@@ -498,6 +498,20 @@ public class DarkMenu extends JMenuBar {
 		});
 		analysisMenu.add(decoWindowItem);
 
+		// Knockout window
+		JMenuItem branchWindowItem = new JMenuItem("Branch analysis...", KeyEvent.VK_7);
+		branchWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
+		branchWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK));
+		branchWindowItem.getAccessibleContext().setAccessibleDescription("Branch prototype");
+		branchWindowItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().createBranchWindow();
+				GUIManager.getDefaultGUIManager().showBranchWindow();
+			}
+		});
+		analysisMenu.add(branchWindowItem);
+
+
 
 
 		//*********************************************************************************************
