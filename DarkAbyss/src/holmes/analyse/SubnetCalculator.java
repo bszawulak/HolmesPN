@@ -2,6 +2,7 @@ package holmes.analyse;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.*;
+import holmes.windows.HolmesBranchVerticesPrototype;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.function.ToDoubleBiFunction;
  * Klasa odpowiedzialna za dekompozycję PN do wybranych typów podsieci
  */
 public class SubnetCalculator {
-    private enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, SMC, MCT, TINV, PINV}
+    private enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, SMC, MCT, TINV, PINV, BV}
 
     public static ArrayList<SubNet> functionalSubNets = new ArrayList<>();
     public static ArrayList<SubNet> snetSubNets = new ArrayList<>();
@@ -27,6 +28,7 @@ public class SubnetCalculator {
     public static ArrayList<SubNet> mctSubNets = new ArrayList<>();
     public static ArrayList<SubNet> tinvSubNets = new ArrayList<>();
     public static ArrayList<SubNet> pinvSubNets = new ArrayList<>();
+    public static ArrayList<SubNet> bvSubNets = new ArrayList<>();
     public static ArrayList<Path> paths = new ArrayList<>();
 
     private static ArrayList<ArrayList<Path>> houResultList = new ArrayList<>();
@@ -749,6 +751,16 @@ public class SubnetCalculator {
         }
     }
 
+    public static void generateBranchesVerticles() {
+
+        for (Node n : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
+            if((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1))
+            {
+                HolmesBranchVerticesPrototype.BranchStructure bs = new HolmesBranchVerticesPrototype.BranchStructure(n);
+                bvSubNets.add(new SubNet(SubNetType.BV, null, null, null, null, bs.paths));
+            }
+        }
+    }
 
     private static boolean checkIfContains(ArrayList<Path> anotherPath, Path path, ArrayList<ArrayList<Path>> connected) {
         for (Path pa : anotherPath) {
@@ -1074,6 +1086,9 @@ public class SubnetCalculator {
                     break;
                 case PINV:
                     createPlaceBasedSubNet(subPlaces);
+                    break;
+                case BV:
+                    createPathBasedSubNet(subPath);
                     break;
             }
         }

@@ -337,10 +337,10 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
     }
 
-    public class BranchStructure {
+    public static class BranchStructure {
         Node root;
         ArrayList<Node> borderNodes;
-        ArrayList<SubnetCalculator.Path> paths;
+        public ArrayList<SubnetCalculator.Path> paths;
         Color branchColor;
 
         public BranchStructure(Node r, ArrayList<Node> bn, ArrayList<SubnetCalculator.Path> p, Color c) {
@@ -358,8 +358,22 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             this.borderNodes = new ArrayList<>();
             //clearColors();
             calcPaths();
-            calcBorders();
+            calcBorders(true);
             setElemetsColor();
+        }
+
+        /**
+         * For decomposition
+         *
+         * @param r
+         */
+        public BranchStructure(Node r) {
+            this.root = r;
+            this.paths = new ArrayList<>();
+            this.borderNodes = new ArrayList<>();
+            //clearColors();
+            calcPaths();
+            calcBorders(false);
         }
 
 
@@ -410,7 +424,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             }
         }
 
-        private void calcBorders() {
+        private void calcBorders(boolean isNotDeco) {
             for (SubnetCalculator.Path p : this.paths) {
                 if (p.startNode.getID() == root.getID()) {
                     this.borderNodes.add(p.endNode);
@@ -419,10 +433,11 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                 }
             }
 
-            for (Node n : this.borderNodes
-            ) {
-                n.branchBorderColors.add(this.branchColor);
-            }
+            if (isNotDeco)
+                for (Node n : this.borderNodes
+                ) {
+                    n.branchBorderColors.add(this.branchColor);
+                }
         }
 
         private ArrayList<Node> calculatePath(Node m, ArrayList<Node> path) {
@@ -432,7 +447,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             //usedNodes.add(m);
             path.add(m);
             if (m.getOutNodes().size() < 2 || m.getInNodes().size() < 2) {
-                if (m.getOutNodes().size() == 1) {
+                if (m.getOutNodes().size() == 1 && m.getInNodes().size() == 1) {
                     calculatePath(m.getOutNodes().get(0), path);
                 }
             }
@@ -447,7 +462,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             //usedNodes.add(m);
             path.add(m);
             if (m.getOutNodes().size() < 2 || m.getInNodes().size() < 2) {
-                if (m.getInNodes().size() == 1) {
+                if ((m.getInNodes().size() == 1)&&(m.getOutNodes().size() == 1)) {
                     calculatePath(m.getInNodes().get(0), path);
                 }
             }

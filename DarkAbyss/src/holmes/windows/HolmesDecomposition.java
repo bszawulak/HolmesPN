@@ -25,7 +25,7 @@ public class HolmesDecomposition extends JFrame {
     private int nocc = 0;
 
     //deco
-    private ArrayList<Integer> choosenDeco = new ArrayList();
+    private ArrayList<Integer> choosenDeco = new ArrayList<Integer>();
     private JTextArea elementsOfDecomposedStructure;
     private int selectedSubNetindex = -1;
     private int selectedSecondSubNetindex = -1;
@@ -212,6 +212,12 @@ public class HolmesDecomposition extends JFrame {
         pinvCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, pinvCheckBox, panel, 12));
         pinvCheckBox.setSelected(false);
         panel.add(pinvCheckBox);
+
+        JCheckBox bvCheckBox = new JCheckBox("BV");
+        bvCheckBox.setBounds(posX + 10, posY + 420, 150, 20);
+        bvCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, bvCheckBox, panel, 13));
+        bvCheckBox.setSelected(false);
+        panel.add(bvCheckBox);
 
         return panel;
     }
@@ -846,6 +852,9 @@ public class HolmesDecomposition extends JFrame {
             case 12:
                 SubnetCalculator.generatePInv();
                 break;
+            case 13:
+                SubnetCalculator.generateBranchesVerticles();
+                break;
         }
     }
 
@@ -877,6 +886,8 @@ public class HolmesDecomposition extends JFrame {
                 return SubnetCalculator.tinvSubNets.size();
             case 12:
                 return SubnetCalculator.pinvSubNets.size();
+            case 13:
+                return SubnetCalculator.bvSubNets.size();
         }
         return 0;
     }
@@ -909,6 +920,8 @@ public class HolmesDecomposition extends JFrame {
                 return "T-inv";
             case 12:
                 return "P-inv";
+            case 13:
+                return "branch bvertices";
         }
         return "";
     }
@@ -941,6 +954,8 @@ public class HolmesDecomposition extends JFrame {
                 return SubnetCalculator.tinvSubNets;
             case 12:
                 return SubnetCalculator.pinvSubNets;
+            case 13:
+                return SubnetCalculator.bvSubNets;
         }
         return SubnetCalculator.functionalSubNets;
     }
@@ -948,7 +963,7 @@ public class HolmesDecomposition extends JFrame {
     private JList generateButton(int index) {
         if (index == 0 || index == 1 || index == 2 || index == 3 || index == 8 || index == 10)
             return generateProperDecoButton(index);
-        if (index == 4 || index == 5 || index == 6 || index == 7 || index == 9 || index == 11 || index == 12)
+        if (index == 4 || index == 5 || index == 6 || index == 7 || index == 9 || index == 11 || index == 12 || index == 13)
             return generateInProperDecoButton(index);
 
         return generateProperDecoButton(index);
@@ -1118,6 +1133,10 @@ public class HolmesDecomposition extends JFrame {
                 subnet = SubnetCalculator.pinvSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.pinvSubNets.size();
                 break;
+            case 13:
+                subnet = SubnetCalculator.bvSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.bvSubNets.size();
+                break;
 
         }
 
@@ -1236,6 +1255,10 @@ public class HolmesDecomposition extends JFrame {
                 firstsubnet = SubnetCalculator.pinvSubNets.get(decoListOne.getSelectedIndex() - 1);
                 firstsize = SubnetCalculator.pinvSubNets.size();
                 break;
+            case 13:
+                firstsubnet = SubnetCalculator.bvSubNets.get(decoListOne.getSelectedIndex() - 1);
+                firstsize = SubnetCalculator.bvSubNets.size();
+                break;
         }
 
 
@@ -1293,6 +1316,10 @@ public class HolmesDecomposition extends JFrame {
             case 12:
                 secondsubnet = SubnetCalculator.pinvSubNets.get(decoListOne.getSelectedIndex() - 1);
                 secondsize = SubnetCalculator.pinvSubNets.size();
+                break;
+            case 13:
+                secondsubnet = SubnetCalculator.bvSubNets.get(decoListOne.getSelectedIndex() - 1);
+                secondsize = SubnetCalculator.bvSubNets.size();
                 break;
 
         }
