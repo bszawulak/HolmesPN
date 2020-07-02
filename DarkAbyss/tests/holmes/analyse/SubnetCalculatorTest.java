@@ -2151,4 +2151,77 @@ class SubnetCalculatorTest {
         SubnetCalculator.cleanSubnets();
 
     }
+
+    @Test
+    void generateBV() {
+        ceateTestNetOne();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(0, SubnetCalculator.bvSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetTwo();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(0,SubnetCalculator.bvSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetThree();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(0,SubnetCalculator.bvSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetFour();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(0,SubnetCalculator.bvSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetFive();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(0,SubnetCalculator.bvSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetSix();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(0,SubnetCalculator.bvSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetSeven();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(1,SubnetCalculator.bvSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetEight();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(1,SubnetCalculator.bvSubNets.size());//poprawka
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetNine();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(2,SubnetCalculator.bvSubNets.size());//poprawka
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetTen();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(2,SubnetCalculator.bvSubNets.size());//poprwka
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetEleven();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(1,SubnetCalculator.bvSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetTwelve();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(1,SubnetCalculator.bvSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetThirteen();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(1,SubnetCalculator.bvSubNets.size());
+        SubnetCalculator.cleanSubnets();
+
+        ceateTestNetFourteen();
+        SubnetCalculator.generateBranchesVerticles();
+        assertEquals(1,SubnetCalculator.bvSubNets.size());
+        SubnetCalculator.cleanSubnets();
+    }
 }

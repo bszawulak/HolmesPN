@@ -1,5 +1,6 @@
 package holmes.windows;
 
+import holmes.analyse.GraphletsCalculator;
 import holmes.analyse.SubnetCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Arc;
@@ -37,6 +38,8 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
         mainPanel = createMainPanel();
         add(mainPanel, BorderLayout.CENTER);
+
+        GraphletsCalculator.GraphletsCalculator();
     }
 
     private JPanel createMainPanel() {
@@ -365,7 +368,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         /**
          * For decomposition
          *
-         * @param r
+         * @param r root vercicle
          */
         public BranchStructure(Node r) {
             this.root = r;
@@ -380,7 +383,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         private void calcPaths() {
 
             for (Node m : root.getOutNodes()) {
-                ArrayList<Node> startPath = new ArrayList<Node>();
+                ArrayList<Node> startPath = new ArrayList<>();
                 startPath.add(root);
                 ArrayList<Node> nodes = calculatePath(m, startPath);
                 if (nodes.get(nodes.size() - 1).getOutNodes().contains(nodes.get(0))) {
@@ -392,7 +395,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
 
             for (Node m : root.getInNodes()) {
-                ArrayList<Node> startPath = new ArrayList<Node>();
+                ArrayList<Node> startPath = new ArrayList<>();
                 startPath.add(root);
                 ArrayList<Node> nodes = calculatePathRevers(m, startPath);
                 if (nodes.get(nodes.size() - 1).getInNodes().contains(nodes.get(0))) {

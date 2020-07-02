@@ -6,13 +6,14 @@ import holmes.windows.HolmesBranchVerticesPrototype;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.function.ToDoubleBiFunction;
 
 /**
  * Klasa odpowiedzialna za dekompozycję PN do wybranych typów podsieci
  */
 public class SubnetCalculator {
-    private enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, SMC, MCT, TINV, PINV, BV}
+    public enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, SMC, MCT, TINV, PINV, BV}
 
     public static ArrayList<SubNet> functionalSubNets = new ArrayList<>();
     public static ArrayList<SubNet> snetSubNets = new ArrayList<>();
@@ -73,10 +74,6 @@ public class SubnetCalculator {
             allTransitions.remove(firstTransition);
             temporaryList = findFunctionalTransition(temporaryList);
             functionalSubNets.add(new SubNet(SubNetType.ZAJCEV, temporaryList, null, null, null, null));
-        }
-
-        if (!functionalSubNets.isEmpty()) {
-            //GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
         }
     }
 
@@ -187,6 +184,7 @@ public class SubnetCalculator {
         smcSubNets = new ArrayList<>();
         tinvSubNets = new ArrayList<>();
         pinvSubNets = new ArrayList<>();
+        bvSubNets = new ArrayList<>();
     }
 
     public static void generateSnets() {
@@ -262,11 +260,6 @@ public class SubnetCalculator {
                         snetSubNets.add(new SubNet(SubNetType.SNET, null, net, null, null, null));
                     }
                 }
-
-
-                if (!snetSubNets.isEmpty()) {
-                    //GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
-                }
             } else {
                 JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
@@ -340,8 +333,8 @@ public class SubnetCalculator {
 
                 for (int i = 0; i < invMatrixT.get(0).size(); i++) {
                     ArrayList<Integer> newRow = new ArrayList<>();
-                    for (int j = 0; j < invMatrixT.size(); j++) {
-                        newRow.add(invMatrixT.get(j).get(i));
+                    for (ArrayList<Integer> integers : invMatrixT) {
+                        newRow.add(integers.get(i));
                     }
                     nonAssignedRows.add(newRow);
                 }
@@ -349,7 +342,7 @@ public class SubnetCalculator {
                 ArrayList<Integer> listOfusedTransitions = new ArrayList<>();
 
                 for (int i = 0; i < nonAssignedRows.size(); i++) {
-                    ArrayList<Integer> newADTset = new ArrayList<Integer>();
+                    ArrayList<Integer> newADTset = new ArrayList<>();
 
                     if (!listOfusedTransitions.contains(i)) {
                         newADTset.add(i);
@@ -365,10 +358,6 @@ public class SubnetCalculator {
                     }
                     if (!newADTset.isEmpty())
                         adtSubNets.add(new SubNet(SubNetType.ADT, null, null, null, newADTset, null));
-                }
-
-                if (!adtSubNets.isEmpty()) {
-                    //GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
@@ -388,8 +377,8 @@ public class SubnetCalculator {
 
                 for (int i = 0; i < invMatrix.get(0).size(); i++) {
                     ArrayList<Integer> newRow = new ArrayList<>();
-                    for (int j = 0; j < invMatrix.size(); j++) {
-                        newRow.add(invMatrix.get(j).get(i));
+                    for (ArrayList<Integer> matrix : invMatrix) {
+                        newRow.add(matrix.get(i));
                     }
                     nonAssignedRows.add(newRow);
                 }
@@ -397,7 +386,7 @@ public class SubnetCalculator {
                 ArrayList<Integer> listOfusedTransitions = new ArrayList<>();
 
                 for (int i = 0; i < nonAssignedRows.size(); i++) {
-                    ArrayList<Integer> newADPset = new ArrayList<Integer>();
+                    ArrayList<Integer> newADPset = new ArrayList<>();
 
                     if (!listOfusedTransitions.contains(i)) {
                         newADPset.add(i);
@@ -414,10 +403,6 @@ public class SubnetCalculator {
                     if (!newADPset.isEmpty())
                         adpSubNets.add(new SubNet(SubNetType.ADP, null, null, null, newADPset, null));
                 }
-
-                if (!adpSubNets.isEmpty()) {
-                    //GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
-                }
             } else {
                 JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
@@ -429,8 +414,10 @@ public class SubnetCalculator {
     private static boolean checkADT(ArrayList<Integer> t1, ArrayList<Integer> t2) {
         boolean result = true;
         for (int i = 0; i < t1.size(); i++) {
-            if (!t1.get(i).equals(t2.get(i)))
+            if (!t1.get(i).equals(t2.get(i))) {
                 result = false;
+                break;
+            }
         }
 
         return result;
@@ -443,7 +430,7 @@ public class SubnetCalculator {
         for (Path path : paths) {
 
             if (path.isCycle) {
-                ArrayList<Path> list = new ArrayList<Path>();
+                ArrayList<Path> list = new ArrayList<>();
                 list.add(path);
                 tzResultList.add(list);
             } else {
@@ -478,10 +465,6 @@ public class SubnetCalculator {
 
         tzResultList = temp;
         tzResultList.clear();
-
-        if (!tzSubNets.isEmpty()) {
-            //GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
-        }
     }
 
     public static void addSinkToSubnets(ArrayList<Path> paths) {
@@ -519,7 +502,7 @@ public class SubnetCalculator {
 
         for (Path path : paths) {
             if (path.isCycle) {
-                ArrayList<Path> list = new ArrayList<Path>();
+                ArrayList<Path> list = new ArrayList<>();
                 list.add(path);
                 tzResultList.add(list);
             } else {
@@ -552,10 +535,6 @@ public class SubnetCalculator {
         tzResultList = temp;
         if (!isOotsuki)
             tzResultList.clear();
-
-        if (!cycleSubNets.isEmpty()) {
-//            GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
-        }
     }
 
     public static void generateHou() {
@@ -577,7 +556,7 @@ public class SubnetCalculator {
 
         for (Path path : paths) {
             if (inNode.contains(path.startNode) && outNode.contains((path.endNode))) {
-                ArrayList<Path> pl = new ArrayList<Path>();
+                ArrayList<Path> pl = new ArrayList<>();
                 pl.add(path);
                 houResultList.add(pl);
             } else {
@@ -608,12 +587,6 @@ public class SubnetCalculator {
                 houSubNets.add(new SubNet(SubNetType.HOU, null, null, null, null, houResultList.get(i)));
             }
         }
-
-        //houResultList.clear();
-
-        if (!houSubNets.isEmpty()) {
-            //      GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
-        }
     }
 
     public static void generateNishi() {
@@ -635,7 +608,7 @@ public class SubnetCalculator {
 
         for (Path path : paths) {
             if (inNode.contains(path.startNode) && outNode.contains((path.endNode))) {
-                ArrayList<Path> pl = new ArrayList<Path>();
+                ArrayList<Path> pl = new ArrayList<>();
                 pl.add(path);
                 nishiResultList.add(pl);
             } else {
@@ -676,10 +649,6 @@ public class SubnetCalculator {
         }
 
         nishiResultList.clear();
-
-        if (!nishiSubNets.isEmpty()) {
-            ///        GUIManager.getDefaultGUIManager().reset.setDecompositionStatus(true);
-        }
     }
 
     public static void generateOotsuki() {
@@ -736,7 +705,7 @@ public class SubnetCalculator {
         //dla každego inwariantu
         for (ArrayList<Integer> inv : invMatrixP) {
             int numberOfTokensInInv = 0;
-            ArrayList<Place> invSupp = new ArrayList<Place>();
+            ArrayList<Place> invSupp = new ArrayList<>();
             //dla každego miejsca
             for (int i = 0; i < inv.size(); i++) {
                 if (inv.get(i) != 0) {
@@ -753,7 +722,7 @@ public class SubnetCalculator {
 
     public static void generateBranchesVerticles() {
 
-        for (Node n : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
+        for (Node n : allNodes) {
             if((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1))
             {
                 HolmesBranchVerticesPrototype.BranchStructure bs = new HolmesBranchVerticesPrototype.BranchStructure(n);
@@ -799,8 +768,8 @@ public class SubnetCalculator {
         }
         ArrayList<Path> possible = findPathsFrom(used.get(used.size() - 1).endNode, unUsed);
         for (Path pos : possible) {
-            ArrayList<Path> NewUsed = new ArrayList<Path>(used);
-            ArrayList<Path> NEWunUsed = new ArrayList<Path>(unUsed);
+            ArrayList<Path> NewUsed = new ArrayList<>(used);
+            ArrayList<Path> NEWunUsed = new ArrayList<>(unUsed);
             NewUsed.add(pos);
             NEWunUsed.remove(pos);
             depHou(NewUsed, NEWunUsed, outNodes);
@@ -813,7 +782,7 @@ public class SubnetCalculator {
         //is cycle add
         if (outNodes.contains(used.get(used.size() - 1).endNode)) {
             for (Path paralelPath : paths) {
-                if (paralelPath.endNode.getOutNodes().size() == 0 && paralelPath.startNode == paralelPath.startNode) { //to check
+                if (paralelPath.endNode.getOutNodes().size() == 0){// && paralelPath.startNode == paralelPath.startNode) { //to check
                     used.add(paralelPath);
                 }
             }
@@ -822,8 +791,8 @@ public class SubnetCalculator {
         }
         ArrayList<Path> possible = findNishiPathsFrom(used.get(used.size() - 1).endNode, unUsed);
         for (Path pos : possible) {
-            ArrayList<Path> NewUsed = new ArrayList<Path>(used);
-            ArrayList<Path> NEWunUsed = new ArrayList<Path>(unUsed);
+            ArrayList<Path> NewUsed = new ArrayList<>(used);
+            ArrayList<Path> NEWunUsed = new ArrayList<>(unUsed);
             NewUsed.add(pos);
             NEWunUsed.remove(pos);
 
@@ -852,8 +821,8 @@ public class SubnetCalculator {
         }
         ArrayList<Path> posible = findPathsFrom(used.get(used.size() - 1).endNode, unUsed);
         for (Path pos : posible) {
-            ArrayList<Path> NewUsed = new ArrayList<Path>(used);
-            ArrayList<Path> NEWunUsed = new ArrayList<Path>(unUsed);
+            ArrayList<Path> NewUsed = new ArrayList<>(used);
+            ArrayList<Path> NEWunUsed = new ArrayList<>(unUsed);
             NewUsed.add(pos);
             NEWunUsed.remove(pos);
             dep(NewUsed, NEWunUsed);
@@ -877,8 +846,10 @@ public class SubnetCalculator {
         for (Path p : list) {
             boolean duble = false;
             for (Path n : possible) {
-                if (n.endNode == p.endNode && n.startNode == p.startNode)
+                if (n.endNode == p.endNode && n.startNode == p.startNode) {
                     duble = true;
+                    break;
+                }
             }
             if (p.startNode == end && !duble)
                 possible.add(p);
@@ -908,7 +879,7 @@ public class SubnetCalculator {
                 if (n.getOutNodes().size() > 1) {
                     usedNodes.add(n);
                     for (Node m : n.getOutNodes()) {
-                        ArrayList<Node> startPath = new ArrayList<Node>();
+                        ArrayList<Node> startPath = new ArrayList<>();
                         startPath.add(n);
                         ArrayList<Node> nodes = calculatePath(m, startPath);
                         if (nodes.get(nodes.size() - 1).getOutNodes().contains(nodes.get(0))) {
@@ -918,7 +889,7 @@ public class SubnetCalculator {
                         }
                     }
                 } else {
-                    ArrayList<Node> nodes = calculatePath(n, new ArrayList<Node>());
+                    ArrayList<Node> nodes = calculatePath(n, new ArrayList<>());
                     listOfPaths.add(new Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes)));
                 }
             }
@@ -926,7 +897,7 @@ public class SubnetCalculator {
 
         for (Node n : allNodes) {
             if (!usedNodes.contains(n)) {
-                ArrayList<Node> nodes = calculatePath(n, new ArrayList<Node>());
+                ArrayList<Node> nodes = calculatePath(n, new ArrayList<>());
                 listOfPaths.add(new Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true));
             }
         }
@@ -945,7 +916,7 @@ public class SubnetCalculator {
         }
 
         for (Node n : listOfStartNodes) {
-            ArrayList<Node> pathList = new ArrayList<Node>();
+            ArrayList<Node> pathList = new ArrayList<>();
             pathList.add(n);
             for (Node singeOutNode : n.getOutNodes()) {
                 pathList.add(singeOutNode);
@@ -980,8 +951,8 @@ public class SubnetCalculator {
 
     private static ArrayList<Integer> getColumn(ArrayList<ArrayList<Integer>> im, int column) {
         ArrayList<Integer> newRow = new ArrayList<>();
-        for (int j = 0; j < im.size(); j++) {
-            newRow.add(im.get(j).get(column));
+        for (ArrayList<Integer> integers : im) {
+            newRow.add(integers.get(column));
         }
         return newRow;
     }
@@ -989,10 +960,10 @@ public class SubnetCalculator {
     private static boolean isSourceOrSink(ArrayList<Integer> rowOrColumn) {
         boolean isMore = false;
         boolean isLess = false;
-        for (int i = 0; i < rowOrColumn.size(); i++) {
-            if (rowOrColumn.get(i) > 0)
+        for (Integer integer : rowOrColumn) {
+            if (integer > 0)
                 isMore = true;
-            if (rowOrColumn.get(i) < 0)
+            if (integer < 0)
                 isLess = true;
 
         }
@@ -1034,7 +1005,7 @@ public class SubnetCalculator {
         private ArrayList<Place> subInternalPlaces;
         ArrayList<Arc> subArcs;
         private boolean proper;
-
+        public HashMap<Integer, Node> orbitMap = new HashMap<Integer, Node>();
         //Snet
         private ArrayList<Transition> subBorderTransition;
         private ArrayList<Transition> subInternalTransition;
@@ -1090,6 +1061,34 @@ public class SubnetCalculator {
                 case BV:
                     createPathBasedSubNet(subPath);
                     break;
+            }
+        }
+
+        SubNet(ArrayList<Arc> al){
+            subTransitions = new ArrayList<>();
+            subPlaces = new ArrayList<>();
+            subArcs = al;
+
+            for (Arc a: al) {
+                if(a.getStartNode().getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
+                    if (!subTransitions.contains(a.getStartNode()))
+                        subTransitions.add((Transition) a.getStartNode());
+                }
+                else
+                {
+                    if (!subPlaces.contains(a.getStartNode()))
+                        subPlaces.add((Place) a.getStartNode());
+                }
+
+                if(a.getEndNode().getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
+                    if (!subTransitions.contains(a.getEndNode()))
+                        subTransitions.add((Transition) a.getEndNode());
+                }
+                else
+                {
+                    if (!subPlaces.contains(a.getEndNode()))
+                        subPlaces.add((Place) a.getEndNode());
+                }
             }
         }
 
@@ -1180,7 +1179,7 @@ public class SubnetCalculator {
 
         private ArrayList<Transition> getTransitionsForADT(ArrayList<Integer> maxADTset) {
             //ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-            ArrayList<Transition> transitionsForADT = new ArrayList<Transition>();
+            ArrayList<Transition> transitionsForADT = new ArrayList<>();
             for (Integer number : maxADTset) {
                 transitionsForADT.add(allTransitions.get(number));
             }
@@ -1189,7 +1188,7 @@ public class SubnetCalculator {
 
         private ArrayList<Place> getTransitionsForADP(ArrayList<Integer> maxADPset) {
             //ArrayList<Place> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-            ArrayList<Place> transitionsForADT = new ArrayList<Place>();
+            ArrayList<Place> transitionsForADT = new ArrayList<>();
             for (Integer number : maxADPset) {
                 transitionsForADT.add(allPlaces.get(number));
             }
@@ -1219,12 +1218,16 @@ public class SubnetCalculator {
             for (Place place : listOfInOutPlaces) {
                 boolean border = false;
                 for (Transition transition : place.getPostTransitions())
-                    if (!this.subTransitions.contains(transition))
+                    if (!this.subTransitions.contains(transition)) {
                         border = true;
+                        break;
+                    }
 
                 for (Transition transition : place.getPreTransitions())
-                    if (!this.subTransitions.contains(transition))
+                    if (!this.subTransitions.contains(transition)) {
                         border = true;
+                        break;
+                    }
 
                 if (border)
                     this.subBorderPlaces.add(place);
@@ -1268,12 +1271,16 @@ public class SubnetCalculator {
             for (Transition transition : listOfInOutTransition) {
                 boolean border = false;
                 for (Place place : transition.getPostPlaces())
-                    if (!this.subPlaces.contains(place))
+                    if (!this.subPlaces.contains(place)) {
                         border = true;
+                        break;
+                    }
 
                 for (Place place : transition.getPrePlaces())
-                    if (!this.subPlaces.contains(place))
+                    if (!this.subPlaces.contains(place)) {
                         border = true;
+                        break;
+                    }
 
                 if (border)
                     this.subBorderTransition.add(transition);
