@@ -491,9 +491,9 @@ public final class ElementDraw {
 					int y = 0;
 					for (Color c: trans.branchBorderColors) {
 						g.setColor(Color.black);
-						g.drawOval(nodeBounds.x+40+x, nodeBounds.y+y, 6, 6);
+						g.fillOval(nodeBounds.x+40+x, nodeBounds.y+y, 6, 6);
 						g.setColor(c);
-						g.drawOval(nodeBounds.x+40+x, nodeBounds.y+y, 5, 5);
+						g.fillOval(nodeBounds.x+40+x, nodeBounds.y+y, 5, 5);
 
 
 						y=y+6;
@@ -1095,9 +1095,12 @@ public final class ElementDraw {
 					{
 						int move=0;
 						for (Color color : arc.layers) {
-							g.setColor(color);
+							g.setColor(Color.black);
 							Stroke backup = g.getStroke();
 							g.setStroke(new BasicStroke(3));
+							g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
+							g.setColor(color);
+							g.setStroke(new BasicStroke(2));
 							g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
 							g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
 							g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
@@ -1124,9 +1127,12 @@ public final class ElementDraw {
 				{
 					int move=0;
 					for (Color color : arc.layers) {
-						g.setColor(color);
+						g.setColor(Color.black);
 						Stroke backup = g.getStroke();
 						g.setStroke(new BasicStroke(3));
+						g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
+						g.setColor(color);
+						g.setStroke(new BasicStroke(2));
 						g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
 						g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
 						g.drawLine(startP.x+move, startP.y+move, (int) xp+move, (int) yp+move);
@@ -1388,9 +1394,12 @@ public final class ElementDraw {
 		if(!arc.layers.isEmpty()) {
 			int move = 0;
 			for (Color color : arc.layers) {
-				g.setColor(color);
+				g.setColor(Color.black);
 				Stroke backup = g.getStroke();
 				g.setStroke(new BasicStroke(3));
+				g.drawLine(startP.x+move, startP.y+move, (int) breaksVector.get(0).x+move, (int) breaksVector.get(0).y+move);
+				g.setColor(color);
+				g.setStroke(new BasicStroke(2));
 				g.drawLine(startP.x + move, startP.y + move, (int) breaksVector.get(0).x + move, (int) breaksVector.get(0).y + move);
 				g.drawLine(startP.x + move, startP.y + move, (int) breaksVector.get(0).x + move, (int) breaksVector.get(0).y + move);
 				g.drawLine(startP.x + move, startP.y + move, (int) breaksVector.get(0).x + move, (int) breaksVector.get(0).y + move);
@@ -1421,9 +1430,12 @@ public final class ElementDraw {
 
 			int move=0;
 			for (Color color : arc.layers) {
-				g.setColor(color);
+				g.setColor(Color.black);
 				Stroke backup = g.getStroke();
 				g.setStroke(new BasicStroke(3));
+				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
+				g.setColor(color);
+				g.setStroke(new BasicStroke(2));
 				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
 				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
 				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
@@ -1454,9 +1466,12 @@ public final class ElementDraw {
 		if(!arc.layers.isEmpty()) {
 			int move = 0;
 			for (Color color : arc.layers) {
-				g.setColor(color);
+				g.setColor(Color.black);
 				Stroke backup = g.getStroke();
 				g.setStroke(new BasicStroke(3));
+				g.drawLine(lastPoint.x+move, lastPoint.y+move, (int) endPx+move, (int) endPy+move);
+				g.setColor(color);
+				g.setStroke(new BasicStroke(2));
 				g.drawLine(lastPoint.x + move, lastPoint.y + move, (int) endPx + move, (int) endPy + move);
 				g.drawLine(lastPoint.x + move, lastPoint.y + move, (int) endPx + move, (int) endPy + move);
 				g.drawLine(lastPoint.x + move, lastPoint.y + move, (int) endPx + move, (int) endPy + move);

@@ -185,6 +185,7 @@ public class SubnetCalculator {
         tinvSubNets = new ArrayList<>();
         pinvSubNets = new ArrayList<>();
         bvSubNets = new ArrayList<>();
+        mctSubNets = new ArrayList<>();
     }
 
     public static void generateSnets() {
@@ -274,13 +275,11 @@ public class SubnetCalculator {
 
     public static void generateMCT() {
         ArrayList<ArrayList<Transition>> mctsets = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTMatrix();
-        if(mctsets!=null && !mctsets.isEmpty()) {
+        if (mctsets != null && !mctsets.isEmpty()) {
             for (ArrayList<Transition> mct : mctsets) {
                 mctSubNets.add(new SubNet(SubNetType.MCT, mct, null, null, null, null));
             }
-        }
-        else
-        {
+        } else {
             JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -723,8 +722,7 @@ public class SubnetCalculator {
     public static void generateBranchesVerticles() {
 
         for (Node n : allNodes) {
-            if((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1))
-            {
+            if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)) {
                 HolmesBranchVerticesPrototype.BranchStructure bs = new HolmesBranchVerticesPrototype.BranchStructure(n);
                 bvSubNets.add(new SubNet(SubNetType.BV, null, null, null, null, bs.paths));
             }
@@ -782,7 +780,7 @@ public class SubnetCalculator {
         //is cycle add
         if (outNodes.contains(used.get(used.size() - 1).endNode)) {
             for (Path paralelPath : paths) {
-                if (paralelPath.endNode.getOutNodes().size() == 0){// && paralelPath.startNode == paralelPath.startNode) { //to check
+                if (paralelPath.endNode.getOutNodes().size() == 0) {// && paralelPath.startNode == paralelPath.startNode) { //to check
                     used.add(paralelPath);
                 }
             }
@@ -976,6 +974,7 @@ public class SubnetCalculator {
         public ArrayList<Node> path;
         public ArrayList<Node> innerpath;
         public boolean isCycle = false;
+        public boolean isRevers = false;
 
         public Path(Node s, Node e, ArrayList<Node> l) {
             startNode = s;
@@ -994,6 +993,17 @@ public class SubnetCalculator {
             innerpath.remove(s);
             innerpath.remove(e);
             isCycle = cycle;
+        }
+
+        public Path(Node s, Node e, ArrayList<Node> l, boolean cycle, boolean revers) {
+            startNode = s;
+            endNode = e;
+            path = new ArrayList<>(l);
+            innerpath = l;
+            innerpath.remove(s);
+            innerpath.remove(e);
+            isCycle = cycle;
+            isRevers = revers;
         }
     }
 
@@ -1064,28 +1074,24 @@ public class SubnetCalculator {
             }
         }
 
-        SubNet(ArrayList<Arc> al){
+        SubNet(ArrayList<Arc> al) {
             subTransitions = new ArrayList<>();
             subPlaces = new ArrayList<>();
             subArcs = al;
 
-            for (Arc a: al) {
-                if(a.getStartNode().getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
+            for (Arc a : al) {
+                if (a.getStartNode().getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
                     if (!subTransitions.contains(a.getStartNode()))
                         subTransitions.add((Transition) a.getStartNode());
-                }
-                else
-                {
+                } else {
                     if (!subPlaces.contains(a.getStartNode()))
                         subPlaces.add((Place) a.getStartNode());
                 }
 
-                if(a.getEndNode().getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
+                if (a.getEndNode().getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
                     if (!subTransitions.contains(a.getEndNode()))
                         subTransitions.add((Transition) a.getEndNode());
-                }
-                else
-                {
+                } else {
                     if (!subPlaces.contains(a.getEndNode()))
                         subPlaces.add((Place) a.getEndNode());
                 }

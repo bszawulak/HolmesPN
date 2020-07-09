@@ -1302,23 +1302,23 @@ public class HolmesDecomposition extends JFrame {
                 secondsize = SubnetCalculator.ootsukiSubNets.size();
                 break;
             case 9:
-                secondsubnet = SubnetCalculator.smcSubNets.get(decoListOne.getSelectedIndex() - 1);
+                secondsubnet = SubnetCalculator.smcSubNets.get(decoListTwo.getSelectedIndex() - 1);
                 secondsize = SubnetCalculator.smcSubNets.size();
                 break;
             case 10:
-                secondsubnet = SubnetCalculator.mctSubNets.get(decoListOne.getSelectedIndex() - 1);
+                secondsubnet = SubnetCalculator.mctSubNets.get(decoListTwo.getSelectedIndex() - 1);
                 secondsize = SubnetCalculator.mctSubNets.size();
                 break;
             case 11:
-                secondsubnet = SubnetCalculator.tinvSubNets.get(decoListOne.getSelectedIndex() - 1);
+                secondsubnet = SubnetCalculator.tinvSubNets.get(decoListTwo.getSelectedIndex() - 1);
                 secondsize = SubnetCalculator.tinvSubNets.size();
                 break;
             case 12:
-                secondsubnet = SubnetCalculator.pinvSubNets.get(decoListOne.getSelectedIndex() - 1);
+                secondsubnet = SubnetCalculator.pinvSubNets.get(decoListTwo.getSelectedIndex() - 1);
                 secondsize = SubnetCalculator.pinvSubNets.size();
                 break;
             case 13:
-                secondsubnet = SubnetCalculator.bvSubNets.get(decoListOne.getSelectedIndex() - 1);
+                secondsubnet = SubnetCalculator.bvSubNets.get(decoListTwo.getSelectedIndex() - 1);
                 secondsize = SubnetCalculator.bvSubNets.size();
                 break;
 

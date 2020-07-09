@@ -3,21 +3,22 @@ package holmes.windows;
 import holmes.analyse.GraphletsCalculator;
 import holmes.analyse.SubnetCalculator;
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.Node;
+import holmes.petrinet.elements.*;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 
 public class HolmesBranchVerticesPrototype extends JFrame {
     private JPanel mainPanel;
     private JPanel logPanel;
     private JPanel inputPanel;
+    private JPanel outputPanel;
     private GUIManager overlord;
+    private JTextArea resultArea;
 
     JTextArea minallTA, maxallTA, minallTAIN, maxallTAIN, minallTAOUT, maxallTAOUT;
     public ArrayList<BranchStructure> bsl = new ArrayList<>();
@@ -45,10 +46,12 @@ public class HolmesBranchVerticesPrototype extends JFrame {
     private JPanel createMainPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        logPanel = createLogPanel(0, 0, 180, 130);
-        inputPanel = createInputPanel(0, 130, 500, 300);
+        logPanel = createLogPanel(0, 0, 200, 150);
+        inputPanel = createInputPanel(0, 130, 200, 150);
+        outputPanel = createOutputPanel(0, 130, 500, 300);
         panel.add(logPanel, BorderLayout.WEST);
-        panel.add(inputPanel, BorderLayout.EAST);
+        panel.add(inputPanel, BorderLayout.CENTER);
+        panel.add(outputPanel, BorderLayout.EAST);
         panel.repaint();
         return panel;
     }
@@ -56,45 +59,70 @@ public class HolmesBranchVerticesPrototype extends JFrame {
     private JPanel createLogPanel(int x, int y, int width, int height) {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Info"));
+        panel.setBorder(BorderFactory.createTitledBorder("Numbers of degrees"));
         panel.setLocation(x, y);
         panel.setPreferredSize(new Dimension(width, height));
-
-        int posX = 10;
-        int posY = 10;
-
         GridBagConstraints c = new GridBagConstraints();
 
-
-        ///////first subnet//////////
-        JLabel text1 = new JLabel("NUMBER OF DEGREES");
-        text1.setLayout(new GridLayout());
-        text1.setEnabled(true);
-        c.fill = GridBagConstraints.HORIZONTAL;
+        JLabel nameDeg = new JLabel("Degree  :  ");
+        nameDeg.setLayout(new GridLayout());
+        nameDeg.setEnabled(true);
         c.gridx = 0;
         c.gridy = 0;
-        panel.add(text1, c);
+        panel.add(nameDeg, c);
 
-        //for each
+        JLabel nameV = new JLabel(" Ver. ");
+        nameV.setLayout(new GridLayout());
+        nameV.setEnabled(true);
+        c.gridx = 1;
+        c.gridy = 0;
+        panel.add(nameV, c);
+
+        JLabel nameT = new JLabel(" Tran. ");
+        nameT.setLayout(new GridLayout());
+        nameT.setEnabled(true);
+        c.gridx = 2;
+        c.gridy = 0;
+        panel.add(nameT, c);
+
+        JLabel nameP = new JLabel(" Pla. ");
+        nameP.setLayout(new GridLayout());
+        nameP.setEnabled(true);
+        c.gridx = 3;
+        c.gridy = 0;
+        panel.add(nameP, c);
 
         int row = 1;
 
-        for (ArrayList<Integer> group : countVerticesDegrees()) {
-            JLabel groupDegree = new JLabel("Degree : " + group.get(0));
+
+        for (VertCounter group : countVerticesDegrees()) {
+            JLabel groupDegree = new JLabel(String.valueOf(group.deg));
             groupDegree.setLayout(new GridLayout());
             groupDegree.setEnabled(true);
-            //c.fill = GridBagConstraints.HORIZONTAL;
             c.gridx = 0;
             c.gridy = row;
             panel.add(groupDegree, c);
 
-            JLabel groupValue = new JLabel(String.valueOf(group.size()));
+            JLabel groupValue = new JLabel(String.valueOf(group.t + group.p));
             groupValue.setLayout(new GridLayout());
             groupValue.setEnabled(true);
-            //c.fill = GridBagConstraints.HORIZONTAL;
             c.gridx = 1;
             c.gridy = row;
             panel.add(groupValue, c);
+
+            JLabel groupTValue = new JLabel(String.valueOf(group.t));
+            groupTValue.setLayout(new GridLayout());
+            groupTValue.setEnabled(true);
+            c.gridx = 2;
+            c.gridy = row;
+            panel.add(groupTValue, c);
+
+            JLabel groupPValue = new JLabel(String.valueOf(group.p));
+            groupPValue.setLayout(new GridLayout());
+            groupPValue.setEnabled(true);
+            c.gridx = 3;
+            c.gridy = row;
+            panel.add(groupPValue, c);
 
             row++;
         }
@@ -102,15 +130,63 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         return panel;
     }
 
+
+    private JPanel createOutputPanel(int x, int y, int width, int height) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Data"));
+        panel.setPreferredSize(new Dimension(width, height));
+
+        resultArea = new JTextArea();
+        resultArea.setText("");
+        resultArea.setLayout(new BorderLayout());
+
+        panel.add(new JScrollPane(resultArea), BorderLayout.CENTER);
+        return panel;
+    }
+
     private JPanel createInputPanel(int x, int y, int width, int height) {
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new FlowLayout());
+        mainPanel.setBorder(BorderFactory.createTitledBorder(""));
+        mainPanel.setPreferredSize(new Dimension(width, height));
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Info"));
-        panel.setLocation(x, y);
-        panel.setPreferredSize(new Dimension(width, height));
+        panel.setBorder(BorderFactory.createTitledBorder("Restrictions"));
 
         int posX = 10;
         int posY = 10;
+
+        JButton calc = new JButton("<html>Find Branch <br />Vertices</html>");
+        calc.setLayout(new FlowLayout());
+        calc.setEnabled(true);
+        calc.setBounds(posX, posY, 70, 70);
+        calc.setMargin(new Insets(0, 0, 0, 0));
+        calc.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+        calc.addActionListener(actionEvent -> caclBranches(0));
+        calc.setFocusPainted(false);
+        mainPanel.add(calc);
+
+        JButton calcT = new JButton("<html>Find Branch <br />Transitions</html>");
+        calcT.setLayout(new FlowLayout());
+        calcT.setEnabled(true);
+        calcT.setBounds(posX, posY + 80, 70, 70);
+        calcT.setMargin(new Insets(0, 0, 0, 0));
+        calcT.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+        calcT.addActionListener(actionEvent -> caclBranches(1));
+        calcT.setFocusPainted(false);
+        mainPanel.add(calcT);
+
+        JButton calcP = new JButton("<html>Find Branch <br />Places</html>");
+        calcP.setLayout(new FlowLayout());
+        calcP.setEnabled(true);
+        calcP.setBounds(posX, posY + 160, 70, 70);
+        calcP.setMargin(new Insets(0, 0, 0, 0));
+        calcP.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+        calcP.addActionListener(actionEvent -> caclBranches(2));
+        calcP.setFocusPainted(false);
+
+        mainPanel.add(calcP);
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -123,6 +199,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
         minallTA = new JTextArea(1, 5);
         minallTA.setLayout(new GridLayout());
+        minallTA.setText("3");
         minallTA.setEnabled(true);
         c.gridx = 1;
         c.gridy = 0;
@@ -143,7 +220,6 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         panel.add(maxallTA, c);
 
         //-------------------------------
-
 
         JLabel minallIN = new JLabel("min in");
         minallIN.setLayout(new GridLayout());
@@ -203,24 +279,16 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         c.gridy = 5;
         panel.add(maxallTAOUT, c);
 
-        JButton calc = new JButton("Find Branch Vertices");
-        calc.setLayout(new GridLayout());
-        calc.setEnabled(true);
-        c.gridx = 1;
-        c.gridy = 7;
+        mainPanel.add(panel);
 
-        calc.setBounds(posX, posY, 120, 36);
-        calc.setMargin(new Insets(0, 0, 0, 0));
-        calc.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        calc.addActionListener(actionEvent -> caclBranches());
-        calc.setFocusPainted(false);
-
-        panel.add(calc, c);
-
-        return panel;
+        return mainPanel;
     }
 
-    private void caclBranches() {
+    private void caclBranches(int type) {
+        clearLayers();
+        bsl.clear();
+        resultArea.selectAll();
+        resultArea.replaceSelection("");
         clearColors();
         ColorPalette cp = new ColorPalette();
 
@@ -264,8 +332,11 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         }
 
         for (Node n : overlord.getWorkspace().getProject().getNodes()) {
-            if (
-                    (n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)
+            switch (type) {
+                case 1:
+                    if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)
+                            &&
+                            (n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)
                             &&
                             (n.getOutNodes().size() + n.getInNodes().size() >= minimalValue)
                             &&
@@ -274,55 +345,134 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                             (n.getInNodes().size() >= minimaInlValue || n.getInNodes().size() <= maximaInlValue)
                             &&
                             (n.getOutNodes().size() >= minimalOutValue || n.getOutNodes().size() <= maximalOutValue)
-            ) {
-
-
-                BranchStructure bs = new BranchStructure(n, cp.getColor());
-                bsl.add(bs);
-
+                    ) {
+                        BranchStructure bs = new BranchStructure(n, cp.getColor());
+                        bsl.add(bs);
+                    }
+                    break;
+                case 2:
+                    if (n.getType().equals(PetriNetElement.PetriNetElementType.PLACE)
+                            &&
+                            (n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)
+                            &&
+                            (n.getOutNodes().size() + n.getInNodes().size() >= minimalValue)
+                            &&
+                            (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
+                            &&
+                            (n.getInNodes().size() >= minimaInlValue || n.getInNodes().size() <= maximaInlValue)
+                            &&
+                            (n.getOutNodes().size() >= minimalOutValue || n.getOutNodes().size() <= maximalOutValue)
+                    ) {
+                        BranchStructure bs = new BranchStructure(n, cp.getColor());
+                        bsl.add(bs);
+                    }
+                    break;
+                default:
+                    if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)
+                            &&
+                            (n.getOutNodes().size() + n.getInNodes().size() >= minimalValue)
+                            &&
+                            (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
+                            &&
+                            (n.getInNodes().size() >= minimaInlValue || n.getInNodes().size() <= maximaInlValue)
+                            &&
+                            (n.getOutNodes().size() >= minimalOutValue || n.getOutNodes().size() <= maximalOutValue)
+                    ) {
+                        BranchStructure bs = new BranchStructure(n, cp.getColor());
+                        bsl.add(bs);
+                    }
             }
         }
-        overlord.getWorkspace().getProject().repaintAllGraphPanels();
+        StringBuilder resultString = new StringBuilder();
+        for (int i = 0; i < bsl.size(); i++) {
+            Node root = bsl.get(i).root;
+            resultString.append(i).append(") ").append(root.getType()).append(": ").append(root.getName()).append("\n\r");
+            for (Node n : bsl.get(i).borderNodes) {
+                String direction = "";
+
+                if (bsl.get(i).paths.stream().anyMatch(path -> path.endNode.equals(n)&& !path.isRevers)) {
+                    direction = " --> ";
+                }
+
+                if (bsl.get(i).paths.stream().anyMatch(path -> path.endNode.equals(n) && path.isRevers)) {
+                    direction = " <-- ";
+                }
+
+                if (bsl.get(i).paths.stream().anyMatch(path -> path.endNode.equals(n)&& !path.isRevers) && bsl.get(i).paths.stream().anyMatch(path -> path.endNode.equals(n) && path.isRevers)) {
+                    direction = " <-> ";
+                }
+
+
+                if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION))
+                    resultString.append("\t ").append(direction).append(" T: <").append(n.getInNodes().size()).append(" | ").append(n.getOutNodes().size()).append("> ").append(n.getName()).append("\n\r");
+                else
+                    resultString.append("\t ").append(direction).append(" P: <").append(n.getInNodes().size()).append(" | ").append(n.getOutNodes().size()).append("> ").append(n.getName()).append("\n\r");
+            }
+        }
+        resultArea.setText(resultString.toString());
+
+        overlord.reset.clearGraphColors();
     }
 
-    private ArrayList<ArrayList<Integer>> countVerticesDegrees() {
+    private void clearLayers() {
+        for (BranchStructure bs : bsl) {
+            bs.root.branchColor = Color.LIGHT_GRAY;//null;
+            for (Node n : bs.borderNodes) {
+                n.branchColor = null;
+            }
 
-        ArrayList<ArrayList<Integer>> counters = new ArrayList<>();
+            for (Arc a : calculateInternalArcs(bs.paths)) {
+                a.layers.clear();
+            }
 
+        }
+        overlord.getWorkspace().repaintAllGraphPanels();
+    }
+
+    private ArrayList<Arc> calculateInternalArcs(ArrayList<SubnetCalculator.Path> pathList) {
+        ArrayList<Arc> listOfAllArcs = new ArrayList<>();
+        for (SubnetCalculator.Path path : pathList) {
+            for (int i = 0; i < path.path.size() - 1; i++) {
+                Node startNode = path.path.get(i);
+                Node endNode = path.path.get(i + 1);
+                for (Arc arc : startNode.getOutArcs()) {
+                    if (arc.getEndNode().getID() == endNode.getID())
+                        listOfAllArcs.add(arc);
+                }
+            }
+            for (Arc arc : path.endNode.getOutArcs()) {
+                if (arc.getEndNode().getID() == path.startNode.getID())
+                    listOfAllArcs.add(arc);
+            }
+        }
+        return listOfAllArcs;
+    }
+
+    private ArrayList<VertCounter> countVerticesDegrees() {
+        ArrayList<Node> nodes = new ArrayList<>();
+        ArrayList<VertCounter> counters = new ArrayList<>();
         for (Node n : overlord.getWorkspace().getProject().getNodes()) {
             Integer degree = n.getInNodes().size() + n.getOutNodes().size();
 
-            boolean exist = false;
-            int existlocation = -1;
-            for (int i = 0; i < counters.size(); i++) {
-                if (!counters.get(i).isEmpty() & counters.get(i).get(0).equals(degree)) {
-                    exist = true;
-                    existlocation = i;
-                }
-            }
-
-            if (exist) {
-                counters.get(existlocation).add(degree);
-            } else {
-                ArrayList<Integer> newGroup = new ArrayList<>();
-                newGroup.add(degree);
-                if (counters.isEmpty()) {
-                    counters.add(newGroup);
-                } else {
-                    boolean added = false;
-                    for (int j = 0; j < counters.size(); j++) {
-                        if (counters.get(j).get(0) > degree) {
-                            counters.add(j, newGroup);
-                            added = true;
-                            break;
-                        }
+            if (counters.stream().anyMatch(x -> x.deg.equals(degree))) {
+                for (VertCounter vc : counters) {
+                    if (vc.deg.equals(degree)) {
+                        if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION))
+                            vc.t++;
+                        else
+                            vc.p++;
                     }
-
-                    if (!added)
-                        counters.add(newGroup);
                 }
+            } else {
+                VertCounter newDeg = new VertCounter(degree);
+                if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION))
+                    newDeg.t++;
+                else
+                    newDeg.p++;
+                counters.add(newDeg);
             }
         }
+        counters.sort(new DegSort());
 
         return counters;
     }
@@ -336,8 +486,6 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             n.branchBorderColors = new ArrayList<>();
             n.branchColor = null;
         }
-
-
     }
 
     public static class BranchStructure {
@@ -387,9 +535,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                 startPath.add(root);
                 ArrayList<Node> nodes = calculatePath(m, startPath);
                 if (nodes.get(nodes.size() - 1).getOutNodes().contains(nodes.get(0))) {
-                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true));
+                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true,false));
                 } else {
-                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes)));
+                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes),false,false));
                 }
             }
 
@@ -399,9 +547,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                 startPath.add(root);
                 ArrayList<Node> nodes = calculatePathRevers(m, startPath);
                 if (nodes.get(nodes.size() - 1).getInNodes().contains(nodes.get(0))) {
-                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true));
+                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true,true));
                 } else {
-                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes)));
+                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes),false,true));
                 }
             }
 
@@ -409,20 +557,19 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         }
 
         private void setElemetsColor() {
-            for (SubnetCalculator.Path p : paths
-            ) {
-
-                for (int i = 0; i < p.path.size() - 1; i++
-                ) {
-                    //if(p.path.get(i).getOutArcs().contains(p.path.get(i+1)))
+            for (SubnetCalculator.Path p : paths) {
+                for (int i = 0; i < p.path.size() - 1; i++) {
                     for (Arc a : p.path.get(i).getOutArcs()
                     ) {
                         if (a.getEndNode().getID() == p.path.get(i + 1).getID()) {
                             a.layers.add(branchColor);
                         }
                     }
-
-                    //p.path.get(i).getInArcs().contains(p.path.get(i+1))
+                    for (Arc a : p.path.get(i).getInArcs()) {
+                        if (a.getStartNode().getID() == p.path.get(i + 1).getID()) {
+                            a.layers.add(branchColor);
+                        }
+                    }
                 }
             }
         }
@@ -437,8 +584,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             }
 
             if (isNotDeco)
-                for (Node n : this.borderNodes
-                ) {
+                for (Node n : this.borderNodes) {
                     n.branchBorderColors.add(this.branchColor);
                 }
         }
@@ -447,7 +593,6 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             if (path.contains(m)) {
                 return path;
             }
-            //usedNodes.add(m);
             path.add(m);
             if (m.getOutNodes().size() < 2 || m.getInNodes().size() < 2) {
                 if (m.getOutNodes().size() == 1 && m.getInNodes().size() == 1) {
@@ -459,20 +604,40 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
         private ArrayList<Node> calculatePathRevers(Node m, ArrayList<Node> path) {
             if (path.contains(m)) {
-                Collections.reverse(path);
                 return path;
             }
-            //usedNodes.add(m);
             path.add(m);
             if (m.getOutNodes().size() < 2 || m.getInNodes().size() < 2) {
-                if ((m.getInNodes().size() == 1)&&(m.getOutNodes().size() == 1)) {
-                    calculatePath(m.getInNodes().get(0), path);
+                if ((m.getInNodes().size() == 1) && (m.getOutNodes().size() == 1)) {
+                    calculatePathRevers(m.getInNodes().get(0), path);
                 }
             }
-
-            Collections.reverse(path);
             return path;
         }
 
+
+    }
+
+    private class VertCounter {
+        public Integer deg;
+        public int t;
+        public int p;
+
+        VertCounter(int degree) {
+            this.deg = degree;
+            this.t = 0;
+            this.p = 0;
+        }
+
+        public Integer getDeg() {
+            return deg;
+        }
+    }
+
+    public class DegSort implements Comparator<VertCounter> {
+        @Override
+        public int compare(VertCounter o1, VertCounter o2) {
+            return o1.getDeg().compareTo(o2.getDeg());
+        }
     }
 }
