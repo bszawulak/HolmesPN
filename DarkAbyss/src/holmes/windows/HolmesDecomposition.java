@@ -22,7 +22,6 @@ public class HolmesDecomposition extends JFrame {
     private JPanel topButtonPanel;
     private JPanel logMainPanel;
     private JPanel infoPanel;
-    private int nocc = 0;
 
     //deco
     private ArrayList<Integer> choosenDeco = new ArrayList<Integer>();
@@ -238,25 +237,15 @@ public class HolmesDecomposition extends JFrame {
             }
             choosenDeco.clear();
             choosenDeco.add(type);
-
-            if (checkBox.isSelected()) {
-                nocc++;
-            } else {
-                nocc--;
-            }
-
         } else {
             if (checkBox.isSelected()) {
                 choosenDeco.add(type);
-                nocc++;
             } else {
-                nocc--;
                 choosenDeco.remove(type);
             }
-            if (nocc > 2) {
+            if (choosenDeco.size() > 2) {
                 checkBox.setSelected(false);
                 choosenDeco.remove(type);
-                nocc--;
             }
         }
     }
@@ -739,21 +728,27 @@ public class HolmesDecomposition extends JFrame {
     }
 
     private void getSubnetOfType() {
-        generateProperSubNet(choosenDeco.get(0));
-        //int listIndex = components.stream().map(Component::getLocation).collect(Collectors.toList()).indexOf(new Point(10, 70));
+        if(choosenDeco.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "Empty list", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        }
+        else {
+            generateProperSubNet(choosenDeco.get(0));
+            //int listIndex = components.stream().map(Component::getLocation).collect(Collectors.toList()).indexOf(new Point(10, 70));
 
-        JList newCB = generateButton(choosenDeco.get(0));
-        decoListOne.setModel(newCB.getModel());
+            JList newCB = generateButton(choosenDeco.get(0));
+            decoListOne.setModel(newCB.getModel());
 
-        if (listOfInvDep.contains(choosenDeco.get(0)) && getSubnetSize(choosenDeco.get(0)) == 0)
-            GUIManager.getDefaultGUIManager().showInvariantsWindow();
+            if (listOfInvDep.contains(choosenDeco.get(0)) && getSubnetSize(choosenDeco.get(0)) == 0)
+                GUIManager.getDefaultGUIManager().showInvariantsWindow();
 
-        if (dualMode) {
-            if (choosenDeco.size() > 1) {
-                generateProperSubNet(choosenDeco.get(choosenDeco.size() - 1));
+            if (dualMode) {
+                if (choosenDeco.size() > 1) {
+                    generateProperSubNet(choosenDeco.get(choosenDeco.size() - 1));
+                }
+                JList secondnewCB = generateButton(choosenDeco.get(choosenDeco.size() - 1));
+                decoListTwo.setModel(secondnewCB.getModel());
             }
-            JList secondnewCB = generateButton(choosenDeco.get(choosenDeco.size() - 1));
-            decoListTwo.setModel(secondnewCB.getModel());
         }
         logMainPanel.updateUI();
 
