@@ -30,6 +30,8 @@ public class SubnetCalculator {
     public static ArrayList<SubNet> tinvSubNets = new ArrayList<>();
     public static ArrayList<SubNet> pinvSubNets = new ArrayList<>();
     public static ArrayList<SubNet> bvSubNets = new ArrayList<>();
+    public static ArrayList<SubNet> btSubNets = new ArrayList<>();
+    public static ArrayList<SubNet> bpSubNets = new ArrayList<>();
     public static ArrayList<Path> paths = new ArrayList<>();
 
     private static ArrayList<ArrayList<Path>> houResultList = new ArrayList<>();
@@ -186,6 +188,8 @@ public class SubnetCalculator {
         pinvSubNets = new ArrayList<>();
         bvSubNets = new ArrayList<>();
         mctSubNets = new ArrayList<>();
+        btSubNets = new ArrayList<>();
+        bpSubNets = new ArrayList<>();
     }
 
     public static void generateSnets() {
@@ -725,6 +729,26 @@ public class SubnetCalculator {
             if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)) {
                 HolmesBranchVerticesPrototype.BranchStructure bs = new HolmesBranchVerticesPrototype.BranchStructure(n);
                 bvSubNets.add(new SubNet(SubNetType.BV, null, null, null, null, bs.paths));
+            }
+        }
+    }
+
+    public static void generateBranchesTransitions() {
+
+        for (Node n : allTransitions) {
+            if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)) {
+                HolmesBranchVerticesPrototype.BranchStructure bs = new HolmesBranchVerticesPrototype.BranchStructure(n);
+                btSubNets.add(new SubNet(SubNetType.BV, null, null, null, null, bs.paths));
+            }
+        }
+    }
+
+    public static void generateBranchesPlaces() {
+
+        for (Node n : allPlaces) {
+            if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)) {
+                HolmesBranchVerticesPrototype.BranchStructure bs = new HolmesBranchVerticesPrototype.BranchStructure(n);
+                bpSubNets.add(new SubNet(SubNetType.BV, null, null, null, null, bs.paths));
             }
         }
     }

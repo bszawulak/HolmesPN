@@ -92,7 +92,7 @@ public class HolmesDecomposition extends JFrame {
         this.setTitle("Decomposition");
 
         setLayout(new BorderLayout());
-        setSize(new Dimension(900, 600));
+        setSize(new Dimension(900, 700));
         setLocation(15, 15);
 
         mainPanel = createMainPanel();
@@ -102,7 +102,7 @@ public class HolmesDecomposition extends JFrame {
     private JPanel createMainPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        buttonPanel = createLeftButtonPanel(0, 0, 180, 130);
+        buttonPanel = createLeftButtonPanel(0, 0, 180, 230);
         logMainPanel = createGraphPanel(0, 130, 500, 300);
         topButtonPanel = createTopButtonPanel(200, 130, 900, 75);
         infoPanel = createInfoPanel(400, 130, 200, 300);
@@ -136,15 +136,6 @@ public class HolmesDecomposition extends JFrame {
         snetCheckBox.setSelected(false);
         panel.add(snetCheckBox);
 
-        /*
-        JCheckBox tnetCheckBox = new JCheckBox("T-net");
-        tnetCheckBox.setBounds(posX + 10, posY + 90, 100, 20);
-        tnetCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, tnetCheckBox, 2));
-        tnetCheckBox.setSelected(false);
-        panel.add(tnetCheckBox);
-        */
-
-
         JCheckBox adtCheckBox = new JCheckBox("T-net/maxADT");
         adtCheckBox.setBounds(posX + 10, posY + 90, 150, 20);
         adtCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, adtCheckBox, panel, 3));
@@ -157,7 +148,6 @@ public class HolmesDecomposition extends JFrame {
         ssnetCheckBox.setSelected(false);
         ssnetCheckBox.setEnabled(false);
         panel.add(ssnetCheckBox);
-
 
         JCheckBox mctCheckBox = new JCheckBox("MCT");
         mctCheckBox.setBounds(posX + 10, posY + 150, 150, 20);
@@ -219,14 +209,25 @@ public class HolmesDecomposition extends JFrame {
         bvCheckBox.setSelected(false);
         panel.add(bvCheckBox);
 
+        JCheckBox btCheckBox = new JCheckBox("BT");
+        btCheckBox.setBounds(posX + 10, posY + 450, 150, 20);
+        btCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, btCheckBox, panel, 14));
+        btCheckBox.setSelected(false);
+        panel.add(btCheckBox);
+
+        JCheckBox bpCheckBox = new JCheckBox("BP");
+        bpCheckBox.setBounds(posX + 10, posY + 480, 150, 20);
+        bpCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, bpCheckBox, panel, 15));
+        bpCheckBox.setSelected(false);
+        panel.add(bpCheckBox);
+
         return panel;
     }
 
-
     public void checkBoxAction(ActionEvent actionEvent, JCheckBox checkBox, JPanel panel, Integer type) {
+
         AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
         if (!dualMode) {
-
             for (Component comp : panel.getComponents()) {
                 if (comp instanceof JCheckBox) {
                     if (comp.getY() != checkBox.getY()) {
@@ -235,7 +236,6 @@ public class HolmesDecomposition extends JFrame {
                     }
                 }
             }
-            //checkBox.setSelected(true);
             choosenDeco.clear();
             choosenDeco.add(type);
 
@@ -245,22 +245,6 @@ public class HolmesDecomposition extends JFrame {
                 nocc--;
             }
 
-            //if (checkBox.isSelected()) {
-            //choosenDeco.se;
-
-            //}
-            //   nocc++;
-            /*} else {
-                nocc--;
-                choosenDeco.remove(type);
-            }
-            if (nocc > 1) {
-                checkBox.setSelected(false);
-                JOptionPane.showMessageDialog(null, "Too many elements", "InfoBox: ", JOptionPane.INFORMATION_MESSAGE);
-                choosenDeco.remove(type);
-                nocc--;
-            }
-            */
         } else {
             if (checkBox.isSelected()) {
                 choosenDeco.add(type);
@@ -271,7 +255,6 @@ public class HolmesDecomposition extends JFrame {
             }
             if (nocc > 2) {
                 checkBox.setSelected(false);
-                //JOptionPane.showMessageDialog(null, "Too many elements", "InfoBox: ", JOptionPane.INFORMATION_MESSAGE);
                 choosenDeco.remove(type);
                 nocc--;
             }
@@ -289,7 +272,6 @@ public class HolmesDecomposition extends JFrame {
         int posY = 10;
 
         GridBagConstraints c = new GridBagConstraints();
-
 
         ///////first subnet//////////
         JLabel fs1 = new JLabel("FIRST SUBNET");
@@ -440,16 +422,6 @@ public class HolmesDecomposition extends JFrame {
         c.gridy = 17;
         panel.add(in2, c);
 
-        /*
-        JLabel in3 = new JLabel("Tversky  Index");
-        in3.setLayout(new GridLayout());
-        in3.setEnabled(true);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 17;
-        panel.add(in3, c);
-        */
-
         /////Values
 
         vafn = new JLabel(String.valueOf(nafn));
@@ -500,7 +472,6 @@ public class HolmesDecomposition extends JFrame {
         c.gridy = 8;
         panel.add(vtsn, c);
 
-
         vacn = new JLabel(String.valueOf(nacn));
         vacn.setLayout(new GridLayout());
         vacn.setEnabled(true);
@@ -525,31 +496,6 @@ public class HolmesDecomposition extends JFrame {
         c.gridy = 13;
         panel.add(vtcn, c);
 
-/*
-        vacn = new JLabel(String.valueOf(nacn));
-        vacn.setLayout(new GridLayout());
-        vacn.setEnabled(true);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 2;
-        c.gridy = 11;
-        panel.add(vacn, c);
-
-        vpcn = new JLabel(String.valueOf(npcn));
-        vpcn.setLayout(new GridLayout());
-        vpcn.setEnabled(true);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 2;
-        c.gridy = 12;
-        panel.add(vpcn, c);
-
-        vtcn = new JLabel(String.valueOf(ntcn));
-        vtcn.setLayout(new GridLayout());
-        vtcn.setEnabled(true);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 2;
-        c.gridy = 13;
-        panel.add(vtcn, c);
-*/
         valueOfSMC = new JLabel(String.valueOf(smc));
         valueOfSMC.setLayout(new GridLayout());
         valueOfSMC.setEnabled(true);
@@ -748,6 +694,7 @@ public class HolmesDecomposition extends JFrame {
         );
         decoListTwo.disable();
         decoListTwo.hide();
+        decoListTwo.setForeground(Color.blue);
         panel.add(decoListTwo);
 
         JPanel listPanel2 = new JPanel();
@@ -772,14 +719,17 @@ public class HolmesDecomposition extends JFrame {
     }
 
     private void setDual() {
+
         if (!dualMode) {
             dualMode = true;
             decoListTwo.enable();
             decoListTwo.show();
+            decoListOne.setForeground(Color.RED);
         } else {
             dualMode = false;
             decoListTwo.disable();
             decoListTwo.hide();
+            decoListOne.setForeground(Color.BLACK);
         }
     }
 
@@ -855,6 +805,12 @@ public class HolmesDecomposition extends JFrame {
             case 13:
                 SubnetCalculator.generateBranchesVerticles();
                 break;
+            case 14:
+                SubnetCalculator.generateBranchesTransitions();
+                break;
+            case 15:
+                SubnetCalculator.generateBranchesPlaces();
+                break;
         }
     }
 
@@ -888,6 +844,10 @@ public class HolmesDecomposition extends JFrame {
                 return SubnetCalculator.pinvSubNets.size();
             case 13:
                 return SubnetCalculator.bvSubNets.size();
+            case 14:
+                return SubnetCalculator.btSubNets.size();
+            case 15:
+                return SubnetCalculator.bpSubNets.size();
         }
         return 0;
     }
@@ -921,7 +881,11 @@ public class HolmesDecomposition extends JFrame {
             case 12:
                 return "P-inv";
             case 13:
-                return "branch bvertices";
+                return "Branch Vertices";
+            case 14:
+                return "Branch Transitions";
+            case 15:
+                return "Branch Places";
         }
         return "";
     }
@@ -956,6 +920,10 @@ public class HolmesDecomposition extends JFrame {
                 return SubnetCalculator.pinvSubNets;
             case 13:
                 return SubnetCalculator.bvSubNets;
+            case 14:
+                return SubnetCalculator.btSubNets;
+            case 15:
+                return SubnetCalculator.bpSubNets;
         }
         return SubnetCalculator.functionalSubNets;
     }
@@ -963,7 +931,7 @@ public class HolmesDecomposition extends JFrame {
     private JList generateButton(int index) {
         if (index == 0 || index == 1 || index == 2 || index == 3 || index == 8 || index == 10)
             return generateProperDecoButton(index);
-        if (index == 4 || index == 5 || index == 6 || index == 7 || index == 9 || index == 11 || index == 12 || index == 13)
+        if (index == 4 || index == 5 || index == 6 || index == 7 || index == 9 || index == 11 || index == 12 || index == 13||index == 14 ||index ==15)
             return generateInProperDecoButton(index);
 
         return generateProperDecoButton(index);
@@ -1037,41 +1005,6 @@ public class HolmesDecomposition extends JFrame {
         return newCB;
     }
 
-    /*
-      private int getSubnetSize(int typeOfDecomposition){
-          int size = 0;
-          switch (typeOfDecomposition) {
-              case 0:
-                  size = SubnetCalculator.functionalSubNets.size();
-                  break;
-              case 1:
-                  size = SubnetCalculator.snetSubNets.size();
-                  break;
-              case 2:
-                  size = SubnetCalculator.tnetSubNets.size();
-                  break;
-              case 3:
-                  size = SubnetCalculator.adtSubNets.size();
-                  break;
-              case 4:
-                  size = SubnetCalculator.tzSubNets.size();
-                  break;
-              case 5:
-                  size = SubnetCalculator.houSubNets.size();
-                  break;
-              case 6:
-                  size = SubnetCalculator.nishiSubNets.size();
-                  break;
-              case 7:
-                  size = SubnetCalculator.cycleSubNets.size();
-                  break;
-              case 8:
-                  size = SubnetCalculator.ootsukiSubNets.size();
-                  break;
-          }
-          return size;
-      }
-  */
     private void showSubNet(int typeOfDecomposition) {
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
@@ -1136,6 +1069,14 @@ public class HolmesDecomposition extends JFrame {
             case 13:
                 subnet = SubnetCalculator.bvSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.bvSubNets.size();
+                break;
+            case 14:
+                subnet = SubnetCalculator.btSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.btSubNets.size();
+                break;
+            case 15:
+                subnet = SubnetCalculator.bpSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.bpSubNets.size();
                 break;
 
         }
@@ -1259,6 +1200,14 @@ public class HolmesDecomposition extends JFrame {
                 firstsubnet = SubnetCalculator.bvSubNets.get(decoListOne.getSelectedIndex() - 1);
                 firstsize = SubnetCalculator.bvSubNets.size();
                 break;
+            case 14:
+                firstsubnet = SubnetCalculator.btSubNets.get(decoListOne.getSelectedIndex() - 1);
+                firstsize = SubnetCalculator.btSubNets.size();
+                break;
+            case 15:
+                firstsubnet = SubnetCalculator.bpSubNets.get(decoListOne.getSelectedIndex() - 1);
+                firstsize = SubnetCalculator.bpSubNets.size();
+                break;
         }
 
 
@@ -1321,23 +1270,19 @@ public class HolmesDecomposition extends JFrame {
                 secondsubnet = SubnetCalculator.bvSubNets.get(decoListTwo.getSelectedIndex() - 1);
                 secondsize = SubnetCalculator.bvSubNets.size();
                 break;
+            case 14:
+                secondsubnet = SubnetCalculator.btSubNets.get(decoListTwo.getSelectedIndex() - 1);
+                secondsize = SubnetCalculator.btSubNets.size();
+                break;
+            case 15:
+                secondsubnet = SubnetCalculator.bpSubNets.get(decoListTwo.getSelectedIndex() - 1);
+                secondsize = SubnetCalculator.bpSubNets.size();
+                break;
+
 
         }
 
         ColorPalette cp = new ColorPalette();
-
-        //place w 1
-/*
-        for (Place element : firstsubnet.getSubPlaces()) {
-            for (Place elementTwo : secondsubnet.getSubPlaces()) {
-                if (firstsubnet.getSubPlaces().contains(elementTwo)) {
-                    elementTwo.setColorWithNumber(true, Color.green, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
-                } else {
-                    element.setColorWithNumber(true, Color.red, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
-                    elementTwo.setColorWithNumber(true, Color.blue, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
-                }
-            }
-        }*/
 
         for (Place elementTwo : secondsubnet.getSubPlaces()) {
             if (firstsubnet.getSubPlaces().contains(elementTwo)) {
@@ -1357,20 +1302,6 @@ public class HolmesDecomposition extends JFrame {
             }
             npfn++;
         }
-
-/*
-        for (Transition element : firstsubnet.getSubTransitions()) {
-            for (Transition elementTwo : secondsubnet.getSubTransitions()) {
-                if (firstsubnet.getSubTransitions().contains(elementTwo)) {
-                    elementTwo.setColorWithNumber(true, Color.green, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
-                } else {
-                    element.setColorWithNumber(true, Color.red, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
-                    elementTwo.setColorWithNumber(true, Color.blue, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
-                }
-            }
-        }
-        */
-
 
         for (Transition elementTwo : secondsubnet.getSubTransitions()) {
             if (firstsubnet.getSubTransitions().contains(elementTwo)) {
