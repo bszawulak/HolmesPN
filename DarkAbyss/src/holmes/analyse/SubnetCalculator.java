@@ -13,7 +13,7 @@ import java.util.function.ToDoubleBiFunction;
  * Klasa odpowiedzialna za dekompozycję PN do wybranych typów podsieci
  */
 public class SubnetCalculator {
-    public enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, SMC, MCT, TINV, PINV, BV}
+    public enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, NotTzCycles, SMC, MCT, TINV, PINV, BV}
 
     public static ArrayList<SubNet> functionalSubNets = new ArrayList<>();
     public static ArrayList<SubNet> snetSubNets = new ArrayList<>();
@@ -32,6 +32,7 @@ public class SubnetCalculator {
     public static ArrayList<SubNet> bvSubNets = new ArrayList<>();
     public static ArrayList<SubNet> btSubNets = new ArrayList<>();
     public static ArrayList<SubNet> bpSubNets = new ArrayList<>();
+    public static ArrayList<SubNet> notTzCyclesiSubNets = new ArrayList<>();
     public static ArrayList<Path> paths = new ArrayList<>();
 
     private static ArrayList<ArrayList<Path>> houResultList = new ArrayList<>();
@@ -190,6 +191,7 @@ public class SubnetCalculator {
         mctSubNets = new ArrayList<>();
         btSubNets = new ArrayList<>();
         bpSubNets = new ArrayList<>();
+        notTzCyclesiSubNets = new ArrayList<>();
     }
 
     public static void generateSnets() {
@@ -470,6 +472,51 @@ public class SubnetCalculator {
         tzResultList.clear();
     }
 
+    public static void generateNotTzCycles() {
+        //cleanSubnets();
+        paths = calculatePaths();
+
+        for (Path path : paths) {
+
+            if (path.isCycle) {
+                ArrayList<Path> list = new ArrayList<>();
+                list.add(path);
+                tzResultList.add(list);
+            } else {
+
+                ArrayList<Path> localListOfPaths = new ArrayList<>(paths);
+                ArrayList<Path> listOfCycles = new ArrayList<>();
+
+                localListOfPaths.remove(path);
+                listOfCycles.add(path);
+                for (Path p : localListOfPaths) {
+                    if (path.endNode == p.startNode) {
+                        dep(listOfCycles, localListOfPaths);
+                    }
+                }
+            }
+        }
+        ArrayList<ArrayList<Path>> temp = new ArrayList<>();
+        for (int i = 0; i < tzResultList.size(); i++) {
+            boolean isDouble = false;
+            for (int j = i + 1; j < tzResultList.size(); j++)
+                if (tzResultList.get(i).containsAll(tzResultList.get(j))) {
+                    isDouble = true;
+                }
+            boolean isSink = checkSinkToSubnets(tzResultList.get(i));
+
+            if (!isDouble && !isSink) {
+                temp.add(tzResultList.get(i));
+                notTzCyclesiSubNets.add(new SubNet(SubNetType.NotTzCycles, null, null, null, null, tzResultList.get(i)));
+            }
+        }
+
+        tzResultList = temp;
+        tzResultList.clear();
+    }
+
+
+
     public static void addSinkToSubnets(ArrayList<Path> paths) {
         ArrayList<Path> sinkSourcePaths = new ArrayList<>();
         for (Path path : paths) {
@@ -497,6 +544,40 @@ public class SubnetCalculator {
             }
         }
         paths.addAll(sinkSourcePaths);
+    }
+
+    public static boolean checkSinkToSubnets(ArrayList<Path> paths) {
+        ArrayList<Path> sinkSourcePaths = new ArrayList<>();
+
+        boolean isSink = false;
+
+        for (Path path : paths) {
+
+            for (Node n : path.path) {
+                for (Node chceck : n.getOutNodes()) {
+                    if (chceck.getOutNodes().isEmpty()) {
+                        ArrayList<Node> list = new ArrayList<>();
+                        list.add(n);
+                        list.add(chceck);
+                        Path sinkPath = new Path(n, chceck, list);
+                        sinkSourcePaths.add(sinkPath);
+                        isSink=true;
+                    }
+                }
+
+                for (Node chceck : n.getInNodes()) {
+                    if (chceck.getInNodes().isEmpty()) {
+                        ArrayList<Node> list = new ArrayList<>();
+                        list.add(n);
+                        list.add(chceck);
+                        Path sinkPath = new Path(chceck, n, list);
+                        sinkSourcePaths.add(sinkPath);
+                        isSink=true;
+                    }
+                }
+            }
+        }
+        return isSink;
     }
 
     public static void generateCycle(boolean isOotsuki) {
@@ -1093,6 +1174,9 @@ public class SubnetCalculator {
                     createPlaceBasedSubNet(subPlaces);
                     break;
                 case BV:
+                    createBranchBasedSubNet(subPath);
+                    break;
+                case NotTzCycles:
                     createPathBasedSubNet(subPath);
                     break;
             }
@@ -1120,6 +1204,25 @@ public class SubnetCalculator {
                         subPlaces.add((Place) a.getEndNode());
                 }
             }
+        }
+
+        private void createBranchBasedSubNet(ArrayList<Path> pathList) {
+            subTransitions = new ArrayList<>();
+            subPlaces = new ArrayList<>();
+            for (Path path : pathList
+            ) {
+                for (Node node : path.path) {
+                    for (Transition t : allTransitions)
+                        if (t.getID() == node.getID())
+                            if (!subTransitions.contains(t))
+                                subTransitions.add(t);
+                    for (Place p : allPlaces)
+                        if (p.getID() == node.getID())
+                            if (!subPlaces.contains(p))
+                                subPlaces.add(p);
+                }
+            }
+            calculateBranchInternalArcs(subPlaces, subTransitions, pathList);
         }
 
         private void createPathBasedSubNet(ArrayList<Path> pathList) {
@@ -1204,6 +1307,30 @@ public class SubnetCalculator {
                 }
             }
             */
+            this.subArcs = listOfAllArcs;
+        }
+
+        private void calculateBranchInternalArcs(ArrayList<Place> subPlaces, ArrayList<Transition> subTransitions, ArrayList<Path> pathList) {
+            ArrayList<Arc> listOfAllArcs = new ArrayList<>();
+            for (Path path : pathList) {
+                for (int i = 0; i < path.path.size() -1; i++) {
+                    Node startNode = path.path.get(i);
+                    Node endNode = path.path.get(i + 1);
+                    for (Arc arc : startNode.getOutArcs()) {
+                        if (arc.getEndNode().getID() == endNode.getID())
+                            listOfAllArcs.add(arc);
+                    }
+                    for(Arc arc : startNode.getInArcs()){
+                        if(arc.getStartNode().getID() == endNode.getID())
+                            listOfAllArcs.add(arc);
+                    }
+                }
+
+                for (Arc arc : path.endNode.getOutArcs()) {
+                    if (arc.getEndNode().getID() == path.startNode.getID())
+                        listOfAllArcs.add(arc);
+                }
+            }
             this.subArcs = listOfAllArcs;
         }
 

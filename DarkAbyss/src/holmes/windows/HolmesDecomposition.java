@@ -220,6 +220,12 @@ public class HolmesDecomposition extends JFrame {
         bpCheckBox.setSelected(false);
         panel.add(bpCheckBox);
 
+        JCheckBox ntzcCheckBox = new JCheckBox("Not SS cycle");
+        ntzcCheckBox.setBounds(posX + 10, posY + 510, 150, 20);
+        ntzcCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, ntzcCheckBox, panel, 16));
+        ntzcCheckBox.setSelected(false);
+        panel.add(ntzcCheckBox);
+
         return panel;
     }
 
@@ -268,7 +274,7 @@ public class HolmesDecomposition extends JFrame {
         fs1.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 0;
+        c.gridy = 4;
         panel.add(fs1, c);
 
         JLabel fs2 = new JLabel("Number of arcs");
@@ -276,7 +282,7 @@ public class HolmesDecomposition extends JFrame {
         fs2.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 5;
         panel.add(fs2, c);
 
         JLabel fs3 = new JLabel("Number of places");
@@ -284,7 +290,7 @@ public class HolmesDecomposition extends JFrame {
         fs3.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 6;
         panel.add(fs3, c);
 
         JLabel fs4 = new JLabel("Number of transitions");
@@ -292,7 +298,7 @@ public class HolmesDecomposition extends JFrame {
         fs4.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 7;
         panel.add(fs4, c);
 
         JSeparator separ = new JSeparator();
@@ -300,7 +306,7 @@ public class HolmesDecomposition extends JFrame {
         separ.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 4;
+        c.gridy = 8;
         panel.add(separ, c);
         ///////second subnet//////////
 
@@ -309,7 +315,7 @@ public class HolmesDecomposition extends JFrame {
         ss1.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 5;
+        c.gridy = 9;
         panel.add(ss1, c);
 
         JLabel ss2 = new JLabel("Number of arcs");
@@ -317,7 +323,7 @@ public class HolmesDecomposition extends JFrame {
         ss2.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 6;
+        c.gridy = 10;
         panel.add(ss2, c);
 
         JLabel ss3 = new JLabel("Number of places");
@@ -325,7 +331,7 @@ public class HolmesDecomposition extends JFrame {
         ss3.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 7;
+        c.gridy = 11;
         panel.add(ss3, c);
 
         JLabel ss4 = new JLabel("Number of transitions");
@@ -333,7 +339,7 @@ public class HolmesDecomposition extends JFrame {
         ss4.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 8;
+        c.gridy = 12;
         panel.add(ss4, c);
 
         JSeparator separ2 = new JSeparator();
@@ -341,7 +347,7 @@ public class HolmesDecomposition extends JFrame {
         separ2.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 9;
+        c.gridy = 13;
         panel.add(separ2, c);
 
         //////common subnet//////
@@ -351,7 +357,7 @@ public class HolmesDecomposition extends JFrame {
         cs1.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 10;
+        c.gridy = 14;
         panel.add(cs1, c);
 
         JLabel cs2 = new JLabel("Number of arcs");
@@ -359,7 +365,7 @@ public class HolmesDecomposition extends JFrame {
         cs2.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 11;
+        c.gridy = 15;
         panel.add(cs2, c);
 
         JLabel cs3 = new JLabel("Number of places");
@@ -367,7 +373,7 @@ public class HolmesDecomposition extends JFrame {
         cs3.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 12;
+        c.gridy = 16;
         panel.add(cs3, c);
 
         JLabel cs4 = new JLabel("Number of transitions");
@@ -375,7 +381,7 @@ public class HolmesDecomposition extends JFrame {
         cs4.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 13;
+        c.gridy = 17;
         panel.add(cs4, c);
 
         JSeparator separ3 = new JSeparator();
@@ -383,7 +389,7 @@ public class HolmesDecomposition extends JFrame {
         separ3.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 14;
+        c.gridy = 18;
         panel.add(separ3, c);
         ////////////////indexy
 
@@ -392,7 +398,7 @@ public class HolmesDecomposition extends JFrame {
         in0.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 15;
+        c.gridy = 19;
         panel.add(in0, c);
 
         JLabel in1 = new JLabel("Sørensen Index");
@@ -400,7 +406,7 @@ public class HolmesDecomposition extends JFrame {
         in1.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 16;
+        c.gridy = 20;
         panel.add(in1, c);
 
         JLabel in2 = new JLabel("Jaccard  Index");
@@ -408,7 +414,7 @@ public class HolmesDecomposition extends JFrame {
         in2.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 17;
+        c.gridy = 21;
         panel.add(in2, c);
 
         /////Values
@@ -418,7 +424,7 @@ public class HolmesDecomposition extends JFrame {
         vafn.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 1;
+        c.gridy = 5;
         panel.add(vafn, c);
 
         vpfn = new JLabel(String.valueOf(npfn));
@@ -426,7 +432,7 @@ public class HolmesDecomposition extends JFrame {
         vpfn.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 2;
+        c.gridy = 6;
         panel.add(vpfn, c);
 
         vtfn = new JLabel(String.valueOf(ntfn));
@@ -434,7 +440,7 @@ public class HolmesDecomposition extends JFrame {
         vtfn.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 3;
+        c.gridy = 7;
         panel.add(vtfn, c);
 
         vasn = new JLabel(String.valueOf(nasn));
@@ -442,7 +448,7 @@ public class HolmesDecomposition extends JFrame {
         vasn.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 6;
+        c.gridy = 10;
         panel.add(vasn, c);
 
         vpsn = new JLabel(String.valueOf(npsn));
@@ -450,7 +456,7 @@ public class HolmesDecomposition extends JFrame {
         vpsn.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 7;
+        c.gridy = 11;
         panel.add(vpsn, c);
 
         vtsn = new JLabel(String.valueOf(ntsn));
@@ -458,7 +464,7 @@ public class HolmesDecomposition extends JFrame {
         vtsn.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 8;
+        c.gridy = 12;
         panel.add(vtsn, c);
 
         vacn = new JLabel(String.valueOf(nacn));
@@ -466,7 +472,7 @@ public class HolmesDecomposition extends JFrame {
         vacn.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 11;
+        c.gridy = 15;
         panel.add(vacn, c);
 
         vpcn = new JLabel(String.valueOf(npcn));
@@ -474,7 +480,7 @@ public class HolmesDecomposition extends JFrame {
         vpcn.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 12;
+        c.gridy = 16;
         panel.add(vpcn, c);
 
         vtcn = new JLabel(String.valueOf(ntcn));
@@ -482,7 +488,7 @@ public class HolmesDecomposition extends JFrame {
         vtcn.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 13;
+        c.gridy = 17;
         panel.add(vtcn, c);
 
         valueOfSMC = new JLabel(String.valueOf(smc));
@@ -490,7 +496,7 @@ public class HolmesDecomposition extends JFrame {
         valueOfSMC.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 15;
+        c.gridy = 19;
         panel.add(valueOfSMC, c);
 
         valueOfSorensenIndex = new JLabel(String.valueOf(sorenIndex));
@@ -498,7 +504,7 @@ public class HolmesDecomposition extends JFrame {
         valueOfSorensenIndex.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 16;
+        c.gridy = 20;
         panel.add(valueOfSorensenIndex, c);
 
         valueOfJackobsenIndex = new JLabel(String.valueOf(jackobIndex));
@@ -506,7 +512,7 @@ public class HolmesDecomposition extends JFrame {
         valueOfJackobsenIndex.setEnabled(true);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
-        c.gridy = 17;
+        c.gridy = 21;
         panel.add(valueOfJackobsenIndex, c);
 
         /*
@@ -806,6 +812,9 @@ public class HolmesDecomposition extends JFrame {
             case 15:
                 SubnetCalculator.generateBranchesPlaces();
                 break;
+            case 16:
+                SubnetCalculator.generateNotTzCycles();
+                break;
         }
     }
 
@@ -843,6 +852,8 @@ public class HolmesDecomposition extends JFrame {
                 return SubnetCalculator.btSubNets.size();
             case 15:
                 return SubnetCalculator.bpSubNets.size();
+            case 16:
+                return SubnetCalculator.notTzCyclesiSubNets.size();
         }
         return 0;
     }
@@ -881,6 +892,8 @@ public class HolmesDecomposition extends JFrame {
                 return "Branch Transitions";
             case 15:
                 return "Branch Places";
+            case 16:
+                return "Not SS cycle";
         }
         return "";
     }
@@ -919,15 +932,40 @@ public class HolmesDecomposition extends JFrame {
                 return SubnetCalculator.btSubNets;
             case 15:
                 return SubnetCalculator.bpSubNets;
+            case 16:
+                return  SubnetCalculator.notTzCyclesiSubNets;
         }
         return SubnetCalculator.functionalSubNets;
     }
 
     private JList generateButton(int index) {
+        /*
         if (index == 0 || index == 1 || index == 2 || index == 3 || index == 8 || index == 10)
             return generateProperDecoButton(index);
-        if (index == 4 || index == 5 || index == 6 || index == 7 || index == 9 || index == 11 || index == 12 || index == 13||index == 14 ||index ==15)
+        if (index == 4 || index == 5 || index == 6 || index == 7 || index == 9 || index == 11 || index == 12 || index == 13||index == 14 ||index ==15 || index==16)
             return generateInProperDecoButton(index);
+        */
+        switch (index) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 8:
+            case 10:
+                return generateProperDecoButton(index);
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 9:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+                return generateInProperDecoButton(index);
+        }
 
         return generateProperDecoButton(index);
     }
@@ -1073,6 +1111,10 @@ public class HolmesDecomposition extends JFrame {
                 subnet = SubnetCalculator.bpSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.bpSubNets.size();
                 break;
+            case 16:
+                subnet = SubnetCalculator.notTzCyclesiSubNets.get(selectedSubNetindex);
+                size = SubnetCalculator.notTzCyclesiSubNets.size();
+                break;
 
         }
 
@@ -1203,6 +1245,10 @@ public class HolmesDecomposition extends JFrame {
                 firstsubnet = SubnetCalculator.bpSubNets.get(decoListOne.getSelectedIndex() - 1);
                 firstsize = SubnetCalculator.bpSubNets.size();
                 break;
+            case 16:
+                firstsubnet = SubnetCalculator.notTzCyclesiSubNets.get(decoListOne.getSelectedIndex() - 1);
+                firstsize = SubnetCalculator.notTzCyclesiSubNets.size();
+                break;
         }
 
 
@@ -1272,6 +1318,10 @@ public class HolmesDecomposition extends JFrame {
             case 15:
                 secondsubnet = SubnetCalculator.bpSubNets.get(decoListTwo.getSelectedIndex() - 1);
                 secondsize = SubnetCalculator.bpSubNets.size();
+                break;
+            case 16:
+                secondsubnet = SubnetCalculator.notTzCyclesiSubNets.get(decoListTwo.getSelectedIndex() - 1);
+                secondsize = SubnetCalculator.notTzCyclesiSubNets.size();
                 break;
 
 
