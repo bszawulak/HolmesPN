@@ -157,6 +157,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesKnockout windowsKnockout;
 	private HolmesDecomposition windowsDeco;
 	private HolmesBranchVerticesPrototype windowsBranch;
+	private HolmesPrototypeComparison windowsComp;
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	private boolean inaReady = true;
@@ -1382,6 +1383,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
+	 * Metoda tworzy prototypowe okno porównywarki sieci.
+	 */
+	public void createComparisonnWindow() {
+		if(windowsComp == null) {
+			windowsComp = new HolmesPrototypeComparison();
+		}
+	}
+
+	/**
 	 * Metoda pokazuje okno analizatora wykluczeń.
 	 */
 	public void showKnockoutWindow() {
@@ -1401,7 +1411,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 			windowsBranch.setVisible(true);
 		}
 	}
-	
+
+	public void showCompWindow() {
+		if(windowsComp != null) {
+			windowsComp.setVisible(true);
+		}
+	}
+
 	/**
 	 * Metoda zapisująca nowe zdarzenie w oknie logów.
 	 * @param text String - tekst zdarzenia

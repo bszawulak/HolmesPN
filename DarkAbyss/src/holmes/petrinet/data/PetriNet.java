@@ -1,7 +1,6 @@
 package holmes.petrinet.data;
 
 import holmes.analyse.MCTCalculator;
-import holmes.analyse.SubnetCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.files.io.AbyssReader;
 import holmes.files.io.AbyssWriter;
@@ -733,11 +732,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	public ArrayList<String> accessSubNetNames() {
 		return subNetNames;
-	}
-
-	public void setSubNetNames(ArrayList<String> namesVector) {
-		if(namesVector.size() == SubnetCalculator.functionalSubNets.size())
-			this.subNetNames = namesVector;
 	}
 	
 	/**

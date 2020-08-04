@@ -47,6 +47,19 @@ public abstract class Matrix {
 	}
 	
 	/**
+	 * Metoda odpowiedzialna za zamianę kolumn.
+	 * @param colA int - indeks kolumny A
+	 * @param colB int - indeks kolumny B
+	 */
+	public void exchangeColumns(int colA, int colB) {
+		for (int i = 0; i < amountOfPlaces; i++) {
+			int temp = getMatrix()[i][colA];
+			getMatrix()[i][colA]  = getMatrix()[i][colB];
+			getMatrix()[i][colB] = temp;
+		}
+	}
+
+	/**
 	 * Metoda odpowiedzialna za zamianę wierszy.
 	 * @param rowA int - indeks wiersza A
 	 * @param rowB int - indeks wiersza B
@@ -58,6 +71,7 @@ public abstract class Matrix {
 			getMatrix()[rowB][i] = temp;
 		}
 	}
+
 
 	/**
 	 * Metoda zwraca macierz.

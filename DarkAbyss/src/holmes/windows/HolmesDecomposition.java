@@ -1,6 +1,7 @@
 package holmes.windows;
 
 import holmes.analyse.SubnetCalculator;
+import holmes.analyse.comparison.DecoComparisonCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
@@ -10,6 +11,9 @@ import holmes.utilities.Tools;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -731,6 +735,38 @@ public class HolmesDecomposition extends JFrame {
     private void calculateDeco() {
         SubnetCalculator.cleanSubnets();
         getSubnetOfType();
+
+        ArrayList<SubnetCalculator.SubNet> deco = getCorrectSubnet(choosenDeco.get(0));
+        ArrayList<int[][]> subMatrix = new ArrayList<>();
+        for (SubnetCalculator.SubNet subnet: deco) {
+            subMatrix.add(DecoComparisonCalculator.subIncMat(subnet).getMatrix());
+        }
+
+        try{
+            BufferedWriter bw = new BufferedWriter(new FileWriter("decoMacierze.txt"));
+            for (int i = 0 ; i < subMatrix.size(); i++){
+                bw.write("sub: "+i);
+                bw.newLine();
+
+                for(int j = 0 ; j < subMatrix.get(i).length ;j++){
+                    for(int k =0; k< subMatrix.get(i)[j].length;k++){
+                        if(k == subMatrix.get(i)[j].length-1) {
+                            bw.write(subMatrix.get(i)[j][k] +"");
+                        }
+                        else {
+                            bw.write(subMatrix.get(i)[j][k] + " ");
+                        }
+                    }
+                    bw.newLine();
+                }
+                bw.newLine();
+            }
+            bw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        DecoComparisonCalculator.vertexOrderAlgorithm(DecoComparisonCalculator.subIncMat(SubnetCalculator.adtSubNets.get(0)));
     }
 
     private void getSubnetOfType() {
@@ -1609,7 +1645,6 @@ public class HolmesDecomposition extends JFrame {
         //return new Color(red, green, blue);
         return Color.GRAY;
     }
-
 
     private void showInfo() {
         JFrame infoWindow = new JFrame();

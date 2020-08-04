@@ -498,7 +498,7 @@ public class DarkMenu extends JMenuBar {
 		});
 		analysisMenu.add(decoWindowItem);
 
-		// Knockout window
+		// Branch window
 		JMenuItem branchWindowItem = new JMenuItem("Branch analysis...", KeyEvent.VK_7);
 		branchWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
 		branchWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK));
@@ -510,6 +510,19 @@ public class DarkMenu extends JMenuBar {
 			}
 		});
 		analysisMenu.add(branchWindowItem);
+
+		// Comparison window
+		JMenuItem compWindowItem = new JMenuItem("Net comparison", KeyEvent.VK_8);
+		compWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
+		compWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
+		compWindowItem.getAccessibleContext().setAccessibleDescription("Comparison prototype");
+		compWindowItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().createComparisonnWindow();
+				GUIManager.getDefaultGUIManager().showCompWindow();
+			}
+		});
+		analysisMenu.add(compWindowItem);
 
 
 
