@@ -215,6 +215,21 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		}
 		return counter;
 	}
+
+    /**
+     * Metoda pozwala pobrać wszystkie łuki wyjściowe z miejsc, w których występuje konlfikt.
+     * Konflikt - miejsce posiada więcej niż 1 łuk wyjściowy
+     * @return ArrayList[Arc] - lista łuków, które występują w konlflikcie
+     */
+    public ArrayList<Arc> getConflictArcs() {
+        ArrayList<Arc> conflictArcs = new ArrayList<Arc>();
+        for (Place place : getPlaces()) {
+            if (place.getOutArcs().size() > 1) {
+                conflictArcs.addAll(place.getOutArcs());
+            }
+        }
+        return conflictArcs;
+    }
 	
 	/**
 	 * Metoda pozwala pobrać wszystkie obiekty tranzycji czasowych w danej sieci.

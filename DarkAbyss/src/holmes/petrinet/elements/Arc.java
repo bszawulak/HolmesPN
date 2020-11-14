@@ -7,6 +7,7 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.firingrate.Constraint;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
@@ -48,6 +49,11 @@ public class Arc extends PetriNetElement {
 	private Arc pairedArc;
 	private boolean isMainArcOfPair = false;
 	private TypeOfArc arcType;
+	
+    private boolean visited = false;
+    private ArrayList<Constraint> constraints;
+    private double fProbability = 0;
+    private double tempFiringFreq = 0;
 	
 	public boolean qSimForcedArc = false; //czy łuk ma być wzmocniony
 	public Color qSimForcedColor = Color.BLACK; //kolor wzmocnienia
@@ -408,6 +414,38 @@ public class Arc extends PetriNetElement {
 	public void setSelected(boolean select) {
 		this.selected = select;
 	}
+
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+    public ArrayList<Constraint> getConstraints() {
+        return constraints;
+    }
+
+    public void setConstraints(ArrayList<Constraint> constraints) {
+        this.constraints = constraints;
+    }
+
+    public double getfProbability() {
+        return fProbability;
+    }
+
+    public void setfProbability(double fProbability) {
+        this.fProbability = fProbability;
+    }
+
+    public double getTempFiringFreq() {
+        return tempFiringFreq;
+    }
+
+    public void setTempFiringFreq(double tempFiringFreq) {
+        this.tempFiringFreq = tempFiringFreq;
+    }
 
 	/**
 	 * Metoda pozwala sprawdzić, czy punkt jest częcią łuku.

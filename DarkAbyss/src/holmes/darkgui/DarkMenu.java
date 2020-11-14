@@ -19,7 +19,7 @@ import holmes.utilities.Tools;
 import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesMergeNets;
 import holmes.windows.managers.HolmesStatesManager;
-
+import holmes.windows.HolmesFiringRateAlgViewer;
 import com.javadocking.dockable.Dockable;
 
 /**
@@ -592,7 +592,17 @@ public class DarkMenu extends JMenuBar {
 			}
 		});
 		//otherMenu.add(fixNet);
-		
+
+        JMenuItem firingRateMenu = new JMenuItem("Calculate firing rates", KeyEvent.VK_8);
+        firingRateMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_invSim.png"));
+        firingRateMenu.getAccessibleContext().setAccessibleDescription("Calculate firing frequency for each transition");
+        firingRateMenu.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                new HolmesFiringRateAlgViewer();
+            }
+        });
+        otherMenu.add(firingRateMenu);
+
 		//CLUSTERS MENU
 		/*
 		clustersOperationsMenu = new JMenu("Clusters");
