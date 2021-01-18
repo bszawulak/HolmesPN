@@ -341,7 +341,7 @@ public class Toolbar extends BorderDock {
 		//TODO:
 		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/aaa.png")) {
 			public void actionPerformed(ActionEvent actionEvent) {	
-				
+
 				IRandomGenerator generator2 = new StandardRandom();
 				
 				for(Transition t : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
@@ -378,7 +378,7 @@ public class Toolbar extends BorderDock {
 					
 				}
 				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-				
+
 				/*
 				HolmesNotepad aa = new HolmesNotepad(600, 480);
 				aa.setVisible(true);
@@ -453,33 +453,40 @@ public class Toolbar extends BorderDock {
 				GraphletsCalculator.generateGraphlets();
 				ArrayList<int[]> GDV = new ArrayList<>();
 
-				//int[] vectorOrbit = GraphletsCalculator.vectorOrbit(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(2));
 
-				for (Node startNode : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
-					int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode);
-					GDV.add(vectorOrbit);
+				boolean test = false;
+
+				if(test) {
+					System.out.println(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(1));
+					int[] vectorOrbit = GraphletsCalculator.vectorOrbit(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(1),test);
 				}
+				else {
 
-
-				for (int j=0; j < GDV.size();j++) {
-					System.out.print(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(j).getName() + " - ");
-					int[] vector = GDV.get(j);
-					for(int i = 0 ; i< vector.length;i++){
-						if(vector[i]<0)
-						{
-							System.out.print( "X, \t");
-						}
-						else {
-							System.out.print(vector[i] + "\t ");
-						}
+					for (Node startNode : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
+						int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode,test);
+						GDV.add(vectorOrbit);
 					}
-					System.out.println();
+
+
+					for (int j = 0; j < GDV.size(); j++) {
+						System.out.print(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(j).getName() + " - ");
+						int[] vector = GDV.get(j);
+						for (int i = 0; i < vector.length; i++) {
+							if (vector[i] < 0) {
+								System.out.print("X, \t");
+							} else {
+								System.out.print(vector[i] + "\t ");
+							}
+						}
+						System.out.println();
+					}
+
 				}
 
 			}
 		};
-		testGraphletButton.setEnabled(true);
-		analysisDockables.add(createButtonDockable("Testing graphlets", testGraphletButton));
+		//testGraphletButton.setEnabled(true);
+		//analysisDockables.add(createButtonDockable("Testing graphlets", testGraphletButton));
 
 
 

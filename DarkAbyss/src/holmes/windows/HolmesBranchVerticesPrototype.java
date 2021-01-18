@@ -342,9 +342,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                             &&
                             (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
                             &&
-                            (n.getInNodes().size() >= minimaInlValue || n.getInNodes().size() <= maximaInlValue)
+                            (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue)
                             &&
-                            (n.getOutNodes().size() >= minimalOutValue || n.getOutNodes().size() <= maximalOutValue)
+                            (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)
                     ) {
                         BranchStructure bs = new BranchStructure(n, cp.getColor());
                         bsl.add(bs);
@@ -359,9 +359,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                             &&
                             (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
                             &&
-                            (n.getInNodes().size() >= minimaInlValue || n.getInNodes().size() <= maximaInlValue)
+                            (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue)
                             &&
-                            (n.getOutNodes().size() >= minimalOutValue || n.getOutNodes().size() <= maximalOutValue)
+                            (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)
                     ) {
                         BranchStructure bs = new BranchStructure(n, cp.getColor());
                         bsl.add(bs);
@@ -374,9 +374,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                             &&
                             (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
                             &&
-                            (n.getInNodes().size() >= minimaInlValue || n.getInNodes().size() <= maximaInlValue)
+                            (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue)
                             &&
-                            (n.getOutNodes().size() >= minimalOutValue || n.getOutNodes().size() <= maximalOutValue)
+                            (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)
                     ) {
                         BranchStructure bs = new BranchStructure(n, cp.getColor());
                         bsl.add(bs);
@@ -409,6 +409,46 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                     resultString.append("\t ").append(direction).append(" P: <").append(n.getInNodes().size()).append(" | ").append(n.getOutNodes().size()).append("> ").append(n.getName()).append("\n\r");
             }
         }
+
+        int transitionNumberIn = 0 ;
+        int transitionNumberOut = 0 ;
+        int placeNumberIn = 0 ;
+        int placeNumberOut = 0 ;
+
+        int transitionNumberInWeight = 0 ;
+        int transitionNumberOutWeight = 0 ;
+        int placeNumberInWeight = 0 ;
+        int placeNumberOutWeight = 0 ;
+
+        for (Node n : overlord.getWorkspace().getProject().getNodes()) {
+            if(n.getInArcs().size()>1 ||n.getOutArcs().size()>1) {
+                if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
+                    transitionNumberIn += n.getInArcs().size();
+                    transitionNumberInWeight += n.getInArcs().stream().mapToInt(i -> i.getWeight()).sum();
+
+                    transitionNumberOut += n.getInArcs().size();
+                    transitionNumberOutWeight += n.getInArcs().stream().mapToInt(i -> i.getWeight()).sum();
+                } else {
+                    placeNumberIn += n.getInArcs().size();
+                    placeNumberInWeight += n.getInArcs().stream().mapToInt(i -> i.getWeight()).sum();
+
+                    placeNumberOut += n.getInArcs().size();
+                    placeNumberOutWeight += n.getInArcs().stream().mapToInt(i -> i.getWeight()).sum();
+                }
+            }
+        }
+/*
+        resultString.append("transitionNumberIn: " + transitionNumberIn + "\n");
+        resultString.append("transitionNumberInWeight: " + transitionNumberInWeight + "\n");
+        resultString.append("transitionNumberOut: " + transitionNumberOut + "\n");
+        resultString.append("transitionNumberOutWeight: " + transitionNumberOutWeight + "\n");
+
+
+        resultString.append("placeNumberIn: " + transitionNumberIn + "\n");
+        resultString.append("placeNumberInWeight: " + transitionNumberInWeight + "\n");
+        resultString.append("placeNumberOut: " + transitionNumberOut + "\n");
+        resultString.append("placeNumberOutWeight: " + transitionNumberOutWeight + "\n");
+*/
         resultArea.setText(resultString.toString());
 
         overlord.reset.clearGraphColors();

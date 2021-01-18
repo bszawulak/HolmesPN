@@ -2,11 +2,9 @@ package holmes.files.io;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
@@ -21,14 +19,10 @@ import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.StatePlacesManager;
 import holmes.petrinet.data.SPNdataVector;
 import holmes.petrinet.data.SPNdataVector.SPNvectorSuperType;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.MetaNode;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
+import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.StochaticsType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
@@ -93,7 +87,48 @@ public class ProjectReader {
 		transitionsProcessed = 0;
 		arcsProcessed = 0;
 	}
-	
+
+	public ProjectReader(boolean isLabelCompariso) {
+		overlord = GUIManager.getDefaultGUIManager();
+		projectCore = new PetriNet(null,"test");
+		nodes = new ArrayList<>();
+		arcs = new ArrayList<>();
+		placesProcessed = 0;
+		transitionsProcessed = 0;
+		arcsProcessed = 0;
+	}
+
+	public boolean readProjectForLabelComparison(String filepath) {
+		boolean status = true;
+
+		try {
+			DataInputStream dis = new DataInputStream(new FileInputStream(filepath));
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(dis));
+
+			overlord.log("Reading project file: " + filepath, "text", true);
+
+			status = readProjectHeader(buffer);
+			if (status == false) {
+				overlord.log("Reading project data block failure.", "error", true);
+				buffer.close();
+				return false;
+			}
+
+			status = readNetwork(buffer,true);
+			if (status == false) {
+				overlord.log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
+				buffer.close();
+				return false;
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return status;
+	}
+
 	/**
 	 * Metoda odpowiedzialna za odczyt danych projektu, do którego ścieżka podana jest jako parametr. 
 	 * @param filepath String - pełna ścieżka do pliku projektu
@@ -118,7 +153,7 @@ public class ProjectReader {
 				return false;
 			}
 			
-			status = readNetwork(buffer);
+			status = readNetwork(buffer,false);
 			if(status == false) {
 				overlord.log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
 				buffer.close();
@@ -273,7 +308,7 @@ public class ProjectReader {
 	 * @param buffer BufferedReader - obiekt odczytujący
 	 * @return boolean - true, jeśli nie było problemów przy odczycie
 	 */
-	private boolean readNetwork(BufferedReader buffer) {
+	private boolean readNetwork(BufferedReader buffer, boolean isLabelComparison) {
 		boolean status = false;
 		try {
 			String line; // = buffer.readLine();
@@ -358,9 +393,17 @@ public class ProjectReader {
 					//przeczytano tranzycje
 				}
 			}
-
-			ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-			ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
+			ArrayList<Place> places = new ArrayList<>();
+			ArrayList<Transition> transitions = new ArrayList<>();
+			if(isLabelComparison)
+			{
+				places = nodes.stream().filter(x->x.getType()==PetriNetElementType.PLACE).map(obj -> (Place) obj).collect(Collectors.toCollection(ArrayList::new));
+				transitions = nodes.stream().filter(x->x.getType()==PetriNetElementType.TRANSITION).map(obj -> (Transition) obj).collect(Collectors.toCollection(ArrayList::new));
+			}
+			else {
+				places = overlord.getWorkspace().getProject().getPlaces();
+				transitions = overlord.getWorkspace().getProject().getTransitions();
+			}
 
 			//ARCS:
 			while(!((line = buffer.readLine()).contains("<Arcs data block>"))) //przewiń do łuków
@@ -1735,4 +1778,15 @@ public class ProjectReader {
 		graphPanel.setOriginSize(graphPanel.getSize());
 		graphPanel.repaint();
 	}
+
+
+	public ArrayList<Node> getNodes() {
+		return nodes;
+	}
+
+	public ArrayList<Arc> getArcs() {
+		return arcs;
+	}
+
+
 }

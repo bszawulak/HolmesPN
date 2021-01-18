@@ -3,6 +3,8 @@ package holmes;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import holmes.analyse.comparison.GraphletComparator;
+import holmes.analyse.comparison.experiment.NetGenerator;
 import holmes.darkgui.GUIManager;
 
 /**

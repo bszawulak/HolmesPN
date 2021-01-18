@@ -56,6 +56,8 @@ public class Arc extends PetriNetElement {
     public boolean qSimForcedArc = false; //czy łuk ma być wzmocniony
     public Color qSimForcedColor = Color.BLACK; //kolor wzmocnienia
 
+    private int memoryOfArcWeight = -1;
+
     /**
      * NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR
      */
@@ -846,5 +848,14 @@ public class Arc extends PetriNetElement {
         return " ArcType: " + arcType.toString()
                 + " StartNode: " + startNode + startNodeLoc + "(" + startELLoc + ") [gID:" + startNodeID + "]  ==>  "
                 + " EndNode: " + endNode + endNodeLoc + "(" + endELLoc + ") [gID:" + endNodeID + "]";
+    }
+
+
+    public int getMemoryOfArcWeight() {
+        return memoryOfArcWeight;
+    }
+
+    public void setMemoryOfArcWeight(int memoryOfArcWeight) {
+        this.memoryOfArcWeight = memoryOfArcWeight;
     }
 }

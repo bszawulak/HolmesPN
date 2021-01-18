@@ -156,6 +156,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesMCS windowMCS; //okno generatora MCS
 	private HolmesKnockout windowsKnockout;
 	private HolmesDecomposition windowsDeco;
+	private HolmesGraphlets windowsGraphlet;
+	private HolmesLabelComparison labelComparison;
 	private HolmesBranchVerticesPrototype windowsBranch;
 	private HolmesPrototypeComparison windowsComp;
 	
@@ -1374,6 +1376,24 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
+	 * Metoda tworzy nowe okno analizatora graphletów.
+	 */
+	public void createGraphletsWindow() {
+		if(windowsGraphlet == null) {
+			windowsGraphlet = new HolmesGraphlets();
+		}
+	}
+
+	/**
+	 * Metoda tworzy nowe okno porównywania z użyciem Labeli.
+	 */
+	public void createLabelComparisonWindow() {
+		if(labelComparison == null) {
+			labelComparison = new HolmesLabelComparison();
+		}
+	}
+
+	/**
 	 * Metoda tworzy prototypowe okno dla branchowych wierzchołków.
 	 */
 	public void createBranchWindow() {
@@ -1406,6 +1426,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}
 	}
 
+	public void showGraphletsWindow() {
+		if(windowsGraphlet != null) {
+			windowsGraphlet.setVisible(true);
+		}
+	}
+
 	public void showBranchWindow() {
 		if(windowsBranch != null) {
 			windowsBranch.setVisible(true);
@@ -1415,6 +1441,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void showCompWindow() {
 		if(windowsComp != null) {
 			windowsComp.setVisible(true);
+		}
+	}
+
+	public void showLabelCompWindow() {
+		if(labelComparison != null) {
+			labelComparison.setVisible(true);
 		}
 	}
 

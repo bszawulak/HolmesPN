@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import holmes.analyse.comparison.KnockoutInvariantComparison;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.Arc;
@@ -96,6 +97,19 @@ public class IOprotocols {
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
 	public boolean readT_invariants(String path) {
+
+
+		try{
+			KnockoutInvariantComparison kic = new KnockoutInvariantComparison();
+			//kic.compare_baldan_cocco();
+			kic.compare();
+			return true;
+		} catch (Exception e) {
+			overlord.log("Fast invariant comparison operation failed.", "error", true);
+			return false;
+		}
+
+/*
 		try {
 			resetComponents();
 			DataInputStream in = new DataInputStream(new FileInputStream(path));
@@ -180,7 +194,10 @@ public class IOprotocols {
 		} catch (Exception e) {
 			overlord.log("T-invariants reading operation failed.", "error", true);
 			return false;
-		} 
+		}
+*/
+
+
 	}
 	
 	/**
@@ -1187,8 +1204,8 @@ public class IOprotocols {
 			fileBuffer += "@";
 			writerObject.println(fileBuffer);
 			writerObject.close();
-			overlord.log("Petri net exported as .pnt INA format. File: "+path, "text", true);
-			overlord.markNetSaved();
+			//overlord.log("Petri net exported as .pnt INA format. File: "+path, "text", true);
+			//overlord.markNetSaved();
 			return true;
 		} catch (Exception e) {
 			//System.err.println("Error: " + e.getMessage());

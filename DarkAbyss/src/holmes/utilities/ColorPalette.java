@@ -64,7 +64,7 @@ public class ColorPalette {
 		colors.add(new Color(0, 255, 0)); //3: zielony
 		colors.add(new Color(0, 0, 255)); //4: niebieski
 		colors.add(new Color(102, 0, 204)); //5: fioletowy
-		colors.add(new Color(96, 96, 96)); //6: ciemny szary
+		//colors.add(new Color(96, 96, 96)); //6: ciemny szary
 		colors.add(new Color(255, 128, 0)); //7: pomarańczowy
 		colors.add(new Color(102, 0, 0)); //8: dark red
 		colors.add(new Color(51, 51, 0)); //9: brązowy
@@ -72,7 +72,7 @@ public class ColorPalette {
 		colors.add(new Color(0, 102, 0)); //11: ciemny zielony
 		colors.add(new Color(102, 102, 255)); //12: ...
 		colors.add(new Color(153, 204, 255)); //13: ...
-		colors.add(new Color(192, 192, 192)); //14: jasny szary
+		//colors.add(new Color(192, 192, 192)); //14: jasny szary
 		colors.add(new Color(102, 255, 255)); //15: ...
 		colors.add(new Color(102, 102, 0)); //16: ...
 		colors.add(new Color(0, 0, 102)); //17: ...

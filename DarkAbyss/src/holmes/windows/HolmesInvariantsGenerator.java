@@ -235,7 +235,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		panel.add(saveInvariantsButton);
 		
 		//**************************************************************************************************
-		
+
 		JButton showInvariantsButton = new JButton();
 		showInvariantsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Show<br>t-invariants</html>");
 		showInvariantsButton.setBounds(posX+505, posY, 120, 36);
@@ -248,7 +248,20 @@ public class HolmesInvariantsGenerator extends JFrame {
 		});
 		showInvariantsButton.setFocusPainted(false);
 		panel.add(showInvariantsButton);
-		
+
+		JButton saveInvButton = new JButton();
+		saveInvButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Save<br>t-invariants</html>");
+		saveInvButton.setBounds(posX+130, posY+40, 120, 36);
+		saveInvButton.setMargin(new Insets(0, 0, 0, 0));
+		saveInvButton.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
+		saveInvButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				saveInvKajaType(true);
+			}
+		});
+		saveInvButton.setFocusPainted(false);
+		panel.add(saveInvButton);
+
 		JButton makeFeasibleButton = new JButton();
 		makeFeasibleButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Make<br>&nbsp;&nbsp;feasible</html>");
 		makeFeasibleButton.setBounds(posX+255, posY+40, 120, 36);
@@ -316,6 +329,52 @@ public class HolmesInvariantsGenerator extends JFrame {
 		panel.add(removeSingleInvCheckBox);
 
 		return panel;
+	}
+
+	private void saveInvKajaType(boolean t_inv) {
+		if(t_inv) {
+			ArrayList<ArrayList<Integer>> t_invariants;
+			ArrayList<Transition> transitions;
+			if ((t_invariants = overlord.getWorkspace().getProject().getT_InvMatrix()) != null) {
+				transitions = overlord.getWorkspace().getProject().getTransitions();
+				HolmesNotepad notePad = new HolmesNotepad(900, 600);
+				notePad.setVisible(true);
+				notePad.addTextLineNL("T-invariants - Kaja Style:", "text");
+				for (int i = 0; i < t_invariants.size(); i++) {
+					ArrayList<Integer> inv = t_invariants.get(i);
+					String vector = "x" + i + " - ";
+					for (int j = 0 ; j < inv.size();j++) {
+						int value = inv.get(j);
+						if(value!=0) {
+							vector += "t"+ overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transitions.get(j)) + ";";
+						}
+					}
+					notePad.addTextLineNL(vector, "text");
+				}
+			}
+		}
+		else
+		{
+			ArrayList<ArrayList<Integer>> p_invariants;
+			ArrayList<Place> places;
+			if ((p_invariants = overlord.getWorkspace().getProject().getT_InvMatrix()) != null) {
+				places = overlord.getWorkspace().getProject().getPlaces();
+				HolmesNotepad notePad = new HolmesNotepad(900, 600);
+				notePad.setVisible(true);
+				notePad.addTextLineNL("P-invariants - Kaja Style:", "text");
+				for (int i = 0; i < p_invariants.size(); i++) {
+					ArrayList<Integer> inv = p_invariants.get(i);
+					String vector = "x" + i + " - ";
+					for (int j = 0 ; j < inv.size();j++) {
+						int value = inv.get(j);
+						if(value!=0) {
+							vector += "p"+overlord.getWorkspace().getProject().getPlaces().lastIndexOf(places.get(j)) + ";";
+						}
+					}
+					notePad.addTextLineNL(vector, "text");
+				}
+			}
+		}
 	}
 
 	/**

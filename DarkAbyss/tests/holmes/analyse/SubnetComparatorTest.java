@@ -1,0 +1,4395 @@
+package holmes.analyse;
+
+import holmes.analyse.comparison.SubnetComparator;
+import holmes.analyse.comparison.structures.GreatCommonSubnet;
+import holmes.petrinet.data.IdGenerator;
+import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.elements.Arc;
+import holmes.petrinet.elements.Node;
+import holmes.petrinet.elements.Place;
+import holmes.petrinet.elements.Transition;
+import org.junit.jupiter.api.Test;
+
+import java.awt.*;
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class SubnetComparatorTest {
+
+    @Test
+    void compare0_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(0, gcs.gcsValue);
+        assertEquals(0, gcs.psel.size());
+    }
+
+    @Test
+    void compare0_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare0_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare0_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    //line 1
+
+    @Test
+    void compare1_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(0, gcs.gcsValue);
+        assertEquals(0, gcs.psel.size());
+    }
+
+    @Test
+    void compare1_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare1_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare1_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    //line 2
+
+    @Test
+    void compare2_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare2_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare2_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet2(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    //line 3
+
+    @Test
+    void compare3_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare3_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare3_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet3(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    //line 4
+
+    @Test
+    void compare4_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare4_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare4_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet4(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    //line 5
+
+    @Test
+    void compare5_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare5_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(3, gcs.gcsValue);
+        assertEquals(3, gcs.psel.get(0).partialNodes.size());
+        assertEquals(2, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare5_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    //line 6
+
+    @Test
+    void compare6_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare6_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(9, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(9, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(9, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(9, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(9, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(9, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(9, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(9, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare6_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(9, gcs.psel.get(0).partialArcs.size());
+    }
+
+    //linia 7
+
+    @Test
+    void compare7_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare7_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(3, gcs.gcsValue);
+        assertEquals(3, gcs.psel.get(0).partialNodes.size());
+        assertEquals(2, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(15, gcs.gcsValue);
+        assertEquals(15, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        printElements(gcs);
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        printElements(gcs);
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(15, gcs.gcsValue);
+        assertEquals(15, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(15, gcs.gcsValue);
+        assertEquals(15, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(15, gcs.gcsValue);
+        assertEquals(15, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(15, gcs.gcsValue);
+        assertEquals(15, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(15, gcs.gcsValue);
+        assertEquals(15, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(15, gcs.gcsValue);
+        assertEquals(15, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(15, gcs.gcsValue);
+        assertEquals(15, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare7_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(15, gcs.gcsValue);
+        assertEquals(15, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    //line 8
+
+    @Test
+    void compare8_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare8_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        printElements(gcs);
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        printElements(gcs);
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    private void printElements(GreatCommonSubnet gcs) {
+        System.out.println("---whole subnet---:");
+        System.out.println("Node:");
+        for (Node n : gcs.psel.get(0).partialNodes) {
+            System.out.println(n.getName());
+        }
+        System.out.println("Arcs:");
+        for (Arc a : gcs.psel.get(0).partialArcs) {
+            System.out.println(a.getStartNode().getName() + "-->" + a.getEndNode().getName());
+        }
+    }
+
+    @Test
+    void compare8_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare8_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    //line 9
+
+    @Test
+    void compare9_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare9_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        printElements(gcs);
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(14, gcs.gcsValue);
+        assertEquals(14, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(14, gcs.gcsValue);
+        assertEquals(14, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(14, gcs.gcsValue);
+        assertEquals(14, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(14, gcs.gcsValue);
+        assertEquals(14, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(14, gcs.gcsValue);
+        assertEquals(14, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(14, gcs.gcsValue);
+        assertEquals(14, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(14, gcs.gcsValue);
+        assertEquals(14, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(14, gcs.gcsValue);
+        assertEquals(14, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare9_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(14, gcs.gcsValue);
+        assertEquals(14, gcs.psel.get(0).partialNodes.size());
+        assertEquals(14, gcs.psel.get(0).partialArcs.size());
+    }
+
+    //line 10
+
+    @Test
+    void compare10_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare10_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(9, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare10_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(10, gcs.gcsValue);
+        assertEquals(10, gcs.psel.get(0).partialNodes.size());
+        assertEquals(10, gcs.psel.get(0).partialArcs.size());
+    }
+
+    //line 11
+
+
+    @Test
+    void compare11_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare11_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare11_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet11(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+
+    //line 12
+
+
+    @Test
+    void compare12_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare12_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare12_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+
+    //line 13
+
+
+    @Test
+    void compare13_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare13_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare13_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+
+    //line 14
+
+
+    @Test
+    void compare14_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare14_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare14_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+
+    //line 15
+
+
+    @Test
+    void compare15_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare15_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare15_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+
+    //line 16
+
+
+    @Test
+    void compare16_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare16_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare16_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+
+    //line 17
+
+
+    @Test
+    void compare17_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare17_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare17_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+
+    //line 18
+
+
+    @Test
+    void compare18_0() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet0());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_1() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet1());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(2, gcs.gcsValue);
+        assertEquals(2, gcs.psel.get(0).partialNodes.size());
+        assertEquals(1, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_2() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet2());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+
+    }
+
+    @Test
+    void compare18_3() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet3());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_4() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet4());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_5() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet5());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_6() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet6());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_7() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet7());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_8() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet8());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_9() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet9());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_10() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet10());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_11() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet11());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_12() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet12());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_13() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet13());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(5, gcs.gcsValue);
+        assertEquals(5, gcs.psel.get(0).partialNodes.size());
+        assertEquals(4, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_14() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet14());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_15() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet15());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_16() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet16());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_17() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet17());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+    @Test
+    void compare18_18() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet18());
+        GreatCommonSubnet gcs = sc.compareTest();
+        assertEquals(7, gcs.gcsValue);
+        assertEquals(7, gcs.psel.get(0).partialNodes.size());
+        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+    }
+
+
+
+
+    SubnetCalculator.SubNet creatSubnet0() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        Transition t1 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t1);
+
+        ArrayList<Place> pl = new ArrayList<>();
+        Place p1 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p1);
+
+        ArrayList<Node> nl = new ArrayList<>();
+        nl.add(p1);
+        nl.add(t1);
+
+        Arc a1 = new Arc(IdGenerator.getNextId(), t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        ArrayList<Arc> al = new ArrayList<>();
+
+        al.add(a1);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet1() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        Transition t1 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t1);
+
+        ArrayList<Place> pl = new ArrayList<>();
+        Place p1 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p1);
+
+        ArrayList<Node> nl = new ArrayList<>();
+        nl.add(p1);
+        nl.add(t1);
+
+        Arc a1 = new Arc(IdGenerator.getNextId(), p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet2() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+        ArrayList<Node> nl = new ArrayList<>();
+
+        Transition t3 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t4 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t3);
+        tl.add(t4);
+
+        Place p3 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p4 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p3);
+        pl.add(p4);
+
+        nl.add(p3);
+        nl.add(p4);
+        nl.add(t3);
+        nl.add(t4);
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p3.getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t3.getElementLocations().get(0), p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p4.getElementLocations().get(0), t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet3() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet4() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t6);
+        tl.add(t7);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p7);
+
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet5() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+        ArrayList<Node> nl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        tl.add(t8);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p7);
+
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a6 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet6() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+        ArrayList<Node> nl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        tl.add(t8);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p10 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p7);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p10);
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a6 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet7() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));t5.setName("T5");
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));t6.setName("T6");
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));t7.setName("T7");
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));t8.setName("T8");
+        Transition t9 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));t9.setName("T9");
+        Transition t10 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));t10.setName("T10");
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        tl.add(t8);
+        tl.add(t9);
+        tl.add(t10);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p5.setName("P5");
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p6.setName("P6");
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p7.setName("P7");
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p8.setName("P8");
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p9.setName("P9");
+        Place p10 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p10.setName("P10");
+        Place p11 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p11.setName("P11");
+        Place p12 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p12.setName("P12");
+        Place p13 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p13.setName("P13");
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p7);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p10);
+        pl.add(p11);
+        pl.add(p12);
+        pl.add(p13);
+
+
+        Arc a21 = new Arc(IdGenerator.getNextId(), p13.getElementLocations().get(0), t10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a22 = new Arc(IdGenerator.getNextId(), t10.getElementLocations().get(0), p8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a11 = new Arc(IdGenerator.getNextId(), p12.getElementLocations().get(0), t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a12 = new Arc(IdGenerator.getNextId(), t9.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a13 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a6 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet8() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));t5.setName("T5");
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));t6.setName("T6");
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));t7.setName("T7");
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));t8.setName("T8");
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        tl.add(t8);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p5.setName("P5");
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p6.setName("P6");
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p7.setName("P7");
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p8.setName("P8");
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p9.setName("P9");
+        Place p10 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p10.setName("P10");
+        Place p11 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));p11.setName("P11");
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p7);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p10);
+        pl.add(p11);
+
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        Arc a21 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a22 = new Arc(IdGenerator.getNextId(), p10.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a23 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a24 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet9() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t9 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t10 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        tl.add(t8);
+        tl.add(t9);
+        tl.add(t10);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p10 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p11 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p12 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p13 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p7);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p10);
+        pl.add(p11);
+        pl.add(p12);
+        pl.add(p13);
+
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a14 = new Arc(IdGenerator.getNextId(), t9.getElementLocations().get(0), p12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a15 = new Arc(IdGenerator.getNextId(), p12.getElementLocations().get(0), t10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a16 = new Arc(IdGenerator.getNextId(), t10.getElementLocations().get(0), p13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a17 = new Arc(IdGenerator.getNextId(), p13.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        Arc a21 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a22 = new Arc(IdGenerator.getNextId(), p10.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a23 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a24 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet10() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+        ArrayList<Node> nl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        tl.add(t8);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p10 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p7);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p10);
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a6 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a99 = new Arc(IdGenerator.getNextId(), p10.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+
+    SubnetCalculator.SubNet creatSubnet11() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+        ArrayList<Node> nl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t9 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        //tl.add(t8);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p10 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        //pl.add(p7);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p10);
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a6 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a77 = new Arc(IdGenerator.getNextId(), t9.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet12() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+        ArrayList<Node> nl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t9 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        //      tl.add(t5);
+        //      tl.add(t6);
+        //      tl.add(t7);
+        tl.add(t8);
+        tl.add(t9);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p10 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        //     pl.add(p6);
+        pl.add(p7);
+        //   pl.add(p8);
+        //   pl.add(p9);
+        //   pl.add(p10);
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a6 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a77 = new Arc(IdGenerator.getNextId(), t9.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet13() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        tl.add(t8);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p10 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p11 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p7);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p10);
+        pl.add(p11);
+
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        Arc a21 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a24 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+
+    SubnetCalculator.SubNet creatSubnet14() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t9 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t10 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t11 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t12 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        tl.add(t8);
+        tl.add(t9);
+        tl.add(t10);
+        tl.add(t11);
+        tl.add(t12);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+
+        Place p11 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p12 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p13 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+
+        Place p14 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p15 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p16 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p7);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p11);
+        pl.add(p12);
+        pl.add(p13);
+        pl.add(p14);
+        pl.add(p15);
+        pl.add(p16);
+
+
+        Arc a321 = new Arc(IdGenerator.getNextId(), p14.getElementLocations().get(0), t11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a322 = new Arc(IdGenerator.getNextId(), t11.getElementLocations().get(0), p13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a21 = new Arc(IdGenerator.getNextId(), p13.getElementLocations().get(0), t10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a22 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0),t10.getElementLocations().get(0),  Arc.TypeOfArc.NORMAL);
+
+
+        Arc a112 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a11 = new Arc(IdGenerator.getNextId(), p12.getElementLocations().get(0), t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a12 = new Arc(IdGenerator.getNextId(), t9.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a13 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0),t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(),t6.getElementLocations().get(0), p5.getElementLocations().get(0),  Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0),t6.getElementLocations().get(0),  Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0),p6.getElementLocations().get(0),  Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), p9.getElementLocations().get(0),t7.getElementLocations().get(0),  Arc.TypeOfArc.NORMAL);
+
+        Arc a6 = new Arc(IdGenerator.getNextId(), t10.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        Arc a46 = new Arc(IdGenerator.getNextId(),t6.getElementLocations().get(0), p15.getElementLocations().get(0),  Arc.TypeOfArc.NORMAL);
+        Arc a47 = new Arc(IdGenerator.getNextId(), p15.getElementLocations().get(0),t12.getElementLocations().get(0),  Arc.TypeOfArc.NORMAL);
+        Arc a410 = new Arc(IdGenerator.getNextId(), t12.getElementLocations().get(0), p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+
+    SubnetCalculator.SubNet creatSubnet15() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t9 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t10 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t11 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t12 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        tl.add(t8);
+        tl.add(t9);
+        tl.add(t10);
+        tl.add(t11);
+        tl.add(t12);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+
+        Place p11 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p12 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p13 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+
+        Place p14 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p15 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p16 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p7);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p11);
+        pl.add(p12);
+        pl.add(p13);
+        pl.add(p14);
+        pl.add(p15);
+        pl.add(p16);
+
+
+        Arc a321 = new Arc(IdGenerator.getNextId(), p14.getElementLocations().get(0), t11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a322 = new Arc(IdGenerator.getNextId(), t11.getElementLocations().get(0), p13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a21 = new Arc(IdGenerator.getNextId(), p13.getElementLocations().get(0), t10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a22 = new Arc(IdGenerator.getNextId(), t10.getElementLocations().get(0), p8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        Arc a11 = new Arc(IdGenerator.getNextId(), p12.getElementLocations().get(0), t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a12 = new Arc(IdGenerator.getNextId(), t9.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a13 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a6 = new Arc(IdGenerator.getNextId(),  p7.getElementLocations().get(0), t10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        Arc a46 = new Arc(IdGenerator.getNextId(),t6.getElementLocations().get(0), p15.getElementLocations().get(0),  Arc.TypeOfArc.NORMAL);
+        Arc a47 = new Arc(IdGenerator.getNextId(), p15.getElementLocations().get(0),t12.getElementLocations().get(0),  Arc.TypeOfArc.NORMAL);
+        Arc a410 = new Arc(IdGenerator.getNextId(), t12.getElementLocations().get(0), p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+
+
+    SubnetCalculator.SubNet creatSubnet16() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+        ArrayList<Node> nl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t9 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t10 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        tl.add(t8);
+        tl.add(t9);
+        tl.add(t10);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p7 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p10 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p11 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p12 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p13 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p14 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p7);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p10);
+        pl.add(p11);
+        pl.add(p12);
+        pl.add(p13);
+        pl.add(p14);
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a6 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a11 = new Arc(IdGenerator.getNextId(), p10.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        Arc a36 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a37 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a30 = new Arc(IdGenerator.getNextId(), t9.getElementLocations().get(0), p12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a99 = new Arc(IdGenerator.getNextId(), p12.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        Arc a46 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a47 = new Arc(IdGenerator.getNextId(), p14.getElementLocations().get(0), t10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a40 = new Arc(IdGenerator.getNextId(), t10.getElementLocations().get(0), p14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a599 = new Arc(IdGenerator.getNextId(), p14.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+
+
+    SubnetCalculator.SubNet creatSubnet17() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+        ArrayList<Node> nl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        //Transition t8 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t9 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        //Transition t10 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t11 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t12 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t13= new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t14 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        //tl.add(t8);
+        tl.add(t9);
+        tl.add(t11);
+        tl.add(t12);
+        tl.add(t13);
+        tl.add(t14);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p11 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p12 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p13 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p14 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p15 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p16 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p11);
+        pl.add(p12);
+        pl.add(p13);
+        pl.add(p14);
+        pl.add(p15);
+        pl.add(p16);
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+
+        Arc a36 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a37 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a30 = new Arc(IdGenerator.getNextId(), t9.getElementLocations().get(0), p12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a99 = new Arc(IdGenerator.getNextId(), p12.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        Arc a536 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a537 = new Arc(IdGenerator.getNextId(), p13.getElementLocations().get(0), t11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a636 = new Arc(IdGenerator.getNextId(), t11.getElementLocations().get(0), p14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a637 = new Arc(IdGenerator.getNextId(), p14.getElementLocations().get(0), t12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a736 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p15.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a737 = new Arc(IdGenerator.getNextId(), p15.getElementLocations().get(0), t13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a836 = new Arc(IdGenerator.getNextId(), t13.getElementLocations().get(0), p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a837 = new Arc(IdGenerator.getNextId(), p16.getElementLocations().get(0), t14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet18() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        ArrayList<Place> pl = new ArrayList<>();
+        ArrayList<Node> nl = new ArrayList<>();
+
+        Transition t5 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t6 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t7 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        //Transition t9 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t11 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t12 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t13= new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        Transition t14 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+        //tl.add(t9);
+        tl.add(t11);
+        tl.add(t12);
+        tl.add(t13);
+        tl.add(t14);
+
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p6 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p8 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p9 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p11 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p12 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p13 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p14 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p15 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p16 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p17 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p18 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p5);
+        pl.add(p6);
+        pl.add(p8);
+        pl.add(p9);
+        pl.add(p11);
+        pl.add(p12);
+        pl.add(p13);
+        pl.add(p14);
+        pl.add(p15);
+        pl.add(p16);
+        pl.add(p17);
+        pl.add(p18);
+
+        Arc a3 = new Arc(IdGenerator.getNextId(), p8.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(IdGenerator.getNextId(), p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a9 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+
+        Arc a36 = new Arc(IdGenerator.getNextId(), t5.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a99 = new Arc(IdGenerator.getNextId(), p12.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        Arc a536 = new Arc(IdGenerator.getNextId(),  p13.getElementLocations().get(0), t7.getElementLocations().get(0),Arc.TypeOfArc.NORMAL);
+        Arc a537 = new Arc(IdGenerator.getNextId(),  t11.getElementLocations().get(0),p13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a636 = new Arc(IdGenerator.getNextId(),  p14.getElementLocations().get(0), t11.getElementLocations().get(0),Arc.TypeOfArc.NORMAL);
+        Arc a637 = new Arc(IdGenerator.getNextId(),  t12.getElementLocations().get(0),p14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a538 = new Arc(IdGenerator.getNextId(),  p17.getElementLocations().get(0), t12.getElementLocations().get(0),Arc.TypeOfArc.NORMAL);
+
+        Arc a736 = new Arc(IdGenerator.getNextId(),  p15.getElementLocations().get(0),t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a737 = new Arc(IdGenerator.getNextId(), t13.getElementLocations().get(0),p15.getElementLocations().get(0),  Arc.TypeOfArc.NORMAL);
+        Arc a836 = new Arc(IdGenerator.getNextId(), p16.getElementLocations().get(0), t13.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a837 = new Arc(IdGenerator.getNextId(),  t14.getElementLocations().get(0), p16.getElementLocations().get(0),Arc.TypeOfArc.NORMAL);
+        Arc a530 = new Arc(IdGenerator.getNextId(),  p18.getElementLocations().get(0), t14.getElementLocations().get(0),Arc.TypeOfArc.NORMAL);
+
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+    }
+/*
+    void ceateTestNets(){
+
+        //net 0
+        ArrayList<Transition> tl = new ArrayList<>();
+        Transition t1 = new Transition(0,0,new Point(1,1));
+        tl.add(t1);
+
+        ArrayList<Place> pl = new ArrayList<>();
+        Place p1 = new Place(99,0,new Point(1,1));
+        pl.add(p1);
+
+        ArrayList<Node> nl = new ArrayList<>();
+        nl.add(p1);
+        nl.add(t1);
+
+        Arc a1 = new Arc(50,t1.getElementLocations().get(0),p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        ArrayList<Arc> al = new ArrayList<>();
+
+        al.add(a1);
+
+        //net 1
+        Transition t2 = new Transition(2,0,new Point(1,1));
+        tl.add(t2);
+
+        Place p2 = new Place(99,0,new Point(1,1));
+        pl.add(p2);
+
+        nl.add(p2);
+        nl.add(t2);
+
+        Arc a2 = new Arc(51,p2.getElementLocations().get(0),t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        al.add(a1);
+
+        //net 2
+        Transition t3 = new Transition(3,0,new Point(1,1));
+        Transition t4 = new Transition(4,0,new Point(1,1));
+        tl.add(t3);
+        tl.add(t4);
+
+        Place p3 = new Place(103,0,new Point(1,1));
+        Place p4 = new Place(104,0,new Point(1,1));
+        pl.add(p3);
+        pl.add(p4);
+
+        nl.add(p3);
+        nl.add(p4);
+        nl.add(t3);
+        nl.add(t4);
+
+        Arc a3 = new Arc(53,p3.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(54,t3.getElementLocations().get(0),p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(55,p4.getElementLocations().get(0),t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        al.add(a3);
+        al.add(a4);
+        al.add(a5);
+
+        //nrt3
+        Transition t5 = new Transition(5,0,new Point(1,1));
+        Transition t6 = new Transition(6,0,new Point(1,1));
+        Transition t7 = new Transition(7,0,new Point(1,1));
+        tl.add(t5);
+        tl.add(t6);
+        tl.add(t7);
+
+        Place p5 = new Place(103,0,new Point(1,1));
+        Place p6 = new Place(104,0,new Point(1,1));
+        pl.add(p5);
+        pl.add(p6);
+
+        nl.add(p5);
+        nl.add(p6);
+        nl.add(t5);
+        nl.add(t6);
+        nl.add(t7);
+
+        Arc a3 = new Arc(53,p3.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(54,t3.getElementLocations().get(0),p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(55,p4.getElementLocations().get(0),t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        al.add(a3);
+        al.add(a4);
+        al.add(a5);
+
+
+
+        PetriNet pn = new PetriNet(nl,al);
+        tc = new InvariantsCalculator(pl,tl,al,true);
+        tc.generateInvariantsForTest(pn);
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
+
+    }
+
+
+
+
+
+    void ceateTestNet(){
+        ArrayList<Transition> tl = new ArrayList<>();
+        Transition t1 = new Transition(0,0,new Point(1,1));
+        tl.add(t1);
+        Transition t2 = new Transition(1,0,new Point(1,2));
+        tl.add(t2);
+        Transition t3 = new Transition(2,0,new Point(1,3));
+        tl.add(t3);
+
+        ArrayList<Place> pl = new ArrayList<>();
+        Place p1 = new Place(99,0,new Point(1,1));
+        pl.add(p1);
+        Place p2 = new Place(98,0,new Point(1,1));
+        pl.add(p2);
+
+        ArrayList<Node> nl = new ArrayList<>();
+        nl.add(p1);
+        nl.add(p2);
+        nl.add(t2);
+        nl.add(t3);
+        nl.add(t1);
+
+        Arc a1 = new Arc(50,t1.getElementLocations().get(0),p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(51,p1.getElementLocations().get(0),t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(52,t2.getElementLocations().get(0),p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(53,p2.getElementLocations().get(0),t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        ArrayList<Arc> al = new ArrayList<>();
+
+        al.add(a1);
+        al.add(a2);
+        al.add(a3);
+        al.add(a4);
+
+
+        PetriNet pn = new PetriNet(nl,al);
+        tc = new InvariantsCalculator(pl,tl,al,true);
+        tc.generateInvariantsForTest(pn);
+        SubnetCalculator.compileTestElements(tl,pl,nl,tc.getInvariants(true),tc.getInvariants(false));
+
+    }
+    */
+
+}

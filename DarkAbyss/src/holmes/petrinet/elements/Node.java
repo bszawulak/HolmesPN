@@ -449,6 +449,17 @@ public abstract class Node extends PetriNetElement {
 		return totalOutNodes;
 	}
 
+	public ArrayList<Node> getOutInNodes() {
+		ArrayList<Node> totalNodes = new ArrayList<Node>();
+		for (Arc arc : getOutArcs()) {
+			totalNodes.add(arc.getEndNode());
+		}
+		for (Arc arc : getInArcs()) {
+			totalNodes.add(arc.getStartNode());
+		}
+		return totalNodes;
+	}
+
 	/**
 	 * Zwraca wartość identyfikatora węzła.
 	 * @return String - łańcuch znaków ID
@@ -540,5 +551,17 @@ public abstract class Node extends PetriNetElement {
 	 */
 	public boolean isInvisible() {
 		return invisible;
+	}
+
+	public ArrayList<Arc> getOutInArcs(){
+		ArrayList<Arc> totalInArcs = new ArrayList<Arc>();
+		//if(isInvisible())
+		//	return totalInArcs;
+
+		for (ElementLocation location : getNodeLocations()) {
+			totalInArcs.addAll(location.getInArcs());
+			totalInArcs.addAll(location.getOutArcs());
+		}
+		return totalInArcs;
 	}
 }

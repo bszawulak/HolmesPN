@@ -2,6 +2,9 @@ package holmes.windows;
 
 import holmes.analyse.SubnetCalculator;
 import holmes.analyse.comparison.DecoComparisonCalculator;
+import holmes.analyse.comparison.SubnetComparator;
+import holmes.analyse.comparison.structures.GreatCommonSubnet;
+import holmes.analyse.comparison.structures.Subnet;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
@@ -17,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 
@@ -554,10 +558,21 @@ public class HolmesDecomposition extends JFrame {
         panel.add(expDecoButton);//,BorderLayout.LINE_START);
 
         JCheckBox dualCheckBox = new JCheckBox("Compare two decompositions");
-        dualCheckBox.setBounds(posX + 300, posY+10, 250, 20);
+        dualCheckBox.setBounds(posX + 300, posY + 10, 250, 20);
         dualCheckBox.addActionListener(actionEvent -> setDual());
         dualCheckBox.setSelected(false);
         panel.add(dualCheckBox);//,BorderLayout.CENTER);
+
+
+        JButton compButton = new JButton("Compare");//"<html>Decomposition\nDescriptions<html>");
+        compButton.setBounds(posX + 620, posY, 120, 36);
+        compButton.setMargin(new Insets(0, 0, 0, 0));
+        //compButton.setIcon(Tools.getResIcon32("icons/stateSim/showNotepad.png"));
+        compButton.addActionListener(actionEvent -> compareSubnets());
+        compButton.setFocusPainted(false);
+        compButton.setEnabled(true);
+        panel.add(compButton);
+
 
         JButton infoButton = new JButton("Info");//"<html>Decomposition\nDescriptions<html>");
         infoButton.setBounds(posX + 750, posY, 120, 36);
@@ -717,6 +732,8 @@ public class HolmesDecomposition extends JFrame {
         return panel;
     }
 
+
+
     private void setDual() {
 
         if (!dualMode) {
@@ -735,7 +752,9 @@ public class HolmesDecomposition extends JFrame {
     private void calculateDeco() {
         SubnetCalculator.cleanSubnets();
         getSubnetOfType();
+    }
 
+    private void calcWhat1(){
         ArrayList<SubnetCalculator.SubNet> deco = getCorrectSubnet(choosenDeco.get(0));
         ArrayList<int[][]> subMatrix = new ArrayList<>();
         for (SubnetCalculator.SubNet subnet: deco) {
@@ -766,15 +785,97 @@ public class HolmesDecomposition extends JFrame {
             e.printStackTrace();
         }
 
-        DecoComparisonCalculator.vertexOrderAlgorithm(DecoComparisonCalculator.subIncMat(SubnetCalculator.adtSubNets.get(0)));
+        //DecoComparisonCalculator.vertexOrderAlgorithm(DecoComparisonCalculator.subIncMat(SubnetCalculator.adtSubNets.get(0)));
+    }
+
+    private void calcWhat2(){
+        //SubnetCalculator.generateADT();
+        SubnetCalculator.generateMCT();
+
+        SubnetCalculator.SubNet subnet = SubnetCalculator.mctSubNets.get(11);
+        int size = SubnetCalculator.mctSubNets.size();
+        ColorPalette cp = new ColorPalette();
+        //places
+
+
+
+        for (int i = 0; i < SubnetCalculator.adtSubNets.size(); i++) {
+            if (subnet.getSubPlaces().containsAll(SubnetCalculator.adtSubNets.get(i).getSubPlaces())) {
+                Color cl = cp.getColor(i);
+                System.out.println("dla i równego : " + i + " - B " + cl.getBlue() + " G " + cl.getGreen() + "R" + cl.getRed());
+                for (Place place : SubnetCalculator.adtSubNets.get(i).getSubInternalPlaces()) {
+                    place.setColorWithNumber(true, cp.getColor(i), false, 0, true, "[Sub net " + (i + 1) + "]");
+                }
+                for (Place place : SubnetCalculator.adtSubNets.get(i).getSubBorderPlaces()) {
+                    place.setColorWithNumber(true, Color.lightGray, false, 0, true, "[Sub net " + (i + 1) + "]");
+                }
+            }
+        }
+
+        /*
+        for (Place place : subnet.getSubPlaces()) {
+            for (int i = 0; i < SubnetCalculator.adtSubNets.size(); i++) {
+                if (subnet.getSubPlaces().containsAll(SubnetCalculator.adtSubNets.get(i).getSubPlaces()))
+                    place.setColorWithNumber(true, cp.getColor(i), false, 0, true, "[Sub net " + (i + 1) + "]");
+            }
+        }
+        */
+
+        //arcs
+        for (Arc arc : subnet.getSubArcs()) {
+            if (!colorSubNet)
+                arc.setGlowedSub(true);
+        }
+
+        //transitions
+
+        for (int i = 0; i < SubnetCalculator.adtSubNets.size(); i++) {
+            if (subnet.getSubTransitions().containsAll(SubnetCalculator.adtSubNets.get(i).getSubTransitions())) {
+                Color cl = cp.getColor(i);
+                System.out.println("dla i równego : " + i + " - B " + cl.getBlue() + " G " + cl.getGreen() + "R" + cl.getRed());
+                for (Transition transition : SubnetCalculator.adtSubNets.get(i).getSubTransitions()) {
+                    transition.setColorWithNumber(true, cl, false, 0, true, "[Sub net " + (i + 1) + "]");
+                }
+            }
+        }
+
+        overlord.getWorkspace().getProject().getNodes().retainAll(subnet.getSubNode());
+        overlord.getWorkspace().getProject().getArcs().retainAll(subnet.getSubArcs());
+
+        /*
+        for (Transition transition : subnet.getSubTransitions()) {
+        for (int i = 0; i < SubnetCalculator.adtSubNets.size(); i++) {
+
+                if (subnet.getSubTransitions().containsAll(SubnetCalculator.adtSubNets.get(i).getSubTransitions()) && subnet.getSubTransitions().size() > 0 && SubnetCalculator.adtSubNets.get(i).getSubTransitions().size() > 0) {
+
+                    Color cl = cp.getColor(i);
+                    System.out.println("dla i równego : " + i + " - dla tanzycji " + transition.getID() + " - B " + cl.getBlue() + " G " + cl.getGreen() + "R" + cl.getRed());
+                    transition.setColorWithNumber(true, cl, false, 0, true, "[Sub net " + (i + 1) + "]");
+                }
+            }
+        }
+        */
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
+
+        //name field:
+        if (overlord.getWorkspace().getProject().accessSubNetNames() != null) {
+            String name = overlord.getWorkspace().getProject().accessSubNetNames().get(selectedSubNetindex);
+            elementsOfDecomposedStructure.setText(name);
+        }
+    }
+
+    private void compareSubnets() {
+        SubnetComparator sc = new SubnetComparator(getCorrectSubnet(choosenDeco.get(0)), getCorrectSubnet(choosenDeco.get(0)));
+        ArrayList<ArrayList<GreatCommonSubnet>> result = sc.compare();
+
+        JFrame windowsComp = new HolmesPrototypeComparison(result);
+        windowsComp.show();
     }
 
     private void getSubnetOfType() {
-        if(choosenDeco.isEmpty())
-        {
+        if (choosenDeco.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Empty list", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
-        }
-        else {
+        } else {
             generateProperSubNet(choosenDeco.get(0));
             //int listIndex = components.stream().map(Component::getLocation).collect(Collectors.toList()).indexOf(new Point(10, 70));
 
@@ -969,7 +1070,7 @@ public class HolmesDecomposition extends JFrame {
             case 15:
                 return SubnetCalculator.bpSubNets;
             case 16:
-                return  SubnetCalculator.notTzCyclesiSubNets;
+                return SubnetCalculator.notTzCyclesiSubNets;
         }
         return SubnetCalculator.functionalSubNets;
     }
@@ -1155,6 +1256,70 @@ public class HolmesDecomposition extends JFrame {
         }
 
         ColorPalette cp = new ColorPalette();
+
+        ArrayList<SubnetCalculator.SubNet> nety = getCorrectSubnet(typeOfDecomposition);
+        for (int i = 0; i < size; i++) {
+            SubnetCalculator.SubNet sub = nety.get(i);
+
+            System.out.println("Podsieć numer : " + i);
+
+            System.out.println("Lista Tranzycji");
+            for (Transition t : sub.getSubTransitions()) {
+                System.out.println(t.getID() + " & " + t.getName() + "\\\\");
+            }
+
+            ArrayList<Place> borderPlaces = new ArrayList<>();
+            for (int j = 0; j < size; j++) {
+                if (i != j) {
+                    ArrayList<Place> listaMiejsc = new ArrayList<>(sub.getSubPlaces());
+                    SubnetCalculator.SubNet subT = nety.get(j);
+                    listaMiejsc.retainAll(subT.getSubPlaces());
+                    borderPlaces.addAll(listaMiejsc);
+                }
+            }
+
+            ArrayList<Place> listaMiejsc = new ArrayList<>(sub.getSubPlaces());
+            listaMiejsc.removeAll(borderPlaces);
+
+            listaMiejsc.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
+            ;
+            System.out.println("Lista miejsc");
+            for (Place p : listaMiejsc
+            ) {
+                System.out.println(p.getID() + " & " + p.getName() + "\\\\");
+            }
+            borderPlaces = borderPlaces.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
+            System.out.println("Lista miejsc granicznych");
+            for (Place p : borderPlaces
+            ) {
+                System.out.println(p.getID() + " & " + p.getName() + "\\\\");
+            }
+
+        }
+        /*
+        System.out.println("Pre");
+        for (Place t : subnet.getSubPlaces()
+        ) {
+            ArrayList<Transition> tmp = new ArrayList<>(t.getPreTransitions());
+            tmp.retainAll(subnet.getSubTransitions());
+            if(tmp.size()>0)
+                System.out.println(t.getID()+ " & " + t.getName() + "\\\\");
+        }
+        System.out.println("Tra");
+        for (Transition t : subnet.getSubTransitions()
+             ) {
+            System.out.println(t.getID()+ " & " + t.getName() + "\\\\");
+        }
+        System.out.println("Post");
+        for (Place t : subnet.getSubPlaces()
+        ) {
+            ArrayList<Transition> tmp = new ArrayList<>(t.getPostTransitions());
+            tmp.retainAll(subnet.getSubTransitions());
+            if(tmp.size()>0)
+            System.out.println(t.getID()+ " & " + t.getName() + "\\\\");
+        }
+        */
+
 
         //places
         for (Place place : subnet.getSubPlaces()) {
@@ -1488,7 +1653,7 @@ public class HolmesDecomposition extends JFrame {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
@@ -1512,7 +1677,7 @@ public class HolmesDecomposition extends JFrame {
                 ArrayList<Place> places = subNet.getSubPlaces();
                 if (places.size() > 1 || trivial) {
                     for (Place place : places) {
-                        place.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + places.size() + ")");
+                        place.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + places.size() + ")");
                     }
 
                     ArrayList<Transition> transitions = subnets.get(m).getSubTransitions();
@@ -1537,7 +1702,7 @@ public class HolmesDecomposition extends JFrame {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
@@ -1572,7 +1737,7 @@ public class HolmesDecomposition extends JFrame {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
@@ -1695,10 +1860,9 @@ public class HolmesDecomposition extends JFrame {
 
         JLabel image1 = new JLabel();
         image1.setIcon(new ImageIcon(getClass().getResource("/images/Abtss-Zaj2.png")));
-        image1.setBounds(new Rectangle(300,300));
+        image1.setBounds(new Rectangle(300, 300));
         image1.setText("Functional \n" +
                 " subnets");
-
 
 
         JTextArea textB = new JTextArea(10, 25);
@@ -1715,7 +1879,7 @@ public class HolmesDecomposition extends JFrame {
 
         JLabel image2 = new JLabel();
         image2.setIcon(new ImageIcon(getClass().getResource("/images/Abyss-ADT-1.png")));
-        image2.setBounds(new Rectangle(300,300));
+        image2.setBounds(new Rectangle(300, 300));
         image2.setText("T-net(ADT) \n" +
                 " subnets");
 
@@ -1733,7 +1897,7 @@ public class HolmesDecomposition extends JFrame {
 
         JLabel image3 = new JLabel();
         image3.setIcon(new ImageIcon(getClass().getResource("/images/Abyss-Zeng-0.png")));
-        image3.setBounds(new Rectangle(300,300));
+        image3.setBounds(new Rectangle(300, 300));
         image3.setText("S-net \n" +
                 " subnets");
 
@@ -1751,7 +1915,7 @@ public class HolmesDecomposition extends JFrame {
 
         JLabel image4 = new JLabel();
         image4.setIcon(new ImageIcon(getClass().getResource("/images/MCT1.png")));
-        image4.setBounds(new Rectangle(300,300));
+        image4.setBounds(new Rectangle(300, 300));
         image4.setText("MCT inducted \n\r" +
                 " subnets");
 
@@ -1770,10 +1934,9 @@ public class HolmesDecomposition extends JFrame {
 
         JLabel image5 = new JLabel();
         image5.setIcon(new ImageIcon(getClass().getResource("/images/Abyss-Ootsuki-3-Alternatywa.png")));
-        image5.setBounds(new Rectangle(300,300));
+        image5.setBounds(new Rectangle(300, 300));
         image5.setText("P1 \n\r" +
                 " subnets");
-
 
 
         infoPanel.add(scrollPane, BorderLayout.CENTER);

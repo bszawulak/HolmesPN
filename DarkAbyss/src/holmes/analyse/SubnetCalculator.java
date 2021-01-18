@@ -1080,12 +1080,13 @@ public class SubnetCalculator {
         public ArrayList<Node> innerpath;
         public boolean isCycle = false;
         public boolean isRevers = false;
+        //public boolean isCOnservarive = false;
 
         public Path(Node s, Node e, ArrayList<Node> l) {
             startNode = s;
             endNode = e;
             path = new ArrayList<>(l);
-            innerpath = l;
+            innerpath =  new ArrayList<>(l);
             innerpath.remove(s);
             innerpath.remove(e);
         }
@@ -1094,7 +1095,7 @@ public class SubnetCalculator {
             startNode = s;
             endNode = e;
             path = new ArrayList<>(l);
-            innerpath = l;
+            innerpath =  new ArrayList<>(l);
             innerpath.remove(s);
             innerpath.remove(e);
             isCycle = cycle;
@@ -1104,11 +1105,19 @@ public class SubnetCalculator {
             startNode = s;
             endNode = e;
             path = new ArrayList<>(l);
-            innerpath = l;
+            innerpath =  new ArrayList<>(l);
             innerpath.remove(s);
             innerpath.remove(e);
             isCycle = cycle;
             isRevers = revers;
+        }
+
+        private boolean checkConservativnes(){
+            for(int i = 0 ; i < path.size();i++){
+                //if(paths.get(i).)
+            }
+
+            return true;
         }
     }
 
@@ -1127,7 +1136,8 @@ public class SubnetCalculator {
         //Universal
         int subNetID;
 
-        SubNet(SubNetType snt, ArrayList<Transition> subTransitions, ArrayList<Place> subPlaces, ArrayList<Node> subNode, ArrayList<Integer> maxADTset, ArrayList<Path> subPath) {
+
+        public SubNet(SubNetType snt, ArrayList<Transition> subTransitions, ArrayList<Place> subPlaces, ArrayList<Node> subNode, ArrayList<Integer> maxADTset, ArrayList<Path> subPath) {
             proper = true;
 
             switch (snt) {
@@ -1182,7 +1192,7 @@ public class SubnetCalculator {
             }
         }
 
-        SubNet(ArrayList<Arc> al) {
+        public SubNet(ArrayList<Arc> al) {
             subTransitions = new ArrayList<>();
             subPlaces = new ArrayList<>();
             subArcs = al;
@@ -1487,6 +1497,11 @@ public class SubnetCalculator {
             listOfNodes.addAll(subPlaces);
 
             return listOfNodes;
+        }
+
+        public void addTransitions(ArrayList<Transition> tl)
+        {
+            subTransitions.addAll(tl);
         }
 
         public ArrayList<Place> getSubPlaces() {
