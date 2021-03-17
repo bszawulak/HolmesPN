@@ -1,6 +1,3 @@
-/**
- * 
- */
 package holmes.files.io;
 
 import java.awt.Dimension;
@@ -98,18 +95,6 @@ public class IOprotocols {
 	 */
 	public boolean readT_invariants(String path) {
 
-
-		try{
-			KnockoutInvariantComparison kic = new KnockoutInvariantComparison();
-			//kic.compare_baldan_cocco();
-			kic.compare();
-			return true;
-		} catch (Exception e) {
-			overlord.log("Fast invariant comparison operation failed.", "error", true);
-			return false;
-		}
-
-/*
 		try {
 			resetComponents();
 			DataInputStream in = new DataInputStream(new FileInputStream(path));
@@ -161,10 +146,10 @@ public class IOprotocols {
 			while (!(readLine = buffer.readLine()).endsWith("~~~~~~~~~~~")) {
 				if(readLine.endsWith("~~~~~~~~~~~")){break;}
 				String[] formattedLine = readLine.split(" ");
-				for (int j = 0; j < formattedLine.length; j++) {
-					if (!(formattedLine[j].isEmpty() || formattedLine[j].contains("Nr."))) {
+				for (String s : formattedLine) {
+					if (!(s.isEmpty() || s.contains("Nr."))) {
 						try {
-							nodesList.add(Integer.parseInt(formattedLine[j]));
+							nodesList.add(Integer.parseInt(s));
 						} catch (NumberFormatException e) {
 							overlord.log("Reading file failed in header section.", "text", true);
 						}
@@ -178,9 +163,9 @@ public class IOprotocols {
 				if(readLine.contains("@")||readLine.isEmpty()){break;}
 				String[] formattedLine = readLine.split("\\|");
 				formattedLine = formattedLine[1].split(" ");
-				for(int i = 0; i<formattedLine.length;i++) {
-					if(!formattedLine[i].isEmpty()){
-						tmpInvariant.add(Integer.parseInt(formattedLine[i]));
+				for (String s : formattedLine) {
+					if (!s.isEmpty()) {
+						tmpInvariant.add(Integer.parseInt(s));
 					}
 				}
 				if(tmpInvariant.size() == nodesList.size()) {
@@ -195,9 +180,6 @@ public class IOprotocols {
 			overlord.log("T-invariants reading operation failed.", "error", true);
 			return false;
 		}
-*/
-
-
 	}
 	
 	/**
@@ -259,10 +241,10 @@ public class IOprotocols {
 					break;
 				
 				String[] formattedLine = readLine.split(" ");
-				for (int j = 0; j < formattedLine.length; j++) {
-					if (!(formattedLine[j].isEmpty() || formattedLine[j].contains("Nr."))) {
+				for (String s : formattedLine) {
+					if (!(s.isEmpty() || s.contains("Nr."))) {
 						try {
-							nodesList.add(Integer.parseInt(formattedLine[j]));
+							nodesList.add(Integer.parseInt(s));
 						} catch (NumberFormatException e) {
 							overlord.log("Reading file failed in header section.", "text", true);
 						}
@@ -276,9 +258,9 @@ public class IOprotocols {
 				if(readLine.contains("@")||readLine.isEmpty()){break;}
 				String[] formattedLine = readLine.split("\\|");
 				formattedLine = formattedLine[1].split(" ");
-				for(int i = 0; i<formattedLine.length;i++) {
-					if(!formattedLine[i].isEmpty()) {
-						tmpInvariant.add(Integer.parseInt(formattedLine[i]));
+				for (String s : formattedLine) {
+					if (!s.isEmpty()) {
+						tmpInvariant.add(Integer.parseInt(s));
 					}
 				}
 				if(tmpInvariant.size() == nodesList.size()) {
@@ -336,7 +318,7 @@ public class IOprotocols {
 				lineStart = lineStart.replace(" ", "");
 				lineStart = lineStart.replace("\t", "");
 				
-				if(lineStart.length() > 0 && firstPass == false) { //początek inwariantu
+				if(lineStart.length() > 0 && !firstPass) { //początek inwariantu
 					invariantsList.add(tmpInvariant);
 
 					tmpInvariant = new ArrayList<Integer>();
@@ -431,7 +413,7 @@ public class IOprotocols {
 				lineStart = lineStart.replace(" ", "");
 				lineStart = lineStart.replace("\t", "");
 				
-				if(lineStart.length() > 0 && firstPass == false) { //początek inwariantu
+				if(lineStart.length() > 0 && !firstPass) { //początek inwariantu
 					invariantsList.add(tmpInvariant);
 
 					tmpInvariant = new ArrayList<Integer>();
@@ -841,7 +823,7 @@ public class IOprotocols {
 
 	/**
 	 * Czyta plik sieci petriego w formacie PNT (INA)
-	 * @param scieżka String - scieżka do pliku
+	 * @param sciezka String - scieżka do pliku
 	 */
 	public void readPNT(String sciezka) {
 		try {
@@ -852,7 +834,7 @@ public class IOprotocols {
 			String wczytanaLinia = buffer.readLine();
 			String[] tabWczytanaLinia = wczytanaLinia.split(":");
 			netName = tabWczytanaLinia[1];
-			int trans[][] = new int[MatSiz][2];
+			int[][] trans = new int[MatSiz][2];
 			int ID = 0;
 			String[] wID = new String[MatSiz];
 			int[] wMark = new int[MatSiz];
@@ -877,58 +859,56 @@ public class IOprotocols {
 					String[] WczytanyString = wczytanaLinia.split(" ");
 					int poz = 0;
 					int poZap = 0;
-					for (int j = 0; j < WczytanyString.length; j++) {
-						if (!WczytanyString[j].isEmpty()) {
-							if (!Character.isWhitespace(WczytanyString[j].charAt(0))) 
-							{
-								if (WczytanyString[j].contains(",")) {
+					for (String s : WczytanyString) {
+						if (!s.isEmpty()) {
+							if (!Character.isWhitespace(s.charAt(0))) {
+								if (s.contains(",")) {
 									poZap = poz;
 									poz = 5;
 								}
-								if (WczytanyString[j].contains(":")) {
+								if (s.contains(":")) {
 									poZap = poz;
 									poz = 4;
 								}
 
 								switch (poz) {
-								// numer miejsca
-								case 0:
-									wID[ID] = WczytanyString[j];
-									poz++;
-									break;
-								// ilosc tokenow
-								case 1:
-									wMark[ID] = Integer.parseInt(WczytanyString[j]);
-									ID++;
-									poz++;
-									break;
-								// wchodzace
-								case 2:
-									tmpStringWej.add(WczytanyString[j]);
-									wagiWej.add(1);
-									break;
-								// wychodzace
-								case 3:
-									tmpStringWyj.add(WczytanyString[j]);
-									wagiWyj.add(1);
-									break;
-								case 4:
-									if (WczytanyString[j].contains(":")) {
-									} else {
-										if (poZap == 2) {
-											wagiWej.remove(wagiWej.size() - 1);
-											wagiWej.add(Integer.parseInt(WczytanyString[j]));
-										} else {
-											wagiWyj.remove(wagiWyj.size() - 1);
-											wagiWyj.add(Integer.parseInt(WczytanyString[j]));
+									// numer miejsca
+									case 0:
+										wID[ID] = s;
+										poz++;
+										break;
+									// ilosc tokenow
+									case 1:
+										wMark[ID] = Integer.parseInt(s);
+										ID++;
+										poz++;
+										break;
+									// wchodzace
+									case 2:
+										tmpStringWej.add(s);
+										wagiWej.add(1);
+										break;
+									// wychodzace
+									case 3:
+										tmpStringWyj.add(s);
+										wagiWyj.add(1);
+										break;
+									case 4:
+										if (!s.contains(":")) {
+											if (poZap == 2) {
+												wagiWej.remove(wagiWej.size() - 1);
+												wagiWej.add(Integer.parseInt(s));
+											} else {
+												wagiWyj.remove(wagiWyj.size() - 1);
+												wagiWyj.add(Integer.parseInt(s));
+											}
+											poz = poZap;
 										}
+										break;
+									case 5:
 										poz = poZap;
-									}
-									break;
-								case 5:
-									poz = poZap;
-									poz++;
-									break;
+										poz++;
+										break;
 								}
 							}
 						}
@@ -971,12 +951,11 @@ public class IOprotocols {
 					} else {
 						tabWczytanaLinia = wczytanaLinia.split(": ");
 						String[] tmp5 = tabWczytanaLinia[0].split(" ");
-						for (int i = 0; i < tmp5.length; i++) {
-							if (tmp5[i].equals("")) {
-							} else {
+						for (String s : tmp5) {
+							if (!s.isEmpty()) {
 								globalPlaceNumber++;
-								trans[Integer.parseInt(tmp5[i])][0] = Integer.parseInt(tmp5[i]);
-								trans[Integer.parseInt(tmp5[i])][1] = globalPlaceNumber;
+								trans[Integer.parseInt(s)][0] = Integer.parseInt(s);
+								trans[Integer.parseInt(s)][1] = globalPlaceNumber;
 							}
 						}
 
@@ -1054,15 +1033,15 @@ public class IOprotocols {
 							hei = elemArray.get(l).getPosition().y;
 						}
 					}
-					if (xFound == true && yFound == false) {
+					if (xFound && !yFound) {
 						graphPanel.setSize(new Dimension(elemArray.get(tmpX)
 								.getPosition().x + 90,graphPanel.getSize().height));
 					}
-					if (yFound == true && xFound == false) {
+					if (!xFound && yFound) {
 						graphPanel.setSize(new Dimension(
 								graphPanel.getSize().width, elemArray.get(tmpY).getPosition().y + 90));
 					}
-					if (xFound == true && yFound == true) {
+					if (xFound && yFound) {
 						graphPanel.setSize(new Dimension(elemArray.get(tmpX)
 								.getPosition().x + 90, elemArray.get(tmpY).getPosition().y + 90));
 					}
@@ -1090,98 +1069,98 @@ public class IOprotocols {
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean writePNT(String path, ArrayList<Place> placeList, ArrayList<Transition> transitionList, ArrayList<Arc> arcList) {
-		String fileBuffer = "P   M   PRE,POST  NETZ 0:";
+		StringBuilder fileBuffer = new StringBuilder("P   M   PRE,POST  NETZ 0:");
 		try {
 			PrintWriter writerObject = new PrintWriter(path);
-			fileBuffer += getFileName(path);
-			fileBuffer += "\r\n";
+			fileBuffer.append(getFileName(path));
+			fileBuffer.append("\r\n");
 			//int[] tabPlace = new int[placeList.size()];
 
 			for (int i = 0; i < placeList.size(); i++) {
 				if (i < 9) {
-					fileBuffer += " ";
+					fileBuffer.append(" ");
 				}
 				if (i < 99) {
-					fileBuffer += " ";
+					fileBuffer.append(" ");
 				}
-				fileBuffer += i;
-				fileBuffer += " ";
-				fileBuffer += placeList.get(i).getTokensNumber();
-				fileBuffer += "    ";
+				fileBuffer.append(i);
+				fileBuffer.append(" ");
+				fileBuffer.append(placeList.get(i).getTokensNumber());
+				fileBuffer.append("    ");
 
 				// łuki
 				if (placeList.get(i).getInArcs().isEmpty()
 						&& placeList.get(i).getOutArcs().isEmpty()) {
-					fileBuffer += " ";
+					fileBuffer.append(" ");
 				}
 				if (placeList.get(i).getInArcs().size() > 0 && placeList.get(i).getOutArcs().isEmpty()) {
 					for (int j = 0; j < placeList.get(i).getInArcs().size(); j++) {
-						fileBuffer += " ";
-						fileBuffer += transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode());
+						fileBuffer.append(" ");
+						fileBuffer.append(transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode()));
 						if (placeList.get(i).getInArcs().get(j).getWeight() > 1) {
-							fileBuffer += ": "+ placeList.get(i).getInArcs().get(j).getWeight();
+							fileBuffer.append(": ").append(placeList.get(i).getInArcs().get(j).getWeight());
 						}
 					}
 				}
 				if (placeList.get(i).getInArcs().size() > 0 && placeList.get(i).getOutArcs().size() > 0) {
 					for (int j = 0; j < placeList.get(i).getInArcs().size(); j++) {
-						fileBuffer += " ";
-						fileBuffer += transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode());
+						fileBuffer.append(" ");
+						fileBuffer.append(transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode()));
 						if (placeList.get(i).getInArcs().get(j).getWeight() > 1) {
-							fileBuffer += ": "+ placeList.get(i).getInArcs().get(j).getWeight();
+							fileBuffer.append(": ").append(placeList.get(i).getInArcs().get(j).getWeight());
 						}
 					}
-					fileBuffer += ",";
+					fileBuffer.append(",");
 					for (int j = 0; j < placeList.get(i).getOutArcs().size(); j++) {
-						fileBuffer += " ";
-						fileBuffer += transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode());
+						fileBuffer.append(" ");
+						fileBuffer.append(transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode()));
 						if (placeList.get(i).getOutArcs().get(j).getWeight() > 1) {
-							fileBuffer += ": "+ placeList.get(i).getOutArcs().get(j).getWeight();
+							fileBuffer.append(": ").append(placeList.get(i).getOutArcs().get(j).getWeight());
 						}
 					}
 				}
 				if (placeList.get(i).getInArcs().isEmpty() && placeList.get(i).getOutArcs().size() > 0) {
-					fileBuffer += ",";
+					fileBuffer.append(",");
 					for (int j = 0; j < placeList.get(i).getOutArcs().size(); j++) {
-						fileBuffer += " ";
-						fileBuffer += transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode());
+						fileBuffer.append(" ");
+						fileBuffer.append(transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode()));
 						if (placeList.get(i).getOutArcs().get(j).getWeight() > 1) {
-							fileBuffer += ": "+ placeList.get(i).getOutArcs().get(j).getWeight();
+							fileBuffer.append(": ").append(placeList.get(i).getOutArcs().get(j).getWeight());
 						}
 					}
 				}
-				fileBuffer += "\r\n";
+				fileBuffer.append("\r\n");
 			}
-			fileBuffer += "@\r\n";
-			fileBuffer += "place nr.             name capacity time\r\n";
+			fileBuffer.append("@\r\n");
+			fileBuffer.append("place nr.             name capacity time\r\n");
 
 			for (int i = 0; i < placeList.size(); i++) {
-				fileBuffer += "     ";
+				fileBuffer.append("     ");
 				if (i < 9) {
-					fileBuffer += " ";
+					fileBuffer.append(" ");
 				}
 				if (i < 99) {
-					fileBuffer += " ";
+					fileBuffer.append(" ");
 				}
-				fileBuffer += i;
-				fileBuffer += ": ";
-				fileBuffer += placeList.get(i).getName() + "                  ";
-				fileBuffer += "65535    0";
-				fileBuffer += "\r\n";
+				fileBuffer.append(i);
+				fileBuffer.append(": ");
+				fileBuffer.append(placeList.get(i).getName()).append("                  ");
+				fileBuffer.append("65535    0");
+				fileBuffer.append("\r\n");
 			}
 
-			fileBuffer += "@\r\n";
-			fileBuffer += "trans nr.             name priority time\r\n";
+			fileBuffer.append("@\r\n");
+			fileBuffer.append("trans nr.             name priority time\r\n");
 			for (int i = 0; i < transitionList.size(); i++) {
-				fileBuffer += "     ";
+				fileBuffer.append("     ");
 				if (i <= 9) {
-					fileBuffer += " ";
+					fileBuffer.append(" ");
 				}
 				if (i <= 99) {
-					fileBuffer += " ";
+					fileBuffer.append(" ");
 				}
-				fileBuffer += i;
-				fileBuffer += ": ";
+				fileBuffer.append(i);
+				fileBuffer.append(": ");
 				/*
 				if (transitionList.get(i).getName().length() > 16) {
 					tmpNazwy = transitionList.get(i).getName();
@@ -1196,12 +1175,12 @@ public class IOprotocols {
 					}
 				}*/
 				
-				fileBuffer += transitionList.get(i).getName() + "                      ";
-				fileBuffer += "0    0";
-				fileBuffer += "\r\n";
+				fileBuffer.append(transitionList.get(i).getName()).append("                      ");
+				fileBuffer.append("0    0");
+				fileBuffer.append("\r\n");
 			}
 			
-			fileBuffer += "@";
+			fileBuffer.append("@");
 			writerObject.println(fileBuffer);
 			writerObject.close();
 			//overlord.log("Petri net exported as .pnt INA format. File: "+path, "text", true);
@@ -1238,7 +1217,7 @@ public class IOprotocols {
 						continue;
 					}
 					
-					if(nrPlaced == false) {
+					if(!nrPlaced) {
 						pw.print("\r\n"+(i+1)+"\t|\t");
 						nrPlaced = true;
 					} else {
@@ -1280,7 +1259,7 @@ public class IOprotocols {
 						continue;
 					}
 					
-					if(nrPlaced == false) {
+					if(!nrPlaced) {
 						pw.print("\r\n"+(i+1)+"\t|\t");
 						nrPlaced = true;
 					} else {
@@ -1359,7 +1338,7 @@ public class IOprotocols {
 	 * Metoda zapisująca p-inwarianty w formacie CSV (Comma Separated Value).
 	 * @param path String - ścieżka do pliku zapisu
 	 * @param p_invariants ArrayList[ArrayList[Integer]] - macierz t-inwariantów
-	 * @param transitions ArrayList[Place] - wektor miejsc
+	 * @param places ArrayList[Place] - wektor miejsc
 	 */
 	public void writeP_invCSV(String path, ArrayList<ArrayList<Integer>> p_invariants, ArrayList<Place> places) {
 		try {
