@@ -111,6 +111,10 @@ public class GraphletComparator {
         double[][] nG = lodaN(path1);
         double[][] nH = lodaN(path2);
 
+        if(nH==null||nH.length==0)
+        {
+            return -1;
+        }
         int maxk = Math.max(nG[0].length,nH[0].length);
 
         double[] d = new double[orbNumber];
@@ -141,6 +145,45 @@ public class GraphletComparator {
         return DoubleStream.of(d).sum()/orbNumber;
     }
 
+    public double[] calcDGDDApartitioned(String path1, String path2){
+
+        double[][] nG = lodaN(path1);
+        double[][] nH = lodaN(path2);
+
+        if(nH==null||nH.length==0)
+        {
+            return new double[0];
+        }
+        int maxk = Math.max(nG[0].length,nH[0].length);
+
+        double[] d = new double[orbNumber];
+
+        for(int orb = 0 ; orb< orbNumber ; orb++)
+        {
+            double di = 0;
+
+            for(int k = 0 ; k < maxk ; k++ )
+            {
+                if(k>=nG[orb].length)
+                {
+                    di += Math.pow(0-nH[orb][k],2);
+                }
+                else if(k>=nH[orb].length)
+                {
+                    di += Math.pow(nG[orb][k]-0,2);
+                }
+                else
+                {
+                    di += Math.pow(nG[orb][k]-nH[orb][k],2);
+                }
+            }
+
+            d[orb] = 1 - (1/Math.sqrt(2)) * Math.sqrt(di);
+        }
+
+        return d;
+    }
+
     private double[][] lodaN(String path) {
 
         Scanner scanner = null;
@@ -154,37 +197,45 @@ public class GraphletComparator {
 
         List<double[]> result = new ArrayList<>();
 
-        while (scanner.hasNext()) {
+        if (scanner != null) {
+            while (scanner.hasNext()) {
 
-            String line = scanner.nextLine();
+                String line = scanner.nextLine();
 
-            if(line.contains("-n"))
-            {
-                startRead = true;
-                line = scanner.nextLine();
-            }
-
-            if(startRead)
-            {
-                line=line.replace("[","");
-                line=line.replace("]","");
-                //to test
-                line=line.replace("NaN","0.0");
-
-                String[] lin = line.split(",");
-
-                double[] shortResult = new double[lin.length];
-
-                for(int i = 0 ; i < lin.length ; i++)
+                if(line.contains("-n"))
                 {
-                    //System.out.println(lin[i]);
-                    shortResult[i] = Double.parseDouble(lin[i]);
+                    startRead = true;
+                    line = scanner.nextLine();
                 }
 
-                result.add(shortResult);
+                if(startRead)
+                {
+                    line=line.replace("[","");
+                    line=line.replace("]","");
+                    //to test
+                    line=line.replace("NaN","0.0");
+
+                    String[] lin = line.split(",");
+
+                    double[] shortResult = new double[lin.length];
+
+                    for(int i = 0 ; i < lin.length ; i++)
+                    {
+                        //System.out.println(lin[i]);
+                        try {
+                            shortResult[i] = Double.parseDouble(lin[i]);
+                        }
+                        catch (Exception ex)
+                        {
+                            System.out.println("Line: " + lin);
+                        }
+                    }
+
+                    result.add(shortResult);
+                }
+
+
             }
-
-
         }
         scanner.close();
 

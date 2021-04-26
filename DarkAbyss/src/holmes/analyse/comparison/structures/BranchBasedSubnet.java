@@ -13,7 +13,7 @@ public class BranchBasedSubnet {
 
     public ArrayList<BranchVertex> branchVertices = new ArrayList<>();
     public ArrayList<Node> nodes = new ArrayList<>();
-    public ArrayList<Transition> transitions;
+    public ArrayList<Transition> transitions = new ArrayList<>();
     public ArrayList<Place> places = new ArrayList<>();
     public ArrayList<Branch> pairs = new ArrayList<>();
     public int[][] branchDirMatrix;
@@ -33,6 +33,58 @@ public class BranchBasedSubnet {
         }
 
         //if(branchVertices.size()==0){
+        paths = calculatePaths(nodes);
+        //}
+
+        this.pairs = generatePaits();
+        this.branchDirMatrix = generateMatrix();
+    }
+
+    public BranchBasedSubnet(BranchVertex bv)
+    {
+        branchVertices.add(bv);
+        for (Branch b : bv.tbranch) {
+            for(Node n :b.branchElements)
+            {
+                if(!nodes.contains(n))
+                {
+                    this.nodes.add(n);
+                }
+
+                if(n.getType().equals(PetriNetElement.PetriNetElementType.PLACE) && !places.contains(n))
+                {
+                    this.places.add((Place)n);
+                }
+
+                if(n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && !transitions.contains(n))
+                {
+                    this.transitions.add((Transition)n);
+                }
+
+            }
+        }
+
+        for (Branch b : bv.pbranches) {
+            for(Node n :b.branchElements)
+            {
+                if(!nodes.contains(n))
+                {
+                    this.nodes.add(n);
+                }
+
+                if(n.getType().equals(PetriNetElement.PetriNetElementType.PLACE) && !places.contains(n))
+                {
+                    this.places.add((Place)n);
+                }
+
+                if(n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && !transitions.contains(n))
+                {
+                    this.transitions.add((Transition)n);
+                }
+
+            }
+        }
+
         paths = calculatePaths(nodes);
         //}
 
@@ -192,7 +244,8 @@ public class BranchBasedSubnet {
         }
 
         public ArrayList<Branch> getSek() {
-            return tbranch.stream().filter(x -> x.endNode.getOutInArcs().size() == 1).collect(Collectors.toCollection(ArrayList::new));
+            //TODO czy startowy też?
+            return tbranch.stream().filter(x -> x.endNode.getOutInArcs().size() == 1 || x.startNode.getOutInArcs().size()==1).collect(Collectors.toCollection(ArrayList::new));
         }
     }
 

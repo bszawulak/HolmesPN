@@ -20,4 +20,18 @@ public class GreatCommonSubnet {
         else
             this.gcsValue = 0 ;
     }
+
+    public GreatCommonSubnet(ArrayList<SubnetComparator.PartialSubnetElements> pse, boolean connected){
+
+        if(connected)
+        {
+
+            //TODO conected wariant
+        }
+        this.psel = pse;
+        if(pse.size()>0)
+            this.gcsValue = pse.get(0).matchingValueFunction();
+        else
+            this.gcsValue = 0 ;
+    }
 }

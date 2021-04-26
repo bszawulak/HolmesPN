@@ -1,21 +1,22 @@
 package holmes.analyse;
 
 import holmes.darkgui.GUIManager;
+import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.elements.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.List;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class GraphletsCalculator {
+    public static int sheetID = 0;
+    private static int totalGrahletID = 0;
 
     public static HashMap<Integer, Node> globalOrbitMap = new HashMap<Integer, Node>();
     public static HashMap<Integer, Integer> orbitOraphMap = new HashMap<>();
@@ -112,8 +113,6 @@ public class GraphletsCalculator {
         graphetsList.add(graphlet_67());
         graphetsList.add(graphlet_68());
         graphetsList.add(graphlet_69());
-        graphetsList.add(graphlet_70());
-
 
         graphetsList.add(graphlet_70());
         graphetsList.add(graphlet_71());
@@ -210,22 +209,216 @@ public class GraphletsCalculator {
         graphetsList.add(graphlet_151());
         graphetsList.add(graphlet_152());
         graphetsList.add(graphlet_153());
+
+
     }
 
 
-    public static void getDirectedGraphletDegreeVector(SubnetCalculator.SubNet sn){
+    public static void getDirectedGraphletDegreeVector(SubnetCalculator.SubNet sn) {
         int[][] DGDV = new int[sn.getSubNode().size()][98];
 
 
-
     }
 
-    public static void getDirectedRelativeGraphletFrequencyDistributionDistance(){
+    public static void generateGraphletsNode3() {
+        graphetsList.clear();
+        //2-NODE
+        graphetsList.add(graphlet_1());
+        graphetsList.add(graphlet_2());
+        //3-NODE
+        graphetsList.add(graphlet_3());
+        graphetsList.add(graphlet_4());
+        graphetsList.add(graphlet_5());
+        graphetsList.add(graphlet_6());
+        graphetsList.add(graphlet_7());
+        graphetsList.add(graphlet_8());
+    }
+
+    public static void generateGraphletsNode4() {
+        generateGraphletsNode3();
+        graphetsList.add(graphlet_9());
+        graphetsList.add(graphlet_10());
+        graphetsList.add(graphlet_11());
+        graphetsList.add(graphlet_12());
+        graphetsList.add(graphlet_13());
+        graphetsList.add(graphlet_14());
+        graphetsList.add(graphlet_15());
+        graphetsList.add(graphlet_16());
+
+        graphetsList.add(graphlet_17());
+        graphetsList.add(graphlet_18());
+        graphetsList.add(graphlet_19());
+        graphetsList.add(graphlet_20());
+        graphetsList.add(graphlet_21());
+        graphetsList.add(graphlet_22());
+        graphetsList.add(graphlet_23());
+        graphetsList.add(graphlet_24());
+
+        graphetsList.add(graphlet_25());
+        graphetsList.add(graphlet_26());
+        graphetsList.add(graphlet_27());
+        graphetsList.add(graphlet_28());
+        graphetsList.add(graphlet_29());
+        graphetsList.add(graphlet_30());
+        graphetsList.add(graphlet_31());
+    }
+
+    public static void generateGraphletsNode5() {
+        generateGraphletsNode4();
+        graphetsList.add(graphlet_32());
+        graphetsList.add(graphlet_33());
+        graphetsList.add(graphlet_34());
+        graphetsList.add(graphlet_35());
+        graphetsList.add(graphlet_36());
+        graphetsList.add(graphlet_37());
+        graphetsList.add(graphlet_38());
+        graphetsList.add(graphlet_39());
+        graphetsList.add(graphlet_40());
+        graphetsList.add(graphlet_41());
+        //graphetsList.add(graphlet_42());
+        //graphetsList.add(graphlet_43());
+        graphetsList.add(graphlet_44());
+        graphetsList.add(graphlet_45());
+        graphetsList.add(graphlet_46());
+        graphetsList.add(graphlet_47());
+        graphetsList.add(graphlet_48());
+        graphetsList.add(graphlet_49());
+        graphetsList.add(graphlet_50());
+        graphetsList.add(graphlet_51());
+        graphetsList.add(graphlet_52());
+        graphetsList.add(graphlet_53());
+        //graphetsList.add(graphlet_54());
+        //graphetsList.add(graphlet_55());
+        graphetsList.add(graphlet_56());
+        graphetsList.add(graphlet_57());
+        graphetsList.add(graphlet_58());
+        graphetsList.add(graphlet_59());
+        graphetsList.add(graphlet_60());
+        graphetsList.add(graphlet_61());
+        graphetsList.add(graphlet_62());
+        graphetsList.add(graphlet_63());
+        graphetsList.add(graphlet_64());
+        graphetsList.add(graphlet_65());
+        graphetsList.add(graphlet_66());
+        graphetsList.add(graphlet_67());
+        graphetsList.add(graphlet_68());
+        graphetsList.add(graphlet_69());
+
+        graphetsList.add(graphlet_70());
+        graphetsList.add(graphlet_71());
+        graphetsList.add(graphlet_72());
+        graphetsList.add(graphlet_73());
+        graphetsList.add(graphlet_74());
+        graphetsList.add(graphlet_75());
+        graphetsList.add(graphlet_76());
+        graphetsList.add(graphlet_77());
+        graphetsList.add(graphlet_78());
+        graphetsList.add(graphlet_79());
+
+        graphetsList.add(graphlet_80());
+        graphetsList.add(graphlet_81());
+        graphetsList.add(graphlet_82());
+        graphetsList.add(graphlet_83());
+        graphetsList.add(graphlet_84());
+        graphetsList.add(graphlet_85());
+        graphetsList.add(graphlet_86());
+        graphetsList.add(graphlet_87());
+        graphetsList.add(graphlet_88());
+        graphetsList.add(graphlet_89());
+
+        graphetsList.add(graphlet_90());
+        graphetsList.add(graphlet_91());
+        graphetsList.add(graphlet_92());
+        graphetsList.add(graphlet_93());
+        graphetsList.add(graphlet_94());
+        graphetsList.add(graphlet_95());
+        graphetsList.add(graphlet_96());
+        graphetsList.add(graphlet_97());
+        graphetsList.add(graphlet_98());
+        graphetsList.add(graphlet_99());
+
+
+        graphetsList.add(graphlet_100());
+        graphetsList.add(graphlet_101());
+        graphetsList.add(graphlet_102());
+        graphetsList.add(graphlet_103());
+        graphetsList.add(graphlet_104());
+        graphetsList.add(graphlet_105());
+        graphetsList.add(graphlet_106());
+        graphetsList.add(graphlet_107());
+        graphetsList.add(graphlet_108());
+        graphetsList.add(graphlet_109());
+
+        graphetsList.add(graphlet_110());
+        graphetsList.add(graphlet_111());
+        graphetsList.add(graphlet_112());
+        graphetsList.add(graphlet_113());
+        graphetsList.add(graphlet_114());
+        graphetsList.add(graphlet_115());
+        graphetsList.add(graphlet_116());
+        graphetsList.add(graphlet_117());
+        graphetsList.add(graphlet_118());
+        graphetsList.add(graphlet_119());
+
+        graphetsList.add(graphlet_120());
+        graphetsList.add(graphlet_121());
+        graphetsList.add(graphlet_122());
+        graphetsList.add(graphlet_123());
+        graphetsList.add(graphlet_124());
+        graphetsList.add(graphlet_125());
+        graphetsList.add(graphlet_126());
+        graphetsList.add(graphlet_127());
+        graphetsList.add(graphlet_128());
+        graphetsList.add(graphlet_129());
+
+        graphetsList.add(graphlet_130());
+        graphetsList.add(graphlet_131());
+        graphetsList.add(graphlet_132());
+        graphetsList.add(graphlet_133());
+        graphetsList.add(graphlet_154());
+        graphetsList.add(graphlet_134());
+        graphetsList.add(graphlet_135());
+        graphetsList.add(graphlet_136());
+        graphetsList.add(graphlet_137());
+        graphetsList.add(graphlet_138());
+        graphetsList.add(graphlet_139());
+
+        graphetsList.add(graphlet_140());
+        graphetsList.add(graphlet_141());
+        graphetsList.add(graphlet_142());
+        graphetsList.add(graphlet_143());
+        graphetsList.add(graphlet_144());
+        graphetsList.add(graphlet_145());
+        graphetsList.add(graphlet_155());
+        graphetsList.add(graphlet_146());
+        graphetsList.add(graphlet_147());
+        graphetsList.add(graphlet_148());
+        graphetsList.add(graphlet_149());
+
+        graphetsList.add(graphlet_150());
+        graphetsList.add(graphlet_151());
+        graphetsList.add(graphlet_152());
+        graphetsList.add(graphlet_153());
+
+        ArrayList<Place> places = new ArrayList<>();
+        ArrayList<Transition> transitions = new ArrayList<>();
+        ArrayList<Arc> arcs = new ArrayList<>();
+        IOprotocols io = new IOprotocols();
+
+        for (SubnetCalculator.SubNet st : graphetsList) {
+            places.addAll(st.getSubPlaces());
+            transitions.addAll(st.getSubTransitions());
+            arcs.addAll(st.getSubArcs());
+        }
+
+        io.writePNT("ramadan.pnt", places, transitions, arcs);
+    }
+
+    public static void getDirectedRelativeGraphletFrequencyDistributionDistance() {
         int[] N = new int[graphletNumber];
 
 
-        for(Struct struct: uniqGraphlets)
-        {
+        for (Struct struct : uniqGraphlets) {
             //int i = struct.graphletID;
             N[struct.graphletID]++;
             //DGDV[]
@@ -235,27 +428,35 @@ public class GraphletsCalculator {
 
         double[] NzDaszkiem = new double[graphletNumber];
 
-        for(int i = 0 ; i < graphletNumber ; i++)
-        {
-            NzDaszkiem[i] = Math.log(N[i])/T;
+        for (int i = 0; i < graphletNumber; i++) {
+            NzDaszkiem[i] = Math.log(N[i]) / T;
         }
 
 
     }
 
-    public static void getDirectedGraphletDegreeDistributionAgreement(){
+    public static void getDirectedGraphletDegreeDistributionAgreement() {
 
     }
 
-    public static void getDirectedGraphDegreeVectorSimilarity(){
+    public static void getDirectedGraphDegreeVectorSimilarity() {
 
     }
 
     private static int fromWhichGrahlet(Node n) {
         int index = -1;
+        int wiel = 0;
         for (int i = 0; i < graphetsList.size(); i++) {
-            if(graphetsList.get(i).getSubNode().stream().anyMatch(x-> x.getID() == n.getID()))//if (graphetsList.get(i).getSubNode().contains(n))
-                index = i;
+            if (graphetsList.get(i).getSubNode().stream().anyMatch(x -> x.getID() == n.getID()))
+            //if (graphetsList.get(i).getSubNode().contains(n))
+            {
+                index = graphetsList.get(i).getSubNetID();
+                //index = i;
+                wiel++;
+            }
+        }
+        if (wiel > 1) {
+            System.out.println("Cos SPierdolono!!!");
         }
         return index;
     }
@@ -264,7 +465,7 @@ public class GraphletsCalculator {
         int[] ov = new int[globalOrbitMap.size()];
         int iterac = 0;
 
-        String text = "";
+        StringBuilder text = new StringBuilder();
         if (test) {
             ov[59] = getOrbitValue(n, globalOrbitMap.get(59));
         } else {
@@ -273,7 +474,7 @@ public class GraphletsCalculator {
                 int result = getOrbitValue(n, m);
                 ov[iterac] = result;
                 //System.out.println("Orbita " + iterac + " = " + result);
-                text += result + ", ";
+                text.append(result).append(", ");
                 iterac++;
             }
         }
@@ -282,11 +483,11 @@ public class GraphletsCalculator {
         return ov;
     }
 
-    public static void getFoundGraphlets(){
+    public static void getFoundGraphlets() {
         ArrayList<ArrayList<ArrayList<Struct>>> resultList = new ArrayList<>();
 
-        int orbitIndex =0;
-        for (Entry<Integer,Node> entry : globalOrbitMap.entrySet()) {
+        int orbitIndex = 0;
+        for (Entry<Integer, Node> entry : globalOrbitMap.entrySet()) {
             ArrayList<ArrayList<Struct>> fromThisOrbit = new ArrayList<>();
 
             for (Node n : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
@@ -299,6 +500,8 @@ public class GraphletsCalculator {
             }
             resultList.add(fromThisOrbit);
         }
+
+        //sprawdź czy map jest praw
 
         graphlets = resultList;
 
@@ -313,23 +516,21 @@ public class GraphletsCalculator {
             foundGraphletsApp = findGraphlet(m, n);
 
             //catch multiple arcs
-            if(multipleArcCheck)
-            {
+            if (multipleArcCheck) {
                 ArrayList<Struct> nonMultiArcStruct = new ArrayList<>();
                 for (Struct graphlet : foundGraphletsApp) {
                     int multiplier = 1;
                     for (Entry<Arc, Arc> entry : graphlet.mapaArcow.entrySet()) {
-                        multiplier= multiplier*entry.getValue().getWeight();
+                        multiplier = multiplier * entry.getValue().getWeight();
                     }
 
 
-                    for(int i = 0 ; i < multiplier ; i ++)
-                    {
+                    for (int i = 0; i < multiplier; i++) {
                         nonMultiArcStruct.add(graphlet);
                     }
                     //System.out.println("------->Multi--->" + multiplier);
                 }
-                foundGraphletsApp=nonMultiArcStruct;
+                foundGraphletsApp = nonMultiArcStruct;
             }
 
             return foundGraphletsApp.size();
@@ -363,11 +564,11 @@ public class GraphletsCalculator {
 
                 boolean properGraphlet = true;
 
-                ArrayList<Arc> properArcList = toExtend.mapaArcow.values().stream().collect(Collectors.toCollection(ArrayList::new));
-                ArrayList<Node> properNodeList = toExtend.mapa.values().stream().collect(Collectors.toCollection(ArrayList::new));
+                ArrayList<Arc> properArcList = new ArrayList<>(toExtend.mapaArcow.values());
+                ArrayList<Node> properNodeList = new ArrayList<>(toExtend.mapa.values());
 
                 for (Arc a : properArcList) {
-                    if(!properNodeList.contains(a.getStartNode()) || !properNodeList.contains(a.getEndNode()))
+                    if (!properNodeList.contains(a.getStartNode()) || !properNodeList.contains(a.getEndNode()))
                         properGraphlet = false;
                 }
 
@@ -382,11 +583,30 @@ public class GraphletsCalculator {
                     }
                 }
 
+                /*
+                for (Node n : toExtend.mapa.values()) {
+                    for (Arc a : n.getOutArcs()) {
+                        if (properNodeList.contains(a.getEndNode()) && properNodeList.contains(a.getStartNode())) {
+                            if (!properArcList.contains(a)) {
+                                properGraphlet = false;
+                                //System.out.println("-> nieprawidlowy graphlet");
+                            }
+                        }
+                    }
+                    for (Arc a : n.getInArcs()) {
+                        if (properNodeList.contains(a.getStartNode()) && properNodeList.contains(a.getEndNode())) {
+                            if (!properArcList.contains(a)) {
+                                properGraphlet = false;
+                                //System.out.println("-> nieprawidlowy graphlet");
+                            }
+                        }
+                    }
+                }
+                */
 
-                if (properGraphlet)
+                if (properGraphlet) {
                     listOfProperGraphlets.add(toExtend);
-
-
+                }
             } else {
                 Arc freeGrahletArcToAdd = takeFreeGraphletArcToAdd(toExtend, arcsFromGraohlet);
                 if (freeGrahletArcToAdd != null) {
@@ -396,7 +616,7 @@ public class GraphletsCalculator {
                     for (Arc nextArc : possibleExtensions) {
                         if (!toExtend.mapaArcow.containsValue(nextArc)) {
                             Struct structureToAdd = new Struct((HashMap<Node, Node>) toExtend.mapa.clone(), (HashMap<Arc, Arc>) toExtend.mapaArcow.clone());
-                            structureToAdd.graphletID=graphletID;
+                            structureToAdd.graphletID = graphletID;
 
                             if (!structureToAdd.mapa.containsValue(nextArc.getStartNode())) {
                                 structureToAdd.mapa.put(freeGrahletNodeToAdd, nextArc.getStartNode());
@@ -414,24 +634,85 @@ public class GraphletsCalculator {
             }
         }
 
+
+
+
         //tylko unikalne
         ArrayList<Struct> uniqeListOfProperGraphlets = new ArrayList<>();
 
         for (int i = 0; i < listOfProperGraphlets.size(); i++) {
-
             Struct struct = listOfProperGraphlets.get(i);
             int counter = 0;
             for (int j = i; j < listOfProperGraphlets.size(); j++) {
                 Struct struct2 = listOfProperGraphlets.get(j);
-                if (struct.mapa.values().containsAll(struct2.mapa.values()))
+
+                if (struct.mapa.values().containsAll(struct2.mapa.values()) && struct.mapaArcow.values().containsAll(struct2.mapaArcow.values()) && struct.mapa.keySet().equals(struct2.mapa.keySet()) && struct.mapaArcow.keySet().equals(struct2.mapaArcow.keySet()))
                     counter++;
             }
             if (counter == 1) {
                 uniqeListOfProperGraphlets.add(listOfProperGraphlets.get(i));
+            } else {
+                ///System.out.println("ASDFGHJK" + listOfProperGraphlets.get(i).graphletID + "po raz " + counter) ;
             }
         }
+        ArrayList<Struct> ProperlyMapGraphlets = new ArrayList<>();
+        for(Struct st : uniqeListOfProperGraphlets)
+        {
+            SubnetCalculator.SubNet graphlet = graphetsList.get(st.graphletID);
 
-        return uniqeListOfProperGraphlets;
+            boolean bubel = false;
+
+            for(Node n : graphlet.getSubNode())
+            {
+                for (Arc a :  n.getInArcs()) {
+                    Arc mapedArc = st.mapaArcow.get(a);
+
+                    Node startNode = mapedArc.getStartNode();
+                    Node endNode = mapedArc.getEndNode();
+                    Node s1 = keys(st.mapa,startNode).findFirst().get();
+                    Node s2 = keys(st.mapa,endNode).findFirst().get();
+
+                    if(graphlet.getSubArcs().stream().noneMatch(x->x.getStartNode().getID()==s1.getID() && x.getEndNode().getID()==s2.getID()))
+                    {
+                        bubel=true;
+                    }
+
+                    //if(getKeysByValue(st.mapa,startNode) && st.mapa.containsValue(endNode))
+
+                    //int originalID = a.getStartNode().getID();
+                    //if(!st.mapa.containsKey(mapedArc.getStartNode()))
+                    //    bubel=true;
+
+                        /*
+                    int mapedID = st.mapa.get(mapedArc.getStartNode()).getID();
+                    if(originalID!= mapedID)
+                        bubel=true;
+                    */
+
+                    if(!st.mapaArcow.containsKey(a))
+                        bubel=true;
+                }
+            }
+
+            for (Arc a : graphlet.getSubArcs()) {
+                if(!st.mapaArcow.containsKey(a))
+                    bubel=true;
+            }
+
+            if(!bubel)
+                ProperlyMapGraphlets.add(st);
+            else
+                System.out.println("BUBEL");
+        }
+
+        return ProperlyMapGraphlets;
+    }
+    public static <K, V> Stream<K> keys(Map<K, V> map, V value) {
+        return map
+                .entrySet()
+                .stream()
+                .filter(entry -> value.equals(entry.getValue()))
+                .map(Map.Entry::getKey);
     }
 
     private static Node takeFreeGraphletNodeToAdd(Struct toExtend, Arc freeGrahletArcToAdd) {
@@ -467,19 +748,13 @@ public class GraphletsCalculator {
                 //wcześniej sprawdzasz czy to nie jest cykl w ramach grafletu
 
                 //zbió© potencjalnych rozszrrzeń - zwracasz ich start nody
-                for (Arc a : entry.getValue().getInArcs()) {
-                    //result.add(a.getStartNode());
-                    result.add(a);
-                }
-
+                result.addAll(entry.getValue().getInArcs());
             }
 
             //freeGrahletArcToAdd łukiem wyjściowym
             if (freeGrahletArcToAdd.getStartNode().getID() == entry.getKey().getID()) {
-                for (Arc a : entry.getValue().getOutArcs()) {
-                    //result.add(a.getEndNode());
-                    result.add(a);
-                }
+                //result.add(a.getEndNode());
+                result.addAll(entry.getValue().getOutArcs());
             }
         }
 
@@ -500,29 +775,98 @@ public class GraphletsCalculator {
         return result;
     }
 
-    private static void sortGraphletsByOrbit(){
+    private static void sortGraphletsByOrbit() {
 
         for (ArrayList<ArrayList<Struct>> listForNode : graphlets) {
-           ArrayList<Struct> gartherd = new ArrayList<>();
-            for(ArrayList<Struct> list : listForNode)
+            ArrayList<Struct> gartherd = new ArrayList<>();
+            for (ArrayList<Struct> list : listForNode)
                 gartherd.addAll(list);
 
             sortedGraphlets.add(gartherd);
         }
     }
 
-    private static void uniqGraphlets(){
-
-        for (ArrayList<ArrayList<Struct>> listForNode : graphlets) {
-            for(ArrayList<Struct> list : listForNode)
-                for(Struct s : list)
-                    if(!uniqGraphlets.stream().anyMatch(x-> x.mapa.values().containsAll(s.mapa.values())) && !uniqGraphlets.stream().anyMatch(x-> x.mapaArcow.values().containsAll(s.mapaArcow.values())))
-                        uniqGraphlets.add(s);
+    private static ArrayList<Integer> getKeyNodeIDs(HashMap<Node, Node> hm) {
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (Node n : hm.keySet()) {
+            ids.add(n.getID());
         }
+        return ids;
     }
+
+    private static ArrayList<Integer> getStructNodeIDs(ArrayList<Node> nl) {
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (Node n : nl) {
+            ids.add(n.getID());
+        }
+        return ids;
+    }
+
+    private static void uniqGraphlets() {
+
+        ArrayList<Struct> propList = new ArrayList<>();
+        //is you id porpper
+        for (ArrayList<ArrayList<Struct>> listForNode : graphlets) {
+            for (ArrayList<Struct> list : listForNode)
+                for (Struct s : list)
+                    if (getKeyNodeIDs(s.mapa).containsAll(getStructNodeIDs(graphetsList.get(s.graphletID).getSubNode())) && s.mapaArcow.keySet().containsAll(graphetsList.get(s.graphletID).getSubArcs())) {
+                        propList.add(s);
+                    } else {
+                        System.out.println("Błędny id");
+                    }
+        }
+
+
+        //for (ArrayList<ArrayList<Struct>> listForNode : graphlets) {
+        //for(ArrayList<Struct> list : listForNode)
+        for (Struct s : propList)
+            //if(uniqGraphlets.stream().noneMatch(x-> x.mapa.values().containsAll(s.mapa.values())) && uniqGraphlets.stream().noneMatch(x-> x.mapaArcow.values().containsAll(s.mapaArcow.values())))
+            if (uniqGraphlets.stream().noneMatch(x -> x.mapa.keySet().equals(s.mapa.keySet()) && x.mapa.values().containsAll(s.mapa.values()) && x.mapaArcow.keySet().equals(s.mapaArcow.keySet()) && x.graphletID == s.graphletID)) {
+                if (s.graphletID == 999) {
+                    System.out.println("You not suppost to be here");
+                    System.out.println(s.graphletID);
+                    System.out.println(s.mapa.keySet());
+                    System.out.println(s.mapa.values());
+                    System.out.println(s.mapaArcow.keySet());
+                    System.out.println(s.mapaArcow.values());//wek
+                }
+                uniqGraphlets.add(s);
+            }
+        //}
+
+
+        ArrayList<Struct> inproper = new ArrayList<>();
+        for (Struct s : uniqGraphlets) {
+            ArrayList<Struct > ip = uniqGraphlets.stream().filter(x->x.mapaArcow.values().containsAll(s.mapaArcow.values())).collect(Collectors.toCollection(ArrayList::new));
+            if(ip.size()>1) {
+                /*
+                System.out.println("--------");
+                for (Struct st: ip) {
+                    System.out.println("You not suppost to be here");
+                    System.out.println(st.graphletID);
+                    System.out.println(st.mapa.keySet());
+                    System.out.println(getKeyNodeIDs(st.mapa));
+                    System.out.println(st.mapa.values());
+                    System.out.println(st.mapaArcow.keySet());
+                    System.out.println(st.mapaArcow.values());//wek
+
+                    if(!getKeyNodeIDs(st.mapa).containsAll(getStructNodeIDs(graphetsList.get(st.graphletID).getSubNode())))
+                    {
+                        System.out.println("Gagatek ze złym numerem :");
+                        System.out.println(getKeyNodeIDs(st.mapa));
+                        System.out.println(getStructNodeIDs(graphetsList.get(st.graphletID).getSubNode()));
+                    }
+                }
+                */
+            }
+        }
+
+
+    }
+
     private static SubnetCalculator.SubNet graphlet_1() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         ArrayList<Arc> al = new ArrayList<>();
         al.add(a1);
@@ -531,13 +875,14 @@ public class GraphletsCalculator {
         sn.orbitMap.put(0, t1);
         sn.orbitMap.put(1, p1);
         globalOrbitMap.putAll(sn.orbitMap);
-
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_2() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         ArrayList<Arc> al = new ArrayList<>();
         al.add(a1);
@@ -546,14 +891,15 @@ public class GraphletsCalculator {
         sn.orbitMap.put(2, p1);
         sn.orbitMap.put(3, t1);
         globalOrbitMap.putAll(sn.orbitMap);
-
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_3() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         ArrayList<Arc> al = new ArrayList<>();
@@ -565,14 +911,15 @@ public class GraphletsCalculator {
         sn.orbitMap.put(5, p1);
         sn.orbitMap.put(6, t2);
         globalOrbitMap.putAll(sn.orbitMap);
-
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_4() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         ArrayList<Arc> al = new ArrayList<>();
@@ -583,14 +930,15 @@ public class GraphletsCalculator {
         sn.orbitMap.put(7, t1);
         sn.orbitMap.put(8, p1);
         globalOrbitMap.putAll(sn.orbitMap);
-
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_5() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         ArrayList<Arc> al = new ArrayList<>();
@@ -602,13 +950,15 @@ public class GraphletsCalculator {
         sn.orbitMap.put(10, p1);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_6() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         ArrayList<Arc> al = new ArrayList<>();
@@ -621,13 +971,15 @@ public class GraphletsCalculator {
         sn.orbitMap.put(13, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_7() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         ArrayList<Arc> al = new ArrayList<>();
@@ -639,13 +991,15 @@ public class GraphletsCalculator {
         sn.orbitMap.put(14, p1);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_8() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         ArrayList<Arc> al = new ArrayList<>();
@@ -657,15 +1011,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(16, p1);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 ///
 
     private static SubnetCalculator.SubNet graphlet_9() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t3.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -679,14 +1035,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(19, p1);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_10() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p1.getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -700,14 +1058,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(21, p1);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_11() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p1.getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -722,15 +1082,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(24, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
 
     private static SubnetCalculator.SubNet graphlet_12() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t3.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -745,6 +1107,8 @@ public class GraphletsCalculator {
         sn.orbitMap.put(27, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
@@ -752,10 +1116,10 @@ public class GraphletsCalculator {
 ///
 
     private static SubnetCalculator.SubNet graphlet_13() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p3.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -769,14 +1133,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(28, p1);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_14() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -790,14 +1156,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(30, p1);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_15() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -812,14 +1180,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(34, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_16() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p3.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -834,6 +1204,8 @@ public class GraphletsCalculator {
         sn.orbitMap.put(37, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
@@ -841,10 +1213,10 @@ public class GraphletsCalculator {
     // 3
 
     private static SubnetCalculator.SubNet graphlet_17() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -861,14 +1233,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(41, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_18() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -885,14 +1259,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(45, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_19() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -909,14 +1285,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(49, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_20() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -933,16 +1311,18 @@ public class GraphletsCalculator {
         sn.orbitMap.put(53, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     // 3.1
 
     private static SubnetCalculator.SubNet graphlet_21() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -966,14 +1346,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(57, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_22() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -997,14 +1379,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(61, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_23() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1027,14 +1411,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(65, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_24() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1059,16 +1445,18 @@ public class GraphletsCalculator {
 
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     // 5
 
     private static SubnetCalculator.SubNet graphlet_25() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1087,14 +1475,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(73, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_26() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1113,14 +1503,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(77, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_27() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1139,14 +1531,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(81, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_28() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1165,14 +1559,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(85, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_29() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1191,14 +1587,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(89, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_30() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1217,14 +1615,16 @@ public class GraphletsCalculator {
         sn.orbitMap.put(93, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_31() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1241,19 +1641,23 @@ public class GraphletsCalculator {
         sn.orbitMap.put(95, p1);
         sn.orbitMap.put(96, t2);
         sn.orbitMap.put(97, p2);
+
+        //89 do poprawy
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //  9 t-t
 
     private static SubnetCalculator.SubNet graphlet_32() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1273,15 +1677,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(102, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_33() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1301,15 +1707,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(107, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_34() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1329,15 +1737,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(112, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_35() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1355,15 +1765,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(115, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_36() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1383,15 +1795,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(120, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_37() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1409,15 +1823,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(123, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_38() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1435,15 +1851,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(126, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_39() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1463,15 +1881,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(131, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_40() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1491,15 +1911,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(136, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_41() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1517,17 +1939,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(139, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     /*
     //duplikat
     private static SubnetCalculator.SubNet graphlet_42() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1547,16 +1971,18 @@ public class GraphletsCalculator {
         sn.orbitMap.put(107, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //duplikat
     private static SubnetCalculator.SubNet graphlet_43() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1574,6 +2000,8 @@ public class GraphletsCalculator {
         sn.orbitMap.put(6, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 */
@@ -1581,11 +2009,11 @@ public class GraphletsCalculator {
 
 
     private static SubnetCalculator.SubNet graphlet_44() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1605,15 +2033,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(144, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_45() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1633,15 +2063,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(149, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_46() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1661,15 +2093,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(154, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_47() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1687,15 +2121,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(157, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_48() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1715,15 +2151,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(162, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_49() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1741,15 +2179,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(165, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_50() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1767,15 +2207,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(168, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_51() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1795,15 +2237,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(173, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_52() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1823,15 +2267,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(178, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_53() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1849,16 +2295,18 @@ public class GraphletsCalculator {
         sn.orbitMap.put(181, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     /*
     private static SubnetCalculator.SubNet graphlet_54() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1876,15 +2324,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(6, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_55() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1902,6 +2352,8 @@ public class GraphletsCalculator {
         sn.orbitMap.put(6, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 */
@@ -1909,11 +2361,11 @@ public class GraphletsCalculator {
     // 10
 
     private static SubnetCalculator.SubNet graphlet_56() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1932,15 +2384,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(185, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_57() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1960,15 +2414,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(190, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_58() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -1987,15 +2443,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(194, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_59() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2014,15 +2472,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(198, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_60() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2042,15 +2502,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(203, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_61() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2069,17 +2531,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(207, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //part
 
     private static SubnetCalculator.SubNet graphlet_62() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2098,15 +2562,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(211, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_63() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2126,15 +2592,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(216, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_64() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2153,17 +2621,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(220, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //part
 
     private static SubnetCalculator.SubNet graphlet_65() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2182,15 +2652,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(224, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_66() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2210,15 +2682,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(229, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_67() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
 
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2238,17 +2712,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(233, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //p
 
     private static SubnetCalculator.SubNet graphlet_68() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2267,15 +2743,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(237, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_69() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2295,15 +2773,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(242, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_70() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2322,15 +2802,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(246, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_71() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2349,15 +2831,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(250, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_72() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2377,15 +2861,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(255, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_73() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2404,17 +2890,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(259, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //part
 
     private static SubnetCalculator.SubNet graphlet_74() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2433,15 +2921,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(263, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_75() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2461,15 +2951,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(268, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_76() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2488,17 +2980,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(272, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //part
 
     private static SubnetCalculator.SubNet graphlet_77() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2517,15 +3011,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(276, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_78() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2545,15 +3041,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(281, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_79() {
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2572,17 +3070,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(285, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //11
 
     private static SubnetCalculator.SubNet graphlet_80() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t4 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t4 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t3.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2599,15 +3099,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(287, t1);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_81() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t4 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t4 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t3.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2625,15 +3127,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(290, t4);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_82() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t4 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t4 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p1.getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2651,15 +3155,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(293, t3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_83() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t4 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t4 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p1.getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2677,15 +3183,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(296, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_84() {
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t4 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t4 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p1.getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2702,15 +3210,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(298, t1);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_85() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p4 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p4 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2727,15 +3237,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(300, p1);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_86() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p4 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p4 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2753,15 +3265,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(303, p4);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_87() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p4 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p4 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p3.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2779,15 +3293,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(306, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_88() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p4 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p4 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p3.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2805,15 +3321,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(309, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_89() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p4 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p4 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p3.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2830,17 +3348,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(311, p1);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //16
 
     private static SubnetCalculator.SubNet graphlet_90() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2862,15 +3382,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(316, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_91() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2892,17 +3414,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(321, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //
 
     private static SubnetCalculator.SubNet graphlet_92() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2924,15 +3448,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(326, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_93() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2954,15 +3480,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(331, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_94() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -2984,15 +3512,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(336, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_95() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3014,17 +3544,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(341, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     // // //
 
     private static SubnetCalculator.SubNet graphlet_96() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3045,15 +3577,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(345, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_97() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3074,17 +3608,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(349, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //
 
     private static SubnetCalculator.SubNet graphlet_98() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3106,15 +3642,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(354, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_99() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3136,17 +3674,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(359, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //
 
     private static SubnetCalculator.SubNet graphlet_100() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3168,15 +3708,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(364, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_101() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3198,15 +3740,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(369, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_102() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3228,15 +3772,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(374, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_103() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3258,17 +3804,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(379, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //
 
     private static SubnetCalculator.SubNet graphlet_104() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3289,15 +3837,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(383, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_105() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3318,17 +3868,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(387, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //
 
     private static SubnetCalculator.SubNet graphlet_106() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3349,15 +3901,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(391, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_107() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3378,16 +3932,18 @@ public class GraphletsCalculator {
         sn.orbitMap.put(395, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
 
     private static SubnetCalculator.SubNet graphlet_108() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3408,15 +3964,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(399, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_109() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3437,17 +3995,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(403, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //16 p variant
 
     private static SubnetCalculator.SubNet graphlet_110() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3469,15 +4029,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(408, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_111() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3499,17 +4061,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(413, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //
 
     private static SubnetCalculator.SubNet graphlet_112() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3531,15 +4095,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(418, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_113() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3561,15 +4127,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(423, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_114() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3591,15 +4159,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(428, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_115() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3621,17 +4191,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(433, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     // // //
 
     private static SubnetCalculator.SubNet graphlet_116() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3652,15 +4224,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(437, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_117() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3681,17 +4255,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(441, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //
 
     private static SubnetCalculator.SubNet graphlet_118() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3713,15 +4289,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(446, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_119() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3743,17 +4321,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(451, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //
 
     private static SubnetCalculator.SubNet graphlet_120() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3775,15 +4355,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(456, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_121() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3805,15 +4387,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(461, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_122() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3835,15 +4419,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(466, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_123() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3865,17 +4451,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(471, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //
 
     private static SubnetCalculator.SubNet graphlet_124() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3896,15 +4484,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(475, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_125() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3925,17 +4515,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(479, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //
 
     private static SubnetCalculator.SubNet graphlet_126() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3956,15 +4548,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(483, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_127() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -3985,16 +4579,18 @@ public class GraphletsCalculator {
         sn.orbitMap.put(487, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
 
     private static SubnetCalculator.SubNet graphlet_128() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4015,15 +4611,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(491, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_129() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4044,17 +4642,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(495, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     // 20 t
 
     private static SubnetCalculator.SubNet graphlet_130() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4077,15 +4677,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(499, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_131() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4109,16 +4711,18 @@ public class GraphletsCalculator {
         sn.orbitMap.put(504, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     //+
     private static SubnetCalculator.SubNet graphlet_132() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4141,15 +4745,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(508, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_133() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4173,15 +4779,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(513, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_154() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4204,15 +4812,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(517, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_134() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4235,15 +4845,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(521, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_135() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4267,15 +4879,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(526, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_137() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4298,15 +4912,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(530, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_138() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a3 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a4 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a5 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4329,15 +4945,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(534, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_139() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4360,15 +4978,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(538, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_140() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4390,16 +5010,18 @@ public class GraphletsCalculator {
         sn.orbitMap.put(541, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
 
     private static SubnetCalculator.SubNet graphlet_136() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4421,17 +5043,18 @@ public class GraphletsCalculator {
         sn.orbitMap.put(544, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
 
-
     private static SubnetCalculator.SubNet graphlet_141() {
-        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4453,17 +5076,19 @@ public class GraphletsCalculator {
         sn.orbitMap.put(547, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     // 20 p
 
     private static SubnetCalculator.SubNet graphlet_142() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4486,15 +5111,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(551, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_143() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4518,15 +5145,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(556, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_144() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4549,15 +5178,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(560, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_145() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4581,15 +5212,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(565, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_155() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4612,6 +5245,8 @@ public class GraphletsCalculator {
         sn.orbitMap.put(569, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
@@ -4619,11 +5254,11 @@ public class GraphletsCalculator {
 
 
     private static SubnetCalculator.SubNet graphlet_146() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4646,15 +5281,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(573, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_147() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4678,17 +5315,18 @@ public class GraphletsCalculator {
         sn.orbitMap.put(578, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
 
-
     private static SubnetCalculator.SubNet graphlet_149() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4711,15 +5349,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(582, p3);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_150() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a3 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a4 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a5 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4742,15 +5382,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(586, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_151() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4773,15 +5415,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(590, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_148() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4803,15 +5447,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(593, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_152() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(t2.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4833,15 +5479,17 @@ public class GraphletsCalculator {
         sn.orbitMap.put(596, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
     private static SubnetCalculator.SubNet graphlet_153() {
-        Place t1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Place t2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
-        Transition p3 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place t1 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Place t2 = new Place(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p1 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p2 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
+        Transition p3 = new Transition(IdGenerator.getNextId(), sheetID, new Point(0, 0));
         Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a3 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
@@ -4863,6 +5511,8 @@ public class GraphletsCalculator {
         sn.orbitMap.put(599, t2);
         globalOrbitMap.putAll(sn.orbitMap);
 
+        sn.setSubNetID(totalGrahletID);
+        totalGrahletID++;
         return sn;
     }
 
@@ -4873,7 +5523,6 @@ public class GraphletsCalculator {
 
 
     public static class Struct {
-
         HashMap<Node, Node> mapa = null;
         HashMap<Arc, Arc> mapaArcow = null;
         int graphletID = -1;
@@ -4883,18 +5532,19 @@ public class GraphletsCalculator {
             this.mapaArcow = ma;
         }
 
-        public HashMap<Arc, Arc>  getArcMap(){
+        public HashMap<Arc, Arc> getArcMap() {
             return mapaArcow;
         }
-        public HashMap<Node, Node>  getNodeMap(){
+
+        public HashMap<Node, Node> getNodeMap() {
             return mapa;
         }
 
-        public void setGraphletID( int id){
-            this.graphletID=id;
+        public void setGraphletID(int id) {
+            this.graphletID = id;
         }
 
-        public int getGraphletID(){
+        public int getGraphletID() {
             return this.graphletID;
         }
     }

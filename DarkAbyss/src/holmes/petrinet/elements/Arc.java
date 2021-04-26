@@ -58,6 +58,9 @@ public class Arc extends PetriNetElement {
 
     private int memoryOfArcWeight = -1;
 
+    //comparison:
+    private boolean isBranchEnd = false;
+
     /**
      * NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR
      */
@@ -857,5 +860,13 @@ public class Arc extends PetriNetElement {
 
     public void setMemoryOfArcWeight(int memoryOfArcWeight) {
         this.memoryOfArcWeight = memoryOfArcWeight;
+    }
+
+    public boolean isBranchEnd() {
+        return isBranchEnd;
+    }
+
+    public void setBranchEnd(boolean branchEnd) {
+        isBranchEnd = branchEnd;
     }
 }

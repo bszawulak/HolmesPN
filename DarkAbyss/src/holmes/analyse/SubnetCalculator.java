@@ -5,6 +5,7 @@ import holmes.petrinet.elements.*;
 import holmes.windows.HolmesBranchVerticesPrototype;
 
 import javax.swing.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.ToDoubleBiFunction;
@@ -12,8 +13,8 @@ import java.util.function.ToDoubleBiFunction;
 /**
  * Klasa odpowiedzialna za dekompozycję PN do wybranych typów podsieci
  */
-public class SubnetCalculator {
-    public enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, NotTzCycles, SMC, MCT, TINV, PINV, BV}
+public class SubnetCalculator implements Serializable{
+    public enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, NotTzCycles, SMC, MCT, TINV, PINV, BV,Export}
 
     public static ArrayList<SubNet> functionalSubNets = new ArrayList<>();
     public static ArrayList<SubNet> snetSubNets = new ArrayList<>();
@@ -285,6 +286,7 @@ public class SubnetCalculator {
             for (ArrayList<Transition> mct : mctsets) {
                 mctSubNets.add(new SubNet(SubNetType.MCT, mct, null, null, null, null));
             }
+            mctSubNets.remove(mctSubNets.size()-1);
         } else {
             JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
@@ -1121,7 +1123,7 @@ public class SubnetCalculator {
         }
     }
 
-    public static class SubNet {
+    public static class SubNet implements Serializable {
         //Functional
         private ArrayList<Transition> subTransitions;
         private ArrayList<Place> subPlaces;
@@ -1189,7 +1191,39 @@ public class SubnetCalculator {
                 case NotTzCycles:
                     createPathBasedSubNet(subPath);
                     break;
+                case Export:
+                    createExportSubnet(subNode);
+                    break;
             }
+        }
+
+        private void createExportSubnet(ArrayList<Node> subNode) {
+            subTransitions = new ArrayList<>();
+            subPlaces = new ArrayList<>();
+            subArcs = new ArrayList<>();
+
+            for (Node n : subNode) {
+                if(n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION))
+                {
+                    subTransitions.add((Transition) n);
+                }
+                else
+                {
+                    subPlaces.add((Place) n);
+                }
+            }
+
+            ArrayList<Arc> listOfAllArcs = new ArrayList<>();
+            for (Transition transition : subTransitions) {
+                for (Arc arc : transition.getInArcs())
+                    if (!listOfAllArcs.contains(arc))
+                        listOfAllArcs.add(arc);
+                for (Arc arc : transition.getOutArcs())
+                    if (!listOfAllArcs.contains(arc))
+                        listOfAllArcs.add(arc);
+            }
+            this.subArcs = listOfAllArcs;
+
         }
 
         public SubNet(ArrayList<Arc> al) {
