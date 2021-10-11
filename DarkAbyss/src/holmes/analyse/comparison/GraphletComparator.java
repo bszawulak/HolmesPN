@@ -94,6 +94,11 @@ public class GraphletComparator {
         return "/home/Szavislav/Eksperyment/Wyniki/i"+i+"j"+j+"/i"+i+"j"+j+"p"+p+"/i"+i+"j"+j+"p"+p+"-"+name+"-DGDDA.txt";
     }
 
+    public String getPath(int d, int i , int j, int p, String name)
+    {
+        return "/home/bartek/Eksperyment/Wyniki/d"+d+"i"+i+"j"+j+"/d"+d+"i"+i+"j"+j+"p"+p+"/d"+d+"i"+i+"j"+j+"p"+p+"-"+name+"-DGDDA.txt";
+    }
+
     private String getName(int variant) {
         switch (variant){
             case 0: return "BASE";
@@ -227,7 +232,7 @@ public class GraphletComparator {
                         }
                         catch (Exception ex)
                         {
-                            System.out.println("Line: " + lin);
+                            //System.out.println("Line: " + lin);
                         }
                     }
 

@@ -957,10 +957,16 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void restoreColors() {
 		try {
+			ArrayList<Place> places = getPlaces();
+			for(int p = 0; p<places.size(); p++) {
+				Place place = places.get(p);
+				place.setTokensNumber(0);
+			}
+
 			if(colorVector == null)
 				return;
 			
-			ArrayList<Place> places = getPlaces();
+			places = getPlaces();
 			for(int p = 0; p<places.size(); p++) {
 				Place place = places.get(p);
 				place.setColorTokensNumber(colorVector.get(p).get(0), 0);
@@ -969,6 +975,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				place.setColorTokensNumber(colorVector.get(p).get(3), 3);
 				place.setColorTokensNumber(colorVector.get(p).get(4), 4);
 				place.setColorTokensNumber(colorVector.get(p).get(5), 5);
+				place.setTokensNumber(0);
 			}
 			
 			ArrayList<Transition> transitions = getTransitions();

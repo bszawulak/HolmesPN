@@ -65,7 +65,7 @@ public class HolmesSimKnockActions {
 		}
 		
 		boolean success =  boss.ssimKnock.initiateSim(true, null);
-		if(success == false) {
+		if(!success) {
 			GUIManager.getDefaultGUIManager().log("State simulator initialization failed.", "error", true);
 			return;
 		}
@@ -161,7 +161,7 @@ public class HolmesSimKnockActions {
 		}
 		
 		boolean success =  boss.ssimKnock.initiateSim(true, null);
-		if(success == false) {
+		if(!success) {
 			GUIManager.getDefaultGUIManager().log("State simulator initialization failed.", "error", true);
 			return;
 		}
@@ -183,8 +183,8 @@ public class HolmesSimKnockActions {
 	/**
 	 * Wywoływana po zakończeniu symulacji zbierania danych knockout.
 	 * @param data NetSimulationData - zebrane dane
-	 * @param places2 
-	 * @param transitions2 
+	 * @param places
+	 * @param  transitions
 	 */
 	public void completeKnockoutSimulationResults(NetSimulationData data, ArrayList<Transition> transitions, ArrayList<Place> places) {
 		NetSimulationData netSimData = data;
@@ -254,7 +254,7 @@ public class HolmesSimKnockActions {
 		}
 		
 		boolean success =  boss.ssimKnock.initiateSim(true, null);
-		if(success == false) {
+		if(!success) {
 			GUIManager.getDefaultGUIManager().log("State simulator initialization failed.", "error", true);
 			return;
 		}
@@ -381,7 +381,7 @@ public class HolmesSimKnockActions {
 			}
 		} else {
 			ArrayList<ArrayList<Transition>> mcts = pn.getMCTMatrix();
-			ArrayList<Transition> disableList = new ArrayList<Transition>();
+			ArrayList<Transition> disableList = new ArrayList<>();
 			String dataTxt = dataSelectedTransTextArea.getText();
 			while(dataTxt.contains("tr#")) {
 				int index = dataTxt.indexOf("tr#");

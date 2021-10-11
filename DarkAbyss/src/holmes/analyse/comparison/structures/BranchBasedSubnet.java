@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class BranchBasedSubnet {
@@ -15,10 +16,10 @@ public class BranchBasedSubnet {
     public ArrayList<Node> nodes = new ArrayList<>();
     public ArrayList<Transition> transitions = new ArrayList<>();
     public ArrayList<Place> places = new ArrayList<>();
-    public ArrayList<Branch> pairs = new ArrayList<>();
+    public ArrayList<Branch> pairs;
     public int[][] branchDirMatrix;
 
-    public ArrayList<SubnetCalculator.Path> paths = new ArrayList<>();
+    public ArrayList<SubnetCalculator.Path> paths;
     ArrayList<Node> usedNodes = new ArrayList<>();
 
     public BranchBasedSubnet(SubnetCalculator.SubNet sn) {
@@ -40,46 +41,37 @@ public class BranchBasedSubnet {
         this.branchDirMatrix = generateMatrix();
     }
 
-    public BranchBasedSubnet(BranchVertex bv)
-    {
+    public BranchBasedSubnet(BranchVertex bv) {
         branchVertices.add(bv);
         for (Branch b : bv.tbranch) {
-            for(Node n :b.branchElements)
-            {
-                if(!nodes.contains(n))
-                {
+            for (Node n : b.branchElements) {
+                if (!nodes.contains(n)) {
                     this.nodes.add(n);
                 }
 
-                if(n.getType().equals(PetriNetElement.PetriNetElementType.PLACE) && !places.contains(n))
-                {
-                    this.places.add((Place)n);
+                if (n.getType().equals(PetriNetElement.PetriNetElementType.PLACE) && !places.contains(n)) {
+                    this.places.add((Place) n);
                 }
 
-                if(n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && !transitions.contains(n))
-                {
-                    this.transitions.add((Transition)n);
+                if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && !transitions.contains(n)) {
+                    this.transitions.add((Transition) n);
                 }
 
             }
         }
 
         for (Branch b : bv.pbranches) {
-            for(Node n :b.branchElements)
-            {
-                if(!nodes.contains(n))
-                {
+            for (Node n : b.branchElements) {
+                if (!nodes.contains(n)) {
                     this.nodes.add(n);
                 }
 
-                if(n.getType().equals(PetriNetElement.PetriNetElementType.PLACE) && !places.contains(n))
-                {
-                    this.places.add((Place)n);
+                if (n.getType().equals(PetriNetElement.PetriNetElementType.PLACE) && !places.contains(n)) {
+                    this.places.add((Place) n);
                 }
 
-                if(n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && !transitions.contains(n))
-                {
-                    this.transitions.add((Transition)n);
+                if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && !transitions.contains(n)) {
+                    this.transitions.add((Transition) n);
                 }
 
             }
@@ -190,7 +182,7 @@ public class BranchBasedSubnet {
             for (Branch bt : bv.tbranch) {
 
                 //if(!bp.containsAll(bt))
-                if (!bp.stream().anyMatch(x -> x.branchElements.containsAll(bt.branchElements)))
+                if (bp.stream().noneMatch(x -> x.branchElements.containsAll(bt.branchElements)))
                     bp.add(bt);
             }
         }
@@ -233,7 +225,7 @@ public class BranchBasedSubnet {
             for (Node n : r.getInNodes()) {
                 Branch br = new Branch(r, n, bbs);
                 //reverse branch
-                if (br.startNode.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && br.endNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE))
+                if ((br.startNode.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && br.endNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE)))//|| (br.startNode.equals(br.endNode)))
                     br.reverseBranch();
 
                 if (br.startNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE) || br.endNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE))
@@ -245,7 +237,12 @@ public class BranchBasedSubnet {
 
         public ArrayList<Branch> getSek() {
             //TODO czy startowy też?
-            return tbranch.stream().filter(x -> x.endNode.getOutInArcs().size() == 1 || x.startNode.getOutInArcs().size()==1).collect(Collectors.toCollection(ArrayList::new));
+            return tbranch.stream().filter(x -> x.endNode.getOutInArcs().size() == 1 || x.startNode.getOutInArcs().size() == 1).collect(Collectors.toCollection(ArrayList::new));
+        }
+
+        public ArrayList<Branch> getLoop() {
+            //TODO czy startowy też?
+            return tbranch.stream().filter(x -> x.startNode.equals(x.endNode)).collect(Collectors.toCollection(ArrayList::new));
         }
     }
 
@@ -255,7 +252,10 @@ public class BranchBasedSubnet {
         public ArrayList<Node> internalBranchElements = new ArrayList<>();
         public ArrayList<Node> branchElements = new ArrayList<>();
         public ArrayList<Arc> branchArcs = new ArrayList<>();
-        private BranchBasedSubnet parent;
+        public BranchBasedSubnet parent;
+
+        public HashMap<Node, Node> nodeMap = new HashMap<>();
+        public HashMap<Arc, Arc> arcMap = new HashMap<>();
 
 
         public Branch(ArrayList<Node> be, ArrayList<Arc> ba, BranchBasedSubnet parentNode) {
@@ -273,7 +273,31 @@ public class BranchBasedSubnet {
                 intEr = new ArrayList<>(be);
                 intEr.remove(intEr.size() - 1);
                 intEr.remove(0);
-            } else {
+            }
+            internalBranchElements = intEr;
+
+            if (branchElements.size() == 1) {
+                System.out.println("Zła branch");
+            }
+        }
+
+        public Branch(ArrayList<Node> be, ArrayList<Arc> ba, BranchBasedSubnet parentNode, HashMap<Node, Node> nm, HashMap<Arc, Arc> am) {
+
+            this.nodeMap = nm;
+            this.arcMap = am;
+            this.parent = parentNode;
+            branchElements.addAll(be);
+            branchArcs.addAll(ba);
+            startNode = be.get(0);
+            endNode = be.get(be.size() - 1);
+
+            sortBranch();
+
+            ArrayList<Node> intEr = new ArrayList<>();
+            if (be.size() > 2) {
+                intEr = new ArrayList<>(be);
+                intEr.remove(intEr.size() - 1);
+                intEr.remove(0);
             }
             internalBranchElements = intEr;
 
@@ -342,8 +366,8 @@ public class BranchBasedSubnet {
 
             if (newOrdering.size() == branchElements.size())
                 branchElements = newOrdering;
-            else
-                JOptionPane.showMessageDialog(null, "Coś zjebałeś nr 23 - sortowanie czegoś brakuje", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            //else
+            //JOptionPane.showMessageDialog(null, "Coś zjebałeś nr 23 - sortowanie czegoś brakuje", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
 
         private void OldsortBranch() {
@@ -361,8 +385,6 @@ public class BranchBasedSubnet {
                 } else if (tmp.size() == 1) {
                     if (tmp.get(0).getOutArcs().size() > 1 || tmp.get(0).getInArcs().size() > 1) {
                         System.out.println("-> " + tmp.get(0).getName());
-                    } else {
-
                     }
                     if (newOrdering.contains(tmp.get(0)))
                         newOrdering.add(0, tmp.get(0));
@@ -377,8 +399,6 @@ public class BranchBasedSubnet {
                 } else if (tmp.size() == 1) {
                     if (tmp.get(0).getOutArcs().size() > 1 || tmp.get(0).getInArcs().size() > 1) {
                         System.out.println("<- " + tmp.get(0).getName());
-                    } else {
-
                     }
                     newOrdering.add(tmp.get(0));
                 } else if (tmp.size() > 1) {

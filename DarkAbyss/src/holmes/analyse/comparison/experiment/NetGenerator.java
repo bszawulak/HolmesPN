@@ -20,11 +20,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 
 public class NetGenerator {
-    int id = 0;
-
     boolean conservative = false;
 
     int x_p = 10;
@@ -33,25 +30,25 @@ public class NetGenerator {
     int y_t = 10;
 
     IOprotocols io = new IOprotocols();
-    String directory = "/home/Szavislav/Eksperyment/Wyniki";
+    //String directory = "/home/Szavislav/Eksperyment/Wyniki";
+    String directory = "/home/bartek/Eksperyment/Wyniki";
 
     private void setNewDirectory(String path) {
         try {
             Files.createDirectories(Paths.get(directory + path));
         } catch (IOException erio) {
-
+            System.out.println(erio.getMessage());
         }
     }
 
-    public NetGenerator(boolean non){
-        int i=0;
+    public NetGenerator(boolean non) {
+        int i = 0;
         int j = 35;
         int p = 32;
 
         setNewDirectory("/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p);
 
         //String tmpdir = directory + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p + "-BASE";
-
 
 
         //io.readPNT(tmpdir + ".pnt");//, sn.getSubPlaces(), sn.getSubTransitions(), sn.getSubArcs());
@@ -108,8 +105,8 @@ public class NetGenerator {
     }
 
     public NetGenerator(int i_min, int i_max, int j_min, int j_max, int p_min, int p_max) {
-        for (int i = i_min; i < i_max; i=i+5) {
-            for (int j = j_min; j < j_max; j=j+5) {
+        for (int i = i_min; i < i_max; i = i + 5) {
+            for (int j = j_min; j < j_max; j = j + 5) {
                 setNewDirectory("/i" + i + "j" + j);
                 for (int p = p_min; p < p_max; p++) { // - próbka 100 sieci
                     SubnetCalculator.SubNet sn = generateNet(10 + i, 10 + j, (int) ((i + j + 20) * 1.3));
@@ -305,12 +302,102 @@ public class NetGenerator {
         }
     }
 
+    public NetGenerator(int i_min, int i_max, int j_min, int j_max, int p_min, int p_max,int md, int density){//, String path) {
+        //this.directory = path;
+
+        //int minDensicty = md;//i_min + j_min + 19;
+
+        for (int d = md; d < density; d++) {
+            for (int i = i_min; i < i_max; i = i + 5) {
+                for (int j = j_min; j < j_max; j = j + 5) {
+                    setNewDirectory("/d"+ d + "i" + i + "j" + j);
+                    for (int p = p_min; p < p_max; p++) { // - próbka 100 sieci
+                        SubnetCalculator.SubNet sn = generateNet(10 + i, 10 + j, d);
+                        setNewDirectory("/d"+ d + "i" + i + "j" + j + "/d"+ d + "i" + i + "j" + j + "p" + p);
+
+                        String tmpdir = directory + "/d"+ d + "i" + i + "j" + j + "/d"+ d + "i" + i + "j" + j + "p" + p + "/d"+ d + "i" + i + "j" + j + "p" + p + "-BASE";
+
+                        io.writePNT(tmpdir + ".pnt", sn.getSubPlaces(), sn.getSubTransitions(), sn.getSubArcs());
+                        GraphletsCalculator.generateGraphlets();
+
+                        ArrayList<int[]> DGDV = new ArrayList<>();
+
+                        for (Node startNode : sn.getSubNode()) {
+                            int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
+                            DGDV.add(vectorOrbit);
+                        }
+
+                        //DGDV
+                        writeDGDV(tmpdir + "-DGDV.txt", DGDV);
+
+                        //DGDDA
+                        writeDGDDA(tmpdir + "-DGDDA.txt", DGDV);
+
+                        //tu można by zacząć dodawać nowe rozszrzenia
+                        //------ 1S VARIANT ------
+                        SubnetCalculator.SubNet nsn = addStar4(cloneSubNet(sn));
+                        tmpdir = directory + "/d"+ d + "i" + i + "j" + j + "/d"+ d + "i" + i + "j" + j + "p" + p + "/d"+ d + "i" + i + "j" + j + "p" + p + "-1S";
+                        io.writePNT(tmpdir + ".pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
+                        DGDV = new ArrayList<>();
+
+                        for (Node startNode : nsn.getSubNode()) {
+                            int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
+                            DGDV.add(vectorOrbit);
+                        }
+
+                        //DGDV
+                        writeDGDV(tmpdir + "-DGDV.txt", DGDV);
+
+                        //DGDDA
+                        writeDGDDA(tmpdir + "-DGDDA.txt", DGDV);
+
+                        //------ 1S1S VARIANT ------
+                        nsn = addStar4(cloneSubNet(sn));
+                        nsn = addStar4sec(cloneSubNet(nsn),sn);
+                        tmpdir = directory + "/d"+ d + "i" + i + "j" + j + "/d"+ d + "i" + i + "j" + j + "p" + p + "/d"+ d + "i" + i + "j" + j + "p" + p + "-1S1S";
+                        io.writePNT(tmpdir + ".pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
+                        DGDV = new ArrayList<>();
+
+                        for (Node startNode : nsn.getSubNode()) {
+                            int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
+                            DGDV.add(vectorOrbit);
+                        }
+
+                        //DGDV
+                        writeDGDV(tmpdir + "-DGDV.txt", DGDV);
+
+                        //DGDDA
+                        writeDGDDA(tmpdir + "-DGDDA.txt", DGDV);
+
+                        //------ 2S VARIANT ------
+                        nsn = addStar4a2(cloneSubNet(sn));
+                        tmpdir = directory + "/d"+ d + "i" + i + "j" + j + "/d"+ d + "i" + i + "j" + j + "p" + p + "/d"+ d + "i" + i + "j" + j + "p" + p + "-1S1S";
+                        io.writePNT(tmpdir + ".pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
+                        DGDV = new ArrayList<>();
+
+                        for (Node startNode : nsn.getSubNode()) {
+                            int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
+                            DGDV.add(vectorOrbit);
+                        }
+
+                        //DGDV
+                        writeDGDV(tmpdir + "-DGDV.txt", DGDV);
+
+                        //DGDDA
+                        writeDGDDA(tmpdir + "-DGDDA.txt", DGDV);
+
+                    }
+                }
+            }
+        }
+    }
+
     private void cleanNetwork(SubnetCalculator.SubNet sn) {
         for (Node n : sn.getSubNode()) {
-            ArrayList<Arc> tmp = new ArrayList<Arc>(n.getOutInArcs());
-            for (int i = 0; i < tmp.size(); i++) {
-                if (!sn.getSubArcs().contains(tmp.get(i))) {
-                    n.getOutInArcs().remove(tmp.get(i));
+            ArrayList<Arc> tmp = new ArrayList<>(n.getOutInArcs());
+            for (Arc arc : tmp) {
+                if (!sn.getSubArcs().contains(arc)) {
+                    n.getOutInArcs().remove(arc);
                 }
             }
         }
@@ -386,7 +473,7 @@ public class NetGenerator {
         listOfTransition.add(t3);
         listOfTransition.add(t4);
         listOfTransition.add(t5);
-        ;
+
         listOfTransition.add(t6);
         listOfTransition.add(t7);
         listOfTransition.add(t8);
@@ -577,6 +664,80 @@ public class NetGenerator {
     }
 
 
+    public SubnetCalculator.SubNet addStar4a2(SubnetCalculator.SubNet sn) {
+        ArrayList<Transition> listOfTransition = new ArrayList<>();
+        ArrayList<Place> listOfPlace = new ArrayList<>();
+        ArrayList<Arc> listOfArc = new ArrayList<>();
+        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 30));
+        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 60));
+        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 90));
+        Transition t4 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 120));
+        Transition t5 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 150));
+
+        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(100, 30));
+        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(100, 60));
+        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(100, 90));
+        Place p4 = new Place(IdGenerator.getNextId(), 99, new Point(100, 120));
+
+        Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(p2.getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a5 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a6 = new Arc(p3.getElementLocations().get(0), t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(t1.getElementLocations().get(0), p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(p4.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        t1.setComment("4");
+        t2.setComment("4");
+        t3.setComment("4");
+        t4.setComment("4");
+        t5.setComment("4");
+
+        p1.setComment("4");
+        p2.setComment("4");
+        p3.setComment("4");
+        p4.setComment("4");
+
+        listOfTransition.add(t1);
+        listOfTransition.add(t2);
+        listOfTransition.add(t3);
+        listOfTransition.add(t4);
+        listOfTransition.add(t5);
+
+        listOfPlace.add(p1);
+        listOfPlace.add(p2);
+        listOfPlace.add(p3);
+        listOfPlace.add(p4);
+
+        listOfArc.add(a1);
+        listOfArc.add(a2);
+        listOfArc.add(a3);
+        listOfArc.add(a4);
+        listOfArc.add(a5);
+        listOfArc.add(a6);
+        listOfArc.add(a7);
+        listOfArc.add(a8);
+
+
+
+
+        int index = getBaseNetTtansitionIndex(sn);
+        listOfArc.add(new Arc(p1.getLastLocation(), sn.getSubTransitions().get(index).getLastLocation(), Arc.TypeOfArc.NORMAL));
+        int index2 = getBaseNetTtansitionIndex(sn);
+        listOfArc.add(new Arc(sn.getSubTransitions().get(index2).getLastLocation(), p2.getLastLocation(), Arc.TypeOfArc.NORMAL));
+
+        //int index = getBaseNetTtansitionIndex(sn);
+        //listOfArc.add(new Arc(p1.getLastLocation(), sn.getSubTransitions().get(index).getLastLocation(), Arc.TypeOfArc.NORMAL));
+
+        listOfTransition.addAll(new ArrayList<>(sn.getSubTransitions()));
+        listOfPlace.addAll(new ArrayList<>(sn.getSubPlaces()));
+        listOfArc.addAll(new ArrayList<>(sn.getSubArcs()));
+
+        return new SubnetCalculator.SubNet(listOfArc);
+    }
+
     public SubnetCalculator.SubNet addStar4(SubnetCalculator.SubNet sn) {
         ArrayList<Transition> listOfTransition = new ArrayList<>();
         ArrayList<Place> listOfPlace = new ArrayList<>();
@@ -633,6 +794,71 @@ public class NetGenerator {
         listOfArc.add(a7);
         listOfArc.add(a8);
         int index = getBaseNetTtansitionIndex(sn);
+        listOfArc.add(new Arc(p1.getLastLocation(), sn.getSubTransitions().get(index).getLastLocation(), Arc.TypeOfArc.NORMAL));
+
+        listOfTransition.addAll(new ArrayList<>(sn.getSubTransitions()));
+        listOfPlace.addAll(new ArrayList<>(sn.getSubPlaces()));
+        listOfArc.addAll(new ArrayList<>(sn.getSubArcs()));
+
+        return new SubnetCalculator.SubNet(listOfArc);
+    }
+
+    public SubnetCalculator.SubNet addStar4sec(SubnetCalculator.SubNet sn,SubnetCalculator.SubNet old) {
+        ArrayList<Transition> listOfTransition = new ArrayList<>();
+        ArrayList<Place> listOfPlace = new ArrayList<>();
+        ArrayList<Arc> listOfArc = new ArrayList<>();
+        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 30));
+        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 60));
+        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 90));
+        Transition t4 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 120));
+        Transition t5 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 150));
+
+        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(100, 30));
+        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(100, 60));
+        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(100, 90));
+        Place p4 = new Place(IdGenerator.getNextId(), 99, new Point(100, 120));
+
+        Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(p2.getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a5 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a6 = new Arc(p3.getElementLocations().get(0), t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(t1.getElementLocations().get(0), p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(p4.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        t1.setComment("4");
+        t2.setComment("4");
+        t3.setComment("4");
+        t4.setComment("4");
+        t5.setComment("4");
+
+        p1.setComment("4");
+        p2.setComment("4");
+        p3.setComment("4");
+        p4.setComment("4");
+
+        listOfTransition.add(t1);
+        listOfTransition.add(t2);
+        listOfTransition.add(t3);
+        listOfTransition.add(t4);
+        listOfTransition.add(t5);
+
+        listOfPlace.add(p1);
+        listOfPlace.add(p2);
+        listOfPlace.add(p3);
+        listOfPlace.add(p4);
+
+        listOfArc.add(a1);
+        listOfArc.add(a2);
+        listOfArc.add(a3);
+        listOfArc.add(a4);
+        listOfArc.add(a5);
+        listOfArc.add(a6);
+        listOfArc.add(a7);
+        listOfArc.add(a8);
+        int index = getBaseNetTtansitionIndex(old);
         listOfArc.add(new Arc(p1.getLastLocation(), sn.getSubTransitions().get(index).getLastLocation(), Arc.TypeOfArc.NORMAL));
 
         listOfTransition.addAll(new ArrayList<>(sn.getSubTransitions()));
@@ -928,10 +1154,6 @@ public class NetGenerator {
         listOfArc.add(new Arc(p1.getLastLocation(), sn.getSubTransitions().get(index).getLastLocation(), Arc.TypeOfArc.NORMAL));
         int index2 = getBaseNetTtansitionIndex(sn);
         listOfArc.add(new Arc(sn.getSubTransitions().get(index2).getLastLocation(), p2.getLastLocation(), Arc.TypeOfArc.NORMAL));
-
-        //listOfArc.add(new Arc(p1.getLastLocation(), sn.getSubTransitions().get(0).getLastLocation(), Arc.TypeOfArc.NORMAL));
-        //listOfArc.add(new Arc(p2.getLastLocation(), sn.getSubTransitions().get(sn.getSubTransitions().size()-1).getLastLocation(), Arc.TypeOfArc.NORMAL));
-
         listOfTransition.addAll(new ArrayList<>(sn.getSubTransitions()));
         listOfPlace.addAll(new ArrayList<>(sn.getSubPlaces()));
         listOfArc.addAll(new ArrayList<>(sn.getSubArcs()));
@@ -1015,8 +1237,8 @@ public class NetGenerator {
         }
 
         int max = 0;
-        for (int l = 0; l < DGDV.size(); l++) {
-            int localMax = Arrays.stream(DGDV.get(l)).max().getAsInt();
+        for (int[] ints : DGDV) {
+            int localMax = Arrays.stream(ints).max().getAsInt();
             if (localMax > max)
                 max = localMax;
         }
@@ -1025,19 +1247,19 @@ public class NetGenerator {
 
         int[][] d = new int[orbitNumber][max + 1];
 
-        for (int l = 0; l < DGDV.size(); l++) {
-            for (int m = 0; m < DGDV.get(l).length; m++) {
-                if (DGDV.get(l)[m] > 0) {
-                    d[m][DGDV.get(l)[m]]++;
+        for (int[] ints : DGDV) {
+            for (int m = 0; m < ints.length; m++) {
+                if (ints[m] > 0) {
+                    d[m][ints[m]]++;
                 }
             }
         }
 
 
-        for (int orb = 0; orb < d.length; orb++) {
+        for (int[] ints : d) {
             try {
                 FileWriter fileWriter = new FileWriter(file, true);
-                fileWriter.write(Arrays.toString(d[orb]) + "\r\n");
+                fileWriter.write(Arrays.toString(ints) + "\r\n");
                 fileWriter.flush();
                 fileWriter.close();
             } catch (IOException e) {
@@ -1065,8 +1287,7 @@ public class NetGenerator {
                 double[] ss = new double[d[orb].length];
                 for (int k = 1; k < d[orb].length; k++) {
                     double dd = (double) d[orb][k];
-                    double kd = (double) k;
-                    ss[k] = dd / kd;
+                    ss[k] = dd / (double) k;
 
                     s[orb] = ss;
                 }
@@ -1130,15 +1351,12 @@ public class NetGenerator {
     }
 
     private void writeDGDV(String directory, ArrayList<int[]> DGDV) {
-
-        //File file = new File(directory + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p +"DGDV.txt");
-
         File file = new File(directory);
 
-        for (int l = 0; l < DGDV.size(); l++) {
+        for (int[] ints : DGDV) {
             try {
                 FileWriter fileWriter = new FileWriter(file, true);
-                fileWriter.write(Arrays.toString(DGDV.get(l)) + "\r\n");
+                fileWriter.write(Arrays.toString(ints) + "\r\n");
                 fileWriter.flush();
                 fileWriter.close();
             } catch (IOException e) {
@@ -1180,7 +1398,7 @@ public class NetGenerator {
                 isNewTransition = false;
 
                 Transition new_transition = null;
-                if (place_index < place_number) {// && switcher) {
+                if (place_index < place_number) {
                     new_place = new Place(IdGenerator.getNextId(), 0, new Point(x_p, y_p));
                     y_p += 30;
                     place_index++;
@@ -1188,7 +1406,7 @@ public class NetGenerator {
                     isNewPlace = true;
                 }
 
-                if (transition_index < transition_number) {// && !switcher) {
+                if (transition_index < transition_number) {
                     new_transition = new Transition(IdGenerator.getNextId(), 0, new Point(x_t, y_t));
                     y_t += 30;
                     transition_index++;
@@ -1214,7 +1432,6 @@ public class NetGenerator {
                             index--;
                         }
 
-
                         if (r.nextBoolean()) {
                             Arc newArc = new Arc(new_place.getLastLocation(), listOfTransitions.get(index).getLastLocation(), Arc.TypeOfArc.NORMAL);
                             listOfArcs.add(newArc);
@@ -1230,10 +1447,8 @@ public class NetGenerator {
                     if (isNewTransition) {
                         int index = r.nextInt(listOfPlaces.size());
                         if (new_place != null && listOfPlaces.get(index).getID() == new_place.getID()) {
-                            //listOfPlaces.get(index).getOutInArcs().get(0).setWeight(listOfPlaces.get(index).getOutInArcs().get(0).getWeight()+1);
                             index--;
-                            //arc_index++;
-                        }// else {
+                        }
 
                         if (r.nextBoolean()) {
                             Arc newArc = new Arc(new_transition.getLastLocation(), listOfPlaces.get(index).getLastLocation(), Arc.TypeOfArc.NORMAL);
@@ -1245,7 +1460,6 @@ public class NetGenerator {
                             switcher = true;
                         }
                         arc_index++;
-                        //}
                     }
                 }
             }
@@ -1270,39 +1484,6 @@ public class NetGenerator {
                 }
             }
 
-            //add additional ARCs
-
-/*
-            if(listOfPlaces.stream().filter(x->x.getInArcs().size()==0 || x.getOutArcs().size()==0).count()>0)
-            {
-                ArrayList<Node> toModify = listOfPlaces.stream().filter(x->x.getType().equals(PetriNetElement.PetriNetElementType.PLACE) && (x.getInArcs().size()==0 || x.getInArcs().size()==0)).collect(Collectors.toCollection(ArrayList::new));
-                for (int i = 0 ; i < toModify.size() ; i++)
-                {
-                    if(toModify.get(i).getInArcs().size()==0)
-                    {
-                        ArrayList<Node> nonSourceTransitions = listOfTransitions.stream().filter(x->x.getInArcs().size()==0).collect(Collectors.toCollection(ArrayList::new));
-                        if(nonSourceTransitions.size()>0)
-                        {
-                            int index_p = listOfPlaces.indexOf(toModify.get(i));
-                            Arc newArc = new Arc( nonSourceTransitions.get(0).getLastLocation(), listOfPlaces.get(index_p).getLastLocation(),Arc.TypeOfArc.NORMAL);
-                            listOfArcs.add(newArc);
-                            arc_index++;
-                        }
-                    }
-                    else
-                    {
-                        ArrayList<Node> nonSinkTransitions = listOfTransitions.stream().filter(x->x.getOutArcs().size()==0).collect(Collectors.toCollection(ArrayList::new));
-                        if(nonSinkTransitions.size()>0)
-                        {
-                            int index_p = listOfPlaces.indexOf(toModify.get(i));
-                            Arc newArc = new Arc(  listOfPlaces.get(index_p).getLastLocation(),nonSinkTransitions.get(0).getLastLocation(),Arc.TypeOfArc.NORMAL);
-                            listOfArcs.add(newArc);
-                            arc_index++;
-                        }
-                    }
-                }
-            }
-*/
             //SINK SOURCE TRANSITIONS
 
             boolean sinkTRansition = listOfPlaces.stream().anyMatch(x -> (x.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && (x.getOutArcs().size() == 0)));
@@ -1342,9 +1523,7 @@ public class NetGenerator {
 
                 if (r.nextBoolean()) {
                     if (listOfArcs.stream().anyMatch(x -> x.getStartNode().getID() == listOfPlaces.get(indexOfPlace).getID() && x.getEndNode().getID() == listOfTransitions.get(indexOfTransition).getID())) {
-                        if (conservative) {
-
-                        } else {
+                        if (!conservative) {
                             Optional<Arc> arcToGainWeigjt = listOfArcs.stream().filter(x -> x.getStartNode().getID() == listOfPlaces.get(indexOfPlace).getID() && x.getEndNode().getID() == listOfTransitions.get(indexOfTransition).getID()).findFirst();
                             arcToGainWeigjt.get().setWeight(arcToGainWeigjt.get().getWeight() + 1);
                             arc_index++;
@@ -1354,21 +1533,13 @@ public class NetGenerator {
                             //read arcki pomijamy
                         } else {
                             Arc newArc = new Arc(listOfPlaces.get(indexOfPlace).getLastLocation(), listOfTransitions.get(indexOfTransition).getLastLocation(), Arc.TypeOfArc.NORMAL);
-                            /*if (listOfArcs.stream().filter(x -> x.getStartNode().getID() == newArc.getEndNode().getID() && x.getEndNode().getID() == newArc.getStartNode().getID()).count() > 0) {
-                                System.out.println("Wtopa");
-                            }*/
                             listOfArcs.add(newArc);
                             arc_index++;
-                            /*if (listOfArcs.stream().filter(x -> x.getStartNode().getID() == newArc.getEndNode().getID() && x.getEndNode().getID() == newArc.getStartNode().getID()).count() > 0) {
-                                System.out.println("Wtopa");
-                            }*/
                         }
                     }
                 } else {
                     if (listOfArcs.stream().anyMatch(x -> x.getEndNode().getID() == listOfPlaces.get(indexOfPlace).getID() && x.getStartNode().getID() == listOfTransitions.get(indexOfTransition).getID())) {
-                        if (conservative) {
-
-                        } else {
+                        if (!conservative) {
                             Optional<Arc> arcToGainWeigjt = listOfArcs.stream().filter(x -> x.getEndNode().getID() == listOfPlaces.get(indexOfPlace).getID() && x.getStartNode().getID() == listOfTransitions.get(indexOfTransition).getID()).findFirst();
                             arcToGainWeigjt.get().setWeight(arcToGainWeigjt.get().getWeight() + 1);
                             arc_index++;
@@ -1378,80 +1549,13 @@ public class NetGenerator {
 
                         } else {
                             Arc newArc = new Arc(listOfTransitions.get(indexOfTransition).getLastLocation(), listOfPlaces.get(indexOfPlace).getLastLocation(), Arc.TypeOfArc.NORMAL);
-                            /*if (listOfArcs.stream().filter(x -> x.getStartNode().getID() == newArc.getEndNode().getID() && x.getEndNode().getID() == newArc.getStartNode().getID()).count() > 0) {
-                                System.out.println("Wtopa");
-                            }*/
                             listOfArcs.add(newArc);
                             arc_index++;
-                            /*if (listOfArcs.stream().filter(x -> x.getStartNode().getID() == newArc.getEndNode().getID() && x.getEndNode().getID() == newArc.getStartNode().getID()).count() > 0) {
-                                System.out.println("Wtopa");
-                            }*/
                         }
                     }
                 }
             }
-
-            /*for (Arc a : listOfArcs) {
-                if (listOfArcs.stream().filter(x -> x.getStartNode().getID() == a.getEndNode().getID() && x.getEndNode().getID() == a.getStartNode().getID()).count() > 0) {
-                    System.out.println("Wtopa");
-                }
-            }*/
-
-            /*
-            //remove sink source
-            for (Transition t : listOfTransitions) {
-                if (t.getInArcs().size() == 0) {
-                    ArrayList<Place> toChoose = new ArrayList<>(listOfPlaces);
-                    toChoose.removeAll(t.getOutNodes());
-                    int index = r.nextInt(toChoose.size());
-                    Arc newArc = new Arc(toChoose.get(index).getLastLocation(), t.getLastLocation(), Arc.TypeOfArc.NORMAL);
-                    listOfArcs.add(newArc);
-                } else if (t.getOutArcs().size() == 0) {
-                    ArrayList<Place> toChoose = new ArrayList<>(listOfPlaces);
-                    toChoose.removeAll(t.getInNodes());
-                    int index = r.nextInt(toChoose.size());
-                    Arc newArc = new Arc(t.getLastLocation(), toChoose.get(index).getLastLocation(), Arc.TypeOfArc.NORMAL);
-                    listOfArcs.add(newArc);
-                }
-            }
-            */
-
-
-/*
-            for (Arc a : listOfArcs) {
-                if (listOfArcs.stream().filter(x -> x.getStartNode().getID() == a.getEndNode().getID() && x.getEndNode().getID() == a.getStartNode().getID()).count() > 0) {
-                    System.out.println("Wtopa");
-                }
-            }
-*/
-
-/*
-            ArrayList<Arc> uniqueListOfArcs = new ArrayList<>();
-            for (Arc a : listOfArcs) {
-                if (uniqueListOfArcs.stream().filter(x -> x.getStartNode().getID() == a.getStartNode().getID() && x.getEndNode().getID() == a.getEndNode().getID()).count() == 0) {
-                    if (listOfArcs.stream().filter(x -> x.getStartNode().getID() == a.getStartNode().getID() && x.getEndNode().getID() == a.getEndNode().getID()).count() > 1) {
-                        ArrayList<Arc> listOfDuplicats = listOfArcs.stream().filter(x -> x.getStartNode().getID() == a.getStartNode().getID() && x.getEndNode().getID() == a.getEndNode().getID()).collect(Collectors.toCollection(ArrayList::new));
-                        Arc tobeWeighted = listOfDuplicats.get(0);
-                        tobeWeighted.setWeight(listOfDuplicats.size());
-                        uniqueListOfArcs.add(tobeWeighted);
-                        listOfDuplicats.remove(tobeWeighted);
-
-                        tobeWeighted.getStartNode().getLastLocation().getOutArcs().removeAll(listOfDuplicats);
-                        tobeWeighted.getEndNode().getLastLocation().getInArcs().removeAll(listOfDuplicats);
-                    } else {
-                        uniqueListOfArcs.add(a);
-                    }
-                }
-            }
-
-
-            System.out.println("unique: " + uniqueListOfArcs.size() + " total: " + listOfArcs.size());
-            */
-            //return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, listOfTransitions, listOfPlaces, null, null, null);
-
             //TEST ratio
-
-
             return new SubnetCalculator.SubNet(listOfArcs);
         } else {
             JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), "Za mało łuków aby stworzyć spójny graf - p: " + place_number + " t:" + transition_number + " a:" + arc_number, "Error",

@@ -1,20 +1,18 @@
 package holmes.files.io;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.awt.*;
+import java.io.*;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
+import holmes.analyse.SubnetCalculator;
 import holmes.analyse.comparison.KnockoutInvariantComparison;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
+import holmes.graphpanel.popupmenu.SheetPopupMenu;
+import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
@@ -22,6 +20,7 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
+import holmes.windows.HolmesBranchVerticesPrototype;
 
 /**
  * Klasa odpowiedzialna za protokoły komunikacyjne z programem INA, Charlie, itd. Precyzyjnie,
@@ -822,6 +821,247 @@ public class IOprotocols {
 	}
 
 	/**
+	 * Czyta plik sieci petriego w formacie PNT (INA) na serverze
+	 * @param sciezka String - scieżka do pliku
+	 */
+	public PetriNet serverReadPNT(String sciezka, int SID) {
+		try {
+			resetComponents();
+			//int SID = overlord.getWorkspace().getProject().returnCleanSheetID();
+			DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+			String wczytanaLinia = buffer.readLine();
+			String[] tabWczytanaLinia = wczytanaLinia.split(":");
+			netName = tabWczytanaLinia[1];
+			int[][] trans = new int[MatSiz][2];
+			int ID = 0;
+			String[] wID = new String[MatSiz];
+			int[] wMark = new int[MatSiz];
+			ArrayList<Integer> wagiWej = new ArrayList<Integer>();
+			ArrayList<Integer> wagiWyj = new ArrayList<Integer>();
+
+			while ((wczytanaLinia = buffer.readLine()) != null) {
+				// Etap I
+
+				// Wczytywanie informacji o Arcach i tokenach
+				if (wczytanaLinia.equals("@")) {
+					etap++;
+				}
+				switch (etap) {
+
+					case 1:
+						ArrayList<String> tmpStringWej = new ArrayList<String>();
+						ArrayList<String> tmpStringWyj = new ArrayList<String>();
+
+						wczytanaLinia = wczytanaLinia.replace(",", " , ");
+						wczytanaLinia = wczytanaLinia.replace(":", " : ");
+						String[] WczytanyString = wczytanaLinia.split(" ");
+						int poz = 0;
+						int poZap = 0;
+						for (String s : WczytanyString) {
+							if (!s.isEmpty()) {
+								if (!Character.isWhitespace(s.charAt(0))) {
+									if (s.contains(",")) {
+										poZap = poz;
+										poz = 5;
+									}
+									if (s.contains(":")) {
+										poZap = poz;
+										poz = 4;
+									}
+
+									switch (poz) {
+										// numer miejsca
+										case 0:
+											wID[ID] = s;
+											poz++;
+											break;
+										// ilosc tokenow
+										case 1:
+											wMark[ID] = Integer.parseInt(s);
+											ID++;
+											poz++;
+											break;
+										// wchodzace
+										case 2:
+											tmpStringWej.add(s);
+											wagiWej.add(1);
+											break;
+										// wychodzace
+										case 3:
+											tmpStringWyj.add(s);
+											wagiWyj.add(1);
+											break;
+										case 4:
+											if (!s.contains(":")) {
+												if (poZap == 2) {
+													wagiWej.remove(wagiWej.size() - 1);
+													wagiWej.add(Integer.parseInt(s));
+												} else {
+													wagiWyj.remove(wagiWyj.size() - 1);
+													wagiWyj.add(Integer.parseInt(s));
+												}
+												poz = poZap;
+											}
+											break;
+										case 5:
+											poz = poZap;
+											poz++;
+											break;
+									}
+								}
+							}
+						}
+						String[] a = new String[tmpStringWej.size()];
+						placeArcListPre.add(tmpStringWej.toArray(a));
+						placeArcListPreWeight.add(wagiWej);
+						a = new String[tmpStringWyj.size()];
+						placeArcListPost.add(tmpStringWyj.toArray(a));
+						placeArcListPostWeight.add(wagiWyj);
+
+						break;
+					case 2:
+						// Etap II
+						// Wczytywanie danych o miejscach
+
+						if ((wczytanaLinia.contains("capacity") && wczytanaLinia.contains("time")
+								&& wczytanaLinia.contains("name")) || wczytanaLinia.equals("@")) {
+						} else {
+							tabWczytanaLinia = wczytanaLinia.split(": ");
+							//String[] tmp4 = tabWczytanaLinia[0].split(" ");
+							int placeNumber = globalPlaceNumber;
+							globalPlaceNumber++;
+							tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
+							String placeName = tabWczytanaLinia[0];
+							Place tmpPlace = new Place(placeNumber, new ArrayList<ElementLocation>(), placeName, "", wMark[placeNumber]);
+							ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
+							namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
+							tmpPlace.setNamesLocations(namesLoc);
+
+							nodeArray.add(tmpPlace);
+						}
+						break;
+					case 3:
+						// Etap III
+						// Wczytywanie danych o tranzycjach
+						if ((wczytanaLinia.contains("priority") && wczytanaLinia.contains("time")
+								&& wczytanaLinia.contains("name")) || wczytanaLinia.equals("@")) {
+							placeCount = globalPlaceNumber;
+						} else {
+							tabWczytanaLinia = wczytanaLinia.split(": ");
+							String[] tmp5 = tabWczytanaLinia[0].split(" ");
+							for (String s : tmp5) {
+								if (!s.isEmpty()) {
+									globalPlaceNumber++;
+									trans[Integer.parseInt(s)][0] = Integer.parseInt(s);
+									trans[Integer.parseInt(s)][1] = globalPlaceNumber;
+								}
+							}
+
+							int transNumber = globalPlaceNumber;
+							tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
+							String transName = tabWczytanaLinia[0];
+							Transition tmpTrans = new Transition(transNumber, new ArrayList<ElementLocation>(), transName, "");
+							ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
+							namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
+							tmpTrans.setNamesLocations(namesLoc);
+							nodeArray.add(tmpTrans);
+							//mark++;
+						}
+						break;
+					case 4:
+						// Tworzenie Arców, szerokosci okna
+						// tworzenie dla kazdego noda element location
+						for (int j = 0; j < nodeArray.size(); j++) {
+							if (nodeArray.get(j).getType() == PetriNetElementType.PLACE) {
+								elemArray.add(new ElementLocation(SID, new Point(80, 30 + j * 60), nodeArray.get(j)));
+								ArrayList<ElementLocation> tempElementLocationArry = new ArrayList<ElementLocation>();
+								tempElementLocationArry.add(elemArray.get(j));
+								nodeArray.get(j).setElementLocations(tempElementLocationArry);
+							}
+
+							if (nodeArray.get(j).getType() == PetriNetElementType.TRANSITION) {
+								elemArray.add(new ElementLocation(SID, new Point(280, 30 + (j - placeCount) * 60), nodeArray.get(j)));
+								ArrayList<ElementLocation> tempElementLocationArry = new ArrayList<ElementLocation>();
+								tempElementLocationArry.add(elemArray.get(j));
+								nodeArray.get(j).setElementLocations(tempElementLocationArry);
+							}
+						}
+
+						int pozycja_a = 0;
+						// Arki
+						for (int k = 0; k < placeArcListPre.size(); k++) {
+							for (int j = 0; j < placeArcListPre.get(k).length; j++) {
+								int t1 = trans[Integer.parseInt(placeArcListPre.get(k)[j])][1];
+								arcArray.add(new Arc(nodeArray.get(t1 - 1).getLastLocation(),
+										nodeArray.get(k).getLastLocation(), "",
+										placeArcListPreWeight.get(0).get(pozycja_a), TypeOfArc.NORMAL));
+								pozycja_a++;
+							}
+						}
+						pozycja_a = 0;
+						for (int k = 0; k < placeArcListPost.size(); k++) {
+							for (int j = 0; j < placeArcListPost.get(k).length; j++) {
+								int t2 = trans[Integer.parseInt(placeArcListPost.get(k)[j])][1];
+								arcArray.add(new Arc(nodeArray.get(k).getLastLocation(),
+										nodeArray.get(t2 - 1).getLastLocation(), "",
+										placeArcListPostWeight.get(0).get(pozycja_a), TypeOfArc.NORMAL));
+								pozycja_a++;
+
+							}
+						}
+
+						/*
+						int wid = Toolkit.getDefaultToolkit().getScreenSize().width - 20;
+						int hei = Toolkit.getDefaultToolkit().getScreenSize().height - 20;
+						int SIN = overlord.IDtoIndex(SID);
+						int tmpX = 0;
+						int tmpY = 0;
+						boolean xFound = false;
+						boolean yFound = false;
+						GraphPanel graphPanel = overlord
+								.getWorkspace().getSheets().get(SIN).getGraphPanel();
+						for (int l = 0; l < elemArray.size(); l++) {
+							if (elemArray.get(l).getPosition().x > wid) {
+								tmpX = l;
+								xFound = true;
+								wid = elemArray.get(l).getPosition().x;
+							}
+							if (elemArray.get(l).getPosition().y > hei) {
+								tmpY = l;
+								yFound = true;
+								hei = elemArray.get(l).getPosition().y;
+							}
+						}
+						if (xFound && !yFound) {
+							graphPanel.setSize(new Dimension(elemArray.get(tmpX)
+									.getPosition().x + 90,graphPanel.getSize().height));
+						}
+						if (!xFound && yFound) {
+							graphPanel.setSize(new Dimension(
+									graphPanel.getSize().width, elemArray.get(tmpY).getPosition().y + 90));
+						}
+						if (xFound && yFound) {
+							graphPanel.setSize(new Dimension(elemArray.get(tmpX)
+									.getPosition().x + 90, elemArray.get(tmpY).getPosition().y + 90));
+						}
+						graphPanel.setOriginSize(graphPanel.getSize());
+						*/
+						break;
+				}
+			}
+
+			in.close();
+			//overlord.log("Petri net from INA .pnt file successfully read.", "text", true);
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			//JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: readPNT",JOptionPane.ERROR_MESSAGE);
+			//overlord.log("Error: " + e.getMessage(), "error", true);
+		}
+		return new PetriNet(nodeArray,arcArray);
+	}
+
+	/**
 	 * Czyta plik sieci petriego w formacie PNT (INA)
 	 * @param sciezka String - scieżka do pliku
 	 */
@@ -1366,6 +1606,197 @@ public class IOprotocols {
 			//System.err.println("Error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: writeP_invCSV",JOptionPane.ERROR_MESSAGE);
 			overlord.log("Error: " + e.getMessage(), "error", true);
+		}
+	}
+
+	public void exportSubnet(ArrayList<ElementLocation> listOfElements) {
+		ArrayList<Node> listOfParentNodes = new ArrayList<>();
+
+		int min_x = Integer.MAX_VALUE;
+		int min_y = Integer.MAX_VALUE;
+
+		for (ElementLocation el : listOfElements) {
+			if(!listOfParentNodes.contains(el.getParentNode()))
+			{
+				listOfParentNodes.add(el.getParentNode());
+			}
+
+			if(el.getPosition().y<min_y)
+			{
+				min_y=el.getPosition().y;
+			}
+			if(el.getPosition().x<min_x)
+			{
+				min_x=el.getPosition().x;
+			}
+		}
+
+		SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.Export,null,null,listOfParentNodes,null,null);
+
+		try {
+			FileDialog fDialog = new FileDialog(new JFrame(), "Save", FileDialog.SAVE);
+			fDialog.setVisible(true);
+			String path = fDialog.getDirectory() + fDialog.getFile();
+
+			FileOutputStream out = new FileOutputStream(path);
+			ObjectOutputStream oos = new ObjectOutputStream(out);
+			oos.writeObject(sn);
+			oos.flush();
+		} catch (Exception e) {
+			System.out.println("Problem serializing: " + e);
+		}
+
+	}
+
+	public void exportBranchVertices(ArrayList<HolmesBranchVerticesPrototype.BranchStructure> bsl)
+	{
+		try {
+			FileDialog fDialog = new FileDialog(new JFrame(), "Save", FileDialog.SAVE);
+			fDialog.setVisible(true);
+			String path = fDialog.getDirectory() + fDialog.getFile();
+
+			FileOutputStream out = new FileOutputStream(path);
+			ObjectOutputStream oos = new ObjectOutputStream(out);
+			//HolmesBranchVerticesPrototype.BranchStructureList b = new HolmesBranchVerticesPrototype.BranchStructureList(bsl);
+			oos.writeObject(bsl);
+			oos.flush();
+		} catch (Exception e) {
+			System.out.println("Problem serializing: " + e);
+		}
+	}
+
+	public ArrayList<HolmesBranchVerticesPrototype.BranchStructure> importBranchVertices(String absolutePath) {
+		ArrayList<HolmesBranchVerticesPrototype.BranchStructure> sn = new ArrayList<>();
+		try
+		{
+			// Reading the object from a file
+			FileInputStream file = new FileInputStream(new File(absolutePath));
+			ObjectInputStream in = new ObjectInputStream(file);
+
+			// Method for deserialization of object
+			HolmesBranchVerticesPrototype.BranchStructureList b ;
+			//b = (HolmesBranchVerticesPrototype.BranchStructureList) in.readObject();
+
+			sn =  (ArrayList<HolmesBranchVerticesPrototype.BranchStructure>) in.readObject();// b.bsl;
+
+			//ArrayList<StatePlacesVector>  spv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().accessStateMatrix();
+
+			in.close();
+			file.close();
+
+			System.out.println("Object has been deserialized ");
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return sn;
+	}
+
+	public void exportSubnet(ArrayList<ElementLocation> listOfElements, ArrayList<Arc> listOfProperArcs) {
+		ArrayList<Node> listOfParentNodes = new ArrayList<>();
+
+		int min_x = Integer.MAX_VALUE;
+		int min_y = Integer.MAX_VALUE;
+
+		for (ElementLocation el : listOfElements) {
+			if(!listOfParentNodes.contains(el.getParentNode()))
+			{
+				listOfParentNodes.add(el.getParentNode());
+			}
+
+			if(el.getPosition().y<min_y)
+			{
+				min_y=el.getPosition().y;
+			}
+			if(el.getPosition().x<min_x)
+			{
+				min_x=el.getPosition().x;
+			}
+		}
+
+
+
+		SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.Export,null,null,listOfParentNodes,null,null);
+		sn.setSubArcs(listOfProperArcs);
+		try {
+			FileDialog fDialog = new FileDialog(new JFrame(), "Save", FileDialog.SAVE);
+			fDialog.setVisible(true);
+			String path = fDialog.getDirectory() + fDialog.getFile();
+
+			FileOutputStream out = new FileOutputStream(path);
+			ObjectOutputStream oos = new ObjectOutputStream(out);
+			oos.writeObject(sn);
+			oos.flush();
+		} catch (Exception e) {
+			System.out.println("Problem serializing: " + e);
+		}
+
+	}
+
+	public void importSubnetFromFile(String absolutePath, int x, int y) {
+
+		try
+		{
+			// Reading the object from a file
+			FileInputStream file = new FileInputStream(new File(absolutePath));
+			ObjectInputStream in = new ObjectInputStream(file);
+
+			// Method for deserialization of object
+
+
+			SubnetCalculator.SubNet sn = (SubnetCalculator.SubNet) in.readObject();
+
+			for(Place p :sn.getSubPlaces()){
+				p.setTokensNumber(0);
+			}
+
+			for (Node n: sn.getSubNode()) {
+				for (ElementLocation el : n.getElementLocations()) {
+					el.getPosition().x+=x;
+					el.getPosition().y+=y;
+					el.setSelected(false);
+				}
+
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().add(n);
+
+				if(n.getType()==PetriNetElementType.PLACE)
+				{
+					GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().addPlace();
+				}
+				for (Place p : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces()) {
+					p.setTokensNumber(0);
+				}
+			}
+			/*
+			for (Transition n: sn.getSubTransitions()) {
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().add(n);
+			}
+			for (Place n: sn.getSubPlaces()) {
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().add(n);
+			}
+			*/
+			for (Arc n: sn.getSubArcs()) {
+				n.setSelected(false);
+				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().add(n);
+			}
+
+
+			ArrayList<StatePlacesVector>  spv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().accessStateMatrix();
+
+			in.close();
+			file.close();
+
+			System.out.println("Object has been deserialized ");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
 	}
 }

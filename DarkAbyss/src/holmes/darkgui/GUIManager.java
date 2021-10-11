@@ -20,7 +20,6 @@ import holmes.windows.*;
 import holmes.windows.ssim.HolmesSim;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
-import holmes.workspace.WorkspaceSheet;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -159,7 +158,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesGraphlets windowsGraphlet;
 	private HolmesLabelComparison labelComparison;
 	private HolmesBranchVerticesPrototype windowsBranch;
-	private HolmesPrototypeComparison windowsComp;
+	private HolmesSubnetComparison windowsComp;
 	
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	private boolean inaReady = true;
@@ -1407,7 +1406,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void createComparisonnWindow() {
 		if(windowsComp == null) {
-			windowsComp = new HolmesPrototypeComparison();
+			windowsComp = new HolmesSubnetComparison();
 		}
 	}
 

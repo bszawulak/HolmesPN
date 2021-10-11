@@ -32,7 +32,7 @@ public class HolmesDecomposition extends JFrame {
     private JPanel infoPanel;
 
     //deco
-    private ArrayList<Integer> choosenDeco = new ArrayList<Integer>();
+    private ArrayList<Integer> choosenDeco = new ArrayList<>();
     private JTextArea elementsOfDecomposedStructure;
     private int selectedSubNetindex = -1;
     private int selectedSecondSubNetindex = -1;
@@ -65,7 +65,7 @@ public class HolmesDecomposition extends JFrame {
     private int ntcn = 0;
     private int nacn = 0;
 
-    private ArrayList<Integer> listOfInvDep = new ArrayList<Integer>(Arrays.asList(1, 3, 99, 10, 11, 12));
+    private ArrayList<Integer> listOfInvDep = new ArrayList<>(Arrays.asList(1, 3, 99, 10, 11, 12));
 
     private float sorenIndex = 0;
     private float jackobIndex = 0;
@@ -92,7 +92,8 @@ public class HolmesDecomposition extends JFrame {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception e) {
-
+            e.getMessage();
+            e.printStackTrace();
         }
         overlord = GUIManager.getDefaultGUIManager();
         setVisible(false);
@@ -733,7 +734,6 @@ public class HolmesDecomposition extends JFrame {
     }
 
 
-
     private void setDual() {
 
         if (!dualMode) {
@@ -754,25 +754,24 @@ public class HolmesDecomposition extends JFrame {
         getSubnetOfType();
     }
 
-    private void calcWhat1(){
+    private void calcWhat1() {
         ArrayList<SubnetCalculator.SubNet> deco = getCorrectSubnet(choosenDeco.get(0));
         ArrayList<int[][]> subMatrix = new ArrayList<>();
-        for (SubnetCalculator.SubNet subnet: deco) {
+        for (SubnetCalculator.SubNet subnet : deco) {
             subMatrix.add(DecoComparisonCalculator.subIncMat(subnet).getMatrix());
         }
 
-        try{
+        try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("decoMacierze.txt"));
-            for (int i = 0 ; i < subMatrix.size(); i++){
-                bw.write("sub: "+i);
+            for (int i = 0; i < subMatrix.size(); i++) {
+                bw.write("sub: " + i);
                 bw.newLine();
 
-                for(int j = 0 ; j < subMatrix.get(i).length ;j++){
-                    for(int k =0; k< subMatrix.get(i)[j].length;k++){
-                        if(k == subMatrix.get(i)[j].length-1) {
-                            bw.write(subMatrix.get(i)[j][k] +"");
-                        }
-                        else {
+                for (int j = 0; j < subMatrix.get(i).length; j++) {
+                    for (int k = 0; k < subMatrix.get(i)[j].length; k++) {
+                        if (k == subMatrix.get(i)[j].length - 1) {
+                            bw.write(subMatrix.get(i)[j][k] + "");
+                        } else {
                             bw.write(subMatrix.get(i)[j][k] + " ");
                         }
                     }
@@ -788,7 +787,7 @@ public class HolmesDecomposition extends JFrame {
         //DecoComparisonCalculator.vertexOrderAlgorithm(DecoComparisonCalculator.subIncMat(SubnetCalculator.adtSubNets.get(0)));
     }
 
-    private void calcWhat2(){
+    private void calcWhat2() {
         //SubnetCalculator.generateADT();
         SubnetCalculator.generateMCT();
 
@@ -796,7 +795,6 @@ public class HolmesDecomposition extends JFrame {
         int size = SubnetCalculator.mctSubNets.size();
         ColorPalette cp = new ColorPalette();
         //places
-
 
 
         for (int i = 0; i < SubnetCalculator.adtSubNets.size(); i++) {
@@ -865,11 +863,13 @@ public class HolmesDecomposition extends JFrame {
     }
 
     private void compareSubnets() {
-        SubnetComparator sc = new SubnetComparator(getCorrectSubnet(choosenDeco.get(0)), getCorrectSubnet(choosenDeco.get(0)));
-        ArrayList<ArrayList<GreatCommonSubnet>> result = sc.compare();
+        //SubnetComparator sc = new SubnetComparator(getCorrectSubnet(choosenDeco.get(0)), getCorrectSubnet(choosenDeco.get(0)));
+        //ArrayList<ArrayList<GreatCommonSubnet>> result = sc.compare();
 
-        JFrame windowsComp = new HolmesPrototypeComparison(result);
-        windowsComp.show();
+        //JFrame windowsComp = new HolmesPrototypeComparison(result);
+        //windowsComp.show();
+        GUIManager.getDefaultGUIManager().createComparisonnWindow();
+        GUIManager.getDefaultGUIManager().showCompWindow();
     }
 
     private void getSubnetOfType() {
@@ -1282,7 +1282,6 @@ public class HolmesDecomposition extends JFrame {
             listaMiejsc.removeAll(borderPlaces);
 
             listaMiejsc.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
-            ;
             System.out.println("Lista miejsc");
             for (Place p : listaMiejsc
             ) {
@@ -1384,71 +1383,54 @@ public class HolmesDecomposition extends JFrame {
         switch (choosenDeco.get(0)) {
             case 0:
                 firstsubnet = SubnetCalculator.functionalSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.functionalSubNets.size();
                 break;
             case 1:
                 firstsubnet = SubnetCalculator.snetSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.snetSubNets.size();
                 break;
             case 2:
                 firstsubnet = SubnetCalculator.tnetSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.tnetSubNets.size();
                 break;
             case 3:
                 firstsubnet = SubnetCalculator.adtSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.adtSubNets.size();
                 break;
             case 4:
                 firstsubnet = SubnetCalculator.tzSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.tzSubNets.size();
                 break;
             case 5:
                 firstsubnet = SubnetCalculator.houSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.houSubNets.size();
                 break;
             case 6:
                 firstsubnet = SubnetCalculator.nishiSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.nishiSubNets.size();
                 break;
             case 7:
                 firstsubnet = SubnetCalculator.cycleSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.cycleSubNets.size();
                 break;
             case 8:
                 firstsubnet = SubnetCalculator.ootsukiSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.ootsukiSubNets.size();
                 break;
             case 9:
                 firstsubnet = SubnetCalculator.smcSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.smcSubNets.size();
                 break;
             case 10:
                 firstsubnet = SubnetCalculator.mctSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.mctSubNets.size();
                 break;
             case 11:
                 firstsubnet = SubnetCalculator.tinvSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.tinvSubNets.size();
                 break;
             case 12:
                 firstsubnet = SubnetCalculator.pinvSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.pinvSubNets.size();
                 break;
             case 13:
                 firstsubnet = SubnetCalculator.bvSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.bvSubNets.size();
                 break;
             case 14:
                 firstsubnet = SubnetCalculator.btSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.btSubNets.size();
                 break;
             case 15:
                 firstsubnet = SubnetCalculator.bpSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.bpSubNets.size();
                 break;
             case 16:
                 firstsubnet = SubnetCalculator.notTzCyclesiSubNets.get(decoListOne.getSelectedIndex() - 1);
-                firstsize = SubnetCalculator.notTzCyclesiSubNets.size();
                 break;
         }
 
@@ -1458,71 +1440,54 @@ public class HolmesDecomposition extends JFrame {
         switch (choosenDeco.get(choosenDeco.size() - 1)) {
             case 0:
                 secondsubnet = SubnetCalculator.functionalSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.functionalSubNets.size();
                 break;
             case 1:
                 secondsubnet = SubnetCalculator.snetSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.snetSubNets.size();
                 break;
             case 2:
                 secondsubnet = SubnetCalculator.tnetSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.tnetSubNets.size();
                 break;
             case 3:
                 secondsubnet = SubnetCalculator.adtSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.adtSubNets.size();
                 break;
             case 4:
                 secondsubnet = SubnetCalculator.tzSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.tzSubNets.size();
                 break;
             case 5:
                 secondsubnet = SubnetCalculator.houSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.houSubNets.size();
                 break;
             case 6:
                 secondsubnet = SubnetCalculator.nishiSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.nishiSubNets.size();
                 break;
             case 7:
                 secondsubnet = SubnetCalculator.cycleSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.cycleSubNets.size();
                 break;
             case 8:
                 secondsubnet = SubnetCalculator.ootsukiSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.ootsukiSubNets.size();
                 break;
             case 9:
                 secondsubnet = SubnetCalculator.smcSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.smcSubNets.size();
                 break;
             case 10:
                 secondsubnet = SubnetCalculator.mctSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.mctSubNets.size();
                 break;
             case 11:
                 secondsubnet = SubnetCalculator.tinvSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.tinvSubNets.size();
                 break;
             case 12:
                 secondsubnet = SubnetCalculator.pinvSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.pinvSubNets.size();
                 break;
             case 13:
                 secondsubnet = SubnetCalculator.bvSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.bvSubNets.size();
                 break;
             case 14:
                 secondsubnet = SubnetCalculator.btSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.btSubNets.size();
                 break;
             case 15:
                 secondsubnet = SubnetCalculator.bpSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.bpSubNets.size();
                 break;
             case 16:
                 secondsubnet = SubnetCalculator.notTzCyclesiSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                secondsize = SubnetCalculator.notTzCyclesiSubNets.size();
                 break;
 
 
@@ -1541,7 +1506,7 @@ public class HolmesDecomposition extends JFrame {
         }
 
         for (Place element : firstsubnet.getSubPlaces()) {
-            if (secondsubnet.getSubPlaces().contains(element)) {
+            if (!secondsubnet.getSubPlaces().contains(element)) {
 
             } else {
                 element.setColorWithNumber(true, Color.red, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
@@ -1959,4 +1924,7 @@ public class HolmesDecomposition extends JFrame {
 
     }
 
+    public void calcSubnetsForSecondNet() {
+
+    }
 }

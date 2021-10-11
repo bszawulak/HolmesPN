@@ -9,10 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -508,20 +505,12 @@ public class HolmesDockWindowsTable extends JPanel {
                 JOptionPane.showMessageDialog(null, "Mode overrided by an active single mode.",
                         "Cannot change now", JOptionPane.WARNING_MESSAGE);
                 doNotUpdate = true;
-                if (overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
-                    maximumModeCheckBox.setSelected(true);
-                } else {
-                    maximumModeCheckBox.setSelected(false);
-                }
+                maximumModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
                 doNotUpdate = false;
             }
 
             AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-            if (abstractButton.getModel().isSelected()) {
-                simulator.setMaxMode(true);
-            } else {
-                simulator.setMaxMode(false);
-            }
+            simulator.setMaxMode(abstractButton.getModel().isSelected());
         });
         components.add(maximumModeCheckBox);
 
@@ -532,11 +521,7 @@ public class HolmesDockWindowsTable extends JPanel {
             if (abstractButton.getModel().isSelected()) {
                 simulator.setSingleMode(true);
                 doNotUpdate = true;
-                if (overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
-                    maximumModeCheckBox.setSelected(true);
-                } else {
-                    maximumModeCheckBox.setSelected(false);
-                }
+                maximumModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
                 doNotUpdate = false;
             } else {
                 simulator.setSingleMode(false);
@@ -816,10 +801,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(portalLabel);
         JCheckBox portalBox = new JCheckBox("", place.isPortal());
         portalBox.setBounds(columnB_posX + 180, columnB_Y, colACompLength, 20);
-        if (((Place) element).isPortal())
-            portalBox.setSelected(true);
-        else
-            portalBox.setSelected(false);
+        portalBox.setSelected(((Place) element).isPortal());
         portalBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             if (box.isSelected()) {
@@ -1227,10 +1209,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         pnCheckBox = new JCheckBox("Standard", transition.isPortal());
         pnCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
-        if (((Transition) element).getTransType() == TransitionType.PN)
-            pnCheckBox.setSelected(true);
-        else
-            pnCheckBox.setSelected(false);
+        pnCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
 
         pnCheckBox.addItemListener(e -> {
             if (doNotUpdate)
@@ -1249,10 +1228,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         tpnCheckBox = new JCheckBox("Time", transition.isPortal());
         tpnCheckBox.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
-        if (((Transition) element).getTransType() == TransitionType.TPN)
-            tpnCheckBox.setSelected(true);
-        else
-            tpnCheckBox.setSelected(false);
+        tpnCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
 
         tpnCheckBox.addItemListener(e -> {
             if (doNotUpdate)
@@ -1360,10 +1336,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(portalLabel);
         JCheckBox portalBox = new JCheckBox("", transition.isPortal());
         portalBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        if (((Transition) element).isPortal())
-            portalBox.setSelected(true);
-        else
-            portalBox.setSelected(false);
+        portalBox.setSelected(((Transition) element).isPortal());
 
         portalBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
@@ -1388,17 +1361,11 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JCheckBox functionalCheckBox = new JCheckBox("", transition.isPortal());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        if (((Transition) element).isFunctional())
-            functionalCheckBox.setSelected(true);
-        else
-            functionalCheckBox.setSelected(false);
+        functionalCheckBox.setSelected(((Transition) element).isFunctional());
 
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            if (box.isSelected())
-                ((Transition) element).setFunctional(true);
-            else
-                ((Transition) element).setFunctional(false);
+            ((Transition) element).setFunctional(box.isSelected());
         });
         components.add(functionalCheckBox);
 
@@ -1675,10 +1642,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         pnCheckBox = new JCheckBox("Standard", transition.isPortal());
         pnCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
-        if (((Transition) element).getTransType() == TransitionType.PN)
-            pnCheckBox.setSelected(true);
-        else
-            pnCheckBox.setSelected(false);
+        pnCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
 
         pnCheckBox.addItemListener(e -> {
             if (doNotUpdate)
@@ -1697,10 +1661,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         tpnCheckBox = new JCheckBox("Time", transition.isPortal());
         tpnCheckBox.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
-        if (((Transition) element).getTransType() == TransitionType.TPN)
-            tpnCheckBox.setSelected(true);
-        else
-            tpnCheckBox.setSelected(false);
+        tpnCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
 
         tpnCheckBox.addItemListener(e -> {
             if (doNotUpdate)
@@ -1783,10 +1744,7 @@ public class HolmesDockWindowsTable extends JPanel {
         tpnBox.setEnabled(true);
         tpnBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            if (box.isSelected())
-                setTPNstatus(true);
-            else
-                setTPNstatus(false);
+            setTPNstatus(box.isSelected());
 
             overlord.markNetChange();
         });
@@ -1798,10 +1756,7 @@ public class HolmesDockWindowsTable extends JPanel {
         dpnBox.setEnabled(true);
         dpnBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            if (box.isSelected())
-                setDPNstatus(true);
-            else
-                setDPNstatus(false);
+            setDPNstatus(box.isSelected());
 
             overlord.markNetChange();
         });
@@ -1867,10 +1822,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JCheckBox portalBox = new JCheckBox("", transition.isPortal());
         portalBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        if (((Transition) element).isPortal())
-            portalBox.setSelected(true);
-        else
-            portalBox.setSelected(false);
+        portalBox.setSelected(((Transition) element).isPortal());
         portalBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             if (box.isSelected()) {
@@ -1894,17 +1846,11 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JCheckBox functionalCheckBox = new JCheckBox("", transition.isPortal());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        if (((Transition) element).isFunctional())
-            functionalCheckBox.setSelected(true);
-        else
-            functionalCheckBox.setSelected(false);
+        functionalCheckBox.setSelected(((Transition) element).isFunctional());
 
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            if (box.isSelected())
-                ((Transition) element).setFunctional(true);
-            else
-                ((Transition) element).setFunctional(false);
+            ((Transition) element).setFunctional(box.isSelected());
 
             overlord.markNetChange();
         });
@@ -2168,10 +2114,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JCheckBox portalBox = new JCheckBox("", transition.isPortal());
         portalBox.setBounds(columnB_posX + 180, columnB_Y, 30, 20);
-        if (((Transition) element).isPortal())
-            portalBox.setSelected(true);
-        else
-            portalBox.setSelected(false);
+        portalBox.setSelected(((Transition) element).isPortal());
 
         portalBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
@@ -3346,10 +3289,7 @@ public class HolmesDockWindowsTable extends JPanel {
         autoscrollBox.setSelected(false);
         autoscrollBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            if (box.isSelected())
-                setAutoscroll(true);
-            else
-                setAutoscroll(false);
+            setAutoscroll(box.isSelected());
         });
         components.add(autoscrollBox);
 
@@ -3894,6 +3834,10 @@ public class HolmesDockWindowsTable extends JPanel {
         ArrayList<Transition> transitions_tmp = overlord.getWorkspace().getProject().getTransitions();
 
 
+        int max_freq = freqVector.stream()
+                .mapToInt(v -> v)
+                .max().orElseThrow(NoSuchElementException::new);
+
         if (freqVector == null) {
             JOptionPane.showMessageDialog(null, "T-invariants data unavailable.", "No t-invariants", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -3901,12 +3845,71 @@ public class HolmesDockWindowsTable extends JPanel {
                 Transition realT = transitions_tmp.get(i);
 
                 if (freqVector.get(i) != 0) {
-                    realT.setGlowedINV(glowT_inv, freqVector.get(i));
-                } else
-                    realT.setColorWithNumber(true, Color.red, true, 0, false, "");
+                    //realT.setGlowedINV(glowT_inv, freqVector.get(i));
+
+                    double fr = (double) freqVector.get(i) / (double) max_freq;
+                    //double fr = freqVector.get(i) /max_freq;
+
+                    int usuwane = (int) ((1 - fr) * 255);
+                    //System.out.println(usuwane);
+
+
+                    //int[] color = getRGB(usuwane);
+                    //new Color(color[0],color[1],color[2]
+
+                    realT.setColorWithNumber(true, getDiscColor(fr), true, freqVector.get(i), false, "");
+                    System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + fr + " \t " + freqVector.get(i));
+
+                } else {
+                    realT.setColorWithNumber(true, Color.gray, true, 0, false, "");
+                    System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + 0 + " \t " + 0);
+                }
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
+    }
+
+    public static Color getDiscColor(double fr) {
+        if (fr == 1) {//rgba(87,187,138,255)
+            return new Color(87, 187, 138, 255);
+        } else if (fr > 0.9) {
+            return new Color(104, 194, 150, 255);
+        } else if (fr > 0.8) {
+            return new Color(121, 201, 162, 255);
+        } else if (fr > 0.7) {
+            return new Color(138, 208, 174, 255);
+        } else if (fr > 0.6) {
+            return new Color(55, 215, 185, 255);
+        } else if (fr > 0.5) {
+            return new Color(171, 221, 197, 255);
+        } else if (fr > 0.4) {
+            return new Color(171, 221, 197, 255);
+        } else if (fr > 0.3) {
+            return new Color(205, 235, 220, 255);
+        } else if (fr > 0.2) {
+            return new Color(222, 242, 232, 255);
+        } else if (fr > 0.1) {
+            return new Color(222, 242, 232, 255);
+        }
+        return Color.white;
+    }
+
+    public static int[] getRGB(int gray) {
+        double[] WEIGHTS = {0.2989, 0.5870, 0.1140};
+        int[] rgb = new int[3];
+
+        for (int i = 0; i < 3; i++) {
+            rgb[i] = (int) (gray / WEIGHTS[i]);
+            if (rgb[i] < 256)
+                return rgb; // Successfully "distributed" all of gray, return it
+
+            // Not quite there, cut it...
+            rgb[i] = 255;
+            // And distribute the remaining on the rest of the RGB components:
+            gray -= (int) (255 * WEIGHTS[i]);
+        }
+
+        return rgb;
     }
 
     /**
@@ -5465,15 +5468,8 @@ public class HolmesDockWindowsTable extends JPanel {
         }
         */
 
-        //
-
-
-        if (SubnetCalculator.functionalSubNets == null || SubnetCalculator.functionalSubNets.size() == 0) {
-            //return;
-        } else {
+        if (!SubnetCalculator.functionalSubNets.isEmpty()) {
             mode = DECOMPOSITION;
-            //clusterColorsData = clusteringData;
-            //overlord.reset.setDecompositionStatus(true);
             SubnetCalculator.cleanSubnets();
         }
 
@@ -5485,7 +5481,7 @@ public class HolmesDockWindowsTable extends JPanel {
         chooseDecoLabel.setBounds(posX, posY, 150, 20);
         components.add(chooseDecoLabel);
 
-        String[] decoList = {"Functional", "S-nets", "T-nets", "maxADT", "Teng-Zhang", "Hou", "Nishi","Cycle","Ootsuki"};
+        String[] decoList = {"Functional", "S-nets", "T-nets", "maxADT", "Teng-Zhang", "Hou", "Nishi", "Cycle", "Ootsuki"};
 
         JComboBox<String> chooseMctBox = new JComboBox<>(decoList);
         chooseMctBox.setBounds(posX, posY + 30, 150, 20);
@@ -5605,16 +5601,16 @@ public class HolmesDockWindowsTable extends JPanel {
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
     }
 
-    private JComboBox<String> generateButton(int index){
-        if(index==0||index==1||index==2||index==3)
+    private JComboBox<String> generateButton(int index) {
+        if (index == 0 || index == 1 || index == 2 || index == 3)
             return generateProperDecoButton(index);
-        if(index==4||index==5||index==6||index==7)
+        if (index == 4 || index == 5 || index == 6 || index == 7)
             return generateInProperDecoButton(index);
 
         return generateProperDecoButton(index);
     }
 
-    private JComboBox<String> generateProperDecoButton(int index){
+    private JComboBox<String> generateProperDecoButton(int index) {
         int size = getSubnetSize(index);
         String[] newComoList = new String[size + 3];
         for (int i = 0; i < size; i++) {
@@ -5649,7 +5645,7 @@ public class HolmesDockWindowsTable extends JPanel {
         return newCB;
     }
 
-    private JComboBox<String> generateInProperDecoButton(int index){
+    private JComboBox<String> generateInProperDecoButton(int index) {
         int size = getSubnetSize(index);
         String[] newComoList = new String[size + 2];
         for (int i = 0; i < size; i++) {
@@ -5858,22 +5854,22 @@ public class HolmesDockWindowsTable extends JPanel {
         pn.resetNetColors();
 
 
-            for (int m = 0; m < subnets.size(); m++) {
+        for (int m = 0; m < subnets.size(); m++) {
 
-                SubnetCalculator.SubNet subNet = subnets.get(m);
-                ArrayList<Node> transitions = subNet.getSubNode();
+            SubnetCalculator.SubNet subNet = subnets.get(m);
+            ArrayList<Node> transitions = subNet.getSubNode();
 
-                    for (Node transition : transitions) {
-                        if(transition.getType()== PetriNetElement.PetriNetElementType.TRANSITION)
-                            ((Transition)transition).setColorWithNumber(true, Color.red, false, m, true, "");
-                        if(transition.getType()== PetriNetElement.PetriNetElementType.PLACE)
-                            ((Place)transition).setColorWithNumber(true, Color.red, false, m, true, "");
-                    }
-                    ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
-                    for (Arc arc : arcs) {
-                        arc.setColor(true, Color.red);
-                    }
+            for (Node transition : transitions) {
+                if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
+                    ((Transition) transition).setColorWithNumber(true, Color.red, false, m, true, "");
+                if (transition.getType() == PetriNetElement.PetriNetElementType.PLACE)
+                    ((Place) transition).setColorWithNumber(true, Color.red, false, m, true, "");
             }
+            ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
+            for (Arc arc : arcs) {
+                arc.setColor(true, Color.red);
+            }
+        }
 
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
     }
@@ -5964,34 +5960,34 @@ public class HolmesDockWindowsTable extends JPanel {
             for (int m = 0; m < subnets.size(); m++) {
                 Color currentColor;
                 /*if(subnets.get(m).isProper()) {
-                */
-                    currentColor = cp.getColor();
+                 */
+                currentColor = cp.getColor();
                   /*  if(currentColor == Color.red)
                         currentColor = cp.getColor();
                 }
                 else{*/
-                  //  currentColor=Color.red;
+                //  currentColor=Color.red;
                 //}
 
-                    SubnetCalculator.SubNet subNet = subnets.get(m);
-                    ArrayList<Transition> transitions = subNet.getSubTransitions();
-                    if (transitions.size() > 1 || trivial) {
-                        for (Transition transition : transitions) {
-                            transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
-                        }
-
-                        ArrayList<Place> places = subnets.get(m).getSubPlaces();
-                        for (Place place : places) {
-                            if (subNet.getSubBorderPlaces().contains(place))
-                                place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
-                            else
-                                place.setColorWithNumber(true, currentColor, false, m, true, "");
-                        }
-                        ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
-                        for (Arc arc : arcs) {
-                            arc.setColor(true, currentColor);
-                        }
+                SubnetCalculator.SubNet subNet = subnets.get(m);
+                ArrayList<Transition> transitions = subNet.getSubTransitions();
+                if (transitions.size() > 1 || trivial) {
+                    for (Transition transition : transitions) {
+                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
                     }
+
+                    ArrayList<Place> places = subnets.get(m).getSubPlaces();
+                    for (Place place : places) {
+                        if (subNet.getSubBorderPlaces().contains(place))
+                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                        else
+                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                    }
+                    ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
+                    for (Arc arc : arcs) {
+                        arc.setColor(true, currentColor);
+                    }
+                }
 
             }
         }

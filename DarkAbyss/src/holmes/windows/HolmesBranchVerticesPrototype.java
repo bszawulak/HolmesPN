@@ -3,12 +3,19 @@ package holmes.windows;
 import holmes.analyse.GraphletsCalculator;
 import holmes.analyse.SubnetCalculator;
 import holmes.darkgui.GUIManager;
+import holmes.files.io.IOprotocols;
+import holmes.graphpanel.popupmenu.SheetPopupMenu;
 import holmes.petrinet.elements.*;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.XMLEncoder;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -27,7 +34,8 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception e) {
-
+            e.getMessage();
+            e.printStackTrace();
         }
         overlord = GUIManager.getDefaultGUIManager();
         setVisible(false);
@@ -185,8 +193,39 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         calcP.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         calcP.addActionListener(actionEvent -> caclBranches(2));
         calcP.setFocusPainted(false);
-
         mainPanel.add(calcP);
+
+        //----comparison
+
+        JButton export = new JButton("<html>Export</html>");
+        export.setLayout(new FlowLayout());
+        export.setEnabled(true);
+        export.setBounds(posX, posY + 80, 70, 70);
+        export.setMargin(new Insets(0, 0, 0, 0));
+        export.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+        export.addActionListener(actionEvent -> exportClick());
+        export.setFocusPainted(false);
+        mainPanel.add(export);
+
+        JButton impor = new JButton("<html>Import</html>");
+        impor.setLayout(new FlowLayout());
+        impor.setEnabled(true);
+        impor.setBounds(posX, posY + 80, 70, 70);
+        impor.setMargin(new Insets(0, 0, 0, 0));
+        impor.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+        impor.addActionListener(actionEvent -> importClick());
+        impor.setFocusPainted(false);
+        mainPanel.add(impor);
+
+        JButton comp = new JButton("<html>Compare</html>");
+        comp.setLayout(new FlowLayout());
+        comp.setEnabled(true);
+        comp.setBounds(posX, posY + 80, 70, 70);
+        comp.setMargin(new Insets(0, 0, 0, 0));
+        comp.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+        comp.addActionListener(actionEvent -> compareClick());
+        comp.setFocusPainted(false);
+        mainPanel.add(comp);
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -282,6 +321,101 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         mainPanel.add(panel);
 
         return mainPanel;
+    }
+
+    private void exportClick() {
+        IOprotocols io = new IOprotocols();
+        calcBase();
+        io.exportBranchVertices(bsl);
+    }
+
+    private void importClick() {
+        IOprotocols io = new IOprotocols();
+        calcBase();
+
+        try {
+            JFileChooser fc = new JFileChooser();
+            int returnVal = fc.showOpenDialog(HolmesBranchVerticesPrototype.this);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+
+                //IOprotocols io = new IOprotocols();
+                String path = file.getAbsolutePath();
+                bsl = io.importBranchVertices(path);
+            }
+        } catch (Exception e) {
+            System.out.println("Problem serializing: " + e);
+        }
+    }
+
+    private void compareClick() {
+
+    }
+
+    private void calcBase() {
+        for (Node n : overlord.getWorkspace().getProject().getNodes()) {
+            if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)) {
+                BranchStructure bs = new BranchStructure(n, new Color(0, 0, 0));
+                bsl.add(bs);
+            }
+        }
+    }
+
+    private void calcTypeI() {
+        calcBase();
+
+        /**
+         only branch vertex
+         - type
+         - degree in
+         - degree out
+         */
+        for (BranchStructure bs : bsl) {
+            bs.root.getType();
+        }
+
+    }
+
+    private void calcTypeII() {
+        /**
+         root branch vertex
+         - type
+         - degree in
+         - degree out
+
+         branch end vertex
+         - type
+         */
+    }
+
+    private void calcTypeIII() {
+        /**
+         root branch vertex
+         - type
+         - degree in
+         - degree out
+
+         branch end vertex
+         - type
+         - degree in
+         - degree out
+         */
+    }
+
+    private void calcTypeIV() {
+        /**
+         root branch vertex
+         - type
+         - degree in
+         - degree out
+
+         branch end vertex
+         - type
+         - degree in
+         - degree out
+         - ISTOTNOŚĆ
+         */
     }
 
     private void caclBranches(int type) {
@@ -390,7 +524,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             for (Node n : bsl.get(i).borderNodes) {
                 String direction = "";
 
-                if (bsl.get(i).paths.stream().anyMatch(path -> path.endNode.equals(n)&& !path.isRevers)) {
+                if (bsl.get(i).paths.stream().anyMatch(path -> path.endNode.equals(n) && !path.isRevers)) {
                     direction = " --> ";
                 }
 
@@ -398,7 +532,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                     direction = " <-- ";
                 }
 
-                if (bsl.get(i).paths.stream().anyMatch(path -> path.endNode.equals(n)&& !path.isRevers) && bsl.get(i).paths.stream().anyMatch(path -> path.endNode.equals(n) && path.isRevers)) {
+                if (bsl.get(i).paths.stream().anyMatch(path -> path.endNode.equals(n) && !path.isRevers) && bsl.get(i).paths.stream().anyMatch(path -> path.endNode.equals(n) && path.isRevers)) {
                     direction = " <-> ";
                 }
 
@@ -410,30 +544,30 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             }
         }
 
-        int transitionNumberIn = 0 ;
-        int transitionNumberOut = 0 ;
-        int placeNumberIn = 0 ;
-        int placeNumberOut = 0 ;
+        int transitionNumberIn = 0;
+        int transitionNumberOut = 0;
+        int placeNumberIn = 0;
+        int placeNumberOut = 0;
 
-        int transitionNumberInWeight = 0 ;
-        int transitionNumberOutWeight = 0 ;
-        int placeNumberInWeight = 0 ;
-        int placeNumberOutWeight = 0 ;
+        int transitionNumberInWeight = 0;
+        int transitionNumberOutWeight = 0;
+        int placeNumberInWeight = 0;
+        int placeNumberOutWeight = 0;
 
         for (Node n : overlord.getWorkspace().getProject().getNodes()) {
-            if(n.getInArcs().size()>1 ||n.getOutArcs().size()>1) {
+            if (n.getInArcs().size() > 1 || n.getOutArcs().size() > 1) {
                 if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
                     transitionNumberIn += n.getInArcs().size();
-                    transitionNumberInWeight += n.getInArcs().stream().mapToInt(i -> i.getWeight()).sum();
+                    transitionNumberInWeight += n.getInArcs().stream().mapToInt(Arc::getWeight).sum();
 
                     transitionNumberOut += n.getInArcs().size();
-                    transitionNumberOutWeight += n.getInArcs().stream().mapToInt(i -> i.getWeight()).sum();
+                    transitionNumberOutWeight += n.getInArcs().stream().mapToInt(Arc::getWeight).sum();
                 } else {
                     placeNumberIn += n.getInArcs().size();
-                    placeNumberInWeight += n.getInArcs().stream().mapToInt(i -> i.getWeight()).sum();
+                    placeNumberInWeight += n.getInArcs().stream().mapToInt(Arc::getWeight).sum();
 
                     placeNumberOut += n.getInArcs().size();
-                    placeNumberOutWeight += n.getInArcs().stream().mapToInt(i -> i.getWeight()).sum();
+                    placeNumberOutWeight += n.getInArcs().stream().mapToInt(Arc::getWeight).sum();
                 }
             }
         }
@@ -528,7 +662,15 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         }
     }
 
-    public static class BranchStructure {
+    public static class BranchStructureList implements Serializable {
+        public ArrayList<BranchStructure> bsl;
+
+        public BranchStructureList(ArrayList<BranchStructure> b) {
+            bsl = b;
+        }
+    }
+
+    public static class BranchStructure implements Serializable {
         Node root;
         ArrayList<Node> borderNodes;
         public ArrayList<SubnetCalculator.Path> paths;
@@ -575,9 +717,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                 startPath.add(root);
                 ArrayList<Node> nodes = calculatePath(m, startPath);
                 if (nodes.get(nodes.size() - 1).getOutNodes().contains(nodes.get(0))) {
-                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true,false));
+                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true, false));
                 } else {
-                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes),false,false));
+                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), false, false));
                 }
             }
 
@@ -587,9 +729,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                 startPath.add(root);
                 ArrayList<Node> nodes = calculatePathRevers(m, startPath);
                 if (nodes.get(nodes.size() - 1).getInNodes().contains(nodes.get(0))) {
-                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true,true));
+                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true, true));
                 } else {
-                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes),false,true));
+                    paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), false, true));
                 }
             }
 

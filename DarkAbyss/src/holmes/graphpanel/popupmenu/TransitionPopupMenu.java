@@ -119,5 +119,22 @@ public class TransitionPopupMenu extends NodePopupMenu {
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
+
+
+		this.addMenuItem("Export subnet to File", "cut.png", e -> {
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
+				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+						"Operation impossible when simulator is working."
+						, "Warning"))
+					return;
+
+				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
+				getGraphPanel().getSelectionManager().saveSubnet();
+				GUIManager.getDefaultGUIManager().markNetChange();
+			} else {
+				JOptionPane.showMessageDialog(null, "Option possible for one transition only.", "Too many selections",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 	}
 }

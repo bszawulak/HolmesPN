@@ -5,9 +5,10 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
+import holmes.files.io.IOprotocols;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import holmes.petrinet.data.IdGenerator;
@@ -1095,4 +1096,18 @@ public class SelectionManager {
 				((Transition) n).setGlowedINV(false, 0);
 			}
 	}
+
+    public void saveSubnet() {
+		ArrayList<ElementLocation> listOfElements = new ArrayList<>();
+		for(ElementLocation el : this.getSelectedElementLocations())
+		{
+			if(el.isSelected())
+			{
+				listOfElements.add(el);
+			}
+		}
+
+		IOprotocols io = new IOprotocols();
+		io.exportSubnet(listOfElements);
+    }
 }

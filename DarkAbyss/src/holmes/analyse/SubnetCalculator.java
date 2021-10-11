@@ -1,6 +1,7 @@
 package holmes.analyse;
 
 import holmes.darkgui.GUIManager;
+import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 import holmes.windows.HolmesBranchVerticesPrototype;
 
@@ -14,7 +15,7 @@ import java.util.function.ToDoubleBiFunction;
  * Klasa odpowiedzialna za dekompozycję PN do wybranych typów podsieci
  */
 public class SubnetCalculator implements Serializable{
-    public enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, NotTzCycles, SMC, MCT, TINV, PINV, BV,Export}
+    public enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADTcomp, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, NotTzCycles, SMC, MCT, TINV, PINV, BV,Export}
 
     public static ArrayList<SubNet> functionalSubNets = new ArrayList<>();
     public static ArrayList<SubNet> snetSubNets = new ArrayList<>();
@@ -372,6 +373,52 @@ public class SubnetCalculator implements Serializable{
         } else {
             JOptionPane.showMessageDialog(null, "Before determine ADT sets, you need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    public static ArrayList<SubNet> generateADTFromSecondNet(PetriNet pn) {
+        //cleanSubnets();
+        ArrayList<SubNet> result = new ArrayList<>();
+
+        if (pn.getT_InvMatrix() != null) {
+            if (!pn.getT_InvMatrix().isEmpty()) {
+                //ArrayList<ArrayList<Integer>> invMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+                ArrayList<ArrayList<Integer>> nonAssignedRows = new ArrayList<>();
+
+                for (int i = 0; i < pn.getT_InvMatrix().get(0).size(); i++) {
+                    ArrayList<Integer> newRow = new ArrayList<>();
+                    for (ArrayList<Integer> integers : pn.getT_InvMatrix()) {
+                        newRow.add(integers.get(i));
+                    }
+                    nonAssignedRows.add(newRow);
+                }
+
+                ArrayList<Integer> listOfusedTransitions = new ArrayList<>();
+
+                for (int i = 0; i < nonAssignedRows.size(); i++) {
+                    ArrayList<Integer> newADTset = new ArrayList<>();
+
+                    if (!listOfusedTransitions.contains(i)) {
+                        newADTset.add(i);
+                        listOfusedTransitions.add(i);
+                        for (int j = i; j < nonAssignedRows.size(); j++) {
+                            if (checkADT(nonAssignedRows.get(i), nonAssignedRows.get(j))) {
+                                if (!listOfusedTransitions.contains(j)) {
+                                    listOfusedTransitions.add(j);
+                                    newADTset.add(j);
+                                }
+                            }
+                        }
+                    }
+                    if (!newADTset.isEmpty())
+                        result.add(new SubNet(SubNetType.ADTcomp, pn.getTransitions(), null, null, newADTset, null));
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Before determine ADT sets, you need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        }
+        return result;
     }
 
     public static void generateADP() {
@@ -1075,7 +1122,7 @@ public class SubnetCalculator implements Serializable{
         return isMore != isLess;
     }
 
-    public static class Path {
+    public static class Path  implements Serializable{
         public Node startNode;
         public Node endNode;
         public ArrayList<Node> path;
@@ -1138,6 +1185,10 @@ public class SubnetCalculator implements Serializable{
         //Universal
         int subNetID;
 
+        public SubNet()
+        {
+
+        }
 
         public SubNet(SubNetType snt, ArrayList<Transition> subTransitions, ArrayList<Place> subPlaces, ArrayList<Node> subNode, ArrayList<Integer> maxADTset, ArrayList<Path> subPath) {
             proper = true;
@@ -1154,6 +1205,9 @@ public class SubnetCalculator implements Serializable{
                     break;
                 case ADT:
                     createTransirionBasedSubNet(getTransitionsForADT(maxADTset));
+                    break;
+                case ADTcomp :
+                    createTransirionBasedSubNet(getTransitionsForADT(maxADTset,subTransitions));
                     break;
                 case ADP:
                     createPlaceBasedSubNet(getTransitionsForADP(maxADTset));
@@ -1376,6 +1430,15 @@ public class SubnetCalculator implements Serializable{
                 }
             }
             this.subArcs = listOfAllArcs;
+        }
+
+        private ArrayList<Transition> getTransitionsForADT(ArrayList<Integer> maxADTset, ArrayList<Transition> transitions) {
+            //ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+            ArrayList<Transition> transitionsForADT = new ArrayList<>();
+            for (Integer number : maxADTset) {
+                transitionsForADT.add(transitions.get(number));
+            }
+            return transitionsForADT;
         }
 
         private ArrayList<Transition> getTransitionsForADT(ArrayList<Integer> maxADTset) {

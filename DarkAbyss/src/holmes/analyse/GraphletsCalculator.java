@@ -3,6 +3,7 @@ package holmes.analyse;
 import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.IdGenerator;
+import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ public class GraphletsCalculator {
     public static int sheetID = 0;
     private static int totalGrahletID = 0;
 
-    public static HashMap<Integer, Node> globalOrbitMap = new HashMap<Integer, Node>();
+    public static HashMap<Integer, Node> globalOrbitMap = new HashMap<>();
     public static HashMap<Integer, Integer> orbitOraphMap = new HashMap<>();
     public static ArrayList<SubnetCalculator.SubNet> graphetsList = new ArrayList<>();
 
@@ -37,6 +38,7 @@ public class GraphletsCalculator {
     }
 
     public static void generateGraphlets() {
+        totalGrahletID = 0;
         graphetsList.clear();
         graphetsList.add(graphlet_1());
         graphetsList.add(graphlet_2());
@@ -411,7 +413,17 @@ public class GraphletsCalculator {
             arcs.addAll(st.getSubArcs());
         }
 
-        io.writePNT("ramadan.pnt", places, transitions, arcs);
+        //io.writePNT("ramadan.pnt", places, transitions, arcs);
+    }
+
+    public static void cleanAll() {
+        graphetsList.clear();
+        globalOrbitMap.clear();
+        uniqGraphlets.clear();
+        sortedGraphlets.clear();
+        graphlets.clear();
+
+
     }
 
     public static void getDirectedRelativeGraphletFrequencyDistributionDistance() {
@@ -446,11 +458,11 @@ public class GraphletsCalculator {
     private static int fromWhichGrahlet(Node n) {
         int index = -1;
         int wiel = 0;
-        for (int i = 0; i < graphetsList.size(); i++) {
-            if (graphetsList.get(i).getSubNode().stream().anyMatch(x -> x.getID() == n.getID()))
+        for (SubnetCalculator.SubNet subNet : graphetsList) {
+            if (subNet.getSubNode().stream().anyMatch(x -> x.getID() == n.getID()))
             //if (graphetsList.get(i).getSubNode().contains(n))
             {
-                index = graphetsList.get(i).getSubNetID();
+                index = subNet.getSubNetID();
                 //index = i;
                 wiel++;
             }
@@ -510,9 +522,36 @@ public class GraphletsCalculator {
         //return resultList;
     }
 
+    public static void getFoundServerGraphlets(PetriNet pn) {
+        ArrayList<ArrayList<ArrayList<Struct>>> resultList = new ArrayList<>();
+
+        int orbitIndex = 0;
+        for (Entry<Integer, Node> entry : globalOrbitMap.entrySet()) {
+            ArrayList<ArrayList<Struct>> fromThisOrbit = new ArrayList<>();
+
+            for (Node n : pn.getNodes()) {
+                if (n.getType() == entry.getValue().getType()) {
+                    ArrayList<Struct> foundGraphletsApp = findGraphlet(entry.getValue(), n);
+                    fromThisOrbit.add(foundGraphletsApp);
+                } else {
+                    fromThisOrbit.add(new ArrayList<>());
+                }
+            }
+            resultList.add(fromThisOrbit);
+        }
+
+        //sprawdź czy map jest praw
+
+        graphlets = resultList;
+
+        sortGraphletsByOrbit();
+        uniqGraphlets();
+        //return resultList;
+    }
+
     private static int getOrbitValue(Node n, Node m) {
         if (n.getType() == m.getType()) {
-            ArrayList<Struct> foundGraphletsApp = new ArrayList<>();
+            ArrayList<Struct> foundGraphletsApp;
             foundGraphletsApp = findGraphlet(m, n);
 
             //catch multiple arcs
@@ -622,8 +661,6 @@ public class GraphletsCalculator {
                                 structureToAdd.mapa.put(freeGrahletNodeToAdd, nextArc.getStartNode());
                             } else if (!structureToAdd.mapa.containsValue(nextArc.getEndNode())) {
                                 structureToAdd.mapa.put(freeGrahletNodeToAdd, nextArc.getEndNode());
-                            } else {
-                                //System.out.println("CHtba już ma, to powinno skoczyć przy cyklach");
                             }
 
                             structureToAdd.mapaArcow.put(freeGrahletArcToAdd, nextArc);
@@ -633,8 +670,6 @@ public class GraphletsCalculator {
                 }
             }
         }
-
-
 
 
         //tylko unikalne
@@ -651,30 +686,25 @@ public class GraphletsCalculator {
             }
             if (counter == 1) {
                 uniqeListOfProperGraphlets.add(listOfProperGraphlets.get(i));
-            } else {
-                ///System.out.println("ASDFGHJK" + listOfProperGraphlets.get(i).graphletID + "po raz " + counter) ;
             }
         }
         ArrayList<Struct> ProperlyMapGraphlets = new ArrayList<>();
-        for(Struct st : uniqeListOfProperGraphlets)
-        {
+        for (Struct st : uniqeListOfProperGraphlets) {
             SubnetCalculator.SubNet graphlet = graphetsList.get(st.graphletID);
 
             boolean bubel = false;
 
-            for(Node n : graphlet.getSubNode())
-            {
-                for (Arc a :  n.getInArcs()) {
+            for (Node n : graphlet.getSubNode()) {
+                for (Arc a : n.getInArcs()) {
                     Arc mapedArc = st.mapaArcow.get(a);
 
                     Node startNode = mapedArc.getStartNode();
                     Node endNode = mapedArc.getEndNode();
-                    Node s1 = keys(st.mapa,startNode).findFirst().get();
-                    Node s2 = keys(st.mapa,endNode).findFirst().get();
+                    Node s1 = keys(st.mapa, startNode).findFirst().get();
+                    Node s2 = keys(st.mapa, endNode).findFirst().get();
 
-                    if(graphlet.getSubArcs().stream().noneMatch(x->x.getStartNode().getID()==s1.getID() && x.getEndNode().getID()==s2.getID()))
-                    {
-                        bubel=true;
+                    if (graphlet.getSubArcs().stream().noneMatch(x -> x.getStartNode().getID() == s1.getID() && x.getEndNode().getID() == s2.getID())) {
+                        bubel = true;
                     }
 
                     //if(getKeysByValue(st.mapa,startNode) && st.mapa.containsValue(endNode))
@@ -689,24 +719,25 @@ public class GraphletsCalculator {
                         bubel=true;
                     */
 
-                    if(!st.mapaArcow.containsKey(a))
-                        bubel=true;
+                    if (!st.mapaArcow.containsKey(a))
+                        bubel = true;
                 }
             }
 
             for (Arc a : graphlet.getSubArcs()) {
-                if(!st.mapaArcow.containsKey(a))
-                    bubel=true;
+                if (!st.mapaArcow.containsKey(a)) {
+                    bubel = true;
+                    break;
+                }
             }
 
-            if(!bubel)
+            if (!bubel)
                 ProperlyMapGraphlets.add(st);
-            else
-                System.out.println("BUBEL");
         }
 
         return ProperlyMapGraphlets;
     }
+
     public static <K, V> Stream<K> keys(Map<K, V> map, V value) {
         return map
                 .entrySet()
@@ -837,31 +868,8 @@ public class GraphletsCalculator {
 
         ArrayList<Struct> inproper = new ArrayList<>();
         for (Struct s : uniqGraphlets) {
-            ArrayList<Struct > ip = uniqGraphlets.stream().filter(x->x.mapaArcow.values().containsAll(s.mapaArcow.values())).collect(Collectors.toCollection(ArrayList::new));
-            if(ip.size()>1) {
-                /*
-                System.out.println("--------");
-                for (Struct st: ip) {
-                    System.out.println("You not suppost to be here");
-                    System.out.println(st.graphletID);
-                    System.out.println(st.mapa.keySet());
-                    System.out.println(getKeyNodeIDs(st.mapa));
-                    System.out.println(st.mapa.values());
-                    System.out.println(st.mapaArcow.keySet());
-                    System.out.println(st.mapaArcow.values());//wek
-
-                    if(!getKeyNodeIDs(st.mapa).containsAll(getStructNodeIDs(graphetsList.get(st.graphletID).getSubNode())))
-                    {
-                        System.out.println("Gagatek ze złym numerem :");
-                        System.out.println(getKeyNodeIDs(st.mapa));
-                        System.out.println(getStructNodeIDs(graphetsList.get(st.graphletID).getSubNode()));
-                    }
-                }
-                */
-            }
+            ArrayList<Struct> ip = uniqGraphlets.stream().filter(x -> x.mapaArcow.values().containsAll(s.mapaArcow.values())).collect(Collectors.toCollection(ArrayList::new));
         }
-
-
     }
 
     private static SubnetCalculator.SubNet graphlet_1() {
@@ -5523,8 +5531,8 @@ public class GraphletsCalculator {
 
 
     public static class Struct {
-        HashMap<Node, Node> mapa = null;
-        HashMap<Arc, Arc> mapaArcow = null;
+        HashMap<Node, Node> mapa;
+        HashMap<Arc, Arc> mapaArcow;
         int graphletID = -1;
 
         public Struct(HashMap<Node, Node> m, HashMap<Arc, Arc> ma) {

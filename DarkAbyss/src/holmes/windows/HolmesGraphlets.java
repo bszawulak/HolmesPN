@@ -6,1222 +6,318 @@ import holmes.analyse.comparison.experiment.NetGenerator;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.*;
 import holmes.utilities.ColorPalette;
-import holmes.utilities.Tools;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.OptionalDouble;
-import java.util.stream.IntStream;
+import java.util.stream.DoubleStream;
 
 public class HolmesGraphlets extends JFrame {
 
     private GUIManager overlord;
     private JPanel mainPanel;
     JComboBox<String> orbit;
-    JComboBox<String> nodeList;
-    JComboBox<String> graphletList;
+    private JTextArea comparisonResultsArea;
+    private JTextArea graphletResultsArea;
+    private JTextArea orbitResultsArea;
 
+    private JComboBox graphletResult;
 
-    JTextArea jtaImin;
-    JTextArea jtaJmin;
-    JTextArea jtaPmin;
+    private boolean firstNetLoaded = false;
+    private boolean secondNetLoaded = false;
 
-    JTextArea jtaImax;
-    JTextArea jtaJmax;
-    JTextArea jtaPmax;
-
-
-    JComboBox<String> orbitSorted;
     JComboBox<String> graphletListSorted;
     JComboBox<String> graphletListUniq;
+    JComboBox getSize;
+    JComboBox getNode;
+    JComboBox getSizeForComparison;
 
-    String[] orbitData = {" --O-- "};
-    String[] nodeData = {" --N-- "};
-    String[] graphData = {" --G-- "};
+    String[] orbitData = {" ----- "};
+    String[] graphDataUniq = {" ----- "};
 
-    String[] orbitDataSorted = {" --OS-- "};
-    String[] graphDataSorted = {" --GS-- "};
-
-
-    String[] graphDataUniq = {" --GU-- "};
+    private String pathToFirstFile = "";
+    private String pathToSecondFile = "";
 
     public HolmesGraphlets() {
-        try {
-            setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-        } catch (Exception e) {
-
-        }
         overlord = GUIManager.getDefaultGUIManager();
-        setVisible(false);
-        this.setTitle("Graphlets");
+        JTabbedPane tabbedPane = new JTabbedPane();
 
-        setLayout(new BorderLayout());
-        setSize(new Dimension(900, 700));
-        setLocation(15, 15);
-
-        mainPanel = createMainPanel();
-        add(mainPanel, BorderLayout.CENTER);
+        JComponent singeNetGraphlets = makeSingleNetPane();
+        JComponent comparisonNetGraphlets = makeComparisonNetPane();
+        tabbedPane.addTab("Single net ", null, singeNetGraphlets, "Graphlets in single net");
+        tabbedPane.addTab("Net comparison ", null, comparisonNetGraphlets, "Graphlets in single net");
+        this.add(tabbedPane, BorderLayout.CENTER);
+        this.pack();
+        this.setVisible(true);
+        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 
-    private JPanel createMainPanel() {
+    protected JComponent makeSingleNetPane() {
+        JPanel panel = new JPanel(false);
+        panel.setLayout(new GridLayout(3, 1));
 
-        JPanel panel = new JPanel(new FlowLayout());
+        JPanel graphletPanel = new JPanel(false);
+        graphletPanel.setLayout(new GridLayout(1, 3));
 
-        int posX = 0;
-        int posY = 0;
+        JPanel graphletButtonPanel = new JPanel(false);
+        graphletButtonPanel.setLayout(new GridLayout(2, 1));
 
-        JButton generateButton = new JButton("<html>Generate</html>");
-        generateButton.setBounds(posX, posY, 120, 36);
-        generateButton.setMargin(new Insets(0, 0, 0, 0));
-        generateButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        generateButton.addActionListener(actionEvent -> generateGraphletOrbits());
-        generateButton.setFocusPainted(false);
-        panel.add(generateButton);//,BorderLayout.LINE_START);
+        JButton checknetForGraphlets = new JButton("Check net for graphlets");
+        checknetForGraphlets.addActionListener(actionEvent -> generateGraphletOrbits());
 
-        orbit = new JComboBox<String>(orbitData);
-        orbit.setBounds(posX + 130, posY, 250, 20);
-        orbit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                @SuppressWarnings("unchecked")
-                JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
-                int selected = comboBox.getSelectedIndex();
-                ArrayList<String> data = new ArrayList<>();
-                for (int i = 0; i < GraphletsCalculator.graphlets.get(selected).size(); i++) {
-                    data.add("Node : " + i);
-                }
+        //checknetForGraphlets.setHorizontalAlignment(JButton.CENTER);
 
-                nodeData = data.stream().toArray(String[]::new);
-                nodeList.setModel(new DefaultComboBoxModel<>(nodeData));
+        String[] sizeString = {"3-node graphlets", "4-node graphlets", "5-node graphlets"};
+        getSize = new JComboBox(sizeString);
+        getSize.setSelectedIndex(2);
 
+        graphletButtonPanel.add(checknetForGraphlets);
+        graphletButtonPanel.add(getSize);
 
-                ArrayList<String> dataS = new ArrayList<>();
-                for (int i = 0; i < GraphletsCalculator.sortedGraphlets.get(selected).size(); i++) {
-                    dataS.add("Graphlet : " + i);
-                }
+        graphletResultsArea = new JTextArea(15, 20);
+        JScrollPane gscroll = new JScrollPane(graphletResultsArea);
+        gscroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-                graphDataSorted = dataS.stream().toArray(String[]::new);
-                graphletListSorted.setModel(new DefaultComboBoxModel<>(graphDataSorted));
-            }
-        });
-        panel.add(orbit, BorderLayout.CENTER);
-
-        nodeList = new JComboBox<String>(nodeData);
-        nodeList.setBounds(posX + 130, posY + 80, 250, 20);
-        nodeList.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                @SuppressWarnings("unchecked")
-                JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
-                int selectedOrbit = orbit.getSelectedIndex();
-                int selectedNode = comboBox.getSelectedIndex();
-                ArrayList<String> data = new ArrayList<>();
-                for (int i = 0; i < GraphletsCalculator.graphlets.get(selectedOrbit).get(selectedNode).size(); i++) {
-                    data.add("Graphlet : " + i);
-                }
-                graphData = data.stream().toArray(String[]::new);
-                graphletList.setModel(new DefaultComboBoxModel<>(graphData));
-
-            }
-        });
-        panel.add(nodeList, BorderLayout.NORTH);
-
-        graphletList = new JComboBox<String>(graphData);
-        graphletList.setBounds(posX + 130, posY + 160, 250, 20);
-        graphletList.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                @SuppressWarnings("unchecked")
-                JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
-                int selectedOrbit = orbit.getSelectedIndex();
-                int selectedNode = nodeList.getSelectedIndex();
-                int selectedGraphlet = comboBox.getSelectedIndex();
-                ArrayList<String> data = new ArrayList<>();
-
-                GraphletsCalculator.Struct graphletStructure = GraphletsCalculator.graphlets.get(selectedOrbit).get(selectedNode).get(selectedGraphlet);
-
-                paintGraphlet(graphletStructure);
-            }
-        });
-        panel.add(graphletList, BorderLayout.EAST);
-
-
-        jtaImin = new JTextArea("Set Place min number +10");
-        jtaImin.setBounds(posX + 130, posY + 160, 250, 20);
-        panel.add(jtaImin, BorderLayout.SOUTH);
-
-        jtaImax = new JTextArea("Set Place max numbejtaIr +10");
-        jtaImax.setBounds(posX + 130, posY + 160, 250, 20);
-        panel.add(jtaImax, BorderLayout.SOUTH);
-
-        jtaJmin = new JTextArea("Set Transition min  number +10");
-        jtaJmin.setBounds(posX + 130, posY + 160, 250, 20);
-        panel.add(jtaJmin, BorderLayout.SOUTH);
-
-        jtaJmax = new JTextArea("Set Transition max number +10");
-        jtaJmax.setBounds(posX + 130, posY + 160, 250, 20);
-        panel.add(jtaJmax, BorderLayout.SOUTH);
-
-        jtaPmin = new JTextArea("Set min number of probe");
-        jtaPmin.setBounds(posX + 130, posY + 160, 250, 20);
-        panel.add(jtaPmin, BorderLayout.SOUTH);
-
-        jtaPmax = new JTextArea("Set max number of probe");
-        jtaPmax.setBounds(posX + 130, posY + 160, 250, 20);
-        panel.add(jtaPmax, BorderLayout.SOUTH);
-        //sorted
-/*
-        orbitSorted = new JComboBox<String>(orbitDataSorted);
-        orbitSorted.setBounds(posX+130, posY, 250, 20);
-        orbitSorted.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                @SuppressWarnings("unchecked")
-                JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
-                int selected = comboBox.getSelectedIndex();
-                ArrayList<String> data = new ArrayList<>();
-                for(int i = 0 ; i < GraphletsCalculator.sortedGraphlets.get(selected).size() ; i++){
-                    data.add("Node : " + i );
-                }
-
-                nodeData = data.stream().toArray(String[]::new);
-                nodeList.setModel(new DefaultComboBoxModel<>(nodeData));
-            }
-        });
-        panel.add(orbitSorted, BorderLayout.CENTER);
-*/
-        graphletListSorted = new JComboBox<String>(graphDataSorted);
-        graphletListSorted.setBounds(posX + 130, posY + 160, 250, 20);
-        graphletListSorted.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                @SuppressWarnings("unchecked")
-                JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
-                int selectedOrbit = orbit.getSelectedIndex();
-                int selectedNode = nodeList.getSelectedIndex();
-                int selectedGraphlet = comboBox.getSelectedIndex();
-                ArrayList<String> data = new ArrayList<>();
-
-                GraphletsCalculator.Struct graphletStructure = GraphletsCalculator.sortedGraphlets.get(selectedOrbit).get(selectedGraphlet);
-
-                paintGraphlet(graphletStructure);
-            }
-        });
-        panel.add(graphletListSorted, BorderLayout.EAST);
-
-        graphletListUniq = new JComboBox<String>(graphDataUniq);
-        graphletListUniq.setBounds(posX + 130, posY + 160, 250, 20);
-        graphletListUniq.addActionListener(new ActionListener() {
+        String[] resultString = {"None"};
+        graphletResult = new JComboBox(sizeString);
+        graphletResult.setSelectedIndex(0);
+        graphletResult.setEnabled(false);
+        graphletResult.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 @SuppressWarnings("unchecked")
                 JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
                 int selectedGraphlet = comboBox.getSelectedIndex();
+
                 GraphletsCalculator.Struct graphletStructure = GraphletsCalculator.uniqGraphlets.get(selectedGraphlet);
+
                 paintGraphlet(graphletStructure);
             }
         });
-        panel.add(graphletListUniq, BorderLayout.EAST);
-
-        panel.add(generateButton, BorderLayout.WEST);
 
 
-        //NetGenerator ng = new NetGenerator();
-        JButton genNetsButton = new JButton("<html>Generate nets</html>");
-        genNetsButton.setBounds(posX, posY, 120, 36);
-        genNetsButton.setMargin(new Insets(0, 0, 0, 0));
-        genNetsButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        genNetsButton.addActionListener(actionEvent ->
-                new NetGenerator(Integer.parseInt(jtaImin.getText()), Integer.parseInt(jtaImax.getText()), Integer.parseInt(jtaJmin.getText()), Integer.parseInt(jtaJmax.getText()), Integer.parseInt(jtaPmin.getText()), Integer.parseInt(jtaPmax.getText())));
-        genNetsButton.setFocusPainted(false);
-        panel.add(genNetsButton);
+        graphletPanel.add(graphletButtonPanel);
+        graphletPanel.add(gscroll);
+        graphletPanel.add(graphletResult);
+        panel.add(graphletPanel);
+        //-----------------------------------
 
 
-        JButton compNets = new JButton("<html>Compare graphlets</html>");
-        compNets.setBounds(posX, posY, 120, 36);
-        compNets.setMargin(new Insets(0, 0, 0, 0));
-        compNets.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        compNets.addActionListener(actionEvent -> compareNets());
-        compNets.setFocusPainted(false);
-        panel.add(compNets);
+        JPanel orbitPanel = new JPanel(false);
+        orbitPanel.setLayout(new GridLayout(1, 2));
 
-        JButton saveGDD = new JButton("<html>Get GDD</html>");
-        saveGDD.setBounds(posX, posY, 120, 36);
-        saveGDD.setMargin(new Insets(0, 0, 0, 0));
-        saveGDD.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        saveGDD.addActionListener(actionEvent -> getAndSaveGdd());
-        saveGDD.setFocusPainted(false);
-        panel.add(saveGDD);
+        String[] nodeString = {"Choose node"};
+        getNode = new JComboBox(nodeString);
+        getNode.setSelectedIndex(0);
+        getNode.addActionListener(actionEvent -> {
+            @SuppressWarnings("unchecked")
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            int selectedGraphlet = comboBox.getSelectedIndex();
 
-        JButton comp = new JButton("<html>Comp old nets</html>");
-        comp.setBounds(posX, posY, 120, 36);
-        comp.setMargin(new Insets(0, 0, 0, 0));
-        comp.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        comp.addActionListener(actionEvent -> compOldNets());
-        comp.setFocusPainted(false);
-        panel.add(comp);
+            if (!comboBox.getModel().getSelectedItem().equals("Choose node")) {
+                Node n = overlord.getWorkspace().getProject().getNodes().get(comboBox.getSelectedIndex());
+                int[] orbits = GraphletsCalculator.vectorOrbit(n, false);
 
-        JButton compGDDA = new JButton("<html>Compare GDDA for all nets</html>");
-        compGDDA.setBounds(posX, posY, 120, 36);
-        compGDDA.setMargin(new Insets(0, 0, 0, 0));
-        compGDDA.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        compGDDA.addActionListener(actionEvent -> compareAllGDDA());
-        compGDDA.setFocusPainted(false);
-        panel.add(compGDDA);
+                orbitResultsArea.setText("");
+                for (int i = 0; i < orbits.length; i++) {
+                    if (orbits[i] > 0) {
+                        orbitResultsArea.append("Orbit-" + i + " : " + orbits[i] + "\n");
+                    }
+                }
+            }
+        });
+        orbitPanel.add(getNode);
 
-        JButton compGDDAstar = new JButton("<html>Compare GDDA BASE-STAR</html>");
-        compGDDAstar.setBounds(posX, posY, 120, 36);
-        compGDDAstar.setMargin(new Insets(0, 0, 0, 0));
-        compGDDAstar.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        compGDDAstar.addActionListener(actionEvent -> compareAllGDDAstar());
-        compGDDAstar.setFocusPainted(false);
-        panel.add(compGDDAstar);
+        orbitResultsArea = new JTextArea(15, 20);
 
-        JButton compGDDALk = new JButton("<html>Compare GDDA BASE-CYCLE</html>");
-        compGDDALk.setBounds(posX, posY, 120, 36);
-        compGDDALk.setMargin(new Insets(0, 0, 0, 0));
-        compGDDALk.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        compGDDALk.addActionListener(actionEvent -> compareAllGDDALk());
-        compGDDALk.setFocusPainted(false);
-        panel.add(compGDDALk);
+        JScrollPane oscroll = new JScrollPane(orbitResultsArea);
+        oscroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        orbitPanel.add(oscroll);
+        panel.add(orbitPanel);
 
+        JPanel saveButtons = new JPanel();
 
-        JButton compGDDAcycle = new JButton("<html>Compare GDDA BASE-CYCLE</html>");
-        compGDDAcycle.setBounds(posX, posY, 120, 36);
-        compGDDAcycle.setMargin(new Insets(0, 0, 0, 0));
-        compGDDAcycle.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        compGDDAcycle.addActionListener(actionEvent -> compareAllGDDAcycle());
-        compGDDAcycle.setFocusPainted(false);
-        panel.add(compGDDAcycle);
+        JButton saveGDDA = new JButton("Save orbits");
+        saveGDDA.addActionListener(actionEvent -> {
+            JFileChooser fc = new JFileChooser();
+            int returnVal = fc.showSaveDialog(HolmesGraphlets.this);
+            saveGDDA(fc.getSelectedFile().getAbsolutePath());
+        });
 
-
-        JButton nnn = new JButton("<html>Compare GDDA with all variants</html>");
-        nnn.setBounds(posX, posY, 120, 36);
-        nnn.setMargin(new Insets(0, 0, 0, 0));
-        nnn.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        nnn.addActionListener(actionEvent -> compareALLVariantsGDDA());
-        nnn.setFocusPainted(false);
-        panel.add(nnn);
-
-
-        JButton test = new JButton("<html>Test Button/html>");
-        test.setBounds(posX, posY, 120, 36);
-        test.setMargin(new Insets(0, 0, 0, 0));
-        test.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        test.addActionListener(actionEvent -> collectGDDAFromFiles());
-        test.setFocusPainted(false);
-        panel.add(test);
+        saveButtons.setLayout(new GridLayout(1, 2));
+        saveButtons.add(saveGDDA);
+        panel.add(saveButtons);
 
         return panel;
     }
 
-    private void compareALLVariantsGDDA() {
-        //NetGenerator ng = new NetGenerator(true);
-
-        //compareAllGDDA();
-        compareGDDA("BASE", "P3VARIANT");
-        compareGDDA("BASE", "C6VARIANT");
-        compareGDDA("BASE", "E2VARIANT");
-        compareGDDA("BASE", "K4LkVARIANT");
-        compareGDDA("BASE", "K4LVARIANT");
-        compareGDDA("BASE", "S4VARIANT");
-        compareGDDA("BASE", "SS4VARIANT");
-        compareGDDA("BASE", "SSS4VARIANT");
-        compareGDDA("BASE", "ALLVARIANT");
-
-        compareGDDA("K4LkVARIANT", "K4LkVARIANT");
-
-        compareGDDA("S4VARIANT", "SS4VARIANT");
-        compareGDDA("S4VARIANT", "SSS4VARIANT");
-        compareGDDA("SS4VARIANT", "SSS4VARIANT");
-
-        compareGDDA("P3VARIANT", "C6VARIANT");
-        compareGDDA("P3VARIANT", "E2VARIANT");
-        compareGDDA("P3VARIANT", "K4LkVARIANT");
-        compareGDDA("P3VARIANT", "K4LVARIANT");
-
-        compareGDDA("C6VARIANT", "E2VARIANT");
-        compareGDDA("C6VARIANT", "K4LkVARIANT");
-        compareGDDA("C6VARIANT", "K4LVARIANT");
-
-        compareGDDA("E2VARIANT", "K4LkVARIANT");
-        compareGDDA("E2VARIANT", "K4LVARIANT");
-    }
-
-    private void collectGDDAFromFiles(){
-/*
-        collectGDDAFromFiles("BASE-SS4VARIANT4");
-        collectGDDAFromFiles("BASE-SS4VARIANT5");
-
-
-        collectGDDAFromFiles("BASE-SSS4VARIANT4");
-        collectGDDAFromFiles("BASE-SSS4VARIANT5");
-*/
-
-        collectGDDAFromFiles("BASE-ALLVARIANT4");
-        collectGDDAFromFiles("BASE-ALLVARIANT5");
-        /*
-        collectGDDAFromFiles("BASE-C6VARIANT4");
-        collectGDDAFromFiles("BASE-C6VARIANT5");
-
-        collectGDDAFromFiles("BASE-S4VARIANT4");
-        collectGDDAFromFiles("BASE-S4VARIANT5");
-
-        collectGDDAFromFiles("BASE-P3VARIANT4");
-        collectGDDAFromFiles("BASE-P3VARIANT5");
-
-        collectGDDAFromFiles("BASE-E2VARIANT4");
-        collectGDDAFromFiles("BASE-E2VARIANT5");
-
-        collectGDDAFromFiles("BASE-K4LVARIANT4");
-        collectGDDAFromFiles("BASE-K4LVARIANT5");
-
-        collectGDDAFromFiles("BASE-K4LkVARIANT4");
-        collectGDDAFromFiles("BASE-K4LkVARIANT5");
-        */
-    }
-
-
-
-    private void collectGDDAFromFiles(String name) {
-        String sciezka = "/home/Szavislav/Eksperyment/Wyniki/";
-
-        Double[][] minTab = new Double[50][50];
-        Double[][] maxTab = new Double[50][50];
-        Double[][] avarage = new Double[50][50];
-        Double[][] ravarage = new Double[50][50];
-
-        DataInputStream in = null;
-        try {
-            in = new DataInputStream(new FileInputStream(sciezka + name+".txt"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
-        String wczytanaLinia = null;
-        try {
-            int i = -1;
-            int j = -1;
-            double min = -1;
-            double max = -1;
-            double avg = -1;
-            double ravg = -1;
-
-            while ((wczytanaLinia = buffer.readLine()) != null) {
-
-                if (wczytanaLinia.contains("==")) {
-                    wczytanaLinia = wczytanaLinia.replace("==", "");
-                    String[] line = wczytanaLinia.split("-");
-                    i = Integer.parseInt(line[0]);
-                    j = Integer.parseInt(line[1]);
-                }
-
-                if (wczytanaLinia.contains("min")) {
-                    String[] line = wczytanaLinia.split("\t");
-                    min = Double.parseDouble(line[1]);
-                }
-                if (wczytanaLinia.contains("max")) {
-                    String[] line = wczytanaLinia.split("\t");
-                    max = Double.parseDouble(line[1]);
-                }
-                if (wczytanaLinia.contains("avarage") && !wczytanaLinia.contains("reduced")) {
-                    String[] line = wczytanaLinia.split("\t");
-                    avg = Double.parseDouble(line[1]);
-                }
-                if (wczytanaLinia.contains("reduced")) {
-                    String[] line = wczytanaLinia.split("\t");
-                    ravg = Double.parseDouble(line[1]);
-
-                    if (i < 45 && j < 45) {
-                        minTab[i][j] = min;
-                        maxTab[i][j] = max;
-                        avarage[i][j] = avg;
-                        ravarage[i][j] = ravg;
-                    }
-                    min = -1;
-                    max = -1;
-                    avg = -1;
-                    ravg = -1;
-                }
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            writeToCSV(minTab, maxTab, avarage, ravarage, sciezka + name+".csv");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void writeToCSV(Double[][] minmatrix, Double[][] maxmatrix, Double[][] avgmatrix, Double[][] ravgmatrix, String path) throws IOException {
-        FileWriter writer = new FileWriter(path);
-
-        int x = 0;
-        int y = 0;
-        for (int i = 0; i < minmatrix.length; i = i + 5) {
-
-            for (int j = 0; j < minmatrix[0].length; j = j + 5) {
-                writer.append(String.valueOf(minmatrix[i][j]));
-                if (j != minmatrix[0].length - 1) {
-                    writer.append(",");
-                }
-                x++;
-            }
-            y++;
-            writer.append("\n");
-        }
-        writer.append("\n");
-
-        x = 0;
-        y = 0;
-        for (int i = 0; i < maxmatrix.length; i = i + 5) {
-
-            for (int j = 0; j < maxmatrix[0].length; j = j + 5) {
-                writer.append(String.valueOf(maxmatrix[i][j]));
-                if (j != maxmatrix[0].length - 1) {
-                    writer.append(",");
-                }
-                x++;
-            }
-            y++;
-            writer.append("\n");
-        }
-        writer.append("\n");
-
-        x = 0;
-        y = 0;
-        for (int i = 0; i < avgmatrix.length; i = i + 5) {
-
-            for (int j = 0; j < avgmatrix[0].length; j = j + 5) {
-                writer.append(String.valueOf(avgmatrix[i][j]));
-                if (j != avgmatrix[0].length - 1) {
-                    writer.append(",");
-                }
-                x++;
-            }
-            y++;
-            writer.append("\n");
-        }
-        writer.append("\n");
-
-        x = 0;
-        y = 0;
-        for (int i = 0; i < ravgmatrix.length; i = i + 5) {
-
-            for (int j = 0; j < ravgmatrix[0].length; j = j + 5) {
-                writer.append(String.valueOf(ravgmatrix[i][j]));
-                if (j != ravgmatrix[0].length - 1) {
-                    writer.append(",");
-                }
-                x++;
-            }
-            y++;
-            writer.append("\n");
-        }
-        writer.append("\n");
-
-        writer.close();
-    }
-
-
-    private void compareGDDA(String first, String second) {
-        System.out.println(first + " - " + second);
-        GraphletComparator gc98 = new GraphletComparator(98);
-        GraphletComparator gc600 = new GraphletComparator(600);
-        for (int i = 0; i < 45; i++) {
-            for (int j = 0; j < 45; j++) {
-                if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/"))) {
-
-                    double[] resultForGDDA4 = new double[100];
-                    double[] resultForGDDA5 = new double[100];
-                    for (int p1 = 0; p1 < 100; p1++) {
-
-                        if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p1 + "/"))) {
-                            resultForGDDA4[p1] = gc98.calcDGDDA(gc98.getPath(i, j, p1, first), gc98.getPath(i, j, p1, second));
-                            resultForGDDA5[p1] = gc600.calcDGDDA(gc600.getPath(i, j, p1, first), gc600.getPath(i, j, p1, second));
-                        } else {
-                            resultForGDDA4[p1] = -1;
-                        }
-                    }
-
-                    //write for 4
-                    String toSave4 = createBlockToSave(resultForGDDA4, i, j);
-                    BufferedWriter fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/" + first + "-" + second + "4"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    BufferedWriter totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/" + first + "-" + second + "4.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    //Write for 5
-
-                    String toSave5 = createBlockToSave(resultForGDDA5, i, j);
-                    fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/" + first + "-" + second + "5"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/" + first + "-" + second + "5.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-    }
-
-    private void compareAllGDDAP() {
-        GraphletComparator gc98 = new GraphletComparator(98);
-        GraphletComparator gc600 = new GraphletComparator(600);
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/"))) {
-
-                    double[] resultForGDDA4 = new double[100];
-                    double[] resultForGDDA5 = new double[100];
-                    for (int p1 = 0; p1 < 100; p1++) {
-
-                        if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p1 + "/"))) {
-                            resultForGDDA4[p1] = gc98.calcDGDDA(gc98.getPath(i, j, p1, "BASE"), gc98.getPath(i, j, p1, "P3VARIANT"));
-                            resultForGDDA5[p1] = gc600.calcDGDDA(gc600.getPath(i, j, p1, "BASE"), gc600.getPath(i, j, p1, "P3VARIANT"));
-                        } else {
-                            resultForGDDA4[p1] = -1;
-                        }
-                    }
-
-                    //write for 4
-                    String toSave4 = createBlockToSave(resultForGDDA4, i, j);
-                    BufferedWriter fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-P-4.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    BufferedWriter totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-P-4.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    //Write for 5
-
-                    String toSave5 = createBlockToSave(resultForGDDA5, i, j);
-                    fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-P-5.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-P-5.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-    }
-
-    private void compareAllGDDAE() {
-        GraphletComparator gc98 = new GraphletComparator(98);
-        GraphletComparator gc600 = new GraphletComparator(600);
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/"))) {
-
-                    double[] resultForGDDA4 = new double[100];
-                    double[] resultForGDDA5 = new double[100];
-                    for (int p1 = 0; p1 < 100; p1++) {
-
-                        if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p1 + "/"))) {
-                            resultForGDDA4[p1] = gc98.calcDGDDA(gc98.getPath(i, j, p1, "BASE"), gc98.getPath(i, j, p1, "E2VARIANT"));
-                            resultForGDDA5[p1] = gc600.calcDGDDA(gc600.getPath(i, j, p1, "BASE"), gc600.getPath(i, j, p1, "E2VARIANT"));
-                        } else {
-                            resultForGDDA4[p1] = -1;
-                        }
-                    }
-
-                    //write for 4
-                    String toSave4 = createBlockToSave(resultForGDDA4, i, j);
-                    BufferedWriter fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-E-4.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    BufferedWriter totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-E-4.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    //Write for 5
-
-                    String toSave5 = createBlockToSave(resultForGDDA5, i, j);
-                    fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-E-5.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-E-5.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-    }
-
-    private void compareAllGDDAL() {
-        GraphletComparator gc98 = new GraphletComparator(98);
-        GraphletComparator gc600 = new GraphletComparator(600);
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/"))) {
-
-                    double[] resultForGDDA4 = new double[100];
-                    double[] resultForGDDA5 = new double[100];
-                    for (int p1 = 0; p1 < 100; p1++) {
-
-                        if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p1 + "/"))) {
-                            resultForGDDA4[p1] = gc98.calcDGDDA(gc98.getPath(i, j, p1, "BASE"), gc98.getPath(i, j, p1, "K4LVARIANT"));
-                            resultForGDDA5[p1] = gc600.calcDGDDA(gc600.getPath(i, j, p1, "BASE"), gc600.getPath(i, j, p1, "K4LVARIANT"));
-                        } else {
-                            resultForGDDA4[p1] = -1;
-                        }
-                    }
-
-                    //write for 4
-                    String toSave4 = createBlockToSave(resultForGDDA4, i, j);
-                    BufferedWriter fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-L-4.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    BufferedWriter totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-L-4.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    //Write for 5
-
-                    String toSave5 = createBlockToSave(resultForGDDA5, i, j);
-                    fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-L-5.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-L-5.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-    }
-
-
-    private void compareAllGDDALk() {
-        GraphletComparator gc98 = new GraphletComparator(98);
-        GraphletComparator gc600 = new GraphletComparator(600);
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/"))) {
-
-                    double[] resultForGDDA4 = new double[100];
-                    double[] resultForGDDA5 = new double[100];
-                    for (int p1 = 0; p1 < 100; p1++) {
-
-                        if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p1 + "/"))) {
-                            resultForGDDA4[p1] = gc98.calcDGDDA(gc98.getPath(i, j, p1, "BASE"), gc98.getPath(i, j, p1, "K4LkVARIANT"));
-                            resultForGDDA5[p1] = gc600.calcDGDDA(gc600.getPath(i, j, p1, "BASE"), gc600.getPath(i, j, p1, "K4LkVARIANT"));
-                        } else {
-                            resultForGDDA4[p1] = -1;
-                        }
-                    }
-
-                    //write for 4
-                    String toSave4 = createBlockToSave(resultForGDDA4, i, j);
-                    BufferedWriter fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-Lk-4.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    BufferedWriter totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-Lk-4.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    //Write for 5
-
-                    String toSave5 = createBlockToSave(resultForGDDA5, i, j);
-                    fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-Lk-5.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-Lk-5.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-    }
-
-
-    private void compareAllGDDAcycle() {
-        GraphletComparator gc98 = new GraphletComparator(98);
-        GraphletComparator gc600 = new GraphletComparator(600);
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/"))) {
-
-                    double[] resultForGDDA4 = new double[100];
-                    double[] resultForGDDA5 = new double[100];
-                    for (int p1 = 0; p1 < 100; p1++) {
-
-                        if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p1 + "/"))) {
-                            resultForGDDA4[p1] = gc98.calcDGDDA(gc98.getPath(i, j, p1, "BASE"), gc98.getPath(i, j, p1, "C6VARIANT"));
-                            resultForGDDA5[p1] = gc600.calcDGDDA(gc600.getPath(i, j, p1, "BASE"), gc600.getPath(i, j, p1, "C6VARIANT"));
-                        } else {
-                            resultForGDDA4[p1] = -1;
-                        }
-                    }
-
-                    //write for 4
-                    String toSave4 = createBlockToSave(resultForGDDA4, i, j);
-                    BufferedWriter fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-CYCLE-4.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    BufferedWriter totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-CYCLE-4.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    //Write for 5
-
-                    String toSave5 = createBlockToSave(resultForGDDA5, i, j);
-                    fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-CYCLE-5.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-CYCLE-5.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-    }
-
-    private void compareAllGDDAstar() {
-
-
-        GraphletComparator gc98 = new GraphletComparator(98);
-        GraphletComparator gc600 = new GraphletComparator(600);
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/"))) {
-
-                    double[] resultForGDDA4 = new double[100];
-                    double[] resultForGDDA5 = new double[100];
-                    for (int p1 = 0; p1 < 100; p1++) {
-
-                        if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p1 + "/"))) {
-                            resultForGDDA4[p1] = gc98.calcDGDDA(gc98.getPath(i, j, p1, "BASE"), gc98.getPath(i, j, p1, "S4VARIANT"));
-                            resultForGDDA5[p1] = gc600.calcDGDDA(gc600.getPath(i, j, p1, "BASE"), gc600.getPath(i, j, p1, "S4VARIANT"));
-                        } else {
-                            resultForGDDA4[p1] = -1;
-                        }
-                    }
-
-                    //write for 4
-                    String toSave4 = createBlockToSave(resultForGDDA4, i, j);
-                    BufferedWriter fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-STAR-4.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    BufferedWriter totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-STAR-4.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    //Write for 5
-
-                    String toSave5 = createBlockToSave(resultForGDDA5, i, j);
-                    fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-STAR-5.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-STAR-5.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-    }
-
-
-    private void compareAllGDDA() {
-
-
-        GraphletComparator gc98 = new GraphletComparator(98);
-        GraphletComparator gc600 = new GraphletComparator(600);
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/"))) {
-
-                    double[] resultForGDDA4 = new double[100];
-                    double[] resultForGDDA5 = new double[100];
-                    for (int p1 = 1; p1 < 100; p1++) {
-
-                        if (Files.exists(Paths.get("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p1 + "/"))) {
-                            resultForGDDA4[p1] = gc98.calcDGDDA(gc98.getPath(i, j, 0, "BASE"), gc98.getPath(i, j, p1, "BASE"));
-                            resultForGDDA5[p1] = gc600.calcDGDDA(gc600.getPath(i, j, 0, "BASE"), gc600.getPath(i, j, p1, "BASE"));
-                        } else {
-                            resultForGDDA4[p1] = -1;
-                        }
-                    }
-
-                    //write for 4
-                    String toSave4 = createBlockToSave(resultForGDDA4, i, j);
-                    BufferedWriter fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-BASE-4.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    BufferedWriter totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-BASE-4.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave4);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    //Write for 5
-
-                    String toSave5 = createBlockToSave(resultForGDDA5, i, j);
-                    fileWriter = null;
-                    try {
-                        fileWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/i" + i + "j" + j + "/BASE-BASE-5.txt"));
-
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    totalResultWriter = null;
-                    try {
-                        totalResultWriter = new BufferedWriter(new FileWriter("/home/Szavislav/Eksperyment/Wyniki/BASE-BASE-5.txt", true));
-
-                        PrintWriter printWriter = new PrintWriter(totalResultWriter);
-                        printWriter.append(toSave5);
-                        printWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-    }
-
-    private String createBlockToSave(double[] resultForGDDA, int i, int j) {
-        String result = "";
-
-        result += "==" + i + "-" + j + "==\n\r";
-
-        double min = Arrays.stream(resultForGDDA).filter(x -> x > 0).min().getAsDouble();
-        int minID = IntStream.range(0, resultForGDDA.length)
-                .filter(x -> min == resultForGDDA[x])
-                .findFirst()
-                .orElse(-1);
-
-        double max = Arrays.stream(resultForGDDA).max().getAsDouble();
-        int maxID = IntStream.range(0, resultForGDDA.length)
-                .filter(x -> max == resultForGDDA[x])
-                .findFirst()
-                .orElse(-1);
-
-        double avarage = Arrays.stream(resultForGDDA).sum() / resultForGDDA.length;
-
-
-        ArrayList<Double> reduced = new ArrayList<>();
-        ArrayList<Double> toWrite = new ArrayList<>();
-        boolean minThrown = false;
-        boolean maxThrown = false;
-        for (int k = 0; k < resultForGDDA.length; k++) {
-            if (resultForGDDA[k] == min && !minThrown) {
-                minThrown = true;
-            } else if (resultForGDDA[k] == max && !maxThrown) {
-                maxThrown = true;
-            } else {
-                reduced.add(resultForGDDA[k]);
-            }
-            toWrite.add(resultForGDDA[k]);
-        }
-
-
-        double redAvarage = reduced.stream().mapToDouble(f -> f.doubleValue()).sum() / reduced.size();
-
-        result += "min\t" + min + "\t net: " + minID + "\n";
-
-        result += "max\t" + max + "\t net: " + maxID + "\n";
-
-        result += "avarage\t" + avarage + "\n";
-
-        result += "reduced avarage\t" + redAvarage + "\n";
-
-        result += "tab\n";
-
-        result += toWrite + "\n";
-
-        return result;
-    }
-
-    private void compOldNets() {
-
-        JFileChooser jFileChooser = new JFileChooser();
-        int returnVal = jFileChooser.showSaveDialog(this);
-
-        String path = jFileChooser.getSelectedFile().getPath();
-
-        JFileChooser jFileChooser2 = new JFileChooser();
-        int returnVal2 = jFileChooser2.showSaveDialog(this);
-
-        String path2 = jFileChooser2.getSelectedFile().getPath();
-
-        GraphletComparator gc = new GraphletComparator(98);
-
-        //System.out.println("GDDA dla covida = > " + gc.calcDGDDA(path, path2));
-    }
-
-    private void getAndSaveGdd() {
-        JFileChooser jFileChooser = new JFileChooser();
-        int returnVal = jFileChooser.showSaveDialog(this);
-
-        String path = jFileChooser.getSelectedFile().getPath();
-
+    private void saveGDDA(String path) {
         ArrayList<int[]> DGDV = new ArrayList<>();
 
-        GraphletsCalculator.generateGraphlets();
-
-        for (Node startNode : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
+        for (Node startNode : overlord.getWorkspace().getProject().getNodes()) {
             int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
             DGDV.add(vectorOrbit);
         }
 
-        //System.out.println("PATH -> " + path);
+        //DGDV
+        //writeDGDV(tmpdir + "-DGDV.txt", DGDV);
+
+        //DGDDA
         NetGenerator.writeDGDDA(path, DGDV);
     }
 
+    protected JComponent makeComparisonNetPane() {
+        JPanel panel = new JPanel(false);
+        panel.setLayout(new GridLayout(2, 1));
 
-    private void compareNets() {
-        GraphletComparator gc = new GraphletComparator(98);
-        gc.compare();
+        JPanel buttonPanel = new JPanel(false);
+        JButton getFirstNet = new JButton("Get First Net Orbits");
+        getFirstNet.setHorizontalAlignment(JButton.CENTER);
+        getFirstNet.addActionListener(actionEvent -> {
+            JFileChooser fc = new JFileChooser();
+            int returnVal = fc.showOpenDialog(HolmesGraphlets.this);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                pathToFirstFile = file.getAbsolutePath();
+                firstNetLoaded = true;
+                comparisonResultsArea.append("First net : " + file.getAbsolutePath() + "\n");
+            }
+        });
+
+        JButton getSecondNet = new JButton("Get Second Net orbits");
+        getSecondNet.setHorizontalAlignment(JButton.CENTER);
+        getSecondNet.addActionListener(actionEvent -> {
+            JFileChooser fc = new JFileChooser();
+            int returnVal = fc.showOpenDialog(HolmesGraphlets.this);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                pathToSecondFile = file.getAbsolutePath();
+                secondNetLoaded = true;
+                comparisonResultsArea.append("Second net  : " + file.getAbsolutePath() + "\n");
+            }
+        });
+
+        String[] sizeString = {"3-node graphlets", "4-node graphlets", "5-node graphlets"};
+        getSizeForComparison = new JComboBox(sizeString);
+        getSizeForComparison.setSelectedIndex(2);
+
+        JButton compare = new JButton("Compare");
+        compare.setHorizontalAlignment(JButton.CENTER);
+        compare.addActionListener(actionEvent -> {
+            if (firstNetLoaded && secondNetLoaded)
+                graphletCompare();
+        });
+
+
+        buttonPanel.setLayout(new GridLayout(1, 4));
+        buttonPanel.add(getFirstNet);
+        buttonPanel.add(getSecondNet);
+        buttonPanel.add(getSizeForComparison);
+        buttonPanel.add(compare);
+
+
+        panel.add(buttonPanel, BorderLayout.NORTH);
+
+        comparisonResultsArea = new JTextArea(15, 20);
+
+        JScrollPane cscroll = new JScrollPane(comparisonResultsArea);
+        cscroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        panel.add(cscroll, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    private void generateGraphletOrbits() {
+
+        switch (getSize.getSelectedIndex()) {
+            case 0:
+                GraphletsCalculator.generateGraphletsNode3();
+                break;
+            case 1:
+                GraphletsCalculator.generateGraphletsNode4();
+                break;
+            case 2:
+                GraphletsCalculator.generateGraphletsNode5();
+                break;
+        }
+
+        //check all net for graphlets and orbits
+        GraphletsCalculator.getFoundGraphlets();
+
+        graphletResultsArea.setText("");
+        for (int i = 0; i < GraphletsCalculator.graphetsList.size(); i++) {
+            int finalI = i;
+            long val = GraphletsCalculator.uniqGraphlets.stream().filter(x -> x.getGraphletID() == finalI).count();
+            //if(val!=0) {
+            graphletResultsArea.append("Graphlet-" + i + " : " + val + "\n");
+            //}
+        }
+
+        String[] resultString = new String[GraphletsCalculator.uniqGraphlets.size()];
+        for (int i = 0; i < GraphletsCalculator.uniqGraphlets.size(); i++) {
+            GraphletsCalculator.Struct st = GraphletsCalculator.uniqGraphlets.get(i);
+            resultString[i] = i + " : Graphlet ID " + st.getGraphletID();
+        }
+
+        //graphletResult = new JComboBox(resultString);
+        graphletResult.setModel(new DefaultComboBoxModel(resultString));
+        graphletResult.setEnabled(true);
+        graphletResult.updateUI();
+
+        //ORBITY
+        String[] NoderesultString = new String[overlord.getWorkspace().getProject().getNodes().size()];
+        for (int i = 0; i < overlord.getWorkspace().getProject().getNodes().size(); i++) {
+            Node n = overlord.getWorkspace().getProject().getNodes().get(i);
+            NoderesultString[i] = i + " : " + n.getType() + " - " + n.getName();
+        }
+
+        getNode.setModel(new DefaultComboBoxModel(NoderesultString));
+
+        /*
+        for(int j = 0 ; j < GraphletsCalculator.graphlets.get(0).size();j++) {
+            for (int i = 0; i < GraphletsCalculator.graphlets.size(); i++) {
+                System.out.print(GraphletsCalculator.graphlets.get(i).get(j).size() + ",");
+            }
+            System.out.println();
+        }
+        */
+    }
+
+    private void graphletCompare() {
+        int orbNumber = 17;
+
+        switch (getSizeForComparison.getSelectedIndex()) {
+            case 0:
+                orbNumber = 17;
+                break;
+            case 1:
+                orbNumber = 98;
+                break;
+            case 2:
+                orbNumber = 600;
+                break;
+            default:
+                orbNumber = 600;
+                break;
+        }
+
+        GraphletComparator gc = new GraphletComparator(orbNumber);
+
+        double[] result = gc.calcDGDDApartitioned(pathToFirstFile, pathToSecondFile);
+
+        comparisonResultsArea.append("Results:\n");
+        comparisonResultsArea.append("GDDA : " + DoubleStream.of(result).sum() / orbNumber + "\n");
+        comparisonResultsArea.append("\nPartial :\n");
+        for (int i = 0; i < result.length; i++) {
+            comparisonResultsArea.append("Orbit " + i + " : " + result[i] + "\n");
+
+        }
+
     }
 
     private void paintGraphlet(GraphletsCalculator.Struct graphletStructure) {
@@ -1244,38 +340,4 @@ public class HolmesGraphlets extends JFrame {
             element.setColor(true, Color.green);
         }
     }
-
-    private void generateGraphletOrbits() {
-        GraphletsCalculator.generateGraphlets();
-        GraphletsCalculator.getFoundGraphlets();
-
-
-        for(int j = 0 ; j < GraphletsCalculator.graphlets.get(0).size();j++)
-        {
-        for (int i = 0; i < GraphletsCalculator.graphlets.size(); i++) {
-                System.out.print(GraphletsCalculator.graphlets.get(i).get(j).size() + ",");
-            }
-            System.out.println();
-        }
-
-        ArrayList<String> data = new ArrayList<>();
-        for (int i = 0; i < GraphletsCalculator.graphlets.size(); i++) {
-            data.add("Orbita : " + i);
-        }
-        orbitData = data.stream().toArray(String[]::new);
-
-        //orbitDataSorted =
-        orbit.setModel(new DefaultComboBoxModel<>(orbitData));
-
-        ArrayList<String> dataG = new ArrayList<>();
-        for (int i = 0; i < GraphletsCalculator.uniqGraphlets.size(); i++) {
-            dataG.add("Graphlet " + GraphletsCalculator.uniqGraphlets.get(i).getGraphletID() + " : " + i);
-        }
-
-        graphDataUniq = dataG.stream().toArray(String[]::new);
-
-        graphletListUniq.setModel(new DefaultComboBoxModel<>(graphDataUniq));
-    }
-
-
 }
