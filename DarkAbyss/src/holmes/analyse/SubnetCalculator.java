@@ -1,5 +1,6 @@
 package holmes.analyse;
 
+import holmes.analyse.comparison.GraphletComparator;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
@@ -79,6 +80,9 @@ public class SubnetCalculator implements Serializable{
             allTransitions.remove(firstTransition);
             temporaryList = findFunctionalTransition(temporaryList);
             functionalSubNets.add(new SubNet(SubNetType.ZAJCEV, temporaryList, null, null, null, null));
+
+            //GraphletComparator gc = new GraphletComparator(600);
+            //gc.compareNetdiv();
         }
     }
 

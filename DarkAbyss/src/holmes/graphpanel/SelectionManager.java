@@ -87,7 +87,7 @@ public class SelectionManager {
 	 * Metoda zwracająca listę łuków sieci.
 	 * @return ArrayList[Arc] - lista łuków
 	 */
-	private ArrayList<Arc> getGraphPanelArcs() {
+	public ArrayList<Arc> getGraphPanelArcs() {
 		return graphPanelArcs;
 	}
 

@@ -2,6 +2,7 @@ package holmes.windows;
 
 import holmes.analyse.SubnetCalculator;
 import holmes.analyse.comparison.DecoComparisonCalculator;
+import holmes.analyse.comparison.GraphletComparator;
 import holmes.analyse.comparison.SubnetComparator;
 import holmes.analyse.comparison.structures.GreatCommonSubnet;
 import holmes.analyse.comparison.structures.Subnet;

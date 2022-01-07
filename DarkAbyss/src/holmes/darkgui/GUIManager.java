@@ -158,8 +158,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesGraphlets windowsGraphlet;
 	private HolmesLabelComparison labelComparison;
 	private HolmesBranchVerticesPrototype windowsBranch;
-	private HolmesSubnetComparison windowsComp;
-	
+	//private HolmesSubnetComparison windowsComp;
+	private HolmesComparisonModule windowsComp;
+	private HolmesReductionPrototype windowReduction;
+
+
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	private boolean inaReady = true;
 	
@@ -1406,9 +1409,19 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void createComparisonnWindow() {
 		if(windowsComp == null) {
-			windowsComp = new HolmesSubnetComparison();
+			windowsComp = new HolmesComparisonModule();
 		}
 	}
+
+	/**
+	 * Metoda tworzy prototypowe okno do redukcji sieci.
+	 */
+	public void createReductionWindow() {
+		if(windowReduction == null) {
+			windowReduction = new HolmesReductionPrototype();
+		}
+	}
+
 
 	/**
 	 * Metoda pokazuje okno analizatora wykluczeń.
@@ -1428,6 +1441,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public void showGraphletsWindow() {
 		if(windowsGraphlet != null) {
 			windowsGraphlet.setVisible(true);
+		}
+	}
+
+	public void showReductionsWindow() {
+		if(windowReduction != null) {
+			windowReduction.setVisible(true);
 		}
 	}
 

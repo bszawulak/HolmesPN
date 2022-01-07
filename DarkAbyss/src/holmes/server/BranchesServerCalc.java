@@ -19,18 +19,19 @@ public class BranchesServerCalc {
     public int index_p = 0;
     public int index_d = 0;
 
+    String pathToFiles = "/home/labnanobio-01/Dokumenty/Eksperyment/";
+
     public BranchesServerCalc() {
     }
 
-    public void Compare() {
+    public void CompareDensity() {
         for (int d = 99; d < 302; d++) {
             int i = 40;
             int j = 40;
             for (int p = 0; p < 100; p++) {
 
-                PetriNet pn1 = loadNet("/home/bartek/Eksperyment/Wyniki/d" + index_d + "i40j40/d" + index_d + "i40j40p" + index_p + "/d" + index_d + "i40j40p" + index_p + "-BASE.pnt", 0);
-                //PetriNet pn2 = loadNet("/home/Szavislav/i0j0p0-S4VARIANT.pnt", 1);
-                PetriNet pn2 = loadNet("/home/bartek/Eksperyment/Wyniki/d" + index_d + "i40j40/d" + index_d + "i40j40p" + index_p + "/d" + index_d + "i40j40p" + index_p + "-1S.pnt", 1);
+                PetriNet pn1 = loadNet(pathToFiles + "Wyniki/d" + index_d + "i40j40/d" + index_d + "i40j40p" + index_p + "/d" + index_d + "i40j40p" + index_p + "-BASE.pnt", 0);
+                PetriNet pn2 = loadNet(pathToFiles + "Wyniki/d" + index_d + "i40j40/d" + index_d + "i40j40p" + index_p + "/d" + index_d + "i40j40p" + index_p + "-1S.pnt", 1);
 
                 ArrayList<BranchVertex> lbv1 = calcBranches(pn1);
                 ArrayList<BranchVertex> lbv2 = calcBranches(pn2);
@@ -39,12 +40,12 @@ public class BranchesServerCalc {
                 index_d = d;
                 index_p = p;
                 //is type, degree and endpoints type the same
-                comparison0(lbv1, lbv2);
-                comparison1(lbv1, lbv2);
-                comparison2(lbv1, lbv2);
-                comparison3(lbv1, lbv2);
+                comparison0(lbv1, lbv2,"");
+                comparison1(lbv1, lbv2,"");
+                comparison2(lbv1, lbv2,"");
+                comparison3(lbv1, lbv2,"");
                 //---------------------
-                comparison4(lbv1, lbv2);
+                comparison4(lbv1, lbv2,"");
             }
         }
 
@@ -108,6 +109,50 @@ public class BranchesServerCalc {
          * sprawdź typy i ISTOTNOŚĆ endpointów
          */
 
+    }
+
+    public void Compare() {
+        for (int i = 0 ; i < 41 ; i=i+5) {
+            index_i=i;
+            System.out.print("i"+i);
+            for (int j = 0; j < 41; j = j + 5) {
+                index_j=j;
+                System.out.print("j"+j);
+                for (int p = 0; p < 100; p++) {
+                    index_p=p;
+                    //compareWithExtensionOfType("S4VARIANT");
+                    //compareWithExtensionOfType("C6VARIANT");
+                    //compareWithExtensionOfType("E2VARIANT");
+                    //compareWithExtensionOfType("P3VARIANT");
+                    compareWithExtensionOfType("P3OVARIANT");
+                    //compareWithExtensionOfType("K4LVARIANT");
+                    //compareWithExtensionOfType("K4LkVARIANT");
+                    //compareWithExtensionOfType("SS4VARIANT");
+                    //compareWithExtensionOfType("SSS4VARIANT");
+                    //compareWithExtensionOfType("ALLVARIANT");
+                }
+
+                System.out.println("p100");
+            }
+        }
+    }
+
+    private void compareWithExtensionOfType(String type) {
+        //System.out.print(type+":");
+        PetriNet pn1 = loadNet(pathToFiles+"Wyniki/i"+index_i+"j"+index_j+"/i"+index_i+"j"+index_j+"p"+index_p +"/i"+index_i+"j"+index_j+"p" +index_p + "-BASE.pnt", 0);
+        //PetriNet pn2 = loadNet("/home/Szavislav/i0j0p0-S4VARIANT.pnt", 1);
+        PetriNet pn2 = loadNet(pathToFiles+"Wyniki/i"+index_i+"j"+index_j+"/i"+index_i+"j"+index_j+"p"+index_p +"/i"+index_i+"j"+index_j+"p" +index_p + "-"+type+".pnt", 1);
+
+        ArrayList<BranchVertex> lbv1 = calcBranches(pn1);
+        ArrayList<BranchVertex> lbv2 = calcBranches(pn2);
+
+        comparison0(lbv1, lbv2,type);
+        comparison1(lbv1, lbv2,type);
+        comparison2(lbv1, lbv2,type);
+        comparison3(lbv1, lbv2,type);
+        //---------------------
+        comparison4(lbv1, lbv2,type);
+        //System.out.println();
     }
 
     private void comparisonV(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
@@ -182,7 +227,7 @@ public class BranchesServerCalc {
 
     }
 
-    private void comparison0(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
+    private void comparison0(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type) {
         ArrayList<BranchVertex> tlbv1 = new ArrayList<>(lbv1);
         ArrayList<BranchVertex> tlbv2 = new ArrayList<>(lbv2);
 
@@ -192,7 +237,7 @@ public class BranchesServerCalc {
 
         while (tlbv1.size() > 0 && tlbv2.size() > 0) {
             if (maping.size() == 43) {
-                System.out.println("GDzie jest bład");
+                //System.out.println("GDzie jest bład");
             }
             //max from 1
             if (tlbv1.get(0).getDegreeOfBV() >= tlbv2.get(0).getDegreeOfBV()) {
@@ -227,7 +272,7 @@ public class BranchesServerCalc {
                         maping.put(branchVertFirst, tlbv2.get(maxIndex.get(index)));
                         tlbv2.remove(tlbv2.get(maxIndex.get(index)));
                     } else {
-                        System.out.println();
+                        //System.out.println();
                     }
                 }
                 //tlbv1.remove(branchVertFirst);
@@ -270,11 +315,11 @@ public class BranchesServerCalc {
         }
 
         //calc sim
-        System.out.println("C 0 ");
-        showSimilarity(lbv1, lbv2, maping, "V0");
+        //System.out.print("C 0 ");
+        showSimilarity(lbv1, lbv2, maping, "V0",type);
     }
 
-    private void comparison1(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
+    private void comparison1(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type) {
         ArrayList<BranchVertex> tlbv1 = new ArrayList<>(lbv1);
         ArrayList<BranchVertex> tlbv2 = new ArrayList<>(lbv2);
 
@@ -361,11 +406,11 @@ public class BranchesServerCalc {
 
         //calc sim
 
-        System.out.println("C 1 ");
-        showSimilarity(lbv1, lbv2, maping, "V1");
+        //System.out.print("C 1 ");
+        showSimilarity(lbv1, lbv2, maping, "V1",type);
     }
 
-    private void comparison2(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
+    private void comparison2(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type) {
         ArrayList<BranchVertex> tlbv1 = new ArrayList<>(lbv1);
         ArrayList<BranchVertex> tlbv2 = new ArrayList<>(lbv2);
 
@@ -470,11 +515,11 @@ public class BranchesServerCalc {
 
         //calc sim
 
-        System.out.println("C 2 ");
-        showSimilarity(lbv1, lbv2, maping, "V2");
+        //System.out.print("C2");
+        showSimilarity(lbv1, lbv2, maping, "V2",type);
     }
 
-    private void comparison3(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
+    private void comparison3(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type) {
         ArrayList<BranchVertex> tlbv1 = new ArrayList<>(lbv1);
         ArrayList<BranchVertex> tlbv2 = new ArrayList<>(lbv2);
 
@@ -616,12 +661,12 @@ public class BranchesServerCalc {
 
         //calc sim
 
-        System.out.println("C 3 ");
-        showSimilarity(lbv1, lbv2, maping, "V3");
+        //System.out.print("C3");
+        showSimilarity(lbv1, lbv2, maping, "V3",type);
     }
 
 
-    private void comparison4(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
+    private void comparison4(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type) {
         ArrayList<BranchVertex> tlbv1 = new ArrayList<>(lbv1);
         ArrayList<BranchVertex> tlbv2 = new ArrayList<>(lbv2);
 
@@ -776,12 +821,12 @@ public class BranchesServerCalc {
         }
 
         //calc sim
-        System.out.println("C 4 ");
-        showSimilarity(lbv1, lbv2, maping, "V4");
+        //System.out.print("C4");
+        showSimilarity(lbv1, lbv2, maping, "V4",type);
     }
 
 
-    private void showSimilarity(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, HashMap<BranchVertex, BranchVertex> maping, String type) {
+    private void showSimilarity(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, HashMap<BranchVertex, BranchVertex> maping, String type,String t) {
         int distance = lbv1.size() - maping.size() + lbv2.size() - maping.size();
         //System.out.println("Dystans : " + distance);
         double ssimilarity = (double) (2 * maping.size()) / (lbv1.size() + lbv2.size());
@@ -792,22 +837,23 @@ public class BranchesServerCalc {
 
 
         try {
-            writeSimilarity(lbv1, lbv2, maping, type);
+            writeSimilarity(lbv1, lbv2, maping, type,t);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void writeSimilarity(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, HashMap<BranchVertex, BranchVertex> maping, String type) throws IOException {
-        FileWriter writer = new FileWriter("/home/bartek/Eksperyment/Wyniki/d" + index_d + "i40j40/d" + index_d + "i40j40p" + index_p + "/branch-similarity-" + type + ".txt");
-        writer.append("Type : ").append(type).append("\n");
+    private void writeSimilarity(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, HashMap<BranchVertex, BranchVertex> maping, String type,String t) throws IOException {
+        FileWriter writer = new FileWriter(pathToFiles+"Wyniki/i"+index_i+"j"+index_j+"/i"+index_i+"j"+index_j+"p" + index_p + "/branch-similarity-" + type + ".txt",true);
+        writer.append("Type : ").append(type+t).append("\n");
         int distance = lbv1.size() - maping.size() + lbv2.size() - maping.size();
         writer.append("Dystans : ").append(String.valueOf(distance)).append("\n");
         double ssimilarity = (double) (2 * maping.size()) / (lbv1.size() + lbv2.size());
         writer.append("Sørensen : ").append(String.valueOf(ssimilarity)).append("\n");
         double jsimilarity = (double) (maping.size()) / (lbv1.size() + lbv2.size() - maping.size());
         writer.append("Jackard : ").append(String.valueOf(jsimilarity)).append("\n");
+        writer.append("Jackard : ").append(String.valueOf(jsimilarity)).append("----\n");
         writer.close();
     }
 
@@ -1014,7 +1060,8 @@ public class BranchesServerCalc {
                 double sumDist = 0;
 
                 for (int p = 0; p < 100; p++) {
-                    packtetContent[p] = readData("/home/bartek/Eksperyment/Wyniki/d" + d + "i40j40/d" + d + "i40j40p" + p + "/branch-similarity-V" + v + ".txt");
+                    //TODO
+                    packtetContent[p] = readData(pathToFiles+"Wyniki/d" + d + "i40j40/d" + d + "i40j40p" + p + "/branch-similarity-V" + v + ".txt");
                     if (packtetContent[p][0] < minDist)
                         minDist = packtetContent[p][0];
                     if (packtetContent[p][1] < minSoren)
@@ -1053,7 +1100,7 @@ public class BranchesServerCalc {
             System.out.println("d = " + d);
         }
         try {
-            writeResult("/home/bartek/Eksperyment/resultOfBranchCOmparison.csv", result);
+            writeResult(pathToFiles+"resultOfBranchCOmparison.csv", result);
         } catch (IOException e) {
             e.printStackTrace();
         }

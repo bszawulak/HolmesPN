@@ -1,5 +1,6 @@
 package holmes.analyse.comparison;
 
+import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.PetriNetData;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
@@ -9,17 +10,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-public class LabeNetComparator {
+public class LabelNetComparator {
 
 
     public ArrayList<MatchedVertex> matchedVertices = new ArrayList<>();
     public PetriNetData fPND;
     public PetriNetData sPND;
 
-    public LabeNetComparator(PetriNetData f, PetriNetData s) {
+    public LabelNetComparator(PetriNetData f, PetriNetData s) {
         fPND=f;
         sPND=s;
     }
+
+
 
     public void calcSimilarities(){
 

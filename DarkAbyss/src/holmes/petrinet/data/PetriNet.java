@@ -341,6 +341,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.getArcs().addAll(arcs);
 		this.getNodes().addAll(nodes);
 	}
+
+	public void addArc(Arc a){
+		this.getArcs().add(a);
+	}
 	
 	/**
 	 * Metoda pozwala ustawić nowe łuki dla danej sieci. Zmiana

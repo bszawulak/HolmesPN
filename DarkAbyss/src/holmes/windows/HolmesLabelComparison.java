@@ -2,7 +2,7 @@ package holmes.windows;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
-import holmes.analyse.comparison.LabeNetComparator;
+import holmes.analyse.comparison.LabelNetComparator;
 import holmes.files.io.ProjectReader;
 import holmes.petrinet.data.PetriNetData;
 
@@ -42,11 +42,21 @@ public class HolmesLabelComparison extends JFrame {
         panel.add(getSecondNetButton);
 
         JButton compareButton = new JButton("Compare");
-        getSecondNetButton.setBounds(400, 10, 150, 20);
+        compareButton.setBounds(400, 10, 150, 20);
         compareButton.addActionListener(actionEvent -> compare(actionEvent));
         panel.add(compareButton);
 
+        JButton calc = new JButton("Compare");
+        calc.setBounds(500, 10, 150, 20);
+        calc.addActionListener(actionEvent -> calculate(actionEvent));
+        panel.add(calc);
+
         return panel;
+    }
+
+    private void calculate(ActionEvent actionEvent) {
+        HolmesGraphletsPrototype hgp = new HolmesGraphletsPrototype("C:\\Eksperyment\\Wyniki\\");
+        hgp.compareDRGFwithoutDensity();
     }
 
     private JPanel createOutputPanel(int x, int y, int width, int height) {
@@ -65,7 +75,7 @@ public class HolmesLabelComparison extends JFrame {
 
     private void compare(ActionEvent actionEvent) {
         if(fPND!=null && sPND!=null) {
-            LabeNetComparator lnc = new LabeNetComparator(fPND, sPND);
+            LabelNetComparator lnc = new LabelNetComparator(fPND, sPND);
             lnc.calcSimilarities();
 
             resultArea.append("---Differences from first Net---\n");

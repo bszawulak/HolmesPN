@@ -31,7 +31,7 @@ public class GraphletsCalculator {
 
     static int graphletNumber = 151;
 
-    static boolean multipleArcCheck = true;
+    public static boolean multipleArcCheck = true;
 
     public static void GraphletsCalculator() {
         generateGraphlets();
@@ -420,7 +420,7 @@ public class GraphletsCalculator {
         graphetsList.clear();
         globalOrbitMap.clear();
         uniqGraphlets.clear();
-        sortedGraphlets.clear();
+        sortedGraphlets.clear(); //TODO dupikaty
         graphlets.clear();
 
 
@@ -570,6 +570,10 @@ public class GraphletsCalculator {
                     //System.out.println("------->Multi--->" + multiplier);
                 }
                 foundGraphletsApp = nonMultiArcStruct;
+            }
+            else
+            {
+
             }
 
             return foundGraphletsApp.size();

@@ -524,19 +524,6 @@ public class DarkMenu extends JMenuBar {
 		});
 		analysisMenu.add(compWindowItem);
 
-
-		JMenuItem compLabWindowItem = new JMenuItem("Net Label comparison", KeyEvent.VK_9);
-		compLabWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
-		compLabWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK));
-		compLabWindowItem.getAccessibleContext().setAccessibleDescription("Comparison prototype");
-		compLabWindowItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().createLabelComparisonWindow();
-				GUIManager.getDefaultGUIManager().showLabelCompWindow();
-			}
-		});
-		analysisMenu.add(compLabWindowItem);
-
 		// Knockout window
 		JMenuItem graphletWindowItem = new JMenuItem("Graphlets", KeyEvent.VK_0);
 		graphletWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
@@ -549,6 +536,20 @@ public class DarkMenu extends JMenuBar {
 			}
 		});
 		analysisMenu.add(graphletWindowItem);
+
+
+		// reduction window
+		JMenuItem reductionWindowItem = new JMenuItem("Reduction", KeyEvent.VK_0);
+		reductionWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
+		reductionWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+		reductionWindowItem.getAccessibleContext().setAccessibleDescription("Decomposition analysis tools");
+		reductionWindowItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GUIManager.getDefaultGUIManager().createReductionWindow();
+				GUIManager.getDefaultGUIManager().showReductionsWindow();
+			}
+		});
+		analysisMenu.add(reductionWindowItem);
 
 
 		//*********************************************************************************************

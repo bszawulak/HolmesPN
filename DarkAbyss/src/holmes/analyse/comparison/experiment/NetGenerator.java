@@ -5,6 +5,7 @@ import holmes.analyse.SubnetCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.IdGenerator;
+import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 
 import javax.swing.*;
@@ -31,7 +32,10 @@ public class NetGenerator {
 
     IOprotocols io = new IOprotocols();
     //String directory = "/home/Szavislav/Eksperyment/Wyniki";
-    String directory = "/home/bartek/Eksperyment/Wyniki";
+    String directory = "/home/bszawulak/Dokumenty/Eksperyment/Wyniki";
+
+
+    String pathToFiles = "/home/labnanobio-01/Dokumenty/Eksperyment/";
 
     private void setNewDirectory(String path) {
         try {
@@ -102,6 +106,358 @@ public class NetGenerator {
         //DGDDA
         writeDGDDA(tmpdir + "-DGDDA.txt", DGDV);
 
+    }
+
+
+    public NetGenerator(String s){
+        GraphletsCalculator.generateGraphlets();
+            for (int i = 0; i < 41; i = i + 5) {
+                System.out.print("i" +i);
+                for (int j = 0; j < 41; j = j+5) {
+                    System.out.print("j" +j);
+                    for (int p = 0; p < 100; p++) {
+                        //PetriNet pn1 = compareSpecificType(i,j,p,path,"BASE");
+                        PetriNet pn2 = compareSpecificType(i,j,p,directory,"P3OVARIANT");
+
+                        ArrayList<int[]> DGDV = new ArrayList<>();
+                        //String tmpdir = directory + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p + "-P3VARIANT";
+
+                        SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(pn2.getArcs());
+                        String tmpdir = directory + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p + "-P3OVARIANT";
+                        //io.writePNT(tmpdir + ".pnt", sn.getSubPlaces(), sn.getSubTransitions(), sn.getSubArcs());
+                        DGDV = new ArrayList<>();
+
+                        for (Node startNode : sn.getSubNode()) {
+                            int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
+                            DGDV.add(vectorOrbit);
+                        }
+
+                        //DGDV
+                        writeDGDV(tmpdir + "-DGDV.txt", DGDV);
+
+                        //DGDDA
+                        writeDGDDA(tmpdir + "-DGDDA.txt", DGDV);
+                    }
+
+                    System.out.println("p");
+                }
+            }
+    }
+
+    private PetriNet  compareSpecificType(int i, int j, int p, String path,String type) {
+        IOprotocols io = new IOprotocols();
+        return io.serverReadPNT(path + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p + "-" + type + ".pnt", 99);
+    }
+
+
+    public NetGenerator()
+    {
+        GraphletsCalculator.generateGraphlets();
+        PetriNet pn = io.serverReadPNT("/home/Szavislav/Eksperyment/Distortion/BASE.pnt",99);
+
+        ArrayList<int[]> DGDV= new ArrayList<>();
+        SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(pn.getArcs());
+        for (Node startNode : sn.getSubNode()) {
+            int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
+            DGDV.add(vectorOrbit);
+        }
+        writeDGDV("/home/Szavislav/Eksperyment/Distortion/net-BASE" + "-DGDV.txt", DGDV);
+        writeDGDDA("/home/Szavislav/Eksperyment/Distortion/net-BASE" + "-DGDDA.txt", DGDV);
+
+        //SubnetCalculator.SubNet nsn = addStar4(cloneSubNet(sn));
+        for(int t =0 ; t < sn.getSubTransitions().size() ; t++) {
+            String tmpdir = "/home/Szavislav/Eksperyment/Distortion/net-"+t;
+            SubnetCalculator.SubNet nsn = addDistortion(cloneSubNet(sn),t,true);
+            io = new IOprotocols();
+            io.writePNT(tmpdir + "A.pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
+            DGDV = new ArrayList<>();
+            for (Node startNode : nsn.getSubNode()) {
+                int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
+                DGDV.add(vectorOrbit);
+            }
+            writeDGDV(tmpdir + "A" + "-DGDV.txt", DGDV);
+            writeDGDDA(tmpdir+ "A" + "-DGDDA.txt", DGDV);
+        }
+
+        for(int t =0 ; t < sn.getSubTransitions().size() ; t++) {
+            String tmpdir = "/home/Szavislav/Eksperyment/Distortion/net-"+t;
+            SubnetCalculator.SubNet nsn = addDistortion(cloneSubNet(sn),t,false);
+            IOprotocols io = new IOprotocols();
+            io.writePNT(tmpdir + "B.pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
+            DGDV = new ArrayList<>();
+            for (Node startNode : nsn.getSubNode()) {
+                int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
+                DGDV.add(vectorOrbit);
+            }
+            writeDGDV(tmpdir + "B"+ "-DGDV.txt", DGDV);
+            writeDGDDA(tmpdir + "B"+ "-DGDDA.txt", DGDV);
+        }
+    }
+
+    public NetGenerator(float f)
+    {
+        GraphletsCalculator.generateGraphlets();
+        PetriNet pn = io.serverReadPNT("/home/Szavislav/Eksperyment/Distortion/BASE.pnt",99);
+
+        ArrayList<int[]> DGDV= new ArrayList<>();
+        SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(pn.getArcs());
+
+        SubnetCalculator.SubNet nsn= addIndependentDistortion(sn);
+        io.writePNT("/home/Szavislav/Eksperyment/Distortion/BASE+sub.pnt",nsn.getSubPlaces(),nsn.getSubTransitions(),nsn.getSubArcs());
+        for (Node startNode : nsn.getSubNode()) {
+            int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
+            DGDV.add(vectorOrbit);
+        }
+        writeDGDV("/home/Szavislav/Eksperyment/Distortion/net-BASE+sub" + "-DGDV.txt", DGDV);
+        writeDGDDA("/home/Szavislav/Eksperyment/Distortion/net-BASE+sub" + "-DGDDA.txt", DGDV);
+
+    }
+
+    private SubnetCalculator.SubNet addDistortion(SubnetCalculator.SubNet sn, int position, boolean direction) {
+        ArrayList<Transition> listOfTransition = new ArrayList<>();
+        ArrayList<Place> listOfPlace = new ArrayList<>();
+        ArrayList<Arc> listOfArc = new ArrayList<>();
+        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 30));
+        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 60));
+        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 90));
+        Transition t4 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 120));
+        Transition t5 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 150));
+
+        Transition t6 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 180));
+        Transition t7 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 210));
+        Transition t8 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 240));
+        Transition t9 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 270));
+
+        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(100, 30));
+        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(100, 60));
+        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(100, 90));
+        Place p4 = new Place(IdGenerator.getNextId(), 99, new Point(100, 120));
+
+        Place p5 = new Place(IdGenerator.getNextId(), 99, new Point(100, 150));
+        Place p6 = new Place(IdGenerator.getNextId(), 99, new Point(100, 180));
+        Place p7 = new Place(IdGenerator.getNextId(), 99, new Point(100, 210));
+        Place p8 = new Place(IdGenerator.getNextId(), 99, new Point(100, 270));
+
+        t1.setComment("4L");
+        t2.setComment("4L");
+        t3.setComment("4L");
+        t4.setComment("4L");
+        t5.setComment("4L");
+        t6.setComment("4L");
+        t7.setComment("4L");
+        t8.setComment("4L");
+        t9.setComment("4L");
+
+        p1.setComment("4L");
+        p2.setComment("4L");
+        p3.setComment("4L");
+        p4.setComment("4L");
+        p5.setComment("4L");
+        p6.setComment("4L");
+        p7.setComment("4L");
+        p8.setComment("4L");
+
+        Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(p2.getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a5 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a6 = new Arc(p3.getElementLocations().get(0), t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(t1.getElementLocations().get(0), p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(p4.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a9 = new Arc(t2.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a11 = new Arc(t3.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a12 = new Arc(p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a13 = new Arc(t4.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a14 = new Arc(p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a15 = new Arc(t5.getElementLocations().get(0), p8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a16 = new Arc(p8.getElementLocations().get(0), t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        listOfTransition.add(t1);
+        listOfTransition.add(t2);
+        listOfTransition.add(t3);
+        listOfTransition.add(t4);
+        listOfTransition.add(t5);
+
+        listOfTransition.add(t6);
+        listOfTransition.add(t7);
+        listOfTransition.add(t8);
+        listOfTransition.add(t9);
+
+        listOfPlace.add(p1);
+        listOfPlace.add(p2);
+        listOfPlace.add(p3);
+        listOfPlace.add(p4);
+        listOfPlace.add(p5);
+        listOfPlace.add(p6);
+        listOfPlace.add(p7);
+        listOfPlace.add(p8);
+
+        listOfArc.add(a1);
+        listOfArc.add(a2);
+        listOfArc.add(a3);
+        listOfArc.add(a4);
+        listOfArc.add(a5);
+        listOfArc.add(a6);
+        listOfArc.add(a7);
+        listOfArc.add(a8);
+        listOfArc.add(a9);
+        listOfArc.add(a10);
+        listOfArc.add(a11);
+        listOfArc.add(a12);
+        listOfArc.add(a13);
+        listOfArc.add(a14);
+        listOfArc.add(a15);
+        listOfArc.add(a16);
+
+        //int index = getBaseNetTtansitionIndex(sn);
+        if(direction)
+            listOfArc.add(new Arc(p1.getLastLocation(), sn.getSubTransitions().get(position).getLastLocation(), Arc.TypeOfArc.NORMAL));
+        else
+            listOfArc.add(new Arc(sn.getSubTransitions().get(position).getLastLocation(),p1.getLastLocation(), Arc.TypeOfArc.NORMAL));
+
+        listOfTransition.addAll(new ArrayList<>(sn.getSubTransitions()));
+        listOfPlace.addAll(new ArrayList<>(sn.getSubPlaces()));
+        listOfArc.addAll(new ArrayList<>(sn.getSubArcs()));
+
+        return new SubnetCalculator.SubNet(listOfArc);
+    }
+
+    private SubnetCalculator.SubNet addIndependentDistortion(SubnetCalculator.SubNet sn) {
+        ArrayList<Transition> listOfTransition = new ArrayList<>();
+        ArrayList<Place> listOfPlace = new ArrayList<>();
+        ArrayList<Arc> listOfArc = new ArrayList<>();
+        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 30));
+        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 60));
+        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 90));
+        Transition t4 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 120));
+        Transition t5 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 150));
+
+        Transition t6 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 180));
+        Transition t7 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 210));
+        Transition t8 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 240));
+        Transition t9 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 270));
+
+        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(100, 30));
+        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(100, 60));
+        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(100, 90));
+        Place p4 = new Place(IdGenerator.getNextId(), 99, new Point(100, 120));
+
+        Place p5 = new Place(IdGenerator.getNextId(), 99, new Point(100, 150));
+        Place p6 = new Place(IdGenerator.getNextId(), 99, new Point(100, 180));
+        Place p7 = new Place(IdGenerator.getNextId(), 99, new Point(100, 210));
+        Place p8 = new Place(IdGenerator.getNextId(), 99, new Point(100, 270));
+
+        t1.setComment("4L");
+        t2.setComment("4L");
+        t3.setComment("4L");
+        t4.setComment("4L");
+        t5.setComment("4L");
+        t6.setComment("4L");
+        t7.setComment("4L");
+        t8.setComment("4L");
+        t9.setComment("4L");
+
+        p1.setComment("4L");
+        p2.setComment("4L");
+        p3.setComment("4L");
+        p4.setComment("4L");
+        p5.setComment("4L");
+        p6.setComment("4L");
+        p7.setComment("4L");
+        p8.setComment("4L");
+
+        Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(p2.getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a5 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a6 = new Arc(p3.getElementLocations().get(0), t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a7 = new Arc(t1.getElementLocations().get(0), p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a8 = new Arc(p4.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a9 = new Arc(t2.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a10 = new Arc(p5.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a11 = new Arc(t3.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a12 = new Arc(p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a13 = new Arc(t4.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a14 = new Arc(p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a15 = new Arc(t5.getElementLocations().get(0), p8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a16 = new Arc(p8.getElementLocations().get(0), t9.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+        listOfTransition.add(t1);
+        listOfTransition.add(t2);
+        listOfTransition.add(t3);
+        listOfTransition.add(t4);
+        listOfTransition.add(t5);
+
+        listOfTransition.add(t6);
+        listOfTransition.add(t7);
+        listOfTransition.add(t8);
+        listOfTransition.add(t9);
+
+        listOfPlace.add(p1);
+        listOfPlace.add(p2);
+        listOfPlace.add(p3);
+        listOfPlace.add(p4);
+        listOfPlace.add(p5);
+        listOfPlace.add(p6);
+        listOfPlace.add(p7);
+        listOfPlace.add(p8);
+
+        listOfArc.add(a1);
+        listOfArc.add(a2);
+        listOfArc.add(a3);
+        listOfArc.add(a4);
+        listOfArc.add(a5);
+        listOfArc.add(a6);
+        listOfArc.add(a7);
+        listOfArc.add(a8);
+        listOfArc.add(a9);
+        listOfArc.add(a10);
+        listOfArc.add(a11);
+        listOfArc.add(a12);
+        listOfArc.add(a13);
+        listOfArc.add(a14);
+        listOfArc.add(a15);
+        listOfArc.add(a16);
+
+        //int index = getBaseNetTtansitionIndex(sn);
+
+        listOfTransition.addAll(new ArrayList<>(sn.getSubTransitions()));
+        listOfPlace.addAll(new ArrayList<>(sn.getSubPlaces()));
+        listOfArc.addAll(new ArrayList<>(sn.getSubArcs()));
+
+        return new SubnetCalculator.SubNet(listOfArc);
+    }
+
+
+    public NetGenerator(int i_min, int i_max, int j_min, int j_max, int p_min, int p_max,boolean a) {
+        System.out.println("P3OVARIANT");
+        for (int i = i_min; i < i_max; i = i + 5) {
+            System.out.print("i"+i);
+            for (int j = j_min; j < j_max; j = j + 5) {
+                System.out.print("j"+j);
+                for (int p = p_min; p < p_max; p++) {
+                    IOprotocols io = new IOprotocols();
+                    PetriNet pn = io.serverReadPNT(directory+"/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p+"/i" + i + "j" + j + "p" + p+"-BASE.pnt" ,99);
+                    ArrayList<Arc> listOfArcs = pn.getArcs();
+                    SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(listOfArcs);
+                    SubnetCalculator.SubNet nsn = addParallel3One(sn);
+
+                    io.writePNT( directory+"/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p+"/i" + i + "j" + j + "p" + p+"-P3OVARIANT.pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
+                }
+                System.out.println("p100");
+            }
+        }
     }
 
     public NetGenerator(int i_min, int i_max, int j_min, int j_max, int p_min, int p_max) {
@@ -1152,6 +1508,55 @@ public class NetGenerator {
 
         int index = getBaseNetTtansitionIndex(sn);
         listOfArc.add(new Arc(p1.getLastLocation(), sn.getSubTransitions().get(index).getLastLocation(), Arc.TypeOfArc.NORMAL));
+        int index2 = getBaseNetTtansitionIndex(sn);
+        listOfArc.add(new Arc(sn.getSubTransitions().get(index2).getLastLocation(), p2.getLastLocation(), Arc.TypeOfArc.NORMAL));
+        listOfTransition.addAll(new ArrayList<>(sn.getSubTransitions()));
+        listOfPlace.addAll(new ArrayList<>(sn.getSubPlaces()));
+        listOfArc.addAll(new ArrayList<>(sn.getSubArcs()));
+
+        return new SubnetCalculator.SubNet(listOfArc);
+    }
+
+    public SubnetCalculator.SubNet addParallel3One(SubnetCalculator.SubNet sn) {
+        ArrayList<Transition> listOfTransition = new ArrayList<>();
+        ArrayList<Place> listOfPlace = new ArrayList<>();
+        ArrayList<Arc> listOfArc = new ArrayList<>();
+        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 30));
+        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 60));
+
+        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(100, 30));
+        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(100, 60));
+        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(100, 90));
+
+        Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(t1.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        Arc a5 = new Arc(t2.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a6 = new Arc(p3.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        t1.setComment("3P");
+        t2.setComment("3P");
+
+        p1.setComment("3P");
+        p2.setComment("3P");
+        p3.setComment("3P");
+
+        listOfTransition.add(t1);
+        listOfTransition.add(t2);
+
+        listOfPlace.add(p1);
+        listOfPlace.add(p2);
+        listOfPlace.add(p3);
+
+        listOfArc.add(a1);
+        listOfArc.add(a2);
+        listOfArc.add(a3);
+        listOfArc.add(a4);
+        listOfArc.add(a5);
+        listOfArc.add(a6);
+
         int index2 = getBaseNetTtansitionIndex(sn);
         listOfArc.add(new Arc(sn.getSubTransitions().get(index2).getLastLocation(), p2.getLastLocation(), Arc.TypeOfArc.NORMAL));
         listOfTransition.addAll(new ArrayList<>(sn.getSubTransitions()));
