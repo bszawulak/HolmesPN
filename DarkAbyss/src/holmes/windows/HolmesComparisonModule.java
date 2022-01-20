@@ -128,7 +128,7 @@ public class HolmesComparisonModule extends JFrame {
                 "");
         JComponent panel6 = makeBranchPanel();
         //panel4.setPreferredSize(new Dimension(410, 50));
-        tabbedPane.addTab("Decomposition based comparison", null, panel6,
+        tabbedPane.addTab("Branching based comparison", null, panel6,
                 "");
         this.add(tabbedPane);
     }
@@ -1904,12 +1904,12 @@ public class HolmesComparisonModule extends JFrame {
         generateBranch.addActionListener(e -> {
             //GraphletComparator gc = new GraphletComparator(600);
             BranchesServerCalc bsc = new BranchesServerCalc();
-            HashMap<BranchVertex, BranchVertex> result = bsc.compare(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet, branchingVariant.getSelectedIndex() + 1);
-            //parsBranchingData(result,bsc.tlbv1Out,bsc.tlbv2Out);
+            HashMap<BranchVertex, Integer> result = bsc.compare(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet, branchingVariant.getSelectedIndex() + 1);
+            parsBranchingData(result,bsc.tlbv1Out,bsc.tlbv2Out);
             infoPaneBranch.append("");//gc.compareNetdiv(getNDKsize(), getRadius(), GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet));
         });
 
-        buttonPanel.add(generateNetdiv);
+        buttonPanel.add(generateBranch);
 
         branchingVariant = new JComboBox();
         branchingVariant.setModel(new DefaultComboBoxModel(new String[]{"Matching variant", "Type I",
@@ -1921,7 +1921,7 @@ public class HolmesComparisonModule extends JFrame {
         return panel;
     }
 
-    private void parsBranchingData(HashMap<BranchVertex, BranchVertex> result, ArrayList<BranchVertex> abv1, ArrayList<BranchVertex> abv2) {
+    private void parsBranchingData(HashMap<BranchVertex, Integer> result, ArrayList<BranchVertex> tlbv1Out, ArrayList<BranchVertex> tlbv2Out) {
 /*
         //parsowanie
         XYSeries series1 = new XYSeries("Branching vertices of net 1");
@@ -1953,9 +1953,23 @@ public class HolmesComparisonModule extends JFrame {
 
 */
         //rysowanie Z INNYCH DANYCGH
+
+        XYSeries series1 = new XYSeries("Branching vertices of first net");
+        XYSeries series2 = new XYSeries("Branching vertices of second net");
+
+        int position = 0;
+        for(Map.Entry<BranchVertex, Integer> entry : result.entrySet()) {
+            BranchVertex key = entry.getKey();
+            Integer value = entry.getValue();
+            series1.add(position,tlbv1Out.stream().filter(x->x.getTypeOfBV().equals(key.getTypeOfBV()) && x.inEndpoints.size()==key.inEndpoints.size()&&x.outEndpoints.size()==key.outEndpoints.size()).count());
+            series2.add(position,tlbv2Out.stream().filter(x->x.getTypeOfBV().equals(key.getTypeOfBV()) && x.inEndpoints.size()==key.inEndpoints.size()&&x.outEndpoints.size()==key.outEndpoints.size()).count());
+
+            position++;
+        }
+
         branchSeriesDataSet.removeAllSeries();
-        //branchSeriesDataSet.addSeries(series1);
-        //branchSeriesDataSet.addSeries(series2);
+        branchSeriesDataSet.addSeries(series1);
+        branchSeriesDataSet.addSeries(series2);
         branchChartPanel.setVisible(true);
 
         CategoryPlot chartPlot = branchChart.getCategoryPlot();

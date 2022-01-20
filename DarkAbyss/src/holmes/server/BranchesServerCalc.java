@@ -7,10 +7,7 @@ import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 
 public class BranchesServerCalc {
 
@@ -23,6 +20,7 @@ public class BranchesServerCalc {
 
     public ArrayList<BranchVertex> tlbv1Out;
     public ArrayList<BranchVertex> tlbv2Out;
+    public HashMap<BranchVertex, BranchVertex> matched;
 
     public BranchesServerCalc() {
     }
@@ -158,20 +156,77 @@ public class BranchesServerCalc {
         //System.out.println();
     }
 
-    public HashMap<BranchVertex, BranchVertex> compare(PetriNet pn1 , PetriNet pn2, int type){
-        HashMap<BranchVertex, BranchVertex> result;
+    public HashMap<BranchVertex, Integer> compare(PetriNet pn1 , PetriNet pn2, int type){
+        HashMap<BranchVertex, BranchVertex> matched;
         ArrayList<BranchVertex> lbv1 = calcBranches(pn1);
         ArrayList<BranchVertex> lbv2 = calcBranches(pn2);
 
+        tlbv1Out = lbv1;
+        tlbv2Out = lbv2;
+
         switch (type){
-            case 0 : result=comparison0(lbv1, lbv2);
+            case 0 : matched=comparison0(lbv1, lbv2);
                 break;
-            default : result = new HashMap<>();
+            default : matched = new HashMap<>();
         }
+
+        HashMap<BranchVertex, Integer> toWrtieeOnChart = parseForChart(matched,lbv1,lbv2);
+
+
+        return toWrtieeOnChart;
+    }
+
+    private HashMap<BranchVertex, Integer> parseForChart(HashMap<BranchVertex, BranchVertex> matched, ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
+        HashMap<BranchVertex, Integer> result = new HashMap<>();
+        //Tylko w 1
+
+        ArrayList<BranchVertex> matchedFIrst = new ArrayList<>(matched.keySet());
+
+        ArrayList<BranchVertex> onlyFIrst =new ArrayList<>(lbv1);
+
+        onlyFIrst.removeAll(matchedFIrst);
+
+        //Typlko w 2
+
+        ArrayList<BranchVertex> matchedSecond = new ArrayList<>(matched.values());
+
+        ArrayList<BranchVertex> onlySecond =new ArrayList<>(lbv2);
+
+        onlySecond.removeAll(matchedSecond);
+
+        //Usuwanie duplikatów / parsowanie do ostatecznego formatu
+
+        result.putAll(parsed(onlyFIrst));
+        result.putAll(parsed(new ArrayList<>(matched.keySet())));
+        result.putAll(parsed(onlySecond));
 
         return result;
     }
 
+    private Map<? extends BranchVertex,? extends Integer> parsed(ArrayList<BranchVertex> onlyFIrst) {
+        HashMap<BranchVertex,Integer> result = new HashMap<>();
+        while(onlyFIrst.size()>0)
+        {
+            BranchVertex bv1 = onlyFIrst.get(0);
+            onlyFIrst.remove(bv1);
+            int counter = 1;
+            ArrayList<BranchVertex> toRemove = new ArrayList<>();
+            for (BranchVertex bv2: onlyFIrst) {
+                if(sameType(bv1,bv2))
+                {
+                    counter++;
+                    toRemove.add(bv2);
+                }
+            }
+            onlyFIrst.removeAll(toRemove);
+            result.put(bv1,counter);
+        }
+        return result;
+    }
+
+    private boolean sameType(BranchVertex bv1, BranchVertex bv2) {
+        return bv1.getTypeOfBV().equals(bv2.getTypeOfBV())&&bv1.inEndpoints.size()==bv2.inEndpoints.size() && bv1.outEndpoints.size()==bv2.outEndpoints.size();
+    }
 
 
     private void comparisonV(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
@@ -332,8 +387,8 @@ public class BranchesServerCalc {
                 //tlbv2.remove(branchVertSecond);
             }
         }
-        tlbv1Out = tlbv1;
-        tlbv2Out = tlbv2;
+        //tlbv1Out = lbv1;
+        //tlbv2Out = lbv2;
         return maping;
     }
 
