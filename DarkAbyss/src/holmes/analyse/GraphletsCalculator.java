@@ -870,6 +870,25 @@ public class GraphletsCalculator {
         //}
 
 
+        if (multipleArcCheck) {
+            ArrayList<Struct> nonMultiArcStruct = new ArrayList<>();
+            for (Struct graphlet : uniqGraphlets) {
+                int multiplier = 1;
+                for (Entry<Arc, Arc> entry : graphlet.mapaArcow.entrySet()) {
+                    multiplier = multiplier * entry.getValue().getWeight();
+                }
+
+
+                for (int i = 0; i < multiplier; i++) {
+                    nonMultiArcStruct.add(graphlet);
+                }
+                //System.out.println("------->Multi--->" + multiplier);
+            }
+            uniqGraphlets = nonMultiArcStruct;
+        }
+
+
+
         ArrayList<Struct> inproper = new ArrayList<>();
         for (Struct s : uniqGraphlets) {
             ArrayList<Struct> ip = uniqGraphlets.stream().filter(x -> x.mapaArcow.values().containsAll(s.mapaArcow.values())).collect(Collectors.toCollection(ArrayList::new));

@@ -4,23 +4,32 @@ import holmes.analyse.GraphletsCalculator;
 import holmes.analyse.InvariantsCalculator;
 import holmes.analyse.SubnetCalculator;
 import holmes.analyse.comparison.*;
+import holmes.analyse.comparison.structures.BranchVertex;
 import holmes.analyse.comparison.structures.GreatCommonSubnet;
 import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
+import holmes.server.BranchesServerCalc;
 import holmes.workspace.ExtensionFileFilter;
+import org.jfree.chart.*;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RectangleEdge;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.DoubleStream;
 
@@ -37,6 +46,9 @@ public class HolmesComparisonModule extends JFrame {
     JTextArea infoPaneDRGF = new JTextArea(30, 30);
     JTextArea infoPaneGDDA = new JTextArea(30, 30);
     JTextArea infoPaneNetdiv = new JTextArea(30, 30);
+    JTextArea infoPaneBranch = new JTextArea(30, 30);
+
+
     JButton generateInvl;
     JButton generateDec;
     JButton generateDrgf;
@@ -44,11 +56,13 @@ public class HolmesComparisonModule extends JFrame {
     JButton saveDGDV1;
     JButton saveDGDV2;
     JButton generateNetdiv;
+    JButton generateBranch;
     JTable dgddTable;
     JComboBox graphletSize;
     JComboBox orbitSize;
     JComboBox egoSize;
     JComboBox graphletNDSize;
+    JComboBox branchingVariant;
     JPanel decoResult;
     boolean invariantMatchingTypr = false;
     boolean transitionMatchingTypr = false;
@@ -65,21 +79,28 @@ public class HolmesComparisonModule extends JFrame {
 
     InvariantComparator invComp;
     JTable matchingTable;
+    JTable branchTable;
     JPanel invPanel;
     JPanel verticesPanel;
 
     Object[][] dataDRGF;
     Object[][] dataDGDD;
+    Object[][] dataBranch;
     JTable drgfTable;
 
     JButton matchVertices;
     int[][] DGDVFirst;
     int[][] DGDVSecond;
 
+    private XYSeriesCollection grdfSeriesDataSet = null;
+    private JFreeChart grdfChart;
+    private JPanel grdfChartPanel = new JPanel();
 
+    private XYSeriesCollection branchSeriesDataSet = null;
+    private JFreeChart branchChart;
+    private JPanel branchChartPanel = new JPanel();
 
     public HolmesComparisonModule() {
-
         setTitle("Comparison module");
         setSize(950, 800);
 
@@ -89,7 +110,7 @@ public class HolmesComparisonModule extends JFrame {
                 "");
 
         JComponent panel2 = makeGraphletPanel();
-        tabbedPane.addTab("Graphlets (DRGF) comparison", null, panel2,
+        tabbedPane.addTab("Graphlets (GRDF) comparison", null, panel2,
                 "");
 
         JComponent panel3 = makeGDDAPanel();
@@ -102,8 +123,12 @@ public class HolmesComparisonModule extends JFrame {
                 "");
 
         JComponent panel5 = makeDecoPanel();
-        panel4.setPreferredSize(new Dimension(410, 50));
+        //panel4.setPreferredSize(new Dimension(410, 50));
         tabbedPane.addTab("Decomposition based comparison", null, panel5,
+                "");
+        JComponent panel6 = makeBranchPanel();
+        //panel4.setPreferredSize(new Dimension(410, 50));
+        tabbedPane.addTab("Decomposition based comparison", null, panel6,
                 "");
         this.add(tabbedPane);
     }
@@ -236,15 +261,22 @@ public class HolmesComparisonModule extends JFrame {
         JButton saveMatchedVertices = new JButton("Save match");
         saveMatchedVertices.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
-            int returnVal = jfc.showOpenDialog(HolmesComparisonModule.this);
+            int returnVal = jfc.showSaveDialog(HolmesComparisonModule.this);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 IOprotocols io = new IOprotocols();
+
+
+                boolean result = saveMatchVerticesFromFile(jfc.getSelectedFile().getAbsolutePath());
                 //TODO WRITE CSV
                 //HashMap<Node, Node> matching = new HashMap<>();
                 //matching = loadMatchVerticesFromFile(jfc.getSelectedFile().getAbsolutePath());
                 //calcMatchingTable(matching);
-                infoPaneInv.append("Match saved to file: " + jfc.getSelectedFile().getName() + "\n");
+                if (result)
+                    infoPaneInv.append("Match saved to file: " + jfc.getSelectedFile().getName() + "\n");
+                else
+                    infoPaneInv.append("Save operation failed");
+
             }
         });
         tmpanel.add(saveMatchedVertices);
@@ -333,22 +365,62 @@ public class HolmesComparisonModule extends JFrame {
             DataInputStream in = new DataInputStream(new FileInputStream(absolutePath));
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
             String readLine = buffer.readLine();
-            if (!readLine.contains("Tramsition maping")) {
-                return result;
-            }
 
-            readLine = buffer.readLine();
+            //CHECK
+            //if (!readLine.contains("Tramsition maping")) {
+            //    return result;
+            //}
+
+            //readLine = buffer.readLine();
             while (readLine != null && readLine.length() > 0) {
                 String[] line = readLine.split(",");
-                Node n1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(Integer.parseInt(line[0]));
-                Node n2 = secondNet.getTransitions().get(Integer.parseInt(line[1]));
-                result.put(n1, n2);
+
+                //name version
+
+                //id version
+                if (!line[1].equals("-1")) {
+                    Node n1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(Integer.parseInt(line[0]));
+                    Node n2 = secondNet.getTransitions().get(Integer.parseInt(line[1]));
+                    result.put(n1, n2);
+                }
+                readLine = buffer.readLine();
             }
             buffer.close();
         } catch (Exception e) {
 
         }
         return result;
+    }
+
+    private boolean saveMatchVerticesFromFile(String absolutePath) {
+        try {
+            HashMap<Node, Node> toSave = new HashMap<>();
+
+            for (int i = 0; i < matchingTable.getRowCount(); i++) {
+                final int finalI = i;
+                Node firstNetNode = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().stream().filter(x -> x.getName().equals(matchingTable.getModel().getValueAt(finalI, 0))).findFirst().orElse(new Transition("Error"));
+                Node secondNetNode = secondNet.getTransitions().stream().filter(x -> x.getName().equals(matchingTable.getModel().getValueAt(finalI, 1))).findFirst().orElse(new Transition("Error"));
+
+                toSave.put(firstNetNode, secondNetNode);
+            }
+
+            File csvOutputFile = new File(absolutePath);
+            try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
+                for (Map.Entry<Node, Node> entry : toSave.entrySet()) {
+                    Node key = entry.getKey();
+                    Node value = entry.getValue();
+
+                    //id
+                    pw.write(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(key) + "," + secondNet.getTransitions().indexOf(value) + "\n");
+                    //name
+                    //pw.write(key.getName()+","+value.getName()+"\n");
+                }
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private void calcMatchingTable(HashMap<Node, Node> matching) {
@@ -438,7 +510,7 @@ public class HolmesComparisonModule extends JFrame {
                 int index = secondNet.getTransitions().indexOf(matched);
                 if (firstInvariant.get(i) != 0) {
                     size1++;
-                    if (firstInvariant.get(index) == secondInvariant.get(i)) {
+                    if (Objects.equals(firstInvariant.get(index), secondInvariant.get(i))) {
                         commonPart++;
                     }
                 }
@@ -526,7 +598,29 @@ public class HolmesComparisonModule extends JFrame {
         south.add(textPanel, BorderLayout.EAST);
         panel.add(south);
 
+        grdfChartPanel = createChartPanel();
+        grdfChartPanel.setVisible(false);
+        panel.add(grdfChartPanel, BorderLayout.SOUTH);
         return panel;
+    }
+
+    JPanel createChartPanel() {
+        String chartTitle = "Graflet Relative Distribution Frequency (GRDF)";
+        String xAxisLabel = "Grphlets";
+        String yAxisLabel = "Count";
+
+        boolean showLegend = true;
+        boolean createTooltip = true;
+        boolean createURL = false;
+
+        grdfSeriesDataSet = new XYSeriesCollection();
+        grdfChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, grdfSeriesDataSet,
+                PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
+
+        grdfChart.getTitle().setFont(new Font("Dialog", Font.PLAIN, 14));
+
+        ChartPanel placesChartPanel = new ChartPanel(grdfChart);
+        return placesChartPanel;
     }
 
     private JPanel createGRDFResultPanel() {
@@ -560,7 +654,7 @@ public class HolmesComparisonModule extends JFrame {
         JPanel panel = new JPanel();
         JPanel buttonPanel = new JPanel(new GridLayout(2, 2));
 
-        JButton chooser = new JButton("Choose second net");
+        JButton chooser = new JButton("Choose second net (.pnt)");
         chooser.setVisible(true);
         chooser.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
@@ -576,7 +670,7 @@ public class HolmesComparisonModule extends JFrame {
         buttonPanel.add(chooser);
 
         graphletSize = new JComboBox();
-        graphletSize.setModel(new DefaultComboBoxModel(new String[]{"Graphlets size", "3-node size",
+        graphletSize.setModel(new DefaultComboBoxModel(new String[]{"Graphlets size", "2-node size", "3-node size",
                 "4-node size", "5-node size"}));
         buttonPanel.add(graphletSize);
 
@@ -591,10 +685,10 @@ public class HolmesComparisonModule extends JFrame {
             GUIManager.getDefaultGUIManager().createGraphletsWindow();
             GUIManager.getDefaultGUIManager().showGraphletsWindow();
 
-    });
+        });
         buttonPanel.add(analysis);
 
-        JPanel radioButtonsPanel = new JPanel(new GridLayout(2,1));
+        JPanel radioButtonsPanel = new JPanel(new GridLayout(2, 1));
         JRadioButton maxButton = new JRadioButton("Single arcs interpetation");
         maxButton.setActionCommand("");
         maxButton.setSelected(true);
@@ -629,15 +723,19 @@ public class HolmesComparisonModule extends JFrame {
 
     private void compareGraphlets() {
 
+        int chiisenGraohletSize = getChoosenGraohletSize(graphletSize.getSelectedIndex());
+
         long[] firstSingleDRGF = calcDRGF(GUIManager.getDefaultGUIManager().getWorkspace().getProject());
         long[] secondSingleDRGF = calcDRGF(secondNet);
 
         long firstSum = Arrays.stream(firstSingleDRGF).sum();
         long secondSum = Arrays.stream(secondSingleDRGF).sum();
 
-        long[] distanceDRGF = new long[GraphletsCalculator.graphetsList.size()];
+        long[] distanceDRGF = new long[chiisenGraohletSize];
         double result = 0;
-        for (int i = 0; i < GraphletsCalculator.graphetsList.size(); i++) {
+
+
+        for (int i = 0; i < chiisenGraohletSize; i++) {
             distanceDRGF[i] = Math.abs(firstSingleDRGF[i] - secondSingleDRGF[i]);
             //if(firstSingleDRGF[i]!=0 && secondSingleDRGF[i]!=0) {
             result += Math.abs(((double) firstSingleDRGF[i] / (double) firstSum) - ((double) secondSingleDRGF[i] / (double) secondSum));
@@ -653,22 +751,53 @@ public class HolmesComparisonModule extends JFrame {
         }
         */
 
-        dataDRGF = new Object[GraphletsCalculator.graphetsList.size() + 1][4];
+        XYSeries series1 = new XYSeries("Number of graphlets of net 1");
+        XYSeries series2 = new XYSeries("Number of graphlets of net 2");
+        dataDRGF = new Object[chiisenGraohletSize + 1][4];
         String[] colNames = new String[4];
         colNames[0] = "Graphlets";
         colNames[1] = "First net";
         colNames[2] = "Second net";
         colNames[3] = "Distance";
-        for (int i = 0; i < GraphletsCalculator.graphetsList.size(); i++) {
+        for (int i = 0; i < chiisenGraohletSize; i++) {
             dataDRGF[i][0] = "G " + i;
             dataDRGF[i][1] = firstSingleDRGF[i];
             dataDRGF[i][2] = secondSingleDRGF[i];
             dataDRGF[i][3] = distanceDRGF[i];
+            series1.add(i, firstSingleDRGF[i]);
+            series2.add(i, secondSingleDRGF[i]);
         }
 
         DefaultTableModel model = new DefaultTableModel(dataDRGF, colNames);
 
         drgfTable.setModel(model);
+        grdfSeriesDataSet.removeAllSeries();
+        grdfSeriesDataSet.addSeries(series1);
+        grdfSeriesDataSet.addSeries(series2);
+        grdfChartPanel.setVisible(true);
+
+        CategoryPlot chartPlot = grdfChart.getCategoryPlot();
+        ValueAxis yAxis = chartPlot.getRangeAxis();
+        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+        CategoryAxis xAxis = chartPlot.getDomainAxis();
+        this.setSize(950, 1200);
+    }
+
+    private int getChoosenGraohletSize(int index) {
+
+        switch (graphletSize.getSelectedIndex()) {
+            case 1:
+                return 2;
+            case 2:
+                return 8;
+            case 3:
+                return 31;
+            case 4:
+                return 151;
+            default:
+                return 151;
+        }
     }
 
     private long[] calcDRGF(PetriNet project) {
@@ -784,14 +913,13 @@ public class HolmesComparisonModule extends JFrame {
     }
 
     private void saveDGDV(int[][] data) {
-        JFileChooser chooser= new JFileChooser();
+        JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         //chooser.showSaveDialog(null);
 
         if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-            exportToCSV(data,chooser.getSelectedFile().getAbsolutePath());
-        }
-        else {
+            exportToCSV(data, chooser.getSelectedFile().getAbsolutePath());
+        } else {
             infoPaneGDDA.append("No directiory choosen for DGDV\n");
         }
 
@@ -800,8 +928,8 @@ public class HolmesComparisonModule extends JFrame {
     private void compareGDDA() {
         GraphletsCalculator.GraphletsCalculator();
 
-        int[][] firstSingleDGDV = calcDGDD(GUIManager.getDefaultGUIManager().getWorkspace().getProject(),true);
-        int[][] secondSingleDGDV = calcDGDD(secondNet,false);
+        int[][] firstSingleDGDV = calcDGDD(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), true);
+        int[][] secondSingleDGDV = calcDGDD(secondNet, false);
 
         //long firstSum =  Arrays.stream(firstSingleDGDDA).sum();
         //long secondSum =  Arrays.stream(secondSingleDGDDA).sum();
@@ -865,12 +993,12 @@ public class HolmesComparisonModule extends JFrame {
         }
     }
 
-    private int[][] calcDGDD(PetriNet pn,boolean firstNet) {
+    private int[][] calcDGDD(PetriNet pn, boolean firstNet) {
         int[][] result = new int[0][0];
         ArrayList<int[]> DGDV = new ArrayList<>();
 
         //TODO stetowanie orbitami
-        if(firstNet)
+        if (firstNet)
             DGDVFirst = new int[pn.getNodes().size()][GraphletsCalculator.globalOrbitMap.size()];
         else
             DGDVSecond = new int[pn.getNodes().size()][GraphletsCalculator.globalOrbitMap.size()];
@@ -878,11 +1006,9 @@ public class HolmesComparisonModule extends JFrame {
         for (Node startNode : pn.getNodes()) {
             int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
             DGDV.add(vectorOrbit);
-            if(firstNet){
+            if (firstNet) {
                 DGDVFirst[pn.getNodes().indexOf(startNode)] = vectorOrbit;
-            }
-            else
-            {
+            } else {
                 DGDVSecond[pn.getNodes().indexOf(startNode)] = vectorOrbit;
             }
         }
@@ -1002,10 +1128,10 @@ public class HolmesComparisonModule extends JFrame {
             JFileChooser jfc = new JFileChooser();
             int returnVal = jfc.showOpenDialog(HolmesComparisonModule.this);
             jfc.setFileFilter(new ExtensionFileFilter("INA PNT format (.pnt)", new String[]{"PNT"}));
-            infoPaneGDDA.append("Choosen file: " + jfc.getSelectedFile().getName() + "\n");
+            infoPaneNetdiv.append("Choosen file: " + jfc.getSelectedFile().getName() + "\n");
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                generateGDDA.setEnabled(true);
+                generateNetdiv.setEnabled(true);
             }
 
         });
@@ -1735,6 +1861,154 @@ public class HolmesComparisonModule extends JFrame {
     private JPanel makeBranchPanel() {
         JPanel panel = new JPanel();
 
+        JPanel optionPanel = createBramchOptionPanel();
+        panel.add(optionPanel, BorderLayout.NORTH);
+
+        JPanel south = new JPanel();
+        JPanel verticesPanel = createBranchResultPanel();
+        south.add(verticesPanel, BorderLayout.WEST);
+
+        JPanel textPanel = createBranchTextArea();
+        south.add(textPanel, BorderLayout.EAST);
+        panel.add(south);
+
+        branchChartPanel = createBranchChartPanel();
+        branchChartPanel.setVisible(false);
+        panel.add(branchChartPanel, BorderLayout.SOUTH);
         return panel;
+    }
+
+    private JPanel createBramchOptionPanel() {
+        JPanel panel = new JPanel();
+
+
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 4));
+
+        JButton chooser = new JButton("Choose second net");
+        chooser.setVisible(true);
+        chooser.addActionListener(e -> {
+            JFileChooser jfc = new JFileChooser();
+            int returnVal = jfc.showOpenDialog(HolmesComparisonModule.this);
+            jfc.setFileFilter(new ExtensionFileFilter("INA PNT format (.pnt)", new String[]{"PNT"}));
+            infoPaneBranch.append("Choosen file: " + jfc.getSelectedFile().getName() + "\n");
+            chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                generateBranch.setEnabled(true);
+            }
+
+        });
+        buttonPanel.add(chooser);
+
+        generateBranch = new JButton("Generate");
+        generateBranch.setVisible(true);
+        generateBranch.addActionListener(e -> {
+            //GraphletComparator gc = new GraphletComparator(600);
+            BranchesServerCalc bsc = new BranchesServerCalc();
+            HashMap<BranchVertex, BranchVertex> result = bsc.compare(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet, branchingVariant.getSelectedIndex() + 1);
+            //parsBranchingData(result,bsc.tlbv1Out,bsc.tlbv2Out);
+            infoPaneBranch.append("");//gc.compareNetdiv(getNDKsize(), getRadius(), GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet));
+        });
+
+        buttonPanel.add(generateNetdiv);
+
+        branchingVariant = new JComboBox();
+        branchingVariant.setModel(new DefaultComboBoxModel(new String[]{"Matching variant", "Type I",
+                "Type II", "Type III", "Type IV", "Type V"}));
+        buttonPanel.add(branchingVariant);
+
+        panel.add(buttonPanel);
+
+        return panel;
+    }
+
+    private void parsBranchingData(HashMap<BranchVertex, BranchVertex> result, ArrayList<BranchVertex> abv1, ArrayList<BranchVertex> abv2) {
+/*
+        //parsowanie
+        XYSeries series1 = new XYSeries("Branching vertices of net 1");
+        XYSeries series2 = new XYSeries("Branching vertices of net 2");
+        dataBranch = new Object[chiisenGraohletSize + 1][4];
+        //String[] colNames = new String[4];
+        //colNames[0] = "Graphlets";
+        //colNames[1] = "First net";
+        //colNames[2] = "Second net";
+        //colNames[3] = "Distance";
+        ArrayList<BranchVertex> abv1Tmp = (ArrayList<BranchVertex>)abv1.clone();
+        ArrayList<BranchVertex> abv1match = new ArrayList<>();
+        abv1match.addAll(result.keySet());
+        abv1Tmp.removeAll(abv1match);
+
+        //ArrayList<BranchVertex> only1 = ;
+
+        int counter =0;
+        for (Map.Entry<BranchVertex, BranchVertex> entry : result.entrySet()) {
+            BranchVertex key = entry.getKey();
+            BranchVertex value = entry.getValue();
+            dataDRGF[i][0] = "G " + i;
+            dataDRGF[i][1] = firstSingleDRGF[i];
+            dataDRGF[i][2] = secondSingleDRGF[i];
+            dataDRGF[i][3] = distanceDRGF[i];
+            series1.add(counter, key.);
+            series2.add(counter, secondSingleDRGF[i]);
+        }
+
+*/
+        //rysowanie Z INNYCH DANYCGH
+        branchSeriesDataSet.removeAllSeries();
+        //branchSeriesDataSet.addSeries(series1);
+        //branchSeriesDataSet.addSeries(series2);
+        branchChartPanel.setVisible(true);
+
+        CategoryPlot chartPlot = branchChart.getCategoryPlot();
+        ValueAxis yAxis = chartPlot.getRangeAxis();
+        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+        CategoryAxis xAxis = chartPlot.getDomainAxis();
+        this.setSize(950, 1200);
+    }
+
+    private JPanel createBranchResultPanel() {
+        JPanel panel = new JPanel();
+
+        Object[] column = {"Branches", "First net", "Second net"};
+        dataBranch = new Object[][]{{"Branch O", "-", "-"}};
+
+        branchTable = new JTable(dataBranch, column);
+        JScrollPane jpane = new JScrollPane(branchTable);
+        JPanel scroll = new JPanel();
+        panel.add(jpane);
+        scroll.add(new JScrollPane(panel));
+        scroll.setEnabled(false);
+
+        return scroll;
+    }
+
+    private JPanel createBranchTextArea() {
+        JPanel panel = new JPanel();
+
+        JScrollPane jsp = new JScrollPane(infoPaneBranch);
+        TitledBorder titleF;
+        titleF = BorderFactory.createTitledBorder("Info Panel");
+        jsp.setBorder(titleF);
+        panel.add(jsp);
+        return panel;
+    }
+
+    JPanel createBranchChartPanel() {
+        String chartTitle = "Branching vertices measure";
+        String xAxisLabel = "Branching vertices";
+        String yAxisLabel = "Count";
+
+        boolean showLegend = true;
+        boolean createTooltip = true;
+        boolean createURL = false;
+
+        branchSeriesDataSet = new XYSeriesCollection();
+        branchChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, branchSeriesDataSet,
+                PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
+
+        branchChart.getTitle().setFont(new Font("Dialog", Font.PLAIN, 14));
+
+        ChartPanel placesChartPanel = new ChartPanel(branchChart);
+        return placesChartPanel;
     }
 }

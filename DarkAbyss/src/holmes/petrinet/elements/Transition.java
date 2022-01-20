@@ -156,6 +156,16 @@ public class Transition extends Node {
         stochasticType = StochaticsType.ST;
     }
 
+    public Transition(String error) {
+        super(99, IdGenerator.getNextTransitionId(), new Point(0,0), realRadius);
+        this.setName("Transition" + IdGenerator.getNextTransitionId());
+        this.fList = new ArrayList<>();
+        this.setType(PetriNetElementType.TRANSITION);
+        transType = TransitionType.PN;
+        stochasticType = StochaticsType.ST;
+        this.setName(error);
+    }
+
     /**
      * Metoda rysująca tranzycję na danym arkuszu.
      *
@@ -1112,22 +1122,15 @@ public class Transition extends Node {
      * @return int - wymagana liczba tokenów danego koloru
      */
     public int getRequiredColoredTokens(int i) {
-        switch (i) {
-            case 0:
-                return reqT0red;
-            case 1:
-                return reqT1green;
-            case 2:
-                return reqT2blue;
-            case 3:
-                return reqT3yellow;
-            case 4:
-                return reqT4gray;
-            case 5:
-                return reqT5black;
-            default:
-                return reqT0red;
-        }
+        return switch (i) {
+            case 0 -> reqT0red;
+            case 1 -> reqT1green;
+            case 2 -> reqT2blue;
+            case 3 -> reqT3yellow;
+            case 4 -> reqT4gray;
+            case 5 -> reqT5black;
+            default -> reqT0red;
+        };
     }
 
     /**
@@ -1138,26 +1141,13 @@ public class Transition extends Node {
      */
     public void setRequiredColoredTokens(int tokens, int i) {
         switch (i) {
-            case 0:
-                reqT0red = tokens;
-                break;
-            case 1:
-                reqT1green = tokens;
-                break;
-            case 2:
-                reqT2blue = tokens;
-                break;
-            case 3:
-                reqT3yellow = tokens;
-                break;
-            case 4:
-                reqT4gray = tokens;
-                break;
-            case 5:
-                reqT5black = tokens;
-                break;
-            default:
-                reqT0red = tokens;
+            case 0 -> reqT0red = tokens;
+            case 1 -> reqT1green = tokens;
+            case 2 -> reqT2blue = tokens;
+            case 3 -> reqT3yellow = tokens;
+            case 4 -> reqT4gray = tokens;
+            case 5 -> reqT5black = tokens;
+            default -> reqT0red = tokens;
         }
     }
 

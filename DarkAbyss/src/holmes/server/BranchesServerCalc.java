@@ -21,6 +21,9 @@ public class BranchesServerCalc {
 
     String pathToFiles = "/home/labnanobio-01/Dokumenty/Eksperyment/";
 
+    public ArrayList<BranchVertex> tlbv1Out;
+    public ArrayList<BranchVertex> tlbv2Out;
+
     public BranchesServerCalc() {
     }
 
@@ -155,6 +158,22 @@ public class BranchesServerCalc {
         //System.out.println();
     }
 
+    public HashMap<BranchVertex, BranchVertex> compare(PetriNet pn1 , PetriNet pn2, int type){
+        HashMap<BranchVertex, BranchVertex> result;
+        ArrayList<BranchVertex> lbv1 = calcBranches(pn1);
+        ArrayList<BranchVertex> lbv2 = calcBranches(pn2);
+
+        switch (type){
+            case 0 : result=comparison0(lbv1, lbv2);
+                break;
+            default : result = new HashMap<>();
+        }
+
+        return result;
+    }
+
+
+
     private void comparisonV(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
     }
 
@@ -226,6 +245,98 @@ public class BranchesServerCalc {
         }
 
     }
+
+    private HashMap<BranchVertex, BranchVertex> comparison0(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
+        ArrayList<BranchVertex> tlbv1 = new ArrayList<>(lbv1);
+        ArrayList<BranchVertex> tlbv2 = new ArrayList<>(lbv2);
+
+        HashMap<BranchVertex, BranchVertex> maping = new HashMap<>();
+
+        //double distance = 0;
+
+        while (tlbv1.size() > 0 && tlbv2.size() > 0) {
+            if (maping.size() == 43) {
+                //System.out.println("GDzie jest bład");
+            }
+            //max from 1
+            if (tlbv1.get(0).getDegreeOfBV() >= tlbv2.get(0).getDegreeOfBV()) {
+                BranchVertex branchVertFirst = tlbv1.get(0);
+                tlbv1.remove(branchVertFirst);
+
+                int max = -1;
+                ArrayList<Integer> maxIndex = new ArrayList<>();
+
+
+                double sumDistance = 0;
+                for (int i = 0; i < tlbv2.size(); i++) {
+                    if (branchVertFirst.getTypeOfBV().equals(tlbv2.get(i).getTypeOfBV()) && branchVertFirst.getInDegreeOfBV() == tlbv2.get(i).getInDegreeOfBV() && branchVertFirst.getOutDegreeOfBV() == tlbv2.get(i).getOutDegreeOfBV()) {
+                        maxIndex.add(i);
+                    }
+                }
+
+                if (!maxIndex.isEmpty()) {
+                    //check endpoints
+                    boolean isMatch = false;
+                    int index = -1;
+                    for (int i = 0; i < maxIndex.size(); i++) {
+                        if (branchVertFirst.getNumberOfInPlace() == tlbv2.get(maxIndex.get(i)).getNumberOfInPlace() &&
+                                branchVertFirst.getNumberOfOutPlace() == tlbv2.get(maxIndex.get(i)).getNumberOfOutPlace() &&
+                                branchVertFirst.getNumberOfInTransitions() == tlbv2.get(maxIndex.get(i)).getNumberOfInTransitions() &&
+                                branchVertFirst.getNumberOfOutTransitions() == tlbv2.get(maxIndex.get(i)).getNumberOfOutTransitions()) {
+                            index = i;
+                        }
+                    }
+
+                    if (index != -1) {
+                        maping.put(branchVertFirst, tlbv2.get(maxIndex.get(index)));
+                        tlbv2.remove(tlbv2.get(maxIndex.get(index)));
+                    } else {
+                        //System.out.println();
+                    }
+                }
+                //tlbv1.remove(branchVertFirst);
+            } else {
+                BranchVertex branchVertSecond = tlbv2.get(0);
+                tlbv2.remove(branchVertSecond);
+
+
+                int max = -1;
+                ArrayList<Integer> maxIndex = new ArrayList<>();
+
+
+                double sumDistance = 0;
+                for (int i = 0; i < tlbv1.size(); i++) {
+                    if (branchVertSecond.getTypeOfBV().equals(lbv1.get(i).getTypeOfBV()) && branchVertSecond.getInDegreeOfBV() == tlbv1.get(i).getInDegreeOfBV() && branchVertSecond.getOutDegreeOfBV() == tlbv1.get(i).getOutDegreeOfBV()) {
+                        maxIndex.add(i);
+                    }
+                }
+
+                if (!maxIndex.isEmpty()) {
+                    //check endpoints
+                    boolean isMatch = false;
+                    int index = -1;
+                    for (int i = 0; i < maxIndex.size(); i++) {
+                        if (branchVertSecond.getNumberOfInPlace() == tlbv1.get(maxIndex.get(i)).getNumberOfInPlace() &&
+                                branchVertSecond.getNumberOfOutPlace() == tlbv1.get(maxIndex.get(i)).getNumberOfOutPlace() &&
+                                branchVertSecond.getNumberOfInTransitions() == tlbv1.get(maxIndex.get(i)).getNumberOfInTransitions() &&
+                                branchVertSecond.getNumberOfOutTransitions() == tlbv1.get(maxIndex.get(i)).getNumberOfOutTransitions()) {
+                            index = i;
+                        }
+                    }
+
+                    if (index != -1) {
+                        maping.put(tlbv1.get(maxIndex.get(index)), branchVertSecond);
+                        tlbv1.remove(tlbv1.get(maxIndex.get(index)));
+                    }
+                }
+                //tlbv2.remove(branchVertSecond);
+            }
+        }
+        tlbv1Out = tlbv1;
+        tlbv2Out = tlbv2;
+        return maping;
+    }
+
 
     private void comparison0(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type) {
         ArrayList<BranchVertex> tlbv1 = new ArrayList<>(lbv1);
