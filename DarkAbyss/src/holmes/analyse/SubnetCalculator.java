@@ -283,6 +283,9 @@ public class SubnetCalculator implements Serializable{
 
     public static void generateTnets() {
         //TODO  unifikacja z ADT
+
+
+
     }
 
     public static void generateMCT() {
