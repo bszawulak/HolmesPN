@@ -293,16 +293,16 @@ public class HolmesGraphlets extends JFrame {
 
         switch (getSizeForComparison.getSelectedIndex()) {
             case 0:
-                orbNumber = 17;
+                orbNumber = 18;
                 break;
             case 1:
-                orbNumber = 98;
+                orbNumber = 90;
                 break;
             case 2:
-                orbNumber = 600;
+                orbNumber = 592;
                 break;
             default:
-                orbNumber = 600;
+                orbNumber = 592;
                 break;
         }
 

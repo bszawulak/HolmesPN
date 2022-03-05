@@ -57,6 +57,7 @@ public class HolmesComparisonModule extends JFrame {
     JButton generateGDDA;
     JButton saveDGDV1;
     JButton saveDGDV2;
+    JButton saveDGDD;
     JButton generateNetdiv;
     JButton generateBranch;
     JTable dgddTable;
@@ -888,6 +889,7 @@ public class HolmesComparisonModule extends JFrame {
             compareGDDA();
             saveDGDV1.setEnabled(true);
             saveDGDV2.setEnabled(true);
+            saveDGDD.setEnabled(true);
         });
         generateGDDA.setEnabled(false);
         buttonPanel.add(generateGDDA);
@@ -895,7 +897,7 @@ public class HolmesComparisonModule extends JFrame {
 
         orbitSize = new JComboBox();
         orbitSize.setModel(new DefaultComboBoxModel(new String[]{"Orbits", "18",
-                "98", "600"}));
+                "90", "592"}));
         buttonPanel.add(orbitSize);
 
         saveDGDV1 = new JButton("Save DGDV for first net");
@@ -908,10 +910,24 @@ public class HolmesComparisonModule extends JFrame {
         saveDGDV2.setEnabled(false);
         buttonPanel.add(saveDGDV2);
 
+        saveDGDD = new JButton("Save DGDV for first net");
+        saveDGDD.addActionListener(e -> saveDGDV(toInt(dataDGDD)));
+        saveDGDD.setEnabled(false);
+        buttonPanel.add(saveDGDD);
 
         panel.add(buttonPanel);
 
         return panel;
+    }
+
+    private int[][] toInt(Object[][] dataDGDD) {
+        int[][] result = new int[dataDGDD.length][dataDGDD[0].length];
+
+        for(int i = 0 ; i < dataDGDD.length ; i++)
+            for(int j = 0 ; j < dataDGDD[i].length ; j++)
+                result[i][j] = (int) dataDGDD[i][j];
+
+        return result;
     }
 
     private void saveDGDV(int[][] data) {
@@ -987,11 +1003,11 @@ public class HolmesComparisonModule extends JFrame {
             case 1:
                 return 18;
             case 2:
-                return 98;
+                return 90;
             case 3:
-                return 600;
+                return 592;
             default:
-                return 600;
+                return 592;
         }
     }
 
@@ -1741,7 +1757,10 @@ public class HolmesComparisonModule extends JFrame {
     private void colorIsomorphicCels(int row, int col, Component
             comp, ArrayList<ArrayList<GreatCommonSubnet>> subNetArrayList) {
         if (subNetArrayList.get(row).get(col).gcsValue == subNetArrayList.get(row).get(col).firstNetNodeSize) {
-            comp.setBackground(Color.green);
+            if(subNetArrayList.get(row).get(col).secondNetNodeSize == subNetArrayList.get(row).get(col).firstNetNodeSize)
+                comp.setBackground(new Color(0,153,0));
+            else
+                comp.setBackground(Color.green);
         } else if (subNetArrayList.get(row).get(col).gcsValue == 0) {
             comp.setBackground(Color.red);
         } else if (subNetArrayList.get(row).get(col).gcsValue > subNetArrayList.get(row).get(col).firstNetNodeSize ||
@@ -2054,25 +2073,30 @@ public class HolmesComparisonModule extends JFrame {
             int pos = sameTypeInList(result.lbv1.get(fb1),lista );
             if (pos>-1) {
                 series1.update((Number)(pos),series1.getY(pos).intValue()+1);
+                System.out.println("Position: " +pos + " - "+ result.lbv1.get(fb1).getBVName());
             }
             else {
                 series1.add(position, 1);
                 series2.add(position, 0);
                 lista.add(result.lbv1.get(fb1));
+                System.out.println("Position: " +position + " - "+ result.lbv1.get(fb1).getBVName());
                 position++;
             }
         }
 
+        System.out.println("second");
         for (int fb1 = 0; fb1 < result.lbv2.size(); fb1++) {
             int pos = sameTypeInList(result.lbv2.get(fb1),lista );
             if (pos>-1) {
                 series2.update((Number)(pos),series2.getY(pos).intValue()+1);
                 //series2.getDataItem(pos).setY(series2.getDataItem(pos).getYValue()+1);
+                System.out.println("Position: " +pos + " - "+ result.lbv2.get(fb1).getBVName());
             }
             else {
                 series1.add(position, 0);
                 series2.add(position, 1);
                 lista.add(result.lbv2.get(fb1));
+                System.out.println("Position: " +position + " - "+ result.lbv2.get(fb1).getBVName());
                 position++;
             }
         }
@@ -2158,17 +2182,27 @@ public class HolmesComparisonModule extends JFrame {
     private int sameTypeInList (BranchVertex bv1, ArrayList<BranchVertex> list){
         int position = -1;
         for (BranchVertex bv2 : list) {
-            if(sameType(bv1,bv2)){
+            if(sameType(bv1,bv2)&&!bv1.getBVName().equals(bv2.getBVName())){
                 position = list.indexOf(bv2);
             }
         }
+
+        //TODO
+        // ENDPOINT TO NIE IN ARC
         return position;
     }
 
     private boolean sameType(BranchVertex bv1, BranchVertex bv2) {
+        if(bv2.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || bv1.getBVName().equals("promoting_thinning_of_the_fibrous_cap"))
+        {
+            System.out.println();
+        }
+
         return bv1.getTypeOfBV().equals(bv2.getTypeOfBV()) &&
-                bv1.inEndpoints.size() == bv2.inEndpoints.size() &&
-                bv1.outEndpoints.size() == bv2.outEndpoints.size() &&
+                //bv1.inEndpoints.size() == bv2.inEndpoints.size() &&
+                //bv1.outEndpoints.size() == bv2.outEndpoints.size() &&
+                bv1.getOutDegreeOfBV() == bv2.getOutDegreeOfBV() &&
+                bv1.getInDegreeOfBV() == bv2.getInDegreeOfBV() &&
                 bv1.getNumberOfInPlace() == bv2.getNumberOfInPlace() &&
                 bv1.getNumberOfOutPlace() == bv2.getNumberOfOutPlace() &&
                 bv1.getNumberOfInTransitions() == bv2.getNumberOfInTransitions() &&

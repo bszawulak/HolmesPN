@@ -55,10 +55,10 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
 
         logPanel = createLogPanel(0, 0, 200, 150);
-        inputPanel = createInputPanel(0, 130, 200, 150);
-        outputPanel = createOutputPanel(0, 130, 500, 300);
-        panel.add(logPanel, BorderLayout.WEST);
-        panel.add(inputPanel, BorderLayout.CENTER);
+        inputPanel = createInputPanel(0, 130, 100, 150);
+        outputPanel = createOutputPanel(0, 130, 700, 300);
+        //panel.add(logPanel, BorderLayout.WEST);
+        panel.add(inputPanel, BorderLayout.WEST);
         panel.add(outputPanel, BorderLayout.EAST);
         panel.repaint();
         return panel;
@@ -155,15 +155,17 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
     private JPanel createInputPanel(int x, int y, int width, int height) {
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new FlowLayout());
+        mainPanel.setLayout(new GridLayout(3,1));
         mainPanel.setBorder(BorderFactory.createTitledBorder(""));
-        mainPanel.setPreferredSize(new Dimension(width, height));
+        //mainPanel.setPreferredSize(new Dimension(width, height));
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Restrictions"));
 
         int posX = 10;
         int posY = 10;
+
+        JPanel buttonPanel = new JPanel(new GridLayout(5,1));
 
         JButton calc = new JButton("<html>Find Branch <br />Vertices</html>");
         calc.setLayout(new FlowLayout());
@@ -173,7 +175,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         calc.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         calc.addActionListener(actionEvent -> caclBranches(0));
         calc.setFocusPainted(false);
-        mainPanel.add(calc);
+        buttonPanel.add(calc);
 
         JButton calcT = new JButton("<html>Find Branch <br />Transitions</html>");
         calcT.setLayout(new FlowLayout());
@@ -183,7 +185,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         calcT.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         calcT.addActionListener(actionEvent -> caclBranches(1));
         calcT.setFocusPainted(false);
-        mainPanel.add(calcT);
+        buttonPanel.add(calcT);
 
         JButton calcP = new JButton("<html>Find Branch <br />Places</html>");
         calcP.setLayout(new FlowLayout());
@@ -193,7 +195,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         calcP.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         calcP.addActionListener(actionEvent -> caclBranches(2));
         calcP.setFocusPainted(false);
-        mainPanel.add(calcP);
+        buttonPanel.add(calcP);
 
         //----comparison
 
@@ -205,7 +207,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         export.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         export.addActionListener(actionEvent -> exportClick());
         export.setFocusPainted(false);
-        mainPanel.add(export);
+        buttonPanel.add(export);
 
         JButton impor = new JButton("<html>Import</html>");
         impor.setLayout(new FlowLayout());
@@ -215,7 +217,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         impor.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         impor.addActionListener(actionEvent -> importClick());
         impor.setFocusPainted(false);
-        mainPanel.add(impor);
+        //buttonPanel.add(impor);
 
         JButton comp = new JButton("<html>Compare</html>");
         comp.setLayout(new FlowLayout());
@@ -225,7 +227,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         comp.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         comp.addActionListener(actionEvent -> compareClick());
         comp.setFocusPainted(false);
-        mainPanel.add(comp);
+        buttonPanel.add(comp);
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -318,7 +320,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         c.gridy = 5;
         panel.add(maxallTAOUT, c);
 
-        mainPanel.add(panel);
+        mainPanel.add(buttonPanel,BorderLayout.NORTH);
+        mainPanel.add(panel,BorderLayout.CENTER);
+        mainPanel.add(logPanel, BorderLayout.SOUTH);
 
         return mainPanel;
     }
