@@ -145,20 +145,20 @@ public class HolmesDecomposition extends JFrame {
         snetCheckBox.setSelected(false);
         panel.add(snetCheckBox);
 
-        JCheckBox adtCheckBox = new JCheckBox("T-net/maxADT");
+        JCheckBox adtCheckBox = new JCheckBox("T-net");
         adtCheckBox.setBounds(posX + 10, posY + 90, 150, 20);
         adtCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, adtCheckBox, panel, 3));
         adtCheckBox.setSelected(false);
         panel.add(adtCheckBox);
 
-        JCheckBox ssnetCheckBox = new JCheckBox("state S-net");
+        JCheckBox ssnetCheckBox = new JCheckBox("conADT");
         ssnetCheckBox.setBounds(posX + 10, posY + 120, 150, 20);
         ssnetCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, ssnetCheckBox, panel, 99));
         ssnetCheckBox.setSelected(false);
         ssnetCheckBox.setEnabled(false);
         panel.add(ssnetCheckBox);
 
-        JCheckBox mctCheckBox = new JCheckBox("MCT");
+        JCheckBox mctCheckBox = new JCheckBox("maxADT(MCT)");
         mctCheckBox.setBounds(posX + 10, posY + 150, 150, 20);
         mctCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, mctCheckBox, panel, 10));
         mctCheckBox.setSelected(false);
@@ -170,7 +170,7 @@ public class HolmesDecomposition extends JFrame {
         tzCheckBox.setSelected(false);
         panel.add(tzCheckBox);
 
-        JCheckBox houCheckBox = new JCheckBox("Paths (Hou)");
+        JCheckBox houCheckBox = new JCheckBox("Paths");
         houCheckBox.setBounds(posX + 10, posY + 210, 150, 20);
         houCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, houCheckBox, panel, 5));
         houCheckBox.setSelected(false);
@@ -188,7 +188,7 @@ public class HolmesDecomposition extends JFrame {
         cycleCheckBox.setSelected(false);
         panel.add(cycleCheckBox);
 
-        JCheckBox ootsukiCheckBox = new JCheckBox("P1 (Ootsuki)");
+        JCheckBox ootsukiCheckBox = new JCheckBox("P1");
         ootsukiCheckBox.setBounds(posX + 10, posY + 300, 150, 20);
         ootsukiCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, ootsukiCheckBox, panel, 8));
         ootsukiCheckBox.setSelected(false);
@@ -204,37 +204,37 @@ public class HolmesDecomposition extends JFrame {
         tinvCheckBox.setBounds(posX + 10, posY + 360, 150, 20);
         tinvCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, tinvCheckBox, panel, 11));
         tinvCheckBox.setSelected(false);
-        panel.add(tinvCheckBox);
+        //panel.add(tinvCheckBox);
 
         JCheckBox pinvCheckBox = new JCheckBox("P-inv");
         pinvCheckBox.setBounds(posX + 10, posY + 390, 150, 20);
         pinvCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, pinvCheckBox, panel, 12));
         pinvCheckBox.setSelected(false);
-        panel.add(pinvCheckBox);
+        //panel.add(pinvCheckBox);
 
         JCheckBox bvCheckBox = new JCheckBox("BV");
         bvCheckBox.setBounds(posX + 10, posY + 420, 150, 20);
         bvCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, bvCheckBox, panel, 13));
         bvCheckBox.setSelected(false);
-        panel.add(bvCheckBox);
+        //panel.add(bvCheckBox);
 
         JCheckBox btCheckBox = new JCheckBox("BT");
         btCheckBox.setBounds(posX + 10, posY + 450, 150, 20);
         btCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, btCheckBox, panel, 14));
         btCheckBox.setSelected(false);
-        panel.add(btCheckBox);
+        //panel.add(btCheckBox);
 
         JCheckBox bpCheckBox = new JCheckBox("BP");
         bpCheckBox.setBounds(posX + 10, posY + 480, 150, 20);
         bpCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, bpCheckBox, panel, 15));
         bpCheckBox.setSelected(false);
-        panel.add(bpCheckBox);
+        //panel.add(bpCheckBox);
 
         JCheckBox ntzcCheckBox = new JCheckBox("Not SS cycle");
         ntzcCheckBox.setBounds(posX + 10, posY + 510, 150, 20);
         ntzcCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, ntzcCheckBox, panel, 16));
         ntzcCheckBox.setSelected(false);
-        panel.add(ntzcCheckBox);
+        //panel.add(ntzcCheckBox);
 
         return panel;
     }

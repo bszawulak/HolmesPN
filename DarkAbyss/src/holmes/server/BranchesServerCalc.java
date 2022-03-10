@@ -41,12 +41,12 @@ public class BranchesServerCalc {
                 index_d = d;
                 index_p = p;
                 //is type, degree and endpoints type the same
-                comparison0(lbv1, lbv2,"");
-                comparison1(lbv1, lbv2,"");
-                comparison2(lbv1, lbv2,"");
-                comparison3(lbv1, lbv2,"");
+                comparison0(lbv1, lbv2, "");
+                comparison1(lbv1, lbv2, "");
+                comparison2(lbv1, lbv2, "");
+                comparison3(lbv1, lbv2, "");
                 //---------------------
-                comparison4(lbv1, lbv2,"");
+                comparison4(lbv1, lbv2, "");
             }
         }
 
@@ -113,14 +113,14 @@ public class BranchesServerCalc {
     }
 
     public void Compare() {
-        for (int i = 0 ; i < 41 ; i=i+5) {
-            index_i=i;
-            System.out.print("i"+i);
+        for (int i = 0; i < 41; i = i + 5) {
+            index_i = i;
+            System.out.print("i" + i);
             for (int j = 0; j < 41; j = j + 5) {
-                index_j=j;
-                System.out.print("j"+j);
+                index_j = j;
+                System.out.print("j" + j);
                 for (int p = 0; p < 100; p++) {
-                    index_p=p;
+                    index_p = p;
                     //compareWithExtensionOfType("S4VARIANT");
                     //compareWithExtensionOfType("C6VARIANT");
                     //compareWithExtensionOfType("E2VARIANT");
@@ -140,23 +140,23 @@ public class BranchesServerCalc {
 
     private void compareWithExtensionOfType(String type) {
         //System.out.print(type+":");
-        PetriNet pn1 = loadNet(pathToFiles+"Wyniki/i"+index_i+"j"+index_j+"/i"+index_i+"j"+index_j+"p"+index_p +"/i"+index_i+"j"+index_j+"p" +index_p + "-BASE.pnt", 0);
+        PetriNet pn1 = loadNet(pathToFiles + "Wyniki/i" + index_i + "j" + index_j + "/i" + index_i + "j" + index_j + "p" + index_p + "/i" + index_i + "j" + index_j + "p" + index_p + "-BASE.pnt", 0);
         //PetriNet pn2 = loadNet("/home/Szavislav/i0j0p0-S4VARIANT.pnt", 1);
-        PetriNet pn2 = loadNet(pathToFiles+"Wyniki/i"+index_i+"j"+index_j+"/i"+index_i+"j"+index_j+"p"+index_p +"/i"+index_i+"j"+index_j+"p" +index_p + "-"+type+".pnt", 1);
+        PetriNet pn2 = loadNet(pathToFiles + "Wyniki/i" + index_i + "j" + index_j + "/i" + index_i + "j" + index_j + "p" + index_p + "/i" + index_i + "j" + index_j + "p" + index_p + "-" + type + ".pnt", 1);
 
         ArrayList<BranchVertex> lbv1 = calcBranches(pn1);
         ArrayList<BranchVertex> lbv2 = calcBranches(pn2);
 
-        comparison0(lbv1, lbv2,type);
-        comparison1(lbv1, lbv2,type);
-        comparison2(lbv1, lbv2,type);
-        comparison3(lbv1, lbv2,type);
+        comparison0(lbv1, lbv2, type);
+        comparison1(lbv1, lbv2, type);
+        comparison2(lbv1, lbv2, type);
+        comparison3(lbv1, lbv2, type);
         //---------------------
-        comparison4(lbv1, lbv2,type);
+        comparison4(lbv1, lbv2, type);
         //System.out.println();
     }
 
-    public HashMap<BranchVertex, Integer> compare(PetriNet pn1 , PetriNet pn2, int type){
+    public ParsedBranchData compare(PetriNet pn1, PetriNet pn2, int type) {
         HashMap<BranchVertex, BranchVertex> matched;
         ArrayList<BranchVertex> lbv1 = calcBranches(pn1);
         ArrayList<BranchVertex> lbv2 = calcBranches(pn2);
@@ -164,16 +164,18 @@ public class BranchesServerCalc {
         tlbv1Out = lbv1;
         tlbv2Out = lbv2;
 
-        switch (type){
-            case 0 : matched=comparison0(lbv1, lbv2);
+        switch (type) {
+            case 1:
+                matched = comparison0(lbv1, lbv2);
                 break;
-            default : matched = new HashMap<>();
+            default:
+                matched = new HashMap<>();
         }
 
-        HashMap<BranchVertex, Integer> toWrtieeOnChart = parseForChart(matched,lbv1,lbv2);
+        HashMap<BranchVertex, Integer> toWrtieeOnChart = parseForChart(matched, lbv1, lbv2);
+        ParsedBranchData pdb = new ParsedBranchData(toWrtieeOnChart,matched,lbv1,lbv2);
 
-
-        return toWrtieeOnChart;
+        return pdb;
     }
 
     private HashMap<BranchVertex, Integer> parseForChart(HashMap<BranchVertex, BranchVertex> matched, ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
@@ -182,7 +184,7 @@ public class BranchesServerCalc {
 
         ArrayList<BranchVertex> matchedFIrst = new ArrayList<>(matched.keySet());
 
-        ArrayList<BranchVertex> onlyFIrst =new ArrayList<>(lbv1);
+        ArrayList<BranchVertex> onlyFIrst = new ArrayList<>(lbv1);
 
         onlyFIrst.removeAll(matchedFIrst);
 
@@ -190,7 +192,7 @@ public class BranchesServerCalc {
 
         ArrayList<BranchVertex> matchedSecond = new ArrayList<>(matched.values());
 
-        ArrayList<BranchVertex> onlySecond =new ArrayList<>(lbv2);
+        ArrayList<BranchVertex> onlySecond = new ArrayList<>(lbv2);
 
         onlySecond.removeAll(matchedSecond);
 
@@ -203,29 +205,34 @@ public class BranchesServerCalc {
         return result;
     }
 
-    private Map<? extends BranchVertex,? extends Integer> parsed(ArrayList<BranchVertex> onlyFIrst) {
-        HashMap<BranchVertex,Integer> result = new HashMap<>();
-        while(onlyFIrst.size()>0)
-        {
+    private Map<? extends BranchVertex, ? extends Integer> parsed(ArrayList<BranchVertex> onlyFIrst) {
+        HashMap<BranchVertex, Integer> result = new HashMap<>();
+        while (onlyFIrst.size() > 0) {
             BranchVertex bv1 = onlyFIrst.get(0);
             onlyFIrst.remove(bv1);
             int counter = 1;
             ArrayList<BranchVertex> toRemove = new ArrayList<>();
-            for (BranchVertex bv2: onlyFIrst) {
-                if(sameType(bv1,bv2))
-                {
+            for (BranchVertex bv2 : onlyFIrst) {
+                if (sameType(bv1, bv2)) {
                     counter++;
                     toRemove.add(bv2);
                 }
             }
             onlyFIrst.removeAll(toRemove);
-            result.put(bv1,counter);
+            result.put(bv1, counter);
         }
         return result;
     }
 
     private boolean sameType(BranchVertex bv1, BranchVertex bv2) {
-        return bv1.getTypeOfBV().equals(bv2.getTypeOfBV())&&bv1.inEndpoints.size()==bv2.inEndpoints.size() && bv1.outEndpoints.size()==bv2.outEndpoints.size();
+        //return bv1.getTypeOfBV().equals(bv2.getTypeOfBV()) && bv1.inEndpoints.size() == bv2.inEndpoints.size() && bv1.outEndpoints.size() == bv2.outEndpoints.size();
+        return bv1.getTypeOfBV().equals(bv2.getTypeOfBV()) &&
+                bv1.inEndpoints.size() == bv2.inEndpoints.size() &&
+                bv1.outEndpoints.size() == bv2.outEndpoints.size() &&
+                bv1.getNumberOfInPlace() == bv2.getNumberOfInPlace() &&
+                bv1.getNumberOfOutPlace() == bv2.getNumberOfOutPlace() &&
+                bv1.getNumberOfInTransitions() == bv2.getNumberOfInTransitions() &&
+                bv1.getNumberOfOutTransitions() == bv2.getNumberOfOutTransitions();
     }
 
 
@@ -339,6 +346,11 @@ public class BranchesServerCalc {
                                 branchVertFirst.getNumberOfInTransitions() == tlbv2.get(maxIndex.get(i)).getNumberOfInTransitions() &&
                                 branchVertFirst.getNumberOfOutTransitions() == tlbv2.get(maxIndex.get(i)).getNumberOfOutTransitions()) {
                             index = i;
+
+                            if(branchVertFirst.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || tlbv2.get(maxIndex.get(i)).getBVName().equals("promoting_thinning_of_the_fibrous_cap"))
+                            {
+                                System.out.println();
+                            }
                         }
                     }
 
@@ -376,6 +388,11 @@ public class BranchesServerCalc {
                                 branchVertSecond.getNumberOfInTransitions() == tlbv1.get(maxIndex.get(i)).getNumberOfInTransitions() &&
                                 branchVertSecond.getNumberOfOutTransitions() == tlbv1.get(maxIndex.get(i)).getNumberOfOutTransitions()) {
                             index = i;
+
+                            if(branchVertSecond.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || tlbv1.get(maxIndex.get(i)).getBVName().equals("promoting_thinning_of_the_fibrous_cap"))
+                            {
+                                System.out.println();
+                            }
                         }
                     }
 
@@ -482,7 +499,7 @@ public class BranchesServerCalc {
 
         //calc sim
         //System.out.print("C 0 ");
-        showSimilarity(lbv1, lbv2, maping, "V0",type);
+        showSimilarity(lbv1, lbv2, maping, "V0", type);
     }
 
     private void comparison1(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type) {
@@ -573,7 +590,7 @@ public class BranchesServerCalc {
         //calc sim
 
         //System.out.print("C 1 ");
-        showSimilarity(lbv1, lbv2, maping, "V1",type);
+        showSimilarity(lbv1, lbv2, maping, "V1", type);
     }
 
     private void comparison2(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type) {
@@ -682,7 +699,7 @@ public class BranchesServerCalc {
         //calc sim
 
         //System.out.print("C2");
-        showSimilarity(lbv1, lbv2, maping, "V2",type);
+        showSimilarity(lbv1, lbv2, maping, "V2", type);
     }
 
     private void comparison3(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type) {
@@ -828,7 +845,7 @@ public class BranchesServerCalc {
         //calc sim
 
         //System.out.print("C3");
-        showSimilarity(lbv1, lbv2, maping, "V3",type);
+        showSimilarity(lbv1, lbv2, maping, "V3", type);
     }
 
 
@@ -988,11 +1005,11 @@ public class BranchesServerCalc {
 
         //calc sim
         //System.out.print("C4");
-        showSimilarity(lbv1, lbv2, maping, "V4",type);
+        showSimilarity(lbv1, lbv2, maping, "V4", type);
     }
 
 
-    private void showSimilarity(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, HashMap<BranchVertex, BranchVertex> maping, String type,String t) {
+    private void showSimilarity(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, HashMap<BranchVertex, BranchVertex> maping, String type, String t) {
         int distance = lbv1.size() - maping.size() + lbv2.size() - maping.size();
         //System.out.println("Dystans : " + distance);
         double ssimilarity = (double) (2 * maping.size()) / (lbv1.size() + lbv2.size());
@@ -1003,16 +1020,16 @@ public class BranchesServerCalc {
 
 
         try {
-            writeSimilarity(lbv1, lbv2, maping, type,t);
+            writeSimilarity(lbv1, lbv2, maping, type, t);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void writeSimilarity(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, HashMap<BranchVertex, BranchVertex> maping, String type,String t) throws IOException {
-        FileWriter writer = new FileWriter(pathToFiles+"Wyniki/i"+index_i+"j"+index_j+"/i"+index_i+"j"+index_j+"p" + index_p + "/branch-similarity-" + type + ".txt",true);
-        writer.append("Type : ").append(type+t).append("\n");
+    private void writeSimilarity(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, HashMap<BranchVertex, BranchVertex> maping, String type, String t) throws IOException {
+        FileWriter writer = new FileWriter(pathToFiles + "Wyniki/i" + index_i + "j" + index_j + "/i" + index_i + "j" + index_j + "p" + index_p + "/branch-similarity-" + type + ".txt", true);
+        writer.append("Type : ").append(type + t).append("\n");
         int distance = lbv1.size() - maping.size() + lbv2.size() - maping.size();
         writer.append("Dystans : ").append(String.valueOf(distance)).append("\n");
         double ssimilarity = (double) (2 * maping.size()) / (lbv1.size() + lbv2.size());
@@ -1227,7 +1244,7 @@ public class BranchesServerCalc {
 
                 for (int p = 0; p < 100; p++) {
                     //TODO
-                    packtetContent[p] = readData(pathToFiles+"Wyniki/d" + d + "i40j40/d" + d + "i40j40p" + p + "/branch-similarity-V" + v + ".txt");
+                    packtetContent[p] = readData(pathToFiles + "Wyniki/d" + d + "i40j40/d" + d + "i40j40p" + p + "/branch-similarity-V" + v + ".txt");
                     if (packtetContent[p][0] < minDist)
                         minDist = packtetContent[p][0];
                     if (packtetContent[p][1] < minSoren)
@@ -1266,7 +1283,7 @@ public class BranchesServerCalc {
             System.out.println("d = " + d);
         }
         try {
-            writeResult(pathToFiles+"resultOfBranchCOmparison.csv", result);
+            writeResult(pathToFiles + "resultOfBranchCOmparison.csv", result);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1331,6 +1348,45 @@ public class BranchesServerCalc {
         }
 
         return result;
+    }
+
+    public class ParsedBranchData {
+        public HashMap<BranchVertex, Integer> merged;
+        public HashMap<BranchVertex, BranchVertex> matched;
+        public ArrayList<BranchVertex> lbv1;
+        public ArrayList<BranchVertex> lbv2;
+        public ArrayList<BranchVertex> onlyFirstNet;
+        public ArrayList<BranchVertex> onlySecondNet;
+
+        public ParsedBranchData() {
+            this.merged = new HashMap<>();
+            this.matched = new HashMap<>();
+            this.lbv1 = new ArrayList<>();
+            this.lbv2 = new ArrayList<>();
+        }
+
+        public ParsedBranchData(HashMap<BranchVertex, Integer> me, HashMap<BranchVertex, BranchVertex> ma, ArrayList<BranchVertex> l1,ArrayList<BranchVertex> l2) {
+            this.merged = me;
+            this.matched = ma;
+            this.lbv1 = l1;
+            this.lbv2 = l2;
+
+            //this.onlyFirstNet =
+            ArrayList<BranchVertex> matchedFIrst = new ArrayList<>(matched.keySet());
+
+            this.onlyFirstNet = new ArrayList<>(lbv1);
+
+            this.onlyFirstNet.removeAll(matchedFIrst);
+
+            //Typlko w 2
+
+            ArrayList<BranchVertex> matchedSecond = new ArrayList<>(matched.values());
+
+            this.onlySecondNet = new ArrayList<>(lbv2);
+
+            this.onlySecondNet.removeAll(matchedSecond);
+        }
+
     }
 
     class sortVB implements Comparator<BranchVertex> {

@@ -10,9 +10,7 @@ import holmes.petrinet.elements.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -109,53 +107,351 @@ public class NetGenerator {
     }
 
 
-    public NetGenerator(String s){
+    public NetGenerator(String s) {
         GraphletsCalculator.generateGraphlets();
-            for (int i = 0; i < 41; i = i + 5) {
-                System.out.print("i" +i);
-                for (int j = 0; j < 41; j = j+5) {
-                    System.out.print("j" +j);
-                    for (int p = 0; p < 100; p++) {
-                        //PetriNet pn1 = compareSpecificType(i,j,p,path,"BASE");
-                        PetriNet pn2 = compareSpecificType(i,j,p,directory,"P3OVARIANT");
+        for (int i = 0; i < 41; i = i + 5) {
+            System.out.print("i" + i);
+            for (int j = 0; j < 41; j = j + 5) {
+                System.out.print("j" + j);
+                for (int p = 0; p < 100; p++) {
+                    //PetriNet pn1 = compareSpecificType(i,j,p,path,"BASE");
+                    PetriNet pn2 = compareSpecificType(i, j, p, directory, "P3OVARIANT");
 
-                        ArrayList<int[]> DGDV = new ArrayList<>();
-                        //String tmpdir = directory + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p + "-P3VARIANT";
+                    ArrayList<int[]> DGDV = new ArrayList<>();
+                    //String tmpdir = directory + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p + "-P3VARIANT";
 
-                        SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(pn2.getArcs());
-                        String tmpdir = directory + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p + "-P3OVARIANT";
-                        //io.writePNT(tmpdir + ".pnt", sn.getSubPlaces(), sn.getSubTransitions(), sn.getSubArcs());
-                        DGDV = new ArrayList<>();
+                    SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(pn2.getArcs());
+                    String tmpdir = directory + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p + "-P3OVARIANT";
+                    //io.writePNT(tmpdir + ".pnt", sn.getSubPlaces(), sn.getSubTransitions(), sn.getSubArcs());
+                    DGDV = new ArrayList<>();
 
-                        for (Node startNode : sn.getSubNode()) {
-                            int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
-                            DGDV.add(vectorOrbit);
-                        }
-
-                        //DGDV
-                        writeDGDV(tmpdir + "-DGDV.txt", DGDV);
-
-                        //DGDDA
-                        writeDGDDA(tmpdir + "-DGDDA.txt", DGDV);
+                    for (Node startNode : sn.getSubNode()) {
+                        int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
+                        DGDV.add(vectorOrbit);
                     }
 
-                    System.out.println("p");
+                    //DGDV
+                    writeDGDV(tmpdir + "-DGDV.txt", DGDV);
+
+                    //DGDDA
+                    writeDGDDA(tmpdir + "-DGDDA.txt", DGDV);
                 }
+
+                System.out.println("p");
             }
+        }
     }
 
-    private PetriNet  compareSpecificType(int i, int j, int p, String path,String type) {
+    private PetriNet compareSpecificType(int i, int j, int p, String path, String type) {
         IOprotocols io = new IOprotocols();
         return io.serverReadPNT(path + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p + "-" + type + ".pnt", 99);
     }
 
+    public NetGenerator(String[] st) {
+        generateAllFuckingGraphlets();
+    }
 
-    public NetGenerator()
-    {
+    private void generateAllFuckingGraphlets() {
+
+        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 270));
+        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(100, 30));
+        Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        ArrayList<Arc> listOfArc = new ArrayList<>();
+        listOfArc.add(a1);
+        SubnetCalculator.SubNet sn1 = new SubnetCalculator.SubNet(listOfArc);
+
+        io.writePNT("GRAFLETY/G2/GRAFLET-0.pnt", sn1.getSubPlaces(), sn1.getSubTransitions(), sn1.getSubArcs());
+
+        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 170));
+        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(100, 30));
+        Arc a2 = new Arc(p2.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        ArrayList<Arc> listOfArc2 = new ArrayList<>();
+        listOfArc2.add(a2);
+        SubnetCalculator.SubNet sn2 = new SubnetCalculator.SubNet(listOfArc2);
+
+        io.writePNT("GRAFLETY/G2/GRAFLET-1.pnt", sn2.getSubPlaces(), sn2.getSubTransitions(), sn2.getSubArcs());
+        //2size
+        ArrayList<SubnetCalculator.SubNet> graphlets_2 = new ArrayList<SubnetCalculator.SubNet>();
+        graphlets_2.add(sn1);
+        graphlets_2.add(sn2);
+
+        ArrayList<SubnetCalculator.SubNet> graphlets_3 = new ArrayList<SubnetCalculator.SubNet>();
+        ArrayList<SubnetCalculator.SubNet> graphlets_4 = new ArrayList<SubnetCalculator.SubNet>();
+        ArrayList<SubnetCalculator.SubNet> graphlets_5 = new ArrayList<SubnetCalculator.SubNet>();
+        ArrayList<ArrayList<SubnetCalculator.SubNet>> graphlets = new ArrayList<>();
+        graphlets.add(graphlets_2);
+        graphlets.add(graphlets_3);
+        graphlets.add(graphlets_4);
+        graphlets.add(graphlets_5);
+
+
+        int graphletCounter = 2;
+
+        int graphletRead = 0;
+        for (int i = 0; i < graphlets.size() - 1; i++) {
+            ArrayList<SubnetCalculator.SubNet> gsn = graphlets.get(i);
+
+            for (int j = 0; j < gsn.size(); j++) {
+                PetriNet pn = io.serverReadPNT("GRAFLETY/G" + (i + 2) + "/GRAFLET-" + graphletRead + ".pnt", 99);
+                SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.Export, null, null, pn.getNodes(), null, null);
+//gsn.get(j);
+
+                for (int k = 0; k < sn.getSubNode().size(); k++) {
+                    Arc arc;
+                    //System.out.println("Node dla (i)" +i + " (j)" +j +" (k)"+k);
+                    //Places
+                    if (sn.getSubNode().get(k).getType().equals(PetriNetElement.PetriNetElementType.PLACE)) {
+                        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 270));
+                        arc = new Arc(sn.getSubNode().get(k).getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+                        ArrayList<Arc> arcs = new ArrayList<>(sn.getSubArcs());
+                        arcs.add(arc);
+                        SubnetCalculator.SubNet snNew = new SubnetCalculator.SubNet(arcs, true);
+
+                        if (doNotContain(snNew, graphlets.get(i + 1))) {
+                            graphlets.get(i + 1).add(snNew);
+                            io.writePNT("GRAFLETY/G" + (i + 3) + "/GRAFLET-" + graphletCounter + ".pnt", snNew.getSubPlaces(), snNew.getSubTransitions(), snNew.getSubArcs());
+                            export(snNew.getSubNode(), i, graphletCounter);
+                            graphletCounter++;
+                        }
+                    }
+                    if (sn.getSubNode().get(k).getType().equals(PetriNetElement.PetriNetElementType.PLACE)) {
+                        Transition t3 = new Transition(IdGenerator.getNextId(), 99, new Point(60, 270));
+                        arc = new Arc(t3.getElementLocations().get(0), sn.getSubNode().get(k).getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+                        ArrayList<Arc> arcs = new ArrayList<>(sn.getSubArcs());
+                        arcs.add(arc);
+                        SubnetCalculator.SubNet snNew = new SubnetCalculator.SubNet(arcs);
+
+                        if (doNotContain(snNew, graphlets.get(i + 1))) {
+                            graphlets.get(i + 1).add(snNew);
+                            io.writePNT("GRAFLETY/G" + (i + 3) + "/GRAFLET-" + graphletCounter + ".pnt", snNew.getSubPlaces(), snNew.getSubTransitions(), snNew.getSubArcs());
+                            export(snNew.getSubNode(), i, graphletCounter);
+                            graphletCounter++;
+                        }
+                    }
+
+                    //Transitions
+                    if (sn.getSubNode().get(k).getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
+                        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(60, 270));
+                        arc = new Arc(sn.getSubNode().get(k).getElementLocations().get(0), t3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+                        ArrayList<Arc> arcs = new ArrayList<>(sn.getSubArcs());
+                        arcs.add(arc);
+                        SubnetCalculator.SubNet snNew = new SubnetCalculator.SubNet(arcs);
+
+                        if (doNotContain(snNew, graphlets.get(i + 1))) {
+                            graphlets.get(i + 1).add(snNew);
+                            io.writePNT("GRAFLETY/G" + (i + 3) + "/GRAFLET-" + graphletCounter + ".pnt", snNew.getSubPlaces(), snNew.getSubTransitions(), snNew.getSubArcs());
+                            export(snNew.getSubNode(), i, graphletCounter);
+                            graphletCounter++;
+                        }
+                    }
+                    if (sn.getSubNode().get(k).getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
+                        Place t3 = new Place(IdGenerator.getNextId(), 99, new Point(60, 270));
+                        arc = new Arc(t3.getElementLocations().get(0), sn.getSubNode().get(k).getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+                        ArrayList<Arc> arcs = new ArrayList<>(sn.getSubArcs());
+                        arcs.add(arc);
+                        SubnetCalculator.SubNet snNew = new SubnetCalculator.SubNet(arcs);
+
+                        if (doNotContain(snNew, graphlets.get(i + 1))) {
+                            graphlets.get(i + 1).add(snNew);
+                            io.writePNT("GRAFLETY/G" + (i + 3) + "/GRAFLET-" + graphletCounter + ".pnt", snNew.getSubPlaces(), snNew.getSubTransitions(), snNew.getSubArcs());
+                            export(snNew.getSubNode(), i, graphletCounter);
+                            graphletCounter++;
+                        }
+                    }
+
+                    //ARCS
+
+                    //System.out.println("Arc dla (i)" +i + " (j)" +j +" (k)"+k);
+                    for (int e=0; e< graphlets.get(i + 1).size() ; e++) {
+                        SubnetCalculator.SubNet exNet = graphlets.get(i + 1).get(e);
+                        for (int p = 0; p < exNet.getSubPlaces().size(); p++) {
+                            for (int t = 0; t < exNet.getSubTransitions().size(); t++) {
+                                //out arc
+                                //if()
+                                int finalP = p;
+                                int finalT = t;
+                                if (!arcExist(exNet.getSubPlaces().get(p), exNet.getSubTransitions().get(t), exNet.getSubArcs()))
+                                {
+
+                                    arc = new Arc(exNet.getSubPlaces().get(p).getElementLocations().get(0), exNet.getSubTransitions().get(t).getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+                                    ArrayList<Arc> arcs = new ArrayList<>(exNet.getSubArcs());
+                                    arcs.add(arc);
+                                    SubnetCalculator.SubNet snNew = new SubnetCalculator.SubNet(arcs);
+
+                                    if (doNotContain(snNew, graphlets.get(i + 1))) {
+                                        graphlets.get(i + 1).add(snNew);
+                                        io.writePNT("GRAFLETY/G" + (i + 3) + "/GRAFLET-" + graphletCounter + ".pnt", snNew.getSubPlaces(), snNew.getSubTransitions(), snNew.getSubArcs());
+                                        export(snNew.getSubNode(), i, graphletCounter);
+                                        graphletCounter++;
+                                    }
+
+                                    arc = new Arc( exNet.getSubTransitions().get(t).getElementLocations().get(0),exNet.getSubPlaces().get(p).getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+                                    arcs = new ArrayList<>(exNet.getSubArcs());
+                                    arcs.add(arc);
+                                    snNew = new SubnetCalculator.SubNet(arcs);
+
+                                    if (doNotContain(snNew, graphlets.get(i + 1))) {
+                                        graphlets.get(i + 1).add(snNew);
+                                        io.writePNT("GRAFLETY/G" + (i + 3) + "/GRAFLET-" + graphletCounter + ".pnt", snNew.getSubPlaces(), snNew.getSubTransitions(), snNew.getSubArcs());
+                                        export(snNew.getSubNode(), i, graphletCounter);
+                                        graphletCounter++;
+                                    }
+
+                                }
+                                //arc = new Arc(exNet.getSubPlaces().get(p).getElementLocations().get(0), exNet.getSubTransitions().get(t).getElementLocations().get(0),Arc.TypeOfArc.NORMAL);
+                            }
+                        }
+                    }
+
+                }
+                graphletRead++;
+            }
+        }
+
+        System.out.println("Graphlets 2 : " + graphlets.get(0).size());
+        System.out.println("Graphlets 3 : " + graphlets.get(1).size());
+        System.out.println("Graphlets 4 : " + graphlets.get(2).size());
+        System.out.println("Graphlets 5 : " + graphlets.get(3).size());
+
+
+        int count = 0;
+        int countGroup = 0;
+        for (ArrayList<SubnetCalculator.SubNet> glist : graphlets) {
+            ArrayList<Arc> combineArc = new ArrayList<>();
+            ArrayList<Place> combinePlaces = new ArrayList<>();
+            ArrayList<Transition> combineTransitions = new ArrayList<>();
+
+            for (SubnetCalculator.SubNet toWriteNet : glist) {
+                combineArc.addAll(toWriteNet.getSubArcs());
+                combinePlaces.addAll(toWriteNet.getSubPlaces());
+                combineTransitions.addAll(toWriteNet.getSubTransitions());
+
+                //   io.writePNT("GRAFLETY/GRAFLET-"+count+".pnt",toWriteNet.getSubPlaces(),toWriteNet.getSubTransitions(),toWriteNet.getSubArcs());
+                //   count++;
+            }
+            ArrayList<Node> nodes = new ArrayList<>();
+            nodes.addAll(combinePlaces);
+            nodes.addAll(combineTransitions);
+            SubnetCalculator.SubNet doEzportu = new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.Export, null, null, nodes, null, null);
+
+            io.writePNT("GRAFLETY/GRAFLET_Group-" + countGroup + ".pnt", combinePlaces, combineTransitions, combineArc);
+            countGroup++;
+        }
+    }
+
+    private boolean arcExist(Place place, Transition transition, ArrayList<Arc> subArcs) {
+
+        for (Arc a : subArcs) {
+            if ((a.getStartNode().equals(place) && a.getEndNode().equals(transition)) || (a.getStartNode().equals(transition) && a.getEndNode().equals(place))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void export(ArrayList<Node> listOfParentNodes, int number, int graphletCounter) {
+        SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.Export, null, null, listOfParentNodes, null, null);
+
+        try {
+            //FileDialog fDialog = new FileDialog(new JFrame(), "Save", FileDialog.SAVE);
+            //fDialog.setVisible(true);
+            String path = "GRAFLETY/G" + (number + 3) + "/G-" + graphletCounter + ".xml";
+
+            FileOutputStream out = new FileOutputStream(path);
+            ObjectOutputStream oos = new ObjectOutputStream(out);
+            oos.writeObject(sn);
+            oos.flush();
+        } catch (Exception e) {
+            System.out.println("Problem serializing: " + e);
+        }
+
+    }
+
+    private boolean doNotContain(SubnetCalculator.SubNet snNew, ArrayList<SubnetCalculator.SubNet> subNets) {
+        for (SubnetCalculator.SubNet snOld : subNets) {
+            if (isomorphisc(snNew, snOld)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isomorphisc(SubnetCalculator.SubNet snNew, SubnetCalculator.SubNet snOld) {
+        boolean isomorphic = false;
+        if (snNew.getSubPlaces().size() == snOld.getSubPlaces().size() &&
+                snNew.getSubTransitions().size() == snOld.getSubTransitions().size() &&
+                snNew.getSubArcs().size() == snOld.getSubArcs().size()) {
+
+            int countM = 0;
+            for (Node m : snOld.getSubNode()) {
+                boolean matched = false;
+                for (Node n : snNew.getSubNode()) {
+                    if (n.getType().equals(m.getType())) {
+                        for (Node mIn : m.getInNodes()) {
+                            boolean in = false;
+                            boolean out = false;
+                            for (Node nIn : n.getInNodes()) {
+                                if (nIn.getInNodes().size() == mIn.getInNodes().size())
+                                    in = true;
+                            }
+                            for (Node nIn : n.getOutNodes()) {
+                                if (nIn.getOutNodes().size() == mIn.getOutNodes().size())
+                                    out = true;
+                            }
+
+                            if (in && out) {
+                                matched = true;
+                            }
+                        }
+                    }
+                }
+
+                if (matched)
+                    countM++;
+            }
+
+            //eachNode has the same surround
+            int countN = 0;
+            for (Node n : snNew.getSubNode()) {
+                boolean matched = false;
+                for (Node m : snOld.getSubNode()) {
+                    if (n.getType().equals(m.getType())) {
+                        for (Node nIn : n.getInNodes()) {
+                            boolean in = false;
+                            boolean out = false;
+                            for (Node mIn : m.getInNodes()) {
+                                if (nIn.getInNodes().size() == mIn.getInNodes().size())
+                                    in = true;
+                            }
+                            for (Node mIn : m.getOutNodes()) {
+                                if (nIn.getOutNodes().size() == mIn.getOutNodes().size())
+                                    out = true;
+                            }
+
+                            if (in && out) {
+                                matched = true;
+                            }
+                        }
+                    }
+                }
+
+                if (matched)
+                    countN++;
+            }
+            //z perspektywy M?
+
+            if (countN == snNew.getSubNode().size() && countN == countM)
+                isomorphic = true;
+        }
+
+        return isomorphic;
+    }
+
+    public NetGenerator() {
         GraphletsCalculator.generateGraphlets();
-        PetriNet pn = io.serverReadPNT("/home/Szavislav/Eksperyment/Distortion/BASE.pnt",99);
+        PetriNet pn = io.serverReadPNT("/home/Szavislav/Eksperyment/Distortion/BASE.pnt", 99);
 
-        ArrayList<int[]> DGDV= new ArrayList<>();
+        ArrayList<int[]> DGDV = new ArrayList<>();
         SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(pn.getArcs());
         for (Node startNode : sn.getSubNode()) {
             int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
@@ -165,9 +461,9 @@ public class NetGenerator {
         writeDGDDA("/home/Szavislav/Eksperyment/Distortion/net-BASE" + "-DGDDA.txt", DGDV);
 
         //SubnetCalculator.SubNet nsn = addStar4(cloneSubNet(sn));
-        for(int t =0 ; t < sn.getSubTransitions().size() ; t++) {
-            String tmpdir = "/home/Szavislav/Eksperyment/Distortion/net-"+t;
-            SubnetCalculator.SubNet nsn = addDistortion(cloneSubNet(sn),t,true);
+        for (int t = 0; t < sn.getSubTransitions().size(); t++) {
+            String tmpdir = "/home/Szavislav/Eksperyment/Distortion/net-" + t;
+            SubnetCalculator.SubNet nsn = addDistortion(cloneSubNet(sn), t, true);
             io = new IOprotocols();
             io.writePNT(tmpdir + "A.pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
             DGDV = new ArrayList<>();
@@ -176,12 +472,12 @@ public class NetGenerator {
                 DGDV.add(vectorOrbit);
             }
             writeDGDV(tmpdir + "A" + "-DGDV.txt", DGDV);
-            writeDGDDA(tmpdir+ "A" + "-DGDDA.txt", DGDV);
+            writeDGDDA(tmpdir + "A" + "-DGDDA.txt", DGDV);
         }
 
-        for(int t =0 ; t < sn.getSubTransitions().size() ; t++) {
-            String tmpdir = "/home/Szavislav/Eksperyment/Distortion/net-"+t;
-            SubnetCalculator.SubNet nsn = addDistortion(cloneSubNet(sn),t,false);
+        for (int t = 0; t < sn.getSubTransitions().size(); t++) {
+            String tmpdir = "/home/Szavislav/Eksperyment/Distortion/net-" + t;
+            SubnetCalculator.SubNet nsn = addDistortion(cloneSubNet(sn), t, false);
             IOprotocols io = new IOprotocols();
             io.writePNT(tmpdir + "B.pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
             DGDV = new ArrayList<>();
@@ -189,21 +485,20 @@ public class NetGenerator {
                 int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
                 DGDV.add(vectorOrbit);
             }
-            writeDGDV(tmpdir + "B"+ "-DGDV.txt", DGDV);
-            writeDGDDA(tmpdir + "B"+ "-DGDDA.txt", DGDV);
+            writeDGDV(tmpdir + "B" + "-DGDV.txt", DGDV);
+            writeDGDDA(tmpdir + "B" + "-DGDDA.txt", DGDV);
         }
     }
 
-    public NetGenerator(float f)
-    {
+    public NetGenerator(float f) {
         GraphletsCalculator.generateGraphlets();
-        PetriNet pn = io.serverReadPNT("/home/Szavislav/Eksperyment/Distortion/BASE.pnt",99);
+        PetriNet pn = io.serverReadPNT("/home/Szavislav/Eksperyment/Distortion/BASE.pnt", 99);
 
-        ArrayList<int[]> DGDV= new ArrayList<>();
+        ArrayList<int[]> DGDV = new ArrayList<>();
         SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(pn.getArcs());
 
-        SubnetCalculator.SubNet nsn= addIndependentDistortion(sn);
-        io.writePNT("/home/Szavislav/Eksperyment/Distortion/BASE+sub.pnt",nsn.getSubPlaces(),nsn.getSubTransitions(),nsn.getSubArcs());
+        SubnetCalculator.SubNet nsn = addIndependentDistortion(sn);
+        io.writePNT("/home/Szavislav/Eksperyment/Distortion/BASE+sub.pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
         for (Node startNode : nsn.getSubNode()) {
             int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, false);
             DGDV.add(vectorOrbit);
@@ -316,10 +611,10 @@ public class NetGenerator {
         listOfArc.add(a16);
 
         //int index = getBaseNetTtansitionIndex(sn);
-        if(direction)
+        if (direction)
             listOfArc.add(new Arc(p1.getLastLocation(), sn.getSubTransitions().get(position).getLastLocation(), Arc.TypeOfArc.NORMAL));
         else
-            listOfArc.add(new Arc(sn.getSubTransitions().get(position).getLastLocation(),p1.getLastLocation(), Arc.TypeOfArc.NORMAL));
+            listOfArc.add(new Arc(sn.getSubTransitions().get(position).getLastLocation(), p1.getLastLocation(), Arc.TypeOfArc.NORMAL));
 
         listOfTransition.addAll(new ArrayList<>(sn.getSubTransitions()));
         listOfPlace.addAll(new ArrayList<>(sn.getSubPlaces()));
@@ -440,20 +735,20 @@ public class NetGenerator {
     }
 
 
-    public NetGenerator(int i_min, int i_max, int j_min, int j_max, int p_min, int p_max,boolean a) {
+    public NetGenerator(int i_min, int i_max, int j_min, int j_max, int p_min, int p_max, boolean a) {
         System.out.println("P3OVARIANT");
         for (int i = i_min; i < i_max; i = i + 5) {
-            System.out.print("i"+i);
+            System.out.print("i" + i);
             for (int j = j_min; j < j_max; j = j + 5) {
-                System.out.print("j"+j);
+                System.out.print("j" + j);
                 for (int p = p_min; p < p_max; p++) {
                     IOprotocols io = new IOprotocols();
-                    PetriNet pn = io.serverReadPNT(directory+"/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p+"/i" + i + "j" + j + "p" + p+"-BASE.pnt" ,99);
+                    PetriNet pn = io.serverReadPNT(directory + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p + "-BASE.pnt", 99);
                     ArrayList<Arc> listOfArcs = pn.getArcs();
                     SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(listOfArcs);
                     SubnetCalculator.SubNet nsn = addParallel3One(sn);
 
-                    io.writePNT( directory+"/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p+"/i" + i + "j" + j + "p" + p+"-P3OVARIANT.pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
+                    io.writePNT(directory + "/i" + i + "j" + j + "/i" + i + "j" + j + "p" + p + "/i" + i + "j" + j + "p" + p + "-P3OVARIANT.pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
                 }
                 System.out.println("p100");
             }
@@ -658,7 +953,7 @@ public class NetGenerator {
         }
     }
 
-    public NetGenerator(int i_min, int i_max, int j_min, int j_max, int p_min, int p_max,int md, int density){//, String path) {
+    public NetGenerator(int i_min, int i_max, int j_min, int j_max, int p_min, int p_max, int md, int density) {//, String path) {
         //this.directory = path;
 
         //int minDensicty = md;//i_min + j_min + 19;
@@ -666,12 +961,12 @@ public class NetGenerator {
         for (int d = md; d < density; d++) {
             for (int i = i_min; i < i_max; i = i + 5) {
                 for (int j = j_min; j < j_max; j = j + 5) {
-                    setNewDirectory("/d"+ d + "i" + i + "j" + j);
+                    setNewDirectory("/d" + d + "i" + i + "j" + j);
                     for (int p = p_min; p < p_max; p++) { // - próbka 100 sieci
                         SubnetCalculator.SubNet sn = generateNet(10 + i, 10 + j, d);
-                        setNewDirectory("/d"+ d + "i" + i + "j" + j + "/d"+ d + "i" + i + "j" + j + "p" + p);
+                        setNewDirectory("/d" + d + "i" + i + "j" + j + "/d" + d + "i" + i + "j" + j + "p" + p);
 
-                        String tmpdir = directory + "/d"+ d + "i" + i + "j" + j + "/d"+ d + "i" + i + "j" + j + "p" + p + "/d"+ d + "i" + i + "j" + j + "p" + p + "-BASE";
+                        String tmpdir = directory + "/d" + d + "i" + i + "j" + j + "/d" + d + "i" + i + "j" + j + "p" + p + "/d" + d + "i" + i + "j" + j + "p" + p + "-BASE";
 
                         io.writePNT(tmpdir + ".pnt", sn.getSubPlaces(), sn.getSubTransitions(), sn.getSubArcs());
                         GraphletsCalculator.generateGraphlets();
@@ -692,7 +987,7 @@ public class NetGenerator {
                         //tu można by zacząć dodawać nowe rozszrzenia
                         //------ 1S VARIANT ------
                         SubnetCalculator.SubNet nsn = addStar4(cloneSubNet(sn));
-                        tmpdir = directory + "/d"+ d + "i" + i + "j" + j + "/d"+ d + "i" + i + "j" + j + "p" + p + "/d"+ d + "i" + i + "j" + j + "p" + p + "-1S";
+                        tmpdir = directory + "/d" + d + "i" + i + "j" + j + "/d" + d + "i" + i + "j" + j + "p" + p + "/d" + d + "i" + i + "j" + j + "p" + p + "-1S";
                         io.writePNT(tmpdir + ".pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
                         DGDV = new ArrayList<>();
 
@@ -709,8 +1004,8 @@ public class NetGenerator {
 
                         //------ 1S1S VARIANT ------
                         nsn = addStar4(cloneSubNet(sn));
-                        nsn = addStar4sec(cloneSubNet(nsn),sn);
-                        tmpdir = directory + "/d"+ d + "i" + i + "j" + j + "/d"+ d + "i" + i + "j" + j + "p" + p + "/d"+ d + "i" + i + "j" + j + "p" + p + "-1S1S";
+                        nsn = addStar4sec(cloneSubNet(nsn), sn);
+                        tmpdir = directory + "/d" + d + "i" + i + "j" + j + "/d" + d + "i" + i + "j" + j + "p" + p + "/d" + d + "i" + i + "j" + j + "p" + p + "-1S1S";
                         io.writePNT(tmpdir + ".pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
                         DGDV = new ArrayList<>();
 
@@ -727,7 +1022,7 @@ public class NetGenerator {
 
                         //------ 2S VARIANT ------
                         nsn = addStar4a2(cloneSubNet(sn));
-                        tmpdir = directory + "/d"+ d + "i" + i + "j" + j + "/d"+ d + "i" + i + "j" + j + "p" + p + "/d"+ d + "i" + i + "j" + j + "p" + p + "-1S1S";
+                        tmpdir = directory + "/d" + d + "i" + i + "j" + j + "/d" + d + "i" + i + "j" + j + "p" + p + "/d" + d + "i" + i + "j" + j + "p" + p + "-1S1S";
                         io.writePNT(tmpdir + ".pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
                         DGDV = new ArrayList<>();
 
@@ -1077,8 +1372,6 @@ public class NetGenerator {
         listOfArc.add(a8);
 
 
-
-
         int index = getBaseNetTtansitionIndex(sn);
         listOfArc.add(new Arc(p1.getLastLocation(), sn.getSubTransitions().get(index).getLastLocation(), Arc.TypeOfArc.NORMAL));
         int index2 = getBaseNetTtansitionIndex(sn);
@@ -1159,7 +1452,7 @@ public class NetGenerator {
         return new SubnetCalculator.SubNet(listOfArc);
     }
 
-    public SubnetCalculator.SubNet addStar4sec(SubnetCalculator.SubNet sn,SubnetCalculator.SubNet old) {
+    public SubnetCalculator.SubNet addStar4sec(SubnetCalculator.SubNet sn, SubnetCalculator.SubNet old) {
         ArrayList<Transition> listOfTransition = new ArrayList<>();
         ArrayList<Place> listOfPlace = new ArrayList<>();
         ArrayList<Arc> listOfArc = new ArrayList<>();

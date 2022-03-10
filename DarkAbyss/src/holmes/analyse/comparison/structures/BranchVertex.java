@@ -24,6 +24,7 @@ public class BranchVertex {
     }
 
 
+    public String getBVName(){return branchVertex.getName();}
 
     public long getNumberOfInTransitions(){return inEndpoints.stream().filter(x->x.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)).count();}
 

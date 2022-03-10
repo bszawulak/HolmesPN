@@ -13,11 +13,11 @@ import holmes.petrinet.elements.*;
 import holmes.server.BranchesServerCalc;
 import holmes.workspace.ExtensionFileFilter;
 import org.jfree.chart.*;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.axis.*;
+import org.jfree.chart.plot.*;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.DoubleStream;
 
@@ -55,6 +56,7 @@ public class HolmesComparisonModule extends JFrame {
     JButton generateGDDA;
     JButton saveDGDV1;
     JButton saveDGDV2;
+    JButton saveDGDD;
     JButton generateNetdiv;
     JButton generateBranch;
     JTable dgddTable;
@@ -886,6 +888,7 @@ public class HolmesComparisonModule extends JFrame {
             compareGDDA();
             saveDGDV1.setEnabled(true);
             saveDGDV2.setEnabled(true);
+            saveDGDD.setEnabled(true);
         });
         generateGDDA.setEnabled(false);
         buttonPanel.add(generateGDDA);
@@ -893,7 +896,7 @@ public class HolmesComparisonModule extends JFrame {
 
         orbitSize = new JComboBox();
         orbitSize.setModel(new DefaultComboBoxModel(new String[]{"Orbits", "18",
-                "98", "600"}));
+                "90", "592"}));
         buttonPanel.add(orbitSize);
 
         saveDGDV1 = new JButton("Save DGDV for first net");
@@ -906,10 +909,24 @@ public class HolmesComparisonModule extends JFrame {
         saveDGDV2.setEnabled(false);
         buttonPanel.add(saveDGDV2);
 
+        saveDGDD = new JButton("Save DGDV for first net");
+        saveDGDD.addActionListener(e -> saveDGDV(toInt(dataDGDD)));
+        saveDGDD.setEnabled(false);
+        buttonPanel.add(saveDGDD);
 
         panel.add(buttonPanel);
 
         return panel;
+    }
+
+    private int[][] toInt(Object[][] dataDGDD) {
+        int[][] result = new int[dataDGDD.length][dataDGDD[0].length];
+
+        for(int i = 0 ; i < dataDGDD.length ; i++)
+            for(int j = 0 ; j < dataDGDD[i].length ; j++)
+                result[i][j] = (int) dataDGDD[i][j];
+
+        return result;
     }
 
     private void saveDGDV(int[][] data) {
@@ -985,7 +1002,7 @@ public class HolmesComparisonModule extends JFrame {
             case 1:
                 return 18;
             case 2:
-                return 98;
+                return 90;
             case 3:
                 return 592;
             default:
@@ -1739,7 +1756,10 @@ public class HolmesComparisonModule extends JFrame {
     private void colorIsomorphicCels(int row, int col, Component
             comp, ArrayList<ArrayList<GreatCommonSubnet>> subNetArrayList) {
         if (subNetArrayList.get(row).get(col).gcsValue == subNetArrayList.get(row).get(col).firstNetNodeSize) {
-            comp.setBackground(Color.green);
+            if(subNetArrayList.get(row).get(col).secondNetNodeSize == subNetArrayList.get(row).get(col).firstNetNodeSize)
+                comp.setBackground(new Color(0,153,0));
+            else
+                comp.setBackground(Color.green);
         } else if (subNetArrayList.get(row).get(col).gcsValue == 0) {
             comp.setBackground(Color.red);
         } else if (subNetArrayList.get(row).get(col).gcsValue > subNetArrayList.get(row).get(col).firstNetNodeSize ||
@@ -1904,8 +1924,8 @@ public class HolmesComparisonModule extends JFrame {
         generateBranch.addActionListener(e -> {
             //GraphletComparator gc = new GraphletComparator(600);
             BranchesServerCalc bsc = new BranchesServerCalc();
-            HashMap<BranchVertex, Integer> result = bsc.compare(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet, branchingVariant.getSelectedIndex() + 1);
-            parsBranchingData(result,bsc.tlbv1Out,bsc.tlbv2Out);
+            BranchesServerCalc.ParsedBranchData result = bsc.compare(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet, branchingVariant.getSelectedIndex());
+            parsBranchingData(result);
             infoPaneBranch.append("");//gc.compareNetdiv(getNDKsize(), getRadius(), GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet));
         });
 
@@ -1921,63 +1941,293 @@ public class HolmesComparisonModule extends JFrame {
         return panel;
     }
 
-    private void parsBranchingData(HashMap<BranchVertex, Integer> result, ArrayList<BranchVertex> tlbv1Out, ArrayList<BranchVertex> tlbv2Out) {
-/*
-        //parsowanie
-        XYSeries series1 = new XYSeries("Branching vertices of net 1");
-        XYSeries series2 = new XYSeries("Branching vertices of net 2");
-        dataBranch = new Object[chiisenGraohletSize + 1][4];
-        //String[] colNames = new String[4];
-        //colNames[0] = "Graphlets";
-        //colNames[1] = "First net";
-        //colNames[2] = "Second net";
-        //colNames[3] = "Distance";
-        ArrayList<BranchVertex> abv1Tmp = (ArrayList<BranchVertex>)abv1.clone();
-        ArrayList<BranchVertex> abv1match = new ArrayList<>();
-        abv1match.addAll(result.keySet());
-        abv1Tmp.removeAll(abv1match);
+    private void parsBranchingData(BranchesServerCalc.ParsedBranchData result) {
 
-        //ArrayList<BranchVertex> only1 = ;
+        dataBranch = new Object[result.matched.size() + result.onlyFirstNet.size() + result.onlySecondNet.size() + 1][3];
+        String[] colNames = new String[3];
+        colNames[0] = "Branching vertex";
+        colNames[1] = "First net";
+        colNames[2] = "Second net";
 
-        int counter =0;
-        for (Map.Entry<BranchVertex, BranchVertex> entry : result.entrySet()) {
+        //matched
+        int counter = 0;
+        for (Map.Entry<BranchVertex, BranchVertex> entry : result.matched.entrySet()) {
             BranchVertex key = entry.getKey();
             BranchVertex value = entry.getValue();
-            dataDRGF[i][0] = "G " + i;
-            dataDRGF[i][1] = firstSingleDRGF[i];
-            dataDRGF[i][2] = secondSingleDRGF[i];
-            dataDRGF[i][3] = distanceDRGF[i];
-            series1.add(counter, key.);
-            series2.add(counter, secondSingleDRGF[i]);
+            dataBranch[counter][0] = "BV" + counter;
+            dataBranch[counter][1] = key.getBVName();
+            dataBranch[counter][2] = value.getBVName();
+            counter++;
         }
 
-*/
+        //first net
+        for (BranchVertex entry : result.onlyFirstNet) {
+            dataBranch[counter][0] = "BV" + counter;
+            dataBranch[counter][1] = entry.getBVName();
+            dataBranch[counter][2] = "--";
+            counter++;
+        }
+
+        //second net
+        for (BranchVertex entry : result.onlySecondNet) {
+            dataBranch[counter][0] = "BV" + counter;
+            dataBranch[counter][1] = "--";
+            dataBranch[counter][2] = entry.getBVName();
+            counter++;
+        }
+
+        DefaultTableModel model = new DefaultTableModel(dataBranch, colNames);
+        branchTable.setAutoResizeMode(5);
+        branchTable.setModel(model);
+        branchTable.setAutoResizeMode(5);
+
         //rysowanie Z INNYCH DANYCGH
 
         XYSeries series1 = new XYSeries("Branching vertices of first net");
         XYSeries series2 = new XYSeries("Branching vertices of second net");
 
         int position = 0;
-        for(Map.Entry<BranchVertex, Integer> entry : result.entrySet()) {
+        /*
+        for(Map.Entry<BranchVertex, Integer> entry : result.merged.entrySet()) {
             BranchVertex key = entry.getKey();
             Integer value = entry.getValue();
-            series1.add(position,tlbv1Out.stream().filter(x->x.getTypeOfBV().equals(key.getTypeOfBV()) && x.inEndpoints.size()==key.inEndpoints.size()&&x.outEndpoints.size()==key.outEndpoints.size()).count());
-            series2.add(position,tlbv2Out.stream().filter(x->x.getTypeOfBV().equals(key.getTypeOfBV()) && x.inEndpoints.size()==key.inEndpoints.size()&&x.outEndpoints.size()==key.outEndpoints.size()).count());
+            series1.add(position,result.lbv1.stream().filter(x->x.getTypeOfBV().equals(key.getTypeOfBV()) && x.inEndpoints.size()==key.inEndpoints.size()&&x.outEndpoints.size()==key.outEndpoints.size()).count());
+            series2.add(position,result.lbv2.stream().filter(x->x.getTypeOfBV().equals(key.getTypeOfBV()) && x.inEndpoints.size()==key.inEndpoints.size()&&x.outEndpoints.size()==key.outEndpoints.size()).count());
 
             position++;
+        }
+        */
+        ArrayList<BranchVertex> lista = new ArrayList<>();
+
+        /*
+        for (int fb1 = 0; fb1 < result.onlyFirstNet.size(); fb1++) {
+            int pos = sameTypeInList(result.onlyFirstNet.get(fb1),lista );
+            if (pos>-1) {
+                series1.update((Number)(pos),series1.getY(pos).intValue()+1);
+            }
+            else {
+                series1.add(position, 1);
+                series2.add(position, 0);
+                lista.add(result.onlyFirstNet.get(fb1));
+                position++;
+            }
+        }
+
+        for(Map.Entry<BranchVertex, BranchVertex> entry : result.matched.entrySet()) {
+            BranchVertex key = entry.getKey();
+            BranchVertex value = entry.getValue();
+
+            //for (int fb1 = 0; fb1 < result.matched.size(); fb1++) {
+            int pos = sameTypeInList(result.matched.get(key),lista );
+            if (pos>-1) {
+                series1.update((Number)(pos),series1.getY(pos).intValue()+1);
+                series2.update((Number)(pos),series2.getY(pos).intValue()+1);
+                //series1.getDataItem(pos).setY(series1.getDataItem(pos).getYValue()+1);
+                //series2.getDataItem(pos).setY(series2.getDataItem(pos).getYValue()+1);
+            }
+            else {
+                series1.add(position, 1);
+                series2.add(position, 1);
+                lista.add(result.matched.get(key));
+                position++;
+            }
+
+            //rozbić i osobno dla values?
+        }
+
+        for (int fb1 = 0; fb1 < result.onlySecondNet.size(); fb1++) {
+            int pos = sameTypeInList(result.onlySecondNet.get(fb1),lista );
+            if (pos>-1) {
+                series2.update((Number)(pos),series2.getY(pos).intValue()+1);
+                //series2.getDataItem(pos).setY(series2.getDataItem(pos).getYValue()+1);
+            }
+            else {
+                series1.add(position, 0);
+                series2.add(position, 1);
+                lista.add(result.onlySecondNet.get(fb1));
+                position++;
+            }
+        }
+
+        branchChart.setBackgroundPaint(Color.white);
+
+        double[] data1 = new double[series1.getItems().size()];
+        double[] data2 = new double[series2.getItems().size()];
+
+        for(int d = 0 ; d < series1.getItemCount() ; d++)
+        {
+            data1[d] = series1.getY(d).doubleValue();
+        }
+
+        for(int d = 0 ; d < series2.getItemCount() ; d++)
+        {
+            data2[d] = series2.getY(d).doubleValue();
+        }
+*/
+        //branchSeriesDataSet =new HistogramDataset();
+        //branchSeriesDataSet.addSeries(series1.getKey(),values, 20);
+        //branchSeriesDataSet.addSeries(series2.getKey(),data2, 20);
+
+        for (int fb1 = 0; fb1 < result.lbv1.size(); fb1++) {
+            int pos = sameTypeInList(result.lbv1.get(fb1),lista );
+            if (pos>-1) {
+                series1.update((Number)(pos),series1.getY(pos).intValue()+1);
+                System.out.println("Position: " +pos + " - "+ result.lbv1.get(fb1).getBVName());
+            }
+            else {
+                series1.add(position, 1);
+                series2.add(position, 0);
+                lista.add(result.lbv1.get(fb1));
+                System.out.println("Position: " +position + " - "+ result.lbv1.get(fb1).getBVName());
+                position++;
+            }
+        }
+
+        System.out.println("second");
+        for (int fb1 = 0; fb1 < result.lbv2.size(); fb1++) {
+            int pos = sameTypeInList(result.lbv2.get(fb1),lista );
+            if (pos>-1) {
+                series2.update((Number)(pos),series2.getY(pos).intValue()+1);
+                //series2.getDataItem(pos).setY(series2.getDataItem(pos).getYValue()+1);
+                System.out.println("Position: " +pos + " - "+ result.lbv2.get(fb1).getBVName());
+            }
+            else {
+                series1.add(position, 0);
+                series2.add(position, 1);
+                lista.add(result.lbv2.get(fb1));
+                System.out.println("Position: " +position + " - "+ result.lbv2.get(fb1).getBVName());
+                position++;
+            }
+        }
+
+        //get name for axis X
+        String[] axisX = new String[lista.size()];
+        for(int x = 0 ; x < lista.size() ; x++)
+        {
+            String name = "";
+            if(lista.get(x).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION))
+                name = "T";
+            else
+                name = "P";
+
+            axisX[x] = name + "<" + lista.get(x).getNumberOfInTransitions() + "," + lista.get(x).getNumberOfOutTransitions() + "," + lista.get(x).getNumberOfInPlace() + "," + lista.get(x).getNumberOfOutPlace() + ">";
         }
 
         branchSeriesDataSet.removeAllSeries();
         branchSeriesDataSet.addSeries(series1);
         branchSeriesDataSet.addSeries(series2);
+
+        XYPlot xyplot = (XYPlot) branchChart.getPlot();
+        xyplot.setForegroundAlpha(0.85F);
+        XYBarRenderer xybarrenderer = (XYBarRenderer) xyplot.getRenderer();
+        xybarrenderer.setBarPainter(new StandardXYBarPainter());
+
+        Paint[] paintArray = {              //code related to translucent colors begin here
+                new Color(0x80ff0000, true),
+                new Color(0x800000ff, true)
+        };
+        SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices",axisX);
+        rangeAxis.setVerticalTickLabels(true);
+        xyplot.setDomainAxis(rangeAxis);
+
+
+
+        NumberAxis yAxis = (NumberAxis) xyplot.getRangeAxis();
+        DecimalFormat format = new DecimalFormat("0");
+        yAxis.setNumberFormatOverride(format);
+        yAxis.setTickUnit(new NumberTickUnit(1));
+
+        xyplot.setDrawingSupplier(new DefaultDrawingSupplier(
+                paintArray,
+                DefaultDrawingSupplier.DEFAULT_FILL_PAINT_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_OUTLINE_PAINT_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_STROKE_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_SHAPE_SEQUENCE));
+        //branchChartPanel = new ChartPanel(branchChart);
         branchChartPanel.setVisible(true);
 
-        CategoryPlot chartPlot = branchChart.getCategoryPlot();
-        ValueAxis yAxis = chartPlot.getRangeAxis();
-        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        /*
+        branchChart = ChartFactory.createHistogram("Histograms combination red,blue,green", null, null, branchSeriesDataSet, PlotOrientation.VERTICAL, true, true, false);
 
-        CategoryAxis xAxis = chartPlot.getDomainAxis();
+        XYPlot xyplot = (XYPlot) branchChart.getPlot();
+        xyplot.setForegroundAlpha(0.85F);
+        XYBarRenderer xybarrenderer = (XYBarRenderer) xyplot.getRenderer();
+        xybarrenderer.setBarPainter(new StandardXYBarPainter());
+        //xybarrenderer.setDrawBarOutline(false);
+        Paint[] paintArray = {              //code related to translucent colors begin here
+                new Color(0x80ff0000, true),
+                new Color(0x8000ff00, true),
+                new Color(0x800000ff, true)
+        };
+
+        xyplot.setDrawingSupplier(new DefaultDrawingSupplier(
+                paintArray,
+                DefaultDrawingSupplier.DEFAULT_FILL_PAINT_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_OUTLINE_PAINT_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_STROKE_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_SHAPE_SEQUENCE));
+
+
+        JPanel jpanel = new ChartPanel(branchChart);
+                */
+        //branchChartPanel = jpanel;
+        ///jpanel.setPreferredSize(new Dimension(1000, 600));
+        //setContentPane(jpanel);
+
+        //branchChartPanel.updateUI();
+
         this.setSize(950, 1200);
+    }
+
+    private Map<? extends BranchVertex, ? extends Integer> parsed(ArrayList<BranchVertex> onlyFIrst) {
+        HashMap<BranchVertex, Integer> result = new HashMap<>();
+        while (onlyFIrst.size() > 0) {
+            BranchVertex bv1 = onlyFIrst.get(0);
+            onlyFIrst.remove(bv1);
+            int counter = 1;
+            ArrayList<BranchVertex> toRemove = new ArrayList<>();
+            for (BranchVertex bv2 : onlyFIrst) {
+                if (sameType(bv1, bv2)) {
+                    counter++;
+                    toRemove.add(bv2);
+                }
+            }
+            onlyFIrst.removeAll(toRemove);
+            result.put(bv1, counter);
+        }
+        return result;
+    }
+
+    private int sameTypeInList (BranchVertex bv1, ArrayList<BranchVertex> list){
+        int position = -1;
+        for (BranchVertex bv2 : list) {
+            if(sameType(bv1,bv2)){//&&!bv1.getBVName().equals(bv2.getBVName())){
+                position = list.indexOf(bv2);
+            }
+        }
+
+        //TODO
+        // ENDPOINT TO NIE IN ARC
+        return position;
+    }
+
+    private boolean sameType(BranchVertex bv1, BranchVertex bv2) {
+        if(bv2.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || bv1.getBVName().equals("promoting_thinning_of_the_fibrous_cap"))
+        {
+            System.out.println();
+        }
+
+        return bv1.getTypeOfBV().equals(bv2.getTypeOfBV()) &&
+                //bv1.inEndpoints.size() == bv2.inEndpoints.size() &&
+                //bv1.outEndpoints.size() == bv2.outEndpoints.size() &&
+                bv1.getOutDegreeOfBV() == bv2.getOutDegreeOfBV() &&
+                bv1.getInDegreeOfBV() == bv2.getInDegreeOfBV() &&
+                bv1.getNumberOfInPlace() == bv2.getNumberOfInPlace() &&
+                bv1.getNumberOfOutPlace() == bv2.getNumberOfOutPlace() &&
+                bv1.getNumberOfInTransitions() == bv2.getNumberOfInTransitions() &&
+                bv1.getNumberOfOutTransitions() == bv2.getNumberOfOutTransitions();
     }
 
     private JPanel createBranchResultPanel() {
@@ -2017,8 +2267,10 @@ public class HolmesComparisonModule extends JFrame {
         boolean createURL = false;
 
         branchSeriesDataSet = new XYSeriesCollection();
-        branchChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, branchSeriesDataSet,
+        //branchChart = ChartFactory.createHistogram(chartTitle, xAxisLabel, yAxisLabel, branchSeriesDataSet, PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
+        branchChart = ChartFactory.createHistogram(chartTitle, xAxisLabel, yAxisLabel, branchSeriesDataSet,
                 PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
+    //createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, branchSeriesDataSet,PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
 
         branchChart.getTitle().setFont(new Font("Dialog", Font.PLAIN, 14));
 

@@ -283,6 +283,9 @@ public class SubnetCalculator implements Serializable{
 
     public static void generateTnets() {
         //TODO  unifikacja z ADT
+
+
+
     }
 
     public static void generateMCT() {
@@ -1306,6 +1309,32 @@ public class SubnetCalculator implements Serializable{
                         subPlaces.add((Place) a.getEndNode());
                 }
             }
+        }
+
+        public SubNet(ArrayList<Arc> al,boolean mock) {
+            subTransitions = new ArrayList<>();
+            subPlaces = new ArrayList<>();
+            subArcs = al;
+
+            for (Arc a : al) {
+                if (a.getStartNode().getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
+                    if (!subTransitions.contains(a.getStartNode()))
+                        subTransitions.add((Transition) a.getStartNode());
+                } else {
+                    if (!subPlaces.contains(a.getStartNode()))
+                        subPlaces.add((Place) a.getStartNode());
+                }
+
+                if (a.getEndNode().getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
+                    if (!subTransitions.contains(a.getEndNode()))
+                        subTransitions.add((Transition) a.getEndNode());
+                } else {
+                    if (!subPlaces.contains(a.getEndNode()))
+                        subPlaces.add((Place) a.getEndNode());
+                }
+            }
+
+
         }
 
         private void createBranchBasedSubNet(ArrayList<Path> pathList) {
