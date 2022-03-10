@@ -679,7 +679,7 @@ public class HolmesComparisonModule extends JFrame {
         generateDrgf.setEnabled(false);
         buttonPanel.add(generateDrgf);
 
-        JButton analysis = new JButton("Sigle net graphlet analysis");
+        JButton analysis = new JButton("Single net graphlet analysis");
         analysis.addActionListener(e -> {
 
             GUIManager.getDefaultGUIManager().createGraphletsWindow();
@@ -987,9 +987,9 @@ public class HolmesComparisonModule extends JFrame {
             case 2:
                 return 98;
             case 3:
-                return 600;
+                return 592;
             default:
-                return 600;
+                return 592;
         }
     }
 
@@ -1140,7 +1140,7 @@ public class HolmesComparisonModule extends JFrame {
         generateNetdiv = new JButton("Generate");
         generateNetdiv.setVisible(true);
         generateNetdiv.addActionListener(e -> {
-            GraphletComparator gc = new GraphletComparator(600);
+            GraphletComparator gc = new GraphletComparator(592);
             infoPaneNetdiv.append(gc.compareNetdiv(getNDKsize(), getRadius(), GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet));
         });
 
@@ -1519,7 +1519,7 @@ public class HolmesComparisonModule extends JFrame {
 
         TitledBorder title;
         title = BorderFactory.createTitledBorder("");
-        rightPanel.setBorder(title);
+        //rightPanel.setBorder(title);
         //jp.add(rightPanel);
 
         JButton saveButton = new JButton("Save to .csv");
@@ -1538,7 +1538,7 @@ public class HolmesComparisonModule extends JFrame {
 
         rightPanel.add(saveButton);
 
-        jp.add(rightPanel, BorderLayout.EAST);
+        //jp.add(rightPanel, BorderLayout.EAST);
 
         return jp;
     }

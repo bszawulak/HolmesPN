@@ -1502,8 +1502,9 @@ public class GraphletsCalculator {
         SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(al);
         sn.orbitMap.put(70, t1);
         sn.orbitMap.put(71, p1);
-        sn.orbitMap.put(72, t2);
-        sn.orbitMap.put(73, p2);
+        //wyłąpywanie błędów
+        //sn.orbitMap.put(72, t2);
+        //sn.orbitMap.put(73, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
         sn.setSubNetID(totalGrahletID);
@@ -1558,8 +1559,9 @@ public class GraphletsCalculator {
         SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(al);
         sn.orbitMap.put(78, t1);
         sn.orbitMap.put(79, p1);
-        sn.orbitMap.put(80, t2);
-        sn.orbitMap.put(81, p2);
+        //wyłąpywanie błędów
+        //sn.orbitMap.put(80, t2);
+        //sn.orbitMap.put(81, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
         sn.setSubNetID(totalGrahletID);
@@ -1642,8 +1644,9 @@ public class GraphletsCalculator {
         SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(al);
         sn.orbitMap.put(90, t1);
         sn.orbitMap.put(91, p1);
-        sn.orbitMap.put(92, t2);
-        sn.orbitMap.put(93, p2);
+        //wyłąpywanie błędów
+        //sn.orbitMap.put(92, t2);
+        //sn.orbitMap.put(93, p2);
         globalOrbitMap.putAll(sn.orbitMap);
 
         sn.setSubNetID(totalGrahletID);

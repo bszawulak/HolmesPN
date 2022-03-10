@@ -42,6 +42,7 @@ public class HolmesGraphlets extends JFrame {
     private String pathToSecondFile = "";
 
     public HolmesGraphlets() {
+        setTitle("Single net graphlet analysis");
         overlord = GUIManager.getDefaultGUIManager();
         JTabbedPane tabbedPane = new JTabbedPane();
 
