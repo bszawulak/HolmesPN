@@ -346,6 +346,11 @@ public class BranchesServerCalc {
                                 branchVertFirst.getNumberOfInTransitions() == tlbv2.get(maxIndex.get(i)).getNumberOfInTransitions() &&
                                 branchVertFirst.getNumberOfOutTransitions() == tlbv2.get(maxIndex.get(i)).getNumberOfOutTransitions()) {
                             index = i;
+
+                            if(branchVertFirst.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || tlbv2.get(maxIndex.get(i)).getBVName().equals("promoting_thinning_of_the_fibrous_cap"))
+                            {
+                                System.out.println();
+                            }
                         }
                     }
 
@@ -383,6 +388,11 @@ public class BranchesServerCalc {
                                 branchVertSecond.getNumberOfInTransitions() == tlbv1.get(maxIndex.get(i)).getNumberOfInTransitions() &&
                                 branchVertSecond.getNumberOfOutTransitions() == tlbv1.get(maxIndex.get(i)).getNumberOfOutTransitions()) {
                             index = i;
+
+                            if(branchVertSecond.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || tlbv1.get(maxIndex.get(i)).getBVName().equals("promoting_thinning_of_the_fibrous_cap"))
+                            {
+                                System.out.println();
+                            }
                         }
                     }
 

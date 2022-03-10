@@ -13,9 +13,7 @@ import holmes.petrinet.elements.*;
 import holmes.server.BranchesServerCalc;
 import holmes.workspace.ExtensionFileFilter;
 import org.jfree.chart.*;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.axis.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -32,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.DoubleStream;
 
@@ -2101,6 +2100,18 @@ public class HolmesComparisonModule extends JFrame {
             }
         }
 
+        //get name for axis X
+        String[] axisX = new String[lista.size()];
+        for(int x = 0 ; x < lista.size() ; x++)
+        {
+            String name = "";
+            if(lista.get(x).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION))
+                name = "T";
+            else
+                name = "P";
+
+            axisX[x] = name + "<" + lista.get(x).getNumberOfInTransitions() + "," + lista.get(x).getNumberOfOutTransitions() + "," + lista.get(x).getNumberOfInPlace() + "," + lista.get(x).getNumberOfOutPlace() + ">";
+        }
 
         branchSeriesDataSet.removeAllSeries();
         branchSeriesDataSet.addSeries(series1);
@@ -2115,6 +2126,16 @@ public class HolmesComparisonModule extends JFrame {
                 new Color(0x80ff0000, true),
                 new Color(0x800000ff, true)
         };
+        SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices",axisX);
+        rangeAxis.setVerticalTickLabels(true);
+        xyplot.setDomainAxis(rangeAxis);
+
+
+
+        NumberAxis yAxis = (NumberAxis) xyplot.getRangeAxis();
+        DecimalFormat format = new DecimalFormat("0");
+        yAxis.setNumberFormatOverride(format);
+        yAxis.setTickUnit(new NumberTickUnit(1));
 
         xyplot.setDrawingSupplier(new DefaultDrawingSupplier(
                 paintArray,
@@ -2182,7 +2203,7 @@ public class HolmesComparisonModule extends JFrame {
     private int sameTypeInList (BranchVertex bv1, ArrayList<BranchVertex> list){
         int position = -1;
         for (BranchVertex bv2 : list) {
-            if(sameType(bv1,bv2)&&!bv1.getBVName().equals(bv2.getBVName())){
+            if(sameType(bv1,bv2)){//&&!bv1.getBVName().equals(bv2.getBVName())){
                 position = list.indexOf(bv2);
             }
         }
@@ -2246,6 +2267,7 @@ public class HolmesComparisonModule extends JFrame {
         boolean createURL = false;
 
         branchSeriesDataSet = new XYSeriesCollection();
+        //branchChart = ChartFactory.createHistogram(chartTitle, xAxisLabel, yAxisLabel, branchSeriesDataSet, PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
         branchChart = ChartFactory.createHistogram(chartTitle, xAxisLabel, yAxisLabel, branchSeriesDataSet,
                 PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
     //createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, branchSeriesDataSet,PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
