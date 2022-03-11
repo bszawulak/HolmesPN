@@ -1,5 +1,6 @@
 package holmes.windows;
 
+import com.birosoft.liquid.util.Panel;
 import holmes.analyse.GraphletsCalculator;
 import holmes.analyse.InvariantsCalculator;
 import holmes.analyse.SubnetCalculator;
@@ -107,6 +108,11 @@ public class HolmesComparisonModule extends JFrame {
     private JFreeChart branchPlaChart;
     private JPanel branchChartPanel = new JPanel();
     private JPanel branchTabs;
+    JPanel listBranchView;
+    JList<String> leftBranchList = new JList();
+    JList<String> centerBranchList = new JList();
+    JList<String> rightBranchList = new JList();
+    ArrayList<branchingPairs> currentBranchingRelations = new ArrayList<>();
 
     public HolmesComparisonModule() {
         setTitle("Comparison module");
@@ -928,8 +934,8 @@ public class HolmesComparisonModule extends JFrame {
     private int[][] toInt(Object[][] dataDGDD) {
         int[][] result = new int[dataDGDD.length][dataDGDD[0].length];
 
-        for(int i = 0 ; i < dataDGDD.length ; i++)
-            for(int j = 0 ; j < dataDGDD[i].length ; j++)
+        for (int i = 0; i < dataDGDD.length; i++)
+            for (int j = 0; j < dataDGDD[i].length; j++)
                 result[i][j] = (int) dataDGDD[i][j];
 
         return result;
@@ -1762,8 +1768,8 @@ public class HolmesComparisonModule extends JFrame {
     private void colorIsomorphicCels(int row, int col, Component
             comp, ArrayList<ArrayList<GreatCommonSubnet>> subNetArrayList) {
         if (subNetArrayList.get(row).get(col).gcsValue == subNetArrayList.get(row).get(col).firstNetNodeSize) {
-            if(subNetArrayList.get(row).get(col).secondNetNodeSize == subNetArrayList.get(row).get(col).firstNetNodeSize)
-                comp.setBackground(new Color(0,153,0));
+            if (subNetArrayList.get(row).get(col).secondNetNodeSize == subNetArrayList.get(row).get(col).firstNetNodeSize)
+                comp.setBackground(new Color(0, 153, 0));
             else
                 comp.setBackground(Color.green);
         } else if (subNetArrayList.get(row).get(col).gcsValue == 0) {
@@ -1905,7 +1911,13 @@ public class HolmesComparisonModule extends JFrame {
         branchTabs.setVisible(true);
         //panel.add(branchTabs, BorderLayout.SOUTH);
 
+
         south.add(branchTabs, BorderLayout.EAST);
+        //panel.add(south);
+
+        listBranchView = new JPanel();
+        listBranchView.setVisible(true);
+        south.add(listBranchView, BorderLayout.SOUTH);
         panel.add(south);
 
         return panel;
@@ -1997,7 +2009,9 @@ public class HolmesComparisonModule extends JFrame {
         //rysowanie Z INNYCH DANYCGH
 
         JComponent tabRes = createBranchDiagramsPanel(result);
-               // branchTabs =
+
+        calcDataForRelationTable(result);
+        // branchTabs =
         //branchTabs.setVisible(true);
         branchTabs.add(tabRes, BorderLayout.WEST);
 
@@ -2005,6 +2019,173 @@ public class HolmesComparisonModule extends JFrame {
 
 
         this.setSize(950, 1200);
+    }
+
+    private void calcDataForRelationTable(BranchesServerCalc.ParsedBranchData result) {
+        //First step
+        ArrayList<branchingPairs> bp = new ArrayList<>();
+        ArrayList<branchingRelation> br2 = new ArrayList<>();
+        for (BranchVertex vertex : result.lbv2) {
+            boolean isIso = false;
+            for (branchingRelation br : br2) {
+                isIso = br.compare(vertex);
+            }
+            if (!isIso) {
+                br2.add(new branchingRelation(vertex));
+                bp.add(new branchingPairs(null, br2.get(br2.size() - 1)));
+            }
+        }
+
+        ArrayList<branchingRelation> br1 = new ArrayList<>();
+        for (BranchVertex vertex : result.lbv1) {
+            boolean isIso = false;
+            for (branchingRelation br : br1) {
+                isIso = br.compare(vertex);
+            }
+            if (!isIso) {
+                br1.add(new branchingRelation(vertex));
+                boolean noIso = true;
+                for (branchingPairs element : bp) {
+                    if (element.net2 !=null && element.net2.isIso(vertex)) {
+                        element.net1 = br1.get(br1.size() - 1);
+                        noIso = false;
+                    }
+                }
+                if (noIso) {
+                    bp.add(new branchingPairs(br1.get(br1.size() - 1), null));
+                }
+
+            }
+        }
+
+        //Second Step
+        for (branchingPairs basePair : bp) {
+            for (branchingPairs internalPair : bp) {
+                if (basePair.type.isIncludED(internalPair.type.root)) {
+                    if (!basePair.smaller.contains(internalPair))
+                        basePair.smaller.add(internalPair);
+                    if (!internalPair.larger.contains(basePair))
+                        internalPair.larger.add(basePair);
+                }
+
+                if (basePair.type.isIncludING(internalPair.type.root)) {
+                    if (!basePair.larger.contains(internalPair))
+                        basePair.larger.add(internalPair);
+                    if (!internalPair.smaller.contains(basePair))
+                        internalPair.smaller.add(basePair);
+                }
+            }
+        }
+
+        listBranchView = createBranchingList(bp);
+
+    }
+
+    private JPanel createBranchingList(ArrayList<branchingPairs> bp) {
+        currentBranchingRelations.clear();
+        currentBranchingRelations=bp;
+        JPanel jp = new JPanel();
+
+        String[] branchingString = calcBranchingString(bp);
+        JComboBox brList = new JComboBox(branchingString);
+        brList.setSelectedIndex(0);
+        brList.addActionListener(e -> {
+            //BranchesServerCalc bsc = new BranchesServerCalc();
+            //BranchesServerCalc.ParsedBranchData result = bsc.compare(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet, branchingVariant.getSelectedIndex());
+            //parsBranchingData(result);
+            //infoPaneBranch.append("");
+            branchingPairs pair = currentBranchingRelations.get(brList.getSelectedIndex());
+            ArrayList<branchingPairs> larger = pair.larger;
+            ArrayList<branchingPairs> smaller = pair.smaller;
+
+
+            DefaultListModel<String>  centerNodel = createListInterior(brList, pair);
+            centerBranchList.setModel( centerNodel );
+            centerBranchList.setVisible(true);
+            centerBranchList.updateUI();
+            centerBranchList.setBounds(200,200, 75,75);
+
+            //Larger
+            DefaultListModel<String>  leftModel = new DefaultListModel<>();
+            for(branchingPairs element :pair.larger)
+            {
+                DefaultListModel<String>  tmpModel = createListInterior(brList, element);
+                addTo(tmpModel, leftModel);
+            }
+            leftBranchList.setModel( leftModel );
+            leftBranchList.setVisible(true);
+            leftBranchList.updateUI();
+            leftBranchList.setBounds(200,200, 75,75);
+
+            //Smaller
+            DefaultListModel<String>  rightModel = new DefaultListModel<>();
+            for(branchingPairs element :pair.smaller)
+            {
+                DefaultListModel<String>  tmpModel = createListInterior(brList, element);
+                addTo(tmpModel, rightModel);
+            }
+            rightBranchList.setModel( rightModel );
+            rightBranchList.setVisible(true);
+            rightBranchList.updateUI();
+            rightBranchList.setBounds(200,200, 75,75);
+        });
+        jp.add(brList);
+
+        //DefaultListModel<String> l1 = new DefaultListModel<>();
+        //l1.addElement("Item1");
+        //l1.addElement("Item2");
+        //l1.addElement("Item3");
+        //l1.addElement("Item4");
+        //JList<String> list = new JList<>(l1);
+        //list.setBounds(100,100, 75,75);
+        //jp.add(list);
+
+        DefaultListModel centerNodel = new DefaultListModel();
+        DefaultListModel leftModel = new DefaultListModel();
+        DefaultListModel rightModel = new DefaultListModel();
+        leftModel.addElement("TEST");
+        centerNodel.addElement("TEST");
+        rightModel.addElement("TEST");
+        leftBranchList = new JList(leftModel);
+        centerBranchList = new JList<>(centerNodel);
+        rightBranchList = new JList(rightModel);
+        jp.add(leftBranchList);
+        jp.add(centerBranchList);
+        jp.add(rightBranchList);
+
+        listBranchView.add(jp, BorderLayout.SOUTH);
+
+        return jp;
+    }
+
+    private DefaultListModel<String> createListInterior(JComboBox brList, branchingPairs pair) {
+        DefaultListModel<String> centerNodel = new DefaultListModel<>();
+        centerNodel.addElement(brList.getSelectedItem().toString());
+        centerNodel.addElement("FIRST NET");
+        for(int i = 0; i < pair.net1.list.size() ; i++)
+        {
+            centerNodel.addElement( "- "+ pair.net1.list.get(i).getBVName());
+        }
+        centerNodel.addElement("SECOND NET");
+        for(int i = 0; i < pair.net2.list.size() ; i++)
+        {
+            centerNodel.addElement("- "+ pair.net2.list.get(i).getBVName());
+        }
+        return centerNodel;
+    }
+
+    private String[] calcBranchingString(ArrayList<branchingPairs> bp) {
+        String[] result = new String[bp.size()];
+        for (int i = 0 ; i <bp.size(); i++) {
+            String name = "";
+            if (bp.get(i).type.root.getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION))
+                name = "T";
+            else
+                name = "P";
+
+            result[i] = name + "<" + bp.get(i).type.root.getNumberOfInTransitions() + "," + bp.get(i).type.root.getNumberOfOutTransitions() + "," + bp.get(i).type.root.getNumberOfInPlace() + "," + bp.get(i).type.root.getNumberOfOutPlace() + ">";
+        }
+        return result;
     }
 
     private Map<? extends BranchVertex, ? extends Integer> parsed(ArrayList<BranchVertex> onlyFIrst) {
@@ -2026,10 +2207,10 @@ public class HolmesComparisonModule extends JFrame {
         return result;
     }
 
-    private int sameTypeInList (BranchVertex bv1, ArrayList<BranchVertex> list){
+    private int sameTypeInList(BranchVertex bv1, ArrayList<BranchVertex> list) {
         int position = -1;
         for (BranchVertex bv2 : list) {
-            if(sameType(bv1,bv2)){//&&!bv1.getBVName().equals(bv2.getBVName())){
+            if (sameType(bv1, bv2)) {//&&!bv1.getBVName().equals(bv2.getBVName())){
                 position = list.indexOf(bv2);
             }
         }
@@ -2040,8 +2221,7 @@ public class HolmesComparisonModule extends JFrame {
     }
 
     private boolean sameType(BranchVertex bv1, BranchVertex bv2) {
-        if(bv2.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || bv1.getBVName().equals("promoting_thinning_of_the_fibrous_cap"))
-        {
+        if (bv2.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || bv1.getBVName().equals("promoting_thinning_of_the_fibrous_cap")) {
             System.out.println();
         }
 
@@ -2105,7 +2285,7 @@ public class HolmesComparisonModule extends JFrame {
     }
     */
 
-    private JPanel createBranchDiagramsPanel(BranchesServerCalc.ParsedBranchData result){
+    private JPanel createBranchDiagramsPanel(BranchesServerCalc.ParsedBranchData result) {
         JPanel jp = new JPanel();
 
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -2113,16 +2293,16 @@ public class HolmesComparisonModule extends JFrame {
 
         this.setSize(950, 800);
 
-        ArrayList<BranchVertex> lbv ;
-        JComponent panelFF = createDiagram(result,0);//,gscl.size(),gscl.get(0).size());
+        ArrayList<BranchVertex> lbv;
+        JComponent panelFF = createDiagram(result, 0);//,gscl.size(),gscl.get(0).size());
         tabbedPane.addTab("Branching vertices BrRDF", null, panelFF, "Diagram for branching vertices ");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-        JComponent panelFP = createDiagram(result,1);
+        JComponent panelFP = createDiagram(result, 1);
         tabbedPane.addTab("Branching transitions BrRDF", null, panelFP, "Diagram for branching transitions ");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-        JComponent panelPP = createDiagram(result,2);
+        JComponent panelPP = createDiagram(result, 2);
         tabbedPane.addTab("Branching places BrRDF", null, panelPP, "Diagram for branching places ");
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
@@ -2142,19 +2322,18 @@ public class HolmesComparisonModule extends JFrame {
         XYSeries series2 = new XYSeries("Branching vertices of second net");
 
         for (int fb1 = 0; fb1 < result.lbv1.size(); fb1++) {
-            int pos = sameTypeInList(result.lbv1.get(fb1),lista );
-            if (pos>-1) {
-                if((mod==1 && result.lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
-                        mod==2 && result.lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
-                        mod==0) {
+            int pos = sameTypeInList(result.lbv1.get(fb1), lista);
+            if (pos > -1) {
+                if ((mod == 1 && result.lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && result.lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
                     series1.update((Number) (pos), series1.getY(pos).intValue() + 1);
                     System.out.println("Position: " + pos + " - " + result.lbv1.get(fb1).getBVName());
                 }
-            }
-            else {
-                if((mod==1 && result.lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
-                        mod==2 && result.lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
-                        mod==0) {
+            } else {
+                if ((mod == 1 && result.lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && result.lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
                     series1.add(position, 1);
                     series2.add(position, 0);
                     lista.add(result.lbv1.get(fb1));
@@ -2166,21 +2345,19 @@ public class HolmesComparisonModule extends JFrame {
 
         System.out.println("second");
         for (int fb1 = 0; fb1 < result.lbv2.size(); fb1++) {
-            int pos = sameTypeInList(result.lbv2.get(fb1),lista );
-            if (pos>-1) {
-                if((mod==1 && result.lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
-                        mod==2 && result.lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
-                        mod==0)
-                {
-                series2.update((Number)(pos),series2.getY(pos).intValue()+1);
-                //series2.getDataItem(pos).setY(series2.getDataItem(pos).getYValue()+1);
-                System.out.println("Position: " +pos + " - "+ result.lbv2.get(fb1).getBVName());
+            int pos = sameTypeInList(result.lbv2.get(fb1), lista);
+            if (pos > -1) {
+                if ((mod == 1 && result.lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && result.lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
+                    series2.update((Number) (pos), series2.getY(pos).intValue() + 1);
+                    //series2.getDataItem(pos).setY(series2.getDataItem(pos).getYValue()+1);
+                    System.out.println("Position: " + pos + " - " + result.lbv2.get(fb1).getBVName());
                 }
-            }
-            else {
-                if((mod==1 && result.lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
-                        mod==2 && result.lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
-                        mod==0) {
+            } else {
+                if ((mod == 1 && result.lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && result.lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
                     series1.add(position, 0);
                     series2.add(position, 1);
                     lista.add(result.lbv2.get(fb1));
@@ -2192,10 +2369,9 @@ public class HolmesComparisonModule extends JFrame {
 
         //get name for axis X
         String[] axisX = new String[lista.size()];
-        for(int x = 0 ; x < lista.size() ; x++)
-        {
+        for (int x = 0; x < lista.size(); x++) {
             String name = "";
-            if(lista.get(x).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION))
+            if (lista.get(x).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION))
                 name = "T";
             else
                 name = "P";
@@ -2203,8 +2379,7 @@ public class HolmesComparisonModule extends JFrame {
             axisX[x] = name + "<" + lista.get(x).getNumberOfInTransitions() + "," + lista.get(x).getNumberOfOutTransitions() + "," + lista.get(x).getNumberOfInPlace() + "," + lista.get(x).getNumberOfOutPlace() + ">";
         }
 
-        if(mod==0)
-        {
+        if (mod == 0) {
             String chartTitle = "Branching vertices measure";
             String xAxisLabel = "Branching vertices";
             String yAxisLabel = "Count";
@@ -2228,7 +2403,6 @@ public class HolmesComparisonModule extends JFrame {
             branchVertSeriesDataSet.addSeries(series2);
 
 
-
             XYPlot xyplot = (XYPlot) branchVertChart.getPlot();
             xyplot.setForegroundAlpha(0.85F);
             XYBarRenderer xybarrenderer = (XYBarRenderer) xyplot.getRenderer();
@@ -2238,7 +2412,7 @@ public class HolmesComparisonModule extends JFrame {
                     new Color(0x80ff0000, true),
                     new Color(0x800000ff, true)
             };
-            SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices",axisX);
+            SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices", axisX);
             rangeAxis.setVerticalTickLabels(true);
             xyplot.setDomainAxis(rangeAxis);
 
@@ -2259,8 +2433,7 @@ public class HolmesComparisonModule extends JFrame {
 
             jp.add(vertChartPanel);
         }
-        if(mod==1)
-        {
+        if (mod == 1) {
 
             String chartTitle = "Branching vertices measure";
             String xAxisLabel = "Branching vertices";
@@ -2285,8 +2458,6 @@ public class HolmesComparisonModule extends JFrame {
             branchSeriesTranDataSet.addSeries(series2);
 
 
-
-
             XYPlot xyplot = (XYPlot) branchTranChart.getPlot();
             xyplot.setForegroundAlpha(0.85F);
             XYBarRenderer xybarrenderer = (XYBarRenderer) xyplot.getRenderer();
@@ -2296,7 +2467,7 @@ public class HolmesComparisonModule extends JFrame {
                     new Color(0x80ff0000, true),
                     new Color(0x800000ff, true)
             };
-            SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices",axisX);
+            SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices", axisX);
             rangeAxis.setVerticalTickLabels(true);
             xyplot.setDomainAxis(rangeAxis);
 
@@ -2317,8 +2488,7 @@ public class HolmesComparisonModule extends JFrame {
 
             jp.add(vertChartPanel);
         }
-        if(mod==2)
-        {
+        if (mod == 2) {
 
             String chartTitle = "Branching vertices measure";
             String xAxisLabel = "Branching vertices";
@@ -2344,9 +2514,6 @@ public class HolmesComparisonModule extends JFrame {
             branchSeriesPlaDataSet.addSeries(series2);
 
 
-
-
-
             XYPlot xyplot = (XYPlot) branchPlaChart.getPlot();
             xyplot.setForegroundAlpha(0.85F);
             XYBarRenderer xybarrenderer = (XYBarRenderer) xyplot.getRenderer();
@@ -2356,7 +2523,7 @@ public class HolmesComparisonModule extends JFrame {
                     new Color(0x80ff0000, true),
                     new Color(0x800000ff, true)
             };
-            SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices",axisX);
+            SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices", axisX);
             rangeAxis.setVerticalTickLabels(true);
             xyplot.setDomainAxis(rangeAxis);
 
@@ -2380,5 +2547,83 @@ public class HolmesComparisonModule extends JFrame {
         }
 
         return jp;
+    }
+
+    private class branchingPairs {
+        public branchingRelation net1;
+        public branchingRelation net2;
+
+        public branchingRelation type;
+        public ArrayList<branchingPairs> larger = new ArrayList<>();
+        public ArrayList<branchingPairs> smaller = new ArrayList<>();
+
+        private branchingPairs(branchingRelation n1, branchingRelation n2) {
+            if (n1 != null) {
+                net1 = n1;
+                type = net1;
+            }
+            if (n2 != null) {
+                net2 = n2;
+                type = net2;
+            }
+        }
+    }
+
+    private class branchingRelation {
+        BranchVertex root;
+        ArrayList<BranchVertex> list = new ArrayList<>();
+
+        private branchingRelation(BranchVertex newVertex) {
+            root = newVertex;
+            list.add(root);
+        }
+
+        private int getTi() {
+            return (int) root.getNumberOfInTransitions();
+        }
+
+        private int getTo() {
+            return (int) root.getNumberOfOutTransitions();
+        }
+
+        private int getPi() {
+            return (int) root.getNumberOfInPlace();
+        }
+
+        private int getPo() {
+            return (int) root.getNumberOfOutPlace();
+        }
+
+        public boolean compare(BranchVertex toCompare) {
+            boolean result = false;
+            if (isIso(toCompare)) {
+                result = true;
+                list.add(toCompare);
+            }
+            return result;
+        }
+
+        public boolean isIso(BranchVertex toCompare) {
+            return getTi() == toCompare.getNumberOfInTransitions() && getTo() == toCompare.getNumberOfOutTransitions() &&
+                    getPi() == toCompare.getNumberOfInPlace() && getPo() == toCompare.getNumberOfOutPlace();
+        }
+
+        public boolean isIncludED(BranchVertex toCompare) {
+            return getTi() >= toCompare.getNumberOfInTransitions() && getTo() >= toCompare.getNumberOfOutTransitions() &&
+                    getPi() >= toCompare.getNumberOfInPlace() && getPo() >= toCompare.getNumberOfOutPlace() && !(getTi() == toCompare.getNumberOfInTransitions() && getTo() == toCompare.getNumberOfOutTransitions() &&
+                    getPi() == toCompare.getNumberOfInPlace() && getPo() == toCompare.getNumberOfOutPlace());
+        }
+
+        public boolean isIncludING(BranchVertex toCompare) {
+            return getTi() <= toCompare.getNumberOfInTransitions() && getTo() <= toCompare.getNumberOfOutTransitions() &&
+                    getPi() <= toCompare.getNumberOfInPlace() && getPo() <= toCompare.getNumberOfOutPlace()&& !(getTi() == toCompare.getNumberOfInTransitions() && getTo() == toCompare.getNumberOfOutTransitions() &&
+                    getPi() == toCompare.getNumberOfInPlace() && getPo() == toCompare.getNumberOfOutPlace());
+        }
+    }
+
+    protected static <T> void addTo(ListModel<T> from, DefaultListModel<T> to) {
+        for (int index = 0; index < from.getSize(); index++) {
+            to.addElement(from.getElementAt(index));
+        }
     }
 }
