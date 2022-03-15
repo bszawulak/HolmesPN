@@ -479,10 +479,10 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                             (n.getOutNodes().size() + n.getInNodes().size() >= minimalValue)
                             &&
                             (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
-                            &&
-                            (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue)
-                            &&
-                            (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)
+                            &&((
+                            (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue))
+                            ||(
+                            (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)))
                     ) {
                         BranchStructure bs = new BranchStructure(n, cp.getColor());
                         bsl.add(bs);
@@ -496,10 +496,10 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                             (n.getOutNodes().size() + n.getInNodes().size() >= minimalValue)
                             &&
                             (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
-                            &&
-                            (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue)
-                            &&
-                            (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)
+                            &&((
+                            (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue))
+                            |(
+                            (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)))
                     ) {
                         BranchStructure bs = new BranchStructure(n, cp.getColor());
                         bsl.add(bs);
