@@ -1,10 +1,12 @@
 package holmes.server;
 
+import holmes.Main;
 import holmes.analyse.comparison.structures.BranchVertex;
 import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
+import holmes.petrinet.elements.PetriNetElement;
 
 import java.io.*;
 import java.util.*;
@@ -14,9 +16,10 @@ public class BranchesServerCalc {
     public int index_i = 0;
     public int index_j = 0;
     public int index_p = 0;
+    public int index_p1 = 0;
     public int index_d = 0;
 
-    String pathToFiles = "/home/labnanobio-01/Dokumenty/Eksperyment/";
+    String pathToFiles = "/home/bszawulak/Dokumenty/Eksperyment/";
 
     public ArrayList<BranchVertex> tlbv1Out;
     public ArrayList<BranchVertex> tlbv2Out;
@@ -138,6 +141,25 @@ public class BranchesServerCalc {
         }
     }
 
+    public void CompareForBranches() {
+        for (int i = 0; i < 41; i = i + 5) {
+            index_i = i;
+            System.out.print("i" + i);
+            for (int j = 0; j < 41; j = j + 5) {
+                index_j = j;
+                System.out.print("j" + j);
+                for (int p = 0; p < 100; p++) {
+                    index_p = p;
+                    for (int p1 = 0; p1 < 100; p1++) {
+                        index_p1 = p1;
+                        if(index_p1!=index_p)
+                        compareBranchesPerSize();
+                    }
+                }
+            }
+        }
+    }
+
     private void compareWithExtensionOfType(String type) {
         //System.out.print(type+":");
         PetriNet pn1 = loadNet(pathToFiles + "Wyniki/i" + index_i + "j" + index_j + "/i" + index_i + "j" + index_j + "p" + index_p + "/i" + index_i + "j" + index_j + "p" + index_p + "-BASE.pnt", 0);
@@ -147,13 +169,33 @@ public class BranchesServerCalc {
         ArrayList<BranchVertex> lbv1 = calcBranches(pn1);
         ArrayList<BranchVertex> lbv2 = calcBranches(pn2);
 
-        comparison0(lbv1, lbv2, type);
-        comparison1(lbv1, lbv2, type);
-        comparison2(lbv1, lbv2, type);
-        comparison3(lbv1, lbv2, type);
+        //comparison0(lbv1, lbv2, type);
+        //comparison1(lbv1, lbv2, type);
+        //comparison2(lbv1, lbv2, type);
+        //comparison3(lbv1, lbv2, type);
         //---------------------
-        comparison4(lbv1, lbv2, type);
+        //comparison4(lbv1, lbv2, type);
         //System.out.println();
+        comparisonBrRDF(lbv1, lbv2, type, 0);
+    }
+
+    private void compareBranchesPerSize() {
+        //System.out.print(type+":");
+        PetriNet pn1 = loadNet(pathToFiles + "Wyniki/i" + index_i + "j" + index_j + "/i" + index_i + "j" + index_j + "p" + index_p + "/i" + index_i + "j" + index_j + "p" + index_p + "-BASE.pnt", 0);
+        //PetriNet pn2 = loadNet("/home/Szavislav/i0j0p0-S4VARIANT.pnt", 1);
+        PetriNet pn2 = loadNet(pathToFiles + "Wyniki/i" + index_i + "j" + index_j + "/i" + index_i + "j" + index_j + "p" + index_p1 + "/i" + index_i + "j" + index_j + "p" + index_p1 + "-BASE.pnt", 1);
+
+        ArrayList<BranchVertex> lbv1 = calcBranches(pn1);
+        ArrayList<BranchVertex> lbv2 = calcBranches(pn2);
+
+        //comparison0(lbv1, lbv2, type);
+        //comparison1(lbv1, lbv2, type);
+        //comparison2(lbv1, lbv2, type);
+        //comparison3(lbv1, lbv2, type);
+        //---------------------
+        //comparison4(lbv1, lbv2, type);
+        //System.out.println();
+        comparisonBrRDF(lbv1, lbv2, "BASE", 0);
     }
 
     public ParsedBranchData compare(PetriNet pn1, PetriNet pn2, int type) {
@@ -173,7 +215,7 @@ public class BranchesServerCalc {
         }
 
         HashMap<BranchVertex, Integer> toWrtieeOnChart = parseForChart(matched, lbv1, lbv2);
-        ParsedBranchData pdb = new ParsedBranchData(toWrtieeOnChart,matched,lbv1,lbv2);
+        ParsedBranchData pdb = new ParsedBranchData(toWrtieeOnChart, matched, lbv1, lbv2);
 
         return pdb;
     }
@@ -246,6 +288,138 @@ public class BranchesServerCalc {
     }
 
     private void comparisonII(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
+    }
+
+    private void comparisonBrRDF(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type, int mod) {
+        ArrayList<BranchVertex> tlbv1 = new ArrayList<>(lbv1);
+        ArrayList<BranchVertex> tlbv2 = new ArrayList<>(lbv2);
+
+        HashMap<BranchVertex, BranchVertex> maping = new HashMap<>();
+
+
+        ///////////////
+        ArrayList<BranchVertex> lista = new ArrayList<>();
+
+        int position = 0;
+
+        ArrayList<Integer> series1 = new ArrayList();
+        ArrayList<Integer> series2 = new ArrayList();
+
+        for (int fb1 = 0; fb1 < lbv1.size(); fb1++) {
+            int pos = sameTypeInList(lbv1.get(fb1), lista);
+            if (pos > -1) {
+                if ((mod == 1 && lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
+                    series1.set((pos), (int) series1.get(pos) + 1);
+                    System.out.println("Position: " + pos + " - " + lbv1.get(fb1).getBVName());
+                }
+            } else {
+                if ((mod == 1 && lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
+                    series1.add(position, 1);
+                    series2.add(position, 0);
+                    lista.add(lbv1.get(fb1));
+                    System.out.println("Position: " + position + " - " + lbv1.get(fb1).getBVName());
+                    position++;
+                }
+            }
+        }
+
+        System.out.println("second");
+        for (int fb1 = 0; fb1 < lbv2.size(); fb1++) {
+            int pos = sameTypeInList(lbv2.get(fb1), lista);
+            if (pos > -1) {
+                if ((mod == 1 && lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
+                    series2.set((pos), (int) series2.get(pos) + 1);
+                    //series2.getDataItem(pos).setY(series2.getDataItem(pos).getYValue()+1);
+                    System.out.println("Position: " + pos + " - " + lbv2.get(fb1).getBVName());
+                }
+            } else {
+                if ((mod == 1 && lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
+                    series1.add(position, 0);
+                    series2.add(position, 1);
+                    lista.add(lbv2.get(fb1));
+                    System.out.println("Position: " + position + " - " + lbv2.get(fb1).getBVName());
+                    position++;
+                }
+            }
+        }
+
+        int[] N1 = new int[series1.size()];
+        int[] N2 = new int[series2.size()];
+
+        for (int i = 0; i < series1.size(); i++) {
+            N1[i] = series1.get(i);
+        }
+        for (int i = 0; i < series2.size(); i++) {
+            N2[i] = series2.get(i);
+        }
+        ///////////////
+        int T1 = 0;
+        int T2 = 0;
+
+        T1 = Arrays.stream(N1).sum();
+        T2 = Arrays.stream(N2).sum();
+
+        double[] F1 = new double[series1.size()];
+        double[] F2 = new double[series2.size()];
+
+        for (int i = 0; i < series1.size(); i++) {
+            if (N1[i] != 0)
+                F1[i] = -Math.log(((double) N1[i] / (double) T1));
+            else
+                F1[i] = 0;
+        }
+        for (int i = 0; i < series2.size(); i++) {
+            if (N2[i] != 0)
+                F2[i] = -Math.log(((double) N2[i] / (double) T2));
+            else
+                F2[i] = 0;
+        }
+
+        double[] Dbr = new double[lista.size()];
+
+        String ThirdPosition = "";
+        for (int i = 0; i < lista.size(); i++) {
+            Dbr[i] = Math.abs(F1[i] - F2[i]);
+            ThirdPosition += Dbr[i];
+            if (i != lista.size() - 1)
+                ThirdPosition += ",";
+        }
+
+        double DbrV = Arrays.stream(Dbr).sum();
+
+        //TODO - test i puszczasz dla paczki ze wzrastająca częstotliwością
+
+
+        try {
+            FileWriter writer = new FileWriter(pathToFiles + "Wyniki/BrRDF-" + type + ".csv", true);
+            writer.append("i:" + index_i + "j:" + index_j + "p:" + index_p + "p1:" + index_p1 + "d:" + index_d + "," + DbrV + "," + ThirdPosition).append("\n");;
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //showSimilarity(lbv1, lbv2, maping, "BrRDF", type);
+    }
+
+    private int sameTypeInList(BranchVertex bv1, ArrayList<BranchVertex> list) {
+        int position = -1;
+        for (BranchVertex bv2 : list) {
+            if (sameType(bv1, bv2)) {//&&!bv1.getBVName().equals(bv2.getBVName())){
+                position = list.indexOf(bv2);
+            }
+        }
+
+        //TODO
+        // ENDPOINT TO NIE IN ARC
+        return position;
     }
 
     private void comparisonI(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
@@ -347,8 +521,7 @@ public class BranchesServerCalc {
                                 branchVertFirst.getNumberOfOutTransitions() == tlbv2.get(maxIndex.get(i)).getNumberOfOutTransitions()) {
                             index = i;
 
-                            if(branchVertFirst.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || tlbv2.get(maxIndex.get(i)).getBVName().equals("promoting_thinning_of_the_fibrous_cap"))
-                            {
+                            if (branchVertFirst.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || tlbv2.get(maxIndex.get(i)).getBVName().equals("promoting_thinning_of_the_fibrous_cap")) {
                                 System.out.println();
                             }
                         }
@@ -389,8 +562,7 @@ public class BranchesServerCalc {
                                 branchVertSecond.getNumberOfOutTransitions() == tlbv1.get(maxIndex.get(i)).getNumberOfOutTransitions()) {
                             index = i;
 
-                            if(branchVertSecond.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || tlbv1.get(maxIndex.get(i)).getBVName().equals("promoting_thinning_of_the_fibrous_cap"))
-                            {
+                            if (branchVertSecond.getBVName().equals("promoting_thinning_of_the_fibrous_cap") || tlbv1.get(maxIndex.get(i)).getBVName().equals("promoting_thinning_of_the_fibrous_cap")) {
                                 System.out.println();
                             }
                         }
@@ -1365,7 +1537,7 @@ public class BranchesServerCalc {
             this.lbv2 = new ArrayList<>();
         }
 
-        public ParsedBranchData(HashMap<BranchVertex, Integer> me, HashMap<BranchVertex, BranchVertex> ma, ArrayList<BranchVertex> l1,ArrayList<BranchVertex> l2) {
+        public ParsedBranchData(HashMap<BranchVertex, Integer> me, HashMap<BranchVertex, BranchVertex> ma, ArrayList<BranchVertex> l1, ArrayList<BranchVertex> l2) {
             this.merged = me;
             this.matched = ma;
             this.lbv1 = l1;
