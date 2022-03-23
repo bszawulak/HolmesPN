@@ -402,6 +402,19 @@ public class SubnetComparator {
                 System.out.println("Typ 1");
                 for (int i = 0; i < net2.branchVertices.size(); i++) {
                     //TODO weź max lub tej samej długości
+                    if(secondQuestion && net2.branchVertices.get(i).pbranches.size()==0){
+                        ArrayList<BranchBasedSubnet.Branch> branchesList = new ArrayList<>();
+                        branchesList.addAll(net2.branchVertices.get(i).pbranches);
+                        if (secondQuestion) {
+                            branchesList.addAll(net2.branchVertices.get(i).tbranch);
+                        }
+                        // net2.branchVertices.get(i).pbranches.get(j).startNode
+                        BranchBasedSubnet.Branch br = new BranchBasedSubnet.Branch(path.path, getArcList(path.path), null);
+                        ArrayList<BranchBasedSubnet.Branch> brl = new ArrayList<BranchBasedSubnet.Branch>();
+                        brl.add(br);
+                        pse = comparePbranches(brl, branchesList, brl.get(0).startNode, net2.branchVertices.get(i).root);
+                        psel.add(pse);
+                    }
                     for (int j = 0; j < net2.branchVertices.get(i).pbranches.size(); j++) {
 
                         ArrayList<BranchBasedSubnet.Branch> branchesList = new ArrayList<>();
@@ -1804,7 +1817,9 @@ public class SubnetComparator {
         ArrayList<Node> commonN = new ArrayList<>();
         ArrayList<Arc> commonA = new ArrayList<>();
 
+        //Czy miesza ścieżki
         if (!secondQuestion) {
+            //Nie nie miesza
             if (((path1.path.get(0).getType().equals(path2.path.get(0).getType())) && (path1.path.get(path1.path.size() - 1).getType().equals(path2.path.get(path2.path.size() - 1).getType())))
                     ||
                     ((path1.path.get(0).getType().equals(path2.path.get(path2.path.size() - 1).getType())) && (path1.path.get(path1.path.size() - 1).getType().equals(path2.path.get(0).getType())))
@@ -1814,7 +1829,10 @@ public class SubnetComparator {
 
             }
         } else {
-            pseList.addAll(choleraJakToNazwe(path1, path2, commonNodes, commonArcs, commonN, commonA));
+            //Tak miesza
+            //a to poniżej zabrania mieszaniu całkowiecie tyle że o ściezkach mówimy
+            //if(path1.startNode.getType().equals(path2.startNode.getType()) && path1.endNode.getType().equals(path2.endNode.getType()))
+                pseList.addAll(choleraJakToNazwe(path1, path2, commonNodes, commonArcs, commonN, commonA));
         }
 
         // if(!secondQuestion) {
