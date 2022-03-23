@@ -39,7 +39,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         }
         overlord = GUIManager.getDefaultGUIManager();
         setVisible(false);
-        this.setTitle("Decomposition");
+        this.setTitle("Branching");
 
         setLayout(new BorderLayout());
         setSize(new Dimension(900, 600));
@@ -155,7 +155,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
     private JPanel createInputPanel(int x, int y, int width, int height) {
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(3,1));
+        mainPanel.setLayout(new GridLayout(3, 1));
         mainPanel.setBorder(BorderFactory.createTitledBorder(""));
         //mainPanel.setPreferredSize(new Dimension(width, height));
         JPanel panel = new JPanel();
@@ -165,9 +165,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         int posX = 10;
         int posY = 10;
 
-        JPanel buttonPanel = new JPanel(new GridLayout(5,1));
+        JPanel buttonPanel = new JPanel(new GridLayout(5, 1));
 
-        JButton calc = new JButton("<html>Find Branch <br />Vertices</html>");
+        JButton calc = new JButton("<html>Find Branching <br />Vertices</html>");
         calc.setLayout(new FlowLayout());
         calc.setEnabled(true);
         calc.setBounds(posX, posY, 70, 70);
@@ -177,7 +177,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         calc.setFocusPainted(false);
         buttonPanel.add(calc);
 
-        JButton calcT = new JButton("<html>Find Branch <br />Transitions</html>");
+        JButton calcT = new JButton("<html>Find Branching <br />Transitions</html>");
         calcT.setLayout(new FlowLayout());
         calcT.setEnabled(true);
         calcT.setBounds(posX, posY + 80, 70, 70);
@@ -187,7 +187,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         calcT.setFocusPainted(false);
         buttonPanel.add(calcT);
 
-        JButton calcP = new JButton("<html>Find Branch <br />Places</html>");
+        JButton calcP = new JButton("<html>Find Branching <br />Places</html>");
         calcP.setLayout(new FlowLayout());
         calcP.setEnabled(true);
         calcP.setBounds(posX, posY + 160, 70, 70);
@@ -240,7 +240,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
         minallTA = new JTextArea(1, 5);
         minallTA.setLayout(new GridLayout());
-        minallTA.setText("3");
+        //minallTA.setText("3");
         minallTA.setEnabled(true);
         c.gridx = 1;
         c.gridy = 0;
@@ -320,8 +320,8 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         c.gridy = 5;
         panel.add(maxallTAOUT, c);
 
-        mainPanel.add(buttonPanel,BorderLayout.NORTH);
-        mainPanel.add(panel,BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.NORTH);
+        mainPanel.add(panel, BorderLayout.CENTER);
         mainPanel.add(logPanel, BorderLayout.SOUTH);
 
         return mainPanel;
@@ -354,7 +354,8 @@ public class HolmesBranchVerticesPrototype extends JFrame {
     }
 
     private void compareClick() {
-
+        GUIManager.getDefaultGUIManager().createComparisonnWindow();
+        GUIManager.getDefaultGUIManager().showCompWindow();
     }
 
     private void calcBase() {
@@ -479,9 +480,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                             (n.getOutNodes().size() + n.getInNodes().size() >= minimalValue)
                             &&
                             (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
-                            &&((
+                            && ((
                             (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue))
-                            ||(
+                            || (
                             (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)))
                     ) {
                         BranchStructure bs = new BranchStructure(n, cp.getColor());
@@ -496,9 +497,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                             (n.getOutNodes().size() + n.getInNodes().size() >= minimalValue)
                             &&
                             (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
-                            &&((
+                            && ((
                             (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue))
-                            |(
+                            | (
                             (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)))
                     ) {
                         BranchStructure bs = new BranchStructure(n, cp.getColor());
