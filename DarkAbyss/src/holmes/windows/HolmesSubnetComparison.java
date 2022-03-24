@@ -360,7 +360,7 @@ public class HolmesSubnetComparison extends JFrame {
         TitledBorder title;
         title = BorderFactory.createTitledBorder("");
         rightPanel.setBorder(title);
-        jp.add(rightPanel);
+        //jp.add(rightPanel);
 
         JButton saveButton = new JButton("Save to .csv");
         saveButton.addActionListener(e -> {

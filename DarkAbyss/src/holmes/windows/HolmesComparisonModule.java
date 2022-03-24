@@ -1896,29 +1896,34 @@ public class HolmesComparisonModule extends JFrame {
         JPanel optionPanel = createBramchOptionPanel();
         panel.add(optionPanel, BorderLayout.NORTH);
 
+        /*
         JPanel south = new JPanel();
         JPanel verticesPanel = createBranchResultPanel();
         south.add(verticesPanel, BorderLayout.WEST);
 
         JPanel textPanel = createBranchTextArea();
         south.add(textPanel, BorderLayout.EAST);
+        */
         //panel.add(south);
 
         //branchChartPanel = createBranchChartPanel();
         //branchChartPanel.setVisible(false);
         //panel.add(branchChartPanel, BorderLayout.SOUTH);
+        JPanel resultPanel = new JPanel();
         branchTabs = new JPanel();
         branchTabs.setVisible(true);
         //panel.add(branchTabs, BorderLayout.SOUTH);
 
 
-        south.add(branchTabs, BorderLayout.EAST);
+        //resultPanel.add(branchTabs, BorderLayout.WEST);
+        panel.add(branchTabs, BorderLayout.CENTER);
         //panel.add(south);
 
         listBranchView = new JPanel();
         listBranchView.setVisible(true);
-        south.add(listBranchView, BorderLayout.SOUTH);
-        panel.add(south);
+        //resultPanel.add(listBranchView, BorderLayout.EAST);
+        panel.add(listBranchView, BorderLayout.SOUTH);
+        //panel.add(south);
 
         return panel;
     }
@@ -1967,7 +1972,7 @@ public class HolmesComparisonModule extends JFrame {
     }
 
     private void parsBranchingData(BranchesServerCalc.ParsedBranchData result) {
-
+/*
         dataBranch = new Object[result.matched.size() + result.onlyFirstNet.size() + result.onlySecondNet.size() + 1][3];
         String[] colNames = new String[3];
         colNames[0] = "Branching vertex";
@@ -2006,6 +2011,7 @@ public class HolmesComparisonModule extends JFrame {
         branchTable.setModel(model);
         branchTable.setAutoResizeMode(5);
 
+        */
         //rysowanie Z INNYCH DANYCGH
 
         JComponent tabRes = createBranchDiagramsPanel(result);
@@ -2046,7 +2052,7 @@ public class HolmesComparisonModule extends JFrame {
                 br1.add(new branchingRelation(vertex));
                 boolean noIso = true;
                 for (branchingPairs element : bp) {
-                    if (element.net2 !=null && element.net2.isIso(vertex)) {
+                    if (element.net2 != null && element.net2.isIso(vertex)) {
                         element.net1 = br1.get(br1.size() - 1);
                         noIso = false;
                     }
@@ -2086,6 +2092,9 @@ public class HolmesComparisonModule extends JFrame {
         currentBranchingRelations=bp;
         JPanel jp = new JPanel();
 
+        JPanel northPanel = new JPanel(new FlowLayout());
+        JLabel name = new JLabel("Choose branch vertex");
+        northPanel.add(name);
         String[] branchingString = calcBranchingString(bp);
         JComboBox brList = new JComboBox(branchingString);
         brList.setSelectedIndex(0);
@@ -2172,6 +2181,19 @@ public class HolmesComparisonModule extends JFrame {
             centerNodel.addElement("- "+ pair.net2.list.get(i).getBVName());
         }
         return centerNodel;
+    }
+
+    private String getBRanchName(BranchVertex root) {
+        String result = "";
+        String name = "";
+        if (root.equals(PetriNetElement.PetriNetElementType.TRANSITION))
+            name = "T";
+        else
+            name = "P";
+
+        result = name + "<" + root.getNumberOfInTransitions() + "," + root.getNumberOfOutTransitions() + "," + root.getNumberOfInPlace() + "," + root.getNumberOfOutPlace() + ">";
+
+        return result;
     }
 
     private String[] calcBranchingString(ArrayList<branchingPairs> bp) {
