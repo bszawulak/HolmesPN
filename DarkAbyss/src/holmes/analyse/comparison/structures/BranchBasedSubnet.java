@@ -256,6 +256,7 @@ public class BranchBasedSubnet {
 
         public HashMap<Node, Node> nodeMap = new HashMap<>();
         public HashMap<Arc, Arc> arcMap = new HashMap<>();
+        public boolean isCycle = false;
 
 
         public Branch(ArrayList<Node> be, ArrayList<Arc> ba, BranchBasedSubnet parentNode) {
@@ -279,6 +280,9 @@ public class BranchBasedSubnet {
             if (branchElements.size() == 1) {
                 System.out.println("Zła branch");
             }
+
+            if(startNode.getID()==endNode.getID())
+                isCycle=true;
         }
 
         public Branch(ArrayList<Node> be, ArrayList<Arc> ba, BranchBasedSubnet parentNode, HashMap<Node, Node> nm, HashMap<Arc, Arc> am) {
@@ -304,6 +308,8 @@ public class BranchBasedSubnet {
             if (branchElements.size() == 1) {
                 System.out.println("Zła branch");
             }
+            if(startNode.getID()==endNode.getID())
+                isCycle=true;
         }
 
         private void sortBranch() {
@@ -434,6 +440,8 @@ public class BranchBasedSubnet {
             if (branchElements.size() == 1) {
                 System.out.println("Zła branch");
             }
+            if(startNode.getID()==endNode.getID())
+                isCycle=true;
         }
 
         public ArrayList<Node> returnBorderNodes() {

@@ -206,6 +206,7 @@ public class BranchesServerCalc {
         tlbv1Out = lbv1;
         tlbv2Out = lbv2;
 
+        /*
         switch (type) {
             case 1:
                 matched = comparison0(lbv1, lbv2);
@@ -213,9 +214,15 @@ public class BranchesServerCalc {
             default:
                 matched = new HashMap<>();
         }
-
-        HashMap<BranchVertex, Integer> toWrtieeOnChart = parseForChart(matched, lbv1, lbv2);
-        ParsedBranchData pdb = new ParsedBranchData(toWrtieeOnChart, matched, lbv1, lbv2);
+        */
+        BrRDFResults v = comparisonBrRDF(lbv1,lbv2,0);
+        BrRDFResults t = comparisonBrRDF(lbv1,lbv2,1);
+        BrRDFResults p = comparisonBrRDF(lbv1,lbv2,2);
+        BrRDFResults brdf = new BrRDFResults(v.vBrRDFvalue,v.vBrRDFtable,t.vBrRDFvalue,t.vBrRDFtable,p.vBrRDFvalue,p.vBrRDFtable,v.branchingVertices);
+        //HashMap<BranchVertex, Integer> toWrtieeOnChart = parseForChart(matched, lbv1, lbv2);
+        //ParsedBranchData pdb = new ParsedBranchData(toWrtieeOnChart, matched, lbv1, lbv2);
+        //dummy object
+        ParsedBranchData pdb = new ParsedBranchData(new HashMap<>(), new HashMap<>(), lbv1, lbv2,brdf);
 
         return pdb;
     }
@@ -290,7 +297,109 @@ public class BranchesServerCalc {
     private void comparisonII(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2) {
     }
 
-    private void comparisonBrRDF(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type, int mod) {
+    public BrRDFResults comparisonBrRDF(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, int mod) {
+
+        ArrayList<BranchVertex> lista = new ArrayList<>();
+
+        int position = 0;
+
+        ArrayList<Integer> series1 = new ArrayList();
+        ArrayList<Integer> series2 = new ArrayList();
+
+        for (int fb1 = 0; fb1 < lbv1.size(); fb1++) {
+            int pos = sameTypeInList(lbv1.get(fb1), lista);
+            if (pos > -1) {
+                if ((mod == 1 && lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
+                    series1.set((pos), (int) series1.get(pos) + 1);
+                    System.out.println("Position: " + pos + " - " + lbv1.get(fb1).getBVName());
+                }
+            } else {
+                if ((mod == 1 && lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && lbv1.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
+                    series1.add(position, 1);
+                    series2.add(position, 0);
+                    lista.add(lbv1.get(fb1));
+                    System.out.println("Position: " + position + " - " + lbv1.get(fb1).getBVName());
+                    position++;
+                }
+            }
+        }
+
+        System.out.println("second");
+        for (int fb1 = 0; fb1 < lbv2.size(); fb1++) {
+            int pos = sameTypeInList(lbv2.get(fb1), lista);
+            if (pos > -1) {
+                if ((mod == 1 && lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
+                    series2.set((pos), (int) series2.get(pos) + 1);
+                    //series2.getDataItem(pos).setY(series2.getDataItem(pos).getYValue()+1);
+                    System.out.println("Position: " + pos + " - " + lbv2.get(fb1).getBVName());
+                }
+            } else {
+                if ((mod == 1 && lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.TRANSITION)) ||
+                        mod == 2 && lbv2.get(fb1).getTypeOfBV().equals(PetriNetElement.PetriNetElementType.PLACE) ||
+                        mod == 0) {
+                    series1.add(position, 0);
+                    series2.add(position, 1);
+                    lista.add(lbv2.get(fb1));
+                    System.out.println("Position: " + position + " - " + lbv2.get(fb1).getBVName());
+                    position++;
+                }
+            }
+        }
+
+        int[] N1 = new int[series1.size()];
+        int[] N2 = new int[series2.size()];
+
+        for (int i = 0; i < series1.size(); i++) {
+            N1[i] = series1.get(i);
+        }
+        for (int i = 0; i < series2.size(); i++) {
+            N2[i] = series2.get(i);
+        }
+        ///////////////
+        int T1 = 0;
+        int T2 = 0;
+
+        T1 = Arrays.stream(N1).sum();
+        T2 = Arrays.stream(N2).sum();
+
+        double[] F1 = new double[series1.size()];
+        double[] F2 = new double[series2.size()];
+
+        for (int i = 0; i < series1.size(); i++) {
+            if (N1[i] != 0)
+                F1[i] = -Math.log(((double) N1[i] / (double) T1));
+            else
+                F1[i] = 0;
+        }
+        for (int i = 0; i < series2.size(); i++) {
+            if (N2[i] != 0)
+                F2[i] = -Math.log(((double) N2[i] / (double) T2));
+            else
+                F2[i] = 0;
+        }
+
+        double[] Dbr = new double[lista.size()];
+
+        String ThirdPosition = "";
+        for (int i = 0; i < lista.size(); i++) {
+            Dbr[i] = Math.abs(F1[i] - F2[i]);
+            ThirdPosition += Dbr[i];
+            if (i != lista.size() - 1)
+                ThirdPosition += ",";
+        }
+
+        double DbrV = Arrays.stream(Dbr).sum();
+
+        return new BrRDFResults(DbrV,Dbr,-1,new double[0],-1, new double[0],lista);
+    }
+
+    public void comparisonBrRDF(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type, int mod) {
         ArrayList<BranchVertex> tlbv1 = new ArrayList<>(lbv1);
         ArrayList<BranchVertex> tlbv2 = new ArrayList<>(lbv2);
 
@@ -398,6 +507,8 @@ public class BranchesServerCalc {
         //TODO - test i puszczasz dla paczki ze wzrastająca częstotliwością
 
 
+
+
         try {
             FileWriter writer = new FileWriter(pathToFiles + "Wyniki/BrRDF-" + type + ".csv", true);
             writer.append("i:" + index_i + "j:" + index_j + "p:" + index_p + "p1:" + index_p1 + "d:" + index_d + "," + DbrV + "," + ThirdPosition).append("\n");;
@@ -406,7 +517,9 @@ public class BranchesServerCalc {
             e.printStackTrace();
         }
 
-        //showSimilarity(lbv1, lbv2, maping, "BrRDF", type);
+
+
+        showSimilarity(lbv1, lbv2, maping, "BrRDF", type);
     }
 
     private int sameTypeInList(BranchVertex bv1, ArrayList<BranchVertex> list) {
@@ -1529,6 +1642,7 @@ public class BranchesServerCalc {
         public ArrayList<BranchVertex> lbv2;
         public ArrayList<BranchVertex> onlyFirstNet;
         public ArrayList<BranchVertex> onlySecondNet;
+        public BrRDFResults brrdf;
 
         public ParsedBranchData() {
             this.merged = new HashMap<>();
@@ -1537,11 +1651,12 @@ public class BranchesServerCalc {
             this.lbv2 = new ArrayList<>();
         }
 
-        public ParsedBranchData(HashMap<BranchVertex, Integer> me, HashMap<BranchVertex, BranchVertex> ma, ArrayList<BranchVertex> l1, ArrayList<BranchVertex> l2) {
+        public ParsedBranchData(HashMap<BranchVertex, Integer> me, HashMap<BranchVertex, BranchVertex> ma, ArrayList<BranchVertex> l1, ArrayList<BranchVertex> l2, BrRDFResults brrd) {
             this.merged = me;
             this.matched = ma;
             this.lbv1 = l1;
             this.lbv2 = l2;
+            this.brrdf = brrd;
 
             //this.onlyFirstNet =
             ArrayList<BranchVertex> matchedFIrst = new ArrayList<>(matched.keySet());
@@ -1566,6 +1681,26 @@ public class BranchesServerCalc {
         // roll number
         public int compare(BranchVertex a, BranchVertex b) {
             return a.getDegreeOfBV() - b.getDegreeOfBV();
+        }
+    }
+
+    public class BrRDFResults{
+        public double vBrRDFvalue = 0;
+        public double tBrRDFvalue = 0;
+        public double pBrRDFvalue = 0;
+        public double[] vBrRDFtable;
+        public double[] tBrRDFtable;
+        public double[] pBrRDFtable;
+        public ArrayList<BranchVertex> branchingVertices;
+
+        public BrRDFResults(double vbv,double[] vbt, double tbv, double[] tbt, double pbv, double[] pbt, ArrayList<BranchVertex> bv){
+            vBrRDFvalue = vbv;
+            tBrRDFvalue = tbv;
+            pBrRDFvalue = pbv;
+            vBrRDFtable = vbt;
+            tBrRDFtable = tbt;
+            pBrRDFtable = pbt;
+branchingVertices = bv;
         }
     }
 
