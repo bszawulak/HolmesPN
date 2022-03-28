@@ -259,6 +259,19 @@ public class BranchBasedSubnet {
         public boolean isCycle = false;
 
 
+        public Branch(Branch rew)
+        {
+            this.parent = rew.parent;
+            branchElements.addAll(new ArrayList<>(rew.branchElements));
+            branchArcs.addAll(new ArrayList<>(rew.branchArcs));
+            startNode = rew.startNode;
+            endNode = rew.endNode;
+
+            sortBranch();
+            internalBranchElements = new ArrayList<>(rew.internalBranchElements);
+            reverseBranch();
+        }
+
         public Branch(ArrayList<Node> be, ArrayList<Arc> ba, BranchBasedSubnet parentNode) {
 
             this.parent = parentNode;

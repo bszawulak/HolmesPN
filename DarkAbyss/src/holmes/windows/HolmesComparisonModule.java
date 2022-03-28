@@ -1,6 +1,5 @@
 package holmes.windows;
 
-import com.birosoft.liquid.util.Panel;
 import holmes.analyse.GraphletsCalculator;
 import holmes.analyse.InvariantsCalculator;
 import holmes.analyse.SubnetCalculator;
@@ -40,8 +39,6 @@ public class HolmesComparisonModule extends JFrame {
 
 
     enum ComparisonTypes {Invariants, Graphlets, Orbits, Netdiv, Branches, Gred}
-
-    ;
     PetriNet secondNet = null;
     ArrayList<SubnetCalculator.SubNet> seconNetList;
     JTextArea infoPaneInv = new JTextArea(30, 30);
@@ -315,11 +312,9 @@ public class HolmesComparisonModule extends JFrame {
         JRadioButton preButton = new JRadioButton("Precise matching");
         preButton.setActionCommand("");
         preButton.setSelected(true);
-        preButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (preButton.isSelected()) {
-                    invariantMatchingTypr = true;
-                }
+        preButton.addActionListener(e -> {
+            if (preButton.isSelected()) {
+                invariantMatchingTypr = true;
             }
         });
         firstQuestion.add(preButton);
@@ -347,11 +342,9 @@ public class HolmesComparisonModule extends JFrame {
         JRadioButton preTButton = new JRadioButton("Precise matching");
         preTButton.setActionCommand("");
         preTButton.setSelected(true);
-        preTButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (preButton.isSelected()) {
-                    transitionMatchingTypr = false;
-                }
+        preTButton.addActionListener(e -> {
+            if (preButton.isSelected()) {
+                transitionMatchingTypr = false;
             }
         });
         secondQuestion.add(preTButton);
@@ -1971,9 +1964,9 @@ public class HolmesComparisonModule extends JFrame {
 
         return panel;
     }
-
-    private void parsBranchingData(BranchesServerCalc.ParsedBranchData result) {
 /*
+    private void parsBranchingData(BranchesServerCalc.ParsedBranchData result) {
+
         dataBranch = new Object[result.matched.size() + result.onlyFirstNet.size() + result.onlySecondNet.size() + 1][3];
         String[] colNames = new String[3];
         colNames[0] = "Branching vertex";
@@ -2012,7 +2005,7 @@ public class HolmesComparisonModule extends JFrame {
         branchTable.setModel(model);
         branchTable.setAutoResizeMode(5);
 
-        */
+        // .//
         //rysowanie Z INNYCH DANYCGH
 
         JComponent tabRes = createBranchDiagramsPanel(result);
@@ -2027,6 +2020,7 @@ public class HolmesComparisonModule extends JFrame {
 
         this.setSize(950, 1200);
     }
+    */
 
     private void parsBranchingData(BranchesServerCalc.ParsedBranchData result) {
         JComponent tabRes = createBranchDiagramsPanel(result);
@@ -2057,6 +2051,7 @@ public class HolmesComparisonModule extends JFrame {
 
         //this.setSize(750, 900);
     }
+
 
     private void calcDataForRelationTable(BranchesServerCalc.ParsedBranchData result) {
         //First step
