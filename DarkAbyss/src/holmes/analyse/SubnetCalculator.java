@@ -15,8 +15,8 @@ import java.util.function.ToDoubleBiFunction;
 /**
  * Klasa odpowiedzialna za dekompozycję PN do wybranych typów podsieci
  */
-public class SubnetCalculator implements Serializable{
-    public enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADTcomp, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, NotTzCycles, SMC, MCT, TINV, PINV, BV,Export}
+public class SubnetCalculator implements Serializable {
+    public enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADTcomp, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, NotTzCycles, SMC, MCT, TINV, PINV, BV, Export}
 
     public static ArrayList<SubNet> functionalSubNets = new ArrayList<>();
     public static ArrayList<SubNet> snetSubNets = new ArrayList<>();
@@ -284,8 +284,116 @@ public class SubnetCalculator implements Serializable{
     public static void generateTnets() {
         //TODO  unifikacja z ADT
 
+        if (invMatrixT != null) {
+
+            for(int i = 0 ; i < invMatrixT.size() ; i++) {
+                for (int j = 0; j < invMatrixT.get(i).size(); j++)
+                {
+                    System.out.print(" " + invMatrixT.get(i).get(j) + " ");
+                }
+                System.out.println();
+            }
 
 
+            if (!invMatrixT.isEmpty()) {
+                //ArrayList<ArrayList<Integer>> invMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+                ArrayList<ArrayList<Integer>> nonAssignedRows = new ArrayList<>();
+
+                for (int i = 0; i < invMatrixT.get(0).size(); i++) {
+                    ArrayList<Integer> newRow = new ArrayList<>();
+                    for (ArrayList<Integer> integers : invMatrixT) {
+                        newRow.add(integers.get(i));
+                    }
+                    nonAssignedRows.add(newRow);
+                }
+
+                ArrayList<Integer> listOfusedTransitions = new ArrayList<>();
+
+                for (int i = 0; i < nonAssignedRows.size(); i++) {
+
+                    ArrayList<Integer> localListOfusedTransitions = new ArrayList<>(listOfusedTransitions);
+                    ArrayList<Integer> newADTset = new ArrayList<>();
+
+                    if (!localListOfusedTransitions.contains(i)) {
+                        newADTset.add(i);
+                        localListOfusedTransitions.add(i);
+                        for (int j = i; j < nonAssignedRows.size(); j++) {
+                            if (checkADT(nonAssignedRows.get(i), nonAssignedRows.get(j))) {
+                                if (!localListOfusedTransitions.contains(j)) {
+                                    localListOfusedTransitions.add(j);
+                                    newADTset.add(j);
+                                }
+                            }
+                        }
+                    }
+
+
+                    if (!newADTset.isEmpty()) {
+                        newADTset = getMaxSubConnectionTnet(newADTset);
+
+                        listOfusedTransitions.addAll(newADTset);
+                    }
+
+                    /*
+                    if(checkConnection(newADTset,j))
+                                    {
+                     */
+
+
+                    if (!newADTset.isEmpty()) {
+                        tnetSubNets.add(new SubNet(SubNetType.TNET, null, null, null, newADTset, null));
+                        listOfusedTransitions.addAll(listOfusedTransitions);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Before determine ADT sets, you need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        }
+
+
+    }
+
+    private static ArrayList<Integer> getMaxSubConnectionTnet(ArrayList<Integer> newADTset) {
+        ArrayList<ArrayList<Integer>> partialResults = new ArrayList<>();
+        while(newADTset.size()>0)
+        {
+            //Integer start = newADTset.get(0);
+            //newADTset.remove(0);
+            ArrayList<Integer> local = new ArrayList<>(newADTset);
+
+
+
+            boolean newConnections = true;
+            while(newConnections)
+            {
+                newConnections = false;
+                for (Integer next : newADTset) {
+                    if(!local.contains(next))
+                        if(checkConnection(local,next))
+                        {
+                            local.add(next);
+                            newConnections = true;
+                        }
+                }
+            }
+            partialResults.add(local);
+            newADTset.removeAll(local);
+        }
+
+        int size = 0;
+        int longest = -1;
+        for (int i = 0 ; i < partialResults.size() ; i++)
+        {
+            if(partialResults.get(i).size()>size)
+            {
+                longest=i;
+                size=partialResults.get(i).size();
+            }
+        }
+
+        return partialResults.get(longest);
     }
 
     public static void generateMCT() {
@@ -294,7 +402,7 @@ public class SubnetCalculator implements Serializable{
             for (ArrayList<Transition> mct : mctsets) {
                 mctSubNets.add(new SubNet(SubNetType.MCT, mct, null, null, null, null));
             }
-            mctSubNets.remove(mctSubNets.size()-1);
+            mctSubNets.remove(mctSubNets.size() - 1);
         } else {
             JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
@@ -341,7 +449,18 @@ public class SubnetCalculator implements Serializable{
     public static void generateADT() {
         //cleanSubnets();
 
+
         if (invMatrixT != null) {
+
+            for(int i = 0 ; i < invMatrixT.size() ; i++) {
+                for (int j = 0; j < invMatrixT.get(i).size(); j++)
+                {
+                    System.out.print(" " + invMatrixT.get(i).get(j) + " ");
+                }
+                System.out.println();
+            }
+
+
             if (!invMatrixT.isEmpty()) {
                 //ArrayList<ArrayList<Integer>> invMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
                 ArrayList<ArrayList<Integer>> nonAssignedRows = new ArrayList<>();
@@ -349,7 +468,11 @@ public class SubnetCalculator implements Serializable{
                 for (int i = 0; i < invMatrixT.get(0).size(); i++) {
                     ArrayList<Integer> newRow = new ArrayList<>();
                     for (ArrayList<Integer> integers : invMatrixT) {
-                        newRow.add(integers.get(i));
+                        //newRow.add(integers.get(i));
+                        if(integers.get(i)>0)
+                            newRow.add(1);
+                        else
+                            newRow.add(0);
                     }
                     nonAssignedRows.add(newRow);
                 }
@@ -357,22 +480,40 @@ public class SubnetCalculator implements Serializable{
                 ArrayList<Integer> listOfusedTransitions = new ArrayList<>();
 
                 for (int i = 0; i < nonAssignedRows.size(); i++) {
+
+                    ArrayList<Integer> localListOfusedTransitions = new ArrayList<>(listOfusedTransitions);
                     ArrayList<Integer> newADTset = new ArrayList<>();
 
-                    if (!listOfusedTransitions.contains(i)) {
+                    if (!localListOfusedTransitions.contains(i)) {
                         newADTset.add(i);
-                        listOfusedTransitions.add(i);
+                        localListOfusedTransitions.add(i);
                         for (int j = i; j < nonAssignedRows.size(); j++) {
                             if (checkADT(nonAssignedRows.get(i), nonAssignedRows.get(j))) {
-                                if (!listOfusedTransitions.contains(j)) {
-                                    listOfusedTransitions.add(j);
+                                if (!localListOfusedTransitions.contains(j)) {
+                                    localListOfusedTransitions.add(j);
                                     newADTset.add(j);
                                 }
                             }
                         }
                     }
-                    if (!newADTset.isEmpty())
+
+
+                    if (!newADTset.isEmpty()) {
+                        newADTset = getMaxSubConnection(newADTset);
+
+                        listOfusedTransitions.addAll(newADTset);
+                    }
+
+                    /*
+                    if(checkConnection(newADTset,j))
+                                    {
+                     */
+
+
+                    if (!newADTset.isEmpty()) {
                         adtSubNets.add(new SubNet(SubNetType.ADT, null, null, null, newADTset, null));
+                        listOfusedTransitions.addAll(listOfusedTransitions);
+                    }
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
@@ -380,6 +521,66 @@ public class SubnetCalculator implements Serializable{
         } else {
             JOptionPane.showMessageDialog(null, "Before determine ADT sets, you need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    private static ArrayList<Integer> getMaxSubConnection(ArrayList<Integer> newADTset) {
+        ArrayList<ArrayList<Integer>> partialResults = new ArrayList<>();
+        while(newADTset.size()>0)
+        {
+            //Integer start = newADTset.get(0);
+            //newADTset.remove(0);
+            //ArrayList<Integer> local = new ArrayList<>(newADTset);
+
+            Integer start = newADTset.get(0);
+            newADTset.remove(0);
+            ArrayList<Integer> inicjator = new ArrayList<Integer>();
+            inicjator.add(start);
+            ArrayList<Integer> local = new ArrayList<>(inicjator);
+
+            boolean newConnections = true;
+            while(newConnections)
+            {
+                newConnections = false;
+                for (Integer next : newADTset) {
+                    if(!local.contains(next))
+                        if(checkConnection(local,next))
+                        {
+                            local.add(next);
+                            newConnections = true;
+                        }
+                }
+            }
+            partialResults.add(local);
+            newADTset.removeAll(local);
+        }
+
+        int size = 0;
+        int longest = -1;
+        for (int i = 0 ; i < partialResults.size() ; i++)
+        {
+            if(partialResults.get(i).size()>size)
+            {
+                longest=i;
+                size=partialResults.get(i).size();
+            }
+        }
+
+        return partialResults.get(longest);
+    }
+
+    private static boolean checkConnection(ArrayList<Integer> newADTset, int j) {
+        boolean connected = false;
+
+        for (Integer i : newADTset) {
+            ArrayList<Node> common = new ArrayList<Node>(allTransitions.get(i).getOutInNodes());
+            common.retainAll(new ArrayList<>(allTransitions.get(j).getOutInNodes()));
+            if (common.size() > 0) {
+                connected = true;
+            }
+
+        }
+
+        return connected;
     }
 
     public static ArrayList<SubNet> generateADTFromSecondNet(PetriNet pn) {
@@ -572,7 +773,6 @@ public class SubnetCalculator implements Serializable{
     }
 
 
-
     public static void addSinkToSubnets(ArrayList<Path> paths) {
         ArrayList<Path> sinkSourcePaths = new ArrayList<>();
         for (Path path : paths) {
@@ -617,7 +817,7 @@ public class SubnetCalculator implements Serializable{
                         list.add(chceck);
                         Path sinkPath = new Path(n, chceck, list);
                         sinkSourcePaths.add(sinkPath);
-                        isSink=true;
+                        isSink = true;
                     }
                 }
 
@@ -628,7 +828,7 @@ public class SubnetCalculator implements Serializable{
                         list.add(chceck);
                         Path sinkPath = new Path(chceck, n, list);
                         sinkSourcePaths.add(sinkPath);
-                        isSink=true;
+                        isSink = true;
                     }
                 }
             }
@@ -1129,7 +1329,7 @@ public class SubnetCalculator implements Serializable{
         return isMore != isLess;
     }
 
-    public static class Path  implements Serializable{
+    public static class Path implements Serializable {
         public Node startNode;
         public Node endNode;
         public ArrayList<Node> path;
@@ -1142,7 +1342,7 @@ public class SubnetCalculator implements Serializable{
             startNode = s;
             endNode = e;
             path = new ArrayList<>(l);
-            innerpath =  new ArrayList<>(l);
+            innerpath = new ArrayList<>(l);
             innerpath.remove(s);
             innerpath.remove(e);
         }
@@ -1151,7 +1351,7 @@ public class SubnetCalculator implements Serializable{
             startNode = s;
             endNode = e;
             path = new ArrayList<>(l);
-            innerpath =  new ArrayList<>(l);
+            innerpath = new ArrayList<>(l);
             innerpath.remove(s);
             innerpath.remove(e);
             isCycle = cycle;
@@ -1161,15 +1361,15 @@ public class SubnetCalculator implements Serializable{
             startNode = s;
             endNode = e;
             path = new ArrayList<>(l);
-            innerpath =  new ArrayList<>(l);
+            innerpath = new ArrayList<>(l);
             innerpath.remove(s);
             innerpath.remove(e);
             isCycle = cycle;
             isRevers = revers;
         }
 
-        private boolean checkConservativnes(){
-            for(int i = 0 ; i < path.size();i++){
+        private boolean checkConservativnes() {
+            for (int i = 0; i < path.size(); i++) {
                 //if(paths.get(i).)
             }
 
@@ -1192,8 +1392,7 @@ public class SubnetCalculator implements Serializable{
         //Universal
         int subNetID;
 
-        public SubNet()
-        {
+        public SubNet() {
 
         }
 
@@ -1208,13 +1407,13 @@ public class SubnetCalculator implements Serializable{
                     createPlaceBasedSubNet(subPlaces);
                     break;
                 case TNET:
-                    createTransirionBasedSubNet(subTransitions);
+                    createTransirionBasedSubNet(getTransitionsForADT(maxADTset));
                     break;
                 case ADT:
                     createTransirionBasedSubNet(getTransitionsForADT(maxADTset));
                     break;
-                case ADTcomp :
-                    createTransirionBasedSubNet(getTransitionsForADT(maxADTset,subTransitions));
+                case ADTcomp:
+                    createTransirionBasedSubNet(getTransitionsForADT(maxADTset, subTransitions));
                     break;
                 case ADP:
                     createPlaceBasedSubNet(getTransitionsForADP(maxADTset));
@@ -1264,12 +1463,9 @@ public class SubnetCalculator implements Serializable{
             subArcs = new ArrayList<>();
 
             for (Node n : subNode) {
-                if(n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION))
-                {
+                if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
                     subTransitions.add((Transition) n);
-                }
-                else
-                {
+                } else {
                     subPlaces.add((Place) n);
                 }
             }
@@ -1311,7 +1507,7 @@ public class SubnetCalculator implements Serializable{
             }
         }
 
-        public SubNet(ArrayList<Arc> al,boolean mock) {
+        public SubNet(ArrayList<Arc> al, boolean mock) {
             subTransitions = new ArrayList<>();
             subPlaces = new ArrayList<>();
             subArcs = al;
@@ -1444,15 +1640,15 @@ public class SubnetCalculator implements Serializable{
         private void calculateBranchInternalArcs(ArrayList<Place> subPlaces, ArrayList<Transition> subTransitions, ArrayList<Path> pathList) {
             ArrayList<Arc> listOfAllArcs = new ArrayList<>();
             for (Path path : pathList) {
-                for (int i = 0; i < path.path.size() -1; i++) {
+                for (int i = 0; i < path.path.size() - 1; i++) {
                     Node startNode = path.path.get(i);
                     Node endNode = path.path.get(i + 1);
                     for (Arc arc : startNode.getOutArcs()) {
                         if (arc.getEndNode().getID() == endNode.getID())
                             listOfAllArcs.add(arc);
                     }
-                    for(Arc arc : startNode.getInArcs()){
-                        if(arc.getStartNode().getID() == endNode.getID())
+                    for (Arc arc : startNode.getInArcs()) {
+                        if (arc.getStartNode().getID() == endNode.getID())
                             listOfAllArcs.add(arc);
                     }
                 }
@@ -1629,8 +1825,7 @@ public class SubnetCalculator implements Serializable{
             return listOfNodes;
         }
 
-        public void addTransitions(ArrayList<Transition> tl)
-        {
+        public void addTransitions(ArrayList<Transition> tl) {
             subTransitions.addAll(tl);
         }
 

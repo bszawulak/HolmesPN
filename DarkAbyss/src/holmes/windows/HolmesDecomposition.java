@@ -15,6 +15,8 @@ import holmes.utilities.Tools;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,6 +54,7 @@ public class HolmesDecomposition extends JFrame {
 
     boolean dualMode = false;
     boolean properDecoMode = true;
+    private ArrayList<JCheckBox> listOfCheckBoxs=new ArrayList<>();
 
     //Similarities
     boolean showSimi = false;
@@ -101,7 +104,7 @@ public class HolmesDecomposition extends JFrame {
         this.setTitle("Decomposition");
 
         setLayout(new BorderLayout());
-        setSize(new Dimension(900, 700));
+        setSize(new Dimension(1100, 700));
         setLocation(15, 15);
 
         mainPanel = createMainPanel();
@@ -111,13 +114,14 @@ public class HolmesDecomposition extends JFrame {
     private JPanel createMainPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        buttonPanel = createLeftButtonPanel(0, 0, 180, 230);
+        buttonPanel = createLeftButtonPanel(0, 0, 300, 230);
         logMainPanel = createGraphPanel(0, 130, 500, 300);
         topButtonPanel = createTopButtonPanel(200, 130, 900, 75);
-        infoPanel = createInfoPanel(400, 130, 200, 300);
+        //topButtonPanel = createTopButtonPanel(200, 130, 900, 75);
+        //infoPanel = createInfoPanel(400, 130, 200, 300);
         panel.add(buttonPanel, BorderLayout.WEST);
         panel.add(logMainPanel, BorderLayout.CENTER);
-        panel.add(infoPanel, BorderLayout.EAST);
+        //panel.add(infoPanel, BorderLayout.EAST);
         panel.add(topButtonPanel, BorderLayout.NORTH);
         panel.repaint();
         return panel;
@@ -125,7 +129,7 @@ public class HolmesDecomposition extends JFrame {
 
     private JPanel createLeftButtonPanel(int x, int y, int width, int height) {
         JPanel panel = new JPanel();
-        panel.setLayout(null);
+        panel.setLayout(new GridLayout(12,1));
         panel.setBorder(BorderFactory.createTitledBorder("Decomposition types"));
         panel.setLocation(x, y);
         panel.setPreferredSize(new Dimension(width, height));
@@ -133,72 +137,104 @@ public class HolmesDecomposition extends JFrame {
         int posX = 10;
         int posY = 20;
 
-        JCheckBox functionalCheckBox = new JCheckBox("Functional nets");
+        ItemListener itemListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                AbstractButton abstractButton = (AbstractButton)itemEvent.getSource();
+                Color foreground = abstractButton.getForeground();
+                Color background = abstractButton.getBackground();
+                int state = itemEvent.getStateChange();
+                if (state == ItemEvent.SELECTED || state == ItemEvent.DESELECTED) {
+                    abstractButton.setForeground(background);
+                    abstractButton.setBackground(foreground);
+                }
+
+            }
+        };
+
+        JLabel prop = new JLabel("Disjoined Decompositions", SwingConstants.CENTER);
+        panel.add(prop);
+
+        JCheckBox functionalCheckBox = new JCheckBox();
         functionalCheckBox.setBounds(posX + 10, posY + 30, 150, 20);
         functionalCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, functionalCheckBox, panel, 0));
         functionalCheckBox.setSelected(false);
-        panel.add(functionalCheckBox);
+        functionalCheckBox.addItemListener(itemListener);
+        panel.add(setOnPanel(functionalCheckBox,"Functional nets"));
 
-        JCheckBox snetCheckBox = new JCheckBox("S-net");
+        JCheckBox snetCheckBox = new JCheckBox();
         snetCheckBox.setBounds(posX + 10, posY + 60, 150, 20);
         snetCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, snetCheckBox, panel, 1));
         snetCheckBox.setSelected(false);
-        panel.add(snetCheckBox);
+        snetCheckBox.addItemListener(itemListener);
+        panel.add(setOnPanel(snetCheckBox,"S-net"));
 
-        JCheckBox adtCheckBox = new JCheckBox("T-net");
+        JCheckBox adtCheckBox = new JCheckBox();
         adtCheckBox.setBounds(posX + 10, posY + 90, 150, 20);
-        adtCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, adtCheckBox, panel, 3));
+        adtCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, adtCheckBox, panel, 2));
         adtCheckBox.setSelected(false);
-        panel.add(adtCheckBox);
+        adtCheckBox.addItemListener(itemListener);
+        panel.add(setOnPanel(adtCheckBox,"T-net"));
 
-        JCheckBox ssnetCheckBox = new JCheckBox("conADT");
+        JCheckBox ssnetCheckBox = new JCheckBox();
         ssnetCheckBox.setBounds(posX + 10, posY + 120, 150, 20);
-        ssnetCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, ssnetCheckBox, panel, 99));
+        ssnetCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, ssnetCheckBox, panel, 3));
         ssnetCheckBox.setSelected(false);
-        ssnetCheckBox.setEnabled(false);
-        panel.add(ssnetCheckBox);
+        ssnetCheckBox.addItemListener(itemListener);
+        panel.add(setOnPanel(ssnetCheckBox,"connected ADT"));
 
-        JCheckBox mctCheckBox = new JCheckBox("maxADT(MCT)");
+        JCheckBox mctCheckBox = new JCheckBox();
         mctCheckBox.setBounds(posX + 10, posY + 150, 150, 20);
         mctCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, mctCheckBox, panel, 10));
         mctCheckBox.setSelected(false);
-        panel.add(mctCheckBox);
+        mctCheckBox.addItemListener(itemListener);
+        panel.add(setOnPanel(mctCheckBox,"maximal ADT (MCT)"));
 
-        JCheckBox tzCheckBox = new JCheckBox("Teng-zeng");
+        JCheckBox smcCheckBox = new JCheckBox();
+        smcCheckBox.setBounds(posX + 10, posY + 330, 150, 20);
+        smcCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, smcCheckBox, panel, 9));
+        smcCheckBox.setSelected(false);
+        smcCheckBox.addItemListener(itemListener);
+        panel.add(setOnPanel(smcCheckBox,"State Machine Component (P1-net)"));
+
+
+        JLabel unprop = new JLabel("Other Decompositions", SwingConstants.CENTER);
+        panel.add(unprop);
+
+        JCheckBox tzCheckBox = new JCheckBox();
         tzCheckBox.setBounds(posX + 10, posY + 180, 150, 20);
         tzCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, tzCheckBox, panel, 4));
         tzCheckBox.setSelected(false);
-        panel.add(tzCheckBox);
+        tzCheckBox.addItemListener(itemListener);
+        panel.add(setOnPanel(tzCheckBox,"Teng-Zeng subnets"));
 
-        JCheckBox houCheckBox = new JCheckBox("Paths");
+        JCheckBox houCheckBox = new JCheckBox();
         houCheckBox.setBounds(posX + 10, posY + 210, 150, 20);
         houCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, houCheckBox, panel, 5));
         houCheckBox.setSelected(false);
-        panel.add(houCheckBox);
+        houCheckBox.addItemListener(itemListener);
+        panel.add(setOnPanel(houCheckBox,"All source-sink paths"));
 
-        JCheckBox nishiCheckBox = new JCheckBox("AugSeq (Nishi)");
+        JCheckBox nishiCheckBox = new JCheckBox();
         nishiCheckBox.setBounds(posX + 10, posY + 240, 150, 20);
         nishiCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, nishiCheckBox, panel, 6));
         nishiCheckBox.setSelected(false);
-        panel.add(nishiCheckBox);
+        //panel.add(setOnPanel(nishiCheckBox,"Augmented Sequential Paths"));
+        nishiCheckBox.setToolTipText("Augmented Sequential Paths");
+        nishiCheckBox.addItemListener(itemListener);
+        panel.add(setOnPanel(nishiCheckBox,"Augmented Sequential Paths"));
 
-        JCheckBox cycleCheckBox = new JCheckBox("Cycle");
+        JCheckBox cycleCheckBox = new JCheckBox();
         cycleCheckBox.setBounds(posX + 10, posY + 270, 150, 20);
         cycleCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, cycleCheckBox, panel, 7));
         cycleCheckBox.setSelected(false);
-        panel.add(cycleCheckBox);
+        cycleCheckBox.addItemListener(itemListener);
+        panel.add(setOnPanel(cycleCheckBox,"Cycles"));
 
         JCheckBox ootsukiCheckBox = new JCheckBox("P1");
         ootsukiCheckBox.setBounds(posX + 10, posY + 300, 150, 20);
         ootsukiCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, ootsukiCheckBox, panel, 8));
         ootsukiCheckBox.setSelected(false);
-        panel.add(ootsukiCheckBox);
-
-        JCheckBox smcCheckBox = new JCheckBox("SMC");
-        smcCheckBox.setBounds(posX + 10, posY + 330, 150, 20);
-        smcCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, smcCheckBox, panel, 9));
-        smcCheckBox.setSelected(false);
-        panel.add(smcCheckBox);
+        //panel.add(ootsukiCheckBox);
 
         JCheckBox tinvCheckBox = new JCheckBox("T-inv");
         tinvCheckBox.setBounds(posX + 10, posY + 360, 150, 20);
@@ -236,20 +272,36 @@ public class HolmesDecomposition extends JFrame {
         ntzcCheckBox.setSelected(false);
         //panel.add(ntzcCheckBox);
 
+
+        listOfCheckBoxs.add(functionalCheckBox);
+        listOfCheckBoxs.add(snetCheckBox);
+        listOfCheckBoxs.add(ssnetCheckBox);
+        listOfCheckBoxs.add(adtCheckBox);
+        listOfCheckBoxs.add(mctCheckBox);
+        listOfCheckBoxs.add(tzCheckBox);
+        listOfCheckBoxs.add(nishiCheckBox);
+        listOfCheckBoxs.add(houCheckBox);
+        listOfCheckBoxs.add(cycleCheckBox);
+        listOfCheckBoxs.add(smcCheckBox);
+
         return panel;
+    }
+
+    private JPanel setOnPanel(JCheckBox functionalCheckBox,String text) {
+        JPanel p = new JPanel(new BorderLayout());
+        p.add(new JLabel(text, JLabel.LEFT), BorderLayout.WEST);
+        p.add(functionalCheckBox, BorderLayout.EAST);
+        p.setBorder(BorderFactory.createLineBorder(Color.lightGray));
+        return p;
     }
 
     public void checkBoxAction(ActionEvent actionEvent, JCheckBox checkBox, JPanel panel, Integer type) {
 
         AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
         if (!dualMode) {
-            for (Component comp : panel.getComponents()) {
-                if (comp instanceof JCheckBox) {
-                    if (comp.getY() != checkBox.getY()) {
-                        JCheckBox box = (JCheckBox) comp;
-                        box.setSelected(false);
-                    }
-                }
+            for (JCheckBox box : listOfCheckBoxs) {
+                if(!checkBox.equals(box))
+                    box.setSelected(false);
             }
             choosenDeco.clear();
             choosenDeco.add(type);
@@ -542,8 +594,8 @@ public class HolmesDecomposition extends JFrame {
     }
 
     private JPanel createTopButtonPanel(int x, int y, int width, int height) {
-        JPanel panel = new JPanel();
-        panel.setLayout(null);
+        JPanel panel = new JPanel(new GridLayout(1,4));
+        //panel.setLayout(null);
         panel.setBorder(BorderFactory.createTitledBorder("Options"));
         panel.setLocation(x, y);
         panel.setPreferredSize(new Dimension(width, height));
@@ -559,11 +611,12 @@ public class HolmesDecomposition extends JFrame {
         expDecoButton.setFocusPainted(false);
         panel.add(expDecoButton);//,BorderLayout.LINE_START);
 
-        JCheckBox dualCheckBox = new JCheckBox("Compare two decompositions");
+        JCheckBox dualCheckBox = new JCheckBox();
         dualCheckBox.setBounds(posX + 300, posY + 10, 250, 20);
         dualCheckBox.addActionListener(actionEvent -> setDual());
         dualCheckBox.setSelected(false);
-        panel.add(dualCheckBox);//,BorderLayout.CENTER);
+        panel.add(setOnPanel(dualCheckBox,"Compare two decompositions"));
+        //panel.add(dualCheckBox);//,BorderLayout.CENTER);
 
 
         JButton compButton = new JButton("Compare");//"<html>Decomposition\nDescriptions<html>");
@@ -747,6 +800,9 @@ public class HolmesDecomposition extends JFrame {
             decoListTwo.disable();
             decoListTwo.hide();
             decoListOne.setForeground(Color.BLACK);
+            choosenDeco.clear();
+            for(JCheckBox b : listOfCheckBoxs)
+                b.setSelected(false);
         }
     }
 
@@ -1005,21 +1061,21 @@ public class HolmesDecomposition extends JFrame {
             case 2:
                 return "T-net ";
             case 3:
-                return "maxADT ";
+                return "connected ADT ";
             case 4:
-                return "Teng-Zeng ";
+                return "Teng-Zeng subnet ";
             case 5:
-                return "Hou ";
+                return "Path ";
             case 6:
-                return "Nishi ";
+                return "Augmented Seqential Path ";
             case 7:
-                return "Cycle";
+                return "Cycle ";
             case 8:
-                return "Ootsuki";
+                return "Ootsuki ";
             case 9:
-                return "SMC";
+                return "SMC ";
             case 10:
-                return "MCT";
+                return "MCT ";
             case 11:
                 return "T-inv";
             case 12:

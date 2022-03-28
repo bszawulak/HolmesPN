@@ -1891,11 +1891,11 @@ public class HolmesComparisonModule extends JFrame {
         JPanel optionPanel = createBramchOptionPanel();
         panel.add(optionPanel, BorderLayout.NORTH);
 
-        /*
+
         JPanel south = new JPanel();
         JPanel textPanel = createBranchTextArea();
         south.add(textPanel, BorderLayout.EAST);
-        */
+
         //panel.add(south);
 
         //branchChartPanel = createBranchChartPanel();
@@ -1908,8 +1908,8 @@ public class HolmesComparisonModule extends JFrame {
 
 
         //resultPanel.add(branchTabs, BorderLayout.WEST);
-        panel.add(branchTabs, BorderLayout.CENTER);
-        //panel.add(south);
+        south.add(branchTabs, BorderLayout.WEST);
+        panel.add(south);
 
         listBranchView = new JPanel();
         listBranchView.setVisible(true);

@@ -8,6 +8,7 @@ import holmes.petrinet.elements.*;
 import holmes.utilities.ColorPalette;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +42,7 @@ public class HolmesGraphlets extends JFrame {
     private String pathToFirstFile = "";
     private String pathToSecondFile = "";
 
+    /* OLD
     public HolmesGraphlets() {
         setTitle("Single net graphlet analysis");
         overlord = GUIManager.getDefaultGUIManager();
@@ -54,6 +56,126 @@ public class HolmesGraphlets extends JFrame {
         this.pack();
         this.setVisible(true);
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+    }
+    */
+
+    public HolmesGraphlets() {
+        setTitle("Single net graphlet analysis");
+        overlord = GUIManager.getDefaultGUIManager();
+
+        JPanel panel = new JPanel(false);
+        panel.setLayout(new BorderLayout());
+
+        JPanel buttonPanel = new JPanel(new GridLayout(5,1));
+
+        JButton checknetForGraphlets = new JButton("Check net for graphlets");
+        checknetForGraphlets.setVisible(true);
+        checknetForGraphlets.addActionListener(actionEvent -> generateGraphletOrbits());
+        checknetForGraphlets.setLayout(new BorderLayout());
+        buttonPanel.add(checknetForGraphlets);
+
+
+        JButton saveGDDA = new JButton("Save orbits");
+        saveGDDA.addActionListener(actionEvent -> {
+            JFileChooser fc = new JFileChooser();
+            int returnVal = fc.showSaveDialog(HolmesGraphlets.this);
+            saveGDDA(fc.getSelectedFile().getAbsolutePath());
+        });
+
+        buttonPanel.add(saveGDDA);
+
+        String[] sizeString = {"3-node graphlets", "4-node graphlets", "5-node graphlets"};
+        getSize = new JComboBox(sizeString);
+        getSize.setSelectedIndex(2);
+        buttonPanel.add(getSize);
+
+        String[] nodeString = {"Choose node"};
+        getNode = new JComboBox(nodeString);
+        getNode.setSelectedIndex(0);
+        getNode.addActionListener(actionEvent -> {
+            @SuppressWarnings("unchecked")
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            int selectedGraphlet = comboBox.getSelectedIndex();
+
+            if (!comboBox.getModel().getSelectedItem().equals("Choose node")) {
+                Node n = overlord.getWorkspace().getProject().getNodes().get(comboBox.getSelectedIndex());
+                int[] orbits = GraphletsCalculator.vectorOrbit(n, false);
+
+                orbitResultsArea.setText("");
+                for (int i = 0; i < orbits.length; i++) {
+                    if (orbits[i] > 0) {
+                        orbitResultsArea.append("Orbit-" + i + " : " + orbits[i] + "\n");
+                    }
+                }
+            }
+        });
+        buttonPanel.add(getNode);
+
+
+
+        String[] resultString = {"None"};
+        graphletResult = new JComboBox(sizeString);
+        graphletResult.setSelectedIndex(0);
+        graphletResult.setEnabled(false);
+        graphletResult.addActionListener(actionEvent -> {
+            @SuppressWarnings("unchecked")
+            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            int selectedGraphlet = comboBox.getSelectedIndex();
+
+            GraphletsCalculator.Struct graphletStructure = GraphletsCalculator.uniqGraphlets.get(selectedGraphlet);
+
+            paintGraphlet(graphletStructure);
+        });
+
+
+        //Check
+        //graphletPanel.add(graphletButtonPanel);
+
+
+        buttonPanel.add(graphletResult);
+
+        TitledBorder titleF;
+        titleF = BorderFactory.createTitledBorder("Options");
+        buttonPanel.setBorder(titleF);
+
+        panel.add(buttonPanel, BorderLayout.NORTH);
+        //-----------------------------------
+
+        //Result AREA
+
+        JPanel infoPanel = new JPanel(false);
+        infoPanel.setLayout(new FlowLayout());
+
+        graphletResultsArea = new JTextArea(40, 22);
+        JScrollPane gscroll = new JScrollPane(graphletResultsArea);
+        gscroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        TitledBorder titleG;
+        titleG = BorderFactory.createTitledBorder("Graphlets info");
+        gscroll.setBorder(titleG);
+        //-----------------------------------
+
+        infoPanel.add(gscroll);
+
+
+        //JPanel orbitPanel = new JPanel(false);
+        //orbitPanel.setLayout(new GridLayout(1, 2));
+
+        orbitResultsArea = new JTextArea(40, 22);
+        JScrollPane oscroll = new JScrollPane(orbitResultsArea);
+        oscroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        TitledBorder titleO;
+        titleO = BorderFactory.createTitledBorder("Orbits info");
+        oscroll.setBorder(titleO);
+        infoPanel.add(oscroll);
+        //panel.add(orbitPanel);
+
+        panel.add(infoPanel, BorderLayout.SOUTH);;
+
+        this.add(panel, BorderLayout.CENTER);
+        this.setPreferredSize(new Dimension(600, 825));
+        this.pack();
+        this.setVisible(true);
     }
 
     protected JComponent makeSingleNetPane() {
