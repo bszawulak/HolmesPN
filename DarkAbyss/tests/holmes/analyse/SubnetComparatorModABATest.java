@@ -1177,8 +1177,9 @@ public class SubnetComparatorModABATest {
     void compare6_12() {
         SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet12(),false,true,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        assertEquals(0, gcs.gcsValue);
-        assertEquals(0, gcs.psel.size());
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -1351,9 +1352,9 @@ public class SubnetComparatorModABATest {
     void compare7_12() {
         SubnetComparator sc = new SubnetComparator(creatSubnet7(), creatSubnet12(),false,true,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        assertEquals(3, gcs.gcsValue);
-        assertEquals(3, gcs.psel.get(0).partialNodes.size());
-        assertEquals(2, gcs.psel.get(0).partialArcs.size());
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -2188,17 +2189,18 @@ public class SubnetComparatorModABATest {
     void compare12_06() {
         SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet6(),false,true,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        assertEquals(0, gcs.gcsValue);
-        assertEquals(0, gcs.psel.size());
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
     void compare12_07() {
         SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet7(),false,true,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        assertEquals(3, gcs.gcsValue);
-        assertEquals(3, gcs.psel.get(0).partialNodes.size());
-        assertEquals(2, gcs.psel.get(0).partialArcs.size());
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -2268,9 +2270,9 @@ public class SubnetComparatorModABATest {
     void compare12_15() {
         SubnetComparator sc = new SubnetComparator(creatSubnet12(), creatSubnet15(),false,true,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        assertEquals(3, gcs.gcsValue);
-        assertEquals(3, gcs.psel.get(0).partialNodes.size());
-        assertEquals(2, gcs.psel.get(0).partialArcs.size());
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -2436,9 +2438,9 @@ public class SubnetComparatorModABATest {
         SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet14(),false,true,false);
         GreatCommonSubnet gcs = sc.compareTest();
         //saveSubnet(gcs);
-        assertEquals(7, gcs.gcsValue);
-        assertEquals(7, gcs.psel.get(0).partialNodes.size());
-        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+        assertEquals(8, gcs.gcsValue);
+        assertEquals(8, gcs.psel.get(0).partialNodes.size());
+        assertEquals(7, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -2602,9 +2604,9 @@ public class SubnetComparatorModABATest {
     void compare14_13() {
         SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet13(),false,true,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        assertEquals(7, gcs.gcsValue);
-        assertEquals(7, gcs.psel.get(0).partialNodes.size());
-        assertEquals(6, gcs.psel.get(0).partialArcs.size());
+        assertEquals(8, gcs.gcsValue);
+        assertEquals(8, gcs.psel.get(0).partialNodes.size());
+        assertEquals(7, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -2633,9 +2635,9 @@ public class SubnetComparatorModABATest {
         SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet16(),false,true,false);
         GreatCommonSubnet gcs = sc.compareTest();
        //aeSubnet(gcs);
-        assertEquals(10, gcs.gcsValue);
-        assertEquals(10, gcs.psel.get(0).partialNodes.size());
-        assertEquals(9, gcs.psel.get(0).partialArcs.size());
+        assertEquals(14, gcs.gcsValue);
+        assertEquals(14, gcs.psel.get(0).partialNodes.size());
+        assertEquals(13, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -2771,9 +2773,9 @@ public class SubnetComparatorModABATest {
     void compare15_12() {
         SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet12(),false,true,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        assertEquals(3, gcs.gcsValue);
-        assertEquals(3, gcs.psel.get(0).partialNodes.size());
-        assertEquals(2, gcs.psel.get(0).partialArcs.size());
+        assertEquals(4, gcs.gcsValue);
+        assertEquals(4, gcs.psel.get(0).partialNodes.size());
+        assertEquals(3, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -3166,9 +3168,9 @@ public class SubnetComparatorModABATest {
         SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet15(),false,true,false);
         GreatCommonSubnet gcs = sc.compareTest();
         //saveSubnet(gcs);
-        assertEquals(6, gcs.gcsValue);
-        assertEquals(6, gcs.psel.get(0).partialNodes.size());
-        assertEquals(5, gcs.psel.get(0).partialArcs.size());
+        assertEquals(9, gcs.gcsValue);
+        assertEquals(9, gcs.psel.get(0).partialNodes.size());
+        assertEquals(8, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -3400,7 +3402,7 @@ public class SubnetComparatorModABATest {
         ArrayList<Arc> al = new ArrayList<>();
 
         al.add(a1);
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet1() {
@@ -3418,7 +3420,7 @@ public class SubnetComparatorModABATest {
 
         Arc a1 = new Arc(IdGenerator.getNextId(), p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet2() {
@@ -3445,7 +3447,7 @@ public class SubnetComparatorModABATest {
         Arc a4 = new Arc(IdGenerator.getNextId(), t3.getElementLocations().get(0), p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a5 = new Arc(IdGenerator.getNextId(), p4.getElementLocations().get(0), t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet3() {
@@ -3469,7 +3471,7 @@ public class SubnetComparatorModABATest {
         Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet4() {
@@ -3494,7 +3496,7 @@ public class SubnetComparatorModABATest {
         Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet5() {
@@ -3526,7 +3528,7 @@ public class SubnetComparatorModABATest {
         Arc a6 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet6() {
@@ -3567,7 +3569,7 @@ public class SubnetComparatorModABATest {
         Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet7() {
@@ -3640,7 +3642,7 @@ public class SubnetComparatorModABATest {
         Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet8() {
@@ -3696,7 +3698,7 @@ public class SubnetComparatorModABATest {
         Arc a23 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a24 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet9() {
@@ -3753,7 +3755,7 @@ public class SubnetComparatorModABATest {
         Arc a23 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a24 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet10() {
@@ -3796,7 +3798,7 @@ public class SubnetComparatorModABATest {
 
         Arc a99 = new Arc(IdGenerator.getNextId(), p10.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
 
@@ -3842,7 +3844,7 @@ public class SubnetComparatorModABATest {
         Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet12() {
@@ -3888,7 +3890,7 @@ public class SubnetComparatorModABATest {
         Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet13() {
@@ -3931,7 +3933,7 @@ public class SubnetComparatorModABATest {
         Arc a21 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a24 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
 
@@ -4008,7 +4010,7 @@ public class SubnetComparatorModABATest {
         Arc a47 = new Arc(IdGenerator.getNextId(), p15.getElementLocations().get(0), t12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a410 = new Arc(IdGenerator.getNextId(), t12.getElementLocations().get(0), p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
 
@@ -4084,7 +4086,7 @@ public class SubnetComparatorModABATest {
         Arc a47 = new Arc(IdGenerator.getNextId(), p15.getElementLocations().get(0), t12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a410 = new Arc(IdGenerator.getNextId(), t12.getElementLocations().get(0), p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
 
@@ -4152,7 +4154,7 @@ public class SubnetComparatorModABATest {
         Arc a599 = new Arc(IdGenerator.getNextId(), p14.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
 
@@ -4226,7 +4228,7 @@ public class SubnetComparatorModABATest {
         Arc a836 = new Arc(IdGenerator.getNextId(), t13.getElementLocations().get(0), p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a837 = new Arc(IdGenerator.getNextId(), p16.getElementLocations().get(0), t14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet18() {
@@ -4300,7 +4302,7 @@ public class SubnetComparatorModABATest {
         Arc a837 = new Arc(IdGenerator.getNextId(), t14.getElementLocations().get(0), p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a530 = new Arc(IdGenerator.getNextId(), p18.getElementLocations().get(0), t14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 /*
     void ceateTestNets(){

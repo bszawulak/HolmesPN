@@ -1502,7 +1502,7 @@ public class SubnetComparator {
 
                         //TODO NIE MOŻE ZACHODZIĆ DLA 13        13_07 czy nie za dużo
                         //listOfLonelyForSecond.removeAll(listofInroperTbranchesForSecond);
-/*
+
                         for (ArrayList<BranchBasedSubnet.Branch> ls : listofInroperTbranchesForSecond) {
                             for (BranchBasedSubnet.Branch toR : ls) {
                                 if(!(ls.stream().anyMatch(x->x.startNode.equals(toR.endNode) && x.endNode.equals(toR.startNode)))) {
@@ -1517,7 +1517,8 @@ public class SubnetComparator {
                                 //listOfLonelyForFirst.remove(indD)
                             }
                         }
-*/
+
+
                         listOfSecond.addAll(listOfLonelyForSecond);
 
                         Collections.sort(listOfSecond, new BranchBasedSubnet.Branch.LenghtSort());
@@ -1643,6 +1644,7 @@ public class SubnetComparator {
                         //TODO dodaj nie używane tbranche
                     }
 
+
                     if (listofInroperTbranches.size() > 0) {
                         ArrayList<PartialSubnetElements> listaPse = new ArrayList<>();
                         listaPse.add(pse);
@@ -1659,18 +1661,19 @@ public class SubnetComparator {
                                     ArrayList<Node> tmpList = new ArrayList<>(tmpPSE.partialNodes);
                                     tmpList.retainAll(inpropBranch.returnBorderNodes());
                                     if (tmpList.size() > 0) {
-                                        System.out.println("Dodaję inpTbranch:");
-                                        printElements(inpropBranch);
+                                        //System.out.println("Dodaję inpTbranch:");
+                                        //printElements(inpropBranch);
 
                                         PartialSubnetElements newPSE = mergePartialSubnetElements(tmpPSE, new PartialSubnetElements(inpropBranch.branchElements, inpropBranch.branchArcs, inpropBranch.nodeMap, inpropBranch.arcMap));
 
                                         if (newPSE.partialNodes.size() > 8) {
-                                            System.out.println("Nein Nein NEin");
-                                            System.out.println("Base");
+                                            //System.out.println("Nein Nein NEin");
+                                            //System.out.println("Base");
 
                                             ArrayList<Node> annyConection = new ArrayList<>(tmpPSE.partialNodes);
                                             annyConection.retainAll(inpropBranch.branchElements);
 
+                                            /*
                                             for (Node a : annyConection) {
                                                 System.out.println("Node " + a.getName() + " " + a.getID());
                                             }
@@ -1683,20 +1686,26 @@ public class SubnetComparator {
                                             for (Arc a : inpropBranch.branchArcs) {
                                                 System.out.println("Arc " + a.getStartNode().getName() + " -> " + a.getEndNode().getName() + " is " + a.isBranchEnd());
                                             }
+                                            */
+
                                         }
 
+                                        /*
                                         for (Arc a : newPSE.partialArcs) {
                                             System.out.println("Arc " + a.getStartNode().getName() + " -> " + a.getEndNode().getName() + " is " + a.isBranchEnd());
                                         }
+                                        */
 
                                         //newPSE = removeBrancheEndElements(newPSE);
                                         tmpListPse.add(newPSE);
 
+                                        /*
                                         System.out.println("WhatHaveIAdd - START");
                                         for (Arc a : newPSE.partialArcs) {
                                             System.out.println(" Arc: " + a.getStartNode().getName() + " - > " + a.getEndNode().getName());
                                         }
                                         System.out.println("WhatHaveIAdd - END");
+                                        */
                                     }
                                 }
                                 System.out.println("clean");
@@ -1708,6 +1717,26 @@ public class SubnetComparator {
                         finished = true;
                         //cleanArcs(listaPse);
                         pseList.addAll(listaPse);
+
+                        if(secondQuestion)
+                        {
+                            /*
+                            for (ArrayList<BranchBasedSubnet.Branch> ls : listofInroperTbranchesForSecond) {
+                                for (BranchBasedSubnet.Branch toR : ls) {
+                                    if(!(ls.stream().anyMatch(x->x.startNode.equals(toR.endNode) && x.endNode.equals(toR.startNode)))) {
+                                        ArrayList<BranchBasedSubnet.Branch> toDel = new ArrayList<>();
+                                        for (BranchBasedSubnet.Branch td : listOfLonelyForSecond) {
+                                            if (td.internalBranchElements.containsAll(toR.internalBranchElements) || toR.internalBranchElements.containsAll(td.internalBranchElements))
+                                                //if(td.startNode.equals(toR.startNode) && td.endNode.equals(toR.endNode) )
+                                                toDel.add(td);
+                                        }
+                                        listOfLonelyForSecond.removeAll(toDel);
+                                    }
+                                    //listOfLonelyForFirst.remove(indD)
+                                }
+                            }
+                            */
+                        }
 
                     } else {
                         finished = true;
