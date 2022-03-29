@@ -115,7 +115,7 @@ public class HolmesComparisonModule extends JFrame {
 
     public HolmesComparisonModule() {
         setTitle("Comparison module");
-        setSize(950, 800);
+        setSize(1000, 800);
 
         JTabbedPane tabbedPane = new JTabbedPane();
         JComponent panel1 = makeInCompPanel();
@@ -2024,6 +2024,8 @@ public class HolmesComparisonModule extends JFrame {
 
     private void parsBranchingData(BranchesServerCalc.ParsedBranchData result) {
         JComponent tabRes = createBranchDiagramsPanel(result);
+        infoPaneBranch.setColumns(25);
+        infoPaneBranch.revalidate();
         infoPaneBranch.append("Calculation compleated :\n");
         infoPaneBranch.append("BrRDF value for all vertices : " + result.brrdf.vBrRDFvalue + "\n");
         infoPaneBranch.append("BrRDF value for transitions : " + result.brrdf.tBrRDFvalue + "\n");

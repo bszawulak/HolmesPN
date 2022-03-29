@@ -230,6 +230,7 @@ public class GraphletsCalculator {
     }
 
     public static void generateGraphletsNode3() {
+        totalGrahletID = 0;
         graphetsList.clear();
         //2-NODE
         graphetsList.add(graphlet_1());
@@ -481,13 +482,16 @@ public class GraphletsCalculator {
     }
 
     public static int[] vectorOrbit(Node n, boolean test) {
+        System.out.println("Node dla ktorego szukamy :" + n.getName());
+        System.out.println("Wielkość mapy orbit :" + globalOrbitMap.size());
+
         int[] ov = new int[globalOrbitMap.size()];
         int iterac = 0;
 
         StringBuilder text = new StringBuilder();
-        if (test) {
-            ov[59] = getOrbitValue(n, globalOrbitMap.get(59));
-        } else {
+        //if (test) {
+        //    ov[59] = getOrbitValue(n, globalOrbitMap.get(59));
+        //} else {
             for (Entry<Integer, Node> map : globalOrbitMap.entrySet()) {
                 Node m = map.getValue();
                 int result = getOrbitValue(n, m);
@@ -496,7 +500,7 @@ public class GraphletsCalculator {
                 text.append(result).append(", ");
                 iterac++;
             }
-        }
+        //}
 
         //JOptionPane.showMessageDialog(null,text);
         return ov;

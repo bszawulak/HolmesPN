@@ -6,6 +6,7 @@ import holmes.analyse.comparison.experiment.NetGenerator;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.*;
 import holmes.utilities.ColorPalette;
+import jxl.write.WritableFont;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -66,7 +67,7 @@ public class HolmesGraphlets extends JFrame {
         JPanel panel = new JPanel(false);
         panel.setLayout(new BorderLayout());
 
-        JPanel buttonPanel = new JPanel(new GridLayout(5,1));
+        JPanel buttonPanel = new JPanel(new GridLayout(6,1));
 
         JButton checknetForGraphlets = new JButton("Check net for graphlets");
         checknetForGraphlets.setVisible(true);
@@ -98,7 +99,7 @@ public class HolmesGraphlets extends JFrame {
             int selectedGraphlet = comboBox.getSelectedIndex();
 
             if (!comboBox.getModel().getSelectedItem().equals("Choose node")) {
-                Node n = overlord.getWorkspace().getProject().getNodes().get(comboBox.getSelectedIndex());
+                Node n = overlord.getWorkspace().getProject().getNodes().get(selectedGraphlet);
                 int[] orbits = GraphletsCalculator.vectorOrbit(n, false);
 
                 orbitResultsArea.setText("");
@@ -112,6 +113,9 @@ public class HolmesGraphlets extends JFrame {
         buttonPanel.add(getNode);
 
 
+        JLabel title = new JLabel("Found Graphlets :");
+        title.setFont(new Font("Dialog", Font.PLAIN, 11));
+        buttonPanel.add(title);
 
         String[] resultString = {"None"};
         graphletResult = new JComboBox(sizeString);
@@ -130,7 +134,13 @@ public class HolmesGraphlets extends JFrame {
 
         //Check
         //graphletPanel.add(graphletButtonPanel);
-
+        /*
+        TitledBorder title;
+        title = BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.black), "Found graphlets");
+        title.setTitleJustification(TitledBorder.CENTER);
+        graphletResult.setBorder(title);
+        */
 
         buttonPanel.add(graphletResult);
 
@@ -173,7 +183,7 @@ public class HolmesGraphlets extends JFrame {
         panel.add(infoPanel, BorderLayout.SOUTH);;
 
         this.add(panel, BorderLayout.CENTER);
-        this.setPreferredSize(new Dimension(600, 825));
+        this.setPreferredSize(new Dimension(600, 850));
         this.pack();
         this.setVisible(true);
     }
@@ -356,6 +366,11 @@ public class HolmesGraphlets extends JFrame {
     }
 
     private void generateGraphletOrbits() {
+        GraphletsCalculator.cleanAll();
+        orbitResultsArea.selectAll();
+        orbitResultsArea.replaceSelection("");
+        graphletResultsArea.selectAll();
+        graphletResultsArea.replaceSelection("");
 
         switch (getSize.getSelectedIndex()) {
             case 0:
@@ -370,6 +385,7 @@ public class HolmesGraphlets extends JFrame {
         }
 
         //check all net for graphlets and orbits
+        //GraphletsCalculator.cleanAll();
         GraphletsCalculator.getFoundGraphlets();
 
         graphletResultsArea.setText("");
@@ -412,7 +428,7 @@ public class HolmesGraphlets extends JFrame {
     }
 
     private void graphletCompare() {
-        int orbNumber = 17;
+        int orbNumber = 18;
 
         switch (getSizeForComparison.getSelectedIndex()) {
             case 0:
