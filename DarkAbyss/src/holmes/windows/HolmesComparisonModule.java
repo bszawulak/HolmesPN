@@ -8,6 +8,7 @@ import holmes.analyse.comparison.structures.BranchVertex;
 import holmes.analyse.comparison.structures.GreatCommonSubnet;
 import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
+import holmes.files.io.Snoopy.SnoopyReader;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 import holmes.server.BranchesServerCalc;
@@ -208,6 +209,7 @@ public class HolmesComparisonModule extends JFrame {
                 generateInvl.setEnabled(true);
                 matchVertices.setEnabled(true);
             }
+
 
         });
         mopanel.add(chooser);
@@ -587,6 +589,20 @@ public class HolmesComparisonModule extends JFrame {
     private void chooseSecondNet(String absolutePath) {
         IOprotocols io = new IOprotocols();
         secondNet = io.serverReadPNT(absolutePath, 99);
+
+        //TODO add snoopy
+        SnoopyReader reader = new SnoopyReader(0, absolutePath);
+        secondNet = new PetriNet(reader.getNodesList(), reader.getArcList());
+            /*
+                    SnoopyReader reader = new SnoopyReader(0, path);
+					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
+					accessStatesManager().createCleanState();
+					accessFiringRatesManager().createCleanSPNdataVector();
+					accessSSAmanager().createCleanSSAvector();
+					overlord.subnetsGraphics.addRequiredSheets();
+					overlord.subnetsGraphics.resizePanels();
+					overlord.getWorkspace().setSelectedDock(0);
+             */
     }
 
     /*
