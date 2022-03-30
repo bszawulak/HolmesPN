@@ -485,8 +485,8 @@ public class Toolbar extends BorderDock {
 
 			}
 		};
-		testGraphletButton.setEnabled(true);
-		analysisDockables.add(createButtonDockable("Testing graphlets", testGraphletButton));
+		//testGraphletButton.setEnabled(true);
+		//analysisDockables.add(createButtonDockable("Testing graphlets", testGraphletButton));
 
 
 

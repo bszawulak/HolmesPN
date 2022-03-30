@@ -166,8 +166,10 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         netMenu.add(createMenuItem("Show TPN/DPN transitions", "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(2)));
 
         netMenu.add(createMenuItem("Fix Snoopy compatibility", "", null, arg0 -> GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility()));
-        this.addSeparator();
 
+
+        //SUBNET IMPORT PROTOTYP
+        this.addSeparator();
 
         JMenu subImpMenu = new JMenu("Subnet import");
         this.add(subImpMenu);

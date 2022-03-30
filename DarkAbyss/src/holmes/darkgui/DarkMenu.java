@@ -514,7 +514,7 @@ public class DarkMenu extends JMenuBar {
 		// Comparison window
 		JMenuItem compWindowItem = new JMenuItem("Net comparison", KeyEvent.VK_8);
 		compWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
-		compWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
+		compWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
 		compWindowItem.getAccessibleContext().setAccessibleDescription("Comparison prototype");
 		compWindowItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

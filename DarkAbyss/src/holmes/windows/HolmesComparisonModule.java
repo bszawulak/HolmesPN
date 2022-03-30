@@ -25,6 +25,7 @@ import org.jfree.ui.RectangleEdge;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -47,7 +48,7 @@ public class HolmesComparisonModule extends JFrame {
     JTextArea infoPaneDRGF = new JTextArea(30, 30);
     JTextArea infoPaneGDDA = new JTextArea(30, 30);
     JTextArea infoPaneNetdiv = new JTextArea(30, 30);
-    JTextArea infoPaneBranch = new JTextArea(30, 30);
+    JTextArea infoPaneBranch = new JTextArea(30, 60);
 
 
     JButton generateInvl;
@@ -200,8 +201,15 @@ public class HolmesComparisonModule extends JFrame {
         chooser.setVisible(true);
         chooser.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
-            jfc.setFileFilter(new ExtensionFileFilter("INA PNT format (.pnt)", new String[]{"PNT"}));
+
+            javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
+            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+            filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
+
+            jfc.addChoosableFileFilter(filters[0]);
+            jfc.addChoosableFileFilter(filters[1]);
             int returnVal = jfc.showOpenDialog(HolmesComparisonModule.this);
+
             infoPaneInv.append("Choosen file: " + jfc.getSelectedFile().getName() + "\n");
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -587,22 +595,15 @@ public class HolmesComparisonModule extends JFrame {
     }
 
     private void chooseSecondNet(String absolutePath) {
-        IOprotocols io = new IOprotocols();
-        secondNet = io.serverReadPNT(absolutePath, 99);
-
-        //TODO add snoopy
-        SnoopyReader reader = new SnoopyReader(0, absolutePath);
-        secondNet = new PetriNet(reader.getNodesList(), reader.getArcList());
-            /*
-                    SnoopyReader reader = new SnoopyReader(0, path);
-					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
-					accessStatesManager().createCleanState();
-					accessFiringRatesManager().createCleanSPNdataVector();
-					accessSSAmanager().createCleanSSAvector();
-					overlord.subnetsGraphics.addRequiredSheets();
-					overlord.subnetsGraphics.resizePanels();
-					overlord.getWorkspace().setSelectedDock(0);
-             */
+        if(absolutePath.endsWith(".pnt")) {
+            IOprotocols io = new IOprotocols();
+            secondNet = io.serverReadPNT(absolutePath, 99);
+        }
+        if(absolutePath.endsWith(".spped"))
+        {
+            SnoopyReader reader = new SnoopyReader(0, absolutePath);
+            secondNet = new PetriNet(reader.getNodesList(), reader.getArcList());
+        }
     }
 
     /*
@@ -683,7 +684,13 @@ public class HolmesComparisonModule extends JFrame {
         chooser.setVisible(true);
         chooser.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
-            jfc.setFileFilter(new ExtensionFileFilter("INA PNT format (.pnt)", new String[]{"PNT"}));
+
+            javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
+            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+            filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
+
+            jfc.addChoosableFileFilter(filters[0]);
+            jfc.addChoosableFileFilter(filters[1]);
             int returnVal = jfc.showOpenDialog(HolmesComparisonModule.this);
             infoPaneDRGF.append("Choosen file: " + jfc.getSelectedFile().getName() + "\n");
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
@@ -894,7 +901,12 @@ public class HolmesComparisonModule extends JFrame {
         chooser.setVisible(true);
         chooser.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
-            jfc.setFileFilter(new ExtensionFileFilter("INA PNT format (.pnt)", new String[]{"PNT"}));
+            javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
+            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+            filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
+
+            jfc.addChoosableFileFilter(filters[0]);
+            jfc.addChoosableFileFilter(filters[1]);
             int returnVal = jfc.showOpenDialog(HolmesComparisonModule.this);
             infoPaneGDDA.append("Choosen file: " + jfc.getSelectedFile().getName() + "\n");
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
@@ -1278,7 +1290,14 @@ public class HolmesComparisonModule extends JFrame {
         chooser.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
 
+            javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
+            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+            filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
+
+            jfc.addChoosableFileFilter(filters[0]);
+            jfc.addChoosableFileFilter(filters[1]);
             int returnVal = jfc.showOpenDialog(HolmesComparisonModule.this);
+
             infoPaneDec.append("Choosen file: " + jfc.getSelectedFile().getName() + "\n");
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -1946,8 +1965,14 @@ public class HolmesComparisonModule extends JFrame {
         chooser.setVisible(true);
         chooser.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
+            javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
+            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+            filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
+
+            jfc.addChoosableFileFilter(filters[0]);
+            jfc.addChoosableFileFilter(filters[1]);
             int returnVal = jfc.showOpenDialog(HolmesComparisonModule.this);
-            jfc.setFileFilter(new ExtensionFileFilter("INA PNT format (.pnt)", new String[]{"PNT"}));
+
             infoPaneBranch.append("Choosen file: " + jfc.getSelectedFile().getName() + "\n");
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
