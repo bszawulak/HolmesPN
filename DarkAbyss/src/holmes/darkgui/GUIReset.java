@@ -116,10 +116,12 @@ public class GUIReset {
 		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
 		pNet.setSimulationActive(false);
 		pNet.setFileName("");
+
 		overlord.simSettings.currentStep = 0;
 		overlord.accessStateSimulatorWindow().resetSimWindow();
 		overlord.accessClusterWindow().resetWindow();
 		overlord.getSimulatorBox().createSimulatorProperties();
+		overlord.resetModuls();
 		pNet.repaintAllGraphPanels();
 		
 		Workspace workspace = overlord.getWorkspace();

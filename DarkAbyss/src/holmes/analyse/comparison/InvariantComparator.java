@@ -86,37 +86,37 @@ public class InvariantComparator {
     public HashMap<Node, Node> matchVertices(int type) {
 
         boolean dupication = false;
-        for (Node n : pn1.getNodes())
-            for (Node m : pn1.getNodes())
+        for (Node n : pn1.getTransitions())
+            for (Node m : pn1.getTransitions())
                 if (n.getID() != m.getID() && n.getName().equals(m.getName())) {
                     JOptionPane.showMessageDialog(null, "In the net 1 there exists at least 2 nodes with the same name", "ErrorBox: name duplication", JOptionPane.ERROR_MESSAGE);
                 }
 
-        for (Node n : pn2.getNodes())
-            for (Node m : pn2.getNodes())
+        for (Node n : pn2.getTransitions())
+            for (Node m : pn2.getTransitions())
                 if (n.getID() != m.getID() && n.getName().equals(m.getName())) {
                     JOptionPane.showMessageDialog(null, "In the net 2 there exists at least 2 nodes with the same name", "ErrorBox: name duplication", JOptionPane.ERROR_MESSAGE);
                 }
 
         if (!dupication)
             if (type == 0) {
-                for (Node n : pn1.getNodes()) {
-                    for (Node m : pn2.getNodes()) {
+                for (Node n : pn1.getTransitions()) {
+                    for (Node m : pn2.getTransitions()) {
                         if (n.getName().equals(m.getName())) {
                             matchedVertices.put(n, m);
                         }
                     }
                 }
             } else if (type == 1) {
-                for (Node n : pn1.getNodes()) {
+                for (Node n : pn1.getTransitions()) {
                     ArrayList<Integer> distance = new ArrayList<>();
-                    for (Node m : pn2.getNodes()) {
+                    for (Node m : pn2.getTransitions()) {
                         distance.add(LevenshteinDistanceDP.compute_Levenshtein_distanceDP(n.getName(), m.getName()));
                     }
 
                     int index = distance.indexOf(Collections.min(distance));
 
-                    matchedVertices.put(n, pn2.getNodes().get(index));
+                    matchedVertices.put(n, pn2.getTransitions().get(index));
 
                 }
             }

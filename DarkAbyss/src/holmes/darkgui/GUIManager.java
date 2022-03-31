@@ -634,6 +634,17 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
+	 * Czyszczenie modułów
+	 */
+	public void resetModuls(){
+		windowsComp = new HolmesComparisonModule();
+		windowsBranch = new HolmesBranchVerticesPrototype();
+		windowsGraphlet = new HolmesGraphlets();
+		windowsDeco = new HolmesDecomposition();
+		windowsKnockout = new HolmesKnockout();
+	}
+
+	/**
 	 * Diabli wiedzą co i kiedy wywołuje tą metodę, tym niemniej zleca ona innej ustalenie
 	 * domyślnych lokalizacji pasków zmiany rozmiarów podokien (Dividers).
 	 */
