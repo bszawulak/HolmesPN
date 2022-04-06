@@ -1165,12 +1165,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				setFileName(name);
 			}
 			// Formaty Snoopiego
-			if (path.endsWith(".spped") || path.endsWith(".spept") || path.endsWith(".colpn") || path.endsWith(".sptpt")) {
+			if (path.endsWith(".spped") || path.endsWith(".spept") || path.endsWith(".colpn") || path.endsWith(".sptpt") || path.endsWith(".pn")) {
 				if(overlord.getSettingsManager().getValue("programUseOldSnoopyLoaders").equals("1")) {
 					overlord.log("Activating old Snoopy loader. Will fail for hierarchical networks.", "text", true);
 					InputStream xmlInput = new FileInputStream(path);
 					SAXParser saxParser = readerSNOOPY.newSAXParser();
-					if (path.endsWith(".spped")) {
+					if (path.endsWith(".spped") || path.endsWith(".pn")) {
 						handler = new NetHandler_Classic();
 					}
 					if (path.endsWith(".spept")) {
@@ -1198,6 +1198,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					name = name.replace(".spept", "");
 					name = name.replace(".colpn", "");
 					name = name.replace(".sptpt", "");
+					name = name.replace(".pn", "");
 					setName(name);
 				} else { //new loader
 					SnoopyReader reader = new SnoopyReader(0, path);

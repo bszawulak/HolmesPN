@@ -185,7 +185,7 @@ public class HolmesGraphlets extends JFrame {
         this.add(panel, BorderLayout.CENTER);
         this.setPreferredSize(new Dimension(600, 850));
         this.pack();
-        this.setVisible(true);
+        //this.setVisible(true);
     }
 
     protected JComponent makeSingleNetPane() {

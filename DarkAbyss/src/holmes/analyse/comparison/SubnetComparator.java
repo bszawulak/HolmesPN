@@ -255,9 +255,10 @@ public class SubnetComparator {
         double maxa = maxComparisons.stream().max(Comparator.comparing(PartialSubnetElements::matchingArcValueFunction)).get().matchingArcValueFunction();
         maxArcComparisons = (ArrayList) maxComparisons.stream().filter(x -> x.matchingArcValueFunction() == maxa).collect(Collectors.toList());
 
+        /*
         if (thirdQuestion) {
             maxComparisons = reductToConnectedStructure(maxComparisons);
-        }
+        }*/
 
         return new GreatCommonSubnet(maxArcComparisons);
     }
@@ -389,38 +390,48 @@ public class SubnetComparator {
                     }
                     for (int j = 0; j < net2.branchVertices.get(i).tbranch.size(); j++) {
 
-                        ArrayList<BranchBasedSubnet.Branch> branchesList = new ArrayList<>();
-                        branchesList.addAll(net2.branchVertices.get(i).tbranch);
-                        if (secondQuestion) {
-                            branchesList.addAll(net2.branchVertices.get(i).pbranches);
+                        if(thirdQuestion && net2.branchVertices.get(i).tbranchC.contains(net2.branchVertices.get(i).tbranch.get(j))) {
+
                         }
-                        // net2.branchVertices.get(i).pbranches.get(j).startNode
+                        else
+                        {
+                            ArrayList<BranchBasedSubnet.Branch> branchesList = new ArrayList<>();
+                            if(!thirdQuestion)
+                                branchesList.addAll(net2.branchVertices.get(i).tbranch);
+                            else
+                                branchesList.addAll(net2.branchVertices.get(i).tbranchS);
 
-                        BranchBasedSubnet.Branch br = new BranchBasedSubnet.Branch(path.path, getArcList(path.path), null);
-                        BranchBasedSubnet.Branch brRev = new BranchBasedSubnet.Branch(path.path, getArcList(path.path), null);
+                            if (secondQuestion) {
+                                branchesList.addAll(net2.branchVertices.get(i).pbranches);
+                            }
+                            // net2.branchVertices.get(i).pbranches.get(j).startNode
 
-                        Collections.reverse(brRev.branchElements);
-                        Collections.reverse(brRev.internalBranchElements);
-                        Collections.reverse(brRev.branchArcs);
-                        Node osn = brRev.startNode;
-                        Node oen = brRev.endNode;
-                        brRev.endNode = osn;
-                        brRev.startNode = oen;
+                            BranchBasedSubnet.Branch br = new BranchBasedSubnet.Branch(path.path, getArcList(path.path), null);
+                            BranchBasedSubnet.Branch brRev = new BranchBasedSubnet.Branch(path.path, getArcList(path.path), null);
 
-                        ArrayList<BranchBasedSubnet.Branch> brl = new ArrayList<BranchBasedSubnet.Branch>();
-                        brl.add(br);
-                        //brl.add(brRev);
-                        pse = comparePbranches(brl, branchesList, brl.get(0).startNode, net2.branchVertices.get(i).root);
-                        psel.add(pse);
+                            Collections.reverse(brRev.branchElements);
+                            Collections.reverse(brRev.internalBranchElements);
+                            Collections.reverse(brRev.branchArcs);
+                            Node osn = brRev.startNode;
+                            Node oen = brRev.endNode;
+                            brRev.endNode = osn;
+                            brRev.startNode = oen;
+
+                            ArrayList<BranchBasedSubnet.Branch> brl = new ArrayList<BranchBasedSubnet.Branch>();
+                            brl.add(br);
+                            //brl.add(brRev);
+                            pse = comparePbranches(brl, branchesList, brl.get(0).startNode, net2.branchVertices.get(i).root);
+                            psel.add(pse);
 
 
-                        ArrayList<BranchBasedSubnet.Branch> brlr = new ArrayList<BranchBasedSubnet.Branch>();
-                        brlr.add(brRev);
-                        pse = comparePbranches(brlr, branchesList, brl.get(0).startNode, net2.branchVertices.get(i).root);
-                        psel.add(pse);
+                            ArrayList<BranchBasedSubnet.Branch> brlr = new ArrayList<BranchBasedSubnet.Branch>();
+                            brlr.add(brRev);
+                            pse = comparePbranches(brlr, branchesList, brl.get(0).startNode, net2.branchVertices.get(i).root);
+                            psel.add(pse);
 
-                        //pse = comparePbranches(brl, branchesList, brl.get(0).endNode, net2.branchVertices.get(i).root);
-                        //psel.add(pse);
+                            //pse = comparePbranches(brl, branchesList, brl.get(0).endNode, net2.branchVertices.get(i).root);
+                            //psel.add(pse);
+                        }
                     }
 
                 }
@@ -796,6 +807,11 @@ public class SubnetComparator {
         ArrayList<Node> commonNodesIn = new ArrayList<>();
         ArrayList<Arc> commonArcsIn = new ArrayList<>();
 
+        if(firstNetBranch.branchElements.size() == 5 && secondNetBranch.branchElements.size()==5)
+        {
+            System.out.println("test");
+        }
+
         if (firstNetBranch.branchElements.size() == secondNetBranch.branchElements.size() && !firstNetBranch.startNode.equals(firstNetBranch.endNode) && !secondNetBranch.startNode.equals(secondNetBranch.endNode)) {
 
             //listOfBranches.add(compareEqualSozeBranches(firstNetBranch,secondNetBranch, ));
@@ -829,40 +845,44 @@ public class SubnetComparator {
             if (firstNetBranch.startNode.equals(firstNetBranch.endNode) && !secondNetBranch.startNode.equals(secondNetBranch.endNode)) {
                 //last or first
                 //firstNetBranch.branchArcs.remove(0);
-                BranchBasedSubnet.Branch loop = new BranchBasedSubnet.Branch(firstNetBranch.branchElements, firstNetBranch.branchArcs, firstNetBranch.parent);
-                //loop.branchArcs.remove(0);
-                loop.branchArcs.remove(loop.branchArcs.size() - 1);
-                BranchBasedSubnet.Branch br = compareBranchesSizeFromBeg(loop, secondNetBranch, bbs, commonNodesIn, commonArcsIn);
-                listOfBranches.add(br);
-                commonNodesIn = new ArrayList<>();
-                commonArcsIn = new ArrayList<>();
-                //od końca brancha
-                loop = new BranchBasedSubnet.Branch(firstNetBranch.branchElements, firstNetBranch.branchArcs, firstNetBranch.parent);
-                loop.branchArcs.remove(0);
-                //loop.branchArcs.remove(loop.branchArcs.size()-1);
-                br = compareBranchesSizeFromEnd(loop, secondNetBranch, bbs, commonNodesIn, commonArcsIn);
-                listOfBranches.add(br);
-                System.out.println("I");
+                if(!thirdQuestion) {
+                    BranchBasedSubnet.Branch loop = new BranchBasedSubnet.Branch(firstNetBranch.branchElements, firstNetBranch.branchArcs, firstNetBranch.parent);
+                    //loop.branchArcs.remove(0);
+                    loop.branchArcs.remove(loop.branchArcs.size() - 1);
+                    BranchBasedSubnet.Branch br = compareBranchesSizeFromBeg(loop, secondNetBranch, bbs, commonNodesIn, commonArcsIn);
+                    listOfBranches.add(br);
+                    commonNodesIn = new ArrayList<>();
+                    commonArcsIn = new ArrayList<>();
+                    //od końca brancha
+                    loop = new BranchBasedSubnet.Branch(firstNetBranch.branchElements, firstNetBranch.branchArcs, firstNetBranch.parent);
+                    loop.branchArcs.remove(0);
+                    //loop.branchArcs.remove(loop.branchArcs.size()-1);
+                    br = compareBranchesSizeFromEnd(loop, secondNetBranch, bbs, commonNodesIn, commonArcsIn);
+                    listOfBranches.add(br);
+                    System.out.println("I");
+                }
             } else if (!firstNetBranch.startNode.equals(firstNetBranch.endNode) && secondNetBranch.startNode.equals(secondNetBranch.endNode)) {
 
                 //secondNetBranch.branchArcs.remove(secondNetBranch.branchArcs.size()-1);
-                BranchBasedSubnet.Branch loop = new BranchBasedSubnet.Branch(secondNetBranch.branchElements, secondNetBranch.branchArcs, secondNetBranch.parent);
-                //loop.branchArcs.remove(0);
-                loop.branchArcs.remove(loop.branchArcs.size() - 1);
+                if(!thirdQuestion) {
+                    BranchBasedSubnet.Branch loop = new BranchBasedSubnet.Branch(secondNetBranch.branchElements, secondNetBranch.branchArcs, secondNetBranch.parent);
+                    //loop.branchArcs.remove(0);
+                    loop.branchArcs.remove(loop.branchArcs.size() - 1);
 
-                BranchBasedSubnet.Branch br = compareBranchesSizeFromBeg(firstNetBranch, loop, bbs, commonNodesIn, commonArcsIn);
-                listOfBranches.add(br);
-                commonNodesIn = new ArrayList<>();
-                commonArcsIn = new ArrayList<>();
-                //od końca brancha'
+                    BranchBasedSubnet.Branch br = compareBranchesSizeFromBeg(firstNetBranch, loop, bbs, commonNodesIn, commonArcsIn);
+                    listOfBranches.add(br);
+                    commonNodesIn = new ArrayList<>();
+                    commonArcsIn = new ArrayList<>();
+                    //od końca brancha'
 
-                //TODO potwór wyszedł stąd
-                loop = new BranchBasedSubnet.Branch(secondNetBranch.branchElements, secondNetBranch.branchArcs, secondNetBranch.parent);
-                loop.branchArcs.remove(0);
-                //loop.branchArcs.remove(loop.branchArcs.size()-1);
-                br = compareBranchesSizeFromEnd(firstNetBranch, loop, bbs, commonNodesIn, commonArcsIn);
-                listOfBranches.add(br);
-                System.out.println("II");
+                    //TODO potwór wyszedł stąd
+                    loop = new BranchBasedSubnet.Branch(secondNetBranch.branchElements, secondNetBranch.branchArcs, secondNetBranch.parent);
+                    loop.branchArcs.remove(0);
+                    //loop.branchArcs.remove(loop.branchArcs.size()-1);
+                    br = compareBranchesSizeFromEnd(firstNetBranch, loop, bbs, commonNodesIn, commonArcsIn);
+                    listOfBranches.add(br);
+                    System.out.println("II");
+                }
                 // br = compareEqualSizeBranchesLoops(firstNetBranch, secondNetBranch, bbs, commonNodesIn, commonArcsIn);
             } else {
 
@@ -1137,24 +1157,67 @@ public class SubnetComparator {
                     PartialSubnetElements pseAb;
                     //try branch reduction elimination
                     if (net1.branchVertices.get(i).tbranch.stream().anyMatch(x -> x.startNode.equals(x.endNode)) || net2.branchVertices.get(j).tbranch.stream().anyMatch(x -> x.startNode.equals(x.endNode))) {
-                        ArrayList<ArrayList<BranchBasedSubnet.Branch>> lvl1 = allPossibleLoopTransformations(net1.branchVertices.get(i).tbranch);
-                        ArrayList<ArrayList<BranchBasedSubnet.Branch>> lvl2 = allPossibleLoopTransformations(net2.branchVertices.get(j).tbranch);
+                        if(!thirdQuestion) {
+                            ArrayList<ArrayList<BranchBasedSubnet.Branch>> lvl1 = allPossibleLoopTransformations(net1.branchVertices.get(i).tbranch);
+                            ArrayList<ArrayList<BranchBasedSubnet.Branch>> lvl2 = allPossibleLoopTransformations(net2.branchVertices.get(j).tbranch);
 
-                        ArrayList<PartialSubnetElements> lopPse = new ArrayList<>();
-                        for (ArrayList<BranchBasedSubnet.Branch> l1 : lvl1) {
-                            for (ArrayList<BranchBasedSubnet.Branch> l2 : lvl2) {
-                                if (l1.stream().anyMatch(x -> x.startNode.equals(x.endNode)) && l2.stream().anyMatch(x -> x.startNode.equals(x.endNode))) {
+                            ArrayList<PartialSubnetElements> lopPse = new ArrayList<>();
+                            for (ArrayList<BranchBasedSubnet.Branch> l1 : lvl1) {
+                                for (ArrayList<BranchBasedSubnet.Branch> l2 : lvl2) {
+                                    if (l1.stream().anyMatch(x -> x.startNode.equals(x.endNode)) && l2.stream().anyMatch(x -> x.startNode.equals(x.endNode))) {
 
+                                    }
+                                    PartialSubnetElements pseTbl = comparePbranches(l1, l2, net1.branchVertices.get(i).root, net2.branchVertices.get(j).root);
+                                    lopPse.add(pseTbl);
                                 }
-                                PartialSubnetElements pseTbl = comparePbranches(l1, l2, net1.branchVertices.get(i).root, net2.branchVertices.get(j).root);
-                                lopPse.add(pseTbl);
                             }
-                        }
 
-                        PartialSubnetElements maxNodeSizePse = lopPse.stream().max(Comparator.comparing(PartialSubnetElements::matchingValueFunction)).orElse(new PartialSubnetElements(new ArrayList<>()));
-                        ArrayList<PartialSubnetElements> listOfMaxElemets = lopPse.stream().filter(x -> x.partialNodes.size() == maxNodeSizePse.partialNodes.size()).collect(Collectors.toCollection(ArrayList::new));
-                        PartialSubnetElements maxNodeArcSizePse = listOfMaxElemets.stream().max(Comparator.comparing(PartialSubnetElements::matchingArcValueFunction)).orElse(new PartialSubnetElements(new ArrayList<>()));
-                        pseAb = mergePartialSubnetElements(psePb, maxNodeArcSizePse);
+                            PartialSubnetElements maxNodeSizePse = lopPse.stream().max(Comparator.comparing(PartialSubnetElements::matchingValueFunction)).orElse(new PartialSubnetElements(new ArrayList<>()));
+                            ArrayList<PartialSubnetElements> listOfMaxElemets = lopPse.stream().filter(x -> x.partialNodes.size() == maxNodeSizePse.partialNodes.size()).collect(Collectors.toCollection(ArrayList::new));
+                            PartialSubnetElements maxNodeArcSizePse = listOfMaxElemets.stream().max(Comparator.comparing(PartialSubnetElements::matchingArcValueFunction)).orElse(new PartialSubnetElements(new ArrayList<>()));
+                            pseAb = mergePartialSubnetElements(psePb, maxNodeArcSizePse);
+                        }
+                        else
+                        {
+                            if(net1.branchVertices.get(i).tbranchC.size()>0 && net2.branchVertices.get(j).tbranchC.size()>0)
+                            {
+                                ArrayList<BranchBasedSubnet.Branch> listOfNoLoopBranchesF = new ArrayList<>(net1.branchVertices.get(i).tbranch);
+                                listOfNoLoopBranchesF.removeAll(net1.branchVertices.get(i).tbranchC);
+
+                                ArrayList<BranchBasedSubnet.Branch> listOfNoLoopBranchesS = new ArrayList<>(net2.branchVertices.get(j).tbranch);
+                                listOfNoLoopBranchesS.removeAll(net2.branchVertices.get(j).tbranchC);
+
+                                PartialSubnetElements pseTbS = comparePbranches(listOfNoLoopBranchesF,listOfNoLoopBranchesS, net1.branchVertices.get(i).root, net2.branchVertices.get(j).root);
+                                PartialSubnetElements pseTbC = comparePbranches(net1.branchVertices.get(i).tbranchC, net2.branchVertices.get(j).tbranchC, net1.branchVertices.get(i).root, net2.branchVertices.get(j).root);
+                                PartialSubnetElements pseTb = mergePartialSubnetElements(pseTbS, pseTbC);
+
+                                pseAb = mergePartialSubnetElements(psePb, pseTb);
+                            }
+                            else if(net1.branchVertices.get(i).tbranchC.size()>0 )
+                            {
+                                ArrayList<BranchBasedSubnet.Branch> listOfNoLoopBranches = new ArrayList<>(net1.branchVertices.get(i).tbranch);
+                                listOfNoLoopBranches.removeAll(net1.branchVertices.get(i).tbranchC);
+
+                                PartialSubnetElements pseTb = comparePbranches(listOfNoLoopBranches,net2.branchVertices.get(j).tbranch, net1.branchVertices.get(i).root, net2.branchVertices.get(j).root);
+                                pseAb = mergePartialSubnetElements(psePb, pseTb);
+                            }
+                            else if(net2.branchVertices.get(j).tbranchC.size()>0)
+                            {
+                                ArrayList<BranchBasedSubnet.Branch> listOfNoLoopBranches = new ArrayList<>(net2.branchVertices.get(j).tbranch);
+                                listOfNoLoopBranches.removeAll(net2.branchVertices.get(j).tbranchC);
+
+                                PartialSubnetElements pseTb = comparePbranches(net1.branchVertices.get(i).tbranch,listOfNoLoopBranches, net1.branchVertices.get(i).root, net2.branchVertices.get(j).root);
+                                pseAb = mergePartialSubnetElements(psePb, pseTb);
+                            }
+                            else
+                            {
+                                //brak loopów
+                                PartialSubnetElements pseTb = comparePbranches(net1.branchVertices.get(i).tbranch, net2.branchVertices.get(j).tbranch, net1.branchVertices.get(i).root, net2.branchVertices.get(j).root);
+                                pseAb = mergePartialSubnetElements(psePb, pseTb);
+                            }
+
+
+                        }
                     } else {
                         PartialSubnetElements pseTb = comparePbranches(net1.branchVertices.get(i).tbranch, net2.branchVertices.get(j).tbranch, net1.branchVertices.get(i).root, net2.branchVertices.get(j).root);
                         pseAb = mergePartialSubnetElements(psePb, pseTb);
@@ -1364,9 +1427,11 @@ public class SubnetComparator {
                 } else if (list.size() == 2) {
                     listofInroperTbranches.add(list);
                 } else {
+                    if(!thirdQuestion)
                     JOptionPane.showMessageDialog(null,
                             "Tbranch nie znalazł žadnych branchy albo za dužo... tak czy siak klocek", "TO CHECK",
                             JOptionPane.ERROR_MESSAGE);
+
                 }
                 ArrayList<PartialSubnetElements> pse = new ArrayList<>(pseList);
             }
@@ -1379,6 +1444,7 @@ public class SubnetComparator {
                 } else if (list.size() == 2) {
                     listofInroperTbranchesForSecond.add(list);
                 } else {
+                    if(!thirdQuestion)
                     JOptionPane.showMessageDialog(null,
                             "Tbranch nie znalazł žadnych branchy albo za dužo... tak czy siak klocek", "TO CHECK",
                             JOptionPane.ERROR_MESSAGE);
@@ -1559,7 +1625,22 @@ public class SubnetComparator {
                     }
 
                     if (listforFirst.size() != 0 && listOfSecond.size() != 0) {
-                        PartialSubnetElements pseTb = comparePbranches(listforFirst, listOfSecond, bv.root, net2.branchVertices.get(net2BVindex).root);
+                        PartialSubnetElements pseTb = null;
+                        if(!thirdQuestion)
+                            pseTb = comparePbranches(listforFirst, listOfSecond, bv.root, net2.branchVertices.get(net2BVindex).root);
+                        else
+                        {
+                            ArrayList<BranchBasedSubnet.Branch> cyclesF = listforFirst.stream().filter(x->x.startNode.equals(x.endNode)).collect(Collectors.toCollection(ArrayList::new));
+                            ArrayList<BranchBasedSubnet.Branch> cyclesS = listOfSecond.stream().filter(x->x.startNode.equals(x.endNode)).collect(Collectors.toCollection(ArrayList::new));
+                            ArrayList<BranchBasedSubnet.Branch> pathsF = new ArrayList<>(listforFirst);
+                            ArrayList<BranchBasedSubnet.Branch> pathsS = new ArrayList<>(listOfSecond);
+                            pathsF.removeAll(cyclesF);
+                            pathsS.removeAll(cyclesS);
+
+                            PartialSubnetElements pseTbS = comparePbranches(pathsF, pathsS, bv.root, net2.branchVertices.get(net2BVindex).root);
+                            PartialSubnetElements pseTbC = comparePbranches(cyclesF, cyclesS, bv.root, net2.branchVertices.get(net2BVindex).root);
+                            pseTb = mergePartialSubnetElements(pseTbS,pseTbC);
+                        }
 
                         if (pseTb.partialNodes.size() > 0) {
                             System.out.println("Dodaję sęk: ");
@@ -2587,16 +2668,28 @@ public class SubnetComparator {
 
         if (pbranches1.size() == 0 && pbranches2.size() == 0) {
             commonNodes.add(root1);
-            return new PartialSubnetElements(commonNodes, commonArcs);
+            //if(!thirdQuestion)
+                return new PartialSubnetElements(commonNodes, commonArcs);
+            //else
+            //{
+            //    ArrayList<BranchBasedSubnet.Branch> allCycyles = pbranches1.stream().filter(x->x.isCycle).collect(Collectors.toCollection(ArrayList::new));
+
+            //}
         }
 
         if (pbranches1.size() == 0 && pbranches2.size() > 0) {
             commonNodes.add(root1);
-            return new PartialSubnetElements(commonNodes, commonArcs);
+            //if(!thirdQuestion)
+                return new PartialSubnetElements(commonNodes, commonArcs);
+            //else
+            //{
+            //    ArrayList<BranchBasedSubnet.Branch> allCycyles = pbranches2.stream().filter(x->x.isCycle).collect(Collectors.toCollection(ArrayList::new));
+
+            //}
         }
 
         if (pbranches1.size() > 0 && pbranches2.size() == 0) {
-            commonNodes.add(root1);
+            commonNodes.add(root2);
             return new PartialSubnetElements(commonNodes, commonArcs);
         }
 

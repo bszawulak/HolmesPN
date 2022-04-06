@@ -210,6 +210,9 @@ public class BranchBasedSubnet {
 
         public ArrayList<Branch> pbranches = new ArrayList<>();
         public ArrayList<Branch> tbranch = new ArrayList<>();
+        public ArrayList<Branch> tbranchC = new ArrayList<>();
+        public ArrayList<Branch> tbranchS = new ArrayList<>();
+
 
         public BranchVertex(Node r, BranchBasedSubnet bbs) {
             root = r;
@@ -218,8 +221,13 @@ public class BranchBasedSubnet {
                 Branch br = new Branch(r, n, bbs);
                 if (br.startNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE) || br.endNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE))
                     pbranches.add(br);
-                else
+                else {
                     tbranch.add(br);
+                    if(br.startNode.equals(br.endNode))
+                        tbranchC.add(br);
+                    else
+                        tbranchS.add(br);
+                }
             }
 
             for (Node n : r.getInNodes()) {
@@ -230,8 +238,13 @@ public class BranchBasedSubnet {
 
                 if (br.startNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE) || br.endNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE))
                     pbranches.add(br);
-                else
+                else {
                     tbranch.add(br);
+                    if(br.startNode.equals(br.endNode))
+                        tbranchC.add(br);
+                    else
+                        tbranchS.add(br);
+                }
             }
         }
 

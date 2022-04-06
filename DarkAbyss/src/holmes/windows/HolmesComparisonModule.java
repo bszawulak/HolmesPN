@@ -189,7 +189,7 @@ public class HolmesComparisonModule extends JFrame {
             JFileChooser jfc = new JFileChooser();
 
             javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
-            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped),(.pn)", new String[] { "SPPED","PN" });
             filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
 
             jfc.addChoosableFileFilter(filters[0]);
@@ -573,7 +573,7 @@ public class HolmesComparisonModule extends JFrame {
             IOprotocols io = new IOprotocols();
             secondNet = io.serverReadPNT(absolutePath, 99);
         }
-        if(absolutePath.endsWith(".spped"))
+        if(absolutePath.endsWith(".spped") || absolutePath.endsWith(".pn"))
         {
             SnoopyReader reader = new SnoopyReader(0, absolutePath);
             secondNet = new PetriNet(reader.getNodesList(), reader.getArcList());
@@ -654,13 +654,13 @@ public class HolmesComparisonModule extends JFrame {
         JPanel panel = new JPanel();
         JPanel buttonPanel = new JPanel(new GridLayout(2, 2));
 
-        JButton chooser = new JButton("Choose second net (.pnt)");
+        JButton chooser = new JButton("Choose second net");
         chooser.setVisible(true);
         chooser.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
 
             javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
-            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped), (.pn)", new String[] { "SPPED","PN" });
             filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
 
             jfc.addChoosableFileFilter(filters[0]);
@@ -785,7 +785,8 @@ public class HolmesComparisonModule extends JFrame {
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
         CategoryAxis xAxis = chartPlot.getDomainAxis();
-        this.setSize(950, 1200);
+        this.setSize(950, 1500);
+        this.pack();
     }
 
     private int getChoosenGraohletSize(int index) {
@@ -869,7 +870,7 @@ public class HolmesComparisonModule extends JFrame {
         chooser.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
             javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
-            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped), (.pn)", new String[] { "SPPED","PN" });
             filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
 
             jfc.addChoosableFileFilter(filters[0]);
@@ -1242,7 +1243,7 @@ public class HolmesComparisonModule extends JFrame {
             JFileChooser jfc = new JFileChooser();
 
             javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
-            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped), (.pn)", new String[] { "SPPED", "PN" });
             filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
 
             jfc.addChoosableFileFilter(filters[0]);
@@ -1912,7 +1913,7 @@ public class HolmesComparisonModule extends JFrame {
         chooser.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
             javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
-            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped)", new String[] { "SPPED" });
+            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped), (.pn)", new String[] { "SPPED", "PN" });
             filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
 
             jfc.addChoosableFileFilter(filters[0]);
@@ -1947,6 +1948,13 @@ public class HolmesComparisonModule extends JFrame {
         branchingVariant.setModel(new DefaultComboBoxModel(new String[]{"Matching variant", "Type I","Type II", "Type III", "Type IV", "Type V"}));
         //buttonPanel.add(branchingVariant);
 
+        JButton singleAnalysis = new JButton("Single net branching analysis");
+        singleAnalysis.setVisible(true);
+        singleAnalysis.addActionListener(e -> {
+            GUIManager.getDefaultGUIManager().createBranchWindow();
+            GUIManager.getDefaultGUIManager().showBranchWindow();
+        });
+        buttonPanel.add(singleAnalysis);
         panel.add(buttonPanel);
 
         return panel;
