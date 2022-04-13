@@ -178,6 +178,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public GUIManager(JFrame frejm) {
 		super(new BorderLayout());
+
+		//JavaDocking wysypuje się jeśli numer wersji nie posiada przynajmniej jednej .
+		if(!System.getProperty("java.version").contains("."))
+			System.setProperty("java.version",System.getProperty("java.version")+".0");
+
 		guiManager = this;
 		io = new GUIOperations(this); //obiekt klasy operacji głównych
 		tex = new TexExporter(); //obiekt zarządzający eksportem tabel do formatu latex

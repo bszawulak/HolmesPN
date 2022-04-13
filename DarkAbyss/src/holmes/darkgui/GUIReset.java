@@ -318,7 +318,7 @@ public class GUIReset {
 	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
-		NetSimulator ns = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator();
+		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
 		if(ns.getSimulatorStatus() == SimulatorMode.STOPPED) {
 			return false;
 		} else {

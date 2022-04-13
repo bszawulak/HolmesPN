@@ -2017,7 +2017,7 @@ public class HolmesComparisonModule extends JFrame {
     }
     */
 
-    private void parsBranchingData(BranchesServerCalc.ParsedBranchData result) {
+    public void parsBranchingData(BranchesServerCalc.ParsedBranchData result) {
         JComponent tabRes = createBranchDiagramsPanel(result);
         infoPaneBranch.setColumns(25);
         infoPaneBranch.revalidate();
