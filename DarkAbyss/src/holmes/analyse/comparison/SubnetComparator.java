@@ -2667,7 +2667,11 @@ public class SubnetComparator {
         ArrayList<Arc> commonArcs = new ArrayList<>();
 
         if (pbranches1.size() == 0 && pbranches2.size() == 0) {
-            commonNodes.add(root1);
+            /*
+            Czy to będzie konieczne
+            if(!firstQuestion)
+             */
+                commonNodes.add(root1);
             //if(!thirdQuestion)
                 return new PartialSubnetElements(commonNodes, commonArcs);
             //else
@@ -2678,7 +2682,11 @@ public class SubnetComparator {
         }
 
         if (pbranches1.size() == 0 && pbranches2.size() > 0) {
-            commonNodes.add(root1);
+            /*
+            Czy to będzie konieczne
+            if(!firstQuestion)
+             */
+                commonNodes.add(root1);
             //if(!thirdQuestion)
                 return new PartialSubnetElements(commonNodes, commonArcs);
             //else
@@ -2689,7 +2697,11 @@ public class SubnetComparator {
         }
 
         if (pbranches1.size() > 0 && pbranches2.size() == 0) {
-            commonNodes.add(root2);
+            /*
+            Czy to będzie konieczne
+            if(!firstQuestion)
+             */
+                commonNodes.add(root2);
             return new PartialSubnetElements(commonNodes, commonArcs);
         }
 
@@ -3019,16 +3031,28 @@ public class SubnetComparator {
         ArrayList<Arc> commonArcs = new ArrayList<>();
 
         if (pbranches1.size() == 0 && pbranches2.size() == 0) {
+            /*
+            Czy to będzie konieczne
+            if(!firstQuestion)
+             */
             commonNodes.add(root1);
             return new PartialSubnetElements(commonNodes, commonArcs);
         }
 
         if (pbranches1.size() == 0 && pbranches2.size() > 0) {
+            /*
+            Czy to będzie konieczne
+            if(!firstQuestion)
+             */
             commonNodes.add(root1);
             return new PartialSubnetElements(commonNodes, commonArcs);
         }
 
         if (pbranches1.size() > 0 && pbranches2.size() == 0) {
+            /*
+            Czy to będzie konieczne
+            if(!firstQuestion)
+             */
             commonNodes.add(root1);
             return new PartialSubnetElements(commonNodes, commonArcs);
         }

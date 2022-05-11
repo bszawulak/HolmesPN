@@ -137,18 +137,16 @@ public class HolmesDecomposition extends JFrame {
         int posX = 10;
         int posY = 20;
 
-        ItemListener itemListener = new ItemListener() {
-            public void itemStateChanged(ItemEvent itemEvent) {
-                AbstractButton abstractButton = (AbstractButton)itemEvent.getSource();
-                Color foreground = abstractButton.getForeground();
-                Color background = abstractButton.getBackground();
-                int state = itemEvent.getStateChange();
-                if (state == ItemEvent.SELECTED || state == ItemEvent.DESELECTED) {
-                    abstractButton.setForeground(background);
-                    abstractButton.setBackground(foreground);
-                }
-
+        ItemListener itemListener = itemEvent -> {
+            AbstractButton abstractButton = (AbstractButton)itemEvent.getSource();
+            Color foreground = abstractButton.getForeground();
+            Color background = abstractButton.getBackground();
+            int state = itemEvent.getStateChange();
+            if (state == ItemEvent.SELECTED || state == ItemEvent.DESELECTED) {
+                abstractButton.setForeground(background);
+                abstractButton.setBackground(foreground);
             }
+
         };
 
         JLabel prop = new JLabel("Disjoined Decompositions", SwingConstants.CENTER);
@@ -636,7 +634,7 @@ public class HolmesDecomposition extends JFrame {
         infoButton.addActionListener(actionEvent -> showInfo());
         infoButton.setFocusPainted(false);
         infoButton.setEnabled(true);
-        panel.add(infoButton);//,BorderLayout.LINE_END);
+        //panel.add(infoButton);//,BorderLayout.LINE_END);
 
         //this.add(panel);
         return panel;
@@ -958,178 +956,93 @@ public class HolmesDecomposition extends JFrame {
     private void generateProperSubNet(int index) {
         SubnetCalculator.compileElements();
         switch (index) {
-            case 0:
-                SubnetCalculator.generateFS();
-                break;
-            case 1:
-                SubnetCalculator.generateSnets();
-                break;
-            case 2:
-                SubnetCalculator.generateTnets();
-                break;
-            case 3:
-                SubnetCalculator.generateADT();
-                break;
-            case 4:
-                SubnetCalculator.generateTZ();
-                break;
-            case 5:
-                SubnetCalculator.generateHou();
-                break;
-            case 6:
-                SubnetCalculator.generateNishi();
-                break;
-            case 7:
-                SubnetCalculator.generateCycle(false);
-                break;
-            case 8:
-                SubnetCalculator.generateOotsuki();
-                break;
-            case 9:
-                SubnetCalculator.generateSMC();
-                break;
-            case 10:
-                SubnetCalculator.generateMCT();
-                break;
-            case 11:
-                SubnetCalculator.generateTInv();
-                break;
-            case 12:
-                SubnetCalculator.generatePInv();
-                break;
-            case 13:
-                SubnetCalculator.generateBranchesVerticles();
-                break;
-            case 14:
-                SubnetCalculator.generateBranchesTransitions();
-                break;
-            case 15:
-                SubnetCalculator.generateBranchesPlaces();
-                break;
-            case 16:
-                SubnetCalculator.generateNotTzCycles();
-                break;
+            case 0 -> SubnetCalculator.generateFS();
+            case 1 -> SubnetCalculator.generateSnets();
+            case 2 -> SubnetCalculator.generateTnets();
+            case 3 -> SubnetCalculator.generateADT();
+            case 4 -> SubnetCalculator.generateTZ();
+            case 5 -> SubnetCalculator.generateHou();
+            case 6 -> SubnetCalculator.generateNishi();
+            case 7 -> SubnetCalculator.generateCycle(false);
+            case 8 -> SubnetCalculator.generateOotsuki();
+            case 9 -> SubnetCalculator.generateSMC();
+            case 10 -> SubnetCalculator.generateMCT();
+            case 11 -> SubnetCalculator.generateTInv();
+            case 12 -> SubnetCalculator.generatePInv();
+            case 13 -> SubnetCalculator.generateBranchesVerticles();
+            case 14 -> SubnetCalculator.generateBranchesTransitions();
+            case 15 -> SubnetCalculator.generateBranchesPlaces();
+            case 16 -> SubnetCalculator.generateNotTzCycles();
         }
     }
 
     private int getSubnetSize(int index) {
-        switch (index) {
-            case 0:
-                return SubnetCalculator.functionalSubNets.size();
-            case 1:
-                return SubnetCalculator.snetSubNets.size();
-            case 2:
-                return SubnetCalculator.tnetSubNets.size();
-            case 3:
-                return SubnetCalculator.adtSubNets.size();
-            case 4:
-                return SubnetCalculator.tzSubNets.size();
-            case 5:
-                return SubnetCalculator.houSubNets.size();
-            case 6:
-                return SubnetCalculator.nishiSubNets.size();
-            case 7:
-                return SubnetCalculator.cycleSubNets.size();
-            case 8:
-                return SubnetCalculator.ootsukiSubNets.size();
-            case 9:
-                return SubnetCalculator.smcSubNets.size();
-            case 10:
-                return SubnetCalculator.mctSubNets.size();
-            case 11:
-                return SubnetCalculator.tinvSubNets.size();
-            case 12:
-                return SubnetCalculator.pinvSubNets.size();
-            case 13:
-                return SubnetCalculator.bvSubNets.size();
-            case 14:
-                return SubnetCalculator.btSubNets.size();
-            case 15:
-                return SubnetCalculator.bpSubNets.size();
-            case 16:
-                return SubnetCalculator.notTzCyclesiSubNets.size();
-        }
-        return 0;
+        return switch (index) {
+            case 0 -> SubnetCalculator.functionalSubNets.size();
+            case 1 -> SubnetCalculator.snetSubNets.size();
+            case 2 -> SubnetCalculator.tnetSubNets.size();
+            case 3 -> SubnetCalculator.adtSubNets.size();
+            case 4 -> SubnetCalculator.tzSubNets.size();
+            case 5 -> SubnetCalculator.houSubNets.size();
+            case 6 -> SubnetCalculator.nishiSubNets.size();
+            case 7 -> SubnetCalculator.cycleSubNets.size();
+            case 8 -> SubnetCalculator.ootsukiSubNets.size();
+            case 9 -> SubnetCalculator.smcSubNets.size();
+            case 10 -> SubnetCalculator.mctSubNets.size();
+            case 11 -> SubnetCalculator.tinvSubNets.size();
+            case 12 -> SubnetCalculator.pinvSubNets.size();
+            case 13 -> SubnetCalculator.bvSubNets.size();
+            case 14 -> SubnetCalculator.btSubNets.size();
+            case 15 -> SubnetCalculator.bpSubNets.size();
+            case 16 -> SubnetCalculator.notTzCyclesiSubNets.size();
+            default -> 0;
+        };
     }
 
     private String getProperSubNetName(int index) {
-        switch (index) {
-            case 0:
-                return "Functional ";
-            case 1:
-                return "S-net ";
-            case 2:
-                return "T-net ";
-            case 3:
-                return "connected ADT ";
-            case 4:
-                return "Teng-Zeng subnet ";
-            case 5:
-                return "Path ";
-            case 6:
-                return "Augmented Seqential Path ";
-            case 7:
-                return "Cycle ";
-            case 8:
-                return "Ootsuki ";
-            case 9:
-                return "SMC ";
-            case 10:
-                return "MCT ";
-            case 11:
-                return "T-inv";
-            case 12:
-                return "P-inv";
-            case 13:
-                return "Branch Vertices";
-            case 14:
-                return "Branch Transitions";
-            case 15:
-                return "Branch Places";
-            case 16:
-                return "Not SS cycle";
-        }
-        return "";
+        return switch (index) {
+            case 0 -> "Functional ";
+            case 1 -> "S-net ";
+            case 2 -> "T-net ";
+            case 3 -> "connected ADT ";
+            case 4 -> "Teng-Zeng subnet ";
+            case 5 -> "Path ";
+            case 6 -> "Augmented Seqential Path ";
+            case 7 -> "Cycle ";
+            case 8 -> "Ootsuki ";
+            case 9 -> "SMC ";
+            case 10 -> "MCT ";
+            case 11 -> "T-inv";
+            case 12 -> "P-inv";
+            case 13 -> "Branch Vertices";
+            case 14 -> "Branch Transitions";
+            case 15 -> "Branch Places";
+            case 16 -> "Not SS cycle";
+            default -> "";
+        };
     }
 
     private ArrayList<SubnetCalculator.SubNet> getCorrectSubnet(int type) {
-        switch (type) {
-            case 0:
-                return SubnetCalculator.functionalSubNets;
-            case 1:
-                return SubnetCalculator.snetSubNets;
-            case 2:
-                return SubnetCalculator.tnetSubNets;
-            case 3:
-                return SubnetCalculator.adtSubNets;
-            case 4:
-                return SubnetCalculator.tzSubNets;
-            case 5:
-                return SubnetCalculator.houSubNets;
-            case 6:
-                return SubnetCalculator.nishiSubNets;
-            case 7:
-                return SubnetCalculator.cycleSubNets;
-            case 8:
-                return SubnetCalculator.ootsukiSubNets;
-            case 9:
-                return SubnetCalculator.smcSubNets;
-            case 10:
-                return SubnetCalculator.mctSubNets;
-            case 11:
-                return SubnetCalculator.tinvSubNets;
-            case 12:
-                return SubnetCalculator.pinvSubNets;
-            case 13:
-                return SubnetCalculator.bvSubNets;
-            case 14:
-                return SubnetCalculator.btSubNets;
-            case 15:
-                return SubnetCalculator.bpSubNets;
-            case 16:
-                return SubnetCalculator.notTzCyclesiSubNets;
-        }
-        return SubnetCalculator.functionalSubNets;
+        return switch (type) {
+            case 0 -> SubnetCalculator.functionalSubNets;
+            case 1 -> SubnetCalculator.snetSubNets;
+            case 2 -> SubnetCalculator.tnetSubNets;
+            case 3 -> SubnetCalculator.adtSubNets;
+            case 4 -> SubnetCalculator.tzSubNets;
+            case 5 -> SubnetCalculator.houSubNets;
+            case 6 -> SubnetCalculator.nishiSubNets;
+            case 7 -> SubnetCalculator.cycleSubNets;
+            case 8 -> SubnetCalculator.ootsukiSubNets;
+            case 9 -> SubnetCalculator.smcSubNets;
+            case 10 -> SubnetCalculator.mctSubNets;
+            case 11 -> SubnetCalculator.tinvSubNets;
+            case 12 -> SubnetCalculator.pinvSubNets;
+            case 13 -> SubnetCalculator.bvSubNets;
+            case 14 -> SubnetCalculator.btSubNets;
+            case 15 -> SubnetCalculator.bpSubNets;
+            case 16 -> SubnetCalculator.notTzCyclesiSubNets;
+            default -> SubnetCalculator.functionalSubNets;
+        };
     }
 
     private JList generateButton(int index) {
@@ -1139,29 +1052,12 @@ public class HolmesDecomposition extends JFrame {
         if (index == 4 || index == 5 || index == 6 || index == 7 || index == 9 || index == 11 || index == 12 || index == 13||index == 14 ||index ==15 || index==16)
             return generateInProperDecoButton(index);
         */
-        switch (index) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 8:
-            case 10:
-                return generateProperDecoButton(index);
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 9:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-            case 16:
-                return generateInProperDecoButton(index);
-        }
+        return switch (index) {
+            case 0, 1, 2, 3, 8, 10 -> generateProperDecoButton(index);
+            case 4, 5, 6, 7, 9, 11, 12, 13, 14, 15, 16 -> generateInProperDecoButton(index);
+            default -> generateProperDecoButton(index);
+        };
 
-        return generateProperDecoButton(index);
     }
 
 
@@ -1241,75 +1137,74 @@ public class HolmesDecomposition extends JFrame {
         SubnetCalculator.SubNet subnet = null;
         int size = 0;
         switch (typeOfDecomposition) {
-            case 0:
+            case 0 -> {
                 subnet = SubnetCalculator.functionalSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.functionalSubNets.size();
-                break;
-            case 1:
+            }
+            case 1 -> {
                 subnet = SubnetCalculator.snetSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.snetSubNets.size();
-                break;
-            case 2:
+            }
+            case 2 -> {
                 subnet = SubnetCalculator.tnetSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.tnetSubNets.size();
-                break;
-            case 3:
+            }
+            case 3 -> {
                 subnet = SubnetCalculator.adtSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.adtSubNets.size();
-                break;
-            case 4:
+            }
+            case 4 -> {
                 subnet = SubnetCalculator.tzSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.tzSubNets.size();
-                break;
-            case 5:
+            }
+            case 5 -> {
                 subnet = SubnetCalculator.houSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.houSubNets.size();
-                break;
-            case 6:
+            }
+            case 6 -> {
                 subnet = SubnetCalculator.nishiSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.nishiSubNets.size();
-                break;
-            case 7:
+            }
+            case 7 -> {
                 subnet = SubnetCalculator.cycleSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.cycleSubNets.size();
-                break;
-            case 8:
+            }
+            case 8 -> {
                 subnet = SubnetCalculator.ootsukiSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.ootsukiSubNets.size();
-                break;
-            case 9:
+            }
+            case 9 -> {
                 subnet = SubnetCalculator.smcSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.smcSubNets.size();
-                break;
-            case 10:
+            }
+            case 10 -> {
                 subnet = SubnetCalculator.mctSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.mctSubNets.size();
-                break;
-            case 11:
+            }
+            case 11 -> {
                 subnet = SubnetCalculator.tinvSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.tinvSubNets.size();
-                break;
-            case 12:
+            }
+            case 12 -> {
                 subnet = SubnetCalculator.pinvSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.pinvSubNets.size();
-                break;
-            case 13:
+            }
+            case 13 -> {
                 subnet = SubnetCalculator.bvSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.bvSubNets.size();
-                break;
-            case 14:
+            }
+            case 14 -> {
                 subnet = SubnetCalculator.btSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.btSubNets.size();
-                break;
-            case 15:
+            }
+            case 15 -> {
                 subnet = SubnetCalculator.bpSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.bpSubNets.size();
-                break;
-            case 16:
+            }
+            case 16 -> {
                 subnet = SubnetCalculator.notTzCyclesiSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.notTzCyclesiSubNets.size();
-                break;
-
+            }
         }
 
         ColorPalette cp = new ColorPalette();
@@ -1438,116 +1333,46 @@ public class HolmesDecomposition extends JFrame {
         SubnetCalculator.SubNet firstsubnet = null;
         int firstsize = 0;
         switch (choosenDeco.get(0)) {
-            case 0:
-                firstsubnet = SubnetCalculator.functionalSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 1:
-                firstsubnet = SubnetCalculator.snetSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 2:
-                firstsubnet = SubnetCalculator.tnetSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 3:
-                firstsubnet = SubnetCalculator.adtSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 4:
-                firstsubnet = SubnetCalculator.tzSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 5:
-                firstsubnet = SubnetCalculator.houSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 6:
-                firstsubnet = SubnetCalculator.nishiSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 7:
-                firstsubnet = SubnetCalculator.cycleSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 8:
-                firstsubnet = SubnetCalculator.ootsukiSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 9:
-                firstsubnet = SubnetCalculator.smcSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 10:
-                firstsubnet = SubnetCalculator.mctSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 11:
-                firstsubnet = SubnetCalculator.tinvSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 12:
-                firstsubnet = SubnetCalculator.pinvSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 13:
-                firstsubnet = SubnetCalculator.bvSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 14:
-                firstsubnet = SubnetCalculator.btSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 15:
-                firstsubnet = SubnetCalculator.bpSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
-            case 16:
-                firstsubnet = SubnetCalculator.notTzCyclesiSubNets.get(decoListOne.getSelectedIndex() - 1);
-                break;
+            case 0 -> firstsubnet = SubnetCalculator.functionalSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 1 -> firstsubnet = SubnetCalculator.snetSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 2 -> firstsubnet = SubnetCalculator.tnetSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 3 -> firstsubnet = SubnetCalculator.adtSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 4 -> firstsubnet = SubnetCalculator.tzSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 5 -> firstsubnet = SubnetCalculator.houSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 6 -> firstsubnet = SubnetCalculator.nishiSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 7 -> firstsubnet = SubnetCalculator.cycleSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 8 -> firstsubnet = SubnetCalculator.ootsukiSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 9 -> firstsubnet = SubnetCalculator.smcSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 10 -> firstsubnet = SubnetCalculator.mctSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 11 -> firstsubnet = SubnetCalculator.tinvSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 12 -> firstsubnet = SubnetCalculator.pinvSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 13 -> firstsubnet = SubnetCalculator.bvSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 14 -> firstsubnet = SubnetCalculator.btSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 15 -> firstsubnet = SubnetCalculator.bpSubNets.get(decoListOne.getSelectedIndex() - 1);
+            case 16 -> firstsubnet = SubnetCalculator.notTzCyclesiSubNets.get(decoListOne.getSelectedIndex() - 1);
         }
 
 
         SubnetCalculator.SubNet secondsubnet = null;
         int secondsize = 0;
         switch (choosenDeco.get(choosenDeco.size() - 1)) {
-            case 0:
-                secondsubnet = SubnetCalculator.functionalSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 1:
-                secondsubnet = SubnetCalculator.snetSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 2:
-                secondsubnet = SubnetCalculator.tnetSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 3:
-                secondsubnet = SubnetCalculator.adtSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 4:
-                secondsubnet = SubnetCalculator.tzSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 5:
-                secondsubnet = SubnetCalculator.houSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 6:
-                secondsubnet = SubnetCalculator.nishiSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 7:
-                secondsubnet = SubnetCalculator.cycleSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 8:
-                secondsubnet = SubnetCalculator.ootsukiSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 9:
-                secondsubnet = SubnetCalculator.smcSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 10:
-                secondsubnet = SubnetCalculator.mctSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 11:
-                secondsubnet = SubnetCalculator.tinvSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 12:
-                secondsubnet = SubnetCalculator.pinvSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 13:
-                secondsubnet = SubnetCalculator.bvSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 14:
-                secondsubnet = SubnetCalculator.btSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 15:
-                secondsubnet = SubnetCalculator.bpSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-            case 16:
-                secondsubnet = SubnetCalculator.notTzCyclesiSubNets.get(decoListTwo.getSelectedIndex() - 1);
-                break;
-
-
+            case 0 -> secondsubnet = SubnetCalculator.functionalSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 1 -> secondsubnet = SubnetCalculator.snetSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 2 -> secondsubnet = SubnetCalculator.tnetSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 3 -> secondsubnet = SubnetCalculator.adtSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 4 -> secondsubnet = SubnetCalculator.tzSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 5 -> secondsubnet = SubnetCalculator.houSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 6 -> secondsubnet = SubnetCalculator.nishiSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 7 -> secondsubnet = SubnetCalculator.cycleSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 8 -> secondsubnet = SubnetCalculator.ootsukiSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 9 -> secondsubnet = SubnetCalculator.smcSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 10 -> secondsubnet = SubnetCalculator.mctSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 11 -> secondsubnet = SubnetCalculator.tinvSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 12 -> secondsubnet = SubnetCalculator.pinvSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 13 -> secondsubnet = SubnetCalculator.bvSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 14 -> secondsubnet = SubnetCalculator.btSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 15 -> secondsubnet = SubnetCalculator.bpSubNets.get(decoListTwo.getSelectedIndex() - 1);
+            case 16 -> secondsubnet = SubnetCalculator.notTzCyclesiSubNets.get(decoListTwo.getSelectedIndex() - 1);
         }
 
         ColorPalette cp = new ColorPalette();
