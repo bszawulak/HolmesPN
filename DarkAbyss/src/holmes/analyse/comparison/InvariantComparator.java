@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class InvariantComparator {
+public class InvariantComparator implements Runnable {
 
     public PetriNet pn1;
     public PetriNet pn2;
     public HashMap<Node, Node> matchedVertices = new HashMap<>();
+    public boolean mode = true;
 
     public InvariantComparator(PetriNet p1, PetriNet p2) {
         this.pn1 = p1;
@@ -122,5 +123,13 @@ public class InvariantComparator {
             }
 
         return matchedVertices;
+    }
+
+    @Override
+    public void run() {
+        if (mode)
+            idealInvariantMatching();
+        else
+            bestInvariantMatching();
     }
 }

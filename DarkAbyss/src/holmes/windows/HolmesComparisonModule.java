@@ -111,6 +111,7 @@ public class HolmesComparisonModule extends JFrame {
     GRDFcalculator grdfCalculator;
     GDDAcalculator gddaCalculator;
     DecoCalccalculator decoCalculator;
+    InvariantComparator invariantComparator;
 
     boolean reGenerateBoolean = false;
 
@@ -300,7 +301,12 @@ public class HolmesComparisonModule extends JFrame {
         JPanel impanel = new JPanel(new GridLayout(1, 2));
 
         generateInvl = new JButton("Compare nets");
-        generateInvl.addActionListener(e -> compareInv());
+        generateInvl.addActionListener(e -> {
+
+            compareInv();
+            //invariantComparator = invComp;
+    }
+        );
         generateInvl.setEnabled(false);
         impanel.add(generateInvl);
         buttonPanel.add(impanel);
