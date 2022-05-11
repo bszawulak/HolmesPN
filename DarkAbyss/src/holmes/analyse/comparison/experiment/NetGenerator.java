@@ -30,7 +30,7 @@ public class NetGenerator {
 
     IOprotocols io = new IOprotocols();
     //String directory = "/home/Szavislav/Eksperyment/Wyniki";
-    String directory = "/home/bszawulak/Dokumenty/Eksperyment/Wyniki";
+    String directory = "/home/bszawulak/Dokumenty/Eksperyment/Wyniki-den-60";
 
 
     String pathToFiles = "/home/labnanobio-01/Dokumenty/Eksperyment/";
@@ -984,6 +984,8 @@ public class NetGenerator {
                         //DGDDA
                         writeDGDDA(tmpdir + "-DGDDA.txt", DGDV);
 
+
+                        /*
                         //tu można by zacząć dodawać nowe rozszrzenia
                         //------ 1S VARIANT ------
                         SubnetCalculator.SubNet nsn = addStar4(cloneSubNet(sn));
@@ -1036,7 +1038,7 @@ public class NetGenerator {
 
                         //DGDDA
                         writeDGDDA(tmpdir + "-DGDDA.txt", DGDV);
-
+                        */
                     }
                 }
             }

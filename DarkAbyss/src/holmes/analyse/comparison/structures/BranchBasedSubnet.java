@@ -502,6 +502,7 @@ public class BranchBasedSubnet {
                 if (list.size() > 1 && n.getType().equals(PetriNetElement.PetriNetElementType.PLACE)) {
                     //probably add more
                     if ((listIn.size() > 1 && listOut.size() == 0) || (listOut.size() > 1 && listIn.size() == 0)) {
+                    //if ((listIn.size() > 1 ) || (listOut.size() > 1 )) { T-net
                         branchElements.add(n);
                         endNode = n;
                     } else {
@@ -523,7 +524,8 @@ public class BranchBasedSubnet {
                                     counter++;
                                 }
                                 if (counter > 1) {
-                                    JOptionPane.showMessageDialog(null, "Coś zjebałeś nr 1", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+                                    //JOptionPane.showMessageDialog(null, "Coś zjebałeś nr 1", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+                                    System.out.println("ADT STARTS HERE: " + startNode.getName());
                                 }
                             }
                         }

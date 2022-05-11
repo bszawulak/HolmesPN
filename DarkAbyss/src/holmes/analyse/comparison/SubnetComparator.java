@@ -1,14 +1,18 @@
 package holmes.analyse.comparison;
 
+import holmes.analyse.GraphletsCalculator;
 import holmes.analyse.SubnetCalculator;
 import holmes.analyse.comparison.structures.BranchBasedSubnet;
 import holmes.analyse.comparison.structures.GreatCommonSubnet;
+import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.elements.*;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -121,6 +125,8 @@ public class SubnetComparator {
 
     public ArrayList<ArrayList<GreatCommonSubnet>> compareFirstSecond() {
         ArrayList<ArrayList<GreatCommonSubnet>> resultMatrix = new ArrayList<>();
+        DecimalFormat df = new DecimalFormat("0.00");
+        int progess = 0;
 
         for (int i = 0; i < subnetsForFirstNet.size(); i++) {
             ArrayList<GreatCommonSubnet> list = new ArrayList<>();
@@ -130,6 +136,23 @@ public class SubnetComparator {
                 list.get(j).secondNetID = j;
                 list.get(j).firstNetNodeSize = subnetsForFirstNet.get(i).nodes.size();
                 list.get(j).secondNetNodeSize = subnetsForSecondNet.get(j).nodes.size();
+
+
+                JTextArea result = GUIManager.getDefaultGUIManager().accessComparisonWindow().infoPaneDec;
+                String content = null;
+                try {
+                    content = result.getDocument().getText(0, result.getDocument().getLength());
+                    int lastLineBreak = content.lastIndexOf('\n');
+                    result.getDocument().remove(lastLineBreak, result.getDocument().getLength() - lastLineBreak);
+
+                    double progress = (double)progess/(double)(subnetsForFirstNet.size() * subnetsForSecondNet.size());
+                    result.append("\n"+df.format(progress*100)+"%");
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+
+
+                progess++;
             }
             resultMatrix.add(list);
         }
@@ -3311,7 +3334,23 @@ public class SubnetComparator {
 
         ArrayList<ArrayList<RowMatch>> listOfVerticesMatches = coloringTable(bm, net1, net2);
 
-        return listOfVerticesMatches;
+        int lenght = 0;
+        for ( ArrayList<RowMatch> tm:
+        listOfVerticesMatches) {
+            if(tm.size()>lenght)
+                lenght=tm.size();
+        }
+
+        ArrayList<ArrayList<RowMatch>> max = new ArrayList<>();
+
+        for ( ArrayList<RowMatch> tm:
+                listOfVerticesMatches) {
+            if(tm.size()==lenght)
+                max.add(tm);
+        }
+
+        return max;
+        //return listOfVerticesMatches;
     }
 
     public static ArrayList<ArrayList<Integer>> listPermutations(ArrayList<Integer> list) {

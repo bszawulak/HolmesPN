@@ -7,7 +7,10 @@ import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
@@ -32,6 +35,8 @@ public class GraphletsCalculator {
     static int graphletNumber = 151;
 
     public static boolean multipleArcCheck = true;
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public static void GraphletsCalculator() {
         generateGraphlets();
@@ -533,6 +538,7 @@ public class GraphletsCalculator {
         //return resultList;
     }
 
+
     public static void getFoundServerGraphlets(PetriNet pn) {
         ArrayList<ArrayList<ArrayList<Struct>>> resultList = new ArrayList<>();
 
@@ -551,6 +557,76 @@ public class GraphletsCalculator {
             resultList.add(fromThisOrbit);
         }
 
+        //sprawdź czy map jest praw
+
+        graphlets = resultList;
+
+        sortGraphletsByOrbit();
+        uniqGraphlets();
+        //return resultList;
+    }
+    public static void getFoundServerGraphlets(PetriNet pn, JTextArea result) {
+        ArrayList<ArrayList<ArrayList<Struct>>> resultList = new ArrayList<>();
+        int orbitIndex = 0;
+        //result.append("\n");
+        for (Entry<Integer, Node> entry : globalOrbitMap.entrySet()) {
+            ArrayList<ArrayList<Struct>> fromThisOrbit = new ArrayList<>();
+
+            orbitIndex++;
+            //Document doc = result.getDocument();
+
+            //result.remove(result.getLineCount());
+            /*
+            String content = null;
+
+            try {
+                content = result.getDocument().getText(0, result.getDocument().getLength());
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+            int lastLineBreak = content.lastIndexOf('\n');
+            try {
+                result.getDocument().remove(lastLineBreak, result.getDocument().getLength() - lastLineBreak);
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+            */
+
+
+            String content = null;
+            try {
+                content = result.getDocument().getText(0, result.getDocument().getLength());
+                int lastLineBreak = content.lastIndexOf('\n');
+                result.getDocument().remove(lastLineBreak, result.getDocument().getLength() - lastLineBreak);
+
+                double progress = (double)orbitIndex/(double)globalOrbitMap.entrySet().size();
+                result.append("\n"+df.format(progress*100)+"%");
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+
+
+            for (Node n : pn.getNodes()) {
+                if (n.getType() == entry.getValue().getType()) {
+                    ArrayList<Struct> foundGraphletsApp = findGraphlet(entry.getValue(), n);
+                    fromThisOrbit.add(foundGraphletsApp);
+                } else {
+                    fromThisOrbit.add(new ArrayList<>());
+                }
+            }
+            resultList.add(fromThisOrbit);
+        }
+
+        String content = null;
+        try {
+            content = result.getDocument().getText(0, result.getDocument().getLength());
+            int lastLineBreak = content.lastIndexOf('\n');
+            result.getDocument().remove(lastLineBreak, result.getDocument().getLength() - lastLineBreak);
+            result.append("finished.");
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+        result.append("\n");
         //sprawdź czy map jest praw
 
         graphlets = resultList;

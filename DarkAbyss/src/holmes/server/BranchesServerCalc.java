@@ -2,11 +2,13 @@ package holmes.server;
 
 import holmes.Main;
 import holmes.analyse.comparison.structures.BranchVertex;
+import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.PetriNetElement;
+import holmes.windows.HolmesComparisonModule;
 
 import java.io.*;
 import java.util.*;
@@ -26,6 +28,214 @@ public class BranchesServerCalc {
     public HashMap<BranchVertex, BranchVertex> matched;
 
     public BranchesServerCalc() {
+    }
+
+    public void compareAverageBRDF() {
+        Double[][] matrixBRDFVavg = new Double[20][100];
+        Double[][] matrixBRDFTavg = new Double[20][100];
+        Double[][] matrixBRDFPavg = new Double[20][100];
+
+
+        Double[][] matrixBRDFVmin = new Double[20][100];
+        Double[][] matrixBRDFTmin = new Double[20][100];
+        Double[][] matrixBRDFPmin = new Double[20][100];
+
+
+        Double[][] matrixBRDFVmax = new Double[20][100];
+        Double[][] matrixBRDFTmax = new Double[20][100];
+        Double[][] matrixBRDFPmax = new Double[20][100];
+
+        for (int j = 0; j < 61; j = j + 5) {
+            for (int p1 = 0; p1 < 100; p1++) {
+
+                int i = j / 5;
+
+                matrixBRDFVavg[i][p1] = 0.0;
+                matrixBRDFTavg[i][p1] = 0.0;
+                matrixBRDFPavg[i][p1] = 0.0;
+                for (int p2 = 0; p2 < 100; p2++) {
+                    if (p1 != p2) {
+                        PetriNet pn1 = loadNet(pathToFiles + "Wyniki/i" + j + "j" + j + "/i" + j + "j" + j + "p" + p1 + "/i" + j + "j" + j + "p" + p1 + "-BASE.pnt", 0);
+                        PetriNet pn2 = loadNet(pathToFiles + "Wyniki/i" + j + "j" + j + "/i" + j + "j" + j + "p" + p2 + "/i" + j + "j" + j + "p" + p2 + "-BASE.pnt", 1);
+                        BranchesServerCalc.ParsedBranchData result = compare(pn1, pn2, 1);
+
+                        Double vBrRDFvalue = result.brrdf.vBrRDFvalue;
+                        Double tBrRDFvalue = result.brrdf.tBrRDFvalue;
+                        Double pBrRDFvalue = result.brrdf.pBrRDFvalue;
+
+                        //sum for avg
+                        matrixBRDFVavg[i][p1] += vBrRDFvalue;
+                        matrixBRDFTavg[i][p1] += tBrRDFvalue;
+                        matrixBRDFPavg[i][p1] += pBrRDFvalue;
+                        //min
+                        if (matrixBRDFVmin[i][p1] == null || matrixBRDFVmin[i][p1] > vBrRDFvalue) {
+                            matrixBRDFVmin[i][p1] = vBrRDFvalue;
+                        }
+                        if (matrixBRDFTmin[i][p1] == null || matrixBRDFTmin[i][p1] > tBrRDFvalue) {
+                            matrixBRDFTmin[i][p1] = tBrRDFvalue;
+                        }
+                        if (matrixBRDFPmin[i][p1] == null || matrixBRDFPmin[i][p1] > pBrRDFvalue) {
+                            matrixBRDFPmin[i][p1] = pBrRDFvalue;
+                        }
+                        //max
+                        if (matrixBRDFVmax[i][p1] == null || matrixBRDFVmax[i][p1] < vBrRDFvalue) {
+                            matrixBRDFVmax[i][p1] = vBrRDFvalue;
+                        }
+                        if (matrixBRDFTmax[i][p1] == null || matrixBRDFTmax[i][p1] < tBrRDFvalue) {
+                            matrixBRDFTmax[i][p1] = tBrRDFvalue;
+                        }
+                        if (matrixBRDFPmax[i][p1] == null || matrixBRDFPmin[i][p1] < pBrRDFvalue) {
+                            matrixBRDFPmax[i][p1] = pBrRDFvalue;
+                        }
+                    } else {
+                        //matrixBRDFVavg[i][p1] += 0.0;
+                        //matrixBRDFTavg[i][p1] += 0.0;
+                        //matrixBRDFPavg[i][p1] += 0.0;
+                    }
+                }
+            }
+        }
+
+        try {
+            FileWriter writer = new FileWriter(pathToFiles + "Wyniki/BrRDF-ForArticle.csv", true);
+            writer.append("matrixBRDFVavg\n");
+            for (int i = 0; i < 20; i++) {
+                String line = "";
+                for (int p1 = 0; p1 < 100; p1++) {
+                    if (matrixBRDFVavg[i][p1] != null)
+                        line += (double) matrixBRDFVavg[i][p1] / 99.0;
+                    else
+                        line += 0.0;
+
+                    if (p1 + 1 < 100)
+                        line += ",";
+
+                }
+                writer.append(line + "\n");
+            }
+
+            writer.append("matrixBRDFTavg\n");
+            for (int i = 0; i < 20; i++) {
+                String line = "";
+                for (int p1 = 0; p1 < 100; p1++) {
+                    if (matrixBRDFTavg[i][p1] != null)
+                        line += (double) matrixBRDFTavg[i][p1] / 99.0;
+                    else
+                        line += 0.0;
+                    if (p1 + 1 < 100)
+                        line += ",";
+                }
+                writer.append(line + "\n");
+            }
+
+            writer.append("matrixBRDFPavg\n");
+            for (int i = 0; i < 20; i++) {
+                String line = "";
+                for (int p1 = 0; p1 < 100; p1++) {
+                    if (matrixBRDFPavg[i][p1] != null)
+                        line += (double) matrixBRDFPavg[i][p1] / 99.0;
+                    else
+                        line += 0.0;
+                    if (p1 + 1 < 100)
+                        line += ",";
+                }
+                writer.append(line + "\n");
+            }
+
+            //min
+            writer.append("matrixBRDFVmin\n");
+            for (int i = 0; i < 20; i++) {
+                String line = "";
+                for (int p1 = 0; p1 < 100; p1++) {
+                    if (matrixBRDFVmin[i][p1] != null)
+                        line += (double) matrixBRDFVmin[i][p1];
+                    else
+                        line += 0.0;
+                    if (p1 + 1 < 100)
+                        line += ",";
+                }
+                writer.append(line + "\n");
+            }
+
+            writer.append("matrixBRDFTmin\n");
+            for (int i = 0; i < 20; i++) {
+                String line = "";
+                for (int p1 = 0; p1 < 100; p1++) {
+                    if (matrixBRDFTmin[i][p1] != null)
+                        line += (double) matrixBRDFTmin[i][p1];
+                    else
+                        line += 0.0;
+                    if (p1 + 1 < 100)
+                        line += ",";
+                }
+                writer.append(line + "\n");
+            }
+
+            writer.append("matrixBRDFPmin\n");
+            for (int i = 0; i < 20; i++) {
+                String line = "";
+                for (int p1 = 0; p1 < 100; p1++) {
+                    if (matrixBRDFPmin[i][p1] != null)
+                        line += (double) matrixBRDFPmin[i][p1];
+                    else
+                        line += 0.0;
+                    if (p1 + 1 < 100)
+                        line += ",";
+                }
+                writer.append(line + "\n");
+            }
+
+
+            //max
+            writer.append("matrixBRDFVmax\n");
+            for (int i = 0; i < 20; i++) {
+                String line = "";
+                for (int p1 = 0; p1 < 100; p1++) {
+                    if (matrixBRDFVmax[i][p1] != null)
+                        line += (double) matrixBRDFVmax[i][p1];
+                    else
+                        line += 0.0;
+                    if (p1 + 1 < 100)
+                        line += ",";
+                }
+                writer.append(line + "\n");
+            }
+
+            writer.append("matrixBRDFTmax\n");
+            for (int i = 0; i < 20; i++) {
+                String line = "";
+                for (int p1 = 0; p1 < 100; p1++) {
+                    if (matrixBRDFTmax[i][p1] != null)
+                        line += (double) matrixBRDFTmax[i][p1];
+                    else
+                        line += 0.0;
+                    if (p1 + 1 < 100)
+                        line += ",";
+                }
+                writer.append(line + "\n");
+            }
+
+            writer.append("matrixBRDFPmax\n");
+            for (int i = 0; i < 20; i++) {
+                String line = "";
+                for (int p1 = 0; p1 < 100; p1++) {
+                    if (matrixBRDFPmax[i][p1] != null)
+                        line += (double) matrixBRDFPmax[i][p1];
+                    else
+                        line += 0.0;
+                    if (p1 + 1 < 100)
+                        line += ",";
+                }
+                writer.append(line + "\n");
+            }
+
+
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //return result;
     }
 
     public void CompareDensity() {
@@ -152,8 +362,8 @@ public class BranchesServerCalc {
                     index_p = p;
                     for (int p1 = 0; p1 < 100; p1++) {
                         index_p1 = p1;
-                        if(index_p1!=index_p)
-                        compareBranchesPerSize();
+                        if (index_p1 != index_p)
+                            compareBranchesPerSize();
                     }
                 }
             }
@@ -215,14 +425,14 @@ public class BranchesServerCalc {
                 matched = new HashMap<>();
         }
         */
-        BrRDFResults v = comparisonBrRDF(lbv1,lbv2,0);
-        BrRDFResults t = comparisonBrRDF(lbv1,lbv2,1);
-        BrRDFResults p = comparisonBrRDF(lbv1,lbv2,2);
-        BrRDFResults brdf = new BrRDFResults(v.vBrRDFvalue,v.vBrRDFtable,t.vBrRDFvalue,t.vBrRDFtable,p.vBrRDFvalue,p.vBrRDFtable,v.branchingVertices);
+        BrRDFResults v = comparisonBrRDF(lbv1, lbv2, 0);
+        BrRDFResults t = comparisonBrRDF(lbv1, lbv2, 1);
+        BrRDFResults p = comparisonBrRDF(lbv1, lbv2, 2);
+        BrRDFResults brdf = new BrRDFResults(v.vBrRDFvalue, v.vBrRDFtable, t.vBrRDFvalue, t.vBrRDFtable, p.vBrRDFvalue, p.vBrRDFtable, v.branchingVertices);
         //HashMap<BranchVertex, Integer> toWrtieeOnChart = parseForChart(matched, lbv1, lbv2);
         //ParsedBranchData pdb = new ParsedBranchData(toWrtieeOnChart, matched, lbv1, lbv2);
         //dummy object
-        ParsedBranchData pdb = new ParsedBranchData(new HashMap<>(), new HashMap<>(), lbv1, lbv2,brdf);
+        ParsedBranchData pdb = new ParsedBranchData(new HashMap<>(), new HashMap<>(), lbv1, lbv2, brdf);
 
         return pdb;
     }
@@ -396,7 +606,7 @@ public class BranchesServerCalc {
 
         double DbrV = Arrays.stream(Dbr).sum();
 
-        return new BrRDFResults(DbrV,Dbr,-1,new double[0],-1, new double[0],lista);
+        return new BrRDFResults(DbrV, Dbr, -1, new double[0], -1, new double[0], lista);
     }
 
     public void comparisonBrRDF(ArrayList<BranchVertex> lbv1, ArrayList<BranchVertex> lbv2, String type, int mod) {
@@ -507,16 +717,14 @@ public class BranchesServerCalc {
         //TODO - test i puszczasz dla paczki ze wzrastająca częstotliwością
 
 
-
-
         try {
             FileWriter writer = new FileWriter(pathToFiles + "Wyniki/BrRDF-" + type + ".csv", true);
-            writer.append("i:" + index_i + "j:" + index_j + "p:" + index_p + "p1:" + index_p1 + "d:" + index_d + "," + DbrV + "," + ThirdPosition).append("\n");;
+            writer.append("i:" + index_i + "j:" + index_j + "p:" + index_p + "p1:" + index_p1 + "d:" + index_d + "," + DbrV + "," + ThirdPosition).append("\n");
+            ;
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
 
 
         showSimilarity(lbv1, lbv2, maping, "BrRDF", type);
@@ -1684,7 +1892,7 @@ public class BranchesServerCalc {
         }
     }
 
-    public class BrRDFResults{
+    public class BrRDFResults {
         public double vBrRDFvalue = 0;
         public double tBrRDFvalue = 0;
         public double pBrRDFvalue = 0;
@@ -1693,14 +1901,14 @@ public class BranchesServerCalc {
         public double[] pBrRDFtable;
         public ArrayList<BranchVertex> branchingVertices;
 
-        public BrRDFResults(double vbv,double[] vbt, double tbv, double[] tbt, double pbv, double[] pbt, ArrayList<BranchVertex> bv){
+        public BrRDFResults(double vbv, double[] vbt, double tbv, double[] tbt, double pbv, double[] pbt, ArrayList<BranchVertex> bv) {
             vBrRDFvalue = vbv;
             tBrRDFvalue = tbv;
             pBrRDFvalue = pbv;
             vBrRDFtable = vbt;
             tBrRDFtable = tbt;
             pBrRDFtable = pbt;
-branchingVertices = bv;
+            branchingVertices = bv;
         }
     }
 

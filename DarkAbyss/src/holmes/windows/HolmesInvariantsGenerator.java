@@ -148,18 +148,16 @@ public class HolmesInvariantsGenerator extends JFrame {
 		generateButton.setBounds(posX, posY, 110, 60);
 		generateButton.setMargin(new Insets(0, 0, 0, 0));
 		generateButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-		generateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(isGeneratorWorking == true) {
-					JOptionPane.showMessageDialog(null, "Invariants generation already in progress.", 
-							"Generator working",JOptionPane.WARNING_MESSAGE);
-				} else {
-					setGeneratorStatus(true);
-					invGenerator = new InvariantsCalculator(true);
-					invGenerator.setShowInvDiff(showInvDiff);
-					Thread myThread = new Thread(invGenerator);
-					myThread.start();
-				}
+		generateButton.addActionListener(actionEvent -> {
+			if(isGeneratorWorking == true) {
+				JOptionPane.showMessageDialog(null, "Invariants generation already in progress.",
+						"Generator working",JOptionPane.WARNING_MESSAGE);
+			} else {
+				setGeneratorStatus(true);
+				invGenerator = new InvariantsCalculator(true);
+				invGenerator.setShowInvDiff(showInvDiff);
+				Thread myThread = new Thread(invGenerator);
+				myThread.start();
 			}
 		});
 		generateButton.setFocusPainted(false);

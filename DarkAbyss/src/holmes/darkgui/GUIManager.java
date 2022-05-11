@@ -1345,7 +1345,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 		else
 			return null;
 	}
-	
+
+	public HolmesComparisonModule accessComparisonWindow() {
+		if(windowsComp!= null)
+			return windowsComp;
+		else
+			return null;
+	}
+
 	/**
 	 * Metoda wywołująca okno generatora MCS.
 	 */
