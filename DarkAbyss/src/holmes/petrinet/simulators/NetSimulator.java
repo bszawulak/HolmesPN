@@ -124,7 +124,7 @@ public class NetSimulator {
 		if(isSingleMode() && overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
 			setMaxMode(true); //override
 		} else {
-			//setMaxMode(false); //WTF? PO CO TO?!?!?!
+			setMaxMode(false); //WTF? PO CO TO?!?!?!
 		}
 		
 		HolmesNotepad notepad = new HolmesNotepad(640, 480);
