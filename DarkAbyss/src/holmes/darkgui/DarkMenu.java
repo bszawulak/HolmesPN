@@ -438,7 +438,7 @@ public class DarkMenu extends JMenuBar {
 			GUIManager.getDefaultGUIManager().createReductionWindow();
 			GUIManager.getDefaultGUIManager().showReductionsWindow();
 		});
-		//analysisMenu.add(reductionWindowItem);
+		analysisMenu.add(reductionWindowItem);
 
 
 		//*********************************************************************************************

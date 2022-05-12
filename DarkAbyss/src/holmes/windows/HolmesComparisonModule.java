@@ -38,7 +38,7 @@ public class HolmesComparisonModule extends JFrame {
 
     public PetriNet secondNet = null;
     public ArrayList<SubnetCalculator.SubNet> seconNetList;
-    JTextArea infoPaneInv = new JTextArea(30, 30);
+    public JTextArea infoPaneInv = new JTextArea(30, 30);
     public JTextArea infoPaneDec = new JTextArea(30, 30);
     public JTextArea infoPaneDRGF = new JTextArea(30, 30);
     public JTextArea infoPaneGDDA = new JTextArea(30, 30);
@@ -462,11 +462,17 @@ public class HolmesComparisonModule extends JFrame {
                 infoPaneInv.append("Choosen: Ideal invariant matching\n\r");
                 infoPaneInv.append("Matched invariants\n\r");
                 infoPaneInv.append("First net ID - Second net ID\n\r");
+
+                Thread myThread = new Thread(invComp);
+                myThread.start();
+
+                /*
                 maping = invComp.idealInvariantMatching();
                 for (Map.Entry<Integer, Integer> ma : maping.entrySet()) {
                     infoPaneInv.append(ma.getKey() + " - " + ma.getValue() + "\n\r");
                 }
                 calcIdealScore(maping);
+                */
             } else {
                 maping = invComp.bestInvariantMatching();
                 infoPaneInv.append("Choosen: Best invariant matching\n\r");
@@ -492,7 +498,7 @@ public class HolmesComparisonModule extends JFrame {
 
     }
 
-    private void calcIdealScore(HashMap<Integer, Integer> maping) {
+    public void calcIdealScore(HashMap<Integer, Integer> maping) {
         double score = 0;
 
         //TODO check if nessesery
@@ -561,7 +567,10 @@ public class HolmesComparisonModule extends JFrame {
                 if (firstInvariant.get(i) != 0) {
                     size1++;
                     if (i < secondInvariant.size()) {
-                        if (index != -1 && index < firstInvariant.size() && Objects.equals(firstInvariant.get(index), secondInvariant.get(i))) {
+
+                        System.out.println("FT : " + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i).getName()+ " - ST :" +  secondNet.getTransitions().get(index).getName());
+
+                        if (index != -1 && index < firstInvariant.size() && Objects.equals(firstInvariant.get(i), secondInvariant.get(index))) {
                             commonPart++;
                         }
                     }
@@ -576,6 +585,7 @@ public class HolmesComparisonModule extends JFrame {
             }
 
             score += (double) (2 * commonPart) / (double) (size1 + size2);
+            System.out.println("----");
         }
         infoPaneInv.append("Best common score: " + score + "\n\r");
     }
@@ -1167,7 +1177,7 @@ public class HolmesComparisonModule extends JFrame {
             d[orb] = 1 - (1 / Math.sqrt(2)) * Math.sqrt(di);
         }
 
-        return DoubleStream.of(d).sum() / orbNumber;
+        return Math.abs(DoubleStream.of(d).sum() / orbNumber);
     }
 
     private JPanel makeNetdivPanel() {

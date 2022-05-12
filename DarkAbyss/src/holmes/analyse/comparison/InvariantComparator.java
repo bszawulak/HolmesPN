@@ -1,5 +1,6 @@
 package holmes.analyse.comparison;
 
+import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Node;
 
@@ -7,6 +8,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class InvariantComparator implements Runnable {
 
@@ -78,6 +80,9 @@ public class InvariantComparator implements Runnable {
                     resultsForOverlaping.add(invariantOverlap);
                 }
             }
+            //TODO
+            // ADD choose from best matchings to IMPROVE
+
             int bestMatch = resultsForOverlaping.indexOf(Collections.max(resultsForOverlaping));
             bestMatchedInvariants.put(in1, bestMatch);
         }
@@ -127,8 +132,15 @@ public class InvariantComparator implements Runnable {
 
     @Override
     public void run() {
-        if (mode)
+        if (mode) {
             idealInvariantMatching();
+            HashMap<Integer, Integer> maping;
+            maping = idealInvariantMatching();
+            for (Map.Entry<Integer, Integer> ma : maping.entrySet()) {
+                GUIManager.getDefaultGUIManager().accessComparisonWindow().infoPaneInv.append(ma.getKey() + " - " + ma.getValue() + "\n\r");
+            }
+            GUIManager.getDefaultGUIManager().accessComparisonWindow().calcIdealScore(maping);
+        }
         else
             bestInvariantMatching();
     }
