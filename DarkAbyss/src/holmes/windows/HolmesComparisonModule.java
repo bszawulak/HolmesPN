@@ -55,6 +55,7 @@ public class HolmesComparisonModule extends JFrame {
     JButton saveDGDD;
     JButton generateNetdiv;
     JButton generateBranch;
+    JButton chooserPnt;
     public JTable dgddTable;
     public JComboBox graphletSize;
     JComboBox orbitSize;
@@ -62,6 +63,7 @@ public class HolmesComparisonModule extends JFrame {
     JComboBox graphletNDSize;
     JComboBox branchingVariant;
     public JPanel decoResult;
+    //boolean invariantType = true;
     boolean invariantMatchingTypr = false;
     boolean transitionMatchingTypr = false;
     Boolean firstQuestionDec = false;
@@ -209,14 +211,16 @@ public class HolmesComparisonModule extends JFrame {
                 invComp = new InvariantComparator(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet);
                 generateInvl.setEnabled(true);
                 matchVertices.setEnabled(true);
+                chooserPnt.setEnabled(true);
             }
 
 
         });
         mopanel.add(chooser);
 
-        JButton chooserPnt = new JButton("Load invariants for second net(.inv)");
+        chooserPnt = new JButton("Load invariants for second net(.inv)");
         chooserPnt.setVisible(true);
+        chooserPnt.setEnabled(false);
         chooserPnt.addActionListener(e -> {
             //FileFilter[] filters = new FileFilter[3];
 
@@ -231,7 +235,10 @@ public class HolmesComparisonModule extends JFrame {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 infoPaneInv.append("Choosen pnt file: " + jfc.getSelectedFile().getName() + "\n");
                 IOprotocols io = new IOprotocols();
-                secondNet.setT_InvMatrix(io.readT_invariantsOut(jfc.getSelectedFile().getAbsolutePath()), false);
+                if(invComp.invariantType)
+                    secondNet.setT_InvMatrix(io.readT_invariantsOut(jfc.getSelectedFile().getAbsolutePath()), false);
+                else
+                    secondNet.setP_InvMatrix(io.readP_invariantsOut(jfc.getSelectedFile().getAbsolutePath()));
             }
         });
         mopanel.add(chooserPnt);
@@ -312,11 +319,43 @@ public class HolmesComparisonModule extends JFrame {
         buttonPanel.add(impanel);
         panel.add(buttonPanel);
 
-        JPanel questions = new JPanel(new GridLayout(1, 2));
-        JPanel firstQuestion = new JPanel(new GridLayout(0, 1));
+        JPanel questions = new JPanel(new GridLayout(1, 3));
+        JPanel zeroQuestion = new JPanel(new GridLayout(0, 1));
 
+        //----
+        TitledBorder titleQ0;
+        titleQ0 = BorderFactory.createTitledBorder("Invariants");
+
+        JRadioButton tiButton = new JRadioButton("T-inv");
+        tiButton.setActionCommand("");
+        tiButton.setSelected(true);
+        tiButton.addActionListener(e -> {
+            if (tiButton.isSelected()) {
+                invComp.invariantType = true;
+            }
+        });
+        zeroQuestion.add(tiButton);
+
+
+        JRadioButton piButton = new JRadioButton("P-inv");
+        piButton.setActionCommand("");
+        piButton.addActionListener(e -> {
+            if (piButton.isSelected()) {
+                invComp.invariantType = false;
+            }
+        });
+        zeroQuestion.add(piButton);
+        zeroQuestion.setBorder(titleQ0);
+        questions.add(zeroQuestion);
+        //----
+
+        ButtonGroup groupQ0 = new ButtonGroup();
+        groupQ0.add(tiButton);
+        groupQ0.add(piButton);
+
+        JPanel firstQuestion = new JPanel(new GridLayout(0, 1));
         TitledBorder titleQ1;
-        titleQ1 = BorderFactory.createTitledBorder("Invariant");
+        titleQ1 = BorderFactory.createTitledBorder("Matching");
         JRadioButton preButton = new JRadioButton("Precise matching");
         preButton.setActionCommand("");
         preButton.setSelected(true);
@@ -432,15 +471,33 @@ public class HolmesComparisonModule extends JFrame {
         String[] colNames = new String[]{"First Net", "Second Net"};
         String[][] rowData = new String[GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size()][colNames.length];
 
-        for (int i = 0; i < rowData.length; i++) {
-            rowData[i][0] = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i).getName();
+        if(invComp.invariantType) {
+            for (int i = 0; i < rowData.length; i++) {
+                rowData[i][0] = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i).getName();
 
-            if (matching.get(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i)) != null) {
-                Node nodeFormSecond = matching.get(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i));
-                rowData[i][1] = nodeFormSecond.getName();
-            } else {
-                rowData[i][1] = "--";
+                if (matching.get(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i)) != null) {
+                    Node nodeFormSecond = matching.get(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i));
+                    rowData[i][1] = nodeFormSecond.getName();
+                } else {
+                    rowData[i][1] = "--";
+                }
             }
+        }
+        else
+        {
+            rowData = new String[GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size()][colNames.length];
+
+            for (int i = 0; i < rowData.length; i++) {
+                rowData[i][0] = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(i).getName();
+
+                if (matching.get(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(i)) != null) {
+                    Node nodeFormSecond = matching.get(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(i));
+                    rowData[i][1] = nodeFormSecond.getName();
+                } else {
+                    rowData[i][1] = "--";
+                }
+            }
+
         }
 
         DefaultTableModel model = new DefaultTableModel(rowData, colNames);
@@ -463,6 +520,7 @@ public class HolmesComparisonModule extends JFrame {
                 infoPaneInv.append("Matched invariants\n\r");
                 infoPaneInv.append("First net ID - Second net ID\n\r");
 
+                invComp.mode = true;
                 Thread myThread = new Thread(invComp);
                 myThread.start();
 
@@ -474,13 +532,17 @@ public class HolmesComparisonModule extends JFrame {
                 calcIdealScore(maping);
                 */
             } else {
-                maping = invComp.bestInvariantMatching();
+                maping = invComp.bestTInvariantMatching();
                 infoPaneInv.append("Choosen: Best invariant matching\n\r");
                 infoPaneInv.append("Matched invariants\n\r");
                 infoPaneInv.append("First net ID - Second net ID\n\r");
                 for (Map.Entry<Integer, Integer> ma : maping.entrySet()) {
                     infoPaneInv.append(ma.getKey() + " - " + ma.getValue() + "\n\r");
                 }
+                invComp.mode = false;
+                Thread myThread = new Thread(invComp);
+                myThread.start();
+
                 calcBestScore(maping);
             }
         } else {

@@ -256,6 +256,79 @@ public class IOprotocols {
         }
     }
 
+
+    /**
+     * Wczytywanie pliki p-inwariantów INA, wcześniej: INAinvariants.read
+     * Dodano poprawki oraz drugą ściękę odczytu - jako plik inwariantów Charliego.
+     *
+     * @param path String - scieżka do pliku
+     * @return boolean - true, jeśli operacja się powiodła
+     */
+    public ArrayList<ArrayList<Integer>> readP_invariantsOut(String path) {
+
+        //TODO
+        //unifikować z t?
+
+        try {
+            resetComponents();
+            DataInputStream in = new DataInputStream(new FileInputStream(path));
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+            String readLine = buffer.readLine();
+            String backup = readLine;
+
+            buffer.readLine();
+            while (!readLine.contains("semipositive place invariants =")) {
+                readLine = buffer.readLine();
+            }
+            buffer.readLine();
+            //nodesList.clear();
+
+            ArrayList<Integer> nodesListTmp = new ArrayList<>();
+            // Etap I - Liczba tranzycji/miejsc
+            while (!(readLine = buffer.readLine()).endsWith("~~~~~~~~~~~")) {
+                if (readLine.endsWith("~~~~~~~~~~~")) {
+                    break;
+                }
+                String[] formattedLine = readLine.split(" ");
+                for (String s : formattedLine) {
+                    if (!(s.isEmpty() || s.contains("Nr."))) {
+                        try {
+                            nodesListTmp.add(Integer.parseInt(s));
+                        } catch (NumberFormatException e) {
+                            overlord.log("Reading file failed in header section.", "text", true);
+                        }
+                    }
+                }
+            }
+            // Etap II - lista P-inwariantow
+            ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+            //invariantsList.clear();
+            ArrayList<ArrayList<Integer>> invariantsListOut = new ArrayList<>();
+            while ((readLine = buffer.readLine()) != null) {
+                if (readLine.contains("@") || readLine.isEmpty()) {
+                    break;
+                }
+                String[] formattedLine = readLine.split("\\|");
+                formattedLine = formattedLine[1].split(" ");
+                for (String s : formattedLine) {
+                    if (!s.isEmpty()) {
+                        tmpInvariant.add(Integer.parseInt(s));
+                    }
+                }
+                if (tmpInvariant.size() == nodesListTmp.size()) {
+                    invariantsListOut.add(tmpInvariant);
+                    tmpInvariant = new ArrayList<Integer>();
+                }
+            }
+            buffer.close();
+            overlord.log("P-invariants from INA file have been read.", "text", true);
+            return invariantsListOut;
+        } catch (Exception e) {
+            overlord.log("P-invariants reading operation failed.", "error", true);
+            return new ArrayList<>();
+        }
+    }
+
     /**
      * Metoda odpowiedzialna za wczytywanie p-inwariantów z pliku wygenerowanego programem INAwin32.exe
      *
