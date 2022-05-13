@@ -25,6 +25,8 @@ public class SubnetComparator {
     public boolean secondQuestion = false;
     public boolean thirdQuestion = false;
 
+    static private ArrayList<ArrayList<Integer>> allFunBranchpermutations = new ArrayList<>();
+
     public SubnetComparator(ArrayList<SubnetCalculator.SubNet> firstNetList, ArrayList<SubnetCalculator.SubNet> secondNetList) {
         for (SubnetCalculator.SubNet sn : firstNetList) {
             subnetsForFirstNet.add(transformSubnet(sn));
@@ -178,6 +180,286 @@ public class SubnetComparator {
         System.out.println("Jak wyglada macierz 2 " + subnetsForFirstNet.size() + "   -   " + subnetsForSecondNet.size());
         return resultMatrix;
     }
+
+    public GreatCommonSubnet compareFunctionalTest() {
+        return compareTwoFunctionalSubnets(subnetsForFirstNet.get(0), subnetsForSecondNet.get(0));
+    }
+
+    private GreatCommonSubnet compareTwoFunctionalSubnets(BranchBasedSubnet sn1, BranchBasedSubnet sn2) {
+        ArrayList<PartialSubnetElements> maxArcComparisons = null;
+        if(sn1.transitions.size()>sn2.transitions.size())
+            allFuncBranchPermutations(sn1.transitions.size());
+        else
+            allFuncBranchPermutations(sn2.transitions.size());
+
+        ArrayList<SubnetComparator.PartialSubnetElements> results = new ArrayList<>();
+
+        for(ArrayList<Integer> matching : allFunBranchpermutations)
+        {
+            HashMap<Transition,Transition> map = new HashMap<>();
+            for(int i = 0 ; i < matching.size() ; i++)
+            {
+                int key = -1;
+                int val = -1;
+
+                if(true)
+                {
+                    key = i;
+                    val = matching.get(i);
+                }
+                else
+                {
+                    key = matching.get(i);
+                    val = i;
+                }
+
+                //TODO
+                //CHECK!!!
+                if(sn1.transitions.size()>key &&  sn2.transitions.size()>val) {
+                    map.put(sn1.transitions.get(key), sn2.transitions.get(val));
+                }
+            }
+
+            ArrayList<PartialSubnetElements> matchNodes = new ArrayList<>();
+            ArrayList<Node> matchN = new ArrayList<>();
+            ArrayList<Arc> matchA = new ArrayList<>();
+
+            for(Map.Entry<Transition, Transition> entry : map.entrySet()) {
+                Transition key = entry.getKey();
+                Transition value = entry.getValue();
+
+                PartialSubnetElements tmp =  checkPlaces(key,value,sn1,sn2,map);
+                matchN.addAll(tmp.partialNodes);
+                matchA.addAll(tmp.partialArcs);
+            }
+
+            results.add(new PartialSubnetElements(matchN,matchA));
+        }
+
+        ArrayList<SubnetComparator.PartialSubnetElements> maxNodes = new ArrayList<>();
+        int max = 0;
+        for(int i = 0 ; i < results.size();i++)
+        {
+            if(results.get(i).partialNodes.size()==max)
+            {
+                maxNodes.add(results.get(i));
+            }
+            if(results.get(i).partialNodes.size()>max)
+            {
+                max = results.get(i).partialNodes.size();
+                maxNodes.clear();
+                maxNodes.add(results.get(i));
+            }
+        }
+
+        ArrayList<SubnetComparator.PartialSubnetElements> maxArcs = new ArrayList<>();
+        max = 0;
+        for(int i = 0 ; i < maxNodes.size();i++)
+        {
+            if(maxNodes.get(i).partialArcs.size()==max)
+            {
+                maxArcs.add(maxNodes.get(i));
+            }
+            if(maxNodes.get(i).partialArcs.size()>max)
+            {
+                max = maxNodes.get(i).partialArcs.size();
+                maxArcs.clear();
+                maxArcs.add(maxNodes.get(i));
+            }
+        }
+        
+        return new GreatCommonSubnet(maxArcs);
+    }
+
+    private PartialSubnetElements  checkPlaces(Transition key, Transition value, BranchBasedSubnet sn1, BranchBasedSubnet sn2, HashMap<Transition,Transition> map) {
+
+        ArrayList<Node> inPlaces = getConInPlaces(key, value, map);
+        ArrayList<Node> outPlaces = getConOutPlaces(key, value, map);
+
+        ArrayList<Place> commonPlaces = new ArrayList<>();
+        ArrayList<Transition> commonTransitions = new ArrayList<>();
+        ArrayList<Node> commonNodes = new ArrayList<>();
+
+        if(!inPlaces.isEmpty()||!outPlaces.isEmpty())
+        {
+            commonNodes.add(key);
+            commonNodes.addAll(inPlaces);
+            commonNodes.addAll(outPlaces);
+            commonNodes.addAll(soloNodes(key, value, map));
+        }
+        if(inPlaces.isEmpty() || outPlaces.isEmpty())
+        {
+            commonNodes.add(key);
+            commonNodes.addAll(soloNodes(key, value, map));
+        }
+
+        //Unikalne?
+
+        HashSet<Node> hset = new HashSet<Node>(commonNodes);
+        ArrayList<Node> unique = new ArrayList<Node>(hset);
+        ArrayList<Arc> uniqueArcs = new ArrayList<>();
+        for(Node n : unique)
+        {
+            if(n!=key)
+            {
+                for(Arc a :n.getOutInArcs())
+                {
+                    if((a.getEndNode().equals(key) && a.getStartNode().equals(n)) || (a.getStartNode().equals(key) && a.getEndNode().equals(n)))
+                    {
+                        uniqueArcs.add(a);
+                    }
+                }
+            }
+        }
+
+        return new PartialSubnetElements(unique,uniqueArcs);
+    }
+
+    private ArrayList<Node>  soloNodes(Transition key, Transition value, HashMap<Transition, Transition> map) {
+        ArrayList<Node> common = new ArrayList<>();
+        ArrayList<Place> outPlacesF = key.getPostPlaces();
+        outPlacesF= (ArrayList<Place>) outPlacesF.stream().filter(x->x.getInNodes().size()==1).collect(Collectors.toList());
+        ArrayList<Place> outPlacesS = value.getPostPlaces();
+        outPlacesS= (ArrayList<Place>) outPlacesS.stream().filter(x->x.getInNodes().size()==1).collect(Collectors.toList());
+        ArrayList<Place> inPlacesF = key.getPrePlaces();
+        inPlacesF= (ArrayList<Place>) inPlacesF.stream().filter(x->x.getOutNodes().size()==1).collect(Collectors.toList());
+        ArrayList<Place> inPlacesS = value.getPrePlaces();
+        inPlacesS= (ArrayList<Place>) inPlacesS.stream().filter(x->x.getOutNodes().size()==1).collect(Collectors.toList());
+
+        for(int i = 0 ; i < outPlacesF.size() && i<outPlacesS.size() ; i++)
+            common.add(outPlacesF.get(i));
+        for(int i = 0 ; i < inPlacesF.size() && i<inPlacesS.size() ; i++)
+            common.add(inPlacesF.get(i));
+
+        return common;
+    }
+
+    private ArrayList<Node> getConOutPlaces(Transition key, Transition value, HashMap<Transition, Transition> map) {
+        ArrayList<Place> outPlacesF = key.getPostPlaces();
+        outPlacesF= (ArrayList<Place>) outPlacesF.stream().filter(x->x.getInNodes().size()>1).collect(Collectors.toList());
+        //inPlacesF.remove(key);
+
+        ArrayList<Place> outPlacesS = value.getPostPlaces();
+        outPlacesS= (ArrayList<Place>) outPlacesS.stream().filter(x->x.getInNodes().size()>1).collect(Collectors.toList());
+        //inPlacesS.remove(value);
+
+        if(!outPlacesF.isEmpty() && !outPlacesS.isEmpty()){
+            ArrayList<Node> conectedF = new ArrayList<>();
+            for (Place p : outPlacesF ) {
+                conectedF.addAll(p.getInNodes());
+                conectedF.remove(key);
+            }
+
+            ArrayList<Node> conectedS = new ArrayList<>();
+            for (Place p : outPlacesS ) {
+                conectedS.addAll(p.getInNodes());
+                conectedS.remove(value);
+            }
+
+            ArrayList<Node> maped = new ArrayList<>();
+            for (Node n :conectedF                 ) {
+                maped.add(map.get(n));
+            }
+            maped.retainAll(conectedS);
+
+            //Maped posiada siąsdujące zmapowane tranzycje a ty chcesz miejsce które jest pomiędzy nimi
+            ArrayList<Node> places = new ArrayList<>();
+            for (Node tran : maped ) {
+                Node RT = null;
+                for (Map.Entry<Transition, Transition> entry : map.entrySet()) {
+                    if (entry.getValue().equals(tran)) {
+                        RT =  entry.getKey();
+                    }
+                }
+
+
+                ArrayList<Node> lp = new ArrayList<>(key.getPostPlaces());
+                lp.retainAll(RT.getOutNodes());
+                places.addAll(lp);
+            }
+
+            if(places.size()>0)
+                return places;
+        }
+        return new ArrayList<>();
+    }
+
+    private ArrayList<Node> getConInPlaces(Transition key, Transition value, HashMap<Transition, Transition> map) {
+        ArrayList<Place> inPlacesF = key.getPrePlaces();
+        inPlacesF= (ArrayList<Place>) inPlacesF.stream().filter(x->x.getOutNodes().size()>1).collect(Collectors.toList());
+        //inPlacesF.stream().filter(x->x.getInNodes().size()>1).collect(Collectors.toList());
+        //inPlacesF.remove(key);
+
+        ArrayList<Place> inPlacesS = value.getPrePlaces();
+        inPlacesS= (ArrayList<Place>) inPlacesS.stream().filter(x->x.getOutNodes().size()>1).collect(Collectors.toList());
+        //inPlacesS.remove(value);
+
+        if(!inPlacesF.isEmpty() && !inPlacesS.isEmpty()){
+            ArrayList<Node> conectedF = new ArrayList<>();
+            for (Place p : inPlacesF ) {
+                conectedF.addAll(p.getOutNodes());
+                conectedF.remove(key);
+            }
+
+            ArrayList<Node> conectedS = new ArrayList<>();
+            for (Place p : inPlacesS ) {
+                conectedS.addAll(p.getOutNodes());
+                conectedS.remove(value);
+            }
+
+            ArrayList<Node> maped = new ArrayList<>();
+            for (Node n :conectedF                 ) {
+                maped.add(map.get(n));
+            }
+            maped.retainAll(conectedS);
+
+            //Maped posiada siąsdujące zmapowane tranzycje a ty chcesz miejsce które jest pomiędzy nimi
+            ArrayList<Node> places = new ArrayList<>();
+            for (Node tran : maped ) {
+                    Node RT = null;
+                    for (Map.Entry<Transition, Transition> entry : map.entrySet()) {
+                        if (entry.getValue().equals(tran)) {
+                            RT =  entry.getKey();
+                        }
+                    }
+
+                    ArrayList<Node> lp = new ArrayList<>(key.getPrePlaces());
+                lp.retainAll(RT.getInNodes());
+                places.addAll(lp);
+            }
+
+            if(places.size()>0)
+                return places;
+        }
+        return new ArrayList<>();
+    }
+
+
+    private void allFuncBranchPermutations(int n)
+    {
+        ArrayList<Integer> list = new ArrayList<>();
+        for(int i = 0 ; i< n;i++)
+        {
+            list.add(i);
+        }
+        permute(list,0);
+    }
+
+    static void permute(java.util.List<Integer> arr, int k){
+        for(int i = k; i < arr.size(); i++){
+            java.util.Collections.swap(arr, i, k);
+            permute(arr, k+1);
+            java.util.Collections.swap(arr, k, i);
+        }
+        if (k == arr.size() -1){
+            //add permutations
+            allFunBranchpermutations.add(new ArrayList<>(arr));
+        }
+    }
+
+    /**
+     * ------ADT---------
+     */
 
     public GreatCommonSubnet compareTest() {
 
