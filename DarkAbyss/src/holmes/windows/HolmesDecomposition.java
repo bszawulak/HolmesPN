@@ -129,7 +129,7 @@ public class HolmesDecomposition extends JFrame {
 
     private JPanel createLeftButtonPanel(int x, int y, int width, int height) {
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(12,1));
+        panel.setLayout(new GridLayout(14,1));
         panel.setBorder(BorderFactory.createTitledBorder("Decomposition types"));
         panel.setLocation(x, y);
         panel.setPreferredSize(new Dimension(width, height));
@@ -192,11 +192,25 @@ public class HolmesDecomposition extends JFrame {
         smcCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, smcCheckBox, panel, 9));
         smcCheckBox.setSelected(false);
         smcCheckBox.addItemListener(itemListener);
-        panel.add(setOnPanel(smcCheckBox,"State Machine Component (P1-net)"));
+        panel.add(setOnPanel(smcCheckBox,"State Machine Component (P1/S1-net)"));
+
 
 
         JLabel unprop = new JLabel("Other Decompositions", SwingConstants.CENTER);
         panel.add(unprop);
+
+
+        JCheckBox tinvCheckBox = new JCheckBox();
+        tinvCheckBox.setBounds(posX + 10, posY + 360, 150, 20);
+        tinvCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, tinvCheckBox, panel, 11));
+        tinvCheckBox.setSelected(false);
+        panel.add(setOnPanel(tinvCheckBox,"T-component (t-inv.)"));
+
+        JCheckBox pinvCheckBox = new JCheckBox();
+        pinvCheckBox.setBounds(posX + 10, posY + 390, 150, 20);
+        pinvCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, pinvCheckBox, panel, 12));
+        pinvCheckBox.setSelected(false);
+        panel.add(setOnPanel(pinvCheckBox,"S-component (p-inv.)"));
 
         JCheckBox tzCheckBox = new JCheckBox();
         tzCheckBox.setBounds(posX + 10, posY + 180, 150, 20);
@@ -228,23 +242,7 @@ public class HolmesDecomposition extends JFrame {
         cycleCheckBox.addItemListener(itemListener);
         panel.add(setOnPanel(cycleCheckBox,"Cycles"));
 
-        JCheckBox ootsukiCheckBox = new JCheckBox("P1");
-        ootsukiCheckBox.setBounds(posX + 10, posY + 300, 150, 20);
-        ootsukiCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, ootsukiCheckBox, panel, 8));
-        ootsukiCheckBox.setSelected(false);
-        //panel.add(ootsukiCheckBox);
 
-        JCheckBox tinvCheckBox = new JCheckBox("T-inv");
-        tinvCheckBox.setBounds(posX + 10, posY + 360, 150, 20);
-        tinvCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, tinvCheckBox, panel, 11));
-        tinvCheckBox.setSelected(false);
-        //panel.add(tinvCheckBox);
-
-        JCheckBox pinvCheckBox = new JCheckBox("P-inv");
-        pinvCheckBox.setBounds(posX + 10, posY + 390, 150, 20);
-        pinvCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, pinvCheckBox, panel, 12));
-        pinvCheckBox.setSelected(false);
-        //panel.add(pinvCheckBox);
 
         JCheckBox bvCheckBox = new JCheckBox("BV");
         bvCheckBox.setBounds(posX + 10, posY + 420, 150, 20);

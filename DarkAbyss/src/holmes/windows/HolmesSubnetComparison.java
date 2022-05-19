@@ -45,6 +45,7 @@ public class HolmesSubnetComparison extends JFrame {
 
 
     public HolmesSubnetComparison() {
+        /*
         setTitle("ADT subnet comparison");
         setSize(950, 300);
         JPanel csop = createStartOptionsPanel();
@@ -56,6 +57,7 @@ public class HolmesSubnetComparison extends JFrame {
         titleF = BorderFactory.createTitledBorder("Info Panel");
         jsp.setBorder(titleF);
         getContentPane().add(jsp, BorderLayout.CENTER);
+        */
         //JPanel result = createResultsPanel(new ArrayList<>());
         //getContentPane().add(result, BorderLayout.SOUTH);
     }

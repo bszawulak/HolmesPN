@@ -3352,7 +3352,7 @@ public class SubnetComparatorModBAATest {
         ArrayList<Arc> al = new ArrayList<>();
 
         al.add(a1);
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet1() {
@@ -3370,7 +3370,7 @@ public class SubnetComparatorModBAATest {
 
         Arc a1 = new Arc(IdGenerator.getNextId(), p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet2() {
@@ -3397,7 +3397,7 @@ public class SubnetComparatorModBAATest {
         Arc a4 = new Arc(IdGenerator.getNextId(), t3.getElementLocations().get(0), p4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a5 = new Arc(IdGenerator.getNextId(), p4.getElementLocations().get(0), t4.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet3() {
@@ -3421,7 +3421,7 @@ public class SubnetComparatorModBAATest {
         Arc a4 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet4() {
@@ -3446,7 +3446,7 @@ public class SubnetComparatorModBAATest {
         Arc a5 = new Arc(IdGenerator.getNextId(), p6.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a2 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet5() {
@@ -3478,7 +3478,7 @@ public class SubnetComparatorModBAATest {
         Arc a6 = new Arc(IdGenerator.getNextId(), t6.getElementLocations().get(0), p7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet6() {
@@ -3519,7 +3519,7 @@ public class SubnetComparatorModBAATest {
         Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet7() {
@@ -3592,7 +3592,7 @@ public class SubnetComparatorModBAATest {
         Arc a7 = new Arc(IdGenerator.getNextId(), p7.getElementLocations().get(0), t8.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p10.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet8() {
@@ -3648,7 +3648,7 @@ public class SubnetComparatorModBAATest {
         Arc a23 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a24 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet9() {
@@ -3705,7 +3705,7 @@ public class SubnetComparatorModBAATest {
         Arc a23 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a24 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet10() {
@@ -3748,7 +3748,7 @@ public class SubnetComparatorModBAATest {
 
         Arc a99 = new Arc(IdGenerator.getNextId(), p10.getElementLocations().get(0), t6.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
 
@@ -3794,7 +3794,7 @@ public class SubnetComparatorModBAATest {
         Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet12() {
@@ -3840,7 +3840,7 @@ public class SubnetComparatorModBAATest {
         Arc a10 = new Arc(IdGenerator.getNextId(), t8.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet13() {
@@ -3883,7 +3883,7 @@ public class SubnetComparatorModBAATest {
         Arc a21 = new Arc(IdGenerator.getNextId(), p11.getElementLocations().get(0), t5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a24 = new Arc(IdGenerator.getNextId(), t7.getElementLocations().get(0), p11.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
 
@@ -3960,7 +3960,7 @@ public class SubnetComparatorModBAATest {
         Arc a47 = new Arc(IdGenerator.getNextId(), p15.getElementLocations().get(0), t12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a410 = new Arc(IdGenerator.getNextId(), t12.getElementLocations().get(0), p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
 
@@ -4036,7 +4036,7 @@ public class SubnetComparatorModBAATest {
         Arc a47 = new Arc(IdGenerator.getNextId(), p15.getElementLocations().get(0), t12.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a410 = new Arc(IdGenerator.getNextId(), t12.getElementLocations().get(0), p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
 
@@ -4104,7 +4104,7 @@ public class SubnetComparatorModBAATest {
         Arc a599 = new Arc(IdGenerator.getNextId(), p14.getElementLocations().get(0), t7.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
 
@@ -4178,7 +4178,7 @@ public class SubnetComparatorModBAATest {
         Arc a836 = new Arc(IdGenerator.getNextId(), t13.getElementLocations().get(0), p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a837 = new Arc(IdGenerator.getNextId(), p16.getElementLocations().get(0), t14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 
     SubnetCalculator.SubNet creatSubnet18() {
@@ -4252,7 +4252,7 @@ public class SubnetComparatorModBAATest {
         Arc a837 = new Arc(IdGenerator.getNextId(), t14.getElementLocations().get(0), p16.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
         Arc a530 = new Arc(IdGenerator.getNextId(), p18.getElementLocations().get(0), t14.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
 
-        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TNET, tl, null, null, null, null);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.TINV, tl, null, null, null, null);
     }
 /*
     void ceateTestNets(){

@@ -25,6 +25,8 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.text.DecimalFormat;
@@ -32,6 +34,12 @@ import java.util.*;
 import java.util.stream.DoubleStream;
 
 public class HolmesComparisonModule extends JFrame {
+
+
+    private boolean decoCompareFtS = true;
+    private boolean decoCompareStF = false;
+    private boolean decoCompareFtF = false;
+    private boolean decoCompareStS = false;
 
 
     enum ComparisonTypes {Invariants, Graphlets, Orbits, Netdiv, Branches, Gred}
@@ -62,6 +70,7 @@ public class HolmesComparisonModule extends JFrame {
     JComboBox egoSize;
     JComboBox graphletNDSize;
     JComboBox branchingVariant;
+    public JComboBox decoType;
     public JPanel decoResult;
     //boolean invariantType = true;
     boolean invariantMatchingTypr = false;
@@ -114,6 +123,7 @@ public class HolmesComparisonModule extends JFrame {
     GDDAcalculator gddaCalculator;
     DecoCalccalculator decoCalculator;
     InvariantComparator invariantComparator;
+    JTabbedPane tabbedDecoPane;
 
     boolean reGenerateBoolean = false;
 
@@ -235,7 +245,7 @@ public class HolmesComparisonModule extends JFrame {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 infoPaneInv.append("Choosen pnt file: " + jfc.getSelectedFile().getName() + "\n");
                 IOprotocols io = new IOprotocols();
-                if(invComp.invariantType)
+                if (invComp.invariantType)
                     secondNet.setT_InvMatrix(io.readT_invariantsOut(jfc.getSelectedFile().getAbsolutePath()), false);
                 else
                     secondNet.setP_InvMatrix(io.readP_invariantsOut(jfc.getSelectedFile().getAbsolutePath()));
@@ -310,9 +320,9 @@ public class HolmesComparisonModule extends JFrame {
         generateInvl = new JButton("Compare nets");
         generateInvl.addActionListener(e -> {
 
-            compareInv();
-            //invariantComparator = invComp;
-    }
+                    compareInv();
+                    //invariantComparator = invComp;
+                }
         );
         generateInvl.setEnabled(false);
         impanel.add(generateInvl);
@@ -471,7 +481,7 @@ public class HolmesComparisonModule extends JFrame {
         String[] colNames = new String[]{"First Net", "Second Net"};
         String[][] rowData = new String[GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size()][colNames.length];
 
-        if(invComp.invariantType) {
+        if (invComp.invariantType) {
             for (int i = 0; i < rowData.length; i++) {
                 rowData[i][0] = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i).getName();
 
@@ -482,9 +492,7 @@ public class HolmesComparisonModule extends JFrame {
                     rowData[i][1] = "--";
                 }
             }
-        }
-        else
-        {
+        } else {
             rowData = new String[GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size()][colNames.length];
 
             for (int i = 0; i < rowData.length; i++) {
@@ -630,7 +638,7 @@ public class HolmesComparisonModule extends JFrame {
                     size1++;
                     if (i < secondInvariant.size()) {
 
-                        System.out.println("FT : " + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i).getName()+ " - ST :" +  secondNet.getTransitions().get(index).getName());
+                        System.out.println("FT : " + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(i).getName() + " - ST :" + secondNet.getTransitions().get(index).getName());
 
                         if (index != -1 && index < firstInvariant.size() && Objects.equals(firstInvariant.get(i), secondInvariant.get(index))) {
                             commonPart++;
@@ -1395,7 +1403,56 @@ public class HolmesComparisonModule extends JFrame {
         );
         generateDec.setEnabled(false);
         buttonPanel.add(generateDec);
+
+        decoType = new JComboBox();
+        decoType.setModel(new DefaultComboBoxModel(new String[]{"Choose decomposition type", "con. ADT", "Functional"}));
+        buttonPanel.add(decoType);
+
         jp.add(buttonPanel);
+
+
+        //decoCompareFtS;
+        JPanel subComparisons = new JPanel(new GridLayout(4,1));
+
+        JCheckBox fts = new JCheckBox("First to Second");
+        fts.addActionListener(actionEvent -> {
+            if(fts.isSelected())
+                decoCompareFtS = true;
+            else
+                decoCompareFtS = false;
+        });
+        fts.setSelected(true);
+        subComparisons.add(fts);
+
+        JCheckBox stf = new JCheckBox("Second to First");
+        stf.addActionListener(actionEvent -> {
+            if(stf.isSelected())
+                decoCompareStF = true;
+            else
+                decoCompareStF = false;
+        });
+        subComparisons.add(stf);
+
+        JCheckBox ftf = new JCheckBox("First to First");
+        ftf.addActionListener(actionEvent -> {
+            if(ftf.isSelected())
+                decoCompareFtF = true;
+            else
+                decoCompareFtF = false;
+        });
+        subComparisons.add(ftf);
+
+        JCheckBox sts = new JCheckBox("Second to Second");
+        sts.addActionListener(actionEvent -> {
+            if(sts.isSelected())
+                decoCompareStS = true;
+            else
+                decoCompareStS = false;
+        });
+        subComparisons.add(sts);
+
+        jp.add(subComparisons);
+
 
         JPanel firstQuestion = new JPanel(new GridLayout(0, 1));
 
@@ -1433,9 +1490,9 @@ public class HolmesComparisonModule extends JFrame {
         if (GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() == null || GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix().isEmpty()) {
             infoPaneDec.append("Generate inwariants for net in workspace.\n");
         }
-        if (SubnetCalculator.adtSubNets == null || SubnetCalculator.adtSubNets.isEmpty()) {
-            infoPaneDec.append("Generate ADT subnets for net in workspace.\n");
-        }
+        //if (SubnetCalculator.adtSubNets == null || SubnetCalculator.adtSubNets.isEmpty()) {
+        //    infoPaneDec.append("Generate ADT subnets for net in workspace.\n");
+        //}
 
 
         JPanel secondQuestion = new JPanel(new GridLayout(0, 1));
@@ -1595,8 +1652,8 @@ public class HolmesComparisonModule extends JFrame {
 
         JPanel leftPanel = new JPanel();
 
-        JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.setSize(200, 500);
+        tabbedDecoPane = new JTabbedPane();
+        tabbedDecoPane.setSize(200, 500);
 
         //this.setSize(1250, 800);
 
@@ -1604,30 +1661,42 @@ public class HolmesComparisonModule extends JFrame {
         sc.secondQuestion = secondQuestionDec;
         sc.thirdQuestion = thirdQuestionDec;
 
-        infoPaneDec.append("Compare first net to second net.\n");
-        JComponent panelFF = createPartResultTable(sc.compareFirstSecond(), false);//,gscl.size(),gscl.get(0).size());
-        tabbedPane.addTab("First net to second net", null, panelFF, "Does nothing");
-        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+        if(!decoCompareFtS&&!decoCompareStF&&!decoCompareFtF&&!decoCompareStS)
+        {
+            JOptionPane.showMessageDialog(this, "Please choose comparison");
+        }
 
-        infoPaneDec.append("Compare second net to first net.\n");
-        JComponent panelSS = createPartResultTable(sc.compareSecondFirst(), false);//,gscl.get(0).size(),gscl.size());
-        tabbedPane.addTab("Second net to first net", null, panelSS, "Does twice as much nothing");
-        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+        if (decoCompareFtS) {
+            infoPaneDec.append("Compare first net to second net.\n");
+            JComponent panelFF = createPartResultTable(sc.compareFirstSecond(), false);//,gscl.size(),gscl.get(0).size());
+            tabbedDecoPane.addTab("First net to second net", null, panelFF, "Does nothing");
+            //tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+        }
 
-        infoPaneDec.append("Compare first net internally.\n");
-        JComponent panelFS = createPartResultTable(sc.compareInternalFirst(), true);//,gscl.size(),gscl.size());
-        tabbedPane.addTab("Internal similarity of First net", null, panelFS, "Still does nothing");
-        tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+        if (decoCompareStF) {
+            infoPaneDec.append("Compare second net to first net.\n");
+            JComponent panelSS = createPartResultTable(sc.compareSecondFirst(), false);//,gscl.get(0).size(),gscl.size());
+            tabbedDecoPane.addTab("Second net to first net", null, panelSS, "Does twice as much nothing");
+            //tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+        }
 
-        infoPaneDec.append("Compare second net internally.\n");
-        JComponent panelSF = createPartResultTable(sc.compareInternalSecond(), true);//,gscl.get(0).size(),gscl.get(0).size());
-        tabbedPane.addTab("Internal similarity of Second net", null, panelSF, "Does nothing at all");
-        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+        if(decoCompareFtF) {
+            infoPaneDec.append("Compare first net internally.\n");
+            JComponent panelFS = createPartResultTable(sc.compareInternalFirst(), true);//,gscl.size(),gscl.size());
+            tabbedDecoPane.addTab("Internal similarity of First net", null, panelFS, "Still does nothing");
+            //tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+        }
+
+        if (decoCompareStS) {
+            infoPaneDec.append("Compare second net internally.\n");
+            JComponent panelSF = createPartResultTable(sc.compareInternalSecond(), true);//,gscl.get(0).size(),gscl.get(0).size());
+            tabbedDecoPane.addTab("Internal similarity of Second net", null, panelSF, "Does nothing at all");
+        }
 
 
         infoPaneDec.append("Comparison finished.\n");
 
-        leftPanel.add(tabbedPane);
+        leftPanel.add(tabbedDecoPane);
 
         jp.add(leftPanel, BorderLayout.PAGE_END);
         // jp.add(new JSeparator(JSeparator.VERTICAL), BorderLayout.LINE_START);
@@ -1641,9 +1710,9 @@ public class HolmesComparisonModule extends JFrame {
         hungarianButton.addActionListener(e -> {
             if (hungarianButton.isSelected()) {
                 coloringMode = 2;
-                if (tabbedPane.getSelectedIndex() < 2) {
-                    int[] hungarianCels = calcHungarianCels(listOfTableContent.get(tabbedPane.getSelectedIndex()));
-                    colorAllHungarianCel(hungarianCels, listOfTableContent.get(tabbedPane.getSelectedIndex()));
+                if (tabbedDecoPane.getSelectedIndex() < 2) {
+                    int[] hungarianCels = calcHungarianCels(listOfTableContent.get(tabbedDecoPane.getSelectedIndex()));
+                    colorAllHungarianCel(hungarianCels, listOfTableContent.get(tabbedDecoPane.getSelectedIndex()));
                 }
             }
         });
@@ -1821,15 +1890,35 @@ public class HolmesComparisonModule extends JFrame {
         if (row < hungarianCels.length)
             if (hungarianCels[row] == col) {
                 comp.setBackground(Color.green);
-                colorSubnet(gcls.get(row).get(col), SubnetCalculator.adtSubNets.get(row));
+                switch(decoType.getSelectedIndex()) {
+                    case 0:
+                        System.out.println("Wrong type of decomposed set to color");
+                        break;
+                    case 1:
+                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.adtSubNets.get(row));
+                        break;
+                    case 2:
+                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.functionalSubNets.get(row));
+                        break;
+                }
+
             } else {
                 comp.setBackground(Color.white);
             }
-
     }
 
     private void colorHungarianCel(int row, int col, ArrayList<ArrayList<GreatCommonSubnet>> gcls) {
-        colorSubnet(gcls.get(row).get(col), SubnetCalculator.adtSubNets.get(row));
+        switch(decoType.getSelectedIndex()) {
+            case 0:
+                System.out.println("Wrong type of decomposed set to color");
+                break;
+            case 1:
+                colorSubnet(gcls.get(row).get(col), SubnetCalculator.adtSubNets.get(row));
+                break;
+            case 2:
+                colorSubnet(gcls.get(row).get(col), SubnetCalculator.functionalSubNets.get(row));
+                break;
+        }
     }
 
     private void colorAllHungarianCel(int[] hungarianCels, ArrayList<ArrayList<GreatCommonSubnet>> gcls) {
@@ -1839,7 +1928,18 @@ public class HolmesComparisonModule extends JFrame {
                 if (i < hungarianCels.length)
                     if (hungarianCels[i] == j) {
                         //comp.setBackground(Color.green);
-                        colorSubnetDensity(gcls.get(i).get(j), SubnetCalculator.adtSubNets.get(i), i, gcls.size());
+
+                        switch(decoType.getSelectedIndex()) {
+                            case 0:
+                                System.out.println("Wrong type of decomposed set to color");
+                                break;
+                            case 1:
+                                colorSubnetDensity(gcls.get(i).get(j), SubnetCalculator.functionalSubNets.get(i), i, gcls.size());
+                                break;
+                            case 2:
+                                colorSubnetDensity(gcls.get(i).get(j), SubnetCalculator.adtSubNets.get(i), i, gcls.size());
+                                break;
+                        }
                     } else {
                         //comp.setBackground(Color.white);
                     }
@@ -1956,7 +2056,7 @@ public class HolmesComparisonModule extends JFrame {
         for (SubnetComparator.PartialSubnetElements pse : gcs.psel) {
             for (Node transition : pse.partialNodes) {
 
-                if(!sn.getSubNode().contains(transition))
+                if (!sn.getSubNode().contains(transition))
                     transition = pse.nodesMap.get(transition);
 
                 if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
@@ -1965,7 +2065,7 @@ public class HolmesComparisonModule extends JFrame {
                     ((Place) transition).setColorWithNumber(true, Color.GREEN, false, 0, true, "");
             }
             for (Arc arc : pse.partialArcs) {
-                if(!sn.getSubArcs().contains(arc))
+                if (!sn.getSubArcs().contains(arc))
                     arc = pse.arcsMap.get(arc);
                 arc.setColor(true, Color.GREEN);
             }

@@ -51,6 +51,7 @@ public class SubnetCalculator implements Serializable {
     private static ArrayList<ArrayList<Integer>> invMatrixP;
     private static ArrayList<Node> allNodes;
     private static ArrayList<Node> usedNodes;
+    private static  ArrayList<Arc> allArcs;
 
     /**
      * Metoda odpowiedzialna za dekompozycję do podsieci funkcyjnych Zajcewa - nie mylić z sieciami funkcyjnymi
@@ -62,6 +63,7 @@ public class SubnetCalculator implements Serializable {
         invMatrixT = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
         invMatrixP = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix();
         allNodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
+        allArcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
         usedNodes = new ArrayList<>();
     }
 
@@ -285,6 +287,100 @@ public class SubnetCalculator implements Serializable {
 
     public static void generateTnets() {
         //TODO  unifikacja z ADT
+/*
+        ArrayList<Transition> allTransition = new ArrayList<>(allTransitions);
+
+        boolean notFinished = true;
+
+        ArrayList<Node> singleTnet = new ArrayList<>();
+
+        singleTnet.add(allTransition.get(0));
+
+        Transition tStart = allTransition.get(0);
+
+        ////////////////////
+
+
+
+        //hashmapy do ustalania lokalizacji miejsca/tranzycji. Równie dobrze
+        //działałoby (niżej, gdy są używane): np. places.indexOf(...)
+        HashMap<Place, Integer> placesMap = new HashMap<>();
+        HashMap<Transition, Integer> transitionsMap = new HashMap<>();
+        for (int i = 0; i < allPlaces.size(); i++) {
+            placesMap.put(allPlaces.get(i), i);
+        }
+        for (int i = 0; i < allTransitions.size(); i++) {
+            transitionsMap.put(allTransitions.get(i), i);
+        }
+
+        ArrayList<ArrayList<Integer>> globalIncidenceMatrix = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> globalIdentityMatrix = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> CMatrix = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> removalList = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> doubleArcs = new ArrayList<>();
+
+        //tworzenie macierzy TP - precyzyjnie do obliczeń T-inwariantów
+        for (int trans = 0; trans < allTransitions.size(); trans++) {
+            ArrayList<Integer> transRow = new ArrayList<>();
+            for (int place = 0; place < allPlaces.size(); place++) {
+                transRow.add(0);
+            }
+            globalIncidenceMatrix.add(transRow);
+            CMatrix.add(new ArrayList<>(transRow));
+        }
+        //wypełnianie macierzy incydencji
+        //int disabledArcs = 0;
+        for (Arc oneArc : allArcs) {
+            int tPosition = 0;
+            int pPosition = 0;
+            int incidenceValue = 0;
+
+            if (oneArc.getArcType() != Arc.TypeOfArc.NORMAL && !(oneArc.getArcType() == Arc.TypeOfArc.READARC)) {
+                continue;
+            }
+            if (oneArc.getStartNode().isInvisible() || oneArc.getEndNode().isInvisible()) {
+                //disabledArcs++;
+                continue;
+            }
+
+            if (oneArc.getStartNode().getType() == PetriNetElement.PetriNetElementType.TRANSITION) {
+                tPosition = transitionsMap.get(oneArc.getStartNode());
+                pPosition = placesMap.get(oneArc.getEndNode());
+                incidenceValue = 1 * oneArc.getWeight();
+            } else { //miejsca
+                tPosition = transitionsMap.get(oneArc.getEndNode());
+                pPosition = placesMap.get(oneArc.getStartNode());
+                incidenceValue = -1 * oneArc.getWeight();
+            }
+
+
+            int oldValue = globalIncidenceMatrix.get(tPosition).get(pPosition);
+            if (oldValue != 0) { //detekcja łuków podwójnych
+                ArrayList<Integer> hiddenReadArc = new ArrayList<>();
+                hiddenReadArc.add(pPosition);
+                hiddenReadArc.add(tPosition);
+                doubleArcs.add(hiddenReadArc);
+            }
+
+            globalIncidenceMatrix.get(tPosition).set(pPosition, oldValue + incidenceValue); //TODO:... uwaga na to!
+            CMatrix.get(tPosition).set(pPosition, oldValue + incidenceValue);
+        }
+
+
+        ArrayList<Boolean> foundTransitons = new ArrayList<>();
+
+        //////////
+
+        for(int i = 0 ; i< CMatrix.size() ; i++)
+        {
+
+
+
+        }
+        */
+        /////////////////////
+
+
 
         if (invMatrixT != null) {
 
@@ -331,7 +427,7 @@ public class SubnetCalculator implements Serializable {
 
 
                     if (!newADTset.isEmpty()) {
-                        newADTset = getMaxSubConnectionTnet(newADTset);
+                        //newADTset = getMaxSubConnectionTnet(newADTset);
 
                         listOfusedTransitions.addAll(newADTset);
                         List<Integer> UniqueNumbers = listOfusedTransitions.stream().distinct().collect(Collectors.toList());

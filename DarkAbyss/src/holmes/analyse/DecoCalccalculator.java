@@ -16,6 +16,20 @@ public class DecoCalccalculator implements Runnable {
     }
     @Override
     public void run() {
+
+        switch(masterWindow.decoType.getSelectedIndex())
+        {
+            case 0 : JOptionPane.showMessageDialog(new JOptionPane(), "Please choose comparison type");
+                        break;
+            case 1 : adtThred();
+                        break;
+            case 2 : functionalThred();
+                        break;
+        }
+
+    }
+
+    private void adtThred() {
         if (SubnetCalculator.adtSubNets == null || SubnetCalculator.adtSubNets.isEmpty()) {
             JOptionPane jpo = new JOptionPane("No ADT sets!");
             GUIManager.getDefaultGUIManager().showDecoWindow();
@@ -39,6 +53,20 @@ public class DecoCalccalculator implements Runnable {
             masterWindow.decoResult.add(result, BorderLayout.WEST);
             //this.revalidate();
         }
+    }
 
+    private void functionalThred() {
+        if (SubnetCalculator.functionalSubNets == null || SubnetCalculator.functionalSubNets.isEmpty()) {
+            JOptionPane jpo = new JOptionPane("No ADT sets!");
+            GUIManager.getDefaultGUIManager().showDecoWindow();
+        } else {
+            masterWindow.listOfTablesDec.clear();
+            masterWindow.seconNetList = SubnetCalculator.generateFunctionalFromSecondNet(masterWindow.secondNet);// generateADTFromSecondNet(masterWindow.secondNet);
+            masterWindow.infoPaneDec.append("Second net: Functional nets generated.\n");
+            masterWindow.sc = new SubnetComparator(SubnetCalculator.functionalSubNets, masterWindow.seconNetList);
+            masterWindow.infoPaneDec.append("Start comparison...\n");
+            JComponent result = masterWindow.createResultsPanel();//stofComparedSubnets);//createPartResultTable(listofComparedSubnets);// createResultsPanel(listofComparedSubnets);
+            masterWindow.decoResult.add(result, BorderLayout.WEST);
+        }
     }
 }
