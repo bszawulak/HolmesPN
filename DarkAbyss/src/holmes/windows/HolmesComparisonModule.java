@@ -16,6 +16,7 @@ import org.jfree.chart.axis.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -31,11 +32,13 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.prefs.Preferences;
 import java.util.stream.DoubleStream;
 
 public class HolmesComparisonModule extends JFrame {
 
 
+    private static final String LAST_USED_FOLDER = "";
     private boolean decoCompareFtS = true;
     private boolean decoCompareStF = false;
     private boolean decoCompareFtF = false;
@@ -56,7 +59,7 @@ public class HolmesComparisonModule extends JFrame {
 
     JButton generateInvl;
     JButton generateDec;
-    JButton generateDrgf;
+    public JButton generateDrgf;
     JButton generateGDDA;
     JButton saveDGDV1;
     JButton saveDGDV2;
@@ -126,6 +129,10 @@ public class HolmesComparisonModule extends JFrame {
     JTabbedPane tabbedDecoPane;
 
     boolean reGenerateBoolean = false;
+
+    public JButton chooserGRDF;
+
+    private String lastChoosenPath = "";
 
     public HolmesComparisonModule() {
         setTitle("Comparison module");
@@ -205,7 +212,9 @@ public class HolmesComparisonModule extends JFrame {
         JButton chooser = new JButton("Choose second net");
         chooser.setVisible(true);
         chooser.addActionListener(e -> {
-            JFileChooser jfc = new JFileChooser();
+            Preferences prefs = Preferences.userRoot().node(getClass().getName());
+            JFileChooser jfc = new JFileChooser(prefs.get(LAST_USED_FOLDER,
+                    new File(".").getAbsolutePath()));
 
             javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
             filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped),(.pn)", new String[]{"SPPED", "PN"});
@@ -219,9 +228,11 @@ public class HolmesComparisonModule extends JFrame {
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 invComp = new InvariantComparator(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet);
-                generateInvl.setEnabled(true);
+                //generateInvl.setEnabled(true);
                 matchVertices.setEnabled(true);
                 chooserPnt.setEnabled(true);
+
+                prefs.put(LAST_USED_FOLDER, jfc.getSelectedFile().getParent());
             }
 
 
@@ -249,6 +260,8 @@ public class HolmesComparisonModule extends JFrame {
                     secondNet.setT_InvMatrix(io.readT_invariantsOut(jfc.getSelectedFile().getAbsolutePath()), false);
                 else
                     secondNet.setP_InvMatrix(io.readP_invariantsOut(jfc.getSelectedFile().getAbsolutePath()));
+
+                generateInvl.setEnabled(true);
             }
         });
         mopanel.add(chooserPnt);
@@ -394,7 +407,7 @@ public class HolmesComparisonModule extends JFrame {
         JPanel secondQuestion = new JPanel(new GridLayout(0, 1));
 
         TitledBorder titleQ2;
-        titleQ2 = BorderFactory.createTitledBorder("Transition");
+        titleQ2 = BorderFactory.createTitledBorder("Node");
         secondQuestion.setBorder(titleQ2);
         JRadioButton preTButton = new JRadioButton("Precise matching");
         preTButton.setActionCommand("");
@@ -720,7 +733,45 @@ public class HolmesComparisonModule extends JFrame {
         Object[] column = {"Graphlets", "First net", "Second net", "Difference"};
         dataDRGF = new Object[][]{{"Graphlet O", "-", "-", "-"}};
 
-        drgfTable = new JTable(dataDRGF, column);
+        drgfTable = new JTable(dataDRGF, column) {
+
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
+                Component comp = super.prepareRenderer(renderer, row, col);
+                Object value = getModel().getValueAt(row, col);
+                //if (getSelectedRow() == row) {
+                //colorIsomorphicCels(row, col, comp, subNetArrayList);
+                //colorHungarianCels(row, col, comp, hungarianCels, gcls);
+
+                //colorHungarianCels(row, col, comp, hungarianCels, gcls);
+
+                String checkStart = String.valueOf(getModel().getValueAt(row, 1));
+                //Before first calculation
+                if (checkStart.equals("-")) {
+                    comp.setBackground(Color.lightGray);
+                } else {
+                    checkStart = String.valueOf(getModel().getValueAt(row, 1));
+                    int c1 = Integer.parseInt(checkStart);
+                    checkStart = String.valueOf(getModel().getValueAt(row, 2));
+                    int c2 = Integer.parseInt(checkStart);
+                    checkStart = String.valueOf(getModel().getValueAt(row, 3));
+                    int c3 = Integer.parseInt(checkStart);
+
+                    if (c1 == 0 && c2 == 0)
+                        comp.setBackground(Color.lightGray);
+                    else if (c1 != 0 && c1 == c2){
+                            comp.setBackground(Color.GREEN);
+                    }
+                    else{
+                        comp.setBackground(Color.WHITE);
+                    }
+                    //pod przycisk
+                    //colorAllHungarianCel(row,col,comp,hungarianCels,gcls);
+                }
+                return comp;
+            }
+        };
+
         JScrollPane jpane = new JScrollPane(drgfTable);
         JPanel scroll = new JPanel();
         panel.add(jpane);
@@ -745,10 +796,12 @@ public class HolmesComparisonModule extends JFrame {
         JPanel panel = new JPanel();
         JPanel buttonPanel = new JPanel(new GridLayout(2, 2));
 
-        JButton chooser = new JButton("Choose second net");
-        chooser.setVisible(true);
-        chooser.addActionListener(e -> {
-            JFileChooser jfc = new JFileChooser();
+        chooserGRDF = new JButton("Choose second net");
+        chooserGRDF.setVisible(true);
+        chooserGRDF.addActionListener(e -> {
+            Preferences prefs = Preferences.userRoot().node(getClass().getName());
+            JFileChooser jfc = new JFileChooser(prefs.get(LAST_USED_FOLDER,
+                    new File(".").getAbsolutePath()));
 
             javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
             filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped), (.pn)", new String[]{"SPPED", "PN"});
@@ -761,18 +814,20 @@ public class HolmesComparisonModule extends JFrame {
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 generateDrgf.setEnabled(true);
+                prefs.put(LAST_USED_FOLDER, jfc.getSelectedFile().getParent());
             }
 
         });
-        buttonPanel.add(chooser);
+        buttonPanel.add(chooserGRDF);
 
         graphletSize = new JComboBox();
-        graphletSize.setModel(new DefaultComboBoxModel(new String[]{"Graphlets size", "2-node size", "3-node size",
-                "4-node size", "5-node size"}));
+        graphletSize.setModel(new DefaultComboBoxModel(new String[]{"Graphlets size", "2-node size (2)", "3-node size (8)",
+                "4-node size (31)", "5-node size (151)"}));
         buttonPanel.add(graphletSize);
 
         generateDrgf = new JButton("Compare nets");
         generateDrgf.addActionListener(actionEvent -> {
+            //enableGRDFbuttons(false);
             grdfCalculator = new GRDFcalculator();
             Thread myThread = new Thread(grdfCalculator);
             myThread.start();
@@ -822,6 +877,13 @@ public class HolmesComparisonModule extends JFrame {
         return panel;
     }
 
+    public void enableGRDFbuttons(boolean type) {
+
+        chooserGRDF.setEnabled(type);
+        generateDrgf.setEnabled(type);
+        graphletSize.setEnabled(type);
+    }
+
     public void setSizeForFtame() {
         this.setSize(1250, 1100);
     }
@@ -858,7 +920,7 @@ public class HolmesComparisonModule extends JFrame {
 
         XYSeries series1 = new XYSeries("Number of graphlets of net 1");
         XYSeries series2 = new XYSeries("Number of graphlets of net 2");
-        dataDRGF = new Object[chiisenGraohletSize + 1][4];
+        dataDRGF = new Object[chiisenGraohletSize][4];
         String[] colNames = new String[4];
         colNames[0] = "Graphlets";
         colNames[1] = "First net";
@@ -949,7 +1011,41 @@ public class HolmesComparisonModule extends JFrame {
         Object[] column = {"DGDD", "0", "1", "2", "...", "k"};
         Object[][] data = {{"Orbit O", 0, 0, 0, 0, 0}, {"Orbit 1", 0, 0, 0, 0, 0}, {"Orbit 2", 0, 0, 0, 0, 0}};
 
-        dgddTable = new JTable(data, column);
+        dgddTable = new JTable(data, column) {
+
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
+                Component comp = super.prepareRenderer(renderer, row, col);
+                Object value = getModel().getValueAt(row, col);
+                //if (getSelectedRow() == row) {
+                //colorIsomorphicCels(row, col, comp, subNetArrayList);
+                //colorHungarianCels(row, col, comp, hungarianCels, gcls);
+
+                //colorHungarianCels(row, col, comp, hungarianCels, gcls);
+
+
+                //Before first calculation
+                /*
+                if (col == 0) {
+                    comp.setBackground(Color.white);
+                } else {
+                    if (DGDVFirst != null && DGDVSecond != null) {
+                        comp.setBackground(Color.yellow);
+                        if (DGDVFirst[0].length > col - 1 && DGDVFirst.length > row && DGDVSecond[0].length > col - 1 && DGDVSecond.length > row) {
+                            comp.setBackground(Color.pink);
+                            if (DGDVFirst[row][col - 1] == DGDVSecond[row][col - 1] && DGDVFirst[row][col - 1] != 0) {
+                                comp.setBackground(Color.green);
+                            } else if (DGDVFirst[row][col - 1] == 0 && DGDVSecond[row][col - 1] == 0) {
+                                comp.setBackground(Color.lightGray);
+                            }
+                        }
+                    }
+                }
+                */
+
+                return comp;
+            }
+        };
         JScrollPane jpane = new JScrollPane(dgddTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         dgddTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         JPanel scroll = new JPanel();
@@ -969,7 +1065,9 @@ public class HolmesComparisonModule extends JFrame {
         JButton chooser = new JButton("Choose second net");
         chooser.setVisible(true);
         chooser.addActionListener(e -> {
-            JFileChooser jfc = new JFileChooser();
+            Preferences prefs = Preferences.userRoot().node(getClass().getName());
+            JFileChooser jfc = new JFileChooser(prefs.get(LAST_USED_FOLDER,
+                    new File(".").getAbsolutePath()));
             javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
             filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped), (.pn)", new String[]{"SPPED", "PN"});
             filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[]{"PNT"});
@@ -981,6 +1079,7 @@ public class HolmesComparisonModule extends JFrame {
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 generateGDDA.setEnabled(true);
+                prefs.put(LAST_USED_FOLDER, jfc.getSelectedFile().getParent());
             }
 
         });
@@ -1014,12 +1113,12 @@ public class HolmesComparisonModule extends JFrame {
         saveDGDV1.setEnabled(false);
         buttonPanel.add(saveDGDV1);
 
-        saveDGDV2 = new JButton("Save DGDV for first net");
+        saveDGDV2 = new JButton("Save DGDV for second net");
         saveDGDV2.addActionListener(e -> saveDGDV(DGDVSecond));
         saveDGDV2.setEnabled(false);
         buttonPanel.add(saveDGDV2);
 
-        saveDGDD = new JButton("Save DGDV for first net");
+        saveDGDD = new JButton("Save DGDD");
         saveDGDD.addActionListener(e -> saveDGDV(toInt(dataDGDD)));
         saveDGDD.setEnabled(false);
         buttonPanel.add(saveDGDD);
@@ -1226,12 +1325,15 @@ public class HolmesComparisonModule extends JFrame {
 
         double[] d = new double[orbNumber];
 
-        dataDGDD = new Object[orbNumber][maxk];
+        dataDGDD = new Object[orbNumber][maxk+1];
 
         for (int orb = 0; orb < orbNumber; orb++) {
             double di = 0;
 
             for (int k = 0; k < maxk; k++) {
+                if (k == 0) {
+                    dataDGDD[orb][k] = "Orb. - " + orb;
+                } else
                 if (k >= nG[orb].length) {
                     dataDGDD[orb][k] = Math.pow(0 - nH[orb][k], 2);
                     di += (double) dataDGDD[orb][k];
@@ -1276,13 +1378,16 @@ public class HolmesComparisonModule extends JFrame {
         JButton chooser = new JButton("Choose second net");
         chooser.setVisible(true);
         chooser.addActionListener(e -> {
-            JFileChooser jfc = new JFileChooser();
+            Preferences prefs = Preferences.userRoot().node(getClass().getName());
+            JFileChooser jfc = new JFileChooser(prefs.get(LAST_USED_FOLDER,
+                    new File(".").getAbsolutePath()));
             int returnVal = jfc.showOpenDialog(HolmesComparisonModule.this);
             jfc.setFileFilter(new ExtensionFileFilter("INA PNT format (.pnt)", new String[]{"PNT"}));
             infoPaneNetdiv.append("Choosen file: " + jfc.getSelectedFile().getName() + "\n");
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 generateNetdiv.setEnabled(true);
+                prefs.put(LAST_USED_FOLDER, jfc.getSelectedFile().getParent());
             }
 
         });
@@ -1375,7 +1480,9 @@ public class HolmesComparisonModule extends JFrame {
         JButton chooser = new JButton("Choose second net");
         chooser.setVisible(true);
         chooser.addActionListener(e -> {
-            JFileChooser jfc = new JFileChooser();
+            Preferences prefs = Preferences.userRoot().node(getClass().getName());
+            JFileChooser jfc = new JFileChooser(prefs.get(LAST_USED_FOLDER,
+                    new File(".").getAbsolutePath()));
 
             javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
             filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped), (.pn)", new String[]{"SPPED", "PN"});
@@ -1389,6 +1496,7 @@ public class HolmesComparisonModule extends JFrame {
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 generateDec.setEnabled(true);
+                prefs.put(LAST_USED_FOLDER, jfc.getSelectedFile().getParent());
             }
 
         });
@@ -1405,18 +1513,18 @@ public class HolmesComparisonModule extends JFrame {
         buttonPanel.add(generateDec);
 
         decoType = new JComboBox();
-        decoType.setModel(new DefaultComboBoxModel(new String[]{"Choose decomposition type", "con. ADT", "Functional"}));
+        decoType.setModel(new DefaultComboBoxModel(new String[]{"Choose decomposition type", "con. ADT", "Functional", "T-net", "t-component", "s-component"}));
         buttonPanel.add(decoType);
 
         jp.add(buttonPanel);
 
 
         //decoCompareFtS;
-        JPanel subComparisons = new JPanel(new GridLayout(4,1));
+        JPanel subComparisons = new JPanel(new GridLayout(4, 1));
 
         JCheckBox fts = new JCheckBox("First to Second");
         fts.addActionListener(actionEvent -> {
-            if(fts.isSelected())
+            if (fts.isSelected())
                 decoCompareFtS = true;
             else
                 decoCompareFtS = false;
@@ -1426,7 +1534,7 @@ public class HolmesComparisonModule extends JFrame {
 
         JCheckBox stf = new JCheckBox("Second to First");
         stf.addActionListener(actionEvent -> {
-            if(stf.isSelected())
+            if (stf.isSelected())
                 decoCompareStF = true;
             else
                 decoCompareStF = false;
@@ -1435,7 +1543,7 @@ public class HolmesComparisonModule extends JFrame {
 
         JCheckBox ftf = new JCheckBox("First to First");
         ftf.addActionListener(actionEvent -> {
-            if(ftf.isSelected())
+            if (ftf.isSelected())
                 decoCompareFtF = true;
             else
                 decoCompareFtF = false;
@@ -1444,7 +1552,7 @@ public class HolmesComparisonModule extends JFrame {
 
         JCheckBox sts = new JCheckBox("Second to Second");
         sts.addActionListener(actionEvent -> {
-            if(sts.isSelected())
+            if (sts.isSelected())
                 decoCompareStS = true;
             else
                 decoCompareStS = false;
@@ -1661,8 +1769,7 @@ public class HolmesComparisonModule extends JFrame {
         sc.secondQuestion = secondQuestionDec;
         sc.thirdQuestion = thirdQuestionDec;
 
-        if(!decoCompareFtS&&!decoCompareStF&&!decoCompareFtF&&!decoCompareStS)
-        {
+        if (!decoCompareFtS && !decoCompareStF && !decoCompareFtF && !decoCompareStS) {
             JOptionPane.showMessageDialog(this, "Please choose comparison");
         }
 
@@ -1680,7 +1787,7 @@ public class HolmesComparisonModule extends JFrame {
             //tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
         }
 
-        if(decoCompareFtF) {
+        if (decoCompareFtF) {
             infoPaneDec.append("Compare first net internally.\n");
             JComponent panelFS = createPartResultTable(sc.compareInternalFirst(), true);//,gscl.size(),gscl.size());
             tabbedDecoPane.addTab("Internal similarity of First net", null, panelFS, "Still does nothing");
@@ -1890,7 +1997,7 @@ public class HolmesComparisonModule extends JFrame {
         if (row < hungarianCels.length)
             if (hungarianCels[row] == col) {
                 comp.setBackground(Color.green);
-                switch(decoType.getSelectedIndex()) {
+                switch (decoType.getSelectedIndex()) {
                     case 0:
                         System.out.println("Wrong type of decomposed set to color");
                         break;
@@ -1900,6 +2007,12 @@ public class HolmesComparisonModule extends JFrame {
                     case 2:
                         colorSubnet(gcls.get(row).get(col), SubnetCalculator.functionalSubNets.get(row));
                         break;
+                    case 3:
+                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.tnetSubNets.get(row));
+                        break;
+                    case 4:
+                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.tinvSubNets.get(row));
+                        break;
                 }
 
             } else {
@@ -1908,7 +2021,7 @@ public class HolmesComparisonModule extends JFrame {
     }
 
     private void colorHungarianCel(int row, int col, ArrayList<ArrayList<GreatCommonSubnet>> gcls) {
-        switch(decoType.getSelectedIndex()) {
+        switch (decoType.getSelectedIndex()) {
             case 0:
                 System.out.println("Wrong type of decomposed set to color");
                 break;
@@ -1917,6 +2030,12 @@ public class HolmesComparisonModule extends JFrame {
                 break;
             case 2:
                 colorSubnet(gcls.get(row).get(col), SubnetCalculator.functionalSubNets.get(row));
+                break;
+            case 3:
+                colorSubnet(gcls.get(row).get(col), SubnetCalculator.tnetSubNets.get(row));
+                break;
+            case 4:
+                colorSubnet(gcls.get(row).get(col), SubnetCalculator.tinvSubNets.get(row));
                 break;
         }
     }
@@ -1929,7 +2048,7 @@ public class HolmesComparisonModule extends JFrame {
                     if (hungarianCels[i] == j) {
                         //comp.setBackground(Color.green);
 
-                        switch(decoType.getSelectedIndex()) {
+                        switch (decoType.getSelectedIndex()) {
                             case 0:
                                 System.out.println("Wrong type of decomposed set to color");
                                 break;
@@ -1938,6 +2057,12 @@ public class HolmesComparisonModule extends JFrame {
                                 break;
                             case 2:
                                 colorSubnetDensity(gcls.get(i).get(j), SubnetCalculator.adtSubNets.get(i), i, gcls.size());
+                                break;
+                            case 3:
+                                colorSubnetDensity(gcls.get(i).get(j), SubnetCalculator.tnetSubNets.get(i), i, gcls.size());
+                                break;
+                            case 4:
+                                colorSubnetDensity(gcls.get(i).get(j), SubnetCalculator.tinvSubNets.get(i), i, gcls.size());
                                 break;
                         }
                     } else {
@@ -2053,7 +2178,12 @@ public class HolmesComparisonModule extends JFrame {
             arc.setColor(true, Color.red);
         }
 
-        for (SubnetComparator.PartialSubnetElements pse : gcs.psel) {
+        //TODO CHOOSE sub for comparison
+        int choosenDeco = 0;
+
+        if(!gcs.psel.isEmpty()) {
+            //for (SubnetComparator.PartialSubnetElements pse : gcs.psel) {
+            SubnetComparator.PartialSubnetElements pse = gcs.psel.get(choosenDeco);
             for (Node transition : pse.partialNodes) {
 
                 if (!sn.getSubNode().contains(transition))
@@ -2193,7 +2323,9 @@ public class HolmesComparisonModule extends JFrame {
         JButton chooser = new JButton("Choose second net");
         chooser.setVisible(true);
         chooser.addActionListener(e -> {
-            JFileChooser jfc = new JFileChooser();
+            Preferences prefs = Preferences.userRoot().node(getClass().getName());
+            JFileChooser jfc = new JFileChooser(prefs.get(LAST_USED_FOLDER,
+                    new File(".").getAbsolutePath()));
             javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
             filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped), (.pn)", new String[]{"SPPED", "PN"});
             filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[]{"PNT"});
@@ -2206,6 +2338,7 @@ public class HolmesComparisonModule extends JFrame {
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 generateBranch.setEnabled(true);
+                prefs.put(LAST_USED_FOLDER, jfc.getSelectedFile().getParent());
             }
 
         });
@@ -2214,13 +2347,13 @@ public class HolmesComparisonModule extends JFrame {
         generateBranch = new JButton("Generate");
         generateBranch.setVisible(true);
         generateBranch.addActionListener(e -> {
-            BranchesServerCalc bsc = new BranchesServerCalc();
-            BranchesServerCalc.ParsedBranchData result = bsc.compare(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet, 1);
-            parsBranchingData(result);
             if (reGenerateBoolean) {
                 infoPaneBranch.selectAll();
                 infoPaneBranch.replaceSelection("");
             }
+            BranchesServerCalc bsc = new BranchesServerCalc();
+            BranchesServerCalc.ParsedBranchData result = bsc.compare(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet, 1);
+            parsBranchingData(result);
             reGenerateBoolean = true;
         });
 
@@ -2732,8 +2865,8 @@ public class HolmesComparisonModule extends JFrame {
             xybarrenderer.setBarPainter(new StandardXYBarPainter());
 
             Paint[] paintArray = {              //code related to translucent colors begin here
-                    new Color(0x80ff0000, true),
-                    new Color(0x800000ff, true)
+                    new Color(0x80FC026A, true),
+                    new Color(0x8017EE07, true)
             };
             SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices", axisX);
             rangeAxis.setVerticalTickLabels(true);
@@ -2752,8 +2885,6 @@ public class HolmesComparisonModule extends JFrame {
                     DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE,
                     DefaultDrawingSupplier.DEFAULT_SHAPE_SEQUENCE));
             //branchChartPanel = new ChartPanel(branchVertChart);
-            branchChartPanel.setVisible(true);
-
             jp.add(vertChartPanel);
         }
         if (mod == 1) {
@@ -2787,8 +2918,10 @@ public class HolmesComparisonModule extends JFrame {
             xybarrenderer.setBarPainter(new StandardXYBarPainter());
 
             Paint[] paintArray = {              //code related to translucent colors begin here
-                    new Color(0x80ff0000, true),
-                    new Color(0x800000ff, true)
+                    //new Color(0x80ff0000, true),
+                    //new Color(0x800000ff, true)
+                    new Color(0x80FC026A, true),
+                    new Color(0x8017EE07, true)
             };
             SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices", axisX);
             rangeAxis.setVerticalTickLabels(true);
@@ -2843,8 +2976,10 @@ public class HolmesComparisonModule extends JFrame {
             xybarrenderer.setBarPainter(new StandardXYBarPainter());
 
             Paint[] paintArray = {              //code related to translucent colors begin here
-                    new Color(0x80ff0000, true),
-                    new Color(0x800000ff, true)
+                    //new Color(0x80ff0000, true),
+                    //new Color(0x800000ff, true)
+                    new Color(0x80FC026A, true),
+                    new Color(0x8017EE07, true)
             };
             SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices", axisX);
             rangeAxis.setVerticalTickLabels(true);

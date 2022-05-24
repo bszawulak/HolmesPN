@@ -21,10 +21,12 @@ public class GRDFcalculator implements Runnable {
     public GRDFcalculator() {
         masterWindow = GUIManager.getDefaultGUIManager().accessComparisonWindow();
     }
+
     @Override
     public void run() {
         int chiisenGraohletSize = masterWindow.getChoosenGraohletSize(masterWindow.graphletSize.getSelectedIndex());
 
+        masterWindow.infoPaneDRGF.append("Comparison process started. \n");
         masterWindow.infoPaneDRGF.append("First net count... \n");
         long[] firstSingleDRGF = calcDRGF(GUIManager.getDefaultGUIManager().getWorkspace().getProject());
         masterWindow.infoPaneDRGF.append("\nSecond net count... \n");
@@ -40,11 +42,12 @@ public class GRDFcalculator implements Runnable {
             distanceDRGF[i] = Math.abs(firstSingleDRGF[i] - secondSingleDRGF[i]);
             result += Math.abs(((double) firstSingleDRGF[i] / (double) firstSum) - ((double) secondSingleDRGF[i] / (double) secondSum));
         }
-        masterWindow.infoPaneDRGF.append("\nDRGF : " + result);
+        int nodeN = masterWindow.graphletSize.getSelectedIndex() + 1;
+        masterWindow.infoPaneDRGF.append("\nGRDF (" + nodeN + "-node) : " + result);
 
         XYSeries series1 = new XYSeries("Number of graphlets of net 1");
         XYSeries series2 = new XYSeries("Number of graphlets of net 2");
-        masterWindow.dataDRGF = new Object[chiisenGraohletSize + 1][4];
+        masterWindow.dataDRGF = new Object[chiisenGraohletSize ][4];
         String[] colNames = new String[4];
         colNames[0] = "Graphlets";
         colNames[1] = "First net";
@@ -72,12 +75,19 @@ public class GRDFcalculator implements Runnable {
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
         CategoryAxis xAxis = chartPlot.getDomainAxis();
+
+        //masterWindow.chooserGRDF.setEnabled(true);
+        //masterWindow.generateDrgf.setEnabled(true);
+        //masterWindow.graphletSize.setEnabled(true);
+        //masterWindow.enableGRDFbuttons(true);
+        masterWindow.drgfTable.revalidate();
+        masterWindow.infoPaneDRGF.append("\nComparison process ended.\n");
     }
 
     private long[] calcDRGF(PetriNet project) {
         GraphletsCalculator.cleanAll();
         GraphletsCalculator.generateGraphlets();
-        GraphletsCalculator.getFoundServerGraphlets(project,masterWindow.infoPaneDRGF);
+        GraphletsCalculator.getFoundServerGraphlets(project, masterWindow.infoPaneDRGF);
         long[] singleDRGF = new long[GraphletsCalculator.graphetsList.size()];
 
         for (int k = 0; k < GraphletsCalculator.graphetsList.size(); k++) {

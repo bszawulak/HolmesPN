@@ -99,10 +99,17 @@ public class SubnetComparator {
         for (int i = 0; i < subnetsForFirstNet.size(); i++) {
             ArrayList<GreatCommonSubnet> list = new ArrayList<>();
             for (int j = 0; j < subnetsForFirstNet.size(); j++) {
+        //int i =12;
+        //int j =12;
+
                 if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 1)
                     list.add(compareTwoSubnets(subnetsForFirstNet.get(i), subnetsForFirstNet.get(j)));
                 if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 2)
                     list.add(compareTwoFunctionalSubnets(subnetsForFirstNet.get(i), subnetsForFirstNet.get(j)));
+                if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 3)
+                    list.add(compareTwoSubnets(subnetsForFirstNet.get(i), subnetsForFirstNet.get(j)));
+                if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 4)
+                    list.add(compareTwoSubnets(subnetsForFirstNet.get(i), subnetsForFirstNet.get(j)));
                 list.get(j).firstNetID = i;
                 list.get(j).secondNetID = j;
                 list.get(j).firstNetNodeSize = subnetsForFirstNet.get(i).nodes.size();
@@ -122,6 +129,10 @@ public class SubnetComparator {
                     list.add(compareTwoSubnets(subnetsForSecondNet.get(i), subnetsForSecondNet.get(j)));
                 if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 2)
                     list.add(compareTwoFunctionalSubnets(subnetsForSecondNet.get(i), subnetsForSecondNet.get(j)));
+                if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 3)
+                    list.add(compareTwoSubnets(subnetsForSecondNet.get(i), subnetsForSecondNet.get(j)));
+                if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 4)
+                    list.add(compareTwoSubnets(subnetsForSecondNet.get(i), subnetsForSecondNet.get(j)));
                 list.get(j).firstNetID = i;
                 list.get(j).secondNetID = j;
                 list.get(j).firstNetNodeSize = subnetsForSecondNet.get(i).nodes.size();
@@ -150,6 +161,10 @@ public class SubnetComparator {
                     list.add(compareTwoSubnets(subnetsForFirstNet.get(i), subnetsForSecondNet.get(j)));
                 if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 2)
                     list.add(compareTwoFunctionalSubnets(subnetsForFirstNet.get(i), subnetsForSecondNet.get(j)));
+                if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 3)
+                    list.add(compareTwoSubnets(subnetsForFirstNet.get(i), subnetsForSecondNet.get(j)));
+                if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 4)
+                    list.add(compareTwoSubnets(subnetsForFirstNet.get(i), subnetsForSecondNet.get(j)));
                 list.get(j).firstNetID = i;
                 list.get(j).secondNetID = j;
                 list.get(j).firstNetNodeSize = subnetsForFirstNet.get(i).nodes.size();
@@ -188,6 +203,10 @@ public class SubnetComparator {
                     list.add(compareTwoSubnets(subnetsForSecondNet.get(i), subnetsForFirstNet.get(j)));
                 if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 2)
                     list.add(compareTwoFunctionalSubnets(subnetsForSecondNet.get(i), subnetsForFirstNet.get(j)));
+                if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 3)
+                    list.add(compareTwoSubnets(subnetsForSecondNet.get(i), subnetsForFirstNet.get(j)));
+                if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 4)
+                    list.add(compareTwoSubnets(subnetsForSecondNet.get(i), subnetsForFirstNet.get(j)));
                 list.get(j).firstNetID = i;
                 list.get(j).secondNetID = j;
                 list.get(j).firstNetNodeSize = subnetsForSecondNet.get(i).nodes.size();
@@ -219,6 +238,7 @@ public class SubnetComparator {
     }
 
     private GreatCommonSubnet compareTwoFunctionalSubnets(BranchBasedSubnet sn1, BranchBasedSubnet sn2) {
+        allFunBranchpermutations.clear();
         ArrayList<PartialSubnetElements> maxArcComparisons = null;
         if (sn1.transitions.size() >= sn2.transitions.size())
             allFuncBranchPermutations(sn1.transitions.size());
@@ -227,7 +247,12 @@ public class SubnetComparator {
 
         ArrayList<SubnetComparator.PartialSubnetElements> results = new ArrayList<>();
 
+        int count =0;
         for (ArrayList<Integer> matching : allFunBranchpermutations) {
+            if(count==23)
+            {
+                System.out.println();
+            }
             listOfMapedFunctionalPlaces.clear();
             HashMap<Transition, Transition> map = new HashMap<>();
             for (int i = 0; i < matching.size(); i++) {
@@ -274,7 +299,7 @@ public class SubnetComparator {
                     matchA.addAll(tmp.partialArcs);
                 }
             }
-
+            count++;
             results.add(new PartialSubnetElements(matchN, matchA));
         }
 
@@ -448,6 +473,9 @@ public class SubnetComparator {
                 conectedS.remove(value);
             }
 
+            HashSet<Node> hset = new HashSet<Node>(conectedF);
+            // = new HashMap<>()
+            conectedF = new ArrayList<Node>(hset);
             ArrayList<Node> maped = new ArrayList<>();
             for (Node n : conectedF) {
                 maped.add(map.get(n));
@@ -478,8 +506,10 @@ public class SubnetComparator {
                 }
             }
 
-            if (places.size() > 0)
-                return places;
+            //if (places.size() > 0)
+            //    return places;
+            if(listOfMapedFunctionalPlaces.size()>0)
+                return new ArrayList<Node> (listOfMapedFunctionalPlaces.keySet());
         }
         return new ArrayList<>();
     }
@@ -506,7 +536,9 @@ public class SubnetComparator {
                 conectedS.addAll(p.getOutNodes());
                 conectedS.remove(value);
             }
-
+            HashSet<Node> hset = new HashSet<Node>(conectedF);
+            // = new HashMap<>()
+            conectedF = new ArrayList<Node>(hset);
             ArrayList<Node> maped = new ArrayList<>();
             for (Node n : conectedF) {
                 maped.add(map.get(n));
@@ -536,8 +568,11 @@ public class SubnetComparator {
 
             }
 
-            if (places.size() > 0)
-                return places;
+            //if (places.size() > 0)
+            //    return places;
+            if(listOfMapedFunctionalPlaces.size()>0)
+                return new ArrayList<Node> (listOfMapedFunctionalPlaces.keySet());
+
         }
         return new ArrayList<>();
     }

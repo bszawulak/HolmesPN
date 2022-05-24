@@ -224,6 +224,16 @@ public class SubnetComparatorFunModATest {
         assertEquals(6, gcs.psel.get(0).partialArcs.size());
     }
 
+    @Test
+    void compare6_06() {
+        SubnetComparator sc = new SubnetComparator(creatSubnet6(), creatSubnet6(), false, false, false);
+        GreatCommonSubnet gcs = sc.compareFunctionalTest();
+        //saveSubnet(gcs);
+        assertEquals(6, gcs.gcsValue);
+        assertEquals(6, gcs.psel.get(0).partialNodes.size());
+        assertEquals(5, gcs.psel.get(0).partialArcs.size());
+    }
+
     SubnetCalculator.SubNet creatSubnet0() {
         ArrayList<Transition> tl = new ArrayList<>();
         Transition t1 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
@@ -399,6 +409,39 @@ public class SubnetComparatorFunModATest {
         al.add(a4);
         al.add(a5);
         al.add(a6);
+        return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.ZAJCEV, tl, null, null, null, null);
+    }
+
+    SubnetCalculator.SubNet creatSubnet6() {
+        ArrayList<Transition> tl = new ArrayList<>();
+        Transition t1 = new Transition(IdGenerator.getNextTransitionId(), 0, new Point(1, 1));
+        tl.add(t1);
+
+        ArrayList<Place> pl = new ArrayList<>();
+        Place p1 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p2 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p3 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p4 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        Place p5 = new Place(IdGenerator.getNextId(), 0, new Point(1, 1));
+        pl.add(p1);
+        pl.add(p2);
+        pl.add(p3);
+        pl.add(p4);
+        pl.add(p5);
+
+        Arc a1 = new Arc(IdGenerator.getNextId(), p1.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(IdGenerator.getNextId(), p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(IdGenerator.getNextId(), t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(IdGenerator.getNextId(), p4.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(IdGenerator.getNextId(), t1.getElementLocations().get(0), p5.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+        ArrayList<Arc> al = new ArrayList<>();
+
+        al.add(a1);
+        al.add(a2);
+        al.add(a3);
+        al.add(a4);
+        al.add(a5);
         return new SubnetCalculator.SubNet(SubnetCalculator.SubNetType.ZAJCEV, tl, null, null, null, null);
     }
 
