@@ -16,7 +16,6 @@ import org.jfree.chart.axis.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -26,8 +25,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.text.DecimalFormat;
@@ -1945,7 +1942,7 @@ public class HolmesComparisonModule extends JFrame {
                         //multiple
                     }
                     if (coloringMode == 2) {
-                        colorHungarianCels(row, col, comp, hungarianCels, gcls);
+                        colorHungarianCels(row, col, comp, hungarianCels, gcls,isInternal);
                     }
                 }
 
@@ -1975,7 +1972,7 @@ public class HolmesComparisonModule extends JFrame {
                 int row = comparisonTable.rowAtPoint(evt.getPoint());
                 int col = comparisonTable.columnAtPoint(evt.getPoint());
                 if (row >= 0 && col >= 0 && coloringMode == 0) {
-                    colorHungarianCel(row, col, gcls);
+                    colorHungarianCel(row, col, gcls,isInternal);
                     TableCellEditor tce = comparisonTable.getCellEditor(row, col);
                     //tce.getTableCellEditorComponent(comparisonTable,)
                     //comparisonTable.getRowgetCellEditor(row,col);;
@@ -1993,25 +1990,27 @@ public class HolmesComparisonModule extends JFrame {
 
 
     private void colorHungarianCels(int row, int col, Component comp, int[] hungarianCels, ArrayList<
-            ArrayList<GreatCommonSubnet>> gcls) {
+            ArrayList<GreatCommonSubnet>> gcls, boolean isInternal) {
         if (row < hungarianCels.length)
             if (hungarianCels[row] == col) {
                 comp.setBackground(Color.green);
+                if(isInternal && row<=col)
+                    isInternal=false;
                 switch (decoType.getSelectedIndex()) {
                     case 0:
                         System.out.println("Wrong type of decomposed set to color");
                         break;
                     case 1:
-                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.adtSubNets.get(row));
+                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.adtSubNets.get(row),isInternal);
                         break;
                     case 2:
-                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.functionalSubNets.get(row));
+                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.functionalSubNets.get(row),isInternal);
                         break;
                     case 3:
-                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.tnetSubNets.get(row));
+                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.tnetSubNets.get(row),isInternal);
                         break;
                     case 4:
-                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.tinvSubNets.get(row));
+                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.tinvSubNets.get(row),isInternal);
                         break;
                 }
 
@@ -2020,22 +2019,24 @@ public class HolmesComparisonModule extends JFrame {
             }
     }
 
-    private void colorHungarianCel(int row, int col, ArrayList<ArrayList<GreatCommonSubnet>> gcls) {
+    private void colorHungarianCel(int row, int col, ArrayList<ArrayList<GreatCommonSubnet>> gcls, boolean isInternal) {
+        if(isInternal && row<=col)
+            isInternal=false;
         switch (decoType.getSelectedIndex()) {
             case 0:
                 System.out.println("Wrong type of decomposed set to color");
                 break;
             case 1:
-                colorSubnet(gcls.get(row).get(col), SubnetCalculator.adtSubNets.get(row));
+                colorSubnet(gcls.get(row).get(col), SubnetCalculator.adtSubNets.get(row),isInternal);
                 break;
             case 2:
-                colorSubnet(gcls.get(row).get(col), SubnetCalculator.functionalSubNets.get(row));
+                colorSubnet(gcls.get(row).get(col), SubnetCalculator.functionalSubNets.get(row),isInternal);
                 break;
             case 3:
-                colorSubnet(gcls.get(row).get(col), SubnetCalculator.tnetSubNets.get(row));
+                colorSubnet(gcls.get(row).get(col), SubnetCalculator.tnetSubNets.get(row),isInternal);
                 break;
             case 4:
-                colorSubnet(gcls.get(row).get(col), SubnetCalculator.tinvSubNets.get(row));
+                colorSubnet(gcls.get(row).get(col), SubnetCalculator.tinvSubNets.get(row),isInternal);
                 break;
         }
     }
@@ -2165,7 +2166,7 @@ public class HolmesComparisonModule extends JFrame {
 
     }
 
-    private void colorSubnet(GreatCommonSubnet gcs, SubnetCalculator.SubNet sn) {
+    private void colorSubnet(GreatCommonSubnet gcs, SubnetCalculator.SubNet sn, boolean map) {
 
         for (Node transition : sn.getSubNode()) {
             if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
@@ -2185,17 +2186,19 @@ public class HolmesComparisonModule extends JFrame {
             //for (SubnetComparator.PartialSubnetElements pse : gcs.psel) {
             SubnetComparator.PartialSubnetElements pse = gcs.psel.get(choosenDeco);
             for (Node transition : pse.partialNodes) {
+                System.out.println("Pered map :" + transition.getName());
 
-                if (!sn.getSubNode().contains(transition))
+                if (map)//!sn.getSubNode().contains(transition))
                     transition = pse.nodesMap.get(transition);
 
+                System.out.println("Post map :" + transition.getName());
                 if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
                     ((Transition) transition).setColorWithNumber(true, Color.GREEN, false, 0, true, "");
                 if (transition.getType() == PetriNetElement.PetriNetElementType.PLACE)
                     ((Place) transition).setColorWithNumber(true, Color.GREEN, false, 0, true, "");
             }
             for (Arc arc : pse.partialArcs) {
-                if (!sn.getSubArcs().contains(arc))
+                if (map)
                     arc = pse.arcsMap.get(arc);
                 arc.setColor(true, Color.GREEN);
             }

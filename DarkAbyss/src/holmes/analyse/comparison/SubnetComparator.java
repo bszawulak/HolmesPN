@@ -99,8 +99,14 @@ public class SubnetComparator {
         for (int i = 0; i < subnetsForFirstNet.size(); i++) {
             ArrayList<GreatCommonSubnet> list = new ArrayList<>();
             for (int j = 0; j < subnetsForFirstNet.size(); j++) {
-        //int i =12;
-        //int j =12;
+
+                //int i=7;
+                //int j=8;
+
+                if(i==12 && j==12)
+                {
+                    System.out.println("rt");
+                }
 
                 if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 1)
                     list.add(compareTwoSubnets(subnetsForFirstNet.get(i), subnetsForFirstNet.get(j)));
@@ -154,8 +160,8 @@ public class SubnetComparator {
                 if (i == 1 && j == 0) {
                     System.out.println("Tu");
                 }
-                //int i=1;
-                //int j=0;
+                //int i=8;
+                //int j=7;
 
                 if (GUIManager.getDefaultGUIManager().accessComparisonWindow().decoType.getSelectedIndex() == 1)
                     list.add(compareTwoSubnets(subnetsForFirstNet.get(i), subnetsForSecondNet.get(j)));
@@ -288,6 +294,16 @@ public class SubnetComparator {
                 matchA.addAll(tmp.partialArcs);
             }
 
+            //third way
+            for (Map.Entry<Transition, Transition> entry : map.entrySet()) {
+                Transition key = entry.getKey();
+                Transition value = entry.getValue();
+
+                PartialSubnetElements tmp = checkLeftPlaces(key, value, sn1, sn2, map,matchN,matchA);
+                matchN.addAll(tmp.partialNodes);
+                matchA.addAll(tmp.partialArcs);
+            }
+
 
             if (firstQuestion) {
                 for (Map.Entry<Transition, Transition> entry : map.entrySet()) {
@@ -330,6 +346,51 @@ public class SubnetComparator {
         }
 
         return new GreatCommonSubnet(maxArcs);
+    }
+
+    private PartialSubnetElements checkLeftPlaces(Transition key, Transition value, BranchBasedSubnet sn1, BranchBasedSubnet sn2, HashMap<Transition, Transition> map, ArrayList<Node> matchN, ArrayList<Arc> matchA) {
+
+
+        ArrayList<Node> common = new ArrayList<>();
+        ArrayList<Place> outPlacesF = key.getPostPlaces();
+        outPlacesF = (ArrayList<Place>) outPlacesF.stream().filter(x -> x.getInNodes().size() > 1).collect(Collectors.toList());
+        ArrayList<Place> outPlacesS = value.getPostPlaces();
+        outPlacesS = (ArrayList<Place>) outPlacesS.stream().filter(x -> x.getInNodes().size() > 1).collect(Collectors.toList());
+        ArrayList<Place> inPlacesF = key.getPrePlaces();
+        inPlacesF = (ArrayList<Place>) inPlacesF.stream().filter(x -> x.getOutNodes().size() > 1).collect(Collectors.toList());
+        ArrayList<Place> inPlacesS = value.getPrePlaces();
+        inPlacesS = (ArrayList<Place>) inPlacesS.stream().filter(x -> x.getOutNodes().size() > 1).collect(Collectors.toList());
+
+        outPlacesF.removeAll(listOfMapedFunctionalPlaces.keySet());
+        inPlacesF.removeAll(listOfMapedFunctionalPlaces.keySet());
+
+
+        outPlacesS.removeAll(listOfMapedFunctionalPlaces.values());
+        inPlacesS.removeAll(listOfMapedFunctionalPlaces.values());
+
+        for (int i = 0; i < outPlacesF.size() && i < outPlacesS.size(); i++) {
+            common.add(outPlacesF.get(i));
+            listOfMapedFunctionalPlaces.put(outPlacesF.get(i), outPlacesS.get(i));
+        }
+        for (int i = 0; i < inPlacesF.size() && i < inPlacesS.size(); i++) {
+            common.add(inPlacesF.get(i));
+            listOfMapedFunctionalPlaces.put(inPlacesF.get(i), inPlacesS.get(i));
+        }
+
+        HashSet<Node> hset = new HashSet<Node>(common);
+        ArrayList<Node> unique = new ArrayList<Node>(hset);
+        ArrayList<Arc> uniqueArcs = new ArrayList<>();
+        for (Node n : unique) {
+            if (n != key) {
+                for (Arc a : n.getOutInArcs()) {
+                    if ((a.getEndNode().equals(key) && a.getStartNode().equals(n)) || (a.getStartNode().equals(key) && a.getEndNode().equals(n))) {
+                        uniqueArcs.add(a);
+                    }
+                }
+            }
+        }
+
+        return new PartialSubnetElements(unique, uniqueArcs);
     }
 
     private PartialSubnetElements checkPlaces(Transition key, Transition value, BranchBasedSubnet sn1, BranchBasedSubnet sn2, HashMap<Transition, Transition> map) {

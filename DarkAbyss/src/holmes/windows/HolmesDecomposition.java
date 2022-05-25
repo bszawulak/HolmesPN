@@ -204,12 +204,14 @@ public class HolmesDecomposition extends JFrame {
         tinvCheckBox.setBounds(posX + 10, posY + 360, 150, 20);
         tinvCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, tinvCheckBox, panel, 11));
         tinvCheckBox.setSelected(false);
+        tinvCheckBox.addItemListener(itemListener);
         panel.add(setOnPanel(tinvCheckBox,"T-component (t-inv.)"));
 
         JCheckBox pinvCheckBox = new JCheckBox();
         pinvCheckBox.setBounds(posX + 10, posY + 390, 150, 20);
         pinvCheckBox.addActionListener(actionEvent -> checkBoxAction(actionEvent, pinvCheckBox, panel, 12));
         pinvCheckBox.setSelected(false);
+        pinvCheckBox.addItemListener(itemListener);
         panel.add(setOnPanel(pinvCheckBox,"S-component (p-inv.)"));
 
         JCheckBox tzCheckBox = new JCheckBox();
