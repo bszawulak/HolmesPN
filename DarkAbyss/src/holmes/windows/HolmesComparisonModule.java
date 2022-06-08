@@ -1931,7 +1931,8 @@ public class HolmesComparisonModule extends JFrame {
                 Object value = getModel().getValueAt(row, col);
                 //if (getSelectedRow() == row) {
                 //colorIsomorphicCels(row, col, comp, subNetArrayList);
-                //colorHungarianCels(row, col, comp, hungarianCels, gcls);
+                colorHungarianCels(row, col, comp, hungarianCels, gcls,isInternal);
+
                 if (isInternal) {
                     colorIsomorphicCels(row, col, comp, gcls);
                 } else {
@@ -1994,6 +1995,8 @@ public class HolmesComparisonModule extends JFrame {
         if (row < hungarianCels.length)
             if (hungarianCels[row] == col) {
                 comp.setBackground(Color.green);
+
+                /*
                 if(isInternal && row<=col)
                     isInternal=false;
                 switch (decoType.getSelectedIndex()) {
@@ -2013,6 +2016,8 @@ public class HolmesComparisonModule extends JFrame {
                         colorSubnet(gcls.get(row).get(col), SubnetCalculator.tinvSubNets.get(row),isInternal);
                         break;
                 }
+
+                 */
 
             } else {
                 comp.setBackground(Color.white);
