@@ -2,11 +2,11 @@
   <library name="javadoc">
     <CLASSES />
     <JAVADOC>
-      <root url="file://$PROJECT_DIR$/DarkAbyss/javadocking1.5.0/javadocking/docs/javadoc" />
+      <root url="file://$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/docs/javadoc" />
     </JAVADOC>
     <SOURCES>
-      <root url="file://$PROJECT_DIR$/DarkAbyss/javadocking1.5.0/javadocking/samples" />
-      <root url="file://$PROJECT_DIR$/DarkAbyss/javadocking1.5.0/javadocking/src" />
+      <root url="file://$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/samples" />
+      <root url="file://$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/src" />
     </SOURCES>
   </library>
 </component>

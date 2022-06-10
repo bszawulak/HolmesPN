@@ -2,24 +2,24 @@
   <artifact type="jar" build-on-make="true" name="DarkAbyss:jar">
     <output-path>$PROJECT_DIR$/output/artifacts/DarkAbyss_jar</output-path>
     <root id="archive" name="DarkAbyss.jar">
-      <element id="module-output" name="DarkAbyss" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/javadocking1.5.0/javadocking/lib/jcommon.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/javadocking1.5.0/javadocking/lib/tinylaf.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/javadocking1.5.0/javadocking/lib/nimrodlf.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/javadocking1.5.0/javadocking/lib/liquidlnf.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/javadocking1.5.0/javadocking/lib/jfreechart.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/javadocking1.5.0/javadocking/lib/javadocking.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/javadocking1.5.0/javadocking/lib/substance-lite.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/libraries/jxl.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/libraries/jep-2.23.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/libraries/Jama-1.0.3.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/libraries/exp4j-0.4.5.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/libraries/xstream-1.4.4.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/libraries/xstream-1.4.7.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/libraries/jcommon-1.0.23.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/libraries/simple-xml-2.6.9.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/libraries/jfreechart-1.0.19.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/DarkAbyss/libraries/RCaller-2.4-SNAPSHOT.jar" path-in-jar="/" />
+      <element id="module-output" name="Holmes" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/lib/jcommon.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/lib/tinylaf.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/lib/nimrodlf.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/lib/liquidlnf.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/lib/jfreechart.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/lib/javadocking.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/lib/substance-lite.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/jxl.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/jep-2.23.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/Jama-1.0.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/exp4j-0.4.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/xstream-1.4.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/xstream-1.4.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/jcommon-1.0.23.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/simple-xml-2.6.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/jfreechart-1.0.19.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/RCaller-2.4-SNAPSHOT.jar" path-in-jar="/" />
       <element id="library" level="project" name="javadoc" />
     </root>
   </artifact>

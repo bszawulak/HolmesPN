@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SubnetComparatorModAABTest {
-    @Test
+    @org.junit.Test
     void compare0_00() {
         SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet0(),false,false,true);
         GreatCommonSubnet gcs = sc.compareTest();
