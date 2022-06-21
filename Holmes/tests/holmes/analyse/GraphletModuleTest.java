@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 public class GraphletModuleTest {
 
     ArrayList<Node> structure = new ArrayList<>();

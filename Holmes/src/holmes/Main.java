@@ -21,6 +21,8 @@ import java.util.ArrayList;
  * Główna klasa programu. Jedna metoda, odpowiedzialna za tworzenie środowiska graficznego Holmes. I całej reszty.
  * Przy okazji jedyna zrozumiała.
  *
+ * 2022-06-21 Wrócilem. MR.
+ *
  * @author students
  * <p>
  * "Czy położyłby się Pan pod kroplówką obsługiwaną przez ten algorytm? -A co by w niej było? -Denaturat." A.D. circa 2001
@@ -81,9 +83,9 @@ public class Main {
                     //gc.generateGraphlets();
 
 
-                    Benchmarker br = new Benchmarker();
+                    //Benchmarker br = new Benchmarker();
 
-                    //guiManager = new GUIManager(new JFrame("Holmes 2.0")); //and pray
+                    guiManager = new GUIManager(new JFrame("Holmes 2.0")); //and pray
 
 
                     //IOprotocols io = new IOprotocols();
