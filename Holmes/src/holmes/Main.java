@@ -22,6 +22,7 @@ import java.util.ArrayList;
  * Przy okazji jedyna zrozumiała.
  *
  * 2022-06-21 Wrócilem. MR.
+ * 2022-06-25 Drugi bzdurny komentarz testowy. Trzeci kiedyś pewnie usunie te brednie.
  *
  * @author students
  * <p>
