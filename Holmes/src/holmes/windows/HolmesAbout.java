@@ -99,7 +99,7 @@ public class HolmesAbout extends JFrame {
 			
 		}
 		
-		JLabel nameLabel = new JLabel("Holmes v1.1.0");
+		JLabel nameLabel = new JLabel("Holmes v1.5.0 Alpha");
 		nameLabel.setFont(new Font("Consolas", Font.PLAIN, 25));
 		nameLabel.setBounds(170, 30, 300, 40);
 		panel.add(nameLabel);
@@ -109,12 +109,12 @@ public class HolmesAbout extends JFrame {
 		nameLabel1b.setBounds(170, 50, 300, 40);
 		panel.add(nameLabel1b);
 		
-		JLabel nameLabel2 = new JLabel("Petri Net IDE");
+		JLabel nameLabel2 = new JLabel("Petri nets editor and analyzer");
 		nameLabel2.setFont(new Font("Consolas", Font.PLAIN, 18));
 		nameLabel2.setBounds(170, 70, 330, 40);
 		panel.add(nameLabel2);
 		
-		JLabel nameLabel3 = new JLabel("Release: 15-03-2022");
+		JLabel nameLabel3 = new JLabel("Release: 29-06-2022 alpha branch [MR]");
 		nameLabel3.setFont(new Font("Consolas", Font.PLAIN, 14));
 		nameLabel3.setBounds(170, 110, 330, 40);
 		panel.add(nameLabel3);
@@ -138,27 +138,30 @@ public class HolmesAbout extends JFrame {
 		textArea.setBackground(new Color(238, 238, 238));
 		
 		textArea.setFont(new Font("Consolas", Font.PLAIN, 15));
+
 		textArea.append("Versions and authors:\n");
-		textArea.append("Holmes version 1.0, january 2017, 57k+ lines of code total \n");
-		textArea.append("\n");
-		textArea.append("Holmes version 0.8, october 2015, 50k+ lines of code total \n");
+		textArea.append("Holmes version 1.5, June 2022-December 2022, even more LOC \n");
+		textArea.append("  Marcin Radom, Ph.D.\n");
+		textArea.append("Holmes version 1.1, June 2022, 140k+ LOC \n");
+		textArea.append("  Bartlomiej Szawulak, Ph.D.\n");
+		textArea.append("Holmes version 1.0, January 2017, 57k+ LOC \n");
+		textArea.append("  Radom Marcin, Ph.D.\n");
+		textArea.append("Holmes version 0.8, October 2015, 50k+ LOC \n");
 		textArea.append("  Radom Marcin, Ph.D.\n");
 		textArea.append("\n");
-		textArea.append("Abyss Version 1.2+, 2014-2015, 30k+ lines of code total \n");
+		textArea.append("Abyss Version 1.2+, 2014-2015, 30k+ LOC \n");
 		textArea.append("  Radom Marcin, Ph.D.\n");
 		textArea.append("  Rybarczyk Agnieszka, Ph.D.\n");
-		textArea.append("\n");
-		textArea.append("Abyss Version 1.1, 2013-2014, 10k lines of code total\n");
+		textArea.append("Abyss Version 1.1, 2013-2014, 10k LOC \n");
 		textArea.append("  Bartłomiej Szawulak, M.Sc. thesis\n");
 		textArea.append("  (supervisor: Radom Marcin, Ph.D.)\n");
-		textArea.append("\n");
-		textArea.append("Abyss Version 1.0, 2012-2013, 7k lines od code total\n");
+		textArea.append("Abyss Version 1.0, 2012-2013, 7k LOC \n");
 		textArea.append("  Andrzejewski Hubert, B.Sc. thesis\n");
 		textArea.append("  Chabelski Piotr, B.Sc. thesis\n");
 		textArea.append("  Szawulak Bartłomiej, B.Sc. thesis\n");
 		textArea.append("  (supervisor: Formanowicz Piotr Ph.D. Dr.Hab.)\n");
 		textArea.append("\n");
-		textArea.append("Holmes IPNE is a free scientific software distributed under GNU GPL, developed in "
+		textArea.append("Holmes is a free scientific software distributed under GNU GPL, developed in "
 				+ "Poznan University of Technology, Faculty of Computing Science, Poznan, Poland.\n");
 		textArea.append("\n");
 		textArea.append("Used external libraries and software:\n");
