@@ -810,7 +810,7 @@ public class HolmesNodeInfo extends JFrame {
 	/**
 	 * Metoda wypełnia pola danych dynamicznych dla miejsca, tj. symuluje 1000 kroków sieci na bazie
 	 * czego ustala liczbę tekenów dla w ramach tej symulacji 
-	 * @param avgFiredTextBox JFormattedTextField - pole z wartością procentową
+	 * //@param avgFiredTextBox JFormattedTextField - pole z wartością procentową
 	 * @param chartMainPanel JPanel - panel wykresu
 	 */
 	private void fillPlaceDynamicData(JPanel chartMainPanel) {

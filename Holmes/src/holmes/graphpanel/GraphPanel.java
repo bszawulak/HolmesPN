@@ -65,7 +65,9 @@ public class GraphPanel extends JComponent {
 		TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, STOCHASTICTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
 		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
 		SUBNET_T, SUBNET_P, SUBNET_PT,
-		CPLACE, CTRANSITION, CARC }
+		CPLACE, CTRANSITION, CARC,
+
+		XTRANSITION, XPLACE}
 	
 	/** Jeśli nie jest równy null, to znaczy, że właśnie przesuwamy jakiś punkt łamiący łuk */
 	public Point arcBreakPoint = null;

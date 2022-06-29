@@ -74,6 +74,10 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("C-Arc"));
 		//basicPetriNetsNode.add(new DefaultMutableTreeNode("Modifier Arc"));
 
+		DefaultMutableTreeNode xTPNNode = new DefaultMutableTreeNode("extTime PN");
+		xTPNNode.add(new DefaultMutableTreeNode("xPlace"));
+		xTPNNode.add(new DefaultMutableTreeNode("xTransition"));
+
 		DefaultMutableTreeNode otherPetriNetsNode = new DefaultMutableTreeNode("Other transitions");
 		otherPetriNetsNode.add(new DefaultMutableTreeNode("(TPN) Time"));
 		otherPetriNetsNode.add(new DefaultMutableTreeNode("(FPN) Functional"));
@@ -91,6 +95,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Tools");
 		rootNode.add(miscNode);
 		rootNode.add(basicPetriNetsNode);
+		rootNode.add(xTPNNode);
 		rootNode.add(otherPetriNetsNode);
 		rootNode.add(hierachicalNode);
 		
@@ -223,6 +228,12 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			case "Modifier Arc":
 				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_MODIFIER);
 				break;
+			case "xPlace":
+				guiManager.getWorkspace().setGraphMode(DrawModes.XPLACE);
+				break;
+			case "xTransition":
+				guiManager.getWorkspace().setGraphMode(DrawModes.XTRANSITION);
+				break;
 			case "Subnet T-type":
 				guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_T);
 				break;
@@ -258,6 +269,8 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				stochasticTrans, immediateTransIcon, deterministicTransIcon, scheduledTransIcon;
 
 		private ImageIcon arcIcon, arcIconRead, arcIconInh, arcIconRst, arcIconEql, arcIconModifier;
+
+		private ImageIcon xPlaceIcon, xTransIcon;
 		
 		private ImageIcon subnetT, subnetP, subnetPT;
 		
@@ -285,6 +298,9 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			arcIconRst = Tools.getResIcon16("/icons/arcReset.gif");
 			arcIconEql = Tools.getResIcon16("/icons/arcEqual.gif");
 			arcIconModifier = Tools.getResIcon16("/icons/arcModifier.gif");
+
+			xPlaceIcon= Tools.getResIcon16("/icons/xPlaceIcon.gif");
+			xTransIcon = Tools.getResIcon16("/icons/xTransIcon.gif");
 			
 			subnetT = Tools.getResIcon16("/icons/subnetT.gif");
 			subnetP = Tools.getResIcon16("/icons/subnetP.gif");
@@ -377,6 +393,14 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				case "Modifier Arc":
 					setIcon(arcIconModifier);
 					setToolTipText("Allows you to place an Modifier Arc on the sheet.");
+					break;
+				case "xPlace":
+					setIcon(xPlaceIcon);
+					setToolTipText("xTPN place with time range.");
+					break;
+				case "xTransition":
+					setIcon(xTransIcon);
+					setToolTipText("xTPN transition with TPN and DPN-like time ranges.");
 					break;
 				case "Subnet T-type":
 					setIcon(subnetT);
