@@ -116,7 +116,7 @@ public class Transition extends Node {
     /*  ***********************************************************************************
         ********************************    xTPN    ***************************************
         ***********************************************************************************  */
-    private boolean xTPNactive = false; //po narysowaniu w Holmesie będzie niezmienialne true
+    private boolean isXTPN = false; //po narysowaniu w Holmesie będzie niezmienialne true
         //co oznacza, że tej tranzycji NIE MOŻNA przekonwertować na klasyczną inaczej, niż
         //odpowiednio ustawiając poniższe parametry. (alphaL=0; alphaU=-1; betaL=betaU=0)
 
@@ -126,13 +126,14 @@ public class Transition extends Node {
     private double betaL_xTPN = 0.0;
     private double betaU_xTPN = 0.0;
 
-    private double tauAlpha_xTPN = 0.0;
-    private double tauBeta_xTPN = 0.0;
+    private double tauAlpha_xTPN = -1.0;
+    private double tauBeta_xTPN = -1.0;
 
-    private boolean isActive_xTPN = false;
-    private boolean isProducing_xTPN = false;
+    private boolean isActive_xTPN = true;
+    private boolean isProducing_xTPN = true;
     //grafika:
-    private boolean showTau_xTPN = false; //czy wyświetlać timery
+    private boolean showTauTime_xTPN = false; //czy wyświetlać timery
+
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
@@ -885,7 +886,6 @@ public class Transition extends Node {
 
     /**
      * Metoda włącza lub wyłącza tryb TPN
-     *
      * @param status boolean - true, jeśli tryb TPN ma być aktywny
      */
     public void setTPNstatus(boolean status) {
@@ -1308,5 +1308,120 @@ public class Transition extends Node {
      */
     public double getBetaU_xTPN() {
         return this.betaU_xTPN;
+    }
+
+    /**
+     * Metoda ustawia zegar tauAlpha tranzycji.
+     * @param value double - nowa wartość tauAlpha.
+     */
+    public void setTauAlpha_xTPN(double value) {
+        tauAlpha_xTPN = value;
+    }
+
+    /**
+     * Metoda modyfikuje zegar tauAlpha tranzycji.
+     * @param delta double - o ile zmienić zegar tauAlpha.
+     */
+    public void updateTauAlpha_xTPN(double delta) {
+        tauAlpha_xTPN += delta;
+    }
+
+    /**
+     * Metoda zwraca zegar tauAlpha tranzycji.
+     * @return double - aktualny czas tauAlpha.
+     */
+    public double getTauAlpha_xTPN() {
+        return tauAlpha_xTPN;
+    }
+
+    /**
+     * Metoda ustawia zegar tauBeta tranzycji.
+     * @param value double - nowa wartość tauBeta.
+     */
+    public void setTauBeta_xTPN(double value) {
+        tauBeta_xTPN = value;
+    }
+
+    /**
+     * Metoda modyfikuje zegar tauBeta tranzycji.
+     * @param delta double - o ile zmienić zegar tauBeta.
+     */
+    public void updateTauBeta_xTPN(double delta) {
+        tauBeta_xTPN += delta;
+    }
+
+    /**
+     * Metoda zwraca zegar tauBeta tranzycji.
+     * @return double - aktualny czas tauBeta.
+     */
+    public double getTauBeta_xTPN() {
+        return tauBeta_xTPN;
+    }
+
+    /**
+     * Metoda ustawia status zegarów tauAlpha i tauBeta - pokazywać czy nie.
+     * @param status boolean - true, jeśli zegary mają być pokazywane.
+     */
+    public void setTauTimersStatus(boolean status) {
+        showTauTime_xTPN = status;
+    }
+
+    /**
+     * Metoda zwraca status zegarów tauAlpha i tauBeta - pokazywać czy nie.
+     * @return boolean - true, jeśli zegary mają być pokazywane.
+     */
+    public boolean getTauTimersStatus() {
+        return showTauTime_xTPN;
+    }
+
+//    private boolean isActive_xTPN = true;
+//    private boolean isProducing_xTPN = true;
+
+    /**
+     * Metoda ustawia status aktywacji tranzycji xTPN.
+     * @param status boolean - true, jeśli tranzycja jest aktywna.
+     */
+    public void setActivationStatusXTPN(boolean status) {
+        isActive_xTPN = status;
+    }
+
+    /**
+     * Metoda zwraca status aktywacji tranzycji xTPN.
+     * @return boolean - true, jeśli tranzycja jest aktywna.
+     */
+    public boolean isActive_xTPN() {
+        return isActive_xTPN;
+    }
+
+    /**
+     * Metoda ustawia status produkcji tranzycji xTPN.
+     * @param status boolean - true, jeśli tranzycja rozpoczęła produkcję.
+     */
+    public void setProduction_xTPNstatus(boolean status) {
+        isProducing_xTPN = status;
+    }
+
+    /**
+     * Metoda zwraca status status produkcji tranzycji xTPN.
+     * @return boolean - true, jeśli tranzycja rozpoczęła produkcję.
+     */
+    public boolean isProducing_xTPN() {
+        return isProducing_xTPN;
+    }
+
+    /**
+     * Metoda włącza tryb XTPN dla tranzycji.
+     * @param status boolean - true, jeśli tryb XTPN ma być aktywny
+     */
+    public void setXTPNstatus(boolean status) {
+        isXTPN = status;
+    }
+
+    /**
+     * Metoda zwraca status tranzycji XTPN / wszystkie inne.
+     * @return boolean - true, jeśli XTPN aktywny
+     */
+    public boolean isXTPN() {
+        return isXTPN;
     }
 }

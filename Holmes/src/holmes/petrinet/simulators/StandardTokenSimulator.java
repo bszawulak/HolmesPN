@@ -40,7 +40,7 @@ public class StandardTokenSimulator implements IEngine {
 	}
 	
 	/**
-	 * Ustawianie podstawocyh parametrów silnika symulacji.
+	 * Ustawianie podstawowych parametrów silnika symulacji.
 	 * @param simulationType NetType - rodzaj symulowanej sieci
 	 * @param maxMode boolean - tryb maximum
 	 * @param singleMode boolean - true, jeśli tylko 1 tranzycja ma odpalić

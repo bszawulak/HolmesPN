@@ -32,15 +32,21 @@ import holmes.utilities.Tools;
  *
  */
 public final class ElementDraw {
-	private static Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);
-	private static Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
+	private static final Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);
+	private static final Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
+
+	private static final Font f_Big = new Font("TimesRoman", Font.BOLD, 14);
+	private static final Font f_BigL = new Font("TimesRoman", Font.PLAIN, 14);
 	
-	private static Color cRed = Color.red;
-	private static Color cGreen = Color.green;
-	private static Color cBlue = Color.blue;
-	private static Color cYellow = new Color(255,155,0) ;
-	private static Color cGrey = Color.gray;
-	private static Color cBlack = Color.black;
+	private static final Color cRed = Color.red;
+	private static final Color cGreen = Color.green;
+	private static final Color cBlue = Color.blue;
+	private static final Color cYellow = new Color(255,155,0) ;
+	private static final Color cGrey = Color.gray;
+	private static final Color cBlack = Color.black;
+
+	private static final Color darkGreen = new Color(0, 75, 0);
+	private static final Color lightSky = new Color(0, 185, 230);
 
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
@@ -48,22 +54,36 @@ public final class ElementDraw {
 	private ElementDraw() {
 
 	}
-	
-	private static void drawCrossHair(Graphics2D g, int x, int y, Color color){
-	    g.setColor(color);
-	    g.setStroke(new BasicStroke(4.0f));
-	    
-	    g.drawOval(x, y, 60, 60);
-	    g.fillArc(x+20, y + 41 , 20, 20, -45, -90);
-	    g.fillArc(x - 1, y + 20, 20, 20, -135, -90);
-	    g.fillArc(x + 20, y - 1, 20, 20, -225, -90);
-	    g.fillArc(x + 41, y + 20, 20, 20, -315, -90);
 
-	    g.fillArc(x+35, y + 36 , 20, 20, 0, -90);
-	    g.fillArc(x+5, y + 36 , 20, 20, -90, -90);
-	    g.fillArc(x+5, y + 5 , 20, 20, -180, -90);
-	    g.fillArc(x+35, y + 5 , 20, 20, -270, -90);
+	/**
+	 * Metoda rysuje celownik nad wskazanym elementem.
+	 * @param g Graphics2D - obiekt canvas
+	 * @param x int - poziom
+	 * @param y int - pion
+	 * @param color Color - kolor, a co?
+	 * @param xTPNelement boolean - true, jeśli XTPN
+	 */
+	private static void drawCrossHair(Graphics2D g, int x, int y, Color color, boolean xTPNelement){
+		if(xTPNelement) {
+			g.setColor(lightSky);
+		} else {
+			g.setColor(color);
+		}
+
+		g.setStroke(new BasicStroke(4.0f));
+
+		g.drawOval(x, y, 60, 60);
+		g.fillArc(x + 20, y + 41, 20, 20, -45, -90);
+		g.fillArc(x - 1, y + 20, 20, 20, -135, -90);
+		g.fillArc(x + 20, y - 1, 20, 20, -225, -90);
+		g.fillArc(x + 41, y + 20, 20, 20, -315, -90);
+
+		g.fillArc(x + 35, y + 36, 20, 20, 0, -90);
+		g.fillArc(x + 5, y + 36, 20, 20, -90, -90);
+		g.fillArc(x + 5, y + 5, 20, 20, -180, -90);
+		g.fillArc(x + 35, y + 5, 20, 20, -270, -90);
 	}
+
 
 	//TODO: znacznik tranzycji
 	/**
@@ -78,6 +98,7 @@ public final class ElementDraw {
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId, ElementDrawSettings eds) {
 		if(node instanceof Transition) { 
 			Transition trans = (Transition)node;
+			boolean xTPNtrans = trans.isXTPN();
 			Color portalColor = new Color(224,224,224);
 			Color portalSelColor = EditorResources.selectionColorLevel3;
 			Color normalColor = new Color(224,224,224);
@@ -101,12 +122,13 @@ public final class ElementDraw {
 				}
 			}
 			
-			for (ElementLocation el : trans.getNodeLocations(sheetId)) {
+			for (ElementLocation el : trans.getNodeLocations(sheetId)) { //rysowanie tranzycji
 				int radius = trans.getRadius();
+
 				g.setColor(Color.WHITE);
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, radius * 2, radius * 2);
 				
-				if(eds.view3d) {
+				if(eds.view3d && !xTPNtrans) { //nie dla XTPN
 					Color backup = g.getColor();
 					g.setColor(Color.DARK_GRAY);
 					g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width, nodeBounds.height);
@@ -173,8 +195,8 @@ public final class ElementDraw {
 						try {
 							//BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/selectedSign.png"));
 							//g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), nodeBounds.y-(trans.getRadius()+2));
-							
-							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.black);
+
+							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.black, xTPNtrans);
 						} catch (Exception e) { }
 					}
 				}
@@ -236,7 +258,7 @@ public final class ElementDraw {
 								g.drawLine(nodeBounds.x+15, nodeBounds.y+11, nodeBounds.x+13, nodeBounds.y+15);
 								g.drawLine(nodeBounds.x+13, nodeBounds.y+15, nodeBounds.x+16, nodeBounds.y+14);
 								g.drawLine(nodeBounds.x+16, nodeBounds.y+14, nodeBounds.x+14, nodeBounds.y+19);
-							} catch (Exception e) { }
+							} catch (Exception ignored) { }
 						}
 						
 						
@@ -297,7 +319,7 @@ public final class ElementDraw {
 
 				// -------- do tego miejsca wspólne dla Transition i TimeTransition --------
 				
-				//TIME TRANSITION
+				//dla tranzycji czasowych, w tym XTPN (po else)
 				if(trans.getTransType() == TransitionType.TPN) {
 					int dpnTextOffset = -5;
 					if(trans.getTPNstatus()) {
@@ -361,7 +383,76 @@ public final class ElementDraw {
 						g.setFont(f_plain);
 					}
 
+					//klepsydra:
 					g.setColor(Color.LIGHT_GRAY);
+					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 7, nodeBounds.x + 22, nodeBounds.y + 7);
+					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 23, nodeBounds.x + 22, nodeBounds.y + 23);
+					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 8, nodeBounds.x + 21, nodeBounds.y + 22);
+					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 22, nodeBounds.x + 21, nodeBounds.y + 8);
+					g.setColor(Color.black);
+					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
+				} else if(trans.getTransType() == TransitionType.XTPN) { //tranzycja XTPN
+					int dpnTextOffset = -5;
+					dpnTextOffset = -15;
+
+
+					trans.setAlphaL_xTPN(2.73, false);
+					trans.setAlphaU_xTPN(12.7344, false);
+					trans.setBetaL_xTPN(1.4473, false);
+					trans.setBetaU_xTPN(56.73333, false);
+					trans.setTauAlpha_xTPN(3.8456854);
+					trans.setTauBeta_xTPN(123.455354);
+					trans.setTauTimersStatus(true);
+
+					g.setColor(Color.blue);
+					//g.setFont(f_plain);
+					g.setFont(f_Big);
+
+					String alfa = "\u03B1:" + Tools.cutValueExt(trans.getAlphaL_xTPN(), 3) + " / "
+							+ Tools.cutValueExt(trans.getAlphaU_xTPN(), 3);
+					g.drawString(alfa, nodeBounds.x - 20, nodeBounds.y - 20);
+
+					g.setColor(darkGreen);
+					String beta = "\u03B2:" + Tools.cutValueExt(trans.getBetaL_xTPN(), 3) + " / "
+							+ Tools.cutValueExt(trans.getBetaU_xTPN(), 3);
+					g.drawString(beta, nodeBounds.x - 20, nodeBounds.y - 4);
+
+					g.setFont(f_BigL);
+					if(trans.getTauTimersStatus()) {
+						double alphaTime = trans.getTauAlpha_xTPN();
+						double betaTime =trans.getTauBeta_xTPN();
+
+						String timerA = "";
+						String timerB = "";
+						g.setColor(Color.red);
+						if(alphaTime < 0 && betaTime < 0) {
+							timerA = "\u03C4(\u03B1): #";
+							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
+							timerB = "\u03C4(\u03B2): #";
+							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
+
+						} else if(alphaTime < 0) {
+							timerA = "\u03C4(\u03B1): #";
+							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
+							timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(betaTime, 2);
+							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
+
+						} else if(betaTime < 0) {
+							timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(alphaTime, 2);
+							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
+							timerB = "\u03C4(\u03B2): #";
+							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
+						} else {
+							timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(alphaTime, 2);
+							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
+							timerB = "\u03C4(\u03B2): #";
+							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
+						}
+					}
+
+
+					//klepsydra:
+					g.setColor(Color.DARK_GRAY);
 					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 7, nodeBounds.x + 22, nodeBounds.y + 7);
 					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 23, nodeBounds.x + 22, nodeBounds.y + 23);
 					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 8, nodeBounds.x + 21, nodeBounds.y + 22);
@@ -421,7 +512,7 @@ public final class ElementDraw {
 					g.setColor(oldC);
 				}
 				
-				if(trans.isOffline() == true) {
+				if(trans.isOffline()) {
 					try {
 						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/offlineTransition2.png"));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
@@ -429,7 +520,7 @@ public final class ElementDraw {
 					} catch (Exception e) { }
 				}
 				
-				if(trans.isInvisible() == true) {
+				if(trans.isInvisible()) {
 					try {
 						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
@@ -438,7 +529,7 @@ public final class ElementDraw {
 				}
 				
 				//dodatkowy tekst nad tranzycją
-				if(trans.isShowedAddText() == true) {
+				if(trans.isShowedAddText()) {
 					String txt = trans.returnAddText();
 					
 					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2);
@@ -465,7 +556,7 @@ public final class ElementDraw {
 					g.setColor(EditorResources.selectionColorLevel2);
 					g.setStroke(EditorResources.glowStrokeLevel2);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan);
+					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan, xTPNtrans);
 					
 					if(eds.snoopyMode) {
 						g.setColor(portalSelColor);
@@ -517,7 +608,7 @@ public final class ElementDraw {
 					g.setColor(EditorResources.selectionColorLevel2);
 					g.setStroke(EditorResources.glowStrokeLevel2);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan);
+					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan, xTPNtrans);
 
 					if(eds.snoopyMode) {
 						g.setColor(portalSelColor);
@@ -617,6 +708,7 @@ public final class ElementDraw {
 			}
 		} else if(node instanceof Place) { // MIEJSCA  //TODO: znacznik miejsc
 			Place place = (Place)node;
+			boolean xTPNplace = place.isXTPNplace();
 			Color portalColor = Color.WHITE;
 			Color portalSelColor = EditorResources.selectionColorLevel3;
             Color subNetColor = EditorResources.glowMTCTransitonColorLevel3;
@@ -639,7 +731,7 @@ public final class ElementDraw {
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - place.getRadius(), el.getPosition().y - place.getRadius(), 
 						place.getRadius() * 2, place.getRadius() * 2);
 				
-				if(eds.view3d) {
+				if(eds.view3d && !xTPNplace) {
 					Color backup = g.getColor();	
 					g.setColor(Color.DARK_GRAY);
 					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
@@ -679,7 +771,7 @@ public final class ElementDraw {
 					try {
 						//BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/selectedSign.png"));
 						//g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), nodeBounds.y-(place.getRadius()-4));
-						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.black);
+						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.black, xTPNplace);
 					} catch (Exception e) {
 						
 					}
@@ -737,7 +829,30 @@ public final class ElementDraw {
 					} catch (Exception e) { }
 				}
 
-				
+
+				if(place.isXTPNplace()) { //miejsce XTPN
+					int dpnTextOffset = -5;
+					dpnTextOffset = -15;
+
+					place.setGammaL_xTPN(12.0554, false);
+					place.setGammaU_xTPN(29.0554, false);
+
+					g.setColor(Color.blue);
+					g.setFont(f_Big);
+
+					String gamma = "\u03B3:" + Tools.cutValueExt(place.getGammaL_xTPN(), 3) + " / "
+							+ Tools.cutValueExt(place.getGammaU_xTPN(), 3);
+					g.drawString(gamma, nodeBounds.x - 20, nodeBounds.y - 4);
+
+					//klepsydra:
+					g.setColor(Color.LIGHT_GRAY);
+					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 9, nodeBounds.x + 28, nodeBounds.y + 9);
+					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 28, nodeBounds.x + 28, nodeBounds.y + 28);
+					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.x + 27, nodeBounds.y + 27);
+					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 27, nodeBounds.x + 27, nodeBounds.y + 10);
+					g.setColor(Color.black);
+					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
+				}
 				
 				//RYSOWANIE PORTALU - OKRĄG W ŚRODKU
 				if (place.isPortal()) {
@@ -837,7 +952,7 @@ public final class ElementDraw {
 						
 					}
 					
-					drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.blue);
+					drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.blue, xTPNplace);
 				}
 				
 				drawTokens(g, place, nodeBounds);

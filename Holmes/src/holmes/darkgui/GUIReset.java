@@ -59,7 +59,7 @@ public class GUIReset {
 		if(status == true) {
 			Object[] options = {"Continue", "Save and continue", "Cancel",};
 			int n = JOptionPane.showOptionDialog(null,
-							"Network has been changed since last save. Continue and clear all data?",
+							"Net has been changed since the last save. Continue and clear all data?",
 							"Data clear warning", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 			if (n == 2) { //save the file
@@ -84,11 +84,9 @@ public class GUIReset {
 	
 	/**
 	 * Używana w przypadku krytycznego błędu rysowania sieci.
-	 * @return boolean - true zawsze
 	 */
-	public boolean emergencyRestart() {
+	public void emergencyRestart() {
 		clearAll();
-		return true;
 	}
 	
 	/**
@@ -152,9 +150,9 @@ public class GUIReset {
 	}
 	
 	/**
-	 * Kasowanie informacji o: inwariantanch, MCT, klastrach, przede wszystkich w kontekście
-	 * podokien programu. Przy okazji reset protokołu I/O.
-	 * @param clearWindows boolean - jeśli true, wtedy nakazuje czystkę dużych podokien programu, np. klastry
+	 * Kasowanie informacji o: inwariantanch, MCT, klastrach, przede wszystkim w kontekście
+	 * okien programu. Przy okazji reset protokołu I/O.
+	 * @param clearWindows boolean - jeśli true, wtedy nakazuje czystkę dużych okien programu, np. klastry
 	 */
 	public void reset2ndOrderData(boolean clearWindows) {
 		//"I nie będzie niczego."
@@ -168,7 +166,7 @@ public class GUIReset {
 			overlord.accessClusterWindow().resetWindow();
 		}
 	
-		if(t_invGenerated == true) {
+		if(t_invGenerated) {
 			overlord.accessNetTablesWindow().resetT_invData();
 			
 			resetCommunicationProtocol();
@@ -189,7 +187,7 @@ public class GUIReset {
 			
 		}
 		
-		if(p_invGenerated == true) {
+		if(p_invGenerated) {
 			resetCommunicationProtocol();
 			pNet.setP_InvMatrix(null);
 			
@@ -205,7 +203,7 @@ public class GUIReset {
 			overlord.log("P-invariants data removed from memory.", "text", true);
 		}
 		
-		if(mctGenerated == true) {
+		if(mctGenerated) {
 			if(overlord.getMctBox().getCurrentDockWindow() != null) {
 				overlord.getMctBox().getCurrentDockWindow().removeAll();
 				overlord.getMctBox().getCurrentDockWindow().resetMCT();
@@ -222,7 +220,7 @@ public class GUIReset {
 			overlord.log("MCT data removed from memory.", "text", true);
 		}
 		
-		if(clustersGenerated == true) {
+		if(clustersGenerated) {
 			if(overlord.getClusterSelectionBox().getCurrentDockWindow() != null) {
 				overlord.getClusterSelectionBox().getCurrentDockWindow().removeAll();
 				overlord.getClusterSelectionBox().getCurrentDockWindow().resetClusters();

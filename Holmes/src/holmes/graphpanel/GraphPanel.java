@@ -60,7 +60,7 @@ public class GraphPanel extends JComponent {
 	private boolean snapToMesh = false;
 	/** TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
 		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
-		SUBNET_T, SUBNET_P, SUBNET_PT, CPLACE, CARC */
+		SUBNET_T, SUBNET_P, SUBNET_PT, CPLACE, CARC, XTRANSITION, XPLACE */
 	public enum DrawModes { POINTER, ERASER, PLACE, 
 		TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, STOCHASTICTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
 		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
@@ -222,8 +222,8 @@ public class GraphPanel extends JComponent {
 	/**
 	 * Metoda pozwala na pobrania aktualnego prostokąta zaznaczenia, na podstawie którego
 	 * rysowany jest obszar zaznaczenia oraz wybierane są obiekty, które kwalifikują się aby
-	 * został zaznaczone. W sytuacji gdy zaznaczenie nie jest rysowane, przyjmuje wartość null.
-	 * @return Rectangle - prostokąd aktualnego zaznaczenia, z pola this.selectingRect
+	 * zostały zaznaczone. W sytuacji, gdy zaznaczenie nie jest rysowane, przyjmuje wartość null.
+	 * @return Rectangle - prostokąt aktualnego zaznaczenia, z pola this.selectingRect
 	 */
 	public Rectangle getSelectingRect() {
 		return selectingRect;
@@ -247,7 +247,7 @@ public class GraphPanel extends JComponent {
 		try {
 			drawPetriNet(g2d);
 		} catch (Exception e) {
-			overlord.log("CRITICAL unknown and urecoverable error while drawing net. "
+			overlord.log("CRITICAL unknown and unrecoverable error while drawing net. "
 					+ "Loaded file probably corrupted. Restarting program.", "error", true);
 			overlord.reset.emergencyRestart();
 		}
@@ -572,6 +572,36 @@ public class GraphPanel extends JComponent {
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
+		}
+	}
+
+	/**
+	 * Metoda związana z mousePressed(MouseEvent).
+	 * @param p Point - punkt dodawania tranzycji xTPN
+	 */
+	private void addNewXTPNTransition(Point p) {
+		if (isLegalLocation(p)) {
+			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, p);
+			n.setTransType(TransitionType.XTPN);
+			n.setXTPNstatus(true);
+			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
+			getNodes().add(n);
+			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans(); // TODO: ?????
+		}
+	}
+
+	/**
+	 * Dodawanie miejsca sieci XTPN - menu kontekstowe.
+	 * @param p Point - punkt dodawania miejsca
+	 */
+	private void addNewNXTPNPlace(Point p) {
+		if (isLegalLocation(p)) {
+			Place n = new Place(IdGenerator.getNextId(), this.sheetId, p);
+			n.setXTPNplaceStatus(true);
+			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
+			getNodes().add(n);
+			overlord.getWorkspace().getProject().accessStatesManager().addPlace();
+			overlord.getWorkspace().getProject().accessSSAmanager().addPlace();
 		}
 	}
 	
@@ -1022,6 +1052,18 @@ public class GraphPanel extends JComponent {
 						overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						addNewTimeTransition(mousePt);
+						overlord.reset.reset2ndOrderData(true);
+						overlord.markNetChange();
+						break;
+					case XTRANSITION:
+						overlord.getWorkspace().getProject().restoreMarkingZero();
+						addNewXTPNTransition(mousePt);
+						overlord.reset.reset2ndOrderData(true);
+						overlord.markNetChange();
+						break;
+					case XPLACE:
+						overlord.getWorkspace().getProject().restoreMarkingZero();
+						addNewNXTPNPlace(mousePt);
 						overlord.reset.reset2ndOrderData(true);
 						overlord.markNetChange();
 						break;

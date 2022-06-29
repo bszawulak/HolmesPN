@@ -386,7 +386,7 @@ public final class Tools {
 	/**
 	 * Metoda formatuje liczbę typu double do wyznaczonej liczby miejsc po przecinku, a następnie
 	 * zwraca ją jako String.
-	 * @param evalMSS double - liczba do przycięcia
+	 * @param value - double; liczba do przycięcia
 	 * @return String - reprezentacja liczby
 	 */
 	public static String cutValue(double value) {

@@ -71,6 +71,7 @@ public class Place extends Node {
 	 ********************************    xTPN    ***************************************
 	 ***********************************************************************************  */
 
+	private boolean isXTPN = false; //czy tokeny marzą o elektrycznych tranzycjach?
 	private double gammaL_xTPN = 0.0;
 	private double gammaU_xTPN = Double.MAX_VALUE - 1;
 
@@ -686,5 +687,21 @@ public class Place extends Node {
 	 */
 	public double getGammaU_xTPN() {
 		return this.gammaU_xTPN;
+	}
+
+	/**
+	 * Metoda włącza status miejsca typu XTPN.
+	 * @param status boolean - true, jeśli tryb XTPN ma być aktywny dla miejsca.
+	 */
+	public void setXTPNplaceStatus(boolean status) {
+		isXTPN = status;
+	}
+
+	/**
+	 * Metoda zwraca status XTPN dla miejsca.
+	 * @return boolean - true, jeśli to miejsce typu XTPN
+	 */
+	public boolean isXTPNplace() {
+		return isXTPN;
 	}
 }
