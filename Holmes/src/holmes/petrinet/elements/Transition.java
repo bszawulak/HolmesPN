@@ -22,6 +22,11 @@ import holmes.petrinet.functions.FunctionsTools;
  * @author students - pierwsza wersja
  * @author MR - tak tu namieszałem, że autorzy swojej roboty by już nie poznali :)
  * Behold: uber-tranzycja, wszystkie do tej pory zaimplementowane rodzaje tranzycji w jednej klasie
+ *
+ * [2022-06-29 MR] I-am-a-genius-meme.jpg; skoro wszystko w jednej klasie, to jedziemy: xTPN też tu się znajdzie.
+ *          W końcu to tylko 6 liczb opisujących cechy xTPN oraz pewnie zbiorek zmiennych rządzących
+ *          stylem rysowania w Holmesie. Co może pójść nie tak... ***** inżynierię oprogramowania, alleluja i
+ *          do przodu. XTPN, to brzmi dumnie. Jak science fiction. Jak "Okręt zwany Francis".
  */
 public class Transition extends Node {
     private static final long serialVersionUID = -4981812911464514746L;
@@ -29,7 +34,7 @@ public class Transition extends Node {
     /**
      * PN, TPN, CPNbasic
      */
-    public enum TransitionType {PN, TPN, CPNbasic} //, DPN, TDPN, CPNbasic }
+    public enum TransitionType {PN, TPN, CPNbasic, XTPN} //, DPN, TDPN, CPNbasic }
 
     private TransitionType transType;
 
@@ -107,6 +112,27 @@ public class Transition extends Node {
     //inne:
     private int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 
+
+    /*  ***********************************************************************************
+        ********************************    xTPN    ***************************************
+        ***********************************************************************************  */
+    private boolean xTPNactive = false; //po narysowaniu w Holmesie będzie niezmienialne true
+        //co oznacza, że tej tranzycji NIE MOŻNA przekonwertować na klasyczną inaczej, niż
+        //odpowiednio ustawiając poniższe parametry. (alphaL=0; alphaU=-1; betaL=betaU=0)
+
+    //parametry xTPN:
+    private double alphaL_xTPN = 0.0;
+    private double alphaU_xTPN = 0.0;
+    private double betaL_xTPN = 0.0;
+    private double betaU_xTPN = 0.0;
+
+    private double tauAlpha_xTPN = 0.0;
+    private double tauBeta_xTPN = 0.0;
+
+    private boolean isActive_xTPN = false;
+    private boolean isProducing_xTPN = false;
+    //grafika:
+    private boolean showTau_xTPN = false; //czy wyświetlać timery
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
@@ -1151,4 +1177,136 @@ public class Transition extends Node {
         }
     }
 
+    /* Uprzejmie prosi się o nie pisane żadnego kodu niezwiązanego z xTPN POD tym komentarzem
+       **************************************************************************************
+       *********************************        xTPN      ***********************************
+       **************************************************************************************
+     */
+
+    /**
+     * Metoda resetuje zegary tranzycji xTPN
+     */
+    public void resetTimeVariables_xTPN() {
+        //TODO: pewnie coś, wyjdzie przy symulatorze
+        tauAlpha_xTPN = -1.0;
+        tauBeta_xTPN = -1.0;
+        isActive_xTPN = false;
+        isProducing_xTPN = false;
+    }
+
+    /**
+     * Metoda ustawia dolną wartość alphaLower dla xTPN.
+     * @param value (double) czas alfaL (=EFT)
+     * @param force (boolean) czy wymusić wartość bez weryfikacji
+     */
+    public void setAlphaL_xTPN(double value, boolean force) {
+        if(force) {
+            this.alphaL_xTPN = value;
+            return;
+        }
+        if (value < 0) {
+            this.alphaL_xTPN = 0.0;
+            return;
+        }
+        if (value > alphaU_xTPN) { //musi być mniejszy równy niż alphaU
+            this.alphaL_xTPN = alphaU_xTPN;
+            return;
+        }
+        this.alphaL_xTPN = value;
+    }
+
+    /**
+     * Metoda pozwala odczytać dolną wartość alphaLower dla xTPN.
+     * @return (double) : czas alphaLower.
+     */
+    public double getAlphaL_xTPN() {
+        return this.alphaL_xTPN;
+    }
+
+    /**
+     * Metoda ustawia górną wartość alphaUpper dla xTPN.
+     * @param value (double) czas alfaU (=LFT)
+     * @param force (boolean) czy wymusić wartość bez weryfikacji
+     */
+    public void setAlphaU_xTPN(double value, boolean force) {
+        if(force) {
+            this.alphaU_xTPN = value;
+            return;
+        }
+        if (value < 0) {
+            this.alphaU_xTPN = -1.0; //domyślnie do redukcji -> classicalPN
+            return;
+        }
+        if (value < alphaL_xTPN) { //musi być większy równy niż alphaL
+            this.alphaU_xTPN = alphaL_xTPN;
+            return;
+        }
+        this.alphaU_xTPN = value;
+    }
+
+    /**
+     * Metoda pozwala odczytać górną wartość alphaUpper dla xTPN.
+     * @return (double) : czas alphaUpper.
+     */
+    public double getAlphaU_xTPN() {
+        return this.alphaU_xTPN;
+    }
+
+    /**
+     * Metoda ustawia dolną wartość betaLower dla xTPN.
+     * @param value (double) czas betaL (=DPN duration lower value)
+     * @param force (boolean) czy wymusić wartość bez weryfikacji
+     */
+    public void setBetaL_xTPN(double value, boolean force) {
+        if(force) {
+            this.betaL_xTPN = value;
+            return;
+        }
+        if (value < 0) {
+            this.betaL_xTPN = 0.0;
+            return;
+        }
+        if (value > betaU_xTPN) { //musi być mniejszy równy niż betaU
+            this.betaL_xTPN = betaU_xTPN;
+            return;
+        }
+        this.betaL_xTPN = value;
+    }
+
+    /**
+     * Metoda pozwala odczytać dolną wartość betaLower dla xTPN.
+     * @return (double) : czas betaLower.
+     */
+    public double getBetaL_xTPN() {
+        return this.betaL_xTPN;
+    }
+
+    /**
+     * Metoda ustawia dolną wartość betaUpper dla xTPN.
+     * @param value (double) czas betaU (=DPN duration upper value)
+     * @param force (boolean) czy wymusić wartość bez weryfikacji
+     */
+    public void setBetaU_xTPN(double value, boolean force) {
+        if(force) {
+            this.betaU_xTPN = value;
+            return;
+        }
+        if (value < 0) {
+            this.betaU_xTPN = 0.0; //domyślnie do redukcji -> classical DPN
+            return;
+        }
+        if (value < betaL_xTPN) { //musi być większy równy niż betaL
+            this.betaU_xTPN = betaL_xTPN;
+            return;
+        }
+        this.betaU_xTPN = value;
+    }
+
+    /**
+     * Metoda pozwala odczytać górną wartość betaUpper dla xTPN.
+     * @return (double) : czas betaUpper.
+     */
+    public double getBetaU_xTPN() {
+        return this.betaU_xTPN;
+    }
 }

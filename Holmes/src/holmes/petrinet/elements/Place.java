@@ -9,6 +9,7 @@ import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
+import holmes.petrinet.functions.FunctionContainer;
 
 /**
  * Klasa implementująca miejsce sieci Petriego. Zapewnia implementację stanu (przechowywania tokenów) oraz 
@@ -16,6 +17,9 @@ import holmes.petrinet.data.IdGenerator;
  * 
  * @author students
  * @author MR - poprawki
+ *
+ * [2022-06-29 MR] xTPN code incoming. Tokeny zyskują osobowość! (muszę, teraz już MUSZĘ doimplementować
+ * 				króliczki zamiast czerwonych kulek. (Albo bombki. "W kszyłcie grzyba. I cygara.")
  *
  */
 public class Place extends Node {
@@ -62,6 +66,17 @@ public class Place extends Node {
 	public int reserved3yellow = 0;
 	public int reserved4grey = 0;
 	public int reserved5black = 0;
+
+	/*  ***********************************************************************************
+	 ********************************    xTPN    ***************************************
+	 ***********************************************************************************  */
+
+	private double gammaL_xTPN = 0.0;
+	private double gammaU_xTPN = Double.MAX_VALUE - 1;
+
+	//grafika:
+	private boolean showTokenSet_xTPN = false; //czy wyświetlać zbiór tokenów
+	private ArrayList<Double> multisetK;
 	
 	/**
 	 * Konstruktor obiektu miejsca sieci.
@@ -73,6 +88,8 @@ public class Place extends Node {
 		super(sheetId, nodeId, placePosition, realRadius);
 		this.setName("Place" + Integer.toString(IdGenerator.getNextPlaceId()));
 		this.setType(PetriNetElementType.PLACE);
+
+		this.multisetK = new ArrayList<Double>();
 	}
 
 	/**
@@ -89,6 +106,8 @@ public class Place extends Node {
 		this.setComment(comment);
 		this.setTokensNumber(tokensNumber);
 		this.setType(PetriNetElementType.PLACE);
+
+		this.multisetK = new ArrayList<Double>();
 	}
 
 	/**
@@ -100,6 +119,8 @@ public class Place extends Node {
 		super(nodeId, elementLocations, realRadius);
 		this.setName("Place" + Integer.toString(IdGenerator.getNextPlaceId()));
 		this.setType(PetriNetElementType.PLACE);
+
+		this.multisetK = new ArrayList<Double>();
 	}
 
 	/**
@@ -601,5 +622,69 @@ public class Place extends Node {
 		this.txtYoff = 0;
 		this.valueXoff = 0;
 		this.valueYoff = 0;
+	}
+
+	/* Uprzejmie prosi się o nie pisane żadnego kodu niezwiązanego z xTPN POD tym komentarzem
+	 **************************************************************************************
+	 *********************************        xTPN      ***********************************
+	 **************************************************************************************
+	 */
+
+	/**
+	 * Metoda ustawia dolną wartość gammaLower dla xTPN.
+	 * @param value (double) czas gammaL (=minimalny czas aktywacji.)
+	 * @param force (boolean) czy wymusić wartość bez weryfikacji
+	 */
+	public void setGammaL_xTPN(double value, boolean force) {
+		if(force) {
+			this.gammaL_xTPN = value;
+			return;
+		}
+		if (value < 0) {
+			this.gammaL_xTPN = 0.0;
+			return;
+		}
+		if (value > gammaU_xTPN) { //musi być mniejszy równy niż gammaU
+			this.gammaL_xTPN = gammaU_xTPN;
+			return;
+		}
+		this.gammaL_xTPN = value;
+	}
+
+	/**
+	 * Metoda pozwala odczytać dolną wartość gammaLower dla xTPN.
+	 * @return (double) : czas gammaLower, minimalny czas aktywacji.
+	 */
+	public double getGammaL_xTPN() {
+		return this.gammaL_xTPN;
+	}
+
+	/**
+	 * Metoda ustawia dolną wartość gammaUpper dla xTPN.
+	 * @param value (double) czas gammaU (=token lifetime limit)
+	 * @param force (boolean) czy wymusić wartość bez weryfikacji
+	 */
+	public void setGammaU_xTPN(double value, boolean force) {
+		if(force) {
+			this.gammaU_xTPN = value;
+			return;
+		}
+		if (value < 0) {
+			this.gammaU_xTPN = -1.0; //domyślnie do redukcji -> classical Place
+			return;
+		}
+		if (value < gammaL_xTPN) { //musi być większy równy niż gammaL
+			this.gammaU_xTPN = gammaL_xTPN;
+			return;
+		}
+		this.gammaU_xTPN = value;
+	}
+
+	/**
+	 * Metoda pozwala odczytać górną wartość gammaUpper dla xTPN.
+	 * @return (double) : czas gammaUpper.
+	 */
+	public double getGammaU_xTPN() {
+		return this.gammaU_xTPN;
 	}
 }
