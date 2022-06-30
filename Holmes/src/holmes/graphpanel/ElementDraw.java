@@ -395,6 +395,7 @@ public final class ElementDraw {
 					int dpnTextOffset = -5;
 					dpnTextOffset = -15;
 
+					// _XTPN mark
 
 					trans.setAlphaL_xTPN(2.73, false);
 					trans.setAlphaU_xTPN(12.7344, false);
@@ -408,14 +409,22 @@ public final class ElementDraw {
 					//g.setFont(f_plain);
 					g.setFont(f_Big);
 
-					String alfa = "\u03B1:" + Tools.cutValueExt(trans.getAlphaL_xTPN(), 3) + " / "
-							+ Tools.cutValueExt(trans.getAlphaU_xTPN(), 3);
-					g.drawString(alfa, nodeBounds.x - 20, nodeBounds.y - 20);
+					if(trans.isAlphaActiveXTPN()) {
+						String alfa = "\u03B1:" + Tools.cutValueExt(trans.getAlphaL_xTPN(), 3) + " / "
+								+ Tools.cutValueExt(trans.getAlphaU_xTPN(), 3);
 
-					g.setColor(darkGreen);
-					String beta = "\u03B2:" + Tools.cutValueExt(trans.getBetaL_xTPN(), 3) + " / "
-							+ Tools.cutValueExt(trans.getBetaU_xTPN(), 3);
-					g.drawString(beta, nodeBounds.x - 20, nodeBounds.y - 4);
+						if(!trans.isBetaActiveXTPN()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
+							g.drawString(alfa, nodeBounds.x - 20, nodeBounds.y - 4);
+						} else {
+							g.drawString(alfa, nodeBounds.x - 20, nodeBounds.y - 20);
+						}
+					}
+					if(trans.isBetaActiveXTPN()) {
+						g.setColor(darkGreen);
+						String beta = "\u03B2:" + Tools.cutValueExt(trans.getBetaL_xTPN(), 3) + " / "
+								+ Tools.cutValueExt(trans.getBetaU_xTPN(), 3);
+						g.drawString(beta, nodeBounds.x - 20, nodeBounds.y - 4);
+					}
 
 					g.setFont(f_BigL);
 					if(trans.getTauTimersStatus()) {

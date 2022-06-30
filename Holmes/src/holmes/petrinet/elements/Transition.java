@@ -125,13 +125,16 @@ public class Transition extends Node {
     private double alphaU_xTPN = 0.0;
     private double betaL_xTPN = 0.0;
     private double betaU_xTPN = 0.0;
-    private boolean alphaMode = true;
-    private boolean betaMode = true;
+    private boolean alphaMode_xTPN = true;
+    private boolean betaMode_xTPN = true;
     private double tauAlpha_xTPN = -1.0;
     private double tauBeta_xTPN = -1.0;
 
-    private boolean isActive_xTPN = true;
-    private boolean isProducing_xTPN = true;
+    //jeśli miejsca wejściowe tracą szybciej tokeny ze starości niż z
+    //produkcji, mniejszamy tau Alfa i Beta (prawdopodobieństwo).
+    private boolean massActionKinetics = false;
+    private boolean isActive_xTPN = false;
+    private boolean isProducing_xTPN = false;
     //grafika:
     private boolean showTauTime_xTPN = false; //czy wyświetlać timery
 
@@ -1431,22 +1434,22 @@ public class Transition extends Node {
      * @param status boolean - true, jeśli tryb alfa-XTPN ma być aktywny
      */
     public void setAlphaXTPNstatus(boolean status) {
-        alphaMode = status;
+        alphaMode_xTPN = status;
     }
 
     /**
-     * Metoda zwraca status alfa tranzycji XTPN / wszystkie inne.
+     * Metoda zwraca status alfa tranzycji XTPN.
      * @return boolean - true, jeśli status alfa-XTPN aktywny
      */
     public boolean isAlphaActiveXTPN() {
-        return alphaMode;
+        return alphaMode_xTPN;
     }
     /**
      * Metoda włącza tryb beta-XTPN dla tranzycji.
      * @param status boolean - true, jeśli tryb beta-XTPN ma być aktywny
      */
     public void setBetaXTPNstatus(boolean status) {
-        betaMode = status;
+        betaMode_xTPN = status;
     }
 
     /**
@@ -1454,6 +1457,22 @@ public class Transition extends Node {
      * @return boolean - true, jeśli status beta-XTPN aktywny
      */
     public boolean isBetaActiveXTPN() {
-        return betaMode;
+        return betaMode_xTPN;
+    }
+
+    /**
+     * Metoda włącza tryb mass-action kinetics XTPN dla tranzycji.
+     * @param status boolean - true, jeśli tryb mass-action kinetics XTPN ma być aktywny
+     */
+    public void setMassActionKineticsXTPNstatus(boolean status) {
+        massActionKinetics = status;
+    }
+
+    /**
+     * Metoda zwraca status trybu mass-action kinetics XTPN dla tranzycji.
+     * @return boolean - true, jeśli tryb mass-action kinetics XTPN ma być aktywny
+     */
+    public boolean isMassActionKineticsActiveXTPN() {
+        return massActionKinetics;
     }
 }

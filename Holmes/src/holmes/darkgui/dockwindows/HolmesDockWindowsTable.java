@@ -2511,10 +2511,9 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(nameField);
 
-        // T-TRANSITION COMMENT
+        // XTPN-TRANSITION COMMENT
         JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
         comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-        columnA_Y += 20;
         components.add(comLabel);
 
         JTextArea commentField = new JTextArea(transition.getComment());
@@ -2538,55 +2537,88 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(CreationPanel);
 
 
-        //XTPN transition modes:
+        //XTPN włączanie lub wyłączanie funkcji alfa i beta
+        columnA_Y += 20;
+
         JLabel changeTypeLabel = new JLabel("Time mode:", JLabel.LEFT);
-        changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        changeTypeLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength, 20);
         components.add(changeTypeLabel);
 
-        alfaModeCheckBox = new JCheckBox("α MODE", transition.isPortal());
-        alfaModeCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
-        alfaModeCheckBox.setSelected(((Transition) element).isAlphaActiveXTPN());
-        alfaModeCheckBox.setBackground(Color.blue);
-        alfaModeCheckBox.addItemListener(e -> {
+        JButton buttonAlfaMode = new JButton("Alfa: ON");
+        buttonAlfaMode.setName("AlfaButton1");
+        buttonAlfaMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonAlfaMode.setBounds(columnB_posX, columnB_Y +=25, 70, 20);
+        if(transition.isAlphaActiveXTPN()) {
+            buttonAlfaMode.setText("Alfa: ON");
+            buttonAlfaMode.setBackground(Color.GREEN);
+        } else {
+            buttonAlfaMode.setText("Alfa: OFF");
+            buttonAlfaMode.setBackground(Color.RED);
+        }
+        buttonAlfaMode.addActionListener(e -> {
             if (doNotUpdate)
                 return;
-            JCheckBox box = (JCheckBox) e.getSource();
-            if (box.isSelected()) {
-                ((Transition) element).setAlphaXTPNstatus(true);
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-            } else {
+
+            JButton button = (JButton) e.getSource();
+            if (transition.isAlphaActiveXTPN()) {
                 ((Transition) element).setAlphaXTPNstatus(false);
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                button.setText("Alfa: OFF");
+                button.setBackground(Color.RED);
+            } else {
+                ((Transition) element).setAlphaXTPNstatus(true);
+                button.setText("Alfa: ON");
+                button.setBackground(Color.GREEN);
             }
+            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(transition.getLastLocation());
         });
-        components.add(alfaModeCheckBox);
+        components.add(buttonAlfaMode);
 
-        betaModeCheckBox = new JCheckBox("β MODE", transition.isPortal());
-        betaModeCheckBox.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
-        betaModeCheckBox.setSelected(((Transition) element).isBetaActiveXTPN());
-        betaModeCheckBox.setBackground(darkGreen);
-        betaModeCheckBox.addItemListener(e -> {
+        JButton buttonBetaMode = new JButton("Beta: ON");
+        buttonBetaMode.setName("BetaButton1");
+        buttonBetaMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonBetaMode.setBounds(columnB_posX+71, columnB_Y, 70, 20);
+        if(transition.isBetaActiveXTPN()) {
+            buttonBetaMode.setText("Beta: ON");
+            buttonBetaMode.setBackground(Color.GREEN);
+        } else {
+            buttonBetaMode.setText("Beta: OFF");
+            buttonBetaMode.setBackground(Color.RED);
+        }
+        buttonBetaMode.addActionListener(e -> {
             if (doNotUpdate)
                 return;
-            JCheckBox box = (JCheckBox) e.getSource();
-            if (box.isSelected()) {
-                ((Transition) element).setBetaXTPNstatus(true);
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-            } else {
+            JButton button = (JButton) e.getSource();
+            if (transition.isBetaActiveXTPN()) {
                 ((Transition) element).setBetaXTPNstatus(false);
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                button.setText("Beta: OFF");
+                button.setBackground(Color.RED);
+            } else {
+                ((Transition) element).setBetaXTPNstatus(true);
+                button.setText("Beta: ON");
+                button.setBackground(Color.GREEN);
             }
+            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+
+
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(transition.getLastLocation());
         });
-        components.add(betaModeCheckBox);
+        components.add(buttonBetaMode);
 
-
-        // EFT / LFT TIMES:
-        JLabel minMaxLabel = new JLabel("EFT / LFT:", JLabel.LEFT);
-        minMaxLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        // alfa ranges:
+        JLabel minMaxLabel = new JLabel("\u03B1 (min/max): ", JLabel.LEFT);
+        minMaxLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength+10, 20);
         components.add(minMaxLabel);
-        JFormattedTextField minTimeField = new JFormattedTextField();
-        minTimeField.setValue(transition.getEFT());
-        minTimeField.addPropertyChangeListener("value", e -> {
+
+        JFormattedTextField alphaMinTextField = new JFormattedTextField();
+        alphaMinTextField.setValue(transition.getAlphaL_xTPN());
+        alphaMinTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
@@ -2594,13 +2626,17 @@ public class HolmesDockWindowsTable extends JPanel {
                 System.out.println(ex.getMessage());
             }
             double min = (double) field.getValue();
-            setMinFireTime(min);
+            if(!setMinAlfaTime(min)) {
+                doNotUpdate = true;
+                field.setValue(transition.getAlphaL_xTPN());
+                doNotUpdate = false;
+            }
             overlord.markNetChange();
         });
 
-        JFormattedTextField maxTimeField = new JFormattedTextField();
-        maxTimeField.setValue(transition.getLFT());
-        maxTimeField.addPropertyChangeListener("value", e -> {
+        JFormattedTextField alphaMaxTextField = new JFormattedTextField();
+        alphaMaxTextField.setValue(transition.getAlphaU_xTPN());
+        alphaMaxTextField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
@@ -2612,33 +2648,62 @@ public class HolmesDockWindowsTable extends JPanel {
             overlord.markNetChange();
         });
 
-        JPanel minTimeSpinnerPanel = new JPanel();
-        minTimeSpinnerPanel.setLayout(new BoxLayout(minTimeSpinnerPanel, BoxLayout.X_AXIS));
-        minTimeSpinnerPanel.add(minTimeField);
-        minTimeSpinnerPanel.add(new JLabel(" / "));
-        minTimeSpinnerPanel.add(maxTimeField);
-        minTimeSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, 200, 20);
-        components.add(minTimeSpinnerPanel);
+        if(!transition.isAlphaActiveXTPN()) {
+            alphaMinTextField.setEnabled(false);
+            alphaMaxTextField.setEnabled(false);
+        }
+        JPanel alfaRangesPanel = new JPanel();
+        alfaRangesPanel.setLayout(new BoxLayout(alfaRangesPanel, BoxLayout.X_AXIS));
+        alfaRangesPanel.add(alphaMinTextField);
+        alfaRangesPanel.add(new JLabel(" / "));
+        alfaRangesPanel.add(alphaMaxTextField);
+        alfaRangesPanel.setBounds(columnA_posX + 90, columnB_Y += 20, 200, 20);
+        components.add(alfaRangesPanel);
 
-        //DURATION:
-        JLabel durationLabel = new JLabel("Duration:", JLabel.LEFT);
-        durationLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-        components.add(durationLabel);
-        JFormattedTextField durationField = new JFormattedTextField();
-        durationField.setValue(transition.getDPNduration());
-        durationField.setBounds(columnA_posX + 90, columnB_Y += 20, 90, 20);
-        durationField.addPropertyChangeListener("value", e -> {
+        //Beta:
+        JLabel betaLabel = new JLabel("\u03B2 (min/max): ", JLabel.LEFT);
+        betaLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength+10, 20);
+        components.add(betaLabel);
+
+        JFormattedTextField betaLowTextField = new JFormattedTextField();
+        betaLowTextField.setValue(transition.getEFT());
+        betaLowTextField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
-                double time = (double) field.getValue();
-                setDurationTime(time);
-                overlord.markNetChange();
-            } catch (Exception ex) {
+            } catch (ParseException ex) {
                 System.out.println(ex.getMessage());
             }
+            double min = (double) field.getValue();
+            setMinFireTime(min);
+            overlord.markNetChange();
         });
-        components.add(durationField);
+
+        JFormattedTextField betaUpTextField = new JFormattedTextField();
+        betaUpTextField.setValue(transition.getLFT());
+        betaUpTextField.addPropertyChangeListener("value", e -> {
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+            }
+            double max = (double) field.getValue();
+            setMaxFireTime(max);
+            overlord.markNetChange();
+        });
+
+        if(!transition.isBetaActiveXTPN()) {
+            betaLowTextField.setEnabled(false);
+            betaUpTextField.setEnabled(false);
+        }
+        JPanel betaRangesPanel = new JPanel();
+        betaRangesPanel.setLayout(new BoxLayout(betaRangesPanel, BoxLayout.X_AXIS));
+        betaRangesPanel.add(betaLowTextField);
+        betaRangesPanel.add(new JLabel(" / "));
+        betaRangesPanel.add(betaUpTextField);
+        betaRangesPanel.setBounds(columnA_posX + 90, columnB_Y += 20, 200, 20);
+        components.add(betaRangesPanel);
 
         //columnA_Y+=40;
         JCheckBox tpnBox = new JCheckBox("TPN active", transition.getTPNstatus());
@@ -7056,7 +7121,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia nową wartość czasu EFT dla tranzycji czasowej.
-     *
      * @param x double - nowe EFT
      */
     private void setMinFireTime(double x) {
@@ -7069,7 +7133,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia nową wartość czasu LFT dla tranzycji czasowej.
-     *
      * @param x double - nowe LFT
      */
     private void setMaxFireTime(double x) {
@@ -7117,6 +7180,28 @@ public class HolmesDockWindowsTable extends JPanel {
             transition.setDPNstatus(status);
             repaintGraphPanel();
         }
+    }
+
+    //XTPN:
+    /**
+     * Metoda ustawia nową wartość czasu Alfa dla tranzycji XTPN.
+     * @param value double - nowa wartość alfa-lower
+     * @return true - jeżeli zmiana wartości się udała
+     */
+    private boolean setMinAlfaTime(double value) {
+        if (mode == XTPN_TRANS) {
+            Transition transition = (Transition) element;
+            double alfaMax = transition.getAlphaU_xTPN();
+            if(value > alfaMax) {
+                JOptionPane.showMessageDialog(null, "AlphaMin value cannot be higher than AlphaMax. \n"
+                        +"AlphaMax: " + alfaMax,
+                        "Alpha range error", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+            transition.setAlphaL_xTPN(value, false);
+            repaintGraphPanel();
+        }
+        return true;
     }
 
     /**
@@ -7174,7 +7259,6 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda sprawdza, czy dla danego węzła sieci lokalizacja jego nazwy nie wykracza poza ramy
      * obrazu sieci - dla współrzędnej X
-     *
      * @param x  int - współrzędna X
      * @param n  Node - wierzchołek sieci
      * @param el ElementLocation - obiekt lokalizacji wierzchołka
@@ -7201,7 +7285,6 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Zmiana nazwy elementu sieci, dokonywana poza listenerem, który
      * jest klasa anonimową (i nie widzi pola element).
-     *
      * @param newName String - nowa nazwa
      */
     private void changeName(String newName) {
