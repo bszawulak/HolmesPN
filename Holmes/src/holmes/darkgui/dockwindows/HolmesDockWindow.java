@@ -13,6 +13,7 @@ import holmes.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionA
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
+import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
@@ -263,7 +264,11 @@ public class HolmesDockWindow extends SingleDock {
             if (e.getElementLocationGroup().size() > 0) {
                 Node n = e.getElementLocation().getParentNode();
                 if (n.getType() == PetriNetElementType.PLACE) {
-                    setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.PLACE, n, e.getElementLocation()));
+                    if(((Place) n).isXTPNplace()) {
+                        setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.XTPNPLACE, n, e.getElementLocation()));
+                    } else {
+                        setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.PLACE, n, e.getElementLocation()));
+                    }
                 } else if (n.getType() == PetriNetElementType.META) {
                     setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.META, n, e.getElementLocation()));
                 } else {
@@ -272,6 +277,8 @@ public class HolmesDockWindow extends SingleDock {
                             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.TRANSITION, n, e.getElementLocation()));
                         } else if (((Transition) n).getTransType() == TransitionType.TPN) {
                             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.TIMETRANSITION, n, e.getElementLocation()));
+                        } else if (((Transition) n).getTransType() == TransitionType.XTPN) {
+                            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.XTPNTRANSITION, n, e.getElementLocation()));
                         } else if (((Transition) n).getTransType() == TransitionType.CPNbasic) {
                             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CTRANSITION, n, e.getElementLocation()));
                         }

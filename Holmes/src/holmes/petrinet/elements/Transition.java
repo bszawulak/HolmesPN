@@ -125,7 +125,8 @@ public class Transition extends Node {
     private double alphaU_xTPN = 0.0;
     private double betaL_xTPN = 0.0;
     private double betaU_xTPN = 0.0;
-
+    private boolean alphaMode = true;
+    private boolean betaMode = true;
     private double tauAlpha_xTPN = -1.0;
     private double tauBeta_xTPN = -1.0;
 
@@ -1423,5 +1424,36 @@ public class Transition extends Node {
      */
     public boolean isXTPN() {
         return isXTPN;
+    }
+
+    /**
+     * Metoda włącza tryb alfa-XTPN dla tranzycji.
+     * @param status boolean - true, jeśli tryb alfa-XTPN ma być aktywny
+     */
+    public void setAlphaXTPNstatus(boolean status) {
+        alphaMode = status;
+    }
+
+    /**
+     * Metoda zwraca status alfa tranzycji XTPN / wszystkie inne.
+     * @return boolean - true, jeśli status alfa-XTPN aktywny
+     */
+    public boolean isAlphaActiveXTPN() {
+        return alphaMode;
+    }
+    /**
+     * Metoda włącza tryb beta-XTPN dla tranzycji.
+     * @param status boolean - true, jeśli tryb beta-XTPN ma być aktywny
+     */
+    public void setBetaXTPNstatus(boolean status) {
+        betaMode = status;
+    }
+
+    /**
+     * Metoda zwraca status beta tranzycji XTPN / wszystkie inne.
+     * @return boolean - true, jeśli status beta-XTPN aktywny
+     */
+    public boolean isBetaActiveXTPN() {
+        return betaMode;
     }
 }
