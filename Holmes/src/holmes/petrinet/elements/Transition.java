@@ -3,6 +3,7 @@ package holmes.petrinet.elements;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
@@ -29,6 +30,7 @@ import holmes.petrinet.functions.FunctionsTools;
  *          do przodu. XTPN, to brzmi dumnie. Jak science fiction. Jak "Okręt zwany Francis".
  */
 public class Transition extends Node {
+    @Serial
     private static final long serialVersionUID = -4981812911464514746L;
 
     /**
@@ -38,13 +40,13 @@ public class Transition extends Node {
 
     private TransitionType transType;
 
-    private static int realRadius = 15;
+    private static final int realRadius = 15;
 
     //podstawowe właściwości:
     private boolean isLaunching;
     private boolean isGlowedINV = false;
     private boolean isGlowedMTC = false;
-    protected boolean isGlowedSub = false;
+    //protected boolean isGlowedSub = false;
     protected boolean offline = false;        // czy wyłączona (MCS, inne)
 
 
@@ -54,7 +56,7 @@ public class Transition extends Node {
     private String transAdditionalText = "";
     private boolean showTransitionAddText = false;
     private Color transColorValue = new Color(255, 255, 255);
-    protected boolean showIntOnly = false; //TODO
+    //protected boolean showIntOnly = false; //TODO
     private boolean valueVisibilityStatus = false;
     public int txtXoff = 0;
     public int txtYoff = 0;
@@ -70,7 +72,7 @@ public class Transition extends Node {
     public boolean qSimDrawStats = false; // czy rysować wypełnienie tranzycji
     public int qSimFillValue = 0; //poziom wypełnienia
     public double qSimFired = 0; //ile razy uruchomiona
-    public String qSimText = ""; //dodatkowy tekst
+    //public String qSimText = ""; //dodatkowy tekst
     public boolean borderFrame = false;
 
     //opcje czasowe:
@@ -119,24 +121,26 @@ public class Transition extends Node {
     private boolean isXTPN = false; //po narysowaniu w Holmesie będzie niezmienialne true
         //co oznacza, że tej tranzycji NIE MOŻNA przekonwertować na klasyczną inaczej, niż
         //odpowiednio ustawiając poniższe parametry. (alphaL=0; alphaU=-1; betaL=betaU=0)
-
     //parametry xTPN:
-    private double alphaL_xTPN = 0.0;
-    private double alphaU_xTPN = 0.0;
-    private double betaL_xTPN = 0.0;
-    private double betaU_xTPN = 0.0;
+    private double alphaMin_xTPN = 0.0;
+    private double alphaMax_xTPN = 0.0;
+    private double betaMin_xTPN = 0.0;
+    private double betaMax_xTPN = 0.0;
     private boolean alphaMode_xTPN = true;
     private boolean betaMode_xTPN = true;
     private double tauAlpha_xTPN = -1.0;
     private double tauBeta_xTPN = -1.0;
 
+    private double timer_Ualfa_XTPN = 0.0;
+    private double timer_Vbeta_XTPN = 0.0;
+
     //jeśli miejsca wejściowe tracą szybciej tokeny ze starości niż z
-    //produkcji, mniejszamy tau Alfa i Beta (prawdopodobieństwo).
+    //produkcji, zmniejszamy tau Alfa i Beta (prawdopodobieństwo).
     private boolean massActionKinetics = false;
     private boolean isActive_xTPN = false;
     private boolean isProducing_xTPN = false;
     //grafika:
-    private boolean showTauTime_xTPN = false; //czy wyświetlać timery
+    private boolean tauTimersVisibility_XTPN = false; //czy wyświetlać timery
 
 
     /**
@@ -294,12 +298,11 @@ public class Transition extends Node {
 
     /**
      * Metoda pozwala określic, czy tranzycja ma byc podświetlona.
-     *
      * @param value boolean - true, jeśli ma świecić
      */
-    public void isGlowed_INV(boolean value) {
-        this.isGlowedINV = value;
-    }
+    //public void isGlowed_INV(boolean value) {
+     //   this.isGlowedINV = value;
+    //}
 
     /**
      * Metoda sprawdza, czy tranzycja świeci będąc częcią zbioru MCT.
@@ -379,7 +382,7 @@ public class Transition extends Node {
             this.borderFrame = false;
         else
             this.borderFrame = true;
-            */
+        */
     }
 
     /**
@@ -738,8 +741,7 @@ public class Transition extends Node {
 
     /**
      * Na potrzeby wczytywania pliku projektu, bez porownania z LFT
-     *
-     * @param value
+     * @param value - double
      */
     public void forceSetEFT(double value) {
         if (value < 0) {
@@ -1199,123 +1201,123 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda ustawia dolną wartość alphaLower dla xTPN.
-     * @param value (double) czas alfaL (=EFT)
+     * Metoda ustawia dolną wartość alfaMin dla xTPN.
+     * @param value (double) czas alfaMin (=EFT)
      * @param force (boolean) czy wymusić wartość bez weryfikacji
      */
-    public void setAlphaL_xTPN(double value, boolean force) {
+    public void setAlphaMin_xTPN(double value, boolean force) {
         if(force) {
-            this.alphaL_xTPN = value;
+            this.alphaMin_xTPN = value;
             return;
         }
         if (value < 0) {
-            this.alphaL_xTPN = 0.0;
+            this.alphaMin_xTPN = 0.0;
             return;
         }
-        if (value > alphaU_xTPN) { //musi być mniejszy równy niż alphaU
-            this.alphaL_xTPN = alphaU_xTPN;
+        if (value > alphaMax_xTPN) { //musi być mniejszy równy niż alphaU
+            this.alphaMin_xTPN = alphaMax_xTPN;
             return;
         }
-        this.alphaL_xTPN = value;
+        this.alphaMin_xTPN = value;
     }
 
     /**
-     * Metoda pozwala odczytać dolną wartość alphaLower dla xTPN.
-     * @return (double) : czas alphaLower.
+     * Metoda pozwala odczytać dolną wartość alfaMin dla xTPN.
+     * @return (double) : czas alfaMin.
      */
-    public double getAlphaL_xTPN() {
-        return this.alphaL_xTPN;
+    public double getAlphaMin_xTPN() {
+        return this.alphaMin_xTPN;
     }
 
     /**
-     * Metoda ustawia górną wartość alphaUpper dla xTPN.
-     * @param value (double) czas alfaU (=LFT)
+     * Metoda ustawia górną wartość alfaMax dla xTPN.
+     * @param value (double) czas alfaMax (=LFT)
      * @param force (boolean) czy wymusić wartość bez weryfikacji
      */
-    public void setAlphaU_xTPN(double value, boolean force) {
+    public void setAlphaMax_xTPN(double value, boolean force) {
         if(force) {
-            this.alphaU_xTPN = value;
+            this.alphaMax_xTPN = value;
             return;
         }
         if (value < 0) {
-            this.alphaU_xTPN = -1.0; //domyślnie do redukcji -> classicalPN
+            this.alphaMax_xTPN = -1.0; //domyślnie do redukcji -> classicalPN
             return;
         }
-        if (value < alphaL_xTPN) { //musi być większy równy niż alphaL
-            this.alphaU_xTPN = alphaL_xTPN;
+        if (value < alphaMin_xTPN) { //musi być większy równy niż alphaL
+            this.alphaMax_xTPN = alphaMin_xTPN;
             return;
         }
-        this.alphaU_xTPN = value;
+        this.alphaMax_xTPN = value;
     }
 
     /**
-     * Metoda pozwala odczytać górną wartość alphaUpper dla xTPN.
-     * @return (double) : czas alphaUpper.
+     * Metoda pozwala odczytać górną wartość alfaMax dla xTPN.
+     * @return (double) : czas alfaMax.
      */
-    public double getAlphaU_xTPN() {
-        return this.alphaU_xTPN;
+    public double getAlphaMax_xTPN() {
+        return this.alphaMax_xTPN;
     }
 
     /**
-     * Metoda ustawia dolną wartość betaLower dla xTPN.
-     * @param value (double) czas betaL (=DPN duration lower value)
+     * Metoda ustawia dolną wartość betaMin dla xTPN.
+     * @param value (double) czas betaMin (=DPN duration lower value)
      * @param force (boolean) czy wymusić wartość bez weryfikacji
      */
-    public void setBetaL_xTPN(double value, boolean force) {
+    public void setBetaMin_xTPN(double value, boolean force) {
         if(force) {
-            this.betaL_xTPN = value;
+            this.betaMin_xTPN = value;
             return;
         }
         if (value < 0) {
-            this.betaL_xTPN = 0.0;
+            this.betaMin_xTPN = 0.0;
             return;
         }
-        if (value > betaU_xTPN) { //musi być mniejszy równy niż betaU
-            this.betaL_xTPN = betaU_xTPN;
+        if (value > betaMax_xTPN) { //musi być mniejszy równy niż betaU
+            this.betaMin_xTPN = betaMax_xTPN;
             return;
         }
-        this.betaL_xTPN = value;
+        this.betaMin_xTPN = value;
     }
 
     /**
-     * Metoda pozwala odczytać dolną wartość betaLower dla xTPN.
-     * @return (double) : czas betaLower.
+     * Metoda pozwala odczytać dolną wartość betaMin dla xTPN.
+     * @return (double) : czas betaMin.
      */
-    public double getBetaL_xTPN() {
-        return this.betaL_xTPN;
+    public double getBetaMin_xTPN() {
+        return this.betaMin_xTPN;
     }
 
     /**
-     * Metoda ustawia dolną wartość betaUpper dla xTPN.
-     * @param value (double) czas betaU (=DPN duration upper value)
+     * Metoda ustawia dolną wartość betaMax dla xTPN.
+     * @param value (double) czas betaMax (=DPN duration upper value)
      * @param force (boolean) czy wymusić wartość bez weryfikacji
      */
-    public void setBetaU_xTPN(double value, boolean force) {
+    public void setBetaMax_xTPN(double value, boolean force) {
         if(force) {
-            this.betaU_xTPN = value;
+            this.betaMax_xTPN = value;
             return;
         }
         if (value < 0) {
-            this.betaU_xTPN = 0.0; //domyślnie do redukcji -> classical DPN
+            this.betaMax_xTPN = 0.0; //domyślnie do redukcji -> classical DPN
             return;
         }
-        if (value < betaL_xTPN) { //musi być większy równy niż betaL
-            this.betaU_xTPN = betaL_xTPN;
+        if (value < betaMin_xTPN) { //musi być większy równy niż betaL
+            this.betaMax_xTPN = betaMin_xTPN;
             return;
         }
-        this.betaU_xTPN = value;
+        this.betaMax_xTPN = value;
     }
 
     /**
-     * Metoda pozwala odczytać górną wartość betaUpper dla xTPN.
-     * @return (double) : czas betaUpper.
+     * Metoda pozwala odczytać górną wartość betaMax dla xTPN.
+     * @return (double) : czas betaMax.
      */
-    public double getBetaU_xTPN() {
-        return this.betaU_xTPN;
+    public double getBetaMax_xTPN() {
+        return this.betaMax_xTPN;
     }
 
     /**
-     * Metoda ustawia zegar tauAlpha tranzycji.
+     * Metoda ustawia wartość docelową zegara U - tauAlpha tranzycji.
      * @param value double - nowa wartość tauAlpha.
      */
     public void setTauAlpha_xTPN(double value) {
@@ -1323,7 +1325,7 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda modyfikuje zegar tauAlpha tranzycji.
+     * Metoda modyfikuje wartość docelową zegara U - tauAlfa tranzycji.
      * @param delta double - o ile zmienić zegar tauAlpha.
      */
     public void updateTauAlpha_xTPN(double delta) {
@@ -1331,7 +1333,7 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda zwraca zegar tauAlpha tranzycji.
+     * Metoda zwraca wartość docelową zegara U - tauAlfa tranzycji.
      * @return double - aktualny czas tauAlpha.
      */
     public double getTauAlpha_xTPN() {
@@ -1339,7 +1341,7 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda ustawia zegar tauBeta tranzycji.
+     * Metoda ustawia wartość docelową zegara V - tauBeta tranzycji.
      * @param value double - nowa wartość tauBeta.
      */
     public void setTauBeta_xTPN(double value) {
@@ -1347,7 +1349,7 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda modyfikuje zegar tauBeta tranzycji.
+     * Metoda modyfikuje wartość docelową zegara V - tauBeta tranzycji.
      * @param delta double - o ile zmienić zegar tauBeta.
      */
     public void updateTauBeta_xTPN(double delta) {
@@ -1355,7 +1357,7 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda zwraca zegar tauBeta tranzycji.
+     * Metoda zwraca wartość docelową zegara V - tauBeta tranzycji.
      * @return double - aktualny czas tauBeta.
      */
     public double getTauBeta_xTPN() {
@@ -1363,23 +1365,68 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda ustawia status zegarów tauAlpha i tauBeta - pokazywać czy nie.
+     * Metoda ustawia status tauAlpha i tauBeta - pokazywać czy nie.
      * @param status boolean - true, jeśli zegary mają być pokazywane.
      */
     public void setTauTimersStatus(boolean status) {
-        showTauTime_xTPN = status;
+        tauTimersVisibility_XTPN = status;
     }
 
     /**
      * Metoda zwraca status zegarów tauAlpha i tauBeta - pokazywać czy nie.
      * @return boolean - true, jeśli zegary mają być pokazywane.
      */
-    public boolean getTauTimersStatus() {
-        return showTauTime_xTPN;
+    public boolean isTauTimerVisible() {
+        return tauTimersVisibility_XTPN;
     }
 
-//    private boolean isActive_xTPN = true;
-//    private boolean isProducing_xTPN = true;
+    /**
+     * Metoda ustawia wartość docelową zegara U-alfa tranzycji.
+     * @param value double - nowa wartość zegara U-alfa.
+     */
+    public void setTimer_Ualfa_XTPN(double value) {
+        timer_Ualfa_XTPN = value;
+    }
+
+    /**
+     * Metoda modyfikuje wartość docelową zegara U-alfa tranzycji.
+     * @param delta double - o ile zmienić zegar U-alfa.
+     */
+    public void updateTimer_Ualfa_XTPN(double delta) {
+        timer_Ualfa_XTPN += delta;
+    }
+
+    /**
+     * Metoda zwraca wartość docelową zegara U-alfa tranzycji.
+     * @return double - aktualny czas U-alfa.
+     */
+    public double getTimer_Ualfa_XTPN() {
+        return timer_Ualfa_XTPN;
+    }
+
+    /**
+     * Metoda ustawia wartość docelową zegara V-beta tranzycji.
+     * @param value double - nowa wartość zegara V-beta.
+     */
+    public void setTimer_Vbeta_XTPN(double value) {
+        timer_Vbeta_XTPN = value;
+    }
+
+    /**
+     * Metoda modyfikuje wartość docelową zegara V-beta tranzycji.
+     * @param delta double - o ile zmienić zegar V-beta.
+     */
+    public void updateTimer_Vbeta_XTPN(double delta) {
+        timer_Vbeta_XTPN += delta;
+    }
+
+    /**
+     * Metoda zwraca wartość docelową zegara V-beta tranzycji.
+     * @return double - aktualny czas V-beta.
+     */
+    public double getTimer_Vbeta_XTPN() {
+        return timer_Vbeta_XTPN;
+    }
 
     /**
      * Metoda ustawia status aktywacji tranzycji xTPN.

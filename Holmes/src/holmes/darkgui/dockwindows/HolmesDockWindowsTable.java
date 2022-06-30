@@ -7,7 +7,10 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.Serial;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,8 +83,9 @@ import holmes.workspace.WorkspaceSheet;
  * Nie obchodzi mnie, co o tym myślicie<br> (╯゜Д゜）╯︵ ┻━┻) . Idźcie w layout i nie wracajcie. ┌∩┐(◣_◢)┌∩┐
  */
 public class HolmesDockWindowsTable extends JPanel {
+    @Serial
     private static final long serialVersionUID = 4510802239873443705L;
-    private GUIManager overlord;
+    private final GUIManager overlord;
     private ArrayList<JComponent> components;
     private static final Color darkGreen = new Color(0, 75, 0);
     private int mode;
@@ -93,10 +97,11 @@ public class HolmesDockWindowsTable extends JPanel {
     public JPanel getPanel() {
         return panel;
     }
-
     public void setPanel(JPanel panel) {
         this.panel = panel;
     }
+
+
 
     // Containers & general use
     private JPanel panel; // główny panel okna
@@ -119,8 +124,8 @@ public class HolmesDockWindowsTable extends JPanel {
     public SpinnerModel nameLocationXSpinnerModel = null;
     public SpinnerModel nameLocationYSpinnerModel = null;
     private Arc pairedArc = null;
-    private JCheckBox betaModeCheckBox;
-    private JCheckBox alfaModeCheckBox;
+    private JCheckBox timeTransitionCheckBox;
+    private JCheckBox classicalTransitionCheckBox;
     //MCT:
     private int selectedMCTindex = -1;
     private boolean colorMCT = false;
@@ -180,6 +185,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private int choosenDeco = 0;
     private JTextArea elementsOfDecomposedStructure;
     private int selectedSubNetindex = -1;
+
     private boolean colorSubNet = false;
     private boolean allSubNetsselected = false;
 
@@ -822,6 +828,8 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
 
@@ -1284,6 +1292,8 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
 
@@ -1676,11 +1686,18 @@ public class HolmesDockWindowsTable extends JPanel {
         changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(changeTypeLabel);
 
-        alfaModeCheckBox = new JCheckBox("Standard", transition.isPortal());
-        alfaModeCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
-        alfaModeCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
+        boolean clasTrans = true;
+        boolean timeTrans = false;
+        if(transition.getTransType() == TransitionType.TPN) {
+            clasTrans = false;
+            timeTrans = true;
+        }
 
-        alfaModeCheckBox.addItemListener(e -> {
+        classicalTransitionCheckBox = new JCheckBox("Standard", clasTrans);
+        classicalTransitionCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
+        classicalTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
+
+        classicalTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
@@ -1688,18 +1705,20 @@ public class HolmesDockWindowsTable extends JPanel {
                 ((Transition) element).setTransType(TransitionType.PN);
 
                 doNotUpdate = true;
-                betaModeCheckBox.setSelected(false);
+                timeTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
-        components.add(alfaModeCheckBox);
+        components.add(classicalTransitionCheckBox);
 
-        betaModeCheckBox = new JCheckBox("Time", transition.isPortal());
-        betaModeCheckBox.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
-        betaModeCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
+        timeTransitionCheckBox = new JCheckBox("Time", timeTrans);
+        timeTransitionCheckBox.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
+        timeTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
 
-        betaModeCheckBox.addItemListener(e -> {
+        timeTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
@@ -1707,12 +1726,14 @@ public class HolmesDockWindowsTable extends JPanel {
                 ((Transition) element).setTransType(TransitionType.TPN);
 
                 doNotUpdate = true;
-                alfaModeCheckBox.setSelected(false);
+                classicalTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
-        components.add(betaModeCheckBox);
+        components.add(timeTransitionCheckBox);
 
         JLabel frLabel = new JLabel("Firing rate:", JLabel.LEFT);
         frLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
@@ -1820,6 +1841,8 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
 
@@ -1828,13 +1851,15 @@ public class HolmesDockWindowsTable extends JPanel {
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
 
-        JCheckBox functionalCheckBox = new JCheckBox("", transition.isPortal());
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.isFunctional());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
         functionalCheckBox.setSelected(((Transition) element).isFunctional());
 
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             ((Transition) element).setFunctional(box.isSelected());
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(functionalCheckBox);
 
@@ -2108,11 +2133,18 @@ public class HolmesDockWindowsTable extends JPanel {
         changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(changeTypeLabel);
 
-        alfaModeCheckBox = new JCheckBox("Standard", transition.isPortal());
-        alfaModeCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
-        alfaModeCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
+        boolean clasTrans = true;
+        boolean timeTrans = false;
+        if(transition.getTransType() == TransitionType.TPN) {
+            clasTrans = false;
+            timeTrans = true;
+        }
 
-        alfaModeCheckBox.addItemListener(e -> {
+        classicalTransitionCheckBox = new JCheckBox("Standard", clasTrans);
+        classicalTransitionCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
+        classicalTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
+
+        classicalTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
@@ -2120,18 +2152,20 @@ public class HolmesDockWindowsTable extends JPanel {
                 ((Transition) element).setTransType(TransitionType.PN);
 
                 doNotUpdate = true;
-                betaModeCheckBox.setSelected(false);
+                timeTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
-        components.add(alfaModeCheckBox);
+        components.add(classicalTransitionCheckBox);
 
-        betaModeCheckBox = new JCheckBox("Time", transition.isPortal());
-        betaModeCheckBox.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
-        betaModeCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
+        timeTransitionCheckBox = new JCheckBox("Time", timeTrans);
+        timeTransitionCheckBox.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
+        timeTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
 
-        betaModeCheckBox.addItemListener(e -> {
+        timeTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
@@ -2139,12 +2173,14 @@ public class HolmesDockWindowsTable extends JPanel {
                 ((Transition) element).setTransType(TransitionType.TPN);
 
                 doNotUpdate = true;
-                alfaModeCheckBox.setSelected(false);
+                classicalTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
-        components.add(betaModeCheckBox);
+        components.add(timeTransitionCheckBox);
 
         // EFT / LFT TIMES:
         JLabel minMaxLabel = new JLabel("EFT / LFT:", JLabel.LEFT);
@@ -2312,7 +2348,7 @@ public class HolmesDockWindowsTable extends JPanel {
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
 
-        JCheckBox functionalCheckBox = new JCheckBox("", transition.isPortal());
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.isFunctional());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
         functionalCheckBox.setSelected(((Transition) element).isFunctional());
 
@@ -2446,7 +2482,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
     //**************************************************************************************
     //*********************************    TRANZYCJA     ***********************************
-    //*********************************       _XTPN       ***********************************
+    //*********************************      _XTPN       ***********************************
     //*********************************                  ***********************************
     //**************************************************************************************
 
@@ -2544,10 +2580,11 @@ public class HolmesDockWindowsTable extends JPanel {
         changeTypeLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength, 20);
         components.add(changeTypeLabel);
 
+        //przycisk Alfa ON/OFF
         JButton buttonAlfaMode = new JButton("Alfa: ON");
         buttonAlfaMode.setName("AlfaButton1");
         buttonAlfaMode.setMargin(new Insets(0, 0, 0, 0));
-        buttonAlfaMode.setBounds(columnB_posX, columnB_Y +=25, 70, 20);
+        buttonAlfaMode.setBounds(columnB_posX, columnB_Y +=25, 60, 20);
         if(transition.isAlphaActiveXTPN()) {
             buttonAlfaMode.setText("Alfa: ON");
             buttonAlfaMode.setBackground(Color.GREEN);
@@ -2572,14 +2609,15 @@ public class HolmesDockWindowsTable extends JPanel {
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
             WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
-            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(transition.getLastLocation());
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(buttonAlfaMode);
 
+        //przycisk Beta ON/OFF
         JButton buttonBetaMode = new JButton("Beta: ON");
         buttonBetaMode.setName("BetaButton1");
         buttonBetaMode.setMargin(new Insets(0, 0, 0, 0));
-        buttonBetaMode.setBounds(columnB_posX+71, columnB_Y, 70, 20);
+        buttonBetaMode.setBounds(columnB_posX+61, columnB_Y, 60, 20);
         if(transition.isBetaActiveXTPN()) {
             buttonBetaMode.setText("Beta: ON");
             buttonBetaMode.setBackground(Color.GREEN);
@@ -2602,20 +2640,56 @@ public class HolmesDockWindowsTable extends JPanel {
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-
-
             WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
-            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(transition.getLastLocation());
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(buttonBetaMode);
 
-        // alfa ranges:
+
+        JButton buttonTauMode = new JButton("Tau: ON");
+        buttonTauMode.setName("TauButton1");
+        buttonTauMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonTauMode.setBounds(columnB_posX+122, columnB_Y, 60, 20);
+        if(transition.isTauTimerVisible()) {
+            buttonTauMode.setText("Tau: ON");
+            buttonTauMode.setBackground(Color.GREEN);
+        } else {
+            buttonTauMode.setText("Tau: OFF");
+            buttonTauMode.setBackground(Color.RED);
+        }
+        buttonTauMode.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+            JButton button = (JButton) e.getSource();
+            if (transition.isTauTimerVisible()) {
+                ((Transition) element).setTauTimersStatus(false);
+                button.setText("Tau: OFF");
+                button.setBackground(Color.RED);
+            } else {
+                ((Transition) element).setTauTimersStatus(true);
+                button.setText("Tau: ON");
+                button.setBackground(Color.GREEN);
+            }
+            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(buttonTauMode);
+
+        // Zakresy alfa:
         JLabel minMaxLabel = new JLabel("\u03B1 (min/max): ", JLabel.LEFT);
         minMaxLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength+10, 20);
         components.add(minMaxLabel);
 
-        JFormattedTextField alphaMinTextField = new JFormattedTextField();
-        alphaMinTextField.setValue(transition.getAlphaL_xTPN());
+        // format danych alfa i beta: do 6 miejsc po przecinku
+        NumberFormat formatter = DecimalFormat.getInstance();
+        formatter.setMinimumFractionDigits(2);
+        formatter.setMaximumFractionDigits(6);
+        formatter.setRoundingMode(RoundingMode.HALF_UP);
+
+        JFormattedTextField alphaMinTextField = new JFormattedTextField(formatter);
+        alphaMinTextField.setValue(transition.getAlphaMin_xTPN());
         alphaMinTextField.addPropertyChangeListener("value", e -> {
             if (doNotUpdate)
                 return;
@@ -2628,14 +2702,14 @@ public class HolmesDockWindowsTable extends JPanel {
             double min = (double) field.getValue();
             if(!setMinAlfaTime(min)) {
                 doNotUpdate = true;
-                field.setValue(transition.getAlphaL_xTPN());
+                field.setValue(transition.getAlphaMin_xTPN());
                 doNotUpdate = false;
             }
             overlord.markNetChange();
         });
 
-        JFormattedTextField alphaMaxTextField = new JFormattedTextField();
-        alphaMaxTextField.setValue(transition.getAlphaU_xTPN());
+        JFormattedTextField alphaMaxTextField = new JFormattedTextField(formatter);
+        alphaMaxTextField.setValue(transition.getAlphaMax_xTPN());
         alphaMaxTextField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
@@ -2652,22 +2726,23 @@ public class HolmesDockWindowsTable extends JPanel {
             alphaMinTextField.setEnabled(false);
             alphaMaxTextField.setEnabled(false);
         }
-        JPanel alfaRangesPanel = new JPanel();
-        alfaRangesPanel.setLayout(new BoxLayout(alfaRangesPanel, BoxLayout.X_AXIS));
-        alfaRangesPanel.add(alphaMinTextField);
-        alfaRangesPanel.add(new JLabel(" / "));
-        alfaRangesPanel.add(alphaMaxTextField);
-        alfaRangesPanel.setBounds(columnA_posX + 90, columnB_Y += 20, 200, 20);
-        components.add(alfaRangesPanel);
 
-        //Beta:
+        alphaMinTextField.setBounds(columnB_posX,columnB_Y+=20,80,20);
+        components.add(alphaMinTextField);
+        JLabel slash1 = new JLabel(" / ", JLabel.LEFT);
+        slash1.setBounds(columnB_posX+85, columnA_Y, 15, 20);
+        components.add(slash1);
+        alphaMaxTextField.setBounds(columnB_posX+100, columnB_Y,80,20);
+        components.add(alphaMaxTextField);
+
+        //zakresy beta:
         JLabel betaLabel = new JLabel("\u03B2 (min/max): ", JLabel.LEFT);
-        betaLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength+10, 20);
+        betaLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength+10, 20);
         components.add(betaLabel);
 
-        JFormattedTextField betaLowTextField = new JFormattedTextField();
-        betaLowTextField.setValue(transition.getEFT());
-        betaLowTextField.addPropertyChangeListener("value", e -> {
+        JFormattedTextField betMinTextField = new JFormattedTextField(formatter);
+        betMinTextField.setValue(transition.getEFT());
+        betMinTextField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
@@ -2679,9 +2754,9 @@ public class HolmesDockWindowsTable extends JPanel {
             overlord.markNetChange();
         });
 
-        JFormattedTextField betaUpTextField = new JFormattedTextField();
-        betaUpTextField.setValue(transition.getLFT());
-        betaUpTextField.addPropertyChangeListener("value", e -> {
+        JFormattedTextField betaMaxTextField = new JFormattedTextField(formatter);
+        betaMaxTextField.setValue(transition.getLFT());
+        betaMaxTextField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
@@ -2694,45 +2769,87 @@ public class HolmesDockWindowsTable extends JPanel {
         });
 
         if(!transition.isBetaActiveXTPN()) {
-            betaLowTextField.setEnabled(false);
-            betaUpTextField.setEnabled(false);
+            betMinTextField.setEnabled(false);
+            betaMaxTextField.setEnabled(false);
         }
-        JPanel betaRangesPanel = new JPanel();
-        betaRangesPanel.setLayout(new BoxLayout(betaRangesPanel, BoxLayout.X_AXIS));
-        betaRangesPanel.add(betaLowTextField);
-        betaRangesPanel.add(new JLabel(" / "));
-        betaRangesPanel.add(betaUpTextField);
-        betaRangesPanel.setBounds(columnA_posX + 90, columnB_Y += 20, 200, 20);
-        components.add(betaRangesPanel);
 
-        //columnA_Y+=40;
-        JCheckBox tpnBox = new JCheckBox("TPN active", transition.getTPNstatus());
-        tpnBox.setBounds(columnB_posX - 5, columnB_Y += 20, 100, 20);
-        tpnBox.setEnabled(true);
-        tpnBox.addItemListener(e -> {
-            JCheckBox box = (JCheckBox) e.getSource();
-            setTPNstatus(box.isSelected());
+        betMinTextField.setBounds(columnB_posX,columnB_Y+=20,80,20);
+        components.add(betMinTextField);
+        JLabel slash2 = new JLabel(" / ", JLabel.LEFT);
+        slash2.setBounds(columnB_posX+85, columnA_Y, 15, 20);
+        components.add(slash2);
+        betaMaxTextField.setBounds(columnB_posX+100, columnB_Y,80,20);
+        components.add(betaMaxTextField);
 
-            overlord.markNetChange();
-        });
-        components.add(tpnBox);
-
+        //mass-action for XTPN transition
+        JCheckBox makCheckBox = new JCheckBox("Mass-Action kinetics");
+        makCheckBox.setBounds(columnA_posX-5, columnB_Y += 20, 160, 20);
         columnA_Y += 20;
-        JCheckBox dpnBox = new JCheckBox("DPN active", transition.getDPNstatus());
-        dpnBox.setBounds(columnB_posX + 100, columnB_Y, 100, 20);
-        dpnBox.setEnabled(true);
-        dpnBox.addItemListener(e -> {
-            JCheckBox box = (JCheckBox) e.getSource();
-            setDPNstatus(box.isSelected());
-
-            overlord.markNetChange();
+        makCheckBox.setSelected(transition.isMassActionKineticsActiveXTPN());
+        makCheckBox.addActionListener(actionEvent -> {
+            if (doNotUpdate)
+                return;
+            if (makCheckBox.isSelected()) {
+                transition.setMassActionKineticsXTPNstatus(true);
+            } else {
+                transition.setMassActionKineticsXTPNstatus(false);
+            }
+            //AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+            //transition.setMassActionKineticsXTPNstatus(abstractButton.getModel().isSelected());
         });
-        components.add(dpnBox);
+        components.add(makCheckBox);
 
+        //FUNKCYJNOŚĆ
+
+        JCheckBox functionalCheckBox = new JCheckBox("Functional", transition.isFunctional());
+        functionalCheckBox.setBounds(columnA_posX-5, columnA_Y += 20, 140, 20);
+        functionalCheckBox.setSelected(((Transition) element).isFunctional());
+        functionalCheckBox.addItemListener(e -> {
+            JCheckBox box = (JCheckBox) e.getSource();
+            ((Transition) element).setFunctional(box.isSelected());
+            overlord.markNetChange();
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        functionalCheckBox.setEnabled(false);
+        components.add(functionalCheckBox);
+
+        JButton functionsEditorButton = new JButton(Tools.getResIcon32("/icons/functionsWindow/functionsIcon.png"));
+        functionsEditorButton.setName("Functions editor");
+        functionsEditorButton.setText("<html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>");
+        functionsEditorButton.setMargin(new Insets(0, 0, 0, 0));
+        functionsEditorButton.setBounds(columnB_posX + 65, columnB_Y+5, 110, 32);
+        functionsEditorButton.addActionListener(actionEvent -> new HolmesFunctionsBuilder((Transition) element));
+        functionsEditorButton.setEnabled(false);
+        components.add(functionsEditorButton);
+
+        // XTPN portal status
+        JCheckBox portalBox = new JCheckBox("Portal:", transition.isPortal());
+        portalBox.setBounds(columnA_posX - 5, columnA_Y += 20, 90, 20);
+        portalBox.setSelected(((Transition) element).isPortal());
+        portalBox.addItemListener(e -> {
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                makePortal();
+            } else {
+                if (((Transition) element).getElementLocations().size() > 1)
+                    JOptionPane.showMessageDialog(null, "XTPN Transition contains more than one location!", "Cannot proceed",
+                            JOptionPane.INFORMATION_MESSAGE);
+                else {
+                    unPortal();
+                    overlord.markNetChange();
+                }
+            }
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(portalBox);
+
+        columnA_Y+=5;
+        columnB_Y+=45;
         // T-TRANSITION SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
-        GraphPanel graphPanel = overlord
-                .getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+        GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
         int xPos = location.getPosition().x;
         int width = graphPanel.getSize().width;
         int zoom = graphPanel.getZoom();
@@ -2759,7 +2876,7 @@ public class HolmesDockWindowsTable extends JPanel {
             zoomLabel2.setForeground(Color.red);
         components.add(zoomLabel2);
 
-        // T-TRANSITION LOCATION:
+        // XTPN lokalizacja:
         JLabel comLabel2 = new JLabel("Location:", JLabel.LEFT);
         comLabel2.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(comLabel2);
@@ -2779,57 +2896,8 @@ public class HolmesDockWindowsTable extends JPanel {
         locationSpinnerPanel.add(locationXSpinner);
         locationSpinnerPanel.add(new JLabel(" , "));
         locationSpinnerPanel.add(locationYSpinner);
-        locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, 200, 20);
+        locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, 160, 20);
         components.add(locationSpinnerPanel);
-
-        // T-TRANSITION PORTAL STATUS
-        JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
-        portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-        components.add(portalLabel);
-
-        JCheckBox portalBox = new JCheckBox("", transition.isPortal());
-        portalBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        portalBox.setSelected(((Transition) element).isPortal());
-        portalBox.addItemListener(e -> {
-            JCheckBox box = (JCheckBox) e.getSource();
-            if (box.isSelected()) {
-                makePortal();
-            } else {
-                if (((Transition) element).getElementLocations().size() > 1)
-                    JOptionPane.showMessageDialog(null, "Transition contains more than one location!", "Cannot proceed",
-                            JOptionPane.INFORMATION_MESSAGE);
-                else {
-                    unPortal();
-                    overlord.markNetChange();
-                }
-            }
-        });
-        components.add(portalBox);
-
-        //FUNKCYJNOŚĆ
-        JLabel functionLabel = new JLabel("Functional:", JLabel.LEFT);
-        functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
-        components.add(functionLabel);
-
-        JCheckBox functionalCheckBox = new JCheckBox("", transition.isPortal());
-        functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        functionalCheckBox.setSelected(((Transition) element).isFunctional());
-
-        functionalCheckBox.addItemListener(e -> {
-            JCheckBox box = (JCheckBox) e.getSource();
-            ((Transition) element).setFunctional(box.isSelected());
-
-            overlord.markNetChange();
-        });
-        components.add(functionalCheckBox);
-
-        JButton functionsEditorButton = new JButton(Tools.getResIcon32("/icons/functionsWindow/functionsIcon.png"));
-        functionsEditorButton.setName("Functions editor");
-        functionsEditorButton.setText("<html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>");
-        functionsEditorButton.setMargin(new Insets(0, 0, 0, 0));
-        functionsEditorButton.setBounds(columnA_posX + 125, columnA_Y - 16, 110, 32);
-        functionsEditorButton.addActionListener(actionEvent -> new HolmesFunctionsBuilder((Transition) element));
-        components.add(functionsEditorButton);
 
         // WSPÓŁRZĘDNE NAPISU:
         columnA_Y += 20;
@@ -2846,12 +2914,12 @@ public class HolmesDockWindowsTable extends JPanel {
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
 
-        JLabel locNameLabelX = new JLabel("xOff: ", JLabel.LEFT);
-        locNameLabelX.setBounds(columnA_posX + 90, columnA_Y, 40, 20);
+        JLabel locNameLabelX = new JLabel("x:", JLabel.LEFT);
+        locNameLabelX.setBounds(columnA_posX + 90, columnA_Y, 20, 20);
         components.add(locNameLabelX);
 
         JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
-        nameLocationXSpinner.setBounds(columnA_posX + 125, columnA_Y, 60, 20);
+        nameLocationXSpinner.setBounds(columnA_posX + 105, columnA_Y, 60, 20);
         nameLocationXSpinner.addChangeListener(new ChangeListener() {
             private Transition trans_tmp;
             private ElementLocation el_tmp;
@@ -2875,12 +2943,12 @@ public class HolmesDockWindowsTable extends JPanel {
 
         components.add(nameLocationXSpinner);
 
-        JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
-        locNameLabelY.setBounds(columnA_posX + 195, columnB_Y, 40, 20);
+        JLabel locNameLabelY = new JLabel("y:", JLabel.LEFT);
+        locNameLabelY.setBounds(columnA_posX + 175, columnB_Y, 20, 20);
         components.add(locNameLabelY);
 
         JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
-        nameLocationYSpinner.setBounds(columnA_posX + 230, columnA_Y, 60, 20);
+        nameLocationYSpinner.setBounds(columnA_posX + 190, columnA_Y, 60, 20);
         nameLocationYSpinner.addChangeListener(new ChangeListener() {
             private Transition trans_tmp;
             private ElementLocation el_tmp;
@@ -3096,6 +3164,8 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
 
@@ -7191,14 +7261,14 @@ public class HolmesDockWindowsTable extends JPanel {
     private boolean setMinAlfaTime(double value) {
         if (mode == XTPN_TRANS) {
             Transition transition = (Transition) element;
-            double alfaMax = transition.getAlphaU_xTPN();
+            double alfaMax = transition.getAlphaMax_xTPN();
             if(value > alfaMax) {
                 JOptionPane.showMessageDialog(null, "AlphaMin value cannot be higher than AlphaMax. \n"
                         +"AlphaMax: " + alfaMax,
                         "Alpha range error", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
-            transition.setAlphaL_xTPN(value, false);
+            transition.setAlphaMin_xTPN(value, false);
             repaintGraphPanel();
         }
         return true;

@@ -46,7 +46,9 @@ public final class ElementDraw {
 	private static final Color cBlack = Color.black;
 
 	private static final Color darkGreen = new Color(0, 75, 0);
-	private static final Color lightSky = new Color(0, 185, 230);
+	private static final Color lightSky = new Color(0, 135, 230);
+	private static final Color lightSky2 = new Color(0, 185, 230);
+	private static final Color lightSky3 = new Color(0, 215, 230);
 
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
@@ -231,13 +233,11 @@ public final class ElementDraw {
 						g.setColor(tpnNormalColor);
 					}
 				}
-				Color back = g.getColor(); // te 4 linie: lekki trojwymiar, ladniejsza tranzycja
+				Color back = g.getColor(); // te 4 linie: lekki trójwymiar, ładniejsza tranzycja
 				g.setColor(Color.white);
 				g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				g.setColor(back);
-				
-				
-				
+
 				if(trans.qSimDrawed && el.qSimDrawed) {
 					int w = nodeBounds.width;
 					int h = nodeBounds.height;
@@ -282,8 +282,7 @@ public final class ElementDraw {
 				} else {
 					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
 				}
-				
-				
+
 				if(trans.getTransType() == TransitionType.CPNbasic) {
 					g.setColor(Color.BLUE);
 				} else {
@@ -301,9 +300,12 @@ public final class ElementDraw {
 							g.setColor(normalColor);
 							g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 						} else {
-							g.setColor(Color.BLACK);
+							g.setColor(lightSky);
 							g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
+							g.setColor(lightSky2);
 							g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
+							g.setColor(lightSky3);
+							g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
 						}
 					}
 				}
@@ -397,21 +399,20 @@ public final class ElementDraw {
 
 					// _XTPN mark
 
-					trans.setAlphaL_xTPN(2.73, false);
-					trans.setAlphaU_xTPN(12.7344, false);
-					trans.setBetaL_xTPN(1.4473, false);
-					trans.setBetaU_xTPN(56.73333, false);
+					trans.setAlphaMin_xTPN(2.73, false);
+					trans.setAlphaMax_xTPN(12.7344, false);
+					trans.setBetaMin_xTPN(1.4473, false);
+					trans.setBetaMax_xTPN(56.73333, false);
 					trans.setTauAlpha_xTPN(3.8456854);
 					trans.setTauBeta_xTPN(123.455354);
-					trans.setTauTimersStatus(true);
+					//trans.setTauTimersStatus(true);
 
 					g.setColor(Color.blue);
-					//g.setFont(f_plain);
 					g.setFont(f_Big);
 
 					if(trans.isAlphaActiveXTPN()) {
-						String alfa = "\u03B1:" + Tools.cutValueExt(trans.getAlphaL_xTPN(), 3) + " / "
-								+ Tools.cutValueExt(trans.getAlphaU_xTPN(), 3);
+						String alfa = "\u03B1:" + Tools.cutValueExt(trans.getAlphaMin_xTPN(), 3) + " / "
+								+ Tools.cutValueExt(trans.getAlphaMax_xTPN(), 3);
 
 						if(!trans.isBetaActiveXTPN()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
 							g.drawString(alfa, nodeBounds.x - 20, nodeBounds.y - 4);
@@ -421,40 +422,46 @@ public final class ElementDraw {
 					}
 					if(trans.isBetaActiveXTPN()) {
 						g.setColor(darkGreen);
-						String beta = "\u03B2:" + Tools.cutValueExt(trans.getBetaL_xTPN(), 3) + " / "
-								+ Tools.cutValueExt(trans.getBetaU_xTPN(), 3);
+						String beta = "\u03B2:" + Tools.cutValueExt(trans.getBetaMin_xTPN(), 3) + " / "
+								+ Tools.cutValueExt(trans.getBetaMax_xTPN(), 3);
 						g.drawString(beta, nodeBounds.x - 20, nodeBounds.y - 4);
 					}
 
 					g.setFont(f_BigL);
-					if(trans.getTauTimersStatus()) {
+					if(trans.isTauTimerVisible()) {
 						double alphaTime = trans.getTauAlpha_xTPN();
 						double betaTime =trans.getTauBeta_xTPN();
+						double u_alfaTime = trans.getTimer_Ualfa_XTPN();
+						double v_betaTime = trans.getTimer_Vbeta_XTPN();
+						int franctionDigits = 2;
 
 						String timerA = "";
 						String timerB = "";
 						g.setColor(Color.red);
 						if(alphaTime < 0 && betaTime < 0) {
-							timerA = "\u03C4(\u03B1): #";
+							timerA = "u\u279F\u03C4(\u03B1): #\u279F#";
 							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
-							timerB = "\u03C4(\u03B2): #";
+							timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
 							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
 
 						} else if(alphaTime < 0) {
-							timerA = "\u03C4(\u03B1): #";
+							timerA = "u\u279F\u03C4(\u03B1): #\u279F#";
 							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
-							timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(betaTime, 2);
+							timerB = "v\u279F\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, franctionDigits) + "\u279F"
+									+ Tools.cutValueExt(betaTime, franctionDigits);
 							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
 
 						} else if(betaTime < 0) {
-							timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(alphaTime, 2);
+							timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, franctionDigits) + "\u279F"
+									+ Tools.cutValueExt(alphaTime, franctionDigits);
 							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
-							timerB = "\u03C4(\u03B2): #";
+							timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
 							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
 						} else {
-							timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(alphaTime, 2);
+							timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, franctionDigits) + "\u279F"
+									+ Tools.cutValueExt(alphaTime, franctionDigits);
 							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
-							timerB = "\u03C4(\u03B2): #";
+							timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
 							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
 						}
 					}
@@ -571,7 +578,7 @@ public final class ElementDraw {
 						g.setColor(portalSelColor);
 						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 					} else {
-						g.setColor(Color.BLACK);
+						g.setColor(Color.black);
 						g.setStroke(new BasicStroke(1.5F));
 						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
 						g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
@@ -594,11 +601,8 @@ public final class ElementDraw {
 						g.fillOval(nodeBounds.x+40+x, nodeBounds.y+y, 6, 6);
 						g.setColor(c);
 						g.fillOval(nodeBounds.x+40+x, nodeBounds.y+y, 5, 5);
-
-
 						y=y+6;
-						if(y==42)
-						{
+						if(y==42) {
 							y=0;
 							x=x+6;
 						}
@@ -606,6 +610,7 @@ public final class ElementDraw {
 				}
 
 				//dubel
+				/*
 				if (el.isPortalSelected() && !el.isSelected()) {
 					g.setColor(Color.BLACK);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -628,7 +633,7 @@ public final class ElementDraw {
 						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
 						g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
 					}
-				}
+				}*/
 
 				/*
 				if (eds.color == true || trans.getTransType() == TransitionType.CPNbasic) {
