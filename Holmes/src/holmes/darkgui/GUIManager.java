@@ -369,7 +369,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 				if(status) {
 					Object[] options = {"Exit", "Save and exit", "Cancel",};
 					int n = JOptionPane.showOptionDialog(null,
-									"Network or its data have been changed since last save. Exit, save&exit or do not exit now?",
+									"Net or its data have been changed since last save. Exit, save&exit or do not exit now?",
 									"Project has been modified", JOptionPane.YES_NO_OPTION,
 									JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 					//cancel
@@ -438,7 +438,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 				|| !checkFileINA3.exists() || !(checkFileINA3.length() == 30)
 				|| !checkFileINA2p.exists() || !(checkFileINA2p.length() == 77)) {
 			
-			log("Something wrong with the INA tools directory.", "warning", true);
+			//log("Something wrong with the INA tools directory.", "warning", true);
 			if(!checkFileINA0.exists()) {
 				checkFileINA0.mkdirs();
 				logNoEnter("Tools directory does not exist: ", "warning", true);
@@ -487,7 +487,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 					log("fixed", "italic", false);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null, "Unable to recreate ina.bat. This is a critical error, possible write"
-							+ " protection issues in program directory. All in all, invariants generation using INAwin32 will"
+							+ " protection issues in program directory. Invariants generation using INAwin32 will"
 							+ " most likely fail.","Critical error - writing", JOptionPane.ERROR_MESSAGE);
 					inaReady = false;
 					log("Critical error, unable to recreate ina.bat file. Invariants generator will not work.", "warning", true);
@@ -495,11 +495,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 			} 
 			
 			if(!checkFileINA1.exists()) { //no INAwin32.exe
-				//String msg = "INAwin32.exe missing in\n "+checkFileINA0.getPath()+"directory.\n"
-				//		+ "Please download manually from and put in the right directory.";
-				//JOptionPane.showMessageDialog(null, msg, "Error - no INAwin32.exe", JOptionPane.ERROR_MESSAGE);
-				log("INAwin32.exe missing in "+checkFileINA0+"directory. Please download "
-						+ "manually from www2.informatik.hu-berlin.de/~starke/ina.html and put into the \\Tools directory.", "warning", true);
+				//log("INAwin32.exe missing in "+checkFileINA0+"directory. Please download "
+				//		+ "manually from www2.informatik.hu-berlin.de/~starke/ina.html and put into the \\Tools directory.", "warning", true);
 				inaReady = false;
 			}
 		}

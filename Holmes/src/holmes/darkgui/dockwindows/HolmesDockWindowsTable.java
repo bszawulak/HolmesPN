@@ -1163,7 +1163,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(idLabel2);
 
         JLabel idLabel3 = new JLabel("global ID:");
-        idLabel3.setBounds(columnB_posX + 55, columnA_Y, 50, 20);
+        idLabel3.setBounds(columnB_posX + 55, columnA_Y, 60, 20);
         components.add(idLabel3);
         JLabel idLabel4 = new JLabel(place.getID() + "");
         idLabel4.setBounds(columnB_posX + 120, columnB_Y, 50, 20);
@@ -1216,10 +1216,122 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
 
+        //przycisk Gamma ON/OFF
+        JLabel gammaLabel = new JLabel("Gamma Mode:", JLabel.LEFT);
+        gammaLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength, 20);
+        components.add(gammaLabel);
+
+
+        JButton buttonGammaMode = new JButton("Gamma: ON");
+        buttonGammaMode.setName("AlfaButton1");
+        buttonGammaMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonGammaMode.setBounds(columnB_posX, columnB_Y +=25, 80, 20);
+        if(place.isGammaModeActiveXTPN()) {
+            buttonGammaMode.setText("Gamma: ON");
+            buttonGammaMode.setBackground(Color.GREEN);
+        } else {
+            buttonGammaMode.setText("Gamma: OFF");
+            buttonGammaMode.setBackground(Color.RED);
+        }
+        buttonGammaMode.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+
+            JButton button = (JButton) e.getSource();
+            if (place.isGammaModeActiveXTPN()) {
+                ((Place) element).setGammaModeXTPNstatus(false);
+                button.setText("Gamma: OFF");
+                button.setBackground(Color.RED);
+            } else {
+                ((Place) element).setGammaModeXTPNstatus(true);
+                button.setText("Gamma: ON");
+                button.setBackground(Color.GREEN);
+            }
+            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(buttonGammaMode);
+
+        // Zakresy gamma:
+        JLabel minMaxLabel = new JLabel("\u03B3 (min/max): ", JLabel.LEFT);
+        minMaxLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength+20, 20);
+        components.add(minMaxLabel);
+
+        // format danych gamma do 6 miejsc po przecinku
+        NumberFormat formatter = DecimalFormat.getInstance();
+        formatter.setMinimumFractionDigits(1);
+        formatter.setMaximumFractionDigits(place.getFraction_xTPN());
+        formatter.setRoundingMode(RoundingMode.HALF_UP);
+        Double example = 3.14;
+
+        JFormattedTextField gammaMinTextField = new JFormattedTextField(formatter);
+        gammaMinTextField.setValue(example);
+        gammaMinTextField.setValue(place.getGammaMin_xTPN());
+        gammaMinTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+            }
+            double min = Double.parseDouble(""+field.getValue());
+            if(!setGammaMinimumTime(min)) {
+                doNotUpdate = true;
+                field.setValue(place.getGammaMin_xTPN());
+                doNotUpdate = false;
+                overlord.markNetChange();
+            }
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+
+        JFormattedTextField gammaMaxTextField = new JFormattedTextField(formatter);
+        gammaMaxTextField.setValue(example);
+        gammaMaxTextField.setValue(place.getGammaMax_xTPN());
+        gammaMaxTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+            }
+
+            double max = Double.parseDouble(""+field.getValue());
+            if(!setMaxGammaTime(max)) {
+                doNotUpdate = true;
+                field.setValue(place.getGammaMax_xTPN());
+                doNotUpdate = false;
+                overlord.markNetChange();
+            }
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+
+        if(!place.isGammaModeActiveXTPN()) {
+            gammaMinTextField.setEnabled(false);
+            gammaMaxTextField.setEnabled(false);
+        }
+
+        gammaMinTextField.setBounds(columnB_posX,columnB_Y+=20,90,20);
+        components.add(gammaMinTextField);
+        JLabel slash1 = new JLabel(" / ", JLabel.LEFT);
+        slash1.setBounds(columnB_posX+95, columnA_Y, 15, 20);
+        components.add(slash1);
+        gammaMaxTextField.setBounds(columnB_posX+110, columnB_Y,90,20);
+        components.add(gammaMaxTextField);
+
+
+
         // PLACE TOKEN
         if (!place.isColored) {
             JLabel tokenLabel = new JLabel("Tokens:", JLabel.LEFT);
-            tokenLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+            tokenLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength, 20);
             components.add(tokenLabel);
             int tok = place.getTokensNumber();
             boolean problem = false;
@@ -2687,8 +2799,11 @@ public class HolmesDockWindowsTable extends JPanel {
         formatter.setMinimumFractionDigits(2);
         formatter.setMaximumFractionDigits(6);
         formatter.setRoundingMode(RoundingMode.HALF_UP);
+        Double example = 3.14;
 
+        // alfaMin value
         JFormattedTextField alphaMinTextField = new JFormattedTextField(formatter);
+        alphaMinTextField.setValue(example);
         alphaMinTextField.setValue(transition.getAlphaMin_xTPN());
         alphaMinTextField.addPropertyChangeListener("value", e -> {
             if (doNotUpdate)
@@ -2699,16 +2814,23 @@ public class HolmesDockWindowsTable extends JPanel {
             } catch (ParseException ex) {
                 System.out.println(ex.getMessage());
             }
-            double min = (double) field.getValue();
-            if(!setMinAlfaTime(min)) {
+
+            double min = Double.parseDouble(""+field.getValue());
+            if(setAlfaMinTime(min)) { //"great success"
+                overlord.markNetChange();
+            } else { //something failed
                 doNotUpdate = true;
                 field.setValue(transition.getAlphaMin_xTPN());
                 doNotUpdate = false;
             }
-            overlord.markNetChange();
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+
         });
 
+        // alfaMax value
         JFormattedTextField alphaMaxTextField = new JFormattedTextField(formatter);
+        alphaMaxTextField.setValue(example);
         alphaMaxTextField.setValue(transition.getAlphaMax_xTPN());
         alphaMaxTextField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
@@ -2717,9 +2839,17 @@ public class HolmesDockWindowsTable extends JPanel {
             } catch (ParseException ex) {
                 System.out.println(ex.getMessage());
             }
-            double max = (double) field.getValue();
-            setMaxFireTime(max);
-            overlord.markNetChange();
+
+            double max = Double.parseDouble(""+field.getValue());
+            if(setAlfaMaxTime(max)) { //"great success"
+                overlord.markNetChange();
+            } else { //something failed
+                doNotUpdate = true;
+                field.setValue(transition.getAlphaMax_xTPN());
+                doNotUpdate = false;
+            }
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
         if(!transition.isAlphaActiveXTPN()) {
@@ -2740,8 +2870,10 @@ public class HolmesDockWindowsTable extends JPanel {
         betaLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength+10, 20);
         components.add(betaLabel);
 
+        // betaMin value
         JFormattedTextField betMinTextField = new JFormattedTextField(formatter);
-        betMinTextField.setValue(transition.getEFT());
+        betMinTextField.setValue(example);
+        betMinTextField.setValue(transition.getBetaMin_xTPN());
         betMinTextField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
@@ -2749,13 +2881,21 @@ public class HolmesDockWindowsTable extends JPanel {
             } catch (ParseException ex) {
                 System.out.println(ex.getMessage());
             }
-            double min = (double) field.getValue();
-            setMinFireTime(min);
-            overlord.markNetChange();
+            double min = Double.parseDouble(""+field.getValue());
+            if(setBetaMinTime(min)) { //"great success"
+                overlord.markNetChange();
+            } else {
+                doNotUpdate = true;
+                field.setValue(transition.getBetaMin_xTPN());
+                doNotUpdate = false;
+            }
+
         });
 
+        // betaMax value
         JFormattedTextField betaMaxTextField = new JFormattedTextField(formatter);
-        betaMaxTextField.setValue(transition.getLFT());
+        betaMaxTextField.setValue(example);
+        betaMaxTextField.setValue(transition.getBetaMax_xTPN());
         betaMaxTextField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
@@ -2763,9 +2903,14 @@ public class HolmesDockWindowsTable extends JPanel {
             } catch (ParseException ex) {
                 System.out.println(ex.getMessage());
             }
-            double max = (double) field.getValue();
-            setMaxFireTime(max);
-            overlord.markNetChange();
+            double max = Double.parseDouble(""+field.getValue());
+            if(setBetaMaxTime(max)) { //"great success"
+                overlord.markNetChange();
+            } else { //something failed
+                doNotUpdate = true;
+                field.setValue(transition.getBetaMax_xTPN());
+                doNotUpdate = false;
+            }
         });
 
         if(!transition.isBetaActiveXTPN()) {
@@ -7241,8 +7386,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia status trybu DPN dla tranzycji.
-     *
-     * @param status boolean - nowy status
+     * @param status (boolean) nowy status, true jeżeli ma być DPN
      */
     private void setDPNstatus(boolean status) {
         if (mode == TIMETRANSITION) {
@@ -7252,23 +7396,224 @@ public class HolmesDockWindowsTable extends JPanel {
         }
     }
 
-    //XTPN:
+    // XTPN zmiany alfa, beta i gamma:
     /**
-     * Metoda ustawia nową wartość czasu Alfa dla tranzycji XTPN.
-     * @param value double - nowa wartość alfa-lower
-     * @return true - jeżeli zmiana wartości się udała
+     * Metoda ustawia nową wartość czasu alfaMinimum dla tranzycji XTPN.
+     * @param newAlphaMin (double) nowa wartość alfaMinimum.
+     * @return true - jeżeli zmiana wartości się udała.
      */
-    private boolean setMinAlfaTime(double value) {
+    private boolean setAlfaMinTime(double newAlphaMin) {
         if (mode == XTPN_TRANS) {
             Transition transition = (Transition) element;
             double alfaMax = transition.getAlphaMax_xTPN();
-            if(value > alfaMax) {
-                JOptionPane.showMessageDialog(null, "AlphaMin value cannot be higher than AlphaMax. \n"
-                        +"AlphaMax: " + alfaMax,
-                        "Alpha range error", JOptionPane.WARNING_MESSAGE);
-                return false;
+            if(newAlphaMin > alfaMax) {
+                //String[] options = {"Increase \u03B1(max) to \u03B1(min)", "Decrease \u03B1(min) to \u03B1(max)", "Cancel"};
+                String[] options = {"\u25B2 Increase \u03B1-max to "+newAlphaMin, "\u25BC Decrease \u03B1-min to "+alfaMax, "\u274C Cancel"};
+                int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B1-min = " +
+                                newAlphaMin + " cannot be higher than current \u03B1-max = " + alfaMax +
+                                "\nIncrease old alphaMaximum or decrease new alphaMinimum?",
+                        "Alpha range problem: \u03B1-min too high",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                switch(answer) {
+                    case 0: //powiększenie alphaMax do nowego alphaMin
+                        transition.setAlphaMax_xTPN(newAlphaMin, true);
+                        transition.setAlphaMin_xTPN(newAlphaMin, true);
+                        repaintGraphPanel();
+                        return true;
+                    case 1: //redukcja nowego alphaMin do aktualnego alphaMax
+                        transition.setAlphaMin_xTPN(alfaMax, true);
+                        repaintGraphPanel();
+                        return true;
+                    default: //cancel
+                        return false;
+                }
             }
-            transition.setAlphaMin_xTPN(value, false);
+            transition.setAlphaMin_xTPN(newAlphaMin, false);
+            repaintGraphPanel();
+        }
+        return true;
+    }
+
+    /**
+     * Metoda ustawia nową wartość czasu alfaMaximum dla tranzycji XTPN.
+     * @param newAlphaMax (double) nowa wartość alfaMaximum.
+     * @return true - jeżeli zmiana wartości się udała.
+     */
+    private boolean setAlfaMaxTime(double newAlphaMax) {
+        if (mode == XTPN_TRANS) {
+            Transition transition = (Transition) element;
+            double alfaMin = transition.getAlphaMin_xTPN();
+            if(newAlphaMax < alfaMin) {
+                //String[] options = {"Increase \u03B1(max) to \u03B1(min)", "Decrease \u03B1(min) to \u03B1(max)", "Cancel"};
+                String[] options = {"\u25B2 Increase \u03B1-max to "+alfaMin, "\u25BC Decrease \u03B1-min "+newAlphaMax, "\u274C Cancel"};
+                int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B1-max = " +
+                                newAlphaMax + " cannot be lower than current \u03B1-min = " + alfaMin +
+                                "\nIncrease new alphaMaximum or decrease old alphaMinimum?",
+                        "Alpha range problem: \u03B1-max too low",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                switch(answer) {
+                    case 0: //powiększenie nowego alphaMax do starej wartości alphaMin
+                        transition.setAlphaMax_xTPN(alfaMin, true);
+                        repaintGraphPanel();
+                        return true;
+                    case 1: //zmniejszenie starego alphaMin do nowego alphaMax
+                        transition.setAlphaMin_xTPN(newAlphaMax, true);
+                        transition.setAlphaMax_xTPN(newAlphaMax, false);
+                        repaintGraphPanel();
+                        return true;
+                    default: //cancel
+                        return false;
+                }
+            }
+            transition.setAlphaMax_xTPN(newAlphaMax, false);
+            repaintGraphPanel();
+        }
+        return true;
+    }
+
+    /**
+     * Metoda ustawia nową wartość czasu betaMinimum dla tranzycji XTPN.
+     * @param newBetaMin (double) nowa wartość betaMinimum.
+     * @return true - jeżeli zmiana wartości się udała.
+     */
+    private boolean setBetaMinTime(double newBetaMin) {
+        if (mode == XTPN_TRANS) {
+            Transition transition = (Transition) element;
+            double betaMax = transition.getBetaMax_xTPN();
+            if(newBetaMin > betaMax) {
+                //String[] options = {"Increase \u03B2(max) to \u03B2(min)", "Decrease \u03B2(min) to \u03B2(max)", "Cancel"};
+                String[] options = {"\u25B2 Increase \u03B2-max to "+newBetaMin, "\u25BC Decrease \u03B2-min to "+betaMax, "\u274C Cancel"};
+                int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B2-min = " +
+                                newBetaMin + " cannot be higher than current \u03B2-max = " + betaMax +
+                                "\nIncrease old betaMaximum or decrease new betaMinimum?",
+                        "Beta range problem: \u03B2-min too high",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                switch(answer) {
+                    case 0: //powiększenie betaMax do nowego betaMin
+                        transition.setBetaMax_xTPN(newBetaMin, true);
+                        transition.setBetaMin_xTPN(newBetaMin, true);
+                        repaintGraphPanel();
+                        return true;
+                    case 1: //redukcja nowego betaMin do aktualnego betaMax
+                        transition.setBetaMin_xTPN(betaMax, true);
+                        repaintGraphPanel();
+                        return true;
+                    default: //cancel
+                        return false;
+                }
+            }
+            transition.setBetaMin_xTPN(newBetaMin, false);
+            repaintGraphPanel();
+        }
+        return true;
+    }
+
+    /**
+     * Metoda ustawia nową wartość czasu betaMaximum dla tranzycji XTPN.
+     * @param newBetaMax (double) nowa wartość betaMaximum.
+     * @return true - jeżeli zmiana wartości się udała.
+     */
+    private boolean setBetaMaxTime(double newBetaMax) {
+        if (mode == XTPN_TRANS) {
+            Transition transition = (Transition) element;
+            double betaMin = transition.getBetaMin_xTPN();
+            if(newBetaMax < betaMin) {
+                //String[] options = {"Increase \u03B2(max) to \u03B2(min)", "Decrease \u03B2(min) to \u03B2(max)", "Cancel"};
+                String[] options = {"\u25B2 Increase \u03B2-max to "+betaMin, "\u25BC Decrease \u03B2-min to "+newBetaMax, "\u274C Cancel"};
+                int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B2-max = " +
+                                newBetaMax + " cannot be lower than current \u03B2-min = " + betaMin +
+                                "\nIncrease new betaMax or decrease old betaMin?",
+                        "Beta range problem: \u03B2-max too low",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                switch(answer) {
+                    case 0: //powiększenie nowego alphaMax do starej wartości alphaMin
+                        transition.setBetaMax_xTPN(betaMin, true);
+                        repaintGraphPanel();
+                        return true;
+                    case 1: //zmniejszenie starego alphaMin do nowego alphaMax
+                        transition.setBetaMin_xTPN(newBetaMax, true);
+                        transition.setBetaMax_xTPN(newBetaMax, false);
+                        repaintGraphPanel();
+                        return true;
+                    default: //cancel
+                        return false;
+                }
+            }
+            transition.setBetaMax_xTPN(newBetaMax, false);
+            repaintGraphPanel();
+        }
+        return true;
+    }
+
+    /**
+     * Metoda ustawia nową wartość czasu gammaMinimum dla miejsca XTPN.
+     * @param newGammaMin double - nowa wartość gammaMinimum.
+     * @return true - jeżeli zmiana wartości się udała.
+     */
+    private boolean setGammaMinimumTime(double newGammaMin) {
+        if (mode == XTPN_PLACE) {
+            Place place = (Place) element;
+            double gammaMax = place.getGammaMax_xTPN();
+            if(newGammaMin > gammaMax) {
+                // String[] options = {"Increase \u03B3(max) to \u03B3(min)", "Decrease \u03B3(min) to \u03B3(max)", "Cancel"};
+                String[] options = {"\u25B2 Increase \u03B3-max to "+newGammaMin, "\u25BC Decrease \u03B3-min to "+gammaMax, "\u274C Cancel"};
+                int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B3-min = " +
+                                newGammaMin + " cannot be higher than current \u03B3-max = " + gammaMax +
+                                "\nIncrease current gammaMaximum or decrease proposed gammaMinimum?",
+                        "Gamma range problem: \u03B3-min too high",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                switch(answer) {
+                    case 0: //powiększenie gMax do nowego gMin
+                        place.setGammaMax_xTPN(newGammaMin, true);
+                        place.setGammaMin_xTPN(newGammaMin, true);
+                        repaintGraphPanel();
+                        return true;
+                    case 1: //redukcja nowego gMin do aktualnego gMax
+                        place.setGammaMin_xTPN(gammaMax, true);
+                        repaintGraphPanel();
+                        return true;
+                    default: //cancel
+                        return false;
+                }
+            }
+            place.setGammaMin_xTPN(newGammaMin, false);
+            repaintGraphPanel();
+        }
+        return true;
+    }
+
+    /**
+     * Metoda ustawia nową wartość czasu gammaMaximum dla miejsca XTPN.
+     * @param newGammaMax double - nowa wartość gammaMaximum.
+     * @return true - jeżeli zmiana wartości się udała.
+     */
+    private boolean setMaxGammaTime(double newGammaMax) {
+        if (mode == XTPN_PLACE) {
+            Place place = (Place) element;
+            double gammaMin = place.getGammaMin_xTPN();
+            if(newGammaMax < gammaMin) {
+                // String[] options = {"Increase \u03B3(max) to \u03B3(min)", "Decrease \u03B3(min) to \u03B3(max)", "Cancel"};
+                String[] options = {"\u25B2 Increase \u03B3-max to "+gammaMin, "\u25BC Decrease \u03B3-min to "+newGammaMax, "\u274C Cancel"};
+                int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B3-max = " +
+                                newGammaMax + " cannot be lower than current \u03B3-min = " + gammaMin +
+                                "\nIncrease proposed gammaMaximum or decrease current gammaMinimum?",
+                        "Gamma range problem: \u03B3-max too low",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                switch(answer) {
+                    case 0: //powiększenie nowego gammaMax do starej wartości gammaMin
+                        place.setGammaMax_xTPN(gammaMin, true);
+                        repaintGraphPanel();
+                        return true;
+                    case 1: //zmniejszenie starego gammaMin do nowego gammaMax
+                        place.setGammaMin_xTPN(newGammaMax, true);
+                        place.setGammaMax_xTPN(newGammaMax, false);
+                        repaintGraphPanel();
+                        return true;
+                    default: //cancel
+                        return false;
+                }
+            }
+            place.setGammaMax_xTPN(newGammaMax, false);
             repaintGraphPanel();
         }
         return true;

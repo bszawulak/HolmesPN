@@ -4,12 +4,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
-import holmes.petrinet.functions.FunctionContainer;
 
 /**
  * Klasa implementująca miejsce sieci Petriego. Zapewnia implementację stanu (przechowywania tokenów) oraz 
@@ -24,6 +25,8 @@ import holmes.petrinet.functions.FunctionContainer;
  */
 public class Place extends Node {
 	private static final long serialVersionUID = 2346995422046987174L;
+
+	private double accuracy_XTPN = 0.0000001;
 	protected static int realRadius = 18;
 	private int tokensNumber = 0;
 	private int reservedTokens = 0;
@@ -72,11 +75,14 @@ public class Place extends Node {
 	 ***********************************************************************************  */
 
 	private boolean isXTPN = false; //czy tokeny marzą o elektrycznych tranzycjach?
-	private double gammaL_xTPN = 0.0;
-	private double gammaU_xTPN = Double.MAX_VALUE - 1;
+	private double gammaMin_xTPN = 0.0;
+	private double gammaMax_xTPN = 99;
+
+	private boolean gammaMode_xTPN = true;
 
 	//grafika:
 	private boolean showTokenSet_xTPN = false; //czy wyświetlać zbiór tokenów
+	private int franctionDigits = 6;
 	private ArrayList<Double> multisetK;
 	
 	/**
@@ -185,8 +191,8 @@ public class Place extends Node {
 	 */
 	public int getColorTokensNumber(int i) {
 		switch(i) {
-			case 0:
-				return tokensNumber;
+			//case 0:
+			//	return tokensNumber; //default i tak to robi
 			case 1:
 				return token1green;
 			case 2:
@@ -636,28 +642,28 @@ public class Place extends Node {
 	 * @param value (double) czas gammaL (=minimalny czas aktywacji.)
 	 * @param force (boolean) czy wymusić wartość bez weryfikacji
 	 */
-	public void setGammaL_xTPN(double value, boolean force) {
+	public void setGammaMin_xTPN(double value, boolean force) {
 		if(force) {
-			this.gammaL_xTPN = value;
+			this.gammaMin_xTPN = value;
 			return;
 		}
 		if (value < 0) {
-			this.gammaL_xTPN = 0.0;
+			this.gammaMin_xTPN = 0.0;
 			return;
 		}
-		if (value > gammaU_xTPN) { //musi być mniejszy równy niż gammaU
-			this.gammaL_xTPN = gammaU_xTPN;
+		if (value > gammaMax_xTPN) { //musi być mniejszy równy niż gammaU
+			this.gammaMin_xTPN = gammaMax_xTPN;
 			return;
 		}
-		this.gammaL_xTPN = value;
+		this.gammaMin_xTPN = value;
 	}
 
 	/**
 	 * Metoda pozwala odczytać dolną wartość gammaLower dla xTPN.
 	 * @return (double) : czas gammaLower, minimalny czas aktywacji.
 	 */
-	public double getGammaL_xTPN() {
-		return this.gammaL_xTPN;
+	public double getGammaMin_xTPN() {
+		return this.gammaMin_xTPN;
 	}
 
 	/**
@@ -665,28 +671,31 @@ public class Place extends Node {
 	 * @param value (double) czas gammaU (=token lifetime limit)
 	 * @param force (boolean) czy wymusić wartość bez weryfikacji
 	 */
-	public void setGammaU_xTPN(double value, boolean force) {
+	public void setGammaMax_xTPN(double value, boolean force) {
+		if(value > Integer.MAX_VALUE)
+			value = Integer.MAX_VALUE - 1;
+
 		if(force) {
-			this.gammaU_xTPN = value;
+			this.gammaMax_xTPN = value;
 			return;
 		}
 		if (value < 0) {
-			this.gammaU_xTPN = -1.0; //domyślnie do redukcji -> classical Place
+			this.gammaMax_xTPN = -1.0; //domyślnie do redukcji -> classical Place
 			return;
 		}
-		if (value < gammaL_xTPN) { //musi być większy równy niż gammaL
-			this.gammaU_xTPN = gammaL_xTPN;
+		if (value < gammaMin_xTPN) { //musi być większy równy niż gammaL
+			this.gammaMax_xTPN = gammaMin_xTPN;
 			return;
 		}
-		this.gammaU_xTPN = value;
+		this.gammaMax_xTPN = value;
 	}
 
 	/**
 	 * Metoda pozwala odczytać górną wartość gammaUpper dla xTPN.
 	 * @return (double) : czas gammaUpper.
 	 */
-	public double getGammaU_xTPN() {
-		return this.gammaU_xTPN;
+	public double getGammaMax_xTPN() {
+		return this.gammaMax_xTPN;
 	}
 
 	/**
@@ -703,5 +712,116 @@ public class Place extends Node {
 	 */
 	public boolean isXTPNplace() {
 		return isXTPN;
+	}
+
+	/**
+	 * Metoda włącza tryb gamma-XTPN dla miejsca.
+	 * @param status boolean - true, jeśli tryb gamma-XTPN ma być aktywny
+	 */
+	public void setGammaModeXTPNstatus(boolean status) {
+		gammaMode_xTPN = status;
+	}
+
+	/**
+	 * Metoda zwraca status gamma miejsca XTPN.
+	 * @return boolean - true, jeśli status gamma-XTPN miejsca
+	 */
+	public boolean isGammaModeActiveXTPN() {
+		return gammaMode_xTPN;
+	}
+
+	/**
+	 * Metoda ustawia wyświetlaną dokładność po przecinku.
+	 * @param value - (int) nowa wartość liczby cyfr przecinku.
+	 */
+	public void setFraction_xTPN(int value) {
+		franctionDigits = value;
+	}
+
+	/**
+	 * Metoda zwraca wyświetlaną dokładność po przecinku.
+	 * @return int - aktualna wartość liczby cyfr przecinku.
+	 */
+	public int getFraction_xTPN() {
+		return franctionDigits;
+	}
+
+	/**
+	 * Dodawanie nowych tokenów do multizbioru K.
+	 * @param howMany - (int) ile tokenów dodać
+	 * @param initialTime - (double) wartość początkowa
+	 */
+	public void addToken_XTPN(int howMany, double initialTime) {
+		for(int i=0; i<howMany; i++) {
+			multisetK.add(initialTime);
+		}
+	}
+
+	/**
+	 * Usuwa tokeny których czas życia jest większy GammaMax.
+	 * @return
+	 */
+	public int removeOldTokens_XTPN() {
+		int removed = 0;
+		for(Double token : multisetK) {
+			if(token > gammaMax_xTPN)  {
+				multisetK.remove(token);
+				removed++;
+			}
+		}
+		return removed;
+	}
+
+	/**
+	 * Usuwa tokeny na potrzeby produkcji tranzycji XTPN.
+	 * @param howMany - (int) - ile usunąć
+	 * @param mode - (int) tryb: 0 - najstarsze, 1 - najmłodsze, 2 - losowe
+	 * @param genetaror - (Random) generator dla mode=2
+	 * @return int - liczba usuniętych tokenów lub -1 gdy wystąpił błąd
+	 */
+	public int removeTokensForProduction(int howMany, int mode, Random genetaror) {
+		int counter = howMany;
+		if(howMany > multisetK.size()) {
+			return -1;
+		}
+
+		if(mode == 0) { //najstarsze
+			for(Double token : multisetK) {
+				multisetK.remove(token);
+				counter--;
+
+				if(counter == 0)
+					break;
+			}
+		} else if (mode == 1) { //najmłodsze
+			Collections.reverse(multisetK);
+			for(Double token : multisetK) {
+				multisetK.remove(token);
+				counter--;
+
+				if(counter == 0) {
+					Collections.reverse(multisetK);
+					break;
+				}
+			}
+
+
+		} else { //losowo
+			for(int i=0; i<howMany; i++) {
+				int index = genetaror.nextInt(multisetK.size());
+				multisetK.remove(index);
+			}
+		}
+		return howMany;
+	}
+
+	/**
+	 * Zwiększanie czasu życia wszystkich tokenów na liście.
+	 * @param tau - (double) o ile zwiększyć czas życia tokenów.
+	 */
+	public void incTokensTime_XTPN(double tau) {
+		for(int x=0; x<multisetK.size(); x++) {
+			multisetK.set(x, multisetK.get(x) + tau);
+		}
 	}
 }

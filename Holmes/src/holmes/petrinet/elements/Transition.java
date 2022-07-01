@@ -141,6 +141,7 @@ public class Transition extends Node {
     private boolean isProducing_xTPN = false;
     //grafika:
     private boolean tauTimersVisibility_XTPN = false; //czy wyświetlać timery
+    private int franctionDigits = 6;
 
 
     /**
@@ -1378,6 +1379,22 @@ public class Transition extends Node {
      */
     public boolean isTauTimerVisible() {
         return tauTimersVisibility_XTPN;
+    }
+
+    /**
+     * Metoda ustawia wyświetlaną dokładność po przecinku.
+     * @param value - (int) nowa wartość liczby cyfr przecinku.
+     */
+    public void setFraction_xTPN(int value) {
+        franctionDigits = value;
+    }
+
+    /**
+     * Metoda zwraca wyświetlaną dokładność po przecinku.
+     * @return int - aktualna wartość liczby cyfr przecinku.
+     */
+    public int getFraction_xTPN() {
+        return franctionDigits;
     }
 
     /**

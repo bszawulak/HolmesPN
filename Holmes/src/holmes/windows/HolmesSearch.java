@@ -67,7 +67,7 @@ public class HolmesSearch extends JFrame {
 		ego.setTitle("Net nodes search window");
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
 		

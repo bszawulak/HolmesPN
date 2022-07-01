@@ -10,8 +10,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -404,6 +406,18 @@ public final class Tools {
 	 * @return String - liczba
 	 */
 	public static String cutValueExt(double value, int howMany) {
+		if(value > Integer.MAX_VALUE) {
+			return "\u221E";
+		}
+		NumberFormat formatter = DecimalFormat.getInstance();
+		formatter.setMinimumFractionDigits(2);
+		formatter.setMaximumFractionDigits(howMany);
+		formatter.setRoundingMode(RoundingMode.HALF_UP);
+
+		String result = formatter.format(value);
+
+		return result;
+		/*
 		String format = "#.";
 		for(int i=0; i<howMany; i++)
 			format += "#";
@@ -417,6 +431,8 @@ public final class Tools {
     	otherSymbols.setDecimalSeparator('.');
     	DecimalFormat df = new DecimalFormat(format, otherSymbols);
 		return df.format(value);
+
+		 */
 	}
 	
 	public static int absolute(int i) {

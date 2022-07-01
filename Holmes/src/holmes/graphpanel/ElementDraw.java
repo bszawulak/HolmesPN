@@ -399,20 +399,24 @@ public final class ElementDraw {
 
 					// _XTPN mark
 
+					/*
 					trans.setAlphaMin_xTPN(2.73, false);
 					trans.setAlphaMax_xTPN(12.7344, false);
 					trans.setBetaMin_xTPN(1.4473, false);
 					trans.setBetaMax_xTPN(56.73333, false);
 					trans.setTauAlpha_xTPN(3.8456854);
 					trans.setTauBeta_xTPN(123.455354);
+					*/
 					//trans.setTauTimersStatus(true);
 
 					g.setColor(Color.blue);
 					g.setFont(f_Big);
 
+					int franctionDigits = trans.getFraction_xTPN();
+
 					if(trans.isAlphaActiveXTPN()) {
-						String alfa = "\u03B1:" + Tools.cutValueExt(trans.getAlphaMin_xTPN(), 3) + " / "
-								+ Tools.cutValueExt(trans.getAlphaMax_xTPN(), 3);
+						String alfa = "\u03B1:" + Tools.cutValueExt(trans.getAlphaMin_xTPN(), franctionDigits) + " / "
+								+ Tools.cutValueExt(trans.getAlphaMax_xTPN(), franctionDigits);
 
 						if(!trans.isBetaActiveXTPN()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
 							g.drawString(alfa, nodeBounds.x - 20, nodeBounds.y - 4);
@@ -422,18 +426,18 @@ public final class ElementDraw {
 					}
 					if(trans.isBetaActiveXTPN()) {
 						g.setColor(darkGreen);
-						String beta = "\u03B2:" + Tools.cutValueExt(trans.getBetaMin_xTPN(), 3) + " / "
-								+ Tools.cutValueExt(trans.getBetaMax_xTPN(), 3);
+						String beta = "\u03B2:" + Tools.cutValueExt(trans.getBetaMin_xTPN(), franctionDigits) + " / "
+								+ Tools.cutValueExt(trans.getBetaMax_xTPN(), franctionDigits);
 						g.drawString(beta, nodeBounds.x - 20, nodeBounds.y - 4);
 					}
 
 					g.setFont(f_BigL);
 					if(trans.isTauTimerVisible()) {
 						double alphaTime = trans.getTauAlpha_xTPN();
-						double betaTime =trans.getTauBeta_xTPN();
+						double betaTime = trans.getTauBeta_xTPN();
 						double u_alfaTime = trans.getTimer_Ualfa_XTPN();
 						double v_betaTime = trans.getTimer_Vbeta_XTPN();
-						int franctionDigits = 2;
+
 
 						String timerA = "";
 						String timerB = "";
@@ -843,20 +847,26 @@ public final class ElementDraw {
 					} catch (Exception e) { }
 				}
 
-
+				// _XTPN gamma i inne
 				if(place.isXTPNplace()) { //miejsce XTPN
+					int franctionDigits = place.getFraction_xTPN();
 					int dpnTextOffset = -5;
-					dpnTextOffset = -15;
-
-					place.setGammaL_xTPN(12.0554, false);
-					place.setGammaU_xTPN(29.0554, false);
 
 					g.setColor(Color.blue);
 					g.setFont(f_Big);
 
-					String gamma = "\u03B3:" + Tools.cutValueExt(place.getGammaL_xTPN(), 3) + " / "
-							+ Tools.cutValueExt(place.getGammaU_xTPN(), 3);
-					g.drawString(gamma, nodeBounds.x - 20, nodeBounds.y - 4);
+					if(place.isGammaModeActiveXTPN()) {
+						double gamma = place.getGammaMax_xTPN();
+						String gammaMaxVal = "\u221E";
+						if(gamma < Integer.MAX_VALUE-2) {
+							gammaMaxVal = Tools.cutValueExt(place.getGammaMax_xTPN(), franctionDigits);
+						}
+						String gammaStr = "\u03B3:" + Tools.cutValueExt(place.getGammaMin_xTPN(), franctionDigits) + " / "
+								+ gammaMaxVal;
+						g.drawString(gammaStr, nodeBounds.x - 20, nodeBounds.y - 4);
+					} else {
+						g.drawString("XTPN: OFF", nodeBounds.x - 20, nodeBounds.y - 4);
+					}
 
 					//klepsydra:
 					g.setColor(Color.LIGHT_GRAY);
