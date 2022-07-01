@@ -1367,6 +1367,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
             JButton button = (JButton) e.getSource();
 
+            place.addTokens_XTPN(1, 0.0);
+
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
             WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
@@ -1609,10 +1611,6 @@ public class HolmesDockWindowsTable extends JPanel {
             }
         }.yesWeCan(place, location));
         components.add(nameLocChangeButton);
-
-
-
-
 
         //COLORS:
         if (place.isColored) {

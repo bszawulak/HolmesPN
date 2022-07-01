@@ -348,8 +348,8 @@ public class Arc extends PetriNetElement {
      * @param g       Graphics2D - grafika 2D
      * @param sheetId int - identyfikator arkusza
      */
-    public void drawSimulationToken(Graphics2D g, int sheetId) {
-        ElementDraw.drawToken(g, sheetId, this);
+    public void drawSimulationMovingToken(Graphics2D g, int sheetId) {
+        ElementDraw.drawMovingToken(g, sheetId, this);
     }
 
     /**

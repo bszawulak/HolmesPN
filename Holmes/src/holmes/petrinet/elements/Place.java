@@ -807,6 +807,13 @@ public class Place extends Node {
 		return numberOfReservTokens_XTPN;
 	}
 
+	/**
+	 * Metoda umożliwia dostęp do multizbioru tokenów.
+	 * @return ArrayList<Double> - multizbiór miejsca XTPN.
+	 */
+	public ArrayList<Double> accessMultiset() {
+		return multisetK;
+	}
 
 	public void transformXTPNintoPNpace() {
 		setGammaModeXTPNstatus(false);

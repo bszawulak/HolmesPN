@@ -304,7 +304,7 @@ public class GraphPanel extends JComponent {
 		}
 		if (this.isSimulationActive()) {
 			for (Arc a : getArcs()) {
-				a.drawSimulationToken(g2d, this.sheetId);
+				a.drawSimulationMovingToken(g2d, this.sheetId);
 			}
 		}
 		
@@ -481,11 +481,11 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Metoda realizuje zmianę rozmiaru arkusza, podczas przesuwania po jego lub poza
-	 * jego obszar, elementów. Jest ona jedynie wykonywana gdy automatyczne zwiększanie
+	 * jego obszar, elementów. Jest ona jedynie wykonywana, gdy automatyczne zwiększanie
 	 * rozmiaru arkusza jest aktywne (isAutoDragScroll = true). Zmiana rozmiaru liczona
 	 * jest na podstawie różnicy pomiędzy wcześniejszą pozycją przeciąganego elementu a aktualną.
-	 * @param currentPoint Point - aktualna pozycja przeciąganego elementu
-	 * @param previousPoint Point - wcześniejsza pozycja przeciąganego elementu
+	 * @param currentPoint (Point) aktualna pozycja przeciąganego elementu
+	 * @param previousPoint (Point) wcześniejsza pozycja przeciąganego elementu
 	 */
 	public void adjustScroll(Point currentPoint, Point previousPoint) {
 		if (!isAutoDragScroll())
@@ -505,8 +505,8 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Dodawanie miejsca - menu kontekstowe.
-	 * @param p Point - punkt dodawania miejsca
+	 * Dodawanie miejsca. Metoda związana z mousePressed(MouseEvent).
+	 * @param p (Point) punkt dodawania miejsca.
 	 */
 	private void addNewPlace(Point p) {
 		if (isLegalLocation(p)) {
@@ -519,8 +519,8 @@ public class GraphPanel extends JComponent {
 	}
 	
 	/**
-	 * Dodawanie miejsca dla sieci kolorowanej - menu kontekstowe.
-	 * @param p Point - punkt dodawania miejsca
+	 * Dodawanie miejsca dla sieci kolorowanej. Metoda związana z mousePressed(MouseEvent).
+	 * @param p (Point) punkt dodawania miejsca.
 	 */
 	private void addNewCPlace(Point p) {
 		if (isLegalLocation(p)) {
@@ -535,7 +535,7 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Metoda związana z mousePressed(MouseEvent).
-	 * @param p Point - punkt dodawania tranzycji
+	 * @param p (Point) punkt dodawania tranzycji.
 	 */
 	private void addNewTransition(Point p) {
 		if (isLegalLocation(p)) {
@@ -548,7 +548,7 @@ public class GraphPanel extends JComponent {
 	
 	/**
 	 * Metoda związana z mousePressed(MouseEvent).
-	 * @param p Point - punkt dodawania kolorowej tranzycji
+	 * @param p (Point) punkt dodawania kolorowej tranzycji
 	 */
 	private void addNewCTransition(Point p) {
 		if (isLegalLocation(p)) {
@@ -562,7 +562,7 @@ public class GraphPanel extends JComponent {
 	
 	/**
 	 * Metoda związana z mousePressed(MouseEvent).
-	 * @param p Point - punkt dodawania tranzycji czasowej
+	 * @param p (Point) punkt dodawania tranzycji czasowej.
 	 */
 	private void addNewTimeTransition(Point p) {
 		if (isLegalLocation(p)) {
@@ -576,8 +576,8 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Metoda związana z mousePressed(MouseEvent).
-	 * @param p Point - punkt dodawania tranzycji xTPN
+	 * Dodawanie tranzycji XTPN. Metoda związana z mousePressed(MouseEvent).
+	 * @param p (Point) punkt dodawania tranzycji xTPN.
 	 */
 	private void addNewXTPNTransition(Point p) {
 		if (isLegalLocation(p)) {
@@ -591,8 +591,8 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Dodawanie miejsca sieci XTPN - menu kontekstowe.
-	 * @param p Point - punkt dodawania miejsca
+	 * Dodawanie miejsca XTPN. Metoda związana z mousePressed(MouseEvent).
+	 * @param p (Point) punkt dodawania miejsca
 	 */
 	private void addNewNXTPNPlace(Point p) {
 		if (isLegalLocation(p)) {
@@ -607,7 +607,7 @@ public class GraphPanel extends JComponent {
 	
 	/**
 	 * Metoda związana z mousePressed(MouseEvent).
-	 * @param p Point - punkt dodawania tranzycji funkcyjnej
+	 * @param p (Point) punkt dodawania tranzycji funkcyjnej/
 	 */
 	private void addNewFunctionalTransition(Point p) {
 		if (isLegalLocation(p)) {
