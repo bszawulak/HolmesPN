@@ -130,12 +130,16 @@ public final class ElementDraw {
 				g.setColor(Color.WHITE);
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, radius * 2, radius * 2);
 				
-				if(eds.view3d && !xTPNtrans) { //nie dla XTPN
+				if(eds.view3d) { //nie dla XTPN
 					Color backup = g.getColor();
+					g.setColor(Color.LIGHT_GRAY);
+					g.fillRect(nodeBounds.x+4, nodeBounds.y+4, nodeBounds.width+1, nodeBounds.height+1);
+					g.setColor(Color.GRAY);
+					g.fillRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width+1, nodeBounds.height+1);
 					g.setColor(Color.DARK_GRAY);
-					g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width, nodeBounds.height);
-					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width, nodeBounds.height);
-					g.fillRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width, nodeBounds.height);
+					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width+1, nodeBounds.height+1);
+					g.setColor(Color.BLACK);
+					g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
 					g.setColor(Color.WHITE);
 					g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					g.setColor(backup);
@@ -749,7 +753,7 @@ public final class ElementDraw {
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - place.getRadius(), el.getPosition().y - place.getRadius(), 
 						place.getRadius() * 2, place.getRadius() * 2);
 				
-				if(eds.view3d && !xTPNplace) {
+				if(eds.view3d) {
 					Color backup = g.getColor();	
 					g.setColor(Color.DARK_GRAY);
 					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
@@ -1129,12 +1133,12 @@ public final class ElementDraw {
 	
 	/**
 	 * Główna metoda statyczna odpowiedzialna za rysowanie łuku sieci.
-	 * @param arc Arc - obiekt łuku
-	 * @param g Graphics2D - obiekt rysujący
-	 * @param sheetId int - numer arkusza
-	 * @param zoom int - zoom
-	 * @param eds ElementDrawSettings - ustawienia rysowania
-	 * @return Graphics2D - obiekt rysujący
+	 * @param arc (Arc) obiekt łuku
+	 * @param g (Graphics2D) obiekt rysujący
+	 * @param sheetId (int) numer arkusza
+	 * @param zoom (int) zoom
+	 * @param eds (ElementDrawSettings) ustawienia rysowania
+	 * @return (Graphics2D) obiekt rysujący
 	 */
 	public static Graphics2D drawArc(Arc arc, Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) { //TODO: metoda drawArc
 		if (arc.getLocationSheetId() != sheetId)
@@ -1225,11 +1229,13 @@ public final class ElementDraw {
 				g.setStroke(backup);
 			} else {
 				//int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
-				g.setStroke(new BasicStroke(eds.arcSize));
+				if(arc.getArcType() == TypeOfArc.XTPN)
+					g.setStroke(new BasicStroke(2));
+				else
+					g.setStroke(new BasicStroke(eds.arcSize));
 				if(breaks > 0)
 					drawBreaks(g, arc, startP, (int)xp, (int)yp, breakPoints, breaks);
 				else {
-
 					if(!arc.layers.isEmpty())
 					{
 						int move=0;
@@ -1252,10 +1258,7 @@ public final class ElementDraw {
 					}
 				}
 			}
-
 			///TODO ZMIENIĆ LOKALIZACJE
-
-
 
 		} else {
 			g.setStroke(new BasicStroke(eds.arcSize));
@@ -1279,13 +1282,11 @@ public final class ElementDraw {
 						move=move+3;
 					}
 					//arc.layers.clear();
-				}else{
+				} else {
 					g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 				}
 			}
 		}
-
-
 
 		if(arc.isColorChanged() && breaks == 0) {
 			Color oldColor = g.getColor();
@@ -1297,7 +1298,6 @@ public final class ElementDraw {
 			g.setColor(oldColor);
 		}
 
-		
 		if(arc.qSimForcedArc && breaks == 0) {
 			g.setColor(arc.qSimForcedColor);
 			g.setStroke(new BasicStroke(4));
@@ -1326,10 +1326,22 @@ public final class ElementDraw {
 			//g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
 			//		new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
 
-			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
+			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk },
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
-		} else if(arc.getArcType() == TypeOfArc.COLOR ) {
+		} else if(arc.getArcType() == TypeOfArc.XTPN ) {
+			M += 2;
+			g.setColor( new Color(0, 0, 153, 250));
+			xl = endP.x + (endRadius + 20) * alfaCos * sign + M * alfaSin;
+			yl = endP.y + (endRadius + 20) * alfaSin * sign - M * alfaCos;
+			xk = endP.x + (endRadius + 20) * alfaCos * sign - M * alfaSin;
+			yk = endP.y + (endRadius + 20) * alfaSin * sign + M * alfaCos;
+			//double newxp = endP.x - (endRadius-45) * alfaCos * sign;
+			//double newyp = endP.y - (endRadius-45) * alfaSin * sign;
 
+			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk },
+					new int[] { (int) yp, (int) yl, (int) yk }, 3);
+
+		} else if(arc.getArcType() == TypeOfArc.COLOR ) {
 			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
 			
@@ -1488,9 +1500,6 @@ public final class ElementDraw {
 				} else {
 					g.drawString(wTxt, x_weight, y_weight + 10);
 				}
-				
-				
-				
 			}
 		}
 		return g;
@@ -1498,13 +1507,13 @@ public final class ElementDraw {
 
 	/**
 	 * Metoda rysuje łuk łamany.
-	 * @param g Graphics2D - obiekt rysujący
-	 * @param arc Arc
-	 * @param startP Point - punkt startowy łuku
-	 * @param endPx int - współrzędna x elementu docelowego łuku
-	 * @param endPy int - współrzędna y elementu docelowego łuku
+	 * @param g (Graphics2D) obiekt rysujący
+	 * @param arc (Arc) - łuk sieci
+	 * @param startP (Point) - punkt startowy łuku
+	 * @param endPx (int) współrzędna x elementu docelowego łuku
+	 * @param endPy (int) współrzędna y elementu docelowego łuku
 	 * @param breaksVector ArrayList[Point] - wektor punktów łąmiących
-	 * @param breaks int - liczba punktów łamiących
+	 * @param breaks (int) liczba punktów łamiących
 	 */
 	private static void drawBreaks(Graphics2D g, Arc arc, Point startP, int endPx, int endPy, ArrayList<Point> breaksVector, int breaks) {
 		if(arc.qSimForcedArc) {
@@ -1580,9 +1589,7 @@ public final class ElementDraw {
 				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
 				g.setStroke(backup);
 				move=move+3;
-
 			}
-
 		}
 		Point lastPoint = breaksVector.get(breaks-1);
 		g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
@@ -1738,7 +1745,6 @@ public final class ElementDraw {
 	
 	private static Color getColor(int tokens) {
 		long steps = GUIManager.getDefaultGUIManager().simSettings.currentStep;
-		
 		if(steps>10) {
 			if(tokens < 10)
 				return Color.white;

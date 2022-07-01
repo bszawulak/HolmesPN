@@ -69,6 +69,7 @@ import holmes.utilities.Tools;
 import holmes.windows.HolmesFunctionsBuilder;
 import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesNotepad;
+import holmes.windows.HolmesXTPNtokens;
 import holmes.windows.managers.HolmesStatesManager;
 import holmes.windows.ssim.HolmesSimSetup;
 import holmes.workspace.WorkspaceSheet;
@@ -109,7 +110,6 @@ public class HolmesDockWindowsTable extends JPanel {
     public boolean doNotUpdate = false;
     //simulator:
     public ButtonGroup group = new ButtonGroup();
-    private JSpinner spiner = new JSpinner();
     public JComboBox<String> simMode;
     private JCheckBox maximumModeCheckBox;
     private JCheckBox singleModeCheckBox;
@@ -186,7 +186,6 @@ public class HolmesDockWindowsTable extends JPanel {
     private JTextArea elementsOfDecomposedStructure;
     private int selectedSubNetindex = -1;
 
-    private boolean colorSubNet = false;
     private boolean allSubNetsselected = false;
 
     // modes
@@ -206,9 +205,10 @@ public class HolmesDockWindowsTable extends JPanel {
     private static final int DECOMPOSITION = 13;
     private static final int XTPN_TRANS = 14;
     private static final int XTPN_PLACE = 15;
+    private static final int XARC = 16;
 
     public enum SubWindow {
-        SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, XTPNTRANSITION, XTPNPLACE, CTRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS,
+        SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, XTPNTRANSITION, XTPNPLACE, XARC, CTRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS,
         MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM, DECOMPOSITION
     }
 
@@ -223,63 +223,27 @@ public class HolmesDockWindowsTable extends JPanel {
         overlord = GUIManager.getDefaultGUIManager();
 
         switch (subType) {
-            case SIMULATOR:
-                createSimulatorSubWindow((NetSimulator) blackBox[0]);
-                break;
-            case PLACE:
-                createPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case TRANSITION:
-                createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case TIMETRANSITION:
-                createTimeTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case XTPNTRANSITION:
-                createXTPNTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case XTPNPLACE:
-                createXTPNPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case CTRANSITION:
-                createColorTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case META:
-                createMetaNodeSubWindow((MetaNode) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case ARC:
-                createArcSubWindow((Arc) blackBox[0]);
-                break;
-            case SHEET:
-                createSheetSubWindow((WorkspaceSheet) blackBox[0]);
-                break;
-            case T_INVARIANTS:
-                createT_invSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
-                break;
-            case P_INVARIANTS:
-                createP_invSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
-                break;
-            case MCT:
-                createMCTSubWindow((ArrayList<ArrayList<Transition>>) blackBox[0]);
-                break;
-            case CLUSTERS:
-                createClustersSubWindow((ClusterDataPackage) blackBox[0]);
-                break;
-            case MCS:
-                createMCSSubWindow((MCSDataMatrix) blackBox[0]);
-                break;
-            case FIXER:
-                createFixerSubWindow();
-                break;
-            case QUICKSIM:
-                createQuickSimSubWindow();
-                break;
-            case KNOCKOUT:
-                createKnockoutData((ArrayList<ArrayList<Integer>>) blackBox[0]);
-                break;
-            case DECOMPOSITION:
-                createDecompositionData();
-                break;
+            case SIMULATOR -> createSimulatorSubWindow((NetSimulator) blackBox[0]);
+            case PLACE -> createPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
+            case TRANSITION -> createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+            case TIMETRANSITION ->
+                    createTimeTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+            case XTPNTRANSITION ->
+                    createXTPNTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+            case XTPNPLACE -> createXTPNPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
+            case CTRANSITION -> createColorTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+            case META -> createMetaNodeSubWindow((MetaNode) blackBox[0], (ElementLocation) blackBox[1]);
+            case ARC, XARC -> createArcSubWindow((Arc) blackBox[0]);
+            case SHEET -> createSheetSubWindow((WorkspaceSheet) blackBox[0]);
+            case T_INVARIANTS -> createT_invSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
+            case P_INVARIANTS -> createP_invSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
+            case MCT -> createMCTSubWindow((ArrayList<ArrayList<Transition>>) blackBox[0]);
+            case CLUSTERS -> createClustersSubWindow((ClusterDataPackage) blackBox[0]);
+            case MCS -> createMCSSubWindow((MCSDataMatrix) blackBox[0]);
+            case FIXER -> createFixerSubWindow();
+            case QUICKSIM -> createQuickSimSubWindow();
+            case KNOCKOUT -> createKnockoutData((ArrayList<ArrayList<Integer>>) blackBox[0]);
+            case DECOMPOSITION -> createDecompositionData();
         }
 
     }
@@ -597,7 +561,7 @@ public class HolmesDockWindowsTable extends JPanel {
         invariantsSimulatorPanel.add(timeLabel);
 
         SpinnerModel timeCycle = new SpinnerNumberModel(1, 1, 9999, 1);
-        spiner = new JSpinner(timeCycle);
+        JSpinner spiner = new JSpinner(timeCycle);
         spiner.setLocation(internalXB + 20, internalY + 3);
         spiner.setSize(70, 20);
         internalY += 25;
@@ -1238,19 +1202,55 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
 
             JButton button = (JButton) e.getSource();
+            int tokensNum = place.getNumberOfTokens_XTPN();
             if (place.isGammaModeActiveXTPN()) {
-                ((Place) element).setGammaModeXTPNstatus(false);
-                button.setText("Gamma: OFF");
-                button.setBackground(Color.RED);
+                //zapytać czy wyłączyć, konwersja kasowanie arrayListy
+                String[] options = {"Reduce to classical place", "Stay as XTPN"};
+                int answer = JOptionPane.showOptionDialog(null, "Turning \u03B3-mode off will clear " +
+                                "all times of tokens ("+tokensNum+") and \nas a result place will have classical PN features."  +
+                                "\nTransform XTPN place into classical place?",
+                        "Transformation into classical place",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                switch(answer) {
+                    case 0: //redukcja do klasycznego miejsca
+                        button.setText("Gamma: OFF");
+                        button.setBackground(Color.RED);
+
+                        place.transformXTPNintoPNpace();
+
+                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                        button.setFocusPainted(false);
+                        WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                        ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+                        return;
+                    default: //cancel
+                        return;
+                }
             } else {
-                ((Place) element).setGammaModeXTPNstatus(true);
-                button.setText("Gamma: ON");
-                button.setBackground(Color.GREEN);
+                //zapytać czy wyłączyć, konwersja kasowanie arrayListy
+                String[] options = {"Transform into XTPN", "Stay as classical PN place"};
+                int answer = JOptionPane.showOptionDialog(null, "This will transform classical " +
+                                "PN place into XTPN.\nAll tokens ("+tokensNum+") will be assigned 0.0 time values."  +
+                                "\nTransform into XTPN place?",
+                        "Conversion into XTPN place",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                switch(answer) {
+                    case 0: //transformacja PN -> XTPN
+                        button.setText("Gamma: ON");
+                        button.setBackground(Color.GREEN);
+
+                        place.transformIntoXTPNplace();
+
+                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                        button.setFocusPainted(false);
+                        WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                        ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+                        return;
+                    default: //cancel
+                        return;
+                }
+
             }
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-            button.setFocusPainted(false);
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
-            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(buttonGammaMode);
 
@@ -1327,11 +1327,82 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(gammaMaxTextField);
 
 
+        JLabel tokensXTPNLabel = new JLabel("Tokens options:", JLabel.LEFT);
+        tokensXTPNLabel.setBounds(columnA_posX, columnA_Y += 25, 120, 20);
+        components.add(tokensXTPNLabel);
+
+        JLabel tokensXTPNLabel2 = new JLabel("Tokens in place :"+place.getNumberOfTokens_XTPN(), JLabel.LEFT);
+        tokensXTPNLabel2.setBounds(columnB_posX+20, columnA_Y, 100, 20);
+        components.add(tokensXTPNLabel2);
+
+        //przycisk okna tokenów
+
+        JButton tokensWindowButton = new JButton("<html>Tokens<br>window</html>");
+        tokensWindowButton.setMargin(new Insets(0, 0, 0, 0));
+        tokensWindowButton.setBounds(columnA_posX, columnA_Y +=25, 80, 30);
+        if(place.isGammaModeActiveXTPN()) {
+            tokensWindowButton.setText("<html>Tokens<br>window</html>");
+            tokensWindowButton.setBackground(Color.GREEN);
+        } else {
+            tokensWindowButton.setText("<html>Tokens<br>window</html>");
+            tokensWindowButton.setBackground(Color.RED);
+        }
+        tokensWindowButton.addActionListener(actionEvent -> new HolmesXTPNtokens((Place) element));
+        components.add(tokensWindowButton);
+
+        //przycisk dodania tokenu XTPN
+        JButton add0tokenButton = new JButton("<html>Add<br>0-token</html>");
+
+        add0tokenButton.setMargin(new Insets(0, 0, 0, 0));
+        add0tokenButton.setBounds(columnB_posX-5, columnB_Y+=50, 80, 30);
+        if(place.isGammaModeActiveXTPN()) {
+            add0tokenButton.setText("<html>Add<br>0-token</html>");
+            add0tokenButton.setBackground(Color.GREEN);
+        } else {
+            add0tokenButton.setText("<html>Add<br>0-token</html>");
+            add0tokenButton.setBackground(Color.RED);
+        }
+        add0tokenButton.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+            JButton button = (JButton) e.getSource();
+
+            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(add0tokenButton);
+
+        //przycisk usunięcia tokenu XTPN
+        JButton remove0tokenButton = new JButton("<html>Remove<br>0-token</html>");
+        remove0tokenButton.setMargin(new Insets(0, 0, 0, 0));
+        remove0tokenButton.setBounds(columnB_posX+80, columnB_Y, 80, 30);
+        if(place.isGammaModeActiveXTPN()) {
+            remove0tokenButton.setText("<html>Remove<br>0-token</html>");
+            remove0tokenButton.setBackground(Color.GREEN);
+        } else {
+            remove0tokenButton.setText("<html>Remove<br>0-token</html>");
+            remove0tokenButton.setBackground(Color.RED);
+        }
+        remove0tokenButton.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+            JButton button = (JButton) e.getSource();
+
+            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(remove0tokenButton);
+
+
 
         // PLACE TOKEN
         if (!place.isColored) {
             JLabel tokenLabel = new JLabel("Tokens:", JLabel.LEFT);
-            tokenLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength, 20);
+            tokenLabel.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 20);
             components.add(tokenLabel);
             int tok = place.getTokensNumber();
             boolean problem = false;
@@ -1342,7 +1413,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
             SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok, 0, Integer.MAX_VALUE, 1);
             JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
-            tokenSpinner.setBounds(columnB_posX, columnB_Y += 20, 95, 20);
+            tokenSpinner.setBounds(columnB_posX, columnB_Y += 35, 95, 20);
             tokenSpinner.addChangeListener(e -> {
                 int tokenz = (int) ((JSpinner) e.getSource()).getValue();
                 setTokens(tokenz);
@@ -1539,8 +1610,11 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(place, location));
         components.add(nameLocChangeButton);
 
+
+
+
+
         //COLORS:
-        //TODO
         if (place.isColored) {
             // PLACE TOKEN
             JLabel tokenLabel = new JLabel("T0 Red:", JLabel.LEFT);
@@ -3943,6 +4017,9 @@ public class HolmesDockWindowsTable extends JPanel {
         initiateContainers();
         // set mode
         mode = ARC;
+        if(arc.getArcType() == TypeOfArc.XTPN)
+            mode = XARC;
+
         element = arc;
         pairedArc = arc.getPairedArc();
         elementLocation = arc.getStartLocation();
@@ -6989,6 +7066,7 @@ public class HolmesDockWindowsTable extends JPanel {
         ColorPalette cp = new ColorPalette();
 
         //places
+        boolean colorSubNet = false;
         for (Place place : subnet.getSubPlaces()) {
             if (!colorSubNet) {
                 place.setGlowedSub(true);
@@ -7336,7 +7414,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia nową wartość czasu EFT dla tranzycji czasowej.
-     * @param x double - nowe EFT
+     * @param x (double) nowe EFT.
      */
     private void setMinFireTime(double x) {
         if (mode == TIMETRANSITION) {
@@ -7348,7 +7426,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia nową wartość czasu LFT dla tranzycji czasowej.
-     * @param x double - nowe LFT
+     * @param x (double) nowe LFT.
      */
     private void setMaxFireTime(double x) {
         if (mode == TIMETRANSITION) {
@@ -7360,8 +7438,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia nową wartość opóźnienia dla produkcji tokenów.
-     *
-     * @param x double - nowa wartość duration
+     * @param x (double) nowa wartość duration.
      */
     private void setDurationTime(double x) {
         if (mode == TIMETRANSITION) {
@@ -7373,8 +7450,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia status trybu TPN dla tranzycji.
-     *
-     * @param status boolean - nowy status
+     * @param status (boolean) nowy status.
      */
     private void setTPNstatus(boolean status) {
         if (mode == TIMETRANSITION) {
@@ -7400,7 +7476,7 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda ustawia nową wartość czasu alfaMinimum dla tranzycji XTPN.
      * @param newAlphaMin (double) nowa wartość alfaMinimum.
-     * @return true - jeżeli zmiana wartości się udała.
+     * @return (true) jeżeli zmiana wartości się udała.
      */
     private boolean setAlfaMinTime(double newAlphaMin) {
         if (mode == XTPN_TRANS) {
@@ -7411,9 +7487,9 @@ public class HolmesDockWindowsTable extends JPanel {
                 String[] options = {"\u25B2 Increase \u03B1-max to "+newAlphaMin, "\u25BC Decrease \u03B1-min to "+alfaMax, "\u274C Cancel"};
                 int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B1-min = " +
                                 newAlphaMin + " cannot be higher than current \u03B1-max = " + alfaMax +
-                                "\nIncrease old alphaMaximum or decrease new alphaMinimum?",
+                                "\nIncrease old alphaMaximum (default action) or decrease new alphaMinimum?",
                         "Alpha range problem: \u03B1-min too high",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 switch(answer) {
                     case 0: //powiększenie alphaMax do nowego alphaMin
                         transition.setAlphaMax_xTPN(newAlphaMin, true);
@@ -7437,7 +7513,7 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda ustawia nową wartość czasu alfaMaximum dla tranzycji XTPN.
      * @param newAlphaMax (double) nowa wartość alfaMaximum.
-     * @return true - jeżeli zmiana wartości się udała.
+     * @return (true) jeżeli zmiana wartości się udała.
      */
     private boolean setAlfaMaxTime(double newAlphaMax) {
         if (mode == XTPN_TRANS) {
@@ -7448,9 +7524,9 @@ public class HolmesDockWindowsTable extends JPanel {
                 String[] options = {"\u25B2 Increase \u03B1-max to "+alfaMin, "\u25BC Decrease \u03B1-min "+newAlphaMax, "\u274C Cancel"};
                 int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B1-max = " +
                                 newAlphaMax + " cannot be lower than current \u03B1-min = " + alfaMin +
-                                "\nIncrease new alphaMaximum or decrease old alphaMinimum?",
+                                "\nIncrease new alphaMaximum or decrease old alphaMinimum (default action)?",
                         "Alpha range problem: \u03B1-max too low",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
                 switch(answer) {
                     case 0: //powiększenie nowego alphaMax do starej wartości alphaMin
                         transition.setAlphaMax_xTPN(alfaMin, true);
@@ -7474,7 +7550,7 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda ustawia nową wartość czasu betaMinimum dla tranzycji XTPN.
      * @param newBetaMin (double) nowa wartość betaMinimum.
-     * @return true - jeżeli zmiana wartości się udała.
+     * @return (true) jeżeli zmiana wartości się udała.
      */
     private boolean setBetaMinTime(double newBetaMin) {
         if (mode == XTPN_TRANS) {
@@ -7485,9 +7561,9 @@ public class HolmesDockWindowsTable extends JPanel {
                 String[] options = {"\u25B2 Increase \u03B2-max to "+newBetaMin, "\u25BC Decrease \u03B2-min to "+betaMax, "\u274C Cancel"};
                 int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B2-min = " +
                                 newBetaMin + " cannot be higher than current \u03B2-max = " + betaMax +
-                                "\nIncrease old betaMaximum or decrease new betaMinimum?",
+                                "\nIncrease old betaMaximum (default action) or decrease new betaMinimum?",
                         "Beta range problem: \u03B2-min too high",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 switch(answer) {
                     case 0: //powiększenie betaMax do nowego betaMin
                         transition.setBetaMax_xTPN(newBetaMin, true);
@@ -7511,7 +7587,7 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda ustawia nową wartość czasu betaMaximum dla tranzycji XTPN.
      * @param newBetaMax (double) nowa wartość betaMaximum.
-     * @return true - jeżeli zmiana wartości się udała.
+     * @return (true) jeżeli zmiana wartości się udała.
      */
     private boolean setBetaMaxTime(double newBetaMax) {
         if (mode == XTPN_TRANS) {
@@ -7522,9 +7598,9 @@ public class HolmesDockWindowsTable extends JPanel {
                 String[] options = {"\u25B2 Increase \u03B2-max to "+betaMin, "\u25BC Decrease \u03B2-min to "+newBetaMax, "\u274C Cancel"};
                 int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B2-max = " +
                                 newBetaMax + " cannot be lower than current \u03B2-min = " + betaMin +
-                                "\nIncrease new betaMax or decrease old betaMin?",
+                                "\nIncrease new betaMax or decrease old betaMin (default action)?",
                         "Beta range problem: \u03B2-max too low",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
                 switch(answer) {
                     case 0: //powiększenie nowego alphaMax do starej wartości alphaMin
                         transition.setBetaMax_xTPN(betaMin, true);
@@ -7547,8 +7623,8 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia nową wartość czasu gammaMinimum dla miejsca XTPN.
-     * @param newGammaMin double - nowa wartość gammaMinimum.
-     * @return true - jeżeli zmiana wartości się udała.
+     * @param newGammaMin (double) nowa wartość gammaMinimum.
+     * @return (true) jeżeli zmiana wartości się udała.
      */
     private boolean setGammaMinimumTime(double newGammaMin) {
         if (mode == XTPN_PLACE) {
@@ -7559,9 +7635,9 @@ public class HolmesDockWindowsTable extends JPanel {
                 String[] options = {"\u25B2 Increase \u03B3-max to "+newGammaMin, "\u25BC Decrease \u03B3-min to "+gammaMax, "\u274C Cancel"};
                 int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B3-min = " +
                                 newGammaMin + " cannot be higher than current \u03B3-max = " + gammaMax +
-                                "\nIncrease current gammaMaximum or decrease proposed gammaMinimum?",
+                                "\nIncrease current gammaMaximum (default action) or decrease proposed gammaMinimum?",
                         "Gamma range problem: \u03B3-min too high",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 switch(answer) {
                     case 0: //powiększenie gMax do nowego gMin
                         place.setGammaMax_xTPN(newGammaMin, true);
@@ -7584,8 +7660,8 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia nową wartość czasu gammaMaximum dla miejsca XTPN.
-     * @param newGammaMax double - nowa wartość gammaMaximum.
-     * @return true - jeżeli zmiana wartości się udała.
+     * @param newGammaMax (double) nowa wartość gammaMaximum.
+     * @return (true) jeżeli zmiana wartości się udała.
      */
     private boolean setMaxGammaTime(double newGammaMax) {
         if (mode == XTPN_PLACE) {
@@ -7596,9 +7672,9 @@ public class HolmesDockWindowsTable extends JPanel {
                 String[] options = {"\u25B2 Increase \u03B3-max to "+gammaMin, "\u25BC Decrease \u03B3-min to "+newGammaMax, "\u274C Cancel"};
                 int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B3-max = " +
                                 newGammaMax + " cannot be lower than current \u03B3-min = " + gammaMin +
-                                "\nIncrease proposed gammaMaximum or decrease current gammaMinimum?",
+                                "\nIncrease proposed gammaMaximum or decrease current gammaMinimum (default action)?",
                         "Gamma range problem: \u03B3-max too low",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
                 switch(answer) {
                     case 0: //powiększenie nowego gammaMax do starej wartości gammaMin
                         place.setGammaMax_xTPN(gammaMin, true);
@@ -7621,8 +7697,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda zmienia współrzędną X dla wierzchołka sieci.
-     *
-     * @param x int - nowa wartość
+     * @param x (int) nowa wartość
      */
     private void setX(int x) {
         if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION
@@ -7802,12 +7877,11 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda zmienia wagę dla łuku sieci, poza listenerem, który
      * jest klasą anonimową (i nie widzi pola element).
-     *
-     * @param weight int - nowa waga
-     * @param arc    Arc - łuk
+     * @param weight int - nowa waga.
+     * @param arc Arc - łuk.
      */
     private void setWeight(int weight, Arc arc) {
-        if (mode == ARC) {
+        if (mode == ARC || mode == XARC) {
             arc.setWeight(weight);
             repaintGraphPanel();
         }
@@ -7822,7 +7896,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param i      int - nr porządkowy koloru, default 0, od 0 do 5
      */
     private void setColorWeight(int weight, Arc arc, int i) {
-        if (mode == ARC) {
+        if (mode == ARC || mode == XARC) {
             switch (i) {
                 case 0:
                     arc.setColorWeight(weight, i);

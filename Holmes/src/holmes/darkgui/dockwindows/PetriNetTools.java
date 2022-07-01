@@ -68,20 +68,22 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Inhibitor Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Reset Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Equal Arc"));
-		
-		basicPetriNetsNode.add(new DefaultMutableTreeNode("C-Place"));
-		basicPetriNetsNode.add(new DefaultMutableTreeNode("C-Transition"));
-		basicPetriNetsNode.add(new DefaultMutableTreeNode("C-Arc"));
 		//basicPetriNetsNode.add(new DefaultMutableTreeNode("Modifier Arc"));
 
-		DefaultMutableTreeNode xTPNNode = new DefaultMutableTreeNode("extTime PN");
+		DefaultMutableTreeNode xTPNNode = new DefaultMutableTreeNode("extended Time PN");
 		xTPNNode.add(new DefaultMutableTreeNode("xPlace"));
 		xTPNNode.add(new DefaultMutableTreeNode("xTransition"));
+		xTPNNode.add(new DefaultMutableTreeNode("xArc"));
 
-		DefaultMutableTreeNode otherPetriNetsNode = new DefaultMutableTreeNode("Other transitions");
-		otherPetriNetsNode.add(new DefaultMutableTreeNode("(TPN) Time"));
-		otherPetriNetsNode.add(new DefaultMutableTreeNode("(FPN) Functional"));
-		otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Stochastic"));
+		DefaultMutableTreeNode otherTransNode = new DefaultMutableTreeNode("TPN, FPN, SPN");
+		otherTransNode.add(new DefaultMutableTreeNode("(TPN) Time"));
+		otherTransNode.add(new DefaultMutableTreeNode("(FPN) Functional"));
+		otherTransNode.add(new DefaultMutableTreeNode("(SPN) Stochastic"));
+
+		DefaultMutableTreeNode colorNetsNode = new DefaultMutableTreeNode("Experimental");
+		colorNetsNode.add(new DefaultMutableTreeNode("C-Place"));
+		colorNetsNode.add(new DefaultMutableTreeNode("C-Transition"));
+		colorNetsNode.add(new DefaultMutableTreeNode("C-Arc"));
 		//otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Immediate"));
 		//otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Deterministic"));
 		//otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Scheduled"));
@@ -96,7 +98,8 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		rootNode.add(miscNode);
 		rootNode.add(basicPetriNetsNode);
 		rootNode.add(xTPNNode);
-		rootNode.add(otherPetriNetsNode);
+		rootNode.add(otherTransNode);
+		rootNode.add(colorNetsNode);
 		rootNode.add(hierachicalNode);
 		
 		// Create the tree model.
@@ -231,6 +234,9 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			case "xPlace":
 				guiManager.getWorkspace().setGraphMode(DrawModes.XPLACE);
 				break;
+			case "xArc":
+				guiManager.getWorkspace().setGraphMode(DrawModes.XARC);
+				break;
 			case "xTransition":
 				guiManager.getWorkspace().setGraphMode(DrawModes.XTRANSITION);
 				break;
@@ -253,7 +259,6 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				guiManager.getWorkspace().setGraphMode(DrawModes.CARC);
 				break;
 			}
-
 		}
 	}
 
@@ -270,11 +275,12 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 
 		private ImageIcon arcIcon, arcIconRead, arcIconInh, arcIconRst, arcIconEql, arcIconModifier;
 
-		private ImageIcon xPlaceIcon, xTransIcon;
+		private ImageIcon xPlaceIcon, xTransIcon, xArcIcon;
 		
 		private ImageIcon subnetT, subnetP, subnetPT;
 		
 		private ImageIcon cplaceIcon, ctransitionIcon, carcIcon;
+
 		/**
 		 * Konstruktor domyślny obiektu klasy wewnętrznej LeafRenderer. Tworzy ikony
 		 * narzędzi rysowania sieci Petriego.
@@ -301,6 +307,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 
 			xPlaceIcon= Tools.getResIcon16("/icons/xPlaceIcon.gif");
 			xTransIcon = Tools.getResIcon16("/icons/xTransIcon.gif");
+			xArcIcon = Tools.getResIcon16("/icons/xArcIcon.gif");
 			
 			subnetT = Tools.getResIcon16("/icons/subnetT.gif");
 			subnetP = Tools.getResIcon16("/icons/subnetP.gif");
@@ -401,6 +408,10 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				case "xTransition":
 					setIcon(xTransIcon);
 					setToolTipText("xTPN transition with TPN and DPN-like time ranges.");
+					break;
+				case "xArc":
+					setIcon(xArcIcon);
+					setToolTipText("xTPN new arc");
 					break;
 				case "Subnet T-type":
 					setIcon(subnetT);

@@ -3,6 +3,7 @@ package holmes.petrinet.elements;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -11,6 +12,8 @@ import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
+
+import static java.lang.Double.valueOf;
 
 /**
  * Klasa implementująca miejsce sieci Petriego. Zapewnia implementację stanu (przechowywania tokenów) oraz 
@@ -24,13 +27,11 @@ import holmes.petrinet.data.IdGenerator;
  *
  */
 public class Place extends Node {
+	@Serial
 	private static final long serialVersionUID = 2346995422046987174L;
-
-	private double accuracy_XTPN = 0.0000001;
 	protected static int realRadius = 18;
 	private int tokensNumber = 0;
 	private int reservedTokens = 0;
-	
 	private boolean isColorChanged;
 	private Color placeColorValue;
 	private boolean valueVisibilityStatus;
@@ -41,12 +42,10 @@ public class Place extends Node {
 	public int txtYoff;
 	public int valueXoff;
 	public int valueYoff;
-	
 	public Color defColor = Color.WHITE;
 	
 	//SSA:
 	private double ssaValue = 0.0;
-	
 	//quickSim
 	public boolean qSimDrawed = false; //czy rysować dodatkowe oznaczenie miejsca - okrąg
 	public int qSimOvalSize = 10; //rozmiar okręgu oznaczającego
@@ -70,21 +69,34 @@ public class Place extends Node {
 	public int reserved4grey = 0;
 	public int reserved5black = 0;
 
-	/*  ***********************************************************************************
-	 ********************************    xTPN    ***************************************
-	 ***********************************************************************************  */
+
+
+
+	/* ***********************************************************************************
+	   ********************************    xTPN    ***************************************
+	   *********************************************************************************** */
 
 	private boolean isXTPN = false; //czy tokeny marzą o elektrycznych tranzycjach?
 	private double gammaMin_xTPN = 0.0;
 	private double gammaMax_xTPN = 99;
-
 	private boolean gammaMode_xTPN = true;
 
 	//grafika:
 	private boolean showTokenSet_xTPN = false; //czy wyświetlać zbiór tokenów
 	private int franctionDigits = 6;
+
+	//tokeny:
 	private ArrayList<Double> multisetK;
-	
+	private ArrayList<Double> reservedMultisetK;
+
+	private int numberOfTokens_XTPN = 0;
+	private int numberOfReservTokens_XTPN = 0;
+
+
+
+
+
+
 	/**
 	 * Konstruktor obiektu miejsca sieci.
 	 * @param nodeId int - identyfikator wierzchołka
@@ -93,10 +105,11 @@ public class Place extends Node {
 	 */
 	public Place(int nodeId, int sheetId, Point placePosition) {
 		super(sheetId, nodeId, placePosition, realRadius);
-		this.setName("Place" + Integer.toString(IdGenerator.getNextPlaceId()));
+		this.setName("Place" + IdGenerator.getNextPlaceId());
 		this.setType(PetriNetElementType.PLACE);
 
 		this.multisetK = new ArrayList<Double>();
+		this.reservedMultisetK = new ArrayList<Double>();
 	}
 
 	/**
@@ -115,6 +128,7 @@ public class Place extends Node {
 		this.setType(PetriNetElementType.PLACE);
 
 		this.multisetK = new ArrayList<Double>();
+		this.reservedMultisetK = new ArrayList<Double>();
 	}
 
 	/**
@@ -124,10 +138,11 @@ public class Place extends Node {
 	 */
 	public Place(int nodeId, ArrayList<ElementLocation> elementLocations) {
 		super(nodeId, elementLocations, realRadius);
-		this.setName("Place" + Integer.toString(IdGenerator.getNextPlaceId()));
+		this.setName("Place" + IdGenerator.getNextPlaceId());
 		this.setType(PetriNetElementType.PLACE);
 
 		this.multisetK = new ArrayList<Double>();
+		this.reservedMultisetK = new ArrayList<Double>();
 	}
 
 	/**
@@ -190,22 +205,14 @@ public class Place extends Node {
 	 * @return int - liczba tokenów kolorowych
 	 */
 	public int getColorTokensNumber(int i) {
-		switch(i) {
-			//case 0:
-			//	return tokensNumber; //default i tak to robi
-			case 1:
-				return token1green;
-			case 2:
-				return token2blue;
-			case 3:
-				return token3yellow;
-			case 4:
-				return token4grey;
-			case 5:
-				return token5black;
-			default:
-				return tokensNumber;
-		}
+		return switch (i) {
+			case 1 -> token1green;
+			case 2 -> token2blue;
+			case 3 -> token3yellow;
+			case 4 -> token4grey;
+			case 5 -> token5black;
+			default -> tokensNumber;
+		};
 	}
 
 	/**
@@ -226,48 +233,13 @@ public class Place extends Node {
 	 * @param i int - nr porządkowy tokenu, default 0, od 0 do 1
 	 */
 	public void setColorTokensNumber(int tokensNumber, int i) {
-		switch(i) {
-			case 0:
-				this.tokensNumber = tokensNumber;
-				if(tokensNumber < 0) {
-					this.tokensNumber = 0;
-				}
-				break;
-			case 1:
-				this.token1green = tokensNumber;
-				if(tokensNumber < 0) {
-					this.token1green = 0;
-				}
-				break;
-			case 2:
-				this.token2blue = tokensNumber;
-				if(tokensNumber < 0) {
-					this.token2blue = 0;
-				}
-				break;
-			case 3:
-				this.token3yellow = tokensNumber;
-				if(tokensNumber < 0) {
-					this.token3yellow = 0;
-				}
-				break;
-			case 4:
-				this.token4grey = tokensNumber;
-				if(tokensNumber < 0) {
-					this.token4grey = 0;
-				}
-				break;
-			case 5:
-				this.token5black = tokensNumber;
-				if(tokensNumber < 0) {
-					this.token5black = 0;
-				}
-				break;
-			default:
-				this.tokensNumber = tokensNumber;
-				if(tokensNumber < 0) {
-					this.tokensNumber = 0;
-				}
+		switch (i) {
+			case 1 -> this.token1green = Math.max(tokensNumber, 0);
+			case 2 -> this.token2blue = Math.max(tokensNumber, 0);
+			case 3 -> this.token3yellow = Math.max(tokensNumber, 0);
+			case 4 -> this.token4grey = Math.max(tokensNumber, 0);
+			case 5 -> this.token5black = Math.max(tokensNumber, 0);
+			default -> this.tokensNumber = Math.max(tokensNumber, 0);
 		}
 	}
 
@@ -291,48 +263,49 @@ public class Place extends Node {
 	 * @param i int - nr porządkowy tokenu, default 0, od 0 do 5
 	 */
 	public void modifyColorTokensNumber(int delta, int i) {
-		switch(i) {
-			case 0:
+		switch (i) {
+			case 0 -> {
 				this.tokensNumber += delta;
-				if(this.tokensNumber < 0) {
+				if (this.tokensNumber < 0) {
 					this.tokensNumber = 0;
 				}
-				break;
-			case 1:
+			}
+			case 1 -> {
 				this.token1green += delta;
-				if(this.tokensNumber < 0) {
+				if (this.tokensNumber < 0) {
 					this.token1green = 0;
 				}
-				break;
-			case 2:
+			}
+			case 2 -> {
 				this.token2blue += delta;
-				if(this.tokensNumber < 0) {
+				if (this.tokensNumber < 0) {
 					this.token2blue = 0;
 				}
-				break;
-			case 3:
+			}
+			case 3 -> {
 				this.token3yellow += delta;
-				if(this.tokensNumber < 0) {
+				if (this.tokensNumber < 0) {
 					this.token3yellow = 0;
 				}
-				break;
-			case 4:
+			}
+			case 4 -> {
 				this.token4grey += delta;
-				if(this.tokensNumber < 0) {
+				if (this.tokensNumber < 0) {
 					this.token4grey = 0;
 				}
-				break;
-			case 5:
+			}
+			case 5 -> {
 				this.token5black += delta;
-				if(this.tokensNumber < 0) {
+				if (this.tokensNumber < 0) {
 					this.token5black = 0;
 				}
-				break;
-			default:
+			}
+			default -> {
 				this.tokensNumber += delta;
-				if(this.tokensNumber < 0) {
+				if (this.tokensNumber < 0) {
 					this.tokensNumber = 0;
 				}
+			}
 		}
 	}
 
@@ -346,31 +319,24 @@ public class Place extends Node {
 	
 	/**
 	 * Metoda zwraca liczbę zarezerwowanych kolorowych tokenów (0-5)
-	 * @param i - nr porzadkowy tokenu, default 0, od 0 do 5
+	 * @param i (int) nr porzadkowy tokenu, default 0, od 0 do 5
 	 * @return int - liczba zarezerwowanych tokenów
 	 */
 	public int getReservedColorTokens(int i) {
-		switch(i) {
-			case 0:
-				return reservedTokens;
-			case 1:
-				return reserved1green;
-			case 2:
-				return reserved2blue;
-			case 3:
-				return reserved3yellow;
-			case 4:
-				return reserved4grey;
-			case 5:
-				return reserved5black;
-			default:
-				return reservedTokens;
-		}
+		return switch (i) {
+			case 0 -> reservedTokens;
+			case 1 -> reserved1green;
+			case 2 -> reserved2blue;
+			case 3 -> reserved3yellow;
+			case 4 -> reserved4grey;
+			case 5 -> reserved5black;
+			default -> reservedTokens;
+		};
 	}
 
 	/**
 	 * Metoda pozwala zarezerwować określoną liczbę tokenów w miejscu.
-	 * @param tokensTaken int - liczba zajmowanych tokenów
+	 * @param tokensTaken (int) liczba zajmowanych tokenów
 	 */
 	public void reserveTokens(int tokensTaken) {
 		this.reservedTokens += tokensTaken;
@@ -378,31 +344,18 @@ public class Place extends Node {
 	
 	/**
 	 * Metoda pozwala zarezerwować określoną liczbę kolorowych tokenów w miejscu.
-	 * @param tokensTaken int - liczba zajmowanych tokenów
-	 * @param i - nr porządkowy kolorowanego tokeny, dafult 0, od 0 do 5
+	 * @param tokensTaken (int) liczba zajmowanych tokenów
+	 * @param i (int) nr porządkowy kolorowanego tokeny, dafult 0, od 0 do 5
 	 */
 	public void reserveColorTokens(int tokensTaken, int i) {
-		switch(i) {
-			case 0:
-				this.reservedTokens += tokensTaken;
-				break;
-			case 1:
-				this.reserved1green += tokensTaken;
-				break;
-			case 2:
-				this.reserved2blue += tokensTaken;
-				break;
-			case 3:
-				this.reserved3yellow += tokensTaken;
-				break;
-			case 4:
-				this.reserved4grey += tokensTaken;
-				break;
-			case 5:
-				this.reserved5black += tokensTaken;
-				break;
-			default:
-				this.reservedTokens += tokensTaken;
+		switch (i) {
+			case 0 -> this.reservedTokens += tokensTaken;
+			case 1 -> this.reserved1green += tokensTaken;
+			case 2 -> this.reserved2blue += tokensTaken;
+			case 3 -> this.reserved3yellow += tokensTaken;
+			case 4 -> this.reserved4grey += tokensTaken;
+			case 5 -> this.reserved5black += tokensTaken;
+			default -> this.reservedTokens += tokensTaken;
 		}
 		
 	}
@@ -425,27 +378,13 @@ public class Place extends Node {
 	 * @param i int - nr porządkowy tokenu, default 0, od 0 do 5
 	 */
 	public void freeReservedColorTokens(int i) {
-		switch(i) {
-			case 0:
-				this.reservedTokens = 0;
-				break;
-			case 1:
-				this.reserved1green = 0;
-				break;
-			case 2:
-				this.reserved2blue = 0;
-				break;
-			case 3:
-				this.reserved3yellow = 0;
-				break;
-			case 4:
-				this.reserved4grey = 0;
-				break;
-			case 5:
-				this.reserved5black = 0;
-				break;
-			default:
-				this.reservedTokens = 0;
+		switch (i) {
+			case 1 -> this.reserved1green = 0;
+			case 2 -> this.reserved2blue = 0;
+			case 3 -> this.reserved3yellow = 0;
+			case 4 -> this.reserved4grey = 0;
+			case 5 -> this.reserved5black = 0;
+			default -> this.reservedTokens = 0;
 		}
 		
 	}
@@ -465,22 +404,15 @@ public class Place extends Node {
 	 * @return int - liczba dostępnych tokenów
 	 */
 	public int getNonReservedColorTokensNumber(int i) {
-		switch(i) {
-			case 0:
-				return tokensNumber - getReservedColorTokens(0);
-			case 1:
-				return token1green - getReservedColorTokens(1);
-			case 2:
-				return token2blue - getReservedColorTokens(2);
-			case 3:
-				return token3yellow - getReservedColorTokens(3);
-			case 4:
-				return token4grey - getReservedColorTokens(4);
-			case 5:
-				return token5black - getReservedColorTokens(5);
-			default:
-				return tokensNumber - getReservedTokens();
-		}
+		return switch (i) {
+			case 0 -> tokensNumber - getReservedColorTokens(0);
+			case 1 -> token1green - getReservedColorTokens(1);
+			case 2 -> token2blue - getReservedColorTokens(2);
+			case 3 -> token3yellow - getReservedColorTokens(3);
+			case 4 -> token4grey - getReservedColorTokens(4);
+			case 5 -> token5black - getReservedColorTokens(5);
+			default -> tokensNumber - getReservedTokens();
+		};
 		
 	}
 	
@@ -638,8 +570,8 @@ public class Place extends Node {
 	 */
 
 	/**
-	 * Metoda ustawia dolną wartość gammaLower dla xTPN.
-	 * @param value (double) czas gammaL (=minimalny czas aktywacji.)
+	 * Metoda ustawia dolną wartość gammaMinimum dla xTPN.
+	 * @param value (double) czas gammaMinimum (=minimalny czas aktywacji.)
 	 * @param force (boolean) czy wymusić wartość bez weryfikacji
 	 */
 	public void setGammaMin_xTPN(double value, boolean force) {
@@ -659,16 +591,16 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Metoda pozwala odczytać dolną wartość gammaLower dla xTPN.
-	 * @return (double) : czas gammaLower, minimalny czas aktywacji.
+	 * Metoda pozwala odczytać dolną wartość gammaMinimum dla xTPN.
+	 * @return (double) czas gammaMinimum, minimalny czas aktywacji.
 	 */
 	public double getGammaMin_xTPN() {
 		return this.gammaMin_xTPN;
 	}
 
 	/**
-	 * Metoda ustawia dolną wartość gammaUpper dla xTPN.
-	 * @param value (double) czas gammaU (=token lifetime limit)
+	 * Metoda ustawia dolną wartość gammaMaximum dla xTPN.
+	 * @param value (double) czas gammaMaximum (=token lifetime limit)
 	 * @param force (boolean) czy wymusić wartość bez weryfikacji
 	 */
 	public void setGammaMax_xTPN(double value, boolean force) {
@@ -692,7 +624,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda pozwala odczytać górną wartość gammaUpper dla xTPN.
-	 * @return (double) : czas gammaUpper.
+	 * @return (double) czas gammaUpper.
 	 */
 	public double getGammaMax_xTPN() {
 		return this.gammaMax_xTPN;
@@ -700,7 +632,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda włącza status miejsca typu XTPN.
-	 * @param status boolean - true, jeśli tryb XTPN ma być aktywny dla miejsca.
+	 * @param status (boolean) true, jeśli tryb XTPN ma być aktywny dla miejsca.
 	 */
 	public void setXTPNplaceStatus(boolean status) {
 		isXTPN = status;
@@ -708,7 +640,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda zwraca status XTPN dla miejsca.
-	 * @return boolean - true, jeśli to miejsce typu XTPN
+	 * @return (boolean) - true, jeśli to miejsce typu XTPN
 	 */
 	public boolean isXTPNplace() {
 		return isXTPN;
@@ -716,7 +648,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda włącza tryb gamma-XTPN dla miejsca.
-	 * @param status boolean - true, jeśli tryb gamma-XTPN ma być aktywny
+	 * @param status (boolean) true, jeśli tryb gamma-XTPN ma być aktywny
 	 */
 	public void setGammaModeXTPNstatus(boolean status) {
 		gammaMode_xTPN = status;
@@ -724,7 +656,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda zwraca status gamma miejsca XTPN.
-	 * @return boolean - true, jeśli status gamma-XTPN miejsca
+	 * @return (boolean) - true, jeśli status gamma-XTPN miejsca
 	 */
 	public boolean isGammaModeActiveXTPN() {
 		return gammaMode_xTPN;
@@ -732,7 +664,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda ustawia wyświetlaną dokładność po przecinku.
-	 * @param value - (int) nowa wartość liczby cyfr przecinku.
+	 * @param value (int) nowa wartość liczby cyfr przecinku.
 	 */
 	public void setFraction_xTPN(int value) {
 		franctionDigits = value;
@@ -740,7 +672,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda zwraca wyświetlaną dokładność po przecinku.
-	 * @return int - aktualna wartość liczby cyfr przecinku.
+	 * @return (int) aktualna wartość liczby cyfr przecinku.
 	 */
 	public int getFraction_xTPN() {
 		return franctionDigits;
@@ -748,18 +680,20 @@ public class Place extends Node {
 
 	/**
 	 * Dodawanie nowych tokenów do multizbioru K.
-	 * @param howMany - (int) ile tokenów dodać
-	 * @param initialTime - (double) wartość początkowa
+	 * @param howMany (int) ile tokenów dodać
+	 * @param initialTime (double) wartość początkowa
 	 */
-	public void addToken_XTPN(int howMany, double initialTime) {
+	public void addTokens_XTPN(int howMany, double initialTime) {
 		for(int i=0; i<howMany; i++) {
-			multisetK.add(initialTime);
+			multisetK.add(valueOf(initialTime));
 		}
+
+		updateNumberOfTokens_XTPN(howMany);
 	}
 
 	/**
 	 * Usuwa tokeny których czas życia jest większy GammaMax.
-	 * @return
+	 * @return int - liczba usuniętych tokenów
 	 */
 	public int removeOldTokens_XTPN() {
 		int removed = 0;
@@ -769,15 +703,16 @@ public class Place extends Node {
 				removed++;
 			}
 		}
+		updateNumberOfTokens_XTPN(-removed);
 		return removed;
 	}
 
 	/**
 	 * Usuwa tokeny na potrzeby produkcji tranzycji XTPN.
-	 * @param howMany - (int) - ile usunąć
-	 * @param mode - (int) tryb: 0 - najstarsze, 1 - najmłodsze, 2 - losowe
-	 * @param genetaror - (Random) generator dla mode=2
-	 * @return int - liczba usuniętych tokenów lub -1 gdy wystąpił błąd
+	 * @param howMany (int) - ile usunąć
+	 * @param mode (int) tryb: 0 - najstarsze, 1 - najmłodsze, 2 - losowe
+	 * @param genetaror (Random) generator dla mode=2
+	 * @return (int) - liczba usuniętych tokenów lub -1 gdy wystąpił błąd
 	 */
 	public int removeTokensForProduction(int howMany, int mode, Random genetaror) {
 		int counter = howMany;
@@ -812,16 +747,76 @@ public class Place extends Node {
 				multisetK.remove(index);
 			}
 		}
+		updateNumberOfTokens_XTPN(-howMany);
 		return howMany;
 	}
 
 	/**
 	 * Zwiększanie czasu życia wszystkich tokenów na liście.
-	 * @param tau - (double) o ile zwiększyć czas życia tokenów.
+	 * @param tau (double) o ile zwiększyć czas życia tokenów.
 	 */
 	public void incTokensTime_XTPN(double tau) {
-		for(int x=0; x<multisetK.size(); x++) {
-			multisetK.set(x, multisetK.get(x) + tau);
+		multisetK.replaceAll(aDouble -> aDouble + tau);
+	}
+
+	/**
+	 * Ustawia liczbę tokenów miejsca XTPN.
+	 * @param value (int) liczba tokenów XTPN.
+	 */
+	public void setNumberOfTokens_XTPN(int value) {
+		this.numberOfTokens_XTPN = value;
+	}
+
+	/**
+	 * Zmienia liczbę tokenów miejsca XTPN.
+	 * @param delta (int) liczba tokenów XTPN do zmiany + lub -.
+	 */
+	public void updateNumberOfTokens_XTPN(int delta) {
+		this.numberOfTokens_XTPN += delta;
+	}
+
+	/**
+	 * Zwraca liczbę tokenów miejsca XTPN.
+	 * @return (int) - liczba tokenów XTPN.
+	 */
+	public int getNumberOfTokens_XTPN() {
+		return numberOfTokens_XTPN;
+	}
+
+	/**
+	 * Ustawia liczbę zarezerwowanych tokenów miejsca XTPN.
+	 * @param value (int) liczba zarezerwowanych tokenów XTPN.
+	 */
+	public void setNumberOfReservedTokens_XTPN(int value) {
+		this.numberOfReservTokens_XTPN = value;
+	}
+
+	/**
+	 * Zmienia liczbę zarezerwowanych tokenów miejsca XTPN.
+	 * @param delta (int) liczba zarezerwowanych tokenów XTPN do zmiany + lub -.
+	 */
+	public void updateNumberOfReservedTokens_XTPN(int delta) {
+		this.numberOfReservTokens_XTPN += delta;
+	}
+
+	/**
+	 * Zwraca liczbę zarezerwowanych tokenów miejsca XTPN.
+	 * @return (int) liczba zarezerwowanych tokenów XTPN.
+	 */
+	public int getNumberOfReservedTokens_XTPN() {
+		return numberOfReservTokens_XTPN;
+	}
+
+
+	public void transformXTPNintoPNpace() {
+		setGammaModeXTPNstatus(false);
+		multisetK.clear();
+	}
+
+	public void transformIntoXTPNplace() {
+		setGammaModeXTPNstatus(true);
+		for(int i=0; i<numberOfTokens_XTPN; i++) {
+			multisetK.add(valueOf(0.0));
 		}
 	}
 }

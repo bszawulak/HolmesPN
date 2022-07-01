@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Line2D;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
@@ -22,6 +23,7 @@ import holmes.petrinet.data.PetriNet;
  * @author MR - poprawki (klasy łuków)
  */
 public class Arc extends PetriNetElement {
+    @Serial
     private static final long serialVersionUID = 5365625190238686098L;
 
     private ElementLocation locationStart;
@@ -62,13 +64,12 @@ public class Arc extends PetriNetElement {
     private boolean isBranchEnd = false;
 
     /**
-     * NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR
+     * NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR, XTPN
      */
-    public enum TypeOfArc {NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR}
+    public enum TypeOfArc {NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR, XTPN}
 
     /**
      * Konstruktor obiektu klasy Arc - chwilowo nieużywany.
-     *
      * @param startPosition ElementLocation - lokalicja żródła łuku
      * @param endPosition   ElementLocation - lokalicja celu łuku
      */
@@ -227,22 +228,14 @@ public class Arc extends PetriNetElement {
      * @return int - waga dla koloru
      */
     public int getColorWeight(int i) {
-        switch (i) {
-            case 0:
-                return weight;
-            case 1:
-                return weight1green;
-            case 2:
-                return weight2blue;
-            case 3:
-                return weight3yellow;
-            case 4:
-                return weight4grey;
-            case 5:
-                return weight5black;
-            default:
-                return weight;
-        }
+        return switch (i) {
+            case 1 -> weight1green;
+            case 2 -> weight2blue;
+            case 3 -> weight3yellow;
+            case 4 -> weight4grey;
+            case 5 -> weight5black;
+            default -> weight;
+        };
     }
 
     /**
@@ -612,10 +605,10 @@ public class Arc extends PetriNetElement {
     /**
      * Metoda pozwala ustawić aktualny krok wizualizacji symulacji.
      *
-     * @param symulationStep int - numer kroku symulacji
+     * @param value int - numer kroku symulacji
      */
-    private void setSimulationStep(int symulationStep) {
-        this.simulationStep = symulationStep;
+    private void setSimulationStep(int value) {
+        this.simulationStep = value;
     }
 
     /**

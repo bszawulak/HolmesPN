@@ -40,6 +40,8 @@ import holmes.tables.FunctionalTransTableModel;
 import holmes.tables.FunctionalTransTableRenderer;
 import holmes.utilities.Tools;
 
+import static java.lang.Double.valueOf;
+
 /**
  * Okno zarządzania funkcjami wskazanej tranzycji.
  * 
@@ -100,7 +102,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		} else if(mainSimulatorActive) {
 			JOptionPane.showMessageDialog(null,
-					"Function editor unavailble when simulator is working.", 
+					"Function editor unavailable when simulator is working.",
 					"Error: simulation in progress", JOptionPane.ERROR_MESSAGE);
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		} else {
@@ -365,7 +367,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		myParser.parseExpression(container.simpleExpression);
 
 		double result = myParser.getValue();
-		if((new Double(result)).isNaN()) {
+		if((valueOf(result)).isNaN()) {
 			currentResult.setText("Not-A-Number");
 			container.correct = false;
 			container.enabled = false;

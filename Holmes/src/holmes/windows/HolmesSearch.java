@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.Serial;
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -38,6 +39,7 @@ import holmes.workspace.WorkspaceSheet;
  *
  */
 public class HolmesSearch extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 8885161841467059860L;
 	private JFrame ego;
 	private ArrayList<Place> places = new ArrayList<Place>();

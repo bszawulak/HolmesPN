@@ -50,7 +50,7 @@ public class DarkDockingListener implements DockingListener {
 
 	/**
 	 * Metoda ustawia obiekt obszaru roboczego.
-	 * @return Workspace - nowy obszar roboczy
+	 * @param workspace (Workspace) nowy obszar roboczy
 	 */
 	public void setWorkspace(Workspace workspace) {
 		this.workspace = workspace;

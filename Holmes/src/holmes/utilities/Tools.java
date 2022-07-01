@@ -406,9 +406,10 @@ public final class Tools {
 	 * @return String - liczba
 	 */
 	public static String cutValueExt(double value, int howMany) {
-		if(value > Integer.MAX_VALUE) {
-			return "\u221E";
-		}
+		//if(value > Integer.MAX_VALUE) {
+		//	return "\u221E";
+		//}
+
 		NumberFormat formatter = DecimalFormat.getInstance();
 		formatter.setMinimumFractionDigits(2);
 		formatter.setMaximumFractionDigits(howMany);
