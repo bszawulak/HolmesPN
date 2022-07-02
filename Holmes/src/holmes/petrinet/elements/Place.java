@@ -13,6 +13,8 @@ import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
 
+import javax.swing.*;
+
 import static java.lang.Double.valueOf;
 
 /**
@@ -684,10 +686,11 @@ public class Place extends Node {
 	 * @param initialTime (double) wartość początkowa
 	 */
 	public void addTokens_XTPN(int howMany, double initialTime) {
-		for(int i=0; i<howMany; i++) {
-			multisetK.add(valueOf(initialTime));
+		if(isGammaModeActiveXTPN()) { //tylko gdy XTPN włączone
+			for (int i = 0; i < howMany; i++) {
+				multisetK.add(valueOf(initialTime));
+			}
 		}
-
 		updateNumberOfTokens_XTPN(howMany);
 	}
 
@@ -697,10 +700,12 @@ public class Place extends Node {
 	 */
 	public int removeOldTokens_XTPN() {
 		int removed = 0;
-		for(Double token : multisetK) {
-			if(token > gammaMax_xTPN)  {
-				multisetK.remove(token);
-				removed++;
+		if(isGammaModeActiveXTPN()) { //tylko gdy XTPN włączone
+			for (Double token : multisetK) {
+				if (token > gammaMax_xTPN) {
+					multisetK.remove(token);
+					removed++;
+				}
 			}
 		}
 		updateNumberOfTokens_XTPN(-removed);
@@ -715,6 +720,11 @@ public class Place extends Node {
 	 * @return (int) - liczba usuniętych tokenów lub -1 gdy wystąpił błąd
 	 */
 	public int removeTokensForProduction(int howMany, int mode, Random genetaror) {
+		if(!isGammaModeActiveXTPN()) { //gdy XTPN wyłączone, tylko usuwamy liczbę
+			updateNumberOfTokens_XTPN(-howMany);
+			return howMany;
+		}
+
 		int counter = howMany;
 		if(howMany > multisetK.size()) {
 			return -1;
@@ -756,7 +766,37 @@ public class Place extends Node {
 	 * @param tau (double) o ile zwiększyć czas życia tokenów.
 	 */
 	public void incTokensTime_XTPN(double tau) {
-		multisetK.replaceAll(aDouble -> aDouble + tau);
+		if(isGammaModeActiveXTPN()) {
+			multisetK.replaceAll(aDouble -> aDouble + tau);
+		} else {
+			JOptionPane.showMessageDialog(null, "Critical error - tokens time update when XTPN status OFF" +
+							"\nfor place"+this.getName(),
+					"Error 587654", JOptionPane.ERROR_MESSAGE);
+			int x = 1;
+		}
+	}
+
+	public boolean updateToken(int ID, Double value) {
+		boolean status = false;
+		if(ID > -1 && ID < multisetK.size()) {
+			multisetK.set(ID, value);
+		}
+		Collections.sort(multisetK);
+		Collections.reverse(multisetK);
+		return status;
+	}
+
+	/**
+	 * Usuwanie tokenu po ID.
+	 * @param id (int) - indeks tokenu.
+	 */
+	public void removeTokenByID(int id) {
+		if(ID > -1 && ID < multisetK.size()) {
+			multisetK.remove(id);
+		}
+		updateNumberOfTokens_XTPN(-1);
+		//Collections.sort(multisetK);
+		//Collections.reverse(multisetK);
 	}
 
 	/**
@@ -765,6 +805,7 @@ public class Place extends Node {
 	 */
 	public void setNumberOfTokens_XTPN(int value) {
 		this.numberOfTokens_XTPN = value;
+		this.tokensNumber = value;
 	}
 
 	/**
@@ -773,6 +814,7 @@ public class Place extends Node {
 	 */
 	public void updateNumberOfTokens_XTPN(int delta) {
 		this.numberOfTokens_XTPN += delta;
+		this.tokensNumber += delta;
 	}
 
 	/**
