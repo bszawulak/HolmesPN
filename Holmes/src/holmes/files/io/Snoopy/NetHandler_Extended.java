@@ -382,7 +382,11 @@ public class NetHandler_Extended extends NetHandler {
 		if (qName.equalsIgnoreCase("node")) {
 			ArrayList<ElementLocation> elementLocationsList = new ArrayList<ElementLocation>();
 			ArrayList<ElementLocation> namesElLocations = new ArrayList<ElementLocation>();
-			
+			ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
+
 			if(coarseCatcher == false) {
 				if(graphicPointsXYLocationsList.size() != graphicNamesXYLocationsList.size()) {
 					GUIManager.getDefaultGUIManager().log("Warning: wrong number of names / nodes locations for "+nodeName+
@@ -406,12 +410,44 @@ public class NetHandler_Extended extends NetHandler {
 				
 				if (nodeType == "Place") {
 					Place tmpPlace = new Place(nodeID, elementLocationsList, nodeName, nodeComment, nodeMarking);
-					tmpPlace.setNamesLocations(namesElLocations);
+					tmpPlace.setNamesLocations(namesElLocations, GUIManager.locationMoveType.NAME);
+
+					//XTPN node preparation (just in case)
+					for(int i=0; i<namesElLocations.size(); i++) {
+						int x = namesElLocations.get(i).getPosition().x;
+						int y = namesElLocations.get(i).getPosition().y;
+						int _sheetID = namesElLocations.get(i).getSheetID();
+						alphaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
+						betaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
+						gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
+						tauLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
+					}
+					tmpPlace.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+					tmpPlace.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
+					tmpPlace.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+					tmpPlace.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+
 					nodesList.add(tmpPlace);
 					IdGenerator.getNextPlaceId();
 				} else {	
 					Transition tmpTran = new Transition(nodeID, elementLocationsList, nodeName, nodeComment);
-					tmpTran.setNamesLocations(namesElLocations);
+					tmpTran.setNamesLocations(namesElLocations, GUIManager.locationMoveType.NAME);
+
+					//XTPN node preparation (just in case)
+					for(int i=0; i<namesElLocations.size(); i++) {
+						int x = namesElLocations.get(i).getPosition().x;
+						int y = namesElLocations.get(i).getPosition().y;
+						int _sheetID = namesElLocations.get(i).getSheetID();
+						alphaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
+						betaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
+						gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
+						tauLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
+					}
+					tmpTran.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+					tmpTran.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
+					tmpTran.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+					tmpTran.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+
 					tmpTransitionList.add(tmpTran);
 					IdGenerator.getNextTransitionId();
 				}
@@ -473,7 +509,7 @@ public class NetHandler_Extended extends NetHandler {
 
 	/**
 	 * Metoda odczytująca zawartość elementu.
-	 * @param ch[] - tablica wczytanych znaków
+	 * @param ch - tablica wczytanych znaków
 	 * @param start - indeks początkowy
 	 * @param length - ilość wczytanych znaków
 	 */
@@ -495,7 +531,7 @@ public class NetHandler_Extended extends NetHandler {
 
 	/**
 	 * Metoda służąca do wyłapywania i ignorowania pustych przestrzeni.
-	 * @param ch[] - tablica wczytanych znaków
+	 * @param ch - tablica wczytanych znaków
 	 * @param start - indeks początkowy
 	 * @param length - wielkość pustej przestrzeni
 	 */

@@ -6,12 +6,14 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.settings.SettingsManager;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.utilities.Tools;
 
 /**
  * Klasa implementująca wierzchołek sieci Petriego. Dziedziczą po niej klasy
@@ -23,13 +25,23 @@ import holmes.petrinet.elements.Transition.TransitionType;
  * @author MR - drobne poprawki
  */
 public abstract class Node extends PetriNetElement {
+	@Serial
 	private static final long serialVersionUID = -8569201372990876149L;
 	private ArrayList<ElementLocation> elementLocations = new ArrayList<ElementLocation>();
+	//lokalizacje napisów do oddzielnego przesuwania
 	private ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
+	private ArrayList<ElementLocation> alphaLocations = new ArrayList<ElementLocation>();
+	private ArrayList<ElementLocation> betaLocations = new ArrayList<ElementLocation>();
+	private ArrayList<ElementLocation> gammaLocations = new ArrayList<ElementLocation>();
+	private ArrayList<ElementLocation> tauLocations = new ArrayList<ElementLocation>();
 	private boolean isPortal = false;
 	private int radius = 20;
-	final static float dash1[] = { 2.0f };
+	final static float[] dash1 = { 2.0f };
 	final static BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+	private static final Font f_Big = new Font("TimesRoman", Font.BOLD, 14);
+	private static final Font f_BigL = new Font("TimesRoman", Font.PLAIN, 14);
+	private static final Color darkGreen = new Color(0, 75, 0);
+
 	public Color branchColor = null;
 	public ArrayList<Color> branchBorderColors = new ArrayList<>();
 	
@@ -49,7 +61,11 @@ public abstract class Node extends PetriNetElement {
 		//lokalizacje graficzne:
 		this.getNodeLocations().add(new ElementLocation(sheetId, nodePosition, this));
 		//napis - przesunięcie startowe:
-		this.getNamesLocations().add(new ElementLocation(sheetId, new Point(0,0), this));
+		this.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(sheetId, new Point(0,0), this));
+		this.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(new ElementLocation(sheetId, new Point(0,0), this));
+		this.getNamesLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(sheetId, new Point(0,0), this));
+		this.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(sheetId, new Point(0,0), this));
+		this.getNamesLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(sheetId, new Point(0,0), this));
 	}
 
 	/**
@@ -94,7 +110,7 @@ public abstract class Node extends PetriNetElement {
 		elementLocation.setParentNode(this);
 		this.getElementLocations().add(elementLocation);
 		//napis - przesunięcie startowe:
-		this.getNamesLocations().add(new ElementLocation(elementLocation.getSheetID(), new Point(0,0), this));
+		this.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(elementLocation.getSheetID(), new Point(0,0), this));
 	}
 
 	/**
@@ -114,10 +130,11 @@ public abstract class Node extends PetriNetElement {
 	 * Metoda pozwala pobrać listę wszystkich punktów lokalizacji nazwy wierzchołka na arkuszu o określonym identyfikatorze.
 	 * @param sheetId int - identyfikator arkusza
 	 * @return ArrayList[Point] - lista punktów lokalizacji nazwy wierzchołka na wybranym arkuszu
+	 * @param nameType  (GUIManager.locationMoveType) - ALPHA, BETA, GAMMA, DELTA
 	 */
-	public ArrayList<Point> getNodeNamePositions(int sheetId) {
+	public ArrayList<Point> getNodeNamePositions(int sheetId, GUIManager.locationMoveType nameType) {
 		ArrayList<Point> returnPoints = new ArrayList<Point>();
-		for (ElementLocation e : this.getNamesLocations())
+		for (ElementLocation e : this.getNamesLocations(nameType))
 			if (e.getSheetID() == sheetId)
 				returnPoints.add(e.getPosition());
 		return returnPoints;
@@ -163,12 +180,12 @@ public abstract class Node extends PetriNetElement {
 	
 	/**
 	 * Metoda odpowiedzialna za rysowanie nazwy wierzchołka na obrazie sieci.
-	 * @param g Graphics2D - obiekt rysujący
-	 * @param sheetId int - identyfikator arkusza
-	 * @param places ArrayList[Place] - wektor miejsc
-	 * @param transitions ArrayList[Transition] - wektor tranzycji
-	 * @param transitions ArrayList[Transition] - wektor tranzycji czasowych
-	 * @param metanodes ArrayList[MetaNode] - wektor metawęzłów
+	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
+	 * @param sheetId (<b>int</b>) identyfikator arkusza.
+	 * @param places (<b>ArrayList[Place]</b>) wektor miejsc.
+	 * @param transitions (<b>ArrayList[Transition]</b>) wektor tranzycji.
+	 * @param timeTransitions (<b>ArrayList[Transition]</b>) wektor tranzycji czasowych.
+	 * @param metanodes (<b>ArrayList[MetaNode]</b>) wektor metawęzłów.
 	 */
 	public void drawName(Graphics2D g, int sheetId, ArrayList<Node> places, ArrayList<Node> transitions, ArrayList<Node> timeTransitions,
 			 ArrayList<Node> metanodes) {
@@ -203,10 +220,10 @@ public abstract class Node extends PetriNetElement {
 		}
 		
 		int name_width = g.getFontMetrics().stringWidth(name);
-		
-		ArrayList<Point> namesPoints = getNodeNamePositions(sheetId);
+
+		// Node może mieć wiele EL (portal):
 		ArrayList<Point> nodePoints = this.getNodePositions(sheetId);
-		
+		ArrayList<Point> namesPoints = getNodeNamePositions(sheetId, GUIManager.locationMoveType.NAME); // lokalizacja przesunięcia nazwy
 		for (int i=0; i<nodePoints.size(); i++) {
 			Point nodePoint = nodePoints.get(i);
 			Point namePoint = namesPoints.get(i);
@@ -220,6 +237,135 @@ public abstract class Node extends PetriNetElement {
 				drawY = nodePoint.y + getRadius() + 15; //oryginalny kod
 			g.drawString(name, drawX, drawY+add_transY);
 		}
+
+		if(this instanceof Place) {
+			if(((Place)this).isXTPNplace() ) {
+				//ArrayList<Point> gammaPoints = getNodeNamePositions(sheetId, GUIManager.locationMoveType.GAMMA); //XTPN, jw
+				for (int i=0; i<gammaLocations.size(); i++) {
+					if(gammaLocations.get(i).getSheetID() != sheetId) //tylko dla danego arkusza
+						continue;
+
+					Point nodePoint = nodePoints.get(i);
+					Point gammaPoint = gammaLocations.get(i).getPosition();
+					int drawX = (nodePoint.x) + gammaPoint.x - 40;
+					int drawY =  (nodePoint.y) + gammaPoint.y - 24;
+
+					if(((Place)this).isGammaModeActiveXTPN() && ((Place)this).isGammaRangeVisible()) {
+						int franctionDigits = ((Place)this).getFraction_xTPN();
+						g.setColor(Color.blue);
+						g.setFont(f_Big);
+						double gamma = ((Place)this).getGammaMax_xTPN();
+						String gammaMaxVal = "\u221E";
+						if(gamma < Integer.MAX_VALUE-2) {
+							gammaMaxVal = Tools.cutValueExt(((Place)this).getGammaMax_xTPN(), franctionDigits);
+						}
+						String gammaStr = "\u03B3:" + Tools.cutValueExt(((Place)this).getGammaMin_xTPN(), franctionDigits) + " / "
+								+ gammaMaxVal;
+
+						g.drawString(gammaStr, drawX, drawY);
+					} else {
+						g.setColor(Color.blue);
+						g.setFont(f_Big);
+						g.drawString("XTPN: OFF", drawX, drawY);
+					}
+				}
+			}
+
+		} else if (this instanceof Transition) {
+			if(((Transition)this).isXTPNtransition()) {
+				if(alphaLocations.size() + betaLocations.size() - tauLocations.size() - namesLocations.size() != 0) {
+					//error, impossible
+					GUIManager.getDefaultGUIManager().log("Alpha, beta, tau and name arrays size do not match. "
+							+ "Node drawName method.", "error", true);
+					return;
+				}
+				for (int i=0; i<alphaLocations.size(); i++) { // ==
+					if(namesLocations.get(i).getSheetID() != sheetId) //tylko dla danego arkusza
+						continue;
+
+					Point nodePoint = nodePoints.get(i);
+					if(((Transition)this).isAlphaActiveXTPN() && ((Transition)this).isAlphaRangeVisible()) {
+						Point alphaPoint = alphaLocations.get(i).getPosition();
+
+						int drawX = (nodePoint.x) + alphaPoint.x - 40;
+						int drawY =  (nodePoint.y) + alphaPoint.y - 24;
+
+						g.setColor(Color.blue);
+						g.setFont(f_Big);
+						if(((Transition)this).isAlphaActiveXTPN()) {
+							String alfa = "\u03B1:" + Tools.cutValueExt(((Transition)this).getAlphaMin_xTPN(), ((Transition)this).getFraction_xTPN()) + " / "
+									+ Tools.cutValueExt(((Transition)this).getAlphaMax_xTPN(), ((Transition)this).getFraction_xTPN());
+
+							if(!((Transition)this).isBetaActiveXTPN()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
+								g.drawString(alfa,drawX, drawY);
+							} else {
+								g.drawString(alfa, drawX, drawY - 16);
+							}
+						}
+					}
+
+					if(((Transition)this).isBetaActiveXTPN() && ((Transition)this).isBetaRangeVisible()) {
+						Point betaPoint = betaLocations.get(i).getPosition();
+						int drawX = (nodePoint.x) + betaPoint.x - 40;
+						int drawY =  (nodePoint.y) + betaPoint.y - 24;
+
+						//g.setColor(Color.blue);
+						g.setFont(f_Big);
+						if(((Transition)this).isBetaActiveXTPN()) {
+							g.setColor(darkGreen);
+							String beta = "\u03B2:" + Tools.cutValueExt(((Transition)this).getBetaMin_xTPN(), ((Transition)this).getFraction_xTPN()) + " / "
+									+ Tools.cutValueExt(((Transition)this).getBetaMax_xTPN(), ((Transition)this).getFraction_xTPN());
+							g.drawString(beta, drawX, drawY);
+						}
+					}
+
+					if(((Transition)this).isTauTimerVisible() && ((Transition)this).isBetaRangeVisible()) {
+						Point tauPoint = tauLocations.get(i).getPosition();
+						int drawX = (nodePoint.x) + tauPoint.x-5;
+						int drawY =  (nodePoint.y) + tauPoint.y-10;
+
+						g.setFont(f_BigL);
+						if(((Transition)this).isTauTimerVisible()) {
+							double alphaTime = ((Transition)this).getTauAlpha_xTPN();
+							double betaTime = ((Transition)this).getTauBeta_xTPN();
+							double u_alfaTime = ((Transition)this).getTimer_Ualfa_XTPN();
+							double v_betaTime = ((Transition)this).getTimer_Vbeta_XTPN();
+
+							String timerA = "";
+							String timerB = "";
+							g.setColor(Color.red);
+							if(alphaTime < 0 && betaTime < 0) {
+								timerA = "u\u279F\u03C4(\u03B1): #\u279F#";
+								g.drawString(timerA, drawX + 40, drawY + 12);
+								timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
+								g.drawString(timerB, drawX + 40, drawY + 26);
+
+							} else if(alphaTime < 0) {
+								timerA = "u\u279F\u03C4(\u03B1): #\u279F#";
+								g.drawString(timerA, drawX + 40, drawY + 12);
+								timerB = "v\u279F\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, ((Transition)this).getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(betaTime, ((Transition)this).getFraction_xTPN());
+								g.drawString(timerB, drawX + 40, drawY + 26);
+
+							} else if(betaTime < 0) {
+								timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, ((Transition)this).getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(alphaTime, ((Transition)this).getFraction_xTPN());
+								g.drawString(timerA, drawX + 40, drawY + 12);
+								timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
+								g.drawString(timerB, drawX + 40, drawY + 26);
+							} else {
+								timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, ((Transition)this).getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(alphaTime, ((Transition)this).getFraction_xTPN());
+								g.drawString(timerA, drawX + 40, drawY + 12);
+								timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
+								g.drawString(timerB, drawX + 40, drawY + 26);
+							}
+						}
+					}
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -370,7 +516,11 @@ public abstract class Node extends PetriNetElement {
 	 */
 	public boolean removeElementLocation(ElementLocation el) {
 		int nodeElLocIndex = this.getNodeLocations().indexOf(el);
-		this.getNamesLocations().remove(nodeElLocIndex);
+		this.getNamesLocations(GUIManager.locationMoveType.NAME).remove(nodeElLocIndex);
+		this.getNamesLocations(GUIManager.locationMoveType.ALPHA).remove(nodeElLocIndex); //XTPN lokalizacja
+		this.getNamesLocations(GUIManager.locationMoveType.BETA).remove(nodeElLocIndex); //XTPN lokalizacja
+		this.getNamesLocations(GUIManager.locationMoveType.GAMMA).remove(nodeElLocIndex); //XTPN lokalizacja
+		this.getNamesLocations(GUIManager.locationMoveType.TAU).remove(nodeElLocIndex); //XTPN lokalizacja
 		this.getNodeLocations().remove(el);
 		
 		int subNet = el.getSheetID();
@@ -387,8 +537,7 @@ public abstract class Node extends PetriNetElement {
 				GUIManager.getDefaultGUIManager().subnetsHQ.clearAllMetaArcs(this, subNet);
 			}
 		}
-		
-		
+
 		if (this.getNodeLocations().size() > 0)
 			return true;
 		else
@@ -465,7 +614,7 @@ public abstract class Node extends PetriNetElement {
 	 * @return String - łańcuch znaków ID
 	 */
 	public String toString() {
-		String type = "";
+		String type;
 		if(this instanceof Place)
 			type = "(P)";
 		else if(this instanceof Transition)
@@ -474,9 +623,7 @@ public abstract class Node extends PetriNetElement {
 			type = "(M)";
 		else
 			type = "(?)";
-		
-		String s = "ID: " + Integer.toString(this.getID())+type;
-		return s;
+		return "ID: " + Integer.toString(this.getID())+type;
 	}
 
 	/**
@@ -497,44 +644,142 @@ public abstract class Node extends PetriNetElement {
 	
 	/**
 	 * Metoda zwraca wektor lokalizacji nazwy wierzchołka.
-	 * @return ArrayList[ElementLocation] - wektor lokalizacji nazw
+	 * @param dataType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
+	 * @return ArrayList[ElementLocation] - odpowiedni wektor lokalizacji nazw.
 	 */
-	public ArrayList<ElementLocation> getNamesLocations() {
-		return namesLocations;
+	public ArrayList<ElementLocation> getNamesLocations(GUIManager.locationMoveType dataType) {
+		return switch (dataType) {
+			case NAME -> namesLocations;
+			case ALPHA -> alphaLocations;
+			case BETA -> betaLocations;
+			case GAMMA -> gammaLocations;
+			case TAU -> tauLocations;
+			default -> namesLocations;
+		};
 	}
 
 	/**
-	 * Metoda ustawia nowy wektor lokalizacji nazw.
-	 * @param namesLocations ArrayList[ElementLocation] - wektor lokalizacji nazw.
+	 * Metoda ustawia nowy wektor lokalizacji nazw odpowiedniego typu.
+	 * @param namesLocations (ArrayList[ElementLocation]) wektor lokalizacji nazw.
+	 * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
 	 */
-	public void setNamesLocations(ArrayList<ElementLocation> namesLocations) {
-		this.namesLocations = namesLocations;
+	public void setNamesLocations(ArrayList<ElementLocation> namesLocations, GUIManager.locationMoveType nameType) {
+		switch(nameType) {
+			case NAME -> this.namesLocations = namesLocations;
+			case ALPHA -> this.alphaLocations = namesLocations;
+			case BETA -> this.betaLocations = namesLocations;
+			case GAMMA -> this.gammaLocations = namesLocations;
+			case TAU -> this.tauLocations = namesLocations;
+			default -> this.namesLocations = namesLocations;
+		}
+
+
 	}
 	
 	/**
 	 * Metoda zwraca pozycję X nazwy wierzchołka o pozycji danej jako argument.
-	 * @param index int - indeks w wektorze ElementLocations
-	 * @return int - pozycja X napisu
+	 * @param index (int) indeks w wektorze ElementLocations.
+	 * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
+	 * @return (int) pozycja X napisu.
 	 */
-	public int getXNameLoc(int index) {
-		if(index >= namesLocations.size()) {
-			GUIManager.getDefaultGUIManager().log("Internal error: invalid index for name location (X position). Node: "+getName(), "error", true);
-			return 0;
+	public int getXNameLoc(int index, GUIManager.locationMoveType nameType) {
+		switch (nameType) {
+			case NAME -> {
+				if (index >= namesLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for name location (X position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return namesLocations.get(index).getPosition().x;
+			}
+			case ALPHA -> {
+				if (index >= alphaLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for alpha location (X position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return alphaLocations.get(index).getPosition().x;
+			}
+			case BETA -> {
+				if (index >= betaLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for beta location (X position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return betaLocations.get(index).getPosition().x;
+			}
+			case GAMMA -> {
+				if (index >= gammaLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for gamma location (X position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return gammaLocations.get(index).getPosition().x;
+			}
+			case TAU -> {
+				if (index >= tauLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for tau location (X position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return tauLocations.get(index).getPosition().x;
+			}
+			default -> {
+				if (index >= namesLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for nama location (X position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return namesLocations.get(index).getPosition().x;
+			}
 		}
-		return namesLocations.get(index).getPosition().x;
 	}
 	
 	/**
 	 * Metoda zwraca pozycję Y nazwy wierzchołka o pozycji danej jako argument.
-	 * @param index int - indeks w wektorze ElementLocations
-	 * @return int - pozycja Y napisu
+	 * @param index (int) indeks w wektorze ElementLocations.
+	 * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
+	 * @return (int) pozycja Y napisu.
 	 */
-	public int getYNameLoc(int index) {
-		if(index >= namesLocations.size()) {
-			GUIManager.getDefaultGUIManager().log("Internal error: invalid index for name location (Y position). Node: "+getName(), "error", true);
-			return 0;
+	public int getYNameLoc(int index, GUIManager.locationMoveType nameType) {
+		switch (nameType) {
+			case NAME -> {
+				if (index >= namesLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for name location (Y position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return namesLocations.get(index).getPosition().y;
+			}
+			case ALPHA -> {
+				if (index >= alphaLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for alpha location (Y position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return alphaLocations.get(index).getPosition().y;
+			}
+			case BETA -> {
+				if (index >= betaLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for beta location (Y position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return betaLocations.get(index).getPosition().y;
+			}
+			case GAMMA -> {
+				if (index >= gammaLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for gamma location (Y position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return gammaLocations.get(index).getPosition().y;
+			}
+			case TAU -> {
+				if (index >= tauLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for tau location (Y position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return tauLocations.get(index).getPosition().y;
+			}
+			default -> {
+				if (index >= namesLocations.size()) {
+					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for name location (Y position). Node: " + getName(), "error", true);
+					return 0;
+				}
+				return namesLocations.get(index).getPosition().y;
+			}
 		}
-		return namesLocations.get(index).getPosition().y;
 	}
 	
 	/**
@@ -555,8 +800,6 @@ public abstract class Node extends PetriNetElement {
 
 	public ArrayList<Arc> getOutInArcs(){
 		ArrayList<Arc> totalInArcs = new ArrayList<Arc>();
-		//if(isInvisible())
-		//	return totalInArcs;
 
 		for (ElementLocation location : getNodeLocations()) {
 			totalInArcs.addAll(location.getInArcs());

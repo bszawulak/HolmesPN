@@ -34,12 +34,10 @@ public class Transition extends Node {
     private static final long serialVersionUID = -4981812911464514746L;
 
     /**
-     * PN, TPN, CPNbasic
+     * PN, TPN, CPNbasic, XTPN
      */
     public enum TransitionType {PN, TPN, CPNbasic, XTPN} //, DPN, TDPN, CPNbasic }
-
     private TransitionType transType;
-
     private static final int realRadius = 15;
 
     //podstawowe właściwości:
@@ -58,6 +56,7 @@ public class Transition extends Node {
     private Color transColorValue = new Color(255, 255, 255);
     //protected boolean showIntOnly = false; //TODO
     private boolean valueVisibilityStatus = false;
+    //inne napisy, np MCT (?)
     public int txtXoff = 0;
     public int txtYoff = 0;
     public int valueXoff = 0;
@@ -103,7 +102,6 @@ public class Transition extends Node {
      * ST, DT, IM, SchT - Stochastic Transition, Deterministic T., Immediate T., Scheduled T.
      */
     public enum StochaticsType {ST, DT, IM, SchT}
-
     private StochaticsType stochasticType;
     private double firingRate = 1.0;
     private SPNtransitionData SPNbox = null;
@@ -130,7 +128,6 @@ public class Transition extends Node {
     private boolean betaMode_xTPN = true;
     private double tauAlpha_xTPN = -1.0;
     private double tauBeta_xTPN = -1.0;
-
     private double timer_Ualfa_XTPN = 0.0;
     private double timer_Vbeta_XTPN = 0.0;
 
@@ -140,6 +137,9 @@ public class Transition extends Node {
     private boolean isActive_xTPN = false;
     private boolean isProducing_xTPN = false;
     //grafika:
+
+    private boolean alphaRangeVisibility_XTPN = true;
+    private boolean betaRangeVisibility_XTPN = true;
     private boolean tauTimersVisibility_XTPN = false; //czy wyświetlać timery
     private int franctionDigits = 6;
 
@@ -204,10 +204,9 @@ public class Transition extends Node {
 
     /**
      * Metoda rysująca tranzycję na danym arkuszu.
-     *
-     * @param g       Graphics2D - grafika 2D
-     * @param sheetId int - identyfikator arkusza
-     * @param eds     ElementDrawSettings - opcje rysowania
+     * @param g (<b>Graphics2D</b>) grafika 2D.
+     * @param sheetId (<b>int</b>) identyfikator arkusza.
+     * @param eds (<b>ElementDrawSettings</b>) opcje rysowania.
      */
     public void draw(Graphics2D g, int sheetId, ElementDrawSettings eds) {
         ElementDraw.drawElement(this, g, sheetId, eds);
@@ -215,7 +214,6 @@ public class Transition extends Node {
 
     /**
      * Zwraca zbiór miejsc wejściowych *t.
-     *
      * @return ArrayList[Place] - lista miejsc ze zbioru *t
      */
     public ArrayList<Place> getPrePlaces() {
@@ -1359,7 +1357,7 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca wartość docelową zegara V - tauBeta tranzycji.
-     * @return double - aktualny czas tauBeta.
+     * @return (<b>double</b>) aktualny czas tauBeta.
      */
     public double getTauBeta_xTPN() {
         return tauBeta_xTPN;
@@ -1367,18 +1365,50 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia status tauAlpha i tauBeta - pokazywać czy nie.
-     * @param status boolean - true, jeśli zegary mają być pokazywane.
+     * @param status (<b>boolean</b>) true, jeśli zegary mają być pokazywane.
      */
     public void setTauTimersStatus(boolean status) {
         tauTimersVisibility_XTPN = status;
     }
 
     /**
-     * Metoda zwraca status zegarów tauAlpha i tauBeta - pokazywać czy nie.
+     * Metoda zwraca status zegarów zegarów alpha - pokazywać czy nie.
      * @return boolean - true, jeśli zegary mają być pokazywane.
      */
     public boolean isTauTimerVisible() {
         return tauTimersVisibility_XTPN;
+    }
+
+    /**
+     * Metoda ustawia status zakresów zegarów alpha - pokazywać czy nie.
+     * @param status (<b>boolean</b>) true, jeśli zakresy mają być pokazywane.
+     */
+    public void setAlphaRangeStatus(boolean status) {
+        alphaRangeVisibility_XTPN = status;
+    }
+
+    /**
+     * Metoda zwraca status zakresów alpha - pokazywać czy nie.
+     * @return (<b>boolean</b>) - true, jeśli zakresy alpha mają być pokazywane.
+     */
+    public boolean isAlphaRangeVisible() {
+        return alphaRangeVisibility_XTPN;
+    }
+
+    /**
+     * Metoda ustawia status zakresów zegarów beta - pokazywać czy nie.
+     * @param status (<b>boolean</b>) true, jeśli zakresy beta mają być pokazywane.
+     */
+    public void setBetaRangeStatus(boolean status) {
+        betaRangeVisibility_XTPN = status;
+    }
+
+    /**
+     * Metoda zwraca status zakresów beta - pokazywać czy nie.
+     * @return (<b>boolean</b>) - true, jeśli zakresy beta mają być pokazywane.
+     */
+    public boolean isBetaRangeVisible() {
+        return betaRangeVisibility_XTPN;
     }
 
     /**
@@ -1489,7 +1519,7 @@ public class Transition extends Node {
      * Metoda zwraca status tranzycji XTPN / wszystkie inne.
      * @return boolean - true, jeśli XTPN aktywny
      */
-    public boolean isXTPN() {
+    public boolean isXTPNtransition() {
         return isXTPN;
     }
 
@@ -1499,6 +1529,7 @@ public class Transition extends Node {
      */
     public void setAlphaXTPNstatus(boolean status) {
         alphaMode_xTPN = status;
+        //setAlphaRangeStatus(status);
     }
 
     /**
@@ -1514,6 +1545,7 @@ public class Transition extends Node {
      */
     public void setBetaXTPNstatus(boolean status) {
         betaMode_xTPN = status;
+        //setBetaRangeStatus(status);
     }
 
     /**

@@ -96,11 +96,10 @@ public final class ElementDraw {
 	 * @param eds ElementDrawSettings - opcje rysowania
 	 * @return Graphics2D - obiekt rysujący
 	 */
-	@SuppressWarnings("unused")
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId, ElementDrawSettings eds) {
 		if(node instanceof Transition) { 
 			Transition trans = (Transition)node;
-			boolean xTPNtrans = trans.isXTPN();
+			boolean xTPNtrans = trans.isXTPNtransition();
 			Color portalColor = new Color(224,224,224);
 			Color portalSelColor = EditorResources.selectionColorLevel3;
 			Color normalColor = new Color(224,224,224);
@@ -398,26 +397,12 @@ public final class ElementDraw {
 					g.setColor(Color.black);
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 				} else if(trans.getTransType() == TransitionType.XTPN) { //tranzycja XTPN
-					int dpnTextOffset = -5;
-					dpnTextOffset = -15;
-
 					// _XTPN mark
 
 					/*
-					trans.setAlphaMin_xTPN(2.73, false);
-					trans.setAlphaMax_xTPN(12.7344, false);
-					trans.setBetaMin_xTPN(1.4473, false);
-					trans.setBetaMax_xTPN(56.73333, false);
-					trans.setTauAlpha_xTPN(3.8456854);
-					trans.setTauBeta_xTPN(123.455354);
-					*/
-					//trans.setTauTimersStatus(true);
-
 					g.setColor(Color.blue);
 					g.setFont(f_Big);
-
 					int franctionDigits = trans.getFraction_xTPN();
-
 					if(trans.isAlphaActiveXTPN()) {
 						String alfa = "\u03B1:" + Tools.cutValueExt(trans.getAlphaMin_xTPN(), franctionDigits) + " / "
 								+ Tools.cutValueExt(trans.getAlphaMax_xTPN(), franctionDigits);
@@ -434,7 +419,9 @@ public final class ElementDraw {
 								+ Tools.cutValueExt(trans.getBetaMax_xTPN(), franctionDigits);
 						g.drawString(beta, nodeBounds.x - 20, nodeBounds.y - 4);
 					}
-
+					*/
+					/*
+					int franctionDigits = trans.getFraction_xTPN();
 					g.setFont(f_BigL);
 					if(trans.isTauTimerVisible()) {
 						double alphaTime = trans.getTauAlpha_xTPN();
@@ -473,7 +460,7 @@ public final class ElementDraw {
 							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
 						}
 					}
-
+					*/
 
 					//klepsydra:
 					g.setColor(Color.DARK_GRAY);
@@ -851,27 +838,8 @@ public final class ElementDraw {
 					} catch (Exception e) { }
 				}
 
-				// _XTPN gamma i inne
+				// _XTPN symbol
 				if(place.isXTPNplace()) { //miejsce XTPN
-					int franctionDigits = place.getFraction_xTPN();
-					int dpnTextOffset = -5;
-
-					g.setColor(Color.blue);
-					g.setFont(f_Big);
-
-					if(place.isGammaModeActiveXTPN()) {
-						double gamma = place.getGammaMax_xTPN();
-						String gammaMaxVal = "\u221E";
-						if(gamma < Integer.MAX_VALUE-2) {
-							gammaMaxVal = Tools.cutValueExt(place.getGammaMax_xTPN(), franctionDigits);
-						}
-						String gammaStr = "\u03B3:" + Tools.cutValueExt(place.getGammaMin_xTPN(), franctionDigits) + " / "
-								+ gammaMaxVal;
-						g.drawString(gammaStr, nodeBounds.x - 20, nodeBounds.y - 4);
-					} else {
-						g.drawString("XTPN: OFF", nodeBounds.x - 20, nodeBounds.y - 4);
-					}
-
 					//klepsydra:
 					g.setColor(Color.LIGHT_GRAY);
 					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 9, nodeBounds.x + 28, nodeBounds.y + 9);

@@ -100,7 +100,11 @@ public class SubnetsControl {
 			}
 			ElementLocation newNameEL = new ElementLocation(subnetID, new Point(0, 0), startNode);
 			startNode.getElementLocations().add(newPortal);
-			startNode.getNamesLocations().add(newNameEL);
+			startNode.getNamesLocations(GUIManager.locationMoveType.NAME).add(newNameEL);
+			startNode.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(newNameEL);
+			startNode.getNamesLocations(GUIManager.locationMoveType.BETA).add(newNameEL);
+			startNode.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(newNameEL);
+			startNode.getNamesLocations(GUIManager.locationMoveType.TAU).add(newNameEL);
 			startNode.setPortal(true);
 			
 			
@@ -173,7 +177,11 @@ public class SubnetsControl {
 			}
 			ElementLocation newNameEL = new ElementLocation(subnetID, new Point(0, 0), endNode);
 			endNode.getElementLocations().add(newPortal);
-			endNode.getNamesLocations().add(newNameEL);
+			endNode.getNamesLocations(GUIManager.locationMoveType.NAME).add(newNameEL);
+			endNode.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(newNameEL);
+			endNode.getNamesLocations(GUIManager.locationMoveType.BETA).add(newNameEL);
+			endNode.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(newNameEL);
+			endNode.getNamesLocations(GUIManager.locationMoveType.TAU).add(newNameEL);
 			endNode.setPortal(true);
 			
 			//if(!hasMetaArc) { //utwórz meta łuk, bo go jeszcze nie ma do tego węzła (od startLocation)
@@ -270,7 +278,12 @@ public class SubnetsControl {
 			ElementLocation newEL = new ElementLocation(sheetID, new Point(point.x+newX, point.y-newY), parent);
 			ElementLocation newNameEL = new ElementLocation(sheetID, new Point(0, 0), parent);
 			parent.getElementLocations().add(newEL);
-			parent.getNamesLocations().add(newNameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.NAME).add(newNameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(newNameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.BETA).add(newNameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(newNameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.TAU).add(newNameEL);
+
 			parent.setPortal(true);
 			
 			Arc newArc = null;
@@ -304,9 +317,9 @@ public class SubnetsControl {
 	
 	/**
 	 * Metoda sprawdza, czy dodanego węzła (P/T) już wchodzi meta-łuk z podanego meta-węzła.
-	 * @param startLocation ElementLocation - EL P/T końcowego węzła
-	 * @param metanode MetaNode - węzeł docelowy łuku
-	 * @return boolean - true, jeśli meta-łuk istnieje, false jeśli jeszcze nie
+	 * @param endLocation (ElementLocation) - EL P/T końcowego węzła.
+	 * @param metanode (MetaNode) węzeł docelowy łuku.
+	 * @return (boolean) - true, jeśli meta-łuk istnieje, false jeśli jeszcze nie
 	 */
 	private boolean checkIfOutMetaExists(ElementLocation endLocation, MetaNode metanode) {
 		Node parent = endLocation.getParentNode();
@@ -747,7 +760,12 @@ public class SubnetsControl {
 			ElementLocation newPortalEL = new ElementLocation(sheetID, point, parent);
 			parent.setPortal(true);
 			parent.getElementLocations().add(newPortalEL);
-			parent.getNamesLocations().add(nameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.NAME).add(nameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(nameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.BETA).add(nameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(nameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.TAU).add(nameEL);
+
 			
 			Arc arc = new Arc(IdGenerator.getNextId(), newPortalEL, metanodeEL, TypeOfArc.META_ARC);
 			arcs.add(arc);
@@ -848,8 +866,12 @@ public class SubnetsControl {
 			ElementLocation newPortalEL = new ElementLocation(sheetID, point, parent);
 			parent.setPortal(true);
 			parent.getElementLocations().add(newPortalEL);
-			parent.getNamesLocations().add(nameEL);
-			
+			parent.getNamesLocations(GUIManager.locationMoveType.NAME).add(nameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(nameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.BETA).add(nameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(nameEL);
+			parent.getNamesLocations(GUIManager.locationMoveType.TAU).add(nameEL);
+
 			Arc arc = new Arc(IdGenerator.getNextId(), metanodeEL, newPortalEL, TypeOfArc.META_ARC);
 			arcs.add(arc);
 		}

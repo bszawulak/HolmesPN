@@ -422,27 +422,28 @@ public class GraphPanel extends JComponent {
 	}
 	
 	/**
-	 * Metoda zmiany lokalizacji nazwy wskazanego wierzchołka w poziomie.
+	 * Metoda zmiany lokalizacji elementu nazwy wskazanego wierzchołka w poziomie.
 	 * @param delta int - wielkość przewinięcia
+	 * @param nameType (GUIManager.locationMoveTyp) - NAME, ALPHA, BETA, GAMMA, TAU
 	 * @return Point - współrzędne po zmianie
 	 */
-	public Point nameLocationChangeHorizontal(int delta) {
+	public Point nameLocationChangeHorizontal(int delta, GUIManager.locationMoveType nameType) {
 		Node n = overlord.getNameLocChangeNode();
 		ElementLocation el = overlord.getNameLocChangeEL();
 		
 		int nameLocIndex = n.getElementLocations().indexOf(el);
 		
-		int oldX = n.getNamesLocations().get(nameLocIndex).getPosition().x;
-		int oldY = n.getNamesLocations().get(nameLocIndex).getPosition().y;
+		int oldX = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().x;
+		int oldY = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().y;
 		oldX += delta;
 		
 		int x = oldX+el.getPosition().x;
 		int y = oldY+el.getPosition().y;
 		
 		if(isLegalLocation(new Point(x, y)) == true)
-			n.getNamesLocations().get(nameLocIndex).getPosition().setLocation(oldX+delta, oldY);
+			n.getNamesLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX+delta, oldY);
 	
-		return n.getNamesLocations().get(nameLocIndex).getPosition();
+		return n.getNamesLocations(nameType).get(nameLocIndex).getPosition();
 	}
 
 	/**
@@ -456,17 +457,18 @@ public class GraphPanel extends JComponent {
 	
 	/**
 	 * Metoda zmiany lokalizacji nazwy wskazanego wierzchołka w pionie.
-	 * @param delta int - wielkość przewinięcia
-	 * @return Point - współrzędne po zmianie
+	 * @param delta (int) wielkość przewinięcia
+	 * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
+	 * @return (Point) współrzędne po zmianie
 	 */
-	public Point nameLocationChangeVertical(int delta) {
+	public Point nameLocationChangeVertical(int delta, GUIManager.locationMoveType nameType) {
 		Node n = overlord.getNameLocChangeNode();
 		ElementLocation el = overlord.getNameLocChangeEL();
 		
 		int nameLocIndex = n.getElementLocations().indexOf(el);
 		
-		int oldX = n.getNamesLocations().get(nameLocIndex).getPosition().x;
-		int oldY = n.getNamesLocations().get(nameLocIndex).getPosition().y;
+		int oldX = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().x;
+		int oldY = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().y;
 		
 		oldY += delta;
 		
@@ -474,9 +476,9 @@ public class GraphPanel extends JComponent {
 		int y = oldY+el.getPosition().y;
 		
 		if(isLegalLocation(new Point(x, y)) == true)
-			n.getNamesLocations().get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+			n.getNamesLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
 		
-		return n.getNamesLocations().get(nameLocIndex).getPosition();
+		return n.getNamesLocations(nameType).get(nameLocIndex).getPosition();
 	}
 
 	/**
@@ -978,7 +980,7 @@ public class GraphPanel extends JComponent {
 		 */
 		public void mousePressed(MouseEvent e) {
 			//reset trybu przesuwania napisu:
-			overlord.setNameLocationChangeMode(null, null, false);
+			overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
 			
 			mousePt = e.getPoint();
 			mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);
@@ -1509,31 +1511,37 @@ public class GraphPanel extends JComponent {
 					//e1.printStackTrace();
 				}
 			} else if (e.isShiftDown()) {  // przewijanie lewo/prawo
-				if(overlord.getNameLocChangeMode() == true) {
-					Point newP = nameLocationChangeHorizontal(e.getWheelRotation() * e.getScrollAmount());
+				if(overlord.getNameLocChangeMode() != GUIManager.locationMoveType.NONE) { //przewijanie lokalizacji napisu
+					Point newP = nameLocationChangeHorizontal(e.getWheelRotation() * e.getScrollAmount()
+							, overlord.getNameLocChangeMode());
 					e.getComponent().repaint(); // bo samo się nie wywoła (P.S. NIE. Nie kombinuj. NIE!)
-					
-					if(overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
-						overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
-						overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
-						overlord.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
-						overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
+
+					if(overlord.getNameLocChangeMode() == GUIManager.locationMoveType.NAME) { //tylko dla nazwy węzła
+						if(overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
+							overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
+							overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
+							overlord.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
+							overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
+						}
 					}
-				} else {
+				} else { //normalne przewijanie arkusza w poziomie
 					scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 30);
 				}
 			} else { // przewijanie góra/dół
-				if(overlord.getNameLocChangeMode() == true) {
-					Point newP =  nameLocationChangeVertical(e.getWheelRotation() * e.getScrollAmount());
+				if(overlord.getNameLocChangeMode() != GUIManager.locationMoveType.NONE) { //przewijanie lokalizacji napisu
+					Point newP =  nameLocationChangeVertical(e.getWheelRotation() * e.getScrollAmount()
+							, overlord.getNameLocChangeMode());
 					e.getComponent().repaint(); // bo samo się nie wywoła (P.S. NIE. Nie kombinuj. NIE!)
-					
-					if(overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
-						overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
-						overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
-						overlord.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
-						overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
+
+					if(overlord.getNameLocChangeMode() == GUIManager.locationMoveType.NAME) { //tylko dla nazwy węzła
+						if(overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
+							overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
+							overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
+							overlord.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
+							overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
+						}
 					}
-				} else {
+				} else { //normalne przewijanie arkusza w pionie
 					scrollSheetVertical(e.getWheelRotation() * e.getScrollAmount() * 30);
 				}
 			}

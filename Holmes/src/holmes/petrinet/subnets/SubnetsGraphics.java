@@ -136,10 +136,10 @@ public class SubnetsGraphics {
 				
 				el.setSheetID(indices.indexOf(sheetID));
 			}
-			for(ElementLocation el: n.getNamesLocations()) {
+			for(ElementLocation el: n.getNamesLocations(GUIManager.locationMoveType.NAME)) {
 				int sheetID = el.getSheetID();
 				int val = indices.get(indices.indexOf(sheetID));
-				if(val == indices.indexOf(sheetID)) //nie ma co podmnieniać
+				if(val == indices.indexOf(sheetID)) //nie ma co podmieniać
 					continue;
 				if(val == -1) {
 					//criticalError = true;

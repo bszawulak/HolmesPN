@@ -831,8 +831,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = place.getElementLocations().indexOf(location);
-        int xNameOffset = place.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = place.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = place.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = place.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -851,7 +851,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -880,7 +880,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -911,11 +911,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (!nameLocChangeMode) {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -1514,8 +1514,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = place.getElementLocations().indexOf(location);
-        int xNameOffset = place.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = place.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = place.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = place.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -1534,7 +1534,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -1563,7 +1563,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -1594,11 +1594,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (!nameLocChangeMode) {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -2062,8 +2062,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = transition.getElementLocations().indexOf(location);
-        int xNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -2081,7 +2081,7 @@ public class HolmesDockWindowsTable extends JPanel {
             public void stateChanged(ChangeEvent e) {
                 if (doNotUpdate)
                     return;
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -2110,7 +2110,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -2140,11 +2140,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (!nameLocChangeMode) {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -2559,8 +2559,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = transition.getElementLocations().indexOf(location);
-        int xNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -2579,7 +2579,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -2608,7 +2608,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -2638,11 +2638,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (!nameLocChangeMode) {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -3123,8 +3123,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = transition.getElementLocations().indexOf(location);
-        int xNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -3143,7 +3143,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -3172,7 +3172,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -3202,11 +3202,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (!nameLocChangeMode) {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -3419,8 +3419,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = transition.getElementLocations().indexOf(location);
-        int xNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -3438,7 +3438,7 @@ public class HolmesDockWindowsTable extends JPanel {
             public void stateChanged(ChangeEvent e) {
                 if (doNotUpdate)
                     return;
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -3467,7 +3467,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -3497,11 +3497,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (!nameLocChangeMode) {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -3889,8 +3889,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = metaNode.getElementLocations().indexOf(location);
-        int xNameOffset = metaNode.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = metaNode.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -3909,7 +3909,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), meta_tmp, el_tmp);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), meta_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -3938,7 +3938,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), meta_tmp, el_tmp);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), meta_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -3968,11 +3968,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (!nameLocChangeMode) {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(meta_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(meta_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -7718,60 +7718,54 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda sprawdza, czy dla danego węzła sieci lokalizacja jego nazwy nie wykracza poza ramy
-     * obrazu sieci - dla współrzędnej Y
-     *
-     * @param y  int - współrzędna Y
-     * @param n  Node - wierzchołek sieci
-     * @param el ElementLocation - obiekt lokalizacji wierzchołka
-     * @return Point - prawidłowe współrzędne
+     * obrazu sieci - dla współrzędnej Y.
+     * @param oldY (int) współrzędna Y.
+     * @param n (Node) wierzchołek sieci.
+     * @param el (ElementLocation) obiekt lokalizacji wierzchołka.
+     * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU.
+     * @return (Point) prawidłowe współrzędne.
      */
-    private Point setNameOffsetY(int y, Node n, ElementLocation el) {
+    private Point setNameOffsetY(int oldY, Node n, ElementLocation el, GUIManager.locationMoveType nameType) {
         int nameLocIndex = n.getElementLocations().indexOf(el);
-        int oldX = n.getNamesLocations().get(nameLocIndex).getPosition().x;
-        int oldY = y;
-        int newx = oldX + el.getPosition().x;
-        int newy = oldY + el.getPosition().y;
+        int oldX = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().x;
 
         int sheetIndex = overlord.IDtoIndex(el.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 
-        if (graphPanel.isLegalLocation(new Point(newx, newy))) {
-            n.getNamesLocations().get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+        if (graphPanel.isLegalLocation(new Point(oldX + el.getPosition().x, oldY + el.getPosition().y))) {
+            n.getNamesLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
             graphPanel.repaint();
         }
-        return n.getNamesLocations().get(nameLocIndex).getPosition();
+        return n.getNamesLocations(nameType).get(nameLocIndex).getPosition();
     }
 
     /**
      * Metoda sprawdza, czy dla danego węzła sieci lokalizacja jego nazwy nie wykracza poza ramy
-     * obrazu sieci - dla współrzędnej X
-     * @param x  int - współrzędna X
-     * @param n  Node - wierzchołek sieci
-     * @param el ElementLocation - obiekt lokalizacji wierzchołka
-     * @return Point - prawidłowe współrzędne
+     * obrazu sieci - dla współrzędnej X.
+     * @param oldX  (int) współrzędna X.
+     * @param n  (Node) wierzchołek sieci.
+     * @param el (ElementLocation) - obiekt lokalizacji wierzchołka.
+     * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU.
+     * @return (Point) prawidłowe współrzędne.
      */
-    private Point setNameOffsetX(int x, Node n, ElementLocation el) {
+    private Point setNameOffsetX(int oldX, Node n, ElementLocation el, GUIManager.locationMoveType nameType) {
         int nameLocIndex = n.getElementLocations().indexOf(el);
-        int oldX = x;
-        int oldY = n.getNamesLocations().get(nameLocIndex).getPosition().y;
-        int newx = oldX + el.getPosition().x;
-        int newy = oldY + el.getPosition().y;
+        int oldY = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().y;
 
         int sheetIndex = overlord.IDtoIndex(el.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 
-        if (graphPanel.isLegalLocation(new Point(newx, newy))) {
-            n.getNamesLocations().get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+        if (graphPanel.isLegalLocation(new Point(oldX + el.getPosition().x, oldY + el.getPosition().y))) {
+            n.getNamesLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
             graphPanel.repaint();
         }
-
-        return n.getNamesLocations().get(nameLocIndex).getPosition();
+        return n.getNamesLocations(nameType).get(nameLocIndex).getPosition();
     }
 
     /**
      * Zmiana nazwy elementu sieci, dokonywana poza listenerem, który
      * jest klasa anonimową (i nie widzi pola element).
-     * @param newName String - nowa nazwa
+     * @param newName (String) nowa nazwa.
      */
     private void changeName(String newName) {
         if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION || mode == META
@@ -7786,7 +7780,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda zmienia komentarz dla elementu sieci, poza listenerem, który
      * jest klasą anonimową (i nie widzi pola element).
      *
-     * @param newComment String - nowy komentarz
+     * @param newComment (String) nowy komentarz.
      */
     private void changeComment(String newComment) {
         element.setComment(newComment);

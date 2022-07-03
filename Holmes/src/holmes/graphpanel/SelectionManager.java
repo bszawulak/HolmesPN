@@ -589,11 +589,23 @@ public class SelectionManager {
 			
 			// poprawić, bo teraz tylko zeruje przesunięcie napisów
 			ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> alphaLocations = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> betaLocations = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> gammaLocations = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> tauLocations = new ArrayList<ElementLocation>();
 			int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
 			for(int i=0; i<getSelectedElementLocations().size(); i++) {	
 				namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				alphaLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				betaLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				gammaLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				tauLocations.add(new ElementLocation(sid, new Point(0,0), null));
 			}
-			portal.setNamesLocations(namesLocations);
+			portal.setNamesLocations(namesLocations, GUIManager.locationMoveType.NAME);
+			portal.setNamesLocations(alphaLocations, GUIManager.locationMoveType.ALPHA);
+			portal.setNamesLocations(betaLocations, GUIManager.locationMoveType.BETA);
+			portal.setNamesLocations(gammaLocations, GUIManager.locationMoveType.GAMMA);
+			portal.setNamesLocations(tauLocations, GUIManager.locationMoveType.TAU);
 			
 			portal.setName(oldName);
 			portal.setComment(oldComment);
@@ -617,11 +629,24 @@ public class SelectionManager {
 			
 			// poprawić, bo teraz tylko zeruje przesunięcie napisów
 			ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> alphaLocations = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> betaLocations = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> gammaLocations = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> tauLocations = new ArrayList<ElementLocation>();
+
 			int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
 			for(int i=0; i<getSelectedElementLocations().size(); i++) {	
 				namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				alphaLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				betaLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				gammaLocations.add(new ElementLocation(sid, new Point(0,0), null));
+				tauLocations.add(new ElementLocation(sid, new Point(0,0), null));
 			}
-			portal.setNamesLocations(namesLocations);
+			portal.setNamesLocations(namesLocations, GUIManager.locationMoveType.NAME);
+			portal.setNamesLocations(alphaLocations, GUIManager.locationMoveType.ALPHA);
+			portal.setNamesLocations(betaLocations, GUIManager.locationMoveType.BETA);
+			portal.setNamesLocations(gammaLocations, GUIManager.locationMoveType.GAMMA);
+			portal.setNamesLocations(tauLocations, GUIManager.locationMoveType.TAU);
 			
 			portal.setName(oldName);
 			portal.setComment(oldComment);
@@ -660,7 +685,11 @@ public class SelectionManager {
 		ElementLocation newNameEL = new ElementLocation(selectedSheedID, new Point(0, 0), parent);
 		
 		parent.getElementLocations().add(newGraphicsEL);
-		parent.getNamesLocations().add(newNameEL);
+		parent.getNamesLocations(GUIManager.locationMoveType.NAME).add(newNameEL);
+		parent.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(newNameEL);
+		parent.getNamesLocations(GUIManager.locationMoveType.BETA).add(newNameEL);
+		parent.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(newNameEL);
+		parent.getNamesLocations(GUIManager.locationMoveType.TAU).add(newNameEL);
 		parent.setPortal(true);
 		
 		getGraphPanel().repaint();
@@ -685,17 +714,30 @@ public class SelectionManager {
 		ElementLocation nodeSelectedEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
 		Node nodeSelected = nodeSelectedEL.getParentNode(); //wybrany wierzchołek
 		ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
+		ArrayList<ElementLocation> alphaLocations = new ArrayList<ElementLocation>();
+		ArrayList<ElementLocation> betaLocations = new ArrayList<ElementLocation>();
+		ArrayList<ElementLocation> gammaLocations = new ArrayList<ElementLocation>();
+		ArrayList<ElementLocation> tauLocations = new ArrayList<ElementLocation>();
+
 		int selectedNodeIndex = getGraphPanelNodes().indexOf(nodeSelected);
 		
 		ArrayList<ElementLocation> otherNodes = nodeSelected.getElementLocations(); //lista jego (innych?) lokacji
 		
 		int indClicked = nodeSelected.getElementLocations().indexOf(nodeSelectedEL);
-		namesLocations.add(nodeSelected.getNamesLocations().get(indClicked));
+		namesLocations.add(nodeSelected.getNamesLocations(GUIManager.locationMoveType.NAME).get(indClicked));
+		alphaLocations.add(nodeSelected.getNamesLocations(GUIManager.locationMoveType.ALPHA).get(indClicked));
+		betaLocations.add(nodeSelected.getNamesLocations(GUIManager.locationMoveType.BETA).get(indClicked));
+		gammaLocations.add(nodeSelected.getNamesLocations(GUIManager.locationMoveType.GAMMA).get(indClicked));
+		tauLocations.add(nodeSelected.getNamesLocations(GUIManager.locationMoveType.TAU).get(indClicked));
 		for (ElementLocation el : otherNodes) { 
 			if(el.equals(nodeSelectedEL) == false) {
 				selectedElementLocations.add(el);
 				indClicked = nodeSelected.getElementLocations().indexOf(el); //odtwarzanie nowej kolejności dla namesLocations
-				namesLocations.add(nodeSelected.getNamesLocations().get(indClicked));
+				namesLocations.add(nodeSelected.getNamesLocations(GUIManager.locationMoveType.NAME).get(indClicked));
+				alphaLocations.add(nodeSelected.getNamesLocations(GUIManager.locationMoveType.ALPHA).get(indClicked));
+				betaLocations.add(nodeSelected.getNamesLocations(GUIManager.locationMoveType.BETA).get(indClicked));
+				gammaLocations.add(nodeSelected.getNamesLocations(GUIManager.locationMoveType.GAMMA).get(indClicked));
+				tauLocations.add(nodeSelected.getNamesLocations(GUIManager.locationMoveType.TAU).get(indClicked));
 			} 
 		}
 		
@@ -724,9 +766,25 @@ public class SelectionManager {
 			Place portal = new Place(IdGenerator.getNextId(), (ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
 
 			//klonowanie lokalizacji nazw + dodatkowy wpis:
-			int sid = namesLocations.get(0).getSheetID();
-			namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
-			portal.setNamesLocations(namesLocations);
+			int sid = namesLocations.get(0).getSheetID(); //pierwszy EL
+			namesLocations.add(new ElementLocation(sid, new Point(0,0), null)); //dodanie klona na koniec
+			portal.setNamesLocations(namesLocations, GUIManager.locationMoveType.NAME); //ustawienie jako aktualny
+
+			int sidA = alphaLocations.get(0).getSheetID(); //pierwszy EL
+			alphaLocations.add(new ElementLocation(sidA, new Point(0,0), null)); //dodanie klona na koniec
+			portal.setNamesLocations(alphaLocations, GUIManager.locationMoveType.ALPHA); //ustawienie jako aktualny
+
+			int sidB = betaLocations.get(0).getSheetID(); //pierwszy EL
+			betaLocations.add(new ElementLocation(sidB, new Point(0,0), null)); //dodanie klona na koniec
+			portal.setNamesLocations(betaLocations, GUIManager.locationMoveType.BETA); //ustawienie jako aktualny
+
+			int sidG = gammaLocations.get(0).getSheetID(); //pierwszy EL
+			gammaLocations.add(new ElementLocation(sidG, new Point(0,0), null)); //dodanie klona na koniec
+			portal.setNamesLocations(gammaLocations, GUIManager.locationMoveType.GAMMA); //ustawienie jako aktualny
+
+			int sidT = tauLocations.get(0).getSheetID(); //pierwszy EL
+			tauLocations.add(new ElementLocation(sidT, new Point(0,0), null)); //dodanie klona na koniec
+			portal.setNamesLocations(tauLocations, GUIManager.locationMoveType.TAU); //ustawienie jako aktualny
 			
 			portal.setName(oldName);
 			portal.setComment(oldComment);
@@ -757,10 +815,25 @@ public class SelectionManager {
 			portal.setTransType(tt);
 
 			//klonowanie lokalizacji nazw + dodatkowy wpis:
-			//ArrayList<ElementLocation> namesLocations = nodeSelected.getNamesLocations();
-			int sid = namesLocations.get(0).getSheetID();
-			namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
-			portal.setNamesLocations(namesLocations);
+			int sid = namesLocations.get(0).getSheetID(); //pierwszy EL
+			namesLocations.add(new ElementLocation(sid, new Point(0,0), null)); //dodanie klona
+			portal.setNamesLocations(namesLocations, GUIManager.locationMoveType.NAME); //ustaw jak główną listę
+
+			int sidA = alphaLocations.get(0).getSheetID(); //pierwszy EL
+			alphaLocations.add(new ElementLocation(sidA, new Point(0,0), null)); //dodanie klona
+			portal.setNamesLocations(alphaLocations, GUIManager.locationMoveType.ALPHA); //ustaw jak główną listę
+
+			int sidB = betaLocations.get(0).getSheetID(); //pierwszy EL
+			betaLocations.add(new ElementLocation(sidB, new Point(0,0), null)); //dodanie klona
+			portal.setNamesLocations(betaLocations, GUIManager.locationMoveType.BETA); //ustaw jak główną listę
+
+			int sidG = gammaLocations.get(0).getSheetID(); //pierwszy EL
+			gammaLocations.add(new ElementLocation(sidG, new Point(0,0), null)); //dodanie klona
+			portal.setNamesLocations(gammaLocations, GUIManager.locationMoveType.GAMMA); //ustaw jak główną listę
+
+			int sidT = tauLocations.get(0).getSheetID(); //pierwszy EL
+			tauLocations.add(new ElementLocation(sidT, new Point(0,0), null)); //dodanie klona
+			portal.setNamesLocations(tauLocations, GUIManager.locationMoveType.TAU); //ustaw jak główną listę
 			
 			portal.setName(oldName);
 			portal.setComment(oldComment);

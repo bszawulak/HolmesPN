@@ -13,7 +13,7 @@ import holmes.varia.NetworkTransformations;
 /**
  * Klasa symuluje PRAWDZIWE szaleństwo zapisu podsieci (coarse T/P shit) w programie Snoopy. 
  * Niemiec płakał, jak projektował...
- * 
+ * Cthulhu fhtagn!
  * @author MR
  *
  */
@@ -88,8 +88,8 @@ public class SnoopyWriterCoarse {
 		write(bw, "          <graphics count=\"1\">");
 		//xOff = 5; 
 		//yOff = 20; 
-		xOff = coarseNode.getXNameLoc(0);
-		yOff = coarseNode.getYNameLoc(0);
+		xOff = coarseNode.getXNameLoc(0, GUIManager.locationMoveType.NAME);
+		yOff = coarseNode.getYNameLoc(0, GUIManager.locationMoveType.NAME);
 		yOff = SnoopyToolClass.getNormalizedY(yOff);
 			
 		write(bw, "            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""
@@ -144,14 +144,14 @@ public class SnoopyWriterCoarse {
 	private void write(BufferedWriter bw, String text) {
 		try {
 			bw.write(text+"\n");
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 	}
 	
 	public String toString() {
 		String txt = "";
-		String type = "";
+		String type;
 		if(coarseNode.getMetaType() == MetaType.SUBNETPLACE)
 			type = "[cPlace]";
 		else

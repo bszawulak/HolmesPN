@@ -85,6 +85,8 @@ public class Place extends Node {
 
 	//grafika:
 	private boolean showTokenSet_xTPN = false; //czy wyświetlać zbiór tokenów
+
+	private boolean gammaRangeVisibility_XTPN = true;
 	private int franctionDigits = 6;
 
 	//tokeny:
@@ -654,6 +656,7 @@ public class Place extends Node {
 	 */
 	public void setGammaModeXTPNstatus(boolean status) {
 		gammaMode_xTPN = status;
+		setGammaRangeStatus(status);
 	}
 
 	/**
@@ -662,6 +665,22 @@ public class Place extends Node {
 	 */
 	public boolean isGammaModeActiveXTPN() {
 		return gammaMode_xTPN;
+	}
+
+	/**
+	 * Metoda ustawia status zakresów gamma - pokazywać czy nie.
+	 * @param status (<b>boolean</b>) true, jeśli zakresy gamma mają być pokazywane.
+	 */
+	public void setGammaRangeStatus(boolean status) {
+		gammaRangeVisibility_XTPN = status;
+	}
+
+	/**
+	 * Metoda zwraca status zakresów gamma - pokazywać czy nie.
+	 * @return (<b>boolean</b>) - true, jeśli zakresy gamma mają być pokazywane.
+	 */
+	public boolean isGammaRangeVisible() {
+		return gammaRangeVisibility_XTPN;
 	}
 
 	/**

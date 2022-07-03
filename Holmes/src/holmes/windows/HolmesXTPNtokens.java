@@ -239,7 +239,9 @@ public class HolmesXTPNtokens extends JFrame {
             if (!listenerAllowed)
                 return;
 
-            Double val = Double.parseDouble((String)addNewTextField.getValue());
+            String text = addNewTextField.getValue().toString();
+            Double val = Double.parseDouble(text);
+
             place.addTokens_XTPN(1, val);
             listenerAllowed=false;
             recreateComboBox();

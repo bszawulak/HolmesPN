@@ -119,7 +119,7 @@ public class MauritiusMapPanel extends JPanel {
     /**
      * Główna metoda rysująca Mapę Mauritiusa poprzez rekurencyjne przeglądanie drzewa binarnego danych o mapie.
      * @param node BTNode - aktualny węzeł drzewa
-     * @param g Graphics - obiekt rysujący
+     * @param g2d Graphics - obiekt rysujący
      * @param x int - pozycja startowa X korzenia
      * @param y int - pozycja startowa Y korzenia
      * @param fullName boolean - jeśli true, wyświetla pełne nazwy reakcji
@@ -594,7 +594,7 @@ public class MauritiusMapPanel extends JPanel {
 
 		public void mousePressed(MouseEvent e) {
 			//reset trybu przesuwania napisu:
-			GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, false);
+			GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
 			
 			Point mousePt = e.getPoint();
 			mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);

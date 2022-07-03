@@ -549,7 +549,7 @@ public class ProjectReader {
 				int elLocSize = Integer.parseInt(line);
 				for(int e=0; e<elLocSize-1; e++) {
 					place.getElementLocations().add(new ElementLocation(0, new Point(20,20), place));
-					place.getNamesLocations().add(new ElementLocation(0, new Point(0,0), place));
+					place.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), place));
 				}
 				
 				return;
@@ -585,10 +585,10 @@ public class ProjectReader {
 				int pointY = Integer.parseInt(tab[2]);
 				int eLocIndex = Integer.parseInt(tab[3]);
 				
-				place.getNamesLocations().get(eLocIndex).setSheetID(sheetID);
+				place.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setSheetID(sheetID);
 				Point newP = new Point(pointX, pointY);
-				place.getNamesLocations().get(eLocIndex).forceSetPosition(newP);
-				place.getNamesLocations().get(eLocIndex).setNotSnappedPosition(newP);
+				place.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).forceSetPosition(newP);
+				place.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setNotSnappedPosition(newP);
 				return;
 			}
 			
@@ -748,7 +748,7 @@ public class ProjectReader {
 				int elLocSize = Integer.parseInt(line);
 				for(int e=0; e<elLocSize-1; e++) {
 					transition.getElementLocations().add(new ElementLocation(0, new Point(20,20), transition));
-					transition.getNamesLocations().add(new ElementLocation(0, new Point(0,0), transition));
+					transition.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), transition));
 				}
 				
 				return;
@@ -784,10 +784,10 @@ public class ProjectReader {
 				int pointY = Integer.parseInt(tab[2]);
 				int eLocIndex = Integer.parseInt(tab[3]);
 				
-				transition.getNamesLocations().get(eLocIndex).setSheetID(sheetID);
+				transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setSheetID(sheetID);
 				Point newP = new Point(pointX, pointY);
-				transition.getNamesLocations().get(eLocIndex).forceSetPosition(newP);
-				transition.getNamesLocations().get(eLocIndex).setNotSnappedPosition(newP);
+				transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).forceSetPosition(newP);
+				transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setNotSnappedPosition(newP);
 				return;
 			}
 			
@@ -890,7 +890,7 @@ public class ProjectReader {
 				int elLocSize = Integer.parseInt(line);
 				for(int e=0; e<elLocSize-1; e++) {
 					metanode.getElementLocations().add(new ElementLocation(0, new Point(20,20), metanode));
-					metanode.getNamesLocations().add(new ElementLocation(0, new Point(0,0), metanode));
+					metanode.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), metanode));
 				}
 				
 				return;
@@ -926,10 +926,10 @@ public class ProjectReader {
 				int pointY = Integer.parseInt(tab[2]);
 				int eLocIndex = Integer.parseInt(tab[3]);
 				
-				metanode.getNamesLocations().get(eLocIndex).setSheetID(sheetID);
+				metanode.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setSheetID(sheetID);
 				Point newP = new Point(pointX, pointY);
-				metanode.getNamesLocations().get(eLocIndex).forceSetPosition(newP);
-				metanode.getNamesLocations().get(eLocIndex).setNotSnappedPosition(newP);
+				metanode.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).forceSetPosition(newP);
+				metanode.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setNotSnappedPosition(newP);
 				return;
 			}
 		} catch (Exception e) {

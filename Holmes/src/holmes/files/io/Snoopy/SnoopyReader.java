@@ -242,9 +242,19 @@ public class SnoopyReader {
 								
 								if(logicalELNumber_names == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation (names_off)
-									place.getNamesLocations().set(0, new ElementLocation(sub, new Point(xOff,yOff), place));
+									place.getNamesLocations(GUIManager.locationMoveType.NAME).set(0, new ElementLocation(sub, new Point(xOff,yOff), place));
+									//XTPN
+									place.getNamesLocations(GUIManager.locationMoveType.ALPHA).set(0, new ElementLocation(sub, new Point(xOff,yOff), place));
+									place.getNamesLocations(GUIManager.locationMoveType.BETA).set(0, new ElementLocation(sub, new Point(xOff,yOff), place));
+									place.getNamesLocations(GUIManager.locationMoveType.GAMMA).set(0, new ElementLocation(sub, new Point(xOff,yOff), place));
+									place.getNamesLocations(GUIManager.locationMoveType.TAU).set(0, new ElementLocation(sub, new Point(xOff,yOff), place));
 								} else {
-									place.getNamesLocations().add(new ElementLocation(sub, new Point(xOff,yOff), place));
+									place.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(sub, new Point(xOff,yOff), place));
+									//XTPN
+									place.getNamesLocations(GUIManager.locationMoveType.ALPHA).set(0, new ElementLocation(sub, new Point(xOff,yOff), place));
+									place.getNamesLocations(GUIManager.locationMoveType.BETA).set(0, new ElementLocation(sub, new Point(xOff,yOff), place));
+									place.getNamesLocations(GUIManager.locationMoveType.GAMMA).set(0, new ElementLocation(sub, new Point(xOff,yOff), place));
+									place.getNamesLocations(GUIManager.locationMoveType.TAU).set(0, new ElementLocation(sub, new Point(xOff,yOff), place));
 								}
 							}
 						}
@@ -347,10 +357,20 @@ public class SnoopyReader {
 							+place.getName(), "warning", true);
 					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
 					
-					place.getNamesLocations().clear();
+					place.getNamesLocations(GUIManager.locationMoveType.NAME).clear();
+					place.getNamesLocations(GUIManager.locationMoveType.ALPHA).clear();
+					place.getNamesLocations(GUIManager.locationMoveType.BETA).clear();
+					place.getNamesLocations(GUIManager.locationMoveType.GAMMA).clear();
+					place.getNamesLocations(GUIManager.locationMoveType.TAU).clear();
+
 					for(int i=0; i<place.getElementLocations().size(); i++) {
 						int sub = place.getElementLocations().get(i).getSheetID();
-						place.getNamesLocations().add(new ElementLocation(sub, new Point(0, 0), place));
+						place.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(sub, new Point(0, 0), place));
+						place.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(new ElementLocation(sub, new Point(0, 0), place));
+						place.getNamesLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(sub, new Point(0, 0), place));
+						place.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(sub, new Point(0, 0), place));
+						place.getNamesLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(sub, new Point(0, 0), place));
+
 					}
 				}
 			}
@@ -500,9 +520,17 @@ public class SnoopyReader {
 								
 								if(logicalELNumber_names == 0) { 
 									//użyty konstruktor dla transition w super-klasie Node utworzył już pierwszy ElementLocation (names_off)
-									transition.getNamesLocations().set(0, new ElementLocation(sub, new Point(xOff,yOff), transition));
+									transition.getNamesLocations(GUIManager.locationMoveType.NAME).set(0, new ElementLocation(sub, new Point(xOff,yOff), transition));
+									transition.getNamesLocations(GUIManager.locationMoveType.ALPHA).set(0, new ElementLocation(sub, new Point(xOff,yOff), transition));
+									transition.getNamesLocations(GUIManager.locationMoveType.BETA).set(0, new ElementLocation(sub, new Point(xOff,yOff), transition));
+									transition.getNamesLocations(GUIManager.locationMoveType.GAMMA).set(0, new ElementLocation(sub, new Point(xOff,yOff), transition));
+									transition.getNamesLocations(GUIManager.locationMoveType.TAU).set(0, new ElementLocation(sub, new Point(xOff,yOff), transition));
 								} else {
-									transition.getNamesLocations().add(new ElementLocation(sub, new Point(xOff,yOff), transition));
+									transition.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(sub, new Point(xOff,yOff), transition));
+									transition.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(new ElementLocation(sub, new Point(xOff,yOff), transition));
+									transition.getNamesLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(sub, new Point(xOff,yOff), transition));
+									transition.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(sub, new Point(xOff,yOff), transition));
+									transition.getNamesLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(sub, new Point(xOff,yOff), transition));
 								}
 							}
 						}
@@ -620,10 +648,18 @@ public class SnoopyReader {
 							+transition.getName(), "warning", true);
 					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
 					
-					transition.getNamesLocations().clear();
+					transition.getNamesLocations(GUIManager.locationMoveType.NAME).clear();
+					transition.getNamesLocations(GUIManager.locationMoveType.ALPHA).clear();
+					transition.getNamesLocations(GUIManager.locationMoveType.BETA).clear();
+					transition.getNamesLocations(GUIManager.locationMoveType.GAMMA).clear();
+					transition.getNamesLocations(GUIManager.locationMoveType.TAU).clear();
 					for(int i=0; i<transition.getElementLocations().size(); i++) {
 						int sub = transition.getElementLocations().get(i).getSheetID();
-						transition.getNamesLocations().add(new ElementLocation(sub, new Point(0, 0), transition));
+						transition.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(sub, new Point(0, 0), transition));
+						transition.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(new ElementLocation(sub, new Point(0, 0), transition));
+						transition.getNamesLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(sub, new Point(0, 0), transition));
+						transition.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(sub, new Point(0, 0), transition));
+						transition.getNamesLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(sub, new Point(0, 0), transition));
 					}
 				}
 			}
@@ -783,9 +819,17 @@ public class SnoopyReader {
 								
 								if(logicalELNumber_names == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation (names_off)
-									metaNode.getNamesLocations().set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.ALPHA).set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.BETA).set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.GAMMA).set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.TAU).set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
 								} else {
-									metaNode.getNamesLocations().add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
 								}
 							}
 						}
@@ -852,10 +896,18 @@ public class SnoopyReader {
 							+metaNode.getName(), "warning", true);
 					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
 					
-					metaNode.getNamesLocations().clear();
+					metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).clear();
+					metaNode.getNamesLocations(GUIManager.locationMoveType.ALPHA).clear();
+					metaNode.getNamesLocations(GUIManager.locationMoveType.BETA).clear();
+					metaNode.getNamesLocations(GUIManager.locationMoveType.GAMMA).clear();
+					metaNode.getNamesLocations(GUIManager.locationMoveType.TAU).clear();
 					for(int i=0; i<metaNode.getElementLocations().size(); i++) {
 						int sub = metaNode.getElementLocations().get(i).getSheetID();
-						metaNode.getNamesLocations().add(new ElementLocation(sub, new Point(0, 0), metaNode));
+						metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(sub, new Point(0, 0), metaNode));
+						metaNode.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(new ElementLocation(sub, new Point(0, 0), metaNode));
+						metaNode.getNamesLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(sub, new Point(0, 0), metaNode));
+						metaNode.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(sub, new Point(0, 0), metaNode));
+						metaNode.getNamesLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(sub, new Point(0, 0), metaNode));
 					}
 				}
 			}
@@ -983,9 +1035,17 @@ public class SnoopyReader {
 								
 								if(logicalELNumber_names == 0) { 
 									//użyty konstruktor dla transition w super-klasie Node utworzył już pierwszy ElementLocation (names_off)
-									metaNode.getNamesLocations().set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.ALPHA).set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.BETA).set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.GAMMA).set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.TAU).set(0, new ElementLocation(sub, new Point(xOff,yOff), metaNode));
 								} else {
-									metaNode.getNamesLocations().add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
+									metaNode.getNamesLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(sub, new Point(xOff,yOff), metaNode));
 								}
 							}
 						}
@@ -1052,10 +1112,18 @@ public class SnoopyReader {
 							+metaNode.getName(), "warning", true);
 					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
 					
-					metaNode.getNamesLocations().clear();
+					metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).clear();
+					metaNode.getNamesLocations(GUIManager.locationMoveType.ALPHA).clear();
+					metaNode.getNamesLocations(GUIManager.locationMoveType.BETA).clear();
+					metaNode.getNamesLocations(GUIManager.locationMoveType.GAMMA).clear();
+					metaNode.getNamesLocations(GUIManager.locationMoveType.TAU).clear();
 					for(int i=0; i<metaNode.getElementLocations().size(); i++) {
 						int sub = metaNode.getElementLocations().get(i).getSheetID();
-						metaNode.getNamesLocations().add(new ElementLocation(sub, new Point(0, 0), metaNode));
+						metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(sub, new Point(0, 0), metaNode));
+						metaNode.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(new ElementLocation(sub, new Point(0, 0), metaNode));
+						metaNode.getNamesLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(sub, new Point(0, 0), metaNode));
+						metaNode.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(sub, new Point(0, 0), metaNode));
+						metaNode.getNamesLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(sub, new Point(0, 0), metaNode));
 					}
 				}
 			}

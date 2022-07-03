@@ -11,7 +11,6 @@ import holmes.petrinet.elements.Transition;
 import holmes.varia.NetworkTransformations;
 
 public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
-
 	public SnoopyWriterTimeTransition() {
 		super();
 	}
@@ -35,9 +34,8 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 		globalTransID = globalID;
 		int currID = snoopyStartingID;
 		int locations = 1;
-		int xOff = 25;
-		int yOff = 25;
-		
+		int xOff;
+		int yOff;
 		
 		ArrayList<Integer> locationsSheetID = new ArrayList<Integer>();
 		int netMainID = 0;
@@ -111,12 +109,12 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 		currID++; //teraz: 359
 		write(bw, "          <![CDATA[" + holmesTransition.getName() + "]]>");
 		write(bw, "          <graphics count=\"" + locations + "\">"); //ile logicznych
-		xOff = 5; //TODO: + holmesPlace.getNameOffX();
-		yOff = 20; //TODO: + holmesPlace.getNameOffY();
+		//xOff = 5; //TODO: + holmesPlace.getNameOffX();
+		//yOff = 20; //TODO: + holmesPlace.getNameOffY();
 		for(int i=0; i<locations; i++) { 
 			//TODO: decyzja, czy środkować czy brać offset z Holmes
-			xOff = holmesTransition.getXNameLoc(i);
-			yOff = holmesTransition.getYNameLoc(i);
+			xOff = holmesTransition.getXNameLoc(i, GUIManager.locationMoveType.NAME);
+			yOff = holmesTransition.getYNameLoc(i, GUIManager.locationMoveType.NAME);
 			yOff = SnoopyToolClass.getNormalizedY(yOff);
 			
 			if(i==0) {//tylko główne miejsce

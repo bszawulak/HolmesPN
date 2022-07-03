@@ -1098,7 +1098,23 @@ public class IOprotocols {
                             Place tmpPlace = new Place(placeNumber, new ArrayList<ElementLocation>(), placeName, "", wMark[placeNumber]);
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(namesLoc);
+                            tmpPlace.setNamesLocations(namesLoc, GUIManager.locationMoveType.NAME);
+                            //XTPN:
+                            ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
+                            alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+
+                            ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
+                            betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
+
+                            ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
+                            gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+
+                            ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
+                            tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
                             nodeArray.add(tmpPlace);
                         }
@@ -1124,9 +1140,27 @@ public class IOprotocols {
                             tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
                             String transName = tabWczytanaLinia[0];
                             Transition tmpTrans = new Transition(transNumber, new ArrayList<ElementLocation>(), transName, "");
+
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(namesLoc);
+                            tmpTrans.setNamesLocations(namesLoc, GUIManager.locationMoveType.NAME);
+                            //XTPN
+                            ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
+                            alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+
+                            ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
+                            betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
+
+                            ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
+                            gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+
+                            ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
+                            tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+
                             nodeArray.add(tmpTrans);
                             //mark++;
                         }
@@ -1338,9 +1372,27 @@ public class IOprotocols {
                             tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
                             String placeName = tabWczytanaLinia[0];
                             Place tmpPlace = new Place(placeNumber, new ArrayList<ElementLocation>(), placeName, "", wMark[placeNumber]);
+
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(namesLoc);
+                            tmpPlace.setNamesLocations(namesLoc, GUIManager.locationMoveType.NAME);
+
+                            //XTPN
+                            ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
+                            alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+
+                            ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
+                            betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
+
+                            ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
+                            gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+
+                            ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
+                            tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
                             nodeArray.add(tmpPlace);
                         }
@@ -1366,11 +1418,30 @@ public class IOprotocols {
                             tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
                             String transName = tabWczytanaLinia[0];
                             Transition tmpTrans = new Transition(transNumber, new ArrayList<ElementLocation>(), transName, "");
+
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(namesLoc);
-                            nodeArray.add(tmpTrans);
+                            tmpTrans.setNamesLocations(namesLoc, GUIManager.locationMoveType.NAME);
+
+                            //XTPN
+                            ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
+                            alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+
+                            ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
+                            betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
+
+                            ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
+                            gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+
+                            ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
+                            tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
                             //mark++;
+
+                            nodeArray.add(tmpTrans);
                         }
                         break;
                     case 4:
@@ -1948,7 +2019,6 @@ public class IOprotocols {
                 n.setSelected(false);
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().add(n);
             }
-
 
             ArrayList<StatePlacesVector> spv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().accessStateMatrix();
 

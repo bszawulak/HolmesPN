@@ -182,7 +182,7 @@ public class ProjectWriter {
 					int pointY = eLoc.getPosition().y;
 					bw.write(spaces(sp)+"<Place location data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 					
-					ElementLocation nameLoc = place.getNamesLocations().get(e);
+					ElementLocation nameLoc = place.getNamesLocations(GUIManager.locationMoveType.NAME).get(e);
 					sheetId = nameLoc.getSheetID();
 					pointX = nameLoc.getPosition().x;
 					pointY = nameLoc.getPosition().y;
@@ -239,7 +239,7 @@ public class ProjectWriter {
 					int pointY = eLoc.getPosition().y;
 					bw.write(spaces(sp)+"<Transition location data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 					
-					ElementLocation nameLoc = trans.getNamesLocations().get(e);
+					ElementLocation nameLoc = trans.getNamesLocations(GUIManager.locationMoveType.NAME).get(e);
 					sheetId = nameLoc.getSheetID();
 					pointX = nameLoc.getPosition().x;
 					pointY = nameLoc.getPosition().y;
@@ -280,7 +280,7 @@ public class ProjectWriter {
 					int pointY = eLoc.getPosition().y;
 					bw.write(spaces(sp)+"<MetaNode location data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 					
-					ElementLocation nameLoc = metanode.getNamesLocations().get(e);
+					ElementLocation nameLoc = metanode.getNamesLocations(GUIManager.locationMoveType.NAME).get(e);
 					sheetId = nameLoc.getSheetID();
 					pointX = nameLoc.getPosition().x;
 					pointY = nameLoc.getPosition().y;

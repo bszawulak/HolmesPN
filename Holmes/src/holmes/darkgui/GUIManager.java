@@ -165,8 +165,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	private boolean inaReady = true;
-	
-	private boolean nameLocChangeMode = false; //jeśli true, zmieniamy offset napisu
+
+	/**
+	 * NONE, NAME, ALPHA, BETA, GAMMA, TAU
+	 */
+	public enum locationMoveType {NONE, NAME, ALPHA, BETA, GAMMA, TAU}
+	private locationMoveType nameLocChangeMode = locationMoveType.NONE;
 	private Node nameSelectedNode = null;
 	private ElementLocation nameNodeEL = null;
 	
@@ -1549,9 +1553,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Faktyczna realizacja tego trybu odbywa się w GraphPanel.MouseWheelHandler.mouseWheelMoved(MouseWheelEvent e)
 	 * @param n Node - wybrany wierzchołek
 	 * @param el ElementLocation - wybrana lokalizacja wierzchołka (portal)
-	 * @param mode boolean - tryb: true jeśli przesuwamy.
+	 * @param mode locationMoveType - NONE, ALPHA, BETA, GAMMA, TAU
 	 */
-	public void setNameLocationChangeMode(Node n, ElementLocation el, boolean mode) {
+	public void setNameLocationChangeMode(Node n, ElementLocation el, locationMoveType mode) {
 		this.nameSelectedNode = n;
 		this.nameNodeEL = el;
 		this.nameLocChangeMode = mode;
@@ -1559,9 +1563,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda zwraca wartość flagi dla trybu zmiany lokalizacji nazwy wybranego wierzchołka sieci.
-	 * @return boolean - true, jeśli włączony tryb zmiany lokalizacji nazwy
+	 * @return (locationMoveType) - NONE, NAME, ALPHA, BETA, GAMMA or TAU
 	 */
-	public boolean getNameLocChangeMode() {
+	public locationMoveType getNameLocChangeMode() {
 		return nameLocChangeMode;
 	}
 	
