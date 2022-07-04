@@ -1146,7 +1146,7 @@ public class HolmesDockWindowsTable extends JPanel {
         idLabel4.setFont(normalFont);
         components.add(idLabel4);
 
-        // NAME
+        // XTPN-place NAME
         JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
         nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(nameLabel);
@@ -1167,7 +1167,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(nameField);
 
-        // KOMENTARZE WIERZCHOŁKA
+        // XTPN-place  KOMENTARZE
         JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
         comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         columnA_Y += 20;
@@ -1192,7 +1192,7 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
 
-        //przycisk Gamma ON/OFF
+        // XTPN-place przycisk Gamma ON/OFF
         JLabel gammaLabel = new JLabel("XTPN mode:", JLabel.LEFT);
         gammaLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength+15, 20);
         components.add(gammaLabel);
@@ -1258,22 +1258,26 @@ public class HolmesDockWindowsTable extends JPanel {
                     return;
                 }
                 return;
-
             }
         });
         components.add(buttonGammaMode);
 
-        // beta values visibility
+        // XTPN-place gamma values visibility
         JButton gammaVisibilityButton = new JButton("<html> Gamma<br>visible<html>");
         gammaVisibilityButton.setName("GammaVButton1");
         gammaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         gammaVisibilityButton.setBounds(columnB_posX+65, columnB_Y, 65, 30);
-        if(place.isGammaRangeVisible()) {
-            gammaVisibilityButton.setText("<html> Gamma<br>visible<html>");
-            gammaVisibilityButton.setBackground(Color.GREEN);
+        if(place.isGammaModeActiveXTPN()) {
+            if (place.isGammaRangeVisible()) {
+                gammaVisibilityButton.setText("<html> Gamma<br>visible<html>");
+                gammaVisibilityButton.setBackground(Color.GREEN);
+            } else {
+                gammaVisibilityButton.setText("<html> Gamma<br>hidden<html>");
+                gammaVisibilityButton.setBackground(Color.RED);
+            }
         } else {
-            gammaVisibilityButton.setText("<html> Gamma<br>hidden<html>");
-            gammaVisibilityButton.setBackground(Color.RED);
+            gammaVisibilityButton.setText("<html> Gamma<br>visible<html>");
+            gammaVisibilityButton.setEnabled(false);
         }
         gammaVisibilityButton.addActionListener(e -> {
             if (doNotUpdate)
@@ -1295,18 +1299,24 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(gammaVisibilityButton);
 
-        //gamma offset
+        // XTPN-place gamma offset
         JButton gammaLocChangeButton = new JButton("<html>Gamma<br>offset<html>");
         gammaLocChangeButton.setName("G-offset");
         gammaLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         gammaLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
         gammaLocChangeButton.setBounds(columnB_posX+130, columnB_Y, 65, 30);
-        if(gammaLocChangeMode) {
-            gammaLocChangeButton.setText("<html>Change<br>location<html>");
-            gammaLocChangeButton.setBackground(Color.BLUE);
+        if(place.isGammaModeActiveXTPN() && place.isGammaRangeVisible()) {
+            if (gammaLocChangeMode) {
+                gammaLocChangeButton.setText("<html>Change<br>location<html>");
+                gammaLocChangeButton.setBackground(Color.BLUE);
+            } else {
+                gammaLocChangeButton.setText("<html>Change<br>location<html>");
+                gammaLocChangeButton.setBackground(Color.GREEN);
+            }
         } else {
-            gammaLocChangeButton.setText("<html>Gamma<br>offset<html>");
-            gammaLocChangeButton.setBackground(Color.GREEN);
+            gammaLocChangeButton.setText("<html>Change<br>location<html>");
+            gammaLocChangeMode = false;
+            gammaLocChangeButton.setEnabled(false);
         }
         gammaLocChangeButton.addActionListener(new ActionListener() {
             // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
@@ -1316,18 +1326,16 @@ public class HolmesDockWindowsTable extends JPanel {
                 JButton button_tmp = (JButton) actionEvent.getSource();
 
                 if (!gammaLocChangeMode) {
-                    gammaLocChangeButton.setText("<html>Gamma<br>offset<html>");
-                    gammaLocChangeButton.setBackground(Color.GREEN);
-
-                    //button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
+                    gammaLocChangeButton.setText("<html>Change<br>location<html>");
+                    gammaLocChangeButton.setBackground(Color.BLUE);
                     gammaLocChangeMode = true;
                     //overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
-                    gammaLocChangeButton.setText("<html>Change<br>location<html>");
-                    gammaLocChangeButton.setBackground(Color.BLUE);
-                    //button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
+                    gammaLocChangeButton.setText("<html>Gamma<br>offset<html>");
+                    gammaLocChangeButton.setBackground(Color.GREEN);
+
                     gammaLocChangeMode = false;
-                    //overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
             private ActionListener yesWeCan(Place place, ElementLocation inLoc) {
@@ -1338,7 +1346,7 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(place, location));
         components.add(gammaLocChangeButton);
 
-        // Zakresy gamma:
+        // XTPN-place  Zakresy gamma:
         JLabel minMaxLabel = new JLabel("\u03B3 (min/max): ", JLabel.LEFT);
         minMaxLabel.setBounds(columnA_posX, columnA_Y += 30, colACompLength+20, 20);
         components.add(minMaxLabel);
@@ -1419,7 +1427,7 @@ public class HolmesDockWindowsTable extends JPanel {
         tokensXTPNLabel2.setBounds(columnB_posX+20, columnA_Y, 140, 20);
         components.add(tokensXTPNLabel2);
 
-        //przycisk okna tokenów
+        // XTPN-place przycisk okna tokenów
         JButton tokensWindowButton = new JButton("<html>Tokens<br>window</html>");
         tokensWindowButton.setMargin(new Insets(0, 0, 0, 0));
         tokensWindowButton.setBounds(columnB_posX, columnB_Y +=44, 65, 30);
@@ -1432,7 +1440,7 @@ public class HolmesDockWindowsTable extends JPanel {
         tokensWindowButton.addActionListener(actionEvent -> new HolmesXTPNtokens((Place) element));
         components.add(tokensWindowButton);
 
-        //przycisk dodania tokenu XTPN
+        // XTPN-place przycisk dodania tokenu XTPN
         JButton add0tokenButton = new JButton("<html>Add<br>0-token</html>");
 
         add0tokenButton.setMargin(new Insets(0, 0, 0, 0));
@@ -1459,7 +1467,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(add0tokenButton);
 
-        //przycisk usunięcia tokenu XTPN
+        // XTPN-place przycisk usunięcia tokenu XTPN
         JButton remove0tokenButton = new JButton("<html>Remove<br>0-token</html>");
         remove0tokenButton.setMargin(new Insets(0, 0, 0, 0));
         remove0tokenButton.setBounds(columnB_posX+130, columnB_Y, 65, 30);
@@ -1483,7 +1491,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(remove0tokenButton);
 
-        //SHEET ID
+        // XTPN-place SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
         int xPos = location.getPosition().x;
@@ -1502,7 +1510,7 @@ public class HolmesDockWindowsTable extends JPanel {
         sheetIdLabel.setFont(normalFont);
         components.add(sheetIdLabel);
 
-        //ZOOM:
+        // XTPN-place ZOOM:
         JLabel zoomLabel = new JLabel("Zoom:");
         zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
         components.add(zoomLabel);
@@ -1513,7 +1521,7 @@ public class HolmesDockWindowsTable extends JPanel {
             zoomLabel2.setForeground(Color.red);
         components.add(zoomLabel2);
 
-        // PORTAL
+        // XTPN-place  PORTAL
         JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
         portalLabel.setBounds(columnB_posX + 110, columnB_Y, colACompLength, 20);
         components.add(portalLabel);
@@ -1538,7 +1546,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(portalBox);
 
-        //LOKALIZACJA:
+        // XTPN-place LOKALIZACJA:
         JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
         locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(locLabel);
@@ -1562,8 +1570,7 @@ public class HolmesDockWindowsTable extends JPanel {
         locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, colBCompLength, 20);
         components.add(locationSpinnerPanel);
 
-
-        // WSPÓŁRZĘDNE NAPISU:
+        // XTPN-place  WSPÓŁRZĘDNE NAPISU:
         columnA_Y += 20;
         columnB_Y += 25;
 
@@ -1635,6 +1642,7 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(place, location));
         components.add(nameLocationYSpinner);
 
+        // XTPN-place przycisk zmiany lokalizacj napisu
         JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
         nameLocChangeButton.setName("LocNameChanger");
         nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
