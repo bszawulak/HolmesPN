@@ -8164,7 +8164,6 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda zmienia wagę dla łuku sieci, poza listenerem, który
      * jest klasą anonimową (i nie widzi pola element).
-     *
      * @param weight int - nowa waga dla koloru
      * @param arc    Arc - obiekt łuku
      * @param i      int - nr porządkowy koloru, default 0, od 0 do 5

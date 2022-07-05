@@ -19,7 +19,7 @@ import holmes.windows.HolmesNotepad;
  */
 public class NetSimulatorLogger {
 	private HolmesNotepad log = GUIManager.getDefaultGUIManager().getSimLog();
-	private String stars = "**********************************************************************************************************";
+
 	/**
 	 * Konstruktor domyślny obiektu klasy NetSimulatorLogger.
 	 */
@@ -35,13 +35,13 @@ public class NetSimulatorLogger {
 	 * @param maximumMode boolean - true jeśli maximum mode
 	 */
 	public void logStart(NetType simulationType, boolean writeHistory, SimulatorMode sm, boolean maximumMode) {
-		String message = "";
+		String message;
 		String histWrite = "yes";
-		if(writeHistory == false)
+		if(!writeHistory)
 			histWrite = "no";
 		
 		String max = "maximum";
-		if(maximumMode == false)
+		if(!maximumMode)
 			max = "50/50";
 		
 		message = "Simulation started. Net sim model: "; //+simulationType.toString()+ " Steps history saved: "+histWrite + "";
@@ -96,7 +96,7 @@ public class NetSimulatorLogger {
 			
 			for(Arc a : inArcs) { //pobierz miejsca wejściowe do danej tramzycji
 				Node p = a.getStartNode();
-				if(prePlaces.contains(p) == false)
+				if(!prePlaces.contains(p))
 					prePlaces.add(p);
 				else
 					log.addText("Warning, multi-arc detected between transition: "+transition.getName()+ " and place: "+p.getName(), "warning", false, true);
@@ -107,7 +107,7 @@ public class NetSimulatorLogger {
 			}
 			for(Arc a : outArcs) { //pobierz miejsca docelowe danej tranzycji
 				Node p = a.getEndNode();
-				if(postPlaces.contains(p) == false)
+				if(!postPlaces.contains(p))
 					postPlaces.add(p);
 				else
 					log.addText("Warning, multi-arc detected between transition: "+transition.getName()+ " and place: "+p.getName(), "warning", false, true);
@@ -130,7 +130,7 @@ public class NetSimulatorLogger {
 			log.addText(postPlacesInfo.size()+"", "b", false, false);
 			log.addText("", "t", false, true);
 			
-			if(details == true) {
+			if(details) {
 				int m = getMaxLength(prePlacesInfo, 0);
 				m = getMaxLength(postPlacesInfo, m);
 				
@@ -168,9 +168,9 @@ public class NetSimulatorLogger {
 	 */
 	private int getMaxLength(ArrayList<String> prePlacesInfo, int currentMax) {
 		int max = currentMax;
-		for(int i=0; i<prePlacesInfo.size(); i++) {
-			if(prePlacesInfo.get(i).length() > max)
-				max = prePlacesInfo.get(i).length();
+		for (String s : prePlacesInfo) {
+			if (s.length() > max)
+				max = s.length();
 		}
 		return max;
 	}
@@ -189,6 +189,7 @@ public class NetSimulatorLogger {
 	 */
 	public void logSimReset() {
 		log.addText("Simulator reset confirmed, state m0 restored. Simulation state cleaned.", "b", true, true);
+		String stars = "**********************************************************************************************************";
 		log.addText(stars, "b", false, true);
 	}
 	

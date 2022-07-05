@@ -17,7 +17,7 @@ import holmes.windows.ssim.HolmesSim;
 
 /**
  * Klasa symulatora. Różnica między nią a symulatorem graficznym jest taka, że poniższe metody potrafią wygenerować
- * dziesiątki tysiący stanów na sekundę (co sprawia, że oszczędzanie pamięci staje się sine qua non w jej wypadku).
+ * dziesiątki tysięcy stanów na sekundę (co sprawia, że oszczędzanie pamięci staje się sine qua non w jej wypadku).
  * 
  * @author MR
  */

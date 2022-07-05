@@ -30,7 +30,7 @@ public class NetSimulator {
 	private SimulatorMode simulatorStatus = SimulatorMode.STOPPED;
 	private SimulatorMode previousSimStatus = SimulatorMode.STOPPED;
 	private PetriNet petriNet;
-	private Integer delay = Integer.valueOf(30);	//opóźnienie
+	private int delay = 30;	//opóźnienie
 	private boolean simulationActive = false;
 	private Timer timer;
 	private ArrayList<Transition> launchingTransitions;
@@ -42,10 +42,9 @@ public class NetSimulator {
 	private boolean writeHistory = true;
 	private long timeCounter = -1;
 	private NetSimulatorLogger nsl = new NetSimulatorLogger();
-	private boolean detailedLogging = true;
 	//private Random generator;
 	
-	private StandardTokenSimulator engine = null;
+	private StandardTokenSimulator engine;
 	private boolean emptySteps = false; 
 	
 	private GUIManager overlord;
@@ -120,12 +119,8 @@ public class NetSimulator {
 		ArrayList<Transition> time_transitions = petriNet.getTimeTransitions();
 		ArrayList<Place> places = petriNet.getPlaces();
 		nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode());
-		
-		if(isSingleMode() && overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
-			setMaxMode(true); //override
-		} else {
-			setMaxMode(false); //WTF? PO CO TO?!?!?!
-		}
+
+		setMaxMode(isSingleMode() && overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
 		
 		HolmesNotepad notepad = new HolmesNotepad(640, 480);
 		boolean status = FunctionsTools.validateFunctionNet(notepad, places);
@@ -264,9 +259,7 @@ public class NetSimulator {
 				overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(3);
 				netSimType = NetType.COLOR;
 				engine.setNetSimType(netSimType);
-				return;
-			} else
-				return;
+			}
 		} else if(netSimType == NetType.TIME) {
 			for(Node n : petriNet.getNodes()) {
 				if(n instanceof Place) { //miejsca ignorujemy
@@ -280,13 +273,12 @@ public class NetSimulator {
 						overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
 						netSimType = NetType.HYBRID;
 						engine.setNetSimType(netSimType);
-						return;
 					}
 				}
-
 			}
 		} else if (netSimType == NetType.HYBRID) {
-			//simulationType = NetType.HYBRID;
+			//TODO
+			// simulationType = NetType.HYBRID;
 		}		
 	}
 
@@ -301,7 +293,7 @@ public class NetSimulator {
 		ArrayList<Arc> arcs;
 		for (Transition transition : transitions) {
 			transition.setLaunching(true);
-			if (backtracking == false)
+			if (!backtracking)
 				arcs = transition.getInArcs();
 			else
 				arcs = transition.getOutArcs();
@@ -314,7 +306,7 @@ public class NetSimulator {
 				arc.setSimulationForwardDirection(!backtracking);
 				arc.setTransportingTokens(true);
 				Place place;
-				if (backtracking == false) { //inArcs
+				if (!backtracking) { //inArcs
 					place = (Place) arc.getStartNode();
 					
 					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
@@ -395,7 +387,7 @@ public class NetSimulator {
 				arc.setTransportingTokens(true);
 				Place place;
 				
-				if (backtracking == false) { //inArcs
+				if (!backtracking) { //inArcs
 					place = (Place) arc.getStartNode();
 					
 					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
@@ -525,17 +517,17 @@ public class NetSimulator {
 		for (Transition transition : transitions) {
 			transition.setLaunching(false);  // skoro tutaj dotarliśmy, to znaczy że tranzycja już
 			//swoje zrobiła i jej status aktywnej się kończy w tym kroku
-			if (backtracking == false)
+			if (!backtracking)
 				arcs = transition.getOutArcs();
 			else
 				arcs = transition.getInArcs();
 			//dodaj odpowiednią liczbę tokenów do miejsc
 			for (Arc arc : arcs) {
-				if(arc.getArcType() == TypeOfArc.READARC)
-					;//continue;
+				//if(arc.getArcType() == TypeOfArc.READARC)
+				//	;//continue;
 				
 				Place place;
-				if (backtracking == false)
+				if (!backtracking)
 					place = (Place) arc.getEndNode();
 				else
 					place = (Place) arc.getStartNode();
@@ -623,8 +615,6 @@ public class NetSimulator {
 			return true;
 		}
 	}
-	
-	
 
 	/**
 	 * Metoda zatrzymuje symulację po zakończeniu aktualnego kroku (gdy zostaną odpalone
@@ -772,7 +762,7 @@ public class NetSimulator {
 	 * Metoda pozwala pobrać interwał czasowy pomiędzy kolejnymi krokami symulacji.
 	 * @return Integer - interwał czasowy pomiędzy kolejnymi krokami symulacji wyrażony w milisekundach
 	 */
-	public Integer getDelay() {
+	public int getDelay() {
 		return delay;
 	}
 
@@ -814,7 +804,7 @@ public class NetSimulator {
 	 * Metoda pozwala okreslić, czy zapisywana jest historia stanów symulacji.
 	 * @return boolean - true, jeśli symulator zapisuje historię, false w przeciwnym wypadku
 	 */
-	public boolean getHistoryMode() {
+	public boolean isHistoryMode() {
 		return writeHistory;
 	}
 	
@@ -857,8 +847,6 @@ public class NetSimulator {
 
 	/**
 	 * Metoda ustawiająca tryb maksymalnego uruchamiania tranzycji.
-	 * @return boolean - true, jeśli włączany jest tryb maksymalnego uruchamiania; 
-	 * 		false w przeciwnym wypadku
 	 */
 	public void setMaxMode(boolean value) {
 		this.maxMode = value;
@@ -983,7 +971,7 @@ public class NetSimulator {
 					}
 					
 					//tutaj dodawany jest nowy krok w symulacji:
-					if(getHistoryMode() == true) {
+					if(isHistoryMode() == true) {
 						actionStack.push(new SimulationStep(SimulatorMode.STEP, cloneTransitionArray(launchingTransitions)));
 						if (actionStack.peek().getPendingTransitions() == null) {
 							overlord.log("Unknown problem in actionPerformed(ActionEvent event) in NetSimulator class.", "error", true);
@@ -1016,6 +1004,7 @@ public class NetSimulator {
 				finishedAddPhase = false;
 				transitionDelay = 0;
 			} else if (transitionDelay >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
+				boolean detailedLogging = true;
 				nsl.logSimStepFinished(launchingTransitions, detailedLogging);
 				
 				// koniec fazy przepływu tokenów, tutaj uaktualniane są wartości tokenów dla miejsc wyjściowych
@@ -1081,7 +1070,7 @@ public class NetSimulator {
 					}
 					
 					//tutaj dodawany jest nowy krok w symulacji:
-					if(getHistoryMode() == true) {
+					if(isHistoryMode()) {
 						actionStack.push(new SimulationStep(SimulatorMode.SINGLE_TRANSITION, launchingTransitions.get(0),
 							cloneTransitionArray(launchingTransitions)));
 					}
