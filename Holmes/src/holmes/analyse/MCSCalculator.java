@@ -46,7 +46,7 @@ public class MCSCalculator implements Runnable {
      * do dalszych obliczeń.
      * @param objR int - ID tranzycji którą należy wyłączyć jak najmniejszym kosztem
      * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
-     * @param transitions ArrayList[Transition] - wektor tranzycji
+     * @param transitionsList ArrayList[Transition] - wektor tranzycji
      * @param MAX_CUTSETSIZE int - maksymalny rozmiar dla zbiorów
      * @param mstWindow HolmesMCS - okno generatora
      */
@@ -153,7 +153,6 @@ public class MCSCalculator implements Runnable {
     
     /**
      * Główna metoda odpowiedzialna za szukanie MCS.
-     * @param MAX_CUTSETSIZE int - do jakiego rozmiaru (uwaga! EKSPLOZJA stanów >6,7)
      * @return List[Set[Integer]] - zbiory MCS
      */
 	public ArrayList<Set<Integer>> findMcs() {

@@ -321,9 +321,16 @@ public class SubnetCalculator implements Serializable {
             int pPosition = 0;
             int incidenceValue = 0;
 
-            if (oneArc.getArcType() != Arc.TypeOfArc.NORMAL && !(oneArc.getArcType() == Arc.TypeOfArc.READARC)) {
+            //if (oneArc.getArcType() != Arc.TypeOfArc.NORMAL && !(oneArc.getArcType() == Arc.TypeOfArc.READARC)) {
+            //    continue;
+            //}
+
+            if (oneArc.getArcType() == Arc.TypeOfArc.NORMAL || oneArc.getArcType() == Arc.TypeOfArc.READARC
+                        || oneArc.getArcType() == Arc.TypeOfArc.XTPN) {
+            } else {
                 continue;
             }
+
             if (oneArc.getStartNode().isInvisible() || oneArc.getEndNode().isInvisible()) {
                 //disabledArcs++;
                 continue;
@@ -686,9 +693,16 @@ public class SubnetCalculator implements Serializable {
             int pPosition = 0;
             int incidenceValue = 0;
 
-            if (oneArc.getArcType() != Arc.TypeOfArc.NORMAL && !(oneArc.getArcType() == Arc.TypeOfArc.READARC)) {
+            //if (oneArc.getArcType() != Arc.TypeOfArc.NORMAL && !(oneArc.getArcType() == Arc.TypeOfArc.READARC)) {
+            //    continue;
+            //}
+
+            if (oneArc.getArcType() == Arc.TypeOfArc.NORMAL || oneArc.getArcType() == Arc.TypeOfArc.READARC
+                    || oneArc.getArcType() == Arc.TypeOfArc.XTPN) {
+            } else {
                 continue;
             }
+
             if (oneArc.getStartNode().isInvisible() || oneArc.getEndNode().isInvisible()) {
                 //disabledArcs++;
                 continue;

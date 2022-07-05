@@ -478,7 +478,7 @@ public class InvariantsCalculatorFeasible {
 		for(ElementLocation el : place.getElementLocations()) {
 			for(Arc a : el.getInArcs()) { //tylko łuki wejściowe
 				if(a.getArcType() == TypeOfArc.READARC || a.getArcType() == TypeOfArc.INHIBITOR) 
-					continue; //czyli poniższe działa tylko dla: NORMAL, RESET i EQUAL
+					continue; //czyli poniższe działa tylko dla: NORMAL, XTPN, RESET i EQUAL
 
 				Transition trans = (Transition) a.getStartNode();
 				int pos = transitions.indexOf(trans);
@@ -505,11 +505,10 @@ public class InvariantsCalculatorFeasible {
 			
 			for(ElementLocation el : transition.getElementLocations()) {
 				for(Arc a : el.getOutArcs()) {
-					if(a.getArcType() != TypeOfArc.READARC) {
-						
-						if(a.getArcType() == TypeOfArc.NORMAL) {
-							if(InvariantsTools.isDoubleArc(a) == false)
-								continue;
+					if(a.getArcType() != TypeOfArc.READARC) { //if łuk odczytu idź dalej
+						if(a.getArcType() == TypeOfArc.NORMAL || a.getArcType() == TypeOfArc.XTPN) { //jeśli normalny łuk to
+							if(InvariantsTools.isDoubleArc(a) == false) //sprawdź, czy to przypadkiem nie łuk podwójny
+								continue; //jeśli nie, spadamy stąd
 						} else {	
 							continue;
 						}
@@ -567,7 +566,7 @@ public class InvariantsCalculatorFeasible {
 					if(raTrans.contains(position) == false)
 						raTrans.add(position);
 				}
-			} else if(a.getArcType() == TypeOfArc.NORMAL){
+			} else if(a.getArcType() == TypeOfArc.NORMAL || a.getArcType() == TypeOfArc.XTPN){
 				if(InvariantsTools.isDoubleArc(a) == true) {
 					Node n = a.getEndNode();
 					if(n instanceof Place) {

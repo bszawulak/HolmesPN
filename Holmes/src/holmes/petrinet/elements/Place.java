@@ -98,9 +98,6 @@ public class Place extends Node {
 
 
 
-
-
-
 	/**
 	 * Konstruktor obiektu miejsca sieci.
 	 * @param nodeId int - identyfikator wierzchołka

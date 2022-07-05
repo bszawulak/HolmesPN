@@ -76,7 +76,6 @@ public class ProjectWriter {
 	 * Główna metoda odpowiedzialna za zapis pliku projektu.
 	 * @return int - kod błędu, 0 - wszystko ok
 	 */
-	@SuppressWarnings("unused")
 	public boolean writeProject(String filepath) {
 		for(Transition trans : transitions) 
 			trans.checkFunctions(arcs, places);
@@ -156,9 +155,30 @@ public class ProjectWriter {
 				sp = 6;
 				bw.write(spaces(sp)+"<Place gID:"+place.getID()+">"+newline); //gID
 				bw.write(spaces(sp)+"<Place name:"+place.getName()+">"+newline);  //nazwa
-			
+
 				bw.write(spaces(sp)+"<Place comment:"+Tools.convertToCode(place.getComment())+">"+newline); //komentarz
 				bw.write(spaces(sp)+"<Place tokens:"+place.getTokensNumber()+">"+newline); //tokeny
+
+				bw.write(spaces(sp)+"<Place XTPN tokens:"+place.getNumberOfTokens_XTPN()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place XTPN gammaMode:"+place.isGammaModeActiveXTPN()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place XTPN gammaVisible:"+place.isGammaRangeVisible()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place XTPN gammaMin:"+place.getGammaMin_xTPN()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place XTPN fractionSize:"+place.getFraction_xTPN()+">"+newline); //tokeny
+
+				bw.write(spaces(sp)+"<Place XTPN multiset"); //multisetK
+				for(int token=0; token<place.accessMultiset().size(); token++) {
+					bw.write(":"+place.accessMultiset().get(token)); //tokeny
+				}
+				bw.write(">"+newline); //tokeny
+
+				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
+
 				
 				bw.write(spaces(sp)+"<Place colored:"+place.isColored+">"+newline);
 				bw.write(spaces(sp)+"<Place colors:"
@@ -172,6 +192,7 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Location data"+">"+newline);
 				sp = 8;
 				bw.write(spaces(sp)+"<Place portal status:"+place.isPortal()+">"+newline);
+
 				int elLocations = place.getElementLocations().size();
 				bw.write(spaces(sp)+"<Place locations:"+elLocations+">"+newline);
 				for(int e=0; e<elLocations; e++) {
@@ -187,8 +208,33 @@ public class ProjectWriter {
 					pointX = nameLoc.getPosition().x;
 					pointY = nameLoc.getPosition().y;
 					bw.write(spaces(sp)+"<Place name offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
-				}
 
+					ElementLocation alphaLoc = place.getNamesLocations(GUIManager.locationMoveType.ALPHA).get(e);
+					sheetId = alphaLoc.getSheetID();
+					pointX = alphaLoc.getPosition().x;
+					pointY = alphaLoc.getPosition().y;
+					bw.write(spaces(sp)+"<Place alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+
+					ElementLocation betaLoc = place.getNamesLocations(GUIManager.locationMoveType.BETA).get(e);
+					sheetId = betaLoc.getSheetID();
+					pointX = betaLoc.getPosition().x;
+					pointY = betaLoc.getPosition().y;
+					bw.write(spaces(sp)+"<Place beta offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+
+					ElementLocation gammaLoc = place.getNamesLocations(GUIManager.locationMoveType.GAMMA).get(e);
+					sheetId = gammaLoc.getSheetID();
+					pointX = gammaLoc.getPosition().x;
+					pointY = gammaLoc.getPosition().y;
+					bw.write(spaces(sp)+"<Place alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+
+					ElementLocation tauLoc = place.getNamesLocations(GUIManager.locationMoveType.TAU).get(e);
+					sheetId = tauLoc.getSheetID();
+					pointX = tauLoc.getPosition().x;
+					pointY = tauLoc.getPosition().y;
+					bw.write(spaces(sp)+"<Place alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+
+
+				}
 				sp = 6;
 				bw.write(spaces(sp)+"<Location data block end"+">"+newline);
 				sp = 4;

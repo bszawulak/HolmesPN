@@ -412,9 +412,18 @@ public class InvariantsCalculator implements Runnable {
             int pPosition = 0;
             int incidenceValue = 0;
 
-            if (oneArc.getArcType() != TypeOfArc.NORMAL && !(oneArc.getArcType() == TypeOfArc.READARC)) {
+            //if (oneArc.getArcType() != TypeOfArc.NORMAL && !(oneArc.getArcType() == TypeOfArc.READARC)) {
+            //    continue;
+            //}
+
+            if(oneArc.getArcType() == TypeOfArc.NORMAL || oneArc.getArcType() == TypeOfArc.XTPN
+                        || oneArc.getArcType() == TypeOfArc.READARC) {
+                //działamy dalej
+            } else {
                 continue;
             }
+
+
             if (oneArc.getStartNode().isInvisible() || oneArc.getEndNode().isInvisible()) {
                 //disabledArcs++;
                 continue;

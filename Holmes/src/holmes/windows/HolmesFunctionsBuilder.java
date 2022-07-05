@@ -483,7 +483,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		int row = tableFunc.getSelectedRow();
 		if(row > -1) {
 			TypeOfArc type = (TypeOfArc) tableFunc.getValueAt(row, 4);
-			if(type == TypeOfArc.NORMAL) {
+			if(type == TypeOfArc.NORMAL || type == TypeOfArc.XTPN) {
 				functionField.setEnabled(true);
 				enabledCheckBox.setEnabled(true);
 				validateButton.setEnabled(true);

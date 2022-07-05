@@ -38,7 +38,7 @@ public class InvariantsSimulator {
 	private SimulatorType simType = SimulatorType.TIME;
 
 	private PetriNet petriNet;
-	private Integer delay = new Integer(0);
+	private Integer delay = Integer.valueOf(0);
 	private boolean simulationActive = false;
 	private Timer timer;
 	private ArrayList<Transition> launchingTransitions;
@@ -331,7 +331,7 @@ public class InvariantsSimulator {
 	 * Metoda uruchamiająca pojedynczą fazę pobrania substratów.
 	 * @param transitions ArrayList[Transition] - zbiór tranzycji
 	 * @param backtracking boolean - true, jeśli symulacja się cofa
-	 * @param chosenTransitionTransition - wybrana tranzycja
+	 * @param chosenTransition Transition - wybrana tranzycja
 	 * @return boolean - zwraca true, jeśli się udało coś odpalić
 	 */
 	public boolean launchSingleSubtractPhase(ArrayList<Transition> transitions,

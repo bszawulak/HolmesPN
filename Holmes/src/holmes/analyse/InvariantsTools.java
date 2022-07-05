@@ -341,7 +341,7 @@ public final class InvariantsTools {
 	 * ostatniej zawiera informacje wektora wynikowego dla próby zerowania macierzy incydencji. Jakakolwiek wartość 
 	 * różna od zera oznacza, że dla danego miejsca nie udało się wyzerować macierzy (dla T-inwariantów)
 	 * @param base ArrayList[Integer] - wektor danych
-	 * @param vector ArrayList[Integer] - wynik testu T-inwariantu
+	 * @param resultVector ArrayList[Integer] - wynik testu T-inwariantu
 	 * @return ArrayList[Integer] base - zwraca nową wartość dla base
 	 */
 	private static ArrayList<Integer> quickSumT_inv(ArrayList<Integer> base, ArrayList<Integer> resultVector) {
@@ -823,8 +823,8 @@ public final class InvariantsTools {
 	
 	/**
 	 * Metoda porównująca zbiór inwariantów bazowy oraz referencyjny. 
-	 * @param ArrayList[ArrayList[Integer]] - macierz referencyjna (z programu)
-	 * @param ArrayList[ArrayList[Integer]] - macierz wczytana celem porównania z referencyjną
+	 * @param refInvMatrix ArrayList[ArrayList[Integer]] - macierz referencyjna (z programu)
+	 * @param invLoadedMatrix ArrayList[ArrayList[Integer]] - macierz wczytana celem porównania z referencyjną
 	 * @return ArrayList[ArrayList[Integer]] - macierz wyników, 3 wektory: <br>
 	 *  1 - część wspólna inwariantów ze zbiorem referencyjnym <br>
 	 *  2 - inwarianty których nie ma w referencyjnym ale są w załadowanym<br>
@@ -1245,7 +1245,7 @@ public final class InvariantsTools {
     			Transition transition = transitions.get(e);
     			for(ElementLocation el : transition.getElementLocations()) {
     				for(Arc arc : el.getInArcs()) {
-    					if(arc.getArcType() == TypeOfArc.NORMAL)
+    					if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.XTPN)
     						continue;
     					
     					if(arc.getArcType() == TypeOfArc.READARC) {
@@ -1276,8 +1276,7 @@ public final class InvariantsTools {
     }
 
     /**
-     * Metoda zwraca informację ile tranzycji wejściowych i ile wyjściowych znajduje się w
-     * inwariancie.
+     * Metoda zwraca informację ile tranzycji wejściowych i ile wyjściowych znajduje się w inwariancie.
      * @param invMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
      * @return ArrayList[ArrayList[Integer]] - macierz wyników, w postaci 3-el. wektorów: [0] - pure in-trans,
      * 		[1] - in-trans (with inhibotors and/or readarcs), [2] - out-transitions
@@ -1697,7 +1696,7 @@ public final class InvariantsTools {
 						inArcs++;
 					}
 					
-					if(arc.getArcType() == TypeOfArc.NORMAL)
+					if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.XTPN)
 						continue;
 					
 					if(arc.getArcType() == TypeOfArc.READARC) {

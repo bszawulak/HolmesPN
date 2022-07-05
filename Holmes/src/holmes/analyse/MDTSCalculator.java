@@ -28,7 +28,6 @@ public class MDTSCalculator {
 		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix(); 
     	if(invariants == null || invariants.size() == 0) { //STEP 1: EM obliczono
     		GUIManager.getDefaultGUIManager().log("No invariants found!", "errer", true);
-    		return;
     	} else {
     		invariantsNumber = invariants.size(); //wiersze w notacji pierwszej
     		tmpInvariantsMatrix = InvariantsTools.transposeMatrix(invariants); //na potrzeby algorytmu: teraz inw to kolumny
@@ -71,8 +70,6 @@ public class MDTSCalculator {
 				removedSoFar++;
 			}
 		}
-			
-			
 		return resultList;
 	}
 }

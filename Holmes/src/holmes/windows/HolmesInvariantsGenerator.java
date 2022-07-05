@@ -931,7 +931,9 @@ public class HolmesInvariantsGenerator extends JFrame {
 			int pPosition = 0;
 			int incidenceValue = 0;
 			
-			if(oneArc.getArcType() != TypeOfArc.NORMAL) {
+			if(oneArc.getArcType() == TypeOfArc.NORMAL || oneArc.getArcType() == TypeOfArc.XTPN) {
+				//idziemy dalej
+			} else {
 				continue;
 			}
 
