@@ -1620,7 +1620,7 @@ public final class ElementDraw {
 
 		//rozdzielone, XTPN może będzie mieć inne tokeny
 		if(place.isXTPNplace()) {
-			if (place.getNumberOfTokens_XTPN() == 1) {
+			if (place.getTokensNumber() == 1) {
 				int x = nodeBounds.x + nodeBounds.width / 2;
 				int y = nodeBounds.y + nodeBounds.height / 2;
 
@@ -1629,7 +1629,7 @@ public final class ElementDraw {
 				g.setColor(Color.black);
 				g.setStroke(EditorResources.tokenDefaultStroke);
 				g.drawOval(x-5, y-5, 10, 10);
-			} else if (place.getNumberOfTokens_XTPN() == 2) {
+			} else if (place.getTokensNumber() == 2) {
 				int x = nodeBounds.x + nodeBounds.width / 2;
 				int y = nodeBounds.y + nodeBounds.height / 2;
 
@@ -1644,7 +1644,7 @@ public final class ElementDraw {
 				g.setColor(Color.black);
 				g.setStroke(EditorResources.tokenDefaultStroke);
 				g.drawOval(x+2, y-5, 10, 10);
-			} else if (place.getNumberOfTokens_XTPN() == 3) {
+			} else if (place.getTokensNumber() == 3) {
 				int x = nodeBounds.x + nodeBounds.width / 2;
 				int y = nodeBounds.y + nodeBounds.height / 2;
 
@@ -1665,7 +1665,7 @@ public final class ElementDraw {
 				g.setColor(Color.black);
 				g.setStroke(EditorResources.tokenDefaultStroke);
 				g.drawOval(x+2, y+1, 10, 10);
-			} else if (place.getNumberOfTokens_XTPN() == 4) {
+			} else if (place.getTokensNumber() == 4) {
 				int x = nodeBounds.x + nodeBounds.width / 2;
 				int y = nodeBounds.y + nodeBounds.height / 2;
 
@@ -1692,10 +1692,10 @@ public final class ElementDraw {
 				g.setColor(Color.black);
 				g.setStroke(EditorResources.tokenDefaultStroke);
 				g.drawOval(x+2, y+1, 10, 10);
-			} else if (place.getNumberOfTokens_XTPN() > 4) {
+			} else if (place.getTokensNumber() > 4) {
 				g.drawString(
 						Integer.toString(place.getTokensNumber()),
-						nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth(Integer.toString(place.getNumberOfTokens_XTPN())) / 2,
+						nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth(Integer.toString(place.getTokensNumber())) / 2,
 						nodeBounds.y + nodeBounds.height / 2 + 5);
 			}
 		} else {

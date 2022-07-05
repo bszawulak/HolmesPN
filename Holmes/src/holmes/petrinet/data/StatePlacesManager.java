@@ -7,7 +7,6 @@ import holmes.petrinet.elements.Place;
 
 /**
  * Klasa zarządzająca listą stanów sieci.
- * 
  * @author MR
  *
  */

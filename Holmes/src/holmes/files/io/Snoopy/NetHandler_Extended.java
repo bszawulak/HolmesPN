@@ -410,7 +410,7 @@ public class NetHandler_Extended extends NetHandler {
 				
 				if (nodeType == "Place") {
 					Place tmpPlace = new Place(nodeID, elementLocationsList, nodeName, nodeComment, nodeMarking);
-					tmpPlace.setNamesLocations(namesElLocations, GUIManager.locationMoveType.NAME);
+					tmpPlace.setTextsLocations(namesElLocations, GUIManager.locationMoveType.NAME);
 
 					//XTPN node preparation (just in case)
 					for(int i=0; i<namesElLocations.size(); i++) {
@@ -422,16 +422,16 @@ public class NetHandler_Extended extends NetHandler {
 						gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						tauLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 					}
-					tmpPlace.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
-					tmpPlace.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
-					tmpPlace.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
-					tmpPlace.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+					tmpPlace.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+					tmpPlace.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
+					tmpPlace.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+					tmpPlace.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
 					nodesList.add(tmpPlace);
 					IdGenerator.getNextPlaceId();
 				} else {	
 					Transition tmpTran = new Transition(nodeID, elementLocationsList, nodeName, nodeComment);
-					tmpTran.setNamesLocations(namesElLocations, GUIManager.locationMoveType.NAME);
+					tmpTran.setTextsLocations(namesElLocations, GUIManager.locationMoveType.NAME);
 
 					//XTPN node preparation (just in case)
 					for(int i=0; i<namesElLocations.size(); i++) {
@@ -443,10 +443,10 @@ public class NetHandler_Extended extends NetHandler {
 						gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						tauLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 					}
-					tmpTran.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
-					tmpTran.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
-					tmpTran.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
-					tmpTran.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+					tmpTran.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+					tmpTran.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
+					tmpTran.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+					tmpTran.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
 					tmpTransitionList.add(tmpTran);
 					IdGenerator.getNextTransitionId();

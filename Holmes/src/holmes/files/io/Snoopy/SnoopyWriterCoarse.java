@@ -88,8 +88,8 @@ public class SnoopyWriterCoarse {
 		write(bw, "          <graphics count=\"1\">");
 		//xOff = 5; 
 		//yOff = 20; 
-		xOff = coarseNode.getXNameLoc(0, GUIManager.locationMoveType.NAME);
-		yOff = coarseNode.getYNameLoc(0, GUIManager.locationMoveType.NAME);
+		xOff = coarseNode.getTextLocation_X(0, GUIManager.locationMoveType.NAME);
+		yOff = coarseNode.getTextLocation_Y(0, GUIManager.locationMoveType.NAME);
 		yOff = SnoopyToolClass.getNormalizedY(yOff);
 			
 		write(bw, "            <graphic xoff=\""+xOff+".00\" yoff=\""+yOff+".00\""

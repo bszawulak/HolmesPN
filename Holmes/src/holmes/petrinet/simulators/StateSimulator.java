@@ -956,8 +956,10 @@ public class StateSimulator implements Runnable {
 				if(arc.getArcType() == TypeOfArc.READARC)
 					continue;
 				
-				if(arc.getArcType() != TypeOfArc.NORMAL) {
-					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
+				if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.XTPN) {
+					;
+				} else {
+					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
 							" arc: "+arc.toString(), "error", true);
 				}
 				

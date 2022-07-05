@@ -120,12 +120,18 @@ public class Transition extends Node {
         //co oznacza, że tej tranzycji NIE MOŻNA przekonwertować na klasyczną inaczej, niż
         //odpowiednio ustawiając poniższe parametry. (alphaL=0; alphaU=-1; betaL=betaU=0)
     //parametry xTPN:
+    private boolean alphaMode_xTPN = true;
+    private boolean alphaRangeVisibility_XTPN = true;
     private double alphaMin_xTPN = 0.0;
     private double alphaMax_xTPN = 0.0;
+
+    private boolean betaMode_xTPN = true;
     private double betaMin_xTPN = 0.0;
     private double betaMax_xTPN = 0.0;
-    private boolean alphaMode_xTPN = true;
-    private boolean betaMode_xTPN = true;
+    private boolean betaRangeVisibility_XTPN = true;
+
+
+    private boolean tauTimersVisibility_XTPN = false; //czy wyświetlać timery
     private double tauAlpha_xTPN = -1.0;
     private double tauBeta_xTPN = -1.0;
     private double timer_Ualfa_XTPN = 0.0;
@@ -134,13 +140,10 @@ public class Transition extends Node {
     //jeśli miejsca wejściowe tracą szybciej tokeny ze starości niż z
     //produkcji, zmniejszamy tau Alfa i Beta (prawdopodobieństwo).
     private boolean massActionKinetics = false;
-    private boolean isActive_xTPN = false;
+    private boolean isActivated_xTPN = false;
     private boolean isProducing_xTPN = false;
     //grafika:
 
-    private boolean alphaRangeVisibility_XTPN = true;
-    private boolean betaRangeVisibility_XTPN = true;
-    private boolean tauTimersVisibility_XTPN = false; //czy wyświetlać timery
     private int franctionDigits = 6;
 
 
@@ -1195,7 +1198,7 @@ public class Transition extends Node {
         //TODO: pewnie coś, wyjdzie przy symulatorze
         tauAlpha_xTPN = -1.0;
         tauBeta_xTPN = -1.0;
-        isActive_xTPN = false;
+        isActivated_xTPN = false;
         isProducing_xTPN = false;
     }
 
@@ -1367,7 +1370,7 @@ public class Transition extends Node {
      * Metoda ustawia status tauAlpha i tauBeta - pokazywać czy nie.
      * @param status (<b>boolean</b>) true, jeśli zegary mają być pokazywane.
      */
-    public void setTauTimersStatus(boolean status) {
+    public void setTauTimersVisibility(boolean status) {
         tauTimersVisibility_XTPN = status;
     }
 
@@ -1383,7 +1386,7 @@ public class Transition extends Node {
      * Metoda ustawia status zakresów zegarów alpha - pokazywać czy nie.
      * @param status (<b>boolean</b>) true, jeśli zakresy mają być pokazywane.
      */
-    public void setAlphaRangeStatus(boolean status) {
+    public void setAlphaRangeVisibility(boolean status) {
         alphaRangeVisibility_XTPN = status;
     }
 
@@ -1399,7 +1402,7 @@ public class Transition extends Node {
      * Metoda ustawia status zakresów zegarów beta - pokazywać czy nie.
      * @param status (<b>boolean</b>) true, jeśli zakresy beta mają być pokazywane.
      */
-    public void setBetaRangeStatus(boolean status) {
+    public void setBetaRangeVisibility(boolean status) {
         betaRangeVisibility_XTPN = status;
     }
 
@@ -1480,22 +1483,22 @@ public class Transition extends Node {
      * @param status boolean - true, jeśli tranzycja jest aktywna.
      */
     public void setActivationStatusXTPN(boolean status) {
-        isActive_xTPN = status;
+        isActivated_xTPN = status;
     }
 
     /**
      * Metoda zwraca status aktywacji tranzycji xTPN.
      * @return boolean - true, jeśli tranzycja jest aktywna.
      */
-    public boolean isActive_xTPN() {
-        return isActive_xTPN;
+    public boolean isActivated_xTPN() {
+        return isActivated_xTPN;
     }
 
     /**
      * Metoda ustawia status produkcji tranzycji xTPN.
      * @param status boolean - true, jeśli tranzycja rozpoczęła produkcję.
      */
-    public void setProduction_xTPNstatus(boolean status) {
+    public void setProductionStatus_xTPN(boolean status) {
         isProducing_xTPN = status;
     }
 
@@ -1525,7 +1528,7 @@ public class Transition extends Node {
 
     /**
      * Metoda włącza tryb alfa-XTPN dla tranzycji.
-     * @param status boolean - true, jeśli tryb alfa-XTPN ma być aktywny
+     * @param status (<b>boolean</b>) true, jeśli tryb alfa-XTPN ma być aktywny
      */
     public void setAlphaXTPNstatus(boolean status) {
         alphaMode_xTPN = status;

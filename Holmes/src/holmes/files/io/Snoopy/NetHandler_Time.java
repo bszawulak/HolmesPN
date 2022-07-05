@@ -454,7 +454,7 @@ public class NetHandler_Time extends NetHandler {
 			
 			if (nodeType == "Place") {
 				Place tmpPlace = new Place(nodeID, elementLocationsList, nodeName, nodeComment, nodeMarking);
-				tmpPlace.setNamesLocations(namesElLocations, GUIManager.locationMoveType.NAME);
+				tmpPlace.setTextsLocations(namesElLocations, GUIManager.locationMoveType.NAME);
 
 				//XTPN node preparation (just in case)
 				for(int i=0; i<namesElLocations.size(); i++) {
@@ -466,10 +466,10 @@ public class NetHandler_Time extends NetHandler {
 					gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 					tauLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 				}
-				tmpPlace.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
-				tmpPlace.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
-				tmpPlace.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
-				tmpPlace.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+				tmpPlace.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+				tmpPlace.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
+				tmpPlace.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+				tmpPlace.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
 				nodesList.add(tmpPlace);
 				IdGenerator.getNextPlaceId();
@@ -484,7 +484,7 @@ public class NetHandler_Time extends NetHandler {
 					tmpTTran.setEFT(nodeEFT);
 					tmpTTran.setLFT(nodeLFT);
 					tmpTTran.setDPNduration(duration);
-					tmpTTran.setNamesLocations(namesElLocations, GUIManager.locationMoveType.NAME);
+					tmpTTran.setTextsLocations(namesElLocations, GUIManager.locationMoveType.NAME);
 
 					//XTPN node preparation (just in case)
 					for(int i=0; i<namesElLocations.size(); i++) {
@@ -496,10 +496,10 @@ public class NetHandler_Time extends NetHandler {
 						gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						tauLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 					}
-					tmpTTran.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
-					tmpTTran.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
-					tmpTTran.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
-					tmpTTran.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+					tmpTTran.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+					tmpTTran.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
+					tmpTTran.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+					tmpTTran.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
 					tmpTTran.setTransType(TransitionType.TPN);
 					if(duration > 0)
@@ -514,7 +514,7 @@ public class NetHandler_Time extends NetHandler {
 					IdGenerator.getNextTransitionId();
 				} else {
 					Transition tmpTran = new Transition(nodeID, elementLocationsList, nodeName, nodeComment);
-					tmpTran.setNamesLocations(namesElLocations, GUIManager.locationMoveType.NAME);
+					tmpTran.setTextsLocations(namesElLocations, GUIManager.locationMoveType.NAME);
 
 					//XTPN node preparation (just in case)
 					for(int i=0; i<namesElLocations.size(); i++) {
@@ -526,10 +526,10 @@ public class NetHandler_Time extends NetHandler {
 						gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						tauLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 					}
-					tmpTran.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
-					tmpTran.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
-					tmpTran.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
-					tmpTran.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+					tmpTran.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+					tmpTran.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
+					tmpTran.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+					tmpTran.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
 					tmpTransitionList.add(tmpTran);
 					IdGenerator.getNextTransitionId();

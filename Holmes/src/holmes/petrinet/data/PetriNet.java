@@ -60,9 +60,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<Integer> t_invariantsTypes;
 	private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //macierz p-inwariantów
 	private ArrayList<String> p_invariantsDescriptions;
-	
 	private ArrayList<ArrayList<Integer>> colorVector = null;
-	
 	private ArrayList<ArrayList<Transition>> mctData;
 	private ArrayList<Integer> transitionMCTnumber;
 	private ArrayList<String> mctNames;
@@ -71,14 +69,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private StatePlacesManager statesManager;
 	private SPNdataVectorManager firingRatesManager;
 	private SSAplacesManager ssaManager;
-
 	private ArrayList<String> subNetNames;
-	
 	private String lastFileName = "";
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<>(), new ArrayList<>(), "default");
-	
 	private ArrayList<GraphPanel> graphPanels;
-	
 	private AbyssWriter ABYSSSwriter;
 	private AbyssReader ABYSSReader;
 	private IOprotocols communicationProtocol;
@@ -95,7 +89,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public GUIManager overlord;
 	
 	/** PN, timePN, extPN, funcPN, timeFuncPN, timeExtPN, funcExtPN, timeFuncExtPN, stochasticPN, stochasticFuncPN */
-	public enum GlobalNetType { PN, timePN, extPN, funcPN, timeFuncPN, timeExtPN, funcExtPN, timeFuncExtPN, stochasticPN, stochasticFuncPN }
+	public enum GlobalNetType { PN, timePN, extPN, funcPN, timeFuncPN, timeExtPN, funcExtPN, timeFuncExtPN, stochasticPN, stochasticFuncPN, XTPN }
 	/** SPPED, SPEPT, SPTPT, HOLMESPROJECT */
 	public enum GlobalFileNetType { SPPED, SPEPT, SPTPT, HOLMESPROJECT }
 	

@@ -183,6 +183,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private JButton alphaLocChangeButton;//tranzycja
     private JButton betaLocChangeButton;//tranzycja
     private JButton tauLocChangeButton;//tranzycja
+
     private JButton gammaVisibilityButton;//miejsce
     private JButton gammaLocChangeButton;//miejsce
 
@@ -843,8 +844,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = place.getElementLocations().indexOf(location);
-        int xNameOffset = place.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
-        int yNameOffset = place.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
+        int xNameOffset = place.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = place.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -1212,7 +1213,7 @@ public class HolmesDockWindowsTable extends JPanel {
             if (doNotUpdate)
                 return;
             JButton button = (JButton) e.getSource();
-            int tokensNum = place.getNumberOfTokens_XTPN();
+            int tokensNum = place.getTokensNumber();
             if (place.isGammaModeActiveXTPN()) {
                 //zapytać czy wyłączyć, konwersja kasowanie arrayListy
                 String[] options = {"Reduce to classical place", "Stay as XTPN"};
@@ -1263,7 +1264,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(buttonGammaMode);
 
         // XTPN-place gamma values visibility
-        JButton gammaVisibilityButton = new JButton("<html> Gamma<br>visible<html>");
+        gammaVisibilityButton = new JButton("<html> Gamma<br>visible<html>");
         gammaVisibilityButton.setName("GammaVButton1");
         gammaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         gammaVisibilityButton.setBounds(columnB_posX+65, columnB_Y, 65, 30);
@@ -1300,7 +1301,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(gammaVisibilityButton);
 
         // XTPN-place gamma offset
-        JButton gammaLocChangeButton = new JButton("<html>Gamma<br>offset<html>");
+        gammaLocChangeButton = new JButton("<html>Gamma<br>offset<html>");
         gammaLocChangeButton.setName("G-offset");
         gammaLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         gammaLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
@@ -1377,7 +1378,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 doNotUpdate = false;
                 overlord.markNetChange();
             }
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
@@ -1401,7 +1402,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 doNotUpdate = false;
                 overlord.markNetChange();
             }
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
@@ -1423,7 +1424,7 @@ public class HolmesDockWindowsTable extends JPanel {
         tokensXTPNLabel.setBounds(columnA_posX, columnA_Y += 20, 120, 20);
         components.add(tokensXTPNLabel);
 
-        JLabel tokensXTPNLabel2 = new JLabel("Tokens in place :"+place.getNumberOfTokens_XTPN(), JLabel.LEFT);
+        JLabel tokensXTPNLabel2 = new JLabel("Tokens in place :"+place.getTokensNumber(), JLabel.LEFT);
         tokensXTPNLabel2.setBounds(columnB_posX+20, columnA_Y, 140, 20);
         components.add(tokensXTPNLabel2);
 
@@ -1462,7 +1463,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(add0tokenButton);
@@ -1486,7 +1487,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(remove0tokenButton);
@@ -1541,7 +1542,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
@@ -1579,8 +1580,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = place.getElementLocations().indexOf(location);
-        int xNameOffset = place.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
-        int yNameOffset = place.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
+        int xNameOffset = place.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = place.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -1956,7 +1957,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 timeTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -1977,7 +1978,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 classicalTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -2089,7 +2090,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
@@ -2106,7 +2107,7 @@ public class HolmesDockWindowsTable extends JPanel {
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             ((Transition) element).setFunctional(box.isSelected());
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(functionalCheckBox);
@@ -2128,8 +2129,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = transition.getElementLocations().indexOf(location);
-        int xNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
-        int yNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
+        int xNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -2433,7 +2434,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
@@ -2473,8 +2474,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = transition.getElementLocations().indexOf(location);
-        int xNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
-        int yNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
+        int xNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -2781,7 +2782,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 timeTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -2802,7 +2803,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 classicalTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -3003,8 +3004,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = transition.getElementLocations().indexOf(location);
-        int xNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
-        int yNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
+        int xNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -3245,7 +3246,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(buttonAlfaMode);
@@ -3289,7 +3290,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(buttonBetaMode);
@@ -3316,13 +3317,13 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
             JButton button = (JButton) e.getSource();
             if (transition.isAlphaRangeVisible()) { //wyłączamy
-                ((Transition) element).setAlphaRangeStatus(false);
+                ((Transition) element).setAlphaRangeVisibility(false);
                 button.setText("<html> Alpha<br>hidden<html>");
                 button.setBackground(Color.RED);
 
                 alphaLocChangeButton.setEnabled(false);
             } else { // włączamy
-                ((Transition) element).setAlphaRangeStatus(true);
+                ((Transition) element).setAlphaRangeVisibility(true);
                 button.setText("<html> Alpha<br>visible<html>");
                 button.setBackground(Color.GREEN);
 
@@ -3334,7 +3335,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(alfaVisibilityButton);
@@ -3360,13 +3361,13 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
             JButton button = (JButton) e.getSource();
             if (transition.isBetaRangeVisible()) { //wyłączamy
-                ((Transition) element).setBetaRangeStatus(false);
+                ((Transition) element).setBetaRangeVisibility(false);
                 button.setText("<html>  Beta<br>hidden<html>");
                 button.setBackground(Color.RED);
 
                 betaLocChangeButton.setEnabled(false);
             } else { //włączamy
-                ((Transition) element).setBetaRangeStatus(true);
+                ((Transition) element).setBetaRangeVisibility(true);
                 button.setText("<html>  Beta<br>visible<html>");
                 button.setBackground(Color.GREEN);
 
@@ -3378,7 +3379,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(betaVisibilityButton);
@@ -3404,13 +3405,13 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
             JButton button = (JButton) e.getSource();
             if (transition.isTauTimerVisible()) { //wyłączamy
-                ((Transition) element).setTauTimersStatus(false);
+                ((Transition) element).setTauTimersVisibility(false);
                 button.setText("<html>  Tau<br>hidden<html>");
                 button.setBackground(Color.RED);
 
                 tauLocChangeButton.setEnabled(false);
             } else { //włączamy
-                ((Transition) element).setTauTimersStatus(true);
+                ((Transition) element).setTauTimersVisibility(true);
                 button.setText("<html>  Tau<br>visible<html>");
                 button.setBackground(Color.GREEN);
 
@@ -3422,7 +3423,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(tauVisibilityButton);
@@ -3600,7 +3601,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 field.setValue(transition.getAlphaMin_xTPN());
                 doNotUpdate = false;
             }
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
 
         });
@@ -3625,7 +3626,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 field.setValue(transition.getAlphaMax_xTPN());
                 doNotUpdate = false;
             }
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
@@ -3728,7 +3729,7 @@ public class HolmesDockWindowsTable extends JPanel {
             JCheckBox box = (JCheckBox) e.getSource();
             ((Transition) element).setFunctional(box.isSelected());
             overlord.markNetChange();
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         functionalCheckBox.setEnabled(false);
@@ -3760,7 +3761,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
@@ -3826,8 +3827,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = transition.getElementLocations().indexOf(location);
-        int xNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
-        int yNameOffset = transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
+        int xNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -4208,8 +4209,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabel);
 
         int locationIndex = metaNode.getElementLocations().indexOf(location);
-        int xNameOffset = metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
-        int yNameOffset = metaNode.getNamesLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
+        int xNameOffset = metaNode.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = metaNode.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -6368,8 +6369,8 @@ public class HolmesDockWindowsTable extends JPanel {
         main.setZoom(120, main.getZoom());
         try {
             JOptionPane.showMessageDialog(null,
-                    "Please click OK button and wait until another information window shows up.\n"
-                            + "Depending on the number of clusters this should take from 10 sec. to 1 min.\n"
+                    "Please click OK and wait until another window with information shows up.\n"
+                            + "Depending on the number of clusters this should take from 10 seconds to 1 minute.\n"
                             + "Please do not use the program until operation is finished.", "Please wait", JOptionPane.INFORMATION_MESSAGE);
 
             progressBar.setMaximum(clusters - 1);
@@ -7251,84 +7252,48 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     private String getProperSubNetName(int index) {
-        switch (index) {
-            case 0:
-                return "Functional ";
-            case 1:
-                return "S-net ";
-            case 2:
-                return "T-net ";
-            case 3:
-                return "maxADT ";
-            case 4:
-                return "Teng-Zeng ";
-            case 5:
-                return "Hou ";
-            case 6:
-                return "Nishi ";
-            case 7:
-                return "Cycle";
-            case 8:
-                return "Ootsuki";
-        }
-        return "";
+        return switch (index) {
+            case 0 -> "Functional ";
+            case 1 -> "S-net ";
+            case 2 -> "T-net ";
+            case 3 -> "maxADT ";
+            case 4 -> "Teng-Zeng ";
+            case 5 -> "Hou ";
+            case 6 -> "Nishi ";
+            case 7 -> "Cycle";
+            case 8 -> "Ootsuki";
+            default -> "";
+        };
     }
 
     private void generateProperSubNet(int index) {
         SubnetCalculator.compileElements();
         switch (index) {
-            case 0:
-                SubnetCalculator.generateFS();
-                break;
-            case 1:
-                SubnetCalculator.generateSnets();
-                break;
-            case 2:
-                SubnetCalculator.generateTnets();
-                break;
-            case 3:
-                SubnetCalculator.generateADT();
-                break;
-            case 4:
-                SubnetCalculator.generateTZ();
-                break;
-            case 5:
-                SubnetCalculator.generateHou();
-                break;
-            case 6:
-                SubnetCalculator.generateNishi();
-                break;
-            case 7:
-                SubnetCalculator.generateCycle(false);
-                break;
-            case 8:
-                SubnetCalculator.generateOotsuki();
-                break;
+            case 0 -> SubnetCalculator.generateFS();
+            case 1 -> SubnetCalculator.generateSnets();
+            case 2 -> SubnetCalculator.generateTnets();
+            case 3 -> SubnetCalculator.generateADT();
+            case 4 -> SubnetCalculator.generateTZ();
+            case 5 -> SubnetCalculator.generateHou();
+            case 6 -> SubnetCalculator.generateNishi();
+            case 7 -> SubnetCalculator.generateCycle(false);
+            case 8 -> SubnetCalculator.generateOotsuki();
         }
     }
 
     private int getSubnetSize(int index) {
-        switch (index) {
-            case 0:
-                return SubnetCalculator.functionalSubNets.size();
-            case 1:
-                return SubnetCalculator.snetSubNets.size();
-            case 2:
-                return SubnetCalculator.tnetSubNets.size();
-            case 3:
-                return SubnetCalculator.adtSubNets.size();
-            case 4:
-                return SubnetCalculator.tzSubNets.size();
-            case 5:
-                return SubnetCalculator.houSubNets.size();
-            case 6:
-                return SubnetCalculator.nishiSubNets.size();
-            case 7:
-                return SubnetCalculator.cycleSubNets.size();
-            case 8:
-                return SubnetCalculator.ootsukiSubNets.size();
-        }
-        return 0;
+        return switch (index) {
+            case 0 -> SubnetCalculator.functionalSubNets.size();
+            case 1 -> SubnetCalculator.snetSubNets.size();
+            case 2 -> SubnetCalculator.tnetSubNets.size();
+            case 3 -> SubnetCalculator.adtSubNets.size();
+            case 4 -> SubnetCalculator.tzSubNets.size();
+            case 5 -> SubnetCalculator.houSubNets.size();
+            case 6 -> SubnetCalculator.nishiSubNets.size();
+            case 7 -> SubnetCalculator.cycleSubNets.size();
+            case 8 -> SubnetCalculator.ootsukiSubNets.size();
+            default -> 0;
+        };
     }
 
     private void showSubNet(int typeOfDecomposition) {
@@ -7340,42 +7305,42 @@ public class HolmesDockWindowsTable extends JPanel {
         SubnetCalculator.SubNet subnet = null;
         int size = 0;
         switch (typeOfDecomposition) {
-            case 0:
+            case 0 -> {
                 subnet = SubnetCalculator.functionalSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.functionalSubNets.size();
-                break;
-            case 1:
+            }
+            case 1 -> {
                 subnet = SubnetCalculator.snetSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.snetSubNets.size();
-                break;
-            case 2:
+            }
+            case 2 -> {
                 subnet = SubnetCalculator.tnetSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.tnetSubNets.size();
-                break;
-            case 3:
+            }
+            case 3 -> {
                 subnet = SubnetCalculator.adtSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.adtSubNets.size();
-                break;
-            case 4:
+            }
+            case 4 -> {
                 subnet = SubnetCalculator.tzSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.tzSubNets.size();
-                break;
-            case 5:
+            }
+            case 5 -> {
                 subnet = SubnetCalculator.houSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.houSubNets.size();
-                break;
-            case 6:
+            }
+            case 6 -> {
                 subnet = SubnetCalculator.nishiSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.nishiSubNets.size();
-                break;
-            case 7:
+            }
+            case 7 -> {
                 subnet = SubnetCalculator.cycleSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.cycleSubNets.size();
-                break;
-            case 8:
+            }
+            case 8 -> {
                 subnet = SubnetCalculator.ootsukiSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.ootsukiSubNets.size();
-                break;
+            }
         }
 
         ColorPalette cp = new ColorPalette();
@@ -8046,16 +8011,16 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     private Point setNameOffsetY(int oldY, Node n, ElementLocation el, GUIManager.locationMoveType nameType) {
         int nameLocIndex = n.getElementLocations().indexOf(el);
-        int oldX = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().x;
+        int oldX = n.getTextsLocations(nameType).get(nameLocIndex).getPosition().x;
 
         int sheetIndex = overlord.IDtoIndex(el.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 
         if (graphPanel.isLegalLocation(new Point(oldX + el.getPosition().x, oldY + el.getPosition().y))) {
-            n.getNamesLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+            n.getTextsLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
             graphPanel.repaint();
         }
-        return n.getNamesLocations(nameType).get(nameLocIndex).getPosition();
+        return n.getTextsLocations(nameType).get(nameLocIndex).getPosition();
     }
 
     /**
@@ -8069,16 +8034,16 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     private Point setNameOffsetX(int oldX, Node n, ElementLocation el, GUIManager.locationMoveType nameType) {
         int nameLocIndex = n.getElementLocations().indexOf(el);
-        int oldY = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().y;
+        int oldY = n.getTextsLocations(nameType).get(nameLocIndex).getPosition().y;
 
         int sheetIndex = overlord.IDtoIndex(el.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 
         if (graphPanel.isLegalLocation(new Point(oldX + el.getPosition().x, oldY + el.getPosition().y))) {
-            n.getNamesLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+            n.getTextsLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
             graphPanel.repaint();
         }
-        return n.getNamesLocations(nameType).get(nameLocIndex).getPosition();
+        return n.getTextsLocations(nameType).get(nameLocIndex).getPosition();
     }
 
     /**

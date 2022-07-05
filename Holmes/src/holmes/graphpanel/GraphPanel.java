@@ -433,17 +433,17 @@ public class GraphPanel extends JComponent {
 		
 		int nameLocIndex = n.getElementLocations().indexOf(el);
 		
-		int oldX = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().x;
-		int oldY = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().y;
+		int oldX = n.getTextsLocations(nameType).get(nameLocIndex).getPosition().x;
+		int oldY = n.getTextsLocations(nameType).get(nameLocIndex).getPosition().y;
 		oldX += delta;
 		
 		int x = oldX+el.getPosition().x;
 		int y = oldY+el.getPosition().y;
 		
 		if(isLegalLocation(new Point(x, y)) == true)
-			n.getNamesLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX+delta, oldY);
+			n.getTextsLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX+delta, oldY);
 	
-		return n.getNamesLocations(nameType).get(nameLocIndex).getPosition();
+		return n.getTextsLocations(nameType).get(nameLocIndex).getPosition();
 	}
 
 	/**
@@ -467,8 +467,8 @@ public class GraphPanel extends JComponent {
 		
 		int nameLocIndex = n.getElementLocations().indexOf(el);
 		
-		int oldX = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().x;
-		int oldY = n.getNamesLocations(nameType).get(nameLocIndex).getPosition().y;
+		int oldX = n.getTextsLocations(nameType).get(nameLocIndex).getPosition().x;
+		int oldY = n.getTextsLocations(nameType).get(nameLocIndex).getPosition().y;
 		
 		oldY += delta;
 		
@@ -476,9 +476,9 @@ public class GraphPanel extends JComponent {
 		int y = oldY+el.getPosition().y;
 		
 		if(isLegalLocation(new Point(x, y)) == true)
-			n.getNamesLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+			n.getTextsLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
 		
-		return n.getNamesLocations(nameType).get(nameLocIndex).getPosition();
+		return n.getTextsLocations(nameType).get(nameLocIndex).getPosition();
 	}
 
 	/**

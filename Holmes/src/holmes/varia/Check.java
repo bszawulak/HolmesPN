@@ -71,6 +71,7 @@ public final class Check {
 		int equal = 0;
 		int meta = 0;
 		int doubleArc = 0;
+		int xtpnArc = 0;
 		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
 		for(Arc a : arcs) {
 			if(a.getArcType() == TypeOfArc.NORMAL) {
@@ -88,6 +89,8 @@ public final class Check {
 				equal++;
 			else if(a.getArcType() == TypeOfArc.META_ARC)
 				meta++;
+			else if(a.getArcType() == TypeOfArc.XTPN)
+				xtpnArc++;
 		}
 		result.add(normal);
 		result.add(readArc);
@@ -96,6 +99,7 @@ public final class Check {
 		result.add(equal);
 		result.add(doubleArc);
 		result.add(meta);
+		result.add(xtpnArc);
 		return result;
 	}
     

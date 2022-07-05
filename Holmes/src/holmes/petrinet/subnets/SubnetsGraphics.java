@@ -136,7 +136,7 @@ public class SubnetsGraphics {
 				
 				el.setSheetID(indices.indexOf(sheetID));
 			}
-			for(ElementLocation el: n.getNamesLocations(GUIManager.locationMoveType.NAME)) {
+			for(ElementLocation el: n.getTextsLocations(GUIManager.locationMoveType.NAME)) {
 				int sheetID = el.getSheetID();
 				int val = indices.get(indices.indexOf(sheetID));
 				if(val == indices.indexOf(sheetID)) //nie ma co podmieniać

@@ -396,29 +396,29 @@ public class HolmesMergeNets extends JFrame {
 				//oldPos = el.getPosition(); //check
 				el.setSheetID(0);
 			}
-			for(ElementLocation el : importedPlace.getNamesLocations(GUIManager.locationMoveType.NAME)) {
-				projectPlace.getNamesLocations(GUIManager.locationMoveType.NAME).add(el);
+			for(ElementLocation el : importedPlace.getTextsLocations(GUIManager.locationMoveType.NAME)) {
+				projectPlace.getTextsLocations(GUIManager.locationMoveType.NAME).add(el);
 				el.setParentNode(projectPlace);
 				el.setSheetID(0);
 			}
 			//XTPN Cthulhu fhtagn!
-			for(ElementLocation el : importedPlace.getNamesLocations(GUIManager.locationMoveType.ALPHA)) {
-				projectPlace.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(el);
+			for(ElementLocation el : importedPlace.getTextsLocations(GUIManager.locationMoveType.ALPHA)) {
+				projectPlace.getTextsLocations(GUIManager.locationMoveType.ALPHA).add(el);
 				el.setParentNode(projectPlace);
 				el.setSheetID(0);
 			}
-			for(ElementLocation el : importedPlace.getNamesLocations(GUIManager.locationMoveType.BETA)) {
-				projectPlace.getNamesLocations(GUIManager.locationMoveType.BETA).add(el);
+			for(ElementLocation el : importedPlace.getTextsLocations(GUIManager.locationMoveType.BETA)) {
+				projectPlace.getTextsLocations(GUIManager.locationMoveType.BETA).add(el);
 				el.setParentNode(projectPlace);
 				el.setSheetID(0);
 			}
-			for(ElementLocation el : importedPlace.getNamesLocations(GUIManager.locationMoveType.GAMMA)) {
-				projectPlace.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(el);
+			for(ElementLocation el : importedPlace.getTextsLocations(GUIManager.locationMoveType.GAMMA)) {
+				projectPlace.getTextsLocations(GUIManager.locationMoveType.GAMMA).add(el);
 				el.setParentNode(projectPlace);
 				el.setSheetID(0);
 			}
-			for(ElementLocation el : importedPlace.getNamesLocations(GUIManager.locationMoveType.TAU)) {
-				projectPlace.getNamesLocations(GUIManager.locationMoveType.TAU).add(el);
+			for(ElementLocation el : importedPlace.getTextsLocations(GUIManager.locationMoveType.TAU)) {
+				projectPlace.getTextsLocations(GUIManager.locationMoveType.TAU).add(el);
 				el.setParentNode(projectPlace);
 				el.setSheetID(0);
 			}
@@ -437,29 +437,29 @@ public class HolmesMergeNets extends JFrame {
 				//oldPos = el.getPosition(); //check
 				el.setSheetID(0);
 			}
-			for(ElementLocation el : importedTrans.getNamesLocations(GUIManager.locationMoveType.NAME)) {
-				projectTrans.getNamesLocations(GUIManager.locationMoveType.NAME).add(el);
+			for(ElementLocation el : importedTrans.getTextsLocations(GUIManager.locationMoveType.NAME)) {
+				projectTrans.getTextsLocations(GUIManager.locationMoveType.NAME).add(el);
 				el.setParentNode(projectTrans);
 				el.setSheetID(0);
 			}
 			//XTPN Cthulhu fhtagn!
-			for(ElementLocation el : importedTrans.getNamesLocations(GUIManager.locationMoveType.ALPHA)) {
-				projectTrans.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(el);
+			for(ElementLocation el : importedTrans.getTextsLocations(GUIManager.locationMoveType.ALPHA)) {
+				projectTrans.getTextsLocations(GUIManager.locationMoveType.ALPHA).add(el);
 				el.setParentNode(projectTrans);
 				el.setSheetID(0);
 			}
-			for(ElementLocation el : importedTrans.getNamesLocations(GUIManager.locationMoveType.BETA)) {
-				projectTrans.getNamesLocations(GUIManager.locationMoveType.BETA).add(el);
+			for(ElementLocation el : importedTrans.getTextsLocations(GUIManager.locationMoveType.BETA)) {
+				projectTrans.getTextsLocations(GUIManager.locationMoveType.BETA).add(el);
 				el.setParentNode(projectTrans);
 				el.setSheetID(0);
 			}
-			for(ElementLocation el : importedTrans.getNamesLocations(GUIManager.locationMoveType.GAMMA)) {
-				projectTrans.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(el);
+			for(ElementLocation el : importedTrans.getTextsLocations(GUIManager.locationMoveType.GAMMA)) {
+				projectTrans.getTextsLocations(GUIManager.locationMoveType.GAMMA).add(el);
 				el.setParentNode(projectTrans);
 				el.setSheetID(0);
 			}
-			for(ElementLocation el : importedTrans.getNamesLocations(GUIManager.locationMoveType.TAU)) {
-				projectTrans.getNamesLocations(GUIManager.locationMoveType.TAU).add(el);
+			for(ElementLocation el : importedTrans.getTextsLocations(GUIManager.locationMoveType.TAU)) {
+				projectTrans.getTextsLocations(GUIManager.locationMoveType.TAU).add(el);
 				el.setParentNode(projectTrans);
 				el.setSheetID(0);
 			}

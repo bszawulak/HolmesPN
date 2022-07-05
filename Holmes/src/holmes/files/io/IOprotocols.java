@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import holmes.analyse.SubnetCalculator;
-import holmes.analyse.comparison.KnockoutInvariantComparison;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
-import holmes.graphpanel.popupmenu.SheetPopupMenu;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.elements.Arc;
@@ -1098,23 +1096,23 @@ public class IOprotocols {
                             Place tmpPlace = new Place(placeNumber, new ArrayList<ElementLocation>(), placeName, "", wMark[placeNumber]);
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(namesLoc, GUIManager.locationMoveType.NAME);
+                            tmpPlace.setTextsLocations(namesLoc, GUIManager.locationMoveType.NAME);
                             //XTPN:
                             ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
                             alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+                            tmpPlace.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
 
                             ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
                             betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
+                            tmpPlace.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
 
                             ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
                             gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+                            tmpPlace.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
 
                             ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
                             tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+                            tmpPlace.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
                             nodeArray.add(tmpPlace);
                         }
@@ -1143,23 +1141,23 @@ public class IOprotocols {
 
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(namesLoc, GUIManager.locationMoveType.NAME);
+                            tmpTrans.setTextsLocations(namesLoc, GUIManager.locationMoveType.NAME);
                             //XTPN
                             ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
                             alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+                            tmpTrans.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
 
                             ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
                             betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
+                            tmpTrans.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
 
                             ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
                             gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+                            tmpTrans.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
 
                             ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
                             tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+                            tmpTrans.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
                             nodeArray.add(tmpTrans);
                             //mark++;
@@ -1375,24 +1373,24 @@ public class IOprotocols {
 
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(namesLoc, GUIManager.locationMoveType.NAME);
+                            tmpPlace.setTextsLocations(namesLoc, GUIManager.locationMoveType.NAME);
 
                             //XTPN
                             ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
                             alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+                            tmpPlace.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
 
                             ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
                             betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
+                            tmpPlace.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
 
                             ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
                             gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+                            tmpPlace.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
 
                             ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
                             tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+                            tmpPlace.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
                             nodeArray.add(tmpPlace);
                         }
@@ -1421,24 +1419,24 @@ public class IOprotocols {
 
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(namesLoc, GUIManager.locationMoveType.NAME);
+                            tmpTrans.setTextsLocations(namesLoc, GUIManager.locationMoveType.NAME);
 
                             //XTPN
                             ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
                             alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+                            tmpTrans.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
 
                             ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
                             betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(betaLoc, GUIManager.locationMoveType.BETA);
+                            tmpTrans.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
 
                             ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
                             gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+                            tmpTrans.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
 
                             ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
                             tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(tauLoc, GUIManager.locationMoveType.TAU);
+                            tmpTrans.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
                             //mark++;
 
                             nodeArray.add(tmpTrans);

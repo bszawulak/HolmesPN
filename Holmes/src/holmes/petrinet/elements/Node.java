@@ -1,6 +1,5 @@
 package holmes.petrinet.elements;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -36,8 +35,8 @@ public abstract class Node extends PetriNetElement {
 	private ArrayList<ElementLocation> tauLocations = new ArrayList<ElementLocation>();
 	private boolean isPortal = false;
 	private int radius = 20;
-	final static float[] dash1 = { 2.0f };
-	final static BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+	//final static float[] dash1 = { 2.0f };
+	//final static BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 	private static final Font f_Big = new Font("TimesRoman", Font.BOLD, 14);
 	private static final Font f_BigL = new Font("TimesRoman", Font.PLAIN, 14);
 	private static final Color darkGreen = new Color(0, 75, 0);
@@ -61,11 +60,11 @@ public abstract class Node extends PetriNetElement {
 		//lokalizacje graficzne:
 		this.getNodeLocations().add(new ElementLocation(sheetId, nodePosition, this));
 		//napis - przesunięcie startowe:
-		this.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(sheetId, new Point(0,0), this));
-		this.getNamesLocations(GUIManager.locationMoveType.ALPHA).add(new ElementLocation(sheetId, new Point(0,0), this));
-		this.getNamesLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(sheetId, new Point(0,0), this));
-		this.getNamesLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(sheetId, new Point(0,0), this));
-		this.getNamesLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(sheetId, new Point(0,0), this));
+		this.getTextsLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(sheetId, new Point(0,0), this));
+		this.getTextsLocations(GUIManager.locationMoveType.ALPHA).add(new ElementLocation(sheetId, new Point(0,0), this));
+		this.getTextsLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(sheetId, new Point(0,0), this));
+		this.getTextsLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(sheetId, new Point(0,0), this));
+		this.getTextsLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(sheetId, new Point(0,0), this));
 	}
 
 	/**
@@ -110,7 +109,7 @@ public abstract class Node extends PetriNetElement {
 		elementLocation.setParentNode(this);
 		this.getElementLocations().add(elementLocation);
 		//napis - przesunięcie startowe:
-		this.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(elementLocation.getSheetID(), new Point(0,0), this));
+		this.getTextsLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(elementLocation.getSheetID(), new Point(0,0), this));
 	}
 
 	/**
@@ -134,7 +133,7 @@ public abstract class Node extends PetriNetElement {
 	 */
 	public ArrayList<Point> getNodeNamePositions(int sheetId, GUIManager.locationMoveType nameType) {
 		ArrayList<Point> returnPoints = new ArrayList<Point>();
-		for (ElementLocation e : this.getNamesLocations(nameType))
+		for (ElementLocation e : this.getTextsLocations(nameType))
 			if (e.getSheetID() == sheetId)
 				returnPoints.add(e.getPosition());
 		return returnPoints;
@@ -331,8 +330,8 @@ public abstract class Node extends PetriNetElement {
 							double u_alfaTime = ((Transition)this).getTimer_Ualfa_XTPN();
 							double v_betaTime = ((Transition)this).getTimer_Vbeta_XTPN();
 
-							String timerA = "";
-							String timerB = "";
+							String timerA;
+							String timerB;
 							g.setColor(Color.red);
 							if(alphaTime < 0 && betaTime < 0) {
 								timerA = "u\u279F\u03C4(\u03B1): #\u279F#";
@@ -516,11 +515,11 @@ public abstract class Node extends PetriNetElement {
 	 */
 	public boolean removeElementLocation(ElementLocation el) {
 		int nodeElLocIndex = this.getNodeLocations().indexOf(el);
-		this.getNamesLocations(GUIManager.locationMoveType.NAME).remove(nodeElLocIndex);
-		this.getNamesLocations(GUIManager.locationMoveType.ALPHA).remove(nodeElLocIndex); //XTPN lokalizacja
-		this.getNamesLocations(GUIManager.locationMoveType.BETA).remove(nodeElLocIndex); //XTPN lokalizacja
-		this.getNamesLocations(GUIManager.locationMoveType.GAMMA).remove(nodeElLocIndex); //XTPN lokalizacja
-		this.getNamesLocations(GUIManager.locationMoveType.TAU).remove(nodeElLocIndex); //XTPN lokalizacja
+		this.getTextsLocations(GUIManager.locationMoveType.NAME).remove(nodeElLocIndex);
+		this.getTextsLocations(GUIManager.locationMoveType.ALPHA).remove(nodeElLocIndex); //XTPN lokalizacja
+		this.getTextsLocations(GUIManager.locationMoveType.BETA).remove(nodeElLocIndex); //XTPN lokalizacja
+		this.getTextsLocations(GUIManager.locationMoveType.GAMMA).remove(nodeElLocIndex); //XTPN lokalizacja
+		this.getTextsLocations(GUIManager.locationMoveType.TAU).remove(nodeElLocIndex); //XTPN lokalizacja
 		this.getNodeLocations().remove(el);
 		
 		int subNet = el.getSheetID();
@@ -623,7 +622,7 @@ public abstract class Node extends PetriNetElement {
 			type = "(M)";
 		else
 			type = "(?)";
-		return "ID: " + Integer.toString(this.getID())+type;
+		return "ID: " + this.getID() +type;
 	}
 
 	/**
@@ -647,9 +646,8 @@ public abstract class Node extends PetriNetElement {
 	 * @param dataType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
 	 * @return ArrayList[ElementLocation] - odpowiedni wektor lokalizacji nazw.
 	 */
-	public ArrayList<ElementLocation> getNamesLocations(GUIManager.locationMoveType dataType) {
+	public ArrayList<ElementLocation> getTextsLocations(GUIManager.locationMoveType dataType) {
 		return switch (dataType) {
-			case NAME -> namesLocations;
 			case ALPHA -> alphaLocations;
 			case BETA -> betaLocations;
 			case GAMMA -> gammaLocations;
@@ -663,9 +661,8 @@ public abstract class Node extends PetriNetElement {
 	 * @param namesLocations (ArrayList[ElementLocation]) wektor lokalizacji nazw.
 	 * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
 	 */
-	public void setNamesLocations(ArrayList<ElementLocation> namesLocations, GUIManager.locationMoveType nameType) {
+	public void setTextsLocations(ArrayList<ElementLocation> namesLocations, GUIManager.locationMoveType nameType) {
 		switch(nameType) {
-			case NAME -> this.namesLocations = namesLocations;
 			case ALPHA -> this.alphaLocations = namesLocations;
 			case BETA -> this.betaLocations = namesLocations;
 			case GAMMA -> this.gammaLocations = namesLocations;
@@ -682,7 +679,7 @@ public abstract class Node extends PetriNetElement {
 	 * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
 	 * @return (int) pozycja X napisu.
 	 */
-	public int getXNameLoc(int index, GUIManager.locationMoveType nameType) {
+	public int getTextLocation_X(int index, GUIManager.locationMoveType nameType) {
 		switch (nameType) {
 			case NAME -> {
 				if (index >= namesLocations.size()) {
@@ -735,15 +732,8 @@ public abstract class Node extends PetriNetElement {
 	 * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
 	 * @return (int) pozycja Y napisu.
 	 */
-	public int getYNameLoc(int index, GUIManager.locationMoveType nameType) {
+	public int getTextLocation_Y(int index, GUIManager.locationMoveType nameType) {
 		switch (nameType) {
-			case NAME -> {
-				if (index >= namesLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for name location (Y position). Node: " + getName(), "error", true);
-					return 0;
-				}
-				return namesLocations.get(index).getPosition().y;
-			}
 			case ALPHA -> {
 				if (index >= alphaLocations.size()) {
 					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for alpha location (Y position). Node: " + getName(), "error", true);

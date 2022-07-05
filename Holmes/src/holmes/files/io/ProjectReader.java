@@ -35,11 +35,11 @@ import holmes.windows.HolmesNotepad;
  * @author MR
  */
 public class ProjectReader {
-	private GUIManager overlord = null;
-	private PetriNet projectCore = null;
-	private ArrayList<Node> nodes = null;
+	private GUIManager overlord;
+	private PetriNet projectCore;
+	private ArrayList<Node> nodes;
 	private ArrayList<MetaNode> metanodes = null;
-	private ArrayList<Arc> arcs = null;
+	private ArrayList<Arc> arcs;
 	private ArrayList<ArrayList<Integer>> t_invariantsMatrix = null;
 	private ArrayList<String> t_invariantsNames = null;
 	private ArrayList<ArrayList<Integer>> p_invariantsMatrix = null;
@@ -527,8 +527,122 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				int tokens = Integer.parseInt(line);
-				place.setTokensNumber(tokens);
+				try {
+					int tokens = Integer.parseInt(line);
+					place.setTokensNumber(tokens);
+				} catch (Exception exc) {
+					overlord.log("Tokens reading failed for place "+placesProcessed, "error", true);
+					place.setTokensNumber(0);
+				}
+				return;
+			}
+
+			query = "Place XTPN status:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {//isGammaModeActiveXTPN
+					place.setXTPNplaceStatus(true);
+				} else if(line.contains("false")) {
+					place.setXTPNplaceStatus(false);
+				} else {
+					overlord.log("XTPN place status reading failed for place "+placesProcessed, "error", true);
+					place.setXTPNplaceStatus(false);
+				}
+				return;
+			}
+
+			query = "Place XTPN gammaMode:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {//isGammaModeActiveXTPN
+					place.setGammaModeXTPNstatus(true);
+				} else if(line.contains("false")) {
+					place.setGammaModeXTPNstatus(false);
+				} else {
+					overlord.log("Gamma mode status reading failed for place "+placesProcessed, "error", true);
+					place.setGammaModeXTPNstatus(true);
+				}
+				return;
+			}
+
+			query = "Place XTPN gammaVisible:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {//isGammaModeActiveXTPN
+					place.setGammaRangeStatus(true);
+				} else if(line.contains("false")) {
+					place.setGammaRangeStatus(false);
+				} else {
+					overlord.log("Gamma range visibility reading failed for place "+placesProcessed, "error", true);
+					place.setGammaRangeStatus(true);
+				}
+				return;
+			}
+
+			query = "Place gammaMin:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				try {
+					double gammaMin = Double.parseDouble(line);
+					place.setGammaMin_xTPN(gammaMin, true);
+				} catch (Exception exc) {
+					overlord.log("Gamma minimum reading failed for place "+placesProcessed, "error", true);
+					place.setGammaMin_xTPN(0, true);
+				}
+				return;
+			}
+
+			query = "Place gammaMax:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				try {
+					double gammaMax = Double.parseDouble(line);
+					place.setGammaMax_xTPN(gammaMax, true);
+				} catch (Exception exc) {
+					overlord.log("Gamma maximum failed for place "+placesProcessed, "error", true);
+					if(place.getGammaMin_xTPN() > 0)
+						place.setGammaMax_xTPN(place.getGammaMin_xTPN(), true);
+					else
+						place.setGammaMax_xTPN(0, true);
+				}
+				return;
+			}
+
+			query = "Place XTPN fractionSize:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				try {
+					int accuracy = Integer.parseInt(line);
+					place.setFraction_xTPN(accuracy);
+				} catch (Exception exc) {
+					overlord.log("Fraction XTPN reading failed for place "+placesProcessed, "error", true);
+					place.setFraction_xTPN(6);
+				}
+				return;
+			}
+
+			query = "Place XTPN multiset:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+
+				String[] tab = line.split(":");
+				for(int i=0; i<tab.length; i++) {
+					try {
+						double token = Double.parseDouble(tab[i]);
+						place.accessMultiset().add(token); //dodanie poza seterem, aby nie dublować wartości tokensNumber
+						//place.addTokens_XTPN(1, token);
+					} catch (Exception exc) {
+						overlord.log("XPTN token value reading failed for place "+placesProcessed, "error", true);
+						place.addTokens_XTPN(1, 0);
+					}
+				}
 				return;
 			}
 			
@@ -538,6 +652,11 @@ public class ProjectReader {
 				line = line.replace(">","");
 				if(line.contains("true")) {
 					place.setPortal(true);
+				} else if(line.contains("false")) {
+					place.setPortal(false);
+				} else {
+					overlord.log("Portal status reading failed for place "+placesProcessed, "error", true);
+					place.setPortal(false);
 				}
 				return;
 			}
@@ -546,12 +665,16 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				int elLocSize = Integer.parseInt(line);
-				for(int e=0; e<elLocSize-1; e++) {
-					place.getElementLocations().add(new ElementLocation(0, new Point(20,20), place));
-					place.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), place));
+				try {
+					int elLocSize = Integer.parseInt(line);
+					for(int e=0; e<elLocSize-1; e++) {
+						place.getElementLocations().add(new ElementLocation(0, new Point(20,20), place));
+						place.getTextsLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), place));
+					}
+				} catch (Exception exc) {
+					overlord.log("CRITICAL ERROR while reading places location - failed for place "+placesProcessed, "error", true);
 				}
-				
+
 				return;
 			}
 			//poniższa część MUSI się wywołać PO tej wyżej, inaczej nie będzie odpowiednio dużo pól ElementLocation!
@@ -585,10 +708,27 @@ public class ProjectReader {
 				int pointY = Integer.parseInt(tab[2]);
 				int eLocIndex = Integer.parseInt(tab[3]);
 				
-				place.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setSheetID(sheetID);
+				place.getTextsLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setSheetID(sheetID);
 				Point newP = new Point(pointX, pointY);
-				place.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).forceSetPosition(newP);
-				place.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setNotSnappedPosition(newP);
+				place.getTextsLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).forceSetPosition(newP);
+				place.getTextsLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setNotSnappedPosition(newP);
+				return;
+			}
+
+			query = "Place gamma offset data sheet/x/y/elIndex:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				String[] tab = line.split(";");
+				int sheetID = Integer.parseInt(tab[0]);
+				int pointX = Integer.parseInt(tab[1]);
+				int pointY = Integer.parseInt(tab[2]);
+				int eLocIndex = Integer.parseInt(tab[3]);
+
+				place.getTextsLocations(GUIManager.locationMoveType.GAMMA).get(eLocIndex).setSheetID(sheetID);
+				Point newP = new Point(pointX, pointY);
+				place.getTextsLocations(GUIManager.locationMoveType.GAMMA).get(eLocIndex).forceSetPosition(newP);
+				place.getTextsLocations(GUIManager.locationMoveType.GAMMA).get(eLocIndex).setNotSnappedPosition(newP);
 				return;
 			}
 			
@@ -614,9 +754,8 @@ public class ProjectReader {
 					place.setColorTokensNumber(Integer.parseInt(tab[3]), 3);
 					place.setColorTokensNumber(Integer.parseInt(tab[4]), 4);
 					place.setColorTokensNumber(Integer.parseInt(tab[5]), 5);
-				} catch (Exception e) {}
-				
-				return;
+				} catch (Exception ignored) {}
+
 			}
 		} catch (Exception e) {
 			overlord.log("Reading file error in line: "+backup+" for Place "+placesProcessed, "error", true);
@@ -632,8 +771,7 @@ public class ProjectReader {
 	private void parseTransitionLine(String line, Transition transition) {
 		String backup = line;
 		try {
-			String query = "";
-			query = "Transition gID:";
+			String query = "Transition gID:";
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				
@@ -649,6 +787,8 @@ public class ProjectReader {
 					transition.setTransType(TransitionType.PN);
 				} else if(line.equals("TPN")) {
 					transition.setTransType(TransitionType.TPN);
+				} else if(line.equals("XTPN")) {
+					transition.setTransType(TransitionType.XTPN);
 				}
 
 				return;
@@ -740,6 +880,186 @@ public class ProjectReader {
 				}
 				return;
 			}
+
+			query = "Transition XTPN status:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {//is XTPN?
+					transition.setXTPNstatus(true);
+				} else if(line.contains("false")) {
+					transition.setXTPNstatus(false);
+				} else {
+					overlord.log("XTPN transition status reading failed for transition "+transitionsProcessed, "error", true);
+					transition.setXTPNstatus(false);
+				}
+				return;
+			}
+
+			query = "Transition XTPN alphaMode:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {
+					transition.setAlphaXTPNstatus(true);
+				} else if(line.contains("false")) {
+					transition.setAlphaXTPNstatus(false);
+				} else {
+					overlord.log("Alpha mode status reading failed for transition "+transitionsProcessed, "error", true);
+					transition.setAlphaXTPNstatus(true);
+				}
+				return;
+			}
+
+			query = "Transition XTPN alphaVisible:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {//isGammaModeActiveXTPN
+					transition.setAlphaRangeVisibility(true);
+				} else if(line.contains("false")) {
+					transition.setAlphaRangeVisibility(false);
+				} else {
+					overlord.log("Alpha range visibility reading failed for transition "+transitionsProcessed, "error", true);
+					transition.setAlphaRangeVisibility(true);
+				}
+				return;
+			}
+
+			query = "Transition XTPN alphaMin:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				try {
+					double gammaMin = Double.parseDouble(line);
+					transition.setAlphaMin_xTPN(gammaMin, true);
+				} catch (Exception exc) {
+					overlord.log("Alpha minimum reading failed for transition "+transitionsProcessed, "error", true);
+					transition.setAlphaMin_xTPN(0, true);
+				}
+				return;
+			}
+
+			query = "Transition XTPN alphaMax:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				try {
+					double gammaMax = Double.parseDouble(line);
+					transition.setAlphaMax_xTPN(gammaMax, true);
+				} catch (Exception exc) {
+					overlord.log("Alpha maximum failed for transition "+transitionsProcessed, "error", true);
+					if(transition.getAlphaMin_xTPN() > 0)
+						transition.setAlphaMax_xTPN(transition.getAlphaMin_xTPN(), true);
+					else
+						transition.setAlphaMax_xTPN(0, true);
+				}
+				return;
+			}
+
+			query = "Transition XTPN betaMode:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {
+					transition.setBetaXTPNstatus(true);
+				} else if(line.contains("false")) {
+					transition.setBetaXTPNstatus(false);
+				} else {
+					overlord.log("Beta mode status reading failed for transition "+transitionsProcessed, "error", true);
+					transition.setBetaXTPNstatus(true);
+				}
+				return;
+			}
+
+			query = "Transition XTPN betaVisible:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {//isGammaModeActiveXTPN
+					transition.setBetaRangeVisibility(true);
+				} else if(line.contains("false")) {
+					transition.setBetaRangeVisibility(false);
+				} else {
+					overlord.log("Beta range visibility reading failed for transition "+transitionsProcessed, "error", true);
+					transition.setBetaRangeVisibility(true);
+				}
+				return;
+			}
+
+			query = "Transition XTPN betaMin:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				try {
+					double gammaMin = Double.parseDouble(line);
+					transition.setBetaMin_xTPN(gammaMin, true);
+				} catch (Exception exc) {
+					overlord.log("Beta minimum reading failed for transition "+transitionsProcessed, "error", true);
+					transition.setBetaMin_xTPN(0, true);
+				}
+				return;
+			}
+
+			query = "Transition XTPN betaMax:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				try {
+					double gammaMax = Double.parseDouble(line);
+					transition.setBetaMax_xTPN(gammaMax, true);
+				} catch (Exception exc) {
+					overlord.log("Beta maximum failed for transition "+transitionsProcessed, "error", true);
+					if(transition.getBetaMin_xTPN() > 0)
+						transition.setBetaMax_xTPN(transition.getBetaMin_xTPN(), true);
+					else
+						transition.setBetaMax_xTPN(0, true);
+				}
+				return;
+			}
+
+			query = "Transition XTPN tauVisible:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {//isGammaModeActiveXTPN
+					transition.setTauTimersVisibility(true);
+				} else if(line.contains("false")) {
+					transition.setTauTimersVisibility(false);
+				} else {
+					overlord.log("Tau timers visibility reading failed for transition "+transitionsProcessed, "error", true);
+					transition.setTauTimersVisibility(true);
+				}
+				return;
+			}
+
+			query = "Transition XTPN massAction:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {
+					transition.setMassActionKineticsXTPNstatus(true);
+				} else if(line.contains("false")) {
+					transition.setMassActionKineticsXTPNstatus(false);
+				} else {
+					overlord.log("Mass-action kinetics status reading failed for transition "+transitionsProcessed, "error", true);
+					transition.setMassActionKineticsXTPNstatus(false);
+				}
+				return;
+			}
+			query = "Transition XTPN fractionSize:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				try {
+					int accuracy = Integer.parseInt(line);
+					transition.setFraction_xTPN(accuracy);
+				} catch (Exception exc) {
+					overlord.log("Fraction XTPN reading failed for transition "+transitionsProcessed, "error", true);
+					transition.setFraction_xTPN(6);
+				}
+				return;
+			}
 			
 			query = "Transition locations:";
 			if(line.contains(query)) {
@@ -748,9 +1068,8 @@ public class ProjectReader {
 				int elLocSize = Integer.parseInt(line);
 				for(int e=0; e<elLocSize-1; e++) {
 					transition.getElementLocations().add(new ElementLocation(0, new Point(20,20), transition));
-					transition.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), transition));
+					transition.getTextsLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), transition));
 				}
-				
 				return;
 			}
 			//poniższa część MUSI się wywołać PO tej wyżej, inaczej nie będzie odpowiednio dużo pól ElementLocation!
@@ -771,9 +1090,9 @@ public class ProjectReader {
 				transition.getElementLocations().get(eLocIndex).setNotSnappedPosition(newP);
 
 				setGlobalXY(pointX, pointY); //update graph panel
-				
 				return;
 			}
+
 			query = "Transition name offset data sheet/x/y/elIndex:";
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
@@ -784,10 +1103,44 @@ public class ProjectReader {
 				int pointY = Integer.parseInt(tab[2]);
 				int eLocIndex = Integer.parseInt(tab[3]);
 				
-				transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setSheetID(sheetID);
+				transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setSheetID(sheetID);
 				Point newP = new Point(pointX, pointY);
-				transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).forceSetPosition(newP);
-				transition.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setNotSnappedPosition(newP);
+				transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).forceSetPosition(newP);
+				transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setNotSnappedPosition(newP);
+				return;
+			}
+
+			query = "Transition alpha offset data sheet/x/y/elIndex:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				String[] tab = line.split(";");
+				int sheetID = Integer.parseInt(tab[0]);
+				int pointX = Integer.parseInt(tab[1]);
+				int pointY = Integer.parseInt(tab[2]);
+				int eLocIndex = Integer.parseInt(tab[3]);
+
+				transition.getTextsLocations(GUIManager.locationMoveType.ALPHA).get(eLocIndex).setSheetID(sheetID);
+				Point newP = new Point(pointX, pointY);
+				transition.getTextsLocations(GUIManager.locationMoveType.ALPHA).get(eLocIndex).forceSetPosition(newP);
+				transition.getTextsLocations(GUIManager.locationMoveType.ALPHA).get(eLocIndex).setNotSnappedPosition(newP);
+				return;
+			}
+
+			query = "Transition beta offset data sheet/x/y/elIndex:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				String[] tab = line.split(";");
+				int sheetID = Integer.parseInt(tab[0]);
+				int pointX = Integer.parseInt(tab[1]);
+				int pointY = Integer.parseInt(tab[2]);
+				int eLocIndex = Integer.parseInt(tab[3]);
+
+				transition.getTextsLocations(GUIManager.locationMoveType.BETA).get(eLocIndex).setSheetID(sheetID);
+				Point newP = new Point(pointX, pointY);
+				transition.getTextsLocations(GUIManager.locationMoveType.BETA).get(eLocIndex).forceSetPosition(newP);
+				transition.getTextsLocations(GUIManager.locationMoveType.BETA).get(eLocIndex).setNotSnappedPosition(newP);
 				return;
 			}
 			
@@ -890,7 +1243,7 @@ public class ProjectReader {
 				int elLocSize = Integer.parseInt(line);
 				for(int e=0; e<elLocSize-1; e++) {
 					metanode.getElementLocations().add(new ElementLocation(0, new Point(20,20), metanode));
-					metanode.getNamesLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), metanode));
+					metanode.getTextsLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), metanode));
 				}
 				
 				return;
@@ -926,10 +1279,10 @@ public class ProjectReader {
 				int pointY = Integer.parseInt(tab[2]);
 				int eLocIndex = Integer.parseInt(tab[3]);
 				
-				metanode.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setSheetID(sheetID);
+				metanode.getTextsLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setSheetID(sheetID);
 				Point newP = new Point(pointX, pointY);
-				metanode.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).forceSetPosition(newP);
-				metanode.getNamesLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setNotSnappedPosition(newP);
+				metanode.getTextsLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).forceSetPosition(newP);
+				metanode.getTextsLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setNotSnappedPosition(newP);
 				return;
 			}
 		} catch (Exception e) {
@@ -964,6 +1317,8 @@ public class ProjectReader {
 				arcType = TypeOfArc.EQUAL;
 			else if(typeLine.contains("META_ARC"))
 				arcType = TypeOfArc.META_ARC;
+			else if(typeLine.contains("XTPN"))
+				arcType = TypeOfArc.XTPN;
 			
 			tab[2] = tab[2].replace(">", "");
 			int weight = Integer.parseInt(tab[2]);
@@ -1219,13 +1574,11 @@ public class ProjectReader {
 						problemWithInv += readedLine+",";
 					}
 				}
-				
 				projectCore.setT_InvMatrix(t_invariantsMatrix, false);
 				
 				if(problems==0) {
 					while(!((line = buffer.readLine()).contains("<Invariants names>"))) //przewiń do nazw inwariantów
 						;
-					
 					t_invariantsNames = new ArrayList<String>();
 					line = buffer.readLine();
 					int readLines = 1;
@@ -1243,14 +1596,11 @@ public class ProjectReader {
 						}
 					}
 					projectCore.setT_InvDescriptions(t_invariantsNames);
-					
-					
 					if(readLines != t_invariantsMatrix.size()) {
 						overlord.log("Error: different numbers of t-invariants ("+t_invariantsMatrix.size()+
 								") and their names ("+readLines+"). Operation failed.", "error", true);
 						return false;
 					}
-					
 				} else {
 					overlord.log("T-invariants with wrong number of elements in file:"+problemWithInv, "error", true);
 					return false;
@@ -1436,9 +1786,6 @@ public class ProjectReader {
 					return false;
 				}
 			}
-			
-			
-			
 			return true;
 		} catch (Exception e) {
 			overlord.log("Reading MCT sets failed for MCT number: \n"+mctProcessed, "error", true);
@@ -1459,7 +1806,7 @@ public class ProjectReader {
 			
 			line = buffer.readLine();
 			int readedLine = 0;
-			if(line.equals("States: 0"))
+			if(line.contains("States: 0"))
 				return false;
 			
 			boolean go = true;
@@ -1524,7 +1871,7 @@ public class ProjectReader {
 			
 			line = buffer.readLine();
 			int readedLine = 0;
-			if(line.equals("FRvectors: 0"))
+			if(line.contains("<FRvectors: 0>"))
 				return false;
 			
 			boolean go = true;
@@ -1620,7 +1967,6 @@ public class ProjectReader {
 				}
 			} else {
 				if((readedLine/3) > frateMngr.accessSPNmatrix().size()) {
-					
 					if(frateMngr.accessSPNmatrix().size() == 0) {
 						frateMngr.createCleanSPNdataVector();
 						overlord.log("Error: SPN vector could not be read. Creating clean vector.", "error", true);
@@ -1631,7 +1977,6 @@ public class ProjectReader {
 					}
 				}
 			}
-			
 			return true;
 		} catch (Exception e) {
 			overlord.log("Reading SPN data vectors failed.", "error", true);
@@ -1647,7 +1992,6 @@ public class ProjectReader {
 	 */
 	private ArrayList<SPNtransitionData> parseSPNdataVector(String[] dataVectorTable, SPNdataVector frVector) {
 		ArrayList<SPNtransitionData> spnVector = new ArrayList<SPNtransitionData>();
-		
 		/*
 		 * public String ST_function = "";
 		public int IM_priority = 0;
@@ -1696,7 +2040,7 @@ public class ProjectReader {
 			
 			line = buffer.readLine();
 			int readedLine = 0;
-			if(line.equals("SSA vectors: 0"))
+			if(line.contains("<SSA vectors: 0>"))
 				return false;
 			
 			boolean go = true;
@@ -1787,6 +2131,4 @@ public class ProjectReader {
 	public ArrayList<Arc> getArcs() {
 		return arcs;
 	}
-
-
 }

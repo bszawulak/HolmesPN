@@ -30,7 +30,7 @@ public class NetSimulator {
 	private SimulatorMode simulatorStatus = SimulatorMode.STOPPED;
 	private SimulatorMode previousSimStatus = SimulatorMode.STOPPED;
 	private PetriNet petriNet;
-	private Integer delay = new Integer(30);	//opóźnienie
+	private Integer delay = Integer.valueOf(30);	//opóźnienie
 	private boolean simulationActive = false;
 	private Timer timer;
 	private ArrayList<Transition> launchingTransitions;
@@ -541,7 +541,7 @@ public class NetSimulator {
 					place = (Place) arc.getStartNode();
 				
 				if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR 
-						|| arc.getArcType() == TypeOfArc.READARC ) { //!!!!!! było bez drugiego członu po ||
+						|| arc.getArcType() == TypeOfArc.READARC || arc.getArcType() == TypeOfArc.XTPN) { //!!!!!! było bez drugiego członu po ||
 					;
 				} else {
 					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
@@ -599,7 +599,7 @@ public class NetSimulator {
 					place = (Place) arc.getStartNode();
 				
 				if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR 
-						|| arc.getArcType() == TypeOfArc.READARC ) { //!!!!!! było bez drugiego członu po ||
+						|| arc.getArcType() == TypeOfArc.READARC || arc.getArcType() == TypeOfArc.XTPN) { //!!!!!! było bez drugiego członu po ||
 					;
 				} else {
 					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 

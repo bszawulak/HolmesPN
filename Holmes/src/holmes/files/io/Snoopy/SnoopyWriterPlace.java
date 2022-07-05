@@ -138,8 +138,8 @@ public class SnoopyWriterPlace {
 		yOff = 20; //TODO: + holmesPlace.getNameOffY();
 		for(int i=0; i<locations; i++) { 
 			//TODO: decyzja, czy środkować czy brać offset z Holmesa
-			xOff = holmesPlace.getXNameLoc(i, GUIManager.locationMoveType.NAME);
-			yOff = holmesPlace.getYNameLoc(i, GUIManager.locationMoveType.NAME);
+			xOff = holmesPlace.getTextLocation_X(i, GUIManager.locationMoveType.NAME);
+			yOff = holmesPlace.getTextLocation_Y(i, GUIManager.locationMoveType.NAME);
 			yOff = SnoopyToolClass.getNormalizedY(yOff);
 			
 			if(i==0) {//tylko główne miejsce

@@ -56,7 +56,7 @@ public class Place extends Node {
 	public boolean qSimDrawStats = false; //czy rysować dodatkowe dane statystyczne
 	public int qSimFillValue = 0; //poziom wypełnienia danychy
 	public double qSimTokens = 0; //ile średnio tokenów w symulacji
-	public String qSimText = ""; //dodatkowy tekst
+	//public String qSimText = ""; //dodatkowy tekst
 	
 	//colors:
 	public boolean isColored = false;
@@ -71,13 +71,9 @@ public class Place extends Node {
 	public int reserved4grey = 0;
 	public int reserved5black = 0;
 
-
-
-
 	/* ***********************************************************************************
 	   ********************************    xTPN    ***************************************
 	   *********************************************************************************** */
-
 	private boolean isXTPN = false; //czy tokeny marzą o elektrycznych tranzycjach?
 	private double gammaMin_xTPN = 0.0;
 	private double gammaMax_xTPN = 99;
@@ -93,8 +89,8 @@ public class Place extends Node {
 	private ArrayList<Double> multisetK;
 	private ArrayList<Double> reservedMultisetK;
 
-	private int numberOfTokens_XTPN = 0;
-	private int numberOfReservTokens_XTPN = 0;
+	//private int numberOfTokens_XTPN = 0;
+	//private int numberOfReservTokens_XTPN = 0;
 
 
 
@@ -245,8 +241,8 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Metoda pozwala zmienić liczbę tokenów w miejscu, dodając do niej określoną wartość.
-	 * @param delta int - wartość o którą zmieni się liczba tokenów
+	 * Metoda pozwala zmienić liczbę tokenów w miejscu, dodając ich określoną wartość.
+	 * @param delta (<b>int</b>) wartość o którą zmieni się liczba tokenów
 	 */
 	public void modifyTokensNumber(int delta) {
 		this.tokensNumber += delta;
@@ -312,7 +308,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda pozwala pobrać liczbę zajętych (zarezerwowanych  przez aktywowaną tranzycję) tokenów.
-	 * @return int - liczba zarezerwowanych tokenów
+	 * @return (<b>int</b>) - liczba zarezerwowanych tokenów
 	 */
 	public int getReservedTokens() {
 		return reservedTokens;
@@ -320,12 +316,11 @@ public class Place extends Node {
 	
 	/**
 	 * Metoda zwraca liczbę zarezerwowanych kolorowych tokenów (0-5)
-	 * @param i (int) nr porzadkowy tokenu, default 0, od 0 do 5
-	 * @return int - liczba zarezerwowanych tokenów
+	 * @param i (<b>int</b>) nr porządkowy tokenu, default 0, od 0 do 5
+	 * @return (<b>int</b>) - liczba zarezerwowanych tokenów
 	 */
 	public int getReservedColorTokens(int i) {
 		return switch (i) {
-			case 0 -> reservedTokens;
 			case 1 -> reserved1green;
 			case 2 -> reserved2blue;
 			case 3 -> reserved3yellow;
@@ -707,7 +702,12 @@ public class Place extends Node {
 				multisetK.add(valueOf(initialTime));
 			}
 		}
-		updateNumberOfTokens_XTPN(howMany);
+		modifyTokensNumber(howMany);
+
+		if(initialTime > 0) {
+			Collections.sort(multisetK);
+			Collections.reverse(multisetK);
+		}
 	}
 
 	/**
@@ -724,7 +724,7 @@ public class Place extends Node {
 				}
 			}
 		}
-		updateNumberOfTokens_XTPN(-removed);
+		modifyTokensNumber(-removed);
 		return removed;
 	}
 
@@ -737,7 +737,7 @@ public class Place extends Node {
 	 */
 	public int removeTokensForProduction(int howMany, int mode, Random genetaror) {
 		if(!isGammaModeActiveXTPN()) { //gdy XTPN wyłączone, tylko usuwamy liczbę
-			updateNumberOfTokens_XTPN(-howMany);
+			modifyTokensNumber(-howMany);
 			return howMany;
 		}
 
@@ -773,7 +773,7 @@ public class Place extends Node {
 				multisetK.remove(index);
 			}
 		}
-		updateNumberOfTokens_XTPN(-howMany);
+		modifyTokensNumber(-howMany);
 		return howMany;
 	}
 
@@ -792,6 +792,12 @@ public class Place extends Node {
 		}
 	}
 
+	/**
+	 * Aktualizacja wartości czasowej tokenu. Potem sortowanie multizbioru.
+	 * @param ID (<b>ID</b>) indeks tokenu.
+	 * @param value (<b>value</b>) nowa wartość tokenu.
+	 * @return (<b>boolean</b>) - true jeśli się udało.
+	 */
 	public boolean updateToken(int ID, Double value) {
 		boolean status = false;
 		if(ID > -1 && ID < multisetK.size()) {
@@ -804,83 +810,39 @@ public class Place extends Node {
 
 	/**
 	 * Usuwanie tokenu po ID.
-	 * @param id (int) - indeks tokenu.
+	 * @param id (<b>int</b>) indeks tokenu.
 	 */
 	public void removeTokenByID(int id) {
 		if(ID > -1 && ID < multisetK.size()) {
 			multisetK.remove(id);
 		}
-		updateNumberOfTokens_XTPN(-1);
+		modifyTokensNumber(-1);
 		//Collections.sort(multisetK);
 		//Collections.reverse(multisetK);
 	}
 
 	/**
-	 * Ustawia liczbę tokenów miejsca XTPN.
-	 * @param value (int) liczba tokenów XTPN.
-	 */
-	public void setNumberOfTokens_XTPN(int value) {
-		this.numberOfTokens_XTPN = value;
-		this.tokensNumber = value;
-	}
-
-	/**
-	 * Zmienia liczbę tokenów miejsca XTPN.
-	 * @param delta (int) liczba tokenów XTPN do zmiany + lub -.
-	 */
-	public void updateNumberOfTokens_XTPN(int delta) {
-		this.numberOfTokens_XTPN += delta;
-		this.tokensNumber += delta;
-	}
-
-	/**
-	 * Zwraca liczbę tokenów miejsca XTPN.
-	 * @return (int) - liczba tokenów XTPN.
-	 */
-	public int getNumberOfTokens_XTPN() {
-		return numberOfTokens_XTPN;
-	}
-
-	/**
-	 * Ustawia liczbę zarezerwowanych tokenów miejsca XTPN.
-	 * @param value (int) liczba zarezerwowanych tokenów XTPN.
-	 */
-	public void setNumberOfReservedTokens_XTPN(int value) {
-		this.numberOfReservTokens_XTPN = value;
-	}
-
-	/**
-	 * Zmienia liczbę zarezerwowanych tokenów miejsca XTPN.
-	 * @param delta (int) liczba zarezerwowanych tokenów XTPN do zmiany + lub -.
-	 */
-	public void updateNumberOfReservedTokens_XTPN(int delta) {
-		this.numberOfReservTokens_XTPN += delta;
-	}
-
-	/**
-	 * Zwraca liczbę zarezerwowanych tokenów miejsca XTPN.
-	 * @return (int) liczba zarezerwowanych tokenów XTPN.
-	 */
-	public int getNumberOfReservedTokens_XTPN() {
-		return numberOfReservTokens_XTPN;
-	}
-
-	/**
-	 * Metoda umożliwia dostęp do multizbioru tokenów.
-	 * @return ArrayList<Double> - multizbiór miejsca XTPN.
+	 * Metoda umożliwia dostęp do multizbioru K tokenów.
+	 * @return (<b>ArrayList<Double></b>) - multizbiór K miejsca XTPN.
 	 */
 	public ArrayList<Double> accessMultiset() {
 		return multisetK;
 	}
 
+	/**
+	 * Metoda kasuje multizbiór K, pozostawia tylko liczbę tokenów jako int.
+	 */
 	public void transformXTPNintoPNpace() {
 		setGammaModeXTPNstatus(false);
 		multisetK.clear();
 	}
 
+	/**
+	 * Na podstawie liczby tokenów metoda wypełnia zerami nowy multizbiór K.
+	 */
 	public void transformIntoXTPNplace() {
 		setGammaModeXTPNstatus(true);
-		for(int i=0; i<numberOfTokens_XTPN; i++) {
+		for(int i=0; i<tokensNumber; i++) {
 			multisetK.add(valueOf(0.0));
 		}
 	}

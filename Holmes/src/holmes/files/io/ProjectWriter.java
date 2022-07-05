@@ -34,20 +34,20 @@ import holmes.varia.Check;
  *
  */
 public class ProjectWriter {
-	private PetriNet projectCore = null;
-	private ArrayList<Place> places = null;
-	private ArrayList<Transition> transitions = null;
-	private ArrayList<MetaNode> metaNodes = null;
-	private ArrayList<Arc> arcs = null;
-	private ArrayList<ArrayList<Integer>> t_invariantsMatrix = null;
-	private ArrayList<String> t_invariantsNames = null;
-	private ArrayList<ArrayList<Integer>> p_invariantsMatrix = null;
-	private ArrayList<String> p_invariantsNames = null;
-	private ArrayList<ArrayList<Transition>> mctData = null;
-	private ArrayList<String> mctNames = null;
-	private ArrayList<StatePlacesVector> statesMatrix = null;
-	private ArrayList<SPNdataVector> firingRatesMatrix = null;
-	private ArrayList<SSAplacesVector> ssaMatrix = null;
+	private PetriNet projectCore;
+	private ArrayList<Place> places ;
+	private ArrayList<Transition> transitions;
+	private ArrayList<MetaNode> metaNodes;
+	private ArrayList<Arc> arcs;
+	private ArrayList<ArrayList<Integer>> t_invariantsMatrix;
+	private ArrayList<String> t_invariantsNames;
+	private ArrayList<ArrayList<Integer>> p_invariantsMatrix;
+	private ArrayList<String> p_invariantsNames;
+	private ArrayList<ArrayList<Transition>> mctData;
+	private ArrayList<String> mctNames;
+	private ArrayList<StatePlacesVector> statesMatrix;
+	private ArrayList<SPNdataVector> firingRatesMatrix;
+	private ArrayList<SSAplacesVector> ssaMatrix;
 	
 	private String newline = "\n";
 	
@@ -128,7 +128,9 @@ public class ProjectWriter {
 			bw.write("<SSA vectors data>"+newline);
 			boolean statusSSA = saveSSAvectors(bw);
 			bw.write("<SSA vectors data end>"+newline);
-			
+
+			//TODO: log o statusach
+
 			bw.close();
 			return true;
 		} catch (Exception e) {
@@ -159,12 +161,12 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Place comment:"+Tools.convertToCode(place.getComment())+">"+newline); //komentarz
 				bw.write(spaces(sp)+"<Place tokens:"+place.getTokensNumber()+">"+newline); //tokeny
 
-				bw.write(spaces(sp)+"<Place XTPN tokens:"+place.getNumberOfTokens_XTPN()+">"+newline); //tokeny
-				bw.write(spaces(sp)+"<Place XTPN gammaMode:"+place.isGammaModeActiveXTPN()+">"+newline); //tokeny
-				bw.write(spaces(sp)+"<Place XTPN gammaVisible:"+place.isGammaRangeVisible()+">"+newline); //tokeny
-				bw.write(spaces(sp)+"<Place XTPN gammaMin:"+place.getGammaMin_xTPN()+">"+newline); //tokeny
-				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
-				bw.write(spaces(sp)+"<Place XTPN fractionSize:"+place.getFraction_xTPN()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place XTPN status:"+place.isXTPNplace()+">"+newline); //czy to miejsce XTPN?
+				bw.write(spaces(sp)+"<Place XTPN gammaMode:"+place.isGammaModeActiveXTPN()+">"+newline); //czy gamma włączone
+				bw.write(spaces(sp)+"<Place XTPN gammaVisible:"+place.isGammaRangeVisible()+">"+newline); //czy gamma widoczne
+				bw.write(spaces(sp)+"<Place XTPN gammaMin:"+place.getGammaMin_xTPN()+">"+newline); //gamma minimum
+				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //gamma maximum
+				bw.write(spaces(sp)+"<Place XTPN fractionSize:"+place.getFraction_xTPN()+">"+newline); //dokładność po przecinku
 
 				bw.write(spaces(sp)+"<Place XTPN multiset"); //multisetK
 				for(int token=0; token<place.accessMultiset().size(); token++) {
@@ -172,14 +174,6 @@ public class ProjectWriter {
 				}
 				bw.write(">"+newline); //tokeny
 
-				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
-				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
-				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
-				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
-				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
-				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //tokeny
-
-				
 				bw.write(spaces(sp)+"<Place colored:"+place.isColored+">"+newline);
 				bw.write(spaces(sp)+"<Place colors:"
 						+place.getColorTokensNumber(0)+";"
@@ -203,37 +197,17 @@ public class ProjectWriter {
 					int pointY = eLoc.getPosition().y;
 					bw.write(spaces(sp)+"<Place location data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 					
-					ElementLocation nameLoc = place.getNamesLocations(GUIManager.locationMoveType.NAME).get(e);
+					ElementLocation nameLoc = place.getTextsLocations(GUIManager.locationMoveType.NAME).get(e);
 					sheetId = nameLoc.getSheetID();
 					pointX = nameLoc.getPosition().x;
 					pointY = nameLoc.getPosition().y;
 					bw.write(spaces(sp)+"<Place name offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 
-					ElementLocation alphaLoc = place.getNamesLocations(GUIManager.locationMoveType.ALPHA).get(e);
-					sheetId = alphaLoc.getSheetID();
-					pointX = alphaLoc.getPosition().x;
-					pointY = alphaLoc.getPosition().y;
-					bw.write(spaces(sp)+"<Place alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
-
-					ElementLocation betaLoc = place.getNamesLocations(GUIManager.locationMoveType.BETA).get(e);
-					sheetId = betaLoc.getSheetID();
-					pointX = betaLoc.getPosition().x;
-					pointY = betaLoc.getPosition().y;
-					bw.write(spaces(sp)+"<Place beta offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
-
-					ElementLocation gammaLoc = place.getNamesLocations(GUIManager.locationMoveType.GAMMA).get(e);
+					ElementLocation gammaLoc = place.getTextsLocations(GUIManager.locationMoveType.GAMMA).get(e);
 					sheetId = gammaLoc.getSheetID();
 					pointX = gammaLoc.getPosition().x;
 					pointY = gammaLoc.getPosition().y;
-					bw.write(spaces(sp)+"<Place alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
-
-					ElementLocation tauLoc = place.getNamesLocations(GUIManager.locationMoveType.TAU).get(e);
-					sheetId = tauLoc.getSheetID();
-					pointX = tauLoc.getPosition().x;
-					pointY = tauLoc.getPosition().y;
-					bw.write(spaces(sp)+"<Place alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
-
-
+					bw.write(spaces(sp)+"<Place gamma offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 				}
 				sp = 6;
 				bw.write(spaces(sp)+"<Location data block end"+">"+newline);
@@ -262,6 +236,19 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition TPN status:"+trans.getTPNstatus()+">"+newline); //is TPN active?
 				bw.write(spaces(sp)+"<Transition DPN status:"+trans.getDPNstatus()+">"+newline); //is DPN active?
 				bw.write(spaces(sp)+"<Transition function flag:"+trans.isFunctional()+">"+newline); //is functional?
+
+				bw.write(spaces(sp)+"<Transition XTPN status:"+trans.isXTPNtransition()+">"+newline); //czy XTPN?
+				bw.write(spaces(sp)+"<Transition XTPN alphaMode:"+trans.isAlphaActiveXTPN()+">"+newline); //czy alpha włączone
+				bw.write(spaces(sp)+"<Transition XTPN alphaVisible:"+trans.isAlphaRangeVisible()+">"+newline); //czy alpha widoczne
+				bw.write(spaces(sp)+"<Transition XTPN alphaMin:"+trans.getAlphaMin_xTPN()+">"+newline); //alpha minimum
+				bw.write(spaces(sp)+"<Transition XTPN alphaMax:"+trans.getAlphaMax_xTPN()+">"+newline); //alpha maximum
+				bw.write(spaces(sp)+"<Transition XTPN betaMode:"+trans.isBetaActiveXTPN()+">"+newline); //czy beta włączone
+				bw.write(spaces(sp)+"<Transition XTPN betaVisible:"+trans.isBetaRangeVisible()+">"+newline); //czy beta widoczne
+				bw.write(spaces(sp)+"<Transition XTPN betaMin:"+trans.getBetaMin_xTPN()+">"+newline); //beta minimum
+				bw.write(spaces(sp)+"<Transition XTPN betaMax:"+trans.getBetaMax_xTPN()+">"+newline); //beta maximum
+				bw.write(spaces(sp)+"<Transition XTPN tauVisible:"+trans.isTauTimerVisible()+">"+newline); //czy beta widoczne
+				bw.write(spaces(sp)+"<Transition XTPN massAction:"+trans.isMassActionKineticsActiveXTPN()+">"+newline); //mass-action
+				bw.write(spaces(sp)+"<Transition XTPN fractionSize:"+trans.getFraction_xTPN()+">"+newline); //dokładność po przecinku
 				
 				bw.write(spaces(sp)+"<Transition colored:"+trans.isColored()+">"+newline); //is colored?
 				bw.write(spaces(sp)+"<Transition colors threshold:"
@@ -285,11 +272,23 @@ public class ProjectWriter {
 					int pointY = eLoc.getPosition().y;
 					bw.write(spaces(sp)+"<Transition location data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 					
-					ElementLocation nameLoc = trans.getNamesLocations(GUIManager.locationMoveType.NAME).get(e);
+					ElementLocation nameLoc = trans.getTextsLocations(GUIManager.locationMoveType.NAME).get(e);
 					sheetId = nameLoc.getSheetID();
 					pointX = nameLoc.getPosition().x;
 					pointY = nameLoc.getPosition().y;
 					bw.write(spaces(sp)+"<Transition name offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+
+					ElementLocation alphaLoc = trans.getTextsLocations(GUIManager.locationMoveType.ALPHA).get(e);
+					sheetId = alphaLoc.getSheetID();
+					pointX = alphaLoc.getPosition().x;
+					pointY = alphaLoc.getPosition().y;
+					bw.write(spaces(sp)+"<Transition alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+
+					ElementLocation betaLoc = trans.getTextsLocations(GUIManager.locationMoveType.BETA).get(e);
+					sheetId = betaLoc.getSheetID();
+					pointX = betaLoc.getPosition().x;
+					pointY = betaLoc.getPosition().y;
+					bw.write(spaces(sp)+"<Transition beta offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 				}
 
 				sp = 6;
@@ -326,7 +325,7 @@ public class ProjectWriter {
 					int pointY = eLoc.getPosition().y;
 					bw.write(spaces(sp)+"<MetaNode location data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 					
-					ElementLocation nameLoc = metanode.getNamesLocations(GUIManager.locationMoveType.NAME).get(e);
+					ElementLocation nameLoc = metanode.getTextsLocations(GUIManager.locationMoveType.NAME).get(e);
 					sheetId = nameLoc.getSheetID();
 					pointX = nameLoc.getPosition().x;
 					pointY = nameLoc.getPosition().y;
@@ -558,7 +557,7 @@ public class ProjectWriter {
 			
 			ArrayList<Integer> arcClasses = Check.getArcClassCount();
 			int readArcs = arcClasses.get(1) / 2;
-			readArcs = 0;
+			//readArcs = 0;
 			int totalArcs = arcs.size()-readArcs;
 			if(savedArcs != totalArcs) {
 				GUIManager.getDefaultGUIManager().log("Error: saved "+savedArcs+" out of total "+totalArcs+" arcs.", "error", true);
