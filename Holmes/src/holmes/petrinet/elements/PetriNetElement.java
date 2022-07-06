@@ -1,5 +1,6 @@
 package holmes.petrinet.elements;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import org.simpleframework.xml.Element;
@@ -14,8 +15,12 @@ import org.simpleframework.xml.Element;
  * @author MR - drobne poprawki
  */
 public class PetriNetElement implements Serializable {
+    @Serial
     private static final long serialVersionUID = 3428968829261305581L;
 
+    /**
+     * ARC, PLACE, TRANSITION, META, UNKNOWN
+     */
     public enum PetriNetElementType {ARC, PLACE, TRANSITION, META, UNKNOWN}
 
     @Element

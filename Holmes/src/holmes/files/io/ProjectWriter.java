@@ -88,6 +88,7 @@ public class ProjectWriter {
 			Date date = new Date();
 			bw.write("Project name: "+projName+newline);
 			bw.write("Date: "+dateFormat.format(date)+newline);
+			bw.write("Net type: "+projectCore.getProjectType()+""+newline);
 			
 			bw.write("<Project blocks>"+newline);
 			bw.write("  <Subnets>"+newline);

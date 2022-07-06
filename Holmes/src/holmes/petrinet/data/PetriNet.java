@@ -84,15 +84,24 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private MCTCalculator analyzer;
 	private PetriNetMethods methods;
 	private boolean isSimulationActive = false;
-	
 	public boolean anythingChanged = false;
 	public GUIManager overlord;
-	
+
+
 	/** [<b>ext - inhibitor, reset or equal Arcs present</b>]
-	 * PN, timePN, <b>ext</b>PN, funcPN, timeFuncPN, time<b>Ext</b>PN, func<b>Ext</b>PN, timeFunc<b>Ext</b>PN, stochasticPN, stochasticFuncPN, XTPN
+	 * PN, TPN, PN_extArcs, FPN, timeFPN, TPN_extArcs, FPN_extArcs, timeFPN_extArcs, SPN, functionalSPN, XTPN
 	 */
-	public enum GlobalNetType { PN, timePN, extPN, funcPN, timeFuncPN, timeExtPN, funcExtPN, timeFuncExtPN
-		, stochasticPN, stochasticFuncPN, XTPN }
+	public enum GlobalNetType { PN, TPN, PN_extArcs, FPN, timeFPN, TPN_extArcs, FPN_extArcs, timeFPN_extArcs
+		, SPN, functionalSPN, XTPN }
+
+	/**
+	 *  CLEAN, FUNCTIONAL, EXT_ARCS, FUN_EXT_ARCS
+	 */
+	public enum GlobalNetSubType { CLEAN, FUNCTIONAL, EXT_ARCS, FUN_EXT_ARCS }
+
+	private GlobalNetType projectType = GlobalNetType.PN;
+	private GlobalNetSubType projectSubType = GlobalNetSubType.CLEAN;
+
 	/** SPPED, SPEPT, SPTPT, HOLMESPROJECT */
 	public enum GlobalFileNetType { SPPED, SPEPT, SPTPT, HOLMESPROJECT }
 	
@@ -104,6 +113,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public PetriNet(ArrayList<Node> nod, ArrayList<Arc> ar) {
 		overlord = GUIManager.getDefaultGUIManager();
+		setProjectType(GlobalNetType.PN);
 		getDataCore().nodes = nod;
 		getDataCore().arcs = ar;
 		this.communicationProtocol = new IOprotocols();
@@ -959,8 +969,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void restoreColors() {
 		try {
 			ArrayList<Place> places = getPlaces();
-			for(int p = 0; p<places.size(); p++) {
-				Place place = places.get(p);
+			for (Place place : places) {
 				place.setTokensNumber(0);
 			}
 
@@ -1612,7 +1621,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda rozpoczynająca proces symulatora wykonać inwariantów.
+	 * Metoda rozpoczynająca proces symulatora wykonań inwariantów.
 	 * @param type int - typ symulacji: 0 - zwykła, 1 - czasowa
 	 * @param value - 
 	 * @throws CloneNotSupportedException
@@ -1620,10 +1629,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void startInvSim(int type, int value) throws CloneNotSupportedException {
 		//Timer timer = new Timer();
 		//Date date = new Date();
-		
 		//this.invSimulator = new InvariantsSimulator(abyss.analyzer.InvariantsSimulator.NetType.BASIC, new PetriNet(
 		//				getData().nodes, getData().arcs), get2ndFormInvariantsList(),type, value);
-
 		//invSimulator.startSimulation(SimulatorMode.LOOP);
 	}
 	
@@ -1636,12 +1643,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		for (GraphPanel gp : getGraphPanels()) {
 			gp.getSelectionManager().forceDeselectAllElements();
 		}
-		
 		setNodes(new ArrayList<>());
 		setArcs(new ArrayList<>());
-		
 		repaintAllGraphPanels();
-		
 		ArrayList<GraphPanel> newGraphPanels = new ArrayList<>();
 		for (GraphPanel gp : getGraphPanels()) {
 			int sheetID = gp.getSheetId();
@@ -1654,6 +1658,97 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		setGraphPanels(newGraphPanels);
 		repaintAllGraphPanels();
 	}
-	
-	
+
+	/**
+	 * Zwraca typ sieci.
+	 * @return (<b>GlobalNetType</b>) - np. PN, timePN, <b>ext</b>PN, funcPN, timeFuncPN, time<b>Ext</b>PN, func<b>Ext</b>PN, timeFunc<b>Ext</b>PN, stochasticPN, stochasticFuncPN, XTPN
+	 */
+	public GlobalNetType getProjectType() {
+		return projectType;
+	}
+
+	/**
+	 * Metoda zwraca typ sieci po nazwie.
+	 * @param name (<b>String</b>) nazwa typu.
+	 * @return (<b>GlobalNetType</b>) enum typ sieci.
+	 */
+	public GlobalNetType getNetTypeByName(String name) {
+		return switch (name) {
+			case "TPN" -> GlobalNetType.TPN;
+			case "PN_extArcs" -> GlobalNetType.PN_extArcs;
+			case "FPN" -> GlobalNetType.FPN;
+			case "timeFPN" -> GlobalNetType.timeFPN;
+			case "TPN_extArcs" -> GlobalNetType.TPN_extArcs;
+			case "FPN_extArcs" -> GlobalNetType.FPN_extArcs;
+			case "timeFPN_extArcs" -> GlobalNetType.timeFPN_extArcs;
+			case "SPN" -> GlobalNetType.SPN;
+			case "functionalSPN" -> GlobalNetType.functionalSPN;
+			case "XTPN" -> GlobalNetType.XTPN;
+			default -> GlobalNetType.PN;
+		};
+	}
+
+	/**
+	 * Ustawia główny typ sieci.
+	 * @param projectType (<b>GlobalNetType</b>) - PN, timePN, <b>ext</b>PN, funcPN, timeFuncPN, time<b>Ext</b>PN, func<b>Ext</b>PN, timeFunc<b>Ext</b>PN, stochasticPN, stochasticFuncPN, XTPN
+	 */
+	public void setProjectType(GlobalNetType projectType) {
+		this.projectType = projectType;
+	}
+
+	/**
+	 * Zwraca podtyp sieci.
+	 * @return (<b>getProjectSubType</b>) CLEAN, FUNCTIONAL, EXT_ARCS
+	 */
+	public GlobalNetSubType getProjectSubType() {
+		return projectSubType;
+	}
+
+	/**
+	 * Ustawia podtyp sieci.
+	 * @param projectSubType (<b>getProjectSubType</b>) CLEAN, FUNCTIONAL, EXT_ARCS
+	 */
+	public void setProjectSubType(GlobalNetSubType projectSubType) {
+		this.projectSubType = projectSubType;
+	}
+
+	/**
+	 * Metoda sprawdza, czy sieć zawiera węzły inny niż XTPN.
+	 * @return (<b>boolean</b>) true, jeżeli są inne niż XTPN
+	 */
+	public boolean hasNonXTPNnodes() {
+		boolean result = false;
+		for (Node n : this.dataCore.nodes) {
+			if (n instanceof Place) {
+				if(!((Place) n).isXTPNplace())
+					return true; //zawiera node nie-XTPN
+			} else if (n instanceof Transition){
+				if(!((Transition) n).isXTPNtransition())
+					return true; //zawiera node nie-XTPN
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Zmienia wszystkie non-XTPN nodes w XTPN
+	 */
+	public void transformAllIntoXTPNnodes() {
+		for (Node n : this.dataCore.nodes) {
+			if (n instanceof Place) {
+				Place place = ((Place) n);
+				place.setXTPNplaceStatus(true);
+				place.setGammaMin_xTPN(99, true);
+				place.setGammaMax_xTPN(99, true);
+				place.setGammaModeXTPNstatus(false); //!! tak! można ręcznie każde miejsce potem zmienić
+			} else if (n instanceof Transition){
+				Transition transition = ((Transition) n);
+				transition.setXTPNstatus(true);
+				transition.setTransType(TransitionType.XTPN);
+				transition.setTPNstatus(false);
+				transition.setDPNstatus(false);
+				transition.setSPNtype(Transition.StochaticsType.NONE);
+			}
+		}
+	}
 }

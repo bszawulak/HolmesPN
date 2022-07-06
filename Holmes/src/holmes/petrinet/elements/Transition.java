@@ -34,9 +34,9 @@ public class Transition extends Node {
     private static final long serialVersionUID = -4981812911464514746L;
 
     /**
-     * PN, TPN, CPNbasic, XTPN
+     * PN, TPN, SPN, XTPN, CPNbasic
      */
-    public enum TransitionType {PN, TPN, CPNbasic, XTPN} //, DPN, TDPN, CPNbasic }
+    public enum TransitionType {PN, TPN, SPN, XTPN, CPNbasic} //, DPN, TDPN, CPNbasic }
     private TransitionType transType;
     private static final int realRadius = 15;
 
@@ -54,7 +54,6 @@ public class Transition extends Node {
     private String transAdditionalText = "";
     private boolean showTransitionAddText = false;
     private Color transColorValue = new Color(255, 255, 255);
-    //protected boolean showIntOnly = false; //TODO
     private boolean valueVisibilityStatus = false;
     //inne napisy, np MCT (?)
     public int txtXoff = 0;
@@ -97,15 +96,13 @@ public class Transition extends Node {
     private ArrayList<FunctionContainer> fList;
 
     //tranzycja stochastyczna:
-
     /**
-     * ST, DT, IM, SchT - Stochastic Transition, Deterministic T., Immediate T., Scheduled T.
+     * ST, DT, IM, SchT, NONE - Stochastic Transition, Deterministic T., Immediate T., Scheduled T.
      */
-    public enum StochaticsType {ST, DT, IM, SchT}
+    public enum StochaticsType {ST, DT, IM, SchT, NONE}
     private StochaticsType stochasticType;
     private double firingRate = 1.0;
     private SPNtransitionData SPNbox = null;
-
     //SSA
     private double SPNprobTime = 0.0;
 
@@ -162,6 +159,7 @@ public class Transition extends Node {
         this.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
+        stochasticType = StochaticsType.NONE;
     }
 
     /**
@@ -176,7 +174,7 @@ public class Transition extends Node {
         this.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
-        stochasticType = StochaticsType.ST;
+        stochasticType = StochaticsType.NONE;
     }
 
     /**
@@ -192,7 +190,7 @@ public class Transition extends Node {
         this.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
-        stochasticType = StochaticsType.ST;
+        stochasticType = StochaticsType.NONE;
     }
 
     public Transition(String error) {
@@ -201,7 +199,7 @@ public class Transition extends Node {
         this.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
-        stochasticType = StochaticsType.ST;
+        stochasticType = StochaticsType.NONE;
         this.setName(error);
     }
 
@@ -242,7 +240,7 @@ public class Transition extends Node {
         for (ElementLocation el : getElementLocations()) {
             for (Arc arc : el.getOutArcs()) {
                 Node n = arc.getEndNode();
-                if (!postPlaces.contains(n)) {
+                if (!postPlaces.contains((Place)n)) {
                     postPlaces.add((Place) n);
                 }
             }
@@ -252,9 +250,9 @@ public class Transition extends Node {
 
     /**
      * Metoda pozwala pobrać łączną liczbę dostępnych tokenów ze wszystkich miejsc wejściowych.
-     *
      * @return int - liczba dostępnych tokenów z pola availableTokens.
      */
+    @SuppressWarnings("unused")
     public int getAvailableTokens() {
         int availableTokens = 0;
         for (Arc arc : getInArcs()) {
@@ -269,6 +267,7 @@ public class Transition extends Node {
      *
      * @return int - liczba tokenów potrzebnych do aktywacji z pola requiredTokens
      */
+    @SuppressWarnings("unused")
     public int getRequiredTokens() {
         int requiredTokens = 0;
         for (Arc arc : getInArcs()) {
@@ -297,14 +296,6 @@ public class Transition extends Node {
         this.isGlowedINV = isGlowed;
         this.firingValueInInvariant = numericalValueShowed;
     }
-
-    /**
-     * Metoda pozwala określic, czy tranzycja ma byc podświetlona.
-     * @param value boolean - true, jeśli ma świecić
-     */
-    //public void isGlowed_INV(boolean value) {
-     //   this.isGlowedINV = value;
-    //}
 
     /**
      * Metoda sprawdza, czy tranzycja świeci będąc częcią zbioru MCT.

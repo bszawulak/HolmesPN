@@ -1610,8 +1610,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda sprawdza do jakiego komponentu nadrzędnego należy przesłany w parametrze i go
-	 * stamtąd usuwa.
+	 * Metoda sprawdza do jakiego komponentu nadrzędnego należy przesłany w parametrze i go stamtąd usuwa.
 	 * @param x Dockable - komponent
 	 */
 	public void cleanLostOne(Dockable x) {

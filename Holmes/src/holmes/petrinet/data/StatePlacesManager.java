@@ -133,12 +133,17 @@ public class StatePlacesManager {
 	 * Przywraca aktualnie wskazywany stan m0.
 	 */
 	public void restoreSelectedState() {
-		ArrayList<Place> places = pn.getPlaces();
-		StatePlacesVector psVector = statesMatrix.get(selectedState);
-		for(int p=0; p<places.size(); p++) {
-			Place place = places.get(p);
-			place.setTokensNumber((int)psVector.getTokens(p));
-			place.freeReservedTokens();
+		if(pn.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+			//TODO: inna macierz danych!!!!!
+
+		} else {
+			ArrayList<Place> places = pn.getPlaces();
+			StatePlacesVector psVector = statesMatrix.get(selectedState);
+			for(int p=0; p<places.size(); p++) {
+				Place place = places.get(p);
+				place.setTokensNumber((int)psVector.getTokens(p));
+				place.freeReservedTokens();
+			}
 		}
 	}
 	

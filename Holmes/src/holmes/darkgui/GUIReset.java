@@ -97,7 +97,8 @@ public class GUIReset {
 		overlord.log("Net data deletion initiated.", "text", true);
 		
 		//CLEAR PETRI NET DATA, kolejność MA ZNACZENIE JAK CHOLERA!!! Nie zmieniać bo coś j... się zepsuje.
-		pNet.resetData(); // tylko w ten sposób!!!! 
+		pNet.resetData(); // tylko w ten sposób!!!!
+		pNet.setProjectType(PetriNet.GlobalNetType.PN);
 		pNet.setT_InvMatrix(null, false);
 		pNet.setP_InvMatrix(null);
 		pNet.setMCTMatrix(null, false);

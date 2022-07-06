@@ -131,7 +131,7 @@ public class SPNdataVectorManager {
 	
 	/**
 	 * Zastępuje wskazany stan SPN aktualnym stanem firing rates sieci.
-	 * @param stateID int - wskazany stan z tabeli
+	 * @param vectorID (<b>int</b>) wskazany stan z tabeli.
 	 */
 	public void replaceSPNvectorWithNetFRates(int vectorID) {
 		ArrayList<Transition> transitions = pn.getTransitions();

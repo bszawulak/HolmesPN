@@ -669,8 +669,6 @@ public abstract class Node extends PetriNetElement {
 			case TAU -> this.tauLocations = namesLocations;
 			default -> this.namesLocations = namesLocations;
 		}
-
-
 	}
 	
 	/**

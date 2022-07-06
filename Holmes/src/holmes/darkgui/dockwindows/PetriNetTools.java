@@ -3,6 +3,7 @@ package holmes.darkgui.dockwindows;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Point;
+import java.io.Serial;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -33,6 +34,7 @@ import com.javadocking.dockable.Dockable;
  * @author MR - wszystkie dodatkowe elementy sieci poza typowymi Place/Transition/Arc
  */
 public class PetriNetTools extends SingleDock implements TreeSelectionListener {
+	@Serial
 	private static final long serialVersionUID = 5385847227073467035L;
 	private Dockable dockable;
 	private JPanel panel;
@@ -65,19 +67,21 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Transition"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Arc"));
 		basicPetriNetsNode.add(new DefaultMutableTreeNode("Read Arc"));
-		basicPetriNetsNode.add(new DefaultMutableTreeNode("Inhibitor Arc"));
-		basicPetriNetsNode.add(new DefaultMutableTreeNode("Reset Arc"));
-		basicPetriNetsNode.add(new DefaultMutableTreeNode("Equal Arc"));
-		//basicPetriNetsNode.add(new DefaultMutableTreeNode("Modifier Arc"));
 
 		DefaultMutableTreeNode xTPNNode = new DefaultMutableTreeNode("extended Time PN");
 		xTPNNode.add(new DefaultMutableTreeNode("xPlace"));
 		xTPNNode.add(new DefaultMutableTreeNode("xTransition"));
 		xTPNNode.add(new DefaultMutableTreeNode("xArc"));
 
-		DefaultMutableTreeNode otherTransNode = new DefaultMutableTreeNode("TPN, FPN, SPN");
+		DefaultMutableTreeNode extArcsNode = new DefaultMutableTreeNode("extended Arcs");
+		extArcsNode.add(new DefaultMutableTreeNode("Inhibitor Arc"));
+		extArcsNode.add(new DefaultMutableTreeNode("Reset Arc"));
+		extArcsNode.add(new DefaultMutableTreeNode("Equal Arc"));
+		//basicPetriNetsNode.add(new DefaultMutableTreeNode("Modifier Arc"));
+
+		DefaultMutableTreeNode otherTransNode = new DefaultMutableTreeNode("TPN, SPN");
 		otherTransNode.add(new DefaultMutableTreeNode("(TPN) Time"));
-		otherTransNode.add(new DefaultMutableTreeNode("(FPN) Functional"));
+		//otherTransNode.add(new DefaultMutableTreeNode("(FPN) Functional"));
 		otherTransNode.add(new DefaultMutableTreeNode("(SPN) Stochastic"));
 
 		DefaultMutableTreeNode colorNetsNode = new DefaultMutableTreeNode("Experimental");
@@ -92,12 +96,12 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		hierachicalNode.add(new DefaultMutableTreeNode("Subnet T-type"));
 		hierachicalNode.add(new DefaultMutableTreeNode("Subnet P-type"));
 		hierachicalNode.add(new DefaultMutableTreeNode("General Subnet"));
-		
-		// Create the root and add the country nodes.
+
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Tools");
 		rootNode.add(miscNode);
 		rootNode.add(basicPetriNetsNode);
 		rootNode.add(xTPNNode);
+		rootNode.add(extArcsNode);
 		rootNode.add(otherTransNode);
 		rootNode.add(colorNetsNode);
 		rootNode.add(hierachicalNode);
@@ -138,7 +142,6 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 
 	/**
 	 * Metoda ustawiająca podokno dokowalne narzędzi intefejsu programu.
-	 * @return Dockable - obiekt dokowalny
 	 */
 	private void setDockable(Dockable dockable) {
 		this.dockable = dockable;
@@ -183,81 +186,31 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		if (node.isLeaf()) {
 			String description = (String) nodeInfo;
 			switch (description) {
-			case "Pointer":
-				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
-				break;
-			case "Eraser":
-				guiManager.getWorkspace().setGraphMode(DrawModes.ERASER);
-				break;
-			case "Place":
-				guiManager.getWorkspace().setGraphMode(DrawModes.PLACE);
-				break;
-			case "Transition":
-				guiManager.getWorkspace().setGraphMode(DrawModes.TRANSITION);
-				break;
-			case "(TPN) Time":
-				guiManager.getWorkspace().setGraphMode(DrawModes.TIMETRANSITION);
-				break;
-			case "(FPN) Functional":
-				guiManager.getWorkspace().setGraphMode(DrawModes.FUNCTIONALTRANS);
-				break;
-			case "(SPN) Stochastic":
-				guiManager.getWorkspace().setGraphMode(DrawModes.STOCHASTICTRANS);
-				break;
-			case "(SPN) Immediate":
-				guiManager.getWorkspace().setGraphMode(DrawModes.IMMEDIATETRANS);
-				break;
-			case "(SPN) Deterministic":
-				guiManager.getWorkspace().setGraphMode(DrawModes.DETERMINISTICTRANS);
-				break;
-			case "(SPN) Scheduled":
-				guiManager.getWorkspace().setGraphMode(DrawModes.SCHEDULEDTRANS);
-				break;
-			case "Arc":
-				guiManager.getWorkspace().setGraphMode(DrawModes.ARC);
-				break;
-			case "Read Arc":
-				guiManager.getWorkspace().setGraphMode(DrawModes.READARC);
-				break;
-			case "Inhibitor Arc":
-				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_INHIBITOR);
-				break;
-			case "Reset Arc":
-				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_RESET);
-				break;
-			case "Equal Arc":
-				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_EQUAL);
-				break;
-			case "Modifier Arc":
-				guiManager.getWorkspace().setGraphMode(DrawModes.ARC_MODIFIER);
-				break;
-			case "xPlace":
-				guiManager.getWorkspace().setGraphMode(DrawModes.XPLACE);
-				break;
-			case "xArc":
-				guiManager.getWorkspace().setGraphMode(DrawModes.XARC);
-				break;
-			case "xTransition":
-				guiManager.getWorkspace().setGraphMode(DrawModes.XTRANSITION);
-				break;
-			case "Subnet T-type":
-				guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_T);
-				break;
-			case "Subnet P-type":
-				guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_P);
-				break;
-			case "General Subnet":
-				guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_PT);
-				break;
-			case "C-Place":
-				guiManager.getWorkspace().setGraphMode(DrawModes.CPLACE);
-				break;
-			case "C-Transition":
-				guiManager.getWorkspace().setGraphMode(DrawModes.CTRANSITION);
-				break;
-			case "C-Arc":
-				guiManager.getWorkspace().setGraphMode(DrawModes.CARC);
-				break;
+				case "Pointer" -> guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
+				case "Eraser" -> guiManager.getWorkspace().setGraphMode(DrawModes.ERASER);
+				case "Place" -> guiManager.getWorkspace().setGraphMode(DrawModes.PLACE);
+				case "Transition" -> guiManager.getWorkspace().setGraphMode(DrawModes.TRANSITION);
+				case "(TPN) Time" -> guiManager.getWorkspace().setGraphMode(DrawModes.TIMETRANSITION);
+				//case "(FPN) Functional" -> guiManager.getWorkspace().setGraphMode(DrawModes.FUNCTIONALTRANS);
+				case "(SPN) Stochastic" -> guiManager.getWorkspace().setGraphMode(DrawModes.STOCHASTICTRANS);
+				case "(SPN) Immediate" -> guiManager.getWorkspace().setGraphMode(DrawModes.IMMEDIATETRANS);
+				case "(SPN) Deterministic" -> guiManager.getWorkspace().setGraphMode(DrawModes.DETERMINISTICTRANS);
+				case "(SPN) Scheduled" -> guiManager.getWorkspace().setGraphMode(DrawModes.SCHEDULEDTRANS);
+				case "Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.ARC);
+				case "Read Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.READARC);
+				case "Inhibitor Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.ARC_INHIBITOR);
+				case "Reset Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.ARC_RESET);
+				case "Equal Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.ARC_EQUAL);
+				case "Modifier Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.ARC_MODIFIER);
+				case "xPlace" -> guiManager.getWorkspace().setGraphMode(DrawModes.XPLACE);
+				case "xArc" -> guiManager.getWorkspace().setGraphMode(DrawModes.XARC);
+				case "xTransition" -> guiManager.getWorkspace().setGraphMode(DrawModes.XTRANSITION);
+				case "Subnet T-type" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_T);
+				case "Subnet P-type" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_P);
+				case "General Subnet" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_PT);
+				case "C-Place" -> guiManager.getWorkspace().setGraphMode(DrawModes.CPLACE);
+				case "C-Transition" -> guiManager.getWorkspace().setGraphMode(DrawModes.CTRANSITION);
+				case "C-Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.CARC);
 			}
 		}
 	}
@@ -265,9 +218,9 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	/**
 	 * Klasa wewnętrzna odpowiedzialna za kształt węzłów drzewa narzędziowego.
 	 * @author students
-	 *
 	 */
-	private class LeafRenderer extends DefaultTreeCellRenderer {
+	private static class LeafRenderer extends DefaultTreeCellRenderer {
+		@Serial
 		private static final long serialVersionUID = 3169140404884453079L;
 		private ImageIcon placeIcon, transitionIcon, pointerIcon,
 				eraserIcon, timeTransitionIcon, functionalTransIcon,
@@ -337,106 +290,106 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			String nodeInfo = (String) (node.getUserObject());
 			if (leaf) {
 				switch (nodeInfo) {
-				case "Pointer":
-					setIcon(pointerIcon);
-					setToolTipText("Allows to point at and move net components on the sheet.");
-					break;
-				case "Eraser":
-					setIcon(eraserIcon);
-					setToolTipText("Allows to delete net components.");
-					break;
-				case "Place":
-					setIcon(placeIcon);
-					setToolTipText("Allows you to place a Place on the sheet.");
-					break;
-				case "Transition":
-					setIcon(transitionIcon);
-					setToolTipText("Allows you to place a Transition on the sheet.");
-					break;
-				case "(TPN) Time":
-					setIcon(timeTransitionIcon);
-					setToolTipText("Allows you to place a Time Transition on the sheet.");
-					break;
-				case "(FPN) Functional":
-					setIcon(functionalTransIcon);
-					setToolTipText("Allows you to place a Functional Transition on the sheet.");
-					break;
-				case "(SPN) Stochastic":
-					setIcon(stochasticTrans);
-					setToolTipText("Allows you to place a Stochastic Transition on the sheet.");
-					break;
-				case "(SPN) Immediate":
-					setIcon(immediateTransIcon);
-					setToolTipText("Allows you to place a Immediate Transition on the sheet.");
-					break;
-				case "(SPN) Deterministic":
-					setIcon(deterministicTransIcon);
-					setToolTipText("Allows you to place a Deterministic Transition on the sheet.");
-					break;
-				case "(SPN) Scheduled":
-					setIcon(scheduledTransIcon);
-					setToolTipText("Allows you to place a Scheduled Transition on the sheet.");
-					break;
-				case "Arc":
-					setIcon(arcIcon);
-					setToolTipText("Allows you to place an Arc on the sheet.");
-					break;
-				case "Read Arc":
-					setIcon(arcIconRead);
-					setToolTipText("Allows you to place an Readarc on the sheet.");
-					break;
-				case "Inhibitor Arc":
-					setIcon(arcIconInh);
-					setToolTipText("Allows you to place an Inhibitor Arc on the sheet.");
-					break;
-				case "Reset Arc":
-					setIcon(arcIconRst);
-					setToolTipText("Allows you to place a Reset Arc on the sheet.");
-					break;
-				case "Equal Arc":
-					setIcon(arcIconEql);
-					setToolTipText("Allows you to place an Equal Arc on the sheet.");
-					break;
-				case "Modifier Arc":
-					setIcon(arcIconModifier);
-					setToolTipText("Allows you to place an Modifier Arc on the sheet.");
-					break;
-				case "xPlace":
-					setIcon(xPlaceIcon);
-					setToolTipText("xTPN place with time range.");
-					break;
-				case "xTransition":
-					setIcon(xTransIcon);
-					setToolTipText("xTPN transition with TPN and DPN-like time ranges.");
-					break;
-				case "xArc":
-					setIcon(xArcIcon);
-					setToolTipText("xTPN new arc");
-					break;
-				case "Subnet T-type":
-					setIcon(subnetT);
-					setToolTipText("Allows you to create subnet with place-interfaces.");
-					break;
-				case "Subnet P-type":
-					setIcon(subnetP);
-					setToolTipText("Allows you to create subnet with transition-interfaces.");
-					break;
-				case "General Subnet":
-					setIcon(subnetPT);
-					setToolTipText("Allows you to create subnet with P/T interfaces.");
-					break;
-				case "C-Place":
-					setIcon(cplaceIcon);
-					setToolTipText("Allows you to create colored place.");
-					break;
-				case "C-Transition":
-					setIcon(ctransitionIcon);
-					setToolTipText("Allows you to create colored transition.");
-					break;
-				case "C-Arc":
-					setIcon(carcIcon);
-					setToolTipText("Allows you to create arc for colored net.");
-					break;
+					case "Pointer" -> {
+						setIcon(pointerIcon);
+						setToolTipText("Allows to point at and move net components on the sheet.");
+					}
+					case "Eraser" -> {
+						setIcon(eraserIcon);
+						setToolTipText("Allows to delete net components.");
+					}
+					case "Place" -> {
+						setIcon(placeIcon);
+						setToolTipText("Allows you to place a Place on the sheet.");
+					}
+					case "Transition" -> {
+						setIcon(transitionIcon);
+						setToolTipText("Allows you to place a Transition on the sheet.");
+					}
+					case "(TPN) Time" -> {
+						setIcon(timeTransitionIcon);
+						setToolTipText("Allows you to place a Time Transition on the sheet.");
+					}
+					//case "(FPN) Functional" -> {
+					//	setIcon(functionalTransIcon);
+					//	setToolTipText("Allows you to place a Functional Transition on the sheet.");
+					//}
+					case "(SPN) Stochastic" -> {
+						setIcon(stochasticTrans);
+						setToolTipText("Allows you to place a Stochastic Transition on the sheet.");
+					}
+					case "(SPN) Immediate" -> {
+						setIcon(immediateTransIcon);
+						setToolTipText("Allows you to place a Immediate Transition on the sheet.");
+					}
+					case "(SPN) Deterministic" -> {
+						setIcon(deterministicTransIcon);
+						setToolTipText("Allows you to place a Deterministic Transition on the sheet.");
+					}
+					case "(SPN) Scheduled" -> {
+						setIcon(scheduledTransIcon);
+						setToolTipText("Allows you to place a Scheduled Transition on the sheet.");
+					}
+					case "Arc" -> {
+						setIcon(arcIcon);
+						setToolTipText("Allows you to place an Arc on the sheet.");
+					}
+					case "Read Arc" -> {
+						setIcon(arcIconRead);
+						setToolTipText("Allows you to place an Readarc on the sheet.");
+					}
+					case "Inhibitor Arc" -> {
+						setIcon(arcIconInh);
+						setToolTipText("Allows you to place an Inhibitor Arc on the sheet.");
+					}
+					case "Reset Arc" -> {
+						setIcon(arcIconRst);
+						setToolTipText("Allows you to place a Reset Arc on the sheet.");
+					}
+					case "Equal Arc" -> {
+						setIcon(arcIconEql);
+						setToolTipText("Allows you to place an Equal Arc on the sheet.");
+					}
+					case "Modifier Arc" -> {
+						setIcon(arcIconModifier);
+						setToolTipText("Allows you to place an Modifier Arc on the sheet.");
+					}
+					case "xPlace" -> {
+						setIcon(xPlaceIcon);
+						setToolTipText("xTPN place with time range.");
+					}
+					case "xTransition" -> {
+						setIcon(xTransIcon);
+						setToolTipText("xTPN transition with TPN and DPN-like time ranges.");
+					}
+					case "xArc" -> {
+						setIcon(xArcIcon);
+						setToolTipText("xTPN new arc");
+					}
+					case "Subnet T-type" -> {
+						setIcon(subnetT);
+						setToolTipText("Allows you to create subnet with place-interfaces.");
+					}
+					case "Subnet P-type" -> {
+						setIcon(subnetP);
+						setToolTipText("Allows you to create subnet with transition-interfaces.");
+					}
+					case "General Subnet" -> {
+						setIcon(subnetPT);
+						setToolTipText("Allows you to create subnet with P/T interfaces.");
+					}
+					case "C-Place" -> {
+						setIcon(cplaceIcon);
+						setToolTipText("Allows you to create colored place.");
+					}
+					case "C-Transition" -> {
+						setIcon(ctransitionIcon);
+						setToolTipText("Allows you to create colored transition.");
+					}
+					case "C-Arc" -> {
+						setIcon(carcIcon);
+						setToolTipText("Allows you to create arc for colored net.");
+					}
 				}
 			} else {
 				setToolTipText(null); // no tool tip

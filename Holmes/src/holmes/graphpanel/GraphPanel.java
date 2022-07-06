@@ -3,6 +3,7 @@ package holmes.graphpanel;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -40,6 +41,7 @@ import holmes.workspace.WorkspaceSheet;
  * @author MR - zmiany, zmiany, zmiany
  */
 public class GraphPanel extends JComponent {
+	@Serial
 	private static final long serialVersionUID = -5746225670483573975L;
 	private static final int meshSize = 20;
 	private GUIManager overlord;
@@ -116,7 +118,8 @@ public class GraphPanel extends JComponent {
 		this.revalidate();
 		this.repaint();
 	}
-	
+
+	@SuppressWarnings("unused")
 	public void resetNodesAndArcs(ArrayList<Node> nodes, ArrayList<Arc> arcs) {
 		this.nodes = nodes;
 		this.arcs = arcs;
@@ -340,7 +343,7 @@ public class GraphPanel extends JComponent {
 	private void debugInfo(Graphics2D g2d) {
 		g2d.setColor(Color.RED);
 		g2d.setFont(new Font("TimesRoman", Font.BOLD, 15));
-		String status = "";
+		String status;
 		
 		int x = 20;
 		int y = 0;
@@ -380,7 +383,7 @@ public class GraphPanel extends JComponent {
 		
 		int transDelay = overlord.simSettings.getTransDelay();
 		status = "Trans. firing delay: "+transDelay;
-		g2d.drawString(status, x, y+=20);
+		g2d.drawString(status, x, y); //last one y
 	}
 
 	/**
@@ -475,7 +478,7 @@ public class GraphPanel extends JComponent {
 		int x = oldX+el.getPosition().x;
 		int y = oldY+el.getPosition().y;
 		
-		if(isLegalLocation(new Point(x, y)) == true)
+		if(isLegalLocation(new Point(x, y)))
 			n.getTextsLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
 		
 		return n.getTextsLocations(nameType).get(nameLocIndex).getPosition();
@@ -547,6 +550,21 @@ public class GraphPanel extends JComponent {
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
 		}
 	}
+
+	/**
+	 * Metoda związana z mousePressed(MouseEvent).
+	 * @param p (Point) punkt dodawania tranzycji stochastycznej.
+	 */
+	private void addNewStochasticTransition(Point p) {
+		if (isLegalLocation(p)) {
+			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, p);
+			n.setSPNtype(Transition.StochaticsType.ST);
+			n.setTransType(TransitionType.SPN);
+			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
+			getNodes().add(n);
+			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
+		}
+	}
 	
 	/**
 	 * Metoda związana z mousePressed(MouseEvent).
@@ -611,6 +629,7 @@ public class GraphPanel extends JComponent {
 	 * Metoda związana z mousePressed(MouseEvent).
 	 * @param p (Point) punkt dodawania tranzycji funkcyjnej/
 	 */
+	@SuppressWarnings("unused")
 	private void addNewFunctionalTransition(Point p) {
 		if (isLegalLocation(p)) {
 			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, p);
@@ -818,7 +837,7 @@ public class GraphPanel extends JComponent {
 		
 	/**
 	 * 
-	 * @return
+	 * @return boolean
 	 */
 	public boolean isDrawMesh() {
 		return drawMesh;
@@ -826,8 +845,9 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * 
-	 * @param drawMesh
+	 * @param drawMesh something?
 	 */
+	@SuppressWarnings("unused")
 	public void setDrawMesh(boolean drawMesh) {
 		this.drawMesh = drawMesh;
 		this.invalidate();
@@ -908,7 +928,7 @@ public class GraphPanel extends JComponent {
 	 * @author students
 	 *
 	 */
-	private class KeyboardHandler implements KeyListener {
+	private static class KeyboardHandler implements KeyListener {
 		@Override
 		public void keyTyped(KeyEvent e) {
 			System.out.println(e.getKeyChar());
@@ -956,12 +976,12 @@ public class GraphPanel extends JComponent {
 		 */
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
-				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown() == false)
+				if (e.getButton() == MouseEvent.BUTTON1 && !e.isShiftDown())
 					getSelectionManager().doubleClickReactionHandler();
-				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown() == true)
+				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown())
 					getSelectionManager().decreaseTokensNumber();
 			} else if (e.getClickCount() == 1) {
-				if (e.getButton() == MouseEvent.BUTTON1 && e.isControlDown() == true) {
+				if (e.getButton() == MouseEvent.BUTTON1 && e.isControlDown()) {
 					getSelectionManager().doubleClickReactionHandler();
 				}
 			}
@@ -1010,95 +1030,118 @@ public class GraphPanel extends JComponent {
 
 				if(e.isAltDown()) //wycentruj ekran
 					centerOnPoint(mousePt);
-				
+
+				PetriNet project = overlord.getWorkspace().getProject();
+
 				switch (getDrawMode()) {
-					case POINTER:
+					case POINTER -> {
 						getSelectionManager().selectSheet();
 						setSelectingRect(new Rectangle(mousePt.x, mousePt.y, 0, 0));
 						clearDrawnArc();
-						break;
-					case PLACE:
+					}
+					case PLACE -> {
+						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+							JOptionPane.showMessageDialog(null, "Normal place cannot be used with XTPN nodes.",
+									"Problem", JOptionPane.WARNING_MESSAGE);
+						} else {
+							_putPlace();
+						}
+					}
+					case TRANSITION -> {
+						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+							JOptionPane.showMessageDialog(null, "Normal transition cannot be used with XTPN nodes.",
+									"Problem", JOptionPane.WARNING_MESSAGE);
+						} else {
+							_putTransition();
+						}
+					}
+					case STOCHASTICTRANS -> {
+						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+							JOptionPane.showMessageDialog(null, "Stochastic transition cannot be used with XTPN nodes.",
+									"Problem", JOptionPane.WARNING_MESSAGE);
+						} else {
+							_putStochasticTransition();
+						}
+					}
+					case ARC, XARC -> {
 						overlord.getWorkspace().getProject().restoreMarkingZero();
-						
-						addNewPlace(mousePt);
-						overlord.reset.reset2ndOrderData(true);
-						overlord.markNetChange();
-						break;
-					case TRANSITION:
-						overlord.getWorkspace().getProject().restoreMarkingZero();
-						
-						addNewTransition(mousePt);
-						overlord.reset.reset2ndOrderData(true);
-						overlord.markNetChange();
-						break;
-					case STOCHASTICTRANS:
-						overlord.getWorkspace().getProject().restoreMarkingZero();
-						
-						addNewTransition(mousePt);
-						overlord.reset.reset2ndOrderData(true);
-						overlord.markNetChange();
-						break;
-					case FUNCTIONALTRANS:
-						overlord.getWorkspace().getProject().restoreMarkingZero();
-						
-						addNewFunctionalTransition(mousePt);
-						overlord.reset.reset2ndOrderData(true);
-						overlord.markNetChange();
-						break;
-					case ARC:
-						overlord.getWorkspace().getProject().restoreMarkingZero();
-						
 						clearDrawnArc();
-						break;
-					case TIMETRANSITION:
-						overlord.getWorkspace().getProject().restoreMarkingZero();
-						
-						addNewTimeTransition(mousePt);
-						overlord.reset.reset2ndOrderData(true);
-						overlord.markNetChange();
-						break;
-					case XTRANSITION:
-						overlord.getWorkspace().getProject().restoreMarkingZero();
-						addNewXTPNTransition(mousePt);
-						overlord.reset.reset2ndOrderData(true);
-						overlord.markNetChange();
-						break;
-					case XPLACE:
-						overlord.getWorkspace().getProject().restoreMarkingZero();
-						addNewNXTPNPlace(mousePt);
-						overlord.reset.reset2ndOrderData(true);
-						overlord.markNetChange();
-						break;
-					case XARC:
-						overlord.getWorkspace().getProject().restoreMarkingZero();
-
-						clearDrawnArc();
-						break;
-					case CPLACE:
-						overlord.getWorkspace().getProject().restoreMarkingZero();
-						
-						addNewCPlace(mousePt);
-						overlord.reset.reset2ndOrderData(true);
-						overlord.markNetChange();
-						break;
-					case CTRANSITION:
-						overlord.getWorkspace().getProject().restoreMarkingZero();
-						
-						addNewCTransition(mousePt);
-						overlord.reset.reset2ndOrderData(true);
-						overlord.markNetChange();
-						break;
-					case SUBNET_P:
-						addNewSubnetP(mousePt);
-						break;
-					case SUBNET_T:
-						addNewSubnetT(mousePt);
-						break;
-					case SUBNET_PT:
-						addNewSubnetPT(mousePt);
-						break;
-					default:
-						break;
+					}
+					case TIMETRANSITION -> {
+						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+							JOptionPane.showMessageDialog(null, "Time transition cannot be used with XTPN nodes.",
+									"Problem", JOptionPane.WARNING_MESSAGE);
+						} else {
+							_putTimeTransition();
+						}
+					}
+					case XTRANSITION -> {
+						if(project.getNodes().size() == 0) {
+							_putXTPNtransition(project);
+						} else if (project.hasNonXTPNnodes()){
+							String[] options = {"Place and transform project", "Cancel placement"};
+							int answer = JOptionPane.showOptionDialog(null,
+									"Holmes detected non-XTPN places or transitions. XTPN transition can only be" +
+											"\nused with other XTPN elements. Transform all non-XTPN nodes into XTPN?" +
+											"\nThis operation cannot be undone, cancel and save project if necessary." +
+											"\nTransformed places (into XTPN) will still have gamma mode turned off.",
+									"Non-XTPN nodes present",
+									JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+							if (answer == 0) {
+								project.transformAllIntoXTPNnodes();
+								_putXTPNtransition(project);
+							}
+						} else { //to samo co w pierwszy ifie
+							_putXTPNtransition(project);
+						}
+					}
+					case XPLACE -> {
+						if(project.getNodes().size() == 0) {
+							_putXTPNtransition(project);
+						} else if (project.hasNonXTPNnodes()){
+							String[] options = {"Place and transform project", "Cancel placement"};
+							int answer = JOptionPane.showOptionDialog(null,
+									"Holmes detected non-XTPN places or transitions. XTPN place can only be" +
+											"\nused with other XTPN elements. Transform all non-XTPN nodes into XTPN?" +
+											"\nThis operation cannot be undone, cancel and save project if necessary." +
+											"\nTransformed places (into XTPN) will still have gamma mode turned off.",
+									"Non-XTPN nodes present",
+									JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+							if (answer == 0) {
+								project.transformAllIntoXTPNnodes();
+								_putXTPNplace(project);
+							}
+						} else { //to samo co w pierwszy ifie
+							_putXTPNplace(project);
+						}
+					}
+					case CPLACE -> {
+						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+							JOptionPane.showMessageDialog(null, "Color place cannot be used with XTPN nodes.",
+									"Problem", JOptionPane.WARNING_MESSAGE);
+						} else {
+							_putColorPlace();
+						}
+					}
+					case CTRANSITION -> {
+						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+							JOptionPane.showMessageDialog(null, "Color transition cannot be used with XTPN nodes.",
+									"Problem", JOptionPane.WARNING_MESSAGE);
+						} else {
+							_putColorTransition();
+						}
+					}
+					case SUBNET_P -> addNewSubnetP(mousePt);
+					case SUBNET_T -> addNewSubnetT(mousePt);
+					case SUBNET_PT -> addNewSubnetPT(mousePt);
+					//case FUNCTIONALTRANS -> {
+					//	overlord.getWorkspace().getProject().restoreMarkingZero();
+					//	addNewFunctionalTransition(mousePt);
+					//	overlord.reset.reset2ndOrderData(true);
+					//	overlord.markNetChange();
+					//}
+					default -> {
+					}
 				}
 			} else if (el != null) {
 				// kliknięto w Node, możliwe że też w łuk, ale nie zostanie on
@@ -1113,8 +1156,7 @@ public class GraphPanel extends JComponent {
 					handleArcsDrawing(el, getDrawMode());
 					
 				} else if (getDrawMode() == DrawModes.ERASER) { //kasowanie czegoś
-					if(overlord.reset.isSimulatorActiveWarning(
-							"Operation impossible when simulator is working.", "Warning") == true)
+					if(overlord.reset.isSimulatorActiveWarning("Operation impossible when simulator is working.", "Warning"))
 						return;
 					
 					Object[] options = {"Delete", "Cancel",};
@@ -1166,7 +1208,7 @@ public class GraphPanel extends JComponent {
 						getSelectionManager().deleteArc(a);
 						overlord.reset.reset2ndOrderData(true);
 						overlord.markNetChange();
-					}	
+					}
 				} else {
 					if (e.isShiftDown()) {
 						a.setSelected(true);
@@ -1185,6 +1227,57 @@ public class GraphPanel extends JComponent {
 			e.getComponent().repaint();
 		}
 
+		private void _putPlace() {
+			overlord.getWorkspace().getProject().restoreMarkingZero();
+			addNewPlace(mousePt);
+			overlord.reset.reset2ndOrderData(true);
+			overlord.markNetChange();
+		}
+		private void _putTransition() {
+			overlord.getWorkspace().getProject().restoreMarkingZero();
+			addNewTransition(mousePt);
+			overlord.reset.reset2ndOrderData(true);
+			overlord.markNetChange();
+		}
+		private void _putStochasticTransition() {
+			overlord.getWorkspace().getProject().restoreMarkingZero();
+			addNewStochasticTransition(mousePt);
+			overlord.reset.reset2ndOrderData(true);
+			overlord.markNetChange();
+		}
+		private void _putTimeTransition() {
+			overlord.getWorkspace().getProject().restoreMarkingZero();
+			addNewTimeTransition(mousePt);
+			overlord.reset.reset2ndOrderData(true);
+			overlord.markNetChange();
+		}
+		private void _putColorPlace() {
+			overlord.getWorkspace().getProject().restoreMarkingZero();
+			addNewCPlace(mousePt);
+			overlord.reset.reset2ndOrderData(true);
+			overlord.markNetChange();
+		}
+		private void _putColorTransition() {
+			overlord.getWorkspace().getProject().restoreMarkingZero();
+			addNewCTransition(mousePt);
+			overlord.reset.reset2ndOrderData(true);
+			overlord.markNetChange();
+		}
+		private void _putXTPNtransition(PetriNet project) {
+			project.setProjectType(PetriNet.GlobalNetType.XTPN); // ustawia status projektu
+			overlord.getWorkspace().getProject().restoreMarkingZero();
+			addNewXTPNTransition(mousePt);
+			overlord.reset.reset2ndOrderData(true);
+			overlord.markNetChange();
+		}
+		private void _putXTPNplace(PetriNet project) {
+			project.setProjectType(PetriNet.GlobalNetType.XTPN);
+			overlord.getWorkspace().getProject().restoreMarkingZero();
+			addNewNXTPNPlace(mousePt);
+			overlord.reset.reset2ndOrderData(true);
+			overlord.markNetChange();
+		}
+
 		/**
 		 * Metoda odpowiedzialna za rysowanie łuków między wierzchołkami sieci.
 		 * @param clickedLocation ElementLocation - gdzie kliknięto
@@ -1200,7 +1293,6 @@ public class GraphPanel extends JComponent {
 						"Problem", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			
 			
 			if(drawnArc == null && node instanceof MetaNode) {
 				if(arcType == DrawModes.ARC) {
@@ -1283,14 +1375,12 @@ public class GraphPanel extends JComponent {
 						clearDrawnArc();
 						return;
 					}
-					
-					
 					overlord.subnetsHQ.addArcFromMetanode(clickedLocation, drawnArc.getStartLocation(), drawnArc);
 					clearDrawnArc();
 					return;
 				}
 				
-				//zwykły łuk poza meta-nodeami:
+				//zwykły łuk poza meta-nodami:
 				if (drawnArc.checkIsCorect(clickedLocation)) {
 					boolean proceed = true;
 					
@@ -1298,7 +1388,7 @@ public class GraphPanel extends JComponent {
 						JOptionPane.showMessageDialog(null,  "Arc going in this direction already exists.", 
 								"Problem", JOptionPane.WARNING_MESSAGE);
 						proceed = false;
-					} else if(isReverseArcPresent(drawnArc.getStartLocation(), clickedLocation) == true) {
+					} else if(isReverseArcPresent(drawnArc.getStartLocation(), clickedLocation)) {
 						if(arcType == DrawModes.ARC) {
 							//JOptionPane.showMessageDialog(null, "Please use Read Arc drawing mode to draw a read-arc!", "Problem", JOptionPane.WARNING_MESSAGE);
 							proceed = true;

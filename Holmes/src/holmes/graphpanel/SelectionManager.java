@@ -115,6 +115,7 @@ public class SelectionManager {
 	 * @param selectedElementLocations ArrayList[ElementLocation] - nowa lista zaznaczonych 
 	 * 		lokalizacji wierzchołków
 	 */
+	@SuppressWarnings("unused")
 	public void setSelectedElementLocations(ArrayList<ElementLocation> selectedElementLocations) {
 		this.selectedElementLocations = selectedElementLocations;
 	}
@@ -289,7 +290,7 @@ public class SelectionManager {
 		ArrayList<Transition> transitions = pn.getTransitions();
 		boolean functionWarning = false;
 		boolean canDo = overlord.subnetsHQ.checkIfExpendable(el);
-		if(canDo == false) {
+		if(!canDo) {
 			JOptionPane.showMessageDialog(null, 
 					"This element is the only one that leads to subnet\n"
 					+ "with other portals of same node. Please remove all\n"
@@ -303,7 +304,7 @@ public class SelectionManager {
 			
 			this.deselectElementLocation(el);
 			Node n = el.getParentNode();
-			if (n.removeElementLocation(el) == false) {
+			if (!n.removeElementLocation(el)) {
 				if(n instanceof Place) {
 					int index = places.indexOf((Place)n);
 					pn.accessStatesManager().removePlace(index);
@@ -374,11 +375,10 @@ public class SelectionManager {
 			ElementLocation el = i.next();
 			
 			boolean canDo = overlord.subnetsHQ.checkIfExpendable(el);
-			if(canDo == false) {
+			if(!canDo) {
 				protectedList.add(el);
 				continue;
 			}
-			
 			
 			int sheetID = el.getSheetID();
 			if(!sheetsModified.contains(sheetID))
@@ -386,7 +386,7 @@ public class SelectionManager {
 			
 			Node n = el.getParentNode();
 			// jeżeli ElementLocation to jedyna lokalizacja dla Node, tutaj jest kasowana:
-			if (n.removeElementLocation(el) == false) {
+			if (!n.removeElementLocation(el)) {
 				if(n instanceof Place) {
 					int index = places.indexOf((Place)n);
 					pn.accessStatesManager().removePlace(index);
@@ -435,7 +435,7 @@ public class SelectionManager {
 		boolean securedDelete = false;
 		if(protectedList.size() > 0)
 			securedDelete = true;
-		
+
 		for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
 			Arc a = i.next();
 			
@@ -490,6 +490,7 @@ public class SelectionManager {
 	 * wywołania metody checkArcsForSelection().
 	 * @param elementLocationGroup ArrayList[ElementLocation] - zbiór który ma zostać zaznaczony
 	 */
+	@SuppressWarnings("unused")
 	public void selectElementLocationGroup(ArrayList<ElementLocation> elementLocationGroup) {
 		if (elementLocationGroup == null)
 			return;
@@ -550,7 +551,7 @@ public class SelectionManager {
 	 * @author students
 	 * @author MR
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unused")
 	public void transformSelectedIntoPortal() {
 		// sprawdzenie czy wszystkie elementy sa tego samego typu (Place lub Transition)
 		for (int i = 1; i < this.getSelectedElementLocations().size(); i++) {
@@ -730,7 +731,7 @@ public class SelectionManager {
 		gammaLocations.add(nodeSelected.getTextsLocations(GUIManager.locationMoveType.GAMMA).get(indClicked));
 		tauLocations.add(nodeSelected.getTextsLocations(GUIManager.locationMoveType.TAU).get(indClicked));
 		for (ElementLocation el : otherNodes) { 
-			if(el.equals(nodeSelectedEL) == false) {
+			if(!el.equals(nodeSelectedEL)) {
 				selectedElementLocations.add(el);
 				indClicked = nodeSelected.getElementLocations().indexOf(el); //odtwarzanie nowej kolejności dla namesLocations
 				namesLocations.add(nodeSelected.getTextsLocations(GUIManager.locationMoveType.NAME).get(indClicked));
@@ -745,7 +746,7 @@ public class SelectionManager {
 			if (el.getParentNode().isPortal()) //usuwanie statusu portal
 				for (ElementLocation e : el.getParentNode().getNodeLocations())
 					e.setPortalSelected(false);
-			if (el.getParentNode().removeElementLocation(el) == false)
+			if (!el.getParentNode().removeElementLocation(el))
 				this.getGraphPanelNodes().remove(el.getParentNode()); //usuwanie węzła sieci z danych sieci
 		}
 		
@@ -995,6 +996,7 @@ public class SelectionManager {
 	 * zostaje metoda selectArc(arc) zaznaczająca go.
 	 * @param arc Arc - łuk którego zaznaczenie ma zostać odwrócone
 	 */
+	@SuppressWarnings("unused")
 	public void toggleArcSelection(Arc arc) {
 		if (arc.getSelected())
 			this.deselectArc(arc);

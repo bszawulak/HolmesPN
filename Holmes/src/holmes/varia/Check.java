@@ -26,7 +26,7 @@ public final class Check {
      * @return ArrayList[ArrayList[Integer]] - macierz inwariantów; null - jeśli pusta lub jej nie ma
      */
     public static ArrayList<ArrayList<Integer>> invExists(boolean t_inv) {
-    	ArrayList<ArrayList<Integer>> invariants = null;
+    	ArrayList<ArrayList<Integer>> invariants;
     	if(t_inv)
     		invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
     	else
@@ -76,7 +76,7 @@ public final class Check {
 		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
 		for(Arc a : arcs) {
 			if(a.getArcType() == TypeOfArc.NORMAL) {
-				if(InvariantsTools.isDoubleArc(a) == true) {
+				if(InvariantsTools.isDoubleArc(a)) {
 					doubleArc++;
 				} else
 					normal++;
@@ -136,22 +136,25 @@ public final class Check {
 				if (((Transition)node).isFunctional()) {
 					functions++;
 				}
-				if (((Transition)node).isXTPNtransition()) {
+				if (((Transition)node).getTransType() == TransitionType.XTPN) {
 					transitionsXTPN++;
+				}
+				if (((Transition)node).getTransType() == TransitionType.SPN) {
+					stochastics++;
 				}
 			} else if (node.getType() == PetriNetElementType.META) {
 				meta++;
 			}
 		}
 		
-		result.add(places);
-		result.add(trans);
-		result.add(tTrans);
-		result.add(meta);
-		result.add(functions);
-		result.add(stochastics);
-		result.add(placesXTPN);
-		result.add(transitionsXTPN);
+		result.add(places); //0
+		result.add(trans); //1
+		result.add(tTrans); //2
+		result.add(meta); //3
+		result.add(functions); //4
+		result.add(stochastics); //5
+		result.add(placesXTPN); //6
+		result.add(transitionsXTPN); //7
 		return result;
 	}
     
@@ -170,26 +173,32 @@ public final class Check {
     
     /**
      * Metoda zwraca liczbowy identyfikator najlepiej pasującego formatu zapisu.
-     * @return
+     * @return (<b>GlobalNetType</b>) - typ sieci, PN, TPN, XTPN, SPN, HYBRID
      */
 	public static GlobalNetType getSuggestedNetType() {
     	ArrayList<Integer> netElements = identifyNetElements();
     	ArrayList<Integer> arcClasses = getArcClassCount();
-    	
+
+		int placesXTPN = netElements.get(6); //miejsca XTPN
+		int transitionsXTPN = netElements.get(7); //tranzycje XTPN
+		if(placesXTPN > 0 || transitionsXTPN > 0) {
+			return GlobalNetType.XTPN; // po prostu, idźcie dalej, Symulator rozpozna swoich.
+		}
+
     	int places = netElements.get(0); //miejsce
     	int transitions = netElements.get(1); //tranzycje
     	int timeTransitions = netElements.get(2); //tranzycje czasowa
-    	int metaNodes = netElements.get(3); //meta-węzły
+    	//int metaNodes = netElements.get(3); //meta-węzły
     	int functionalTransitions = netElements.get(4); //tranzycje funkcyjna
     	int stochasticTransitions = netElements.get(5); //tranzycje stochastyczne
-    	
-    	int arc = arcClasses.get(0); //łuk
-    	int readArc = arcClasses.get(1); //łuk odczytu
+
+    	//int arc = arcClasses.get(0); //łuk
+    	//int readArc = arcClasses.get(1); //łuk odczytu
     	int inhibitorArc = arcClasses.get(2); //łuk blokujący
     	int resetA = arcClasses.get(3); //łuk resetujacy
     	int equalArc = arcClasses.get(4); //łuk równościowy
-    	int doubleArc = arcClasses.get(5); //łuk podwójny (ukryty łuk odczytu)
-    	int metaArc = arcClasses.get(6); //meta-łuk
+    	//int doubleArc = arcClasses.get(5); //łuk podwójny (ukryty łuk odczytu)
+    	//int metaArc = arcClasses.get(6); //meta-łuk
     	
     	boolean extMarker = false; 
     	if(inhibitorArc>0 || resetA>0 || equalArc>0 ) //zwykłe łuki, ale moga być łuki odczytu
@@ -198,13 +207,13 @@ public final class Check {
     	if(timeTransitions==0 && functionalTransitions==0) { //klasyczne węzły
     		if(functionalTransitions > 0) { //funkcyjna
     			if(extMarker) {
-        			return GlobalNetType.funcExtPN;
+        			return GlobalNetType.FPN_extArcs;
         		} else {
-        			return GlobalNetType.funcPN;
+        			return GlobalNetType.FPN;
         		}
     		} else {
     			if(extMarker) {
-        			return GlobalNetType.extPN;
+        			return GlobalNetType.PN_extArcs;
         		} else {
         			return GlobalNetType.PN;
         		}
@@ -214,27 +223,26 @@ public final class Check {
     	if(timeTransitions>0 ) { //czasowa
     		if(functionalTransitions > 0) { //funkcyjna
     			if(extMarker) { //ext
-        			return GlobalNetType.timeFuncExtPN;
+        			return GlobalNetType.timeFPN_extArcs;
         		} else {
-        			return GlobalNetType.timeFuncPN;
+        			return GlobalNetType.timeFPN;
         		}
     		} else {
     			if(extMarker) { //ext
-        			return GlobalNetType.timeExtPN;
+        			return GlobalNetType.TPN_extArcs;
         		} else {
-        			return GlobalNetType.timePN;
+        			return GlobalNetType.TPN;
         		}
     		}
     	}
     	
     	if(functionalTransitions>0) {
     		if(extMarker) {
-    			return GlobalNetType.funcExtPN;
+    			return GlobalNetType.FPN_extArcs;
     		} else {
-    			return GlobalNetType.funcPN;
+    			return GlobalNetType.FPN;
     		}
     	}
-    	
     	return null;
     }
     
@@ -247,23 +255,23 @@ public final class Check {
     	switch (netType) {
     		case PN:
     			return GlobalFileNetType.SPPED;
-    		case extPN:
+    		case PN_extArcs:
     			return GlobalFileNetType.SPEPT;
-    		case timePN:
+    		case TPN:
     			return GlobalFileNetType.SPTPT;
-    		case timeExtPN:
+    		case TPN_extArcs:
     			return GlobalFileNetType.HOLMESPROJECT;
-    		case funcPN:
+    		case FPN:
     			return GlobalFileNetType.HOLMESPROJECT;
-    		case timeFuncPN:
+    		case timeFPN:
     			return GlobalFileNetType.HOLMESPROJECT;
-    		case funcExtPN:
+    		case FPN_extArcs:
     			return GlobalFileNetType.HOLMESPROJECT;
-    		case timeFuncExtPN:
+    		case timeFPN_extArcs:
     			return GlobalFileNetType.HOLMESPROJECT;	
-    		case stochasticPN:
+    		case SPN:
     			return GlobalFileNetType.HOLMESPROJECT;	
-    		case stochasticFuncPN:
+    		case functionalSPN:
     			return GlobalFileNetType.HOLMESPROJECT;	
     	}
 		return null;
@@ -273,23 +281,23 @@ public final class Check {
     	switch (netType) {
 		case PN:
 			return "Classical Petri Net";
-		case extPN:
+		case PN_extArcs:
 			return "Extended Petri Net";
-		case timePN:
+		case TPN:
 			return "Time(d) Petri Net";
-		case timeExtPN:
+		case TPN_extArcs:
 			return "Extended Time(d) Petri Net (hybrid)";
-		case funcPN:
+		case FPN:
 			return "Functional Petri Net";
-		case timeFuncPN:
+		case timeFPN:
 			return "Time(d) Functional Petri Net (hybrid)";
-		case funcExtPN:
+		case FPN_extArcs:
 			return "Extended Functional Petri Net";
-		case timeFuncExtPN:
+		case timeFPN_extArcs:
 			return "Extended Time(d) Functional Petri Net (VERY hybrid)";
-		case stochasticPN:
+		case SPN:
 			return "Stochastic Petri Net";
-		case stochasticFuncPN:
+		case functionalSPN:
 			return "Stochastic Functional Petri Net (VERY hybrid)";
 	}
 	return null;

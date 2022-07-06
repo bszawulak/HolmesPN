@@ -115,6 +115,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private Arc pairedArc = null;
     private JCheckBox timeTransitionCheckBox;
     private JCheckBox classicalTransitionCheckBox;
+    private JCheckBox stochasticTransitionCheckBox;
     //MCT:
     private int selectedMCTindex = -1;
     private boolean colorMCT = false;
@@ -176,6 +177,8 @@ public class HolmesDockWindowsTable extends JPanel {
 
     private boolean allSubNetsselected = false;
 
+    private JLabel projectTypeLabelText; //typ sieci
+
     //XTPN:
     private JButton alfaVisibilityButton;//tranzycja
     private JButton betaVisibilityButton;//tranzycja
@@ -210,9 +213,10 @@ public class HolmesDockWindowsTable extends JPanel {
     private static final int XTPN_TRANS = 14;
     private static final int XTPN_PLACE = 15;
     private static final int XARC = 16;
+    private static final int SPN = 99; //rzutem na taśmę
 
     public enum SubWindow {
-        SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, XTPNTRANSITION, XTPNPLACE, XARC, CTRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS,
+        SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, SPNTRANSITION, XTPNTRANSITION, XTPNPLACE, XARC, CTRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS,
         MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM, DECOMPOSITION
     }
 
@@ -241,6 +245,8 @@ public class HolmesDockWindowsTable extends JPanel {
             case TRANSITION -> createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
             case TIMETRANSITION ->
                     createTimeTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+            case SPNTRANSITION ->
+                    createSPNTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
             case XTPNTRANSITION ->
                     createXTPNTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
             case XTPNPLACE -> createXTPNPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
@@ -1254,7 +1260,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                     button.setFocusPainted(false);
-                    WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                    WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
                     ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
                     return;
                 }
@@ -1295,7 +1301,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(gammaVisibilityButton);
@@ -1330,7 +1336,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     gammaLocChangeButton.setText("<html>Change<br>location<html>");
                     gammaLocChangeButton.setBackground(Color.BLUE);
                     gammaLocChangeMode = true;
-                    //overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                    //GUIManager.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     gammaLocChangeButton.setText("<html>Gamma<br>offset<html>");
                     gammaLocChangeButton.setBackground(Color.GREEN);
@@ -1862,7 +1868,7 @@ public class HolmesDockWindowsTable extends JPanel {
         element = transition;
         Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 
-        // ID:
+        // CLASSICAL TRANSITION ID:
         JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
         idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
         components.add(idLabel);
@@ -1881,7 +1887,7 @@ public class HolmesDockWindowsTable extends JPanel {
         idLabel4.setFont(normalFont);
         components.add(idLabel4);
 
-        // TRANSITION NAME:
+        // CLASSICAL TRANSITION NAME:
         JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
         nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(nameLabel);
@@ -1904,7 +1910,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(nameField);
 
-        //KOMENTARZE WIERZCHOŁKA:
+        // CLASSICAL TRANSITION KOMENTARZE WIERZCHOŁKA:
         JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
         comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         columnA_Y += 20;
@@ -1930,31 +1936,23 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
 
-        //CHANGE TYPE:
+        // CLASSICAL TRANSITION CHANGE TYPE:
         JLabel changeTypeLabel = new JLabel("Trans. Type:", JLabel.LEFT);
         changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(changeTypeLabel);
 
-        boolean clasTrans = true;
-        boolean timeTrans = false;
-        if(transition.getTransType() == TransitionType.TPN) {
-            clasTrans = false;
-            timeTrans = true;
-        }
-
-        classicalTransitionCheckBox = new JCheckBox("Standard", clasTrans);
-        classicalTransitionCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
+        classicalTransitionCheckBox = new JCheckBox("PN");
+        classicalTransitionCheckBox.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
         classicalTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
-
         classicalTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
             if (box.isSelected()) {
                 ((Transition) element).setTransType(TransitionType.PN);
-
                 doNotUpdate = true;
                 timeTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                 WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
@@ -1963,19 +1961,18 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(classicalTransitionCheckBox);
 
-        timeTransitionCheckBox = new JCheckBox("Time", timeTrans);
-        timeTransitionCheckBox.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
+        timeTransitionCheckBox = new JCheckBox("TPN");
+        timeTransitionCheckBox.setBounds(columnB_posX + 70, columnB_Y, 60, 20);
         timeTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
-
         timeTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
             if (box.isSelected()) {
                 ((Transition) element).setTransType(TransitionType.TPN);
-
                 doNotUpdate = true;
                 classicalTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                 WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
@@ -1984,6 +1981,27 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(timeTransitionCheckBox);
 
+        stochasticTransitionCheckBox = new JCheckBox("SPN");
+        stochasticTransitionCheckBox.setBounds(columnB_posX+130, columnB_Y, 60, 20);
+        stochasticTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.SPN);
+        stochasticTransitionCheckBox.addItemListener(e -> {
+            if (doNotUpdate)
+                return;
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                ((Transition) element).setTransType(TransitionType.SPN);
+                doNotUpdate = true;
+                classicalTransitionCheckBox.setSelected(false);
+                timeTransitionCheckBox.setSelected(false);
+                doNotUpdate = false;
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            }
+        });
+        components.add(stochasticTransitionCheckBox);
+
+        /*
         JLabel frLabel = new JLabel("Firing rate:", JLabel.LEFT);
         frLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(frLabel);
@@ -2013,6 +2031,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
         });
         components.add(frField);
+        */
 
         //SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
@@ -2044,7 +2063,7 @@ public class HolmesDockWindowsTable extends JPanel {
             zoomLabel2.setForeground(Color.red);
         components.add(zoomLabel2);
 
-        //LOKALIZACJA:
+        // CLASSICAL TRANSITION LOKALIZACJA:
         JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
         locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(locLabel);
@@ -2069,7 +2088,7 @@ public class HolmesDockWindowsTable extends JPanel {
         locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, colBCompLength, 20);
         components.add(locationSpinnerPanel);
 
-        // PORTAL
+        // CLASSICAL TRANSITION PORTAL
         JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
         portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(portalLabel);
@@ -2095,7 +2114,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(portalBox);
 
-        //FUNKCYJNOŚĆ
+        // CLASSICAL TRANSITION FUNKCYJNOŚĆ
         JLabel functionLabel = new JLabel("Functional:", JLabel.LEFT);
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
@@ -2120,7 +2139,7 @@ public class HolmesDockWindowsTable extends JPanel {
         functionsEditorButton.addActionListener(actionEvent -> new HolmesFunctionsBuilder((Transition) element));
         components.add(functionsEditorButton);
 
-        // WSPÓŁRZĘDNE NAPISU:
+        // CLASSICAL TRANSITION WSPÓŁRZĘDNE NAPISU:
         columnA_Y += 20;
         columnB_Y += 20;
 
@@ -2191,6 +2210,7 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(transition, location));
         components.add(nameLocationYSpinner);
 
+        // CLASSICAL TRANSITION TEXT LOCATION CHANGE BUTTON
         JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
         nameLocChangeButton.setName("LocNameChanger");
         nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
@@ -2285,8 +2305,8 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     //**************************************************************************************
-    //*********************************                  ***********************************
     //*********************************    TRANZYCJA     ***********************************
+    //*********************************     KOLOROWA     ***********************************
     //*********************************                  ***********************************
     //**************************************************************************************
 
@@ -2314,7 +2334,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(colorLabel);
         columnB_Y += 10;
 
-        // ID:
+        // COLOR-TRANSITION ID:
         JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
         idLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(idLabel);
@@ -2333,7 +2353,7 @@ public class HolmesDockWindowsTable extends JPanel {
         idLabel4.setFont(normalFont);
         components.add(idLabel4);
 
-        // TRANSITION NAME:
+        // COLOR-TRANSITION NAME:
         JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
         nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(nameLabel);
@@ -2356,7 +2376,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(nameField);
 
-        //KOMENTARZE WIERZCHOŁKA:
+        // COLOR-TRANSITION KOMENTARZE WIERZCHOŁKA:
         JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
         comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         columnA_Y += 20;
@@ -2382,7 +2402,7 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
 
-        //SHEET ID
+        // COLOR-TRANSITION SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
         int xPos = location.getPosition().x;
@@ -2401,7 +2421,7 @@ public class HolmesDockWindowsTable extends JPanel {
         sheetIdLabel.setFont(normalFont);
         components.add(sheetIdLabel);
 
-        //ZOOM:
+        // COLOR-TRANSITION ZOOM:
         JLabel zoomLabel = new JLabel("Zoom:");
         zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
         components.add(zoomLabel);
@@ -2412,7 +2432,7 @@ public class HolmesDockWindowsTable extends JPanel {
             zoomLabel2.setForeground(Color.red);
         components.add(zoomLabel2);
 
-        //PORTAL
+        // COLOR-TRANSITION PORTAL
         JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
         portalLabel.setBounds(columnB_posX + 120, columnB_Y, colACompLength, 20);
         components.add(portalLabel);
@@ -2439,7 +2459,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(portalBox);
 
-        //LOKALIZACJA:
+        // COLOR-TRANSITION LOKALIZACJA:
         JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
         locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(locLabel);
@@ -2465,7 +2485,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locationSpinnerPanel);
 
 
-        // WSPÓŁRZĘDNE NAPISU:
+        // COLOR-TRANSITION WSPÓŁRZĘDNE NAPISU:
         columnA_Y += 20;
         columnB_Y += 20;
 
@@ -2536,6 +2556,7 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(transition, location));
         components.add(nameLocationYSpinner);
 
+        // COLOR-TRANSITION TEXT LOCATION BUTTON
         JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
         nameLocChangeButton.setName("LocNameChanger");
         nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
@@ -2568,6 +2589,7 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(transition, location));
         components.add(nameLocChangeButton);
 
+        // COLOR-TRANSITION TOKENS
         JLabel reqLabel = new JLabel("Required tokens threshold:", JLabel.LEFT);
         reqLabel.setBounds(columnA_posX, columnA_Y += 50, 220, 20);
         columnB_Y += 76;
@@ -2661,6 +2683,466 @@ public class HolmesDockWindowsTable extends JPanel {
         add(panel);
     }
 
+    //**************************************************************************************
+    //*********************************     TRANZYCJA    ***********************************
+    //*********************************        SPN       ***********************************
+    //*********************************                  ***********************************
+    //**************************************************************************************
+
+    /**
+     * Metoda odpowiedzialna za tworzenie podokna właściwości klikniętej tranzycji.
+     * @param transition (<b>Transition</b>) obiekt tranzycji sieci.
+     * @param location (<b>ElementLocation</b>) - lokalizacja tranzycji.
+     */
+    private void createSPNTransitionSubWindow(Transition transition, ElementLocation location) {
+        //[2022-07-06] na razie czysto na bazie zwykłej tranzycji, copy pase
+
+        int columnA_posX = 10;
+        int columnB_posX = 100;
+        int columnA_Y = 0;
+        int columnB_Y = 0;
+        int colACompLength = 70;
+        int colBCompLength = 200;
+
+        mode = TRANSITION;
+        elementLocation = location;
+        initiateContainers();
+        element = transition;
+        Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
+
+        // SPN TRANSITION ID:
+        JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
+        idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+        components.add(idLabel);
+
+        final int gID = overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transition);
+        JLabel idLabel2 = new JLabel(Integer.toString(gID));
+        idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+        idLabel2.setFont(normalFont);
+        components.add(idLabel2);
+
+        JLabel idLabel3 = new JLabel("gID:");
+        idLabel3.setBounds(columnB_posX + 35, columnA_Y, 50, 20);
+        components.add(idLabel3);
+        JLabel idLabel4 = new JLabel(transition.getID() + "");
+        idLabel4.setBounds(columnB_posX + 60, columnB_Y, 50, 20);
+        idLabel4.setFont(normalFont);
+        components.add(idLabel4);
+
+        // SPN TRANSITION NAME:
+        JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
+        nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(nameLabel);
+
+        DefaultFormatter format = new DefaultFormatter();
+        format.setOverwriteMode(false);
+        JFormattedTextField nameField = new JFormattedTextField(format);
+        nameField.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+        nameField.setValue(transition.getName());
+        nameField.addPropertyChangeListener("value", e -> {
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+            }
+            String newName = field.getText();
+            changeName(newName);
+            overlord.markNetChange();
+        });
+        components.add(nameField);
+
+        // SPN TRANSITION KOMENTARZE WIERZCHOŁKA:
+        JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
+        comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        columnA_Y += 20;
+        components.add(comLabel);
+
+        JTextArea commentField = new JTextArea(transition.getComment());
+        commentField.setLineWrap(true);
+        commentField.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent e) {
+                JTextArea field = (JTextArea) e.getSource();
+                String newComment = "";
+                if (field != null)
+                    newComment = field.getText();
+                changeComment(newComment);
+                overlord.markNetChange();
+            }
+        });
+
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(commentField), BorderLayout.CENTER);
+        CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
+        columnB_Y += 20;
+        components.add(CreationPanel);
+
+        // SPN TRANSITION CHANGE TYPE:
+        JLabel changeTypeLabel = new JLabel("Trans. Type:", JLabel.LEFT);
+        changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(changeTypeLabel);
+
+        classicalTransitionCheckBox = new JCheckBox("PN");
+        classicalTransitionCheckBox.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
+        classicalTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
+        classicalTransitionCheckBox.addItemListener(e -> {
+            if (doNotUpdate)
+                return;
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                ((Transition) element).setTransType(TransitionType.PN);
+                doNotUpdate = true;
+                timeTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
+                doNotUpdate = false;
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            }
+        });
+        components.add(classicalTransitionCheckBox);
+
+        timeTransitionCheckBox = new JCheckBox("TPN");
+        timeTransitionCheckBox.setBounds(columnB_posX + 70, columnB_Y, 60, 20);
+        timeTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
+        timeTransitionCheckBox.addItemListener(e -> {
+            if (doNotUpdate)
+                return;
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                ((Transition) element).setTransType(TransitionType.TPN);
+                doNotUpdate = true;
+                classicalTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
+                doNotUpdate = false;
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            }
+        });
+        components.add(timeTransitionCheckBox);
+
+        stochasticTransitionCheckBox = new JCheckBox("SPN");
+        stochasticTransitionCheckBox.setBounds(columnB_posX+130, columnB_Y, 60, 20);
+        stochasticTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.SPN);
+        stochasticTransitionCheckBox.addItemListener(e -> {
+            if (doNotUpdate)
+                return;
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                ((Transition) element).setTransType(TransitionType.SPN);
+                doNotUpdate = true;
+                classicalTransitionCheckBox.setSelected(false);
+                timeTransitionCheckBox.setSelected(false);
+                doNotUpdate = false;
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            }
+        });
+        components.add(stochasticTransitionCheckBox);
+
+        JLabel frLabel = new JLabel("Firing rate:", JLabel.LEFT);
+        frLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(frLabel);
+
+        JTextArea frField = new JTextArea("" + ((Transition) element).getFiringRate());
+        frField.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
+        frField.setLineWrap(true);
+        frField.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent e) {
+                JTextArea field = (JTextArea) e.getSource();
+                String newFR = "";
+                if (field != null)
+                    newFR = field.getText();
+
+                try {
+                    double newVal = Double.parseDouble(newFR);
+
+                    SPNtransitionData xxx = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager()
+                            .getCurrentSPNdataVector().accessVector().get(gID);
+                    ((Transition) element).setFiringRate(newVal);
+                    xxx.ST_function = newFR;
+                } catch (Exception ee) {
+                    System.out.println(ee.getMessage());
+                }
+                //changeComment(newComment);
+                //overlord.markNetChange();
+            }
+        });
+        components.add(frField);
+
+        // SPN TRANSITION SHEET ID
+        int sheetIndex = overlord.IDtoIndex(location.getSheetID());
+        GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+        int xPos = location.getPosition().x;
+        int width = graphPanel.getSize().width;
+        int zoom = graphPanel.getZoom();
+        int yPos = location.getPosition().y;
+        int height = graphPanel.getSize().height;
+        width = (int) (((double) 100 / (double) zoom) * width);
+        height = (int) (((double) 100 / (double) zoom) * height);
+
+        JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
+        sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(sheetLabel);
+        JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
+        sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+        sheetIdLabel.setFont(normalFont);
+        components.add(sheetIdLabel);
+
+        //ZOOM:
+        JLabel zoomLabel = new JLabel("Zoom:");
+        zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
+        components.add(zoomLabel);
+        JLabel zoomLabel2 = new JLabel("" + zoom);
+        zoomLabel2.setBounds(columnB_posX + 70, columnB_Y, colBCompLength, 20);
+        zoomLabel2.setFont(normalFont);
+        if (zoom != 100)
+            zoomLabel2.setForeground(Color.red);
+        components.add(zoomLabel2);
+
+        //LOKALIZACJA:
+        JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
+        locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(locLabel);
+
+        SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
+        SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
+
+        JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
+        locationXSpinner.addChangeListener(e -> setX((int) ((JSpinner) e.getSource()).getValue()));
+        JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
+        locationYSpinner.addChangeListener(e -> setY((int) ((JSpinner) e.getSource()).getValue()));
+        if (zoom != 100) {
+            locationXSpinner.setEnabled(false);
+            locationYSpinner.setEnabled(false);
+        }
+        JPanel locationSpinnerPanel = new JPanel();
+        locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel, BoxLayout.X_AXIS));
+        locationSpinnerPanel.add(locationXSpinner);
+        locationSpinnerPanel.add(new JLabel(" , "));
+        locationSpinnerPanel.add(locationYSpinner);
+
+        locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, colBCompLength, 20);
+        components.add(locationSpinnerPanel);
+
+        // SPN TRANSITION PORTAL
+        JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
+        portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(portalLabel);
+        JCheckBox portalBox = new JCheckBox("", transition.isPortal());
+        portalBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
+        portalBox.setSelected(((Transition) element).isPortal());
+
+        portalBox.addItemListener(e -> {
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                makePortal();
+            } else {
+                if (((Transition) element).getElementLocations().size() > 1)
+                    JOptionPane.showMessageDialog(null, "Transition contains more than one location!", "Cannot proceed",
+                            JOptionPane.INFORMATION_MESSAGE);
+                else {
+                    unPortal();
+                    overlord.markNetChange();
+                }
+            }
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(portalBox);
+
+        // SPN TRANSITION FUNKCYJNOŚĆ
+        JLabel functionLabel = new JLabel("Functional:", JLabel.LEFT);
+        functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+        components.add(functionLabel);
+
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.isFunctional());
+        functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
+        functionalCheckBox.setSelected(((Transition) element).isFunctional());
+
+        functionalCheckBox.addItemListener(e -> {
+            JCheckBox box = (JCheckBox) e.getSource();
+            ((Transition) element).setFunctional(box.isSelected());
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(functionalCheckBox);
+
+        JButton functionsEditorButton = new JButton(Tools.getResIcon32("/icons/functionsWindow/functionsIcon.png"));
+        functionsEditorButton.setName("Functions editor");
+        functionsEditorButton.setText("<html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>");
+        functionsEditorButton.setMargin(new Insets(0, 0, 0, 0));
+        functionsEditorButton.setBounds(columnA_posX + 125, columnA_Y - 16, 110, 32);
+        functionsEditorButton.addActionListener(actionEvent -> new HolmesFunctionsBuilder((Transition) element));
+        components.add(functionsEditorButton);
+
+        // SPN TRANSITION WSPÓŁRZĘDNE NAPISU:
+        columnA_Y += 20;
+        columnB_Y += 20;
+
+        JLabel locNameLabel = new JLabel("Name offset:", JLabel.LEFT);
+        locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength + 10, 20);
+        components.add(locNameLabel);
+
+        int locationIndex = transition.getElementLocations().indexOf(location);
+        int xNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
+
+        nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
+        nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
+
+        JLabel locNameLabelX = new JLabel("xOff: ", JLabel.LEFT);
+        locNameLabelX.setBounds(columnA_posX + 90, columnA_Y, 40, 20);
+        components.add(locNameLabelX);
+
+        JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
+        nameLocationXSpinner.setBounds(columnA_posX + 125, columnA_Y, 60, 20);
+        nameLocationXSpinner.addChangeListener(new ChangeListener() {
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void stateChanged(ChangeEvent e) {
+                if (doNotUpdate)
+                    return;
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                doNotUpdate = true;
+                nameLocationXSpinnerModel.setValue(res.x);
+                doNotUpdate = false;
+            }
+
+            private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+
+        components.add(nameLocationXSpinner);
+
+        JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
+        locNameLabelY.setBounds(columnA_posX + 195, columnB_Y, 40, 20);
+        components.add(locNameLabelY);
+
+        JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
+        nameLocationYSpinner.setBounds(columnA_posX + 230, columnA_Y, 60, 20);
+        nameLocationYSpinner.addChangeListener(new ChangeListener() {
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void stateChanged(ChangeEvent e) {
+                if (doNotUpdate)
+                    return;
+
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                doNotUpdate = true;
+                nameLocationYSpinnerModel.setValue(res.y);
+                doNotUpdate = false;
+            }
+
+            private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+        components.add(nameLocationYSpinner);
+
+        // SPN TRANSITION TEXT LOCATION BUTTON
+        JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
+        nameLocChangeButton.setName("LocNameChanger");
+        nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
+        nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+        nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
+        nameLocChangeButton.addActionListener(new ActionListener() {
+            // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                JButton button_tmp = (JButton) actionEvent.getSource();
+
+                if (!nameLocChangeMode) {
+                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
+                    nameLocChangeMode = true;
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                } else {
+                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
+                    nameLocChangeMode = false;
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+                }
+            }
+
+            private ActionListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+        components.add(nameLocChangeButton);
+
+        /*
+        JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
+        debugModeLabel1.setBounds(columnA_posX, columnA_Y += 45, colACompLength, 20);
+        components.add(debugModeLabel1);
+
+        JTextArea debugChangeID = new JTextArea("");
+        debugChangeID.setBounds(columnB_posX, columnB_Y += 70, 60, 20);
+        debugChangeID.setLineWrap(true);
+        debugChangeID.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent e) {
+                JTextArea field = (JTextArea) e.getSource();
+                String newFR = "";
+                if (field != null)
+                    newFR = field.getText();
+
+                try {
+                    int id = Integer.parseInt(newFR);
+
+                    ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+                    if (id >= 0 && id < transitions.size()) {
+
+                        Transition t1 = (Transition) element;
+                        Transition t2 = transitions.get(id);
+                        if (transitions.indexOf(t1) == id)
+                            return;
+
+                        int pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t1);
+                        int pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t2);
+                        Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
+                        GUIManager.getDefaultGUIManager().log("Swapping transitions " + t1.getName() + " and " + t2.getName() + " successfull.", "text", true);
+
+                        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                        //ElementLocation loc1st = ((Transition)element).getElementLocations().get(0);
+                        ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
+                    }
+                } catch (Exception ee) {
+                    System.out.println(ee.getMessage());
+                }
+            }
+        });
+        components.add(debugChangeID);
+
+        JButton aaa = new JButton();
+        aaa.setName("ChangeID");
+        aaa.setText("Change ID");
+        aaa.setMargin(new Insets(0, 0, 0, 0));
+        aaa.setBounds(columnB_posX + 70, columnB_Y, 80, 20);
+        aaa.addActionListener(actionEvent -> {
+        });
+        components.add(aaa); */
+
+        panel.setLayout(null);
+        for (JComponent component : components) {
+            panel.add(component);
+        }
+
+        panel.setOpaque(true);
+        panel.repaint();
+        add(panel);
+    }
 
     //**************************************************************************************
     //*********************************    TRANZYCJA     ***********************************
@@ -2687,7 +3169,7 @@ public class HolmesDockWindowsTable extends JPanel {
         element = transition;
         Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 
-        // ID
+        // TIMETRANSITION ID
         JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
         idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
         components.add(idLabel);
@@ -2706,7 +3188,7 @@ public class HolmesDockWindowsTable extends JPanel {
         idLabel4.setFont(normalFont);
         components.add(idLabel4);
 
-        // T-TRANSITION NAME
+        // TIME TRANSITION NAME
         JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
         nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(nameLabel);
@@ -2729,7 +3211,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(nameField);
 
-        // T-TRANSITION COMMENT
+        // TIME TRANSITION COMMENT
         JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
         comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         columnA_Y += 20;
@@ -2755,31 +3237,23 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
 
-        //CHANGE TYPE:
+        // TIME TRANSITION CHANGE TYPE:
         JLabel changeTypeLabel = new JLabel("Trans. Type:", JLabel.LEFT);
         changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(changeTypeLabel);
 
-        boolean clasTrans = true;
-        boolean timeTrans = false;
-        if(transition.getTransType() == TransitionType.TPN) {
-            clasTrans = false;
-            timeTrans = true;
-        }
-
-        classicalTransitionCheckBox = new JCheckBox("Standard", clasTrans);
-        classicalTransitionCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
+        classicalTransitionCheckBox = new JCheckBox("PN");
+        classicalTransitionCheckBox.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
         classicalTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
-
         classicalTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
             if (box.isSelected()) {
                 ((Transition) element).setTransType(TransitionType.PN);
-
                 doNotUpdate = true;
                 timeTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                 WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
@@ -2788,19 +3262,18 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(classicalTransitionCheckBox);
 
-        timeTransitionCheckBox = new JCheckBox("Time", timeTrans);
-        timeTransitionCheckBox.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
+        timeTransitionCheckBox = new JCheckBox("TPN");
+        timeTransitionCheckBox.setBounds(columnB_posX + 70, columnB_Y, 60, 20);
         timeTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
-
         timeTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
             if (box.isSelected()) {
                 ((Transition) element).setTransType(TransitionType.TPN);
-
                 doNotUpdate = true;
                 classicalTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                 WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
@@ -2809,7 +3282,27 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(timeTransitionCheckBox);
 
-        // EFT / LFT TIMES:
+        stochasticTransitionCheckBox = new JCheckBox("SPN");
+        stochasticTransitionCheckBox.setBounds(columnB_posX+130, columnB_Y, 60, 20);
+        stochasticTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.SPN);
+        stochasticTransitionCheckBox.addItemListener(e -> {
+            if (doNotUpdate)
+                return;
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                ((Transition) element).setTransType(TransitionType.SPN);
+                doNotUpdate = true;
+                classicalTransitionCheckBox.setSelected(false);
+                timeTransitionCheckBox.setSelected(false);
+                doNotUpdate = false;
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            }
+        });
+        components.add(stochasticTransitionCheckBox);
+
+        // TIME TRANSITION EFT / LFT TIMES:
         JLabel minMaxLabel = new JLabel("EFT / LFT:", JLabel.LEFT);
         minMaxLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(minMaxLabel);
@@ -2893,7 +3386,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(dpnBox);
 
-        // T-TRANSITION SHEET ID
+        // TIME TRANSITION SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
         GraphPanel graphPanel = overlord
                 .getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
@@ -2970,7 +3463,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(portalBox);
 
-        //FUNKCYJNOŚĆ
+        // TIME TRANSITION FUNKCYJNOŚĆ
         JLabel functionLabel = new JLabel("Functional:", JLabel.LEFT);
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
@@ -2995,7 +3488,7 @@ public class HolmesDockWindowsTable extends JPanel {
         functionsEditorButton.addActionListener(actionEvent -> new HolmesFunctionsBuilder((Transition) element));
         components.add(functionsEditorButton);
 
-        // WSPÓŁRZĘDNE NAPISU:
+        // TIME TRANSITION WSPÓŁRZĘDNE NAPISU:
         columnA_Y += 20;
         columnB_Y += 20;
 
@@ -3067,6 +3560,7 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(transition, location));
         components.add(nameLocationYSpinner);
 
+        // TIME TRANSITION LOCATION CHANGE
         JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
         nameLocChangeButton.setName("LocNameChanger");
         nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
@@ -3132,7 +3626,7 @@ public class HolmesDockWindowsTable extends JPanel {
         element = transition;
         Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 
-        // ID
+        // XTPN ID
         JLabel idLabel = new JLabel("ID XTPN:", JLabel.LEFT);
         idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
         components.add(idLabel);
@@ -3151,7 +3645,7 @@ public class HolmesDockWindowsTable extends JPanel {
         idLabel4.setFont(normalFont);
         components.add(idLabel4);
 
-        // XTPN-transition name
+        // XTPN transition name
         JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
         nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(nameLabel);
@@ -3174,7 +3668,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(nameField);
 
-        // XTPN-transition comment
+        // XTPN transition comment
         JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
         comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(comLabel);
@@ -3200,13 +3694,13 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(CreationPanel);
 
 
-        // XTPN-transition włączanie lub wyłączanie funkcji alfa i beta
+        // XTPN transition włączanie lub wyłączanie funkcji alfa i beta
         columnA_Y += 20;
         JLabel changeTypeLabel = new JLabel("Time mode:", JLabel.LEFT);
         changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(changeTypeLabel);
 
-        // XTPN-transition przycisk Alfa mode ON/OFF
+        // XTPN transition przycisk Alfa mode ON/OFF
         JButton buttonAlfaMode = new JButton("Alfa: ON");
         buttonAlfaMode.setName("AlfaButton1");
         buttonAlfaMode.setMargin(new Insets(0, 0, 0, 0));
@@ -3251,7 +3745,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(buttonAlfaMode);
 
-        // XTPN-transition przycisk Beta ON/OFF
+        // XTPN transition przycisk Beta ON/OFF
         JButton buttonBetaMode = new JButton("Beta: ON");
         buttonBetaMode.setName("BetaButton1");
         buttonBetaMode.setMargin(new Insets(0, 0, 0, 0));
@@ -3295,7 +3789,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(buttonBetaMode);
 
-        // XTPN-transition alpha values visibility
+        // XTPN transition alpha values visibility
         alfaVisibilityButton = new JButton("<html> Alpha<br>visible<html>");
         alfaVisibilityButton.setName("<html> Alpha<br>visible<html>");
         alfaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
@@ -3340,7 +3834,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(alfaVisibilityButton);
 
-        // XTPN-transition beta values visibility
+        // XTPN transition beta values visibility
         betaVisibilityButton = new JButton("<html>  Beta<br>visible<html>");
         betaVisibilityButton.setName("TauButton1");
         betaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
@@ -4032,7 +4526,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(CreationPanel);
 
         // ZMIANA TYPU META-WĘZŁA
-        // ВНИМАНИЕ!!! Hic sunt leones...
+        // ВНИМАНИЕ!!!
         JRadioButton subnetTButton = new JRadioButton("Subnet T-type");
         subnetTButton.setBounds(columnA_posX - 5, columnA_Y += 20, 105, 20);
         subnetTButton.setActionCommand("0");
@@ -4731,9 +5225,9 @@ public class HolmesDockWindowsTable extends JPanel {
     //**************************************************************************************
 
     /**
-     * Metoda pomocnicza konstruktora odpowiedzialna za utworzenia podokna właściwości arkusza sieci.
-     *
-     * @param sheet WorkspaceSheet - obiekt arkusza
+     * Metoda pomocnicza konstruktora odpowiedzialna za utworzenia okna właściwości arkusza sieci.<br>
+     * [2022-07-06] ...i czasopisma... tfu, znaczy: i jeszcze projektu aktualnie wgranego.
+     * @param sheet (<b>WorkspaceSheet</b>) obiekt arkusza
      */
     private void createSheetSubWindow(WorkspaceSheet sheet) {
         int columnA_posX = 10;
@@ -4747,13 +5241,24 @@ public class HolmesDockWindowsTable extends JPanel {
         mode = SHEET;
         currentSheet = sheet;
 
+        JLabel projectTypeLabel = new JLabel("Project type:", JLabel.LEFT);
+        projectTypeLabel.setBounds(columnA_posX, columnA_Y += 10, 80, 20);
+        components.add(projectTypeLabel);
+
+        projectTypeLabelText = new JLabel("Petri net (normal)", JLabel.LEFT);
+        projectTypeLabelText.setBounds(columnB_posX, columnB_Y += 10, 200, 20);
+        projectTypeLabelText.setText(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getProjectType()+"");
+        components.add(projectTypeLabelText);
+
+        //ArrayList<Integer> nodeTypes = Check.getSuggestedNetType();
+
         // SHEET ID
         JLabel netNameLabel = new JLabel("PN Name:", JLabel.LEFT);
-        netNameLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+        netNameLabel.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 20);
         components.add(netNameLabel);
 
         JFormattedTextField netNameField = new JFormattedTextField();
-        netNameField.setBounds(columnB_posX, columnB_Y += 10, colBCompLength, 20);
+        netNameField.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 20);
         netNameField.setText(overlord.getWorkspace().getProject().getName());
         netNameField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
@@ -4763,7 +5268,6 @@ public class HolmesDockWindowsTable extends JPanel {
                 System.out.println(ex.getMessage());
             }
             String newName = field.getText();
-
             overlord.getWorkspace().getProject().setName(newName);
         });
         components.add(netNameField);
@@ -7535,27 +8039,18 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     private ArrayList<SubnetCalculator.SubNet> getCorrectSubnet(int type) {
-        switch (type) {
-            case 0:
-                return SubnetCalculator.functionalSubNets;
-            case 1:
-                return SubnetCalculator.snetSubNets;
-            case 2:
-                return SubnetCalculator.tnetSubNets;
-            case 3:
-                return SubnetCalculator.adtSubNets;
-            case 4:
-                return SubnetCalculator.tzSubNets;
-            case 5:
-                return SubnetCalculator.houSubNets;
-            case 6:
-                return SubnetCalculator.nishiSubNets;
-            case 7:
-                return SubnetCalculator.cycleSubNets;
-            case 8:
-                return SubnetCalculator.ootsukiSubNets;
-        }
-        return SubnetCalculator.functionalSubNets;
+        return switch (type) {
+            case 0 -> SubnetCalculator.functionalSubNets;
+            case 1 -> SubnetCalculator.snetSubNets;
+            case 2 -> SubnetCalculator.tnetSubNets;
+            case 3 -> SubnetCalculator.adtSubNets;
+            case 4 -> SubnetCalculator.tzSubNets;
+            case 5 -> SubnetCalculator.houSubNets;
+            case 6 -> SubnetCalculator.nishiSubNets;
+            case 7 -> SubnetCalculator.cycleSubNets;
+            case 8 -> SubnetCalculator.ootsukiSubNets;
+            default -> SubnetCalculator.functionalSubNets;
+        };
     }
 
     private Color calcMiddleColor(Color one, Color two) {
@@ -8123,26 +8618,13 @@ public class HolmesDockWindowsTable extends JPanel {
         Place place = (Place) element;
         if (mode == PLACE && place.isColored) {
             switch (i) {
-                case 0:
-                    place.setColorTokensNumber(tokens, 0);
-                    break;
-                case 1:
-                    place.setColorTokensNumber(tokens, 1);
-                    break;
-                case 2:
-                    place.setColorTokensNumber(tokens, 2);
-                    break;
-                case 3:
-                    place.setColorTokensNumber(tokens, 3);
-                    break;
-                case 4:
-                    place.setColorTokensNumber(tokens, 4);
-                    break;
-                case 5:
-                    place.setColorTokensNumber(tokens, 5);
-                    break;
-                default:
-                    place.setTokensNumber(tokens);
+                case 0 -> place.setColorTokensNumber(tokens, 0);
+                case 1 -> place.setColorTokensNumber(tokens, 1);
+                case 2 -> place.setColorTokensNumber(tokens, 2);
+                case 3 -> place.setColorTokensNumber(tokens, 3);
+                case 4 -> place.setColorTokensNumber(tokens, 4);
+                case 5 -> place.setColorTokensNumber(tokens, 5);
+                default -> place.setTokensNumber(tokens);
             }
             repaintGraphPanel();
         }
@@ -8171,27 +8653,13 @@ public class HolmesDockWindowsTable extends JPanel {
     private void setColorWeight(int weight, Arc arc, int i) {
         if (mode == ARC || mode == XARC) {
             switch (i) {
-                case 0:
-                    arc.setColorWeight(weight, i);
-                    break;
-                case 1:
-                    arc.setColorWeight(weight, i);
-                    break;
-                case 2:
-                    arc.setColorWeight(weight, i);
-                    break;
-                case 3:
-                    arc.setColorWeight(weight, i);
-                    break;
-                case 4:
-                    arc.setColorWeight(weight, i);
-                    break;
-                case 5:
-                    arc.setColorWeight(weight, i);
-                    break;
-                default:
-                    arc.setColorWeight(weight, i);
-                    break;
+                case 0 -> arc.setColorWeight(weight, i);
+                case 1 -> arc.setColorWeight(weight, i);
+                case 2 -> arc.setColorWeight(weight, i);
+                case 3 -> arc.setColorWeight(weight, i);
+                case 4 -> arc.setColorWeight(weight, i);
+                case 5 -> arc.setColorWeight(weight, i);
+                default -> arc.setColorWeight(weight, i);
             }
 
             repaintGraphPanel();
@@ -8208,26 +8676,13 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     private void setActivationWeight(int weight, Transition trans, int i) {
         switch (i) {
-            case 0:
-                trans.setRequiredColoredTokens(weight, 0);
-                break;
-            case 1:
-                trans.setRequiredColoredTokens(weight, 1);
-                break;
-            case 2:
-                trans.setRequiredColoredTokens(weight, 2);
-                break;
-            case 3:
-                trans.setRequiredColoredTokens(weight, 3);
-                break;
-            case 4:
-                trans.setRequiredColoredTokens(weight, 4);
-                break;
-            case 5:
-                trans.setRequiredColoredTokens(weight, 5);
-                break;
-            default:
-                trans.setRequiredColoredTokens(weight, 0);
+            case 0 -> trans.setRequiredColoredTokens(weight, 0);
+            case 1 -> trans.setRequiredColoredTokens(weight, 1);
+            case 2 -> trans.setRequiredColoredTokens(weight, 2);
+            case 3 -> trans.setRequiredColoredTokens(weight, 3);
+            case 4 -> trans.setRequiredColoredTokens(weight, 4);
+            case 5 -> trans.setRequiredColoredTokens(weight, 5);
+            default -> trans.setRequiredColoredTokens(weight, 0);
         }
     }
 

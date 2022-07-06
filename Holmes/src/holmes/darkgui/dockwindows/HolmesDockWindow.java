@@ -1,6 +1,7 @@
 package holmes.darkgui.dockwindows;
 
 import java.awt.Point;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
@@ -11,7 +12,6 @@ import holmes.darkgui.dockwindows.HolmesDockWindowsTable.SubWindow;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import holmes.petrinet.data.MCSDataMatrix;
-import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
@@ -24,14 +24,15 @@ import com.javadocking.dockable.DefaultDockable;
 import com.javadocking.dockable.Dockable;
 
 /**
- * Metoda odpowiedzialna za podokno programu, w którym gromadzone są kolejne zakładki
+ * Metoda odpowiedzialna za okno programu, w którym gromadzone są kolejne zakładki
  * jak np. symulator, analizator, edytor, itd. Wychwytuje ona między innymi
  * zdarzenia kliknięcia na jakiś element np. sieci, następnie zlecając utworzenie
- * podokna wyświetlającego odpowiednie właściwości, przyciski, opcje, itd.
+ * okna wyświetlającego odpowiednie właściwości, przyciski, opcje, itd.
  *
  * @author students
  */
 public class HolmesDockWindow extends SingleDock {
+    @Serial
     private static final long serialVersionUID = -1966643269924197502L;
     private Dockable dockable;
     private Point position;
@@ -62,54 +63,38 @@ public class HolmesDockWindow extends SingleDock {
         guiManager = GUIManager.getDefaultGUIManager();
 
         switch (type) {
-            case EDITOR:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("NetElement", scrollPane,
-                        "Net Element"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
-            case SIMULATOR:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("Simulator", scrollPane,
-                        "Simulator"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
-            case SELECTOR:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("Selection", scrollPane,
-                        "Selection"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
-            case T_INVARIANTS:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("Transition_Invariants", scrollPane,
-                        "T-inv"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
-            case P_INVARIANTS:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("Place_Invariants", scrollPane,
-                        "P-inv"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
-            case MctANALYZER:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("MCT_Groups", scrollPane,
-                        "MCT"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
-            case ClusterSELECTOR:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("Clusters_Selection", scrollPane,
-                        "Clusters"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
-            case MCSselector:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("MCS_selector", scrollPane,
-                        "MCS"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
-            case FIXNET:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("Fix_selector", scrollPane,
-                        "Fix"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
-            case QuickSim:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("Quick_simulator", scrollPane,
-                        "qSim"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
-            case Knockout:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("Knockout_selector", scrollPane,
-                        "Knockout"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
-            case DECOMPOSITION:
-                setDockable(GUIManager.externalWithListener(new DefaultDockable("Decomposition", scrollPane,
-                        "DECOMPOSITION"), GUIManager.getDefaultGUIManager().getDockingListener()));
-                break;
+            case EDITOR -> setDockable(GUIManager.externalWithListener(new DefaultDockable("NetElement", scrollPane,
+                    "Net Element"), GUIManager.getDefaultGUIManager().getDockingListener()));
+            case SIMULATOR -> setDockable(GUIManager.externalWithListener(new DefaultDockable("Simulator", scrollPane,
+                    "Simulator"), GUIManager.getDefaultGUIManager().getDockingListener()));
+            case SELECTOR -> setDockable(GUIManager.externalWithListener(new DefaultDockable("Selection", scrollPane,
+                    "Selection"), GUIManager.getDefaultGUIManager().getDockingListener()));
+            case T_INVARIANTS ->
+                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Transition_Invariants", scrollPane,
+                            "T-inv"), GUIManager.getDefaultGUIManager().getDockingListener()));
+            case P_INVARIANTS ->
+                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Place_Invariants", scrollPane,
+                            "P-inv"), GUIManager.getDefaultGUIManager().getDockingListener()));
+            case MctANALYZER ->
+                    setDockable(GUIManager.externalWithListener(new DefaultDockable("MCT_Groups", scrollPane,
+                            "MCT"), GUIManager.getDefaultGUIManager().getDockingListener()));
+            case ClusterSELECTOR ->
+                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Clusters_Selection", scrollPane,
+                            "Clusters"), GUIManager.getDefaultGUIManager().getDockingListener()));
+            case MCSselector ->
+                    setDockable(GUIManager.externalWithListener(new DefaultDockable("MCS_selector", scrollPane,
+                            "MCS"), GUIManager.getDefaultGUIManager().getDockingListener()));
+            case FIXNET -> setDockable(GUIManager.externalWithListener(new DefaultDockable("Fix_selector", scrollPane,
+                    "Fix"), GUIManager.getDefaultGUIManager().getDockingListener()));
+            case QuickSim ->
+                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Quick_simulator", scrollPane,
+                            "qSim"), GUIManager.getDefaultGUIManager().getDockingListener()));
+            case Knockout ->
+                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Knockout_selector", scrollPane,
+                            "Knockout"), GUIManager.getDefaultGUIManager().getDockingListener()));
+            case DECOMPOSITION ->
+                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Decomposition", scrollPane,
+                            "DECOMPOSITION"), GUIManager.getDefaultGUIManager().getDockingListener()));
         }
 
         position = new Point(0, 0);
@@ -117,22 +102,22 @@ public class HolmesDockWindow extends SingleDock {
 
         //immediate creation:
         switch (type) {
-            case SELECTOR:
+            case SELECTOR -> {
                 setSelectionPanel(new SelectionPanel());
                 scrollPane.getViewport().add(getSelectionPanel());
-                break;
-            case FIXNET:
+            }
+            case FIXNET -> {
                 setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.FIXER));
                 scrollPane.getViewport().add(getCurrentDockWindow());
-                break;
-            case QuickSim:
+            }
+            case QuickSim -> {
                 setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.QUICKSIM));
                 scrollPane.getViewport().add(getCurrentDockWindow());
-                break;
-            case DECOMPOSITION:
+            }
+            case DECOMPOSITION -> {
                 setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.DECOMPOSITION));
                 scrollPane.getViewport().add(getCurrentDockWindow());
-                break;
+            }
         }
     }
 
@@ -189,6 +174,7 @@ public class HolmesDockWindow extends SingleDock {
         }
     }
 
+    @SuppressWarnings("unused")
     public void showDecompositionBoxWindows(){
         if (type == DockWindowType.DECOMPOSITION) {
             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.DECOMPOSITION));
@@ -277,6 +263,8 @@ public class HolmesDockWindow extends SingleDock {
                             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.TRANSITION, n, e.getElementLocation()));
                         } else if (((Transition) n).getTransType() == TransitionType.TPN) {
                             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.TIMETRANSITION, n, e.getElementLocation()));
+                        } else if (((Transition) n).getTransType() == TransitionType.SPN) {
+                            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SPNTRANSITION, n, e.getElementLocation()));
                         } else if (((Transition) n).getTransType() == TransitionType.XTPN) {
                             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.XTPNTRANSITION, n, e.getElementLocation()));
                         } else if (((Transition) n).getTransType() == TransitionType.CPNbasic) {
@@ -286,7 +274,7 @@ public class HolmesDockWindow extends SingleDock {
                 }
                 scrollPane.getViewport().add(getCurrentDockWindow());
             } else if (e.getArcGroup().size() > 0) {
-                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.ARC, (Arc) e.getArc()));
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.ARC, e.getArc()));
                 scrollPane.getViewport().add(getCurrentDockWindow());
             }
         } else if (e.getActionType() == SelectionActionType.SELECTED_SHEET) {

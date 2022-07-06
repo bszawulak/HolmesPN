@@ -73,6 +73,7 @@ public class ProjectReader {
 	public ProjectReader() {
 		overlord = GUIManager.getDefaultGUIManager();
 		projectCore = overlord.getWorkspace().getProject();
+		projectCore.setProjectType(PetriNet.GlobalNetType.PN); //default
 		nodes = projectCore.getNodes();
 		metanodes = projectCore.getMetaNodes();
 		arcs = projectCore.getArcs();
@@ -88,9 +89,14 @@ public class ProjectReader {
 		arcsProcessed = 0;
 	}
 
-	public ProjectReader(boolean isLabelCompariso) {
+	/**
+	 * Konstruktor dla modułów Szawiego.
+	 * @param isLabelCompariso (<b>boolean</b>) unused, ale co ja tam wiem [MR]
+	 */
+	public ProjectReader(boolean isLabelCompariso) { //[MR] compariso? caramba!
 		overlord = GUIManager.getDefaultGUIManager();
 		projectCore = new PetriNet(null,"test");
+		projectCore.setProjectType(PetriNet.GlobalNetType.PN); //default
 		nodes = new ArrayList<>();
 		arcs = new ArrayList<>();
 		placesProcessed = 0;
@@ -229,25 +235,12 @@ public class ProjectReader {
 	 */
 	private boolean readProjectHeader(BufferedReader buffer) {
 		try {
-			String line = buffer.readLine();
-			if(line.contains("Project name")) {
-				line = line.substring(line.indexOf("name:")+6);
-				projectCore.setName(line);
-			} else {
-				overlord.log("No project name tag in file.", "error", true);
-				return false;
+			String line;
+			while(!((line = buffer.readLine()).contains("<Project blocks>"))) {
+				parseHeaderLine(line);
 			}
-			
-			line = buffer.readLine();
-			if(line.contains("Date:")) {
-				//line = line.substring(line.indexOf("name:")+6);
-				//projectCore.setName(line);
-			} else {
-				overlord.log("No project date tag in file.", "error", true);
-				return false;
-			}
-			
-			line = buffer.readLine();
+
+			//line = buffer.readLine();
 			if(line.contains("<Project blocks>")) {
 				while(!((line = buffer.readLine()).contains("</Project blocks>"))) {
 					parseNetblocksLine(line);
@@ -258,6 +251,34 @@ public class ProjectReader {
 			overlord.log("Uknown error while reading project header.", "error", true);
 			return false;
 		}
+	}
+
+	private boolean parseHeaderLine(String line) {
+		String backup = line;
+		try {
+			String query = "Project name";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf("name:")+6);
+				projectCore.setName(line);
+				return true;
+			}
+			query = "Date:";
+			if(line.contains(query)) {
+				//line = line.substring(line.indexOf("date:")+6);
+				//projectCore.setName(line);
+
+				//ignore
+				return true;
+			}
+			query = "Net type:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf("type:")+6);
+				projectCore.setProjectType(projectCore.getNetTypeByName(line));
+			}
+		} catch (Exception e) {
+			overlord.log("Reading file error in line: "+backup+" for Transition "+transitionsProcessed, "error", true);
+		}
+		return false;
 	}
 
 	/**
@@ -786,6 +807,8 @@ public class ProjectReader {
 				if(line.equals("PN")) {
 					transition.setTransType(TransitionType.PN);
 				} else if(line.equals("TPN")) {
+					transition.setTransType(TransitionType.TPN);
+				} else if(line.equals("SPN")) {
 					transition.setTransType(TransitionType.TPN);
 				} else if(line.equals("XTPN")) {
 					transition.setTransType(TransitionType.XTPN);
