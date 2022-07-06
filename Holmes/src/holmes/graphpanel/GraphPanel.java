@@ -247,8 +247,8 @@ public class GraphPanel extends JComponent {
 		try {
 			drawPetriNet(g2d);
 		} catch (Exception e) {
-			overlord.log("CRITICAL unknown and unrecoverable error while drawing net. "
-					+ "Loaded file probably corrupted. Restarting program.", "error", true);
+			overlord.log("CRITICAL error while drawing net. (Which should not happen. Obviously.) "
+					+ "Loaded file probably corrupted (if after project loading). Restarting program.", "error", true);
 			overlord.reset.emergencyRestart();
 		}
 	}

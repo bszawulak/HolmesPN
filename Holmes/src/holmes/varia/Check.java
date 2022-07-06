@@ -10,6 +10,7 @@ import holmes.petrinet.data.PetriNet.GlobalFileNetType;
 import holmes.petrinet.data.PetriNet.GlobalNetType;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
+import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
@@ -108,7 +109,7 @@ public final class Check {
      * @return ArrayList[Integer] - zawartość w kolejności: miejsca, tranzycje, tranzycje czasowe, meta-węzły,
      * 		tranzycje funcyjne, tranzycje stochastyczne
      */
-    public static ArrayList<Integer> identifiNetElements() {
+    public static ArrayList<Integer> identifyNetElements() {
     	ArrayList<Integer> result = new ArrayList<Integer>();
     	ArrayList<Node> nodes = overlord.getWorkspace().getProject().getNodes();
     	
@@ -118,10 +119,15 @@ public final class Check {
 		int meta = 0;
 		int functions = 0;
 		int stochastics = 0;
+		int placesXTPN = 0;
+		int transitionsXTPN = 0;
 		
 		for(Node node : nodes) {
 			if (node.getType() == PetriNetElementType.PLACE) {
 				places++;
+				if(((Place)node).isXTPNplace()) {
+					placesXTPN++;
+				}
 			} else if (node.getType() == PetriNetElementType.TRANSITION ) {
 				trans++;
 				if (((Transition)node).getTransType() == TransitionType.TPN) {
@@ -129,6 +135,9 @@ public final class Check {
 				}
 				if (((Transition)node).isFunctional()) {
 					functions++;
+				}
+				if (((Transition)node).isXTPNtransition()) {
+					transitionsXTPN++;
 				}
 			} else if (node.getType() == PetriNetElementType.META) {
 				meta++;
@@ -141,6 +150,8 @@ public final class Check {
 		result.add(meta);
 		result.add(functions);
 		result.add(stochastics);
+		result.add(placesXTPN);
+		result.add(transitionsXTPN);
 		return result;
 	}
     
@@ -158,35 +169,34 @@ public final class Check {
     }
     
     /**
-     * Metoda zwraca liczbowy identyfikator najlepiej pasującego formatu zapisu
+     * Metoda zwraca liczbowy identyfikator najlepiej pasującego formatu zapisu.
      * @return
      */
-    @SuppressWarnings("unused")
 	public static GlobalNetType getSuggestedNetType() {
-    	ArrayList<Integer> netElements = identifiNetElements();
+    	ArrayList<Integer> netElements = identifyNetElements();
     	ArrayList<Integer> arcClasses = getArcClassCount();
     	
-    	int p = netElements.get(0); //miejsce
-    	int t = netElements.get(1); //tranzycje
-    	int tt = netElements.get(2); //tranzycje czasowa
-    	int m = netElements.get(3); //meta-węzły
-    	int ft = netElements.get(4); //tranzycje funkcyjna
-    	int st = netElements.get(5); //tranzycje stochastyczne
+    	int places = netElements.get(0); //miejsce
+    	int transitions = netElements.get(1); //tranzycje
+    	int timeTransitions = netElements.get(2); //tranzycje czasowa
+    	int metaNodes = netElements.get(3); //meta-węzły
+    	int functionalTransitions = netElements.get(4); //tranzycje funkcyjna
+    	int stochasticTransitions = netElements.get(5); //tranzycje stochastyczne
     	
-    	int a = arcClasses.get(0); //łuk
-    	int ra = arcClasses.get(1); //łuk odczytu
-    	int ia = arcClasses.get(2); //łuk blokujący
-    	int resA = arcClasses.get(3); //łuk resetujacy
-    	int ea = arcClasses.get(4); //łuk równościowy
-    	int da = arcClasses.get(5); //łuk podwójny (ukryty łuk odczytu)
-    	int ma = arcClasses.get(6); //meta-łuk
+    	int arc = arcClasses.get(0); //łuk
+    	int readArc = arcClasses.get(1); //łuk odczytu
+    	int inhibitorArc = arcClasses.get(2); //łuk blokujący
+    	int resetA = arcClasses.get(3); //łuk resetujacy
+    	int equalArc = arcClasses.get(4); //łuk równościowy
+    	int doubleArc = arcClasses.get(5); //łuk podwójny (ukryty łuk odczytu)
+    	int metaArc = arcClasses.get(6); //meta-łuk
     	
     	boolean extMarker = false; 
-    	if(ia>0 || resA>0 || ea>0 ) //zwykłe łuki, ale moga być łuki odczytu
+    	if(inhibitorArc>0 || resetA>0 || equalArc>0 ) //zwykłe łuki, ale moga być łuki odczytu
     		extMarker = true;
     	
-    	if(tt==0 && ft==0) { //klasyczne węzły
-    		if(ft > 0) { //funkcyjna
+    	if(timeTransitions==0 && functionalTransitions==0) { //klasyczne węzły
+    		if(functionalTransitions > 0) { //funkcyjna
     			if(extMarker) {
         			return GlobalNetType.funcExtPN;
         		} else {
@@ -201,8 +211,8 @@ public final class Check {
     		}
     	}
     	
-    	if(tt>0 ) { //czasowa
-    		if(ft > 0) { //funkcyjna
+    	if(timeTransitions>0 ) { //czasowa
+    		if(functionalTransitions > 0) { //funkcyjna
     			if(extMarker) { //ext
         			return GlobalNetType.timeFuncExtPN;
         		} else {
@@ -217,7 +227,7 @@ public final class Check {
     		}
     	}
     	
-    	if(ft>0) {
+    	if(functionalTransitions>0) {
     		if(extMarker) {
     			return GlobalNetType.funcExtPN;
     		} else {

@@ -88,8 +88,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public boolean anythingChanged = false;
 	public GUIManager overlord;
 	
-	/** PN, timePN, extPN, funcPN, timeFuncPN, timeExtPN, funcExtPN, timeFuncExtPN, stochasticPN, stochasticFuncPN */
-	public enum GlobalNetType { PN, timePN, extPN, funcPN, timeFuncPN, timeExtPN, funcExtPN, timeFuncExtPN, stochasticPN, stochasticFuncPN, XTPN }
+	/** [<b>ext - inhibitor, reset or equal Arcs present</b>]
+	 * PN, timePN, <b>ext</b>PN, funcPN, timeFuncPN, time<b>Ext</b>PN, func<b>Ext</b>PN, timeFunc<b>Ext</b>PN, stochasticPN, stochasticFuncPN, XTPN
+	 */
+	public enum GlobalNetType { PN, timePN, extPN, funcPN, timeFuncPN, timeExtPN, funcExtPN, timeFuncExtPN
+		, stochasticPN, stochasticFuncPN, XTPN }
 	/** SPPED, SPEPT, SPTPT, HOLMESPROJECT */
 	public enum GlobalFileNetType { SPPED, SPEPT, SPTPT, HOLMESPROJECT }
 	

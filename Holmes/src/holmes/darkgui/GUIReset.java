@@ -1,6 +1,5 @@
 package holmes.darkgui;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -10,7 +9,6 @@ import com.javadocking.dockable.Dockable;
 
 import holmes.analyse.MCTCalculator;
 import holmes.clusters.ClusterDataPackage;
-import holmes.darkgui.dockwindows.HolmesDockWindow;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable.SubWindow;
 import holmes.graphpanel.GraphPanel;
@@ -51,12 +49,12 @@ public class GUIReset {
 	 * Metoda odpowiedzialna za czyszczenie danych i przywracanie programu do stanu początkowego.
 	 */
 	public boolean newProjectInitiated() {
-		if(isSimulatorActiveWarning("Please stop simulation completely before continuing.", "Warning") == true) {
+		if(isSimulatorActiveWarning("Please stop simulation completely before continuing.", "Warning")) {
 			return false;
 		}
 
-		boolean status = overlord.getNetChangeStatus();
-		if(status == true) {
+		boolean hasSomethingChanged = overlord.getNetChangeStatus();
+		if(hasSomethingChanged) {
 			Object[] options = {"Continue", "Save and continue", "Cancel",};
 			int n = JOptionPane.showOptionDialog(null,
 							"Net has been changed since the last save. Continue and clear all data?",
@@ -66,7 +64,7 @@ public class GUIReset {
 				return false;
 			} else if (n == 1) {
 				boolean savingStatus = overlord.io.saveAsGlobal();
-				if(savingStatus == false)
+				if(!savingStatus)
 					return false;
 			}
 		}
@@ -86,6 +84,7 @@ public class GUIReset {
 	 * Używana w przypadku krytycznego błędu rysowania sieci.
 	 */
 	public void emergencyRestart() {
+		overlord.log("Something went terribly wrong. Holmes emergency restart initiated.", "error", true);
 		clearAll();
 	}
 	
@@ -97,7 +96,7 @@ public class GUIReset {
 		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		overlord.log("Net data deletion initiated.", "text", true);
 		
-		//CLEAR PETRI NET DATA, kolejność MA ZNACZENIE JAK CHOLERA. Nie zmieniać!
+		//CLEAR PETRI NET DATA, kolejność MA ZNACZENIE JAK CHOLERA!!! Nie zmieniać bo coś j... się zepsuje.
 		pNet.resetData(); // tylko w ten sposób!!!! 
 		pNet.setT_InvMatrix(null, false);
 		pNet.setP_InvMatrix(null);
@@ -294,6 +293,7 @@ public class GUIReset {
 		clustersGenerated = status;
 	}
 
+	@SuppressWarnings("unused")
 	public void setDecompositionStatus(boolean status) {
 		subNetGenerated = status;
 	}
@@ -302,18 +302,15 @@ public class GUIReset {
 	 * Metoda zwraca wartość true jeśli symulator działa.
 	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
+	@SuppressWarnings("unused")
 	public boolean isSimulatorActive() {
 		NetSimulator ns = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator();
-		if(ns.getSimulatorStatus() == SimulatorMode.STOPPED) {
-			return false;
-		} else {
-			return true;
-		}
+		return ns.getSimulatorStatus() != SimulatorMode.STOPPED; // STOPPED => return false (czyli NOT active);
 	}
 	
 	/**
 	 * Metoda zwraca wartość true jeśli symulator działa. Dodatkowo wyświetla okno z ostrzeżeniem
-	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
+	 * @return (<b>boolean</b>) - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
 		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();

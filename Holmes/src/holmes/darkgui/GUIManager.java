@@ -1494,9 +1494,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	/**
 	 * Metoda zapisująca nowe zdarzenie w oknie logów.
-	 * @param text String - tekst zdarzenia
-	 * @param mode String - tryb zapisu w oknie
-	 * @param time boolean - true, jeśli ma być podany czas zdarzenia
+	 * @param text (<b>String</b>) tekst zdarzenia.
+	 * @param mode (<b>String</b>) tryb zapisu w oknie: <b>warning</b>, <b>error</b>, <b>text</b>, <b>italic</b>, <b>bold</b>
+	 * @param time (<b>boolean</b>) true, jeśli ma być podany czas zdarzenia
 	 */
 	public void log(String text, String mode, boolean time) {
 		windowConsole.addText(text, mode, time, true);
@@ -1505,10 +1505,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zapisująca nowe zdarzenie w oknie logów - bez Enter na końcu.
-	 * @param text String - tekst zdarzenia
-	 * @param mode String - tryb zapisu w oknie
-	 * @param time boolean - true, jeśli ma być podany czas zdarzenia
+	 * Metoda zapisująca nowe zdarzenie w oknie logów - <b>bez Enter na końcu</b>.
+	 * @param text (<b>String</b>) tekst zdarzenia.
+	 * @param mode (<b>String</b>) tryb zapisu w oknie: <b>warning</b>, <b>error</b>, <b>text</b>, <b>italic</b>, <b>bold</b>
+	 * @param time (<b>boolean</b>) true, jeśli ma być podany czas zdarzenia
 	 */
 	public void logNoEnter(String text, String mode, boolean time) {
 		windowConsole.addText(text, mode, time, false);
@@ -1603,7 +1603,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda zwraca wartość flagi zmiany sieci.
-	 * @return boolean - jeśli true, to znaczy że sieć się zmieniłą od ostatniego zapisu.
+	 * @return (<b>boolean</b>) - jeśli true, to znaczy, że sieć się zmieniło od ostatniego zapisu.
 	 */
 	public boolean getNetChangeStatus() {
 		return getWorkspace().getProject().anythingChanged;
