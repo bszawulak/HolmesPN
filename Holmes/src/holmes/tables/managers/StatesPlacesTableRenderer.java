@@ -38,7 +38,7 @@ public class StatesPlacesTableRenderer implements TableCellRenderer {
 	 * @param isSelected boolean - czy zaznaczona komórka
 	 * @param hasFocus boolean - czy aktywna komórka
 	 * @param row int - numer wiersza
-	 * @param columnt int - numer kolumny
+	 * @param column int - numer kolumny
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
@@ -46,7 +46,7 @@ public class StatesPlacesTableRenderer implements TableCellRenderer {
     }
 
     /**
-     * Metoda trybu rysowania dla komórek tabeli inwariantów.
+     * Metoda trybu rysowania dla komórek tabeli.
      * @param value Object - wartość do wpisania
      * @param isSelected boolean - czy komórka jest wybrana
      * @param hasFocus boolean - czy jest aktywna

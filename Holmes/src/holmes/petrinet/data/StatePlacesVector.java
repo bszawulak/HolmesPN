@@ -1,5 +1,6 @@
 package holmes.petrinet.data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -13,6 +14,7 @@ import holmes.petrinet.elements.Place;
  *
  */
 public class StatePlacesVector implements Serializable {
+	@Serial
 	private static final long serialVersionUID = 6652562026923360610L;
 	private ArrayList<Double> stateVector;
 	private String stateType = "";

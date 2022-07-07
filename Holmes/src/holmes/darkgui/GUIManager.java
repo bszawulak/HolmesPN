@@ -30,14 +30,11 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
 import com.javadocking.DockingManager;
@@ -70,6 +67,7 @@ import com.javadocking.visualizer.SingleMaximizer;
  * @author MR - Metody, Metody. Nowe Metody. Podpisano: Cyryl
  */
 public class GUIManager extends JPanel implements ComponentListener {
+	@Serial
 	private static final long serialVersionUID = -817072868916096442L;
 	// Static fields.
 	private static GUIManager guiManager;

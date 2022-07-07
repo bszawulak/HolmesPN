@@ -3,8 +3,8 @@ package holmes.darkgui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.JMenu;
@@ -29,6 +29,7 @@ import com.javadocking.dockable.Dockable;
  *
  */
 public class DarkMenu extends JMenuBar {
+	@Serial
 	private static final long serialVersionUID = -1671996309149490657L;
 
 	// GUI
