@@ -1,10 +1,7 @@
 package holmes.darkgui.dockwindows;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serial;
@@ -45,6 +42,8 @@ import holmes.analyse.*;
 import holmes.clusters.ClusterDataPackage;
 import holmes.clusters.ClusterTransition;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.holmesInterface.OvalButton;
+import holmes.darkgui.holmesInterface.RoundedBorder;
 import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.GraphPanel;
 import holmes.graphpanel.GraphPanel.DrawModes;
@@ -4411,6 +4410,29 @@ public class HolmesDockWindowsTable extends JPanel {
             }
         }.yesWeCan(transition, location));
         components.add(nameLocChangeButton);
+
+/*
+        JButton S1L1Reset = new JButton("Reset");
+        S1L1Reset.setFont(new Font("Work Sans", Font.PLAIN, 14));
+        S1L1Reset.setForeground(new Color(90, 90, 90));
+        S1L1Reset.setBackground(new Color(220, 208, 192));
+        S1L1Reset.setOpaque(true);
+        S1L1Reset.setBorderPainted(false);
+        S1L1Reset.setBorder(new RoundedBorder(20));
+        S1L1Reset.setBounds(43, 465, 100, 20);
+
+        S1L1Reset.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                S1L1Reset.setForeground(new Color(0,0,0));
+
+            }
+            public void mouseExited(MouseEvent e) {
+                S1L1Reset.setForeground(new Color(90,90,90));
+            }
+        });
+        S1L1Reset.setMargin(new Insets(0, 0, 0, 0));
+        S1L1Reset.setBounds(columnA_posX + 90, columnA_Y += 45, 150, 40);
+        components.add(S1L1Reset);*/
 
         panel.setLayout(null);
         for (JComponent component : components) panel.add(component);
