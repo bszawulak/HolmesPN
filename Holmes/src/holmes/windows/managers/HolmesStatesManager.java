@@ -29,7 +29,6 @@ public class HolmesStatesManager extends JFrame {
 	private static final long serialVersionUID = -4590055483268695118L;
 	private JFrame ego;
 	private GUIManager overlord;
-	private StatesPlacesTableRenderer tableRenderer;
 	private StatesPlacesTableModel tableModelPN;
 	private StatesPlacesTableModel tableModelXTPN;
 	private JTable statesTablePN;
@@ -142,9 +141,9 @@ public class HolmesStatesManager extends JFrame {
         
 		statesTablePN.setName("StatesTable");
 		statesTablePN.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		tableRenderer = new StatesPlacesTableRenderer(statesTablePN);
-		statesTablePN.setDefaultRenderer(Object.class, tableRenderer);
-		statesTablePN.setDefaultRenderer(Double.class, tableRenderer);
+		StatesPlacesTableRenderer tableRendererPN = new StatesPlacesTableRenderer(statesTablePN);
+		statesTablePN.setDefaultRenderer(Object.class, tableRendererPN);
+		statesTablePN.setDefaultRenderer(Double.class, tableRendererPN);
 		
     	statesTablePN.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
@@ -535,9 +534,9 @@ public class HolmesStatesManager extends JFrame {
 
 		statesTableXTPN.setName("StatesTable");
 		statesTableXTPN.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		tableRenderer = new StatesPlacesTableRenderer(statesTableXTPN);
-		statesTableXTPN.setDefaultRenderer(Object.class, tableRenderer);
-		statesTableXTPN.setDefaultRenderer(Double.class, tableRenderer);
+		StatesPlacesTableRenderer tableRendererXTPN = new StatesPlacesTableRenderer(statesTableXTPN);
+		statesTableXTPN.setDefaultRenderer(Object.class, tableRendererXTPN);
+		statesTableXTPN.setDefaultRenderer(Double.class, tableRendererXTPN);
 
 		statesTableXTPN.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -696,7 +695,7 @@ public class HolmesStatesManager extends JFrame {
 				}
 				int selected = statesTableXTPN.getSelectedRow();
 				if(selected > -1)
-					new HolmesStatesEditor((HolmesStatesManager)ego, statesManager.getState(selected), selected);
+					new HolmesStatesEditorXTPN((HolmesStatesManager)ego, statesManager.getState(selected), selected);
 			}
 		});
 		result.add(editStateButton);

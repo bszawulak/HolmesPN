@@ -8,8 +8,7 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;
 
 /**
- * Klasa zarządzająca stanem sieci klasycznej, tj. liczbą tokenów w miejsach.
- * 
+ * Klasa zarządzająca stanem sieci klasycznej, tj. liczbą tokenów w miejscach.
  * @author MR
  *
  */
@@ -17,11 +16,11 @@ public class StatePlacesVector implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 6652562026923360610L;
 	private ArrayList<Double> stateVector;
-	private String stateType = "";
+	private String stateType;
 	private String stateDescription;
 	
 	/**
-	 * Konstruktor obiektu klasy PlacesStateVector.
+	 * Konstruktor obiektu klasy StatePlacesVector.
 	 */
 	public StatePlacesVector() {
 		stateVector = new ArrayList<Double>();
@@ -30,7 +29,7 @@ public class StatePlacesVector implements Serializable {
 	}
 	
 	/**
-	 * Dodaje nowe miejsce z zadaną liczba tokenów do wektora.
+	 * Dodaje nowe miejsce z zadaną liczbą tokenów do wektora.
 	 * @param value double - liczba tokenów
 	 */
 	public void addPlace(double value) {
@@ -39,8 +38,8 @@ public class StatePlacesVector implements Serializable {
 	
 	/**
 	 * Usuwa lokalizację właśnie kasowanego miejsca z wektora tokenów.
-	 * @param index int - nr miejsca
-	 * @return boolean - true, jeśli operacja się udała
+	 * @param index (<b>int</b>) indeks miejsca.
+	 * @return (<b>boolean</b>) - true, jeśli operacja się udała.
 	 */
 	public boolean removePlace(int index) {
 		if(index >= stateVector.size())
@@ -53,7 +52,7 @@ public class StatePlacesVector implements Serializable {
 	
 	/**
 	 * Zwraca liczbę miejsc.
-	 * @return int
+	 * @return (<b>int</b>) - rozmiar wektora stanu (liczba miejsc).
 	 */
 	public int getSize() {
 		return stateVector.size();
@@ -61,8 +60,8 @@ public class StatePlacesVector implements Serializable {
 	
 	/**
 	 * Zwraca liczbę tokenów w stanie dla zadanego miejsca.
-	 * @param index int - nr miejsca
-	 * @return double - liczba tokenów
+	 * @param index (<b>int</b>) indeks miejsca.
+	 * @return (<b>double</b>) - liczba tokenów w miejscu o indeksie index.
 	 */
 	public double getTokens(int index) {
 		if(index >= stateVector.size())
@@ -73,8 +72,8 @@ public class StatePlacesVector implements Serializable {
 	
 	/**
 	 * Ustawia wskazaną liczbę tokenów w wektorze stanu dla danego miejsca.
-	 * @param index int - indeks miejsca
-	 * @param tokens double - liczba tokenów
+	 * @param index (<b>int</b>) indeks miejsca.
+	 * @param tokens (<b>double</b>) nowa liczba tokenów w miejscu o indeksie index.
 	 */
 	public void setTokens(int index, double tokens) {
 		if(index < stateVector.size())
@@ -83,9 +82,10 @@ public class StatePlacesVector implements Serializable {
 	
 	/**
 	 * Dodaje wskazaną liczbę tokenów do wektora stanu dla danego miejsca.
-	 * @param index int - indeks miejsca
-	 * @param tokens double - liczba tokenów
+	 * @param index (<b>int</b>) indeks miejsca.
+	 * @param tokens (<b>double</b>) nowa liczba tokenów do dodania w miejscu o indeksie index.
 	 */
+	@SuppressWarnings("unused")
 	public void addTokens(int index, double tokens) {
 		if(index < stateVector.size()) {
 			double oldValue = stateVector.get(index);
@@ -96,6 +96,7 @@ public class StatePlacesVector implements Serializable {
 	/**
 	 * Uaktualnia cały wektor stanu chwilowym stanem sieci (liczbą tokenów)
 	 */
+	@SuppressWarnings("unused")
 	public void updateWholeVector() {
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		int placesNumber = places.size();
@@ -106,7 +107,7 @@ public class StatePlacesVector implements Serializable {
 	
 	/**
 	 * Ustawia nowy opis wektora stanów (liczby tokenów sieci).
-	 * @param description String - opis
+	 * @param description (<b>String</b>) opis stanu.
 	 */
 	public void setDescription(String description) {
 		this.stateDescription = description;
@@ -114,7 +115,7 @@ public class StatePlacesVector implements Serializable {
 	
 	/**
 	 * Zwraca opis wektora stanu (liczby tokenów w sieci).
-	 * @return String - opis
+	 * @return (<b>String</b>) opis stanu.
 	 */
 	public String getDescription() {
 		return this.stateDescription;
@@ -122,7 +123,7 @@ public class StatePlacesVector implements Serializable {
 	
 	/**
 	 * Ustawia typ wektora stanu (liczby tokenów w sieci).
-	 * @param type String - nazwa typu
+	 * @param type (<b>String</b>) nazwa typu stanu.
 	 */
 	public void setStateType(String type) {
 		this.stateType = type;
@@ -130,15 +131,15 @@ public class StatePlacesVector implements Serializable {
 	
 	/**
 	 * Zwraca nazwę typu wektora stanu (liczby tokenów sieci).
-	 * @return String - nazwa typu
+	 * @return (<b>String</b>) nazwa typu stanu.
 	 */
 	public String getStateType() {
 		return this.stateType;
 	}
 	
 	/**
-	 * Umożliwia dostęp do wektora danych stanu sieci - liczby tokenów w miejsach.
-	 * @return ArrayList[Double] - wektor stanu sieci klasycznej
+	 * Umożliwia dostęp do wektora danych stanu sieci - liczby tokenów w miejscach.
+	 * @return (<b>ArrayList[Double]</b>) - wektor stanu sieci klasycznej
 	 */
 	public ArrayList<Double> accessVector() {
 		return this.stateVector;

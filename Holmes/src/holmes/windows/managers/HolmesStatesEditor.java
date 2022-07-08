@@ -9,6 +9,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -37,19 +38,14 @@ import holmes.tables.managers.StatesPlacesEditorTableModel;
 import holmes.utilities.Tools;
 
 public class HolmesStatesEditor extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -2088768019289555918L;
 	private GUIManager overlord;
 	private HolmesStatesManager parentWindow;
-	private DefaultTableCellRenderer tableRenderer;
 	private StatesPlacesEditorTableModel tableModel;
-	private JTable table;
-	private JPanel tablePanel;
 	private StatePlacesVector stateVector;
 	private int stateIndex;
-	private JTextArea vectorDescrTextArea;
-	
 	private ArrayList<Place> places;
-	private PetriNet pn;
 	private StatePlacesManager statesManager;
 	
 	private long globalTokensNumber = 0;
@@ -64,11 +60,11 @@ public class HolmesStatesEditor extends JFrame {
 		setTitle("Holmes state editor");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
-    	this.pn = overlord.getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
     	this.parentWindow = parent;
     	this.stateVector = stateVector;
     	this.stateIndex = stateIndex;
@@ -104,8 +100,8 @@ public class HolmesStatesEditor extends JFrame {
 		setLocation(50, 50);
 		setResizable(true);
 		setLayout(new BorderLayout());
-		
-		tablePanel = getMainTablePanel();
+
+		JPanel tablePanel = getMainTablePanel();
 		add(getTopPanel(), BorderLayout.NORTH);
 		add(tablePanel, BorderLayout.CENTER);
 	}
@@ -132,8 +128,8 @@ public class HolmesStatesEditor extends JFrame {
 		JLabel labelID = new JLabel(stateIndex+"");
 		labelID.setBounds(posX+110, posY, 100, 20);
 		filler.add(labelID);
-		
-		vectorDescrTextArea = new JTextArea(statesManager.accessStateMatrix().get(stateIndex).getDescription());
+
+		JTextArea vectorDescrTextArea = new JTextArea(statesManager.accessStateMatrix().get(stateIndex).getDescription());
 		vectorDescrTextArea.setLineWrap(true);
 		vectorDescrTextArea.setEditable(true);
 		vectorDescrTextArea.addFocusListener(new FocusAdapter() {
@@ -226,8 +222,8 @@ public class HolmesStatesEditor extends JFrame {
 		result.setPreferredSize(new Dimension(500, 500));
 		
 		tableModel = new StatesPlacesEditorTableModel(this, stateIndex);
-		table = new RXTable(tableModel);
-		((RXTable)table).setSelectAllForEdit(true);
+		JTable table = new RXTable(tableModel);
+		((RXTable) table).setSelectAllForEdit(true);
 		
 		table.getColumnModel().getColumn(0).setHeaderValue("ID");
 		table.getColumnModel().getColumn(0).setPreferredWidth(30);
@@ -242,7 +238,7 @@ public class HolmesStatesEditor extends JFrame {
         
 		table.setName("SSAplacesTable");
 		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		tableRenderer = new DefaultTableCellRenderer();
+		DefaultTableCellRenderer tableRenderer = new DefaultTableCellRenderer();
 		table.setDefaultRenderer(Object.class, tableRenderer);
 		table.setDefaultRenderer(Double.class, tableRenderer);
 

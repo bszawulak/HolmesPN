@@ -3,6 +3,7 @@ package holmes.darkgui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -34,14 +35,6 @@ public class DarkMenu extends JMenuBar {
 
 	// GUI
 	private GUIManager guiManager;
-	// menus
-	private JMenu fileMenu;
-	private JMenu windowMenu;
-	private JMenu netMenu;
-	private JMenu hierachyMenu;
-	private JMenu analysisMenu;
-	private JMenu mctOperationsMenu;
-	private JMenu otherMenu;
 	private JMenu sheetsMenu;
 
 	// dockable
@@ -67,7 +60,8 @@ public class DarkMenu extends JMenuBar {
 		//*********************************************************************************************
 		
 		// Build the File menu.
-		fileMenu = new JMenu("File");
+		// menus
+		JMenu fileMenu = new JMenu("File");
 		
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		fileMenu.getAccessibleContext().setAccessibleDescription("The File Menu");
@@ -77,7 +71,7 @@ public class DarkMenu extends JMenuBar {
 		JMenuItem projectMenuItem = new JMenuItem("New Project",  KeyEvent.VK_N);
 		projectMenuItem.setEnabled(true);
 		projectMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_newProject.png"));
-		projectMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
+		projectMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
 		projectMenuItem.getAccessibleContext().setAccessibleDescription("New project");
 		projectMenuItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().reset.newProjectInitiated());
 		fileMenu.add(projectMenuItem);
@@ -200,7 +194,7 @@ public class DarkMenu extends JMenuBar {
 		//*********************************************************************************************
 		
 		// Build the Window menu.
-		windowMenu = new JMenu("Windows");
+		JMenu windowMenu = new JMenu("Windows");
 		windowMenu.setMnemonic(KeyEvent.VK_W);
 		windowMenu.getAccessibleContext().setAccessibleDescription("The Window Menu");
 		this.add(windowMenu);
@@ -245,8 +239,8 @@ public class DarkMenu extends JMenuBar {
 		//***********************************  NET PROPERTIES *****************************************
 		//***********************************                 *****************************************
 		//*********************************************************************************************
-		
-		netMenu = new JMenu("Net");
+
+		JMenu netMenu = new JMenu("Net");
 		netMenu.setMnemonic(KeyEvent.VK_N);
 		netMenu.getAccessibleContext().setAccessibleDescription("Net menu");
 		this.add(netMenu);
@@ -301,7 +295,7 @@ public class DarkMenu extends JMenuBar {
 		//*********************************************************************************************
 		
 		// Build the File menu.
-		hierachyMenu = new JMenu("Subnets");
+		JMenu hierachyMenu = new JMenu("Subnets");
 		hierachyMenu.setMnemonic(KeyEvent.VK_F);
 		hierachyMenu.getAccessibleContext().setAccessibleDescription("Subnets tools");
 		this.add(hierachyMenu);
@@ -339,7 +333,7 @@ public class DarkMenu extends JMenuBar {
 			
 		
 		//INVARIANTS MENU
-		analysisMenu = new JMenu("Analysis");
+		JMenu analysisMenu = new JMenu("Analysis");
 		analysisMenu.setMnemonic(KeyEvent.VK_I);
 		analysisMenu.getAccessibleContext().setAccessibleDescription("Net analysis");
 		this.add(analysisMenu);
@@ -447,13 +441,13 @@ public class DarkMenu extends JMenuBar {
 		//***********************************    OTHER MENU   *****************************************
 		//***********************************                 *****************************************
 		//*********************************************************************************************
-		
-		otherMenu = new JMenu("Other");
+
+		JMenu otherMenu = new JMenu("Other");
 		otherMenu.setMnemonic(KeyEvent.VK_O);
 		otherMenu.getAccessibleContext().setAccessibleDescription("Other, unchecked or under-construction methods");
 		this.add(otherMenu);
-		
-		mctOperationsMenu = new JMenu("MCT");
+
+		JMenu mctOperationsMenu = new JMenu("MCT");
 		mctOperationsMenu.setMnemonic(KeyEvent.VK_M);
 		mctOperationsMenu.getAccessibleContext().setAccessibleDescription("MCT Operations menu");
 		mctOperationsMenu.setPreferredSize(new Dimension(WIDTH, 38));
