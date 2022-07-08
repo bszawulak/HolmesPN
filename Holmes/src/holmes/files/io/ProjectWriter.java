@@ -131,6 +131,14 @@ public class ProjectWriter {
 			bw.write("<SSA vectors data end>"+newline);
 
 			//TODO: log o statusach
+			GUIManager.getDefaultGUIManager().log("Net saved: "+statusNet, "text", true);
+			GUIManager.getDefaultGUIManager().log("T-invariants saved: "+statusInv, "text", true);
+			GUIManager.getDefaultGUIManager().log("P-invariants saved: "+statusPInv, "text", true);
+			GUIManager.getDefaultGUIManager().log("MCT saved: "+statusMCT, "text", true);
+			GUIManager.getDefaultGUIManager().log("Net states saved: "+statusStates, "text", true);
+			GUIManager.getDefaultGUIManager().log("Firing rates saved: "+statusFR, "text", true);
+			GUIManager.getDefaultGUIManager().log("SSA vectors saved: "+statusSSA, "text", true);
+
 
 			bw.close();
 			return true;

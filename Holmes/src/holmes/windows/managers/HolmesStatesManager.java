@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.StatePlacesManager;
@@ -429,16 +430,16 @@ public class HolmesStatesManager extends JFrame {
 	 * @return JPanel - panel
 	 */
 	public JPanel getBottomPanel() {
-		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Others"));
+		JPanel result = new JPanel(new BorderLayout());
+		result.setBorder(BorderFactory.createTitledBorder("State description:"));
 		result.setPreferredSize(new Dimension(900, 150));
 
 		int posXda = 10;
 		int posYda = 15;
 		
-		JLabel label0 = new JLabel("State description:");
-		label0.setBounds(posXda, posYda, 140, 20);
-		result.add(label0);
+		//JLabel label0 = new JLabel("State description:");
+		//label0.setBounds(posXda, posYda, 140, 20);
+		//result.add(label0);
 		
 		stateDescrTextAreaPN = new JTextArea();
 		stateDescrTextAreaPN.setLineWrap(true);
@@ -457,7 +458,7 @@ public class HolmesStatesManager extends JFrame {
         CreationPanel.setLayout(new BorderLayout());
         CreationPanel.add(new JScrollPane(stateDescrTextAreaPN), BorderLayout.CENTER);
         CreationPanel.setBounds(posXda, posYda+=25, 600, 100);
-        result.add(CreationPanel);
+        result.add(CreationPanel, BorderLayout.CENTER);
 
 		
 	    return result;
@@ -566,7 +567,9 @@ public class HolmesStatesManager extends JFrame {
 		int posXda = 10;
 		int posYda = 25;
 
-		JButton selectStateButton = new JButton("Set net state");
+		HolmesRoundedButton selectStateButton = new HolmesRoundedButton(""
+				, "StateManager/HSM_newstate1.png", "StateManager/HSM_newstate3.png"
+				, "StateManager/HSM_newstate2.png");
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
@@ -596,7 +599,10 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(selectStateButton);
 
-		JButton addNewStateButton = new JButton("<html>Add current<br/>&nbsp;&nbsp;net state</html>");
+		HolmesRoundedButton addNewStateButton = new HolmesRoundedButton(""
+				, "StateManager/HSM_addcurrnew1.png", "StateManager/HSM_addcurrnew3.png"
+				, "StateManager/HSM_addcurrnew2.png");
+		//JButton  = new JButton("<html>Add current<br/>&nbsp;&nbsp;net state</html>");
 		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
@@ -622,7 +628,10 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewStateButton);
 
-		JButton addNewCleanStateButton = new JButton("<html>Create new<br/>state vector</html>");
+		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton(""
+				, "StateManager/HSM_createNewV1.png", "StateManager/HSM_createNewV3.png"
+				, "StateManager/HSM_createNewV2.png");
+		//JButton addNewCleanStateButton = new JButton("<html>Create new<br/>state vector</html>");
 		addNewCleanStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewCleanStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewCleanStateButton.setFocusPainted(false);
@@ -648,7 +657,10 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewCleanStateButton);
 
-		JButton replaceStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;</html>");
+		HolmesRoundedButton replaceStateButton = new HolmesRoundedButton(""
+				, "StateManager/HSM_replaceSt1.png", "StateManager/HSM_replaceSt3.png"
+				, "StateManager/HSM_replaceSt2.png");
+		//JButton replaceStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;</html>");
 		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
@@ -665,7 +677,10 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(replaceStateButton);
 
-		JButton removeStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;</html>");
+		HolmesRoundedButton removeStateButton = new HolmesRoundedButton(""
+				, "StateManager/HSM_removeSt1.png", "StateManager/HSM_removeSt3.png"
+				, "StateManager/HSM_removeSt2.png");
+		//JButton removeStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;</html>");
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
@@ -682,7 +697,10 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(removeStateButton);
 
-		JButton editStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>state vector</html>");
+		HolmesRoundedButton editStateButton = new HolmesRoundedButton(""
+				, "StateManager/HSM_editSt1.png", "StateManager/HSM_editSt3.png"
+				, "StateManager/HSM_editSt2.png");
+		//JButton editStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>state vector</html>");
 		editStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
@@ -696,6 +714,10 @@ public class HolmesStatesManager extends JFrame {
 				int selected = statesTableXTPN.getSelectedRow();
 				if(selected > -1)
 					new HolmesStatesEditorXTPN((HolmesStatesManager)ego, statesManager.getState(selected), selected);
+				else {
+					JOptionPane.showMessageDialog(ego, "Please click on any state row.",
+							"No state selected", JOptionPane.WARNING_MESSAGE);
+				}
 			}
 		});
 		result.add(editStateButton);
@@ -820,16 +842,16 @@ public class HolmesStatesManager extends JFrame {
 	 * @return JPanel - panel
 	 */
 	public JPanel getBottomPanelXTPN() {
-		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Others"));
+		JPanel result = new JPanel(new BorderLayout());
+		result.setBorder(BorderFactory.createTitledBorder("State description:"));
 		result.setPreferredSize(new Dimension(900, 150));
 
 		int posXda = 10;
 		int posYda = 15;
 
-		JLabel label0 = new JLabel("State description:");
-		label0.setBounds(posXda, posYda, 140, 20);
-		result.add(label0);
+		//JLabel label0 = new JLabel("State description:");
+		//label0.setBounds(posXda, posYda, 140, 20);
+		//result.add(label0);
 
 		stateDescrTextAreaXTPN = new JTextArea();
 		stateDescrTextAreaXTPN.setLineWrap(true);
@@ -848,7 +870,7 @@ public class HolmesStatesManager extends JFrame {
 		CreationPanel.setLayout(new BorderLayout());
 		CreationPanel.add(new JScrollPane(stateDescrTextAreaXTPN), BorderLayout.CENTER);
 		CreationPanel.setBounds(posXda, posYda+=25, 600, 100);
-		result.add(CreationPanel);
+		result.add(CreationPanel, BorderLayout.CENTER);
 
 
 		return result;

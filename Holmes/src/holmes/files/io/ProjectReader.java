@@ -253,6 +253,11 @@ public class ProjectReader {
 		}
 	}
 
+	/**
+	 * Metoda czyta linie nagłówka pliku projektu.
+	 * @param line (<b>String</b>) linia do odczutu z pliku.
+	 * @return (<b>boolean</b>) - true, jeśli wszystko poszło ok.
+	 */
 	private boolean parseHeaderLine(String line) {
 		String backup = line;
 		try {

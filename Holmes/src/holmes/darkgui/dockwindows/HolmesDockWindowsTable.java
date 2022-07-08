@@ -23,8 +23,6 @@ import holmes.analyse.*;
 import holmes.clusters.ClusterDataPackage;
 import holmes.clusters.ClusterTransition;
 import holmes.darkgui.GUIManager;
-import holmes.darkgui.holmesInterface.OvalButton;
-import holmes.darkgui.holmesInterface.RoundedBorder;
 import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.GraphPanel;
 import holmes.graphpanel.GraphPanel.DrawModes;
