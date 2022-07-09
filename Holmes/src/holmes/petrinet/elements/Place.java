@@ -85,6 +85,8 @@ public class Place extends Node {
 	private boolean gammaRangeVisibility_XTPN = true;
 	private int franctionDigits = 6;
 
+	private double accuracyLevel = 0.000000001;
+
 	//tokeny:
 	private ArrayList<Double> multisetK;
 	private ArrayList<Double> reservedMultisetK;
@@ -105,8 +107,8 @@ public class Place extends Node {
 		this.setName("Place" + IdGenerator.getNextPlaceId());
 		this.setType(PetriNetElementType.PLACE);
 
-		this.multisetK = new ArrayList<Double>();
-		this.reservedMultisetK = new ArrayList<Double>();
+		this.multisetK = new ArrayList<>();
+		this.reservedMultisetK = new ArrayList<>();
 	}
 
 	/**
@@ -124,8 +126,8 @@ public class Place extends Node {
 		this.setTokensNumber(tokensNumber);
 		this.setType(PetriNetElementType.PLACE);
 
-		this.multisetK = new ArrayList<Double>();
-		this.reservedMultisetK = new ArrayList<Double>();
+		this.multisetK = new ArrayList<>();
+		this.reservedMultisetK = new ArrayList<>();
 	}
 
 	/**
@@ -138,8 +140,8 @@ public class Place extends Node {
 		this.setName("Place" + IdGenerator.getNextPlaceId());
 		this.setType(PetriNetElementType.PLACE);
 
-		this.multisetK = new ArrayList<Double>();
-		this.reservedMultisetK = new ArrayList<Double>();
+		this.multisetK = new ArrayList<>();
+		this.reservedMultisetK = new ArrayList<>();
 	}
 
 	/**
@@ -176,11 +178,11 @@ public class Place extends Node {
 	 * @return ArrayList[Transition] - lista tranzycji ze zbioru p*
 	 */
 	public ArrayList<Transition> getPostTransitions() {
-		ArrayList<Transition> postTransitions = new ArrayList<Transition>();
+		ArrayList<Transition> postTransitions = new ArrayList<>();
 		for(ElementLocation el : getElementLocations()) {
 			for(Arc arc : el.getOutArcs()) {
 				Node n = arc.getEndNode();
-				if(!postTransitions.contains(n)) {
+				if(!postTransitions.contains((Transition)n)) {
 					postTransitions.add((Transition)n);
 				}
 			}
@@ -261,12 +263,6 @@ public class Place extends Node {
 	 */
 	public void modifyColorTokensNumber(int delta, int i) {
 		switch (i) {
-			case 0 -> {
-				this.tokensNumber += delta;
-				if (this.tokensNumber < 0) {
-					this.tokensNumber = 0;
-				}
-			}
 			case 1 -> {
 				this.token1green += delta;
 				if (this.tokensNumber < 0) {
@@ -345,7 +341,6 @@ public class Place extends Node {
 	 */
 	public void reserveColorTokens(int tokensTaken, int i) {
 		switch (i) {
-			case 0 -> this.reservedTokens += tokensTaken;
 			case 1 -> this.reserved1green += tokensTaken;
 			case 2 -> this.reserved2blue += tokensTaken;
 			case 3 -> this.reserved3yellow += tokensTaken;
@@ -373,6 +368,7 @@ public class Place extends Node {
 	 * Metoda zwalnia wszystkie zarezerwowane kolorowe tokeny.
 	 * @param i int - nr porządkowy tokenu, default 0, od 0 do 5
 	 */
+	@SuppressWarnings("unused")
 	public void freeReservedColorTokens(int i) {
 		switch (i) {
 			case 1 -> this.reserved1green = 0;
@@ -718,7 +714,7 @@ public class Place extends Node {
 		int removed = 0;
 		if(isGammaModeActiveXTPN()) { //tylko gdy XTPN włączone
 			for (Double token : multisetK) {
-				if (token > gammaMax_xTPN) {
+				if (token + accuracyLevel > gammaMax_xTPN) {
 					multisetK.remove(token);
 					removed++;
 				}
@@ -765,8 +761,6 @@ public class Place extends Node {
 					break;
 				}
 			}
-
-
 		} else { //losowo
 			for(int i=0; i<howMany; i++) {
 				int index = genetaror.nextInt(multisetK.size());
@@ -826,6 +820,15 @@ public class Place extends Node {
 	 */
 	public ArrayList<Double> accessMultiset() {
 		return multisetK;
+	}
+
+	/**
+	 * Podmienia multizbiór na nowy (np. przy zmianie stanu na jeden z przechowywanych).
+	 * @param newMultiset (<b>ArrayList[Double]</b>) nowy multizbiór.
+	 */
+	public void replaceMultiset(ArrayList<Double> newMultiset) {
+		multisetK = newMultiset;
+		reservedMultisetK.clear(); // ?
 	}
 
 	/**

@@ -429,7 +429,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     "Saving m0 state", JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
             if (n == 0) {
-                overlord.getWorkspace().getProject().accessStatesManager().addCurrentState();
+                overlord.getWorkspace().getProject().accessStatesManager().addCurrentStatePN();
             }
         });
         components.add(saveButton);
@@ -2681,7 +2681,7 @@ public class HolmesDockWindowsTable extends JPanel {
         int colACompLength = 70;
         int colBCompLength = 200;
 
-        mode = TRANSITION;
+        mode = SPN;
         elementLocation = location;
         initiateContainers();
         element = transition;
@@ -8599,9 +8599,9 @@ public class HolmesDockWindowsTable extends JPanel {
         if (mode == PLACE) {
             place.setTokensNumber(tokens);
 
-            if (overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
+            if (overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
                 ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-                overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+                overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(place), tokens);
             }
             repaintGraphPanel();
         }

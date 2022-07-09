@@ -126,8 +126,6 @@ public class Transition extends Node {
     private double betaMin_xTPN = 0.0;
     private double betaMax_xTPN = 0.0;
     private boolean betaRangeVisibility_XTPN = true;
-
-
     private boolean tauTimersVisibility_XTPN = false; //czy wyświetlać timery
     private double tauAlpha_xTPN = -1.0;
     private double tauBeta_xTPN = -1.0;
@@ -140,7 +138,6 @@ public class Transition extends Node {
     private boolean isActivated_xTPN = false;
     private boolean isProducing_xTPN = false;
     //grafika:
-
     private int franctionDigits = 6;
 
 

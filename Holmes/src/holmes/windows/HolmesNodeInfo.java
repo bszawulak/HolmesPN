@@ -12,6 +12,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.Serial;
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -60,6 +61,7 @@ import holmes.utilities.Tools;
  *
  */
 public class HolmesNodeInfo extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 1476738825515760744L;
 	private GUIManager overlord;
 	private Place place;
@@ -204,7 +206,7 @@ public class HolmesNodeInfo extends JFrame {
 		infoPanel.add(portalLabel);
 		
 		String port = "no";
-		if(place.isPortal() == true) 
+		if(place.isPortal())
 			port = "yes";
 		
 		JLabel portalLabel2 = new JLabel(port);
@@ -237,9 +239,9 @@ public class HolmesNodeInfo extends JFrame {
 				int tokens = (int) spinner.getValue();
 				action.setTokens(place, tokens);
 				
-				if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
+				if(overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
 					ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-					overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+					overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(place), tokens);
 				}
 			}
 		});

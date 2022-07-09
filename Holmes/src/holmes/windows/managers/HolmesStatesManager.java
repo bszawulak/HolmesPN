@@ -18,7 +18,9 @@ import holmes.petrinet.data.StatePlacesVectorXTPN;
 import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
 import holmes.tables.managers.StatesPlacesTableModel;
+import holmes.tables.managers.StatesPlacesTableModelXTPN;
 import holmes.tables.managers.StatesPlacesTableRenderer;
+import holmes.tables.managers.StatesPlacesTableRendererXTPN;
 import holmes.utilities.Tools;
 
 /**
@@ -29,25 +31,25 @@ import holmes.utilities.Tools;
 public class HolmesStatesManager extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -4590055483268695118L;
-	private JFrame ego;
-	private GUIManager overlord;
+	private final JFrame ego;
+	private final GUIManager overlord;
 	private StatesPlacesTableModel tableModelPN;
-	private StatesPlacesTableModel tableModelXTPN;
+	private StatesPlacesTableModelXTPN tableModelXTPN;
 	private JTable statesTablePN;
 	private JTable statesTableXTPN;
 	private JTextArea stateDescrTextAreaPN;
 	private JTextArea stateDescrTextAreaXTPN;
-	private ArrayList<Place> places;
-	private PetriNet pn;
-	private StatePlacesManager statesManager;
+	private final ArrayList<Place> places;
+	private final PetriNet pn;
+	private final StatePlacesManager statesManager;
 	private int selectedRow;
-	private int cellWidth;
+	private final int cellWidth;
 	
 	/**
 	 * Główny konstruktor okna managera stanów początkowych.
 	 */
 	public HolmesStatesManager() {
-		setTitle("Holmes starting states manager");
+		setTitle("Holmes p-states states manager");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ignored) {
@@ -98,12 +100,9 @@ public class HolmesStatesManager extends JFrame {
 		mainXTPN.add(submainXTPN, BorderLayout.CENTER);
 		mainXTPN.add(getButtonsPanelXTPN(), BorderLayout.EAST);
 
-
 		tabbedPane.addTab("XTPN", mainXTPN);
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-
 		add(tabbedPane, BorderLayout.CENTER);
-		//add(main, BorderLayout.CENTER);
 	}
 	
 	/**
@@ -182,25 +181,23 @@ public class HolmesStatesManager extends JFrame {
 		selectStateButton.setToolTipText("Sets selected state as the active one and changes number of tokens in\n"
 				+ "net places according to values of the selected state.");
 		selectStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/selectStateIcon.png"));
-		selectStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				int selected = statesTablePN.getSelectedRow();
-				Object[] options = {"Set new state", "Keep old state",};
-				int n = JOptionPane.showOptionDialog(null,
-								"Set all places of the net according to the selected (table row: "+(selected+1)+") state?",
-								"Set new state?", JOptionPane.YES_NO_OPTION,
-								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-				if (n == 0) {
-					tableModelPN.setSelected(selected);
-					statesManager.setNetworkState(selected);
-					pn.repaintAllGraphPanels();
-					tableModelPN.fireTableDataChanged();
-					overlord.markNetChange();
-				}
+		selectStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfo();
+				return;
+			}
+			int selected = statesTablePN.getSelectedRow();
+			Object[] options = {"Set new state", "Keep current state",};
+			int n = JOptionPane.showOptionDialog(null,
+							"Set all places of the net according to the selected (table row: "+(selected+1)+") state?",
+							"Setting new state", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+			if (n == 0) {
+				tableModelPN.setSelected(selected);
+				statesManager.setNetworkStatePN(selected);
+				pn.repaintAllGraphPanels();
+				tableModelPN.fireTableDataChanged();
+				overlord.markNetChange();
 			}
 		});
 		result.add(selectStateButton);
@@ -211,22 +208,20 @@ public class HolmesStatesManager extends JFrame {
 		addNewStateButton.setFocusPainted(false);
 		addNewStateButton.setToolTipText("Create new state vector based on current net state (distribution of tokens in places)");
 		addNewStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/addStateIcon.png"));
-		addNewStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				Object[] options = {"Add new state", "Cancel",};
-				int n = JOptionPane.showOptionDialog(null,
-								"Add current net state to states table?",
-								"Add new state?", JOptionPane.YES_NO_OPTION,
-								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-				if (n == 0) {
-					statesManager.addCurrentState();
-					addLastStateToTable();
-					tableModelPN.fireTableDataChanged();
-				}
+		addNewStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfo();
+				return;
+			}
+			Object[] options = {"Add new state", "Cancel",};
+			int n = JOptionPane.showOptionDialog(null,
+							"Add current net state to states table?",
+							"Adding new state", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+			if (n == 0) {
+				statesManager.addCurrentStatePN();
+				addLastStateToTable();
+				tableModelPN.fireTableDataChanged();
 			}
 		});
 		result.add(addNewStateButton);
@@ -246,10 +241,10 @@ public class HolmesStatesManager extends JFrame {
 				Object[] options = {"Add new state", "Cancel",};
 				int n = JOptionPane.showOptionDialog(null,
 								"Add clean net state to states table?",
-								"Add clean new state?", JOptionPane.YES_NO_OPTION,
-								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+								"Adding new clean state", JOptionPane.YES_NO_OPTION,
+								JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 				if (n == 0) {
-					statesManager.addNewCleanState();
+					statesManager.addNewCleanStatePN();
 					addLastStateToTable();
 					tableModelPN.fireTableDataChanged();
 				}
@@ -263,14 +258,12 @@ public class HolmesStatesManager extends JFrame {
 		replaceStateButton.setFocusPainted(false);
 		replaceStateButton.setToolTipText("Replace the values of the selected state from the table with the current net places values.");
 		replaceStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/replaceStateIcon.png"));
-		replaceStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				replaceStateAction();
+		replaceStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfo();
+				return;
 			}
+			replaceStateAction();
 		});
 		result.add(replaceStateButton);
 		
@@ -280,14 +273,12 @@ public class HolmesStatesManager extends JFrame {
 		removeStateButton.setFocusPainted(false);
 		removeStateButton.setToolTipText("Removes state vector from project data.");
 		removeStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/removeStateIcon.png"));
-		removeStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				removeStateAction();
+		removeStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfo();
+				return;
 			}
+			removeStateAction();
 		});
 		result.add(removeStateButton);
 		
@@ -296,16 +287,14 @@ public class HolmesStatesManager extends JFrame {
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
 		editStateButton.setIcon(Tools.getResIcon32("/icons/stateManager/stateEdit.png"));
-		editStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				int selected = statesTablePN.getSelectedRow();
-				if(selected > -1)
-					new HolmesStatesEditor((HolmesStatesManager)ego, statesManager.getStatePN(selected), selected);
+		editStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfo();
+				return;
 			}
+			int selected = statesTablePN.getSelectedRow();
+			if(selected > -1)
+				new HolmesStatesEditor((HolmesStatesManager)ego, statesManager.getStatePN(selected), selected);
 		});
 		result.add(editStateButton);
 		
@@ -335,13 +324,13 @@ public class HolmesStatesManager extends JFrame {
 		Object[] options = {"Remove state", "Cancel",};
 		int n = JOptionPane.showOptionDialog(null,
 						"Remove selected state (table row: "+(selected+1)+") from the states table?",
-						"Remove state?", JOptionPane.YES_NO_OPTION,
-						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+						"Removing state", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
 		}
 		
-		statesManager.removeState(selected);
+		statesManager.removeStatePN(selected);
 		fillTable();
 		overlord.markNetChange();
 	}
@@ -354,13 +343,13 @@ public class HolmesStatesManager extends JFrame {
 		Object[] options = {"Replace state", "Cancel",};
 		int n = JOptionPane.showOptionDialog(null,
 						"Replace selected state (table row: "+(selected+1)+") with the current net state?",
-						"Replace state?", JOptionPane.YES_NO_OPTION,
-						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+						"Replacing state", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
 		}
 		
-		statesManager.replaceStateWithNetState(selected);
+		statesManager.replaceStateWithNetStatePN(selected);
 		fillTable();
 		overlord.markNetChange();
 	}
@@ -386,7 +375,7 @@ public class HolmesStatesManager extends JFrame {
 		int states = statesManager.accessStateMatrix().size();
 		StatePlacesVector psVector = statesManager.getStatePN(states-1);
 		
-		ArrayList<String> rowVector = new ArrayList<String>();
+		ArrayList<String> rowVector = new ArrayList<>();
 		
 		rowVector.add("");
 		rowVector.add("m0("+(states)+")");
@@ -403,11 +392,11 @@ public class HolmesStatesManager extends JFrame {
 	private void fillTable() {
 		tableModelPN.clearModel(places.size());
 		
-		int selectedState = statesManager.selectedState;
+		int selectedStatePN = statesManager.selectedStatePN;
     	for(int row=0; row<statesManager.accessStateMatrix().size(); row++) {
-    		ArrayList<String> rowVector = new ArrayList<String>();
+    		ArrayList<String> rowVector = new ArrayList<>();
     		
-    		if(selectedState == row)
+    		if(selectedStatePN == row)
     			rowVector.add("X");
     		else
     			rowVector.add("");
@@ -448,7 +437,7 @@ public class HolmesStatesManager extends JFrame {
             	JTextArea field = (JTextArea) e.getSource();
             	if(field != null) {
             		String newComment = field.getText();
-            		statesManager.setStateDescription(selectedRow, newComment);
+            		statesManager.setStateDescriptionPN(selectedRow, newComment);
             	}
             }
         });
@@ -479,7 +468,7 @@ public class HolmesStatesManager extends JFrame {
 	 * Ustawia pole opisy wybranego stanu.
 	 */
 	public void fillDescriptionField() {
-		String description = statesManager.getStateDescription(selectedRow);
+		String description = statesManager.getStateDescriptionPN(selectedRow);
 		stateDescrTextAreaPN.setText(description);
 	}
 	
@@ -490,17 +479,23 @@ public class HolmesStatesManager extends JFrame {
 		try {
 			selectedRow = statesTablePN.getSelectedRow();
 			fillDescriptionField();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 	}
 
+
+
 	//******************************************************************************
+	//******************************************************************************
+	//********************************    XTPN    **********************************
 	//******************************************************************************
 	//******************************************************************************
 
+
+
 	/**
-	 * Tworzy panel główny tablicy.
+	 * Tworzy panel główny tablicy stanów XTPN.
 	 * @return (<b>Panel</b>) - panel.
 	 */
 	public JPanel getMainTablePanelXTPN() {
@@ -509,8 +504,7 @@ public class HolmesStatesManager extends JFrame {
 		result.setBorder(BorderFactory.createTitledBorder("States table"));
 		result.setPreferredSize(new Dimension(500, 500));
 
-		tableModelXTPN = new StatesPlacesTableModel(places.size(), this);
-		//statesTable.setModel(tableModel);
+		tableModelXTPN = new StatesPlacesTableModelXTPN(places.size(), this);
 		statesTableXTPN = new RXTable(tableModelXTPN);
 		((RXTable)statesTableXTPN).setSelectAllForEdit(true);
 
@@ -529,19 +523,15 @@ public class HolmesStatesManager extends JFrame {
 			statesTableXTPN.getColumnModel().getColumn(i+2).setMaxWidth(cellWidth);
 		}
 
-		//TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(statesTable.getModel());
-		//statesTable.setRowSorter(sorter);
-
 		statesTableXTPN.setName("StatesTable");
 		statesTableXTPN.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		StatesPlacesTableRenderer tableRendererXTPN = new StatesPlacesTableRenderer(statesTableXTPN);
+		StatesPlacesTableRendererXTPN tableRendererXTPN = new StatesPlacesTableRendererXTPN(statesTableXTPN);
 		statesTableXTPN.setDefaultRenderer(Object.class, tableRendererXTPN);
 		statesTableXTPN.setDefaultRenderer(Double.class, tableRendererXTPN);
-
 		statesTableXTPN.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 1) {
-					if(e.isControlDown() == false)
+					if(!e.isControlDown())
 						cellClickActionXTPN();
 				}
 			}
@@ -572,28 +562,25 @@ public class HolmesStatesManager extends JFrame {
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
-		selectStateButton.setToolTipText("Sets selected state as the active one and changes number of tokens in\n"
+		selectStateButton.setToolTipText("Sets selected XTPN state as the active one and changes number of tokens in\n"
 				+ "net places according to values of the selected state.");
-		selectStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/selectStateIcon.png"));
-		selectStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfoXTPN();
-					return;
-				}
-				int selected = statesTableXTPN.getSelectedRow();
-				Object[] options = {"Set new state", "Keep old state",};
-				int n = JOptionPane.showOptionDialog(null,
-						"Set all places of the net according to the selected (table row: "+(selected+1)+") state?",
-						"Set new state?", JOptionPane.YES_NO_OPTION,
-						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-				if (n == 0) {
-					tableModelXTPN.setSelected(selected);
-					statesManager.setNetworkState(selected);
-					pn.repaintAllGraphPanels();
-					tableModelXTPN.fireTableDataChanged();
-					overlord.markNetChange();
-				}
+		selectStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfoXTPN();
+				return;
+			}
+			int selected = statesTableXTPN.getSelectedRow();
+			Object[] options = {"Set new state", "Keep current state",};
+			int n = JOptionPane.showOptionDialog(null,
+					"Set all places of the net according to the selected (table row: "+(selected+1)+") state?",
+					"Setting new state", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+			if (n == 0) {
+				tableModelXTPN.setSelected(selected);
+				statesManager.setNetworkStateXTPN(selected);
+				pn.repaintAllGraphPanels();
+				tableModelXTPN.fireTableDataChanged();
+				overlord.markNetChange();
 			}
 		});
 		result.add(selectStateButton);
@@ -601,28 +588,24 @@ public class HolmesStatesManager extends JFrame {
 		HolmesRoundedButton addNewStateButton = new HolmesRoundedButton(""
 				, "StateManager/HSM_addcurrnew1.png", "StateManager/HSM_addcurrnew3.png"
 				, "StateManager/HSM_addcurrnew2.png");
-		//JButton  = new JButton("<html>Add current<br/>&nbsp;&nbsp;net state</html>");
 		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
 		addNewStateButton.setToolTipText("Create new state vector based on current net state (distribution of tokens in places)");
-		addNewStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/addStateIcon.png"));
-		addNewStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfoXTPN();
-					return;
-				}
-				Object[] options = {"Add new state", "Cancel",};
-				int n = JOptionPane.showOptionDialog(null,
-						"Add current net state to states table?",
-						"Add new state?", JOptionPane.YES_NO_OPTION,
-						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-				if (n == 0) {
-					statesManager.addCurrentState();
-					addLastStateToTableXTPN();
-					tableModelXTPN.fireTableDataChanged();
-				}
+		addNewStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfoXTPN();
+				return;
+			}
+			Object[] options = {"Add new XTPN state", "Cancel",};
+			int n = JOptionPane.showOptionDialog(null,
+					"Add current XTPN net state to states table?",
+					"New state", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+			if (n == 0) {
+				statesManager.addCurrentStateXTPN();
+				addLastStateToTableXTPN();
+				tableModelXTPN.fireTableDataChanged();
 			}
 		});
 		result.add(addNewStateButton);
@@ -630,28 +613,24 @@ public class HolmesStatesManager extends JFrame {
 		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton(""
 				, "StateManager/HSM_createNewV1.png", "StateManager/HSM_createNewV3.png"
 				, "StateManager/HSM_createNewV2.png");
-		//JButton addNewCleanStateButton = new JButton("<html>Create new<br/>state vector</html>");
 		addNewCleanStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewCleanStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewCleanStateButton.setFocusPainted(false);
 		addNewCleanStateButton.setToolTipText("Create new and clean state vector (all tokens values set to 0).");
-		addNewCleanStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/addCleanState.png"));
-		addNewCleanStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfoXTPN();
-					return;
-				}
-				Object[] options = {"Add new state", "Cancel",};
-				int n = JOptionPane.showOptionDialog(null,
-						"Add clean net state to states table?",
-						"Add clean new state?", JOptionPane.YES_NO_OPTION,
-						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-				if (n == 0) {
-					statesManager.addNewCleanState();
-					addLastStateToTableXTPN();
-					tableModelXTPN.fireTableDataChanged();
-				}
+		addNewCleanStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfoXTPN();
+				return;
+			}
+			Object[] options = {"Add new XTPN state", "Cancel",};
+			int n = JOptionPane.showOptionDialog(null,
+					"Add clean XTPN net state to states table?",
+					"New clean state", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+			if (n == 0) {
+				statesManager.addNewCleanStateXTPN();
+				addLastStateToTableXTPN();
+				tableModelXTPN.fireTableDataChanged();
 			}
 		});
 		result.add(addNewCleanStateButton);
@@ -659,40 +638,32 @@ public class HolmesStatesManager extends JFrame {
 		HolmesRoundedButton replaceStateButton = new HolmesRoundedButton(""
 				, "StateManager/HSM_replaceSt1.png", "StateManager/HSM_replaceSt3.png"
 				, "StateManager/HSM_replaceSt2.png");
-		//JButton replaceStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;</html>");
 		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
-		replaceStateButton.setToolTipText("Replace the values of the selected state from the table with the current net places values.");
-		replaceStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/replaceStateIcon.png"));
-		replaceStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfoXTPN();
-					return;
-				}
-				replaceStateActionXTPN();
+		replaceStateButton.setToolTipText("Replace the values of the selected XTPN state from the table with the current XTPN net places values.");
+		replaceStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfoXTPN();
+				return;
 			}
+			replaceStateActionXTPN();
 		});
 		result.add(replaceStateButton);
 
 		HolmesRoundedButton removeStateButton = new HolmesRoundedButton(""
 				, "StateManager/HSM_removeSt1.png", "StateManager/HSM_removeSt3.png"
 				, "StateManager/HSM_removeSt2.png");
-		//JButton removeStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;</html>");
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
-		removeStateButton.setToolTipText("Removes state vector from project data.");
-		removeStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/removeStateIcon.png"));
-		removeStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfoXTPN();
-					return;
-				}
-				removeStateActionXTPN();
+		removeStateButton.setToolTipText("Removes XTPN state vector from project data.");
+		removeStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfoXTPN();
+				return;
 			}
+			removeStateActionXTPN();
 		});
 		result.add(removeStateButton);
 
@@ -703,7 +674,7 @@ public class HolmesStatesManager extends JFrame {
 		editStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
-		editStateButton.setIcon(Tools.getResIcon32("/icons/stateManager/stateEdit.png"));
+		//editStateButton.setIcon(Tools.getResIcon32("/icons/stateManager/stateEdit.png"));
 		editStateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if(places.size() == 0) {
@@ -714,13 +685,12 @@ public class HolmesStatesManager extends JFrame {
 				if(selected > -1)
 					new HolmesStatesEditorXTPN((HolmesStatesManager)ego, statesManager.getStateXTPN(selected), selected);
 				else {
-					JOptionPane.showMessageDialog(ego, "Please click on any state row.",
-							"No state selected", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(ego, "Please click on any XTPN state row.",
+							"No XTPN state selected", JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
 		result.add(editStateButton);
-
 		return result;
 	}
 
@@ -728,8 +698,8 @@ public class HolmesStatesManager extends JFrame {
 	 * Krótki komunikat, że nie ma sieci.
 	 */
 	private void noNetInfoXTPN() {
-		JOptionPane.showMessageDialog(this, "There are no places in the net!",
-				"No net", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(this, "There are no places in the net.",
+				"No places", JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**
@@ -737,23 +707,23 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void removeStateActionXTPN() {
 		int selected = statesTableXTPN.getSelectedRow();
-		int states = statesManager.accessStateMatrix().size();
+		int states = statesManager.accessStateMatrixXTPN().size();
 		if(states == 1) {
-			JOptionPane.showMessageDialog(null, "At least one net state must remain!",
+			JOptionPane.showMessageDialog(null, "At least one XTPN net state must remain.",
 					"Warning",JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
-		Object[] options = {"Remove state", "Cancel",};
+		Object[] options = {"Remove XTPN state", "Cancel",};
 		int n = JOptionPane.showOptionDialog(null,
-				"Remove selected state (table row: "+(selected+1)+") from the states table?",
-				"Remove state?", JOptionPane.YES_NO_OPTION,
-				JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+				"Remove selected XTPN state (table row: "+(selected+1)+") from the states table?",
+				"Remove XTPN state", JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
 		}
 
-		statesManager.removeState(selected);
+		statesManager.removeStateXTPN(selected);
 		fillTableXTPN();
 		overlord.markNetChange();
 	}
@@ -763,16 +733,16 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void replaceStateActionXTPN() {
 		int selected = statesTableXTPN.getSelectedRow();
-		Object[] options = {"Replace state", "Cancel",};
+		Object[] options = {"Replace XTPN state", "Cancel",};
 		int n = JOptionPane.showOptionDialog(null,
-				"Replace selected state (table row: "+(selected+1)+") with the current net state?",
-				"Replace state?", JOptionPane.YES_NO_OPTION,
-				JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+				"Replace selected XTPN state (table row: "+(selected+1)+") with the current net state?",
+				"Replace XTPN state", JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
 		}
 
-		statesManager.replaceStateWithNetState(selected);
+		statesManager.replaceStateWithNetStateXTPN(selected);
 		fillTableXTPN();
 		overlord.markNetChange();
 	}
@@ -795,17 +765,15 @@ public class HolmesStatesManager extends JFrame {
 	 * aktualny stan sieci do tabeli stanów.
 	 */
 	private void addLastStateToTableXTPN() {
-		int states = statesManager.accessStateMatrix().size();
+		int states = statesManager.accessStateMatrixXTPN().size();
 		StatePlacesVectorXTPN psVector = statesManager.getStateXTPN(states-1);
-
-		ArrayList<String> rowVector = new ArrayList<String>();
+		ArrayList<String> rowVector = new ArrayList<>();
 
 		rowVector.add("");
 		rowVector.add("m0("+(states)+")");
 		for(int p=0; p<psVector.getSize(); p++) {
-
-			//TODO:
-			//rowVector.add(""+psVector.getTokens(p));
+			int value = psVector.getMultisetK(p).size();
+			rowVector.add(""+value);
 		}
 		tableModelXTPN.addNew(rowVector);
 		overlord.markNetChange();
@@ -817,11 +785,11 @@ public class HolmesStatesManager extends JFrame {
 	private void fillTableXTPN() {
 		tableModelXTPN.clearModel(places.size());
 
-		int selectedState = statesManager.selectedState;
-		for(int row=0; row<statesManager.accessStateMatrix().size(); row++) {
-			ArrayList<String> rowVector = new ArrayList<String>();
+		int selectedStateXTPN = statesManager.selectedStateXTPN;
+		for(int row=0; row<statesManager.accessStateMatrixXTPN().size(); row++) {
+			ArrayList<String> rowVector = new ArrayList<>();
 
-			if(selectedState == row)
+			if(selectedStateXTPN == row)
 				rowVector.add("X");
 			else
 				rowVector.add("");
@@ -830,8 +798,8 @@ public class HolmesStatesManager extends JFrame {
 			rowVector.add("m0("+(row+1)+")");
 
 			for(int p=0; p<psVector.getSize(); p++) {
-				//TODO:
-				//rowVector.add(""+psVector.getTokens(p));
+				int value = psVector.getMultisetK(p).size();
+				rowVector.add(""+value);
 			}
 			tableModelXTPN.addNew(rowVector);
 		}
@@ -845,15 +813,11 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	public JPanel getBottomPanelXTPN() {
 		JPanel result = new JPanel(new BorderLayout());
-		result.setBorder(BorderFactory.createTitledBorder("State description:"));
+		result.setBorder(BorderFactory.createTitledBorder("XTPN state description:"));
 		result.setPreferredSize(new Dimension(900, 150));
 
 		int posXda = 10;
 		int posYda = 15;
-
-		//JLabel label0 = new JLabel("State description:");
-		//label0.setBounds(posXda, posYda, 140, 20);
-		//result.add(label0);
 
 		stateDescrTextAreaXTPN = new JTextArea();
 		stateDescrTextAreaXTPN.setLineWrap(true);
@@ -863,7 +827,7 @@ public class HolmesStatesManager extends JFrame {
 				JTextArea field = (JTextArea) e.getSource();
 				if(field != null) {
 					String newComment = field.getText();
-					statesManager.setStateDescription(selectedRow, newComment);
+					statesManager.setStateDescriptionXTPN(selectedRow, newComment);
 				}
 			}
 		});
@@ -873,8 +837,6 @@ public class HolmesStatesManager extends JFrame {
 		CreationPanel.add(new JScrollPane(stateDescrTextAreaXTPN), BorderLayout.CENTER);
 		CreationPanel.setBounds(posXda, posYda+=25, 600, 100);
 		result.add(CreationPanel, BorderLayout.CENTER);
-
-
 		return result;
 	}
 
@@ -883,11 +845,12 @@ public class HolmesStatesManager extends JFrame {
 	 * @param row int - nr wiersza tablicy
 	 * @param column int - nr kolumny tablicy
 	 * @param value double - nowa wartość
+	 *
+	 *     NIEUŻYWANA, WSZYSTKIE KOLUMNY READ ONLY!
 	 */
 	public void changeStateXTPN(int row, int column, double value) {
-		//TODO:
 		//statesManager.getStateXTPN(row).accessVector().set(column-2, value);
-		overlord.markNetChange();
+		//overlord.markNetChange();
 		tableModelXTPN.fireTableDataChanged();
 	}
 
@@ -895,7 +858,7 @@ public class HolmesStatesManager extends JFrame {
 	 * Ustawia pole opisy wybranego stanu.
 	 */
 	public void fillDescriptionFieldXTPN() {
-		String description = statesManager.getStateDescription(selectedRow);
+		String description = statesManager.getStateDescriptionXTPN(selectedRow);
 		stateDescrTextAreaXTPN.setText(description);
 	}
 
@@ -906,7 +869,7 @@ public class HolmesStatesManager extends JFrame {
 		try {
 			selectedRow = statesTableXTPN.getSelectedRow();
 			fillDescriptionField();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 
 		}
 	}

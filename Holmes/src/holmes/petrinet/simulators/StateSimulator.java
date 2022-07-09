@@ -354,7 +354,7 @@ public class StateSimulator implements Runnable {
 			currentDataPackage.placeTokensMax.add(0.0);
 			currentDataPackage.placeZeroTokens.add(0);
 			
-			currentDataPackage.startingState = overlord.getWorkspace().getProject().accessStatesManager().getCurrentState();
+			currentDataPackage.startingState = overlord.getWorkspace().getProject().accessStatesManager().getCurrentStatePN();
 		}
 		for(int t=0; t<transNumber; t++) {
 			totalTransFiringInTurn.add(0);

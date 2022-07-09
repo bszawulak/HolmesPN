@@ -40,13 +40,13 @@ import holmes.utilities.Tools;
 public class HolmesStatesEditor extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -2088768019289555918L;
-	private GUIManager overlord;
-	private HolmesStatesManager parentWindow;
+	private final GUIManager overlord;
+	private final HolmesStatesManager parentWindow;
 	private StatesPlacesEditorTableModel tableModel;
-	private StatePlacesVector stateVector;
-	private int stateIndex;
-	private ArrayList<Place> places;
-	private StatePlacesManager statesManager;
+	private final StatePlacesVector stateVector;
+	private final int stateIndex;
+	private final ArrayList<Place> places;
+	private final StatePlacesManager statesManager;
 	
 	private long globalTokensNumber = 0;
 	
@@ -156,14 +156,12 @@ public class HolmesStatesEditor extends JFrame {
 		changeAllButton.setFocusPainted(false);
 		changeAllButton.setToolTipText("Sets same number of tokens in all places.");
 		changeAllButton.setIcon(Tools.getResIcon16("/icons/stateManager/changeAll.png"));
-		changeAllButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					return;
-				}
-				
-				changeGlobalTokensNumber();
+		changeAllButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				return;
 			}
+
+			changeGlobalTokensNumber();
 		});
 		result.add(changeAllButton);
 		
@@ -269,7 +267,7 @@ public class HolmesStatesEditor extends JFrame {
 	 * @param newValue double - nowa wartość tokenów
 	 */
 	public void changeRealValue(int index, int placeID, double newValue) {
-		statesManager.getState(index).accessVector().set(placeID, newValue);
+		statesManager.getStatePN(index).accessVector().set(placeID, newValue);
 		parentWindow.changeTableCell(index, placeID+2, newValue, true);
 		overlord.markNetChange();
 	}

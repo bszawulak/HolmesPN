@@ -26,13 +26,13 @@ import holmes.utilities.Tools;
 public abstract class Node extends PetriNetElement {
 	@Serial
 	private static final long serialVersionUID = -8569201372990876149L;
-	private ArrayList<ElementLocation> elementLocations = new ArrayList<ElementLocation>();
+	private ArrayList<ElementLocation> elementLocations = new ArrayList<>();
 	//lokalizacje napisów do oddzielnego przesuwania
-	private ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
-	private ArrayList<ElementLocation> alphaLocations = new ArrayList<ElementLocation>();
-	private ArrayList<ElementLocation> betaLocations = new ArrayList<ElementLocation>();
-	private ArrayList<ElementLocation> gammaLocations = new ArrayList<ElementLocation>();
-	private ArrayList<ElementLocation> tauLocations = new ArrayList<ElementLocation>();
+	private ArrayList<ElementLocation> namesLocations = new ArrayList<>();
+	private ArrayList<ElementLocation> alphaLocations = new ArrayList<>();
+	private ArrayList<ElementLocation> betaLocations = new ArrayList<>();
+	private ArrayList<ElementLocation> gammaLocations = new ArrayList<>();
+	private ArrayList<ElementLocation> tauLocations = new ArrayList<>();
 	private boolean isPortal = false;
 	private int radius = 20;
 	//final static float[] dash1 = { 2.0f };
@@ -118,7 +118,7 @@ public abstract class Node extends PetriNetElement {
 	 * @return ArrayList[Point] - lista punktów lokalizacji wierzchołka na wybranym arkuszu
 	 */
 	public ArrayList<Point> getNodePositions(int sheetId) {
-		ArrayList<Point> returnPoints = new ArrayList<Point>();
+		ArrayList<Point> returnPoints = new ArrayList<>();
 		for (ElementLocation e : this.getNodeLocations())
 			if (e.getSheetID() == sheetId)
 				returnPoints.add(e.getPosition());
@@ -132,7 +132,7 @@ public abstract class Node extends PetriNetElement {
 	 * @param nameType  (GUIManager.locationMoveType) - ALPHA, BETA, GAMMA, DELTA
 	 */
 	public ArrayList<Point> getNodeNamePositions(int sheetId, GUIManager.locationMoveType nameType) {
-		ArrayList<Point> returnPoints = new ArrayList<Point>();
+		ArrayList<Point> returnPoints = new ArrayList<>();
 		for (ElementLocation e : this.getTextsLocations(nameType))
 			if (e.getSheetID() == sheetId)
 				returnPoints.add(e.getPosition());
@@ -145,7 +145,7 @@ public abstract class Node extends PetriNetElement {
 	 * @return ArrayList[ElementLocation] - lista lokalizacji wierzchołka na wybranym arkuszu
 	 */
 	public ArrayList<ElementLocation> getNodeLocations(int sheetId) {
-		ArrayList<ElementLocation> returnPoints = new ArrayList<ElementLocation>();
+		ArrayList<ElementLocation> returnPoints = new ArrayList<>();
 		for (ElementLocation e : this.getElementLocations())
 			if (e.getSheetID() == sheetId)
 				returnPoints.add(e);
@@ -409,7 +409,7 @@ public abstract class Node extends PetriNetElement {
 	 * 			zawierają się w wybranym prostokątnym obszarze na wybranym arkuszu
 	 */
 	public ArrayList<ElementLocation> getLocationsWhichAreContained(Rectangle rectangle, int sheetId) {
-		ArrayList<ElementLocation> returnElementLocations = new ArrayList<ElementLocation>();
+		ArrayList<ElementLocation> returnElementLocations = new ArrayList<>();
 		for (ElementLocation el : this.getNodeLocations(sheetId))
 			if (rectangle.contains(el.getPosition()))
 				returnElementLocations.add(el);
@@ -531,16 +531,11 @@ public abstract class Node extends PetriNetElement {
 					break;
 				}
 			}
-			
 			if(!found) {
 				GUIManager.getDefaultGUIManager().subnetsHQ.clearAllMetaArcs(this, subNet);
 			}
 		}
-
-		if (this.getNodeLocations().size() > 0)
-			return true;
-		else
-			return false;
+		return (this.getNodeLocations().size() > 0);
 	}
 
 	/**
@@ -548,7 +543,7 @@ public abstract class Node extends PetriNetElement {
 	 * @return ArrayList[Arc] - lista łuków wejściowych
 	 */
 	public ArrayList<Arc> getInArcs() {
-		ArrayList<Arc> totalInArcs = new ArrayList<Arc>();
+		ArrayList<Arc> totalInArcs = new ArrayList<>();
 		//if(isInvisible())
 		//	return totalInArcs;
 		
@@ -563,7 +558,7 @@ public abstract class Node extends PetriNetElement {
 	 * @return ArrayList[Arc] - lista łuków wyjściowych
 	 */
 	public ArrayList<Arc> getOutArcs() {
-		ArrayList<Arc> totalOutArcs = new ArrayList<Arc>();
+		ArrayList<Arc> totalOutArcs = new ArrayList<>();
 		//if(isInvisible())
 		//	return totalOutArcs;
 		
@@ -578,7 +573,7 @@ public abstract class Node extends PetriNetElement {
 	 * @return ArrayList[Node] - lista wierzchołków wejściowych
 	 */
 	public ArrayList<Node> getInNodes() {
-		ArrayList<Node> totalInNodes = new ArrayList<Node>();
+		ArrayList<Node> totalInNodes = new ArrayList<>();
 		for (Arc arc : getInArcs()) {
 			totalInNodes.add(arc.getStartNode());
 		}
@@ -590,7 +585,7 @@ public abstract class Node extends PetriNetElement {
 	 * @return ArrayList[Node] - lista wierzchołków wyjściowych
 	 */
 	public ArrayList<Node> getOutNodes() {
-		ArrayList<Node> totalOutNodes = new ArrayList<Node>();
+		ArrayList<Node> totalOutNodes = new ArrayList<>();
 		for (Arc arc : getOutArcs()) {
 			totalOutNodes.add(arc.getEndNode());
 		}
@@ -598,7 +593,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	public ArrayList<Node> getOutInNodes() {
-		ArrayList<Node> totalNodes = new ArrayList<Node>();
+		ArrayList<Node> totalNodes = new ArrayList<>();
 		for (Arc arc : getOutArcs()) {
 			totalNodes.add(arc.getEndNode());
 		}
@@ -787,7 +782,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	public ArrayList<Arc> getOutInArcs(){
-		ArrayList<Arc> totalInArcs = new ArrayList<Arc>();
+		ArrayList<Arc> totalInArcs = new ArrayList<>();
 
 		for (ElementLocation location : getNodeLocations()) {
 			totalInArcs.addAll(location.getInArcs());

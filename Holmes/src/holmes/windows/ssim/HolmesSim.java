@@ -257,7 +257,7 @@ public class HolmesSim extends JFrame {
 	    stateLabel0.setBounds(posXda+400, posYda, 130, 20);
 	    dataAcquisitionPanel.add(stateLabel0);
 	    
-	    selStateLabel = new JLabel(""+overlord.getWorkspace().getProject().accessStatesManager().selectedState);
+	    selStateLabel = new JLabel(""+overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN);
 	    selStateLabel.setBounds(posXda+400, posYda+20, 60, 20);
 	    dataAcquisitionPanel.add(selStateLabel);
 		
@@ -1274,7 +1274,7 @@ public class HolmesSim extends JFrame {
 	 * Metoda wypełnia komponenty rozwijalne danymi o miejscach i tranzycjach.
 	 */
 	private void fillPlacesAndTransitionsData() {
-		selStateLabel.setText(""+overlord.getWorkspace().getProject().accessStatesManager().selectedState);
+		selStateLabel.setText(""+overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN);
 		
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		if(places== null || places.size() == 0) {

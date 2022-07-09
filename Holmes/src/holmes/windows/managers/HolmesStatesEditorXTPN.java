@@ -130,7 +130,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
         labelID.setBounds(posX+110, posY, 100, 20);
         filler.add(labelID);
 
-        JTextArea vectorDescrTextArea = new JTextArea(statesManager.accessStateMatrix().get(stateIndex).getDescription());
+        JTextArea vectorDescrTextArea = new JTextArea(statesManager.accessStateMatrixXTPN().get(stateIndex).getDescription());
         vectorDescrTextArea.setLineWrap(true);
         vectorDescrTextArea.setEditable(true);
         vectorDescrTextArea.addFocusListener(new FocusAdapter() {
@@ -138,7 +138,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
                 JTextArea field = (JTextArea) e.getSource();
                 if(field != null) {
                     String newComment = field.getText();
-                    statesManager.accessStateMatrix().get(stateIndex).setDescription(newComment);
+                    statesManager.accessStateMatrixXTPN().get(stateIndex).setDescription(newComment);
                     fillTable();
                     parentWindow.fillDescriptionField();
                 }

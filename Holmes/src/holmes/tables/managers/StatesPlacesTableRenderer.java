@@ -18,7 +18,7 @@ import javax.swing.table.TableCellRenderer;
 public class StatesPlacesTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
 	private static final DecimalFormat formatter = new DecimalFormat( "#" );
-	private JTable table;
+	private final JTable table;
 	private static final Font fontNormal =  new Font("Verdana", Font.PLAIN, 9);
 	private static final Font fontBold =  new Font("Verdana", Font.BOLD, 9);
 	
@@ -71,12 +71,10 @@ public class StatesPlacesTableRenderer implements TableCellRenderer {
     	}
     	if(selectedRow == row)
     		oLabel.setBackground(Color.lightGray);
-    	
-    	
+
     	if(value instanceof Double) {
             value = formatter.format((Number)value);
         }
-    	
     	
     	oLabel.setText(value.toString());
         return oLabel;

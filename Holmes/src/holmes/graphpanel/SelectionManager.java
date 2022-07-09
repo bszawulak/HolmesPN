@@ -31,12 +31,12 @@ import holmes.petrinet.functions.FunctionsTools;
  * @author MR - mnóstwo dodatków i poprawek
  */
 public class SelectionManager {
-	private GUIManager overlord;
+	private final GUIManager overlord;
 	private GraphPanel graphPanel;
 	private ArrayList<Node> graphPanelNodes;
 	private ArrayList<Arc> graphPanelArcs;
-	private ArrayList<ElementLocation> selectedElementLocations = new ArrayList<ElementLocation>();
-	private ArrayList<Arc> selectedArcs = new ArrayList<Arc>();
+	private ArrayList<ElementLocation> selectedElementLocations = new ArrayList<>();
+	private ArrayList<Arc> selectedArcs = new ArrayList<>();
 	private SelectionActionListener actionListener;
 
 	/**
@@ -74,11 +74,12 @@ public class SelectionManager {
 		return graphPanelNodes;
 	}
 
-	@SuppressWarnings("unused")
+
 	/**
 	 * Metoda ustawiająca nową tablicę wierzchołków arkusza sieci.
 	 * @param graphPanelNodes ArrayList[Node] - nowa tablica węzłów
 	 */
+	@SuppressWarnings("unused")
 	private void setGraphPanelNodes(ArrayList<Node> graphPanelNodes) {
 		this.graphPanelNodes = graphPanelNodes;
 	}
@@ -91,11 +92,12 @@ public class SelectionManager {
 		return graphPanelArcs;
 	}
 
-	@SuppressWarnings("unused")
+
 	/**
 	 * Metoda ustawiająca nową listę łuków panelu graficznego.
 	 * @param graphPanelArcs ArrayList[Arc] - lista łuków
 	 */
+	@SuppressWarnings("unused")
 	private void setGraphPanelArcs(ArrayList<Arc> graphPanelArcs) {
 		this.graphPanelArcs = graphPanelArcs;
 	}
@@ -132,6 +134,7 @@ public class SelectionManager {
 	 * Metoda umożliwia ustawienie aktualnej listy zaznaczonych łuków.
 	 * @param selectedArcs ArrayList[Arc] - nowa lista zaznaczonych łuków
 	 */
+	@SuppressWarnings("unused")
 	public void setSelectedArcs(ArrayList<Arc> selectedArcs) {
 		this.selectedArcs = selectedArcs;
 	}
@@ -299,7 +302,7 @@ public class SelectionManager {
 			this.invokeActionListener();
 			
 		} else {
-			ArrayList<Integer> sheetModified = new ArrayList<Integer>();
+			ArrayList<Integer> sheetModified = new ArrayList<>();
 			sheetModified.add(el.getSheetID());
 			
 			this.deselectElementLocation(el);
@@ -367,8 +370,8 @@ public class SelectionManager {
 		PetriNet pn = overlord.getWorkspace().getProject();
 		ArrayList<Place> places = pn.getPlaces();
 		ArrayList<Transition> transitions = pn.getTransitions();
-		ArrayList<Integer> sheetsModified = new ArrayList<Integer>();
-		ArrayList<ElementLocation> protectedList = new ArrayList<ElementLocation>();
+		ArrayList<Integer> sheetsModified = new ArrayList<>();
+		ArrayList<ElementLocation> protectedList = new ArrayList<>();
 		boolean functionWarning = false;
 		
 		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
@@ -432,9 +435,7 @@ public class SelectionManager {
 			i.remove();
 		}
 		// kasuje wszystkie zaznaczone łuki:
-		boolean securedDelete = false;
-		if(protectedList.size() > 0)
-			securedDelete = true;
+		boolean securedDelete = protectedList.size() > 0;
 
 		for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
 			Arc a = i.next();
@@ -589,11 +590,11 @@ public class SelectionManager {
 			Place portal = new Place(IdGenerator.getNextId(), (ArrayList<ElementLocation>)getSelectedElementLocations().clone()); 
 			
 			// poprawić, bo teraz tylko zeruje przesunięcie napisów
-			ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
-			ArrayList<ElementLocation> alphaLocations = new ArrayList<ElementLocation>();
-			ArrayList<ElementLocation> betaLocations = new ArrayList<ElementLocation>();
-			ArrayList<ElementLocation> gammaLocations = new ArrayList<ElementLocation>();
-			ArrayList<ElementLocation> tauLocations = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> namesLocations = new ArrayList<>();
+			ArrayList<ElementLocation> alphaLocations = new ArrayList<>();
+			ArrayList<ElementLocation> betaLocations = new ArrayList<>();
+			ArrayList<ElementLocation> gammaLocations = new ArrayList<>();
+			ArrayList<ElementLocation> tauLocations = new ArrayList<>();
 			int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
 			for(int i=0; i<getSelectedElementLocations().size(); i++) {	
 				namesLocations.add(new ElementLocation(sid, new Point(0,0), null));
@@ -629,11 +630,11 @@ public class SelectionManager {
 			portal.setTransType(tt);
 			
 			// poprawić, bo teraz tylko zeruje przesunięcie napisów
-			ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
-			ArrayList<ElementLocation> alphaLocations = new ArrayList<ElementLocation>();
-			ArrayList<ElementLocation> betaLocations = new ArrayList<ElementLocation>();
-			ArrayList<ElementLocation> gammaLocations = new ArrayList<ElementLocation>();
-			ArrayList<ElementLocation> tauLocations = new ArrayList<ElementLocation>();
+			ArrayList<ElementLocation> namesLocations = new ArrayList<>();
+			ArrayList<ElementLocation> alphaLocations = new ArrayList<>();
+			ArrayList<ElementLocation> betaLocations = new ArrayList<>();
+			ArrayList<ElementLocation> gammaLocations = new ArrayList<>();
+			ArrayList<ElementLocation> tauLocations = new ArrayList<>();
 
 			int sid = getSelectedElementLocations().get(0).getParentNode().getElementLocations().get(0).getSheetID();
 			for(int i=0; i<getSelectedElementLocations().size(); i++) {	
@@ -700,7 +701,7 @@ public class SelectionManager {
 	 * Metoda zmienia aktualnie kliknięty element w portal, tworząc jego klona.
 	 * @author MR
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unused")
 	public void cloneNodeIntoPortal() {
 		// sprawdzenie czy wszystkie elementy sa tego samego typu (Place lub Transition)
 		if(this.getSelectedElementLocations().size() > 1) {
@@ -714,11 +715,11 @@ public class SelectionManager {
 		//dodawanie innych miejsc dla samego portalu do selectedElementLocations
 		ElementLocation nodeSelectedEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
 		Node nodeSelected = nodeSelectedEL.getParentNode(); //wybrany wierzchołek
-		ArrayList<ElementLocation> namesLocations = new ArrayList<ElementLocation>();
-		ArrayList<ElementLocation> alphaLocations = new ArrayList<ElementLocation>();
-		ArrayList<ElementLocation> betaLocations = new ArrayList<ElementLocation>();
-		ArrayList<ElementLocation> gammaLocations = new ArrayList<ElementLocation>();
-		ArrayList<ElementLocation> tauLocations = new ArrayList<ElementLocation>();
+		ArrayList<ElementLocation> namesLocations = new ArrayList<>();
+		ArrayList<ElementLocation> alphaLocations = new ArrayList<>();
+		ArrayList<ElementLocation> betaLocations = new ArrayList<>();
+		ArrayList<ElementLocation> gammaLocations = new ArrayList<>();
+		ArrayList<ElementLocation> tauLocations = new ArrayList<>();
 
 		int selectedNodeIndex = getGraphPanelNodes().indexOf(nodeSelected);
 		
@@ -853,7 +854,7 @@ public class SelectionManager {
 	 * w miejscu, po wykryciu podwójnego kliknięcia.
 	 */
 	public void doubleClickReactionHandler() {
-		ArrayList<Node> safetyNodesList = new ArrayList<Node>();
+		ArrayList<Node> safetyNodesList = new ArrayList<>();
 		for (ElementLocation el : getSelectedElementLocations()) {
 			if (el.getParentNode().getType() == PetriNetElementType.PLACE && !safetyNodesList.contains(el.getParentNode())) {
 				safetyNodesList.add(el.getParentNode());
@@ -861,12 +862,13 @@ public class SelectionManager {
 				place.modifyTokensNumber(1);
 
 				if(place.isXTPNplace()) {
-					//TODO: warning
+					JOptionPane.showMessageDialog(null, "Cannot fast-increase tokens in XTPN place.",
+							"Operation unavailable", JOptionPane.WARNING_MESSAGE);
 				} else {
-					if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
+					if(overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
 						int tokens = place.getTokensNumber();
 						ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-						overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+						overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(place), tokens);
 					}
 				}
 
@@ -898,22 +900,22 @@ public class SelectionManager {
 	 * w miejscu, po wykryciu podwójnego kliknięcia.
 	 */
 	public void decreaseTokensNumber() {
-		ArrayList<Node> safetyNodesList = new ArrayList<Node>();
+		ArrayList<Node> safetyNodesList = new ArrayList<>();
 		for (ElementLocation el : getSelectedElementLocations()) {
 			if (el.getParentNode().getType() == PetriNetElementType.PLACE && !safetyNodesList.contains(el.getParentNode())) {
 				if(((Place) el.getParentNode()).isXTPNplace()) {
-					//TODO:
-					//warning
+					JOptionPane.showMessageDialog(null, "Cannot fast-decrease tokens in XTPN place.",
+							"Operation unavailable", JOptionPane.WARNING_MESSAGE);
 				} else {
 					safetyNodesList.add(el.getParentNode());
 					int tokens = ((Place) el.getParentNode()).getTokensNumber();
 					if(tokens >= 1) {
 						((Place) el.getParentNode()).modifyTokensNumber(-1);
 
-						if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
+						if(overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
 							int value = ((Place) el.getParentNode()).getTokensNumber();
 							ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-							overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(((Place) el.getParentNode())), value);
+							overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(((Place) el.getParentNode())), value);
 						}
 					}
 				}

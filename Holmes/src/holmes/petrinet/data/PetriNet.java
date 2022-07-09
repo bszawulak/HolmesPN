@@ -865,7 +865,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Umożliwia dostęp do managera stanów sieci.
-	 * @return StatesManager - obiekt managera
+	 * @return (<b>StatesManager</b>) obiekt managera stanów.
 	 */
 	public StatePlacesManager accessStatesManager() {
 		return this.statesManager;
@@ -903,7 +903,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void restoreMarkingZero() {
 		try {
-			accessStatesManager().restoreSelectedState();
+			//accessStatesManager().restoreSelectedState();
+			accessStatesManager().setNetworkStatePN(accessStatesManager().selectedStatePN);
 	
 			for(Transition trans : getTransitions()) {
 				trans.setLaunching(false);
@@ -932,7 +933,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void restoreMarkingZeroFast(ArrayList<Transition> transitions) {
 		try {
-			accessStatesManager().restoreSelectedState();
+			//accessStatesManager().restoreSelectedState();
+			accessStatesManager().setNetworkStatePN(accessStatesManager().selectedStatePN);
 	
 			for(Transition trans : transitions) {
 				trans.setLaunching(false);
@@ -1190,7 +1192,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					}
 					saxParser.parse(xmlInput, handler);
 					addArcsAndNodes(handler.getArcList(), handler.getNodesList());
-					accessStatesManager().createCleanState();
+					accessStatesManager().createCleanStatePN();
 					accessSSAmanager().createCleanSSAvector();
 					accessFiringRatesManager().createCleanSPNdataVector();
 					
@@ -1210,7 +1212,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				} else { //new loader
 					SnoopyReader reader = new SnoopyReader(0, path);
 					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
-					accessStatesManager().createCleanState();
+					accessStatesManager().createCleanStatePN();
 					accessFiringRatesManager().createCleanSPNdataVector();
 					accessSSAmanager().createCleanSSAvector();
 					overlord.subnetsGraphics.addRequiredSheets();
@@ -1228,7 +1230,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if (path.endsWith(".pnt")) {
 				communicationProtocol.readPNT(path);
 				addArcsAndNodes(communicationProtocol.getArcArray(), communicationProtocol.getNodeArray());
-				accessStatesManager().createCleanState();
+				accessStatesManager().createCleanStatePN();
 				accessFiringRatesManager().createCleanSPNdataVector();
 			}
 			

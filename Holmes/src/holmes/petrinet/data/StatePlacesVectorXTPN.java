@@ -30,8 +30,8 @@ public class StatePlacesVectorXTPN implements Serializable {
     }
 
     /**
-     * Dodaje nowe miejsce z zadany zbiorem tokenów do wektora.
-     * @param multisetK (<b>ArrayList<Double></b>) multizbiór tokenów.
+     * Dodaje nowe miejsce z zadanym zbiorem tokenów do wektora.
+     * @param multisetK (<b>ArrayList[Double]</b>) multizbiór tokenów.
      */
     public void addPlaceXTPN(ArrayList<Double> multisetK) {
         stateVectorXTPN.add(multisetK);
@@ -81,9 +81,9 @@ public class StatePlacesVectorXTPN implements Serializable {
     }
 
     /**
-     * Dodaje wskazany multizbiór K tokenów do wektora stanu dla danego miejsca.
+     * Dodaje podzbiór tokenów do już istniejącego multizbioru danego miejsca.
      * @param index (<b>int</b>) indeks miejsca.
-     * @param newMultiSetK (<b>ArrayList<Double>/b>) nowe tokeny do dodania.
+     * @param newMultiSetK (<b>ArrayList[Double]</b>) nowe tokeny do dodania.
      * @param sort (<b>boolean</b>) true, jeśli mamy sortować, niepotrzebne, gdy dodajemy zera.
      */
     public void addTokensMultiset(int index, ArrayList<Double> newMultiSetK, boolean sort) {

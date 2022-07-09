@@ -194,10 +194,10 @@ public class ProjectReader {
 			if(states) {
 				status = readStates(buffer);
 				if(!status) {
-					projectCore.accessStatesManager().createCleanState();
+					projectCore.accessStatesManager().createCleanStatePN();
 				}
 			} else {
-				projectCore.accessStatesManager().createCleanState();
+				projectCore.accessStatesManager().createCleanStatePN();
 			}
 			
 			if(firingRates) {
@@ -1839,7 +1839,7 @@ public class ProjectReader {
 			
 			boolean go = true;
 			StatePlacesManager statesMngr = projectCore.accessStatesManager();
-			statesMngr.reset(true);
+			statesMngr.resetPN(false);
 
 			line = buffer.readLine();
 			try {
@@ -1875,7 +1875,7 @@ public class ProjectReader {
 			if(((int)readedLine/3) > statesMngr.accessStateMatrix().size()) {
 				overlord.log("Error reading state vector number "+(readedLine), "error", true);
 				if(statesMngr.accessStateMatrix().size() == 0) {
-					statesMngr.createCleanState();
+					statesMngr.createCleanStatePN();
 				}
 			}
 			

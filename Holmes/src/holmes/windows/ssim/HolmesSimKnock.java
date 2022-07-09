@@ -716,12 +716,13 @@ public class HolmesSimKnock extends JPanel {
 		stateLabel0.setBounds(posXda+280, posYda+45, 130, 20);
 		result.add(stateLabel0);
 		    
-		int selState = overlord.getWorkspace().getProject().accessStatesManager().selectedState;
+		int selState = overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN;
 		selStateLabel = new JLabel(""+selState);
 	    selStateLabel.setBounds(posXda+405, posYda+45, 60, 20);
 	    result.add(selStateLabel);
-	    
-	    selStateDescrLabel = new JLabel(""+overlord.getWorkspace().getProject().accessStatesManager().getStateDescription(selState));
+
+		//TODO: XTPN
+	    selStateDescrLabel = new JLabel(""+overlord.getWorkspace().getProject().accessStatesManager().getStateDescriptionPN(selState));
 	    selStateDescrLabel.setBounds(posXda+280, posYda+65, 200, 20);
 	    result.add(selStateDescrLabel);
 		
@@ -768,10 +769,12 @@ public class HolmesSimKnock extends JPanel {
 	public void updateFreshKnockoutTab() {
 		PetriNet pn = overlord.getWorkspace().getProject();
 		
-		int sel = pn.accessStatesManager().selectedState;
+		int sel = pn.accessStatesManager().selectedStatePN;
 		selStateLabel.setText(""+sel);
-		selStateDescrLabel.setText(pn.accessStatesManager().getStateDescription(sel));
-		
+		selStateDescrLabel.setText(pn.accessStatesManager().getStateDescriptionPN(sel));
+		//TODO: XTPN
+
+
 		//reference data:
 		ArrayList<NetSimulationData> references = pn.accessSimKnockoutData().accessReferenceSets();
 		int refSize = references.size();
