@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -48,6 +49,7 @@ import holmes.workspace.ExtensionFileFilter;
  * @author MR
  */
 public class HolmesMergeNets extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -1099324397672549971L;
 	private GUIManager overlord;
 	private PetriNet pn;
@@ -71,7 +73,7 @@ public class HolmesMergeNets extends JFrame {
 	
 	private boolean transitionView = true;
 	
-	private class DataTuple{
+	private static class DataTuple{
 		int n_org;
 		int n_imp;
 		public DataTuple(int x, int y) {
@@ -108,7 +110,7 @@ public class HolmesMergeNets extends JFrame {
 	private void initalizeComponents() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) { 
+		} catch (Exception ignored) {
 			
 		}
 		setLayout(new BorderLayout());
@@ -142,11 +144,7 @@ public class HolmesMergeNets extends JFrame {
 		loadSnoopyButton.setFocusPainted(false);
 		loadSnoopyButton.setIcon(Tools.getResIcon32("/icons/mergeWindow/importFromSnoopy.png"));
 		loadSnoopyButton.setToolTipText("Load net from Snoopy file to merge with current one");
-		loadSnoopyButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				handleSnoopyImport();
-			}
-		});
+		loadSnoopyButton.addActionListener(actionEvent -> handleSnoopyImport());
 		result.add(loadSnoopyButton);
 		
 		JButton loadHolmesButton = new JButton("<html>Load Holmes<br>&nbsp;&nbsp;&nbsp;project&nbsp;</html>");
@@ -155,10 +153,8 @@ public class HolmesMergeNets extends JFrame {
 		loadHolmesButton.setFocusPainted(false);
 		loadHolmesButton.setIcon(Tools.getResIcon32("/icons/mergeWindow/importFromHolmes.png"));
 		loadHolmesButton.setToolTipText("Load net from Holmes project file to merge with current one");
-		loadHolmesButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				;
-			}
+		loadHolmesButton.addActionListener(actionEvent -> {
+			;
 		});
 		result.add(loadHolmesButton);
 		
@@ -250,6 +246,7 @@ public class HolmesMergeNets extends JFrame {
 		ActionMap am = mergeTable.getActionMap();
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "DeleteRow");
 		am.put("DeleteRow", new AbstractAction() {
+			@Serial
 			private static final long serialVersionUID = 7224127781074461772L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -308,10 +305,7 @@ public class HolmesMergeNets extends JFrame {
 		placesViewCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected())
-					transitionView = true;
-				else
-					transitionView = false;
+				transitionView = abstractButton.getModel().isSelected();
 				
 				fillProjectTable();
 				fillImportTable(newNodes);
@@ -325,11 +319,7 @@ public class HolmesMergeNets extends JFrame {
 		mergeButton.setFocusPainted(false);
 		mergeButton.setIcon(Tools.getResIcon32("/icons/mergeWindow/mergeNodes.png"));
 		mergeButton.setToolTipText("Set nodes for joining (imported net node will become another\ngraphical element location of a node from the project)");
-		mergeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				addMergeLine();
-			}
-		});
+		mergeButton.addActionListener(actionEvent -> addMergeLine());
 		topPanel.add(mergeButton);
 		
 		
@@ -480,7 +470,7 @@ public class HolmesMergeNets extends JFrame {
 			}
 			nodes.add(n);
 			if(n instanceof Place) {
-				pn.accessStatesManager().addPlace();
+				pn.accessStatesManager().addPlace((Place)n);
 				pn.accessSSAmanager().addPlace();
 			} else if(n instanceof Transition) {
 				pn.accessFiringRatesManager().addTrans();
@@ -528,8 +518,7 @@ public class HolmesMergeNets extends JFrame {
 			
 			for(String str : tableData) {
 				String firstInt = str.substring(1, str.indexOf(" "));
-				String tmp = str.substring(str.indexOf(" <== ")+6);
-				String secondInt = tmp;
+				String secondInt = str.substring(str.indexOf(" <== ")+6);
 				DataTuple newP = new DataTuple(Integer.parseInt(firstInt), Integer.parseInt(secondInt));
 				
 				if(str.substring(0,1).equals("p")) {
@@ -570,7 +559,7 @@ public class HolmesMergeNets extends JFrame {
 	
 	/**
 	 * Zwraca maksymalne rozmiary sieci wczytanej
-	 * @return
+	 * @return (<b>Dimension</b>)
 	 */
 	private Dimension getImportedNetSize() {
 		Dimension dimSheet0 = new Dimension(0, 0);

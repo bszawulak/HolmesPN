@@ -10,7 +10,6 @@ import holmes.analyse.SubnetCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
@@ -40,7 +39,7 @@ public class IOprotocols {
     @SuppressWarnings("unused")
     private String netName; // = "";
     private int globalPlaceNumber; // = 0;
-    private int etap; // = 1;
+    private int stage; // = 1;
     private int placeCount;//  = 0;
     private ArrayList<String[]> placeArcListPost; // = new ArrayList<String[]>();
     private ArrayList<ArrayList<Integer>> placeArcListPostWeight; // = new ArrayList<ArrayList<Integer>>();
@@ -77,7 +76,7 @@ public class IOprotocols {
         MatSiz = 99999;
         netName = "";
         globalPlaceNumber = 0;
-        etap = 1;
+        stage = 1;
         placeCount = 0;
         placeArcListPost = new ArrayList<String[]>();
         placeArcListPostWeight = new ArrayList<ArrayList<Integer>>();
@@ -1005,9 +1004,9 @@ public class IOprotocols {
 
                 // Wczytywanie informacji o Arcach i tokenach
                 if (wczytanaLinia.equals("@")) {
-                    etap++;
+                    stage++;
                 }
-                switch (etap) {
+                switch (stage) {
 
                     case 1:
                         ArrayList<String> tmpStringWej = new ArrayList<String>();
@@ -1266,8 +1265,8 @@ public class IOprotocols {
             int SID = overlord.getWorkspace().getProject().returnCleanSheetID();
             DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
-            String wczytanaLinia = buffer.readLine();
-            String[] tabWczytanaLinia = wczytanaLinia.split(":");
+            String readLine = buffer.readLine();
+            String[] tabWczytanaLinia = readLine.split(":");
             netName = tabWczytanaLinia[1];
             int[][] trans = new int[MatSiz][2];
             int ID = 0;
@@ -1276,22 +1275,20 @@ public class IOprotocols {
             ArrayList<Integer> wagiWej = new ArrayList<Integer>();
             ArrayList<Integer> wagiWyj = new ArrayList<Integer>();
 
-            while ((wczytanaLinia = buffer.readLine()) != null) {
+            while ((readLine = buffer.readLine()) != null) {
                 // Etap I
 
                 // Wczytywanie informacji o Arcach i tokenach
-                if (wczytanaLinia.equals("@")) {
-                    etap++;
+                if (readLine.equals("@")) {
+                    stage++;
                 }
-                switch (etap) {
-
+                switch (stage) {
                     case 1:
                         ArrayList<String> tmpStringWej = new ArrayList<String>();
                         ArrayList<String> tmpStringWyj = new ArrayList<String>();
-
-                        wczytanaLinia = wczytanaLinia.replace(",", " , ");
-                        wczytanaLinia = wczytanaLinia.replace(":", " : ");
-                        String[] WczytanyString = wczytanaLinia.split(" ");
+                        readLine = readLine.replace(",", " , ");
+                        readLine = readLine.replace(":", " : ");
+                        String[] WczytanyString = readLine.split(" ");
                         int poz = 0;
                         int poZap = 0;
                         for (String s : WczytanyString) {
@@ -1360,10 +1357,10 @@ public class IOprotocols {
                         // Etap II
                         // Wczytywanie danych o miejscach
 
-                        if ((wczytanaLinia.contains("capacity") && wczytanaLinia.contains("time")
-                                && wczytanaLinia.contains("name")) || wczytanaLinia.equals("@")) {
+                        if ((readLine.contains("capacity") && readLine.contains("time")
+                                && readLine.contains("name")) || readLine.equals("@")) {
                         } else {
-                            tabWczytanaLinia = wczytanaLinia.split(": ");
+                            tabWczytanaLinia = readLine.split(": ");
                             //String[] tmp4 = tabWczytanaLinia[0].split(" ");
                             int placeNumber = globalPlaceNumber;
                             globalPlaceNumber++;
@@ -1398,11 +1395,11 @@ public class IOprotocols {
                     case 3:
                         // Etap III
                         // Wczytywanie danych o tranzycjach
-                        if ((wczytanaLinia.contains("priority") && wczytanaLinia.contains("time")
-                                && wczytanaLinia.contains("name")) || wczytanaLinia.equals("@")) {
+                        if ((readLine.contains("priority") && readLine.contains("time")
+                                && readLine.contains("name")) || readLine.equals("@")) {
                             placeCount = globalPlaceNumber;
                         } else {
-                            tabWczytanaLinia = wczytanaLinia.split(": ");
+                            tabWczytanaLinia = readLine.split(": ");
                             String[] tmp5 = tabWczytanaLinia[0].split(" ");
                             for (String s : tmp5) {
                                 if (!s.isEmpty()) {
@@ -1568,9 +1565,9 @@ public class IOprotocols {
                 }
                 if (placeList.get(i).getInArcs().size() > 0 && placeList.get(i).getOutArcs().isEmpty()) {
                     for (int j = 0; j < placeList.get(i).getInArcs().size(); j++) {
-                        if (transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode()) != -1) {
+                        if (transitionList.contains((Transition)placeList.get(i).getInArcs().get(j).getStartNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode()));
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getInArcs().get(j).getStartNode()));
                             if (placeList.get(i).getInArcs().get(j).getWeight() > 1) {
                                 fileBuffer.append(": ").append(placeList.get(i).getInArcs().get(j).getWeight());
                             }
@@ -1579,9 +1576,9 @@ public class IOprotocols {
                 }
                 if (placeList.get(i).getInArcs().size() > 0 && placeList.get(i).getOutArcs().size() > 0) {
                     for (int j = 0; j < placeList.get(i).getInArcs().size(); j++) {
-                        if (transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode()) != -1) {
+                        if (transitionList.contains((Transition)placeList.get(i).getInArcs().get(j).getStartNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode()));
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getInArcs().get(j).getStartNode()));
                             if (placeList.get(i).getInArcs().get(j).getWeight() > 1) {
                                 fileBuffer.append(": ").append(placeList.get(i).getInArcs().get(j).getWeight());
                             }
@@ -1589,9 +1586,9 @@ public class IOprotocols {
                     }
                     fileBuffer.append(",");
                     for (int j = 0; j < placeList.get(i).getOutArcs().size(); j++) {
-                        if (transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode())!=-1) {
+                        if (transitionList.contains((Transition)placeList.get(i).getOutArcs().get(j).getEndNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode()));
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getOutArcs().get(j).getEndNode()));
                             if (placeList.get(i).getOutArcs().get(j).getWeight() > 1) {
                                 fileBuffer.append(": ").append(placeList.get(i).getOutArcs().get(j).getWeight());
                             }
@@ -1601,9 +1598,9 @@ public class IOprotocols {
                 if (placeList.get(i).getInArcs().isEmpty() && placeList.get(i).getOutArcs().size() > 0) {
                     fileBuffer.append(",");
                     for (int j = 0; j < placeList.get(i).getOutArcs().size(); j++) {
-                        if(transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode())!=-1) {
+                        if(transitionList.contains((Transition)placeList.get(i).getOutArcs().get(j).getEndNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode()));
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getOutArcs().get(j).getEndNode()));
                             if (placeList.get(i).getOutArcs().get(j).getWeight() > 1) {
                                 fileBuffer.append(": ").append(placeList.get(i).getOutArcs().get(j).getWeight());
                             }
@@ -1919,6 +1916,7 @@ public class IOprotocols {
 
             sn = (ArrayList<HolmesBranchVerticesPrototype.BranchStructure>) in.readObject();// b.bsl;
 
+            //[MR] poniższe było unused:
             //ArrayList<StatePlacesVector>  spv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().accessStateMatrix();
 
             in.close();
@@ -1970,19 +1968,15 @@ public class IOprotocols {
         } catch (Exception e) {
             System.out.println("Problem serializing: " + e);
         }
-
     }
 
     public void importSubnetFromFile(String absolutePath, int x, int y) {
-
         try {
             // Reading the object from a file
             FileInputStream file = new FileInputStream(new File(absolutePath));
             ObjectInputStream in = new ObjectInputStream(file);
 
             // Method for deserialization of object
-
-
             SubnetCalculator.SubNet sn = (SubnetCalculator.SubNet) in.readObject();
 
             for (Place p : sn.getSubPlaces()) {
@@ -1995,11 +1989,10 @@ public class IOprotocols {
                     el.getPosition().y += y;
                     el.setSelected(false);
                 }
-
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().add(n);
 
                 if (n.getType() == PetriNetElementType.PLACE) {
-                    GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().addPlace();
+                    GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().addPlace((Place)n);
                 }
                 for (Place p : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces()) {
                     p.setTokensNumber(0);
@@ -2018,7 +2011,7 @@ public class IOprotocols {
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().add(n);
             }
 
-            ArrayList<StatePlacesVector> spv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().accessStateMatrix();
+            //ArrayList<StatePlacesVector> spv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().accessStateMatrix();
 
             in.close();
             file.close();

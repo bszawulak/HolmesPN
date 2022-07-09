@@ -172,7 +172,7 @@ public class HolmesXTPNtokens extends JFrame {
 
             try {
                 String text = tokenValueTextField.getValue().toString();
-                Double val = Double.parseDouble(text);
+                double val = Double.parseDouble(text);
                 if(val < 0.0)
                     val = 0.0;
                 listenerAllowed=false;
@@ -291,7 +291,6 @@ public class HolmesXTPNtokens extends JFrame {
 
                 //tokensComboBox.setSelectedIndex(0);
                 listenerAllowed=true;
-            } else {
             }
         });
         comboPanel.add(clearAllButton);

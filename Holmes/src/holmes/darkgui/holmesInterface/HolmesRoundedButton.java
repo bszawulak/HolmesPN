@@ -22,7 +22,6 @@ public class HolmesRoundedButton extends JButton {
         clicked = Tools.getResIcon22("/buttons/"+clickedName);
     }
 
-
     @Override
     protected void paintComponent(Graphics g) {
         int offset = getInsets().left;

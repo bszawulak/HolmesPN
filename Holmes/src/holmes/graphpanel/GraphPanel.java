@@ -515,10 +515,10 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewPlace(Point p) {
 		if (isLegalLocation(p)) {
-			Place n = new Place(IdGenerator.getNextId(), this.sheetId, p);
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
-			overlord.getWorkspace().getProject().accessStatesManager().addPlace();
+			Place place = new Place(IdGenerator.getNextId(), this.sheetId, p);
+			this.getSelectionManager().selectOneElementLocation(place.getLastLocation());
+			getNodes().add(place);
+			overlord.getWorkspace().getProject().accessStatesManager().addPlace(place);
 			overlord.getWorkspace().getProject().accessSSAmanager().addPlace();
 		}
 	}
@@ -529,11 +529,11 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewCPlace(Point p) {
 		if (isLegalLocation(p)) {
-			Place n = new Place(IdGenerator.getNextId(), this.sheetId, p);
-			n.isColored = true;
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
-			overlord.getWorkspace().getProject().accessStatesManager().addPlace();
+			Place place = new Place(IdGenerator.getNextId(), this.sheetId, p);
+			place.isColored = true;
+			this.getSelectionManager().selectOneElementLocation(place.getLastLocation());
+			getNodes().add(place);
+			overlord.getWorkspace().getProject().accessStatesManager().addPlace(place);
 			overlord.getWorkspace().getProject().accessSSAmanager().addPlace();
 		}
 	}
@@ -616,11 +616,11 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewNXTPNPlace(Point p) {
 		if (isLegalLocation(p)) {
-			Place n = new Place(IdGenerator.getNextId(), this.sheetId, p);
-			n.setXTPNplaceStatus(true);
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
-			overlord.getWorkspace().getProject().accessStatesManager().addPlace();
+			Place place = new Place(IdGenerator.getNextId(), this.sheetId, p);
+			place.setXTPNplaceStatus(true);
+			this.getSelectionManager().selectOneElementLocation(place.getLastLocation());
+			getNodes().add(place);
+			overlord.getWorkspace().getProject().accessStatesManager().addPlace(place);
 			overlord.getWorkspace().getProject().accessSSAmanager().addPlace();
 		}
 	}
@@ -688,11 +688,7 @@ public class GraphPanel extends JComponent {
 		int panelHeight = orgSize.height;
 		
 		//if(point.x > 20 && point.y > 20 && point.x < (getSize().width - 20) && point.y < (getSize().height - 20)) {
-		if(point.x > 20 && point.y > 20 && point.x < (panelWidht - 20) && point.y < (panelHeight - 20)) {
-			return true;
-		} else {
-			return false;
-		}
+		return (point.x > 20 && point.y > 20 && point.x < (panelWidht - 20) && point.y < (panelHeight - 20));
 	}
 
 	/**

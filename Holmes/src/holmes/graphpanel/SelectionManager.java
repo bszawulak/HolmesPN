@@ -859,12 +859,18 @@ public class SelectionManager {
 				safetyNodesList.add(el.getParentNode());
 				Place place = (Place) el.getParentNode();
 				place.modifyTokensNumber(1);
-				
-				if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
-					int tokens = place.getTokensNumber();
-					ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-					overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+
+				if(place.isXTPNplace()) {
+					//TODO: warning
+				} else {
+					if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
+						int tokens = place.getTokensNumber();
+						ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+						overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+					}
 				}
+
+
 			} else if(el.getParentNode().getType() == PetriNetElementType.META && !safetyNodesList.contains(el.getParentNode())) {
 				try {
 					MetaNode node = (MetaNode)el.getParentNode();
@@ -895,17 +901,24 @@ public class SelectionManager {
 		ArrayList<Node> safetyNodesList = new ArrayList<Node>();
 		for (ElementLocation el : getSelectedElementLocations()) {
 			if (el.getParentNode().getType() == PetriNetElementType.PLACE && !safetyNodesList.contains(el.getParentNode())) {
-				safetyNodesList.add(el.getParentNode());
-				int tokens = ((Place) el.getParentNode()).getTokensNumber();
-				if(tokens >= 1) {
-					((Place) el.getParentNode()).modifyTokensNumber(-1);
-				
-					if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
-						int value = ((Place) el.getParentNode()).getTokensNumber();
-						ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-						overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(((Place) el.getParentNode())), value);
+				if(((Place) el.getParentNode()).isXTPNplace()) {
+					//TODO:
+					//warning
+				} else {
+					safetyNodesList.add(el.getParentNode());
+					int tokens = ((Place) el.getParentNode()).getTokensNumber();
+					if(tokens >= 1) {
+						((Place) el.getParentNode()).modifyTokensNumber(-1);
+
+						if(overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
+							int value = ((Place) el.getParentNode()).getTokensNumber();
+							ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+							overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(((Place) el.getParentNode())), value);
+						}
 					}
 				}
+
+
 			}
 		}
 		//invokeActionListener();

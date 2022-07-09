@@ -30,8 +30,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.StatePlacesManager;
+import holmes.petrinet.data.StatePlacesVectorXTPN;
 import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
 import holmes.tables.managers.StatesPlacesEditorTableModelXTPN;
@@ -43,7 +43,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
     private GUIManager overlord;
     private HolmesStatesManager parentWindow;
     private StatesPlacesEditorTableModelXTPN tableModel;
-    private StatePlacesVector stateVector;
+    private StatePlacesVectorXTPN stateVectorXTPN;
     private int stateIndex;
     private ArrayList<Place> places;
     private StatePlacesManager statesManager;
@@ -56,7 +56,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
      * @param stateVector StatePlacesVector - wektor SSA
      * @param stateIndex int - indeks powyższego wektora w tablicy
      */
-    public HolmesStatesEditorXTPN(HolmesStatesManager parent, StatePlacesVector stateVector, int stateIndex) {
+    public HolmesStatesEditorXTPN(HolmesStatesManager parent, StatePlacesVectorXTPN stateVector, int stateIndex) {
         setTitle("Holmes state editor XTPN");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
@@ -66,7 +66,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
         this.overlord = GUIManager.getDefaultGUIManager();
         PetriNet pn = overlord.getWorkspace().getProject();
         this.parentWindow = parent;
-        this.stateVector = stateVector;
+        this.stateVectorXTPN = stateVector;
         this.stateIndex = stateIndex;
         this.places = pn.getPlaces();
         this.statesManager = pn.accessStatesManager();
@@ -83,9 +83,10 @@ public class HolmesStatesEditorXTPN extends JFrame {
      */
     private void fillTable() {
         tableModel.clearModel();
-        int size = stateVector.getSize();
+        int size = stateVectorXTPN.getSize();
         for(int p=0; p<size; p++) {
-            tableModel.addNew(p, places.get(p).getName(), stateVector.getTokens(p));
+            //TODO
+            //tableModel.addNew(p, places.get(p).getName(), stateVector.getTokens(p));
         }
 
         tableModel.fireTableDataChanged();
@@ -196,9 +197,10 @@ public class HolmesStatesEditorXTPN extends JFrame {
                 "Change whole state?", JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE, null, options, options[1]);
         if (n == 0) {
-            int size = stateVector.getSize();
+            int size = stateVectorXTPN.getSize();
             for(int p=0; p<size; p++) {
-                stateVector.setTokens(p, globalTokensNumber);
+                //TODO:
+                //stateVector.setTokens(p, globalTokensNumber);
                 tableModel.setQuietlyValueAt(globalTokensNumber, p, 2);
 
                 if(p == size-1)
@@ -241,8 +243,6 @@ public class HolmesStatesEditorXTPN extends JFrame {
         DefaultTableCellRenderer tableRenderer = new DefaultTableCellRenderer();
         table.setDefaultRenderer(Object.class, tableRenderer);
         table.setDefaultRenderer(Double.class, tableRenderer);
-
-
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
@@ -269,7 +269,8 @@ public class HolmesStatesEditorXTPN extends JFrame {
      * @param newValue double - nowa wartość tokenów
      */
     public void changeRealValue(int index, int placeID, double newValue) {
-        statesManager.getState(index).accessVector().set(placeID, newValue);
+        //TODO:
+        //statesManager.getStateXTPN(index).accessVector().set(placeID, newValue);
         parentWindow.changeTableCell(index, placeID+2, newValue, true);
         overlord.markNetChange();
     }

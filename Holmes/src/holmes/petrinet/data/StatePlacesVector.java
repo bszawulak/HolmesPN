@@ -46,7 +46,6 @@ public class StatePlacesVector implements Serializable {
 			return false;
 		
 		stateVector.remove(index);
-		
 		return true;
 	}
 	

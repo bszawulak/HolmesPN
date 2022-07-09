@@ -17,7 +17,7 @@ public class StatePlacesVectorXTPN implements Serializable {
     @Serial
     private static final long serialVersionUID = 2161649872359143583L;
     private ArrayList<ArrayList<Double>> stateVectorXTPN;
-    private String stateType = "";
+    private String stateType;
     private String stateDescription;
 
     /**
@@ -33,7 +33,7 @@ public class StatePlacesVectorXTPN implements Serializable {
      * Dodaje nowe miejsce z zadany zbiorem tokenów do wektora.
      * @param multisetK (<b>ArrayList<Double></b>) multizbiór tokenów.
      */
-    public void addPlace(ArrayList<Double> multisetK) {
+    public void addPlaceXTPN(ArrayList<Double> multisetK) {
         stateVectorXTPN.add(multisetK);
     }
 
@@ -42,7 +42,7 @@ public class StatePlacesVectorXTPN implements Serializable {
      * @param index (<b>int</b>) indeks miejsca.
      * @return boolean - true, jeśli operacja się udała
      */
-    public boolean removePlace(int index) {
+    public boolean removePlaceXTPN(int index) {
         if(index >= stateVectorXTPN.size())
             return false;
 

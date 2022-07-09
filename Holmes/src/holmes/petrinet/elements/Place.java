@@ -788,7 +788,6 @@ public class Place extends Node {
 			JOptionPane.showMessageDialog(null, "Critical error - tokens time update when XTPN status OFF" +
 							"\nfor place"+this.getName(),
 					"Error 587654", JOptionPane.ERROR_MESSAGE);
-			int x = 1;
 		}
 	}
 
@@ -823,7 +822,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda umożliwia dostęp do multizbioru K tokenów.
-	 * @return (<b>ArrayList<Double></b>) - multizbiór K miejsca XTPN.
+	 * @return (<b>ArrayList[Double]</b>) - multizbiór K miejsca XTPN.
 	 */
 	public ArrayList<Double> accessMultiset() {
 		return multisetK;

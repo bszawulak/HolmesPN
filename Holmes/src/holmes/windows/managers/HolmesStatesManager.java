@@ -14,6 +14,7 @@ import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.StatePlacesManager;
+import holmes.petrinet.data.StatePlacesVectorXTPN;
 import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
 import holmes.tables.managers.StatesPlacesTableModel;
@@ -36,11 +37,9 @@ public class HolmesStatesManager extends JFrame {
 	private JTable statesTableXTPN;
 	private JTextArea stateDescrTextAreaPN;
 	private JTextArea stateDescrTextAreaXTPN;
-	
 	private ArrayList<Place> places;
 	private PetriNet pn;
 	private StatePlacesManager statesManager;
-	
 	private int selectedRow;
 	private int cellWidth;
 	
@@ -305,7 +304,7 @@ public class HolmesStatesManager extends JFrame {
 				}
 				int selected = statesTablePN.getSelectedRow();
 				if(selected > -1)
-					new HolmesStatesEditor((HolmesStatesManager)ego, statesManager.getState(selected), selected);
+					new HolmesStatesEditor((HolmesStatesManager)ego, statesManager.getStatePN(selected), selected);
 			}
 		});
 		result.add(editStateButton);
@@ -385,7 +384,7 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void addLastStateToTable() {
 		int states = statesManager.accessStateMatrix().size();
-		StatePlacesVector psVector = statesManager.getState(states-1);
+		StatePlacesVector psVector = statesManager.getStatePN(states-1);
 		
 		ArrayList<String> rowVector = new ArrayList<String>();
 		
@@ -413,7 +412,7 @@ public class HolmesStatesManager extends JFrame {
     		else
     			rowVector.add("");
     		
-    		StatePlacesVector psVector = statesManager.getState(row);
+    		StatePlacesVector psVector = statesManager.getStatePN(row);
     		rowVector.add("m0("+(row+1)+")");
     		
     		for(int p=0; p<psVector.getSize(); p++) {
@@ -427,7 +426,7 @@ public class HolmesStatesManager extends JFrame {
 	
 	/**
 	 * Tworzy panel dolny z informacjami o stanie.
-	 * @return JPanel - panel
+	 * @return (<b>JPanel</b>) panel.
 	 */
 	public JPanel getBottomPanel() {
 		JPanel result = new JPanel(new BorderLayout());
@@ -466,12 +465,12 @@ public class HolmesStatesManager extends JFrame {
 	
 	/**
 	 * Metoda wywoływana przez akcję renderera tablicy, gdy następuje zmiana w komórce.
-	 * @param row int - nr wiersza tablicy
-	 * @param column int - nr kolumny tablicy
-	 * @param value double - nowa wartość
+	 * @param row (<b>int</b>) nr wiersza tablicy.
+	 * @param column (<b>int</b>) nr kolumny tablicy.
+	 * @param value (<b>double</b>) - nowa wartość.
 	 */
 	public void changeState(int row, int column, double value) {
-		statesManager.getState(row).accessVector().set(column-2, value);
+		statesManager.getStatePN(row).accessVector().set(column-2, value);
 		overlord.markNetChange();
 		tableModelPN.fireTableDataChanged();
 	}
@@ -502,7 +501,7 @@ public class HolmesStatesManager extends JFrame {
 
 	/**
 	 * Tworzy panel główny tablicy.
-	 * @return JPanel - panel
+	 * @return (<b>Panel</b>) - panel.
 	 */
 	public JPanel getMainTablePanelXTPN() {
 		JPanel result = new JPanel(new BorderLayout());
@@ -713,7 +712,7 @@ public class HolmesStatesManager extends JFrame {
 				}
 				int selected = statesTableXTPN.getSelectedRow();
 				if(selected > -1)
-					new HolmesStatesEditorXTPN((HolmesStatesManager)ego, statesManager.getState(selected), selected);
+					new HolmesStatesEditorXTPN((HolmesStatesManager)ego, statesManager.getStateXTPN(selected), selected);
 				else {
 					JOptionPane.showMessageDialog(ego, "Please click on any state row.",
 							"No state selected", JOptionPane.WARNING_MESSAGE);
@@ -797,14 +796,16 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void addLastStateToTableXTPN() {
 		int states = statesManager.accessStateMatrix().size();
-		StatePlacesVector psVector = statesManager.getState(states-1);
+		StatePlacesVectorXTPN psVector = statesManager.getStateXTPN(states-1);
 
 		ArrayList<String> rowVector = new ArrayList<String>();
 
 		rowVector.add("");
 		rowVector.add("m0("+(states)+")");
 		for(int p=0; p<psVector.getSize(); p++) {
-			rowVector.add(""+psVector.getTokens(p));
+
+			//TODO:
+			//rowVector.add(""+psVector.getTokens(p));
 		}
 		tableModelXTPN.addNew(rowVector);
 		overlord.markNetChange();
@@ -825,11 +826,12 @@ public class HolmesStatesManager extends JFrame {
 			else
 				rowVector.add("");
 
-			StatePlacesVector psVector = statesManager.getState(row);
+			StatePlacesVectorXTPN psVector = statesManager.getStateXTPN(row);
 			rowVector.add("m0("+(row+1)+")");
 
 			for(int p=0; p<psVector.getSize(); p++) {
-				rowVector.add(""+psVector.getTokens(p));
+				//TODO:
+				//rowVector.add(""+psVector.getTokens(p));
 			}
 			tableModelXTPN.addNew(rowVector);
 		}
@@ -883,7 +885,8 @@ public class HolmesStatesManager extends JFrame {
 	 * @param value double - nowa wartość
 	 */
 	public void changeStateXTPN(int row, int column, double value) {
-		statesManager.getState(row).accessVector().set(column-2, value);
+		//TODO:
+		//statesManager.getStateXTPN(row).accessVector().set(column-2, value);
 		overlord.markNetChange();
 		tableModelXTPN.fireTableDataChanged();
 	}
