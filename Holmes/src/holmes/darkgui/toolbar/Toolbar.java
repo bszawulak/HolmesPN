@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -53,6 +54,7 @@ import com.javadocking.visualizer.SingleMaximizer;
  */
 @SuppressWarnings("unused")
 public class Toolbar extends BorderDock {
+	@Serial
 	private static final long serialVersionUID = 640320332920131092L;
 	private GUIManager overlord;
 	private SingleMaximizer maximizePanel;

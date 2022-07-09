@@ -112,7 +112,7 @@ public class HolmesStatesManager extends JFrame {
 	public JPanel getMainTablePanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("States table"));
+		result.setBorder(BorderFactory.createTitledBorder("p-states table"));
 		result.setPreferredSize(new Dimension(500, 500));
 		
 		tableModelPN = new StatesPlacesTableModel(places.size(), this);
@@ -499,7 +499,7 @@ public class HolmesStatesManager extends JFrame {
 	public JPanel getMainTablePanelXTPN() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("States table"));
+		result.setBorder(BorderFactory.createTitledBorder("p-states table"));
 		result.setPreferredSize(new Dimension(500, 500));
 
 		tableModelXTPN = new StatesPlacesTableModelXTPN(places.size(), this);
@@ -521,7 +521,7 @@ public class HolmesStatesManager extends JFrame {
 			statesTableXTPN.getColumnModel().getColumn(i+2).setMaxWidth(cellWidth);
 		}
 
-		statesTableXTPN.setName("StatesTable");
+		statesTableXTPN.setName("XTPNStatesTable");
 		statesTableXTPN.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
 		StatesPlacesTableRendererXTPN tableRendererXTPN = new StatesPlacesTableRendererXTPN(statesTableXTPN);
 		statesTableXTPN.setDefaultRenderer(Object.class, tableRendererXTPN);
@@ -554,14 +554,13 @@ public class HolmesStatesManager extends JFrame {
 		int posXda = 10;
 		int posYda = 25;
 
-		HolmesRoundedButton selectStateButton = new HolmesRoundedButton(""
-				, "StateManager/HSM_newstate1.png", "StateManager/HSM_newstate3.png"
-				, "StateManager/HSM_newstate2.png");
+		HolmesRoundedButton selectStateButton = new HolmesRoundedButton("Set new p-state"
+				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
-		selectStateButton.setToolTipText("Sets selected XTPN state as the active one and changes number of tokens in\n"
-				+ "net places according to values of the selected state.");
+		selectStateButton.setToolTipText("<html>Use selected XTPN p-state as the active one and change number of tokens in<br>"
+				+ "all net places according to values of the selected p-state.<html>");
 		selectStateButton.addActionListener(actionEvent -> {
 			if(places.size() == 0) {
 				noNetInfoXTPN();
@@ -589,13 +588,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(selectStateButton);
 
-		HolmesRoundedButton addNewStateButton = new HolmesRoundedButton(""
-				, "StateManager/HSM_addcurrnew1.png", "StateManager/HSM_addcurrnew3.png"
-				, "StateManager/HSM_addcurrnew2.png");
+		HolmesRoundedButton addNewStateButton = new HolmesRoundedButton("<html><center>Add current<br>p-state</center></html>"
+				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
-		addNewStateButton.setToolTipText("Create new state vector based on current net state (distribution of tokens in places)");
+		addNewStateButton.setToolTipText("Create new XTPN state vector based on current p-state.");
 		addNewStateButton.addActionListener(actionEvent -> {
 			if(places.size() == 0) {
 				noNetInfoXTPN();
@@ -614,13 +612,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewStateButton);
 
-		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton(""
-				, "StateManager/HSM_createNewV1.png", "StateManager/HSM_createNewV3.png"
-				, "StateManager/HSM_createNewV2.png");
+		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton("<html><center>Create<br>new p-state</center></html>"
+				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		addNewCleanStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewCleanStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewCleanStateButton.setFocusPainted(false);
-		addNewCleanStateButton.setToolTipText("Create new and clean state vector (all tokens values set to 0).");
+		addNewCleanStateButton.setToolTipText("Create new clean p-state vector (all tokens values set to 0).");
 		addNewCleanStateButton.addActionListener(actionEvent -> {
 			if(places.size() == 0) {
 				noNetInfoXTPN();
@@ -639,13 +636,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewCleanStateButton);
 
-		HolmesRoundedButton replaceStateButton = new HolmesRoundedButton(""
-				, "StateManager/HSM_replaceSt1.png", "StateManager/HSM_replaceSt3.png"
-				, "StateManager/HSM_replaceSt2.png");
+		HolmesRoundedButton replaceStateButton = new HolmesRoundedButton("Replace p-state"
+				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
-		replaceStateButton.setToolTipText("Replace the values of the selected XTPN state from the table with the current XTPN net places values.");
+		replaceStateButton.setToolTipText("<html>Replace the values of the selected XTPN p-state vector<br>from the table with the current XTPN net p-state.</html>");
 		replaceStateButton.addActionListener(actionEvent -> {
 			if(places.size() == 0) {
 				noNetInfoXTPN();
@@ -655,13 +651,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(replaceStateButton);
 
-		HolmesRoundedButton removeStateButton = new HolmesRoundedButton(""
-				, "StateManager/HSM_removeSt1.png", "StateManager/HSM_removeSt3.png"
-				, "StateManager/HSM_removeSt2.png");
+		HolmesRoundedButton removeStateButton = new HolmesRoundedButton("Remove p-state"
+				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
-		removeStateButton.setToolTipText("Removes XTPN state vector from project data.");
+		removeStateButton.setToolTipText("Removes XTPN p-state vector from the project data.");
 		removeStateButton.addActionListener(actionEvent -> {
 			if(places.size() == 0) {
 				noNetInfoXTPN();
@@ -671,12 +666,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(removeStateButton);
 
-		HolmesRoundedButton editStateButton = new HolmesRoundedButton(""
-				, "StateManager/HSM_editSt1.png", "StateManager/HSM_editSt3.png"
-				, "StateManager/HSM_editSt2.png");
+		HolmesRoundedButton editStateButton = new HolmesRoundedButton("State Editor"
+				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		editStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
+		editStateButton.setToolTipText("Opens p-state editor window.");
 		editStateButton.addActionListener(actionEvent -> {
 			if(places.size() == 0) {
 				noNetInfoXTPN();

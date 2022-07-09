@@ -7,29 +7,29 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+/**
+ * Klasa nowych przycisków Holmesa, wymaga grafik dla: normalnego stanu, myszy nad przyciskiem oraz klikniętego.
+ */
 public class HolmesRoundedButton extends JButton {
     private ImageIcon normal;
     private ImageIcon hover;
     private ImageIcon clicked;
 
-    private String textname;
-    private JLabel title;
     public HolmesRoundedButton(String text, String normalName, String howerName, String clickedName) {
-        //setLayout(new BorderLayout());
-        //super(text);
-        textname = text;
+        setLayout(new BorderLayout());
         Dimension size = getPreferredSize();
         size.width = size.height = Math.max(size.width, size.height);
         setPreferredSize(size);
         setContentAreaFilled(false);
+        setFocusPainted(false);
 
         normal = Tools.getResIcon22("/buttons/"+normalName);
         hover = Tools.getResIcon22("/buttons/"+howerName);
         clicked = Tools.getResIcon22("/buttons/"+clickedName);
 
-        title = new JLabel(textname);
+        JLabel title = new JLabel(text);
         title.setHorizontalAlignment(JLabel.CENTER);
-        //add(title, BorderLayout.CENTER);
+        add(title, BorderLayout.CENTER);
     }
 
     @Override

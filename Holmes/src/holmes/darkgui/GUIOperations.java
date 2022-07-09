@@ -80,7 +80,7 @@ public class GUIOperations {
 			return;
 		
 		boolean status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
-		if(status == true) {
+		if(status) {
 			overlord.setLastPath(file.getParentFile().getPath());
 			overlord.getSimulatorBox().createSimulatorProperties();
 			GUIManager.getDefaultGUIManager().getFrame().setTitle(
@@ -120,7 +120,7 @@ public class GUIOperations {
 				return;
 			
 			boolean proceed = overlord.reset.newProjectInitiated();
-			if(proceed == false) {
+			if(!proceed) {
 				return;
 			}
 			
@@ -144,7 +144,7 @@ public class GUIOperations {
 			}
 			try {
 				overlord.getWorkspace().getProject().storeColors();
-			}catch (Exception e) {
+			} catch (Exception ignored) {
 				
 			}
 		}
@@ -221,11 +221,8 @@ public class GUIOperations {
 				result = overlord.getWorkspace().getProject().saveInvariantsToCharlie(file.getPath() + fileExtension, t_inv);
 			}
 		}
-		
-		if(result == 0)
-			return true;
-		else
-			return false;
+
+		return result == 0;
 	}
 	
 	/**
@@ -316,7 +313,7 @@ public class GUIOperations {
 			File file = fc.getSelectedFile();
 			String extension = fc.getFileFilter().getDescription();
 			if (extension.toLowerCase().contains(".project")) {
-				if(Tools.overwriteDecision(file.getPath()) == false)
+				if(!Tools.overwriteDecision(file.getPath()))
 					return false;
 				String fileExtension = ".project";
 				if(file.getPath().toLowerCase().contains(".project"))
@@ -328,7 +325,7 @@ public class GUIOperations {
 				return status;
 			}
 			if (extension.toLowerCase().contains(".apf")) {
-				if(Tools.overwriteDecision(file.getPath()) == false)
+				if(!Tools.overwriteDecision(file.getPath()))
 					return false;
 				String fileExtension = ".apf";
 				if(file.getPath().toLowerCase().contains(".apf"))
@@ -340,7 +337,7 @@ public class GUIOperations {
 				return status;
 			}
 			if (extension.toLowerCase().contains(".abyss")) {
-				if(Tools.overwriteDecision(file.getPath()) == false)
+				if(!Tools.overwriteDecision(file.getPath()))
 					return false;
 
 				String fileExtension = ".abyss";
@@ -374,7 +371,7 @@ public class GUIOperations {
 			return false;
 		}
 		
-		if(Tools.overwriteDecision(selectedFile) == false)
+		if(!Tools.overwriteDecision(selectedFile))
 			return false;
 		
 		String extension = Tools.lastExtension;
@@ -415,7 +412,7 @@ public class GUIOperations {
 			return status;
 		} else if (extension.contains(".project")) {
 			File file = new File(selectedFile);
-			if(Tools.overwriteDecision(file.getPath()) == false)
+			if(!Tools.overwriteDecision(file.getPath()))
 				return false;
 			String fileExtension = ".project";
 			if(file.getPath().toLowerCase().contains(".project"))
@@ -458,17 +455,17 @@ public class GUIOperations {
 		
 		GlobalNetType netType = Check.getSuggestedNetType();
 		
-		String fileFormat = "";
+		String fileFormat;
 		String additionalWhining = "";
-		String netRealName = "";
+		String netRealName ;
 		if(netType != null) {
 			GlobalFileNetType suggestion = Check.suggestesFileFormat(netType);
 			fileFormat = Check.getExtension(suggestion);
 			fileFormat = fileFormat.toLowerCase();
 			netRealName = Check.getNetName(netType);
 			if(Check.isHierarchical()) {
-				additionalWhining = "\nWarning: hierachical net structure detected. Using Holmes project STRONGLY ADVISED.\n"
-						+ "You have been warned...\n";
+				additionalWhining = "\nWarning: hierarchical net structure detected. Using Holmes project is strongly advised.\n"
+						+ "Other save format will most probably fail.\n";
 			}
 		} else {
 			netRealName = "Unknown";
@@ -482,9 +479,7 @@ public class GUIOperations {
 		} else {
 			if(fileFormat.equals(".project"))
 				fileFormat = "Holmes project file (.project)";
-			
-			
-			
+
 			Object[] options = {"Use selected anyway", "Use suggested format", "Save as project", "Cancel save",};
 			int n = JOptionPane.showOptionDialog(null,
 							"Selected net file format: "+extension+"\n"
@@ -530,7 +525,7 @@ public class GUIOperations {
 
 		PetriNet project = overlord.getWorkspace().getProject();
 		boolean status = project.loadTPinvariantsFromFile(file.getPath(), t_inv);
-		if(status == false) {
+		if(!status) {
 			return false;
 		}
 		
@@ -551,6 +546,7 @@ public class GUIOperations {
 	 * operacji na plikach.
 	 * @param t_inv boolean - true, jeśli mają być liczone t-inwarianty, false: p-inwarianty
 	 */
+	@SuppressWarnings("all")
 	public void generateINAinvariants(boolean t_inv) {
 		String stars = "************************************************************************************************";
 		String toolPath = overlord.getToolPath();
@@ -570,7 +566,7 @@ public class GUIOperations {
 		File inaExe = new File(toolPath+"INAwin32.exe");
 		File batFile = new File(toolPath+"ina.bat");
 		File commandFile = new File(toolPath+"COMMAND.ina");
-		if(t_inv == false)
+		if(!t_inv)
 			commandFile = new File(toolPath+"COMMANDp.ina");
 		
 		String holmesPath = overlord.getHolmesPath();
@@ -636,7 +632,7 @@ public class GUIOperations {
 			//wczytywanie inwariantów do systemu:
 			PetriNet project = overlord.getWorkspace().getProject();
 			boolean status = project.loadTPinvariantsFromFile(invariantsFile.getPath(), t_inv);
-			if(status == false) {
+			if(!status) {
 				return;
 			}
 			
@@ -686,7 +682,7 @@ public class GUIOperations {
 	 */
 	public void fastGenerateTinvariants() {
 		boolean status = overlord.accessInvariantsWindow().isGeneratorWorking;
-		if(status == true) {
+		if(status) {
 			JOptionPane.showMessageDialog(null, "Invariants generation already in progress.", "Generator working",JOptionPane.WARNING_MESSAGE);
 		} else {
 			InvariantsCalculator invGenerator = new InvariantsCalculator(true);
@@ -765,15 +761,14 @@ public class GUIOperations {
 			}
 		}
 		
-		String CSVfilePath= "";
-		CSVfilePath = selectionOfSource();
+		String CSVfilePath = selectionOfSource();
 		if(CSVfilePath == null)
 			return null;
 		
 		String dir_path = "";
 		int c_number = howMany;
 		try{
-			int invNumber = 0;
+			int invNumber;
 			if(overlord.getWorkspace().getProject().getT_InvMatrix() == null) {
 				overlord.log("Warning: unable to check if given clusters number ("+howMany+") exceeds invariants "
 						+ "number. If so, the procedure may fail.", "warning", true);
@@ -814,7 +809,7 @@ public class GUIOperations {
 			dir_path = dir_path.replace("\\", "/");
 			
 			File test64 = new File(overlord.getSettingsManager().getValue("r_path64"));
-			String r_path = "";
+			String r_path;
 			if(test64.exists())
 				r_path = overlord.getSettingsManager().getValue("r_path64");
 			else {
@@ -850,8 +845,7 @@ public class GUIOperations {
 				return null;
 			}
 		}
-		String CSVfilePath = "";
-		CSVfilePath = selectionOfSource();
+		String CSVfilePath = selectionOfSource();
 		if(CSVfilePath == null)
 			return null;
 		
@@ -867,9 +861,6 @@ public class GUIOperations {
 				if(invNumber < howMany)
 					howMany = invNumber;
 			}
-			
-			//File test = new File(CSVfilePath);
-			//String CSVDirectoryPath = test.getParent();
 
 			Object[] options = {"Select cluster directory", "Use temporary directory", "Cancel operation"};
 			int n = JOptionPane.showOptionDialog(null,
@@ -982,7 +973,7 @@ public class GUIOperations {
 	public String[] generateSingleClustering(String clustersPath, String algorithm, String metric, int howMany) {
 		String filePath = clustersPath + "//cluster.csv";
 		File csvFile = new File(filePath);
-		if(csvFile.exists() == false) { //jeśli nie ma pliku
+		if(!csvFile.exists()) { //jeśli nie ma pliku
 			Object[] options = {"Manually locate file", "Cancel procedure",};
 			int n = JOptionPane.showOptionDialog(null,
 							"No input.csv file in:\n"+filePath+ "\nDo you want to select location manually?",
@@ -996,7 +987,7 @@ public class GUIOperations {
 					return null;
 				
 				csvFile = new File(filePath);
-				if(csvFile.exists() == false)
+				if(!csvFile.exists())
 					return null;
 			} else { 
 				return null;
@@ -1047,7 +1038,7 @@ public class GUIOperations {
 			JOptionPane.showMessageDialog(null, "Clustering failed. Check log.", "Critical error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-		String result[] = new String[5];
+		String[] result = new String[5];
 		result[0] = resultFilePath_clusterCSV;
 		result[1] = resultFilePath_r;
 		result[2] = resultFilePath_MCT;

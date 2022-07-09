@@ -20,7 +20,7 @@ public class StatesPlacesEditorTableModelXTPN extends DefaultTableModel {
     public static class PlaceEditContainer {
         public int ID;
         public String name;
-        public Double tokens;
+        public String tokens;
     }
 
     /**
@@ -54,7 +54,7 @@ public class StatesPlacesEditorTableModelXTPN extends DefaultTableModel {
      * @param name String - nazwa miejsca
      * @param value double - liczba tokenów
      */
-    public void addNew(int ID, String name, double value) {
+    public void addNew(int ID, String name, String value) {
         PlaceEditContainer row = new PlaceEditContainer();
         row.ID = ID;
         row.name = name;
@@ -104,7 +104,7 @@ public class StatesPlacesEditorTableModelXTPN extends DefaultTableModel {
      * Zwraca status edytowalności komórek.
      */
     public boolean isCellEditable(int row, int column) {
-        return column == 2;
+        return false;
     }
 
     /**
@@ -142,6 +142,7 @@ public class StatesPlacesEditorTableModelXTPN extends DefaultTableModel {
      * @param col int - nr kolumny
      */
     public void setValueAt(Object value, int row, int col) {
+        /*
         double newValue;
         try {
             if(col == 2) {
@@ -152,9 +153,11 @@ public class StatesPlacesEditorTableModelXTPN extends DefaultTableModel {
         } catch (Exception e) {
             //dataMatrix.get(row).firingRate = 1.0;
         }
+        */
     }
 
     public void setQuietlyValueAt(Object value, int row, int col) {
+        /*
         double newValue;
         try {
             if(col == 2) {
@@ -163,5 +166,6 @@ public class StatesPlacesEditorTableModelXTPN extends DefaultTableModel {
             }
         } catch (Exception ignored) {
         }
+        */
     }
 }

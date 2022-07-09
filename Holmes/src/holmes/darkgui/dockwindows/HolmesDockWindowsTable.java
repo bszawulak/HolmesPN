@@ -23,6 +23,7 @@ import holmes.analyse.*;
 import holmes.clusters.ClusterDataPackage;
 import holmes.clusters.ClusterTransition;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.GraphPanel;
 import holmes.graphpanel.GraphPanel.DrawModes;
@@ -1398,32 +1399,36 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(gammaMaxTextField);
 
 
-        JLabel tokensXTPNLabel = new JLabel("Tokens options:", JLabel.LEFT);
-        tokensXTPNLabel.setBounds(columnA_posX, columnA_Y += 20, 120, 20);
-        components.add(tokensXTPNLabel);
+        //JLabel tokensXTPNLabel = new JLabel("Tokens options:", JLabel.LEFT);
+        //tokensXTPNLabel.setBounds(columnA_posX, columnA_Y += 20, 120, 20);
+        //components.add(tokensXTPNLabel);
 
-        JLabel tokensXTPNLabel2 = new JLabel("Tokens in place :"+place.getTokensNumber(), JLabel.LEFT);
-        tokensXTPNLabel2.setBounds(columnB_posX+20, columnA_Y, 140, 20);
+        JLabel tokensXTPNLabel2 = new JLabel("Tokens in place: "+place.getTokensNumber(), JLabel.LEFT);
+        tokensXTPNLabel2.setBounds(columnA_posX, columnA_Y+=20, 140, 20);
         components.add(tokensXTPNLabel2);
 
         // XTPN-place przycisk okna tokenów
-        JButton tokensWindowButton = new JButton("<html>Tokens<br>window</html>");
+        //JButton tokensWindowButton = new JButton("<html>Tokens<br>window</html>");
+
+        HolmesRoundedButton tokensWindowButton = new HolmesRoundedButton("<html>Tokens<br>window</html>"
+                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         tokensWindowButton.setMargin(new Insets(0, 0, 0, 0));
-        tokensWindowButton.setBounds(columnB_posX, columnB_Y +=44, 65, 30);
+        tokensWindowButton.setBounds(columnA_posX, columnB_Y +=40, 90, 40);
         if(place.isGammaModeActiveXTPN()) {
             tokensWindowButton.setBackground(Color.GREEN);
         } else {
             tokensWindowButton.setBackground(Color.RED);
             tokensWindowButton.setEnabled(false);
         }
-        tokensWindowButton.addActionListener(actionEvent -> new HolmesXTPNtokens((Place) element));
+        tokensWindowButton.addActionListener(actionEvent -> new HolmesXTPNtokens((Place) element, null));
         components.add(tokensWindowButton);
 
         // XTPN-place przycisk dodania tokenu XTPN
-        JButton add0tokenButton = new JButton("<html>Add<br>0-token</html>");
-
+        //JButton add0tokenButton = new JButton("<html>Add<br>0-token</html>");
+        HolmesRoundedButton add0tokenButton = new HolmesRoundedButton("<html><center>Add<br>token</center></html>"
+                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         add0tokenButton.setMargin(new Insets(0, 0, 0, 0));
-        add0tokenButton.setBounds(columnB_posX+65, columnB_Y, 65, 30);
+        add0tokenButton.setBounds(columnB_posX, columnB_Y, 90, 40);
         if(place.isGammaModeActiveXTPN()) {
             add0tokenButton.setText("<html>Add<br>0-token</html>");
             add0tokenButton.setBackground(Color.GREEN);
@@ -1447,9 +1452,11 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(add0tokenButton);
 
         // XTPN-place przycisk usunięcia tokenu XTPN
-        JButton remove0tokenButton = new JButton("<html>Remove<br>0-token</html>");
+        //JButton remove0tokenButton = new JButton("<html>Remove<br>0-token</html>");
+        HolmesRoundedButton remove0tokenButton = new HolmesRoundedButton("<html><center>Remove<br>token</center></html>"
+                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         remove0tokenButton.setMargin(new Insets(0, 0, 0, 0));
-        remove0tokenButton.setBounds(columnB_posX+130, columnB_Y, 65, 30);
+        remove0tokenButton.setBounds(columnB_posX+90, columnB_Y, 90, 40);
         if(place.isGammaModeActiveXTPN()) {
             remove0tokenButton.setText("<html>Remove<br>0-token</html>");
             remove0tokenButton.setBackground(Color.GREEN);
@@ -1482,10 +1489,10 @@ public class HolmesDockWindowsTable extends JPanel {
         height = (int) (((double) 100 / (double) zoom) * height);
 
         JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
-        sheetLabel.setBounds(columnA_posX, columnA_Y += 55, colACompLength, 20);
+        sheetLabel.setBounds(columnA_posX, columnA_Y += 60, colACompLength, 20);
         components.add(sheetLabel);
         JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
-        sheetIdLabel.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 20);
+        sheetIdLabel.setBounds(columnB_posX, columnB_Y += 40, colBCompLength, 20);
         sheetIdLabel.setFont(normalFont);
         components.add(sheetIdLabel);
 
@@ -4142,11 +4149,9 @@ public class HolmesDockWindowsTable extends JPanel {
         makCheckBox.addActionListener(actionEvent -> {
             if (doNotUpdate)
                 return;
-            if (makCheckBox.isSelected()) {
-                transition.setMassActionKineticsXTPNstatus(true);
-            } else {
-                transition.setMassActionKineticsXTPNstatus(false);
-            }
+
+            transition.setMassActionKineticsXTPNstatus(makCheckBox.isSelected());
+
             //AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
             //transition.setMassActionKineticsXTPNstatus(abstractButton.getModel().isSelected());
         });

@@ -7,6 +7,7 @@ import holmes.petrinet.data.StatePlacesVectorXTPN;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.simulators.NetSimulator;
 import holmes.utilities.Tools;
+import holmes.windows.managers.HolmesStatesEditorXTPN;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 public class HolmesXTPNtokens extends JFrame {
     private JFrame ego;
     private final GUIManager overlord;
+
+    private HolmesStatesEditorXTPN parentWindow;
     private Place place = null;
     private boolean mainSimulatorActive;
     private boolean listenerAllowed = true; //jeśli true, comboBoxy działają
@@ -29,8 +32,6 @@ public class HolmesXTPNtokens extends JFrame {
     private JComboBox tokensComboBox;
     private JLabel idTokenLabel;
     private JFormattedTextField tokenValueTextField;
-    private  JButton changeTokenValueButton;
-    private JButton removeTokenValueButton;
     private JLabel tokensNoLabel;
 
     private P_StateManager spm;
@@ -39,14 +40,15 @@ public class HolmesXTPNtokens extends JFrame {
 
     private JFormattedTextField addNewTextField;
 
-    public HolmesXTPNtokens(Place placeObj) {
+    public HolmesXTPNtokens(Place placeObj, HolmesStatesEditorXTPN parent) {
         overlord = GUIManager.getDefaultGUIManager();
+        parentWindow = parent;
         place = placeObj;
         spm = overlord.getWorkspace().getProject().accessStatesManager();
         vectorXTPN = spm.getCurrentStateXTPN();
         places = overlord.getWorkspace().getProject().getPlaces();
         ego = this;
-        ego.setTitle("XPTN place tokens manager");
+        ego.setTitle("XPTN tokens window");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ignored) {
@@ -56,10 +58,15 @@ public class HolmesXTPNtokens extends JFrame {
         if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != NetSimulator.SimulatorMode.STOPPED)
             mainSimulatorActive = true;
 
-        //oblokowuje główne okno
+        //odblokowuje okno wywoławcze
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                overlord.getFrame().setEnabled(true);
+                if(parentWindow == null) {
+                    overlord.getFrame().setEnabled(true);
+                } else {
+                    parentWindow.fillTable();
+                    parentWindow.setEnabled(true);
+                }
             }
         });
 
@@ -69,7 +76,13 @@ public class HolmesXTPNtokens extends JFrame {
                     "Error: simulation in progress", JOptionPane.ERROR_MESSAGE);
             this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         } else {
-            overlord.getFrame().setEnabled(false);
+
+            if(parentWindow == null) {
+                overlord.getFrame().setEnabled(false);
+            } else {
+                parentWindow.setEnabled(false);
+            }
+
             setResizable(false);
             initializeComponents();
             //setLocationRelativeTo(overlord);
@@ -174,9 +187,11 @@ public class HolmesXTPNtokens extends JFrame {
         //HolmesRoundedButton changeTokenValueButton = new HolmesRoundedButton(""
         //        , "XTPNtokensWindow/HTWchange1.png", "XTPNtokensWindow/HTWchange2.png"
         //        , "XTPNtokensWindow/HTWchange3.png");
-        HolmesRoundedButton changeTokenValueButton = new HolmesRoundedButton("Change value", "bMtemp_1.png", "bMtemp_2.png", "bMtemp_3.png");
+        HolmesRoundedButton changeTokenValueButton = new HolmesRoundedButton("Change value"
+                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         changeTokenValueButton.setMargin(new Insets(0, 0, 0, 0));
-        changeTokenValueButton.setBounds(comboPanelX+160, comboPanelY-5, 100, 30);
+        changeTokenValueButton.setBounds(comboPanelX+150, comboPanelY-5, 100, 30);
+        changeTokenValueButton.setFocusPainted(false);
         changeTokenValueButton.addActionListener(e -> {
             if (!listenerAllowed)
                 return;
@@ -210,9 +225,11 @@ public class HolmesXTPNtokens extends JFrame {
        // HolmesRoundedButton removeTokenValueButton = new HolmesRoundedButton(""
        //         , "XTPNtokensWindow/HTWremove1.png", "XTPNtokensWindow/HTWremove2.png"
         //        , "XTPNtokensWindow/HTWremove3.png");
-        HolmesRoundedButton removeTokenValueButton = new HolmesRoundedButton("Remove", "bMtemp_1.png", "bMtemp_2.png", "bMtemp_3.png");
+        HolmesRoundedButton removeTokenValueButton = new HolmesRoundedButton("Remove"
+                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         removeTokenValueButton.setMargin(new Insets(0, 0, 0, 0));
-        removeTokenValueButton.setBounds(comboPanelX+260, comboPanelY-5, 100, 30);
+        removeTokenValueButton.setBounds(comboPanelX+250, comboPanelY-5, 100, 30);
+        removeTokenValueButton.setFocusPainted(false);
         removeTokenValueButton.addActionListener(e -> {
             if (!listenerAllowed)
                 return;
@@ -233,7 +250,7 @@ public class HolmesXTPNtokens extends JFrame {
                 tokensNoLabel.setText("Tokens:"+place.getTokensNumber());
                 tokensComboBox.setSelectedIndex(0);
             } catch (Exception exc) {
-                JOptionPane.showMessageDialog(null, "Cannot conver "+tokenValueTextField.getValue()+ " into Double",
+                JOptionPane.showMessageDialog(null, "Cannot convert "+tokenValueTextField.getValue()+ " into Double",
                         "Conversion eror", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -246,7 +263,7 @@ public class HolmesXTPNtokens extends JFrame {
         // pole dodawania nowego tokenu
         addNewTextField = new JFormattedTextField(formatter);
         addNewTextField.setValue(Double.valueOf(0.0));
-        addNewTextField.setBounds(comboPanelX+40, comboPanelY, 95, 20);
+        addNewTextField.setBounds(comboPanelX+40, comboPanelY, 110, 20);
         addNewTextField.addPropertyChangeListener("value", e -> {
             if (!listenerAllowed)
                 return;
@@ -264,15 +281,14 @@ public class HolmesXTPNtokens extends JFrame {
         //HolmesRoundedButton addNewTokenButton = new HolmesRoundedButton("Add new"
         //        , "XTPNtokensWindow/HTWaddNew1.png", "XTPNtokensWindow/HTWaddNew2.png"
         //        , "XTPNtokensWindow/HTWaddNew3.png");
-
-        HolmesRoundedButton addNewTokenButton = new HolmesRoundedButton("Add new token", "bMtemp_1.png", "bMtemp_2.png", "bMtemp_3.png");
-        //JButton addNewTokenButton = new JButton("Add New");
+        HolmesRoundedButton addNewTokenButton = new HolmesRoundedButton("Add new token"
+                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        addNewTokenButton.setBounds(comboPanelX+150, comboPanelY-5, 100, 30);
         addNewTokenButton.setMargin(new Insets(0, 0, 0, 0));
-        addNewTokenButton.setBounds(comboPanelX+170, comboPanelY-5, 100, 30);
+        addNewTokenButton.setFocusPainted(false);
         addNewTokenButton.addActionListener(e -> {
             if (!listenerAllowed)
                 return;
-
             try {
                 String text = addNewTextField.getValue().toString();
                 Double val = Double.parseDouble(text);
@@ -286,16 +302,15 @@ public class HolmesXTPNtokens extends JFrame {
                 int oldSelectedIndex = tokensComboBox.getSelectedIndex();
                 recreateComboBox();
 
-                if(oldSelectedIndex < 0)
-                    oldSelectedIndex = 0;
-
+                //if(oldSelectedIndex < 0)
+                //    oldSelectedIndex = 0;
 
                 tokenValueTextField.setEnabled(true);
                 changeTokenValueButton.setEnabled(true);
                 removeTokenValueButton.setEnabled(true);
                 recalculateTokens();
-                idTokenLabel.setText("ID: "+tokensComboBox.getSelectedIndex());
-                tokensComboBox.setSelectedIndex(oldSelectedIndex);
+                //idTokenLabel.setText("ID: "+tokensComboBox.getSelectedIndex());
+                tokensComboBox.setSelectedIndex(0);
             } catch (Exception exc) {
                 JOptionPane.showMessageDialog(null, "Cannot convert "+tokenValueTextField.getValue()+ " into Double",
                         "Conversion eror", JOptionPane.ERROR_MESSAGE);
@@ -303,9 +318,12 @@ public class HolmesXTPNtokens extends JFrame {
         });
         comboPanel.add(addNewTokenButton);
 
-        JButton clearAllButton = new JButton("Clear All");
+
+        //JButton clearAllButton = new JButton("Clear All");
+        HolmesRoundedButton clearAllButton = new HolmesRoundedButton("Clear all"
+                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         clearAllButton.setMargin(new Insets(0, 0, 0, 0));
-        clearAllButton.setBounds(comboPanelX+10, comboPanelY+=25, 60, 30);
+        clearAllButton.setBounds(comboPanelX+10, comboPanelY+=25, 100, 30);
         clearAllButton.addActionListener(e -> {
             if (!listenerAllowed)
                 return;
@@ -327,6 +345,7 @@ public class HolmesXTPNtokens extends JFrame {
         });
         comboPanel.add(clearAllButton);
 
+        /*
         JButton pStateManagerButton = new JButton("<html>p-state<br>manager</html>");
         pStateManagerButton.setMargin(new Insets(0, 0, 0, 0));
         pStateManagerButton.setBounds(comboPanelX+150, comboPanelY, 60, 30);
@@ -336,6 +355,7 @@ public class HolmesXTPNtokens extends JFrame {
 
         });
         comboPanel.add(pStateManagerButton);
+*/
 
         listenerAllowed = true;
 

@@ -38,7 +38,7 @@ public class InvariantsSimulator {
 	private SimulatorType simType = SimulatorType.TIME;
 
 	private PetriNet petriNet;
-	private Integer delay = Integer.valueOf(0);
+	private Integer delay = 0;
 	private boolean simulationActive = false;
 	private Timer timer;
 	private ArrayList<Transition> launchingTransitions;
@@ -149,11 +149,12 @@ public class InvariantsSimulator {
 
 	}
 
-	@SuppressWarnings("incomplete-switch")
+
 	/**
 	 * Metoda rozpoczynająca symulację inwariantów.
 	 * @param simulatorMode SimulatorMode - tryb pracy symulatora
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public void startSimulation(SimulatorMode simulatorMode) {
 		timeFrame.setBounds(185, 115, 80, 30);
 		timeFrame.getContentPane().add(
@@ -292,7 +293,7 @@ public class InvariantsSimulator {
 	 * 
 	 * @param t
 	 * @param list
-	 * @return
+	 * @return ArrayList[Transition]
 	 */
 	public ArrayList<Transition> searchConflict(Transition t,
 			ArrayList<Transition> list) {

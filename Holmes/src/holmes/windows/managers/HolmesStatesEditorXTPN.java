@@ -2,9 +2,6 @@ package holmes.windows.managers;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
@@ -13,19 +10,13 @@ import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import holmes.darkgui.GUIManager;
@@ -36,12 +27,13 @@ import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
 import holmes.tables.managers.StatesPlacesEditorTableModelXTPN;
 import holmes.utilities.Tools;
+import holmes.windows.HolmesXTPNtokens;
 
 public class HolmesStatesEditorXTPN extends JFrame {
     @Serial
     private static final long serialVersionUID = 3176765993380657329L;
-    private GUIManager overlord;
     private HolmesStatesManager parentWindow;
+    private HolmesStatesEditorXTPN ego;
     private StatesPlacesEditorTableModelXTPN tableModel;
     private StatePlacesVectorXTPN stateVectorXTPN;
     private int stateIndex;
@@ -57,15 +49,16 @@ public class HolmesStatesEditorXTPN extends JFrame {
      * @param stateIndex int - indeks powyższego wektora w tablicy
      */
     public HolmesStatesEditorXTPN(HolmesStatesManager parent, StatePlacesVectorXTPN stateVector, int stateIndex) {
-        setTitle("Holmes state editor XTPN");
+        setTitle("Holmes p-state editor XTPN");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ignored) {
 
         }
-        this.overlord = GUIManager.getDefaultGUIManager();
+        GUIManager overlord = GUIManager.getDefaultGUIManager();
         PetriNet pn = overlord.getWorkspace().getProject();
         this.parentWindow = parent;
+        ego = this;
         this.stateVectorXTPN = stateVector;
         this.stateIndex = stateIndex;
         this.places = pn.getPlaces();
@@ -81,12 +74,16 @@ public class HolmesStatesEditorXTPN extends JFrame {
     /**
      * Wypełnianie tabeli nowymi danymi - tj. odświeżanie.
      */
-    private void fillTable() {
+    public void fillTable() {
         tableModel.clearModel();
         int size = stateVectorXTPN.getSize();
         for(int p=0; p<size; p++) {
-            //TODO
-            //tableModel.addNew(p, places.get(p).getName(), stateVector.getTokens(p));
+            ArrayList<Double> multiset = stateVectorXTPN.getMultisetK(p);
+            StringBuilder line = new StringBuilder();
+            for(Double d : multiset) {
+                line.append(d).append(" | ");
+            }
+            tableModel.addNew(p, places.get(p).getName(), line.toString());
         }
 
         tableModel.fireTableDataChanged();
@@ -151,20 +148,18 @@ public class HolmesStatesEditorXTPN extends JFrame {
         CreationPanel.setBounds(posX, posY+=20, 600, 50);
         filler.add(CreationPanel);
 
+        /*
         JButton changeAllButton = new JButton("<html>&nbsp;Set tokens&nbsp;<br>in all places</html>");
         changeAllButton.setBounds(posX+620, posY, 120, 40);
         changeAllButton.setMargin(new Insets(0, 0, 0, 0));
         changeAllButton.setFocusPainted(false);
         changeAllButton.setToolTipText("Sets same number of tokens in all places.");
         changeAllButton.setIcon(Tools.getResIcon16("/icons/stateManager/changeAll.png"));
-        changeAllButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                if(places.size() == 0) {
-                    return;
-                }
-
-                changeGlobalTokensNumber();
+        changeAllButton.addActionListener(actionEvent -> {
+            if(places.size() == 0) {
+                return;
             }
+            changeGlobalTokensNumber();
         });
         result.add(changeAllButton);
 
@@ -175,13 +170,13 @@ public class HolmesStatesEditorXTPN extends JFrame {
         SpinnerModel tokensSpinnerModel = new SpinnerNumberModel(0, 0, Long.MAX_VALUE, 1);
         JSpinner tokensSpinner = new JSpinner(tokensSpinnerModel);
         tokensSpinner.setBounds(posX+750, posY+20, 120, 20);
-        tokensSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                double tokens = (double) ((JSpinner) e.getSource()).getValue();
-                globalTokensNumber = (int) tokens;
-            }
+        tokensSpinner.addChangeListener(e -> {
+            double tokens = (double) ((JSpinner) e.getSource()).getValue();
+            globalTokensNumber = (int) tokens;
         });
         result.add(tokensSpinner);
+        */
+
 
         result.add(filler, BorderLayout.CENTER);
         return result;
@@ -202,7 +197,6 @@ public class HolmesStatesEditorXTPN extends JFrame {
                 //TODO:
                 //stateVector.setTokens(p, globalTokensNumber);
                 tableModel.setQuietlyValueAt(globalTokensNumber, p, 2);
-
                 if(p == size-1)
                     parentWindow.changeTableCell(stateIndex, p+2, globalTokensNumber, true);
                 else
@@ -220,7 +214,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
     public JPanel getMainTablePanel() {
         JPanel result = new JPanel(new BorderLayout());
         result.setLocation(0, 0);
-        result.setBorder(BorderFactory.createTitledBorder("State vector table"));
+        result.setBorder(BorderFactory.createTitledBorder("p-state vector table"));
         result.setPreferredSize(new Dimension(500, 500));
 
         tableModel = new StatesPlacesEditorTableModelXTPN(this, stateIndex);
@@ -232,13 +226,13 @@ public class HolmesStatesEditorXTPN extends JFrame {
         table.getColumnModel().getColumn(0).setMinWidth(30);
         table.getColumnModel().getColumn(0).setMaxWidth(30);
         table.getColumnModel().getColumn(1).setHeaderValue("Place name");
-        table.getColumnModel().getColumn(1).setPreferredWidth(600);
+        table.getColumnModel().getColumn(1).setPreferredWidth(200);
         table.getColumnModel().getColumn(1).setMinWidth(100);
         table.getColumnModel().getColumn(2).setHeaderValue("Tokens");
-        table.getColumnModel().getColumn(2).setPreferredWidth(100);
+        table.getColumnModel().getColumn(2).setPreferredWidth(500);
         table.getColumnModel().getColumn(2).setMinWidth(50);
 
-        table.setName("SSAplacesTable");
+        table.setName("p-stateVectorTable");
         table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
         DefaultTableCellRenderer tableRenderer = new DefaultTableCellRenderer();
         table.setDefaultRenderer(Object.class, tableRenderer);
@@ -246,8 +240,10 @@ public class HolmesStatesEditorXTPN extends JFrame {
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
-                    if(e.isControlDown() == false)
-                        ;	//cellClickAction();
+                    if(!e.isControlDown()) {
+                        int row = table.getSelectedRow();
+                        new HolmesXTPNtokens(places.get(row), ego);
+                    }
                 }
             }
         });
@@ -271,8 +267,8 @@ public class HolmesStatesEditorXTPN extends JFrame {
     public void changeRealValue(int index, int placeID, double newValue) {
         //TODO:
         //statesManager.getStateXTPN(index).accessVector().set(placeID, newValue);
-        parentWindow.changeTableCell(index, placeID+2, newValue, true);
-        overlord.markNetChange();
+        //parentWindow.changeTableCell(index, placeID+2, newValue, true);
+        //overlord.markNetChange();
     }
 
     /**

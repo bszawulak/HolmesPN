@@ -56,8 +56,7 @@ public class HolmesNetTablesActions {
 	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 	  	    	
 	  	    	HolmesNodeInfo window = new HolmesNodeInfo(
-	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(index), 
-	  	    			antWindow);
+	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(index), antWindow);
 	  	    	window.setVisible(true);
 	  	    	//int column = table.getSelectedColumn();
 	  	    	//cellClickedEvent(row, column);
@@ -71,7 +70,7 @@ public class HolmesNetTablesActions {
 	  	    			antWindow);
 	  	    	window.setVisible(true);
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 	}
@@ -86,7 +85,7 @@ public class HolmesNetTablesActions {
 			return;
 		}
 		
-		ArrayList<Double> resVector = null;
+		ArrayList<Double> resVector;
 		StateSimulator ss = new StateSimulator();
 		
 		SimulatorGlobals ownSettings = new SimulatorGlobals();
@@ -127,7 +126,7 @@ public class HolmesNetTablesActions {
 
 	/**
 	 * Metoda wypełniająca tabelę tramzycji danymi.
-	 * @param model DefaultTableModel - obiekt danych
+	 * @param modelTransitions DefaultTableModel - obiekt danych
 	 */
 	public void addTransitionsToModel(TransitionsTableModel modelTransitions) {
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -174,7 +173,7 @@ public class HolmesNetTablesActions {
 
 	/**
 	 * Metoda wypełniająca tabelę inwariantów podstawowymi informacjami o nich.
-	 * @param model DefaultTableModel - obiekt danych
+	 * @param modelInvariants DefaultTableModel - obiekt danych
 	 */
 	public void addBasicInvDataToModel(InvariantsTableModel modelInvariants) {
 		//TODO:
@@ -207,16 +206,9 @@ public class HolmesNetTablesActions {
     			ic.ID = i;
     			ic.name = pn.accessT_InvDescriptions().get(i);
     			ic.transNumber = support.size();
-    			
-    			if(nonMinimalInvariants.get(i).size() == 0)
-    				ic.minimal = true;
-    			else
-    				ic.minimal = false;
 
-    			if(feasibleVector.get(i) == -1)
-    				ic.feasible = false;
-    			else
-    				ic.feasible = true;
+				ic.minimal = nonMinimalInvariants.get(i).size() == 0;
+				ic.feasible = feasibleVector.get(i) != -1;
     		
     			ic.pureInTransitions = inOutInfoMatrix.get(i).get(0);
     			ic.inTransitions = inOutInfoMatrix.get(i).get(1);
@@ -241,12 +233,8 @@ public class HolmesNetTablesActions {
     				ic.sub = false;
     				ic.sur = false;
     			}
-    			
-    			if(canonicalVector.get(i) == 0)
-    				ic.canonical = true;
-    			else
-    				ic.canonical = false;
-    			
+
+				ic.canonical = canonicalVector.get(i) == 0;
     			
     			dataMatrix.add(ic);
     		}	
@@ -255,17 +243,14 @@ public class HolmesNetTablesActions {
     	for(InvariantContainer ic : dataMatrix) {
     		modelInvariants.addNew(ic.ID, ic.transNumber, ic.minimal, ic.feasible, ic.pureInTransitions, ic.inTransitions, 
     				ic.outTransitions, ic.readArcs, ic.inhibitors, ic.sur, ic.sub, ic.normalInv, ic.canonical, ic.name);
-    			
+
     	}
-     	
-    	
 	}
 	
 	/**
 	 * Metoda służąca do wypełniania tabeli inwariantów.
 	 * @param modelInvariants InvariantsTableModel - model tablicy inwariantów
 	 * @param invariantsMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
-	 * @param invSize ArrayList[Integer] invSize - wektor wielkości inwariantów
 	 * @param simSteps int - ile kroków symulacji
 	 * @param maximumMode boolean - true: tryb maximum
 	 * @param singleMode boolean - true: 1 odpalenie tranzycji na turę(krok)
@@ -306,7 +291,7 @@ public class HolmesNetTablesActions {
 					double avg = resVector.get(t);
 					
 					if(avg == 0) { //dane o inwariantach z zagłodzonymi tranzycjami
-						if(rowsWithZero.contains(row) == false)
+						if(!rowsWithZero.contains(row))
 							rowsWithZero.add(row);
 						zeroDeadTrans.set(t, -1); //aktywna, ale zagłodzona
 					}
@@ -340,7 +325,7 @@ public class HolmesNetTablesActions {
 				return false;
 			}
 			
-			int selRows[] = table.getSelectedRows();
+			int[] selRows = table.getSelectedRows();
 			if(selRows.length != 2) {
 				JOptionPane.showMessageDialog(null, "Please select two rows (SHIFT key + mouse click).",
 						"Invalid number of rows selected", JOptionPane.WARNING_MESSAGE);

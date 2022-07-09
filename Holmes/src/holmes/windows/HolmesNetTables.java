@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,7 @@ import holmes.utilities.Tools;
  * @author MR
  */
 public class HolmesNetTables extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 8429744762731301629L;
 	
 	//interface components:

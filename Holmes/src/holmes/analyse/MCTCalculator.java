@@ -65,7 +65,7 @@ public class MCTCalculator {
 	public ArrayList<ArrayList<Transition>> generateMCT() {
 		ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		ArrayList<ArrayList<Integer>> invariantsTranspose = null;
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_invTypesComputed() == true) {
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_invTypesComputed()) {
 			//tylko prawdziwe mct
 			ArrayList<Integer> tInvTypes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessT_InvTypesVector();
 			ArrayList<ArrayList<Integer>> tInv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() ;
