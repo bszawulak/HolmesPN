@@ -66,7 +66,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<String> mctNames;
 	private NetSimulationDataCore simData;
 	private MCSDataMatrix mcsData;
-	private StatePlacesManager statesManager;
+	private P_StateManager statesManager;
 	private SPNdataVectorManager firingRatesManager;
 	private SSAplacesManager ssaManager;
 	private ArrayList<String> subNetNames;
@@ -121,7 +121,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.mcsData = new MCSDataMatrix();
 		this.methods = new PetriNetMethods(this);
 		this.simData = new NetSimulationDataCore();
-		this.statesManager = new StatePlacesManager(this);
+		this.statesManager = new P_StateManager(this);
 		this.ssaManager = new SSAplacesManager(this);
 		this.t_invComputed = false;
 	}
@@ -136,7 +136,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.workspace = workspace;
 		this.setSimulator(new NetSimulator(NetType.BASIC, this));
 		this.setMCTanalyzer(new MCTCalculator(this));
-		this.statesManager = new StatePlacesManager(this);
+		this.statesManager = new P_StateManager(this);
 		this.ssaManager = new SSAplacesManager(this);
 		this.firingRatesManager = new SPNdataVectorManager(this);
 		resetComm();
@@ -867,7 +867,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Umożliwia dostęp do managera stanów sieci.
 	 * @return (<b>StatesManager</b>) obiekt managera stanów.
 	 */
-	public StatePlacesManager accessStatesManager() {
+	public P_StateManager accessStatesManager() {
 		return this.statesManager;
 	}
 	
@@ -879,7 +879,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		return this.ssaManager;
 	}
 	
-	public void replaceStatesManager(StatePlacesManager newStatesMngr) {
+	public void replaceStatesManager(P_StateManager newStatesMngr) {
 		statesManager = newStatesMngr;
 	}
 	

@@ -4,20 +4,13 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
-import holmes.petrinet.data.SPNdataVectorManager;
-import holmes.petrinet.data.SPNtransitionData;
-import holmes.petrinet.data.IdGenerator;
-import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.data.SSAplacesManager;
-import holmes.petrinet.data.SSAplacesVector;
+import holmes.petrinet.data.*;
 import holmes.petrinet.data.SSAplacesVector.SSAdataType;
-import holmes.petrinet.data.StatePlacesVector;
-import holmes.petrinet.data.StatePlacesManager;
-import holmes.petrinet.data.SPNdataVector;
 import holmes.petrinet.data.SPNdataVector.SPNvectorSuperType;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
@@ -35,11 +28,11 @@ import holmes.windows.HolmesNotepad;
  * @author MR
  */
 public class ProjectReader {
-	private GUIManager overlord;
-	private PetriNet projectCore;
-	private ArrayList<Node> nodes;
+	private final GUIManager overlord;
+	private final PetriNet projectCore;
+	private final ArrayList<Node> nodes;
 	private ArrayList<MetaNode> metanodes = null;
-	private ArrayList<Arc> arcs;
+	private final ArrayList<Arc> arcs;
 	private ArrayList<ArrayList<Integer>> t_invariantsMatrix = null;
 	private ArrayList<String> t_invariantsNames = null;
 	private ArrayList<ArrayList<Integer>> p_invariantsMatrix = null;
@@ -61,6 +54,7 @@ public class ProjectReader {
 	//które bloki w ogóle próbowac czytać (zależne od tagów w sekcji [Project blocks]
 	private boolean subnets = false; //bloki coarse
 	private boolean states = false;
+	private boolean statesXTPN = false;
 	private boolean functions = false;
 	private boolean firingRates = false;
 	private boolean pInvariants = false;
@@ -83,10 +77,6 @@ public class ProjectReader {
 		p_invariantsNames = projectCore.accessP_InvDescriptions();
 		mctData = projectCore.getMCTMatrix();
 		mctNames = projectCore.accessMCTnames();
-		
-		placesProcessed = 0;
-		transitionsProcessed = 0;
-		arcsProcessed = 0;
 	}
 
 	/**
@@ -99,9 +89,6 @@ public class ProjectReader {
 		projectCore.setProjectType(PetriNet.GlobalNetType.PN); //default
 		nodes = new ArrayList<>();
 		arcs = new ArrayList<>();
-		placesProcessed = 0;
-		transitionsProcessed = 0;
-		arcsProcessed = 0;
 	}
 
 	public boolean readProjectForLabelComparison(String filepath) {
@@ -114,20 +101,18 @@ public class ProjectReader {
 			overlord.log("Reading project file: " + filepath, "text", true);
 
 			status = readProjectHeader(buffer);
-			if (status == false) {
+			if (!status) {
 				overlord.log("Reading project data block failure.", "error", true);
 				buffer.close();
 				return false;
 			}
 
 			status = readNetwork(buffer,true);
-			if (status == false) {
+			if (!status) {
 				overlord.log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
 				buffer.close();
 				return false;
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -142,7 +127,7 @@ public class ProjectReader {
 	 */
 	public boolean readProject(String filepath) {
 		boolean status = overlord.reset.newProjectInitiated();
-		if(status == false) {
+		if(!status) {
 			return false;
 		}
 		
@@ -153,14 +138,14 @@ public class ProjectReader {
 			overlord.log("Reading project file: "+filepath, "text", true);
 			
 			status = readProjectHeader(buffer);
-			if(status == false) {
+			if(!status) {
 				overlord.log("Reading project data block failure.", "error", true);
 				buffer.close();
 				return false;
 			}
 			
 			status = readNetwork(buffer,false);
-			if(status == false) {
+			if(!status) {
 				overlord.log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
 				buffer.close();
 				return false;
@@ -199,6 +184,15 @@ public class ProjectReader {
 			} else {
 				projectCore.accessStatesManager().createCleanStatePN();
 			}
+
+			if(statesXTPN) {
+				status = readStatesXTPN(buffer);
+				if(!status) {
+					projectCore.accessStatesManager().createCleanStateXTPN();
+				}
+			} else {
+				projectCore.accessStatesManager().createCleanStateXTPN();
+			}
 			
 			if(firingRates) {
 				status = readFiringRates(buffer);
@@ -230,8 +224,8 @@ public class ProjectReader {
 
 	/**
 	 * Metoda służąca do czytania bloku składowych pliku projektu.
-	 * @param buffer BufferedReader - obiekt czytający
-	 * @return boolean - true, jeśli się udało
+	 * @param buffer (<b>BufferedReader</b>) obiekt czytający.
+	 * @return (<b>boolean</b>) - true, jeśli się udało.
 	 */
 	private boolean readProjectHeader(BufferedReader buffer) {
 		try {
@@ -255,7 +249,7 @@ public class ProjectReader {
 
 	/**
 	 * Metoda czyta linie nagłówka pliku projektu.
-	 * @param line (<b>String</b>) linia do odczutu z pliku.
+	 * @param line (<b>String</b>) linia do odczytu z pliku.
 	 * @return (<b>boolean</b>) - true, jeśli wszystko poszło ok.
 	 */
 	private boolean parseHeaderLine(String line) {
@@ -287,11 +281,10 @@ public class ProjectReader {
 	}
 
 	/**
-	 * Metoda czyta blok informujący jakie podbloki są w ogóle w pliku projektu.
-	 * @param line String - linia do czytania
+	 * Metoda czyta blok informujący, które bloki są w ogóle w pliku projektu.
+	 * @param line (<b>String</b>) linia do czytania.
 	 */
 	private void parseNetblocksLine(String line) {
-		String backup = line;
 		String query = "";
 		try {
 			query = "subnets";
@@ -302,6 +295,11 @@ public class ProjectReader {
 			query = "statesmatrix";
 			if(line.toLowerCase().contains(query)) {
 				states = true;
+				return;
+			}
+			query = "statesxtpnmatrix";
+			if(line.toLowerCase().contains(query)) {
+				statesXTPN = true;
 				return;
 			}
 			query = "functions";
@@ -325,15 +323,16 @@ public class ProjectReader {
 				return;
 			}
 		} catch (Exception e) {
-			overlord.log("Reading error in line: "+backup, "error", true);
+			overlord.log("Reading error in line: "+ line, "error", true);
 		}
 	}
 
 	/**
 	 * Metoda odczytująca dane sieci z pliku projektu i tworząca sieć na bazie miejsc, tranzycji i łuków.
-	 * @param buffer BufferedReader - obiekt odczytujący
-	 * @return boolean - true, jeśli nie było problemów przy odczycie
+	 * @param buffer (<b>BufferedReader</b>) obiekt czytający.
+	 * @return (<b>boolean</b>) - true, jeśli się udało.
 	 */
+	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readNetwork(BufferedReader buffer, boolean isLabelComparison) {
 		boolean status = false;
 		try {
@@ -341,14 +340,10 @@ public class ProjectReader {
 			//ID GENERATOR:
 			while(!((line = buffer.readLine()).contains("ID generator"))) //przewiń do ID generator
 				;
+
 			line = line.substring(line.indexOf("state:")+6);
 			line = line.replace(">", "");
-			//dane generatora, ale właściwo to po co??
-			//String[] tab = line.split(";");
-			//int totalIDs = Integer.parseInt(tab[0]);
-			//int placesIDs = Integer.parseInt(tab[1]);
-			//int transIDs = Integer.parseInt(tab[2]);
-			
+
 			//PLACES:
 			line = buffer.readLine();
 			if(!line.contains("<Places: 0>")) { //są miejsca
@@ -374,6 +369,7 @@ public class ProjectReader {
 			//TRANSITIONS:
 			while(!((line = buffer.readLine()).contains("<Transitions: "))) //przewiń do tranzycji
 				;
+
 			if(!line.contains("<Transitions: 0>")) { //są tranzycje
 				line = buffer.readLine(); // -> Transition: 0
 				boolean go = true;
@@ -398,6 +394,7 @@ public class ProjectReader {
 				//METANODES:
 				while(!((line = buffer.readLine()).contains("<MetaNodes: "))) //przewiń do tranzycji
 					;
+
 				if(!line.contains("<MetaNodes: 0>")) { //są tranzycje
 					line = buffer.readLine(); // -> Transition: 0
 					boolean go = true;
@@ -419,8 +416,8 @@ public class ProjectReader {
 					//przeczytano tranzycje
 				}
 			}
-			ArrayList<Place> places = new ArrayList<>();
-			ArrayList<Transition> transitions = new ArrayList<>();
+			ArrayList<Place> places;
+			ArrayList<Transition> transitions;
 			if(isLabelComparison)
 			{
 				places = nodes.stream().filter(x->x.getType()==PetriNetElementType.PLACE).map(obj -> (Place) obj).collect(Collectors.toCollection(ArrayList::new));
@@ -434,6 +431,7 @@ public class ProjectReader {
 			//ARCS:
 			while(!((line = buffer.readLine()).contains("<Arcs data block>"))) //przewiń do łuków
 				;
+
 			while(!(line = buffer.readLine()).contains("Arcs data block end")) {
 				Arc newArc = parseArcLine(line, places, transitions, metanodes);
 				if(newArc != null) {
@@ -505,10 +503,8 @@ public class ProjectReader {
 				correct = true;
 			if(table[4].contains("true"))
 				enabled = true;
-			
-			boolean status = transition.updateFunctionString(table[1], table[2], correct, enabled);
-	
-			return status;
+
+			return transition.updateFunctionString(table[1], table[2], correct, enabled);
 		} catch (Exception e) {
 			overlord.log("Failed to correctly parse line: "+functionLine, "warning", true);
 			return false;
@@ -527,8 +523,7 @@ public class ProjectReader {
 			String query = "";
 			query = "Place gID:";
 			if(line.contains(query)) {
-				line = line.substring(line.indexOf(query)+query.length());
-				
+				//line = line.substring(line.indexOf(query)+query.length());
 				return;
 			}
 			
@@ -799,8 +794,7 @@ public class ProjectReader {
 		try {
 			String query = "Transition gID:";
 			if(line.contains(query)) {
-				line = line.substring(line.indexOf(query)+query.length());
-				
+				//line = line.substring(line.indexOf(query)+query.length());
 				return;
 			}
 			
@@ -808,15 +802,12 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				
-				if(line.equals("PN")) {
-					transition.setTransType(TransitionType.PN);
-				} else if(line.equals("TPN")) {
-					transition.setTransType(TransitionType.TPN);
-				} else if(line.equals("SPN")) {
-					transition.setTransType(TransitionType.TPN);
-				} else if(line.equals("XTPN")) {
-					transition.setTransType(TransitionType.XTPN);
+
+				switch (line) {
+					case "PN" -> transition.setTransType(TransitionType.PN);
+					case "TPN" -> transition.setTransType(TransitionType.TPN);
+					case "SPN" -> transition.setTransType(TransitionType.SPN);
+					case "XTPN" -> transition.setTransType(TransitionType.XTPN);
 				}
 
 				return;
@@ -870,10 +861,7 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				if(line.contains("true"))
-					transition.setTPNstatus(true);
-				else
-					transition.setTPNstatus(false);
+				transition.setTPNstatus(line.contains("true"));
 				return;
 			}
 			
@@ -881,10 +869,7 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				if(line.contains("true"))
-					transition.setDPNstatus(true);
-				else
-					transition.setDPNstatus(false);
+				transition.setDPNstatus(line.contains("true"));
 				return;
 			}
 			
@@ -892,10 +877,7 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				if(line.contains("true"))
-					transition.setFunctional(true);
-				else
-					transition.setFunctional(false);
+				transition.setFunctional(line.contains("true"));
 				return;
 			}
 			
@@ -1194,11 +1176,9 @@ public class ProjectReader {
 					transition.setRequiredColoredTokens(Integer.parseInt(tab[3]), 3);
 					transition.setRequiredColoredTokens(Integer.parseInt(tab[4]), 4);
 					transition.setRequiredColoredTokens(Integer.parseInt(tab[5]), 5);
-				} catch (Exception e) {}
-				
-				return;
+				} catch (Exception ignored) {}
+				//return;
 			}
-			
 		} catch (Exception e) {
 			overlord.log("Reading file error in line: "+backup+" for Transition "+transitionsProcessed, "error", true);
 		}
@@ -1213,10 +1193,9 @@ public class ProjectReader {
 	private void parseMetaNodesLine(String line, MetaNode metanode) {
 		String backup = line;
 		try {
-			String query = "";
-			query = "MetaNode gID:";
+			String query = "MetaNode gID:";
 			if(line.contains(query)) {
-				line = line.substring(line.indexOf(query)+query.length());
+				//line = line.substring(line.indexOf(query)+query.length());
 				return;
 			}
 			
@@ -1224,16 +1203,13 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				
-				if(line.equals("SUBNETTRANS")) {
-					metanode.setMetaType(MetaType.SUBNETTRANS);
-				} else if(line.equals("SUBNETPLACE")) {
-					metanode.setMetaType(MetaType.SUBNETPLACE);
-				} else if(line.equals("SUBNET")) {
-					metanode.setMetaType(MetaType.SUBNET);
-				} else {
-					metanode.setMetaType(MetaType.UNKNOWN);
-				} 
+
+				switch (line) {
+					case "SUBNETTRANS" -> metanode.setMetaType(MetaType.SUBNETTRANS);
+					case "SUBNETPLACE" -> metanode.setMetaType(MetaType.SUBNETPLACE);
+					case "SUBNET" -> metanode.setMetaType(MetaType.SUBNET);
+					default -> metanode.setMetaType(MetaType.UNKNOWN);
+				}
 
 				return;
 			}
@@ -1311,7 +1287,7 @@ public class ProjectReader {
 				Point newP = new Point(pointX, pointY);
 				metanode.getTextsLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).forceSetPosition(newP);
 				metanode.getTextsLocations(GUIManager.locationMoveType.NAME).get(eLocIndex).setNotSnappedPosition(newP);
-				return;
+				//return;
 			}
 		} catch (Exception e) {
 			overlord.log("Reading file error in line: "+backup+" for MetaNode "+metanodesProcessed, "error", true);
@@ -1361,14 +1337,13 @@ public class ProjectReader {
 			
 			if(arcData.indexOf("M") > 0) {
 				metaSecond = true;
-				metaFirst = false;
 			}
 			if(arcData.indexOf("M") == 0) {
 				metaFirst = true;
 				metaSecond = false;
 			}
 			
-			if(arcData.indexOf("T") != -1)
+			if(arcData.contains("T"))
 				isThereTransition = true;
 			
 			arcData = arcData.replace("P", "");
@@ -1379,12 +1354,12 @@ public class ProjectReader {
 			arcData = arcData.replace("(", " ");
 			String[] arcDataTable = arcData.split(" ");
 			
-			int placeIndex = -1;
-			int transIndex = -1;
-			int metaIndex = -1;
-			int placeElLoc = -1;
-			int transElLoc = -1;
-			int metaElLoc = -1;
+			int placeIndex;
+			int transIndex;
+			int metaIndex;
+			int placeElLoc;
+			int transElLoc;
+			int metaElLoc;
 			
 			boolean colorReadOk = false;
 			boolean colorStatus = false;
@@ -1398,10 +1373,10 @@ public class ProjectReader {
 					colorsWeights = tab[5].split(":");
 					colorReadOk = true;
 				}
-			} catch (Exception e) {}
+			} catch (Exception ignored) {}
 			
 			if(placeFirst) { //pierwsze jest miejsce
-				if(metaSecond == false) {
+				if(!metaSecond) {
 					placeIndex = Integer.parseInt(arcDataTable[0]);
 					placeElLoc = Integer.parseInt(arcDataTable[1]);
 					transIndex = Integer.parseInt(arcDataTable[2]);
@@ -1435,8 +1410,8 @@ public class ProjectReader {
 					return newArc;
 				}
 			} else { //placeFirst = false
-				if(metaFirst == true) { 
-					if(isThereTransition == true) { //druga jest tranzycja
+				if(metaFirst) {
+					if(isThereTransition) { //druga jest tranzycja
 						metaIndex = Integer.parseInt(arcDataTable[0]);
 						metaElLoc = Integer.parseInt(arcDataTable[1]);
 						transIndex = Integer.parseInt(arcDataTable[2]);
@@ -1470,7 +1445,7 @@ public class ProjectReader {
 						return newArc;
 					}
 				} else { //placesFirst = false, metaFirst = false -> pierwsza jest tranzycja
-					if(metaSecond == true) { //drugi jest meta węzeł
+					if(metaSecond) { //drugi jest meta węzeł
 						transIndex = Integer.parseInt(arcDataTable[0]);
 						transElLoc = Integer.parseInt(arcDataTable[1]);
 						metaIndex = Integer.parseInt(arcDataTable[2]);
@@ -1542,26 +1517,28 @@ public class ProjectReader {
 	 */
 	private void addBroken(Arc newArc, String brokenLine) {
 		String[] tab = brokenLine.split("x");
-		for(int i=0; i<tab.length; i++) {
-			String s = tab[i];
+		for (String s : tab) {
 			try {
 				String[] coords = s.split("-");
 				int x = Integer.parseInt(coords[0]);
 				int y = Integer.parseInt(coords[1]);
-				
-				if(x == 99999 && y == 11111)
+
+				if (x == 99999 && y == 11111)
 					return;
-				
-				newArc.addBreakPoint(new Point(x,y));;
-			} catch (Exception e) {}
+
+				newArc.addBreakPoint(new Point(x, y));
+				;
+			} catch (Exception ignored) {
+			}
 		}
 	}
 
 	/**
 	 * Metoda pomocnicza czytająca z pliku projektu blok danych o t-inwariantach.
-	 * @param buffer BufferedReader - obiekt czytający
-	 * @return boolean - true, jeśli wszystko się udało
+	 * @param buffer (<b>BufferedReader</b>) obiekt czytający.
+	 * @return (<b>boolean</b>) - true, jeśli się udało.
 	 */
+	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readTInvariants(BufferedReader buffer) {
 		try {
 			String line = "";
@@ -1570,18 +1547,18 @@ public class ProjectReader {
 			
 			line = buffer.readLine();
 			int transNumber = projectCore.getTransitions().size();
-			String problemWithInv = "";
+			StringBuilder problemWithInv = new StringBuilder();
 			int problems = 0;
 			int readedLine = -1;
 			
 			if(!line.contains("<Invariants: 0>")) { //są miejsca
 				boolean go = true;
-				t_invariantsMatrix = new ArrayList<ArrayList<Integer>>();
+				t_invariantsMatrix = new ArrayList<>();
 				
 				line = buffer.readLine();
 				while(go) {
 					readedLine++;
-					ArrayList<Integer> invariant = new ArrayList<Integer>();
+					ArrayList<Integer> invariant = new ArrayList<>();
 					line = line.replace(" ", "");
 					String[] tab = line.split(";");
 					
@@ -1599,7 +1576,7 @@ public class ProjectReader {
 						t_invariantsProcessed++;
 					} else {
 						problems++;
-						problemWithInv += readedLine+",";
+						problemWithInv.append(readedLine).append(",");
 					}
 				}
 				projectCore.setT_InvMatrix(t_invariantsMatrix, false);
@@ -1644,9 +1621,10 @@ public class ProjectReader {
 	
 	/**
 	 * Metoda pomocnicza czytająca z pliku projektu blok danych o p-inwariantach.
-	 * @param buffer BufferedReader - obiekt czytający
-	 * @return boolean - true, jeśli wszystko się udało
+	 * @param buffer (<b>BufferedReader</b>) obiekt czytający.
+	 * @return (<b>boolean</b>) - true, jeśli się udało.
 	 */
+	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readPInvariants(BufferedReader buffer) {
 		try {
 			String line = "";
@@ -1655,18 +1633,18 @@ public class ProjectReader {
 			
 			line = buffer.readLine();
 			int placeNumber = projectCore.getPlaces().size();
-			String problemWithInv = "";
+			StringBuilder problemWithInv = new StringBuilder();
 			int problems = 0;
 			int readedLine = -1;
 			
 			if(!line.contains("<PInvariants: 0>")) { //są miejsca
 				boolean go = true;
-				p_invariantsMatrix = new ArrayList<ArrayList<Integer>>();
+				p_invariantsMatrix = new ArrayList<>();
 				
 				line = buffer.readLine();
 				while(go) {
 					readedLine++;
-					ArrayList<Integer> invariant = new ArrayList<Integer>();
+					ArrayList<Integer> invariant = new ArrayList<>();
 					line = line.replace(" ", "");
 					String[] tab = line.split(";");
 					
@@ -1684,7 +1662,7 @@ public class ProjectReader {
 						p_invariantsProcessed++;
 					} else {
 						problems++;
-						problemWithInv += readedLine+",";
+						problemWithInv.append(readedLine).append(",");
 					}
 				}
 				
@@ -1734,19 +1712,20 @@ public class ProjectReader {
 	
 	/**
 	 * Metoda czyta blok danych o zbiorach MCT.
-	 * @param buffer BufferedReader - obiekt czytający
-	 * @return boolean - true, jeśli wszystko dobrze poszło
+	 * @param buffer (<b>BufferedReader</b>) obiekt czytający.
+	 * @return (<b>boolean</b>) - true, jeśli się udało.
 	 */
+	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readMCT(BufferedReader buffer) {
 		try {
-			String line = "";
+			String line;
 			while(!((line = buffer.readLine()).contains("<MCT data>"))) //przewiń do zbiorów MCT
 				;
 			
 			line = buffer.readLine();
 			ArrayList<Transition> transitions = projectCore.getTransitions();
 			int transNumber = transitions.size();
-			String problemWithMCTLines = "";
+			StringBuilder problemWithMCTLines = new StringBuilder();
 			int problems = 0;
 			int readedLine = -1;
 			
@@ -1760,14 +1739,14 @@ public class ProjectReader {
 					ArrayList<Transition> mct = new ArrayList<Transition>();
 					line = line.replace(" ", "");
 					String[] tab = line.split(";");
-					
-					for(int i=0; i<tab.length; i++) {
-						int mctNumber = Integer.parseInt(tab[i]);
-						if(mctNumber < transNumber) {
+
+					for (String s : tab) {
+						int mctNumber = Integer.parseInt(s);
+						if (mctNumber < transNumber) {
 							mct.add(transitions.get(mctNumber));
 						} else {
 							problems++;
-							problemWithMCTLines += readedLine+",";
+							problemWithMCTLines.append(readedLine).append(",");
 						}
 					}
 
@@ -1823,9 +1802,10 @@ public class ProjectReader {
 	
 	/**
 	 * Metoda czyta blok danych o stanach sieci.
-	 * @param buffer BufferedReader - obiekt czytający
-	 * @return boolean - true, jeśli wszystko dobrze poszło
+	 * @param buffer (<b>BufferedReader</b>) obiekt czytający.
+	 * @return (<b>boolean</b>) - true, jeśli się udało.
 	 */
+	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readStates(BufferedReader buffer) {
 		try {
 			String line = "";
@@ -1838,7 +1818,7 @@ public class ProjectReader {
 				return false;
 			
 			boolean go = true;
-			StatePlacesManager statesMngr = projectCore.accessStatesManager();
+			P_StateManager statesMngr = projectCore.accessStatesManager();
 			statesMngr.resetPN(false);
 
 			line = buffer.readLine();
@@ -1848,9 +1828,9 @@ public class ProjectReader {
 					StatePlacesVector pVector = new StatePlacesVector();
 					line = line.replace(" ", "");
 					String[] tab = line.split(";");
-					
-					for(int i=0; i<tab.length; i++) {
-						pVector.accessVector().add(Double.parseDouble(tab[i]));
+
+					for (String s : tab) {
+						pVector.accessVector().add(Double.parseDouble(s));
 					}
 					
 					line = buffer.readLine(); //dane dodatkowe
@@ -1870,7 +1850,7 @@ public class ProjectReader {
 					
 					statesMngr.accessStateMatrix().add(pVector);
 				}
-			} catch (Exception e) {}
+			} catch (Exception ignored) {}
 			
 			if(((int)readedLine/3) > statesMngr.accessStateMatrix().size()) {
 				overlord.log("Error reading state vector number "+(readedLine), "error", true);
@@ -1878,19 +1858,91 @@ public class ProjectReader {
 					statesMngr.createCleanStatePN();
 				}
 			}
-			
 			return true;
 		} catch (Exception e) {
 			overlord.log("Reading state vectors failed.", "error", true);
 			return false;
 		}
 	}
+
+	/**
+	 * Metoda czyta blok danych o stanach sieci.
+	 * @param buffer (<b>BufferedReader</b>) obiekt czytający.
+	 * @return (<b>boolean</b>) - true, jeśli się udało.
+	 */
+	@SuppressWarnings("StatementWithEmptyBody")
+	private boolean readStatesXTPN(BufferedReader buffer) {
+		try {
+			String line = "";
+			while(!((line = buffer.readLine()).contains("<States XTPN data>"))) //przewiń do wektorów stanów
+				;
+
+			line = buffer.readLine();
+			int readedLine = 0;
+			if(line.contains("States: 0"))
+				return false;
+
+			boolean go = true;
+			P_StateManager statesMngr = projectCore.accessStatesManager();
+			statesMngr.resetXTPN(false);
+
+			line = buffer.readLine();
+			try {
+				while(go) {
+					readedLine++;
+					StatePlacesVectorXTPN pVector = new StatePlacesVectorXTPN();
+					line = line.replace(" ", "");
+					String[] tab = line.split(":");
+
+					for (String multiString : tab) {
+						String[] subTab = multiString.split(";");
+						ArrayList<Double> multisetK = new ArrayList<>();
+						for(String s : subTab) {
+							multisetK.add(Double.parseDouble(s));
+						}
+						Collections.sort(multisetK);
+						Collections.reverse(multisetK);
+						pVector.addPlaceXTPN(multisetK);
+					}
+
+					line = buffer.readLine(); //dane dodatkowe
+					line = line.trim();
+					tab = line.split(";");
+					pVector.setStateType(tab[0]);
+
+					line = buffer.readLine();
+					line = line.trim();
+					line = Tools.decodeString(line);
+					pVector.setDescription(line);
+
+					line = buffer.readLine();
+					if(line.contains("<EOSt>")) {
+						go = false;
+					}
+
+					statesMngr.accessStateMatrixXTPN().add(pVector);
+				}
+			} catch (Exception ignored) {}
+
+			if(((int)readedLine/3) > statesMngr.accessStateMatrix().size()) {
+				overlord.log("Error reading state XTPN vector number "+(readedLine), "error", true);
+				if(statesMngr.accessStateMatrix().size() == 0) {
+					statesMngr.createCleanStatePN();
+				}
+			}
+			return true;
+		} catch (Exception e) {
+			overlord.log("Reading XTPN state vectors failed.", "error", true);
+			return false;
+		}
+	}
 	
 	/**
 	 * Czyta dane wektorów odpaleń tranzycji w modelu SPN.
-	 * @param buffer BufferedReader - obiekt czytający
-	 * @return boolean - true, jeśli wszystko poszło ok.
+	 * @param buffer (<b>BufferedReader</b>) obiekt czytający.
+	 * @return (<b>boolean</b>) - true, jeśli się udało.
 	 */
+	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readFiringRates(BufferedReader buffer) {
 		try {
 			String line = "";
@@ -1927,17 +1979,15 @@ public class ProjectReader {
 						
 						ArrayList<SPNtransitionData> dataVector = new ArrayList<SPNtransitionData>();
 						for(int i=0; i<dataVectorTable.length; i++) {
-							StochaticsType subType = StochaticsType.ST;
-							if(tabType[i].equals("DT"))
-								subType = StochaticsType.DT;
-							else if(tabType[i].equals("IM"))
-								subType = StochaticsType.IM;
-							else if(tabType[i].equals("SchT"))
-								subType = StochaticsType.SchT;
-							
+							StochaticsType subType = switch (tabType[i]) {
+								case "DT" -> StochaticsType.DT;
+								case "IM" -> StochaticsType.IM;
+								case "SchT" -> StochaticsType.SchT;
+								default -> StochaticsType.ST;
+							};
+
 							//TODO: nowy konstruktor, wektor zapisu
 							SPNtransitionData frc = frVector.newContainer(dataVectorTable[i], subType);
-
 							dataVector.add(frc);
 						}
 						frVector.accessVector().addAll(dataVector); //boxing
@@ -2034,20 +2084,18 @@ public class ProjectReader {
 			for(int i=0; i<transitionsProcessed; i++) {
 				SPNtransitionData box = frVector.newContainer();
 				box.ST_function = dataVectorTable[i*7];
-				try { box.IM_priority = Integer.parseInt(dataVectorTable[(i*7)+1]); } catch(Exception e) {}
-				try { box.DET_delay = Integer.parseInt(dataVectorTable[(i*7)+2]); } catch(Exception e) {}
+				try { box.IM_priority = Integer.parseInt(dataVectorTable[(i*7)+1]); } catch(Exception ignored) {}
+				try { box.DET_delay = Integer.parseInt(dataVectorTable[(i*7)+2]); } catch(Exception ignored) {}
 				box.SCH_start = dataVectorTable[(i*7)+3];
-				try { box.SCH_rep = Integer.parseInt(dataVectorTable[(i*7)+4]); } catch(Exception e) {}
+				try { box.SCH_rep = Integer.parseInt(dataVectorTable[(i*7)+4]); } catch(Exception ignored) {}
 				box.SCH_end = dataVectorTable[(i*7)+5];
-				
-				if(dataVectorTable[(i*7)+6].equals("IM"))
-					box.sType = StochaticsType.IM;
-				else if(dataVectorTable[(i*7)+6].equals("DT"))
-					box.sType = StochaticsType.DT;
-				else if(dataVectorTable[(i*7)+6].equals("SchT"))
-					box.sType = StochaticsType.SchT;
-				else
-					box.sType = StochaticsType.ST;
+
+				switch (dataVectorTable[(i * 7) + 6]) {
+					case "IM" -> box.sType = StochaticsType.IM;
+					case "DT" -> box.sType = StochaticsType.DT;
+					case "SchT" -> box.sType = StochaticsType.SchT;
+					default -> box.sType = StochaticsType.ST;
+				}
 				
 				spnVector.add(box);
 			}
@@ -2057,9 +2105,10 @@ public class ProjectReader {
 
 	/**
 	 * Metoda czyta blok danych z wektorami SSA.
-	 * @param buffer BufferedReader - obiekt czytający
-	 * @return boolean - true, jeśli wszystko dobrze poszło
+	 * @param buffer (<b>BufferedReader</b>) obiekt czytający.
+	 * @return (<b>boolean</b>) - true, jeśli się udało.
 	 */
+	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readSSAvectors(BufferedReader buffer) {
 		try {
 			String line = "";
@@ -2082,9 +2131,9 @@ public class ProjectReader {
 					SSAplacesVector pVector = new SSAplacesVector();
 					line = line.replace(" ", "");
 					String[] tab = line.split(";");
-					
-					for(int i=0; i<tab.length; i++) {
-						pVector.accessVector().add(Double.parseDouble(tab[i]));
+
+					for (String s : tab) {
+						pVector.accessVector().add(Double.parseDouble(s));
 					}
 
 					line = buffer.readLine(); //dane dodatkowe
@@ -2109,7 +2158,7 @@ public class ProjectReader {
 					}
 					ssaMngr.accessSSAmatrix().add(pVector);
 				}
-			} catch (Exception e) {}
+			} catch (Exception ignored) {}
 			
 			if(((int)readedLine/3) > ssaMngr.accessSSAmatrix().size()) {
 				overlord.log("Error reading state vector number "+(readedLine), "error", true);

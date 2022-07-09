@@ -104,10 +104,8 @@ public class HolmesLabelComparison extends JFrame {
 
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-
                 ProjectReader pRdr = new ProjectReader(true);
                 boolean status = pRdr.readProjectForLabelComparison(firstNetChooser.getSelectedFile().getPath());
-
 
                 XStream xstream = new XStream(new StaxDriver());
                 xstream.alias("petriNet", PetriNetData.class);
@@ -116,7 +114,7 @@ public class HolmesLabelComparison extends JFrame {
                     fPND = new PetriNetData(pRdr.getNodes(),pRdr.getArcs(), "First Net");
                 else
                     sPND = new PetriNetData(pRdr.getNodes(),pRdr.getArcs(), "Second Net");
-            } catch (Exception e) {
+            } catch (Exception ignored) {
 
             }
         }

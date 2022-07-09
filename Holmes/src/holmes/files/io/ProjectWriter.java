@@ -9,12 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.data.IdGenerator;
-import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.data.SSAplacesVector;
-import holmes.petrinet.data.StatePlacesVector;
-import holmes.petrinet.data.SPNdataVector;
-import holmes.petrinet.data.SPNtransitionData;
+import holmes.petrinet.data.*;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.ElementLocation;
@@ -34,22 +29,23 @@ import holmes.varia.Check;
  *
  */
 public class ProjectWriter {
-	private PetriNet projectCore;
-	private ArrayList<Place> places ;
-	private ArrayList<Transition> transitions;
-	private ArrayList<MetaNode> metaNodes;
-	private ArrayList<Arc> arcs;
-	private ArrayList<ArrayList<Integer>> t_invariantsMatrix;
-	private ArrayList<String> t_invariantsNames;
-	private ArrayList<ArrayList<Integer>> p_invariantsMatrix;
-	private ArrayList<String> p_invariantsNames;
-	private ArrayList<ArrayList<Transition>> mctData;
-	private ArrayList<String> mctNames;
-	private ArrayList<StatePlacesVector> statesMatrix;
-	private ArrayList<SPNdataVector> firingRatesMatrix;
-	private ArrayList<SSAplacesVector> ssaMatrix;
+	private final PetriNet projectCore;
+	private final ArrayList<Place> places ;
+	private final ArrayList<Transition> transitions;
+	private final ArrayList<MetaNode> metaNodes;
+	private final ArrayList<Arc> arcs;
+	private final ArrayList<ArrayList<Integer>> t_invariantsMatrix;
+	private final ArrayList<String> t_invariantsNames;
+	private final ArrayList<ArrayList<Integer>> p_invariantsMatrix;
+	private final ArrayList<String> p_invariantsNames;
+	private final ArrayList<ArrayList<Transition>> mctData;
+	private final ArrayList<String> mctNames;
+	private final ArrayList<StatePlacesVector> statesMatrix;
+	private final ArrayList<StatePlacesVectorXTPN> statesMatrixXTPN;
+	private final ArrayList<SPNdataVector> firingRatesMatrix;
+	private final ArrayList<SSAplacesVector> ssaMatrix;
 	
-	private String newline = "\n";
+	private final String newline = "\n";
 	
 	/**
 	 * Konstruktor obiektu klasy ProjectWriter.
@@ -68,6 +64,7 @@ public class ProjectWriter {
 		mctData = projectCore.getMCTMatrix();
 		mctNames = projectCore.accessMCTnames();
 		statesMatrix = projectCore.accessStatesManager().accessStateMatrix();
+		statesMatrixXTPN = projectCore.accessStatesManager().accessStateMatrixXTPN();
 		firingRatesMatrix = projectCore.accessFiringRatesManager().accessSPNmatrix();
 		ssaMatrix = projectCore.accessSSAmanager().accessSSAmatrix();
 	}
@@ -96,6 +93,7 @@ public class ProjectWriter {
 			bw.write("  <PlaceInvData>"+newline);
 			bw.write("  <MCT data>"+newline);
 			bw.write("  <StatesMatrix>"+newline);
+			bw.write("  <StatesXTPNMatrix>"+newline);
 			bw.write("  <FunctionsData>"+newline);
 			bw.write("  <FiringRatesData>"+newline);
 			bw.write("  <SSAmatrix>"+newline);
@@ -121,6 +119,10 @@ public class ProjectWriter {
 			bw.write("<States data>"+newline);
 			boolean statusStates = saveStates(bw);
 			bw.write("<States data end>"+newline);
+
+			bw.write("<States XTPN data>"+newline);
+			boolean statusXTPNStates = saveStatesXTPN(bw);
+			bw.write("<States XTPN data end>"+newline);
 			
 			bw.write("<Firing rates data>"+newline);
 			boolean statusFR = saveFiringRates(bw);
@@ -130,15 +132,14 @@ public class ProjectWriter {
 			boolean statusSSA = saveSSAvectors(bw);
 			bw.write("<SSA vectors data end>"+newline);
 
-			//TODO: log o statusach
 			GUIManager.getDefaultGUIManager().log("Net saved: "+statusNet, "text", true);
 			GUIManager.getDefaultGUIManager().log("T-invariants saved: "+statusInv, "text", true);
 			GUIManager.getDefaultGUIManager().log("P-invariants saved: "+statusPInv, "text", true);
 			GUIManager.getDefaultGUIManager().log("MCT saved: "+statusMCT, "text", true);
 			GUIManager.getDefaultGUIManager().log("Net states saved: "+statusStates, "text", true);
+			GUIManager.getDefaultGUIManager().log("Net XTPN states saved: "+statusXTPNStates, "text", true);
 			GUIManager.getDefaultGUIManager().log("Firing rates saved: "+statusFR, "text", true);
 			GUIManager.getDefaultGUIManager().log("SSA vectors saved: "+statusSSA, "text", true);
-
 
 			bw.close();
 			return true;
@@ -150,8 +151,8 @@ public class ProjectWriter {
 
 	/**
 	 * Metoda realizująca zapis danych o strukturze sieci do pliku projektu.
-	 * @param bw BufferedWriter - obiekt zapisujący
-	 * @return boolean - true, jeśli wszystko się udało
+	 * @param bw (<b>BufferedWriter</b>) obiekt zapisujący.
+	 * @return (<b>boolean</b>) - true, jeśli wszystko się udało.
 	 */
 	private boolean saveNetwork(BufferedWriter bw) {
 		try {
@@ -358,73 +359,71 @@ public class ProjectWriter {
 				int elLocations = place.getElementLocations().size();
 				for(int e=0; e<elLocations; e++) { //wszystkie lokalizacje miejsca
 					ElementLocation eLoc = place.getElementLocations().get(e);
-					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<Arc>(eLoc.getOutArcs());
+					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<>(eLoc.getOutArcs());
 					ArrayList<Arc> metaOutArcs = eLoc.accessMetaOutArcs();
 					tmp_outgoingArcs.addAll(metaOutArcs);
 					int arcsNumber = tmp_outgoingArcs.size();
-					for(int a=0; a<arcsNumber; a++) { //wszystkie łuki wyjściowe
-						Arc arc = tmp_outgoingArcs.get(a);
-						String arcType = ""+arc.getArcType();
+					for (Arc arc : tmp_outgoingArcs) { //wszystkie łuki wyjściowe
+						String arcType = "" + arc.getArcType();
 						Node endNode = arc.getEndNode();
-						
-						if(endNode instanceof Transition) {
-							String startLoc = "P"+p+"("+e+")";
-							Transition endTransition = (Transition)endNode;
+
+						if (endNode instanceof Transition) {
+							String startLoc = "P" + p + "(" + e + ")";
+							Transition endTransition = (Transition) endNode;
 							int endNodeIndex = transitions.indexOf(endTransition);
 							ElementLocation endNodeLocation = arc.getEndLocation();
 							int endNodeLocationIndex = -1;
-							for(int e2=0; e2<endTransition.getElementLocations().size(); e2++) {
-								if(endNodeLocation == endTransition.getElementLocations().get(e2)) {
+							for (int e2 = 0; e2 < endTransition.getElementLocations().size(); e2++) {
+								if (endNodeLocation == endTransition.getElementLocations().get(e2)) {
 									endNodeLocationIndex = e2;
 									break;
 								}
 							}
-							
-							String endLoc = "T"+endNodeIndex+"("+endNodeLocationIndex+")";
+
+							String endLoc = "T" + endNodeIndex + "(" + endNodeLocationIndex + ")";
 							int weight = arc.getWeight();
 
-							String brokenLine = "";
-							if(arc.accessBreaks().size() > 0) {
-								brokenLine += ";";
-								for(Point point : arc.accessBreaks()) {
-									brokenLine += point.x;
-									brokenLine += "-";
-									brokenLine += point.y;
-									brokenLine += "x";
+							StringBuilder brokenLine = new StringBuilder();
+							if (arc.accessBreaks().size() > 0) {
+								brokenLine.append(";");
+								for (Point point : arc.accessBreaks()) {
+									brokenLine.append(point.x);
+									brokenLine.append("-");
+									brokenLine.append(point.y);
+									brokenLine.append("x");
 								}
-								brokenLine = brokenLine.substring(0, brokenLine.length()-1);
+								brokenLine = new StringBuilder(brokenLine.substring(0, brokenLine.length() - 1));
 							} else {
-								brokenLine += ";99999-11111";
+								brokenLine.append(";99999-11111");
 							}
-							
-							boolean isColored = false;
-							if(arc.getArcType() == TypeOfArc.COLOR)
-								isColored = true;
-							String coloredWeights = ""+arc.getColorWeight(0)+":"+arc.getColorWeight(1)+":"+arc.getColorWeight(2)+":"
-									+arc.getColorWeight(3)+":"+arc.getColorWeight(4)+":"+arc.getColorWeight(5);
-							
-							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+brokenLine+";"+isColored
-									+";"+coloredWeights+newline);
+
+							boolean isColored = arc.getArcType() == TypeOfArc.COLOR;
+
+							String coloredWeights = "" + arc.getColorWeight(0) + ":" + arc.getColorWeight(1) + ":" + arc.getColorWeight(2) + ":"
+									+ arc.getColorWeight(3) + ":" + arc.getColorWeight(4) + ":" + arc.getColorWeight(5);
+
+							bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + brokenLine + ";" + isColored
+									+ ";" + coloredWeights + newline);
 							savedArcs++;
-						} else if(endNode instanceof MetaNode) {
-							String startLoc = "P"+p+"("+e+")";
-							MetaNode endMetanode = (MetaNode)endNode;
+						} else if (endNode instanceof MetaNode) {
+							String startLoc = "P" + p + "(" + e + ")";
+							MetaNode endMetanode = (MetaNode) endNode;
 							int endNodeIndex = metaNodes.indexOf(endMetanode);
 							ElementLocation endNodeLocation = arc.getEndLocation();
 							int endNodeLocationIndex = -1;
-							for(int e2=0; e2<endMetanode.getElementLocations().size(); e2++) {
-								if(endNodeLocation == endMetanode.getElementLocations().get(e2)) {
+							for (int e2 = 0; e2 < endMetanode.getElementLocations().size(); e2++) {
+								if (endNodeLocation == endMetanode.getElementLocations().get(e2)) {
 									endNodeLocationIndex = e2;
 									break;
 								}
 							}
-							
-							String endLoc = "M"+endNodeIndex+"("+endNodeLocationIndex+")";
+
+							String endLoc = "M" + endNodeIndex + "(" + endNodeLocationIndex + ")";
 							int weight = arc.getWeight();
 
-							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
+							bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + newline);
 							savedArcs++;
-						} 
+						}
 					}
 				}	
 			}
@@ -434,72 +433,68 @@ public class ProjectWriter {
 				int elLocations = trans.getElementLocations().size();
 				for(int e=0; e<elLocations; e++) { //wszystkie lokalizacje tranzycji
 					ElementLocation eLoc = trans.getElementLocations().get(e);
-					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<Arc>(eLoc.getOutArcs());
+					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<>(eLoc.getOutArcs());
 					ArrayList<Arc> metaOutArcs = eLoc.accessMetaOutArcs();
 					tmp_outgoingArcs.addAll(metaOutArcs);
 					int arcsNumber = tmp_outgoingArcs.size();
-					for(int a=0; a<arcsNumber; a++) { //wszystkie łuki wyjściowe
-						Arc arc = tmp_outgoingArcs.get(a);
-						String arcType = ""+arc.getArcType();
+					for (Arc arc : tmp_outgoingArcs) { //wszystkie łuki wyjściowe
+						String arcType = "" + arc.getArcType();
 						Node endNode = arc.getEndNode();
-						if(endNode instanceof Place) {
-							String startLoc = "T"+t+"("+e+")";
-							Place endPlace = (Place)endNode;
+						if (endNode instanceof Place) {
+							String startLoc = "T" + t + "(" + e + ")";
+							Place endPlace = (Place) endNode;
 							int endNodeIndex = places.indexOf(endPlace);
 							ElementLocation endNodeLocation = arc.getEndLocation();
 							int endNodeLocationIndex = -1;
-							for(int e2=0; e2<endPlace.getElementLocations().size(); e2++) {
-								if(endNodeLocation == endPlace.getElementLocations().get(e2)) {
+							for (int e2 = 0; e2 < endPlace.getElementLocations().size(); e2++) {
+								if (endNodeLocation == endPlace.getElementLocations().get(e2)) {
 									endNodeLocationIndex = e2;
 									break;
 								}
 							}
-							
-							String endLoc = "P"+endNodeIndex+"("+endNodeLocationIndex+")";
+
+							String endLoc = "P" + endNodeIndex + "(" + endNodeLocationIndex + ")";
 							int weight = arc.getWeight();
-							
-							
-							
-							String brokenLine = "";
-							if(arc.accessBreaks().size() > 0) {
-								brokenLine += ";";
-								for(Point point : arc.accessBreaks()) {
-									brokenLine += point.x;
-									brokenLine += "-";
-									brokenLine += point.y;
-									brokenLine += "x";
+
+							StringBuilder brokenLine = new StringBuilder();
+							if (arc.accessBreaks().size() > 0) {
+								brokenLine.append(";");
+								for (Point point : arc.accessBreaks()) {
+									brokenLine.append(point.x);
+									brokenLine.append("-");
+									brokenLine.append(point.y);
+									brokenLine.append("x");
 								}
-								brokenLine = brokenLine.substring(0, brokenLine.length()-1);
+								brokenLine = new StringBuilder(brokenLine.substring(0, brokenLine.length() - 1));
 							} else {
-								brokenLine += ";99999-11111";
+								brokenLine.append(";99999-11111");
 							}
-							
-							boolean isColored = false;
-							if(arc.getArcType() == TypeOfArc.COLOR)
-								isColored = true;
-							String coloredWeights = ""+arc.getColorWeight(0)+":"+arc.getColorWeight(1)+":"+arc.getColorWeight(2)+":"
-									+arc.getColorWeight(3)+":"+arc.getColorWeight(4)+":"+arc.getColorWeight(5);
-							
-							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+brokenLine+";"+isColored
-									+";"+coloredWeights+newline);
+
+							boolean isColored = arc.getArcType() == TypeOfArc.COLOR;
+
+							String coloredWeights = "" + arc.getColorWeight(0) + ":" + arc.getColorWeight(1) + ":" + arc.getColorWeight(2) + ":"
+									+ arc.getColorWeight(3) + ":" + arc.getColorWeight(4) + ":" + arc.getColorWeight(5);
+
+							bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + brokenLine + ";" + isColored
+									+ ";" + coloredWeights + newline);
 							savedArcs++;
-						} else if(endNode instanceof MetaNode) {
-							String startLoc = "T"+t+"("+e+")";
-							MetaNode endMetanode = (MetaNode)endNode;
+						} else if (endNode instanceof MetaNode) {
+							String startLoc = "T" + t + "(" + e + ")";
+							MetaNode endMetanode = (MetaNode) endNode;
 							int endNodeIndex = metaNodes.indexOf(endMetanode);
 							ElementLocation endNodeLocation = arc.getEndLocation();
 							int endNodeLocationIndex = -1;
-							for(int e2=0; e2<endMetanode.getElementLocations().size(); e2++) {
-								if(endNodeLocation == endMetanode.getElementLocations().get(e2)) {
+							for (int e2 = 0; e2 < endMetanode.getElementLocations().size(); e2++) {
+								if (endNodeLocation == endMetanode.getElementLocations().get(e2)) {
 									endNodeLocationIndex = e2;
 									break;
 								}
 							}
-							
-							String endLoc = "M"+endNodeIndex+"("+endNodeLocationIndex+")";
+
+							String endLoc = "M" + endNodeIndex + "(" + endNodeLocationIndex + ")";
 							int weight = arc.getWeight();
-							
-							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
+
+							bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + newline);
 							savedArcs++;
 						}
 					}
@@ -512,51 +507,50 @@ public class ProjectWriter {
 				int elLocations = metaNode.getElementLocations().size();
 				for(int e=0; e<elLocations; e++) { //wszystkie lokalizacje meta-węzła
 					ElementLocation eLoc = metaNode.getElementLocations().get(e);
-					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<Arc>(eLoc.getOutArcs());
+					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<>(eLoc.getOutArcs());
 					ArrayList<Arc> metaOutArcs = eLoc.accessMetaOutArcs();
 					tmp_outgoingArcs.addAll(metaOutArcs);
 					int arcsNumber = tmp_outgoingArcs.size();
-					for(int a=0; a<arcsNumber; a++) { //wszystkie łuki wyjściowe
-						Arc arc = tmp_outgoingArcs.get(a);
-						String arcType = ""+arc.getArcType();
+					for (Arc arc : tmp_outgoingArcs) { //wszystkie łuki wyjściowe
+						String arcType = "" + arc.getArcType();
 						Node endNode = arc.getEndNode();
-						if(endNode instanceof Place) {
-							String startLoc = "M"+m+"("+e+")";
-							Place endPlace = (Place)endNode;
+						if (endNode instanceof Place) {
+							String startLoc = "M" + m + "(" + e + ")";
+							Place endPlace = (Place) endNode;
 							int endNodeIndex = places.indexOf(endPlace);
 							ElementLocation endNodeLocation = arc.getEndLocation();
 							int endNodeLocationIndex = -1;
-							for(int e2=0; e2<endPlace.getElementLocations().size(); e2++) {
-								if(endNodeLocation == endPlace.getElementLocations().get(e2)) {
+							for (int e2 = 0; e2 < endPlace.getElementLocations().size(); e2++) {
+								if (endNodeLocation == endPlace.getElementLocations().get(e2)) {
 									endNodeLocationIndex = e2;
 									break;
 								}
 							}
-							
-							String endLoc = "P"+endNodeIndex+"("+endNodeLocationIndex+")";
+
+							String endLoc = "P" + endNodeIndex + "(" + endNodeLocationIndex + ")";
 							int weight = arc.getWeight();
-							
-							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
+
+							bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + newline);
 							savedArcs++;
-						} else if(endNode instanceof Transition) {
-							String startLoc = "M"+m+"("+e+")";
-							Transition endTransition = (Transition)endNode;
+						} else if (endNode instanceof Transition) {
+							String startLoc = "M" + m + "(" + e + ")";
+							Transition endTransition = (Transition) endNode;
 							int endNodeIndex = transitions.indexOf(endTransition);
 							ElementLocation endNodeLocation = arc.getEndLocation();
 							int endNodeLocationIndex = -1;
-							for(int e2=0; e2<endTransition.getElementLocations().size(); e2++) {
-								if(endNodeLocation == endTransition.getElementLocations().get(e2)) {
+							for (int e2 = 0; e2 < endTransition.getElementLocations().size(); e2++) {
+								if (endNodeLocation == endTransition.getElementLocations().get(e2)) {
 									endNodeLocationIndex = e2;
 									break;
 								}
 							}
-							
-							String endLoc = "T"+endNodeIndex+"("+endNodeLocationIndex+")";
+
+							String endLoc = "T" + endNodeIndex + "(" + endNodeLocationIndex + ")";
 							int weight = arc.getWeight();
-							
-							bw.write(spaces(sp)+"<Arc: "+arcType+"; "+startLoc+" -> "+endLoc+"; "+weight+">"+newline);
+
+							bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + newline);
 							savedArcs++;
-						} 
+						}
 					}
 				}
 			}
@@ -599,8 +593,8 @@ public class ProjectWriter {
 	
 	/**
 	 * Metoda służąca do zapisania w pliku projektu t-inwariantów (CSV) oraz ich nazw.
-	 * @param bw BufferedWriter - obiekt zapisujący
-	 * @return boolean - true, jeśli wszystko dobrze poszło
+	 * @param bw (<b>BufferedWriter</b>) obiekt zapisujący.
+	 * @return (<b>boolean</b>) - true, jeśli wszystko się udało.
 	 */
 	private boolean saveT_Invariants(BufferedWriter bw) {
 		try {
@@ -624,12 +618,12 @@ public class ProjectWriter {
 			for(int i=0; i<invNumber; i++) {
 				sp = 4;
 				ArrayList<Integer> invariant = t_invariantsMatrix.get(i);
-				String line = ""+i+";";
+				StringBuilder line = new StringBuilder("" + i + ";");
 				
 				for(int it=0; it<invSize; it++) {
-					line += invariant.get(it)+";";
+					line.append(invariant.get(it)).append(";");
 				}
-				line = line.substring(0, line.length()-1); //usun ostatni ';'
+				line = new StringBuilder(line.substring(0, line.length() - 1)); //usun ostatni ';'
 				bw.write(spaces(sp)+line+newline);
 			}
 			sp = 2;
@@ -651,8 +645,8 @@ public class ProjectWriter {
 	
 	/**
 	 * Metoda służąca do zapisania w pliku projektu p-inwariantów (CSV) oraz ich nazw.
-	 * @param bw BufferedWriter - obiekt zapisujący
-	 * @return boolean - true, jeśli wszystko dobrze poszło
+	 * @param bw (<b>BufferedWriter</b>) obiekt zapisujący.
+	 * @return (<b>boolean</b>) - true, jeśli wszystko się udało.
 	 */
 	private boolean saveP_Invariants(BufferedWriter bw) {
 		try {
@@ -676,12 +670,12 @@ public class ProjectWriter {
 			for(int i=0; i<invNumber; i++) {
 				sp = 4;
 				ArrayList<Integer> invariant = p_invariantsMatrix.get(i);
-				String line = ""+i+";";
+				StringBuilder line = new StringBuilder("" + i + ";");
 				
 				for(int it=0; it<invSize; it++) {
-					line += invariant.get(it)+";";
+					line.append(invariant.get(it)).append(";");
 				}
-				line = line.substring(0, line.length()-1); //usun ostatni ';'
+				line = new StringBuilder(line.substring(0, line.length() - 1)); //usun ostatni ';'
 				bw.write(spaces(sp)+line+newline);
 			}
 			sp = 2;
@@ -725,20 +719,19 @@ public class ProjectWriter {
 			}
 	
 			bw.write(spaces(sp)+"<MCT: "+mctNumber+">"+newline);
-			for(int m=0; m<mctNumber; m++) {
+			for (ArrayList<Transition> mctDatum : mctData) {
 				sp = 4;
-				ArrayList<Transition> mct =  mctData.get(m);
-				if(mct.size() == 0) {
-					bw.write(";"+newline);
+				if (mctDatum.size() == 0) {
+					bw.write(";" + newline);
 					continue;
 				}
-				
-				String mctLine = "";
-				for(Transition trans : mct) {
-					mctLine += transitions.indexOf(trans) + ";";
+
+				StringBuilder mctLine = new StringBuilder();
+				for (Transition trans : mctDatum) {
+					mctLine.append(transitions.indexOf(trans)).append(";");
 				}
-				mctLine = mctLine.substring(0, mctLine.length()-1); //usun ostatni ';'
-				bw.write(spaces(sp)+mctLine+newline);
+				mctLine = new StringBuilder(mctLine.substring(0, mctLine.length() - 1)); //usun ostatni ';'
+				bw.write(spaces(sp) + mctLine + newline);
 			}
 			sp = 2;
 			bw.write(spaces(sp)+"<EOM>"+newline);
@@ -760,8 +753,8 @@ public class ProjectWriter {
 	
 	/**
 	 * Sekcja odpowiedzialna za zapis tablicy stanów sieci.
-	 * @param bw BufferedWriter - obiekt zapisujący
-	 * @return boolean - true, jeśli operacja się powiodła a pacjent nie zmarł.
+	 * @param bw (<b>BufferedWriter</b>) obiekt zapisujący.
+	 * @return (<b>boolean</b>) - true, jeśli operacja się powiodła, a pacjent nie zmarł.
 	 */
 	private boolean saveStates(BufferedWriter bw) {
 		try {
@@ -770,19 +763,18 @@ public class ProjectWriter {
 	
 			if(places.size() > 0) { 
 				bw.write(spaces(sp)+"<States: "+statesNumber+">"+newline);
-				for(int s=0; s<statesNumber; s++) {
+				for (StatePlacesVector vector : statesMatrix) {
 					sp = 4;
-					StatePlacesVector sVector = statesMatrix.get(s);
-					String stateLine = "";
-					for(Double value : sVector.accessVector()) {
-						stateLine += value + ";";
+					StringBuilder stateLine = new StringBuilder();
+					for (Double value : vector.accessVector()) {
+						stateLine.append(value).append(";");
 					}
-					stateLine = stateLine.substring(0, stateLine.length()-1); //usun ostatni ';'
-					bw.write(spaces(sp)+stateLine+newline);
-					
-					String type = sVector.getStateType();
-					bw.write(spaces(sp)+type+";"+newline);
-					bw.write(spaces(sp)+Tools.convertToCode(sVector.getDescription())+newline);
+					stateLine = new StringBuilder(stateLine.substring(0, stateLine.length() - 1)); //usun ostatni ';'
+					bw.write(spaces(sp) + stateLine + newline);
+
+					String type = vector.getStateType();
+					bw.write(spaces(sp) + type + ";" + newline);
+					bw.write(spaces(sp) + Tools.convertToCode(vector.getDescription()) + newline);
 				}
 			} else {
 				bw.write(spaces(sp)+"<States: 0>"+newline);
@@ -797,11 +789,59 @@ public class ProjectWriter {
 			return false;
 		}
 	}
+
+	/**
+	 * Sekcja odpowiedzialna za zapis tablicy stanów sieci.
+	 * @param bw (<b>BufferedWriter</b>) obiekt zapisujący.
+	 * @return (<b>boolean</b>) - true, jeśli operacja się powiodła, a pacjent nie zmarł.
+	 */
+	private boolean saveStatesXTPN(BufferedWriter bw) {
+		try {
+			int sp = 2;
+			int statesNumber = statesMatrixXTPN.size();
+
+			if(places.size() > 0) {
+				bw.write(spaces(sp)+"<States: "+statesNumber+">"+newline);
+				for (StatePlacesVectorXTPN vector : statesMatrixXTPN) {
+					sp = 4;
+					StringBuilder stateLine = new StringBuilder();
+
+					for(ArrayList<Double> multiset : vector.accessVector()) {
+						int counter = 0;
+						for(Double value : multiset) {
+							counter++;
+							if(counter == multiset.size())  {
+								stateLine.append(value).append(":"); //separator multizbiorów
+							} else {
+								stateLine.append(value).append(";");
+							}
+						}
+					}
+					stateLine = new StringBuilder(stateLine.substring(0, stateLine.length() - 1)); //usun ostatni '|'
+					bw.write(spaces(sp) + stateLine + newline);
+
+					String type = vector.getStateType();
+					bw.write(spaces(sp) + type + ";" + newline);
+					bw.write(spaces(sp) + Tools.convertToCode(vector.getDescription()) + newline);
+				}
+			} else {
+				bw.write(spaces(sp)+"<States: 0>"+newline);
+			}
+			sp = 2;
+			bw.write(spaces(sp)+"<EOSt>"+newline);
+
+			return true;
+		} catch (Exception e) {
+			GUIManager.getDefaultGUIManager().log("Error while saving states data.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			return false;
+		}
+	}
 	
 	/**
 	 * Metoda zapisuje tablicę wektorów firing rates tranzycji.
-	 * @param bw BufferedWriter - obiekt zapisujący
-	 * @return boolean - true, jeśli wszystko się udało
+	 * @param bw (<b>BufferedWriter</b>) obiekt zapisujący.
+	 * @return (<b>boolean</b>) - true, jeśli wszystko się udało.
 	 */
 	private boolean saveFiringRates(BufferedWriter bw) {
 		try {
@@ -810,9 +850,8 @@ public class ProjectWriter {
 	
 			if(transitions.size()>0) {
 				bw.write(spaces(sp)+"<FRvectors: "+frNumber+">"+newline);
-				for(int fr=0; fr<frNumber; fr++) {
+				for (SPNdataVector ratesMatrix : firingRatesMatrix) {
 					sp = 4;
-					SPNdataVector frVector = firingRatesMatrix.get(fr);
 					/*
 					String frLine = "";
 					String stochTypeLine = "";
@@ -826,15 +865,15 @@ public class ProjectWriter {
 					stochTypeLine = stochTypeLine.substring(0, stochTypeLine.length()-1); //usun ostatni ';'
 					bw.write(spaces(sp)+stochTypeLine+newline);
 					*/
-					String dataLine = "version101:";
-					for(SPNtransitionData frc : frVector.accessVector()) {
-						dataLine += (frc.returnSaveVector()+";");
+					StringBuilder dataLine = new StringBuilder("version101:");
+					for (SPNtransitionData frc : ratesMatrix.accessVector()) {
+						dataLine.append(frc.returnSaveVector()).append(";");
 					}
-					dataLine = dataLine.substring(0, dataLine.length()-1); //usun ostatni ';'
-					bw.write(spaces(sp)+dataLine+newline);
-					
-					bw.write(spaces(sp)+frVector.getSPNtype()+";"+newline);
-					bw.write(spaces(sp)+Tools.convertToCode(frVector.getDescription())+newline);
+					dataLine = new StringBuilder(dataLine.substring(0, dataLine.length() - 1)); //usun ostatni ';'
+					bw.write(spaces(sp) + dataLine + newline);
+
+					bw.write(spaces(sp) + ratesMatrix.getSPNtype() + ";" + newline);
+					bw.write(spaces(sp) + Tools.convertToCode(ratesMatrix.getDescription()) + newline);
 				}
 			} else {
 				bw.write(spaces(sp)+"<FRvectors: 0>"+newline);
@@ -851,8 +890,8 @@ public class ProjectWriter {
 	
 	/**
 	 * Sekcja odpowiedzialna za zapis tablicy wektorów danych SSA.
-	 * @param bw BufferedWriter - obiekt zapisujący
-	 * @return boolean - true, jeśli operacja się powiodła a pacjent nie zmarł.
+	 * @param bw (<b>BufferedWriter</b>) obiekt zapisujący.
+	 * @return (<b>boolean</b>) - true, jeśli wszystko się udało.
 	 */
 	private boolean saveSSAvectors(BufferedWriter bw) {
 		try {
@@ -861,20 +900,19 @@ public class ProjectWriter {
 	
 			if(places.size() > 0) {
 				bw.write(spaces(sp)+"<SSA vectors: "+ssaNumber+">"+newline);
-				for(int s=0; s<ssaNumber; s++) {
+				for (SSAplacesVector matrix : ssaMatrix) {
 					sp = 4;
-					SSAplacesVector sVector = ssaMatrix.get(s);
-					String stateLine = "";
-					for(Double value : sVector.accessVector()) {
-						stateLine += value + ";";
+					StringBuilder stateLine = new StringBuilder();
+					for (Double value : matrix.accessVector()) {
+						stateLine.append(value).append(";");
 					}
-					stateLine = stateLine.substring(0, stateLine.length()-1); //usun ostatni ';'
-					bw.write(spaces(sp)+stateLine+newline);
-					
-					String ssaType = sVector.getType().toString();
-					double ssaVolume = sVector.getVolume();
-					bw.write(spaces(sp)+ssaType+";"+ssaVolume+newline);
-					bw.write(spaces(sp)+Tools.convertToCode(sVector.getDescription())+newline);
+					stateLine = new StringBuilder(stateLine.substring(0, stateLine.length() - 1)); //usun ostatni ';'
+					bw.write(spaces(sp) + stateLine + newline);
+
+					String ssaType = matrix.getType().toString();
+					double ssaVolume = matrix.getVolume();
+					bw.write(spaces(sp) + ssaType + ";" + ssaVolume + newline);
+					bw.write(spaces(sp) + Tools.convertToCode(matrix.getDescription()) + newline);
 				}
 			} else {
 				bw.write(spaces(sp)+"<SSA vectors: 0>"+newline);
@@ -892,14 +930,15 @@ public class ProjectWriter {
 	
 	/**
 	 * Metoda zwraca łańcuch znaków o zadanej liczbie spacji.
-	 * @param howMany int - ile spacji
-	 * @return String - łańcuch spacji
+	 * @param howMany (<b>int</b>) ile spacji.
+	 * @return (<b>String</b>) - łańcuch spacji.
 	 */
 	private String spaces(int howMany) {
-		String result = "";
-		for(int i=0; i<howMany; i++) {
-			result += " ";
-		}
-		return result;
+		return " ".repeat(Math.max(0, howMany));
+		//StringBuilder result = new StringBuilder();
+		//		for(int i=0; i<howMany; i++) {
+		//			result.append(" ");
+		//		}
+		//		return result.toString();
 	}
 }

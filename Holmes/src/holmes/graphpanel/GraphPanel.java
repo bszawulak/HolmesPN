@@ -1093,7 +1093,7 @@ public class GraphPanel extends JComponent {
 					}
 					case XPLACE -> {
 						if(project.getNodes().size() == 0) {
-							_putXTPNtransition(project);
+							_putXTPNplace(project);
 						} else if (project.hasNonXTPNnodes()){
 							String[] options = {"Place and transform project", "Cancel placement"};
 							int answer = JOptionPane.showOptionDialog(null,

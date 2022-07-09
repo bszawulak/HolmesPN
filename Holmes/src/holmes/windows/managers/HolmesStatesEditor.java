@@ -3,8 +3,6 @@ package holmes.windows.managers;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
@@ -31,7 +29,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.StatePlacesVector;
-import holmes.petrinet.data.StatePlacesManager;
+import holmes.petrinet.data.P_StateManager;
 import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
 import holmes.tables.managers.StatesPlacesEditorTableModel;
@@ -46,7 +44,7 @@ public class HolmesStatesEditor extends JFrame {
 	private final StatePlacesVector stateVector;
 	private final int stateIndex;
 	private final ArrayList<Place> places;
-	private final StatePlacesManager statesManager;
+	private final P_StateManager statesManager;
 	
 	private long globalTokensNumber = 0;
 	
@@ -240,7 +238,6 @@ public class HolmesStatesEditor extends JFrame {
 		table.setDefaultRenderer(Object.class, tableRenderer);
 		table.setDefaultRenderer(Double.class, tableRenderer);
 
-		
 		table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {

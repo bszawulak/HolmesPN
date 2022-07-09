@@ -16,7 +16,7 @@ import holmes.petrinet.elements.Place;
 public class StatePlacesVectorXTPN implements Serializable {
     @Serial
     private static final long serialVersionUID = 2161649872359143583L;
-    private ArrayList<ArrayList<Double>> stateVectorXTPN;
+    private final ArrayList<ArrayList<Double>> stateVectorXTPN;
     private String stateType;
     private String stateDescription;
 

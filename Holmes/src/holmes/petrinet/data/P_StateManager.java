@@ -10,7 +10,7 @@ import holmes.petrinet.elements.Place;
  * @author MR
  *
  */
-public class StatePlacesManager {
+public class P_StateManager {
 	private final GUIManager overlord;
 	private final PetriNet pn;
 	
@@ -23,7 +23,7 @@ public class StatePlacesManager {
 	 * Konstruktor obiektu klasy StatesManager
 	 * @param net PetriNet - główny obiekt sieci
 	 */
-	public StatePlacesManager(PetriNet net) {
+	public P_StateManager(PetriNet net) {
 		overlord = GUIManager.getDefaultGUIManager();
 		this.pn = net;
 		
@@ -200,15 +200,22 @@ public class StatePlacesManager {
 	/**
 	 * Metoda ustawia nowy stan miejsc sieci XTPN na bazie wybranego stanu.
 	 * @param stateID (<b>int</b>) indeks stanu z listy.
+	 * @return (<b>boolean</b>) - true, jeżeli się udało.
 	 */
-	public void setNetworkStateXTPN(int stateID) {
+	public boolean setNetworkStateXTPN(int stateID) {
 		ArrayList<Place> places = pn.getPlaces();
 		StatePlacesVectorXTPN psVector = statesMatrixXTPN.get(stateID);
-		for(int p=0; p<places.size(); p++) {
-			Place place = places.get(p);
-			place.replaceMultiset(new ArrayList<>(psVector.getMultisetK(p)));
+		if(psVector.getSize() == places.size()) {
+			for (int p = 0; p < places.size(); p++) {
+				Place place = places.get(p);
+				place.replaceMultiset(new ArrayList<>(psVector.getMultisetK(p)));
+				place.setTokensNumber(psVector.getMultisetK(p).size());
+			}
+			selectedStateXTPN = stateID;
+			return true;
+		} else {
+			return false;
 		}
-		selectedStateXTPN = stateID;
 	}
 
 	/**
@@ -250,8 +257,8 @@ public class StatePlacesManager {
 		StatePlacesVectorXTPN psVector = statesMatrixXTPN.get(stateID);
 		psVector.accessVector().clear();
 
-		for(int p=0; p<places.size(); p++) {
-			ArrayList<Double> currentPlaceMultiset = new ArrayList<>(places.get(p).accessMultiset());
+		for (Place place : places) {
+			ArrayList<Double> currentPlaceMultiset = new ArrayList<>(place.accessMultiset());
 			psVector.addPlaceXTPN(currentPlaceMultiset);
 		}
 	}
@@ -313,7 +320,7 @@ public class StatePlacesManager {
 	 * @param createFirstVector (<b>boolean</b>) jeśli false, nie tworzy pierwszych elementów (na potrzeby <b>ProjectReader</b>)
 	 */
 	public void resetPN(boolean createFirstVector) {
-		statesMatrix = new ArrayList<StatePlacesVector>();
+		statesMatrix = new ArrayList<>();
 		if(createFirstVector) {
 			statesMatrix.add(new StatePlacesVector());
 			statesMatrix.get(0).setDescription("Default first (0) working state for current net.");
@@ -326,7 +333,7 @@ public class StatePlacesManager {
 	 * @param createFirstVector (<b>boolean</b>) jeśli false, nie tworzy pierwszych elementów (na potrzeby <b>ProjectReader</b>)
 	 */
 	public void resetXTPN(boolean createFirstVector) {
-		statesMatrixXTPN = new ArrayList<StatePlacesVectorXTPN>();
+		statesMatrixXTPN = new ArrayList<>();
 		if(createFirstVector) {
 			statesMatrixXTPN.add(new StatePlacesVectorXTPN());
 			statesMatrixXTPN.get(0).setDescription("Default first (0) working XTPN state for current net.");

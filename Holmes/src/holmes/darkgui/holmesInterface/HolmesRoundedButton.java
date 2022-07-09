@@ -4,14 +4,20 @@ import holmes.utilities.Tools;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class HolmesRoundedButton extends JButton {
     private ImageIcon normal;
     private ImageIcon hover;
     private ImageIcon clicked;
+
+    private String textname;
+    private JLabel title;
     public HolmesRoundedButton(String text, String normalName, String howerName, String clickedName) {
-        super(text);
+        //setLayout(new BorderLayout());
+        //super(text);
+        textname = text;
         Dimension size = getPreferredSize();
         size.width = size.height = Math.max(size.width, size.height);
         setPreferredSize(size);
@@ -20,6 +26,10 @@ public class HolmesRoundedButton extends JButton {
         normal = Tools.getResIcon22("/buttons/"+normalName);
         hover = Tools.getResIcon22("/buttons/"+howerName);
         clicked = Tools.getResIcon22("/buttons/"+clickedName);
+
+        title = new JLabel(textname);
+        title.setHorizontalAlignment(JLabel.CENTER);
+        //add(title, BorderLayout.CENTER);
     }
 
     @Override

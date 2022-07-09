@@ -84,7 +84,7 @@ public class HolmesDockWindowsTable extends JPanel {
     public JLabel timeStepLabelValue;
     private NetSimulator simulator;  // obiekt symulatora
     // P/T/M/A
-    private ButtonGroup groupRadioMetaType = new ButtonGroup();  //metanode
+    private final ButtonGroup groupRadioMetaType = new ButtonGroup();  //metanode
     private boolean nameLocChangeMode = false;
     private PetriNetElement element;
     private ElementLocation elementLocation;
@@ -1205,20 +1205,17 @@ public class HolmesDockWindowsTable extends JPanel {
                                 "\nTransform XTPN place into classical place?",
                         "Transformation into classical place",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-                switch(answer) {
-                    case 0: //redukcja do klasycznego miejsca
-                        button.setText("<html>Gamma:<br>  OFF</html>");
-                        button.setBackground(Color.RED);
+                //cancel
+                if (answer == 0) { //redukcja do klasycznego miejsca
+                    button.setText("<html>Gamma:<br>  OFF</html>");
+                    button.setBackground(Color.RED);
 
-                        place.transformXTPNintoPNpace();
+                    place.transformXTPNintoPNpace();
 
-                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                        button.setFocusPainted(false);
-                        WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
-                        ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
-                        return;
-                    default: //cancel
-                        return;
+                    GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                    button.setFocusPainted(false);
+                    WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                    ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
                 }
             } else {
                 //zapytać czy wyłączyć, konwersja kasowanie arrayListy
@@ -1239,9 +1236,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     button.setFocusPainted(false);
                     WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
                     ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
-                    return;
                 }
-                return;
             }
         });
         components.add(buttonGammaMode);
@@ -1978,38 +1973,6 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(stochasticTransitionCheckBox);
 
-        /*
-        JLabel frLabel = new JLabel("Firing rate:", JLabel.LEFT);
-        frLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-        components.add(frLabel);
-
-        JTextArea frField = new JTextArea("" + ((Transition) element).getFiringRate());
-        frField.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
-        frField.setLineWrap(true);
-        frField.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) {
-                JTextArea field = (JTextArea) e.getSource();
-                String newFR = "";
-                if (field != null)
-                    newFR = field.getText();
-
-                try {
-                    double newVal = Double.parseDouble(newFR);
-
-                    SPNtransitionData xxx = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager()
-                            .getCurrentSPNdataVector().accessVector().get(gID);
-                    ((Transition) element).setFiringRate(newVal);
-                    xxx.ST_function = newFR;
-                } catch (Exception ee) {
-                    System.out.println(ee.getMessage());
-                }
-                //changeComment(newComment);
-                //overlord.markNetChange();
-            }
-        });
-        components.add(frField);
-        */
-
         //SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
@@ -2178,7 +2141,6 @@ public class HolmesDockWindowsTable extends JPanel {
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
             }
-
             private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc) {
                 trans_tmp = transition;
                 el_tmp = inLoc;
@@ -2211,7 +2173,6 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
-
             private ActionListener yesWeCan(Transition transition, ElementLocation inLoc) {
                 trans_tmp = transition;
                 el_tmp = inLoc;
@@ -2219,7 +2180,6 @@ public class HolmesDockWindowsTable extends JPanel {
             }
         }.yesWeCan(transition, location));
         components.add(nameLocChangeButton);
-
 
         JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
         debugModeLabel1.setBounds(columnA_posX, columnA_Y += 45, colACompLength, 20);
@@ -6755,14 +6715,12 @@ public class HolmesDockWindowsTable extends JPanel {
                 }
                 note.addTextLineNL("", "text");
             }
-
         }
         note.addTextLineNL("", "text");
         note.addTextLineNL("", "text");
         note.addTextLineNL("", "text");
         note.addTextLineNL("", "text");
         note.addTextLineNL("", "text");
-
 
         for (int i = 0; i < clusterColorsData.clustersInvariants.size(); i++) {
             note.addTextLineNL("Cluster#" + i, "text");
@@ -6781,17 +6739,12 @@ public class HolmesDockWindowsTable extends JPanel {
                     if (invSubMatrix.get(inv).get(trans) > 0) {
                         note.addTextLine(";t" + trans, "text");
                     }
-
-
                 }
                 note.addTextLineNL("", "text");
             }
-
         }
-
         note.setCaretFirstLine();
         note.setVisible(true);
-
     }
 
     /**
