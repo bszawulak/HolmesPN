@@ -84,7 +84,6 @@ public class HolmesDockWindowsTable extends JPanel {
     private JCheckBox maximumModeCheckBox;
     private JCheckBox singleModeCheckBox;
     public JLabel timeStepLabelValue;
-
     public JLabel timeLabelXTPN;
     public JLabel stepLabelXTPN;
     private NetSimulator simulator;  // obiekt symulatora
@@ -160,6 +159,10 @@ public class HolmesDockWindowsTable extends JPanel {
     private int selectedSubNetindex = -1;
 
     private boolean allSubNetsselected = false;
+
+    //kolor:
+    private JButton c1Button;
+    private JButton c2Button;
 
     private JLabel projectTypeLabelText; //typ sieci
 
@@ -291,6 +294,8 @@ public class HolmesDockWindowsTable extends JPanel {
             int selectedModeIndex = simMode.getSelectedIndex();
             int change = simulator.setGraphicalSimulatorNetType(selectedModeIndex);
             doNotUpdate = true;
+            c1Button.setEnabled(false);
+            c2Button.setEnabled(false);
             if (change == 0) {
                 simMode.setSelectedIndex(0);
             } else if (change == 1) {
@@ -299,6 +304,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 simMode.setSelectedIndex(2);
             } else if (change == 3) {
                 simMode.setSelectedIndex(3);
+                c1Button.setEnabled(true);
+                c2Button.setEnabled(true);
             } else {
                 overlord.log("Error while changing graphical simulator mode.", "error", true);
             }
@@ -440,20 +447,28 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(saveButton);
 
-        JButton c1Button = new JButton("Store");
+        c1Button = new JButton("<html><center>Store<br>colors</center></html>");
         c1Button.setName("reset");
         c1Button.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
-        c1Button.setToolTipText("Reset all tokens in places.");
-        c1Button.setEnabled(true);
-        c1Button.addActionListener(actionEvent -> overlord.getWorkspace().getProject().storeColors());
+        c1Button.setToolTipText("Reset all color tokens in places.");
+        c1Button.setEnabled(false);
+        c1Button.addActionListener(actionEvent -> {
+            //JOptionPane.showMessageDialog(null, "Color PN (experimental) simulator currently unavailable.",
+            //        "Module unavailable", JOptionPane.INFORMATION_MESSAGE);
+            overlord.getWorkspace().getProject().storeColors();
+        });
         components.add(c1Button);
 
-        JButton c2Button = new JButton("Reset");
+        c2Button = new JButton("<html><center>Restore<br>colors</center></html>");
         c2Button.setName("reset");
         c2Button.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
-        c2Button.setToolTipText("Reset all tokens in places.");
-        c2Button.setEnabled(true);
-        c2Button.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreColors());
+        c2Button.setToolTipText("Reset all color tokens in places.");
+        c2Button.setEnabled(false);
+        c2Button.addActionListener(actionEvent -> {
+            //JOptionPane.showMessageDialog(null, "Color PN (experimental) simulator currently unavailable.",
+            //        "Module unavailable", JOptionPane.INFORMATION_MESSAGE);
+            overlord.getWorkspace().getProject().restoreColors();
+        });
         components.add(c2Button);
 
         JButton statesButton = new JButton("State manager");

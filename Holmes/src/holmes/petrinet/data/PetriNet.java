@@ -74,11 +74,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private String lastFileName = "";
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<>(), new ArrayList<>(), "default");
 	private ArrayList<GraphPanel> graphPanels;
-	private AbyssWriter ABYSSSwriter;
-	private AbyssReader ABYSSReader;
 	private IOprotocols communicationProtocol;
 	private NetHandler handler;
-	private SAXParserFactory readerSNOOPY;
 	private Workspace workspace;
 	private DrawModes drawMode = DrawModes.POINTER;
 	private NetSimulator simulator;
@@ -213,19 +210,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				returnTransitions.add((Transition) n);
 		}
 		return returnTransitions;
-	}
-	
-	/**
-	 * Zwraca liczbę tranzycji sieci.
-	 * @return int - liczba tranzycji
-	 */
-	public int getTransitionsNumber() {
-		int counter = 0;
-		for (Node n : this.dataCore.nodes) {
-			if (n instanceof Transition)
-				counter++;
-		}
-		return counter;
 	}
 	
 	/**
@@ -391,6 +375,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda pobiera aktualny tryb rysowania definiowany przez tryb DrawModes.
 	 * @return DrawModes - tryb rysowania
 	 */
+	@SuppressWarnings("unused")
 	public DrawModes getDrawMode() {
 		return this.drawMode;
 	}
@@ -399,6 +384,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda zwracająca handler oczytu pliku sieci.
 	 * @return NetHandler - obiekt dla parsera w czasie czytania pliku
 	 */
+	@SuppressWarnings("unused")
 	public NetHandler getHandler() {
 		return handler;
 	}
@@ -637,6 +623,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param index int - nr p-inwariantu, od zera
 	 * @return String - nazwa p-inwariantu
 	 */
+	@SuppressWarnings("unused")
 	public String getP_InvDescription(int index) {
 		if(p_invariantsMatrix == null)
 			return "";
@@ -786,12 +773,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return boolean - true jeżeli arkusz nie ma węzłów;
 	 * 		false w przeciwnym wypadku
 	 */
+	@SuppressWarnings("unused")
 	public boolean isSheetEmpty(int sheetID) {
 		boolean result = true;
 		for (Node node : getNodes())
 			for (ElementLocation location : node.getNodeLocations())
-				if (location.getSheetID() == sheetID)
+				if (location.getSheetID() == sheetID) {
 					result = false;
+					break;
+				}
 		return result;
 	}
 
@@ -801,6 +791,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * wierzchołków oraz łuków.
 	 * @param graphPanel - nowy arkusz
 	 */
+	@SuppressWarnings("unused")
 	public void addGraphPanel(GraphPanel graphPanel) {
 		graphPanel.setNodesAndArcs(this.getDataCore().nodes, this.getDataCore().arcs);
 		this.getGraphPanels().add(graphPanel);
@@ -908,7 +899,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public SPNdataVectorManager accessFiringRatesManager() {
 		return this.firingRatesManager;
 	}
-	
+
+
 	public void replaceStatesManager(SPNdataVectorManager newStatesMngr) {
 		this.firingRatesManager = newStatesMngr;
 	}
@@ -921,23 +913,28 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void restoreMarkingZero() {
 		try {
-			//accessStatesManager().restoreSelectedState();
-			accessStatesManager().setNetworkStatePN(accessStatesManager().selectedStatePN);
-	
+			if(checkIfXTPNpresent()) {
+				accessStatesManager().setNetworkStateXTPN(accessStatesManager().selectedStateXTPN);
+			} else {
+				accessStatesManager().setNetworkStatePN(accessStatesManager().selectedStatePN);
+			}
+
 			for(Transition trans : getTransitions()) {
 				trans.setLaunching(false);
-
 				if(trans.getTransType() == TransitionType.TPN) {
 					trans.resetTimeVariables();
+				}
+				if(trans.isXTPNtransition()) {
+					trans.resetTimeVariables_xTPN();
 				}
 			}
 
 			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
 			setSimulator(new NetSimulator(nt, this));
 			setSimulatorXTPN(new NetSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
-			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN());
-			overlord.io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
-			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep();
+			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN()); //ustawia nowe instancje symulatorów
+			overlord.io.updateTimeStep(""+getSimulator().getSimulatorTimeStep()); //-1 po resecie symulatorów
+			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep(); //-1, jak wyżej
 			
 			repaintAllGraphPanels();
 			getSimulator().getSimLogger().logSimReset();
@@ -948,17 +945,23 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Szybsza wersja przywracania stanu sieci, bez zawracania głowy okna SimulatorBox j.w.
-	 * @param transitions ArrayList[Transition] - wektor tranzycji
+	 * @param transitions (<b>ArrayList[Transition]</b>) wektor tranzycji.
 	 */
 	public void restoreMarkingZeroFast(ArrayList<Transition> transitions) {
 		try {
-			//accessStatesManager().restoreSelectedState();
-			accessStatesManager().setNetworkStatePN(accessStatesManager().selectedStatePN);
+			if(checkIfXTPNpresent()) {
+				accessStatesManager().setNetworkStateXTPN(accessStatesManager().selectedStateXTPN);
+			} else {
+				accessStatesManager().setNetworkStatePN(accessStatesManager().selectedStatePN);
+			}
 	
 			for(Transition trans : transitions) {
 				trans.setLaunching(false);
 				if(trans.getTransType() == TransitionType.TPN) {
 					trans.resetTimeVariables();
+				}
+				if(trans.isXTPNtransition()) {
+					trans.resetTimeVariables_xTPN();
 				}
 			}
 			getSimulator().getSimLogger().logSimReset();
@@ -985,15 +988,16 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda przywraca stan początkowy sieci
+	 * Metoda przywraca stan początkowy sieci kolorowej.
 	 */
 	public void restoreColors() {
+		if(checkIfXTPNpresent())
+			return;
 		try {
 			ArrayList<Place> places = getPlaces();
 			for (Place place : places) {
 				place.setTokensNumber(0);
 			}
-
 			if(colorVector == null)
 				return;
 			
@@ -1008,9 +1012,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				place.setColorTokensNumber(colorVector.get(p).get(5), 5);
 				place.setTokensNumber(0);
 			}
-			
 			ArrayList<Transition> transitions = getTransitions();
-
 			for(Transition trans : transitions) {
 				trans.setLaunching(false);
 				
@@ -1132,7 +1134,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean saveAsAbyss(String filePath) {
-		ABYSSSwriter = new AbyssWriter();
+		AbyssWriter ABYSSSwriter = new AbyssWriter();
 		return ABYSSSwriter.write(filePath);
 	}
 	
@@ -1175,12 +1177,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		if(!status) {
 			return false;
 		}
-		
-		readerSNOOPY = SAXParserFactory.newInstance();
+
+		SAXParserFactory readerSNOOPY = SAXParserFactory.newInstance();
 		try {
 			// Format własny
 			if (path.endsWith(".abyss")) {
-				ABYSSReader = new AbyssReader();
+				AbyssReader ABYSSReader = new AbyssReader();
 				ABYSSReader.read(path);
 				addArcsAndNodes(ABYSSReader.getArcArray(), ABYSSReader.getNodeArray());
 				setName(ABYSSReader.getPNname());
@@ -1292,7 +1294,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 						JOptionPane.showMessageDialog(null, "There are no t-invariants to export.",
 							"Warning",JOptionPane.WARNING_MESSAGE);
 					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+					//result = -1;
 				}
 			} else {
 				if (getP_InvMatrix() != null) {
@@ -1307,11 +1309,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 						JOptionPane.showMessageDialog(null, "There are no p-invariants to export.",
 							"Warning",JOptionPane.WARNING_MESSAGE);
 					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+					//result = -1;
 				}
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
 			overlord.log("Error: " + e.getMessage(), "error", true);
 		}
 		return result;
@@ -1337,7 +1338,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					JOptionPane.showMessageDialog(null, "There are no t-invariants to export",
 							"Warning",JOptionPane.WARNING_MESSAGE);
 					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+					//result = -1;
 				}
 			} else {
 				if (getP_InvMatrix() != null) {
@@ -1350,7 +1351,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					JOptionPane.showMessageDialog(null, "There are no p-invariants to export",
 							"Warning",JOptionPane.WARNING_MESSAGE);
 					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+					//result = -1;
 				}
 			}
 			
@@ -1381,7 +1382,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					JOptionPane.showMessageDialog(null, "There are no t-invariants to export.",
 							"Warning",JOptionPane.WARNING_MESSAGE);
 					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+					//result = -1;
 				}
 			} else {
 				if (getP_InvMatrix() != null) {
@@ -1394,7 +1395,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					JOptionPane.showMessageDialog(null, "There are no p-invariants to export.",
 							"Warning",JOptionPane.WARNING_MESSAGE);
 					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+					//result = -1;
 				}
 			}
 			
@@ -1645,10 +1646,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda rozpoczynająca proces symulatora wykonań inwariantów.
 	 * @param type int - typ symulacji: 0 - zwykła, 1 - czasowa
-	 * @param value - 
-	 * @throws CloneNotSupportedException
+	 * @param value int
 	 */
-	public void startInvSim(int type, int value) throws CloneNotSupportedException {
+	public void startInvSim(int type, int value)  {
 		//Timer timer = new Timer();
 		//Date date = new Date();
 		//this.invSimulator = new InvariantsSimulator(abyss.analyzer.InvariantsSimulator.NetType.BASIC, new PetriNet(
@@ -1735,7 +1735,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda sprawdza, czy sieć zawiera węzły inny niż XTPN.
+	 * Metoda sprawdza, czy sieć zawiera węzły inne niż XTPN.
 	 * @return (<b>boolean</b>) true, jeżeli są inne niż XTPN
 	 */
 	public boolean hasNonXTPNnodes() {
@@ -1747,6 +1747,24 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			} else if (n instanceof Transition){
 				if(!((Transition) n).isXTPNtransition())
 					return true; //zawiera node nie-XTPN
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Metoda sprawdza, czy istnieją elementy XTPN.
+	 * @return (<b>boolean</b>) true, jeżeli są węzły XTPN.
+	 */
+	public boolean checkIfXTPNpresent() {
+		boolean result = false;
+		for (Node n : this.dataCore.nodes) {
+			if (n instanceof Place) {
+				if(((Place) n).isXTPNplace())
+					return true; //zawiera node XTPN
+			} else if (n instanceof Transition){
+				if(((Transition) n).isXTPNtransition())
+					return true; //zawiera node XTPN
 			}
 		}
 		return result;

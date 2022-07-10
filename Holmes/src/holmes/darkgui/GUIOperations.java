@@ -143,7 +143,7 @@ public class GUIOperations {
 						"  "+Tools.getFileName(file));
 			}
 			try {
-				overlord.getWorkspace().getProject().storeColors();
+				//overlord.getWorkspace().getProject().storeColors();  //TODO? WTH?
 			} catch (Exception ignored) {
 				
 			}

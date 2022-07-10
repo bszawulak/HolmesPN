@@ -1043,6 +1043,9 @@ public class StateSimulator implements Runnable {
 			if(transitions.get(i).getTransType() == TransitionType.TPN) {
 				transitions.get(i).resetTimeVariables();
 			}
+			if(transitions.get(i).getTransType() == TransitionType.XTPN) {
+				transitions.get(i).resetTimeVariables_xTPN();
+			}
 		}
 	}
 	

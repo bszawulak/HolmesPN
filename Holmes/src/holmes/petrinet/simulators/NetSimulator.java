@@ -197,7 +197,7 @@ public class NetSimulator {
 	/**
 	 * Metoda ustawiająca tryb sieci do symulacji.
 	 * @param type int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
-	 * @return int - faktyczny ustawiony tryb: 0 - PN, 1 - TPN, 2 - Hybrid, -1 : crash mode
+	 * @return int - faktyczny ustawiony tryb: 0 - PN, 1 - TPN, 2 - Hybrid, 3 - Color, -1 : crash mode
 	 */
 	public int setGraphicalSimulatorNetType(int type) {
 		//sprawdzenie poprawności trybu, zakładamy że BASIC działa zawsze

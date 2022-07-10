@@ -129,8 +129,8 @@ public class Transition extends Node {
     private boolean tauTimersVisibility_XTPN = false; //czy wyświetlać timery
     private double tauAlpha_xTPN = -1.0;
     private double tauBeta_xTPN = -1.0;
-    private double timer_Ualfa_XTPN = 0.0;
-    private double timer_Vbeta_XTPN = 0.0;
+    private double timer_Ualfa_XTPN = -1.0;
+    private double timer_Vbeta_XTPN = -1.0;
 
     //jeśli miejsca wejściowe tracą szybciej tokeny ze starości niż z
     //produkcji, zmniejszamy tau Alfa i Beta (prawdopodobieństwo).
@@ -878,6 +878,7 @@ public class Transition extends Node {
         TPNtimerLimit = -1;
         TPNtimer = -1;
         DPNtimer = -1;
+
     }
 
     /**
@@ -1180,12 +1181,14 @@ public class Transition extends Node {
      */
 
     /**
-     * Metoda resetuje zegary tranzycji xTPN
+     * Metoda resetuje zegary tranzycji XTPN.
      */
     public void resetTimeVariables_xTPN() {
         //TODO: pewnie coś, wyjdzie przy symulatorze
         tauAlpha_xTPN = -1.0;
         tauBeta_xTPN = -1.0;
+        timer_Ualfa_XTPN = -1.0;
+        timer_Vbeta_XTPN = -1.0;
         isActivated_xTPN = false;
         isProducing_xTPN = false;
     }
