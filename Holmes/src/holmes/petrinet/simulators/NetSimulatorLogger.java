@@ -6,7 +6,6 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
@@ -34,7 +33,7 @@ public class NetSimulatorLogger {
 	 * @param sm SimulatorMode - rodzaj wciśniętego przycisku startu pracy
 	 * @param maximumMode boolean - true jeśli maximum mode
 	 */
-	public void logStart(NetType simulationType, boolean writeHistory, SimulatorMode sm, boolean maximumMode) {
+	public void logStart(SimulatorGlobals.SimNetType simulationType, boolean writeHistory, SimulatorMode sm, boolean maximumMode) {
 		String message;
 		String histWrite = "yes";
 		if(!writeHistory)
@@ -75,12 +74,6 @@ public class NetSimulatorLogger {
 	 * @param details boolean - true jeśli włączono dokładne raportowanie
 	 */
 	public void logSimStepFinished(ArrayList<Transition> launchingTransitions, boolean details) {
-		//ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		//ArrayList<TimeTransition> timeTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTimeTransitions();
-		//ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		//if(allTransitions == null || allTransitions.size() == 0)
-		//	return;
-		
 		for (Transition transition : launchingTransitions) {
 			ArrayList<Arc> inArcs = transition.getInArcs();
 			ArrayList<Arc> outArcs = transition.getOutArcs();
@@ -156,8 +149,6 @@ public class NetSimulatorLogger {
 					log.addText("output transition", "b", false, true);
 				}
 			}
-			
-			
 		}
 	}
 	
@@ -174,8 +165,6 @@ public class NetSimulatorLogger {
 		}
 		return max;
 	}
-	
-	
 
 	/**
 	 * Krótki komunikat o utworzeniu kopii stanu m0.

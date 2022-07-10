@@ -25,7 +25,8 @@ import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.simulators.NetSimulator;
-import holmes.petrinet.simulators.NetSimulator.NetType;
+import holmes.petrinet.simulators.NetSimulatorXTPN;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.workspace.Workspace;
 import holmes.workspace.WorkspaceSheet;
 
@@ -81,6 +82,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private Workspace workspace;
 	private DrawModes drawMode = DrawModes.POINTER;
 	private NetSimulator simulator;
+	private NetSimulatorXTPN simulatorXTPN;
 	private MCTCalculator analyzer;
 	private PetriNetMethods methods;
 	private boolean isSimulationActive = false;
@@ -134,7 +136,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.overlord = GUIManager.getDefaultGUIManager();
 		this.setGraphPanels(new ArrayList<>());
 		this.workspace = workspace;
-		this.setSimulator(new NetSimulator(NetType.BASIC, this));
+		this.setSimulator(new NetSimulator(SimulatorGlobals.SimNetType.BASIC, this));
+		this.setSimulatorXTPN(new NetSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
 		this.setMCTanalyzer(new MCTCalculator(this));
 		this.statesManager = new P_StateManager(this);
 		this.ssaManager = new SSAplacesManager(this);
@@ -446,9 +449,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda pozwala na pobrania aktualnego obiektu symulatora Netsimulator
-	 * dla bieżącego projektu
-	 * @return NetSimulator - symulator
+	 * Metoda pozwala na pobrania aktualnego obiektu symulatora dla bieżącego projektu.
+	 * @return (<b>NetSimulator</b>) - symulator sieci klasycznych.
 	 */
 	public NetSimulator getSimulator() {
 		return simulator;
@@ -456,10 +458,26 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda pozwala na ustawienie symulatora NetSimulator dla bieżącego projektu
-	 * @param simulator NetSimulator - nowy symulator
+	 * @param simulator (<b>NetSimulator</b>) nowy symulator klasy NetSimulator (zwykły)
 	 */
 	public void setSimulator(NetSimulator simulator) {
 		this.simulator = simulator;
+	}
+
+	/**
+	 * Metoda pozwala na pobrania aktualnego obiektu symulatora XTPN.
+	 * @return (<b>NetSimulatorXTPN</b>) - symulator sieci XTPN.
+	 */
+	public NetSimulatorXTPN getSimulatorXTPN() {
+		return simulatorXTPN;
+	}
+
+	/**
+	 * Metoda pozwala na ustawienie symulatora XTPN dla bieżącego projektu
+	 * @param simulator (<b>NetSimulatorXTPN</b>) nowy symulator klasy NetSimulatorXTPN (XTPN)
+	 */
+	public void setSimulatorXTPN(NetSimulatorXTPN simulator) {
+		this.simulatorXTPN = simulator;
 	}
 
 	/**
@@ -724,7 +742,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda zwraca obiekt wektora nazw zbiorów MCT.
-	 * @return
+	 * @return (<b>ArrayList[String]</b>) wektor nazw.
 	 */
 	public ArrayList<String> accessMCTnames() {
 		return mctNames;
@@ -732,7 +750,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda ustawia nowy wektor nazw dla zbiorów MCT.
-	 * @param namesVector ArrayList[String] - nazwy MCT
+	 * @param namesVector (<b>ArrayList[String]</b>) wektor nazw MCT.
 	 */
 	public void setMCTNames(ArrayList<String> namesVector) {
 		if(mctData == null)
@@ -913,10 +931,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					trans.resetTimeVariables();
 				}
 			}
-			
-			NetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
+
+			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
 			setSimulator(new NetSimulator(nt, this));
-			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
+			setSimulatorXTPN(new NetSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
+			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN());
 			overlord.io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
 			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep();
 			
@@ -999,10 +1018,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					trans.resetTimeVariables();
 				}
 			}
-			
-			NetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
+
+			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
 			setSimulator(new NetSimulator(nt, this));
-			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
+			setSimulatorXTPN(new NetSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
+			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN());
 			overlord.io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
 			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep();
 			

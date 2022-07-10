@@ -22,6 +22,7 @@ import holmes.petrinet.simulators.NetSimulator;
 import com.javadocking.dock.SingleDock;
 import com.javadocking.dockable.DefaultDockable;
 import com.javadocking.dockable.Dockable;
+import holmes.petrinet.simulators.NetSimulatorXTPN;
 
 /**
  * Metoda odpowiedzialna za okno programu, w którym gromadzone są kolejne zakładki
@@ -143,7 +144,8 @@ public class HolmesDockWindow extends SingleDock {
     public void createSimulatorProperties() {
         if (type == DockWindowType.SIMULATOR) {
             NetSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
-            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SIMULATOR, netSim));
+            NetSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
+            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SIMULATOR, netSim, netSimXTPN));
             scrollPane.getViewport().add(getCurrentDockWindow());
         }
     }

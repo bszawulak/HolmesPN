@@ -42,6 +42,7 @@ import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.simulators.NetSimulator;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.NetSimulatorXTPN;
 import holmes.petrinet.simulators.QuickSimTools;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
@@ -83,7 +84,11 @@ public class HolmesDockWindowsTable extends JPanel {
     private JCheckBox maximumModeCheckBox;
     private JCheckBox singleModeCheckBox;
     public JLabel timeStepLabelValue;
+
+    public JLabel timeLabelXTPN;
+    public JLabel stepLabelXTPN;
     private NetSimulator simulator;  // obiekt symulatora
+    private NetSimulatorXTPN simulatorXTPN;
     // P/T/M/A
     private final ButtonGroup groupRadioMetaType = new ButtonGroup();  //metanode
     private boolean nameLocChangeMode = false;
@@ -218,7 +223,7 @@ public class HolmesDockWindowsTable extends JPanel {
     public HolmesDockWindowsTable(SubWindow subType, Object... blackBox) {
         overlord = GUIManager.getDefaultGUIManager();
         switch (subType) {
-            case SIMULATOR -> createSimulatorSubWindow((NetSimulator) blackBox[0]);
+            case SIMULATOR -> createSimulatorSubWindow((NetSimulator) blackBox[0], (NetSimulatorXTPN) blackBox[1]);
             case PLACE -> createPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
             case TRANSITION -> createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
             case TIMETRANSITION ->
@@ -256,7 +261,7 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param sim NetSimulator - obiekt symulatora sieci
      */
-    private void createSimulatorSubWindow(NetSimulator sim) {
+    private void createSimulatorSubWindow(NetSimulator sim, NetSimulatorXTPN simXTPN) {
         int columnA_posX = 10;
         int columnB_posX = 80;
         int columnA_Y = 0;
@@ -268,7 +273,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode", "Color"};
         mode = SIMULATOR;
-        setSimulator(sim);
+        setSimulator(sim, simXTPN);
 
         // SIMULATION MODE
         JLabel netTypeLabel = new JLabel("Mode:");
@@ -284,7 +289,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
 
             int selectedModeIndex = simMode.getSelectedIndex();
-            int change = simulator.setSimNetType(selectedModeIndex);
+            int change = simulator.setGraphicalSimulatorNetType(selectedModeIndex);
             doNotUpdate = true;
             if (change == 0) {
                 simMode.setSelectedIndex(0);
@@ -508,7 +513,11 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(singleModeCheckBox);
 
+
+
+
         //PANEL SYMULATORA INWARIANTÓW
+        /*
         JPanel invariantsSimulatorPanel = new JPanel();
 
         invariantsSimulatorPanel.setLayout(null);
@@ -571,7 +580,6 @@ public class HolmesDockWindowsTable extends JPanel {
         //startButton.setLocation(internalXA, internalY);
         //startButton.setSize(80, 40);
         startButton.addActionListener(actionEvent -> {
-            /*
             if(overlord.getWorkspace().getProject().get2ndFormInvariantsList().size()>0)
             {
 
@@ -592,13 +600,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 setEnabledSimulationDisruptButtons(false);
                 overlord.getShortcutsBar().setEnabledSimulationInitiateButtons(true);
                 overlord.getShortcutsBar().setEnabledSimulationDisruptButtons(false);
-
             }
             else {
                 JOptionPane.showMessageDialog(null, "There are no invariants to simulate.",
                         "Invariant simulator", JOptionPane.INFORMATION_MESSAGE);
             }
-            */
         });
 
         TimeMode.setEnabled(false);
@@ -608,15 +614,94 @@ public class HolmesDockWindowsTable extends JPanel {
         startButton.setEnabled(false);
         invariantsSimulatorPanel.add(startButton);
         //components.add(invariantsSimulatorPanel);
+        */
+
 
         panel.setLayout(null);
         for (JComponent component : components) {
             panel.add(component);
         }
+
+        panel.add(createXTPNsimPanel(columnA_posX, columnA_Y)); //XTPN sim panel na końcu
+
         panel.setOpaque(true);
         panel.repaint();
         panel.setVisible(true);
         add(panel);
+    }
+
+    private JPanel createXTPNsimPanel(int columnA_posX, int columnA_Y) {
+        JPanel xtmpSimPanel = new JPanel();
+        xtmpSimPanel.setLayout(null);
+        xtmpSimPanel.setBorder(BorderFactory.createTitledBorder("XTPN simulator"));
+        xtmpSimPanel.setBounds(columnA_posX - 5, columnA_Y += 20, 160, 200);
+
+        int internalX = 10;
+        int internalY = 0;
+
+        //JLabel xtmIntro = new JLabel("XTPN simulator:");
+        //xtmIntro.setBounds(internalX, internalY += 20, 90, 20);
+        //xtmpSimPanel.add(xtmIntro);
+
+        JLabel stepLabelText = new JLabel("Step:");
+        stepLabelText.setBounds(internalX, internalY += 20, 90, 20);
+        xtmpSimPanel.add(stepLabelText);
+
+        stepLabelXTPN = new JLabel("0");
+        stepLabelXTPN.setBounds(internalX+60, internalY , 90, 20);
+        xtmpSimPanel.add(stepLabelXTPN);
+
+        JLabel timeLabelText = new JLabel("Time:");
+        timeLabelText.setBounds(internalX, internalY += 20, 90, 20);
+        xtmpSimPanel.add(timeLabelText);
+
+        timeLabelXTPN = new JLabel("0.0");
+        timeLabelXTPN.setBounds(internalX+60, internalY , 90, 20);
+        xtmpSimPanel.add(timeLabelXTPN);
+
+        JLabel optionsLavel = new JLabel("Simulation buttons:");
+        optionsLavel.setBounds(internalX, internalY += 20, 120, 20);
+        xtmpSimPanel.add(optionsLavel);
+
+        HolmesRoundedButton loopSimulation = new HolmesRoundedButton(""
+                , "/simulator/simStart1.png", "/simulator/simStart2.png", "/simulator/simStart3.png");
+        loopSimulation.setName("simB5");
+        loopSimulation.setBounds(internalX, internalY += 20, 50, 50);
+        loopSimulation.setToolTipText("Loop simulation");
+        loopSimulation.addActionListener(actionEvent -> {
+            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+            simulatorXTPN.startSimulation(NetSimulatorXTPN.SimulatorModeXTPN.XTPNLOOP);
+            mode = SIMULATOR;
+        });
+        xtmpSimPanel.add(loopSimulation);
+
+
+        HolmesRoundedButton pauseSimulation = new HolmesRoundedButton(""
+                , "/simulator/simPause1.png", "/simulator/simPause2.png", "/simulator/simPause3.png");
+        pauseSimulation.setName("stop");
+        pauseSimulation.setBounds(internalX+40, internalY, 50, 50);
+        pauseSimulation.setToolTipText("Pause simulation");
+       // pauseSimulation.setEnabled(false);
+        pauseSimulation.addActionListener(actionEvent -> {
+            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+            simulatorXTPN.pause();
+            mode = SIMULATOR;
+        });
+        xtmpSimPanel.add(pauseSimulation);
+
+        HolmesRoundedButton stopSimulation = new HolmesRoundedButton(""
+                , "/simulator/simStop1.png", "/simulator/simStop2.png", "/simulator/simStop2.png");
+        stopSimulation.setBounds(internalX+80, internalY, 50, 50);
+        stopSimulation.setToolTipText("Schedule a stop for the simulation");
+        //stopSimulation.setEnabled(false);
+        stopSimulation.addActionListener(actionEvent -> {
+            simulatorXTPN.stop();
+            mode = SIMULATOR;
+        });
+        xtmpSimPanel.add(stopSimulation);
+
+
+        return xtmpSimPanel;
     }
 
     //**************************************************************************************
@@ -8646,20 +8731,28 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia nowy obiekt symulatora sieci.
-     *
-     * @param netSim NetSimulator - nowy obiekt
+     * @param netSim (<b>NetSimulator</b>) simulator zwykły.
+     * @param netSim (<b>NetSimulatorXTPN</b>) simulator XTPN.
      */
-    public void setSimulator(NetSimulator netSim) {
+    public void setSimulator(NetSimulator netSim, NetSimulatorXTPN netSimXTPN) {
         simulator = netSim;
+        simulatorXTPN = netSimXTPN;
     }
 
     /**
-     * Metoda zwraca obiekt aktywnego symulatora z podokna symulacji.
-     *
-     * @return NetSimulator - obiekt symulatora
+     * Metoda zwraca obiekt aktywnego zwykłego symulatora z podokna symulacji.
+     * @return (<b>NetSimulator</b>) obiekt symulatora sieci zwykłej.
      */
     public NetSimulator getSimulator() {
         return simulator;
+    }
+
+    /**
+     * Metoda zwraca obiekt aktywnego symulatora XTPN z podokna symulacji.
+     * @return (<b>NetSimulatorXTPN</b>) obiekt symulatora XTPN.
+     */
+    public NetSimulatorXTPN getSimulatorXTPN() {
+        return simulatorXTPN;
     }
 
     /**

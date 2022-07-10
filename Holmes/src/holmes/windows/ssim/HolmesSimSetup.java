@@ -26,7 +26,6 @@ import javax.swing.event.ChangeListener;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.simulators.SimulatorGlobals;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.utilities.Tools;
 import holmes.windows.managers.HolmesSPNmanager;
 import holmes.windows.managers.HolmesSSAwindowManager;
@@ -574,13 +573,13 @@ public class HolmesSimSetup extends JFrame {
 	 */
 	private void configureWindow() {
 		doNotUpdate = true;
-		
-		NetType netType = settings.getNetType();
-		if(netType == NetType.BASIC)
+
+		SimulatorGlobals.SimNetType netType = settings.getNetType();
+		if(netType == SimulatorGlobals.SimNetType.BASIC)
 			groupNetType.setSelected(classPNRadioButton.getModel(), true);
-		else if(netType == NetType.TIME)
+		else if(netType == SimulatorGlobals.SimNetType.TIME)
 			groupNetType.setSelected(timeNetRadioButtion.getModel(), true);
-		else if(netType == NetType.HYBRID)
+		else if(netType == SimulatorGlobals.SimNetType.HYBRID)
 			groupNetType.setSelected(hybridNetRadioButton.getModel(), true);
 		
 		

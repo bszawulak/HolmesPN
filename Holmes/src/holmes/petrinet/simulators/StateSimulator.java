@@ -55,7 +55,7 @@ public class StateSimulator implements Runnable {
 	 * Główny konstruktor obiektu klasy StateSimulator.
 	 */
 	public StateSimulator() {
-		engine = new StandardTokenSimulator();
+		engine = new SimulatorStandardPN();
 		overlord = GUIManager.getDefaultGUIManager();
 	}
 
@@ -182,22 +182,22 @@ public class StateSimulator implements Runnable {
 		if(useGlobals) {
 			int engineType = overlord.simSettings.getSimulatorType();
 			if(engineType == 0) {
-				if(!(engine instanceof StandardTokenSimulator)) {
-					engine = new StandardTokenSimulator();
+				if(!(engine instanceof SimulatorStandardPN)) {
+					engine = new SimulatorStandardPN();
 				}
 			} else if (engineType == 1) {
 				if(!(engine instanceof SPNengine)) {
 					engine = new SPNengine();
 				}
 			} else { //domyślnie standardowy silnik
-				if(!(engine instanceof StandardTokenSimulator)) {
-					engine = new StandardTokenSimulator();
+				if(!(engine instanceof SimulatorStandardPN)) {
+					engine = new SimulatorStandardPN();
 				}
 			}
 			
 		} else { //domyślny, prosty tryb
-			if(!(engine instanceof StandardTokenSimulator)) {
-				engine = new StandardTokenSimulator();
+			if(!(engine instanceof SimulatorStandardPN)) {
+				engine = new SimulatorStandardPN();
 			}
 		}
 	}
@@ -927,7 +927,7 @@ public class StateSimulator implements Runnable {
 	 * @return boolean - true jeśli jest choć jedna aktywna tranzycja; false w przeciwnym wypadku
 	 */
 	private boolean isPossibleStep() {
-		if(engine instanceof StandardTokenSimulator) {
+		if(engine instanceof SimulatorStandardPN) {
 			for (Transition transition : transitions) {
 				if (transition.isActive())
 					return true;
@@ -1081,7 +1081,7 @@ public class StateSimulator implements Runnable {
 			engine = new SPNengine();
 			overlord.simSettings.setSimulatorType(1);
 		} else {
-			engine = new StandardTokenSimulator();
+			engine = new SimulatorStandardPN();
 			overlord.simSettings.setSimulatorType(0);
 		}
 	}

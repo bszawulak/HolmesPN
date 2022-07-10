@@ -16,7 +16,6 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.StateSimulator;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.tables.InvariantContainer;
 import holmes.tables.InvariantsSimulatorTableModel;
 import holmes.tables.InvariantsTableModel;
@@ -89,7 +88,7 @@ public class HolmesNetTablesActions {
 		StateSimulator ss = new StateSimulator();
 		
 		SimulatorGlobals ownSettings = new SimulatorGlobals();
-		ownSettings.setNetType(NetType.BASIC);
+		ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC);
 		ownSettings.setMaxMode(false);
 		ownSettings.setSingleMode(false);
 		ss.initiateSim(false, ownSettings);
@@ -136,7 +135,7 @@ public class HolmesNetTablesActions {
 		
 		StateSimulator ss = new StateSimulator();
 		SimulatorGlobals ownSettings = new SimulatorGlobals();
-		ownSettings.setNetType(NetType.BASIC);
+		ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC);
 		ownSettings.setMaxMode(false);
 		ownSettings.setSingleMode(false);
 		ss.initiateSim(false, ownSettings);
@@ -257,7 +256,7 @@ public class HolmesNetTablesActions {
 	 * @param invSimNetType NetType - rodzaj symulacji sieci
 	 */
 	public void addInvariantsToModel(InvariantsSimulatorTableModel modelInvariants, ArrayList<ArrayList<Integer>> invariantsMatrix,
-			int simSteps, boolean maximumMode, boolean singleMode, NetType invSimNetType) {
+			int simSteps, boolean maximumMode, boolean singleMode, SimulatorGlobals.SimNetType invSimNetType) {
 		StateSimulator ss = new StateSimulator();
 		
 		SimulatorGlobals ownSettings = new SimulatorGlobals();

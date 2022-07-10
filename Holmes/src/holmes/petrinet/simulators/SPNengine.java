@@ -12,7 +12,6 @@ import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.StochaticsType;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 
 public class SPNengine implements IEngine {
 	private GUIManager overlord;
@@ -56,7 +55,7 @@ public class SPNengine implements IEngine {
 	
 	private ArrayList<ArrayList<Integer>> tpIncidenceMatrix;
 	
-	public void setEngine(NetType simulationType, boolean maxMode, boolean singleMode,
+	public void setEngine(SimulatorGlobals.SimNetType simulationType, boolean maxMode, boolean singleMode,
 			ArrayList<Transition> transitions, ArrayList<Transition> time_transitions, ArrayList<Place> places) {
 		
 		this.overlord = GUIManager.getDefaultGUIManager();
@@ -192,7 +191,6 @@ public class SPNengine implements IEngine {
 	 */
 	@Override
 	public ArrayList<Transition> getTransLaunchList(boolean emptySteps) {
-
 		if(!settingDetRemoval) { //priorytetowa lista tranzycji opóźnionych, które nie mogły odpalic o czasie
 			for(Transition trans : detPrioritySequence) {
 				if(trans.isActive()) { //jak już w końcu jest aktywna...
@@ -205,7 +203,6 @@ public class SPNengine implements IEngine {
 					return launchableTransitions; 
 				}
 			}
-			
 		}
 		
 		Transition immFired = immediateFireSubsystem();
@@ -379,7 +376,6 @@ public class SPNengine implements IEngine {
 				}
 			}
 		}
-		
 	}
 
 	/**
@@ -427,7 +423,6 @@ public class SPNengine implements IEngine {
 		//są same oczekujące na swój czas uruchomienia
 	}
 
-
 	/**
 	 * Metoda aktualizuje listę tranzycji, których wartości prawdopodobieństwa / czasu uruchomienia muszą ulec zmianie z powodu
 	 * zmian w miejsach połączonych (IN/OUT) z tymi tranzycjami.
@@ -437,7 +432,6 @@ public class SPNengine implements IEngine {
 		if(lastFiredTransition.getSPNtype() == StochaticsType.ST)
 			transitionSTtypeUpdateList.add(lastFiredTransition); //ważne dla wejściowych, gdyż one nie zostałyby tutaj
 			//dodane przez kod poniżej, więc dodajemy ręcznie tym poleceniem
-		
 
 		ArrayList<Place> changedPlaces = involvedPlacesMap.get(lastFiredTransition);
 		for(Place place : changedPlaces) {
@@ -470,7 +464,6 @@ public class SPNengine implements IEngine {
 	private void setProbFunction(Transition transition) {
 		long massActionKineticModifier = 1;
 		if(settings.isSSAMassAction()) {
-			
 			ArrayList<Place> prePlaces = prePlacesMap.get(transition);
 			
 			if(prePlaces.size() == 0) {
@@ -480,7 +473,6 @@ public class SPNengine implements IEngine {
 				if(prePlaces.isEmpty()) {
 					//int x=1;
 				}
-				
 				for (Place prePlace : prePlaces) {
 					int placeLoc = placesMap.get(prePlace);
 					int transLoc = transitionsMap.get(transition);
@@ -502,10 +494,8 @@ public class SPNengine implements IEngine {
 		transition.setSPNprobTime(probTime);
 	}
 
-	 
-
 	@Override
-	public void setNetSimType(NetType simulationType) {
+	public void setNetSimType(SimulatorGlobals.SimNetType simulationType) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -521,15 +511,6 @@ public class SPNengine implements IEngine {
 		// TODO Auto-generated method stub
 		
 	}
-
-	/**
-	 * Ustawia generator liczb pseudo-losowych.
-	 * @param IRandomGenerator - generator implementujący interface IRandomGenerator
-	 */
-	//@Override
-	//public void setGenerator(IRandomGenerator generator) {
-	//	this.generator = generator;
-	//}
 
 	/**
 	 * Zwraca aktualnie ustawiony generator liczb pseudo-losowych.

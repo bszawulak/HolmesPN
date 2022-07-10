@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 
 /**
  * Interface silnika symulatorów.
@@ -13,11 +12,11 @@ import holmes.petrinet.simulators.NetSimulator.NetType;
  *
  */
 public interface IEngine {
-	public void setEngine(NetType simulationType, boolean maxMode, boolean singleMode, 
-			ArrayList<Transition> transitions, ArrayList<Transition> time_transitions,
-			ArrayList<Place> places);
+	public void setEngine(SimulatorGlobals.SimNetType simulationType, boolean maxMode, boolean singleMode,
+						  ArrayList<Transition> transitions, ArrayList<Transition> time_transitions,
+						  ArrayList<Place> places);
 	
-	public void setNetSimType(NetType simulationType);
+	public void setNetSimType(SimulatorGlobals.SimNetType simulationType);
 	public void setMaxMode(boolean value);
 	public void setSingleMode(boolean value);
 	public ArrayList<Transition> getTransLaunchList(boolean emptySteps);

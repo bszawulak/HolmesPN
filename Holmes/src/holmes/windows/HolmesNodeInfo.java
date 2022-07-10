@@ -50,7 +50,6 @@ import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.StateSimulator;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.utilities.Tools;
@@ -81,7 +80,7 @@ public class HolmesNodeInfo extends JFrame {
 	private int transInterval = 10;
 	private JFormattedTextField avgFiredTextBox;
 	
-	private NetType choosenNetType = NetType.BASIC;
+	private SimulatorGlobals.SimNetType choosenNetType = SimulatorGlobals.SimNetType.BASIC;
 	
 	/**
 	 * Konstruktor do tworzenia okna właściwości miejsca.
@@ -121,7 +120,7 @@ public class HolmesNodeInfo extends JFrame {
 		setTitle("Node: "+transition.getName());
 		
 		if(transition.getDPNstatus() || transition.getTPNstatus())
-			choosenNetType = NetType.TIME;
+			choosenNetType = SimulatorGlobals.SimNetType.TIME;
 		
 		initializeCommon();
 		
@@ -475,13 +474,13 @@ public class HolmesNodeInfo extends JFrame {
 				int selectedModeIndex = simNetMode.getSelectedIndex();
 				switch(selectedModeIndex) {
 					case 0:
-						choosenNetType = NetType.BASIC;
+						choosenNetType = SimulatorGlobals.SimNetType.BASIC;
 						break;
 					case 1:
-						choosenNetType = NetType.TIME;
+						choosenNetType = SimulatorGlobals.SimNetType.TIME;
 						break;
 					case 2:
-						choosenNetType = NetType.HYBRID;
+						choosenNetType = SimulatorGlobals.SimNetType.HYBRID;
 						break;
 				}
 			}
@@ -782,7 +781,7 @@ public class HolmesNodeInfo extends JFrame {
 		final JComboBox<String> simNetMode = new JComboBox<String>(simModeName);
 		simNetMode.setBounds(chartX+400, chartY_2nd, 120, 25);
 		
-		if(choosenNetType == NetType.TIME)
+		if(choosenNetType == SimulatorGlobals.SimNetType.TIME)
 			simNetMode.setSelectedIndex(1);
 		else
 			simNetMode.setSelectedIndex(0);
@@ -793,13 +792,13 @@ public class HolmesNodeInfo extends JFrame {
 				int selectedModeIndex = simNetMode.getSelectedIndex();
 				switch(selectedModeIndex) {
 					case 0:
-						choosenNetType = NetType.BASIC;
+						choosenNetType = SimulatorGlobals.SimNetType.BASIC;
 						break;
 					case 1:
-						choosenNetType = NetType.TIME;
+						choosenNetType = SimulatorGlobals.SimNetType.TIME;
 						break;
 					case 2:
-						choosenNetType = NetType.HYBRID;
+						choosenNetType = SimulatorGlobals.SimNetType.HYBRID;
 						break;
 				}
 			}

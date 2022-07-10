@@ -9,7 +9,6 @@ import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 
 /**
  * Globalne ustawienia symulatora.
@@ -18,6 +17,10 @@ import holmes.petrinet.simulators.NetSimulator.NetType;
  *
  */
 public class SimulatorGlobals {
+	/** BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func */
+	public enum SimNetType {
+		BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func
+	}
 	private GUIManager overlord;
 	
 	private int ARC_STEP_DELAY = 25;
@@ -25,7 +28,7 @@ public class SimulatorGlobals {
 	
 	private boolean maxMode = false;
 	private boolean singleMode = false;
-	private NetType refNetType = NetType.BASIC;	
+	private SimNetType refNetType = SimNetType.BASIC;
 	private boolean emptySteps = false; // 0 - bez pustych kroków, 1 - z pustymi krokami
 	private int simSteps = 1000;			//liczba kroków dla zbioru referencyjnego
 	private int simReps = 100;
@@ -92,7 +95,7 @@ public class SimulatorGlobals {
 		//if(value == false)
 		//	this.maxMode = false;
 		
-		if(singleMode == true)
+		if(singleMode)
 			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
 				setMaxMode(true);
 			}
@@ -107,56 +110,54 @@ public class SimulatorGlobals {
 	}
 	
 	/**
-	 * Zwraca aktualnie ustawiony typ sieci.
-	 * @return
+	 * Zwraca aktualnie ustawiony typ symulacji sieci.
+	 * @return (<b>SimulatorGlobals.SimNetType</b>) typ sumulacji.
 	 */
-	public NetType getNetType() {
+	public SimulatorGlobals.SimNetType getNetType() {
 		return this.refNetType;
 	}
 	
 	/**
 	 * Metoda ustawiająca tryb sieci do symulacji.
-	 * @param type int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
+	 * @param typeID int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
 	 * @return int - faktyczny ustawiony tryb: 0 - PN, 1 - TPN, 2 - Hybrid, -1 : crash mode
 	 */
 	public int setNetType(int typeID) {
 		int res = checkSimulatorNetType(typeID);
-		
-		switch(res) {
-			case 0:
-				refNetType = NetType.BASIC;
-				break;
-			case 1:
-				refNetType = NetType.TIME;
-				break;
-			case 2:
-				refNetType = NetType.HYBRID;
-				break;
+
+		switch (res) {
+			case 0 -> refNetType = SimNetType.BASIC;
+			case 1 -> refNetType = SimNetType.TIME;
+			case 2 -> refNetType = SimNetType.HYBRID;
+			//case 3 -> refNetType = SimNetType.COLOR;
+			//case 4 -> refNetType = SimNetType.XTPN;
+			//case 5 -> refNetType = SimNetType.XTPNfunc;
+			//case 6 -> refNetType = SimNetType.XTPNext;
+			//case 7 -> refNetType = SimNetType.XTPNext_func;
 		}
 		return res;
 	}
-	
-	public int setNetType(NetType netType) {
+
+	/**
+	 * Uswtawia typ symulacji sieci.
+	 * @param netType (<b>SimNetType</b>) BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func
+	 * @return (<b>int</b>) numer porządkowy
+	 */
+	public int setNetType(SimNetType netType) {
 		int typeID = 0;
-		if(netType == NetType.BASIC)
+		if(netType == SimNetType.BASIC)
 			typeID = 0;
-		else if(netType == NetType.TIME)
+		else if(netType == SimNetType.TIME)
 			typeID = 1;
-		else if(netType == NetType.HYBRID)
+		else if(netType == SimNetType.HYBRID)
 			typeID = 2;
 				
 		int res = checkSimulatorNetType(typeID);
-		
-		switch(res) {
-			case 0:
-				refNetType = NetType.BASIC;
-				break;
-			case 1:
-				refNetType = NetType.TIME;
-				break;
-			case 2:
-				refNetType = NetType.HYBRID;
-				break;
+
+		switch (res) {
+			case 0 -> refNetType = SimNetType.BASIC;
+			case 1 -> refNetType = SimNetType.TIME;
+			case 2 -> refNetType = SimNetType.HYBRID;
 		}
 		
 		return res;
@@ -274,9 +275,9 @@ public class SimulatorGlobals {
 	 * @param value int - nowa wartość, im mniej (min=5), tym szybciej
 	 */
 	public void setArcDelay(int value) {
-		if(value < 5)
-			this.ARC_STEP_DELAY = 5;
-		
+		//if(value < 5)
+		//	this.ARC_STEP_DELAY = 5;
+
 		this.ARC_STEP_DELAY = value;
 	}
 	
@@ -293,8 +294,8 @@ public class SimulatorGlobals {
 	 * @param value int - nowa wartość, im mniej (min=10), tym szybciej
 	 */
 	public void setTransDelay(int value) {
-		if(value < 10)
-			this.TRANS_FIRING_DELAY = 10;
+		//if(value < 10)
+		//	this.TRANS_FIRING_DELAY = 10;
 		
 		this.TRANS_FIRING_DELAY = value;
 	}
@@ -316,7 +317,7 @@ public class SimulatorGlobals {
 		
 		maxMode = false;
 		singleMode = false;
-		refNetType = NetType.BASIC;	
+		refNetType = SimNetType.BASIC;
 		emptySteps = false;
 		simSteps = 1000;
 		simReps = 100;

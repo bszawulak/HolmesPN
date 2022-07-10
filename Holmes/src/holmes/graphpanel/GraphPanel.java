@@ -26,7 +26,7 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
-import holmes.petrinet.simulators.NetSimulator.NetType;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.subnets.SubnetsTools;
 import holmes.utilities.Tools;
 import holmes.workspace.WorkspaceSheet;
@@ -297,7 +297,7 @@ public class GraphPanel extends JComponent {
 		}
 		
 		ElementDrawSettings eds = new ElementDrawSettings();
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().getSimNetType() == NetType.COLOR) {
+		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().getSimNetType() == SimulatorGlobals.SimNetType.COLOR) {
 			eds.color = true;
 		}
 		//TODO:
@@ -1456,7 +1456,6 @@ public class GraphPanel extends JComponent {
 							if(arcSheet > 0) {
 								overlord.subnetsHQ.addMetaArc(arc);
 							}
-							
 							overlord.reset.reset2ndOrderData(true);
 							overlord.markNetChange();
 						}

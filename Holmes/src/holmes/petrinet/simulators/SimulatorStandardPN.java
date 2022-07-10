@@ -7,7 +7,6 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 
 /**
  * Silnik symulatora programu. Innymi słowy są tutaj procedury odpowiedzialne za tworzenie
@@ -15,9 +14,9 @@ import holmes.petrinet.simulators.NetSimulator.NetType;
  * 
  * @author MR
  */
-public class StandardTokenSimulator implements IEngine {
+public class SimulatorStandardPN implements IEngine {
 	private GUIManager overlord;
-	private NetType netSimType = NetType.BASIC;
+	private SimulatorGlobals.SimNetType netSimType = SimulatorGlobals.SimNetType.BASIC;
 	private ArrayList<Transition> transitions = null;
 	private ArrayList<Transition> time_transitions = null;
 	private ArrayList<Integer> transitionsIndexList = null;
@@ -34,7 +33,7 @@ public class StandardTokenSimulator implements IEngine {
 	/**
 	 * Konstruktor obiektu klasy SimulatorEngine.
 	 */
-	public StandardTokenSimulator() {
+	public SimulatorStandardPN() {
 		this.overlord = GUIManager.getDefaultGUIManager();
 		generator = new StandardRandom(System.currentTimeMillis());
 	}
@@ -48,9 +47,9 @@ public class StandardTokenSimulator implements IEngine {
 	 * @param time_transitions ArrayList[Transition] - wektor tranzycji czasowych
 	 * @param places ArrayList[Place] - wektor miejsc
 	 */
-	public void setEngine(NetType simulationType, boolean maxMode, boolean singleMode, 
-			ArrayList<Transition> transitions, ArrayList<Transition> time_transitions,
-			ArrayList<Place> places) {
+	public void setEngine(SimulatorGlobals.SimNetType simulationType, boolean maxMode, boolean singleMode,
+						  ArrayList<Transition> transitions, ArrayList<Transition> time_transitions,
+						  ArrayList<Place> places) {
 		this.netSimType = simulationType;
 		this.maxMode = maxMode;
 		this.singleMode = singleMode;
@@ -86,7 +85,7 @@ public class StandardTokenSimulator implements IEngine {
 	 * Metoda do zmiany trybu symulacji.
 	 * @param simulationType NetType - nowy typ symulacji
 	 */
-	public void setNetSimType(NetType simulationType) {
+	public void setNetSimType(SimulatorGlobals.SimNetType simulationType) {
 		this.netSimType = simulationType;
 	}
 	
@@ -138,7 +137,7 @@ public class StandardTokenSimulator implements IEngine {
 			if (launchableTransitions.size() > 0) {
 				generated = true; 
 			} else {
-				if (netSimType == NetType.TIME || netSimType == NetType.HYBRID) {
+				if (netSimType == SimulatorGlobals.SimNetType.TIME || netSimType == SimulatorGlobals.SimNetType.HYBRID) {
 					return launchableTransitions;
 				} else {
 					safetyCounter++;
@@ -179,10 +178,10 @@ public class StandardTokenSimulator implements IEngine {
 	 * które tranzycje nadają się do uruchomienia. Aktualnie działa dla modelu klasycznego PN
 	 * oraz czasowego.
 	 */
-	private void generateLaunchingTransitions(NetType simulationType) {
+	private void generateLaunchingTransitions(SimulatorGlobals.SimNetType simulationType) {
 		launchableTransitions.clear();
 
-		if (simulationType == NetType.BASIC) {
+		if (simulationType == SimulatorGlobals.SimNetType.BASIC) {
 			Collections.shuffle(transitionsIndexList);
 
 			for (int i = 0; i < transitionsIndexList.size(); i++) {
@@ -194,7 +193,7 @@ public class StandardTokenSimulator implements IEngine {
 					}
 				}
 			}
-		} if (simulationType == NetType.COLOR) { //ok
+		} if (simulationType == SimulatorGlobals.SimNetType.COLOR) { //ok
 			Collections.shuffle(transitionsIndexList);
 
 			for (int i = 0; i < transitionsIndexList.size(); i++) {
@@ -206,7 +205,7 @@ public class StandardTokenSimulator implements IEngine {
 					}
 				}
 			}
-		} else if (simulationType == NetType.HYBRID) { 
+		} else if (simulationType == SimulatorGlobals.SimNetType.HYBRID) {
 			timeTransDecisions();
 			
 			Collections.shuffle(transitionsIndexList);
@@ -229,7 +228,7 @@ public class StandardTokenSimulator implements IEngine {
 			}
 			//oldHybrid(); 
 			
-		} else if (simulationType == NetType.TIME) { //czysty model czasowy TPN / DPN
+		} else if (simulationType == SimulatorGlobals.SimNetType.TIME) { //czysty model czasowy TPN / DPN
 			timeTransDecisions();
 		}
 

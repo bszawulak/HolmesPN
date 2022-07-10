@@ -39,7 +39,7 @@ import javax.swing.table.TableRowSorter;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.NetSimulator.NetType;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.tables.InvariantsSimulatorTableModel;
 import holmes.tables.InvariantsTableModel;
 import holmes.tables.PTITableRenderer;
@@ -64,7 +64,7 @@ public class HolmesNetTables extends JFrame {
 	private JPanel buttonsPanel;
 	private JScrollPane tableScrollPane;
 	private JComboBox<String> invSimNetModeCombo;
-	private NetType invSimNetType = NetType.BASIC;
+	private SimulatorGlobals.SimNetType invSimNetType = SimulatorGlobals.SimNetType.BASIC;
 	private boolean doNotUpdate = false;
 	//data components:
 	private JTable table;
@@ -338,19 +338,19 @@ public class HolmesNetTables extends JFrame {
 				doNotUpdate = true;
 				switch(selectedModeIndex) {
 					case 0:
-						invSimNetType = NetType.BASIC;
+						invSimNetType = SimulatorGlobals.SimNetType.BASIC;
 						invSimNetModeCombo.setSelectedIndex(0);
 						break;
 					case 1:
-						invSimNetType = NetType.TIME;
+						invSimNetType = SimulatorGlobals.SimNetType.TIME;
 						invSimNetModeCombo.setSelectedIndex(1);
 						break;
 					case 2:
-						invSimNetType = NetType.HYBRID;
+						invSimNetType = SimulatorGlobals.SimNetType.HYBRID;
 						invSimNetModeCombo.setSelectedIndex(2);
 						break;
 					case -1:
-						invSimNetType = NetType.BASIC;
+						invSimNetType = SimulatorGlobals.SimNetType.BASIC;
 						invSimNetModeCombo.setSelectedIndex(1);
 						GUIManager.getDefaultGUIManager().log("Error while changing simulator mode. Set for BASIC.", "error", true);
 						break;

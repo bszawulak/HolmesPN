@@ -36,7 +36,6 @@ import holmes.analyse.TimeComputations;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.StateSimulator;
@@ -177,7 +176,7 @@ public class HolmesInvariantsViewer extends JFrame {
 			} else {
 				StateSimulator ss = new StateSimulator();
 				SimulatorGlobals ownSettings = new SimulatorGlobals();
-				ownSettings.setNetType(NetType.BASIC);
+				ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC);
 				ownSettings.setMaxMode(false);
 				ownSettings.setSingleMode(false);
 				ss.initiateSim(false, ownSettings);
@@ -488,7 +487,7 @@ public class HolmesInvariantsViewer extends JFrame {
 					StateSimulator ss = new StateSimulator();
 					
 					SimulatorGlobals ownSettings = new SimulatorGlobals();
-					ownSettings.setNetType(NetType.BASIC);
+					ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC);
 					ownSettings.setMaxMode(false);
 					ownSettings.setSingleMode(false);
 					ss.initiateSim(false, ownSettings);
@@ -750,7 +749,7 @@ public class HolmesInvariantsViewer extends JFrame {
 	
 	/**
 	 * Metoda wywołuje okno notatnika z danymi o inwariancie.
-	 * @param selectedInvIndex2 int - indeks wybranego z listy
+	 * @param invNo int - indeks wybranego z listy
 	 */
 	protected void showInvariantNotepad(int invNo) {
 		if(invNo == 0)

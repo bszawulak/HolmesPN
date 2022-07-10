@@ -17,8 +17,9 @@ import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.NetSimulator;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.NetSimulatorXTPN;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.workspace.Workspace;
 
 /**
@@ -112,7 +113,8 @@ public class GUIReset {
 		pNet.clearSimKnockoutData();
 		pNet.resetComm();
 		pNet.setMCTanalyzer(new MCTCalculator(pNet));
-		pNet.setSimulator(new NetSimulator(NetType.BASIC, pNet));
+		pNet.setSimulator(new NetSimulator(SimulatorGlobals.SimNetType.BASIC, pNet));
+		pNet.setSimulatorXTPN(new NetSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, pNet));
 		pNet.setSimulationActive(false);
 		pNet.setFileName("");
 
@@ -315,12 +317,24 @@ public class GUIReset {
 	 * @return (<b>boolean</b>) - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
-		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
-		if(ns.getSimulatorStatus() == SimulatorMode.STOPPED) {
-			return false;
-		} else {
-			JOptionPane.showMessageDialog(null, msg, msgTitle, JOptionPane.WARNING_MESSAGE);
-			return true;
+		Object obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		if(obj instanceof  NetSimulator) {
+			NetSimulator ns = (NetSimulator)obj;
+			if(ns.getSimulatorStatus() == SimulatorMode.STOPPED) {
+				return false;
+			} else {
+				JOptionPane.showMessageDialog(null, msg, msgTitle, JOptionPane.WARNING_MESSAGE);
+				return true;
+			}
+		} else if(obj instanceof  NetSimulatorXTPN) {
+			NetSimulatorXTPN ns = (NetSimulatorXTPN)obj;
+			if(ns.getXTPNsimulatorStatus() == NetSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
+				return false;
+			} else {
+				JOptionPane.showMessageDialog(null, msg, msgTitle, JOptionPane.WARNING_MESSAGE);
+				return true;
+			}
 		}
+		return false;
 	}
 }

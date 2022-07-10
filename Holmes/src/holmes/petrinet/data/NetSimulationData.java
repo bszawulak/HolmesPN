@@ -2,8 +2,7 @@ package holmes.petrinet.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import holmes.petrinet.simulators.NetSimulator.NetType;
+import holmes.petrinet.simulators.SimulatorGlobals;
 
 /**
  * Klasa kontener, do przechowywania danych o wynikach wielokrotnej symulacji sieci.
@@ -16,7 +15,7 @@ public class NetSimulationData implements Serializable {
 	public int placesNumber = 0;
 	public int transNumber = 0;
 	public boolean maxMode = false;
-	public NetType netSimType = NetType.BASIC;
+	public SimulatorGlobals.SimNetType netSimType = SimulatorGlobals.SimNetType.BASIC;
 	public int steps = 0;
 	public int reps = 0;
 	//inne:

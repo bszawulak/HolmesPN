@@ -636,7 +636,7 @@ public class Toolbar extends BorderDock {
 		allowOnlySimulationDisruptButtons();
 		simulationDockables.get(5).getContent().setEnabled(false);
 	}
-	@SuppressWarnings({ "serial" })
+
 	/**
 	 * Metoda odpowiedzialna za tworzenie tablicy przycisków symulatora.
 	 * @return ArrayList[ButtonDockable] - tablica zawierająca obiekty przycisków

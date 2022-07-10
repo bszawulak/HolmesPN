@@ -26,7 +26,7 @@ import holmes.windows.HolmesNotepad;
  * @author MR - poprawki, zmiany, kolejne rodzaje trubów symulacji
  */
 public class NetSimulator {
-	private NetType netSimType;
+	private SimulatorGlobals.SimNetType netSimType;
 	private SimulatorMode simulatorStatus = SimulatorMode.STOPPED;
 	private SimulatorMode previousSimStatus = SimulatorMode.STOPPED;
 	private PetriNet petriNet;
@@ -44,7 +44,7 @@ public class NetSimulator {
 	private NetSimulatorLogger nsl = new NetSimulatorLogger();
 	//private Random generator;
 	
-	private StandardTokenSimulator engine;
+	private SimulatorStandardPN engine;
 	private boolean emptySteps = false; 
 	
 	private GUIManager overlord;
@@ -60,27 +60,21 @@ public class NetSimulator {
 	 * STOPPED tryb stopu (zatrzymana symulacja)
 	 */
 	public enum SimulatorMode {
-		LOOP, SINGLE_TRANSITION_LOOP, SINGLE_TRANSITION, STEP, STOPPED, PAUSED, ACTION_BACK, LOOP_BACK
-	}
-
-	/** BASIC, TIME, HYBRID, COLOR, XTPN */
-	public enum NetType {
-		BASIC, TIME, HYBRID, COLOR, XTPN
+		LOOP, SINGLE_TRANSITION_LOOP, SINGLE_TRANSITION, STEP, STOPPED, PAUSED, ACTION_BACK, LOOP_BACK,
+		XTPNLOOP
 	}
 
 	/**
 	 * Konstruktor obiektu symulatora sieci.
-	 * @param type NetType - typ sieci
-	 * @param net PetriNet - sieć do symulacji 
+	 * @param type (<b>SimulatorGlobals.SimNetType</b>) typ symulacji.
+	 * @param net (<b>PetriNet</b>) sieć do symulacji .
 	 */
-	public NetSimulator(NetType type, PetriNet net) {
+	public NetSimulator(SimulatorGlobals.SimNetType type, PetriNet net) {
 		netSimType = type;
 		petriNet = net;
 		launchingTransitions = new ArrayList<Transition>();
-		//generator = new Random(System.currentTimeMillis());
 		actionStack = new Stack<SimulationStep>(); //historia kroków
-		
-		engine = new StandardTokenSimulator();
+		engine = new SimulatorStandardPN();
 		overlord = GUIManager.getDefaultGUIManager();
 	}
 	
@@ -96,43 +90,42 @@ public class NetSimulator {
 		writeHistory = true;
 		timeCounter = -1;
 		actionStack.removeAllElements();
-		engine = new StandardTokenSimulator();
+		engine = new SimulatorStandardPN();
 	}
 	
 	/**
 	 * Dostęp do obiektu silnika symulacji.
 	 * @return SimulatorEngine - silnik symulatora
 	 */
-	public StandardTokenSimulator accessEngine() {
+	public SimulatorStandardPN accessEngine() {
 		return engine;
 	}
 
-	//@SuppressWarnings("incomplete-switch")
 	/**
 	 * Metoda rozpoczyna symulację w odpowiednim trybie. W zależności od wybranego trybu,
-	 * w oddzielnym wątku symulacji zainicjalizowana zostaje odpowiednia klasa dziedzicząca
+	 * w oddzielnym wątku symulacji inicjalizowana zostaje odpowiednia klasa dziedzicząca
 	 * po StepPerformer.
-	 * @param simulatorMode SimulatorMode - wybrany tryb symulacji
+	 * @param simulatorMode (<b>SimulatorMode</b>) wybrany tryb symulacji.
 	 */
 	public void startSimulation(SimulatorMode simulatorMode) {
 		ArrayList<Transition> transitions = petriNet.getTransitions();
 		ArrayList<Transition> time_transitions = petriNet.getTimeTransitions();
 		ArrayList<Place> places = petriNet.getPlaces();
-		nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode());
+		nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode()); //TODO
 
-		setMaxMode(isSingleMode() && overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
-		
+		//setMaxMode(isSingleMode() && overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
+
 		HolmesNotepad notepad = new HolmesNotepad(640, 480);
 		boolean status = FunctionsTools.validateFunctionNet(notepad, places);
 		if(status)
 			notepad.setVisible(true);
 		else
 			notepad.dispose();
-		
+
 		engine.setEngine(netSimType, isMaxMode(), isSingleMode(), transitions, time_transitions, places);
 
 		nsl.logBackupCreated();
-		
+
 		previousSimStatus = getSimulatorStatus();
 		setSimulatorStatus(simulatorMode);
 		setSimulationActive(true);
@@ -140,7 +133,7 @@ public class NetSimulator {
 		//ustawiania stanu przycisków symulacji:
 		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
 		checkSimulatorNetType(); //trust no one
-		
+
 		switch (getSimulatorStatus()) {
 			case LOOP:
 				taskPerformer = new StepLoopPerformer(true); //główny tryb
@@ -181,7 +174,7 @@ public class NetSimulator {
 	private boolean isPossibleStep() {
 		ArrayList<Transition> transitions = petriNet.getTransitions();
 		
-		if(netSimType == NetType.COLOR) { //kolorowane
+		if(netSimType == SimulatorGlobals.SimNetType.COLOR) { //kolorowane
 			for (Transition transition : transitions) {
 				if (transition.isColorActive()) { //ok
 					return true;
@@ -206,24 +199,24 @@ public class NetSimulator {
 	 * @param type int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
 	 * @return int - faktyczny ustawiony tryb: 0 - PN, 1 - TPN, 2 - Hybrid, -1 : crash mode
 	 */
-	public int setSimNetType(int type) {
-		//sprawdzenie poprawności trybu, zakładamy że Basic działa zawsze
+	public int setGraphicalSimulatorNetType(int type) {
+		//sprawdzenie poprawności trybu, zakładamy że BASIC działa zawsze
 		int check = overlord.simSettings.checkSimulatorNetType(type);
 		
 		if(check == 0) {
-			this.netSimType = NetType.BASIC;
+			this.netSimType = SimulatorGlobals.SimNetType.BASIC;
 			engine.setNetSimType(netSimType);
 			return 0;
 		} else if(check == 1) {
-			this.netSimType = NetType.TIME;
+			this.netSimType = SimulatorGlobals.SimNetType.TIME;
 			engine.setNetSimType(netSimType);
 			return 1;
 		} else if (check == 2) {
-			this.netSimType = NetType.HYBRID;
+			this.netSimType = SimulatorGlobals.SimNetType.HYBRID;
 			engine.setNetSimType(netSimType);
 			return 2;
 		} else if (check == 3) {
-			this.netSimType = NetType.COLOR;
+			this.netSimType = SimulatorGlobals.SimNetType.COLOR;
 			engine.setNetSimType(netSimType);
 			return 3;
 		}
@@ -234,7 +227,7 @@ public class NetSimulator {
 	 * Zwraca rodzaj ustawionej sieci do symulacji (BASIC, TIMED, HYBRID).
 	 * @return NetType - j.w.
 	 */
-	public NetType getSimNetType() {
+	public SimulatorGlobals.SimNetType getSimNetType() {
 		return netSimType;
 	}
 	
@@ -243,7 +236,7 @@ public class NetSimulator {
 	 * z punktu widzenia ustawionego trybu symulacji
 	 */
 	private void checkSimulatorNetType() {
-		if(netSimType == NetType.BASIC) {
+		if(netSimType == SimulatorGlobals.SimNetType.BASIC) {
 			boolean colorDetected = false;
 			for(Node n : petriNet.getNodes()) {
 				if(n instanceof Place) { 
@@ -257,10 +250,10 @@ public class NetSimulator {
 				JOptionPane.showMessageDialog(null, "Current net contains color places.\nSimulator switched to color mode.",
 						"Invalid mode", JOptionPane.ERROR_MESSAGE);
 				overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(3);
-				netSimType = NetType.COLOR;
+				netSimType = SimulatorGlobals.SimNetType.COLOR;
 				engine.setNetSimType(netSimType);
 			}
-		} else if(netSimType == NetType.TIME) {
+		} else if(netSimType == SimulatorGlobals.SimNetType.TIME) {
 			for(Node n : petriNet.getNodes()) {
 				if(n instanceof Place) { //miejsca ignorujemy
 					continue;
@@ -271,12 +264,12 @@ public class NetSimulator {
 						JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
 								"Invalid mode", JOptionPane.ERROR_MESSAGE);
 						overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
-						netSimType = NetType.HYBRID;
+						netSimType = SimulatorGlobals.SimNetType.HYBRID;
 						engine.setNetSimType(netSimType);
 					}
 				}
 			}
-		} else if (netSimType == NetType.HYBRID) {
+		} else if (netSimType == SimulatorGlobals.SimNetType.HYBRID) {
 			//TODO
 			// simulationType = NetType.HYBRID;
 		}		
@@ -878,7 +871,7 @@ public class NetSimulator {
 	 *
 	 */
 	private class SimulationPerformer implements ActionListener {
-		protected int transitionDelay = overlord.simSettings.getTransDelay();		// licznik kroków graficznych
+		protected int transitionDelay = overlord.simSettings.getTransDelay(); // licznik kroków graficznych
 		protected boolean subtractPhase = true; // true - subtract, false - add
 		protected boolean finishedAddPhase = true;
 		protected boolean scheduledStop = false;
