@@ -85,8 +85,6 @@ public class Place extends Node {
 	private boolean gammaRangeVisibility_XTPN = true;
 	private int franctionDigits = 6;
 
-	private double accuracyLevel = 0.000000001;
-
 	//tokeny:
 	private ArrayList<Double> multisetK;
 	private ArrayList<Double> reservedMultisetK;
@@ -714,7 +712,7 @@ public class Place extends Node {
 		int removed = 0;
 		if(isGammaModeActiveXTPN()) { //tylko gdy XTPN włączone
 			for (Double token : multisetK) {
-				if (token + accuracyLevel > gammaMax_xTPN) {
+				if (token + GUIManager.getDefaultGUIManager().simSettings.calculationsAccuracy > gammaMax_xTPN) {
 					multisetK.remove(token);
 					removed++;
 				}

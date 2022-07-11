@@ -40,10 +40,11 @@ public class SimulatorGlobals {
 	
 	private int SPNimmediateMode = 2;
 	private boolean SPNdetRemove = true;
-	
 	private boolean ssaMassActionKineticsEnabled = true;
-	
 	public boolean quickSimToken = false;
+
+	//XTPN:
+	public double calculationsAccuracy = 0.000000001;
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.

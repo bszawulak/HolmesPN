@@ -362,7 +362,7 @@ public final class ElementDraw {
 					if(trans.getDPNstatus()) {
 						String dur = String.valueOf( trans.getDPNduration() );
 						if(trans.getDPNtimer() >= 0) {
-							dur = String.valueOf( trans.getDPNtimer() ) + " / "+dur;
+							dur = trans.getDPNtimer() + " / "+dur;
 						} else {
 							dur = " # / "+dur;
 						}
@@ -528,7 +528,7 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/offlineTransition2.png"));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
 								nodeBounds.y-(trans.getRadius()+2));
-					} catch (Exception e) { }
+					} catch (Exception ignored) { }
 				}
 				
 				if(trans.isInvisible()) {
@@ -536,7 +536,7 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
 								nodeBounds.y-(trans.getRadius()+2));
-					} catch (Exception e) { }
+					} catch (Exception ignored) { }
 				}
 				
 				//dodatkowy tekst nad tranzycją
@@ -830,12 +830,12 @@ public final class ElementDraw {
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
 				
-				if(place.isInvisible() == true) {
+				if(place.isInvisible()) {
 					try {
 						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
 						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), 
 								nodeBounds.y-(place.getRadius()-3));
-					} catch (Exception e) { }
+					} catch (Exception ignored) { }
 				}
 
 				// _XTPN symbol

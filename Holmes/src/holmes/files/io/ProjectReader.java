@@ -639,8 +639,8 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				try {
-					int accuracy = Integer.parseInt(line);
-					place.setFraction_xTPN(accuracy);
+					int fractionSize = Integer.parseInt(line);
+					place.setFraction_xTPN(fractionSize);
 				} catch (Exception exc) {
 					overlord.log("Fraction XTPN reading failed for place "+placesProcessed, "error", true);
 					place.setFraction_xTPN(6);
@@ -1062,8 +1062,8 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				try {
-					int accuracy = Integer.parseInt(line);
-					transition.setFraction_xTPN(accuracy);
+					int fractionSize = Integer.parseInt(line);
+					transition.setFraction_xTPN(fractionSize);
 				} catch (Exception exc) {
 					overlord.log("Fraction XTPN reading failed for transition "+transitionsProcessed, "error", true);
 					transition.setFraction_xTPN(6);

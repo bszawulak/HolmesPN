@@ -24,7 +24,7 @@ public interface IRandomGenerator {
 	 * @return long - wartość losowa
 	 */
 	public long nextLong(long min, long max);
-	public int nextInt(int bits);
+	public int nextInt(int max);
 	/**
 	 * Deleguje generator Java.Random do wygenerowania losowej liczby double
 	 * @return double - losowa wartość

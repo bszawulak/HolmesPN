@@ -138,7 +138,7 @@ public class Transition extends Node {
     private boolean isActivated_xTPN = false;
     private boolean isProducing_xTPN = false;
     //grafika:
-    private int franctionDigits = 6;
+    private int fractionDigits = 6;
 
 
     /**
@@ -1410,7 +1410,7 @@ public class Transition extends Node {
      * @param value - (int) nowa wartość liczby cyfr przecinku.
      */
     public void setFraction_xTPN(int value) {
-        franctionDigits = value;
+        fractionDigits = value;
     }
 
     /**
@@ -1418,14 +1418,14 @@ public class Transition extends Node {
      * @return int - aktualna wartość liczby cyfr przecinku.
      */
     public int getFraction_xTPN() {
-        return franctionDigits;
+        return fractionDigits;
     }
 
     /**
      * Metoda ustawia wartość docelową zegara U-alfa tranzycji.
      * @param value double - nowa wartość zegara U-alfa.
      */
-    public void setTimer_Ualfa_XTPN(double value) {
+    public void setTimerAlfa_XTPN(double value) {
         timer_Ualfa_XTPN = value;
     }
 
@@ -1433,7 +1433,7 @@ public class Transition extends Node {
      * Metoda modyfikuje wartość docelową zegara U-alfa tranzycji.
      * @param delta double - o ile zmienić zegar U-alfa.
      */
-    public void updateTimer_Ualfa_XTPN(double delta) {
+    public void updateTimerAlfa_XTPN(double delta) {
         timer_Ualfa_XTPN += delta;
     }
 
@@ -1441,7 +1441,7 @@ public class Transition extends Node {
      * Metoda zwraca wartość docelową zegara U-alfa tranzycji.
      * @return double - aktualny czas U-alfa.
      */
-    public double getTimer_Ualfa_XTPN() {
+    public double getTimerAlfa_XTPN() {
         return timer_Ualfa_XTPN;
     }
 
@@ -1449,7 +1449,7 @@ public class Transition extends Node {
      * Metoda ustawia wartość docelową zegara V-beta tranzycji.
      * @param value double - nowa wartość zegara V-beta.
      */
-    public void setTimer_Vbeta_XTPN(double value) {
+    public void setTimerBeta_XTPN(double value) {
         timer_Vbeta_XTPN = value;
     }
 
@@ -1457,7 +1457,7 @@ public class Transition extends Node {
      * Metoda modyfikuje wartość docelową zegara V-beta tranzycji.
      * @param delta double - o ile zmienić zegar V-beta.
      */
-    public void updateTimer_Vbeta_XTPN(double delta) {
+    public void updateTimerBeta_XTPN(double delta) {
         timer_Vbeta_XTPN += delta;
     }
 
@@ -1465,7 +1465,7 @@ public class Transition extends Node {
      * Metoda zwraca wartość docelową zegara V-beta tranzycji.
      * @return double - aktualny czas V-beta.
      */
-    public double getTimer_Vbeta_XTPN() {
+    public double getTimerBeta_XTPN() {
         return timer_Vbeta_XTPN;
     }
 

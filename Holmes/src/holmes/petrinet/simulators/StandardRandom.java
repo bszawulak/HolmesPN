@@ -45,6 +45,21 @@ public class StandardRandom implements IRandomGenerator  {
 		return result;
 		*/
 	}
+
+	/**
+	 * Metoda zwraca liczbę losową typu int z podanego zakresu.
+	 * @param min int - dolna granica
+	 * @param max int - górna granica
+	 * @return int - liczba z zakresu [min, max]
+	 */
+	private int getRandomInt(int min, int max) {
+		if(min == 0 && max == 0)
+			return 0;
+		if(min == max)
+			return min;
+
+		return generator.nextInt((max - min) + 1) + min; //OK, zakres np. 3 do 6 daje: 3,4,5,6 (graniczne obie też!)
+	}
 	
 	@Override
 	public long nextLong(long min, long max) {

@@ -277,6 +277,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().setJMenuBar(getMenu());
 
 		// create workspace
+		createSimLogWindow(); // okno logów symulatora
+
 		setWorkspace(new Workspace(this)); // default workspace dock
 		getDockingListener().setWorkspace(workspace);
 		
@@ -402,7 +404,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//createPropertiesWindow();
 		createStateSimulatorWindow();
 		createMCSWindow(); // okno generatora MCS
-		createSimLogWindow(); // okno logów symulatora
 		
 		String path = settingsManager.getValue("lastOpenedPath");
 		File f = new File(path);

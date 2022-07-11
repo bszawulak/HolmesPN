@@ -594,10 +594,10 @@ public class InvariantsSimulator {
 		protected int remainingTransitionsAmount = launchingTransitions.size();
 
 		protected void updateStep() {
-			GUIManager.getDefaultGUIManager().getWorkspace().incrementSimulationStep();
-			
+			GUIManager.getDefaultGUIManager().getWorkspace().getProject().incrementSimulationStep();
+
 			//tutaj nic si� nie dzieje: a chyba chodzi�o o update podokna w�a�ciwo�ci z liczb� token�w
-			GUIManager.getDefaultGUIManager().getSimulatorBox().updateSimulatorProperties();
+			//GUIManager.getDefaultGUIManager().getSimulatorBox().updateSimulatorProperties();
 		}
 
 		public void scheduleStop() {

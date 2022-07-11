@@ -296,7 +296,6 @@ public class Workspace implements SelectionActionListener {
 
 	/**
 	 * Metoda ustawiająca nowy obiekt zawierający sieć Petriego.
-	 * @return PetriNet - obiekt z danymi sieci
 	 */
 	private void setProject(PetriNet project) {
 		this.project = project;
@@ -308,7 +307,7 @@ public class Workspace implements SelectionActionListener {
 	 * @return int - pozycja arkusza na liście sheetsIDtable
 	 */
 	public int getIndexOfId(int id) {
-		Integer ajDi = new Integer(id);
+		Integer ajDi = id; //było: new Integer(id)
 		return sheetsIDtable.lastIndexOf(ajDi); //wymuszenie odpowiedniej metody przez boxing inta w Integer
 	}
 
@@ -367,13 +366,6 @@ public class Workspace implements SelectionActionListener {
 	 */
 	public void repaintAllGraphPanels() {
 		this.getProject().repaintAllGraphPanels();
-	}
-
-	/**
-	 * Metoda zwiększająca krok symulacji.
-	 */
-	public void incrementSimulationStep() {
-		this.getProject().incrementSimulationStep();
 	}
 
 	/**

@@ -692,50 +692,6 @@ public class NetSimulator {
 	}
 
 	/**
-	 * Metoda pozwala pobrać liczbę wierzchołków w sieci Petriego.
-	 * @return int - liczba wierzchołków w sieci Petriego
-	 */
-	public int getNodesAmount() {
-		return petriNet.getNodes().size();
-	}
-
-	/**
-	 * Metoda pozwala pobrać liczbę miejsc w sieci Petriego.
-	 * @return int - liczba miejsc w sieci Petriego
-	 */
-	public int getPlacesAmount() {
-		return petriNet.getPlaces().size();
-	}
-
-	/**
-	 * Metoda pozwala pobrać liczbę tranzycji w sieci Petriego.
-	 * @return int  - liczba tranzycji w sieci Petriego
-	 */
-	public int getTransitionsAmount() {
-		return petriNet.getTransitions().size();
-	}
-
-	/**
-	 * Metoda pozwala pobrać liczbę łuków w sieci Petriego.
-	 * @return int - liczba łuków w sieci Petriego
-	 */
-	public int getArcsAmount() {
-		return petriNet.getArcs().size();
-	}
-
-	/**
-	 * Metoda pozwala pobrać łączną liczbę wszystkich tokenów w sieci Petriego.
-	 * @return int - liczba tokenów w sieci Petriego
-	 */
-	public int getTokensAmount() {
-		int tokenAmount = 0;
-		for (Place place : petriNet.getPlaces()) {
-			tokenAmount += place.getTokensNumber();
-		}
-		return tokenAmount;
-	}
-
-	/**
 	 * Metoda pozwala pobrać zegar odpowiadający za wątek symulacji.
 	 * @return Timer - zegar odpowiadający za wątek symulacji
 	 */
@@ -881,9 +837,9 @@ public class NetSimulator {
 		 * Metoda aktualizuje wyświetlanie graficznej części symulacji po wykonaniu każdego kroku.
 		 */
 		protected void updateStepCounter() {
-			overlord.getWorkspace().incrementSimulationStep();
+			overlord.getWorkspace().getProject().incrementSimulationStep();
 			//tutaj nic się nie dzieje: a chyba chodziło o update podokna właściwości z liczbą tokenów
-			overlord.getSimulatorBox().updateSimulatorProperties();
+			//overlord.getSimulatorBox().updateSimulatorProperties();
 		}
 
 		/**

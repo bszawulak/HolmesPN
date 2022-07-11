@@ -36,7 +36,6 @@ public class HolmesDockWindow extends SingleDock {
     @Serial
     private static final long serialVersionUID = -1966643269924197502L;
     private Dockable dockable;
-    private Point position;
     private GUIManager guiManager;
     private HolmesDockWindowsTable dockWindowPanel;
     private SelectionPanel selectionPanel;
@@ -98,7 +97,7 @@ public class HolmesDockWindow extends SingleDock {
                             "DECOMPOSITION"), GUIManager.getDefaultGUIManager().getDockingListener()));
         }
 
-        position = new Point(0, 0);
+        Point position = new Point(0, 0);
         this.addDockable(getDockable(), position, position);
 
         //immediate creation:

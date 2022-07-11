@@ -327,8 +327,8 @@ public abstract class Node extends PetriNetElement {
 						if(((Transition)this).isTauTimerVisible()) {
 							double alphaTime = ((Transition)this).getTauAlpha_xTPN();
 							double betaTime = ((Transition)this).getTauBeta_xTPN();
-							double u_alfaTime = ((Transition)this).getTimer_Ualfa_XTPN();
-							double v_betaTime = ((Transition)this).getTimer_Vbeta_XTPN();
+							double u_alfaTime = ((Transition)this).getTimerAlfa_XTPN();
+							double v_betaTime = ((Transition)this).getTimerBeta_XTPN();
 
 							String timerA;
 							String timerB;

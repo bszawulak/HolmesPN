@@ -17,13 +17,13 @@ import holmes.windows.HolmesNotepad;
  *
  */
 public class NetSimulatorLogger {
-	private HolmesNotepad log = GUIManager.getDefaultGUIManager().getSimLog();
+	private HolmesNotepad log; // = GUIManager.getDefaultGUIManager().getSimLog();
 
 	/**
 	 * Konstruktor domyślny obiektu klasy NetSimulatorLogger.
 	 */
 	public NetSimulatorLogger() {
-		
+		log = GUIManager.getDefaultGUIManager().getSimLog();
 	}
 	
 	/**
